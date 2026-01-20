@@ -1,70 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-74567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7071ED3BE5F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 05:27:51 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72334D3BE5C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 05:27:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DB6B34E9B16
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 04:27:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B47B8355A4A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 04:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4FC346760;
-	Tue, 20 Jan 2026 04:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A8D347FFA;
+	Tue, 20 Jan 2026 04:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DktcV8dI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uQPAMc66"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8583D346AC9
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 04:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3545345753
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 04:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768883227; cv=none; b=YTGkyO5UU4NGqHrtvWluaWpS5tSuyDVwFLnlZ0+EBN5y/ZbRSCsz8SKIhiOn0S2Mh7pG3PILTSAxfobXGaqgA8AILu9QWc/oC0BHzcBSjeYiPa3L3aHcFvGIa8EOjUFxU2BgyAdO2b62TCjgSCTqHD01VzyleaBMMZ+Lw9FEjSQ=
+	t=1768883244; cv=none; b=e0l6B4sT61lAt7WBfKipWaMRQA4DIclryYfZ7RGu7XDQIB2mTtCSsAjCruOuDfAA5ot6h7pBtUkC5CWk0Ej215IRoVXZBFpdcaiwcN6KbAsj4j5emypy/BbptZF1B0UbvgV9oZ0zhvs08R0G0MOaVkYvpSR4N2RdVn1rWxefydE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768883227; c=relaxed/simple;
-	bh=X8FU8ogecwf8kjTfYDVyXu0MV1R3qua7Wh94im77YgM=;
+	s=arc-20240116; t=1768883244; c=relaxed/simple;
+	bh=xs/PHx070j//uMlDdcx5aTr3e2to9BJLJE8Lurv3BO4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y+cF67Px5POzSM+9yN1NXfJpzcS4+Ow5T32MdOTs7M3oA+/f/4o8Mx3CbkfpVhRnFA663zrrW2GayMUh1A/VllndJ0KjegZgIOWXHXop+qkiLhqWpMeILb5fvWg7ASNU7P4IOhhvYaVEmNSNuN8T22dstuLaYMIHSEGYhGyw9K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DktcV8dI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE48BC2BCB2
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 04:27:03 +0000 (UTC)
+	 To:Cc:Content-Type; b=ZNuVahJN1QGzl14pjJgrAd98mFGoUB0UGQZlmPb++K/M2ainEAVhdMGY4FZB1MMXU9xu8+aEj32pUhCpym5UWy4Tormnh0j6u1w2jhsSFuga7nhpqBJ4+29TIouIPJz0qvIa1t6/0gDHCHRRs/WHIZayWywi/O9o+4m6nOBr1Mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uQPAMc66; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B67ABC2BCAF
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 04:27:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768883223;
-	bh=X8FU8ogecwf8kjTfYDVyXu0MV1R3qua7Wh94im77YgM=;
+	s=k20201202; t=1768883242;
+	bh=xs/PHx070j//uMlDdcx5aTr3e2to9BJLJE8Lurv3BO4=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DktcV8dIC2hUNaAFjcwhetaIgTfxZVEXn0eLg4al26Lc0TMIxCbGX8s6qbVFCHZqD
-	 d6UKJydxr9n8ug7I1EspFsS4t7VRYagpz0y8dS0S0nlxYSiwOn4GiNWV9PZWyX+XGr
-	 Rl2hzFyDooL/W5ZPj9v5Zk3VTmP8H1D08gJYUgIfUxVHJmnTiB4qBF74BsaInkm5CD
-	 vcpHpRr18+tppIX1pEPvwelqiNq+hAWwiL+zJXDnuYHU96pvKEt+Kko82OXfGdFaUC
-	 6xPdYdtDElLGZIw4wADIbVSAruXTVaCjq488hLP3DLS/53HO5gfLadznRFPBwzmyIb
-	 +ucUWleA3i5tw==
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-65089cebdb4so7771069a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 20:27:03 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVPmOMLg+kP34nvNKXup4y9+UL4dh60+xQN6BhS7fHa6QlgWMQP/mrRJl9QCIu01HDATc9lf3kekBSNPNRQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzX3vFFz6ChpIelk2jBF82q/Io49EIUtFUQnigWyxj+FNdMlJQl
-	nUmPAhCxp5ti0R2KLNrXGYh58mOSz2H6RGEd5DQfCM3nh3xXuh6lVGYvsZn28QPYXlOngvuNjuC
-	UyRpeVg/GLGXRre8aWfLnlxjzauSKdAY=
-X-Received: by 2002:a05:6402:1471:b0:64d:1a1:9dee with SMTP id
- 4fb4d7f45d1cf-654bb32c9d0mr11200711a12.16.1768883222139; Mon, 19 Jan 2026
- 20:27:02 -0800 (PST)
+	b=uQPAMc66NeGWtI+DKobi5AdF+AFnHR2mIl4R137TLuAiv29N+E5+wyFIXkf6Vq+Ea
+	 YSWUBdt8gi08SsXylAkCvd+SD6is/VdG7Jh+8cVW67PcLLZW2mJHfYHuiJyeGEkSjm
+	 9SgonUh4RiSiBZA8x5w/wBkHwX4OoqI0jkLYQ6d8EyeDTw79rm3SlkqJoZw5SleD9v
+	 K72q4aOHPX/EGzQh4DXUHlzFBJkDyqbBosIq0wS/MdP6Ewsr9GrW36hXBZEG11MANp
+	 kjMnqVnR708ZWAzAevR1ZcsLFWm/zZRPI6EQvyaBkNvdD+xdSMQbVIJRonRaac1k4N
+	 pl2pXnmfPxwMg==
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b87003e998bso1014136266b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 20:27:22 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXKAIMFJ/GfAHhvtJO9EGn0TIo6r0k099O+KeyhsKFtvnFZs55C+3dPqui6PRdsYVGglzVyeHdCUqN8mtDE@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFtvG4UmiHHZz4Cv5iHLQTp7FnzXEpTdEFsi/N/6YSADOe5MFw
+	M8LgKQgL9L/Y4MFIeKPX3+2rGDeBxulTpqFixCFfwBx9VTZTRtQaeWjQQMMYjlLLRTrWfoWL0rz
+	FJlV69EhWFrFrw7qEklN4S9JwDoSJ4TI=
+X-Received: by 2002:a17:906:6a1e:b0:b71:60a3:a8b9 with SMTP id
+ a640c23a62f3a-b8793a5bf69mr1351344866b.29.1768883241261; Mon, 19 Jan 2026
+ 20:27:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260111140345.3866-1-linkinjeon@kernel.org> <20260116093348.GA22781@lst.de>
- <CAKYAXd9CXj5hZ2zoiyEgrBWA6NB1u2VrBEcOGCwCPCSZODzp6w@mail.gmail.com> <20260119070254.GA1480@lst.de>
-In-Reply-To: <20260119070254.GA1480@lst.de>
+References: <20260111140345.3866-1-linkinjeon@kernel.org> <20260111140345.3866-14-linkinjeon@kernel.org>
+ <20260116093025.GD21396@lst.de> <CAKYAXd9dz_OBkMWcS5OtfU0BhEA1r4hMqtWJ_u+qWYK4Nwk+7Q@mail.gmail.com>
+ <20260119071923.GE1480@lst.de>
+In-Reply-To: <20260119071923.GE1480@lst.de>
 From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Tue, 20 Jan 2026 13:26:48 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd_NzRz3n3yBo_6OSE4M9mT2M+y9Tspb5t1KJSpjBniJ9Q@mail.gmail.com>
-X-Gm-Features: AZwV_QgziZ7A7ONQCvO75eAjUjPtmXOfHDnfHWr5bfzqFEnAjV3S47RUPGTnyRo
-Message-ID: <CAKYAXd_NzRz3n3yBo_6OSE4M9mT2M+y9Tspb5t1KJSpjBniJ9Q@mail.gmail.com>
-Subject: Re: [PATCH v5 00/14] ntfs filesystem remake
+Date: Tue, 20 Jan 2026 13:27:08 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_07=0fPd4As1HajY-Q_Uvkqm6LLvri6=wzTV833=RB-g@mail.gmail.com>
+X-Gm-Features: AZwV_QhqMkfRprqk26v3KgTJBYY6Tnh210JA5ANvPguia0mkyBaPwjo5GIPQ4ZE
+Message-ID: <CAKYAXd_07=0fPd4As1HajY-Q_Uvkqm6LLvri6=wzTV833=RB-g@mail.gmail.com>
+Subject: Re: [PATCH v5 13/14] ntfs: add Kconfig and Makefile
 To: Christoph Hellwig <hch@lst.de>
 Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu, 
 	willy@infradead.org, jack@suse.cz, djwong@kernel.org, josef@toxicpanda.com, 
@@ -75,30 +76,33 @@ Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 19, 2026 at 4:03=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrot=
+On Mon, Jan 19, 2026 at 4:19=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrot=
 e:
 >
-> On Sun, Jan 18, 2026 at 02:19:51PM +0900, Namjae Jeon wrote:
-> > > I'm not sure how many tests are actually run for the ntfs variants
-> > > because they lack features needed for many tests, but how many still
-> > > fail with this, because with these numbers I suspect there's quite
-> > > a few left. Do you have any good grasp why they are failing, i.e.
-> > > assumptions in xfsteasts, or missing feature checks?
-> > Regarding the xfstests results, many of the 'Not Run' cases are due to
-> > fundamental differences in the NTFS architecture. For instance, NTFS
-> > does not support certain advanced features like reflink, which causes
-> > many tests to be skipped. Also, ntfs does not yet support journaling,
-> > leading to failures in tests that assume journal-based consistency.
-> > I am currently categorizing these failures to distinguish between
-> > NTFS-inherent limitations and areas for future improvement. I will
-> > provide a detailed breakdown and analysis of these test results in the
-> > cover letter on next version.
+> On Sun, Jan 18, 2026 at 02:08:01PM +0900, Namjae Jeon wrote:
+> > > > +
+> > > > +       If you don't know what Access Control Lists are, say N.
+> > >
+> > > This looks like a new feature over the old driver.  What is the
+> > > use case for it?
+> > The POSIX ACLs support is intended to ensure functional parity and ABI
+> > compatibility with the existing ntfs3 driver, which already supports
+> > this feature. Since this ntfs aims to be a replacement for ntfs3,
+> > providing the same mount options and permission model is essential for
+> > a seamless user transition.
 >
-> Not run is totally fine.  We have plenty of them even for native
-> file systems, and having even more for foreign file system support
-> is just fine.  What I meant to say is the number of failing tests
-> is the much more interesting metric, so maybe you can share that?
-Yes, I will share that.
+> Can you make this more clear in the help text?
+Sure, I'll update it.
+>
+>
+> > Furthermore, By enabling this feature, we can pass more xfstests test
+> > cases.
+>
+> Passing more tests only really matters when they were failing before,
+> and lack of Posix ACL code should not lead to failures - if it does
+> we need to improve feature detection in xfstests.
+I agreed. and xfstests already handles acl detection correctly..
+
 Thanks!
 >
 
