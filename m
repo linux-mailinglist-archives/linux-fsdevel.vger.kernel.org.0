@@ -1,117 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-74570-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74571-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4AC0D3BE65
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 05:30:09 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4885CD3BEA4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 06:11:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 232904EB49B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 04:28:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5705235A21B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 05:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F102334886F;
-	Tue, 20 Jan 2026 04:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4E43612D5;
+	Tue, 20 Jan 2026 05:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lDMTSO+v"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mAJz3C6C"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69EF348465
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 04:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40C433F381
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 05:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768883317; cv=none; b=X5W9IQs5WZ1iWYNMpwjH6RH1k1FXWMZnVKRT07EUzC2InUUy/4hFPvIKpVXuYhPrvtsSVe9s2Ko8FG+8svcjGxbb4GaDf76A2HOitNAqAZxQafcucUOQil3CD1cXs2bbKqLCXcq2zxJUivFJaXrCawAdJsYFV3NMNDmNw/Cc5Uo=
+	t=1768885884; cv=none; b=pHxnsAy0xfQZMGpX5ye+sYF1xyUIbJfQCXWeS1g1K+cj1UC5ztJEZVqs94+dqBatu4BXWIvZfm5aQ/zBXidCF0RbyoDXrItxAoe8XzGgYO6RXL9hXPfKVNhrgDw3AYGcB9uCEQHqHVeUKwQOKUdctd57HggWJw8FHV7NxRCnZ+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768883317; c=relaxed/simple;
-	bh=bUsSc7sNiJhJxOcCJS6DImmgfZ2Qvmff4DHBmFghLL0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GkLZq5CzvtP0gTBiS2Acpx8YhvuI13fs4T0ct0c+8Ktm9Ik9jBlD+HgQYoJrA/6mfFRic0Q5ARN7QesiIiLkyQdcO1GG5/1Midy3aRrtCjaGGweM9tDQ9WjBcg1K4+cUQ5hks+EK4lhSlC9mAlexOv2jTU50JvhNzQDdfwlt/wE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lDMTSO+v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4070FC2BC87
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 04:28:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768883317;
-	bh=bUsSc7sNiJhJxOcCJS6DImmgfZ2Qvmff4DHBmFghLL0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lDMTSO+vilrQjxqCTSetml7M3In9YeOdVxWzmRS+lfNcTdet48go79XAwCcLFNZcb
-	 sYxV0b4pbodt8TjaHn6Mr2bPi+FnoGmO0iuxegSzK+AhBmVbvPdrHTOjVHGhuY0Tq6
-	 XxQts7ulDyDBmjhJziw9BFLBSbu+1gb12RMfrvpUXDQY5n+M7WHpa//gcv9kSUJFhK
-	 ZqgVq1jso45dhmWWLX+PC7Dy7+ifZ3RJYG8a9U2u2HVxIgtyVWvrDnH4vz7M01oBvi
-	 8pum9V1tnS7hFJwpD/sK9+i2tUKtL0tUGEiFt0ZMpUYfcKub7mpFQajMdXeamit7So
-	 jCLmqWCmcfTXA==
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-64b7318f1b0so7530143a12.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 20:28:37 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUye8c114OUGsKCDCiomGie8NsS61A08w69Sjbo5JZLzgB+TpIKJWPKwNmXzTDv7rtbadFJXXTZFVA/LJVm@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfmM3NXhM3p0fwuqGETKbQa+ahXt3o6tOZgjc8mhT2a8kWbbvJ
-	iMBIkTIP7J76la6rR6W08drMy1K8KdFgsKXD5FhMfPIavA+q5vLwnM1tc4ZsTOMvNK1wPVbknjP
-	skVSSkj0lEOYT1Lifbf+s4jGRVs0hn3o=
-X-Received: by 2002:a05:6402:2342:b0:64b:8e3a:603e with SMTP id
- 4fb4d7f45d1cf-654b9364192mr9322530a12.4.1768883315798; Mon, 19 Jan 2026
- 20:28:35 -0800 (PST)
+	s=arc-20240116; t=1768885884; c=relaxed/simple;
+	bh=BVQqtT5e5Nlu7tzj48hWrYh2CC/as4WCfpHt4BWKtvw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=blhlW6i0SHMDpMaWx0pBiIQM9Lqstjqt0Fi+Ja1sPbkuPcZu863/vkeS0fog9ev/ItLWgxWIjiuP7GwImFYPhDxjk9yyrXWhwOcHZa9qy82oR+2uZI6xTFYGkG8o2jk45aYy5a6I+aTuqBiyF/Cdbo/hWk93kZhj7P4g30WpTZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mAJz3C6C; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-c56188aef06so1898266a12.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 21:11:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768885882; x=1769490682; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4ko1FzMYx8rXlnRUTJ/8NAkzPJbLlUKQ0Y8GgQDxnTs=;
+        b=mAJz3C6CbY+KlEXUGTWJqOrVe6PHus6mO0hFQlO5JNlmMYJJ+t52o0Pwb7ZBMdYShC
+         N+/qhlqIpRT59FF94QssgF/cXCFdazY13uQQjXMH/kj3fTtl1ET6lXaSs31wHChZZLi/
+         VJ5/V/3n3AwO1Gxq8GWKV97hst2L1lv1Sdr4J9HsY//mpdGRx9l/1wl6tNVRY+JvFZH/
+         ASlUTxuV99GW92Zsdc69K8m3Qq/02d4a09Cv0MrCB9p8aK0hSCl0OFh+Cvj/hvEXCrB2
+         jk9RM94JyJVVXLgq3C83xyxZmNLYoqbtLhs69PeshTNxmdtE3a6sPiW56c8/S58rKnV9
+         EimA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768885882; x=1769490682;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4ko1FzMYx8rXlnRUTJ/8NAkzPJbLlUKQ0Y8GgQDxnTs=;
+        b=aFF2+nY4mzYyXSwLohYthxEjsaC9Q39U1Bk8DIc5HYly0yqIaulGRIPfzvt2V/Gh2J
+         TOfY8LnUFsg8o8ruynpNu+5ln2fTLb0KnkZu8Z9J27xMdrBCvry8nAFcy3ATOBlOAk5A
+         8htyZ5kEL2E72A+88y53anffcVM8hsKS4NIcgeIhQy78kYkbNr/CIFkbRsatV3HfNk3m
+         Qp0Fc3tehD/+cxne5cce8BW6kcjgAtfJSdAqQfoA0CGvU0VFaAOuS+p303W1mlumTcyF
+         6YEq/fewzX25uFWhRraJsUg0iEEWkyup0RmTNRgslqxpWjU5ybXdaw3+4A/5EE3mZMwv
+         8xnw==
+X-Gm-Message-State: AOJu0Yy8MgyEI2yVLI92BMmhC1Xku4VjLML4DipcgJGZReepVgUSKgUe
+	1SeJ1lcLwYsB901fhjrppDDXMd7gq0UxUxmu3JSxqB97f7CYsEOPc+dtwbcfjw==
+X-Gm-Gg: AY/fxX4Sa2XfFVZjd76fzlstaU2iH6/subJ8S1GtcGJOkfDOtdYHGKGbY2iKGJqvKhI
+	wRLBAbX8Vd2fFNSzLufytjd0yBiw591i4lyTM5VicaMsVf+QfFRIZp9XkG4VDVw+WJEtmI8UOiI
+	wXSSIJeOlcup44Qi4J8kOyNWz+hsF292lE0CqKunyfgLZAno6Kh53GhFcuy11DXnoC2UdZIVKwf
+	ZOvUhOnTIlCMR9Wnfg07DyJ2gjstvHET6DZauMwhifcATp6DKej5UZQJ1EBARCHqqjMzidAJQas
+	g9ZFF/W2bg4gHAaSGPgSVg1DosSQ2/vtSnlyUlHpLWUefDfW1F4LA7bl2JjfubCx8ezbBDsaRlW
+	TUNJF6lCCTFYCfkfEMzDJcmoCCk0NcL7AUTjBLSYnksGvCXilm3d8YizdiuzHS4JY6H5C97c39x
+	c15md2IBI4QGKkEHTsstD1VIHbkoC43i0lqTCqL7v6KEGYVuHtiVDiQmfCv18NUynlfZM=
+X-Received: by 2002:a05:6a21:168b:b0:361:4ca3:e17d with SMTP id adf61e73a8af0-38dfe5902f3mr13465494637.13.1768885882094;
+        Mon, 19 Jan 2026 21:11:22 -0800 (PST)
+Received: from deepanshu-kernel-hacker.. ([2405:201:682f:389d:f843:2c12:200a:6bd8])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c5edf251a6csm10441925a12.13.2026.01.19.21.11.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Jan 2026 21:11:21 -0800 (PST)
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+To: slava@dubeyko.com,
+	glaubitz@physik.fu-berlin.de,
+	frank.li@vivo.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Deepanshu Kartikey <kartikey406@gmail.com>,
+	syzbot+d80abb5b890d39261e72@syzkaller.appspotmail.com
+Subject: [PATCH] hfsplus: fix uninit-value in hfsplus_strcasecmp
+Date: Tue, 20 Jan 2026 10:41:14 +0530
+Message-ID: <20260120051114.1281285-1-kartikey406@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260111140345.3866-1-linkinjeon@kernel.org> <20260111140345.3866-8-linkinjeon@kernel.org>
- <20260116091451.GA20873@lst.de> <CAKYAXd9+P6ekYnbXuoG95Nt5-H6bie6cSm4N-9RFDN3E+smJ+g@mail.gmail.com>
- <20260119071719.GD1480@lst.de>
-In-Reply-To: <20260119071719.GD1480@lst.de>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Tue, 20 Jan 2026 13:28:23 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd9pYVu7cCLrJ_KWNs2ysJOx75tq5wJTZpDBdr-dvcvazw@mail.gmail.com>
-X-Gm-Features: AZwV_Qi-0NLyxE64GyKZPMnLmH9ojeQMEeXlOsA8b_IbWPeVuEOkQfcOAF2VgCM
-Message-ID: <CAKYAXd9pYVu7cCLrJ_KWNs2ysJOx75tq5wJTZpDBdr-dvcvazw@mail.gmail.com>
-Subject: Re: [PATCH v5 07/14] ntfs: update iomap and address space operations
-To: Christoph Hellwig <hch@lst.de>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu, 
-	willy@infradead.org, jack@suse.cz, djwong@kernel.org, josef@toxicpanda.com, 
-	sandeen@sandeen.net, rgoldwyn@suse.com, xiang@kernel.org, dsterba@suse.com, 
-	pali@kernel.org, ebiggers@kernel.org, neil@brown.name, amir73il@gmail.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com, 
-	Hyunchul Lee <hyc.lee@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jan 19, 2026 at 4:17=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrot=
-e:
->
-> On Sun, Jan 18, 2026 at 02:00:09PM +0900, Namjae Jeon wrote:
-> > > This function confuses me.  In general end_io handlers should not
-> > > need to drop a folio reference.  For the normal buffered I/O path,
-> > > the folio is locked for reads, and has the writeback bit set for
-> > > writes, so this is no needed.  When doing I/O in a private folio,
-> > > the caller usually has a reference as it needs to do something with
-> > > it.  What is the reason for the special pattern here? A somewhat
-> > > more descriptive name and a comment would help to describe why
-> > > it's done this way.
-> > The reason for this pattern is to prevent a race condition between
-> > metadata I/O and inode eviction (e.g., during umount). ni->folio holds
-> > mft record blocks (e.g., one 4KB folio containing four 1KB mft
-> > records). When an MFT record is written to disk via submit_bio(), if a
-> > concurrent umount occurs, the inode could be evicted, and
-> > ntfs_evict_big_inode() would call folio_put(ni->folio). If this
-> > happens before the I/O completes, the folio could be released
-> > prematurely, potentially leading to data corruption or use-after-free.
-> > To prevent this, I increment the folio reference count with
-> > folio_get() before submit_bio() and decrement it in ntfs_bio_end_io().
-> > I will add the comment for this.
->
-> Thanks!
->
-> Something else I just noticed:  I think the implementation of the wait
-> flag in ntfs_dev_write is wrong.  folio_wait_stable only waits for the
-> writeback bit to be cleared when mapping_stable_writes is set, but even
-> without that I don't think you can even rely on the writeback bit to be
-> set at this point.  If the data needs to be on-disk when this function
-> returns, I'd call filemap_write_and_wait_range for the entire range
-> after the folio write loop instead.  Or maybe even in the caller
-> that wants it?
-Right. I will call filemap_write_and_wait_range() instead of
-folio_wait_stable().
-Thanks for your review!
+Syzbot reported a KMSAN uninit-value issue in hfsplus_strcasecmp() during
+filesystem mount operations. The root cause is that hfsplus_find_cat()
+declares a local hfsplus_cat_entry variable without initialization before
+passing it to hfs_brec_read().
+
+If hfs_brec_read() doesn't completely fill the entire structure (e.g., when
+the on-disk data is shorter than sizeof(hfsplus_cat_entry)), the padding
+bytes in tmp.thread.nodeName remain uninitialized. These uninitialized
+bytes are then copied by hfsplus_cat_build_key_uni() into the search key,
+and subsequently accessed by hfsplus_strcasecmp() during catalog lookups,
+triggering the KMSAN warning.
+
+Fix this by zeroing the tmp variable before use to ensure all padding
+bytes are initialized.
+
+Reported-by: syzbot+d80abb5b890d39261e72@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=d80abb5b890d39261e72
+Tested-by: syzbot+d80abb5b890d39261e72@syzkaller.appspotmail.com
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+ fs/hfsplus/catalog.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/hfsplus/catalog.c b/fs/hfsplus/catalog.c
+index 02c1eee4a4b8..9c75d1736427 100644
+--- a/fs/hfsplus/catalog.c
++++ b/fs/hfsplus/catalog.c
+@@ -199,6 +199,7 @@ int hfsplus_find_cat(struct super_block *sb, u32 cnid,
+ 	u16 type;
+ 
+ 	hfsplus_cat_build_key_with_cnid(sb, fd->search_key, cnid);
++	memset(&tmp, 0, sizeof(tmp));
+ 	err = hfs_brec_read(fd, &tmp, sizeof(hfsplus_cat_entry));
+ 	if (err)
+ 		return err;
+-- 
+2.43.0
+
 
