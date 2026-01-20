@@ -1,103 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-74672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UOo2Kiu/b2kOMQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 18:45:15 +0100
+	id eN3yDHm/b2kOMQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 18:46:33 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D21448C6F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 18:45:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFD7C48CDB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 18:46:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5681950BF01
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 14:45:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 30669983BA6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 14:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0E243CEFF;
-	Tue, 20 Jan 2026 14:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9856244CAEE;
+	Tue, 20 Jan 2026 14:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c0Yb6Fai"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N+UIexV2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AEF41760;
-	Tue, 20 Jan 2026 14:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17EB743CEDF;
+	Tue, 20 Jan 2026 14:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768919757; cv=none; b=KWNo29C9PgCkXpJxVEbtUHgb+CDZGdA+v52sTnvNBDlCLbB3E6qELfY6rFmCWsoCOIupnly+sRL5AZZovAcQNGmDtOKY+DSGv427PswciCnbWcOXADwmDM3HpxAOwbEdLdyIjxcnB2DntZgOqBEx5CxX9t2c3KbI6ErHYj0vQho=
+	t=1768919969; cv=none; b=gA0c6OVXO0d2+2JLi+Kz1WWGQSIstzVzHV9viNPESTXRqpBP+v8K5JFXzyWjP62h4QLE5UqUwC43ys9tI4xlMZNvKrDHnx6W8bWxdbqDKT1uhJkFdcK0pVq4ocvaovg8T2AjpiFCnIQ2iOqSAOhs/SSoaoT3h5Mt+sigaBX37mQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768919757; c=relaxed/simple;
-	bh=dpS+PxEHDbPvZHdk4rsi82HgYDznM+Ad7e2Y2GUOqM0=;
+	s=arc-20240116; t=1768919969; c=relaxed/simple;
+	bh=CeS53p/iUF6ZIAmtlaJKzUvodYe28myupJNz66J3YlM=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=l3ROzX5hO9aVu9HYfQFvjpY+usvZpRiH73716KcAt19Wl1LROIOiP09lrpGHAvXMBmba40XMwQ3tcedHWV2Js8s7BjpOQTaLV/jVQPTEH6anyJ3srIWIupeCRMgX7tlzzVgtQpx8gDc2GFzzuGD5HOed0fuyQXG7/n2ydfeM8X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c0Yb6Fai; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1E02C16AAE;
-	Tue, 20 Jan 2026 14:35:49 +0000 (UTC)
+	 Content-Type:MIME-Version; b=ZWERCP5DQmBx4acY/3dilDY5P9A0D34w8kM7fYjMpZ6DtZ4jFKuW23fcwNTOXidDFPsPijCCxGtpGv2TBaDv0X3OkdS9LT821Ckl7gBjIiwlhLMFY7NoEgom3MLY4+TugHkOaZ4R1ujmS2numtk6ErDPbppjwvf1bRqR14QnjcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N+UIexV2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 585BEC16AAE;
+	Tue, 20 Jan 2026 14:39:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768919756;
-	bh=dpS+PxEHDbPvZHdk4rsi82HgYDznM+Ad7e2Y2GUOqM0=;
+	s=k20201202; t=1768919968;
+	bh=CeS53p/iUF6ZIAmtlaJKzUvodYe28myupJNz66J3YlM=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=c0Yb6FaiYwLqlqQz3OwDA/IDqUxyfXBp9KbKpjmBBfSeVXvxXUbg9q9NdfGgmZWgW
-	 LBb/OzfIa5D1/ur6fI8X1Vk7TdmXZKRMcEbjf9JlXnfEB9MYhrugESVBOALo3dfsJN
-	 c3kyXsUItLSCJTQSL1vvZL/3HJKK84XphEQiwTOn6YtKVhBnj9QBGOT4f0CwrcGO8u
-	 yGALNKq6Knah/9QOmKYxcHJkuuYwydE3ayRFjpzgUGf4tYVBIXe6uQ3AjWXvBoJsWL
-	 PgAgzCMENAMM68Vji4VPbqanPmS2G1JSuw16TDRDByd2ZHk+IW8jbpd/hMVDkrbbE8
-	 vt/1AfPD2XjbQ==
-Message-ID: <2ed97731c54ef130ea58861a91c80dacd785de9a.camel@kernel.org>
-Subject: Re: [PATCH v2 01/31] Documentation: document EXPORT_OP_NOLOCKS
+	b=N+UIexV2/jJKOKht4ULYWMWi45vTee39rk1V1qhn1NUA2GTyOLjoXsOjAIaG4mqwN
+	 E9A/4K4CRsJBiWApsUQmDFfNw6wGlKBdvWjyuGic9FbvWA+L4cZBEySz0BNHvxAEut
+	 Me8fXTLiV8f+PKsCckBiHEv26Mf1XxUY69z07cufRj9asSuGfTOx39BrNMykZ7Jq+m
+	 +m3VQ71xPUfrNa9nY7wieJYhUfz70LqbSJ0nd60hc6ZDed1LDqdJ2zz5dcWmw1xrth
+	 SzaOtyjBwfo1sqMarS+jaHPRqhlBTJjSOW0KlIdScig1OYkzSD3/aHglku7X4dacQG
+	 VYYKcuZs2CLJg==
+Message-ID: <a0916b361406fa52771cf3dd507521fa1cc31d7c.camel@kernel.org>
+Subject: Re: [PATCH v3] man/man2const/F_[SG]ETDELEG.2const,
+ man/man2/fcntl.2: Document F_SETDELEG and F_GETDELEG
 From: Jeff Layton <jlayton@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro	
- <viro@zeniv.linux.org.uk>, Chuck Lever <chuck.lever@oracle.com>, NeilBrown	
- <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo	
- <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, Amir Goldstein	
- <amir73il@gmail.com>, Hugh Dickins <hughd@google.com>, Baolin Wang	
- <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>,
-  Theodore Ts'o	 <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
- Jan Kara	 <jack@suse.com>, Gao Xiang <xiang@kernel.org>, Chao Yu
- <chao@kernel.org>, Yue Hu	 <zbestahu@gmail.com>, Jeffle Xu
- <jefflexu@linux.alibaba.com>, Sandeep Dhavale	 <dhavale@google.com>, Hongbo
- Li <lihongbo22@huawei.com>, Chunhai Guo	 <guochunhai@vivo.com>, Carlos
- Maiolino <cem@kernel.org>, Ilya Dryomov	 <idryomov@gmail.com>, Alex Markuze
- <amarkuze@redhat.com>, Viacheslav Dubeyko	 <slava@dubeyko.com>, Chris Mason
- <clm@fb.com>, David Sterba <dsterba@suse.com>,  Luis de Bethencourt	
- <luisbg@kernel.org>, Salah Triki <salah.triki@gmail.com>, Phillip Lougher	
- <phillip@squashfs.org.uk>, Steve French <sfrench@samba.org>, Paulo
- Alcantara	 <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- Shyam Prasad N	 <sprasad@microsoft.com>, Bharath SM
- <bharathsm@microsoft.com>, Miklos Szeredi	 <miklos@szeredi.hu>, Mike
- Marshall <hubcap@omnibond.com>, Martin Brandenburg	 <martin@omnibond.com>,
- Mark Fasheh <mark@fasheh.com>, Joel Becker	 <jlbec@evilplan.org>, Joseph Qi
- <joseph.qi@linux.alibaba.com>, Konstantin Komarov
- <almaz.alexandrovich@paragon-software.com>, Ryusuke Konishi
- <konishi.ryusuke@gmail.com>,  Trond Myklebust <trondmy@kernel.org>, Anna
- Schumaker <anna@kernel.org>, Dave Kleikamp <shaggy@kernel.org>, David
- Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>, Jan
- Kara <jack@suse.cz>,  Andreas Gruenbacher	 <agruenba@redhat.com>, OGAWA
- Hirofumi <hirofumi@mail.parknet.co.jp>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, David Laight	
- <david.laight.linux@gmail.com>, Dave Chinner <david@fromorbit.com>, 
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-ext4@vger.kernel.org, 	linux-erofs@lists.ozlabs.org,
- linux-xfs@vger.kernel.org, 	ceph-devel@vger.kernel.org,
- linux-btrfs@vger.kernel.org, 	linux-cifs@vger.kernel.org,
- samba-technical@lists.samba.org, 	linux-unionfs@vger.kernel.org,
- devel@lists.orangefs.org, 	ocfs2-devel@lists.linux.dev,
- ntfs3@lists.linux.dev, linux-nilfs@vger.kernel.org, 
-	jfs-discussion@lists.sourceforge.net, linux-mtd@lists.infradead.org, 
-	gfs2@lists.linux.dev, linux-f2fs-devel@lists.sourceforge.net, 
-	linux-doc@vger.kernel.org
-Date: Tue, 20 Jan 2026 09:35:48 -0500
-In-Reply-To: <707f08e114bf603caf7de020bb630d5477e86bca.camel@kernel.org>
-References: <20260119-exportfs-nfsd-v2-0-d93368f903bd@kernel.org>
-			 <20260119-exportfs-nfsd-v2-1-d93368f903bd@kernel.org>
-			 <aW8yV6v8ZDiynOUm@infradead.org>
-		 <9b64bed72e43d0bf24e9b1e3bc770c4a87082762.camel@kernel.org>
-	 <707f08e114bf603caf7de020bb630d5477e86bca.camel@kernel.org>
+To: Alejandro Colomar <alx@kernel.org>, linux-man@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Date: Tue, 20 Jan 2026 09:39:27 -0500
+In-Reply-To: <5b283a25dbe2ab9ed78719c132885d9d3157f2bb.1768750908.git.alx@kernel.org>
+References: <20260114-master-v2-0-719f5b47dfe2@kernel.org>
+	 <5b283a25dbe2ab9ed78719c132885d9d3157f2bb.1768750908.git.alx@kernel.org>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -181,91 +139,366 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Spamd-Result: default: False [-0.46 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.96 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,oracle.com,brown.name,redhat.com,talpey.com,gmail.com,google.com,linux.alibaba.com,linux-foundation.org,mit.edu,dilger.ca,suse.com,huawei.com,vivo.com,dubeyko.com,fb.com,squashfs.org.uk,samba.org,manguebit.org,microsoft.com,szeredi.hu,omnibond.com,fasheh.com,evilplan.org,paragon-software.com,infradead.org,nod.at,suse.cz,mail.parknet.co.jp,lwn.net,fromorbit.com,vger.kernel.org,kvack.org,lists.ozlabs.org,lists.samba.org,lists.orangefs.org,lists.linux.dev,lists.sourceforge.net,lists.infradead.org];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-74672-lists,linux-fsdevel=lfdr.de];
-	DMARC_POLICY_ALLOW(0.00)[kernel.org,quarantine];
-	RCVD_TLS_LAST(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
+	TAGGED_FROM(0.00)[bounces-74673-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	DMARC_POLICY_ALLOW(0.00)[kernel.org,quarantine];
+	RCPT_COUNT_THREE(0.00)[3];
 	FROM_HAS_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[jlayton@kernel.org,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[77];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROM(0.00)[];
-	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo]
-X-Rspamd-Queue-Id: 1D21448C6F
+X-Rspamd-Queue-Id: AFD7C48CDB
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Tue, 2026-01-20 at 09:12 -0500, Jeff Layton wrote:
-> On Tue, 2026-01-20 at 08:20 -0500, Jeff Layton wrote:
-> > On Mon, 2026-01-19 at 23:44 -0800, Christoph Hellwig wrote:
-> > > On Mon, Jan 19, 2026 at 11:26:18AM -0500, Jeff Layton wrote:
-> > > > +  EXPORT_OP_NOLOCKS - Disable file locking on this filesystem. Som=
-e
-> > > > +    filesystems cannot properly support file locking as implemente=
-d by
-> > > > +    nfsd. A case in point is reexport of NFS itself, which can't b=
-e done
-> > > > +    safely without coordinating the grace period handling. Other c=
-lustered
-> > > > +    and networked filesystems can be problematic here as well.
-> > >=20
-> > > I'm not sure this is very useful.  It really needs to document what
-> > > locking semantics nfs expects, because otherwise no reader will know
-> > > if they set this or not.
-> >=20
-> > Fair point. I'll see if I can draft something better. Suggestions
-> > welcome.
+On Sun, 2026-01-18 at 16:42 +0100, Alejandro Colomar wrote:
+> From: Jeff Layton <jlayton@kernel.org>
 >=20
-> How about this?
+> With Linux 6.19, userland will be able to request a delegation on a file
+> or directory.  These new objects act a lot like file leases, but are
+> based on NFSv4 file and directory delegations.
 >=20
-> +  EXPORT_OP_NOLOCKS - Disable file locking on this filesystem. Filesyste=
-ms
-> +    that want to support locking over NFS must support POSIX file lockin=
-g
-> +    semantics and must handle lock recovery requests from clients after =
-a
-> +    reboot. Most local disk, RAM, or pseudo-filesystems use the generic =
-POSIX
-> +    locking support in the kernel and naturally provide this capability.=
- Network
-> +    or clustered filesystems usually need special handling to do this pr=
-operly.
+> Add new F_GETDELEG and F_SETDELEG manpages to document them.
+>=20
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> [alx: minor tweaks]
+> Signed-off-by: Alejandro Colomar <alx@kernel.org>
+> ---
+>  man/man2/fcntl.2                |   5 +
+>  man/man2const/F_GETDELEG.2const | 265 ++++++++++++++++++++++++++++++++
+>  man/man2const/F_SETDELEG.2const |   1 +
+>  3 files changed, 271 insertions(+)
+>  create mode 100644 man/man2const/F_GETDELEG.2const
+>  create mode 100644 man/man2const/F_SETDELEG.2const
+>=20
+> diff --git a/man/man2/fcntl.2 b/man/man2/fcntl.2
+> index 7f34e332e..f05d559da 100644
+> --- a/man/man2/fcntl.2
+> +++ b/man/man2/fcntl.2
+> @@ -78,6 +78,11 @@ .SS Leases
+>  .BR F_SETLEASE (2const)
+>  .TQ
+>  .BR F_GETLEASE (2const)
+> +.SS Delegations
+> +.TP
+> +.BR F_SETDELEG (2const)
+> +.TQ
+> +.BR F_GETDELEG (2const)
+>  .SS File and directory change notification (dnotify)
+>  .TP
+>  .BR F_NOTIFY (2const)
+> diff --git a/man/man2const/F_GETDELEG.2const b/man/man2const/F_GETDELEG.2=
+const
+> new file mode 100644
+> index 000000000..e4d98feed
+> --- /dev/null
+> +++ b/man/man2const/F_GETDELEG.2const
+> @@ -0,0 +1,265 @@
+> +.\" Copyright, the authors of the Linux man-pages project
+> +.\"
+> +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+> +.\"
+> +.TH F_GETDELEG 2const (date) "Linux man-pages (unreleased)"
+> +.SH NAME
+> +F_GETDELEG,
+> +F_SETDELEG
+> +\-
+> +delegations
+> +.SH LIBRARY
+> +Standard C library
+> +.RI ( libc ,\~ \-lc )
+> +.SH SYNOPSIS
+> +.nf
+> +.B #define _GNU_SOURCE
+> +.B #include <fcntl.h>
+> +.P
+> +.BI "int fcntl(int " fd ", F_SETDELEG, const struct delegation *" deleg =
+);
+> +.BI "int fcntl(int " fd ", F_GETDELEG, struct delegation *" deleg );
+> +.fi
+> +.P
+> +.EX
+> +struct delegation {
+> +	__u32  d_flags;
+> +	__u16  d_type;
+> +	__u16  __pad;
+> +};
+> +.EE
+> +.SH DESCRIPTION
+> +.B F_SETDELEG
+> +and
+> +.B F_GETDELEG
+> +are used to establish a new delegation,
+> +and retrieve the current delegation,
+> +on the open file description referred to by the file descriptor
+> +.IR fd .
+> +.P
+> +A file delegation is a mechanism whereby
+> +the process holding the delegation (the "delegation holder")
+> +is notified (via delivery of a signal)
+> +when a process (the "delegation breaker")
+> +tries to
+> +.BR open (2)
+> +or
+> +.BR truncate (2)
+> +the file referred to by that file descriptor,
+> +or tries to
+> +.BR unlink (2)
+> +or
+> +.BR rename (2)
+> +the dentry that was originally opened for the file.
+> +.P
+> +Delegations can also be set on directory file descriptors.
+> +The holder of a directory delegation will be notified if there is a
+> +create, delete, or rename of a dirent within the directory.
+> +.TP
+> +.B F_SETDELEG
+> +Set or remove a file or directory delegation according to the
+> +value specified in
+> +.IR deleg->d_type :
+> +.RS
+> +.TP
+> +.B F_RDLCK
+> +Establish a read delegation.
+> +This will cause the calling process to be notified
+> +when the file is
+> +opened for writing,
+> +or is truncated, unlinked or renamed.
+> +A read delegation can be placed
+> +only on a file descriptor that is opened read-only.
+> +.IP
+> +If
+> +.I fd
+> +refers to a directory,
+> +then the calling process will be notified
+> +if there are changes to filenames within the directory,
+> +or when the directory itself is renamed.
+> +.TP
+> +.B F_WRLCK
+> +Establish a write delegation.
+> +This will cause the caller to be notified when the file is opened for re=
+ading or writing,
+> +or is truncated, renamed or unlinked.
+> +A write delegation may be placed on a file only if there are no other op=
+en file descriptors for the file.
+> +The file must be opened for write in order to set a write delegation on =
+it.
+> +Write delegations cannot be set on directory file descriptors.
+> +.TP
+> +.B F_UNLCK
+> +Remove our delegation from the file.
+> +.RE
+> +.P
+> +Like leases,
+> +delegations are associated with an open file description
+> +(see
+> +.BR open (2)).
+> +This means that duplicate file descriptors
+> +(created by, for example,
+> +.BR fork (2)
+> +or
+> +.BR dup (2))
+> +refer to the same delegation,
+> +and this delegation may be modified or released
+> +using any of these descriptors.
+> +Furthermore,
+> +the delegation is released by either an explicit
+> +.B F_UNLCK
+> +operation on any of these duplicate file descriptors,
+> +or when all such file descriptors have been closed.
+> +.P
+> +An unprivileged process may establish a delegation
+> +only on a file whose UID (owner) matches the filesystem UID of the proce=
+ss.
+> +A process with the
+> +.B CAP_LEASE
+> +capability may establish delegations on arbitrary files and directories.
+> +.TP
+> +.B F_GETDELEG
+> +Indicates what type of delegation is associated with the file descriptor
+> +.I fd
+> +by setting
+> +.I deleg->d_type
+> +to either
+> +.BR F_RDLCK ,
+> +.BR F_WRLCK ,
+> +or
+> +.BR F_UNLCK ,
+> +indicating, respectively,
+> +a read delegation, a write delegation, or no delegation.
+> +.P
+> +When a process (the "delegation breaker")
+> +performs an activity that conflicts with a delegation
+> +established via
+> +.BR F_SETDELEG ,
+> +the system call is blocked by the kernel
+> +and the kernel notifies the delegation holder by sending it a signal
+> +.RB ( SIGIO
+> +by default).
+> +The delegation holder should respond to receipt of this signal
+> +by doing whatever cleanup is required
+> +in preparation for the file to be
+> +accessed by another process
+> +(e.g., flushing cached buffers)
+> +and then either remove or downgrade its delegation.
+> +A delegation is removed by performing an
+> +.B F_SETDELEG
+> +operation specifying
+> +.I deleg->d_type
+> +as
+> +.BR F_UNLCK .
+> +If the delegation holder currently holds
+> +a write delegation on the file,
+> +and the delegation breaker
+> +is opening the file for reading,
+> +then it is sufficient for the delegation holder to
+> +downgrade the delegation to a read delegation.
+> +This is done by performing an
+> +.B F_SETDELEG
+> +operation specifying
+> +.I deleg->d_type
+> +as
+> +.BR F_RDLCK .
+> +.P
+> +If the delegation holder
+> +fails to downgrade or remove the delegation
+> +within the number of seconds specified in
+> +.IR /proc/sys/fs/lease\-break\-time ,
+> +then the kernel
+> +forcibly removes or downgrades the delegation holder's delegation.
+> +.P
+> +Once a delegation break has been initiated,
+> +.B F_GETDELEG
+> +returns the target delegation type in the
+> +.I deleg->d_type
+> +(either
+> +.B F_RDLCK
+> +or
+> +.BR F_UNLCK ,
+> +depending on what would be compatible with the delegation breaker)
+> +until the delegation holder voluntarily downgrades or removes the delega=
+tion
+> +or the kernel forcibly does so after the delegation break timer expires.
+> +.P
+> +Once the delegation has been voluntarily or forcibly removed or downgrad=
+ed,
+> +and assuming the delegation breaker has not unblocked its system call,
+> +the kernel permits the delegation breaker's system call to proceed.
+> +.P
+> +If the delegation breaker's blocked system call
+> +is interrupted by a signal handler,
+> +then the system call fails with the error
+> +.BR EINTR ,
+> +but the other steps still occur as described above.
+> +If the delegation breaker is killed by a signal while blocked in
+> +.BR open (2)
+> +or
+> +.BR truncate (2),
+> +then the other steps still occur as described above.
+> +If the delegation breaker specifies the
+> +.B O_NONBLOCK
+> +flag when calling
+> +.BR open (2),
+> +then the call immediately fails with the error
+> +.BR EWOULDBLOCK ,
+> +but the other steps still occur as described above.
+> +.P
+> +The default signal used to notify the delegation holder is
+> +.BR SIGIO ,
+> +but this can be changed using
+> +.BR F_SETSIG (2const).
+> +If a
+> +.BR F_SETSIG (2const)
+> +operation is performed
+> +(even one specifying
+> +.BR SIGIO ),
+> +and the signal
+> +handler is established using
+> +.BR SA_SIGINFO ,
+> +then the handler will receive a
+> +.I siginfo_t
+> +structure as its second argument,
+> +and the
+> +.I si_fd
+> +field of this argument will hold
+> +the file descriptor of the file with the delegation
+> +that has been accessed by another process.
+> +(This is useful if the caller holds delegations against multiple files.)
+> +.SH NOTES
+> +Delegations were designed to implement NFSv4 delegations for the Linux N=
+FS server.
+> +.SH RETURN VALUE
+> +On success zero is returned.
+> +On error, \-1 is returned, and
+> +.I errno
+> +is set to indicate the error.
+> +A successful
+> +.B F_GETDELEG
+> +call will also update the
+> +.I deleg->d_type
+> +field.
+> +.SH ERRORS
+> +See
+> +.BR fcntl (2).
+> +These operations can also return the following errors:
+> +.TP
+> +.B EAGAIN
+> +The file was held open in a way that
+> +conflicts with the requested delegation.
+> +.TP
+> +.B EINVAL
+> +The caller tried to set a
+> +.B F_WRLCK
+> +delegation and
+> +.I fd
+> +represents a directory.
+> +.TP
+> +.B EINVAL
+> +.I fd
+> +doesn't represent a file or directory.
+> +.TP
+> +.B EINVAL
+> +The underlying filesystem doesn't support delegations.
+> +.SH STANDARDS
+> +Linux,
+> +IETF\ RFC\ 8881.
+> +.SH HISTORY
+> +Linux 6.19.
+> +.SH SEE ALSO
+> +.BR fcntl (2) ,
+> +.BR F_SETLEASE (2const)
+> diff --git a/man/man2const/F_SETDELEG.2const b/man/man2const/F_SETDELEG.2=
+const
+> new file mode 100644
+> index 000000000..acabdfc13
+> --- /dev/null
+> +++ b/man/man2const/F_SETDELEG.2const
+> @@ -0,0 +1 @@
+> +.so man2const/F_GETDELEG.2const
+>=20
+> base-commit: f17241696722c472c5fcd06ee3b7af7afc3f1082
 
-Even better, I think?
 
-+
-+  EXPORT_OP_NOLOCKS - Disable file locking on this filesystem. Filesystems
-+    that want to support locking over NFS must support POSIX file locking
-+    semantics. When the server reboots, the clients will issue requests to
-+    recover their locks, which nfsd will issue to the filesystem as new lo=
-ck
-+    requests. Those must succeed in order for lock recovery to work. Most
-+    local disk, RAM, or pseudo-filesystems use the generic POSIX locking
-+    support in the kernel and naturally provide this capability. Network o=
-r
-+    clustered filesystems usually need special handling to do this properl=
-y.
-+    Set this flag on filesystems that can't guarantee the proper semantics
-+    (e.g. reexported NFS).
+This all looks great to me. Did you need me to make any other changes?
+Thanks for doing the cleanup! FWIW:
 
---=20
-Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
