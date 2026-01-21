@@ -1,149 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-74871-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74872-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UAykCRX1cGmgbAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74871-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 16:47:33 +0100
+	id uLqFINQQcWlEcgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74872-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 18:45:56 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF38E596FB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 16:47:32 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 419445AB85
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 18:45:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BF2E37485AA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 15:10:50 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B153D78B983
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 15:25:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCBB48C8C6;
-	Wed, 21 Jan 2026 14:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B914BC029;
+	Wed, 21 Jan 2026 15:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q4sFTZSr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f68.google.com (mail-pj1-f68.google.com [209.85.216.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31B838BF6E;
-	Wed, 21 Jan 2026 14:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09B6436358
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 15:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769007205; cv=none; b=cRvhwN+MiBDKUdK4+0jqjaeiZ3Htewx9FlHVcw1bzgNMAmLvisqlOWTtdAkpG24lW+ai1rrmyv58LM1ivNnakAJqQ+lIegmHK1Hur7SpWKwsV6KDqmPOmgarOQPIV1j1m7WmG45SXAm8sJ8whExViioDm99pCGgafywXPzdzEss=
+	t=1769007744; cv=none; b=sFTmF+eNN/VMWNkr/GeOd/o0Wp6pNNKIWovhvkyPRyYy30NhGh918srLnB3JyMDHEKAl9WtduXB5D+ekc50Shp2PLbDwD4zI4ki/SSB15mAftwlUWfbcRD+IQIyiXukQ/opOX8eX3VAxPZ0QDJPyq7JkLl/RpKbJ9skFX2eORbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769007205; c=relaxed/simple;
-	bh=42Nce56/PaVMWl8jsxdgzHKUZoZpcn3sDLGJj2LfwMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dxRLErcVf5qeWgnEAA4rZ/gnruv6zblqodBk08PucDt7D063v2v3vvlZUYDFL5zVKCBBtP6Ho3QiNWKPhbLt1te+7190tFImN6r+0iXc/MKOYmeS5aJKQGKgrU6XuarM1z7lLg1JAZdwj64oUZILDyencGV+b1BHWGfp+Yhby54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 8AE19227AAD; Wed, 21 Jan 2026 15:53:19 +0100 (CET)
-Date: Wed, 21 Jan 2026 15:53:18 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
-	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: Re: [PATCH] nfsd: do not allow exporting of special kernel
- filesystems
-Message-ID: <20260121145318.GB13325@lst.de>
-References: <20260121085028.558164-1-amir73il@gmail.com> <20260121101234.GA22918@lst.de> <CAOQ4uxjRoK-tEEr+QsdSm-yce1+n2XZkkO-uFKrbhLXdyw4cgA@mail.gmail.com>
+	s=arc-20240116; t=1769007744; c=relaxed/simple;
+	bh=N+DP0mic9dW2SwO8MufVMZAUv5nHtgU9Ibx3wfXW44Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=sfe1/e/764UWocXejHDYS0ZV3s0eZn1g+fp74DlFiEHXA9veVkuD4WKc5i+ZgBy9/8s/ViYTg95jbO0IGTgCFR0RxSl/fQa6dh9ids4lyoha487BHoSomTk5yhxpjAxFbkOjTY0AhRdS3cePp1htgMCZvae+SM7MgMEzDzT13Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q4sFTZSr; arc=none smtp.client-ip=209.85.216.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f68.google.com with SMTP id 98e67ed59e1d1-34ab8e0df53so5043670a91.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 07:02:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769007741; x=1769612541; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TwL6JIRS2DILAHIQcR4xQA3DxSxHqsiHM2z6oLPh+Cg=;
+        b=Q4sFTZSr4aNdokeESr+U5tRX59xfMMbxseV2yL9Ry4/PIJat25R+/7iO6WTp4aCpWS
+         56MQ+IQK9BJgbNF/iHTmPMcbWvmAV2AY8eLW9yPx3PPye8xlMIC3gijwZz5/R33YXypB
+         45BAEJM6sRMf8z90A1oh5ox8VSkCyfVaVjOpdy5lckUUigNDLlcsZifEJfKda1+3KpZO
+         kO1alEGie+BEtu5i3T481cv63ET21hep3IfgAm30iqEYW8ooUwL7lkFil4dwwPl++9up
+         s+0pZOY5HtwJZMsdP68xlhd3xPNhzRZ1/2PcvtLYnHtLWKE7QPbblpqRF9MK1O/ozxkz
+         Vo4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769007741; x=1769612541;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=TwL6JIRS2DILAHIQcR4xQA3DxSxHqsiHM2z6oLPh+Cg=;
+        b=oHdQOh01aX5XRAluco69ZzWQry7hgLrY+0nswWGySSewr50KhmmukgBkI1cMQvEoYe
+         iHM9BYkmn+vWQ2bXwS3WH+3XvqqYdfjejx4NGhyblBsYWQn4uWCD3HivTyCpsMLbA62G
+         LWM1aoitAKxR+LcTX4fN17VxEkSkKdrH80wA/3+GVY4BebrnYJuBdXWP8qjiXKaOPfAD
+         ulcAafLh9z0iEvKAI2DV3Jcfukd3e1RBffq8kLoJm2TUQjRlgBKURz0Hn8RS9qVYUnB5
+         nx86orMPeoznkE6nKEytBGYTQ+vAiSXIpE9KgwlgPLnjFf5NVXdW43AX5pOSd5qgOdXq
+         BdLg==
+X-Gm-Message-State: AOJu0Yz11L2qfjocsTU+SfAtVzVF0LZlUyIqUlf/zASz9EBrUWhqo/g9
+	FDabrDt1llWSDW+4+XUyfRvdbQoxEutdtOOLVxpuORWmXTVQYYJjp86F
+X-Gm-Gg: AZuq6aJSj7rpFBt7NF6Mg/WvS5gwSY5w8dxEdm2eyf2GsXrzsnSM9jrRo0rmbDS+kjQ
+	AqetefNVQsFbli8B9lqCL7Xt3DZTO1Tn6JdCezF5SeU8PQXY6WCvvWbsXH1xEAGwQ8WTOhsyBLg
+	qLISrHpTB3lJbxAOgWgzxe3nqKHGKGV9uvqpK0doDeVkWbs87QqeJRFRKwaFLiJpqR5Nv28i8TU
+	86AJVt6/ma/6zy2+q+Hu3Dz8AucFyYkzFa/gZIa6Dxe7H7h3Q2MeoZuHU9yGPT37nhmek71BKce
+	/GCfDJ9ihaTFFCt/+afXqwzsNlGltvUVLNmyIY+WJ+2sYcn4uevXeDNnZHun9w5kgtKhf5313Wt
+	S+gfVEfO3SAUKqZrPbJEb29s/NWrfpt7vUQI09H+9vxAwp2TXM/wfEBuVCoC9jW8+fcXsVk2aiR
+	eeoRkASGgClr2gtcx3DAnHIRgqLPIf
+X-Received: by 2002:a17:90b:3f8e:b0:353:883:aff6 with SMTP id 98e67ed59e1d1-3530883b063mr1407873a91.20.1769007740636;
+        Wed, 21 Jan 2026 07:02:20 -0800 (PST)
+Received: from localhost.localdomain ([111.125.231.221])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-352678c69fasm17882867a91.14.2026.01.21.07.02.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Jan 2026 07:02:20 -0800 (PST)
+From: Prithvi Tambewagh <activprithvi@gmail.com>
+To: syzbot+f6e8174215573a84b797@syzkaller.appspotmail.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	Prithvi Tambewagh <activprithvi@gmail.com>
+Subject: Testing for v2: configfs: add lock class key to struct configfs_fragment for frag_sem
+Date: Wed, 21 Jan 2026 20:32:11 +0530
+Message-Id: <20260121150211.82216-1-activprithvi@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <6767d8ea.050a0220.226966.0021.GAE@google.com>
+References: <6767d8ea.050a0220.226966.0021.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxjRoK-tEEr+QsdSm-yce1+n2XZkkO-uFKrbhLXdyw4cgA@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Spamd-Result: default: False [-1.16 / 15.00];
+X-Spamd-Result: default: False [1.04 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : No valid SPF, No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:7979, ipnet:213.196.21.0/24, country:US];
-	MID_RHS_MATCH_FROM(0.00)[];
 	TO_DN_SOME(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,googlegroups.com,gmail.com];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com];
-	R_DKIM_NA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	PRECEDENCE_BULK(0.00)[];
-	TAGGED_FROM(0.00)[bounces-74871-lists,linux-fsdevel=lfdr.de];
-	R_SPF_SOFTFAIL(0.00)[~all:c];
 	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo,lst.de:email,lst.de:mid]
-X-Rspamd-Queue-Id: BF38E596FB
+	TAGGED_FROM(0.00)[bounces-74872-lists,linux-fsdevel=lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DMARC_POLICY_ALLOW(0.00)[gmail.com,none];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[activprithvi@gmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	R_SPF_SOFTFAIL(0.00)[~all:c];
+	TAGGED_RCPT(0.00)[linux-fsdevel,f6e8174215573a84b797];
+	RCVD_COUNT_FIVE(0.00)[5];
+	ASN(0.00)[asn:7979, ipnet:2a01:60a::/32, country:US];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo]
+X-Rspamd-Queue-Id: 419445AB85
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Wed, Jan 21, 2026 at 11:35:11AM +0100, Amir Goldstein wrote:
-> On Wed, Jan 21, 2026 at 11:12 AM Christoph Hellwig <hch@lst.de> wrote:
-> >
-> > On Wed, Jan 21, 2026 at 09:50:27AM +0100, Amir Goldstein wrote:
-> > > pidfs and nsfs recently gained support for encode/decode of file handles
-> > > via name_to_handle_at(2)/opan_by_handle_at(2).
-> > >
-> > > These special kernel filesystems have custom ->open() and ->permission()
-> > > export methods, which nfsd does not respect and it was never meant to be
-> > > used for exporting those filesystems by nfsd.
-> > >
-> > > Therefore, do not allow nfsd to export filesystems with custom ->open()
-> > > or ->permission() methods.
-> >
-> > Yeah, this was added in and not used in the existing export_ops users.
-> >
-> 
-> Not used in existing users (nfsd) on purpose to my understanding
-> That's the point of this patch - to fix this misunderstanding
+#syz test upstream 3a8660878839faadb4f1a6dd72c3179c1df56787
 
-Well, I've dug through the documentation and commits that added it,
-and there's absolutely nothing explaining the intent unfortunately.
+Signed-off-by: Prithvi Tambewagh <activprithvi@gmail.com>
+---
+ fs/configfs/configfs_internal.h | 1 +
+ fs/configfs/dir.c               | 6 +++++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-> >
-> > Please spell out here why ->open and ->permission are not allowed.
-> > Listing what the code does is generally not that useful, while why
-> > it does that provides value.
-> 
-> This is what I had in the RFC patch:
-> /*
-> + * Do not allow exporting to NFS filesystems with custom ->open() and
-> + * ->permission() ops, which nfsd does not respect (e.g. pidfs, nsfs).
-> + */
-> 
-> I took Chuck's suggestion to rewrite the requirements, but TBH,
-> I'd rather not touch the existing comment myself at all.
-> I prefer that Check and Jeff apply a separate patch to rewrite the
-> documentation if they feel that this is needed or to propose the
-> phrasing that they prefer.
+diff --git a/fs/configfs/configfs_internal.h b/fs/configfs/configfs_internal.h
+index 0b969d0eb8ff..15bcde6c878b 100644
+--- a/fs/configfs/configfs_internal.h
++++ b/fs/configfs/configfs_internal.h
+@@ -21,6 +21,7 @@
+ struct configfs_fragment {
+ 	atomic_t frag_count;
+ 	struct rw_semaphore frag_sem;
++	struct lock_class_key frag_sem_key;
+ 	bool frag_dead;
+ };
+ 
+diff --git a/fs/configfs/dir.c b/fs/configfs/dir.c
+index 81f4f06bc87e..10c76cef88c9 100644
+--- a/fs/configfs/dir.c
++++ b/fs/configfs/dir.c
+@@ -163,6 +163,8 @@ static struct configfs_fragment *new_fragment(void)
+ 	if (p) {
+ 		atomic_set(&p->frag_count, 1);
+ 		init_rwsem(&p->frag_sem);
++		lockdep_register_key(&p->frag_sem_key);
++		lockdep_set_class(&p->frag_sem, &p->frag_sem_key);
+ 		p->frag_dead = false;
+ 	}
+ 	return p;
+@@ -170,8 +172,10 @@ static struct configfs_fragment *new_fragment(void)
+ 
+ void put_fragment(struct configfs_fragment *frag)
+ {
+-	if (frag && atomic_dec_and_test(&frag->frag_count))
++	if (frag && atomic_dec_and_test(&frag->frag_count)) {
++		lockdep_unregister_key(&frag->frag_sem_key);
+ 		kfree(frag);
++	}
+ }
+ 
+ struct configfs_fragment *get_fragment(struct configfs_fragment *frag)
 
-I don't really care who writes the documentation, but if we reject
-based on the presence of the methods we really need to document
-the why.  
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+-- 
+2.34.1
 
-> > While looking this I have to say the API documentation for these
-> > methods in exportfs.h is unfortunately completely useless as well.
-> > It doesn't mention the limitation that it's only used by the
-> > non-exportfs code, and also doesn't mention why a file system
-> > would implement or have to implement them :(  The commit messages
-> > adding them are just as bad as well.
-> 
-> I will leave that to Christian for a followup patch or to suggest
-> the phrasing.
-
-Yes, I think we really need a braindump from Christian here.  If
-you don't want to add that to the documentation I'll find some
-time to include it into a revision, because documenting these
-kinds of things is really essential.  We're already confused only
-2 years after this was added, and it's only going to get worse.
 
