@@ -1,62 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-74870-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74871-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id sFDjEY/2cGmgbAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74870-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 16:53:51 +0100
+	id UAykCRX1cGmgbAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74871-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 16:47:33 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3ED059807
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 16:53:50 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF38E596FB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 16:47:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BEFAD72E9CB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 15:09:29 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BF2E37485AA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 15:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D9248BD4E;
-	Wed, 21 Jan 2026 14:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCBB48C8C6;
+	Wed, 21 Jan 2026 14:53:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329F9500971;
-	Wed, 21 Jan 2026 14:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31B838BF6E;
+	Wed, 21 Jan 2026 14:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769007060; cv=none; b=FAYXz9VMVJzOv4KwkWaLSuXaBmbRcMrI9cfow3bPTh/XfPXFK1EEK+kK+QThHXjFUkav7/2oTnztVX0TQLMbiXkLGIdfpElXqMPGSAS64A8GTHLCS1xqLW+twcbU3rii1MOEB0snp7Aeri4+SZAZT2823iLkNF5+exVQN12s/RY=
+	t=1769007205; cv=none; b=cRvhwN+MiBDKUdK4+0jqjaeiZ3Htewx9FlHVcw1bzgNMAmLvisqlOWTtdAkpG24lW+ai1rrmyv58LM1ivNnakAJqQ+lIegmHK1Hur7SpWKwsV6KDqmPOmgarOQPIV1j1m7WmG45SXAm8sJ8whExViioDm99pCGgafywXPzdzEss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769007060; c=relaxed/simple;
-	bh=jkN42i04PCY9gsFvRKGdvArKZfuihUzw6N8XCuSD7EE=;
+	s=arc-20240116; t=1769007205; c=relaxed/simple;
+	bh=42Nce56/PaVMWl8jsxdgzHKUZoZpcn3sDLGJj2LfwMc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sb6bFOjFsRLqq67LbXZRo8mKpYd27hvqExNRgZSLvBvSX/ch1zBYslk9jYAJpuiwhUcNWcZB68tiwqVXhsXhVD8eJogoaIw9uUcfdm8ViIy8yB2di9JWepAkXi7D2m81aLlLbqGA9Su4iOnP0PZze4zh17w4gpK9Kpe6Zt5Ytgg=
+	 Content-Type:Content-Disposition:In-Reply-To; b=dxRLErcVf5qeWgnEAA4rZ/gnruv6zblqodBk08PucDt7D063v2v3vvlZUYDFL5zVKCBBtP6Ho3QiNWKPhbLt1te+7190tFImN6r+0iXc/MKOYmeS5aJKQGKgrU6XuarM1z7lLg1JAZdwj64oUZILDyencGV+b1BHWGfp+Yhby54=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
 Received: by verein.lst.de (Postfix, from userid 2407)
-	id B2714227AAD; Wed, 21 Jan 2026 15:50:52 +0100 (CET)
-Date: Wed, 21 Jan 2026 15:50:51 +0100
+	id 8AE19227AAD; Wed, 21 Jan 2026 15:53:19 +0100 (CET)
+Date: Wed, 21 Jan 2026 15:53:18 +0100
 From: Christoph Hellwig <hch@lst.de>
 To: Amir Goldstein <amir73il@gmail.com>
-Cc: NeilBrown <neil@brown.name>, Christian Brauner <brauner@kernel.org>,
+Cc: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>,
 	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
 	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
 	linux-nfs@vger.kernel.org
 Subject: Re: [PATCH] nfsd: do not allow exporting of special kernel
  filesystems
-Message-ID: <20260121145051.GA13325@lst.de>
-References: <20260121085028.558164-1-amir73il@gmail.com> <176898904083.16766.14818617047357377637@noble.neil.brown.name> <CAOQ4uxiB=RAZEgTRqRvbCQ4e0FTc9WaTX2Z+T=YAYySaPUVHjQ@mail.gmail.com>
+Message-ID: <20260121145318.GB13325@lst.de>
+References: <20260121085028.558164-1-amir73il@gmail.com> <20260121101234.GA22918@lst.de> <CAOQ4uxjRoK-tEEr+QsdSm-yce1+n2XZkkO-uFKrbhLXdyw4cgA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxiB=RAZEgTRqRvbCQ4e0FTc9WaTX2Z+T=YAYySaPUVHjQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxjRoK-tEEr+QsdSm-yce1+n2XZkkO-uFKrbhLXdyw4cgA@mail.gmail.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 X-Spamd-Result: default: False [-1.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
@@ -67,7 +68,7 @@ X-Spamd-Result: default: False [-1.16 / 15.00];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
+	ASN(0.00)[asn:7979, ipnet:213.196.21.0/24, country:US];
 	MID_RHS_MATCH_FROM(0.00)[];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
@@ -78,25 +79,71 @@ X-Spamd-Result: default: False [-1.16 / 15.00];
 	FROM_HAS_DN(0.00)[];
 	RCPT_COUNT_SEVEN(0.00)[9];
 	PRECEDENCE_BULK(0.00)[];
-	TAGGED_FROM(0.00)[bounces-74870-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-74871-lists,linux-fsdevel=lfdr.de];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
 	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo,lst.de:mid]
-X-Rspamd-Queue-Id: C3ED059807
+	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo,lst.de:email,lst.de:mid]
+X-Rspamd-Queue-Id: BF38E596FB
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Wed, Jan 21, 2026 at 11:24:47AM +0100, Amir Goldstein wrote:
-> > It is not immediately obvious that this is safe when nop is NULL, but it
-> > is because exportfs_can_decode_fh() checks for that case.  As that is a
-> > static inline a static analyser can easily confirm this.  So it is
-> > probably OK.
+On Wed, Jan 21, 2026 at 11:35:11AM +0100, Amir Goldstein wrote:
+> On Wed, Jan 21, 2026 at 11:12 AM Christoph Hellwig <hch@lst.de> wrote:
+> >
+> > On Wed, Jan 21, 2026 at 09:50:27AM +0100, Amir Goldstein wrote:
+> > > pidfs and nsfs recently gained support for encode/decode of file handles
+> > > via name_to_handle_at(2)/opan_by_handle_at(2).
+> > >
+> > > These special kernel filesystems have custom ->open() and ->permission()
+> > > export methods, which nfsd does not respect and it was never meant to be
+> > > used for exporting those filesystems by nfsd.
+> > >
+> > > Therefore, do not allow nfsd to export filesystems with custom ->open()
+> > > or ->permission() methods.
+> >
+> > Yeah, this was added in and not used in the existing export_ops users.
+> >
 > 
-> Heh, in the RFC patch [1], I had those conditions wrapped in a helper
-> just below exportfs_can_decode_fh(), so this was more clear, but now
-> I tried to avoid adding a helper named exportfs_may_nfs_export()... ;)
+> Not used in existing users (nfsd) on purpose to my understanding
+> That's the point of this patch - to fix this misunderstanding
 
-Please drop the nfs - exportfs is a generic layer, and not tried to
-nfs, even if that's currently the only user.
+Well, I've dug through the documentation and commits that added it,
+and there's absolutely nothing explaining the intent unfortunately.
 
+> >
+> > Please spell out here why ->open and ->permission are not allowed.
+> > Listing what the code does is generally not that useful, while why
+> > it does that provides value.
+> 
+> This is what I had in the RFC patch:
+> /*
+> + * Do not allow exporting to NFS filesystems with custom ->open() and
+> + * ->permission() ops, which nfsd does not respect (e.g. pidfs, nsfs).
+> + */
+> 
+> I took Chuck's suggestion to rewrite the requirements, but TBH,
+> I'd rather not touch the existing comment myself at all.
+> I prefer that Check and Jeff apply a separate patch to rewrite the
+> documentation if they feel that this is needed or to propose the
+> phrasing that they prefer.
+
+I don't really care who writes the documentation, but if we reject
+based on the presence of the methods we really need to document
+the why.  
+
+> > While looking this I have to say the API documentation for these
+> > methods in exportfs.h is unfortunately completely useless as well.
+> > It doesn't mention the limitation that it's only used by the
+> > non-exportfs code, and also doesn't mention why a file system
+> > would implement or have to implement them :(  The commit messages
+> > adding them are just as bad as well.
+> 
+> I will leave that to Christian for a followup patch or to suggest
+> the phrasing.
+
+Yes, I think we really need a braindump from Christian here.  If
+you don't want to add that to the documentation I'll find some
+time to include it into a revision, because documenting these
+kinds of things is really essential.  We're already confused only
+2 years after this was added, and it's only going to get worse.
 
