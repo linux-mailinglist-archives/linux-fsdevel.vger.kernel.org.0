@@ -1,191 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-74891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74892-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WA0OBQQmcWl8eQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 20:16:20 +0100
+	id qFogKEcqcWniewAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74892-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 20:34:31 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9ACE5BF2D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 20:16:19 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4521C5C449
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 20:34:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E815C68C9E8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 17:58:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9350C822CEF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 18:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C86340DA5;
-	Wed, 21 Jan 2026 17:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0C636AB62;
+	Wed, 21 Jan 2026 17:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="aT5ide7N"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="xPlMB1r9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from 013.lax.mailroute.net (013.lax.mailroute.net [199.89.1.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2D6348452;
-	Wed, 21 Jan 2026 17:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDA1337113;
+	Wed, 21 Jan 2026 17:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769018198; cv=none; b=mcyxb+EFwNWSUYWjNd23EQRxZoR0o6wNhZ3LdciXgyaO3284xNzwmSosQpwmJmPgAnJW+n7aa+P6NLixJhVn/+UAGanLKRtXaUg31WlItcClj/b1k6OtlXYcUU7IcOdnLRR8dz8Whtq698O3lJBIYjaOZDrJMfwWIllg3oW/nqw=
+	t=1769018398; cv=none; b=aKRQ2pNHgpiO2q1RWthd9IUcjlkQ/ZukrlIcy3NvepcvU0FqeFZsia35JumzJrveGeyv4SxHrwkts+xdUpHrCQeypNCBSyrUzzzZfNxMuoY0TN/B50Pfj2ANM1oS0cOMHbyEKh0/xu4USGnu86w12Q3uFjpxjShtU98WTMfdtjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769018198; c=relaxed/simple;
-	bh=DXdMGPIW7/PPrYdCjuyf1yCAwIUpn27quJ4MeXauIDc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QnI3T0A7mSOy1gAsRtSkI9DHtv3Wur4+ruQfrFASKna8F6Q6/WkPNcVd+HZ94uubxOsixkDivwPZm3x/61Ro95Fdd8yixLEVTGrtal8u91dAfJeFqfMN9avSkeOB09sd+qMKOoTc2tauYIVJ0mCd9VcvhnYgFCVbhoZEw0aL5mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=aT5ide7N; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=m3Epy0AtawqM4edbGGu6EzMFOO396a69rOhtKKxxgcQ=; b=aT5ide7NhibXPQjwRD9B86vKOl
-	2jKoucwZhy9WAd8T5t1LTW5qYBp1wCD2qjh1xbTOoL38u0e/zDffZVxbvKEvO+BnP62l3qYfisKeH
-	395a/O9xY6nOqFN0WWuxHF3a6RHYfCMGC0NfO/kuQUyad0id4U3hzsOt9mH3IoGR9hy5PdaOqpnu2
-	Sr8caUgbMR0ml4yaS6BrZLwa3qdZgNF7zJq5TCmcly6R1ZJ8qlSTCQu8c08iYOl3uCAual5agUVRe
-	ytCaFtIZElkVOQP2pOgsr+v5NNxtFaPdybJYkdrXrAiolavXMunov4W+oEGu2W6AQrlThtnoSSY3v
-	YOl2zfsg==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vicRA-0088nl-U0; Wed, 21 Jan 2026 18:56:13 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Horst Birthelmer <horst@birthelmer.de>
-Cc: Bernd Schubert <bernd@bsbernd.com>, Bernd Schubert <bschubert@ddn.com>,
-  Amir Goldstein <amir73il@gmail.com>,  Miklos Szeredi <miklos@szeredi.hu>,
-  "Darrick J. Wong" <djwong@kernel.org>,  Kevin Chen <kchen@ddn.com>,
-  Horst Birthelmer <hbirthelmer@ddn.com>,  "linux-fsdevel@vger.kernel.org"
- <linux-fsdevel@vger.kernel.org>,  "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>,  Matt Harvey <mharvey@jumptrading.com>,
-  "kernel-dev@igalia.com" <kernel-dev@igalia.com>
-Subject: Re: [RFC PATCH v2 4/6] fuse: implementation of the
- FUSE_LOOKUP_HANDLE operation
-In-Reply-To: <aWFcmSNLq9XM8KjW@fedora> (Horst Birthelmer's message of "Fri, 9
-	Jan 2026 20:55:06 +0100")
-References: <20251212181254.59365-1-luis@igalia.com>
-	<20251212181254.59365-5-luis@igalia.com>
-	<CAJfpegszP+2XA=vADK4r09KU30BQd-r9sNu2Dog88yLG8iV7WQ@mail.gmail.com>
-	<87zf6nov6c.fsf@wotan.olymp>
-	<CAJfpegst6oha7-M+8v9cYpk7MR-9k_PZofJ3uzG39DnVoVXMkA@mail.gmail.com>
-	<CAOQ4uxjXN0BNZaFmgs3U7g5jPmBOVV4HenJYgdfO_-6oV94ACw@mail.gmail.com>
-	<CAJfpegsS1gijE=hoaQCiR+i7vmHHxxhkguGJvMf6aJ2Ez9r1dw@mail.gmail.com>
-	<b2582658-c5e9-4cf8-b673-5ccc78fe0d75@ddn.com>
-	<CAOQ4uxhMtz6WqLKPegRy+Do2UU6uJvDOqb8YU6=-jAy98E5Vfw@mail.gmail.com>
-	<645edb96-e747-4f24-9770-8f7902c95456@ddn.com>
-	<aWFcmSNLq9XM8KjW@fedora>
-Date: Wed, 21 Jan 2026 17:56:12 +0000
-Message-ID: <877bta26kj.fsf@wotan.olymp>
+	s=arc-20240116; t=1769018398; c=relaxed/simple;
+	bh=cB7R//NyyNvgFjDreXZmNdq9+kWv2SQNEu5wQ+LEJsc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lF6V+kZRfZ14GrfggaEO+jd2S7sG0oLYnJSA3Go7PcJse+DJCjXZaYt8CjdZaPy7HJBPeZDJbxdVisWJfGtabenm0EHKi5AXKQ86vrJgdnvXumfBTo8YWSrCMaKxI4QP+7Wnak1XpyczBVSdpw2PhUmybuAu46sodlOfUfCdWio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=xPlMB1r9; arc=none smtp.client-ip=199.89.1.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 013.lax.mailroute.net (Postfix) with ESMTP id 4dxBmX5YtWzlfc9J;
+	Wed, 21 Jan 2026 17:59:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1769018394; x=1771610395; bh=X95i5SKsyEWEDZbyP0xAvaZy
+	AHiPEpx9o5mzJwtQaRI=; b=xPlMB1r9293lwx+nqLmvq3sIWxaQv+DR6irp2zLd
+	Zlua7TSWZ8wMnhaUmn/e8NGQWAgd25zfYZSa2+EAdxPRrIFp/QSNCNTg039YMpSZ
+	KqiVG1YlurwxJ5MjITbfO+z9ycSu4QHlCrlKxcRyVNQsDSqRNwSzAYKfe8TQt6VO
+	jR7zAslx/P9nFEaKybxWySyeQNwzic+l58UsD/YAWL97RocJFnKYw3nqlx8Qp6Gh
+	SzoVFuf1xXaTvZAbnvOnBuOBA8HBS4jvwVIpL4lv7i44YCq32+OPEPIrTkhXjksG
+	Coccv8upOwnfpsqVrwOaPvgRE1gG0L40K8+tQO49JkcAwA==
+X-Virus-Scanned: by MailRoute
+Received: from 013.lax.mailroute.net ([127.0.0.1])
+ by localhost (013.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id CF6OQ5EBPfQt; Wed, 21 Jan 2026 17:59:54 +0000 (UTC)
+Received: from [100.119.48.131] (unknown [104.135.180.219])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 013.lax.mailroute.net (Postfix) with ESMTPSA id 4dxBmQ3ps2zlfvq4;
+	Wed, 21 Jan 2026 17:59:50 +0000 (UTC)
+Message-ID: <6927d0f7-5bf5-4035-b1c2-50f3edae4b7f@acm.org>
+Date: Wed, 21 Jan 2026 09:59:49 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	R_DKIM_REJECT(1.00)[igalia.com:s=20170329];
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: target: Fix recursive locking in
+ __configfs_open_file()
+To: Prithvi <activprithvi@gmail.com>
+Cc: martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+ target-devel@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de,
+ jlbec@evilplan.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org,
+ david.hunter.linux@gmail.com, khalid@kernel.org,
+ syzbot+f6e8174215573a84b797@syzkaller.appspotmail.com, stable@vger.kernel.org
+References: <20260108191523.303114-1-activprithvi@gmail.com>
+ <2f88aa9b-b1c2-4b02-81e8-1c43b982db1b@acm.org>
+ <20260119185049.mvcjjntdkmtdk4je@inspiron>
+ <ac604919-1620-4fea-9401-869fd15f3533@acm.org>
+ <20260121175136.2ku57xskhwwg7syz@inspiron>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20260121175136.2ku57xskhwwg7syz@inspiron>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-0.46 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
+	R_DKIM_ALLOW(-0.20)[acm.org:s=mr01];
 	MAILLIST(-0.15)[generic];
-	DMARC_POLICY_SOFTFAIL(0.10)[igalia.com : No valid SPF,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-74891-lists,linux-fsdevel=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_CC(0.00)[bsbernd.com,ddn.com,gmail.com,szeredi.hu,kernel.org,vger.kernel.org,jumptrading.com,igalia.com];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	DKIM_TRACE(0.00)[igalia.com:-];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[luis@igalia.com,linux-fsdevel@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-74892-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	FREEMAIL_CC(0.00)[oracle.com,vger.kernel.org,lst.de,evilplan.org,lists.linux.dev,linuxfoundation.org,gmail.com,kernel.org,syzkaller.appspotmail.com];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DMARC_POLICY_ALLOW(0.00)[acm.org,reject];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[bvanassche@acm.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[acm.org:+];
+	RCVD_COUNT_FIVE(0.00)[6];
+	TAGGED_RCPT(0.00)[linux-fsdevel,f6e8174215573a84b797];
+	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:7979, ipnet:213.196.21.0/24, country:US];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:7979, ipnet:2a01:60a::/32, country:US];
-	TO_DN_SOME(0.00)[]
-X-Rspamd-Queue-Id: B9ACE5BF2D
+	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo,acm.org:mid,acm.org:dkim]
+X-Rspamd-Queue-Id: 4521C5C449
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-Hi Horst!
+On 1/21/26 9:51 AM, Prithvi wrote:
+> I tried using lockdep_register_key() and lockdep_unregister_key() for the
+> frag_sem lock, however it stil gives the possible recursive locking
+> warning. Here is the patch and the bug report from its test:
+> 
+> https://lore.kernel.org/all/6767d8ea.050a0220.226966.0021.GAE@google.com/T/#m3203ceddf3423b7116ba9225d182771608f93a6f
+> 
+> Would using down_read_nested() and subclasses be a better option here?
+> 
+> I also checked out some documentation regarding it and learnt that to use
+> the _nested() form, the hierarchy among the locks should be mapped
+> accurately; however, IIUC, there isn't any hierarchy between the locks in
+> this case, is this right?
+> 
+> Apologies if I am missing something obvious here, and thanks for your
+> time and guidance.
 
-On Fri, Jan 09 2026, Horst Birthelmer wrote:
+This is unexpected. Please ask help from someone who is familiar with 
+VFS internals. I'm not familiar with these internals.
 
-> On Fri, Jan 09, 2026 at 07:12:41PM +0000, Bernd Schubert wrote:
->> On 1/9/26 19:29, Amir Goldstein wrote:
->> > On Fri, Jan 9, 2026 at 4:56=E2=80=AFPM Bernd Schubert <bschubert@ddn.c=
-om> wrote:
->> >>
->> >>
->> >>
->> >> On 1/9/26 16:37, Miklos Szeredi wrote:
->> >>> On Fri, 9 Jan 2026 at 16:03, Amir Goldstein <amir73il@gmail.com> wro=
-te:
->> >>>
->> >>>> What about FUSE_CREATE? FUSE_TMPFILE?
->> >>>
->> >>> FUSE_CREATE could be decomposed to FUSE_MKOBJ_H + FUSE_STATX + FUSE_=
-OPEN.
->> >>>
->> >>> FUSE_TMPFILE is special, the create and open needs to be atomic.   So
->> >>> the best we can do is FUSE_TMPFILE_H + FUSE_STATX.
->> >>>
->> >=20
->> > I thought that the idea of FUSE_CREATE is that it is atomic_open()
->> > is it not?
->> > If we decompose that to FUSE_MKOBJ_H + FUSE_STATX + FUSE_OPEN
->> > it won't be atomic on the server, would it?
->>=20
->> Horst just posted the libfuse PR for compounds
->> https://github.com/libfuse/libfuse/pull/1418
->>=20
->> You can make it atomic on the libfuse side with the compound
->> implementation. I.e. you have the option leave it to libfuse to handle
->> compound by compound as individual requests, or you handle the compound
->> yourself as one request.
->>=20
->> I think we need to create an example with self handling of the compound,
->> even if it is just to ensure that we didn't miss anything in design.
->
-> I actually do have an example that would be suitable.
-> I could implement the LOOKUP+CREATE as a pseudo atomic operation in passt=
-hrough_hp.
+Thanks,
 
-So, I've been working on getting an implementation of LOOKUP_HANDLE+STATX.
-And I would like to hear your opinion on a problem I found:
-
-If the kernel is doing a LOOKUP, you'll send the parent directory nodeid
-in the request args.  On the other hand, the nodeid for a STATX will be
-the nodeid will be for the actual inode being statx'ed.
-
-The problem is that when merging both requests into a compound request,
-you don't have the nodeid for the STATX.  I've "fixed" this by passing in
-FUSE_ROOT_ID and hacking user-space to work around it: if the lookup
-succeeds, we have the correct nodeid for the STATX.  That seems to work
-fine for my case, where the server handles the compound request itself.
-But from what I understand libfuse can also handle it as individual
-requests, and in this case the server wouldn't know the right nodeid for
-the STATX.
-
-Obviously, the same problem will need to be solved for other operations
-(for example for FUSE_CREATE where we'll need to do a FUSE_MKOBJ_H +
-FUSE_STATX + FUSE_OPEN).
-
-I guess this can eventually be fixed in libfuse, by updating the nodeid in
-this case.  Another solution is to not allow these sort of operations to
-be handled individually.  But maybe I'm just being dense and there's a
-better solution for this.
-
-Cheers,
---=20
-Lu=C3=ADs
+Bart.
 
