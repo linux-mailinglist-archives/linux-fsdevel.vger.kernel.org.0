@@ -1,118 +1,227 @@
-Return-Path: <linux-fsdevel+bounces-74819-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id AMPiCSWRcGkaYgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74819-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 09:41:09 +0100
+	id SFVGA9iTcGlyYgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 09:52:40 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BF8A53B65
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 09:41:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7220553E62
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 09:52:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3397542AA2E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 08:38:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D5CB44E8EAC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 08:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B54B477E56;
-	Wed, 21 Jan 2026 08:38:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5936747279E;
+	Wed, 21 Jan 2026 08:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FtXC1NKw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226F0421EEC;
-	Wed, 21 Jan 2026 08:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C795B451062
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 08:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768984694; cv=none; b=M8hamiMabS7D+9HCQglNnMHmIlMFiOgX/0ALhQihG7TzV6zFxSerkAXFXiMJAX2n9tm/s+WTCzfIAmdop1489yJUHjpDGsWOSFWRgaNdrAzwQ3NiQIs3HRXatjnXijI3ueA0UIJhAszSphYjBTNqklDkM2o8+pVYHqWS1Pb644Q=
+	t=1768985433; cv=none; b=a7DH2Slzg2mN0tGIijtIBx25/QUnlB+yeBRF9/NQNbZveCWBYdysPWRf4y+Sgd/bvaykQqGD+Uhnp4wmmEUjXeXB05FLeKafaietFW09wLBoNAM8qMw8tAlWJy1p41xNGt1lIWydOB/wE5C+8tD66DmWFs87t/q+FysuyC/lJWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768984694; c=relaxed/simple;
-	bh=ztCuDhTR1/VE13/PrrFQ1FjqyBka2YWhv+S+4Pjg+Ik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S91qVO9VR5ygRm5kuF8AkxmuDeJMhguBfxVgX/UxAndzMMhBTQfQ940A7pCzlPUJ8V43gxYDzRB6ftUPXjh9Ojqo+Ye4shUmOc6V+FM+ESwlzhP0Qb4fubPufoD1LPWcWnxEzGwAZXiuBaiXeLhSx31PApcaaZz4+TIMoxBsVHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 18495227AAA; Wed, 21 Jan 2026 09:38:08 +0100 (CET)
-Date: Wed, 21 Jan 2026 09:38:07 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Dai Ngo <dai.ngo@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>, chuck.lever@oracle.com,
-	jlayton@kernel.org, neil@brown.name, okorniev@redhat.com,
-	tom@talpey.com, alex.aring@gmail.com, linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1768985433; c=relaxed/simple;
+	bh=WAqqvlkEfgyIrnhaubplQ0uzr8/tj2pqp8HJa3CUEt8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MTsN3OTGYkBwRRUkPsxWPbzO91VLRXzSryqPA6+rOjy9NlcyJ5AM3OmG9fmTtJWykJAs/vZZMzi+CszT6ZymnwuGFuwgK+Mvsj38hG+FER/2z02Zev3uL3N13HbkXrwjlqbp2N67r3onAG9mpYwQ9mobu/nmoaXHnCCDhKwjFWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FtXC1NKw; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-64b9b0b4d5dso12740147a12.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 00:50:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768985430; x=1769590230; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=k5YZG1zJ7jWuGeoMG2viDWNiVus/gdfkiySQBNQMP44=;
+        b=FtXC1NKwz5A1ze/gwCPH1/m6ec38DwE95td7denVvt3kApmN/rIE3ji7LXN5NYTFDC
+         t7kVf66wPssrbKjys82kK8twNGoN0q/AO1d4OoIOEwPr/AlCJ/UJ6Yo0XdEgPFce7+NF
+         FlrJOp9H4bKEQzFmHxOMuezrcUESf0nDTdNMWn9IcEbmSJcj+VsRMewAeHzLh1jjwq2p
+         AVzvBRcy1bIWAZvdImwTxbBeHCcgIp9dKhKHlB1kUGUNtkuaEVDaTjYDRBrC/y88JFGa
+         RYAyERqCufRm20PPust1Wewl82Lc51WIXYuaXBSzQOOo0AiEXmeaRN3s3FLTrWofdwbk
+         AVcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768985430; x=1769590230;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k5YZG1zJ7jWuGeoMG2viDWNiVus/gdfkiySQBNQMP44=;
+        b=VHXivT9AlyABgbkraqKPZGJLhAjr/+1s57OAEWklsXMMI+ziUJA8dDHFBiUQRKazhk
+         1LxNMGSBa/cG1JcZAo1XRVPaJLGJAIXB1KfBZ8AsezkWeZsZWmNEOVPdY7Fs/I4XD3aU
+         zHwedHBla0VebLy0+EsRo840uDHqE98wJfML3wkeBYW6PmIC5Kwmza2yyq+MoxPTrlaz
+         7rCbRoTKbGovA0Q1wx5LBSYyEOV+Gm1TdfoxAwh4zN2O0n5OQzhkpubmV+EyQJBQ9Pwm
+         JfCc30tqA1d8XyhLJv8MoRCXDVymdlklSgE5f2heWqCGILJLhHPJ3gHOCDaT7OmHogOv
+         KLnA==
+X-Forwarded-Encrypted: i=1; AJvYcCX5F1K5OvbohzOsuLxvcDDP/fD7iLQW7Gs+zORnOj6NKUui9hUpeFoNZ2D218zrzQFTdtFiGBQCMlqnfBYU@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQ0UFMJiNgMvIjxDPYlGb8IvCk1aFE7bgzC4vafRoV3OLBruSX
+	NQaHFSIPGa4RYHWPxXPEXj2rxTHuDn/2tSLysr0o+S3E4MfJKvAt43wr
+X-Gm-Gg: AZuq6aLlRE36cABGAMSpUn4Lmkc0OFIqYHCeIzDKorHsGs1PeYX4Q26cf5MZXGTq4gM
+	jd/nIyf/Z1KzQrHiINbN38s2EM51Zox9W1DrwSh+W0+ujWbnYj7fgq3hndpz6S2ZUoyw4BEz1+a
+	jD/WsNF8l+v/b2zjOWFT5IYD7Amb3KY68W2sHb4V9+MTUVxULx6R25CrTrmjw9qpJQ5VA5cZUjh
+	vuDsM59YrNYWKNFq0Libc+90xetNdUdxr2dtk33SV+1kiXNJ0voIkU6byHyTpsGNruMyAV1oEiV
+	EtdQ1Z7dhATqu47FN7/CVJus8iax6nPvrDziQqxs3ROqyLCwCdExlEunEWY5fLodzrjIci+rSr2
+	qI0uFSr1prhouc0P+BEHV3xijhQyrIJZImDdn5ZjlciB3VPW2Vit+R00McMXgP3lLRxXvYQOnwJ
+	Rw9+n+AUkhjZpCH7xLN2h4eveVQGeYOHGVSTztRJpDbkJgA/5OfgOLmGrvOg69U6Z2s7BsH/0Wq
+	WK+91mvOPoJla7h
+X-Received: by 2002:a17:907:9410:b0:b73:7fc8:a9c9 with SMTP id a640c23a62f3a-b8796a5bce3mr1424085966b.29.1768985429526;
+        Wed, 21 Jan 2026 00:50:29 -0800 (PST)
+Received: from localhost (2001-1c00-570d-ee00-5298-1165-6703-de60.cable.dynamic.v6.ziggo.nl. [2001:1c00:570d:ee00:5298:1165:6703:de60])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8795168c7bsm1627542866b.20.2026.01.21.00.50.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Jan 2026 00:50:28 -0800 (PST)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Neil Brown <neilb@suse.de>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
 	linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 1/1] NFSD: Enforce recall timeout for layout conflict
-Message-ID: <20260121083807.GA15669@lst.de>
-References: <20260119174737.3619599-1-dai.ngo@oracle.com> <20260120072638.GA6380@lst.de> <0b0112f8-793c-42af-a2a7-ee662496a9e4@oracle.com>
+Subject: [PATCH] nfsd: do not allow exporting of special kernel filesystems
+Date: Wed, 21 Jan 2026 09:50:27 +0100
+Message-ID: <20260121085028.558164-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0b0112f8-793c-42af-a2a7-ee662496a9e4@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Spamd-Result: default: False [0.34 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-0.46 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
-	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : No valid SPF, No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-74819-lists,linux-fsdevel=lfdr.de];
+	TO_DN_SOME(0.00)[];
+	DMARC_POLICY_ALLOW(0.00)[gmail.com,none];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_CC(0.00)[lst.de,oracle.com,kernel.org,brown.name,redhat.com,talpey.com,gmail.com,vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-74820-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	R_SPF_SOFTFAIL(0.00)[~all:c];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:7979, ipnet:2a01:60a::/32, country:US];
-	R_DKIM_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
+	FROM_NEQ_ENVFROM(0.00)[amir73il@gmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	R_SPF_SOFTFAIL(0.00)[~all:c];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_COUNT_FIVE(0.00)[5];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo]
-X-Rspamd-Queue-Id: 7BF8A53B65
+	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo]
+X-Rspamd-Queue-Id: 7220553E62
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Tue, Jan 20, 2026 at 10:54:39AM -0800, Dai Ngo wrote:
-> Thank you Christoph! I have a couple of questions regarding to
-> xfs_break_layouts and xfs_break_leased_layouts.
->
-> . Should we break out of the while loop in xfs_break_leased_layouts
-> if the 2nd call to break_layout, inside the while loop, returns error
-> other than -EWOULDBLOCK?
+pidfs and nsfs recently gained support for encode/decode of file handles
+via name_to_handle_at(2)/opan_by_handle_at(2).
 
-Good question.
+These special kernel filesystems have custom ->open() and ->permission()
+export methods, which nfsd does not respect and it was never meant to be
+used for exporting those filesystems by nfsd.
 
-> . In xfs_break_leased_layouts, the return value of the 2nd call to
-> break_layout was rightly ignored since the call was made without
-> holding the xfs_inode lock so there could be a race condition where
-> a new layout was handled out to another client.
+Therefore, do not allow nfsd to export filesystems with custom ->open()
+or ->permission() methods.
 
-I have to admin that I'm not sure what other errors we could
-have.  Looking through the code I see:
+Fixes: b3caba8f7a34a ("pidfs: implement file handle support")
+Fixes: 5222470b2fbb3 ("nsfs: support file handles")
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
+ fs/nfsd/export.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
- o -EINVAL for incorrect flags.
- o the error from lease_alloc, which could be -ENOMEM, -EINVAL
-   again for a wrong type
- o -EINTR or similar from wait_event_interruptible_timeout
+Christian,
 
-The -EINVAL cases can't happen, for code hygiene they probably should be
-handled.  -EINTR means the caller gave up, so it should be handled.
--ENOMEM for the tiny structure is basically impossible to hit, but there
-is no point in not giving up, so it should be handled as well.
+I had enough of the stable file handles discussion [1].
 
-So yeah, I think we should break out of the loop on error.
+This patch which I already suggested [2] on week ago, states a justified
+technical reason why pidfs and nsfs should not be exported by nfsd,
+so let's use this technical reasoning and stop the philosophic discussions
+about what is a stable file handle is please.
+
+Regarding cgroupfs, we can either deal with it later or not - it is not
+a clear but as pidfs and nsfs which absolutely should be fixed
+retroactively in stable kernels.
+
+If you think that cgroupfs could benefit from "exhaustive" file handles [3]
+then we can implement open_by_handle_at(FD_CGROUPFS_ROOT, ... and that
+would classify cgroupfs the same as pidfs and nsfs.
+
+Thanks,
+Amir.
+
+[1] https://lore.kernel.org/linux-fsdevel/20250912-work-namespace-v2-0-1a247645cef5@kernel.org/
+[2] https://lore.kernel.org/linux-fsdevel/CAOQ4uxhkaGFtQRzTj2xaf2GJucoAY5CGiyUjB=8YA2zTbOtFvw@mail.gmail.com/
+[3] https://lore.kernel.org/linux-fsdevel/20250912-work-namespace-v2-29-1a247645cef5@kernel.org/
+
+diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
+index 2a1499f2ad196..232dacac611e9 100644
+--- a/fs/nfsd/export.c
++++ b/fs/nfsd/export.c
+@@ -405,6 +405,7 @@ static struct svc_export *svc_export_lookup(struct svc_export *);
+ static int check_export(const struct path *path, int *flags, unsigned char *uuid)
+ {
+ 	struct inode *inode = d_inode(path->dentry);
++	const struct export_operations *nop = inode->i_sb->s_export_op;
+ 
+ 	/*
+ 	 * We currently export only dirs, regular files, and (for v4
+@@ -422,13 +423,12 @@ static int check_export(const struct path *path, int *flags, unsigned char *uuid
+ 	if (*flags & NFSEXP_V4ROOT)
+ 		*flags |= NFSEXP_READONLY;
+ 
+-	/* There are two requirements on a filesystem to be exportable.
+-	 * 1:  We must be able to identify the filesystem from a number.
+-	 *       either a device number (so FS_REQUIRES_DEV needed)
+-	 *       or an FSID number (so NFSEXP_FSID or ->uuid is needed).
+-	 * 2:  We must be able to find an inode from a filehandle.
+-	 *       This means that s_export_op must be set.
+-	 * 3: We must not currently be on an idmapped mount.
++	/*
++	 * The requirements for a filesystem to be exportable:
++	 * 1. The filehandle must identify a filesystem by number
++	 * 2. The filehandle must uniquely identify an inode
++	 * 3. The filesystem must not have custom filehandle open/perm methods
++	 * 4. The requested file must not reside on an idmapped mount
+ 	 */
+ 	if (!(inode->i_sb->s_type->fs_flags & FS_REQUIRES_DEV) &&
+ 	    !(*flags & NFSEXP_FSID) &&
+@@ -437,11 +437,16 @@ static int check_export(const struct path *path, int *flags, unsigned char *uuid
+ 		return -EINVAL;
+ 	}
+ 
+-	if (!exportfs_can_decode_fh(inode->i_sb->s_export_op)) {
++	if (!exportfs_can_decode_fh(nop)) {
+ 		dprintk("exp_export: export of invalid fs type.\n");
+ 		return -EINVAL;
+ 	}
+ 
++	if (nop->open || nop->permission) {
++		dprintk("exp_export: export of non-standard fs type.\n");
++		return -EINVAL;
++	}
++
+ 	if (is_idmapped_mnt(path->mnt)) {
+ 		dprintk("exp_export: export of idmapped mounts not yet supported.\n");
+ 		return -EINVAL;
+-- 
+2.52.0
 
 
