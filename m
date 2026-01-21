@@ -1,169 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-74880-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74881-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GEMTKLcRcWlEcgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74880-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 18:49:43 +0100
+	id CMB7IHImcWl8eQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74881-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 20:18:10 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D5EE5ABEE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 18:49:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56F235BF87
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 20:18:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CAD06508423
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 16:40:41 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9827584BDB0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 17:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51D449550C;
-	Wed, 21 Jan 2026 16:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C3A3C1FEF;
+	Wed, 21 Jan 2026 17:27:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WNZqq5X7"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aI19GJ3H";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pAh3Sb8I";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vbuj+ygm";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Q5V04+M/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515A4495503
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 16:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D692732F77B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 17:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769013047; cv=none; b=GUtY3qMBlQxkHuEtg1yQv1Zl6weCImYCPD7oTFAK4eFn+w5J5owEc2Sx0jCVQrGK969Nmux291JkA6uiH2/gCDip4/BGtHm74ObvqSWWoZwhYalocDQxhayta8w/tDQ6MbeQj5G2cybGfuPAJ0pW0las6R2ixnW/1LtsHp4TNu0=
+	t=1769016477; cv=none; b=kDNW4scicKbQkIt2XWwCY0YDGRvNsljxLvuSWIP9BXTt4Fe25oMNG9vdY879aG11qJJniE9agSuYBSg1BS00cQ2Jbc+4+4VGdnr3AOQAynI5kxJYiq03ITOqux2mMEjjzGVQoyGqEO3kJuhFkqE7psIf6CizvvouVJrSntXeDTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769013047; c=relaxed/simple;
-	bh=W7Zu0PnTuLRBAozsYxYe5Hg7VKxLQ9M7sbpOyn4RmMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SCqvRa0BbrWTsEvqjmfSEsgmk5vFzjgVW+Y/O/dxSJ/mEqkCQzRL7DKLhCU31UvOdVXdZB14o2t6UHaJsQLKzx7yXkuxX3y4sRxIse+qEUGh/f5bVgJg29GQIO+KJbcXvWMIdxJWne0d0F/mwZYmNJs54piAMK31Z0YaoMJx3YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WNZqq5X7; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1769013046; x=1800549046;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=W7Zu0PnTuLRBAozsYxYe5Hg7VKxLQ9M7sbpOyn4RmMQ=;
-  b=WNZqq5X78iOztvPZVd8+7s95WkNfqQ7Svar38ejMrA257fVRu0Zjw1/I
-   FQaQBFIHbI2KCd4bxdZ9U1ZyBIBxEMgGBA58wB04H4zx5W6/AV4xwUpcE
-   DfHDcjt0fiCNdu9v7S6hmOj7F8q1cultnFyTb2CjU7An7pHrCWpScDFtq
-   npn6jy2oCsIKMwgwjO/QD4MNAEcSnkM1TqjA1zD0dGpbusgDCCAz7VlSk
-   wgtVeKHQFSNsUWBxjwizPJsphfmw0RFANDuK6+TWgQDuDLElkk6BN1MFs
-   asSUBd3/wvzji1TNDPNKQsf7RqqdYEQxQCno4b8+iH1VVkos6IYTP8h8E
-   g==;
-X-CSE-ConnectionGUID: 2paRhTPsSOalNZC0Or8PVQ==
-X-CSE-MsgGUID: F04kcPHJRw2WFm0slM0HTQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11678"; a="80547322"
-X-IronPort-AV: E=Sophos;i="6.21,242,1763452800"; 
-   d="scan'208";a="80547322"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jan 2026 08:30:38 -0800
-X-CSE-ConnectionGUID: eqQqczg1RouwDlmtojD5+A==
-X-CSE-MsgGUID: EDbtCJZhTyi03Ib/fkB24Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,242,1763452800"; 
-   d="scan'208";a="206092817"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.73])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jan 2026 08:30:34 -0800
-Date: Wed, 21 Jan 2026 18:30:32 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: David Disseldorp <ddiss@suse.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] initramfs_test: test header fields with 0x hex prefix
-Message-ID: <aXD_KOVfZigByV5n@smile.fi.intel.com>
-References: <20260120204715.14529-1-ddiss@suse.de>
- <20260120204715.14529-3-ddiss@suse.de>
- <aW__NwDBkzq_bePk@smile.fi.intel.com>
- <20260121201936.0580e4de.ddiss@suse.de>
- <aXDRithD3DsGiXBc@smile.fi.intel.com>
- <20260122031702.5e2e73c8.ddiss@suse.de>
+	s=arc-20240116; t=1769016477; c=relaxed/simple;
+	bh=9brRciqO7AZGSJjHiTuC/KG7Oa0VQpLP0+AuKFzuW+4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K9VrY0NLbJ9UgEYshHHkV7HAy79l9T8qY4gV3Pl0FHuS81lD7NhEr6uUcogMw9sy24N7Ya5GtmSLPUYwiolDZHy3ybRyy9peqrOL1TCjfREiUvja9hIBXlSUdDjzy8eBSvijjjHEeqLrdXyqq2YbtLO5bb8KoICuxbT2GQgL5Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aI19GJ3H; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pAh3Sb8I; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vbuj+ygm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Q5V04+M/; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D2F5A5BD52;
+	Wed, 21 Jan 2026 17:27:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1769016473; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=mg8qMJcBbzQLVQyzC7TJKVdmUFD6HD0Objs0efQfWIA=;
+	b=aI19GJ3HPLncs0RbjYTxr9p3hqVaWM5/1+Dlh6kXRyFkil7Z0VanaVvSnA+FsbC6FopO+w
+	Pe3AK2I8Pr7UguGHqe2dO0R2i6JocHzn0rWmkiey5LDUzgOkuZgu/jqXQEKH9aTj053Q2k
+	2MBaynWQEU/LmB5D97eYcDLJcs4bO0c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1769016473;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=mg8qMJcBbzQLVQyzC7TJKVdmUFD6HD0Objs0efQfWIA=;
+	b=pAh3Sb8IYd+aQCsuZ5trZjT+l75vU4kP1L0evWN2lLjEeoePiUTUYG8yw5Mt/eFwTfUeEI
+	j9rckCOuIAaPeSAw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=vbuj+ygm;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="Q5V04+M/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1769016472; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=mg8qMJcBbzQLVQyzC7TJKVdmUFD6HD0Objs0efQfWIA=;
+	b=vbuj+ygmSIiMnAVWaiKER10OeYPY/xfGsTnNCWpj2r/u6fxoKKjw4iR0KjjCtkB5NcrVx2
+	lagopqPcZb2rnO7Sx/NropuALfG2vvl5WoWniVlaSitNS2LNbSV9EOKrdn0ymuqSJeKA+i
+	f/v45ZbFyav9XJ06l/ot/ILLSNFbH2o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1769016472;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=mg8qMJcBbzQLVQyzC7TJKVdmUFD6HD0Objs0efQfWIA=;
+	b=Q5V04+M/ZDaa865RFErfVhJ8JTLmsaiK0zjQUyA1HbOpx+gS28O7/iwrwREM7ON4lFK+MI
+	GeuzuOKMlGVfxQAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AB2DD3EA63;
+	Wed, 21 Jan 2026 17:27:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 0VpeKJgMcWlbHQAAD6G6ig
+	(envelope-from <ddiss@suse.de>); Wed, 21 Jan 2026 17:27:52 +0000
+From: David Disseldorp <ddiss@suse.de>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Christian Brauner <brauner@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 0/8] SQUASH: test and improve cpio hex header validation
+Date: Thu, 22 Jan 2026 04:12:48 +1100
+Message-ID: <20260121172749.32322-1-ddiss@suse.de>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260122031702.5e2e73c8.ddiss@suse.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
-X-Spamd-Result: default: False [-1.96 / 15.00];
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
+X-Spam-Level: 
+X-Spamd-Result: default: False [-0.46 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	DMARC_POLICY_ALLOW(0.00)[intel.com,none];
-	TAGGED_FROM(0.00)[bounces-74880-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	HAS_ORG_HEADER(0.00)[];
+	TAGGED_FROM(0.00)[bounces-74881-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_FIVE(0.00)[6];
+	FROM_NEQ_ENVFROM(0.00)[ddiss@suse.de,linux-fsdevel@vger.kernel.org];
 	RCVD_TLS_LAST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[intel.com:+];
-	MISSING_XM_UA(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DMARC_POLICY_ALLOW(0.00)[suse.de,none];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCPT_COUNT_THREE(0.00)[4];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[andriy.shevchenko@linux.intel.com,linux-fsdevel@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_COUNT_FIVE(0.00)[5];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
+	TO_DN_SOME(0.00)[];
 	ASN(0.00)[asn:7979, ipnet:213.196.21.0/24, country:US];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:dkim,ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo]
-X-Rspamd-Queue-Id: 3D5EE5ABEE
+	FROM_HAS_DN(0.00)[]
+X-Rspamd-Queue-Id: 56F235BF87
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Thu, Jan 22, 2026 at 03:17:02AM +1100, David Disseldorp wrote:
-> On Wed, 21 Jan 2026 15:15:54 +0200, Andy Shevchenko wrote:
-> > On Wed, Jan 21, 2026 at 08:42:05PM +1100, David Disseldorp wrote:
-> > > On Wed, 21 Jan 2026 00:18:31 +0200, Andy Shevchenko wrote:  
-> > > > On Wed, Jan 21, 2026 at 07:32:33AM +1100, David Disseldorp wrote:  
-> > > > > cpio header fields are 8-byte hex strings, but one "interesting"
-> > > > > side-effect of our historic simple_str[n]toul() use means that a "0x"
-> > > > > prefixed header field will be successfully processed when coupled
-> > > > > alongside a 6-byte hex remainder string.    
-> > > > 
-> > > > Should mention that this is against specifications.
-> 
-> I've added this and will send as v2.
+This patchset is a combination of my
+https://lore.kernel.org/linux-fsdevel/20260120204715.14529-1-ddiss@suse.de/
+and Andy's
+https://lore.kernel.org/linux-fsdevel/20260119204151.1447503-1-andriy.shevchenko@linux.intel.com/
+patchsets.
 
-Thanks!
+The reason for combining them is so that a the initramfs_test case can
+track the user-facing change in header parsing behaviour for cpio
+fields that carry a "0x" hex prefix.
 
-> > > > > Test for this corner case by injecting "0x" prefixes into the uid, gid
-> > > > > and namesize cpio header fields. Confirm that init_stat() returns
-> > > > > matching uid and gid values.    
-> > > > 
-> > > > This is should be considered as an invalid case and I don't believe
-> > > > we ever had that bad header somewhere. The specification is clear
-> > > > that the number has to be filled with '0' to the most significant
-> > > > byte until all 8 positions are filled.
-> > > > 
-> > > > If any test case like this appears it should not be fatal.  
-> > > 
-> > > Yes, the test case can easily be changed to expect an unpack_to_rootfs()
-> > > error (or dropped completely). The purpose is just to ensure that the
-> > > user visible change is a concious decision rather than an undocumented
-> > > side effect.  
-> > 
-> > Can you say this clearly in the commit message? With that done I will have
-> > no objections as it seems we all agree with the possible breakage of this
-> > "feature" (implementation detail).
-> 
-> Sure, I think it'd make sense to put the v2 test patches as 1/2 in your
-> series such that your subsequent hex2bin() patch modifies the test to
-> expect error. E.g.
+@Andy: please feel free to squash the two SQUASH flagged patches into
+your 4/8 hex2bin() patch.
 
-Yes! Thanks for providing a PoC. Maybe you can do it as a formal patch that
-I can simply take into my next version?
+The initramfs_test changes are based atop commit aaf76839616a3cff
+("initramfs_test: kunit test for cpio.filesize > PATH_MAX") queued at
+https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git .
+@Christian: If possible, please fix the commit subject in the above
+commit: it should be "cpio.namesize" instead of "cpio.filesize".
 
--- 
-With Best Regards,
-Andy Shevchenko
+Andy Shevchenko (4):
+      initramfs: Sort headers alphabetically
+      initramfs: Refactor to use hex2bin() instead of custom approach
+      vsprintf: Revert "add simple_strntoul"
+      kstrtox: Drop extern keyword in the simple_strtox() declarations
 
+David Disseldorp (4):
+      initramfs_test: add fill_cpio() format parameter
+      initramfs_test: test header fields with 0x hex prefix
+      SQUASH initramfs: propagate parse_header errors
+      SQUASH initramfs_test: expect error for "0x" prefixed header
+
+ include/linux/kstrtox.h |  9 +++---
+ init/initramfs.c        | 68 +++++++++++++++++++++-----------------
+ init/initramfs_test.c   | 72 +++++++++++++++++++++++++++++++++--------
+ lib/vsprintf.c          |  7 ----
+ 4 files changed, 101 insertions(+), 55 deletions(-)
 
 
