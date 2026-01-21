@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-74832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iFnVIB6lcGlyYgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 11:06:22 +0100
+	id +FhjCgemcGlyYgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 11:10:15 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E78F54EB7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 11:06:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFDE754F7B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 11:10:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 875DE602181
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 10:00:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 775AB62469B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 10:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B081480DE5;
-	Wed, 21 Jan 2026 09:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41E7481FCB;
+	Wed, 21 Jan 2026 10:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GlzCRsx8"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pQX0zA99"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F966359F9F;
-	Wed, 21 Jan 2026 09:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08EC5480DC0;
+	Wed, 21 Jan 2026 10:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768989556; cv=none; b=Ug8zAIMQJ7JJJNjHij5KXV3aq6nGcelQpOfHV6nfNkJwGP2tD+MXaZ+n69VkiobBjpR1O9qkHZRWkyIRp/38tEM8otb8LxKukSSaE/ByxRbxGqWlgBsh2EeSnwcxGWda4s8lQJEMZqKAeBc5lVuGIMibUpSJRmbRTojqVOSl358=
+	t=1768989635; cv=none; b=O9RasQTm5xqiv3E6OEZecMDJwtIiXEV60Qqt3LgoOJP9zEiCQxsINP9YWXEy4BVEdzoH+D7Dt+JIERhuw+mTXsjpbm781Nhn5GA7jNgLM93tnRkxYPVduiI6yap+2tNSuJ4N5ddKqXaVOqT+/eiVbGzaY3/zbfBGXj5E6RmmpYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768989556; c=relaxed/simple;
-	bh=T86hBBvfepicKUGBqX/8FhOUi0DjwHw8mEMM5b8bcH0=;
+	s=arc-20240116; t=1768989635; c=relaxed/simple;
+	bh=3vbUGHF7n3G1eg75mXKdBZJGpcTXiwC4QvVWgG8Teh0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AAvdt8oGHid9y00YYkuJqMeE6UjhpAMYAPQACT2em9CkDEME5Pcd3t9ABjRcx7cpsrrUH9K208tPqdA3sVEgK8BzMOEnex+SotZoYOKyYgDojh8Phg34tnyyZIblykwva+JbyVq5mNiVz5hnbAuQtI7PfphyePXW4lgZAy6Rc6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GlzCRsx8; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=LndjlLHBRXeZLYKZutEZHbfswl4MYtRLr9aJbD5HRfcYtTcRTq6rCUDDsPE2yIIiyzdJnbAmlRENAYqUQV4TjiTXbncFs2/pHCHYxtX0D+OP9Q9jVBn0+xYnojU9cOGhlGmpsGAOSiPS7hhTecjZnp/SNOS8Nwh+EfYWf1XjIOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pQX0zA99; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=BIxfnTqIxfG/JDCpqz8ddR3KhEWm3MiBJqi238v5YU4=; b=GlzCRsx84vMm8sXEe178jEsMHi
-	yEfsLuaiVDfKdvvIzvHHomVN4gwjGG/E7g6hvTZrX9Jl+jMggt9g7DJYZ9KBfIFzYhA3kss7211EY
-	GEs0h/iYU1akVr821mpLBTcpxPKmjbRmaNEdphN9zpqkHbi/dWkZXm28+Sqj5tXo4XslET+sDAg7q
-	8tiAmX+5fSaGZCHmy/XD/afOXoGw6dcJ4dJHsPsM0/1AOYGnrcB/NtcMCkFeZvjwrcVtFQsDFGHap
-	YeLREzyq2Ckz1YZlspGFTUyxh+vgvNaPEZGDQVL2D5WGr5K6wxV8nnmvIwla6TuNJ/6ZKDWgoUayq
-	u8VgPgRQ==;
+	bh=wMbWURXBKlERnmrf5QHs0kPUbIXlx/juA5w6FY/x4Mo=; b=pQX0zA99VzZEIlAcpAlPuQefUS
+	jy9CjjLBfeNNN1FNJitVD8JqerILO8jjC2fZiCCKiOnZ+AFbjn1TYpqjbQaKf+C8/KRnnpzD3SGrm
+	1PWJ9D0VnaLF05hqis2S5I41XDL1jyEKDnD+EFR38vRrwM8QPEg3EqDl695fgD/6Ar8xKBHcmKyax
+	7put0Wn3gyLR7YcoxmrK+vm9eU0JdOvfRB2prGJ/Am84hKoGOlEzX9X79ne8Tfk9prDNrEldtzRiA
+	ijbo3W0+o5oEyQQ0Ds62PvFNcq+zxEq6evP7CKwgfSi+8rKZW1NE7FntT3VSj7fEic6gmCvCHtw/f
+	BXWot+KA==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1viUzJ-00000005EDM-2rax;
-	Wed, 21 Jan 2026 09:58:57 +0000
-Date: Wed, 21 Jan 2026 01:58:57 -0800
+	id 1viV0b-00000005EMZ-1e4Z;
+	Wed, 21 Jan 2026 10:00:17 +0000
+Date: Wed, 21 Jan 2026 02:00:17 -0800
 From: Christoph Hellwig <hch@infradead.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: NeilBrown <neil@brown.name>, Christoph Hellwig <hch@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, NeilBrown <neil@brown.name>,
+	Christoph Hellwig <hch@infradead.org>,
 	Amir Goldstein <amir73il@gmail.com>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
 	Chuck Lever <chuck.lever@oracle.com>,
@@ -106,9 +106,8 @@ Cc: NeilBrown <neil@brown.name>, Christoph Hellwig <hch@infradead.org>,
 	gfs2@lists.linux.dev, linux-f2fs-devel@lists.sourceforge.net
 Subject: Re: [PATCH 00/29] fs: require filesystems to explicitly opt-in to
  nfsd export support
-Message-ID: <aXCjYY9tVKWv29fN@infradead.org>
-References: <CAOQ4uxjOJMwv_hRVTn3tJHDLMQHbeaCGsdLupiZYcwm7M2rm3g@mail.gmail.com>
- <9c99197dde2eafa55a1b55dce2f0d4d02c77340a.camel@kernel.org>
+Message-ID: <aXCjsTBnHGuqTJdb@infradead.org>
+References: <9c99197dde2eafa55a1b55dce2f0d4d02c77340a.camel@kernel.org>
  <176877859306.16766.15009835437490907207@noble.neil.brown.name>
  <aW3SAKIr_QsnEE5Q@infradead.org>
  <176880736225.16766.4203157325432990313@noble.neil.brown.name>
@@ -117,6 +116,7 @@ References: <CAOQ4uxjOJMwv_hRVTn3tJHDLMQHbeaCGsdLupiZYcwm7M2rm3g@mail.gmail.com>
  <20260120-entmilitarisieren-wanken-afd04b910897@brauner>
  <176890211061.16766.16354247063052030403@noble.neil.brown.name>
  <20260120-hacken-revision-88209121ac2c@brauner>
+ <a35ac736d9ebc6c92a6e7d61aeb5198234102442.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -125,7 +125,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260120-hacken-revision-88209121ac2c@brauner>
+In-Reply-To: <a35ac736d9ebc6c92a6e7d61aeb5198234102442.camel@kernel.org>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spamd-Result: default: False [-0.46 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
@@ -137,9 +137,9 @@ X-Spamd-Result: default: False [-0.46 / 15.00];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[brown.name,infradead.org,kernel.org,gmail.com,zeniv.linux.org.uk,oracle.com,redhat.com,talpey.com,google.com,linux.alibaba.com,linux-foundation.org,mit.edu,dilger.ca,suse.com,huawei.com,vivo.com,dubeyko.com,fb.com,squashfs.org.uk,samba.org,manguebit.org,microsoft.com,szeredi.hu,omnibond.com,fasheh.com,evilplan.org,paragon-software.com,nod.at,suse.cz,mail.parknet.co.jp,vger.kernel.org,kvack.org,lists.ozlabs.org,lists.orangefs.org,lists.linux.dev,lists.sourceforge.net,lists.infradead.org];
+	FREEMAIL_CC(0.00)[kernel.org,brown.name,infradead.org,gmail.com,zeniv.linux.org.uk,oracle.com,redhat.com,talpey.com,google.com,linux.alibaba.com,linux-foundation.org,mit.edu,dilger.ca,suse.com,huawei.com,vivo.com,dubeyko.com,fb.com,squashfs.org.uk,samba.org,manguebit.org,microsoft.com,szeredi.hu,omnibond.com,fasheh.com,evilplan.org,paragon-software.com,nod.at,suse.cz,mail.parknet.co.jp,vger.kernel.org,kvack.org,lists.ozlabs.org,lists.orangefs.org,lists.linux.dev,lists.sourceforge.net,lists.infradead.org];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-74832-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-74833-lists,linux-fsdevel=lfdr.de];
 	DMARC_POLICY_ALLOW(0.00)[infradead.org,none];
 	RCVD_TLS_LAST(0.00)[];
 	DKIM_TRACE(0.00)[infradead.org:+];
@@ -154,21 +154,29 @@ X-Spamd-Result: default: False [-0.46 / 15.00];
 	MID_RHS_MATCH_FROM(0.00)[];
 	MISSING_XM_UA(0.00)[];
 	ASN(0.00)[asn:7979, ipnet:2a01:60a::/32, country:US];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:mid,infradead.org:dkim,ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo]
-X-Rspamd-Queue-Id: 5E78F54EB7
+	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo,infradead.org:mid,infradead.org:dkim]
+X-Rspamd-Queue-Id: BFDE754F7B
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Tue, Jan 20, 2026 at 11:31:54AM +0100, Christian Brauner wrote:
-> It is very much fine for a filesystems to support file handles without
-> wanting to support exporting via NFS. That is especially true for
-> in-kernel pseudo filesystems.
+On Tue, Jan 20, 2026 at 07:50:32AM -0500, Jeff Layton wrote:
+> > > and it DOES provide stable filehandles.
+> > 
+> 
+> Across reboot? Not really.
+> 
+> It's quite possible that we may end up with the same "id" numbers in
+> cgroupfs on a new incarnation of the filesystem after a reboot. The
+> files in there are not the same ones as the ones before, but their
+> filehandles may match because kernfs doesn't factor in an i_generation
+> number.
+> 
+> Could we fix it by adding a random i_generation value or something?
+> Possibly, but there really isn't a good use-case that I can see for
+> allowing cgroupfs to be exported via nfsd. Best to disallow it until
+> someone comes up with one.
 
-I'm still amazed at this statement.  "Wanting to export" is not
-something for the file system to decide on in any kind of sane
-layering.  The file systems exports features, and layers higher
-in the stack make use of it.  We just need to be precise in describing
+Yeah.  And I'm pretty sure everyone here will push back hard on any
+such use case.
 
-In-kernel code will then we so nice to respect it.  But for userspace
-even then all bets are off.
 
