@@ -1,227 +1,212 @@
-Return-Path: <linux-fsdevel+bounces-74820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id SFVGA9iTcGlyYgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 09:52:40 +0100
+	id 4A5wCgWccGlyYgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 10:27:33 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7220553E62
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 09:52:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B42C545BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 10:27:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D5CB44E8EAC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 08:50:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2374B80ADAE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 09:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5936747279E;
-	Wed, 21 Jan 2026 08:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A4D3BBA05;
+	Wed, 21 Jan 2026 09:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FtXC1NKw"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fGUGR4tX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1PfneHy3";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fGUGR4tX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1PfneHy3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C795B451062
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 08:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949C019D89E
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 09:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768985433; cv=none; b=a7DH2Slzg2mN0tGIijtIBx25/QUnlB+yeBRF9/NQNbZveCWBYdysPWRf4y+Sgd/bvaykQqGD+Uhnp4wmmEUjXeXB05FLeKafaietFW09wLBoNAM8qMw8tAlWJy1p41xNGt1lIWydOB/wE5C+8tD66DmWFs87t/q+FysuyC/lJWE=
+	t=1768986865; cv=none; b=Jo+EfkSHRGFNGAVREvli0E7A4cRYoSoR9E9sLj/Esl2tTKQagV9E/2pi9VUAdWcB+eSgYjN4Oiejo87qp8yKdNXH97JBLH3hF4m51C7cU3tVN35f0NfmrBr5Daelfw9MfpxmyZHTPHN1+XKjSdmXbBTwE/jydPTXgj4is7vSZvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768985433; c=relaxed/simple;
-	bh=WAqqvlkEfgyIrnhaubplQ0uzr8/tj2pqp8HJa3CUEt8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MTsN3OTGYkBwRRUkPsxWPbzO91VLRXzSryqPA6+rOjy9NlcyJ5AM3OmG9fmTtJWykJAs/vZZMzi+CszT6ZymnwuGFuwgK+Mvsj38hG+FER/2z02Zev3uL3N13HbkXrwjlqbp2N67r3onAG9mpYwQ9mobu/nmoaXHnCCDhKwjFWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FtXC1NKw; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-64b9b0b4d5dso12740147a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 00:50:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768985430; x=1769590230; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=k5YZG1zJ7jWuGeoMG2viDWNiVus/gdfkiySQBNQMP44=;
-        b=FtXC1NKwz5A1ze/gwCPH1/m6ec38DwE95td7denVvt3kApmN/rIE3ji7LXN5NYTFDC
-         t7kVf66wPssrbKjys82kK8twNGoN0q/AO1d4OoIOEwPr/AlCJ/UJ6Yo0XdEgPFce7+NF
-         FlrJOp9H4bKEQzFmHxOMuezrcUESf0nDTdNMWn9IcEbmSJcj+VsRMewAeHzLh1jjwq2p
-         AVzvBRcy1bIWAZvdImwTxbBeHCcgIp9dKhKHlB1kUGUNtkuaEVDaTjYDRBrC/y88JFGa
-         RYAyERqCufRm20PPust1Wewl82Lc51WIXYuaXBSzQOOo0AiEXmeaRN3s3FLTrWofdwbk
-         AVcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768985430; x=1769590230;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k5YZG1zJ7jWuGeoMG2viDWNiVus/gdfkiySQBNQMP44=;
-        b=VHXivT9AlyABgbkraqKPZGJLhAjr/+1s57OAEWklsXMMI+ziUJA8dDHFBiUQRKazhk
-         1LxNMGSBa/cG1JcZAo1XRVPaJLGJAIXB1KfBZ8AsezkWeZsZWmNEOVPdY7Fs/I4XD3aU
-         zHwedHBla0VebLy0+EsRo840uDHqE98wJfML3wkeBYW6PmIC5Kwmza2yyq+MoxPTrlaz
-         7rCbRoTKbGovA0Q1wx5LBSYyEOV+Gm1TdfoxAwh4zN2O0n5OQzhkpubmV+EyQJBQ9Pwm
-         JfCc30tqA1d8XyhLJv8MoRCXDVymdlklSgE5f2heWqCGILJLhHPJ3gHOCDaT7OmHogOv
-         KLnA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5F1K5OvbohzOsuLxvcDDP/fD7iLQW7Gs+zORnOj6NKUui9hUpeFoNZ2D218zrzQFTdtFiGBQCMlqnfBYU@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ0UFMJiNgMvIjxDPYlGb8IvCk1aFE7bgzC4vafRoV3OLBruSX
-	NQaHFSIPGa4RYHWPxXPEXj2rxTHuDn/2tSLysr0o+S3E4MfJKvAt43wr
-X-Gm-Gg: AZuq6aLlRE36cABGAMSpUn4Lmkc0OFIqYHCeIzDKorHsGs1PeYX4Q26cf5MZXGTq4gM
-	jd/nIyf/Z1KzQrHiINbN38s2EM51Zox9W1DrwSh+W0+ujWbnYj7fgq3hndpz6S2ZUoyw4BEz1+a
-	jD/WsNF8l+v/b2zjOWFT5IYD7Amb3KY68W2sHb4V9+MTUVxULx6R25CrTrmjw9qpJQ5VA5cZUjh
-	vuDsM59YrNYWKNFq0Libc+90xetNdUdxr2dtk33SV+1kiXNJ0voIkU6byHyTpsGNruMyAV1oEiV
-	EtdQ1Z7dhATqu47FN7/CVJus8iax6nPvrDziQqxs3ROqyLCwCdExlEunEWY5fLodzrjIci+rSr2
-	qI0uFSr1prhouc0P+BEHV3xijhQyrIJZImDdn5ZjlciB3VPW2Vit+R00McMXgP3lLRxXvYQOnwJ
-	Rw9+n+AUkhjZpCH7xLN2h4eveVQGeYOHGVSTztRJpDbkJgA/5OfgOLmGrvOg69U6Z2s7BsH/0Wq
-	WK+91mvOPoJla7h
-X-Received: by 2002:a17:907:9410:b0:b73:7fc8:a9c9 with SMTP id a640c23a62f3a-b8796a5bce3mr1424085966b.29.1768985429526;
-        Wed, 21 Jan 2026 00:50:29 -0800 (PST)
-Received: from localhost (2001-1c00-570d-ee00-5298-1165-6703-de60.cable.dynamic.v6.ziggo.nl. [2001:1c00:570d:ee00:5298:1165:6703:de60])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8795168c7bsm1627542866b.20.2026.01.21.00.50.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Jan 2026 00:50:28 -0800 (PST)
-From: Amir Goldstein <amir73il@gmail.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Neil Brown <neilb@suse.de>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: [PATCH] nfsd: do not allow exporting of special kernel filesystems
-Date: Wed, 21 Jan 2026 09:50:27 +0100
-Message-ID: <20260121085028.558164-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.52.0
+	s=arc-20240116; t=1768986865; c=relaxed/simple;
+	bh=5YDLEp/CvTYyVVddVxCFdjGV7z3BpBUELJupr2ir7bE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mOAoEgCD1XxPQ31xm/khNhxrwdwZQywKsSzU4P7Gj+SlZlNwes9wYiTz2ukiQjUnwIwcLDg0zHf8UlZUpuYky+aX3//mVuwrcohsb3jO/JoUTFeGFfmgcpJNh+rhFRXffDM3YF8+HNb/LYwXygdnNtPz6loPMQKaXUM1vJaCvd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fGUGR4tX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1PfneHy3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fGUGR4tX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1PfneHy3; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 669A233689;
+	Wed, 21 Jan 2026 09:14:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1768986861; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=b2VyOl4PkB1DnATyXlsc3FFoUTfEVfq5o1UmXW37DZ4=;
+	b=fGUGR4tXKC6a66DcAkdXCuftkfe64KlAVKidiEbC4BaaesNdtuqAUlwMRz5P4c0/bHf0zG
+	7cj1PbaR5wQuWUpsBu9IPcrSK7WnYilj+yj9tcIlbdAB8FnK2mbfwa/waDqFSoJnthTw1M
+	fzFe/wumdLj5qQ3yC9MsitnN97TwaHQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1768986861;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=b2VyOl4PkB1DnATyXlsc3FFoUTfEVfq5o1UmXW37DZ4=;
+	b=1PfneHy3VAmMTROwDjZwBoPGqrk0hCLx5ceBhlEoxcj2kLDUjSuJ8Dw3pqPwIUpokIciy0
+	5vjlyw8OHwBEClBA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=fGUGR4tX;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=1PfneHy3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1768986861; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=b2VyOl4PkB1DnATyXlsc3FFoUTfEVfq5o1UmXW37DZ4=;
+	b=fGUGR4tXKC6a66DcAkdXCuftkfe64KlAVKidiEbC4BaaesNdtuqAUlwMRz5P4c0/bHf0zG
+	7cj1PbaR5wQuWUpsBu9IPcrSK7WnYilj+yj9tcIlbdAB8FnK2mbfwa/waDqFSoJnthTw1M
+	fzFe/wumdLj5qQ3yC9MsitnN97TwaHQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1768986861;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=b2VyOl4PkB1DnATyXlsc3FFoUTfEVfq5o1UmXW37DZ4=;
+	b=1PfneHy3VAmMTROwDjZwBoPGqrk0hCLx5ceBhlEoxcj2kLDUjSuJ8Dw3pqPwIUpokIciy0
+	5vjlyw8OHwBEClBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5CED83EA63;
+	Wed, 21 Jan 2026 09:14:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id hNypFu2YcGk0KwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 21 Jan 2026 09:14:21 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1226CA09E9; Wed, 21 Jan 2026 10:14:17 +0100 (CET)
+From: Jan Kara <jack@suse.cz>
+To: morton@suse.cz
+Cc: bernd@bsbernd.com,
+	Joanne Koong <joannelkoong@gmail.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	<linux-block@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>,
+	Jan Kara <jack@suse.cz>
+Subject: [PATCH] flex_proportions: Make fprop_new_period() hardirq safe
+Date: Wed, 21 Jan 2026 10:13:56 +0100
+Message-ID: <20260121091355.14209-2-jack@suse.cz>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2124; i=jack@suse.cz; h=from:subject; bh=5YDLEp/CvTYyVVddVxCFdjGV7z3BpBUELJupr2ir7bE=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBpcJjTlmuj9rBRbcf7Vy5IAXkgckTlZsjgChVQJ 3fYEMZGdCaJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCaXCY0wAKCRCcnaoHP2RA 2TySB/9ayu/xjOVJ47tvA2MxBIBXOcAszF9RQPGYnnOVRS5NO58CHugM6DSCDqsMdc5IWqoHvXK JS+Sfei+crvmeyIkHpyefYhb80TfpbUiykkWTTAeXNkcr9FPvJ5OgvL43O6+Rpv7uaTU9DGk1Ix xgCZ7xZAG483reFUo+76Y/BahfOVIOcY4R9jcYNw7JEvzSXJAOc1aFaONZc9KWVHtj5LlywwrTd fJD1ipHLI3Teml8j9Jd2bRSxjVd5oJBNYDpnoEMiH24E9/MjO17rVdJH76HnUlA2eqeDebUh+o2 bZp9lv9FYWBnqeslyErTMIo/lJsAj1Z7F5JYGFVGBudakeP1
+X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-0.46 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
+X-Spam-Level: 
+X-Spamd-Result: default: False [0.04 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
+	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TO_DN_SOME(0.00)[];
-	DMARC_POLICY_ALLOW(0.00)[gmail.com,none];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-74821-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-74820-lists,linux-fsdevel=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
-	FREEMAIL_FROM(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[bsbernd.com,gmail.com,szeredi.hu,vger.kernel.org,suse.cz];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[amir73il@gmail.com,linux-fsdevel@vger.kernel.org];
+	DMARC_NA(0.00)[suse.cz];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[suse.cz:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[bsbernd.com:email,dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo,suse.cz:email,suse.cz:dkim,suse.cz:mid];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_COUNT_FIVE(0.00)[5];
+	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	RCPT_COUNT_SEVEN(0.00)[7];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo]
-X-Rspamd-Queue-Id: 7220553E62
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: 8B42C545BE
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-pidfs and nsfs recently gained support for encode/decode of file handles
-via name_to_handle_at(2)/opan_by_handle_at(2).
+Bernd has reported a lockdep splat from flexible proportions code that
+is essentially complaining about the following race:
 
-These special kernel filesystems have custom ->open() and ->permission()
-export methods, which nfsd does not respect and it was never meant to be
-used for exporting those filesystems by nfsd.
+<timer fires>
+run_timer_softirq - we are in softirq context
+  call_timer_fn
+    writeout_period
+      fprop_new_period
+        write_seqcount_begin(&p->sequence);
 
-Therefore, do not allow nfsd to export filesystems with custom ->open()
-or ->permission() methods.
+        <hardirq is raised>
+        ...
+        blk_mq_end_request()
+	  blk_update_request()
+	    ext4_end_bio()
+	      folio_end_writeback()
+		__wb_writeout_add()
+		  __fprop_add_percpu_max()
+		    if (unlikely(max_frac < FPROP_FRAC_BASE)) {
+		      fprop_fraction_percpu()
+			seq = read_seqcount_begin(&p->sequence);
+			  - sees odd sequence so loops indefinitely
 
-Fixes: b3caba8f7a34a ("pidfs: implement file handle support")
-Fixes: 5222470b2fbb3 ("nsfs: support file handles")
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Note that a deadlock like this is only possible if the bdi has
+configured maximum fraction of writeout throughput which is very rare
+in general but frequent for example for FUSE bdis. To fix this problem
+we have to make sure write section of the sequence counter is irqsafe.
+
+Reported-by: Bernd Schubert <bernd@bsbernd.com>
+Link: https://lore.kernel.org/all/9b845a47-9aee-43dd-99bc-1a82bea00442@bsbernd.com/
+Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/nfsd/export.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ lib/flex_proportions.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Christian,
-
-I had enough of the stable file handles discussion [1].
-
-This patch which I already suggested [2] on week ago, states a justified
-technical reason why pidfs and nsfs should not be exported by nfsd,
-so let's use this technical reasoning and stop the philosophic discussions
-about what is a stable file handle is please.
-
-Regarding cgroupfs, we can either deal with it later or not - it is not
-a clear but as pidfs and nsfs which absolutely should be fixed
-retroactively in stable kernels.
-
-If you think that cgroupfs could benefit from "exhaustive" file handles [3]
-then we can implement open_by_handle_at(FD_CGROUPFS_ROOT, ... and that
-would classify cgroupfs the same as pidfs and nsfs.
-
-Thanks,
-Amir.
-
-[1] https://lore.kernel.org/linux-fsdevel/20250912-work-namespace-v2-0-1a247645cef5@kernel.org/
-[2] https://lore.kernel.org/linux-fsdevel/CAOQ4uxhkaGFtQRzTj2xaf2GJucoAY5CGiyUjB=8YA2zTbOtFvw@mail.gmail.com/
-[3] https://lore.kernel.org/linux-fsdevel/20250912-work-namespace-v2-29-1a247645cef5@kernel.org/
-
-diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
-index 2a1499f2ad196..232dacac611e9 100644
---- a/fs/nfsd/export.c
-+++ b/fs/nfsd/export.c
-@@ -405,6 +405,7 @@ static struct svc_export *svc_export_lookup(struct svc_export *);
- static int check_export(const struct path *path, int *flags, unsigned char *uuid)
+diff --git a/lib/flex_proportions.c b/lib/flex_proportions.c
+index 84ecccddc771..012d5614efb9 100644
+--- a/lib/flex_proportions.c
++++ b/lib/flex_proportions.c
+@@ -64,13 +64,14 @@ void fprop_global_destroy(struct fprop_global *p)
+ bool fprop_new_period(struct fprop_global *p, int periods)
  {
- 	struct inode *inode = d_inode(path->dentry);
-+	const struct export_operations *nop = inode->i_sb->s_export_op;
+ 	s64 events = percpu_counter_sum(&p->events);
++	unsigned long flags;
  
  	/*
- 	 * We currently export only dirs, regular files, and (for v4
-@@ -422,13 +423,12 @@ static int check_export(const struct path *path, int *flags, unsigned char *uuid
- 	if (*flags & NFSEXP_V4ROOT)
- 		*flags |= NFSEXP_READONLY;
- 
--	/* There are two requirements on a filesystem to be exportable.
--	 * 1:  We must be able to identify the filesystem from a number.
--	 *       either a device number (so FS_REQUIRES_DEV needed)
--	 *       or an FSID number (so NFSEXP_FSID or ->uuid is needed).
--	 * 2:  We must be able to find an inode from a filehandle.
--	 *       This means that s_export_op must be set.
--	 * 3: We must not currently be on an idmapped mount.
-+	/*
-+	 * The requirements for a filesystem to be exportable:
-+	 * 1. The filehandle must identify a filesystem by number
-+	 * 2. The filehandle must uniquely identify an inode
-+	 * 3. The filesystem must not have custom filehandle open/perm methods
-+	 * 4. The requested file must not reside on an idmapped mount
+ 	 * Don't do anything if there are no events.
  	 */
- 	if (!(inode->i_sb->s_type->fs_flags & FS_REQUIRES_DEV) &&
- 	    !(*flags & NFSEXP_FSID) &&
-@@ -437,11 +437,16 @@ static int check_export(const struct path *path, int *flags, unsigned char *uuid
- 		return -EINVAL;
- 	}
+ 	if (events <= 1)
+ 		return false;
+-	preempt_disable_nested();
++	local_irq_save(flags);
+ 	write_seqcount_begin(&p->sequence);
+ 	if (periods < 64)
+ 		events -= events >> periods;
+@@ -78,7 +79,7 @@ bool fprop_new_period(struct fprop_global *p, int periods)
+ 	percpu_counter_add(&p->events, -events);
+ 	p->period += periods;
+ 	write_seqcount_end(&p->sequence);
+-	preempt_enable_nested();
++	local_irq_restore(flags);
  
--	if (!exportfs_can_decode_fh(inode->i_sb->s_export_op)) {
-+	if (!exportfs_can_decode_fh(nop)) {
- 		dprintk("exp_export: export of invalid fs type.\n");
- 		return -EINVAL;
- 	}
- 
-+	if (nop->open || nop->permission) {
-+		dprintk("exp_export: export of non-standard fs type.\n");
-+		return -EINVAL;
-+	}
-+
- 	if (is_idmapped_mnt(path->mnt)) {
- 		dprintk("exp_export: export of idmapped mounts not yet supported.\n");
- 		return -EINVAL;
+ 	return true;
+ }
 -- 
-2.52.0
+2.51.0
 
 
