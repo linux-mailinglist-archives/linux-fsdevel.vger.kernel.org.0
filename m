@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-74798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 2EdbG2J2cGktYAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 07:46:58 +0100
+	id wOcWN3R2cGktYAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 07:47:16 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 452B75246E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 07:46:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A888D52494
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 07:47:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 127F14C34CC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 06:44:26 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4B19D4048EF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 06:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D688744BCB3;
-	Wed, 21 Jan 2026 06:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC7244BCBD;
+	Wed, 21 Jan 2026 06:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3QIg/Ok+"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pjgH7E2w"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8174041C308;
-	Wed, 21 Jan 2026 06:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9D244BCBA;
+	Wed, 21 Jan 2026 06:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768977840; cv=none; b=f+c8u4pmHDr53oOn6dVwPBNPvJ00hP3ualY1Cdok15bRyfPaR+vjLMbWtdWdlmmYbVsve2j79HlpPWzOgAGgJUVpqI2jW+GACEZw/acFAXGeJJXIAmU2P1Q/Os9ESPxWzE0rRYS+lTn9mxfiIsvd2MQD1oW49lZP/U2XVHkMiI0=
+	t=1768977844; cv=none; b=cPIx7K4MsA2H/SlsElvpfU3HPfS4sz5u+7wuFhiLquYpwRtCa8Q5hTJ7giPtAsUvBMZqMR7120dJdK/da4spSipkbbb786SVUM2wIFTKm35WM+7LT9kF0mkMaQVMilRmU0mi9hTk91fcgqo1BBjL9HVVgf3rth1X5cSKsA5ci0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768977840; c=relaxed/simple;
-	bh=N7X9ew+nev4LJsndIBlC5Ym1S2XVQAuNu5z8oVSoU20=;
+	s=arc-20240116; t=1768977844; c=relaxed/simple;
+	bh=3LUGM/5+G+t6skALuCtZ2dp1h7iokzDfk636qTUhr9Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X05xCnQK0S4COazJI32newDWV5hwqN/265AGA1oL7K1YUaLtdEwpAqcOgZMhysOdkobsnEAQ7nue2PERDTDYFCBpMy7S1flRDxsQ8aKu1/an0hUrlnZeEQGvOvUGUbmYU5mMJo6Ba/duEXVosj/WS9MIJvT+BexXK5D94zneAno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3QIg/Ok+; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=Uhn2uu4ekcGgtZvU6MknTCUQ/tMuqA6V+u2BaahzRFk0b9kJutY0x3gzYORqo8kZCFPF0w9O/gkzAuNazONqWPpGE4sjmtz0/lds//cJs2DYuP880qQBLo85mtmbpReWFKS5+Py3UFWz/Mfw/g4+hR2CyVbmZJyKxs0YWASjRQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pjgH7E2w; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=LRqImKpOznPzP22J04AvRZ2JnYK6n021FN45zcyz6jw=; b=3QIg/Ok+vuiuH/nopIW4A4wG1y
-	XC94QwV8bemwBT1yZOWysIj/l+qKTgctWSCBIJr9xNZas6P/TV4y+fMf+ZP24u4dnhyeKeG0ihj68
-	d1ZknBlPxpn61l+aHe0EcgzXpMQsLP1RF7WjTscBsbrbX0vQJhYdNZdkKd2XPkxFm6YDnmYvkB3YP
-	DMdcUeAdbFqlrX+mHcyZGTDFASUFZ47YhY+u8c/IChJ4hNxceiBSW0xUwx/9BRn5VL0rniL6PDbnE
-	ArDvh6PrLgSvMTGUVzce33hMfFyba1Y3IfmzjE2TVUD5PFWOgWU2pM4jCzE+TE0usHYNbwDeKH6HR
-	gw/oio0Q==;
+	bh=wev1Jw9CBSGeKswkzPuHEROPjVwtbhqdC7VkrAxa5Ss=; b=pjgH7E2w9plKw1NwDDYhXlb6h4
+	5bUFhKRR9f0pxLDlaCD8UGsBAz+y/31PZ5W4/0q3A1N1NsZMYG+8WIFZk2wMklhCp5L84XAb5OprX
+	ZeITXioGIADHwdgPgtvneK0kb1dg4SAOa5AkD82TpErZlxtD49+Q+A00G6e3AA8gmzB6SAWiE/hZq
+	4ZRpoyTNOujojfTh50O0ibyuLiCpXw7PrPu5gg2UQtgaIEfVr0WsbLjLEF+aOMxfn59oMdUBlB1gd
+	HY7crysAFoXRqas3w1A7Rtpka7fOOjh3l/mqGPSC1RtlNkFTbyYgCTOxThYjgUKCi7+Mz+2JmhPZ0
+	z5lkHULg==;
 Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1viRwa-00000004xYg-4Bet;
-	Wed, 21 Jan 2026 06:43:57 +0000
+	id 1viRwf-00000004xYz-0Rpp;
+	Wed, 21 Jan 2026 06:44:01 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>,
 	Christian Brauner <brauner@kernel.org>
@@ -62,9 +62,9 @@ Cc: "Darrick J. Wong" <djwong@kernel.org>,
 	nvdimm@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org,
 	linux-xfs@vger.kernel.org
-Subject: [PATCH 02/15] block: factor out a bio_integrity_setup_default helper
-Date: Wed, 21 Jan 2026 07:43:10 +0100
-Message-ID: <20260121064339.206019-3-hch@lst.de>
+Subject: [PATCH 03/15] block: add a bdev_has_integrity_csum helper
+Date: Wed, 21 Jan 2026 07:43:11 +0100
+Message-ID: <20260121064339.206019-4-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260121064339.206019-1-hch@lst.de>
 References: <20260121064339.206019-1-hch@lst.de>
@@ -87,7 +87,7 @@ X-Spamd-Result: default: False [0.14 / 15.00];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-74798-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-74799-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[infradead.org:+];
@@ -101,94 +101,48 @@ X-Spamd-Result: default: False [0.14 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[11];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:email,lst.de:mid,infradead.org:dkim,ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo]
-X-Rspamd-Queue-Id: 452B75246E
+	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo,infradead.org:dkim,lst.de:email,lst.de:mid]
+X-Rspamd-Queue-Id: A888D52494
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-Add a helper to set the seed and check flag based on useful defaults
-from the profile.
-
-Note that this includes a small behavior change, as we ow only sets the
-seed if any action is set, which is fine as nothing will look at it.
+Factor out a helper to see if the block device has an integrity checksum
+from bdev_stable_writes so that it can be reused for other checks.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- block/bio-integrity-auto.c    | 14 ++------------
- block/bio-integrity.c         | 16 ++++++++++++++++
- include/linux/bio-integrity.h |  1 +
- 3 files changed, 19 insertions(+), 12 deletions(-)
+ include/linux/blkdev.h | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/block/bio-integrity-auto.c b/block/bio-integrity-auto.c
-index 3a4141a9de0c..5345d55b9998 100644
---- a/block/bio-integrity-auto.c
-+++ b/block/bio-integrity-auto.c
-@@ -88,7 +88,6 @@ bool __bio_integrity_endio(struct bio *bio)
-  */
- void bio_integrity_prep(struct bio *bio, unsigned int action)
- {
--	struct blk_integrity *bi = blk_get_integrity(bio->bi_bdev->bd_disk);
- 	struct bio_integrity_data *bid;
- 
- 	bid = mempool_alloc(&bid_pool, GFP_NOIO);
-@@ -96,17 +95,8 @@ void bio_integrity_prep(struct bio *bio, unsigned int action)
- 	bid->bio = bio;
- 	bid->bip.bip_flags |= BIP_BLOCK_INTEGRITY;
- 	bio_integrity_alloc_buf(bio, action & BI_ACT_ZERO);
--
--	bip_set_seed(&bid->bip, bio->bi_iter.bi_sector);
--
--	if (action & BI_ACT_CHECK) {
--		if (bi->csum_type == BLK_INTEGRITY_CSUM_IP)
--			bid->bip.bip_flags |= BIP_IP_CHECKSUM;
--		if (bi->csum_type)
--			bid->bip.bip_flags |= BIP_CHECK_GUARD;
--		if (bi->flags & BLK_INTEGRITY_REF_TAG)
--			bid->bip.bip_flags |= BIP_CHECK_REFTAG;
--	}
-+	if (action & BI_ACT_CHECK)
-+		bio_integrity_setup_default(bio);
- 
- 	/* Auto-generate integrity metadata if this is a write */
- 	if (bio_data_dir(bio) == WRITE && bip_should_check(&bid->bip))
-diff --git a/block/bio-integrity.c b/block/bio-integrity.c
-index 6bdbb4ed2d1a..0e8ebe84846e 100644
---- a/block/bio-integrity.c
-+++ b/block/bio-integrity.c
-@@ -101,6 +101,22 @@ void bio_integrity_free_buf(struct bio_integrity_payload *bip)
- 		kfree(bvec_virt(bv));
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 438c4946b6e5..c1f3e6bcc217 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1472,14 +1472,18 @@ static inline bool bdev_synchronous(struct block_device *bdev)
+ 	return bdev->bd_disk->queue->limits.features & BLK_FEAT_SYNCHRONOUS;
  }
  
-+void bio_integrity_setup_default(struct bio *bio)
-+{
-+	struct blk_integrity *bi = blk_get_integrity(bio->bi_bdev->bd_disk);
-+	struct bio_integrity_payload *bip = bio_integrity(bio);
-+
-+	bip_set_seed(bip, bio->bi_iter.bi_sector);
-+
-+	if (bi->csum_type) {
-+		bip->bip_flags |= BIP_CHECK_GUARD;
-+		if (bi->csum_type == BLK_INTEGRITY_CSUM_IP)
-+			bip->bip_flags |= BIP_IP_CHECKSUM;
-+	}
-+	if (bi->flags & BLK_INTEGRITY_REF_TAG)
-+		bip->bip_flags |= BIP_CHECK_REFTAG;
+-static inline bool bdev_stable_writes(struct block_device *bdev)
++static inline bool bdev_has_integrity_csum(struct block_device *bdev)
+ {
+-	struct request_queue *q = bdev_get_queue(bdev);
++	struct queue_limits *lim = bdev_limits(bdev);
+ 
+-	if (IS_ENABLED(CONFIG_BLK_DEV_INTEGRITY) &&
+-	    q->limits.integrity.csum_type != BLK_INTEGRITY_CSUM_NONE)
+-		return true;
+-	return q->limits.features & BLK_FEAT_STABLE_WRITES;
++	return IS_ENABLED(CONFIG_BLK_DEV_INTEGRITY) &&
++		lim->integrity.csum_type != BLK_INTEGRITY_CSUM_NONE;
 +}
 +
- /**
-  * bio_integrity_free - Free bio integrity payload
-  * @bio:	bio containing bip to be freed
-diff --git a/include/linux/bio-integrity.h b/include/linux/bio-integrity.h
-index 276cbbdd2c9d..232b86b9bbcb 100644
---- a/include/linux/bio-integrity.h
-+++ b/include/linux/bio-integrity.h
-@@ -143,5 +143,6 @@ static inline int bio_integrity_add_page(struct bio *bio, struct page *page,
++static inline bool bdev_stable_writes(struct block_device *bdev)
++{
++	return bdev_has_integrity_csum(bdev) ||
++		(bdev_limits(bdev)->features & BLK_FEAT_STABLE_WRITES);
+ }
  
- void bio_integrity_alloc_buf(struct bio *bio, bool zero_buffer);
- void bio_integrity_free_buf(struct bio_integrity_payload *bip);
-+void bio_integrity_setup_default(struct bio *bio);
- 
- #endif /* _LINUX_BIO_INTEGRITY_H */
+ static inline bool blk_queue_write_cache(struct request_queue *q)
 -- 
 2.47.3
 
