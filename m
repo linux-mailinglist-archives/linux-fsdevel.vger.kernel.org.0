@@ -1,234 +1,255 @@
-Return-Path: <linux-fsdevel+bounces-74779-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +DBpGKZpcGkVXwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74779-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 06:52:38 +0100
+	id YHUtG+BxcGktYAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 07:27:44 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A4051BB0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 06:52:37 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42B61520B6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 07:27:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 370366C6891
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 05:52:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 526FD4A40B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 06:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD76364E8A;
-	Wed, 21 Jan 2026 05:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF2C43DA2E;
+	Wed, 21 Jan 2026 06:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SCQv/ANJ"
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="eb+tRD/e"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8D82139C9
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 05:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.219.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768974716; cv=pass; b=Iugcv6qCdWUNIOSk6I3NDdVk01ySMiZ5Slakd41Atlk6lAr9WJ5mMzKV99re6HzoJESRdmu0i8bwBXguCJWmesHdkcYd9ONw0UpbqsdzJbVahhSGRPjO+LU7FoucK8ZQYzPM5YdVYnkq6oqltnvCfQ64ZeWIJKrOy9P2rAXCZ4Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768974716; c=relaxed/simple;
-	bh=r2nxDFuaFWwuKID50LYqaG7OoXYxDBmc6/nwIMD0c6E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oSugwFNofZoB9zcF/KqrlubIv3mXO9kWSZ8cSnX1jUUWF1i1j96/pG7UqQ5vyKw5Bd3vZNVcp58KbKUaqEQaMivhcU5fbsV1UV92z9nEKgQKmb0jCxvky4bX1krOq5QTAJ1EjpbIu1mbafnPWNF7q9veP1rw7l3wiptNo6jJdj4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SCQv/ANJ; arc=pass smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-88888d80590so91802156d6.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 21:51:53 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1768974713; cv=none;
-        d=google.com; s=arc-20240605;
-        b=BCSTY6yEApHA6oRd0ppBXy56jI6ZtGO/h6sGodFv7gP3BgjoG4O3gyrzF8/BYFYLR1
-         XlUyg9MxREkD7PdynesJkTlzdtbgRLo7N6SFNxA+8wmPdMFRJGLWCES/mxWPseqWPD+h
-         hdNk8FYHNsf/rS5vnP3luyT8nTTX9YpoxaLuAzszj72TYY4Z4TGFAvm3QqvwB1YlPgRS
-         7FfeFEHtWRcuCy88t0VEoaS/+7h8p109Qt1HDiGWIgsFEfN2UBsr81mF21OPnAL73JWd
-         IJNaIJCZBJfy92QG1ZTzpSaGPKR6xSpl4F8zxFAwT2ySfXsPVybaMHMLO14MaBrEIxz3
-         xtpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=saJl4uL3MrSVK5nhxdOmwKURYZi0uIqWnl/khLUQqYg=;
-        fh=wMkf5V3ptCPmjvCeu8JxIDoY4q3wwyx7YdEAxIQvmtw=;
-        b=bqwGaBpFfwE/8KZ97Jyuo2QX8Zk7KqRpSgOTh0Y/688OaAgXTm0qlZq50UFh914clt
-         Ftn7tSOUQkFnUCyaNRPrSgX3MV0wB4PEzPRHdYmccc5+JSUPJRfMOLXhcE+ZszI/49gA
-         UU+VStylRm0nLtUSKeK39FSHuXhgL48hOjplNKTr7KZTIP+I2ZuFsk4ymFP9xx26TGkI
-         ijD/u9maQqkO09oKyldYWp+XwzGgOzwKpCBsgrCUXNzFHYgp6IN9rAQqVs05FI4UZjfh
-         dzO18v7/jTwc710PiUYaIBrEGauKN+Iybl0r9Yh8XGVPHzP/uWkEDXBUfPl1XgJVfUaO
-         vTcQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768974713; x=1769579513; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=saJl4uL3MrSVK5nhxdOmwKURYZi0uIqWnl/khLUQqYg=;
-        b=SCQv/ANJvE0NygVEZTFe3CrtXE5MMDcaS84LiQHEMvsh+En/xl2PwjzeJ9gd2ZVGRS
-         Vy/tRzLr7EBkLeFyysPJ7MvsIjb3fffTt7vLPac21TVNi4NKyXhzaUCWav+An7UX9+C5
-         Vdf43Ynr1ZF3oPo4ln40Nv/LEoXaajIOgWToXf4pju3GMfCKlHq6BdNLoQXcm2G45B5W
-         TrHX5zvuLXuy+n96MmNc1FuD+gST1LUlPqjwTOmDxC3YPgqHkrzc7q57LRs3Yvrb52v2
-         gawlrXhuyjnVq8D02sxl+jsCPXwvRyI28JTRXhyK7/2z4HNiR7LzIMZ6IO3nGyqIOizM
-         VFPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768974713; x=1769579513;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=saJl4uL3MrSVK5nhxdOmwKURYZi0uIqWnl/khLUQqYg=;
-        b=pEPTn7rOidASmQ3uBLKHYE3XjZXTRIa+gKzRe0i+bm2ALlBlcgBdcsOmbmKnuC/6mK
-         Jw/aQxJteOtrwH1Wl4sgVaAYgSxaggET8QM2spg3t5oZYZ9tUEelgesNQDDRxWZuyTXx
-         W+chk1Fh6AEJChmrjm7sxNw+wi0dytsNHlMe0nmZny3AhYPejHrHNafOVDMlkyZgcixt
-         qq2A0kmd2hEQxRspaDZT8uZumMwjQ5ofwEdQswWmjxNHmzsjuQaEs+VyM5spKlKBO+Cd
-         ZMIC6k14joAfzO9pOD14EC4dRedJWJZ+c9ptTa4b2l4BUqeLQf6r1gpkjje72DAq/+6D
-         bs9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWsCcf2osV5MD0tOChPo+TIxMXs5PuyqzWWGFiCbD0jY+k2QxHQXob98+ECfie0n468LgVpEoHX02sLQu3l@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBt9DWKKFlWo3jCJqTsK6se6BVeiK7J+vcGOVX+ugsulCELR7Y
-	jq4s7rT/R69lOJEzRzomPkCwZ16s7zio6koRw2rmZ9EGEnRQ94mLlrtJYzi9Mo+HFftWIl+ikn+
-	rmBev7QRhQEvqBM/hT7k/6w/UtZohvNqklzy+2to=
-X-Gm-Gg: AZuq6aKjS/HliEZNAUGwQKkT7dnO9snt6X1wB4Ub6/g1kUuGZXOevYbsZQaUz4s4hqV
-	ZMIfByf4weLKAy6iKG2kNqX/w8DDDZMu7o92pAXYs7gMje+vtsY5XoypvhfxRVl4ENnCCaHFl6d
-	6xXR0fEAqgZSRruw0bGjhgN+dm4rpaEEVf/PhbaIHqi9Bvi0FYzeyEbhEmYeoxPFjES/6qTLYaB
-	W9mHvV8YRso1HbHkP4LnuDNpfy9QZU0BEAd/n9rOJjfRPHQgYVSG6iMYCY/IB7j2GO3kg==
-X-Received: by 2002:a05:6214:5191:b0:882:42e6:171a with SMTP id
- 6a1803df08f44-8942e48897bmr257726896d6.29.1768974712843; Tue, 20 Jan 2026
- 21:51:52 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A92844105F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 06:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768976835; cv=none; b=Fuy51SXSDg574/tuARHooeoVwbk/lech5BaZtZwVgrSpz1wssR2ChKHYBA0aF0PF0Wm8VY4wmJKzDZWZJlzPBOE5oloUfm2UNYmCa0bRAgvNsUw9Ily0rVjh+pUW5hP5HVZlL5Qb4IOBEbR82XLeGSYfCKeOclSq30nkGF7YiRg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768976835; c=relaxed/simple;
+	bh=F/e/1SQuPlXVM0fbpmrX8eyhOkpYxwKnYyBNKMtSO1c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SVKT8tDoYqle3HKrVtLIXLVo9W1higCRbGzIqPWawsDjD9mM+rk0fD9noZeU6SJIp+cD9ovLKCpLh5CH4uiLwA2Sm6EWiZ7rLkopuPsuHJK2yydLDvwJoMZOHSErQj9A17ss4q+/6aK9x1Kwe60Ow1YBlgnlKJIGgAJ1AjgSjPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=eb+tRD/e; arc=none smtp.client-ip=113.46.200.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=qyo1UXxvb80ZNtm/KnUth+3Ew/cM0x9cJHvAGUTak5g=;
+	b=eb+tRD/eivjXTKEyxjwn/9SYlw6P2b7VcP22XoR/Ovy3xm6Qht9REnU6iMn3JgkCNq/gYGpZp
+	5pS0xlvCRC28HMJW1t8OHh0L1qnzoXfoP6rM5C3hPNuNPlxChTN0I1ohu2qUMyxkeer7OWlJMUq
+	O+4T5QaPJcUKv8aGfJDQcbM=
+Received: from mail.maildlp.com (unknown [172.19.162.197])
+	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4dwvJT0PjSz1T4H4;
+	Wed, 21 Jan 2026 14:23:05 +0800 (CST)
+Received: from kwepemr500001.china.huawei.com (unknown [7.202.194.229])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8913740588;
+	Wed, 21 Jan 2026 14:27:07 +0800 (CST)
+Received: from huawei.com (10.50.85.135) by kwepemr500001.china.huawei.com
+ (7.202.194.229) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 21 Jan
+ 2026 14:27:06 +0800
+From: Jinjiang Tu <tujinjiang@huawei.com>
+To: <willy@infradead.org>, <akpm@linux-foundation.org>, <david@kernel.org>,
+	<lorenzo.stoakes@oracle.com>, <ziy@nvidia.com>,
+	<baolin.wang@linux.alibaba.com>, <Liam.Howlett@oracle.com>,
+	<npache@redhat.com>, <ryan.roberts@arm.com>, <dev.jain@arm.com>,
+	<baohua@kernel.org>, <lance.yang@linux.dev>, <shardul.b@mpiricsoftware.com>,
+	<linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>
+CC: <wangkefeng.wang@huawei.com>, <tujinjiang@huawei.com>
+Subject: [RFC PATCH] mm/khugepaged: free empty xa_nodes when rollbacks in collapse_file
+Date: Wed, 21 Jan 2026 14:22:43 +0800
+Message-ID: <20260121062243.1893129-1-tujinjiang@huawei.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260116015452.757719-1-joannelkoong@gmail.com>
- <20260116015452.757719-2-joannelkoong@gmail.com> <aWmn2FympQXOMst-@casper.infradead.org>
- <CAJnrk1Zs2C-RjigzuhU-5dCqZqV1igAfAWfiv-trnydwBYOHfA@mail.gmail.com>
- <aWqxgAfDHD5mZBO1@casper.infradead.org> <CAJnrk1YJFV5aE2U6bK1PpTBp5tfkRzBK5o24AhidYFUfQnQjNQ@mail.gmail.com>
- <20260117023002.GD15532@frogsfrogsfrogs> <CAJnrk1ZSnrMLQ-g4XCAhb1nXBWE_ueEM_uTreUNxuT-3z_z-DA@mail.gmail.com>
- <aXAmwHNte1TvHbvj@casper.infradead.org> <CAJnrk1Z-eTJGMEJfAcJG0T3gwVcO7C1vayYaK9Rb3POar2=Jcw@mail.gmail.com>
- <aXBZN2tzg5MyrnAb@casper.infradead.org>
-In-Reply-To: <aXBZN2tzg5MyrnAb@casper.infradead.org>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 20 Jan 2026 21:51:41 -0800
-X-Gm-Features: AZwV_QjMoSZ6mHdAAEuAIytH39nNhswDOWXRfo1erCSabczFrJwJaVIGvn_MOJI
-Message-ID: <CAJnrk1bCVJ7JY2ZEn1OO0wJpX6FHqhfX9J3NLVuwjdj0AtYg7w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] iomap: fix readahead folio refcounting race
-To: Matthew Wilcox <willy@infradead.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, brauner@kernel.org, hch@infradead.org, 
-	bfoster@redhat.com, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spamd-Result: default: False [-1.96 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemr500001.china.huawei.com (7.202.194.229)
+X-Spamd-Result: default: False [-0.46 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[huawei.com:s=dkim];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-74779-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[huawei.com:+];
+	TAGGED_FROM(0.00)[bounces-74781-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
-	DMARC_POLICY_ALLOW(0.00)[gmail.com,none];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	R_SPF_SOFTFAIL(0.00)[~all:c];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DMARC_POLICY_ALLOW(0.00)[huawei.com,quarantine];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
+	ASN(0.00)[asn:7979, ipnet:213.196.21.0/24, country:US];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo,infradead.org:email,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: C4A4051BB0
+	FROM_NEQ_ENVFROM(0.00)[tujinjiang@huawei.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	PRECEDENCE_BULK(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	R_SPF_SOFTFAIL(0.00)[~all:c];
+	TO_DN_NONE(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo,huawei.com:email,huawei.com:dkim,huawei.com:mid]
+X-Rspamd-Queue-Id: 42B61520B6
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Tue, Jan 20, 2026 at 8:42=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Tue, Jan 20, 2026 at 08:12:10PM -0800, Joanne Koong wrote:
-> > On Tue, Jan 20, 2026 at 5:07=E2=80=AFPM Matthew Wilcox <willy@infradead=
-.org> wrote:
-> > >
-> > > On Tue, Jan 20, 2026 at 04:34:22PM -0800, Joanne Koong wrote:
-> > > > But looking at some of the caller implementations, I think my above
-> > > > implementation is wrong. At least one caller (zonefs, erofs) relies=
- on
-> > > > iterative partial reads for zeroing parts of the folio (eg setting
-> > > > next iomap iteration on the folio as IOMAP_HOLE), which is fine sin=
-ce
-> > > > reads using bios end the read at bio submission time (which happens=
- at
-> > > > ->submit_read()). But fuse ends the read at either
-> > > > ->read_folio_range() or ->submit_read() time. So I think the caller
-> > > > needs to specify whether it ends the read at ->read_folio_range() o=
-r
-> > > > not, and only then can we invalidate ctx->cur_folio. I'll submit v4
-> > > > with this change.
-> > >
-> > > ... but it can only do that on a block size boundary!  Which means th=
-at
-> > > if the block size is smaller than the folio size, we'll allocate an i=
-fs.
-> > > If the block size is equal to the folio size, we won't allocate an IF=
-S,
-> > > but neither will the length be less than the folio size ... so the re=
-turn
-> > > of -EIO was dead code, like I said.  Right?
-> >
-> > Maybe I'm totally misreading this then, but can't the file size be
-> > non-block-aligned even if the filesystem is block-based, which means
-> > "iomap->length =3D i_size_read(inode) - iomap->offset" (as in
-> > zonefs_read_iomap_begin()) isn't guaranteed to always be a
-> > block-aligned mapping length (eg leading to the case where plen <
-> > folio_size and block_size =3D=3D folio_size)? I see for direct io write=
-s
-> > that the write size is enforced to be block-aligned (in
-> > zonefs_file_dio_write()) and seq files must go through direct io, but
-> > I don't see that this applies to buffered writes for non-seq files,
-> > which I think means inode->i_size can be non-block-aligned.
->
-> I think the important thing is that a block device can only do I/O in
-> units of block size!  Let's work an example.
->
-> Lets say we're on a 4KiB block device and have a 4KiB folio.  The file in
-> question is a mere 700 bytes in size.  Regardless of what the filesystem
-> asks iomap for (700 bytes or 4096 bytes), the BIO that goes to the
-> device instructs it to read one 4KiB block.  Once the read has completed,
-> all bytes in the folio are now uptodate and the completion handler can
-> call folio_end_read().
->
-> If we were on a 512 byte block device, we'd allocate an IFS, do an I/O
-> for 2 * 512 byte blocks and zero the remaining 3KiB with memset().
-> Whichever of the memset() or read-completion happened later calls
-> folio_end_read().
->
-> (some filesystems zero post-EOF bytes after the DMA has completed;
-> I believe ntfs3 does, for example.  But I don't think XFS or iomap does
-> that; it relies on post-EOF bytes being zeroed in the writeback path)
+collapse_file() calls xas_create_range() to pre-create all slots needed.
+If collapse_file() finally fails, these pre-created slots are empty nodes
+and aren't destroyed.
 
-I see, thanks for your patience. Basically what you are saying is that
-it never makes sense for a filesystem to set the iomap->length value
-in ->iomap_begin() to something that's less than the block size
-because all I/O submissions to the bio layer have block-aligned
-lengths. That makes sense to me.
+I can reproduce it with following steps.
+1) create file /tmp/test_madvise_collapse and ftruncate to 4MB size, and
+then mmap the file
+2) memset for the first 2MB
+3) madvise(MADV_COLLAPSE) for the second 2MB
+4) unlink the file
 
-(btw, I realize where I went wrong with the zonefs analysis above -
-the zonefs doc [1] says for non-seq (conventional) files "The size of
-conventional zone files is fixed to the size of the zone that they
-represent. Conventional zone files cannot be truncated". which means
-the i_size_read() value for zonefs is always block-aligned).
+in 3), collapse_file() calls xas_create_range() to expand xarray depth, and
+fails to collapse due to the whole 2M region is empty. collapse_file()
+rollback path doesn't destroy the pre-created empty nodes.
 
-You were right about the if check being unnecessary, I'll drop it.
+When the file is deleted, shmem_evict_inode()->shmem_truncate_range()
+traverses all entries and calls xas_store(xas, NULL) to delete, if the leaf
+xa_node that stores deleted entry becomes emtry, xas_store() will
+automatically delete the empty node and delete it's  parent is empty too,
+until parent node isn't empty. shmem_evict_inode() won't traverse the empty
+nodes created by xas_create_range() due to these nodes doesn't store any
+entries. As a result, these empty nodes are leaked.
 
-Thanks,
-Joanne
+We couldn't simply destroy empty nodes in rollback path, because xarray
+lock is released and re-held several times in collapse_file(). Another
+collapse_file() call may take concurrently, and those empty nodes may
+be needed by the another collapse_file() call.
 
-[1] https://zonedstorage.io/docs/filesystems/zonefs
+To fix it, move xas_create_range() call just before update new_folio to
+xarray, to guarantee collapse_file() doesn't unlock xarray lock
+temporarily. Besides, xas_create_range() may fails too, we don't unlock
+xarray lock and retry again, just destroy the new created empty xa_nodes
+with xarray lock held to prevent any concurrency.
+
+Fixes: 77da9389b9d5 ("mm: Convert collapse_shmem to XArray")
+Signed-off-by: Jinjiang Tu <tujinjiang@huawei.com>
+---
+ include/linux/xarray.h |  1 +
+ lib/xarray.c           | 19 +++++++++++++++++++
+ mm/khugepaged.c        | 36 +++++++++++++++++++-----------------
+ 3 files changed, 39 insertions(+), 17 deletions(-)
+
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index be850174e802..972df5ceeb84 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -1555,6 +1555,7 @@ void xas_destroy(struct xa_state *);
+ void xas_pause(struct xa_state *);
+ 
+ void xas_create_range(struct xa_state *);
++void xas_destroy_range(struct xa_state *xas, unsigned long start, unsigned long end);
+ 
+ #ifdef CONFIG_XARRAY_MULTI
+ int xa_get_order(struct xarray *, unsigned long index);
+diff --git a/lib/xarray.c b/lib/xarray.c
+index 9a8b4916540c..e6126052f141 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -752,6 +752,25 @@ void xas_create_range(struct xa_state *xas)
+ }
+ EXPORT_SYMBOL_GPL(xas_create_range);
+ 
++void xas_destroy_range(struct xa_state *xas, unsigned long start, unsigned long end)
++{
++	unsigned long index;
++	void *entry;
++
++	for (index = start; index < end; ++index) {
++		xas_set(xas, index);
++		entry = xas_load(xas);
++		if (entry)
++			continue;
++
++		if (!xas->xa_node || xas_invalid(xas))
++			continue;
++
++		if (!xas->xa_node->count)
++			xas_delete_node(xas);
++	}
++}
++
+ static void update_node(struct xa_state *xas, struct xa_node *node,
+ 		int count, int values)
+ {
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 97d1b2824386..969058088eee 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1863,7 +1863,7 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+ 	struct folio *folio, *tmp, *new_folio;
+ 	pgoff_t index = 0, end = start + HPAGE_PMD_NR;
+ 	LIST_HEAD(pagelist);
+-	XA_STATE_ORDER(xas, &mapping->i_pages, start, HPAGE_PMD_ORDER);
++	XA_STATE(xas, &mapping->i_pages, 0);
+ 	int nr_none = 0, result = SCAN_SUCCEED;
+ 	bool is_shmem = shmem_file(file);
+ 
+@@ -1882,22 +1882,7 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+ 	new_folio->index = start;
+ 	new_folio->mapping = mapping;
+ 
+-	/*
+-	 * Ensure we have slots for all the pages in the range.  This is
+-	 * almost certainly a no-op because most of the pages must be present
+-	 */
+-	do {
+-		xas_lock_irq(&xas);
+-		xas_create_range(&xas);
+-		if (!xas_error(&xas))
+-			break;
+-		xas_unlock_irq(&xas);
+-		if (!xas_nomem(&xas, GFP_KERNEL)) {
+-			result = SCAN_FAIL;
+-			goto rollback;
+-		}
+-	} while (1);
+-
++	xas_lock_irq(&xas);
+ 	for (index = start; index < end;) {
+ 		xas_set(&xas, index);
+ 		folio = xas_load(&xas);
+@@ -2194,6 +2179,23 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+ 		xas_lock_irq(&xas);
+ 	}
+ 
++	xas_set_order(&xas, start, HPAGE_PMD_ORDER);
++	xas_create_range(&xas);
++	if (xas_error(&xas)) {
++		xas_set_order(&xas, start, 0);
++		if (nr_none) {
++			for (index = start; index < end; index++) {
++				if (xas_next(&xas) == XA_RETRY_ENTRY)
++					xas_store(&xas, NULL);
++			}
++		}
++		xas_destroy_range(&xas, start, end);
++		xas_unlock_irq(&xas);
++		result = SCAN_FAIL;
++
++		goto rollback;
++	}
++
+ 	if (is_shmem)
+ 		lruvec_stat_mod_folio(new_folio, NR_SHMEM_THPS, HPAGE_PMD_NR);
+ 	else
+-- 
+2.43.0
+
 
