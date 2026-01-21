@@ -1,175 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-74890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 4C5vLFcscWl1fAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 20:43:19 +0100
+	id WA0OBQQmcWl8eQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 20:16:20 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 721D15C687
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 20:43:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9ACE5BF2D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 20:16:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1C4DA84E6BE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 17:55:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E815C68C9E8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 17:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A668033C52D;
-	Wed, 21 Jan 2026 17:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C86340DA5;
+	Wed, 21 Jan 2026 17:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WO/y8HoN"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="aT5ide7N"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D9831ED90
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 17:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2D6348452;
+	Wed, 21 Jan 2026 17:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769017909; cv=none; b=P5NMGaNrbC36tzK3RYyddFiUc8ccFfDcM5TtCCnaJkAZHREXHTwwatJ7Khfz6WyVdAGW9d7Tbq2kGPrkLZ/AxjjFtVka4j5xMsR83qvyDbXjNSgfxff/b/nM+0jDFzswRDaZgnGEUjJkTa39JMc0XCQHws3AVoxKRCgWyVxAIf0=
+	t=1769018198; cv=none; b=mcyxb+EFwNWSUYWjNd23EQRxZoR0o6wNhZ3LdciXgyaO3284xNzwmSosQpwmJmPgAnJW+n7aa+P6NLixJhVn/+UAGanLKRtXaUg31WlItcClj/b1k6OtlXYcUU7IcOdnLRR8dz8Whtq698O3lJBIYjaOZDrJMfwWIllg3oW/nqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769017909; c=relaxed/simple;
-	bh=1qYGgZ9c1b8r3u+ifdHQSBBS7lpLzGEKtldRnalLi6U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dRUNFVpHzWNninMncNIRfQHPBvNSFRDnrDG1LbRBWGWZV80XLAGwEfchATRTDqyK6B9RdyNlR96KIa55yO+SZ0MP7ycpmlCzAdpuq1O8suqnJ/C2Y8WCV9tjI9b/loapPT4MB/cHPPGGEpXvhuQOMQra210UpNwtj0UboGBzcbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WO/y8HoN; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-81f4a1a3181so111085b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 09:51:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769017906; x=1769622706; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xSB1wkD3tnNMvDpX/kYDMDj0XcHDa2KakGtOpJoZJvw=;
-        b=WO/y8HoN8++LvTXEnlN+3f5gDWDSUm8n+DL3HU2hv1uCQUVaUdkpBB4z1GNQlcQl89
-         xX12P/wt4OkuQrJcLbmZZr5Krf3FNaFOeWBVe8WzXf+88X0Z9D/Qn8Wi/FsUSl+z3t7y
-         UDaLZ7U5BZDTEg6zkRlas4v1eWL+rBltX/WyU5FLSK18ZAhaYG+IKyL7o3N9Eg6PzR9I
-         17Rdkl0uBp20uoqz4j07jCD47tgZU8AwJ1AE2EZOKC8gKSX+P3Vj0Tk7BB70mDF1Tz/o
-         GhWiLfWWwxXI625dlz727yNxEacK+wlu1lQH3NcUfqF6zIlyxgXkUI1e1rbA0MeaQpcw
-         0QFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769017906; x=1769622706;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xSB1wkD3tnNMvDpX/kYDMDj0XcHDa2KakGtOpJoZJvw=;
-        b=KQyXEKaT9W2O4O0fmdiri/UiMngxc0HFsyKR3QI05HTzbpAzQv+mz1khXOR7MtZQji
-         U4PoP3kzdhNwZcTLBlOslrt2WewU3wXfGWc7VR1Xni1oy4rxnaAjEWSb9q9NjIElyc5C
-         WAXtAAFv7bwSMcKzTMo8nrrnNpwz9qrOKcLrfW/AN43b7pF7KEyGJHx/g7Ins1pw1u6/
-         KX6I2DfycP77G4Nv2YQYPpRaGZi/2jpwoDc+XrkMbeH6e2pyc4h5nBlOmNuPQxOHO0pp
-         ErRXFWFP1vJFjRqBhEjPVOeKiPepk+8e6dCfUSijbg/7suW1cVlBc8mdzhklx0JnpMbQ
-         4/Nw==
-X-Forwarded-Encrypted: i=1; AJvYcCXrG4S7zOGFSfe4Zccw8kN94VknRJTeKUwrzxQDJgQmZKrrxKrxc+WdIZE2wIe0mqgO2vFInaoGGMr/bHtH@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQkhD1OR+AGshhuGumTY6ONnCIxQyF2kcK+Uka4A5km3M57Ap5
-	TvxcGfxmprLE0G/OfbwXFXNb7bGscKBERWWs0wAad7NsPS0fhnv1o31I
-X-Gm-Gg: AZuq6aJnxTABisfPOcHCLNJ6v+jS0AZgp0NXmY65hgc9o+7dj+tpEIZFUGYq8aOqtAq
-	9D5CDhLAydHY8tT13KKBFUee99ONszcHCS5ng84LSVcPpTwI0xdyTrRqS0gf2TDITwUNBwdJlDa
-	f9EfENgZbiNWFEv7ZkAS27NRPj2AtrFmbm60Nfy4iPwPFiG6RWXbJ5PG9Xx9Da46YlSO3K2iFHU
-	J5YPexJUP6FjMWlPlFP5PIDhpJiJlN/GK+y/OiClWk8Gu+EyULDmr1+3Ub5CGQEfrgB9q0av+Lf
-	X6JPGQrjCncZhtFL0l+gPR+XU4zB+yi9mp8Zfbshm7q596PclN68oHHEW4GJczpf9OVokjlJYh0
-	EyPgBjk2SCJ51KPysqM9U7TGmQya4JLC8HyIIfRH/n+1dUVvs7qNasb1gxG5LpLGCdUO30gR7yq
-	8OwE7iAZYfvJw=
-X-Received: by 2002:a05:6a00:8d2:b0:81e:408e:47c9 with SMTP id d2e1a72fcca58-81f9f69002amr15459101b3a.11.1769017906237;
-        Wed, 21 Jan 2026 09:51:46 -0800 (PST)
-Received: from inspiron ([111.125.231.221])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-81fddd12fcasm7382081b3a.0.2026.01.21.09.51.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Jan 2026 09:51:45 -0800 (PST)
-Date: Wed, 21 Jan 2026 23:21:36 +0530
-From: Prithvi <activprithvi@gmail.com>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
-	target-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	hch@lst.de, jlbec@evilplan.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com, khalid@kernel.org,
-	syzbot+f6e8174215573a84b797@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] scsi: target: Fix recursive locking in
- __configfs_open_file()
-Message-ID: <20260121175136.2ku57xskhwwg7syz@inspiron>
-References: <20260108191523.303114-1-activprithvi@gmail.com>
- <2f88aa9b-b1c2-4b02-81e8-1c43b982db1b@acm.org>
- <20260119185049.mvcjjntdkmtdk4je@inspiron>
- <ac604919-1620-4fea-9401-869fd15f3533@acm.org>
+	s=arc-20240116; t=1769018198; c=relaxed/simple;
+	bh=DXdMGPIW7/PPrYdCjuyf1yCAwIUpn27quJ4MeXauIDc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QnI3T0A7mSOy1gAsRtSkI9DHtv3Wur4+ruQfrFASKna8F6Q6/WkPNcVd+HZ94uubxOsixkDivwPZm3x/61Ro95Fdd8yixLEVTGrtal8u91dAfJeFqfMN9avSkeOB09sd+qMKOoTc2tauYIVJ0mCd9VcvhnYgFCVbhoZEw0aL5mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=aT5ide7N; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=m3Epy0AtawqM4edbGGu6EzMFOO396a69rOhtKKxxgcQ=; b=aT5ide7NhibXPQjwRD9B86vKOl
+	2jKoucwZhy9WAd8T5t1LTW5qYBp1wCD2qjh1xbTOoL38u0e/zDffZVxbvKEvO+BnP62l3qYfisKeH
+	395a/O9xY6nOqFN0WWuxHF3a6RHYfCMGC0NfO/kuQUyad0id4U3hzsOt9mH3IoGR9hy5PdaOqpnu2
+	Sr8caUgbMR0ml4yaS6BrZLwa3qdZgNF7zJq5TCmcly6R1ZJ8qlSTCQu8c08iYOl3uCAual5agUVRe
+	ytCaFtIZElkVOQP2pOgsr+v5NNxtFaPdybJYkdrXrAiolavXMunov4W+oEGu2W6AQrlThtnoSSY3v
+	YOl2zfsg==;
+Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1vicRA-0088nl-U0; Wed, 21 Jan 2026 18:56:13 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Horst Birthelmer <horst@birthelmer.de>
+Cc: Bernd Schubert <bernd@bsbernd.com>, Bernd Schubert <bschubert@ddn.com>,
+  Amir Goldstein <amir73il@gmail.com>,  Miklos Szeredi <miklos@szeredi.hu>,
+  "Darrick J. Wong" <djwong@kernel.org>,  Kevin Chen <kchen@ddn.com>,
+  Horst Birthelmer <hbirthelmer@ddn.com>,  "linux-fsdevel@vger.kernel.org"
+ <linux-fsdevel@vger.kernel.org>,  "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>,  Matt Harvey <mharvey@jumptrading.com>,
+  "kernel-dev@igalia.com" <kernel-dev@igalia.com>
+Subject: Re: [RFC PATCH v2 4/6] fuse: implementation of the
+ FUSE_LOOKUP_HANDLE operation
+In-Reply-To: <aWFcmSNLq9XM8KjW@fedora> (Horst Birthelmer's message of "Fri, 9
+	Jan 2026 20:55:06 +0100")
+References: <20251212181254.59365-1-luis@igalia.com>
+	<20251212181254.59365-5-luis@igalia.com>
+	<CAJfpegszP+2XA=vADK4r09KU30BQd-r9sNu2Dog88yLG8iV7WQ@mail.gmail.com>
+	<87zf6nov6c.fsf@wotan.olymp>
+	<CAJfpegst6oha7-M+8v9cYpk7MR-9k_PZofJ3uzG39DnVoVXMkA@mail.gmail.com>
+	<CAOQ4uxjXN0BNZaFmgs3U7g5jPmBOVV4HenJYgdfO_-6oV94ACw@mail.gmail.com>
+	<CAJfpegsS1gijE=hoaQCiR+i7vmHHxxhkguGJvMf6aJ2Ez9r1dw@mail.gmail.com>
+	<b2582658-c5e9-4cf8-b673-5ccc78fe0d75@ddn.com>
+	<CAOQ4uxhMtz6WqLKPegRy+Do2UU6uJvDOqb8YU6=-jAy98E5Vfw@mail.gmail.com>
+	<645edb96-e747-4f24-9770-8f7902c95456@ddn.com>
+	<aWFcmSNLq9XM8KjW@fedora>
+Date: Wed, 21 Jan 2026 17:56:12 +0000
+Message-ID: <877bta26kj.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ac604919-1620-4fea-9401-869fd15f3533@acm.org>
-X-Spamd-Result: default: False [0.04 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	R_DKIM_REJECT(1.00)[igalia.com:s=20170329];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
+	DMARC_POLICY_SOFTFAIL(0.10)[igalia.com : No valid SPF,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-74890-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-74891-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[oracle.com,vger.kernel.org,lst.de,evilplan.org,lists.linux.dev,linuxfoundation.org,gmail.com,kernel.org,syzkaller.appspotmail.com];
-	RCPT_COUNT_TWELVE(0.00)[14];
+	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_CC(0.00)[bsbernd.com,ddn.com,gmail.com,szeredi.hu,kernel.org,vger.kernel.org,jumptrading.com,igalia.com];
 	MIME_TRACE(0.00)[0:+];
-	DMARC_POLICY_ALLOW(0.00)[gmail.com,none];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	R_SPF_SOFTFAIL(0.00)[~all:c];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[activprithvi@gmail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	RCVD_COUNT_FIVE(0.00)[5];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel,f6e8174215573a84b797];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	DKIM_TRACE(0.00)[igalia.com:-];
 	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[luis@igalia.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	R_SPF_SOFTFAIL(0.00)[~all:c];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
 	ASN(0.00)[asn:7979, ipnet:2a01:60a::/32, country:US];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo]
-X-Rspamd-Queue-Id: 721D15C687
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Queue-Id: B9ACE5BF2D
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Tue, Jan 20, 2026 at 05:48:16AM -0800, Bart Van Assche wrote:
-> On 1/19/26 10:50 AM, Prithvi wrote:
-> >   Possible unsafe locking scenario:
-> > 
-> >         CPU0
-> >         ----
-> >    lock(&p->frag_sem);
-> >    lock(&p->frag_sem);
-> The least intrusive way to suppress this type of lockdep complaints is
-> by using lockdep_register_key() and lockdep_unregister_key().
-> 
-> Thanks,
-> 
-> Bart.
+Hi Horst!
 
-Hello Bart,
+On Fri, Jan 09 2026, Horst Birthelmer wrote:
 
-I tried using lockdep_register_key() and lockdep_unregister_key() for the
-frag_sem lock, however it stil gives the possible recursive locking
-warning. Here is the patch and the bug report from its test:
+> On Fri, Jan 09, 2026 at 07:12:41PM +0000, Bernd Schubert wrote:
+>> On 1/9/26 19:29, Amir Goldstein wrote:
+>> > On Fri, Jan 9, 2026 at 4:56=E2=80=AFPM Bernd Schubert <bschubert@ddn.c=
+om> wrote:
+>> >>
+>> >>
+>> >>
+>> >> On 1/9/26 16:37, Miklos Szeredi wrote:
+>> >>> On Fri, 9 Jan 2026 at 16:03, Amir Goldstein <amir73il@gmail.com> wro=
+te:
+>> >>>
+>> >>>> What about FUSE_CREATE? FUSE_TMPFILE?
+>> >>>
+>> >>> FUSE_CREATE could be decomposed to FUSE_MKOBJ_H + FUSE_STATX + FUSE_=
+OPEN.
+>> >>>
+>> >>> FUSE_TMPFILE is special, the create and open needs to be atomic.   So
+>> >>> the best we can do is FUSE_TMPFILE_H + FUSE_STATX.
+>> >>>
+>> >=20
+>> > I thought that the idea of FUSE_CREATE is that it is atomic_open()
+>> > is it not?
+>> > If we decompose that to FUSE_MKOBJ_H + FUSE_STATX + FUSE_OPEN
+>> > it won't be atomic on the server, would it?
+>>=20
+>> Horst just posted the libfuse PR for compounds
+>> https://github.com/libfuse/libfuse/pull/1418
+>>=20
+>> You can make it atomic on the libfuse side with the compound
+>> implementation. I.e. you have the option leave it to libfuse to handle
+>> compound by compound as individual requests, or you handle the compound
+>> yourself as one request.
+>>=20
+>> I think we need to create an example with self handling of the compound,
+>> even if it is just to ensure that we didn't miss anything in design.
+>
+> I actually do have an example that would be suitable.
+> I could implement the LOOKUP+CREATE as a pseudo atomic operation in passt=
+hrough_hp.
 
-https://lore.kernel.org/all/6767d8ea.050a0220.226966.0021.GAE@google.com/T/#m3203ceddf3423b7116ba9225d182771608f93a6f
+So, I've been working on getting an implementation of LOOKUP_HANDLE+STATX.
+And I would like to hear your opinion on a problem I found:
 
-Would using down_read_nested() and subclasses be a better option here?
+If the kernel is doing a LOOKUP, you'll send the parent directory nodeid
+in the request args.  On the other hand, the nodeid for a STATX will be
+the nodeid will be for the actual inode being statx'ed.
 
-I also checked out some documentation regarding it and learnt that to use
-the _nested() form, the hierarchy among the locks should be mapped
-accurately; however, IIUC, there isn't any hierarchy between the locks in
-this case, is this right?
+The problem is that when merging both requests into a compound request,
+you don't have the nodeid for the STATX.  I've "fixed" this by passing in
+FUSE_ROOT_ID and hacking user-space to work around it: if the lookup
+succeeds, we have the correct nodeid for the STATX.  That seems to work
+fine for my case, where the server handles the compound request itself.
+But from what I understand libfuse can also handle it as individual
+requests, and in this case the server wouldn't know the right nodeid for
+the STATX.
 
-Apologies if I am missing something obvious here, and thanks for your 
-time and guidance.
+Obviously, the same problem will need to be solved for other operations
+(for example for FUSE_CREATE where we'll need to do a FUSE_MKOBJ_H +
+FUSE_STATX + FUSE_OPEN).
 
-Best Regards,
-Prithvi
+I guess this can eventually be fixed in libfuse, by updating the nodeid in
+this case.  Another solution is to not allow these sort of operations to
+be handled individually.  But maybe I'm just being dense and there's a
+better solution for this.
+
+Cheers,
+--=20
+Lu=C3=ADs
 
