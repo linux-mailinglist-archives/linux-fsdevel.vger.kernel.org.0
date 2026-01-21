@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-74800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cCLVM4t2cGktYAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 07:47:39 +0100
+	id 2DdeFKh2cGktYAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 07:48:08 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C0C3524BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 07:47:39 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B41E7524E7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 07:48:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 025DC4E0B2B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 06:44:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6921B725587
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 06:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001BE44CACB;
-	Wed, 21 Jan 2026 06:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F9E44CADD;
+	Wed, 21 Jan 2026 06:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RBhKoeDu"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fsHRDkbL"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E1644B67E;
-	Wed, 21 Jan 2026 06:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA10C44CAC7;
+	Wed, 21 Jan 2026 06:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768977850; cv=none; b=TRgvesSNdIruDSCyHKWFDeTbm/3uwXkAwdAcjAg2wt9REo7to+LO13rlmUlgVun9Lpeh87C7x3of2GrhtC5cy7lUg9ekhAX+eQw13YiyrA0JvhYnKSCF8ABTImB2JbuSoXyo9snnBcpbsGR81mUKqZsHgrxs0SypfKexg/3d3LM=
+	t=1768977852; cv=none; b=bva8AJb9y2lL7+dNBW5gTmCRiWgbsQRELern1qVLjkcuJ5sKu/mz9Q8L3cLPynFf4Af1TKDLnhDZCZrIy7weDFADeFgloFQdbitM06HUgrgnC56ZsJSAtSbz7iYijBkxt2v+HL9n+EO+IRjxF5gVaasLfC5XvuAATPM6JkWYmys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768977850; c=relaxed/simple;
-	bh=Ntjyew39ErKjlsjUqzM3tKlsCNohsHmGkw9G6FyrUvY=;
+	s=arc-20240116; t=1768977852; c=relaxed/simple;
+	bh=pag6WWCHrJmBJB9+C0Gb5Jl5HWSCPlkfGOtWvSzdslA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=m+QPV8pMuDcEjojwRCGanJiAAJYOi1zU40H2WifoNCGCCAiR3oO3uidMAApW9Tdz2CHBa+Rzuusqplo0YEgf7zByQc+hjjV7+4Rjism7oi+t4evU0onWbalAMxTQpgKNL0TzCYkj8Gcv1gaEiLS6YHm/r+O4V1G7zqecO1cr424=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RBhKoeDu; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=tRmcr8OBOGIudYkNv+5nt7BTNYlcZ8momWLnK/1QRLmBHA/qOlJg7Xi3Evt/GXWcaa9vngzR3m50j+mgaP9wO+D2ta6gGWbvLY7cwnOkGxdTt5WPLqj3cQUQlyGCq1xKL5krywnACk52WmUVMbgYAYG48v3O+qbYC2iaPewwlWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fsHRDkbL; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=kVXRZ7/O6YUcjTJT0lFFH0r13TLIIHHS9dvXLs6XMPw=; b=RBhKoeDuT20HoTwI9lsvM6gSXl
-	0elSLHA3x1zS+R+hjXnQnb8tqRQrj3l2PMLLJTHVQ4f/9IuYUPiLFdCfHMnoA0ayyUIUseudFhBKl
-	XxFElD+rJpl3Ko/MXrGi854EkUY+ZPqFaLUNBdQ5wNnh0wKAV6g3QERFpxSa9t/RinEAuJgW+d6gh
-	k1i+UWF/+L1Lxfc9357K21/8NX6QOZsoYveq1/10XwqxyXln710jqfFVprLoj8R97yGIWK+jri+Pm
-	uB3SMQA53r1ZI5oekqdU5Kn3QiFZ1UkOwIQdt5zxgL+vu5yal7sRVukS4BM+6GaHDS17LmWsO02a0
-	TCsV5TBA==;
+	bh=TbujKF9GAtSiu8uHvtjxQMXyk997lVVKBOml7tb0emM=; b=fsHRDkbLQNBqty+47Kw7qWzVJM
+	tNrTCRubrOR3s9C4RDn57q9kL3L3zArb2kh9bTt6j7HB1oJElOE8MQh7uabWdOfGJan2xUd1uNxWC
+	UWTjRPnj06/0pGHeXARR2zM2ejp4b3hs9/Z+w0bZZHs2xTlUKOy/NwY0uOPtaZh7MWtlHYkb16gyJ
+	/JxLzcYa/ra69/okgVYA5rZmGt5KWle+BwnQnlW+N84CI+HR6iyKdR6bNyxk/EzEirkbRVUN3dYC3
+	VQNmfATEvlRpuxaoRibFFpkUkB/GcYLHmZKfi5wLNR3piZH6Y3XhR6bRN0w+ovGMi7ISaqUC59Nim
+	z0g0uYeA==;
 Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1viRwj-00000004xZR-0qzu;
-	Wed, 21 Jan 2026 06:44:05 +0000
+	id 1viRwn-00000004xZo-1Q0S;
+	Wed, 21 Jan 2026 06:44:09 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>,
 	Christian Brauner <brauner@kernel.org>
@@ -62,9 +62,9 @@ Cc: "Darrick J. Wong" <djwong@kernel.org>,
 	nvdimm@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org,
 	linux-xfs@vger.kernel.org
-Subject: [PATCH 04/15] block: prepare generation / verification helpers for fs usage
-Date: Wed, 21 Jan 2026 07:43:12 +0100
-Message-ID: <20260121064339.206019-5-hch@lst.de>
+Subject: [PATCH 05/15] block: make max_integrity_io_size public
+Date: Wed, 21 Jan 2026 07:43:13 +0100
+Message-ID: <20260121064339.206019-6-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260121064339.206019-1-hch@lst.de>
 References: <20260121064339.206019-1-hch@lst.de>
@@ -87,11 +87,11 @@ X-Spamd-Result: default: False [0.14 / 15.00];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-74800-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-74801-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[infradead.org:+];
-	ASN(0.00)[asn:7979, ipnet:213.196.21.0/24, country:US];
+	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
 	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
@@ -101,99 +101,90 @@ X-Spamd-Result: default: False [0.14 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[11];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo,infradead.org:dkim,lst.de:email,lst.de:mid]
-X-Rspamd-Queue-Id: 9C0C3524BB
+	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:email,lst.de:mid,dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo,infradead.org:dkim]
+X-Rspamd-Queue-Id: B41E7524E7
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-Return the status from verify instead of directly stashing it in the bio,
-and rename the helpers to use the usual bio_ prefix for things operating
-on a bio.
+File systems that generate integrity will need this, so move it out
+of the block private or blk-mq specific headers.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- block/bio-integrity-auto.c |  4 ++--
- block/blk.h                |  6 ++++--
- block/t10-pi.c             | 12 ++++++------
- 3 files changed, 12 insertions(+), 10 deletions(-)
+ block/blk-settings.c          | 13 -------------
+ include/linux/blk-integrity.h |  5 -----
+ include/linux/blkdev.h        | 18 ++++++++++++++++++
+ 3 files changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/block/bio-integrity-auto.c b/block/bio-integrity-auto.c
-index 5345d55b9998..f68a17a8dbc2 100644
---- a/block/bio-integrity-auto.c
-+++ b/block/bio-integrity-auto.c
-@@ -39,7 +39,7 @@ static void bio_integrity_verify_fn(struct work_struct *work)
- 		container_of(work, struct bio_integrity_data, work);
- 	struct bio *bio = bid->bio;
- 
--	blk_integrity_verify_iter(bio, &bid->saved_bio_iter);
-+	bio->bi_status = bio_integrity_verify(bio, &bid->saved_bio_iter);
- 	bio_integrity_finish(bid);
- 	bio_endio(bio);
- }
-@@ -100,7 +100,7 @@ void bio_integrity_prep(struct bio *bio, unsigned int action)
- 
- 	/* Auto-generate integrity metadata if this is a write */
- 	if (bio_data_dir(bio) == WRITE && bip_should_check(&bid->bip))
--		blk_integrity_generate(bio);
-+		bio_integrity_generate(bio);
- 	else
- 		bid->saved_bio_iter = bio->bi_iter;
- }
-diff --git a/block/blk.h b/block/blk.h
-index 886238cae5f1..d222ce4b6dfc 100644
---- a/block/blk.h
-+++ b/block/blk.h
-@@ -695,8 +695,10 @@ int bdev_open(struct block_device *bdev, blk_mode_t mode, void *holder,
- 	      const struct blk_holder_ops *hops, struct file *bdev_file);
- int bdev_permission(dev_t dev, blk_mode_t mode, void *holder);
- 
--void blk_integrity_generate(struct bio *bio);
--void blk_integrity_verify_iter(struct bio *bio, struct bvec_iter *saved_iter);
-+void bio_integrity_generate(struct bio *bio);
-+blk_status_t bio_integrity_verify(struct bio *bio,
-+		struct bvec_iter *saved_iter);
-+
- void blk_integrity_prepare(struct request *rq);
- void blk_integrity_complete(struct request *rq, unsigned int nr_bytes);
- 
-diff --git a/block/t10-pi.c b/block/t10-pi.c
-index 0c4ed9702146..d27be6041fd3 100644
---- a/block/t10-pi.c
-+++ b/block/t10-pi.c
-@@ -372,7 +372,7 @@ static void ext_pi_type1_complete(struct request *rq, unsigned int nr_bytes)
- 	}
+diff --git a/block/blk-settings.c b/block/blk-settings.c
+index a9e65dc090da..dabfab97fbab 100644
+--- a/block/blk-settings.c
++++ b/block/blk-settings.c
+@@ -123,19 +123,6 @@ static int blk_validate_zoned_limits(struct queue_limits *lim)
+ 	return 0;
  }
  
--void blk_integrity_generate(struct bio *bio)
-+void bio_integrity_generate(struct bio *bio)
+-/*
+- * Maximum size of I/O that needs a block layer integrity buffer.  Limited
+- * by the number of intervals for which we can fit the integrity buffer into
+- * the buffer size.  Because the buffer is a single segment it is also limited
+- * by the maximum segment size.
+- */
+-static inline unsigned int max_integrity_io_size(struct queue_limits *lim)
+-{
+-	return min_t(unsigned int, lim->max_segment_size,
+-		(BLK_INTEGRITY_MAX_SIZE / lim->integrity.metadata_size) <<
+-			lim->integrity.interval_exp);
+-}
+-
+ static int blk_validate_integrity_limits(struct queue_limits *lim)
  {
- 	struct blk_integrity *bi = blk_get_integrity(bio->bi_bdev->bd_disk);
- 	struct bio_integrity_payload *bip = bio_integrity(bio);
-@@ -404,7 +404,7 @@ void blk_integrity_generate(struct bio *bio)
- 	}
+ 	struct blk_integrity *bi = &lim->integrity;
+diff --git a/include/linux/blk-integrity.h b/include/linux/blk-integrity.h
+index 91d12610d252..b2f34f696a4f 100644
+--- a/include/linux/blk-integrity.h
++++ b/include/linux/blk-integrity.h
+@@ -8,11 +8,6 @@
+ 
+ struct request;
+ 
+-/*
+- * Maximum contiguous integrity buffer allocation.
+- */
+-#define BLK_INTEGRITY_MAX_SIZE		SZ_2M
+-
+ enum blk_integrity_flags {
+ 	BLK_INTEGRITY_NOVERIFY		= 1 << 0,
+ 	BLK_INTEGRITY_NOGENERATE	= 1 << 1,
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index c1f3e6bcc217..8d4e622c1f98 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1875,6 +1875,24 @@ static inline int bio_split_rw_at(struct bio *bio,
+ 	return bio_split_io_at(bio, lim, segs, max_bytes, lim->dma_alignment);
  }
  
--void blk_integrity_verify_iter(struct bio *bio, struct bvec_iter *saved_iter)
-+blk_status_t bio_integrity_verify(struct bio *bio, struct bvec_iter *saved_iter)
- {
- 	struct blk_integrity *bi = blk_get_integrity(bio->bi_bdev->bd_disk);
- 	struct bio_integrity_payload *bip = bio_integrity(bio);
-@@ -439,11 +439,11 @@ void blk_integrity_verify_iter(struct bio *bio, struct bvec_iter *saved_iter)
- 		}
- 		kunmap_local(kaddr);
- 
--		if (ret) {
--			bio->bi_status = ret;
--			return;
--		}
-+		if (ret)
-+			return ret;
- 	}
++/*
++ * Maximum contiguous integrity buffer allocation.
++ */
++#define BLK_INTEGRITY_MAX_SIZE		SZ_2M
 +
-+	return BLK_STS_OK;
- }
++/*
++ * Maximum size of I/O that needs a block layer integrity buffer.  Limited
++ * by the number of intervals for which we can fit the integrity buffer into
++ * the buffer size.  Because the buffer is a single segment it is also limited
++ * by the maximum segment size.
++ */
++static inline unsigned int max_integrity_io_size(struct queue_limits *lim)
++{
++	return min_t(unsigned int, lim->max_segment_size,
++		(BLK_INTEGRITY_MAX_SIZE / lim->integrity.metadata_size) <<
++			lim->integrity.interval_exp);
++}
++
+ #define DEFINE_IO_COMP_BATCH(name)	struct io_comp_batch name = { }
  
- void blk_integrity_prepare(struct request *rq)
+ #endif /* _LINUX_BLKDEV_H */
 -- 
 2.47.3
 
