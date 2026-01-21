@@ -1,155 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-74901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uMy4FysrcWniewAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 20:38:19 +0100
+	id gGMqMyI6cWnKfQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 21:42:10 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C641D5C555
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 20:38:18 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 518E95D7A0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 21:42:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9E3499E373D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 19:13:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CD748ACE219
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 19:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3DA27055D;
-	Wed, 21 Jan 2026 19:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5AB3BBA14;
+	Wed, 21 Jan 2026 19:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="0Ihyc9wu";
+	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="i6+eDi5l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp01-ext2.udag.de (smtp01-ext2.udag.de [62.146.106.18])
+Received: from e2i340.smtp2go.com (e2i340.smtp2go.com [103.2.141.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792C3364E91;
-	Wed, 21 Jan 2026 19:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.146.106.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613C434F24D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 19:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769022775; cv=none; b=YZLmFiEBbcSG5jAWFeyrWkQ9u/5CqFhSErIpjOiJxp71Kz3SOJCUnVAg6DnnwVPPAGLxihYH3k0JAgdFWFPpsIcSKTQ/QxJDY3mqFAb1m2APxWQAzYwDtpC5ioNPcBUyKU62Q+uqJfUm3p/nmde1Dh48jOUfuUo1RrApyIiT4XQ=
+	t=1769024451; cv=none; b=kzKtq9pLFOoNSFIARVF9S5NlWIWacUCctFOk0p5h596U/a4vagLnjfkw9FcvxKb2RZeFjCUB0CKMah6zqieavoaE9K005Jg+PhsnquNALlOpXaUh/RgA1bCo/MFwLnvlimceykOOKgqOqJFdTBH6UxK26ljusleMhlRnhWccBFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769022775; c=relaxed/simple;
-	bh=qMOz+yEkA/rkjen0l+JehhX4t4nu9fAUE9DUzbDC2QQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MuQGc8Pd7rEYg8pzvkAqLBQF2MyP155nhFJhP5YUGgBbiELq37ZpALB0kda6Szpyh74o4zNJgoWbyN7k2dg1WwL5Q54gd4qEEsxyTyaoyy0iow0cSbnMgQxHdvgxet1WJm06gF1DL/8LOlGphTxottBg2DTzZXDH4IrICL6diQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de; spf=pass smtp.mailfrom=birthelmer.de; arc=none smtp.client-ip=62.146.106.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birthelmer.de
-Received: from localhost (200-143-067-156.ip-addr.inexio.net [156.67.143.200])
-	by smtp01-ext2.udag.de (Postfix) with ESMTPA id 1F304E0430;
-	Wed, 21 Jan 2026 20:12:50 +0100 (CET)
-Authentication-Results: smtp01-ext2.udag.de;
-	auth=pass smtp.auth=birthelmercom-0001 smtp.mailfrom=horst@birthelmer.de
-Date: Wed, 21 Jan 2026 20:12:49 +0100
-From: Horst Birthelmer <horst@birthelmer.de>
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Bernd Schubert <bernd@bsbernd.com>, Luis Henriques <luis@igalia.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Kevin Chen <kchen@ddn.com>, 
-	Horst Birthelmer <hbirthelmer@ddn.com>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Matt Harvey <mharvey@jumptrading.com>, 
-	"kernel-dev@igalia.com" <kernel-dev@igalia.com>
-Subject: Re: Re: [RFC PATCH v2 4/6] fuse: implementation of the
- FUSE_LOOKUP_HANDLE operation
-Message-ID: <aXEjX7MD4GzGRvdE@fedora>
-References: <CAOQ4uxhMtz6WqLKPegRy+Do2UU6uJvDOqb8YU6=-jAy98E5Vfw@mail.gmail.com>
- <645edb96-e747-4f24-9770-8f7902c95456@ddn.com>
- <aWFcmSNLq9XM8KjW@fedora>
- <877bta26kj.fsf@wotan.olymp>
- <aXEVjYKI6qDpf-VW@fedora>
- <03ea69f4-f77b-4fe7-9a7c-5c5ca900e4bf@bsbernd.com>
- <aXEbnMNbE4k6WI7j@fedora>
- <5d022dc0-8423-4af2-918f-81ad04d50678@ddn.com>
- <aXEhTi2-8DRZKb_I@fedora>
- <e761b39b-79c7-40d4-947e-a209fcf2bb6b@ddn.com>
+	s=arc-20240116; t=1769024451; c=relaxed/simple;
+	bh=68r8bE6qhwjbZqaNnErslOyPOA3WUR4dKp6zwT9IzoI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Def9RzWJ7g4VY9KK391zdm5j+6lefOWa0LOlL1xpZVUo35DwnMNB5webD8s9DEHkbWdi2Fzw64mR2cclGs7su9J8WZ90t/FutXrUAna2EvrKUjgQZTwirTbbZuqeiP0VgwQBqLfxcg2I97EFhvrJznRPFoqDD3umYc3ByfnCWRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=0Ihyc9wu reason="unknown key version"; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=i6+eDi5l; arc=none smtp.client-ip=103.2.141.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=smtpservice.net; s=maxzs0.a1-4.dyn; x=1769025349; h=Feedback-ID:
+	X-Smtpcorp-Track:Message-ID:Date:Subject:To:From:Reply-To:Sender:
+	List-Unsubscribe:List-Unsubscribe-Post;
+	bh=x8yZEnRd7C3j49tb9f9GokLxR8hXGi7pt3NNBUhXvEo=; b=0Ihyc9wuY73Gdk4rIISHNRbzx5
+	nx/IVqQMQV2xOj8dzInpqtbuHV2beiinYWpuadm+XvglyfVk4k/HZWB2ibJJZPxHSScpu8n91wBwh
+	FydTqNqze7NFaxHp+5xQQ32AZzqYiL/90Dce5w+BFSyTeLxFDzSjB3hCRH8IBFZAs67HCZBuaQiMB
+	DTZ3YchTfXyBoslNXJweps7C77LkKhWN6heypp0de6s/RLOjVxWtZ45O+68yz/MN6j8WUtE8GHCZS
+	Lk1mFoAbfpQPbYpUh6u64NMJQZuWWlwD7fIpoYbhdxbQShck+eLw9nGBatup/1Yy2HEun9IjpRUrH
+	4avv8+2w==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
+ i=@triplefau.lt; q=dns/txt; s=s510616; t=1769024449; h=from : subject
+ : to : message-id : date;
+ bh=x8yZEnRd7C3j49tb9f9GokLxR8hXGi7pt3NNBUhXvEo=;
+ b=i6+eDi5l+r28+9l3j38ZuRrNVl6MCmUGvgJqqqPm9D0zm/zDD/J3ule1AWYBuWkhMwrud
+ /o0iW48fUQPuhOXighJ4QabSh4V3lI4cb9+Ypj/3FuuRbEMCIK5VRAahfCPQV6dY5+jJWsF
+ Hk565tMR+MTGvht7w7I7cz/sotDrMIljnprMADnK/exGKCkHFOMCDx5OziHmxeNPZzAsGq8
+ 3ZdXLmvu2Ps+hOjgMGawM3cVwnpculqek3iy2Yn5bE3JhZNpBWitv3xQb8m8nHWb5lXBs0n
+ rzWf+jeaRwFv3PaTG8i4PUVsLifkPgNH9mzL0NFu04S8cnorWcRJ+76KtHQg==
+Received: from [10.172.233.58] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.94.2-S2G) (envelope-from <repk@triplefau.lt>)
+ id 1vie3Y-TRk6mP-9F; Wed, 21 Jan 2026 19:39:56 +0000
+Received: from [10.12.239.196] (helo=localhost) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.98.1-S2G) (envelope-from <repk@triplefau.lt>)
+ id 1vie3X-FnQW0hPpTp5-n3YU; Wed, 21 Jan 2026 19:39:55 +0000
+From: Remi Pommarel <repk@triplefau.lt>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ v9fs@lists.linux.dev
+Cc: Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Eric Van Hensbergen <ericvh@kernel.org>,
+ Latchesar Ionkov <lucho@ionkov.net>,
+ Dominique Martinet <asmadeus@codewreck.org>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Remi Pommarel <repk@triplefau.lt>
+Subject: [PATCH 0/2] wait/9p: Account 9P RPC waiting time as I/O wait
+Date: Wed, 21 Jan 2026 20:21:57 +0100
+Message-ID: <cover.1769009696.git.repk@triplefau.lt>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e761b39b-79c7-40d4-947e-a209fcf2bb6b@ddn.com>
-X-Spamd-Result: default: False [-0.66 / 15.00];
+Content-Transfer-Encoding: 8bit
+X-Smtpcorp-Track: btT4spd16VO0.KghQ5y7_aIri.TE0BdgckhKg
+Feedback-ID: 510616m:510616apGKSTK:510616scHTfb7n3f
+X-Report-Abuse: Please forward a copy of this message, including all headers,
+ to <abuse-report@smtp2go.com>
+X-Spamd-Result: default: False [-0.46 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[triplefau.lt:s=s510616];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	DMARC_POLICY_SOFTFAIL(0.10)[birthelmer.de : No valid SPF, No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	TAGGED_FROM(0.00)[bounces-74901-lists,linux-fsdevel=lfdr.de];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[bsbernd.com,igalia.com,gmail.com,szeredi.hu,kernel.org,ddn.com,vger.kernel.org,jumptrading.com];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[horst@birthelmer.de,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-74905-lists,linux-fsdevel=lfdr.de];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DMARC_POLICY_ALLOW(0.00)[triplefau.lt,quarantine];
+	DKIM_TRACE(0.00)[triplefau.lt:+];
+	FROM_NEQ_ENVFROM(0.00)[repk@triplefau.lt,linux-fsdevel@vger.kernel.org];
+	PRECEDENCE_BULK(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_COUNT_FIVE(0.00)[5];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	R_DKIM_NA(0.00)[];
-	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
+	TO_DN_SOME(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo]
-X-Rspamd-Queue-Id: C641D5C555
+	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo,triplefau.lt:mid,triplefau.lt:dkim]
+X-Rspamd-Queue-Id: 518E95D7A0
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Wed, Jan 21, 2026 at 08:03:32PM +0100, Bernd Schubert wrote:
-> 
-> 
-> On 1/21/26 20:00, Horst Birthelmer wrote:
-> > On Wed, Jan 21, 2026 at 07:49:25PM +0100, Bernd Schubert wrote:
-> >>
-> >>
-> > ...
-> >>> The problem Luis had was that he cannot construct the second request in the compound correctly
-> >>> since he does not have all the in parameters to write complete request.
-> >>
-> >> What I mean is, the auto-handler of libfuse could complete requests of
-> >> the 2nd compound request with those of the 1st request?
-> >>
-> > With a crazy bunch of flags, we could probably do it, yes.
-> > It is way easier that the fuse server treats certain compounds
-> > (combination of operations) as a single request and handles
-> > those accordingly.
-> 
-> Hmm, isn't the problem that each fuse server then needs to know those
-> common compound combinations? And that makes me wonder, what is the
-> difference to an op code then?
+This patch serie helps to attribute the time spent waiting for server
+responses during 9P RPC calls to I/O wait time in system metrics. As a
+result, I/O-intensive operations on a 9pfs mount will now be reflected
+in the "wa" column instead of the "id" one of tools like top.
 
-I'm pretty sure we both have some examples and counter examples in mind.
+Thanks,
 
-Let's implement a couple of the suggested compounds and we will see 
-if we can make generic rules. I'm not convinced yet, that we want to
-have a generic implementation in libfuse.
+Remi Pommarel (2):
+  wait: Introduce io_wait_event_killable()
+  9p: Track 9P RPC waiting time as IO
 
-The advantage to the 'add an opcode' for every combination 
-(and there are already a couple of those) approach is that
-you don't need more opcodes, so no changes to the kernel.
-You need some code in the fuse server, though, which to me is
-fine, since if you have atomic operations implemented there,
-why not actually use them.
+ include/linux/wait.h | 15 +++++++++++++++
+ net/9p/client.c      |  4 ++--
+ 2 files changed, 17 insertions(+), 2 deletions(-)
 
-The big advantage is, choice.
+-- 
+2.50.1
 
-There will be some examples (like the one from Luis)
-where you don't actually have a generic choice,
-or you create some convention, like you just had in mind.
-(put the result of the first operation into the input
-of the next ... or into some fields ... etc.)
-
-> 
-> 
-> Thanks,
-> Bernd
-
-Horst
 
