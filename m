@@ -1,263 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-74770-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yLHgJ8E+cGnXXAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74770-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 03:49:37 +0100
+	id aBxZDldCcGnXXAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 04:04:55 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CEAC50064
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 03:49:37 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D280150374
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 04:04:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6370E967E03
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 02:46:01 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9C9994E8776
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 03:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA2D72900A8;
-	Wed, 21 Jan 2026 02:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE78B35293C;
+	Wed, 21 Jan 2026 03:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jgPsiK9D"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Pr8JlwaC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0E5343D98
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 02:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDAE347BBB
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 03:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768963478; cv=none; b=o96ytT8t7V2CxQAOdiKP1g+Jok9sBv55+8ZSKEm2QKkPYMWl7paHmqwqNphaEzjsiFwLW26z07cUgnmQQ74INlWeKeWB5yO36vN7ukitBdhz61LxhrzM4I10Kkxncg4wfxOMAUxd+dhk8nWYMjpRXcVh+KiBePHlCFkuY9ys4zU=
+	t=1768964687; cv=none; b=ru7b6Tu9nANizua97Zrjnge1/MTPeiYf5IHjhCfbi+vTiqgzOiSc86vgqy+5QQ5QLptFtZ5+0EzLbnOxD2hHs7Vv7feglq70ty4gK0tDARInjpdByAVNvY1e76E4dYhsdhP41mqJuz88/hZErXeMEAgSMECwH1cjM7PwYkkCdu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768963478; c=relaxed/simple;
-	bh=7FsvJSNwl9vQqM3jvZJfFGYx3+rBZcB6E7E7CwgTXz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OUhL68TLmkHFj0MJkzYKQLI6BOjSxkw2/NnarVb3H/fpPdUC/z3KS7zbCaErHJujiECLKJwiUSdD8cCRHu3dxg5psA3boZdznDUvdYnbsl0QZBWfzQV/HPipNe3TDEH9U9fXp4FS7zwfzpHfew9w3VIh34WVvqmXHOORqzQUWJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jgPsiK9D; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-34b75fba315so3025865a91.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 18:44:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768963476; x=1769568276; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=10L6Vo5U3X0GbtQ/DFHIFQGtYREEbj8suGJdhOatTic=;
-        b=jgPsiK9DT230maut87hfht2Cl0qK0LsevqPCrA/vwRf+Cm4SkQNdzmB4xCfc2yQPjw
-         n/4yoageno6/l2zZ9Ms+95bihPaObBjkUbR8d7kbX2fENEJRwiT9RMeEt3YZKconKq/h
-         6LrJl+jtI5a1QLEe9iF2vSg+vPUlPtX0ACKeXDF7+s4NAVbN/1T7Bn3QgRH0Jvo4y062
-         Fc/phhVlKkXBfQHIRCDbbkanaJJ0VyV+7FStrLjIDz89iO3uqwcc7j7inH6iNLKGZotG
-         45AUasMG/zUWpBiyQWp2NI4BAuyI+Q/+D/sqIXSYFa0yhhYmolZmnSIY1IJQpiQ/43Lr
-         wWDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768963476; x=1769568276;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=10L6Vo5U3X0GbtQ/DFHIFQGtYREEbj8suGJdhOatTic=;
-        b=m78SZBdhLXGexHlEdiVpZbN/IZbCW4XVARdEPGy9921HuGYCqdaSxWQGatZAcoUz9G
-         LIwSlaJO1O6ZCo7yHPrh4S4UQyOMY5n8Wdk1tQvlXaQ4KybRhv5EwhUdKzVV5mlR3Fo9
-         WmECHGqNn0oqAIzKUv264lwk/MNKaD6v1ZOfmQTzadXcQouXnsqo7v6P7suNMatmNygq
-         JNSEAhs9y1T8KLRl9eji/tuNY+ZBTZ5FaHeA0dUNkFALDcSfnBv4EzR9HvvDGtKvxNUE
-         bEouUV7dX4WMMxyiXIENLOMwx9FHvECIwhuYBYt5yOSdt763pP9FxSUPTCbinxuQRjfR
-         orxg==
-X-Forwarded-Encrypted: i=1; AJvYcCVM4bCYzgs1268KBk32zM90h1p4vfXXVkTHo2sjbkPo76FQadGwKxmN4PFMh6d+w+ZHgDCkoJijz/3acbHz@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+odlgdVPYA2wLt7/GE7Jlr9Yv8dtU3JYxmsPvw7krlcBNBllm
-	mW26FwsXvYB0uXNMB/4NIze54zcj+N7XBhCdg5v8Dp+xCjEAnVRXQCon
-X-Gm-Gg: AZuq6aKXAIDtsjqJzZbI5Xv2VF2U2x3lkBrHhqn3S8PAGmSrUrN43THjYvpTLDs61ti
-	kG0ewJPgCelrOmX00Qy4VbOKcU1U8IGwO/F5DqL61suYeJEkj8S7XRAVCTudydm8NRh5hU2iv94
-	gMXLahGZBh8wWFdRyFl5JH/o2FGSoq+JajUVK054yJ53kX7ry7A/Pe7rTqnKPArUMq7om2aoxLR
-	7tBEc7uEtjhA68VrkY3y5pNFU7IHqGPHEn1Ydnfv0njO7O9k6+UViQkZvTRSHot7DI25F0jkLKN
-	mwLBMGWwK/Oykaf3SmHaLE4fteAd/mE8MfcFdFtdanitupNPnR3RkaIfsGYJBcNT/kxHHiJKhda
-	LITQJSl5rV7tLS9rfWwkoz4Njuy113zM8ztdhtMNtFfMJaGXpmZHRI4fW13lAxnRfHBKr62kAT9
-	l3
-X-Received: by 2002:a17:90b:3148:b0:34d:1d54:8bcf with SMTP id 98e67ed59e1d1-35272f025e0mr14314669a91.9.1768963475722;
-        Tue, 20 Jan 2026 18:44:35 -0800 (PST)
-Received: from localhost ([2a12:a305:4::4074])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3527313c2a9sm13354589a91.17.2026.01.20.18.44.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Jan 2026 18:44:35 -0800 (PST)
-Date: Wed, 21 Jan 2026 10:44:31 +0800
-From: Jinchao Wang <wangjinchao600@gmail.com>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-	"frank.li@vivo.com" <frank.li@vivo.com>,
-	"slava@dubeyko.com" <slava@dubeyko.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"syzbot+1e3ff4b07c16ca0f6fe2@syzkaller.appspotmail.com" <syzbot+1e3ff4b07c16ca0f6fe2@syzkaller.appspotmail.com>
-Subject: Re: [RFC PATCH] fs/hfs: fix ABBA deadlock in hfs_mdb_commit
-Message-ID: <aXA9j9oQLHAHPP46@ndev>
-References: <20260113081952.2431735-1-wangjinchao600@gmail.com>
- <a2b8144a25206fba69e59e805d93c05444080132.camel@ibm.com>
- <aWcHhTiUrDppotRg@ndev>
- <d382b5c97a71d769598fd32bc22cae9f960fea70.camel@ibm.com>
- <aWhgNujuXujxSg3E@ndev>
- <b718505beca70f2a3c1e0e20c74e43ae558b29d5.camel@ibm.com>
- <aWnybRfDcsUAtsol@ndev>
- <0349430786e4553845c30490e19b08451c8b999f.camel@ibm.com>
- <aW7Vy_RpxseBC4UQ@ndev>
- <3a5b428754b6e006025c462f37e610b5a5e361a5.camel@ibm.com>
+	s=arc-20240116; t=1768964687; c=relaxed/simple;
+	bh=TWEI54Iqzuw+CcLquu7Ufiwo1EhFnXvervNKZcJ8eIA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ppjmVFKG4+5zUhhdVwcYIaRtnM1a0SuUK65B1jwko4kUGBzTJxRMM50Np649KHGEZuSjh+a3wxyRPKYuKQcEYgftl5sQiX6Q+qI/9IRI6TC07QllFnhT6vCPOl9ejBGQzA8hEf0EbPLyxD5fw2wsh/Saqj3i2UZxeOKvMetDjR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Pr8JlwaC; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1768964676; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=v1Xb+9y2HraNWMqrebtudihWynXYvLYKmhtgRQKtt6Y=;
+	b=Pr8JlwaCg30gn3l8bWescMjT163F0f+2E1An2lGkKt51NhNgBX0OseSLNTqCEytrB4+sIbbLWHRfxMlhbmMRvMhoNz22RvrFiuGCMlbX6S8Waxdv6W7rdf566jKAyd68gCT3o+TPf4lHjtjynnjrP+fyZ+cY7mTOZx33b6sVQDI=
+Received: from 30.221.146.111(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WxWTogB_1768964675 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 21 Jan 2026 11:04:35 +0800
+Message-ID: <403da199-dc77-4597-9943-8888bad9a941@linux.alibaba.com>
+Date: Wed, 21 Jan 2026 11:04:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3a5b428754b6e006025c462f37e610b5a5e361a5.camel@ibm.com>
-X-Spamd-Result: default: False [0.04 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] fuse: wait on congestion for async readahead
+To: Abhishek Angale <abhishek.angale@rubrik.com>,
+ Joanne Koong <joannelkoong@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>,
+ Anna Schumaker <anna@kernel.org>,
+ Trond Myklebust <trond.myklebust@hammerspace.com>,
+ NeilBrown <neilb@ownmail.net>, linux-fsdevel@vger.kernel.org
+References: <CAJnrk1Yi-_x6w0f7w=xRBT7s4SDEJKcTm_f-hCZjdyBVtvxCzQ@mail.gmail.com>
+ <20260120105552.760619-1-abhishek.angale@rubrik.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <20260120105552.760619-1-abhishek.angale@rubrik.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-8.96 / 15.00];
+	WHITELIST_DMARC(-7.00)[alibaba.com:D:+];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_DKIM_ALLOW(-0.20)[linux.alibaba.com:s=default];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	FREEMAIL_CC(0.00)[szeredi.hu,suse.cz,kernel.org,hammerspace.com,ownmail.net,vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-74771-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-74770-lists,linux-fsdevel=lfdr.de];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	DMARC_POLICY_ALLOW(0.00)[gmail.com,none];
-	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_TO(0.00)[rubrik.com,gmail.com];
+	DMARC_POLICY_ALLOW(0.00)[linux.alibaba.com,none];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	FROM_HAS_DN(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[linux.alibaba.com:+];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
-	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[wangjinchao600@gmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[jefflexu@linux.alibaba.com,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel,1e3ff4b07c16ca0f6fe2];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo]
-X-Rspamd-Queue-Id: 0CEAC50064
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	ASN(0.00)[asn:7979, ipnet:2a01:60a::/32, country:US];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.alibaba.com:mid,linux.alibaba.com:dkim,ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo]
+X-Rspamd-Queue-Id: D280150374
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Tue, Jan 20, 2026 at 08:51:06PM +0000, Viacheslav Dubeyko wrote:
-> On Tue, 2026-01-20 at 09:09 +0800, Jinchao Wang wrote:
-> > 
+
+
+On 1/20/26 6:55 PM, Abhishek Angale wrote:
+> Hi Joanne,
 > 
-> <skipped>
+> First, please accept my apologies for the delay in responding.
 > 
-> > > 
-> > > Firs of all, I've tried to check the syzbot report that you are mentioning in
-> > > the patch. And I was confused because it was report for FAT. So, I don't see the
-> > > way how I can reproduce the issue on my side.
-> > > 
-> > > Secondly, I need to see the real call trace of the issue. This discussion
-> > > doesn't make sense without the reproduction path and the call trace(s) of the
-> > > issue.
-> > > 
-> > > Thanks,
-> > > Slava.
-> > There are many crash in the syz report page, please follow the specified time and version.
-> > 
-> > Syzbot report: https://syzkaller.appspot.com/bug?extid=1e3ff4b07c16ca0f6fe2  
-> > 
-> > For this version:
-> > > time             |  kernel    | Commit       | Syzkaller |
-> > > 2025/12/20 17:03 | linux-next | cc3aa43b44bd | d6526ea3  |
-> > 
-> > The full call trace can be found in the crash log of "2025/12/20 17:03", which url is:
-> > 
-> > Crash log: https://syzkaller.appspot.com/text?tag=CrashLog&x=12909b1a580000  
+> Thanks for the thoughtful questions. I agree these are the right
+> concerns to validate before making readahead block on congestion, since
+> it can block application thread.
 > 
-> This call trace is dedicated to flushing inode's dirty pages in page cache, as
-> far as I can see:
+> A few clarifications on the call path and what the patch actually waits
+> on:
 > 
-> [  504.401993][   T31] INFO: task kworker/u8:1:13 blocked for more than 143
-> seconds.
-> [  504.434587][   T31]       Not tainted syzkaller #0
-> [  504.441437][   T31] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-> disables this message.
-> [  504.451145][   T31] task:kworker/u8:1    state:D stack:22792 pid:13   
-> tgid:13    ppid:2      task_flags:0x4208060 flags:0x00080000
-> [  504.463591][   T31] Workqueue: writeback wb_workfn (flush-7:4)
-> [  504.471997][   T31] Call Trace:
-> [  504.475502][   T31]  <TASK>
-> ...
-> [  504.805695][   T31]  </TASK>
+> * The wait only triggers when we’ve reached the congestion threshold and
+>   there are only async pages left in the current readahead window:
+>   - Condition: fc->num_background >= fc->congestion_threshold &&
+>     rac->ra->async_size >= readahead_count(rac)
+>   - In other words, the page(s) needed to satisfy the caller’s current
+>     read are already accounted for; we don’t block those. We only decide
+>     whether to continue prefetching the remainder of the window or skip
+>     it.
 > 
-> And this call trace is dedicated to superblock commit: 
+> * The wait is killable (wait_event_killable), so signals will break out
+>   immediately.
 > 
-> [  505.186758][   T31] INFO: task kworker/1:4:5971 blocked for more than 144
-> seconds.
-> [  505.194752][ T8014] Bluetooth: hci37: command tx timeout
-> [  505.210267][   T31]       Not tainted syzkaller #0
-> [  505.215260][   T31] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-> disables this message.
-> [  505.273687][   T31] task:kworker/1:4     state:D stack:24152 pid:5971 
-> tgid:5971  ppid:2      task_flags:0x4208060 flags:0x00080000
-> [  505.287569][   T31] Workqueue: events_long flush_mdb
-> [  505.293762][   T31] Call Trace:
-> [  505.297607][   T31]  <TASK>
-> ...
-> [  505.570372][   T31]  </TASK>
+> * Wakeups are driven by fuse_request_end() when the number of background
+>   requests falls below the congestion threshold. The patch does not
+>   increase concurrency; it only avoids the “idle gap” caused by aborting
+>   async readahead when congestion eases.
 > 
-> I don't see any relation between folios in inode's page cache and HFS_SB(sb)-
-> >mdb_bh because they cannot share the same folio. 
-What you pasted are not the right tasks. Please see this analysis which I sent before
-and focus on the task id 8009 and 8010.
-
-Analysis
-========
-In the crash log, the lockdep information requires adjustment based on the call stack.
-After adjustment, a deadlock is identified:
-
-** task syz.1.1902:8009 **
-- held &disk->open_mutex
-- held foio lock
-- wait lock_buffer(bh)
-Partial call trace:
-->blkdev_writepages()
-        ->writeback_iter()
-                ->writeback_get_folio()
-                        ->folio_lock(folio)
-        ->block_write_full_folio()
-                __block_write_full_folio()
-                        ->lock_buffer(bh)
-
-task syz.0.1904:8010
-- held &type->s_umount_key#66 down_read
-- held lock_buffer(HFS_SB(sb)->mdb_bh);
-- wait folio
-Partial call trace:
-hfs_mdb_commit
-        ->lock_buffer(HFS_SB(sb)->mdb_bh);
-        ->bh = sb_bread(sb, block);
-                ...->folio_lock(folio)
-
-
-Other hung tasks are secondary effects of this deadlock. The issue
-is reproducible in my local environment usuing the syz-reproducer.
-
-> I still don't see from your
-> explanation how the issue could happen. I don't see how lock_buffer(HFS_SB(sb)-
-> >mdb_bh) can be responsible for the issue. 
-
-> Oppositely, if we follow to your
-> logic, then we never can be able to mount any HFS volume. But xfstests works for
-> HFS file systems (of course, multiple tests fail) and I cannot see the deadlock
-> for common situation. So, you need to explain which particular use-case can
-> reproduce the issue and what is mechanism of deadlock happening.
+>> How does this perform on workloads where there's other work
+>> interspersed between the buffered sequential reads, or on random/mixed
+>> workloads where readahead is triggered but not fully utilized?
 > 
+> To your questions on interspersed and mixed/random workloads:
+> 
+> * Interspersed workload (thinktime between reads): We specifically
+>   tested a workload with thinktime (to simulate CPU or other work
+>   between IOs). Results are essentially unchanged with the patch:
+>   - Avg latency: 6.12 us -> 6.29 us
+>   - Avg IOPS: 7577 -> 7571
+>   - BW: 29.60 -> 29.58 MB/s
+>   - These deltas are within run-to-run noise. This makes sense given the
+>     wait only applies to the async portion and doesn’t block the
+>     synchronous data needed by the caller.
+>   Command:
+>     fio --name=interspersed_work --filename=file.1G --rw=read --bs=4K \
+>         --numjobs=1 --ioengine=libaio --iodepth=1 --thinktime=1000 \
+>         --thinktime_blocks=8 --size=1G
+> 
+> * Strided workload (wasted readahead): This is a case where readahead is
+>   often not fully utilized. The patch doesn’t hurt; we actually see a
+>   small improvement:
+>   - Avg latency: 2565.90 us -> 2561.92 us
+>   - Avg IOPS: 44260 -> 44960
+>   - BW: 173.0 -> 175.8 MB/s
+>   Command:
+>     fio --name=strided_wasted_ra --filename=file.250G --rw=read --bs=4K \
+>         --zonemode=strided --zonesize=128k --zoneskip=100M --numjobs=32 \
+>         --ioengine=libaio --iodepth=4 --offset_increment=1G --size=1G
+> 
+> * Random read stability: Also slightly better with the patch:
+>   - Avg latency: 15829.10 us -> 15536.74 us
+>   - Avg IOPS: 7856.6 -> 8009.2
+>   - BW: 30.7 -> 31.3 MB/s
+>   Command:
+>     fio --name=random_read --filename=file.250G --rw=randread --bs=4K \
+>         --numjobs=32 --ioengine=libaio --iodepth=4 --offset_increment=1G \
+>         --size=1G
+> 
+>> I'm also concerned about how this would affect application-visible
+>> tail latency, since congestion could take a while to clear up (eg if
+>> writeback is to a remote server somewhere).
+> 
+> On application-visible tail latency: because the wait only happens when
+> the request stream has reached the congestion limit and only async pages
+> remain, there is no blocking of the “needed now” page(s) for the current
+> read. So the caller’s synchronous read path latency is not delayed by
+> this wait. 
 
-Please follow what I sent and do the reproduce. 
-Have you ever try the specified time and version in the syz report page?
+I think the async readahead only means that the calling process doesn't
+need to wait for the completion of the readahead IO.  Indeed the IO
+submission (i.e. fuse_readahead()) is called from the sync process
+context, and thus the deliberate wait in fuse_readahead() will increase
+the latency of the sync read(2).
 
-| time             |  kernel    | Commit       | Syzkaller |
-| 2025/12/20 17:03 | linux-next | cc3aa43b44bd | d6526ea3  |
+Besides, we also noticed the similar issue where the congestion
+mechanism can suppress the peak bandwidth performance.  But I'm not sure
+if there's better solution except from increasing the threshold to a
+noticeable large value which obviously breaks the congestion mechanism :|
 
 -- 
 Thanks,
-Jinchao
+Jingbo
+
 
