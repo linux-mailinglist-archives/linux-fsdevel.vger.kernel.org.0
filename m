@@ -1,308 +1,1064 @@
-Return-Path: <linux-fsdevel+bounces-74929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74930-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uF+AEgJScWkKCQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 23:24:02 +0100
+	id MGWnMeJXcWkNEwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74930-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 23:49:06 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF4305EBEB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 23:24:01 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DB085F087
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 23:49:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D663A8484D0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 22:20:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B866F3E334C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 22:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A710C4508EE;
-	Wed, 21 Jan 2026 22:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540F044DB90;
+	Wed, 21 Jan 2026 22:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="smTqTppK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qToUqfSi"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2342D3A9615;
-	Wed, 21 Jan 2026 22:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D5F44E04A;
+	Wed, 21 Jan 2026 22:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769033869; cv=none; b=NW3HeJTWTSQ5WYvKU7X6e/quYpDZVC0Zh3mynOMoM+dvcrIEn5hwA9lwFt6osJBwqBC2K/8681KaDgOc7xTRJ1a/7PCs27qbg48iEcFIlo0B8Rqm/dWV4xsVifBg8FA93pPnjREvyjv62cznJz8V0O8+scHjB75oVYFegIQtm/0=
+	t=1769035514; cv=none; b=uxE8doK13QeucWwlblUKv+sFkk0WwAx7L1+93kUnUElymrG0VhLbtbVt1W4/bSdWx3AWyEXsPS0rC5JV/VaWfWT7ziToWUe+WE7K4jikuu5hiC/yXNKuGHxxrMv0XdgyoKSCsZw6qwCUwfANPbyrzASbo9IfDqPBrUEvaG/Dfcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769033869; c=relaxed/simple;
-	bh=tEw7ToJNe232eJBfHt52JdOoeWeeUG6hSsbgG8JaE34=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uTk5RphoCYMNk0pWFpEQnPBLIU/x7dUXBIY2HlYQ6Fxb1KKXEi0PfxRkL6tTWxQSALkKGebe2LiKbn+C30v8jIrOBkD10T0HX5JQAPnQT+q09u5GIPG+pIOrIME7U20i8V2cfnRG6GGoff2PtZ7uffQyULjZvJcwrLFP3ZtTZfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=smTqTppK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF101C4CEF1;
-	Wed, 21 Jan 2026 22:17:47 +0000 (UTC)
+	s=arc-20240116; t=1769035514; c=relaxed/simple;
+	bh=X9GMFmX3lmVoM7Wyp1BJVuWxvPlHn7pb3V6w9rcXX/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pGTuUY2sXrglcYw5s/9khj+l3x19k8mHWwPKSAcJz71S8HbH0eeh+RS9z5Me6fG2KhzTlcip4n0qW5Uxk9gy6SfNNbYfZ1qB5STPD6wPixeIrqFBXOD5F9Wmutyn8mEZL/QAsH5R5C6WYYQjEdxh8d4GEfwnPn15uGWGuyfgAHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qToUqfSi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 312BEC4CEF1;
+	Wed, 21 Jan 2026 22:45:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769033868;
-	bh=tEw7ToJNe232eJBfHt52JdOoeWeeUG6hSsbgG8JaE34=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=smTqTppKojVay9dt0x1QIZmDYqYgeqqXJIPXXUP/COVSj4uifJ4kApgS9zEm4/jpo
-	 lgNIHeO2fCgjVJbssi+nY3mBE2YN4ynQ5dcbPuFdRry594HEhoVQ6ed7n50ITpJxv1
-	 F8iSwH4IYNS2W/gRimH8w3sitX/N+aJRK9gsT0XHlk0+uWm1FqXngmTPGJ7/wmyyI6
-	 JM0pFrgFKxyl1RFdVhEwhuhVxroIM5/m8aTaDsMTd2/Z9v8WqwyyIowgEOYPeagRGe
-	 1udHn8UdEIPbZO26mS6wEZPjWIj8xBEgSbnYgCCZ6SdOcpLJpaK55BO3wiYaMhD5cK
-	 /0smElR5of0vQ==
-Message-ID: <9c5e9e07-b370-4c71-9dd6-8b6a3efe32c7@kernel.org>
-Date: Wed, 21 Jan 2026 17:17:45 -0500
+	s=k20201202; t=1769035514;
+	bh=X9GMFmX3lmVoM7Wyp1BJVuWxvPlHn7pb3V6w9rcXX/w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qToUqfSimzMUv2EN+W5xNQXquqmVadf6FrppWkmlwdNKnANlyZZ7HjAdxBPAeeVcO
+	 xYCqff40Sw6oML2wuCiNe4JSU5Lze0olAXcIzfGTerklruOtbHF8YmMxh8gxnInVzo
+	 UDAnO/9ePUKxwoYh7o58LB/Q+4bs+Zqa28P2uszXdJ/gt16DVmQAzcbhdNJnPz6p1i
+	 K4SUxNzszLTd9OuqnjGX4BC80a7DpnO/yfAX8bMA4hZTPqP/aKYoDvxhTnuZE+aJIi
+	 cjYI9Rb/wdT6d5eaPrxu3e7SFnJHW0tPyKFPF6MHaZjbxuAasM7zK2fQcXLOTYmS7u
+	 T2tT3a9x3Y6wA==
+Date: Wed, 21 Jan 2026 14:45:13 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, bernd@bsbernd.com, neal@gompa.dev,
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 01/31] fuse: implement the basic iomap mechanisms
+Message-ID: <20260121224513.GJ5966@frogsfrogsfrogs>
+References: <176169810144.1424854.11439355400009006946.stgit@frogsfrogsfrogs>
+ <176169810371.1424854.3010195280915622081.stgit@frogsfrogsfrogs>
+ <CAJnrk1ZOLNytBdVqvWiHbwA0rE0KCVt09SmHFZ3pp_tffg+iaQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] NFSD: Add a key for signing filehandles
-To: Benjamin Coddington <bcodding@hammerspace.com>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
- NeilBrown <neil@brown.name>, Trond Myklebust <trondmy@kernel.org>,
- Anna Schumaker <anna@kernel.org>, Eric Biggers <ebiggers@kernel.org>,
- Rick Macklem <rick.macklem@gmail.com>, linux-nfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-crypto@vger.kernel.org
-References: <cover.1769026777.git.bcodding@hammerspace.com>
- <6d7bfccbaf082194ea257749041c19c2c2385cce.1769026777.git.bcodding@hammerspace.com>
- <e299b7c6-9d37-4ffe-8d45-a95d92e33406@app.fastmail.com>
- <0D5F8EA8-D77E-4F56-9EA6-8D6FC2F2CD37@hammerspace.com>
-Content-Language: en-US
-From: Chuck Lever <cel@kernel.org>
-Organization: kernel.org
-In-Reply-To: <0D5F8EA8-D77E-4F56-9EA6-8D6FC2F2CD37@hammerspace.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1ZOLNytBdVqvWiHbwA0rE0KCVt09SmHFZ3pp_tffg+iaQ@mail.gmail.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.46 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.46 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-74929-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[oracle.com,kernel.org,brown.name,gmail.com,vger.kernel.org];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	HAS_ORG_HEADER(0.00)[];
-	DMARC_POLICY_ALLOW(0.00)[kernel.org,quarantine];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[kernel.org:+];
 	FROM_HAS_DN(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	TAGGED_FROM(0.00)[bounces-74930-lists,linux-fsdevel=lfdr.de];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	DMARC_POLICY_ALLOW(0.00)[kernel.org,quarantine];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[cel@kernel.org,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
+	ASN(0.00)[asn:7979, ipnet:2a01:60a::/32, country:US];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:helo,dfw.mirrors.kernel.org:rdns]
-X-Rspamd-Queue-Id: CF4305EBEB
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:helo,ams.mirrors.kernel.org:rdns]
+X-Rspamd-Queue-Id: 8DB085F087
 X-Rspamd-Action: no action
 
-On 1/21/26 3:54 PM, Benjamin Coddington wrote:
-> On 21 Jan 2026, at 15:43, Chuck Lever wrote:
+On Wed, Jan 21, 2026 at 11:34:24AM -0800, Joanne Koong wrote:
+> On Tue, Oct 28, 2025 at 5:45 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> > From: Darrick J. Wong <djwong@kernel.org>
+> >
+> > Implement functions to enable upcalling of iomap_begin and iomap_end to
+> > userspace fuse servers.
+> >
+> > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+> > ---
+> >  fs/fuse/fuse_i.h          |   22 ++
+> >  fs/fuse/iomap_i.h         |   36 ++++
+> >  include/uapi/linux/fuse.h |   90 +++++++++
+> >  fs/fuse/Kconfig           |   32 +++
+> >  fs/fuse/Makefile          |    1
+> >  fs/fuse/file_iomap.c      |  434 +++++++++++++++++++++++++++++++++++++++++++++
+> >  fs/fuse/inode.c           |    8 +
+> >  7 files changed, 621 insertions(+), 2 deletions(-)
+> >  create mode 100644 fs/fuse/iomap_i.h
+> >  create mode 100644 fs/fuse/file_iomap.c
+> >
+> >
+> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > index 7c7d255d817f1e..45be59df7ae592 100644
+> > --- a/fs/fuse/fuse_i.h
+> > +++ b/fs/fuse/fuse_i.h
+> > @@ -929,6 +929,9 @@ struct fuse_conn {
+> >         /* Is synchronous FUSE_INIT allowed? */
+> >         unsigned int sync_init:1;
+> >
+> > +       /* Enable fs/iomap for file operations */
+> > +       unsigned int iomap:1;
+> > +
+> >         /* Use io_uring for communication */
+> >         unsigned int io_uring;
+> >
+> > @@ -1053,12 +1056,17 @@ static inline struct fuse_mount *get_fuse_mount_super(struct super_block *sb)
+> >         return sb->s_fs_info;
+> >  }
+> >
+> > +static inline const struct fuse_mount *get_fuse_mount_super_c(const struct super_block *sb)
+> > +{
+> > +       return sb->s_fs_info;
+> > +}
 > 
->> On Wed, Jan 21, 2026, at 3:24 PM, Benjamin Coddington wrote:
->>> A future patch will enable NFSD to sign filehandles by appending a Message
->>> Authentication Code(MAC).  To do this, NFSD requires a secret 128-bit key
->>> that can persist across reboots.  A persisted key allows the server to
->>> accept filehandles after a restart.  Enable NFSD to be configured with this
->>> key via both the netlink and nfsd filesystem interfaces.
->>>
->>> Since key changes will break existing filehandles, the key can only be set
->>> once.  After it has been set any attempts to set it will return -EEXIST.
->>>
->>> Link:
->>> https://lore.kernel.org/linux-nfs/cover.1769026777.git.bcodding@hammerspace.com
->>> Signed-off-by: Benjamin Coddington <bcodding@hammerspace.com>
->>> ---
->>>  Documentation/netlink/specs/nfsd.yaml |  6 ++
->>>  fs/nfsd/netlink.c                     |  5 +-
->>>  fs/nfsd/netns.h                       |  2 +
->>>  fs/nfsd/nfsctl.c                      | 94 +++++++++++++++++++++++++++
->>>  fs/nfsd/trace.h                       | 25 +++++++
->>>  include/uapi/linux/nfsd_netlink.h     |  1 +
->>>  6 files changed, 131 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/Documentation/netlink/specs/nfsd.yaml
->>> b/Documentation/netlink/specs/nfsd.yaml
->>> index badb2fe57c98..d348648033d9 100644
->>> --- a/Documentation/netlink/specs/nfsd.yaml
->>> +++ b/Documentation/netlink/specs/nfsd.yaml
->>> @@ -81,6 +81,11 @@ attribute-sets:
->>>        -
->>>          name: min-threads
->>>          type: u32
->>> +      -
->>> +        name: fh-key
->>> +        type: binary
->>> +        checks:
->>> +            exact-len: 16
->>>    -
->>>      name: version
->>>      attributes:
->>> @@ -163,6 +168,7 @@ operations:
->>>              - leasetime
->>>              - scope
->>>              - min-threads
->>> +            - fh-key
->>>      -
->>>        name: threads-get
->>>        doc: get the number of running threads
->>> diff --git a/fs/nfsd/netlink.c b/fs/nfsd/netlink.c
->>> index 887525964451..81c943345d13 100644
->>> --- a/fs/nfsd/netlink.c
->>> +++ b/fs/nfsd/netlink.c
->>> @@ -24,12 +24,13 @@ const struct nla_policy
->>> nfsd_version_nl_policy[NFSD_A_VERSION_ENABLED + 1] = {
->>>  };
->>>
->>>  /* NFSD_CMD_THREADS_SET - do */
->>> -static const struct nla_policy
->>> nfsd_threads_set_nl_policy[NFSD_A_SERVER_MIN_THREADS + 1] = {
->>> +static const struct nla_policy
->>> nfsd_threads_set_nl_policy[NFSD_A_SERVER_FH_KEY + 1] = {
->>>  	[NFSD_A_SERVER_THREADS] = { .type = NLA_U32, },
->>>  	[NFSD_A_SERVER_GRACETIME] = { .type = NLA_U32, },
->>>  	[NFSD_A_SERVER_LEASETIME] = { .type = NLA_U32, },
->>>  	[NFSD_A_SERVER_SCOPE] = { .type = NLA_NUL_STRING, },
->>>  	[NFSD_A_SERVER_MIN_THREADS] = { .type = NLA_U32, },
->>> +	[NFSD_A_SERVER_FH_KEY] = NLA_POLICY_EXACT_LEN(16),
->>>  };
->>>
->>>  /* NFSD_CMD_VERSION_SET - do */
->>> @@ -58,7 +59,7 @@ static const struct genl_split_ops nfsd_nl_ops[] = {
->>>  		.cmd		= NFSD_CMD_THREADS_SET,
->>>  		.doit		= nfsd_nl_threads_set_doit,
->>>  		.policy		= nfsd_threads_set_nl_policy,
->>> -		.maxattr	= NFSD_A_SERVER_MIN_THREADS,
->>> +		.maxattr	= NFSD_A_SERVER_FH_KEY,
->>>  		.flags		= GENL_ADMIN_PERM | GENL_CMD_CAP_DO,
->>>  	},
->>>  	{
->>> diff --git a/fs/nfsd/netns.h b/fs/nfsd/netns.h
->>> index 9fa600602658..c8ed733240a0 100644
->>> --- a/fs/nfsd/netns.h
->>> +++ b/fs/nfsd/netns.h
->>> @@ -16,6 +16,7 @@
->>>  #include <linux/percpu-refcount.h>
->>>  #include <linux/siphash.h>
->>>  #include <linux/sunrpc/stats.h>
->>> +#include <linux/siphash.h>
->>>
->>>  /* Hash tables for nfs4_clientid state */
->>>  #define CLIENT_HASH_BITS                 4
->>> @@ -224,6 +225,7 @@ struct nfsd_net {
->>>  	spinlock_t              local_clients_lock;
->>>  	struct list_head	local_clients;
->>>  #endif
->>> +	siphash_key_t		*fh_key;
->>>  };
->>>
->>>  /* Simple check to find out if a given net was properly initialized */
->>> diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
->>> index 30caefb2522f..e59639efcf5c 100644
->>> --- a/fs/nfsd/nfsctl.c
->>> +++ b/fs/nfsd/nfsctl.c
->>> @@ -49,6 +49,7 @@ enum {
->>>  	NFSD_Ports,
->>>  	NFSD_MaxBlkSize,
->>>  	NFSD_MinThreads,
->>> +	NFSD_Fh_Key,
->>>  	NFSD_Filecache,
->>>  	NFSD_Leasetime,
->>>  	NFSD_Gracetime,
->>> @@ -69,6 +70,7 @@ static ssize_t write_versions(struct file *file, char
->>> *buf, size_t size);
->>>  static ssize_t write_ports(struct file *file, char *buf, size_t size);
->>>  static ssize_t write_maxblksize(struct file *file, char *buf, size_t
->>> size);
->>>  static ssize_t write_minthreads(struct file *file, char *buf, size_t
->>> size);
->>> +static ssize_t write_fh_key(struct file *file, char *buf, size_t size);
->>>  #ifdef CONFIG_NFSD_V4
->>>  static ssize_t write_leasetime(struct file *file, char *buf, size_t
->>> size);
->>>  static ssize_t write_gracetime(struct file *file, char *buf, size_t
->>> size);
->>> @@ -88,6 +90,7 @@ static ssize_t (*const write_op[])(struct file *,
->>> char *, size_t) = {
->>>  	[NFSD_Ports] = write_ports,
->>>  	[NFSD_MaxBlkSize] = write_maxblksize,
->>>  	[NFSD_MinThreads] = write_minthreads,
->>> +	[NFSD_Fh_Key] = write_fh_key,
->>>  #ifdef CONFIG_NFSD_V4
->>>  	[NFSD_Leasetime] = write_leasetime,
->>>  	[NFSD_Gracetime] = write_gracetime,
->>> @@ -950,6 +953,60 @@ static ssize_t write_minthreads(struct file *file,
->>> char *buf, size_t size)
->>>  	return scnprintf(buf, SIMPLE_TRANSACTION_LIMIT, "%u\n", minthreads);
->>>  }
->>>
->>> +/*
->>> + * write_fh_key - Set or report the current NFS filehandle key, the key
->>> + * 		can only be set once, else -EEXIST because changing the key
->>> + * 		will break existing filehandles.
->>
->> Do you really need both a /proc/fs/nfsd API and a netlink API? I
->> think one or the other would be sufficient, unless you have
->> something else in mind (in which case, please elaborate in the
->> patch description).
+> I'm not seeing this getting used anywhere - did you mean to remove this?
+
+Yeah.
+
+> > +
+> >  static inline struct fuse_conn *get_fuse_conn_super(struct super_block *sb)
+> >  {
+> >         return get_fuse_mount_super(sb)->fc;
+> >  }
+> >
+> > -static inline struct fuse_mount *get_fuse_mount(struct inode *inode)
+> > +static inline struct fuse_mount *get_fuse_mount(const struct inode *inode)
+> >  {
+> >         return get_fuse_mount_super(inode->i_sb);
+> >  }
+> > @@ -1683,4 +1691,16 @@ extern void fuse_sysctl_unregister(void);
+> >  #define fuse_sysctl_unregister()       do { } while (0)
+> >  #endif /* CONFIG_SYSCTL */
+> >
+> > +#if IS_ENABLED(CONFIG_FUSE_IOMAP)
+> > +bool fuse_iomap_enabled(void);
+> > +
+> > +static inline bool fuse_has_iomap(const struct inode *inode)
+> > +{
+> > +       return get_fuse_conn(inode)->iomap;
+> > +}
+> > +#else
+> > +# define fuse_iomap_enabled(...)               (false)
+> > +# define fuse_has_iomap(...)                   (false)
+> > +#endif
+> > +
+> >  #endif /* _FS_FUSE_I_H */
+> > diff --git a/fs/fuse/iomap_i.h b/fs/fuse/iomap_i.h
+> > new file mode 100644
+> > index 00000000000000..d773f728579d1d
+> > --- /dev/null
+> > +++ b/fs/fuse/iomap_i.h
+> > @@ -0,0 +1,36 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (C) 2025 Oracle.  All Rights Reserved.
+> > + * Author: Darrick J. Wong <djwong@kernel.org>
+> > + */
+> > +#ifndef _FS_FUSE_IOMAP_I_H
+> > +#define _FS_FUSE_IOMAP_I_H
+> > +
+> > +#if IS_ENABLED(CONFIG_FUSE_IOMAP)
+> > +#if IS_ENABLED(CONFIG_FUSE_IOMAP_DEBUG)
+> > +# define ASSERT(condition) do {                                                \
+> > +       int __cond = !!(condition);                                     \
+> > +       WARN(!__cond, "Assertion failed: %s, func: %s, line: %d", #condition, __func__, __LINE__); \
+> > +} while (0)
+> > +# define BAD_DATA(condition) ({                                                \
+> > +       int __cond = !!(condition);                                     \
+> > +       WARN(__cond, "Bad mapping: %s, func: %s, line: %d", #condition, __func__, __LINE__); \
+> > +})
+> > +#else
+> > +# define ASSERT(condition)
+> > +# define BAD_DATA(condition) ({                                                \
+> > +       int __cond = !!(condition);                                     \
+> > +       unlikely(__cond);                                               \
+> > +})
+> > +#endif /* CONFIG_FUSE_IOMAP_DEBUG */
+> > +
+> > +enum fuse_iomap_iodir {
+> > +       READ_MAPPING,
+> > +       WRITE_MAPPING,
+> > +};
+> > +
+> > +#define EFSCORRUPTED   EUCLEAN
+> > +
+> > +#endif /* CONFIG_FUSE_IOMAP */
+> > +
+> > +#endif /* _FS_FUSE_IOMAP_I_H */
+> > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> > index 18713cfaf09171..7d709cf12b41a7 100644
+> > --- a/include/uapi/linux/fuse.h
+> > +++ b/include/uapi/linux/fuse.h
+> > @@ -240,6 +240,9 @@
+> >   *  - add FUSE_COPY_FILE_RANGE_64
+> >   *  - add struct fuse_copy_file_range_out
+> >   *  - add FUSE_NOTIFY_PRUNE
+> > + *
+> > + *  7.99
 > 
-> Yes, some distros use one or the other.  Some try to use both!  Until you
-> guys deprecate one of the interfaces I think we're stuck expanding them
-> both.
+> Should this be changed to something like 7.46 now that this patch is
+> submitted for merging into the tree?
 
-Neil has said he wants to keep /proc/fs/nfsd rather indefinitely, and
-we have publicly stated we will add only to netlink unless it's
-unavoidable. I prefer not growing the legacy API.
+When review of this patchset nears completion I'll change the 99s to
+46 or whatever the fuse/libfuse minor version happens to be at that
+point.
 
-We generally don't backport new features like this one to stable
-kernels, so IMO tucking this into only netlink is defensible.
+Nobody's touched this series since 29 October (during 6.19 development)
+and I've been busy with xfs_healer so I'm not submitting this for 7.0
+either.
 
-The procfs API has the ordering requirement that Jeff pointed out. I
-don't think it's a safe API to allow the server to start up without
-setting the key first. The netlink API provides a better guarantee
-there.
-
-
->> Also "set once" seems to be ambiguous. Is it "set once" per NFSD
->> module load, one per system boot epoch, or set once, _ever_ ?
+> > + *  - add FUSE_IOMAP and iomap_{begin,end,ioend} for regular file operations
+> >   */
+> >
+> >  #ifndef _LINUX_FUSE_H
+> > @@ -275,7 +278,7 @@
+> >  #define FUSE_KERNEL_VERSION 7
+> >
+> >  /** Minor version number of this interface */
+> > -#define FUSE_KERNEL_MINOR_VERSION 45
+> > +#define FUSE_KERNEL_MINOR_VERSION 99
 > 
-> Once per nfsd module load - I can clarify next time.
+> Same question here
 > 
->> While it's good UX safety to prevent reseting the key, there are
->> going to be cases where it is both needed and safe to replace the
->> FH signing key. Have you considered providing a key rotation
->> mechanism or a recipe to do so?
+> >
+> >  /** The node ID of the root inode */
+> >  #define FUSE_ROOT_ID 1
+> > @@ -448,6 +451,7 @@ struct fuse_file_lock {
+> >   * FUSE_OVER_IO_URING: Indicate that client supports io-uring
+> >   * FUSE_REQUEST_TIMEOUT: kernel supports timing out requests.
+> >   *                      init_out.request_timeout contains the timeout (in secs)
+> > + * FUSE_IOMAP: Client supports iomap for regular file operations.
+> >   */
+> >  #define FUSE_ASYNC_READ                (1 << 0)
+> >  #define FUSE_POSIX_LOCKS       (1 << 1)
+> > @@ -495,6 +499,7 @@ struct fuse_file_lock {
+> >  #define FUSE_ALLOW_IDMAP       (1ULL << 40)
+> >  #define FUSE_OVER_IO_URING     (1ULL << 41)
+> >  #define FUSE_REQUEST_TIMEOUT   (1ULL << 42)
+> > +#define FUSE_IOMAP             (1ULL << 43)
+> >
+> >  /**
+> >   * CUSE INIT request/reply flags
+> > @@ -664,6 +669,9 @@ enum fuse_opcode {
+> >         FUSE_STATX              = 52,
+> >         FUSE_COPY_FILE_RANGE_64 = 53,
+> >
+> > +       FUSE_IOMAP_BEGIN        = 4094,
+> > +       FUSE_IOMAP_END          = 4095,
+> > +
+> >         /* CUSE specific operations */
+> >         CUSE_INIT               = 4096,
+> >
+> > @@ -1314,4 +1322,84 @@ struct fuse_uring_cmd_req {
+> >         uint8_t padding[6];
+> >  };
+> >
+> > +/* mapping types; see corresponding IOMAP_TYPE_ */
+> > +#define FUSE_IOMAP_TYPE_HOLE           (0)
+> > +#define FUSE_IOMAP_TYPE_DELALLOC       (1)
+> > +#define FUSE_IOMAP_TYPE_MAPPED         (2)
+> > +#define FUSE_IOMAP_TYPE_UNWRITTEN      (3)
+> > +#define FUSE_IOMAP_TYPE_INLINE         (4)
+> > +
+> > +/* fuse-specific mapping type indicating that writes use the read mapping */
+> > +#define FUSE_IOMAP_TYPE_PURE_OVERWRITE (255)
+> > +
+> > +#define FUSE_IOMAP_DEV_NULL            (0U)    /* null device cookie */
+> > +
+> > +/* mapping flags passed back from iomap_begin; see corresponding IOMAP_F_ */
+> > +#define FUSE_IOMAP_F_NEW               (1U << 0)
+> > +#define FUSE_IOMAP_F_DIRTY             (1U << 1)
+> > +#define FUSE_IOMAP_F_SHARED            (1U << 2)
+> > +#define FUSE_IOMAP_F_MERGED            (1U << 3)
+> > +#define FUSE_IOMAP_F_BOUNDARY          (1U << 4)
+> > +#define FUSE_IOMAP_F_ANON_WRITE                (1U << 5)
+> > +#define FUSE_IOMAP_F_ATOMIC_BIO                (1U << 6)
 > 
-> I've considered it, but we do not need it at this point.
+> Do you think it makes sense to have the fuse iomap constants mirror
+> the in-kernel iomap ones? Maybe I'm mistaken but it seems like the
+> fuse iomap capabilities won't diverge too much from fs/iomap ones? I
+> like that if they're mirrored, then it makes it simpler instead of
+> needing to convert back and forth.
 
-I disagree: Admins will need to know how to replace an FH key that was
-compromised. At the very least your docs should explain how to do that
-safely.
+"Mirrored"?  As in, having the define use a symbol:
 
+#define FUSE_IOMAP_F_NEW		IOMAP_F_NEW
 
-> The key can
-> be replaced today by restarting the server, and you really need to know what
-> you're doing if you want to replace it.  Writing extra code to help someone
-> that knows isn't really going to help them.  If a need appears for this, the
-> work can get done.
+instead of defining it to be a specific numerical constant like it is
+here?
 
-I cleverly said "a key rotation mechanism _or_ a recipe" so if it's
-something you prefer only to document, let's take that route.
+<confused>
 
-Ensuring all clients have unmounted and then unloading nfsd.ko before
-setting a fresh key is a lot of juggling. That should be enough to
-prevent an FH key change by accident.
+This might not be answering your question, but as an old iomap
+maintainer I want the kernel iomap api and the fuse iomap uabi to
+be as decoupled as they can be; and trust the compiler to notice that
+the flag and enum constants are the same and not do anything too stupid
+with the translation.
 
+> > +/* fuse-specific mapping flag asking for ->iomap_end call */
+> > +#define FUSE_IOMAP_F_WANT_IOMAP_END    (1U << 7)
+> > +
+> > +/* mapping flags passed to iomap_end */
+> > +#define FUSE_IOMAP_F_SIZE_CHANGED      (1U << 8)
+> > +#define FUSE_IOMAP_F_STALE             (1U << 9)
+> > +
+> > +/* operation flags from iomap; see corresponding IOMAP_* */
+> > +#define FUSE_IOMAP_OP_WRITE            (1U << 0)
+> > +#define FUSE_IOMAP_OP_ZERO             (1U << 1)
+> > +#define FUSE_IOMAP_OP_REPORT           (1U << 2)
+> > +#define FUSE_IOMAP_OP_FAULT            (1U << 3)
+> > +#define FUSE_IOMAP_OP_DIRECT           (1U << 4)
+> > +#define FUSE_IOMAP_OP_NOWAIT           (1U << 5)
+> > +#define FUSE_IOMAP_OP_OVERWRITE_ONLY   (1U << 6)
+> > +#define FUSE_IOMAP_OP_UNSHARE          (1U << 7)
+> > +#define FUSE_IOMAP_OP_DAX              (1U << 8)
+> > +#define FUSE_IOMAP_OP_ATOMIC           (1U << 9)
+> > +#define FUSE_IOMAP_OP_DONTCACHE                (1U << 10)
+> > +
+> > +#define FUSE_IOMAP_NULL_ADDR           (-1ULL) /* addr is not valid */
+> > +
+> > +struct fuse_iomap_io {
+> > +       uint64_t offset;        /* file offset of mapping, bytes */
+> > +       uint64_t length;        /* length of mapping, bytes */
+> > +       uint64_t addr;          /* disk offset of mapping, bytes */
+> > +       uint16_t type;          /* FUSE_IOMAP_TYPE_* */
+> > +       uint16_t flags;         /* FUSE_IOMAP_F_* */
+> > +       uint32_t dev;           /* device cookie */
+> 
+> Do you think it's a good idea to add a reserved field here in case we
+> end up needing it in the future?
 
--- 
-Chuck Lever
+I'm open to the idea of pre-padding the structs, though that's extra
+copy overhead until they get used for something.
+
+Does that fuse-iouring-zerocopy patchset that you're working on enable
+the kernel to avoid copying fuse command data around?  I haven't read it
+in sufficient (or any) detail to know the answer to that question.
+
+Second: how easy is it to send a variable sized fuse command to
+userspace?  It looks like some commands like FUSE_WRITE do things like:
+
+	if (ff->fm->fc->minor < 9)
+		args->in_args[0].size = FUSE_COMPAT_WRITE_IN_SIZE;
+	else
+		args->in_args[0].size = sizeof(ia->write.in);
+	args->in_args[0].value = &ia->write.in;
+	args->in_args[1].size = count;
+
+Which means that future expansion can (in theory) bump the minor version
+and send larer commands.
+
+It also looks like the kernel can support receiving variable-sized
+responses, like FUSE_READ does:
+
+	args->out_argvar = true;
+	args->out_numargs = 1;
+	args->out_args[0].size = count;
+
+I think this means that if we ever needed to expand the _out struct to
+allow the fuse server to send back a more lengthy response, we could
+potentially do that without needing a minor protocol version bump.
+
+> > +};
+> > +
+> > +struct fuse_iomap_begin_in {
+> > +       uint32_t opflags;       /* FUSE_IOMAP_OP_* */
+> > +       uint32_t reserved;      /* zero */
+> > +       uint64_t attr_ino;      /* matches fuse_attr:ino */
+> > +       uint64_t pos;           /* file position, in bytes */
+> > +       uint64_t count;         /* operation length, in bytes */
+> > +};
+> > +
+> > +struct fuse_iomap_begin_out {
+> > +       /* read file data from here */
+> > +       struct fuse_iomap_io    read;
+> > +
+> > +       /* write file data to here, if applicable */
+> > +       struct fuse_iomap_io    write;
+> 
+> Same question here
+
+How much padding do you want?  fuse_iomap_io is conveniently half a
+cacheline right now...
+
+> > +};
+> > +
+> > +struct fuse_iomap_end_in {
+> > +       uint32_t opflags;       /* FUSE_IOMAP_OP_* */
+> > +       uint32_t reserved;      /* zero */
+> > +       uint64_t attr_ino;      /* matches fuse_attr:ino */
+> > +       uint64_t pos;           /* file position, in bytes */
+> > +       uint64_t count;         /* operation length, in bytes */
+> > +       int64_t written;        /* bytes processed */
+> 
+> On the fs/iomap side, I see that written is passed through by
+> iomap_iter() to ->iomap_end through 'ssize_t advanced' but it's not
+> clear to me why advanced needs to be signed. I think it used to also
+> represent the error status, but it looks like now that's represented
+> through iter->status and 'advanced' strictly reflects the number of
+> bytes written. As such, do you think it makes sense to change
+> 'advanced' to loff_t and have written be uint64_t instead?
+
+Not quite -- back in the bad old days, iomap_iter::processed was a s64
+value that the iteration loop had to set to one of:
+
+ * a positive number for positive progress
+ * zero to stop the iteration
+ * a negative errno to fail out
+
+Nowadays we just move iomap_iter::pos forward via iomap_iter_advance or
+set status to a negative number to end the iteration.
+
+So yes, I think @advanced should be widened to 64-bits since iomap
+operations can jump more than 2GB per iter step.  Practically speaking I
+think this hasn't yet been a problem because the only operations that
+can do that (fiemap, seek, swap) also don't have any client filesystems
+that implement iomap_end; or they do but never send mappings large
+enough to cause problems.
+
+iomap iters can't go backwards so @advanced could be u64 as well.
+
+Also the name of the ->iomap_end parameter could be changed to
+"advanced" because iomap_end could in theory be called for any
+operation, not just writes.  That's a throwback to the days when the
+iomap code was just part of xfs.  It also is an unsigned quantity.
+
+> > +
+> > +       /* mapping that the kernel acted upon */
+> > +       struct fuse_iomap_io    map;
+> > +};
+> > +
+> >  #endif /* _LINUX_FUSE_H */
+> > diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
+> > index 290d1c09e0b924..934d48076a010c 100644
+> > --- a/fs/fuse/Kconfig
+> > +++ b/fs/fuse/Kconfig
+> > @@ -69,6 +69,38 @@ config FUSE_PASSTHROUGH
+> >  config FUSE_BACKING
+> >         bool
+> >
+> > +config FUSE_IOMAP
+> > +       bool "FUSE file IO over iomap"
+> > +       default y
+> > +       depends on FUSE_FS
+> > +       depends on BLOCK
+> > +       select FS_IOMAP
+> > +       help
+> > +         Enable fuse servers to operate the regular file I/O path through
+> > +         the fs-iomap library in the kernel.  This enables higher performance
+> > +         userspace filesystems by keeping the performance critical parts in
+> > +         the kernel while delegating the difficult metadata parsing parts to
+> > +         an easily-contained userspace program.
+> > +
+> > +         This feature is considered EXPERIMENTAL.  Use with caution!
+> > +
+> > +         If unsure, say N.
+> > +
+> > +config FUSE_IOMAP_BY_DEFAULT
+> > +       bool "FUSE file I/O over iomap by default"
+> > +       default n
+> > +       depends on FUSE_IOMAP
+> > +       help
+> > +         Enable sending FUSE file I/O over iomap by default.
+> 
+> I'm not really sure what the general linux preference is for adding
+> new configs, but assuming it errs towards less configs than more, imo
+> it seems easy enough to just set the enable_iomap module param to true
+> manually instead of needing this config for it, especially since the
+> param only needs to be set once.
+
+/me doesn't know what the norm is in fuse-land -- for xfs I've preferred
+to have a kconfig option for experimental code so that distros can turn
+off experimental stuff they don't want to support.
+
+OTOH they can also patch it out or affix the module param to 0.
+
+Also I'm not sure if the kernel tinyfication project is still active,
+for a while they were advocating strongly for more kconfig options so
+that people building embedded kernels could turn off big chunks of
+functionality they'd never need.
+
+> > +
+> > +config FUSE_IOMAP_DEBUG
+> > +       bool "Debug FUSE file IO over iomap"
+> > +       default y
+> > +       depends on FUSE_IOMAP
+> > +       help
+> > +         Enable debugging assertions for the fuse iomap code paths and logging
+> > +         of bad iomap file mapping data being sent to the kernel.
+> 
+> I'm wondering if it makes sense to make this a general FUSE_DEBUG
+> config so we can reuse this more generally
+
+In general yes but I highly recommend that everyone look at the static
+labels and auto-ftracing stuff enabled by the next few debug patches
+before anyone commits to spreading that enhanced observability / brain
+disease to the rest of fuse. ;)
+
+> > +
+> >  config FUSE_IO_URING
+> >         bool "FUSE communication over io-uring"
+> >         default y
+> > diff --git a/fs/fuse/Makefile b/fs/fuse/Makefile
+> > index 46041228e5be2c..27be39317701d6 100644
+> > --- a/fs/fuse/Makefile
+> > +++ b/fs/fuse/Makefile
+> > @@ -18,5 +18,6 @@ fuse-$(CONFIG_FUSE_PASSTHROUGH) += passthrough.o
+> >  fuse-$(CONFIG_FUSE_BACKING) += backing.o
+> >  fuse-$(CONFIG_SYSCTL) += sysctl.o
+> >  fuse-$(CONFIG_FUSE_IO_URING) += dev_uring.o
+> > +fuse-$(CONFIG_FUSE_IOMAP) += file_iomap.o
+> >
+> >  virtiofs-y := virtio_fs.o
+> > diff --git a/fs/fuse/file_iomap.c b/fs/fuse/file_iomap.c
+> > new file mode 100644
+> > index 00000000000000..d564d60d0f1779
+> > --- /dev/null
+> > +++ b/fs/fuse/file_iomap.c
+> > @@ -0,0 +1,434 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (C) 2025 Oracle.  All Rights Reserved.
+> > + * Author: Darrick J. Wong <djwong@kernel.org>
+> > + */
+> > +#include <linux/iomap.h>
+> > +#include "fuse_i.h"
+> > +#include "fuse_trace.h"
+> > +#include "iomap_i.h"
+> > +
+> > +static bool __read_mostly enable_iomap =
+> > +#if IS_ENABLED(CONFIG_FUSE_IOMAP_BY_DEFAULT)
+> > +       true;
+> > +#else
+> > +       false;
+> > +#endif
+> > +module_param(enable_iomap, bool, 0644);
+> > +MODULE_PARM_DESC(enable_iomap, "Enable file I/O through iomap");
+> > +
+> > +bool fuse_iomap_enabled(void)
+> > +{
+> > +       /* Don't let anyone touch iomap until the end of the patchset. */
+> > +       return false;
+> > +
+> > +       /*
+> > +        * There are fears that a fuse+iomap server could somehow DoS the
+> > +        * system by doing things like going out to lunch during a writeback
+> > +        * related iomap request.  Only allow iomap access if the fuse server
+> > +        * has rawio capabilities since those processes can mess things up
+> > +        * quite well even without our help.
+> > +        */
+> > +       return enable_iomap && has_capability_noaudit(current, CAP_SYS_RAWIO);
+> > +}
+> > +
+> > +/* Convert IOMAP_* mapping types to FUSE_IOMAP_TYPE_* */
+> > +#define XMAP(word) \
+> > +       case IOMAP_##word: \
+> > +               return FUSE_IOMAP_TYPE_##word
+> > +static inline uint16_t fuse_iomap_type_to_server(uint16_t iomap_type)
+> > +{
+> > +       switch (iomap_type) {
+> > +       XMAP(HOLE);
+> > +       XMAP(DELALLOC);
+> > +       XMAP(MAPPED);
+> > +       XMAP(UNWRITTEN);
+> > +       XMAP(INLINE);
+> > +       default:
+> > +               ASSERT(0);
+> > +       }
+> > +       return 0;
+> > +}
+> > +#undef XMAP
+> > +
+> > +/* Convert FUSE_IOMAP_TYPE_* to IOMAP_* mapping types */
+> > +#define XMAP(word) \
+> > +       case FUSE_IOMAP_TYPE_##word: \
+> > +               return IOMAP_##word
+> > +static inline uint16_t fuse_iomap_type_from_server(uint16_t fuse_type)
+> > +{
+> > +       switch (fuse_type) {
+> > +       XMAP(HOLE);
+> > +       XMAP(DELALLOC);
+> > +       XMAP(MAPPED);
+> > +       XMAP(UNWRITTEN);
+> > +       XMAP(INLINE);
+> > +       default:
+> > +               ASSERT(0);
+> > +       }
+> > +       return 0;
+> > +}
+> > +#undef XMAP
+> > +
+> > +/* Validate FUSE_IOMAP_TYPE_* */
+> > +static inline bool fuse_iomap_check_type(uint16_t fuse_type)
+> > +{
+> > +       switch (fuse_type) {
+> > +       case FUSE_IOMAP_TYPE_HOLE:
+> > +       case FUSE_IOMAP_TYPE_DELALLOC:
+> > +       case FUSE_IOMAP_TYPE_MAPPED:
+> > +       case FUSE_IOMAP_TYPE_UNWRITTEN:
+> > +       case FUSE_IOMAP_TYPE_INLINE:
+> > +       case FUSE_IOMAP_TYPE_PURE_OVERWRITE:
+> > +               return true;
+> > +       }
+> > +
+> > +       return false;
+> > +}
+> > +
+> > +#define FUSE_IOMAP_F_ALL (FUSE_IOMAP_F_NEW | \
+> > +                         FUSE_IOMAP_F_DIRTY | \
+> > +                         FUSE_IOMAP_F_SHARED | \
+> > +                         FUSE_IOMAP_F_MERGED | \
+> > +                         FUSE_IOMAP_F_BOUNDARY | \
+> > +                         FUSE_IOMAP_F_ANON_WRITE | \
+> > +                         FUSE_IOMAP_F_ATOMIC_BIO | \
+> > +                         FUSE_IOMAP_F_WANT_IOMAP_END)
+> > +
+> > +static inline bool fuse_iomap_check_flags(uint16_t flags)
+> > +{
+> > +       return (flags & ~FUSE_IOMAP_F_ALL) == 0;
+> > +}
+> > +
+> > +/* Convert IOMAP_F_* mapping state flags to FUSE_IOMAP_F_* */
+> > +#define XMAP(word) \
+> > +       if (iomap_f_flags & IOMAP_F_##word) \
+> > +               ret |= FUSE_IOMAP_F_##word
+> > +#define YMAP(iword, oword) \
+> > +       if (iomap_f_flags & IOMAP_F_##iword) \
+> > +               ret |= FUSE_IOMAP_F_##oword
+> > +static inline uint16_t fuse_iomap_flags_to_server(uint16_t iomap_f_flags)
+> > +{
+> > +       uint16_t ret = 0;
+> > +
+> > +       XMAP(NEW);
+> > +       XMAP(DIRTY);
+> > +       XMAP(SHARED);
+> > +       XMAP(MERGED);
+> > +       XMAP(BOUNDARY);
+> > +       XMAP(ANON_WRITE);
+> > +       XMAP(ATOMIC_BIO);
+> > +       YMAP(PRIVATE, WANT_IOMAP_END);
+> > +
+> > +       XMAP(SIZE_CHANGED);
+> > +       XMAP(STALE);
+> > +
+> > +       return ret;
+> > +}
+> > +#undef YMAP
+> > +#undef XMAP
+> > +
+> > +/* Convert FUSE_IOMAP_F_* to IOMAP_F_* mapping state flags */
+> > +#define XMAP(word) \
+> > +       if (fuse_f_flags & FUSE_IOMAP_F_##word) \
+> > +               ret |= IOMAP_F_##word
+> > +#define YMAP(iword, oword) \
+> > +       if (fuse_f_flags & FUSE_IOMAP_F_##iword) \
+> > +               ret |= IOMAP_F_##oword
+> > +static inline uint16_t fuse_iomap_flags_from_server(uint16_t fuse_f_flags)
+> > +{
+> > +       uint16_t ret = 0;
+> > +
+> > +       XMAP(NEW);
+> > +       XMAP(DIRTY);
+> > +       XMAP(SHARED);
+> > +       XMAP(MERGED);
+> > +       XMAP(BOUNDARY);
+> > +       XMAP(ANON_WRITE);
+> > +       XMAP(ATOMIC_BIO);
+> > +       YMAP(WANT_IOMAP_END, PRIVATE);
+> > +
+> > +       return ret;
+> > +}
+> > +#undef YMAP
+> > +#undef XMAP
+> > +
+> > +/* Convert IOMAP_* operation flags to FUSE_IOMAP_OP_* */
+> > +#define XMAP(word) \
+> > +       if (iomap_op_flags & IOMAP_##word) \
+> > +               ret |= FUSE_IOMAP_OP_##word
+> > +static inline uint32_t fuse_iomap_op_to_server(unsigned iomap_op_flags)
+> > +{
+> > +       uint32_t ret = 0;
+> > +
+> > +       XMAP(WRITE);
+> > +       XMAP(ZERO);
+> > +       XMAP(REPORT);
+> > +       XMAP(FAULT);
+> > +       XMAP(DIRECT);
+> > +       XMAP(NOWAIT);
+> > +       XMAP(OVERWRITE_ONLY);
+> > +       XMAP(UNSHARE);
+> > +       XMAP(DAX);
+> > +       XMAP(ATOMIC);
+> > +       XMAP(DONTCACHE);
+> > +
+> > +       return ret;
+> > +}
+> > +#undef XMAP
+> > +
+> > +/* Validate an iomap mapping. */
+> > +static inline bool fuse_iomap_check_mapping(const struct inode *inode,
+> > +                                           const struct fuse_iomap_io *map,
+> > +                                           enum fuse_iomap_iodir iodir)
+> > +{
+> > +       const unsigned int blocksize = i_blocksize(inode);
+> > +       uint64_t end;
+> > +
+> > +       /* Type and flags must be known */
+> > +       if (BAD_DATA(!fuse_iomap_check_type(map->type)))
+> > +               return false;
+> > +       if (BAD_DATA(!fuse_iomap_check_flags(map->flags)))
+> > +               return false;
+> > +
+> > +       /* No zero-length mappings */
+> > +       if (BAD_DATA(map->length == 0))
+> > +               return false;
+> > +
+> > +       /* File range must be aligned to blocksize */
+> > +       if (BAD_DATA(!IS_ALIGNED(map->offset, blocksize)))
+> > +               return false;
+> > +       if (BAD_DATA(!IS_ALIGNED(map->length, blocksize)))
+> > +               return false;
+> > +
+> > +       /* No overflows in the file range */
+> > +       if (BAD_DATA(check_add_overflow(map->offset, map->length, &end)))
+> > +               return false;
+> > +
+> > +       /* File range cannot start past maxbytes */
+> > +       if (BAD_DATA(map->offset >= inode->i_sb->s_maxbytes))
+> > +               return false;
+> > +
+> > +       switch (map->type) {
+> > +       case FUSE_IOMAP_TYPE_MAPPED:
+> > +       case FUSE_IOMAP_TYPE_UNWRITTEN:
+> > +               /* Mappings backed by space must have a device/addr */
+> > +               if (BAD_DATA(map->dev == FUSE_IOMAP_DEV_NULL))
+> > +                       return false;
+> > +               if (BAD_DATA(map->addr == FUSE_IOMAP_NULL_ADDR))
+> > +                       return false;
+> > +               break;
+> > +       case FUSE_IOMAP_TYPE_DELALLOC:
+> > +       case FUSE_IOMAP_TYPE_HOLE:
+> > +       case FUSE_IOMAP_TYPE_INLINE:
+> > +               /* Mappings not backed by space cannot have a device addr. */
+> > +               if (BAD_DATA(map->dev != FUSE_IOMAP_DEV_NULL))
+> > +                       return false;
+> > +               if (BAD_DATA(map->addr != FUSE_IOMAP_NULL_ADDR))
+> > +                       return false;
+> > +               break;
+> > +       case FUSE_IOMAP_TYPE_PURE_OVERWRITE:
+> > +               /* "Pure overwrite" only allowed for write mapping */
+> > +               if (BAD_DATA(iodir != WRITE_MAPPING))
+> > +                       return false;
+> > +               break;
+> > +       default:
+> > +               /* should have been caught already */
+> > +               ASSERT(0);
+> > +               return false;
+> > +       }
+> > +
+> > +       /* XXX: we don't support devices yet */
+> 
+> > +       if (BAD_DATA(map->dev != FUSE_IOMAP_DEV_NULL))
+> > +               return false;
+> > +
+> > +       /* No overflows in the device range, if supplied */
+> > +       if (map->addr != FUSE_IOMAP_NULL_ADDR &&
+> > +           BAD_DATA(check_add_overflow(map->addr, map->length, &end)))
+> > +               return false;
+> > +
+> > +       return true;
+> > +}
+> > +
+> > +/* Convert a mapping from the server into something the kernel can use */
+> > +static inline void fuse_iomap_from_server(struct inode *inode,
+> 
+> Maybe worth adding a const in front of struct inode?
+
+It can go away in a patch or two when we wire up bdev support.
+
+Though considering that fuse_iomap_enabled returns false all the way to
+the end of the patchset I guess I could just set bdev to null and skip
+passing in the inode at all.
+
+> > +                                         struct iomap *iomap,
+> > +                                         const struct fuse_iomap_io *fmap)
+> > +{
+> > +       iomap->addr = fmap->addr;
+> > +       iomap->offset = fmap->offset;
+> > +       iomap->length = fmap->length;
+> > +       iomap->type = fuse_iomap_type_from_server(fmap->type);
+> > +       iomap->flags = fuse_iomap_flags_from_server(fmap->flags);
+> > +       iomap->bdev = inode->i_sb->s_bdev; /* XXX */
+> > +}
+> > +
+> > +/* Convert a mapping from the kernel into something the server can use */
+> > +static inline void fuse_iomap_to_server(struct fuse_iomap_io *fmap,
+> > +                                       const struct iomap *iomap)
+> > +{
+> > +       fmap->addr = FUSE_IOMAP_NULL_ADDR; /* XXX */
+> > +       fmap->offset = iomap->offset;
+> > +       fmap->length = iomap->length;
+> > +       fmap->type = fuse_iomap_type_to_server(iomap->type);
+> > +       fmap->flags = fuse_iomap_flags_to_server(iomap->flags);
+> > +       fmap->dev = FUSE_IOMAP_DEV_NULL; /* XXX */
+> 
+> AFAICT, this only gets used for sending the FUSE_IOMAP_END request. Is
+> passing the iomap->addr to fmap->addr and inode->i_sb->s_bdev to
+> fmap->dev not useful to the server here?
+
+So far the only fields I've needed in fuse4fs are the
+offset/count/written fields as provided by iomap_iter, and the flags
+field from the mapping.  The addr field isn't necessary for fuse4fs
+because the fuse server would know if the mapping had changed.  OTOH
+it's probably harmless to send it along.
+
+Hrm.  I probably need a way to look up the backing_id from the iomap
+bdev.
+
+Looking further ahead at the ioend patch, I just realized that iomap
+ioends can tell you the new address of a write-append operation but they
+don't tell you which device.  I guess you can read that from the
+ioend->io_bio.bi_bdev.
+
+> Also, did you mean to leave in the /* XXX */ comments?
+
+Yes, because they're a reminder to come back and check if I /ever/
+needed them.
+
+> > +}
+> > +
+> > +/* Check the incoming _begin mappings to make sure they're not nonsense. */
+> > +static inline int
+> > +fuse_iomap_begin_validate(const struct inode *inode,
+> > +                         unsigned opflags, loff_t pos,
+> > +                         const struct fuse_iomap_begin_out *outarg)
+> > +{
+> > +       /* Make sure the mappings aren't garbage */
+> > +       if (!fuse_iomap_check_mapping(inode, &outarg->read, READ_MAPPING))
+> > +               return -EFSCORRUPTED;
+> > +
+> > +       if (!fuse_iomap_check_mapping(inode, &outarg->write, WRITE_MAPPING))
+> > +               return -EFSCORRUPTED;
+> > +
+> > +       /*
+> > +        * Must have returned a mapping for at least the first byte in the
+> > +        * range.  The main mapping check already validated that the length
+> > +        * is nonzero and there is no overflow in computing end.
+> > +        */
+> > +       if (BAD_DATA(outarg->read.offset > pos))
+> > +               return -EFSCORRUPTED;
+> > +       if (BAD_DATA(outarg->write.offset > pos))
+> > +               return -EFSCORRUPTED;
+> > +
+> > +       if (BAD_DATA(outarg->read.offset + outarg->read.length <= pos))
+> > +               return -EFSCORRUPTED;
+> > +       if (BAD_DATA(outarg->write.offset + outarg->write.length <= pos))
+> > +               return -EFSCORRUPTED;
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static inline bool fuse_is_iomap_file_write(unsigned int opflags)
+> > +{
+> > +       return opflags & (IOMAP_WRITE | IOMAP_ZERO | IOMAP_UNSHARE);
+> > +}
+> > +
+> > +static int fuse_iomap_begin(struct inode *inode, loff_t pos, loff_t count,
+> > +                           unsigned opflags, struct iomap *iomap,
+> > +                           struct iomap *srcmap)
+> > +{
+> > +       struct fuse_inode *fi = get_fuse_inode(inode);
+> > +       struct fuse_iomap_begin_in inarg = {
+> > +               .attr_ino = fi->orig_ino,
+> > +               .opflags = fuse_iomap_op_to_server(opflags),
+> > +               .pos = pos,
+> > +               .count = count,
+> > +       };
+> > +       struct fuse_iomap_begin_out outarg = { };
+> > +       struct fuse_mount *fm = get_fuse_mount(inode);
+> > +       FUSE_ARGS(args);
+> > +       int err;
+> > +
+> > +       args.opcode = FUSE_IOMAP_BEGIN;
+> > +       args.nodeid = get_node_id(inode);
+> > +       args.in_numargs = 1;
+> > +       args.in_args[0].size = sizeof(inarg);
+> > +       args.in_args[0].value = &inarg;
+> > +       args.out_numargs = 1;
+> > +       args.out_args[0].size = sizeof(outarg);
+> > +       args.out_args[0].value = &outarg;
+> > +       err = fuse_simple_request(fm, &args);
+> > +       if (err)
+> > +               return err;
+> > +
+> > +       err = fuse_iomap_begin_validate(inode, opflags, pos, &outarg);
+> > +       if (err)
+> > +               return err;
+> > +
+> > +       if (fuse_is_iomap_file_write(opflags) &&
+> > +           outarg.write.type != FUSE_IOMAP_TYPE_PURE_OVERWRITE) {
+> > +               /*
+> > +                * For an out of place write, we must supply the write mapping
+> > +                * via @iomap, and the read mapping via @srcmap.
+> > +                */
+> > +               fuse_iomap_from_server(inode, iomap, &outarg.write);
+> > +               fuse_iomap_from_server(inode, srcmap, &outarg.read);
+> > +       } else {
+> > +               /*
+> > +                * For everything else (reads, reporting, and pure overwrites),
+> > +                * we can return the sole mapping through @iomap and leave
+> > +                * @srcmap unchanged from its default (HOLE).
+> > +                */
+> > +               fuse_iomap_from_server(inode, iomap, &outarg.read);
+> > +       }
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +/* Decide if we send FUSE_IOMAP_END to the fuse server */
+> > +static bool fuse_should_send_iomap_end(const struct iomap *iomap,
+> > +                                      unsigned int opflags, loff_t count,
+> > +                                      ssize_t written)
+> > +{
+> > +       /* fuse server demanded an iomap_end call. */
+> > +       if (iomap->flags & FUSE_IOMAP_F_WANT_IOMAP_END)
+> > +               return true;
+> > +
+> > +       /* Reads and reporting should never affect the filesystem metadata */
+> > +       if (!fuse_is_iomap_file_write(opflags))
+> > +               return false;
+> > +
+> > +       /* Appending writes get an iomap_end call */
+> > +       if (iomap->flags & IOMAP_F_SIZE_CHANGED)
+> > +               return true;
+> > +
+> > +       /* Short writes get an iomap_end call to clean up delalloc */
+> > +       return written < count;
+> > +}
+> > +
+> > +static int fuse_iomap_end(struct inode *inode, loff_t pos, loff_t count,
+> > +                         ssize_t written, unsigned opflags,
+> > +                         struct iomap *iomap)
+> > +{
+> > +       struct fuse_inode *fi = get_fuse_inode(inode);
+> > +       struct fuse_mount *fm = get_fuse_mount(inode);
+> > +       int err = 0;
+> > +
+> > +       if (fuse_should_send_iomap_end(iomap, opflags, count, written)) {
+> > +               struct fuse_iomap_end_in inarg = {
+> > +                       .opflags = fuse_iomap_op_to_server(opflags),
+> > +                       .attr_ino = fi->orig_ino,
+> > +                       .pos = pos,
+> > +                       .count = count,
+> > +                       .written = written,
+> > +               };
+> > +               FUSE_ARGS(args);
+> > +
+> > +               fuse_iomap_to_server(&inarg.map, iomap);
+> > +
+> > +               args.opcode = FUSE_IOMAP_END;
+> > +               args.nodeid = get_node_id(inode);
+> 
+> Just curious about this - does it make sense to set args.force here
+> for this opcode? It seems like it serves the same sort of purpose a
+> flush request (which sets args.force) does?
+
+What does args.force do?  There's no documentation of what behaviors
+these fields are supposed to trigger.
+
+> > +               args.in_numargs = 1;
+> > +               args.in_args[0].size = sizeof(inarg);
+> > +               args.in_args[0].value = &inarg;
+> > +               err = fuse_simple_request(fm, &args);
+> > +               switch (err) {
+> > +               case -ENOSYS:
+> > +                       /*
+> > +                        * libfuse returns ENOSYS for servers that don't
+> > +                        * implement iomap_end
+> > +                        */
+> > +                       err = 0;
+> > +                       break;
+> > +               case 0:
+> > +                       break;
+> 
+> Is this case 0 needed separately from the default case?
+
+Nah, that's just me absorbing functional brogrammerisms. ;)
+
+--D
+
+> Thanks,
+> Joanne
+> 
+> > +               default:
+> > +                       break;
+> > +               }
+> > +       }
+> > +
+> > +       return err;
+> > +}
+> > +
+> > +const struct iomap_ops fuse_iomap_ops = {
+> > +       .iomap_begin            = fuse_iomap_begin,
+> > +       .iomap_end              = fuse_iomap_end,
+> > +};
+> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > index 0cac7164afa298..1eea8dc6e723c6 100644
+> > --- a/fs/fuse/inode.c
+> > +++ b/fs/fuse/inode.c
+> > @@ -1457,6 +1457,12 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+> >
+> >                         if (flags & FUSE_REQUEST_TIMEOUT)
+> >                                 timeout = arg->request_timeout;
+> > +
+> > +                       if ((flags & FUSE_IOMAP) && fuse_iomap_enabled()) {
+> > +                               fc->iomap = 1;
+> > +                               pr_warn(
+> > + "EXPERIMENTAL iomap feature enabled.  Use at your own risk!");
+> > +                       }
+> >                 } else {
+> >                         ra_pages = fc->max_read / PAGE_SIZE;
+> >                         fc->no_lock = 1;
+> > @@ -1525,6 +1531,8 @@ static struct fuse_init_args *fuse_new_init(struct fuse_mount *fm)
+> >          */
+> >         if (fuse_uring_enabled())
+> >                 flags |= FUSE_OVER_IO_URING;
+> > +       if (fuse_iomap_enabled())
+> > +               flags |= FUSE_IOMAP;
+> >
+> >         ia->in.flags = flags;
+> >         ia->in.flags2 = flags >> 32;
+> >
 
