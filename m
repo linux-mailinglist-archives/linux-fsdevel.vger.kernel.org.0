@@ -1,267 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-74911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74915-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KHZrGbuOcWkLJAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 03:43:07 +0100
+	id WMiRJec2cWnKfQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74915-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 21:28:23 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD4B261084
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 03:43:06 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B0AE5D38C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 21:28:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A40FF9EA43F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 19:55:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D507F7881EF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 20:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC543D332C;
-	Wed, 21 Jan 2026 19:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225B53DA7EB;
+	Wed, 21 Jan 2026 20:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hHZU8u0q"
+	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="zIlxUAaJ";
+	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="RviAK33Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from e2i340.smtp2go.com (e2i340.smtp2go.com [103.2.141.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2483BBA19
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 19:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D954A3DA7C3
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 20:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769025299; cv=none; b=rXbcdWRGSBr5EvHx005jCO4yBkcmpC7u+OFcZLHyRIKfnR3eYDrnqS31ftAh//1xqQocLv4khYe8ZLJsDLptGuPVl2yhRdvxlpan8pEWVamRkzUiP5t/CoMhDEOeIuId82+ipl1luq0OLdxFn+7gj3rFtTKVrVfkraUxvRA3qKc=
+	t=1769026437; cv=none; b=Ykquv6Tzni6b9Ryf6FZqxTZGUa6HpXn3f28X7LQGYOUNcsBPUG4W22pbyJK4ixR/nn7mt3GNU+qQJg6Sn0uozpqEduPZvxAkDofeiwo160CY4VINFGaIUkMQGU5dCwP0nUiYswy6E4cgPYlUOtckDfa/0lhE+gelHOQd2st2f+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769025299; c=relaxed/simple;
-	bh=+FHQ1hfSyTT6VI8M149P/ZbCjPfOZTrHJq4X8tNwqmU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yc0WgGbech49zqAhQZBp0ubDrJyL05IeDMv6B3dbLXrI0OxjSuH2XkxqNkHaEAyG9Gh2WW6XMbOJoMi4CqnxmS6Ex2E994vAqduy5JhPc0gFUgkWD61j0ZepCVgWV+Kk0I9+JYdatRtUxI9BVDaklXOeLNoN8H6HHy/UhcjFH1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hHZU8u0q; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1769025296;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zfynPqgAvAkpjBmuuO2JFrn162BWPXesCBnZDuNhRyE=;
-	b=hHZU8u0qBtUBcSMzbEQYk9D95HSmR5DiVofxBqsCvhJ+7HAK5liTzamOeXIajSNaI1Tjn6
-	3yRnoXfigKREAXxtOtL/j+HccxSId+wUEoX1s8GR+IlWG/5Q28pu8K1cki1TtzU3RTjaxD
-	D8q3MYOe1CrYT9S+Jquf4ZMaIwh0kuA=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-484-lFkgxWuyM0i-XSDNQC4aXQ-1; Wed,
- 21 Jan 2026 14:54:51 -0500
-X-MC-Unique: lFkgxWuyM0i-XSDNQC4aXQ-1
-X-Mimecast-MFC-AGG-ID: lFkgxWuyM0i-XSDNQC4aXQ_1769025289
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4895719560B2;
-	Wed, 21 Jan 2026 19:54:47 +0000 (UTC)
-Received: from bfoster (unknown [10.22.64.128])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3A97018001D5;
-	Wed, 21 Jan 2026 19:54:42 +0000 (UTC)
-Date: Wed, 21 Jan 2026 14:54:40 -0500
-From: Brian Foster <bfoster@redhat.com>
-To: Kundan Kumar <kundan.kumar@samsung.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	willy@infradead.org, mcgrof@kernel.org, clm@meta.com,
-	david@fromorbit.com, amir73il@gmail.com, axboe@kernel.dk,
-	hch@lst.de, ritesh.list@gmail.com, djwong@kernel.org,
-	dave@stgolabs.net, cem@kernel.org, wangyufei@vivo.com,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-xfs@vger.kernel.org, gost.dev@samsung.com,
-	anuj20.g@samsung.com, vishak.g@samsung.com, joshi.k@samsung.com
-Subject: Re: [PATCH v3 0/6] AG aware parallel writeback for XFS
-Message-ID: <aXEvAD5Rf5QLp4Ma@bfoster>
-References: <CGME20260116101236epcas5p12ba3de776976f4ea6666e16a33ab6ec4@epcas5p1.samsung.com>
- <20260116100818.7576-1-kundan.kumar@samsung.com>
+	s=arc-20240116; t=1769026437; c=relaxed/simple;
+	bh=2aNkmmpN/maFhoXoFDhcOIJSoaTihCV4ecMI+GcnpNE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=InNaaSiGo3z1+KnT6VtCZSKOEYPIRk26bli9t46khbZt+DFKrtGq9oc4roouAR0Nc0PMRWgrr1yN0c8qzo3U53f57HB9qKBz2MbOWAgPdoxJVFqYJbtRvWzAQmHN6XNQC4zfxeseAbZVS3UExdwDom8Bv3kfU737kKmutdYYbrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=zIlxUAaJ reason="unknown key version"; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=RviAK33Q; arc=none smtp.client-ip=103.2.141.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=smtpservice.net; s=maxzs0.a1-4.dyn; x=1769027335; h=Feedback-ID:
+	X-Smtpcorp-Track:Message-ID:Date:Subject:To:From:Reply-To:Sender:
+	List-Unsubscribe:List-Unsubscribe-Post;
+	bh=DkeWrKH0WcCHByM+aqm+Lo33XrX0YtkSj2vD2jtqy8Y=; b=zIlxUAaJeYgUAB2ty5rXTQmgdR
+	6K4gYQedxmkvyk6vMfre5PHdeSP4JSZt4QgR5yT0XH8IHo21MmtIPYBK2lrsy57JXhl3KjGeNhjZQ
+	9dysy5N21l8Lc92e6vUwILyl2o/6F7Lr3YwaXgDTbdNdgiupUWKRd7GyMY9xWTa1fi52xyUF5FURd
+	Nc6Arq2LuZR9hiNaI7alBDnOMzAfK0sK4+3guQ8bE2ia4FrqRc9s63lUWupnu+47FNJAf/v6ZlO68
+	NLJu4Vky1Hk8c+IS74NH+vBeuBylUp1nI21jpn8ehZY3LsMpbLnNiNoPd2uzsOEHt3W+P67TM0siM
+	nAVTD7GQ==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
+ i=@triplefau.lt; q=dns/txt; s=s510616; t=1769026435; h=from : subject
+ : to : message-id : date;
+ bh=DkeWrKH0WcCHByM+aqm+Lo33XrX0YtkSj2vD2jtqy8Y=;
+ b=RviAK33Q80mhtugcrIgShfP+Fh7WIBYGWvYdJxtyAIt9P1BMVF6BivinHFD8/rkYcO+Dr
+ 9aIoU37E8Fy/T4XzQTQ9zDqUYYd40rINOadAqTs10bdlK8AwlxvmXscLTClQyjHr+d7fQZO
+ P0Jvxc7o0IhwlXPqw2F1kwcoWM9TRgJJXTxrMC+AI5VdKG3HFHPpZGIccPNLUBW82J1z6oG
+ vJY+PPjcMnr+EspLhmrFcPVKnCEM4yg0omw1JvYbyL8ZB5ia4zqF7EK0a7b2AJXqTPnFDFH
+ XCZo+jMwb1JOFeo3M0xVLbBSlNjipbSHhaAOjRwnv05SkSRQQm/SUR3zStwg==
+Received: from [10.176.58.103] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.94.2-S2G) (envelope-from <repk@triplefau.lt>)
+ id 1vieaJ-TRk25T-Q8; Wed, 21 Jan 2026 20:13:47 +0000
+Received: from [10.12.239.196] (helo=localhost) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.98.1-S2G) (envelope-from <repk@triplefau.lt>)
+ id 1vieaJ-4o5NDgruk4z-qgaY; Wed, 21 Jan 2026 20:13:47 +0000
+From: Remi Pommarel <repk@triplefau.lt>
+To: v9fs@lists.linux.dev
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Eric Van Hensbergen <ericvh@kernel.org>,
+ Latchesar Ionkov <lucho@ionkov.net>,
+ Dominique Martinet <asmadeus@codewreck.org>,
+ Christian Schoenebeck <linux_oss@crudebyte.com>,
+ Remi Pommarel <repk@triplefau.lt>
+Subject: [PATCH v2 0/3] 9p: Performance improvements for build workloads
+Date: Wed, 21 Jan 2026 20:56:07 +0100
+Message-ID: <cover.1769013622.git.repk@triplefau.lt>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260116100818.7576-1-kundan.kumar@samsung.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
-X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [4.04 / 15.00];
-	MID_END_EQ_FROM_USER_PART(4.00)[];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Smtpcorp-Track: vjBCcuWTrR1H.-uxwllURuJOy.A9IaZwEn6mh
+Feedback-ID: 510616m:510616apGKSTK:510616sVoWefEZkJ
+X-Report-Abuse: Please forward a copy of this message, including all headers,
+ to <abuse-report@smtp2go.com>
+X-Spamd-Result: default: False [-0.46 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
+	R_DKIM_ALLOW(-0.20)[triplefau.lt:s=s510616];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-74911-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,infradead.org,meta.com,fromorbit.com,gmail.com,kernel.dk,lst.de,stgolabs.net,vivo.com,vger.kernel.org,kvack.org,samsung.com];
+	TO_DN_SOME(0.00)[];
+	DMARC_POLICY_ALLOW(0.00)[triplefau.lt,quarantine];
 	RCVD_TLS_LAST(0.00)[];
-	GREYLIST(0.00)[pass,body];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-74915-lists,linux-fsdevel=lfdr.de];
+	DKIM_MIXED(0.00)[];
+	R_DKIM_PERMFAIL(0.00)[smtpservice.net:s=maxzs0.a1-4.dyn];
+	DKIM_TRACE(0.00)[smtpservice.net:~,triplefau.lt:+];
+	ASN(0.00)[asn:7979, ipnet:213.196.21.0/24, country:US];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DMARC_POLICY_ALLOW(0.00)[redhat.com,quarantine];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[repk@triplefau.lt,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[bfoster@redhat.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[redhat.com:+];
-	RCVD_COUNT_FIVE(0.00)[6];
-	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_COUNT_FIVE(0.00)[5];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_TWELVE(0.00)[23];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Rspamd-Queue-Id: CD4B261084
+	DBL_BLOCKED_OPENRESOLVER(0.00)[triplefau.lt:mid,triplefau.lt:dkim,ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo]
+X-Rspamd-Queue-Id: 0B0AE5D38C
 X-Rspamd-Action: no action
+X-Rspamd-Server: lfdr
 
-On Fri, Jan 16, 2026 at 03:38:12PM +0530, Kundan Kumar wrote:
-> This series explores AG aware parallel writeback for XFS. The goal is
-> to reduce writeback contention and improve scalability by allowing
-> writeback to be distributed across allocation groups (AGs).
-> 
-> Problem statement
-> =================
-> Today, XFS writeback walks the page cache serially per inode and funnels
-> all writeback through a single writeback context. For aging filesystems,
-> especially with high parallel buffered IO this leads to limited
-> concurrency across independent AGs.
-> 
-> The filesystem already has strong AG level parallelism for allocation and
-> metadata operations, but writeback remains largely AG agnostic.
-> 
-> High-level approach
-> ===================
-> This series introduces an AG aware writeback with following model:
-> 1) Predict the target AG for buffered writes (mapped or delalloc) at write
->    time.
-> 2) Tag AG hints per folio (via lightweight metadata / xarray).
-> 3) Track dirty AGs per inode using bitmap.
-> 4) Offload writeback to per AG worker threads, each performing a onepass
->    scan.
-> 5) Workers filter folios and submit folios which are tagged for its AG.
-> 
-> Unlike our earlier approach that parallelized writeback by introducing
-> multiple writeback contexts per BDI, this series keeps all changes within
-> XFS and is orthogonal to that work. The AG aware mechanism uses per folio
-> AG hints to route writeback to AG specific workers, and therefore applies
-> even when a single inode’s data spans multiple AGs. This avoids the
-> earlier limitation of relying on inode-based AG locality, which can break
-> down on aged/fragmented filesystems.
-> 
-> IOPS and throughput
-> ===================
-> We see significant improvemnt in IOPS if files span across multiple AG
-> 
-> Workload 12 files each of 500M in 12 directories(AGs) - numjobs = 12
->     - NVMe device Intel Optane
->         Base XFS                : 308 MiB/s
->         Parallel Writeback XFS  : 1534 MiB/s  (+398%)
-> 
-> Workload 6 files each of 6G in 6 directories(AGs) - numjobs = 12
->     - NVMe device Intel Optane
->         Base XFS                : 409 MiB/s
->         Parallel Writeback XFS  : 1245 MiB/s  (+204%)
-> 
+This patchset introduces several performance optimizations for the 9p
+filesystem when used with cache=loose option (exclusive or read only
+mounts). These improvements particularly target workloads with frequent
+lookups of non-existent paths and repeated symlink resolutions.
 
-Hi Kundan,
+The very state of the art benchmark consisting of cloning a fresh
+hostap repository and building hostapd and wpa_supplicant for hwsim
+tests (cd tests/hwsim; time ./build.sh) in a VM running on a 9pfs rootfs
+(with trans=virtio,cache=loose options) has been used to test those
+optimizations impact.
 
-Could you provide more detail on how you're testing here? I threw this
-at some beefier storage I have around out of curiosity and I'm not
-seeing much of a difference. It could be I'm missing some details or
-maybe the storage outweighs the processing benefit. But for example, is
-this a fio test command being used? Is there preallocation? What type of
-storage? Is a particular fs geometry being targeted for this
-optimization (i.e. smaller AGs), etc.?
+For reference, the build takes 0m56.492s on my laptop natively while it
+completes in 2m18.702sec on the VM. This represents a significant
+performance penalty considering running the same build on a VM using a
+virtiofs rootfs (with "--cache always" virtiofsd option) takes around
+1m32.141s. This patchset aims to bring the 9pfs build time close to
+that of virtiofs, rather than the native host time, as a realistic
+expectation.
 
-FWIW, I skimmed through the code a bit and the main thing that kind of
-stands out to me is the write time per-folio hinting. Writeback handling
-for the overwrite (i.e. non-delalloc) case is basically a single lookup
-per mapping under shared inode lock. The question that comes to mind
-there is what is the value of per-ag batching as opposed to just adding
-generic concurrency? It seems unnecessary to me to take care to shuffle
-overwrites into per-ag based workers when the underlying locking is
-already shared.
+This first two patches in this series focus on keeping negative dentries
+in the cache, ensuring that subsequent lookups for paths known to not
+exist do not require redundant 9P RPC calls. This optimization reduces
+the time needed for the compiler to search for header files across known
+locations. These two patches introduce a new mount option, ndentrytmo,
+which specifies the number of ms to keep the dentry in the cache. Using
+ndentrytmo=-1 (keeping the negative dentry indifinetly) shrunk build
+time to 1m46.198s.
 
-WRT delalloc, it looks like we're basically taking the inode AG as the
-starting point and guessing based on the on-disk AGF free blocks counter
-at the time of the write. The delalloc accounting doesn't count against
-the AGF, however, so ISTM that in many cases this would just effectively
-land on the inode AG for larger delalloc writes. Is that not the case?
+The third patch extends page cache usage to symlinks by allowing
+p9_client_readlink() results to be cached. Resolving symlink is
+apparently something done quite frequently during the build process and
+avoiding the cost of a 9P RPC call round trip for already known symlinks
+helps reduce the build time to 1m26.602s, outperforming the virtiofs
+setup.
 
-Once we get to delalloc writeback, we're under exclusive inode lock and
-fall into the block allocator. The latter trylock iterates the AGs
-looking for a good candidate. So what's the advantage of per-ag
-splitting delalloc at writeback time if we're sending the same inode to
-per-ag workers that all 1. require exclusive inode lock and 2. call into
-an allocator that is designed to be scalable (i.e. if one AG is locked
-it will just move to the next)?
+Here is summary of the different hostapd/wpa_supplicant build times:
 
-Yet another consideration is how delalloc conversion works at the
-xfs_bmapi_convert_delalloc() -> xfs_bmapi_convert_one_delalloc() level.
-If you take a look at the latter, we look up the entire delalloc extent
-backing the folio under writeback and attempt to allocate it all at once
-(not just the blocks backing the folio). So in theory if we were to end
-up tagging a sequence of contiguous delalloc backed folios at buffered
-write time with different AGs, we're still going to try to allocate all
-of that in one AG at writeback time. So the per-ag hinting also sort of
-competes with this by shuffling writeback of the same potential extent
-into different workers, making it a little hard to try and reason about.
+  - Baseline (no patch): 2m18.702s
+  - negative dentry caching (patches 1-2): 1m46.198s (23% improvement)
+  - Above + symlink caching (patches 1-3): 1m26.302s (an additional 18%
+    improvement, 37% in total)
 
-So stepping back it kind of feels to me like the write time hinting has
-so much potential for inaccuracy and unpredictability of writeback time
-behavior (for the delalloc case), that it makes me wonder if we're
-effectively just enabling arbitrary concurrency at writeback time and
-perhaps seeing benefit from that. If so, that makes me wonder if the
-associated value can be gained by somehow simplifying this to not
-require write time hinting at all.
+With this ~37% performance gain, 9pfs with cache=loose can compete with
+virtiofs for (at least) this specific scenario. Although this benchmark
+is not the most typical, I do think that these caching optimizations
+could benefit a wide range of other workflows as well.
 
-Have you run any experiments that perhaps rotors inodes to the
-individual wb workers based on the inode AG (i.e. basically ignoring all
-the write time stuff) by chance? Or anything that otherwise helps
-quantify the value of per-ag batching over just basic concurrency? I'd
-be interested to see if/how behavior changes with something like that.
+Changes since v2:
+  - Rebase on 9p-next (with new mount API conversion)
+  - Integrated symlink caching with the network filesystem helper
+    library for robustness (a lot of code expects a valid netfs context)
+  - Instantiate symlink dentry at creation to avoid keeping a negative
+    dentry in cache
+  - Moved IO waiting time accounting to a separate patch series
 
-Brian
+Thanks.
 
-> These changes are on top of the v6.18 kernel release.
-> 
-> Future work involves tighten writeback control (wbc) handling to integrate
-> with global writeback accounting and range semantics, also evaluate
-> interaction with higher level writeback parallelism.
-> 
-> Kundan Kumar (6):
->   iomap: add write ops hook to attach metadata to folios
->   xfs: add helpers to pack AG prediction info for per-folio tracking
->   xfs: add per-inode AG prediction map and dirty-AG bitmap
->   xfs: tag folios with AG number during buffered write via iomap attach
->     hook
->   xfs: add per-AG writeback workqueue infrastructure
->   xfs: offload writeback by AG using per-inode dirty bitmap and per-AG
->     workers
-> 
->  fs/iomap/buffered-io.c |   3 +
->  fs/xfs/xfs_aops.c      | 257 +++++++++++++++++++++++++++++++++++++++++
->  fs/xfs/xfs_aops.h      |   3 +
->  fs/xfs/xfs_icache.c    |  27 +++++
->  fs/xfs/xfs_inode.h     |   5 +
->  fs/xfs/xfs_iomap.c     | 114 ++++++++++++++++++
->  fs/xfs/xfs_iomap.h     |  31 +++++
->  fs/xfs/xfs_mount.c     |   2 +
->  fs/xfs/xfs_mount.h     |  10 ++
->  fs/xfs/xfs_super.c     |   2 +
->  include/linux/iomap.h  |   3 +
->  11 files changed, 457 insertions(+)
-> 
-> -- 
-> 2.25.1
-> 
-> 
+Remi Pommarel (3):
+  9p: Cache negative dentries for lookup performance
+  9p: Introduce option for negative dentry cache retention time
+  9p: Enable symlink caching in page cache
+
+ fs/9p/fid.c             |  11 +++--
+ fs/9p/v9fs.c            |  10 +++-
+ fs/9p/v9fs.h            |   2 +
+ fs/9p/v9fs_vfs.h        |  15 ++++++
+ fs/9p/vfs_addr.c        |  24 +++++++--
+ fs/9p/vfs_dentry.c      | 105 ++++++++++++++++++++++++++++++++++------
+ fs/9p/vfs_inode.c       |  13 +++--
+ fs/9p/vfs_inode_dotl.c  |  73 +++++++++++++++++++++++++---
+ fs/9p/vfs_super.c       |   1 +
+ include/net/9p/client.h |   2 +
+ 10 files changed, 220 insertions(+), 36 deletions(-)
+
+-- 
+2.50.1
 
 
