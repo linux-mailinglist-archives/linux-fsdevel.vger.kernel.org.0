@@ -1,71 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-74935-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74936-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id sAnIFMRgcWkHGgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74935-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 00:27:00 +0100
+	id gK58BOlgcWkHGgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74936-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 00:27:37 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D3C05F7A5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 00:27:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92DA05F7D2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 00:27:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BEC50607B50
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 23:23:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 14A9A9A94FB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 23:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99394338905;
-	Wed, 21 Jan 2026 23:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C052338905;
+	Wed, 21 Jan 2026 23:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="RnxCtGYR"
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="AsLQPSzt"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2543B8D70;
-	Wed, 21 Jan 2026 23:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6532C286D5E;
+	Wed, 21 Jan 2026 23:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769037662; cv=none; b=S+MUrTCY/0F3aH1kgaqnxHiTISL6MhdQLga3HlWf4w7KHHaGMErSsKdErLNUbGtcQwrltu4XedNmvgZqG059I+AGDodMyqMNynixaPtw08bsYn3QyEkZrrEQWoeo3AC88VcR14422DyJn0q5SzjW3aFGPIcPKXqvIozZCsgyvjo=
+	t=1769037848; cv=none; b=H+Ncoi7c1KDMndJv1BIh3HW6FbOm2XLu0cbJ/2y2SfH+3g4jk7ritFrIAPLcH/DbVz7IXZ0NKaJa+5tbEBCzRQTeak9qZyCO/Qy74Q65FWnAdtK6rKTulINgbIPUTdczj4dCQTdkrii+Cn8Jdgg+ziOJ8Pn1qsUxaN9Q8v969HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769037662; c=relaxed/simple;
-	bh=OGS/fNnlPes+JePKrm0CsA/gNGfnZi7LTgyUV5rtYQY=;
+	s=arc-20240116; t=1769037848; c=relaxed/simple;
+	bh=noGctKV7hSfPIMZvhoPpW/JkK2WKKQTYnjhm1mnxB8c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HoAG46aP1YQ40jthyzvwgKbX0adGnxPJ5xHzXjajf3+dI2WbCoJOCnWTXvFs9yO7J2V/di+Cmfbdvj8hE3wWFt42QYLuIxkvjRDMT0e67+UhUONHFltPPUKtudmGjCUwSgpDeAPZKEqpXRJk1m3ZL3COyVUs5f/Y8fhdOlMMyzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=RnxCtGYR; arc=none smtp.client-ip=62.210.214.84
+	 Content-Type:Content-Disposition:In-Reply-To; b=fNbuUDhF077pHmJaXfUKTx0EOD/+Jt5ZzSrprzC7btALnItbMIUWZhmNOjjgarvkvc73Y+4nyjlCkw3iad7ii6CausoO8qz2LwjJxlUUacnQ4s93JnOtEljTXZtSUDWusuWyF/rrZ0P764526Nr3nXkkB0K2pSrlc/CtqRqXkoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=AsLQPSzt; arc=none smtp.client-ip=62.210.214.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
 Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 0CA0D14C2D6;
-	Thu, 22 Jan 2026 00:20:47 +0100 (CET)
+	by submarine.notk.org (Postfix) with ESMTPS id 5C41C14C2DE;
+	Thu, 22 Jan 2026 00:24:02 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1769037651;
+	s=2; t=1769037844;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CuLgIEQicKxAzOp7ggur18BjDbH0Izb2IJBPplUcKjY=;
-	b=RnxCtGYROU3Pzp2Z6VJ6IjGSi82WzhLXQc24UTMxeHcSzMD7dKgx/s1lQ88dCz+4EKmJbu
-	0CGoB0nFkL0VurFlq1k/wtHBeu1decs5N6FkwlJIIaCxZQr8Rl6DCEO8k/RQl/4ruMm9yM
-	e/dvKLZzP6oX9xZVUoM3yrBr+0KGgmvM0zYThcfFKp28ZECgcdNmWnngl3FAp/YV3ivqG0
-	aHSag9Vwx0hi/RdFekpyOC74Pk1PNFvi92UlvgBTE4qzHrpvy/WeH7yFYKnoxg3SFmSlDt
-	GQYzFqPj/Nbte+2rHZw8SzqNROl008NDHIe9tjY5OrGDk+VMxG6kg7adLupryw==
+	bh=YS2JAcOeVL+Usx5qZkbSLHdNWHXAog+0vtbjbzuN4RE=;
+	b=AsLQPSztZbAq0I+/0/l9thdklbtt12gl3xwbmWA9sMj2+qThFqlmtlS2XsqgPKuzv9pXtn
+	XxFVP7t3/S60s/me8DVMqBOanlMlhBNmdbsNwsyiiZ4uW7QXzu4yEN6TobXq0KWZw9T4rK
+	kUrGIjrd8FNlt2mbU1MemieBXuwJKMpNGFsSWmd/jWpgPQBvJp9Ay2cI0y/wtODzDlGrqi
+	JIbz5vcPA3U6CAxTBgN2WahIMXlIKNSA1+n22RFKdsfiRwOB8FL+WHwHl66ncORsDd17en
+	v4lE5fET4HzhFteUNRcZlqzAFhv1nVBsJwzchrlq/Iuez5yVZf6wWpOCFwA8sQ==
 Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 6abc6ff1;
-	Wed, 21 Jan 2026 23:20:46 +0000 (UTC)
-Date: Thu, 22 Jan 2026 08:20:31 +0900
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 1012ecd5;
+	Wed, 21 Jan 2026 23:24:00 +0000 (UTC)
+Date: Thu, 22 Jan 2026 08:23:45 +0900
 From: Dominique Martinet <asmadeus@codewreck.org>
 To: Remi Pommarel <repk@triplefau.lt>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	v9fs@lists.linux.dev, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
+Cc: v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] 9p: Track 9P RPC waiting time as IO
-Message-ID: <aXFfPweqq25iE-UC@codewreck.org>
-References: <cover.1769009696.git.repk@triplefau.lt>
- <47f0b44f159084f4032a9424e0e2e586b8640a12.1769009696.git.repk@triplefau.lt>
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>
+Subject: Re: [PATCH v2 0/3] 9p: Performance improvements for build workloads
+Message-ID: <aXFgAcDjjqJc6qhQ@codewreck.org>
+References: <cover.1769013622.git.repk@triplefau.lt>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -74,7 +72,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <47f0b44f159084f4032a9424e0e2e586b8640a12.1769009696.git.repk@triplefau.lt>
+In-Reply-To: <cover.1769013622.git.repk@triplefau.lt>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.96 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
@@ -88,7 +86,7 @@ X-Spamd-Result: default: False [-1.96 / 15.00];
 	RCVD_TLS_LAST(0.00)[];
 	DMARC_POLICY_ALLOW(0.00)[codewreck.org,none];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-74935-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-74936-lists,linux-fsdevel=lfdr.de];
 	RECEIVED_HELO_LOCALHOST(0.00)[];
 	MISSING_XM_UA(0.00)[];
 	FROM_HAS_DN(0.00)[];
@@ -96,34 +94,71 @@ X-Spamd-Result: default: False [-1.96 / 15.00];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[asmadeus@codewreck.org,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:7979, ipnet:2a01:60a::/32, country:US];
+	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
 	RCVD_COUNT_FIVE(0.00)[5];
-	RCPT_COUNT_SEVEN(0.00)[10];
+	RCPT_COUNT_SEVEN(0.00)[7];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[]
-X-Rspamd-Queue-Id: 2D3C05F7A5
+X-Rspamd-Queue-Id: 92DA05F7D2
 X-Rspamd-Action: no action
 
-Remi Pommarel wrote on Wed, Jan 21, 2026 at 08:21:59PM +0100:
-> Use io_wait_event_killable() to ensure that time spent waiting for 9P
-> RPC transactions is accounted as IO wait time.
+Remi Pommarel wrote on Wed, Jan 21, 2026 at 08:56:07PM +0100:
+> This patchset introduces several performance optimizations for the 9p
+> filesystem when used with cache=loose option (exclusive or read only
+> mounts). These improvements particularly target workloads with frequent
+> lookups of non-existent paths and repeated symlink resolutions.
+> 
+> The very state of the art benchmark consisting of cloning a fresh
+> hostap repository and building hostapd and wpa_supplicant for hwsim
+> tests (cd tests/hwsim; time ./build.sh) in a VM running on a 9pfs rootfs
+> (with trans=virtio,cache=loose options) has been used to test those
+> optimizations impact.
+> 
+> For reference, the build takes 0m56.492s on my laptop natively while it
+> completes in 2m18.702sec on the VM. This represents a significant
+> performance penalty considering running the same build on a VM using a
+> virtiofs rootfs (with "--cache always" virtiofsd option) takes around
+> 1m32.141s. This patchset aims to bring the 9pfs build time close to
+> that of virtiofs, rather than the native host time, as a realistic
+> expectation.
+> 
+> This first two patches in this series focus on keeping negative dentries
+> in the cache, ensuring that subsequent lookups for paths known to not
+> exist do not require redundant 9P RPC calls. This optimization reduces
+> the time needed for the compiler to search for header files across known
+> locations. These two patches introduce a new mount option, ndentrytmo,
+> which specifies the number of ms to keep the dentry in the cache. Using
+> ndentrytmo=-1 (keeping the negative dentry indifinetly) shrunk build
+> time to 1m46.198s.
+> 
+> The third patch extends page cache usage to symlinks by allowing
+> p9_client_readlink() results to be cached. Resolving symlink is
+> apparently something done quite frequently during the build process and
+> avoiding the cost of a 9P RPC call round trip for already known symlinks
+> helps reduce the build time to 1m26.602s, outperforming the virtiofs
+> setup.
+> 
+> Here is summary of the different hostapd/wpa_supplicant build times:
+> 
+>   - Baseline (no patch): 2m18.702s
+>   - negative dentry caching (patches 1-2): 1m46.198s (23% improvement)
+>   - Above + symlink caching (patches 1-3): 1m26.302s (an additional 18%
+>     improvement, 37% in total)
+> 
+> With this ~37% performance gain, 9pfs with cache=loose can compete with
+> virtiofs for (at least) this specific scenario. Although this benchmark
+> is not the most typical, I do think that these caching optimizations
+> could benefit a wide range of other workflows as well.
 
-Thanks for splitting this out of your other 9p improvements!
+Thank you!
 
-I was about to ask Peter/Ingo which tree this should go through, but
-could you also convert the other few wait_event_killable() calls in
-net/9p/trans_*.c ?
-They're either waiting for other IO to complete (virtio x2) or for the
-current IO to complete (virtio/xen), so I think they qualify just as
-much.
-
-(the virtio ones will likely conflict with some other rework that's been
-dragging on last month, but given the patch is trivial it won't matter
-much, you can send as of master)
-
-Thanks,
+We've had a couple of regressions lately so I'll take a week or two to
+run some proper tests first, but overall looks good to me, I just wanted
+to acknowledge the patches early.
+(as such it likely won't make 6.20 but should hopefully go into the next
+one)
 -- 
-Dominique Martinet | Asmadeus
+Dominique
 
