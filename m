@@ -1,162 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-74815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0KDQIvuEcGktYAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 08:49:15 +0100
+	id kGlLJIiNcGkEYQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 09:25:44 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0637753074
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 08:49:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 031F5538A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 09:25:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 66BBA4EB71A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 07:49:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C3BC4F0096
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 08:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57600304BDC;
-	Wed, 21 Jan 2026 07:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8385B3A63FE;
+	Wed, 21 Jan 2026 08:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3PgJEqLa"
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="00lkPeLf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430373BF307
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 07:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475543BBA05
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 08:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768981746; cv=none; b=nyzao+Lvdtv1lHJwFcVdyVH4+EKynbYKobJDhZxwH3poNth2Obt8Dnff6kAsnYJWwF/SbdeFnTkcxm+LPLEKzRsiSxJJpiAftmk1C7u7HTxrTR+RYoGrVViq9oAIsWMIOvkfuEh1vxBkhKBNNfzIamLFqCI3eatE7IbyFMgjfe0=
+	t=1768983604; cv=none; b=r3AjFbE1aDY/gVtdo4ymJ5DcvHwC8zqMKgJPsT5tF2D3EarHvavjFFVq1Nw3BxFdOc2ggjcj3ruBxnjsNwXdH3+NsZ13y3LTeQHzkKexyb4Ce4Scnvk6AAuOfTna56JPGLm1KDEDLgkTL0dU7YTalEDpdlo9ReOuZUMDv1XgE0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768981746; c=relaxed/simple;
-	bh=uEV3nffG8vN4HfZsmaWu+WmBMmCaSv2drdcBL+6Xics=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ahIK1Xlqa+aV4Zf3FnCX47RhoBULZ59z2L+ooVeg2p/T5ICSZKioZyWudkBl1ToUDpAdnIVO5Kzf1RR5QpHK2Tf4Rh8K5umqjpOQC9+WI3yS7oId4R61S1/to9rdDqzV1FOhOTBVo+zRNkX1nf3MOXuix4+Bqjr1OaS5QUGZaHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3PgJEqLa; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=EquTN4VmIO/MzkXq9Nr8w/etR/m8vWaMQEG3HhOupsk=; b=3PgJEqLaNYEXRh8sV6ETgpwean
-	xgaJTAOQc71aSXzje1M6bjKaPDzM8oyd/J/dSgkCpefj+bCJ59zCMrdaE2wFNZFNzqoZskaxpjhYL
-	g8hLLsAY4VPKSdSUbXiNf3q68yZHMq+lmVRtYewwynFgNJd0d7uuXD3q5wL6dexxoloxJM/0Uhb/o
-	oClNyL4I4kCaykTqlev1Sf97OqS1/wt4moykSVnVFlolDWcnm7Y90IjNQuqTAiMLuDGzP/6FzqMSW
-	g+XbTvszVSR5/mImy72DEHHERw8XUy5PtgQIgS7a2J8R5a4NL5dS+PGvJbr9090t4JlFh6PndhHC1
-	UHZDDcIQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1viSxa-000000052PA-0pEV;
-	Wed, 21 Jan 2026 07:49:02 +0000
-Date: Tue, 20 Jan 2026 23:49:02 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: brauner@kernel.org, willy@infradead.org, djwong@kernel.org,
-	hch@infradead.org, bfoster@redhat.com,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 1/1] iomap: fix readahead folio access after
- folio_end_read()
-Message-ID: <aXCE7jZ5HdhOktEs@infradead.org>
-References: <20260116200427.1016177-1-joannelkoong@gmail.com>
- <20260116200427.1016177-2-joannelkoong@gmail.com>
+	s=arc-20240116; t=1768983604; c=relaxed/simple;
+	bh=cfq46GPoNLHA/8zCcIQDJomG5BK9jjQ53l9unzkB0Kw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jJnuDcwYTx+Lacvg1QaNlHLorq/I8qIMn0rbi2ZyP1G/m9m5rE79IzjhL/aPIjU6wRCzQvAnlM7XZ7uYqQiNzEuGIFwZJv4/xyktE0OF7wsSqYxAhC0GMTV3lLK/jrfDM161xPuqN/1dbz7rkV2ghoxEBKCbvQ33miunae/OJR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=00lkPeLf; arc=none smtp.client-ip=113.46.200.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=TSq6+yOT1HdiMWW0u9Yc+Zl3cqGQ3pgfZNbZ2cq5LD8=;
+	b=00lkPeLfx/QR/Ly6HZWxS/zzaQW8FdmDJ2XbgT/4I7N3GVIJXKexwFU/cG+gyO1W9q4zcDfte
+	fBhDGI9wOWeVL/NH1h7yhkltJcgP8S9DHFeyq/1Cs1u010nvL3P6BPEJRG1oj3j+U5vBLN696r8
+	yopauiLXq/lmdwGknS/gdGY=
+Received: from mail.maildlp.com (unknown [172.19.163.0])
+	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4dwxpg43L2z1T4H4;
+	Wed, 21 Jan 2026 16:15:55 +0800 (CST)
+Received: from kwepemr500001.china.huawei.com (unknown [7.202.194.229])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2AE58405A8;
+	Wed, 21 Jan 2026 16:19:58 +0800 (CST)
+Received: from [10.174.179.179] (10.174.179.179) by
+ kwepemr500001.china.huawei.com (7.202.194.229) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 21 Jan 2026 16:19:57 +0800
+Message-ID: <baccc29c-a68d-40e3-9e0b-f172d32e3842@huawei.com>
+Date: Wed, 21 Jan 2026 16:19:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260116200427.1016177-2-joannelkoong@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] mm/khugepaged: free empty xa_nodes when rollbacks in
+ collapse_file
+To: Matthew Wilcox <willy@infradead.org>
+CC: <akpm@linux-foundation.org>, <david@kernel.org>,
+	<lorenzo.stoakes@oracle.com>, <ziy@nvidia.com>,
+	<baolin.wang@linux.alibaba.com>, <Liam.Howlett@oracle.com>,
+	<npache@redhat.com>, <ryan.roberts@arm.com>, <dev.jain@arm.com>,
+	<baohua@kernel.org>, <lance.yang@linux.dev>, <shardul.b@mpiricsoftware.com>,
+	<linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
+	<wangkefeng.wang@huawei.com>
+References: <20260121062243.1893129-1-tujinjiang@huawei.com>
+ <aXB0Zcu4bIEvSSuX@casper.infradead.org>
+From: Jinjiang Tu <tujinjiang@huawei.com>
+In-Reply-To: <aXB0Zcu4bIEvSSuX@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemr500001.china.huawei.com (7.202.194.229)
 X-Spamd-Result: default: False [-1.96 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
+	R_DKIM_ALLOW(-0.20)[huawei.com:s=dkim];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	DMARC_POLICY_ALLOW(0.00)[infradead.org,none];
-	TAGGED_FROM(0.00)[bounces-74815-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-74816-lists,linux-fsdevel=lfdr.de];
+	DMARC_POLICY_ALLOW(0.00)[huawei.com,quarantine];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
+	FROM_HAS_DN(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[infradead.org:+];
-	MISSING_XM_UA(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	DKIM_TRACE(0.00)[huawei.com:+];
+	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
 	TO_DN_SOME(0.00)[];
-	R_SPF_SOFTFAIL(0.00)[~all:c];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@infradead.org,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[tujinjiang@huawei.com,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	R_SPF_SOFTFAIL(0.00)[~all:c];
 	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo,infradead.org:mid,infradead.org:dkim]
-X-Rspamd-Queue-Id: 0637753074
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:mid,huawei.com:dkim,dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo]
+X-Rspamd-Queue-Id: 031F5538A6
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Fri, Jan 16, 2026 at 12:04:27PM -0800, Joanne Koong wrote:
-> If the folio does not have an iomap_folio_state struct attached to it
-> and the folio gets read in by the filesystem's IO helper,
-> folio_end_read() may have already been called on the folio.
 
-Not just can, but it has to, as there is no other way to track when
-folio_end_read would need to be called.
+在 2026/1/21 14:38, Matthew Wilcox 写道:
+> On Wed, Jan 21, 2026 at 02:22:43PM +0800, Jinjiang Tu wrote:
+>> collapse_file() calls xas_create_range() to pre-create all slots needed.
+>> If collapse_file() finally fails, these pre-created slots are empty nodes
+>> and aren't destroyed.
+> try this instead
+>
+> diff --git a/fs/inode.c b/fs/inode.c
+> index cff1d3af0d57..85886af1e7ab 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -744,22 +744,18 @@ void dump_mapping(const struct address_space *mapping)
+>   
+>   void clear_inode(struct inode *inode)
+>   {
+> -	/*
+> -	 * We have to cycle the i_pages lock here because reclaim can be in the
+> -	 * process of removing the last page (in __filemap_remove_folio())
+> -	 * and we must not free the mapping under it.
+> -	 */
+> -	xa_lock_irq(&inode->i_data.i_pages);
+> -	BUG_ON(inode->i_data.nrpages);
+>   	/*
+>   	 * Almost always, mapping_empty(&inode->i_data) here; but there are
+>   	 * two known and long-standing ways in which nodes may get left behind
+>   	 * (when deep radix-tree node allocation failed partway; or when THP
+> -	 * collapse_file() failed). Until those two known cases are cleaned up,
+> -	 * or a cleanup function is called here, do not BUG_ON(!mapping_empty),
+> -	 * nor even WARN_ON(!mapping_empty).
+> +	 * collapse_file() failed).
+> +	 *
+> +	 * xa_destroy() also cycles the lock for us, which is needed because
+> +	 * reclaim can be in the process of removing the last folio (in
+> +	 * __filemap_remove_folio()) and we must not free the mapping under it.
+>   	 */
+> -	xa_unlock_irq(&inode->i_data.i_pages);
+> +	xa_destroy(&inode->i_data.i_pages);
+> +	BUG_ON(inode->i_data.nrpages);
+>   	BUG_ON(!list_empty(&inode->i_data.i_private_list));
+>   	BUG_ON(!(inode->i_state & I_FREEING));
+>   	BUG_ON(inode->i_state & I_CLEAR);
 
-> Fix this by invalidating ctx->cur_folio when a folio without
-> iomap_folio_state metadata attached to it has been handed to the
-> filesystem's IO helper.
-
-Fix what?
-
-for read_folio nothing ever looks at cur_folio, so I guess that is not
-what is being fixed, and it's readahead in some form.  Can you explain
-what went wrong and how it is being fixed here a bit better?
-
->  			*bytes_submitted += plen;
-> +			/*
-> +			 * If the folio does not have ifs metadata attached,
-> +			 * then after ->read_folio_range(), the folio might have
-> +			 * gotten freed (eg iomap_finish_folio_read() ->
-> +			 * folio_end_read() followed by page cache eviction,
-> +			 * which for readahead folios drops the last refcount).
-> +			 * Invalidate ctx->cur_folio here.
-> +			 *
-> +			 * For folios without ifs metadata attached, the read
-> +			 * should be on the entire folio.
-> +			 */
-> +			if (!ifs) {
-> +				ctx->cur_folio = NULL;
-> +				if (unlikely(plen != folio_len))
-> +					return -EIO;
-> +			}
-
-I think the sanity check here is an impossible to hit condition and
-should probably be a WARN_ON_ONCE?
-
-So to answer the above, I guess the issue that for readahead, the
-
-	if (ctx->cur_folio &&
-	    offset_in_folio(ctx->cur_folio, iter->pos) == 0) {
-
-in iomap_readahead_iter does a double completion?
-
-I don't really love how this spreads the cur_folio setup logic from
-iomap_readahead_iter to here, but the other options I can think off to
-pass that logic to iomap_readahead_iter (overload return value with a
-positive return, extra output argument) don't feel all that enticing
-either because they'd now have to spread the ifs logic into
-iomap_readahead_iter.  So I guess this version it is for now.
-
-Maybe in the future I'll look into moving all the cur_folio logic
-from iomap_readahead_iter into iomap_read_folio_iter and see if
-that improves things, but that should not get into the way of the
-bug fix.
+I tried it, and the memleak disappears.
 
 
