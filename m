@@ -1,261 +1,285 @@
-Return-Path: <linux-fsdevel+bounces-74760-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74761-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 4BqeAoAdcGlRVwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74760-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 01:27:44 +0100
+	id mKzsFEsecGlRVwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74761-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 01:31:07 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 717CE4E7DE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 01:27:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E86CE4E85D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 01:31:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A9B9F7A26B7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 00:27:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8C675502A62
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 00:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49AEB279DC9;
-	Wed, 21 Jan 2026 00:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EB429DB86;
+	Wed, 21 Jan 2026 00:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZcjHq1h"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V6SZd6Mo";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ishrvz1Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4673277CBF
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 00:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C40729346F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 00:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768955254; cv=none; b=HLkgrVdvgnrwxB16DNBm5d4WTc76Oi2ymFnG+4EBV9W1fZSZp2LlLBm6U5nryWCJdH1LQe1H33C89c+Hi6MVMdkYuUjlL0JIXEWYGyNTn9zv5L1yf8rtu9sEfKguLyn9wI0+e0+9AugsxvOim+cgOMUJ99AKXZS/8NKs2h9A1vU=
+	t=1768955435; cv=none; b=j2tbmykLDo+snFjeyTOrYmCSTS6lhlQdrUD7tty+MpaTofsP2fTB7ve7KF27Rm6gHdMLL4q20Hf2NoGLKHfIozHqqHPHMgVDE8f6k0vUo48kOLQsIlwIZj8+7Ekx0ZLOIrGr/Qym5tLmKfmthzauyVLWVzVOhhvaOPJKmJSuvDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768955254; c=relaxed/simple;
-	bh=tqrIn/rvJhREjbNiNmFvH5kp0Rrgg/owpt/3USFyP34=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Erq7kRRWH3ZArqx1iFWdStRKiJhuXc5IfYjTEwCWd+Jkvjh8p4VlTvzVs7jD5/02Q5XKMIl/K8Mf1sFrcqt9ZEOFkiU64rAm7pj8nnMvV/s+1KJd/svNRifyqCsq6eHYlfRZMxoFXzCisI9vffgEOHVqqEfrUE/PWSuoL2hYBJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZcjHq1h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52E0FC16AAE;
-	Wed, 21 Jan 2026 00:27:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768955254;
-	bh=tqrIn/rvJhREjbNiNmFvH5kp0Rrgg/owpt/3USFyP34=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eZcjHq1hg2jkwBVHhg26EN+xHVS5OBwWJCCb+2Ag2La1oELlX5VYgdO1wAm2WrfWg
-	 Qm7vRgAZtCH7vQXHNHpBlLI/d+4n7s9penNhW4IUi5B2k1Cbv3Ds5a4/Hfh7k7SVDk
-	 9Go5zyEMkXcFDT8TeGRbVosIpEzu8BfVsrbs1F8NkGKIchSn3ZuBMqfb0yfuPx70Ut
-	 w3hdkrlk7UCM2jD2J4GD1cY6JtphQ4Sag02GS7Vaywqq7NzJdlnz9/DcevWYQdJ7Vb
-	 cvLft7WFEN9vVHbMYdIH4jsyf2R/10lVPWhgXAJc9W3rhcNu6peNm4MpIgMYRjoiXl
-	 SOlM0DlVkGqlg==
-Date: Tue, 20 Jan 2026 16:27:33 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, jefflexu@linux.alibaba.com, luochunsheng@ustc.edu,
-	horst@birthelmer.de, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] fuse: simplify logic in fuse_notify_store() and
- fuse_retrieve()
-Message-ID: <20260121002733.GH15532@frogsfrogsfrogs>
-References: <20260120224449.1847176-1-joannelkoong@gmail.com>
- <20260120224449.1847176-3-joannelkoong@gmail.com>
+	s=arc-20240116; t=1768955435; c=relaxed/simple;
+	bh=kqA7hFp0b5pOlAT5k4slsR0tFyV4F1zhBk7jCl4+Sk8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bF8BkEBqXWc7VMqdv6FJd4i2upmJZFwxaB7bKVAKaC38e8JZtKUXY0txUXXhZ34nA8PTndkUOkmDLzbUjONJF+NwwFa5udTDKewpDNcx7S239WRyGmR9UJyG8DRK48Qbq5Z+8OCbo1FiXTxKfhjJ2wuEh0NyuVCNxJ1aH1znzZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V6SZd6Mo; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ishrvz1Q; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1768955432;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5nxjbXT0xnBHhhZgM6DIUEflr+8xamjmOI0ttVCQ4KI=;
+	b=V6SZd6MoIjgiU/LqJJAfKZ4fCORJ91KkgyVHW/GMqiLJoHEaox0/axQUaDctvWYbs3ycd3
+	S2xi2GL8ixVl44qQ53OX0kwTFvHX9k+GvvQDqgGIqNFDfJPQHSFAMBs7MffWsqwpkh7RMx
+	e+J1zkS5AX2IP9rSKN0KPML46PdXG3c=
+Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
+ [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-422-rdMjo5maPCaWf-aAqXZfQA-1; Tue, 20 Jan 2026 19:30:30 -0500
+X-MC-Unique: rdMjo5maPCaWf-aAqXZfQA-1
+X-Mimecast-MFC-AGG-ID: rdMjo5maPCaWf-aAqXZfQA_1768955430
+Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-78f9d077d9cso35643767b3.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 16:30:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1768955430; x=1769560230; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5nxjbXT0xnBHhhZgM6DIUEflr+8xamjmOI0ttVCQ4KI=;
+        b=Ishrvz1QqY2yHzLGZxecr21latunvaF3VSBorqdACzmeit3PAUHt5Div/GTiE4a6R+
+         M3js5Q1XQU3OjwQjY7f4I73y6HeYZ3sigDVtfavneElIB+QGDqQ+nsYN/lf/63jbWGa/
+         AkR1QpsHYDdWObUR5El0F4rhclAYiXWGJ0M/cVmkpMBIGNI2iBy8z4gLxtnvBcS4FXS4
+         jGi+i/tSEcHQk4kdd3KvKKde1+iuv8rSgxb6oZEwzY9bXrLKv7b07GQ2Rw5quAAC6pkq
+         wycMrBSXZq5W0wI0ERgGam2EwtE9ZTfn7L5+JZcj1f0tD/Gq2MvOyV+cN8VlUtoKfyBY
+         ViJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768955430; x=1769560230;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5nxjbXT0xnBHhhZgM6DIUEflr+8xamjmOI0ttVCQ4KI=;
+        b=Kd4HQJJY91LG9u11iEw/6jJ2UuvlNyAVmYTHa3tnk9VuJv++BXZjVUgrCpdqdcTK3M
+         CP3KZMSpcQscrvZADntPJMUMys7yx/V7TZd8nBGuQh+z2pzH0DI5HVZKZq6tom2Z3g8H
+         yf0N/yIb6KovfIQ9qjUgey1msirTyMhoY6TMN/SffRC/GmRxG5pp6ry1gGYLlJyns++E
+         lWocvt3y7p3fCRzTamPfeaOZhhUWY50Epgp3KcGQJwbVqNNlOXkA0DI8iUO5orkj85ey
+         Ejn+8WvsYF5cfAJK8ZlHKX5FTYoFT1QL+nLa4ntLKDB5uHYuXGuqUFFZ/qQ0QZOn1quT
+         KHKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnGQ/mI7BS2ruUV61esJ7nkwnaqZZvZq675dkT7lHUskgcSKIBL/r5mv/bRQQ5BcY1iUT7KIXtTVb/YlYM@vger.kernel.org
+X-Gm-Message-State: AOJu0YztLKEJOLkaT4P3jnt1HrhxY6Z8I0xu/nMPyVKMKU1bG3cw4b+n
+	SNo12JETDzHef9Kzo/Bx3PxeCiNvpNUATyTq1SSgpNSlp6zaui30fsWqayez8o85pn+yjneZ6aB
+	lJHPLn3xaONFlQ9B3/FvhiregqCufU7Or8BBldM4SEB2nb1OB1Jd9wv9Bwm0658hgjJk=
+X-Gm-Gg: AZuq6aKMM6ks+JmL/lEyYh9qUElVVvAFPW8xoiWCmQxsMdGOWcCaIj0ue4NmT20Kg21
+	OQNQlEu8H9bD5hA+1sHFQanigjbUAcLARiD7WPPTr8S23vYgnLRj0GFb8Q28d1zopqnpU5f5eBs
+	UBegqRVC6sr6l84QH523LbFn2VaN7zrAeJlqxx9KhU42pLSV4Jf3g9Wy6Rte/s+OZNSp9uPLzBz
+	F4hau00oSI1F/2eow/10u2wQ1QRHIFN/ARLSfis/ogh3VQbkCxDQSJRihDzQ+OyoReU0xYFsxGl
+	9C+X7lyjkEF46ltzv7ArHSKuluqNdoFJwB0XHaaeVB4CBHi+VJaGJ37p4MPnvLa4eVdqnQqwlfF
+	3/FVdABWVKtt6QAfnt8ONMxaFmAX6/6Lq4KYkOR+Z
+X-Received: by 2002:a05:690c:4b85:b0:793:d0b5:9bcb with SMTP id 00721157ae682-7940a153cf5mr30151097b3.24.1768955429900;
+        Tue, 20 Jan 2026 16:30:29 -0800 (PST)
+X-Received: by 2002:a05:690c:4b85:b0:793:d0b5:9bcb with SMTP id 00721157ae682-7940a153cf5mr30150937b3.24.1768955429529;
+        Tue, 20 Jan 2026 16:30:29 -0800 (PST)
+Received: from li-4c4c4544-0032-4210-804c-c3c04f423534.ibm.com ([2600:1700:6476:1430::41])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-793c66c70f4sm59096427b3.7.2026.01.20.16.30.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Jan 2026 16:30:29 -0800 (PST)
+Message-ID: <8dce90cb96a33a123e5baa1613fde06658523495.camel@redhat.com>
+Subject: Re: [EXTERNAL] Re: [PATCH v5 0/2] ceph: add subvolume metrics
+ reporting support
+From: Viacheslav Dubeyko <vdubeyko@redhat.com>
+To: Alex Markuze <amarkuze@redhat.com>, ceph-devel@vger.kernel.org
+Cc: idryomov@gmail.com, linux-fsdevel@vger.kernel.org
+Date: Tue, 20 Jan 2026 16:30:28 -0800
+In-Reply-To: <721bc15d532ea4dd03e079bd516f332208fa48c2.camel@redhat.com>
+References: <20260118182446.3514417-1-amarkuze@redhat.com>
+	 <721bc15d532ea4dd03e079bd516f332208fa48c2.camel@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.2 (3.58.2-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260120224449.1847176-3-joannelkoong@gmail.com>
-X-Spamd-Result: default: False [-1.46 / 15.00];
+X-Spamd-Result: default: False [-1.96 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719,redhat.com:s=google];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org];
+	DMARC_POLICY_ALLOW(0.00)[redhat.com,quarantine];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TAGGED_FROM(0.00)[bounces-74760-lists,linux-fsdevel=lfdr.de];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-74761-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DMARC_POLICY_ALLOW(0.00)[kernel.org,quarantine];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	R_SPF_SOFTFAIL(0.00)[~all];
+	DKIM_TRACE(0.00)[redhat.com:+];
+	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
+	TO_DN_SOME(0.00)[];
+	R_SPF_SOFTFAIL(0.00)[~all:c];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
+	FROM_NEQ_ENVFROM(0.00)[vdubeyko@redhat.com,linux-fsdevel@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_COUNT_FIVE(0.00)[6];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo]
-X-Rspamd-Queue-Id: 717CE4E7DE
+X-Rspamd-Queue-Id: E86CE4E85D
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Tue, Jan 20, 2026 at 02:44:47PM -0800, Joanne Koong wrote:
-> Simplify the folio parsing logic in fuse_notify_store() and
-> fuse_retrieve().
-> 
-> In particular, calculate the index by tracking pos, which allows us to
-> remove calculating nr_pages, and use "pos" in place of outarg's offset
-> field.
-> 
-> Suggested-by: Jingbo Xu <jefflexu@linux.alibaba.com>
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+On Tue, 2026-01-20 at 16:18 -0800, Viacheslav Dubeyko wrote:
+> On Sun, 2026-01-18 at 18:24 +0000, Alex Markuze wrote:
+> > This patch series adds support for per-subvolume I/O metrics collection
+> > and reporting to the MDS. This enables administrators to monitor I/O
+> > patterns at the subvolume granularity, which is useful for multi-tenant
+> > CephFS deployments where different subvolumes may be allocated to
+> > different users or applications.
+> >=20
+> > The implementation requires protocol changes to receive the subvolume_i=
+d
+> > from the MDS (InodeStat v9), and introduces a new metrics type
+> > (CLIENT_METRIC_TYPE_SUBVOLUME_METRICS) for reporting aggregated I/O
+> > statistics back to the MDS.
+> >=20
+> > Note: The InodeStat v8 handling patch (forward-compatible handling for
+> > the versioned optmetadata field) is now in the base tree, so this serie=
+s
+> > starts with v9 parsing.
+> >=20
+> > Patch 1 adds support for parsing the subvolume_id field from InodeStat
+> > v9 and storing it in the inode structure for later use. This patch also
+> > introduces CEPH_SUBVOLUME_ID_NONE constant (value 0) for unknown/unset
+> > state and enforces subvolume_id immutability with WARN_ON_ONCE if
+> > attempting to change an already-set subvolume_id.
+> >=20
+> > Patch 2 adds the complete subvolume metrics infrastructure:
+> > - CEPHFS_FEATURE_SUBVOLUME_METRICS feature flag for MDS negotiation
+> > - Red-black tree based metrics tracker for efficient per-subvolume
+> >   aggregation with kmem_cache for entry allocations
+> > - Wire format encoding matching the MDS C++ AggregatedIOMetrics struct
+> > - Integration with the existing CLIENT_METRICS message
+> > - Recording of I/O operations from file read/write and writeback paths
+> > - Debugfs interfaces for monitoring
+> >=20
+> > Metrics tracked per subvolume include:
+> > - Read/write operation counts
+> > - Read/write byte counts
+> > - Read/write latency sums (for average calculation)
+> >=20
+> > The metrics are periodically sent to the MDS as part of the existing
+> > metrics reporting infrastructure when the MDS advertises support for
+> > the SUBVOLUME_METRICS feature.
+> >=20
+> > Debugfs additions in Patch 2:
+> > - metrics/subvolumes: displays last sent and pending subvolume metrics
+> > - metrics/metric_features: displays MDS session feature negotiation
+> >   status, showing which metric-related features are enabled (including
+> >   METRIC_COLLECT and SUBVOLUME_METRICS)
+> >=20
+> > Changes since v4:
+> > - Merged CEPH_SUBVOLUME_ID_NONE and WARN_ON_ONCE immutability check
+> >   into patch 1 (previously split across patches 2 and 3)
+> > - Removed unused 'cl' variable from parse_reply_info_in() that would
+> >   cause compiler warning
+> > - Added read I/O recording in finish_netfs_read() for netfs read path
+> > - Simplified subvolume_metrics_dump() to use direct rb-tree iteration
+> >   instead of intermediate snapshot allocation
+> > - InodeStat v8 patch now in base tree, reducing series from 3 to 2
+> >   patches
+> >=20
+> > Changes since v3:
+> > - merged CEPH_SUBVOLUME_ID_NONE patch into its predecessor
+> >=20
+> > Changes since v2:
+> > - Add CEPH_SUBVOLUME_ID_NONE constant (value 0) for unknown/unset state
+> > - Add WARN_ON_ONCE if attempting to change already-set subvolume_id
+> > - Add documentation for struct ceph_session_feature_desc ('bit' field)
+> > - Change pr_err() to pr_info() for "metrics disabled" message
+> > - Use pr_warn_ratelimited() instead of manual __ratelimit()
+> > - Add documentation comments to ceph_subvol_metric_snapshot and
+> >   ceph_subvolume_metrics_tracker structs
+> > - Use kmemdup_array() instead of kmemdup() for overflow checking
+> > - Add comments explaining ret > 0 checks for read metrics (EOF handling=
+)
+> > - Use kmem_cache for struct ceph_subvol_metric_rb_entry allocations
+> > - Add comment explaining seq_file error handling in dump function
+> >=20
+> > Changes since v1:
+> > - Fixed unused variable warnings (v8_struct_v, v8_struct_compat) by
+> >   using ceph_decode_skip_8() instead of ceph_decode_8_safe()
+> > - Added detailed comment explaining InodeStat encoding versions v1-v9
+> > - Clarified that "optmetadata" is the actual field name in MDS C++ code
+> > - Aligned subvolume_id handling with FUSE client convention (0 =3D unkn=
+own)
+> >=20
+> >=20
+> > Alex Markuze (2):
+> >   ceph: parse subvolume_id from InodeStat v9 and store in inode
+> >   ceph: add subvolume metrics collection and reporting
+> >=20
+> >  fs/ceph/Makefile            |   2 +-
+> >  fs/ceph/addr.c              |  14 ++
+> >  fs/ceph/debugfs.c           | 157 +++++++++++++++++
+> >  fs/ceph/file.c              |  68 +++++++-
+> >  fs/ceph/inode.c             |  41 +++++
+> >  fs/ceph/mds_client.c        |  72 ++++++--
+> >  fs/ceph/mds_client.h        |  14 +-
+> >  fs/ceph/metric.c            | 183 ++++++++++++++++++-
+> >  fs/ceph/metric.h            |  39 ++++-
+> >  fs/ceph/subvolume_metrics.c | 416 ++++++++++++++++++++++++++++++++++++=
+++++++++
+> >  fs/ceph/subvolume_metrics.h |  97 +++++++++++
+> >  fs/ceph/super.c             |   8 +
+> >  fs/ceph/super.h             |  11 ++
+> >  13 files changed, 1094 insertions(+), 28 deletions(-)
+> >  create mode 100644 fs/ceph/subvolume_metrics.c
+> >  create mode 100644 fs/ceph/subvolume_metrics.h
+> >=20
+> > --
+> > 2.34.1
+>=20
+> Let me run xfstests on the patchset. I'll be back with the results ASAP.
+>=20
 
-Looks fine to me,
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+I have troubles to apply your pathset on Linux kernel 6.19-rc6:
 
---D
+git am ./v5_20260118_amarkuze_ceph_add_subvolume_metrics_reporting_support.=
+mbx
+Applying: ceph: handle InodeStat v8 versioned field in reply parsing
+Applying: ceph: parse subvolume_id from InodeStat v9 and store in inode
+error: patch failed: fs/ceph/inode.c:742
+error: fs/ceph/inode.c: patch does not apply
+Patch failed at 0002 ceph: parse subvolume_id from InodeStat v9 and store i=
+n
+inode
+hint: Use 'git am --show-current-patch=3Ddiff' to see the failed patch
+When you have resolved this problem, run "git am --continue".
+If you prefer to skip this patch, run "git am --skip" instead.
+To restore the original branch and stop patching, run "git am --abort".
 
-> ---
->  fs/fuse/dev.c | 42 +++++++++++++++++-------------------------
->  1 file changed, 17 insertions(+), 25 deletions(-)
-> 
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index 7558ff337413..9cbd5b64d9c9 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -1765,10 +1765,9 @@ static int fuse_notify_store(struct fuse_conn *fc, unsigned int size,
->  	struct address_space *mapping;
->  	u64 nodeid;
->  	int err;
-> -	pgoff_t index;
-> -	unsigned int offset;
->  	unsigned int num;
->  	loff_t file_size;
-> +	loff_t pos;
->  	loff_t end;
->  
->  	if (size < sizeof(outarg))
-> @@ -1785,7 +1784,8 @@ static int fuse_notify_store(struct fuse_conn *fc, unsigned int size,
->  		return -EINVAL;
->  
->  	nodeid = outarg.nodeid;
-> -	num = min(outarg.size, MAX_LFS_FILESIZE - outarg.offset);
-> +	pos = outarg.offset;
-> +	num = min(outarg.size, MAX_LFS_FILESIZE - pos);
->  
->  	down_read(&fc->killsb);
->  
-> @@ -1795,10 +1795,8 @@ static int fuse_notify_store(struct fuse_conn *fc, unsigned int size,
->  		goto out_up_killsb;
->  
->  	mapping = inode->i_mapping;
-> -	index = outarg.offset >> PAGE_SHIFT;
-> -	offset = outarg.offset & ~PAGE_MASK;
->  	file_size = i_size_read(inode);
-> -	end = outarg.offset + num;
-> +	end = pos + num;
->  	if (end > file_size) {
->  		file_size = end;
->  		fuse_write_update_attr(inode, file_size, num);
-> @@ -1808,19 +1806,18 @@ static int fuse_notify_store(struct fuse_conn *fc, unsigned int size,
->  		struct folio *folio;
->  		unsigned int folio_offset;
->  		unsigned int nr_bytes;
-> -		unsigned int nr_pages;
-> +		pgoff_t index = pos >> PAGE_SHIFT;
->  
->  		folio = filemap_grab_folio(mapping, index);
->  		err = PTR_ERR(folio);
->  		if (IS_ERR(folio))
->  			goto out_iput;
->  
-> -		folio_offset = ((index - folio->index) << PAGE_SHIFT) + offset;
-> -		nr_bytes = min_t(unsigned, num, folio_size(folio) - folio_offset);
-> -		nr_pages = (offset + nr_bytes + PAGE_SIZE - 1) >> PAGE_SHIFT;
-> +		folio_offset = offset_in_folio(folio, pos);
-> +		nr_bytes = min(num, folio_size(folio) - folio_offset);
->  
->  		err = fuse_copy_folio(cs, &folio, folio_offset, nr_bytes, 0);
-> -		if (!folio_test_uptodate(folio) && !err && offset == 0 &&
-> +		if (!folio_test_uptodate(folio) && !err && folio_offset == 0 &&
->  		    (nr_bytes == folio_size(folio) || file_size == end)) {
->  			folio_zero_segment(folio, nr_bytes, folio_size(folio));
->  			folio_mark_uptodate(folio);
-> @@ -1831,9 +1828,8 @@ static int fuse_notify_store(struct fuse_conn *fc, unsigned int size,
->  		if (err)
->  			goto out_iput;
->  
-> +		pos += nr_bytes;
->  		num -= nr_bytes;
-> -		offset = 0;
-> -		index += nr_pages;
->  	}
->  
->  	err = 0;
-> @@ -1865,7 +1861,6 @@ static int fuse_retrieve(struct fuse_mount *fm, struct inode *inode,
->  {
->  	int err;
->  	struct address_space *mapping = inode->i_mapping;
-> -	pgoff_t index;
->  	loff_t file_size;
->  	unsigned int num;
->  	unsigned int offset;
-> @@ -1876,15 +1871,16 @@ static int fuse_retrieve(struct fuse_mount *fm, struct inode *inode,
->  	size_t args_size = sizeof(*ra);
->  	struct fuse_args_pages *ap;
->  	struct fuse_args *args;
-> +	loff_t pos = outarg->offset;
->  
-> -	offset = outarg->offset & ~PAGE_MASK;
-> +	offset = offset_in_page(pos);
->  	file_size = i_size_read(inode);
->  
->  	num = min(outarg->size, fc->max_write);
-> -	if (outarg->offset > file_size)
-> +	if (pos > file_size)
->  		num = 0;
-> -	else if (num > file_size - outarg->offset)
-> -		num = file_size - outarg->offset;
-> +	else if (num > file_size - pos)
-> +		num = file_size - pos;
->  
->  	num_pages = (num + offset + PAGE_SIZE - 1) >> PAGE_SHIFT;
->  	num_pages = min(num_pages, fc->max_pages);
-> @@ -1907,31 +1903,27 @@ static int fuse_retrieve(struct fuse_mount *fm, struct inode *inode,
->  	args->in_pages = true;
->  	args->end = fuse_retrieve_end;
->  
-> -	index = outarg->offset >> PAGE_SHIFT;
-> -
->  	while (num && ap->num_folios < num_pages) {
->  		struct folio *folio;
->  		unsigned int folio_offset;
->  		unsigned int nr_bytes;
-> -		unsigned int nr_pages;
-> +		pgoff_t index = pos >> PAGE_SHIFT;
->  
->  		folio = filemap_get_folio(mapping, index);
->  		if (IS_ERR(folio))
->  			break;
->  
-> -		folio_offset = ((index - folio->index) << PAGE_SHIFT) + offset;
-> +		folio_offset = offset_in_folio(folio, pos);
->  		nr_bytes = min(folio_size(folio) - folio_offset, num);
-> -		nr_pages = (offset + nr_bytes + PAGE_SIZE - 1) >> PAGE_SHIFT;
->  
->  		ap->folios[ap->num_folios] = folio;
->  		ap->descs[ap->num_folios].offset = folio_offset;
->  		ap->descs[ap->num_folios].length = nr_bytes;
->  		ap->num_folios++;
->  
-> -		offset = 0;
-> +		pos += nr_bytes;
->  		num -= nr_bytes;
->  		total_len += nr_bytes;
-> -		index += nr_pages;
->  	}
->  	ra->inarg.offset = outarg->offset;
->  	ra->inarg.size = total_len;
-> -- 
-> 2.47.3
-> 
-> 
+Which is your code base? Which branch have you used as base one?
+
+Thanks,
+Slava.
+
 
