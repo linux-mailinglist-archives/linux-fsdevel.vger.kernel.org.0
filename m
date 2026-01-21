@@ -1,107 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-74866-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74867-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CFtBKUHxcGk+awAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74866-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 16:31:13 +0100
+	id AHFtA2f0cGmgbAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74867-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 16:44:39 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 528DD59358
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 16:31:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9097B59672
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 16:44:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2283DA2DE21
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 14:34:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA38FA2A0FD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 14:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C07E44BC81;
-	Wed, 21 Jan 2026 14:27:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3B74BCAD0;
+	Wed, 21 Jan 2026 14:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l4/7iE8/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NiaSrp/F"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6575F32ED21;
-	Wed, 21 Jan 2026 14:27:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3AB481648;
+	Wed, 21 Jan 2026 14:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769005667; cv=none; b=AmyYEQADOO7/EvV6s77yhpOHbZof7itp5euF5dj6wR07D+sX5iWu3vQck+mMIzw575ZLuss7AJvFUZzcTUNLI4/l00OXTY1jPm9ObwsttAYUlRtYqLE0mXgDz28rotCGkq5fn451YW5GMVBoG8JcfkJdjqZs/6FpIc5ZM4ogNZg=
+	t=1769006095; cv=none; b=UQl/6cUBbUcTov1TsuWDVk+A4lEh+Xbv+gMDx3TyT5kEc0VKc062wDVAYhmRVmAVkY19lE8QZR79bevP7PoaPiZ1d8CytK4Is8vmBsuLHK42MbSAR1CQODQagO9fPkVmI7A3jco/R8OnqRXkN3V6Y2Dhzv5t+r7IxuQd2ZjSWfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769005667; c=relaxed/simple;
-	bh=i5hbrzdp22zDHgYLz86OMwY0w48EYyLnIazFien27/4=;
+	s=arc-20240116; t=1769006095; c=relaxed/simple;
+	bh=RUhKC3qFXdFvUgdefgliAGo3eE813fulWfiWIozSL2I=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KpaWka0LsX0r2TtSYE8PLvTGDfIi24TT3mld1GHl1e6noofjY1jQhYworJhJ6L5UjIPqLONq5+7UyK62QKrIIsLclRnBjqjP1z9eYyPj9koworPmnSr+MvIuEt2N1YiYivXgiEdSA9VLTxr+wOgFvl1H/4kfoBwDXsH4Khgm7FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l4/7iE8/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 960D7C4CEF1;
-	Wed, 21 Jan 2026 14:27:39 +0000 (UTC)
+	 Content-Type:MIME-Version; b=IvhT9Fff18YQwv1sEjGcfKzowPifR962QmwyMyAJAR9oG3XheKYyhGYh1XqulENKKCa2f8ueEJAtRQvMz1cchc63d6rhMCiKNDtLke1FYMOnvoN0Q4q3h/idJZZejdRibpokibZ9hsBIyIscl0TFpKZanSLkkF/Nip9p53UbTiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NiaSrp/F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32F71C4CEF1;
+	Wed, 21 Jan 2026 14:34:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769005666;
-	bh=i5hbrzdp22zDHgYLz86OMwY0w48EYyLnIazFien27/4=;
+	s=k20201202; t=1769006095;
+	bh=RUhKC3qFXdFvUgdefgliAGo3eE813fulWfiWIozSL2I=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=l4/7iE8/tj2pXG5zknCg4ReuYwfqpqrOXJ1Ek1+CBBwcjIrFrFAsh3OUZD6NyX2gC
-	 8GnPn+a+/lDm9Ub0sXmq1vMq1ziRtpUm/KvJCrFC8MQkE3yUjTa1A8c1lWa2UhuAMw
-	 F1KXosNj6EfSZv5WIUnMAH6O/8u/xSTUQnlG9vk9fua1DK0oFe4v2KVPe+DXALpHfR
-	 Ytlvn34xTSytWwINfuBvK84VHh0v10umjqXj/Do8jSFk122fZzWzi1yH+bO2QmJc/N
-	 i9HI4rmiVVvnnQqTe7kRXccV5wCNLETc1O+xGwbL9wWGE1cYEuej+YUuqPZWutMoy8
-	 irgZTK8S3Cf6A==
-Message-ID: <364d2fd98af52a2e2c32ca286decbdc1fe1c80d3.camel@kernel.org>
-Subject: Re: [PATCH 00/29] fs: require filesystems to explicitly opt-in to
- nfsd export support
+	b=NiaSrp/FVimBaGqS/eTBxDCzn8fXiM2uKJi4JN2ATS77gnXdc2BEHh13UzldZ8sco
+	 +ysSy+3SYkzpznSAg4f+N4Dgeq9YoYVYYQR9/6gIu13SRrbLVrILUp3EFo/i3UL/kb
+	 gvcLuAaYsqhVN10/JgDA0Ft44uSh9pvkqyJ2n4g3GHExSr31OwjaJj202PLCkBUgZy
+	 gKF1dzuG3vBKDYXq9JEQ2podipFs7R3mfqDLwqnNulO+fgvQ8oe8F2PY9qPFfOQDnx
+	 oQBk+B5En8iXC5eXSIwUWTsglnMDBAtG14RxecFPSJOiGY6+EsmLZkmCUWoDQnSwa2
+	 uais/eQw0PnLg==
+Message-ID: <45cd7c99978f0f3df8599e86d224c31cc1ca198e.camel@kernel.org>
+Subject: Re: [PATCH 1/1] NFSD: Enforce recall timeout for layout conflict
 From: Jeff Layton <jlayton@kernel.org>
-To: NeilBrown <neil@brown.name>, Christoph Hellwig <hch@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>, Amir Goldstein
- <amir73il@gmail.com>,  Alexander Viro <viro@zeniv.linux.org.uk>, Chuck
- Lever <chuck.lever@oracle.com>, Olga Kornievskaia	 <okorniev@redhat.com>,
- Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,  Hugh Dickins
- <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Andrew
- Morton	 <akpm@linux-foundation.org>, Theodore Ts'o <tytso@mit.edu>, Andreas
- Dilger	 <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>, Gao Xiang
- <xiang@kernel.org>,  Chao Yu <chao@kernel.org>, Yue Hu
- <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,  Sandeep
- Dhavale <dhavale@google.com>, Hongbo Li <lihongbo22@huawei.com>, Chunhai
- Guo <guochunhai@vivo.com>,  Carlos Maiolino	 <cem@kernel.org>, Ilya Dryomov
- <idryomov@gmail.com>, Alex Markuze	 <amarkuze@redhat.com>, Viacheslav
- Dubeyko <slava@dubeyko.com>, Chris Mason	 <clm@fb.com>, David Sterba
- <dsterba@suse.com>, Luis de Bethencourt	 <luisbg@kernel.org>, Salah Triki
- <salah.triki@gmail.com>, Phillip Lougher	 <phillip@squashfs.org.uk>, Steve
- French <sfrench@samba.org>, Paulo Alcantara	 <pc@manguebit.org>, Ronnie
- Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N	
- <sprasad@microsoft.com>, Bharath SM <bharathsm@microsoft.com>, Miklos
- Szeredi	 <miklos@szeredi.hu>, Mike Marshall <hubcap@omnibond.com>, Martin
- Brandenburg	 <martin@omnibond.com>, Mark Fasheh <mark@fasheh.com>, Joel
- Becker	 <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>,
- Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Ryusuke
- Konishi <konishi.ryusuke@gmail.com>,  Trond Myklebust <trondmy@kernel.org>,
- Anna Schumaker <anna@kernel.org>, Dave Kleikamp <shaggy@kernel.org>, David
- Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>, Jan
- Kara <jack@suse.cz>,  Andreas Gruenbacher	 <agruenba@redhat.com>, OGAWA
- Hirofumi <hirofumi@mail.parknet.co.jp>, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-ext4@vger.kernel.org, 	linux-erofs@lists.ozlabs.org,
- linux-xfs@vger.kernel.org, 	ceph-devel@vger.kernel.org,
- linux-btrfs@vger.kernel.org, 	linux-cifs@vger.kernel.org,
- linux-unionfs@vger.kernel.org, 	devel@lists.orangefs.org,
- ocfs2-devel@lists.linux.dev, ntfs3@lists.linux.dev, 
-	linux-nilfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net, 
-	linux-mtd@lists.infradead.org, gfs2@lists.linux.dev, 
-	linux-f2fs-devel@lists.sourceforge.net
-Date: Wed, 21 Jan 2026 09:27:38 -0500
-In-Reply-To: <176899164457.16766.16099772451425825775@noble.neil.brown.name>
-References: <20260115-exportfs-nfsd-v1-0-8e80160e3c0c@kernel.org>
-	, <CAOQ4uxjOJMwv_hRVTn3tJHDLMQHbeaCGsdLupiZYcwm7M2rm3g@mail.gmail.com>
-	, <9c99197dde2eafa55a1b55dce2f0d4d02c77340a.camel@kernel.org>
-	, <176877859306.16766.15009835437490907207@noble.neil.brown.name>
-	, <aW3SAKIr_QsnEE5Q@infradead.org>
-	, <176880736225.16766.4203157325432990313@noble.neil.brown.name>
-	, <20260119-kanufahren-meerjungfrau-775048806544@brauner>
-	, <176885553525.16766.291581709413217562@noble.neil.brown.name>
-	, <aW8w2SRyFnmA2uqk@infradead.org>
-	, <176890126683.16766.5241619788613840985@noble.neil.brown.name>
-	, <aXCg-MqXH0E6IuwS@infradead.org>
-	 <176899164457.16766.16099772451425825775@noble.neil.brown.name>
+To: Dai Ngo <dai.ngo@oracle.com>, chuck.lever@oracle.com, neil@brown.name, 
+	okorniev@redhat.com, tom@talpey.com, hch@lst.de, alex.aring@gmail.com
+Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
+Date: Wed, 21 Jan 2026 09:34:53 -0500
+In-Reply-To: <0b8ccb71-4727-47b0-84c7-0d4a4abbe390@oracle.com>
+References: <20260119174737.3619599-1-dai.ngo@oracle.com>
+	 <f02d32dc80e1a51f4a91c5e3ce2a5fe10680e4ea.camel@kernel.org>
+	 <a1dc8306-6422-45c8-a5b0-8d10a4d89279@oracle.com>
+	 <f2203e755aca4da45b099b18aac03b0a9d299343.camel@kernel.org>
+	 <0b8ccb71-4727-47b0-84c7-0d4a4abbe390@oracle.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -193,91 +150,212 @@ X-Spamd-Result: default: False [-0.46 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[kernel.org,gmail.com,zeniv.linux.org.uk,oracle.com,redhat.com,talpey.com,google.com,linux.alibaba.com,linux-foundation.org,mit.edu,dilger.ca,suse.com,huawei.com,vivo.com,dubeyko.com,fb.com,squashfs.org.uk,samba.org,manguebit.org,microsoft.com,szeredi.hu,omnibond.com,fasheh.com,evilplan.org,paragon-software.com,infradead.org,nod.at,suse.cz,mail.parknet.co.jp,vger.kernel.org,kvack.org,lists.ozlabs.org,lists.orangefs.org,lists.linux.dev,lists.sourceforge.net,lists.infradead.org];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-74866-lists,linux-fsdevel=lfdr.de];
-	DMARC_POLICY_ALLOW(0.00)[kernel.org,quarantine];
+	TAGGED_FROM(0.00)[bounces-74867-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_TO(0.00)[oracle.com,brown.name,redhat.com,talpey.com,lst.de,gmail.com];
+	DMARC_POLICY_ALLOW(0.00)[kernel.org,quarantine];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	FROM_HAS_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
-	R_SPF_SOFTFAIL(0.00)[~all:c];
+	R_SPF_SOFTFAIL(0.00)[~all];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[jlayton@kernel.org,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[72];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[9];
 	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo]
-X-Rspamd-Queue-Id: 528DD59358
+	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo,oracle.com:email]
+X-Rspamd-Queue-Id: 9097B59672
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Wed, 2026-01-21 at 21:34 +1100, NeilBrown wrote:
-> On Wed, 21 Jan 2026, Christoph Hellwig wrote:
->=20
-> >=20
+On Tue, 2026-01-20 at 14:48 -0800, Dai Ngo wrote:
+> On 1/20/26 1:28 PM, Jeff Layton wrote:
+> > On Tue, 2026-01-20 at 13:22 -0800, Dai Ngo wrote:
+> > > On 1/20/26 12:41 PM, Jeff Layton wrote:
+> > > > On Mon, 2026-01-19 at 09:47 -0800, Dai Ngo wrote:
+> > > > > When a layout conflict triggers a recall, enforcing a timeout
+> > > > > is necessary to prevent excessive nfsd threads from being tied
+> > > > > up in __break_lease and ensure the server can continue servicing
+> > > > > incoming requests efficiently.
+> > > > >=20
+> > > > > This patch introduces two new functions in lease_manager_operatio=
+ns:
+> > > > >=20
+> > > > > 1. lm_breaker_timedout: Invoked when a lease recall times out,
+> > > > >      allowing the lease manager to take appropriate action.
+> > > > >=20
+> > > > >      The NFSD lease manager uses this to handle layout recall
+> > > > >      timeouts. If the layout type supports fencing, a fence
+> > > > >      operation is issued to prevent the client from accessing
+> > > > >      the block device.
+> > > > >=20
+> > > > > 2. lm_need_to_retry: Invoked when there is a lease conflict.
+> > > > >      This allows the lease manager to instruct __break_lease
+> > > > >      to return an error to the caller, prompting a retry of
+> > > > >      the conflicting operation.
+> > > > >=20
+> > > > >      The NFSD lease manager uses this to avoid excessive nfsd
+> > > > >      from being blocked in __break_lease, which could hinder
+> > > > >      the server's ability to service incoming requests.
+> > > > >=20
+> > > > > Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
+> > > > > ---
+> > > > >    Documentation/filesystems/locking.rst |  4 ++
+> > > > >    fs/locks.c                            | 29 +++++++++++-
+> > > > >    fs/nfsd/nfs4layouts.c                 | 65 +++++++++++++++++++=
+++++++--
+> > > > >    include/linux/filelock.h              |  7 +++
+> > > > >    4 files changed, 100 insertions(+), 5 deletions(-)
+> > > > >=20
+> > > > > diff --git a/Documentation/filesystems/locking.rst b/Documentatio=
+n/filesystems/locking.rst
+> > > > > index 04c7691e50e0..ae9a1b207b95 100644
+> > > > > --- a/Documentation/filesystems/locking.rst
+> > > > > +++ b/Documentation/filesystems/locking.rst
+> > > > > @@ -403,6 +403,8 @@ prototypes::
+> > > > >    	bool (*lm_breaker_owns_lease)(struct file_lock *);
+> > > > >            bool (*lm_lock_expirable)(struct file_lock *);
+> > > > >            void (*lm_expire_lock)(void);
+> > > > > +        void (*lm_breaker_timedout)(struct file_lease *);
+> > > > > +        bool (*lm_need_to_retry)(struct file_lease *, struct fil=
+e_lock_context *);
+> > > > >   =20
+> > > > >    locking rules:
+> > > > >   =20
+> > > > > @@ -417,6 +419,8 @@ lm_breaker_owns_lease:	yes     	no			no
+> > > > >    lm_lock_expirable	yes		no			no
+> > > > >    lm_expire_lock		no		no			yes
+> > > > >    lm_open_conflict	yes		no			no
+> > > > > +lm_breaker_timedout     no              no                      =
+yes
+> > > > > +lm_need_to_retry        yes             no                      =
+no
+> > > > >    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D	=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D	=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D	=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > >   =20
+> > > > >    buffer_head
+> > > > > diff --git a/fs/locks.c b/fs/locks.c
+> > > > > index 46f229f740c8..cd08642ab8bb 100644
+> > > > > --- a/fs/locks.c
+> > > > > +++ b/fs/locks.c
+> > > > > @@ -381,6 +381,14 @@ lease_dispose_list(struct list_head *dispose=
+)
+> > > > >    	while (!list_empty(dispose)) {
+> > > > >    		flc =3D list_first_entry(dispose, struct file_lock_core, flc=
+_list);
+> > > > >    		list_del_init(&flc->flc_list);
+> > > > > +		if (flc->flc_flags & FL_BREAKER_TIMEDOUT) {
+> > > > > +			struct file_lease *fl;
+> > > > > +
+> > > > > +			fl =3D file_lease(flc);
+> > > > > +			if (fl->fl_lmops &&
+> > > > > +					fl->fl_lmops->lm_breaker_timedout)
+> > > > > +				fl->fl_lmops->lm_breaker_timedout(fl);
+> > > > > +		}
+> > > > >    		locks_free_lease(file_lease(flc));
+> > > > >    	}
+> > > > >    }
+> > > > > @@ -1531,8 +1539,10 @@ static void time_out_leases(struct inode *=
+inode, struct list_head *dispose)
+> > > > >    		trace_time_out_leases(inode, fl);
+> > > > >    		if (past_time(fl->fl_downgrade_time))
+> > > > >    			lease_modify(fl, F_RDLCK, dispose);
+> > > > > -		if (past_time(fl->fl_break_time))
+> > > > > +		if (past_time(fl->fl_break_time)) {
+> > > > >    			lease_modify(fl, F_UNLCK, dispose);
+> > > > > +			fl->c.flc_flags |=3D FL_BREAKER_TIMEDOUT;
+> > > > > +		}
+> > > > When the lease times out, you go ahead and remove it but then mark =
+it
+> > > > with FL_BREAKER_TIMEDOUT. Then later, you call ->lm_breaker_timedou=
+t if
+> > > > that's set.
+> > > >=20
+> > > > That means that when this happens, there is a window of time where
+> > > > there is no lease, but the rogue client isn't yet fenced. That soun=
+ds
+> > > > like a problem as you could allow competing access.
+> > > I have to think more about the implication of competing access. Since
+> > > the thread that detects the conflict is in the process of fencing the
+> > > other client and has not accessed the file data yet, I don't see the
+> > > problem of allowing the other client to continue access the file unti=
+l
+> > > fence operation completed.
 > > >=20
-> > > It took me a while to sift through the code/patches/comments and come=
- to
-> > > this understanding and I apologise if I wasn't as clear earlier.  But
-> > > my intuition was always that file handle stability was never the real
-> > > issue, and maintainer choice was.  Hence my rejection of the
-> > > "STABLE_HANDLES" name.
+> > Isn't the whole point of write layout leases to grant exclusive access
+> > to an external client? At the point where you lose the lease, any
+> > competing access can then proceed. Maybe a local file writer starts
+> > writing to the file at that point. But...what if the client is still
+> > writing stuff to the backing store? Won't that corrupt data (and maybe
+> > metadata)?
 > >=20
-> > Why do you keep ignoring the fat that the stable handles are really
-> > important for anyone wanting to actually use them for their original
-> > storage purpose, be that for knfsd, a userland nfs damon, or other
-> > storage applications in userspace despite explaining this countless
-> > times?
-> >=20
+> > > > I think you'll have to do this in reverse order: fence the client a=
+nd
+> > > > then remove the lease.
+> > > >=20
+> > > > >    	}
+> > > > >    }
+> > > > >   =20
+> > > > > @@ -1633,6 +1643,8 @@ int __break_lease(struct inode *inode, unsi=
+gned int flags)
+> > > > >    	list_for_each_entry_safe(fl, tmp, &ctx->flc_lease, c.flc_list=
+) {
+> > > > >    		if (!leases_conflict(&fl->c, &new_fl->c))
+> > > > >    			continue;
+> > > > > +		if (new_fl->fl_lmops !=3D fl->fl_lmops)
+> > > > > +			new_fl->fl_lmops =3D fl->fl_lmops;
+> > > > >    		if (want_write) {
+> > > > >    			if (fl->c.flc_flags & FL_UNLOCK_PENDING)
+> > > > >    				continue;
+> > > > > @@ -1657,6 +1669,18 @@ int __break_lease(struct inode *inode, uns=
+igned int flags)
+> > > > >    		goto out;
+> > > > >    	}
+> > > > >   =20
+> > > > > +	/*
+> > > > > +	 * Check whether the lease manager wants the operation
+> > > > > +	 * causing the conflict to be retried.
+> > > > > +	 */
+> > > > > +	if (new_fl->fl_lmops && new_fl->fl_lmops->lm_need_to_retry &&
+> > > > > +			new_fl->fl_lmops->lm_need_to_retry(new_fl, ctx)) {
+> > > > > +		trace_break_lease_noblock(inode, new_fl);
+> > > > > +		error =3D -ERESTARTSYS;
+> > > > > +		goto out;
+> > > > > +	}
+> > > > > +	ctx->flc_in_conflict =3D true;
+> > > > > +
+> > > > I guess flc_in_conflict is supposed to indicate "hey, we're already
+> > > > doing a layout break on this inode". That seems reasonable, if a li=
+ttle
+> > > > klunky.
+> > > >=20
+> > > > It would be nice if you could track this flag inside of nfsd's data
+> > > > structures instead (since only it cares about the flag), but I don'=
+t
+> > > > think it has any convenient per-inode structures to set this in.
+> > > Can we move this flag in to nfsd_file? set the flag there and clear
+> > > the flag when fencing completed.
+> > >=20
+> > No, there can be several nfsd_file objects per inode. I think that'd be
+> > hard to do.
 >=20
-> It isn't that I don't think they are important.  It is that I think they
-> are universally provided (when not connectable).
-> If we add an EXPORT_OP_STABLE_FILEHANDLES flag, I believe we would need t=
-o
-> set it on every export_operations structure.  So what would be the
-> point?
+> Can we move the in_conflict flag in to nfs4_file? I think there is
+> exactly one nfs4_file for every unique inode in use by NFSv4 clients.
+>=20
+> We can get to nfs4_file from:
+>     file_lease -> nfs4_layout_stateid -> nfs4_stid -> nfs4_file
+>=20
 >=20
 
-I see your point.
-
-Using your definitions, stability is not a problem for Linux
-filesystems. The filehandles generally don't change after they have
-been established.
-
-Uniqueness however _is_ a problem as we can end up with valid handles
-for files that have been recreated across a reboot with some
-filesystems (esp. "synthetic" ones like cgroupfs, pidfs, etc.). Naming
-the flag STABLE conflates the two.
-
-In an earlier email, HCH said:
-
-> We'll still need a stable handles flag, and expose it to userspace
-> to avoid applications being tricked into using broken non-stable
-> file handles.  We should have caught that when they were added, but
-> didn't unfortunately.
->=20
-
-If we assume he meant "unique handles" flag, then I think we're all
-mostly in agreement here.  As far as this patchset goes: what if we
-were to just rename EXPORT_OP_STABLE_HANDLES to
-EXPORT_OP_UNIQUE_HANDLES (and clean up the documentation), since that's
-the main issue for existing filesystems. It would be fairly simple to
-advertise handle uniqueness using statx or something.
-
-Alternately, instead of denying access to these filesystems, we could
-just fix these filesystems to create unique handles (a'la random
-i_generation value or something similar). That should mostly prevent
-filehandles from being reusable across a reboot on these filesystems.
-
-That would leave cgroupfs and the like exportable via nfsd, but as you
-point out, we can't deny export by userland servers. If people want to
-do this kind of crazy stuff, maybe we shouldn't deny them after all.
+Yeah, that might work since it is a per-fh object, and you shouldn't
+need to deal with this except on files open via nfs4 anyway.
 
 --=20
 Jeff Layton <jlayton@kernel.org>
