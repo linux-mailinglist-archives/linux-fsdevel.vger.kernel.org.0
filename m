@@ -1,289 +1,278 @@
-Return-Path: <linux-fsdevel+bounces-75120-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75121-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 6FbPMoRhcmnfjQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75120-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 18:42:28 +0100
+	id KIGQFuJdcmnbjAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75121-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 18:26:58 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 720986B8E0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 18:42:28 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE2206B404
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 18:26:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 4CD59314DECD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 17:11:24 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 1833A30215B6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 17:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68D834F24A;
-	Thu, 22 Jan 2026 16:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF1552FDC5C;
+	Thu, 22 Jan 2026 16:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z4NHE7Mo"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XfNCGydT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5162652B0;
-	Thu, 22 Jan 2026 16:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CF226ED46
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 16:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769100644; cv=none; b=cYXXch2c0kP4Z0q7c4zgeH93r8Ko46CsAcIekGdGcBwfJR3ED78OYPtwGyaE8JUl2MazV2hUaMPCBhE4M7g9B4mmREN3ErJBOz/Eu7xGlEE63qT/tQth8mJgE5yUPmWeixZPqeECGPl1WcP6a7ENXuEjcx33G6irdQxS+CN+5Es=
+	t=1769100705; cv=none; b=gKo3esf9TEGg8nuDfI7sm2UnB4uKvpT/iXO+BfWZD58u9y/GChp2wH3PV+nZvXca9Vt5Y14yprXawO+5ekxpD60ZExPywNBbuM30DYDokiLaE4qLfHRunaJ8xMXcdvj+iZemPC/xXVM9ZxQzH4MGeELZULBmwikVUirMI18eSWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769100644; c=relaxed/simple;
-	bh=Xyiw9AxMWwSQdA3omrRTFTMLi5UjMpgHWUX5JpRSk/o=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gEmj9a40h/zYJhy8hxrx7GLolzUqBIOdY7k7IPoBE5Cbvl+wE3piB9v5pgAVSmYQq5ovi73YCrjmUAsUJ4LvtZZ4qY7bsoTD0WTsnIWHOp1Msmkj8mOEJ8F3h8G2qQSKFCtst+xPqO82bZXppFc1ZL9CL/FuL5nrzoeIP2q2Fm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z4NHE7Mo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFE73C116C6;
-	Thu, 22 Jan 2026 16:50:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769100642;
-	bh=Xyiw9AxMWwSQdA3omrRTFTMLi5UjMpgHWUX5JpRSk/o=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Z4NHE7Mo4hNXVD5pE3Cpilnu7u+axC/r6+2vyx3MExDtdl11AQT2IPlmzyp9N/LQE
-	 rZtoxc2J742eGLxRKwekKYSD/gcWPhe90D69IZXQKmIeTMNjWuW8g9Kn9kNbCSJ31e
-	 qYkinBJSEux6+NarTJU03+Miu/CmZo5ZUvfVQE91BRecd17ETLvipBX+WD3NmB63Zm
-	 7fa6R3SKlQy1d29LH5Sz3J1yGjwgGRQf/ZqOGHaDgTJPQ2fxgc+qFOAKsPnW9H4/rv
-	 AHWTgLoH/wAqPNas40sSekr34u4z05VabGH8IIbp18eCZ7cuaGI47i2uUx7gsZoLIC
-	 Iz2eOGV0O1A8g==
-Message-ID: <29da00c72005812ca83954e8f2af91248b5bffe4.camel@kernel.org>
-Subject: Re: [PATCH v2 2/3] NFSD/export: Add sign_fh export option
-From: Jeff Layton <jlayton@kernel.org>
-To: Benjamin Coddington <bcodding@hammerspace.com>
-Cc: Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, Trond
- Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, Eric
- Biggers <ebiggers@kernel.org>,  Rick Macklem <rick.macklem@gmail.com>,
- linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org
-Date: Thu, 22 Jan 2026 11:50:40 -0500
-In-Reply-To: <0597653E-1984-4D2B-9A47-9BAE3A8E7A8B@hammerspace.com>
-References: <cover.1769026777.git.bcodding@hammerspace.com>
-	 <7202a379d564fc1be6d2bfbf4da85c40418d9b07.1769026777.git.bcodding@hammerspace.com>
-	 <801018d9115ea8abb214eaa74d5000c6f7f758a4.camel@kernel.org>
-	 <0597653E-1984-4D2B-9A47-9BAE3A8E7A8B@hammerspace.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
- MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
- gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
- 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
- R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
- rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
- ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
- Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
- lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
- iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
- QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
- YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
- wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
- LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
- 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
- c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
- LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
- TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
- 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
- xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
- +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
- Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
- BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
- N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
- naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
- RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
- FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
- 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
- P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
- aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
- T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
- dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
- 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
- kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
- uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
- AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
- FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
- 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
- sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
- qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
- sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
- IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
- UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
- dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
- EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
- apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
- M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
- dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
- 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
- jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
- flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
- BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
- AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
- 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
- HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
- 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
- uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
- DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
- CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
- Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
- AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
- aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
- f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.2 (3.58.2-1.fc43) 
+	s=arc-20240116; t=1769100705; c=relaxed/simple;
+	bh=BkNCKLcWQqVf5WeWboQ4+mG3qDSQZFn9jm4nXVA7ycw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hMdvrw+FKfdU2rYqf8av/ScyGkivrs5QyQtNl4hXlftA9yXgeh+NLf+JlYkeCy8Lt4nhoIpl15KPy47g308lpK9pWZn0tLt7zYebNrjLapKLxzwNMEf2NkuF/LX3MPPS6TcQbIJC/SSypaOA9zZskKdlY2Cv19FophiJwbg1ntE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XfNCGydT; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Soblh2RNTRhcpwbx4AV60NMfshy1tQwFzK2qCbOWb9I=; b=XfNCGydTpJTuXv2YQ/SVSBpXZk
+	dgEf83Y8MgYA+VzJAsxSW+tZ0Rj4fYcy9xifcVcnUDSF3caM8GA5JbArddaRtHPHAk25MA9xN6tCD
+	PabZINcviMZptpcb6L1gYOXmgDxoXGKb/hrxcQFeBT5GCNL5gWGkmbT/Q5AQjVszXeOlSV7R4NxZZ
+	TCqWW73ZmoKLThZm26Wvx7er5JyB9fxv3WdeHNtupboovJFXjrjFWxbW/qxSCtSRFx8Ilgt9KU34J
+	025PDreizzWaC1aTi6OMyo1F/FExDY5pU7LxrAveEByPs61/Vf/PAxSaj9OJE9JoJjXgdvz965jLc
+	uPGuieHg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vixu9-00000000aPm-1O4P;
+	Thu, 22 Jan 2026 16:51:33 +0000
+Date: Thu, 22 Jan 2026 16:51:33 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org,
+	djwong@kernel.org, bfoster@redhat.com,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] iomap: fix readahead folio access after
+ folio_end_read()
+Message-ID: <aXJVlYkGKaHFFH9T@casper.infradead.org>
+References: <20260116200427.1016177-1-joannelkoong@gmail.com>
+ <20260116200427.1016177-2-joannelkoong@gmail.com>
+ <aXCE7jZ5HdhOktEs@infradead.org>
+ <CAJnrk1Zp1gkwP=paJLtHN5S41JNBJar-_W0q7K_1zTULh4TqUw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJnrk1Zp1gkwP=paJLtHN5S41JNBJar-_W0q7K_1zTULh4TqUw@mail.gmail.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
+	R_DKIM_ALLOW(-0.20)[infradead.org:s=casper.20170209];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[oracle.com,brown.name,kernel.org,gmail.com,vger.kernel.org];
-	TAGGED_FROM(0.00)[bounces-75120-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_TO(0.00)[gmail.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	TAGGED_FROM(0.00)[bounces-75121-lists,linux-fsdevel=lfdr.de];
 	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-0.993];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jlayton@kernel.org,linux-fsdevel@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
+	NEURAL_HAM(-0.00)[-0.990];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[willy@infradead.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[infradead.org:+];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[hammerspace.com:email,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 720986B8E0
+	RCPT_COUNT_FIVE(0.00)[6];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,casper.infradead.org:mid]
+X-Rspamd-Queue-Id: DE2206B404
 X-Rspamd-Action: no action
 
-On Thu, 2026-01-22 at 11:31 -0500, Benjamin Coddington wrote:
-> On 22 Jan 2026, at 11:02, Jeff Layton wrote:
->=20
-> > On Wed, 2026-01-21 at 15:24 -0500, Benjamin Coddington wrote:
-> > > In order to signal that filehandles on this export should be signed, =
-add a
-> > > "sign_fh" export option.  Filehandle signing can help the server defe=
-nd
-> > > against certain filehandle guessing attacks.
-> > >=20
-> > > Setting the "sign_fh" export option sets NFSEXP_SIGN_FH.  In a future=
- patch
-> > > NFSD uses this signal to append a MAC onto filehandles for that expor=
-t.
-> > >=20
-> > > While we're in here, tidy a few stray expflags to more closely align =
-to the
-> > > export flag order.
-> > >=20
-> > > Link: https://lore.kernel.org/linux-nfs/cover.1769026777.git.bcodding=
-@hammerspace.com
-> > > Signed-off-by: Benjamin Coddington <bcodding@hammerspace.com>
-> > > ---
-> > >  fs/nfsd/export.c                 | 5 +++--
-> > >  include/uapi/linux/nfsd/export.h | 4 ++--
-> > >  2 files changed, 5 insertions(+), 4 deletions(-)
-> > >=20
-> > > diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
-> > > index 2a1499f2ad19..19c7a91c5373 100644
-> > > --- a/fs/nfsd/export.c
-> > > +++ b/fs/nfsd/export.c
-> > > @@ -1349,13 +1349,14 @@ static struct flags {
-> > >  	{ NFSEXP_ASYNC, {"async", "sync"}},
-> > >  	{ NFSEXP_GATHERED_WRITES, {"wdelay", "no_wdelay"}},
-> > >  	{ NFSEXP_NOREADDIRPLUS, {"nordirplus", ""}},
-> > > +	{ NFSEXP_SECURITY_LABEL, {"security_label", ""}},
-> > > +	{ NFSEXP_SIGN_FH, {"sign_fh", ""}},
-> > >  	{ NFSEXP_NOHIDE, {"nohide", ""}},
-> > > -	{ NFSEXP_CROSSMOUNT, {"crossmnt", ""}},
-> > >  	{ NFSEXP_NOSUBTREECHECK, {"no_subtree_check", ""}},
-> > >  	{ NFSEXP_NOAUTHNLM, {"insecure_locks", ""}},
-> > > +	{ NFSEXP_CROSSMOUNT, {"crossmnt", ""}},
-> > >  	{ NFSEXP_V4ROOT, {"v4root", ""}},
-> > >  	{ NFSEXP_PNFS, {"pnfs", ""}},
-> > > -	{ NFSEXP_SECURITY_LABEL, {"security_label", ""}},
-> > >  	{ 0, {"", ""}}
-> > >  };
-> > >=20
-> > > diff --git a/include/uapi/linux/nfsd/export.h b/include/uapi/linux/nf=
-sd/export.h
-> > > index a73ca3703abb..de647cf166c3 100644
-> > > --- a/include/uapi/linux/nfsd/export.h
-> > > +++ b/include/uapi/linux/nfsd/export.h
-> > > @@ -34,7 +34,7 @@
-> > >  #define NFSEXP_GATHERED_WRITES	0x0020
-> > >  #define NFSEXP_NOREADDIRPLUS    0x0040
-> > >  #define NFSEXP_SECURITY_LABEL	0x0080
-> > > -/* 0x100 currently unused */
-> > > +#define NFSEXP_SIGN_FH		0x0100
-> > >  #define NFSEXP_NOHIDE		0x0200
-> > >  #define NFSEXP_NOSUBTREECHECK	0x0400
-> > >  #define	NFSEXP_NOAUTHNLM	0x0800		/* Don't authenticate NLM requests =
-- just trust */
-> > > @@ -55,7 +55,7 @@
-> > >  #define NFSEXP_PNFS		0x20000
-> > >=20
-> > >  /* All flags that we claim to support.  (Note we don't support NOACL=
-.) */
-> > > -#define NFSEXP_ALLFLAGS		0x3FEFF
-> > > +#define NFSEXP_ALLFLAGS		0x3FFFF
-> > >=20
-> > >  /* The flags that may vary depending on security flavor: */
-> > >  #define NFSEXP_SECINFO_FLAGS	(NFSEXP_READONLY | NFSEXP_ROOTSQUASH \
-> >=20
-> > One thing that needs to be understood and documented is how things will
-> > behave when this flag changes. For instance:
-> >=20
-> > Support we start with sign_fh enabled, and client gets a signed
-> > filehandle. The server then reboots and the export options change such
-> > that sign_fh is disabled. What happens when the client tries to present
-> > that fh to the server? Does it ignore the signature (since sign_fh is
-> > now disabled), or does it reject the filehandle because it's not
-> > expecting a signature?
->=20
-> That's great question - right now it will first look up the export, see t=
-hat
-> NFSEXP_SIGN_FH is not set, then bypass verifying (and truncating) the MAC
-> from the end of the filehadle before sending the filehandle off to export=
-fs
-> - the end result will be will be -ESTALE.
->=20
-> Would it be a good idea to allow the server to see that the filehandle ha=
-s
-> FH_AT_MAC set, and just trim off the MAC without verifying it?  That woul=
-d
-> allow the signed fh to still function on that export.
->=20
-> Might need to audit the cases where fh_match() is used in that case, or m=
-ake
-> fh_match() signed-aware.  I'm less familiar with those cases, but I can l=
-ook
-> into them.
->=20
+On Wed, Jan 21, 2026 at 03:13:35PM -0800, Joanne Koong wrote:
+> Thanks for taking a look at this. The problem I'm trying to fix is
+> this readahead scenario:
+> * folio with no ifs gets read in by the filesystem through the
+> ->read_folio_range() call
+> * the filesystem reads in the folio and calls
+> iomap_finish_folio_read() which calls folio_end_read(), which unlocks
+> the folio
+> * then the page cache evicts the folio and drops the last refcount on
+> the folio which frees the folio and the folio gets repurposed by
+> another filesystem (eg btrfs) which uses folio->private
+> * the iomap logic accesses ctx->cur_folio still, and in the call to
+> iomap_read_end(), it'll detect a non-null folio->private and it'll
+> assume that's the ifs and it'll try to do stuff like
+> spin_lock_irq(&ifs->state_lock) which will crash the system.
+> 
+> This is not a problem for folios with an ifs because the +1 bias we
+> add to ifs->read_bytes_pending makes it so that iomap is the one who
+> invokes folio_end_read() when it's all done with the folio.
 
-No, I think -ESTALE is fine in this situation. I don't think we need to
-go to any great lengths to make this scenario actually work. We just
-need to understand what happens if it does, and make sure that it's
-documented.
+This is so complicated.  I think you made your life harder by adding the
+bias to read_bytes_pending.  What if we just rip most of this out ...
 
-Cheers,
---=20
-Jeff Layton <jlayton@kernel.org>
+(the key here is to call iomap_finish_folio_read() instead of
+iomap_set_range_uptodate() when we zero parts of the folio)
+
+I've thrown this at my test VM.  See how it ends up doing.
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 154456e39fe5..c2ff4f561617 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -381,7 +381,7 @@ static int iomap_read_inline_data(const struct iomap_iter *iter,
+ 		ifs_alloc(iter->inode, folio, iter->flags);
+ 
+ 	folio_fill_tail(folio, offset, iomap->inline_data, size);
+-	iomap_set_range_uptodate(folio, offset, folio_size(folio) - offset);
++	iomap_finish_folio_read(folio, offset, folio_size(folio) - offset, 0);
+ 	return 0;
+ }
+ 
+@@ -418,92 +418,19 @@ static void iomap_read_init(struct folio *folio)
+ 	struct iomap_folio_state *ifs = folio->private;
+ 
+ 	if (ifs) {
+-		size_t len = folio_size(folio);
+-
+ 		/*
+-		 * ifs->read_bytes_pending is used to track how many bytes are
+-		 * read in asynchronously by the IO helper. We need to track
+-		 * this so that we can know when the IO helper has finished
+-		 * reading in all the necessary ranges of the folio and can end
+-		 * the read.
+-		 *
+-		 * Increase ->read_bytes_pending by the folio size to start, and
+-		 * add a +1 bias. We'll subtract the bias and any uptodate /
+-		 * zeroed ranges that did not require IO in iomap_read_end()
+-		 * after we're done processing the folio.
+-		 *
+-		 * We do this because otherwise, we would have to increment
+-		 * ifs->read_bytes_pending every time a range in the folio needs
+-		 * to be read in, which can get expensive since the spinlock
+-		 * needs to be held whenever modifying ifs->read_bytes_pending.
+-		 *
+-		 * We add the bias to ensure the read has not been ended on the
+-		 * folio when iomap_read_end() is called, even if the IO helper
+-		 * has already finished reading in the entire folio.
++		 * Initially all bytes in the folio are pending.
++		 * We subtract as either reads complete or we decide
++		 * to memset().  Once the count reaches zero, the read
++		 * is complete.
+ 		 */
+ 		spin_lock_irq(&ifs->state_lock);
+ 		WARN_ON_ONCE(ifs->read_bytes_pending != 0);
+-		ifs->read_bytes_pending = len + 1;
++		ifs->read_bytes_pending = folio_size(folio);
+ 		spin_unlock_irq(&ifs->state_lock);
+ 	}
+ }
+ 
+-/*
+- * This ends IO if no bytes were submitted to an IO helper.
+- *
+- * Otherwise, this calibrates ifs->read_bytes_pending to represent only the
+- * submitted bytes (see comment in iomap_read_init()). If all bytes submitted
+- * have already been completed by the IO helper, then this will end the read.
+- * Else the IO helper will end the read after all submitted ranges have been
+- * read.
+- */
+-static void iomap_read_end(struct folio *folio, size_t bytes_submitted)
+-{
+-	struct iomap_folio_state *ifs = folio->private;
+-
+-	if (ifs) {
+-		bool end_read, uptodate;
+-
+-		spin_lock_irq(&ifs->state_lock);
+-		if (!ifs->read_bytes_pending) {
+-			WARN_ON_ONCE(bytes_submitted);
+-			spin_unlock_irq(&ifs->state_lock);
+-			folio_unlock(folio);
+-			return;
+-		}
+-
+-		/*
+-		 * Subtract any bytes that were initially accounted to
+-		 * read_bytes_pending but skipped for IO. The +1 accounts for
+-		 * the bias we added in iomap_read_init().
+-		 */
+-		ifs->read_bytes_pending -=
+-			(folio_size(folio) + 1 - bytes_submitted);
+-
+-		/*
+-		 * If !ifs->read_bytes_pending, this means all pending reads by
+-		 * the IO helper have already completed, which means we need to
+-		 * end the folio read here. If ifs->read_bytes_pending != 0,
+-		 * the IO helper will end the folio read.
+-		 */
+-		end_read = !ifs->read_bytes_pending;
+-		if (end_read)
+-			uptodate = ifs_is_fully_uptodate(folio, ifs);
+-		spin_unlock_irq(&ifs->state_lock);
+-		if (end_read)
+-			folio_end_read(folio, uptodate);
+-	} else if (!bytes_submitted) {
+-		/*
+-		 * If there were no bytes submitted, this means we are
+-		 * responsible for unlocking the folio here, since no IO helper
+-		 * has taken ownership of it. If there were bytes submitted,
+-		 * then the IO helper will end the read via
+-		 * iomap_finish_folio_read().
+-		 */
+-		folio_unlock(folio);
+-	}
+-}
+-
+ static int iomap_read_folio_iter(struct iomap_iter *iter,
+ 		struct iomap_read_folio_ctx *ctx, size_t *bytes_submitted)
+ {
+@@ -544,7 +471,7 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
+ 		/* zero post-eof blocks as the page may be mapped */
+ 		if (iomap_block_needs_zeroing(iter, pos)) {
+ 			folio_zero_range(folio, poff, plen);
+-			iomap_set_range_uptodate(folio, poff, plen);
++			iomap_finish_folio_read(folio, poff, plen, 0);
+ 		} else {
+ 			if (!*bytes_submitted)
+ 				iomap_read_init(folio);
+@@ -588,8 +515,6 @@ void iomap_read_folio(const struct iomap_ops *ops,
+ 
+ 	if (ctx->ops->submit_read)
+ 		ctx->ops->submit_read(ctx);
+-
+-	iomap_read_end(folio, bytes_submitted);
+ }
+ EXPORT_SYMBOL_GPL(iomap_read_folio);
+ 
+@@ -601,7 +526,6 @@ static int iomap_readahead_iter(struct iomap_iter *iter,
+ 	while (iomap_length(iter)) {
+ 		if (ctx->cur_folio &&
+ 		    offset_in_folio(ctx->cur_folio, iter->pos) == 0) {
+-			iomap_read_end(ctx->cur_folio, *cur_bytes_submitted);
+ 			ctx->cur_folio = NULL;
+ 		}
+ 		if (!ctx->cur_folio) {
+@@ -653,9 +577,6 @@ void iomap_readahead(const struct iomap_ops *ops,
+ 
+ 	if (ctx->ops->submit_read)
+ 		ctx->ops->submit_read(ctx);
+-
+-	if (ctx->cur_folio)
+-		iomap_read_end(ctx->cur_folio, cur_bytes_submitted);
+ }
+ EXPORT_SYMBOL_GPL(iomap_readahead);
+ 
 
