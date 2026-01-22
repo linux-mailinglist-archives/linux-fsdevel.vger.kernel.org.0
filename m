@@ -1,67 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-74980-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QENxARjCcWmdLwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74980-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 07:22:16 +0100
+	id APUJEGfCcWmdLwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 07:23:35 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 671CC62392
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 07:22:15 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0081E623B0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 07:23:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B22D74E0F4B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 06:22:12 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0FF974C6C2F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 06:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA263ED105;
-	Thu, 22 Jan 2026 06:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9A130EF80;
+	Thu, 22 Jan 2026 06:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dPtRDG3Q"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="PHWsK/cV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5488040F8C2
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 06:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6919047DD7C;
+	Thu, 22 Jan 2026 06:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769062926; cv=none; b=QXTThmIZy7WzfhbCddKNiDM45yEfu+VwpdU9kZTFpAg1rvkLJ3vMOzQCP+9NYvnZeRA2RcbHgHGhVQ0a6FSnvUVVWpLt0JNPbKVpVVPBfuV8OO/t1F25rF9KNE4W4wlQ8lsE5ZeYvGCNxK4PU+CWxs7diG2qfJp1JX+Kcsymj0c=
+	t=1769063002; cv=none; b=q2Pu/VPAuszn8OSQorv7N9D5BXPmj4zre5xrrV5KZtu8nRUBKw71JJ3GcRBCaQs3lFp/PMZQ8IJ7W5tpz+K8p0CsTeG1+AxiW3Bx6c9jviERtlSzNIfnoadNgcZeUcAMor7j80VUKDVZF4sb6Ut6EJLLvjsGBXfCummU5/v4X64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769062926; c=relaxed/simple;
-	bh=BuhcUeagOrblC0D3FauRt9BUA47GTN59GTabgWaIwD0=;
+	s=arc-20240116; t=1769063002; c=relaxed/simple;
+	bh=OcQhZTX+aGOePXebaqBvOi0aOCI81xsm8N/tmlH+IaE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O9kWQ6lUUcpY0axdrMgK4LzwFBSzjEi67Kari0oZpfRa19NKJj07dKTht3yALn235nJakRPE2MuCEH4KCOJWpuv7kdkGRyoLfUUtpPoBE4jqilOrGxUVdlp6PiLCcPx8dL8sSPqqeqtNjXymfhGWlD+R1L1ToXWJNUCPOpQbdxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dPtRDG3Q; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=kXZUKaXUg+E3Bm2gbJhAxQAVmv7BIzcOHsfZ6mD1+TvKa8YScpDVCSDnNRoI6nTzcOjeQLLi/cKRw213lwT4ziaUvh6D6fXxMMUhKswaIsL5Z0FnaUmUM8bQ8dWafJwHYy4SgMC7diS0StCyhAK+QT85q6oLupQQHGovQQDvEsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=PHWsK/cV; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=E9+heVjOiPN4xLku4leMU1/TgIt/0iviGGXi0cpAQ7g=; b=dPtRDG3Qk40K+II92TfrLGhLFb
-	hEEuy4bA6ZBeBqW7EupDUS4gw0v9mCd+5oqBIBqA2K8+jCFV5/pgt5ZTMlzae54XS0kn9oTL4CShi
-	JqhoACfK14pnsTwNAJ5I7pjyrH6X1EmHDG/pLLJ06kIYdS9KIJ88IIAWAF+Q9Quk8MpNEJTFEzKl9
-	dShncJ7k1ueEakvMn/hqFs8SSBF4CDSd5ib/9TNUHC+hWrbWhzeQJXYMFrUFAl8DO/hN9L2NOAjqo
-	2kB/pyVQXvll4/nFhE402XY0ShmHOky9j6sqJxSa4J4PGivyuxa1EniRhgrlJlOzn6Yt1q91tnfOL
-	2r3PQlyA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vio4v-00000006Upk-0Es9;
-	Thu, 22 Jan 2026 06:22:01 +0000
-Date: Wed, 21 Jan 2026 22:22:01 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org,
-	willy@infradead.org, djwong@kernel.org, bfoster@redhat.com,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 1/1] iomap: fix readahead folio access after
- folio_end_read()
-Message-ID: <aXHCCdqh04F-_wjt@infradead.org>
-References: <20260116200427.1016177-1-joannelkoong@gmail.com>
- <20260116200427.1016177-2-joannelkoong@gmail.com>
- <aXCE7jZ5HdhOktEs@infradead.org>
- <CAJnrk1Zp1gkwP=paJLtHN5S41JNBJar-_W0q7K_1zTULh4TqUw@mail.gmail.com>
+	bh=YmbACIStS/DUJQ4c1zuLR6yFwGfpLhnIlfpJY2SkgKg=; b=PHWsK/cVz1pt9+aOqd6BEmVyT4
+	JqIhj5bDyvspsr+sKsD9CLlIeuXKJlBBkd84owqc0NDvGZqziPOddiT84jWio+yg1fy220NcF0l52
+	Iirt+Ey6z36r3D28xWN5aPiLWrqTYDqxPUUiDOKzbG6Bl+mSc8NwKYkfzyEp31D1g1CvvCcEFCX/z
+	TyG5J5nE65Ssf8KwtKTIhIzTmGtKB9uRMQwZDJUGQ/+7tCbJFjB9YtVChr9ohXFcaCx+PD7O73SHv
+	zFYBPE2yN/kYvty1xgnz2Y9R4fOeNmJHaaXEpu6vF7OuGNmDbBiU0tBIBJKnStlMSGRzeAH0m5IRK
+	vQpxNTXw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1vio7m-0000000Dyq6-0UPp;
+	Thu, 22 Jan 2026 06:24:58 +0000
+Date: Thu, 22 Jan 2026 06:24:58 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 20/21] __dentry_kill(): new locking scheme
+Message-ID: <20260122062458.GA3330204@ZenIV>
+References: <20250707204918.GK1880847@ZenIV>
+ <CAKPOu+9qpqSSr300ZDduXRbj6dwQo8Cp2bskdS=gfehcVx-=ug@mail.gmail.com>
+ <20250707205952.GL1880847@ZenIV>
+ <CAKPOu+8zjtLkjYzCCVyyC80YgekMws4vGOvnPLjvUiQ6zWaqaA@mail.gmail.com>
+ <20250707213214.GM1880847@ZenIV>
+ <CAKPOu+-JxtBnjxiLDXWFNQrD=4dR_KtJbvEdNEzJA33ZqKGuAw@mail.gmail.com>
+ <20250707221917.GO1880847@ZenIV>
+ <20250707223753.GQ1880847@ZenIV>
+ <CAKPOu+9=AV-NxJYXjwiUL4iXPH=oUSF25+6t25M8ujfj2OvHVQ@mail.gmail.com>
+ <20260121215550.GD3183987@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -70,81 +74,232 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJnrk1Zp1gkwP=paJLtHN5S41JNBJar-_W0q7K_1zTULh4TqUw@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20260121215550.GD3183987@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.96 / 15.00];
+X-Spamd-Result: default: False [-1.46 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
+	R_DKIM_ALLOW(-0.20)[linux.org.uk:s=zeniv-20220401];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	DMARC_POLICY_ALLOW(0.00)[infradead.org,none];
-	TAGGED_FROM(0.00)[bounces-74980-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-74981-lists,linux-fsdevel=lfdr.de];
+	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
+	DKIM_TRACE(0.00)[linux.org.uk:+];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[infradead.org:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	R_SPF_SOFTFAIL(0.00)[~all:c];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@infradead.org,linux-fsdevel@vger.kernel.org];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DMARC_POLICY_ALLOW(0.00)[zeniv.linux.org.uk,none];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[viro@zeniv.linux.org.uk,linux-fsdevel@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[4];
+	R_SPF_SOFTFAIL(0.00)[~all:c];
+	ASN(0.00)[asn:7979, ipnet:213.196.21.0/24, country:US];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:mid,infradead.org:dkim,dfw.mirrors.kernel.org:helo,dfw.mirrors.kernel.org:rdns]
-X-Rspamd-Queue-Id: 671CC62392
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:helo,ams.mirrors.kernel.org:rdns]
+X-Rspamd-Queue-Id: 0081E623B0
 X-Rspamd-Action: no action
 
-On Wed, Jan 21, 2026 at 03:13:35PM -0800, Joanne Koong wrote:
-> Thanks for taking a look at this. The problem I'm trying to fix is
-> this readahead scenario:
-> * folio with no ifs gets read in by the filesystem through the
-> ->read_folio_range() call
-> * the filesystem reads in the folio and calls
-> iomap_finish_folio_read() which calls folio_end_read(), which unlocks
-> the folio
-> * then the page cache evicts the folio and drops the last refcount on
-> the folio which frees the folio and the folio gets repurposed by
-> another filesystem (eg btrfs) which uses folio->private
-> * the iomap logic accesses ctx->cur_folio still, and in the call to
-> iomap_read_end(), it'll detect a non-null folio->private and it'll
-> assume that's the ifs and it'll try to do stuff like
-> spin_lock_irq(&ifs->state_lock) which will crash the system.
+On Wed, Jan 21, 2026 at 09:55:50PM +0000, Al Viro wrote:
 
-Yeah, I think I gather that from the code changes in the patch, but
-it helps to state this.  Or in short, this:
-
-		if (ctx->cur_folio &&
-                    offset_in_folio(ctx->cur_folio, iter->pos) == 0) {
-
-accesses a potentially freed folio.
-
-> > > +                             if (unlikely(plen != folio_len))
-> > > +                                     return -EIO;
-> > > +                     }
-> >
-> > I think the sanity check here is an impossible to hit condition and
-> > should probably be a WARN_ON_ONCE?
+> It's not so much an intention as having nothing good to wait on.
 > 
-> I'll be removing this check for the next version.
+> Theoretically, there's a way to deal with that - dentry in the middle
+> of stuck iput() from dentry_unlink_inode() from __dentry_kill() is
+> guaranteed to be
+> 	* negative
+> 	* unhashed
+> 	* not in-lookup
+> 
+> What we could do is adding an hlist_head aliased with ->d_alias, ->d_rcu
+> and ->d_in_lookup_hash.  Then select_collect2() running into a dentry
+> with negative refcount would set _that_ as victim and bugger off, same
+> as we do for ones on shrink lists.
 
-I think it's good to have the checking, what I mean is to add a
-WARN_ON_ONCE to make it stick out as a debug check.
+No need to bother with hlist - all we need is a single-linked list that
+does not need to be generic.  Variant below seems to survive the local
+beating...
 
-> Looking at this some more, I think we'll need to use ctx->cur_folio
-> for non-readahead reads as well (eg passing ctx->cur_folio to
-> iomap_read_end() in iomap_read_folio()). As Matthew pointed out to me
-> in [1], we still can't access folio->private after folio_end_read()
-> even if we hold an active refcount on the folio.
+From 4d1f759a6338703f07a27a4d8e5814604968fb5b Mon Sep 17 00:00:00 2001
+From: Al Viro <viro@zeniv.linux.org.uk>
+Date: Wed, 21 Jan 2026 18:17:12 -0500
+Subject: [PATCH] get rid of busy-waiting in shrink_dcache_parent()
 
-Yeah.
+There's a case in which shrink_dcache_parent() ends up busy-waiting:
+if some dentry in the subtree in question is found to be in process
+of being evicted by another thread.  We need to wait for that to
+finish so that parent would no longer be pinned; otherwise we'd end
+up with ridiculous situation - nothing in a subtree is busy, and call
+of shrink_dcache_parent() fails to evict some directory only because
+memory pressure initiated eviction of some of its children before we
+got to those.
+
+The reason why we busy-wait is the lack of anything convenient we could
+wait on.  That can be fixed, though, and without growing struct dentry.
+
+Dentries in question are
+	* already marked dead (negative ->d_count)
+	* already negative
+	* already unhashed
+	* already not in in-lookup hash
+	* yet to get removed from ->d_sib and get DCACHE_DENTRY_KILLED in
+flags.
+
+Neither ->d_alias nor the fields overlapping it (->d_rcu and ->d_in_lookup_hash)
+are going to be accessed for these dentries until after dentry_unlist().  What's
+more, ->d_alias.next is guaranteed to be NULL.
+
+So we can embed struct completion into struct select_data and (ab)use
+->d_alias.next for linked list of struct select_data instances.
+
+If dentry_unlist() finds ->d_alias.next non-NULL, it carefully goes over
+the list and calls complete() for each of those.
+
+That way select_collect2() can treat negative ->d_count the same way it
+deals with dentries on other thread's shrink list - grab rcu_read_lock(),
+stash dentry into data.victim and tell d_walk() to stop.
+
+Should shrink_dcache_parent() run into that case, it would attach its
+select_data to victim dentry, drop whatever normal eviction candidates
+it has gathered and wait for completion.  Voila...
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+ fs/dcache.c | 84 ++++++++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 71 insertions(+), 13 deletions(-)
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index cf865c12cdf9..283c8ab767e1 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -605,6 +605,54 @@ void d_drop(struct dentry *dentry)
+ }
+ EXPORT_SYMBOL(d_drop);
+ 
++struct select_data {
++	struct dentry *start;
++	union {
++		long found;
++		struct {
++			struct dentry *victim;
++			struct select_data *next;
++			struct completion completion;
++		};
++	};
++	struct list_head dispose;
++};
++
++/*
++ *  shrink_dcache_parent() needs to be notified when dentry in process of
++ *  being evicted finally gets unlisted.  Such dentries are
++ *	already with negative ->d_count
++ *	already negative
++ *	already not in in-lookup hash
++ *	reachable only via ->d_sib.
++ *
++ *  Neither ->d_alias, nor ->d_rcu, nor ->d_in_lookup_hash are going to be
++ *  accessed for those, so we can (ab)use ->d_alias.next for list of
++ *  select_data of waiters.  Initially it's going to be NULL and as long
++ *  as dentry_unlist() returns it to that state we are fine.
++ */
++static inline void d_add_waiter(struct dentry *dentry, struct select_data *p)
++{
++	struct select_data *v = (void *)dentry->d_u.d_alias.next;
++	init_completion(&p->completion);
++	p->next = v;
++	dentry->d_u.d_alias.next = (void *)p;
++}
++
++static inline void d_complete_waiters(struct dentry *dentry)
++{
++	struct select_data *v = (void *)dentry->d_u.d_alias.next;
++	if (unlikely(v)) {
++		/* some shrink_dcache_tree() instances are waiting */
++		dentry->d_u.d_alias.next = NULL;
++		while (v) {
++			struct completion *r = &v->completion;
++			v = v->next;
++			complete(r);
++		}
++	}
++}
++
+ static inline void dentry_unlist(struct dentry *dentry)
+ {
+ 	struct dentry *next;
+@@ -613,6 +661,7 @@ static inline void dentry_unlist(struct dentry *dentry)
+ 	 * attached to the dentry tree
+ 	 */
+ 	dentry->d_flags |= DCACHE_DENTRY_KILLED;
++	d_complete_waiters(dentry);
+ 	if (unlikely(hlist_unhashed(&dentry->d_sib)))
+ 		return;
+ 	__hlist_del(&dentry->d_sib);
+@@ -1499,15 +1548,6 @@ int d_set_mounted(struct dentry *dentry)
+  * constraints.
+  */
+ 
+-struct select_data {
+-	struct dentry *start;
+-	union {
+-		long found;
+-		struct dentry *victim;
+-	};
+-	struct list_head dispose;
+-};
+-
+ static enum d_walk_ret select_collect(void *_data, struct dentry *dentry)
+ {
+ 	struct select_data *data = _data;
+@@ -1559,6 +1599,10 @@ static enum d_walk_ret select_collect2(void *_data, struct dentry *dentry)
+ 			return D_WALK_QUIT;
+ 		}
+ 		to_shrink_list(dentry, &data->dispose);
++	} else if (dentry->d_lockref.count < 0) {
++		rcu_read_lock();
++		data->victim = dentry;
++		return D_WALK_QUIT;
+ 	}
+ 	/*
+ 	 * We can return to the caller if we have found some (this
+@@ -1598,12 +1642,26 @@ static void shrink_dcache_tree(struct dentry *parent, bool for_umount)
+ 		data.victim = NULL;
+ 		d_walk(parent, &data, select_collect2);
+ 		if (data.victim) {
+-			spin_lock(&data.victim->d_lock);
+-			if (!lock_for_kill(data.victim)) {
+-				spin_unlock(&data.victim->d_lock);
++			struct dentry *v = data.victim;
++
++			spin_lock(&v->d_lock);
++			if (v->d_lockref.count < 0 &&
++			    !(v->d_flags & DCACHE_DENTRY_KILLED)) {
++				// It's busy dying; have it notify us once
++				// it becomes invisible to d_walk().
++				d_add_waiter(v, &data);
++				spin_unlock(&v->d_lock);
++				rcu_read_unlock();
++				if (!list_empty(&data.dispose))
++					shrink_dentry_list(&data.dispose);
++				wait_for_completion(&data.completion);
++				continue;
++			}
++			if (!lock_for_kill(v)) {
++				spin_unlock(&v->d_lock);
+ 				rcu_read_unlock();
+ 			} else {
+-				shrink_kill(data.victim);
++				shrink_kill(v);
+ 			}
+ 		}
+ 		if (!list_empty(&data.dispose))
+-- 
+2.47.3
 
 
