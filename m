@@ -1,167 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-75006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75007-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id IMW5C1r5cWmvZwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 11:18:02 +0100
+	id cKwSJl78cWmvZwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75007-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 11:30:54 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4E8D65217
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 11:18:01 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F38D65469
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 11:30:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 99EA47616A0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 10:13:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 007046811FA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 10:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460913C008E;
-	Thu, 22 Jan 2026 10:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C207310635;
+	Thu, 22 Jan 2026 10:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XWCXsuZO";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="g5S3K+5K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OyOCHkrt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D7F3ACF1B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 10:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8595A2222C0
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 10:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769076798; cv=none; b=P7NwjWYvGNQN1D7Y3N/nemPpYKqywQI1QJhNNWZWD5S2sjaxDRCzHnk5nwx/xymCrO/hJl9UwFU409GBPkj863UBoboQa4d6NPr4BT81hNWnrunvPw9VMhzCdUuwUFNaz4+nPjN6F9hqc97YBtwzDWUsN5As0qjz9cEXLVhEfrA=
+	t=1769077095; cv=none; b=rTlg9+KZVYFRAqCzlguygLW8k/JAz8uFpfbuOrt3HsMlrJW25o8F0zJ5bb9/Im7HKowsMGDMnOQyNsYJ7wMbpjCHAbheOfrrkd9IFjZ9LgkZR9ytQDNyT6GBVO5H+NWGv5txIxCns5BK9zVeRctGJYK7AWa0jZ+25iykEtE6qK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769076798; c=relaxed/simple;
-	bh=+DaVDwDFTaE2CJY7NQbgkoOai3RZT+Zn59KkM8yLeo4=;
+	s=arc-20240116; t=1769077095; c=relaxed/simple;
+	bh=9EIjkzJNA9E4VUPDTyu9hd8T5/zhI8edzp0B+c2y9jE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IZD+W7Qc9LObm+At/3AOC8A/CS+cAqafXhmiAh0+/bvDM9UhuHVYNVGsuxJ13bzCMKGkUOKpDs81C7/wbgR47Sex8H/QUm5bbtZKpUbLqUX/cvv1cdCVQanG95N64Q/kzMc8kwD/DkoSe9hilPShdE84EP4ekvRwY0AaEBboxWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XWCXsuZO; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=g5S3K+5K; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1769076795;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3PvjpRuZOnSj4n9pyzBuctSprFCgwIRN8fXSvvKed5k=;
-	b=XWCXsuZOsF99mYL8KILDVW2EFbl6CYdDV9JmLRm66EUXI5x7RK9DMf7KhLDja6WSQEaWSC
-	XR5GsClxOzplgcBVCAwgyjvQPf0C5KAkCDdqx6a29G7ZBjhJDxGRlPGiYEDfA6/fTFTLHC
-	if2vUb5aAQVB2jdv9jCWKO6XlnEN78I=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-212-OFF1GqeVOpK4L26Pp6jUgA-1; Thu, 22 Jan 2026 05:13:14 -0500
-X-MC-Unique: OFF1GqeVOpK4L26Pp6jUgA-1
-X-Mimecast-MFC-AGG-ID: OFF1GqeVOpK4L26Pp6jUgA_1769076793
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4803a72daaeso6536675e9.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 02:13:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1769076793; x=1769681593; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3PvjpRuZOnSj4n9pyzBuctSprFCgwIRN8fXSvvKed5k=;
-        b=g5S3K+5KE9TU90sCN1QAz80NYI66OosJyZHhY+7yAiUx1pPBL4tBu1PJdbZCUucOjE
-         BzoWrZeGYy1ajTFZuepFHm2CenYr7g0MuhGf8oFDI5/4vD34Ka8NtNqtbeFBiJk73kT4
-         bPe6nQmSaaPs1w6A/ghFYW1Eimk59akp55KoKXak5CKMcMwwBrDpHqIBSRLkg4bLKO0T
-         r+X5GIkyiWABZOpIBv90hIWizH7D+CBox3zmKCeRWfniE3BhVuczFs9V7f0TyLXrJkXn
-         xXtNbQmArNN2NWrlaONrnGeqP8LCZ9gTEiSIzYyW9zJc+aTA1ic/LxmXoEOLL8qpPOqT
-         549w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769076793; x=1769681593;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3PvjpRuZOnSj4n9pyzBuctSprFCgwIRN8fXSvvKed5k=;
-        b=llp894U3LcrBWJfmUrxJN0zSKib3vQI23l8FbPkrxlZoWMY2OFzHdDVDmttSQpb8NV
-         OQKjhQNn/yLzBAoaPGmQzgc0rth6AeHxa46aktJWq4IOWebOAi5hMSR9pFkR2VbuCcp1
-         kAwALVw/7/QfGUWhZfgZhteYzdvlEK7gMuwryULH0+ZMgbTcJzng7WdMq72MStlrFK6d
-         Uz4bDYfwJ8p1tLr+/1WGSOdAF6EiQUrhcS0hhIzsaBOKOp7+7Bx+saXy/HwK7DZdnu1Q
-         kGaXARJ/HKrfvOtfeCIng56L1eXjUlSQEbK/XyzaZjPA58A09cV3ByKfT8xHPDCwHAsc
-         iK8g==
-X-Forwarded-Encrypted: i=1; AJvYcCXvIM5P5NXb8dlINCuggmrnFXW52xGAgf1vm+7LGm79/g0c+0W9Dne/DEKwD7rvNnB8iEB3sma+1RzKRf/W@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXur0olqFut2tg3S3SAb5QaFym8YrHwTR9xW4Ku9zE/RtHSvcx
-	Aer63HI2vCYJsPRcON2PBkfU54PgZK7jchVxXQ+9w3PV14TxyGIPHzTt37bPnDA2ddXjPToSq7S
-	EwHCpsF9J2a8MpkpguvwaJ+oIAvBzb19oLJTnuzfzwkPI1RzX4aUXXpbHXmvaayizlQ==
-X-Gm-Gg: AZuq6aJFqu0GLfLJo4I7/9zPlcEjgFK9j/7y/R2ODZlNsq13giF0xNMOK7aepq/qoDB
-	bMXv26HynLul2KrNWfW8sIQ6kr+EYwo5eC38+BudjRvRH72F7A2mROsKOy89E8lBmcCcCY+RfGv
-	Cp30oO7sEaCFOTN1S2/x2qSU0Ui9SIkH1d15lx6V17EIXtak9Pau+XQO46bX2QlgV/5DgrQoY1y
-	8AczvA2v6zQGd907Kgm7c/UHEZ8gSFBZXHfTlPqbEh/aNKZczw0Tqznm5x9D9WsyvigcUZC/x5y
-	2CTQHMD+9YVs+XCycRjsUeUdJbVQ2UxbL5rg8KBNU668141zilADOMxPTjxMHXw0VdNyoRMSjY8
-	=
-X-Received: by 2002:a05:600c:58d3:b0:47e:e48f:43b5 with SMTP id 5b1f17b1804b1-480470d4b5emr28224385e9.18.1769076792940;
-        Thu, 22 Jan 2026 02:13:12 -0800 (PST)
-X-Received: by 2002:a05:600c:58d3:b0:47e:e48f:43b5 with SMTP id 5b1f17b1804b1-480470d4b5emr28223915e9.18.1769076792425;
-        Thu, 22 Jan 2026 02:13:12 -0800 (PST)
-Received: from thinky ([217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4804702fb04sm54550985e9.3.2026.01.22.02.13.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Jan 2026 02:13:12 -0800 (PST)
-Date: Thu, 22 Jan 2026 11:12:41 +0100
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Eric Biggers <ebiggers@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, David Sterba <dsterba@suse.com>, 
-	Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, fsverity@lists.linux.dev
-Subject: Re: [PATCH 04/11] fsverity: start consolidating pagecache code
-Message-ID: <a3oh6pju5fuodkmhb42o5t7qkqo5oqtwk3nu4wls57p5ihz2rh@q7mt6lpuprvd>
-References: <20260122082214.452153-1-hch@lst.de>
- <20260122082214.452153-5-hch@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FyXQC6rn+4vMPy/3BGaYB4PWlVJIIcN21WhkcLSCO6/iQdMz1rpX4V7cZJJ4vRP6WmReLlyDxOafRyKYncr7bEdd1IoT7rteozeazUmEeIxcBEK65IPJrUBr3DBcy0PBECx+v5Gfmapv/Oswxv6K81oa6dtqcyMOCvXoNZ1NP8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OyOCHkrt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9F2EC116C6;
+	Thu, 22 Jan 2026 10:18:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769077095;
+	bh=9EIjkzJNA9E4VUPDTyu9hd8T5/zhI8edzp0B+c2y9jE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OyOCHkrtuz4ueSm5GPODxY6RTMZKIX0odUUuSvQV6ia30erM8gPotfwowOcRaY3LV
+	 5l8zfyKbpHjw9LtdQVzgOT4SqqUFo10tOiV94PIAdBtYGzV1fyO2nYY1mQ/q1n0ozW
+	 SwqNTIVpLy2oilpzohDdDtzhyXYo4mkVZgHJpPQo54QHgA81L4MkOTHdWZs/jmbknK
+	 UeORy1uEGfhwvzJYaGORZnoqAGZ4F6wXw5KURAMmwPdZsAjWYRCaw0sUA0XLf0JBHD
+	 /Maly3zGj28NVYHtA5Y7jhTfcpmdNxpg346IIHbcmOl9adYhV9QCjUFjrWTnRwYz4W
+	 ibRVW6bCo1QhQ==
+Date: Thu, 22 Jan 2026 11:18:10 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC v2] pidfs: convert rb-tree to rhashtable
+Message-ID: <20260122-allrad-zirkel-9d519a7f12f3@brauner>
+References: <20260120-work-pidfs-rhashtable-v2-1-d593c4d0f576@kernel.org>
+ <6yefrqagwzxnyauuidtvzsaejowzrkh5u2cjrjwmn5ulbt27by@fy5fezgl4tsq>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260122082214.452153-5-hch@lst.de>
+In-Reply-To: <6yefrqagwzxnyauuidtvzsaejowzrkh5u2cjrjwmn5ulbt27by@fy5fezgl4tsq>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.46 / 15.00];
+X-Spamd-Result: default: False [2.54 / 15.00];
+	MID_END_EQ_FROM_USER_PART(4.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719,redhat.com:s=google];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75006-lists,linux-fsdevel=lfdr.de];
-	DMARC_POLICY_ALLOW(0.00)[redhat.com,quarantine];
 	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75007-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	DKIM_TRACE(0.00)[redhat.com:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,zeniv.linux.org.uk,vger.kernel.org];
+	DMARC_POLICY_ALLOW(0.00)[kernel.org,quarantine];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[aalbersh@redhat.com,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:email,dfw.mirrors.kernel.org:helo,dfw.mirrors.kernel.org:rdns]
-X-Rspamd-Queue-Id: B4E8D65217
+	ASN(0.00)[asn:7979, ipnet:2a01:60a::/32, country:US];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:helo,ams.mirrors.kernel.org:rdns,suse.cz:email]
+X-Rspamd-Queue-Id: 3F38D65469
 X-Rspamd-Action: no action
 
-On 2026-01-22 09:22:00, Christoph Hellwig wrote:
-> ext4 and f2fs are largely using the same code to read a page full
-> of Merkle tree blocks from the page cache, and the upcoming xfs
-> fsverity support would add another copy.
+On Wed, Jan 21, 2026 at 11:59:11AM +0100, Jan Kara wrote:
+> On Tue 20-01-26 15:52:35, Christian Brauner wrote:
+> > Mateusz reported performance penalties [1] during task creation because
+> > pidfs uses pidmap_lock to add elements into the rbtree. Switch to an
+> > rhashtable to have separate fine-grained locking and to decouple from
+> > pidmap_lock moving all heavy manipulations outside of it.
+> > 
+> > Convert the pidfs inode-to-pid mapping from an rb-tree with seqcount
+> > protection to an rhashtable. This removes the global pidmap_lock
+> > contention from pidfs_ino_get_pid() lookups and allows the hashtable
+> > insert to happen outside the pidmap_lock.
+> > 
+> > pidfs_add_pid() is split. pidfs_prepare_pid() allocates inode number and
+> > initializes pid fields and is called inside pidmap_lock. pidfs_add_pid()
+> > inserts pid into rhashtable and is called outside pidmap_lock. Insertion
+> > into the rhashtable can fail and memory allocation may happen so we need
+> > to drop the spinlock.
+> > 
+> > To guard against accidently opening an already reaped task
+> > pidfs_ino_get_pid() uses additional checks beyond pid_vnr(). If
+> > pid->attr is PIDFS_PID_DEAD or NULL the pid either never had a pidfd or
+> > it already went through pidfs_exit() aka the process as already reaped.
+> > If pid->attr is valid check PIDFS_ATTR_BIT_EXIT to figure out whether
+> > the task has exited.
+> > 
+> > This slightly changes visibility semantics: pidfd creation is denied
+> > after pidfs_exit() runs, which is just before the pid number is removed
+> > from the via free_pid(). That should not be an issue though.
+> > 
+> > Link: https://lore.kernel.org/20251206131955.780557-1-mjguzik@gmail.com [1]
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
 > 
-> Move the ext4 code to fs/verity/ and use it in f2fs as well.  For f2fs
-> this removes the previous f2fs-specific error injection, but otherwise
-> the behavior remains unchanged.
+> Looks very nice! Feel free to add:
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+> I have just one question about the new PIDFS_ATTR_BIT_EXIT check.  AFAIU it
+> protects from grabbing struct pid references for pids that are dying. But
+> we can also call free_pid() from places like ksys_setsid() where
+> PIDFS_ATTR_BIT_EXIT is not set. So this check only seems as a convenience
+> rather than some hard guarantee, am I right?
 
-looks good to me
-Reviewed-by: Andrey Albershteyn <aalbersh@redhat.com>
+Excellent question!
 
--- 
-- Andrey
+So the way this whole freeing works is weird. So when a task becomes a
+session leader or process group leader __change_pid() detaches the task
+from its old session/process group leader.
 
+The old session leader/process group leader pid only ends up with
+free_pid() called on it if it has already been reaped, i.e.,
+pid_has_task() returns NULL.
+
+But if the task has already been reaped then it will have already passed
+pidfs_exit() and so the exit bit will be set.
+
+So this only handles already dead pids.
 
