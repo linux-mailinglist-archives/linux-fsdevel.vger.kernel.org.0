@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-75015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id MCeIKk8DcmmvZwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 12:00:31 +0100
+	id AEz3LwwDcmmvZwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 11:59:24 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E6B565A28
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 12:00:31 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 894B8659F5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 11:59:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 818A78A8910
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 10:50:03 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1FE716C4FF3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 10:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BDC3B8BBF;
-	Thu, 22 Jan 2026 10:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CE63B9607;
+	Thu, 22 Jan 2026 10:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m47B8e0H"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHMdEmYH"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8163A35DA
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 10:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DF840FDAC
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 10:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769078950; cv=none; b=ibkBcbR4376kVwYzIcgTyp8NuJrIqca6myxNb0E5/tT9nR2zsqcgkDdqKlN13VMAcL4bAHrLsNMllGrt434YaeVRRwn1lwy8w2u6Wu4/75DjCnRUzpkRQNlqboAl2SaqM2hXFbjLJmWj5DOOfloh2hrocZJcmuJdNUvya5IjFUg=
+	t=1769078950; cv=none; b=GT8jGkYSS304leI0G49hdRIM5XQgC6RpGCihSZZcatAzLMHP8TBHf7iwC9FZGEJQgYe8Ugy+AV2YfniSUByfL3SZu44wiMvYQbtGI6D33C1AbXHHnPaP47LRT8KX/NqSpaqTWl7oj6TEwmtkns6Irk0/ubzjk0qeLHStk1dmUPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1769078950; c=relaxed/simple;
-	bh=rpraz+CpTUVff2ozzDglsuz2apJ19c698O4vSTGoHJg=;
+	bh=LWskL1A3nznQ+ge8FZCbhAjaOytwB6AgbR+QRYw1foQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=E/VDKXzzBwvQB0eRgci4FAkliIzetyg9fSKg0meTMYKdSNy3eF/J4Waal7BeE4OoZHXTZkm/L+G1PfzBKMmsh0MaYiXDzAnS1NnHzCPkHpSC93NSQLVUH68QOIdyvyW3ovZ+tWw+mSF4WqvIv55BtSyMGMI7pnckectWKGMVrXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m47B8e0H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0E81C116C6;
-	Thu, 22 Jan 2026 10:49:06 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=pZWQEwGMqHlTIKpzWIb6RDNtqjlHd8p455WNpk/zNEFa9NUPWJ5jjokYsMvb/SIdN7LSrOfSlDdTJIBADYBYr4E83LniRwczty4ShhJYqAXvpjOlKL3S4/WSZIcHdpj+eMm9BEzELTKMVIATXTrWJ+IAISIqW8LISulB/ustIFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BHMdEmYH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D13FBC2BC87;
+	Thu, 22 Jan 2026 10:49:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769078948;
-	bh=rpraz+CpTUVff2ozzDglsuz2apJ19c698O4vSTGoHJg=;
+	s=k20201202; t=1769078950;
+	bh=LWskL1A3nznQ+ge8FZCbhAjaOytwB6AgbR+QRYw1foQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=m47B8e0Hbh3QjDruRkuQMCk3A6AkaIIDAiGKAw+iKCS9pJ1ji0uacbWcIpPgANU3P
-	 rZ4qE16iWXzjobOKdVzHdwIyhh7twDVN+7lBo4L8QMk7DAklvAJfsEIdAf+6BZQfAn
-	 K9OKer9uxJlz3LQc6hzA6tjM/0/a7cZIff7Z6YwM62F/QxLizkRQEyzU2V/mEtMt6v
-	 688fvqnzA4TAsImOwLwaRNvciGRiuHdrlApFWwaSL3rv58WqHyjAQZ86ti+avf8atu
-	 Vs0VFuJJFtsQ32t/VDn9eFTxJOxyjqCphUTY1w4PWRMx72YuwJAiNi+LAoXkd3RzOj
-	 5te9LPUTSVGwQ==
+	b=BHMdEmYHgHniqbgb4Up/JpmP/kgrd34eXY1GGti7Z9Ko5r4fCGXiVesipYlqdjKes
+	 fa7oE8hwSpu/EgExEQYSiOnBu88Ep/36ZvWW6R7Vm1taUMFjgw+NISJeonfWURKujq
+	 fP59NsxIaj2n49FTrM6q6OSfFEzotdhB4uGrzKybNVFb8FWrTXYlkYWzdjdMy68OhX
+	 +NXP67vVeFv9MVvJ/mZxV5JE7OWP9mh7ByWq1uhYaf2JTfTBUcXY8QkfYA7JnloN50
+	 YnAheP0B4OFMtejEJPALlUDb3LEhPSFaBAaLRfpbhlkJqeLOMFPryyJEr3R+kchuqq
+	 b8FN8mMMzacRQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 22 Jan 2026 11:48:49 +0100
-Subject: [PATCH 4/7] tools: update mount.h header
+Date: Thu, 22 Jan 2026 11:48:50 +0100
+Subject: [PATCH 5/7] selftests/statmount: add statmount_alloc() helper
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,7 +57,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260122-work-fsmount-namespace-v1-4-5ef0a886e646@kernel.org>
+Message-Id: <20260122-work-fsmount-namespace-v1-5-5ef0a886e646@kernel.org>
 References: <20260122-work-fsmount-namespace-v1-0-5ef0a886e646@kernel.org>
 In-Reply-To: <20260122-work-fsmount-namespace-v1-0-5ef0a886e646@kernel.org>
 To: linux-fsdevel@vger.kernel.org
@@ -66,12 +66,12 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
  Josef Bacik <josef@toxicpanda.com>, Aleksa Sarai <cyphar@cyphar.com>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1606; i=brauner@kernel.org;
- h=from:subject:message-id; bh=rpraz+CpTUVff2ozzDglsuz2apJ19c698O4vSTGoHJg=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQWMcx0rVyjeebu7+InZzICZ378Y6O5zmf+svhbwauif
- Vea/9lW21HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRS0wM/wwUtuwXTdq22Xna
- hFN8gm9XeT6KqsgJkbiwY8lLmx627AeMDNszL1btXX36A6e11Y/nLuc+f1oYuYeh7Pd0Xaup5+Q
- Np/EDAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1630; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=LWskL1A3nznQ+ge8FZCbhAjaOytwB6AgbR+QRYw1foQ=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQWMczUOnjPXChGf67k4+YUr6r8C4zpmVtN5MWUv39PS
+ Pecdce3o5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCJ7DzMyvDPI1gk4+N734zy+
+ tHWTY3av+1Cy+EPeHnaNDwl/iqLfzWP4p73c6aVM5U3mm3Oiul/cL65p4zZZ0OaTtKPFOnDt8fp
+ 3fAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 X-Rspamd-Server: lfdr
@@ -84,14 +84,14 @@ X-Spamd-Result: default: False [-1.96 / 15.00];
 	HAS_LIST_UNSUB(-0.01)[];
 	DMARC_POLICY_ALLOW(0.00)[kernel.org,quarantine];
 	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,suse.cz,kernel.org,gmail.com,toxicpanda.com,cyphar.com];
-	TAGGED_FROM(0.00)[bounces-75015-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-75016-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
+	ASN(0.00)[asn:7979, ipnet:2a01:60a::/32, country:US];
 	TO_DN_SOME(0.00)[];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
 	PRECEDENCE_BULK(0.00)[];
@@ -101,61 +101,66 @@ X-Spamd-Result: default: False [-1.96 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:helo,dfw.mirrors.kernel.org:rdns]
-X-Rspamd-Queue-Id: 1E6B565A28
+	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:helo,ams.mirrors.kernel.org:rdns]
+X-Rspamd-Queue-Id: 894B8659F5
 X-Rspamd-Action: no action
 
-Update the mount.h header so we can rely on it in the selftests.
+Add a helper to allocate a statmount buffer and call statmount(). This
+helper will be shared by multiple test suites that need to query mount
+information via statmount().
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- tools/include/uapi/linux/mount.h | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ .../selftests/filesystems/statmount/statmount.h    | 27 ++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/tools/include/uapi/linux/mount.h b/tools/include/uapi/linux/mount.h
-index 7fa67c2031a5..2204708dbf7a 100644
---- a/tools/include/uapi/linux/mount.h
-+++ b/tools/include/uapi/linux/mount.h
-@@ -61,7 +61,8 @@
- /*
-  * open_tree() flags.
-  */
--#define OPEN_TREE_CLONE		1		/* Clone the target tree and attach the clone */
-+#define OPEN_TREE_CLONE		(1 << 0)	/* Clone the target tree and attach the clone */
-+#define OPEN_TREE_NAMESPACE	(1 << 1)	/* Clone the target tree into a new mount namespace */
- #define OPEN_TREE_CLOEXEC	O_CLOEXEC	/* Close the file on execve() */
+diff --git a/tools/testing/selftests/filesystems/statmount/statmount.h b/tools/testing/selftests/filesystems/statmount/statmount.h
+index e1cba4bfd8d9..4ef23e54212c 100644
+--- a/tools/testing/selftests/filesystems/statmount/statmount.h
++++ b/tools/testing/selftests/filesystems/statmount/statmount.h
+@@ -3,10 +3,14 @@
+ #ifndef __STATMOUNT_H
+ #define __STATMOUNT_H
  
- /*
-@@ -109,6 +110,7 @@ enum fsconfig_command {
-  * fsmount() flags.
-  */
- #define FSMOUNT_CLOEXEC		0x00000001
-+#define FSMOUNT_NAMESPACE	0x00000002	/* Create the mount in a new mount namespace */
++#include <errno.h>
+ #include <stdint.h>
++#include <stdlib.h>
+ #include <linux/mount.h>
+ #include <asm/unistd.h>
  
- /*
-  * Mount attributes.
-@@ -197,7 +199,10 @@ struct statmount {
-  */
- struct mnt_id_req {
- 	__u32 size;
--	__u32 spare;
-+	union {
-+		__u32 mnt_ns_fd;
-+		__u32 mnt_fd;
-+	};
- 	__u64 mnt_id;
- 	__u64 param;
- 	__u64 mnt_ns_id;
-@@ -232,4 +237,9 @@ struct mnt_id_req {
- #define LSMT_ROOT		0xffffffffffffffff	/* root mount */
- #define LISTMOUNT_REVERSE	(1 << 0) /* List later mounts first */
- 
-+/*
-+ * @flag bits for statmount(2)
-+ */
-+#define STATMOUNT_BY_FD		0x00000001U	/* want mountinfo for given fd */
++#define STATMOUNT_BUFSIZE (1 << 15)
 +
- #endif /* _UAPI_LINUX_MOUNT_H */
+ #ifndef __NR_statmount
+ 	#if defined __alpha__
+ 		#define __NR_statmount 567
+@@ -84,4 +88,27 @@ static inline ssize_t listmount(uint64_t mnt_id, uint64_t mnt_ns_id,
+ 	return syscall(__NR_listmount, &req, list, num, flags);
+ }
+ 
++static inline struct statmount *statmount_alloc(uint64_t mnt_id, uint64_t mnt_ns_id, uint64_t mask)
++{
++	struct statmount *buf;
++	size_t bufsize = STATMOUNT_BUFSIZE;
++	int ret;
++
++	for (;;) {
++		buf = malloc(bufsize);
++		if (!buf)
++			return NULL;
++
++		ret = statmount(mnt_id, mnt_ns_id, 0, mask, buf, bufsize, 0);
++		if (ret == 0)
++			return buf;
++
++		free(buf);
++		if (errno != EOVERFLOW)
++			return NULL;
++
++		bufsize <<= 1;
++	}
++}
++
+ #endif /* __STATMOUNT_H */
 
 -- 
 2.47.3
