@@ -1,66 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-75045-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75041-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OPpTEAEwcmmadwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75045-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 15:11:13 +0100
+	id yJDEN/kycmmadwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75041-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 15:23:53 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B027267BA0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 15:11:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7262F67E15
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 15:23:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 503B34F563E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 13:52:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C787258B0BC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 13:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5796334B40F;
-	Thu, 22 Jan 2026 13:50:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5D3340A6C;
+	Thu, 22 Jan 2026 13:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="nGyTQUOZ"
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="oo7DWSfH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com [113.46.200.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1504F338F5B;
-	Thu, 22 Jan 2026 13:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3BE330B22;
+	Thu, 22 Jan 2026 13:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769089826; cv=none; b=PtLkwSYh1hgr0aaCLwno8qgykQmkrBzOX0Jj/H6YXWR5kTbJM0u+a6FMoVyYXBJ6w3Zs6DNTw+6Q1TF4N4i966+LnzxNkUJRBWyW3HsY1knoRh4VgdnpdlmTiU0qAWUupjHPQn6PhgXmDtjdu75sz30/INdRaOIv+LzZaSQmcM0=
+	t=1769089823; cv=none; b=Etfm9XEzKc4UA261MprdT1FcugfJsGawqt/B9GvnxN9LqMStM9WCIEU/izp2LQC7d5uqacxIfHGi0KxyuTnD+LSerEBTG2Nu96XBFxQPooI1zdkGWf9eHjex+nf6nylz59oZ368VGYOHdf9gEbYNxVloDO6yGQt2+tnSFjgVD50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769089826; c=relaxed/simple;
-	bh=+SUjc358ft0Qx2/9xo/Em/VA/96fSeWHqg/BOtUlNh0=;
+	s=arc-20240116; t=1769089823; c=relaxed/simple;
+	bh=5MfobSVxZXGISDnvwk/oyoJ2THkDS+BLtt7M7DQLhwA=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BLPKS8PpgEB5KVuaXHG7OjxVbpBkMH3FGMYkrTBBUx6bdtIxihcfiadIzYuTXqpiFCytqzVCwHe0g6OcHr6xw7YeENmi1zO/znGyHRz1FdyTxFmMJS+K+c68hnOKvfj3ehciuHXA+c8RxoI0VOiLhNHeD/IxpiTFzoVqxhXpxy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=nGyTQUOZ; arc=none smtp.client-ip=113.46.200.216
+	 MIME-Version:Content-Type; b=B3+1vNxvvUsLx9ONZvuq8SSuvmx7mtQZJy7cZBEErgxuSwJW1HHcgrtvMGlKrDUmKQ7fHEOQdT+NKjx8KuxEksFW0AVj3oJWWaMp3YXM25LW/ZX4r07pcNt90hwbiuDYDWi5S+RCtRujuwbwswxp0F3eLQXS4bgs2OgDH7/VNhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=oo7DWSfH; arc=none smtp.client-ip=113.46.200.217
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
 	c=relaxed/relaxed; q=dns/txt;
 	h=From;
-	bh=xAa8T4/dhzGgisIp59i8kaQOP1U0tmXz+haC7atdmWY=;
-	b=nGyTQUOZkihDPX/H39dxjz4qbnBOfZ+xZmMLdT4k5TyZC+nI69xCtxLut8rmURbCyeAAYq2Eg
-	FClX5fuv4+9GKtTe4A9FLJ9m/m2SiDuvusXcvu9d675c55J9CeSIEdehWmlWtUZeMFEks7Ov9YU
-	oXb9AAZh1fr1trqqWG7OBzA=
-Received: from mail.maildlp.com (unknown [172.19.162.140])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4dxj5K70sWz1T4Gp;
-	Thu, 22 Jan 2026 21:46:13 +0800 (CST)
+	bh=+RJ/lUy/s4IsZLQoItUqmF+7IGRzX6S4ot1reZrnGfM=;
+	b=oo7DWSfHxz0tzaJHOoVC3r/qXviwmoPgLWhb+KrBpatngd5uXVxdOxFIiX4r7+E1CWfIwwNeO
+	vnSMQYPXGonhfcr3bHFu86XuLvT+cYaHWTLEo0PjmykNrwAX6AM4cwZh/j4INmQO5J7uVJzMH3h
+	Brn7uCrXTZeIwXiYVNBrxHI=
+Received: from mail.maildlp.com (unknown [172.19.162.144])
+	by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4dxj5R3tsJzcb0S;
+	Thu, 22 Jan 2026 21:46:19 +0800 (CST)
 Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
-	by mail.maildlp.com (Postfix) with ESMTPS id 50F612016A;
+	by mail.maildlp.com (Postfix) with ESMTPS id DC2B240567;
 	Thu, 22 Jan 2026 21:50:18 +0800 (CST)
 Received: from huawei.com (10.67.174.162) by kwepemr500015.china.huawei.com
  (7.202.195.162) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 22 Jan
- 2026 21:50:17 +0800
+ 2026 21:50:18 +0800
 From: Hongbo Li <lihongbo22@huawei.com>
 To: <hsiangkao@linux.alibaba.com>, <chao@kernel.org>, <brauner@kernel.org>
 CC: <hch@lst.de>, <djwong@kernel.org>, <amir73il@gmail.com>,
 	<linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
 	<linux-kernel@vger.kernel.org>, <lihongbo22@huawei.com>
-Subject: [PATCH v16 04/10] erofs: add erofs_inode_set_aops helper to set the aops.
-Date: Thu, 22 Jan 2026 13:37:12 +0000
-Message-ID: <20260122133718.658056-5-lihongbo22@huawei.com>
+Subject: [PATCH v16 05/10] erofs: using domain_id in the safer way
+Date: Thu, 22 Jan 2026 13:37:13 +0000
+Message-ID: <20260122133718.658056-6-lihongbo22@huawei.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20260122133718.658056-1-lihongbo22@huawei.com>
 References: <20260122133718.658056-1-lihongbo22@huawei.com>
@@ -88,10 +88,10 @@ X-Spamd-Result: default: False [-0.46 / 15.00];
 	DKIM_TRACE(0.00)[huawei.com:+];
 	FREEMAIL_CC(0.00)[lst.de,kernel.org,gmail.com,vger.kernel.org,lists.ozlabs.org,huawei.com];
 	DMARC_POLICY_ALLOW(0.00)[huawei.com,quarantine];
-	TAGGED_FROM(0.00)[bounces-75045-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-75041-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
+	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[lihongbo22@huawei.com,linux-fsdevel@vger.kernel.org];
@@ -101,86 +101,92 @@ X-Spamd-Result: default: False [-0.46 / 15.00];
 	RCVD_COUNT_FIVE(0.00)[6];
 	RCPT_COUNT_SEVEN(0.00)[10];
 	FROM_HAS_DN(0.00)[]
-X-Rspamd-Queue-Id: B027267BA0
+X-Rspamd-Queue-Id: 7262F67E15
 X-Rspamd-Action: no action
 
-Add erofs_inode_set_aops helper to set the inode->i_mapping->a_ops,
-and using IS_ENABLED to make it cleaner.
+Either the existing fscache usecase or the upcoming page
+cache sharing case, the `domain_id` should be protected as
+sensitive information, so we use the safer helpers to allocate,
+free and display domain_id.
 
 Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
 ---
- fs/erofs/inode.c    | 23 +----------------------
- fs/erofs/internal.h | 23 +++++++++++++++++++++++
- 2 files changed, 24 insertions(+), 22 deletions(-)
+ Documentation/filesystems/erofs.rst | 5 +++--
+ fs/erofs/fscache.c                  | 4 ++--
+ fs/erofs/super.c                    | 8 ++++----
+ 3 files changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-index bce98c845a18..389632bb46c4 100644
---- a/fs/erofs/inode.c
-+++ b/fs/erofs/inode.c
-@@ -235,28 +235,7 @@ static int erofs_fill_inode(struct inode *inode)
+diff --git a/Documentation/filesystems/erofs.rst b/Documentation/filesystems/erofs.rst
+index 08194f194b94..40dbf3b6a35f 100644
+--- a/Documentation/filesystems/erofs.rst
++++ b/Documentation/filesystems/erofs.rst
+@@ -126,8 +126,9 @@ dax={always,never}     Use direct access (no page cache).  See
+ dax                    A legacy option which is an alias for ``dax=always``.
+ device=%s              Specify a path to an extra device to be used together.
+ fsid=%s                Specify a filesystem image ID for Fscache back-end.
+-domain_id=%s           Specify a domain ID in fscache mode so that different images
+-                       with the same blobs under a given domain ID can share storage.
++domain_id=%s           Specify a trusted domain ID for fscache mode so that
++                       different images with the same blobs, identified by blob IDs,
++                       can share storage within the same trusted domain.
+ fsoffset=%llu          Specify block-aligned filesystem offset for the primary device.
+ ===================    =========================================================
+ 
+diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
+index f4937b025038..a2cc0f3fa9d0 100644
+--- a/fs/erofs/fscache.c
++++ b/fs/erofs/fscache.c
+@@ -379,7 +379,7 @@ static void erofs_fscache_domain_put(struct erofs_domain *domain)
+ 		}
+ 		fscache_relinquish_volume(domain->volume, NULL, false);
+ 		mutex_unlock(&erofs_domain_list_lock);
+-		kfree(domain->domain_id);
++		kfree_sensitive(domain->domain_id);
+ 		kfree(domain);
+ 		return;
  	}
- 
- 	mapping_set_large_folios(inode->i_mapping);
--	if (erofs_inode_is_data_compressed(vi->datalayout)) {
--#ifdef CONFIG_EROFS_FS_ZIP
--		DO_ONCE_LITE_IF(inode->i_blkbits != PAGE_SHIFT,
--			  erofs_info, inode->i_sb,
--			  "EXPERIMENTAL EROFS subpage compressed block support in use. Use at your own risk!");
--		inode->i_mapping->a_ops = &z_erofs_aops;
--#else
--		err = -EOPNOTSUPP;
--#endif
--	} else {
--		inode->i_mapping->a_ops = &erofs_aops;
--#ifdef CONFIG_EROFS_FS_ONDEMAND
--		if (erofs_is_fscache_mode(inode->i_sb))
--			inode->i_mapping->a_ops = &erofs_fscache_access_aops;
--#endif
--#ifdef CONFIG_EROFS_FS_BACKED_BY_FILE
--		if (erofs_is_fileio_mode(EROFS_SB(inode->i_sb)))
--			inode->i_mapping->a_ops = &erofs_fileio_aops;
--#endif
--	}
--
--	return err;
-+	return erofs_inode_set_aops(inode, inode, false);
+@@ -446,7 +446,7 @@ static int erofs_fscache_init_domain(struct super_block *sb)
+ 	sbi->domain = domain;
+ 	return 0;
+ out:
+-	kfree(domain->domain_id);
++	kfree_sensitive(domain->domain_id);
+ 	kfree(domain);
+ 	return err;
  }
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index dca1445f6c92..6fbe9220303a 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -525,8 +525,8 @@ static int erofs_fc_parse_param(struct fs_context *fc,
+ 			return -ENOMEM;
+ 		break;
+ 	case Opt_domain_id:
+-		kfree(sbi->domain_id);
+-		sbi->domain_id = kstrdup(param->string, GFP_KERNEL);
++		kfree_sensitive(sbi->domain_id);
++		sbi->domain_id = no_free_ptr(param->string);
+ 		if (!sbi->domain_id)
+ 			return -ENOMEM;
+ 		break;
+@@ -624,7 +624,7 @@ static void erofs_set_sysfs_name(struct super_block *sb)
+ {
+ 	struct erofs_sb_info *sbi = EROFS_SB(sb);
  
- /*
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index ec79e8b44d3b..8e28c2fa8735 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -455,6 +455,29 @@ static inline void *erofs_vm_map_ram(struct page **pages, unsigned int count)
- 	return NULL;
- }
- 
-+static inline int erofs_inode_set_aops(struct inode *inode,
-+				       struct inode *realinode, bool no_fscache)
-+{
-+	if (erofs_inode_is_data_compressed(EROFS_I(realinode)->datalayout)) {
-+		if (!IS_ENABLED(CONFIG_EROFS_FS_ZIP))
-+			return -EOPNOTSUPP;
-+		DO_ONCE_LITE_IF(realinode->i_blkbits != PAGE_SHIFT,
-+			  erofs_info, realinode->i_sb,
-+			  "EXPERIMENTAL EROFS subpage compressed block support in use. Use at your own risk!");
-+		inode->i_mapping->a_ops = &z_erofs_aops;
-+		return 0;
-+	}
-+	inode->i_mapping->a_ops = &erofs_aops;
-+	if (IS_ENABLED(CONFIG_EROFS_FS_ONDEMAND)) {
-+		if (!no_fscache && erofs_is_fscache_mode(realinode->i_sb))
-+			inode->i_mapping->a_ops = &erofs_fscache_access_aops;
-+	} else {
-+		if (erofs_is_fileio_mode(EROFS_SB(realinode->i_sb)))
-+			inode->i_mapping->a_ops = &erofs_fileio_aops;
-+	}
-+	return 0;
-+}
-+
- int erofs_register_sysfs(struct super_block *sb);
- void erofs_unregister_sysfs(struct super_block *sb);
- int __init erofs_init_sysfs(void);
+-	if (sbi->domain_id)
++	if (sbi->domain_id && sbi->fsid)
+ 		super_set_sysfs_name_generic(sb, "%s,%s", sbi->domain_id,
+ 					     sbi->fsid);
+ 	else if (sbi->fsid)
+@@ -852,7 +852,7 @@ static void erofs_sb_free(struct erofs_sb_info *sbi)
+ {
+ 	erofs_free_dev_context(sbi->devs);
+ 	kfree(sbi->fsid);
+-	kfree(sbi->domain_id);
++	kfree_sensitive(sbi->domain_id);
+ 	if (sbi->dif0.file)
+ 		fput(sbi->dif0.file);
+ 	kfree(sbi->volume_name);
 -- 
 2.22.0
 
