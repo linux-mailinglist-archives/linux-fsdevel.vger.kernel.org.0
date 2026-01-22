@@ -1,252 +1,332 @@
-Return-Path: <linux-fsdevel+bounces-75149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75151-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0MlWD4GLcmlJmAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 21:41:37 +0100
+	id mEk1Fl6McmlJmAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75151-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 21:45:18 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B03646D7B0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 21:41:36 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id C09DF6D83E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 21:45:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id A0DB330157F4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 20:41:35 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id B73603008769
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 20:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3D03A703A;
-	Thu, 22 Jan 2026 20:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5A33A7326;
+	Thu, 22 Jan 2026 20:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="SCmRGBJh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gcmER34L"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fra-out-004.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-004.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.74.81.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08824389440;
-	Thu, 22 Jan 2026 20:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.74.81.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0263A7034
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 20:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769114486; cv=none; b=Wi0uEkevEO1aWPnf2y6HYYxiGqkXTQtxRewbOagjY/urlbtPTXLuG1gQB9MAVBriQc9PQhtRRvw3yOWB1VpBXwfh5TME9nTZPF4jf+Pb5s466qUMuUuqPbeRtAm6aMRfPV8PR5cOan+WM7z3YSTFDAzc5x/nQQpsg2QjVRrpXE8=
+	t=1769114712; cv=none; b=ftIz9mkFUKufLQpvWDjBebLsPsFZRgaiNx5phalbqnzFypj1hl3jRvxiIX3GfUaKT4dD11RNOdElJPEshmGBeoXxOMwM2LjJddNtcl+SAS0OxByEeZf3+AVqXagz/6Zm8HuXDjROYGCmNH3LQAuKhgh46IXSKqWx8bwIo4fXr90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769114486; c=relaxed/simple;
-	bh=LonPtWha4x8xuSmcztKfYqypFSPHpLZl16paREdrt8M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tBpsHwoZwG1JMuNnjGbIy3cGGHuTSiGvk3VHQDz/gP7Lj3ksdYwrird8jLrvr7g/3ZR5jcD3JHlof3KqoMyzxRLRfprJ366Xxkw1W6dVIKLNEBnyDKC5ej98cFO3OHZB/6DpOZWbyPMMrNiMoIj7fR8NcYfUTnTSI9IUhasSIeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=SCmRGBJh; arc=none smtp.client-ip=3.74.81.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+	s=arc-20240116; t=1769114712; c=relaxed/simple;
+	bh=WpjdkZr7gZqb2N0wQQcH0LtMh0wWbvw+Iwn8aCgLLuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p9IenOrKQF1JHrur+UhJuFWte39XrVFlWdFycb2E8xzqsvCWTi9FOD/nnTKROD/DjMsV1cLufBOuaqJ/9v7gFeGNaV0r+1Ud+iqwUL2tJK2BABFtL1QlYv8jVIQuR0GWBdBFyPRZ8gVkTZm/pWhSsvyWuUX1LQfGuP0qU+K//W8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gcmER34L; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-4359a302794so973530f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 12:45:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1769114480; x=1800650480;
-  h=message-id:date:mime-version:reply-to:subject:to:cc:
-   references:from:in-reply-to:content-transfer-encoding;
-  bh=L060fUvGttxYBIHa6eLU8Z48SLaOwnhKGvQs72E5QZs=;
-  b=SCmRGBJhNyXtpYiJKtHywhQ3vlbN3/T3F4Y2L8whBJAfJcCtGq59YV6k
-   IfqNX+2Vn+zqIr//fQgpfpFFODHMyhzTkK6ZkSHqfDuc7h0xmV1gOjxKU
-   QIr11WoHQLZsS5AQSJ8mo7LoHjYlJy64VBfs9Cmq2B9RNNWtQcT5lNaa6
-   rhzQVZ6KsnsqpBLe58WbTq5NKK9zpwbmgPirLsNvw6kGNb71qmhe/9eDS
-   VvZSgTS4E4jenFoFB36tW1/nVrZzCCt8apbYolXuBRdLuTib+eudUNLrV
-   g5ogb6vDyGAfxksDqAOswDYU2obRaB8qGKvR7lvLxr8L6otMmcTM6VdA/
-   A==;
-X-CSE-ConnectionGUID: Eq/qtYVnSJqlAvEbKUczXA==
-X-CSE-MsgGUID: JuRcDWNSTV2iEyPOM5D09w==
-X-IronPort-AV: E=Sophos;i="6.21,246,1763424000"; 
-   d="scan'208";a="8319239"
-Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
-  by internal-fra-out-004.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jan 2026 20:40:53 +0000
-Received: from EX19MTAEUA001.ant.amazon.com [54.240.197.233:3034]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.29.47:2525] with esmtp (Farcaster)
- id a5dd7989-855e-4510-b2e9-5fd9107a3c02; Thu, 22 Jan 2026 20:40:52 +0000 (UTC)
-X-Farcaster-Flow-ID: a5dd7989-855e-4510-b2e9-5fd9107a3c02
-Received: from EX19D005EUB003.ant.amazon.com (10.252.51.31) by
- EX19MTAEUA001.ant.amazon.com (10.252.50.50) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.35;
- Thu, 22 Jan 2026 20:40:51 +0000
-Received: from [192.168.23.186] (10.106.82.17) by
- EX19D005EUB003.ant.amazon.com (10.252.51.31) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.35;
- Thu, 22 Jan 2026 20:40:47 +0000
-Message-ID: <0635e64a-2194-4a6c-b772-28af54d58e3b@amazon.com>
-Date: Thu, 22 Jan 2026 20:40:46 +0000
+        d=gmail.com; s=20230601; t=1769114698; x=1769719498; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4HXJHkDaMXh/2DJp2ACfR897wjQMnrDONUo/R82h0M0=;
+        b=gcmER34LfFAnAfhzDkM7m4TDar+DJeE0qDIqfc+RUpua99uBzXOqoPnKiz3ZiY5Ayy
+         Tr3jZtsz5A64o6uZTP+c+hJ08YSReoYVCO4cgWA7yvMO0SbSjJnPWYhJzlw+yuyYF8/7
+         /BlfCfHEpyHQ5MLftDHk5birLXRtT8kWWRV+Rt0yjfm06wn9xEW8J/lWDjFdUXQ0IxoF
+         V+7laWiohni37wjl1LFbXV8Q2VNKzyWrtmm1NgrHtKV1fJWXbZq3WjY65cqaYlZ1fnH3
+         /AMSMb3xCRYDMMJuN3LihcbUbAbwXIPdQ1iLddqbukRxrYJEtuJ33pe+BKp68iz/WB/P
+         IsMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769114698; x=1769719498;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4HXJHkDaMXh/2DJp2ACfR897wjQMnrDONUo/R82h0M0=;
+        b=ZrvvKAU+HA/qRiwZUpigiv0hsL6cMdAtax40QeBFrGAsGAENS+Upy2+JlEq+7X+nnm
+         7/k296bBCLBTVYK8p70+O1ew1QiuIW9Ky5A+XZ5sN1ss3o13C+T5ZqMgd0gTcZ62k6fR
+         /BoWn+LZT0aJo/QsNiYxTTFARi1jTcp6N59F0b0oSdo9HrM566dxNRr4F9j621DT3IRD
+         oNIwl1iY9DdCFy6gQ5lWofgaWKBqbfuGHiVRrMAKxcO76xpS6EgRnZtiSu50lLYHAOg9
+         0nOjodNaywWxl8Hwm+db/NQKumw+2BU6Vel0b8QGGkJFg8WaJl/dMh9SkWtFrXZTSUF4
+         2UIw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6dCmboIPeTLTAIbCbRAK3XKhdZuuzO9rMU2S/nYW8AS/6xd1VI3Lgp1EIf2xEEFdSbjaT7oj/WSyZ1CHg@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlanCbk76uEfFooTc9KtYpsOHuqng9p16lkbSJrQE5Huy6jNeB
+	absbhjZsJ/ogm1oLIBLuHMSJAqEXszfOeFiiHzw78WbxgAzK7zBPYSHz
+X-Gm-Gg: AZuq6aKXC3ptgDkbm6xMr3JQZLZXAQ/iD4aBhlDvJdNhj3RWRVsQFkAVxQ0cnUpWFR5
+	scGhYwqwtg4TYqM8dJTASZ/JODiJ87CHL0VmW3Q5Up9jUkuzaW/lukSSzQHg/2MEYQEL8ILiBS1
+	xBnvTA1gJ3YUusRVVkCqL6tV8s0K3BfHMGYPneGEK+JRDyKuQIJvqllklT/QwuWIgLj+7yR/ghH
+	VgR1CxGicWZF4zdxvl3IQ7PKM4xZwEaucPCn9KCYOmfHWSwep5sbedddpWw8cb0I6ivepLYZn6R
+	IQOcrF9Q+3Z+XJKXQBkY4Aybt7BtPRttowHfy2aEhssWZ9Y35Hp0NJv7Urp+K291+DpwnWC9gMr
+	zW5JqSZX02NV/BaPXADY8C7VtMEabZzIzzlyga12vxYT3OgBqa1zNUBDt0McrhHaGTiQ1PLYSFi
+	IgXhYf6yuCjsjED7F60LADPYReIlsac9BOqVs2tnDEzwuBckYnCklA3xJgS6LpLuJ7TrL5bQ==
+X-Received: by 2002:a05:6000:1447:b0:435:9432:a407 with SMTP id ffacd0b85a97d-435b161c131mr1619126f8f.54.1769114697795;
+        Thu, 22 Jan 2026 12:44:57 -0800 (PST)
+Received: from f (cst-prg-85-136.cust.vodafone.cz. [46.135.85.136])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435b1c02cf6sm1311240f8f.7.2026.01.22.12.44.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Jan 2026 12:44:57 -0800 (PST)
+Date: Thu, 22 Jan 2026 21:44:50 +0100
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Qiliang Yuan <realwujing@gmail.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, yuanql9@chinatelecom.cn
+Subject: Re: [PATCH] fs/file: optimize FD allocation complexity with 3-level
+ summary bitmap
+Message-ID: <4qzknwustcw7vkpky3z5kvkmjp3burhwipivfeqr4cine3i4x5@772ocqtmmcoj>
+References: <20260122170345.157803-1-realwujing@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <kalyazin@amazon.com>
-Subject: Re: [PATCH v9 07/13] KVM: guest_memfd: Add flag to remove from direct
- map
-To: Ackerley Tng <ackerleytng@google.com>, "Kalyazin, Nikita"
-	<kalyazin@amazon.co.uk>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"kernel@xen0n.name" <kernel@xen0n.name>, "linux-riscv@lists.infradead.org"
-	<linux-riscv@lists.infradead.org>, "linux-s390@vger.kernel.org"
-	<linux-s390@vger.kernel.org>, "loongarch@lists.linux.dev"
-	<loongarch@lists.linux.dev>
-CC: "pbonzini@redhat.com" <pbonzini@redhat.com>, "corbet@lwn.net"
-	<corbet@lwn.net>, "maz@kernel.org" <maz@kernel.org>, "oupton@kernel.org"
-	<oupton@kernel.org>, "joey.gouly@arm.com" <joey.gouly@arm.com>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, "yuzenghui@huawei.com"
-	<yuzenghui@huawei.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"will@kernel.org" <will@kernel.org>, "seanjc@google.com" <seanjc@google.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com"
-	<mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org"
-	<x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "luto@kernel.org"
-	<luto@kernel.org>, "peterz@infradead.org" <peterz@infradead.org>,
-	"willy@infradead.org" <willy@infradead.org>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "david@kernel.org" <david@kernel.org>,
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
-	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>, "vbabka@suse.cz"
-	<vbabka@suse.cz>, "rppt@kernel.org" <rppt@kernel.org>, "surenb@google.com"
-	<surenb@google.com>, "mhocko@suse.com" <mhocko@suse.com>, "ast@kernel.org"
-	<ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>,
-	"andrii@kernel.org" <andrii@kernel.org>, "martin.lau@linux.dev"
-	<martin.lau@linux.dev>, "eddyz87@gmail.com" <eddyz87@gmail.com>,
-	"song@kernel.org" <song@kernel.org>, "yonghong.song@linux.dev"
-	<yonghong.song@linux.dev>, "john.fastabend@gmail.com"
-	<john.fastabend@gmail.com>, "kpsingh@kernel.org" <kpsingh@kernel.org>,
-	"sdf@fomichev.me" <sdf@fomichev.me>, "haoluo@google.com" <haoluo@google.com>,
-	"jolsa@kernel.org" <jolsa@kernel.org>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
-	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, "peterx@redhat.com"
-	<peterx@redhat.com>, "jannh@google.com" <jannh@google.com>,
-	"pfalcato@suse.de" <pfalcato@suse.de>, "shuah@kernel.org" <shuah@kernel.org>,
-	"riel@surriel.com" <riel@surriel.com>, "ryan.roberts@arm.com"
-	<ryan.roberts@arm.com>, "jgross@suse.com" <jgross@suse.com>,
-	"yu-cheng.yu@intel.com" <yu-cheng.yu@intel.com>, "kas@kernel.org"
-	<kas@kernel.org>, "coxu@redhat.com" <coxu@redhat.com>,
-	"kevin.brodsky@arm.com" <kevin.brodsky@arm.com>, "maobibo@loongson.cn"
-	<maobibo@loongson.cn>, "prsampat@amd.com" <prsampat@amd.com>,
-	"mlevitsk@redhat.com" <mlevitsk@redhat.com>, "jmattson@google.com"
-	<jmattson@google.com>, "jthoughton@google.com" <jthoughton@google.com>,
-	"agordeev@linux.ibm.com" <agordeev@linux.ibm.com>, "alex@ghiti.fr"
-	<alex@ghiti.fr>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-	"borntraeger@linux.ibm.com" <borntraeger@linux.ibm.com>,
-	"chenhuacai@kernel.org" <chenhuacai@kernel.org>, "dev.jain@arm.com"
-	<dev.jain@arm.com>, "gor@linux.ibm.com" <gor@linux.ibm.com>,
-	"hca@linux.ibm.com" <hca@linux.ibm.com>, "Jonathan.Cameron@huawei.com"
-	<Jonathan.Cameron@huawei.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>,
-	"pjw@kernel.org" <pjw@kernel.org>, "shijie@os.amperecomputing.com"
-	<shijie@os.amperecomputing.com>, "svens@linux.ibm.com" <svens@linux.ibm.com>,
-	"thuth@redhat.com" <thuth@redhat.com>, "wyihan@google.com"
-	<wyihan@google.com>, "yang@os.amperecomputing.com"
-	<yang@os.amperecomputing.com>, "vannapurve@google.com"
-	<vannapurve@google.com>, "jackmanb@google.com" <jackmanb@google.com>,
-	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>, "patrick.roy@linux.dev"
-	<patrick.roy@linux.dev>, "Thomson, Jack" <jackabt@amazon.co.uk>, "Itazuri,
- Takahiro" <itazur@amazon.co.uk>, "Manwaring, Derek" <derekmn@amazon.com>,
-	"Cali, Marco" <xmarcalx@amazon.co.uk>
-References: <20260114134510.1835-1-kalyazin@amazon.com>
- <20260114134510.1835-8-kalyazin@amazon.com>
- <CAEvNRgEzVhEzr-3GWTsE7GSBsPdvVLq7WFEeLHzcmMe=R9S51w@mail.gmail.com>
- <a2b79af7-e5d1-4668-bff3-606f57d32dfc@amazon.com>
- <CAEvNRgF46M1jp0+eBu2wQMO7P1afyo00SOkENFwvB2KYX3dnFA@mail.gmail.com>
- <f2f2a6bd-5cb4-46c9-a0f8-3240670094b5@amazon.com>
- <CAEvNRgEd=Uh09dU_P7_vvzRpOyMYd=OKazpkxzr=VLe5HcQhGw@mail.gmail.com>
-Content-Language: en-US
-From: Nikita Kalyazin <kalyazin@amazon.com>
-Autocrypt: addr=kalyazin@amazon.com; keydata=
- xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
- JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
- BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
- IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
- CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
- ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
- ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
- i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
-In-Reply-To: <CAEvNRgEd=Uh09dU_P7_vvzRpOyMYd=OKazpkxzr=VLe5HcQhGw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EX19D004EUC003.ant.amazon.com (10.252.51.249) To
- EX19D005EUB003.ant.amazon.com (10.252.51.31)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260122170345.157803-1-realwujing@gmail.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-7.66 / 15.00];
-	WHITELIST_DMARC(-7.00)[amazon.com:D:+];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[amazon.com,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[amazon.com:s=amazoncorp2];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75149-lists,linux-fsdevel=lfdr.de];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns];
-	FREEMAIL_CC(0.00)[redhat.com,lwn.net,kernel.org,arm.com,huawei.com,google.com,linutronix.de,alien8.de,linux.intel.com,zytor.com,infradead.org,linux-foundation.org,oracle.com,suse.cz,suse.com,iogearbox.net,linux.dev,gmail.com,fomichev.me,ziepe.ca,nvidia.com,suse.de,surriel.com,intel.com,loongson.cn,amd.com,linux.ibm.com,ghiti.fr,eecs.berkeley.edu,dabbelt.com,os.amperecomputing.com,amazon.co.uk,amazon.com];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75151-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[kalyazin@amazon.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[amazon.com:+];
-	RCPT_COUNT_GT_50(0.00)[96];
-	MID_RHS_MATCH_FROM(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
-	HAS_REPLYTO(0.00)[kalyazin@amazon.com];
+	FREEMAIL_TO(0.00)[gmail.com];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[mjguzik@gmail.com,linux-fsdevel@vger.kernel.org];
+	MISSING_XM_UA(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: B03646D7B0
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com]
+X-Rspamd-Queue-Id: C09DF6D83E
 X-Rspamd-Action: no action
 
-
-
-On 22/01/2026 20:30, Ackerley Tng wrote:
-> Nikita Kalyazin <kalyazin@amazon.com> writes:
+On Thu, Jan 22, 2026 at 12:03:45PM -0500, Qiliang Yuan wrote:
+> Current FD allocation performs a two-level bitmap search (open_fds and
+> full_fds_bits). This results in O(N/64) complexity when searching for a
+> free FD, as the kernel needs to scan the first-level summary bitmap.
 > 
->>
->> [...snip...]
->>
->>>>>> @@ -533,6 +580,8 @@ static void kvm_gmem_free_folio(struct folio *folio)
->>>>>>          kvm_pfn_t pfn = page_to_pfn(page);
->>>>>>          int order = folio_order(folio);
->>>>>>
->>>>>> +     kvm_gmem_folio_restore_direct_map(folio);
->>>>>> +
->>>>>
->>>>> I can't decide if the kvm_gmem_folio_no_direct_map(folio) should be in
->>>>> the caller or within kvm_gmem_folio_restore_direct_map(), since this
->>>>> time it's a folio-specific property being checked.
->>>>
->>>> I'm tempted to keep it similar to the kvm_gmem_folio_zap_direct_map()
->>>> case.  How does the fact it's a folio-speicific property change your
->>>> reasoning?
->>>>
->>>
->>> This is good too:
->>>
->>>     if (kvm_gmem_folio_no_direct_map(folio))
->>>             kvm_gmem_folio_restore_direct_map(folio)
->>
->> It turns out we can't do that because folio->mapping is gone by the time
->> filemap_free_folio() is called so we can't inspect the flags.  Are you
->> ok with only having this check when zapping (but not when restoring)?
->> Do you think we should add a comment saying it's conditional here?
->>
+> For processes with very large FD limits (e.g., millions of sockets),
+> scanning even the level 1 summary bitmap can become a bottleneck during
+> high-frequency allocation.
 > 
-> I thought kvm_gmem_folio_no_direct_map() only reads folio->private,
-> which I think should still be there at the point of
-> filemap_free_folio().
-
-Oh, I misread your last reply.  What you're proposing would work indeed.
-
+> This patch introduces a third level of summary bitmap (full_fds_bits_l2),
+> where each bit represents whether a 64-word chunk (4096 FDs) in open_fds
+> is fully allocated. This reduces the search complexity to O(N/4096),
+> making FD allocation significantly more scalable for high-concurrency
+> workloads.
 > 
->>>
->>> [...snip...]
->>>
 
+Do you have results to justify this change?
+
+Note this adds more bouncing memory accesses to the lock-protected area.
+
+The centralized locking is a long stranding problem and I'm not
+convinced there is more place for lipstick on that pig.
+
+The real solution(tm) would instead make it feasible to not need said
+locking.
+
+As is all programs are shafted because any fd-allocating syscall is
+required to obtain lowest fd available.
+
+In another life I suggested introducing a new flag for accept, open et
+al which would waive that requirement for that specific invocation in
+turn allowing scalable allocation instead.
+
+Say it would be called O_ANYFD/SOCK_ANYFD.
+
+Then the fd space can be partitioned in some capacity -- maybe per
+thread, maybe per cpu, maybe some other granularity, but it would no
+longer be centralized.
+
+Code which knowns about the feature and is fine with it can pass the
+flag and in turn allocate from one of the extra tables by default.
+
+Code oblivious to the feature would not see a change in behavior, as
+absent the flag the kernel would ensure to find the lowest fd.
+
+Ultimately any program written with performance in mind can be then
+trivially tweaked to use it and get the benefit. The hard part is making
+it sensibly work.
+
+
+> Signed-off-by: Qiliang Yuan <realwujing@gmail.com>
+> Signed-off-by: Qiliang Yuan <yuanql9@chinatelecom.cn>
+> ---
+>  fs/file.c               | 45 +++++++++++++++++++++++++++++++++--------
+>  include/linux/fdtable.h |  2 ++
+>  2 files changed, 39 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/file.c b/fs/file.c
+> index 0a4f3bdb2dec..1163160e81af 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -114,6 +114,8 @@ static void free_fdtable_rcu(struct rcu_head *rcu)
+>  
+>  #define BITBIT_NR(nr)	BITS_TO_LONGS(BITS_TO_LONGS(nr))
+>  #define BITBIT_SIZE(nr)	(BITBIT_NR(nr) * sizeof(long))
+> +#define BITBITBIT_NR(nr) BITS_TO_LONGS(BITBIT_NR(nr))
+> +#define BITBITBIT_SIZE(nr) (BITBITBIT_NR(nr) * sizeof(long))
+>  
+>  #define fdt_words(fdt) ((fdt)->max_fds / BITS_PER_LONG) // words in ->open_fds
+>  /*
+> @@ -132,6 +134,8 @@ static inline void copy_fd_bitmaps(struct fdtable *nfdt, struct fdtable *ofdt,
+>  			copy_words * BITS_PER_LONG, nwords * BITS_PER_LONG);
+>  	bitmap_copy_and_extend(nfdt->full_fds_bits, ofdt->full_fds_bits,
+>  			copy_words, nwords);
+> +	bitmap_copy_and_extend(nfdt->full_fds_bits_l2, ofdt->full_fds_bits_l2,
+> +			BITS_TO_LONGS(copy_words), BITS_TO_LONGS(nwords));
+>  }
+>  
+>  /*
+> @@ -222,7 +226,7 @@ static struct fdtable *alloc_fdtable(unsigned int slots_wanted)
+>  	fdt->fd = data;
+>  
+>  	data = kvmalloc(max_t(size_t,
+> -				 2 * nr / BITS_PER_BYTE + BITBIT_SIZE(nr), L1_CACHE_BYTES),
+> +				 2 * nr / BITS_PER_BYTE + BITBIT_SIZE(nr) + BITBITBIT_SIZE(nr), L1_CACHE_BYTES),
+>  				 GFP_KERNEL_ACCOUNT);
+>  	if (!data)
+>  		goto out_arr;
+> @@ -231,6 +235,8 @@ static struct fdtable *alloc_fdtable(unsigned int slots_wanted)
+>  	fdt->close_on_exec = data;
+>  	data += nr / BITS_PER_BYTE;
+>  	fdt->full_fds_bits = data;
+> +	data += BITBIT_SIZE(nr);
+> +	fdt->full_fds_bits_l2 = data;
+>  
+>  	return fdt;
+>  
+> @@ -335,16 +341,24 @@ static inline void __set_open_fd(unsigned int fd, struct fdtable *fdt, bool set)
+>  	__set_bit(fd, fdt->open_fds);
+>  	__set_close_on_exec(fd, fdt, set);
+>  	fd /= BITS_PER_LONG;
+> -	if (!~fdt->open_fds[fd])
+> +	if (!~fdt->open_fds[fd]) {
+>  		__set_bit(fd, fdt->full_fds_bits);
+> +		unsigned int idx = fd / BITS_PER_LONG;
+> +		if (!~fdt->full_fds_bits[idx])
+> +			__set_bit(idx, fdt->full_fds_bits_l2);
+> +	}
+>  }
+>  
+>  static inline void __clear_open_fd(unsigned int fd, struct fdtable *fdt)
+>  {
+>  	__clear_bit(fd, fdt->open_fds);
+>  	fd /= BITS_PER_LONG;
+> -	if (test_bit(fd, fdt->full_fds_bits))
+> +	if (test_bit(fd, fdt->full_fds_bits)) {
+>  		__clear_bit(fd, fdt->full_fds_bits);
+> +		unsigned int idx = fd / BITS_PER_LONG;
+> +		if (test_bit(idx, fdt->full_fds_bits_l2))
+> +			__clear_bit(idx, fdt->full_fds_bits_l2);
+> +	}
+>  }
+>  
+>  static inline bool fd_is_open(unsigned int fd, const struct fdtable *fdt)
+> @@ -402,6 +416,7 @@ struct files_struct *dup_fd(struct files_struct *oldf, struct fd_range *punch_ho
+>  	new_fdt->close_on_exec = newf->close_on_exec_init;
+>  	new_fdt->open_fds = newf->open_fds_init;
+>  	new_fdt->full_fds_bits = newf->full_fds_bits_init;
+> +	new_fdt->full_fds_bits_l2 = newf->full_fds_bits_init_l2;
+>  	new_fdt->fd = &newf->fd_array[0];
+>  
+>  	spin_lock(&oldf->file_lock);
+> @@ -536,6 +551,7 @@ struct files_struct init_files = {
+>  		.close_on_exec	= init_files.close_on_exec_init,
+>  		.open_fds	= init_files.open_fds_init,
+>  		.full_fds_bits	= init_files.full_fds_bits_init,
+> +		.full_fds_bits_l2 = init_files.full_fds_bits_init_l2,
+>  	},
+>  	.file_lock	= __SPIN_LOCK_UNLOCKED(init_files.file_lock),
+>  	.resize_wait	= __WAIT_QUEUE_HEAD_INITIALIZER(init_files.resize_wait),
+> @@ -545,22 +561,35 @@ static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start)
+>  {
+>  	unsigned int maxfd = fdt->max_fds; /* always multiple of BITS_PER_LONG */
+>  	unsigned int maxbit = maxfd / BITS_PER_LONG;
+> +	unsigned int maxbit_l2 = BITBIT_NR(maxfd);
+>  	unsigned int bitbit = start / BITS_PER_LONG;
+> +	unsigned int bitbit_l2 = bitbit / BITS_PER_LONG;
+>  	unsigned int bit;
+>  
+>  	/*
+> -	 * Try to avoid looking at the second level bitmap
+> +	 * Try to avoid looking at the upper level bitmaps
+>  	 */
+>  	bit = find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_LONG,
+>  				 start & (BITS_PER_LONG - 1));
+>  	if (bit < BITS_PER_LONG)
+>  		return bit + bitbit * BITS_PER_LONG;
+>  
+> -	bitbit = find_next_zero_bit(fdt->full_fds_bits, maxbit, bitbit) * BITS_PER_LONG;
+> -	if (bitbit >= maxfd)
+> +	/* Algorithmic Optimization: O(N) -> O(1) via 3rd-level summary bitmap */
+> +	bitbit_l2 = find_next_zero_bit(fdt->full_fds_bits_l2, maxbit_l2, bitbit_l2);
+> +	if (bitbit_l2 >= maxbit_l2)
+>  		return maxfd;
+> -	if (bitbit > start)
+> -		start = bitbit;
+> +
+> +	if (bitbit_l2 * BITS_PER_LONG > bitbit)
+> +		bitbit = bitbit_l2 * BITS_PER_LONG;
+> +
+> +	bitbit = find_next_zero_bit(fdt->full_fds_bits, maxbit, bitbit);
+> +	if (bitbit >= maxbit)
+> +		return maxfd;
+> +
+> +	bit = bitbit * BITS_PER_LONG;
+> +	if (bit > start)
+> +		start = bit;
+> +
+>  	return find_next_zero_bit(fdt->open_fds, maxfd, start);
+>  }
+>  
+> diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
+> index c45306a9f007..992b4ed9c1e0 100644
+> --- a/include/linux/fdtable.h
+> +++ b/include/linux/fdtable.h
+> @@ -29,6 +29,7 @@ struct fdtable {
+>  	unsigned long *close_on_exec;
+>  	unsigned long *open_fds;
+>  	unsigned long *full_fds_bits;
+> +	unsigned long *full_fds_bits_l2;
+>  	struct rcu_head rcu;
+>  };
+>  
+> @@ -53,6 +54,7 @@ struct files_struct {
+>  	unsigned long close_on_exec_init[1];
+>  	unsigned long open_fds_init[1];
+>  	unsigned long full_fds_bits_init[1];
+> +	unsigned long full_fds_bits_init_l2[1];
+>  	struct file __rcu * fd_array[NR_OPEN_DEFAULT];
+>  };
+>  
+> -- 
+> 2.51.0
+> 
 
