@@ -1,250 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-75156-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id eKUGJ4CWcmmSmwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75156-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 22:28:32 +0100
+	id AFPvA8uXcmnBmwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 22:34:03 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 469B46DC30
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 22:28:32 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9BBF6DCAB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 22:34:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7EB4C303C032
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 21:27:10 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 1E12E3008D56
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 21:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E67F3994A4;
-	Thu, 22 Jan 2026 21:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744873B8BD8;
+	Thu, 22 Jan 2026 21:34:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OJPq9gkt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JE9f9QXZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD31C38E5CA;
-	Thu, 22 Jan 2026 21:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769117223; cv=none; b=E1Gyo3nZHgpBLPe9fBb+8X2Vm9jUbk2TK2h2sj43DofF33RR3KLYoqqpSzaphlf6rfgqAKBQlM6RMBFrxWwmIRInthkTxuVOgdzyWHc4eQZA82YNqqXAgRpwMurJNG73rGEu7+OR1h4oZiCzk7PB/EZ9GXApK7mBxipaL0Wuyi0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769117223; c=relaxed/simple;
-	bh=U10N7ULI9KAcvzTiDsxNFxtjl4EJCZqPOvlb4g1ZbUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j9+Orau13yT8HQQ6s1RjeiA5ZNAeciDIe5DJ5bl+teZ11zSa7NlueKZQW8v8HMAhtFLtcH6xPScgWjLzWBzosFmVDXDmgaeepuArWVbGS7kDyRfPH+bW/a0j1LezF3XMQgwHyJQxtBqAPFN4nWElg+vVWUfYPgLGfwlxUNk7sY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OJPq9gkt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CE21C19423;
-	Thu, 22 Jan 2026 21:27:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769117221;
-	bh=U10N7ULI9KAcvzTiDsxNFxtjl4EJCZqPOvlb4g1ZbUc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OJPq9gktVwk0sp4pr0hoATeQnthpgn9hLQIzJzJiyOCIZuuq72NaoYVe0Qh3fFELw
-	 UDA79/097W+MDYAWljX5K4kMsMbyLiXZ6zKD5WeXv42sohvNwPOcVDlHoCWY960VOF
-	 GUImQW0Sp1IVRwcpGVtZpOGhzaR7ldOijeiofs912DMIk4jeVieWzVqth0edJFSznb
-	 nTrcBZM4Vqj4kERQp3Th9UY7id7oVIwuUUBTYeKS8WdcRDowvxa+GWalm6PbDo2Diy
-	 oR3JOS01L1a7BiX7g8oTwxsxd+8zvqOb3ch72LS/IJ+67nhwE7rQbxkuXgPdl/KO8s
-	 YBwcrpMqB9/2A==
-Date: Thu, 22 Jan 2026 13:27:00 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>, t@magnolia.djwong.org
-Cc: Eric Biggers <ebiggers@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	Andrey Albershteyn <aalbersh@redhat.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	fsverity@lists.linux.dev
-Subject: Re: [PATCH 04/11] fsverity: start consolidating pagecache code
-Message-ID: <20260122212700.GD5910@frogsfrogsfrogs>
-References: <20260122082214.452153-1-hch@lst.de>
- <20260122082214.452153-5-hch@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D58314A6C
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 21:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.175
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769117633; cv=pass; b=b2WP6wN1m47Uy8PB6ZR+vFik+RNOxQtcKwb7wbJuTPP8wmzqH7P5oOKxW7XvzP3L7CnFf2n/bkTheJRbHsktOJ3Wc5L7MPJzg9dpP3GqZaKTeViGC+0ZrUUsJNoaEk1YKOaCZ7LR6XeuPuJ/0jPKfQndmuJEpKC4e820428EHZA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769117633; c=relaxed/simple;
+	bh=6TQk5VBP3Apn9oSuY1koRPknOD+h/oo064BNRERmo+s=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=uv0n4ai0DR5nlZX/s0VMHlSAGIqP8QgfZ5BCS+XIeRUiKCKz7m6BACCN21qWFKoLVDBUdhWz75OVX8fNf0S5dHY9oJuprI8hx82UcTswlMnjWPKD14WwIHnmmIiB0tt3JP5FxvE5CurPD6TMNsJ5n8TcO1MNO/+3vLjfSx8gNck=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JE9f9QXZ; arc=pass smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-382fceabddfso11773721fa.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 13:33:50 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769117627; cv=none;
+        d=google.com; s=arc-20240605;
+        b=dx9f4UrjgtebRoxHaTgultkHr5H0TX+semt1L+Ccntud6VLqmOv/mPb0koA6BKQMDU
+         iXgK0VV/2xdswHFStcj9UjPjIDvAzErvZIWue76RTHYgUIjSBVuAeOXr3NvrR0jCKrHA
+         hzWSo1x6Mze3mudAT+f6UGEFioxisV1sUXmWs9jjpfzeksZqvemiSWsJfl/Xl7c8CfJV
+         7GoZ/UHnx+Fl5ahneRDxCj/OpsDDB7SSzsOGrat4LKOtXWsx9P5GIiEb/+x5B6NBVttr
+         8vgZ5dHRv7iIqjhfXLFRK1Fn1DRxqET3XtIrdY0AwcKokyOlsKeVtC4gbZySrC5EueuP
+         Kkig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=to:subject:message-id:date:from:reply-to:mime-version
+         :dkim-signature;
+        bh=g7oRgy/tk8RRmWcGe/LhPVXYWjTBgg6SZHZHkjSsXlM=;
+        fh=b7jPGPHtQ2uHOv+IAIWl6DqU41dAJIJ79mke9g5dDTs=;
+        b=hrTBxadVNzRA4ESC4S7dEJa1BneqWkpqzDzYnGTlnfqVDW4QbBN3IGtBtXYxyE4Upu
+         xP18gY5YVBF5h2Lver8zza4Rq5v7T3cBvqcitl7ErMVrCAt6BuvJAq0Mu+qaOKHtnlj3
+         YmBePbBguTVMtjaExKn8bHtyH4BN9MDLvGII9kpkNguXShFUPKxQiNIsIZFSLtEEA95Z
+         ApnhN0V4bOcx+JsLrhIheU+kOsj+bdPr4LvATLG+uAFz/eYlEPszyPkTsL9Ryo/CFFSf
+         oOgMw+Nt3YtPtSSxvzpPOQo6deWFcKIzaTOu1k3mLPi+yrR02Fwnp9NpEFyqnD4pfbuj
+         Wz5g==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769117627; x=1769722427; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g7oRgy/tk8RRmWcGe/LhPVXYWjTBgg6SZHZHkjSsXlM=;
+        b=JE9f9QXZYIY3NFO2s6u3WeBWaFXJ/feQ+8hiiJigyuIIAVEqd1+UuOkoiQ/NTsRKzP
+         gP3To2oAMGgSYukZZYTOgvVkTm3rXbEaVja5NKdVXTqePTFD3qIl33mUrf5tkcTSnm0I
+         w2jykasPv4yA1j8qgArtWXIOzZh1wD9O5mitmVbTMk+bsLTZA2oZ1G5Ndrkibz5pbp8Z
+         6H6OJ7/1/VH3kgvYutou7PckwPwvIwBiPOSywgjuO59QYiOB+C6kLb8RtE4F+2ZRqYTD
+         jjqz2cg/uAwc8gslbXaGLBUMbFPuv+fpfzpnBUnKbJKpW9x6wqZ3gx7xvz5jBNAWJ3wN
+         AYzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769117627; x=1769722427;
+        h=to:subject:message-id:date:from:reply-to:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g7oRgy/tk8RRmWcGe/LhPVXYWjTBgg6SZHZHkjSsXlM=;
+        b=WxS64mrEjPRVjyXNrxKjnoZUzfbR0i7rz2/yyeR8khZIbxXO1E470FBThjeCf5ZxeL
+         mgpP4qObDUJ7Mfdc8mOuaSQpPcwmFIdNIGVtzhRBVDZWVa7M9XH5MjM6JzfX33WSnpjD
+         Wl3Syfnb1dViFdP926x/rMb+YhL2PseZTJAnv6vL4Jyd678hBQiadNfjrxuduKkjCjT1
+         AfIyrrm/ViYB0o3QdawKJk1mumJbMY0Mk2Cc7NayIrYEsrq5XGXp6en9Q4ydYSjNoV+V
+         e5MfMPk37L1Dpw30kWZR5dNA013ErNvZ9M+IhLjuuVCnINHbea2mEZtQj9NLc8/1YJYF
+         SNKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDn406iu6auxxDwSGaoMfh5cG82DmDF3wRoSwbnnTQvZ3eveB2jtRta+jxBg9Egvf9gOodoUPSxpBmsWSh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx52xc1rZnGRgjj0nCZsy2MmZB1apIHwMvwTU3/e2aSN+9Pondj
+	VvoWneEQrHn4ngooN25a7D2+cLjI4rtnBr+y10Zmslpb0wYx/ptP7oC4eM1awnDL1tEAx2kUA3w
+	81qKquIbjgGexEWp+kar7x3mNNfu/3hzFnq+4LEs=
+X-Gm-Gg: AZuq6aKfLcm+eKaORlbTmLmXJM7/0tj5omnitqm/LVTA54JmuXsRMp4xbe9eWUyhgxU
+	mq4OP1B/3Rp6CDwiRbWvEKKwUofUP9QXa0w4SvLJ4MOL7AKUz3rLUwwUYSob1nzRtL5hrO0i894
+	lS/PvVPxGW7OnhUBIgq/HUM2B/A2FIeAXiUVUiC3Ls4U1kRZj3w7GS/69HhMfRAeuGRmSF4ZtZo
+	7HIbxlyrsN89cOPDwCV37h7MyK75fVDtMvYst5NbOY4YOsSR21myFt1E2YNmM13OC756lHnvXSu
+	pkqQsZ2vb2AEucWgEltRMwcILZ4V
+X-Received: by 2002:a05:651c:1542:b0:385:c6c3:fb8f with SMTP id
+ 38308e7fff4ca-385da0a823amr1612811fa.30.1769117626612; Thu, 22 Jan 2026
+ 13:33:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260122082214.452153-5-hch@lst.de>
+Reply-To: slandden@gmail.com
+From: Shawn Landden <slandden@gmail.com>
+Date: Thu, 22 Jan 2026 13:33:35 -0800
+X-Gm-Features: AZwV_Qj6W6gZM7Uhm3aU99yyqApQS3pJK0k_cnhGcOlo5L_VIfxQo3-Sptwzq68
+Message-ID: <CA+49okpQYfsg=6AwZ_CGGPSYP0Hed0-+RELwzHg5ovZyXiZFFA@mail.gmail.com>
+Subject: isofs: support full length file names
+To: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
+	RCPT_COUNT_TWO(0.00)[2];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75156-lists,linux-fsdevel=lfdr.de];
-	RCPT_COUNT_TWELVE(0.00)[17];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.997];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_REPLYTO(0.00)[gmail.com];
+	TAGGED_FROM(0.00)[bounces-75157-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 469B46DC30
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[slandden@gmail.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	HAS_REPLYTO(0.00)[slandden@gmail.com];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: A9BBF6DCAB
 X-Rspamd-Action: no action
 
-On Thu, Jan 22, 2026 at 09:22:00AM +0100, Christoph Hellwig wrote:
-> ext4 and f2fs are largely using the same code to read a page full
-> of Merkle tree blocks from the page cache, and the upcoming xfs
-> fsverity support would add another copy.
-> 
-> Move the ext4 code to fs/verity/ and use it in f2fs as well.  For f2fs
-> this removes the previous f2fs-specific error injection, but otherwise
-> the behavior remains unchanged.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/ext4/verity.c         | 17 +----------------
->  fs/f2fs/verity.c         | 17 +----------------
->  fs/verity/pagecache.c    | 38 ++++++++++++++++++++++++++++++++++++++
->  include/linux/fsverity.h |  3 +++
->  4 files changed, 43 insertions(+), 32 deletions(-)
->  create mode 100644 fs/verity/pagecache.c
-> 
-> diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
-> index 2ce4cf8a1e31..a071860ad36a 100644
-> --- a/fs/ext4/verity.c
-> +++ b/fs/ext4/verity.c
-> @@ -361,23 +361,8 @@ static struct page *ext4_read_merkle_tree_page(struct inode *inode,
->  					       pgoff_t index,
->  					       unsigned long num_ra_pages)
->  {
-> -	struct folio *folio;
-> -
->  	index += ext4_verity_metadata_pos(inode) >> PAGE_SHIFT;
-> -
-> -	folio = __filemap_get_folio(inode->i_mapping, index, FGP_ACCESSED, 0);
-> -	if (IS_ERR(folio) || !folio_test_uptodate(folio)) {
-> -		DEFINE_READAHEAD(ractl, NULL, NULL, inode->i_mapping, index);
-> -
-> -		if (!IS_ERR(folio))
-> -			folio_put(folio);
-> -		else if (num_ra_pages > 1)
-> -			page_cache_ra_unbounded(&ractl, num_ra_pages, 0);
-> -		folio = read_mapping_folio(inode->i_mapping, index, NULL);
-> -		if (IS_ERR(folio))
-> -			return ERR_CAST(folio);
-> -	}
-> -	return folio_file_page(folio, index);
-> +	return generic_read_merkle_tree_page(inode, index, num_ra_pages);
->  }
->  
->  static int ext4_write_merkle_tree_block(struct file *file, const void *buf,
-> diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
-> index c1c4d8044681..d37e584423af 100644
-> --- a/fs/f2fs/verity.c
-> +++ b/fs/f2fs/verity.c
-> @@ -259,23 +259,8 @@ static struct page *f2fs_read_merkle_tree_page(struct inode *inode,
->  					       pgoff_t index,
->  					       unsigned long num_ra_pages)
->  {
-> -	struct folio *folio;
-> -
->  	index += f2fs_verity_metadata_pos(inode) >> PAGE_SHIFT;
-> -
-> -	folio = f2fs_filemap_get_folio(inode->i_mapping, index, FGP_ACCESSED, 0);
-> -	if (IS_ERR(folio) || !folio_test_uptodate(folio)) {
-> -		DEFINE_READAHEAD(ractl, NULL, NULL, inode->i_mapping, index);
-> -
-> -		if (!IS_ERR(folio))
-> -			folio_put(folio);
-> -		else if (num_ra_pages > 1)
-> -			page_cache_ra_unbounded(&ractl, num_ra_pages, 0);
-> -		folio = read_mapping_folio(inode->i_mapping, index, NULL);
-> -		if (IS_ERR(folio))
-> -			return ERR_CAST(folio);
-> -	}
-> -	return folio_file_page(folio, index);
-> +	return generic_read_merkle_tree_page(inode, index, num_ra_pages);
->  }
->  
->  static int f2fs_write_merkle_tree_block(struct file *file, const void *buf,
-> diff --git a/fs/verity/pagecache.c b/fs/verity/pagecache.c
-> new file mode 100644
-> index 000000000000..1efcdde20b73
-> --- /dev/null
-> +++ b/fs/verity/pagecache.c
-> @@ -0,0 +1,38 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright 2019 Google LLC
-> + */
-> +
-> +#include <linux/fsverity.h>
-> +#include <linux/pagemap.h>
-> +
-> +/**
-> + * generic_read_merkle_tree_page - generic ->read_merkle_tree_page helper
-> + * @inode:	inode containing the Merkle tree
-> + * @index:	0-based index of the page in the inode
-> + * @num_ra_pages: The number of Merkle tree pages that should be prefetched.
-> + *
-> + * The caller needs to adjust @index from the Merkle-tree relative index passed
-> + * to ->read_merkle_tree_page to the actual index where the Merkle tree is
-> + * stored in the page cache for @inode.
-> + */
-> +struct page *generic_read_merkle_tree_page(struct inode *inode, pgoff_t index,
-> +		unsigned long num_ra_pages)
-> +{
-> +	struct folio *folio;
-> +
-> +	folio = __filemap_get_folio(inode->i_mapping, index, FGP_ACCESSED, 0);
+commit 561453fdcf0dd8f4402f14867bf5bd961cb1704d (HEAD -> master)
+Author: shawn landden <slandden@gmail.com>
+Date:   Thu Jan 15 21:44:11 2026 +0000
 
-Nice hoist, though I wonder -- as an exported fs function, should we be
-checking that the returned folio doesn't cover EOF?  Not that any of the
-users actually check that returned merkle tree folios fit that
-criterion.
+    isofs: support full length file names (255 instead of 253)
+    Linux file names can be up to 255 characters in
+    length (256 characters with the NUL), but the code
+    here only supports 253 characters.
 
-<shrug> as a pure hoist this is ok so
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+    I tested a different version of this patch a few
+    years back when I fumbled across this bug, but
+    this version has not been tested.
 
---D
-
-> +	if (IS_ERR(folio) || !folio_test_uptodate(folio)) {
-> +		DEFINE_READAHEAD(ractl, NULL, NULL, inode->i_mapping, index);
-> +
-> +		if (!IS_ERR(folio))
-> +			folio_put(folio);
-> +		else if (num_ra_pages > 1)
-> +			page_cache_ra_unbounded(&ractl, num_ra_pages, 0);
-> +		folio = read_mapping_folio(inode->i_mapping, index, NULL);
-> +		if (IS_ERR(folio))
-> +			return ERR_CAST(folio);
-> +	}
-> +	return folio_file_page(folio, index);
-> +}
-> +EXPORT_SYMBOL_GPL(generic_read_merkle_tree_page);
-> diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-> index e22cf84fe83a..121703625cc8 100644
-> --- a/include/linux/fsverity.h
-> +++ b/include/linux/fsverity.h
-> @@ -309,4 +309,7 @@ static inline int fsverity_file_open(struct inode *inode, struct file *filp)
->  
->  void fsverity_cleanup_inode(struct inode *inode);
->  
-> +struct page *generic_read_merkle_tree_page(struct inode *inode, pgoff_t index,
-> +		unsigned long num_ra_pages);
-> +
->  #endif	/* _LINUX_FSVERITY_H */
-> -- 
-> 2.47.3
-> 
-> 
+diff --git a/fs/isofs/rock.c b/fs/isofs/rock.c
+index 576498245b9d..094778d77974 100644
+--- a/fs/isofs/rock.c
++++ b/fs/isofs/rock.c
+@@ -271,7 +271,7 @@ int get_rock_ridge_filename(struct iso_directory_record *de,
+                                break;
+                        }
+                        len = rr->len - 5;
+-                       if (retnamlen + len >= 254) {
++                       if (retnamlen + len > 255) {
+                                truncate = 1;
+                                break;
+                        }
 
