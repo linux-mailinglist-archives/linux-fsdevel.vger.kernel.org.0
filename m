@@ -1,145 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-75067-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id wAk2I7VWcmkpiwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75067-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 17:56:21 +0100
+	id 0GPvIhJGcmnpfAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 16:45:22 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0F046A766
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 17:56:20 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30691691FF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 16:45:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 1EC86302E7CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 16:51:41 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E6A973009FB4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 15:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41A1315760;
-	Thu, 22 Jan 2026 15:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE3944A725;
+	Thu, 22 Jan 2026 15:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="U3UThz0w"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="j6JxqPze";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0iqPGW1a";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="j6JxqPze";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0iqPGW1a"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com [113.46.200.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6506536C0C5;
-	Thu, 22 Jan 2026 15:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1CA449EA3
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 15:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769096839; cv=none; b=ksFiZtCYinJDSmGZ5ILElKqgJ2jG5XYcKDt1kX+0GF6rASV0neU/h1TyfHG/t/I/J6Ku0oqsORPuKsMYIiNQBwIKqeZxkZ5X1HhG19EcdAqV9kBvYLYOogRLCc48s33/4TZ4gd8y1Ub4HtdBKrd+XJuEfqFYsBv4w1FbS1TC6Cg=
+	t=1769096542; cv=none; b=nQCkQit59iq36fYY/8Z/uMduisIYnl9tjMRgBbg4Q4aZDXT8k7+Z7DEoEMACZrameaeWMxusmIYV9jcdhSexGiRp65tKsip4gpn1sqKgg0KsYpwBLJ0k0/UsJ5QT6lAjhT0TkxzoZMNACq1JBNyf1v5/tdqXT2xH4Ce6oUo7Bzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769096839; c=relaxed/simple;
-	bh=jQL+6RLzsR7px2jEpDMEZv3HOKyEr1oSO9vZY9RkvZQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sUmco6lw/z3mg5bsVw6Bqj4M0Vdoz8lrTWwCaccqAtZRjDpm07NXl01kvOtENS/L5hDR8Co+UK67RQremGscLW4SA/IEGsOxEfM1wWPhpeswPKoqve2IQUPsh5ta5CqSn8sqRH9pEzWKsg24itMzTDA6hHopCbqkQNWO8rWBXCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=U3UThz0w; arc=none smtp.client-ip=113.46.200.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=VrO1Gh2lwSX3aEb9VUUJD65yCyKiA7UNP2YVeY/Su74=;
-	b=U3UThz0wysPJ9ZdqJ4aMtzKlpeHrwuhz3ykUZHebb/O8/V5YkPVsZjdQwrRG5axHboapFBqS3
-	6oMGswSRek3nsXoA4jrzCG8UNr4vRl1ZWYZqHsJ1zleYeoieASKImdVz8s7IgQ0CgFp53tTdtop
-	qe/O1eT0FNMiJajd+ADfsoE=
-Received: from mail.maildlp.com (unknown [172.19.163.127])
-	by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dxlhs4h37zKm53;
-	Thu, 22 Jan 2026 23:43:41 +0800 (CST)
-Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
-	by mail.maildlp.com (Postfix) with ESMTPS id D7294402AB;
-	Thu, 22 Jan 2026 23:47:06 +0800 (CST)
-Received: from huawei.com (10.67.174.162) by kwepemr500015.china.huawei.com
- (7.202.195.162) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 22 Jan
- 2026 23:47:06 +0800
-From: Hongbo Li <lihongbo22@huawei.com>
-To: <hsiangkao@linux.alibaba.com>, <chao@kernel.org>, <brauner@kernel.org>
-CC: <hch@lst.de>, <djwong@kernel.org>, <amir73il@gmail.com>,
-	<linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, <lihongbo22@huawei.com>
-Subject: [PATCH v17 10/10] erofs: implement .fadvise for page cache share
-Date: Thu, 22 Jan 2026 15:34:06 +0000
-Message-ID: <20260122153406.660073-11-lihongbo22@huawei.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20260122153406.660073-1-lihongbo22@huawei.com>
-References: <20260122153406.660073-1-lihongbo22@huawei.com>
+	s=arc-20240116; t=1769096542; c=relaxed/simple;
+	bh=lvRJnEpqGKml9ZZukNMsShpYKPXGJJ3h5jLBmdm7izg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EQPzw90+DFHTosoI7U8PRcnYBZrk1HVvgkovuezyQpdBy4Z97hsrv4sobwZ7i0zuL115asAw3EvXdOZlkwDGU32+0p5XoYFRPCAa95b5VVt4CypPIWvnIw1iT7TJIWi308EzdvVwFVzJU/9RRvzqs3IpM2vuOwgatSk+JZGvMRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=j6JxqPze; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0iqPGW1a; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=j6JxqPze; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0iqPGW1a; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6FE955BCD7;
+	Thu, 22 Jan 2026 15:42:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1769096536;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eXgjnBxZ8BrNqn4Sk6A4xpE60v2fmF+nX+2I0eOLLCg=;
+	b=j6JxqPzePV1v3VMwls0tzTsZjgdG9emkov+yXkAfgU/rTXQf8T3zUIk9y6kwTpmIwFH+jg
+	+tGTZOAzNSt5DmyeGJlQYLKpb2hgbWczQo2u8RmaFCK8Kyk9Ad8W0Ksxyx6AoNHndiNUd3
+	pgQ09os0+EUkMbgwfaOlHtEStLw+2xM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1769096536;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eXgjnBxZ8BrNqn4Sk6A4xpE60v2fmF+nX+2I0eOLLCg=;
+	b=0iqPGW1agNVaVnQmF+2mMFaHz5jf38AXI7KkERuGiInWYYKzTGrVODUWzChReQtemzPfna
+	a8MSgMwRXxKctUBQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=j6JxqPze;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=0iqPGW1a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1769096536;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eXgjnBxZ8BrNqn4Sk6A4xpE60v2fmF+nX+2I0eOLLCg=;
+	b=j6JxqPzePV1v3VMwls0tzTsZjgdG9emkov+yXkAfgU/rTXQf8T3zUIk9y6kwTpmIwFH+jg
+	+tGTZOAzNSt5DmyeGJlQYLKpb2hgbWczQo2u8RmaFCK8Kyk9Ad8W0Ksxyx6AoNHndiNUd3
+	pgQ09os0+EUkMbgwfaOlHtEStLw+2xM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1769096536;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eXgjnBxZ8BrNqn4Sk6A4xpE60v2fmF+nX+2I0eOLLCg=;
+	b=0iqPGW1agNVaVnQmF+2mMFaHz5jf38AXI7KkERuGiInWYYKzTGrVODUWzChReQtemzPfna
+	a8MSgMwRXxKctUBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3DF1F13533;
+	Thu, 22 Jan 2026 15:42:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 0Tn4DlhFcmlzbQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Thu, 22 Jan 2026 15:42:16 +0000
+Date: Thu, 22 Jan 2026 16:42:15 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Eric Biggers <ebiggers@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+	Andrey Albershteyn <aalbersh@redhat.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	fsverity@lists.linux.dev
+Subject: Re: fsverity cleanups, speedup and memory usage optimization v2
+Message-ID: <20260122154215.GV26902@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20260122082214.452153-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemr500015.china.huawei.com (7.202.195.162)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260122082214.452153-1-hch@lst.de>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Score: -4.21
+X-Spam-Level: 
+X-Spam-Flag: NO
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[huawei.com,quarantine];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[huawei.com:s=dkim];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75067-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[lst.de,kernel.org,gmail.com,vger.kernel.org,lists.ozlabs.org,huawei.com];
-	RCVD_COUNT_FIVE(0.00)[6];
-	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75059-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	DMARC_NA(0.00)[suse.cz];
+	FROM_HAS_DN(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[lihongbo22@huawei.com,linux-fsdevel@vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	MIME_TRACE(0.00)[0:+];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	HAS_REPLYTO(0.00)[dsterba@suse.cz];
+	RCVD_COUNT_FIVE(0.00)[6];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[dsterba@suse.cz,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	TO_DN_NONE(0.00)[];
-	DKIM_TRACE(0.00)[huawei.com:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	MIME_TRACE(0.00)[0:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[alibaba.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,huawei.com:email,huawei.com:dkim,huawei.com:mid]
-X-Rspamd-Queue-Id: F0F046A766
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:dkim,suse.cz:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,suse.com:email]
+X-Rspamd-Queue-Id: 30691691FF
 X-Rspamd-Action: no action
 
-From: Hongzhen Luo <hongzhen@linux.alibaba.com>
+On Thu, Jan 22, 2026 at 09:21:56AM +0100, Christoph Hellwig wrote:
+> Hi all,
+> 
+> this series has a hodge podge of fsverity enhances that I looked into as
+> part of the review of the xfs fsverity support series.
+> 
+> The first part calls fsverity code from VFS code instead of requiring
+> boilerplate in the file systems.  The first patch fixes a bug in btrfs
+> as part of that, as btrfs was missing a check.  An xfstests
+> test case for this was submitted already.
+> 
+> The middle part optimizes the fsverity read path by kicking off readahead
+> for the fsverity hashes from the data read submission context, which in my
+> simply testing showed huge benefits for sequential reads using dd.
+> I haven't been able to get fio to run on a preallocated fio file, but
+> I expect random read benefits would be significantly better than that
+> still.
+> 
+> The last part avoids the need for a pointer in every inode for fsverity
+> and instead uses a rhashtable lookup, which is once per read_folio or
+> ->readahead invocation and for for btrfs another time for each bio
+> completion.  Right now this does not increse the number of inodes in
+> each slab, but for ext4 we are getting very close to that (within
+> 16 bytes by my count).
+> 
+> Changes since v1:
+>  - reorder to keep the most controversial part last
+>  - drop moving the open handling to common code (for now)
+>  - factor the page cache read code into common code
+>  - reduce the number of hash lookups
+>  - add a barrier in the fsverity_active that pairs with the cmpxchg
+>    that sets the inode flag.
+> 
+> Diffstat:
+>  fs/attr.c                    |   12 ++
 
-This patch implements the .fadvise interface for page cache share.
-Similar to overlayfs, it drops those clean, unused pages through
-vfs_fadvise().
+For the btrfs changes
 
-Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
-Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
----
- fs/erofs/ishare.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+>  fs/btrfs/btrfs_inode.h       |    4 
+>  fs/btrfs/extent_io.c         |   37 +++++---
+>  fs/btrfs/inode.c             |   13 ---
+>  fs/btrfs/verity.c            |   11 --
 
-diff --git a/fs/erofs/ishare.c b/fs/erofs/ishare.c
-index ad53a57dbcbc..ce980320a8b9 100644
---- a/fs/erofs/ishare.c
-+++ b/fs/erofs/ishare.c
-@@ -151,6 +151,12 @@ static int erofs_ishare_mmap(struct file *file, struct vm_area_struct *vma)
- 	return generic_file_readonly_mmap(file, vma);
- }
- 
-+static int erofs_ishare_fadvise(struct file *file, loff_t offset,
-+				loff_t len, int advice)
-+{
-+	return vfs_fadvise(file->private_data, offset, len, advice);
-+}
-+
- const struct file_operations erofs_ishare_fops = {
- 	.open		= erofs_ishare_file_open,
- 	.llseek		= generic_file_llseek,
-@@ -159,6 +165,7 @@ const struct file_operations erofs_ishare_fops = {
- 	.release	= erofs_ishare_file_release,
- 	.get_unmapped_area = thp_get_unmapped_area,
- 	.splice_read	= filemap_splice_read,
-+	.fadvise	= erofs_ishare_fadvise,
- };
- 
- struct inode *erofs_real_inode(struct inode *inode, bool *need_iput)
--- 
-2.22.0
-
+Acked-by: David Sterba <dsterba@suse.com>
 
