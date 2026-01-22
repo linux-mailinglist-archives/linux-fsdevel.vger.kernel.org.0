@@ -1,204 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-75116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id kAd4O9hbcmn5iwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 18:18:16 +0100
+	id gIKnBehacmn5iwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 18:14:16 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C26EE6B06A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 18:18:16 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A49496AF5E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 18:14:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id B4DFA300F86F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 17:05:39 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 35659304706E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 17:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A88C3DC960;
-	Thu, 22 Jan 2026 16:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827743DBC3A;
+	Thu, 22 Jan 2026 16:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qDkEOquo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBAF3DC5AD;
-	Thu, 22 Jan 2026 16:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDD33DC596;
+	Thu, 22 Jan 2026 16:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769100007; cv=none; b=b0ok8vBAUE5iWVA+BGDi1lTeGoSNS/LYQCzcPOntEQ68+Mgk8AKa5s29djssxFCnkMt0jTafw0WXMezCLA2mPXmkE3vP28EjtBrFgeueOAXLsKQ6MK4kVasS8xo/I29lJ624tG3JXMghzBcXSr0f1IKW2DIVqSTLAsjz7ahr/pg=
+	t=1769100012; cv=none; b=npl+u5IeYb5m+FmMT61CG7NA73AxyINn+Vgtm45LA5TWJdB2WdDWuL87GCIimvtimDeUzDdLYO9OLtBClxyBsCYqLsKu87648xlweLrdyBH4SzvKckCuvyg8GCgh4YJaTZlHxMwa4/cyigZgPfD6TwrEJtI2DFTVwuCTfYfE91M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769100007; c=relaxed/simple;
-	bh=Y/GejnuGHd0FcnD1vOPIOyknHojP1QImfAW2WsEPUx8=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W2SIiIdxYasSaNSeENmSTpDVw8wgXTnG6QfRtH7A/caXKza/hddUp85v/ScJBwompuVvfRh73/C45TpC5t3V4LRF13k8oUI9o5G/IYSfbySwz4zngo7+lDta5BIdqQn7VREKwfeLapxU4DEDZT+y2DhjMz+1fMxbo+xvs+B+fE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.224.107])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dxmwz4d18zHnGdq;
-	Fri, 23 Jan 2026 00:39:15 +0800 (CST)
-Received: from dubpeml500005.china.huawei.com (unknown [7.214.145.207])
-	by mail.maildlp.com (Postfix) with ESMTPS id A1D8940584;
-	Fri, 23 Jan 2026 00:39:51 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml500005.china.huawei.com
- (7.214.145.207) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 22 Jan
- 2026 16:39:50 +0000
-Date: Thu, 22 Jan 2026 16:39:48 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>, Ard Biesheuvel <ardb@kernel.org>, "Alison
- Schofield" <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Yazen Ghannam <yazen.ghannam@amd.com>, "Dave
- Jiang" <dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>, "Matthew
- Wilcox" <willy@infradead.org>, Jan Kara <jack@suse.cz>, "Rafael J . Wysocki"
-	<rafael@kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek
-	<pavel@kernel.org>, Li Ming <ming.li@zohomail.com>, Jeff Johnson
-	<jeff.johnson@oss.qualcomm.com>, Ying Huang <huang.ying.caritas@gmail.com>,
-	Yao Xingtao <yaoxt.fnst@fujitsu.com>, "Peter Zijlstra"
-	<peterz@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nathan Fontenot <nathan.fontenot@amd.com>, Terry Bowman
-	<terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>, Benjamin Cheatham
-	<benjamin.cheatham@amd.com>, Zhijian Li <lizhijian@fujitsu.com>, Borislav
- Petkov <bp@alien8.de>, Tomasz Wolski <tomasz.wolski@fujitsu.com>
-Subject: Re: [PATCH v5 7/7] dax/hmem: Reintroduce Soft Reserved ranges back
- into the iomem tree
-Message-ID: <20260122163948.00007ff6@huawei.com>
-In-Reply-To: <20260122045543.218194-8-Smita.KoralahalliChannabasappa@amd.com>
-References: <20260122045543.218194-1-Smita.KoralahalliChannabasappa@amd.com>
-	<20260122045543.218194-8-Smita.KoralahalliChannabasappa@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1769100012; c=relaxed/simple;
+	bh=BSYp/bzi458nChkgXFgNg5RvW+gR2fohfiKCtkV9ZOs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lYulZRKG7G052XmaESdenyncCB5aGBTqdgEVDMbJmmTlw+DvpAQPSIn9kWfeN9PhiiGP2JFqT4aeAnXpSKuA+tOFof7S19tW82OgB/mit9TGU8Fn8uJOe4M64omMv3GFWAmZR9wjd1RScIfE0CugHgQqq4JE5KfvYccBOfkHUq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qDkEOquo; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1769099997; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=RSY/JnmKMfJRsvDnjCG+dfJqjElkzKdq9scoQDm8tCM=;
+	b=qDkEOquoK9hXZWOtAMBuaDdpQJ0F57gMCc2unasLwCr0RWAl7W6na08EkWgTfwVN6jJpYwD84+L2RT4olTXnITGn2lQNzSNZqpLX09avR+BqQzfuAPcosbbjqRuruqvL3xjQCR9MGOGiZXuS4VdHuOlIfeuUeNGRgI0MUr8kmbc=
+Received: from 30.180.182.138(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WxcxUuY_1769099996 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 23 Jan 2026 00:39:57 +0800
+Message-ID: <6caf418e-b261-4354-9ddb-77daaadab045@linux.alibaba.com>
+Date: Fri, 23 Jan 2026 00:39:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v17 08/10] erofs: support unencoded inodes for page cache
+ share
+To: Hongbo Li <lihongbo22@huawei.com>
+Cc: hch@lst.de, djwong@kernel.org, amir73il@gmail.com,
+ linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, Chao Yu <chao@kernel.org>,
+ Christian Brauner <brauner@kernel.org>
+References: <20260122153406.660073-1-lihongbo22@huawei.com>
+ <20260122153406.660073-9-lihongbo22@huawei.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20260122153406.660073-9-lihongbo22@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
- dubpeml500005.china.huawei.com (7.214.145.207)
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [1.54 / 15.00];
-	DMARC_POLICY_QUARANTINE(1.50)[huawei.com : SPF not aligned (relaxed), No valid DKIM,quarantine];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-9.16 / 15.00];
+	WHITELIST_DMARC(-7.00)[alibaba.com:D:+];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[linux.alibaba.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[linux.alibaba.com:s=default];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,lists.linux.dev,kernel.org,intel.com,amd.com,stgolabs.net,infradead.org,suse.cz,zohomail.com,oss.qualcomm.com,gmail.com,fujitsu.com,linuxfoundation.org,alien8.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[32];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75117-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[lst.de,kernel.org,gmail.com,vger.kernel.org,lists.ozlabs.org];
 	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-75116-lists,linux-fsdevel=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jonathan.cameron@huawei.com,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	NEURAL_HAM(-0.00)[-0.999];
+	FROM_NEQ_ENVFROM(0.00)[hsiangkao@linux.alibaba.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[linux.alibaba.com:+];
 	MID_RHS_MATCH_FROM(0.00)[];
-	R_DKIM_NA(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[amd.com:email,huawei.com:mid,huawei.com:email,intel.com:email,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,fujitsu.com:email]
-X-Rspamd-Queue-Id: C26EE6B06A
+	RCPT_COUNT_SEVEN(0.00)[9];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[alibaba.com:email,linux.alibaba.com:mid,linux.alibaba.com:dkim,huawei.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: A49496AF5E
 X-Rspamd-Action: no action
 
-On Thu, 22 Jan 2026 04:55:43 +0000
-Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com> wrote:
 
-> Reworked from a patch by Alison Schofield <alison.schofield@intel.com>
+
+On 2026/1/22 23:34, Hongbo Li wrote:
+> This patch adds inode page cache sharing functionality for unencoded
+> files.
 > 
-> Reintroduce Soft Reserved range into the iomem_resource tree for HMEM
-> to consume.
+> I conducted experiments in the container environment. Below is the
+> memory usage for reading all files in two different minor versions
+> of container images:
 > 
-> This restores visibility in /proc/iomem for ranges actively in use, while
-> avoiding the early-boot conflicts that occurred when Soft Reserved was
-> published into iomem before CXL window and region discovery.
+> +-------------------+------------------+-------------+---------------+
+> |       Image       | Page Cache Share | Memory (MB) |    Memory     |
+> |                   |                  |             | Reduction (%) |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     241     |       -       |
+> |       redis       +------------------+-------------+---------------+
+> |   7.2.4 & 7.2.5   |        Yes       |     163     |      33%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     872     |       -       |
+> |      postgres     +------------------+-------------+---------------+
+> |    16.1 & 16.2    |        Yes       |     630     |      28%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     2771    |       -       |
+> |     tensorflow    +------------------+-------------+---------------+
+> |  2.11.0 & 2.11.1  |        Yes       |     2340    |      16%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     926     |       -       |
+> |       mysql       +------------------+-------------+---------------+
+> |  8.0.11 & 8.0.12  |        Yes       |     735     |      21%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     390     |       -       |
+> |       nginx       +------------------+-------------+---------------+
+> |   7.2.4 & 7.2.5   |        Yes       |     219     |      44%      |
+> +-------------------+------------------+-------------+---------------+
+> |       tomcat      |        No        |     924     |       -       |
+> | 10.1.25 & 10.1.26 +------------------+-------------+---------------+
+> |                   |        Yes       |     474     |      49%      |
+> +-------------------+------------------+-------------+---------------+
 > 
-> Link: https://lore.kernel.org/linux-cxl/29312c0765224ae76862d59a17748c8188fb95f1.1692638817.git.alison.schofield@intel.com/
-> Co-developed-by: Alison Schofield <alison.schofield@intel.com>
-> Signed-off-by: Alison Schofield <alison.schofield@intel.com>
-> Co-developed-by: Zhijian Li <lizhijian@fujitsu.com>
-> Signed-off-by: Zhijian Li <lizhijian@fujitsu.com>
-> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-A few minor things from a fresh read.
-> ---
->  drivers/dax/hmem/hmem.c | 32 +++++++++++++++++++++++++++++++-
->  1 file changed, 31 insertions(+), 1 deletion(-)
+> Additionally, the table below shows the runtime memory usage of the
+> container:
 > 
-> diff --git a/drivers/dax/hmem/hmem.c b/drivers/dax/hmem/hmem.c
-> index bcb57d8678d7..f3ef4faf158f 100644
-> --- a/drivers/dax/hmem/hmem.c
-> +++ b/drivers/dax/hmem/hmem.c
-> @@ -64,6 +64,34 @@ struct dax_defer_work {
->  	struct work_struct work;
->  };
->  
-> +static void remove_soft_reserved(void *r)
-> +{
-> +	remove_resource(r);
-> +	kfree(r);
-> +}
-> +
-> +static int add_soft_reserve_into_iomem(struct device *host,
-> +				       const struct resource *res)
-> +{
-> +	struct resource *soft __free(kfree) =
-> +		kzalloc(sizeof(*soft), GFP_KERNEL);
+> +-------------------+------------------+-------------+---------------+
+> |       Image       | Page Cache Share | Memory (MB) |    Memory     |
+> |                   |                  |             | Reduction (%) |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |      35     |       -       |
+> |       redis       +------------------+-------------+---------------+
+> |   7.2.4 & 7.2.5   |        Yes       |      28     |      20%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     149     |       -       |
+> |      postgres     +------------------+-------------+---------------+
+> |    16.1 & 16.2    |        Yes       |      95     |      37%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     1028    |       -       |
+> |     tensorflow    +------------------+-------------+---------------+
+> |  2.11.0 & 2.11.1  |        Yes       |     930     |      10%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     155     |       -       |
+> |       mysql       +------------------+-------------+---------------+
+> |  8.0.11 & 8.0.12  |        Yes       |     132     |      15%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |      25     |       -       |
+> |       nginx       +------------------+-------------+---------------+
+> |   7.2.4 & 7.2.5   |        Yes       |      20     |      20%      |
+> +-------------------+------------------+-------------+---------------+
+> |       tomcat      |        No        |     186     |       -       |
+> | 10.1.25 & 10.1.26 +------------------+-------------+---------------+
+> |                   |        Yes       |      98     |      48%      |
+> +-------------------+------------------+-------------+---------------+
+> 
+> Co-developed-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
+> Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
+> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
 
-On one line. I think it's exactly 80 chars.
+Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 
-> +	int rc;
-> +
-The declaration and check should be together. For __free stuff inline declarations
-are preferred.
-
-You fully assign it so kmalloc is all that's needed.
-	
-	
-	struct resource *soft __free(kfree) = kzalloc(sizeof(*soft), GFP_KERNEL);
-	if (!soft)
-
-If not, just switch the two declarations.
-
-> +	if (!soft)
-> +		return -ENOMEM;
-> +
-> +	*soft = DEFINE_RES_NAMED_DESC(res->start, (res->end - res->start + 1),
-> +				      "Soft Reserved", IORESOURCE_MEM,
-> +				      IORES_DESC_SOFT_RESERVED);
-> +
-> +	rc = insert_resource(&iomem_resource, soft);
-> +	if (rc)
-> +		return rc;
-> +
-> +	return devm_add_action_or_reset(host, remove_soft_reserved,
-> +					no_free_ptr(soft));
-> +}
-> +
->  static int hmem_register_device(struct device *host, int target_nid,
->  				const struct resource *res)
->  {
-> @@ -94,7 +122,9 @@ static int hmem_register_device(struct device *host, int target_nid,
->  	if (rc != REGION_INTERSECTS)
->  		return 0;
->  
-> -	/* TODO: Add Soft-Reserved memory back to iomem */
-> +	rc = add_soft_reserve_into_iomem(host, res);
-> +	if (rc)
-> +		return rc;
->  
->  	id = memregion_alloc(GFP_KERNEL);
->  	if (id < 0) {
-
+Thanks,
+Gao Xiang
 
