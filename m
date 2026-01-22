@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-74985-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WBjwIdzfcWk+MgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74985-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 09:29:16 +0100
+	id yKiNAZLfcWk+MgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 09:28:02 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74EB363101
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 09:29:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70501630BE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 09:28:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E2249444B50
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 08:23:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 514777A872C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 08:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA223904DB;
-	Thu, 22 Jan 2026 08:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514803A783F;
+	Thu, 22 Jan 2026 08:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zKER5S4L"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JTUIP6Nv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377152E62A4;
-	Thu, 22 Jan 2026 08:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087F52E62A4;
+	Thu, 22 Jan 2026 08:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769070159; cv=none; b=tMSQP1xdva2FgTv+l98GZI2+HciFf4yVKet/uOmw+HokwFoxE0TmqgNIYbvbUsW/wuCH2ED+PbrRY66OFoJjBH9/CQ6Vv8OQkn6ikCucZ1xzP7c6jzSfhSFXxsd42AFrtWnX7ZU0KWugE/jXCwVhSvIxM+EZGux1UV0l5Ohhmf0=
+	t=1769070164; cv=none; b=iXyW5W51NSyO9V1JhHbZAOpjXbHgKJAK6BHTZZzueRn6Rbq1U3ru3T8jrCZi5DqtIklgk4RPCRn8T2EtXIopL8cnJ2BXFa23DYoeqk8uRBGaSFLF6x4ZPUDjyCzwBRAtsM48RjnSx2n7azSOKmU8AHH1SHnSwzDdoSmljPpJi4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769070159; c=relaxed/simple;
-	bh=suRVOzPSwk+tcBUEFxwi+EjCly2Vqp0LFWQNanSRtoY=;
+	s=arc-20240116; t=1769070164; c=relaxed/simple;
+	bh=kDITSgEEIPWpQ71hPWjePv38ErelhFnUMuQSTq+Rg5U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ezaTVUTWfyIGv7Qc+bW5npHKNzcL1MGOcxLUTW4HgDXIco1CRFPeNslsc/m+/scmwEu13hj9R222ULvohEJhedvo6TEZ4ejCOpbnwwMqmjkyKDZHSXxMEc76VuOllVvtA3roJukxE1uj92Pq+apIEK5npkHbkCF76aXHS2qFo8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=zKER5S4L; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=fqXE89iNmrYX/pfmtnYhUYLHrIO0axBUKGff6fRuimZhl8TZvq0K3UP9IHI/y8mOWV4Oq72JH3sHvu9i9Sqy5FT1C/TuACky4um6QApW8EHbdL/JLA4M0z3lQXQ23X4DmEvISGin6GaXLdKbx4WAgr6rAO+u596lr+b8+RcDZfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JTUIP6Nv; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=4bYg0QMchl9Q+OOatAPzNZds96rjnjIt58SQA24EC6Y=; b=zKER5S4LoQcr2hvmiM3DP2Vh97
-	0i2D7QwlZ692sfFutJLV3VoaDGqRywizQx3ovu20P3ASVCXSz3NmL76Smt+e7oKzaV9aEr68b+BcB
-	kQBsyaA3h3UPYw6YcIMkMURBBjpKjhvt4ees3maaRbMUD551VtqyjKC7d4UHV5VA3kOT6V5nMNlV1
-	K5NAGL5804mItraa1vMn+1db1pICwmgOlfCmkUPLdHK7JCgTQ9WEESZ1Tqzy1UU26+6J/ygkbaf7g
-	pTAVtJvQchocJFalRm7D+uazKt6h8OUu1F/bHkB0uBTqB+tOgfDYwCfGJFNn7hysSlKhLfVK87DlA
-	RzBG0VIg==;
+	bh=hAdCas95cj/I7ncOjpN0dsifccMn9iRm7c/Zz9k4sHY=; b=JTUIP6NvgUQQq/H4TkuH36i7U2
+	BjGvHHZGwEub6I68mXheK183MCOuhWmcA68rEL7cZh5CMkTS3FVvcl3d2efx85v5UsqrdHJ3L8tKi
+	CB4WdStYKD56Jec/MXHzfuEzIVkLptkfJOxPj3gBdO9wqxb0755pj7Wqv+CWXbHBiWDf+2gXwEOWv
+	wpQFtCiUSetCMpU+2qj8qzUAfNj8WY32GsvevNfoxHAEyNDfyG1VVMlmnjRxeqPcGE7E4dTGehIGl
+	tjd122hTkiVzkatQQkzSuZxayUJK41TNq2G+hNRLjFrpBHI1oe176BDcrc19bk5MYtZBrh5PY6Jzl
+	0NABE7FQ==;
 Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vipxb-00000006dt5-0vor;
-	Thu, 22 Jan 2026 08:22:35 +0000
+	id 1vipxg-00000006dto-0wgM;
+	Thu, 22 Jan 2026 08:22:40 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Eric Biggers <ebiggers@kernel.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>,
@@ -66,9 +66,9 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>,
 	linux-ext4@vger.kernel.org,
 	linux-f2fs-devel@lists.sourceforge.net,
 	fsverity@lists.linux.dev
-Subject: [PATCH 02/11] fs,fsverity: clear out fsverity_info from common code
-Date: Thu, 22 Jan 2026 09:21:58 +0100
-Message-ID: <20260122082214.452153-3-hch@lst.de>
+Subject: [PATCH 03/11] fsverity: pass struct file to ->write_merkle_tree_block
+Date: Thu, 22 Jan 2026 09:21:59 +0100
+Message-ID: <20260122082214.452153-4-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260122082214.452153-1-hch@lst.de>
 References: <20260122082214.452153-1-hch@lst.de>
@@ -93,7 +93,7 @@ X-Spamd-Result: default: False [0.14 / 15.00];
 	RCPT_COUNT_TWELVE(0.00)[15];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	TAGGED_FROM(0.00)[bounces-74985-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-74986-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
@@ -105,179 +105,148 @@ X-Spamd-Result: default: False [0.14 / 15.00];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:7979, ipnet:2a01:60a::/32, country:US];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:helo,ams.mirrors.kernel.org:rdns,infradead.org:dkim,lst.de:mid,lst.de:email]
-X-Rspamd-Queue-Id: 74EB363101
+	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:dkim,dfw.mirrors.kernel.org:helo,dfw.mirrors.kernel.org:rdns,lst.de:mid,lst.de:email]
+X-Rspamd-Queue-Id: 70501630BE
 X-Rspamd-Action: no action
 
-Directly remove the fsverity_info from the hash and free it from
-clear_inode instead of requiring file systems to handle it.
+This will make an iomap implementation of the method easier.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/btrfs/inode.c         | 10 +++-------
- fs/ext4/super.c          |  1 -
- fs/f2fs/inode.c          |  1 -
- fs/inode.c               |  9 +++++++++
- fs/verity/open.c         |  3 +--
- include/linux/fsverity.h | 26 ++------------------------
- 6 files changed, 15 insertions(+), 35 deletions(-)
+ fs/btrfs/verity.c        | 5 +++--
+ fs/ext4/verity.c         | 6 +++---
+ fs/f2fs/verity.c         | 6 +++---
+ fs/verity/enable.c       | 9 +++++----
+ include/linux/fsverity.h | 4 ++--
+ 5 files changed, 16 insertions(+), 14 deletions(-)
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index a2b5b440637e..67c64efc5099 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -34,7 +34,6 @@
- #include <linux/sched/mm.h>
- #include <linux/iomap.h>
- #include <linux/unaligned.h>
--#include <linux/fsverity.h>
- #include "misc.h"
- #include "ctree.h"
- #include "disk-io.h"
-@@ -5571,11 +5570,8 @@ void btrfs_evict_inode(struct inode *inode)
- 
- 	trace_btrfs_inode_evict(inode);
- 
--	if (!root) {
--		fsverity_cleanup_inode(inode);
--		clear_inode(inode);
--		return;
--	}
-+	if (!root)
-+		goto clear_inode;
- 
- 	fs_info = inode_to_fs_info(inode);
- 	evict_inode_truncate_pages(inode);
-@@ -5675,7 +5671,7 @@ void btrfs_evict_inode(struct inode *inode)
- 	 * to retry these periodically in the future.
- 	 */
- 	btrfs_remove_delayed_node(BTRFS_I(inode));
--	fsverity_cleanup_inode(inode);
-+clear_inode:
- 	clear_inode(inode);
- }
- 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 87205660c5d0..86131f4d8718 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1527,7 +1527,6 @@ void ext4_clear_inode(struct inode *inode)
- 		EXT4_I(inode)->jinode = NULL;
- 	}
- 	fscrypt_put_encryption_info(inode);
--	fsverity_cleanup_inode(inode);
- }
- 
- static struct inode *ext4_nfs_get_inode(struct super_block *sb,
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 38b8994bc1b2..ee332b994348 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -1000,7 +1000,6 @@ void f2fs_evict_inode(struct inode *inode)
- 	}
- out_clear:
- 	fscrypt_put_encryption_info(inode);
--	fsverity_cleanup_inode(inode);
- 	clear_inode(inode);
- }
- 
-diff --git a/fs/inode.c b/fs/inode.c
-index 379f4c19845c..38dbdfbb09ba 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -14,6 +14,7 @@
- #include <linux/cdev.h>
- #include <linux/memblock.h>
- #include <linux/fsnotify.h>
-+#include <linux/fsverity.h>
- #include <linux/mount.h>
- #include <linux/posix_acl.h>
- #include <linux/buffer_head.h> /* for inode_has_buffers */
-@@ -773,6 +774,14 @@ void dump_mapping(const struct address_space *mapping)
- 
- void clear_inode(struct inode *inode)
+diff --git a/fs/btrfs/verity.c b/fs/btrfs/verity.c
+index a2ac3fb68bc8..e7643c22a6bf 100644
+--- a/fs/btrfs/verity.c
++++ b/fs/btrfs/verity.c
+@@ -774,16 +774,17 @@ static struct page *btrfs_read_merkle_tree_page(struct inode *inode,
+ /*
+  * fsverity op that writes a Merkle tree block into the btree.
+  *
+- * @inode:	inode to write a Merkle tree block for
++ * @file:	file to write a Merkle tree block for
+  * @buf:	Merkle tree block to write
+  * @pos:	the position of the block in the Merkle tree (in bytes)
+  * @size:	the Merkle tree block size (in bytes)
+  *
+  * Returns 0 on success or negative error code on failure
+  */
+-static int btrfs_write_merkle_tree_block(struct inode *inode, const void *buf,
++static int btrfs_write_merkle_tree_block(struct file *file, const void *buf,
+ 					 u64 pos, unsigned int size)
  {
-+	/*
-+	 * Only IS_VERITY() inodes can have verity info, so start by checking
-+	 * for IS_VERITY() (which is faster than retrieving the pointer to the
-+	 * verity info).  This minimizes overhead for non-verity inodes.
-+	 */
-+	if (IS_ENABLED(CONFIG_FS_VERITY) && IS_VERITY(inode))
-+		fsverity_cleanup_inode(inode);
-+
- 	/*
- 	 * We have to cycle the i_pages lock here because reclaim can be in the
- 	 * process of removing the last page (in __filemap_remove_folio())
-diff --git a/fs/verity/open.c b/fs/verity/open.c
-index 2aa5eae5a540..090cb77326ee 100644
---- a/fs/verity/open.c
-+++ b/fs/verity/open.c
-@@ -384,14 +384,13 @@ int __fsverity_file_open(struct inode *inode, struct file *filp)
- }
- EXPORT_SYMBOL_GPL(__fsverity_file_open);
++	struct inode *inode = file_inode(file);
+ 	loff_t merkle_pos = merkle_file_pos(inode);
  
--void __fsverity_cleanup_inode(struct inode *inode)
-+void fsverity_cleanup_inode(struct inode *inode)
+ 	if (merkle_pos < 0)
+diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
+index 415d9c4d8a32..2ce4cf8a1e31 100644
+--- a/fs/ext4/verity.c
++++ b/fs/ext4/verity.c
+@@ -380,12 +380,12 @@ static struct page *ext4_read_merkle_tree_page(struct inode *inode,
+ 	return folio_file_page(folio, index);
+ }
+ 
+-static int ext4_write_merkle_tree_block(struct inode *inode, const void *buf,
++static int ext4_write_merkle_tree_block(struct file *file, const void *buf,
+ 					u64 pos, unsigned int size)
  {
- 	struct fsverity_info **vi_addr = fsverity_info_addr(inode);
+-	pos += ext4_verity_metadata_pos(inode);
++	pos += ext4_verity_metadata_pos(file_inode(file));
  
- 	fsverity_free_info(*vi_addr);
- 	*vi_addr = NULL;
+-	return pagecache_write(inode, buf, size, pos);
++	return pagecache_write(file_inode(file), buf, size, pos);
  }
--EXPORT_SYMBOL_GPL(__fsverity_cleanup_inode);
  
- void __init fsverity_init_info_cache(void)
+ const struct fsverity_operations ext4_verityops = {
+diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
+index 05b935b55216..c1c4d8044681 100644
+--- a/fs/f2fs/verity.c
++++ b/fs/f2fs/verity.c
+@@ -278,12 +278,12 @@ static struct page *f2fs_read_merkle_tree_page(struct inode *inode,
+ 	return folio_file_page(folio, index);
+ }
+ 
+-static int f2fs_write_merkle_tree_block(struct inode *inode, const void *buf,
++static int f2fs_write_merkle_tree_block(struct file *file, const void *buf,
+ 					u64 pos, unsigned int size)
  {
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index 86fb1708676b..ea1ed2e6c2f9 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -179,26 +179,6 @@ int fsverity_get_digest(struct inode *inode,
- /* open.c */
+-	pos += f2fs_verity_metadata_pos(inode);
++	pos += f2fs_verity_metadata_pos(file_inode(file));
  
- int __fsverity_file_open(struct inode *inode, struct file *filp);
--void __fsverity_cleanup_inode(struct inode *inode);
--
--/**
-- * fsverity_cleanup_inode() - free the inode's verity info, if present
-- * @inode: an inode being evicted
-- *
-- * Filesystems must call this on inode eviction to free the inode's verity info.
-- */
--static inline void fsverity_cleanup_inode(struct inode *inode)
--{
--	/*
--	 * Only IS_VERITY() inodes can have verity info, so start by checking
--	 * for IS_VERITY() (which is faster than retrieving the pointer to the
--	 * verity info).  This minimizes overhead for non-verity inodes.
--	 */
--	if (IS_VERITY(inode))
--		__fsverity_cleanup_inode(inode);
--	else
--		VFS_WARN_ON_ONCE(*fsverity_info_addr(inode) != NULL);
--}
- 
- /* read_metadata.c */
- 
-@@ -250,10 +230,6 @@ static inline int __fsverity_file_open(struct inode *inode, struct file *filp)
- 	return -EOPNOTSUPP;
+-	return pagecache_write(inode, buf, size, pos);
++	return pagecache_write(file_inode(file), buf, size, pos);
  }
  
--static inline void fsverity_cleanup_inode(struct inode *inode)
--{
--}
--
- /* read_metadata.c */
- 
- static inline int fsverity_ioctl_read_metadata(struct file *filp,
-@@ -331,4 +307,6 @@ static inline int fsverity_file_open(struct inode *inode, struct file *filp)
+ const struct fsverity_operations f2fs_verityops = {
+diff --git a/fs/verity/enable.c b/fs/verity/enable.c
+index 95ec42b84797..c56c18e2605b 100644
+--- a/fs/verity/enable.c
++++ b/fs/verity/enable.c
+@@ -41,14 +41,15 @@ static int hash_one_block(const struct merkle_tree_params *params,
  	return 0;
  }
  
-+void fsverity_cleanup_inode(struct inode *inode);
-+
- #endif	/* _LINUX_FSVERITY_H */
+-static int write_merkle_tree_block(struct inode *inode, const u8 *buf,
++static int write_merkle_tree_block(struct file *file, const u8 *buf,
+ 				   unsigned long index,
+ 				   const struct merkle_tree_params *params)
+ {
++	struct inode *inode = file_inode(file);
+ 	u64 pos = (u64)index << params->log_blocksize;
+ 	int err;
+ 
+-	err = inode->i_sb->s_vop->write_merkle_tree_block(inode, buf, pos,
++	err = inode->i_sb->s_vop->write_merkle_tree_block(file, buf, pos,
+ 							  params->block_size);
+ 	if (err)
+ 		fsverity_err(inode, "Error %d writing Merkle tree block %lu",
+@@ -135,7 +136,7 @@ static int build_merkle_tree(struct file *filp,
+ 			err = hash_one_block(params, &buffers[level]);
+ 			if (err)
+ 				goto out;
+-			err = write_merkle_tree_block(inode,
++			err = write_merkle_tree_block(filp,
+ 						      buffers[level].data,
+ 						      level_offset[level],
+ 						      params);
+@@ -155,7 +156,7 @@ static int build_merkle_tree(struct file *filp,
+ 			err = hash_one_block(params, &buffers[level]);
+ 			if (err)
+ 				goto out;
+-			err = write_merkle_tree_block(inode,
++			err = write_merkle_tree_block(filp,
+ 						      buffers[level].data,
+ 						      level_offset[level],
+ 						      params);
+diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
+index ea1ed2e6c2f9..e22cf84fe83a 100644
+--- a/include/linux/fsverity.h
++++ b/include/linux/fsverity.h
+@@ -116,7 +116,7 @@ struct fsverity_operations {
+ 	/**
+ 	 * Write a Merkle tree block to the given inode.
+ 	 *
+-	 * @inode: the inode for which the Merkle tree is being built
++	 * @file: the file for which the Merkle tree is being built
+ 	 * @buf: the Merkle tree block to write
+ 	 * @pos: the position of the block in the Merkle tree (in bytes)
+ 	 * @size: the Merkle tree block size (in bytes)
+@@ -126,7 +126,7 @@ struct fsverity_operations {
+ 	 *
+ 	 * Return: 0 on success, -errno on failure
+ 	 */
+-	int (*write_merkle_tree_block)(struct inode *inode, const void *buf,
++	int (*write_merkle_tree_block)(struct file *file, const void *buf,
+ 				       u64 pos, unsigned int size);
+ };
+ 
 -- 
 2.47.3
 
