@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-74986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yKiNAZLfcWk+MgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 09:28:02 +0100
+	id 6H8mErPfcWk+MgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 09:28:35 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70501630BE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 09:28:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB207630D4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 09:28:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 514777A872C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 08:23:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 42BB06C272B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 08:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514803A783F;
-	Thu, 22 Jan 2026 08:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CC23806BB;
+	Thu, 22 Jan 2026 08:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JTUIP6Nv"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2KsvWC3a"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087F52E62A4;
-	Thu, 22 Jan 2026 08:22:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C774034CFBB;
+	Thu, 22 Jan 2026 08:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769070164; cv=none; b=iXyW5W51NSyO9V1JhHbZAOpjXbHgKJAK6BHTZZzueRn6Rbq1U3ru3T8jrCZi5DqtIklgk4RPCRn8T2EtXIopL8cnJ2BXFa23DYoeqk8uRBGaSFLF6x4ZPUDjyCzwBRAtsM48RjnSx2n7azSOKmU8AHH1SHnSwzDdoSmljPpJi4Q=
+	t=1769070175; cv=none; b=RpzE3BAC3KyCLfpXs6NcAxtA1FkFtxwah6i6eBs5e1U3BnzeGjicx+uBuc6aDaLLKsJIqbeLjoymtXHqqX6E5KvUggD+tdLxMETHWKJp7W/zZ88qKxtSRvmVeFPlVbeTY5oSrkur0YOxW/qKahgtL8xurq/PWcqLgHVYanCRbZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769070164; c=relaxed/simple;
-	bh=kDITSgEEIPWpQ71hPWjePv38ErelhFnUMuQSTq+Rg5U=;
+	s=arc-20240116; t=1769070175; c=relaxed/simple;
+	bh=+nbbVPttq5sh5F6OAj6t7wzb4AUwWW5DIZDdc6V5MNY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fqXE89iNmrYX/pfmtnYhUYLHrIO0axBUKGff6fRuimZhl8TZvq0K3UP9IHI/y8mOWV4Oq72JH3sHvu9i9Sqy5FT1C/TuACky4um6QApW8EHbdL/JLA4M0z3lQXQ23X4DmEvISGin6GaXLdKbx4WAgr6rAO+u596lr+b8+RcDZfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JTUIP6Nv; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=p3ErM1NZR4Oy88CDB4Dwon0h3ohAtVLYqraCnVq/COIJpKK3dujQZuCgd+C8LfIf+XjOhUrnBY3HFevcHLCl1SoUGGsAMP7vz0Yq8RHZzEPSGWRujJ1tjZaNcSG3Iruf9XKycoJojDzhwvF7/LoZt/eZWPK5QW8+FC5MO9XV5dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=2KsvWC3a; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=hAdCas95cj/I7ncOjpN0dsifccMn9iRm7c/Zz9k4sHY=; b=JTUIP6NvgUQQq/H4TkuH36i7U2
-	BjGvHHZGwEub6I68mXheK183MCOuhWmcA68rEL7cZh5CMkTS3FVvcl3d2efx85v5UsqrdHJ3L8tKi
-	CB4WdStYKD56Jec/MXHzfuEzIVkLptkfJOxPj3gBdO9wqxb0755pj7Wqv+CWXbHBiWDf+2gXwEOWv
-	wpQFtCiUSetCMpU+2qj8qzUAfNj8WY32GsvevNfoxHAEyNDfyG1VVMlmnjRxeqPcGE7E4dTGehIGl
-	tjd122hTkiVzkatQQkzSuZxayUJK41TNq2G+hNRLjFrpBHI1oe176BDcrc19bk5MYtZBrh5PY6Jzl
-	0NABE7FQ==;
+	bh=OM9wMzq/llzm5SLdpG00aP7cJ38lRMBcvo9i+eIotIc=; b=2KsvWC3axAJ7UqLz9e2U3lBXe8
+	zz7z2hx/WYe8nQxqpZro/Eb6FwDlpoyrEBfbZDwEOKoZICKkSHANrLcD8cg3xqCwbXHPMRIFVHNJB
+	B/3Xc1vcmxSz/W+hQgZyydP4JLAQGhLlkOrbQD24Rkcq6bi/Od1SH+Iu65zwNQK26qbfEkyetYeka
+	aSoD+A3HvHOw4Na3YB45x39+YcJyIkNpACZQI+0hTqaZUJHEy0LqqEJanPfbLOz7w0wXiDVUOa1bv
+	fc9CYYVOxcHNrYtu73zVaMbzDjhknHE7WYdCZ1c4j5L3RLONhJVopNNeVtbqx/C/uoV2ZWS0O1/xI
+	4HWnrg9w==;
 Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vipxg-00000006dto-0wgM;
-	Thu, 22 Jan 2026 08:22:40 +0000
+	id 1vipxq-00000006duK-1lJM;
+	Thu, 22 Jan 2026 08:22:50 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Eric Biggers <ebiggers@kernel.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>,
@@ -66,9 +66,9 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>,
 	linux-ext4@vger.kernel.org,
 	linux-f2fs-devel@lists.sourceforge.net,
 	fsverity@lists.linux.dev
-Subject: [PATCH 03/11] fsverity: pass struct file to ->write_merkle_tree_block
-Date: Thu, 22 Jan 2026 09:21:59 +0100
-Message-ID: <20260122082214.452153-4-hch@lst.de>
+Subject: [PATCH 04/11] fsverity: start consolidating pagecache code
+Date: Thu, 22 Jan 2026 09:22:00 +0100
+Message-ID: <20260122082214.452153-5-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260122082214.452153-1-hch@lst.de>
 References: <20260122082214.452153-1-hch@lst.de>
@@ -93,7 +93,7 @@ X-Spamd-Result: default: False [0.14 / 15.00];
 	RCPT_COUNT_TWELVE(0.00)[15];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	TAGGED_FROM(0.00)[bounces-74986-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-74987-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
@@ -105,148 +105,142 @@ X-Spamd-Result: default: False [0.14 / 15.00];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
+	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:dkim,dfw.mirrors.kernel.org:helo,dfw.mirrors.kernel.org:rdns,lst.de:mid,lst.de:email]
-X-Rspamd-Queue-Id: 70501630BE
+X-Rspamd-Queue-Id: CB207630D4
 X-Rspamd-Action: no action
 
-This will make an iomap implementation of the method easier.
+ext4 and f2fs are largely using the same code to read a page full
+of Merkle tree blocks from the page cache, and the upcoming xfs
+fsverity support would add another copy.
+
+Move the ext4 code to fs/verity/ and use it in f2fs as well.  For f2fs
+this removes the previous f2fs-specific error injection, but otherwise
+the behavior remains unchanged.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/btrfs/verity.c        | 5 +++--
- fs/ext4/verity.c         | 6 +++---
- fs/f2fs/verity.c         | 6 +++---
- fs/verity/enable.c       | 9 +++++----
- include/linux/fsverity.h | 4 ++--
- 5 files changed, 16 insertions(+), 14 deletions(-)
+ fs/ext4/verity.c         | 17 +----------------
+ fs/f2fs/verity.c         | 17 +----------------
+ fs/verity/pagecache.c    | 38 ++++++++++++++++++++++++++++++++++++++
+ include/linux/fsverity.h |  3 +++
+ 4 files changed, 43 insertions(+), 32 deletions(-)
+ create mode 100644 fs/verity/pagecache.c
 
-diff --git a/fs/btrfs/verity.c b/fs/btrfs/verity.c
-index a2ac3fb68bc8..e7643c22a6bf 100644
---- a/fs/btrfs/verity.c
-+++ b/fs/btrfs/verity.c
-@@ -774,16 +774,17 @@ static struct page *btrfs_read_merkle_tree_page(struct inode *inode,
- /*
-  * fsverity op that writes a Merkle tree block into the btree.
-  *
-- * @inode:	inode to write a Merkle tree block for
-+ * @file:	file to write a Merkle tree block for
-  * @buf:	Merkle tree block to write
-  * @pos:	the position of the block in the Merkle tree (in bytes)
-  * @size:	the Merkle tree block size (in bytes)
-  *
-  * Returns 0 on success or negative error code on failure
-  */
--static int btrfs_write_merkle_tree_block(struct inode *inode, const void *buf,
-+static int btrfs_write_merkle_tree_block(struct file *file, const void *buf,
- 					 u64 pos, unsigned int size)
- {
-+	struct inode *inode = file_inode(file);
- 	loff_t merkle_pos = merkle_file_pos(inode);
- 
- 	if (merkle_pos < 0)
 diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
-index 415d9c4d8a32..2ce4cf8a1e31 100644
+index 2ce4cf8a1e31..a071860ad36a 100644
 --- a/fs/ext4/verity.c
 +++ b/fs/ext4/verity.c
-@@ -380,12 +380,12 @@ static struct page *ext4_read_merkle_tree_page(struct inode *inode,
- 	return folio_file_page(folio, index);
- }
- 
--static int ext4_write_merkle_tree_block(struct inode *inode, const void *buf,
-+static int ext4_write_merkle_tree_block(struct file *file, const void *buf,
- 					u64 pos, unsigned int size)
+@@ -361,23 +361,8 @@ static struct page *ext4_read_merkle_tree_page(struct inode *inode,
+ 					       pgoff_t index,
+ 					       unsigned long num_ra_pages)
  {
--	pos += ext4_verity_metadata_pos(inode);
-+	pos += ext4_verity_metadata_pos(file_inode(file));
- 
--	return pagecache_write(inode, buf, size, pos);
-+	return pagecache_write(file_inode(file), buf, size, pos);
+-	struct folio *folio;
+-
+ 	index += ext4_verity_metadata_pos(inode) >> PAGE_SHIFT;
+-
+-	folio = __filemap_get_folio(inode->i_mapping, index, FGP_ACCESSED, 0);
+-	if (IS_ERR(folio) || !folio_test_uptodate(folio)) {
+-		DEFINE_READAHEAD(ractl, NULL, NULL, inode->i_mapping, index);
+-
+-		if (!IS_ERR(folio))
+-			folio_put(folio);
+-		else if (num_ra_pages > 1)
+-			page_cache_ra_unbounded(&ractl, num_ra_pages, 0);
+-		folio = read_mapping_folio(inode->i_mapping, index, NULL);
+-		if (IS_ERR(folio))
+-			return ERR_CAST(folio);
+-	}
+-	return folio_file_page(folio, index);
++	return generic_read_merkle_tree_page(inode, index, num_ra_pages);
  }
  
- const struct fsverity_operations ext4_verityops = {
+ static int ext4_write_merkle_tree_block(struct file *file, const void *buf,
 diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
-index 05b935b55216..c1c4d8044681 100644
+index c1c4d8044681..d37e584423af 100644
 --- a/fs/f2fs/verity.c
 +++ b/fs/f2fs/verity.c
-@@ -278,12 +278,12 @@ static struct page *f2fs_read_merkle_tree_page(struct inode *inode,
- 	return folio_file_page(folio, index);
- }
- 
--static int f2fs_write_merkle_tree_block(struct inode *inode, const void *buf,
-+static int f2fs_write_merkle_tree_block(struct file *file, const void *buf,
- 					u64 pos, unsigned int size)
+@@ -259,23 +259,8 @@ static struct page *f2fs_read_merkle_tree_page(struct inode *inode,
+ 					       pgoff_t index,
+ 					       unsigned long num_ra_pages)
  {
--	pos += f2fs_verity_metadata_pos(inode);
-+	pos += f2fs_verity_metadata_pos(file_inode(file));
- 
--	return pagecache_write(inode, buf, size, pos);
-+	return pagecache_write(file_inode(file), buf, size, pos);
+-	struct folio *folio;
+-
+ 	index += f2fs_verity_metadata_pos(inode) >> PAGE_SHIFT;
+-
+-	folio = f2fs_filemap_get_folio(inode->i_mapping, index, FGP_ACCESSED, 0);
+-	if (IS_ERR(folio) || !folio_test_uptodate(folio)) {
+-		DEFINE_READAHEAD(ractl, NULL, NULL, inode->i_mapping, index);
+-
+-		if (!IS_ERR(folio))
+-			folio_put(folio);
+-		else if (num_ra_pages > 1)
+-			page_cache_ra_unbounded(&ractl, num_ra_pages, 0);
+-		folio = read_mapping_folio(inode->i_mapping, index, NULL);
+-		if (IS_ERR(folio))
+-			return ERR_CAST(folio);
+-	}
+-	return folio_file_page(folio, index);
++	return generic_read_merkle_tree_page(inode, index, num_ra_pages);
  }
  
- const struct fsverity_operations f2fs_verityops = {
-diff --git a/fs/verity/enable.c b/fs/verity/enable.c
-index 95ec42b84797..c56c18e2605b 100644
---- a/fs/verity/enable.c
-+++ b/fs/verity/enable.c
-@@ -41,14 +41,15 @@ static int hash_one_block(const struct merkle_tree_params *params,
- 	return 0;
- }
- 
--static int write_merkle_tree_block(struct inode *inode, const u8 *buf,
-+static int write_merkle_tree_block(struct file *file, const u8 *buf,
- 				   unsigned long index,
- 				   const struct merkle_tree_params *params)
- {
-+	struct inode *inode = file_inode(file);
- 	u64 pos = (u64)index << params->log_blocksize;
- 	int err;
- 
--	err = inode->i_sb->s_vop->write_merkle_tree_block(inode, buf, pos,
-+	err = inode->i_sb->s_vop->write_merkle_tree_block(file, buf, pos,
- 							  params->block_size);
- 	if (err)
- 		fsverity_err(inode, "Error %d writing Merkle tree block %lu",
-@@ -135,7 +136,7 @@ static int build_merkle_tree(struct file *filp,
- 			err = hash_one_block(params, &buffers[level]);
- 			if (err)
- 				goto out;
--			err = write_merkle_tree_block(inode,
-+			err = write_merkle_tree_block(filp,
- 						      buffers[level].data,
- 						      level_offset[level],
- 						      params);
-@@ -155,7 +156,7 @@ static int build_merkle_tree(struct file *filp,
- 			err = hash_one_block(params, &buffers[level]);
- 			if (err)
- 				goto out;
--			err = write_merkle_tree_block(inode,
-+			err = write_merkle_tree_block(filp,
- 						      buffers[level].data,
- 						      level_offset[level],
- 						      params);
+ static int f2fs_write_merkle_tree_block(struct file *file, const void *buf,
+diff --git a/fs/verity/pagecache.c b/fs/verity/pagecache.c
+new file mode 100644
+index 000000000000..1efcdde20b73
+--- /dev/null
++++ b/fs/verity/pagecache.c
+@@ -0,0 +1,38 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright 2019 Google LLC
++ */
++
++#include <linux/fsverity.h>
++#include <linux/pagemap.h>
++
++/**
++ * generic_read_merkle_tree_page - generic ->read_merkle_tree_page helper
++ * @inode:	inode containing the Merkle tree
++ * @index:	0-based index of the page in the inode
++ * @num_ra_pages: The number of Merkle tree pages that should be prefetched.
++ *
++ * The caller needs to adjust @index from the Merkle-tree relative index passed
++ * to ->read_merkle_tree_page to the actual index where the Merkle tree is
++ * stored in the page cache for @inode.
++ */
++struct page *generic_read_merkle_tree_page(struct inode *inode, pgoff_t index,
++		unsigned long num_ra_pages)
++{
++	struct folio *folio;
++
++	folio = __filemap_get_folio(inode->i_mapping, index, FGP_ACCESSED, 0);
++	if (IS_ERR(folio) || !folio_test_uptodate(folio)) {
++		DEFINE_READAHEAD(ractl, NULL, NULL, inode->i_mapping, index);
++
++		if (!IS_ERR(folio))
++			folio_put(folio);
++		else if (num_ra_pages > 1)
++			page_cache_ra_unbounded(&ractl, num_ra_pages, 0);
++		folio = read_mapping_folio(inode->i_mapping, index, NULL);
++		if (IS_ERR(folio))
++			return ERR_CAST(folio);
++	}
++	return folio_file_page(folio, index);
++}
++EXPORT_SYMBOL_GPL(generic_read_merkle_tree_page);
 diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index ea1ed2e6c2f9..e22cf84fe83a 100644
+index e22cf84fe83a..121703625cc8 100644
 --- a/include/linux/fsverity.h
 +++ b/include/linux/fsverity.h
-@@ -116,7 +116,7 @@ struct fsverity_operations {
- 	/**
- 	 * Write a Merkle tree block to the given inode.
- 	 *
--	 * @inode: the inode for which the Merkle tree is being built
-+	 * @file: the file for which the Merkle tree is being built
- 	 * @buf: the Merkle tree block to write
- 	 * @pos: the position of the block in the Merkle tree (in bytes)
- 	 * @size: the Merkle tree block size (in bytes)
-@@ -126,7 +126,7 @@ struct fsverity_operations {
- 	 *
- 	 * Return: 0 on success, -errno on failure
- 	 */
--	int (*write_merkle_tree_block)(struct inode *inode, const void *buf,
-+	int (*write_merkle_tree_block)(struct file *file, const void *buf,
- 				       u64 pos, unsigned int size);
- };
+@@ -309,4 +309,7 @@ static inline int fsverity_file_open(struct inode *inode, struct file *filp)
  
+ void fsverity_cleanup_inode(struct inode *inode);
+ 
++struct page *generic_read_merkle_tree_page(struct inode *inode, pgoff_t index,
++		unsigned long num_ra_pages);
++
+ #endif	/* _LINUX_FSVERITY_H */
 -- 
 2.47.3
 
