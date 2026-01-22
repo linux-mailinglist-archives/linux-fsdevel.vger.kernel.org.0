@@ -1,566 +1,391 @@
-Return-Path: <linux-fsdevel+bounces-75162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +CnMIAGfcmm/ngAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 23:04:49 +0100
+	id yJa3OTWjcmkOnwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 23:22:45 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 019566E09D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 23:04:48 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D106E219
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 23:22:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id F400D3022919
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 22:04:29 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id CAEDD30115BA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 22:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DB439CEEA;
-	Thu, 22 Jan 2026 22:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8193D5F5C;
+	Thu, 22 Jan 2026 22:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G7kIQZSr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LLaviXeQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191D62517AC;
-	Thu, 22 Jan 2026 22:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52938340A6C;
+	Thu, 22 Jan 2026 22:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769119462; cv=none; b=QOGt8lDKvtHPaCCeoz+u5msPyS0qJIVcDKKVB7oiW5bzroM1I4HVv8UJVDW5DaXv7SqGGjoLqk9ktysomyCpWn7QuzASXXURmwra6cqd7A8hk42bfAH9NQ0i/mzOegR+iimts1z0jjKu7gaPtxNsHevHRUTw0GVxxfbgTBwg/Qw=
+	t=1769120554; cv=none; b=vEvqWKrjM9FcTSzC7c+/cF7Ld/tAOOe2u70jYK/bnCVRzAEMkDE+xo5Myn6dLE+NNlvAZTmvR/Qz/xzVdlY/0ZIvFq1Fr6JbEH3XzhuLkITng9zETEM6Bmw/E0ce2SKMvwLrA0y4kGkY31mHcvR0k0A7V3WnfdXYHdwqdjFpV70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769119462; c=relaxed/simple;
-	bh=rNt18OKEZslrDWFTYLSKyNaeJ0L6uX3jup7SCZjqnpA=;
+	s=arc-20240116; t=1769120554; c=relaxed/simple;
+	bh=vbZVdqnDpuNV44Hfrf6Xl1ppec06FKlDoiQRGs0GK98=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YCyB1+DjEzrQ46HEtP2JsHWynvcDUK+z3URWGdwOiHRYH1p3t5kOU9l3GPxu5IuZTu/FuR/moE2slxldwVgFp0iqRiOSt5bDT73XA65yEN4q1s2HF43qsLSulnxxuqr/Ts0ShAbLynb28P9QsN/7xaXT7Kf6eOBdfs9lXOPA/RM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G7kIQZSr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F10CC116C6;
-	Thu, 22 Jan 2026 22:04:21 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=nxPND6HW8mAbOHbq0ZO8HsP4pCHVctKcR7a7KkPnz1RPPWxHIhpV/241zanh/xEMYuHOROZhEkX39fs0t2+1IpV3ocCsLIrOcdc6sTBpcqVepP+iNBysKBIhvXQ5y+W1GASdCQPMLoWd1n3gryDgFJR3Mj/yuD18kZ3biesrptU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LLaviXeQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3311C116C6;
+	Thu, 22 Jan 2026 22:22:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769119461;
-	bh=rNt18OKEZslrDWFTYLSKyNaeJ0L6uX3jup7SCZjqnpA=;
+	s=k20201202; t=1769120554;
+	bh=vbZVdqnDpuNV44Hfrf6Xl1ppec06FKlDoiQRGs0GK98=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G7kIQZSrZSfzg/76EGOOXzKN9KXH8SVSDDiO183lHPs79El3vgOvKoMoTZ5jE0Zqo
-	 ZwCLSZ/Fht0MffLcE25utPz20FypUtoztSKzn5gjGHIAcjfC13vnzlxZffwsqbbi2+
-	 lxDgpfV0sfmdxPQw59AdIQoyR1Wi0a2zAtfjWNioMXaG0gRkRyn4b7Zx1Xspmn+hag
-	 OfKljWZbvVxAa7RmvlzezHxA0311KQVQBlmrudjz/061n/aSxp85vDaCPRa/IgY2Q1
-	 h6TykSofydk8FOWoBaPDIpRxy11+M7lnqrwBCvg9a139ZhTyLlfePexkv4/I3i+ucK
-	 Yj6w+iB8PCeDw==
-Date: Thu, 22 Jan 2026 14:04:20 -0800
+	b=LLaviXeQjDfm+CDG6c2K97GPpOkNM+4HOK2WfBy/dhWLdFZOeSQ4dXc+Yl/wEIQX+
+	 op0Te7XmGuueYhBeNPZpdV/Cf5dLf+VVb92B5adgbmioSWmovYFpF1pSBmP6vRZ0qb
+	 Lrowo1Xqyoxsvh+j595AFCEeESQ+ZPSpKAtCJ/rmAjnKdw5Mjo4/NLf8T12Ul+MUpu
+	 MDwBqSGiM4N2kJAOv64bZo44ng0H1V7mDyFjJtfGZPmLLDTL1NSHChwUMaAZoVqPUf
+	 HjjB/GqfhGcK8bma1hcE5D0Tcn4wGaOWG/Sdh/9nrijmq6AXmDzXzmhWsvGbXSwWYw
+	 vVaDwpCSwA4Gg==
+Date: Thu, 22 Jan 2026 14:22:33 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Eric Biggers <ebiggers@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	Andrey Albershteyn <aalbersh@redhat.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	fsverity@lists.linux.dev
-Subject: Re: [PATCH 11/11] fsverity: use a hashtable to find the fsverity_info
-Message-ID: <20260122220420.GI5910@frogsfrogsfrogs>
-References: <20260122082214.452153-1-hch@lst.de>
- <20260122082214.452153-12-hch@lst.de>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, bernd@bsbernd.com, neal@gompa.dev,
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 07/31] fuse: create a per-inode flag for toggling iomap
+Message-ID: <20260122222233.GA5900@frogsfrogsfrogs>
+References: <176169810144.1424854.11439355400009006946.stgit@frogsfrogsfrogs>
+ <176169810502.1424854.13869957103489591272.stgit@frogsfrogsfrogs>
+ <CAJnrk1ZDeYytdjuCdg6-O-PGjcmwS33LOnfFT_YY9SPE=x=Qxw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260122082214.452153-12-hch@lst.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1ZDeYytdjuCdg6-O-PGjcmwS33LOnfFT_YY9SPE=x=Qxw@mail.gmail.com>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	MID_RHS_NOT_FQDN(0.50)[];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_TO(0.00)[gmail.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75162-lists,linux-fsdevel=lfdr.de];
-	RCPT_COUNT_TWELVE(0.00)[16];
+	TAGGED_FROM(0.00)[bounces-75163-lists,linux-fsdevel=lfdr.de];
+	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
 	NEURAL_HAM(-0.00)[-0.997];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,lst.de:email]
-X-Rspamd-Queue-Id: 019566E09D
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 90D106E219
 X-Rspamd-Action: no action
 
-On Thu, Jan 22, 2026 at 09:22:07AM +0100, Christoph Hellwig wrote:
-> Use the kernel's resizable hash table to find the fsverity_info.  This
-
-Oh is that what the 'r' stands for?  I thought it was rcu.  Maybe it's
-both. :P
-
-> way file systems that want to support fsverity don't have to bloat
-> every inode in the system with an extra pointer.  The tradeoff is that
-> looking up the fsverity_info is a bit more expensive now, but the main
-> operations are still dominated by I/O and hashing overhead.
+On Wed, Jan 21, 2026 at 05:13:39PM -0800, Joanne Koong wrote:
+> On Tue, Oct 28, 2025 at 5:46 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> > From: Darrick J. Wong <djwong@kernel.org>
+> >
+> > Create a per-inode flag to control whether or not this inode actually
+> > uses iomap.  This is required for non-regular files because iomap
+> > doesn't apply there; and enables fuse filesystems to provide some
+> > non-iomap files if desired.
+> >
+> > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 > 
-> Because insertation into the hash table now happens before S_VERITY is
-> set, fsverity just becomes a barrier and a flag check and doesn't have
-> to look up the fsverity_info at all, so there is only one two two
-
-"one two two" <confused>?
-
-> lookups per I/O operation depending on the file system and lookups
-> in the ioctl path that is not performance critical.
+> The logic in this makes sense to me, left just a few comments below.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/btrfs/btrfs_inode.h       |  4 --
->  fs/btrfs/inode.c             |  3 --
->  fs/btrfs/verity.c            |  2 -
->  fs/ext4/ext4.h               |  4 --
->  fs/ext4/super.c              |  3 --
->  fs/ext4/verity.c             |  2 -
->  fs/f2fs/f2fs.h               |  3 --
->  fs/f2fs/super.c              |  3 --
->  fs/f2fs/verity.c             |  2 -
->  fs/verity/enable.c           | 30 ++++++++------
->  fs/verity/fsverity_private.h | 17 ++++----
->  fs/verity/open.c             | 75 ++++++++++++++++++++++-------------
->  fs/verity/verify.c           |  4 +-
->  include/linux/fsverity.h     | 77 +++++++++++-------------------------
->  14 files changed, 100 insertions(+), 129 deletions(-)
+> Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
+
+Thanks!
+
+> > ---
+> >  fs/fuse/fuse_i.h          |   17 ++++++++++++++++
+> >  include/uapi/linux/fuse.h |    3 +++
+> >  fs/fuse/file.c            |    1 +
+> >  fs/fuse/file_iomap.c      |   49 +++++++++++++++++++++++++++++++++++++++++++++
+> >  fs/fuse/inode.c           |   26 ++++++++++++++++++------
+> >  5 files changed, 90 insertions(+), 6 deletions(-)
+> >
+> >
+> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > index 839d4f2ada4656..c7aeb324fe599e 100644
+> > --- a/fs/fuse/fuse_i.h
+> > +++ b/fs/fuse/fuse_i.h
+> > @@ -257,6 +257,8 @@ enum {
+> >          * or the fuse server has an exclusive "lease" on distributed fs
+> >          */
+> >         FUSE_I_EXCLUSIVE,
+> > +       /* Use iomap for this inode */
+> > +       FUSE_I_IOMAP,
+> >  };
+> >
+> >  struct fuse_conn;
+> > @@ -1717,11 +1719,26 @@ extern const struct fuse_backing_ops fuse_iomap_backing_ops;
+> >
+> >  void fuse_iomap_mount(struct fuse_mount *fm);
+> >  void fuse_iomap_unmount(struct fuse_mount *fm);
+> > +
+> > +void fuse_iomap_init_reg_inode(struct inode *inode, unsigned attr_flags);
+> > +void fuse_iomap_init_nonreg_inode(struct inode *inode, unsigned attr_flags);
+> > +void fuse_iomap_evict_inode(struct inode *inode);
+> > +
+> > +static inline bool fuse_inode_has_iomap(const struct inode *inode)
+> > +{
+> > +       const struct fuse_inode *fi = get_fuse_inode(inode);
+> > +
+> > +       return test_bit(FUSE_I_IOMAP, &fi->state);
+> > +}
+> >  #else
+> >  # define fuse_iomap_enabled(...)               (false)
+> >  # define fuse_has_iomap(...)                   (false)
+> >  # define fuse_iomap_mount(...)                 ((void)0)
+> >  # define fuse_iomap_unmount(...)               ((void)0)
+> > +# define fuse_iomap_init_reg_inode(...)                ((void)0)
+> > +# define fuse_iomap_init_nonreg_inode(...)     ((void)0)
+> > +# define fuse_iomap_evict_inode(...)           ((void)0)
+> > +# define fuse_inode_has_iomap(...)             (false)
+> >  #endif
+> >
+> >  #endif /* _FS_FUSE_I_H */
+> > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> > index e571f8ceecbfad..e949bfe022c3b0 100644
+> > --- a/include/uapi/linux/fuse.h
+> > +++ b/include/uapi/linux/fuse.h
+> > @@ -243,6 +243,7 @@
+> >   *
+> >   *  7.99
+> >   *  - add FUSE_IOMAP and iomap_{begin,end,ioend} for regular file operations
+> > + *  - add FUSE_ATTR_IOMAP to enable iomap for specific inodes
+> >   */
+> >
+> >  #ifndef _LINUX_FUSE_H
+> > @@ -583,9 +584,11 @@ struct fuse_file_lock {
+> >   *
+> >   * FUSE_ATTR_SUBMOUNT: Object is a submount root
+> >   * FUSE_ATTR_DAX: Enable DAX for this file in per inode DAX mode
+> > + * FUSE_ATTR_IOMAP: Use iomap for this inode
+> >   */
+> >  #define FUSE_ATTR_SUBMOUNT      (1 << 0)
+> >  #define FUSE_ATTR_DAX          (1 << 1)
+> > +#define FUSE_ATTR_IOMAP                (1 << 2)
+> >
+> >  /**
+> >   * Open flags
+> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> > index f1ef77a0be05bb..42c85c19f3b13b 100644
+> > --- a/fs/fuse/file.c
+> > +++ b/fs/fuse/file.c
+> > @@ -3135,6 +3135,7 @@ void fuse_init_file_inode(struct inode *inode, unsigned int flags)
+> >         init_waitqueue_head(&fi->page_waitq);
+> >         init_waitqueue_head(&fi->direct_io_waitq);
+> >
+> > +       fuse_iomap_init_reg_inode(inode, flags);
 > 
-> diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
-> index 73602ee8de3f..55c272fe5d92 100644
-> --- a/fs/btrfs/btrfs_inode.h
-> +++ b/fs/btrfs/btrfs_inode.h
-> @@ -339,10 +339,6 @@ struct btrfs_inode {
->  
->  	struct rw_semaphore i_mmap_lock;
->  
-> -#ifdef CONFIG_FS_VERITY
-> -	struct fsverity_info *i_verity_info;
-> -#endif
-> -
->  	struct inode vfs_inode;
->  };
->  
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index 67c64efc5099..93b2ce75fb06 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -8097,9 +8097,6 @@ static void init_once(void *foo)
->  	struct btrfs_inode *ei = foo;
->  
->  	inode_init_once(&ei->vfs_inode);
-> -#ifdef CONFIG_FS_VERITY
-> -	ei->i_verity_info = NULL;
-> -#endif
->  }
->  
->  void __cold btrfs_destroy_cachep(void)
-> diff --git a/fs/btrfs/verity.c b/fs/btrfs/verity.c
-> index c152bef71e8b..cd96fac4739f 100644
-> --- a/fs/btrfs/verity.c
-> +++ b/fs/btrfs/verity.c
-> @@ -795,8 +795,6 @@ static int btrfs_write_merkle_tree_block(struct file *file, const void *buf,
->  }
->  
->  const struct fsverity_operations btrfs_verityops = {
-> -	.inode_info_offs         = (int)offsetof(struct btrfs_inode, i_verity_info) -
-> -				   (int)offsetof(struct btrfs_inode, vfs_inode),
+> imo it's a bit confusing to have this here when the rest of the
+> fuse_iomap_init_nonreg_inode() calls happen inside the switch case
+> statement. Maybe it makes sense to have this inside the switch case
+> like the fuse_iomap_init_nonreg_inode() calls, or alternatively move
+> the fuse_iomap_init_nonreg_inode() calls into their corresponding
+> helpers (eg fuse_init_dir(), etc.), so that it's consistent?
 
-Ugliness, get thee gone! ;)
+Ah, that.  Originally I /did/ have it in the switch statement in
+fuse_init_inode.  Then I started trying to work on fsdax support (HA!)
+for which it became necessary to move the fuse_iomap_init_reg_inode call
+to fuse_init_file_inode and pass it a pointer to args->flags so that it
+could clear FUSE_ATTR_DAX so that the other fuse dax io paths wouldn't
+try to install themselves.
 
->  	.begin_enable_verity     = btrfs_begin_enable_verity,
->  	.end_enable_verity       = btrfs_end_enable_verity,
->  	.get_verity_descriptor   = btrfs_get_verity_descriptor,
+I never got fsdax working properly so that's why it's never been
+attached to my fuse-iomap patches.  Maybe that'll happen some day in the
+meantime ... should fuse_iomap_init_reg_inode move back to the switch?
 
-<snip>
-
-> diff --git a/fs/verity/enable.c b/fs/verity/enable.c
-> index c56c18e2605b..94c88c419054 100644
-> --- a/fs/verity/enable.c
-> +++ b/fs/verity/enable.c
-> @@ -265,9 +265,24 @@ static int enable_verity(struct file *filp,
->  		goto rollback;
->  	}
->  
-> +	/*
-> +	 * Add the fsverity_info into the hash table before finishing the
-> +	 * initialization so that we don't have to undo the enabling when memory
-> +	 * allocation for the hash table fails.  This is safe because looking up
-> +	 * the fsverity_info always first checks the S_VERITY flag on the inode,
-> +	 * which will only be set at the very end of the ->end_enable_verity
-> +	 * method.
-> +	 */
-> +	err = fsverity_set_info(vi);
-> +	if (err)
-> +		goto rollback;
-> +
->  	/*
->  	 * Tell the filesystem to finish enabling verity on the file.
-> -	 * Serialized with ->begin_enable_verity() by the inode lock.
-> +	 * Serialized with ->begin_enable_verity() by the inode lock.  The file
-> +	 * system needs to set the S_VERITY flag on the inode at the very end of
-> +	 * the method, at which point the fsverity information can be accessed
-> +	 * by other threads.
->  	 */
->  	inode_lock(inode);
->  	err = vops->end_enable_verity(filp, desc, desc_size, params.tree_size);
-> @@ -275,19 +290,10 @@ static int enable_verity(struct file *filp,
->  	if (err) {
->  		fsverity_err(inode, "%ps() failed with err %d",
->  			     vops->end_enable_verity, err);
-> -		fsverity_free_info(vi);
-> +		fsverity_remove_info(vi);
->  	} else if (WARN_ON_ONCE(!IS_VERITY(inode))) {
-> +		fsverity_remove_info(vi);
->  		err = -EINVAL;
-> -		fsverity_free_info(vi);
-> -	} else {
-> -		/* Successfully enabled verity */
-> -
-> -		/*
-> -		 * Readers can start using the inode's verity info immediately,
-> -		 * so it can't be rolled back once set.  So don't set it until
-> -		 * just after the filesystem has successfully enabled verity.
-> -		 */
-> -		fsverity_set_info(inode, vi);
->  	}
->  out:
->  	kfree(params.hashstate);
-> diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
-> index 9018b71b3b23..fc1ef334d12c 100644
-> --- a/fs/verity/fsverity_private.h
-> +++ b/fs/verity/fsverity_private.h
-> @@ -11,6 +11,7 @@
->  #define pr_fmt(fmt) "fs-verity: " fmt
->  
->  #include <linux/fsverity.h>
-> +#include <linux/rhashtable.h>
->  
->  /*
->   * Implementation limit: maximum depth of the Merkle tree.  For now 8 is plenty;
-> @@ -63,13 +64,14 @@ struct merkle_tree_params {
->   * fsverity_info - cached verity metadata for an inode
->   *
->   * When a verity file is first opened, an instance of this struct is allocated
-> - * and a pointer to it is stored in the file's in-memory inode.  It remains
-> - * until the inode is evicted.  It caches information about the Merkle tree
-> - * that's needed to efficiently verify data read from the file.  It also caches
-> - * the file digest.  The Merkle tree pages themselves are not cached here, but
-> - * the filesystem may cache them.
-> + * and a pointer to it is stored in the global hash table, indexed by the inode
-> + * pointer value.  It remains alive until the inode is evicted.  It caches
-> + * information about the Merkle tree that's needed to efficiently verify data
-> + * read from the file.  It also caches the file digest.  The Merkle tree pages
-> + * themselves are not cached here, but the filesystem may cache them.
->   */
->  struct fsverity_info {
-> +	struct rhash_head rhash_head;
->  	struct merkle_tree_params tree_params;
->  	u8 root_hash[FS_VERITY_MAX_DIGEST_SIZE];
->  	u8 file_digest[FS_VERITY_MAX_DIGEST_SIZE];
-> @@ -127,9 +129,8 @@ int fsverity_init_merkle_tree_params(struct merkle_tree_params *params,
->  struct fsverity_info *fsverity_create_info(const struct inode *inode,
->  					   struct fsverity_descriptor *desc);
->  
-> -void fsverity_set_info(struct inode *inode, struct fsverity_info *vi);
-> -
-> -void fsverity_free_info(struct fsverity_info *vi);
-> +int fsverity_set_info(struct fsverity_info *vi);
-> +void fsverity_remove_info(struct fsverity_info *vi);
->  
->  int fsverity_get_descriptor(struct inode *inode,
->  			    struct fsverity_descriptor **desc_ret);
-> diff --git a/fs/verity/open.c b/fs/verity/open.c
-> index 090cb77326ee..f1640f4d3d3b 100644
-> --- a/fs/verity/open.c
-> +++ b/fs/verity/open.c
-> @@ -12,6 +12,14 @@
->  #include <linux/slab.h>
->  
->  static struct kmem_cache *fsverity_info_cachep;
-> +static struct rhashtable fsverity_info_hash;
-> +
-> +static const struct rhashtable_params fsverity_info_hash_params = {
-> +	.key_len		= sizeof(struct inode *),
-
-	.key_len		= sizeof_field(struct fsverity_info, inode),
-
-Perhaps?
-
-> +	.key_offset		= offsetof(struct fsverity_info, inode),
-> +	.head_offset		= offsetof(struct fsverity_info, rhash_head),
-> +	.automatic_shrinking	= true,
-> +};
->  
->  /**
->   * fsverity_init_merkle_tree_params() - initialize Merkle tree parameters
-> @@ -170,6 +178,13 @@ static void compute_file_digest(const struct fsverity_hash_alg *hash_alg,
->  	desc->sig_size = sig_size;
->  }
->  
-> +static void fsverity_free_info(struct fsverity_info *vi)
-> +{
-> +	kfree(vi->tree_params.hashstate);
-> +	kvfree(vi->hash_block_verified);
-> +	kmem_cache_free(fsverity_info_cachep, vi);
-> +}
-> +
->  /*
->   * Create a new fsverity_info from the given fsverity_descriptor (with optional
->   * appended builtin signature), and check the signature if present.  The
-> @@ -241,33 +256,18 @@ struct fsverity_info *fsverity_create_info(const struct inode *inode,
->  	return ERR_PTR(err);
->  }
->  
-> -void fsverity_set_info(struct inode *inode, struct fsverity_info *vi)
-> +int fsverity_set_info(struct fsverity_info *vi)
->  {
-> -	/*
-> -	 * Multiple tasks may race to set the inode's verity info pointer, so
-> -	 * use cmpxchg_release().  This pairs with the smp_load_acquire() in
-> -	 * fsverity_get_info().  I.e., publish the pointer with a RELEASE
-> -	 * barrier so that other tasks can ACQUIRE it.
-> -	 */
-> -	if (cmpxchg_release(fsverity_info_addr(inode), NULL, vi) != NULL) {
-> -		/* Lost the race, so free the verity info we allocated. */
-> -		fsverity_free_info(vi);
-> -		/*
-> -		 * Afterwards, the caller may access the inode's verity info
-> -		 * directly, so make sure to ACQUIRE the winning verity info.
-> -		 */
-> -		(void)fsverity_get_info(inode);
-> -	}
-> +	return rhashtable_lookup_insert_fast(&fsverity_info_hash,
-> +			&vi->rhash_head, fsverity_info_hash_params);
->  }
->  
-> -void fsverity_free_info(struct fsverity_info *vi)
-> +struct fsverity_info *__fsverity_get_info(const struct inode *inode)
->  {
-> -	if (!vi)
-> -		return;
-> -	kfree(vi->tree_params.hashstate);
-> -	kvfree(vi->hash_block_verified);
-> -	kmem_cache_free(fsverity_info_cachep, vi);
-> +	return rhashtable_lookup_fast(&fsverity_info_hash, &inode,
-> +			fsverity_info_hash_params);
-
-Hrm.  The rhashtable stores a pointer to the rhash_head, but now we're
-returning that as if it were a fsverity_info pointer.  Can I be pedantic
-and ask for a proper container_of() to avoid leaving a landmine if the
-struct layout ever changes?
-
->  }
-> +EXPORT_SYMBOL_GPL(__fsverity_get_info);
->  
->  static bool validate_fsverity_descriptor(struct inode *inode,
->  					 const struct fsverity_descriptor *desc,
-> @@ -352,7 +352,7 @@ int fsverity_get_descriptor(struct inode *inode,
->  
->  static int ensure_verity_info(struct inode *inode)
->  {
-> -	struct fsverity_info *vi = fsverity_get_info(inode);
-> +	struct fsverity_info *vi = fsverity_get_info(inode), *found;
->  	struct fsverity_descriptor *desc;
->  	int err;
->  
-> @@ -369,8 +369,18 @@ static int ensure_verity_info(struct inode *inode)
->  		goto out_free_desc;
->  	}
->  
-> -	fsverity_set_info(inode, vi);
-> -	err = 0;
-> +	/*
-> +	 * Multiple tasks may race to set the inode's verity info, in which case
-> +	 * we might find an existing fsverity_info in the hash table.
-> +	 */
-> +	found = rhashtable_lookup_get_insert_fast(&fsverity_info_hash,
-> +			&vi->rhash_head, fsverity_info_hash_params);
-> +	if (found) {
-> +		fsverity_free_info(vi);
-> +		if (IS_ERR(found))
-> +			err = PTR_ERR(found);
-> +	}
-> +
->  out_free_desc:
->  	kfree(desc);
->  	return err;
-> @@ -384,16 +394,25 @@ int __fsverity_file_open(struct inode *inode, struct file *filp)
->  }
->  EXPORT_SYMBOL_GPL(__fsverity_file_open);
->  
-> +void fsverity_remove_info(struct fsverity_info *vi)
-> +{
-> +	rhashtable_remove_fast(&fsverity_info_hash, &vi->rhash_head,
-> +			fsverity_info_hash_params);
-> +	fsverity_free_info(vi);
-> +}
-> +
->  void fsverity_cleanup_inode(struct inode *inode)
->  {
-> -	struct fsverity_info **vi_addr = fsverity_info_addr(inode);
-> +	struct fsverity_info *vi = fsverity_get_info(inode);
->  
-> -	fsverity_free_info(*vi_addr);
-> -	*vi_addr = NULL;
-> +	if (vi)
-> +		fsverity_remove_info(vi);
->  }
->  
->  void __init fsverity_init_info_cache(void)
->  {
-> +	if (rhashtable_init(&fsverity_info_hash, &fsverity_info_hash_params))
-> +		panic("failed to initialize fsverity hash\n");
->  	fsverity_info_cachep = KMEM_CACHE_USERCOPY(
->  					fsverity_info,
->  					SLAB_RECLAIM_ACCOUNT | SLAB_PANIC,
-> diff --git a/fs/verity/verify.c b/fs/verity/verify.c
-> index 74792cd8b037..4ae926528dd5 100644
-> --- a/fs/verity/verify.c
-> +++ b/fs/verity/verify.c
-> @@ -323,9 +323,9 @@ fsverity_init_verification_context(struct fsverity_verification_context *ctx,
->  				   struct fsverity_info *vi)
->  {
->  	ctx->inode = inode;
-> -	ctx->vi = vi;
-
-Can this function drop its @vi argument?
-
-> +	ctx->vi = fsverity_get_info(inode);
->  	ctx->num_pending = 0;
-> -	if (vi->tree_params.hash_alg->algo_id == HASH_ALGO_SHA256 &&
-> +	if (ctx->vi->tree_params.hash_alg->algo_id == HASH_ALGO_SHA256 &&
->  	    sha256_finup_2x_is_optimized())
->  		ctx->max_pending = 2;
->  	else
-> diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-> index c044285b6aff..20282493402c 100644
-> --- a/include/linux/fsverity.h
-> +++ b/include/linux/fsverity.h
-> @@ -30,13 +30,6 @@ struct fsverity_info;
->  
->  /* Verity operations for filesystems */
->  struct fsverity_operations {
-> -	/**
-> -	 * The offset of the pointer to struct fsverity_info in the
-> -	 * filesystem-specific part of the inode, relative to the beginning of
-> -	 * the common part of the inode (the 'struct inode').
-> -	 */
-> -	ptrdiff_t inode_info_offs;
-> -
->  	/**
->  	 * Begin enabling verity on the given file.
->  	 *
-> @@ -142,40 +135,6 @@ struct fsverity_operations {
->  };
->  
->  #ifdef CONFIG_FS_VERITY
-> -
-> -/*
-> - * Returns the address of the verity info pointer within the filesystem-specific
-> - * part of the inode.  (To save memory on filesystems that don't support
-> - * fsverity, a field in 'struct inode' itself is no longer used.)
-> - */
-> -static inline struct fsverity_info **
-> -fsverity_info_addr(const struct inode *inode)
-> -{
-> -	VFS_WARN_ON_ONCE(inode->i_sb->s_vop->inode_info_offs == 0);
-> -	return (void *)inode + inode->i_sb->s_vop->inode_info_offs;
-> -}
-> -
-> -static inline struct fsverity_info *fsverity_get_info(const struct inode *inode)
-> -{
-> -	/*
-> -	 * Since this function can be called on inodes belonging to filesystems
-> -	 * that don't support fsverity at all, and fsverity_info_addr() doesn't
-> -	 * work on such filesystems, we have to start with an IS_VERITY() check.
-> -	 * Checking IS_VERITY() here is also useful to minimize the overhead of
-> -	 * fsverity_active() on non-verity files.
-> -	 */
-> -	if (!IS_VERITY(inode))
-> -		return NULL;
-> -
-> -	/*
-> -	 * Pairs with the cmpxchg_release() in fsverity_set_info().  I.e.,
-> -	 * another task may publish the inode's verity info concurrently,
-> -	 * executing a RELEASE barrier.  Use smp_load_acquire() here to safely
-> -	 * ACQUIRE the memory the other task published.
-> -	 */
-> -	return smp_load_acquire(fsverity_info_addr(inode));
-> -}
-> -
->  /* enable.c */
->  
->  int fsverity_ioctl_enable(struct file *filp, const void __user *arg);
-> @@ -204,11 +163,6 @@ void fsverity_enqueue_verify_work(struct work_struct *work);
->  
->  #else /* !CONFIG_FS_VERITY */
->  
-> -static inline struct fsverity_info *fsverity_get_info(const struct inode *inode)
-> -{
-> -	return NULL;
-> -}
-> -
->  /* enable.c */
->  
->  static inline int fsverity_ioctl_enable(struct file *filp,
-> @@ -289,18 +243,35 @@ static inline bool fsverity_verify_page(struct fsverity_info *vi,
->   * fsverity_active() - do reads from the inode need to go through fs-verity?
->   * @inode: inode to check
->   *
-> - * This checks whether the inode's verity info has been set.
-> - *
-> - * Filesystems call this from ->readahead() to check whether the pages need to
-> - * be verified or not.  Don't use IS_VERITY() for this purpose; it's subject to
-> - * a race condition where the file is being read concurrently with
-> - * FS_IOC_ENABLE_VERITY completing.  (S_VERITY is set before the verity info.)
-> + * This checks whether the inode's verity info has been set, and reads need
-> + * to verify the verity information.
->   *
->   * Return: true if reads need to go through fs-verity, otherwise false
->   */
->  static inline bool fsverity_active(const struct inode *inode)
->  {
-> -	return fsverity_get_info(inode) != NULL;
-> +	/*
-> +	 * The memory barrier pairs with the try_cmpxchg in set_mask_bits used
-> +	 * to set the S_VERITY bit in i_flags.
-> +	 */
-> +	smp_mb();
-> +	return IS_ENABLED(CONFIG_FS_VERITY) && IS_VERITY(inode);
-> +}
-> +
-> +/**
-> + * fsverity_get_info - get fsverity information for an inode
-> + * @inode: inode to operate on.
-> + *
-> + * This gets the fsverity_info for @inode if it exists.  Safe to call without
-> + * knowin that a fsverity_info exist for @inode, including on file systems that
-> + * do not support fsverity.
-> + */
-> +struct fsverity_info *__fsverity_get_info(const struct inode *inode);
-> +static inline struct fsverity_info *fsverity_get_info(const struct inode *inode)
-> +{
-> +	if (!fsverity_active(inode))
-> +		return NULL;
-> +	return __fsverity_get_info(inode);
->  }
->  
->  /**
-> -- 
-> 2.47.3
+> >         if (IS_ENABLED(CONFIG_FUSE_DAX))
+> >                 fuse_dax_inode_init(inode, flags);
+> >  }
+> > diff --git a/fs/fuse/file_iomap.c b/fs/fuse/file_iomap.c
+> > index 1b9e1bf2f799a3..fc0d5f135bacf9 100644
+> > --- a/fs/fuse/file_iomap.c
+> > +++ b/fs/fuse/file_iomap.c
+> > @@ -635,3 +635,52 @@ void fuse_iomap_unmount(struct fuse_mount *fm)
+> >         fuse_flush_requests_and_wait(fc);
+> >         fuse_send_destroy(fm);
+> >  }
+> > +
+> > +static inline void fuse_inode_set_iomap(struct inode *inode)
+> > +{
+> > +       struct fuse_inode *fi = get_fuse_inode(inode);
+> > +
+> > +       set_bit(FUSE_I_IOMAP, &fi->state);
+> > +}
+> > +
+> > +static inline void fuse_inode_clear_iomap(struct inode *inode)
+> > +{
+> > +       struct fuse_inode *fi = get_fuse_inode(inode);
+> > +
+> > +       clear_bit(FUSE_I_IOMAP, &fi->state);
+> > +}
+> > +
+> > +void fuse_iomap_init_nonreg_inode(struct inode *inode, unsigned attr_flags)
+> > +{
+> > +       struct fuse_conn *conn = get_fuse_conn(inode);
+> > +       struct fuse_inode *fi = get_fuse_inode(inode);
+> > +
+> > +       ASSERT(!S_ISREG(inode->i_mode));
+> > +
+> > +       if (conn->iomap && (attr_flags & FUSE_ATTR_IOMAP))
+> > +               set_bit(FUSE_I_EXCLUSIVE, &fi->state);
+> > +}
+> > +
+> > +void fuse_iomap_init_reg_inode(struct inode *inode, unsigned attr_flags)
+> > +{
+> > +       struct fuse_conn *conn = get_fuse_conn(inode);
+> > +       struct fuse_inode *fi = get_fuse_inode(inode);
+> > +
+> > +       ASSERT(S_ISREG(inode->i_mode));
+> > +
+> > +       if (conn->iomap && (attr_flags & FUSE_ATTR_IOMAP)) {
+> > +               set_bit(FUSE_I_EXCLUSIVE, &fi->state);
+> > +               fuse_inode_set_iomap(inode);
+> > +       }
+> > +}
+> > +
+> > +void fuse_iomap_evict_inode(struct inode *inode)
+> > +{
+> > +       struct fuse_conn *conn = get_fuse_conn(inode);
+> > +       struct fuse_inode *fi = get_fuse_inode(inode);
+> > +
+> > +       if (fuse_inode_has_iomap(inode))
 > 
+> If I'm understanding this correctly, a fuse inode can't have
+> FUSE_I_IOMAP set on it if conn>iomap is not enabled, correct?
+
+Correct.
+
+> Maybe it makes sense to just return if (!conn->iomap) at the very
+> beginning, to make that more clear?
+
+<shrug> fuse_inode_has_iomap only checks FUSE_I_IOMAP...
+
+> > +               fuse_inode_clear_iomap(inode);
+> > +       if (conn->iomap && fuse_inode_is_exclusive(inode))
+> > +               clear_bit(FUSE_I_EXCLUSIVE, &fi->state);
+
+...but I wasn't going to assume that iomap is the only way that
+FUSE_I_EXCLUSIVE could get set.
+
+On the other hand, for non-regular files we set FUSE_I_EXCLUSIVE only if
+conn->iomap is nonzero *and* attr->flags contains FUSE_ATTR_IOMAP.  So
+this clearing code isn't quite the same as the setting code.
+
+I wonder if that means we should set FUSE_I_IOMAP for non-regular files?
+They don't use iomap itself, but I suppose it would be neat if "iomap
+directories" also meant that timestamps and whatnot worked in the same
+as they do for regular files.
+
+> > +}
+> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > index 271356fa3be3ea..9b9e7b2dd0d928 100644
+> > --- a/fs/fuse/inode.c
+> > +++ b/fs/fuse/inode.c
+> > @@ -196,6 +196,8 @@ static void fuse_evict_inode(struct inode *inode)
+> >                 WARN_ON(!list_empty(&fi->write_files));
+> >                 WARN_ON(!list_empty(&fi->queued_writes));
+> >         }
+> > +
+> > +       fuse_iomap_evict_inode(inode);
+> >  }
+> >
+> >  static int fuse_reconfigure(struct fs_context *fsc)
+> > @@ -428,20 +430,32 @@ static void fuse_init_inode(struct inode *inode, struct fuse_attr *attr,
+> >         inode->i_size = attr->size;
+> >         inode_set_mtime(inode, attr->mtime, attr->mtimensec);
+> >         inode_set_ctime(inode, attr->ctime, attr->ctimensec);
+> > -       if (S_ISREG(inode->i_mode)) {
+> > +       switch (inode->i_mode & S_IFMT) {
+> > +       case S_IFREG:
+> >                 fuse_init_common(inode);
+> >                 fuse_init_file_inode(inode, attr->flags);
+> > -       } else if (S_ISDIR(inode->i_mode))
+> > +               break;
+> > +       case S_IFDIR:
+> >                 fuse_init_dir(inode);
+> > -       else if (S_ISLNK(inode->i_mode))
+> > +               fuse_iomap_init_nonreg_inode(inode, attr->flags);
+> > +               break;
+> > +       case S_IFLNK:
+> >                 fuse_init_symlink(inode);
+> > -       else if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode) ||
+> > -                S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode)) {
+> > +               fuse_iomap_init_nonreg_inode(inode, attr->flags);
+> > +               break;
+> > +       case S_IFCHR:
+> > +       case S_IFBLK:
+> > +       case S_IFIFO:
+> > +       case S_IFSOCK:
+> >                 fuse_init_common(inode);
+> >                 init_special_inode(inode, inode->i_mode,
+> >                                    new_decode_dev(attr->rdev));
+> > -       } else
+> > +               fuse_iomap_init_nonreg_inode(inode, attr->flags);
+> > +               break;
+> > +       default:
+> >                 BUG();
+> 
+> Just thinking out loud here and curious to hear whether you like this
+> idea or not: another option is calling
+> 
+> if (conn->iomap)
+>     fuse_iomap_init_inode();
+> 
+> at the end, where fuse_iomap_init_inode() would be something like:
+> 
+> void fuse_iomap_init_inode(struct inode *inode, unsigned attr_flags)
+> {
+>     struct fuse_inode *fi = get_fuse_inode(inode);
+> 
+>     if (attr_flags & FUSE_ATTR_IOMAP)
+>           set_bit(FUSE_I_EXCLUSIVE, &fi->state);
+> 
+>     if (S_ISREG(inode->i_mode))
+>             fuse_inode_set_iomap(inode);
+> }
+> 
+> which seems simpler to me than having both
+> fuse_iomap_init_nonreg_inode() and fuse_iomap_init_reg_inode()
+> function and invoking it per i_mode case.
+
+Yeah that would be simpler, but for that weird fsdax enabling quirk I
+mentioned earlier.
+
+Hrmm, I could also modify fuse_dax_inode_init to return without doing
+anything if FUSE_ATTR_IOMAP is set.
+
+--D
+
+> Thanks,
+> Joanne
+> 
+> > +               break;
+> > +       }
+> >         /*
+> >          * Ensure that we don't cache acls for daemons without FUSE_POSIX_ACL
+> >          * so they see the exact same behavior as before.
+> >
 > 
 
