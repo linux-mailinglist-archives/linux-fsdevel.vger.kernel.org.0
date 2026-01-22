@@ -1,192 +1,354 @@
-Return-Path: <linux-fsdevel+bounces-74962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id eC9RAjaCcWk1IAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 02:49:42 +0100
+	id wFbZHkGHcWk1IAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 03:11:13 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E9AF6082C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 02:49:41 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67E6260BC3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 03:11:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4AB46769C2A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 01:49:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1DE8138AEBB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 02:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7D31C84D7;
-	Thu, 22 Jan 2026 01:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A609D352C44;
+	Thu, 22 Jan 2026 02:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="D+lT7U+u"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aXr59vdq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73025352949
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 01:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769046575; cv=none; b=aDAPhddA6TI6asiKFQ8/NU3Y/R6bc3tZpqIJnGahhXUKOTmiMpyK84cq/1ifE/qXQJm9wArwWYJbRbu/BhOs5cDO8PStM30Yhu+JHNwlqddR+HPwc03fu1lVJJ7kiXmbBYeJ2PWlzQBHNlvZKoLCsqLtxxgp7FYalrQWbpkusRg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769046575; c=relaxed/simple;
-	bh=lANgwnZBx7uJ6AaFObhUfdRMzyN4cP9tsw8bYmRA5Ho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IUo2wf6AzaOT+lak+MsfYagIQPRV1aogK1BBEjXP8Pqf+R0VNedJ+EBzPiEVGVwX3RswZtlbjJZPDIhMJuCKUsm492IT6IREwQsh1A0KTMJ/pOF8H6xFTO2k7Ln2J8gSRPcQ20kaUuay93I98Qg/tCn0VkRXjJlo6uUku1Gv4Kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=D+lT7U+u; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1769046568; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=CSbaboWUbbkVLULY+de+RcFIwy5mlcueIjalB3v17S4=;
-	b=D+lT7U+uu38NRLgPmTR4zxCSNixZuX99xVnUj31NVA0nUitLhPyqTPsPo63l8KfWc58DtThTM04snwoEKkMALzfMjwfJzo8cqc//jeuI8UCU/t6AXcRLoztrn4w57+sB09FrPqhLAr0tZufr34ZFip/LzzpJqS6+0Nx60Iiz5w0=
-Received: from 30.221.148.85(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WxaUo2a_1769046567 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 22 Jan 2026 09:49:28 +0800
-Message-ID: <e9bbebb4-83e2-4ded-9def-7ad2fdb54c9e@linux.alibaba.com>
-Date: Thu, 22 Jan 2026 09:49:26 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B43E225788
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 02:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.173
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769047647; cv=pass; b=Xj3ICzjqnD18BrAryWjiLOcFYchL/wm3UHWiONODJSJLxwo9mLMfykHwHUOaI+7Y3Gqe3POgyxJYuwyEc6Sgwn+zYIJWI/EvjcCd17uAQEDG/+A5S8FdS15lvaBCkenVAcV9r0LLd3NHb9CUXaV6cWSD/7X+bfCPiV0pZjTXL8Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769047647; c=relaxed/simple;
+	bh=Y6ljLvg48i3b1N9KN1v1Rm5dqdMrOeodbfvOYAP28aw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PVleV6VQtnI9Azdz6zU5znHFFpxMQ/OtRI7OyNzFwvqH3WFtUm4x+vFMuHGD/B9OKcMhMHgpsZaqKTBOcJI4cl5tECi1eILi3fdXn1M65Hm/U6/BmNEIACVPLCYctPXza4jiANB+JJO226VN/O4r/JZnXIe9LdEuJg2DwQwq3QE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aXr59vdq; arc=pass smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-5014b7de222so5380741cf.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 18:07:25 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769047644; cv=none;
+        d=google.com; s=arc-20240605;
+        b=XkloLdIgNiaEbxVSwkMlv6bhUdRemEqFA3hm0c8eHvGo96ukzh/xuOtGgxJFZSC6xE
+         1JOgrINv6gumMayKAsTrdGzua/IuvM+w7tdIUgzn96tvcBXWvKb3J651kOZYcj3tIgQV
+         yQvs6h77JwReerJmbtofaTSVCvyo2usdu80eYef49KtXlKoRYqt/5G08kXmy5XKy+gfg
+         FcRWuSDmq5NX4YbuaEsm8Ly7tYrAamF4u71cqBohlpflZLQuTcsHNT0aZCbYnmoMLOEh
+         F70qt+cIDXPg1ay/e+49DeGwgqtOIt/Owsg6zN2tWdRw7ji5VYH2mDA2oTo+unbjdwG/
+         HThg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=+8rdTk3hQrnZKOFpAO7QycwSQJVKoagcpHPwKaebE6o=;
+        fh=ztQi/xvkTk62xacjfq0EOZxHFfT8B0Id9vnJEdCp8Hc=;
+        b=dfwozs8tDHckqCQ+Dcip1o1AdsLd340gDQDYxNNZ3bmX8TjrQsmRRQiS2U6wCCbaE1
+         +ltZwaWdMkO33m/qcLKShKRpsEHjBXYYaI3pWSgYiP/eCT1UKyXZb1o1Pu2F76KpmAv1
+         gdbnrCI6jyhMuKOvorZvrNvTY8quB9+1WitvYbSdTo6nufWfeVwnoKMO8KOqkkJfM/Ip
+         k8ZCn8ePXo6EDJImx2IgKyTcuUraW9UYSSYdwZL2YTOeeFl/uJjN5ld/2PLZ397TFN+c
+         k3MLEkxqnMPLRVHNIG/IZRJJOvchwqYozFVOtTCJ+1lAjvJB5Yr1R7Y53fzWNgt4KSzu
+         u25g==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769047644; x=1769652444; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+8rdTk3hQrnZKOFpAO7QycwSQJVKoagcpHPwKaebE6o=;
+        b=aXr59vdqmKzUcmY2tFjQJg3qSjDJ0IADTaRFqXU+Zzr3+fASeKBPjxrR80T0pUNC0O
+         Z7RZ5V3fku2ZGmSegjgk5+KHwuergZ3oikL24vAxz8bjeStcmpekBkV5uUfAk41gMqrX
+         cOR/h8blgy6+cJT4p74HDpws3bJj4ZY/JJTlk27yFe/yFbATKzj1tmyaRXtyC4/2vnCl
+         zK1sQ2j3OlNwgitXuNasx+a18Eq9G08y3rHdtLrNO9PRxE2hZ+8DivuQlNqNQ6ziq5lA
+         dvRoFUIbhFQIAdf1/62/mMTernRdX/ASllxlWRqO22ZhWasrYAboNdRyfVILb1eiw76v
+         xjdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769047644; x=1769652444;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=+8rdTk3hQrnZKOFpAO7QycwSQJVKoagcpHPwKaebE6o=;
+        b=TlAQY2uhVDPMXQj9BYCcm+T6UV7yOiDAFJKtQ5IZw5LK2CruBCg8Sgvw/p3v/PfzIb
+         UsZCq3o9PtU/1q8b/IXoVRsg2QV5TZQ0rmTGOAfOlhFac1O7n4zsnsPFmecbpc1Rz6Rg
+         GeeY11nI65cyc+VUt+f4ZOP7Cr2KlqYUrGFQ3A9kBpGOYAolWH4CvzeTaEEv4vc1Mv8I
+         FUs0r00BP9htLVUJZduQUU5wLkHd6bYmafUvFgFh77Vf27e8qG/Ow7BDqyJvlj/znxSu
+         iiiASy6Y6o9HxwoI87AILOFfrVTrFl+4pt5Hl+OFYf4OHI744XNCdN238LtgpuGOzelP
+         gB+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX9ZkxgI2l9W+mfjWHDDiDBoik11vBl+FY+4e1ZoVIk+VNmPOjHss2QkdbMWfE9ypw6hQJb5F99nixNRbmQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxx+ebKuIQv8ndJC8r7LL0AHyXefNHLMg08xEe5pWSFrCVjNfUM
+	z06S7TeLJr5oFPq8PmiPc/5zRuGYBeW+bQvinKCRmn/SJbf/z05e2z+aUfGBX0x2psjSh3zni6N
+	9xyogZgGvIMZN58wfeOP9MsZvX+rppgk=
+X-Gm-Gg: AZuq6aJ+QuvDK0otlrplMn4o66MYfttxPF01yzrs1vYBHNfMT/4J5Jfjo1GVvLOdh+4
+	rtC2+HKLTM4IYna9BQCA8acw3CGnVlZfY2UP3GkoBg+jlTeHd7MYEsvI8brfq/+vnG6rwL6kL3s
+	Mt248S7yFmr2Pw6WnQWhCmQm1gCH+RKU/n4G4vseUesDvZsgCEZz/bQAM12u8By8VnLuMryc+uP
+	exszH6yokceeuNq3xOeObt1ucUNxpPJyknz52y7pX7VkbScTc5nmxgh97ZO0fYuc4jRtg==
+X-Received: by 2002:ac8:5dc9:0:b0:4ee:2984:7d93 with SMTP id
+ d75a77b69052e-502a1652b7cmr228472581cf.17.1769047644168; Wed, 21 Jan 2026
+ 18:07:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] fuse: use DIV_ROUND_UP() for page count
- calculations
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org
-References: <20260116235606.2205801-1-joannelkoong@gmail.com>
- <20260116235606.2205801-2-joannelkoong@gmail.com>
- <2295ba7e-b830-4177-bccb-250fca11b142@linux.alibaba.com>
- <CAJnrk1Y1SkEgEjsJx9Ya4N2Nso08ic+J1PUzYySiyj=MR1ofKA@mail.gmail.com>
- <CAJnrk1YNmN1rcZ8sa8SHzBt-M1AcO9bsQv1090W=po+vFVMr5g@mail.gmail.com>
- <90a1bb2f-3c21-4ab8-86e8-b94677c0976b@linux.alibaba.com>
- <CAJnrk1Z-cSywcZ+0LyEb_tNWZRTLrHjFMSGSJPzNO4EqK4wozA@mail.gmail.com>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <CAJnrk1Z-cSywcZ+0LyEb_tNWZRTLrHjFMSGSJPzNO4EqK4wozA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <176169810144.1424854.11439355400009006946.stgit@frogsfrogsfrogs> <176169810568.1424854.4073875923015322741.stgit@frogsfrogsfrogs>
+In-Reply-To: <176169810568.1424854.4073875923015322741.stgit@frogsfrogsfrogs>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 21 Jan 2026 18:07:12 -0800
+X-Gm-Features: AZwV_QgoK3RTteN4i0D884plVDnteDhgPN2E7eEuueAfxxEN0Wwf3HfnKt32BqU
+Message-ID: <CAJnrk1Y8Fi7ZgY15WDtKZ1kVAsh-kzfNbEOvHKNwCxtA6iWzWA@mail.gmail.com>
+Subject: Re: [PATCH 10/31] fuse: implement basic iomap reporting such as
+ FIEMAP and SEEK_{DATA,HOLE}
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: miklos@szeredi.hu, bernd@bsbernd.com, neal@gompa.dev, 
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-8.96 / 15.00];
-	WHITELIST_DMARC(-7.00)[alibaba.com:D:+];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+X-Spamd-Result: default: False [-1.96 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[linux.alibaba.com:s=default];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-74963-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-74962-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DMARC_POLICY_ALLOW(0.00)[linux.alibaba.com,none];
+	MIME_TRACE(0.00)[0:+];
+	DMARC_POLICY_ALLOW(0.00)[gmail.com,none];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_FIVE(0.00)[6];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jefflexu@linux.alibaba.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[linux.alibaba.com:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
+	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	ASN(0.00)[asn:7979, ipnet:2a01:60a::/32, country:US];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:helo,dfw.mirrors.kernel.org:rdns,alibaba.com:email,linux.alibaba.com:mid,linux.alibaba.com:dkim]
-X-Rspamd-Queue-Id: 6E9AF6082C
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:helo,ams.mirrors.kernel.org:rdns,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: 67E6260BC3
 X-Rspamd-Action: no action
 
+On Tue, Oct 28, 2025 at 5:47=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
+>
+> From: Darrick J. Wong <djwong@kernel.org>
+>
+> Implement the basic file mapping reporting functions like FIEMAP, BMAP,
+> and SEEK_DATA/HOLE.
+>
+> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+> ---
+>  fs/fuse/fuse_i.h     |    8 ++++++
+>  fs/fuse/dir.c        |    1 +
+>  fs/fuse/file.c       |   13 ++++++++++
+>  fs/fuse/file_iomap.c |   68 ++++++++++++++++++++++++++++++++++++++++++++=
++++++-
+>  4 files changed, 89 insertions(+), 1 deletion(-)
+>
+>
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index c7aeb324fe599e..6fe8aa1845b98d 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -1730,6 +1730,11 @@ static inline bool fuse_inode_has_iomap(const stru=
+ct inode *inode)
+>
+>         return test_bit(FUSE_I_IOMAP, &fi->state);
+>  }
+> +
+> +int fuse_iomap_fiemap(struct inode *inode, struct fiemap_extent_info *fi=
+einfo,
+> +                     u64 start, u64 length);
+> +loff_t fuse_iomap_lseek(struct file *file, loff_t offset, int whence);
+> +sector_t fuse_iomap_bmap(struct address_space *mapping, sector_t block);
+>  #else
+>  # define fuse_iomap_enabled(...)               (false)
+>  # define fuse_has_iomap(...)                   (false)
+> @@ -1739,6 +1744,9 @@ static inline bool fuse_inode_has_iomap(const struc=
+t inode *inode)
+>  # define fuse_iomap_init_nonreg_inode(...)     ((void)0)
+>  # define fuse_iomap_evict_inode(...)           ((void)0)
+>  # define fuse_inode_has_iomap(...)             (false)
+> +# define fuse_iomap_fiemap                     NULL
+> +# define fuse_iomap_lseek(...)                 (-ENOSYS)
+> +# define fuse_iomap_bmap(...)                  (-ENOSYS)
+>  #endif
+>
+>  #endif /* _FS_FUSE_I_H */
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index 18eb1bb192bb58..bafc386f2f4d3a 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -2296,6 +2296,7 @@ static const struct inode_operations fuse_common_in=
+ode_operations =3D {
+>         .set_acl        =3D fuse_set_acl,
+>         .fileattr_get   =3D fuse_fileattr_get,
+>         .fileattr_set   =3D fuse_fileattr_set,
+> +       .fiemap         =3D fuse_iomap_fiemap,
+>  };
+>
+>  static const struct inode_operations fuse_symlink_inode_operations =3D {
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index bd9c208a46c78d..8a981f41b1dbd0 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -2512,6 +2512,12 @@ static sector_t fuse_bmap(struct address_space *ma=
+pping, sector_t block)
+>         struct fuse_bmap_out outarg;
+>         int err;
+>
+> +       if (fuse_inode_has_iomap(inode)) {
+> +               sector_t alt_sec =3D fuse_iomap_bmap(mapping, block);
+> +               if (alt_sec > 0)
+> +                       return alt_sec;
+> +       }
+> +
+>         if (!inode->i_sb->s_bdev || fm->fc->no_bmap)
+>                 return 0;
+>
+> @@ -2547,6 +2553,13 @@ static loff_t fuse_lseek(struct file *file, loff_t=
+ offset, int whence)
+>         struct fuse_lseek_out outarg;
+>         int err;
+>
+> +       if (fuse_inode_has_iomap(inode)) {
+> +               loff_t alt_pos =3D fuse_iomap_lseek(file, offset, whence)=
+;
+> +
+> +               if (alt_pos >=3D 0 || (alt_pos < 0 && alt_pos !=3D -ENOSY=
+S))
 
+I don't think you technically need the "alt_pos < 0" part here since
+the  "alt_pos >=3D 0 ||" part already accounts for that
 
-On 1/22/26 5:59 AM, Joanne Koong wrote:
-> On Tue, Jan 20, 2026 at 7:21 PM Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
->>
->> Hi Joanne,
->>
->> Thanks for the replying ;)
->>
->> On 1/21/26 4:06 AM, Joanne Koong wrote:
->>> On Tue, Jan 20, 2026 at 11:10 AM Joanne Koong <joannelkoong@gmail.com> wrote:
->>>>
->>>> On Sun, Jan 18, 2026 at 6:12 PM Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
->>>>>
->>>>> On 1/17/26 7:56 AM, Joanne Koong wrote:
->>>>>> Use DIV_ROUND_UP() instead of manually computing round-up division
->>>>>> calculations.
->>>>>>
->>>>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
->>>>>> ---
->>>>>>  fs/fuse/dev.c  | 6 +++---
->>>>>>  fs/fuse/file.c | 2 +-
->>>>>>  2 files changed, 4 insertions(+), 4 deletions(-)
->>>>>>
->>>>>> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
->>>>>> index 6d59cbc877c6..698289b5539e 100644
->>>>>> --- a/fs/fuse/dev.c
->>>>>> +++ b/fs/fuse/dev.c
->>>>>> @@ -1814,7 +1814,7 @@ static int fuse_notify_store(struct fuse_conn *fc, unsigned int size,
->>>>>>
->>>>>>               folio_offset = ((index - folio->index) << PAGE_SHIFT) + offset;
->>>>>>               nr_bytes = min_t(unsigned, num, folio_size(folio) - folio_offset);
->>>>>> -             nr_pages = (offset + nr_bytes + PAGE_SIZE - 1) >> PAGE_SHIFT;
->>>>>> +             nr_pages = DIV_ROUND_UP(offset + nr_bytes, PAGE_SIZE);
->>>>>>
->>>>>>               err = fuse_copy_folio(cs, &folio, folio_offset, nr_bytes, 0);
->>>>>>               if (!folio_test_uptodate(folio) && !err && offset == 0 &&
->>>>>
->>>>> IMHO, could we drop page offset, instead just update the file offset and
->>>>> re-calculate folio index and folio offset for each loop, i.e. something
->>>>> like what [1] did?
->>>>>
->>>>> This could make the code simpler and cleaner.
->>>>
->>>> Hi Jingbo,
->>>>
->>>> I'll break this change out into a separate patch. I agree your
->>>> proposed restructuring of the logic makes it simpler to parse.
->>>>
->>>> Thanks,
->>>> Joanne
->>>>
->>>>>
->>>>> BTW, it seems that if the grabbed folio is newly created on hand and the
->>>>> range described by the store notify doesn't cover the folio completely,
->>>>> the folio won't be set as Uptodate and thus the written data may be
->>>>> missed?  I'm not sure if this is in design.
->>>
->>> (sorry, forgot to respond to this part of your email)
->>>
->>> I think this is intentional. By "thus the written data may be missed",
->>> I think you're talking about the writeback path? My understanding is
->>> it's the dirty bit, not uptodate,
->>
->> Not exactly. What I'm concerned is the uptodate bit.
->>
->> In the case where "the grabbed folio is newly created on hand and the
->> range described by the store notify doesn't cover the folio completely,
->> the folio won't be set as Uptodate", the following read(2) or write(2)
->> on the folio will discard the content already in the folio, instead it
->> triggers .readpage() to fetch data from FUSE server again.
-> 
-> Could you elaborate on why this concerns you? Isn't this necessary
-> behavior given that it needs to fetch the parts that the store notify
-> didn't cover? Or is your concern that the contents are discarded? But
-> the server already has that information stored on their side, so I'm
-> not seeing why that's a problem.
-> 
+> +                       return alt_pos;
+> +       }
+> +
+>         if (fm->fc->no_lseek)
+>                 goto fallback;
+>
+> diff --git a/fs/fuse/file_iomap.c b/fs/fuse/file_iomap.c
+> index 66a7b8faa31ac2..ce64e7c4860ef8 100644
+> --- a/fs/fuse/file_iomap.c
+> +++ b/fs/fuse/file_iomap.c
+> @@ -4,6 +4,7 @@
+>   * Author: Darrick J. Wong <djwong@kernel.org>
+>   */
+>  #include <linux/iomap.h>
+> +#include <linux/fiemap.h>
+>  #include "fuse_i.h"
+>  #include "fuse_trace.h"
+>  #include "iomap_i.h"
+> @@ -561,7 +562,7 @@ static int fuse_iomap_end(struct inode *inode, loff_t=
+ pos, loff_t count,
+>         return err;
+>  }
+>
+> -const struct iomap_ops fuse_iomap_ops =3D {
+> +static const struct iomap_ops fuse_iomap_ops =3D {
+>         .iomap_begin            =3D fuse_iomap_begin,
+>         .iomap_end              =3D fuse_iomap_end,
+>  };
+> @@ -690,3 +691,68 @@ void fuse_iomap_evict_inode(struct inode *inode)
+>         if (conn->iomap && fuse_inode_is_exclusive(inode))
+>                 clear_bit(FUSE_I_EXCLUSIVE, &fi->state);
+>  }
+> +
+> +int fuse_iomap_fiemap(struct inode *inode, struct fiemap_extent_info *fi=
+einfo,
+> +                     u64 start, u64 count)
+> +{
+> +       struct fuse_conn *fc =3D get_fuse_conn(inode);
+> +       int error;
+> +
+> +       /*
+> +        * We are called directly from the vfs so we need to check per-in=
+ode
+> +        * support here explicitly.
+> +        */
+> +       if (!fuse_inode_has_iomap(inode))
+> +               return -EOPNOTSUPP;
+> +
+> +       if (fieinfo->fi_flags & FIEMAP_FLAG_XATTR)
 
-I'm not thinking it as a problem.  As said, I guess it is just a design
-constraint for FUSE_NOTIFY_STORE.
+I don't see where FIEMAP_FLAG_SYNC and FIEMAP_FLAG_CACHE are supported
+either, should these return -EOPNOTSUPP if they're set as well?
 
-Thanks.
+> +               return -EOPNOTSUPP;
+> +
+> +       if (fuse_is_bad(inode))
+> +               return -EIO;
+> +
+> +       if (!fuse_allow_current_process(fc))
+> +               return -EACCES;
+> +
+> +       inode_lock_shared(inode);
+> +       error =3D iomap_fiemap(inode, fieinfo, start, count, &fuse_iomap_=
+ops);
+> +       inode_unlock_shared(inode);
+> +
+> +       return error;
+> +}
+> +
+> +sector_t fuse_iomap_bmap(struct address_space *mapping, sector_t block)
+> +{
+> +       ASSERT(fuse_inode_has_iomap(mapping->host));
+> +
+> +       return iomap_bmap(mapping, block, &fuse_iomap_ops);
+> +}
+> +
+> +loff_t fuse_iomap_lseek(struct file *file, loff_t offset, int whence)
+> +{
+> +       struct inode *inode =3D file->f_mapping->host;
+> +       struct fuse_conn *fc =3D get_fuse_conn(inode);
+> +
+> +       ASSERT(fuse_inode_has_iomap(inode));
+> +
+> +       if (fuse_is_bad(inode))
+> +               return -EIO;
+> +
+> +       if (!fuse_allow_current_process(fc))
+> +               return -EACCES;
+> +
+> +       switch (whence) {
+> +       case SEEK_HOLE:
+> +               offset =3D iomap_seek_hole(inode, offset, &fuse_iomap_ops=
+);
+> +               break;
+> +       case SEEK_DATA:
+> +               offset =3D iomap_seek_data(inode, offset, &fuse_iomap_ops=
+);
+> +               break;
+> +       default:
 
+Does it make sense to have the default case just call generic_file_llseek()=
+?
 
--- 
 Thanks,
-Jingbo
+Joanne
 
+> +               return -ENOSYS;
+> +       }
+> +
+> +       if (offset < 0)
+> +               return offset;
+> +       return vfs_setpos(file, offset, inode->i_sb->s_maxbytes);
+> +}
+>
 
