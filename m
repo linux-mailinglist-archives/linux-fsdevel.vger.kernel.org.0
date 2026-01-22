@@ -1,121 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-74996-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id SJgqLAzjcWk+MgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74996-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 09:42:52 +0100
+	id sLFAJnfkcWk+MgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 09:48:55 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 209BD6357D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 09:42:52 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C3C63681
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 09:48:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 62D8962A56C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 08:35:00 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 401D15C5207
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 08:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB453D7D65;
-	Thu, 22 Jan 2026 08:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D84133EAF3;
+	Thu, 22 Jan 2026 08:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2moXo0MM"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="WFcaReBh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22EB117A300;
-	Thu, 22 Jan 2026 08:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F782E414;
+	Thu, 22 Jan 2026 08:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769070872; cv=none; b=KEgPEC3HxY+38CAYF8Dt8c5GyOJ/aEXiIxyYCwLUFZtEzuS0suJNeCZsr6x/ug+KbjCwjIkBYxuCYrwXcoNRlDjocs+UVWADDa1aJqYI9IVQz8lmowyeDgGwl3qcgvSS89zy9vpBMXxr+nVrwBzxi9BG5es3xVApS2JrwKSBa44=
+	t=1769071267; cv=none; b=MolxB9bRUrxOSrDJwNB6SCnhWjI2BVGaZ9NfRZzmDUy2VM25+2sTOL6A8AHKbZBjDOf3RTyAnUZdq7z0unAINL0beEn9CAUpHh2iv4UlygHpAeQOpVGwVP+UwDV2SpCKFNXQOPjLUZlW+MCuEYeWCbgoTNQkDPgbiZdTMyqx0ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769070872; c=relaxed/simple;
-	bh=Ec9HSKoS+AjRIYzZwTjw9D3Foun14L6Ec3gSgfCISms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ILp3WmUMB1LkPxNTCRpVAnysqbniKEiaJx+pYxU3neExNWaUnRYgiKB/u62Bq1lCrvvs5flydppbgzSLAG7ALACHX23GATFq1NW8i7i1OaO4VWB3TmcQRnkIQGljUhNcP+64IeMbYHahV0rTPEOTSWIsQ4jGpNNUNzqLMm277oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=2moXo0MM; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wyKG6mSVnYVdf6WsGgp/YJqBxiUMWc/coML45itFX9Y=; b=2moXo0MM7AqnOr1r91L6tzTt0Q
-	8Y4djegXXpfVa/iRYwy5+HfmImkZq/F+jqFu0eN101xM1Pg4Yrcu22qbT5qeBmFHTF99Bh2iU2yqP
-	NDIWpRfPtHUvqb5CZQ+RrNe7mFT79LRaVE7alJFRxUFZva1lmQtuTOHuNG5guqb6Z3G+9W1HzS61b
-	vl/P6QVlwyhzxjm3wXWTGtIw+fewNWfjVG8hDKxyaCGgvJuLMKdjcaSy8KvcI0wt54yOVytH12+GO
-	H/T+2MD+uAlklTccD9cnGVXmeGOjcl+CCavvGFgDqXe2LExL4CnOnZPvlEGe0Q+98/UPz13rAA08k
-	2sNAS85g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1viq96-00000006epL-3gs3;
-	Thu, 22 Jan 2026 08:34:28 +0000
-Date: Thu, 22 Jan 2026 00:34:28 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 1/2] f2fs: improve readahead for POSIX_FADV_WILLNEED
-Message-ID: <aXHhFN-feFYFcKYu@infradead.org>
-References: <20251121014202.1969909-1-jaegeuk@kernel.org>
- <aSALfvLUObUGSx-e@infradead.org>
- <aSCpzRW8mUhNnjHB@google.com>
+	s=arc-20240116; t=1769071267; c=relaxed/simple;
+	bh=tP9is0/H7vqHiwvdJ5kbuXSDgP/FdiFh7Ii0X89G5BA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vDuJtja00EhSmgeyBy9AWNX2BVG0mWun506FfGhrrdhYBcFG38W4QT392NoT8eD2Iz4qNUA8GxRDjFpc1qR8MM9nbQ69x3WUaQRqpDmKuf4tQAjWrKb8m9V8HRMXIr4QEgPgPqBRPTeoSLINPgnALIaucTiCKYGI7d5Gyy93b0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=WFcaReBh; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1769071259; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=gJSzOWSqPre+2yZ8/cQcaEgo/1k5YiDdjzLGF45ntF8=;
+	b=WFcaReBhDlm2rnq4OeLezvOIKLuIn2sVr+qaxj6AYFkxHip3wogyyghyTLZYU9cwylWwMmEtb9eQtg5BRne7zj7tg9yYeTjXEWs/HkBR2ZtkWoBkrkfvdi3p6MVNnP5ST1N3gj1/IFKDsToK2lHqV3I2gStAFzE+VspfFSOgOyw=
+Received: from 30.221.131.199(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WxbgvIV_1769071257 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 22 Jan 2026 16:40:58 +0800
+Message-ID: <abb1f8f4-c5cd-416b-b346-046d3fa8408c@linux.alibaba.com>
+Date: Thu, 22 Jan 2026 16:40:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aSCpzRW8mUhNnjHB@google.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 5/9] erofs: introduce the page cache share feature
+To: Christoph Hellwig <hch@lst.de>
+Cc: Hongbo Li <lihongbo22@huawei.com>, chao@kernel.org, djwong@kernel.org,
+ amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Christian Brauner <brauner@kernel.org>, oliver.yang@linux.alibaba.com
+References: <af1f3ff6-a163-4515-92bf-44c9cf6c92f3@linux.alibaba.com>
+ <20260119072932.GB2562@lst.de>
+ <8e30bc4b-c97f-4ab2-a7ce-27f399ae7462@linux.alibaba.com>
+ <20260119083251.GA5257@lst.de>
+ <b29b112e-5fe1-414b-9912-06dcd7d7d204@linux.alibaba.com>
+ <20260119092220.GA9140@lst.de>
+ <73f2c243-e029-4f95-aa8e-285c7affacac@linux.alibaba.com>
+ <50db56b8-4cf9-4d62-b242-c982a260a330@linux.alibaba.com>
+ <20260120065242.GA3436@lst.de>
+ <5892c7bb-f06e-45d7-ad84-99837788e5ab@linux.alibaba.com>
+ <20260122083310.GA27928@lst.de>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20260122083310.GA27928@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.96 / 15.00];
+X-Spamd-Result: default: False [-8.96 / 15.00];
+	WHITELIST_DMARC(-7.00)[alibaba.com:D:+];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
+	R_DKIM_ALLOW(-0.20)[linux.alibaba.com:s=default];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DKIM_TRACE(0.00)[infradead.org:+];
-	DMARC_POLICY_ALLOW(0.00)[infradead.org,none];
-	TAGGED_FROM(0.00)[bounces-74996-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[huawei.com,kernel.org,gmail.com,vger.kernel.org,lists.ozlabs.org,linux-foundation.org,linux.alibaba.com];
+	TAGGED_FROM(0.00)[bounces-74997-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	RCVD_TLS_LAST(0.00)[];
+	DMARC_POLICY_ALLOW(0.00)[linux.alibaba.com,none];
 	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@infradead.org,linux-fsdevel@vger.kernel.org];
+	RCVD_COUNT_THREE(0.00)[4];
+	DKIM_TRACE(0.00)[linux.alibaba.com:+];
+	ASN(0.00)[asn:7979, ipnet:213.196.21.0/24, country:US];
 	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[hsiangkao@linux.alibaba.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
-	RCPT_COUNT_SEVEN(0.00)[8];
+	RCPT_COUNT_SEVEN(0.00)[11];
 	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:mid,infradead.org:dkim,dfw.mirrors.kernel.org:helo,dfw.mirrors.kernel.org:rdns]
-X-Rspamd-Queue-Id: 209BD6357D
+	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:helo,ams.mirrors.kernel.org:rdns,linux.alibaba.com:mid,linux.alibaba.com:dkim]
+X-Rspamd-Queue-Id: 44C3C63681
 X-Rspamd-Action: no action
 
-On Fri, Nov 21, 2025 at 06:05:01PM +0000, Jaegeuk Kim wrote:
-> On 11/20, Christoph Hellwig wrote:
-> > On Fri, Nov 21, 2025 at 01:42:01AM +0000, Jaegeuk Kim wrote:
-> > > This patch boosts readahead for POSIX_FADV_WILLNEED.
-> > 
-> > How?  That's not a good changelog.
-> > 
-> > Also open coding the read-ahead logic is not a good idea.  The only
-> > f2fs-specific bits are the compression check, and the extent precaching,
-> > but you surely should be able to share a read-ahead helper with common
-> > code instead of duplicating the logic.
-> 
-> Ok, let me try to write up and post a generic version of the changes.
 
-Did this go anywhere?
+
+On 2026/1/22 16:33, Christoph Hellwig wrote:
+> On Tue, Jan 20, 2026 at 03:19:21PM +0800, Gao Xiang wrote:
+>>> It will be very hard to change unless we move to physical indexing of
+>>> the page cache, which has all kinds of downside.s
+>>
+>> I'm not sure if it's really needed: I think the final
+>> folio adaption plan is that folio can be dynamic
+>> allocated? then why not keep multiple folios for a
+>> physical memory, since folios are not order-0 anymore.
+> 
+> Having multiple folios for the same piece of memory can't work,
+> at we'd have unsynchronized state.
+
+Why not just left unsynchronized state in a unique way,
+but just left mapping + indexing seperated.
+
+Anyway, that is just a wild thought, I will not dig
+into that.
+
+> 
+>> Using physical indexing sounds really inflexible on my
+>> side, and it can be even regarded as a regression for me.
+> 
+> I'm absolutely not arguing for that..
+> 
+>>>> So that let's face the reality: this feature introduces
+>>>> on-disk xattrs called "fingerprints." --- Since they're
+>>>> just xattrs, the EROFS on-disk format remains unchanged.
+>>>
+>>> I think the concept of using a backing file of some sort for the shared
+>>> pagecache (which I have no problem with at all), vs the imprecise
+>>
+>> In that way (actually Jingbo worked that approach in 2023),
+>> we have to keep the shared data physically contiguous and
+>> even uncompressed, which cannot work for most cases.
+> 
+> Why does that matter?
+
+Sorry then, I think I don't get the point, but we really
+need this for the complete page cache sharing on the
+single physical machine.
+
+> 
+>> On the other side, I do think `fingerprint` from design
+>> is much like persistent NFS file handles in some aspect
+>> (but I don't want to equal to that concept, but very
+>> similar) for a single trusted domain, we should have to
+>> deal with multiple filesystem sources and mark in a
+>> unique way in a domain.
+> 
+> I don't really thing they are similar in any way.
+
+Why they are not similiar, you still need persistent IDs
+in inodes for multiple fses, if there are a
+content-addressable immutable filesystems working in
+inodes, they could just use inode hashs as file handles
+instead of inode numbers + generations.
+
+Thanks,
+Gao Xiang
 
 
