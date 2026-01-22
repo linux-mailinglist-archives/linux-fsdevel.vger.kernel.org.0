@@ -1,197 +1,274 @@
-Return-Path: <linux-fsdevel+bounces-75147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id gHFMJp2DcmkrlwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 21:07:57 +0100
+	id cLBxHfyLcmlJmAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 21:43:40 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D3C26D552
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 21:07:57 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 701026D7EB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 21:43:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 701DD300FB63
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 20:07:54 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 2F1963041BB7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 20:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A150B39CEFF;
-	Thu, 22 Jan 2026 20:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF783A2AE2;
+	Thu, 22 Jan 2026 20:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X/lWqrLz"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="l0eX+9fE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BB33803EC
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 20:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769112466; cv=pass; b=VI3nlsqO4xT5alOhyReVfzpuCeeLLBU/kQmEQ/V8XnNn6rweXSLEDLI/8rx2s8NKvvwfHaK4nrKEYnAtebQaypSoe/K3R37WdyukTYZj0VWNJlBQ0vNj1ZR0ItD3dKGCbeQft8NBm7U1+uecf8P9yuKyGH7W0RqaiDp2LZQsgO4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769112466; c=relaxed/simple;
-	bh=UeToXNeIZz9y9OvrlDazfYnO7oODJgQv05/I8arOeUU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bZEIoSMfOfvx923nabwpjJJSdaPcKc5DyftGwmSAfM9xgXPLNqM57srDferk1d2NCTbWg2UD9EKE0M8MkytXBea49iH0iFwC67JfOi477qGQk31aW34pH9f6uWzV+KmKbZGSPa7Vl8efi1rNJRgciIwZFwmTQYW6XlouybLL1sg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X/lWqrLz; arc=pass smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-64d1ef53cf3so1828331a12.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 12:07:43 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769112459; cv=none;
-        d=google.com; s=arc-20240605;
-        b=N+VIcK5eKa09Aur8+vdBdoa0KhHDDTrzHTuoOuxhlZY8+IyJE9zDjd4g7S7RdsxBpg
-         1sjlkvSdPs1yBs6om1nyX7kEDSVIWzDf7floI5ZQqaXhE+fH/+4YnehXT3QbUn8ixBlw
-         lbfkWcmxHttWx5hVYv17+XHuAazzhUWB3Ym4WKyynDfrPnGI2E+R8KO3CVpuuXW/yeG7
-         ViWu2QrSX7rDXXL8lxwFAtXZwxoyMabZCMnU8JPsCWLDQtnQLcJr6DZUrKnAS5HCCno+
-         u8b90f0GsopBXVH5tOjwEJ7VSQZCdi85yQ8G95afbJLIOOPd12OdJ29cMznywWtrjVSN
-         oWJQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=UeToXNeIZz9y9OvrlDazfYnO7oODJgQv05/I8arOeUU=;
-        fh=tsQ8BOCYLBiO2Qh5vl0FT7LwMDxJ3ZIYexd5zyRCcz4=;
-        b=hG1+TQLw/BvPVtO+cq0/DJ7fF8hhenaMcMXWk++/5HcfEfYIDjN0B2YNrYGRjF9N6w
-         OI7M0dn2FRqBCuWFKO+NstFSPoOi1ZF8wPDE8aWsR6OP3a5CpclQjk0AEPa9it8DIqK9
-         f5HJvKMJh+T9pJ/aEYppVxdKFu90bs0ZkMPbyQsBqaJiqBcflq9oj75KTj+rHmWoArYR
-         2XolQz4acBofQJyfNGOl9QjDfwW+DWzLWRBoi+Rq74LhTn23O4FeApomH9R8AVrbDOgb
-         +MUtmQJ1J1EnJdrvoXsyU4csBkDC1lummIrKctVmGa5IHy6/zx68TOb+ZIw8S1Gpbln/
-         Zujg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769112459; x=1769717259; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UeToXNeIZz9y9OvrlDazfYnO7oODJgQv05/I8arOeUU=;
-        b=X/lWqrLz2bQ6qvlxMp7/4e7A3KNMkcvHPGvJrXvIoIFpAaXIC/J52gb0mTswrvGFCP
-         qSSVd1czapsgBn9o4IwsRwvrzkDyZFQx/Q7wv1QR4ekmsTMySm+kz1F5NgHYxohKdeQW
-         9UBy+879Kpi1tgCxNhjuYt8DS45VfiBkOyHJO/2HCOK97WnN26k3ENKaWBrgHO+JG8UL
-         BEq6qWIJt7oQcNqg684IBIHDoze+DmC0pRYl6PWRXWVulbGGtM+GXeZOX3icPwGLoZvy
-         F8yBwJU6ABDv/T7C8paHIdvH8dD98D8xBTj2IE6kxogY0Puri6AgRf99EEFaozcudOgy
-         Dzog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769112459; x=1769717259;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=UeToXNeIZz9y9OvrlDazfYnO7oODJgQv05/I8arOeUU=;
-        b=NXexBjvwdt3tGAjtUoJG2pHTYbVC7mi5eHdAcRh8Akd0gw3AOv9GY6Pip8nEK+Ehw0
-         J32J31Jp8k8IjxROqnpxxK6LQeJkBJfstdBkomMUqz1LN81veUbQlFvbVum0Wa7k+h8/
-         m4JC5wr/M3BjzD7KQw2v0gGOfOJnbjp8ZrRlT5uBGVBWkfHonIZGBlTFde5dJ3TVRcjH
-         sCSL5x9Fy3gJ0yYBxy6ROTJxbU2Yp0+AxLBiPHQxUh1AjWMHb+BuWBWdG/PF20njUlaV
-         LpXFXGbseyoW/9+DsG1F05qzktPsYi2Khl4vW10u0nsN4wDvv42cx7EFU/cl1PcG6Csj
-         BlFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAwgded0hd8m5h7prBORiEAs5BysyEnK7E5QRk1TOhZ9NT2Uhc0WiDGq04z40OVTiJYmh7dX55wGAGUieG@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsQb3bsU3y9TQaOkgDmbU/p9Bpk/syKj47b1pa+mlH2KvCGzNt
-	O+Hxle7QCVaQ8zpBgeOzz3bctWHUAWH8qtWdvNZvrEJwLfZ2Vs2HWsO5EPX6lJZ/5VaBqVyv7/k
-	Bg7pLSqqK7P6lC9ShOhfQBqgm8dNC9R4=
-X-Gm-Gg: AZuq6aIo8/TEhubozT0+38Vk6qO0PTX9EIQQQ7Ap946p4MCGTqeebs3CXgHHLdDPpFS
-	1NZboneJqV8zfS1KEwc6GQjFWqHh2m2HOQeyd8rZ5RaHOZhT87Yp4wv9E6lIMDaoLYZ345VrTzh
-	Sm63ITKZf1xKZ3zwe8aqKvh6/5PIG4seVQHzVK37FRnufYVdlghcXQqWv5hMgeyAU4QC42FdorZ
-	+qQQbotGhpc6wfW18VUs+D8oVySd5nv+eiOgwT8Uc+J+8svlWwXhgr2cQJ/Qhz8Uu40lsGzxVlP
-	P22j8tHXnyycjHRUOBUZHE357dBnBn6KdP5USjDB
-X-Received: by 2002:a17:907:70a:b0:b84:42e5:2b7e with SMTP id
- a640c23a62f3a-b885ae682a6mr30056466b.51.1769112458391; Thu, 22 Jan 2026
- 12:07:38 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DF43A6402
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 20:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769114513; cv=none; b=qLDabokwk9Nc8Sa6A2BXZa868I8TAv+b0UvRnLA7+JCDDlhbjTD6lQne+Pt87qK46Zch0HgquTNVOVifiXhZyD7FuaJYELQxUFOfMJf6yWG4KXGOPGIeeySzJaPszyJrsN5ow7p1a+TN5MtP1s99LKmV91OHDIr2nkdjqNWzNTw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769114513; c=relaxed/simple;
+	bh=SyoD74S8RQOlJ8H8Ihh7DjOqfBQCsA1myDlyuBwaC1Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=EOrB/gLNEGSU01/kgkZajvnds2H/5+9rMXf8cBn5MEGM8J1gSAcWuVPa2t676XaN8uC07AXEcQa5vxR+6KoeIFNcaxRdsui32BvMZQXZ7Lm/NKaN+OKdnhuh8IhyWtz507N/aMfik1tSYahI9q6cDpbchmVI5jAqLBC9+5Mca7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=l0eX+9fE; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=OJ20mFQ66vl/qJyX8i3fS2ENYZWM6NABfeT4cML/nMw=; b=l0eX+9fEGoenF4znIvpmt63URR
+	rGkdQRXogi881wbNHYhXJgxKaXt+7kJkkYVhtk5pT+IvzcPDUnWPMTvzqVvpd/YSgSoU2/Ookg3yd
+	WSCcQXXVbkIX3p3KgLht1Xv9KSi7DG599R+VuBXzKSD2l05ghMYYwGq4ScHqk6RV7rXec/yr83pv+
+	ABj+lv+pyyZUwU4dSPziVLqNIf1D/ObB1Cs4EEIRZHGEh8wTVdAfNOYkD786nARbQfaRVqix1YqoL
+	/g6rVgxaftIyJx188mm7YqZyg/P1+jdQ7Pa4gWTsCuRsEZ/WmYce0DwcgKP5jNIDc+Hc8f2Naqumh
+	RiIhpVNw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1vj1AH-0000000FYrq-1B5L;
+	Thu, 22 Jan 2026 20:20:25 +0000
+Date: Thu, 22 Jan 2026 20:20:25 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>, Nikolay Borisov <nik.borisov@suse.com>,
+	Max Kellermann <max.kellermann@ionos.com>
+Subject: [PATCH][RFC] get rid of busy-wait in shrink_dcache_tree()
+Message-ID: <20260122202025.GG3183987@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com>
- <20260114-tonyk-get_disk_uuid-v1-3-e6a319e25d57@igalia.com>
- <20260114062608.GB10805@lst.de> <5334ebc6-ceee-4262-b477-6b161c5ca704@igalia.com>
- <20260115062944.GA9590@lst.de> <633bb5f3-4582-416c-b8b9-fd1f3b3452ab@suse.com>
- <20260115072311.GA10352@lst.de> <22b16e24-d10e-43f6-bc2b-eeaa94310e3a@igalia.com>
- <CAOQ4uxhbz7=XT=C3R8XqL0K_o7KwLKsoNwgk=qJGuw2375MTJw@mail.gmail.com>
- <0241e2c4-bf11-4372-9eda-cccaba4a6d7d@igalia.com> <CAOQ4uxi988PutUi=Owm5zf6NaCm90PUCJLu7dw8firH8305w-A@mail.gmail.com>
- <33c1ccbd-abbe-4278-8ab1-d7d645c8b6e8@igalia.com> <CAOQ4uxgCM=q29Vs+35y-2K9k7GP2A2NfPkuqCrUiMUHW+KhbWw@mail.gmail.com>
- <75a9247a-12f4-4066-9712-c70ab41c274f@igalia.com> <CAOQ4uxig==FAd=2hO0B_CVBDSuBwdqL-zaXkpf-QXn5iEL364g@mail.gmail.com>
-In-Reply-To: <CAOQ4uxig==FAd=2hO0B_CVBDSuBwdqL-zaXkpf-QXn5iEL364g@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 22 Jan 2026 21:07:27 +0100
-X-Gm-Features: AZwV_Qj-Pre4XZbhvcFXr13YDWLuhkhhzBZFRQumTLtcoMVU1rOesRZLphknff4
-Message-ID: <CAOQ4uxg6dKr4XB3yAkfGd_ehZkBMcoNHiF5CeB9=3aca44yHRg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] ovl: Use real disk UUID for origin file handles
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: Christoph Hellwig <hch@lst.de>, Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
-	NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
-	Tom Talpey <tom@talpey.com>, Carlos Maiolino <cem@kernel.org>, Chris Mason <clm@fb.com>, 
-	David Sterba <dsterba@suse.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	kernel-dev@igalia.com, vivek@collabora.com, 
-	Ludovico de Nittis <ludovico.denittis@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Sender: Al Viro <viro@ftp.linux.org.uk>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+X-Spamd-Result: default: False [-1.66 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[zeniv.linux.org.uk,none];
+	R_DKIM_ALLOW(-0.20)[linux.org.uk:s=zeniv-20220401];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-75147-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[amir73il@gmail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TAGGED_FROM(0.00)[bounces-75150-lists,linux-fsdevel=lfdr.de];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: 5D3C26D552
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[viro@zeniv.linux.org.uk,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[linux.org.uk:+];
+	NEURAL_HAM(-0.00)[-0.991];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,linux.org.uk:email,linux.org.uk:dkim]
+X-Rspamd-Queue-Id: 701026D7EB
 X-Rspamd-Action: no action
 
-On Tue, Jan 20, 2026 at 4:12=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> On Mon, Jan 19, 2026 at 5:56=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@i=
-galia.com> wrote:
-> >
-...
-> > Actually they are not in the same fs, upper and lower are coming from
-> > different fs', so when trying to mount I get the fallback to
-> > `uuid=3Dnull`. A quick hack circumventing this check makes the mount wo=
-rk.
-> >
-> > If you think this is the best way to solve this issue (rather than
-> > following the VFS helper path for instance),
->
-> That's up to you if you want to solve the "all lower layers on same fs"
-> or want to also allow lower layers on different fs.
-> The former could be solved by relaxing the ovl rules.
->
-> > please let me know how can
-> > I safely lift this restriction, like maybe adding a new flag for this?
->
-> I think the attached patch should work for you and should not
-> break anything.
->
-> It's only sanity tested and will need to write tests to verify it.
->
+There's a case in which shrink_dcache_tree() ends up busy-waiting: if some
+dentry in the subtree in question is found to be in process of being evicted
+by another thread.  We need to wait for that to finish so that parent would
+no longer be pinned, to avoid the situations when nothing in the tree is
+busy, but shrink_dcache_tree() fails to evict some directory only because
+memory pressure initiated eviction of some of its children before we got to
+evicting those ourselves.  That would be bogus both for shrink_dcache_parent()
+and for shrink_dcache_for_umount().
 
-Andre,
+Unfortunately, we have nothing to wait on.  That had led to the possibility
+of busy-waiting - getting through the iteration of shrink_dcache_tree() main
+loop without having made any progress.  That's Not Nice(tm) and that had been
+discussed quite a few times since at least 2018.  Recently it became obvious
+that this goes beyond "not nice" - on sufficiently contrieved setup it's
+possible to get a livelock there, with both threads involved tied to the same
+CPU, shrink_dcache_tree() one with higher priority than the thread that has
+given CPU up on may_sleep() in the very beginning of iput() during eviction
+of the dentry in the tree shrink_dcache_tree() is busy-waiting for.
 
-I tested the patch and it looks good on my side.
-If you want me to queue this patch for 7.0,
-please let me know if it addresses your use case.
+Let's get rid of that busy-waiting.  Constraints are
+        * don't grow struct dentry
+        * don't slow the normal case of __dentry_kill() down
+and it turns out to be doable.
 
-Thanks,
-Amir.
+Dentries in question are
+        * already marked dead (negative ->d_count)
+        * already negative
+        * already unhashed
+        * already not in in-lookup hash
+        * yet to get removed from ->d_sib and get DCACHE_DENTRY_KILLED in
+flags.
+
+Neither ->d_alias nor the fields overlapping it (->d_rcu and ->d_in_lookup_hash)
+are going to be accessed for these dentries until after dentry_unlist().  What's
+more, ->d_alias.next is guaranteed to be NULL.
+
+So we can embed struct completion into struct select_data and (ab)use
+->d_alias.next for linked list of struct select_data instances.
+
+If dentry_unlist() finds ->d_alias.next non-NULL, it carefully goes over that
+list and calls complete() for each of those.
+
+That way select_collect2() can treat negative ->d_count the same way it deals
+with dentries on other thread's shrink list - grab rcu_read_lock(), stash the
+dentry into data.victim and tell d_walk() to stop.
+
+If shrink_dcache_parent() runs into that case, it should attach its select_data
+to victim dentry, evict whatever normal eviction candidates it has gathered
+and wait for completion.  Voila...
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+diff --git a/fs/dcache.c b/fs/dcache.c
+index dc2fff4811d1..6db72a684d8d 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -605,6 +605,54 @@ void d_drop(struct dentry *dentry)
+ }
+ EXPORT_SYMBOL(d_drop);
+ 
++struct select_data {
++	struct dentry *start;
++	union {
++		long found;
++		struct {
++			struct dentry *victim;
++			struct select_data *next;
++			struct completion completion;
++		};
++	};
++	struct list_head dispose;
++};
++
++/*
++ *  shrink_dcache_parent() needs to be notified when dentry in process of
++ *  being evicted finally gets unlisted.  Such dentries are
++ *	already with negative ->d_count
++ *	already negative
++ *	already not in in-lookup hash
++ *	reachable only via ->d_sib.
++ *
++ *  Neither ->d_alias, nor ->d_rcu, nor ->d_in_lookup_hash are going to be
++ *  accessed for those, so we can (ab)use ->d_alias.next for list of
++ *  select_data of waiters.  Initially it's going to be NULL and as long
++ *  as dentry_unlist() returns it to that state we are fine.
++ */
++static inline void d_add_waiter(struct dentry *dentry, struct select_data *p)
++{
++	struct select_data *v = (void *)dentry->d_u.d_alias.next;
++	init_completion(&p->completion);
++	p->next = v;
++	dentry->d_u.d_alias.next = (void *)p;
++}
++
++static inline void d_complete_waiters(struct dentry *dentry)
++{
++	struct select_data *v = (void *)dentry->d_u.d_alias.next;
++	if (unlikely(v)) {
++		/* some shrink_dcache_tree() instances are waiting */
++		dentry->d_u.d_alias.next = NULL;
++		while (v) {
++			struct completion *r = &v->completion;
++			v = v->next;
++			complete(r);
++		}
++	}
++}
++
+ static inline void dentry_unlist(struct dentry *dentry)
+ {
+ 	struct dentry *next;
+@@ -613,6 +661,7 @@ static inline void dentry_unlist(struct dentry *dentry)
+ 	 * attached to the dentry tree
+ 	 */
+ 	dentry->d_flags |= DCACHE_DENTRY_KILLED;
++	d_complete_waiters(dentry);
+ 	if (unlikely(hlist_unhashed(&dentry->d_sib)))
+ 		return;
+ 	__hlist_del(&dentry->d_sib);
+@@ -1499,15 +1548,6 @@ int d_set_mounted(struct dentry *dentry)
+  * constraints.
+  */
+ 
+-struct select_data {
+-	struct dentry *start;
+-	union {
+-		long found;
+-		struct dentry *victim;
+-	};
+-	struct list_head dispose;
+-};
+-
+ static enum d_walk_ret select_collect(void *_data, struct dentry *dentry)
+ {
+ 	struct select_data *data = _data;
+@@ -1559,6 +1599,10 @@ static enum d_walk_ret select_collect2(void *_data, struct dentry *dentry)
+ 			return D_WALK_QUIT;
+ 		}
+ 		to_shrink_list(dentry, &data->dispose);
++	} else if (dentry->d_lockref.count < 0) {
++		rcu_read_lock();
++		data->victim = dentry;
++		return D_WALK_QUIT;
+ 	}
+ 	/*
+ 	 * We can return to the caller if we have found some (this
+@@ -1598,12 +1642,26 @@ static void shrink_dcache_tree(struct dentry *parent, bool for_umount)
+ 		data.victim = NULL;
+ 		d_walk(parent, &data, select_collect2);
+ 		if (data.victim) {
+-			spin_lock(&data.victim->d_lock);
+-			if (!lock_for_kill(data.victim)) {
+-				spin_unlock(&data.victim->d_lock);
++			struct dentry *v = data.victim;
++
++			spin_lock(&v->d_lock);
++			if (v->d_lockref.count < 0 &&
++			    !(v->d_flags & DCACHE_DENTRY_KILLED)) {
++				// It's busy dying; have it notify us once
++				// it becomes invisible to d_walk().
++				d_add_waiter(v, &data);
++				spin_unlock(&v->d_lock);
++				rcu_read_unlock();
++				if (!list_empty(&data.dispose))
++					shrink_dentry_list(&data.dispose);
++				wait_for_completion(&data.completion);
++				continue;
++			}
++			if (!lock_for_kill(v)) {
++				spin_unlock(&v->d_lock);
+ 				rcu_read_unlock();
+ 			} else {
+-				shrink_kill(data.victim);
++				shrink_kill(v);
+ 			}
+ 		}
+ 		if (!list_empty(&data.dispose))
 
