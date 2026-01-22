@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-75013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oPj+JigGcmmvZwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 12:12:40 +0100
+	id MFC1EKEEcmmvZwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 12:06:09 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 895E765C88
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 12:12:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1333165B50
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 12:06:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 48A9F6A9021
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 10:49:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D283D4AAA91
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 10:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D9B40B6EF;
-	Thu, 22 Jan 2026 10:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A893F23CC;
+	Thu, 22 Jan 2026 10:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gGxb0MSd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQNHYfx9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62461365A0B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 10:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC893A35DA
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 10:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769078946; cv=none; b=EDYgB/74fDoYCBq8S/sPyR1OJyxnVTpP5ekzYaJn52MCc8tnCRxdJEJuN3GRvDa0WgH+d5UTbRE00BlCNDAYWmzyYLQOF/RT5jO3gLkMgiqhCk7hxpBFN0BAZZ5XILx0ISQtF2aYt5YQo5HxPv+8HAHqBRZq8R02Mzehn9ZHleY=
+	t=1769078948; cv=none; b=hjn1B9thPay0n80DQ8jolJI+FwutA8eXIuw4jimHezBDhKg4mS+i0eSMOiELPG5ikGmu+wGiL3GZPaol397+ticDFvo8dNPvOAuc/7GfYvHs8YAcRpf78022DmQ01TWVPhpEPfKtgYVGNadZHkgf+JVPaSqVIQAj0OaUF1v0j1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769078946; c=relaxed/simple;
-	bh=X7fUStBnFskvjkIHsMTbQ7tDdjZhXDSD2JFr93EDy44=;
+	s=arc-20240116; t=1769078948; c=relaxed/simple;
+	bh=zH6dY7Ry9a8FoaF3H/7Gub4GL/G4Y8WJyua20frOp1Y=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ejBEaO41wW+8jTacw3umuOAcrqo5+QAQh0bKIUgPwG9t8THb2SyxPg+tczo3rNU+zaAla6eqSqfNYOV1MbL0fdATnN+nKgofvxi/CM/I2U+GHjs9UnvIVQ8M1JU/t4Jdwbyy8lGXP5Qt4XyQm2Sswa2Vv7wa3lZio1Lxtgy7onw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gGxb0MSd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3417EC116C6;
-	Thu, 22 Jan 2026 10:49:02 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=MPkrrnQDpZ2iPGs7TFHLc77FG1iYbOgMiatlPluaVL9l0lazYQPAE7H4QKobfPD5pd9o0aPhtMtLukNe8WrltVYy6EcxYBkPiUzCe3gd/zaQotx0SJolnPjP6B77kIG4gno4Vv2fURNOK28eeZ8twcBUCRtKXIck+rq6uRu7A3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQNHYfx9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6641BC16AAE;
+	Thu, 22 Jan 2026 10:49:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769078943;
-	bh=X7fUStBnFskvjkIHsMTbQ7tDdjZhXDSD2JFr93EDy44=;
+	s=k20201202; t=1769078946;
+	bh=zH6dY7Ry9a8FoaF3H/7Gub4GL/G4Y8WJyua20frOp1Y=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=gGxb0MSdMz/6D8M0IVzosGS9QGiUj88s+/kX6TIlcUkSprbMCNcK7WTOn6nGWGSkN
-	 AycUCNIMCLPHRnk6AArptOCyiBvIRn428Tq7vgNI6kGAFoVHqrZQARVtJyBVtjPamA
-	 MRI4Et2dUGALmqyiUf7KF6mlgI9OcuFdLTtyAW1m/rET9LMXzqpjS43knQkGZF6qJP
-	 dxhkNVvAWBZIJMUklfAgwehwua/zjarBD5pimcAC5f3O0S6T69uRYDJHhlYcnI4v2C
-	 LUmy3cJuxsbiNg2j1QzRPuAsePj5sfKCJQ/pWmCWSVYjvxoPb0/hxBdS3Bse7GiIRE
-	 UPFWXg+rcXAYA==
+	b=KQNHYfx9WiwFJbDDx2che5KxF1eZIQzEFYd3JBAVxzXN016+rFZv6cj7O2tVGx8U4
+	 Dwmknc6Yg+xJoWrlaTXvkAQlHrhUO49hOb5WvGOlVOXKAqZfl1O39pF7yfCNOdO9zP
+	 W+DfCUQT2npVlw+YfAZFmMNWfciySOx1KB3C96toGg2EJC/iOfLw4e8phU8mfC4ywG
+	 piVERW2iDGRDP7wzVY0n2uFKM3ZnCu+KHNIlBN0Pnjh8w8NlkkpMKVhNceAE6W58hg
+	 h6TfFuRN+8J/SWiG3YxSLG4z0j/ojmMJu60bSoaWSigpJGrWLlnKzSc98YnvB2InbR
+	 6ZL2ATja8OnAw==
 From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 22 Jan 2026 11:48:47 +0100
-Subject: [PATCH 2/7] mount: simplify __do_loopback()
+Date: Thu, 22 Jan 2026 11:48:48 +0100
+Subject: [PATCH 3/7] mount: add FSMOUNT_NAMESPACE
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,7 +57,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260122-work-fsmount-namespace-v1-2-5ef0a886e646@kernel.org>
+Message-Id: <20260122-work-fsmount-namespace-v1-3-5ef0a886e646@kernel.org>
 References: <20260122-work-fsmount-namespace-v1-0-5ef0a886e646@kernel.org>
 In-Reply-To: <20260122-work-fsmount-namespace-v1-0-5ef0a886e646@kernel.org>
 To: linux-fsdevel@vger.kernel.org
@@ -66,12 +66,12 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
  Josef Bacik <josef@toxicpanda.com>, Aleksa Sarai <cyphar@cyphar.com>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4268; i=brauner@kernel.org;
- h=from:subject:message-id; bh=X7fUStBnFskvjkIHsMTbQ7tDdjZhXDSD2JFr93EDy44=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQWMcw4aPymJLiIJ+n31wNF+lbhn7+9bNGdLxJ0X0i1u
- 6fz55W6jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIm8aWJk2BLEN/dmyaTSS2bl
- TRz1kW1fyhZukxe7LpTAW/Am+i93KyNDC8OmU/kXvy19+DLbXcRg5/kc2913HngUas6wLbb09dZ
- lAAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5439; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=zH6dY7Ry9a8FoaF3H/7Gub4GL/G4Y8WJyua20frOp1Y=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQWMcz8HOXUVXPkREp7scP673NlFMz8Eh4GJL0p7FP/t
+ iNIMje/o5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCLPpzMy/C5X2Cc+ufdw/0L1
+ jOV/259vk9aKv2+du8vnN6/Pz3Pn+RkZXq5unhffffTE+8eRZ5x0DTpqfy60Pzll2qSWWtkFCle
+ deQA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 X-Rspamd-Server: lfdr
@@ -84,7 +84,7 @@ X-Spamd-Result: default: False [-1.96 / 15.00];
 	HAS_LIST_UNSUB(-0.01)[];
 	DMARC_POLICY_ALLOW(0.00)[kernel.org,quarantine];
 	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,suse.cz,kernel.org,gmail.com,toxicpanda.com,cyphar.com];
-	TAGGED_FROM(0.00)[bounces-75013-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-75014-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	RCVD_TLS_LAST(0.00)[];
@@ -93,7 +93,7 @@ X-Spamd-Result: default: False [-1.96 / 15.00];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	ASN(0.00)[asn:7979, ipnet:2a01:60a::/32, country:US];
 	TO_DN_SOME(0.00)[];
-	R_SPF_SOFTFAIL(0.00)[~all];
+	R_SPF_SOFTFAIL(0.00)[~all:c];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
@@ -102,120 +102,156 @@ X-Spamd-Result: default: False [-1.96 / 15.00];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:helo,ams.mirrors.kernel.org:rdns]
-X-Rspamd-Queue-Id: 895E765C88
+X-Rspamd-Queue-Id: 1333165B50
 X-Rspamd-Action: no action
 
-Remove the OPEN_TREE_NAMESPACE flag checking from __do_loopback() and
-instead have callers pass CL_COPY_MNT_NS_FILE directly in copy_flags.
+Add FSMOUNT_NAMESPACE flag to fsmount() that creates a new mount
+namespace with the newly created filesystem attached to a copy of the
+real rootfs. This returns a namespace file descriptor instead of an
+O_PATH mount fd, similar to how OPEN_TREE_NAMESPACE works for open_tree().
+
+This allows creating a new filesystem and immediately placing it in a
+new mount namespace in a single operation, which is useful for container
+runtimes and other namespace-based isolation mechanisms.
+
+The rootfs mount is created before copying the real rootfs for the new
+namespace meaning that the mount namespace id for the mount of the root
+of the namespace is bigger than the child mounted on top of it. We've
+never explicitly given the guarantee for such ordering and I doubt
+anyone relies on it. Accepting that lets us avoid copying the mount
+again and also avoids having to massage may_copy_tree() to grant an
+exception for fsmount->mnt->mnt_ns being NULL.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/namespace.c | 31 +++++++++----------------------
- 1 file changed, 9 insertions(+), 22 deletions(-)
+ fs/namespace.c             | 53 +++++++++++++++++++++++++++++++++-------------
+ include/uapi/linux/mount.h |  1 +
+ 2 files changed, 39 insertions(+), 15 deletions(-)
 
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 695ea0c37a7b..46d2eb1c9c3d 100644
+index 46d2eb1c9c3d..30f2991b4a7f 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -2950,10 +2950,9 @@ static inline bool may_copy_tree(const struct path *path)
- }
- 
- static struct mount *__do_loopback(const struct path *old_path,
--				   unsigned int flags, unsigned int copy_flags)
-+				   bool recurse, unsigned int copy_flags)
- {
- 	struct mount *old = real_mount(old_path->mnt);
--	bool recurse = flags & AT_RECURSIVE;
- 
- 	if (IS_MNT_UNBINDABLE(old))
- 		return ERR_PTR(-EINVAL);
-@@ -2964,18 +2963,6 @@ static struct mount *__do_loopback(const struct path *old_path,
- 	if (!recurse && __has_locked_children(old, old_path->dentry))
- 		return ERR_PTR(-EINVAL);
- 
--	/*
--	 * When creating a new mount namespace we don't want to copy over
--	 * mounts of mount namespaces to avoid the risk of cycles and also to
--	 * minimize the default complex interdependencies between mount
--	 * namespaces.
--	 *
--	 * We could ofc just check whether all mount namespace files aren't
--	 * creating cycles but really let's keep this simple.
--	 */
--	if (!(flags & OPEN_TREE_NAMESPACE))
--		copy_flags |= CL_COPY_MNT_NS_FILE;
--
- 	if (recurse)
- 		return copy_tree(old, old_path->dentry, copy_flags);
- 
-@@ -2990,7 +2977,6 @@ static int do_loopback(const struct path *path, const char *old_name,
- {
- 	struct path old_path __free(path_put) = {};
- 	struct mount *mnt = NULL;
--	unsigned int flags = recurse ? AT_RECURSIVE : 0;
- 	int err;
- 
- 	if (!old_name || !*old_name)
-@@ -3009,7 +2995,7 @@ static int do_loopback(const struct path *path, const char *old_name,
- 	if (!check_mnt(mp.parent))
- 		return -EINVAL;
- 
--	mnt = __do_loopback(&old_path, flags, 0);
-+	mnt = __do_loopback(&old_path, recurse, CL_COPY_MNT_NS_FILE);
- 	if (IS_ERR(mnt))
- 		return PTR_ERR(mnt);
- 
-@@ -3047,7 +3033,7 @@ static struct mnt_namespace *get_detached_copy(const struct path *path, unsigned
- 			ns->seq_origin = src_mnt_ns->ns.ns_id;
- 	}
- 
--	mnt = __do_loopback(path, flags, 0);
-+	mnt = __do_loopback(path, (flags & AT_RECURSIVE), CL_COPY_MNT_NS_FILE);
- 	if (IS_ERR(mnt)) {
- 		emptied_ns = ns;
- 		return ERR_CAST(mnt);
-@@ -3082,7 +3068,8 @@ static struct file *open_detached_copy(struct path *path, unsigned int flags)
+@@ -3068,8 +3068,13 @@ static struct file *open_detached_copy(struct path *path, unsigned int flags)
  DEFINE_FREE(put_empty_mnt_ns, struct mnt_namespace *,
  	    if (!IS_ERR_OR_NULL(_T)) free_mnt_ns(_T))
  
--static struct mnt_namespace *create_new_namespace(struct path *path, unsigned int flags)
-+static struct mnt_namespace *create_new_namespace(struct path *path,
-+						  bool recurse)
++enum open_newns_flags_t {
++	OPEN_NEWNS_RECURSIVE	= BIT(0),
++	OPEN_NEWNS_CLONE	= BIT(1),
++};
++
+ static struct mnt_namespace *create_new_namespace(struct path *path,
+-						  bool recurse)
++						  enum open_newns_flags_t flags)
  {
  	struct mnt_namespace *new_ns __free(put_empty_mnt_ns) = NULL;
  	struct path to_path __free(path_put) = {};
-@@ -3140,7 +3127,7 @@ static struct mnt_namespace *create_new_namespace(struct path *path, unsigned in
- 	 * restrictions of creating detached bind-mounts. It has a lot
- 	 * saner and simpler semantics.
- 	 */
--	mnt = __do_loopback(path, flags, copy_flags);
-+	mnt = __do_loopback(path, recurse, copy_flags);
- 	if (IS_ERR(mnt))
- 		return ERR_CAST(mnt);
+@@ -3080,6 +3085,9 @@ static struct mnt_namespace *create_new_namespace(struct path *path,
+ 	unsigned int copy_flags = 0;
+ 	bool locked = false;
  
-@@ -3167,11 +3154,11 @@ static struct mnt_namespace *create_new_namespace(struct path *path, unsigned in
++	if ((flags & (OPEN_NEWNS_RECURSIVE | OPEN_NEWNS_CLONE)) == OPEN_NEWNS_RECURSIVE)
++		return ERR_PTR(-EINVAL);
++
+ 	if (user_ns != ns->user_ns)
+ 		copy_flags |= CL_SLAVE;
+ 
+@@ -3122,14 +3130,18 @@ static struct mnt_namespace *create_new_namespace(struct path *path,
+ 	if (unlikely(IS_ERR(mp.parent)))
+ 		return ERR_CAST(mp.parent);
+ 
+-	/*
+-	 * We don't emulate unshare()ing a mount namespace. We stick to the
+-	 * restrictions of creating detached bind-mounts. It has a lot
+-	 * saner and simpler semantics.
+-	 */
+-	mnt = __do_loopback(path, recurse, copy_flags);
+-	if (IS_ERR(mnt))
+-		return ERR_CAST(mnt);
++	if (flags & OPEN_NEWNS_CLONE) {
++		/*
++		 * We don't emulate unshare()ing a mount namespace. We stick to
++		 * the restrictions of creating detached bind-mounts. It has a
++		 * lot saner and simpler semantics.
++		 */
++		mnt = __do_loopback(path, flags & OPEN_NEWNS_RECURSIVE, copy_flags);
++		if (IS_ERR(mnt))
++			return ERR_CAST(mnt);
++	} else {
++		mnt = real_mount(mntget(path->mnt));
++	}
+ 
+ 	scoped_guard(mount_writer) {
+ 		if (locked)
+@@ -3154,11 +3166,12 @@ static struct mnt_namespace *create_new_namespace(struct path *path,
  	return no_free_ptr(new_ns);
  }
  
--static struct file *open_new_namespace(struct path *path, unsigned int flags)
-+static struct file *open_new_namespace(struct path *path, bool recurse)
+-static struct file *open_new_namespace(struct path *path, bool recurse)
++static struct file *open_new_namespace(struct path *path,
++				       enum open_newns_flags_t flags)
  {
  	struct mnt_namespace *new_ns;
  
--	new_ns = create_new_namespace(path, flags);
-+	new_ns = create_new_namespace(path, recurse);
+-	new_ns = create_new_namespace(path, recurse);
++	new_ns = create_new_namespace(path, flags);
  	if (IS_ERR(new_ns))
  		return ERR_CAST(new_ns);
  	return open_namespace_file(to_ns_common(new_ns));
-@@ -3221,7 +3208,7 @@ static struct file *vfs_open_tree(int dfd, const char __user *filename, unsigned
+@@ -3208,7 +3221,9 @@ static struct file *vfs_open_tree(int dfd, const char __user *filename, unsigned
  		return ERR_PTR(ret);
  
  	if (flags & OPEN_TREE_NAMESPACE)
--		return open_new_namespace(&path, flags);
-+		return open_new_namespace(&path, (flags & AT_RECURSIVE));
+-		return open_new_namespace(&path, (flags & AT_RECURSIVE));
++		return open_new_namespace(&path,
++				((flags & AT_RECURSIVE) ? OPEN_NEWNS_RECURSIVE : 0) |
++				OPEN_NEWNS_CLONE);
  
  	if (flags & OPEN_TREE_CLONE)
  		return open_detached_copy(&path, flags);
+@@ -4395,11 +4410,15 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
+ 	unsigned int mnt_flags = 0;
+ 	long ret;
+ 
+-	if (!may_mount())
++	if ((flags & ~(FSMOUNT_CLOEXEC | FSMOUNT_NAMESPACE)) != 0)
++		return -EINVAL;
++
++	if ((flags & FSMOUNT_NAMESPACE) &&
++	    !ns_capable(current_user_ns(), CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
+-	if ((flags & ~(FSMOUNT_CLOEXEC)) != 0)
+-		return -EINVAL;
++	if (!(flags & FSMOUNT_NAMESPACE) && !may_mount())
++		return -EPERM;
+ 
+ 	if (attr_flags & ~FSMOUNT_VALID_FLAGS)
+ 		return -EINVAL;
+@@ -4466,6 +4485,10 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
+ 	 */
+ 	vfs_clean_context(fc);
+ 
++	if (flags & FSMOUNT_NAMESPACE)
++		return FD_ADD((flags & FSMOUNT_CLOEXEC) ? O_CLOEXEC : 0,
++			      open_new_namespace(&new_path, 0));
++
+ 	ns = alloc_mnt_ns(current->nsproxy->mnt_ns->user_ns, true);
+ 	if (IS_ERR(ns))
+ 		return PTR_ERR(ns);
+diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+index d9d86598d100..2204708dbf7a 100644
+--- a/include/uapi/linux/mount.h
++++ b/include/uapi/linux/mount.h
+@@ -110,6 +110,7 @@ enum fsconfig_command {
+  * fsmount() flags.
+  */
+ #define FSMOUNT_CLOEXEC		0x00000001
++#define FSMOUNT_NAMESPACE	0x00000002	/* Create the mount in a new mount namespace */
+ 
+ /*
+  * Mount attributes.
 
 -- 
 2.47.3
