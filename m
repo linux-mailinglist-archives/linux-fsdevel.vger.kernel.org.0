@@ -1,306 +1,341 @@
-Return-Path: <linux-fsdevel+bounces-74945-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74946-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id IP2cMWNtcWkPHAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74945-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 01:20:51 +0100
+	id qNNjFg1ucWkPHAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74946-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 01:23:41 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53AD35FE5B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 01:20:51 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09B895FEBD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 01:23:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 03FB15882F6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 00:20:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6578736C96F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 00:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5C1286D7D;
-	Thu, 22 Jan 2026 00:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB07F2BCF45;
+	Thu, 22 Jan 2026 00:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k+MucNcG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RcmMfGYb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0252857F6
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 00:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F390327F163
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 00:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.169
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769041225; cv=pass; b=UtPQwxO+qWEMIaTnzofW7o0SIO9jSYGv1fCm7FxpwdgqAGsitlxgDDn5Bkk+IpONw/6wm5+lehOqvE/rmHTMj83A3AKjOcZDQ3vTJuVJxZkoC8zqF3Q0EVKqW1D9Cb295cnZbwNLNNqSeMWbTnvh/m+n/+mEno+nMlmtxoVgJOs=
+	t=1769041402; cv=pass; b=rSjU45KMPyB7RTg4d4SGwb0Uu4ed6b3ohQC5OCoysEvmAD18ndWf/1UFaFaayo4mkWOGALKdfzaGVFvj1JO5IcCsgIWb3EXmTyHJoj31hOI+3ENp5UyuKoA4S/FGPSancf/767bP1BFcxE7YZndX8ub6XgPzwpnB8oMwnXWdRpg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769041225; c=relaxed/simple;
-	bh=uDet0qkeSRR1s3nfeSTE4gpghrVQ6C4op726XCOFlug=;
-	h=From:In-Reply-To:References:MIME-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qooTqEnBEAE82ol1WoMA9EtX4ho7wHP879EzIEhqvG2oET2lT4/6hInB5uF4IIGmqHqLW1dXiBjotGbJHUm6heTlPq7ARv7G7DN4Q92ngWvWUeEWahHgb2NC6s6Hgt2ck3oKdx8xSMpmJ8S4ZFTAa/YiMaAxmqOges1CGzMMQm0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k+MucNcG; arc=pass smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-56624fea96fso537831e0c.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 16:20:23 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769041222; cv=none;
+	s=arc-20240116; t=1769041402; c=relaxed/simple;
+	bh=IvHSX40nTc/ek4uvlvk06j7MjqF6iPY31dTzU/pChqM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ez0ES9FHYBDvhKuk67z/zwI8ZXr6Ix/TwNilJoa2usGskMcsyy492+jW/w7ms1Z7gPe2IfgbsFCK7Z1YHjTw3okldjDYsrCGbE3bHbXj5wi6xL/njs5NcZ1A9k5OSePbMMmFZTW7n+93YtjDEPYbvklnH4Po5FPMwyaleHGNtYs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RcmMfGYb; arc=pass smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-5028fb9d03bso3171971cf.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 16:23:20 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769041400; cv=none;
         d=google.com; s=arc-20240605;
-        b=HElo1bWjwzaUJ9ZqZuvRFyQSEA91+/6Vv4N3dXwmMF1mzmso36nmT/X/BFSsIE7Iiy
-         E0J0DY33iRvwDHR9MHhZIPF8j3w+CZ4JaxJmH166YldfwFX8ZcYhJRKnvw6Fw+SVqhbB
-         lGEonAm1AkmFYtD3pgFJ/9JCSyiCh1aGxmNPxpJKw/9yu6mjyLp9KE1rrtJj95bsujQa
-         3Bvt3qNjn/DmCooR3Tn8XPLv/aEccUjv+hk0tZ5pUKy/ZNUVLdgej2kammzFK22hgOCQ
-         3ifQwznEGYUaPV5PU2hortAGZOkB3IBgKb6wH8rZrzXJGecaNOicgvAdLklaYNAr1Hlu
-         BDGg==
+        b=LU56ZP7As0OYWFqk05fYn0NBdyBrKUhBElREbOTLmBtZVIKPayQajFxYBjrizJhiRg
+         9gfGAZHeToEfRqchQ/xQE+IwA96mZwHkMaEizSV2glBMofjOboaCcd7ZAnq+w2IbNUtC
+         1Ba4XvRFXjtLIj2xlgbwJmiAZdUcbg2ElEapIeKS2PQb+uuuK7SbJ7f5TjU4Vtg8T5+v
+         mt9tZ3fXTdcdfsUU+J+IX5CWj+0F51hNm6qAZcgdjrlmAUYWrOAJAMuUcKBCS04QAgmi
+         soUkXj63UXfRrPdHU+vcisOni5cXCG/A8WQkFxU2DQQrbpoaaxWY+ldckADzy1iZRkd0
+         Qquw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:dkim-signature;
-        bh=NgWkbldIsVdXmF1uopkpscBQ8hvxBRp9zzbekpxQ/oc=;
-        fh=VKdxkh2lPl6pLRsxCj5WhnBSI79u9j/GIM3QzbT9xG8=;
-        b=DVzHWHZhK+TSthNTWqdnmZNyxrbuedEa2e8rAVcfjbn/62kVC483leJUOFyonS2ipy
-         oiYU++Y/FZFZ/rttghAMrRAM7r0rcBEm8EVDE3IpZ4nqYp9EdtwMP9XSWIyO0nSnmptM
-         xCEXKmHs/hb5AUKTzbl0nf+uoDGlK8fmfnKF7Khm8eN7Z79OC74c4Rd80ozxPBlWevRL
-         1YJNkwSjSdQL2efawbmH2vvMayhkPSeV/kL+FoEXfkkivNeu35lRhCJagev4wyXTwtnf
-         tgpwR7jNsFTQk5uppPo9BXX8PKjOZ0srOhdWwqqUY4S6+jtbcKIwudZfods4oLXKfVZA
-         JRzw==;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=yyXMwGrZK/5Ub3ARxZ1O1ZyOE7guC/+ZIizn3kEzzYc=;
+        fh=pt1XeODH74FszcA1NSEhnuhFSkzz80UqkDIVCY6TpSg=;
+        b=T3xahTyPau6rESVCHV62g/ccY3D8Zlx4pEyonxNXeyZqXBfOa+fzpg5eJwHuEgJh8E
+         MrkM5L9J3dpnolnrZVcUfLwi+D5KCajeMLWBNyLBQqnIsBmi0J9nOsgr/IeMCpoegIaW
+         i1dGmW5ykE4Y06dHv4hUWGrA4oYnVJE44rneQITLBgQINAxrV62+0bs1/bTHc6C2sGaK
+         V0iQra3ojBIOoF/6sCWErtzDo25jkdienot+Zn0T8amTjoCKRLrLvrVONvgcnoHXHHIH
+         OjQJBDCSQMe/b2Sb5GhG04Za+g2L0k06DBJkCaiLtZ6Q7PeTmgMBecxZGtIL88vAB897
+         TIlw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1769041222; x=1769646022; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NgWkbldIsVdXmF1uopkpscBQ8hvxBRp9zzbekpxQ/oc=;
-        b=k+MucNcGf9vjPx+WxCzfOyTjixKWfQbMvdVS25Sz5jdmgnni+owVrIgzdHLTLU+lv8
-         CKE2ohJQIHogMlkaC/5v1GC/sf6G3Mq/Z/XaFjzxsBm3gSc8RxNXGQiGChS++TWKMNpl
-         9DaBPvSVLrAsTl6O6vhBZpyE8pmXPRZVHig6fHmx8S+DCDKaqFdr385YP+8oIp4N3Zab
-         vEE7QTwg4kX0lYy6jw0O+2X1yLBwL1jeMWAkjFLDaY3Zf2sBP4YNIadbK1GspITeGPwN
-         t5F1k4v49zy3yDfm/GndsZaMHIpnRodYavj9D03SZYsFAvtmaThYzBxBo82ZulwPXnkl
-         QFoQ==
+        d=gmail.com; s=20230601; t=1769041400; x=1769646200; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yyXMwGrZK/5Ub3ARxZ1O1ZyOE7guC/+ZIizn3kEzzYc=;
+        b=RcmMfGYbQRjDlgMdgTk6wguPQ6WEM7/P3qT5HapoK9DU5EDqoc5yptx9GxgFJQILur
+         BfGaM3mQuVEG1QMVv1+6auCRhz5BDfOCncBNxoDXuBpItcsBEZfrNN7KqAK/qHEFJbvq
+         NQQFj2ffXh8piJwsrE59aVyYHMWspJf7ZJKiciR0plPUeCgWDniSyg8O643YlRao27+Y
+         8m1/81UM5adKwT9U16isuLsyBOtxmus8H/JFEVwH5zXjfV+EMfnv4/AovfrByMQXMQv0
+         pgKjQRrCuA9qkn2uYJNklX77T3QIneL6zIckjqcGktAwqxyC7aVLqmp7uaBmCCFcEmpJ
+         m49w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769041222; x=1769646022;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NgWkbldIsVdXmF1uopkpscBQ8hvxBRp9zzbekpxQ/oc=;
-        b=I7iZihT/KMro3B+nkMcWkst0Dxmz1idO1hvVmg1mHcT+mYEORqY0qvFHvl3YXcPJcy
-         3Mf3N45L/NakZ8RCkB4phoc8wWJGq4QJ6FI2YhyIIHJEfIWwaa10wkKwu3dhRrIuOOKl
-         /7E+DU6GLZ3OGAro5z2XBIiXlOvEA45cJ3b7x/QSJdUuWjgGZkQGhvN6b7or4hCMxSIh
-         Xvxp2q/CNCQkvNW1rdZB3FGB/31NhEC79x7Ek9R/OQ2vbX4DupKsxX2Sd4eFnuiIQAnh
-         zfQlvjFUjQ3MgYfeINs3wIJe7W0OlJ17TuOHMQalOYME5qY/DT+ae+ag7YacH7Shi/cW
-         VO0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXBwlH71RsxuBa//oZRZDepb7Kq8u+aW6kwbn82ykRS5UD/6DFKpyWopGiEOx2d3jlo3+QoWEo42aTYmI0v@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKE5kfX6fpclSZaUVapxNJxRt+F4X7K+WiwZ7WCPe9espMx883
-	cP2ERabPq/2+ZXtkF5v8Faqu0e5EFo4nvR3T8z6txi+YDDTuU3f8z8ZdOf8ZG8q7/HEu0+vqcey
-	W2z34rqU5qVp0oW3KnLwKpqqKBm0C8HOUlNP9gfkj
-X-Gm-Gg: AZuq6aJbfrXG8Qcf2UAAxs8I2R0W8IWZzXwzlNxn5tD0gqQYQs5XHrXnNqWrAbWJzQG
-	opZNi83QbNkfo+cyEyfdSUVpqFffPtOdUf9CLYVcutffa/8JvWquxd5GG37Sr9C41FV5HSm30wU
-	+2sQVSkk4v+5RxOlJB6Fzlk17ONx2a997ztLSYUdNuk5G+r4Th25M/a8sfj/lAmjpy3VTEHbPS3
-	njbYsdOv5x+5zhWqrOY1cnJ57g+ssy0dm7LqEs+B4HBhJdhZkpDmxdhqPwNGnL2jHaSlOS/QP1I
-	/8tw7E8p2Y39zVU5JkkvV239zw==
-X-Received: by 2002:a05:6102:370f:b0:5ef:b32c:dff8 with SMTP id
- ada2fe7eead31-5f532daa025mr403198137.5.1769041220288; Wed, 21 Jan 2026
- 16:20:20 -0800 (PST)
-Received: from 176938342045 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 21 Jan 2026 16:20:19 -0800
-Received: from 176938342045 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 21 Jan 2026 16:20:19 -0800
-From: Ackerley Tng <ackerleytng@google.com>
-In-Reply-To: <6b50a83e-acd7-4db3-ae9b-015ffad4f615@amazon.com>
-References: <20260114134510.1835-1-kalyazin@amazon.com> <20260114134510.1835-3-kalyazin@amazon.com>
- <CAEvNRgGrpv5h04s+btubhUFHo=d6mBFbr2BVrMt=bWuWOztdJQ@mail.gmail.com> <6b50a83e-acd7-4db3-ae9b-015ffad4f615@amazon.com>
+        d=1e100.net; s=20230601; t=1769041400; x=1769646200;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=yyXMwGrZK/5Ub3ARxZ1O1ZyOE7guC/+ZIizn3kEzzYc=;
+        b=BL+aYUrN895XtmgU0AQAfeKNJWm2BDTdMMshHEgVVqzA2UoDz64SiwRVsPpMefs6Pn
+         JcQKk86lxKtg+qkorEJby5OHP/W5t1aqZfyANQtq6NxfAZATzXBt3v6sI/Oxh50P49Ye
+         5z7nh0iircmNcS9LRw2IcperVKk1fn6fGhQM0mAGeuiI00uq5WEvJ5HlYq5T06wrls75
+         ejdRlE8OeMXbSjhXMby+/hKVRL39iwJJxfJhNlNCx6KhHQ/0gQF49vDxVM5vH385hNHV
+         0RGaYObMTIEaKjMDxP/p/hnMSKAh0cqmchBoefQ0R3WOVQFZEpGdthxifwk+gpnJfKLI
+         UAHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2GCh9jzgxSL6r5K0TUoS8cGQc1T2CCIAmEHDqnY3Wko4DvRnLzb9/K7NGc4arVHdwFGARI1bcr1GrGGXb@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzha7ES5m0IpGSFORVGH+dgphNjo9Fp1O2TNRmDNZ0XBeW+E0Nw
+	UjGOP9m7+CCeKYXxqfefwDVr0W0VrXHH/nn6Yv4rhmzvJM8EAjBVNkpAG8LkePgl97EhVXQ45oz
+	taMA4KfgBDi2HUfCjBX6TEke3We2hLxs=
+X-Gm-Gg: AZuq6aLTKJaPlhAuoCjJnTCeJmxHTe6n/XY2kXdIpdAHvMXOD1pk8IHTZnycFJvc/4b
+	KqBlFUTuQua2l8iEWMtnP2XKwQlN8dXp4R7NtQ9NJih2T+Z9/bMIov61XqLRVq3RKI/fBeFWLEB
+	3YYu1yOlbYxuWKhdo8g40EDaT9fydBEwk6xGAP3vl2+/S4441qbuXhh1Si5BELf3tTTjAvDOih2
+	YZwb0HAbeLenyiHqRpWUhQEoS5xvxMBzFlJ+qkssdvnC9GuTXGsWgLTP2tZD442nKE23A==
+X-Received: by 2002:ac8:7f56:0:b0:4ff:c884:31ad with SMTP id
+ d75a77b69052e-502a175713dmr303665671cf.53.1769041399655; Wed, 21 Jan 2026
+ 16:23:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 21 Jan 2026 16:20:19 -0800
-X-Gm-Features: AZwV_Qi8Ad3srMrd8WYJ_YHR6Nmvzc-hfHPfYm40mDZ1I3o7aAQCl-nKoDyQfts
-Message-ID: <CAEvNRgHMdnALNfT0SuEb-gqM1Aq1c6U_nRB2GzC0jYqrDRJTOw@mail.gmail.com>
-Subject: Re: [PATCH v9 02/13] mm/gup: drop secretmem optimization from gup_fast_folio_allowed
-To: kalyazin@amazon.com, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, "kernel@xen0n.name" <kernel@xen0n.name>, 
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, 
-	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>, 
-	"loongarch@lists.linux.dev" <loongarch@lists.linux.dev>
-Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, "corbet@lwn.net" <corbet@lwn.net>, 
-	"maz@kernel.org" <maz@kernel.org>, "oupton@kernel.org" <oupton@kernel.org>, 
-	"joey.gouly@arm.com" <joey.gouly@arm.com>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, 
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, 
-	"will@kernel.org" <will@kernel.org>, "seanjc@google.com" <seanjc@google.com>, 
-	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"hpa@zytor.com" <hpa@zytor.com>, "luto@kernel.org" <luto@kernel.org>, 
-	"peterz@infradead.org" <peterz@infradead.org>, "willy@infradead.org" <willy@infradead.org>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "david@kernel.org" <david@kernel.org>, 
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>, 
-	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>, "vbabka@suse.cz" <vbabka@suse.cz>, 
-	"rppt@kernel.org" <rppt@kernel.org>, "surenb@google.com" <surenb@google.com>, "mhocko@suse.com" <mhocko@suse.com>, 
-	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
-	"andrii@kernel.org" <andrii@kernel.org>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
-	"eddyz87@gmail.com" <eddyz87@gmail.com>, "song@kernel.org" <song@kernel.org>, 
-	"yonghong.song@linux.dev" <yonghong.song@linux.dev>, 
-	"john.fastabend@gmail.com" <john.fastabend@gmail.com>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
-	"sdf@fomichev.me" <sdf@fomichev.me>, "haoluo@google.com" <haoluo@google.com>, 
-	"jolsa@kernel.org" <jolsa@kernel.org>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
-	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, "peterx@redhat.com" <peterx@redhat.com>, 
-	"jannh@google.com" <jannh@google.com>, "pfalcato@suse.de" <pfalcato@suse.de>, 
-	"shuah@kernel.org" <shuah@kernel.org>, "riel@surriel.com" <riel@surriel.com>, 
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>, "jgross@suse.com" <jgross@suse.com>, 
-	"yu-cheng.yu@intel.com" <yu-cheng.yu@intel.com>, "kas@kernel.org" <kas@kernel.org>, 
-	"coxu@redhat.com" <coxu@redhat.com>, "kevin.brodsky@arm.com" <kevin.brodsky@arm.com>, 
-	"maobibo@loongson.cn" <maobibo@loongson.cn>, "prsampat@amd.com" <prsampat@amd.com>, 
-	"mlevitsk@redhat.com" <mlevitsk@redhat.com>, "jmattson@google.com" <jmattson@google.com>, 
-	"jthoughton@google.com" <jthoughton@google.com>, "agordeev@linux.ibm.com" <agordeev@linux.ibm.com>, 
-	"alex@ghiti.fr" <alex@ghiti.fr>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, 
-	"borntraeger@linux.ibm.com" <borntraeger@linux.ibm.com>, "chenhuacai@kernel.org" <chenhuacai@kernel.org>, 
-	"dev.jain@arm.com" <dev.jain@arm.com>, "gor@linux.ibm.com" <gor@linux.ibm.com>, 
-	"hca@linux.ibm.com" <hca@linux.ibm.com>, 
-	"Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
-	"pjw@kernel.org" <pjw@kernel.org>, 
-	"shijie@os.amperecomputing.com" <shijie@os.amperecomputing.com>, "svens@linux.ibm.com" <svens@linux.ibm.com>, 
-	"thuth@redhat.com" <thuth@redhat.com>, "wyihan@google.com" <wyihan@google.com>, 
-	"yang@os.amperecomputing.com" <yang@os.amperecomputing.com>, 
-	"vannapurve@google.com" <vannapurve@google.com>, "jackmanb@google.com" <jackmanb@google.com>, 
-	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>, "patrick.roy@linux.dev" <patrick.roy@linux.dev>, 
-	"Thomson, Jack" <jackabt@amazon.co.uk>, "Itazuri, Takahiro" <itazur@amazon.co.uk>, 
-	"Manwaring, Derek" <derekmn@amazon.com>, "Cali, Marco" <xmarcalx@amazon.co.uk>
+References: <176169810144.1424854.11439355400009006946.stgit@frogsfrogsfrogs>
+ <176169810415.1424854.10373764649459618752.stgit@frogsfrogsfrogs>
+ <CAJnrk1ZUbuAER90xbagWnBZ9dWKkdUAqVRa1vmZ5BtL_o=TnnA@mail.gmail.com> <20260122000227.GK5966@frogsfrogsfrogs>
+In-Reply-To: <20260122000227.GK5966@frogsfrogsfrogs>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 21 Jan 2026 16:23:08 -0800
+X-Gm-Features: AZwV_Qgjb8XgeysXcP88DDgVJSYEpHtw7nd-7kRskGNM3PdmVUgS62gjGWMSLYQ
+Message-ID: <CAJnrk1Z_M4XP7dApmuLA9Na+7+9OO0he9EcaZJrubTrHKKUk8w@mail.gmail.com>
+Subject: Re: [PATCH 03/31] fuse: make debugging configurable at runtime
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: miklos@szeredi.hu, bernd@bsbernd.com, neal@gompa.dev, 
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.46 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.96 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[redhat.com,lwn.net,kernel.org,arm.com,huawei.com,google.com,linutronix.de,alien8.de,linux.intel.com,zytor.com,infradead.org,linux-foundation.org,oracle.com,suse.cz,suse.com,iogearbox.net,linux.dev,gmail.com,fomichev.me,ziepe.ca,nvidia.com,suse.de,surriel.com,intel.com,loongson.cn,amd.com,linux.ibm.com,ghiti.fr,eecs.berkeley.edu,dabbelt.com,os.amperecomputing.com,amazon.co.uk,amazon.com];
-	DMARC_POLICY_ALLOW(0.00)[google.com,reject];
-	FROM_HAS_DN(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-74945-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	DKIM_TRACE(0.00)[google.com:+];
-	MISSING_XM_UA(0.00)[];
+	TAGGED_FROM(0.00)[bounces-74946-lists,linux-fsdevel=lfdr.de];
 	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DMARC_POLICY_ALLOW(0.00)[gmail.com,none];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[ackerleytng@google.com,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	ASN(0.00)[asn:7979, ipnet:2a01:60a::/32, country:US];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_GT_50(0.00)[96];
-	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
-	FORGED_SENDER_MAILLIST(0.00)[]
-X-Rspamd-Queue-Id: 53AD35FE5B
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6]
+X-Rspamd-Queue-Id: 09B895FEBD
 X-Rspamd-Action: no action
 
-Nikita Kalyazin <kalyazin@amazon.com> writes:
+On Wed, Jan 21, 2026 at 4:02=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
+>
+> On Wed, Jan 21, 2026 at 03:42:04PM -0800, Joanne Koong wrote:
+> > On Tue, Oct 28, 2025 at 5:45=E2=80=AFPM Darrick J. Wong <djwong@kernel.=
+org> wrote:
+> > >
+> > > From: Darrick J. Wong <djwong@kernel.org>
+> > >
+> > > Use static keys so that we can configure debugging assertions and dme=
+sg
+> > > warnings at runtime.  By default this is turned off so the cost is
+> > > merely scanning a nop sled.  However, fuse server developers can turn
+> > > it on for their debugging systems.
+> > >
+> > > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+> > > ---
+> > >  fs/fuse/fuse_i.h     |    8 +++++
+> > >  fs/fuse/iomap_i.h    |   16 ++++++++--
+> > >  fs/fuse/Kconfig      |   15 +++++++++
+> > >  fs/fuse/file_iomap.c |   81 ++++++++++++++++++++++++++++++++++++++++=
+++++++++++
+> > >  fs/fuse/inode.c      |    7 ++++
+> > >  5 files changed, 124 insertions(+), 3 deletions(-)
+> > >
+> > >
+> > > diff --git a/fs/fuse/file_iomap.c b/fs/fuse/file_iomap.c
+> > > index a88f5d8d2bce15..b6fc70068c5542 100644
+> > > --- a/fs/fuse/file_iomap.c
+> > > +++ b/fs/fuse/file_iomap.c
+> > > @@ -8,6 +8,12 @@
+> > >  #include "fuse_trace.h"
+> > >  #include "iomap_i.h"
+> > >
+> > > +#if IS_ENABLED(CONFIG_FUSE_IOMAP_DEBUG_DEFAULT)
+> > > +DEFINE_STATIC_KEY_TRUE(fuse_iomap_debug);
+> > > +#else
+> > > +DEFINE_STATIC_KEY_FALSE(fuse_iomap_debug);
+> > > +#endif
+> > > +
+> > >  static bool __read_mostly enable_iomap =3D
+> > >  #if IS_ENABLED(CONFIG_FUSE_IOMAP_BY_DEFAULT)
+> > >         true;
+> > > @@ -17,6 +23,81 @@ static bool __read_mostly enable_iomap =3D
+> > >  module_param(enable_iomap, bool, 0644);
+> > >  MODULE_PARM_DESC(enable_iomap, "Enable file I/O through iomap");
+> > >
+> > > +#if IS_ENABLED(CONFIG_FUSE_IOMAP_DEBUG)
+> > > +static struct kobject *iomap_kobj;
+> > > +
+> > > +static ssize_t fuse_iomap_debug_show(struct kobject *kobject,
+> > > +                                    struct kobj_attribute *a, char *=
+buf)
+> > > +{
+> > > +       return sysfs_emit(buf, "%d\n", !!static_key_enabled(&fuse_iom=
+ap_debug));
+> > > +}
+> > > +
+> > > +static ssize_t fuse_iomap_debug_store(struct kobject *kobject,
+> > > +                                     struct kobj_attribute *a,
+> > > +                                     const char *buf, size_t count)
+> > > +{
+> > > +       int ret;
+> > > +       int val;
+> > > +
+> > > +       ret =3D kstrtoint(buf, 0, &val);
+> > > +       if (ret)
+> > > +               return ret;
+> > > +
+> > > +       if (val < 0 || val > 1)
+> > > +               return -EINVAL;
+> > > +
+> > > +       if (val)
+> > > +               static_branch_enable(&fuse_iomap_debug);
+> > > +       else
+> > > +               static_branch_disable(&fuse_iomap_debug);
+> > > +
+> > > +       return count;
+> > > +}
+> > > +
+> > > +#define __INIT_KOBJ_ATTR(_name, _mode, _show, _store)               =
+   \
+> > > +{                                                                   =
+   \
+> > > +       .attr   =3D { .name =3D __stringify(_name), .mode =3D _mode }=
+,        \
+> > > +       .show   =3D _show,                                           =
+     \
+> > > +       .store  =3D _store,                                          =
+     \
+> > > +}
+> > > +
+> > > +#define FUSE_ATTR_RW(_name, _show, _store)                     \
+> > > +       static struct kobj_attribute fuse_attr_##_name =3D        \
+> > > +                       __INIT_KOBJ_ATTR(_name, 0644, _show, _store)
+> > > +
+> > > +#define FUSE_ATTR_PTR(_name)                                   \
+> > > +       (&fuse_attr_##_name.attr)
+> > > +
+> > > +FUSE_ATTR_RW(debug, fuse_iomap_debug_show, fuse_iomap_debug_store);
+> > > +
+> > > +static const struct attribute *fuse_iomap_attrs[] =3D {
+> > > +       FUSE_ATTR_PTR(debug),
+> > > +       NULL,
+> > > +};
+> > > +
+> > > +int fuse_iomap_sysfs_init(struct kobject *fuse_kobj)
+> > > +{
+> > > +       int error;
+> > > +
+> > > +       iomap_kobj =3D kobject_create_and_add("iomap", fuse_kobj);
+> > > +       if (!iomap_kobj)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       error =3D sysfs_create_files(iomap_kobj, fuse_iomap_attrs);
+> > > +       if (error) {
+> > > +               kobject_put(iomap_kobj);
+> > > +               return error;
+> > > +       }
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +void fuse_iomap_sysfs_cleanup(struct kobject *fuse_kobj)
+> > > +{
+> >
+> > Is sysfs_remove_files() also needed here?
+>
+> kobject_put is supposed to tear down the attrs that sysfs_create_files
+> attaches to iomap_kobj.  Though you're right to be suspicious -- there
+> are a lot of places that explicitly call sysfs_remove_files to undo
+> sysfs_create_files; and also a lot of places that just let kobject_put
+> do the dirty work.
 
-> On 15/01/2026 21:40, Ackerley Tng wrote:
->> "Kalyazin, Nikita" <kalyazin@amazon.co.uk> writes:
->>
->>> From: Patrick Roy <patrick.roy@linux.dev>
->>>
->>> This drops an optimization in gup_fast_folio_allowed() where
->>> secretmem_mapping() was only called if CONFIG_SECRETMEM=y. secretmem is
->>> enabled by default since commit b758fe6df50d ("mm/secretmem: make it on
->>> by default"), so the secretmem check did not actually end up elided in
->>> most cases anymore anyway.
->>>
->>> This is in preparation of the generalization of handling mappings where
->>> direct map entries of folios are set to not present.  Currently,
->>> mappings that match this description are secretmem mappings
->>> (memfd_secret()).  Later, some guest_memfd configurations will also fall
->>> into this category.
->>>
->>> Signed-off-by: Patrick Roy <patrick.roy@linux.dev>
->>> Acked-by: Vlastimil Babka <vbabka@suse.cz>
->>> Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
->>> ---
->>>   mm/gup.c | 11 +----------
->>>   1 file changed, 1 insertion(+), 10 deletions(-)
->>>
->>> diff --git a/mm/gup.c b/mm/gup.c
->>> index 95d948c8e86c..9cad53acbc99 100644
->>> --- a/mm/gup.c
->>> +++ b/mm/gup.c
->>> @@ -2739,7 +2739,6 @@ static bool gup_fast_folio_allowed(struct folio *folio, unsigned int flags)
->>>   {
->>>        bool reject_file_backed = false;
->>>        struct address_space *mapping;
->>> -     bool check_secretmem = false;
->>>        unsigned long mapping_flags;
->>>
->>>        /*
->>> @@ -2751,14 +2750,6 @@ static bool gup_fast_folio_allowed(struct folio *folio, unsigned int flags)
->>
->> Copying some lines the diff didn't contain:
->>
->>          /*
->>           * If we aren't pinning then no problematic write can occur. A long term
->>           * pin is the most egregious case so this is the one we disallow.
->>           */
->>          if ((flags & (FOLL_PIN | FOLL_LONGTERM | FOLL_WRITE)) ==
->>              (FOLL_PIN | FOLL_LONGTERM | FOLL_WRITE))
->>
->> If we're pinning, can we already return true here? IIUC this function
->> is passed a folio that is file-backed, and the check if (!mapping) is
->> just there to catch the case where the mapping got truncated.
+Makes sense, thanks for the context.
 >
-> I have to admit that I am not comfortable with removing this check,
-> unless someone says it's certainly alright.
+> > > +       kobject_put(iomap_kobj);
+> > > +}
+> > > +#endif /* IS_ENABLED(CONFIG_FUSE_IOMAP_DEBUG) */
+> > > +
+> > >  bool fuse_iomap_enabled(void)
+> > >  {
+> > >         /* Don't let anyone touch iomap until the end of the patchset=
+. */
+> > > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > > index 1eea8dc6e723c6..eec711302a4a13 100644
+> > > --- a/fs/fuse/inode.c
+> > > +++ b/fs/fuse/inode.c
+> > > @@ -2277,8 +2277,14 @@ static int fuse_sysfs_init(void)
+> > >         if (err)
+> > >                 goto out_fuse_unregister;
+> > >
+> > > +       err =3D fuse_iomap_sysfs_init(fuse_kobj);
+> > > +       if (err)
+> > > +               goto out_fuse_connections;
+> > > +
+> > >         return 0;
+> > >
+> > > + out_fuse_connections:
+> > > +       sysfs_remove_mount_point(fuse_kobj, "connections");
+> > >   out_fuse_unregister:
+> > >         kobject_put(fuse_kobj);
+> > >   out_err:
+> > > @@ -2287,6 +2293,7 @@ static int fuse_sysfs_init(void)
+> > >
+> > >  static void fuse_sysfs_cleanup(void)
+> > >  {
+> > > +       fuse_iomap_sysfs_cleanup(fuse_kobj);
+> > >         sysfs_remove_mount_point(fuse_kobj, "connections");
+> > >         kobject_put(fuse_kobj);
+> > >  }
+> > >
+> > Could you explain why it's better that this goes through sysfs than
+> > through a module param?
+>
+> You can dynamically enable debugging on a production system.  I (by
+> which I really mean the support org) wishes they could do that with XFS.
+>
+> Module parameters don't come with setter functions so you can't call
+> static_branch_{enable,disable} when the parameter value updates.
 >
 
-Perhaps David can help here, David last changed this in
-f002882ca369aba3eece5006f3346ccf75ede7c5 (mm: merge folio_is_secretmem()
-and folio_fast_pin_allowed() into gup_fast_folio_allowed()) from return
-true to check_secretmem = true :)
+Ohh I thought the "module_param_cb()" stuff does let you do that and
+can be dynamically enabled/disabled as well? I mostly ask because it
+feels like it'd be nicer from a user POV if all the config stuff (eg
+enable uring, enable iomap, etc.) is in one place.
 
->>
->> Or should we wait for the check where the mapping got truncated? If so,
->> then maybe we can move this "are we pinning" check to after this check
->> and remove the reject_file_backed variable?
+Thanks,
+Joanne
+
+> --D
 >
-> I can indeed move the pinning check to the end to remove the variable.
-> I'd do it in a separate patch.
->
->>
->>          /*
->>           * The mapping may have been truncated, in any case we cannot determine
->>           * if this mapping is safe - fall back to slow path to determine how to
->>           * proceed.
->>           */
->>          if (!mapping)
->>                  return false;
->>
->>
->>>                reject_file_backed = true;
->>>
->>>        /* We hold a folio reference, so we can safely access folio fields. */
->>> -
->>> -     /* secretmem folios are always order-0 folios. */
->>> -     if (IS_ENABLED(CONFIG_SECRETMEM) && !folio_test_large(folio))
->>> -             check_secretmem = true;
->>> -
->>> -     if (!reject_file_backed && !check_secretmem)
->>> -             return true;
->>> -
->>>        if (WARN_ON_ONCE(folio_test_slab(folio)))
->>>                return false;
->>>
->>> @@ -2800,7 +2791,7 @@ static bool gup_fast_folio_allowed(struct folio *folio, unsigned int flags)
->>>         * At this point, we know the mapping is non-null and points to an
->>>         * address_space object.
->>>         */
->>> -     if (check_secretmem && secretmem_mapping(mapping))
->>> +     if (secretmem_mapping(mapping))
->>>                return false;
->>>        /* The only remaining allowed file system is shmem. */
->>>        return !reject_file_backed || shmem_mapping(mapping);
->>> --
->>> 2.50.1
+> > Thanks,
+> > Joanne
 
