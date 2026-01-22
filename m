@@ -1,81 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-74941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74942-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OFM7KsVpcWmaGgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 01:05:25 +0100
+	id 4ANJN9dpcWmaGgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74942-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 01:05:43 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 524185FCAC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 01:05:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B06F95FCB5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 01:05:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A0FA736409A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 00:05:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0CF93363D15
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 00:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC06117A31E;
-	Thu, 22 Jan 2026 00:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7211E126F0A;
+	Thu, 22 Jan 2026 00:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFv6mwxg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mIVDjrt5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA5542AB7
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 00:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652C55477E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 00:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769040313; cv=none; b=HTh/GhxR9KrIwMCzQVh5pjnw+2M0moeqkA6dri8cSK+IMkMRwOk9E5VPUlNCCUXeJL4IhomnPaL+kUw3jCMJA60TSMgmOwr3vGFHBlrB3dTI2RzaQsXNZTTtYDyDy6+4HKLCUrow2UQPYDUy+2H2blKrSDQcKt5CMa0xXW9HLh4=
+	t=1769040326; cv=none; b=e9iN5gzosBRatPD4LJNFJMpNIUG0Dk84Xly2myLZ/uv221CR1IxT5RJm8m1Yibt3HTj47TuxvGZjuytHTylTVfjCy+/1tfePvRWud5pa/6qgBzzlzeP0AS11MPnrU758mRU+3E6ND8MZ/TrqUO2SXlXmtLce4P+rVEkon17YBBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769040313; c=relaxed/simple;
-	bh=q+AUUOOeMhKH4rbq5XzBfwcYUGNSAKYTTd5X5bgXNQ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LEolEmmf+6SOLxyVw66/Zxn2WkbCcqzWusltDHJ2nHy+9WWjM1L8v7nfzEecDF4WwQymVmgaQyCVCm46YZiK4TEdvffM19Ype0L3KJNwg+626TSaGqaFP4TJRCd7k4WUzDj5lHtn3NbhCZ8k3nSEcyxNOMKzj3FdvHizyOJ27sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CFv6mwxg; arc=none smtp.client-ip=209.85.222.178
+	s=arc-20240116; t=1769040326; c=relaxed/simple;
+	bh=ZbUZB1ogPVw9gjpt+c9O76DxT1EELZCu7huPHQfRrGE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=opPL1CyFVAddbaS/POUsDMtfAzVupKzA6Wq358tJ+WwJp6RKhThaTg5PIyCndLDUh1Chy1/bVJ2WGL6RnDi9BYYF1QDL960XJjQ/FoAF89VDGg/a1QLsGPJcBAEP+aePtiOhZn9jbaDe7gSprNvZxuUQOS5uk1EVlJ89tnANLj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mIVDjrt5; arc=none smtp.client-ip=209.85.160.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-8c531473fdcso47523585a.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 16:05:07 -0800 (PST)
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-50146fcf927so15595001cf.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 16:05:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769040305; x=1769645105; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PO1Jt5uhqRvDjhw/8xWJ8hHcQeGO0dm7l6ynZgVgbzM=;
-        b=CFv6mwxgE+DU48BCauiF33LjMTbc3Vv05tXOOSvcKDqTqZs0BAIOjJleMo3WS6g67Y
-         jT9aIzmRiuD6lgeDFW7untTRehJNhuXYQu2P53qyZJw56lgnY5HkApw+MQefzTIDBw0R
-         mRmY3NQacbauWurnC7lPptSNBk0MCYt0XD2T3s/VUWHCFXuPUSRJgfGL5/Jr1ARHnQSu
-         C2pqAlmb0obHoH+JpRl6eIz/ogjIkoXVuZq+APnqJXCjrUjLjSPmgL815b7JHiJcOUv8
-         p1iCCz9zUjO+uYE3pvhEv8vT5aEgdxEc8+q97bOLLRWpKnVAAYQ+Sp6eltEF+G4aieS1
-         T7bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769040305; x=1769645105;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1769040320; x=1769645120; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PO1Jt5uhqRvDjhw/8xWJ8hHcQeGO0dm7l6ynZgVgbzM=;
-        b=Mz+CFtkfP4XIpiiR1/lGWztNG3/lizD6DFcTB+pkV2GYC5l6q7iS5gbmv3mbFqkVL8
-         b9w1iGvnIoW6noXeMPHiQn6LS8jSeZPp/LIGkn2BtPaFp1PQ2l6NnDxbcT65vjHhilsw
-         ORftGl1W8o/xosPj2BAHWmAFoAYLSpyF2w6ktDJFB9uJ7A2tAvZ9YYl6ZkXpWd9krSur
-         yeDaYUInbwBCCfuhZd2DhjNt2oMu6SR3GHBSPcfQFHh/aDBM/wi2ruboVR4tLZIOOgEz
-         DBCRhSTs47TDqckzw4+Cct5YzFt/faiD2Yu53srWJTBMA11CLnmX9bjpZhi/GF+WgL/h
-         cK8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUJu6rcV9U4ZiCUB18U63kGXPmrLvZAWZgYVdTyZsi+G1QMG15WVUtkpqtRNiZyl8ZTixfKyTsw5n6uISo5@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSRrsAowFOl87FVyjLglu5udhEE2i9FiKnYT9L/bBRsZrh8zYn
-	2cEd9xq9hqa6jqzL0GJp/q10Lw57kX5i0VWnx+dxoIcWTTNBMkoY670F
-X-Gm-Gg: AZuq6aKVoK33aiSfHIUdEBSKL8kkLVblJ6tZOHSN3CU55DtSr62IAbZvanpo8dHr/RA
-	HZ+je7bikTacs7ocpyK62EDqJxjeL+PrsByUxN7M9rkbaGTbNN6zqWwbRRGXxfkLFLaKsFeZK/T
-	9srfZEH/0+QsuUSAE2ohXV/uqDUZXsoO6qXNK31O4Oy7wn9MFC8WiGSZ+/s2A0bykxD6pQNgZ1p
-	JnFvLuNrFjlCqRkCQ3MCRcsZwP7zXVKbWrA48AtCio8OnqhshQHUj2hHNniXLYMfek9sVcSpJVN
-	CaclMl3V6prNhBcl0alMWxWi4jksTlnmqepAqQwFNitUVf7fXZYwr50u/zl/iCwLu5+OaEvEANL
-	T7jj1gZK2QLTrzFbVAEYlNb5r1E1QRHj+Iu6W+e+FV7ULTtCgpIaPseJQPNk5hNH7NxVrif+Ict
-	chabMlRgME31EfqrhJNLjKOA==
-X-Received: by 2002:a05:620a:4586:b0:8a3:87ef:9245 with SMTP id af79cd13be357-8c6a6979ebbmr2872525685a.85.1769040305419;
-        Wed, 21 Jan 2026 16:05:05 -0800 (PST)
+        bh=P3RYdvqlKAuG/CfRii9sLaEP6zoDVwJWmRzC2pyderY=;
+        b=mIVDjrt5nwkrAPW6GhH7zttRSivXq+CY7ekN/W1daoo8iKIBhpTZAji6sE+QcXLK1/
+         BxfSM+JneQhBSsiL3JV8jFchryhSP0APuFfYbuCbNheurMPZ8cEqIduCTUJcpa5rwtAB
+         dmKw0MZsPiVRZUPV7sGb/X8ZKYH4ytTsotekh1iaZrN7nAG3csUBg1jcSU2I8g0DUGu8
+         3lvNET9CohBDWY7vcM338FeYV7xinbgIc1/OnCt9xspVxp22k3gXVGYy52aTFQxHzI+8
+         HVkzXcOffPEo5M1ufwMmijV4Ya94RsTBLuFwya8JBtehCT36mH22zUvvm3w9IDc9pUz+
+         GE5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769040320; x=1769645120;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=P3RYdvqlKAuG/CfRii9sLaEP6zoDVwJWmRzC2pyderY=;
+        b=BqEoQ77pWzB7urAX93WtX+qjOBIP0XsZ50N0WG/OjCuYWBJ70bsCAISpHbFrvULz0U
+         25dVBLu6D2Uv1rXfSUqLbjT3h2vvOb4ACcf9ZJkz97FjNliKyuHkXAIiyQQ6G1lt3D2E
+         AzYejfF8swxqm9/V+rgp2KgVUyx9BGZ3Os2JjtpPLd/22/tPUTkJgK4MGJRmWvA1nN7/
+         DkrXvSjcyWEk/BjGu3a6BfLYlWTPxO7heJ3TAfFeyRZXj8bb2y7k/iAFdEiroTB0XyBN
+         0qr7YuYk/obxak0dEnXXqUUairpjKLaN3xsvuAax/vRS+Nq5Z8l8Ahc413m3k1pYiqDB
+         aLig==
+X-Forwarded-Encrypted: i=1; AJvYcCXO5Vd1Zz9qK8uBDkkbLjr5UGWKZ6ZJaI3F8g0mRSnvV0YiDpUjmoM9oompA70AgKz80Qmg+T0zMyS4UTaR@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgKhqM8g9TVagIHCPnocc99Le/yoG8OM+/J9ZpMTvi/FwFYG7n
+	Lp5QZXqWuHG189UZMCOqbLAsJ9HtC5WxybbyEG+Z7Lhsdsj/tbEXtx/f
+X-Gm-Gg: AZuq6aJ1sMyTcgYBMvu9KL6K6zPrXadYp4X8lkYOaicVm6SjI8dfk+/UwncaPTzSRE0
+	VCWASqni7vv8x2mNDTk3LFO1KNhTDFZGBl2/4eGeJ9fAXM2giIwOsWKEHtHs9HMM5K10f4okTSY
+	jt0JBpWAt9tJvZUAqyU8xDp6wRYDGMPKtlJW+USe2FBRA9y5fs6rZAGLPA9YC0Lt2Ac8vxFVVx7
+	5PviDYM/ES0On87uQuXJyeS8ECPsOFzsiQkmz+Q5knP4ORL4zQPVOwV3VFtoA4LL4l5QtvyeRew
+	6ih+f45vBl0Kd0zTN0Q353CZ+h2UzaBSOzqzio+DT5OCaevkCwIaEakZ1mGFbmY/USJyU9pl3Ls
+	+gNauELdrzr/rQtNuwjosq47zMg2CyXF6twWHu5CImgEGi0T2wnP6Xvzb5kJRLMOFtjACS9k/z3
+	zYDzSyMEZSSM2a2ELCGEzuCw==
+X-Received: by 2002:ac8:5751:0:b0:501:47c4:ac8b with SMTP id d75a77b69052e-502eb58f9e9mr17132691cf.25.1769040319806;
+        Wed, 21 Jan 2026 16:05:19 -0800 (PST)
 Received: from localhost ([198.1.209.214])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c6a71ad7a2sm1419883385a.3.2026.01.21.16.05.02
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-502a1d9f480sm122298971cf.13.2026.01.21.16.05.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Jan 2026 16:05:03 -0800 (PST)
+        Wed, 21 Jan 2026 16:05:18 -0800 (PST)
 From: William Hansen-Baird <william.hansen.baird@gmail.com>
 To: linkinjeon@kernel.org,
 	sj1557.seo@samsung.com
@@ -83,10 +85,12 @@ Cc: yuezhang.mo@sony.com,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	William Hansen-Baird <william.hansen.baird@gmail.com>
-Subject: [PATCH 1/2] exfat: remove unnecessary else after return statement
-Date: Wed, 21 Jan 2026 19:04:33 -0500
-Message-ID: <20260122000451.160907-1-william.hansen.baird@gmail.com>
+Subject: [PATCH 2/2] exfat: add blank line after declarations
+Date: Wed, 21 Jan 2026 19:04:34 -0500
+Message-ID: <20260122000451.160907-2-william.hansen.baird@gmail.com>
 X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260122000451.160907-1-william.hansen.baird@gmail.com>
+References: <20260122000451.160907-1-william.hansen.baird@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -104,7 +108,7 @@ X-Spamd-Result: default: False [0.04 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-74941-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-74942-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RECEIVED_HELO_LOCALHOST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -125,33 +129,43 @@ X-Spamd-Result: default: False [0.04 / 15.00];
 	ASN(0.00)[asn:7979, ipnet:213.196.21.0/24, country:US];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	FROM_HAS_DN(0.00)[]
-X-Rspamd-Queue-Id: 524185FCAC
+X-Rspamd-Queue-Id: B06F95FCB5
 X-Rspamd-Action: no action
 
-Else-branch is unnecessary after return statement in if-branch.
-Remove to enhance readability and reduce indentation.
+Add a blank line after variable declarations in fatent.c and file.c.
+This improves readability and makes code style more consistent
+across the exfat subsystem.
 
 Signed-off-by: William Hansen-Baird <william.hansen.baird@gmail.com>
 ---
- fs/exfat/inode.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/exfat/fatent.c | 1 +
+ fs/exfat/file.c   | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
-index f9501c3a3666..234a9f41e083 100644
---- a/fs/exfat/inode.c
-+++ b/fs/exfat/inode.c
-@@ -511,8 +511,9 @@ static ssize_t exfat_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 			exfat_write_failed(mapping, size);
- 
- 		return ret;
--	} else
--		size = pos + ret;
-+	}
+diff --git a/fs/exfat/fatent.c b/fs/exfat/fatent.c
+index c9c5f2e3a05e..543ce7e8d367 100644
+--- a/fs/exfat/fatent.c
++++ b/fs/exfat/fatent.c
+@@ -192,6 +192,7 @@ static int __exfat_free_cluster(struct inode *inode, struct exfat_chain *p_chain
+ 	if (p_chain->flags == ALLOC_NO_FAT_CHAIN) {
+ 		int err;
+ 		unsigned int last_cluster = p_chain->dir + p_chain->size - 1;
 +
-+	size = pos + ret;
+ 		do {
+ 			bool sync = false;
  
- 	if (rw == WRITE) {
- 		/*
+diff --git a/fs/exfat/file.c b/fs/exfat/file.c
+index 536c8078f0c1..c7cfa28a3e11 100644
+--- a/fs/exfat/file.c
++++ b/fs/exfat/file.c
+@@ -682,6 +682,7 @@ static ssize_t exfat_file_write_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 
+ 	if (iocb->ki_pos > pos) {
+ 		ssize_t err = generic_write_sync(iocb, iocb->ki_pos - pos);
++
+ 		if (err < 0)
+ 			return err;
+ 	}
 -- 
 2.52.0
 
