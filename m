@@ -1,204 +1,227 @@
-Return-Path: <linux-fsdevel+bounces-74958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QDkNC7p3cWkJHwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 02:04:58 +0100
+	id sEn4Jo54cWkJHwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 02:08:30 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBAF3602B4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 02:04:57 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 678E8602FA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 02:08:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8FA394FA61F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 01:04:52 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9FCA23C6AF7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 01:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B84F325729;
-	Thu, 22 Jan 2026 01:04:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BCF9331218;
+	Thu, 22 Jan 2026 01:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X0YLdRka"
+	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="ZObQNd8U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11023140.outbound.protection.outlook.com [40.107.201.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA37D3271F9;
-	Thu, 22 Jan 2026 01:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769043881; cv=none; b=J4gqe9eF9hlR+1+gtY0TBxD1DRvmogNVavllx+a/oSsOuGk/aPqasiEsYeKPMRg1EkG2ELrxB1WKkOhV7P4NKS1otJJzNxAuj0CPoouC3dQieiDAJo10H83ybzzjmQb7zgsbv2qrjeyaz7ocJpeaHHLPRvaLpBe7iqRXqTrpv7A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769043881; c=relaxed/simple;
-	bh=1M92osCLOAcqjlx4r3JdGnpfGhqcLTqReWA2nBg/AIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IkmDjOdUBOtPfLn2DSm1S3TPk/iqdyRTjbBqkHodP7WQM2qwIaODmOpEt76I+op+3fvUEvJLDCEucpSrGVDlmN8Pa2R74c2U8Q2K0TZYE3Fm/xIgBPExi7SS2mW7NorogIAAlNInqlelxeKVGlNW55A1jmwP/6AeOX9xVh1x24Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X0YLdRka; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B7DDC4CEF1;
-	Thu, 22 Jan 2026 01:04:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769043881;
-	bh=1M92osCLOAcqjlx4r3JdGnpfGhqcLTqReWA2nBg/AIM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X0YLdRkaNfuxT7wUTVLHlkztvm6FQZD3l7TDCZkD3zxGGQpW07Pwo90piIw5zs68C
-	 3MJAtfNMs4DQ+AjUI+V7O1xF4iAM5peyQvKaUI/+FkK10XlR73HvVNlS+HF0Jz44Mf
-	 alLcAN852JSV8gm7b6dK5jys6sq/GmDEx4X1yXG4e0FIv676QyNXwCn7GqUSO0LLeX
-	 RbV01AfSBdEt86TjrgK+rApqYF74UGBgiur21KQgUWcGwNdsejwjeYv4OSYB/6uDZG
-	 MGCkNjhyU6LxxGDAeacc7H8kQ6GOztELwXsFm7ll1CLz21zmF3gyM1O/gA7UmnKq30
-	 zItthxwTb/13g==
-Date: Wed, 21 Jan 2026 17:04:40 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
-	Carlos Maiolino <cem@kernel.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Anuj Gupta <anuj20.g@samsung.com>,
-	Kanchan Joshi <joshi.k@samsung.com>, linux-block@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 07/15] block: pass a maxlen argument to
- bio_iov_iter_bounce
-Message-ID: <20260122010440.GT5945@frogsfrogsfrogs>
-References: <20260121064339.206019-1-hch@lst.de>
- <20260121064339.206019-8-hch@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1F71643B;
+	Thu, 22 Jan 2026 01:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.140
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769044097; cv=fail; b=TFpjm/dpJBMn9VkrJMVSzh5lVIi/pWP8xlLmV9cwcx9EiTlqZRJWMBOxdK6I5S71TK+raP0xITZm4vOom8X9KcsYsVaufsbsrerMPhGnkqP0xBKgQPl5tamKYkeiMORTtMH4Isl1EknjtJo0HOY+fRplLVqEO6j6Rp3XsPBO2Ck=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769044097; c=relaxed/simple;
+	bh=jD1eS5NGjlVT5dXmm4dWQtiYlx7QKZEHV2CYpjpx1e4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Xzz8P2iu+ihfBsonecRzL6itFtK7nVJtfmCtgVVxp9SGDxWRmOnAVE2oqN+a4mthTarIuTnKnhRI20IkMTC8VRyxBSdmwd7oMg9n2HdrujaK6C9EHEDT5lzhBItxbP2iEXbfo5F5HeXAUOuOjTyeLLFraJgrmOlXU6q4Ib4BbhU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com; spf=pass smtp.mailfrom=hammerspace.com; dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b=ZObQNd8U; arc=fail smtp.client-ip=40.107.201.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hammerspace.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xFuE6jGuYqeRxLK7HgPdK8gXZY56x0eMBGIZeQrnKeFGYmIFqVWGfXPHw/4ccEoj4A7UQbCVt/rXIJbtufGVtIllEcSstWeKF+qWfT/dZdKvIaSkYP0QpI8XX8F2cSJK7gkg5ylT3kOCHQYAHn7ezkZhhG8Jq/J30MVa8gl0a+ltAtSbtERrRThsWddxunCw6sCoYMT1Gc99vrJWU/IDd9BSwo32LVHIOd5ov63V7E5zYfNgYuAcB8NNUVJ+PxOP9yYedN0i+2X/P31K9bzNCMJd+ZBdxvvYvlch5RZjMNTF0iH2s6lccZErzYcsXXvTvP/b6YqGP++7oqASmWboXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mzs7Vk2rzwQvlUk7LYqBKEEK0hAgNET3HSWsyErsaZA=;
+ b=bJt6xK2rNZB0o3AhTMety9mTHsPGSd6sbk0OUesjWxLp/LqE2bMvDP8/wJ4kBrpFJpSB1fyF3ty+OuJjku4lsqgc59NQ+7sTETcWqLIk4ogkCiypNWYYDBQ+6OJmRDUJGCjJ450xNfK+2+zsYMWmu2S524TRCuHQCDxlcqGZXiImuZJhS0nwxCTv96DCPGbmqKqkIBw3aGkPquqQcsEpPT7INag5i2jZtmjA4PWp/rxu053xbpO1CBtyCkIRvyKp/dgOAs+dBOnA50eGFDnHiuLaOYH5Tj7mD6CZlutsCdZw7gYbEQiXY7z1cEnJSRaZL/EDLzXpng+QacEQ7yrwRg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=hammerspace.com; dmarc=pass action=none
+ header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mzs7Vk2rzwQvlUk7LYqBKEEK0hAgNET3HSWsyErsaZA=;
+ b=ZObQNd8U/xBbB+iWnaMBg9DpWoe9TnMCiq6cJkpys19HL88LZCsBlTmocuf9vYoqlIkRGJhSy39Vy/pPmAXRP52AppYnmA1ZyZdKSev5JPbpC6PlVuDp3YE9i3HitlzHyCyvXrUNx21acnwCim2vtsK8AkKnhBC7KTTUeNa3kuI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=hammerspace.com;
+Received: from DM8PR13MB5239.namprd13.prod.outlook.com (2603:10b6:5:314::5) by
+ DM4PR13MB5884.namprd13.prod.outlook.com (2603:10b6:8:4f::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9542.9; Thu, 22 Jan 2026 01:08:11 +0000
+Received: from DM8PR13MB5239.namprd13.prod.outlook.com
+ ([fe80::fa6e:7b5:d1ec:92f3]) by DM8PR13MB5239.namprd13.prod.outlook.com
+ ([fe80::fa6e:7b5:d1ec:92f3%4]) with mapi id 15.20.9520.011; Thu, 22 Jan 2026
+ 01:08:09 +0000
+From: Benjamin Coddington <bcodding@hammerspace.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
+ NeilBrown <neil@brown.name>, Trond Myklebust <trondmy@kernel.org>,
+ Anna Schumaker <anna@kernel.org>, Rick Macklem <rick.macklem@gmail.com>,
+ linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-crypto@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] NFSD: Add a key for signing filehandles
+Date: Wed, 21 Jan 2026 20:08:05 -0500
+X-Mailer: MailMate (2.0r6272)
+Message-ID: <9A2DB68D-4336-4564-A3C1-71D507C0C5F7@hammerspace.com>
+In-Reply-To: <20260122005112.GA946159@google.com>
+References: <cover.1769026777.git.bcodding@hammerspace.com>
+ <6d7bfccbaf082194ea257749041c19c2c2385cce.1769026777.git.bcodding@hammerspace.com>
+ <20260122005112.GA946159@google.com>
+Content-Type: text/plain
+X-ClientProxiedBy: PH8PR22CA0014.namprd22.prod.outlook.com
+ (2603:10b6:510:2d1::29) To DM8PR13MB5239.namprd13.prod.outlook.com
+ (2603:10b6:5:314::5)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260121064339.206019-8-hch@lst.de>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM8PR13MB5239:EE_|DM4PR13MB5884:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8842e7b8-22ca-403d-7169-08de5952b504
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?4k34R1SZ53GOv2+M0hhmIj0QpBafpI2AfqJAH/Xj1kI8PttpmSCT0J3jowms?=
+ =?us-ascii?Q?/02j9VtS4+ET0uHHvof0vYIa5dXOZZu3XrcRWasrHCLso8jdlmpyom4S+/08?=
+ =?us-ascii?Q?Qbe41WUvJioAv4lD0jRSd8yGD6u0BSpnot/W9qTr5OLzf13I0+fR74JahGA0?=
+ =?us-ascii?Q?w3lSDeVt09MDhAFOaw0K1JjSUVAp4g4VY+sAcRWrHmidN6qMxXechL5OokRO?=
+ =?us-ascii?Q?jG2lwQMguoZSAlhuDGwV53tIujxNKI/cpOr5jbaxXKec5i/yE5nIKi0OSexR?=
+ =?us-ascii?Q?ng6dYZRBiQPBgscCm4gNvRUS4OpTbh8MXJtF7fbR8BaDSdReaK97WMoJWPn9?=
+ =?us-ascii?Q?M5ixzvb2RjjZUwRo1UKjvLRtKkQ6b0dNxd7Z9DSnj/Lc/OR4sJl//Jp62J9M?=
+ =?us-ascii?Q?4uylfnm6MayRGd7Y7ANNlOzUQpm0SZ7kQNZIR7ToV2GAUC8KmKbZpWsboEpr?=
+ =?us-ascii?Q?3h7wW5vVExrhCCBNcTwSFScSfe+GaaqW8Lma82fRr8RnZSK0/wbkgbhaHljC?=
+ =?us-ascii?Q?2HAPZybYcpl3zHzoCS6+ftiRmZNiTaAUZrHzTx2NoTKcVlOwmMieFA8eZziu?=
+ =?us-ascii?Q?38PYcHrOH0HuWFGw63XtH3Qhi8maKXqQNDFt+jIQA9BiYZEZBjIKSMJZmeiD?=
+ =?us-ascii?Q?w0spdMA2OJFIYUgMYoruPzc+2UihjoXyszlA4V2+OTyH+fnrD8IGR4tscoiK?=
+ =?us-ascii?Q?oJ8mWnEKmvuvAUYEsksmMXp0NNLEBkImEmH7p2+hF9+epx5MwUT7QylwfZXk?=
+ =?us-ascii?Q?EC0neuYIFycUiQ0V25YQFKYgkp3snOlPRZKVMWexaWzYJljwFWwFzhV0PKSP?=
+ =?us-ascii?Q?7X3NXkXWGvR7Z0/cAUduBWdBWF5Yd5V2xEbDAXkB1S3aw9ZKnsnpkejJ7IG6?=
+ =?us-ascii?Q?RuQELq4/cD6jw8ZXFlvqj7Qyk96QggUjNKL5xWZVqChA9I3qCUw0nFeCcWMB?=
+ =?us-ascii?Q?M7i4+VA8jnbvtCrW2SLCeoER/ZF5d3efkmVtG0+gOyGrTGKy+cI1YWpw+YvG?=
+ =?us-ascii?Q?ED2vinUR/ure0WmwSKlyuMC1IlezCpQa1s4+Ghwk3EHQ53brjSanD3eodfAA?=
+ =?us-ascii?Q?1joYVbaTD01bYmyEeixLLLUqJJoFa3U1sDOw74tCa6lpr4Rm8g+7ithKKmkh?=
+ =?us-ascii?Q?ygdBzLQz2vVIHi93d39/JHhZLa960nfo5y7A/bHXn+N2PU75/aFBjejgdiL5?=
+ =?us-ascii?Q?ZgvYRpZW2tP1c/s+SwMjkvOwKQ2m3/nCPScr5BZvnOh3iIdFDFkw1msWcm7Y?=
+ =?us-ascii?Q?wB/NrB988AIGVaC9W9y/alNcrfHeH/d7blF2Lxo/SsdSioIqd0GCrcXhIHsg?=
+ =?us-ascii?Q?tftpArPthaQ40pkfrOuS4ysjwplw5nkGhSG2bMLSCw8eK8Z32usO+/zyMg/t?=
+ =?us-ascii?Q?XDmREntXlu74Sm8PfX/eivy/+bMjJsr6p0t0tTH5/VHU+Z24myz3DYPhwUem?=
+ =?us-ascii?Q?JcXLp6+eUzZ4yanHRbWOflzT0srU1T2+j0IfbId7eQtNwPMQiVigwbzmtwmn?=
+ =?us-ascii?Q?At9HQr9o+uICcDZ4Y/Ad6oCWdjm/xqq3geDumQ1Ntm6Ds1omWQzybGeHYadm?=
+ =?us-ascii?Q?NlhkQ2su9HAlA2YuQ5U=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR13MB5239.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?kkj8K0k+XvoLLW6XQRi1ECEjBpmzE0rLL+jSJlHgUhCH7Iy+SzPuz4BVs7b0?=
+ =?us-ascii?Q?fqCqOxl4joC/Ww4sRRTjMYSJddt87s75zkguWUaQHcv9rPvh3T/TMv8kMCkf?=
+ =?us-ascii?Q?3J0yPI0s/IHp5a7lzyZBxR8sjuSiPj7esBwKSiYv8hs+1uc7I6oiUE3ctWlZ?=
+ =?us-ascii?Q?uWK3SzzODJMBuhj+3TWbD05Qdyxeg2td3/SzRf9X9TlZbuH+m4WneqCXExXA?=
+ =?us-ascii?Q?2N2dq4x2HNDW6ladF5AMWm2ry6aKoCuWF0v7Ux2FWFTiNnqY7zE7JFi55k7I?=
+ =?us-ascii?Q?qHVGMdtadsXpVa5wULyoJr27g7WZcJ0CBWbDj5tjSNAEMaKf2l9Fw7tf+HQF?=
+ =?us-ascii?Q?HHi65YsKRPYYj1T3f6lApFado+je4t+ojASDYjW/wE3LUxHvpMjuHcPiCpsD?=
+ =?us-ascii?Q?fOZ7c9BxFvBmHpL8/L751BNft+a6nhnl2jj6tEIadrVu2vWG5XxrqA+VwIpI?=
+ =?us-ascii?Q?m4Ndyz68bFPcUaiCNII033YzlwTNiXzik6A+27/Xda9yObs52SaTwmkivOb2?=
+ =?us-ascii?Q?vy5WRjCJ3jBcvQRX0nCOvuFM8QDkenPO9rzA2TKaLyp8BiCwLaA2qA6bKA6M?=
+ =?us-ascii?Q?tKSO9DIO58K7RnnbC8nyuf412oXw3KxzWnD9g3IHiuEeY0dzj0Qxj9T7sgAj?=
+ =?us-ascii?Q?T0J2rh5hNVS23iG1U116ipiHlwn/iGPbldTtbmM3tbC/u8AMxo3WGL+rkmjz?=
+ =?us-ascii?Q?lP53f/9gkIv15e4Lij6HYs7YwTQXmMryrjwdW9LOsMvzUkh+z7QeJBlyzsnX?=
+ =?us-ascii?Q?zZA7uEfW1o+XbsRk4GUagl51gmgr7Ig8z3arXXtUmDcH6Ck9TBaCIZJ4aWid?=
+ =?us-ascii?Q?oWcrDxdadONRtDIQRpcM+yFD1FjwMac9C3xOZLwXxkSKspp0coUPpchOP44i?=
+ =?us-ascii?Q?0ZmHaqJS+CA4XqGWEIWG8cQJtGyv9vdu12ufqn2OzWM+ovqqIrrPeBl96k+R?=
+ =?us-ascii?Q?IDv1oaDRa0xt7/eiQ8cNwzDJ1z4Iurr20OGrNy6inVj2MzgKY9deh/yyZDm6?=
+ =?us-ascii?Q?GInCG+9nu9wYpINmaRqJIVhCuU8swfNrv7IwO90W4MVJS36E6SecwsHyJ2Hf?=
+ =?us-ascii?Q?r9uvPpa4R9RWDRUbZ7VpuhVIOKFuVcC1uW+6IBp8EGAw6mGri4fbuquMqwiR?=
+ =?us-ascii?Q?sVizSykLgFtGCw49EvdMoVOC5EKEmR3Ei/fT7UfmHp9XDJhd47eyLkSn8O20?=
+ =?us-ascii?Q?4jBvRXoQSoC9qN/tdibdWyu8UG7A1dmo0n1ertdJEl++BNM/3jndjPBgaGIV?=
+ =?us-ascii?Q?fAJtbjqKHyAcuAdqKuI1Xh2I09YGGPbaa6OhrAmbWXy214PnI1xfPfOOjayL?=
+ =?us-ascii?Q?3hRW5FTLdWXxRZ6A3IaqilYUiqb82yD+k0UJrgyRLWqyyoPaXuz8rAtp/NJq?=
+ =?us-ascii?Q?e1/cuel2NR7pxzH2AV0RcsW+5n6UU/Ex/CpnE/e+da93wG+7PnpIC1VQQdCg?=
+ =?us-ascii?Q?YxNDKdAUsRauMaq6hA4oHzCA1zUGGhn+3O9aIxGFYvkHD0MAhPwnLw2cxAUi?=
+ =?us-ascii?Q?W9OrshaSg0ujRSMiX8upWCmn56eiLXwuyxwXsYEBhfdsDeNVCTXVUZD3W/tk?=
+ =?us-ascii?Q?StXVRpnek9AduxToBe4B6wnvZt2AQQpgCodmWdNhYJw7mxRLNW7dJyyLgdLT?=
+ =?us-ascii?Q?prEWxXSgXQ+5BZisSeXboEGGy39A7XpQBeE5xnQwgwDwICv1+qICDTuBM2nv?=
+ =?us-ascii?Q?1ylDD3jVD4ytyb5F3IMz+W6hyuM3Kcou4laB6l14LSJcSj1biGmDUUk/+u+z?=
+ =?us-ascii?Q?LGDIAtRWMhKX/eO0VfmL9U6cCEOHAYA=3D?=
+X-OriginatorOrg: hammerspace.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8842e7b8-22ca-403d-7169-08de5952b504
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR13MB5239.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jan 2026 01:08:09.3884
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6zB2LeBGF0W0sZoLwHJ7qVJCyypjZrAvzra+PuDmrY74rQvORRL6mTG9IfC185gObkLRKcvWk7phNuaff3SpVQspH3BemqJLmmQMZ9XtIW4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR13MB5884
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.46 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
+X-Spamd-Result: default: False [2.04 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_REJECT(1.00)[cv is fail on i=2];
+	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_DKIM_ALLOW(-0.20)[hammerspace.com:s=selector2];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DMARC_POLICY_ALLOW(0.00)[kernel.org,quarantine];
-	TAGGED_FROM(0.00)[bounces-74958-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-74959-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[bcodding@hammerspace.com,linux-fsdevel@vger.kernel.org];
+	RCVD_TLS_LAST(0.00)[];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[oracle.com,kernel.org,brown.name,gmail.com,vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	DMARC_POLICY_ALLOW(0.00)[hammerspace.com,none];
+	DKIM_TRACE(0.00)[hammerspace.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	ASN(0.00)[asn:7979, ipnet:213.196.21.0/24, country:US];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:email,dfw.mirrors.kernel.org:helo,dfw.mirrors.kernel.org:rdns]
-X-Rspamd-Queue-Id: CBAF3602B4
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:helo,ams.mirrors.kernel.org:rdns]
+X-Rspamd-Queue-Id: 678E8602FA
 X-Rspamd-Action: no action
 
-On Wed, Jan 21, 2026 at 07:43:15AM +0100, Christoph Hellwig wrote:
-> Allow the file system to limit the size processed in a single
-> bounce operation.  This is needed when generating integrity data
-> so that the size of a single integrity segment can't overflow.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  block/bio.c          | 17 ++++++++++-------
->  fs/iomap/direct-io.c |  2 +-
->  include/linux/bio.h  |  2 +-
->  3 files changed, 12 insertions(+), 9 deletions(-)
-> 
-> diff --git a/block/bio.c b/block/bio.c
-> index da795b1df52a..e89b24dc0283 100644
-> --- a/block/bio.c
-> +++ b/block/bio.c
-> @@ -1293,9 +1293,10 @@ static void bio_free_folios(struct bio *bio)
->  	}
->  }
->  
-> -static int bio_iov_iter_bounce_write(struct bio *bio, struct iov_iter *iter)
-> +static int bio_iov_iter_bounce_write(struct bio *bio, struct iov_iter *iter,
-> +		size_t maxlen)
->  {
-> -	size_t total_len = iov_iter_count(iter);
-> +	size_t total_len = min(maxlen, iov_iter_count(iter));
->  
->  	if (WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED)))
->  		return -EINVAL;
-> @@ -1333,9 +1334,10 @@ static int bio_iov_iter_bounce_write(struct bio *bio, struct iov_iter *iter)
->  	return 0;
->  }
->  
-> -static int bio_iov_iter_bounce_read(struct bio *bio, struct iov_iter *iter)
-> +static int bio_iov_iter_bounce_read(struct bio *bio, struct iov_iter *iter,
-> +		size_t maxlen)
->  {
-> -	size_t len = min(iov_iter_count(iter), SZ_1M);
-> +	size_t len = min3(iov_iter_count(iter), maxlen, SZ_1M);
->  	struct folio *folio;
->  
->  	folio = folio_alloc_greedy(GFP_KERNEL, &len);
-> @@ -1372,6 +1374,7 @@ static int bio_iov_iter_bounce_read(struct bio *bio, struct iov_iter *iter)
->   * bio_iov_iter_bounce - bounce buffer data from an iter into a bio
->   * @bio:	bio to send
->   * @iter:	iter to read from / write into
-> + * @maxlen:	maximum size to bounce
->   *
->   * Helper for direct I/O implementations that need to bounce buffer because
->   * we need to checksum the data or perform other operations that require
-> @@ -1379,11 +1382,11 @@ static int bio_iov_iter_bounce_read(struct bio *bio, struct iov_iter *iter)
->   * copies the data into it.  Needs to be paired with bio_iov_iter_unbounce()
->   * called on completion.
->   */
-> -int bio_iov_iter_bounce(struct bio *bio, struct iov_iter *iter)
-> +int bio_iov_iter_bounce(struct bio *bio, struct iov_iter *iter, size_t maxlen)
->  {
->  	if (op_is_write(bio_op(bio)))
-> -		return bio_iov_iter_bounce_write(bio, iter);
-> -	return bio_iov_iter_bounce_read(bio, iter);
-> +		return bio_iov_iter_bounce_write(bio, iter, maxlen);
-> +	return bio_iov_iter_bounce_read(bio, iter, maxlen);
->  }
->  
->  static void bvec_unpin(struct bio_vec *bv, bool mark_dirty)
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 9c572de0d596..842fc7fecb2d 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -326,7 +326,7 @@ static ssize_t iomap_dio_bio_iter_one(struct iomap_iter *iter,
->  	bio->bi_end_io = iomap_dio_bio_end_io;
->  
->  	if (dio->flags & IOMAP_DIO_BOUNCE)
-> -		ret = bio_iov_iter_bounce(bio, dio->submit.iter);
-> +		ret = bio_iov_iter_bounce(bio, dio->submit.iter, UINT_MAX);
+On 21 Jan 2026, at 19:51, Eric Biggers wrote:
 
-Nitpicking here, but shouldn't this be SIZE_MAX?
+> On Wed, Jan 21, 2026 at 03:24:16PM -0500, Benjamin Coddington wrote:
+>> +		sip_fh_key = kmalloc(sizeof(siphash_key_t), GFP_KERNEL);
+>> +		if (!sip_fh_key) {
+>> +			ret = -ENOMEM;
+>> +			goto out;
+>> +		}
+>> +
+>> +		memcpy(sip_fh_key, &uuid_fh_key, sizeof(siphash_key_t));
+>
+> Note that siphash_key_t consists of a pair of native-endian u64's:
+>
+>     typedef struct {
+>             u64 key[2];
+>     } siphash_key_t;
+>
+> If you copy a byte array into it, the result will differ on little
+> endian vs. big endian CPUs.
+>
+> You may want to do le64_to_cpus() on each u64, like what
+> fscrypt_derive_siphash_key() does.
 
---D
+Great catch - thanks Eric.
 
->  	else
->  		ret = bio_iov_iter_get_pages(bio, dio->submit.iter,
->  					     alignment - 1);
-> diff --git a/include/linux/bio.h b/include/linux/bio.h
-> index 95cfc79b88b8..df0d7e71372a 100644
-> --- a/include/linux/bio.h
-> +++ b/include/linux/bio.h
-> @@ -479,7 +479,7 @@ void __bio_release_pages(struct bio *bio, bool mark_dirty);
->  extern void bio_set_pages_dirty(struct bio *bio);
->  extern void bio_check_pages_dirty(struct bio *bio);
->  
-> -int bio_iov_iter_bounce(struct bio *bio, struct iov_iter *iter);
-> +int bio_iov_iter_bounce(struct bio *bio, struct iov_iter *iter, size_t maxlen);
->  void bio_iov_iter_unbounce(struct bio *bio, bool is_error, bool mark_dirty);
->  
->  extern void bio_copy_data_iter(struct bio *dst, struct bvec_iter *dst_iter,
-> -- 
-> 2.47.3
-> 
-> 
+Ben
 
