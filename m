@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-75097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cCa5AIpRcmnpfAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 17:34:18 +0100
+	id iN/GA3NPcmnpfAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 17:25:23 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50EA46A0A8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 17:34:17 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FFAC69DF8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 17:25:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 5598B3048114
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 16:26:16 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id DB39830021EE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 16:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E66B39DB2C;
-	Thu, 22 Jan 2026 16:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092364DBD9F;
+	Thu, 22 Jan 2026 16:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MAFxvZzj";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="qEi1Vn3j"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cdPy2H61";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="YzNBT84m"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08AC23994CC;
-	Thu, 22 Jan 2026 16:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35693859D7;
+	Thu, 22 Jan 2026 16:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769098115; cv=fail; b=ntCPvEtNke9+dCEwcPtjtQmeHxttVKcJV8/emdNoAmkFIDdA/tQb0hzaNcxqwcefG0ZbxLyhky2W1NLUP5QptPgJ1GEMqU7tV5JijCHnhzpNScA9X3ePKKHLoB3Hl1K6mYj9P8Jcm2ivBD8y0fCqGFQONoqzxOaIPUUgetCdQSk=
+	t=1769098101; cv=fail; b=Ggj7X03RnAY10EzgY3ZPd6Q5PpkKR2P1TFmCtHvT/Of03g2zt6YOoalwbQQjH/ymJyTdP4rYRAi6bg07a+n4Ybz9gVuvRqF8BpZ+mr1+/VQxKvVMP+S17gfE0b5RxMixfYYlCuuyy9w+lU5MexpLmcL7YR042rlQojN97fOSn+E=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769098115; c=relaxed/simple;
-	bh=6aTVgIQ3W9A95nKU25jcHQLC5+8igvj+8l07NBAV8qw=;
+	s=arc-20240116; t=1769098101; c=relaxed/simple;
+	bh=Y5RRKsH/MybEHFnL+93UxqsQGkb+J7tp1DpqutAtzL8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JpGS23nSxuaJqrjx+xGe49JsUevBvXL+1oFvEXn32lBUMya+B1LGjfqPi2jVhzCX1KWbn9w94cM5bXiNjrrlAd9TR/tLDECtbr62GFFJoNSOhar1ZhdgJDlRyU8GyN0DzyjQkWWL7Y4pALLDYCpsxGHpEx5vjgGngvlVzuH4Svs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=MAFxvZzj; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=qEi1Vn3j; arc=fail smtp.client-ip=205.220.165.32
+	 Content-Type:MIME-Version; b=pJq6HyPVf2sNGkT1nKDl7P8F6eqUYnfhOige7yc8kae9fjZBI/wLwU4SCu6YwjFLaAo11UJJsJUGiv45Rfv0BTxFcVog6VpIXi7b9BlG4HtRnc2Y3eF6fPjV9Ooa5hfH0x8PCzqhb9KvDu5WDwOkPdU2iEJMu4OupD2odbwCN34=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cdPy2H61; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=YzNBT84m; arc=fail smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60MDgN2G248898;
-	Thu, 22 Jan 2026 16:06:54 GMT
+	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60MDgN2H248898;
+	Thu, 22 Jan 2026 16:06:57 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=ljjDuu/4OYG090RbFla0qGxk0g386zowPTlGmvncFM4=; b=
-	MAFxvZzj6a5XphC0aro734+3yDbU03tbOrKUV5RtXlrP5DNEBWR9PK8tKbJLdrcD
-	UjvD5c63Sv+VJjYVOMWXOzylID1fo3cNE2f4p1R4iydU8z+TZL4bWnjqwrhN7DIb
-	S96QIJDdbgxHCxsLa0y9FxNhgswoyT7qR4rVJkVSEiKgKOpd7li4pSmvHcm0ytGB
-	q8xnaBkR+yoJrORgGrx3WE7WYVXbZ8+csbQa044Bcg3BPjuYjLX/wKuBTn+CTGkQ
-	RMJfh+L6AAphtTphfBJLCSvXWS/ltCojhh25MYEYdmsFSvDm9N51qw6yK/dRyTJ1
-	zYQTszEfg6CJB2jkXlqr/g==
+	corp-2025-04-25; bh=IxlAehEn2wCEaEAXCeMgbjxjG9wyjKPrxhsNi195/lM=; b=
+	cdPy2H619caIG1G1C32buGlefQ97fVfH9JYKf66V3XAwRr35OmoSJuY/78JJhdbG
+	EmWcARx3+GbuCHrSasuGW/dCdjdDXldDoRiK7F03k6l15IOw+yDMCl77fYSI0qeu
+	hnwpnm54RBlbFjXzy25+6bGpJPEJAodtskrjBAjcnt8+6XMNbdginVkgS3uswqtw
+	tfMu/dN6MsezbGvlBUy6ijiTR5JUoEW9Sv7voM3kConwm1ameZRIbm3Qu7CNdy9v
+	9rgFFms+Zd9uQbc9etd8rAJclTOqlc3WrSygeoCUoOc5XP82f2QXi7R8ePxS5GUG
+	bQwWFwRRogA0X4ehsDWv5g==
 Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4br10w000n-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4br10w000q-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 22 Jan 2026 16:06:54 +0000 (GMT)
+	Thu, 22 Jan 2026 16:06:56 +0000 (GMT)
 Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 60MEgcCP032257;
-	Thu, 22 Jan 2026 16:06:53 GMT
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 60MEgcCR032257;
+	Thu, 22 Jan 2026 16:06:55 GMT
 Received: from bl0pr03cu003.outbound.protection.outlook.com (mail-eastusazon11012013.outbound.protection.outlook.com [52.101.53.13])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4br0vgusre-5
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4br0vgusre-6
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 22 Jan 2026 16:06:53 +0000
+	Thu, 22 Jan 2026 16:06:55 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wQ1non/jRA7Ca9BmqlyXCmbaOrry0Y82omywy11bpIhdrMIPCt0ybPNVJOH+PIcppy2kGf3LAdhPKDX5HmkGZBjLKrA5r077mGdXujKMXK6MkQK9DJoXtpodEn4iZVRQVPT6kEZ27Vz8vxXHxyoC31I61+5m/vIV8G6x+hPbfqklqc5uj+IL2g1iiKxfCvUAahgsoZxoN9NlO1wXY6/1nCrU2j3s1KdwOI1eCCa8fL4OwN51pz8lzTmVwA+6fwIcBaxu76GmjGVOtmKoyr2vjzD/bg2ei6GA8dhM+BOKly70sSV4Y0VgS9nR0N7LlYDdUo4Vq2ylLh/TKYg8LLlhtw==
+ b=iJyQAIxEJPUZ54tex0zC8xzvvxWMahDE7UmLKJngbvD0jSpeCkfPQubCqVYRNxn/k9kMlINDxPMGnGoPv/FhRSub1erhnH8VDjmEJTazVblx3Fo1fXTHqNVPRKEhc3apJY8SdraONkjydImlBF5bbOvVxXlyMH+meA2yygmuqp6RBeJwYvBmvObi6sGDey/yFNis0uU7xU/nnmvMJQK5+ENQwA1doUb0eOsZLbBaFTyIGbWJfEf6Irm8RRV1PYyPtV4VfHaIPBWV3//RH1b9rsURevr6ELK9biDQPTBj66rZDsm9/9gVBeNAWQwVbacEGmz2yOjsa0lK02Z225oCsQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ljjDuu/4OYG090RbFla0qGxk0g386zowPTlGmvncFM4=;
- b=wD0dmN18bLMXLfAEgNVqQKVk5kmyrVInCBZKoqUwTnhWuGN7g1PjrsrRSOwL9IdcNuOD7WAWSTu/5aiJw27C6GZAfLNVk+OL9GUWDH7Tx9eBnoOrJb6jXkaqdTWl8YNpmLxnbQWAtefV9T6ODLRKGXW88HvkEyvOKXRzSqTzurcdwvZPR9u40eMsKpot+l9i4jKtXWtgbd5mpOtvQwcl19DYwzn9GxuPX1540vfuJL9qIo0R7zlRK9UOBoWI46cG6b/pdAgMMfqm8I1bJZ4W/NrXanInpZeOzI7kw4hB4/iGdzVJWTd8wHP8nOcriTveK3xeFWd4WPQlDbAcdc6aQA==
+ bh=IxlAehEn2wCEaEAXCeMgbjxjG9wyjKPrxhsNi195/lM=;
+ b=B+7+o2uH+Lwq/y1r69d/v7B2UMj9I2kFSv0N2CIC6doPq7KibxnRhBWbUbaMxMGu5h9/FFTVBfACXk8HzOPTVxUPjzaUYr4AtmZyROXma7E3bFAv8ID7ju3QmgOaGztXWM7F1HObMKdOd+4553OSqNf0jx41d/9jCjZAjS0N9bVa5r8prpCuY+9p1Xr7bi8Wy/eAihFpITLag6EKNwJB5Lvq1cHWBwuuptjUJP9lUBNKozQdK2yuCFWJFbGZ9chELNYwAV49HHVIbatMcExxtfqu256wKOGeDKc3qC8Ea+ikCv5NBHydqrmF76CahPAnfiKi1ET7BalADwiq2Ja9sA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ljjDuu/4OYG090RbFla0qGxk0g386zowPTlGmvncFM4=;
- b=qEi1Vn3joce4emYQScQDUi2LGzJ341qa3URBnOYiX3zGWxX/FfGCiJx6gsXXzOGi0jQfcL/B2zlwy8PHimKJVh49OW9A9pnKkO6az/An6h3Hy0SdF4MhlnaL3FuthsWVa4u3BIJUKSZZLYvqvdWWKJfZmpWEURxyzfiJ52sSkWE=
+ bh=IxlAehEn2wCEaEAXCeMgbjxjG9wyjKPrxhsNi195/lM=;
+ b=YzNBT84mcRGddIZdRl8c75DxNtlucooMwqLp/qxQNa/ZG/63NQVxaKDOAimn5ElUHkiU2yLGLzmmbsG96qH3i2tHsBIlNDT/Yg/1DFe0le654xADsWkKf4JvxGkhCzI4/4yMPpjanCU8S4nP9V7ak9/nez5Y2t0GAPgdCcXSjp8=
 Received: from BL4PR10MB8229.namprd10.prod.outlook.com (2603:10b6:208:4e6::14)
  by BL3PR10MB6065.namprd10.prod.outlook.com (2603:10b6:208:3b4::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.9; Thu, 22 Jan
- 2026 16:06:39 +0000
+ 2026 16:06:42 +0000
 Received: from BL4PR10MB8229.namprd10.prod.outlook.com
  ([fe80::552b:16d2:af:c582]) by BL4PR10MB8229.namprd10.prod.outlook.com
  ([fe80::552b:16d2:af:c582%6]) with mapi id 15.20.9520.005; Thu, 22 Jan 2026
- 16:06:39 +0000
+ 16:06:42 +0000
 From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Jarkko Sakkinen <jarkko@kernel.org>,
@@ -149,16 +149,16 @@ Cc: Jarkko Sakkinen <jarkko@kernel.org>,
         devel@lists.orangefs.org, linux-xfs@vger.kernel.org,
         keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
         Jason Gunthorpe <jgg@nvidia.com>
-Subject: [PATCH v2 08/13] mm: update shmem_[kernel]_file_*() functions to use vma_flags_t
-Date: Thu, 22 Jan 2026 16:06:17 +0000
-Message-ID: <736febd280eb484d79cef5cf55b8a6f79ad832d2.1769097829.git.lorenzo.stoakes@oracle.com>
+Subject: [PATCH v2 09/13] mm: update all remaining mmap_prepare users to use vma_flags_t
+Date: Thu, 22 Jan 2026 16:06:18 +0000
+Message-ID: <fb1f55323799f09fe6a36865b31550c9ec67c225.1769097829.git.lorenzo.stoakes@oracle.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1769097829.git.lorenzo.stoakes@oracle.com>
 References: <cover.1769097829.git.lorenzo.stoakes@oracle.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: LO4P123CA0145.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:188::6) To BL4PR10MB8229.namprd10.prod.outlook.com
+X-ClientProxiedBy: LO6P265CA0002.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:339::11) To BL4PR10MB8229.namprd10.prod.outlook.com
  (2603:10b6:208:4e6::14)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -168,85 +168,85 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: BL4PR10MB8229:EE_|BL3PR10MB6065:EE_
-X-MS-Office365-Filtering-Correlation-Id: e98a52ab-d7b3-43e5-3d57-08de59d03a14
+X-MS-Office365-Filtering-Correlation-Id: 07c1a3da-897f-42f5-a187-08de59d03b9c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?LFaQD5TElnFinQZhPfnqx+BeN19j4LJ1GG3GB+FJYUrXFBiwC1CbrJWjuN6O?=
- =?us-ascii?Q?5fxN+dcewGCqw4DebAcotXDegq+5dQSKU/MwVElvLR9eD4p5osz7ncPYuiWL?=
- =?us-ascii?Q?+AuwTI1RxiQ1cV25AS7QxZoFgQLvXPVFixFPtf19nj4YzmKTM2U6edGK4rtt?=
- =?us-ascii?Q?6wWaw0kcJ+pqwd6yQLsDpphMnypS1BZ6bxFHqlyi8kVDinGZf+hDu4Q+Mlvw?=
- =?us-ascii?Q?UFwzhDS5CHfov0lAmv+61wwmsdoFOPXCHrUcl0G5uiUBIlen3EHGVc4obWzV?=
- =?us-ascii?Q?9A92YXnBAHmxMOi3p+SHn293BW72pfE+zKPjAIFrKT2p7C2eWD4ZeAIMKUMm?=
- =?us-ascii?Q?9PYSg8lZE+9e2z61ymdo2SSz8I0AhkUievnGbTiZBP+0CHpCqa8vl9IpUn4Q?=
- =?us-ascii?Q?hk/5j5veng4Fbt3auptTnMvGCFIQ+9vEHoSjT8XUyt2u83U+nYNAMmxoTqsO?=
- =?us-ascii?Q?7Hyx5+5Gg2pdDpmvWvO90L3lv5pyb6L+IV3F1itKw4ksd4gPrvKyTxJVcpFk?=
- =?us-ascii?Q?ymvVrMCtodHmnkZNnVx2hkwgwYdi9jo7huqXMRTzcFRqB8yhYB50jxX5ohdR?=
- =?us-ascii?Q?CfNzd2wV2JThbm7HfSSSZS7hCtrADDITK6JbgZ9LdPqpL1Fgqx6UshiAErGC?=
- =?us-ascii?Q?Je/Wx6I0k2AKn3HPXXsP4b95dMzSNhuDIyD4xaI9778HfCyriUHD9pMTdE/3?=
- =?us-ascii?Q?blXhDa6CV198F51yGIXF3a3aLZPTjenMaydrE+wH4ImQEfteWHLJ31YJyYLG?=
- =?us-ascii?Q?+2a7aGvcS9FiKE1YFEUKggDe7hYQq/pyLEWpQ7Jn2Uxg4VbFZ0uy+Rkj/49w?=
- =?us-ascii?Q?x+VENnxghEJh7ryWGobJEYWabXVhsLc/YWxDawxitsZQqcTFGUJaabQp8AFb?=
- =?us-ascii?Q?KK1i140spoai9SypOXf3bzSM8whd2U94IPoFXp0sJ5nyAAL9vxRwiw1ekJY2?=
- =?us-ascii?Q?cUxcUxJevRT9iMLnxLIIEv0X5hJC8zAwa1XJgiMeGs3g6E+CbOtjpUg+Oy+t?=
- =?us-ascii?Q?pYtr+KoIgSBJSnvCGkNU1bplIym7jGE3l4ZxDio6YJa7FA6hXU+i6Ywfd3C8?=
- =?us-ascii?Q?z+N9/KETNtQg4wwKd3xk/XzFBapLhxHmfdqbYfIteCV1Ru/IL59q2fCCFG91?=
- =?us-ascii?Q?H2AJhY+dPzcW1xU3zTobDpzYiZ9Yqn1T86uw1g1NvZETao7lIMLc1UmB38Vk?=
- =?us-ascii?Q?D/WPuyWVK5tXKdhx2DPhuJebR/gImlcOhcrYmebgzXw7R+IY3TRWWeIVwHg+?=
- =?us-ascii?Q?6zKbgDd0vnwFvQGWiCsuk4W8Exzwb6YGVwa3xSORA78RKg41sWuHBa/PFiYM?=
- =?us-ascii?Q?KgfYE6xjoSaZ7vYltYo/NAMTx9ZMCpCFGtHbDVp0uhM/Jz11ezsJTz7q0iMx?=
- =?us-ascii?Q?BfDyde5IB0z+tpnoKaFEHDSYAyp+6ILNEK36V3HcBG1YNiU1WrN9qe6CbdMM?=
- =?us-ascii?Q?nkEvLjqsEH6QBZibOZJm1ry12g6DAvs+LwHfYvyzPmcg+JsZZgchgmxRsERt?=
- =?us-ascii?Q?V/A5M7AcHnqtrVdL+a9KvH5KUVhCm+OXaWD4Dxex+nvDBDjRYzZMP6v9Toja?=
- =?us-ascii?Q?t8yyoGTuH3kA+Rs36dc=3D?=
+	=?us-ascii?Q?8p3/vGYy6qAAOpybnp0fjK2cLlT6q9FMkVXdm+GBtvLqzhQefn31doKd+SsZ?=
+ =?us-ascii?Q?wxxR684gH0uc7CVwgcI5IRo5uqZZEW6g/hGSxeW6WgXHUIsREq/XHVxwittv?=
+ =?us-ascii?Q?neYAXeAXf2a93hcGQ45/jgoN/wrFrC73pIWg+thXeyTNGpJYGvx3lsbyBCdV?=
+ =?us-ascii?Q?BrB9OAXgIOVx9p53ojCeO/MZqQ4SHiRrJH+8WxiEcXdNbjViPLI30oyZ1JGK?=
+ =?us-ascii?Q?F7uWEBnrRBtYIR9OFLE9SxU/2gp2Ix4HvQI/eNFL/WT2u7EA6llY/uu6sZPm?=
+ =?us-ascii?Q?PEIWrdElzHFuKCWHlRgBbKrnCHqCKrQRYdEDzIbNQqWD2J0B6MTO139y4ZMG?=
+ =?us-ascii?Q?txL7FcV69WiViD2SjGilqrsJTWGuZwlqw5eTiDx/u0Yw0E1g+c0NfEu8wfLp?=
+ =?us-ascii?Q?Ff9blzH/0fSGZ2oRtSibNFYeEW9HOXFPc+/l5UsUHPD+HrY+bNkQq5zxeFkl?=
+ =?us-ascii?Q?69IILxEIY+NuwfUYAukpDtNlk05x9z3DUiVROro6XjegTvtbGh6THeK7VUEH?=
+ =?us-ascii?Q?edoIZ6RE5j58yj4lVdiTOaMQli6+hy+fJQms9x3eP/2GbISuhDyyEEJ0behG?=
+ =?us-ascii?Q?lx/xD43H9H6Rh/z+1W7gaki5Luw776C93hL6JchREOjev+zrMPDTWeQUqfBv?=
+ =?us-ascii?Q?YjKtFasYpLo1p2iT1EdrkjSw77oIon1SfdXNbGjzF2RR45/8IDm1vHOhpi0A?=
+ =?us-ascii?Q?F9l5JLZ8CB0yL4ObHDYYjT5obhTo/LpKyTzxAIgqmbO3W6Z6UyEZvWSPxqt4?=
+ =?us-ascii?Q?0r9Jye+coWjU9SDLJacrlg+lClWjGboHtsT5lnuUPqpIOktaUthjeoOMBcei?=
+ =?us-ascii?Q?kbO7cABGUcezdaEYc+/eLtM8pr6L4SuUpgJwV5BW6yc382x7Zyr+2SzCoP+m?=
+ =?us-ascii?Q?fp8KVdPWInv57DkpcU9m3iwv7zzksSCoo7VK9snaStqR8HUHKbpqVQnTLO9i?=
+ =?us-ascii?Q?tBsG//Jxhcj8caQOci0TMEJGXnTcfBILcqiKZT01kxPSBqpoIiQvcDdLggxb?=
+ =?us-ascii?Q?Wokf4G73Q/89dshxx2scD8uuemzV76fEv3H7aVcgUpIWfNU4maHfNOJzwQS5?=
+ =?us-ascii?Q?XjY77wIfN+lq+8IpBdmK9piP8TYPhHumUyM5xa3bu60wFHHYSYrn2wslGWU6?=
+ =?us-ascii?Q?pYGsivqLb6w+yKwoy7O+TYG2x+RlLxvnf4hDdKXk1eE8dF5OxtHBLB0MXP7V?=
+ =?us-ascii?Q?KfL1xGlfsuIxALwfPaY3VDyxi7aO3Q6s2MUov0XGajdMT3ei7YMhpFmelC2K?=
+ =?us-ascii?Q?iPLiOCDdDH9BYbLYJ/6dpyJ07rKUyzfIacdYEzQyvQCPRSPTafbgM4Nc+Y6A?=
+ =?us-ascii?Q?A45ltjbXq51+lzFUyivVVW9glUto6RDaTuVcQPM157QxsMPhBJdbjx8C5vwE?=
+ =?us-ascii?Q?UT2pD66JP8GfsPzqY2IGWPQ7/JzSzBsIw7wmDOuekfK75he4R7fzFAm8H32I?=
+ =?us-ascii?Q?CO8dcgrPbPtrOZNq/9qFMxL4c82x1T5DjSbiLhy1NilUtja4uxXV83nG6Qnb?=
+ =?us-ascii?Q?182yIKPa3OVwU1rNy6BPs3M9NXBj+co89dx8BwR+dDJjN2kJOX89rs1OHa6w?=
+ =?us-ascii?Q?A0/B59dhsQTLfVqVIS0=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR10MB8229.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?eMTZUmL5StD/BzTYX4BXPntTQjRx1ASr/FgU+q/lkRdRIJHpoueHuvHhxPIp?=
- =?us-ascii?Q?DvZVyxs/YWQ2nWm/ErkTY47uur7Yfi+DWPGJc0ZpOzx9wNVXOcZEHYAIMrKP?=
- =?us-ascii?Q?2elM+CKUBgKIYcSHJ520Pkp6QWd82zBIpLLsB1m6b3LAcyoP6PBUirC0ZbSI?=
- =?us-ascii?Q?XrFxbgvnQTFjiO8bBPgokFRlcQfwdXcR4TOfEs2DhNLg5/MoXpAyR8wVHxMR?=
- =?us-ascii?Q?kGF7BjMhC58uaYyfAG1yNwLCVnC2apnuoro2vE6jtzTixoJURTK8lb6GQaHG?=
- =?us-ascii?Q?J9WgvTjh//HoXu4xxs4K4WIHJUJ6o+nMgA2Fk8LkUZUyVBc41MaQB/o9M6kI?=
- =?us-ascii?Q?G7v7ngmxX6FFGzU8YTJiN6A0MpLWaSUMcT0mNKeS5u5QdNDtIXheQG/wQriY?=
- =?us-ascii?Q?YiQxt2Oe+2dSXyuc2koTbcrP49u8aF4FKOdPgKJCfl5S4k6YKLNHUbjJkUcP?=
- =?us-ascii?Q?lcYhVl9sVFtdW+e707VmVvQde5p5u56/NK9AuSquRCFBKVaZNTtAsO9z5tcP?=
- =?us-ascii?Q?ublEZMlBsYtH98liLQnTkyI9RncIUVtQcgd1/Gox5MFtto/3YT7z4/OYO0oG?=
- =?us-ascii?Q?IkaABptK0eFNH1prKTKOZWmktgcxQStVaA1c4CMURAHXEyWXOcux8lRgrYPd?=
- =?us-ascii?Q?aa7t9CQvaUeMugPHGcfK4FCz+st4X4bj6ItnoreiktRhlSf1TrRRRfYaj0hZ?=
- =?us-ascii?Q?oPoSqhsBfqprtQvsGfAB0NhEelclO1HpdGwXVeVSpmNUKyFZejyDdSxxdAlL?=
- =?us-ascii?Q?2RJ0KBDY4it1C5shaEgtExzY1LkR3rNhtggrKE3NIuj83cxCobZOEXDp8B/I?=
- =?us-ascii?Q?ArBv+tKlftyRAaqUzyytWwpqWpfqz4j3u+UFhoh1nEZqFdV3kjVsBHQ22g0c?=
- =?us-ascii?Q?Y4MjwBSP5cWsjaQl5Befh1iMkjWETDeFOYwsAwOHriCSy+NxtY9HdbwkpIJu?=
- =?us-ascii?Q?fLb6kE+HSvRd1Wg1A48WaTOVF2Q/l+vVBx4TAouQmCwmALZhmiKiBl/4Zhs2?=
- =?us-ascii?Q?6q5bPXrx7K/Bg+R/dZqfQJlgl9m+2Y/Kv/BpFKFubnTMhdZalHTweusLPtp4?=
- =?us-ascii?Q?zEon0STAWcs1eLLMc8mPdUMliE9unFHEXOBinD25jje1fjc/7tRSVyQzdIgZ?=
- =?us-ascii?Q?XfDGdvEJehzDLu8XjzDDDduB/kd9jLygUt8xJCiwOQrcrGtpBDc8wtDd4QTJ?=
- =?us-ascii?Q?sveFmJDWT4u1/y1rgcVW29YW2CkjVd5W42x5MwcJ5tZPSRMMqm2VD2GHfMje?=
- =?us-ascii?Q?DQK9bQf+8w2JHjfqEfnnZT39bjpplKefsZaVsdYOBhZQmEUknGS8ibVx9HFK?=
- =?us-ascii?Q?LibiQvLl5ozIeIIbCqYSEBzJmvR0ppcO80NoOynuwwzZwHxFH0G8TpYAP059?=
- =?us-ascii?Q?hxAF3Q2QOPDvd1avUfl5gbSpsPWVH5Pn59UJruiLKZlbaMdgxkyb5hIUTpQP?=
- =?us-ascii?Q?dYI+CVGOcRExd7zzaOw2/R6iU/KUAuyR6aKdHnF4Srjd9sGskDQbjl6y0cIz?=
- =?us-ascii?Q?PO1dFC04KlOoQUkFbr7QpfutX1KnF8j2ShOmNsi8dZs7+hRMeJgLYCmGjLNs?=
- =?us-ascii?Q?b1XTuSl98dsqWrVFyxWTFkMGB0yV1XFhomwPfaUeDguHI9YIKI8bibAcC0re?=
- =?us-ascii?Q?130qbM7uny98SMz5R1t8OQ5Bp+kJ5KgbO1cVhF8O+EiR3v2YItKFyH+uphhR?=
- =?us-ascii?Q?hqGbyLwAslq6RRni6ABwOgqxlL9pOS+EzMqX9N1E0u8k8sQv/qhV5TUaXytN?=
- =?us-ascii?Q?yANsoveTU9Ts5vU9QCSomc7qxu/zDEw=3D?=
+	=?us-ascii?Q?M6GTV1knkT8GyZ6VKDBIDR+DDWJXjtOrSar6wKhMH3LXYBQd2/LJNaOWg9/F?=
+ =?us-ascii?Q?jHqfQ9pUk3iO841fIjJEiWfsQCwNmM4IClXsPEwzepPr7LqBLaCCjK4YepSO?=
+ =?us-ascii?Q?GWAAJ2sLRd5dda1eq7D149NskqUh69BrwljIqkAg9YwTaaYnTYpOOQDPHd21?=
+ =?us-ascii?Q?vUCMviiV3XPDwbqUDQTrSIA/RZE8Mr4h6IzSZPGh0hZNbcCuUVzhurTWrkN+?=
+ =?us-ascii?Q?EqpHa0qtpoQAnRTY4erD3vzsnWEFIx9ZK81Sicd7ylzbAV3vVz8xLZ/lR5LJ?=
+ =?us-ascii?Q?OrHrrtMNWcmBz/L9NcRM3k4r7c6NNwM3b7VqFzgwGirJdz+UXcd+ecsibL9E?=
+ =?us-ascii?Q?qGIRmTz+f5+V/gffmubrVKdOHHuxwqumsJ26P55Im3x3aIsUZikTQmU/95sM?=
+ =?us-ascii?Q?WSaYazmULTZsqmc8bPTza3MImpvH6gA5YQyY6VRejFlImd71Fg5QzUAsw8xG?=
+ =?us-ascii?Q?KfVClPbGW02oPDEwdAoLkR4npJNXBhStp3/zeL0oXcNVweaIzY7ytAW0we2V?=
+ =?us-ascii?Q?ftLdiOk1cGTfEiEjhErgbIkQ/iNaMIDxp7cz4n8krdIcjOe6vA5YY8i5gYTi?=
+ =?us-ascii?Q?91GudeVa3EPDzce5JvfFbceOMZY/EF9VHwqckgDI2VcLMTxUdzKexDKYRhiC?=
+ =?us-ascii?Q?suy8l7F2rasTFA33r4CAfY70fkMeRWRtYJ8CteUHVqbFvt9rUF5MFUA+12Lo?=
+ =?us-ascii?Q?hZD1SUsRs4WPhxWDu61nKiv00FR4toDX3ltTzsBCl+yAKpA2oq+VwETY4lAF?=
+ =?us-ascii?Q?a7T4S+i+V2EVktkC6xqynPGMxMh28iP6yAksQhdAPGoNVliuh6sPylmAwa9A?=
+ =?us-ascii?Q?Pv0q2sek8j+9uPn3oO+szjzDpKnJRvawCXkbzDP3qEI5HeJQP18oDLFeqUtZ?=
+ =?us-ascii?Q?sk5BSIZnnkKA79k8dwzyd0M71TdyXhSIRbFocv6Bnn8cDVtDXKhw1X6YxmJn?=
+ =?us-ascii?Q?KO5FIdvHcF7d3erdY4WzCD0JZx6CnI+yJINX/hKb87748OyVxFvhrhm9xetd?=
+ =?us-ascii?Q?wWHBNJ1rBj4AkTqzYA6aDfOkce263S1rT3bc0/JYJbLkAELjKoVp8LtNwCTy?=
+ =?us-ascii?Q?+giSW7rTX5Suo8bjpB/vidv+wDwYDQMv8S96RCk8grtk1AaCYdLotjCVzxeZ?=
+ =?us-ascii?Q?rRn2yIKRkaYiM6MpD7QUbBIb2ZAsF/T5vc3kvCpsTl+EPYRyF+esStSdK8Eh?=
+ =?us-ascii?Q?wvdN5n4LuUHvjVNpYCyrBP/rqUcSblZ5x2EYrk7EXT/CukauujjmjNomEyS8?=
+ =?us-ascii?Q?i88idr4rFzOVxKZ4frzGe01LUNTfllLtmzxhKYCH1Bb/AUP+L0YFO9eeXbUv?=
+ =?us-ascii?Q?DbdqWEFPlbMgduGYF/61BQ/4mVMxsfpHnuQL16PNePQyJgj6rQBt1IZGDW8C?=
+ =?us-ascii?Q?L9UWqD02PunVvKIbpHaQUJcm4ewR+LSc+ntHTNIUQ7vWudk+onVLlTYnstqd?=
+ =?us-ascii?Q?wp/7JlXgKjEwiwsKMqX0c0pgcyUgS6CVyM9z9v8h5PCK7LhME0QVce3Bqlkb?=
+ =?us-ascii?Q?ofVYtISXWFc3tsTgzDjqbla/Q9PXhWJ+e/QHfMUq/kCSy5dN9q/Plocakujo?=
+ =?us-ascii?Q?ZuZZ4QTF0dbNHuvyAz2v3YCaTWnq/L7eF08FxiYA1xHV6iOtHWYBFD07o0Gf?=
+ =?us-ascii?Q?COdFXIg94Vs+hfQ1+kJ5hBvRBTMshWr5cHDIV5R9k9RDS8CvqVSgr30CWYqP?=
+ =?us-ascii?Q?x9XlBzVawkyQRrMkJlC10TFN5PjTv8fHykKIyU6vShZfI7pJS90oD65gu3mE?=
+ =?us-ascii?Q?UjklQnsSRXJyOiOYBi8RCrOfLEXrNOQ=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	VIuDDMyxXU70nWSK5pMGROb4h50SHzmvYzV20mDZhdLlF5rqxkW9EXAgdE5egybUhthyDRTgCXZW7YKwC9K9zXfsTw+FioWcYJexAXZDBJZrUZ5+twb3xaByEDk3w1rj0eQYbzoFKbqOk4S2nNZPoT0Nd5m7GROpsuSyXcjzN9mimC0iI5mPzK77ZazOoh/35axDZ9776ty2y0ZV/l5zooxamq9fLSlgLdr59YZqP8t9KNziQnJoGgAvLfKV1F+BTYP5YZEpjr9TSrCBVfqAN2PA4f9HYkNmH6tkypmXBfo11//TB92/djqZq8ACUL6X+iuKRkUx4JiS8HRSKTd6EzTwGhSM/MWJUH42yQSRsvMJ6by7fdNx41L8cUS+C/y2bpxlFxw14mmH0dxvI7d8FzeURI7IHh0x/RY9vnEGfSQjURQrlP4XncefjTB/ElOBVgitr3rA/nUdPpr7rojckWjN7G1PJEmPvW/jjXCCp8FKqqqGdj2ktDL6rpQ8xh13L5r8lyc/nl3dibWePWC2RVqXAyftsLrfLW6iDjMVpeNmQz0h2EFUV+SQ42226Sr0Ri61f5squ/qCpkrRhTIv1F0N5jVxnTggHhZ1CeujJCI=
+	19nPEAIPSAxstl009/qwHfJT9NOn60U+5qQOonfb3WjH6uFWp/TiKycj+vUmY6lSuWH1fYU7OfKXJlcW9KmJ/FBXD+N6ZG1oZeRqVXQ+SICQ+CbZDjpzW1gDpEjpy/eTF43P/UAkBqu1U4hNjsxTtfnHNrxM5oK3KzaO1fS01aD8+APvnEhRetC/diWc8XFBVJCfNuIzjtf0yuIl5MNrzzKW1P35+nXhFTZiy6m1nmCj9jcqzATqVMeGFT3pUKo1c7A9p3M/pnXFGskOToNps1g6Gp5EiOytLy9nIaoiFJ+njbTngf691GSXiiCdCuaasBJTRLTCJxq7ACtlVDnOhkNJ8+feqU/b08C7E48UOqJdpJ1tuGYKCczOeq89YihEp62CWQYDztQCECinegyyvsOEfZOC5LcUgkviwX1+z50S03Sn2E21k+mZ1eym8d/O0QejgLZLxf6posNkXya747lLZnfrros8ftKQdf0A8Is0hp9TMXpOQicMFBMzBbHSvZgUxiRxNtVm6ENgTPEckrkfHs4fNv/94b8E4J/JHGpRFxlQfdsi45wcLVJJLUUsBX2v0mZWULGebug0CkG1gV6JawXpPOVtKYCSA6QWmgo=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e98a52ab-d7b3-43e5-3d57-08de59d03a14
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07c1a3da-897f-42f5-a187-08de59d03b9c
 X-MS-Exchange-CrossTenant-AuthSource: BL4PR10MB8229.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jan 2026 16:06:39.7266
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jan 2026 16:06:42.3144
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0Ei2LA7ODeKJ+uzgfdjnOCkyPVImW7YcQdWBnp5/0VHAsVqtlUGMVCdTDTQa4lAiG2Gp449VMERAP08VO7Anu3LdAl78hTARpj01myIBchU=
+X-MS-Exchange-CrossTenant-UserPrincipalName: Tit1tkfHDWAdAO3iAWtx0NMxZYShjqvJv1+vU6UNfA8mILyz0SI7io51+G1r5VF3LeMPz1J0YsAIdwfC/6lHNJbQcZ1F9IyHgq8fBlUMAmY=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR10MB6065
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.20,FMLib:17.12.100.49
@@ -255,22 +255,22 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bu
  spamscore=0 phishscore=0 mlxscore=0 mlxlogscore=999 suspectscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2601150000
  definitions=main-2601220123
-X-Authority-Analysis: v=2.4 cv=H4nWAuYi c=1 sm=1 tr=0 ts=69724b1e b=1 cx=c_pps
+X-Authority-Analysis: v=2.4 cv=H4nWAuYi c=1 sm=1 tr=0 ts=69724b20 b=1 cx=c_pps
  a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
  a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
  a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=vUbySO9Y5rIA:10
  a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
- a=vvSCmUsU4Gqzg4pU4WgA:9 cc=ntf awl=host:13644
-X-Proofpoint-GUID: Uonla_wORqndmSff8eMAdfAz1wHM3mDk
-X-Proofpoint-ORIG-GUID: Uonla_wORqndmSff8eMAdfAz1wHM3mDk
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTIyMDEyMyBTYWx0ZWRfX1FyZH6/9LZ10
- OU8604ePlA8ugxjREvvpnXvFpQs0aI0OwxoTb+hWQ43g0KlR5wHNiJdjGrdd/XOtfT3FD/Ho/h+
- +tdluwAetrOGbb57JB29Rd394qV5nid7fvd97YqsXcqBu2Ad1hNz+TYJ35hbg0LhNg00WgqSivb
- muzeq2rrHhjjN6DrVpctHoYtt4afTVNDaeIptC5e0GAJgpTMQsuT7abQcgi4/zlzsNS0VF6Y9MN
- 6hgVoM8M8HVlpZfIhmW3iXYpb942ALmFfZfs5UYbk4cZeXJPzh7Cv8yzi2tCIT8G4/HZb4guPO7
- /mzuUqBXTm+dePXGCrQ3HS3eKApKaBxy2k02n3YAo36PtyVHQKrVN2OL0g/fqdcCK21xoBMKVy7
- 7XqeTd5uFHOf4JtZQHscFnb0nFjRrcmZSp0lvJBAgzYQ3KHQ+G1otk/ojwzqEB7XzWW8O3M7DEU
- 5J5dxMQ4dkrgal3Yg+MmommS9K/erIBq7caWHot0=
+ a=Y41x4OjG33KyMScx15sA:9 cc=ntf awl=host:13644
+X-Proofpoint-GUID: bLSPJaftRcRXEEyDWxlo3ssWmCXCOdiQ
+X-Proofpoint-ORIG-GUID: bLSPJaftRcRXEEyDWxlo3ssWmCXCOdiQ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTIyMDEyMyBTYWx0ZWRfX3r2Uc64WVWjm
+ pBqssOtWZRECk2H/3eVzOSFkT51cz/GTJEkrc2n1pwptMoeYDR/+NN9SyJsEyddQCedoFgS4WS5
+ I1m6zO9e1HSZI3a2B92OIYfbESi9NCy9TAoMLvyuW4ztgRNnBXYlyvEWK+yUDtVg/TMEUU22fnk
+ JoZIxPkSbCWe4kTvyrkH/3Fc/5pJM2qBUDt+oR6CqgY1txNa+dk5IDvrf/AiFqz/RcLsaDP+vz2
+ QgWHKqnGqqqEsDYR5hvypQP8ywCc47L8flqk59uJX1x2w27dmoVJbkuviQ3uyCBsNe6sZewScHP
+ XH6WbNj+ex1xJepILx2UDbLOZETabv6PCT39IJpW3dWwTBt+Cw0S5Xcrve3PWN+6cDmoly4Ekyu
+ 6B6Knn81fT6lucPLWb50qmt0QksZGlKeM7rOUQkwO/eRmq9qArbQHjzQXubzSv21nMH1ZaoCnBV
+ vWsguQxfhMXxxQosE813eYdMjIoAKgtsSO6oRSHc=
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [2.84 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
@@ -278,12 +278,12 @@ X-Spamd-Result: default: False [2.84 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[oracle.com,reject];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	R_DKIM_ALLOW(-0.20)[oracle.com:s=corp-2025-04-25,oracle.onmicrosoft.com:s=selector2-oracle-onmicrosoft-com];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75097-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-75095-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,redhat.com,alien8.de,zytor.com,arndb.de,linuxfoundation.org,intel.com,suse.de,gmail.com,ffwll.ch,ursulin.net,amd.com,zeniv.linux.org.uk,suse.cz,kvack.org,linux.alibaba.com,google.com,huawei.com,vivo.com,mit.edu,dilger.ca,linux.dev,paragon-software.com,omnibond.com,arm.com,wdc.com,infradead.org,oracle.com,suse.com,nvidia.com,paul-moore.com,namei.org,hallyn.com,rasmusvillemoes.dk,vger.kernel.org,lists.linux.dev,lists.freedesktop.org,lists.ozlabs.org,lists.orangefs.org];
 	MIME_TRACE(0.00)[0:+];
@@ -294,476 +294,442 @@ X-Spamd-Result: default: False [2.84 / 15.00];
 	FROM_NEQ_ENVFROM(0.00)[lorenzo.stoakes@oracle.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[oracle.com:+,oracle.onmicrosoft.com:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.onmicrosoft.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,oracle.com:email,oracle.com:dkim,oracle.com:mid];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.onmicrosoft.com:dkim,oracle.com:email,oracle.com:dkim,oracle.com:mid,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_GT_50(0.00)[93];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	RCVD_COUNT_SEVEN(0.00)[9]
-X-Rspamd-Queue-Id: 50EA46A0A8
+X-Rspamd-Queue-Id: 8FFAC69DF8
 X-Rspamd-Action: no action
 
-In order to be able to use only vma_flags_t in vm_area_desc we must adjust
-shmem file setup functions to operate in terms of vma_flags_t rather than
-vm_flags_t.
+We will be shortly removing the vm_flags_t field from vm_area_desc so we
+need to update all mmap_prepare users to only use the dessc->vma_flags
+field.
 
-This patch makes this change and updates all callers to use the new
-functions.
+This patch achieves that and makes all ancillary changes required to make
+this possible.
+
+This lays the groundwork for future work to eliminate the use of vm_flags_t
+in vm_area_desc altogether and more broadly throughout the kernel.
+
+While we're here, we take the opportunity to replace VM_REMAP_FLAGS with
+VMA_REMAP_FLAGS, the vma_flags_t equivalent.
 
 No functional changes intended.
 
 Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 ---
- arch/x86/kernel/cpu/sgx/ioctl.c           |  2 +-
- drivers/gpu/drm/drm_gem.c                 |  5 +-
- drivers/gpu/drm/i915/gem/i915_gem_shmem.c |  2 +-
- drivers/gpu/drm/i915/gem/i915_gem_ttm.c   |  3 +-
- drivers/gpu/drm/i915/gt/shmem_utils.c     |  3 +-
- drivers/gpu/drm/ttm/tests/ttm_tt_test.c   |  2 +-
- drivers/gpu/drm/ttm/ttm_backup.c          |  3 +-
- drivers/gpu/drm/ttm/ttm_tt.c              |  2 +-
- fs/xfs/scrub/xfile.c                      |  3 +-
- fs/xfs/xfs_buf_mem.c                      |  2 +-
- include/linux/shmem_fs.h                  |  8 ++-
- ipc/shm.c                                 |  6 +--
- mm/memfd.c                                |  2 +-
- mm/memfd_luo.c                            |  2 +-
- mm/shmem.c                                | 59 +++++++++++++----------
- security/keys/big_key.c                   |  2 +-
- 16 files changed, 57 insertions(+), 49 deletions(-)
+ drivers/char/mem.c       |  6 +++---
+ drivers/dax/device.c     | 10 +++++-----
+ fs/aio.c                 |  2 +-
+ fs/erofs/data.c          |  5 +++--
+ fs/ext4/file.c           |  4 ++--
+ fs/ntfs3/file.c          |  2 +-
+ fs/orangefs/file.c       |  4 ++--
+ fs/ramfs/file-nommu.c    |  2 +-
+ fs/resctrl/pseudo_lock.c |  2 +-
+ fs/romfs/mmap-nommu.c    |  2 +-
+ fs/xfs/xfs_file.c        |  4 ++--
+ fs/zonefs/file.c         |  3 ++-
+ include/linux/dax.h      |  8 ++++----
+ include/linux/mm.h       | 24 +++++++++++++++++++-----
+ kernel/relay.c           |  2 +-
+ mm/memory.c              | 17 ++++++++---------
+ 16 files changed, 56 insertions(+), 41 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 9322a9287dc7..0bc36957979d 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -83,7 +83,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
- 	encl_size = secs->size + PAGE_SIZE;
- 
- 	backing = shmem_file_setup("SGX backing", encl_size + (encl_size >> 5),
--				   VM_NORESERVE);
-+				   mk_vma_flags(VMA_NORESERVE_BIT));
- 	if (IS_ERR(backing)) {
- 		ret = PTR_ERR(backing);
- 		goto err_out_shrink;
-diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-index e4df43427394..be4dca2bc34e 100644
---- a/drivers/gpu/drm/drm_gem.c
-+++ b/drivers/gpu/drm/drm_gem.c
-@@ -130,14 +130,15 @@ int drm_gem_object_init_with_mnt(struct drm_device *dev,
- 				 struct vfsmount *gemfs)
+diff --git a/drivers/char/mem.c b/drivers/char/mem.c
+index 52039fae1594..cca4529431f8 100644
+--- a/drivers/char/mem.c
++++ b/drivers/char/mem.c
+@@ -306,7 +306,7 @@ static unsigned zero_mmap_capabilities(struct file *file)
+ /* can't do an in-place private mapping if there's no MMU */
+ static inline int private_mapping_ok(struct vm_area_desc *desc)
  {
- 	struct file *filp;
-+	const vma_flags_t flags = mk_vma_flags(VMA_NORESERVE_BIT);
- 
- 	drm_gem_private_object_init(dev, obj, size);
- 
- 	if (gemfs)
- 		filp = shmem_file_setup_with_mnt(gemfs, "drm mm object", size,
--						 VM_NORESERVE);
-+						 flags);
- 	else
--		filp = shmem_file_setup("drm mm object", size, VM_NORESERVE);
-+		filp = shmem_file_setup("drm mm object", size, flags);
- 
- 	if (IS_ERR(filp))
- 		return PTR_ERR(filp);
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-index 26dda55a07ff..fe1843497b27 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-@@ -496,7 +496,7 @@ static int __create_shmem(struct drm_i915_private *i915,
- 			  struct drm_gem_object *obj,
- 			  resource_size_t size)
- {
--	unsigned long flags = VM_NORESERVE;
-+	const vma_flags_t flags = mk_vma_flags(VMA_NORESERVE_BIT);
- 	struct file *filp;
- 
- 	drm_gem_private_object_init(&i915->drm, obj, size);
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_ttm.c b/drivers/gpu/drm/i915/gem/i915_gem_ttm.c
-index f65fe86c02b5..7b1a7d01db2b 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_ttm.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_ttm.c
-@@ -200,7 +200,8 @@ static int i915_ttm_tt_shmem_populate(struct ttm_device *bdev,
- 		struct address_space *mapping;
- 		gfp_t mask;
- 
--		filp = shmem_file_setup("i915-shmem-tt", size, VM_NORESERVE);
-+		filp = shmem_file_setup("i915-shmem-tt", size,
-+					mk_vma_flags(VMA_NORESERVE_BIT));
- 		if (IS_ERR(filp))
- 			return PTR_ERR(filp);
- 
-diff --git a/drivers/gpu/drm/i915/gt/shmem_utils.c b/drivers/gpu/drm/i915/gt/shmem_utils.c
-index 365c4b8b04f4..5f37c699a320 100644
---- a/drivers/gpu/drm/i915/gt/shmem_utils.c
-+++ b/drivers/gpu/drm/i915/gt/shmem_utils.c
-@@ -19,7 +19,8 @@ struct file *shmem_create_from_data(const char *name, void *data, size_t len)
- 	struct file *file;
- 	int err;
- 
--	file = shmem_file_setup(name, PAGE_ALIGN(len), VM_NORESERVE);
-+	file = shmem_file_setup(name, PAGE_ALIGN(len),
-+				mk_vma_flags(VMA_NORESERVE_BIT));
- 	if (IS_ERR(file))
- 		return file;
- 
-diff --git a/drivers/gpu/drm/ttm/tests/ttm_tt_test.c b/drivers/gpu/drm/ttm/tests/ttm_tt_test.c
-index 61ec6f580b62..bd5f7d0b9b62 100644
---- a/drivers/gpu/drm/ttm/tests/ttm_tt_test.c
-+++ b/drivers/gpu/drm/ttm/tests/ttm_tt_test.c
-@@ -143,7 +143,7 @@ static void ttm_tt_fini_shmem(struct kunit *test)
- 	err = ttm_tt_init(tt, bo, 0, caching, 0);
- 	KUNIT_ASSERT_EQ(test, err, 0);
- 
--	shmem = shmem_file_setup("ttm swap", BO_SIZE, 0);
-+	shmem = shmem_file_setup("ttm swap", BO_SIZE, EMPTY_VMA_FLAGS);
- 	tt->swap_storage = shmem;
- 
- 	ttm_tt_fini(tt);
-diff --git a/drivers/gpu/drm/ttm/ttm_backup.c b/drivers/gpu/drm/ttm/ttm_backup.c
-index 32530c75f038..6bd4c123d94c 100644
---- a/drivers/gpu/drm/ttm/ttm_backup.c
-+++ b/drivers/gpu/drm/ttm/ttm_backup.c
-@@ -178,5 +178,6 @@ EXPORT_SYMBOL_GPL(ttm_backup_bytes_avail);
-  */
- struct file *ttm_backup_shmem_create(loff_t size)
- {
--	return shmem_file_setup("ttm shmem backup", size, 0);
-+	return shmem_file_setup("ttm shmem backup", size,
-+				EMPTY_VMA_FLAGS);
- }
-diff --git a/drivers/gpu/drm/ttm/ttm_tt.c b/drivers/gpu/drm/ttm/ttm_tt.c
-index 611d20ab966d..f73a5ce87645 100644
---- a/drivers/gpu/drm/ttm/ttm_tt.c
-+++ b/drivers/gpu/drm/ttm/ttm_tt.c
-@@ -330,7 +330,7 @@ int ttm_tt_swapout(struct ttm_device *bdev, struct ttm_tt *ttm,
- 	struct page *to_page;
- 	int i, ret;
- 
--	swap_storage = shmem_file_setup("ttm swap", size, 0);
-+	swap_storage = shmem_file_setup("ttm swap", size, EMPTY_VMA_FLAGS);
- 	if (IS_ERR(swap_storage)) {
- 		pr_err("Failed allocating swap storage\n");
- 		return PTR_ERR(swap_storage);
-diff --git a/fs/xfs/scrub/xfile.c b/fs/xfs/scrub/xfile.c
-index c753c79df203..fe0584a39f16 100644
---- a/fs/xfs/scrub/xfile.c
-+++ b/fs/xfs/scrub/xfile.c
-@@ -61,7 +61,8 @@ xfile_create(
- 	if (!xf)
- 		return -ENOMEM;
- 
--	xf->file = shmem_kernel_file_setup(description, isize, VM_NORESERVE);
-+	xf->file = shmem_kernel_file_setup(description, isize,
-+					   mk_vma_flags(VMA_NORESERVE_BIT));
- 	if (IS_ERR(xf->file)) {
- 		error = PTR_ERR(xf->file);
- 		goto out_xfile;
-diff --git a/fs/xfs/xfs_buf_mem.c b/fs/xfs/xfs_buf_mem.c
-index dcbfa274e06d..fd6f0a5bc0ea 100644
---- a/fs/xfs/xfs_buf_mem.c
-+++ b/fs/xfs/xfs_buf_mem.c
-@@ -62,7 +62,7 @@ xmbuf_alloc(
- 	if (!btp)
- 		return -ENOMEM;
- 
--	file = shmem_kernel_file_setup(descr, 0, 0);
-+	file = shmem_kernel_file_setup(descr, 0, EMPTY_VMA_FLAGS);
- 	if (IS_ERR(file)) {
- 		error = PTR_ERR(file);
- 		goto out_free_btp;
-diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-index e2069b3179c4..a8273b32e041 100644
---- a/include/linux/shmem_fs.h
-+++ b/include/linux/shmem_fs.h
-@@ -102,12 +102,10 @@ static inline struct shmem_inode_info *SHMEM_I(struct inode *inode)
- extern const struct fs_parameter_spec shmem_fs_parameters[];
- extern void shmem_init(void);
- extern int shmem_init_fs_context(struct fs_context *fc);
--extern struct file *shmem_file_setup(const char *name,
--					loff_t size, unsigned long flags);
--extern struct file *shmem_kernel_file_setup(const char *name, loff_t size,
--					    unsigned long flags);
-+struct file *shmem_file_setup(const char *name, loff_t size, vma_flags_t flags);
-+struct file *shmem_kernel_file_setup(const char *name, loff_t size, vma_flags_t vma_flags);
- extern struct file *shmem_file_setup_with_mnt(struct vfsmount *mnt,
--		const char *name, loff_t size, unsigned long flags);
-+		const char *name, loff_t size, vma_flags_t flags);
- int shmem_zero_setup(struct vm_area_struct *vma);
- int shmem_zero_setup_desc(struct vm_area_desc *desc);
- extern unsigned long shmem_get_unmapped_area(struct file *, unsigned long addr,
-diff --git a/ipc/shm.c b/ipc/shm.c
-index 2c7379c4c647..e8c7d1924c50 100644
---- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -708,6 +708,7 @@ static int newseg(struct ipc_namespace *ns, struct ipc_params *params)
- 	struct shmid_kernel *shp;
- 	size_t numpages = (size + PAGE_SIZE - 1) >> PAGE_SHIFT;
- 	const bool has_no_reserve = shmflg & SHM_NORESERVE;
-+	vma_flags_t acctflag = EMPTY_VMA_FLAGS;
- 	struct file *file;
- 	char name[13];
- 
-@@ -738,7 +739,6 @@ static int newseg(struct ipc_namespace *ns, struct ipc_params *params)
- 
- 	sprintf(name, "SYSV%08x", key);
- 	if (shmflg & SHM_HUGETLB) {
--		vma_flags_t acctflag = EMPTY_VMA_FLAGS;
- 		struct hstate *hs;
- 		size_t hugesize;
- 
-@@ -755,14 +755,12 @@ static int newseg(struct ipc_namespace *ns, struct ipc_params *params)
- 		file = hugetlb_file_setup(name, hugesize, acctflag,
- 				HUGETLB_SHMFS_INODE, (shmflg >> SHM_HUGE_SHIFT) & SHM_HUGE_MASK);
- 	} else {
--		vm_flags_t acctflag = 0;
--
- 		/*
- 		 * Do not allow no accounting for OVERCOMMIT_NEVER, even
- 		 * if it's asked for.
- 		 */
- 		if  (has_no_reserve && sysctl_overcommit_memory != OVERCOMMIT_NEVER)
--			acctflag = VM_NORESERVE;
-+			vma_flags_set(&acctflag, VMA_NORESERVE_BIT);
- 		file = shmem_kernel_file_setup(name, size, acctflag);
- 	}
- 	error = PTR_ERR(file);
-diff --git a/mm/memfd.c b/mm/memfd.c
-index 5f95f639550c..f3a8950850a2 100644
---- a/mm/memfd.c
-+++ b/mm/memfd.c
-@@ -469,7 +469,7 @@ static struct file *alloc_file(const char *name, unsigned int flags)
- 					(flags >> MFD_HUGE_SHIFT) &
- 					MFD_HUGE_MASK);
- 	} else {
--		file = shmem_file_setup(name, 0, VM_NORESERVE);
-+		file = shmem_file_setup(name, 0, mk_vma_flags(VMA_NORESERVE_BIT));
- 	}
- 	if (IS_ERR(file))
- 		return file;
-diff --git a/mm/memfd_luo.c b/mm/memfd_luo.c
-index 4f6ba63b4310..a2629dcfd0f1 100644
---- a/mm/memfd_luo.c
-+++ b/mm/memfd_luo.c
-@@ -443,7 +443,7 @@ static int memfd_luo_retrieve(struct liveupdate_file_op_args *args)
- 	if (!ser)
- 		return -EINVAL;
- 
--	file = shmem_file_setup("", 0, VM_NORESERVE);
-+	file = shmem_file_setup("", 0, mk_vma_flags(VMA_NORESERVE_BIT));
- 
- 	if (IS_ERR(file)) {
- 		pr_err("failed to setup file: %pe\n", file);
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 0adde3f4df27..97a8f55c7296 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -3057,9 +3057,9 @@ static struct offset_ctx *shmem_get_offset_ctx(struct inode *inode)
- }
- 
- static struct inode *__shmem_get_inode(struct mnt_idmap *idmap,
--					     struct super_block *sb,
--					     struct inode *dir, umode_t mode,
--					     dev_t dev, unsigned long flags)
-+				       struct super_block *sb,
-+				       struct inode *dir, umode_t mode,
-+				       dev_t dev, vma_flags_t flags)
- {
- 	struct inode *inode;
- 	struct shmem_inode_info *info;
-@@ -3087,7 +3087,8 @@ static struct inode *__shmem_get_inode(struct mnt_idmap *idmap,
- 	spin_lock_init(&info->lock);
- 	atomic_set(&info->stop_eviction, 0);
- 	info->seals = F_SEAL_SEAL;
--	info->flags = (flags & VM_NORESERVE) ? SHMEM_F_NORESERVE : 0;
-+	info->flags = vma_flags_test(&flags, VMA_NORESERVE_BIT)
-+		? SHMEM_F_NORESERVE : 0;
- 	info->i_crtime = inode_get_mtime(inode);
- 	info->fsflags = (dir == NULL) ? 0 :
- 		SHMEM_I(dir)->fsflags & SHMEM_FL_INHERITED;
-@@ -3140,7 +3141,7 @@ static struct inode *__shmem_get_inode(struct mnt_idmap *idmap,
- #ifdef CONFIG_TMPFS_QUOTA
- static struct inode *shmem_get_inode(struct mnt_idmap *idmap,
- 				     struct super_block *sb, struct inode *dir,
--				     umode_t mode, dev_t dev, unsigned long flags)
-+				     umode_t mode, dev_t dev, vma_flags_t flags)
- {
- 	int err;
- 	struct inode *inode;
-@@ -3166,9 +3167,9 @@ static struct inode *shmem_get_inode(struct mnt_idmap *idmap,
- 	return ERR_PTR(err);
+-	return is_nommu_shared_mapping(desc->vm_flags);
++	return is_nommu_shared_vma_flags(&desc->vma_flags);
  }
  #else
--static inline struct inode *shmem_get_inode(struct mnt_idmap *idmap,
-+static struct inode *shmem_get_inode(struct mnt_idmap *idmap,
- 				     struct super_block *sb, struct inode *dir,
--				     umode_t mode, dev_t dev, unsigned long flags)
-+				     umode_t mode, dev_t dev, vma_flags_t flags)
+ 
+@@ -360,7 +360,7 @@ static int mmap_mem_prepare(struct vm_area_desc *desc)
+ 
+ 	desc->vm_ops = &mmap_mem_ops;
+ 
+-	/* Remap-pfn-range will mark the range VM_IO. */
++	/* Remap-pfn-range will mark the range with the I/O flag. */
+ 	mmap_action_remap_full(desc, desc->pgoff);
+ 	/* We filter remap errors to -EAGAIN. */
+ 	desc->action.error_hook = mmap_filter_error;
+@@ -520,7 +520,7 @@ static int mmap_zero_prepare(struct vm_area_desc *desc)
+ #ifndef CONFIG_MMU
+ 	return -ENOSYS;
+ #endif
+-	if (desc->vm_flags & VM_SHARED)
++	if (vma_desc_test_flags(desc, VMA_SHARED_BIT))
+ 		return shmem_zero_setup_desc(desc);
+ 
+ 	desc->action.success_hook = mmap_zero_private_success;
+diff --git a/drivers/dax/device.c b/drivers/dax/device.c
+index 22999a402e02..528e81240c4d 100644
+--- a/drivers/dax/device.c
++++ b/drivers/dax/device.c
+@@ -13,7 +13,7 @@
+ #include "dax-private.h"
+ #include "bus.h"
+ 
+-static int __check_vma(struct dev_dax *dev_dax, vm_flags_t vm_flags,
++static int __check_vma(struct dev_dax *dev_dax, vma_flags_t flags,
+ 		       unsigned long start, unsigned long end, struct file *file,
+ 		       const char *func)
  {
- 	return __shmem_get_inode(idmap, sb, dir, mode, dev, flags);
+@@ -24,7 +24,7 @@ static int __check_vma(struct dev_dax *dev_dax, vm_flags_t vm_flags,
+ 		return -ENXIO;
+ 
+ 	/* prevent private mappings from being established */
+-	if ((vm_flags & VM_MAYSHARE) != VM_MAYSHARE) {
++	if (!vma_flags_test(&flags, VMA_MAYSHARE_BIT)) {
+ 		dev_info_ratelimited(dev,
+ 				"%s: %s: fail, attempted private mapping\n",
+ 				current->comm, func);
+@@ -53,7 +53,7 @@ static int __check_vma(struct dev_dax *dev_dax, vm_flags_t vm_flags,
+ static int check_vma(struct dev_dax *dev_dax, struct vm_area_struct *vma,
+ 		     const char *func)
+ {
+-	return __check_vma(dev_dax, vma->vm_flags, vma->vm_start, vma->vm_end,
++	return __check_vma(dev_dax, vma->flags, vma->vm_start, vma->vm_end,
+ 			   vma->vm_file, func);
  }
-@@ -3875,7 +3876,8 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	if (!generic_ci_validate_strict_name(dir, &dentry->d_name))
+ 
+@@ -306,14 +306,14 @@ static int dax_mmap_prepare(struct vm_area_desc *desc)
+ 	 * fault time.
+ 	 */
+ 	id = dax_read_lock();
+-	rc = __check_vma(dev_dax, desc->vm_flags, desc->start, desc->end, filp,
++	rc = __check_vma(dev_dax, desc->vma_flags, desc->start, desc->end, filp,
+ 			 __func__);
+ 	dax_read_unlock(id);
+ 	if (rc)
+ 		return rc;
+ 
+ 	desc->vm_ops = &dax_vm_ops;
+-	desc->vm_flags |= VM_HUGEPAGE;
++	vma_desc_set_flags(desc, VMA_HUGEPAGE_BIT);
+ 	return 0;
+ }
+ 
+diff --git a/fs/aio.c b/fs/aio.c
+index 0a23a8c0717f..59b67b8da1b2 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -394,7 +394,7 @@ static const struct vm_operations_struct aio_ring_vm_ops = {
+ 
+ static int aio_ring_mmap_prepare(struct vm_area_desc *desc)
+ {
+-	desc->vm_flags |= VM_DONTEXPAND;
++	vma_desc_set_flags(desc, VMA_DONTEXPAND_BIT);
+ 	desc->vm_ops = &aio_ring_vm_ops;
+ 	return 0;
+ }
+diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+index bb13c4cb8455..e7bc29e764c6 100644
+--- a/fs/erofs/data.c
++++ b/fs/erofs/data.c
+@@ -438,11 +438,12 @@ static int erofs_file_mmap_prepare(struct vm_area_desc *desc)
+ 	if (!IS_DAX(file_inode(desc->file)))
+ 		return generic_file_readonly_mmap_prepare(desc);
+ 
+-	if ((desc->vm_flags & VM_SHARED) && (desc->vm_flags & VM_MAYWRITE))
++	if (vma_desc_test_flags(desc, VMA_SHARED_BIT) &&
++	    vma_desc_test_flags(desc, VMA_MAYWRITE_BIT))
  		return -EINVAL;
  
--	inode = shmem_get_inode(idmap, dir->i_sb, dir, mode, dev, VM_NORESERVE);
-+	inode = shmem_get_inode(idmap, dir->i_sb, dir, mode, dev,
-+				mk_vma_flags(VMA_NORESERVE_BIT));
- 	if (IS_ERR(inode))
- 		return PTR_ERR(inode);
- 
-@@ -3910,7 +3912,8 @@ shmem_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
- 	struct inode *inode;
- 	int error;
- 
--	inode = shmem_get_inode(idmap, dir->i_sb, dir, mode, 0, VM_NORESERVE);
-+	inode = shmem_get_inode(idmap, dir->i_sb, dir, mode, 0,
-+				mk_vma_flags(VMA_NORESERVE_BIT));
- 	if (IS_ERR(inode)) {
- 		error = PTR_ERR(inode);
- 		goto err_out;
-@@ -4107,7 +4110,7 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 		return -ENAMETOOLONG;
- 
- 	inode = shmem_get_inode(idmap, dir->i_sb, dir, S_IFLNK | 0777, 0,
--				VM_NORESERVE);
-+				mk_vma_flags(VMA_NORESERVE_BIT));
- 	if (IS_ERR(inode))
- 		return PTR_ERR(inode);
- 
-@@ -5108,7 +5111,8 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
- #endif /* CONFIG_TMPFS_QUOTA */
- 
- 	inode = shmem_get_inode(&nop_mnt_idmap, sb, NULL,
--				S_IFDIR | sbinfo->mode, 0, VM_NORESERVE);
-+				S_IFDIR | sbinfo->mode, 0,
-+				mk_vma_flags(VMA_NORESERVE_BIT));
- 	if (IS_ERR(inode)) {
- 		error = PTR_ERR(inode);
- 		goto failed;
-@@ -5808,7 +5812,7 @@ static inline void shmem_unacct_size(unsigned long flags, loff_t size)
- 
- static inline struct inode *shmem_get_inode(struct mnt_idmap *idmap,
- 				struct super_block *sb, struct inode *dir,
--				umode_t mode, dev_t dev, unsigned long flags)
-+				umode_t mode, dev_t dev, vma_flags_t flags)
- {
- 	struct inode *inode = ramfs_get_inode(sb, dir, mode, dev);
- 	return inode ? inode : ERR_PTR(-ENOSPC);
-@@ -5819,10 +5823,11 @@ static inline struct inode *shmem_get_inode(struct mnt_idmap *idmap,
- /* common code */
- 
- static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name,
--				       loff_t size, unsigned long vm_flags,
-+				       loff_t size, vma_flags_t flags,
- 				       unsigned int i_flags)
- {
--	unsigned long flags = (vm_flags & VM_NORESERVE) ? SHMEM_F_NORESERVE : 0;
-+	const unsigned long shmem_flags =
-+		vma_flags_test(&flags, VMA_NORESERVE_BIT) ? SHMEM_F_NORESERVE : 0;
- 	struct inode *inode;
- 	struct file *res;
- 
-@@ -5835,13 +5840,13 @@ static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name,
- 	if (is_idmapped_mnt(mnt))
- 		return ERR_PTR(-EINVAL);
- 
--	if (shmem_acct_size(flags, size))
-+	if (shmem_acct_size(shmem_flags, size))
- 		return ERR_PTR(-ENOMEM);
- 
- 	inode = shmem_get_inode(&nop_mnt_idmap, mnt->mnt_sb, NULL,
--				S_IFREG | S_IRWXUGO, 0, vm_flags);
-+				S_IFREG | S_IRWXUGO, 0, flags);
- 	if (IS_ERR(inode)) {
--		shmem_unacct_size(flags, size);
-+		shmem_unacct_size(shmem_flags, size);
- 		return ERR_CAST(inode);
- 	}
- 	inode->i_flags |= i_flags;
-@@ -5864,9 +5869,10 @@ static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name,
-  *	checks are provided at the key or shm level rather than the inode.
-  * @name: name for dentry (to be seen in /proc/<pid>/maps)
-  * @size: size to be set for the file
-- * @flags: VM_NORESERVE suppresses pre-accounting of the entire object size
-+ * @vma_flags: VMA_NORESERVE_BIT suppresses pre-accounting of the entire object size
-  */
--struct file *shmem_kernel_file_setup(const char *name, loff_t size, unsigned long flags)
-+struct file *shmem_kernel_file_setup(const char *name, loff_t size,
-+				     vma_flags_t flags)
- {
- 	return __shmem_file_setup(shm_mnt, name, size, flags, S_PRIVATE);
+ 	desc->vm_ops = &erofs_dax_vm_ops;
+-	desc->vm_flags |= VM_HUGEPAGE;
++	vma_desc_set_flags(desc, VMA_HUGEPAGE_BIT);
+ 	return 0;
  }
-@@ -5878,7 +5884,7 @@ EXPORT_SYMBOL_GPL(shmem_kernel_file_setup);
-  * @size: size to be set for the file
-  * @flags: VM_NORESERVE suppresses pre-accounting of the entire object size
-  */
--struct file *shmem_file_setup(const char *name, loff_t size, unsigned long flags)
-+struct file *shmem_file_setup(const char *name, loff_t size, vma_flags_t flags)
- {
- 	return __shmem_file_setup(shm_mnt, name, size, flags, 0);
- }
-@@ -5889,16 +5895,17 @@ EXPORT_SYMBOL_GPL(shmem_file_setup);
-  * @mnt: the tmpfs mount where the file will be created
-  * @name: name for dentry (to be seen in /proc/<pid>/maps)
-  * @size: size to be set for the file
-- * @flags: VM_NORESERVE suppresses pre-accounting of the entire object size
-+ * @flags: VMA_NORESERVE_BIT suppresses pre-accounting of the entire object size
-  */
- struct file *shmem_file_setup_with_mnt(struct vfsmount *mnt, const char *name,
--				       loff_t size, unsigned long flags)
-+				       loff_t size, vma_flags_t flags)
- {
- 	return __shmem_file_setup(mnt, name, size, flags, 0);
- }
- EXPORT_SYMBOL_GPL(shmem_file_setup_with_mnt);
- 
--static struct file *__shmem_zero_setup(unsigned long start, unsigned long end, vm_flags_t vm_flags)
-+static struct file *__shmem_zero_setup(unsigned long start, unsigned long end,
-+		vma_flags_t flags)
- {
- 	loff_t size = end - start;
- 
-@@ -5908,7 +5915,7 @@ static struct file *__shmem_zero_setup(unsigned long start, unsigned long end, v
- 	 * accessible to the user through its mapping, use S_PRIVATE flag to
- 	 * bypass file security, in the same way as shmem_kernel_file_setup().
+ #else
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 7a8b30932189..dfd5f4fe1647 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -822,13 +822,13 @@ static int ext4_file_mmap_prepare(struct vm_area_desc *desc)
+ 	 * We don't support synchronous mappings for non-DAX files and
+ 	 * for DAX files if underneath dax_device is not synchronous.
  	 */
--	return shmem_kernel_file_setup("dev/zero", size, vm_flags);
-+	return shmem_kernel_file_setup("dev/zero", size, flags);
+-	if (!daxdev_mapping_supported(desc->vm_flags, file_inode(file), dax_dev))
++	if (!daxdev_mapping_supported(desc, file_inode(file), dax_dev))
+ 		return -EOPNOTSUPP;
+ 
+ 	file_accessed(file);
+ 	if (IS_DAX(file_inode(file))) {
+ 		desc->vm_ops = &ext4_dax_vm_ops;
+-		desc->vm_flags |= VM_HUGEPAGE;
++		vma_desc_set_flags(desc, VMA_HUGEPAGE_BIT);
+ 	} else {
+ 		desc->vm_ops = &ext4_file_vm_ops;
+ 	}
+diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+index 2e7b2e566ebe..2902fc6d9a85 100644
+--- a/fs/ntfs3/file.c
++++ b/fs/ntfs3/file.c
+@@ -347,7 +347,7 @@ static int ntfs_file_mmap_prepare(struct vm_area_desc *desc)
+ 	struct inode *inode = file_inode(file);
+ 	struct ntfs_inode *ni = ntfs_i(inode);
+ 	u64 from = ((u64)desc->pgoff << PAGE_SHIFT);
+-	bool rw = desc->vm_flags & VM_WRITE;
++	const bool rw = vma_desc_test_flags(desc, VMA_WRITE_BIT);
+ 	int err;
+ 
+ 	/* Avoid any operation if inode is bad. */
+diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
+index 919f99b16834..c75aa3f419b1 100644
+--- a/fs/orangefs/file.c
++++ b/fs/orangefs/file.c
+@@ -411,8 +411,8 @@ static int orangefs_file_mmap_prepare(struct vm_area_desc *desc)
+ 		     "orangefs_file_mmap: called on %pD\n", file);
+ 
+ 	/* set the sequential readahead hint */
+-	desc->vm_flags |= VM_SEQ_READ;
+-	desc->vm_flags &= ~VM_RAND_READ;
++	vma_desc_set_flags(desc, VMA_SEQ_READ_BIT);
++	vma_desc_clear_flags(desc, VMA_RAND_READ_BIT);
+ 
+ 	file_accessed(file);
+ 	desc->vm_ops = &orangefs_file_vm_ops;
+diff --git a/fs/ramfs/file-nommu.c b/fs/ramfs/file-nommu.c
+index 77b8ca2757e0..0f8e838ece07 100644
+--- a/fs/ramfs/file-nommu.c
++++ b/fs/ramfs/file-nommu.c
+@@ -264,7 +264,7 @@ static unsigned long ramfs_nommu_get_unmapped_area(struct file *file,
+  */
+ static int ramfs_nommu_mmap_prepare(struct vm_area_desc *desc)
+ {
+-	if (!is_nommu_shared_mapping(desc->vm_flags))
++	if (!is_nommu_shared_vma_flags(&desc->vma_flags))
+ 		return -ENOSYS;
+ 
+ 	file_accessed(desc->file);
+diff --git a/fs/resctrl/pseudo_lock.c b/fs/resctrl/pseudo_lock.c
+index 0bfc13c5b96d..e81d71abfe54 100644
+--- a/fs/resctrl/pseudo_lock.c
++++ b/fs/resctrl/pseudo_lock.c
+@@ -1044,7 +1044,7 @@ static int pseudo_lock_dev_mmap_prepare(struct vm_area_desc *desc)
+ 	 * Ensure changes are carried directly to the memory being mapped,
+ 	 * do not allow copy-on-write mapping.
+ 	 */
+-	if (!(desc->vm_flags & VM_SHARED)) {
++	if (!vma_desc_test_flags(desc, VMA_SHARED_BIT)) {
+ 		mutex_unlock(&rdtgroup_mutex);
+ 		return -EINVAL;
+ 	}
+diff --git a/fs/romfs/mmap-nommu.c b/fs/romfs/mmap-nommu.c
+index 4b77c6dc4418..7c3a1a7fecee 100644
+--- a/fs/romfs/mmap-nommu.c
++++ b/fs/romfs/mmap-nommu.c
+@@ -63,7 +63,7 @@ static unsigned long romfs_get_unmapped_area(struct file *file,
+  */
+ static int romfs_mmap_prepare(struct vm_area_desc *desc)
+ {
+-	return is_nommu_shared_mapping(desc->vm_flags) ? 0 : -ENOSYS;
++	return is_nommu_shared_vma_flags(&desc->vma_flags) ? 0 : -ENOSYS;
  }
  
- /**
-@@ -5918,7 +5925,7 @@ static struct file *__shmem_zero_setup(unsigned long start, unsigned long end, v
+ static unsigned romfs_mmap_capabilities(struct file *file)
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index 7874cf745af3..1238ec018bc7 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -1974,14 +1974,14 @@ xfs_file_mmap_prepare(
+ 	 * We don't support synchronous mappings for non-DAX files and
+ 	 * for DAX files if underneath dax_device is not synchronous.
+ 	 */
+-	if (!daxdev_mapping_supported(desc->vm_flags, file_inode(file),
++	if (!daxdev_mapping_supported(desc, file_inode(file),
+ 				      target->bt_daxdev))
+ 		return -EOPNOTSUPP;
+ 
+ 	file_accessed(file);
+ 	desc->vm_ops = &xfs_file_vm_ops;
+ 	if (IS_DAX(inode))
+-		desc->vm_flags |= VM_HUGEPAGE;
++		vma_desc_set_flags(desc, VMA_HUGEPAGE_BIT);
+ 	return 0;
+ }
+ 
+diff --git a/fs/zonefs/file.c b/fs/zonefs/file.c
+index c1e5e30e90a0..8a7161fc49e5 100644
+--- a/fs/zonefs/file.c
++++ b/fs/zonefs/file.c
+@@ -333,7 +333,8 @@ static int zonefs_file_mmap_prepare(struct vm_area_desc *desc)
+ 	 * ordering between msync() and page cache writeback.
+ 	 */
+ 	if (zonefs_inode_is_seq(file_inode(file)) &&
+-	    (desc->vm_flags & VM_SHARED) && (desc->vm_flags & VM_MAYWRITE))
++	    vma_desc_test_flags(desc, VMA_SHARED_BIT) &&
++	    vma_desc_test_flags(desc, VMA_MAYWRITE_BIT))
+ 		return -EINVAL;
+ 
+ 	file_accessed(file);
+diff --git a/include/linux/dax.h b/include/linux/dax.h
+index 9d624f4d9df6..bf103f317cac 100644
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -65,11 +65,11 @@ size_t dax_recovery_write(struct dax_device *dax_dev, pgoff_t pgoff,
+ /*
+  * Check if given mapping is supported by the file / underlying device.
   */
- int shmem_zero_setup(struct vm_area_struct *vma)
+-static inline bool daxdev_mapping_supported(vm_flags_t vm_flags,
++static inline bool daxdev_mapping_supported(const struct vm_area_desc *desc,
+ 					    const struct inode *inode,
+ 					    struct dax_device *dax_dev)
  {
--	struct file *file = __shmem_zero_setup(vma->vm_start, vma->vm_end, vma->vm_flags);
-+	struct file *file = __shmem_zero_setup(vma->vm_start, vma->vm_end, vma->flags);
- 
- 	if (IS_ERR(file))
- 		return PTR_ERR(file);
-@@ -5939,7 +5946,7 @@ int shmem_zero_setup(struct vm_area_struct *vma)
+-	if (!(vm_flags & VM_SYNC))
++	if (!vma_desc_test_flags(desc, VMA_SYNC_BIT))
+ 		return true;
+ 	if (!IS_DAX(inode))
+ 		return false;
+@@ -111,11 +111,11 @@ static inline void set_dax_nomc(struct dax_device *dax_dev)
+ static inline void set_dax_synchronous(struct dax_device *dax_dev)
+ {
+ }
+-static inline bool daxdev_mapping_supported(vm_flags_t vm_flags,
++static inline bool daxdev_mapping_supported(const struct vm_area_desc *desc,
+ 					    const struct inode *inode,
+ 					    struct dax_device *dax_dev)
+ {
+-	return !(vm_flags & VM_SYNC);
++	return !vma_desc_test_flags(desc, VMA_SYNC_BIT);
+ }
+ static inline size_t dax_recovery_write(struct dax_device *dax_dev,
+ 		pgoff_t pgoff, void *addr, size_t bytes, struct iov_iter *i)
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index fd93317193e0..e31f72a021ef 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -550,17 +550,18 @@ enum {
+ /*
+  * Physically remapped pages are special. Tell the
+  * rest of the world about it:
+- *   VM_IO tells people not to look at these pages
++ *   IO tells people not to look at these pages
+  *	(accesses can have side effects).
+- *   VM_PFNMAP tells the core MM that the base pages are just
++ *   PFNMAP tells the core MM that the base pages are just
+  *	raw PFN mappings, and do not have a "struct page" associated
+  *	with them.
+- *   VM_DONTEXPAND
++ *   DONTEXPAND
+  *      Disable vma merging and expanding with mremap().
+- *   VM_DONTDUMP
++ *   DONTDUMP
+  *      Omit vma from core dump, even when VM_IO turned off.
   */
- int shmem_zero_setup_desc(struct vm_area_desc *desc)
+-#define VM_REMAP_FLAGS (VM_IO | VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP)
++#define VMA_REMAP_FLAGS mk_vma_flags(VMA_IO_BIT, VMA_PFNMAP_BIT,	\
++				     VMA_DONTEXPAND_BIT, VMA_DONTDUMP_BIT)
+ 
+ /* This mask prevents VMA from being scanned with khugepaged */
+ #define VM_NO_KHUGEPAGED (VM_SPECIAL | VM_HUGETLB)
+@@ -1925,6 +1926,14 @@ static inline bool is_cow_mapping(vm_flags_t flags)
+ 	return (flags & (VM_SHARED | VM_MAYWRITE)) == VM_MAYWRITE;
+ }
+ 
++static inline bool vma_desc_is_cow_mapping(struct vm_area_desc *desc)
++{
++	const vma_flags_t *flags = &desc->vma_flags;
++
++	return vma_flags_test(flags, VMA_MAYWRITE_BIT) &&
++		!vma_flags_test(flags, VMA_SHARED_BIT);
++}
++
+ #ifndef CONFIG_MMU
+ static inline bool is_nommu_shared_mapping(vm_flags_t flags)
  {
--	struct file *file = __shmem_zero_setup(desc->start, desc->end, desc->vm_flags);
-+	struct file *file = __shmem_zero_setup(desc->start, desc->end, desc->vma_flags);
+@@ -1938,6 +1947,11 @@ static inline bool is_nommu_shared_mapping(vm_flags_t flags)
+ 	 */
+ 	return flags & (VM_MAYSHARE | VM_MAYOVERLAY);
+ }
++
++static inline bool is_nommu_shared_vma_flags(const vma_flags_t *flags)
++{
++	return vma_flags_test(flags, VMA_MAYSHARE_BIT, VMA_MAYOVERLAY_BIT);
++}
+ #endif
  
- 	if (IS_ERR(file))
- 		return PTR_ERR(file);
-diff --git a/security/keys/big_key.c b/security/keys/big_key.c
-index d46862ab90d6..268f702df380 100644
---- a/security/keys/big_key.c
-+++ b/security/keys/big_key.c
-@@ -103,7 +103,7 @@ int big_key_preparse(struct key_preparsed_payload *prep)
- 					 0, enckey);
+ #if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
+diff --git a/kernel/relay.c b/kernel/relay.c
+index e36f6b926f7f..1c8e88259df0 100644
+--- a/kernel/relay.c
++++ b/kernel/relay.c
+@@ -92,7 +92,7 @@ static int relay_mmap_prepare_buf(struct rchan_buf *buf,
+ 		return -EINVAL;
  
- 		/* save aligned data to file */
--		file = shmem_kernel_file_setup("", enclen, 0);
-+		file = shmem_kernel_file_setup("", enclen, EMPTY_VMA_FLAGS);
- 		if (IS_ERR(file)) {
- 			ret = PTR_ERR(file);
- 			goto err_enckey;
+ 	desc->vm_ops = &relay_file_mmap_ops;
+-	desc->vm_flags |= VM_DONTEXPAND;
++	vma_desc_set_flags(desc, VMA_DONTEXPAND_BIT);
+ 	desc->private_data = buf;
+ 
+ 	return 0;
+diff --git a/mm/memory.c b/mm/memory.c
+index 3852075ea62d..ad78cb7e64ec 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2955,7 +2955,7 @@ static inline int remap_p4d_range(struct mm_struct *mm, pgd_t *pgd,
+ 	return 0;
+ }
+ 
+-static int get_remap_pgoff(vm_flags_t vm_flags, unsigned long addr,
++static int get_remap_pgoff(bool is_cow, unsigned long addr,
+ 		unsigned long end, unsigned long vm_start, unsigned long vm_end,
+ 		unsigned long pfn, pgoff_t *vm_pgoff_p)
+ {
+@@ -2965,7 +2965,7 @@ static int get_remap_pgoff(vm_flags_t vm_flags, unsigned long addr,
+ 	 * un-COW'ed pages by matching them up with "vma->vm_pgoff".
+ 	 * See vm_normal_page() for details.
+ 	 */
+-	if (is_cow_mapping(vm_flags)) {
++	if (is_cow) {
+ 		if (addr != vm_start || end != vm_end)
+ 			return -EINVAL;
+ 		*vm_pgoff_p = pfn;
+@@ -2986,7 +2986,7 @@ static int remap_pfn_range_internal(struct vm_area_struct *vma, unsigned long ad
+ 	if (WARN_ON_ONCE(!PAGE_ALIGNED(addr)))
+ 		return -EINVAL;
+ 
+-	VM_WARN_ON_ONCE((vma->vm_flags & VM_REMAP_FLAGS) != VM_REMAP_FLAGS);
++	VM_WARN_ON_ONCE(!vma_test_all_flags_mask(vma, VMA_REMAP_FLAGS));
+ 
+ 	BUG_ON(addr >= end);
+ 	pfn -= addr >> PAGE_SHIFT;
+@@ -3110,9 +3110,9 @@ void remap_pfn_range_prepare(struct vm_area_desc *desc, unsigned long pfn)
+ 	 * check it again on complete and will fail there if specified addr is
+ 	 * invalid.
+ 	 */
+-	get_remap_pgoff(desc->vm_flags, desc->start, desc->end,
++	get_remap_pgoff(vma_desc_is_cow_mapping(desc), desc->start, desc->end,
+ 			desc->start, desc->end, pfn, &desc->pgoff);
+-	desc->vm_flags |= VM_REMAP_FLAGS;
++	vma_desc_set_flags_mask(desc, VMA_REMAP_FLAGS);
+ }
+ 
+ static int remap_pfn_range_prepare_vma(struct vm_area_struct *vma, unsigned long addr,
+@@ -3121,13 +3121,12 @@ static int remap_pfn_range_prepare_vma(struct vm_area_struct *vma, unsigned long
+ 	unsigned long end = addr + PAGE_ALIGN(size);
+ 	int err;
+ 
+-	err = get_remap_pgoff(vma->vm_flags, addr, end,
+-			      vma->vm_start, vma->vm_end,
+-			      pfn, &vma->vm_pgoff);
++	err = get_remap_pgoff(is_cow_mapping(vma->vm_flags), addr, end,
++			      vma->vm_start, vma->vm_end, pfn, &vma->vm_pgoff);
+ 	if (err)
+ 		return err;
+ 
+-	vm_flags_set(vma, VM_REMAP_FLAGS);
++	vma_set_flags_mask(vma, VMA_REMAP_FLAGS);
+ 	return 0;
+ }
+ 
 -- 
 2.52.0
 
