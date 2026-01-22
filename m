@@ -1,100 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-75025-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75026-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +BJiGjgYcmksawAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75025-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 13:29:44 +0100
+	id eNy5GScfcmmPdQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75026-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 13:59:19 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B696266A31
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 13:29:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30BF766F4D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 13:59:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A7C47727273
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 11:33:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 22AC3741F59
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 11:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3627436BCD6;
-	Thu, 22 Jan 2026 11:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02BD389DF8;
+	Thu, 22 Jan 2026 11:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="bapPuMwV";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IfqGhGml"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nljiXZaw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C2FDDAB;
-	Thu, 22 Jan 2026 11:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1436F3624AF
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 11:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769081529; cv=none; b=F/UZQtn+vVRfSKrKPlgossgRPnbgfSDcY9dB1sQjBH1mqNL47sL+kZfKbdFyp76THM+mweMuVWGE8zFemsU+gVWr1uK6nGTDQ+8j3PIxd++JBOdqdZVqU46Q7VdytAm3HIqZ1pKlVftRQOWEMtq+Xj694jlotWlE+gYtXEdmJTA=
+	t=1769082428; cv=none; b=MJJPsE87PhAv8+uFEpJbFutoA5430zLnc8P1flGDJLLoBbBU8dR9WIV4zsOoJumjqnL4eJqzwfr/QyM9j57MUTb9HIpr+u3R6julYLsNZmxbJ4WpDOhKTkfAKsn8u19OZ20T9tyssxn+7fFUg4C82KAXTByurT8dxD4BG3MbnDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769081529; c=relaxed/simple;
-	bh=CXjq3wyQsuf0qKEHmGlNxyWRW8GC3zPk3bcbpB/jBrI=;
+	s=arc-20240116; t=1769082428; c=relaxed/simple;
+	bh=L23kP1MKIlxxrA/vTdHehDXUOocxzJrIy3gu+khhV+g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KQCScpr0RnRkJaYTlcP21OFnsc441g226W6btozpxdjKsKtXQbAaqykw+ufmIwgs9gG0474gAIJBH/ZUuTr09uI79H1qAf5Xxq+IyKufCtuhF5I1HN6j9tL892nKAbBMSDU+6VqqjqfXdkC/+yfOhJ0w3c9bOdYGZJHs9U9hA/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=bapPuMwV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IfqGhGml; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id D20E0140014F;
-	Thu, 22 Jan 2026 06:32:05 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-08.internal (MEProxy); Thu, 22 Jan 2026 06:32:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1769081525;
-	 x=1769167925; bh=ubb7SX3ZCnFUyaHfqgbVjvcennbM4Ol785JrjoTlb8c=; b=
-	bapPuMwV3nQVbsCQjKxFwplWTkY8H7Fknla2dx6HsiTOFFDLHCxbHHz7+g9G3pph
-	GR/xrUGK7lGYzTVkn9vtBRHd1OnA4Tr8FG9TfZcCqc9RbK2Rey7iqN1OjSsTNUcM
-	kDj991jaaYT8LGgbJ+OEG4RM0niE8QduCsBCjFSNs8cBaMATu78XjsdM3dBJA8q9
-	03D5j7sGwuNwscziolg0bO2nXcdLSbILQoOqctfH7g9J+HDiuUVwwuW3o2A3Psuo
-	WQ6NYA9gHW6I20JlzAD6ZDzGGMFqXD6kxd9ga5JpRq8viwbBE/nCOmD2BdA/Ki8m
-	gbBSP4ZrK+XB/HelWZxvHw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1769081525; x=
-	1769167925; bh=ubb7SX3ZCnFUyaHfqgbVjvcennbM4Ol785JrjoTlb8c=; b=I
-	fqGhGmlASfjSrYdvzZAVbWw9HtNxkdHC1PGgzvh8jOxma/P7am4tDudGnU+xCHs0
-	kM3+HLoqLJqOIzNgZSnLzVxMXe9lOAspxPBUh67Wa2VEUNVsvQnhOR4t7oSXrU7C
-	xPGbsrW5pswGMzz3GS17vJzKN2MOLjB9Pzv33aGyg5nUyhI5smP0AXtlNyuJL6bX
-	lQ2xUGuLVV2BBt7q3gA364c8uIZM6lRx9IPmLISJbibYuDJLMd7c09iMygzJoqrt
-	oiZbHUw5TH14R4C0ub6mM60gCnBaxPLPSr3iAfMRpNCxvr/sjyGGGEvHo7I9RZWm
-	TfqJITopAXsPSSKTqHHyg==
-X-ME-Sender: <xms:tQpyaVacF7QSdSaLs7hO_Iri6W5W5fp48_yWRZF-8BZF8wX7QK5HTw>
-    <xme:tQpyad8RecrjiWSVL5wOa9UKbQ0r60hqWQAftqE9XNCOlFuiq8uWMGWFekfkQ-6nu
-    fDMxSjpmkmxACN4gA6yj3jJnGLHM9uDkLmdSNmP7njDT4Yr7hBS>
-X-ME-Received: <xmr:tQpyaXOMuR1DtSnwLENL3QWnL7lawENO2o_IRFft-Qg2bpT6TQFbjecAqXIgE0NDfZ7pFpOE2JPts_bhFeb7fGDS76qbTGz4nWryXR6w1YKd9gMRWw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddugeeitdehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghrnhgu
-    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
-    htthgvrhhnpeehhfejueejleehtdehteefvdfgtdelffeuudejhfehgedufedvhfehueev
-    udeugeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    gsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgtphhtthhopeduvddpmhhouggv
-    pehsmhhtphhouhhtpdhrtghpthhtoheplhhuihhssehighgrlhhirgdrtghomhdprhgtph
-    htthhopehhohhrshhtsegsihhrthhhvghlmhgvrhdruggvpdhrtghpthhtohepsghstghh
-    uhgsvghrthesuggunhdrtghomhdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilh
-    drtghomhdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthht
-    ohepughjfihonhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehktghhvghnseguug
-    hnrdgtohhmpdhrtghpthhtohephhgsihhrthhhvghlmhgvrhesuggunhdrtghomhdprhgt
-    phhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:tQpyaaHwMrsGEflv_dYxx5IrEUYuRo6hDar5lbLu7QMirYJ7wdFeOg>
-    <xmx:tQpyaVwo5rRSBnRYAreq8Q0fPiE_9uc3nCk3vavcQfALfERBPQ7Ayw>
-    <xmx:tQpyabpVfB1arJ1kt8KGENCLS77yAGKrsEdcgFDotrrz2AAEwpH2Yg>
-    <xmx:tQpyabm9XRN0oPhPvaWHNJ7TCEF-ugcvrB5oiM1scTi0Yl7uz4kO0Q>
-    <xmx:tQpyaXQkZJE1o3WCcPOg-mdmDC5Ew-MaJbSGmoDQIUujZkZtOmMmAebA>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 22 Jan 2026 06:32:03 -0500 (EST)
-Message-ID: <ce468d08-4bdf-487e-9dc3-8b71236a74cc@bsbernd.com>
-Date: Thu, 22 Jan 2026 12:32:03 +0100
+	 In-Reply-To:Content-Type; b=cC+LLKaGWsBogB799VBkXm8oWXIhFVx7zRjGoIjOE9fhXHz3zCkErysCRsQDCHxPMNfbaVg4/dRYdwAvOKLpoEtXXDKdVvExSUPXBSddzIJb2Lloeo4A1X3zZGcRNswqcMOGCCnEHFMe3iViVT+KViTuQouMZd+WS/zSGZ617kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nljiXZaw; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-4359a302794so574514f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 03:47:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769082423; x=1769687223; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/c04FssyRzWAvFZbUZZ5iSwy4KaO1b4NaDQ9GK8JLME=;
+        b=nljiXZawh5QxydA4lbo89SOm6Z5RduUhSqUBtra9we1Svfex2VEIf860MZoiYSNwow
+         Q7dTem3yaRi1Pm57q/7He6mqWTLV55hH67oAbdm8VybY0K95d/umdKxgRfgJjj/ReFQd
+         peOUFEAhJji17Q4l5c9oqDNwEjfRdHuPZ7GJ1rTO6/qCPaCDnmpnF5aQM0HtHerG4Ljv
+         ccfpfM37hGbhRqBlN+54iBu05VAD1kreB0csgIgVM+xW3c6rOhHZScVQzYMjU6silAOx
+         xWBcUQOsAmsQtVBgbhykOCRtAhr2ioAbGwk207natgOb0+EZLQlj4GIQ94Pjf+6/MvxK
+         ccCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769082423; x=1769687223;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/c04FssyRzWAvFZbUZZ5iSwy4KaO1b4NaDQ9GK8JLME=;
+        b=VI0E9DY63H3bCYToe6Qu7cFR4famDzg79fZP8JFPjVdqKHnkR8S2JATjSHtXecy70E
+         tfR44er6K+VPSQkJGSRHMSN8zuJ0wtYdN0vYz00OiFINepXhHkUeZVuFu4Q5uQXJjZSD
+         3hg031jKZe2SWSXCgE3LHn/UPtGAc1xw51CuE1X8jtJbZHthUcdd6PF/rrSVpnrXE4od
+         D8qDgFyG/hYLFXQQ5bMS434trtF1YWygNMRKXsp2HU7wm+B9GHZHXM4X04EzAzmctSg4
+         4+TFMrHGdLO85uBU1OmlGeyWtrQQ+NCobIqlpKacl5Sl5W2LxTcJZ/cWvVf3qlH7hkSZ
+         Y+MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJlPCh6OaeRh1V5+SfzY0oUk7TM5VWpGDPb2AsLO7/INa465rDT6goElnHnRwRFIjom1oVkFybIonQsUrY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4VyQmcd+pEYjqT0YVngZuPEgk1H2zy4vo9D5EypntZThUHWzm
+	BRJ+jOhCTo9kY5T7oa4LtscXDTekhzdBfQLFe02h8yeQ5XepKb4Vs+Dl
+X-Gm-Gg: AZuq6aLUxcZ3YkD2o79TIHJrKD5OscnrQljQ8j4/Wnub8oY+NP3ewk/IbpwI2DfLXKb
+	fpXrlj/dCI6kJN61q/ETlXAtCDu0CUfIqB2+SS1nb1p5t/Jm5vhKkGMdY16Ov5U6DtXFE0nZcoH
+	7oYRnj7+3bZl1d/ba25OBWkmjOTw4g8GVNNHUSQBc9BBQVU0uTHmk5ic0dCzbNZ4VCuOiClX324
+	mOj8ftRh0dLm54AgL6AUlnIO5yej4pduPPZ37y+W9opTVRnLZQSOPHtt78c0U6aLLDDtihQ/8+P
+	SWnaJ0b64VKxt3FdfxZuxLRFpBsD128B7KyKt9GaZeBV94u3n/umD6vjsORL3mXzkeSWEfN/NRy
+	AgybkVQ5DjPuQ4I5tJBYVM1V5yMFENIKyRTRQysyldqyrJHC0ppM9Kz46ZoxhZQcpuU5CvaQf5h
+	dIkQrpiglD1v4R8cdggzoPvirROiyGskgierJokG8TCppTjNhZzPcS1jGIIqOdtici1UBGsipUn
+	zw8JASuyIg2Qnl0xdg/gRPTjWMhSl59wHP8rV/SjQf/D4c=
+X-Received: by 2002:a05:6000:144b:b0:435:95ce:836e with SMTP id ffacd0b85a97d-43595ce838amr11818024f8f.55.1769082423045;
+        Thu, 22 Jan 2026 03:47:03 -0800 (PST)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:46c4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4358f138e26sm19447555f8f.17.2026.01.22.03.47.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Jan 2026 03:47:02 -0800 (PST)
+Message-ID: <d3389449-f344-48ae-ab13-697e01d1cc46@gmail.com>
+Date: Thu, 22 Jan 2026 11:46:59 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -102,137 +89,139 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 4/6] fuse: implementation of the FUSE_LOOKUP_HANDLE
- operation
-To: Luis Henriques <luis@igalia.com>, Horst Birthelmer <horst@birthelmer.de>
-Cc: Bernd Schubert <bschubert@ddn.com>, Amir Goldstein <amir73il@gmail.com>,
- Miklos Szeredi <miklos@szeredi.hu>, "Darrick J. Wong" <djwong@kernel.org>,
- Kevin Chen <kchen@ddn.com>, Horst Birthelmer <hbirthelmer@ddn.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Matt Harvey <mharvey@jumptrading.com>,
- "kernel-dev@igalia.com" <kernel-dev@igalia.com>
-References: <aXEVjYKI6qDpf-VW@fedora>
- <03ea69f4-f77b-4fe7-9a7c-5c5ca900e4bf@bsbernd.com> <aXEbnMNbE4k6WI7j@fedora>
- <5d022dc0-8423-4af2-918f-81ad04d50678@ddn.com> <aXEhTi2-8DRZKb_I@fedora>
- <e761b39b-79c7-40d4-947e-a209fcf2bb6b@ddn.com> <aXEjX7MD4GzGRvdE@fedora>
- <87pl726kko.fsf@wotan.olymp> <aXH48-QCxUU4TlNk@fedora.fritz.box>
- <87ldhp7wbf.fsf@wotan.olymp> <aXICIREIL46NcaK8@fedora.fritz.box>
- <87h5sd7uu5.fsf@wotan.olymp>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <87h5sd7uu5.fsf@wotan.olymp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [RFC v2 05/11] block: add infra to handle dmabuf tokens
+To: Nitesh Shetty <nj.shetty@samsung.com>
+Cc: linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+ Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org
+References: <cover.1763725387.git.asml.silence@gmail.com>
+ <51cddd97b31d80ec8842a88b9f3c9881419e8a7b.1763725387.git.asml.silence@gmail.com>
+ <CGME20260121074135epcas5p2eeb621d6acc9b4b73e6d45f5a40c078d@epcas5p2.samsung.com>
+ <20260121073724.dja6wyqyf5apkdcx@green245.gost>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20260121073724.dja6wyqyf5apkdcx@green245.gost>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.96 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[bsbernd.com:s=fm1,messagingengine.com:s=fm2];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[ddn.com,gmail.com,szeredi.hu,kernel.org,vger.kernel.org,jumptrading.com,igalia.com];
-	DMARC_POLICY_ALLOW(0.00)[bsbernd.com,none];
-	DKIM_TRACE(0.00)[bsbernd.com:+,messagingengine.com:+];
-	TAGGED_FROM(0.00)[bounces-75025-lists,linux-fsdevel=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75026-lists,linux-fsdevel=lfdr.de];
+	DMARC_POLICY_ALLOW(0.00)[gmail.com,none];
 	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:7979, ipnet:213.196.21.0/24, country:US];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[bernd@bsbernd.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	ASN(0.00)[asn:7979, ipnet:213.196.21.0/24, country:US];
 	TO_DN_SOME(0.00)[];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:helo,ams.mirrors.kernel.org:rdns,bsbernd.com:mid,bsbernd.com:dkim,messagingengine.com:dkim]
-X-Rspamd-Queue-Id: B696266A31
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:helo,ams.mirrors.kernel.org:rdns]
+X-Rspamd-Queue-Id: 30BF766F4D
 X-Rspamd-Action: no action
 
-
-
-On 1/22/26 12:25, Luis Henriques wrote:
-> On Thu, Jan 22 2026, Horst Birthelmer wrote:
-> 
->> On Thu, Jan 22, 2026 at 10:53:24AM +0000, Luis Henriques wrote:
->>> On Thu, Jan 22 2026, Horst Birthelmer wrote:
->> ...
->>>>>
->>>>> So, to summarise:
->>>>>
->>>>> In the end, even FUSE servers that do support compound operations will
->>>>> need to check the operations within a request, and act accordingly.  There
->>>>> will be new combinations that will not be possible to be handle by servers
->>>>> in a generic way: they'll need to return -EOPNOTSUPP if the combination of
->>>>> operations is unknown.  libfuse may then be able to support the
->>>>> serialisation of that specific operation compound.  But that'll require
->>>>> flagging the request as "serialisable".
->>>>
->>>> OK, so this boils down to libfuse trying a bit harder than it does at the moment.
->>>> After it calls the compound handler it should check for EOPNOTSUP and the flag
->>>> and then execute the single requests itself.
->>>>
->>>> At the moment the fuse server implementation itself has to do this.
->>>> Actually the patched passthrough_hp does exactly that.
->>>>
->>>> I think I can live with that.
->>>
->>> Well, I was trying to suggest to have, at least for now, as little changes
->>> to libfuse as possible.  Something like this:
->>>
->>> 	if (req->se->op.compound)
->>> 		req->se->op.compound(req, arg->count, arg->flags, in_payload);
->>> 	else if (arg->flags & FUSE_COMPOUND_SERIALISABLE)
->>> 		fuse_execute_compound_sequential(req);
->>> 	else
->>> 		fuse_reply_err(req, ENOSYS);
->>>
->>> Eventually, support for specific non-serialisable operations could be
->>> added, but that would have to be done for each individual compound.
->>> Obviously, the server itself could also try to serialise the individual
->>> operations in the compound handle, and use the same helper.
->>>
+On 1/21/26 07:37, Nitesh Shetty wrote:
+> On 23/11/25 10:51PM, Pavel Begunkov wrote:
+>> Add blk-mq infrastructure to handle dmabuf tokens. There are two main
+>> objects. The first is struct blk_mq_dma_token, which is an extension of
+>> struct dma_token and passed in an iterator. The second is struct
+>> blk_mq_dma_map, which keeps the actual mapping and unlike the token, can
+>> be ejected (e.g. by move_notify) and recreated.
 >>
->> Is there a specific reason why you want that change in lowlevel.c?
->> The patched passthrouhg_hp does this implicitly, actually without the flag.
->> It handles what it knows as 'atomic' compound and uses the helper for the rest.
->> If you don't want to handle specific combinations, just check for them 
->> and return an error.
+>> The token keeps an rcu protected pointer to the mapping, so when it
+>> resolves a token into a mapping to pass it to a request, it'll do an rcu
+>> protected lookup and get a percpu reference to the mapping.
+>>
+>> If there is no current mapping attached to a token, it'll need to be
+>> created by calling the driver (e.g. nvme) via a new callback. It
+>> requires waiting, thefore can't be done for nowait requests and couldn't
+>> happen deeper in the stack, e.g. during nvme request submission.
+>>
+>> The structure split is needed because move_notify can request to
+>> invalidate the dma mapping at any moment, and we need a way to
+>> concurrently remove it and wait for the inflight requests using the
+>> previous mapping to complete.
+>>
+>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>> ---
+>> block/Makefile                   |   1 +
+>> block/bdev.c                     |  14 ++
+>> block/blk-mq-dma-token.c         | 236 +++++++++++++++++++++++++++++++
+>> block/blk-mq.c                   |  20 +++
+>> block/fops.c                     |   1 +
+>> include/linux/blk-mq-dma-token.h |  60 ++++++++
+>> include/linux/blk-mq.h           |  21 +++
+>> include/linux/blkdev.h           |   3 +
+>> 8 files changed, 356 insertions(+)
+>> create mode 100644 block/blk-mq-dma-token.c
+>> create mode 100644 include/linux/blk-mq-dma-token.h
+>>
+>> diff --git a/block/Makefile b/block/Makefile
+>> index c65f4da93702..0190e5aa9f00 100644
+...
+>> diff --git a/block/blk-mq.c b/block/blk-mq.c
+>> index f2650c97a75e..1ff3a7e3191b 100644
+>> --- a/block/blk-mq.c
+>> +++ b/block/blk-mq.c
+>> @@ -29,6 +29,7 @@
+>> #include <linux/blk-crypto.h>
+>> #include <linux/part_stat.h>
+>> #include <linux/sched/isolation.h>
+>> +#include <linux/blk-mq-dma-token.h>
+>>
+>> #include <trace/events/block.h>
+>>
+>> @@ -439,6 +440,7 @@ static struct request *blk_mq_rq_ctx_init(struct blk_mq_alloc_data *data,
+>>     rq->nr_integrity_segments = 0;
+>>     rq->end_io = NULL;
+>>     rq->end_io_data = NULL;
+>> +    rq->dma_map = NULL;
+>>
+>>     blk_crypto_rq_set_defaults(rq);
+>>     INIT_LIST_HEAD(&rq->queuelist);
+>> @@ -794,6 +796,7 @@ static void __blk_mq_free_request(struct request *rq)
+>>     blk_pm_mark_last_busy(rq);
+>>     rq->mq_hctx = NULL;
+>>
+>> +    blk_rq_drop_dma_map(rq);
+> blk_rq_drop_dma_map(rq), needs to be added in blk_mq_end_request_batch
+> as well[1], otherwise I am seeing we leave with increased reference
+> count in dma-buf exporter side.
 > 
-> Sorry, I have the feeling that I'm starting to bikeshed a bit...
+> Thanks,
+> Nitesh
 > 
-> Anyway, I saw the passthrough_hp code, and that's why I thought it would
-> be easy to just move that into the lowlevel API.  I assumed this would be
-> a very small change to your current code that would also allow to safely
-> handle "serialisable" requests in servers that do not have the
-> ->compound() handler.  Obviously, the *big* difference from your code
-> would be that the kernel would need to flag the non-serialisable requests,
-> so that user-space would know whether they could handle requests
-> individually or not.
+> [1]
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -1214,6 +1214,7 @@ void blk_mq_end_request_batch(struct io_comp_batch *iob)
 > 
-> And another thought I just had (more bikeshedding!) is that if the server
-> will be allowed to call fuse_execute_compound_sequential(), then this
-> function would also need to check that flag and return an error if the
-> request can't be serialisable.
-> 
-> Anyway, I'll stop bothering you now :-)  These comments should probably
-> have been done in the libfuse PR anyway.
+>                   blk_crypto_free_request(rq);
+>                   blk_pm_mark_last_busy(rq);
+> +               blk_rq_drop_dma_map(rq);
 
-Kind of, we have an organization github account as well - the PRs went
-through that first. We need to add more documentation why it cannot
-be done from fuse directly in all cases. Well, the kernel could indeed
-add the flags when it is safe. Though the first user of compounds is
-open+getattr and there it should not be handled automatically, at
-least not without introducing change behavior.
+Ah yes, thanks Nitesh
 
+-- 
+Pavel Begunkov
 
-Thanks,
-Bernd
 
