@@ -1,351 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-74940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CGdqDSJpcWmaGgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 01:02:42 +0100
+	id OFM7KsVpcWmaGgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 01:05:25 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF20C5FC70
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 01:02:41 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 524185FCAC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 01:05:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3EAA8361854
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 00:02:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A0FA736409A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 00:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EAB941A8F;
-	Thu, 22 Jan 2026 00:02:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC06117A31E;
+	Thu, 22 Jan 2026 00:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gPeaZ5vw"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFv6mwxg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3744B134CF;
-	Thu, 22 Jan 2026 00:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA5542AB7
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 00:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769040149; cv=none; b=uxTerfuHfMtvViIpqdbXGhVpF+eCS0qELhPNzIz3N3pBxLr4fiZB0j3WbqbEMoAH9akFVkjL88yp0HNR1pU6rbEX6HtKoTLdSZcu94pqA/W3/5sD2IwGz3QO7vo/LCUL+ojnUSdPYhL2hqKlDMc/6IqwA3JIMaKuUcCNXGOu+0A=
+	t=1769040313; cv=none; b=HTh/GhxR9KrIwMCzQVh5pjnw+2M0moeqkA6dri8cSK+IMkMRwOk9E5VPUlNCCUXeJL4IhomnPaL+kUw3jCMJA60TSMgmOwr3vGFHBlrB3dTI2RzaQsXNZTTtYDyDy6+4HKLCUrow2UQPYDUy+2H2blKrSDQcKt5CMa0xXW9HLh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769040149; c=relaxed/simple;
-	bh=v9yUpPExeStVdXlwSO33v5TebMa5i5t5tpXfbKmVIuI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a+3xRj/EZgDTSit3T/eXpDDzXB8nOEgZRFmnv5UKdvjt38bqwsHnTZ02ShdJYfvFYxwaHPKamspVYS7l6APIc3cZkQnJSitJNerqUCq9+Mey8/+in9VRwD7qVfSZQNql96unZI7HTRFN4xd2SmCpuMTdl2gYu/cXlF9Mrhiyf1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gPeaZ5vw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5346EC4CEF1;
-	Thu, 22 Jan 2026 00:02:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769040148;
-	bh=v9yUpPExeStVdXlwSO33v5TebMa5i5t5tpXfbKmVIuI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gPeaZ5vwUlWI7GKbpEB+s+tjQeARWAI3/JGhUkQ6XqD5lg02i4e1VmzEj8OCoIGGK
-	 G6lDbP3F2Ms3JZrlUt/9aCPT9r3gHuJCmxxdl7GnSYeyASE3KBLChjIGmcRxTFqJRO
-	 QNB+8kVryYmo2CqmqfrSfsK5bRFTFbSySVlbSW2NDm6QAd+X0VqCIncpZPrT4ecXw1
-	 xytZ3UIc0WmWWFWquxGRMF1l0QUFs1TlAadBcK8zcoIZvGw/Kc1ADxewaxJrg/yJJk
-	 cQlql42ka8+jD2z8HS8ny6fyhsYXWsZB6in1/FJVGQJurGdVwOedyHJUdN5sxbcZgg
-	 YzFJ8heEwJJFQ==
-Date: Wed, 21 Jan 2026 16:02:27 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, bernd@bsbernd.com, neal@gompa.dev,
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 03/31] fuse: make debugging configurable at runtime
-Message-ID: <20260122000227.GK5966@frogsfrogsfrogs>
-References: <176169810144.1424854.11439355400009006946.stgit@frogsfrogsfrogs>
- <176169810415.1424854.10373764649459618752.stgit@frogsfrogsfrogs>
- <CAJnrk1ZUbuAER90xbagWnBZ9dWKkdUAqVRa1vmZ5BtL_o=TnnA@mail.gmail.com>
+	s=arc-20240116; t=1769040313; c=relaxed/simple;
+	bh=q+AUUOOeMhKH4rbq5XzBfwcYUGNSAKYTTd5X5bgXNQ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LEolEmmf+6SOLxyVw66/Zxn2WkbCcqzWusltDHJ2nHy+9WWjM1L8v7nfzEecDF4WwQymVmgaQyCVCm46YZiK4TEdvffM19Ype0L3KJNwg+626TSaGqaFP4TJRCd7k4WUzDj5lHtn3NbhCZ8k3nSEcyxNOMKzj3FdvHizyOJ27sQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CFv6mwxg; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-8c531473fdcso47523585a.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jan 2026 16:05:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769040305; x=1769645105; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PO1Jt5uhqRvDjhw/8xWJ8hHcQeGO0dm7l6ynZgVgbzM=;
+        b=CFv6mwxgE+DU48BCauiF33LjMTbc3Vv05tXOOSvcKDqTqZs0BAIOjJleMo3WS6g67Y
+         jT9aIzmRiuD6lgeDFW7untTRehJNhuXYQu2P53qyZJw56lgnY5HkApw+MQefzTIDBw0R
+         mRmY3NQacbauWurnC7lPptSNBk0MCYt0XD2T3s/VUWHCFXuPUSRJgfGL5/Jr1ARHnQSu
+         C2pqAlmb0obHoH+JpRl6eIz/ogjIkoXVuZq+APnqJXCjrUjLjSPmgL815b7JHiJcOUv8
+         p1iCCz9zUjO+uYE3pvhEv8vT5aEgdxEc8+q97bOLLRWpKnVAAYQ+Sp6eltEF+G4aieS1
+         T7bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769040305; x=1769645105;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PO1Jt5uhqRvDjhw/8xWJ8hHcQeGO0dm7l6ynZgVgbzM=;
+        b=Mz+CFtkfP4XIpiiR1/lGWztNG3/lizD6DFcTB+pkV2GYC5l6q7iS5gbmv3mbFqkVL8
+         b9w1iGvnIoW6noXeMPHiQn6LS8jSeZPp/LIGkn2BtPaFp1PQ2l6NnDxbcT65vjHhilsw
+         ORftGl1W8o/xosPj2BAHWmAFoAYLSpyF2w6ktDJFB9uJ7A2tAvZ9YYl6ZkXpWd9krSur
+         yeDaYUInbwBCCfuhZd2DhjNt2oMu6SR3GHBSPcfQFHh/aDBM/wi2ruboVR4tLZIOOgEz
+         DBCRhSTs47TDqckzw4+Cct5YzFt/faiD2Yu53srWJTBMA11CLnmX9bjpZhi/GF+WgL/h
+         cK8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUJu6rcV9U4ZiCUB18U63kGXPmrLvZAWZgYVdTyZsi+G1QMG15WVUtkpqtRNiZyl8ZTixfKyTsw5n6uISo5@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSRrsAowFOl87FVyjLglu5udhEE2i9FiKnYT9L/bBRsZrh8zYn
+	2cEd9xq9hqa6jqzL0GJp/q10Lw57kX5i0VWnx+dxoIcWTTNBMkoY670F
+X-Gm-Gg: AZuq6aKVoK33aiSfHIUdEBSKL8kkLVblJ6tZOHSN3CU55DtSr62IAbZvanpo8dHr/RA
+	HZ+je7bikTacs7ocpyK62EDqJxjeL+PrsByUxN7M9rkbaGTbNN6zqWwbRRGXxfkLFLaKsFeZK/T
+	9srfZEH/0+QsuUSAE2ohXV/uqDUZXsoO6qXNK31O4Oy7wn9MFC8WiGSZ+/s2A0bykxD6pQNgZ1p
+	JnFvLuNrFjlCqRkCQ3MCRcsZwP7zXVKbWrA48AtCio8OnqhshQHUj2hHNniXLYMfek9sVcSpJVN
+	CaclMl3V6prNhBcl0alMWxWi4jksTlnmqepAqQwFNitUVf7fXZYwr50u/zl/iCwLu5+OaEvEANL
+	T7jj1gZK2QLTrzFbVAEYlNb5r1E1QRHj+Iu6W+e+FV7ULTtCgpIaPseJQPNk5hNH7NxVrif+Ict
+	chabMlRgME31EfqrhJNLjKOA==
+X-Received: by 2002:a05:620a:4586:b0:8a3:87ef:9245 with SMTP id af79cd13be357-8c6a6979ebbmr2872525685a.85.1769040305419;
+        Wed, 21 Jan 2026 16:05:05 -0800 (PST)
+Received: from localhost ([198.1.209.214])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c6a71ad7a2sm1419883385a.3.2026.01.21.16.05.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Jan 2026 16:05:03 -0800 (PST)
+From: William Hansen-Baird <william.hansen.baird@gmail.com>
+To: linkinjeon@kernel.org,
+	sj1557.seo@samsung.com
+Cc: yuezhang.mo@sony.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	William Hansen-Baird <william.hansen.baird@gmail.com>
+Subject: [PATCH 1/2] exfat: remove unnecessary else after return statement
+Date: Wed, 21 Jan 2026 19:04:33 -0500
+Message-ID: <20260122000451.160907-1-william.hansen.baird@gmail.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1ZUbuAER90xbagWnBZ9dWKkdUAqVRa1vmZ5BtL_o=TnnA@mail.gmail.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.46 / 15.00];
+X-Spamd-Result: default: False [0.04 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-74941-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-74940-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_TO(0.00)[gmail.com];
-	DMARC_POLICY_ALLOW(0.00)[kernel.org,quarantine];
-	MIME_TRACE(0.00)[0:+];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	FROM_HAS_DN(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[sony.com,vger.kernel.org,gmail.com];
 	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DMARC_POLICY_ALLOW(0.00)[gmail.com,none];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[williamhansenbaird@gmail.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	RCVD_COUNT_FIVE(0.00)[5];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:7979, ipnet:2a01:60a::/32, country:US];
+	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:7979, ipnet:213.196.21.0/24, country:US];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6]
-X-Rspamd-Queue-Id: CF20C5FC70
+	FROM_HAS_DN(0.00)[]
+X-Rspamd-Queue-Id: 524185FCAC
 X-Rspamd-Action: no action
 
-On Wed, Jan 21, 2026 at 03:42:04PM -0800, Joanne Koong wrote:
-> On Tue, Oct 28, 2025 at 5:45 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> >
-> > From: Darrick J. Wong <djwong@kernel.org>
-> >
-> > Use static keys so that we can configure debugging assertions and dmesg
-> > warnings at runtime.  By default this is turned off so the cost is
-> > merely scanning a nop sled.  However, fuse server developers can turn
-> > it on for their debugging systems.
-> >
-> > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> > ---
-> >  fs/fuse/fuse_i.h     |    8 +++++
-> >  fs/fuse/iomap_i.h    |   16 ++++++++--
-> >  fs/fuse/Kconfig      |   15 +++++++++
-> >  fs/fuse/file_iomap.c |   81 ++++++++++++++++++++++++++++++++++++++++++++++++++
-> >  fs/fuse/inode.c      |    7 ++++
-> >  5 files changed, 124 insertions(+), 3 deletions(-)
-> >
-> >
-> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> > index 45be59df7ae592..61fb65f3604d61 100644
-> > --- a/fs/fuse/fuse_i.h
-> > +++ b/fs/fuse/fuse_i.h
-> > @@ -1691,6 +1691,14 @@ extern void fuse_sysctl_unregister(void);
-> >  #define fuse_sysctl_unregister()       do { } while (0)
-> >  #endif /* CONFIG_SYSCTL */
-> >
-> > +#if IS_ENABLED(CONFIG_FUSE_IOMAP_DEBUG)
-> > +int fuse_iomap_sysfs_init(struct kobject *kobj);
-> > +void fuse_iomap_sysfs_cleanup(struct kobject *kobj);
-> > +#else
-> > +# define fuse_iomap_sysfs_init(...)            (0)
-> > +# define fuse_iomap_sysfs_cleanup(...)         ((void)0)
-> > +#endif
-> > +
-> >  #if IS_ENABLED(CONFIG_FUSE_IOMAP)
-> >  bool fuse_iomap_enabled(void);
-> >
-> > diff --git a/fs/fuse/iomap_i.h b/fs/fuse/iomap_i.h
-> > index 6d9ce9c0f40a04..3615ec76c0dec0 100644
-> > --- a/fs/fuse/iomap_i.h
-> > +++ b/fs/fuse/iomap_i.h
-> > @@ -6,19 +6,29 @@
-> >  #ifndef _FS_FUSE_IOMAP_I_H
-> >  #define _FS_FUSE_IOMAP_I_H
-> >
-> > +#if IS_ENABLED(CONFIG_FUSE_IOMAP_DEBUG_DEFAULT)
-> > +DECLARE_STATIC_KEY_TRUE(fuse_iomap_debug);
-> > +#else
-> > +DECLARE_STATIC_KEY_FALSE(fuse_iomap_debug);
-> > +#endif
-> > +
-> >  #if IS_ENABLED(CONFIG_FUSE_IOMAP)
-> >  #if IS_ENABLED(CONFIG_FUSE_IOMAP_DEBUG)
-> > -# define ASSERT(condition) do {                                                \
-> > +# define ASSERT(condition) \
-> > +while (static_branch_unlikely(&fuse_iomap_debug)) {                    \
-> >         int __cond = !!(condition);                                     \
-> >         if (unlikely(!__cond))                                          \
-> >                 trace_fuse_iomap_assert(__func__, __LINE__, #condition); \
-> >         WARN(!__cond, "Assertion failed: %s, func: %s, line: %d", #condition, __func__, __LINE__); \
-> > -} while (0)
-> > +       break;                                                          \
-> > +}
-> >  # define BAD_DATA(condition) ({                                                \
-> >         int __cond = !!(condition);                                     \
-> >         if (unlikely(__cond))                                           \
-> >                 trace_fuse_iomap_bad_data(__func__, __LINE__, #condition); \
-> > -       WARN(__cond, "Bad mapping: %s, func: %s, line: %d", #condition, __func__, __LINE__); \
-> > +       if (static_branch_unlikely(&fuse_iomap_debug))                  \
-> > +               WARN(__cond, "Bad mapping: %s, func: %s, line: %d", #condition, __func__, __LINE__); \
-> > +       unlikely(__cond);                                                               \
-> >  })
-> >  #else
-> >  # define ASSERT(condition)
-> > diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
-> > index 934d48076a010c..bb867afe6e867c 100644
-> > --- a/fs/fuse/Kconfig
-> > +++ b/fs/fuse/Kconfig
-> > @@ -101,6 +101,21 @@ config FUSE_IOMAP_DEBUG
-> >           Enable debugging assertions for the fuse iomap code paths and logging
-> >           of bad iomap file mapping data being sent to the kernel.
-> >
-> > +         Say N here if you don't want any debugging code code compiled in at
-> > +         all.
-> > +
-> > +config FUSE_IOMAP_DEBUG_BY_DEFAULT
-> > +       bool "Debug FUSE file IO over iomap at boot time"
-> > +       default n
-> > +       depends on FUSE_IOMAP_DEBUG
-> > +       help
-> > +         At boot time, enable debugging assertions for the fuse iomap code
-> > +         paths and warnings about bad iomap file mapping data.  This enables
-> > +         fuse server authors to control debugging at runtime even on a
-> > +         distribution kernel while avoiding most of the overhead on production
-> > +         systems.  The setting can be changed at runtime via
-> > +         /sys/fs/fuse/iomap/debug.
-> > +
-> >  config FUSE_IO_URING
-> >         bool "FUSE communication over io-uring"
-> >         default y
-> > diff --git a/fs/fuse/file_iomap.c b/fs/fuse/file_iomap.c
-> > index a88f5d8d2bce15..b6fc70068c5542 100644
-> > --- a/fs/fuse/file_iomap.c
-> > +++ b/fs/fuse/file_iomap.c
-> > @@ -8,6 +8,12 @@
-> >  #include "fuse_trace.h"
-> >  #include "iomap_i.h"
-> >
-> > +#if IS_ENABLED(CONFIG_FUSE_IOMAP_DEBUG_DEFAULT)
-> > +DEFINE_STATIC_KEY_TRUE(fuse_iomap_debug);
-> > +#else
-> > +DEFINE_STATIC_KEY_FALSE(fuse_iomap_debug);
-> > +#endif
-> > +
-> >  static bool __read_mostly enable_iomap =
-> >  #if IS_ENABLED(CONFIG_FUSE_IOMAP_BY_DEFAULT)
-> >         true;
-> > @@ -17,6 +23,81 @@ static bool __read_mostly enable_iomap =
-> >  module_param(enable_iomap, bool, 0644);
-> >  MODULE_PARM_DESC(enable_iomap, "Enable file I/O through iomap");
-> >
-> > +#if IS_ENABLED(CONFIG_FUSE_IOMAP_DEBUG)
-> > +static struct kobject *iomap_kobj;
-> > +
-> > +static ssize_t fuse_iomap_debug_show(struct kobject *kobject,
-> > +                                    struct kobj_attribute *a, char *buf)
-> > +{
-> > +       return sysfs_emit(buf, "%d\n", !!static_key_enabled(&fuse_iomap_debug));
-> > +}
-> > +
-> > +static ssize_t fuse_iomap_debug_store(struct kobject *kobject,
-> > +                                     struct kobj_attribute *a,
-> > +                                     const char *buf, size_t count)
-> > +{
-> > +       int ret;
-> > +       int val;
-> > +
-> > +       ret = kstrtoint(buf, 0, &val);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       if (val < 0 || val > 1)
-> > +               return -EINVAL;
-> > +
-> > +       if (val)
-> > +               static_branch_enable(&fuse_iomap_debug);
-> > +       else
-> > +               static_branch_disable(&fuse_iomap_debug);
-> > +
-> > +       return count;
-> > +}
-> > +
-> > +#define __INIT_KOBJ_ATTR(_name, _mode, _show, _store)                  \
-> > +{                                                                      \
-> > +       .attr   = { .name = __stringify(_name), .mode = _mode },        \
-> > +       .show   = _show,                                                \
-> > +       .store  = _store,                                               \
-> > +}
-> > +
-> > +#define FUSE_ATTR_RW(_name, _show, _store)                     \
-> > +       static struct kobj_attribute fuse_attr_##_name =        \
-> > +                       __INIT_KOBJ_ATTR(_name, 0644, _show, _store)
-> > +
-> > +#define FUSE_ATTR_PTR(_name)                                   \
-> > +       (&fuse_attr_##_name.attr)
-> > +
-> > +FUSE_ATTR_RW(debug, fuse_iomap_debug_show, fuse_iomap_debug_store);
-> > +
-> > +static const struct attribute *fuse_iomap_attrs[] = {
-> > +       FUSE_ATTR_PTR(debug),
-> > +       NULL,
-> > +};
-> > +
-> > +int fuse_iomap_sysfs_init(struct kobject *fuse_kobj)
-> > +{
-> > +       int error;
-> > +
-> > +       iomap_kobj = kobject_create_and_add("iomap", fuse_kobj);
-> > +       if (!iomap_kobj)
-> > +               return -ENOMEM;
-> > +
-> > +       error = sysfs_create_files(iomap_kobj, fuse_iomap_attrs);
-> > +       if (error) {
-> > +               kobject_put(iomap_kobj);
-> > +               return error;
-> > +       }
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +void fuse_iomap_sysfs_cleanup(struct kobject *fuse_kobj)
-> > +{
-> 
-> Is sysfs_remove_files() also needed here?
+Else-branch is unnecessary after return statement in if-branch.
+Remove to enhance readability and reduce indentation.
 
-kobject_put is supposed to tear down the attrs that sysfs_create_files
-attaches to iomap_kobj.  Though you're right to be suspicious -- there
-are a lot of places that explicitly call sysfs_remove_files to undo
-sysfs_create_files; and also a lot of places that just let kobject_put
-do the dirty work.
+Signed-off-by: William Hansen-Baird <william.hansen.baird@gmail.com>
+---
+ fs/exfat/inode.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-> > +       kobject_put(iomap_kobj);
-> > +}
-> > +#endif /* IS_ENABLED(CONFIG_FUSE_IOMAP_DEBUG) */
-> > +
-> >  bool fuse_iomap_enabled(void)
-> >  {
-> >         /* Don't let anyone touch iomap until the end of the patchset. */
-> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> > index 1eea8dc6e723c6..eec711302a4a13 100644
-> > --- a/fs/fuse/inode.c
-> > +++ b/fs/fuse/inode.c
-> > @@ -2277,8 +2277,14 @@ static int fuse_sysfs_init(void)
-> >         if (err)
-> >                 goto out_fuse_unregister;
-> >
-> > +       err = fuse_iomap_sysfs_init(fuse_kobj);
-> > +       if (err)
-> > +               goto out_fuse_connections;
-> > +
-> >         return 0;
-> >
-> > + out_fuse_connections:
-> > +       sysfs_remove_mount_point(fuse_kobj, "connections");
-> >   out_fuse_unregister:
-> >         kobject_put(fuse_kobj);
-> >   out_err:
-> > @@ -2287,6 +2293,7 @@ static int fuse_sysfs_init(void)
-> >
-> >  static void fuse_sysfs_cleanup(void)
-> >  {
-> > +       fuse_iomap_sysfs_cleanup(fuse_kobj);
-> >         sysfs_remove_mount_point(fuse_kobj, "connections");
-> >         kobject_put(fuse_kobj);
-> >  }
-> >
-> Could you explain why it's better that this goes through sysfs than
-> through a module param?
+diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+index f9501c3a3666..234a9f41e083 100644
+--- a/fs/exfat/inode.c
++++ b/fs/exfat/inode.c
+@@ -511,8 +511,9 @@ static ssize_t exfat_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 			exfat_write_failed(mapping, size);
+ 
+ 		return ret;
+-	} else
+-		size = pos + ret;
++	}
++
++	size = pos + ret;
+ 
+ 	if (rw == WRITE) {
+ 		/*
+-- 
+2.52.0
 
-You can dynamically enable debugging on a production system.  I (by
-which I really mean the support org) wishes they could do that with XFS.
-
-Module parameters don't come with setter functions so you can't call
-static_branch_{enable,disable} when the parameter value updates.
-
---D
-
-> Thanks,
-> Joanne
 
