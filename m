@@ -1,205 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-75018-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75019-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GEdDEqcDcmmvZwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75018-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 12:01:59 +0100
+	id KGYBOTAEcmmvZwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75019-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 12:04:16 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 130D365A71
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 12:01:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61FF765AE9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 12:04:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 129046C576D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 10:50:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 340726AB013
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jan 2026 10:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E10A41C2F5;
-	Thu, 22 Jan 2026 10:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1661F3A7F44;
+	Thu, 22 Jan 2026 10:53:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LT6ZWsx6"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="bSmianh7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B983BFE35
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 10:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368A62E5D17;
+	Thu, 22 Jan 2026 10:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769078955; cv=none; b=emCFfnFphovJO2UbNCdru4hzcHZ0Iuv/rAxFs/pgZ4HlYrPfDQbRBam/Eu7Jyi/eR4JAgls2MBxyIDzeFsIL0+OU8eNpBIqVv+KoqP+gbUq7cAHlP88/pwa2fgC5U2CNZfvcKxnNRJDpMMan7txMyq31BhoTrkoc40SkCLh8giQ=
+	t=1769079229; cv=none; b=UEXnGej//uT1+/0P7MW199U084L25GZOWRQLvDZq+XbDlKweaTPuFBcgHaWk6gKFn7V5l8RuGBckp0cObcRV+63MzHwVOwvUOTNGJPhM65i5bmubg/fEKtZ0XMLs7bOVuvlgMrlY3pqWsVPmFeMOgZLh2+85kZ91qpnAh7u67dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769078955; c=relaxed/simple;
-	bh=4DK1RW4Mvv40Q7jC3XcGwuNPAZU52VAXoQsTgfRGmwQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aYwP84wGGswP/KPQBPFWIHCOjpGAh7xDQ04J6xU2FMV07UXWHyBErH/v+Tq9KPKur8HNgLR08TsEBXWCN2pYTtBsyZF6cEMeiB6hmW3sgdiwFkm641ZEk7hSNVEBYWW0ZtTGcY1zlnuMTYSIWMaBEqTz7rH/1GEMusQPVnqQ4Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LT6ZWsx6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 811E1C16AAE;
-	Thu, 22 Jan 2026 10:49:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769078955;
-	bh=4DK1RW4Mvv40Q7jC3XcGwuNPAZU52VAXoQsTgfRGmwQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=LT6ZWsx6YSLS56x4MWRnvqtKY92DH1wCLLxGAcvamft8TY9dJ1sqT4jrAK6JsJopo
-	 VlhDqtfYzP5ZCf+EZxopOVOGLt66jOWii1/Nsxf1ruYvl3lm17CxpU+yfXQ0ciMY3M
-	 mtE+Z5MXF5tRnxnvPnPeEhc0/VKWaYkbeuglhjEa2c95+KHdLuc0CbAYNTsW3C00Am
-	 62SXx74Hsv+t9ko/q/LV+1EbiXOJnYqa5+iO2Q2hXX+FgBzOwYkwwMoiCvaZP42KB5
-	 1ao6Z/cY+v/SRdjXrbDze+34yALlTRhsxnKw4be3nHlq0N5xWUMZ9A47OapL+lMi4H
-	 GchjmwECKFEzw==
-From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 22 Jan 2026 11:48:52 +0100
-Subject: [PATCH 7/7] selftests/open_tree_ns: fix compilation
+	s=arc-20240116; t=1769079229; c=relaxed/simple;
+	bh=wZf3Uf8jsn88PuPSffsAY4gFE3kL5KVWEWgYay0R6kA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HZNAOh/j1MHGPGN9UfrZdaWc2cSUxSc+CA3fgogf1T/eUOPl6uJPT93EBWI/wsgNnmw2baEvrqVy6pRrPa7B2/iETu1TMa9AXQWUGxRALuoOlFHeWusUnO3hybBb9XehTt0op4NF+oG2BRRH8+hhe5zY2bZGuF2Fg00EkSr8HVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=bSmianh7; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=uWe52uShijabMs9oCNZnME8Sh8gPTiJ3hXhZuaAITus=; b=bSmianh7RHeJk4DTuyeThK2n19
+	omOWAQOSwasXewKQEslsZ9LWkajWe4QRC1usXJXt4G2O8qndep4KbnY2G9NN26IBvqY8b9d7vGzq3
+	j30NkwwDg8tFE+K5JtMAVPqtrBuPjXNMnN8MC56bk4zPgq6MAFf5pwVo3T0j8pPLXOt79wG413pcp
+	AY0goUzjPUhFl55dZTGQIqjByicuH7EA0/nQjjg0QuI9uPm66V5tDEv0fs2yRHxpIhpfRj+8RWbUn
+	RUHdP7h8fh/z0RH5Ic5QPV8NO5C4hW+nv25mcNKxUeDFugabx5O18sNJqFjqYrC74IBlkqrkGxDTE
+	zn13qe1A==;
+Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1visJd-008PqJ-S3; Thu, 22 Jan 2026 11:53:29 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Horst Birthelmer <horst@birthelmer.de>
+Cc: Bernd Schubert <bschubert@ddn.com>,  Bernd Schubert <bernd@bsbernd.com>,
+  Amir Goldstein <amir73il@gmail.com>,  Miklos Szeredi <miklos@szeredi.hu>,
+  "Darrick J. Wong" <djwong@kernel.org>,  Kevin Chen <kchen@ddn.com>,
+  Horst Birthelmer <hbirthelmer@ddn.com>,  "linux-fsdevel@vger.kernel.org"
+ <linux-fsdevel@vger.kernel.org>,  "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>,  Matt Harvey <mharvey@jumptrading.com>,
+  "kernel-dev@igalia.com" <kernel-dev@igalia.com>
+Subject: Re: [RFC PATCH v2 4/6] fuse: implementation of the
+ FUSE_LOOKUP_HANDLE operation
+In-Reply-To: <aXH48-QCxUU4TlNk@fedora.fritz.box> (Horst Birthelmer's message
+	of "Thu, 22 Jan 2026 11:20:50 +0100")
+References: <aWFcmSNLq9XM8KjW@fedora> <877bta26kj.fsf@wotan.olymp>
+	<aXEVjYKI6qDpf-VW@fedora>
+	<03ea69f4-f77b-4fe7-9a7c-5c5ca900e4bf@bsbernd.com>
+	<aXEbnMNbE4k6WI7j@fedora>
+	<5d022dc0-8423-4af2-918f-81ad04d50678@ddn.com>
+	<aXEhTi2-8DRZKb_I@fedora>
+	<e761b39b-79c7-40d4-947e-a209fcf2bb6b@ddn.com>
+	<aXEjX7MD4GzGRvdE@fedora> <87pl726kko.fsf@wotan.olymp>
+	<aXH48-QCxUU4TlNk@fedora.fritz.box>
+Date: Thu, 22 Jan 2026 10:53:24 +0000
+Message-ID: <87ldhp7wbf.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260122-work-fsmount-namespace-v1-7-5ef0a886e646@kernel.org>
-References: <20260122-work-fsmount-namespace-v1-0-5ef0a886e646@kernel.org>
-In-Reply-To: <20260122-work-fsmount-namespace-v1-0-5ef0a886e646@kernel.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
- Josef Bacik <josef@toxicpanda.com>, Aleksa Sarai <cyphar@cyphar.com>, 
- Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3327; i=brauner@kernel.org;
- h=from:subject:message-id; bh=4DK1RW4Mvv40Q7jC3XcGwuNPAZU52VAXoQsTgfRGmwQ=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQWMcwU/rn7vpeXQvSTqMkbZm59EnT0weKKeZFGL+8Eb
- tpz+mVvT0cpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBE3m1g+CvCXv7piYzLI5X7
- P1aXOk6KW1W/95fssr3nQwL/tYrdL3Nj+F94r6RPfsqpzufr9h+eIbJl44rV/kVrP1sJWiw+qSp
- ZOIETAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.96 / 15.00];
+X-Spamd-Result: default: False [-0.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_DKIM_REJECT(1.00)[igalia.com:s=20170329];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
+	DMARC_POLICY_SOFTFAIL(0.10)[igalia.com : No valid SPF,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	DMARC_POLICY_ALLOW(0.00)[kernel.org,quarantine];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,suse.cz,kernel.org,gmail.com,toxicpanda.com,cyphar.com];
-	TAGGED_FROM(0.00)[bounces-75018-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-75019-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:7979, ipnet:213.196.21.0/24, country:US];
+	RCVD_COUNT_THREE(0.00)[4];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FREEMAIL_CC(0.00)[ddn.com,bsbernd.com,gmail.com,szeredi.hu,kernel.org,vger.kernel.org,jumptrading.com,igalia.com];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	DKIM_TRACE(0.00)[igalia.com:-];
+	MISSING_XM_UA(0.00)[];
 	TO_DN_SOME(0.00)[];
-	R_SPF_SOFTFAIL(0.00)[~all:c];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[luis@igalia.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
+	R_SPF_SOFTFAIL(0.00)[~all:c];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:helo,ams.mirrors.kernel.org:rdns]
-X-Rspamd-Queue-Id: 130D365A71
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:helo,dfw.mirrors.kernel.org:rdns,wotan.olymp:mid]
+X-Rspamd-Queue-Id: 61FF765AE9
 X-Rspamd-Action: no action
 
-Fix open_tree_ns selftests and remove it's own local version of the
-statmount() allocation helper.
+On Thu, Jan 22 2026, Horst Birthelmer wrote:
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- .../selftests/filesystems/open_tree_ns/Makefile    |  2 +-
- .../filesystems/open_tree_ns/open_tree_ns_test.c   | 33 ++++------------------
- 2 files changed, 6 insertions(+), 29 deletions(-)
+> On Thu, Jan 22, 2026 at 09:52:23AM +0000, Luis Henriques wrote:
+>> Hi!
+>>=20
+>> On Wed, Jan 21 2026, Horst Birthelmer wrote:
+>>=20
+>> > On Wed, Jan 21, 2026 at 08:03:32PM +0100, Bernd Schubert wrote:
+>> >>=20
+>> >>=20
+>> >> On 1/21/26 20:00, Horst Birthelmer wrote:
+>> >> > On Wed, Jan 21, 2026 at 07:49:25PM +0100, Bernd Schubert wrote:
+>> >> >>
+>> >> >>
+>> >> > ...
+>> >> >>> The problem Luis had was that he cannot construct the second requ=
+est in the compound correctly
+>> >> >>> since he does not have all the in parameters to write complete re=
+quest.
+>> >> >>
+>> >> >> What I mean is, the auto-handler of libfuse could complete request=
+s of
+>> >> >> the 2nd compound request with those of the 1st request?
+>> >> >>
+>> >> > With a crazy bunch of flags, we could probably do it, yes.
+>> >> > It is way easier that the fuse server treats certain compounds
+>> >> > (combination of operations) as a single request and handles
+>> >> > those accordingly.
+>>=20
+>> Right, I think that at least the compound requests that can not be
+>> serialised (i.e. those that can not be executed using the libfuse helper
+>> function fuse_execute_compound_sequential()) should be flagged as such.
+>> An extra flag to be set in the request should do the job.
+>>=20
+>> This way, if this flag isn't set in a compound request and the FUSE serv=
+er
+>> doesn't have a compound handle, libfuse could serialise the requests.
+>> Otherwise, it would return -ENOTSUPP.
+>>=20
+>> >> Hmm, isn't the problem that each fuse server then needs to know those
+>> >> common compound combinations? And that makes me wonder, what is the
+>> >> difference to an op code then?
+>> >
+>> > I'm pretty sure we both have some examples and counter examples in min=
+d.
+>> >
+>> > Let's implement a couple of the suggested compounds and we will see=20
+>> > if we can make generic rules. I'm not convinced yet, that we want to
+>> > have a generic implementation in libfuse.
+>> >
+>> > The advantage to the 'add an opcode' for every combination=20
+>> > (and there are already a couple of those) approach is that
+>> > you don't need more opcodes, so no changes to the kernel.
+>> > You need some code in the fuse server, though, which to me is
+>> > fine, since if you have atomic operations implemented there,
+>> > why not actually use them.
+>> >
+>> > The big advantage is, choice.
+>> >
+>> > There will be some examples (like the one from Luis)
+>> > where you don't actually have a generic choice,
+>> > or you create some convention, like you just had in mind.
+>> > (put the result of the first operation into the input
+>> > of the next ... or into some fields ... etc.)
+>>=20
+>> So, to summarise:
+>>=20
+>> In the end, even FUSE servers that do support compound operations will
+>> need to check the operations within a request, and act accordingly.  The=
+re
+>> will be new combinations that will not be possible to be handle by serve=
+rs
+>> in a generic way: they'll need to return -EOPNOTSUPP if the combination =
+of
+>> operations is unknown.  libfuse may then be able to support the
+>> serialisation of that specific operation compound.  But that'll require
+>> flagging the request as "serialisable".
+>
+> OK, so this boils down to libfuse trying a bit harder than it does at the=
+ moment.
+> After it calls the compound handler it should check for EOPNOTSUP and the=
+ flag
+> and then execute the single requests itself.
+>
+> At the moment the fuse server implementation itself has to do this.
+> Actually the patched passthrough_hp does exactly that.
+>
+> I think I can live with that.
 
-diff --git a/tools/testing/selftests/filesystems/open_tree_ns/Makefile b/tools/testing/selftests/filesystems/open_tree_ns/Makefile
-index 73c03c4a7ef6..4976ed1d7d4a 100644
---- a/tools/testing/selftests/filesystems/open_tree_ns/Makefile
-+++ b/tools/testing/selftests/filesystems/open_tree_ns/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- TEST_GEN_PROGS := open_tree_ns_test
- 
--CFLAGS := -Wall -Werror -g $(KHDR_INCLUDES)
-+CFLAGS += -Wall -O0 -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
- LDLIBS := -lcap
- 
- include ../../lib.mk
-diff --git a/tools/testing/selftests/filesystems/open_tree_ns/open_tree_ns_test.c b/tools/testing/selftests/filesystems/open_tree_ns/open_tree_ns_test.c
-index 9711556280ae..7511696bea25 100644
---- a/tools/testing/selftests/filesystems/open_tree_ns/open_tree_ns_test.c
-+++ b/tools/testing/selftests/filesystems/open_tree_ns/open_tree_ns_test.c
-@@ -1,5 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-+ * Copyright (c) 2026 Christian Brauner <brauner@kernel.org>
-+ *
-  * Test for OPEN_TREE_NAMESPACE flag.
-  *
-  * Test that open_tree() with OPEN_TREE_NAMESPACE creates a new mount
-@@ -50,31 +52,6 @@ static int get_mnt_ns_id_from_path(const char *path, uint64_t *mnt_ns_id)
- 	return ret;
- }
- 
--#define STATMOUNT_BUFSIZE (1 << 15)
--
--static struct statmount *statmount_alloc(uint64_t mnt_id, uint64_t mnt_ns_id, uint64_t mask)
--{
--	struct statmount *buf;
--	size_t bufsize = STATMOUNT_BUFSIZE;
--	int ret;
--
--	for (;;) {
--		buf = malloc(bufsize);
--		if (!buf)
--			return NULL;
--
--		ret = statmount(mnt_id, mnt_ns_id, mask, buf, bufsize, 0);
--		if (ret == 0)
--			return buf;
--
--		free(buf);
--		if (errno != EOVERFLOW)
--			return NULL;
--
--		bufsize <<= 1;
--	}
--}
--
- static void log_mount(struct __test_metadata *_metadata, struct statmount *sm)
- {
- 	const char *fs_type = "";
-@@ -221,7 +198,7 @@ FIXTURE_SETUP(open_tree_ns)
- 		SKIP(return, "open_tree() syscall not supported");
- 
- 	/* Check if statmount/listmount are supported */
--	ret = statmount(0, 0, 0, NULL, 0, 0);
-+	ret = statmount(0, 0, 0, 0, NULL, 0, 0);
- 	if (ret == -1 && errno == ENOSYS)
- 		SKIP(return, "statmount() syscall not supported");
- 
-@@ -340,7 +317,7 @@ TEST_F(open_tree_ns, verify_mount_properties)
- 	ASSERT_GE(nr_mounts, 1);
- 
- 	/* Get info about the root mount (the bind mount, rootfs is hidden) */
--	ret = statmount(list[0], new_ns_id, STATMOUNT_MNT_BASIC, &sm, sizeof(sm), 0);
-+	ret = statmount(list[0], new_ns_id, 0, STATMOUNT_MNT_BASIC, &sm, sizeof(sm), 0);
- 	ASSERT_EQ(ret, 0);
- 
- 	ASSERT_NE(sm.mnt_id, sm.mnt_parent_id);
-@@ -452,7 +429,7 @@ FIXTURE_SETUP(open_tree_ns_userns)
- 		SKIP(return, "open_tree() syscall not supported");
- 
- 	/* Check if statmount/listmount are supported */
--	ret = statmount(0, 0, 0, NULL, 0, 0);
-+	ret = statmount(0, 0, 0, 0, NULL, 0, 0);
- 	if (ret == -1 && errno == ENOSYS)
- 		SKIP(return, "statmount() syscall not supported");
- }
+Well, I was trying to suggest to have, at least for now, as little changes
+to libfuse as possible.  Something like this:
 
--- 
-2.47.3
+	if (req->se->op.compound)
+		req->se->op.compound(req, arg->count, arg->flags, in_payload);
+	else if (arg->flags & FUSE_COMPOUND_SERIALISABLE)
+		fuse_execute_compound_sequential(req);
+	else
+		fuse_reply_err(req, ENOSYS);
 
+Eventually, support for specific non-serialisable operations could be
+added, but that would have to be done for each individual compound.
+Obviously, the server itself could also try to serialise the individual
+operations in the compound handle, and use the same helper.
+
+Cheers,
+--=20
+Lu=C3=ADs
 
