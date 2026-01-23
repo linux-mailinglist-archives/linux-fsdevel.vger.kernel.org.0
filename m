@@ -1,184 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-75315-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CP3GOEftc2nfzgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75315-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 22:51:03 +0100
+	id mNdMKhvvc2lIzwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 22:58:51 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 891907AF9C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 22:51:03 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 233287B032
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 22:58:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 752E03021738
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 21:50:56 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 9D70D301705D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 21:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD7F224AFA;
-	Fri, 23 Jan 2026 21:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF862C08B0;
+	Fri, 23 Jan 2026 21:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GeivFwvd"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ginA7Hwr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3FC33985
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jan 2026 21:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.176
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769205055; cv=pass; b=pDz8gjNKMTN4JNrIT+TxSb7L9/vA6kyLWCaCG4vWMen05xtARC5GCzZGSw+K6/NjeeRIVhxdkjLIHXRiY5PYVaNQM0Ju5XRrGKZwSZmy+jaofEAbVrAANLHAmw7T8U55rzocY9wqrl8o9CnHJpBFwEGlYd6NidqoeCYhtAa08o4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769205055; c=relaxed/simple;
-	bh=6IXzu5urvUpIOvNTmg0w02E+jJ0ffDlI4ifqyZP7KSw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t6kjXzpvkW8JvckVTAokUtX/qAj2XOVU+90/hiABzXCe+gkUAgEOQgGDF26yGLzD1MbYTlsl11hsBki9Pm62xftJgkydXAHy+W8hwt7OqJsuQAZNuY7wMQw3b0vf4KrppDNeGck2Z1SKJwR5a+S4n4UC0RQk/qR2VNkAg0m0YTA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GeivFwvd; arc=pass smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-502b698e510so35300881cf.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jan 2026 13:50:53 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769205053; cv=none;
-        d=google.com; s=arc-20240605;
-        b=T5OaguB9ivvb18mEdus8hF2qygnvTmMu3U7JTm0Fz9d6QCFMSPSBI+cWtCI3OZVPdC
-         t2D7xfUAAvgIVGbHyvOLpP65R2dVHGPhNZeiTti+dbN9+BP82KHjUBRbvF4Ty69T7Dgp
-         FCdwWc4S9MQ9FvXLcUYcun9RdblsH7ide4/oVzPxZmTijqukSOy4tiNsUXmfXDrSLGs9
-         uYcEibL8IG5Ec3nbKMzL4OjqcOSNTv98OfXCV+91S+nUHdTP2PHHLdKvg99LXf8NhAuh
-         mlctkF38UM6AdH3WCeCmAknE0ZrqL23iQJqAnYD7FECYRNMBxAEeqrp/SzaHbxAuapc0
-         30gg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=r3RsJnPZvrF//Bx+/Oni1yeILddUVVYgZUnr0pj0hvM=;
-        fh=bQ2FYYZ1lOMAqS5swvJS55R09WuYyqdWi5OsiTdlpjA=;
-        b=kTExAMP+lTt/yMM74a1TW6bRQ5BRK5yU5Z6RzsOqxvWRgdvfNwArwtH9Welcc0lbDC
-         cWKXCic7BMBsdLten0+xyzzpgLQppoJblPoi8lk3bblZTjgQzrkLUDiTBcoFXEtMJEVK
-         IpCdiz5AuVbqnpodD3q2gxa0NGWhRl9NWKdE+f6B0x1VSv+ZebZBPG1+ha+WYcBk/OmV
-         QeMBZvRrB7olv0EQ2DAP4Xm/NwdCyg+fdKun61ff0nl8ftHkY70651mpwjK7hzpGPG8J
-         bsN67+eel48ikf7h28k0Loz/ct7W8W2gVxE5ho3xosSyYbyOFrpx25Yl/7u05nQPvZ0N
-         RMUA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769205053; x=1769809853; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r3RsJnPZvrF//Bx+/Oni1yeILddUVVYgZUnr0pj0hvM=;
-        b=GeivFwvdR1iy1xBwOhVxI5ankoPxaRHi/ers7RP5h7Wf+YKTA5HEUNLaOW1RnsjmEf
-         43Fc7ejW5dzZWy4ir4KudAhUyXwHFHD9EP0+sKH120WYkxkzN4ksEKkS3pA84zZYhoFf
-         F/QKBtbZrZsby544iDycPEtKXN6vYveh6ne469CJT8UaHF1BIjhMkX4o/p1fggxkU7K1
-         BpwnFUHTdZfIhhFse/8ZNbTjltrqJkPbKL19yzrQJmKQ6a8H0btzqNsmbT+fhNXxNhEf
-         veCXb8637DiAKLRWrqnJG9lAcRRCid3CuaIBe577RQMksbmwYR9+2MOKkuf9rTs/naut
-         Aw4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769205053; x=1769809853;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=r3RsJnPZvrF//Bx+/Oni1yeILddUVVYgZUnr0pj0hvM=;
-        b=Lpk9HhVaa7a6K5gRyDuJx7Q6wz7fbOUJ/lOOViD85qN//5ycSmjFV/uEvn22Ex/8Dx
-         OS2xwg7lhtrd5wT/trFAWwtvm5NEoKFZN148FSDOXDRBGclxag3tluUu111bHtLO8VTv
-         CfoH66crmoMQ6TGNOKjz49OtyBtWrT66/ZdzN1XTD3ZVyf0JlbNnztfW8N4UHG3unvrV
-         FR85SIw/ycmjCQsCXnBMuvuhX8XBv7e/E3LpHzdDoTdmsjoHBpY537X+StWojMxIj2hu
-         SOrOowyVLD9ot9ovO5Fvm6hFUXJW6bZa8lCm2kYLcQK6ChFfWGdOc0w4Hd1Gp/M6Uvnn
-         0DLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKHnkUdUhmfV+SVg4YdsTzKsN4wk0p7/LINIzZoCO+6NHdvzMFbJbR+GS3xNhQNVrJ+f/zzuZcaLyK04vP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5XQWf8XvOld6Eu85lFQQmA1MtK0dH5AYlgA1y3pcJ2F3TiTy3
-	q8tLu+K0GDLlmQ/gWVfInnmmojhlc77pOq0YJIopGy6ngSDgK6NbZT3UHv1SCm9jK2/w6xKRD4C
-	w9M2onuYtnxYgMMgts5i4YsDFBMeFQFM=
-X-Gm-Gg: AZuq6aIE13L0+QdJXSe1YD7IkaBDDHLpGv+ZRGpf3m8lKBI8NbLXXBzomZBLo0gisP2
-	HsLSU9mSd6obj0SGiNWDtMZRmLQ6VWvGoifYI92jKLKRbN8s9c/TnUJJ4wek7cLbznq+fHtcBu/
-	C6E3lqVy/NGInNFwd1LrHPnR0K8x1WAlcoJfTleHwKAG8PBTWWoXtbOLGd4NLh/cpHG+M7/TiGP
-	f5m8SCS9gjM3ZfchYFfFrBv4i05Co3VutT8nsvUyjNGO9imH9dhzJmgudsVODcqg4pdRA==
-X-Received: by 2002:ac8:7c55:0:b0:4f1:ab79:fb18 with SMTP id
- d75a77b69052e-502f7747aa4mr55300201cf.25.1769205052741; Fri, 23 Jan 2026
- 13:50:52 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1AE51917ED;
+	Fri, 23 Jan 2026 21:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769205519; cv=none; b=tq/3bpd+O8WB7rMOUL1K0HmhtKHIhrLt76O+rAE+c7+DVIRu/twPSisnMpkS0e93OaQK9XKbW6JMj6SiwRY2clNaJ+I08XELZsJhLmv/ApbTEVoDk1W/IRdOhlPJxwiVoR6p2aGIKxh3is0fuQ2pU1IdPFOMt8WMML9MrvDI+SQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769205519; c=relaxed/simple;
+	bh=s+u4l9jgvCQsaB7wNxpg562iq5WlHBRtw+Cvbyn4kKc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XsK0kbp9BmWVht/COCakIHzPa9uvi+VBBXM8/ry1wMxhB2bi7SbRcBEFGQn3sluYxQ6PyNXiHrKTECTMUVz5I2r0pv0CL73Z2Bzb+FTL+1qc5MZLHbiabbFgNges6EtNf/eCK473oiXNQbdfy4zddjHPvBlJFHcyTYzKXwtma0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ginA7Hwr; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1769205517; x=1800741517;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=s+u4l9jgvCQsaB7wNxpg562iq5WlHBRtw+Cvbyn4kKc=;
+  b=ginA7HwrTMSsVbaXJ3bVaaa4OGULE8CO8AVKwiraRrTwEO3mPowOKmdD
+   uumfY1dc9nQv4To21zbG4qGWIs9vp1MbwTjxvTx/phuGZeFEVtVIbgHVB
+   LXKSyVb2U7EDRenn101p1IQMEPByuWl5VzVbER/oGisXJqX+15Q6SP+fO
+   /8uKUoZxf/gGS7FRfQ8gccqKlte9SstJK8APTqnXzbzgLyDXb+yN8SiLY
+   MF+0dqM6zA8R5QtBt4skfsibLSgN5LPExcdzcXG4Lm1HMA5Z4FWDDDtfp
+   u2Gq8rYdFTYSXEt+ZtChMYwwJ7Q8ycvntnl/1uPRbMqzJQh6lNwwfVWwF
+   w==;
+X-CSE-ConnectionGUID: nEEl1FC+TqGfQMraezyU/g==
+X-CSE-MsgGUID: UyXjyl3iSHGWp1hkQvjB5A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11680"; a="73050042"
+X-IronPort-AV: E=Sophos;i="6.21,248,1763452800"; 
+   d="scan'208";a="73050042"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jan 2026 13:58:37 -0800
+X-CSE-ConnectionGUID: uF4jqUrfQ4Stw3fSvpu8Gw==
+X-CSE-MsgGUID: WAMlR/KWQCmNnHDa5MqcIQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,248,1763452800"; 
+   d="scan'208";a="207474318"
+Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.108.225]) ([10.125.108.225])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jan 2026 13:58:34 -0800
+Message-ID: <52970d7e-287e-4234-9bd0-5c258b576872@intel.com>
+Date: Fri, 23 Jan 2026 14:58:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <176169810144.1424854.11439355400009006946.stgit@frogsfrogsfrogs> <176169810700.1424854.5753715202341698632.stgit@frogsfrogsfrogs>
-In-Reply-To: <176169810700.1424854.5753715202341698632.stgit@frogsfrogsfrogs>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 23 Jan 2026 13:50:41 -0800
-X-Gm-Features: AZwV_QiX4hOk_3lPAHP4zgVxbMS4JU0Q0fRA5UCPS5O3nWxaluH3IssYOZyADgE
-Message-ID: <CAJnrk1bymmhei7X15980THz8gnQCgm2ik2nLBOWkZ3NF5MXNXA@mail.gmail.com>
-Subject: Re: [PATCH 16/31] fuse: implement large folios for iomap pagecache files
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: miklos@szeredi.hu, bernd@bsbernd.com, neal@gompa.dev, 
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/7] cxl/region: Skip decoder reset on detach for
+ autodiscovered regions
+To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
+ linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Yazen Ghannam <yazen.ghannam@amd.com>, Davidlohr Bueso <dave@stgolabs.net>,
+ Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
+ Pavel Machek <pavel@kernel.org>, Li Ming <ming.li@zohomail.com>,
+ Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ Ying Huang <huang.ying.caritas@gmail.com>,
+ Yao Xingtao <yaoxt.fnst@fujitsu.com>, Peter Zijlstra <peterz@infradead.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Nathan Fontenot <nathan.fontenot@amd.com>,
+ Terry Bowman <terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>,
+ Benjamin Cheatham <benjamin.cheatham@amd.com>,
+ Zhijian Li <lizhijian@fujitsu.com>, Borislav Petkov <bp@alien8.de>,
+ Tomasz Wolski <tomasz.wolski@fujitsu.com>
+References: <20260122045543.218194-1-Smita.KoralahalliChannabasappa@amd.com>
+ <20260122045543.218194-4-Smita.KoralahalliChannabasappa@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20260122045543.218194-4-Smita.KoralahalliChannabasappa@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-75315-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[32];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75316-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[kernel.org,intel.com,huawei.com,amd.com,stgolabs.net,infradead.org,suse.cz,zohomail.com,oss.qualcomm.com,gmail.com,fujitsu.com,linuxfoundation.org,alien8.de];
+	RCVD_TLS_LAST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[dave.jiang@intel.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[intel.com:+];
+	NEURAL_HAM(-0.00)[-0.994];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_FIVE(0.00)[6];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 891907AF9C
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,intel.com:dkim,intel.com:mid,amd.com:email]
+X-Rspamd-Queue-Id: 233287B032
 X-Rspamd-Action: no action
 
-On Tue, Oct 28, 2025 at 5:49=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
- wrote:
->
-> From: Darrick J. Wong <djwong@kernel.org>
->
-> Use large folios when we're using iomap.
->
-> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 
-Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
+
+On 1/21/26 9:55 PM, Smita Koralahalli wrote:
+> __cxl_decoder_detach() currently resets decoder programming whenever a
+> region is detached if cxl_config_state is beyond CXL_CONFIG_ACTIVE. For
+> autodiscovered regions, this can incorrectly tear down decoder state
+> that may be relied upon by other consumers or by subsequent ownership
+> decisions.
+> 
+> Skip cxl_region_decode_reset() during detach when CXL_REGION_F_AUTO is
+> set.
+> 
+> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+
+
 > ---
->  fs/fuse/file_iomap.c |    6 ++++++
->  1 file changed, 6 insertions(+)
->
->
-> diff --git a/fs/fuse/file_iomap.c b/fs/fuse/file_iomap.c
-> index 897a07f197c797..0bae356045638b 100644
-> --- a/fs/fuse/file_iomap.c
-> +++ b/fs/fuse/file_iomap.c
-> @@ -1380,12 +1380,18 @@ static const struct address_space_operations fuse=
-_iomap_aops =3D {
->  static inline void fuse_inode_set_iomap(struct inode *inode)
->  {
->         struct fuse_inode *fi =3D get_fuse_inode(inode);
-> +       unsigned int min_order =3D 0;
->
->         inode->i_data.a_ops =3D &fuse_iomap_aops;
->
->         INIT_WORK(&fi->ioend_work, fuse_iomap_end_io);
->         INIT_LIST_HEAD(&fi->ioend_list);
->         spin_lock_init(&fi->ioend_lock);
+>  drivers/cxl/core/region.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index ae899f68551f..45ee598daf95 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -2178,7 +2178,9 @@ __cxl_decoder_detach(struct cxl_region *cxlr,
+>  		cxled->part = -1;
+>  
+>  	if (p->state > CXL_CONFIG_ACTIVE) {
+> -		cxl_region_decode_reset(cxlr, p->interleave_ways);
+> +		if (!test_bit(CXL_REGION_F_AUTO, &cxlr->flags))
+> +			cxl_region_decode_reset(cxlr, p->interleave_ways);
 > +
-> +       if (inode->i_blkbits > PAGE_SHIFT)
-> +               min_order =3D inode->i_blkbits - PAGE_SHIFT;
-> +
-> +       mapping_set_folio_min_order(inode->i_mapping, min_order);
->         set_bit(FUSE_I_IOMAP, &fi->state);
->  }
->
->
+>  		p->state = CXL_CONFIG_ACTIVE;
+>  	}
+>  
+
 
