@@ -1,380 +1,289 @@
-Return-Path: <linux-fsdevel+bounces-75322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YKv0In/8c2mf0gAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 23:55:59 +0100
+	id KF5MCrr/c2mA1AAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 00:09:46 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id E64D27B4C0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 23:55:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84AC87B5FF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 00:09:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id CCFB33006B72
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 22:55:56 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 932D23006453
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 23:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55EBE255F3F;
-	Fri, 23 Jan 2026 22:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094EA2E5B3D;
+	Fri, 23 Jan 2026 23:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dfrXqWhN"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="loB4uze1";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="odgeeCoC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF5C2D8375;
-	Fri, 23 Jan 2026 22:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF652C08CD;
+	Fri, 23 Jan 2026 23:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769208954; cv=none; b=Ioh90rzE08KZ+uI4Yo7CN1RzTPHwljAPWNzOW3H5H0JpMr+y5ABQIDJajkrchhPVDEB/dNRtV3qfT+/yp5dN600lWcj9v67eyNVKWV8ZvIPrUMdDkDO9uaz0cL98qcZQXZux3r6TgvpqmlrCRayc1q9Vnq4rjf8prPlxSAqMghg=
+	t=1769209780; cv=none; b=Ea9MGWKtQQbvImUZjnpdjOfReNuLCXMgIN4I/JsNCUloQwDvvEWnNfAr0MufAGClaJcjWSwCEqyUlxt0PQ5Ll4CygASgkwNHgzcUM7DMcvVCi8HSOpTy6bg7kAMvygigSHqOn9traoTGCjw2eQajohL4ZmxS9N4dxbNGmeQhNno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769208954; c=relaxed/simple;
-	bh=qc5PJE1kXd2KE97QOmmdiO+WZTUjEX2gOoIhJxPb0Aw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZmwdK2yZL/I5MCrEwtlUknuESxGRlcWY2stj+T90q7BfBRc6mMA0I0mMyTAhLLM/7ZQU2Mcg0Iyas2uXSWofGvGreBkcmL6SRDxzxObuxwaGdiXBa+ICc8Nom9wdrYeKe90ioMzd56UX02Ucu6oksrYNrGIqUW0A7eI/N++yKns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dfrXqWhN; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1769208953; x=1800744953;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=qc5PJE1kXd2KE97QOmmdiO+WZTUjEX2gOoIhJxPb0Aw=;
-  b=dfrXqWhNq7KnYC/0epgSjJhMxRPh4tdGx5hrM0vS5QyrFlXPoD6xCNF1
-   xvANeugYRr9qOKpP5etmiouin64aV9Gou6le0eNx7r7dddTQ/ROG9mQ7v
-   8+Dmq3WgrRazrs1etm8pxQ4oNbo5/iTUdVv1U/qoHYXaqkE2hsbc5medh
-   lQxIu3A/mIWhF52Tu4795mpIiJbKhIF/JzCwD2XzO49UHSMbMkwTW0JfL
-   rIBubMPxMjBTb4HkDC3UhW7z/kHTbe8huFvTuWJ+6a2Kc49hxEJQR/DZX
-   v8sUFM6pigw8TCRCkGlB/6pkPdEcqScPcexkBZ5WjUuqKJXJBaFmSBlww
-   Q==;
-X-CSE-ConnectionGUID: F1NyfEuJRSOyCI11HIOV+Q==
-X-CSE-MsgGUID: KMLWaI3ZQ2Cu2lH3PQ2kbg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11680"; a="87882601"
-X-IronPort-AV: E=Sophos;i="6.21,249,1763452800"; 
-   d="scan'208";a="87882601"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jan 2026 14:55:52 -0800
-X-CSE-ConnectionGUID: lSX315IhQ8G6LcCIk6+vhQ==
-X-CSE-MsgGUID: NzrG0BXpQI+vcYqn79xg/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,249,1763452800"; 
-   d="scan'208";a="211261193"
-Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.108.225]) ([10.125.108.225])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jan 2026 14:55:50 -0800
-Message-ID: <7ca8de5a-94d0-4b38-8ea4-68bac2dd09a1@intel.com>
-Date: Fri, 23 Jan 2026 15:55:48 -0700
+	s=arc-20240116; t=1769209780; c=relaxed/simple;
+	bh=jMoMs7+t/1zQmhCAHXcMOlVZTqtqaw5888TD/Z2KG1U=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:Date:Message-id; b=AffNOHJnqNKqnJJ+R7TemGCpgorXcLkXYbm3GRhwdmLcOxkKQNeUnotqLaiQKyjw/065scbBhwNn2cvgzaCgAZ9g5LsGy6oepz51a9TBjRuNtYgrvhs+D/KpGdjYqxP50BFIwyMyqeR8vLG6US9nmHHHbjoGX/u6GWBmF9+O6CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=loB4uze1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=odgeeCoC; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailfout.phl.internal (Postfix) with ESMTP id 421C7EC0175;
+	Fri, 23 Jan 2026 18:09:37 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Fri, 23 Jan 2026 18:09:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:reply-to:subject:subject:to:to; s=fm2; t=1769209777; x=
+	1769296177; bh=6Hz74XLlXKNuXciR9/DBJO/Te/Fs/bImQLb80n1DAXM=; b=l
+	oB4uze1m2uiyeoB2+3PewQUyIT5PehRm5t0WceUVeBu4w4nK2Fen78puDG3PFU9Z
+	tsOUTXz5fB+eIj0OQlrATwYAkPaXgKc0Xk5J5ASFw3SWb7WDD/foCVi4rsRTE7j4
+	GsuCD/t1RvVqnTHyZWVcBtQyLTdoOBS6SlVd6gRrzgFqt1zOOhgPOqVipWcDAYtE
+	Zph/6fOVgf27BlHKSXMz9D+5T2C0DsNMpJoWbPnK9BBhRBhKb7H1J+6b0zx/slyF
+	Bo3xOKJrn5Fyc/U9IyG2zwlMTkzKjmXVEvh/6zlZmzfiAsAhkqGh05igJYXjIagf
+	S+VjAqOA9gLvthubkckAg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:reply-to
+	:subject:subject:to:to:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm2; t=1769209777; x=1769296177; bh=6Hz74XLlXKNuX
+	ciR9/DBJO/Te/Fs/bImQLb80n1DAXM=; b=odgeeCoCk2XSHBpO8jPLZj75QIV1g
+	9DDT3QH2P9EmcNRUfhf0Ai3Znt9wTE3PoYDBT5KElbnPD1lGlvWkAeP8KWch0qqj
+	pc799TpdM8fGjyaYtqaFNc2MxiIn1jN3h3mdVJAtkNIM2/25IybKt8VWI4LduPkJ
+	nH4CEmuBhtiGmx00Fuju/zKUvEbzPRxzvnDMowR/eo2tcKrz0XPQb3pTb0bVk3g0
+	8nYZ33dQAbsw0a07HZQI4gcT1Aat1z7QGysVBfdYOeqQ2FA6Wjptud2Wo/aUhSRF
+	shzxgpqX9U3Fw6Cta1Bodber1oQ1+6V7dA3qE3Dm3RCzlp+jDNcWPRHgg==
+X-ME-Sender: <xms:sP9zaRwyhBqEmC0UKlan7iip9GKscI6vfDMmEjqFOE38FvkIEpu1lQ>
+    <xme:sP9zadJQA4AQ25vWZeJsRYc1s6O11l0w9cAebmLpsfC1IeEzbEhhSN1EEJbsRMmC_
+    ygfWVRfZPtApxG9fzBy3X2eRi84jBs6o9UbTfxxQ4IVZ1maeA>
+X-ME-Received: <xmr:sP9zaYUwaemFm5uB_ZVRnKbVQyFgpv-dN6I2fmx7nUvUE3nSfXhRWjCnZ49GX0-60cJXsfIRYIJZ1KQzg26VCsAFh7T7gHVOtnwBv3DiiKSV>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduhedtfedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheurhho
+    fihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepff
+    ehfeettedtieetuedtgeevfffhffdtheelleffffeujedvleevgfdvgfelleeunecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsgesoh
+    ifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehlihhnuhigqdgtrhihphhtohesvhhgvghrrdhkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgt
+    phhtthhopehtrhhonhgumhihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjlhgrhi
+    htohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvsghighhgvghrsheskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheprghnnhgrsehkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopegstghougguihhngheshhgrmhhmvghrshhprggtvgdrtghomh
+X-ME-Proxy: <xmx:sP9zaYaRLrEnzWmNnSX6ROZmvsmP5_rTcIrDVEXPaJBKeeZcxyc0dw>
+    <xmx:sP9zaXyTa2ut9LtRNkYdSdSBRuYU3Fiv3mcpiSc8VaJ41g5HZEmXOg>
+    <xmx:sP9zaQ1xTRTdkzi7hZ1mwTW7QZG9XQygN7BSwG-pwFFgbuM34UZ-cQ>
+    <xmx:sP9zaQlnEf2uqyi5zc4Ar8-8ydbSo0FFGxDndWT5ampzpwGv7ytbLA>
+    <xmx:sf9zadw0XYSfQUu5zQ-kVvEt57whPCmyM9ACy5muSftQvvwdANH90AC4>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 23 Jan 2026 18:09:33 -0500 (EST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 6/7] dax/hmem, cxl: Defer and resolve ownership of Soft
- Reserved memory ranges
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
- linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Cc: Ard Biesheuvel <ardb@kernel.org>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Yazen Ghannam <yazen.ghannam@amd.com>, Davidlohr Bueso <dave@stgolabs.net>,
- Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
- Pavel Machek <pavel@kernel.org>, Li Ming <ming.li@zohomail.com>,
- Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- Ying Huang <huang.ying.caritas@gmail.com>,
- Yao Xingtao <yaoxt.fnst@fujitsu.com>, Peter Zijlstra <peterz@infradead.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Nathan Fontenot <nathan.fontenot@amd.com>,
- Terry Bowman <terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>,
- Benjamin Cheatham <benjamin.cheatham@amd.com>,
- Zhijian Li <lizhijian@fujitsu.com>, Borislav Petkov <bp@alien8.de>,
- Tomasz Wolski <tomasz.wolski@fujitsu.com>
-References: <20260122045543.218194-1-Smita.KoralahalliChannabasappa@amd.com>
- <20260122045543.218194-7-Smita.KoralahalliChannabasappa@amd.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20260122045543.218194-7-Smita.KoralahalliChannabasappa@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: NeilBrown <neilb@ownmail.net>
+To: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
+ NeilBrown <neil@brown.name>, Trond Myklebust <trondmy@kernel.org>,
+ Anna Schumaker <anna@kernel.org>,
+ Benjamin Coddington <bcodding@hammerspace.com>,
+ Eric Biggers <ebiggers@kernel.org>, Rick Macklem <rick.macklem@gmail.com>
+Cc: linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-crypto@vger.kernel.org
+Subject: [PATCH/RFC] nfsd: rate limit requests that result in -ESTALE from the
+ filesystem
+Date: Sat, 24 Jan 2026 10:09:31 +1100
+Message-id: <176920977124.16766.1785815212991547773@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
-	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
+	DMARC_POLICY_ALLOW(-0.50)[ownmail.net,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74];
+	R_DKIM_ALLOW(-0.20)[ownmail.net:s=fm2,messagingengine.com:s=fm2];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[32];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75322-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[kernel.org,intel.com,huawei.com,amd.com,stgolabs.net,infradead.org,suse.cz,zohomail.com,oss.qualcomm.com,gmail.com,fujitsu.com,linuxfoundation.org,alien8.de];
-	RCVD_TLS_LAST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[dave.jiang@intel.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[intel.com:+];
-	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MID_RHS_MATCH_FROM(0.00)[];
+	REPLYTO_DN_EQ_FROM_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75323-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_TO(0.00)[oracle.com,kernel.org,brown.name,hammerspace.com,gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_FROM(0.00)[ownmail.net];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,intel.com:email,intel.com:dkim,intel.com:mid,amd.com:email]
-X-Rspamd-Queue-Id: E64D27B4C0
+	REPLYTO_DOM_NEQ_FROM_DOM(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[neilb@ownmail.net,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[ownmail.net:+,messagingengine.com:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	HAS_REPLYTO(0.00)[neil@brown.name];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,messagingengine.com:dkim,brown.name:replyto,brown.name:email,noble.neil.brown.name:mid]
+X-Rspamd-Queue-Id: 84AC87B5FF
 X-Rspamd-Action: no action
 
 
+This is an idea for an alternate approach to address the problem that
+Ben is trying to address by signing file handles.
 
-On 1/21/26 9:55 PM, Smita Koralahalli wrote:
-> The current probe time ownership check for Soft Reserved memory based
-> solely on CXL window intersection is insufficient. dax_hmem probing is not
-> always guaranteed to run after CXL enumeration and region assembly, which
-> can lead to incorrect ownership decisions before the CXL stack has
-> finished publishing windows and assembling committed regions.
-> 
-> Introduce deferred ownership handling for Soft Reserved ranges that
-> intersect CXL windows at probe time by scheduling deferred work from
-> dax_hmem and waiting for the CXL stack to complete enumeration and region
-> assembly before deciding ownership.
-> 
-> Evaluate ownership of Soft Reserved ranges based on CXL region
-> containment.
-> 
->    - If all Soft Reserved ranges are fully contained within committed CXL
->      regions, DROP handling Soft Reserved ranges from dax_hmem and allow
->      dax_cxl to bind.
-> 
->    - If any Soft Reserved range is not fully claimed by committed CXL
->      region, tear down all CXL regions and REGISTER the Soft Reserved
->      ranges with dax_hmem instead.
-> 
-> While ownership resolution is pending, gate dax_cxl probing to avoid
-> binding prematurely.
-> 
-> This enforces a strict ownership. Either CXL fully claims the Soft
-> Reserved ranges or it relinquishes it entirely.
-> 
-> Co-developed-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-> ---
->  drivers/cxl/core/region.c | 25 ++++++++++++
->  drivers/cxl/cxl.h         |  2 +
->  drivers/dax/cxl.c         |  9 +++++
->  drivers/dax/hmem/hmem.c   | 81 ++++++++++++++++++++++++++++++++++++++-
->  4 files changed, 115 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 9827a6dd3187..6c22a2d4abbb 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -3875,6 +3875,31 @@ static int cxl_region_debugfs_poison_clear(void *data, u64 offset)
->  DEFINE_DEBUGFS_ATTRIBUTE(cxl_poison_clear_fops, NULL,
->  			 cxl_region_debugfs_poison_clear, "%llx\n");
->  
-> +static int cxl_region_teardown_cb(struct device *dev, void *data)
-> +{
-> +	struct cxl_root_decoder *cxlrd;
-> +	struct cxl_region *cxlr;
-> +	struct cxl_port *port;
-> +
-> +	if (!is_cxl_region(dev))
-> +		return 0;
-> +
-> +	cxlr = to_cxl_region(dev);
-> +
-> +	cxlrd = to_cxl_root_decoder(cxlr->dev.parent);
-> +	port = cxlrd_to_port(cxlrd);
-> +
-> +	devm_release_action(port->uport_dev, unregister_region, cxlr);
-> +
-> +	return 0;
-> +}
-> +
-> +void cxl_region_teardown_all(void)
-> +{
-> +	bus_for_each_dev(&cxl_bus_type, NULL, NULL, cxl_region_teardown_cb);
-> +}
-> +EXPORT_SYMBOL_GPL(cxl_region_teardown_all);
-> +
->  static int cxl_region_contains_sr_cb(struct device *dev, void *data)
->  {
->  	struct resource *res = data;
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index b0ff6b65ea0b..1864d35d5f69 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -907,6 +907,7 @@ int cxl_add_to_region(struct cxl_endpoint_decoder *cxled);
->  struct cxl_dax_region *to_cxl_dax_region(struct device *dev);
->  u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint, u64 spa);
->  bool cxl_region_contains_soft_reserve(const struct resource *res);
-> +void cxl_region_teardown_all(void);
->  #else
->  static inline bool is_cxl_pmem_region(struct device *dev)
->  {
-> @@ -933,6 +934,7 @@ static inline bool cxl_region_contains_soft_reserve(const struct resource *res)
->  {
->  	return false;
->  }
-> +static inline void cxl_region_teardown_all(void) { }
->  #endif
->  
->  void cxl_endpoint_parse_cdat(struct cxl_port *port);
-> diff --git a/drivers/dax/cxl.c b/drivers/dax/cxl.c
-> index 13cd94d32ff7..b7e90d6dd888 100644
-> --- a/drivers/dax/cxl.c
-> +++ b/drivers/dax/cxl.c
-> @@ -14,6 +14,15 @@ static int cxl_dax_region_probe(struct device *dev)
->  	struct dax_region *dax_region;
->  	struct dev_dax_data data;
->  
-> +	switch (dax_cxl_mode) {
-> +	case DAX_CXL_MODE_DEFER:
-> +		return -EPROBE_DEFER;
-> +	case DAX_CXL_MODE_REGISTER:
-> +		return -ENODEV;
-> +	case DAX_CXL_MODE_DROP:
-> +		break;
-> +	}
-> +
->  	if (nid == NUMA_NO_NODE)
->  		nid = memory_add_physaddr_to_nid(cxlr_dax->hpa_range.start);
->  
-> diff --git a/drivers/dax/hmem/hmem.c b/drivers/dax/hmem/hmem.c
-> index 1e3424358490..bcb57d8678d7 100644
-> --- a/drivers/dax/hmem/hmem.c
-> +++ b/drivers/dax/hmem/hmem.c
-> @@ -3,6 +3,7 @@
->  #include <linux/memregion.h>
->  #include <linux/module.h>
->  #include <linux/dax.h>
-> +#include "../../cxl/cxl.h"
+The reasons I think an alternate is worth considering are:
 
-Would it make sense to move what common definitions you need to include/cxl/cxl.h?
+ - Ben's approach requires some configuration, though not much.
+   This approach requires zero configuration which is always better.
 
-DJ
+ - Ben's approach adds a siphash calculation or two to (almost) every
+   NFS request.  This may not be a great cost but it is still some time
+   and some power.  Less is more.
 
->  #include "../bus.h"
->  
->  static bool region_idle;
-> @@ -58,9 +59,15 @@ static void release_hmem(void *pdev)
->  	platform_device_unregister(pdev);
->  }
->  
-> +struct dax_defer_work {
-> +	struct platform_device *pdev;
-> +	struct work_struct work;
-> +};
-> +
->  static int hmem_register_device(struct device *host, int target_nid,
->  				const struct resource *res)
->  {
-> +	struct dax_defer_work *work = dev_get_drvdata(host);
->  	struct platform_device *pdev;
->  	struct memregion_info info;
->  	long id;
-> @@ -69,8 +76,18 @@ static int hmem_register_device(struct device *host, int target_nid,
->  	if (IS_ENABLED(CONFIG_DEV_DAX_CXL) &&
->  	    region_intersects(res->start, resource_size(res), IORESOURCE_MEM,
->  			      IORES_DESC_CXL) != REGION_DISJOINT) {
-> -		dev_dbg(host, "deferring range to CXL: %pr\n", res);
-> -		return 0;
-> +		switch (dax_cxl_mode) {
-> +		case DAX_CXL_MODE_DEFER:
-> +			dev_dbg(host, "deferring range to CXL: %pr\n", res);
-> +			schedule_work(&work->work);
-> +			return 0;
-> +		case DAX_CXL_MODE_REGISTER:
-> +			dev_dbg(host, "registering CXL range: %pr\n", res);
-> +			break;
-> +		case DAX_CXL_MODE_DROP:
-> +			dev_dbg(host, "dropping CXL range: %pr\n", res);
-> +			return 0;
-> +		}
->  	}
->  
->  	rc = region_intersects_soft_reserve(res->start, resource_size(res));
-> @@ -123,8 +140,67 @@ static int hmem_register_device(struct device *host, int target_nid,
->  	return rc;
->  }
->  
-> +static int cxl_contains_soft_reserve(struct device *host, int target_nid,
-> +				     const struct resource *res)
-> +{
-> +	if (region_intersects(res->start, resource_size(res), IORESOURCE_MEM,
-> +			      IORES_DESC_CXL) != REGION_DISJOINT) {
-> +		if (!cxl_region_contains_soft_reserve(res))
-> +			return 1;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void process_defer_work(struct work_struct *_work)
-> +{
-> +	struct dax_defer_work *work = container_of(_work, typeof(*work), work);
-> +	struct platform_device *pdev = work->pdev;
-> +	int rc;
-> +
-> +	/* relies on cxl_acpi and cxl_pci having had a chance to load */
-> +	wait_for_device_probe();
-> +
-> +	rc = walk_hmem_resources(&pdev->dev, cxl_contains_soft_reserve);
-> +
-> +	if (!rc) {
-> +		dax_cxl_mode = DAX_CXL_MODE_DROP;
-> +		rc = bus_rescan_devices(&cxl_bus_type);
-> +		if (rc)
-> +			dev_warn(&pdev->dev, "CXL bus rescan failed: %d\n", rc);
-> +	} else {
-> +		dax_cxl_mode = DAX_CXL_MODE_REGISTER;
-> +		cxl_region_teardown_all();
-> +	}
-> +
-> +	walk_hmem_resources(&pdev->dev, hmem_register_device);
-> +}
-> +
-> +static void kill_defer_work(void *_work)
-> +{
-> +	struct dax_defer_work *work = container_of(_work, typeof(*work), work);
-> +
-> +	cancel_work_sync(&work->work);
-> +	kfree(work);
-> +}
-> +
->  static int dax_hmem_platform_probe(struct platform_device *pdev)
->  {
-> +	struct dax_defer_work *work = kzalloc(sizeof(*work), GFP_KERNEL);
-> +	int rc;
-> +
-> +	if (!work)
-> +		return -ENOMEM;
-> +
-> +	work->pdev = pdev;
-> +	INIT_WORK(&work->work, process_defer_work);
-> +
-> +	rc = devm_add_action_or_reset(&pdev->dev, kill_defer_work, work);
-> +	if (rc)
-> +		return rc;
-> +
-> +	platform_set_drvdata(pdev, work);
-> +
->  	return walk_hmem_resources(&pdev->dev, hmem_register_device);
->  }
->  
-> @@ -174,3 +250,4 @@ MODULE_ALIAS("platform:hmem_platform*");
->  MODULE_DESCRIPTION("HMEM DAX: direct access to 'specific purpose' memory");
->  MODULE_LICENSE("GPL v2");
->  MODULE_AUTHOR("Intel Corporation");
-> +MODULE_IMPORT_NS("CXL");
+Filehandles already contain 32 bits of randomness.  Rather than adding
+another 64 bits as Ben's patch does, this patch increase the time it
+take to test all possible values for those 32 bits to make it an
+impractical attack.
+
+Comments welcome.
+
+Thanks,
+NeilBrown
+
+
+
+From: NeilBrown <neil@brown.name>
+Subject: [PATCH] nfsd: rate limit requests that result in -ESTALE from the
+ filesystem
+
+NFS file handles typically contain a 32 bit generation number which is
+randomly generated by the filesystem when the inode (or inode number) is
+allocated.  This makes it hard to guess correct file handles.  Hard but
+not impossible on a low latency network with a high speed server.
+
+The NFS server will reject a request to access the file associated with
+a filehandle if the user credential given is now allowed the access the
+file, but it is not able to check if the user (or client) should be
+allowed to even know that filehandle.  This would require knowing all
+the paths to a given file, all the credential that the client has access
+to, when whether some combination of those credential can complete a
+walk down any of the paths.
+
+So the NFS server currently depends on the client to "do the right
+thing".
+
+In some circumstances the client may not be sufficiently trusted, and
+path-based access controls may be an important part of the access
+management strategy.  In these cases the protection provided by nfsd may
+not be sufficient.
+
+The only known attack methodology is to guess the inode number of a file
+of interest, then iterate over all possible generation numbers.  This
+would be expected to achieve success (if the inode number is valid) in,
+on average, 2^31 guesses.  At one per microsecond this is less than one
+hour.  At one per 10 microseconds this is less than one day.
+
+When presented with an incorrect guess the filesystem with report an
+error to nfsd, either NULL or ERR_PTR(-ESTALE).  This patch causes nfsd
+to detect those errors and insert a 15ms delay.  It also take a lock so
+that all such delays are serialised.  This increases the expected time
+to success to 1 year.
+
+Normally NFSERR_STALE errors are rare and are no on a fast path.
+Normal accesses which use a filehandle which has become stale will now
+incur a 15msec does which is likely to be unnoticeable.  An attack will
+notice an intolerable delay.
+
+Possible this code could detect if there are ever a large number of
+requests over an extended time and then take more firm action.
+
+Signed-off-by: NeilBrown <neil@brown.name>
+---
+ fs/nfsd/netns.h  |  2 ++
+ fs/nfsd/nfsctl.c |  1 +
+ fs/nfsd/nfsfh.c  | 15 +++++++++++++++
+ 3 files changed, 18 insertions(+)
+
+diff --git a/fs/nfsd/netns.h b/fs/nfsd/netns.h
+index 9fa600602658..f7229d1f9d86 100644
+--- a/fs/nfsd/netns.h
++++ b/fs/nfsd/netns.h
+@@ -219,6 +219,8 @@ struct nfsd_net {
+ 	/* last time an admin-revoke happened for NFSv4.0 */
+ 	time64_t		nfs40_last_revoke;
+=20
++	struct mutex		estale_rate_limit_mutex;
++
+ #if IS_ENABLED(CONFIG_NFS_LOCALIO)
+ 	/* Local clients to be invalidated when net is shut down */
+ 	spinlock_t              local_clients_lock;
+diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+index 7587c64bf26d..55d25d9b414f 100644
+--- a/fs/nfsd/nfsctl.c
++++ b/fs/nfsd/nfsctl.c
+@@ -2198,6 +2198,7 @@ static __net_init int nfsd_net_init(struct net *net)
+ 	nfsd4_init_leases_net(nn);
+ 	get_random_bytes(&nn->siphash_key, sizeof(nn->siphash_key));
+ 	seqlock_init(&nn->writeverf_lock);
++	mutex_init(&nn->estale_rate_limit_mutex);
+ #if IS_ENABLED(CONFIG_NFS_LOCALIO)
+ 	spin_lock_init(&nn->local_clients_lock);
+ 	INIT_LIST_HEAD(&nn->local_clients);
+diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
+index ed85dd43da18..7032f65fe21a 100644
+--- a/fs/nfsd/nfsfh.c
++++ b/fs/nfsd/nfsfh.c
+@@ -244,6 +244,8 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst *rqstp, =
+struct net *net,
+ 						data_left, fileid_type, 0,
+ 						nfsd_acceptable, exp);
+ 		if (IS_ERR_OR_NULL(dentry)) {
++			struct nfsd_net *nn =3D net_generic(net, nfsd_net_id);
++
+ 			trace_nfsd_set_fh_dentry_badhandle(rqstp, fhp,
+ 					dentry ?  PTR_ERR(dentry) : -ESTALE);
+ 			switch (PTR_ERR(dentry)) {
+@@ -252,6 +254,19 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst *rqstp,=
+ struct net *net,
+ 				break;
+ 			default:
+ 				dentry =3D ERR_PTR(-ESTALE);
++				/* We limit ESTALE returns to 1 every
++				 * 15 milliseconds (across all threads) to
++				 * prevent a client from guessing the
++				 * correct (32 bit) generation number
++				 * for an given inode in significantly
++				 * less than 1 year.  This ensures clients
++				 * can only access files for which they
++				 * are allowed to access a path from the
++				 * exported root.
++				 */
++				mutex_lock(&nn->estale_rate_limit_mutex);
++				msleep(15);
++				mutex_unlock(&nn->estale_rate_limit_mutex);
+ 			}
+ 		}
+ 	}
 
 
