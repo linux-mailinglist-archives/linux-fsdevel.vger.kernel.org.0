@@ -1,161 +1,247 @@
-Return-Path: <linux-fsdevel+bounces-75298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0IxoJlaMc2l0xAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 15:57:26 +0100
+	id oBahIOmMc2l0xAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 15:59:53 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 733E4774EC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 15:57:26 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 273F777605
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 15:59:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 933C73009401
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 14:57:25 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 21B76304EA9B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 14:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C299932D0F0;
-	Fri, 23 Jan 2026 14:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868812E06EA;
+	Fri, 23 Jan 2026 14:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eoLJ2J7s"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E03gqZWO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67BDA330640
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jan 2026 14:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930ED33555D
+	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jan 2026 14:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769180242; cv=none; b=C79Y4ICYabXVgDsGMM4tO7fyWyKOLWbgyYmxiaz3l5tR4tYnb/HZbaqbpaYiW1VzzSWyjkU95pTRFPGnSFEu37chKSpV2j1uy8gSxYDSR0ZBZy+Jep2cMQv4XYymHGCAUyVwF3JoLCUwPeTy54Fkfr956c4cS35CK514Wg0G6KQ=
+	t=1769180311; cv=none; b=KzPIL7v10kWWUPHdNtWeBTfTmoNG3eYPJ1KH7zMBPTkxR2FgIj4Vsy9/8fDliH6YppHqt/nI8PV8Re1vnhaDTZL6gnOZzzedS0WucBW/IRGQN9K563XltajDhTkMKE1GBVS+LGhtXRW9ZyUdLzICv5hQTX1mJV2iBc20lojQRMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769180242; c=relaxed/simple;
-	bh=98gfQfTtpuQIK4SRjDriRs29SOaTPxKtPQ4zxBSwmD8=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=B9YJTCkXt2aVoera9QsnSfFgV/7arAq+U94DQ9xKiS4urCuEXpsMgC+xaV0JuItKzbEpNJvukBikwXX6vtOg51HZu8y59uSJa+1oS7CkZXxMWKaX+at6AgDp8k3QyYDJpbtM5XbmQe+voVzswMcQNQx73cotOR2lRDiyR3RrRjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eoLJ2J7s; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1769180239;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C9dje+sNIA+yLoiDKbDNtKWUYVXUn9yJ3J50p0rKaA0=;
-	b=eoLJ2J7skX1yxSOrQZnYoXA5Q2AwPWeYlP7pqY3d7BcZflShX1K8UaeFyY2W8HcTC5vT6M
-	UvSoIb/Ri89GTZoCaZWAOx/O5QK/FMFbqy5IYdYFANFcMjSdbiOm8k7BIZ+sfjQyyESU8O
-	N995gH3LmUAU3xpTcj9o1NHYFW/El0c=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-266-zQ3khed6Ng-AjKJiBdeFRg-1; Fri,
- 23 Jan 2026 09:57:13 -0500
-X-MC-Unique: zQ3khed6Ng-AjKJiBdeFRg-1
-X-Mimecast-MFC-AGG-ID: zQ3khed6Ng-AjKJiBdeFRg_1769180232
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3C95F18005B6;
-	Fri, 23 Jan 2026 14:57:11 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.2])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 97B311800999;
-	Fri, 23 Jan 2026 14:57:07 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20260123135858.GA24386@lst.de>
-References: <20260123135858.GA24386@lst.de> <20260119074425.4005867-4-hch@lst.de> <20260119074425.4005867-1-hch@lst.de> <1754475.1769168237@warthog.procyon.org.uk>
-To: Christoph Hellwig <hch@lst.de>
-Cc: dhowells@redhat.com, Jens Axboe <axboe@kernel.dk>,
-    Christian Brauner <brauner@kernel.org>,
-    "Darrick J. Wong" <djwong@kernel.org>,
-    Carlos Maiolino <cem@kernel.org>, Qu Wenruo <wqu@suse.com>,
-    Al Viro <viro@zeniv.linux.org.uk>, linux-block@vger.kernel.org,
-    linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-    Kundan Kumar <kundan.kumar@samsung.com>,
-    Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH 03/14] iov_iter: extract a iov_iter_extract_bvecs helper from bio code
+	s=arc-20240116; t=1769180311; c=relaxed/simple;
+	bh=yLzY19MuS3iN380+AoG930YPzVQx3y4RwEr4smOpjaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YU/BGPsm/BwoTCxt8/09M7/PA+Hjimdv4AaBm0AbuXSNPuHC67JWYefn0iNxVdHUFz9p83pLRaRsZlW5J52klpFFH++QRW7AvYFDEFm5tTDwrIIacBvPCoVFdeeEa8JIpyZ4h7WH0iIAaRAIKxdlYMA3tEp+GJC/5tX66rJ19o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E03gqZWO; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-81f5381d168so2450565b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jan 2026 06:58:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769180306; x=1769785106; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eEedmtOY7Y8eJ9xgbPCCWxatDC0k0Q8serp7IKoqpeM=;
+        b=E03gqZWOFHV3q/QQn+Zg2MgCO0R4louQSem3MkoQbOTGUL4ZT/EziRRSowEbQN6H/p
+         aUNsW2+IbwA0Q3G7kYkJO2679gs98qiGwCy8AU7TIQ5J42HcAr8/uZYDHlMDgLJwgSdM
+         t3drZyVjo4hbGG5tGlmZSsT/K3OVgs4pZlSLZDlzAeMh0DR+3zB0YArA7v8/Q3NaSyAy
+         wIDi7QDlO6uWxeXZkfZRTsSGBs2RTiThdFdUop9xefCTEC49ZW3/39gKcxojKAyTL+j+
+         3N0sdIGy0CLWJsN/lt9XyzbUYpBuZFhrQCoPRUSFmVU2oozpDmWtVu7NxJU28n00sLff
+         GgAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769180306; x=1769785106;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eEedmtOY7Y8eJ9xgbPCCWxatDC0k0Q8serp7IKoqpeM=;
+        b=AyU09sQkCyUmzCy16acDbZ7HQ56r/Pi44R0UkDBtnV7SIRDfieGRkbF2vRW2QOI4N1
+         FbU9JfmAEgvBPH53Vv4NbG5fa1Lw6l7RmYLCyep/nzmzXv9DgzdQ9H748Xp6U27YY+Sb
+         ypFInR+BnKvG4bZz73tdCk77GcoUL1CvFz/MDMIaAPJLMY3Nk/quGbJ9+v2hOIIpamDs
+         D4Q1WHW/gghDpjVYNCeFsWtrMCTcKwwJEi+JzQhZwuo/IHTKceLEX3JNkizOVJzgR917
+         LmPn2xh+1/E4448UdvCmwVhsUkxJJE+Pwfzmc3nkMZKxKrsfkKbeGkzZH+b+5TII+ujz
+         tmsw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJ/bQJ7mc4kd+2HlU6yRSBG8Fad0VFe5jV35f5ru8mYQ6y34vlNhe4FS7YUj4XXdRCLtvKxGm40aRfhBYU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5AOgpVGJMMco60HzR2/AaXOd6HxNMOHWvKXW8mnIASuERN/KQ
+	EvVbSpY6QhjDTDzIx7dK2+wRiHQ2lkVDSezSfhBcc3iCw+crZdWgIynWEnQbUA==
+X-Gm-Gg: AZuq6aLVUqkWoLerKqCLao1Tt/LLYthVYAMeLVQucfZGyBAwX0pkymnwUV8XbCQcASy
+	k6f0XFWB22E2ShJzjeyC98ldvpFpd+dRzKUiO/ZTHW0T7h9EWYykr/Yo6laZ8TxeU/lZTfMA3e2
+	x6taWCbPUQXGXdgumi/CCLGyom9jv0DxEoSXKjh5cIaBHELe7v4HDQR523nAhKyiDpcg3kjx78G
+	kjUoZKFTotMZ09yEgGuk2hKxM0Y8eWByZBJfysMOey110u6RwzBP7yfB/5kLNdH9n60SWRE3Kf0
+	uOlc+SfbfaI2HbhFGfwAmHboSlKVynUI5scJ7r4iqh7uO6/PV7qmOljVssAXjpKg7t93a+sxsXj
+	tCAybzCJ3yDfZ+msgCObXDQ+8fBx/MEj8zwQ8ZpYRgwGiTHGxGC/zAHR1+rOgvHNUxZTld1wUBc
+	rC3HmRDXB+/2w=
+X-Received: by 2002:a05:6a21:3944:b0:366:14b0:1a41 with SMTP id adf61e73a8af0-38e6f8297c7mr3334491637.79.1769180305734;
+        Fri, 23 Jan 2026 06:58:25 -0800 (PST)
+Received: from inspiron ([111.125.231.221])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c635a42e8ecsm2290372a12.32.2026.01.23.06.58.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Jan 2026 06:58:25 -0800 (PST)
+Date: Fri, 23 Jan 2026 20:28:13 +0530
+From: Prithvi <activprithvi@gmail.com>
+To: Dmitry Bogdanov <d.bogdanov@yadro.com>
+Cc: martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+	target-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	hch@lst.de, jlbec@evilplan.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com, khalid@kernel.org,
+	syzbot+f6e8174215573a84b797@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] scsi: target: Fix recursive locking in
+ __configfs_open_file()
+Message-ID: <20260123145813.wamnt62fwh2ihtur@inspiron>
+References: <20260108191523.303114-1-activprithvi@gmail.com>
+ <20260115032012.yb5ylmumcirrmsbr@inspiron>
+ <20260122095634.GA15012@yadro.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1763224.1769180224.1@warthog.procyon.org.uk>
-Date: Fri, 23 Jan 2026 14:57:06 +0000
-Message-ID: <1763225.1769180226@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260122095634.GA15012@yadro.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75298-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	HAS_ORG_HEADER(0.00)[];
-	DKIM_TRACE(0.00)[redhat.com:+];
-	RCPT_COUNT_TWELVE(0.00)[13];
+	TAGGED_FROM(0.00)[bounces-75299-lists,linux-fsdevel=lfdr.de];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	FREEMAIL_CC(0.00)[oracle.com,vger.kernel.org,lst.de,evilplan.org,lists.linux.dev,linuxfoundation.org,gmail.com,kernel.org,syzkaller.appspotmail.com];
 	MIME_TRACE(0.00)[0:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	TO_DN_SOME(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[dhowells@redhat.com,linux-fsdevel@vger.kernel.org];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
-	RCVD_COUNT_FIVE(0.00)[6];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,lst.de:email]
-X-Rspamd-Queue-Id: 733E4774EC
+	FROM_NEQ_ENVFROM(0.00)[activprithvi@gmail.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	NEURAL_HAM(-0.00)[-1.000];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel,f6e8174215573a84b797];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,yadro.com:email,appspotmail.com:email]
+X-Rspamd-Queue-Id: 273F777605
 X-Rspamd-Action: no action
 
-Christoph Hellwig <hch@lst.de> wrote:
-
-> On Fri, Jan 23, 2026 at 11:37:17AM +0000, David Howells wrote:
-> > Christoph Hellwig <hch@lst.de> wrote:
+On Thu, Jan 22, 2026 at 12:56:34PM +0300, Dmitry Bogdanov wrote:
+> On Thu, Jan 15, 2026 at 08:50:12AM +0530, Prithvi wrote:
 > > 
-> > > +static unsigned int get_contig_folio_len(struct page **pages,
-> > > +		unsigned int *num_pages, size_t left, size_t offset)
-> > > +{
-> > > +	struct folio *folio = page_folio(pages[0]);
-> > 
-> > You can't do this.  You cannot assume that pages[0] is of folio type.
-> > vmsplice() is unfortunately a thing and the page could be a network read
-> > buffer.
+> > On Fri, Jan 09, 2026 at 12:45:23AM +0530, Prithvi Tambewagh wrote:
+> > > In flush_write_buffer, &p->frag_sem is acquired and then the loaded store
+> > > function is called, which, here, is target_core_item_dbroot_store().
+> > > This function called filp_open(), following which these functions were
+> > > called (in reverse order), according to the call trace:
+> > >
+> > > down_read
+> > > __configfs_open_file
+> > > do_dentry_open
+> > > vfs_open
+> > > do_open
+> > > path_openat
+> > > do_filp_open
+> > > file_open_name
+> > > filp_open
+> > > target_core_item_dbroot_store
+> > > flush_write_buffer
+> > > configfs_write_iter
+> > >
+> > > Hence ultimately, __configfs_open_file() was called, indirectly by
+> > > target_core_item_dbroot_store(), and it also attempted to acquire
+> > > &p->frag_sem, which was already held by the same thread, acquired earlier
+> > > in flush_write_buffer. This poses a possibility of recursive locking,
+> > > which triggers the lockdep warning.
+> > >
+> > > Fix this by modifying target_core_item_dbroot_store() to use kern_path()
+> > > instead of filp_open() to avoid opening the file using filesystem-specific
+> > > function __configfs_open_file(), and further modifying it to make this
+> > > fix compatible.
+> > >
+> > > Reported-by: syzbot+f6e8174215573a84b797@syzkaller.appspotmail.com
+> > > Closes: https://syzkaller.appspot.com/bug?extid=f6e8174215573a84b797
+> > > Tested-by: syzbot+f6e8174215573a84b797@syzkaller.appspotmail.com
+> > > Cc: stable@vger.kernel.org
+> > > Signed-off-by: Prithvi Tambewagh <activprithvi@gmail.com>
+> > > ---
+> > >  drivers/target/target_core_configfs.c | 13 +++++++------
+> > >  1 file changed, 7 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
+> > > index b19acd662726..f29052e6a87d 100644
+> > > --- a/drivers/target/target_core_configfs.c
+> > > +++ b/drivers/target/target_core_configfs.c
+> > > @@ -108,8 +108,8 @@ static ssize_t target_core_item_dbroot_store(struct config_item *item,
+> > >                                       const char *page, size_t count)
+> > >  {
+> > >       ssize_t read_bytes;
+> > > -     struct file *fp;
+> > >       ssize_t r = -EINVAL;
+> > > +     struct path path = {};
+> > >
+> > >       mutex_lock(&target_devices_lock);
+> > >       if (target_devices) {
+> > > @@ -131,17 +131,18 @@ static ssize_t target_core_item_dbroot_store(struct config_item *item,
+> > >               db_root_stage[read_bytes - 1] = '\0';
+> > >
+> > >       /* validate new db root before accepting it */
+> > > -     fp = filp_open(db_root_stage, O_RDONLY, 0);
+> > > -     if (IS_ERR(fp)) {
+> > > +     r = kern_path(db_root_stage, LOOKUP_FOLLOW, &path);
+> > > +     if (r) {
+> > >               pr_err("db_root: cannot open: %s\n", db_root_stage);
+> > >               goto unlock;
+> > >       }
+> > > -     if (!S_ISDIR(file_inode(fp)->i_mode)) {
+> > > -             filp_close(fp, NULL);
+> > > +     if (!d_is_dir(path.dentry)) {
+> > > +             path_put(&path);
+> > >               pr_err("db_root: not a directory: %s\n", db_root_stage);
+> > > +             r = -ENOTDIR;
+> > >               goto unlock;
+> > >       }
+> > > -     filp_close(fp, NULL);
+> > > +     path_put(&path);
+> > >
+> > >       strscpy(db_root, db_root_stage);
+> > >       pr_debug("Target_Core_ConfigFS: db_root set to %s\n", db_root);
+> > >
+> > > base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+> > > --
+> > > 2.34.1
+> > >
 > 
-> Hmm, this just moves around existing code added in commit ed9832bc08db
-> ("block: introduce folio awareness and add a bigger size from folio").
+> You missed the very significant thing in the commit message - that this
+> lockdep warning is due to try to write its own filename to dbroot file:
 > 
-> How do we get these network read buffers into either a user address
-> space or a (non-bvec) iter passed to O_DIRECT reads/writes?
-
-Splice from TCP socket to pipe, vmsplice from there into process address
-space; DIO write() from there I think should do it.
-
-What you might need to do is write page-sized chunks into one end of the TCP
-socket and flush it after each one so that vmsplice() sees page-sized chunks
-of data.  I'm not sure how well an external connection would work to get
-actual transmission buffers.  The problem is that the received packet is
-page-aligned, including the network headers (I think), so if you can, say,
-send 8K packets, you'd have to try and guess where the page boundaries are as
-vmsplice can only work on whole pages.
-
-Can we make vmsplice() just copy data?
-
-> Can we come up with testcase for xfstests or blktests for this?
+> 	db_root: not a directory: /sys/kernel/config/target/dbroot
 > 
-> How do we find out if a given page is a folio and that we can do this?
+> That is why the semaphore is the same - it is of the same file.
+> 
+> Without that explanation nobody understands wheter it is a false positive or not.
+> 
+> The fix itself looks good.
+> 
+> Reviewed-by: Dmitry Bogdanov <d.bogdanov@yadro.com> 
 
-That's a question for Willy.
+Hello Dmitry,
 
-David
+I have sent v2 patch with this change incorporated, however it doesn't
+include your Reviewed-by tag. Since your review applies, and the changes
+in v2 don't invalidate it, I wanted to confirm if its okay to carry
+forward your Reviewed-by tag or if you would prefer to review it agian.
 
+Apologies if this is an obvious point.
+
+Best Regards,
+Prithvi
 
