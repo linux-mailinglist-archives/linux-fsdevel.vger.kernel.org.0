@@ -1,100 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-75242-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75243-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cI/GL/Myc2lItAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75242-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 09:36:03 +0100
+	id iEneGO00c2lItAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75243-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 09:44:29 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E78972966
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 09:36:03 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2F5B72AC9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 09:44:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id F155E301DC1C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 08:36:00 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 138DA300EBD4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 08:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A450322B77;
-	Fri, 23 Jan 2026 08:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7C233A718;
+	Fri, 23 Jan 2026 08:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DPArbCqF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403F62DE1FA;
-	Fri, 23 Jan 2026 08:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588EC3314D9;
+	Fri, 23 Jan 2026 08:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769157359; cv=none; b=KypCMqpaD3SjGk9ThvndYxUfdOTH/FujGYXtgxZiMhXb6AmHnWQ4eyNb8MkdBDVXsONMAOxIHFAj7I1u0dpIeAo2rZiQ1Ig0kex5WH2yRIusoLEapma/oWLe2HgCBSbNSyx3AR6eovgh7RQSW7Mp9cDlHyHO4wKLyDU7pJgDJss=
+	t=1769157813; cv=none; b=in0iulEYtlD329HJseFb2g20+7TOohGikM7HjLfYUKvxPOJylGDI7eBX53225JbWzZ7ht07V/685vBzvJFIBRhLD12CH1xzLEvwH9OMD1iWBSwcmBSxnWpn+o8FZMUQ9yyh3bYdX+w/Cztqf9wH+K/PZUntuJ4qrHu+T1a26jOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769157359; c=relaxed/simple;
-	bh=4xe7FzvjqGCo86DTA9TePIu6gBkFRDzmOQywZnr4y7M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VqliJ7gF/PMTc6xWpSpaosO1d8mcUq3NT47Wq3Gzf7n8M+E61ifZnWFxYqOfQd3q4RlE16WzCN7l7ANGWxOkxejTnkRl/c7uJzkotMruKjPvT+D19sMniYeDblQU7KXTD5nWhBLCLg3Z4STuHGVNNkUNkXZsUahsPVS7p7p5bJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 5F08D227AAF; Fri, 23 Jan 2026 09:35:54 +0100 (CET)
-Date: Fri, 23 Jan 2026 09:35:54 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	Christian Brauner <brauner@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Carlos Maiolino <cem@kernel.org>, Qu Wenruo <wqu@suse.com>,
-	Al Viro <viro@zeniv.linux.org.uk>, linux-block@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 01/14] block: refactor get_contig_folio_len
-Message-ID: <20260123083554.GA30708@lst.de>
-References: <20260119074425.4005867-1-hch@lst.de> <20260119074425.4005867-2-hch@lst.de> <824538a6-ce9d-41e7-9485-10ff9e4d5334@kernel.org>
+	s=arc-20240116; t=1769157813; c=relaxed/simple;
+	bh=IjBzeukcuum7qie/wGvJsDRzxzqGbiX2MwG4HT1vpOg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iL53nwIfWZVYgfL3FV6ZdK7eJPsRhcjLIbjHIM9HfC9L+raMz70UTyjtWoYbcVIG2vm7GtgkQlOsUvUD8DYbyPmvkXQJhI9Un6GKMw8KF9dh/fy5Oti+AD6WdG3Kr+Slm0jGpaBIcsr3bhyiR0yKXeXrA8e5wBY25SK8zmbxuYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DPArbCqF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6337C116D0;
+	Fri, 23 Jan 2026 08:43:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769157812;
+	bh=IjBzeukcuum7qie/wGvJsDRzxzqGbiX2MwG4HT1vpOg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DPArbCqFQV6S6jzffEe6x0Or3TFnRdn/3fz4YpibBhZDda9p91mptWfib3r/Y8qbH
+	 OAXKo69MdcX5MZpjfNnS/ebLG5oWTzwZI7G5Uox15zaREF+WuqY9lQIdh0ykF016n8
+	 CdzU2Beli1fOQz+KGaqlHonhep+HAXQaOMP2EwwkGoE0NVt1bHoIl5EgyIuO4Qv1tQ
+	 lnoF4PjOiOv0vKiAtUj0tprRtsbnfcbO0pgMGlbqqpkuc6++fDU/cB4sm/leccyH5a
+	 agm19Rj5oCAONxB9g4h9UAbJDY38NHYazFH2kDEMryrkupDIy6h3ybUxzPAFcd9enL
+	 Xic3trAJivnWg==
+Message-ID: <f556fdbc-604c-4c5d-b1f5-0f9ca9322e55@kernel.org>
+Date: Fri, 23 Jan 2026 19:43:29 +1100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <824538a6-ce9d-41e7-9485-10ff9e4d5334@kernel.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/14] block: remove bio_release_page
+To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+ Christian Brauner <brauner@kernel.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Carlos Maiolino <cem@kernel.org>,
+ Qu Wenruo <wqu@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
+ linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+References: <20260119074425.4005867-1-hch@lst.de>
+ <20260119074425.4005867-5-hch@lst.de>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20260119074425.4005867-5-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.36 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TAGGED_FROM(0.00)[bounces-75243-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	HAS_ORG_HEADER(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[4];
-	RCPT_COUNT_SEVEN(0.00)[11];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-0.999];
 	PRECEDENCE_BULK(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75242-lists,linux-fsdevel=lfdr.de];
-	R_DKIM_NA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:mid,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 6E78972966
+	FROM_NEQ_ENVFROM(0.00)[dlemoal@kernel.org,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:email,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: D2F5B72AC9
 X-Rspamd-Action: no action
 
-On Fri, Jan 23, 2026 at 07:32:04PM +1100, Damien Le Moal wrote:
-> > -	unsigned int j;
-> > +	struct folio *folio = page_folio(pages[0]);
-> > +	size_t contig_sz = min_t(size_t, PAGE_SIZE - offset, left);
-> > +	unsigned int max_pages, i;
-> > +	size_t folio_offset, len;
-> > +
-> > +	folio_offset = PAGE_SIZE * folio_page_idx(folio, pages[0]) + offset;
+On 2026/01/19 18:44, Christoph Hellwig wrote:
+> Merge bio_release_page into the only remaining caller.
 > 
-> folio_page_idx(folio, pages[0]) is always going to be 0 here, no ?
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-No, page could be at an offset into the folio.
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 
+-- 
+Damien Le Moal
+Western Digital Research
 
