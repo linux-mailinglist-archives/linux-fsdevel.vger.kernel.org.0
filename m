@@ -1,138 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-75182-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id kPanMFHCcmnvpAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75182-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 01:35:29 +0100
+	id MHWBKQ/Ecmk/pQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 01:42:55 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65B846ECF7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 01:35:29 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC6A6ED4A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 01:42:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id C6EE13008338
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 00:35:28 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0FBF8300E3BB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 00:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B703358A0;
-	Fri, 23 Jan 2026 00:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C9633E363;
+	Fri, 23 Jan 2026 00:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ZMxdkN8I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShZI1/yN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C749033555F
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jan 2026 00:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0C5314D0C;
+	Fri, 23 Jan 2026 00:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769128523; cv=none; b=aQvCFy/IuEJmER29jZFu0YSKWtOewzEXocZ9ZM2LxypETjugVpQI6ladxP1C1TLBC+2Dvq83PF4VTWO8MhKnkrCkymqM2cFvGhE5OUZlx+akQ5GDoCMnm2Sm0P/caByrm7P/DRjp6ZXNqB1/cvv8AeV/3UsOs3onjP4aXesp71c=
+	t=1769128961; cv=none; b=uTNxrb1t/03f9ZtBy3bVPBtvb5X6npzet81voa4qPnJDNprXAgnomF+fh16CwhgLjenGF3SFdVMrIDuiUlC/gwwiTpB0Wl7qBjGNG4kb4X5YgZL3LmQijs6NRdKcApa/IusvqQjJYm+enoZCfTORqad6XJQ/opfSoK7PTMqU8Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769128523; c=relaxed/simple;
-	bh=eP61JBRIVRbFbol+02mYcO07gAQGmMkyJf5+xCYd2JA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d4DAfpy9fHeNcGUsVvitt21FBWD4rkgLiOwch5/+G89Ue2CVUnIrGiDQjpj8NsoxQZPp7fyk6k7oLHIAgHWLOkjMrrfzNxv1Izy2qAx+s3+qVxmbHO5KUoSg/krTJzXvyy5/Pr0vkM+nNcPBFxJ6dxhHF2vlq36BRhShtKSFvuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ZMxdkN8I; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=0tOYeDoU4/E4b6+1OEKEKixKU2p+ACg3Gd9swuYqwKg=; b=ZMxdkN8IGaHUarQ5OnSH6m1hYU
-	Uifc6ntFmoEF3NU4FqehHVoy3W0g9L5KDPxhddXuPYV8jHkv76GsrLdRxfmcceEzsIHcpEefD/pWw
-	fYs+UJMViIToTq2+LTiY5UqAnL37VWOWy61XqVPwth3F78VmokEVnzRlyy4Xbhhnhs2WxvPAz7sMm
-	0zDW6ziCk29I90h/TPSkm12SCwmTmbvQ4BhJ7Y1iL+gHsWsjIWsFlMIeCgdpknCDcyYG4kg+be+Gh
-	2El/vZU5DzS6QWphI+VZa8VDjxiI5kn5vp43/AUIjlJga91oVyEca+nW50H3AmBOt/S9oL2RkltYx
-	auSzaDzQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1vj5AR-0000000GBas-48m2;
-	Fri, 23 Jan 2026 00:36:52 +0000
-Date: Fri, 23 Jan 2026 00:36:51 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>, Nikolay Borisov <nik.borisov@suse.com>,
-	Max Kellermann <max.kellermann@ionos.com>
-Subject: Re: [PATCH][RFC] get rid of busy-wait in shrink_dcache_tree()
-Message-ID: <20260123003651.GH3183987@ZenIV>
-References: <20260122202025.GG3183987@ZenIV>
- <CAHk-=wj1nKArJE8dj+mwF2bGu+N2-DL0P2ytaLYJRrDdPpa9MA@mail.gmail.com>
+	s=arc-20240116; t=1769128961; c=relaxed/simple;
+	bh=YxGwcerMm4XsXjm+1niJ1WYBTECA2bIMf19KywNaCDg=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=X8nUQ0SKpcKOkvkkJnGibow4R7U6en93Fn2uuXx6nEVLKhDcxgYrydFjF1XFj4Bd5VYkEDkeBzrugVokNZ66E4oAjR4cbYaqAKILLnZU38r2PUXzjRDP0XUBzKfSGNPkY8cwdXOwnvRcqU3RjaJCIcHCb6BoUrXWthpPVkqVuC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ShZI1/yN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D617C4AF09;
+	Fri, 23 Jan 2026 00:42:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769128961;
+	bh=YxGwcerMm4XsXjm+1niJ1WYBTECA2bIMf19KywNaCDg=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=ShZI1/yNzfRZmu3sAjPE26FJHVCzdjNlR+PLLp4IBIjapKolYcMC/p/AzlQi8kHOy
+	 E6N/2W2E5pbB7ftb730Cw4JH/VlIVqvxbnyT1of+3pueWWa9Uliru6CZhIiNC88aWu
+	 VqzFK4TQxalFuLYdfa7Gk1bYZr2eTNdyfe6gSwFV/oQuP8DRhWTVOPyO0H6/XntitM
+	 tBUss/brfrvJZRVZ5OZuEX1lA9AjU+iqu/0VZA+qg0XEwsarVMGki7cWdIvd9MnvDN
+	 8t5ul/t6LL2uITv0UmRDtXRalCIU4WNFGdULXYG+BjWbMjHexyK30Qy9s4VGX+KALh
+	 C96ziga6Ri68w==
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 37676F40068;
+	Thu, 22 Jan 2026 19:42:39 -0500 (EST)
+Received: from phl-imap-15 ([10.202.2.104])
+  by phl-compute-10.internal (MEProxy); Thu, 22 Jan 2026 19:42:39 -0500
+X-ME-Sender: <xms:_8NyacyT6qdzAUxIj7fj3Nsl5-8VCaqp1T4qK26YUXr5Y2aLA_2NeQ>
+    <xme:_8NyabEJSUOtxd1CnvO613uISWenl61hqckxjKSALI97Y6gbT7BTG5imlp1tVtD5E
+    dZmK-v-K3MOUkKiTHhKdFXjV_m_beGWUd8A8yfrOFy-NV1DzTUMBrQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddugeejieefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedfvehhuhgt
+    khcunfgvvhgvrhdfuceotggvlheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
+    hnpefghfeguedtieeiveeugfevtdejfedukeevgfeggfeugfetgfeltdetueelleelteen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegthhhutg
+    hklhgvvhgvrhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeifeegleel
+    leehledqfedvleekgeegvdefqdgtvghlpeepkhgvrhhnvghlrdhorhhgsehfrghsthhmrg
+    hilhdrtghomhdpnhgspghrtghpthhtohepfeefpdhmohguvgepshhmthhpohhuthdprhgt
+    phhtthhopehsvghnohiihhgrthhskhihsegthhhrohhmihhumhdrohhrghdprhgtphhtth
+    hopegrughilhhgvghrrdhkvghrnhgvlhesughilhhgvghrrdgtrgdprhgtphhtthhopehs
+    lhgrvhgrseguuhgsvgihkhhordgtohhmpdhrtghpthhtoheprhhonhhnihgvshgrhhhlsg
+    gvrhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnnhgrsehkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    gtvghmsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegthhgroheskhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtohepughjfihonhhgsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:_8Nyae8fZEj0DQVrfCxr0FyILU_fNTywtQD_OdmOVcWNU77PmfI2QA>
+    <xmx:_8NyaVi4xh0mDAqTYl6Aak7mh9kYy0ReitnlyVgR-YCNKQ747f-2xw>
+    <xmx:_8Nyac8j6VWHBiYHUbMz1HkDlTHqHH88I_1l7dpKX9shblHKGUUhGQ>
+    <xmx:_8NyaZQERqfU2S5JiAxoVvJLMQM2fwqj5pfagVYnH43qwMV8tHCRpg>
+    <xmx:_8NyaXduDdH_fuVXwK1_-Pl2iicEZJxM3cCk9MYctO41spFo2tlD5lzS>
+Feedback-ID: ifa6e4810:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id F0153780076; Thu, 22 Jan 2026 19:42:38 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wj1nKArJE8dj+mwF2bGu+N2-DL0P2ytaLYJRrDdPpa9MA@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-ThreadId: A--SnukTeK5R
+Date: Thu, 22 Jan 2026 19:42:15 -0500
+From: "Chuck Lever" <cel@kernel.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-api@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net,
+ "OGAWA Hirofumi" <hirofumi@mail.parknet.co.jp>,
+ "Namjae Jeon" <linkinjeon@kernel.org>,
+ "Sungjong Seo" <sj1557.seo@samsung.com>,
+ "Yuezhang Mo" <yuezhang.mo@sony.com>,
+ almaz.alexandrovich@paragon-software.com,
+ "Viacheslav Dubeyko" <slava@dubeyko.com>, glaubitz@physik.fu-berlin.de,
+ frank.li@vivo.com, "Theodore Tso" <tytso@mit.edu>,
+ adilger.kernel@dilger.ca, "Carlos Maiolino" <cem@kernel.org>,
+ "Steve French" <sfrench@samba.org>, "Paulo Alcantara" <pc@manguebit.org>,
+ "Ronnie Sahlberg" <ronniesahlberg@gmail.com>,
+ "Shyam Prasad N" <sprasad@microsoft.com>,
+ "Trond Myklebust" <trondmy@kernel.org>,
+ "Anna Schumaker" <anna@kernel.org>, "Jaegeuk Kim" <jaegeuk@kernel.org>,
+ "Chao Yu" <chao@kernel.org>, "Hans de Goede" <hansg@kernel.org>,
+ senozhatsky@chromium.org, "Chuck Lever" <chuck.lever@oracle.com>
+Message-Id: <bb2bb55c-6078-4494-9851-c684dfd9aa8c@app.fastmail.com>
+In-Reply-To: <20260123002646.GL5945@frogsfrogsfrogs>
+References: <20260122160311.1117669-1-cel@kernel.org>
+ <20260122160311.1117669-2-cel@kernel.org>
+ <20260123002646.GL5945@frogsfrogsfrogs>
+Subject: Re: [PATCH v7 01/16] fs: Add case sensitivity flags to file_kattr
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-2.15 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[zeniv.linux.org.uk,none];
-	R_DKIM_ALLOW(-0.20)[linux.org.uk:s=zeniv-20220401];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	XM_UA_NO_VERSION(0.01)[];
+	TAGGED_FROM(0.00)[bounces-75183-lists,linux-fsdevel=lfdr.de];
+	RCPT_COUNT_TWELVE(0.00)[33];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75182-lists,linux-fsdevel=lfdr.de];
-	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,vger.kernel.org,lists.sourceforge.net,mail.parknet.co.jp,samsung.com,sony.com,paragon-software.com,dubeyko.com,physik.fu-berlin.de,vivo.com,mit.edu,dilger.ca,samba.org,manguebit.org,gmail.com,microsoft.com,chromium.org,oracle.com];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,oracle.com:email,app.fastmail.com:mid];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[viro@zeniv.linux.org.uk,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[linux.org.uk:+];
-	NEURAL_HAM(-0.00)[-0.993];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[cel@kernel.org,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	NEURAL_HAM(-0.00)[-0.992];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 65B846ECF7
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: 0BC6A6ED4A
 X-Rspamd-Action: no action
 
-On Thu, Jan 22, 2026 at 04:19:56PM -0800, Linus Torvalds wrote:
-> On Thu, 22 Jan 2026 at 12:18, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > +static inline void d_add_waiter(struct dentry *dentry, struct select_data *p)
-> > +{
-> > +       struct select_data *v = (void *)dentry->d_u.d_alias.next;
-> > +       init_completion(&p->completion);
-> > +       p->next = v;
-> > +       dentry->d_u.d_alias.next = (void *)p;
-> > +}
-> 
-> I tend to not love it when I see new users of completions - I've seen
-> too many mis-uses - but this does seem to be a good use-case for them.
-> 
-> That said, I absolutely abhor your cast. Christ - that 'd_u' is
-> *already* a union, exactly because that thing gets used for different
-> things - just add a new union member, instead of mis-using an existing
-> union member that then requires you to cast the data to a different
-> form.
-> 
-> Yes, you had an explanation for why you used d_alias.next, but please
-> make that explanation be in the union itself, not in the commit
-> message of something that mis-uses the union. Please?
-> 
-> That way there's no need for a cast, and you can name that new union
-> member something that also clarifies things on a source level
-> ("eviction_completion" or whatever).
-> 
-> Or am I missing something?
 
-In practice it doesn't really matter, but we don't want to initialize
-that field to NULL - no good place for doing that.  Sure, the entire
-d_alias has been subject to hlist_del_init() or INIT_HLIST_NODE(), so
-any pointer field unioned with it will end up being NULL without
-any assignments to it, but...  ugh.  "We have a union of two-pointer
-struct, a pointer and some other stuff; we'd set both members of that
-struct member to NULL and count upon the pointer member of union
-having been zeroed by that" leaves a bad taste.
+
+On Thu, Jan 22, 2026, at 7:26 PM, Darrick J. Wong wrote:
+> On Thu, Jan 22, 2026 at 11:02:56AM -0500, Chuck Lever wrote:
+>> From: Chuck Lever <chuck.lever@oracle.com>
+>>=20
+>> Enable upper layers such as NFSD to retrieve case sensitivity
+>> information from file systems by adding FS_XFLAG_CASEFOLD and
+>> FS_XFLAG_CASENONPRESERVING flags.
+>>=20
+>> Filesystems report case-insensitive or case-nonpreserving behavior
+>> by setting these flags directly in fa->fsx_xflags. The default
+>> (flags unset) indicates POSIX semantics: case-sensitive and
+>> case-preserving. These flags are read-only; userspace cannot set
+>> them via ioctl.
+>>=20
+>> Remove struct file_kattr initialization from fileattr_fill_xflags()
+>> and fileattr_fill_flags(). Callers at ioctl/syscall entry points
+>> zero-initialize the struct themselves, which allows them to pass
+>> hints (flags_valid, fsx_valid) to the filesystem's ->fileattr_get()
+>> callback via the fa argument. Filesystem handlers that invoke these
+>> fill functions can now set flags directly in fa->fsx_xflags before
+>> calling them, without the fill functions zeroing those values.
+>
+> In hindsight I regret not asking for the file_kattr initialization
+> change to be in a separate patch.
+
+If I=E2=80=99m asked to post another revision of this series, I=E2=80=99=
+ll look at splitting
+1/16 into two patches.
+
+
+>> Case sensitivity information is exported to userspace via the
+>> fa_xflags field in the FS_IOC_FSGETXATTR ioctl and file_getattr()
+>> system call.
+>>=20
+>> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+>
+> The UAPI changes still look ok to me.  AFAICT the file_kattr
+> initialization now seem like they don't zap fields to confuse
+> vfs_fileattr_get.
+>
+> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+
+
+--=20
+Chuck Lever
 
