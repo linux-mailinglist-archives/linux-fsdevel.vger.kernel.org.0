@@ -1,242 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-75177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oLZXGt+8cmklpAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 01:12:15 +0100
+	id EEvPG86+cmljpAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 01:20:30 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E57286EB62
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 01:12:14 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id A637D6EBDD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 01:20:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id DCF3B300DF44
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 00:11:58 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id AED4F300D44C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 00:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262E928DB76;
-	Fri, 23 Jan 2026 00:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773C02F25F3;
+	Fri, 23 Jan 2026 00:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dIiFnBTo"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LJzsOWTK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D7D2F25F5;
-	Fri, 23 Jan 2026 00:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4E51DB34C
+	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jan 2026 00:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769127113; cv=none; b=LD6drRrXcMPO9a1XKLnHKaDg70NaqD50KQFUXbQg0+I0manjznRPJe8Mpu2F5XDCGwyk4fq5lwU026vCMUill009wvM3Ho3fcNWhily+kQvcKP/kDPt8fXT8ymqMnRRnhZFiYxzB7uVXeROSJhR6DzDER0GgehtdR1kL4W8u12s=
+	t=1769127622; cv=none; b=PZPuQXzSzFbYd56rJ/HV+U3IJvRIvHoH8Fn3ov5WSTKWx4Ii8Tbxcqlw3P/mMF+e0LzqAaacZbkee1NjUhxS7MmGNAUaOXJwlyCTkk4eOAkSO3u2jG0R876dawCKKKpp3DpVprZap+Ii5u0p4NdBrAvFzdr6ziTay1hesllse9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769127113; c=relaxed/simple;
-	bh=W0l8rkdl/NphprkLF/MG7YFKFxORfE9biiB9GZtSY2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YeYcslNjFA/FfFHrbAWqulX+7VTyxdQwerE1HfTAw5CkeXjQv3b/lSgcX3n4B/aO7r7lRQC/JkQUQkwpSEYsxTE4rmXeFBBpvI8fDi7tQKt8R1BlvmoEOj+0+z0K6OLNDkB1zJzVMv43Mk935yo+u3HPcoBWX09eP8B8w8bTswM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dIiFnBTo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 576F7C116C6;
-	Fri, 23 Jan 2026 00:11:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769127111;
-	bh=W0l8rkdl/NphprkLF/MG7YFKFxORfE9biiB9GZtSY2Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dIiFnBToxYE01ZXyMMjqfJy+5cYgiK8Xq2CVVUeoOPMSjn602pBJ75WRufgeQmmWq
-	 VO/A5qmTBPV5fHj0tS75TgiQBxdI3/vNJmx3X89C40BfxVcGvzhNLQ6K6905qRkZqd
-	 Zcb2u4YR/ZJDdWFFoMcJvmkh+JdxJifCGYFQTAk/Xp1x8YbP/vBpn/ARZG1jIWK31H
-	 YT4U1y3QM3cgXqxzbO2E5BNOG9yTb3vbVl3hKSBg25FiYvHi/0VR9NXHxQBT8BPim1
-	 dtc3GWbAAy0vf+4QFj3hv1DhE14gPq/IhQbIamSsjpsMvKPDClJWsye4MDUmyh8avV
-	 wE7a+nylyQJjQ==
-Date: Thu, 22 Jan 2026 16:11:50 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
-	Carlos Maiolino <cem@kernel.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Anuj Gupta <anuj20.g@samsung.com>,
-	Kanchan Joshi <joshi.k@samsung.com>, linux-block@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 06/15] block: add fs_bio_integrity helpers
-Message-ID: <20260123001150.GK5945@frogsfrogsfrogs>
-References: <20260121064339.206019-1-hch@lst.de>
- <20260121064339.206019-7-hch@lst.de>
+	s=arc-20240116; t=1769127622; c=relaxed/simple;
+	bh=Vgc0+2ion6I1bbCK86hsPCak9Y2mSO1PbyZCPiu+cRo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ufW8Vvyxq1HOYruDZsK0j+4rT0eKQK6b4nvBpm4d2u/SgIBRT8REEr5XnVa664539uK2LrX7YpK/3A8LH3VXArJ3yJdXZoyBFxmsLNhPCiC+FSqFeYSCi7qRShUimLIrT9R4iYOR1BBcom3Q8eVH0PvN9uvcl86+EMGOPBVo8bI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LJzsOWTK; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b885e8c679bso36146366b.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 16:20:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1769127614; x=1769732414; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=APrUMeUPvbE+eGvFMIBZPlCHZPeWZcSaQIf/bjVNxDo=;
+        b=LJzsOWTKeKd4Dv6OX4XcUcb6oyaTjtCq2Yl6QwKKqbTNFft6oK/DTRn2L/H0RhTGDi
+         +rgqpj/Cigs9HjQm3zYq41d172ssU9GNzrSim9vbg5i/jJytzyFHNOd0u2r5/+WoCM1Z
+         3CR1gxf6nWRg16BqVdItGRaoGB+81AGgUB+U8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769127614; x=1769732414;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=APrUMeUPvbE+eGvFMIBZPlCHZPeWZcSaQIf/bjVNxDo=;
+        b=IjJ8OVNpt/4h6CpvaF31g0EU8NndgfPqCYjSrYcElEGk0ezFav5RsMO+/CFXLdVWKT
+         dixfji1nnpbQJxLqXvwKq1WghZSQjGiGNuIfOCaFbjIdw5eH6CZWuIqpaGJYs2a/RWPs
+         S5iboJ5eKEc71b3IVFOMpN/AQx4Hb83HcVTo1n4lVm9t+TVc0/CobStzTUKzKL7Ko/uM
+         COBr+8KvUCimlwswIeknRTgzFi/fK0KlpyEQLlp3bAfAZOa2Ncj29htJUJik1nuXm70v
+         xET4lmtfFbY9hmq4tUVNI46b/zLllHsVq1A4RF1SwH1bBeApZibMpjXUf0RwkhKQLuMg
+         kiNQ==
+X-Gm-Message-State: AOJu0YwZip1sMPWeM/6vpmgRDWXymUq1pcZRT4NqDlLXAWpxYK/RVJxb
+	ppjUPdq2MP72A2Nepc9n66d9VjidPXPiOXOI+CPFtPSqeGafnC6tAWKA8wPhfec1W++OrXMoiOp
+	Tmy3aNuk=
+X-Gm-Gg: AZuq6aJl4nIek+3LO0viygixrqO+Uqmd+xvG4OLKrsbK/Ck0WtwpsZcrxM8O9gir0uY
+	86ejIClPwqkS0Q84NwGALX+G4h2qkM3qvHaDFm0jdCjot/jfP7H2qeeNrHkQK+RD9vUrJvR/jhL
+	JkLUKQo4ZUisIzK4sBm4bPJESzGoLBowUjlNz+lzEhN1/E2Px0w0aRoGQ6thBtBMojTPUPTwKq+
+	JHKNKjc7cp8AxBlxVjmiFxe4aDcefLkiIk4VRQgQjlUI4ONgyPsyok1pN82TZc2hRrPDQQPpJoh
+	6Dlvb32KhntnKP/Kd7V5roVqzkrS+L5uITdUzSjl0Gd1fCiOMV3j8wntwDNDlLlwL1ndQkuk1ow
+	IH5ENGkqspw1DKBI2wrIn2NM0oF/3pKx3/hAyFrIOGWh3uqp10fbqcrqr5CbufS8hrR3KYJE0tA
+	pVdM9Xi9i2viPIpUTKhuLFYL/k/DGNRMyTEz+N73swATiCVULtoOVcB1oZTNDJ
+X-Received: by 2002:a17:906:fe04:b0:b88:47b4:7626 with SMTP id a640c23a62f3a-b885ac7d666mr70321066b.27.1769127613659;
+        Thu, 22 Jan 2026 16:20:13 -0800 (PST)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b885b419288sm38475666b.20.2026.01.22.16.20.13
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Jan 2026 16:20:13 -0800 (PST)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-64b7318f1b0so2227305a12.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jan 2026 16:20:13 -0800 (PST)
+X-Received: by 2002:a05:6402:2755:b0:653:e85b:76de with SMTP id
+ 4fb4d7f45d1cf-658487b7fe8mr794159a12.26.1769127613011; Thu, 22 Jan 2026
+ 16:20:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260121064339.206019-7-hch@lst.de>
+References: <20260122202025.GG3183987@ZenIV>
+In-Reply-To: <20260122202025.GG3183987@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 22 Jan 2026 16:19:56 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wj1nKArJE8dj+mwF2bGu+N2-DL0P2ytaLYJRrDdPpa9MA@mail.gmail.com>
+X-Gm-Features: AZwV_QjI5V_BUbeIy90uzBTLORjzbdBBuZtoU1a_Em-cSfKW2YC4QJ1KD12jctE
+Message-ID: <CAHk-=wj1nKArJE8dj+mwF2bGu+N2-DL0P2ytaLYJRrDdPpa9MA@mail.gmail.com>
+Subject: Re: [PATCH][RFC] get rid of busy-wait in shrink_dcache_tree()
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	Jan Kara <jack@suse.cz>, Nikolay Borisov <nik.borisov@suse.com>, 
+	Max Kellermann <max.kellermann@ionos.com>
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[linux-foundation.org:s=google];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-75178-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75177-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
+	DMARC_NA(0.00)[linux-foundation.org];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	MISSING_XM_UA(0.00)[];
-	NEURAL_HAM(-0.00)[-0.996];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	DKIM_TRACE(0.00)[linux-foundation.org:+];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,lst.de:email]
-X-Rspamd-Queue-Id: E57286EB62
+	MIME_TRACE(0.00)[0:+];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCPT_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[torvalds@linux-foundation.org,linux-fsdevel@vger.kernel.org];
+	MISSING_XM_UA(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	NEURAL_HAM(-0.00)[-0.996];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,linux-foundation.org:dkim]
+X-Rspamd-Queue-Id: A637D6EBDD
 X-Rspamd-Action: no action
 
-On Wed, Jan 21, 2026 at 07:43:14AM +0100, Christoph Hellwig wrote:
-> Add a set of helpers for file system initiated integrity information.
-> These include mempool backed allocations and verifying based on a passed
-> in sector and size which is often available from file system completion
-> routines.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  block/Makefile                |  2 +-
->  block/bio-integrity-fs.c      | 81 +++++++++++++++++++++++++++++++++++
->  include/linux/bio-integrity.h |  6 +++
->  3 files changed, 88 insertions(+), 1 deletion(-)
->  create mode 100644 block/bio-integrity-fs.c
-> 
-> diff --git a/block/Makefile b/block/Makefile
-> index c65f4da93702..7dce2e44276c 100644
-> --- a/block/Makefile
-> +++ b/block/Makefile
-> @@ -26,7 +26,7 @@ bfq-y				:= bfq-iosched.o bfq-wf2q.o bfq-cgroup.o
->  obj-$(CONFIG_IOSCHED_BFQ)	+= bfq.o
->  
->  obj-$(CONFIG_BLK_DEV_INTEGRITY) += bio-integrity.o blk-integrity.o t10-pi.o \
-> -				   bio-integrity-auto.o
-> +				   bio-integrity-auto.o bio-integrity-fs.o
->  obj-$(CONFIG_BLK_DEV_ZONED)	+= blk-zoned.o
->  obj-$(CONFIG_BLK_WBT)		+= blk-wbt.o
->  obj-$(CONFIG_BLK_DEBUG_FS)	+= blk-mq-debugfs.o
-> diff --git a/block/bio-integrity-fs.c b/block/bio-integrity-fs.c
-> new file mode 100644
-> index 000000000000..c8b3c753965d
-> --- /dev/null
-> +++ b/block/bio-integrity-fs.c
-> @@ -0,0 +1,81 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2025 Christoph Hellwig.
-> + */
-> +#include <linux/blk-integrity.h>
-> +#include <linux/bio-integrity.h>
-> +#include "blk.h"
-> +
-> +struct fs_bio_integrity_buf {
-> +	struct bio_integrity_payload	bip;
-> +	struct bio_vec			bvec;
-> +};
-> +
-> +static struct kmem_cache *fs_bio_integrity_cache;
-> +static mempool_t fs_bio_integrity_pool;
-> +
-> +void fs_bio_integrity_alloc(struct bio *bio)
+On Thu, 22 Jan 2026 at 12:18, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> +static inline void d_add_waiter(struct dentry *dentry, struct select_data *p)
 > +{
-> +	struct fs_bio_integrity_buf *iib;
-> +	unsigned int action;
-> +
-> +	action = bio_integrity_action(bio);
-> +	if (!action)
-> +		return;
-> +
-> +	iib = mempool_alloc(&fs_bio_integrity_pool, GFP_NOIO);
-> +	bio_integrity_init(bio, &iib->bip, &iib->bvec, 1);
-> +
-> +	bio_integrity_alloc_buf(bio, action & BI_ACT_ZERO);
-> +	if (action & BI_ACT_CHECK)
-> +		bio_integrity_setup_default(bio);
+> +       struct select_data *v = (void *)dentry->d_u.d_alias.next;
+> +       init_completion(&p->completion);
+> +       p->next = v;
+> +       dentry->d_u.d_alias.next = (void *)p;
 > +}
-> +
-> +void fs_bio_integrity_free(struct bio *bio)
-> +{
-> +	struct bio_integrity_payload *bip = bio_integrity(bio);
-> +
-> +	bio_integrity_free_buf(bip);
-> +	mempool_free(container_of(bip, struct fs_bio_integrity_buf, bip),
-> +			&fs_bio_integrity_pool);
-> +
-> +	bio->bi_integrity = NULL;
-> +	bio->bi_opf &= ~REQ_INTEGRITY;
-> +}
-> +
-> +void fs_bio_integrity_generate(struct bio *bio)
-> +{
-> +	fs_bio_integrity_alloc(bio);
-> +	bio_integrity_generate(bio);
-> +}
-> +EXPORT_SYMBOL_GPL(fs_bio_integrity_generate);
-> +
-> +int fs_bio_integrity_verify(struct bio *bio, sector_t sector, unsigned int size)
-> +{
-> +	struct blk_integrity *bi = blk_get_integrity(bio->bi_bdev->bd_disk);
-> +	struct bio_integrity_payload *bip = bio_integrity(bio);
-> +
-> +	/*
-> +	 * Reinitialize bip->bit_iter.
 
-s/bit_iter/bip_iter/ ?
+I tend to not love it when I see new users of completions - I've seen
+too many mis-uses - but this does seem to be a good use-case for them.
 
-With that fixed, this looks fine to me;
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+That said, I absolutely abhor your cast. Christ - that 'd_u' is
+*already* a union, exactly because that thing gets used for different
+things - just add a new union member, instead of mis-using an existing
+union member that then requires you to cast the data to a different
+form.
 
---D
+Yes, you had an explanation for why you used d_alias.next, but please
+make that explanation be in the union itself, not in the commit
+message of something that mis-uses the union. Please?
 
-> +	 *
-> +	 * This is for use in the submitter after the driver is done with the
-> +	 * bio. Requires the submitter to remember the sector and the size.
-> +	 */
-> +
-> +	memset(&bip->bip_iter, 0, sizeof(bip->bip_iter));
-> +	bip->bip_iter.bi_sector = sector;
-> +	bip->bip_iter.bi_size = bio_integrity_bytes(bi, size >> SECTOR_SHIFT);
-> +	return blk_status_to_errno(bio_integrity_verify(bio, &bip->bip_iter));
-> +}
-> +
-> +static int __init fs_bio_integrity_init(void)
-> +{
-> +	fs_bio_integrity_cache = kmem_cache_create("fs_bio_integrity",
-> +			sizeof(struct fs_bio_integrity_buf), 0,
-> +			SLAB_HWCACHE_ALIGN | SLAB_PANIC, NULL);
-> +	if (mempool_init_slab_pool(&fs_bio_integrity_pool, BIO_POOL_SIZE,
-> +			fs_bio_integrity_cache))
-> +		panic("fs_bio_integrity: can't create pool\n");
-> +	return 0;
-> +}
-> +fs_initcall(fs_bio_integrity_init);
-> diff --git a/include/linux/bio-integrity.h b/include/linux/bio-integrity.h
-> index 232b86b9bbcb..503dc9bc655d 100644
-> --- a/include/linux/bio-integrity.h
-> +++ b/include/linux/bio-integrity.h
-> @@ -145,4 +145,10 @@ void bio_integrity_alloc_buf(struct bio *bio, bool zero_buffer);
->  void bio_integrity_free_buf(struct bio_integrity_payload *bip);
->  void bio_integrity_setup_default(struct bio *bio);
->  
-> +void fs_bio_integrity_alloc(struct bio *bio);
-> +void fs_bio_integrity_free(struct bio *bio);
-> +void fs_bio_integrity_generate(struct bio *bio);
-> +int fs_bio_integrity_verify(struct bio *bio, sector_t sector,
-> +		unsigned int size);
-> +
->  #endif /* _LINUX_BIO_INTEGRITY_H */
-> -- 
-> 2.47.3
-> 
-> 
+That way there's no need for a cast, and you can name that new union
+member something that also clarifies things on a source level
+("eviction_completion" or whatever).
+
+Or am I missing something?
+
+              Linus
 
