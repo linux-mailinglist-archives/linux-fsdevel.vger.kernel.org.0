@@ -1,101 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-75287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 8O2ZBZl3c2kfwAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 14:28:57 +0100
+	id iMXzGCl/c2mQwwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 15:01:13 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DB25763F4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 14:28:56 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A9087690A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 15:01:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 73579302BE91
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 13:28:51 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 5975F302DF60
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 13:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676FC3148B8;
-	Fri, 23 Jan 2026 13:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IIGUxHaz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="H81de6h2";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IIGUxHaz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="H81de6h2"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35A33148B4;
+	Fri, 23 Jan 2026 13:59:07 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283502773EE
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jan 2026 13:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63A630E0E0;
+	Fri, 23 Jan 2026 13:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769174929; cv=none; b=rc+j1JpAEdpgyI8tVGahcW7KcODG8Dg0wUOPyVmdoOz1nQiULByP9IZ/8bYQyshx1W/iAl3nuc/57hgsQg6HFvPjWjCocf8l9DAKgiG+UvsP0krYeIXL0VtvsIVm2NsRFCZluyJ3sTxYyqgTYl4AxL6GMx7hrjmX2rGEENWkB5Q=
+	t=1769176746; cv=none; b=JyLUdKUW29W2mm1nMBH634B+QVqpziZGc5m1gMUjXkslKQslENBtWF2e6HW94BKL6woOmUasfjJS5cbsI+92r/0dcMP2Qy4kUZLzJ2z3OEZPpMI1WmGPFcJKjUqeaykNJ4kt1nqVnO3x7vEOAVbJmc7xKzXZLPstQDwdXeyKYY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769174929; c=relaxed/simple;
-	bh=/0Pfm8yg5Hi20fkvCP6rh4iKXjE1hyR/7xqigvR5UXM=;
+	s=arc-20240116; t=1769176746; c=relaxed/simple;
+	bh=KsDWJy9IIzRYwrCXF2vcDTPb6iqadM+bu8+EwSQNB3U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qEK4H3vGRQorRY2uPwtuSPuM1oFLJBTHjFBjbVPuAtkfu81ZMUwORAv7iMa3et4OFzsTN9mwAWUNsf0zkLOilrz93ntVTn+I+tlEDjYjJYVAcH/nX53hRg/OIM+0AWJ6t2ZDJJ1c0EbPSHmNlRuNaV2e8A3+CpGCFlEmJHqu9Qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IIGUxHaz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=H81de6h2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IIGUxHaz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=H81de6h2; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 01A2F337E8;
-	Fri, 23 Jan 2026 13:28:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1769174926; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pKZbv8HP1lHjem4ZlORk52SmSzDh2FsHRLWWPU2yAQk=;
-	b=IIGUxHazUDX5fFXFgdVVkoI0tsDV+AFKQ4OmjfsVHc4kScOkT9azZPC/HBDIwOeCDsUnEo
-	xDlYzhUsPh17WilCJvvUFA9rzeXyLzOZyZmPWcxC40ywJUs3ISsMJYV+Do1k+AfzMzt2iC
-	qQBtd4sbdfIO21EC4nbrBn0Cgq131B8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1769174926;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pKZbv8HP1lHjem4ZlORk52SmSzDh2FsHRLWWPU2yAQk=;
-	b=H81de6h2n8wADz4jhN8mbj8pP0sA45VE8Q0bsBq3LSyMZO2so2R2y6LKIbPA5q4pGdxbFZ
-	kKKB5j0GuwOP3wDg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1769174926; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pKZbv8HP1lHjem4ZlORk52SmSzDh2FsHRLWWPU2yAQk=;
-	b=IIGUxHazUDX5fFXFgdVVkoI0tsDV+AFKQ4OmjfsVHc4kScOkT9azZPC/HBDIwOeCDsUnEo
-	xDlYzhUsPh17WilCJvvUFA9rzeXyLzOZyZmPWcxC40ywJUs3ISsMJYV+Do1k+AfzMzt2iC
-	qQBtd4sbdfIO21EC4nbrBn0Cgq131B8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1769174926;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pKZbv8HP1lHjem4ZlORk52SmSzDh2FsHRLWWPU2yAQk=;
-	b=H81de6h2n8wADz4jhN8mbj8pP0sA45VE8Q0bsBq3LSyMZO2so2R2y6LKIbPA5q4pGdxbFZ
-	kKKB5j0GuwOP3wDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E3110136AA;
-	Fri, 23 Jan 2026 13:28:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 6hVkN413c2m2agAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 23 Jan 2026 13:28:45 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A9E9BA0A1B; Fri, 23 Jan 2026 14:28:45 +0100 (CET)
-Date: Fri, 23 Jan 2026 14:28:45 +0100
-From: Jan Kara <jack@suse.cz>
-To: Shawn Landden <slandden@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: isofs: support full length file names
-Message-ID: <6ihm5cyg54nv4lwoikvcpejws6vwu2rzevkdwm3ufshan4liti@qfpcl2toy6md>
-References: <CA+49okpQYfsg=6AwZ_CGGPSYP0Hed0-+RELwzHg5ovZyXiZFFA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=K9agmW+WSG+NYl0h8monX0azhT356rSScaSafuse+XEaORUzAi8fGdLxVm+HXpNqsYlAvX/E31rNLG4LFzCkg3H/7o0Zjo3+FpRYgmFdDo9KsKqeBgFB5Zg5ohrWKXUerqE0UHU9v9Ohv52OYDh79Pn41UXPH8yXwnqz79/Tcwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 7930E227AAE; Fri, 23 Jan 2026 14:58:58 +0100 (CET)
+Date: Fri, 23 Jan 2026 14:58:58 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: David Howells <dhowells@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Christian Brauner <brauner@kernel.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Carlos Maiolino <cem@kernel.org>, Qu Wenruo <wqu@suse.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, linux-block@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Kundan Kumar <kundan.kumar@samsung.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH 03/14] iov_iter: extract a iov_iter_extract_bvecs
+ helper from bio code
+Message-ID: <20260123135858.GA24386@lst.de>
+References: <20260119074425.4005867-4-hch@lst.de> <20260119074425.4005867-1-hch@lst.de> <1754475.1769168237@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -104,82 +57,55 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+49okpQYfsg=6AwZ_CGGPSYP0Hed0-+RELwzHg5ovZyXiZFFA@mail.gmail.com>
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spam-Flag: NO
+In-Reply-To: <1754475.1769168237@warthog.procyon.org.uk>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
+X-Spamd-Result: default: False [-1.36 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
+	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75287-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,suse.com:email,suse.cz:dkim];
-	DMARC_NA(0.00)[suse.cz];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	NEURAL_HAM(-0.00)[-0.999];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MID_RHS_MATCH_FROM(0.00)[];
 	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	NEURAL_HAM(-0.00)[-0.998];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: 2DB25763F4
+	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
+	RCVD_COUNT_THREE(0.00)[4];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:mid,lst.de:email];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75288-lists,linux-fsdevel=lfdr.de];
+	R_DKIM_NA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[]
+X-Rspamd-Queue-Id: 9A9087690A
 X-Rspamd-Action: no action
 
-On Thu 22-01-26 13:33:35, Shawn Landden wrote:
-> commit 561453fdcf0dd8f4402f14867bf5bd961cb1704d (HEAD -> master)
-> Author: shawn landden <slandden@gmail.com>
-> Date:   Thu Jan 15 21:44:11 2026 +0000
+On Fri, Jan 23, 2026 at 11:37:17AM +0000, David Howells wrote:
+> Christoph Hellwig <hch@lst.de> wrote:
 > 
->     isofs: support full length file names (255 instead of 253)
->     Linux file names can be up to 255 characters in
->     length (256 characters with the NUL), but the code
->     here only supports 253 characters.
+> > +static unsigned int get_contig_folio_len(struct page **pages,
+> > +		unsigned int *num_pages, size_t left, size_t offset)
+> > +{
+> > +	struct folio *folio = page_folio(pages[0]);
 > 
->     I tested a different version of this patch a few
->     years back when I fumbled across this bug, but
->     this version has not been tested.
+> You can't do this.  You cannot assume that pages[0] is of folio type.
+> vmsplice() is unfortunately a thing and the page could be a network read
+> buffer.
 
-Thanks for the patch! Can you please add proper Signed-off-by line so that
-the patch can be merged (see Documentation/process/submitting-patches.rst)?
-Also please use NAME_MAX constant instead of hardcoded 255 value. Finally
-I'd note that I didn't find anything in the Rockridge standard that would
-limit alternate name length even to 255 characters and Linux kernel
-supports upto PATH_MAX long path components. But at the same time I think
-there's no practical value in supporting longer file names, only larger
-chance of breaking something somewhere so I think NAME_MAX is a good value
-to pick.
+Hmm, this just moves around existing code added in commit ed9832bc08db
+("block: introduce folio awareness and add a bigger size from folio").
 
-								Honza
+How do we get these network read buffers into either a user address
+space or a (non-bvec) iter passed to O_DIRECT reads/writes?
 
-> diff --git a/fs/isofs/rock.c b/fs/isofs/rock.c
-> index 576498245b9d..094778d77974 100644
-> --- a/fs/isofs/rock.c
-> +++ b/fs/isofs/rock.c
-> @@ -271,7 +271,7 @@ int get_rock_ridge_filename(struct iso_directory_record *de,
->                                 break;
->                         }
->                         len = rr->len - 5;
-> -                       if (retnamlen + len >= 254) {
-> +                       if (retnamlen + len > 255) {
->                                 truncate = 1;
->                                 break;
->                         }
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Can we come up with testcase for xfstests or blktests for this?
+
+How do we find out if a given page is a folio and that we can do this?
 
