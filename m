@@ -1,67 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-75302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75301-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id SCbBFlKQc2l0xAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 16:14:26 +0100
+	id IHqdMVaQc2l0xAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75301-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 16:14:30 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0528777980
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 16:14:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B278377987
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 16:14:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 72ED23012B98
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 15:07:11 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 3CB7630466D4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 15:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C452E6CD0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37EC92BE7DF;
 	Fri, 23 Jan 2026 15:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="hkgh8H4u";
-	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="Is2SBDXd"
+	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="XBhbk3vS";
+	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="VPyvMLoC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from e2i340.smtp2go.com (e2i340.smtp2go.com [103.2.141.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58204225416
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43859245005
 	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jan 2026 15:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769180800; cv=none; b=XrgwWzvWqLxq+BmRjcJFNcRQtaURiV32ErlTH7yfUDmwCQOkRNQOMmxN1QYSwMZ94WnXHXrSQARFL01RzabD6viwhusrIkZukQ8+7BMqMhRDHRmKqR/oapSr8ipTl+VYeWerhO/Np8OGKBNNBh0iQytxRBUUuHEoYG1b+FTabMU=
+	t=1769180800; cv=none; b=maExslmo6hxF5OOyJtYBzpZz3i6KZfvu/5k8AFulqJTVRCN90MIaMvfLt3sKJOAoWDo/WTKVP0au3d7CDLl3VOmaOPbo6qpP9y9h6FhEwblERkHgCMXCeTxsQRSGoJieIFz3tK8VaPfZzLIf/HLvexHZqns9TRBcy3Csb8dnakI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1769180800; c=relaxed/simple;
-	bh=XtiAGoBQ1blzOcjTq8pgxagTyavwnvETQwdQ0jnB2rA=;
+	bh=vjCLcCM2F3IicS+95q5ad2BGOrb3kOWYWjtQkuAY+fs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FTy0/+3VVTGcYT3JaGdHaYSN3ptrrqmObknwbEtHhldEhYooQrpQdF60rp185qonhS5ok1a5W5Uhy5wghnYn6G6nYLPWehxdJIX0D61awzxM0Gt2R9Z2T/9oG1fb0jUG5jLHEWMsfuXZ1aZTDs1Pr50qaVjguir3xAb90dxL4+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=hkgh8H4u reason="unknown key version"; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=Is2SBDXd; arc=none smtp.client-ip=103.2.141.84
+	 MIME-Version; b=nz6sw/QzbkP99OwS1b1G6OWy9/LtfKwsMTP11PGpMUl0rty8g+R3xub2G0/mnodCjSdmckLUWpcRH+U6iEjoaG99vtN3xq/KAUGuwNaS00iZ2KARVMVCjPxNqvC1ZhorQNfYd5tFuMU1whGr/spOw2IQSQNFvNhDb80t9efT4kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=XBhbk3vS reason="unknown key version"; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=VPyvMLoC; arc=none smtp.client-ip=103.2.141.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=smtpservice.net; s=maxzs0.a1-4.dyn; x=1769181699; h=Feedback-ID:
 	X-Smtpcorp-Track:Message-ID:Date:Subject:To:From:Reply-To:Sender:
 	List-Unsubscribe:List-Unsubscribe-Post;
-	bh=5hlZx6sa9MG8kpnxvIumfa5wATQurfzuGf1yx1tG58U=; b=hkgh8H4uBpFWL00bKwzTNtakru
-	GA4XC/mw5vcYxDjmh7EKDhSQTC0LZf3kOcMOsaRYwyjtukTQ5QS2Z08cXDuac7CabCP11WT/KQh/4
-	sZs4+MHJ0cZSe/9u80UjuETuaUwVyY7ua5xiVTONpmrKQYToLjDB1o0o7DZ1MsLYIM3hi2spDxBuB
-	LjoEscLyMTGuzaKpLpgTQxiHkQwVVsUm5TQUuuFvd/kdYwDbWTDh/XZjR5weqKm1xQgd4bdOgmv7A
-	zeqKkb6MsttNfQgjscm4dRuru9kKR+GTjxhThXJXor4OgfN+gXoOGmrEU5FSrAiDgvCkDiWsM1ppz
-	1bwkhZhw==;
+	bh=6Y7DdxPq3eM3t0cx86EDuwdGb1aCri5BBH+ThrSGicw=; b=XBhbk3vSBSolOkJgJIx5FW7BoM
+	FMt/OpBu5laPQbzdxTxd5koDR4hAPgFMkcMTBItlCQYnUMH3CDJmBjDbfZjIeojsKttHg/lEtPxLL
+	0WZUZNRaF2RYHKiR1QXH4KoS0wfm5rCJSSFO+fZ4QumNR6+VYcPC/rTn50XNGvY2bIWYxC2Dc9Ba5
+	2hrSVwWs3au3jBcFe6jx1d7w+jfKTGY9vBFjT+JepGzCzF5BV87HItnAfa/h1u8hbVQEjLalSTowJ
+	1KkE/+rRZgbiZrrcaVphyDt5gL8Upzz7LhMgZdXDN0mHeUX8UTy7O8RBRxlb+aRDLZhy3hunr0bAD
+	UblTHtvw==;
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
  i=@triplefau.lt; q=dns/txt; s=s510616; t=1769180799; h=from : subject
  : to : message-id : date;
- bh=5hlZx6sa9MG8kpnxvIumfa5wATQurfzuGf1yx1tG58U=;
- b=Is2SBDXdG1UDMS3KD0JTPkOTeLWJ2NuFxkRP1zZHp1FmQtMFEq2/jyILFnj5NQM5AKc/k
- g6y8qYDJ73ii0ExJwDhgqbFus+dAy/BVPS4iyX5CmCEYRekH5FM1SxjVaBYEemmyfaTN90j
- Q04o6VtNqmuzP03poh8kAyg1K7nkc9UH0bDbNNQinXxH+E6/kzNZk3Se7lHhQbKzNCcqQG+
- jSeMn4wkBwg/iYv05jB7GAyhXBd3Jy0hEpZOGhNWiSgtBD2Hz/L6NS4IiAcLeaMluGd/msN
- Kf5INNGEiLoRIIV8UAw84on+f98bHT08r/cLnCeRl/7x/2VfiCRwbdkcjZVA==
-Received: from [10.172.233.45] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
+ bh=6Y7DdxPq3eM3t0cx86EDuwdGb1aCri5BBH+ThrSGicw=;
+ b=VPyvMLoC5tSuHY7qkQlOWcYYofpF9WfwLAx4S0KaVUE179z9Pi6sgAP3WrWEOHKoRDwEB
+ sdGRXoTvgLOPReOKH6XEBchn0xlj5OZKQmYpmYHwuaju0A79uqT3mpiOAdLCfzoaRyd07h5
+ swI/xFADNTz23qNWayXIszhnoSbF/56G4h+aKdll5q/Ib5Pu2QojyRCG9PB7lYo52djtbTN
+ 6b9wL18SA0tJMNKWJZiH/ipAJTxCcw6dcIIma+FDfHJSejQ+sLlW83nmrgLlJWF3P9OJCH1
+ nApZfCgScgGqsFB19/XVjptniu0UQuTOqlbNHH6wfUfrMwLd61KlGVB3yqjQ==
+Received: from [10.176.58.103] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
  (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
  (Exim 4.94.2-S2G) (envelope-from <repk@triplefau.lt>)
- id 1vjIjN-TRk3Nn-Sa; Fri, 23 Jan 2026 15:05:49 +0000
+ id 1vjIjO-TRk3SA-Pq; Fri, 23 Jan 2026 15:05:50 +0000
 Received: from [10.12.239.196] (helo=localhost) by smtpcorp.com with esmtpsa
  (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
  (Exim 4.98.1-S2G) (envelope-from <repk@triplefau.lt>)
- id 1vjIjN-AIkwcC8p21S-ImA4; Fri, 23 Jan 2026 15:05:49 +0000
+ id 1vjIjO-4o5NDgrkAJF-qZA0; Fri, 23 Jan 2026 15:05:50 +0000
 From: Remi Pommarel <repk@triplefau.lt>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
  v9fs@lists.linux.dev
@@ -71,9 +71,9 @@ Cc: Juri Lelli <juri.lelli@redhat.com>,
  Latchesar Ionkov <lucho@ionkov.net>,
  Dominique Martinet <asmadeus@codewreck.org>, linux-fsdevel@vger.kernel.org,
  linux-kernel@vger.kernel.org, Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH v2 1/2] wait: Introduce io_wait_event_killable()
-Date: Fri, 23 Jan 2026 15:48:07 +0100
-Message-ID: <1b2870001ecd34fe6c05be2ddfefb3c798b11701.1769179462.git.repk@triplefau.lt>
+Subject: [PATCH v2 2/2] 9p: Track 9P RPC waiting time as IO
+Date: Fri, 23 Jan 2026 15:48:08 +0100
+Message-ID: <b8601271263011203fa34eada2e8ac21d9f679e5.1769179462.git.repk@triplefau.lt>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <cover.1769179462.git.repk@triplefau.lt>
 References: <cover.1769179462.git.repk@triplefau.lt>
@@ -84,8 +84,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Smtpcorp-Track: fA2OeBO86Rys.IIhATsx7FrMK.DvUe7gYHbxu
-Feedback-ID: 510616m:510616apGKSTK:510616siuLes3UuY
+X-Smtpcorp-Track: QUJwr4JLCMmv.fWY_IANUfrLf.4e550wngm10
+Feedback-ID: 510616m:510616apGKSTK:510616sagCjD9iGE
 X-Report-Abuse: Please forward a copy of this message, including all headers,
  to <abuse-report@smtp2go.com>
 X-Rspamd-Server: lfdr
@@ -101,7 +101,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
 	DKIM_MIXED(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75302-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-75301-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_FIVE(0.00)[5];
 	R_DKIM_PERMFAIL(0.00)[smtpservice.net:s=maxzs0.a1-4.dyn];
 	MIME_TRACE(0.00)[0:+];
@@ -117,46 +117,96 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,infradead.org:email]
-X-Rspamd-Queue-Id: 0528777980
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: B278377987
 X-Rspamd-Action: no action
 
-Add io_wait_event_killable(), a variant of wait_event_killable() that
-uses io_schedule() instead of schedule(). This is to be used in
-situation where waiting time is to be accounted as IO wait time.
+Use io_wait_event_killable() to ensure that time spent waiting for 9P
+RPC transactions is accounted as IO wait time.
 
 Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- include/linux/wait.h | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ net/9p/client.c       |  4 ++--
+ net/9p/trans_virtio.c | 14 +++++++-------
+ net/9p/trans_xen.c    |  4 ++--
+ 3 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/include/linux/wait.h b/include/linux/wait.h
-index f648044466d5..dce055e6add3 100644
---- a/include/linux/wait.h
-+++ b/include/linux/wait.h
-@@ -937,6 +937,21 @@ extern int do_wait_intr_irq(wait_queue_head_t *, wait_queue_entry_t *);
- 	__ret;									\
- })
+diff --git a/net/9p/client.c b/net/9p/client.c
+index f60d1d041adb..1b475525ac5b 100644
+--- a/net/9p/client.c
++++ b/net/9p/client.c
+@@ -590,8 +590,8 @@ p9_client_rpc(struct p9_client *c, int8_t type, const char *fmt, ...)
+ 	}
+ again:
+ 	/* Wait for the response */
+-	err = wait_event_killable(req->wq,
+-				  READ_ONCE(req->status) >= REQ_STATUS_RCVD);
++	err = io_wait_event_killable(req->wq,
++				     READ_ONCE(req->status) >= REQ_STATUS_RCVD);
  
-+#define __io_wait_event_killable(wq, condition)					\
-+	___wait_event(wq, condition, TASK_KILLABLE, 0, 0, io_schedule())
-+
-+/*
-+ * wait_event_killable() - link wait_event_killable but with io_schedule()
-+ */
-+#define io_wait_event_killable(wq_head, condition)				\
-+({										\
-+	int __ret = 0;								\
-+	might_sleep();								\
-+	if (!(condition))							\
-+		__ret = __io_wait_event_killable(wq_head, condition);		\
-+	__ret;									\
-+})
-+
- #define __wait_event_state(wq, condition, state)				\
- 	___wait_event(wq, condition, state, 0, 0, schedule())
+ 	/* Make sure our req is coherent with regard to updates in other
+ 	 * threads - echoes to wmb() in the callback
+diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+index 10c2dd486438..370f4f37dcec 100644
+--- a/net/9p/trans_virtio.c
++++ b/net/9p/trans_virtio.c
+@@ -284,8 +284,8 @@ p9_virtio_request(struct p9_client *client, struct p9_req_t *req)
+ 		if (err == -ENOSPC) {
+ 			chan->ring_bufs_avail = 0;
+ 			spin_unlock_irqrestore(&chan->lock, flags);
+-			err = wait_event_killable(*chan->vc_wq,
+-						  chan->ring_bufs_avail);
++			err = io_wait_event_killable(*chan->vc_wq,
++						     chan->ring_bufs_avail);
+ 			if (err  == -ERESTARTSYS)
+ 				return err;
  
+@@ -325,7 +325,7 @@ static int p9_get_mapped_pages(struct virtio_chan *chan,
+ 		 * Other zc request to finish here
+ 		 */
+ 		if (atomic_read(&vp_pinned) >= chan->p9_max_pages) {
+-			err = wait_event_killable(vp_wq,
++			err = io_wait_event_killable(vp_wq,
+ 			      (atomic_read(&vp_pinned) < chan->p9_max_pages));
+ 			if (err == -ERESTARTSYS)
+ 				return err;
+@@ -512,8 +512,8 @@ p9_virtio_zc_request(struct p9_client *client, struct p9_req_t *req,
+ 		if (err == -ENOSPC) {
+ 			chan->ring_bufs_avail = 0;
+ 			spin_unlock_irqrestore(&chan->lock, flags);
+-			err = wait_event_killable(*chan->vc_wq,
+-						  chan->ring_bufs_avail);
++			err = io_wait_event_killable(*chan->vc_wq,
++						     chan->ring_bufs_avail);
+ 			if (err  == -ERESTARTSYS)
+ 				goto err_out;
+ 
+@@ -531,8 +531,8 @@ p9_virtio_zc_request(struct p9_client *client, struct p9_req_t *req,
+ 	spin_unlock_irqrestore(&chan->lock, flags);
+ 	kicked = 1;
+ 	p9_debug(P9_DEBUG_TRANS, "virtio request kicked\n");
+-	err = wait_event_killable(req->wq,
+-			          READ_ONCE(req->status) >= REQ_STATUS_RCVD);
++	err = io_wait_event_killable(req->wq,
++				     READ_ONCE(req->status) >= REQ_STATUS_RCVD);
+ 	// RERROR needs reply (== error string) in static data
+ 	if (READ_ONCE(req->status) == REQ_STATUS_RCVD &&
+ 	    unlikely(req->rc.sdata[4] == P9_RERROR))
+diff --git a/net/9p/trans_xen.c b/net/9p/trans_xen.c
+index 12f752a92332..d57965e6aab0 100644
+--- a/net/9p/trans_xen.c
++++ b/net/9p/trans_xen.c
+@@ -136,8 +136,8 @@ static int p9_xen_request(struct p9_client *client, struct p9_req_t *p9_req)
+ 	ring = &priv->rings[num];
+ 
+ again:
+-	while (wait_event_killable(ring->wq,
+-				   p9_xen_write_todo(ring, size)) != 0)
++	while (io_wait_event_killable(ring->wq,
++				      p9_xen_write_todo(ring, size)) != 0)
+ 		;
+ 
+ 	spin_lock_irqsave(&ring->lock, flags);
 -- 
 2.50.1
 
