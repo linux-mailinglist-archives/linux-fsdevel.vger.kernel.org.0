@@ -1,157 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-75219-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id eJTLGHcac2mwsAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75219-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 07:51:35 +0100
+	id YNpCLUIec2ngsQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 08:07:46 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C66F571288
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 07:51:34 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0098D716CD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 08:07:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3F550300D46E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 06:51:30 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id E3CD1300D0D6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 07:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E871E326958;
-	Fri, 23 Jan 2026 06:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C103491C9;
+	Fri, 23 Jan 2026 07:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="MQmvNUye"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FeSQZ5jI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com [113.46.200.226])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C02B31B117
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jan 2026 06:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7686D353EE5;
+	Fri, 23 Jan 2026 07:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769151089; cv=none; b=l0C+cL58DmNsIZzPdw2ptZ0lnMts/hTSYTYTcUymozvfSf7XIBsG8kv74UYHcd1QLlbexLpicofVrXYWidWuYqMzCmQqbXT6kmhEBaJCr5D1GAyJQmiqyWpWOAS4xEXX90rcvXcV+j7KBrGvS54VrlS8TXFPU3ZLwOqjIZncIYc=
+	t=1769151938; cv=none; b=JW6QylZh7F12i67hm1hwGiU0Qp9K5mlvFbWACeWOxGrJF33errYmF++4Zrusw773RE+GQe9YH4pU46fkqLHjFA1/H/tlnBow/0bEZw9m6MWyRDNc5jObqgCNiGnBNFbKOyoYQgRJTERAYtSVnqYNbfBmFl3arY/HIuzQ8zNGkyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769151089; c=relaxed/simple;
-	bh=eqejNXVE9l3kOKW4J3rvhb9J6IdR3oiyVWsGG9+a3ts=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=amMBl/FNpkHTbnwIhk4LIGK+y0qHLSKpVmjkwQwNJR8rqDLF4gWYnjg4ZlR1w0IuAMEyKFW90+bfE1Ypz1RwzuCGQAbbL49FzKiRxRnAen9HNlCfLZ37rAuCOBQuWciU+/I24kvquNfVtH6CVOXRSiSenAG1Q01dwoQJC2NR2/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=MQmvNUye; arc=none smtp.client-ip=113.46.200.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=Dq315O0j93dLcFq1bZxcJRTGFPKJRchphpHfHVTtMQs=;
-	b=MQmvNUyeyICeQ+LPKkgRlGKf0Tw5IELOxCwPeDuhrzdFigKfHtQdOaBFQIZp3TRHtU6sHWOfH
-	ZB0w3K+9gJhOtvyuqGRPSQ43McUZxeh3b6sgr5E3TCQjCJPOCEIHdsHlZn1N+YX8EfDr4YexMR2
-	cXQFN1gmVxqdJnvikc/6Tbo=
-Received: from mail.maildlp.com (unknown [172.19.163.15])
-	by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dy7mF2npkzKm5N;
-	Fri, 23 Jan 2026 14:47:57 +0800 (CST)
-Received: from kwepemr500001.china.huawei.com (unknown [7.202.194.229])
-	by mail.maildlp.com (Postfix) with ESMTPS id F302A40565;
-	Fri, 23 Jan 2026 14:51:22 +0800 (CST)
-Received: from [10.174.179.179] (10.174.179.179) by
- kwepemr500001.china.huawei.com (7.202.194.229) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 23 Jan 2026 14:51:22 +0800
-Message-ID: <a1f97fe2-fa7c-4411-b2a0-d19257653863@huawei.com>
-Date: Fri, 23 Jan 2026 14:51:21 +0800
+	s=arc-20240116; t=1769151938; c=relaxed/simple;
+	bh=prCnkzVm6fO+8z3GY9lZ2HXlhvUz7mQRWkvGcn3TQqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rJhYbiMpbJHOdIXHuTuNY6oDWNzjfgLFaIgsBEzrOWHtR7w2Sq1ZGyLBrtGbpSVGGzjFOCngN9W+AIQmtvH2SiUQmnTzQJxBQ0xlKiQ93Pd05Eq1YfdRdvrE5LSuS2NDm6IoCo5+abFpFP725yN8tN9AUG69Y8w5ThlGU3VqhLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FeSQZ5jI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F9FBC4CEF1;
+	Fri, 23 Jan 2026 07:05:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769151937;
+	bh=prCnkzVm6fO+8z3GY9lZ2HXlhvUz7mQRWkvGcn3TQqc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FeSQZ5jIKu5X570rU+hozIVgDsUiB9w5MldzlfSIfGs7PdpPGcgp0pm9n1OEL2OIL
+	 BPLy7aF+cSWx0G1x9oS5wHFphonilgt4tqgjHqHCFROndgPUCquvSElDq/ghKZ0PJe
+	 edMlgx/AztU/YghtW6sJ0x51KyLqUjjQSSGQ6YvKhw5zETrJdDV0IBeJFVWiyaXJS+
+	 1mXQLVWqGndMQ7igB3vm9xMVBZG/jTk8ZRMlIK/hNGewLRRc3u9ZlTFDRyS1czTJ/t
+	 evkIt/+rRExNw452WBl4XKya1qr2AvaDONDy2DpoL6UBQ3ZR7hdsYeUlz62+YompdF
+	 MRUV2d8EZbcZQ==
+Date: Thu, 22 Jan 2026 23:05:37 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
+	Carlos Maiolino <cem@kernel.org>, Qu Wenruo <wqu@suse.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, linux-block@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 02/14] block: open code bio_add_page and fix handling of
+ mismatching P2P ranges
+Message-ID: <20260123070537.GR5945@frogsfrogsfrogs>
+References: <20260119074425.4005867-1-hch@lst.de>
+ <20260119074425.4005867-3-hch@lst.de>
+ <20260122175908.GZ5945@frogsfrogsfrogs>
+ <20260123054314.GA24902@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] mm/khugepaged: free empty xa_nodes when rollbacks in
- collapse_file
-To: Matthew Wilcox <willy@infradead.org>
-CC: <akpm@linux-foundation.org>, <david@kernel.org>,
-	<lorenzo.stoakes@oracle.com>, <ziy@nvidia.com>,
-	<baolin.wang@linux.alibaba.com>, <Liam.Howlett@oracle.com>,
-	<npache@redhat.com>, <ryan.roberts@arm.com>, <dev.jain@arm.com>,
-	<baohua@kernel.org>, <lance.yang@linux.dev>, <shardul.b@mpiricsoftware.com>,
-	<linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
-	<wangkefeng.wang@huawei.com>
-References: <20260121062243.1893129-1-tujinjiang@huawei.com>
- <aXB0Zcu4bIEvSSuX@casper.infradead.org>
-From: Jinjiang Tu <tujinjiang@huawei.com>
-In-Reply-To: <aXB0Zcu4bIEvSSuX@casper.infradead.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemr500001.china.huawei.com (7.202.194.229)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260123054314.GA24902@lst.de>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[huawei.com,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[huawei.com:s=dkim];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	TAGGED_FROM(0.00)[bounces-75219-lists,linux-fsdevel=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[huawei.com:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75220-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	MISSING_XM_UA(0.00)[];
+	NEURAL_HAM(-0.00)[-0.997];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[tujinjiang@huawei.com,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCVD_COUNT_FIVE(0.00)[6];
-	MID_RHS_MATCH_FROM(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
+	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:mid,huawei.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: C66F571288
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 0098D716CD
 X-Rspamd-Action: no action
 
+On Fri, Jan 23, 2026 at 06:43:14AM +0100, Christoph Hellwig wrote:
+> On Thu, Jan 22, 2026 at 09:59:08AM -0800, Darrick J. Wong wrote:
+> > On Mon, Jan 19, 2026 at 08:44:09AM +0100, Christoph Hellwig wrote:
+> > > bio_add_page fails to add data to the bio when mixing P2P with non-P2P
+> > > ranges, or ranges that map to different P2P providers.  In that case
+> > > it will trigger that WARN_ON and return an error up the chain instead of
+> > > simply starting a new bio as intended.  Fix this by open coding
+> > 
+> > AFAICT we've already done all the other checks in bio_add_page, so
+> > calling __bio_add_page directly from within the loop is ok since you've
+> > explicitly handled the !zone_device_pages_have_same_pgmap() case.
+> > 
+> > > bio_add_page and handling this case explicitly.  While doing so, stop
+> > > merging physical contiguous data that belongs to multiple folios.  While
+> > > this merge could lead to more efficient bio packing in some case,
+> > > dropping will allow to remove handling of this corner case in other
+> > > places and make the code more robust.
+> > 
+> > That does sound like a landmine waiting to go off...
+> 
+> What?  Removing the handling?
 
-在 2026/1/21 14:38, Matthew Wilcox 写道:
-> On Wed, Jan 21, 2026 at 02:22:43PM +0800, Jinjiang Tu wrote:
->> collapse_file() calls xas_create_range() to pre-create all slots needed.
->> If collapse_file() finally fails, these pre-created slots are empty nodes
->> and aren't destroyed.
-> try this instead
->
-> diff --git a/fs/inode.c b/fs/inode.c
-> index cff1d3af0d57..85886af1e7ab 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -744,22 +744,18 @@ void dump_mapping(const struct address_space *mapping)
->   
->   void clear_inode(struct inode *inode)
->   {
-> -	/*
-> -	 * We have to cycle the i_pages lock here because reclaim can be in the
-> -	 * process of removing the last page (in __filemap_remove_folio())
-> -	 * and we must not free the mapping under it.
-> -	 */
-> -	xa_lock_irq(&inode->i_data.i_pages);
-> -	BUG_ON(inode->i_data.nrpages);
->   	/*
->   	 * Almost always, mapping_empty(&inode->i_data) here; but there are
->   	 * two known and long-standing ways in which nodes may get left behind
->   	 * (when deep radix-tree node allocation failed partway; or when THP
-> -	 * collapse_file() failed). Until those two known cases are cleaned up,
-> -	 * or a cleanup function is called here, do not BUG_ON(!mapping_empty),
-> -	 * nor even WARN_ON(!mapping_empty).
-> +	 * collapse_file() failed).
-> +	 *
-> +	 * xa_destroy() also cycles the lock for us, which is needed because
-> +	 * reclaim can be in the process of removing the last folio (in
-> +	 * __filemap_remove_folio()) and we must not free the mapping under it.
->   	 */
-> -	xa_unlock_irq(&inode->i_data.i_pages);
-> +	xa_destroy(&inode->i_data.i_pages);
-> +	BUG_ON(inode->i_data.nrpages);
->   	BUG_ON(!list_empty(&inode->i_data.i_private_list));
->   	BUG_ON(!(inode->i_state & I_FREEING));
->   	BUG_ON(inode->i_state & I_CLEAR);
+Urk, sorry.  I meant to say that the *old code* combining pages from
+multiple folios sounded like a landmine waiting to go off.
 
-Hi, Matthew
-
-This appoach is much simpler. Could you please send a formal patch?
-
+--D
 
