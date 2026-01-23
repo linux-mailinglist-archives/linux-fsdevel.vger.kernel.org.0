@@ -1,129 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-75297-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aIdzH0eMc2l0xAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75297-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 15:57:11 +0100
+	id 0IxoJlaMc2l0xAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 15:57:26 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4C53774CD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 15:57:10 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 733E4774EC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 15:57:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D817A303FF1A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 14:56:01 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 933C73009401
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 14:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1FB32D0E7;
-	Fri, 23 Jan 2026 14:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C299932D0F0;
+	Fri, 23 Jan 2026 14:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLYx87g/"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eoLJ2J7s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C372D592D;
-	Fri, 23 Jan 2026 14:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67BDA330640
+	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jan 2026 14:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769180160; cv=none; b=c3CLc6ItCtfbFangUeLDqwwSVM8A7D8dE9Pd+UWtZkWj8VC6rqp4wDPainhYUiJNqXEn9ZK6B7CPT1wActlHEwwQPMP6cXazPvC4NjCkY4Wp8qcxSj5g4VDa5XdZDDyYlTdJYb7qIajgq0vE5Am+1j2rP2uSK5u/PZYNeN9Zx9k=
+	t=1769180242; cv=none; b=C79Y4ICYabXVgDsGMM4tO7fyWyKOLWbgyYmxiaz3l5tR4tYnb/HZbaqbpaYiW1VzzSWyjkU95pTRFPGnSFEu37chKSpV2j1uy8gSxYDSR0ZBZy+Jep2cMQv4XYymHGCAUyVwF3JoLCUwPeTy54Fkfr956c4cS35CK514Wg0G6KQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769180160; c=relaxed/simple;
-	bh=nM6wei6S8isBJ7NthtQVm+j+g0SqQK+3QLy6kExLyIY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QfF0sndnRPUOHkK10xcBuQlg3U3SgGTKOdaSNh6CDvDlo+/ljgcL2F/s7KNSF7Zweon+usKQMkfwfojN7x7eSScIgY2hvkxXTmxeakQpVrt/6lZhpbw0hQArYRAClrKehYAf+KHchvONzsveasxa+JJn4hq9BzwmfWzQNYRklKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bLYx87g/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B572CC4CEF1;
-	Fri, 23 Jan 2026 14:55:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769180160;
-	bh=nM6wei6S8isBJ7NthtQVm+j+g0SqQK+3QLy6kExLyIY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bLYx87g/G62pjSI+ZNYUkUAarMUnaVNtyIAxCm2HsS25NI2n0NU8LPH1dUQVO9aUj
-	 JmOb71JDsQt9Aph47wYpgHW9UEdgsxGNMKV28I+O3buXzxvRgNPxqs51oBDwhuvtjS
-	 V8iVP30SUF0gVs0eLr9ko/apo8O9aHN9CdlEkVP0YW0Yvbf47J6BOhXpK8PSb6KNb+
-	 K5hz/Ylvpk6WMkoFz4lt7yinzviWR6tI1zaRw1hieJeD6n4uBVfcJ7oaZc49YPtpdv
-	 WXf9ZKlqyWcyN256BgnzSOyowcOCdH+mAHG5ulYTD0Z9Be6VznPMAPZpAy5bsID+Fm
-	 JKHDr09A0IG/w==
-From: Christian Brauner <brauner@kernel.org>
-To: Andrey Albershteyn <aalbersh@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: reset read-only fsflags together with xflags
-Date: Fri, 23 Jan 2026 15:55:49 +0100
-Message-ID: <20260123-diesmal-hetzjagd-5a1d71ef29b8@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260121193645.3611716-1-aalbersh@kernel.org>
-References: <20260121193645.3611716-1-aalbersh@kernel.org>
+	s=arc-20240116; t=1769180242; c=relaxed/simple;
+	bh=98gfQfTtpuQIK4SRjDriRs29SOaTPxKtPQ4zxBSwmD8=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=B9YJTCkXt2aVoera9QsnSfFgV/7arAq+U94DQ9xKiS4urCuEXpsMgC+xaV0JuItKzbEpNJvukBikwXX6vtOg51HZu8y59uSJa+1oS7CkZXxMWKaX+at6AgDp8k3QyYDJpbtM5XbmQe+voVzswMcQNQx73cotOR2lRDiyR3RrRjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eoLJ2J7s; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1769180239;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C9dje+sNIA+yLoiDKbDNtKWUYVXUn9yJ3J50p0rKaA0=;
+	b=eoLJ2J7skX1yxSOrQZnYoXA5Q2AwPWeYlP7pqY3d7BcZflShX1K8UaeFyY2W8HcTC5vT6M
+	UvSoIb/Ri89GTZoCaZWAOx/O5QK/FMFbqy5IYdYFANFcMjSdbiOm8k7BIZ+sfjQyyESU8O
+	N995gH3LmUAU3xpTcj9o1NHYFW/El0c=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-266-zQ3khed6Ng-AjKJiBdeFRg-1; Fri,
+ 23 Jan 2026 09:57:13 -0500
+X-MC-Unique: zQ3khed6Ng-AjKJiBdeFRg-1
+X-Mimecast-MFC-AGG-ID: zQ3khed6Ng-AjKJiBdeFRg_1769180232
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3C95F18005B6;
+	Fri, 23 Jan 2026 14:57:11 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.2])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 97B311800999;
+	Fri, 23 Jan 2026 14:57:07 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20260123135858.GA24386@lst.de>
+References: <20260123135858.GA24386@lst.de> <20260119074425.4005867-4-hch@lst.de> <20260119074425.4005867-1-hch@lst.de> <1754475.1769168237@warthog.procyon.org.uk>
+To: Christoph Hellwig <hch@lst.de>
+Cc: dhowells@redhat.com, Jens Axboe <axboe@kernel.dk>,
+    Christian Brauner <brauner@kernel.org>,
+    "Darrick J. Wong" <djwong@kernel.org>,
+    Carlos Maiolino <cem@kernel.org>, Qu Wenruo <wqu@suse.com>,
+    Al Viro <viro@zeniv.linux.org.uk>, linux-block@vger.kernel.org,
+    linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+    Kundan Kumar <kundan.kumar@samsung.com>,
+    Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH 03/14] iov_iter: extract a iov_iter_extract_bvecs helper from bio code
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1291; i=brauner@kernel.org; h=from:subject:message-id; bh=nM6wei6S8isBJ7NthtQVm+j+g0SqQK+3QLy6kExLyIY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQWd/9+clRfYY602nRVq2d5octWngw5eGhhc2QZ2417H Jl2B/iMO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACay4AUjwy5Tcf8P7wuNA0Md Ju9KOqerf8h4QfYqxo2vHY3+W9mfm8bwv7DnvbXFfUHxqPhw+UcT2c+KTmffy+k+w+WxyIG+BWt VmAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1763224.1769180224.1@warthog.procyon.org.uk>
+Date: Fri, 23 Jan 2026 14:57:06 +0000
+Message-ID: <1763225.1769180226@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [2.34 / 15.00];
-	MID_END_EQ_FROM_USER_PART(4.00)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-75298-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75297-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
-	TO_DN_SOME(0.00)[];
+	HAS_ORG_HEADER(0.00)[];
+	DKIM_TRACE(0.00)[redhat.com:+];
+	RCPT_COUNT_TWELVE(0.00)[13];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	TO_DN_SOME(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[dhowells@redhat.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	NEURAL_HAM(-0.00)[-0.999];
+	RCVD_COUNT_FIVE(0.00)[6];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_FIVE(0.00)[6];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: E4C53774CD
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,lst.de:email]
+X-Rspamd-Queue-Id: 733E4774EC
 X-Rspamd-Action: no action
 
-On Wed, 21 Jan 2026 20:36:43 +0100, Andrey Albershteyn wrote:
-> While setting file attributes, the read-only flags are reset
-> for ->xflags, but not for ->flags if flag is shared between both. This
-> is fine for now as all read-only xflags don't overlap with flags.
-> However, for any read-only shared flag this will create inconsistency
-> between xflags and flags. The non-shared flag will be reset in
-> vfs_fileattr_set() to the current value, but shared one is past further
-> to ->fileattr_set.
+Christoph Hellwig <hch@lst.de> wrote:
+
+> On Fri, Jan 23, 2026 at 11:37:17AM +0000, David Howells wrote:
+> > Christoph Hellwig <hch@lst.de> wrote:
+> > 
+> > > +static unsigned int get_contig_folio_len(struct page **pages,
+> > > +		unsigned int *num_pages, size_t left, size_t offset)
+> > > +{
+> > > +	struct folio *folio = page_folio(pages[0]);
+> > 
+> > You can't do this.  You cannot assume that pages[0] is of folio type.
+> > vmsplice() is unfortunately a thing and the page could be a network read
+> > buffer.
 > 
-> [...]
+> Hmm, this just moves around existing code added in commit ed9832bc08db
+> ("block: introduce folio awareness and add a bigger size from folio").
+> 
+> How do we get these network read buffers into either a user address
+> space or a (non-bvec) iter passed to O_DIRECT reads/writes?
 
-Applied to the vfs-7.0.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-7.0.misc branch should appear in linux-next soon.
+Splice from TCP socket to pipe, vmsplice from there into process address
+space; DIO write() from there I think should do it.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+What you might need to do is write page-sized chunks into one end of the TCP
+socket and flush it after each one so that vmsplice() sees page-sized chunks
+of data.  I'm not sure how well an external connection would work to get
+actual transmission buffers.  The problem is that the received packet is
+page-aligned, including the network headers (I think), so if you can, say,
+send 8K packets, you'd have to try and guess where the page boundaries are as
+vmsplice can only work on whole pages.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Can we make vmsplice() just copy data?
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+> Can we come up with testcase for xfstests or blktests for this?
+> 
+> How do we find out if a given page is a folio and that we can do this?
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-7.0.misc
+That's a question for Willy.
 
-[1/1] fs: reset read-only fsflags together with xflags
-      https://git.kernel.org/vfs/vfs/c/9396bfdacb5a
+David
+
 
