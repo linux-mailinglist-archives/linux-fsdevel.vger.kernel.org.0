@@ -1,63 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-75220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YNpCLUIec2ngsQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 08:07:46 +0100
+	id yGKFJ7Iec2ngsQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 08:09:38 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0098D716CD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 08:07:45 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E26571705
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 08:09:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id E3CD1300D0D6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 07:05:45 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 6FA533004F1B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 07:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C103491C9;
-	Fri, 23 Jan 2026 07:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6C73542F8;
+	Fri, 23 Jan 2026 07:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FeSQZ5jI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZW9BEiiM"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7686D353EE5;
-	Fri, 23 Jan 2026 07:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6E035A95F;
+	Fri, 23 Jan 2026 07:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769151938; cv=none; b=JW6QylZh7F12i67hm1hwGiU0Qp9K5mlvFbWACeWOxGrJF33errYmF++4Zrusw773RE+GQe9YH4pU46fkqLHjFA1/H/tlnBow/0bEZw9m6MWyRDNc5jObqgCNiGnBNFbKOyoYQgRJTERAYtSVnqYNbfBmFl3arY/HIuzQ8zNGkyk=
+	t=1769152174; cv=none; b=AzgzJwy1Ixezim4Xv0scPHWCl+P8PzRabAtxxiUsCPFe++3YfmHzE/zAZ2YdS9XbefdQbuaqx/W8HoT8fS+aipQMmgUoHo1c+ZyUS7tAtU6oUcQGURKM+/gEbZVY0JduEk6eIp+mdGC/6RbX8ll9/PfFbr/G6KAYLP56Xd3q4is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769151938; c=relaxed/simple;
-	bh=prCnkzVm6fO+8z3GY9lZ2HXlhvUz7mQRWkvGcn3TQqc=;
+	s=arc-20240116; t=1769152174; c=relaxed/simple;
+	bh=ofnkU/zHlsoyC2sM3ZLTfx0zSZXoPY0968HprSgh0yA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rJhYbiMpbJHOdIXHuTuNY6oDWNzjfgLFaIgsBEzrOWHtR7w2Sq1ZGyLBrtGbpSVGGzjFOCngN9W+AIQmtvH2SiUQmnTzQJxBQ0xlKiQ93Pd05Eq1YfdRdvrE5LSuS2NDm6IoCo5+abFpFP725yN8tN9AUG69Y8w5ThlGU3VqhLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FeSQZ5jI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F9FBC4CEF1;
-	Fri, 23 Jan 2026 07:05:37 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=KxZSIBk/Bbh1LXRRUSaiHYpgKjXrj0QQus8ouVeQe65vaYMyXd0svDHiMAyt1mwPjqrM+RvwvznLcdzE+Eb3IQkAPFD7rDOU4MmWYqF2DiPQPkuadFaYZp5C1ayDzsfqsiLSJMFCLbym9Ox8pBLDCK1XOavOJ6XahPtg6bXrl7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZW9BEiiM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5649C4CEF1;
+	Fri, 23 Jan 2026 07:09:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769151937;
-	bh=prCnkzVm6fO+8z3GY9lZ2HXlhvUz7mQRWkvGcn3TQqc=;
+	s=k20201202; t=1769152173;
+	bh=ofnkU/zHlsoyC2sM3ZLTfx0zSZXoPY0968HprSgh0yA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FeSQZ5jIKu5X570rU+hozIVgDsUiB9w5MldzlfSIfGs7PdpPGcgp0pm9n1OEL2OIL
-	 BPLy7aF+cSWx0G1x9oS5wHFphonilgt4tqgjHqHCFROndgPUCquvSElDq/ghKZ0PJe
-	 edMlgx/AztU/YghtW6sJ0x51KyLqUjjQSSGQ6YvKhw5zETrJdDV0IBeJFVWiyaXJS+
-	 1mXQLVWqGndMQ7igB3vm9xMVBZG/jTk8ZRMlIK/hNGewLRRc3u9ZlTFDRyS1czTJ/t
-	 evkIt/+rRExNw452WBl4XKya1qr2AvaDONDy2DpoL6UBQ3ZR7hdsYeUlz62+YompdF
-	 MRUV2d8EZbcZQ==
-Date: Thu, 22 Jan 2026 23:05:37 -0800
+	b=ZW9BEiiMW8h5cUEK3gX1n0aWcyMdKN05+pBrf5Gfq/FVYHBoYhGpNQiAlOaFzjTiQ
+	 kbZgKK5w0KPaTIY2pPSfQoRehgWOkajYgmXz//kSoSVwv8qwS2EAxLXbbeTs3KGQLy
+	 hv+Fxv0ebJ3JF7+BcO8dbHBOYiJZrrVijqEah/QD+XB8cgGt0wIYNw2RhpomdPnbh8
+	 o9rbJWk25n1tbTg3Uo0H0pR6pZf+4q4WKgEFkGHgphNmaqnbiYoYs85n/G6omtsQbs
+	 f+drXsU9IQFpjfBKhOZRGZMrs8OXamz1J9WdCFSuaeOEdoofVJokEejwO01HZSxCIA
+	 Td+AHFGnfGq7A==
+Date: Thu, 22 Jan 2026 23:09:33 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Christoph Hellwig <hch@lst.de>
 Cc: Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
 	Carlos Maiolino <cem@kernel.org>, Qu Wenruo <wqu@suse.com>,
 	Al Viro <viro@zeniv.linux.org.uk>, linux-block@vger.kernel.org,
 	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 02/14] block: open code bio_add_page and fix handling of
- mismatching P2P ranges
-Message-ID: <20260123070537.GR5945@frogsfrogsfrogs>
+Subject: Re: [PATCH 03/14] iov_iter: extract a iov_iter_extract_bvecs helper
+ from bio code
+Message-ID: <20260123070933.GS5945@frogsfrogsfrogs>
 References: <20260119074425.4005867-1-hch@lst.de>
- <20260119074425.4005867-3-hch@lst.de>
- <20260122175908.GZ5945@frogsfrogsfrogs>
- <20260123054314.GA24902@lst.de>
+ <20260119074425.4005867-4-hch@lst.de>
+ <20260122174703.GX5945@frogsfrogsfrogs>
+ <20260123054448.GB24902@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,27 +66,27 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260123054314.GA24902@lst.de>
+In-Reply-To: <20260123054448.GB24902@lst.de>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75220-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-75221-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
 	MISSING_XM_UA(0.00)[];
-	NEURAL_HAM(-0.00)[-0.997];
+	NEURAL_HAM(-0.00)[-0.998];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
@@ -94,34 +94,29 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 0098D716CD
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 3E26571705
 X-Rspamd-Action: no action
 
-On Fri, Jan 23, 2026 at 06:43:14AM +0100, Christoph Hellwig wrote:
-> On Thu, Jan 22, 2026 at 09:59:08AM -0800, Darrick J. Wong wrote:
-> > On Mon, Jan 19, 2026 at 08:44:09AM +0100, Christoph Hellwig wrote:
-> > > bio_add_page fails to add data to the bio when mixing P2P with non-P2P
-> > > ranges, or ranges that map to different P2P providers.  In that case
-> > > it will trigger that WARN_ON and return an error up the chain instead of
-> > > simply starting a new bio as intended.  Fix this by open coding
+On Fri, Jan 23, 2026 at 06:44:48AM +0100, Christoph Hellwig wrote:
+> On Thu, Jan 22, 2026 at 09:47:03AM -0800, Darrick J. Wong wrote:
+> > > -	struct page **pages = (struct page **)bv;
 > > 
-> > AFAICT we've already done all the other checks in bio_add_page, so
-> > calling __bio_add_page directly from within the loop is ok since you've
-> > explicitly handled the !zone_device_pages_have_same_pgmap() case.
+> > Huh.  We type-abuse an array of bio_vec's as an array of struct page
+> > pointers??
 > > 
-> > > bio_add_page and handling this case explicitly.  While doing so, stop
-> > > merging physical contiguous data that belongs to multiple folios.  While
-> > > this merge could lead to more efficient bio packing in some case,
-> > > dropping will allow to remove handling of this corner case in other
-> > > places and make the code more robust.
-> > 
-> > That does sound like a landmine waiting to go off...
+> > As a straight hoist the patch looks correct but I'm confused about this.
 > 
-> What?  Removing the handling?
+> Yes.  This uses the larger space allocated for bio_vecs to first
+> place the pages at the end, and then filling in the bio_vecs from the
+> beginning.  I think the comments describe it pretty well, but if you
+> have ideas for enhancement, this might be a good time to update them.
 
-Urk, sorry.  I meant to say that the *old code* combining pages from
-multiple folios sounded like a landmine waiting to go off.
+I'm not sure, since the alternative is to wrap the whole mess in a
+union, which makes the type-abuse more explicit but then is still pretty
+ugly.  The only improvement I can really think of would be a huge
+comment wherever we start this, which I think Kent's original code from
+2011 had ("deep magic", etc).
 
 --D
 
