@@ -1,137 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-75311-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75312-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id AMSvDubYc2lXzAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75311-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 21:24:06 +0100
+	id OE26FQ/cc2mbzAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75312-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 21:37:35 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id E63047A954
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 21:24:05 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id C38D97A9C8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 21:37:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 02358302255D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 20:24:00 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id CFDFC3030119
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 20:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291582DBF4B;
-	Fri, 23 Jan 2026 20:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6206C2EC08C;
+	Fri, 23 Jan 2026 20:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SF+opV+g"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rMzzr48Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEB62DA757
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jan 2026 20:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 379382E8B9F;
+	Fri, 23 Jan 2026 20:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769199834; cv=none; b=J3zVvvk4/EeD7kpYzS3wqmBljWTWs9n0oRI/uGnL/+NjJcpv3WXy4xlbltws3XvYls07iu9S482VSbfisfqN0fqXuFHhkMaOm0ilzFfExuGojlP/jJOTGvq84lUzPvozrOfJ3K9wlncTwFX13f5eGwbffgZ2ZzyQplHqNARWzBY=
+	t=1769200641; cv=none; b=YJ7wzdfElkzGgpa8wms7rv8qHVhyZPRUbyNROP4PkKnaxRHaoWpMma3Sy9vxLanGFOR4gvFzAxOUNjIQo604p8lNwMFRV7WNEZg+DK/h2/zHwWaHocddCTE2g1sVyRKYx287ytVeH1InUuoLv4slEGkh8+DDTTE0jw+YdujUUR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769199834; c=relaxed/simple;
-	bh=TCYJ9pm4u9pY8XA2MVmsOObmE6D7jsYdHa39/d5HMcc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rr7V2Dt1plI/ZmpgOI3wovAIyNwN6gsokRaba+CLSgiQmjBKpA70SCCHi5FMj4NKgCTSIlBObemZn4gWxCXx4IYMwQ9L9HA4nTjwQeiQeNkTnl/hFxe5ZEqXz988WXcDIbKMU/U6FFrcH1Ir7yNOonwjNU1d7ebLaTjgcOP3gkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SF+opV+g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A0E4C2BC87
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jan 2026 20:23:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769199834;
-	bh=TCYJ9pm4u9pY8XA2MVmsOObmE6D7jsYdHa39/d5HMcc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=SF+opV+gFpElpTEh5dma1Eqc4cd2BEVKbsd1ucMgZXsVvZkwYMxw12y67TwcT416k
-	 G7pAyXs3qgWL5pYemOAEW/+DdPJBAivrosXeIIGFoULmCKta1RNVokMDrM9nk9xYHR
-	 tGWoAVRdDhFPwOD8y+jvyB6vkDFon31QT1fcN3FiLzs0rVDfpRUSSuHGRydHrWJeEx
-	 q4LtYid2aCM0SpFBS9Zn6r2joNSLUkCvzY5kA/gZno4TJfAbYDUR2z57SnlpfwxkrZ
-	 QanPVyPwBeTHvb/42HPUQBmjwQuK+M6FsHAhZVOOR0RnuXxIDTfMv7pwRdAKJVvr7g
-	 U0mSvlWc5z7hQ==
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-8947ddce09fso24289096d6.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jan 2026 12:23:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX82fSdyFvZOCWi9LwDkpDS8S3cj4br33HATeQuqcClpmTqOMHKmuuFfzNirTLuEOBd52w6N1B3BeDAIwQS@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHkSYH+Is9VMbpPIHtuI2kGjqURswt3misl2KoGtr6No+JHu/p
-	ROW21cQbjoy9ynoy9i6qW0WcIlBr9ESZ32i14K9v55nNg8Q6KzxE2znjQFvaZ9YbQ7alkIuieby
-	NkgWEwl0YFpleO1Iv1s0FzsxlcBE6hVg=
-X-Received: by 2002:a05:6214:cc1:b0:894:3c57:dbc0 with SMTP id
- 6a1803df08f44-8949020dac1mr58981856d6.39.1769199833659; Fri, 23 Jan 2026
- 12:23:53 -0800 (PST)
+	s=arc-20240116; t=1769200641; c=relaxed/simple;
+	bh=J3uIrIsI3rDKrre8O5bOnE8gVqwa7R70GzDdw+6sFgc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gWA0PHf2ubTGvmiMe2YsfboMZY7uU4p7uDaHTqLpe8LOeGdc/eIYr1P0dlVltY13oQymD/6krdQ5On11iaxXJcpL9Ju1dN/SsUbalKjiaGcYWOQ+6Rsq7oKgl3Wcfdg6iWlGQLjm26sA936O4UqQ10spkaEpqUm1DTM4DVCw5vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rMzzr48Z; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jIvepI9acMMMk9EyKKutMt3xnmNKtmyd0L+HCslVMZQ=; b=rMzzr48ZEZwxWMtRrKDYd5siJh
+	aH5MXe97U3+/lggnM1s+cCvnK5QyDgtQqX/Ou9/z0+/TICygzTWr316AA58osp/yT8PJnYjsni60L
+	HKyMZEwSibLYWoIbObsv1RVKbPMn9eGPjhxH7lXyrtcCq9H7cHIaS9WteSwHg+XjouAhHvn9JQZS8
+	yCQLEhyl7ZGPx3NS8rQWO7WrSxTAM7+vbpu+v8sKpOwUmzk0X/GX8ofdd4hXTVGqStFeJ11wXrcY2
+	mqTA9SJF3XAKqI4Gn757O/GLxH8ZaSzJaG/Yqs85MAyL2mgXCKSgXiLIAdqqga5ylsEpiLGQn4Osc
+	EXBZEEqQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vjNu6-00000002Fay-1Ftx;
+	Fri, 23 Jan 2026 20:37:14 +0000
+Date: Fri, 23 Jan 2026 20:37:14 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "qian01.li@samsung.com" <qian01.li@samsung.com>,
+	"a.manzanares@samsung.com" <a.manzanares@samsung.com>,
+	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
+	"javier.gonz@samsung.com" <javier.gonz@samsung.com>,
+	Patrick Donnelly <pdonnell@ibm.com>,
+	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"slava@dubeyko.com" <slava@dubeyko.com>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	Pavan Rallabhandi <Pavan.Rallabhandi@ibm.com>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Data placement policy for FDP SSD in
+ Ceph and other distributed file systems
+Message-ID: <aXPb-tehcuOvSC9V@casper.infradead.org>
+References: <b4bbba0993d4c1abd6566d8d508bbb47aacd7671.camel@ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPhsuW4=heDwYEkmRzSnLHDdW=da71qDd1KqUj9sYUOT5uOx3w@mail.gmail.com>
- <CAHC9VhRU_vtN4oXHVuT4Tt=WFP=4FrKc=i8t=xDz+bamUG7r6g@mail.gmail.com>
- <CAPhsuW6vCrN=k6xEuPf+tJr6ikH_RwfyaU_Q9DvGg2r2U9y+UA@mail.gmail.com>
- <94bf50cb-cea7-48c1-9f88-073c969eb211@schaufler-ca.com> <CAPhsuW7xi+PP9OnkpBoh96aQyf3C82S1cZY4NJro-FKp0i719Q@mail.gmail.com>
- <633aa038-4356-4db3-b61f-191cf56c73b4@schaufler-ca.com>
-In-Reply-To: <633aa038-4356-4db3-b61f-191cf56c73b4@schaufler-ca.com>
-From: Song Liu <song@kernel.org>
-Date: Fri, 23 Jan 2026 12:23:42 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW5-m9oVraESqht_OMwOf-b80LBC0w+DSKk9Kru7sF8d4Q@mail.gmail.com>
-X-Gm-Features: AZwV_Qil2W6hJzceDSRZxA4srphedhZgK-8wrWEE_IAEq6nCZVjDWj78lZ3LHwg
-Message-ID: <CAPhsuW5-m9oVraESqht_OMwOf-b80LBC0w+DSKk9Kru7sF8d4Q@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Refactor LSM hooks for VFS mount operations
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Paul Moore <paul@paul-moore.com>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, lsf-pc@lists.linux-foundation.org, 
-	linux-security-module <linux-security-module@vger.kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b4bbba0993d4c1abd6566d8d508bbb47aacd7671.camel@ibm.com>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64];
+	R_DKIM_ALLOW(-0.20)[infradead.org:s=casper.20170209];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75312-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75311-lists,linux-fsdevel=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	DKIM_TRACE(0.00)[infradead.org:+];
 	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[song@kernel.org,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	RCVD_COUNT_FIVE(0.00)[5];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	NEURAL_HAM(-0.00)[-0.997];
+	FROM_NEQ_ENVFROM(0.00)[willy@infradead.org,linux-fsdevel@vger.kernel.org];
+	MISSING_XM_UA(0.00)[];
+	NEURAL_HAM(-0.00)[-0.996];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	TO_DN_SOME(0.00)[]
-X-Rspamd-Queue-Id: E63047A954
+	FORGED_SENDER_MAILLIST(0.00)[]
+X-Rspamd-Queue-Id: C38D97A9C8
 X-Rspamd-Action: no action
 
-Hi Casey,
+On Fri, Jan 23, 2026 at 08:13:49PM +0000, Viacheslav Dubeyko via Lsf-pc wrote:
+> I think we need to elaborate much better approach for FDP SSDs in the case of
+> distributed file systems. I believe that it needs to execute accurate
+> benchmarking of above mentioned use-cases with analysis of peculiarities of
+> distributed file systems case. Finally, we will be able to analyze these results
+> and to elaborate a vision of proper solution for distributed file system case
+> (like Ceph, for example).
+> 
+> So, I suggest to meet at LSF/MM/BPF and to discuss the benchmarking results and
+> potential vision of the solution.
 
-On Thu, Jan 22, 2026 at 6:38=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
-.com> wrote:
-[...]
-> > Could you please share more information about this issue?
->
-> LSMs assume that any mount options passed to them are options
-> they provide. If an option isn't recognized, it's an error. If
-> two LSMs provide mount options the first will report an error for
-> a mount option recognized by the second. Since hook processing
-> uses a "bail on fail" model, the second LSM will never be called
-> to process its options and the mount operation will fail.
->
-> The option processing needs to change to allow option processing
-> in an LSM to differentiate between a failure in processing its
-> options from finding an unrecognized option. The infrastructure
-> needs to be changed to allow for multiple LSMs to look at the
-> options and only fail if none of them handle the options.
-
-Thanks for the explanation!
-
-This issue is indeed tricky. Since we are talking about to major
-refactoring of LSM hooks around mount operations, it is good
-timing to also solve this issue. I will look more into this.
-
-Song
+Is this proposal for an I/O track discussion, an FS track discussion or
+both?  (I see nothing in this proposal that would suggest that MM or BPF
+people should be involved).
 
