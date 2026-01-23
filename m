@@ -1,195 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-75238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75239-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id eKZ7EGkuc2mTswAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 09:16:41 +0100
+	id iIb/Nx4wc2mTswAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75239-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 09:23:58 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B7572505
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 09:16:40 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 420AE7266D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 09:23:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0074C304C97B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 08:12:35 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7675D300EF92
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 08:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28ABD350D42;
-	Fri, 23 Jan 2026 08:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE4133E378;
+	Fri, 23 Jan 2026 08:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="atcHtk62"
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="ZGW//1RY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com [74.125.82.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49CF230C602
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jan 2026 08:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8F0263C8F;
+	Fri, 23 Jan 2026 08:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769155954; cv=none; b=gO92CLfWHMsNy3DYJJmpMfvnUebBj9DTG5HpK6uZFBwP4Ly9Mt/USj0ckFYZdm8Kc6mpAR6jLLdORDTLxjKPvw1CS/dNe04RT7LCO0G/kfE1dpKPdFCIKLzYibbab5idKpfHiom0i4xST927Kti/5XfXr5SnlWqAjjN+TREM8Mk=
+	t=1769156507; cv=none; b=KYsUkhUkymcO2YIM8ngIlwkgz4L0sf18VJgD1G1KDd3QzCh+TyqUfStQNlmfxTArVt6kLV9ejhgu9CM1a6aLDShwvV+Ufv45meGRVrjIrVMzbfR/AJJRz5cI/7AyJJEpUTxDcFKBfF552uZehLlblPaBOAZ/nLnqPVE1/v/hg10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769155954; c=relaxed/simple;
-	bh=Ecrm2+6N6Z/T/n+8rsIboMq5D9ci8gPIweMR0A03Q0s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AzRQ0WImTcuU7J0qT6HxnhYHZIPQg2TYrs2idyGDkUaeA1usODkEjSc/2fj+qDNgDTLW01kf+uKJlabwzcVquVk6Y8PBISyI0U/ELLbLEFFk2UkoUS1GII3ynW+WiSg+3iqjnBtGzadozxt1xiJ7JaFcSm7dhhvgZbwguxooT9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=atcHtk62; arc=none smtp.client-ip=74.125.82.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-dy1-f174.google.com with SMTP id 5a478bee46e88-2b7070acfdcso1955439eec.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jan 2026 00:12:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769155952; x=1769760752; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pDt4ubMlKawjVjnkE1M7nH+9HIsoLEd8+NCdahhhvGE=;
-        b=atcHtk62omvCxdYm9xtnlWgPE1Ax5tc1lyXL/jmJOCZTDyL+2jJKVESyXBhWHnB+Ux
-         R+NQFxGt+OWE9IbCa9hm2IKRQAorVsyfu6QmjlTlpT/k5uT7Iw1sI4/yYwmCjKkyC2dV
-         RKsJa2VKHm3ity2+kE8MRBP1n+JPz8Nwhus/rLwIQ5W8CabtbH6ILi8bu8GN/v/NNScW
-         l+r1DNEqpiMiRe9sWDwIjw3F79iT7u/Rsq8e87407vZXEs3dH/En0ZKlekwEiVgkbKtc
-         blcOgzAIDpG6u3wNdeL4d6hVpTYk9+AgK2kmi3A/M53Rv/qTuXhc5g+G6aQCy6gJ4NeT
-         YZsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769155952; x=1769760752;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=pDt4ubMlKawjVjnkE1M7nH+9HIsoLEd8+NCdahhhvGE=;
-        b=YbfbQXagwBVJJcNVEesxt1cskfaq2k8ey9+5H+k6HaGEE6Hcaf+0JUK3DA5U5nQJdZ
-         UIy5bOfmDtCjhfsyF7+YClsLg0yxL33COhrLzW2eNXpTZqFCH6/vZ/oAhR5yHXj8qtrS
-         jMUKCAFh4viGznYuw3wthTEBs7ZkhPy2FSDgTtsOj0ZRTF0ej4u6Cd/60rzGUD3KX4hR
-         HqXlyLncHiQJIJJ90TfkR7vQBQFlB6X/VWCBCrLDFj/ykEWfi4qnatd+35n0jcFJFqBB
-         uF3YMakhC2gzdgjv34LM9JD8rrml/ikWEe6HCj4JPj+hesGAH+J/B/G05SSLfgJUMDyX
-         ZHNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWS4uNgF/2hQ3uqkx9oqV3j+ktZGyqV9cqHaM6GAKK4eU0mgRXwacuzY+gsubhPmdf4s5MLdXnOJrMG2vBB@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEl7MG7IeiK8mfgbZZaWXK2bQjgZFfn94mkEIIrfUvH8N62R4e
-	Ne8at+LXHSeyVP6hGB+yWRwOJvrD/Blh1cA+AaPKqgWFSpnPHY6ycf3m
-X-Gm-Gg: AZuq6aKjuczsdYcivUcEyfwqkbMJGYCGCHm50nY3dxHmPvRfU5nGjoHvh/hyqyUKOkl
-	aobDEaHY+imGPqh0wnXQuqy/4c5ORmag3giOz5uWYrKZNGZVQaz3H9oZTeAHSEMLN7E8f5LBOWq
-	mnUi76xGiKmmah1midwmgXGQTtxuBTEtzNR/SrGkZ2plcCRToyVfpcoY6EzFyuNRv48z7KFkZNv
-	hamnIsE/VRyTaWE4Rilnn42bdHe8cvs0EJImdBsyxSF+DO79YDdqhsTN7QkqpcIzriizuDFJCXw
-	KCCqoWnUNkor+aXbXk8/i20Dnu8mbYybZupytoBNAzsRegdWaI/qcQIFMF/dBY+8F3OA60ct0Cm
-	R6ue4oSo1qDL4jwhtWxqdRma8c7XZnbmSSUMolmlh7OXwp1xgF8uDDDlByVYfR6UoWFm6/MlCoj
-	+qyyk=
-X-Received: by 2002:a05:7300:a49a:b0:2b0:4c5f:c05c with SMTP id 5a478bee46e88-2b7399b0eeamr934441eec.4.1769155952292;
-        Fri, 23 Jan 2026 00:12:32 -0800 (PST)
-Received: from debian ([74.48.213.230])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b73a9e1ad3sm2055819eec.19.2026.01.23.00.12.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Jan 2026 00:12:32 -0800 (PST)
-From: Qiliang Yuan <realwujing@gmail.com>
-To: viro@zeniv.linux.org.uk
-Cc: brauner@kernel.org,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	realwujing@gmail.com,
-	yuanql9@chinatelecom.cn
-Subject: [PATCH v2] fs/file: optimize close_range() complexity from O(N) to O(Sparse)
-Date: Fri, 23 Jan 2026 03:12:21 -0500
-Message-ID: <20260123081221.659125-1-realwujing@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260122171408.GF3183987@ZenIV>
-References: <20260122171408.GF3183987@ZenIV>
+	s=arc-20240116; t=1769156507; c=relaxed/simple;
+	bh=2GpzZ9ZYwB5LCNaqoegN9i1n5b7oQh48aowVNuZ/HRY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rGxjoH0A+GSdqdUKbcLScSrIqW6zey+aKRRKhjXOzC/I78bDxaFuxZibtFB0cHSLQeUejvXj+wH8jdX4b3pJ/nk0ehcAqmChpdFoZiKBBU9iN8eJNLjy9hODtA6VjcqHHbwP0QQ7rOzE/BIohyj/YnJGvnAHRbH2FSmX7kvzU+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=ZGW//1RY; arc=none smtp.client-ip=113.46.200.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=XPpBwN+Ym64kt/gOXADmq5l86PyuqqhVUYveTqcrDUY=;
+	b=ZGW//1RYRTolN6mbtqAHV/mZnwIDOA57/XW6eGmsWVCa9shqLkSsNFMTqGQMryfuzuqMAwIh2
+	LafjjnwZmwtBhVi6O+pJV8IGfz6D4KIOZOS3oNzf/3DWY3PzdxlQ47ErVvi/dUDp2yxlV/HCca3
+	21io3ldhJqtqWJv/W8cgu8M=
+Received: from mail.maildlp.com (unknown [172.19.162.223])
+	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4dy9mQ56r2z1prKt;
+	Fri, 23 Jan 2026 16:18:14 +0800 (CST)
+Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
+	by mail.maildlp.com (Postfix) with ESMTPS id 942DA40570;
+	Fri, 23 Jan 2026 16:21:41 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ kwepemr500015.china.huawei.com (7.202.195.162) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 23 Jan 2026 16:21:40 +0800
+Message-ID: <7b8bd967-bc81-434a-802c-8c2b95259700@huawei.com>
+Date: Fri, 23 Jan 2026 16:21:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 04/10] erofs: add erofs_inode_set_aops helper to set
+ the aops.
+Content-Language: en-US
+To: Gao Xiang <hsiangkao@linux.alibaba.com>, Christoph Hellwig <hch@lst.de>
+CC: <chao@kernel.org>, <brauner@kernel.org>, <djwong@kernel.org>,
+	<amir73il@gmail.com>, <linux-fsdevel@vger.kernel.org>,
+	<linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
+References: <20260122133718.658056-1-lihongbo22@huawei.com>
+ <20260122133718.658056-5-lihongbo22@huawei.com>
+ <b20b263d-132b-464e-8314-d3f795e5e582@linux.alibaba.com>
+ <20260123061825.GA25722@lst.de>
+ <e0b170ec-253e-49ed-be62-9a90e9eb9053@linux.alibaba.com>
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <e0b170ec-253e-49ed-be62-9a90e9eb9053@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemr500015.china.huawei.com (7.202.195.162)
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	DMARC_POLICY_ALLOW(-0.50)[huawei.com,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[huawei.com:s=dkim];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	TAGGED_FROM(0.00)[bounces-75238-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,suse.cz,vger.kernel.org,gmail.com,chinatelecom.cn];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org,lists.ozlabs.org];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75239-lists,linux-fsdevel=lfdr.de];
+	DKIM_TRACE(0.00)[huawei.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[realwujing@gmail.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCVD_COUNT_FIVE(0.00)[5];
-	NEURAL_HAM(-0.00)[-1.000];
-	TO_DN_NONE(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[lihongbo22@huawei.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	NEURAL_HAM(-0.00)[-0.965];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[chinatelecom.cn:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 88B7572505
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,huawei.com:mid,huawei.com:dkim]
+X-Rspamd-Queue-Id: 420AE7266D
 X-Rspamd-Action: no action
 
-In close_range(), the kernel traditionally performs a linear scan over the
-[fd, max_fd] range, resulting in O(N) complexity where N is the range size.
-For processes with sparse FD tables, this is inefficient as it checks many
-unallocated slots.
+Hi Xiang and Christoph,
 
-This patch optimizes __range_close() by using find_next_bit() on the
-open_fds bitmap to skip holes. This shifts the algorithmic complexity from
-O(Range Size) to O(Active FDs), providing a significant performance boost
-for large-range close operations on sparse file descriptor tables.
+On 2026/1/23 15:42, Gao Xiang wrote:
+> 
+> 
+> On 2026/1/23 14:18, Christoph Hellwig wrote:
+>> On Thu, Jan 22, 2026 at 09:54:15PM +0800, Gao Xiang wrote:
+>>>> @@ -455,6 +455,29 @@ static inline void *erofs_vm_map_ram(struct 
+>>>> page **pages, unsigned int count)
+>>>>        return NULL;
+>>>>    }
+>>>>    +static inline int erofs_inode_set_aops(struct inode *inode,
+>>>> +                       struct inode *realinode, bool no_fscache)
+>>>> +{
+>>>> +    if 
+>>>> (erofs_inode_is_data_compressed(EROFS_I(realinode)->datalayout)) {
+>>>> +        if (!IS_ENABLED(CONFIG_EROFS_FS_ZIP))
+>>>> +            return -EOPNOTSUPP;
+>>>> +        DO_ONCE_LITE_IF(realinode->i_blkbits != PAGE_SHIFT,
+>>>> +              erofs_info, realinode->i_sb,
+>>>> +              "EXPERIMENTAL EROFS subpage compressed block support 
+>>>> in use. Use at your own risk!");
+>>>> +        inode->i_mapping->a_ops = &z_erofs_aops;
+>>>
+>>> Is that available if CONFIG_EROFS_FS_ZIP is undefined?
+>>
+>> z_erofs_aops is declared unconditionally, and the IS_ENABLED above
+>> ensures the compiler will never generate a reference to it.
+>>
+>> So this is fine, and a very usualy trick to make the code more
+>> readable.
+> 
+> Yeah, I get your point, that is really helpful and I haven't
+> used that trick.
+> 
+> The other problem was the else part is incorrect, Hongbo,
+> how about applying the following code and resend the next
+> version, I will apply all patches later:
+> 
 
-Signed-off-by: Qiliang Yuan <realwujing@gmail.com>
-Signed-off-by: Qiliang Yuan <yuanql9@chinatelecom.cn>
----
-v2:
-  - Recalculate fdt after re-acquiring file_lock to avoid UAF if the
-    table is expanded/reallocated during filp_close() or cond_resched().
-v1:
-  - Initial optimization using find_next_bit() on open_fds bitmap to
-    skip holes, improving complexity to O(Active FDs).
+Thanks you very much for your careful review and help. It was indeed my 
+own mistake (I have been making errors too easily lately which taught me 
+a lot...).
+I have updated the new version in:
 
- fs/file.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+https://lore.kernel.org/all/20260123075239.664330-1-lihongbo22@huawei.com/
 
-diff --git a/fs/file.c b/fs/file.c
-index 0a4f3bdb2dec..51ddcff0081a 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -777,23 +777,29 @@ static inline void __range_close(struct files_struct *files, unsigned int fd,
- 				 unsigned int max_fd)
- {
- 	struct file *file;
-+	struct fdtable *fdt;
- 	unsigned n;
- 
- 	spin_lock(&files->file_lock);
--	n = last_fd(files_fdtable(files));
-+	fdt = files_fdtable(files);
-+	n = last_fd(fdt);
- 	max_fd = min(max_fd, n);
- 
--	for (; fd <= max_fd; fd++) {
-+	for (fd = find_next_bit(fdt->open_fds, max_fd + 1, fd);
-+	     fd <= max_fd;
-+	     fd = find_next_bit(fdt->open_fds, max_fd + 1, fd + 1)) {
- 		file = file_close_fd_locked(files, fd);
- 		if (file) {
- 			spin_unlock(&files->file_lock);
- 			filp_close(file, files);
- 			cond_resched();
- 			spin_lock(&files->file_lock);
-+			fdt = files_fdtable(files);
- 		} else if (need_resched()) {
- 			spin_unlock(&files->file_lock);
- 			cond_resched();
- 			spin_lock(&files->file_lock);
-+			fdt = files_fdtable(files);
- 		}
- 	}
- 	spin_unlock(&files->file_lock);
--- 
-2.51.0
+Thanks,
+Hongbo
 
+> static inline int erofs_inode_set_aops(struct inode *inode,
+>                                         struct inode *realinode, bool 
+> no_fscache)
+> {
+>          if 
+> (erofs_inode_is_data_compressed(EROFS_I(realinode)->datalayout)) {
+>                  if (!IS_ENABLED(CONFIG_EROFS_FS_ZIP))
+>                          return -EOPNOTSUPP;
+>                  DO_ONCE_LITE_IF(realinode->i_blkbits != PAGE_SHIFT,
+>                            erofs_info, realinode->i_sb,
+>                            "EXPERIMENTAL EROFS subpage compressed block 
+> support in use. Use at your own risk!");
+>                  inode->i_mapping->a_ops = &z_erofs_aops;
+>                  return 0;
+>          }
+>          inode->i_mapping->a_ops = &erofs_aops;
+>          if (IS_ENABLED(CONFIG_EROFS_FS_ONDEMAND) && !no_fscache &&
+>              erofs_is_fscache_mode(realinode->i_sb))
+>                  inode->i_mapping->a_ops = &erofs_fscache_access_aops;
+>          if (IS_ENABLED(CONFIG_EROFS_FS_BACKED_BY_FILE) &&
+>              erofs_is_fileio_mode(EROFS_SB(realinode->i_sb)))
+>                  inode->i_mapping->a_ops = &erofs_fileio_aops;
+>          return 0;
+> }
+> 
+> Thanks,
+> Gao Xiang
 
