@@ -1,147 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-75189-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75185-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CMUdMyrTcmnKpgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75189-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 02:47:22 +0100
+	id ENntGeTQcmnKpgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75185-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 02:37:40 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 330FC6F520
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 02:47:22 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4EA76F2AD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 02:37:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id AADD730574B8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 01:45:57 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id C6BB330120FD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jan 2026 01:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A59353ED0;
-	Fri, 23 Jan 2026 01:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889CF34F46F;
+	Fri, 23 Jan 2026 01:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="uTFxrd8I"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="XCYI5AMH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com [113.46.200.222])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFC6376BC5;
-	Fri, 23 Jan 2026 01:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.222
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1BE36CDE7;
+	Fri, 23 Jan 2026 01:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769132736; cv=none; b=nciitzSL/zN9Rlak+IgDUaodbEee8QHE09FyMJIuAbAVu1Z5mTnwv30R6sYepxAtiPHR4NL5CgVkQ4e+JFEeLCqloXGFDArlr2HzcuG5oLNzdTP4DJCEUtxhUmIXUnGi82VaKi25G6JEJeveUIBabW4WY1VzA/8UYoImEzsQ+x4=
+	t=1769132250; cv=none; b=IfzeOPjno9jiRxEptNSvmqEbRf2nkEUUpGY/TDxHY1IKNF4h9t1Ynz4Q/EOiMdSssEwMTk7eC064dUPi9wFPpkhsVx9ipu7Qolc7g2vDk9qPOVrOnj/KFqltJt1ngLvGXo5HDb/b1vPC3ySmoAiVg8MWWzuwx8vBFCIJ9iQzIvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769132736; c=relaxed/simple;
-	bh=anA6yDKzxBNODzduD70HgdLsrJbw6S9AkfSIJUGFzX0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nCj76lmZYbGiikKLgQtPFQ3tWB24TT8NQpSA+MqbVPw93T3n6n/CmyDI4tSEyV/kepxeaKfW8y7G0de8uQHenvOiosOma+wkzEbnSAWvZrDHolCCfoYoitzqSmAeUt4yjTSM72/orF4R1ASOk6gmXvf4dtrg12+Wxf8DCYPSBgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=uTFxrd8I; arc=none smtp.client-ip=113.46.200.222
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=pjdMVj5WK0KjkehQa5OTHZ+MCiwfMCyVPXQRCDg124Y=;
-	b=uTFxrd8IXGqAsUVgSzf8YOFirRCl+3Vri/JQVcixI0RqRwASzkKo/jUAAOd1zf2p8vAHRhNct
-	7JRO2KnDibrXmcR1YSb58tPaTU2XzWY8irks5vvRwYuE1ugRbA9HdzpSp+Pa/6cphzU/dMAJn2U
-	JzHDdXLMT0jGr7lSzjEguOw=
-Received: from mail.maildlp.com (unknown [172.19.163.200])
-	by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4dy0z93hBczLlTR;
-	Fri, 23 Jan 2026 09:41:57 +0800 (CST)
-Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9F0384055B;
-	Fri, 23 Jan 2026 09:45:21 +0800 (CST)
-Received: from huawei.com (10.67.174.162) by kwepemr500015.china.huawei.com
- (7.202.195.162) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 23 Jan
- 2026 09:45:20 +0800
-From: Hongbo Li <lihongbo22@huawei.com>
-To: <hsiangkao@linux.alibaba.com>, <chao@kernel.org>, <brauner@kernel.org>
-CC: <hch@lst.de>, <djwong@kernel.org>, <amir73il@gmail.com>,
-	<linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, <lihongbo22@huawei.com>
-Subject: [PATCH v18 10/10] erofs: implement .fadvise for page cache share
-Date: Fri, 23 Jan 2026 01:31:32 +0000
-Message-ID: <20260123013132.662393-11-lihongbo22@huawei.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20260123013132.662393-1-lihongbo22@huawei.com>
-References: <20260123013132.662393-1-lihongbo22@huawei.com>
+	s=arc-20240116; t=1769132250; c=relaxed/simple;
+	bh=URzEB4TyVLPJ0Q9KqeHfxpBTrzPlgb7DYWhcPdepu6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hz8/qGZ1cqW8k+PBwW3+jCOWfY4EAsoYI3g7MRc+9FpnJ7bTtngaTGdEaGhcbg6MouqAhQXG+Vz5S8EsM1Iw1yB/LP+KOKbWlPLXka/As6Kne8/BB++Q7KBRDPP3EfqUain7h38OQj3WIm3bLUQxumAUs1SNkFDHPoXtPTXTz7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=XCYI5AMH; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=oJpR0abL6Upot0fWbyBrvmiec0l2GBXUNO1f0js3zDA=; b=XCYI5AMHgU7dGxUeQtdnSDkWie
+	KPLw9SlMuVfNUv2nEtN69WvPUHdBVZfdaQ3sM7lkHIITHmgKEJBp0vmOzTdx/g7/p9SLrrqiUjKDj
+	6iQL7sDlaeMXyX9/5d4nkKzb3cgz4zWQgFZQUjX+wjmruuyUxNHCpZh8ziR8YZZX/Qi1QEhoZOsPQ
+	qphdr0JdzeWubH0JzsnFaS24bu29FIeYfZGdBoSxXL0SI4Ne9266UYanfQ1zF+KXmnjotGGBN2FMH
+	YJl5h6kWA1E0Zel+7HnxrePTzL0VLAxmCghVT0syQ6tF2auFF7oX5R9dHN6udIfZ3NTsawvNHY8+8
+	VI3U+XEg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1vj68Z-0000000Gb6u-2hnp;
+	Fri, 23 Jan 2026 01:38:59 +0000
+Date: Fri, 23 Jan 2026 01:38:59 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: Zack Weinberg <zack@owlfolio.org>, Vincent Lefevre <vincent@vinc17.net>,
+	Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
+	Rich Felker <dalias@libc.org>, linux-fsdevel@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	GNU libc development <libc-alpha@sourceware.org>
+Subject: Re: [RFC v1] man/man2/close.2: CAVEATS: Document divergence from
+ POSIX.1-2024
+Message-ID: <20260123013859.GI3183987@ZenIV>
+References: <20250517133251.GY1509@brightrain.aerifal.cx>
+ <5jm7pblkwkhh4frqjptrw4ll4nwncn22ep2v7sli6kz5wxg5ik@pbnj6wfv66af>
+ <8c47e10a-be82-4d5b-a45e-2526f6e95123@app.fastmail.com>
+ <20250524022416.GB6263@brightrain.aerifal.cx>
+ <1571b14d-1077-4e81-ab97-36e39099761e@app.fastmail.com>
+ <20260120174659.GE6263@brightrain.aerifal.cx>
+ <aW_jz7nucPBjhu0C@devuan>
+ <aW_olRn5s1lbbjdH@devuan>
+ <1ec25e49-841e-4b04-911d-66e3b9ff4471@app.fastmail.com>
+ <aXLGdWGTrYo1s6v7@devuan>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemr500015.china.huawei.com (7.202.195.162)
+In-Reply-To: <aXLGdWGTrYo1s6v7@devuan>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[huawei.com,quarantine];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[huawei.com:s=dkim];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[zeniv.linux.org.uk,none];
+	R_DKIM_ALLOW(-0.20)[linux.org.uk:s=zeniv-20220401];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FROM_NEQ_ENVFROM(0.00)[lihongbo22@huawei.com,linux-fsdevel@vger.kernel.org];
-	FREEMAIL_CC(0.00)[lst.de,kernel.org,gmail.com,vger.kernel.org,lists.ozlabs.org,huawei.com];
-	TAGGED_FROM(0.00)[bounces-75189-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-75185-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[huawei.com:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	NEURAL_HAM(-0.00)[-0.978];
-	TO_DN_NONE(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCVD_COUNT_FIVE(0.00)[6];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[172.105.105.114:from];
 	MIME_TRACE(0.00)[0:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,huawei.com:dkim,huawei.com:mid,alibaba.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 330FC6F520
+	DKIM_TRACE(0.00)[linux.org.uk:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	NEURAL_HAM(-0.00)[-0.995];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[viro@zeniv.linux.org.uk,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[62.89.141.173:received,100.90.174.1:received];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,linux.org.uk:dkim]
+X-Rspamd-Queue-Id: D4EA76F2AD
 X-Rspamd-Action: no action
 
-From: Hongzhen Luo <hongzhen@linux.alibaba.com>
+On Fri, Jan 23, 2026 at 02:02:53AM +0100, Alejandro Colomar wrote:
+> > HISTORY
+> >        The close() system call was present in Unix V7.
+> 
+> That would be simply stated as:
+> 
+> 	V7.
+> 
+> We could also document the first POSIX standard, as not all Unix APIs
+> were standardized at the same time.  Thus:
+> 
+> 	V7, POSIX.1-1988.
+> 
+> Thanks!
 
-This patch implements the .fadvise interface for page cache share.
-Similar to overlayfs, it drops those clean, unused pages through
-vfs_fadvise().
+11/3/71							 SYS CLOSE (II)
+NAME		close -- close a file
+SYNOPSIS	(file descriptor in r0)
+		sys	close		/ close = 6.
+DESCRIPTION	Given a file descriptor such as returned from an open or
+		creat call, close closes the associated file. A close of
+		all files is automatic on exit, but since processes are
+		limited to 10 simultaneously open files, close is
+		necessary to programs which deal with many files.
+FILES
+SEE ALSO	creat, open
+DIAGNOSTICS	The error bit (c—bit) is set for an unknown file
+		descriptor.
+BUGS
+OWNER		ken, dmr
 
-Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
-Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
-Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
- fs/erofs/ishare.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/fs/erofs/ishare.c b/fs/erofs/ishare.c
-index ad53a57dbcbc..ce980320a8b9 100644
---- a/fs/erofs/ishare.c
-+++ b/fs/erofs/ishare.c
-@@ -151,6 +151,12 @@ static int erofs_ishare_mmap(struct file *file, struct vm_area_struct *vma)
- 	return generic_file_readonly_mmap(file, vma);
- }
- 
-+static int erofs_ishare_fadvise(struct file *file, loff_t offset,
-+				loff_t len, int advice)
-+{
-+	return vfs_fadvise(file->private_data, offset, len, advice);
-+}
-+
- const struct file_operations erofs_ishare_fops = {
- 	.open		= erofs_ishare_file_open,
- 	.llseek		= generic_file_llseek,
-@@ -159,6 +165,7 @@ const struct file_operations erofs_ishare_fops = {
- 	.release	= erofs_ishare_file_release,
- 	.get_unmapped_area = thp_get_unmapped_area,
- 	.splice_read	= filemap_splice_read,
-+	.fadvise	= erofs_ishare_fadvise,
- };
- 
- struct inode *erofs_real_inode(struct inode *inode, bool *need_iput)
--- 
-2.22.0
-
+That's V1 manual.  In V3 we already get EBADF on unopened descriptor;
+in _all_ cases there close(N) ends up with descriptor N not opened.
 
