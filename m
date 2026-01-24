@@ -1,286 +1,392 @@
-Return-Path: <linux-fsdevel+bounces-75348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75349-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YLxOF+KidGnz8AAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 11:45:54 +0100
+	id UC9eLAykdGkH8QAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75349-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 11:50:52 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE9757D476
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 11:45:53 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C4D7D505
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 11:50:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C3D0A300FEF3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 10:45:34 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 51E9E30097E1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 10:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DA82C11D5;
-	Sat, 24 Jan 2026 10:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11CDA28F935;
+	Sat, 24 Jan 2026 10:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nWrdm395"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n86VRnti"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBBF212FAD
-	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Jan 2026 10:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769251532; cv=pass; b=QSQoUzQB2wOJ5Ae31CY/MXpgKBddlp6VYxBWM7lvAZWdNsdV4qhyv0j69mOJCftWVIc3hwlOJ35kUak7LA1Loa+gRD0t1mJN0ZTPPMnza9QeMJQtNILcFvVFc2kCHQltND5p3xz3JVedIc4lw5SSHfM6kNnstbk1mWkqS26xpP0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769251532; c=relaxed/simple;
-	bh=OhfWhlQZiS1Yq37GsKg1ZRvFgI+/q0guhtaSDhFcjg0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VqwJXeAoBMiqPPHpTf3SX8P0R+LnaMhK/8ier+UehFAHCawiRcTvpoJKVaPGVu+CNz0kCP09oq8BYe/6bFSPz0qkNG3m8iQEauckslwUCeY0BxEWFDr5Ow2BVvbnAOJfRsIkU0TNLjQ3zKcNmEDj27zoq1NY9SBwnoZuHzvYtxQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nWrdm395; arc=pass smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b885e8c6700so283006466b.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Jan 2026 02:45:30 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769251529; cv=none;
-        d=google.com; s=arc-20240605;
-        b=RCpEihj3V87iC4XbV0CHxV2Lho5FCVnrXeT5TDdhI1wheD9168RFaHCnIblFrffAAM
-         HUI0zjR3Y3pAFpqz1i+aQj/H496aCei8tabH/V3w476RRq/0wYDqGA/E3lyQHmgBYFBq
-         jER49GbpXQ0RCGQTv2YNnFxcoW3RETHPmsDojgbNZLgRgdisGf91ip00mAg3x2HlFmo3
-         /pkPETvG+6Pag0718RiQp8JROFcXNbk64+ZkoBaNfDZZDvT++fEKAIeA6rZ9y2tdf1O4
-         nlUX1TOhVbEJGvsc0BxNSFcyObNICw5OOHBkk3coMqSSV9Ehqb1McLPkRN7KWSW9abNX
-         fd1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=eYTZThtnBEBRsjkEMZ8Jc1BneVEDWprUm5MZX/gFhJo=;
-        fh=Nrg1AGY3heYi4WRaIBd5KFTZ6mf5KrWseNseG9D5czQ=;
-        b=jioWJv6RH3dQ3MZojtHNzEZXTb8lVKyiulHdUJDXy4Mt2YS/9dHR1CuI2OjDna8EbZ
-         IKSWlAeyY+zQjCAWv5fOwcCpN5HySBkLYkI8I+bILR0IjTmk82tpYDYJkiYUNy3Sy7f6
-         uyKYM0ortvLFpBZ+qkZ2b9gz9U1bAXBVY+CKsv3MEP/PI8AS88Zv+KYatUZbhHxEHUh8
-         Bx7wXuTgvEHfCBzKmfAkYnezAfRmmdygmHiwuKyiJCajmBmJ9S7PWGfApVw+3xOHuQih
-         hfVUqOZUN6zeKE4ZcwsyTh0e55VJyJZq0m+YQfd4pM57cgDHx/iDkae+eD78wfuFIheR
-         YFvg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769251529; x=1769856329; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eYTZThtnBEBRsjkEMZ8Jc1BneVEDWprUm5MZX/gFhJo=;
-        b=nWrdm395wUmY0BCaISWaPOutLg163MXaaFaptr3TTl4rfWl7AxdcgS6OuDLbYYEpaz
-         wME6dE/pV4njENzX/dnctf1XEEQ37vKc7YP2fi/sWsKFP+qDie/YBSevOnzomRoJtiYo
-         KMqzTpsJ+MwgRfGOu231yJ8/8kW47AMeWL50DlUX42blTBQKPcLC4C0MmTkdbDquDbra
-         aGjiNQRHD9Am8aaaPhEa0sTUxxFWuByY0Y9yX5e9Avzpr8Y2dA3dbTopa12UxBbIXfwl
-         mnW4sFPT0BasxFjWJrHNA5XOdlSRWKTj9C+w4Ku3fYVpEGO2k7fWwPo1tQsGP0cKx0hy
-         T/vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769251529; x=1769856329;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=eYTZThtnBEBRsjkEMZ8Jc1BneVEDWprUm5MZX/gFhJo=;
-        b=mhTnTGi5Nvpj6D/Kkd0Xc4exA6/dtfjWs6iSZCwqnHrRsenCLr6PIhhrJFgWd7+aun
-         dPTd+eemaFQGIdg11dmVWoVaxvG2avA/sYnvZ/bk70lpONFNuWN+vVNwPRmZyt10GEKS
-         xlaC4pxijYXvPNeztKy98zZQm46gCPM/HlDLnvNSO1ATFdUeHa79KouB59uGpBeGaClR
-         85p0QHneN7krBAX+xpfX18JQMfvZ+IK2qLNN2Wi4DyUJ9fhd3I6pQC5/39gg2LEDSO2c
-         e6Hhs73efARU6r+DUXuQfzo8+h4STt8pjJtl5KCFdmTRPr8VD47K0KOWA33FRA4UtI5w
-         43Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNmaokz2qoZ92k7h0VsMuBSKoMVJgY54FRIXfIpsQjaWuHrGJ1jM426jQHjZSiBbX7l/RwAPf+QHN/NKpl@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFq+RrLbjkJtZq/t1lxZaeX6fS4ZQ14DTPJ+UtZPf4nwNbt/GU
-	SWGWJk3I5RISs0RvXimlDp/LXwjmansxZKV186xyaYdUqs+mNHhlpjK7ONmSsgCbR4pPdQGsBZw
-	UtdEXQ0KVTIhcc0k/j9/Zk6/2dAut2SNuw/308AQ=
-X-Gm-Gg: AZuq6aI07YBMO1WG3TqrQz2RNSQ0cCzzCF6fTNLX8pQ7CMVAzaqhOnVg4rDP0QfbwpN
-	tCX4Ril0nbo7507+sLp1nlgKW8PkcinNBeP+pKWBTyIcom9vkDyu91ZRg6mTu6iX5k0rqZhh0Mf
-	RbfOD55/Z3/EQ5gWSqL0XigxhbkG9zOuMZeNeRq+NwOOinbOz7cAm4jL+VtEi925981zw/3/Ecz
-	QjPPo8JWZFxN3VvN4xpuOB8YZda7oSG1NlZVfQothkpmzPxzosZHfx/cOK0aue2Eiu8x/gDpI8k
-	UCyI8lAmB+n+IgkkzDmUTXGne2QeneX622L/Mxc=
-X-Received: by 2002:a17:907:1c0a:b0:b87:173f:630 with SMTP id
- a640c23a62f3a-b885ae61dc2mr478554866b.40.1769251528580; Sat, 24 Jan 2026
- 02:45:28 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCCA3EBF3A;
+	Sat, 24 Jan 2026 10:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769251840; cv=none; b=kqfWQQkhwSBRV2FAerk3e/ViQ95N4rebPmp8DRQWQPseHXgpngx3JT9EBnX+CouTFSrQacEjIiqF0ZxlSwTOhx5YaSNWhwbYI0e6YDTdN5mu2GOB/pB3ccfVaotRHtuFLRADfDPYabYIl+KvU5dNhEP7Y6qLhf96ghrZq2zIjN8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769251840; c=relaxed/simple;
+	bh=WUdQx4R7xfasZRUncmPtemedq3qIyfgVAY0zIp5DdME=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UAEqOlqUIIUW7NYO50Wf6S5UKsG/1d9p0XHHiufikEvQrw6QXktnXwposfDh7TSyecWdujDhPvpdZzSl+ZI4SGna2Ydmc0uUm06Q+eH87bStw64qaobisHZZaHhZMUaGcNLYGQRga61XumJd0n68+UYEK/GnhXmN+8KmwLvAnLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n86VRnti; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24F23C116D0;
+	Sat, 24 Jan 2026 10:50:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769251840;
+	bh=WUdQx4R7xfasZRUncmPtemedq3qIyfgVAY0zIp5DdME=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=n86VRnti+9QeFDyW832tt3RBNHu23luygjLI+jE3Ife5LRDsaNW2xaYAcHTN0TVpU
+	 4SBPkCdF0dYgybTnpxFlatSWNChOB4IDQHUrgYeJVL+4fjgspyHmiHj24IrlJttdbQ
+	 9SyIfad26vNNWDzYQpPHf1hWjA+YoUPRt5Ohf+7pO2k+XGtIPUxQuFvMwRpP7HLcqQ
+	 MK1bKqayBRe2oBTtgguw/jdy+PXBQcBt12/AqrKrbe5A57SStnDrE7dgab5RPN5Rbo
+	 jcUgdGWgQa6pPJ6u/BOb/dhA2GxVWzLxpEUWSzVNdUCjRcVyLgDiXkAtbOmC+/MXa+
+	 Vq8b0z5X2yoiA==
+Message-ID: <8c17ec4e60f491a70f596142a9fa5540be12165e.camel@kernel.org>
+Subject: Re: [PATCH/RFC] nfsd: rate limit requests that result in -ESTALE
+ from the filesystem
+From: Jeff Layton <jlayton@kernel.org>
+To: NeilBrown <neil@brown.name>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Trond Myklebust
+ <trondmy@kernel.org>,  Anna Schumaker	 <anna@kernel.org>, Benjamin
+ Coddington <bcodding@hammerspace.com>, Eric Biggers	 <ebiggers@kernel.org>,
+ Rick Macklem <rick.macklem@gmail.com>, 	linux-nfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, 	linux-crypto@vger.kernel.org
+Date: Sat, 24 Jan 2026 05:50:37 -0500
+In-Reply-To: <176922024977.16766.3757451159050621194@noble.neil.brown.name>
+References: <176920977124.16766.1785815212991547773@noble.neil.brown.name>
+	, <d1e5a45b5c3d8ac2d92ac15c8ae7ff79dafdef92.camel@kernel.org>
+	 <176922024977.16766.3757451159050621194@noble.neil.brown.name>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.2 (3.58.2-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com>
- <20260114-tonyk-get_disk_uuid-v1-3-e6a319e25d57@igalia.com>
- <20260114062608.GB10805@lst.de> <5334ebc6-ceee-4262-b477-6b161c5ca704@igalia.com>
- <20260115062944.GA9590@lst.de> <633bb5f3-4582-416c-b8b9-fd1f3b3452ab@suse.com>
- <20260115072311.GA10352@lst.de> <22b16e24-d10e-43f6-bc2b-eeaa94310e3a@igalia.com>
- <CAOQ4uxhbz7=XT=C3R8XqL0K_o7KwLKsoNwgk=qJGuw2375MTJw@mail.gmail.com>
- <0241e2c4-bf11-4372-9eda-cccaba4a6d7d@igalia.com> <CAOQ4uxi988PutUi=Owm5zf6NaCm90PUCJLu7dw8firH8305w-A@mail.gmail.com>
- <33c1ccbd-abbe-4278-8ab1-d7d645c8b6e8@igalia.com> <CAOQ4uxgCM=q29Vs+35y-2K9k7GP2A2NfPkuqCrUiMUHW+KhbWw@mail.gmail.com>
- <75a9247a-12f4-4066-9712-c70ab41c274f@igalia.com> <CAOQ4uxig==FAd=2hO0B_CVBDSuBwdqL-zaXkpf-QXn5iEL364g@mail.gmail.com>
- <CAOQ4uxg6dKr4XB3yAkfGd_ehZkBMcoNHiF5CeB9=3aca44yHRg@mail.gmail.com>
- <ee38734b-c4c3-4b96-8ff2-b4ce5730b57c@igalia.com> <8ab387b1-c4aa-40a5-946f-f4510d8afd02@igalia.com>
-In-Reply-To: <8ab387b1-c4aa-40a5-946f-f4510d8afd02@igalia.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sat, 24 Jan 2026 11:45:17 +0100
-X-Gm-Features: AZwV_QilNv7skh3Dbv-Uyf4qbklEv15lpqvlCHXP7YddmY5hXQul6pw3DTKCtH8
-Message-ID: <CAOQ4uxiRpwuyfj_Wy3Zj+HAi+jgQOq8nPQK8wmn6Hgsz-9i1fw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] ovl: Use real disk UUID for origin file handles
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: Christoph Hellwig <hch@lst.de>, Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
-	NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
-	Tom Talpey <tom@talpey.com>, Carlos Maiolino <cem@kernel.org>, Chris Mason <clm@fb.com>, 
-	David Sterba <dsterba@suse.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	kernel-dev@igalia.com, vivek@collabora.com, 
-	Ludovico de Nittis <ludovico.denittis@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-75348-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	RCPT_COUNT_TWELVE(0.00)[25];
+	FREEMAIL_CC(0.00)[oracle.com,kernel.org,hammerspace.com,gmail.com,vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-75349-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	TO_DN_SOME(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[amir73il@gmail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[jlayton@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: BE9757D476
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 17C4D7D505
 X-Rspamd-Action: no action
 
-On Fri, Jan 23, 2026 at 9:08=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
-lia.com> wrote:
->
-> Em 23/01/2026 10:24, Andr=C3=A9 Almeida escreveu:
-> >
-> > Em 22/01/2026 17:07, Amir Goldstein escreveu:
-> >> On Tue, Jan 20, 2026 at 4:12=E2=80=AFPM Amir Goldstein <amir73il@gmail=
-.com>
-> >> wrote:
-> >>>
-> >>> On Mon, Jan 19, 2026 at 5:56=E2=80=AFPM Andr=C3=A9 Almeida
-> >>> <andrealmeid@igalia.com> wrote:
-> >>>>
-> >> ...
-> >>>> Actually they are not in the same fs, upper and lower are coming fro=
-m
-> >>>> different fs', so when trying to mount I get the fallback to
-> >>>> `uuid=3Dnull`. A quick hack circumventing this check makes the mount
-> >>>> work.
-> >>>>
-> >>>> If you think this is the best way to solve this issue (rather than
-> >>>> following the VFS helper path for instance),
-> >>>
-> >>> That's up to you if you want to solve the "all lower layers on same f=
-s"
-> >>> or want to also allow lower layers on different fs.
-> >>> The former could be solved by relaxing the ovl rules.
-> >>>
-> >>>> please let me know how can
-> >>>> I safely lift this restriction, like maybe adding a new flag for thi=
-s?
-> >>>
-> >>> I think the attached patch should work for you and should not
-> >>> break anything.
-> >>>
-> >>> It's only sanity tested and will need to write tests to verify it.
-> >>>
-> >>
-> >> Andre,
-> >>
-> >> I tested the patch and it looks good on my side.
-> >> If you want me to queue this patch for 7.0,
-> >> please let me know if it addresses your use case.
-> >>
-> >
-> > Hi Amir,
-> >
-> > I'm still testing it to make sure it works my case, I will return to yo=
-u
-> > ASAP. Thanks for the help!
-> >
->
-> So, your patch wasn't initially working in my setup here, and after some
-> debugging it turns out that on ovl_verify_fh() *fh would have a NULL
-> UUID, but *ofh would have a valid UUID, so the compare would then fail.
->
-> Adding this line at ovl_get_fh() fixed the issue for me and made the
-> patch work as I was expecting:
->
-> +       if (!ovl_origin_uuid(ofs))
-> +               fh->fb.uuid =3D uuid_null;
-> +
->          return fh;
->
-> Please let me know if that makes sense to you.
+On Sat, 2026-01-24 at 13:04 +1100, NeilBrown wrote:
+> On Sat, 24 Jan 2026, Jeff Layton wrote:
+> > On Sat, 2026-01-24 at 10:09 +1100, NeilBrown wrote:
+> > > This is an idea for an alternate approach to address the problem that
+> > > Ben is trying to address by signing file handles.
+> > >=20
+> > > The reasons I think an alternate is worth considering are:
+> > >=20
+> > >  - Ben's approach requires some configuration, though not much.
+> > >    This approach requires zero configuration which is always better.
+> > >=20
+> > >  - Ben's approach adds a siphash calculation or two to (almost) every
+> > >    NFS request.  This may not be a great cost but it is still some ti=
+me
+> > >    and some power.  Less is more.
+> > >=20
+> > > Filehandles already contain 32 bits of randomness.  Rather than addin=
+g
+> > > another 64 bits as Ben's patch does, this patch increase the time it
+> > > take to test all possible values for those 32 bits to make it an
+> > > impractical attack.
+> > >=20
+> > > Comments welcome.
+> > >=20
+> > > Thanks,
+> > > NeilBrown
+> > >=20
+> > >=20
+> > >=20
+> > > From: NeilBrown <neil@brown.name>
+> > > Subject: [PATCH] nfsd: rate limit requests that result in -ESTALE fro=
+m the
+> > >  filesystem
+> > >=20
+> > > NFS file handles typically contain a 32 bit generation number which i=
+s
+> > > randomly generated by the filesystem when the inode (or inode number)=
+ is
+> > > allocated.  This makes it hard to guess correct file handles.  Hard b=
+ut
+> > > not impossible on a low latency network with a high speed server.
+> > >=20
+> > > The NFS server will reject a request to access the file associated wi=
+th
+> > > a filehandle if the user credential given is now allowed the access t=
+he
+> > > file, but it is not able to check if the user (or client) should be
+> > > allowed to even know that filehandle.  This would require knowing all
+> > > the paths to a given file, all the credential that the client has acc=
+ess
+> > > to, when whether some combination of those credential can complete a
+> > > walk down any of the paths.
+> > >=20
+> > > So the NFS server currently depends on the client to "do the right
+> > > thing".
+> > >=20
+> > > In some circumstances the client may not be sufficiently trusted, and
+> > > path-based access controls may be an important part of the access
+> > > management strategy.  In these cases the protection provided by nfsd =
+may
+> > > not be sufficient.
+> > >=20
+> > > The only known attack methodology is to guess the inode number of a f=
+ile
+> > > of interest, then iterate over all possible generation numbers.  This
+> > > would be expected to achieve success (if the inode number is valid) i=
+n,
+> > > on average, 2^31 guesses.  At one per microsecond this is less than o=
+ne
+> > > hour.  At one per 10 microseconds this is less than one day.
+> > >=20
+> > > When presented with an incorrect guess the filesystem with report an
+> > > error to nfsd, either NULL or ERR_PTR(-ESTALE).  This patch causes nf=
+sd
+> > > to detect those errors and insert a 15ms delay.  It also take a lock =
+so
+> > > that all such delays are serialised.  This increases the expected tim=
+e
+> > > to success to 1 year.
+> > >=20
+> > > Normally NFSERR_STALE errors are rare and are no on a fast path.
+> > > Normal accesses which use a filehandle which has become stale will no=
+w
+> > > incur a 15msec does which is likely to be unnoticeable.  An attack wi=
+ll
+> > > notice an intolerable delay.
+> > >=20
+> > > Possible this code could detect if there are ever a large number of
+> > > requests over an extended time and then take more firm action.
+> > >=20
+> > > Signed-off-by: NeilBrown <neil@brown.name>
+> > > ---
+> > >  fs/nfsd/netns.h  |  2 ++
+> > >  fs/nfsd/nfsctl.c |  1 +
+> > >  fs/nfsd/nfsfh.c  | 15 +++++++++++++++
+> > >  3 files changed, 18 insertions(+)
+> > >=20
+> > > diff --git a/fs/nfsd/netns.h b/fs/nfsd/netns.h
+> > > index 9fa600602658..f7229d1f9d86 100644
+> > > --- a/fs/nfsd/netns.h
+> > > +++ b/fs/nfsd/netns.h
+> > > @@ -219,6 +219,8 @@ struct nfsd_net {
+> > >  	/* last time an admin-revoke happened for NFSv4.0 */
+> > >  	time64_t		nfs40_last_revoke;
+> > > =20
+> > > +	struct mutex		estale_rate_limit_mutex;
+> > > +
+> > >  #if IS_ENABLED(CONFIG_NFS_LOCALIO)
+> > >  	/* Local clients to be invalidated when net is shut down */
+> > >  	spinlock_t              local_clients_lock;
+> > > diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+> > > index 7587c64bf26d..55d25d9b414f 100644
+> > > --- a/fs/nfsd/nfsctl.c
+> > > +++ b/fs/nfsd/nfsctl.c
+> > > @@ -2198,6 +2198,7 @@ static __net_init int nfsd_net_init(struct net =
+*net)
+> > >  	nfsd4_init_leases_net(nn);
+> > >  	get_random_bytes(&nn->siphash_key, sizeof(nn->siphash_key));
+> > >  	seqlock_init(&nn->writeverf_lock);
+> > > +	mutex_init(&nn->estale_rate_limit_mutex);
+> > >  #if IS_ENABLED(CONFIG_NFS_LOCALIO)
+> > >  	spin_lock_init(&nn->local_clients_lock);
+> > >  	INIT_LIST_HEAD(&nn->local_clients);
+> > > diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
+> > > index ed85dd43da18..7032f65fe21a 100644
+> > > --- a/fs/nfsd/nfsfh.c
+> > > +++ b/fs/nfsd/nfsfh.c
+> > > @@ -244,6 +244,8 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst =
+*rqstp, struct net *net,
+> > >  						data_left, fileid_type, 0,
+> > >  						nfsd_acceptable, exp);
+> > >  		if (IS_ERR_OR_NULL(dentry)) {
+> > > +			struct nfsd_net *nn =3D net_generic(net, nfsd_net_id);
+> > > +
+> > >  			trace_nfsd_set_fh_dentry_badhandle(rqstp, fhp,
+> > >  					dentry ?  PTR_ERR(dentry) : -ESTALE);
+> > >  			switch (PTR_ERR(dentry)) {
+> > > @@ -252,6 +254,19 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst=
+ *rqstp, struct net *net,
+> > >  				break;
+> > >  			default:
+> > >  				dentry =3D ERR_PTR(-ESTALE);
+> > > +				/* We limit ESTALE returns to 1 every
+> > > +				 * 15 milliseconds (across all threads) to
+> > > +				 * prevent a client from guessing the
+> > > +				 * correct (32 bit) generation number
+> > > +				 * for an given inode in significantly
+> > > +				 * less than 1 year.  This ensures clients
+> > > +				 * can only access files for which they
+> > > +				 * are allowed to access a path from the
+> > > +				 * exported root.
+> > > +				 */
+> > > +				mutex_lock(&nn->estale_rate_limit_mutex);
+> > > +				msleep(15);
+> > > +				mutex_unlock(&nn->estale_rate_limit_mutex);
+> >=20
+> > Hmm...maybe a mutex_trylock and if it fails do an immediate -EAGAIN
+> > return (which hopefully becomes NFSERR3_JUKEBOX or NFS4ERR_DELAY)? This
+> > could be a way to DoS the server, otherwise.
+>=20
+> Returning NFS4ERR_DELAY immediately instead of NFS4ERR_STALE gives
+> the attacking client nearly identical information.  It would not resend
+> the request that reported NFS4ERR_DELAY.
+>=20
 
-It does not make sense to me.
-I think you may be using the uuid=3Doff feature in the wrong way.
-What you did was to change the stored UUID, but this NOT the
-purpose of uuid=3Doff.
+Ok, good point.
 
-The purpose of uuid=3Doff is NOT to allow mounting an overlayfs
-that was previously using a different lower UUID.
-The purpose is to mount overlayfs the from the FIRST time with
-uuid=3Doff so that ovl_verify_origin_fh() gets null uuid from the
-first call that sets the ORIGIN xattr.
+It does occur to me that we're not concerned so much with ESTALE errors
+globally, as seeing a lot of them that refer to the same inode. It
+would be nice if we could track this on a per-inode basis, and only
+serialize and delay ESTALE errors for the same inode.
 
-IOW, if user want to be able to change underlying later UUID
-user needs to declare from the first overlayfs mount that this
-is expected to happen, otherwise, overlayfs will assume that
-an unintentional wrong configuration was used.
+> Triggering a DoS is part of the point - it both defeats the attack and
+> makes the attack obvious.  If an attack is going to be obvious it will
+> likely be caught so the potential attacker is unlikely to try.
+>=20
+> A client with authority to make requests can already generate a high
+> rate of high cost request without waiting for replies and so potentially
+> DoS the server.  Remember that we aren't aiming to protect against
+> completely unauthorised client, but only clients which do have some
+> authority.
+>=20
 
-I updated the documentation to try to explain this better:
-
-Is my understanding of the problems you had correct?
-Is my solution understood and applicable to your use case?
-
-Thanks,
-Amir.
-
-diff --git a/Documentation/filesystems/overlayfs.rst
-b/Documentation/filesystems/overlayfs.rst
-index ab989807a2cb6..af5a69f87da42 100644
---- a/Documentation/filesystems/overlayfs.rst
-+++ b/Documentation/filesystems/overlayfs.rst
-@@ -753,9 +753,9 @@ Note: the mount options index=3Doff,nfs_export=3Don
-are conflicting for a
- read-write mount and will result in an error.
-
- Note: the mount option uuid=3Doff can be used to replace UUID of the under=
-lying
--filesystem in file handles with null, and effectively disable UUID checks.=
- This
-+filesystem in file handles with null, in order to relax the UUID checks. T=
-his
- can be useful in case the underlying disk is copied and the UUID of this c=
-opy
--is changed. This is only applicable if all lower/upper/work directories ar=
-e on
-+is changed. This is only applicable if all lower directories are on
- the same filesystem, otherwise it will fallback to normal behaviour.
+It sounds like we need to accompany this with a warning or something to
+alert that an authorized client is triggering a lot of ESTALE errors.
 
 
-@@ -769,7 +769,7 @@ controlled by the "uuid" mount option, which
-supports these values:
-     UUID of overlayfs is null. fsid is taken from upper most filesystem.
- - "off":
-     UUID of overlayfs is null. fsid is taken from upper most filesystem.
--    UUID of underlying layers is ignored.
-+    UUID of underlying layers is ignored and null used instead.
- - "on":
-     UUID of overlayfs is generated and used to report a unique fsid.
-     UUID is stored in xattr "trusted.overlay.uuid", making overlayfs fsid
+> >=20
+> > >  			}
+> > >  		}
+> > >  	}
+> >=20
+> >=20
+> > FWIW, I don't necessarily see this as a replacement for Ben's work, but
+> > it might be a nice complement.
+>=20
+> If you knew that an attack couldn't succeed, why would you bother
+> setting sign_fh ?
+>=20
+
+I think this may potentially give us a way to assign different
+filehandles to different clients.
+
+Once we tack on the signature, there is (seemingly) no reason that
+every client must get the same filehandle. If we were to factor in
+(e.g.) the long-form clientid when generating the hash, then we'd have
+a v4 fh that could only be used by a single client.
+
+Then, even if you were to guess a filehandle (or gain it via other
+means) it still wouldn't do you a lot of good without being able to
+spoof the connection from the client too.
+
+I'm not sure what we'd factor in for v3 though.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
