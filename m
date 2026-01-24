@@ -1,192 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-75353-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75354-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YPs1D135dGmO/gAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75353-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 17:54:53 +0100
+	id iC55NPP9dGk7/wAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75354-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 18:14:27 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D733A7E309
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 17:54:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3191B7E41E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 18:14:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 6E733300D15D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 16:54:33 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9623D3011846
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 17:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B740626CE2C;
-	Sat, 24 Jan 2026 16:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5BE238C15;
+	Sat, 24 Jan 2026 17:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FfwvaTsZ"
+	dkim=pass (2048-bit key) header.d=multikernel-io.20230601.gappssmtp.com header.i=@multikernel-io.20230601.gappssmtp.com header.b="g146gg8K"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4581A24677F;
-	Sat, 24 Jan 2026 16:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769273671; cv=none; b=SGwWeZWa3+Fa21Lbjz9BTDHMPq+qFeMGcD+WaYlCImoRefgLSgKNPghzRUCO+YUVknYvfIc82ECJGs5wcDoB+2e5ErR0jS7qU4h3KJcl0va8rdBsv5Zo0V6n2qiHN65l/j1LWOiHlPfbMatz7XNzHo+nBo3EKHvQYNzx8B/5BbA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769273671; c=relaxed/simple;
-	bh=73Hqh12kK68g6ILOa04pwssPqLmn170Un7G0Rk25elo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pIZz2oa4JuHrAAT3XNd//U3+9weB+4ppWAelbxhPxM7mdTCRJetRrcsq1AJn+tzJn0A/o9D5VktYIRKlt5gsWhFuGq7kh0+UEU9Zae1PHmjp7GfHPKMG6NC+bxT4PZ139uQhUZ02wz2YZXWPoDLdpBWTQHaeTYhA2JuwxVEwZiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FfwvaTsZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC262C116D0;
-	Sat, 24 Jan 2026 16:54:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769273670;
-	bh=73Hqh12kK68g6ILOa04pwssPqLmn170Un7G0Rk25elo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FfwvaTsZUkUFhdLfNWMPF6dIcza9h6DlSnXL4/7TvBnwk6a1iBNyJUJHKhkiOUd8T
-	 pCGieIXfDVmL4LqRW+GlmtQ+bCJpDB5TwlzumpBxDnDsR5uUSt7/CFmwJGhGUScDef
-	 Z2Eueh8uz5KTV40s962/AJauCHw8jpcLcvbHA3QbzjyLM0BfravdeiGe5F1CLO3PBG
-	 7C6/hEeFCrZXpAYh+CMJxEvIS39Vj0wUHB8dGLt9Lg0Cru7i8lwY14J0mf3OtM2waE
-	 wnm9hRy7jhJzKMKr+YjrJMmOZRxPIw9Tdjf1c245q4QE9UV45/mwux+UzH45CvmpHe
-	 XHQDEVgh12Yng==
-Date: Sat, 24 Jan 2026 08:54:30 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, bernd@bsbernd.com, neal@gompa.dev,
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 07/31] fuse: create a per-inode flag for toggling iomap
-Message-ID: <20260124165430.GT5966@frogsfrogsfrogs>
-References: <176169810144.1424854.11439355400009006946.stgit@frogsfrogsfrogs>
- <176169810502.1424854.13869957103489591272.stgit@frogsfrogsfrogs>
- <CAJnrk1ZDeYytdjuCdg6-O-PGjcmwS33LOnfFT_YY9SPE=x=Qxw@mail.gmail.com>
- <20260122222233.GA5900@frogsfrogsfrogs>
- <CAJnrk1ZYp=+ho02gMAPGLsGBo3a84ScuE92xP68=1SR-ixAs+g@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4CB21D3D6
+	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Jan 2026 17:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769274669; cv=pass; b=jNpgNc4noScEAQoL/FPj//N+i0ABTnBf2Jy/D7LOET7qcYVOyHHMSXXaQfr0OMfWmYmzloX+mFiywsK/qAISA/aC+xcPOqwVMK922Mfv6johgiODrzSxpulZZ37V6db1OahxlIl+WmvQejXI02hMfgT6kAZTdOQf3h2zfQg2vCY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769274669; c=relaxed/simple;
+	bh=0guLFI3yNYL4nKgjJyirG/A5FgTwEs1RA0pP7qKHPeA=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=F4HyCWgBCuQSDoJPvOab1AHXijtEO9Zvi+mEP1Sut9guBUymt3fgN+CRPhoX6NRnyGa72Y/Uc6cQs/dzADCCImAl5e+xAzcB0Uxf//waoqDTia0QI9MBnLsYHM8awU0WfogQv+zi50NvV2YXSMMYiX3oDgerK8b42hbZrIE79CI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=multikernel.io; spf=pass smtp.mailfrom=multikernel.io; dkim=pass (2048-bit key) header.d=multikernel-io.20230601.gappssmtp.com header.i=@multikernel-io.20230601.gappssmtp.com header.b=g146gg8K; arc=pass smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=multikernel.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=multikernel.io
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6505cac9879so4934444a12.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Jan 2026 09:11:07 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769274666; cv=none;
+        d=google.com; s=arc-20240605;
+        b=J4Na5oLl1mX04KnMaqJ7T8ep6ytWzODwABEEkjLB6rST/bgfJeCrxhuf8Uw7ZehbYU
+         ZuyhQGk2Lof1ELVqORCwMoUOZtop1bvt2hUXrIUZcNX7roya1DOOCmRBAVjupblTSE9W
+         zpeyeO/de+exHfAsNjyTYH3HnkXV/5ZltTiUP9uG/xo5PcIC01Aj11sayh28XgjGlUh9
+         jruAH3ZtZ0I49hhhWrgZ9v9PYADCAmS6fPA0PJNAdKZp+6YO4quGDSySPY9tinWjFcVK
+         41DPKqKVMZWlc8HVS1JixZ5jJruLyKWG21pRBjrZwt5YWRLU2Y6koJP9usQVKl8Kej0y
+         5cNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:dkim-signature;
+        bh=0guLFI3yNYL4nKgjJyirG/A5FgTwEs1RA0pP7qKHPeA=;
+        fh=MLId9pOXgLsGejWIe5OSUP3up7R+QF02o5p2FupE2+g=;
+        b=SL20ZyqWkYBF8IsKvQF7Ig/lFZ080JVHi2ASwv7H54TUBU6f2QQgnJYIovF/pTdH/M
+         EaOKosV6RdjR8fM7S1aqQZsl4euVOBrjVH2sXFTfX2lg6DT4KeJ/lj7gA62SKP1BPdBh
+         ad97PzHmyCa3DzFZ24ergThOkHtagqBW+mcXKCSzIqeDhnOMBiXoxAlrppzNTwBvbmMH
+         1RKubnK2IiCHnQ/JbQfZmOXsLyEiKy9gMNlaOdDoIqPBEc+MKHbXmrMeb5WQeSDs3v53
+         fM3aJ5lyd51kEKAkNZEx5IqmlXcwosrLbWYRUyNXEVjl7caZlCSD4ELMzq5iU0BgZwXN
+         WXdA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=multikernel-io.20230601.gappssmtp.com; s=20230601; t=1769274666; x=1769879466; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0guLFI3yNYL4nKgjJyirG/A5FgTwEs1RA0pP7qKHPeA=;
+        b=g146gg8KabMhMk9E9spY/dHYwQKhytYZXa0SWrkpsLI8O4NnubAgV8UsNOmpCwTZD/
+         c/Dzg2Ri7zzy8BTdTGQU0Yb4ROzhY+sTLrkvG2Yu1/UtzC8CatsuqjhA2uEhpszsN05U
+         ViZ9/KqszjAYCYBuYJFHYQb5DvZZr2oao4oZlTXlYiaJf35fcvvphFmOyO8NUPh/DzFZ
+         e2K7sOGU6qa2AXEeC3J/wCA/8ypag1ioxUU3Z1HhfEqb3g081/uYLcQPUIU9m5aO3QjF
+         Th5tkI52ZSkG3ruGJA/XEC+xJIk9tz1vaIRnbsoEJa7On5+rLywtwAbI8CHybIrRXJJT
+         hl6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769274666; x=1769879466;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0guLFI3yNYL4nKgjJyirG/A5FgTwEs1RA0pP7qKHPeA=;
+        b=lQNTXzHmzbOh9qVwhFLBPxGd7v4psJiB3xtV9Kh3WDfjc/+g6BH3QsGYIq2Hr8x4uh
+         +mpsIamHgGNrsDiqTKuKnx2GS8Rz34n/HY0HsjBgd4k/1Yp9VhZcCjiHW/O9peqF4XPM
+         bwc6tkKQG0w+dDRyP/+PiOWGqOpk3eTcAamtVnO2xMpIaxulzu7QjS9PJtB+qez6gmbu
+         9GIcxYPBC3XvZaAzSH66AuxAbCQgpFxI8q/LPIvFNGht5+UDQMShoMrZ3Aa8I0PpUElk
+         7KMUDxbtn4s3ANnomwQH9T+zcbuevPvhDo1uWXzLSyyEXBZYS2vbBqyP0j4/a+gjnUkP
+         jLLg==
+X-Gm-Message-State: AOJu0YzI2FckbvVM4cuTe3mcnIPgJK6/CEr6mxtZHCYjnK+vl7yXSlld
+	C+VjyNcbGxX2J3WXojyi7AV9iWb5yC3No2K8WFisMOlCcEI0ghPGRrajmochr/FdvVXoqzbqRwV
+	k9h/6ElY25qQXwhvkmwMotX2HHAZt5Opg6yKtlODeH+rZ1zcSxmF93MIySA==
+X-Gm-Gg: AZuq6aJrkj6U2X21api1qASlPd0AY7VeMyw1+Sf0pB5fj15hxNw6ecyKw1MaTdNe9iG
+	l5pEbtM1FqkoI0J1gYljLLn9/3d6o96EvTIE3L8GG2+Ni+pT3USqq5wBTqsD915/ZyPnJ1AFhy0
+	gk9s0e3NZ8TcxyC86yRYsMiIHuFtVaFhHdCTuqPFNdF0XxcpqlHh+I0ceML1wjrsAj4IzIMgSFT
+	ifxwBJIC12z1ed86/7W7o3J7Ke08fthMoFq1bPCV+CmG4zlClmich55IdS/X/06hD9TFLEixQQq
+	KLYc7VN/GdYIHN+0NlI/zCV9at3B6j0zex5yAEV9+Rqj1pEP2K64kl/wSmbu
+X-Received: by 2002:a05:6402:398a:b0:64b:7ab2:9f83 with SMTP id
+ 4fb4d7f45d1cf-658487ca05dmr3259820a12.31.1769274665372; Sat, 24 Jan 2026
+ 09:11:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1ZYp=+ho02gMAPGLsGBo3a84ScuE92xP68=1SR-ixAs+g@mail.gmail.com>
+From: Cong Wang <cwang@multikernel.io>
+Date: Sat, 24 Jan 2026 09:10:54 -0800
+X-Gm-Features: AZwV_Qhxdx5zMF1zGxFZZ1OazCcKy7yeZniyqbTBOvVt-ZdammtaNoM6DOBMeLM
+Message-ID: <CAGHCLaREA4xzP7CkJrpqu4C=PKw_3GppOUPWZKn0Fxom_3Z9Qw@mail.gmail.com>
+Subject: [ANNOUNCE] DAXFS: A zero-copy, dmabuf-friendly filesystem for shared memory
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	R_DKIM_ALLOW(-0.20)[multikernel-io.20230601.gappssmtp.com:s=20230601];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75353-lists,linux-fsdevel=lfdr.de];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-75354-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	DMARC_NA(0.00)[multikernel.io];
+	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[multikernel-io.20230601.gappssmtp.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	NEURAL_HAM(-0.00)[-1.000];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FROM_NEQ_ENVFROM(0.00)[cwang@multikernel.io,linux-fsdevel@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[3];
+	NEURAL_HAM(-0.00)[-1.000];
 	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: D733A7E309
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,multikernel-io.20230601.gappssmtp.com:dkim,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: 3191B7E41E
 X-Rspamd-Action: no action
 
-On Fri, Jan 23, 2026 at 10:05:32AM -0800, Joanne Koong wrote:
-> On Thu, Jan 22, 2026 at 2:22 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> >
-> > On Wed, Jan 21, 2026 at 05:13:39PM -0800, Joanne Koong wrote:
-> > > On Tue, Oct 28, 2025 at 5:46 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> > > >
-> > > > From: Darrick J. Wong <djwong@kernel.org>
-> > > >
-> > > > Create a per-inode flag to control whether or not this inode actually
-> > > > uses iomap.  This is required for non-regular files because iomap
-> > > > doesn't apply there; and enables fuse filesystems to provide some
-> > > > non-iomap files if desired.
-> > > >
-> > > > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> > >
-> > > The logic in this makes sense to me, left just a few comments below.
-> > >
-> > > Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
-> >
-> > Thanks!
-> >
-> > > > ---
-> > > >  fs/fuse/fuse_i.h          |   17 ++++++++++++++++
-> > > >  include/uapi/linux/fuse.h |    3 +++
-> > > >  fs/fuse/file.c            |    1 +
-> > > >  fs/fuse/file_iomap.c      |   49 +++++++++++++++++++++++++++++++++++++++++++++
-> > > >  fs/fuse/inode.c           |   26 ++++++++++++++++++------
-> > > >  5 files changed, 90 insertions(+), 6 deletions(-)
-> > > >
-> > > > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> > > > index f1ef77a0be05bb..42c85c19f3b13b 100644
-> > > > --- a/fs/fuse/file.c
-> > > > +++ b/fs/fuse/file.c
-> > > > +void fuse_iomap_init_reg_inode(struct inode *inode, unsigned attr_flags)
-> > > > +{
-> > > > +       struct fuse_conn *conn = get_fuse_conn(inode);
-> > > > +       struct fuse_inode *fi = get_fuse_inode(inode);
-> > > > +
-> > > > +       ASSERT(S_ISREG(inode->i_mode));
-> > > > +
-> > > > +       if (conn->iomap && (attr_flags & FUSE_ATTR_IOMAP)) {
-> > > > +               set_bit(FUSE_I_EXCLUSIVE, &fi->state);
-> > > > +               fuse_inode_set_iomap(inode);
-> > > > +       }
-> > > > +}
-> > > > +
-> > > > +void fuse_iomap_evict_inode(struct inode *inode)
-> > > > +{
-> > > > +       struct fuse_conn *conn = get_fuse_conn(inode);
-> > > > +       struct fuse_inode *fi = get_fuse_inode(inode);
-> > > > +
-> > > > +       if (fuse_inode_has_iomap(inode))
-> > >
-> > > If I'm understanding this correctly, a fuse inode can't have
-> > > FUSE_I_IOMAP set on it if conn>iomap is not enabled, correct?
-> >
-> > Correct.
-> >
-> > > Maybe it makes sense to just return if (!conn->iomap) at the very
-> > > beginning, to make that more clear?
-> >
-> > <shrug> fuse_inode_has_iomap only checks FUSE_I_IOMAP...
-> >
-> > > > +               fuse_inode_clear_iomap(inode);
-> > > > +       if (conn->iomap && fuse_inode_is_exclusive(inode))
-> > > > +               clear_bit(FUSE_I_EXCLUSIVE, &fi->state);
-> >
-> > ...but I wasn't going to assume that iomap is the only way that
-> > FUSE_I_EXCLUSIVE could get set.
-> >
-> > On the other hand, for non-regular files we set FUSE_I_EXCLUSIVE only if
-> > conn->iomap is nonzero *and* attr->flags contains FUSE_ATTR_IOMAP.  So
-> > this clearing code isn't quite the same as the setting code.
-> >
-> > I wonder if that means we should set FUSE_I_IOMAP for non-regular files?
-> > They don't use iomap itself, but I suppose it would be neat if "iomap
-> > directories" also meant that timestamps and whatnot worked in the same
-> > as they do for regular files.
-> >
-> 
-> That seems like a good idea to me. I think that also makes the mental
-> model (at least for me) simpler.
+Hello,
 
-I tried that, and generic/476 immediately broke.  I'll get back to that
-next week, but turning it on unconditionally is not trivial
-unfortunately. :/
+I would like to introduce DAXFS, a simple read-only filesystem
+designed to operate directly on shared physical memory via the DAX
+(Direct Access).
 
---D
+Unlike ramfs or tmpfs, which operate within the kernel=E2=80=99s page cache
+and result in fragmented, per-instance memory allocation, DAXFS
+provides a mechanism for zero-copy reads from contiguous memory
+regions. It bypasses the traditional block I/O stack, buffer heads,
+and page cache entirely.
 
-> Thanks,
-> Joanne
+Key Features
+- Zero-Copy Efficiency: File reads resolve to direct memory loads,
+eliminating page cache duplication and CPU-driven copies.
+- True Physical Sharing: By mapping a contiguous physical address or a
+dma-buf, multiple kernel instances or containers can share the same
+physical pages.
+- Hardware Integration: Supports mounting memory exported by GPUs,
+FPGAs, or CXL devices via the dma-buf API.
+- Simplicity: Uses a self-contained, read-only image format with no
+runtime allocation or complex device management.
+
+Primary Use Cases
+- Multikernel Environments: Sharing a common Docker image across
+independent kernel instances via shared memory.
+- CXL Memory Pooling: Accessing read-only data across multiple hosts
+without network I/O.
+- Container Rootfs Sharing: Using a single DAXFS base image for
+multiple containers (via OverlayFS) to save physical RAM.
+- Accelerator Data: Zero-copy access to model weights or lookup tables
+stored in device memory.
+
+The source includes a kernel module and a mkdaxfs user-space tool for
+image creation, it is available here:
+https://github.com/multikernel/daxfs
+
+I am looking forward to your feedback on the architecture and its
+potential integration to the upstream Linux kernel.
+
+Best regards,
+Cong Wang
 
