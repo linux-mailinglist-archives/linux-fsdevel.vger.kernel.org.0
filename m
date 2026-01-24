@@ -1,324 +1,215 @@
-Return-Path: <linux-fsdevel+bounces-75340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75341-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QNSLCq8odGmX2gAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 03:04:31 +0100
+	id wEG8Ga4ydGmm3AAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75341-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 03:47:10 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id D36FC7C2C4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 03:04:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D729B7C404
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 03:47:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 75F5230146A4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 02:04:22 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 9D4AF3013006
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 02:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB36212564;
-	Sat, 24 Jan 2026 02:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F2020DD48;
+	Sat, 24 Jan 2026 02:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="vxou7VK4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="C13fVbRT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OUs9CDDJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78393EBF09;
-	Sat, 24 Jan 2026 02:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769220257; cv=none; b=p5c9UwwRLY5HNQK2yjd+I1Z7ZYJb0SbHthMHsBHVTliBs6BmXgRuZ88TUUrEzeeZTrt7fp4FiZOtv5nTk7XY3AbloEslgS93DrTf3DxWiYDUYKjeiv5c/ROYcguRNiRkPG15ITUB+9sT7/9w1dRLwezXX22bsjnC0RdKIBxSY0I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769220257; c=relaxed/simple;
-	bh=EeKnc/5YoCEu6smEqT6pXz/HyqqmaoQc18xnh+4s8Fw=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=HDvEk4M9ASiNQPe2C4/nlGQ1SSOaBl/DTRyNCti6L/4SwCMxo0oujCup0tPDyxktgiZLWglIEWRIohxuFscmdfk9dxWzfDHb8YMn7mWzP12RjNfkHwuf257Umrp10qGjw+fsigZVZ2If/JpeaUp/TMmtMtTjSdwOnXiSty2cB7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=vxou7VK4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=C13fVbRT; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfout.phl.internal (Postfix) with ESMTP id BF7F7EC017B;
-	Fri, 23 Jan 2026 21:04:14 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Fri, 23 Jan 2026 21:04:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
-	1769220254; x=1769306654; bh=P+5M6oEbQqEcmFz9eJ5wAxCG+JfxnZsGnWd
-	Wi9pUZI0=; b=vxou7VK4iK9Fxw/GfLEcvYGX4Un8YRH+CYTmvTAMqNQPbcbObGC
-	IIflcost5JBR67hapxCYsu7NboayTOYuCABSCw2HvSya4vjnTZEJjMhlhxOoWY9S
-	N/HCFgGlABzPV6Vkrg3Ulk0yatPLHbRqquAOKFLabS7/RRZYWKORWmC0hPyKgA0F
-	5cq4pI3klOo8gk8JRZqYslXIXf7WjyAualccxNP13hlPI1lUSc8XwA6IVGqRwiZk
-	GIWTQARWASeXlBCSrfG63keNGfkElpkb5DeTpTTKJeDsZW4Gr26jVKVbFjvRPt4H
-	k3zjM5YeOsvztYad/N8u9VND/Ro9iWaVoZw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1769220254; x=
-	1769306654; bh=P+5M6oEbQqEcmFz9eJ5wAxCG+JfxnZsGnWdWi9pUZI0=; b=C
-	13fVbRTMwT+2hhFdRSncUrd5XSXGn+hjAixL89jLFufl+c2bZBrnPLHFGldu8Vr/
-	ywHk8/1dJ9lt+PehC/fNGZYgGI5EA6Wzsjd1yJKeeK+4M6qTJ0eMEgTJ0ek2WU9O
-	ElNJ4d5rC12lY7XOSt8Pz7momyG1eVzmkBW6LcM+PEfW81PnMTzsfcrcgIvX7Tg3
-	Nci849q/60UQCLF6stblPCkA7elnukWiF5k40a+XUxr9C9+tHCs0gavPKo4cGS03
-	5KSprlAZ7CLXdgXtyDqhH9vfvnYHBnABqOtCwltCgIOb9zu8mHVdh6Y7iY3ADyFA
-	Qo711shabyVu+TXY8fe5w==
-X-ME-Sender: <xms:nih0aQh31ma3rkOeA1l9mSMuIrIFjY1PI2L3akpPidtfovTrhfkVGw>
-    <xme:nih0afBVpPxmbMd4VqDITzIB5bIyom5boAlwr44ikVApHuck51vlD_j0V52aaNFwO
-    Iw3mmv5SMlKFQoTXUYMf2rNIDvwXXWvy-oQouSy338_gp0CNQ>
-X-ME-Received: <xmr:nih0aS6gLiQq0dVfueh8KUV-t0PWSO-AkRotADcSj9VNq0O0XlfxFGdzrAbuIYYiq0HHbaZ0QpbFvpUTbvwzK0HDAfAHxuG1KOg_F9RzJ91K>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduhedtieejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehlihhnuhigqdgtrhihphhtohesvhhgvghrrdhkvghrnhgvlh
-    drohhrghdprhgtphhtthhopegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdp
-    rhgtphhtthhopehtrhhonhgumhihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjlh
-    grhihtohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvsghighhgvghrsheskhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtoheprghnnhgrsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopegstghougguihhngheshhgrmhhmvghrshhprggtvgdrtghomh
-X-ME-Proxy: <xmx:nih0aUGYnZy9K1ZcJuyNNE65YtI9KPytKwHdr2VIfSASRrF_FzxiIw>
-    <xmx:nih0adD7SokQ-5UvRN5O7QQ9VBt_WqHoy5oldpqKibC0Uufe8fi5YQ>
-    <xmx:nih0aZydYrnVcpRqW7GXsfS5k4rXG6pCK0apYYjNDcebnRA1szgkaw>
-    <xmx:nih0aR6HtRMwYSWnN5pM3mdbUUlN0JJgN6eMdVE4lvWmfrughodbaw>
-    <xmx:nih0aR3VrA2xGmbUVy097aDgjvKL7-mwBp2sPkmfZamzc6s1FGLjjhcC>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 23 Jan 2026 21:04:11 -0500 (EST)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E89286352
+	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Jan 2026 02:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.182
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769222799; cv=pass; b=B/WtpoXuVBENaLHvhhr+yB7+LwhirtqFTEFStm1QlGGZbLUN/ZSokNNZUrhE1dUOXUHa8P3QgqjruRrV3TbiW6Y9VHWyH6GITPeMdDNYggBur9PcDnyX58XTTlrOBhpZPdHal6kqPqXBWKNnIFq8WkTzhYp4LZ4yABIGtg4Digc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769222799; c=relaxed/simple;
+	bh=EipzswoJqGpCk/EjSge/EWU+SsEFjc4Js/gT9tBlFzI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hjj5oqnQIyKpaTBJ2Pj+kVh8lgskhkNOIfQRXTRxCW+9ikG/6d0Lt+dz9gHaNvpiqW/g1CDlTzO1cFjeorD4LUhQD79wZtC0kEnkWWJDq537svvWohvK733D5QTZGXh/nX19PrGaySRUzYkcIza2b2R+BYSmzFi/bDlWggrjdzc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OUs9CDDJ; arc=pass smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-79430ef54c3so25183847b3.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jan 2026 18:46:38 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769222797; cv=none;
+        d=google.com; s=arc-20240605;
+        b=elp2XQuII1M9GD6lBgct/bCHqJJHq+grhbphYxb3PALQjv8jvptCjvQfZDUecxg95J
+         5ZkSFyZv4a8It2zU1f6OYka9rIQ3AAD6xrR31zaOy4w6G4Tqnj4RDKp6w/esbXaWB++O
+         6LYu6d2Su+1dkNfiYK6EFKycE8/0mDQVOwOUX+OhwC3rUB6fq/0o+xNV9ZT+/EnDg0gI
+         0AWcdNj8YX9dy5XFHNO15SxKx+mQJOpQSNWNdw6Wl0+AWrJ/Qyu1wvswNwWSGNpt1Aa0
+         Ast4z1CXtZ4EXLgHOW9T8+fBhNU8MXI1GPA4ldO40VHJnkzFtOGH9JYgpV2grc2KCJ1F
+         3LUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=hVBIyYSLwYri5Rm5aIFaBdXSWGbMyG2/W55rodswgt8=;
+        fh=wALrIgMugMWp4qPZ6/zOTGsn8kI9qoxxAzRKAtf4eFk=;
+        b=KDFzi7NAfLJjJx1DTb7xKJ7XnAesMMYsAAftZKiRQ2ErvH4r64kdeDGnvrJ6KdjuIL
+         9bP46+HjZ8UpUIA4DbPO6Q+BNp/NfLeUvRBrAL5/oM3CeXUVTBXH4AzxMvP2AFrxYHgn
+         3ilx5GkEhjMssZ6l4afKsjunvFgc6bATPgzHnD/qE1KodRBVCYfWjzvrxNFQDC/0aX3i
+         nDI655hhTr8KFIzYnqYCpNgxomDvwcI90DaO++O5IAVUhPF5HSgF6KMHmIcACEpZVtAA
+         X0Nm8Sp1AgFtO+b9eKCdxtc0rkbktqXTdFCXQZLwxILqZ8rQi48Hn2pL5fzEyteTtcgX
+         pLJQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769222797; x=1769827597; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hVBIyYSLwYri5Rm5aIFaBdXSWGbMyG2/W55rodswgt8=;
+        b=OUs9CDDJit536hH8CPCzZPzvCdl1byLTIG25xBbh/AyFRWdb/pG3gY7ARJRDeUjI4B
+         9uT+knCBRK1E4R1qgnERtT4eGD8FMwpxkbhmes9rwD4rd0DQgu+yORViaJpK2Qqa5gz6
+         rF3FDEhEObvEYidrnPdukokSo/cePKUg6onv+MaZsLn9Yd5bW/AVb7/svYoS5PkYL7JX
+         wluV88Ckb3tbgtl6Tri8wefFOxzTbVo/4pceFMoQtbmPgozBrrZHlKPPWN+QGLxvfmLY
+         yL0Bo7gmCn4m05XSeQ8+3UUJSyNiBCdRvziYmv+DWfTnLEUlcIfQy+o+kvums7lB9WC0
+         g1zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769222797; x=1769827597;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=hVBIyYSLwYri5Rm5aIFaBdXSWGbMyG2/W55rodswgt8=;
+        b=g9xs2SOS16ntD7zJYPeEWDVXNSj1Hva0sgzZe5DKQ5jZrRrSkuw3+iyReoObQkIpe4
+         V+ixv8hyxutrJIsL4Am2prJuRW+wd4pd5Bg/ZHqJiLf8Lo4S4jlYqahe/EBRJYrt8U1N
+         fLOSJT+Lk5/lvT6+0dDGdCOwK1QVKmaP93q9S5lmatcvSEcny5hK8qzAyUG3j8NpP/5J
+         0SUG/P4K62FGyJzbLwsV84tiZKyY19gupCu9ythrV81PP/Gi7aUKWnOGIBl7Yc/icrYV
+         k8pBggAr4hRmgymdbnkMMt85UWAJz33yYTsJaRz7yZQx6ZXioC/HwsZxTnCimJgY9s6h
+         p2EA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmLkUTSWJZSSc16Iw2An+zP5m2J06LgcxDglPPfXC9r7WREFt9yuoW0+/7szdeq1SBhnR9wujQVjO0/P+c@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+Nq+yezsKtNC4gFSKwMKXk+sebBK8PTR1akj3ChYRWyEbGzZQ
+	GzpS5tB0NEBWNBwFoQQRIBR536nFam1YVp2J2Ls1GfO+je/LTVXPZpa0zZiR2WJvoiUT8gFJ0Dz
+	yDBb1uAQJhrwRB6+RSZJcAo7eOPCcXTy0yfWosAE=
+X-Gm-Gg: AZuq6aIiaCLLv/vDwj9jKslc9nFvPX4wQvJDgiDl1vQI0AjFkMK/yOALIm6LJHB61mj
+	OZJDQyh7gQ/JHG0G06lggc747RybHzBIZAtqEY5sYAmRubst9mPv7bZNDtdPf9T+Gzy90Jb2Myf
+	1JfcE9P0jZTlB0ZQ0bduLycTFCYbJ0nv+jVC95fVHCUDuKLzWNrr7XOjbw9BZRdTkEvwl5Y/qON
+	Nb5IdEA29/poEgF2gzay6qggtr/ghINBAiI/Wj/X8pRAUlNOBTkSZ5ml172vPmoyEZEpP6dF0he
+	xI+MzNoY2cMSOImmGqj4Kfwb7JIHZlO9JsLcaqRiOzZ2RqeDSM9KopsCZE9i
+X-Received: by 2002:a05:690e:1a8b:b0:644:774a:96b5 with SMTP id
+ 956f58d0204a3-6495bfe741amr3236061d50.54.1769222797135; Fri, 23 Jan 2026
+ 18:46:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Jeff Layton" <jlayton@kernel.org>
-Cc: "Chuck Lever" <chuck.lever@oracle.com>,
- "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
- "Benjamin Coddington" <bcodding@hammerspace.com>,
- "Eric Biggers" <ebiggers@kernel.org>, "Rick Macklem" <rick.macklem@gmail.com>,
- linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-crypto@vger.kernel.org
-Subject: Re: [PATCH/RFC] nfsd: rate limit requests that result in -ESTALE from
- the filesystem
-In-reply-to: <d1e5a45b5c3d8ac2d92ac15c8ae7ff79dafdef92.camel@kernel.org>
-References: <176920977124.16766.1785815212991547773@noble.neil.brown.name>,
- <d1e5a45b5c3d8ac2d92ac15c8ae7ff79dafdef92.camel@kernel.org>
-Date: Sat, 24 Jan 2026 13:04:09 +1100
-Message-id: <176922024977.16766.3757451159050621194@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+References: <20260120051114.1281285-1-kartikey406@gmail.com>
+ <1bf327370c695a5ca6a56d287d75a19311246995.camel@ibm.com> <CADhLXY5pVdqhY+cLze66UrZmy0saCro_mQR+APth+VC5tMEnjA@mail.gmail.com>
+ <88705e499034c736cc24321a8251354e29a049da.camel@ibm.com> <CADhLXY6wFsspQMe0C4BNRsmKn2LaPaBFfOh1T+OBibuZVSo70g@mail.gmail.com>
+ <eefff28b927ccc20442063278e65155c1ed5acd8.camel@ibm.com>
+In-Reply-To: <eefff28b927ccc20442063278e65155c1ed5acd8.camel@ibm.com>
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+Date: Sat, 24 Jan 2026 08:16:25 +0530
+X-Gm-Features: AZwV_Qj8q7DhtVLFyqLAcJF1pCX8sjvf4AFiQ0O0my4liLv3dCff4U4-FwOit0w
+Message-ID: <CADhLXY6fMO51pxc1P00F3g9PccNvXwOPd+g0FxeHq1FYGR3Xng@mail.gmail.com>
+Subject: Re: [PATCH] hfsplus: fix uninit-value in hfsplus_strcasecmp
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>, "frank.li@vivo.com" <frank.li@vivo.com>, 
+	"slava@dubeyko.com" <slava@dubeyko.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"syzbot+d80abb5b890d39261e72@syzkaller.appspotmail.com" <syzbot+d80abb5b890d39261e72@syzkaller.appspotmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[ownmail.net,none];
-	R_DKIM_ALLOW(-0.20)[ownmail.net:s=fm2,messagingengine.com:s=fm2];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75340-lists,linux-fsdevel=lfdr.de];
-	REPLYTO_DN_EQ_FROM_DN(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[oracle.com,kernel.org,hammerspace.com,gmail.com,vger.kernel.org];
-	FREEMAIL_FROM(0.00)[ownmail.net];
 	RCVD_TLS_LAST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75341-lists,linux-fsdevel=lfdr.de];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	REPLYTO_DOM_NEQ_FROM_DOM(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
 	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[neilb@ownmail.net,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[ownmail.net:+,messagingengine.com:+];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	HAS_REPLYTO(0.00)[neil@brown.name];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MISSING_XM_UA(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[kartikey406@gmail.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel,d80abb5b890d39261e72];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[ownmail.net:dkim,noble.neil.brown.name:mid,brown.name:replyto,brown.name:email,messagingengine.com:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: D36FC7C2C4
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: D729B7C404
 X-Rspamd-Action: no action
 
-On Sat, 24 Jan 2026, Jeff Layton wrote:
-> On Sat, 2026-01-24 at 10:09 +1100, NeilBrown wrote:
-> > This is an idea for an alternate approach to address the problem that
-> > Ben is trying to address by signing file handles.
-> >=20
-> > The reasons I think an alternate is worth considering are:
-> >=20
-> >  - Ben's approach requires some configuration, though not much.
-> >    This approach requires zero configuration which is always better.
-> >=20
-> >  - Ben's approach adds a siphash calculation or two to (almost) every
-> >    NFS request.  This may not be a great cost but it is still some time
-> >    and some power.  Less is more.
-> >=20
-> > Filehandles already contain 32 bits of randomness.  Rather than adding
-> > another 64 bits as Ben's patch does, this patch increase the time it
-> > take to test all possible values for those 32 bits to make it an
-> > impractical attack.
-> >=20
-> > Comments welcome.
-> >=20
-> > Thanks,
-> > NeilBrown
-> >=20
-> >=20
-> >=20
-> > From: NeilBrown <neil@brown.name>
-> > Subject: [PATCH] nfsd: rate limit requests that result in -ESTALE from the
-> >  filesystem
-> >=20
-> > NFS file handles typically contain a 32 bit generation number which is
-> > randomly generated by the filesystem when the inode (or inode number) is
-> > allocated.  This makes it hard to guess correct file handles.  Hard but
-> > not impossible on a low latency network with a high speed server.
-> >=20
-> > The NFS server will reject a request to access the file associated with
-> > a filehandle if the user credential given is now allowed the access the
-> > file, but it is not able to check if the user (or client) should be
-> > allowed to even know that filehandle.  This would require knowing all
-> > the paths to a given file, all the credential that the client has access
-> > to, when whether some combination of those credential can complete a
-> > walk down any of the paths.
-> >=20
-> > So the NFS server currently depends on the client to "do the right
-> > thing".
-> >=20
-> > In some circumstances the client may not be sufficiently trusted, and
-> > path-based access controls may be an important part of the access
-> > management strategy.  In these cases the protection provided by nfsd may
-> > not be sufficient.
-> >=20
-> > The only known attack methodology is to guess the inode number of a file
-> > of interest, then iterate over all possible generation numbers.  This
-> > would be expected to achieve success (if the inode number is valid) in,
-> > on average, 2^31 guesses.  At one per microsecond this is less than one
-> > hour.  At one per 10 microseconds this is less than one day.
-> >=20
-> > When presented with an incorrect guess the filesystem with report an
-> > error to nfsd, either NULL or ERR_PTR(-ESTALE).  This patch causes nfsd
-> > to detect those errors and insert a 15ms delay.  It also take a lock so
-> > that all such delays are serialised.  This increases the expected time
-> > to success to 1 year.
-> >=20
-> > Normally NFSERR_STALE errors are rare and are no on a fast path.
-> > Normal accesses which use a filehandle which has become stale will now
-> > incur a 15msec does which is likely to be unnoticeable.  An attack will
-> > notice an intolerable delay.
-> >=20
-> > Possible this code could detect if there are ever a large number of
-> > requests over an extended time and then take more firm action.
-> >=20
-> > Signed-off-by: NeilBrown <neil@brown.name>
-> > ---
-> >  fs/nfsd/netns.h  |  2 ++
-> >  fs/nfsd/nfsctl.c |  1 +
-> >  fs/nfsd/nfsfh.c  | 15 +++++++++++++++
-> >  3 files changed, 18 insertions(+)
-> >=20
-> > diff --git a/fs/nfsd/netns.h b/fs/nfsd/netns.h
-> > index 9fa600602658..f7229d1f9d86 100644
-> > --- a/fs/nfsd/netns.h
-> > +++ b/fs/nfsd/netns.h
-> > @@ -219,6 +219,8 @@ struct nfsd_net {
-> >  	/* last time an admin-revoke happened for NFSv4.0 */
-> >  	time64_t		nfs40_last_revoke;
-> > =20
-> > +	struct mutex		estale_rate_limit_mutex;
-> > +
-> >  #if IS_ENABLED(CONFIG_NFS_LOCALIO)
-> >  	/* Local clients to be invalidated when net is shut down */
-> >  	spinlock_t              local_clients_lock;
-> > diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-> > index 7587c64bf26d..55d25d9b414f 100644
-> > --- a/fs/nfsd/nfsctl.c
-> > +++ b/fs/nfsd/nfsctl.c
-> > @@ -2198,6 +2198,7 @@ static __net_init int nfsd_net_init(struct net *net)
-> >  	nfsd4_init_leases_net(nn);
-> >  	get_random_bytes(&nn->siphash_key, sizeof(nn->siphash_key));
-> >  	seqlock_init(&nn->writeverf_lock);
-> > +	mutex_init(&nn->estale_rate_limit_mutex);
-> >  #if IS_ENABLED(CONFIG_NFS_LOCALIO)
-> >  	spin_lock_init(&nn->local_clients_lock);
-> >  	INIT_LIST_HEAD(&nn->local_clients);
-> > diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
-> > index ed85dd43da18..7032f65fe21a 100644
-> > --- a/fs/nfsd/nfsfh.c
-> > +++ b/fs/nfsd/nfsfh.c
-> > @@ -244,6 +244,8 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst *rqs=
-tp, struct net *net,
-> >  						data_left, fileid_type, 0,
-> >  						nfsd_acceptable, exp);
-> >  		if (IS_ERR_OR_NULL(dentry)) {
-> > +			struct nfsd_net *nn =3D net_generic(net, nfsd_net_id);
-> > +
-> >  			trace_nfsd_set_fh_dentry_badhandle(rqstp, fhp,
-> >  					dentry ?  PTR_ERR(dentry) : -ESTALE);
-> >  			switch (PTR_ERR(dentry)) {
-> > @@ -252,6 +254,19 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst *rq=
-stp, struct net *net,
-> >  				break;
-> >  			default:
-> >  				dentry =3D ERR_PTR(-ESTALE);
-> > +				/* We limit ESTALE returns to 1 every
-> > +				 * 15 milliseconds (across all threads) to
-> > +				 * prevent a client from guessing the
-> > +				 * correct (32 bit) generation number
-> > +				 * for an given inode in significantly
-> > +				 * less than 1 year.  This ensures clients
-> > +				 * can only access files for which they
-> > +				 * are allowed to access a path from the
-> > +				 * exported root.
-> > +				 */
-> > +				mutex_lock(&nn->estale_rate_limit_mutex);
-> > +				msleep(15);
-> > +				mutex_unlock(&nn->estale_rate_limit_mutex);
->=20
-> Hmm...maybe a mutex_trylock and if it fails do an immediate -EAGAIN
-> return (which hopefully becomes NFSERR3_JUKEBOX or NFS4ERR_DELAY)? This
-> could be a way to DoS the server, otherwise.
+On Sat, Jan 24, 2026 at 4:51=E2=80=AFAM Viacheslav Dubeyko
+<Slava.Dubeyko@ibm.com> wrote:
+>
+>
+> If the whole fix will be small, then one patch is better to have. Otherwi=
+se,
+> patchset could be more better for the review.
+>
 
-Returning NFS4ERR_DELAY immediately instead of NFS4ERR_STALE gives
-the attacking client nearly identical information.  It would not resend
-the request that reported NFS4ERR_DELAY.
+Hi Slava,
 
-Triggering a DoS is part of the point - it both defeats the attack and
-makes the attack obvious.  If an attack is going to be obvious it will
-likely be caught so the potential attacker is unlikely to try.
+Thank you for the guidance! Based on your feedback and the debug output sho=
+wing
+the partial read (26 bytes read, 520 expected), here's my proposed fix.
 
-A client with authority to make requests can already generate a high
-rate of high cost request without waiting for replies and so potentially
-DoS the server.  Remember that we aren't aiming to protect against
-completely unauthorised client, but only clients which do have some
-authority.
+I'd appreciate your review before I send the formal patch.
 
->=20
-> >  			}
-> >  		}
-> >  	}
->=20
->=20
-> FWIW, I don't necessarily see this as a replacement for Ben's work, but
-> it might be a nice complement.
+---
 
-If you knew that an attack couldn't succeed, why would you bother
-setting sign_fh ?
+The fix includes two changes:
+
+1. Add validation in hfs_brec_read() to reject partial reads:
+
+int hfs_brec_read(struct hfs_find_data *fd, void *rec, u32 rec_len)
+{
+int res;
+
+res =3D hfs_brec_find(fd, hfs_find_rec_by_key);
+if (res)
+return res;
+if (fd->entrylength > rec_len)
+return -EINVAL;
+++ if (fd->entrylength < rec_len) {
+++ pr_err("hfsplus: incomplete catalog record (got %u, expected %u)\n",
+++        fd->entrylength, rec_len);
+++ return -EINVAL;
+++ }
+hfs_bnode_read(fd->bnode, rec, fd->entryoffset, fd->entrylength);
+return 0;
+}
+
+2. Initialize tmp in hfsplus_find_cat() as defensive programming:
+
+int hfsplus_find_cat(struct super_block *sb, u32 cnid,
+     struct hfs_find_data *fd)
+{
+-- hfsplus_cat_entry tmp;
+++ hfsplus_cat_entry tmp =3D {0};
+int err;
+u16 type;
+...
+}
+
+---
+
+Does this look correct to you? Should I proceed with this approach, or woul=
+d
+you suggest any modifications?
+
 
 Thanks,
-NeilBrown
+Deepanshu
 
