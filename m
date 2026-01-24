@@ -1,180 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-75354-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iC55NPP9dGk7/wAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75354-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 18:14:27 +0100
+	id MFq6AXcEdWnP/wAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 18:42:15 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3191B7E41E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 18:14:27 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBDC47E5A9
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 18:42:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 9623D3011846
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 17:11:11 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 7AE923013035
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 17:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5BE238C15;
-	Sat, 24 Jan 2026 17:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5552B2701C4;
+	Sat, 24 Jan 2026 17:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=multikernel-io.20230601.gappssmtp.com header.i=@multikernel-io.20230601.gappssmtp.com header.b="g146gg8K"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h6a1e6ax"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4CB21D3D6
-	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Jan 2026 17:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769274669; cv=pass; b=jNpgNc4noScEAQoL/FPj//N+i0ABTnBf2Jy/D7LOET7qcYVOyHHMSXXaQfr0OMfWmYmzloX+mFiywsK/qAISA/aC+xcPOqwVMK922Mfv6johgiODrzSxpulZZ37V6db1OahxlIl+WmvQejXI02hMfgT6kAZTdOQf3h2zfQg2vCY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769274669; c=relaxed/simple;
-	bh=0guLFI3yNYL4nKgjJyirG/A5FgTwEs1RA0pP7qKHPeA=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=F4HyCWgBCuQSDoJPvOab1AHXijtEO9Zvi+mEP1Sut9guBUymt3fgN+CRPhoX6NRnyGa72Y/Uc6cQs/dzADCCImAl5e+xAzcB0Uxf//waoqDTia0QI9MBnLsYHM8awU0WfogQv+zi50NvV2YXSMMYiX3oDgerK8b42hbZrIE79CI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=multikernel.io; spf=pass smtp.mailfrom=multikernel.io; dkim=pass (2048-bit key) header.d=multikernel-io.20230601.gappssmtp.com header.i=@multikernel-io.20230601.gappssmtp.com header.b=g146gg8K; arc=pass smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=multikernel.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=multikernel.io
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6505cac9879so4934444a12.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Jan 2026 09:11:07 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769274666; cv=none;
-        d=google.com; s=arc-20240605;
-        b=J4Na5oLl1mX04KnMaqJ7T8ep6ytWzODwABEEkjLB6rST/bgfJeCrxhuf8Uw7ZehbYU
-         ZuyhQGk2Lof1ELVqORCwMoUOZtop1bvt2hUXrIUZcNX7roya1DOOCmRBAVjupblTSE9W
-         zpeyeO/de+exHfAsNjyTYH3HnkXV/5ZltTiUP9uG/xo5PcIC01Aj11sayh28XgjGlUh9
-         jruAH3ZtZ0I49hhhWrgZ9v9PYADCAmS6fPA0PJNAdKZp+6YO4quGDSySPY9tinWjFcVK
-         41DPKqKVMZWlc8HVS1JixZ5jJruLyKWG21pRBjrZwt5YWRLU2Y6koJP9usQVKl8Kej0y
-         5cNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:dkim-signature;
-        bh=0guLFI3yNYL4nKgjJyirG/A5FgTwEs1RA0pP7qKHPeA=;
-        fh=MLId9pOXgLsGejWIe5OSUP3up7R+QF02o5p2FupE2+g=;
-        b=SL20ZyqWkYBF8IsKvQF7Ig/lFZ080JVHi2ASwv7H54TUBU6f2QQgnJYIovF/pTdH/M
-         EaOKosV6RdjR8fM7S1aqQZsl4euVOBrjVH2sXFTfX2lg6DT4KeJ/lj7gA62SKP1BPdBh
-         ad97PzHmyCa3DzFZ24ergThOkHtagqBW+mcXKCSzIqeDhnOMBiXoxAlrppzNTwBvbmMH
-         1RKubnK2IiCHnQ/JbQfZmOXsLyEiKy9gMNlaOdDoIqPBEc+MKHbXmrMeb5WQeSDs3v53
-         fM3aJ5lyd51kEKAkNZEx5IqmlXcwosrLbWYRUyNXEVjl7caZlCSD4ELMzq5iU0BgZwXN
-         WXdA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A997822A4E8
+	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Jan 2026 17:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769276523; cv=none; b=a6yKbqx+H39dzrLOkv6sFJR48Rlo06Q+RdavqvIzzaF0LEA790K7Yc3FCotzl7O7IambyDjWyv1BB4bDtj1UVC60oDY/ofysVvNxWtYykJ9zSyzgn/ylr2nUakSkn7OZhuIVRthW1Hkwi3OZXe8JD1tkzP3qJlJqdpVGZnLqcXU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769276523; c=relaxed/simple;
+	bh=EBc05REX281vBJG/8qd75ptDoBPMWPIb7O5pqviqR6Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TDzNp6/nADeFb0VN8PrfQ5i6K/dg2qQ7kKBld+Oi08IBpF1qse0AzNnGsutnYUjZQ8GQny3jL6W8shHK5EAbfXqPI7N/P9126SCEcE/DXqlBJ6p8N6xCwkBVWC2r5IjkSurdWtnHzvccA/BZoizBakbRdERw2NdbxQqfNoz51MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h6a1e6ax; arc=none smtp.client-ip=209.85.221.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-4359249bbacso2770351f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Jan 2026 09:42:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=multikernel-io.20230601.gappssmtp.com; s=20230601; t=1769274666; x=1769879466; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0guLFI3yNYL4nKgjJyirG/A5FgTwEs1RA0pP7qKHPeA=;
-        b=g146gg8KabMhMk9E9spY/dHYwQKhytYZXa0SWrkpsLI8O4NnubAgV8UsNOmpCwTZD/
-         c/Dzg2Ri7zzy8BTdTGQU0Yb4ROzhY+sTLrkvG2Yu1/UtzC8CatsuqjhA2uEhpszsN05U
-         ViZ9/KqszjAYCYBuYJFHYQb5DvZZr2oao4oZlTXlYiaJf35fcvvphFmOyO8NUPh/DzFZ
-         e2K7sOGU6qa2AXEeC3J/wCA/8ypag1ioxUU3Z1HhfEqb3g081/uYLcQPUIU9m5aO3QjF
-         Th5tkI52ZSkG3ruGJA/XEC+xJIk9tz1vaIRnbsoEJa7On5+rLywtwAbI8CHybIrRXJJT
-         hl6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769274666; x=1769879466;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1769276521; x=1769881321; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0guLFI3yNYL4nKgjJyirG/A5FgTwEs1RA0pP7qKHPeA=;
-        b=lQNTXzHmzbOh9qVwhFLBPxGd7v4psJiB3xtV9Kh3WDfjc/+g6BH3QsGYIq2Hr8x4uh
-         +mpsIamHgGNrsDiqTKuKnx2GS8Rz34n/HY0HsjBgd4k/1Yp9VhZcCjiHW/O9peqF4XPM
-         bwc6tkKQG0w+dDRyP/+PiOWGqOpk3eTcAamtVnO2xMpIaxulzu7QjS9PJtB+qez6gmbu
-         9GIcxYPBC3XvZaAzSH66AuxAbCQgpFxI8q/LPIvFNGht5+UDQMShoMrZ3Aa8I0PpUElk
-         7KMUDxbtn4s3ANnomwQH9T+zcbuevPvhDo1uWXzLSyyEXBZYS2vbBqyP0j4/a+gjnUkP
-         jLLg==
-X-Gm-Message-State: AOJu0YzI2FckbvVM4cuTe3mcnIPgJK6/CEr6mxtZHCYjnK+vl7yXSlld
-	C+VjyNcbGxX2J3WXojyi7AV9iWb5yC3No2K8WFisMOlCcEI0ghPGRrajmochr/FdvVXoqzbqRwV
-	k9h/6ElY25qQXwhvkmwMotX2HHAZt5Opg6yKtlODeH+rZ1zcSxmF93MIySA==
-X-Gm-Gg: AZuq6aJrkj6U2X21api1qASlPd0AY7VeMyw1+Sf0pB5fj15hxNw6ecyKw1MaTdNe9iG
-	l5pEbtM1FqkoI0J1gYljLLn9/3d6o96EvTIE3L8GG2+Ni+pT3USqq5wBTqsD915/ZyPnJ1AFhy0
-	gk9s0e3NZ8TcxyC86yRYsMiIHuFtVaFhHdCTuqPFNdF0XxcpqlHh+I0ceML1wjrsAj4IzIMgSFT
-	ifxwBJIC12z1ed86/7W7o3J7Ke08fthMoFq1bPCV+CmG4zlClmich55IdS/X/06hD9TFLEixQQq
-	KLYc7VN/GdYIHN+0NlI/zCV9at3B6j0zex5yAEV9+Rqj1pEP2K64kl/wSmbu
-X-Received: by 2002:a05:6402:398a:b0:64b:7ab2:9f83 with SMTP id
- 4fb4d7f45d1cf-658487ca05dmr3259820a12.31.1769274665372; Sat, 24 Jan 2026
- 09:11:05 -0800 (PST)
+        bh=hwxVrejUO+lBMAe9SgBJs9PZlLotjLAwzjKh+NoaG68=;
+        b=h6a1e6axnIl9uasuCe+IoZZfQ8tR9FHExwjXuaLiaDKWlkFNWLqXVGIq8ce7g57C7A
+         7dLWhxkl2RZ0Ql9E9ulLuqiSxZpL5FfyV45ZJHXf7BBHCsv301jnwgsHoihBgI/M/0kS
+         3xKpIsg2DjLwvk0dURPfK1EdhkUipaWQtQQp+a/H7NwCGkRde9/2xX7RFpQXw6gu1tKi
+         SZxQawcmRfX4u5sB9p2sUguwyyyUrTNqgCboNdKTHKG1DmkDpMxADZ/UC4O1XysQNgBC
+         myg/+7BsL2Lps5v8LA7P3AXm2Gvsaoq0ygDIUKAHkbnuHw6ebM31vm+a+7l3rtclEUPi
+         F2lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769276521; x=1769881321;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=hwxVrejUO+lBMAe9SgBJs9PZlLotjLAwzjKh+NoaG68=;
+        b=put9gtisZfsFdITTgDBS1WUGY+yboK0Jo9m0FvYQkQCOafzmFCpwc/T8f2M7gd6Xey
+         Lf2XH0+4RFhRUQBhlvW77bzV2GdIOV5L+nbBql5pvSluvSwfspQThT386OZcrcv7BEbh
+         IBaQVMKbEF0ogbipY/UVjpMc4BjBi4ayniU72tcf+keVwM46/GBXJAcdGHj3k1hz+liy
+         BDjBsapFooPpDkhdT31swqntvqZI5QtBKJUQ7KCaiupr8tJ3O5p5q2hXAH/8YBw0wD5H
+         qS1NiywOE+DFSQl8EQa84uAnRvH/CgD/JLGnmOBAKdJGbBmuQVuhXP04GAMucWdsFhyh
+         9AEw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7K39w/hoOsbTmfhVzw6mrMrYG3x1r6DKBeVgX++hc4WphR/fHIx9OT2wLgYV2pzY8R/SRLwQdwVNylu/P@vger.kernel.org
+X-Gm-Message-State: AOJu0Yywor3+r87NbCYc92KZfKCw/t81GbpbNu7hYPBwYrYdlXJ3+ETT
+	76mSKx7mNDbUw6LzoGzQ99JE1NR9N9cO4vb4vA7ghZFjO5S9AXP1pt5b
+X-Gm-Gg: AZuq6aKg3XxpSPhu/HIj2jZEqgooWlwGZfRtZoOuXNvRQm3Hj4AMyIY5jo7IiBfie/R
+	ghTCPihTHLhQNsLehAtpQ0x6CNQVAuZ5rCGH2hWU6oNtdAMnmwzu+TselC5xN11Be6Y90gzuKNj
+	Cfxp4hLDArO/F3J1fttLOtilLv6TCYWP0QkCsTARmGSNpHO5q9hWYrcxaVXQuENe7HCWxM+nBxU
+	mNuV8PSturdQi7PZ2sa4ixF2DxwHsxmp2ecdIWp62Xc7dTj4C5g4NiEl8paC0ON7wi+C+/WXj61
+	k/8S2LCC3qI9naQ9BBxKHD/B230uP2Jxl6eVvQ9+cLbon0nQrAILg+GY0kA/U1UPYgHEG6tEBBJ
+	eXFk79TqSl+Mbl/SAI3slV/aESUdjyZ7wmCZMZ6QHtjVfhUMro/BT76FAus3BPN2K2QSVHyfvC3
+	x7/rumdB8UvzAZI/mxtA==
+X-Received: by 2002:a05:6000:18a4:b0:435:9538:939b with SMTP id ffacd0b85a97d-435b1ad3727mr11730610f8f.8.1769276520845;
+        Sat, 24 Jan 2026 09:42:00 -0800 (PST)
+Received: from localhost ([212.73.77.104])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-435b1e7164dsm16037107f8f.23.2026.01.24.09.41.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 24 Jan 2026 09:42:00 -0800 (PST)
+From: Askar Safin <safinaskar@gmail.com>
+To: hpa@zytor.com
+Cc: brauner@kernel.org,
+	corbet@lwn.net,
+	jack@suse.cz,
+	lennart@poettering.net,
+	linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	systemd-devel@lists.freedesktop.org,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH 0/3] Add the ability to mount filesystems during initramfs expansion
+Date: Sat, 24 Jan 2026 20:41:50 +0300
+Message-ID: <20260124174150.974899-1-safinaskar@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260124003939.426931-1-hpa@zytor.com>
+References: <20260124003939.426931-1-hpa@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Cong Wang <cwang@multikernel.io>
-Date: Sat, 24 Jan 2026 09:10:54 -0800
-X-Gm-Features: AZwV_Qhxdx5zMF1zGxFZZ1OazCcKy7yeZniyqbTBOvVt-ZdammtaNoM6DOBMeLM
-Message-ID: <CAGHCLaREA4xzP7CkJrpqu4C=PKw_3GppOUPWZKn0Fxom_3Z9Qw@mail.gmail.com>
-Subject: [ANNOUNCE] DAXFS: A zero-copy, dmabuf-friendly filesystem for shared memory
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	R_DKIM_ALLOW(-0.20)[multikernel-io.20230601.gappssmtp.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_CONTAINS_FROM(1.00)[];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-75355-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75354-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	DMARC_NA(0.00)[multikernel.io];
-	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com];
-	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_FIVE(0.00)[5];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[multikernel-io.20230601.gappssmtp.com:+];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_NEQ_ENVFROM(0.00)[safinaskar@gmail.com,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[cwang@multikernel.io,linux-fsdevel@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[3];
 	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	TO_DN_NONE(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,multikernel-io.20230601.gappssmtp.com:dkim,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: 3191B7E41E
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[zytor.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: BBDC47E5A9
 X-Rspamd-Action: no action
 
-Hello,
+"H. Peter Anvin" <hpa@zytor.com>:
+> At Plumber's 2024, Lennart Poettering of the systemd project requested
+> the ability to overmount the rootfs with a separate tmpfs before
+> initramfs expansion, so the populated tmpfs can be unmounted.
 
-I would like to introduce DAXFS, a simple read-only filesystem
-designed to operate directly on shared physical memory via the DAX
-(Direct Access).
+This is already solved by [1] and [2]. They are in next.
 
-Unlike ramfs or tmpfs, which operate within the kernel=E2=80=99s page cache
-and result in fragmented, per-instance memory allocation, DAXFS
-provides a mechanism for zero-copy reads from contiguous memory
-regions. It bypasses the traditional block I/O stack, buffer heads,
-and page cache entirely.
+[1] https://lore.kernel.org/all/20251229-work-empty-namespace-v1-0-bfb24c7b061f@kernel.org/
+[2] https://lore.kernel.org/all/20260112-work-immutable-rootfs-v2-0-88dd1c34a204@kernel.org/
 
-Key Features
-- Zero-Copy Efficiency: File reads resolve to direct memory loads,
-eliminating page cache duplication and CPU-driven copies.
-- True Physical Sharing: By mapping a contiguous physical address or a
-dma-buf, multiple kernel instances or containers can share the same
-physical pages.
-- Hardware Integration: Supports mounting memory exported by GPUs,
-FPGAs, or CXL devices via the dma-buf API.
-- Simplicity: Uses a self-contained, read-only image format with no
-runtime allocation or complex device management.
-
-Primary Use Cases
-- Multikernel Environments: Sharing a common Docker image across
-independent kernel instances via shared memory.
-- CXL Memory Pooling: Accessing read-only data across multiple hosts
-without network I/O.
-- Container Rootfs Sharing: Using a single DAXFS base image for
-multiple containers (via OverlayFS) to save physical RAM.
-- Accelerator Data: Zero-copy access to model weights or lookup tables
-stored in device memory.
-
-The source includes a kernel module and a mkdaxfs user-space tool for
-image creation, it is available here:
-https://github.com/multikernel/daxfs
-
-I am looking forward to your feedback on the architecture and its
-potential integration to the upstream Linux kernel.
-
-Best regards,
-Cong Wang
+-- 
+Askar Safin
 
