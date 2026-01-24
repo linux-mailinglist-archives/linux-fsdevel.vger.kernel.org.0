@@ -1,312 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-75329-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75330-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id ENLTIYYLdGkQ1wAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75329-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 01:00:06 +0100
+	id SxFdOWYNdGly1wAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75330-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 01:08:06 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D155D7B92B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 01:00:05 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A9A87B977
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 01:08:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8C488301572D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 00:00:02 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id E921A3013EC3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 00:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B102DF6E6;
-	Sat, 24 Jan 2026 00:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43182AE8D;
+	Sat, 24 Jan 2026 00:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PfpvuR0/"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GS73p9qk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E06423182D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jan 2026 23:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769212800; cv=none; b=NRistpjlZnG1bp0JoBRNbo3VVMRz+d1pnW2QAAYfthl/MkWNO8Osbz2vy7Pyew4B1tgZouLaEh3Tan1oMCPLWyryfGryrwIFLvGf/yeIQtcbNzp6LXZsn6ifZ2kynwoInPuyYyfQ3EMvIbQQKKouYzstI0OX3ZSLXM4Mif2xMQ0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769212800; c=relaxed/simple;
-	bh=Q8oURI8EOS0Z1g59RtixAsz/r7bBSFvTYv+pg+g3rT8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kmzGS1rZg48o3QzUiiHkMAU7Mw1BOI8wLba0zJJwqdChp1xWLlzrRIloC3+etmsg0FEoPnSYoT44CoVQX+nd0z181so58L7ejePn5d5GuKnwIaBtR8VbA7BFZcHC5Cbcswl3wZ2TNbnf93c7ZLyUcgThLwFn97LAdpOrPvPBlZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PfpvuR0/; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-81ed3e6b8e3so1380891b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jan 2026 15:59:59 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CCAEADC
+	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Jan 2026 00:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.172
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769213281; cv=pass; b=BqQ7Ox/zWOApXFNT+7hBhI0aOx3BfJyh/9SSMk+puTzQYty+ujKWgvss4dNF/4spRuvo8tS0Gis0CA8wwaee/96KmheuvbkxPTfvKNZzBkWTw2DEXcUW6WM8jWg08Gpo4yYZEJ/j173tIZbpV+SM+OntNdSKwOSYNZyI8QD89Uc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769213281; c=relaxed/simple;
+	bh=wSe7FuVJUHyRwwoVflyeXFFmY3WfXrs2ZcO7QxlO3W4=;
+	h=From:In-Reply-To:References:MIME-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ImetsfoHaKzIvlAx3MDNF5Yw7vyl+gilp/Zbd4cyfz8LPEScaATPhHgDJc/DsMMQD2Zh4LQATj0CNWrKN0MTTyHizB2Dl36TKHXjeHL5ON1J2SjwwflNHV1rAO2fW8m2COu5tk0PGTCrlIxCiTRS+z7Ab+tHdSoANcIxQfwlE2M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GS73p9qk; arc=pass smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-5664393d409so376519e0c.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jan 2026 16:07:59 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769213279; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Gc0wX2k1tzGPt9RlhZnySriUcoayQxvB8U0QMXPTv8mlyBfH/9tI4DpfIPrCN8p9os
+         WrzdBWHc6lq7QICccZg/jF343ge7J6wz5cB7WYb+BTTalTo6LLVnlv3FiRdYENCbd1DP
+         BejrvxFZ5zvZFJmmhMQhuDfYdLLS2zdrQa+V4L41yE6l6VEBPZQr9MpCRIhxme5updfp
+         Zb0FvOmpGpVXHueC8VZfcicz0Oae0vd2uzLFgnsMAuuxcwFl4ZO3/gZNr/IPvXMJsor5
+         2PN+byZrx+KR3PqyiQIv3chMWlb/sMvT/aUP21TvptJvjC3DorS5iXleMSi3+rV/6Lry
+         s7hg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:dkim-signature;
+        bh=/DNHlYn4p0TppVAhoBNqhHlPga7XxHNgUsUOejXrb08=;
+        fh=nEl9GBPLvXHs6D6RySiFj+svC23ujPTVp9g0xpRLI80=;
+        b=fgEwrP4FCQUjEaDVleNWV4/ykcvDU2Kb7zJUFNdKx3d1B5zI8Xehgvt/nncquj0O02
+         3xV9vdVqSKkvraB6OIs4qBQjEAEPlxQwCdiui8FDiOmRp1z4omtlMAJQg/e+xCs898+g
+         Lx4HLVDXlgonkIgekIQsvVE0L2UUotiQ+SNijgm5CE/yu4AiEzBkhM9FHcswMbBFHWn4
+         flnr3k2rsMc6saL/93bq3kcK4n7+2mMl8mV3e51VIKmImhlCdq82AFcHWIV60avc/gsU
+         eL3sEnnLcEwtJbrgyCj6ZpCJrusJbt7/5K2xp1CuPth87dL5t9tsLIkMxyPMB0iRHSe8
+         KARQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769212798; x=1769817598; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z5REaKGKMwRlbVIOOcLhBfMycKZ4WyMEcTgxC2+IZbo=;
-        b=PfpvuR0/KmIXtoZ5PjWjjft/2qnAtoEm2xERyJ28F4Wzv7H8b9+zdZZmL8AKWqKa/m
-         JKbX3ROrgFMmh5EWZGIoVIQEpesD1prn3hGQ5vZwNGUnpJRR1bhCh86Vw6zzbQyCbCQu
-         W3CQIHexvFtZ3f1yN+EZuXV+vWdOzx0X5MMfaOABLOw8xPFNIyXmoW/ucqKlYvLM9MUd
-         CEtLAlxsaTk9FUN7hFWkj3kTdPDzyn66UT7jtedrkT+0OIW6DhgjYbVmgYX/afLXq+Uu
-         sckk7yNpFRaCY82OGC9dEdoCsbiCxCZ5rHg0ySGqxTaoe7575/HPvXnjMqbcOJzEP0fm
-         n8jw==
+        d=google.com; s=20230601; t=1769213279; x=1769818079; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/DNHlYn4p0TppVAhoBNqhHlPga7XxHNgUsUOejXrb08=;
+        b=GS73p9qk9k2uZbjNlfvSB0KZfJGIjLLaktV3kekj16d8bpOVuej/5YAGwMorScQAxB
+         B4uQAeoqQm+rP8EY0ur48oVi5PJoEx7ggWP5E9KGA2iB2VrAhDeOsWQfi+dPM7QZULCj
+         92MegSB+IFJuaqIA1oHe/b6vbnS/vJ0GsqsQmdIon0xy/OodDkZ7tQiOOVS2b67Mb8VC
+         zT+pgRb75eapREX+VF1C6pJVuZTC++LTn9Qw/bFPLKesQHFZAZueB/SPin777/4zCzVQ
+         +J6KltDANPJxKleiLkLnaC78cog/mfWJ78F7fvhEy8OE0iRe9YDBqVQNbKbDtfGqaisB
+         37gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769212798; x=1769817598;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=z5REaKGKMwRlbVIOOcLhBfMycKZ4WyMEcTgxC2+IZbo=;
-        b=jNuOguhouw/II2s4W2Cb0MuztTa5AmRVAzYrU+OJbpNBPsQ/wPi9P/gPRJFcDejwUI
-         30HZSxOpYh0rIuawjY4iLSnhJzOX4XqbEhcZXwhvRk75YBAlSKkmvKF7DJCgAi0mY7N6
-         onk7GQoUJFfwCk1J3wHPAFg5T26wSO/gci+ij14KWtCwGuQyZG5wKrX0BKE5nZls9LjJ
-         GLgpHLHR9wUg1joN4aHyfwCK1JKfuWdPLgHD0SG73aAXIeFI8CmMxafmWbXwltDV7Upl
-         6tEoCPQU7ySwys76el+3IYktAep1vj58F3GvlXhdykig1WfhG3F7uvCt2rK8pjIDvgoP
-         z6tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUz8XmxJrFuzA1+SdT7sZGV/LgDBK+zJJOc8UDO8OK6VhhnigOUhORgr6/PRuz6viErZbcU3W2RAPbRKkdh@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb/K4fEw2exitF9s/wp1MXq17KeYuVtRiLSPjCEm7Kfe/ilhkG
-	HAOMBIAsqbmeIOg1I4i0gqO7FbZ+vHn07XvYtFWHu02Nm/kitMNzeTUa
-X-Gm-Gg: AZuq6aIgHElCA+tsd50R1X3ImVJdq36FtsLML7qFKfKVwVGrPHOo5mIdE5dNJE5t2RX
-	ZILMxeSlpdhMTtUzEq34p8iLdWkFBGVp2z/jKMtuatyy3SHdhDk8fq5VM4ZgXJCzIydb5DvxRT8
-	tBVvtZMawZCDd48zDxU+SybOAR8J0NpkiWjJW7P1DaGsi3DJMvbmoRDISsa2pAoJRSUvvf62dex
-	eOHrT9nSgf1U48OrDdrpP/nxFBIlAdu5JcFg/wIOHbUpK9AfYHGTWFBDhATYh5R7P964FslYLc+
-	e8NJCOTMGATRTScaa+ENaH67xFCNAv5Bw/lnm9xHrLaDxJ+VUpZO6rUs5QwQ0FM9PsTcpN4L2XO
-	MT3525E6bsYk6NXXGCgLYdQ+ToDoZznYO0x8p/AcCu1hu2/NYttbuZlrw9W2s6UlWMlsFY9kS++
-	12XH0RQQ==
-X-Received: by 2002:a05:6a00:1493:b0:821:807a:e427 with SMTP id d2e1a72fcca58-82317d4b415mr3412469b3a.21.1769212798514;
-        Fri, 23 Jan 2026 15:59:58 -0800 (PST)
-Received: from localhost ([2a03:2880:ff:5f::])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8231871ccc2sm3121620b3a.36.2026.01.23.15.59.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Jan 2026 15:59:58 -0800 (PST)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: brauner@kernel.org
-Cc: willy@infradead.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	bfoster@redhat.com,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v4 1/1] iomap: fix invalid folio access after folio_end_read()
-Date: Fri, 23 Jan 2026 15:56:17 -0800
-Message-ID: <20260123235617.1026939-2-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260123235617.1026939-1-joannelkoong@gmail.com>
-References: <20260123235617.1026939-1-joannelkoong@gmail.com>
+        d=1e100.net; s=20230601; t=1769213279; x=1769818079;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/DNHlYn4p0TppVAhoBNqhHlPga7XxHNgUsUOejXrb08=;
+        b=tgcz4DsrBznglk5eKhH/dsRnHbNihbvj9eL5yWGkcKhj1e+x1JSGw7wxjJq4vBN1rt
+         D/D6/gjSLFlwVlSGoSNkWlsr4fmZe6AC5GIevTI1at8B6TA16ZfI7p6Y71n6loNbHzwM
+         C7s4JQhqFfiZ+Y1rAtz3xhMEh+wektYQMpCESgNwNd1V+juFio3p6oEqkJ3xRlF16b7p
+         MFJwPqGW6xS97KslAdpnzMRCt0eptY+ah3k4hFauImDMAETZ5tyeCNJ5QvVgMBmlj/Es
+         6bAHRTXjp10A3bueWhvTevE3hiatCcbBPK+cm8WA1Xu0k0NyurBdMWkmGcWXWuXHNJ1/
+         3oLw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1BSgw+MhDTVNnrhFTcbdq7gNbSbZ+2azCFTOSKHb2CKpKeFUehY7A7mqwjhjXPnr84uZAlKXu2cVt5t59@vger.kernel.org
+X-Gm-Message-State: AOJu0YygHfU6irJPQVq2xXs3vLI5xG9qFxLV3O4W4ay56a0feHLcl4qU
+	7OJIxEhMItM2rIygu7JyhxjFJn45zBreKK4H4j5dE0nNZ/dcODP79DsKQlwMv+HV2csEWAuDgS6
+	cM8MbSVN8u0KC73p7KohmrIgiAjsJ4fo3B7aTKTqt
+X-Gm-Gg: AZuq6aImJC9gAHnABT4385oL2c2vT164uodN94cw0uQiUqFv5DPfSTmMFZEpeyUel2U
+	rwDo6osDcZuSLg2UgTWqlu68bRjGQSb+QXkp93OlSwzE2jmNDC93T4lob3wB9PhTCqB7eM/zGFP
+	rvh9E6elTyIRNM/NBZt6UaRmjNYzfyxDcJqbNVnwsSCQ1giZC9Mzs/cGLCeWv/JD4xY4HmPwFL8
+	TGGUFiuSIPaKWJ74T04OF3bde8O9pOF6hE3WV1oSrIotaCpHH8OeFVJgsjqCWiFFhSZhSXj9dB+
+	pYgSgjFO99x9HmVhYsbHlGZBeA==
+X-Received: by 2002:a05:6102:374b:b0:5f5:30e4:c8cd with SMTP id
+ ada2fe7eead31-5f55874acd1mr847220137.42.1769213278639; Fri, 23 Jan 2026
+ 16:07:58 -0800 (PST)
+Received: from 176938342045 named unknown by gmailapi.google.com with
+ HTTPREST; Fri, 23 Jan 2026 16:07:57 -0800
+Received: from 176938342045 named unknown by gmailapi.google.com with
+ HTTPREST; Fri, 23 Jan 2026 16:07:57 -0800
+From: Ackerley Tng <ackerleytng@google.com>
+In-Reply-To: <cover.1747264138.git.ackerleytng@google.com>
+References: <cover.1747264138.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Fri, 23 Jan 2026 16:07:57 -0800
+X-Gm-Features: AZwV_QiZSx8uXBlkjUzf-XEIBRHwTGQ0-9_ksNxOa1FVccYAoX0KqqZc1VcdbW4
+Message-ID: <CAEvNRgFmq8DP_=V7mrY8qza3i9h4-Bn0OWt72iDj6mELu+BiZg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
+To: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, linux-fsdevel@vger.kernel.org
+Cc: david@kernel.org, fvdl@google.com, ira.weiny@intel.com, 
+	jthoughton@google.com, michael.roth@amd.com, pankaj.gupta@amd.com, 
+	rick.p.edgecombe@intel.com, seanjc@google.com, vannapurve@google.com, 
+	yan.y.zhao@intel.com, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
+	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	TAGGED_FROM(0.00)[bounces-75329-lists,linux-fsdevel=lfdr.de];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,mail.gmail.com:mid];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
 	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	NEURAL_HAM(-0.00)[-1.000];
+	RCVD_TLS_LAST(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[ackerleytng@google.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	TO_DN_NONE(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: D155D7B92B
+	TAGGED_FROM(0.00)[bounces-75330-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_FIVE(0.00)[6];
+	DKIM_TRACE(0.00)[google.com:+]
+X-Rspamd-Queue-Id: 4A9A87B977
 X-Rspamd-Action: no action
 
-If the folio does not have an iomap_folio_state (ifs) attached and the
-folio gets read in by the filesystem's IO helper, folio_end_read() will
-be called by the IO helper at any time. For this case, we cannot access
-the folio after dispatching it to the IO helper, eg subsequent accesses
-like
+Ackerley Tng <ackerleytng@google.com> writes:
 
-	if (ctx->cur_folio &&
-                    offset_in_folio(ctx->cur_folio, iter->pos) == 0) {
+Re-using this thread to collect discussions related to guest_memfd
+HugeTLB support, also trimmed cc list.
 
-are incorrect.
+Here's the latest public version Vishal and I have:
 
-Fix these invalid accesses by invalidating ctx->cur_folio if all bytes
-of the folio have been read in by the IO helper.
+  https://github.com/googleprodkernel/linux-cc/tree/wip-gmem-conversions-hugetlb-restructuring-12-08-25
 
-This allows us to also remove the +1 bias added for the ifs case. The
-bias was previously added to ensure that if all bytes are read in, the
-IO helper does not end the read on the folio until iomap has decremented
-the bias.
+On the guest_memfd call on 2026-01-22, Michael found another bug to do
+with multiple threads trying to allocate within the same huge page at
+the same time.
 
-Fixes: b2f35ac4146d ("iomap: add caller-provided callbacks for read and readahead")
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
----
- fs/iomap/buffered-io.c | 69 ++++++++++++++++++++++--------------------
- 1 file changed, 37 insertions(+), 32 deletions(-)
+The fix we're using to make progress is to use hugetlb_fault_mutex_lock.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 6beb876658c0..f8937fd5ee8e 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -409,8 +409,6 @@ static void iomap_read_init(struct folio *folio)
- 	struct iomap_folio_state *ifs = folio->private;
- 
- 	if (ifs) {
--		size_t len = folio_size(folio);
--
- 		/*
- 		 * ifs->read_bytes_pending is used to track how many bytes are
- 		 * read in asynchronously by the IO helper. We need to track
-@@ -418,23 +416,19 @@ static void iomap_read_init(struct folio *folio)
- 		 * reading in all the necessary ranges of the folio and can end
- 		 * the read.
- 		 *
--		 * Increase ->read_bytes_pending by the folio size to start, and
--		 * add a +1 bias. We'll subtract the bias and any uptodate /
--		 * zeroed ranges that did not require IO in iomap_read_end()
--		 * after we're done processing the folio.
-+		 * Increase ->read_bytes_pending by the folio size to start.
-+		 * We'll subtract any uptodate / zeroed ranges that did not
-+		 * require IO in iomap_read_end() after we're done processing
-+		 * the folio.
- 		 *
- 		 * We do this because otherwise, we would have to increment
- 		 * ifs->read_bytes_pending every time a range in the folio needs
- 		 * to be read in, which can get expensive since the spinlock
- 		 * needs to be held whenever modifying ifs->read_bytes_pending.
--		 *
--		 * We add the bias to ensure the read has not been ended on the
--		 * folio when iomap_read_end() is called, even if the IO helper
--		 * has already finished reading in the entire folio.
- 		 */
- 		spin_lock_irq(&ifs->state_lock);
- 		WARN_ON_ONCE(ifs->read_bytes_pending != 0);
--		ifs->read_bytes_pending = len + 1;
-+		ifs->read_bytes_pending = folio_size(folio);
- 		spin_unlock_irq(&ifs->state_lock);
- 	}
- }
-@@ -465,11 +459,9 @@ static void iomap_read_end(struct folio *folio, size_t bytes_submitted)
- 
- 		/*
- 		 * Subtract any bytes that were initially accounted to
--		 * read_bytes_pending but skipped for IO. The +1 accounts for
--		 * the bias we added in iomap_read_init().
-+		 * read_bytes_pending but skipped for IO.
- 		 */
--		ifs->read_bytes_pending -=
--			(folio_size(folio) + 1 - bytes_submitted);
-+		ifs->read_bytes_pending -= folio_size(folio) - bytes_submitted;
- 
- 		/*
- 		 * If !ifs->read_bytes_pending, this means all pending reads by
-@@ -483,18 +475,30 @@ static void iomap_read_end(struct folio *folio, size_t bytes_submitted)
- 		spin_unlock_irq(&ifs->state_lock);
- 		if (end_read)
- 			folio_end_read(folio, uptodate);
--	} else if (!bytes_submitted) {
-+	} else {
- 		/*
--		 * If there were no bytes submitted, this means we are
--		 * responsible for unlocking the folio here, since no IO helper
--		 * has taken ownership of it. If there were bytes submitted,
--		 * then the IO helper will end the read via
--		 * iomap_finish_folio_read().
-+		 * If a folio without an ifs is submitted to the IO helper, the
-+		 * read must be on the entire folio and the IO helper takes
-+		 * ownership of the folio. This means we should only enter
-+		 * iomap_read_end() for the !ifs case if no bytes were submitted
-+		 * to the IO helper, in which case we are responsible for
-+		 * unlocking the folio here.
- 		 */
-+		WARN_ON_ONCE(bytes_submitted);
- 		folio_unlock(folio);
- 	}
- }
- 
-+static void iomap_read_submit_and_end(struct iomap_read_folio_ctx *ctx,
-+		size_t bytes_submitted)
-+{
-+	if (ctx->ops->submit_read)
-+		ctx->ops->submit_read(ctx);
-+
-+	if (ctx->cur_folio)
-+		iomap_read_end(ctx->cur_folio, bytes_submitted);
-+}
-+
- static int iomap_read_folio_iter(struct iomap_iter *iter,
- 		struct iomap_read_folio_ctx *ctx, size_t *bytes_submitted)
- {
-@@ -502,6 +506,7 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
- 	loff_t pos = iter->pos;
- 	loff_t length = iomap_length(iter);
- 	struct folio *folio = ctx->cur_folio;
-+	size_t folio_len = folio_size(folio);
- 	size_t poff, plen;
- 	loff_t pos_diff;
- 	int ret;
-@@ -515,8 +520,7 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
- 
- 	ifs_alloc(iter->inode, folio, iter->flags);
- 
--	length = min_t(loff_t, length,
--			folio_size(folio) - offset_in_folio(folio, pos));
-+	length = min_t(loff_t, length, folio_len - offset_in_folio(folio, pos));
- 	while (length) {
- 		iomap_adjust_read_range(iter->inode, folio, &pos, length, &poff,
- 				&plen);
-@@ -542,7 +546,15 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
- 			ret = ctx->ops->read_folio_range(iter, ctx, plen);
- 			if (ret)
- 				return ret;
-+
- 			*bytes_submitted += plen;
-+			/*
-+			 * If the entire folio has been read in by the IO
-+			 * helper, then the helper owns the folio and will end
-+			 * the read on it.
-+			 */
-+			if (*bytes_submitted == folio_len)
-+				ctx->cur_folio = NULL;
- 		}
- 
- 		ret = iomap_iter_advance(iter, plen);
-@@ -572,10 +584,7 @@ void iomap_read_folio(const struct iomap_ops *ops,
- 		iter.status = iomap_read_folio_iter(&iter, ctx,
- 				&bytes_submitted);
- 
--	if (ctx->ops->submit_read)
--		ctx->ops->submit_read(ctx);
--
--	iomap_read_end(folio, bytes_submitted);
-+	iomap_read_submit_and_end(ctx, bytes_submitted);
- }
- EXPORT_SYMBOL_GPL(iomap_read_folio);
- 
-@@ -636,11 +645,7 @@ void iomap_readahead(const struct iomap_ops *ops,
- 		iter.status = iomap_readahead_iter(&iter, ctx,
- 					&cur_bytes_submitted);
- 
--	if (ctx->ops->submit_read)
--		ctx->ops->submit_read(ctx);
--
--	if (ctx->cur_folio)
--		iomap_read_end(ctx->cur_folio, cur_bytes_submitted);
-+	iomap_read_submit_and_end(ctx, cur_bytes_submitted);
- }
- EXPORT_SYMBOL_GPL(iomap_readahead);
- 
--- 
-2.47.3
+unsigned int gmem_hugetlb_mapping_index_lock(struct address_space *mapping,
+					     pgoff_t index, u8 page_order)
+{
+	pgoff_t index_floor = round_down(index, 1ULL << page_order);
 
+	return hugetlb_fault_mutex_lock(mapping, index_floor);
+}
+
+void gmem_hugetlb_mapping_index_unlock(unsigned int hash)
+{
+	hugetlb_fault_mutex_unlock(hash);
+}
+
+and then
+
+static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
+{
+        ... declarations ...
+
+	if (gmem_is_hugetlb(gi->flags))
+		lock_id = gmem_hugetlb_mapping_index_lock(mapping, index, gi->page_order);
+
+        ... and this right at the end ...
+
+	if (gmem_is_hugetlb(gi->flags))
+		gmem_hugetlb_mapping_index_unlock(lock_id);
+}
+
+Yan also found some bugs (thanks!) and there's a discussion at [*].
+
+[*] https://lore.kernel.org/all/CAEvNRgGG+xYhsz62foOrTeAxUCYxpCKCJnNgTAMYMV=w2eq+6Q@mail.gmail.com/
 
