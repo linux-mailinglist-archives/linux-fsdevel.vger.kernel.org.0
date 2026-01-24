@@ -1,65 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-75369-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75370-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KCa7AJY3dWkqCQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75369-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 22:20:22 +0100
+	id OOaMDjU8dWlUCgEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75370-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 22:40:05 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D5267F060
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 22:20:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C53D57F142
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 22:40:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4228C30131C0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 21:20:07 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id BC2FB3014127
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 21:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C6C27E054;
-	Sat, 24 Jan 2026 21:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tx3PHjVF"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5049281532;
+	Sat, 24 Jan 2026 21:39:45 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from brightrain.aerifal.cx (brightrain.aerifal.cx [104.156.224.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCB610F1;
-	Sat, 24 Jan 2026 21:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7F12836B0
+	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Jan 2026 21:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.156.224.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769289604; cv=none; b=Vmml/LxuUCHmUS7mQQLiCJMiwKevvSc8EEtn4SGFa+cg/v0VVkWMsTSCn7LURpz/3LYm8l3FB9eUkhw1B0F6UGLIE7vPZ9OYmWd+c8UwB3+e1RgBPi17H2DhUgbs8OIEL5bDTHTC2ke43wYGDxsUHSgPDib9ok2DHiLy8WGXOg8=
+	t=1769290785; cv=none; b=FgWtgIwfVjr/m8FNOacLONiQFcQEsaPYzRoyFGC1kX4n7eXSqU2SwnNTUSFVDniehlipL1cFeCj0rwJuFj8WVd9eOMhohBcJ1ciR2eRtqDXHlZVyqn5Nu3xNnaw0t249QKVCmND4vOsn30MDrptbx4DJ9Eanw/qvCCDIAjJPeRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769289604; c=relaxed/simple;
-	bh=oI+uA3O35prux956Vzu7Z1UUlwDa0yJcLaD0R2S8IsY=;
+	s=arc-20240116; t=1769290785; c=relaxed/simple;
+	bh=/mid9Q9CXUWG2ha83G0bBjVrJ0AD7rA0cgemMAil4co=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HBYDBN1cAHrUsw9qR1LS9tfdG32XF2WfaQUQV5TUe1EUlO3mKd4xhmlfKoGi5mxSVPuBAzW+L9X+zqEyjVerZvOGwhgQOfzy3Rbq+SGK4xkP4P8CBBJcDyMhsxxYSvI2MfVg9XrKCaNHn0FAvYHnBaxlDLlyo4rBMSJr5adXnjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tx3PHjVF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE05BC116D0;
-	Sat, 24 Jan 2026 21:20:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769289604;
-	bh=oI+uA3O35prux956Vzu7Z1UUlwDa0yJcLaD0R2S8IsY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tx3PHjVFa71TMA8P2jVrrQzZkrnzrpZqil3kd3DaCVTplbq9iK6DlJ8qsql1thPAv
-	 UNjuW1nfiRVWAbZf+LRjOeoUGh4XP+zmVrTNSc8g7amTOCb4vyFpcPWGiqIIenq2dB
-	 vft8MwRjbFKObQYd0ghcaHYdAZbM58IwoBylA9FvOa/jgLOmx9LjHJvNd36n4Pcm2R
-	 L8QHWrN4AT/1gM+82FP1MC53CTF2OW1OSsDNz1AatHjk7o4UTRUS+VrtUNfKt2GK58
-	 xob/cAfD4zqAwb+w2F7IClIn40cu37XDMKbfm3FWH+cSbAYgtbkiZuLzAG63322rOw
-	 Mk5sbTrl4k/7w==
-Date: Sat, 24 Jan 2026 13:19:56 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	Andrey Albershteyn <aalbersh@redhat.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	fsverity@lists.linux.dev
-Subject: Re: [PATCH 06/11] fsverity: push out fsverity_info lookup
-Message-ID: <20260124211956.GF2762@quark>
-References: <20260122082214.452153-1-hch@lst.de>
- <20260122082214.452153-7-hch@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Eol8xSHcOn48vfIXZnYtIHt84ipk/IgS10GA7nk8E75vWIGn/XpopPhcAbkkoNFk3hFzl8XQMRTvpJSRODEB3yt3fZWCP4xksgT+E0AKJLYfuSs4uknzQnpaZKh8AqPWZEvWi1uVncceBD1iV2aENZ4bUkJwegpqKNS4CSIGQKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org; spf=pass smtp.mailfrom=aerifal.cx; arc=none smtp.client-ip=104.156.224.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aerifal.cx
+Date: Sat, 24 Jan 2026 16:39:34 -0500
+From: Rich Felker <dalias@libc.org>
+To: The 8472 <kernel@infinite-source.de>
+Cc: Zack Weinberg <zack@owlfolio.org>, Alejandro Colomar <alx@kernel.org>,
+	Vincent Lefevre <vincent@vinc17.net>, Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+	GNU libc development <libc-alpha@sourceware.org>
+Subject: Re: [RFC v1] man/man2/close.2: CAVEATS: Document divergence from
+ POSIX.1-2024
+Message-ID: <20260124213934.GI6263@brightrain.aerifal.cx>
+References: <20250517133251.GY1509@brightrain.aerifal.cx>
+ <5jm7pblkwkhh4frqjptrw4ll4nwncn22ep2v7sli6kz5wxg5ik@pbnj6wfv66af>
+ <8c47e10a-be82-4d5b-a45e-2526f6e95123@app.fastmail.com>
+ <20250524022416.GB6263@brightrain.aerifal.cx>
+ <1571b14d-1077-4e81-ab97-36e39099761e@app.fastmail.com>
+ <20260120174659.GE6263@brightrain.aerifal.cx>
+ <aW_jz7nucPBjhu0C@devuan>
+ <aW_olRn5s1lbbjdH@devuan>
+ <1ec25e49-841e-4b04-911d-66e3b9ff4471@app.fastmail.com>
+ <0f60995f-370f-4c2d-aaa6-731716657f9d@infinite-source.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,100 +62,53 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260122082214.452153-7-hch@lst.de>
+In-Reply-To: <0f60995f-370f-4c2d-aaa6-731716657f9d@infinite-source.de>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-1.46 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75369-lists,linux-fsdevel=lfdr.de];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[ebiggers@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
+	NEURAL_HAM(-0.00)[-0.999];
+	RCVD_COUNT_THREE(0.00)[3];
+	MIME_TRACE(0.00)[0:+];
 	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	DMARC_NA(0.00)[libc.org];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:email]
-X-Rspamd-Queue-Id: 9D5267F060
+	FROM_NEQ_ENVFROM(0.00)[dalias@libc.org,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	R_DKIM_NA(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75370-lists,linux-fsdevel=lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[]
+X-Rspamd-Queue-Id: C53D57F142
 X-Rspamd-Action: no action
 
-On Thu, Jan 22, 2026 at 09:22:02AM +0100, Christoph Hellwig wrote:
-> Pass a struct fsverity_info to the verification and readahead helpers,
-> and push the lookup into the callers.  Right now this is a very
-> dumb almost mechanic move that open codes a lot of fsverity_info_addr()
-> calls int the file systems.  The subsequent patches will clean this up.
+On Sat, Jan 24, 2026 at 08:34:01PM +0100, The 8472 wrote:
+> On 23/01/2026 01:33, Zack Weinberg wrote:
 > 
-> This prepares for reducing the number of fsverity_info lookups, which
-> will allow to amortize them better when using a more expensive lookup
-> method.
+> [...]
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/btrfs/extent_io.c     |  4 +++-
->  fs/buffer.c              |  4 +++-
->  fs/ext4/readpage.c       | 11 ++++++++---
->  fs/f2fs/compress.c       |  4 +++-
->  fs/f2fs/data.c           | 15 +++++++++++----
->  fs/verity/verify.c       | 26 ++++++++++++++------------
->  include/linux/fsverity.h | 24 +++++++++++++++---------
->  7 files changed, 57 insertions(+), 31 deletions(-)
+> > ERRORS
+> >         EBADF  The fd argument was not a valid, open file descriptor.
+> 
+> Unfortunately EBADF from FUSE is passed through unfiltered by the kernel
+> on close[0], that makes it more difficult to reliably detect bugs relating
+> to double-closes of file descriptors.
 
-This patch introduces another bisection hazard by adding calls to
-fsverity_info_addr() when CONFIG_FS_VERITY=n.  fsverity_info_addr() has
-a definition only when CONFIG_FS_VERITY=y.
+Wow, that's a nasty bug. Are the kernel folks not amenable to fixing
+it? I wonder if that could even have security implications. I think
+you could detect these fraudulent EBADFs (albeit not under conditions
+where there's a race bug) by performing fcntl/F_GETFD before close and
+knowing the EBADF from close is fake is fcntl didn't EBADF, but that
+seems like an unreasonable cost to work around FUSE behaving badly.
 
-Maybe temporarily add a CONFIG_FS_VERITY=n stub for fsverity_info_addr()
-that returns NULL, and also ensure that it's dereferenced only when it's
-known that fsverity verification is needed.  Most of the call sites look
-okay, but the second one in ext4_mpage_readpages() needs to be fixed.
-
-> @@ -430,6 +431,7 @@ EXPORT_SYMBOL_GPL(fsverity_verify_blocks);
->  #ifdef CONFIG_BLOCK
->  /**
->   * fsverity_verify_bio() - verify a 'read' bio that has just completed
-> + * @vi: fsverity_info for the inode to be read
->   * @bio: the bio to verify
->   *
->   * Verify the bio's data against the file's Merkle tree.  All bio data segments
-> @@ -442,13 +444,13 @@ EXPORT_SYMBOL_GPL(fsverity_verify_blocks);
->   * filesystems) must instead call fsverity_verify_page() directly on each page.
->   * All filesystems must also call fsverity_verify_page() on holes.
->   */
-> -void fsverity_verify_bio(struct bio *bio)
-> +void fsverity_verify_bio(struct fsverity_info *vi, struct bio *bio)
->  {
->  	struct inode *inode = bio_first_folio_all(bio)->mapping->host;
->  	struct fsverity_verification_context ctx;
->  	struct folio_iter fi;
->  
-> -	fsverity_init_verification_context(&ctx, inode);
-> +	fsverity_init_verification_context(&ctx, inode, vi);
-
-Note that fsverity_info has a back-pointer to the inode.  So,
-fsverity_init_verification_context() could just take the vi and set
-ctx->inode to vi->inode.
-
-Then it wouldn't be necessary to get the inode from
-bio_first_folio_all(bio)->mapping->host (in fsverity_verify_bio()) or
-folio->mapping->host (in fsverity_verify_blocks()).
-Similarly in fsverity_readahead() too.
-
-(It might make sense to handle this part as a separate patch.)
-
-- Eric
+Rich
 
