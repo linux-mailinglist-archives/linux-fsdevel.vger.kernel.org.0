@@ -1,148 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-75356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id AEohMHAFdWnx/wAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 18:46:24 +0100
+	id ofNWNa0PdWluAQEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 19:30:05 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEAE27E602
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 18:46:23 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42F2E7E740
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 19:30:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 905963006394
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 17:46:18 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 0766E300C811
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jan 2026 18:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735C815E5BB;
-	Sat, 24 Jan 2026 17:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE4922157E;
+	Sat, 24 Jan 2026 18:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DZSPp5m3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HuhC8Tt3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4718B3EBF0E
-	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Jan 2026 17:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BAF8243376;
+	Sat, 24 Jan 2026 18:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769276776; cv=none; b=ld1Br54u+QEmgbe7C8jbaZpWKGLdjgLSNXV/t5+vzPZCN+0E9gKMOjDGFWP8BLoIyNgp6S4khINMJHLerL6ANG6FXyxkKbx/y5ornPBVp18/F/zU2BRo3TX7sT1+wNlEAWBBRlk9lTYzGioyk4bhoKNF+LyT/n6rpKusvvfOfQY=
+	t=1769279402; cv=none; b=ZNPHr2Pa+O7ZW64KYek0k3gsMQeNL+oqMLs78R49Jc4FT69yti7j3ca5K17BN0imm7Hr2igLb5GrwTAtkH6SvqoQRYmCVHfFqGnd3V+koSxZe3FO/O0A+F5R/zW9uRg5Ifxl4zU+GMr2FwgLmLNtVxrswsiq/HvyU7SyJmdcAYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769276776; c=relaxed/simple;
-	bh=s7vUhsuQcI6ljWpTeXUTHbT3be4LrJOFULQfFIUNsx0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VpKNbZ95if15q2pY2+Zo/EWk/awLP9Gm1HLCl3MLHvaqEByPnd+j3bjz2sii9FxdZUDZHTFthUyVfWjl4ELhvd6HWyY359qoZ7BtjJWDWiTdfWos+W/IMuS5ytGQpMeYxTH6W8y2QpsnOvdITvmWb3SPV1MJ3hHcb/Tp16d/gBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DZSPp5m3; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6505cac9879so4964408a12.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Jan 2026 09:46:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1769276772; x=1769881572; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=a860oab+rFNYoCqrwGo7YpHA3uci+MoPPUl+nEJ6f0s=;
-        b=DZSPp5m3CNHxRsxawnIU24zpujdJ7lPjVbAMGFF6cLPmvIC8KDGPDp0uSniZWp0rp3
-         x8KBpjAsqdb/ulsyNjN84V5CG6UQiV/QwYZ6sfZgNr+BTeVdEemq6HylUxeiiwZo/0aM
-         5Sk4q0z+cU4shXKshkOI0fo0OzGHa3Rms3Fqk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769276772; x=1769881572;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a860oab+rFNYoCqrwGo7YpHA3uci+MoPPUl+nEJ6f0s=;
-        b=QgG4OdorBAzR0axQcc0+TBf7zihgkHgnN/xsSi1Aun0sOgvS9pMQyQg+FAvDmT4U9j
-         8eP1yDAEDL0SwTKo9G1Ua6tgGGGa7Z8R/kdRPKTCy1Jx3tXQrVWv0UXARpF+t4TLfPI9
-         k8/KQTIn9pfzhhodmM12cw/hHviLpQgktZ1lkXvd4kiVmtvneUg6I8hX1CS4lB1Og8wd
-         3oLgdEp2nTxiyc6OGh8SGtWeXwurHHVnLCpPzJ1o5LMYVopg8mN5+F8nBo0i2ua5whVj
-         B2W45gQ3WxyrZdriYiBpgc4EUru/CvR554aG3odA8NX8hkMgnsOVq6E4SNBiuScrIR9N
-         9GJw==
-X-Gm-Message-State: AOJu0YwoKtlzUGsTFFSh8y006fCDETUMzRxzwIJWKXRtNWMqAik42ZYj
-	+Bx/r+fuVa+yNt9gKnxJBHlieU7ZQU7xW82wyew48RboZ0xeKjGyXTKR3bQDpRH6Y7jjwmvW/gI
-	DLHv9Tq8=
-X-Gm-Gg: AZuq6aKV547rGtRGw0CNNym6L3RAhkr/yunJxFLXkXlWZXuq2imeoAp1hsjFBZyAJSM
-	E3qURqgtIH/7qoIf2y72NbVyql2+rHEC9ORH4LH6Ey7ncWJvwFF6VcH0wemcJ5Cbxozz4WwfBwm
-	JdPtvRHckHpnBcSxxM+lnadRBbf8xQeqcxkVqxbgzyddSGpo8ssd5x2UwqKJgJ+sdng6MoPPUb/
-	wVnHBv0C8J6dafXiDSSytLNb0im7+RrxeOPd5YPmar+nSFWHZ9xW2dsxpQXJYIpeikRRo82jBGe
-	MMQzs/U3sXz6nl0UE34pRGy6Ssja9/e0dhXCUJmO5oSu9PeFB0tbHs9EiQ9EAdB4QRjn1EPqT+Q
-	DSTsJvubyZuRb2r1/+lnq6S5KDfIssIYLMEtFTEr+sbNCrYmRA5DDPHAo9qEWZBF/mHH9+fjN09
-	D4vk/uhgsuX1U9rNJ5fSWJcBYt8LaYIA4587GyQvJkC26kl47Vz/r4Ks01HIpa
-X-Received: by 2002:a17:906:6a07:b0:b88:599f:703e with SMTP id a640c23a62f3a-b885ac0fc30mr442978166b.2.1769276772285;
-        Sat, 24 Jan 2026 09:46:12 -0800 (PST)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8872854909sm193500466b.44.2026.01.24.09.46.11
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 24 Jan 2026 09:46:11 -0800 (PST)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b885a18f620so368698366b.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Jan 2026 09:46:11 -0800 (PST)
-X-Received: by 2002:a17:907:944e:b0:b7c:e320:5232 with SMTP id
- a640c23a62f3a-b885ac0ffc4mr485625666b.5.1769276771121; Sat, 24 Jan 2026
- 09:46:11 -0800 (PST)
+	s=arc-20240116; t=1769279402; c=relaxed/simple;
+	bh=s8IKxwWsXucua6wqhxMUTVDlcpMQSm0GFKQUHS7XJds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XSRBmr40hHT3pB5SeK6w+Ni9NpYR5N73ftpLzVLXcKFUILbTdN3UU63XD3OaaSm6rgen/zLBITAOd09/gFLMbFFEk/kbFWpWPiXp5dW6kQEt4Z8YjgjqGolr9FGyYpCMhJEOXKrGdQKAECfaal2goh9JqzKcW8FQKXQqOe5gEwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HuhC8Tt3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95BAFC116D0;
+	Sat, 24 Jan 2026 18:30:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769279402;
+	bh=s8IKxwWsXucua6wqhxMUTVDlcpMQSm0GFKQUHS7XJds=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HuhC8Tt3hj1WbSVBnwGm6BFupmZXA8scX85bpBL+4acd35ImGyF8o3lDbZY2gcBEf
+	 gkKzjSzUuSGu8hCipjlAStfBLwBdnIRixd1VqzxZneY4hgs4UIfpjbAOmliT9yh1yp
+	 UQgwc9UGFobAEhiS9nTcNZwfevs6qziDHUHy0CtuKFeqD/MF9CBotvN9KL+2gxqT4P
+	 20D17IiQIV1w/Yu4/rfjq3G6cB4kty24gcjKzH898/MjY2dusYkg8u4WCl9Catlefj
+	 N2EHwAF4I1jFmnjtvERiL4fQRi/e2l1UprmacBNpCnSBBV/ofWBAT00Djv0aijIgQI
+	 DMLoVrmYdtH0w==
+Date: Sat, 24 Jan 2026 10:29:59 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Andrey Albershteyn <aalbersh@kernel.org>
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: reset read-only fsflags together with xflags
+Message-ID: <20260124182959.GB2762@quark>
+References: <20260121193645.3611716-1-aalbersh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260122202025.GG3183987@ZenIV> <CAHk-=wj1nKArJE8dj+mwF2bGu+N2-DL0P2ytaLYJRrDdPpa9MA@mail.gmail.com>
- <20260123003651.GH3183987@ZenIV> <20260124043623.GK3183987@ZenIV>
- <CAHk-=wgkSAHswtOzvTXeBOz1GLNfsohSPdyzZmnVYe2Qx4fetQ@mail.gmail.com> <20260124053639.GL3183987@ZenIV>
-In-Reply-To: <20260124053639.GL3183987@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 24 Jan 2026 09:45:54 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgGCyjEC9ookrcVou4__nkPbSosP7RG6AwntBZbdeAjuA@mail.gmail.com>
-X-Gm-Features: AZwV_QipVsyxObYyhvCmtoZ7WIApowDzsCOO9OBU0SPdlsuWvW_TMdKYgQks_AQ
-Message-ID: <CAHk-=wgGCyjEC9ookrcVou4__nkPbSosP7RG6AwntBZbdeAjuA@mail.gmail.com>
-Subject: Re: [PATCH][RFC] get rid of busy-wait in shrink_dcache_tree()
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	Jan Kara <jack@suse.cz>, Nikolay Borisov <nik.borisov@suse.com>, 
-	Max Kellermann <max.kellermann@ionos.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260121193645.3611716-1-aalbersh@kernel.org>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[linux-foundation.org:s=google];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75356-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75357-lists,linux-fsdevel=lfdr.de];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	DMARC_NA(0.00)[linux-foundation.org];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[linux-foundation.org:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[torvalds@linux-foundation.org,linux-fsdevel@vger.kernel.org];
 	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[ebiggers@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,linux.org.uk:email]
-X-Rspamd-Queue-Id: DEAE27E602
+	RCPT_COUNT_FIVE(0.00)[5];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 42F2E7E740
 X-Rspamd-Action: no action
 
-On Fri, 23 Jan 2026 at 21:34, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> The only trouble is that as soon as some joker slaps __randomize_layout
-> on struct hlist_node they'll start flipping from sharing with ->next to
-> sharing with ->pprev, at random.
+On Wed, Jan 21, 2026 at 08:36:43PM +0100, Andrey Albershteyn wrote:
+> While setting file attributes, the read-only flags are reset
+> for ->xflags, but not for ->flags if flag is shared between both. This
+> is fine for now as all read-only xflags don't overlap with flags.
+> However, for any read-only shared flag this will create inconsistency
+> between xflags and flags. The non-shared flag will be reset in
+> vfs_fileattr_set() to the current value, but shared one is past further
+> to ->fileattr_set.
+> 
+> Reported-by: Eric Biggers <ebiggers@kernel.org>
+> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> ---
+> 
+> The shared read-only flag is going to be added for fsverity. The one for ->flags
+> already exists.
+> 
+> [1]: https://lore.kernel.org/linux-xfs/20260119165644.2945008-2-aalbersh@kernel.org/
 
-If somebody starts using randomize_layout on core data structures,
-they get what they deserve.
+Reviewed-by: Eric Biggers <ebiggers@kernel.org>
 
-We have tons of data structures that are *NOT* randomizable.
-
-In fact, RANDSTRUCT is so broken in general that we actually taint the
-kernel if you enable that crazy option in the first place. So no,
-"what if somebody enables it on random things" is not even remotely
-worth worrying about.
-
-            Linus
+- Eric
 
