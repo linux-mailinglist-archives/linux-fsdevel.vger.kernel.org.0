@@ -1,148 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-75393-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75394-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id fpBiM3mBdmmuRQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75393-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jan 2026 21:47:53 +0100
+	id eDNUMtiPdmksSAEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75394-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jan 2026 22:49:12 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1344C826AF
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jan 2026 21:47:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C420828FD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jan 2026 22:49:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 519073004F75
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jan 2026 20:47:49 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 6BEBF30086EA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jan 2026 21:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485DE30C373;
-	Sun, 25 Jan 2026 20:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8379B30DEA0;
+	Sun, 25 Jan 2026 21:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U2u4XCCN"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="e5UblH7z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75FB5482EB
-	for <linux-fsdevel@vger.kernel.org>; Sun, 25 Jan 2026 20:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB34224240;
+	Sun, 25 Jan 2026 21:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769374066; cv=none; b=to3UwZUJhXpoIcuj3Vh/fPCxokSoG75SH/tsIRp+iG06K0i3BjhKAljmnrmWIKRsFOf0I+OhSczzJsBjrh80X2nIrQGh8QS1+JBGl6M1tsFhF895wPZSu0e6QY/kUFXKSJ8+a38GwaFfACrQHXhX6nNxSJ7FEzYZlACssYskCE4=
+	t=1769377714; cv=none; b=LQ4yF7zz9w1PAaNI5wH0/Bo+9FOhzrYs+qWV7z4G877Qnqb0lS0aLiuLTAsBUuRofroAdDrAoOOgy/7mpcIX3KSAJWyDhPFIjw/FzXT8nlRu7ywY2XOaYRGIGoKZPSE/I6nfpdJq6SouU+DPwaLNedyXNmWecR5vGE3d6mfnTEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769374066; c=relaxed/simple;
-	bh=LH1jC5c1kGjeM88R84d2F32DvAZKT1npv2iWUscmNzE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fC7hMoSyBoUG0kcurhaU8Q11EM/MXnD9KkEdVpiMKSi8B9Q1i7nQH2ud3b6Hi/7ZHDWHBV4qGtHyWpDB4C85O2UddiSyM6RBkifGMzVZ/XqlTwGU3h9oqBg5nCQGuPAUgJVO7nxQigyqIuItFjk30yoCbFkFzhgOTKIUQ1QrDz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U2u4XCCN; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-4359a16a400so3587088f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Jan 2026 12:47:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769374064; x=1769978864; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TrOnLwvRLG3JEc1/1HSkUCyAsStaYOH2lsmBWKKbgf0=;
-        b=U2u4XCCNrzoG9WEehpV9RG9iWcDF+/RLgra8O3lqj27HzSZbaUBVmlvQUa7mArBpg3
-         492zzkn5MDjkwc0cqaLzYg8N7QXO6pXLgOEr2s0q5MNMXLl5mtHsjPZjOOe7agu3EEGx
-         aP0Ee9r/pbubhNniUeNXgtm1Km/Zjt+xLtRWPFgGpISarxQUf+JHIBDwR1kuOii555GI
-         fqT/VTOW2q64/yR0tr14fuWh6hTRH+/HhEozgba9eVJKfn/Rcg6qMYrwveMWoshnbENR
-         SeZ1JN+dA6WEkCNeI2NM7wVnCaIS7/L0wewlziXm2P5s6m4fT+HYcTPqkTl1koTd7ivT
-         4Ung==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769374064; x=1769978864;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=TrOnLwvRLG3JEc1/1HSkUCyAsStaYOH2lsmBWKKbgf0=;
-        b=HYgLXBBdh1kGl4T5qpobI7F/pX6dlm1QlarHJC783WqFr/jPeBC177c3toim28Y3T/
-         9wMwuMfdo55SuUJQteD2ceU3VHQUn5AO+s5QtHWrVLxMeAN1PbTFB4Xe87p+7PF+Z2r8
-         s5jcHpofcfojvAqKxAAB3wncGx5TYWVhpS4b9eogQvJ1U/zVjVCw6H3P8vTxwsbfP1ff
-         vh9YfEg7fyzibdrvS6CYyOtehx9AT6CvcENy+bXSk4P0kiRXIibloeiE3MmPEmtfvKx3
-         aX8n6ZeI8IEQ3eroaMuw/TAlYxbUcxIIhRLlqo3QrNtTaCKdQE8agtZep9S+FHD1IeRw
-         gFTA==
-X-Forwarded-Encrypted: i=1; AJvYcCX96NgWoHz6bOhXsYMZPSSFwDuBGJbeUgS/oOHNmumsPnRI/C2QUby88rwFwO5MrL/pZ2FqIiueSXIp7AS/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbxZqB5y2UmkjNHU1EbIQzjwopLHWy57p3mxjsVuG2MYG6NW4/
-	sG5m+EPOazFof2OLpYHa5C9FXwPjWoikAjmd1FmzVo2we3d2zaPIATi+
-X-Gm-Gg: AZuq6aLVWIiunBXx0MDmRjK0Ecuei3tzKNVR5HCmHjHHVZk6yU+tFteL7r1Q3jHxftd
-	1/wHAexeJc8t5zd43w85dUFV0PxoMb7ezvhUNOgSE+3eGi/3BEwe14iId0LbZ8+tRwGnrDQA49l
-	FHOnS54dpec139UC+itC245TZd7mDGpVAlBfA8BK8bx/Gaw+wFlNdQmzDbyKvAdnrHcJB7aFs4N
-	NOY3+O0n8Sljk8Wzt1EZnQxHqesVLViRRJbkxC2vPDdrntdqZV6yUhyURfmwjx5UFwyDwg5lp31
-	drPAEYb1IbV/4ye259TEVCXxr7ql+0dnlxSIe1mOnejlQIwOXkBR/xy/JxwRgmBOhDMAkuKr1hZ
-	WjqrfbigGq0V62ndSAkc05rtA4fvUE+hk0y3cUrqB3Q2fqJm0KsCIZqVDOzV0X0Ojv/cmz5htFG
-	gMrSZSWH4=
-X-Received: by 2002:a05:6000:420e:b0:435:9ee1:f91a with SMTP id ffacd0b85a97d-435ca3a43c4mr4888315f8f.53.1769374063579;
-        Sun, 25 Jan 2026 12:47:43 -0800 (PST)
-Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-435b1c24a8asm24444674f8f.12.2026.01.25.12.47.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 25 Jan 2026 12:47:43 -0800 (PST)
-From: Askar Safin <safinaskar@gmail.com>
-To: brauner@kernel.org
-Cc: amir73il@gmail.com,
-	hsiangkao@linux.alibaba.com,
-	jack@suse.cz,
-	jlayton@kernel.org,
-	josef@toxicpanda.com,
-	lennart@poettering.net,
-	linux-fsdevel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	walters@verbum.org,
-	zbyszek@in.waw.pl
-Subject: Re: [PATCH 3/3] fs: add immutable rootfs
-Date: Sun, 25 Jan 2026 23:47:38 +0300
-Message-ID: <20260125204738.2080749-1-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260108-protokollieren-melone-de2f17539209@brauner>
-References: <20260108-protokollieren-melone-de2f17539209@brauner>
+	s=arc-20240116; t=1769377714; c=relaxed/simple;
+	bh=dVblczFOT3KK64ywz5l+aXQv3RLrX2RoBjFt0kny0a8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZtYpqOlsJ+oIqczEAEfgipQ5P62mh66nTdor8cE+GpmjCb9gBH6cNBLZdwLrihTj5wnF5j9J6SL8Gml7163eMy2kGlYyaEKkaB/Py8xEdxWyvYj51mkvd0tvr2YuKPSJBlb8T0Bo7lOCO9vQt86J2zsgYWl76AX1H4Z8uSmIrYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=e5UblH7z; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=quPIaL6J4vgskyL8jbt0HEBw7S9sSjdcy/gh2a5f1k4=; b=e5UblH7z5/IjdAKi22YkrU/R70
+	RpKHo3fZ71OVhhLv/oYJcW70xMU/N3QMFRSrTRoQ9NeI+QbCHXH6TZFSTz7yN+zkprWYk2wCe/zb3
+	WX/cZTCUAglWH3fuxkJxwIsSo1ygzzq8aILKQhkTwvQIZa0Gs44VH3lUCouxwoEMoc1LE24FR4KWG
+	fJMxm+deBt8KWp6yJWvwdt80mv2jzq+ZxWiF2/cKu3t4q9ZP9O5fMu/JhZ+INTwx0ZWaHrytz8VhQ
+	dRyMWcchY40sPMrTdfnDW2tPwobxN98aqvOeIbVBJ6KjknVfCVzvDeD2O4zCb58CWO3yMSzyMePbg
+	j2CpBSzw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vk7y2-00000004zbi-1ua8;
+	Sun, 25 Jan 2026 21:48:22 +0000
+Date: Sun, 25 Jan 2026 21:48:22 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+	Andrey Albershteyn <aalbersh@redhat.com>,
+	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	fsverity@lists.linux.dev
+Subject: Re: [PATCH 11/11] fsverity: use a hashtable to find the fsverity_info
+Message-ID: <aXaPph6Yi-hzf0J-@casper.infradead.org>
+References: <20260122082214.452153-1-hch@lst.de>
+ <20260122082214.452153-12-hch@lst.de>
+ <20260125013104.GA2255@sol>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260125013104.GA2255@sol>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[infradead.org:s=casper.20170209];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75393-lists,linux-fsdevel=lfdr.de];
-	TO_DN_NONE(0.00)[];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,linux.alibaba.com,suse.cz,kernel.org,toxicpanda.com,poettering.net,vger.kernel.org,zeniv.linux.org.uk,verbum.org,in.waw.pl];
+	TAGGED_FROM(0.00)[bounces-75394-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
+	RCPT_COUNT_TWELVE(0.00)[15];
 	MIME_TRACE(0.00)[0:+];
-	FROM_NEQ_ENVFROM(0.00)[safinaskar@gmail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	RCVD_COUNT_FIVE(0.00)[5];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	FROM_HAS_DN(0.00)[]
-X-Rspamd-Queue-Id: 1344C826AF
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[willy@infradead.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[infradead.org:+];
+	NEURAL_HAM(-0.00)[-1.000];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 3C420828FD
 X-Rspamd-Action: no action
 
-Christian Brauner <brauner@kernel.org>:
-> We can start with the basic right now where it's not mountable from
-> userspace and then make it mountable from userspace later.
+On Sat, Jan 24, 2026 at 05:31:04PM -0800, Eric Biggers wrote:
+> Maybe do:
+> 
+> 	if (IS_ENABLED(CONFIG_FS_VERITY) && IS_VERITY(inode)) {
+> 		/*
+>                  * This pairs with the try_cmpxchg in set_mask_bits()
+>                  * used to set the S_VERITY bit in i_flags.
+> 		 */
+> 		smp_mb();
+> 		return true;
+> 	}
 
-For your information: if we make it mountable by userspace, then
-magic number will not be reliable indicator of whether this is actual
-root of hierarchy.
+Is there a reason not to do as DAX did:
 
-But this is okay, because we can do listmount/statmount and check
-whether mount id is equal to parent mount id.
++++ b/include/linux/fs.h
+@@ -2119,7 +2119,11 @@ extern loff_t vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
+ #endif
+ #define S_ENCRYPTED    (1 << 14) /* Encrypted file (using fs/crypto/) */
+ #define S_CASEFOLD     (1 << 15) /* Casefolded file */
++#ifdef CONFIG_FS_VERITY
+ #define S_VERITY       (1 << 16) /* Verity file (using fs/verity/) */
++#else
++#define S_VERITY       0         /* Make all the verity checks disappear */
++#endif
+ #define S_KERNEL_FILE  (1 << 17) /* File is in use by the kernel (eg. fs/cachefiles) */
+ #define S_ANON_INODE   (1 << 19) /* Inode is an anonymous inode */
 
--- 
-Askar Safin
+
+and then we can drop the CONFIG_FS_VERITY check here and in (at leaast)
+three other places
 
