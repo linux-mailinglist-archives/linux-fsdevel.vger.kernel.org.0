@@ -1,207 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-75386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75387-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YBsxCM85dmmTNgEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jan 2026 16:42:07 +0100
+	id MoXGFn1DdmmXOQEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75387-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jan 2026 17:23:25 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76C6E814E4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jan 2026 16:42:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E8548168F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jan 2026 17:23:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 5EB203005652
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jan 2026 15:42:05 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 605CC30062FD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jan 2026 16:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F11F3254BB;
-	Sun, 25 Jan 2026 15:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3878930DD13;
+	Sun, 25 Jan 2026 16:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W2vqNHrf"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dNm+x/Cs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5499324707
-	for <linux-fsdevel@vger.kernel.org>; Sun, 25 Jan 2026 15:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.179
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769355724; cv=pass; b=K3na4+flXEz1GF/lB9T11SRl4RS0LNvYTNhAn23Fo1q9qd2DDeddXQdkMnyPcnWiYhJ5ddYRHQBnVIZ4AWE3GuYaxCpyzv/c3OCeERcYbRzQzu4u206yruWJKkBLrqL++o88U5wYk7wrGhvsXh4Pi1VgEV8/7e6YcLPpkrYyUT8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769355724; c=relaxed/simple;
-	bh=rNk6ePg/D71f1bVvLdkIMLT2fyEpWH9p+c3WaoD0KpQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C/7yniJjTk5hKwTzPxwrfI8plk66CFTA7jQ3w9ooK+nb02SySBpvEHvBqh3P6oJaWFZXV4eNBCvqM3dmw03Tf6Hj4UOy6TynpLofLTKfyzdkiARSC92TL4EBNp7Hin7Dz84KXH07t+tbqh+7SjkiHb6SxpMECJVo52MUkWkFZiM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W2vqNHrf; arc=pass smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5663601fe8bso3290781e0c.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Jan 2026 07:42:02 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769355722; cv=none;
-        d=google.com; s=arc-20240605;
-        b=Db6Oml9uc0y4H1Tc25O2cOuDPIQR4+QrjNQadg342ornv78UGwEikJc/PNw2cTFwuc
-         7GOduZsAB1wUwY4FlMpJNkoc3pi72T6TwPItUJ9WEZaebp2LcazF/KXiEnwAxiEWIkaE
-         oheZ2B6/jLW0sb1kExajRXhwid1D6yyYwGVSyARGDI6f6YrXI5FIXaR9atesclBlvzr4
-         NG9JoOCE1bjlYUAjLEs1wzPZVwZkxQ12uiWzTjxriXu0wZvNOOlYAicrF0+i7PAXvJus
-         IdbFWT/PCN2fF8RO+v6o089wuVuAX9NDgnSJhpgIGdyHDQOX4txEzseghK88hhRssIbK
-         jq9g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=p8tYbUMORQ+mIeOx9diAkXGQUAiatsPi/KGkl/H1Hio=;
-        fh=jlAoB5NRf+sckPI+BiLWTGIaMSNTTaiib9dUFTScdA8=;
-        b=Wj6h01rO7gEeJhNUvkKoG9jjrrnQCG6rsZD7dz4p8PiPfpBFlo5FwDJubdMd2imAHN
-         JNah+5PGwaojXgDtLeq5QcDinjy7SO13llFkUMvBRcyZHvPyernPDZhz7KmtVsdsoCFR
-         slQrums60X7ZfFtNz2OpXE3hXH/n9XoGRZeJZykjS91Wk1dpVXL8E9SCTEoDcZoCRaFX
-         PQ3yS1xeaUSI7JYDkp8djE9PV88ggjGHiQCYZ+HIoZNh/pD708NpWI3HcbGmX3HO6MI/
-         CDFigurOyCJFt0fD7hzmO0TCt0VV53hz+AeI2wB0FbAaG6OA4h+hpYk4jtEmzmcgvZTd
-         pJIQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769355722; x=1769960522; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p8tYbUMORQ+mIeOx9diAkXGQUAiatsPi/KGkl/H1Hio=;
-        b=W2vqNHrfruApUjJxmSpsGyy+4gVF5IjRtYo3bpYWVXwa/vpW/MBcKqsoeP9UdJRUz9
-         byy6Q7SLepR/kXt20pvF/wX+/k3drlQYLqqypmUf4AADMhcxYFSi46AYzaiQ/tV7ZKEe
-         P01l+8Ht2+pG5dpp4UsK3fkwDuRuToc8/v0XWps4+sgbKFQvR2NoA25EeSBAnAfGOT3/
-         McOUmWmzXmxPQywmG8i1BQLTGuGnRRLeh5AhvjVFUmgSR0pdMK6emoys57sokQAyKF0P
-         DVa8tonLLqEJp79tgcr41OwPDQXfLfKLj6lCl8SGj6cUrOAf9eozfZUyi5vP1vJ+8JfJ
-         W0/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769355722; x=1769960522;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=p8tYbUMORQ+mIeOx9diAkXGQUAiatsPi/KGkl/H1Hio=;
-        b=S8R6qNNhkPTzTb99W7Ana/MRVvHaW6sAM8fzEcNSKISF+1zkGQGHUq99+qYSe/FWt4
-         cjg3g9Qz1y8zQJBA/vxIjKmFCtBcEt/qgc21m2cUdMewueoNEAbKgTWNrfFWF8vW8y36
-         iUiKF64UMII5tDor5oys1S7dp92a9lE17L+o9rIxEQNYtCwc0jq4wR5i+ptWv0qSJ9Nl
-         sW3NiDi2pUUOGvDP7sBipVUEOsDVHPzLyGGlcT7QOoeaokUfiDzmD39+1H5jULsO21No
-         JUy8R4HMvduZxXkmclCd5qgRnxdoEI3fRcizGR927WhLAQXgQTZNSbUUfhqSwoXAEDrC
-         K4Ow==
-X-Gm-Message-State: AOJu0Yzu65PTb1HvMR34uaVHro7lETV63CCZSrrdJUzXjmhngzsZcpTW
-	Wxsx/K2Xgm76/E7FqfXnzr4cxCGnxbZoGHHdBnSEETEKmAiUSzetLCCsQjBo1Y1KkGkLqLvwcic
-	C2ckQXAugkkgCrJM82kRFOdUK289NXiI=
-X-Gm-Gg: AZuq6aJ8Plv63HYXZM/mmVDmuJsjACKHdxczjnHNTEg4FI45k7NKeg7tya0tYzhII4t
-	prLqp3ysOT9wObcaiaSC+kd5MdxzwfZsygMfuQS1pdfcvfWWwwQ/cKg+PwPoq+0rRm15yjK8IoN
-	aSsEnsRMiGcy/rCzNNDC78k7D3XFYLu3BnVgTTP7VId179Gs4wJvyjHsFqBwHiaf+SfMkaqmxKI
-	NsJJeESilFG5SboYh3E5L9DrycyYnuJfdKwZn3HNOskuhCA0D8Wpxmmy3cyJcEMzFUga5h3jHEd
-	uNQnK1cjnM3nw+Jz+MgxnNw4rbCFhLw=
-X-Received: by 2002:a05:6102:290a:b0:5f5:37f6:2b30 with SMTP id
- ada2fe7eead31-5f57634edb5mr546757137.15.1769355721735; Sun, 25 Jan 2026
- 07:42:01 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62AD121018A;
+	Sun, 25 Jan 2026 16:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769358197; cv=none; b=U+xExA3O2iwG9tiOS0f9/DoY18jnEt//OwI3l4KYOfdTWuVECxJMYGF2clG6tdo6jOBMKaSAjwakZJlc33TJfepWnhmCcJpMGigHDjM+YQJ204LMRZLYhS+0DM+z62uHlBsQ3sAC2NZyRhsdXX67SUJBvr+qx3BqqVcmS4VVz7A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769358197; c=relaxed/simple;
+	bh=Q+C3PlAHFFClJm32UkwPQpUTYsed3vglsbB5dFYDyRs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jj0F30Jc/+HrTdFHaGa54kuL3vtn+puZAGpBjPwSbTGTVeo5coT+Dz4/AKnYMIEFwbQhTqQYDwWDkITtpHT3Pa/NzPDyTBkVEa6awqXeoeMwhj7FcFVWTm7scl3YfJ8oE+EKPkCqr6izbaCMEx+pa8Oj0xwe1fu34VO/AaAVhqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dNm+x/Cs; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1769358197; x=1800894197;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Q+C3PlAHFFClJm32UkwPQpUTYsed3vglsbB5dFYDyRs=;
+  b=dNm+x/Cs+Am3DUCamFiuMVJifM+DPqHxrN9iOjB2jO/ggYqUKUnrQuDh
+   6sjPgEI5H1AKCyDaWt8p3P9wqAnFvIP65FLtHSCP7qUBQmCB0deLiaPzk
+   ujmQfyYfQoXVc2B0fyhiuDwgnmziyPmYuC3BL5NkJ3/9YHNZ+YLFaV9FV
+   5Ktk644qm9kK+dgUoWRmXuWZ+GEp+2eOZPJ9iXYsvwmIKVaimeJ+HzzeI
+   ReDmjzmEM9HNRGHoryO9IXgagFKkfohyl29lB4vMSwqe+ofeK94FMBU48
+   nQ9XRm0NG1O374tSQR41H82rUmykfVmnJevoPiDTEBkaI0xFsUAGEIuY2
+   A==;
+X-CSE-ConnectionGUID: BjHZMqhgSCOby/u3yHSE8w==
+X-CSE-MsgGUID: 6Phhh9RHQIWlx7teFmav2Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11682"; a="81180954"
+X-IronPort-AV: E=Sophos;i="6.21,253,1763452800"; 
+   d="scan'208";a="81180954"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jan 2026 08:23:16 -0800
+X-CSE-ConnectionGUID: 16wwdm3mQgyBkh2BeM+bEg==
+X-CSE-MsgGUID: SlVq3XsoS6CgXeqEGfs4hQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,253,1763452800"; 
+   d="scan'208";a="211947092"
+Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 25 Jan 2026 08:23:13 -0800
+Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vk2tK-00000000WBG-3BZ1;
+	Sun, 25 Jan 2026 16:23:10 +0000
+Date: Mon, 26 Jan 2026 00:22:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dorjoy Chowdhury <dorjoychy111@gmail.com>,
+	linux-fsdevel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	jlayton@kernel.org, chuck.lever@oracle.com, alex.aring@gmail.com,
+	arnd@arndb.de
+Subject: Re: [PATCH 1/2] open: new O_REGULAR flag support
+Message-ID: <202601260042.TRDQjGeu-lkp@intel.com>
+References: <20260125141518.59493-2-dorjoychy111@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260125141518.59493-1-dorjoychy111@gmail.com>
- <20260125141518.59493-2-dorjoychy111@gmail.com> <57fe666f-f451-462f-8f16-8c0ba83f1eac@app.fastmail.com>
-In-Reply-To: <57fe666f-f451-462f-8f16-8c0ba83f1eac@app.fastmail.com>
-From: Dorjoy Chowdhury <dorjoychy111@gmail.com>
-Date: Sun, 25 Jan 2026 21:41:50 +0600
-X-Gm-Features: AZwV_QjkcRbssqctRot0q3M2s9Vsa7Wbv5qofxF2cNL1HFmTpgJVm96Xg9rRJRM
-Message-ID: <CAFfO_h7ttQPVCR-yQ_=h4BLoHYW3QZOWQ+oSNSFvY-7NOxxeHw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] open: new O_REGULAR flag support
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Alexander Aring <alex.aring@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260125141518.59493-2-dorjoychy111@gmail.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [0.34 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	MID_CONTAINS_FROM(1.00)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
 	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75386-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[lists.linux.dev,vger.kernel.org,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,arndb.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-75387-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[dorjoychy111@gmail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[9];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: 76C6E814E4
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[lkp@intel.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[intel.com:+];
+	NEURAL_HAM(-0.00)[-1.000];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Queue-Id: 8E8548168F
 X-Rspamd-Action: no action
 
-On Sun, Jan 25, 2026 at 8:40=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
-:
->
-> On Sun, Jan 25, 2026, at 15:14, Dorjoy Chowdhury wrote:
->
-> > diff --git a/include/uapi/asm-generic/errno-base.h
-> > b/include/uapi/asm-generic/errno-base.h
-> > index 9653140bff92..ea9a96d30737 100644
-> > --- a/include/uapi/asm-generic/errno-base.h
-> > +++ b/include/uapi/asm-generic/errno-base.h
-> > @@ -36,5 +36,6 @@
-> >  #define      EPIPE           32      /* Broken pipe */
-> >  #define      EDOM            33      /* Math argument out of domain of=
- func */
-> >  #define      ERANGE          34      /* Math result not representable =
-*/
-> > +#define      ENOTREGULAR     35      /* Not a regular file */
->
-> This clashes with EDEADLK on most architectures, or with
-> EAGAIN on alpha and ENOMSG on mips/parisc. You probably
-> need to pick the next free value in uapi/asm-generic/errno.h
-> and arch/*/include/uapi/asm/errno.h and keep this sorted
-> after EHWPOISON if you can't find an existing error code.
->
+Hi Dorjoy,
 
-Thanks for pointing this out. I will fix up in v2 along with other
-comments (if any). I looked at the existing error codes in
-uapi/asm-generic/errno.h and didn't notice anything that I could
-reuse. So if I understand correctly, I will need this new error code
-in both uapi/asm-generic/errno.h (not in errno-base.h) and in
-arch/*/include/uapi/asm/errno.h (I see some parallel
-tools/arch/*/include/uapi/asm/errno.h files too) just after EHWPOISON,
-right?
+kernel test robot noticed the following build errors:
 
-> > diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generi=
-c/fcntl.h
-> > index 613475285643..11e5eadab868 100644
-> > --- a/include/uapi/asm-generic/fcntl.h
-> > +++ b/include/uapi/asm-generic/fcntl.h
-> > @@ -88,6 +88,10 @@
-> >  #define __O_TMPFILE  020000000
-> >  #endif
-> >
-> > +#ifndef O_REGULAR
-> > +#define O_REGULAR       040000000
-> > +#endif
->
-> This in turn clashes with O_PATH on alpha, __O_TMPFILE on
-> parisc, and __O_SYNC on sparc. We can probably fill the holes
-> in asm/fcntl.h to define this.
->
+[auto build test ERROR on brauner-vfs/vfs.all]
+[also build test ERROR on shuah-kselftest/next shuah-kselftest/fixes linus/master arnd-asm-generic/master v6.19-rc6 next-20260123]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-And for this, I will need to just define O_REGULAR in alpha, parisc
-and sparc too, right?
-Good catch on the sparc file, some are octal, some are hexadecimal,
-easy to miss. Thanks!
+url:    https://github.com/intel-lab-lkp/linux/commits/Dorjoy-Chowdhury/open-new-O_REGULAR-flag-support/20260125-221826
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20260125141518.59493-2-dorjoychy111%40gmail.com
+patch subject: [PATCH 1/2] open: new O_REGULAR flag support
+config: alpha-allnoconfig (https://download.01.org/0day-ci/archive/20260126/202601260042.TRDQjGeu-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 15.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260126/202601260042.TRDQjGeu-lkp@intel.com/reproduce)
 
-Regards,
-Dorjoy
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202601260042.TRDQjGeu-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from <command-line>:
+   fs/fcntl.c: In function 'fcntl_init':
+>> include/linux/compiler_types.h:631:45: error: call to '__compiletime_assert_389' declared with attribute error: BUILD_BUG_ON failed: 21 - 1 != HWEIGHT32( (VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) | __FMODE_EXEC)
+     631 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                             ^
+   include/linux/compiler_types.h:612:25: note: in definition of macro '__compiletime_assert'
+     612 |                         prefix ## suffix();                             \
+         |                         ^~~~~~
+   include/linux/compiler_types.h:631:9: note: in expansion of macro '_compiletime_assert'
+     631 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^~~~~~~~~~~~~~~~
+   fs/fcntl.c:1172:9: note: in expansion of macro 'BUILD_BUG_ON'
+    1172 |         BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
+         |         ^~~~~~~~~~~~
+
+
+vim +/__compiletime_assert_389 +631 include/linux/compiler_types.h
+
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  617  
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  618  #define _compiletime_assert(condition, msg, prefix, suffix) \
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  619  	__compiletime_assert(condition, msg, prefix, suffix)
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  620  
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  621  /**
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  622   * compiletime_assert - break build and emit msg if condition is false
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  623   * @condition: a compile-time constant condition to check
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  624   * @msg:       a message to emit if condition is false
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  625   *
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  626   * In tradition of POSIX assert, this macro will break the build if the
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  627   * supplied condition is *false*, emitting the supplied error message if the
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  628   * compiler has support to do so.
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  629   */
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  630  #define compiletime_assert(condition, msg) \
+eb5c2d4b45e3d2 Will Deacon 2020-07-21 @631  	_compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  632  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
