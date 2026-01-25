@@ -1,199 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-75382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75383-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KNxHMaUldmn0MQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jan 2026 15:16:05 +0100
+	id 0EPXGWQrdmkVMwEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75383-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jan 2026 15:40:36 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A3D480F14
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jan 2026 15:16:05 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A13281075
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jan 2026 15:40:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id AA2953005AC7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jan 2026 14:15:55 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id EF0C93005D13
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jan 2026 14:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0BF31A7F7;
-	Sun, 25 Jan 2026 14:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D553242A5;
+	Sun, 25 Jan 2026 14:40:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eAJEVnZM"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="iGzYx2jC";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="V/werXKU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ACC53164B8
-	for <linux-fsdevel@vger.kernel.org>; Sun, 25 Jan 2026 14:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E00F7081A;
+	Sun, 25 Jan 2026 14:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769350554; cv=none; b=JNy345Zvf4dIVElE4MRak/dojGaq0p4jGVY4uBmr2GhtNbNVzzX8wObcmKywTVEYZV49/opcHJK3rs0A3dA2WllCZJFchzy9L9qTp7DdsVmm3y5P/5zBvZ9kgBoOgJmj0sv4Xqb+M5UIZOi3j4bYm62ouRxBNDtkzqocy7MZplw=
+	t=1769352027; cv=none; b=esF2Hqno7XuRx5QOQsklOzeClE+mhFxt0R5KAUr4itxDy5K0zPQP1XNiiCg2YL6cSgfr6/XVs7VsI/E5o7IYCBU7cVQG5cII91rWCK/9JRU6FqfnH8BxnfrAJhYmm4NL3lIS3T8DtKcN9WG+3U9A7Z5TckSQuU3IHpmd0Gt7OcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769350554; c=relaxed/simple;
-	bh=zbm88tZ5EKGHb6dIIBgtcubs1/j7WvW74bC5PmEIF3Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VkSzatNXFfp5xd+j6S/hiyPlK9Gnkx5ZS+3lkb9OpE6KsvliGeDuVBRHA8dYWbYeTFpS/Btse0jRLkViPOlTMM5v8vJwx0WY8RZnFTPVDWAJmy5P8r6mQofCdKXFA0xzpHZYIJAE+VnoAHl7dzVMrqQpxsSYG4v4Y1cwqTe/f2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eAJEVnZM; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-35334ea1f98so1686571a91.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Jan 2026 06:15:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769350552; x=1769955352; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0HDHyt8o7AOVvqViroBB2au4kbVsQeTCVMosjUYhWB4=;
-        b=eAJEVnZM/1j38E7TMKeCr5cZAGaSeREO/bJH5uXtrRwVir/1kdH16yvWY79MWFLQEf
-         ZuqbLIOdmTGB7MHHDOoLqZUq5q/yRdmtAFV2xJ54JvWljw6RFvzC0w0mwS2GdcBqDUAf
-         xurDjc4Bl6jTPYip4Re93qUAUVDgTlVOtSjYEptLJm1TtjiIpn9R3Ajb+4mKj+5coPH7
-         Y0hTss7A4XOqMAE11IyJSKpnvzsYPmMxiIjJsFsEEtc4gXoqK47Cp30nKgmQUP/MSTfw
-         leMJNDpJoEQHOzpijFotJCHEJ8ScyoMQVaoWfpE62HA483MtrVqk7pCOCxmDe/bE5xn8
-         Ko+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769350552; x=1769955352;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=0HDHyt8o7AOVvqViroBB2au4kbVsQeTCVMosjUYhWB4=;
-        b=Q05VTjxyrlS2ruBlzNNXpjE0NP44xDsbv4cByLT6mrgWCFmZp57oqUm0SfCOUqbnAK
-         HC7NQqbDwWXLY6jswqbcSu7SbOY83NTNsMiM1mRduq7jTThuJsXNfCEojQ/WXAbOexJ3
-         I1L0wxWO9+WDetRvY/LCkb5VS3tYput6qz3zbHqqmY8EiRs2cbBZ3VJvyojZ41VqsT1C
-         r+FUrKFnPsdW8CCMHgDnzSK5WmP4GCDkwobzTxE7rcjksG/4E1/i7iuDJ3lqDChOnfTW
-         ZhsSys+5BKZJ9r7IOuBgUKtr+PoKXPTj4JaGQYTyWpda7sx22GAHZvQCYDYJYcE5RQ0O
-         45Hw==
-X-Gm-Message-State: AOJu0YwquA/o8PH6UFehvztdhiqe3pDzyrAv0ObJQvW+TdyO6zOJvCQ+
-	7jlpsHDWeo//MOA4BWUscdX7ft09nqH2K08f/1pyxKAUfZSP9zM9g7yAWviGuQ==
-X-Gm-Gg: AZuq6aIV8n5Q1eNab2VSGR7k9aEceeVSdwLnB0TeDnTI6h3quWHbuWA8VtpvBX+UxUe
-	uIjBJLi1L4t1DV+sXkuguHXpcpDvOZTEbDidEQTacxSRe0HBM15qLpHWvIit3/v/FpO1efrQggu
-	KeXwQoQzGH9AQsIeXNRt7dRir4SIMPHkgWXRB/YG5pNecVy8bMwX/udsLsp5NN8FQqSCXK2N6iG
-	WTVVqrTTUmX4ir1+/mK89f4YKNcttMCtm8LDm1MJ933LnjSnXYWjJu9fXfVdm91SMddN39/5Atv
-	aVKfVhFZWfcdFvBB9ISPVoYHdDIdtZ3DLkZMsDTo+K+n2a3LMYpcmJ0I37Bh+vMjDzAtXNIsEnE
-	cPw/f2qBIsI5mqIdVs6fw1hxk1dhKMwyqBCDh3I1FBRmKF7T1qq+HC1LM3aOc5G2WXNSGiXIwP4
-	p/eNQpmVxFW6w1hQ4i93ESx0RthEKCegXN0pwiz9Oli+U=
-X-Received: by 2002:a17:90b:388e:b0:340:bb64:c5e with SMTP id 98e67ed59e1d1-353c40e25a1mr1406748a91.14.1769350552220;
-        Sun, 25 Jan 2026 06:15:52 -0800 (PST)
-Received: from toolbx ([103.230.182.3])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c635a4135e6sm6334225a12.25.2026.01.25.06.15.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Jan 2026 06:15:51 -0800 (PST)
-From: Dorjoy Chowdhury <dorjoychy111@gmail.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	jlayton@kernel.org,
-	chuck.lever@oracle.com,
-	alex.aring@gmail.com,
-	arnd@arndb.de
-Subject: [PATCH 2/2] kselftest/openat2: test for O_REGULAR flag
-Date: Sun, 25 Jan 2026 20:14:06 +0600
-Message-ID: <20260125141518.59493-3-dorjoychy111@gmail.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260125141518.59493-1-dorjoychy111@gmail.com>
-References: <20260125141518.59493-1-dorjoychy111@gmail.com>
+	s=arc-20240116; t=1769352027; c=relaxed/simple;
+	bh=KPDAkGr8n7LDUpQuJdayySUvAhzmR/J8rH+zt+GoQ9M=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=qUv3EY+DjcknfXYdq9eE4+ggIvQmCI6SU/VPc0b+j+YRcLg5DKxXnV7nlTb37SIn1B2r4NSgZ4nYUHZCELdmV57ZgxF5QBMAgnmaNYGtn1LVl8Yl6tocKkNgewTAPEmweAkTk/7P7a3OR7fRP7WZOQpGU4u8CtBfS//nWui9PEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=iGzYx2jC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=V/werXKU; arc=none smtp.client-ip=202.12.124.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 7E9AB7A012F;
+	Sun, 25 Jan 2026 09:40:24 -0500 (EST)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-04.internal (MEProxy); Sun, 25 Jan 2026 09:40:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1769352024;
+	 x=1769438424; bh=e1+LRUSjs1wRZ98SLc7vlwG7NKTx+fUqwKv087ZYlf0=; b=
+	iGzYx2jCRENOcTQVADHdxTEQ4d/3juOdVZWStF9P/BkmSc6iVDTI3C5EX7UCGqYH
+	QLLmkrGcnMNIf2/a0PYPGKmtBeM5pdQ6MKNheSQRL5qo+MVEy/flEYFiquyeTRyl
+	kfZl3VXjN6eT+n9XiwYtWTh5mLOL2sByApNTukV1njrCC+Vzd8b93KaCTEJGY6hA
+	d8sjAhtI6CXMePbwq1elpzeuklhSYtXOY5d+ZiGICk72C/FS2mpaPvYBCKsbx7eR
+	GVH47fSvrb8pcS5ohp5ydlhRZ8c2rtN8syplRqCViwj8FD3usFNqP60GiA7IwYc0
+	hC/gdQyABIN5sYm6U3S4YA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1769352024; x=
+	1769438424; bh=e1+LRUSjs1wRZ98SLc7vlwG7NKTx+fUqwKv087ZYlf0=; b=V
+	/werXKURR4uBObiIIpKCwEsMNV7QsMlVRkXu/vkcS2LqbyMyJcpN480aKV9H+uHk
+	e4ij6FptkhXHt6PuCO89SJxdADXCck29XUbu3nHsquAjZnFEF35nFsWYT/R86SPK
+	aj79mUVxpLr7IYkbXJopMiry0S+JTEywQM5/Na4GI5E6iGcNTMwyz4Lqfk0NruKs
+	W9ur3JynGY9WNy1dnNi8ZS0eXQYwi7Lp5LcJnaAyFIQYAiBhSJaWSrCEkTZ20U3S
+	msRASYNeEbg9cnSs1/UsMZSGcCNDPBhkDG3K0B3mGGWP7IZJMYahdKXDDjWAKMQP
+	scX7wwNpIlgtNdvegxVwg==
+X-ME-Sender: <xms:Vyt2aXep3IsNnP5MJHq4H20yrHmmotsoZ0Dc67p3ak0Tt9YIeCsB8g>
+    <xme:Vyt2aYDldxRk4GOl6KCwglW8lGF8P5nEElaNrRi7qACpyG4lAGnTxFHGXurCHiLlb
+    6eNzfKhAI4THJb7lwG_ix1VfCi_FUNycduwmt6rGqSfGNkYcMS_ons>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduheehtdehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheprghlvgigrdgrrhhinhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
+    epughorhhjohihtghhhiduuddusehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghrrghu
+    nhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhlrgihthhonheskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheptghhuhgtkhdrlhgvvhgvrhesohhrrggtlhgvrdgtohhm
+    pdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtoheplhhinhhugidqfh
+    hsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhig
+    qdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhroh
+    esiigvnhhivhdrlhhinhhugidrohhrghdruhhk
+X-ME-Proxy: <xmx:Vyt2aS-cVq80xkuRv4FIdQ0zrdCR3d-qane3ulqfmk9QFNqyNFHE7Q>
+    <xmx:Vyt2aVy7-2V--wHM8POaXBHGVKiEdaGVxIHJmfUYxXEP-LWJthYZnw>
+    <xmx:Vyt2aSpGcXODmBXNG_ktRgFUzFLzii5v07kBaZsZkwrSSbGqgvnS8g>
+    <xmx:Vyt2aWoT_98xm1tO4wIODJXn-EGPhLuqk6MXM-eZ8jZUgxaLA2CnCQ>
+    <xmx:WCt2aSqYyKAA7Iqxu_pwPXd7YhnGxbwMLumbgXBe5fwnM3cII3PdXrjz>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id A4E30700069; Sun, 25 Jan 2026 09:40:23 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: As39fFuPNmh7
+Date: Sun, 25 Jan 2026 15:40:03 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Dorjoy Chowdhury" <dorjoychy111@gmail.com>, linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "Jeff Layton" <jlayton@kernel.org>, "Chuck Lever" <chuck.lever@oracle.com>,
+ "Alexander Aring" <alex.aring@gmail.com>
+Message-Id: <57fe666f-f451-462f-8f16-8c0ba83f1eac@app.fastmail.com>
+In-Reply-To: <20260125141518.59493-2-dorjoychy111@gmail.com>
+References: <20260125141518.59493-1-dorjoychy111@gmail.com>
+ <20260125141518.59493-2-dorjoychy111@gmail.com>
+Subject: Re: [PATCH 1/2] open: new O_REGULAR flag support
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.84 / 15.00];
+X-Spamd-Result: default: False [-0.65 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	DMARC_POLICY_ALLOW(-0.50)[arndb.de,none];
+	R_DKIM_ALLOW(-0.20)[arndb.de:s=fm2,messagingengine.com:s=fm2];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,arndb.de];
-	FROM_NEQ_ENVFROM(0.00)[dorjoychy111@gmail.com,linux-fsdevel@vger.kernel.org];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75382-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-75383-lists,linux-fsdevel=lfdr.de];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org];
 	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	TO_DN_NONE(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[arnd@arndb.de,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[arndb.de:+,messagingengine.com:+];
+	RCVD_COUNT_FIVE(0.00)[6];
 	RCPT_COUNT_SEVEN(0.00)[9];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_COUNT_FIVE(0.00)[5];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[]
-X-Rspamd-Queue-Id: 5A3D480F14
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,messagingengine.com:dkim]
+X-Rspamd-Queue-Id: 9A13281075
 X-Rspamd-Action: no action
 
-Just a happy path test.
+On Sun, Jan 25, 2026, at 15:14, Dorjoy Chowdhury wrote:
 
-Signed-off-by: Dorjoy Chowdhury <dorjoychy111@gmail.com>
----
- .../testing/selftests/openat2/openat2_test.c  | 37 ++++++++++++++++++-
- 1 file changed, 36 insertions(+), 1 deletion(-)
+> diff --git a/include/uapi/asm-generic/errno-base.h 
+> b/include/uapi/asm-generic/errno-base.h
+> index 9653140bff92..ea9a96d30737 100644
+> --- a/include/uapi/asm-generic/errno-base.h
+> +++ b/include/uapi/asm-generic/errno-base.h
+> @@ -36,5 +36,6 @@
+>  #define	EPIPE		32	/* Broken pipe */
+>  #define	EDOM		33	/* Math argument out of domain of func */
+>  #define	ERANGE		34	/* Math result not representable */
+> +#define	ENOTREGULAR	35      /* Not a regular file */
 
-diff --git a/tools/testing/selftests/openat2/openat2_test.c b/tools/testing/selftests/openat2/openat2_test.c
-index 0e161ef9e9e4..c2f8771e2dae 100644
---- a/tools/testing/selftests/openat2/openat2_test.c
-+++ b/tools/testing/selftests/openat2/openat2_test.c
-@@ -320,8 +320,42 @@ void test_openat2_flags(void)
- 	}
- }
- 
-+#ifndef O_REGULAR
-+#define O_REGULAR 040000000
-+#endif
-+
-+#ifndef ENOTREGULAR
-+#define ENOTREGULAR 35
-+#endif
-+
-+void test_openat2_o_regular_flag(void)
-+{
-+	if (!openat2_supported) {
-+		ksft_test_result_skip("Skipping %s as openat2 is not supported\n", __func__);
-+		return;
-+	}
-+
-+	struct open_how how = {
-+		.flags = O_REGULAR | O_RDONLY
-+	};
-+
-+	int fd = sys_openat2(AT_FDCWD, "/dev/null", &how);
-+
-+	if (fd == ENOENT) {
-+		ksft_test_result_skip("Skipping %s as there is no /dev/null\n", __func__);
-+		return;
-+	}
-+
-+	if (fd != -ENOTREGULAR) {
-+		ksft_test_result_fail("openat2 should return ENOTREGULAR\n");
-+		return;
-+	}
-+
-+	ksft_test_result_pass("%s succeeded\n", __func__);
-+}
-+
- #define NUM_TESTS (NUM_OPENAT2_STRUCT_VARIATIONS * NUM_OPENAT2_STRUCT_TESTS + \
--		   NUM_OPENAT2_FLAG_TESTS)
-+		   NUM_OPENAT2_FLAG_TESTS + 1)
- 
- int main(int argc, char **argv)
- {
-@@ -330,6 +364,7 @@ int main(int argc, char **argv)
- 
- 	test_openat2_struct();
- 	test_openat2_flags();
-+	test_openat2_o_regular_flag();
- 
- 	if (ksft_get_fail_cnt() + ksft_get_error_cnt() > 0)
- 		ksft_exit_fail();
--- 
-2.52.0
+This clashes with EDEADLK on most architectures, or with
+EAGAIN on alpha and ENOMSG on mips/parisc. You probably
+need to pick the next free value in uapi/asm-generic/errno.h
+and arch/*/include/uapi/asm/errno.h and keep this sorted
+after EHWPOISON if you can't find an existing error code.
 
+> diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
+> index 613475285643..11e5eadab868 100644
+> --- a/include/uapi/asm-generic/fcntl.h
+> +++ b/include/uapi/asm-generic/fcntl.h
+> @@ -88,6 +88,10 @@
+>  #define __O_TMPFILE	020000000
+>  #endif
+> 
+> +#ifndef O_REGULAR
+> +#define O_REGULAR       040000000
+> +#endif
+
+This in turn clashes with O_PATH on alpha, __O_TMPFILE on
+parisc, and __O_SYNC on sparc. We can probably fill the holes
+in asm/fcntl.h to define this.
+
+      Arnd
 
