@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-75406-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75407-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id mNVeLh3zdmkzZgEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75406-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 05:52:45 +0100
+	id AAIJNmrzdmkzZgEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75407-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 05:54:02 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3A6B83F5B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 05:52:44 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79BDB8405A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 05:54:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id DA0C73001593
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 04:52:37 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C638B300461C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 04:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD76D30E0F2;
-	Mon, 26 Jan 2026 04:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FAD30E0F9;
+	Mon, 26 Jan 2026 04:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="l7wcRBQO"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yQM/eZ8W"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3E213AA2F;
-	Mon, 26 Jan 2026 04:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480B213AA2F;
+	Mon, 26 Jan 2026 04:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769403156; cv=none; b=ZKjpC4FVLKU8yf/n1mrEMEU6Mk/l43T80TFGEgesTDtzE/ExHLcO6qOwiV0BioOWeZvesVE9m7tfrH6ajyjmWMRigZXDGXsr6RqpOQnZs027EU/GDWH2P0PQ02A03iBWi6lDZKbuz/7e/oFq9m5anRr0P9FkZrCtnXwWBXYte50=
+	t=1769403159; cv=none; b=jqC3PcxIaYhdcquZjuck7rgg0BYZ2Ujk6WqCiVnKOI/xHAc/xMAkXGj34Xx8WpAhCcWDyrtEor9+TfiAIPeyy8lQFhhF54BrTAr2JebQftu+DgIwprkBjJ6FpSHhYO5rdXdkxKVhy9iJ8ya89I64O6API/VC6Tr527CluzmznlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769403156; c=relaxed/simple;
-	bh=MbdGEmevTBJb0vS/gZUueE/OHoHj7gpwXbP5a70MZWQ=;
+	s=arc-20240116; t=1769403159; c=relaxed/simple;
+	bh=HHPaCIvxn7ijiLY1PaT9zXlPLDg0nerBSLsePJHbmUw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=onP3/QhOX8Tt2GKGzxEvfNN6oPMNhBbePiWqP6rWHSGreq0IKaoqvP9heXmB/awCHQmWdppPpZAZJtqrmKPe0g09Pxt7UWjOoBVBcROKcBAX2q/KfAfmZwmrA3LARGEpC/z/w706rHNlARwSAJcWqtUTCFMyNN1SbMO52OZXCVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=l7wcRBQO; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=lzh9kZqKtDMGJR/6CMieW8QEo1pJiGdKc/FOYRHdFUxRRyQbE1c0i/c6FwayWrfKw/3Bcxw5RyUMVV/tOZF3nwWW7iKS2mZIyY1G9GqViYDceVFIjCnufsxefw2T676Sg7SUUhYnp4IjE3C5Rfk9UFgDjGVY1hduwYYI57PWtpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yQM/eZ8W; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=tiEhYLJfu/bJWzWAGoEqv1JQK/ldnE8nfYaqsxqRmME=; b=l7wcRBQOnBfMUGbnRz2+KltkAb
-	sC04sbi+4QtkLTWZAUJqoqu83mp+4g4J0GZBez22+XlAW20mL8myxaPBismls5fmZaPhjBQhOr/yy
-	N3vwgJAPXXSoqvJE7MQk1OxA2ZqAe6mHpSpIz5V0AedfZ5qZ8lJPgooSUZrvaa+5MZht+11UDwnBt
-	VzBYsTt2G0ZKRHhC/tjVhJjN4o9+HKMgf6Stm6y4ZZlSTGUU/J0/bXqiqwSui5f0smvBivkdOcdMZ
-	OQw6lphgwgrQhDh2Qvj9a5CvTquLmy/fxXUjtnZioXr/DlawVShZSBrgccpTjE4CWI84ycBQ0XmYT
-	NLwfkKsQ==;
+	bh=JTIIqGdNnnTZ8/mFXJscuc9GxNFmE8A4i8uFXevVu+E=; b=yQM/eZ8WFbBdBrTMl+x5tw5XwW
+	7yVA4ioCpASh43agtnJVjTgilg4y7S/x3Dx83KQdTAIatHxGPVjwcLOGEhw/5YP+/SeRGj+4CbgOK
+	5EZ1wQ7T/6VY935/fuwJIKMkc2aFtcsYEFQdTgRIK33GWIWbEoWn2PsOz54EJIcztV9ufmKSfEF+F
+	JQn+3L+IqrySRwR40dJYsrTCx9UM3p2+uJ/REWy99JE9/yh/qpW4M0nZno/576NbWcEIhj+3wfA6M
+	9qfA5TcQ2x1l8KFuLrG8kFJeBGE55c5a4HjQ2IO4uKjoUOtGaqlXEfDoE9OG3CP48HYxyUtFZjaB/
+	SOS7eAwg==;
 Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vkEaV-0000000BuPN-0g7V;
-	Mon, 26 Jan 2026 04:52:31 +0000
+	id 1vkEaa-0000000BuPh-09rw;
+	Mon, 26 Jan 2026 04:52:36 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Eric Biggers <ebiggers@kernel.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>,
@@ -63,11 +63,10 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>,
 	linux-btrfs@vger.kernel.org,
 	linux-ext4@vger.kernel.org,
 	linux-f2fs-devel@lists.sourceforge.net,
-	fsverity@lists.linux.dev,
-	"Darrick J. Wong" <djwong@kernel.org>
-Subject: [PATCH 02/16] fs,fsverity: clear out fsverity_info from common code
-Date: Mon, 26 Jan 2026 05:50:48 +0100
-Message-ID: <20260126045212.1381843-3-hch@lst.de>
+	fsverity@lists.linux.dev
+Subject: [PATCH 03/16] ext4: don't build the fsverity work handler for !CONFIG_FS_VERITY
+Date: Mon, 26 Jan 2026 05:50:49 +0100
+Message-ID: <20260126045212.1381843-4-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260126045212.1381843-1-hch@lst.de>
 References: <20260126045212.1381843-1-hch@lst.de>
@@ -84,20 +83,21 @@ X-Spamd-Result: default: False [-0.06 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	R_MISSING_CHARSET(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), DKIM not aligned (relaxed),none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	RCVD_COUNT_THREE(0.00)[4];
-	TAGGED_FROM(0.00)[bounces-75406-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-75407-lists,linux-fsdevel=lfdr.de];
+	RCPT_COUNT_TWELVE(0.00)[15];
 	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[4];
+	SUBJECT_HAS_EXCLAIM(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
@@ -105,182 +105,36 @@ X-Spamd-Result: default: False [-0.06 / 15.00];
 	NEURAL_HAM(-0.00)[-1.000];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,suse.cz:email,lst.de:mid,lst.de:email,infradead.org:dkim,suse.com:email]
-X-Rspamd-Queue-Id: A3A6B83F5B
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:mid,lst.de:email,infradead.org:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 79BDB8405A
 X-Rspamd-Action: no action
 
-Directly remove the fsverity_info from the hash and free it from
-clear_inode instead of requiring file systems to handle it.
+Use IS_ENABLED to disable this code, leading to a slight size reduction:
+
+   text	   data	    bss	    dec	    hex	filename
+   4121	    376	     16	   4513	   11a1	fs/ext4/readpage.o.old
+   4030	    328	     16	   4374	   1116	fs/ext4/readpage.o
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-Acked-by: David Sterba <dsterba@suse.com> [btrfs]
 ---
- fs/btrfs/inode.c         | 10 +++-------
- fs/ext4/super.c          |  1 -
- fs/f2fs/inode.c          |  1 -
- fs/inode.c               |  9 +++++++++
- fs/verity/open.c         |  3 +--
- include/linux/fsverity.h | 26 ++------------------------
- 6 files changed, 15 insertions(+), 35 deletions(-)
+ fs/ext4/readpage.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index a2b5b440637e..67c64efc5099 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -34,7 +34,6 @@
- #include <linux/sched/mm.h>
- #include <linux/iomap.h>
- #include <linux/unaligned.h>
--#include <linux/fsverity.h>
- #include "misc.h"
- #include "ctree.h"
- #include "disk-io.h"
-@@ -5571,11 +5570,8 @@ void btrfs_evict_inode(struct inode *inode)
- 
- 	trace_btrfs_inode_evict(inode);
- 
--	if (!root) {
--		fsverity_cleanup_inode(inode);
--		clear_inode(inode);
--		return;
--	}
-+	if (!root)
-+		goto clear_inode;
- 
- 	fs_info = inode_to_fs_info(inode);
- 	evict_inode_truncate_pages(inode);
-@@ -5675,7 +5671,7 @@ void btrfs_evict_inode(struct inode *inode)
- 	 * to retry these periodically in the future.
- 	 */
- 	btrfs_remove_delayed_node(BTRFS_I(inode));
--	fsverity_cleanup_inode(inode);
-+clear_inode:
- 	clear_inode(inode);
- }
- 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 87205660c5d0..86131f4d8718 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1527,7 +1527,6 @@ void ext4_clear_inode(struct inode *inode)
- 		EXT4_I(inode)->jinode = NULL;
- 	}
- 	fscrypt_put_encryption_info(inode);
--	fsverity_cleanup_inode(inode);
- }
- 
- static struct inode *ext4_nfs_get_inode(struct super_block *sb,
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 38b8994bc1b2..ee332b994348 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -1000,7 +1000,6 @@ void f2fs_evict_inode(struct inode *inode)
- 	}
- out_clear:
- 	fscrypt_put_encryption_info(inode);
--	fsverity_cleanup_inode(inode);
- 	clear_inode(inode);
- }
- 
-diff --git a/fs/inode.c b/fs/inode.c
-index 379f4c19845c..38dbdfbb09ba 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -14,6 +14,7 @@
- #include <linux/cdev.h>
- #include <linux/memblock.h>
- #include <linux/fsnotify.h>
-+#include <linux/fsverity.h>
- #include <linux/mount.h>
- #include <linux/posix_acl.h>
- #include <linux/buffer_head.h> /* for inode_has_buffers */
-@@ -773,6 +774,14 @@ void dump_mapping(const struct address_space *mapping)
- 
- void clear_inode(struct inode *inode)
- {
-+	/*
-+	 * Only IS_VERITY() inodes can have verity info, so start by checking
-+	 * for IS_VERITY() (which is faster than retrieving the pointer to the
-+	 * verity info).  This minimizes overhead for non-verity inodes.
-+	 */
-+	if (IS_ENABLED(CONFIG_FS_VERITY) && IS_VERITY(inode))
-+		fsverity_cleanup_inode(inode);
-+
- 	/*
- 	 * We have to cycle the i_pages lock here because reclaim can be in the
- 	 * process of removing the last page (in __filemap_remove_folio())
-diff --git a/fs/verity/open.c b/fs/verity/open.c
-index 2aa5eae5a540..090cb77326ee 100644
---- a/fs/verity/open.c
-+++ b/fs/verity/open.c
-@@ -384,14 +384,13 @@ int __fsverity_file_open(struct inode *inode, struct file *filp)
- }
- EXPORT_SYMBOL_GPL(__fsverity_file_open);
- 
--void __fsverity_cleanup_inode(struct inode *inode)
-+void fsverity_cleanup_inode(struct inode *inode)
- {
- 	struct fsverity_info **vi_addr = fsverity_info_addr(inode);
- 
- 	fsverity_free_info(*vi_addr);
- 	*vi_addr = NULL;
- }
--EXPORT_SYMBOL_GPL(__fsverity_cleanup_inode);
- 
- void __init fsverity_init_info_cache(void)
- {
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index 86fb1708676b..ea1ed2e6c2f9 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -179,26 +179,6 @@ int fsverity_get_digest(struct inode *inode,
- /* open.c */
- 
- int __fsverity_file_open(struct inode *inode, struct file *filp);
--void __fsverity_cleanup_inode(struct inode *inode);
--
--/**
-- * fsverity_cleanup_inode() - free the inode's verity info, if present
-- * @inode: an inode being evicted
-- *
-- * Filesystems must call this on inode eviction to free the inode's verity info.
-- */
--static inline void fsverity_cleanup_inode(struct inode *inode)
--{
--	/*
--	 * Only IS_VERITY() inodes can have verity info, so start by checking
--	 * for IS_VERITY() (which is faster than retrieving the pointer to the
--	 * verity info).  This minimizes overhead for non-verity inodes.
--	 */
--	if (IS_VERITY(inode))
--		__fsverity_cleanup_inode(inode);
--	else
--		VFS_WARN_ON_ONCE(*fsverity_info_addr(inode) != NULL);
--}
- 
- /* read_metadata.c */
- 
-@@ -250,10 +230,6 @@ static inline int __fsverity_file_open(struct inode *inode, struct file *filp)
- 	return -EOPNOTSUPP;
- }
- 
--static inline void fsverity_cleanup_inode(struct inode *inode)
--{
--}
--
- /* read_metadata.c */
- 
- static inline int fsverity_ioctl_read_metadata(struct file *filp,
-@@ -331,4 +307,6 @@ static inline int fsverity_file_open(struct inode *inode, struct file *filp)
- 	return 0;
- }
- 
-+void fsverity_cleanup_inode(struct inode *inode);
-+
- #endif	/* _LINUX_FSVERITY_H */
+diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+index e7f2350c725b..267594ef0b2c 100644
+--- a/fs/ext4/readpage.c
++++ b/fs/ext4/readpage.c
+@@ -130,7 +130,8 @@ static void bio_post_read_processing(struct bio_post_read_ctx *ctx)
+ 		ctx->cur_step++;
+ 		fallthrough;
+ 	case STEP_VERITY:
+-		if (ctx->enabled_steps & (1 << STEP_VERITY)) {
++		if (IS_ENABLED(CONFIG_FS_VERITY) &&
++		    ctx->enabled_steps & (1 << STEP_VERITY)) {
+ 			INIT_WORK(&ctx->work, verity_work);
+ 			fsverity_enqueue_verify_work(&ctx->work);
+ 			return;
 -- 
 2.47.3
 
