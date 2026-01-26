@@ -1,421 +1,520 @@
-Return-Path: <linux-fsdevel+bounces-75538-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KLHuBafWd2mFlwEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75538-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 22:03:35 +0100
+	id 2JVfLULXd2mFlwEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 22:06:10 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A5E8D766
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 22:03:34 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A7B08D7F3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 22:06:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 5C720301C94E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 21:03:33 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id DF168301AA6E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 21:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE10423A9AD;
-	Mon, 26 Jan 2026 21:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91BEF2DEA90;
+	Mon, 26 Jan 2026 21:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LrHEViwJ"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XErw+koI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012039.outbound.protection.outlook.com [52.101.48.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC282D5923
-	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jan 2026 21:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769461409; cv=none; b=F5EMt+v55oaJnTbN3R7MiCoF0mKdf7z5zv4EqUKVdGnf+otr5+9Hn1164TGciZ72OgD8CD+DxSgd7fXqk115khdJtp3WzD/153iYhIKEcvNniO4saz2CG9ciu1txS8XKHhb0lBDyK3krNM3Tf9+e0fpx3TY/vpbb6eNxfdF8Rtg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769461409; c=relaxed/simple;
-	bh=6Vuo+/WWgw6D7+YTy8t1gKRCIqKv02pGmqfSCpDxKjo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=htHnNhIPW54O6W7ci47SZGIQkMVpLNoGyYewnIMYYyiYukge/MqVXpLeuQl9efNY5Csb6/AF0Sv6/salamQJVckhRWp27vl513y5RZohebJ3jmVnM3c0GAW9vD4LM4cL014wnwRotpUHU6bWaOjfWzWbFtSzH5kVIWl64hcXrPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LrHEViwJ; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-432da746749so2656890f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jan 2026 13:03:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769461406; x=1770066206; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6ZbA1TCeSebZcAGci/xc0bq+Ttgq9beeBxy8eztDU8w=;
-        b=LrHEViwJ4k2HXqc59hVbjc7bk+t42Usbl1aSUjFO3dJ834TLrhxN4fFsB/vw4jPb8G
-         0lfvC1an9PcX9p8Sf+wYBsxviiCy1KtOzUJG3+y1BJayJF0KL3t+/g5wS/jNQ4fwNtqV
-         8UVTWrYxG1z/32pnEOsP0wWPq71jbI2JzwdORoF1AkjqT6hxNXNpR57KaKQa20zU/r9P
-         YHpzL05tLHH+r+E9Jpg5gR69FzRT4vzwsGVnVFwjYIky8Rju8KlUaq0aqtl1JCxXhLq3
-         /DqHHyOsbzS0jZgxzFftYEIlOIkitIH2HpnQpF42JOP9f7aEEnlnWNV4+xBkoUVrWH2c
-         3CMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769461406; x=1770066206;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6ZbA1TCeSebZcAGci/xc0bq+Ttgq9beeBxy8eztDU8w=;
-        b=r2neREtgL2Z63r7QM5UCX+xNPAklEgSBvK69VpctuXzKNh49mt6D/UaVSMN31Z7qxJ
-         GprLRyAN4RMguoeHX2HGk9IZdlLJ7ca7nkgRyBuHPh5Lh2eyONiKaoROFq72YmRPRqiM
-         WWUli9cB8fkgEk+0g70gfU8Y61IFsaPVzWhT3CICwAAnOM4uJGgSPByNbSiboSHcawVl
-         5ePeRYjdj0l1nnML8W7BJI6c3DKgQjTSKHgkg7iP0zSIIhksd8DK3umlqk6sdMyOvuWu
-         XhnhzS+Z/zZqdEqDJunE7NfZTIWPWR+XjQz7GvfZ0UASfpfojGkAine32E9ml2JwXYz7
-         VYPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7oNn+pZY+n4gInezkLbSi9F/d5/bekqrGZFJmgLWu5TYid6MI6qVjFLNxlXzT+P3tFRRwzm+c/GRALY/R@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBTzsniGC3ubuKk3WzCyxriWdU6qFX49f04gl6yvAWYGx+T84Q
-	kZNzp0xZD7d9qkhVup/mq/ZCGBhcGx1AYaMnA5+aRS3PbTBm/ry8QUhJ
-X-Gm-Gg: AZuq6aJrXLb8Qtg8lkCIsXBKOtrMf+RzlQirBqoS+iwC0pDFnYNsrw6ifY7xtaeQV7V
-	A7GWVzfezdahpCkXPAbFd78MBMypovl2F3H8h51b/3rG3OhWyzzn/Erec4772mlUin28YdzAW+e
-	A+TVJHvnFPPhvXGChfCOKZs56q2lX1ykmJV6dHtYqcLhMnrQ76joTIAb1Dh7hWFPqv7mowT3Qor
-	6qpDrHU0t4FMDL03U1dODItQ2zrTJiZKkXDRRddjz/vwh59dELyf+7Wn/w0dhxZ3OlXrGHSb2kS
-	mIC7DWgEiYJOUbb/UsJ5N2yEzlMOLrPCEcnappwZtwSL8PynKguupyyumgbEIf0GjiURyZ9sYfn
-	iWT9xviBuWtn49f/mJNxqf/FtWjct6PgPNhHi1R1KsUgK8HZ0OeIRIKlXWgLDpnEbNse+uLAVyC
-	WS03+JUm3i7ZDmvyTIsDONZ7eZZY1TFpjKr4T3J1J7iMw6
-X-Received: by 2002:a05:6000:1446:b0:431:656:c726 with SMTP id ffacd0b85a97d-435ca124817mr8247020f8f.3.1769461405127;
-        Mon, 26 Jan 2026 13:03:25 -0800 (PST)
-Received: from eldamar.lan (c-82-192-244-13.customer.ggaweb.ch. [82.192.244.13])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435b1e7156dsm33430252f8f.20.2026.01.26.13.03.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jan 2026 13:03:23 -0800 (PST)
-Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
-Received: by eldamar.lan (Postfix, from userid 1000)
-	id BF1ECBE2EE7; Mon, 26 Jan 2026 22:03:22 +0100 (CET)
-Date: Mon, 26 Jan 2026 22:03:22 +0100
-From: Salvatore Bonaccorso <carnil@debian.org>
-To: Viacheslav Dubeyko <vdubeyko@redhat.com>
-Cc: Ilya Dryomov <idryomov@gmail.com>,
-	Viacheslav Dubeyko <slava@dubeyko.com>, ceph-devel@vger.kernel.org,
-	pdonnell@redhat.com, linux-fsdevel@vger.kernel.org,
-	amarkuze@redhat.com, khiremat@redhat.com, Pavan.Rallabhandi@ibm.com,
-	1125405@bugs.debian.org,
-	Reinhard Eilmsteiner <reinhard.eilmsteiner@eilm.at>
-Subject: Re: [PATCH v5] ceph: fix kernel crash in ceph_open()
-Message-ID: <aXfWmlvvy03c7kja@eldamar.lan>
-References: <20260114195524.1025067-2-slava@dubeyko.com>
- <CAOi1vP8CwX5T_R4gdZ0egg2oxCwFGAvoi6Us2k4=QFKmtqHmjQ@mail.gmail.com>
- <3e4c420c7dd63ac3ecd0c9c21aea4f75784eada4.camel@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2292DCBF8;
+	Mon, 26 Jan 2026 21:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.39
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769461557; cv=fail; b=d/DDGKFUoLEavi2cidBYqGFEg91QtVLZb0gxdcLNLVvdr/g1RY3QftKdpJWNERgvpJiOSvTKqOkvapBHYk4BXe/0rNjZQUnaGjueqvKOksN8nFUnnBqJOpr7E3g56PfqLYyHQX2ENt3Y1j34MuGIJcIzTPGDCAHyYoeyL1OVnwU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769461557; c=relaxed/simple;
+	bh=hUDDk8mvOhpf/RXuezRpsvOCIf0tnm+WwkD4hetaiaA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=k6neo6nQqkxXUkF1CKRu//nivijST9V46mNtkBjHI5nVNi78Zu0dQDgk07aKgjld701pKn44zG0Mfd/FwgPb+jIkeik85Ykt/7vNErGIGLKaAoupO0Pz4XaE0VCnMeLhW1Lk8cCOo54CRFM1uBMYSFmkqKVjb1i1vbyVKlq3RyI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XErw+koI; arc=fail smtp.client-ip=52.101.48.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fWKagA91NcvA8H1jte6mOEp8aEgjpmuF79k0hy2Zj7cwXhEwlOvLKr7Wpq6MmV7Srp0GTPwgVOOT18W0kksfFfQevu/Fh7UzM1FoBIzOzvY2vvB8EzCaWxMLVpEy2GalnQxXPVHp0XdIg/HPRE44rvzQ1BfmYYvZQI3fJCUuHDw7lPPpRBZjldutd/f71PbBz7sYeJ+SJzthsjBwtK5oIDAzYJJfP4GQyyEpEjOzMsNAPDBReIYya8D8CKW6vURWnoAK2VPmKXZQjHHIvCrDK45XZVg6+OBHNOMrah4sgiw68ATaFYC6DTeK57WY8W/wczpQ9QyAbMHejaTVju+5xw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=l92GbjMkHZ5vo8Dh4bVG2Pw9fowuW7F+zfP7VtpfmeU=;
+ b=tIt7MtjoOgUIhb5k+qT1NukimcDcqkEwS0AkMK08ZPzKXpbSuSdq8NYGuAj70KGMKKmz5tT8xmLUNCX5hvE8iA9G2MZ+D4AlIYTYq+T9UHtroy3JWiQuz6lINAPmHQ9teCAXSF8xuPU+hpCB8S8TW28PlXLtLSSxefuRrsEqa4HF18VwOOjvkzOgvWbio8U3MBUznLnC8zvfh9Rc2VWvWeIQUkcQsMPPM9BOPfggJHIY1yVLJBh/OBfaLAoWVMCXK2bpspCBnFSLUvGopZDYsoZVXBvLOao3IifRT+0Vpizz7M90Pl0t0ryNuRfKhwcWPwf6KYN3IxAdNvOKDW91Ug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=l92GbjMkHZ5vo8Dh4bVG2Pw9fowuW7F+zfP7VtpfmeU=;
+ b=XErw+koIjXSsZM0hYQxvWT3f0S4qe27qccU7AEDuH+zyYW8EZ3K7KgzThz84Lbn1Qxu5WIOvj7TxMbx3Dx+FfXbtB0vTs2OTRv8yCKRmt0CjSC/arvu1XqBTAz0Zl5Sw7g18GyRxroFcmvjJmnfqy89ZuBteg5IX8JSleydxlvM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from LV8PR12MB9714.namprd12.prod.outlook.com (2603:10b6:408:2a0::5)
+ by PH7PR12MB6666.namprd12.prod.outlook.com (2603:10b6:510:1a8::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.15; Mon, 26 Jan
+ 2026 21:05:51 +0000
+Received: from LV8PR12MB9714.namprd12.prod.outlook.com
+ ([fe80::8c9f:3a5b:974b:99c6]) by LV8PR12MB9714.namprd12.prod.outlook.com
+ ([fe80::8c9f:3a5b:974b:99c6%6]) with mapi id 15.20.9542.015; Mon, 26 Jan 2026
+ 21:05:51 +0000
+Message-ID: <9f33dc8b-4d0c-4e0b-8212-ecf1a2635b5d@amd.com>
+Date: Mon, 26 Jan 2026 13:05:47 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 6/7] dax/hmem, cxl: Defer and resolve ownership of Soft
+ Reserved memory ranges
+To: Alison Schofield <alison.schofield@intel.com>,
+ Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-pm@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Yazen Ghannam <yazen.ghannam@amd.com>, Dave Jiang <dave.jiang@intel.com>,
+ Davidlohr Bueso <dave@stgolabs.net>, Matthew Wilcox <willy@infradead.org>,
+ Jan Kara <jack@suse.cz>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Len Brown <len.brown@intel.com>, Pavel Machek <pavel@kernel.org>,
+ Li Ming <ming.li@zohomail.com>, Jeff Johnson
+ <jeff.johnson@oss.qualcomm.com>, Ying Huang <huang.ying.caritas@gmail.com>,
+ Yao Xingtao <yaoxt.fnst@fujitsu.com>, Peter Zijlstra <peterz@infradead.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Nathan Fontenot <nathan.fontenot@amd.com>,
+ Terry Bowman <terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>,
+ Benjamin Cheatham <benjamin.cheatham@amd.com>,
+ Zhijian Li <lizhijian@fujitsu.com>, Borislav Petkov <bp@alien8.de>,
+ Tomasz Wolski <tomasz.wolski@fujitsu.com>
+References: <20260122045543.218194-1-Smita.KoralahalliChannabasappa@amd.com>
+ <20260122045543.218194-7-Smita.KoralahalliChannabasappa@amd.com>
+ <aXMWzC8zf3bqIHJ0@aschofie-mobl2.lan>
+Content-Language: en-US
+From: "Koralahalli Channabasappa, Smita" <skoralah@amd.com>
+In-Reply-To: <aXMWzC8zf3bqIHJ0@aschofie-mobl2.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0PR03CA0266.namprd03.prod.outlook.com
+ (2603:10b6:a03:3a0::31) To LV8PR12MB9714.namprd12.prod.outlook.com
+ (2603:10b6:408:2a0::5)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3e4c420c7dd63ac3ecd0c9c21aea4f75784eada4.camel@redhat.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9714:EE_|PH7PR12MB6666:EE_
+X-MS-Office365-Filtering-Correlation-Id: ababfe97-150d-4164-6f87-08de5d1eafca
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ekVXM0xlUllNcU1yS3ZQTXFhc1l2eEhLWjZxaTNLUC80YmVycWN1cUhMWlgz?=
+ =?utf-8?B?bWN2RlBSV3d2L3hTaFNaNkdCeEd0Q3RIR2F0a0xwZVBNWS9US0UzNDcxdktp?=
+ =?utf-8?B?ZE8xZWp0b0p3NVU3aFRXL0R5cElHc0FWRUJ3ZG5OeXlCSnpkVFpzRlorUVZk?=
+ =?utf-8?B?NDI3enZsN2tlTXVGalVlOTNSSFhiOEp3UGkzT1htL1FrcTkvc0pNdnBmalZV?=
+ =?utf-8?B?cysvempyOHRVdERxQjl2VWFGTmdhRldDVTlZV1BMOWNVUXZjeDI0R1hFTVpp?=
+ =?utf-8?B?OE9OZnFoMm1oSzU4a2E5Z1BBTlphNm9nUS9rMjhzRk9GQ1d2R1RTL2M0WFgz?=
+ =?utf-8?B?K1lWTEdDUkoyc1pSc1pBdEI4RUdRSkE5eUdtSStRYUswSGVpQXc1UWlYVytq?=
+ =?utf-8?B?MUlnckpZajB6Z2VKclZIUysvZ2s3d1U0ajlyUElOVE5NcVVEdHVMOTZFWlVm?=
+ =?utf-8?B?Tjh3NENFR2VvclBreGgzT2Q3ek5xVWFsWDhYQlBxZDlmdVJXdWVlVE9vdldR?=
+ =?utf-8?B?bDhlcmxhbnVKendxajBGdFlHQVFtWXhCQURFRk5GRFRaQXNsNVpZYldCR0tV?=
+ =?utf-8?B?V2ttM283NGRGYUhBUFZMTmZaZXdOL05STW1mNVpNVWZ5VjUrbE1RNThiSmda?=
+ =?utf-8?B?cHRFUk1vNm9yREZiMHg0RFNKNlNIc3ZjRnlBMnVZTjRJRTNMRXFMN1o0bmI1?=
+ =?utf-8?B?TC9wMHI5c2c0N2l4M3pzWnM1UGZacHRBQXdyU3NKSFhHSVZCTU05ejJBT3du?=
+ =?utf-8?B?YnVuNTUvMzdNajVNbzdIVWI0bHVKTVNQVGVmMnhZRXMya05uQ3NNbllySzhK?=
+ =?utf-8?B?U2ZOZnBOWWtybjYvVS9DU1Ayb09DUEFxM2Vid3NicjBKS0VUeFYxamFtdXdH?=
+ =?utf-8?B?ajVWOTh2Rkd0Q2Qra3k0VEdlRHQ3VEtUWGF0a05tK2FOOG80aHp5aEcxK1hK?=
+ =?utf-8?B?WCtueHNTNzVsbnVBeEIzZ1dYcHAxWDlWV2NxNUorR0dwZnpabWMrMnk5Kzk4?=
+ =?utf-8?B?WnhwMzhxTWFFL1g2bDRISVpxZ01WUWhDNnZRMjZ6WWRrc016dWZXcWpNWlFa?=
+ =?utf-8?B?THJJVzMwTnJ6aWpqVWR4VjZaWXpiS2JGMGxhd2xTMFIrNHlCR3JrT1J4UTFm?=
+ =?utf-8?B?a1FROVU0RWJiTE9UcGhKYndFUCthSG9aUDNwTVdXTmI0S2JTNnVha3hMOE94?=
+ =?utf-8?B?Z1hBaWJUTlRYZHNRdmtTL3AzYkVqQ1FmR1JCZkw4dkNBNm1zVk1NRzdzZnh1?=
+ =?utf-8?B?TUpBUzBIUjlIVzl6L200dDVQcWlOU2dBVG1kRHgyeVVVUzFkejViNWU3NVg4?=
+ =?utf-8?B?WXFtYlY2Y1BaYTV3SUdjWFFUNTJmWml2dzM3bVN6amVvd0tuUVc3VndFdU5I?=
+ =?utf-8?B?a3loQWM3RHVURTFEKzhJblhacWpkNkF1ekhzRmRJbWRhSXlMNVBYcVpYbUJV?=
+ =?utf-8?B?UnlNT2pjKzM5dGJJUHZtY2Ric1l4ckMremR0UEtkOHRRUnpuelFuZ213YjY4?=
+ =?utf-8?B?U3htRFM4TXlEMDZDZm05elVNK2V2Slh0dlJtTnp1SEtJQ3FtWUJxZ3phYU5X?=
+ =?utf-8?B?OWlLRHMrK2JBWHlocEE0WmE2OGZCMlBqSEJBbmtHMXRBTmNlZmxvclJWNWQ4?=
+ =?utf-8?B?NmpPbHh1ekhQRnpIb0VWc2lQY0xUbDQ3cndxOEllMkFaNStKaFhDYllRaHdY?=
+ =?utf-8?B?V2ZVTTk3aW1Lcjl6RVd4OFovNzRGTUlLUFAvTzlwY0s2c212b0QxTVk2dFg3?=
+ =?utf-8?B?aGZEbkxINWZRUlpKbGJLR3c2MHlyclVkdjhlY2hmNDdMVm1xM0czaTdmN2xs?=
+ =?utf-8?B?MnlOUGlMc0ZWck5wbTB2RWpqZjNwZjVDY2hiY3E4RXZReldNUkU2OXRKL3ND?=
+ =?utf-8?B?YXl5QzI5Nk56QUh6d0pIZXMxamtRb0ZxbDdUUmpZalJIUkhZc29uYUlyRkEr?=
+ =?utf-8?B?T3UrOC9Pd0ZIbHNLenlsRE9ncGp6U2xaOGNVZGpKcGN2ZlBaV3IrWlBqcE1u?=
+ =?utf-8?B?clBjY1pwTnBmeXBSRmsraHlsZEtRcnovNVhKZldvZzdFRkkxTjA1cnFiaWM1?=
+ =?utf-8?B?eEMzc2dLa2dWc2E4aXk0MnNTQ292SWhZdXRPenRYRG5ERlhvdkFlRjZOV3g5?=
+ =?utf-8?Q?6tdo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9714.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MjB1M0gwOExQMjJZaGRweUd5TDg1bmxkMWgyVEV0akRHb2gwcnZEUFc0TjIz?=
+ =?utf-8?B?WEc3cm9ma2htYU9EVEh6QkZmM0RjS0daWWtDR25YQ2lzRWk2YmxheUZiRFVu?=
+ =?utf-8?B?d04rWVAvUU1aL2EremlJR2RJelo1eFFqQTNOa05DQ1JHWkVFVjF5U3ZtWXJj?=
+ =?utf-8?B?b0swZThRNVpCblI4MUxWaHZDKzZFNHZaVEFSWVJ1VHpUdzZCQktMY1ZxM0hV?=
+ =?utf-8?B?VTAxZzFCMXZvOU1Pd3JJM3pGZ0VaQ3VWU25jU0tHREdhWGJBNGN1eFhyN0lI?=
+ =?utf-8?B?ZzJybTBmdzM5TFFYRmdsd3JIWVZyK3UxMG11TU1lMXlxZVJBVmFpTk5qeG94?=
+ =?utf-8?B?Tm5NMHRiYWRpdDh4ZnV6UldrR3FUS09wU1Y0VnRZQmVNV215bDJhOUlQMnp4?=
+ =?utf-8?B?bm1kMDJWY0FiZG16Z3ZuU3VwUitRaHlFV01keHFmQzB1WVdxYURPNU9SclM2?=
+ =?utf-8?B?Z0dCYXErZUJxaFNIcEJTMXBsdGNPNTZESjZxR1FHWjlaUm9FcWdwbnNhYis5?=
+ =?utf-8?B?RldqVk52WWppNE9DS2RwNnNZMEF5cDZBYm1MQTd4aHdiQnJaWEZQanpaa1JP?=
+ =?utf-8?B?RTlsZ3N1Mk5OOVBzUE9oUkxKZjhsbTdCcW02TVhHU29GQnY0TFRkZ01aYjgr?=
+ =?utf-8?B?alV4R3g2SGVRMG5vNWorZ0ZSbGtlWWpQYjA1enczWnhIRUI1d1NqSTEvUUQr?=
+ =?utf-8?B?Lys0UFpRWjRkLzUrb3FHWHZtR204eGYybnh5OStMNmxhQ0I2NlhMTWk3ejNK?=
+ =?utf-8?B?TjAxeFdVYS9IamJGdTZia2NKUmlKY0FNTGhaejVzd0Y5NUk1eTcrZTRkbkNw?=
+ =?utf-8?B?eURXUHFiZmZHYkZiK2NIaDYvcExCdXlsYm9YbUVLWUZQNlVpVTY5MXAzV1po?=
+ =?utf-8?B?REhrNVQ5WmNOaWVnbnhWdElsK1BMdDFtZ3E4ODltOGdqZHJRRjUvYkxwVHNU?=
+ =?utf-8?B?bm5VR0ZyY0h6d3pNaXZXQWloOWVyaE15NVQ1OW9ZMHJhS1VaaStTeTkvT1pI?=
+ =?utf-8?B?aFpOSWxGVDY2SkdUUFJXdm9mc09kRkpqK0R2NzB2NDl5bWlHd2M4UFpsaUJr?=
+ =?utf-8?B?TEF5SVd3MGhzSW5mN2tpYWRUOFIyQUIvRXUyUHlwbjN0VlRBMW0zK2tHbzh5?=
+ =?utf-8?B?WXo3RXVNa3liOFFGb2xFQlVEZ2hTbHpGcVdsejBmejJvNXlFYzdUeG94cURJ?=
+ =?utf-8?B?SnNDbGJnSUthQys4Vm4xSWZZQk9ndHA5L1lTTEpEb3hpKzdBV1BPTnF0eVU1?=
+ =?utf-8?B?WldicDg1T0xla294RVMxeElYVnh5YVNwRWNMbDd2bm1rVlpyejNOdjFkUmdp?=
+ =?utf-8?B?aE9YZS9uWmttajFUYnppRGFaZW9yYWtLSmFGZjhFOHB0bXZwVk5zVzM1NTZ0?=
+ =?utf-8?B?eG9NYUw4Z2g1M0N2SWRjQnUvU0xMUncyRHB3MXNaM3FjSWhXQ0xXNGdjQm90?=
+ =?utf-8?B?N2t2NTdLbmYwWlZHa0xqOEJaMlBEanJJUS9vTzl1d2Mrd0pmZ2gyZGhYQVpG?=
+ =?utf-8?B?WEplUW82ZlF5RCtLc3hRZ0JNL3dYRFJlN3BHdi8vdXlkMER6eEdwVnlIZDRk?=
+ =?utf-8?B?UlZwWjBJTG5wbmp5M3ZPWEkvZ1o5eEd0TmVZanZoRFRkeDRzYkw3a2JrNEg2?=
+ =?utf-8?B?Y2kyWHBQbDdxN1ZaVENvbkYxYVBaZGRuWnh2V1E5SDF6NkN2Ulo2N0FUMS9o?=
+ =?utf-8?B?YzR6UC96Szcra0VUWFBlUVZsUkpvNnVYNUUwaHlKTExmOG03Tzh4SXdqNTZo?=
+ =?utf-8?B?ZVZNTW5UK0J2UUpTOWpDMzdxbDVZY0ExUmxNTDNjVld6SG9KVFpNbjU5ZVZj?=
+ =?utf-8?B?dXdNTlNWT3ZCdUdHdjdxMktkS2FNWUF3MjhrUlFXc3VKR0FpaHByTGdLUi85?=
+ =?utf-8?B?YUp1ZGwxV2tCdURQZGRIQWFZMjhUaVdSZUs1cHE3N2dkWGFxSXMyVkRURFd1?=
+ =?utf-8?B?S21NSzhiNTJGTkJGdzIxNmFsejg4QU10S3dNQTZLeWcyWk9JK3JDQzluTnVC?=
+ =?utf-8?B?cmhqdnFCM0ZYZWdYb2szT0dkNDc2OEs5MlpMVHpFM0hhS1lVNldkV29ZNmVM?=
+ =?utf-8?B?Si94TnVKeWxkaGJRSSt1RUVIMlpDakV1UnVkN2hpdWdJTXJHQ0Z4eE4rcitn?=
+ =?utf-8?B?eTFCRklFNUlsSjdOdlN2S0NnckNSWXh1TVNRbklieE54T0piS0RGckRibjhH?=
+ =?utf-8?B?TmJ1YnlKR0YxUWNQQ2tOMlc5ejJ5QXlYK21rR0VBK2ZxeTNOYXRaSVQyR2gx?=
+ =?utf-8?B?d2ZFOWU1OGVVMGpsZ1ozS0RwSmJtb2hFaVJIUTQ2Z3BJZm5HbkovQ2V1d2xy?=
+ =?utf-8?B?VUlPNUJERUtLZlNsNU5uMGpWVzl4bEhCYWlqQUVVZEY5TTA3d245Zz09?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ababfe97-150d-4164-6f87-08de5d1eafca
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9714.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jan 2026 21:05:51.6635
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yohxXAF6Cp+lQt9gAHHCcQYUushgyIRcq5CjtDkfgMzzI6e0PEyk85WVf1uBri8OYXacMmjw1D1xC7TEXI3kYQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6666
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+X-Spamd-Result: default: False [1.34 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_REJECT(1.00)[cv is fail on i=2];
+	DMARC_POLICY_ALLOW(-0.50)[amd.com,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[amd.com:s=selector1];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	DMARC_NA(0.00)[debian.org];
-	FREEMAIL_CC(0.00)[gmail.com,dubeyko.com,vger.kernel.org,redhat.com,ibm.com,bugs.debian.org,eilm.at];
 	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[33];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75538-lists,linux-fsdevel=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MISSING_XM_UA(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75539-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[vger.kernel.org,lists.linux.dev,kernel.org,intel.com,huawei.com,amd.com,stgolabs.net,infradead.org,suse.cz,zohomail.com,oss.qualcomm.com,gmail.com,fujitsu.com,linuxfoundation.org,alien8.de];
+	RCVD_TLS_LAST(0.00)[];
 	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[carnil@debian.org,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[skoralah@amd.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[amd.com:+];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[dubeyko.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,ceph.com:url,bootlin.com:url]
-X-Rspamd-Queue-Id: 79A5E8D766
+	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[amd.com:email,amd.com:dkim,amd.com:mid,intel.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 1A7B08D7F3
 X-Rspamd-Action: no action
 
-Hi,
+Hi Alison,
 
-On Mon, Jan 26, 2026 at 12:18:29PM -0800, Viacheslav Dubeyko wrote:
-> On Mon, 2026-01-26 at 13:35 +0100, Ilya Dryomov wrote:
-> > On Wed, Jan 14, 2026 at 8:56 PM Viacheslav Dubeyko <slava@dubeyko.com> wrote:
-> > > 
-> > > From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-> > > 
-> > > The CephFS kernel client has regression starting from 6.18-rc1.
-> > > 
-> > > sudo ./check -g quick
-> > > FSTYP         -- ceph
-> > > PLATFORM      -- Linux/x86_64 ceph-0005 6.18.0-rc5+ #52 SMP PREEMPT_DYNAMIC Fri
-> > > Nov 14 11:26:14 PST 2025
-> > > MKFS_OPTIONS  -- 192.168.1.213:3300:/scratch
-> > > MOUNT_OPTIONS -- -o name=admin,ms_mode=secure 192.168.1.213:3300:/scratch
-> > > /mnt/cephfs/scratch
-> > > 
-> > > Killed
-> > > 
-> > > Nov 14 11:48:10 ceph-0005 kernel: [  154.723902] libceph: mon0
-> > > (2)192.168.1.213:3300 session established
-> > > Nov 14 11:48:10 ceph-0005 kernel: [  154.727225] libceph: client167616
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.087260] BUG: kernel NULL pointer
-> > > dereference, address: 0000000000000000
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.087756] #PF: supervisor read access in
-> > > kernel mode
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.088043] #PF: error_code(0x0000) - not-
-> > > present page
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.088302] PGD 0 P4D 0
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.088688] Oops: Oops: 0000 [#1] SMP KASAN
-> > > NOPTI
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.090080] CPU: 4 UID: 0 PID: 3453 Comm:
-> > > xfs_io Not tainted 6.18.0-rc5+ #52 PREEMPT(voluntary)
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.091245] Hardware name: QEMU Standard PC
-> > > (i440FX + PIIX, 1996), BIOS 1.17.0-5.fc42 04/01/2014
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.092103] RIP: 0010:strcmp+0x1c/0x40
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.092493] Code: 90 90 90 90 90 90 90 90
-> > > 90 90 90 90 90 90 31 c0 eb 14 66 66 2e 0f 1f 84 00 00 00 00 00 90 48 83 c0 01 84
-> > > d2 74 19 0f b6 14 07 <3a> 14 06 74 ef 19 c0 83 c8 01 31 d2 31 f6 31 ff c3 cc cc
-> > > cc cc 31
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.094057] RSP: 0018:ffff8881536875c0
-> > > EFLAGS: 00010246
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.094522] RAX: 0000000000000000 RBX:
-> > > ffff888116003200 RCX: 0000000000000000
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.095114] RDX: 0000000000000063 RSI:
-> > > 0000000000000000 RDI: ffff88810126c900
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.095714] RBP: ffff8881536876a8 R08:
-> > > 0000000000000000 R09: 0000000000000000
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.096297] R10: 0000000000000000 R11:
-> > > 0000000000000000 R12: dffffc0000000000
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.096889] R13: ffff8881061d0000 R14:
-> > > 0000000000000000 R15: 0000000000000000
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.097490] FS:  000074a85c082840(0000)
-> > > GS:ffff8882401a4000(0000) knlGS:0000000000000000
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.098146] CS:  0010 DS: 0000 ES: 0000
-> > > CR0: 0000000080050033
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.098630] CR2: 0000000000000000 CR3:
-> > > 0000000110ebd001 CR4: 0000000000772ef0
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.099219] PKRU: 55555554
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.099476] Call Trace:
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.099686]  <TASK>
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.099873]  ?
-> > > ceph_mds_check_access+0x348/0x1760
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.100267]  ?
-> > > __kasan_check_write+0x14/0x30
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.100671]  ? lockref_get+0xb1/0x170
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.100979]  ?
-> > > __pfx__raw_spin_lock+0x10/0x10
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.101372]  ceph_open+0x322/0xef0
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.101669]  ? __pfx_ceph_open+0x10/0x10
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.101996]  ?
-> > > __pfx_apparmor_file_open+0x10/0x10
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.102434]  ?
-> > > __ceph_caps_issued_mask_metric+0xd6/0x180
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.102911]  do_dentry_open+0x7bf/0x10e0
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.103249]  ? __pfx_ceph_open+0x10/0x10
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.103508]  vfs_open+0x6d/0x450
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.103697]  ? may_open+0xec/0x370
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.103893]  path_openat+0x2017/0x50a0
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.104110]  ? __pfx_path_openat+0x10/0x10
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.104345]  ?
-> > > __pfx_stack_trace_save+0x10/0x10
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.104599]  ?
-> > > stack_depot_save_flags+0x28/0x8f0
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.104865]  ? stack_depot_save+0xe/0x20
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.105063]  do_filp_open+0x1b4/0x450
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.105253]  ?
-> > > __pfx__raw_spin_lock_irqsave+0x10/0x10
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.105538]  ? __pfx_do_filp_open+0x10/0x10
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.105748]  ? __link_object+0x13d/0x2b0
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.105949]  ?
-> > > __pfx__raw_spin_lock+0x10/0x10
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.106169]  ?
-> > > __check_object_size+0x453/0x600
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.106428]  ? _raw_spin_unlock+0xe/0x40
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.106635]  do_sys_openat2+0xe6/0x180
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.106827]  ?
-> > > __pfx_do_sys_openat2+0x10/0x10
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.107052]  __x64_sys_openat+0x108/0x240
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.107258]  ?
-> > > __pfx___x64_sys_openat+0x10/0x10
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.107529]  ?
-> > > __pfx___handle_mm_fault+0x10/0x10
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.107783]  x64_sys_call+0x134f/0x2350
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.108007]  do_syscall_64+0x82/0xd50
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.108201]  ?
-> > > fpregs_assert_state_consistent+0x5c/0x100
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.108467]  ? do_syscall_64+0xba/0xd50
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.108626]  ? __kasan_check_read+0x11/0x20
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.108801]  ?
-> > > count_memcg_events+0x25b/0x400
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.109013]  ? handle_mm_fault+0x38b/0x6a0
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.109216]  ? __kasan_check_read+0x11/0x20
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.109457]  ?
-> > > fpregs_assert_state_consistent+0x5c/0x100
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.109724]  ?
-> > > irqentry_exit_to_user_mode+0x2e/0x2a0
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.109991]  ? irqentry_exit+0x43/0x50
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.110180]  ? exc_page_fault+0x95/0x100
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.110389]
-> > > entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.110638] RIP: 0033:0x74a85bf145ab
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.110821] Code: 25 00 00 41 00 3d 00 00
-> > > 41 00 74 4b 64 8b 04 25 18 00 00 00 85 c0 75 67 44 89 e2 48 89 ee bf 9c ff ff ff
-> > > b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 0f 87 91 00 00 00 48 8b 54 24 28 64 48
-> > > 2b 14 25
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.111724] RSP: 002b:00007ffc77d316d0
-> > > EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.112080] RAX: ffffffffffffffda RBX:
-> > > 0000000000000002 RCX: 000074a85bf145ab
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.112442] RDX: 0000000000000000 RSI:
-> > > 00007ffc77d32789 RDI: 00000000ffffff9c
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.112790] RBP: 00007ffc77d32789 R08:
-> > > 00007ffc77d31980 R09: 0000000000000000
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.113125] R10: 0000000000000000 R11:
-> > > 0000000000000246 R12: 0000000000000000
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.113502] R13: 00000000ffffffff R14:
-> > > 0000000000000180 R15: 0000000000000001
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.113838]  </TASK>
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.113957] Modules linked in:
-> > > intel_rapl_msr intel_rapl_common intel_uncore_frequency_common intel_pmc_core
-> > > pmt_telemetry pmt_discovery pmt_class intel_pmc_ssram_telemetry intel_vsec
-> > > kvm_intel kvm joydev irqbypass polyval_clmulni ghash_clmulni_intel aesni_intel
-> > > rapl floppy input_leds psmouse i2c_piix4 vga16fb mac_hid i2c_smbus vgastate
-> > > serio_raw bochs qemu_fw_cfg pata_acpi sch_fq_codel rbd msr parport_pc ppdev lp
-> > > parport efi_pstore
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.116339] CR2: 0000000000000000
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.116574] ---[ end trace 0000000000000000
-> > > ]---
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.116826] RIP: 0010:strcmp+0x1c/0x40
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.117058] Code: 90 90 90 90 90 90 90 90
-> > > 90 90 90 90 90 90 31 c0 eb 14 66 66 2e 0f 1f 84 00 00 00 00 00 90 48 83 c0 01 84
-> > > d2 74 19 0f b6 14 07 <3a> 14 06 74 ef 19 c0 83 c8 01 31 d2 31 f6 31 ff c3 cc cc
-> > > cc cc 31
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.118070] RSP: 0018:ffff8881536875c0
-> > > EFLAGS: 00010246
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.118362] RAX: 0000000000000000 RBX:
-> > > ffff888116003200 RCX: 0000000000000000
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.118748] RDX: 0000000000000063 RSI:
-> > > 0000000000000000 RDI: ffff88810126c900
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.119116] RBP: ffff8881536876a8 R08:
-> > > 0000000000000000 R09: 0000000000000000
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.119492] R10: 0000000000000000 R11:
-> > > 0000000000000000 R12: dffffc0000000000
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.119865] R13: ffff8881061d0000 R14:
-> > > 0000000000000000 R15: 0000000000000000
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.120242] FS:  000074a85c082840(0000)
-> > > GS:ffff8882401a4000(0000) knlGS:0000000000000000
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.120704] CS:  0010 DS: 0000 ES: 0000
-> > > CR0: 0000000080050033
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.121008] CR2: 0000000000000000 CR3:
-> > > 0000000110ebd001 CR4: 0000000000772ef0
-> > > Nov 14 11:48:11 ceph-0005 kernel: [  155.121409] PKRU: 55555554
-> > > 
-> > > We have issue here [1] if fs_name == NULL:
-> > > 
-> > > const char fs_name = mdsc->fsc->mount_options->mds_namespace;
-> > >     ...
-> > >     if (auth->match.fs_name && strcmp(auth->match.fs_name, fs_name)) {
-> > >             / fsname mismatch, try next one */
-> > >             return 0;
-> > >     }
-> > > 
-> > > v2
-> > > Patrick Donnelly suggested that: In summary, we should definitely start
-> > > decoding `fs_name` from the MDSMap and do strict authorizations checks
-> > > against it. Note that the `--mds_namespace` should only be used for
-> > > selecting the file system to mount and nothing else. It's possible
-> > > no mds_namespace is specified but the kernel will mount the only
-> > > file system that exists which may have name "foo".
-> > > 
-> > > v3
-> > > The namespace_equals() logic has been generalized into
-> > > __namespace_equals() with the goal of using it in
-> > > ceph_mdsc_handle_fsmap() and ceph_mds_auth_match().
-> > > The misspelling of CEPH_NAMESPACE_WILDCARD has been corrected.
-> > > 
-> > > v4
-> > > The __namespace_equals() now supports wildcard check.
-> > > 
-> > > v5
-> > > Patrick Donnelly suggested to add the sanity check of
-> > > kstrdup() returned pointer in ceph_mdsmap_decode()
-> > > added logic. Also, he suggested much simpler logic of
-> > > namespace strings comparison in the form of
-> > > ceph_namespace_match() logic.
-> > > 
-> > > This patch reworks ceph_mdsmap_decode() and namespace_equals() with
-> > > the goal of supporting the suggested concept. Now struct ceph_mdsmap
-> > > contains m_fs_name field that receives copy of extracted FS name
-> > > by ceph_extract_encoded_string(). For the case of "old" CephFS file systems,
-> > > it is used "cephfs" name. Also, namespace_equals() method has been
-> > > reworked with the goal of proper names comparison.
-> > > 
-> > > [1] https://elixir.bootlin.com/linux/v6.18-rc4/source/fs/ceph/mds_client.c#L5666
-> > > [2] https://tracker.ceph.com/issues/73886
-> > > 
-> > > Fixes: 22c73d52a6d0 ("ceph: fix multifs mds auth caps issue")
-> > > Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-> > > cc: Kotresh Hiremath Ravishankar <khiremat@redhat.com>
-> > > cc: Alex Markuze <amarkuze@redhat.com>
-> > > cc: Ilya Dryomov <idryomov@gmail.com>
-> > > cc: Patrick Donnelly <pdonnell@redhat.com>
-> > > cc: Ceph Development <ceph-devel@vger.kernel.org>
-> > > ---
-> > >  fs/ceph/mds_client.c         | 11 +++++------
-> > >  fs/ceph/mdsmap.c             | 24 ++++++++++++++++++------
-> > >  fs/ceph/mdsmap.h             |  1 +
-> > >  fs/ceph/super.h              | 24 +++++++++++++++++++-----
-> > >  include/linux/ceph/ceph_fs.h |  6 ++++++
-> > >  5 files changed, 49 insertions(+), 17 deletions(-)
-> > > 
-> > > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > > index 7e4eab824dae..703c14bc3c95 100644
-> > > --- a/fs/ceph/mds_client.c
-> > > +++ b/fs/ceph/mds_client.c
-> > > @@ -5671,7 +5671,7 @@ static int ceph_mds_auth_match(struct ceph_mds_client *mdsc,
-> > >         u32 caller_uid = from_kuid(&init_user_ns, cred->fsuid);
-> > >         u32 caller_gid = from_kgid(&init_user_ns, cred->fsgid);
-> > >         struct ceph_client *cl = mdsc->fsc->client;
-> > > -       const char *fs_name = mdsc->fsc->mount_options->mds_namespace;
-> > > +       const char *fs_name = mdsc->mdsmap->m_fs_name;
-> > >         const char *spath = mdsc->fsc->mount_options->server_path;
-> > >         bool gid_matched = false;
-> > >         u32 gid, tlen, len;
-> > > @@ -5679,7 +5679,8 @@ static int ceph_mds_auth_match(struct ceph_mds_client *mdsc,
-> > > 
-> > >         doutc(cl, "fsname check fs_name=%s  match.fs_name=%s\n",
-> > >               fs_name, auth->match.fs_name ? auth->match.fs_name : "");
-> > > -       if (auth->match.fs_name && strcmp(auth->match.fs_name, fs_name)) {
-> > > +
-> > > +       if (!ceph_namespace_match(auth->match.fs_name, fs_name, NAME_MAX)) {
-> > 
-> > Hi Slava,
-> > 
-> > How was this tested?  In particular, do you have a test case covering
-> > an MDS auth cap that specifies a particular fs_name (i.e. one where
-> > auth->match.fs_name wouldn't be NULL or CEPH_NAMESPACE_WILDCARD)?
-> > 
-> > I'm asking because it looks like ceph_namespace_match() would always
-> > declare a mismatch in that scenario due to the fact that NAME_MAX is
-> > passed for target_len and
-> > 
-> >     if (strlen(pattern) != target_len)
-> >             return false;
-> > 
-> > condition inside of ceph_namespace_match().  This in turn means that
-> > ceph_mds_check_access() would disregard the respective cap and might
-> > allow access where it's supposed to be denied.
-> > 
-> > 
+On 1/22/2026 10:35 PM, Alison Schofield wrote:
+> On Thu, Jan 22, 2026 at 04:55:42AM +0000, Smita Koralahalli wrote:
+>> The current probe time ownership check for Soft Reserved memory based
+>> solely on CXL window intersection is insufficient. dax_hmem probing is not
+>> always guaranteed to run after CXL enumeration and region assembly, which
+>> can lead to incorrect ownership decisions before the CXL stack has
+>> finished publishing windows and assembling committed regions.
+>>
+>> Introduce deferred ownership handling for Soft Reserved ranges that
+>> intersect CXL windows at probe time by scheduling deferred work from
+>> dax_hmem and waiting for the CXL stack to complete enumeration and region
+>> assembly before deciding ownership.
+>>
+>> Evaluate ownership of Soft Reserved ranges based on CXL region
+>> containment.
+>>
+>>     - If all Soft Reserved ranges are fully contained within committed CXL
+>>       regions, DROP handling Soft Reserved ranges from dax_hmem and allow
+>>       dax_cxl to bind.
+>>
+>>     - If any Soft Reserved range is not fully claimed by committed CXL
+>>       region, tear down all CXL regions and REGISTER the Soft Reserved
+>>       ranges with dax_hmem instead.
+>>
+>> While ownership resolution is pending, gate dax_cxl probing to avoid
+>> binding prematurely.
 > 
-> I have run the xfstests (quick group) with the patch applied. I didn't see any
-> unusual behavior. If we believe that these tests are not enough, then, maybe, we
-> need to introduce the additional Ceph specialized tests.
+> This patch is the point in the set where I begin to fail creating DAX
+> regions on my non soft-reserved platforms.
+> 
+> Before this patch, at region probe, devm_cxl_add_dax_region(cxlr) succeeded
+> without delay, but now those calls result in EPROBE DEFER.
+> 
+> That deferral is wanted for platforms with Soft Reserveds, but for
+> platforms without, those probes will never resume.
+> 
+> IIUC this will impact platforms without SRs, not just my test setup.
+> In my testing it's visible during both QEMU and cxl-test region creation.
+> 
+> Can we abandon this whole deferral scheme if there is nothing in the
+> new soft_reserved resource tree?
+> 
+> Or maybe another way to get the dax probes UN-deferred in this case?
 
-FWIW, the regression has been reported in Debian as well as
-https://bugs.debian.org/1125405 and Reinhard confirmed that the patch
-seems to resolve the observed regression.
+Thanks for pointing this. I didn't think through this.
 
-Regards,
-Salvatore
+I was thinking to make the deferral conditional on HMEM actually 
+observing a CXL-overlapping range. Rough flow:
+
+One assumption I'm relying on here is that dax_hmem and "initial" 
+hmem_register_device() walk happens before dax_cxl probes. If that 
+assumption doesn’t hold this approach may not be sufficient.
+
+1. Keep dax_cxl_mode default as DEFER as it is now in dax/bus.c
+2. Introduce need_deferral flag initialized to false in dax/bus.c
+3. During the initial dax_hmem walk, in hmem_register_device() if HMEM 
+observes SR that intersects IORES_DESC_CXL, set a need_deferral flag and 
+schedule the deferred work. (case DEFER)
+4. In dax_cxl probe: only return -EPROBE_DEFER when dax_cxl_mode == 
+DEFER and need_deferral is set, otherwise proceed with cxl_dax.
+
+Please call out if you see issues with this approach (especially around 
+the ordering assumption).
+
+Thanks
+Smita
+> 
+> -- Alison
+> 
+>>
+>> This enforces a strict ownership. Either CXL fully claims the Soft
+>> Reserved ranges or it relinquishes it entirely.
+>>
+>> Co-developed-by: Dan Williams <dan.j.williams@intel.com>
+>> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+>> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+>> ---
+>>   drivers/cxl/core/region.c | 25 ++++++++++++
+>>   drivers/cxl/cxl.h         |  2 +
+>>   drivers/dax/cxl.c         |  9 +++++
+>>   drivers/dax/hmem/hmem.c   | 81 ++++++++++++++++++++++++++++++++++++++-
+>>   4 files changed, 115 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+>> index 9827a6dd3187..6c22a2d4abbb 100644
+>> --- a/drivers/cxl/core/region.c
+>> +++ b/drivers/cxl/core/region.c
+>> @@ -3875,6 +3875,31 @@ static int cxl_region_debugfs_poison_clear(void *data, u64 offset)
+>>   DEFINE_DEBUGFS_ATTRIBUTE(cxl_poison_clear_fops, NULL,
+>>   			 cxl_region_debugfs_poison_clear, "%llx\n");
+>>   
+>> +static int cxl_region_teardown_cb(struct device *dev, void *data)
+>> +{
+>> +	struct cxl_root_decoder *cxlrd;
+>> +	struct cxl_region *cxlr;
+>> +	struct cxl_port *port;
+>> +
+>> +	if (!is_cxl_region(dev))
+>> +		return 0;
+>> +
+>> +	cxlr = to_cxl_region(dev);
+>> +
+>> +	cxlrd = to_cxl_root_decoder(cxlr->dev.parent);
+>> +	port = cxlrd_to_port(cxlrd);
+>> +
+>> +	devm_release_action(port->uport_dev, unregister_region, cxlr);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +void cxl_region_teardown_all(void)
+>> +{
+>> +	bus_for_each_dev(&cxl_bus_type, NULL, NULL, cxl_region_teardown_cb);
+>> +}
+>> +EXPORT_SYMBOL_GPL(cxl_region_teardown_all);
+>> +
+>>   static int cxl_region_contains_sr_cb(struct device *dev, void *data)
+>>   {
+>>   	struct resource *res = data;
+>> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+>> index b0ff6b65ea0b..1864d35d5f69 100644
+>> --- a/drivers/cxl/cxl.h
+>> +++ b/drivers/cxl/cxl.h
+>> @@ -907,6 +907,7 @@ int cxl_add_to_region(struct cxl_endpoint_decoder *cxled);
+>>   struct cxl_dax_region *to_cxl_dax_region(struct device *dev);
+>>   u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint, u64 spa);
+>>   bool cxl_region_contains_soft_reserve(const struct resource *res);
+>> +void cxl_region_teardown_all(void);
+>>   #else
+>>   static inline bool is_cxl_pmem_region(struct device *dev)
+>>   {
+>> @@ -933,6 +934,7 @@ static inline bool cxl_region_contains_soft_reserve(const struct resource *res)
+>>   {
+>>   	return false;
+>>   }
+>> +static inline void cxl_region_teardown_all(void) { }
+>>   #endif
+>>   
+>>   void cxl_endpoint_parse_cdat(struct cxl_port *port);
+>> diff --git a/drivers/dax/cxl.c b/drivers/dax/cxl.c
+>> index 13cd94d32ff7..b7e90d6dd888 100644
+>> --- a/drivers/dax/cxl.c
+>> +++ b/drivers/dax/cxl.c
+>> @@ -14,6 +14,15 @@ static int cxl_dax_region_probe(struct device *dev)
+>>   	struct dax_region *dax_region;
+>>   	struct dev_dax_data data;
+>>   
+>> +	switch (dax_cxl_mode) {
+>> +	case DAX_CXL_MODE_DEFER:
+>> +		return -EPROBE_DEFER;
+>> +	case DAX_CXL_MODE_REGISTER:
+>> +		return -ENODEV;
+>> +	case DAX_CXL_MODE_DROP:
+>> +		break;
+>> +	}
+>> +
+>>   	if (nid == NUMA_NO_NODE)
+>>   		nid = memory_add_physaddr_to_nid(cxlr_dax->hpa_range.start);
+>>   
+>> diff --git a/drivers/dax/hmem/hmem.c b/drivers/dax/hmem/hmem.c
+>> index 1e3424358490..bcb57d8678d7 100644
+>> --- a/drivers/dax/hmem/hmem.c
+>> +++ b/drivers/dax/hmem/hmem.c
+>> @@ -3,6 +3,7 @@
+>>   #include <linux/memregion.h>
+>>   #include <linux/module.h>
+>>   #include <linux/dax.h>
+>> +#include "../../cxl/cxl.h"
+>>   #include "../bus.h"
+>>   
+>>   static bool region_idle;
+>> @@ -58,9 +59,15 @@ static void release_hmem(void *pdev)
+>>   	platform_device_unregister(pdev);
+>>   }
+>>   
+>> +struct dax_defer_work {
+>> +	struct platform_device *pdev;
+>> +	struct work_struct work;
+>> +};
+>> +
+>>   static int hmem_register_device(struct device *host, int target_nid,
+>>   				const struct resource *res)
+>>   {
+>> +	struct dax_defer_work *work = dev_get_drvdata(host);
+>>   	struct platform_device *pdev;
+>>   	struct memregion_info info;
+>>   	long id;
+>> @@ -69,8 +76,18 @@ static int hmem_register_device(struct device *host, int target_nid,
+>>   	if (IS_ENABLED(CONFIG_DEV_DAX_CXL) &&
+>>   	    region_intersects(res->start, resource_size(res), IORESOURCE_MEM,
+>>   			      IORES_DESC_CXL) != REGION_DISJOINT) {
+>> -		dev_dbg(host, "deferring range to CXL: %pr\n", res);
+>> -		return 0;
+>> +		switch (dax_cxl_mode) {
+>> +		case DAX_CXL_MODE_DEFER:
+>> +			dev_dbg(host, "deferring range to CXL: %pr\n", res);
+>> +			schedule_work(&work->work);
+>> +			return 0;
+>> +		case DAX_CXL_MODE_REGISTER:
+>> +			dev_dbg(host, "registering CXL range: %pr\n", res);
+>> +			break;
+>> +		case DAX_CXL_MODE_DROP:
+>> +			dev_dbg(host, "dropping CXL range: %pr\n", res);
+>> +			return 0;
+>> +		}
+>>   	}
+>>   
+>>   	rc = region_intersects_soft_reserve(res->start, resource_size(res));
+>> @@ -123,8 +140,67 @@ static int hmem_register_device(struct device *host, int target_nid,
+>>   	return rc;
+>>   }
+>>   
+>> +static int cxl_contains_soft_reserve(struct device *host, int target_nid,
+>> +				     const struct resource *res)
+>> +{
+>> +	if (region_intersects(res->start, resource_size(res), IORESOURCE_MEM,
+>> +			      IORES_DESC_CXL) != REGION_DISJOINT) {
+>> +		if (!cxl_region_contains_soft_reserve(res))
+>> +			return 1;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void process_defer_work(struct work_struct *_work)
+>> +{
+>> +	struct dax_defer_work *work = container_of(_work, typeof(*work), work);
+>> +	struct platform_device *pdev = work->pdev;
+>> +	int rc;
+>> +
+>> +	/* relies on cxl_acpi and cxl_pci having had a chance to load */
+>> +	wait_for_device_probe();
+>> +
+>> +	rc = walk_hmem_resources(&pdev->dev, cxl_contains_soft_reserve);
+>> +
+>> +	if (!rc) {
+>> +		dax_cxl_mode = DAX_CXL_MODE_DROP;
+>> +		rc = bus_rescan_devices(&cxl_bus_type);
+>> +		if (rc)
+>> +			dev_warn(&pdev->dev, "CXL bus rescan failed: %d\n", rc);
+>> +	} else {
+>> +		dax_cxl_mode = DAX_CXL_MODE_REGISTER;
+>> +		cxl_region_teardown_all();
+>> +	}
+>> +
+>> +	walk_hmem_resources(&pdev->dev, hmem_register_device);
+>> +}
+>> +
+>> +static void kill_defer_work(void *_work)
+>> +{
+>> +	struct dax_defer_work *work = container_of(_work, typeof(*work), work);
+>> +
+>> +	cancel_work_sync(&work->work);
+>> +	kfree(work);
+>> +}
+>> +
+>>   static int dax_hmem_platform_probe(struct platform_device *pdev)
+>>   {
+>> +	struct dax_defer_work *work = kzalloc(sizeof(*work), GFP_KERNEL);
+>> +	int rc;
+>> +
+>> +	if (!work)
+>> +		return -ENOMEM;
+>> +
+>> +	work->pdev = pdev;
+>> +	INIT_WORK(&work->work, process_defer_work);
+>> +
+>> +	rc = devm_add_action_or_reset(&pdev->dev, kill_defer_work, work);
+>> +	if (rc)
+>> +		return rc;
+>> +
+>> +	platform_set_drvdata(pdev, work);
+>> +
+>>   	return walk_hmem_resources(&pdev->dev, hmem_register_device);
+>>   }
+>>   
+>> @@ -174,3 +250,4 @@ MODULE_ALIAS("platform:hmem_platform*");
+>>   MODULE_DESCRIPTION("HMEM DAX: direct access to 'specific purpose' memory");
+>>   MODULE_LICENSE("GPL v2");
+>>   MODULE_AUTHOR("Intel Corporation");
+>> +MODULE_IMPORT_NS("CXL");
+>> -- 
+>> 2.17.1
+>>
+
 
