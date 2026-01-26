@@ -1,160 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-75526-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75527-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aP2oBaTKd2lylAEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75526-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 21:12:20 +0100
+	id WKrHCP7Kd2lylAEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75527-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 21:13:50 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C84438CED2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 21:12:19 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C4B8CF0B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 21:13:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id B11633025A4B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 20:12:13 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id CCD783018288
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 20:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC592C08D9;
-	Mon, 26 Jan 2026 20:12:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFAF52C11C9;
+	Mon, 26 Jan 2026 20:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B3K3AwRd"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="PuU+KAGZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5112C027C;
-	Mon, 26 Jan 2026 20:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D521C29B204;
+	Mon, 26 Jan 2026 20:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769458328; cv=none; b=i79V/FBxa9FJMijdix4gURmZrbDg+CP/HytoWTvIx07No5+N+pJn02AsUQQ31/teX1NTP+zfZRYG9bcpLK9XMm5u4Z2tT4GDPv8r0AkDSB5A+A4WxGAa10AJg472UQ06DD4YPNpinVvdaeVkftG7U5zhJ4J+lhiydV7fBsTpb+U=
+	t=1769458423; cv=none; b=VSyogslEz23wUviCRRr89JyVoIuDUhxCh3ZLG5UZVUoKD2J6LBhql/0uWhLU02ggSKiTi6/SxQYEbtuo5xFXYijiyGTPDTXyQJAu03ppr4tgDndMwOfcXeUU4O9I9VX1+T9OoK7Klc31BmhVIpULb6PZYFGbeTQiet0GKsWbY9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769458328; c=relaxed/simple;
-	bh=NBe+OxYRigsrCScWNRGhoFuPEsSz3lykHJTIWDbyMDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jUeFvyPqwIj7MkFwY4LHp/BYsTYlewRh72QM+1z2V4uHM1Hh/eRV0lSekiaMGcU00WfOn2hsVeYwLg2HI+r48EGtTbGj2ctAlZDAB9SZE70lyFRQ9cDfOM6jRjNndJQweGo4U8KZWnFluyezWNuFdkteG+XDfHNcGZgqP8x57m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B3K3AwRd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C26AEC116C6;
-	Mon, 26 Jan 2026 20:12:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769458328;
-	bh=NBe+OxYRigsrCScWNRGhoFuPEsSz3lykHJTIWDbyMDI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B3K3AwRdtBqGRu/L0NVC2m/GP0oeFUwZGfM5GvznVm9SC4gLQ0Q/wUEhnJgCtVJ6/
-	 3hBgOYdjlX4u9PUZ0AVnNlNqsADYsiji5c7ZCYbDF3dPITcbpj0MWR24shiGQ+aZyN
-	 qhBUxH2vAzOy0Q+hW8/87TrJC5oOxviszzzyQi+o7HiwPKy0ODSW/eeG+xVqNQNFPG
-	 aCd3Tr+fuP0vTljmBoLEVDvqhaqRvXutNBbYDiGg3XmuUxeCLfYatg3u21MkYa6tET
-	 4+2gllNik8k0IpeNxNVqiGa88nvSll2D2FKnPiS0Mz94gEdfhKUxrVNYxjgAXP6E/N
-	 Wg+2yKtJ8gj+A==
-Date: Mon, 26 Jan 2026 12:12:06 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Matthew Wilcox <willy@infradead.org>, Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	Andrey Albershteyn <aalbersh@redhat.com>,
-	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	fsverity@lists.linux.dev
-Subject: Re: [PATCH 11/11] fsverity: use a hashtable to find the fsverity_info
-Message-ID: <20260126201206.GA30838@quark>
-References: <20260122082214.452153-1-hch@lst.de>
- <20260122082214.452153-12-hch@lst.de>
- <20260125013104.GA2255@sol>
- <aXaPph6Yi-hzf0J-@casper.infradead.org>
- <20260126044432.GE30803@lst.de>
+	s=arc-20240116; t=1769458423; c=relaxed/simple;
+	bh=YcrML87ShYkGKB6ZyS7KSUrjevy8i/2PiiASIF3Ueu4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ryap/UF+8prJaRY5wy5hIDoq4RXFba846NTdi89TmdA/ZkHjX2ODNZFc2zgGXOYJIZMDQj3A+LKyNpKf872wLb7PzZMgo5oSxrWFGVSS/Ou37b6hsFBni2MDpCLhERR9L8ThPfgNr7KddCuf8G8KArLKaSjmTb4cDs7EsujpIEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=PuU+KAGZ; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1769458413; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=gu7IeuPqkTXcHbpTJTB+5i/GAquRe193dCB4L9W0mjA=;
+	b=PuU+KAGZiM0Q4g+7X1BfwSEwlMZ3IPRliM9m7w1PoQvO0QL8uK+IDa2grm+bC9LGfZ2t5M9VAQogO2gNFWCJjteNVuW2G1HHJ+nhdA7JhhxB7Gn0ZLLjOig/kuu1bQ+mapf3bPJ+OQ/91wFI03G+3CtgFfGGhsm21R1OVVPl+KU=
+Received: from 30.180.182.138(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WxzDUWW_1769458411 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 27 Jan 2026 04:13:32 +0800
+Message-ID: <fed3341a-365f-4099-b58d-8687732d193f@linux.alibaba.com>
+Date: Tue, 27 Jan 2026 04:13:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260126044432.GE30803@lst.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [ANNOUNCE] DAXFS: A zero-copy, dmabuf-friendly filesystem for
+ shared memory
+To: Cong Wang <cwang@multikernel.io>, Matthew Wilcox <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Cong Wang <xiyou.wangcong@gmail.com>, multikernel@lists.linux.dev
+References: <CAGHCLaREA4xzP7CkJrpqu4C=PKw_3GppOUPWZKn0Fxom_3Z9Qw@mail.gmail.com>
+ <55e3d9f6-50d2-48c0-b7e3-fb1c144cf3e8@linux.alibaba.com>
+ <CAGHCLaQbr2Q1KwEJhsZGuaFV=m6WEkxsgurg30+pjSQ4dHQ_1Q@mail.gmail.com>
+ <aXe9nhAsK2lzOoxY@casper.infradead.org>
+ <CAGHCLaSe8g+BQ5OtRv0_Ft3o-G0gR4oVSOW0DtdsQJdwuJsDCA@mail.gmail.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <CAGHCLaSe8g+BQ5OtRv0_Ft3o-G0gR4oVSOW0DtdsQJdwuJsDCA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-7.66 / 15.00];
+	WHITELIST_DMARC(-7.00)[alibaba.com:D:+];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[linux.alibaba.com,none];
+	R_DKIM_ALLOW(-0.20)[linux.alibaba.com:s=default];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-75527-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75526-lists,linux-fsdevel=lfdr.de];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[ebiggers@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: C84438CED2
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com,lists.linux.dev];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[hsiangkao@linux.alibaba.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[linux.alibaba.com:+];
+	NEURAL_HAM(-0.00)[-1.000];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,infradead.org:email]
+X-Rspamd-Queue-Id: 71C4B8CF0B
 X-Rspamd-Action: no action
 
-On Mon, Jan 26, 2026 at 05:44:32AM +0100, Christoph Hellwig wrote:
-> On Sun, Jan 25, 2026 at 09:48:22PM +0000, Matthew Wilcox wrote:
-> > Is there a reason not to do as DAX did:
+
+
+On 2026/1/27 03:48, Cong Wang wrote:
+> On Mon, Jan 26, 2026 at 11:16 AM Matthew Wilcox <willy@infradead.org> wrote:
+>>
+>> On Mon, Jan 26, 2026 at 09:38:23AM -0800, Cong Wang wrote:
+>>> If you are interested in adding multikernel support to EROFS, here is
+>>> the codebase you could start with:
+>>> https://github.com/multikernel/linux. PR is always welcome.
+>>
+>> I think the onus is rather the other way around.  Adding a new filesystem
+>> to Linux has a high bar to clear because it becomes a maintenance burden
+>> to the rest of us.  Convince us that what you're doing here *can't*
+>> be done better by modifying erofs.
+>>
+>> Before I saw the email from Gao Xiang, I was also going to suggest that
+>> using erofs would be a better idea than supporting your own filesystem.
+>> Writing a new filesystem is a lot of fun.  Supporting a new filesystem
+>> and making it production-quality is a whole lot of pain.  It's much
+>> better if you can leverage other people's work.  That's why DAX is a
+>> support layer for filesystems rather than its own filesystem.
 > 
-> > +#ifdef CONFIG_FS_VERITY
-> >  #define S_VERITY       (1 << 16) /* Verity file (using fs/verity/) */
-> > +#else
-> > +#define S_VERITY       0         /* Make all the verity checks disappear */
-> > +#endif
-> >  #define S_KERNEL_FILE  (1 << 17) /* File is in use by the kernel (eg. fs/cachefiles) */
-> >  #define S_ANON_INODE   (1 << 19) /* Inode is an anonymous inode */
-> > 
-> > 
-> > and then we can drop the CONFIG_FS_VERITY check here and in (at leaast)
-> > three other places
+> Great question.
 > 
-> I looked into this, but wasn't entirely sure about all callers.  Also
-> in at least some places we might need the barrier in fsverity_active,
-> so my plan was to see how many of the checks should simply be converted
-> to fsverity_active in a follow on and how much is left after that first.
+> The core reason is multikernel assumes little to none compatibility.
+> 
+> Specifically for this scenario, struct inode is not compatible. This
+> could rule out a lot of existing filesystems, except read-only ones.
 
-When CONFIG_FS_VERITY=n, there can still be inodes that have fsverity
-enabled, since they might have already been present on the filesystem.
-The S_VERITY flag and the corresponding IS_VERITY() macro are being used
-to identify such inodes and handle them appropriately.  
+I don't quite get the point here, assuming you know filesystems.
 
-Consider fsverity_file_open() for example:
+> 
+> Now back to EROFS, it is still based on a block device, which
+> itself can't be shared among different kernels. ramdax is actually
+> a perfect example here, its label_area can't be shared among
+> different kernels.
+> 
+> Let's take one step back: even if we really could share a device
+> with multiple kernels, it still could not share the memory footprint,
+> with DAX + EROFS, we would still get:
+> 1) Each kernel creates its own DAX mappings
+> 2) And faults pages independently
+> 
+> There is no cross-kernel page sharing accounting.
+> 
+> I hope this makes sense.
 
-static inline int fsverity_file_open(struct inode *inode, struct file *filp)
-{
-	if (IS_VERITY(inode))
-		return __fsverity_file_open(inode, filp);
-	return 0;
-}
+No, EROFS on-disk format designs for any backend, so you could
+use this format backed by:
+  1) raw block device
+  2) file
+  3) a pure ramdaxfs (it's still WIP)
 
-When CONFIG_FS_VERITY=n, __fsverity_file_open() resolves to the stub:
+Why not? because an ordinary container image user doesn't assume
+a fs especially for a particular type of device, especially for
+golden image usage.
 
-static inline int __fsverity_file_open(struct inode *inode, struct file *filp)
-{
-	return -EOPNOTSUPP;
-}
+You cannot say, oh, I build an image, maybe, you have to use it
+just for ramdax usage, oh, you backed by a file on the block
+device, you have to convert to another format to use:
 
-So the result is that on a kernel that doesn't have fsverity support
-enabled, trying to open an fsverity file fails with EOPNOTSUPP.
+  EROFS on-disk format should allow for _all the device backend_.
 
-But this relies on IS_VERITY() still working correctly.
+At a quick glance of your code, it seems it's much premature
+and ineffective because subdirectories just like a link chain,
+and maybe it is only somewhat reasonable for ramdax usage,
+but it's still _not_ cache-friendly.
 
-Similar code that relies on IS_VERITY() working correctly exists in
-other places as well, for example in the implementation of statx().
+The reason why it doesn't work for you because _multikernel_
+isn't an offical upsteam requirement, all upstream virtualization
+users directly use virtio-pmem now.
 
-So IS_VERITY() can't be changed to always return false when
-CONFIG_FS_VERITY=n, unless we identified all the callers like these and
-updated them to check the underlying filesystem-specific flag instead.
+I think for the upstream kernels, you'd like to make multikernel
+an offical upstream requirement first, then there will be drivers
+for you to do multikernel ramdax, rather than the raw usage of
+  1) memremap
+  2) vmf_insert_mixed
 
-- Eric
+in the filesystem drivers, I do think they are _red line_ for
+any new filesytem drivers (instead of legacy cramfs MTD XIP
+old code).
+
+Anyway, I really think your current use cases are already
+covered by EROFS for many years.
+
+Thanks,
+Gao Xiang
+
+> 
+> Regards,
+> Cong
+
 
