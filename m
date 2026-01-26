@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-75416-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75417-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WFiNDTL0dmkzZgEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75416-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 05:57:22 +0100
+	id +O+kNkn0dmkzZgEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75417-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 05:57:45 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id D47EF84102
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 05:57:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 811D084148
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 05:57:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 15F01304C050
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 04:53:37 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 695EB30530C4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 04:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BC130E0F2;
-	Mon, 26 Jan 2026 04:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605AB30E0EE;
+	Mon, 26 Jan 2026 04:53:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HaN/7K18"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xZLF6+u7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C8713AA2F;
-	Mon, 26 Jan 2026 04:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE96213AA2F;
+	Mon, 26 Jan 2026 04:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769403215; cv=none; b=R/0nroTaGlOvp3K8lV6luJ1vBBLeqRSJaoaE4QU4W23ktFAIo3VDMwCTgyPbD62Lz5zSHyuCVbcG5r2boHAEkhSUPSvO+xXwdOof4sdnj+knc70QxrW7PHgEZVUwsKB1nMEwVUOGV/TEgHQaCyP8hsuSbpdGfUfHJNXewyvW53Q=
+	t=1769403221; cv=none; b=FQOEyriUGTkXLvjV3mV7PknYs0DqARN9g3Q/AEVpysbJ+j5Clv8qJQTK7AAT9A2orENmqWU8nJ2HlApVXnk8hrWjdJFDkkgSjRhdaXwmUYrfb+OlT26leSaybnmZmHXD6ftWXM3gaQWFWCHe0O+i5lu6zxogeMSbTeZ09+bQjVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769403215; c=relaxed/simple;
-	bh=Ds7nQElTciKCoBuzFNRFLEVQvdWROZXdIw9DY82rvBc=;
+	s=arc-20240116; t=1769403221; c=relaxed/simple;
+	bh=RH4ywp0cmyWzgcoK/QUJN+cb3B+tPrcjBFmD3MkPAcI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Pv1JOrimSo/zHWQ0pmkmmfbxZMIUFaEIukrVHWyMiyXH6MbNIfCM+J233iFpmBjT+ysVfQNImsEOow4tJcJJtnxVYTe883Xu7g21jKugyHnxW1BIe5bwvQqIrEITSyk8azcwmWG/KPxNctv0iMTujj67wCvLsukAhuIqA/k3IbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HaN/7K18; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=ZIQEwjSoP2RQ2RgmQaX3g+kJaxbGwgHUKrC1Rb+6vEd9N+zaziCmWFaDh0eacV9kaPNepmXbyiUFzzBqjJa+RwlNdzWRML+mWgfmB4OZYxjmxsJmqrKSxqZuoEEKw8BQ9rui+ZljsCRARzDXseq2WNDYHE0GHOzsJZI/yl++/X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xZLF6+u7; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=Uz7fpZnjUlMd/aGr9OL/OJaWWyGR47o6Wopw3Zb7zdM=; b=HaN/7K18H5UcWW9LjTxQe7V5ZE
-	L8zQ5P5ZzK50LdGM5MpuShnnX+exrcEA8UyaICyDMA4HbWj4EEVnsAPq7PH3R8vRyibNZ54jBlqFj
-	9ZtNxAHNWyDZLlUsW0+SVWIQ4mHBk0ko7AIsHCsJ4M4vZbFBvxSl6dDQ9YBfmB6PUliFOvbbpF5UK
-	8dpAuiXRlM4GgY+NjeXVludsvP49/Eg0bw0w8wkzxnA86h3ibKFJk8rtarZZNdV5b0EOTMK5DQQdc
-	oM6iMGdNMarSGsbrOXlaYdRSgJcnZ4oK5x2bkhGVpLbdjLgdlOvjHY3TCl0sf1bHBENGqSqkV4CiU
-	3Maxk5DA==;
+	bh=oRybYDIwYACfSNoZYA6Jbad4AVQunyOxpSpOn34Lydo=; b=xZLF6+u7AsHxLwT97vB7FJKjHi
+	ljRQvsFPgfLTyS2b0880rnd/51reS3vXx8qWEeIY3DBbXdurGVOJ6Le87npes9JUiIxVgKyHeGjpz
+	K/oU4cr0Xjz34l+bMDg2OrhE5emAcbL6aNZqDlxL2kzeOXaFuwd7J4qAqA1/aZPkVSo/Fzu2mKJux
+	SmSCSx5ztRDD+8fTYnIXCQFNj/DNoDYRAUbDmKOaIbINDmaF19zz36fzkIbodYMLSQ/bUy+4aVpQx
+	SNudQCw3Ju07Ita/nppRVty6moTFHsksQfRsBOPdTgOGbTnaFCfDEb+YEZZ4tdq+BmFupeIsa+A19
+	bPWuIjYg==;
 Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vkEbU-0000000BuTu-0kqU;
-	Mon, 26 Jan 2026 04:53:32 +0000
+	id 1vkEbZ-0000000BuUh-0h0D;
+	Mon, 26 Jan 2026 04:53:37 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Eric Biggers <ebiggers@kernel.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>,
@@ -63,10 +63,11 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>,
 	linux-btrfs@vger.kernel.org,
 	linux-ext4@vger.kernel.org,
 	linux-f2fs-devel@lists.sourceforge.net,
-	fsverity@lists.linux.dev
-Subject: [PATCH 12/16] fs: consolidate fsverity_info lookup in buffer.c
-Date: Mon, 26 Jan 2026 05:50:58 +0100
-Message-ID: <20260126045212.1381843-13-hch@lst.de>
+	fsverity@lists.linux.dev,
+	"Darrick J. Wong" <djwong@kernel.org>
+Subject: [PATCH 13/16] ext4: consolidate fsverity_info lookup
+Date: Mon, 26 Jan 2026 05:50:59 +0100
+Message-ID: <20260126045212.1381843-14-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260126045212.1381843-1-hch@lst.de>
 References: <20260126045212.1381843-1-hch@lst.de>
@@ -90,9 +91,9 @@ X-Spamd-Result: default: False [-0.06 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
+	RCPT_COUNT_TWELVE(0.00)[16];
 	RCVD_COUNT_THREE(0.00)[4];
-	TAGGED_FROM(0.00)[bounces-75416-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-75417-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
@@ -106,92 +107,128 @@ X-Spamd-Result: default: False [-0.06 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:mid,lst.de:email,infradead.org:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: D47EF84102
+X-Rspamd-Queue-Id: 811D084148
 X-Rspamd-Action: no action
 
-Look up the fsverity_info once in end_buffer_async_read_io, and then
-pass it along to the I/O completion workqueue in
-struct postprocess_bh_ctx.
+Look up the fsverity_info once in ext4_mpage_readpages, and then use it
+for the readahead, local verification of holes and pass it along to the
+I/O completion workqueue in struct bio_post_read_ctx.
 
 This amortizes the lookup better once it becomes less efficient.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/buffer.c | 27 +++++++++++----------------
- 1 file changed, 11 insertions(+), 16 deletions(-)
+ fs/ext4/readpage.c | 32 ++++++++++++++------------------
+ 1 file changed, 14 insertions(+), 18 deletions(-)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 3982253b6805..f4b3297ef1b1 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -302,6 +302,7 @@ static void end_buffer_async_read(struct buffer_head *bh, int uptodate)
- struct postprocess_bh_ctx {
- 	struct work_struct work;
- 	struct buffer_head *bh;
+diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+index bf65562da9c2..17920f14e2c2 100644
+--- a/fs/ext4/readpage.c
++++ b/fs/ext4/readpage.c
+@@ -61,6 +61,7 @@ enum bio_post_read_step {
+ 
+ struct bio_post_read_ctx {
+ 	struct bio *bio;
 +	struct fsverity_info *vi;
- };
+ 	struct work_struct work;
+ 	unsigned int cur_step;
+ 	unsigned int enabled_steps;
+@@ -96,7 +97,7 @@ static void verity_work(struct work_struct *work)
+ 	struct bio_post_read_ctx *ctx =
+ 		container_of(work, struct bio_post_read_ctx, work);
+ 	struct bio *bio = ctx->bio;
+-	struct inode *inode = bio_first_folio_all(bio)->mapping->host;
++	struct fsverity_info *vi = ctx->vi;
  
- static void verify_bh(struct work_struct *work)
-@@ -309,25 +310,14 @@ static void verify_bh(struct work_struct *work)
- 	struct postprocess_bh_ctx *ctx =
- 		container_of(work, struct postprocess_bh_ctx, work);
- 	struct buffer_head *bh = ctx->bh;
--	struct inode *inode = bh->b_folio->mapping->host;
- 	bool valid;
+ 	/*
+ 	 * fsverity_verify_bio() may call readahead() again, and although verity
+@@ -109,7 +110,7 @@ static void verity_work(struct work_struct *work)
+ 	mempool_free(ctx, bio_post_read_ctx_pool);
+ 	bio->bi_private = NULL;
  
--	valid = fsverity_verify_blocks(*fsverity_info_addr(inode), bh->b_folio,
--				       bh->b_size, bh_offset(bh));
-+	valid = fsverity_verify_blocks(ctx->vi, bh->b_folio, bh->b_size,
-+				       bh_offset(bh));
- 	end_buffer_async_read(bh, valid);
- 	kfree(ctx);
+-	fsverity_verify_bio(*fsverity_info_addr(inode), bio);
++	fsverity_verify_bio(vi, bio);
+ 
+ 	__read_end_io(bio);
+ }
+@@ -173,22 +174,16 @@ static void mpage_end_io(struct bio *bio)
+ 	__read_end_io(bio);
  }
  
--static bool need_fsverity(struct buffer_head *bh)
+-static inline bool ext4_need_verity(const struct inode *inode, pgoff_t idx)
 -{
--	struct folio *folio = bh->b_folio;
--	struct inode *inode = folio->mapping->host;
--
 -	return fsverity_active(inode) &&
--		/* needed by ext4 */
--		folio->index < DIV_ROUND_UP(inode->i_size, PAGE_SIZE);
+-	       idx < DIV_ROUND_UP(inode->i_size, PAGE_SIZE);
 -}
 -
- static void decrypt_bh(struct work_struct *work)
+ static void ext4_set_bio_post_read_ctx(struct bio *bio,
+ 				       const struct inode *inode,
+-				       pgoff_t first_idx)
++				       struct fsverity_info *vi)
  {
- 	struct postprocess_bh_ctx *ctx =
-@@ -337,7 +327,7 @@ static void decrypt_bh(struct work_struct *work)
+ 	unsigned int post_read_steps = 0;
  
- 	err = fscrypt_decrypt_pagecache_blocks(bh->b_folio, bh->b_size,
- 					       bh_offset(bh));
--	if (err == 0 && need_fsverity(bh)) {
-+	if (err == 0 && ctx->vi) {
- 		/*
- 		 * We use different work queues for decryption and for verity
- 		 * because verity may require reading metadata pages that need
-@@ -359,15 +349,20 @@ static void end_buffer_async_read_io(struct buffer_head *bh, int uptodate)
- {
- 	struct inode *inode = bh->b_folio->mapping->host;
- 	bool decrypt = fscrypt_inode_uses_fs_layer_crypto(inode);
--	bool verify = need_fsverity(bh);
+ 	if (fscrypt_inode_uses_fs_layer_crypto(inode))
+ 		post_read_steps |= 1 << STEP_DECRYPT;
+ 
+-	if (ext4_need_verity(inode, first_idx))
++	if (vi)
+ 		post_read_steps |= 1 << STEP_VERITY;
+ 
+ 	if (post_read_steps) {
+@@ -197,6 +192,7 @@ static void ext4_set_bio_post_read_ctx(struct bio *bio,
+ 			mempool_alloc(bio_post_read_ctx_pool, GFP_NOFS);
+ 
+ 		ctx->bio = bio;
++		ctx->vi = vi;
+ 		ctx->enabled_steps = post_read_steps;
+ 		bio->bi_private = ctx;
+ 	}
+@@ -224,6 +220,7 @@ int ext4_mpage_readpages(struct inode *inode,
+ 	sector_t first_block;
+ 	unsigned page_block;
+ 	struct block_device *bdev = inode->i_sb->s_bdev;
 +	struct fsverity_info *vi = NULL;
-+
-+	/* needed by ext4 */
-+	if (bh->b_folio->index < DIV_ROUND_UP(inode->i_size, PAGE_SIZE))
-+		vi = fsverity_get_info(inode);
+ 	int length;
+ 	unsigned relative_block = 0;
+ 	struct ext4_map_blocks map;
+@@ -245,9 +242,11 @@ int ext4_mpage_readpages(struct inode *inode,
+ 			folio = readahead_folio(rac);
  
- 	/* Decrypt (with fscrypt) and/or verify (with fsverity) if needed. */
--	if (uptodate && (decrypt || verify)) {
-+	if (uptodate && (decrypt || vi)) {
- 		struct postprocess_bh_ctx *ctx =
- 			kmalloc(sizeof(*ctx), GFP_ATOMIC);
+ 		if (first_folio) {
+-			if (ext4_need_verity(inode, folio->index))
+-				fsverity_readahead(*fsverity_info_addr(inode),
+-						folio, nr_pages);
++			if (folio->index <
++			    DIV_ROUND_UP(inode->i_size, PAGE_SIZE))
++				vi = fsverity_get_info(inode);
++			if (vi)
++				fsverity_readahead(vi, folio, nr_pages);
+ 			first_folio = false;
+ 		}
  
- 		if (ctx) {
- 			ctx->bh = bh;
-+			ctx->vi = vi;
- 			if (decrypt) {
- 				INIT_WORK(&ctx->work, decrypt_bh);
- 				fscrypt_enqueue_decrypt_work(&ctx->work);
+@@ -338,10 +337,7 @@ int ext4_mpage_readpages(struct inode *inode,
+ 			folio_zero_segment(folio, first_hole << blkbits,
+ 					  folio_size(folio));
+ 			if (first_hole == 0) {
+-				if (ext4_need_verity(inode, folio->index) &&
+-				    !fsverity_verify_folio(
+-						*fsverity_info_addr(inode),
+-						folio))
++				if (vi && !fsverity_verify_folio(vi, folio))
+ 					goto set_error_page;
+ 				folio_end_read(folio, true);
+ 				continue;
+@@ -369,7 +365,7 @@ int ext4_mpage_readpages(struct inode *inode,
+ 					REQ_OP_READ, GFP_KERNEL);
+ 			fscrypt_set_bio_crypt_ctx(bio, inode, next_block,
+ 						  GFP_KERNEL);
+-			ext4_set_bio_post_read_ctx(bio, inode, folio->index);
++			ext4_set_bio_post_read_ctx(bio, inode, vi);
+ 			bio->bi_iter.bi_sector = first_block << (blkbits - 9);
+ 			bio->bi_end_io = mpage_end_io;
+ 			if (rac)
 -- 
 2.47.3
 
