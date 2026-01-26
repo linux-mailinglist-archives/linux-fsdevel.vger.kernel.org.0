@@ -1,123 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-75472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id SMwvB/mBd2m9hgEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 16:02:17 +0100
+	id wCJxFY6Ld2m9hgEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 16:43:10 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A84289E0C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 16:02:16 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id E55C08A45E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 16:43:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id ACD8E3006D77
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 14:59:59 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id AE0C4301BEDA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 15:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76F53346B5;
-	Mon, 26 Jan 2026 14:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E31534028D;
+	Mon, 26 Jan 2026 15:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BrScewTz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rkry+gta"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C888329E4B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jan 2026 14:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE52933DEED
+	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jan 2026 15:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769439595; cv=none; b=R4rbxN+GzRAPL4f4X51pc3+RlTHwBKIznJ0IXsPcQTRho1z2JA3JnMG7KKNVz9w4bTlm8e+dk3ZpfuejM9a34Mj2BMvhKgCgH+Fvfx5n5/zAlKUduyPopHHgk9ebzTw/QlbmpT82d0JN2Bg/+95YcfXCqwyHuutFzp7TlZAUW44=
+	t=1769442132; cv=none; b=IgU2Zng5CmWi4etsLSgt5J7rUH96gJ458SgdzZOOMq6ZrtTn+f3frZORN3PP+zFxMb6ccAZVeqg867w0FEp/asyakVFTDOxIHy3rUj+UmULYNhOVV1mWHE50lviMt1QqSi5PpD/UqIkQ26u3GmzO3FIUjmTiscZmvdBE10U7+ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769439595; c=relaxed/simple;
-	bh=OX+v4TKDR+gsW/n8vIf9pjEXlRymcXTp3D79Tv25LRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C/ufT9Rf/AZHmoPyulAg9qC2UFauJdrLyGFoJn5fN1pRoB3qIpqjJmu9y9JlAnLw8pEz3aY5d1l8BlSE2FMiwFXtXqpwJVaPD7xW2N57J207XUugEknbXvzKJ4cgzaFNCAica3PNcgHMdpWP3zvFqu0+3rkU1Kc+Ge8iv694N3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BrScewTz; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=w0fs68nxSYfkTSNg/ax/LrOAm2/rHroEdR3TFp7o/b8=; b=BrScewTz4PBRKInE6NkIu98MCm
-	oNTa1v3mBAHPl/8htrfKlPhKOOF4VDMHIrh6oNJQickm/9gpIXkvjDyQjlwfgMWUYnNZAd8hMEeG3
-	XIlIbTGcSk1qOku2RYOCSAXJsIokfAOmnbp7nu8jj/anEHFnqy6jtCZ0HZJi8Uya8fqroBRdYelCL
-	bXdIyZM6/yG08pHGqTiPBD4/WRT0MqgyHnGFMXpcGoW0B7eSSgXaAUO8VAYIPFT1kCaR99aTubFqq
-	VyoPSsi39Ou22MD3z+sIXqk2h7JAh55qWVpNX9ep8GRgeuo9iMgCLtgzOr2B6r9dFqCexkFIPAxh2
-	PnLotR5g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vkO4F-0000000Cjp3-0NvD;
-	Mon, 26 Jan 2026 14:59:51 +0000
-Date: Mon, 26 Jan 2026 06:59:51 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Joanne Koong <joannelkoong@gmail.com>, brauner@kernel.org,
-	djwong@kernel.org, bfoster@redhat.com,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 1/1] iomap: fix invalid folio access after
- folio_end_read()
-Message-ID: <aXeBZx7A3sWuFmIm@infradead.org>
-References: <20260123235617.1026939-1-joannelkoong@gmail.com>
- <20260123235617.1026939-2-joannelkoong@gmail.com>
- <aXb_trkyt-uzdIkd@infradead.org>
- <aXeAY8K12KKf9d4_@casper.infradead.org>
+	s=arc-20240116; t=1769442132; c=relaxed/simple;
+	bh=tDX4/j/4ahIfg9o5XRxBR2QuO+1qYjcCp7uZcGAX03Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PgNJBTp1BQsCyOJC2Izn9snrJUUc+gbmnq9x6bV8JdWdha99mpFzY6+qs78ZiMdb4lUnEJTutH6UE+ePFVs9MSQlYQC9YaMK2/W25XNP7PqjJxCjjzRnFKBTUQ2V3+APXoAvBOvJYYfgV6S9rLNdtblp9ndRxlaYjWNzFGhSobM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rkry+gta; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-823081bb15fso2414052b3a.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jan 2026 07:42:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769442131; x=1770046931; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/KlZEx+u0e43aEKml6MIGqsrdovDvYZ8jhKvUs4y8zM=;
+        b=Rkry+gtaQzFD2JFs7fslO+jz3JiSSZ/eWp8x/NoKgaFXLWH6Y8Yv12fy780wzy33iX
+         iRbk6ih/gSn6JjO/4rmxYPBW+5UzrgIs2S+QAgI4Ert7zkjzGrvf7yzcSj4weemR5AmB
+         L8y4oddm8p3h+jsESK4nNtq83fq1YMJJXJBqFLyyTsKySBawyXre+OoqaFNR+RLfUrCm
+         nCLjDDuCFKF6xk6KO722hBv0g35fcTDkbqvSMnQSgNW0SRlLo+6Hh+5DkKp7pQrdX42Q
+         TZQG2VfwbV8DJ5Sq4PfdQc2f2ONnghf2cTcD/ncYlOPVTUAzASfci9juRhfVvD4CkEw3
+         PGtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769442131; x=1770046931;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/KlZEx+u0e43aEKml6MIGqsrdovDvYZ8jhKvUs4y8zM=;
+        b=UF2rJrglmosZzY/k3kA4MfojHIKwoSSIu4oU/KfYh7ctlESkExR6fcxtTI+9hLj/H0
+         ChSUdeDwb8rR1WPWyxGR7dU88SHvFKsPiesyYdl5rDtuotSYB4GWnXJJ8wZNhGs7LqeG
+         mPGxXXtczyWGFOdsGTd4ubwlQX8kqMTpK8+jsmlduQ3Ugd/MGFXxA7UrHPWGiN8LgkB8
+         Uy8+4vyb1GNirE5ZydhTkT25UTOvF/fKwcmAVOFB8M0HpE/hJssxyQEiSfFoMn9GYTsw
+         4P4gHb9hbGblRGilUYXXw/82BngRwRkNo+PorG7MOqwHHHJFqzpR4dIkh4gtVLd/wz/r
+         Bm9w==
+X-Gm-Message-State: AOJu0YybdrK/CwgTxPEuHamDbtM1Lr+VQJNlEbsSb6f5iuayl022vbaS
+	fBacEANBbOpDZmt3Gnitdqx3Zle3fvBH+Q6VC80gP3ZxeuYUVqiwjT/vVQtCaw==
+X-Gm-Gg: AZuq6aIxQ5pnvF74bzKHStYFy5xq8SYQNIyIVTqN/0tE70oKJxUk+xur6eAqn+38vEq
+	88yzdOyYcd9wNEbBewkavQp4To18YIS7t97m3AezBCdj4eclBi4otOV2ufAUu7RbH+AZ2ySmh1B
+	WgVkRHiZxFTCZv0juG1r7SS32XlgsZDYg0UWaYXVfdp6H0slbXKwoNHWy0iHXXF9Y2HVyJnGwk/
+	DtJk1mAa7ptrsnVd8pJAHzVK3TGV7rK6IST7cun8fzDjfIFuWoorJy7hTsgpJP1mJTyl+kLImad
+	2d2MPVVW89/PFS5I1ugBdt11eiTg+AQo9xKczVQ0WdqA7Cx+aI8S3nGaRZZyps1+rQ3A1fJElky
+	QJetjn3ysVjpOny+FHKMzjFHxzA/M8UlTj+m/X7ZDVRepAkY1R0tDsP4d5SoIfdIxd/yExP6RSh
+	VLcerNsvWiJzvoj35CNThhHBx0nmx4MpkkNROGv/7Q7j8=
+X-Received: by 2002:a17:90b:3b44:b0:341:abdc:8ea2 with SMTP id 98e67ed59e1d1-353c41c97a7mr4093004a91.37.1769442130618;
+        Mon, 26 Jan 2026 07:42:10 -0800 (PST)
+Received: from toolbx ([103.230.182.3])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3536d88b098sm8649100a91.3.2026.01.26.07.42.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Jan 2026 07:42:10 -0800 (PST)
+From: Dorjoy Chowdhury <dorjoychy111@gmail.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	jlayton@kernel.org,
+	chuck.lever@oracle.com,
+	alex.aring@gmail.com,
+	arnd@arndb.de
+Subject: [PATCH v2 0/2] O_REGULAR flag support for open
+Date: Mon, 26 Jan 2026 21:39:20 +0600
+Message-ID: <20260126154156.55723-1-dorjoychy111@gmail.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aXeAY8K12KKf9d4_@casper.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [0.84 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[infradead.org,gmail.com,kernel.org,redhat.com,vger.kernel.org];
-	TAGGED_FROM(0.00)[bounces-75472-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-75473-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[vger.kernel.org,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,arndb.de];
 	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	TO_DN_NONE(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[infradead.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
-	MISSING_XM_UA(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	FROM_NEQ_ENVFROM(0.00)[dorjoychy111@gmail.com,linux-fsdevel@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@infradead.org,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	NEURAL_HAM(-0.00)[-1.000];
+	DKIM_TRACE(0.00)[gmail.com:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:mid,infradead.org:dkim,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 4A84289E0C
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[uapi-group.org:url,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: E55C08A45E
 X-Rspamd-Action: no action
 
-On Mon, Jan 26, 2026 at 02:55:31PM +0000, Matthew Wilcox wrote:
-> > Can you drop this cleanup for now?  I think it's actually useful,
-> > but it should be in a separate patch, and creates a conflict with
-> > my iomap PI series.
-> > 
-> > The actual fix looks great and simplified the code nicely!
-> 
-> I don't think it's just a cleanup -- I think it's a bug fix.  But, yes,
-> it should be a separate patch because it's a separate bug.  That bug
-> can be hit if the folio passed to iomap_read_folio() covers more than
-> one extent, the first call to iomap_iter() succeeds, and then the second
-> one fails.  Now we have a folio with a positive read_pending that will
-> never become zero, so we'll never unlock the folio.
+Changes in v2:
+- rename ENOTREGULAR to ENOTREG
+- define ENOTREG in uapi/asm-generic/errno.h (instead of errno-base.h) and in arch/*/include/uapi/asm/errno.h files
+- override O_REGULAR in arch/{alpha,sparc,parisc}/include/uapi/asm/fcntl.h due to clash with include/uapi/asm-generic/fcntl.h
+- I have kept the kselftest but now that O_REGULAR and ENOTREG can have different value on different architectures I am not sure if it's right
+- v1 is at: https://lore.kernel.org/linux-fsdevel/20260125141518.59493-1-dorjoychy111@gmail.com/T/
 
-Oh, I missed it added a condition for the read_folio case.  Another
-reason to split the fix from the (otherwise nice) refactoring.  And
-fixing it directly in read_folio also helps with the conflict avoidance.
+Hi,
+
+I came upon this "Ability to only open regular files" uapi feature suggestion
+from https://uapi-group.org/kernel-features/#ability-to-only-open-regular-files
+and thought it would be something I could do as a first patch and get to
+know the kernel code a bit better.
+
+I am not quite sure if the semantics that I baked into the code for this
+O_REGULAR flag's behavior when combined with other flags like O_CREAT look
+good and if there are other places that need the checks. I can fixup my
+patch according to suggestions for improvement. I did some happy path testing
+and the O_REGULAR flag seems to work as intended.
+
+Thanks.
+
+Regards,
+Dorjoy
+
+Dorjoy Chowdhury (2):
+  open: new O_REGULAR flag support
+  kselftest/openat2: test for O_REGULAR flag
+
+ arch/alpha/include/uapi/asm/errno.h           |  2 +
+ arch/alpha/include/uapi/asm/fcntl.h           |  1 +
+ arch/mips/include/uapi/asm/errno.h            |  2 +
+ arch/parisc/include/uapi/asm/errno.h          |  2 +
+ arch/parisc/include/uapi/asm/fcntl.h          |  1 +
+ arch/sparc/include/uapi/asm/errno.h           |  2 +
+ arch/sparc/include/uapi/asm/fcntl.h           |  1 +
+ fs/fcntl.c                                    |  2 +-
+ fs/namei.c                                    |  6 +++
+ fs/open.c                                     |  4 +-
+ include/linux/fcntl.h                         |  2 +-
+ include/uapi/asm-generic/errno.h              |  2 +
+ include/uapi/asm-generic/fcntl.h              |  4 ++
+ tools/arch/alpha/include/uapi/asm/errno.h     |  2 +
+ tools/arch/mips/include/uapi/asm/errno.h      |  2 +
+ tools/arch/parisc/include/uapi/asm/errno.h    |  2 +
+ tools/arch/sparc/include/uapi/asm/errno.h     |  2 +
+ tools/include/uapi/asm-generic/errno.h        |  2 +
+ .../testing/selftests/openat2/openat2_test.c  | 37 ++++++++++++++++++-
+ 19 files changed, 74 insertions(+), 4 deletions(-)
+
+-- 
+2.52.0
 
 
