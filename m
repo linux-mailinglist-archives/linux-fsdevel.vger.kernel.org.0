@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-75407-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75408-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id AAIJNmrzdmkzZgEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75407-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 05:54:02 +0100
+	id kAvFNYLzdmkzZgEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75408-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 05:54:26 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79BDB8405A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 05:54:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E5084080
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 05:54:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C638B300461C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 04:52:40 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0E5783021701
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 04:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FAD30E0F9;
-	Mon, 26 Jan 2026 04:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D820D30E827;
+	Mon, 26 Jan 2026 04:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yQM/eZ8W"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="25c5Ta7G"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480B213AA2F;
-	Mon, 26 Jan 2026 04:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D581013AA2F;
+	Mon, 26 Jan 2026 04:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769403159; cv=none; b=jqC3PcxIaYhdcquZjuck7rgg0BYZ2Ujk6WqCiVnKOI/xHAc/xMAkXGj34Xx8WpAhCcWDyrtEor9+TfiAIPeyy8lQFhhF54BrTAr2JebQftu+DgIwprkBjJ6FpSHhYO5rdXdkxKVhy9iJ8ya89I64O6API/VC6Tr527CluzmznlE=
+	t=1769403166; cv=none; b=BinxUMrAp+kqgpAq/Uu+Z4J4hWIxp3nEU+ufahBZZuJQKaEJtYcun/q9ZZ28VD9hbOOITDfi6AVt2Oax8BlVVWd42fpK+DE2XYP+5wTUD8rJORu3JDE1KaTb9RPQWgcMZAu6sg36g934TbCiabM3Fe1bjlwOOQaghzxqgg9qdfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769403159; c=relaxed/simple;
-	bh=HHPaCIvxn7ijiLY1PaT9zXlPLDg0nerBSLsePJHbmUw=;
+	s=arc-20240116; t=1769403166; c=relaxed/simple;
+	bh=jhsCEEAqNPDcQ2Ukgq/Z04gBE+CWeDXFu38TsNXFeb4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lzh9kZqKtDMGJR/6CMieW8QEo1pJiGdKc/FOYRHdFUxRRyQbE1c0i/c6FwayWrfKw/3Bcxw5RyUMVV/tOZF3nwWW7iKS2mZIyY1G9GqViYDceVFIjCnufsxefw2T676Sg7SUUhYnp4IjE3C5Rfk9UFgDjGVY1hduwYYI57PWtpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yQM/eZ8W; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=aowjlW82QTWuo/Q1gLInn9Bws/4e+u3a0F2xEAtBY8nIXxCYhv24cQM2ihYANfnrf1HJFA/eaLE/qlZ/vBNEmlx3LXuO/Uyl0t5AZSvCkr/OdDl1ByM/T9LpMhBV8LIUWvcE6YuwmK2ac/G30x9k3xIVA6eVk80WD9xtezjTgfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=25c5Ta7G; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=JTIIqGdNnnTZ8/mFXJscuc9GxNFmE8A4i8uFXevVu+E=; b=yQM/eZ8WFbBdBrTMl+x5tw5XwW
-	7yVA4ioCpASh43agtnJVjTgilg4y7S/x3Dx83KQdTAIatHxGPVjwcLOGEhw/5YP+/SeRGj+4CbgOK
-	5EZ1wQ7T/6VY935/fuwJIKMkc2aFtcsYEFQdTgRIK33GWIWbEoWn2PsOz54EJIcztV9ufmKSfEF+F
-	JQn+3L+IqrySRwR40dJYsrTCx9UM3p2+uJ/REWy99JE9/yh/qpW4M0nZno/576NbWcEIhj+3wfA6M
-	9qfA5TcQ2x1l8KFuLrG8kFJeBGE55c5a4HjQ2IO4uKjoUOtGaqlXEfDoE9OG3CP48HYxyUtFZjaB/
-	SOS7eAwg==;
+	bh=msMVIu9sG+zHlGxQl6P3akWEAjf+4WBK4vAVLStngPE=; b=25c5Ta7GQUDobn0Tj5TWcEk9FF
+	mn4meeagTervwGPMltG1T9z1ye1U1VS+t+gazG3hRDG6+eGKVRAhSPm5dOVEE4d832K4JH1nxbkxW
+	DT6cOkBZE3C6GZMgiL7DdjUOgLXueC5DTv5yhZ6F4J6yH6kUsMU4wsvuXtwvcOs6w6nklAwpMNrpj
+	6hbVlkvf92lMiczrJNWcuD2rzaiLewVmTuxksauReVN1baUjLcCC6j4tj+Jb9kmDHY27R0EyEmjC5
+	QgoblTW7pu8wrQYbjgiWr3b6pPKE1KWAoYg9ZEL0yjhcyz5lchLO//7rlAms64vPmd6xf6epIfRqv
+	aj+awHhQ==;
 Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vkEaa-0000000BuPh-09rw;
-	Mon, 26 Jan 2026 04:52:36 +0000
+	id 1vkEaf-0000000BuQ1-2QIb;
+	Mon, 26 Jan 2026 04:52:42 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Eric Biggers <ebiggers@kernel.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>,
@@ -64,9 +64,9 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>,
 	linux-ext4@vger.kernel.org,
 	linux-f2fs-devel@lists.sourceforge.net,
 	fsverity@lists.linux.dev
-Subject: [PATCH 03/16] ext4: don't build the fsverity work handler for !CONFIG_FS_VERITY
-Date: Mon, 26 Jan 2026 05:50:49 +0100
-Message-ID: <20260126045212.1381843-4-hch@lst.de>
+Subject: [PATCH 04/16] f2fs: don't build the fsverity work handler for !CONFIG_FS_VERITY
+Date: Mon, 26 Jan 2026 05:50:50 +0100
+Message-ID: <20260126045212.1381843-5-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260126045212.1381843-1-hch@lst.de>
 References: <20260126045212.1381843-1-hch@lst.de>
@@ -90,7 +90,7 @@ X-Spamd-Result: default: False [-0.06 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75407-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-75408-lists,linux-fsdevel=lfdr.de];
 	RCPT_COUNT_TWELVE(0.00)[15];
 	MIME_TRACE(0.00)[0:+];
 	RCVD_COUNT_THREE(0.00)[4];
@@ -107,34 +107,33 @@ X-Spamd-Result: default: False [-0.06 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:mid,lst.de:email,infradead.org:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 79BDB8405A
+X-Rspamd-Queue-Id: 79E5084080
 X-Rspamd-Action: no action
 
 Use IS_ENABLED to disable this code, leading to a slight size reduction:
 
    text	   data	    bss	    dec	    hex	filename
-   4121	    376	     16	   4513	   11a1	fs/ext4/readpage.o.old
-   4030	    328	     16	   4374	   1116	fs/ext4/readpage.o
+  25709	   2412	     24	  28145	   6df1	fs/f2fs/compress.o.old
+  25198	   2252	     24	  27474	   6b52	fs/f2fs/compress.o
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/ext4/readpage.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/f2fs/compress.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-index e7f2350c725b..267594ef0b2c 100644
---- a/fs/ext4/readpage.c
-+++ b/fs/ext4/readpage.c
-@@ -130,7 +130,8 @@ static void bio_post_read_processing(struct bio_post_read_ctx *ctx)
- 		ctx->cur_step++;
- 		fallthrough;
- 	case STEP_VERITY:
--		if (ctx->enabled_steps & (1 << STEP_VERITY)) {
-+		if (IS_ENABLED(CONFIG_FS_VERITY) &&
-+		    ctx->enabled_steps & (1 << STEP_VERITY)) {
- 			INIT_WORK(&ctx->work, verity_work);
- 			fsverity_enqueue_verify_work(&ctx->work);
- 			return;
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index 7b68bf22989d..40a62f1dee4d 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -1833,7 +1833,7 @@ void f2fs_decompress_end_io(struct decompress_io_ctx *dic, bool failed,
+ {
+ 	int i;
+ 
+-	if (!failed && dic->need_verity) {
++	if (IS_ENABLED(CONFIG_FS_VERITY) && !failed && dic->need_verity) {
+ 		/*
+ 		 * Note that to avoid deadlocks, the verity work can't be done
+ 		 * on the decompression workqueue.  This is because verifying
 -- 
 2.47.3
 
