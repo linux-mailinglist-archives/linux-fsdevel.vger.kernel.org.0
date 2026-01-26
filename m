@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-75430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uPVOK+sBd2maaQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 06:55:55 +0100
+	id OAqSIfkBd2maaQEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 06:56:09 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52D5A844A6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 06:55:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D022844B4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 06:56:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7FFB8302F38D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 05:54:43 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 6582F3033889
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 05:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCB02288D5;
-	Mon, 26 Jan 2026 05:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467B9238C2F;
+	Mon, 26 Jan 2026 05:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kkwQIqQ6"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u/7Wn8iF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771332222C5;
-	Mon, 26 Jan 2026 05:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0920223336;
+	Mon, 26 Jan 2026 05:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769406881; cv=none; b=PiJHTDmY44mSLMYDUb8x5eF6jiaYND4RjYpJe4GUKS6wMQpXhG/BBBA7bPCS6OHdKfk2e6JOOOmA559nj6d+zE61AzLtry5VRjx2o1jpFQOIYfIis/G50yFDIVOt1shKOoLxmPElVldig2U1bm+bxps6lRI86+Pr2hdnvEmHn74=
+	t=1769406885; cv=none; b=u9XP/ZUC6bxeQSOVml+sgNryc8yKtnfqDGz7trIQX4HOxH/rBjDdU9T5ij4+WGD2pXgiotjjSNP4U+Yb+jVnLqy7i5dGqKfS/oALxdiPfQ4IJgf31l/e5VHUqFtghyECvsWzCeuFc7Cuwzi3huaI5fSgNx+ht8xfbNOf6badp3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769406881; c=relaxed/simple;
-	bh=39rh3ayAx/NLiz8P+tHyXBXMitOt5/TLDWuSgSFlAds=;
+	s=arc-20240116; t=1769406885; c=relaxed/simple;
+	bh=PT2f4azBsijlT1dSm6doVN2Lny6POIRW3sYqM+ZcUHg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PtiiaN4r/Pks1tvl5GSGbJRinxRUlu+v73cuD2cU1Vtw0/446NmJR5GX5DATXy8OKfVKVQIuUU+abDdvGwGMp2NTIpgo3xwmZguXyOE0Upukm2gmG+e0dZvDAjiztg+P6k6IgnL+bfdXx1XdCYNJV7YJrWAl6E/vi6vmNAQ14YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kkwQIqQ6; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=eWnVYbGm0ud5JQJjW78huVzhXCodXjp5YAx2ZhEYgOzCX7LuP3HOFKIsw7hOARbctLm0vdss7ksvXNu24OlrWqPiEwgR8AUxz8tKYfdr4J5cL6CW/ppE9poPJdlXOPoeJhs9EB16GftPKaSntkBqkLP3+bNFNDA6YUsZRqHkYzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=u/7Wn8iF; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=CJu7fZjlLtHAEX1Ahc3bmaF6jvK4cuIWpQGwA4Eg1uc=; b=kkwQIqQ6WL+Lt9UV55TgA2pYLI
-	W/jPqpmrPz5Or+5ZZR61zfDdKTD0/iVbUu9+h/yP+5vR/hSlmpyErL5y6G0s7UlOTQATv3b6dmBaq
-	bmy0Ggw/7lgBlSzG5zlr0ka0hIabYDJwKo6Xqx2TV9JCX9qYJmTalP+LNJjl9Ej00svreM4GVXmbT
-	pEcDcIsoiHboyz6YT6z0vCrdNgI10gpRJKm2Ug0+k0KZIz+rE2hfmm7hm6TJgsahLnARw67M1zQfw
-	LT0JTOdVHoFNu6RwhBDKruUZiSaSAJYzyudACVc/j1ZV3iqVEiPLlMCBxw2JxGkNQC0niSkp2l+IE
-	ke22T+1w==;
+	bh=GaK9f7GNG5jt2q9FYJX47fvTQUzLlPrfxtwSUqDJZAU=; b=u/7Wn8iFzXdDIMoIAwLdk2YK7O
+	+6sp3UqBhCds6a8fOUODqeXDaEfY2K3c5HL1ED5bfETV4TyNdYlqqCfRO1vkW0MpeGoFO+sEhP2jk
+	3+/Pff4sOYtxsdWCt1nRjI0HUAJ/1/Fx1nxYtVfpx7FgceGDn3iP2v5nfhu6hxbp+q9W8QaM2kPgX
+	9F859cymySht0SvTyPu1acj70bPBHIB3NT0S3aULUQSF+ItH46Wn69YkulqWWpDiEcNtp3YzUTDu6
+	t97D42snRtU6q2TaTaJGhyd1TwC3NyV3Qy/hd8x/PYFXZFss81kG2k59fiU1Q/zJpzwxSSv1zLLT2
+	nzOZphJg==;
 Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vkFYc-0000000BxFz-3yyo;
-	Mon, 26 Jan 2026 05:54:39 +0000
+	id 1vkFYg-0000000BxGw-3xV5;
+	Mon, 26 Jan 2026 05:54:43 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>,
 	Christian Brauner <brauner@kernel.org>
@@ -58,12 +58,10 @@ Cc: "Darrick J. Wong" <djwong@kernel.org>,
 	linux-block@vger.kernel.org,
 	linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-	Anuj Gupta <anuj20.g@samsung.com>
-Subject: [PATCH 06/15] block: add helpers to bounce buffer an iov_iter into bios
-Date: Mon, 26 Jan 2026 06:53:37 +0100
-Message-ID: <20260126055406.1421026-7-hch@lst.de>
+	Damien Le Moal <dlemoal@kernel.org>
+Subject: [PATCH 07/15] iomap: fix submission side handling of completion side errors
+Date: Mon, 26 Jan 2026 06:53:38 +0100
+Message-ID: <20260126055406.1421026-8-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260126055406.1421026-1-hch@lst.de>
 References: <20260126055406.1421026-1-hch@lst.de>
@@ -77,292 +75,70 @@ Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.06 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
 	MAILLIST(-0.15)[generic];
 	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), DKIM not aligned (relaxed),none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
 	RCVD_COUNT_THREE(0.00)[4];
-	TAGGED_FROM(0.00)[bounces-75430-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75431-lists,linux-fsdevel=lfdr.de];
+	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[infradead.org:+];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
+	RCPT_COUNT_SEVEN(0.00)[10];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[infradead.org:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:dkim,wdc.com:email,samsung.com:email,lst.de:mid,lst.de:email]
-X-Rspamd-Queue-Id: 52D5A844A6
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:dkim,lst.de:mid,lst.de:email]
+X-Rspamd-Queue-Id: 1D022844B4
 X-Rspamd-Action: no action
 
-Add helpers to implement bounce buffering of data into a bio to implement
-direct I/O for cases where direct user access is not possible because
-stable in-flight data is required.  These are intended to be used as
-easily as bio_iov_iter_get_pages for the zero-copy path.
+The "if (dio->error)" in iomap_dio_bio_iter exists to stop submitting
+more bios when a completion already return an error.  Commit cfe057f7db1f
+("iomap_dio_actor(): fix iov_iter bugs") made it revert the iov by
+"copied", which is very wrong given that we've already consumed that
+range and submitted a bio for it.
 
-The write side is trivial and just copies data into the bounce buffer.
-The read side is a lot more complex because it needs to perform the copy
-from the completion context, and without preserving the iov_iter through
-the call chain.  It steals a trick from the integrity data user interface
-and uses the first vector in the bio for the bounce buffer data that is
-fed to the block I/O stack, and uses the others to record the user
-buffer fragments.
-
+Fixes: cfe057f7db1f ("iomap_dio_actor(): fix iov_iter bugs")
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Anuj Gupta <anuj20.g@samsung.com
 Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Tested-by: Anuj Gupta <anuj20.g@samsung.com>
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- block/bio.c         | 179 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/bio.h |  26 +++++++
- 2 files changed, 205 insertions(+)
+ fs/iomap/direct-io.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/block/bio.c b/block/bio.c
-index 285b573ae82f..49f7548a31d6 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1266,6 +1266,185 @@ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter,
- 	return bio_iov_iter_align_down(bio, iter, len_align_mask);
- }
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 4000c8596d9b..867c0ac6df8f 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -443,9 +443,13 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+ 	nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS);
+ 	do {
+ 		size_t n;
+-		if (dio->error) {
+-			iov_iter_revert(dio->submit.iter, copied);
+-			copied = ret = 0;
++
++		/*
++		 * If completions already occurred and reported errors, give up now and
++		 * don't bother submitting more bios.
++		 */
++		if (unlikely(data_race(dio->error))) {
++			ret = 0;
+ 			goto out;
+ 		}
  
-+static struct folio *folio_alloc_greedy(gfp_t gfp, size_t *size)
-+{
-+	struct folio *folio;
-+
-+	while (*size > PAGE_SIZE) {
-+		folio = folio_alloc(gfp | __GFP_NORETRY, get_order(*size));
-+		if (folio)
-+			return folio;
-+		*size = rounddown_pow_of_two(*size - 1);
-+	}
-+
-+	return folio_alloc(gfp, get_order(*size));
-+}
-+
-+static void bio_free_folios(struct bio *bio)
-+{
-+	struct bio_vec *bv;
-+	int i;
-+
-+	bio_for_each_bvec_all(bv, bio, i) {
-+		struct folio *folio = page_folio(bv->bv_page);
-+
-+		if (!is_zero_folio(folio))
-+			folio_put(folio);
-+	}
-+}
-+
-+static int bio_iov_iter_bounce_write(struct bio *bio, struct iov_iter *iter)
-+{
-+	size_t total_len = iov_iter_count(iter);
-+
-+	if (WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED)))
-+		return -EINVAL;
-+	if (WARN_ON_ONCE(bio->bi_iter.bi_size))
-+		return -EINVAL;
-+	if (WARN_ON_ONCE(bio->bi_vcnt >= bio->bi_max_vecs))
-+		return -EINVAL;
-+
-+	do {
-+		size_t this_len = min(total_len, SZ_1M);
-+		struct folio *folio;
-+
-+		if (this_len > PAGE_SIZE * 2)
-+			this_len = rounddown_pow_of_two(this_len);
-+
-+		if (bio->bi_iter.bi_size > BIO_MAX_SIZE - this_len)
-+			break;
-+
-+		folio = folio_alloc_greedy(GFP_KERNEL, &this_len);
-+		if (!folio)
-+			break;
-+		bio_add_folio_nofail(bio, folio, this_len, 0);
-+
-+		if (copy_from_iter(folio_address(folio), this_len, iter) !=
-+				this_len) {
-+			bio_free_folios(bio);
-+			return -EFAULT;
-+		}
-+
-+		total_len -= this_len;
-+	} while (total_len && bio->bi_vcnt < bio->bi_max_vecs);
-+
-+	if (!bio->bi_iter.bi_size)
-+		return -ENOMEM;
-+	return 0;
-+}
-+
-+static int bio_iov_iter_bounce_read(struct bio *bio, struct iov_iter *iter)
-+{
-+	size_t len = min(iov_iter_count(iter), SZ_1M);
-+	struct folio *folio;
-+
-+	folio = folio_alloc_greedy(GFP_KERNEL, &len);
-+	if (!folio)
-+		return -ENOMEM;
-+
-+	do {
-+		ssize_t ret;
-+
-+		ret = iov_iter_extract_bvecs(iter, bio->bi_io_vec + 1, len,
-+				&bio->bi_vcnt, bio->bi_max_vecs - 1, 0);
-+		if (ret <= 0) {
-+			if (!bio->bi_vcnt)
-+				return ret;
-+			break;
-+		}
-+		len -= ret;
-+		bio->bi_iter.bi_size += ret;
-+	} while (len && bio->bi_vcnt < bio->bi_max_vecs - 1);
-+
-+	/*
-+	 * Set the folio directly here.  The above loop has already calculated
-+	 * the correct bi_size, and we use bi_vcnt for the user buffers.  That
-+	 * is safe as bi_vcnt is only used by the submitter and not the actual
-+	 * I/O path.
-+	 */
-+	bvec_set_folio(&bio->bi_io_vec[0], folio, bio->bi_iter.bi_size, 0);
-+	if (iov_iter_extract_will_pin(iter))
-+		bio_set_flag(bio, BIO_PAGE_PINNED);
-+	return 0;
-+}
-+
-+/**
-+ * bio_iov_iter_bounce - bounce buffer data from an iter into a bio
-+ * @bio:	bio to send
-+ * @iter:	iter to read from / write into
-+ *
-+ * Helper for direct I/O implementations that need to bounce buffer because
-+ * we need to checksum the data or perform other operations that require
-+ * consistency.  Allocates folios to back the bounce buffer, and for writes
-+ * copies the data into it.  Needs to be paired with bio_iov_iter_unbounce()
-+ * called on completion.
-+ */
-+int bio_iov_iter_bounce(struct bio *bio, struct iov_iter *iter)
-+{
-+	if (op_is_write(bio_op(bio)))
-+		return bio_iov_iter_bounce_write(bio, iter);
-+	return bio_iov_iter_bounce_read(bio, iter);
-+}
-+
-+static void bvec_unpin(struct bio_vec *bv, bool mark_dirty)
-+{
-+	struct folio *folio = page_folio(bv->bv_page);
-+	size_t nr_pages = (bv->bv_offset + bv->bv_len - 1) / PAGE_SIZE -
-+			bv->bv_offset / PAGE_SIZE + 1;
-+
-+	if (mark_dirty)
-+		folio_mark_dirty_lock(folio);
-+	unpin_user_folio(folio, nr_pages);
-+}
-+
-+static void bio_iov_iter_unbounce_read(struct bio *bio, bool is_error,
-+		bool mark_dirty)
-+{
-+	unsigned int len = bio->bi_io_vec[0].bv_len;
-+
-+	if (likely(!is_error)) {
-+		void *buf = bvec_virt(&bio->bi_io_vec[0]);
-+		struct iov_iter to;
-+
-+		iov_iter_bvec(&to, ITER_DEST, bio->bi_io_vec + 1, bio->bi_vcnt,
-+				len);
-+		/* copying to pinned pages should always work */
-+		WARN_ON_ONCE(copy_to_iter(buf, len, &to) != len);
-+	} else {
-+		/* No need to mark folios dirty if never copied to them */
-+		mark_dirty = false;
-+	}
-+
-+	if (bio_flagged(bio, BIO_PAGE_PINNED)) {
-+		int i;
-+
-+		for (i = 0; i < bio->bi_vcnt; i++)
-+			bvec_unpin(&bio->bi_io_vec[1 + i], mark_dirty);
-+	}
-+
-+	folio_put(page_folio(bio->bi_io_vec[0].bv_page));
-+}
-+
-+/**
-+ * bio_iov_iter_unbounce - finish a bounce buffer operation
-+ * @bio:	completed bio
-+ * @is_error:	%true if an I/O error occurred and data should not be copied
-+ * @mark_dirty:	If %true, folios will be marked dirty.
-+ *
-+ * Helper for direct I/O implementations that need to bounce buffer because
-+ * we need to checksum the data or perform other operations that require
-+ * consistency.  Called to complete a bio set up by bio_iov_iter_bounce().
-+ * Copies data back for reads, and marks the original folios dirty if
-+ * requested and then frees the bounce buffer.
-+ */
-+void bio_iov_iter_unbounce(struct bio *bio, bool is_error, bool mark_dirty)
-+{
-+	if (op_is_write(bio_op(bio)))
-+		bio_free_folios(bio);
-+	else
-+		bio_iov_iter_unbounce_read(bio, is_error, mark_dirty);
-+}
-+
- static void submit_bio_wait_endio(struct bio *bio)
- {
- 	complete(bio->bi_private);
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index c75a9b3672aa..95cfc79b88b8 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -403,6 +403,29 @@ static inline int bio_iov_vecs_to_alloc(struct iov_iter *iter, int max_segs)
- 	return iov_iter_npages(iter, max_segs);
- }
- 
-+/**
-+ * bio_iov_bounce_nr_vecs - calculate number of bvecs for a bounce bio
-+ * @iter:	iter to bounce from
-+ * @op:		REQ_OP_* for the bio
-+ *
-+ * Calculates how many bvecs are needed for the next bio to bounce from/to
-+ * @iter.
-+ */
-+static inline unsigned short
-+bio_iov_bounce_nr_vecs(struct iov_iter *iter, blk_opf_t op)
-+{
-+	/*
-+	 * We still need to bounce bvec iters, so don't special case them
-+	 * here unlike in bio_iov_vecs_to_alloc.
-+	 *
-+	 * For reads we need to use a vector for the bounce buffer, account
-+	 * for that here.
-+	 */
-+	if (op_is_write(op))
-+		return iov_iter_npages(iter, BIO_MAX_VECS);
-+	return iov_iter_npages(iter, BIO_MAX_VECS - 1) + 1;
-+}
-+
- struct request_queue;
- 
- void bio_init(struct bio *bio, struct block_device *bdev, struct bio_vec *table,
-@@ -456,6 +479,9 @@ void __bio_release_pages(struct bio *bio, bool mark_dirty);
- extern void bio_set_pages_dirty(struct bio *bio);
- extern void bio_check_pages_dirty(struct bio *bio);
- 
-+int bio_iov_iter_bounce(struct bio *bio, struct iov_iter *iter);
-+void bio_iov_iter_unbounce(struct bio *bio, bool is_error, bool mark_dirty);
-+
- extern void bio_copy_data_iter(struct bio *dst, struct bvec_iter *dst_iter,
- 			       struct bio *src, struct bvec_iter *src_iter);
- extern void bio_copy_data(struct bio *dst, struct bio *src);
 -- 
 2.47.3
 
