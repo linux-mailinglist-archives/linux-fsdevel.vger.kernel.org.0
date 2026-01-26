@@ -1,189 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-75468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id wNrKCKhzd2n7ggEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 15:01:12 +0100
+	id CKYUJCt1d2n7ggEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 15:07:39 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 723B6893D3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 15:01:11 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21FE08951C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 15:07:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 5D5223033FAD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 13:53:43 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 1D7BE3006692
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 14:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C9A33B97F;
-	Mon, 26 Jan 2026 13:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infinite-source.de header.i=@infinite-source.de header.b="ZUxUScE7";
-	dkim=permerror (0-bit key) header.d=infinite-source.de header.i=@infinite-source.de header.b="WZ2H2xa9"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B87991CF7D5;
+	Mon, 26 Jan 2026 14:07:34 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f80.google.com (mail-ot1-f80.google.com [209.85.210.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8138233B6F5;
-	Mon, 26 Jan 2026 13:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769435603; cv=pass; b=swnpi+4f0cUx3TTJEYQUqWvVXyIcIm1aq3jLNguLXS8yXzwg8Yiq+zmfpluyR7HXoJ5/uJTc3nA5aa55UpKBo4is4NFNQLUT/acRIO2zJ6cf7jVgrn6K1bZKJd9OJSIyPebb1siJc1sRANveTq/S+0QmQjeBJ3f5Qu5WNOKhSvU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769435603; c=relaxed/simple;
-	bh=5xyC33At/ybRJoiYDW3HNnwotdi3JbEr9v1+QqNQ+kE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bWcl7N7llm2/uri3vXeVeVEyH/hs1RxnSqn0uNAubMSafSs+xOYSc3R+BydiFBFU7Z/nmlbEfYywa12Vd/E09SMTV/8pziBQ6TFsrwBscWb24tDy4HGa/YYthy8Fs1VijvMQQmwVCfn7mabhIXKLecGsBvE9P6JfNA6tTna4e4w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infinite-source.de; spf=none smtp.mailfrom=infinite-source.de; dkim=pass (2048-bit key) header.d=infinite-source.de header.i=@infinite-source.de header.b=ZUxUScE7; dkim=permerror (0-bit key) header.d=infinite-source.de header.i=@infinite-source.de header.b=WZ2H2xa9; arc=pass smtp.client-ip=85.215.255.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infinite-source.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infinite-source.de
-ARC-Seal: i=1; a=rsa-sha256; t=1769435593; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=cThFVjYwLQTaJNxIAL+1KIgnLHF5xhio7CprsE2pPak7ClgLs76Cfm+UN9NgpVUn0O
-    z957pisSgdCQikrXSbOez+TN9o/rJfMH5xAIbY0mPVFD5oRf9TNMV3sMvO2Y7TwqFmL2
-    d36tvIg18XfIA2aNNpTMXw/KB1Zba6/E0JEf1WqrSj7zIQxfGFwGtCX/To4BKPCHsKgG
-    e9pk/iDXwP0DNX5OXWnxAdywVgUUeNC/Pr+LoLvv+sKSa8wtpivd1FjgFaBGNGrX9TS0
-    gqBpvsmYub1Dnw7jXOz0NTGKyoAEfRESVxOJHPUQJh3Eo0z9FvxIgWyqXzUJO3fnxkOI
-    qVaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1769435593;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=Ojkp+ZCZgadF4U1CzuGr9uOotTlgXHGtv0MD7TDKMvc=;
-    b=blr9psxTEb3Hx+qHQZdv0U1L9q56e6Telxr3jCCQXYW9w2SkffGfzSnyvSpKLJlPPE
-    XTOiZL8o8o9VY/FrHY+ijqdlvmxSkPyl4KsyYgiZzcaUBCFI+L77nHoV6fV7RRICW3rT
-    1hAu5u0fsEWHSQVcYBa2JGXhiQCIB+KJ8Ka++UP8gVVwL3ryf/G0Jfi5H3xSepIr1jBo
-    qWMgC+q2nQ30WoXTYAcHttcAXjMtR+ZloXtyVP2bGP6/+DjAFcNdJBxOPZGMxBW3eEo2
-    ED8yTkTEqET+VY2OakWZFY1he0kjJGOjBSK0Ktej/WA/zoSPQ26YSyiUo3C7H8zU6wdv
-    MpkQ==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1769435593;
-    s=strato-dkim-0002; d=infinite-source.de;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=Ojkp+ZCZgadF4U1CzuGr9uOotTlgXHGtv0MD7TDKMvc=;
-    b=ZUxUScE79577WNHAhn4T5G8nm4B2TX8JBMH7DE3Mmk+l/v726s4ug/8U6z/XDvL5FD
-    rID5nDKnm3ZX4F52fNi+Ihxu1WSz541AFkoae07sR/3b0X2O2CoSBeSzSkRLhWNUm3hU
-    Hr3HOvsuWeAo1ASuhtYIcLM0do/CIywsY0LF8NYLI0aiDRig6eV/11BTVLhUj9JrjGJf
-    B1PmitsctOfGpu7cMOSWD3VVK0nxpZSDxYWhy4q8ggm8RtoAZYm3vUcfr2nWTPxDHKwe
-    IPH9/kfuhnzNoK791MtgtAUdcb0ppHH/Fkw6MuRncqMy9QVxIu60FErpv9nhofK11U/K
-    QU5A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1769435593;
-    s=strato-dkim-0003; d=infinite-source.de;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=Ojkp+ZCZgadF4U1CzuGr9uOotTlgXHGtv0MD7TDKMvc=;
-    b=WZ2H2xa9Qdvvx5nojpyjrqD7cJI36VpgCrz30/aznPdnjegj9UPRV8ukaDZAHBIzUq
-    yitgXChJFtg8+SZA8UBA==
-X-RZG-AUTH: ":LW0Wek7mfO1Vkr5kPgWDvaJNkQpNEn8ylntakOISso1hE0McXX1lsX682SOpskKNgu1vdp7pXN2ayNAkR2kxTl8Z4is3C39It++VDQOZ4cpkTMma5+3/Lw=="
-Received: from [IPV6:2003:de:f721:6800:da61:1e19:86ba:107a]
-    by smtp.strato.de (RZmta 54.1.0 AUTH)
-    with ESMTPSA id 20d7db20QDrCBhQ
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Mon, 26 Jan 2026 14:53:12 +0100 (CET)
-Message-ID: <c59361e4-ad50-4cdf-888e-3d9a4aa6f69b@infinite-source.de>
-Date: Mon, 26 Jan 2026 14:53:12 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C9F2D061C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jan 2026 14:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.80
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769436454; cv=none; b=L1LQQq+mKqnTtyquFWwmg6XTW/r+USEzzP7WJKTLwTlpZgwMxOGmhs0ukbDJSS7x6+GaNqtm/riheIiBJnCtuIk/o4AKynDzq8eUzMR0iNqvF4Yts9oLna8Hg5semHJ+g98lCwH9ibnTvTEh6Tz1+4nQ3GTgPJ21FAhPQYL2Pf8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769436454; c=relaxed/simple;
+	bh=PUJPhOJ4AZ2lB4sT5ZrEb+XeEdqEQ9/Hnw47hjixBKQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=f4tBpDZqk8UlGNycQCR1LtGxtS5/EtrvlahaTiO6Ar5AM+A+gQs1h0njaorrR0RhKaFe0HUbflkXgoF8x+HHuycwwUVNH0LFvz3p100X7cCsEzd4IDJELh1ybr1XeVOB/T5KDE8VR1MNMYQNsi89AeKq+A5eMw+RHm8TadsLlQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.210.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-ot1-f80.google.com with SMTP id 46e09a7af769-7cfdd2f521bso6238164a34.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jan 2026 06:07:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769436452; x=1770041252;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6YOXJTvQa35EfB+oi4pMAGZpTsTQpaRB63oI/VpRPtY=;
+        b=V/v2HKKoKWHCQC9Dm4C1J5ASc+JNpynmqD3o0ZAFnu4B4ojVIoqSiHd78t5UbW7lor
+         pEpJc2A8b6vK/pEVPDhy4xJ98ODo1M0knjow62pOEyLame3qVKhCrk2/a1hHO62FJG1q
+         JrzQ5D/LWPa3ezFIbXR3jOkelgOWLUiEvj+QbuPg69sQ4h5qa+jT5W9w/0koQRghicDO
+         ztjYSQEZc0juw7KEPo3d5iLTVccKys3O1t2o1Zu9S/ckvciop3HdlemcsYs/I4vYsVE/
+         KrV5tGQ/MZcByEV/Fw/5fEqHZLhPWnwvVHVshCs5l7SFZ0Ddc4R+m2yuL/hDhpfZZ4Fr
+         VA4w==
+X-Forwarded-Encrypted: i=1; AJvYcCXr0VXj5+daaHH8q9Hv0Mvp2SsbUGLqIo6hHAjtADyeaoCIRMyvBRC8acwDgYz87iqqFO+4j0nL+S/DeRJX@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEwgCs/zkg0C3Z/EI8cwzmJs6x1zfSgAWTQnCJz3zX4J4cMQCf
+	67SckV3VjPH75V+zvfiBjCNI8rE4slxnGnu+As0MmMQgUtWaN/8QngSELKAXuJEdY5Mqw1KpMJa
+	RMc7RU3zijFaMN8SSsRrHnUkhcQtmOgqyuJCE8eoCiHTX7TNWXowbm0NmE1w=
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v1] man/man2/close.2: CAVEATS: Document divergence from
- POSIX.1-2024
-To: Jan Kara <jack@suse.cz>, Zack Weinberg <zack@owlfolio.org>
-Cc: The 8472 <kernel@infinite-source.de>, Rich Felker <dalias@libc.org>,
- Alejandro Colomar <alx@kernel.org>, Vincent Lefevre <vincent@vinc17.net>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-api@vger.kernel.org, GNU libc development <libc-alpha@sourceware.org>
-References: <20250524022416.GB6263@brightrain.aerifal.cx>
- <1571b14d-1077-4e81-ab97-36e39099761e@app.fastmail.com>
- <20260120174659.GE6263@brightrain.aerifal.cx> <aW_jz7nucPBjhu0C@devuan>
- <aW_olRn5s1lbbjdH@devuan>
- <1ec25e49-841e-4b04-911d-66e3b9ff4471@app.fastmail.com>
- <0f60995f-370f-4c2d-aaa6-731716657f9d@infinite-source.de>
- <20260124213934.GI6263@brightrain.aerifal.cx>
- <7654b75b-6697-4aad-93fc-29fa9b734bdb@infinite-source.de>
- <de07d292-99d8-44e8-b7d6-c491ac5fe5be@app.fastmail.com>
- <whaocgx6bopndbpag2wazn2ko4skxl4pe6owbavj3wblxjps4s@ntdfvzwggxv3>
-Content-Language: en-US
-From: The 8472 <kernel@infinite-source.de>
-In-Reply-To: <whaocgx6bopndbpag2wazn2ko4skxl4pe6owbavj3wblxjps4s@ntdfvzwggxv3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6820:1886:b0:65b:2a82:d700 with SMTP id
+ 006d021491bc7-662e044e138mr2042204eaf.44.1769436451887; Mon, 26 Jan 2026
+ 06:07:31 -0800 (PST)
+Date: Mon, 26 Jan 2026 06:07:31 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69777523.050a0220.1d05e9.0018.GAE@google.com>
+Subject: [syzbot] [iomap?] WARNING in iomap_iter (6)
+From: syzbot <syzbot+bd5ca596a01d01bfa083@syzkaller.appspotmail.com>
+To: brauner@kernel.org, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[infinite-source.de,reject];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[infinite-source.de:s=strato-dkim-0002,infinite-source.de:s=strato-dkim-0003];
+X-Spamd-Result: default: False [-0.36 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=312c0a6c03e6d7df];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	MAILLIST(-0.15)[generic];
+	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75468-lists,linux-fsdevel=lfdr.de];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-75469-lists,linux-fsdevel=lfdr.de,bd5ca596a01d01bfa083];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[infinite-source.de:+];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	SUBJECT_HAS_QUESTION(0.00)[];
+	REDIRECTOR_URL(0.00)[goo.gl];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[kernel@infinite-source.de,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_DN_NONE(0.00)[];
+	R_DKIM_NA(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,infinite-source.de:mid,infinite-source.de:dkim]
-X-Rspamd-Queue-Id: 723B6893D3
+	DBL_BLOCKED_OPENRESOLVER(0.00)[storage.googleapis.com:url,goo.gl:url,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,googlegroups.com:email]
+X-Rspamd-Queue-Id: 21FE08951C
 X-Rspamd-Action: no action
 
-On 26/01/2026 13:15, Jan Kara wrote:
-> On Sun 25-01-26 10:37:01, Zack Weinberg wrote:
->> On Sat, Jan 24, 2026, at 4:57 PM, The 8472 wrote:
->>
->>>>       [QUERY: Do delayed errors ever happen in any of these situations?
->>>>
->>>>          - The fd is not the last reference to the open file description
->>>>
->>>>          - The OFD was opened with O_RDONLY
->>>>
->>>>          - The OFD was opened with O_RDWR but has never actually
->>>>            been written to
->>>>
->>>>          - No data has been written to the OFD since the last call to
->>>>            fsync() for that OFD
->>>>
->>>>          - No data has been written to the OFD since the last call to
->>>>            fdatasync() for that OFD
->>>>
->>>>          If we can give some guidance about when people don’t need to
->>>>          worry about delayed errors, it would be helpful.]
->>
->> In particular, I really hope delayed errors *aren’t* ever reported
->> when you close a file descriptor that *isn’t* the last reference
->> to its open file description, because the thread-safe way to close
->> stdout without losing write errors[2] depends on that not happening.
-> 
-> So I've checked and in Linux ->flush callback for the file is called
-> whenever you close a file descriptor (regardless whether there are other
-> file descriptors pointing to the same file description) so it's upto
-> filesystem implementation what it decides to do and which error it will
-> return... Checking the implementations e.g. FUSE and NFS *will* return
-> delayed writeback errors on *first* descriptor close even if there are
-> other still open descriptors for the description AFAICS.
-Regarding the "first", does that mean the errors only get delivered once?
-I.e. if a concurrent fork/exec happens for process spawning and the fork-child
-closes the file descriptors then this closing may basically receive the errors
-and the parent will not see them (unless additional errors happen)?
-Or if _any_ part of the program dups the descriptor and then closes it without
-reporting errors then all uses of those descriptor must consider error delivery
-on close to be unreliable?
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    a66191c590b3 Merge tag 'hyperv-fixes-signed-20260121' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10db3e3a580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=312c0a6c03e6d7df
+dashboard link: https://syzkaller.appspot.com/bug?extid=bd5ca596a01d01bfa083
+compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f802af648f7a/disk-a66191c5.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9f28f489fe55/vmlinux-a66191c5.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8c44005e0c3c/bzImage-a66191c5.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+bd5ca596a01d01bfa083@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+iter->iomap.offset + iter->iomap.length <= iter->pos
+WARNING: fs/iomap/iter.c:36 at iomap_iter_done fs/iomap/iter.c:36 [inline], CPU#0: kworker/u8:26/9724
+WARNING: fs/iomap/iter.c:36 at iomap_iter+0x982/0xf30 fs/iomap/iter.c:114, CPU#0: kworker/u8:26/9724
+Modules linked in:
+CPU: 0 UID: 0 PID: 9724 Comm: kworker/u8:26 Tainted: G             L      syzkaller #0 PREEMPT(full) 
+Tainted: [L]=SOFTLOCKUP
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/13/2026
+Workqueue: loop6 loop_workfn
+RIP: 0010:iomap_iter_done fs/iomap/iter.c:36 [inline]
+RIP: 0010:iomap_iter+0x982/0xf30 fs/iomap/iter.c:114
+Code: ff ff ff e9 86 fa ff ff e8 ab 6d 65 ff 90 0f 0b 90 e9 06 fd ff ff e8 9d 6d 65 ff 90 0f 0b 90 e9 3b fd ff ff e8 8f 6d 65 ff 90 <0f> 0b 90 e9 97 fd ff ff e8 81 6d 65 ff 90 0f 0b 90 e9 c4 fd ff ff
+RSP: 0018:ffffc9000cdcf268 EFLAGS: 00010293
+RAX: ffffffff825d2b81 RBX: ffffc9000cdcf3c0 RCX: ffff88806e5d1e80
+RDX: 0000000000000000 RSI: 8000000000083fff RDI: 0000003e80000000
+RBP: ffffc9000cdcf3f8 R08: ffffc9000cdcf3e8 R09: ffffc9000cdcf430
+R10: dffffc0000000000 R11: ffffffff8473db20 R12: 8000000000083fff
+R13: ffffc9000cdcf402 R14: 1ffff920019b9e79 R15: 0000003e80000000
+FS:  0000000000000000(0000) GS:ffff888125928000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000031712ff8 CR3: 0000000043618000 CR4: 00000000003526f0
+DR0: ffffffffffffffff DR1: 00000000000001f8 DR2: 0000000000000083
+DR3: ffffffffefffff15 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ iomap_file_buffered_write+0x275/0xa30 fs/iomap/buffered-io.c:1187
+ blkdev_buffered_write block/fops.c:736 [inline]
+ blkdev_write_iter+0x524/0x710 block/fops.c:802
+ lo_rw_aio+0xc7a/0xf00 include/linux/percpu-rwsem.h:-1
+ do_req_filebacked drivers/block/loop.c:434 [inline]
+ loop_handle_cmd drivers/block/loop.c:1947 [inline]
+ loop_process_work+0x61d/0x11a0 drivers/block/loop.c:1982
+ process_one_work kernel/workqueue.c:3257 [inline]
+ process_scheduled_works+0xaec/0x17a0 kernel/workqueue.c:3340
+ worker_thread+0x89f/0xd90 kernel/workqueue.c:3421
+ kthread+0x726/0x8b0 kernel/kthread.c:463
+ ret_from_fork+0x51b/0xa40 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:246
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
