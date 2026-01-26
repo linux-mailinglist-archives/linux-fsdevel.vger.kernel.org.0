@@ -1,40 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-75400-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75401-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OGnHGf7tdmkHZAEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75400-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 05:30:54 +0100
+	id aHFaCJvudmkHZAEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75401-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 05:33:31 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 098D383E4E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 05:30:53 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA88083E94
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 05:33:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 5DDC93002337
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 04:30:53 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 54CA63007CA9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 04:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899351C5D72;
-	Mon, 26 Jan 2026 04:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F35A30C611;
+	Mon, 26 Jan 2026 04:33:17 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E6219A2A3;
-	Mon, 26 Jan 2026 04:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F4F295511;
+	Mon, 26 Jan 2026 04:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769401849; cv=none; b=ae6ufYnHSjJ2Y5yKwoEFjqrXbwGcRHWYn1TJJqLu2G/dsH1Gw5/zu5sgIJbcHpxbNCfAykua3LjhH4w3za90HwtRW18ALmcS8p4LlbogLe06Z+RlPGSruU1ZTq73rKyxnICeAMejjJR9mm9R091yn8baKTP52hkPurWHQRiqM8Q=
+	t=1769401996; cv=none; b=rOuRK/KEGnsZV9IlGCShMcVuZYIHfhkt7Lqjlq/3om42pzhCjdxOEzU4QCnHWtvaCwmNO+7gQtLBy1I/fXIUZqbzJx9vFj5SfdnvLBs+kZdjO2+zXS08zCqbmWcEF/e7SSaWpGX5Txiwaen6+CpWQvU6yF9BR8ED34g3AI91c3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769401849; c=relaxed/simple;
-	bh=udhD9Q9jATMwJS6PxCqXE8wYDkakqwwtnhDWysAw6HU=;
+	s=arc-20240116; t=1769401996; c=relaxed/simple;
+	bh=RE7ir2TtXqgklqUp7zQMs3F6Y48rSvyMCBqXJ+NJjOo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DgggJUzGXqTiZpaJ+IX7F9UP11l6SKqcDQPjZMDl6p8+MWFv0iTlDc1XeIaE+R/6hWvpaeHlAQGwVLNStLD7QR2xQgH5x+bHGgDIk4/TMed5hHiykuWkuNfAYGW5PsXYk92JylJ4JndJM8hM1j+vfkJW7JtYMvNfACGEniNlBJ0=
+	 Content-Type:Content-Disposition:In-Reply-To; b=cXzGAbl13ktDpUy2gyo/TUfh1nA4xAHy3tliJg0oEHXZ8Y+JoluqplQt7LROZy+lcY47h90GTOfCfZFN6YrbyQoe8IvPgao25gmMLe9QUeW9+s6Ag59w2wHuHubT1k3d5bmEyv4sw0xe19cPLVAI36Pnhj8QB4qfmybAMIhaKk8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
 Received: by verein.lst.de (Postfix, from userid 2407)
-	id 6F6B0227A8E; Mon, 26 Jan 2026 05:30:43 +0100 (CET)
-Date: Mon, 26 Jan 2026 05:30:42 +0100
+	id D3E6F227A88; Mon, 26 Jan 2026 05:33:11 +0100 (CET)
+Date: Mon, 26 Jan 2026 05:33:11 +0100
 From: Christoph Hellwig <hch@lst.de>
 To: Eric Biggers <ebiggers@kernel.org>
 Cc: Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
@@ -46,10 +46,9 @@ Cc: Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
 	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
 	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
 	fsverity@lists.linux.dev
-Subject: Re: [PATCH 05/11] fsverity: kick off hash readahead at data I/O
- submission time
-Message-ID: <20260126043042.GB30803@lst.de>
-References: <20260122082214.452153-1-hch@lst.de> <20260122082214.452153-6-hch@lst.de> <20260124205329.GE2762@quark>
+Subject: Re: [PATCH 06/11] fsverity: push out fsverity_info lookup
+Message-ID: <20260126043311.GC30803@lst.de>
+References: <20260122082214.452153-1-hch@lst.de> <20260122082214.452153-7-hch@lst.de> <20260124211956.GF2762@quark>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,19 +57,19 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260124205329.GE2762@quark>
+In-Reply-To: <20260124211956.GF2762@quark>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.36 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	NEURAL_HAM(-0.00)[-0.999];
 	RCPT_COUNT_TWELVE(0.00)[16];
 	MIME_TRACE(0.00)[0:+];
@@ -80,105 +79,46 @@ X-Spamd-Result: default: False [-1.36 / 15.00];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
 	RCVD_COUNT_THREE(0.00)[4];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,lst.de:mid];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75400-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-75401-lists,linux-fsdevel=lfdr.de];
 	R_DKIM_NA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[]
-X-Rspamd-Queue-Id: 098D383E4E
+X-Rspamd-Queue-Id: AA88083E94
 X-Rspamd-Action: no action
 
-On Sat, Jan 24, 2026 at 12:53:29PM -0800, Eric Biggers wrote:
-> > +void generic_readahead_merkle_tree(struct inode *inode, pgoff_t index,
-> > +		unsigned long nr_pages)
-> >  {
-> >  	struct folio *folio;
-> >  
-> >  	folio = __filemap_get_folio(inode->i_mapping, index, FGP_ACCESSED, 0);
-> > -	if (IS_ERR(folio) || !folio_test_uptodate(folio)) {
-> > +	if (PTR_ERR(folio) == -ENOENT || !folio_test_uptodate(folio)) {
+On Sat, Jan 24, 2026 at 01:19:56PM -0800, Eric Biggers wrote:
+> This patch introduces another bisection hazard by adding calls to
+> fsverity_info_addr() when CONFIG_FS_VERITY=n.  fsverity_info_addr() has
+> a definition only when CONFIG_FS_VERITY=y.
 > 
-> This dereferences an ERR_PTR() when __filemap_get_folio() returns an
-> error other than -ENOENT.
+> Maybe temporarily add a CONFIG_FS_VERITY=n stub for fsverity_info_addr()
+> that returns NULL, and also ensure that it's dereferenced only when it's
+> known that fsverity verification is needed.  Most of the call sites look
+> okay, but the second one in ext4_mpage_readpages() needs to be fixed.
 
-Yes.  I've fixed that and split the change in error handling into a
-separate well described prep patch while at it.
-> I think the correct thing to do here would be the following:
-> 
->         if (inode->i_sb->s_vop->readahead_merkle_tree)
-> 		inode->i_sb->s_vop->readahead_merkle_tree(inode, index,
-> 							  last_index - index + 1);
-> 
-> Then __fsverity_readahead() can be folded into fsverity_readahead().
+I've added an external declaration for fsverity_info_addr in the
+CONFIG_FS_VERITY=n so that the linker catches unguarded references.  It 
+caught two, which I fixed by adding IS_ENABLED checks that also reduce
+the code size for non-fsverity builds.
 
-I've done that, and also added a little comment.
+> > -	fsverity_init_verification_context(&ctx, inode);
+> > +	fsverity_init_verification_context(&ctx, inode, vi);
+> 
+> Note that fsverity_info has a back-pointer to the inode.  So,
+> fsverity_init_verification_context() could just take the vi and set
+> ctx->inode to vi->inode.
+> 
+> Then it wouldn't be necessary to get the inode from
+> bio_first_folio_all(bio)->mapping->host (in fsverity_verify_bio()) or
+> folio->mapping->host (in fsverity_verify_blocks()).
+> Similarly in fsverity_readahead() too.
+> 
+> (It might make sense to handle this part as a separate patch.)
 
-> 
-> > +void __fsverity_readahead(struct inode *inode, const struct fsverity_info *vi,
-> > +		loff_t data_start_pos, unsigned long nr_pages)
-> > +{
-> > +	const struct merkle_tree_params *params = &vi->tree_params;
-> > +	u64 start_hidx = data_start_pos >> params->log_blocksize;
-> > +	u64 end_hidx = (data_start_pos + ((nr_pages - 1) << PAGE_SHIFT)) >>
-> > +			params->log_blocksize;
-> 
-> (nr_pages - 1) << PAGE_SHIFT can overflow an 'unsigned long'.
-> (nr_pages - 1) needs to be cast to u64 before doing the shift.
-> 
-> But also it would make more sense to pass
-> (pgoff_t start_index, unsigned long nr_pages) instead of
-> (loff_t data_start_pos, unsigned long nr_pages),
-> so that the two numbers have the same units.
-> 
-> start_idx and end_hidx could then be computed as follows:
-> 
->     u64 start_hidx = (u64)start_index << params->log_blocks_per_page;
->     u64 end_hidx = (((u64)start_index + nr_pages) << params->log_blocks_per_page) - 1;
-> 
-> Note that fsverity_readahead() derives the position from the index.  If
-> it just used the index directly, that would be more direct.
-
-Yes, I've updated that.  Having proper types and/or conversion helpers
-for the fsverity specific addressing would be really nice as well,
-but I've not touched that for now.
-
-> > +	int level;
-> > +
-> > +	if (!inode->i_sb->s_vop->readahead_merkle_tree)
-> > +		return;
-> > +	if (unlikely(data_start_pos >= inode->i_size))
-> > +		return;
-> 
-> The check against i_size shouldn't be necessary: the caller should just
-> call this only for data it's actually going to read.
-
-This check is based on / copied from the check in verify_data_block.
-Now we only kick off readahead now and and don't actually do anything
-with the read blocks, so I'll take your word that this can be removed.
-
-> > +	for (level = 0; level < params->num_levels; level++) {
-> > +		unsigned long level_start = params->level_start[level];
-> > +		unsigned long next_start_hidx = start_hidx >> params->log_arity;
-> > +		unsigned long next_end_hidx = end_hidx >> params->log_arity;
-> > +		unsigned long start_idx = (level_start + next_start_hidx) >>
-> > +				params->log_blocks_per_page;
-> > +		unsigned long end_idx = (level_start + next_end_hidx) >>
-> > +				params->log_blocks_per_page;
-> 
-> start_idx and end_idx should have type pgoff_t to make it clear that
-> they're page indices.
-
-Fixed.
-
-> > +/**
-> > + * fsverity_readahead() - kick off readahead on fsverity hashes
-> > + * @folio:		first folio that is being read
-> 
-> folio => file data folio
-> 
-> Otherwise it can be confused with the Merkle tree.
-
-I've incoroporate the various suggested documentation improvements.
-Thanks!
+To be able to nicely used this vi->inode needs to lose the const
+qualifier.  I've done that, and also added a const qualifiers
+to ctx->vi while at it in prep patches.  With that just using
+vi->inode in this patch is easy enough.
 
 
