@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-75513-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75514-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id kIIIK168d2l8kgEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75513-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 20:11:26 +0100
+	id mDkIF9q8d2l8kgEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75514-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 20:13:30 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 666D18C65B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 20:11:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DCCB8C6AD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 20:13:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 3FB15302BA2B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 19:11:08 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id F15433023E2C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 19:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57BC278E63;
-	Mon, 26 Jan 2026 19:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F45727A107;
+	Mon, 26 Jan 2026 19:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I2XZrOKp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qUeTP6mY"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE5E23D7DE;
-	Mon, 26 Jan 2026 19:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A288248886;
+	Mon, 26 Jan 2026 19:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769454663; cv=none; b=pwMhHINM7jNAGrO3IRd5g0dAXwE67+FxNFylvDttQrrnz18r61lvYS/vAno33Sf0qk3hqKfVJbd8s3CE59WbVju6mZEfuIsjQnSyrN6gaB8v9aydiVwoutmPu533zev18MY/Eo25l5gALomvXp2MBZHRT5zRiEwDJrkNFBA8jWc=
+	t=1769454799; cv=none; b=MltfkeXUifDQp0iDQgjVN3/Xfb7SH0lp0e+gaR9fWCaqLjskf6xv3AEwLr2sNzTK0EZ2qefXvKWSlc9yG7Za9Ybm3YoIju3046cUBTAFK62pIJPDQIhvI+117ibt8TPa7krdjw9v5SdPbqqvBTMQtfdj0T03dmCx0ls0ZGv6hdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769454663; c=relaxed/simple;
-	bh=VuNjk5JPQkuJHg0tkyb4Xhls+pw6q17FfG9hVadfPQ0=;
+	s=arc-20240116; t=1769454799; c=relaxed/simple;
+	bh=eT3IR992p6oONvMpC+r6wQi71diCQPvsBYr8PIDAS60=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V33pNX/39f2z51Ucv5mBMTrYvD9p5nLgm67OFW3j2WuOn6eZs5IbU5e1PMRalc4Kd8WAC4ZY65SdNspPyuA97fwuyw6l2AU15PmINK4nbAtinwmCEvb/rulybcBD8EZIjY9OVHn5s7s098KeWd/J2e1Wf8r6NcmmuBj3xYzOUCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I2XZrOKp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 080F1C116C6;
-	Mon, 26 Jan 2026 19:11:03 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zegm/mjwmbGkMK7qU/YmS8XfVqyvhGmp1l1J5/f0BX7wimMLAeNxBz/HOxj5i1iiw9PSg9fjowuWP/w80vHjzIeLZdxzoiHz3OSb5AUXWC0P0CuG+CmXJYN1HGNNmjEPWz7US2vs52LesZd1PORjHE3nm01yVVKGwD7YhVYwKeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qUeTP6mY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98D57C116C6;
+	Mon, 26 Jan 2026 19:13:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769454663;
-	bh=VuNjk5JPQkuJHg0tkyb4Xhls+pw6q17FfG9hVadfPQ0=;
+	s=k20201202; t=1769454798;
+	bh=eT3IR992p6oONvMpC+r6wQi71diCQPvsBYr8PIDAS60=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I2XZrOKpelUwXVo3uRwJuxY9weKtlh0PSlhPTaKfohUJ09qk2nF0eKyw3KYuGrzIq
-	 P2B/Fu4TmTWZxnZzSHDXYwnB8sqyQ5KFBcLuUQcrU8o8wPtOMsEY5Xax7z3T0L1fOI
-	 HtdeL0HHtZTqRh5vTqgL2vRquzGT8lg6eK0mo06sYgnpT0hAXrl7yy9phFAbxzl3iI
-	 26s9jlb8JuojngiEhqQOzF24Sm2mtFC+qtCLLETANb8fkiiKYtTT2B6YCQbwgbUWRW
-	 ZtzxW5iXUsC3TeHuPdY8R2BfYNcJrPOCwXEJS99N3zxxUgyVv1e9nNrSv9X8OKiucy
-	 S/XyKphCGnE0g==
-Date: Mon, 26 Jan 2026 11:11:02 -0800
+	b=qUeTP6mYSouKnWqfts+Fd19K43rbbbzw/DMIIBchyEZpiveM1eUIckXa5l9Y8CLII
+	 TGk0KsSO/SimN8kSWWweGqMOI3Om+eiAFauIUzVuFTqYiWdERA7xniuhhlBpZW/s/1
+	 9/sqbhas1kG6h24grwtNZ75DknHZtlCGdKKcFhhDhBOB8unb/xHimGxplEItnKPflp
+	 6MmU6kU2OPoGvMdCu4G3dohIxAxFohOepqwzoX3BvFADp+iSe8Yqi5PVutA/SbBEZI
+	 wnLrdel391jDTv3Msymbi/OtiEdPBhpuAMlZdWTdeRgWb80SHsv+MXJKeLc0wjDRsE
+	 RmeIuLcKu5N7Q==
+Date: Mon, 26 Jan 2026 11:13:18 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Christoph Hellwig <hch@lst.de>
 Cc: Eric Biggers <ebiggers@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
@@ -55,11 +55,11 @@ Cc: Eric Biggers <ebiggers@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
 	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
 	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
 	linux-f2fs-devel@lists.sourceforge.net, fsverity@lists.linux.dev
-Subject: Re: [PATCH 07/16] fsverity: don't issue readahead for non-ENOENT
- errors from __filemap_get_folio
-Message-ID: <20260126191102.GO5910@frogsfrogsfrogs>
+Subject: Re: [PATCH 09/16] fsverity: constify the vi pointer in
+ fsverity_verification_context
+Message-ID: <20260126191318.GP5910@frogsfrogsfrogs>
 References: <20260126045212.1381843-1-hch@lst.de>
- <20260126045212.1381843-8-hch@lst.de>
+ <20260126045212.1381843-10-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,7 +68,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260126045212.1381843-8-hch@lst.de>
+In-Reply-To: <20260126045212.1381843-10-hch@lst.de>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
@@ -82,7 +82,7 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75513-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-75514-lists,linux-fsdevel=lfdr.de];
 	RCPT_COUNT_TWELVE(0.00)[16];
 	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
@@ -97,64 +97,86 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TO_DN_SOME(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,lst.de:email]
-X-Rspamd-Queue-Id: 666D18C65B
+X-Rspamd-Queue-Id: 1DCCB8C6AD
 X-Rspamd-Action: no action
 
-On Mon, Jan 26, 2026 at 05:50:53AM +0100, Christoph Hellwig wrote:
-> Issuing more reads on errors is not a good idea, especially when the
-> most common error here is -ENOMEM.
+On Mon, Jan 26, 2026 at 05:50:55AM +0100, Christoph Hellwig wrote:
+> struct fsverity_info contains information that is only read in the
+> verification path.  Apply the const qualifier to match various explicitly
+> passed arguments.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/verity/pagecache.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/verity/pagecache.c b/fs/verity/pagecache.c
-> index 1efcdde20b73..63393f0f5834 100644
-> --- a/fs/verity/pagecache.c
-> +++ b/fs/verity/pagecache.c
-> @@ -22,7 +22,8 @@ struct page *generic_read_merkle_tree_page(struct inode *inode, pgoff_t index,
->  	struct folio *folio;
->  
->  	folio = __filemap_get_folio(inode->i_mapping, index, FGP_ACCESSED, 0);
-> -	if (IS_ERR(folio) || !folio_test_uptodate(folio)) {
-> +	if (PTR_ERR(folio) == -ENOENT ||
-> +	    !(IS_ERR(folio) && !folio_test_uptodate(folio))) {
 
-I don't understand this logic at all.  If @folio is actually an
-ERR_PTR, then we dereference the non-folio to see if it's not uptodate?
-
-I think (given the previous revisions) that what you want is to initiate
-readahead if either there's no folio at all (ENOENT) or if there is a
-folio but it's not uptodate?  But not if there's some other error
-(ENOMEM, EL3HLT, EFSCORRUPTED, etc)?
-
-So maybe you want:
-
-	folio = __filemap_get_folio(...);
-	if (!IS_ERR(folio)) {
-		if (folio_test_uptodate(folio))
-			return folio_file_page(folio);
-		folio_put(folio);
-	} else if (PTR_ERR(folio) == -ENOENT) {
-		return ERR_CAST(folio);
-	}
-
-	if (num_ra_pages > 1)
-		page_cache_ra_unbounded(&ractl, num_ra_pages, 0);
-	folio = read_mapping_folio(inode->i_mapping, index, NULL);
-	if (IS_ERR(folio))
-		return ERR_CAST(folio);
-
-	return folio_file_page(folio);
-
-<confused>
+Seems fine to me...
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
 --D
 
->  		DEFINE_READAHEAD(ractl, NULL, NULL, inode->i_mapping, index);
+> ---
+>  fs/verity/verify.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/verity/verify.c b/fs/verity/verify.c
+> index 32cadb71953c..881af159e705 100644
+> --- a/fs/verity/verify.c
+> +++ b/fs/verity/verify.c
+> @@ -21,7 +21,7 @@ struct fsverity_pending_block {
 >  
->  		if (!IS_ERR(folio))
+>  struct fsverity_verification_context {
+>  	struct inode *inode;
+> -	struct fsverity_info *vi;
+> +	const struct fsverity_info *vi;
+>  
+>  	/*
+>  	 * This is the queue of data blocks that are pending verification.  When
+> @@ -84,8 +84,8 @@ EXPORT_SYMBOL_GPL(fsverity_readahead);
+>   * Returns true if the hash block with index @hblock_idx in the tree, located in
+>   * @hpage, has already been verified.
+>   */
+> -static bool is_hash_block_verified(struct fsverity_info *vi, struct page *hpage,
+> -				   unsigned long hblock_idx)
+> +static bool is_hash_block_verified(const struct fsverity_info *vi,
+> +				   struct page *hpage, unsigned long hblock_idx)
+>  {
+>  	unsigned int blocks_per_page;
+>  	unsigned int i;
+> @@ -156,7 +156,8 @@ static bool is_hash_block_verified(struct fsverity_info *vi, struct page *hpage,
+>   *
+>   * Return: %true if the data block is valid, else %false.
+>   */
+> -static bool verify_data_block(struct inode *inode, struct fsverity_info *vi,
+> +static bool verify_data_block(struct inode *inode,
+> +			      const struct fsverity_info *vi,
+>  			      const struct fsverity_pending_block *dblock)
+>  {
+>  	const u64 data_pos = dblock->pos;
+> @@ -315,7 +316,7 @@ static void
+>  fsverity_init_verification_context(struct fsverity_verification_context *ctx,
+>  				   struct inode *inode)
+>  {
+> -	struct fsverity_info *vi = *fsverity_info_addr(inode);
+> +	const struct fsverity_info *vi = *fsverity_info_addr(inode);
+>  
+>  	ctx->inode = inode;
+>  	ctx->vi = vi;
+> @@ -342,7 +343,7 @@ fsverity_clear_pending_blocks(struct fsverity_verification_context *ctx)
+>  static bool
+>  fsverity_verify_pending_blocks(struct fsverity_verification_context *ctx)
+>  {
+> -	struct fsverity_info *vi = ctx->vi;
+> +	const struct fsverity_info *vi = ctx->vi;
+>  	const struct merkle_tree_params *params = &vi->tree_params;
+>  	int i;
+>  
+> @@ -372,7 +373,7 @@ static bool fsverity_add_data_blocks(struct fsverity_verification_context *ctx,
+>  				     struct folio *data_folio, size_t len,
+>  				     size_t offset)
+>  {
+> -	struct fsverity_info *vi = ctx->vi;
+> +	const struct fsverity_info *vi = ctx->vi;
+>  	const struct merkle_tree_params *params = &vi->tree_params;
+>  	const unsigned int block_size = params->block_size;
+>  	u64 pos = (u64)data_folio->index << PAGE_SHIFT;
 > -- 
 > 2.47.3
 > 
