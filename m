@@ -1,195 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-75443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YGNfKGAfd2ntcQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 09:01:36 +0100
+	id eBwNO50rd2nacwEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 09:53:49 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BE2885396
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 09:01:36 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E7C285A66
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 09:53:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id DDF7D3013004
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 08:01:01 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 472E2302769C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 08:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3B32F691A;
-	Mon, 26 Jan 2026 08:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8FD3019D8;
+	Mon, 26 Jan 2026 08:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="i/qRwIZW";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LrSBPgpH"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TXqOc4+Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D7B26E711;
-	Mon, 26 Jan 2026 08:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085A725FA05
+	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jan 2026 08:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769414459; cv=none; b=fB8RlaQn/Knl7X+Q0DWe61KKaPYIas8b5Xup8v5bi0fvdyjPqCKxPfcG8nR93a3+OWUrGpRSey1Yg2d2ksGrsJV4HsAHEzmIaNHxceWMkPuMcW0fnZhUCr5AbfQEIdoKnFqVzD6nIpXpYV8tKYN7OyBQhnjQOXDk3NlTZ4T5KEU=
+	t=1769417530; cv=none; b=d1/eWk85Q2u0hC4o7LkDxgpM7iCLPkt9Cw6zsrOiWXOuh345uYahzVeBjviXibPiNWiIfxOtTRH8VYWUUKJCPk9R8k0bA5+CS9o0y3LyQyuRofvny2mDuF0dff1PvJLNpj0J8Fswl/zbygW1hRMP/+VQtJhBHZ3q+ViRlQU2LMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769414459; c=relaxed/simple;
-	bh=Jq2F+oCg5oDSvWCa10TFq1iUE4KbxQiTyPoLBVvSJjM=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=k0ih/SSviI/Y9ZnfDReTQJVZSi9wM2mPrAwT5ABPe+A9wOTI8jxJJ3NYB5t/t1mqx/mA84xfOrHbBwupVwRUrPMokQ0JsZALI3AiTsicIVk8Tm3tJT7ATIckivhSOWHpWD9DOcDGqm37uCH5ZHIs7osDoezkoftXWmlijaSB1gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=i/qRwIZW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LrSBPgpH; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 674E91400059;
-	Mon, 26 Jan 2026 03:00:57 -0500 (EST)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-04.internal (MEProxy); Mon, 26 Jan 2026 03:00:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1769414457;
-	 x=1769500857; bh=P8ncLr4g8+8XbCw2IM+F0C9C0EAgVMAauftZ2zcoeu8=; b=
-	i/qRwIZWm1G8nLRfkb1Rc76Wazijd+Z/mwC3OyMOiAykxOdYor5eJzLaPMqX3Ksp
-	xSvZV8QcyAu9pZrwal+CnDfVAt6Uot8cUs7PyR7rs1W3ZzguL/PF9K9Sr3PHrxaW
-	SpZlQ+9VbSDeBqj71EVChoBtjTPrhG7vnS7K6g0CwZgSb+5h7mz0HLdhxXAq+WgW
-	80lYjgRmAOy4mxaTIIHhQ/4u/1LVzFwbi3zIo+yj9FJC34tQ6Ay8QeSvNGf7rCXk
-	6as6JL6amRw6a5de2S2WZeEUQqApyb4U7OeOvDhuvsLzIlLrlKLAFzlruu3saUf8
-	n/ZS8ezoNEML9GpN7uPSrQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1769414457; x=
-	1769500857; bh=P8ncLr4g8+8XbCw2IM+F0C9C0EAgVMAauftZ2zcoeu8=; b=L
-	rSBPgpHkdl5X7xCzY2fvEIgpTFY+/r/7xI+LZVYvdyVQKV7j9jLjIRkOFTio7cLl
-	giWjGRR2+8nbXe54FREQFceTpIDIRZ4tjUr232Gbc87Oli/XhNRDUy7QycxTurX0
-	eGIl1FqaU94FuHiNMlyDiekDeK23/J1GnU5/uD1oA7wxktVd7W2JAFgQFvwalUAv
-	fGfn2AAwIVSIug8abWSv8c9k2txOSmxPs5OBirIfw/q9zZ9ulvx1q+3htPG0CKpG
-	8P9XWZgnFXtrR8QdMIFnz/8mF/jUFhv7Wx8Z+JcTZfGo1erBs5GMezGvByNU8TPa
-	0xnJgIQmV0SL/VzEmfizw==
-X-ME-Sender: <xms:OR93aXpy7AxORIU8ALV6SVfu2GZ2tBNdzlmDswt34Lb4YZm9Cneepw>
-    <xme:OR93acctjR84XwxNcMmXRPCfvXJHKuwNNt2ndhhKMa674tgNLKZiDEM9Zza2Ar7Bn
-    KioTE1PB5frHOtFMlBldkzdQ-YB-kU87Skom0WUXlX_Lv-8dfeLivI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduheejudegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheprghlvgigrdgrrhhinhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
-    epughorhhjohihtghhhiduuddusehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghrrghu
-    nhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhlrgihthhonheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheptghhuhgtkhdrlhgvvhgvrhesohhrrggtlhgvrdgtohhm
-    pdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtoheplhhinhhugidqfh
-    hsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhig
-    qdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhroh
-    esiigvnhhivhdrlhhinhhugidrohhrghdruhhk
-X-ME-Proxy: <xmx:OR93aTKgUj39tnP09CSXHNMGJ2heUbjZRPV5NDvoKsA-kGAlSlr_RA>
-    <xmx:OR93aaMiqJLtkyYsO5eTvi0GVgGBlKuB9gIOBLkDOqu5cO8cV17COg>
-    <xmx:OR93aWUJFyUbVv-ozIaodOhfUJpGlFy3D3S1KJULKXPezIDVyVM-0w>
-    <xmx:OR93aYk1XpUrB2OWDgaxXZNLYxWE0aelmaXVe0HZjm705XklnqENKg>
-    <xmx:OR93abVzKXbrDGDOgh7usBGEtBAjxFn0fSkzr1byWiOuIuB4-a266cOu>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id F206D700069; Mon, 26 Jan 2026 03:00:56 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1769417530; c=relaxed/simple;
+	bh=VuF13fDDkjsDdQB0FK1glz3rdsLnhvFj2Qao2aEyreo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=lR4akf42HNJZgRT/G7gFpmUqIj/5nq8M5KsHFBvQZxrbyAaaZnP2/g61twX2LYN1K3sDgdI/sqDZ4CH9FwrE7/FRhhJX0qyfhTmjwN6Typ6lgAuIfH2KxqB+w11BeewC8RF70nV/RyZ77WfGXjF4rFHPnEz5gNQ4Vc1MPsnSzeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TXqOc4+Q; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1769417528;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YzWG8mhXvLiSMnrLWOTgHghebUSlEnmkpDMK2MCkjTI=;
+	b=TXqOc4+Q/o5I9FshDL4tTiQHBRipTIyxOYTsTnO+EoP4vJsh42OBmcQWS7H7yqxJdbxCub
+	92z8ZIM7kQzH5DhmkNTlmZMh1KZGvfWjP9di2W7yj09vVNohY82qaVOSwvJBn69SJVqjbX
+	+a+0/5jH6ez9S25GN5/HVOncA2Xxb7I=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-45-7XI-tJViPxmtoAD9SgSCrw-1; Mon,
+ 26 Jan 2026 03:52:04 -0500
+X-MC-Unique: 7XI-tJViPxmtoAD9SgSCrw-1
+X-Mimecast-MFC-AGG-ID: 7XI-tJViPxmtoAD9SgSCrw_1769417523
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 143001944A84;
+	Mon, 26 Jan 2026 08:52:02 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.45.225.129])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 431D519560B4;
+	Mon, 26 Jan 2026 08:51:57 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: "Zack Weinberg" <zack@owlfolio.org>
+Cc: "The 8472" <kernel@infinite-source.de>,  "Rich Felker"
+ <dalias@libc.org>,  "Alejandro Colomar" <alx@kernel.org>,  "Vincent
+ Lefevre" <vincent@vinc17.net>,  "Jan Kara" <jack@suse.cz>,  "Alexander
+ Viro" <viro@zeniv.linux.org.uk>,  "Christian Brauner"
+ <brauner@kernel.org>,  linux-fsdevel@vger.kernel.org,
+  linux-api@vger.kernel.org,  "GNU libc development"
+ <libc-alpha@sourceware.org>
+Subject: Re: [RFC v1] man/man2/close.2: CAVEATS: Document divergence from
+ POSIX.1-2024
+In-Reply-To: <de07d292-99d8-44e8-b7d6-c491ac5fe5be@app.fastmail.com> (Zack
+	Weinberg's message of "Sun, 25 Jan 2026 10:37:01 -0500")
+References: <20250517133251.GY1509@brightrain.aerifal.cx>
+	<5jm7pblkwkhh4frqjptrw4ll4nwncn22ep2v7sli6kz5wxg5ik@pbnj6wfv66af>
+	<8c47e10a-be82-4d5b-a45e-2526f6e95123@app.fastmail.com>
+	<20250524022416.GB6263@brightrain.aerifal.cx>
+	<1571b14d-1077-4e81-ab97-36e39099761e@app.fastmail.com>
+	<20260120174659.GE6263@brightrain.aerifal.cx>
+	<aW_jz7nucPBjhu0C@devuan> <aW_olRn5s1lbbjdH@devuan>
+	<1ec25e49-841e-4b04-911d-66e3b9ff4471@app.fastmail.com>
+	<0f60995f-370f-4c2d-aaa6-731716657f9d@infinite-source.de>
+	<20260124213934.GI6263@brightrain.aerifal.cx>
+	<7654b75b-6697-4aad-93fc-29fa9b734bdb@infinite-source.de>
+	<de07d292-99d8-44e8-b7d6-c491ac5fe5be@app.fastmail.com>
+Date: Mon, 26 Jan 2026 09:51:55 +0100
+Message-ID: <lhu8qdkpxhw.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: As39fFuPNmh7
-Date: Mon, 26 Jan 2026 09:00:35 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Dorjoy Chowdhury" <dorjoychy111@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "Jeff Layton" <jlayton@kernel.org>, "Chuck Lever" <chuck.lever@oracle.com>,
- "Alexander Aring" <alex.aring@gmail.com>
-Message-Id: <a3a9ea10-ae0f-4258-9950-89c2bdfa05b1@app.fastmail.com>
-In-Reply-To: 
- <CAFfO_h7ttQPVCR-yQ_=h4BLoHYW3QZOWQ+oSNSFvY-7NOxxeHw@mail.gmail.com>
-References: <20260125141518.59493-1-dorjoychy111@gmail.com>
- <20260125141518.59493-2-dorjoychy111@gmail.com>
- <57fe666f-f451-462f-8f16-8c0ba83f1eac@app.fastmail.com>
- <CAFfO_h7ttQPVCR-yQ_=h4BLoHYW3QZOWQ+oSNSFvY-7NOxxeHw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] open: new O_REGULAR flag support
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.65 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[arndb.de,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[arndb.de:s=fm2,messagingengine.com:s=fm2];
+	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	XM_UA_NO_VERSION(0.01)[];
-	TAGGED_FROM(0.00)[bounces-75443-lists,linux-fsdevel=lfdr.de];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[vger.kernel.org,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[arnd@arndb.de,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[arndb.de:+,messagingengine.com:+];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[arndb.de:dkim,app.fastmail.com:mid,messagingengine.com:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 1BE2885396
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[fweimer@redhat.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	PRECEDENCE_BULK(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75444-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_FIVE(0.00)[6];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[redhat.com:+]
+X-Rspamd-Queue-Id: 5E7C285A66
 X-Rspamd-Action: no action
 
-On Sun, Jan 25, 2026, at 16:41, Dorjoy Chowdhury wrote:
->
-> Thanks for pointing this out. I will fix up in v2 along with other
-> comments (if any). I looked at the existing error codes in
-> uapi/asm-generic/errno.h and didn't notice anything that I could
-> reuse. So if I understand correctly, I will need this new error code
-> in both uapi/asm-generic/errno.h (not in errno-base.h) and in
-> arch/*/include/uapi/asm/errno.h (I see some parallel
-> tools/arch/*/include/uapi/asm/errno.h files too) just after EHWPOISON,
-> right?
+* Zack Weinberg:
 
-Yes, sounds good to me.
+> In particular, I really hope delayed errors *aren=E2=80=99t* ever reported
+> when you close a file descriptor that *isn=E2=80=99t* the last reference
+> to its open file description, because the thread-safe way to close
+> stdout without losing write errors[2] depends on that not happening.
 
->> > diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
->> > index 613475285643..11e5eadab868 100644
->> > --- a/include/uapi/asm-generic/fcntl.h
->> > +++ b/include/uapi/asm-generic/fcntl.h
->> > @@ -88,6 +88,10 @@
->> >  #define __O_TMPFILE  020000000
->> >  #endif
->> >
->> > +#ifndef O_REGULAR
->> > +#define O_REGULAR       040000000
->> > +#endif
->>
->> This in turn clashes with O_PATH on alpha, __O_TMPFILE on
->> parisc, and __O_SYNC on sparc. We can probably fill the holes
->> in asm/fcntl.h to define this.
->>
->
-> And for this, I will need to just define O_REGULAR in alpha, parisc
-> and sparc too, right?
+> [2] https://stackoverflow.com/a/50865617 (third code block)
 
-Yes, the only question is whether to use the first available
-bit, or the one after the previously last one.
+Are you sure about that?  It means that errors are never reported if a
+shell script redirects standard output over multiple commands.
 
-> Good catch on the sparc file, some are octal, some are hexadecimal,
-> easy to miss. Thanks!
+Thanks,
+Florian
 
-Right, I wonder if there are any downsides to redefining them
-all the same way.
-
-    Arnd
 
