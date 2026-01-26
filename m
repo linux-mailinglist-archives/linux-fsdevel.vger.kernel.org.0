@@ -1,115 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-75544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oDQyCM3kd2k9mQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 23:03:57 +0100
+	id eM+mIJ7md2k9mQEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 23:11:42 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D4D88DCE4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 23:03:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE9498DDFD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 23:11:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 736FB3025D37
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 22:03:50 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 76A0A303EAA4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jan 2026 22:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41CE2FFDFC;
-	Mon, 26 Jan 2026 22:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08A02FF643;
+	Mon, 26 Jan 2026 22:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Puk6Va9w"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zs9LA8kU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D723D2FDC30
-	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jan 2026 22:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E83E2EAB82
+	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jan 2026 22:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.178
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769465029; cv=pass; b=okEQ4SYRZ4+6+xppUVs0H2MQdwGnNHyBX+umtrKGIo6qG5Ia+WNxdbWeZPF/Fh7B/XbfDXu8E0yLDC/BWvgFCcWPgowxcU8GF6XgE4K1xFjVIVey96JVKeYnZWFElvK4PaVGlAsv4Jd7hW4N+atTnuEqzkX9SEIDdkiU3xMPioU=
+	t=1769465440; cv=pass; b=B9gMhgZdykCQDoERg9LUQWOqZMTRib9hoPkQj5RHYFKNlUPJsJV8GImzVsIkWW2JsHll38TwNAoV6kKrKf/jH+GA288ZcWpzlNcvCUK0F5mDvyvAbWtRP+C3xUUJZnxT0VWA+/vylqVU8ZotB9hfDmLm2HW46AAI4cDNm4emmvI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769465029; c=relaxed/simple;
-	bh=vBeV35fwku9CnFe/OmA75ZrHPb5195tw3FhVtWb96Co=;
+	s=arc-20240116; t=1769465440; c=relaxed/simple;
+	bh=KF042WMwtWjjl4pmi595H1OUEPLk6M01DQjVf67rgNA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SAjJA/67RBwpkvlE/ae2TEWFhMXlgxz1s1eqSmV0eTeyUrW0XAnbQyU+vlNptynkF3km0pduENRJyKu2xoW6Jx2aojUB75v4asFHOe49nxwHRFYq+pT0EjVS58PkfvpZArOBWctFU/mzwiGLptFXYzuS2411GYzXJuwQvjzpaAo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Puk6Va9w; arc=pass smtp.client-ip=209.85.160.176
+	 To:Cc:Content-Type; b=Hh3cQRxF74ooYNSRxyUxj11Nu1rbeAULbgjanUYUEqSfH51YW+SGdQJb8CCvAyscsAxOxvXkUuSMrePHggU6ed0BF4Qh3IWw/fjET0NbOQFqWrrAvPzIbjxdgrytZ0NYF+PhwbAe5P2KVapwPGu2YvrykAB5RaUflWTjfxhQljg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zs9LA8kU; arc=pass smtp.client-ip=209.85.160.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-502a2370e4fso40439091cf.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jan 2026 14:03:47 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769465027; cv=none;
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-5029901389dso46194311cf.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jan 2026 14:10:38 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769465438; cv=none;
         d=google.com; s=arc-20240605;
-        b=XNam2NE2zMo5q8FCxispgrPtYbelt0sXfHOzZ98HFG1ZGFes9gOIpACKPH5qRWsEzf
-         I48xMNTvBaoO8LM+3XjRcpAW2PNqXW0NLefS9QOW4Eqkjle3TuuVaA8GfudKTyYl/sLk
-         CZgdQqgwYmqnh+Sxm7WWrAFttYNXrprRqC9SknhvF5zQ0hDEW8IAxehMPTVkUm174qAf
-         h4/jiKjdLSSzoRQjnme+fGbM1V1ftBSnONs0mnvI8JTaW9jdm2h9fhDrwr/mB55Q5HF8
-         Y2KUiUrCFEHTk3RkUVsSz1GS5BoknaI+bBHRKT4Wj43XZNBPxXFOoZF1yzhHYqPjV89K
-         Gslg==
+        b=dCp24nbNfUgbSJyAP9SYkZn9FTjTs8Izyfeh9ANLczY1uY0fN1bc+0/tJwHPa+pFbS
+         nuz465tCuSqCWTIbVyZmG0XqI/ArFAjML+43R3v5hzFiDWb1x38NsdxdXQLaPUZesVL/
+         EFKOBv5Y+5OTG37scuREA8rwJvIdTkh/avHkbehtoYTJlabm+9W8J4kSD2vx1BPa1sbw
+         ETNryprwEatyuru7f/cGSMzM3fXKyZ1uvHpb4BfLxu83WpZhoHVvvFSBScIZxm+dY84T
+         P8IlzNKeOOeWkrWZ+0s/0UkK5nUf4HYTw7Dm49ANCJjVkYbZe5xmxZBxLRF0HyEE99PK
+         knsg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=U0GQz5BrunN5+AVpEKL3s+TGSO56ZaLfAgrBKITYepc=;
-        fh=QrCDpLzYJHQ98+crV6cXBKTJT/58PuvfJx+89pmwmNk=;
-        b=L9nLfdeVZvvgArPcklM33HDCDboeCEi6b1YMw5R1+Cb9VHxh7zBtf+Cqq5SVrF9Own
-         racKPj8rnTAIWpTFcGSIRQj/kFk+DgudoSQeFEmBKYEFlYCuAkQg7EFijSACeLLaAgr9
-         j9MjeLzkRSraTI3oh/sEEPZ79Yg1Dhi+pgBCxgcUA/AQXkuvW7ItD+rYNTImJW6L2XoD
-         d7sQHGzPb00EUClbVvDxO0i0zflUj1Jw+dVmtlufnTll4OwionTq+Knj/DUxh1Kq9MXv
-         o0z0eeZFPqDw0u9PS28exUbCjwGqVfwqZBUXQuYpjg4eRgpndGoyk2BhxueoMPnxH80y
-         KVvQ==;
+        bh=KF042WMwtWjjl4pmi595H1OUEPLk6M01DQjVf67rgNA=;
+        fh=VOsUtuvV4US2hsmiZdf5MuxRIkyZXnMaI7nG5X3egt0=;
+        b=BvElyrlKjjFMVulcg7FA+KL6wr4dFatitp4GOwbDRWi1B4xxXlaSdfQk8FZIjVOXMQ
+         upA9W7/N3ob245lXPWT3ZFq4KxPRLC6t7ku9FNWEKG1vIjKj8P4JXDW9u6L2cCPLBIxO
+         pJlMqCCJPuViNXT7XYA/nF/FKhFH29Y/ckfibXLCZNXnipCi63hrnU7boViKlzUGr1AQ
+         49u/L0L2cubEZTQAYgqZB5W+p5ZhaD+IXoFLZH+Out4KrXJfj/98E0tHyHpCjV3R5mWp
+         ZJsES3eh3I0kR6MR3d7VoNYmn5Z5zop/XeihdcFOQ35x6t3CA2vVZhWkYyNLnTdJSqlQ
+         xC/g==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769465027; x=1770069827; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1769465438; x=1770070238; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=U0GQz5BrunN5+AVpEKL3s+TGSO56ZaLfAgrBKITYepc=;
-        b=Puk6Va9wl4NqmsOAmOdrkFQkn3AR21ONpytTHOViyZgzofVONMfJtQ2rj3Z8VoQdYZ
-         2fZsXxTycFVI9kd27oy5SQVicje2zJ4eaZY2X5t3JkW7HVDazyvVNthm85MDZ2BXbpa3
-         R7ULJL4wBlGpqCH13ESIsZgVPhXmlFZNKV7FdtvkBNc5E/BRmrYKN9ZuCSnbDU9UztFO
-         KkxmKoYhdtUxe5qOXa4PM74PF5lD8WoZZZoEW/OYSvsobsyrJCEpkoBPVc5Nk3GK47Is
-         ojLz1MRcW6jW0WZD+35GOWgUvxYfJJNPnmVaPLayIoqRfOcwsiGfyXPFs/HGzI55QCBS
-         FqBQ==
+        bh=KF042WMwtWjjl4pmi595H1OUEPLk6M01DQjVf67rgNA=;
+        b=Zs9LA8kUhpxFmX5Fd90KEqFuA+rht4JYcIsfD4eaqelgDVtXfnF1exB9JiCgshO10u
+         RXooaYm7wgOyD9R97kizuZc7j6/TB1DWbRVN7jv7lUa68Px8aYOCDyXMU+wwDvG8AKHY
+         7JTEAjBGJH/uP+EaT2PtzJig6+OM6TflSjfmUpzbFQsy68TTTtnJRC4jOpiy0aZ7Whqt
+         9uqswBIUBWOJywMcdp2le+O58puf8sQ2fAEf0wXH0pSg8xx9DoKAxX+96ppn3rSHqs2m
+         pRB/BxH4d4jenKiJ7Mkrp04J/ZQG62alSViASxJU3i68Y3lE8hSs3hkJTiEFn8wpPIjO
+         S+VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769465027; x=1770069827;
+        d=1e100.net; s=20230601; t=1769465438; x=1770070238;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=U0GQz5BrunN5+AVpEKL3s+TGSO56ZaLfAgrBKITYepc=;
-        b=se9U9WE4ZjkjpP8zniUXIi+rE3CBEM5x+2LNJP0Kh8S7jU/IQEYzpfXLTXqCIID0tY
-         JPOUtNMGmiOSDfGw8AdICHbLB01QJpaw0XBVSZDWKyWCz6/49OxTMBZqlA0BUhwwQHcv
-         M8Yd72CetHXv4VPLW66aFLj/KhvEwMoa1zItDbEFu9woe9ThfVflay/nu19DAlX/p8Nw
-         qAlHhcci2CGTlIREZUEbB7s3qBjHRa5NQ1nGpIgUacSW8S9huB6I7c+vwAYO0Vyk9abL
-         viG3ITHqhWxIJnU+AvWQUWhQoYLXJEo+jH7U/KvORqp+wfEhC8zxCQgRadK7gh4q1L9s
-         DvmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVX1vvXmNcsDmjthl1Hi++zahJi55pYpNa41H51ZjyqkDWVQ7Bo1HERbCC4+9luWdwcUu1QMj/ceYrc7C8V@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzj3g6nOSW/9AwkRAdGB2S7krp073vJUDLjncDeKiaFuc3NnFfX
-	kFLF4demyNuQxb77r8bAW7fI3gADaSJfF7MJulTFxMMTLnAQRzLfHMhD37AFOH5QHjjymk4cVlM
-	fPFxqZ2VYs1yYG1dh0E9hZRX3pWCYRI4=
-X-Gm-Gg: AZuq6aLB/9X1pIRxRMqZKdMb3WX6M2i/ZTTi9keOOhGuDTjilB3f24GCbzxwy4bbDmS
-	EESjWmumseGFIAtv6vIq5mM59+BWiNoikba4vo8YYrApnMQN6u095vbQMikNvF1e3LGLOjtCAeK
-	SH3dNNTmoXRgfH/+ZMZQ/UM97Ni5zVi4xZPnzPOpZJTlsPPmN2dnvU0nIzjturTTFq69lKeZu1B
-	PRb9VF3i9PvO+3nfTriyQ5rplLKzSSNZHt7zKMw6n2RjCY1ue6BQ+rqbFoV+ggUkPpQGLlCtDW2
-	H1WgoJZP6Kc=
-X-Received: by 2002:ac8:7e93:0:b0:4ec:f56c:afa5 with SMTP id
- d75a77b69052e-50314bad868mr71172071cf.22.1769465026709; Mon, 26 Jan 2026
- 14:03:46 -0800 (PST)
+        bh=KF042WMwtWjjl4pmi595H1OUEPLk6M01DQjVf67rgNA=;
+        b=V8PDzsUGi7j2ElcOyKk/wqNwJZ5s83dbpmni6VjbFyLxDw/I20DQ5OtRET3/LDyBhY
+         rqn4qELT7pNfMHFUWG8tXf7u6Pt1vG2OcZiahb1pHMAQZLi7AQz3vMD5VS+akI6GeU9v
+         s6O/2F9E5aOuvWEhYmNp4+9paCixzw2eLkHMaQK2vT9nws4a6nrt6o+1zu5ya9WXPjGK
+         0LETqg62oaHyzrxoRieo7ughD7xbC/7Yib1PqEvq75CQ8V58K9PlQ5AZ1+atZIXnQ5G7
+         HK3bdsAAIkaU/n2+p9aZR+QQOYhznPFeZoO+OPqlgLsORx6flYe/OhLYVy3+n53IsP/8
+         Ra+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXAXAsM2tasA2lJ05W2FwZRjk5yJKyXlWPBswPA/wcMxXR0+hnh9MlpwRY13LWqveBJ6pMj9G9c8Rjuuur0@vger.kernel.org
+X-Gm-Message-State: AOJu0YxePcyyOxkJ4V+lMBwfeIecQ9r/XVDMO3pFufPurvqwBFQjazXr
+	tPmPGdYBOcOlG51pwHntAed5cL+vzWVAp50Y7SOiCIJRNBywmvNfY8byJddhkQ1w/1ow0bEQbZu
+	YYaDPhJgQzu4UlnxS2FlnQvj9F6Wz9yk=
+X-Gm-Gg: AZuq6aKbtcGVUYE0TyQWTbAqmorcDOSxMtQ3H1Ol3ISLg7HlchH3ni2wuwDaicDzwHB
+	C54GlHtaS3Kj49CehF1/4H+QI9+Jlq4d/ZdGhdmvIhbEawM5ZjVhlrs5FZZoyN4iaf8/jKA3MF0
+	y5JaGE4INxFGZzUQ2HflIRWxEL2qBOKZcFVvdcyOkoO68Bvn8HXV8ZH1kiRY2IUoKvEmghJx9S6
+	jDE3lvVSJQnW3mupyuBnMISXQFMRYQx69Q4K7i1MwCXNDCpM1qZP2V3nKlAM7CRVo/RklVcKZJB
+	fmOziV/BP90=
+X-Received: by 2002:a05:622a:153:b0:4ed:67ea:1e5d with SMTP id
+ d75a77b69052e-50314d183femr74501211cf.53.1769465438095; Mon, 26 Jan 2026
+ 14:10:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <176169810144.1424854.11439355400009006946.stgit@frogsfrogsfrogs> <176169810721.1424854.6150447623894591900.stgit@frogsfrogsfrogs>
-In-Reply-To: <176169810721.1424854.6150447623894591900.stgit@frogsfrogsfrogs>
+References: <20260123235617.1026939-1-joannelkoong@gmail.com>
+ <20260123235617.1026939-2-joannelkoong@gmail.com> <aXb_trkyt-uzdIkd@infradead.org>
+ <aXeAY8K12KKf9d4_@casper.infradead.org> <CAJnrk1aQ8s04Co_Ncd41EpbMJEexPEF2qtAhGnG1rop8LLvWHA@mail.gmail.com>
+ <aXffs1jcO0u85KpO@casper.infradead.org>
+In-Reply-To: <aXffs1jcO0u85KpO@casper.infradead.org>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Mon, 26 Jan 2026 14:03:35 -0800
-X-Gm-Features: AZwV_Qgm806vibKtJMMyXSlZpA5lFonExx42bXZM330YeqybgAAy-pL4OxB8GVg
-Message-ID: <CAJnrk1ZDz5pQUtyiphuqtyAJtpx23x1BcdPUDBRJRfJaguzrhQ@mail.gmail.com>
-Subject: Re: [PATCH 17/31] fuse: use an unrestricted backing device with iomap
- pagecache io
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: miklos@szeredi.hu, bernd@bsbernd.com, neal@gompa.dev, 
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Date: Mon, 26 Jan 2026 14:10:27 -0800
+X-Gm-Features: AZwV_QhVczB5tnXCYY7qpjyJZXN17-uPtrQ8reifcF72MabuKLY394xg27LW-As
+Message-ID: <CAJnrk1Y_WAHbq7x+MYvuzsW3FbiYxO7Q1Up42Lks3kOoHiYgTw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/1] iomap: fix invalid folio access after folio_end_read()
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org, djwong@kernel.org, 
+	bfoster@redhat.com, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
@@ -117,7 +119,7 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
@@ -125,91 +127,35 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-75544-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-75545-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_FROM(0.00)[gmail.com];
 	TO_DN_SOME(0.00)[];
 	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
+	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
 	DKIM_TRACE(0.00)[gmail.com:+];
-	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROMTLD(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: 5D4D88DCE4
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_FIVE(0.00)[6];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid,infradead.org:email]
+X-Rspamd-Queue-Id: CE9498DDFD
 X-Rspamd-Action: no action
 
-On Tue, Oct 28, 2025 at 5:49=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
- wrote:
+On Mon, Jan 26, 2026 at 1:42=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
 >
-> From: Darrick J. Wong <djwong@kernel.org>
+> > I'll drop the change for the new iomap_read_submit_and_end() helper
+> > and submit that later as a separate patch to Christian's tree.
 >
-> With iomap support turned on for the pagecache, the kernel issues
-> writeback to directly to block devices and we no longer have to push all
-> those pages through the fuse device to userspace.  Therefore, we don't
-> need the tight dirty limits (~1M) that are used for regular fuse.  This
-> dramatically increases the performance of fuse's pagecache IO.
->
-> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> ---
->  fs/fuse/file_iomap.c |   21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
->
->
-> diff --git a/fs/fuse/file_iomap.c b/fs/fuse/file_iomap.c
-> index 0bae356045638b..a9bacaa0991afa 100644
-> --- a/fs/fuse/file_iomap.c
-> +++ b/fs/fuse/file_iomap.c
-> @@ -713,6 +713,27 @@ const struct fuse_backing_ops fuse_iomap_backing_ops=
- =3D {
->  void fuse_iomap_mount(struct fuse_mount *fm)
->  {
->         struct fuse_conn *fc =3D fm->fc;
-> +       struct super_block *sb =3D fm->sb;
-> +       struct backing_dev_info *old_bdi =3D sb->s_bdi;
-> +       char *suffix =3D sb->s_bdev ? "-fuseblk" : "-fuse";
-> +       int res;
-> +
-> +       /*
-> +        * sb->s_bdi points to the initial private bdi.  However, we want=
- to
-> +        * redirect it to a new private bdi with default dirty and readah=
-ead
-> +        * settings because iomap writeback won't be pushing a ton of dir=
-ty
-> +        * data through the fuse device.  If this fails we fall back to t=
-he
-> +        * initial fuse bdi.
-> +        */
-> +       sb->s_bdi =3D &noop_backing_dev_info;
-> +       res =3D super_setup_bdi_name(sb, "%u:%u%s.iomap", MAJOR(fc->dev),
-> +                                  MINOR(fc->dev), suffix);
-> +       if (res) {
-> +               sb->s_bdi =3D old_bdi;
-> +       } else {
-> +               bdi_unregister(old_bdi);
-> +               bdi_put(old_bdi);
-> +       }
+> I don't think it deserves to be factored out into a separate function,
+> honestly.
 
-Maybe I'm missing something here, but isn't sb->s_bdi already set to
-noop_backing_dev_info when fuse_iomap_mount() is called?
-fuse_fill_super() -> fuse_fill_super_common() -> fuse_bdi_init() does
-this already before the fuse_iomap_mount() call, afaict. I think what
-we need to do is just unset BDI_CAP_STRICTLIMIT and adjust the bdi max
-ratio? This is more of a nit, but I think it'd also be nice if we
-swapped the ordering of this patch with the previous one enabling
-large folios, so that large folios gets enabled only when all the bdi
-stuff for it is ready.
+I'll drop this altogether then.
 
 Thanks,
 Joanne
-
->
->         /*
->          * Enable syncfs for iomap fuse servers so that we can send a fin=
-al
->
 
