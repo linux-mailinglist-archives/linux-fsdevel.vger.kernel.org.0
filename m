@@ -1,542 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-75629-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75630-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yIjYJvjyeGmGuAEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75629-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 18:16:40 +0100
+	id 4MuJC271eGnYuAEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75630-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 18:27:10 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D4A49859D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 18:16:40 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F1AD986C5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 18:27:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 8CC7A3030EF6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 17:12:09 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D6D62303353B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 17:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30C9361DB2;
-	Tue, 27 Jan 2026 17:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A2E2EA482;
+	Tue, 27 Jan 2026 17:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YARCjHc6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VrGgzLq4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3FA3624C5
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 17:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618412DF14B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 17:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769533928; cv=none; b=TW9oYCJCp2w7OYNPuk3NT0AFVL/rNKlyYyN+pfPUEfLEnfFEPXAO6UuF1pf1pfR/nPGSK5uaW9al3/PIO3PDdHq1cxK1/ahDA2b//8/HNGWie9TzDu7eV+B9T/DMHsv4PBa2IVO5brBkfA+h+7ayzY9oY9d5SHRKX6MfoOUu7Nw=
+	t=1769534740; cv=none; b=pNN6o33T3U3diiTknEX/YOZBm1hGEbbW0fYp3NhV8EHNccL3Fh7PLOs6U2B0ddI078HMnUAY0FzobSklrLMQxzR+pYmufSkjhHbZjeAYY6fsgC7RukOAqXhuCgz3fmRYyxU/SpIFhFBQtWXPqutERgUZn+xiXgLKiTv8dJMXGRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769533928; c=relaxed/simple;
-	bh=ynzRnFuntXNuQOKFaHmhEur4jaJQk/SjLB89Ap2S+CY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=REA7gE1g+XSS8tmgpImOFWZydZuqfREf2Y4PMa2mNyRF87x5MmcKre9obTZJ3C8u5zCGSuEZJ5SllDAjvMaRk8z0xY1uwR8wE30WEqRQ/MqC/dcWqbjJqANmS1vs/NuoqPJJmsfnQPbzrrIm4jP2XUJc2q/wWVX0/ZSJGxCx1e8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YARCjHc6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6902DC4AF0B;
-	Tue, 27 Jan 2026 17:12:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769533928;
-	bh=ynzRnFuntXNuQOKFaHmhEur4jaJQk/SjLB89Ap2S+CY=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=YARCjHc6uOzLT/N095+LKTGWs0+8Sn/DdKAmEAteH79nqW5yzDRVO61gBwEtFRIni
-	 a3czMNTQSqNy93pr6EW5qKuCulrgUqSv2NeoBWyzlZGtXqGHNvbvT4OGJ8FPtNmrOT
-	 ckFsSIogr45YVbN/ReDvXUGwXXYROgwEPYohILKvUaUnA1GXUKUakMQkGmDWfDf4v2
-	 NpkRN7DvDD7u3y0qiHc4iVqB0fSAEcFz91NWg9OonKPVhkCBxa+A1GVGmmfVSlV2XN
-	 X3PT9IFdJBDnu3b7rKpnrjXaB75WcTEdkaaXRy+QZpD3zljs6YoRZXM35jPfbHjTtJ
-	 ASajrzTtRtCCg==
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 65F81F40092;
-	Tue, 27 Jan 2026 12:12:06 -0500 (EST)
-Received: from phl-imap-15 ([10.202.2.104])
-  by phl-compute-10.internal (MEProxy); Tue, 27 Jan 2026 12:12:06 -0500
-X-ME-Sender: <xms:5vF4aUwITNO0uQKfIiN7CC-bB5qkj3dQjKaoADs6E0KfEix5NxocSg>
-    <xme:5vF4aTGkcrDwCS_f5YeSmmQ5xSRI5iVyYXxJ4uTHBs8gZXw9kW2ZpwHUKa9F8HXh9
-    m-S8Ef_kPbVhqqRy5nBM0Boq3am7JDV9EHaXRMYIT7R3COW2XS_kC0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduiedutdeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfvehhuhgt
-    khcunfgvvhgvrhdfuceotggvlheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
-    hnpefhffekffeftdfgheeiveekudeuhfdvjedvfedvueduvdegleekgeetgfduhfefleen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegthhhutg
-    hklhgvvhgvrhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeifeegleel
-    leehledqfedvleekgeegvdefqdgtvghlpeepkhgvrhhnvghlrdhorhhgsehfrghsthhmrg
-    hilhdrtghomhdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgt
-    phhtthhopehnvghilhessghrohifnhdrnhgrmhgvpdhrtghpthhtoheprghlvgigrdgrrh
-    hinhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtohepjhhlrgihthhonheskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htohephhgthheslhhsthdruggvpdhrtghpthhtoheptghhuhgtkhdrlhgvvhgvrhesohhr
-    rggtlhgvrdgtohhmpdhrtghpthhtohepuggrihdrnhhgohesohhrrggtlhgvrdgtohhmpd
-    hrtghpthhtohepohhkohhrnhhivghvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehj
-    rggtkhesshhushgvrdgtii
-X-ME-Proxy: <xmx:5vF4aTslNwFMn7CedD6SXtJkRUF03E8XkP56O9HRJ-NqHGC61K5baQ>
-    <xmx:5vF4aZoj0ryE74KV-1J8I3kFiLnpEgTlEoSXwueFUT48EEQtdsTHLw>
-    <xmx:5vF4aaIM2K5lns5xz5pKxIi4MDqxlJdzYJYcHUBvnvE4RhyQSzpOnA>
-    <xmx:5vF4aRsszUw9kD6jmkRKIOEdfl506w3jIPXenWNkNKCAzf9gInqIpA>
-    <xmx:5vF4afCcW_5DvTsjX1_J0hW0O861728Zic7qxWG-YsvGla0eW8uVdnHt>
-Feedback-ID: ifa6e4810:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 3EC11780070; Tue, 27 Jan 2026 12:12:06 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1769534740; c=relaxed/simple;
+	bh=WoywLs3pjNqpB/uecLRDSsX1z6Vl9eGn3ukPXY6L85w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dvKyJUhbwZhfzT3gwrvBF7RF9CFEvTvgaPXoFl9Rgz6Goh2yYjWX8kNh/RiForTe4GRAQJBbRMpmijPyWrqQCKz96ZFzOn8bZvhQUCm2z15NSS7dJofk0BXQEGBqipDbs79avTxCUr7RD7sMaSrfZjD/CX32nSkZYjnOA7DoaGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VrGgzLq4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1769534738;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LYDGJ5opMmdA+UH/QDKUhHHjs4Ehiyk8rSz1A55NKGc=;
+	b=VrGgzLq4gZCLa3w9qfWkjtWMa0ASp99RCK8pnhHI/sC9ZU0NQOdKRQEBXupVrFybxZhXsQ
+	015d1iHjCZSQZsu6bylLRUuvYBiogJQJmeRu6Q1zPSoLqeCCHJwkwQR5lR6NXYN3IL7rMT
+	cjgTu46v/XmmQl0Xe6B4uDYce1QXzNk=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-520-dDc73ywAOxaaGDNzYpuNfA-1; Tue,
+ 27 Jan 2026 12:25:33 -0500
+X-MC-Unique: dDc73ywAOxaaGDNzYpuNfA-1
+X-Mimecast-MFC-AGG-ID: dDc73ywAOxaaGDNzYpuNfA_1769534732
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 95C831955DB7;
+	Tue, 27 Jan 2026 17:25:31 +0000 (UTC)
+Received: from fedora (unknown [10.45.224.8])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A588D30001A2;
+	Tue, 27 Jan 2026 17:25:26 +0000 (UTC)
+Received: by fedora (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 27 Jan 2026 18:25:31 +0100 (CET)
+Date: Tue, 27 Jan 2026 18:25:25 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: alexjlzheng@gmail.com
+Cc: usamaarif642@gmail.com, david@kernel.org, akpm@linux-foundation.org,
+	lorenzo.stoakes@oracle.com, alexjlzheng@tencent.com,
+	mingo@kernel.org, ruippan@tencent.com, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] procfs: fix missing RCU protection when reading
+ real_parent in do_task_stat()
+Message-ID: <aXj1BZY0P_NQp0yI@redhat.com>
+References: <20260127150450.2073236-1-alexjlzheng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AK8vHSv07t_c
-Date: Tue, 27 Jan 2026 12:11:36 -0500
-From: "Chuck Lever" <cel@kernel.org>
-To: "Dai Ngo" <dai.ngo@oracle.com>, "Chuck Lever" <chuck.lever@oracle.com>,
- "Jeff Layton" <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
- "Olga Kornievskaia" <okorniev@redhat.com>, "Tom Talpey" <tom@talpey.com>,
- "Christoph Hellwig" <hch@lst.de>, "Alexander Aring" <alex.aring@gmail.com>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
-Message-Id: <88a3edc5-4928-4235-a555-a7017d5ca502@app.fastmail.com>
-In-Reply-To: <20260127005013.552805-1-dai.ngo@oracle.com>
-References: <20260127005013.552805-1-dai.ngo@oracle.com>
-Subject: Re: [PATCH v4 1/1] NFSD: Enforce Timeout on Layout Recall and Integrate Lease
- Manager Fencing
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260127150450.2073236-1-alexjlzheng@tencent.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.65 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75629-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_TO(0.00)[oracle.com,kernel.org,brown.name,redhat.com,talpey.com,lst.de,gmail.com,zeniv.linux.org.uk,suse.cz];
-	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[redhat.com:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,app.fastmail.com:mid,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[gmail.com,kernel.org,linux-foundation.org,oracle.com,tencent.com,vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-75630-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,tencent.com:email];
+	MIME_TRACE(0.00)[0:+];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[cel@kernel.org,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[oleg@redhat.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	TO_DN_NONE(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	RCPT_COUNT_SEVEN(0.00)[10];
 	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: 1D4A49859D
+X-Rspamd-Queue-Id: 7F1AD986C5
 X-Rspamd-Action: no action
 
+On 01/27, alexjlzheng@gmail.com wrote:
+>
+> From: Jinliang Zheng <alexjlzheng@tencent.com>
+>
+> When reading /proc/[pid]/stat, do_task_stat() accesses task->real_parent
+> without proper RCU protection, which leads:
 
+Thanks for the patch...
 
-On Mon, Jan 26, 2026, at 7:50 PM, Dai Ngo wrote:
-> When a layout conflict triggers a recall, enforcing a timeout is
-> necessary to prevent excessive nfsd threads from being blocked in
-> __break_lease ensuring the server continues servicing incoming
-> requests efficiently.
->
-> This patch introduces a new function to lease_manager_operations:
->
-> lm_breaker_timedout: Invoked when a lease recall times out and is
-> about to be disposed of. This function enables the lease manager
-> to inform the caller whether the file_lease should remain on the
-> flc_list or be disposed of.
->
-> For the NFSD lease manager, this function now handles layout recall
-> timeouts. If the layout type supports fencing and the client has not
-> been fenced, a fence operation is triggered to prevent the client
-> from accessing the block device.
->
-> While the fencing operation is in progress, the conflicting file_lease
-> remains on the flc_list until fencing is complete. This guarantees
-> that no other clients can access the file, and the client with
-> exclusive access is properly blocked before disposal.
->
-> Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
-> ---
->  Documentation/filesystems/locking.rst |  2 +
->  fs/locks.c                            | 10 +++-
->  fs/nfsd/blocklayout.c                 | 38 ++++++-------
->  fs/nfsd/nfs4layouts.c                 | 79 +++++++++++++++++++++++++--
->  fs/nfsd/nfs4state.c                   |  1 +
->  fs/nfsd/state.h                       |  6 ++
->  include/linux/filelock.h              |  1 +
->  7 files changed, 110 insertions(+), 27 deletions(-)
->
-> v2:
->     . Update Subject line to include fencing operation.
->     . Allow conflicting lease to remain on flc_list until fencing
->       is complete.
->     . Use system worker to perform fencing operation asynchronously.
->     . Use nfs4_stid.sc_count to ensure layout stateid remains
->       valid before starting the fencing operation, nfs4_stid.sc_count
->       is released after fencing operation is complete.
->     . Rework nfsd4_scsi_fence_client to:
->          . wait until fencing to complete before exiting.
->          . wait until fencing in progress to complete before
->            checking the NFSD_MDS_PR_FENCED flag.
->     . Remove lm_need_to_retry from lease_manager_operations.
-> v3:
->     . correct locking requirement in locking.rst.
->     . add max retry count to fencing operation.
->     . add missing nfs4_put_stid in nfsd4_layout_fence_worker.
->     . remove special-casing of FL_LAYOUT in lease_modify.
->     . remove lease_want_dispose.
->     . move lm_breaker_timedout call to time_out_leases.
-> v4:
->     . only increment ls_fence_retry_cnt after successfully
->       schedule new work in nfsd4_layout_lm_breaker_timedout.
->
-> diff --git a/Documentation/filesystems/locking.rst 
-> b/Documentation/filesystems/locking.rst
-> index 04c7691e50e0..a339491f02e4 100644
-> --- a/Documentation/filesystems/locking.rst
-> +++ b/Documentation/filesystems/locking.rst
-> @@ -403,6 +403,7 @@ prototypes::
->  	bool (*lm_breaker_owns_lease)(struct file_lock *);
->          bool (*lm_lock_expirable)(struct file_lock *);
->          void (*lm_expire_lock)(void);
-> +        void (*lm_breaker_timedout)(struct file_lease *);
-> 
->  locking rules:
-> 
-> @@ -417,6 +418,7 @@ lm_breaker_owns_lease:	yes     	no			no
->  lm_lock_expirable	yes		no			no
->  lm_expire_lock		no		no			yes
->  lm_open_conflict	yes		no			no
-> +lm_breaker_timedout     yes             no                      no
->  ======================	=============	=================	=========
-> 
->  buffer_head
-> diff --git a/fs/locks.c b/fs/locks.c
-> index 46f229f740c8..1b63aa704598 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -1524,6 +1524,7 @@ static void time_out_leases(struct inode *inode, 
-> struct list_head *dispose)
->  {
->  	struct file_lock_context *ctx = inode->i_flctx;
->  	struct file_lease *fl, *tmp;
-> +	bool remove = true;
-> 
->  	lockdep_assert_held(&ctx->flc_lock);
-> 
-> @@ -1531,8 +1532,13 @@ static void time_out_leases(struct inode *inode, 
-> struct list_head *dispose)
->  		trace_time_out_leases(inode, fl);
->  		if (past_time(fl->fl_downgrade_time))
->  			lease_modify(fl, F_RDLCK, dispose);
-> -		if (past_time(fl->fl_break_time))
-> -			lease_modify(fl, F_UNLCK, dispose);
-> +
-> +		if (past_time(fl->fl_break_time)) {
-> +			if (fl->fl_lmops && fl->fl_lmops->lm_breaker_timedout)
-> +				remove = fl->fl_lmops->lm_breaker_timedout(fl);
-> +			if (remove)
-> +				lease_modify(fl, F_UNLCK, dispose);
-> +		}
->  	}
->  }
-> 
-> diff --git a/fs/nfsd/blocklayout.c b/fs/nfsd/blocklayout.c
-> index 7ba9e2dd0875..69d3889df302 100644
-> --- a/fs/nfsd/blocklayout.c
-> +++ b/fs/nfsd/blocklayout.c
-> @@ -443,6 +443,14 @@ nfsd4_scsi_proc_layoutcommit(struct inode *inode, 
-> struct svc_rqst *rqstp,
->  	return nfsd4_block_commit_blocks(inode, lcp, iomaps, nr_iomaps);
->  }
-> 
-> +/*
-> + * Perform the fence operation to prevent the client from accessing the
-> + * block device. If a fence operation is already in progress, wait for
-> + * it to complete before checking the NFSD_MDS_PR_FENCED flag. Once the
-> + * operation is complete, check the flag. If NFSD_MDS_PR_FENCED is set,
-> + * update the layout stateid by setting the ls_fenced flag to indicate
-> + * that the client has been fenced.
-> + */
->  static void
->  nfsd4_scsi_fence_client(struct nfs4_layout_stateid *ls, struct 
-> nfsd_file *file)
->  {
-> @@ -450,31 +458,23 @@ nfsd4_scsi_fence_client(struct 
-> nfs4_layout_stateid *ls, struct nfsd_file *file)
->  	struct block_device *bdev = file->nf_file->f_path.mnt->mnt_sb->s_bdev;
->  	int status;
-> 
-> -	if (nfsd4_scsi_fence_set(clp, bdev->bd_dev))
-> +	mutex_lock(&clp->cl_fence_mutex);
-> +	if (nfsd4_scsi_fence_set(clp, bdev->bd_dev)) {
-> +		ls->ls_fenced = true;
-> +		mutex_unlock(&clp->cl_fence_mutex);
-> +		nfs4_put_stid(&ls->ls_stid);
->  		return;
-> +	}
-> 
->  	status = bdev->bd_disk->fops->pr_ops->pr_preempt(bdev, NFSD_MDS_PR_KEY,
->  			nfsd4_scsi_pr_key(clp),
->  			PR_EXCLUSIVE_ACCESS_REG_ONLY, true);
-> -	/*
-> -	 * Reset to allow retry only when the command could not have
-> -	 * reached the device. Negative status means a local error
-> -	 * (e.g., -ENOMEM) prevented the command from being sent.
-> -	 * PR_STS_PATH_FAILED, PR_STS_PATH_FAST_FAILED, and
-> -	 * PR_STS_RETRY_PATH_FAILURE indicate transport path failures
-> -	 * before device delivery.
-> -	 *
-> -	 * For all other errors, the command may have reached the device
-> -	 * and the preempt may have succeeded. Avoid resetting, since
-> -	 * retrying a successful preempt returns PR_STS_IOERR or
-> -	 * PR_STS_RESERVATION_CONFLICT, which would cause an infinite
-> -	 * retry loop.
-> -	 */
-> -	if (status < 0 ||
-> -	    status == PR_STS_PATH_FAILED ||
-> -	    status == PR_STS_PATH_FAST_FAILED ||
-> -	    status == PR_STS_RETRY_PATH_FAILURE)
-> +	if (status)
->  		nfsd4_scsi_fence_clear(clp, bdev->bd_dev);
-> +	else
-> +		ls->ls_fenced = true;
+>   cpu 0                               cpu 1
+>   -----                               -----
+>   do_task_stat
+>     var = task->real_parent
+>                                       release_task
+>                                         call_rcu(delayed_put_task_struct)
+>     task_tgid_nr_ns(var)
+>       rcu_read_lock   <--- Too late!
 
-The removed code distinguishes retryable errors (such as path failures)
-from permanent errors (PR_STS_IOERR, PR_STS_RESERVATION_CONFLICT), but
-the new code clears the fence on any error, potentially causing infinite
-retry loops as warned in the removed comment.
+Almost off-topic, but I can't resist. This looks confusing to me.
+It is not "Too late", this rcu_read_lock() protects another thing.
+Nevermind.
 
-Either the comment and error distinction should remain, or some rationale
-for removing the distinction between temporary and permanent errors should
-be added to the commit message.
+I think that the changelog could be more clear. It should probably
+mention that forget_original_parent() doesn't take child->signal->siglock
+and thus we have a race... I dunno.
 
-
-> +	mutex_unlock(&clp->cl_fence_mutex);
-> +	nfs4_put_stid(&ls->ls_stid);
-> 
->  	trace_nfsd_pnfs_fence(clp, bdev->bd_disk->disk_name, status);
->  }
-> diff --git a/fs/nfsd/nfs4layouts.c b/fs/nfsd/nfs4layouts.c
-> index ad7af8cfcf1f..1c498f3cd059 100644
-> --- a/fs/nfsd/nfs4layouts.c
-> +++ b/fs/nfsd/nfs4layouts.c
-> @@ -222,6 +222,29 @@ nfsd4_layout_setlease(struct nfs4_layout_stateid *ls)
->  	return 0;
->  }
-> 
-> +static void
-> +nfsd4_layout_fence_worker(struct work_struct *work)
-> +{
-> +	struct nfsd_file *nf;
-> +	struct delayed_work *dwork = to_delayed_work(work);
-> +	struct nfs4_layout_stateid *ls = container_of(dwork,
-> +			struct nfs4_layout_stateid, ls_fence_work);
-> +	u32 type;
-> +
-> +	rcu_read_lock();
-> +	nf = nfsd_file_get(ls->ls_file);
-> +	rcu_read_unlock();
-> +	if (!nf) {
-> +		nfs4_put_stid(&ls->ls_stid);
-> +		return;
-> +	}
-> +
-> +	type = ls->ls_layout_type;
-> +	if (nfsd4_layout_ops[type]->fence_client)
-> +		nfsd4_layout_ops[type]->fence_client(ls, nf);
-> +	nfsd_file_put(nf);
-> +}
-> +
->  static struct nfs4_layout_stateid *
->  nfsd4_alloc_layout_stateid(struct nfsd4_compound_state *cstate,
->  		struct nfs4_stid *parent, u32 layout_type)
-> @@ -271,6 +294,10 @@ nfsd4_alloc_layout_stateid(struct 
-> nfsd4_compound_state *cstate,
->  	list_add(&ls->ls_perfile, &fp->fi_lo_states);
->  	spin_unlock(&fp->fi_lock);
-> 
-> +	INIT_DELAYED_WORK(&ls->ls_fence_work, nfsd4_layout_fence_worker);
-> +	ls->ls_fenced = false;
-> +	ls->ls_fence_retry_cnt = 0;
-> +
->  	trace_nfsd_layoutstate_alloc(&ls->ls_stid.sc_stateid);
->  	return ls;
->  }
-> @@ -708,9 +735,10 @@ nfsd4_cb_layout_done(struct nfsd4_callback *cb, 
-> struct rpc_task *task)
->  		rcu_read_unlock();
->  		if (fl) {
->  			ops = nfsd4_layout_ops[ls->ls_layout_type];
-> -			if (ops->fence_client)
-> +			if (ops->fence_client) {
-> +				refcount_inc(&ls->ls_stid.sc_count);
->  				ops->fence_client(ls, fl);
-> -			else
-> +			} else
->  				nfsd4_cb_layout_fail(ls, fl);
->  			nfsd_file_put(fl);
+> --- a/fs/proc/array.c
+> +++ b/fs/proc/array.c
+> @@ -528,7 +528,9 @@ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
 >  		}
-> @@ -747,11 +775,9 @@ static bool
->  nfsd4_layout_lm_break(struct file_lease *fl)
->  {
->  	/*
-> -	 * We don't want the locks code to timeout the lease for us;
-> -	 * we'll remove it ourself if a layout isn't returned
-> -	 * in time:
-> +	 * Enforce break lease timeout to prevent NFSD
-> +	 * thread from hanging in __break_lease.
->  	 */
-> -	fl->fl_break_time = 0;
->  	nfsd4_recall_file_layout(fl->c.flc_owner);
->  	return false;
->  }
-> @@ -782,10 +808,51 @@ nfsd4_layout_lm_open_conflict(struct file *filp, 
-> int arg)
->  	return 0;
->  }
-> 
-> +/**
-> + * nfsd4_layout_lm_breaker_timedout - The layout recall has timed out.
+>
+>  		sid = task_session_nr_ns(task, ns);
+> -		ppid = task_tgid_nr_ns(task->real_parent, ns);
+> +		rcu_read_lock();
+> +		ppid = task_tgid_nr_ns(rcu_dereference(task->real_parent), ns);
+> +		rcu_read_unlock();
 
-Nit: Move the description of @fl here.
+But this can't really help. If task->real_parent has already exited and
+it was reaped, then it is actually "Too late!" for rcu_read_lock().
 
-> + * If the layout type supports a fence operation, schedule a worker to
-> + * fence the client from accessing the block device.
-> + *
-> + * @fl: file to check
-> + *
-> + * Return true if the file lease should be disposed of by the caller;
-> + * otherwise, return false.
-> + */
-> +static bool
-> +nfsd4_layout_lm_breaker_timedout(struct file_lease *fl)
-> +{
-> +	struct nfs4_layout_stateid *ls = fl->c.flc_owner;
-> +	bool ret;
-> +
-> +	if (!nfsd4_layout_ops[ls->ls_layout_type]->fence_client)
-> +		return true;
-> +	if (ls->ls_fenced || ls->ls_fence_retry_cnt >= LO_MAX_FENCE_RETRY)
-> +		return true;
+Please use task_ppid_nr_ns() which does the necessary pid_alive() check.
 
-Since these two variables are accessed while the fence mutex
-is held in other places, they need similar protection here
-to prevent races. You explained that the mutex cannot be
-taken here, so some other form of serialization will be
-needed to protect these fields.
+Oleg.
 
-If I'm reading this correctly, when the fence fails after all
-5 retries, the client retains block device access but server
-believes recall succeeded ?
-
-
-> +
-> +	if (work_busy(&ls->ls_fence_work.work))
-> +		return false;
-> +	/* Schedule work to do the fence operation */
-> +	ret = mod_delayed_work(system_dfl_wq, &ls->ls_fence_work, 0);
-> +	if (!ret) {
-> +		/*
-> +		 * If there is no pending work, mod_delayed_work queues
-> +		 * new task. While fencing is in progress, a reference
-> +		 * count is added to the layout stateid to ensure its
-> +		 * validity. This reference count is released once fencing
-> +		 * has been completed.
-> +		 */
-> +		refcount_inc(&ls->ls_stid.sc_count);
-> +		++ls->ls_fence_retry_cnt;
-> +		return true;
-> +	}
-
-Incrementing after the mod_delayed_work() call is racy. Instead:
-
-refcount_inc(&ls->ls_stid.sc_count);
-ret = mod_delayed_work(system_dfl_wq, &ls->ls_fence_work, 0);
-if (ret) {
-    refcount_dec(&ls->ls_stid.sc_count);
-    ....
-}
-
-
-> +	return false;
-> +}
-> +
->  static const struct lease_manager_operations nfsd4_layouts_lm_ops = {
->  	.lm_break		= nfsd4_layout_lm_break,
->  	.lm_change		= nfsd4_layout_lm_change,
->  	.lm_open_conflict	= nfsd4_layout_lm_open_conflict,
-> +	.lm_breaker_timedout	= nfsd4_layout_lm_breaker_timedout,
->  };
-> 
->  int
-> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> index 583c13b5aaf3..a57fa3318362 100644
-> --- a/fs/nfsd/nfs4state.c
-> +++ b/fs/nfsd/nfs4state.c
-> @@ -2385,6 +2385,7 @@ static struct nfs4_client *alloc_client(struct 
-> xdr_netobj name,
->  #endif
->  #ifdef CONFIG_NFSD_SCSILAYOUT
->  	xa_init(&clp->cl_dev_fences);
-> +	mutex_init(&clp->cl_fence_mutex);
->  #endif
->  	INIT_LIST_HEAD(&clp->async_copies);
->  	spin_lock_init(&clp->async_lock);
-> diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
-> index 713f55ef6554..57e54dfb406c 100644
-> --- a/fs/nfsd/state.h
-> +++ b/fs/nfsd/state.h
-> @@ -529,6 +529,7 @@ struct nfs4_client {
->  	time64_t		cl_ra_time;
->  #ifdef CONFIG_NFSD_SCSILAYOUT
->  	struct xarray		cl_dev_fences;
-> +	struct mutex		cl_fence_mutex;
->  #endif
->  };
-> 
-> @@ -738,8 +739,13 @@ struct nfs4_layout_stateid {
->  	stateid_t			ls_recall_sid;
->  	bool				ls_recalled;
->  	struct mutex			ls_mutex;
-> +	struct delayed_work		ls_fence_work;
-
-Still missing cancel_delayed_work_sync() when freeing the
-layout stateid.
-
-
-> +	bool				ls_fenced;
-> +	int				ls_fence_retry_cnt;
->  };
-> 
-> +#define	LO_MAX_FENCE_RETRY		5
-
-The value of 5 needs some justification here in a comment.
-Actually, 5 might be too low, but I can't really tell.
-
-
-> +
->  static inline struct nfs4_layout_stateid *layoutstateid(struct nfs4_stid *s)
->  {
->  	return container_of(s, struct nfs4_layout_stateid, ls_stid);
-> diff --git a/include/linux/filelock.h b/include/linux/filelock.h
-> index 2f5e5588ee07..13b9c9f04589 100644
-> --- a/include/linux/filelock.h
-> +++ b/include/linux/filelock.h
-> @@ -50,6 +50,7 @@ struct lease_manager_operations {
->  	void (*lm_setup)(struct file_lease *, void **);
->  	bool (*lm_breaker_owns_lease)(struct file_lease *);
->  	int (*lm_open_conflict)(struct file *, int);
-> +	bool (*lm_breaker_timedout)(struct file_lease *fl);
->  };
-> 
->  struct lock_manager {
-> -- 
-> 2.47.3
-
--- 
-Chuck Lever
 
