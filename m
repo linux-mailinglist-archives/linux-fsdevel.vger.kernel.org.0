@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-75634-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75635-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0Cb7Ov/9eGmOuQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75634-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 19:03:43 +0100
+	id 0DKDJCH+eGmOuQEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75635-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 19:04:17 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD1798BF2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 19:03:43 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F82698C09
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 19:04:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 543CD308299D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 18:01:43 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 408B43092AA3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 18:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90ED324B2D;
-	Tue, 27 Jan 2026 18:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCED324B2D;
+	Tue, 27 Jan 2026 18:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aTn+fq/F"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FdmUOdvz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2852B3112D5
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 18:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA802EC0AA
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 18:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769536902; cv=none; b=YXe3gAQgF5ZqA14O6qM6o5jCFjUvvT8MoVakOCrTw/9F6raA3zVS/7SONQIswV3SKGyoyaqG7G1bqG0EkzEg9bSbxfuRexgLqh0k/2XHF6v+ThvZ4NFXpd16HVZ3KeSgSUuy/mqbkQU5s3Jx46nBD0pcRBkZPiUfrBk7COt+pOk=
+	t=1769536907; cv=none; b=I3+BLfMhm1OBBLISOH0c7id7/epa2PSD/CtmeSOItB4asFR4tz/xAJrTYhi0gzUSE53p6Sx7XWlSUIHikObpfDuYt5oIOvz5ZZGPy6mBiXxQ9pKM458vRcnIzWA3uHdiRmm5QCiCyB6ozc0COCmFZG7cE+Mcznkbc+i17ZEMfFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769536902; c=relaxed/simple;
-	bh=tqewIhbRqq1adswiVbpduoDW8JX3z3VKvL2i1Kqr57I=;
+	s=arc-20240116; t=1769536907; c=relaxed/simple;
+	bh=fGlXttV7nMmxi4UcuYtsCWFX6BEZWzCp9QY5mD62bk4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bjy31vjhzrgycx1+CfTo0e06nZEtO25rQ9Sf20zknkKs3WFPT4LhmQMUZL8sj1c8FTmFxnZJF/cS3g+MZ3AKRWPGF8+GGvIp0hsxLy6EcHUlcRL55/uCH6XoTV55HBkoCHGUEJ3YVJpehb9j5A4BzfDkz8k7z213Qu87CnRTJQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aTn+fq/F; arc=none smtp.client-ip=209.85.210.182
+	 MIME-Version; b=N2cUkqsANnn0s/YricUHOP12YlmF/dGhDcHAMGLsX8oIwJrU0qBJiVPkNT9ARqj3ORzTs/Ap9V3Nju5pUzWVCbyUs/ETB/9DU8tVbVsFCXcDqNlFlRld2gGpkJczY8Cj6mB2oktwn/KprMDYVYW6aLbFXCWTmJfI8jzwLbDwExM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FdmUOdvz; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-81e8a9d521dso3534482b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 10:01:41 -0800 (PST)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-81e8a9d521dso3534523b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 10:01:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769536900; x=1770141700; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1769536905; x=1770141705; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EFHTE7+4vut1ZBbXi2BaQWFLCQQCwb8j1cvQskcZkjo=;
-        b=aTn+fq/FqyTDZaAEDHf07XjggDCP2frppyiTKRswruXN3rDTOoiYbfOIWrN6FmB77r
-         ymX7yfMGFdwxelUU/kWB1LlOsb23wF+S84fb3X3XDSwLpHlgZ0XEzjOdJj2kV1qzehD7
-         12/B15D/TYWpzjL3lrKEojiyhDxBRF/Wlr3RV/NJYClZY7UyH/ZH0n48ahygJfqbT7O3
-         mSZZ25Aeom+XyYNiPBhaKSu15yeRectAzcbOyJR2XMq9+T0StSNAPcw/5ZivZ7ycb540
-         NfzJtvgucySpiRx2Y+CUPokk66VCytgNMiBC8P651EbsXO+iKr+9jb7ZB0gkf/Las8p6
-         5nSw==
+        bh=fmJz7Q237YfPvUh8bIWiB/H6qzUCS1WcnX3PPdkuOR4=;
+        b=FdmUOdvziWp418HeEvFVfEzMTpkFxR2S+LIgRIphNYI3rZI8Sd3S2+vgG6kzwnxi36
+         I+x4lapqbn7+b8uUZ3jv+RleIdr4eZnQwMVBJPsS3nL3ja05nRRQosQSvooL9b2inxsd
+         oRhIlgYQFnjczvsHGOCf9tPjPtz1Ap/cmD+xXgcCLvWnmdaflJj9snsuYUc7iEjp2sZk
+         UfekmT8aQvPy+R2yhEjqh9PhFXTPBtVlu9JMoTmOaiO2vkWuUzO+jjkBeEMV4p3LraH2
+         cAgQRR20BrZXIRUq6ggZbKx6l3I7h7vxdoCR+kGgCpqYcp90L7Mt8lU6mCKm7v9QFOjq
+         qlFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769536900; x=1770141700;
+        d=1e100.net; s=20230601; t=1769536905; x=1770141705;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=EFHTE7+4vut1ZBbXi2BaQWFLCQQCwb8j1cvQskcZkjo=;
-        b=cu8JZ/olcQRboed3Wa5S2BMKprCijiKHdmg/A4upJRKt6elpPOL9/SUw7TxuMImEQ9
-         9axbQdx3yNJyWzJraARO31gc1oUmyWr39+wuoTJd7H4UUlu3GRNN0tA3m/C5zGMwU5TJ
-         euMP+Vd02tIGKv2PmNfzhTzVUY87LJ6OGPbPxd/9I4XwWbzV/u/8CP1WBjreNHFWyuyT
-         7t4+E3hfXfANMYxrWZqvure+qu8yE8IBFYDtqVsVrNPzHKTA+CpHhBEMzoguQz/vxsss
-         3fxink+0Z+XTxB/nz38qf01RXs3hS6U4/aY4ReXZxuQ+9cVlhTQcMqaDXZY0+mCeBDSN
-         xBqA==
-X-Gm-Message-State: AOJu0Yzw2iu6Cv+T1AnyPstCQY871SYonC2W46c0JGMYm0y3r/WkwsHg
-	/2K1/cOtRaceyiji8OfFTYFqiIFXaSGLkY6VOObQhXRaMu0CBHykrRpRg7ZENQ==
-X-Gm-Gg: AZuq6aJzw8OCCIeaBV1mOTms3jhhg7vuzJf1uV1Kriw1LNSFjiDCnVWytBzlzr5Jxna
-	mDbt0c09+htvO3jPaA3RB1tHqBuoGXUA3EwLx4ZdvnYmpLW+14SI7bSJzLuN8rP6y4DyvfLsZEe
-	NEIoPBJRWZJc9zL4jknkh0FHwEMsE3Ls17356Qv711s9siCMJ/vUsITHNFdIx0NPVXFYeMMooaG
-	Z8DJ+xlw1A9s0E773NpuEQROCTqRXo9rTiiD9qk1P4k2i8xPb9Mn1JhzKO4mhyUGxAHJNfTXHez
-	eREZBEzll9+Yfv5afOsgXojyOkD/MYOPrqdkknIhk/KkLAL7Dan+HlFhPehoMOwPLmvi6RWu+mf
-	Fl6SjJXoQPRd8ByyJ9Mt8SRtwVYAqqxgBkO+UaFDv6TrHRSO+ClIJuD/U2uX+tUnLgb19/jzP/q
-	4BdbEXUfliPsagSruHnGxh3enSTrMoiE78V9AMqAzaJ5/MDFDYUnIZuA==
-X-Received: by 2002:a05:6a00:3e18:b0:823:d58:c48f with SMTP id d2e1a72fcca58-823692f0703mr2287212b3a.69.1769536900305;
-        Tue, 27 Jan 2026 10:01:40 -0800 (PST)
+        bh=fmJz7Q237YfPvUh8bIWiB/H6qzUCS1WcnX3PPdkuOR4=;
+        b=YMDpP7Hbvxqt6lok/IIvgKap4utk5U2tFdL4IN+rAmmPHr9bHP4QbzR4Qi5VeqTNMw
+         PPC25tvNGiCd+L7eEWRzjusjVz6fzugKCA1ULpamDmvctpPUbZIBqy5xm5A+/cHp8gDm
+         39aSvGwf3iBzUPREdg8mgxW9Go3ma0Ol/RrTUiIlJZfqusY3K5ipOj0QU4ZlhlZZmuWI
+         jYjNsmj/y5IOZ4IFTZqePva4RNjaR/Ug0/mgjbetpPO4VR3RxNgsp3jWpfMUQt/wMGBN
+         m+jjaVg36cul+aqWP4DblhcYHW2TuhHzUrB/TxS4uhHkTj4vpjB4nw2Fc/wZzOVfH/Pw
+         PfMg==
+X-Gm-Message-State: AOJu0Yw0O+XdiIV5UahAIEgi1PTCC8YkHr1/7W6JfSTiKfKsBNgCF5qm
+	RuAOR97I0jYuu4fQYcnhy6yQDXDufAmrNbwhiJfIRNzpjt61kRl08/7u/5/H6A==
+X-Gm-Gg: AZuq6aJ+x1QQf43az2e8fQ0Fqkx35ccF85WD+4tcoMg3JFaSc0mkrJNKNc7qOkWEfMv
+	VR49Pkiez3TAQfKwud7sN/zaws5evIXatSADY6pUXTtdUf1fEqLc57tDFCpS2pxlUvJYHCj1c5t
+	rIGEeMfmilKylAvi01LSXldxIjaAs/DRyvLXnaEGjJf64rNm6zRRqsTTv7NVCLjbjE3p7SaaB5R
+	ccg/VtFveHoL4oWU/Ivt7f2llAH6QhQxiikO/1yO1XNz63L3qVv7t0ZFITH7dVVSLy8XwsZO5nW
+	tu37Q7nQQZ9kBHxP4xT7h/uUaUj9gv71eOgDpdLbYspaM+xPlRNNa2nu8et+9tldOcN/ZoWEegw
+	4JasNzHoNg+Ji9gQxVVpjhNwtGCjekv2+fDmcABsNrRKbRZgp4jPk5lspWYGXjzlk8t24zbAltT
+	sEmvJ3ac1WUUr50grHIRcpvv4qv9Ov7+jEoZjDt9W1+lk=
+X-Received: by 2002:a05:6a00:bc83:b0:81f:4675:c2a5 with SMTP id d2e1a72fcca58-8236928e24dmr2648269b3a.32.1769536904802;
+        Tue, 27 Jan 2026 10:01:44 -0800 (PST)
 Received: from toolbx ([103.230.182.3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82379b1bc68sm216891b3a.2.2026.01.27.10.01.36
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82379b1bc68sm216891b3a.2.2026.01.27.10.01.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Jan 2026 10:01:39 -0800 (PST)
+        Tue, 27 Jan 2026 10:01:44 -0800 (PST)
 From: Dorjoy Chowdhury <dorjoychy111@gmail.com>
 To: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -86,9 +86,9 @@ Cc: linux-kernel@vger.kernel.org,
 	alex.aring@gmail.com,
 	arnd@arndb.de,
 	adilger@dilger.ca
-Subject: [PATCH v3 2/4] kselftest/openat2: test for O_REGULAR flag
-Date: Tue, 27 Jan 2026 23:58:18 +0600
-Message-ID: <20260127180109.66691-3-dorjoychy111@gmail.com>
+Subject: [PATCH v3 3/4] sparc/fcntl.h: convert O_* flag macros from hex to octal
+Date: Tue, 27 Jan 2026 23:58:19 +0600
+Message-ID: <20260127180109.66691-4-dorjoychy111@gmail.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260127180109.66691-1-dorjoychy111@gmail.com>
 References: <20260127180109.66691-1-dorjoychy111@gmail.com>
@@ -107,11 +107,11 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_MISSING_CHARSET(0.50)[];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75634-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-75635-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_CC(0.00)[vger.kernel.org,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,arndb.de,dilger.ca];
 	FROM_HAS_DN(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
@@ -128,74 +128,78 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	FREEMAIL_FROM(0.00)[gmail.com];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 6FD1798BF2
+X-Rspamd-Queue-Id: 3F82698C09
 X-Rspamd-Action: no action
 
-Just a happy path test.
+Following the convention in include/uapi/asm-generic/fcntl.h and other
+architecture specific arch/*/include/uapi/asm/fcntl.h files.
 
 Signed-off-by: Dorjoy Chowdhury <dorjoychy111@gmail.com>
 ---
- .../testing/selftests/openat2/openat2_test.c  | 37 ++++++++++++++++++-
- 1 file changed, 36 insertions(+), 1 deletion(-)
+ arch/sparc/include/uapi/asm/fcntl.h | 36 ++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/tools/testing/selftests/openat2/openat2_test.c b/tools/testing/selftests/openat2/openat2_test.c
-index 0e161ef9e9e4..011ebc9af4e5 100644
---- a/tools/testing/selftests/openat2/openat2_test.c
-+++ b/tools/testing/selftests/openat2/openat2_test.c
-@@ -320,8 +320,42 @@ void test_openat2_flags(void)
- 	}
- }
+diff --git a/arch/sparc/include/uapi/asm/fcntl.h b/arch/sparc/include/uapi/asm/fcntl.h
+index a93d18d2c23e..3c16f1a66a6a 100644
+--- a/arch/sparc/include/uapi/asm/fcntl.h
++++ b/arch/sparc/include/uapi/asm/fcntl.h
+@@ -2,23 +2,23 @@
+ #ifndef _SPARC_FCNTL_H
+ #define _SPARC_FCNTL_H
  
-+#ifndef O_REGULAR
-+#define O_REGULAR 040000000
-+#endif
-+
-+#ifndef ENOTREG
-+#define ENOTREG 134
-+#endif
-+
-+void test_openat2_o_regular_flag(void)
-+{
-+	if (!openat2_supported) {
-+		ksft_test_result_skip("Skipping %s as openat2 is not supported\n", __func__);
-+		return;
-+	}
-+
-+	struct open_how how = {
-+		.flags = O_REGULAR | O_RDONLY
-+	};
-+
-+	int fd = sys_openat2(AT_FDCWD, "/dev/null", &how);
-+
-+	if (fd == ENOENT) {
-+		ksft_test_result_skip("Skipping %s as there is no /dev/null\n", __func__);
-+		return;
-+	}
-+
-+	if (fd != -ENOTREG) {
-+		ksft_test_result_fail("openat2 should return ENOTREG\n");
-+		return;
-+	}
-+
-+	ksft_test_result_pass("%s succeeded\n", __func__);
-+}
-+
- #define NUM_TESTS (NUM_OPENAT2_STRUCT_VARIATIONS * NUM_OPENAT2_STRUCT_TESTS + \
--		   NUM_OPENAT2_FLAG_TESTS)
-+		   NUM_OPENAT2_FLAG_TESTS + 1)
+-#define O_APPEND	0x0008
+-#define FASYNC		0x0040	/* fcntl, for BSD compatibility */
+-#define O_CREAT		0x0200	/* not fcntl */
+-#define O_TRUNC		0x0400	/* not fcntl */
+-#define O_EXCL		0x0800	/* not fcntl */
+-#define O_DSYNC		0x2000	/* used to be O_SYNC, see below */
+-#define O_NONBLOCK	0x4000
++#define O_APPEND	0000000010
++#define FASYNC		0000000100	/* fcntl, for BSD compatibility */
++#define O_CREAT		0000001000	/* not fcntl */
++#define O_TRUNC		0000002000	/* not fcntl */
++#define O_EXCL		0000004000	/* not fcntl */
++#define O_DSYNC		0000020000	/* used to be O_SYNC, see below */
++#define O_NONBLOCK	0000040000
+ #if defined(__sparc__) && defined(__arch64__)
+-#define O_NDELAY	0x0004
++#define O_NDELAY	0000000004
+ #else
+-#define O_NDELAY	(0x0004 | O_NONBLOCK)
++#define O_NDELAY	(0000000004 | O_NONBLOCK)
+ #endif
+-#define O_NOCTTY	0x8000	/* not fcntl */
+-#define O_LARGEFILE	0x40000
+-#define O_DIRECT        0x100000 /* direct disk access hint */
+-#define O_NOATIME	0x200000
+-#define O_CLOEXEC	0x400000
++#define O_NOCTTY	0000100000	/* not fcntl */
++#define O_LARGEFILE	0001000000
++#define O_DIRECT        0004000000 /* direct disk access hint */
++#define O_NOATIME	0010000000
++#define O_CLOEXEC	0020000000
+ /*
+  * Before Linux 2.6.33 only O_DSYNC semantics were implemented, but using
+  * the O_SYNC flag.  We continue to use the existing numerical value
+@@ -32,12 +32,12 @@
+  *
+  * Note: __O_SYNC must never be used directly.
+  */
+-#define __O_SYNC	0x800000
++#define __O_SYNC	0040000000
+ #define O_SYNC		(__O_SYNC|O_DSYNC)
  
- int main(int argc, char **argv)
- {
-@@ -330,6 +364,7 @@ int main(int argc, char **argv)
+-#define O_PATH		0x1000000
+-#define __O_TMPFILE	0x2000000
+-#define O_REGULAR	0x4000000
++#define O_PATH		0100000000
++#define __O_TMPFILE	0200000000
++#define O_REGULAR	0400000000
  
- 	test_openat2_struct();
- 	test_openat2_flags();
-+	test_openat2_o_regular_flag();
- 
- 	if (ksft_get_fail_cnt() + ksft_get_error_cnt() > 0)
- 		ksft_exit_fail();
+ #define F_GETOWN	5	/*  for sockets. */
+ #define F_SETOWN	6	/*  for sockets. */
 -- 
 2.52.0
 
