@@ -1,43 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-75576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id AIBOJ5JYeGkNpgEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 07:17:54 +0100
+	id 4McHBYFZeGkupgEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 07:21:53 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id F080D9055A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 07:17:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5150490597
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 07:21:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E63F530490C5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 06:16:00 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7F87A301D69E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 06:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CA632AAD3;
-	Tue, 27 Jan 2026 06:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416EF32A3FE;
+	Tue, 27 Jan 2026 06:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RTL4LvSM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F76299920;
-	Tue, 27 Jan 2026 06:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89661F3FED;
+	Tue, 27 Jan 2026 06:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769494558; cv=none; b=VEAssm2wvNgo7BLEQQ6NA0wFHMxWURmrbWunUURkrzBuHwV04I3g9QDqEpcdorS6SGe0GJPrBttkvxz0Xgsd+ZNGvJ2Ar2J1MVBO7wsKRB0/3TU2LeBRzS/aCJ8AfoKZ6t7PX5vcATUyoZNOY+vhH4BZQfW7NNOhfuN/hLZNIBs=
+	t=1769494888; cv=none; b=kIaYMbKFeAutRHD0IWKyZFXsjlzhHpGWtl3F4yG6Lc9tKDKM/8WsGdl+y400IWafCwT+bWHj+z31XZGJqYWTK/VfdFt9sjlkH1nwg0FGW/N+sZjgZLAR8MDfrQK/S8pHXI0vreuDLuy3jXSH2SywPvcVr/qb4k5G6SeADlzw/PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769494558; c=relaxed/simple;
-	bh=A+Qvt7PJ1zzJc5nC8vIE7nhGKBhLxaI43psasrisBGg=;
+	s=arc-20240116; t=1769494888; c=relaxed/simple;
+	bh=kk2V4G3auJhPjVPWGb0eJbR78yju4WWua17kbmc6Gxc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=doyJaGh2JS4S/O74cRQUPsnHjftvSEC95rhf5ABNnNXD6fvc4zgNlgSfMUGTrLQVsVC+VPvXpd68hBID5wAHvBamdgCjl7tE+gVFNdP/NbbM/dhXB+UoBFNYuI6cHwaPkVRg23oU/gF2wm+/3pAjGG3HcnG7Fv+7W3zg12CqmJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 2F41D227AAE; Tue, 27 Jan 2026 07:15:52 +0100 (CET)
-Date: Tue, 27 Jan 2026 07:15:51 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=LxruRHFRI/4SH8QUNha46MGc3a9NErFCE0FKVyss18e+MWnKtfp1WCpgfGOVbtUQXbhVZaFDDxEEJGB7zKmx+yD0yxIlSpfAOcCoTylrg7gMD7XaKTH4nwLAZZubSWqu7/ZXN+Q9sezviKjHBqR/adH4Gf419sr5C1p06HUqPKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RTL4LvSM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8398C116C6;
+	Tue, 27 Jan 2026 06:21:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769494888;
+	bh=kk2V4G3auJhPjVPWGb0eJbR78yju4WWua17kbmc6Gxc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RTL4LvSMUGOTtLW9wXJkpR0u684upITx8xZl84Y31HC1RqoKXvCBezyDsiP3ySxUr
+	 E/B+8/BXI1rjjU3BkuZaAFz8J9hKYfFnYkRFHrf18UIwfmvBfV6YHk/uwHTp2HJQvS
+	 6BKI68umDuXLIIj6tsO1PQXJlM4Jf7SQXPycRfvFXvAMNvpdSSTXwAvgN/7dcy0Df0
+	 hr59kGK1M4AtByyuMO2mZWrc2ERwuVIuvR4fK3PqYyXBonryBdqnlvPZTfRfSBQmKj
+	 IiOBH48fB1ojGb3ercxDF4N9AjHTAaHezrLsbjyKZzMJBJBL2DGFWg0BoYDuI3m0NO
+	 8zk5iJ28eeEOw==
+Date: Mon, 26 Jan 2026 22:20:55 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
 	David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
 	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
@@ -45,10 +56,14 @@ Cc: Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
 	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
 	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
 	linux-f2fs-devel@lists.sourceforge.net, fsverity@lists.linux.dev
-Subject: Re: [PATCH 16/16] fsverity: use a hashtable to find the
- fsverity_info
-Message-ID: <20260127061551.GA25522@lst.de>
-References: <20260126045212.1381843-1-hch@lst.de> <20260126045212.1381843-17-hch@lst.de> <20260126204030.GC30838@quark>
+Subject: Re: [PATCH 07/16] fsverity: don't issue readahead for non-ENOENT
+ errors from __filemap_get_folio
+Message-ID: <20260127062055.GA90735@sol>
+References: <20260126045212.1381843-1-hch@lst.de>
+ <20260126045212.1381843-8-hch@lst.de>
+ <20260126191102.GO5910@frogsfrogsfrogs>
+ <20260126205301.GD30838@quark>
+ <20260127060039.GA25321@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,63 +72,67 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260126204030.GC30838@quark>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20260127060039.GA25321@lst.de>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.36 / 15.00];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	NEURAL_HAM(-0.00)[-1.000];
+	TAGGED_FROM(0.00)[bounces-75577-lists,linux-fsdevel=lfdr.de];
 	RCPT_COUNT_TWELVE(0.00)[16];
 	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
-	RCVD_COUNT_THREE(0.00)[4];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,lst.de:mid];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75576-lists,linux-fsdevel=lfdr.de];
-	R_DKIM_NA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[]
-X-Rspamd-Queue-Id: F080D9055A
+	FROM_NEQ_ENVFROM(0.00)[ebiggers@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 5150490597
 X-Rspamd-Action: no action
 
-On Mon, Jan 26, 2026 at 12:40:30PM -0800, Eric Biggers wrote:
-> On Mon, Jan 26, 2026 at 05:51:02AM +0100, Christoph Hellwig wrote:
-> > The file open path uses rhashtable_lookup_get_insert_fast,
-> > which can either find an existing object for the hash key or insert a
-> > new one in a single atomic operation, so that concurrent opens never
-> > allocate duplicate fsverity_info structure.
+On Tue, Jan 27, 2026 at 07:00:39AM +0100, Christoph Hellwig wrote:
+> > -	if (PTR_ERR(folio) == -ENOENT ||
+> > -	    !(IS_ERR(folio) && !folio_test_uptodate(folio))) {
+> > +	if (folio == ERR_PTR(-ENOENT) ||
+> > +	    (!IS_ERR(folio) && !folio_test_uptodate(folio))) {
+> > 
+> > (Note that PTR_ERR() shouldn't be used before it's known that the
+> > pointer is an error pointer.)
 > 
-> They still do, though.  But that's unchanged from before.
-> ensure_verity_info() frees the one it allocated if it finds that one got
-> set concurrently.
+> That's new to me, and I can't find anything in the documentation or
+> implementation suggesting that.  Your example code above also does
+> this as does plenty of code in the kernel elsewhere.
 
-You're right.  We allocate them, but never register them.  I'll fix
-that up.
+Not sure why this is controversial.  The documentation for PTR_ERR() is
+clear that it's for error pointers:
 
-> 
-> > Because insertion into the hash table now happens before S_VERITY is set,
-> > fsverity just becomes a barrier and a flag check and doesn't have to look
-> > up the fsverity_info at all, so there is only a single lookup per
-> > ->read_folio or ->readahead invocation.  For btrfs there is an additional
-> > one for each bio completion, while for ext4 and f2fs the fsverity_info
-> > is stored in the per-I/O context and reused for the completion workqueue.
-> 
-> btrfs actually still looks up the verity info once per folio.  See:
-> 
->     btrfs_readahead()
->         -> btrfs_do_readpage()
->             -> fsverity_get_info()
+/**
+ * PTR_ERR - Extract the error code from an error pointer.
+ * @ptr: An error pointer.
+ * Return: The error code within @ptr.
+ */
+static inline long __must_check PTR_ERR(__force const void *ptr)
+{
+        return (long) ptr;
+}
 
-True.  I've fixed up btrfs to avoid extra lookups.
+Yes, it's really just a cast, and 'PTR_ERR(folio) == -ENOENT' actually
+still works when folio isn't necessarily an error pointer.  But normally
+it would be written as a pointer comparison as I suggested.
+
+- Eric
 
