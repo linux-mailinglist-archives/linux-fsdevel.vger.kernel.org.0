@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-75635-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75636-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0DKDJCH+eGmOuQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75635-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 19:04:17 +0100
+	id QOOFFUb+eGmOuQEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75636-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 19:04:54 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F82698C09
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 19:04:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5C6098C20
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 19:04:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 408B43092AA3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 18:01:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4821B30A4CA3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 18:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCED324B2D;
-	Tue, 27 Jan 2026 18:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0943112D5;
+	Tue, 27 Jan 2026 18:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FdmUOdvz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P/MzFsHH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA802EC0AA
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 18:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFBD2F5491
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 18:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769536907; cv=none; b=I3+BLfMhm1OBBLISOH0c7id7/epa2PSD/CtmeSOItB4asFR4tz/xAJrTYhi0gzUSE53p6Sx7XWlSUIHikObpfDuYt5oIOvz5ZZGPy6mBiXxQ9pKM458vRcnIzWA3uHdiRmm5QCiCyB6ozc0COCmFZG7cE+Mcznkbc+i17ZEMfFI=
+	t=1769536913; cv=none; b=sokuOiBquhN/hnmcvCjrTBLsForyxsIMLYuOrYjd5c+p4l/UK8cMpe4qVvAUzFyuLREsJ+sbSFtX6Z9vIiF1ecDvv6zYo3/8nAySfCf2HS1lZh55IopiyItBifFAamzCAaFj3nRQLd0SR5j/yaK/aVjrowTXb7hgrGwhDLOHdoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769536907; c=relaxed/simple;
-	bh=fGlXttV7nMmxi4UcuYtsCWFX6BEZWzCp9QY5mD62bk4=;
+	s=arc-20240116; t=1769536913; c=relaxed/simple;
+	bh=eEVLpo0/xWWCNyXB2qN7+LU2JrOD+X8cK85rNuw9cR4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N2cUkqsANnn0s/YricUHOP12YlmF/dGhDcHAMGLsX8oIwJrU0qBJiVPkNT9ARqj3ORzTs/Ap9V3Nju5pUzWVCbyUs/ETB/9DU8tVbVsFCXcDqNlFlRld2gGpkJczY8Cj6mB2oktwn/KprMDYVYW6aLbFXCWTmJfI8jzwLbDwExM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FdmUOdvz; arc=none smtp.client-ip=209.85.210.179
+	 MIME-Version; b=ofJosJkivniS2vTXDxB33heXnPfwuq0p2smFwvD6HrehHEoNUuHyyvTidoRmLvBdoE2IIQW9xMOrVAr2tndgzgBNCm6K2yhlWr//GirHXlOw9QXIYKHHPFbXABCtjalfdO7N+VUOnycX2GjU1NaWnqtEeGPx/7DSSR71QEciwXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P/MzFsHH; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-81e8a9d521dso3534523b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 10:01:45 -0800 (PST)
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-81dbc0a99d2so3013101b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 10:01:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769536905; x=1770141705; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1769536910; x=1770141710; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fmJz7Q237YfPvUh8bIWiB/H6qzUCS1WcnX3PPdkuOR4=;
-        b=FdmUOdvziWp418HeEvFVfEzMTpkFxR2S+LIgRIphNYI3rZI8Sd3S2+vgG6kzwnxi36
-         I+x4lapqbn7+b8uUZ3jv+RleIdr4eZnQwMVBJPsS3nL3ja05nRRQosQSvooL9b2inxsd
-         oRhIlgYQFnjczvsHGOCf9tPjPtz1Ap/cmD+xXgcCLvWnmdaflJj9snsuYUc7iEjp2sZk
-         UfekmT8aQvPy+R2yhEjqh9PhFXTPBtVlu9JMoTmOaiO2vkWuUzO+jjkBeEMV4p3LraH2
-         cAgQRR20BrZXIRUq6ggZbKx6l3I7h7vxdoCR+kGgCpqYcp90L7Mt8lU6mCKm7v9QFOjq
-         qlFw==
+        bh=xKA6NqBZUbRPPOHudTEbZyIDBpxMfrFTaNpZfF3CE7Q=;
+        b=P/MzFsHHqreK0DAFO//Y9yrBBaff1a1H8bbh+BHLayw9RDEEoylv5ID+uCl7G9AkCn
+         WYcHtUZE4tLI6JfxzwvaM7V+Au/rLfKFGTXqviTW2hew83KxOJM2t6aUW9Ev6Ovs+oF3
+         Iot9bQDVpDa61AhraTXpoqklFT7+iodH8WIxiyTd4Z8QIVNy88UEsH9GTOXwYu/AmHyM
+         8mOkGDLEY+hrvBkJWGV2DtwspEx1vM8SN7MGIO2WDPPyC/2LkEqNFeE1aXutroa1YbzZ
+         0w4408c3FlcY7l1KeMYJ726cIFr9aj9wMenuEQRSnvVuYE4C3SYcUm++zmGmjmk5vBZB
+         tL+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769536905; x=1770141705;
+        d=1e100.net; s=20230601; t=1769536910; x=1770141710;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=fmJz7Q237YfPvUh8bIWiB/H6qzUCS1WcnX3PPdkuOR4=;
-        b=YMDpP7Hbvxqt6lok/IIvgKap4utk5U2tFdL4IN+rAmmPHr9bHP4QbzR4Qi5VeqTNMw
-         PPC25tvNGiCd+L7eEWRzjusjVz6fzugKCA1ULpamDmvctpPUbZIBqy5xm5A+/cHp8gDm
-         39aSvGwf3iBzUPREdg8mgxW9Go3ma0Ol/RrTUiIlJZfqusY3K5ipOj0QU4ZlhlZZmuWI
-         jYjNsmj/y5IOZ4IFTZqePva4RNjaR/Ug0/mgjbetpPO4VR3RxNgsp3jWpfMUQt/wMGBN
-         m+jjaVg36cul+aqWP4DblhcYHW2TuhHzUrB/TxS4uhHkTj4vpjB4nw2Fc/wZzOVfH/Pw
-         PfMg==
-X-Gm-Message-State: AOJu0Yw0O+XdiIV5UahAIEgi1PTCC8YkHr1/7W6JfSTiKfKsBNgCF5qm
-	RuAOR97I0jYuu4fQYcnhy6yQDXDufAmrNbwhiJfIRNzpjt61kRl08/7u/5/H6A==
-X-Gm-Gg: AZuq6aJ+x1QQf43az2e8fQ0Fqkx35ccF85WD+4tcoMg3JFaSc0mkrJNKNc7qOkWEfMv
-	VR49Pkiez3TAQfKwud7sN/zaws5evIXatSADY6pUXTtdUf1fEqLc57tDFCpS2pxlUvJYHCj1c5t
-	rIGEeMfmilKylAvi01LSXldxIjaAs/DRyvLXnaEGjJf64rNm6zRRqsTTv7NVCLjbjE3p7SaaB5R
-	ccg/VtFveHoL4oWU/Ivt7f2llAH6QhQxiikO/1yO1XNz63L3qVv7t0ZFITH7dVVSLy8XwsZO5nW
-	tu37Q7nQQZ9kBHxP4xT7h/uUaUj9gv71eOgDpdLbYspaM+xPlRNNa2nu8et+9tldOcN/ZoWEegw
-	4JasNzHoNg+Ji9gQxVVpjhNwtGCjekv2+fDmcABsNrRKbRZgp4jPk5lspWYGXjzlk8t24zbAltT
-	sEmvJ3ac1WUUr50grHIRcpvv4qv9Ov7+jEoZjDt9W1+lk=
-X-Received: by 2002:a05:6a00:bc83:b0:81f:4675:c2a5 with SMTP id d2e1a72fcca58-8236928e24dmr2648269b3a.32.1769536904802;
-        Tue, 27 Jan 2026 10:01:44 -0800 (PST)
+        bh=xKA6NqBZUbRPPOHudTEbZyIDBpxMfrFTaNpZfF3CE7Q=;
+        b=cpqXycyNqvlLvkwprm2fCpqoiuHtK/02hVrV/tsKzImZPKfnqfa0+pWEkqwhGl8oN2
+         ot70Oc9/fsos68D2orMV3xLpe2GPHHRYvrZ/cWeUdejbrEa480zUBJ9MczWr+dgAk1vl
+         utHQ0f3SigLUWar1JLWo2YBgnqDi+A7oVYK6b0cMTbYkRTZ10VpcM8JQyrn+rtE0X0/s
+         y64j0iFU3VXUU6m+fuf87LAtMSfp0dgzvMcr2xEcEUYEU15TLLAi8i2Oi4ulAgyTVzmb
+         HXGC+Y1p+xxjQ/xAAcacy+znCkvzh7v1U7Fh/sxr4phLLUSkN68P3AFazf3yL1NRJ2Oj
+         Nhuw==
+X-Gm-Message-State: AOJu0YzRxj4XXmD4saoKuLsi35imnScN6pY4de0z/RfLLpblaMjxM+10
+	188nSEVqFQU2soV/XnxQI+CQGtAXzMVQ6t8ZX8gWwo41QM+hBv8SiDN6xL154w==
+X-Gm-Gg: AZuq6aIOSoYS1m6t3x7HJ/g4xzdz8YnGRv8+Lr68LZ8/fnZAt/EctzbEOTdqfV+WtXa
+	Z+AHxycIvQg+FxRpCZqXws4j2QhUfMRbLgt0axGpRTk3X+6et498usJTsNe2ahASwJXHTVd6iq1
+	02Jdj5h+qoaYQN2TPigXyxRW3tPa7a62gKkE1gp1bopmbHBH/2M4/ud3zIb7UW82wpjJhhVzYKy
+	s97yH5kwiQ4ZyZuFhMdYow822if/gAyCiyDuGw2Pqu8b7T2itHe+gJQFtZQTdq+VuP68nJkaAdC
+	SLeowAM6X80X4GR5Zxhuu17vt23s52eRkXXS8A52znGepyudqgxnPYXnuVp4vyS0spEeGNVqHIy
+	KjZ5DTSF0U4izJub9E/HEqvo8qfMxENivMzPOJV1FgNlDRTug+vGSSt2akv8U2hxE5PAmu4G67b
+	J+bcdVzOf/WE/GiQBq70+S73dCAoYce/6ta3go5v3L4Ko=
+X-Received: by 2002:a05:6a00:800d:b0:81f:3d13:e07b with SMTP id d2e1a72fcca58-823692a0fe5mr2211061b3a.43.1769536909590;
+        Tue, 27 Jan 2026 10:01:49 -0800 (PST)
 Received: from toolbx ([103.230.182.3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82379b1bc68sm216891b3a.2.2026.01.27.10.01.40
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82379b1bc68sm216891b3a.2.2026.01.27.10.01.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Jan 2026 10:01:44 -0800 (PST)
+        Tue, 27 Jan 2026 10:01:49 -0800 (PST)
 From: Dorjoy Chowdhury <dorjoychy111@gmail.com>
 To: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -86,9 +86,9 @@ Cc: linux-kernel@vger.kernel.org,
 	alex.aring@gmail.com,
 	arnd@arndb.de,
 	adilger@dilger.ca
-Subject: [PATCH v3 3/4] sparc/fcntl.h: convert O_* flag macros from hex to octal
-Date: Tue, 27 Jan 2026 23:58:19 +0600
-Message-ID: <20260127180109.66691-4-dorjoychy111@gmail.com>
+Subject: [PATCH v3 4/4] mips/fcntl.h: convert O_* flag macros from hex to octal
+Date: Tue, 27 Jan 2026 23:58:20 +0600
+Message-ID: <20260127180109.66691-5-dorjoychy111@gmail.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260127180109.66691-1-dorjoychy111@gmail.com>
 References: <20260127180109.66691-1-dorjoychy111@gmail.com>
@@ -111,7 +111,7 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75635-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-75636-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_CC(0.00)[vger.kernel.org,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,arndb.de,dilger.ca];
 	FROM_HAS_DN(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
@@ -130,7 +130,7 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 3F82698C09
+X-Rspamd-Queue-Id: A5C6098C20
 X-Rspamd-Action: no action
 
 Following the convention in include/uapi/asm-generic/fcntl.h and other
@@ -138,68 +138,50 @@ architecture specific arch/*/include/uapi/asm/fcntl.h files.
 
 Signed-off-by: Dorjoy Chowdhury <dorjoychy111@gmail.com>
 ---
- arch/sparc/include/uapi/asm/fcntl.h | 36 ++++++++++++++---------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+ arch/mips/include/uapi/asm/fcntl.h | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/arch/sparc/include/uapi/asm/fcntl.h b/arch/sparc/include/uapi/asm/fcntl.h
-index a93d18d2c23e..3c16f1a66a6a 100644
---- a/arch/sparc/include/uapi/asm/fcntl.h
-+++ b/arch/sparc/include/uapi/asm/fcntl.h
-@@ -2,23 +2,23 @@
- #ifndef _SPARC_FCNTL_H
- #define _SPARC_FCNTL_H
+diff --git a/arch/mips/include/uapi/asm/fcntl.h b/arch/mips/include/uapi/asm/fcntl.h
+index 0369a38e3d4f..6aa3f49df17e 100644
+--- a/arch/mips/include/uapi/asm/fcntl.h
++++ b/arch/mips/include/uapi/asm/fcntl.h
+@@ -11,15 +11,15 @@
+ 
+ #include <asm/sgidefs.h>
  
 -#define O_APPEND	0x0008
--#define FASYNC		0x0040	/* fcntl, for BSD compatibility */
--#define O_CREAT		0x0200	/* not fcntl */
--#define O_TRUNC		0x0400	/* not fcntl */
--#define O_EXCL		0x0800	/* not fcntl */
--#define O_DSYNC		0x2000	/* used to be O_SYNC, see below */
--#define O_NONBLOCK	0x4000
-+#define O_APPEND	0000000010
-+#define FASYNC		0000000100	/* fcntl, for BSD compatibility */
-+#define O_CREAT		0000001000	/* not fcntl */
-+#define O_TRUNC		0000002000	/* not fcntl */
-+#define O_EXCL		0000004000	/* not fcntl */
-+#define O_DSYNC		0000020000	/* used to be O_SYNC, see below */
-+#define O_NONBLOCK	0000040000
- #if defined(__sparc__) && defined(__arch64__)
--#define O_NDELAY	0x0004
-+#define O_NDELAY	0000000004
- #else
--#define O_NDELAY	(0x0004 | O_NONBLOCK)
-+#define O_NDELAY	(0000000004 | O_NONBLOCK)
- #endif
--#define O_NOCTTY	0x8000	/* not fcntl */
--#define O_LARGEFILE	0x40000
--#define O_DIRECT        0x100000 /* direct disk access hint */
--#define O_NOATIME	0x200000
--#define O_CLOEXEC	0x400000
-+#define O_NOCTTY	0000100000	/* not fcntl */
-+#define O_LARGEFILE	0001000000
-+#define O_DIRECT        0004000000 /* direct disk access hint */
-+#define O_NOATIME	0010000000
-+#define O_CLOEXEC	0020000000
+-#define O_DSYNC		0x0010	/* used to be O_SYNC, see below */
+-#define O_NONBLOCK	0x0080
+-#define O_CREAT		0x0100	/* not fcntl */
+-#define O_TRUNC		0x0200	/* not fcntl */
+-#define O_EXCL		0x0400	/* not fcntl */
+-#define O_NOCTTY	0x0800	/* not fcntl */
+-#define FASYNC		0x1000	/* fcntl, for BSD compatibility */
+-#define O_LARGEFILE	0x2000	/* allow large file opens */
++#define O_APPEND	0000010
++#define O_DSYNC		0000020	/* used to be O_SYNC, see below */
++#define O_NONBLOCK	0000200
++#define O_CREAT		0000400	/* not fcntl */
++#define O_TRUNC		0001000	/* not fcntl */
++#define O_EXCL		0002000	/* not fcntl */
++#define O_NOCTTY	0004000	/* not fcntl */
++#define FASYNC		0010000	/* fcntl, for BSD compatibility */
++#define O_LARGEFILE	0020000	/* allow large file opens */
  /*
   * Before Linux 2.6.33 only O_DSYNC semantics were implemented, but using
   * the O_SYNC flag.  We continue to use the existing numerical value
-@@ -32,12 +32,12 @@
+@@ -33,9 +33,9 @@
   *
   * Note: __O_SYNC must never be used directly.
   */
--#define __O_SYNC	0x800000
-+#define __O_SYNC	0040000000
+-#define __O_SYNC	0x4000
++#define __O_SYNC	0040000
  #define O_SYNC		(__O_SYNC|O_DSYNC)
+-#define O_DIRECT	0x8000	/* direct disk access hint */
++#define O_DIRECT	0100000	/* direct disk access hint */
  
--#define O_PATH		0x1000000
--#define __O_TMPFILE	0x2000000
--#define O_REGULAR	0x4000000
-+#define O_PATH		0100000000
-+#define __O_TMPFILE	0200000000
-+#define O_REGULAR	0400000000
- 
- #define F_GETOWN	5	/*  for sockets. */
- #define F_SETOWN	6	/*  for sockets. */
+ #define F_GETLK		14
+ #define F_SETLK		6
 -- 
 2.52.0
 
