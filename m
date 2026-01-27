@@ -1,249 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-75586-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75587-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id E0b/Hnd1eGlDqAEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75586-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 09:21:11 +0100
+	id yHeWLmiKeGn5qwEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75587-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 10:50:32 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEEFE9107D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 09:21:10 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9DA29211D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 10:50:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 2744B30360AD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 08:21:09 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 15B5631259FE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 09:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA887273D75;
-	Tue, 27 Jan 2026 08:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB261335549;
+	Tue, 27 Jan 2026 09:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6sTLfJS"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="bb+ojoNI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yx1-f45.google.com (mail-yx1-f45.google.com [74.125.224.45])
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F77023B63F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 08:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F2F332EA5
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 09:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.178
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769502064; cv=pass; b=qeWV8nODC352zZn5lFqWGHPBkcQHh3DpsdLu855HT9U6Yu0Arrdfki0WRG5RAIbnTb1fTxbl39LXgPnXHgH2TEIE18nBoMGns6uGhwkcarEkWE9mNZzPi8KgLDQc3N41YvBI1U+VAyJwX2UGXxl6tQymBbARNCc752FYJ1UWaxg=
+	t=1769507068; cv=pass; b=QGr8UL4yCahevxsodyTRSFOBXfzMBgGviGcjnhnTUwv7ZfrfRlKoygkcRk0s2oCB1iN1tJKNxSkUkY7fWw7XNZ2RVX+eqzRwRI+DF6DxxMNIFeepFco71pAsA6zb97Zs5rOKEyVNcn54XwsSCC8NhI0DIidcXvj6/OUD14gVrGI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769502064; c=relaxed/simple;
-	bh=wbCW7fe55k09XI3K+JlcQBRGcE9oz5k4KpG+0aRPYBM=;
+	s=arc-20240116; t=1769507068; c=relaxed/simple;
+	bh=MMk/WTOuwflmOPLTViGDWddx7/81wzMT9bhbYS0tj10=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UQjT/8YBLW2KZy8MhHfvo2/7jO7mrjAQPk07o1p1T+Eu4CCO+yg8aEOEWDr4sw6VL7JWQrM94qiCaEfACQj2bVlSPmbtPth+DMLsbGwWvOhaPzz/z3rq99meVyM4zWNnD13lPAZrjqWaeuBFxHFElMLEyf8073Mgp20ecK5HPt8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G6sTLfJS; arc=pass smtp.client-ip=74.125.224.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f45.google.com with SMTP id 956f58d0204a3-6496a048323so2419416d50.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 00:21:02 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769502062; cv=none;
+	 To:Cc:Content-Type; b=HikbalHZcDXB8Ips9zOavScsvX92KLnij57Rk/mNrB8xaIiY4o6xkJQH4e9D30NnKgiYeVXluHUyGfVaw/38dH7RM2EXMHF1uXF+ZEvZJPzqGWXauhnM2rdD3Dn/qt0wd9b1Q6mXYiPIoTblXQKkOd4YZRSQed3Fj+EnAxoQGGI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=bb+ojoNI; arc=pass smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4ffbea7fdf1so52919371cf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 01:44:25 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769507065; cv=none;
         d=google.com; s=arc-20240605;
-        b=Tjwwkf+Nx79LUTfUvgZUePDgC9yvfJTtJFwdHa8eqMKAHrIwaNP0YIWzgDG6U7JgEc
-         dOYzbwHb2l6rhJ6s+3jYKcS+fGDz8DfbLC72KTjY8y99qRHIVEZ51i0fgaBCr3eC0tIs
-         rmDm/75kN/7eg9VpAmyAI5q//Q5scQ5PppQ0fHawrNUah8lEy+knTfMzNgequt7Kr7wn
-         LQEFNtkk44Se2rWVnvjGJQEQjcAdAcDUYSOa4fUJQLmrXy4GLSXeA1A4mfoxOBjlY5W4
-         aVmzm4DJ9101USSp2KWeZpusAV8DzSyLmuAUnmgeiLmv0TsGc/rWQXwKhCuluQYrlNOk
-         kYEA==
+        b=IMqFB20TnmRhK5B/rTKIgZ8CsI9DyVzMhT+OGyVJ7fcQlzlePXtt0x22w79WTqKigQ
+         O0NdYy8Yljoe44/jNoAkBw/y+mFe1HgVKp39ZkhB6RMcJvdd1DodRXJBMku77FfuIdp2
+         Yh6pxbGoucKsKZrUR6dvVkSi1cecY60pRSTwUPaafsxvwOrVUjrLTHfXLTYEiRuyEEmS
+         p4qLEdyNBdFd/ATy66RXqDgygEyQCl1zyzj1IYihI7SPj1YksAku7xx0P0IErrCY2An5
+         pN4IoOwSm8qzO0R+D/hZIQHvv9d7wQteGbRWRslDhIrrywXvM4U8RN3xpr9T+K62/8SA
+         131Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=rInO50rL+FT4bl7O6+DTFr33WqdYfNDMtWFHdaLnEt0=;
-        fh=d0VxgjYbUqLOll3r4yRt+Bo3jU6fk5EXTrodWrhuzko=;
-        b=hsMs+S6J68MHkT40lM7J7pK/kIlJUQKztHY0s7wcOQcVD+NNrk6GsSExOBw6+jOx+R
-         7bO3pBhWTKKsVNogcdE+cXDwysZWCHP1UBzS+4hWL4x4YXmuvMOrXo6CSoDCMbXy/iEz
-         soOWNnyh5ZvFjKmkm/ypTviQE7KJb35TJjhJIdaGv8R81T1OCp2MmkQx6/XMrw8q5z/c
-         nMJF3EHnjz7Pzphc2hp950VRqX+XxNo/PDC+ltKACjzl+lFQv+ASNNRNMLOdA2OTtSN9
-         FCjrcGdKNl2Q0mG1pXXCBNo9L10fowyKh0IkmQ6KjNIlxkYPZoiZ5qafqYmjIr8NQJ0e
-         4GOg==;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=gZstn0DrPa2PjWg/PVtM0+TGagjIKYzoX+tj562NXaY=;
+        fh=CQZ0U6NVBmpqTGEX0Bf8cNGyt20hb+Ad43/RHWpC9xo=;
+        b=Sh5UAs8+kH2ptb9A06NK2RJxepuD0DpzQfrlKdR1MgFvDRKk/udaskQUqaKphdyr6d
+         UVAEUBx9GWI68xZ/yvQIzqfpDfiEVhtLKQ+SMQRERcDvQ31rSqHS9hRSzC82QR6Ql+gy
+         X3N96DCvYCcFRDyXc5DQvvq+qRa4EdE/nXo8Js44I6oX6RmXIItqgX4lbzvB5iArDUsF
+         +STDOQabzLJAqYdbmxcCW5RpnCtg2R39NwDy+rjfqvGt3raFlywIsoThZtdr2bRUExLl
+         yQQviwFDZfcCwny5723YSD6U21Uht8k7C+K/JKYNuIrRzc702dtZZlsyb68biUz87e9z
+         EqQw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769502062; x=1770106862; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rInO50rL+FT4bl7O6+DTFr33WqdYfNDMtWFHdaLnEt0=;
-        b=G6sTLfJS1rD+2lWUN5Jeh+FyFeQvpvCLq8o+fXkV/SS3jYBQhCJltB+RxsOLJst3Uv
-         U9QLdVE+qrpvB/zJ2ZE9uiCsUqKJCZOLtoMtU62wIFYnfz1jnC7eC9QJZ3jNvYI9H4zb
-         Pn36qLC/lj3WFgQ4lDcxHtXFfZ7xqDAgRUCpV616Q/CUvv+WVTkcrX0cWKPTKjT3D420
-         x3q8Xl15QtytDS4+n0cERYP/cGhuRzZ6nLGrb96+tmXP2E6N4JaCkDjRmdKEuuqq7Ja3
-         JRzymLqqCUu64+nyH8o8POUyLUQJBzAPs9NPWYbT4S5dGNADAlUUR0P+5zz9gRURuzEE
-         1nJw==
+        d=szeredi.hu; s=google; t=1769507065; x=1770111865; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gZstn0DrPa2PjWg/PVtM0+TGagjIKYzoX+tj562NXaY=;
+        b=bb+ojoNI66ot0EYONhTosjJLTkGbeTzlubSYx/2Ki36B9o3X0xuGH9jJ0JmyqP1JP2
+         seZth2fUKwQsulvWFFw1I4IPzAFVq8w85BdbmLjJmEKDngMvm/HDvUWmftkohAKbjGjy
+         DO4QgeiZ35sRG67B8RCxEh7vNutdKUuyoVJaA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769502062; x=1770106862;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=rInO50rL+FT4bl7O6+DTFr33WqdYfNDMtWFHdaLnEt0=;
-        b=ffvKhxpZF90i98GtXhhvbmWTcZvkNlogDbsXxaPU6+DOuPQIiS5MZDjPWlDniYPd7P
-         dQIKae+JfhgbL7dYcfEnHG8fTN6Y1ukmhQf7MC+RTYAl6cd8hQuDS8Ta61MMaLI9zu3j
-         L+/V9uSfyRiztk6XvUtlM2cSFSmRVaPCA0hZ+k3SmC141BZnrGoM0JRct85opl2/FZ7f
-         uUp/OZ8Qk8ikbUvHitlTgn3d1hhbzMajoZTyUwX/X62CBu6Djn5t/JT1cNGsJ8+Nkh5G
-         Brjnwd78B/iODmAE4Akf42G1XzhBcLaIBt7T7nsfQUo3b137M9VJsqbzUacVUwWeSzcf
-         GIiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUkdcJyCAGRyH/IkBXEYV58jBg9o3H38+Wv+PucAPq31JJD/dIugCfqJ9Zvu9XvDzplWIxeUmqJoQRlM27o@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+0ksA+cChlLYQfr2BUY3fVB7OabhM+hoxPCCWeQgQqxf1pRgx
-	SbImDk8izVfVytjOU+iQRav4ZkVI5NeP4R2w+uPtyHSzHcYy+vgpjJOQ161vhywjMhR8FpWWlix
-	ltKwKZUIF3RMONidSwPFx/hSwsfMN4Pc=
-X-Gm-Gg: AZuq6aLjfzk4PPXv69zW2oIWyYZKqOF8/b/wJiBJL7ZuN6gkebBM6HNjaIUp2y4+bOZ
-	U1eOirDxEpm/DUz0dFq9CXqgzr9GnSEvcle2y2z/HHzo8sH1iHOxmWUHbVpS2jAxE68qCgovufR
-	fmx8t0kuHM6BQpLd9EA73JvQU/VbV/bl6yNCyiapJR9F8qP+1c6O8gwfdU2tlus4BfkNOR96Y9r
-	enjW/gZRsDPW11uQa05FF/yi0A/uTSmNkBSteFtMRLVQu54SyXxRH08caR9omNCwqVJtAh6nB9l
-	H2mn65OylBZNwVq92iQ5kPum/x1xynPTueJdnpH2EE9fg/3b2wJSBEeieDib
-X-Received: by 2002:a05:690e:400d:b0:649:5204:a127 with SMTP id
- 956f58d0204a3-6498fc41ba9mr444727d50.60.1769502062094; Tue, 27 Jan 2026
- 00:21:02 -0800 (PST)
+        d=1e100.net; s=20230601; t=1769507065; x=1770111865;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gZstn0DrPa2PjWg/PVtM0+TGagjIKYzoX+tj562NXaY=;
+        b=DcNXDSaixfliEY5EU+udwLAAaxu0u86BDuukuCNuWohThEyIGD+pBE6xLOIgft6Ngn
+         Ckp1JCuUQ4459pgTA9WsQ1254TzD5SXaC48/Aks374s5ioEdwdjWTOLz5re9CMCcsZW0
+         MM0iJ/q1rQn7uy3nJkumP9q7flBEwz0+U5Q4/Nkk7mkXHtJDp1sjKpLDMIe6GgPSvoc1
+         HGr901CoJxXJBo3+iPmfVUNC03O0iUv4NkzOURvrRM7+6ZGIWf9Xwikqp8QIM//7yicv
+         BQUZphk2wp7An66NYTvClQeyi2KsI19U3r13oeoKEnSY0MvhCY0NQvN609u8tLqXhTTI
+         cZHQ==
+X-Gm-Message-State: AOJu0YzRKwtTTtpiPOp+pfS7oFRMuwaENYatiCIpczXLH0J5fPGmwnY6
+	9Kcy+9zc6BHu07uqbuAeij/YbgcMipvaFkzPBgky29jpFSflTidukBG0l+RcSQlWa54wHVtgBlP
+	l/luF0vGTcIj7aVQ59yzRtOe/nabXiHH3CJSq3F7qS7GQl+QHyyyFHsM=
+X-Gm-Gg: AZuq6aK5I3R8QCgGJidc5/3h+YfvPiFi3rcCSGtEnc1DL3VEjCr9iWHLRjmuNCpUMtN
+	txfPrjpGr34KJnWdrzsmajFL3JBiYcu13MBuGgi1odMALjJcdMvD62zZ2SD3svANKSsTu57Db4W
+	VoVjnKOEg7UNe+frHvGqqcf3hEVEM3laoINq2yECg2SYClgc9KremJRgD1oCc6V4aI04vA3H9yk
+	1Yc/z9YrOXkJnKuE6Me8qX94Xl4t/lAhhSFyGhC5NimiI6ZBY2BYpOzPYbvQxnr4CQ64vc=
+X-Received: by 2002:ac8:7d04:0:b0:4ec:eecf:66e4 with SMTP id
+ d75a77b69052e-5032f7647a1mr11669831cf.7.1769507064908; Tue, 27 Jan 2026
+ 01:44:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260120051114.1281285-1-kartikey406@gmail.com>
- <1bf327370c695a5ca6a56d287d75a19311246995.camel@ibm.com> <CADhLXY5pVdqhY+cLze66UrZmy0saCro_mQR+APth+VC5tMEnjA@mail.gmail.com>
- <88705e499034c736cc24321a8251354e29a049da.camel@ibm.com> <CADhLXY6wFsspQMe0C4BNRsmKn2LaPaBFfOh1T+OBibuZVSo70g@mail.gmail.com>
- <eefff28b927ccc20442063278e65155c1ed5acd8.camel@ibm.com> <CADhLXY6fMO51pxc1P00F3g9PccNvXwOPd+g0FxeHq1FYGR3Xng@mail.gmail.com>
- <31dcca48613697b220c92367723f16dad7b1b17a.camel@ibm.com>
-In-Reply-To: <31dcca48613697b220c92367723f16dad7b1b17a.camel@ibm.com>
-From: Deepanshu Kartikey <kartikey406@gmail.com>
-Date: Tue, 27 Jan 2026 13:50:50 +0530
-X-Gm-Features: AZwV_Qhe6fxp2jAVwPMsMcVlTeM41QPZmidu_Ux_pnnXLXQtJVWuBW9FKTOYJ3Y
-Message-ID: <CADhLXY54yiFoqGghDQ9=p7PQXSo7caJ17pBrGS3Ck3uuRDOB5A@mail.gmail.com>
-Subject: Re: [PATCH] hfsplus: fix uninit-value in hfsplus_strcasecmp
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>, "frank.li@vivo.com" <frank.li@vivo.com>, 
-	"slava@dubeyko.com" <slava@dubeyko.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"syzbot+d80abb5b890d39261e72@syzkaller.appspotmail.com" <syzbot+d80abb5b890d39261e72@syzkaller.appspotmail.com>
+References: <CAP4dvsfs55KqSNmdv_LM1_4moUUcVxvjCrj5zjGFxOH4mi8xOQ@mail.gmail.com>
+In-Reply-To: <CAP4dvsfs55KqSNmdv_LM1_4moUUcVxvjCrj5zjGFxOH4mi8xOQ@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 27 Jan 2026 10:44:13 +0100
+X-Gm-Features: AZwV_QiIaTpCKuroTdG-5rXcI3cqbqhF0uQADcEeNMc1dr7EsfAEhUq6HyWW-wU
+Message-ID: <CAJfpegtmBUSYVkx7_dB1p4XQsd2b156B_vCr=BNx-0yySHOhOg@mail.gmail.com>
+Subject: Re: [QUESTION] fuse: why invalidate all page cache in truncate()
+To: Zhang Tianci <zhangtianci.1997@bytedance.com>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, =?UTF-8?B?6LCi5rC45ZCJ?= <xieyongji@bytedance.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75586-lists,linux-fsdevel=lfdr.de];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	TO_DN_ALL(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75587-lists,linux-fsdevel=lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
+	DKIM_TRACE(0.00)[szeredi.hu:+];
+	RCVD_TLS_LAST(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[kartikey406@gmail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel,d80abb5b890d39261e72];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: DEEFE9107D
+	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[4];
+	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MIME_TRACE(0.00)[0:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[szeredi.hu:dkim,mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,bytedance.com:email]
+X-Rspamd-Queue-Id: C9DA29211D
 X-Rspamd-Action: no action
 
-On Tue, Jan 27, 2026 at 2:07=E2=80=AFAM Viacheslav Dubeyko
-<Slava.Dubeyko@ibm.com> wrote:
+On Sun, 4 Jan 2026 at 07:51, Zhang Tianci
+<zhangtianci.1997@bytedance.com> wrote:
 >
-
-
+> Hi all,
 >
-> It looks like we can simply combined to check into one:
+> We have recently encountered a case where aria2c adopts the following
+> IO pattern when downloading files(We enabled writeback_cache option):
 >
-> if (fd->entrylength !=3D rec_len)
+> It allocates file space via fallocate. If fallocate is not supported,
+> it will circularly write 256KB of zero-filled data to the file until it reaches
+> an enough size, and then truncate the file to the desired size. Subsequently,
+> it fills non-zero data into the file through random writes.
 >
-> However, I am not completely sure that it's completely correct fix. Becau=
-se, for
-> example, hfs_cat_find_brec() tries to read hfs_cat_rec union:
+> This causes aria2c to run extremely slowly, which does not meet our
+> expectations,
+> because we have enabled writeback_cache, random writes should not be this slow.
+> After investigation, I found that a readpage operation is performed in every
+> write_begin callback. This is quite odd, as the file was just fully filled with
+> zeros via write operations; the file's page cache should all be uptodate,
+> so there is no need for a readpage. Upon further analysis, I discovered that the
+> root cause is that truncate has invalidated all the page cache.
 >
->         hfs_cat_build_key(sb, fd->search_key, cnid, NULL);
->         res =3D hfs_brec_read(fd, &rec, sizeof(rec));
->         if (res)
->                 return res;
->
-> It means that we provide the bigger length that it is required for struct
-> hfs_cat_file or struct hfs_cat_dir. It sounds to me that the reading of t=
-hese
-> records will be rejected. Am I wrong here?
->
+> I would like to know why the invalidation is performed. After checking the code
+> commit history, I found that this has been the implementation since FUSE added
+> support for the writeback cache mode.
 
-Hi Slava,
+This in fact goes back to the very first version committed into Linus' tree:
 
-Thank you for the feedback! You're absolutely right - using !=3D would brea=
-k
-callers that read unions with different-sized members.
+$ git show d8a5ba45457e4 | grep -C 3 invalidate_inode_pages
++void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr)
++{
++       if (S_ISREG(inode->i_mode) && i_size_read(inode) != attr->size)
++               invalidate_inode_pages(inode->i_mapping);
 
-Instead of validating in hfs_brec_read() (which is generic), I should valid=
-ate
-specifically in hfsplus_find_cat() where we know we're reading a thread rec=
-ord.
+This pattern was copied into setattr and, since it was harmless, left
+there for two centuries.
 
-Here's the corrected approach:
+And because it was there for so long there's a minute chance that some
+fuse filesystem is relying on this behavior, so I'm a bit reluctant to
+change it.
 
----
-
-int hfsplus_find_cat(struct super_block *sb, u32 cnid,
-                     struct hfs_find_data *fd)
-{
-        hfsplus_cat_entry tmp =3D {0};
-        int err;
-        u16 type;
-        u32 min_size;
-
-        hfsplus_cat_build_key_with_cnid(sb, fd->search_key, cnid);
-        err =3D hfs_brec_read(fd, &tmp, sizeof(hfsplus_cat_entry));
-        if (err)
-                return err;
-
-        type =3D be16_to_cpu(tmp.type);
-        if (type !=3D HFSPLUS_FOLDER_THREAD && type !=3D HFSPLUS_FILE_THREA=
-D) {
-                pr_err("found bad thread record in catalog\n");
-                return -EIO;
-        }
-
-++      /* Validate we read a complete thread record */
-++      min_size =3D offsetof(hfsplus_cat_entry, thread.nodeName) +
-++                 offsetof(struct hfsplus_unistr, unicode) +
-++                 be16_to_cpu(tmp.thread.nodeName.length) * 2;
-++      if (fd->entrylength < min_size) {
-++              pr_err("incomplete thread record read (got %u, need %u)\n",
-++                     fd->entrylength, min_size);
-++              return -EIO;
-++      }
-
-        if (be16_to_cpu(tmp.thread.nodeName.length) > 255) {
-                pr_err("catalog name length corrupted\n");
-                return -EIO;
-        }
-
-        hfsplus_cat_build_key_uni(fd->search_key,
-                be32_to_cpu(tmp.thread.parentID),
-                &tmp.thread.nodeName);
-        return hfs_brec_find(fd, hfs_find_rec_by_key);
-}
-
----
-
-This way:
-1. hfs_brec_read() remains generic (doesn't break other callers)
-2. We validate specifically for thread records where we know the
-expected structure
-3. We calculate minimum required size based on the string length the
-record claims
-4. We initialize tmp =3D {0} as defensive programming
-
-Does this look correct?
+And fixing this does not in fact fix the underlying issue.  Manually
+preallocating disk space by writing zero blocks has the size effect of
+priming the page cache as well, which makes the random writes faster.
+Doing the same with fallocate() does not have this side effect and
+would leave the fuse filesystem with the bad performance.
 
 Thanks,
-Deepanshu
+Miklos
 
