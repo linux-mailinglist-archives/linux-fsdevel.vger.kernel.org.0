@@ -1,310 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-75645-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75646-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yHx8DDMceWmPvQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75645-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 21:12:35 +0100
+	id 4JAfBowceWmPvQEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75646-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 21:14:04 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAE379A423
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 21:12:34 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA9959A455
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 21:14:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 71C493011068
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 20:12:31 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 5A6733055D50
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 20:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6BF32D0DD;
-	Tue, 27 Jan 2026 20:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F8D32ED28;
+	Tue, 27 Jan 2026 20:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CDJ/TleG"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="HEJ8AHlZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31F23093DE
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 20:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.175
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769544748; cv=pass; b=OwQShif6rBlhvHbWuUs/dP7o3PDvDDa3JqRcKcowoA08OjwVIoMYmtUAxNd32doVBERDKftbfvv1CCYai1k1yIzkWMYKdVkQAnezjiuziaJCccwxGtqdR6eu50Acdi9Bu1wq27YwLTkh/C5qtOB7lmT8nyLw+5sU6DRC6ROVM4E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769544748; c=relaxed/simple;
-	bh=JJBPPVKMZhTyGU22lX0xiVTke3oW6BaBcC3lfwkZzPs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fl+zNZibtuYJ3Q0my1+t5m6b5b87YsJavJPe00puOPSwKjHeXUG/+hmFgg9SCBgxvKlE78n4Sh6r9nNu2fRoBzZfPTlybUDg+pmPAjZo/LznAOUTneLRQ55CvIL2gov1M88LjNMOQ8tpBcHG/TiUYECqDhklRn/icd0n7/linF8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CDJ/TleG; arc=pass smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-5029901389dso55088271cf.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 12:12:25 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769544745; cv=none;
-        d=google.com; s=arc-20240605;
-        b=JpTJ1tWPwMIa2fCZh5sqAFMjUF1v0nGiMgeRUFddx/kKoAqn7Ref0Iw26YYY6i08+l
-         /0ohxPEpljmxUXF4kmtvWD3hYvb+cYrZ5f69XBrZxlmoTI1hwB1rJGs+isO0Ci4dwj8M
-         dGcD86cLKHt6CvGpmxs9mC3kfKfS3iPZI0C8TX/t6PD+h1hknRQnv2K9WnmIcw6zY3AV
-         9bi+JCkV/YbpK4wT8/iI+TaCyjswQZNc8JXDTPJfykFHs7rgahIXVUVq0x2/18cmXKZo
-         MbY/PxLkWjn+8aky7h9XXD0MkdG+9ts0Zzqc9xXBWb0Gk+Ec+eAKCHCclJKLib9NUqzJ
-         oBlA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Py+NDYxam+4HyU9vi83DYcaSNUJRmmB3oQfidT43VpU=;
-        fh=xpVndYcErXOI4oTIFyXB4OUOYAAyYEFiPsIJY+HVwdQ=;
-        b=B16ulp7lin2C2Skk53sssW14w9FER7DdWecBcbV/LEhjmJsxRH6ydiwG/YAXzlm8sW
-         jdGA0+9o+JhJcEsL/HuQTAAIbbHGEDWHf4bKiE6GGsCSIQmmC3GacrgjftIROpPgQF7f
-         uvD8NbJJNP1/nNnjddrlbkrMlecSVRsbgXh615UwsZXBRk8x10NxeZs80RS8PsTDPqu3
-         pRlkspatj1XJbhoMDPP1UlmVSYHzhjnRmDewLCn7EkCua2wkERus9ym22za727jcKL6m
-         SBLkyj/wj5DajKmDesaJf9KX4N9HnEkp71JArh0QR7YutXbJ0Iiy56zXO2dvndr44UMy
-         nQBg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769544745; x=1770149545; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Py+NDYxam+4HyU9vi83DYcaSNUJRmmB3oQfidT43VpU=;
-        b=CDJ/TleGN4AntUjDnS7nad9XXnU39w08cdluWWf1gXbgH1Hh59ZjgaEebvLgrhizMh
-         IML4+OoyBeXlybj1tCGdmZJ9pgKrYXTN8mH2uvC7nRT43XBk16Mt/SpJX1QTVTlXYvfY
-         qempUAqL0YEsvp8XsSUbeaQQvHuqQBpnEousEyNMovWMn7DfgTGxhh8yRSDysA9YbgD2
-         d94TAmtICaRjSpD89oR5/7oEMNcD7Zrnx4lumMI6fXeMXuMIHYEsNLsveV3L7yaI47qO
-         etzCTjfbGIvvZlFhJzvgFrEKL+u2GLQliao4Q89UdCv+IVvtYbDiAnsVdNjTPXkM44L4
-         cyBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769544745; x=1770149545;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Py+NDYxam+4HyU9vi83DYcaSNUJRmmB3oQfidT43VpU=;
-        b=nBDe2fJo1+LBQNa9xIe0ejz3B/JeyKc1iMtmaao0KGTftBBtd5Cjg/uTi7R0XgnRjb
-         FjWNO5KpedqBLRJP95+0b2oaO7tIdMfZzbT80vVyy6K3qMypjGBxQJuE7QnY/oGftfPG
-         eKEFgip+P3xIOIgt6d2B5pGvC/X1ZQkARutDUp9LwcIGYENSlwt4DiOJOfv1HYO2tczc
-         +jSiDSuqtcH3geInJJYjg0rDVjQ5ngKrWf4cCH1VPSKfJvsWWqqWmMKCRPaszTknoIzn
-         bVEyuAme1d1nEn8VVsiaHV8LGqA0IEVQqRe910U8huUJNc9rADQVJczPOOqo7V2j9fW+
-         X2rg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhyBBg7rCBld8TRD//xNaJUmIHwi0vXa37WpcPPAiTXGvmhkmb0OYzaxMYSGXg3qYweToR0QtdvzEI9gNN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo4ascH3hO0deZNoN0XC1JC+t/t/LfyLQx7A3Wj5wSzSOkzwe5
-	2dD8NdFeHZnFbPfwHcYg3eDNZUoyPOwf1PCr1uiQQ9MPslm/ZmZpQOwF3Dg9qnEtSkN4X6s+RSN
-	dwQNHDGZr9c1HKvhXxgHjbvkEfbMTqqg=
-X-Gm-Gg: AZuq6aJXduyN/nnGidkfypxSKyH/lBjUsNyRzPD6wxKh5q0VCym3O1Vap8jG+F4b5Jn
-	gMyR8jJhTq8/Zl632ERFFfaDKCQBhx0ec2guwbw5BCjaKJ5SmYZJS3CVvif08EQbuP3rNyUSz+Y
-	Z5np/7Cvs3eAUm7r+D8jdrtEiwMdV9zKXf5gGIDgfgV3EpwtR2rx/w5N4auXE1eXyizTZ0G+OKq
-	ciXpaFJsfY7w+pEVPda9yKY1M3cvGEq/bVgfXuqB2zQyQzjnVoZPwA+uuvc2ld0ol1AUw==
-X-Received: by 2002:a05:622a:189f:b0:4f1:ba4d:deb1 with SMTP id
- d75a77b69052e-5032fa0964fmr38493761cf.46.1769544743289; Tue, 27 Jan 2026
- 12:12:23 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB8032ED38;
+	Tue, 27 Jan 2026 20:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769544796; cv=none; b=mnopJc4JIlq9BLo8zlBLcK+4MlggSPRN3aIDTjTGl+HmKT5B4ticu8fDA/pvAMBX/yh5QNV4T0czxZhZvtbJDGIa3nXeBfBMFT8MTAl3JQh/8PFEfnnzaDd0KqDF1jmO6qGjwOiD5YTUsuR9pvNAuvaOX49oq3fcLc6HW3BPT10=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769544796; c=relaxed/simple;
+	bh=DkWAjAr3ro/0362KFmc8W3ZifYIfv/tTjACTZ8M1odA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GVaBXhmxj66ON2s+v2Dc3szyVc/CaH00pgUouBo4Safsu7tgxT93pxOd+ns943FR+Zq8viA8Mlnpz1gPBijQCI/X6JwldXbXqMrWQw3I/vILfS17Nl/sEITUV1Y8VXZ7ho1ahkr4vklTlOpav6w+o7vrsSH0DykQZkW5QLjRc74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=HEJ8AHlZ; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BThmTYQxvIJzQkA/L/WO0umKgcoH0NckbPSOFRkaDt4=; b=HEJ8AHlZg14JJPbg8QtNWS1ji2
+	tJT/2Fs1T5x5ADAyCAF83hSNvt9o3z0K3RSxk2gUB8Da5/tSbaBFKwqw22nB9KSBEdLXuDL7FqPew
+	7Y+0P4xYkRhvZjXTFdCSvNynNniJgE6ZN0ESEh44Vc7Ehkj50lCswNvXEYERPQvdfeH75yQduHjQN
+	Pq05K/lmA3+K8RokHDK11A0sXSW/FfXFcjSMTd9/8b2Gfp8Iz6ORbZwkKjtp/91tEjK8DcKs1Smzh
+	pMHt05iiq6RxHZG8nxYrYmxa8r2p827g4+Rly5OrSWZkh9CWcaNv1tRLRrbeWiJeWu+s2oV5wvc/f
+	Bx+2nTwQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1vkpSg-00000001D3Z-2Fqa;
+	Tue, 27 Jan 2026 20:14:54 +0000
+Date: Tue, 27 Jan 2026 20:14:54 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Samuel Wu <wusamuel@google.com>,
+	linux-fsdevel@vger.kernel.org, brauner@kernel.org, jack@suse.cz,
+	raven@themaw.net, miklos@szeredi.hu, neil@brown.name,
+	a.hindborg@kernel.org, linux-mm@kvack.org,
+	linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev,
+	kees@kernel.org, rostedt@goodmis.org, linux-usb@vger.kernel.org,
+	paul@paul-moore.com, casey@schaufler-ca.com,
+	linuxppc-dev@lists.ozlabs.org, john.johansen@canonical.com,
+	selinux@vger.kernel.org, borntraeger@linux.ibm.com,
+	bpf@vger.kernel.org, clm@meta.com,
+	android-kernel-team <android-kernel-team@google.com>
+Subject: Re: [PATCH v4 00/54] tree-in-dcache stuff
+Message-ID: <20260127201454.GQ3183987@ZenIV>
+References: <20251118051604.3868588-1-viro@zeniv.linux.org.uk>
+ <CAG2KctrjSP+XyBiOB7hGA2DWtdpg3diRHpQLKGsVYxExuTZazA@mail.gmail.com>
+ <2026012715-mantra-pope-9431@gregkh>
+ <CAHk-=whME4fu2Gn+W7MPiFHqwn51VByhpttf-wHdhAqQAQXpqw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260116233044.1532965-1-joannelkoong@gmail.com>
-In-Reply-To: <20260116233044.1532965-1-joannelkoong@gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 27 Jan 2026 12:12:11 -0800
-X-Gm-Features: AZwV_Qi3POI6J03YkckRItEKw5pFk9mRb8BgUJIg8waJ96yPvnv15BsZkw5x2JU
-Message-ID: <CAJnrk1Z-9rsP86Fc=57P9gy=vFjfjT8nuAgE2_snL3_vfbbBmg@mail.gmail.com>
-Subject: Re: [PATCH v4 00/25] fuse/io-uring: add kernel-managed buffer rings
- and zero-copy
-To: axboe@kernel.dk, miklos@szeredi.hu
-Cc: bschubert@ddn.com, csander@purestorage.com, krisman@suse.de, 
-	io-uring@vger.kernel.org, asml.silence@gmail.com, xiaobing.li@samsung.com, 
-	safinaskar@gmail.com, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whME4fu2Gn+W7MPiFHqwn51VByhpttf-wHdhAqQAQXpqw@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+X-Spamd-Result: default: False [-1.66 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[zeniv.linux.org.uk,none];
+	R_DKIM_ALLOW(-0.20)[linux.org.uk:s=zeniv-20220401];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[ddn.com,purestorage.com,suse.de,vger.kernel.org,gmail.com,samsung.com];
-	FROM_HAS_DN(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	TAGGED_FROM(0.00)[bounces-75645-lists,linux-fsdevel=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75646-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
-	TO_DN_NONE(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
 	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[viro@zeniv.linux.org.uk,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[linux.org.uk:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	FREEMAIL_FROM(0.00)[gmail.com]
-X-Rspamd-Queue-Id: DAE379A423
+	RCPT_COUNT_TWELVE(0.00)[25];
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Queue-Id: AA9959A455
 X-Rspamd-Action: no action
 
-On Fri, Jan 16, 2026 at 3:31=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
-m> wrote:
->
-> This series adds buffer ring and zero-copy capabilities to fuse over io-u=
-ring.
-> This requires adding a new kernel-managed buf (kmbuf) ring type to io-uri=
-ng
-> where the buffers are provided and managed by the kernel instead of by
-> userspace.
->
-> On the io-uring side, the kmbuf interface is basically identical to pbufs=
-.
-> They differ mostly in how the memory region is set up and whether it is
-> userspace or kernel that recycles back the buffer. Internally, the
-> IOBL_KERNEL_MANAGED flag is used to mark the buffer ring as kernel-manage=
-d.
->
-> The zero-copy work builds on top of the infrastructure added for
-> kernel-managed buffer rings (the bulk of which is in patch 19: "fuse: add
-> io-uring kernel-managed buffer ring") and that informs some of the design
-> choices for how fuse uses the kernel-managed buffer ring without zero-cop=
-y.
+On Tue, Jan 27, 2026 at 10:39:04AM -0800, Linus Torvalds wrote:
+> On Mon, 26 Jan 2026 at 23:42, Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > Note that I had to revert commit e5bf5ee26663 ("functionfs: fix the
+> > open/removal races") from the stable backports, as it was causing issues
+> > on the pixel devices it got backported to.  So perhaps look there?
+> 
+> Hmm. That commit is obviously still upstream, do we understand why it
+> caused problems in the backports?
 
-Could anyone on the fuse side review the fuse changes in patches 19 and 24?
+This is all I've seen:
 
-Thanks,
-Joanne
+| It has been reported to cause test problems in Android devices.  As the
+| other functionfs changes were not also backported at the same time,
+| something is out of sync.  So just revert this one for now and it can
+| come back in the future as a patch series if it is tested.
 
->
-> There was a previous submission for supporting registered buffers in fuse=
- [1]
-> but that was abandoned in favor of using kernel-managed buffer rings, whi=
-ch,
-> once incremental buffer consumption is added in a later patchset, gives
-> significant memory usage advantages in allowing the full buffer capacity =
-to be
-> utilized across multiple requests, as well as offers more flexibility for
-> future additions. As well, it also makes the userspace side setup simpler=
-.
-> The relevant refactoring fuse patches from the previous submission are ca=
-rried
-> over into this one.
->
-> Benchmarks for zero-copy (patch 24) show approximately the following
-> differences in throughput for bs=3D1M:
->
-> direct randreads: ~20% increase (~2100 MB/s -> ~2600 MB/s)
-> buffered randreads: ~25% increase (~1900 MB/s -> 2400 MB/s)
-> direct randwrites: no difference (~750 MB/s)
-> buffered randwrites: ~10% increase (950 MB/s -> 1050 MB/s)
->
-> The benchmark was run using fio on the passthrough_hp server:
-> fio --name=3Dtest_run --ioengine=3Dsync --rw=3Drand{read,write} --bs=3D1M
-> --size=3D1G --numjobs=3D2 --ramp_time=3D30 --group_reporting=3D1
->
-> This series is on top of commit b71e635feefc in the io-uring tree.
->
-> The libfuse changes can be found in [2]. This has a dependency on the lib=
-uring
-> changes in [3]. To test the server, you can run it with:
-> sudo ~/libfuse/build/example/passthrough_hp ~/src ~/mounts/tmp
-> --nopassthrough -o io_uring_zero_copy -o io_uring_q_depth=3D8
->
-> Thanks,
-> Joanne
->
-> [1] https://lore.kernel.org/linux-fsdevel/20251027222808.2332692-1-joanne=
-lkoong@gmail.com/
-> [2] https://github.com/joannekoong/libfuse/tree/zero_copy
-> [3] https://github.com/joannekoong/liburing/tree/kmbuf
->
-> v3: https://lore.kernel.org/linux-fsdevel/20251223003522.3055912-1-joanne=
-lkoong@gmail.com/
-> v3 -> v4:
-> * Get rid of likely()s and get rid of going through cmd interface layer (=
-Gabriel)
-> * Fix io_uring_cmd_fixed_index_get() to return back the node pointer (Cal=
-eb)
-> * Add documentation for io_buffer_register_bvec (Caleb)
-> * Remove WARN_ON_ONCE() for io_buffer_unregister() call (Caleb)
->
-> v2: https://lore.kernel.org/linux-fsdevel/20251218083319.3485503-1-joanne=
-lkoong@gmail.com/
-> v2 -> v3:
-> * fix casting between void * and u64 for 32-bit architectures (kernel tes=
-t robot)
-> * add newline for documentation bullet points (kernel test robot)
-> * fix unrecognized "boolean" (kernel test robot), switch it to a flag (me=
-)
->
-> v1: https://lore.kernel.org/linux-fsdevel/20251203003526.2889477-1-joanne=
-lkoong@gmail.com/
-> v1 -> v2:
-> * drop fuse buffer cleanup on ring death, which makes things a lot simple=
-r (Jens)
->   - this drops a lot of things (eg needing ring_ctx tracking, needing cal=
-lback
->     for ring death, etc)
-> * drop fixed buffer pinning altogether and just do lookup every time (Jen=
-s)
->   (didn't significantly affect the benchmark results seen)
-> * fix spelling mistake in docs (Askar)
-> * use -EALREADY for pinning already pinned bufring, return PTR_ERR for
->    registration instead of err, move initializations to outside locks (Ca=
-leb)
-> * drop fuse patches for zero-ed out headers (me)
->
-> Joanne Koong (25):
->   io_uring/kbuf: refactor io_buf_pbuf_register() logic into generic
->     helpers
->   io_uring/kbuf: rename io_unregister_pbuf_ring() to
->     io_unregister_buf_ring()
->   io_uring/kbuf: add support for kernel-managed buffer rings
->   io_uring/kbuf: add mmap support for kernel-managed buffer rings
->   io_uring/kbuf: support kernel-managed buffer rings in buffer selection
->   io_uring/kbuf: add buffer ring pinning/unpinning
->   io_uring/kbuf: add recycling for kernel managed buffer rings
->   io_uring: add io_uring_fixed_index_get() and
->     io_uring_fixed_index_put()
->   io_uring/kbuf: add io_uring_is_kmbuf_ring()
->   io_uring/kbuf: export io_ring_buffer_select()
->   io_uring/kbuf: return buffer id in buffer selection
->   io_uring/cmd: set selected buffer index in __io_uring_cmd_done()
->   fuse: refactor io-uring logic for getting next fuse request
->   fuse: refactor io-uring header copying to ring
->   fuse: refactor io-uring header copying from ring
->   fuse: use enum types for header copying
->   fuse: refactor setting up copy state for payload copying
->   fuse: support buffer copying for kernel addresses
->   fuse: add io-uring kernel-managed buffer ring
->   io_uring/rsrc: rename
->     io_buffer_register_bvec()/io_buffer_unregister_bvec()
->   io_uring/rsrc: split io_buffer_register_request() logic
->   io_uring/rsrc: Allow buffer release callback to be optional
->   io_uring/rsrc: add io_buffer_register_bvec()
->   fuse: add zero-copy over io-uring
->   docs: fuse: add io-uring bufring and zero-copy documentation
->
->  Documentation/block/ublk.rst                  |  14 +-
->  .../filesystems/fuse/fuse-io-uring.rst        |  59 +-
->  drivers/block/ublk_drv.c                      |  18 +-
->  fs/fuse/dev.c                                 |  30 +-
->  fs/fuse/dev_uring.c                           | 692 ++++++++++++++----
->  fs/fuse/dev_uring_i.h                         |  42 +-
->  fs/fuse/fuse_dev_i.h                          |   8 +-
->  include/linux/io_uring/buf.h                  |  25 +
->  include/linux/io_uring/cmd.h                  |  97 ++-
->  include/linux/io_uring_types.h                |  10 +-
->  include/uapi/linux/fuse.h                     |  17 +-
->  include/uapi/linux/io_uring.h                 |  17 +-
->  io_uring/kbuf.c                               | 355 +++++++--
->  io_uring/kbuf.h                               |  19 +-
->  io_uring/memmap.c                             | 117 ++-
->  io_uring/memmap.h                             |   4 +
->  io_uring/register.c                           |   9 +-
->  io_uring/rsrc.c                               | 183 ++++-
->  io_uring/uring_cmd.c                          |   6 +-
->  19 files changed, 1447 insertions(+), 275 deletions(-)
->  create mode 100644 include/linux/io_uring/buf.h
->
-> --
-> 2.47.3
->
+My apologies for not following up on that one; Greg, could you give some
+references to those reports?
 
