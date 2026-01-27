@@ -1,175 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-75621-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75623-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CIXgNxPXeGmUtgEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75621-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 16:17:39 +0100
+	id WJMrNDfjeGkztwEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75623-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 17:09:27 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72C9F9682E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 16:17:39 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9594497743
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 17:09:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 6AE7A3118461
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 15:05:06 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id B7D873033842
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 15:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5C135CB7A;
-	Tue, 27 Jan 2026 15:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UA032jrZ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE87735D5EA;
+	Tue, 27 Jan 2026 15:16:16 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com [74.125.82.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C345311596
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 15:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E5235D60B;
+	Tue, 27 Jan 2026 15:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769526296; cv=none; b=nUiRHcebIkfxjlkaRNHsQxkYBRYQVLTREbavG/BRHK/mezr/2IMjZ1HD1WleK4mTUMY4bc80RBwogPvz4CGqC4lzv6i9uwR2ue9j/X2jX2HbH3XdIjYKHo90w31GPtmE38XEVOfbydC8cFmCiqIP2Nw+n6+Yq2eOsYcgyAa81sY=
+	t=1769526976; cv=none; b=g5q9V8PWSjlOC3zMAvzXOTxRAxZ26I/nP0LpL1VFpBDoWnOcAdpuAu+WPFYIb1gDqK+Su5Ln8sT010AVoiOm+IQx5Q4bA7kv715OvZx8AZn+oSkMGs8xwHo7VBCG7bT2ZnmbGarZjvoUgU9vKlNaOwg0aMU+zgGfVwsh48TyX7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769526296; c=relaxed/simple;
-	bh=fzAvvFvg2NMOEmxo0qD2egnIC0422shul4ad6BkvdIE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Sfd7M2o60W0+Q0k/Zrkfv9rHa2+4ZSnOeD9Or5L5/Efd5EW96/dxdfEVe6bcl9ILG/ZC8Xpk3/I2yzF86f/4ItG3zWe8L9x5+AfzfnJYU9fj9PaRgue4z7fV4DKNvqtRX1kGBqEVPTPlOeMErHa/v3VYYxHwNsBXzYjPmOxg/e4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UA032jrZ; arc=none smtp.client-ip=74.125.82.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-dy1-f175.google.com with SMTP id 5a478bee46e88-2b729f4c154so10109907eec.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 07:04:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769526294; x=1770131094; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xZVogJ27pgSKdZ5YmHMcdX+mPuBmmbvugZHLoT7NyCA=;
-        b=UA032jrZ1Yb4EeTQZKG0x/ZGGaJsOo5k8Vu9sYQ8rmhC6jPTz53t7Be/Bct11F+mUo
-         JyVVUYXLM8esu/Xi2g2MIT7Wk6mvTBnCniNtyyHD5TSrepcCHYlGzMO0YxE3u/bMXXLY
-         Cf6znNouYnJC75Zlb8WDVJz3dHUy8Xg/QfOcr8+ggP/2EodAN+JC8+EGcaaLOMgioDOx
-         GPcDferKBrRhat1KnAfDXVfgSgKZJUJiCtJPV8HCCHwY+y8oagf8nvux6FtBzgW5aIpn
-         sv8R7dU6Xu4WdxgzXfiTZE6LwoPJbheozfUj7NF+FeIJY4kymrC5Lx4R4bLthx4r6O0/
-         6UpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769526294; x=1770131094;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xZVogJ27pgSKdZ5YmHMcdX+mPuBmmbvugZHLoT7NyCA=;
-        b=K6sM2tr0gxvmIGmnxSWtyiAb5qx8VqxEv/cyvtLtLoXoX3i/qNdMf1XaFeMaJRRMve
-         LykGg/cWW08BDQg5YynPnrf1K1qBRPJzJ8+qLjnE2msZk5XZhV/uEouw/zI5WHMVhxTw
-         Bm47sc2O/KpnPcQ3ax066hlnIUzMGZxw02KRJiLaBONnKqTVUF1IeSvJszMSbQ/sR1ue
-         WOsmZoyHa+Lq5rHW3lcB/QCRYfDg+kH0blrloh7i1SLrLdoyS0rmV6c8SjJZV75heqDI
-         G3GIW5sysqxad+ubLz/93tXdFeRmf/6Y29DR4Kkz7IP/hR2A2vCwN703z7BKhqROVBEd
-         JqDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXqGg6xjsBSxKnP6qdP7fgCzFDWzro47In6W3pqUMgjb2acubEz773gePDRnKRelW0qpm3du6RRG+2yheyP@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCBKCcplIyhPbYwasQhiIoUMlKkAky62Gh7gIXfZ4OmUk09ESz
-	q4VHrG1HufDp8a5zt3sD81/v2ZE90psSbgsbb5u28EFq4+0bvYYCmnFV
-X-Gm-Gg: AZuq6aLJ7yCaPd3JYd7oTtr6P3mZlXF4m3aEKl/Vq4UP2/R8i7KOcOOq8zfKbqipX6t
-	ZoQYpXZyf6lr/M69V2I96VdOwVSF8E+tZEhxwAOlKrDjuzbFdstThIXC9YJfHEyYcjUx/KuPANE
-	mZ1NvqSU6+iEIw73yx8u9clPugpN0qp8E/Ri33Y3OtXIA7/aHRoMIJlpgwNHb2UmBOqbhX1HK7a
-	7eQ80mZdGiC/Dglw85m7uE6QMtO8v1NxwhVQjTEXlSVyg8POLrWyv0HlHzDjY1cWztJQP9NfAW3
-	/TjWS2t9nEknp85+DW/3jWHodTmytJPYFRD1sCMCcEfqd6OKGWMzJaNUeRjm0foDAUCnIFBqvjJ
-	O1Hi9PHvNdYpDL/kxLcjDtqGfRQ1JXJQZ7syytRRX1KRDl3zjnJru2QTOX6Jf+p3AKUqJynTDLd
-	TaLpfobczwsFH9EbMKWRZMtME=
-X-Received: by 2002:a05:7300:cc12:b0:2b7:1a4a:d564 with SMTP id 5a478bee46e88-2b78da4a239mr1345551eec.42.1769526294106;
-        Tue, 27 Jan 2026 07:04:54 -0800 (PST)
-Received: from VM-16-24-fedora.. ([43.153.32.141])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b73a6925d3sm17964031eec.7.2026.01.27.07.04.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Jan 2026 07:04:53 -0800 (PST)
-From: alexjlzheng@gmail.com
-X-Google-Original-From: alexjlzheng@tencent.com
-To: oleg@redhat.com,
-	usamaarif642@gmail.com,
-	david@kernel.org,
-	akpm@linux-foundation.org,
-	lorenzo.stoakes@oracle.com,
-	alexjlzheng@tencent.com,
-	mingo@kernel.org,
-	ruippan@tencent.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] procfs: fix missing RCU protection when reading real_parent in do_task_stat()
-Date: Tue, 27 Jan 2026 23:04:50 +0800
-Message-ID: <20260127150450.2073236-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1769526976; c=relaxed/simple;
+	bh=pmEU1/GjeEWtU5JBXeKFHL6rzRm4Dv+qk3Ok9xl6wR4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DRgXNhTZZaYXacoqJXCorivUC6DrkVcPZ7vr423SLl7nNpYBPr9gHTmvpT49OopPkXGTQTbiTQN7QWb9xei6/ALMduS1nvt/gNNsoqucFq8d9ymSFA0anRxdEC8cA0IwR0c1n16aC59rcK/trBVyvtpMjupXnJLp5gXV6i39iQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 3EEDB227AAA; Tue, 27 Jan 2026 16:16:10 +0100 (CET)
+Date: Tue, 27 Jan 2026 16:16:09 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Anuj gupta <anuj1072538@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Christian Brauner <brauner@kernel.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Carlos Maiolino <cem@kernel.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Anuj Gupta <anuj20.g@samsung.com>,
+	Kanchan Joshi <joshi.k@samsung.com>, linux-block@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: Re: support file system generated / verified integrity information
+Message-ID: <20260127151609.GA1883@lst.de>
+References: <20260121064339.206019-1-hch@lst.de> <CACzX3AuDkwEw3v0bNmYLk8updk1ghVJa-T9o=EHXor9FA7badw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACzX3AuDkwEw3v0bNmYLk8updk1ghVJa-T9o=EHXor9FA7badw@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-1.36 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
+	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75621-lists,linux-fsdevel=lfdr.de];
-	FROM_NEQ_ENVFROM(0.00)[alexjlzheng@gmail.com,linux-fsdevel@vger.kernel.org];
-	RCVD_COUNT_FIVE(0.00)[5];
-	FREEMAIL_TO(0.00)[redhat.com,gmail.com,kernel.org,linux-foundation.org,oracle.com,tencent.com];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
+	TAGGED_FROM(0.00)[bounces-75623-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[13];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
-	TO_DN_NONE(0.00)[];
-	FROM_NO_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	R_DKIM_NA(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,tencent.com:mid,tencent.com:email]
-X-Rspamd-Queue-Id: 72C9F9682E
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,lst.de:mid]
+X-Rspamd-Queue-Id: 9594497743
 X-Rspamd-Action: no action
 
-From: Jinliang Zheng <alexjlzheng@tencent.com>
+On Tue, Jan 27, 2026 at 08:24:28PM +0530, Anuj gupta wrote:
+> Hi Christoph,
+> 
+> Here are the QD1 latency numbers (in usec)
 
-When reading /proc/[pid]/stat, do_task_stat() accesses task->real_parent
-without proper RCU protection, which leads:
+Thanks a lot!
 
-  cpu 0                               cpu 1
-  -----                               -----
-  do_task_stat
-    var = task->real_parent
-                                      release_task
-                                        call_rcu(delayed_put_task_struct)
-    task_tgid_nr_ns(var)
-      rcu_read_lock   <--- Too late!
-      task_pid_ptr    <--- UAF!
-      rcu_read_unlock
+Adding in the baseline numbers, as I wanted to compare those:
 
-This fix adds proper RCU protection similar to getppid() in kernel/sys.c
-which correctly uses rcu_dereference() when accessing current->real_parent.
+> Intel Optane:
+> 
+> Sequential read
+>   | size | baseline | xfs-bounce |  xfs-pi  |
+>   +------+----------+-----------+-----------+
+>   |   4k |    7.18  |    13.62   |     7.20 |
+>   |  64K |   36.40  |    99.66   |    34.16 |
+>   |   1M |  206.38  |   258.88   |   306.23 |
+>   +------+----------+------------+----------+
 
-Fixes: 06fffb1267c9 ("do_task_stat: don't take rcu_read_lock()")
-Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
----
- fs/proc/array.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/fs/proc/array.c b/fs/proc/array.c
-index 42932f88141a..3c2eea2c551a 100644
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -528,7 +528,9 @@ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
- 		}
- 
- 		sid = task_session_nr_ns(task, ns);
--		ppid = task_tgid_nr_ns(task->real_parent, ns);
-+		rcu_read_lock();
-+		ppid = task_tgid_nr_ns(rcu_dereference(task->real_parent), ns);
-+		rcu_read_unlock();
- 		pgid = task_pgrp_nr_ns(task, ns);
- 
- 		unlock_task_sighand(task, &flags);
--- 
-2.39.3
-
+So for 4k and 64k reads we basically get back to the baseline.
+The 1M numbers are puzzling, though.  I wonder if we need to
+add WQ_CPU_INTENSIVE or do some other tweaks to the XFS I/O
+completion workqueue so that we don't overload the scheduler.
 
