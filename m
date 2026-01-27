@@ -1,498 +1,310 @@
-Return-Path: <linux-fsdevel+bounces-75644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75645-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id eJK4NxAceWmPvQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 21:12:00 +0100
+	id yHx8DDMceWmPvQEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75645-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 21:12:35 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 418FA9A40B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 21:12:00 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAE379A423
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 21:12:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id F38743039C90
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 20:11:48 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 71C493011068
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 20:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D462032E6BF;
-	Tue, 27 Jan 2026 20:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6BF32D0DD;
+	Tue, 27 Jan 2026 20:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wdh2/jKk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CDJ/TleG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0D123D2A3;
-	Tue, 27 Jan 2026 20:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31F23093DE
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 20:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.175
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769544706; cv=fail; b=QHvooYjHZLaqgnPHKu95vz6XDP1HUJdri89gS8L3fQaFIFDjBtxo4kfZCTOiDJ8fsUaAaYY3P8H30pTRgczTNf6tppPuwGjL9enX1FAspf6/adRJ3RVQnl8YQ7pAdiKpIIgARW/tOzAMKTqVvjmJr53iUfeUEew/sv7HM24Jk4A=
+	t=1769544748; cv=pass; b=OwQShif6rBlhvHbWuUs/dP7o3PDvDDa3JqRcKcowoA08OjwVIoMYmtUAxNd32doVBERDKftbfvv1CCYai1k1yIzkWMYKdVkQAnezjiuziaJCccwxGtqdR6eu50Acdi9Bu1wq27YwLTkh/C5qtOB7lmT8nyLw+5sU6DRC6ROVM4E=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769544706; c=relaxed/simple;
-	bh=jVXGST8geEdXJSb7UHoTY42zaPcs5BHlcvHzju0peLg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=HkCeolFbfVZ1j8/UUSR/wbUJAv+ZK6lOjGCEGB68BJ4z1zR20XyKX8sjBSfMWk5/EtmWHsx/OLp8kVBpQeQLxL7nnKUfDJfE/9kX9MoDSBFxxJg0exPTvPxlOGDXpnTnoR744Dmu5p6ZsVszD/CthVX3d3+ATjGjMif4zDMqrTo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wdh2/jKk; arc=fail smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1769544704; x=1801080704;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=jVXGST8geEdXJSb7UHoTY42zaPcs5BHlcvHzju0peLg=;
-  b=Wdh2/jKkIxJf2Wi0nORHoidbvgXMgIZ42TCCcEtNmtmtQLyFLIxk1t5s
-   jG4gGKgSBPN3UJMf1dLbX0rPRDWeO/kBTPeR78IDJOEpwYUNyQALifq+B
-   T6+yfeOq+5XA8CuB0QUW+Ee9cEqP8ki1U5DiC92SnVuzlyVx7txFOkxSS
-   6hdJyq3OBKeXFKztXirk8e05Gqx46KF3rMVnJ8NzdGBN3iNTZGvV9wzw9
-   Cgjot4MzrG/9CNOoktVfmwqwNHUJLZo/7Gv8orLCHgA3LAjtdor48xPTb
-   yglB84BUYUeljIgYsQWGQSj+RqojsqPxpMYQgsMxegkk+qSc+kMQb2cE6
-   A==;
-X-CSE-ConnectionGUID: kp7K5MLZQEmJFNkTAe/B7Q==
-X-CSE-MsgGUID: i3HRNinKTRWZsvtTdh8bLg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11684"; a="69950741"
-X-IronPort-AV: E=Sophos;i="6.21,257,1763452800"; 
-   d="scan'208";a="69950741"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2026 12:11:43 -0800
-X-CSE-ConnectionGUID: wS4U9vEnQBmT2YSLrC48+w==
-X-CSE-MsgGUID: bdw/ImMnQHCW4gksvj2ILA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,257,1763452800"; 
-   d="scan'208";a="207311220"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2026 12:11:42 -0800
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35; Tue, 27 Jan 2026 12:11:41 -0800
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35 via Frontend Transport; Tue, 27 Jan 2026 12:11:41 -0800
-Received: from CH1PR05CU001.outbound.protection.outlook.com (52.101.193.64) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35; Tue, 27 Jan 2026 12:11:41 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=B0IoEErzmWnTH8V0iiAAXZbCuxPtARxhReFVq/e/ETFMTt4haqG5xRynFaU8fXLqNiHWNIox/zBm2MuvEQVbJ54+8Lbj7zyll7nHiNqgmvPzrxO19+c5fkXZGee8/jmBZ0VqGTmn2oWS/7k9N7XZJKh6X2lpmOIMrKrOZeU0bJcZfm+GuwLPRzdgbuNLAVFszzIoK4Kg/pD2dUQWzUiJvodiYwQFaQk89qyjYUO1Ru23rHwk/CXtT94If7BJc7L2yWnOrJggR0e/c20loubmeLrOWHkHtWAfGZRL6elFZLAYqbo0FQFqzuTtDXkPJjbYFOdKfNPciMkkUKPfCaa/hw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nzrbnca8Nw2Csx9quIq2MzYsoD1++KKxaFY9d1KQ094=;
- b=NaoubTyCtOhD8vIY2yG2CQNMQFNdT23825LZkviPROwYARqtP3jzvv/sgN+YBxFijs6Yz6HUhXiaqeOA3RPoMPjDyHTSJl0NYWt2ljT5lsbepsP6OI8cTTeorFr/fDTHmZKUfHehNXUy22qw4kX6tblZognCfioIMNz55jjz4PXPopbZUuE2Fy2VigNxMT22TeqznwXRbQGVQVNQxMG3qoHPxJeejd66dWUoVG3lbDGKYWX+pV38xahYe9/zBMG/RMzGC3NHR+qsKgac2g2g4AhxUsHSe8MW/FGa61/Ly2EY3Ek+DIFbFr5y0+kLe/n6ynUh3yDkuttDdHD9wngUzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS4PPF0BAC23327.namprd11.prod.outlook.com (2603:10b6:f:fc02::9)
- by SA1PR11MB6783.namprd11.prod.outlook.com (2603:10b6:806:25f::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.15; Tue, 27 Jan
- 2026 20:11:39 +0000
-Received: from DS4PPF0BAC23327.namprd11.prod.outlook.com
- ([fe80::46c9:7f71:993d:8aee]) by DS4PPF0BAC23327.namprd11.prod.outlook.com
- ([fe80::46c9:7f71:993d:8aee%8]) with mapi id 15.20.9564.006; Tue, 27 Jan 2026
- 20:11:38 +0000
-Date: Tue, 27 Jan 2026 12:11:32 -0800
-From: Alison Schofield <alison.schofield@intel.com>
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Yazen Ghannam <yazen.ghannam@amd.com>, Dave Jiang <dave.jiang@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, Matthew Wilcox <willy@infradead.org>,
-	Jan Kara <jack@suse.cz>, "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown
-	<len.brown@intel.com>, Pavel Machek <pavel@kernel.org>, Li Ming
-	<ming.li@zohomail.com>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>, "Ying
- Huang" <huang.ying.caritas@gmail.com>, Yao Xingtao <yaoxt.fnst@fujitsu.com>,
-	Peter Zijlstra <peterz@infradead.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Nathan Fontenot <nathan.fontenot@amd.com>,
-	Terry Bowman <terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>,
-	Benjamin Cheatham <benjamin.cheatham@amd.com>, Zhijian Li
-	<lizhijian@fujitsu.com>, Borislav Petkov <bp@alien8.de>, Tomasz Wolski
-	<tomasz.wolski@fujitsu.com>
-Subject: Re: [PATCH v5 6/7] dax/hmem, cxl: Defer and resolve ownership of
- Soft Reserved memory ranges
-Message-ID: <aXkb9BwPDfMeOCe1@aschofie-mobl2.lan>
-References: <20260122045543.218194-1-Smita.KoralahalliChannabasappa@amd.com>
- <20260122045543.218194-7-Smita.KoralahalliChannabasappa@amd.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260122045543.218194-7-Smita.KoralahalliChannabasappa@amd.com>
-X-ClientProxiedBy: SJ0PR03CA0120.namprd03.prod.outlook.com
- (2603:10b6:a03:333::35) To DS4PPF0BAC23327.namprd11.prod.outlook.com
- (2603:10b6:f:fc02::9)
+	s=arc-20240116; t=1769544748; c=relaxed/simple;
+	bh=JJBPPVKMZhTyGU22lX0xiVTke3oW6BaBcC3lfwkZzPs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fl+zNZibtuYJ3Q0my1+t5m6b5b87YsJavJPe00puOPSwKjHeXUG/+hmFgg9SCBgxvKlE78n4Sh6r9nNu2fRoBzZfPTlybUDg+pmPAjZo/LznAOUTneLRQ55CvIL2gov1M88LjNMOQ8tpBcHG/TiUYECqDhklRn/icd0n7/linF8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CDJ/TleG; arc=pass smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-5029901389dso55088271cf.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 12:12:25 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769544745; cv=none;
+        d=google.com; s=arc-20240605;
+        b=JpTJ1tWPwMIa2fCZh5sqAFMjUF1v0nGiMgeRUFddx/kKoAqn7Ref0Iw26YYY6i08+l
+         /0ohxPEpljmxUXF4kmtvWD3hYvb+cYrZ5f69XBrZxlmoTI1hwB1rJGs+isO0Ci4dwj8M
+         dGcD86cLKHt6CvGpmxs9mC3kfKfS3iPZI0C8TX/t6PD+h1hknRQnv2K9WnmIcw6zY3AV
+         9bi+JCkV/YbpK4wT8/iI+TaCyjswQZNc8JXDTPJfykFHs7rgahIXVUVq0x2/18cmXKZo
+         MbY/PxLkWjn+8aky7h9XXD0MkdG+9ts0Zzqc9xXBWb0Gk+Ec+eAKCHCclJKLib9NUqzJ
+         oBlA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=Py+NDYxam+4HyU9vi83DYcaSNUJRmmB3oQfidT43VpU=;
+        fh=xpVndYcErXOI4oTIFyXB4OUOYAAyYEFiPsIJY+HVwdQ=;
+        b=B16ulp7lin2C2Skk53sssW14w9FER7DdWecBcbV/LEhjmJsxRH6ydiwG/YAXzlm8sW
+         jdGA0+9o+JhJcEsL/HuQTAAIbbHGEDWHf4bKiE6GGsCSIQmmC3GacrgjftIROpPgQF7f
+         uvD8NbJJNP1/nNnjddrlbkrMlecSVRsbgXh615UwsZXBRk8x10NxeZs80RS8PsTDPqu3
+         pRlkspatj1XJbhoMDPP1UlmVSYHzhjnRmDewLCn7EkCua2wkERus9ym22za727jcKL6m
+         SBLkyj/wj5DajKmDesaJf9KX4N9HnEkp71JArh0QR7YutXbJ0Iiy56zXO2dvndr44UMy
+         nQBg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769544745; x=1770149545; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Py+NDYxam+4HyU9vi83DYcaSNUJRmmB3oQfidT43VpU=;
+        b=CDJ/TleGN4AntUjDnS7nad9XXnU39w08cdluWWf1gXbgH1Hh59ZjgaEebvLgrhizMh
+         IML4+OoyBeXlybj1tCGdmZJ9pgKrYXTN8mH2uvC7nRT43XBk16Mt/SpJX1QTVTlXYvfY
+         qempUAqL0YEsvp8XsSUbeaQQvHuqQBpnEousEyNMovWMn7DfgTGxhh8yRSDysA9YbgD2
+         d94TAmtICaRjSpD89oR5/7oEMNcD7Zrnx4lumMI6fXeMXuMIHYEsNLsveV3L7yaI47qO
+         etzCTjfbGIvvZlFhJzvgFrEKL+u2GLQliao4Q89UdCv+IVvtYbDiAnsVdNjTPXkM44L4
+         cyBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769544745; x=1770149545;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Py+NDYxam+4HyU9vi83DYcaSNUJRmmB3oQfidT43VpU=;
+        b=nBDe2fJo1+LBQNa9xIe0ejz3B/JeyKc1iMtmaao0KGTftBBtd5Cjg/uTi7R0XgnRjb
+         FjWNO5KpedqBLRJP95+0b2oaO7tIdMfZzbT80vVyy6K3qMypjGBxQJuE7QnY/oGftfPG
+         eKEFgip+P3xIOIgt6d2B5pGvC/X1ZQkARutDUp9LwcIGYENSlwt4DiOJOfv1HYO2tczc
+         +jSiDSuqtcH3geInJJYjg0rDVjQ5ngKrWf4cCH1VPSKfJvsWWqqWmMKCRPaszTknoIzn
+         bVEyuAme1d1nEn8VVsiaHV8LGqA0IEVQqRe910U8huUJNc9rADQVJczPOOqo7V2j9fW+
+         X2rg==
+X-Forwarded-Encrypted: i=1; AJvYcCXhyBBg7rCBld8TRD//xNaJUmIHwi0vXa37WpcPPAiTXGvmhkmb0OYzaxMYSGXg3qYweToR0QtdvzEI9gNN@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo4ascH3hO0deZNoN0XC1JC+t/t/LfyLQx7A3Wj5wSzSOkzwe5
+	2dD8NdFeHZnFbPfwHcYg3eDNZUoyPOwf1PCr1uiQQ9MPslm/ZmZpQOwF3Dg9qnEtSkN4X6s+RSN
+	dwQNHDGZr9c1HKvhXxgHjbvkEfbMTqqg=
+X-Gm-Gg: AZuq6aJXduyN/nnGidkfypxSKyH/lBjUsNyRzPD6wxKh5q0VCym3O1Vap8jG+F4b5Jn
+	gMyR8jJhTq8/Zl632ERFFfaDKCQBhx0ec2guwbw5BCjaKJ5SmYZJS3CVvif08EQbuP3rNyUSz+Y
+	Z5np/7Cvs3eAUm7r+D8jdrtEiwMdV9zKXf5gGIDgfgV3EpwtR2rx/w5N4auXE1eXyizTZ0G+OKq
+	ciXpaFJsfY7w+pEVPda9yKY1M3cvGEq/bVgfXuqB2zQyQzjnVoZPwA+uuvc2ld0ol1AUw==
+X-Received: by 2002:a05:622a:189f:b0:4f1:ba4d:deb1 with SMTP id
+ d75a77b69052e-5032fa0964fmr38493761cf.46.1769544743289; Tue, 27 Jan 2026
+ 12:12:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS4PPF0BAC23327:EE_|SA1PR11MB6783:EE_
-X-MS-Office365-Filtering-Correlation-Id: 97508ce2-81bf-4557-ea8f-08de5de04785
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?8IyGVWUUYrM1zKa/Yo2fL9JJMSQOfztzPhIdJWPJMYzJqRiIPNySXvpqWxkn?=
- =?us-ascii?Q?mN8Zs35y5l8TpzFrmqdm2SczsqEQyICZ4UIEysB5ihoHtHEELmedI5pXD0ES?=
- =?us-ascii?Q?77N/mpcsHtdvzQIP72sLldterFYJTlamBGjOYJjU+LnHsUZRdFVrAEZhlpxX?=
- =?us-ascii?Q?lH/eFKq2BkkalGP3Br8zT9ahX3gUZmGZH8AK29Iowe1SlO7VM1YEgt0ShLT7?=
- =?us-ascii?Q?I851AeljaTvqpm2OIlJ3K2oRk4q0w2g0MNwzaNkKHMPOSuWFlKHvoetydl2B?=
- =?us-ascii?Q?OJCVQI4mACRoheCxA/saUnCKD3Jk8vYI0mljNXhketiiNgL7EEuqxY2zMHEt?=
- =?us-ascii?Q?l1lDjHU+ffuJBv8PVFPHNI6nMXSPUsqBKZ2VGK7PlhuhsWKCDc44ekb19Gv5?=
- =?us-ascii?Q?1Nf8ijeglDH0IQob6GuM45fEqjes4UpT5KtejDgdE/tDjna42qEqGEVLXXdu?=
- =?us-ascii?Q?FwGQIYgzBcm4K1l1+EkrzOMWuV0MJjrolQNy1HnWamhDs9LfFUZm2w6JAVzP?=
- =?us-ascii?Q?8wcWEv7uw0QCwPzIDMdB3V6BK0hbLf456sgAD2R5j/WtL8xx3tcbHGSqbgSN?=
- =?us-ascii?Q?fn3299RPDbkOi47wqRDTNazWcCvW5z1vFbQLHTujKEbG4kY3h0Rp9sRK31mq?=
- =?us-ascii?Q?wcv/9g7HTfUAFjen1mhNLVOEh2NdvqkgBaELv/OIFsSHjQNvzpAPMciEFIHL?=
- =?us-ascii?Q?Ehqu4y9aPZglH/NfQARrplOFeIfomBIeek5S1wdcBrZxUTkXHbpe9PU73Kv9?=
- =?us-ascii?Q?9yRUz784IXo8uRbbx5TzCz6OX4lCMtYH/eFlt7FUPxZElzZ3/I0JL6NjkmrF?=
- =?us-ascii?Q?zQTOn5Vh/XR4FNEZ86FQHxEpgbjMUBUShaeRflXhtTYT8XJNGwLLIKv7QQbA?=
- =?us-ascii?Q?7z/4k+zYvRjNnF7nD3V40WPuQCoeZ8FTD0d0y35iB73rUyJNLx/wt4LBMAQU?=
- =?us-ascii?Q?Z7RWhPJiYQExKZlPJ2yd+0w5visWFc0lF1osJkGbqKdK9w92DSyTNmU3PYEZ?=
- =?us-ascii?Q?hQt69FHG00IQcBJYyqn/nT6bMynvN6d/5wBboZN1BPwJmqnYQzcV/XpQ67KM?=
- =?us-ascii?Q?JXesG+lesrxR3p2BNkLoEQDMjCgezaSGkz3C1eI0Rf2UFA3AVWzvmWhyy+74?=
- =?us-ascii?Q?iDmeBEhQhMbQZFXLvc90FXE6AuvSrbSnEpRwiJ2DaKzedhgMZbdLSHAU2oFn?=
- =?us-ascii?Q?i0GfdvmxRpQznuOyZ8z+YKnj3oS6VtM2MafEey50zD/YVHjeirlssRM+WMtE?=
- =?us-ascii?Q?5vt/mEtS48+RxgyILloKvMoUi4C3Hn3/FDJ5G4n0pzgEV5N6FUBKitiMO35B?=
- =?us-ascii?Q?ly6hPXfaMhhtj7rbL76I9S2/1z9q+Vtl2pzIN0j2Hf5F8Dsj8YuSsU4GrgoX?=
- =?us-ascii?Q?qW9XiRrFj/a4eASFybnYzbJr4qlVVBDVoHjCPDt09Rn5HIkwrGU7riw9xQt4?=
- =?us-ascii?Q?bLTmHZy6dXm+ofanJ5Wn18B3DccWrmdH0iPd3Bm7jWrjwP41PipKBA6fW9NR?=
- =?us-ascii?Q?A06obxncZmBQlb7zkuWAqAEvnsk/D/RlDee2ZM+xXwRks2B8GkwXl2KgNbWB?=
- =?us-ascii?Q?8Z6BV9+VP3kfdoIdk5c=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS4PPF0BAC23327.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?H4By58uOWQBAfB7GtQLZe932/e7AHYC0xC+SSMy+/jVoktOca0Fqwv4yRLtn?=
- =?us-ascii?Q?eSWZAvyRb2FgxQEpmFBUXv50mnKY8ZwOBqMVTZvb+rBDCwH/+8NiQPSYHMrd?=
- =?us-ascii?Q?NeDXSzxiCZLEjbJl4fcepKnl9rem0n9VRBCnwmfAI2abNSkfbFXJmGB3rYK+?=
- =?us-ascii?Q?OgzLITITlekxKW+IwENT06Qp2zstApCjRTaTGpQtDWB0Hi/yLtUSZCeYsh3d?=
- =?us-ascii?Q?ZtzfRkQLWwVLG2j0NPXVAEVjA5Dpb2vOJkF5+XKIOUlWKjwpVdtwNgFMs72s?=
- =?us-ascii?Q?6MSHfn5KAqON1kgIIl+7S3KuEoiLhNypq6p0hiILmvo58OrWhtrnImRKuf9M?=
- =?us-ascii?Q?Y0iys2+YmibRnYw7c06DquhXlagiHp3vdH8V90vs5WSCleGWaoGGfbdeMJ/O?=
- =?us-ascii?Q?Vh6ZWLuyL2+BQwBxjgx+XlKtmeWKHVuILwk7/M/h2RIm0LGLe/LC8mywrsSK?=
- =?us-ascii?Q?Ziluhkqr7231679liIJycLSQ92GSnBXN7tDyYfEElX33EPQs2ONFUw9+hz7a?=
- =?us-ascii?Q?tIRiTAbhJpOSVyAMTiU1h0ep75uPPtXCJEtkDA6byM13mep3tnC1tnJae2BX?=
- =?us-ascii?Q?1pFFoOe1WOJvxOlf2imzNZe7545E4qrbHCituCiaFxMUAw3mOewmRpJykp+e?=
- =?us-ascii?Q?M+q2cZdu932ajcOCkXDCRdao/UybmWtVmZqzZWPswadPVJNEsYra950vWX/q?=
- =?us-ascii?Q?qs+tXPiIOdbkKgR2AgZHl1Ts+Ji3xVxr1AGmECh1REB6kl6QqFmUkfeGDhkC?=
- =?us-ascii?Q?BpiUjNNlAJRDPuM57q5oLk/SSy4EBcMDSmZxUE6UyriPg1cK8bgsxBVzgUBy?=
- =?us-ascii?Q?4i6nSlv9uFe7sFr3MUTEfnClCVicH72B6cQXeEmoUCx3ryiQp8GQ19ra45x2?=
- =?us-ascii?Q?79cpbCIJJWvbK17DGRoi95yETO9JeFDHqlXcjJxLnP2bJjhYCCiDX87Kicyb?=
- =?us-ascii?Q?hTbaAPLG3CazffN6ihriG9/aPyirJCBn+VkDRISnZlJ8tOvdQE5BSxFYArsm?=
- =?us-ascii?Q?yj087u6Iu4Z6Uwnk2pRjT/MMziMzARXl9xQi6zlktgem957JWFH+Ii1QWO4m?=
- =?us-ascii?Q?jHKsY7f7C357RctiKpv1rKtIkLqoVaq5z4d+stTnMUPgJww9f0wtV5DRMYjq?=
- =?us-ascii?Q?bK2Dx2mYXcpDjV+RLefy2p27qTTzPf8y03WpQMwAEtpQHixvOvjrzm5HtXgK?=
- =?us-ascii?Q?wXhJTerh1BhXG8zxoQPVEp7an5KeU/h7GgnS5wCBZ1gb3XvCRWnxVhydF3gK?=
- =?us-ascii?Q?bx5RQkUCdF04sIDY35czligmklCT+xnsGS8j7EyzbkGy0e/1O9MWXx7KUPWx?=
- =?us-ascii?Q?2IpbWydxzPn9QsfR4XbubuFBC+vCU5yZZGanqQgCtRH3oUOHGw5NiyEPGUrq?=
- =?us-ascii?Q?qjrpr1730qFJCAJRz9WSbUmfkAW7PmOmvjp7JE4rlpTXHLbsQBX4w4kg1JoJ?=
- =?us-ascii?Q?OK47yDfT41+O8zZukHWpGj84Qn151Y+ucLNtQQpWnEzvt26jyAU6UfP2wEov?=
- =?us-ascii?Q?k+Sb0o6TxoJ/SR2cTibQZXsA+Jyk1oKufmlqruYCPu2AkVI3jsHJcdPDskkF?=
- =?us-ascii?Q?tDs3iZWOZoDbvQBXov8GVCw63ozmqu9jjJ7Q0SMSOReII1nhv2h3laiPbgJ8?=
- =?us-ascii?Q?xGX5iAW9rRA0ckFY0SNAm/q8oPcPkbGTmRwjZjiH0buS3EBJGfMZmgjO6uCL?=
- =?us-ascii?Q?uorkslrPpqEb29eoegjamCUerlLLgF+RmvIcbkjBIbFHAUSultEbbBJcwWhD?=
- =?us-ascii?Q?kyV+AXEsDk/sL/QdEMpW9kBEqt1eHfA=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 97508ce2-81bf-4557-ea8f-08de5de04785
-X-MS-Exchange-CrossTenant-AuthSource: DS4PPF0BAC23327.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jan 2026 20:11:38.8616
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZrA5aDxITu2LclfnIrNk2lh7zimUaD2KqrRY8BRuZ8NCPDxS3B4mV+q7RIAzNs6JHY/z3a8Wf/qdZnsfXDAqFd+BH+hXSerGj9aZDNXnO94=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6783
-X-OriginatorOrg: intel.com
+References: <20260116233044.1532965-1-joannelkoong@gmail.com>
+In-Reply-To: <20260116233044.1532965-1-joannelkoong@gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 27 Jan 2026 12:12:11 -0800
+X-Gm-Features: AZwV_Qi3POI6J03YkckRItEKw5pFk9mRb8BgUJIg8waJ96yPvnv15BsZkw5x2JU
+Message-ID: <CAJnrk1Z-9rsP86Fc=57P9gy=vFjfjT8nuAgE2_snL3_vfbbBmg@mail.gmail.com>
+Subject: Re: [PATCH v4 00/25] fuse/io-uring: add kernel-managed buffer rings
+ and zero-copy
+To: axboe@kernel.dk, miklos@szeredi.hu
+Cc: bschubert@ddn.com, csander@purestorage.com, krisman@suse.de, 
+	io-uring@vger.kernel.org, asml.silence@gmail.com, xiaobing.li@samsung.com, 
+	safinaskar@gmail.com, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [1.34 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_REJECT(1.00)[cv is fail on i=2];
-	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
-	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75644-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_CC(0.00)[ddn.com,purestorage.com,suse.de,vger.kernel.org,gmail.com,samsung.com];
 	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	TAGGED_FROM(0.00)[bounces-75645-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[32];
-	FREEMAIL_CC(0.00)[vger.kernel.org,lists.linux.dev,kernel.org,intel.com,huawei.com,amd.com,stgolabs.net,infradead.org,suse.cz,zohomail.com,oss.qualcomm.com,gmail.com,fujitsu.com,linuxfoundation.org,alien8.de];
-	DKIM_TRACE(0.00)[intel.com:+];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_NONE(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[alison.schofield@intel.com,linux-fsdevel@vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
 	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[10]
-X-Rspamd-Queue-Id: 418FA9A40B
+	NEURAL_HAM(-0.00)[-1.000];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FREEMAIL_FROM(0.00)[gmail.com]
+X-Rspamd-Queue-Id: DAE379A423
 X-Rspamd-Action: no action
 
-On Thu, Jan 22, 2026 at 04:55:42AM +0000, Smita Koralahalli wrote:
-> The current probe time ownership check for Soft Reserved memory based
-> solely on CXL window intersection is insufficient. dax_hmem probing is not
-> always guaranteed to run after CXL enumeration and region assembly, which
-> can lead to incorrect ownership decisions before the CXL stack has
-> finished publishing windows and assembling committed regions.
-> 
-> Introduce deferred ownership handling for Soft Reserved ranges that
-> intersect CXL windows at probe time by scheduling deferred work from
-> dax_hmem and waiting for the CXL stack to complete enumeration and region
-> assembly before deciding ownership.
-> 
-> Evaluate ownership of Soft Reserved ranges based on CXL region
-> containment.
-> 
->    - If all Soft Reserved ranges are fully contained within committed CXL
->      regions, DROP handling Soft Reserved ranges from dax_hmem and allow
->      dax_cxl to bind.
-> 
->    - If any Soft Reserved range is not fully claimed by committed CXL
->      region, tear down all CXL regions and REGISTER the Soft Reserved
->      ranges with dax_hmem instead.
-> 
-> While ownership resolution is pending, gate dax_cxl probing to avoid
-> binding prematurely.
-> 
-> This enforces a strict ownership. Either CXL fully claims the Soft
-> Reserved ranges or it relinquishes it entirely.
-> 
-> Co-developed-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-> ---
->  drivers/cxl/core/region.c | 25 ++++++++++++
->  drivers/cxl/cxl.h         |  2 +
+On Fri, Jan 16, 2026 at 3:31=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
+>
+> This series adds buffer ring and zero-copy capabilities to fuse over io-u=
+ring.
+> This requires adding a new kernel-managed buf (kmbuf) ring type to io-uri=
+ng
+> where the buffers are provided and managed by the kernel instead of by
+> userspace.
+>
+> On the io-uring side, the kmbuf interface is basically identical to pbufs=
+.
+> They differ mostly in how the memory region is set up and whether it is
+> userspace or kernel that recycles back the buffer. Internally, the
+> IOBL_KERNEL_MANAGED flag is used to mark the buffer ring as kernel-manage=
+d.
+>
+> The zero-copy work builds on top of the infrastructure added for
+> kernel-managed buffer rings (the bulk of which is in patch 19: "fuse: add
+> io-uring kernel-managed buffer ring") and that informs some of the design
+> choices for how fuse uses the kernel-managed buffer ring without zero-cop=
+y.
 
-Can the region teardown helper be introduced in a separate patch before this
-patch...like you did for the contains soft reserved helper?
+Could anyone on the fuse side review the fuse changes in patches 19 and 24?
 
->  drivers/dax/cxl.c         |  9 +++++
->  drivers/dax/hmem/hmem.c   | 81 ++++++++++++++++++++++++++++++++++++++-
->  4 files changed, 115 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 9827a6dd3187..6c22a2d4abbb 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -3875,6 +3875,31 @@ static int cxl_region_debugfs_poison_clear(void *data, u64 offset)
->  DEFINE_DEBUGFS_ATTRIBUTE(cxl_poison_clear_fops, NULL,
->  			 cxl_region_debugfs_poison_clear, "%llx\n");
->  
-> +static int cxl_region_teardown_cb(struct device *dev, void *data)
-> +{
-> +	struct cxl_root_decoder *cxlrd;
-> +	struct cxl_region *cxlr;
-> +	struct cxl_port *port;
-> +
-> +	if (!is_cxl_region(dev))
-> +		return 0;
-> +
-> +	cxlr = to_cxl_region(dev);
-> +
-> +	cxlrd = to_cxl_root_decoder(cxlr->dev.parent);
-> +	port = cxlrd_to_port(cxlrd);
-> +
+Thanks,
+Joanne
 
-How about a dev_dbg() here on each killed region, and a dev_info()
-at the call site proclaiming what is happening.
-
-
-> +	devm_release_action(port->uport_dev, unregister_region, cxlr);
-> +
-> +	return 0;
-> +}
-> +
-> +void cxl_region_teardown_all(void)
-> +{
-> +	bus_for_each_dev(&cxl_bus_type, NULL, NULL, cxl_region_teardown_cb);
-> +}
-> +EXPORT_SYMBOL_GPL(cxl_region_teardown_all);
-
-Maybe be cautious with who can access this function:
-EXPORT_SYMBOL_FOR_MODULES(cxl_region_teardown_all, "dax_hmem");
-
-
-> +
->  static int cxl_region_contains_sr_cb(struct device *dev, void *data)
->  {
->  	struct resource *res = data;
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index b0ff6b65ea0b..1864d35d5f69 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -907,6 +907,7 @@ int cxl_add_to_region(struct cxl_endpoint_decoder *cxled);
->  struct cxl_dax_region *to_cxl_dax_region(struct device *dev);
->  u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint, u64 spa);
->  bool cxl_region_contains_soft_reserve(const struct resource *res);
-> +void cxl_region_teardown_all(void);
->  #else
->  static inline bool is_cxl_pmem_region(struct device *dev)
->  {
-> @@ -933,6 +934,7 @@ static inline bool cxl_region_contains_soft_reserve(const struct resource *res)
->  {
->  	return false;
->  }
-> +static inline void cxl_region_teardown_all(void) { }
->  #endif
->  
->  void cxl_endpoint_parse_cdat(struct cxl_port *port);
-> diff --git a/drivers/dax/cxl.c b/drivers/dax/cxl.c
-> index 13cd94d32ff7..b7e90d6dd888 100644
-> --- a/drivers/dax/cxl.c
-> +++ b/drivers/dax/cxl.c
-> @@ -14,6 +14,15 @@ static int cxl_dax_region_probe(struct device *dev)
->  	struct dax_region *dax_region;
->  	struct dev_dax_data data;
->  
-> +	switch (dax_cxl_mode) {
-> +	case DAX_CXL_MODE_DEFER:
-> +		return -EPROBE_DEFER;
-> +	case DAX_CXL_MODE_REGISTER:
-> +		return -ENODEV;
-> +	case DAX_CXL_MODE_DROP:
-> +		break;
-> +	}
-> +
->  	if (nid == NUMA_NO_NODE)
->  		nid = memory_add_physaddr_to_nid(cxlr_dax->hpa_range.start);
->  
-> diff --git a/drivers/dax/hmem/hmem.c b/drivers/dax/hmem/hmem.c
-> index 1e3424358490..bcb57d8678d7 100644
-> --- a/drivers/dax/hmem/hmem.c
-> +++ b/drivers/dax/hmem/hmem.c
-> @@ -3,6 +3,7 @@
->  #include <linux/memregion.h>
->  #include <linux/module.h>
->  #include <linux/dax.h>
-> +#include "../../cxl/cxl.h"
->  #include "../bus.h"
->  
->  static bool region_idle;
-> @@ -58,9 +59,15 @@ static void release_hmem(void *pdev)
->  	platform_device_unregister(pdev);
->  }
->  
-> +struct dax_defer_work {
-> +	struct platform_device *pdev;
-> +	struct work_struct work;
-> +};
-> +
->  static int hmem_register_device(struct device *host, int target_nid,
->  				const struct resource *res)
->  {
-> +	struct dax_defer_work *work = dev_get_drvdata(host);
->  	struct platform_device *pdev;
->  	struct memregion_info info;
->  	long id;
-> @@ -69,8 +76,18 @@ static int hmem_register_device(struct device *host, int target_nid,
->  	if (IS_ENABLED(CONFIG_DEV_DAX_CXL) &&
->  	    region_intersects(res->start, resource_size(res), IORESOURCE_MEM,
->  			      IORES_DESC_CXL) != REGION_DISJOINT) {
-> -		dev_dbg(host, "deferring range to CXL: %pr\n", res);
-> -		return 0;
-> +		switch (dax_cxl_mode) {
-> +		case DAX_CXL_MODE_DEFER:
-> +			dev_dbg(host, "deferring range to CXL: %pr\n", res);
-> +			schedule_work(&work->work);
-> +			return 0;
-> +		case DAX_CXL_MODE_REGISTER:
-> +			dev_dbg(host, "registering CXL range: %pr\n", res);
-> +			break;
-> +		case DAX_CXL_MODE_DROP:
-> +			dev_dbg(host, "dropping CXL range: %pr\n", res);
-> +			return 0;
-> +		}
->  	}
->  
->  	rc = region_intersects_soft_reserve(res->start, resource_size(res));
-> @@ -123,8 +140,67 @@ static int hmem_register_device(struct device *host, int target_nid,
->  	return rc;
->  }
->  
-> +static int cxl_contains_soft_reserve(struct device *host, int target_nid,
-> +				     const struct resource *res)
-> +{
-> +	if (region_intersects(res->start, resource_size(res), IORESOURCE_MEM,
-> +			      IORES_DESC_CXL) != REGION_DISJOINT) {
-> +		if (!cxl_region_contains_soft_reserve(res))
-> +			return 1;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void process_defer_work(struct work_struct *_work)
-> +{
-> +	struct dax_defer_work *work = container_of(_work, typeof(*work), work);
-> +	struct platform_device *pdev = work->pdev;
-> +	int rc;
-> +
-> +	/* relies on cxl_acpi and cxl_pci having had a chance to load */
-> +	wait_for_device_probe();
-> +
-> +	rc = walk_hmem_resources(&pdev->dev, cxl_contains_soft_reserve);
-> +
-> +	if (!rc) {
-> +		dax_cxl_mode = DAX_CXL_MODE_DROP;
-> +		rc = bus_rescan_devices(&cxl_bus_type);
-> +		if (rc)
-> +			dev_warn(&pdev->dev, "CXL bus rescan failed: %d\n", rc);
-> +	} else {
-> +		dax_cxl_mode = DAX_CXL_MODE_REGISTER;
-
-dev_info or dev_warn that we are doing the teardown.
-
-
-> +		cxl_region_teardown_all();
-> +	}
-> +
-> +	walk_hmem_resources(&pdev->dev, hmem_register_device);
-> +}
-> +
-> +static void kill_defer_work(void *_work)
-> +{
-> +	struct dax_defer_work *work = container_of(_work, typeof(*work), work);
-> +
-> +	cancel_work_sync(&work->work);
-> +	kfree(work);
-> +}
-> +
->  static int dax_hmem_platform_probe(struct platform_device *pdev)
->  {
-> +	struct dax_defer_work *work = kzalloc(sizeof(*work), GFP_KERNEL);
-> +	int rc;
-> +
-> +	if (!work)
-> +		return -ENOMEM;
-> +
-> +	work->pdev = pdev;
-> +	INIT_WORK(&work->work, process_defer_work);
-> +
-> +	rc = devm_add_action_or_reset(&pdev->dev, kill_defer_work, work);
-> +	if (rc)
-> +		return rc;
-> +
-> +	platform_set_drvdata(pdev, work);
-> +
->  	return walk_hmem_resources(&pdev->dev, hmem_register_device);
->  }
->  
-> @@ -174,3 +250,4 @@ MODULE_ALIAS("platform:hmem_platform*");
->  MODULE_DESCRIPTION("HMEM DAX: direct access to 'specific purpose' memory");
->  MODULE_LICENSE("GPL v2");
->  MODULE_AUTHOR("Intel Corporation");
-> +MODULE_IMPORT_NS("CXL");
-> -- 
-> 2.17.1
-> 
+>
+> There was a previous submission for supporting registered buffers in fuse=
+ [1]
+> but that was abandoned in favor of using kernel-managed buffer rings, whi=
+ch,
+> once incremental buffer consumption is added in a later patchset, gives
+> significant memory usage advantages in allowing the full buffer capacity =
+to be
+> utilized across multiple requests, as well as offers more flexibility for
+> future additions. As well, it also makes the userspace side setup simpler=
+.
+> The relevant refactoring fuse patches from the previous submission are ca=
+rried
+> over into this one.
+>
+> Benchmarks for zero-copy (patch 24) show approximately the following
+> differences in throughput for bs=3D1M:
+>
+> direct randreads: ~20% increase (~2100 MB/s -> ~2600 MB/s)
+> buffered randreads: ~25% increase (~1900 MB/s -> 2400 MB/s)
+> direct randwrites: no difference (~750 MB/s)
+> buffered randwrites: ~10% increase (950 MB/s -> 1050 MB/s)
+>
+> The benchmark was run using fio on the passthrough_hp server:
+> fio --name=3Dtest_run --ioengine=3Dsync --rw=3Drand{read,write} --bs=3D1M
+> --size=3D1G --numjobs=3D2 --ramp_time=3D30 --group_reporting=3D1
+>
+> This series is on top of commit b71e635feefc in the io-uring tree.
+>
+> The libfuse changes can be found in [2]. This has a dependency on the lib=
+uring
+> changes in [3]. To test the server, you can run it with:
+> sudo ~/libfuse/build/example/passthrough_hp ~/src ~/mounts/tmp
+> --nopassthrough -o io_uring_zero_copy -o io_uring_q_depth=3D8
+>
+> Thanks,
+> Joanne
+>
+> [1] https://lore.kernel.org/linux-fsdevel/20251027222808.2332692-1-joanne=
+lkoong@gmail.com/
+> [2] https://github.com/joannekoong/libfuse/tree/zero_copy
+> [3] https://github.com/joannekoong/liburing/tree/kmbuf
+>
+> v3: https://lore.kernel.org/linux-fsdevel/20251223003522.3055912-1-joanne=
+lkoong@gmail.com/
+> v3 -> v4:
+> * Get rid of likely()s and get rid of going through cmd interface layer (=
+Gabriel)
+> * Fix io_uring_cmd_fixed_index_get() to return back the node pointer (Cal=
+eb)
+> * Add documentation for io_buffer_register_bvec (Caleb)
+> * Remove WARN_ON_ONCE() for io_buffer_unregister() call (Caleb)
+>
+> v2: https://lore.kernel.org/linux-fsdevel/20251218083319.3485503-1-joanne=
+lkoong@gmail.com/
+> v2 -> v3:
+> * fix casting between void * and u64 for 32-bit architectures (kernel tes=
+t robot)
+> * add newline for documentation bullet points (kernel test robot)
+> * fix unrecognized "boolean" (kernel test robot), switch it to a flag (me=
+)
+>
+> v1: https://lore.kernel.org/linux-fsdevel/20251203003526.2889477-1-joanne=
+lkoong@gmail.com/
+> v1 -> v2:
+> * drop fuse buffer cleanup on ring death, which makes things a lot simple=
+r (Jens)
+>   - this drops a lot of things (eg needing ring_ctx tracking, needing cal=
+lback
+>     for ring death, etc)
+> * drop fixed buffer pinning altogether and just do lookup every time (Jen=
+s)
+>   (didn't significantly affect the benchmark results seen)
+> * fix spelling mistake in docs (Askar)
+> * use -EALREADY for pinning already pinned bufring, return PTR_ERR for
+>    registration instead of err, move initializations to outside locks (Ca=
+leb)
+> * drop fuse patches for zero-ed out headers (me)
+>
+> Joanne Koong (25):
+>   io_uring/kbuf: refactor io_buf_pbuf_register() logic into generic
+>     helpers
+>   io_uring/kbuf: rename io_unregister_pbuf_ring() to
+>     io_unregister_buf_ring()
+>   io_uring/kbuf: add support for kernel-managed buffer rings
+>   io_uring/kbuf: add mmap support for kernel-managed buffer rings
+>   io_uring/kbuf: support kernel-managed buffer rings in buffer selection
+>   io_uring/kbuf: add buffer ring pinning/unpinning
+>   io_uring/kbuf: add recycling for kernel managed buffer rings
+>   io_uring: add io_uring_fixed_index_get() and
+>     io_uring_fixed_index_put()
+>   io_uring/kbuf: add io_uring_is_kmbuf_ring()
+>   io_uring/kbuf: export io_ring_buffer_select()
+>   io_uring/kbuf: return buffer id in buffer selection
+>   io_uring/cmd: set selected buffer index in __io_uring_cmd_done()
+>   fuse: refactor io-uring logic for getting next fuse request
+>   fuse: refactor io-uring header copying to ring
+>   fuse: refactor io-uring header copying from ring
+>   fuse: use enum types for header copying
+>   fuse: refactor setting up copy state for payload copying
+>   fuse: support buffer copying for kernel addresses
+>   fuse: add io-uring kernel-managed buffer ring
+>   io_uring/rsrc: rename
+>     io_buffer_register_bvec()/io_buffer_unregister_bvec()
+>   io_uring/rsrc: split io_buffer_register_request() logic
+>   io_uring/rsrc: Allow buffer release callback to be optional
+>   io_uring/rsrc: add io_buffer_register_bvec()
+>   fuse: add zero-copy over io-uring
+>   docs: fuse: add io-uring bufring and zero-copy documentation
+>
+>  Documentation/block/ublk.rst                  |  14 +-
+>  .../filesystems/fuse/fuse-io-uring.rst        |  59 +-
+>  drivers/block/ublk_drv.c                      |  18 +-
+>  fs/fuse/dev.c                                 |  30 +-
+>  fs/fuse/dev_uring.c                           | 692 ++++++++++++++----
+>  fs/fuse/dev_uring_i.h                         |  42 +-
+>  fs/fuse/fuse_dev_i.h                          |   8 +-
+>  include/linux/io_uring/buf.h                  |  25 +
+>  include/linux/io_uring/cmd.h                  |  97 ++-
+>  include/linux/io_uring_types.h                |  10 +-
+>  include/uapi/linux/fuse.h                     |  17 +-
+>  include/uapi/linux/io_uring.h                 |  17 +-
+>  io_uring/kbuf.c                               | 355 +++++++--
+>  io_uring/kbuf.h                               |  19 +-
+>  io_uring/memmap.c                             | 117 ++-
+>  io_uring/memmap.h                             |   4 +
+>  io_uring/register.c                           |   9 +-
+>  io_uring/rsrc.c                               | 183 ++++-
+>  io_uring/uring_cmd.c                          |   6 +-
+>  19 files changed, 1447 insertions(+), 275 deletions(-)
+>  create mode 100644 include/linux/io_uring/buf.h
+>
+> --
+> 2.47.3
+>
 
