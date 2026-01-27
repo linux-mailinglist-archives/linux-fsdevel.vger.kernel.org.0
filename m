@@ -1,288 +1,267 @@
-Return-Path: <linux-fsdevel+bounces-75662-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75664-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uPkMKIVIeWl0wQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75662-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 00:21:41 +0100
+	id GPy9ChJJeWmFwQEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75664-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 00:24:02 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 410A49B5DF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 00:21:41 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F0E9B60E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 00:24:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8BA983019539
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 23:21:30 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 8843F301A29A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 23:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596BF2ECD32;
-	Tue, 27 Jan 2026 23:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CE52EDD50;
+	Tue, 27 Jan 2026 23:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T9blrn0M"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="DTm9nSEE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC5F2D6E66;
-	Tue, 27 Jan 2026 23:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9334F2D838B;
+	Tue, 27 Jan 2026 23:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769556087; cv=none; b=WylCHqmoieR/vhBgSjz4Ioovi7dfSlwSk5MGBgnSK/M+EvyHvIbGbrq51hl2UsMWiEEgzoAA69/ZxeGpfa2dhkNX5kL3j/kANIFHsXJYgt79e0o+6jH/waFanxcW9iER6vs7aOTpkHurnnJE+Q4NPWt4xPO76t+QsqVlJ7L4ThE=
+	t=1769556238; cv=none; b=qaJAZ3Lm0KLt3hVjnZt36oFNOgWoOtpCygUtJ/Bt2/rfXblwKtBC5NUZsyQ7ISZ0Qx6rd3QWr3VpEezbQfffYmZ0lXcx2E6i/zy4sJMsa9lquRDQqZmoScWBjHLsG9AGxL8EnnqdybCnS8XxBSrN8Tn9mdeEzb9ZrMn6NOLSNbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769556087; c=relaxed/simple;
-	bh=z5nng7RlI/SdUAp4rXwRow7Ng58N6YuGHmFa7mWDQLE=;
+	s=arc-20240116; t=1769556238; c=relaxed/simple;
+	bh=TQONOwCwGoKoCH0YlZm0ZAn7reau+7wsk8oVRd/iD0I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rT0JwilhdJtGVDqGUeyQV6eXCN4TDdg+OdS4EqGWmRxz4ID8YYphVziiUVBHP6JB8bmLVkJ30WzLx/jMygwGq5zRIVZ4cDU8wHHE2KegBZ0vm04GQmmEH2Hz9RfCu/pyCA8dKWW6Hq71hYYHpFc0Fg6mPAE9kGF7CM/JWi8j84E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T9blrn0M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B802C116C6;
-	Tue, 27 Jan 2026 23:21:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769556087;
-	bh=z5nng7RlI/SdUAp4rXwRow7Ng58N6YuGHmFa7mWDQLE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T9blrn0Myz1kfjqRmogoC1JugLlmy6QmN0ugHbFIVozWzU+yMWe9ZuxkRYIducyt8
-	 jCKk4Mse+VELymuSbEShAnaEXDQ9bV6j/EQ1s3VNqm0IPzCqNuDoRqnGgMpQdoCPhu
-	 52uGC3RDcr/jld1b64lFJXsZW99eNjMjTyaQMC1XMMBdmY+u+NSvR/d7xIksT8xyV3
-	 au40GOuF0CxyItdwqNvy5PuJBQgZ6jKTLVINOwm648OY9RtU1QU6ZCTw4mnFQ2DvPQ
-	 5Nv6/vpITcJ6IpBSpsif7DJi4i0Nw5zFseny8Vf1JUHwvFPcJ8l8pFzcjcv4Fqy/f7
-	 CHYyZio22eTeA==
-Date: Tue, 27 Jan 2026 15:21:25 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, bernd@bsbernd.com, neal@gompa.dev,
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCHSET v6 4/8] fuse: allow servers to use iomap for better
- file IO performance
-Message-ID: <20260127232125.GA5966@frogsfrogsfrogs>
-References: <20251029002755.GK6174@frogsfrogsfrogs>
- <176169810144.1424854.11439355400009006946.stgit@frogsfrogsfrogs>
- <CAJnrk1Z05QZmos90qmWtnWGF+Kb7rVziJ51UpuJ0O=A+6N1vrg@mail.gmail.com>
- <20260127022235.GG5900@frogsfrogsfrogs>
- <CAJnrk1bSVy4=c=N_FfOajs1FE4o8T=Br=jFm7gBDaCGvRpgGVA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=N3UDEZFEFnp0swttVPUJh5D23ROSWa8CFX5xLLvcJiKWbwaXx8a1lt2jQg9EOsOjuXlNDDoGRaeWYbHaKqeztnSbPUtAr7xS7EpxLNY1VJpFF7Z+q4RfCU7KrsGJoFR5RIGhHyiAKsda0XtNYEXbEy0BoPqUvLi1gpOSCoby21k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=DTm9nSEE; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4f11gV3Dftz9tRx;
+	Wed, 28 Jan 2026 00:23:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1769556230;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vYBrNwGIq3I61Ink1JXpolpFCZQaFJ/2wC/59Sl1tBg=;
+	b=DTm9nSEEBVVFM/vGb803r4Ldq7wGsR4PbJ6Xjksil6HwEwN5v3qd31CwEKRH4fgG0y5vKW
+	Igsupn88o1argn/JdTTP1bn/3VNByfXnbRp9c0KQ+CBHY4HEpcJqo4S6TvHDkgY0tFahNb
+	0OyVYJraMOQKkJtBVViwkFpO8/6AjAlUKo9DdiksxlAekUdSqz/UJs5yC5VuR7FRopCB8Y
+	MfozbUbkQUcqMcnAPHg+PKLS8Vza3Pc1cgSfwJSrVj2K870G+5kaoAUor6Wuo3awMlB/1G
+	YeNgVu5dO8YBLD9SG0dSZQ0qF/FXOpSfhIJYr6G5BkLlry0WqsV4dPAfOjjs0A==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Wed, 28 Jan 2026 00:23:45 +0100
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Dorjoy Chowdhury <dorjoychy111@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, jlayton@kernel.org, 
+	chuck.lever@oracle.com, alex.aring@gmail.com, arnd@arndb.de, adilger@dilger.ca
+Subject: Re: [PATCH v3 1/4] open: new O_REGULAR flag support
+Message-ID: <2026-01-27-awake-stony-flair-patrol-g4abX8@cyphar.com>
+References: <20260127180109.66691-1-dorjoychy111@gmail.com>
+ <20260127180109.66691-2-dorjoychy111@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6di3bgb2h5z3bivc"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1bSVy4=c=N_FfOajs1FE4o8T=Br=jFm7gBDaCGvRpgGVA@mail.gmail.com>
+In-Reply-To: <20260127180109.66691-2-dorjoychy111@gmail.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-2.76 / 15.00];
+	SIGNED_PGP(-2.00)[];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	DMARC_POLICY_ALLOW(-0.50)[cyphar.com,reject];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[cyphar.com:s=MBO0001];
+	MIME_GOOD(-0.20)[multipart/signed,text/plain];
 	MAILLIST(-0.15)[generic];
-	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-75664-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[vger.kernel.org,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,arndb.de,dilger.ca];
+	MIME_TRACE(0.00)[0:+,1:+,2:~];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75662-lists,linux-fsdevel=lfdr.de];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
 	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
+	FROM_NEQ_ENVFROM(0.00)[cyphar@cyphar.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[cyphar.com:+];
+	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 410A49B5DF
+	RCPT_COUNT_SEVEN(0.00)[11];
+	TO_DN_SOME(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: A0F0E9B60E
 X-Rspamd-Action: no action
 
-On Tue, Jan 27, 2026 at 11:47:31AM -0800, Joanne Koong wrote:
-> On Mon, Jan 26, 2026 at 6:22 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> >
-> > On Mon, Jan 26, 2026 at 04:59:16PM -0800, Joanne Koong wrote:
-> > > On Tue, Oct 28, 2025 at 5:38 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> > > >
-> > > > Hi all,
-> > > >
-> > > > This series connects fuse (the userspace filesystem layer) to fs-iomap
-> > > > to get fuse servers out of the business of handling file I/O themselves.
-> > > > By keeping the IO path mostly within the kernel, we can dramatically
-> > > > improve the speed of disk-based filesystems.  This enables us to move
-> > > > all the filesystem metadata parsing code out of the kernel and into
-> > > > userspace, which means that we can containerize them for security
-> > > > without losing a lot of performance.
-> > >
-> > > I haven't looked through how the fuse2fs or fuse4fs servers are
-> > > implemented yet (also, could you explain the difference between the
-> > > two? Which one should we look at to see how it all ties together?),
-> >
-> > fuse4fs is a lowlevel fuse server; fuse2fs is a high(?) level fuse
-> > server.  fuse4fs is the successor to fuse2fs, at least on Linux and BSD.
-> 
-> Ah I see, thanks for the explanation. In that case, I'll just look at
-> fuse4fs then.
-> 
-> >
-> > > but I wonder if having bpf infrastructure hooked up to fuse would be
-> > > especially helpful for what you're doing here with fuse iomap. afaict,
-> > > every read/write whether it's buffered or direct will incur at least 1
-> > > call to ->iomap_begin() to get the mapping metadata, which will be 2
-> > > context-switches (and if the server has ->iomap_end() implemented,
-> > > then 2 more context-switches).
-> >
-> > Yes, I agree that's a lot of context switching for file IO...
-> >
-> > > But it seems like the logic for retrieving mapping
-> > > offsets/lengths/metadata should be pretty straightforward?
-> >
-> > ...but it gets very cheap if the fuse server can cache mappings in the
-> > kernel to avoid all that.  That is, incidentally, what patchset #7
-> > implements.
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=fuse-iomap-cache_2026-01-22
-> >
-> > > If the extent lookups are table lookups or tree
-> > > traversals without complex side effects, then having
-> > > ->iomap_begin()/->iomap_end() be executed as a bpf program would avoid
-> > > the context switches and allow all the caching logic to be moved from
-> > > the kernel to the server-side (eg using bpf maps).
-> >
-> > Hrmm.  Now that /is/ an interesting proposal.  Does BPF have a data
-> > structure that supports interval mappings?  I think the existing bpf map
-> 
-> Not yet but I don't see why a b+ tree like data strucutre couldn't be added.
-> Maybe one workaround in the meantime that could work is using a sorted
-> array map and doing binary search on that, until interval mappings can
-> be natively supported?
 
-I guess, though I already had a C structure to borrow from xfs ;)
+--6di3bgb2h5z3bivc
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 1/4] open: new O_REGULAR flag support
+MIME-Version: 1.0
 
-> > only does key -> value.  Also, is there an upper limit on the size of a
-> > map?  You could have hundreds of millions of maps for a very fragmented
-> > regular file.
-> 
-> If I'm remembering correctly, there's an upper limit on the number of
-> map entries, which is bounded by u32
+On 2026-01-27, Dorjoy Chowdhury <dorjoychy111@gmail.com> wrote:
+> This flag indicates the path should be opened if it's a regular file.
+> This is useful to write secure programs that want to avoid being tricked
+> into opening device nodes with special semantics while thinking they
+> operate on regular files.
+>=20
+> A corresponding error code ENOTREG has been introduced. For example, if
+> open is called on path /dev/null with O_REGULAR in the flag param, it
+> will return -ENOTREG.
+>=20
+> When used in combination with O_CREAT, either the regular file is
+> created, or if the path already exists, it is opened if it's a regular
+> file. Otherwise, -ENOTREG is returned.
+>=20
+> -EINVAL is returned when O_REGULAR is combined with O_DIRECTORY (not
+> part of O_TMPFILE) because it doesn't make sense to open a path that
+> is both a directory and a regular file.
 
-That's problematic, since files can have 64-bit logical block numbers.
+As you mention in your cover letter, this is something that the UAPI
+group has asked for in the past[1] and was even discussed at a recent
+LPC (maybe LPC 2024?) -- thanks for the patch!
 
-> > At one point I suggested to the famfs maintainer that it might be
-> > easier/better to implement the interleaved mapping lookups as bpf
-> > programs instead of being stuck with a fixed format in the fuse
-> > userspace abi, but I don't know if he ever implemented that.
-> 
-> This seems like a good use case for it too
-> >
-> > > Is this your
-> > > assessment of it as well or do you think the server-side logic for
-> > > iomap_begin()/iomap_end() is too complicated to make this realistic?
-> > > Asking because I'm curious whether this direction makes sense, not
-> > > because I think it would be a blocker for your series.
-> >
-> > For disk-based filesystems I think it would be difficult to model a bpf
-> > program to do mappings, since they can basically point anywhere and be
-> > of any size.
-> 
-> Hmm I'm not familiar enough with disk-based filesystems to know what
-> the "point anywhere and be of any size" means. For the mapping stuff,
-> doesn't it just point to a block number? Or are you saying the problem
-> would be there's too many mappings since a mapping could be any size?
+In the next posting of this patchset, I would suggest including this
+information in the *commit message* with a link (commit messages end up
+in the git history, cover letters are a little harder to search for when
+doing "git blame").
 
-The second -- mappings can be any size, and unprivileged userspace can
-control the mappings.
+[1]: https://uapi-group.org/kernel-features/#ability-to-only-open-regular-f=
+iles
 
-> I was thinking the issue would be more that there might be other logic
-> inside ->iomap_begin()/->iomap_end() besides the mapping stuff that
-> would need to be done that would be too out-of-scope for bpf. But I
-> think I need to read through the fuse4fs stuff to understand more what
-> it's doing in those functions.
+>  #define WILL_CREATE(flags)	(flags & (O_CREAT | __O_TMPFILE))
+> -#define O_PATH_FLAGS		(O_DIRECTORY | O_NOFOLLOW | O_PATH | O_CLOEXEC)
+> +#define O_PATH_FLAGS		(O_DIRECTORY | O_NOFOLLOW | O_PATH | O_CLOEXEC | O=
+_REGULAR)
 
-<nod>
+It doesn't really make sense to use this flag with O_PATH -- O_PATH file
+descriptors do not actually open the target inode and so there is no
+risk to doing this.
 
---D
+In fact the method of safely opening files while avoiding device inodes
+on Linux today is to open an O_PATH, then use fstat(2) to check whether
+it is a regular file, and then re-open the file descriptor through
+/proc/self/fd/$n. (This is totally race-safe.)
 
-> 
-> Thanks,
-> Joanne
-> 
-> >
-> > OTOH it would be enormously hilarious to me if one could load a file
-> > mapping predictive model into the kernel as a bpf program and use that
-> > as a first tier before checking the in-memory btree mapping cache from
-> > patchset 7.  Quite a few years ago now there was a FAST paper
-> > establishing that even a stupid linear regression model could in theory
-> > beat a disk btree lookup.
-> >
-> > --D
-> >
-> > > Thanks,
-> > > Joanne
-> > >
-> > > >
-> > > > If you're going to start using this code, I strongly recommend pulling
-> > > > from my git trees, which are linked below.
-> > > >
-> > > > This has been running on the djcloud for months with no problems.  Enjoy!
-> > > > Comments and questions are, as always, welcome.
-> > > >
-> > > > --D
-> > > >
-> > > > kernel git tree:
-> > > > https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=fuse-iomap-fileio
-> > > > ---
-> > > > Commits in this patchset:
-> > > >  * fuse: implement the basic iomap mechanisms
-> > > >  * fuse_trace: implement the basic iomap mechanisms
-> > > >  * fuse: make debugging configurable at runtime
-> > > >  * fuse: adapt FUSE_DEV_IOC_BACKING_{OPEN,CLOSE} to add new iomap devices
-> > > >  * fuse_trace: adapt FUSE_DEV_IOC_BACKING_{OPEN,CLOSE} to add new iomap devices
-> > > >  * fuse: flush events and send FUSE_SYNCFS and FUSE_DESTROY on unmount
-> > > >  * fuse: create a per-inode flag for toggling iomap
-> > > >  * fuse_trace: create a per-inode flag for toggling iomap
-> > > >  * fuse: isolate the other regular file IO paths from iomap
-> > > >  * fuse: implement basic iomap reporting such as FIEMAP and SEEK_{DATA,HOLE}
-> > > >  * fuse_trace: implement basic iomap reporting such as FIEMAP and SEEK_{DATA,HOLE}
-> > > >  * fuse: implement direct IO with iomap
-> > > >  * fuse_trace: implement direct IO with iomap
-> > > >  * fuse: implement buffered IO with iomap
-> > > >  * fuse_trace: implement buffered IO with iomap
-> > > >  * fuse: implement large folios for iomap pagecache files
-> > > >  * fuse: use an unrestricted backing device with iomap pagecache io
-> > > >  * fuse: advertise support for iomap
-> > > >  * fuse: query filesystem geometry when using iomap
-> > > >  * fuse_trace: query filesystem geometry when using iomap
-> > > >  * fuse: implement fadvise for iomap files
-> > > >  * fuse: invalidate ranges of block devices being used for iomap
-> > > >  * fuse_trace: invalidate ranges of block devices being used for iomap
-> > > >  * fuse: implement inline data file IO via iomap
-> > > >  * fuse_trace: implement inline data file IO via iomap
-> > > >  * fuse: allow more statx fields
-> > > >  * fuse: support atomic writes with iomap
-> > > >  * fuse_trace: support atomic writes with iomap
-> > > >  * fuse: disable direct reclaim for any fuse server that uses iomap
-> > > >  * fuse: enable swapfile activation on iomap
-> > > >  * fuse: implement freeze and shutdowns for iomap filesystems
-> > > > ---
-> > > >  fs/fuse/fuse_i.h          |  161 +++
-> > > >  fs/fuse/fuse_trace.h      |  939 +++++++++++++++++++
-> > > >  fs/fuse/iomap_i.h         |   52 +
-> > > >  include/uapi/linux/fuse.h |  219 ++++
-> > > >  fs/fuse/Kconfig           |   48 +
-> > > >  fs/fuse/Makefile          |    1
-> > > >  fs/fuse/backing.c         |   12
-> > > >  fs/fuse/dev.c             |   30 +
-> > > >  fs/fuse/dir.c             |  120 ++
-> > > >  fs/fuse/file.c            |  133 ++-
-> > > >  fs/fuse/file_iomap.c      | 2230 +++++++++++++++++++++++++++++++++++++++++++++
-> > > >  fs/fuse/inode.c           |  162 +++
-> > > >  fs/fuse/iomode.c          |    2
-> > > >  fs/fuse/trace.c           |    2
-> > > >  14 files changed, 4056 insertions(+), 55 deletions(-)
-> > > >  create mode 100644 fs/fuse/iomap_i.h
-> > > >  create mode 100644 fs/fuse/file_iomap.c
-> > > >
-> > >
+My main reason for pushing back against this it's really quite
+preferable to avoid expanding the set of O_* flags which work with
+O_PATH if they don't add much -- O_PATH has really unfortunate behaviour
+with ignoring other flags and openat2(2) finally fixed that by blocking
+ignored flag combinations.
+
+>  inline struct open_how build_open_how(int flags, umode_t mode)
+>  {
+> @@ -1250,6 +1250,8 @@ inline int build_open_flags(const struct open_how *=
+how, struct open_flags *op)
+>  			return -EINVAL;
+>  		if (!(acc_mode & MAY_WRITE))
+>  			return -EINVAL;
+> +	} else if ((flags & O_DIRECTORY) && (flags & O_REGULAR)) {
+> +		return -EINVAL;
+>  	}
+>  	if (flags & O_PATH) {
+>  		/* O_PATH only permits certain other flags to be set. */
+> diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
+> index a332e79b3207..4fd07b0e0a17 100644
+> --- a/include/linux/fcntl.h
+> +++ b/include/linux/fcntl.h
+> @@ -10,7 +10,7 @@
+>  	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC |=
+ \
+>  	 O_APPEND | O_NDELAY | O_NONBLOCK | __O_SYNC | O_DSYNC | \
+>  	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
+> -	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
+> +	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_REGULAR)
+
+Legacy open(2)/openat(2) do not reject invalid flag arguments, which
+means that you cannot trivially add a new security-critical flag to them
+for two reasons:
+
+ * You cannot easily rely on them because old kernels will not return
+   -EINVAL, meaning you cannot be sure that the flag is supported. You
+   can try to test-run it, but the operation needs to be a non-dangerous
+   operation to try (and caching this has its own issues, such as with
+   programs that apply seccomp filters later).
+
+   To be fair, since you reject O_DIRECTORY|O_REGULAR there is a
+   relatively easy way to detect this, but the caveats about problems
+   with caching still apply.
+
+ * Old programs might pass garbage bits that have been ignored thus far,
+   which means that making them have meaning can break userspace. Given
+   the age of open(2) this is a very hard thing to guarantee and is one
+   of many reasons I wrote openat2(2) and finally added proper flag
+   checking.
+
+   This is something your patch doesn't deal with and I don't think can
+   be done in a satisfactory way (because the behaviour relies on more
+   than just the arguments).
+
+For reference, this is why O_TMPFILE includes O_DIRECTORY and requires
+an O_ACCMODE with write bits -- this combination will fail on old
+kernels, which allows you to rely on it and also guarantees that no
+existing older programs passed that flag combination already and
+happened to work on older kernels. This kind of trick won't work for
+O_REGULAR, unfortunately.
+
+In my view, this should be an openat2(2)-only API. In addition, I would
+propose that (instead of burning another O_* flag bit for this as a
+special-purpose API just for regular files) you could have a mask of
+which S_IFMT bits should be rejected as a new field in "struct
+open_how". This would let you reject sockets or device inodes but permit
+FIFOs and regular files or directories, for instance. This could even be
+done without a new O_* flag at all (the zero-value how->sfmt_mask would
+allow everything and so would work well with extensible structs), but we
+could add an O2_* flag anyway.
+
+> +#define ENOTREG		134	/* Not a regular file */
+> +
+
+We are probably a little too reticent to add new errnos, but in this
+case I think that there should be some description in the commit or
+cover letter about why a new errno is needed. ENXIO or
+EPROTONOSUPPORT/EPROTOTYPE is what you would typically use (yes, they
+aren't a _perfect_ match but one of the common occurrences in syscall
+design is to read through errno(7) and figure out what errnos kind of
+fit what you need to express).
+
+Then to be fair, the existence of ENOTBLK, ENOTDIR, ENOTSOCK, etc. kind
+of justify the existence of ENOTREG too. Unfortunately, you won't be
+able to use ENOTREG if you go with my idea of having mask bits in
+open_how... (And what errno should we use then...? Hm.)
+
+--=20
+Aleksa Sarai
+https://www.cyphar.com/
+
+--6di3bgb2h5z3bivc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaXlI/RsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG/60wD/VvVaRBRhXMQy7cnSMS0M
+uHfCA1iC9Y5yxeM1mMcSUOQA/AkGUpoUV2AvY/RFwOiqnGafkiVHT1T4iurwBQ+Z
+o20F
+=TCKu
+-----END PGP SIGNATURE-----
+
+--6di3bgb2h5z3bivc--
 
