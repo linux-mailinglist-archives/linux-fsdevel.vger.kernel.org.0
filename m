@@ -1,149 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-75639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QO8LKYgJeWmxugEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 19:52:56 +0100
+	id cDvUL7sKeWnyugEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 19:58:03 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD2399636
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 19:52:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7418C997D6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 19:58:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id B05F33041152
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 18:48:11 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 7949630EE0D9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 18:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB723644BC;
-	Tue, 27 Jan 2026 18:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFE6365A19;
+	Tue, 27 Jan 2026 18:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="euV4UMv0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k5cnXmGn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1B236A03A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 18:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46A7352923
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 18:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769539579; cv=none; b=LzhoFEGZRF/mGlDvgcU1LdLc7YxUtJa4CQOWLROTHD9aGS6GaSXpwf7rdba9sKvnEdSsRS9ljGq9doa1b1A7EwLOip5xkH/0ORRFg3gkuQn1hhz7PVtsRsVh3g64zX2yK5VaIXWsaVwBGRd5frIhTLlrpYINSi8vdQNeCZUSZCk=
+	t=1769539761; cv=none; b=enFWavnl7dFJ/aTIS7ZHd1xcvCP5jDpOmFIEdHGGIRTMszVDTF5U5m7TFWJCq0Z1K4HaMduPK2S/MFepypKrQWhn9N9g9DuT1wIvoHU6HBukXp8ih4oRXz7j+WXRN0ljs7GihKdYX6wCT0WboNDuTDLnWGzLymnrKt0imH+gHFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769539579; c=relaxed/simple;
-	bh=Puce/Y2uoOhkmXAnyMr90G2Ehk1ZPgymehgrzrUE1uw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RfhfhDWw0Tc0ZK4IXRBWGnroPZcfugB7UaoBdJ43JCxlU8InNSJ36LAJTGEl0u9qifTKVu3C3fICnIAqVOJi/0Of6HDl8rPY4mAyAQMgWQ3teSozkbd16uahX0lYO5SUb7iqEbE886ubIgNpHoUDXNCzklBOv7nAM4CJhJ3JC4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=euV4UMv0; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-59b6f267721so5702957e87.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 10:46:17 -0800 (PST)
+	s=arc-20240116; t=1769539761; c=relaxed/simple;
+	bh=H/mUqj1MHym3h+xccswqiYBIcdRG1+8Acfn4Jr0zMSc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oNo4zXvAdMTZPmfp0cR980Wz9/ba+EMoGN/kkX3J8agRZT5SqLQWWN5Dxl0yQP3ydUSFCfX4NPZ7KhObeTtT3cLj/WBVKj3gcwav9jgBILE8TiwFFBkn6RXd1X2JwQINl2A7w4fSL0SC9XhTZ3VUNX/+FVg+mpEkl1d+TAADx2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k5cnXmGn; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-59deec3d8dcso4154750e87.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 10:49:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1769539576; x=1770144376; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IB3BhFyIjodZhUGQQ41xIA4/U0Zmh362p3tEBCm/trs=;
-        b=euV4UMv0hTturAXRqW3Enjalcu4vo6X7E7SRzytQhQm/8HtcPHjIpn8fIVjkr/+082
-         lC5dno3zKt+BCBQZ94noh9gkiZqQOgPoMyqh3tzfKpzv7IS+7DPTw3mjdyCZaem/Lx8H
-         iObm/srDQQCpb1AMN9/5LlJmwVzIKe6guD94Y=
+        d=gmail.com; s=20230601; t=1769539758; x=1770144558; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=anXGgOceECfQoLypx++H38it/s+nZ40qvJA23frVAZ0=;
+        b=k5cnXmGnLS+O68gA8yv0cwthCOqxTsiGr3ROkTYBkrziEs+gej30AcFX3kXLSei2/U
+         27YC0edI53VgeJa9pKBW3hc+rCJxgLBI4BBxTN2Po47luE38+SM3DuHTnUnhp/P/x3TE
+         Esmeke7eIItb9kFS5oxL9buhQIO3UVH/I4pPoMnDdeRV39myqSOJBeCDfk1Z2q5vjpYH
+         NRA3SUyiG4F6lHCd4r2FmTrna+3PtJ5jLX9J19G3uGNOJJTBMy96EW1j5D57job+Kkfv
+         8yp99Eaxv7uK2dbW0T26ZaH+LN8Rj8qGh7vF3v94vrgFv9FBP4UsrSxa9b5r21oQfmZY
+         Ylig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769539576; x=1770144376;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IB3BhFyIjodZhUGQQ41xIA4/U0Zmh362p3tEBCm/trs=;
-        b=kRyFOocKpf0l0q9gaobBquTwnXo4NJx7twFjrHENzmz63dTTsEpTaFhlrYnUNQp+aq
-         tEuG+9FmalXfkvX2mbnAhAQkeN0kQpwW4D0ibR+rL9NdMk2mRFswpHRz72eBZOfVDkjo
-         X5sOcZdrK76tkI2Y4kGFWWOOOx6NuAj6PzcVGBBm8sUWKC8r6Go2dXfva+Md9XnqIR2H
-         t2T93gyMden9m+vg3v7ItYSw9oppzPFtuTW6NGlK3v9JKZTqxW1XyZ1Q3K5aNwomAhAP
-         6U04SWHpBQuwrLus+GRrCr0qfRKjz4/IAxEdknvZGVmtSMbNRB3bcLMgoBEg/VFiWW1q
-         DOGA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1URAu3WQUdTeB6sKo28GbhievUSIA/QaXPOnSfF23hLZZqgEVBaXnajvIe+HeS6i4GYZIN9gQ1WazO43D@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaswOPQmy3dyALSWHr1xt0DnMd1bJyKx+l0ih+/Xlskeq0inE4
-	whg+KqrfYFYPOpcIiDohg/8sxfggsxyAmRz+2Z5jTlrWYwa3rhCDXTyCf0HDuB/HDULTujKZKrV
-	hYl0+3Uw=
-X-Gm-Gg: AZuq6aKiVqRdryySZJU6aNDyYJVV++6xqE3yLyWaPHUY6lXiH6t2GssQsoFfCX235Rt
-	y2/fk3o1wfZ9lMD+QJI7n4pCXjXZg0+A12PSGNLK5nfLlOruyaZdKXwfS7k3NZIJNZ5x3hYwdqX
-	h/zb6Et6pnz7g+oiiCxwoyl11QNhEWXkH0glaOO3zSRPB3NZa0i05HiBF8WQT2evj324uh0Y5Pj
-	2HFZidauaA8P6lYRCRB7yBPzOJvlwdaT6fOag2h9E2FReVXdkljmEoAwdwa3xQCEhq5ZnnHXcDp
-	uy2rwnqUb9vMai/W/PaoYNNAK0KCDtadDOJCyuMDV0eeD7Wf527g+b0hpDkUgwvWdDkdkuRu16X
-	V+A4bRwS/qeIL4iHwT+u3cplV9Euu3l3cupcNovRJHybVKPkYp19AfwaYcYuGWkYnTpR5nEdA+i
-	AIXWfXd02efpUUfGbs0VG/wP7V1WU7BLACsOtLEDlfh7OuNjc/XmVfmB+bX/6mcHz3
-X-Received: by 2002:a05:6512:2393:b0:59d:f5a8:276 with SMTP id 2adb3069b0e04-59e04017116mr1134862e87.19.1769539575600;
-        Tue, 27 Jan 2026 10:46:15 -0800 (PST)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59e074ab98bsm93556e87.6.2026.01.27.10.46.15
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Jan 2026 10:46:15 -0800 (PST)
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-38319cbc8fbso52291171fa.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 10:46:15 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX9gL1rnKe2gqR2GgFKn8CqO1Zvo85vMenaV/09sDDC9zawz7ytygayl8KFu7lTNiEJMR6qKfyGiwSUX62C@vger.kernel.org
-X-Received: by 2002:a05:6402:27c6:b0:64b:9d9b:f0f7 with SMTP id
- 4fb4d7f45d1cf-658a60c5513mr1939607a12.33.1769539160812; Tue, 27 Jan 2026
- 10:39:20 -0800 (PST)
+        d=1e100.net; s=20230601; t=1769539758; x=1770144558;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=anXGgOceECfQoLypx++H38it/s+nZ40qvJA23frVAZ0=;
+        b=fBDuQRQoti9q07Dga4szMIq93QOoL+g/b4E2AUhx8J12s9XwqM41/uhVJs8oDwCre1
+         lbV7UXT0FBlZ0H12NjAXTUR0OAbVKeo57uoJXuVJwC+JJf933dUXrzI0Hf/60Sr9nZ8l
+         8+MJ4v2J5AJEAYvodH1yHuzRBtlR5Cx+kfMI3lM1tQ5z6OHZ2rm70UtX35vRsKwYsGK+
+         rM9glts/2Z0zTbAQBrycVejZndfVfaxdqtdgHMWThX9iwZMDtSh7x/abgHBwXqyWtBbd
+         WBSXtrbUZa9owfqlxbC7CrNWymndPbI2Py4etqCKUOpV4KW4yPNJ1Aqmszx99GFi9RzK
+         F4wA==
+X-Forwarded-Encrypted: i=1; AJvYcCVM955BMImLIFw0adK0ByT7+I8fC1LL0W9i+tg1VhYd3btv9+Ttm7GZShFVqM/mzJn30unGyDtQAGOfwCP3@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKKHS7PJMB6mB7RoWeJpQd8oY/AKQpEeEZ9lCzD52wKN38eKB4
+	/0rfNpn9KYxs+cyLrrP17o1clVwVTHG57DvX1NOCt4O3vgMbDmmAoWI3
+X-Gm-Gg: AZuq6aIoU4n3btBDiTmbhAMGnvre9SJtFLxWDxGP9tBbCNzckBPFPNT9cRIPA3xX8er
+	unoqu/xKui1o6PRE0j+bNPJekoBPp/gnhYDBVeg2PdyssHpdEiWJ+YDWgmK6LzDhDWDBIksbyHJ
+	CTpnCLXSLWVg8HzzRDFeZnveU2GbKmeax1TFy4dXMbcuH+g1p4sXjUUptEP1wak4Ajs38IoR3dr
+	DQ/+6/wFPBQpCItNO6rBmgQYiUnKgS2TAiPcLgEmChjbevGkJ5XvbSa2BDREOs2FdUsbCKgbK9t
+	bCtG+jajRKmTLMCHe0GjKxpK1pGu2VZLl18G0qfVwZ3+FWgqSKXfesv1igmf9mGsJK3WLVoThwu
+	sB1W7P3zlIo+HNCpkSWcv3X1m+VbM6DOdhnSoqGGN55OQWtDKKY+DV3yGmuZSpS+9sbS0mqsqkC
+	xwFBLUDobuIsTsULZ7mLMzBX7STe0tYfpduX19ASFZVNzIrnPQdlQIe3+4w763tT8IM3v0Sw==
+X-Received: by 2002:a05:6512:3993:b0:59d:e5e0:3dee with SMTP id 2adb3069b0e04-59e0402535emr1412810e87.27.1769539757664;
+        Tue, 27 Jan 2026 10:49:17 -0800 (PST)
+Received: from f (cst-prg-85-136.cust.vodafone.cz. [46.135.85.136])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59e074b98ebsm95376e87.80.2026.01.27.10.49.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Jan 2026 10:49:17 -0800 (PST)
+Date: Tue, 27 Jan 2026 19:49:11 +0100
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: alexjlzheng@gmail.com, usamaarif642@gmail.com, david@kernel.org, 
+	akpm@linux-foundation.org, lorenzo.stoakes@oracle.com, alexjlzheng@tencent.com, 
+	mingo@kernel.org, ruippan@tencent.com, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] procfs: fix missing RCU protection when reading
+ real_parent in do_task_stat()
+Message-ID: <zgqq2et7hf4fh3ggzvvcfmr5wkwoqjfzftxpdedinwinpr4xun@jrbtkbd5ig6n>
+References: <20260127150450.2073236-1-alexjlzheng@tencent.com>
+ <aXj1BZY0P_NQp0yI@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251118051604.3868588-1-viro@zeniv.linux.org.uk>
- <CAG2KctrjSP+XyBiOB7hGA2DWtdpg3diRHpQLKGsVYxExuTZazA@mail.gmail.com> <2026012715-mantra-pope-9431@gregkh>
-In-Reply-To: <2026012715-mantra-pope-9431@gregkh>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 27 Jan 2026 10:39:04 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whME4fu2Gn+W7MPiFHqwn51VByhpttf-wHdhAqQAQXpqw@mail.gmail.com>
-X-Gm-Features: AZwV_QjTvEFSmpHcnOP1NJLVZBe5xlcj-dD5ZtjcNC__rjqudIVF0E_rBxSpQA4
-Message-ID: <CAHk-=whME4fu2Gn+W7MPiFHqwn51VByhpttf-wHdhAqQAQXpqw@mail.gmail.com>
-Subject: Re: [PATCH v4 00/54] tree-in-dcache stuff
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Samuel Wu <wusamuel@google.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel@vger.kernel.org, brauner@kernel.org, jack@suse.cz, 
-	raven@themaw.net, miklos@szeredi.hu, neil@brown.name, a.hindborg@kernel.org, 
-	linux-mm@kvack.org, linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev, 
-	kees@kernel.org, rostedt@goodmis.org, linux-usb@vger.kernel.org, 
-	paul@paul-moore.com, casey@schaufler-ca.com, linuxppc-dev@lists.ozlabs.org, 
-	john.johansen@canonical.com, selinux@vger.kernel.org, 
-	borntraeger@linux.ibm.com, bpf@vger.kernel.org, clm@meta.com, 
-	android-kernel-team <android-kernel-team@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aXj1BZY0P_NQp0yI@redhat.com>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_DKIM_ALLOW(-0.20)[linux-foundation.org:s=google];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75639-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75640-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[gmail.com,kernel.org,linux-foundation.org,oracle.com,tencent.com,vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	DMARC_NA(0.00)[linux-foundation.org];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[linux-foundation.org:+];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	RCVD_TLS_LAST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[torvalds@linux-foundation.org,linux-fsdevel@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[mjguzik@gmail.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linuxfoundation.org:email,linux-foundation.org:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: 1BD2399636
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 7418C997D6
 X-Rspamd-Action: no action
 
-On Mon, 26 Jan 2026 at 23:42, Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> Note that I had to revert commit e5bf5ee26663 ("functionfs: fix the
-> open/removal races") from the stable backports, as it was causing issues
-> on the pixel devices it got backported to.  So perhaps look there?
+On Tue, Jan 27, 2026 at 06:25:25PM +0100, Oleg Nesterov wrote:
+> On 01/27, alexjlzheng@gmail.com wrote:
+> > --- a/fs/proc/array.c
+> > +++ b/fs/proc/array.c
+> > @@ -528,7 +528,9 @@ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
+> >  		}
+> >
+> >  		sid = task_session_nr_ns(task, ns);
+> > -		ppid = task_tgid_nr_ns(task->real_parent, ns);
+> > +		rcu_read_lock();
+> > +		ppid = task_tgid_nr_ns(rcu_dereference(task->real_parent), ns);
+> > +		rcu_read_unlock();
+> 
+> But this can't really help. If task->real_parent has already exited and
+> it was reaped, then it is actually "Too late!" for rcu_read_lock().
+> 
+> Please use task_ppid_nr_ns() which does the necessary pid_alive() check.
+> 
 
-Hmm. That commit is obviously still upstream, do we understand why it
-caused problems in the backports?
+That routine looks bogus in its own right though.
 
-                 Linus
+Suppose it fits the time window between the current parent exiting and
+the task being reassigned to init. Then you transiently see 0 as the pid,
+instead of 1 (or whatever). This reads like a bug to me.
+
+But suppose task_ppid_nr_ns() managed to get the right value at the
+time. As per usual, such an exit + reaping could have happened before
+the caller even looks at the returned pid.
+
+Or to put it differently, imo the check in the routine not only does not
+help, but introduces a corner case with a bogus result.
+
+It probably should do precisely the same thing proposed in this patch,
+as in:
+	rcu_read_lock();
+	ppid = task_tgid_nr_ns(rcu_dereference(task->real_parent), ns);
+	rcu_read_unlock();
 
