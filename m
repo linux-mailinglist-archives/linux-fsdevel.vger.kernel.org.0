@@ -1,57 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-75657-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75658-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id bADbEXs3eWkJwAEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75657-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 23:08:59 +0100
+	id CKlHEdM/eWmAwAEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75658-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 23:44:35 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9807A9AE91
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 23:08:58 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D3529B315
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 23:44:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A959D3013D59
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 22:08:50 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 7604A300845E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 22:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD4D333431;
-	Tue, 27 Jan 2026 22:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7D12E8B98;
+	Tue, 27 Jan 2026 22:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="L/jbmUyY"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="RQ71i25t";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EHK13jj0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40732528FD;
-	Tue, 27 Jan 2026 22:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED212E11A6;
+	Tue, 27 Jan 2026 22:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769551728; cv=none; b=R/JR2A90nl+x5PfMvmbt6o3TDxUnZLdAu7On6f+VhKDamalLinhr7++XEZrMNQLuq18GSmrwSZfLCu0xSiFoyNJar1DhUhPRVU+ZII7/wtHPBTdqJfjQdg2f6CKUBDNsXJsk3GWs/I4OonNiQszNSZaUClTyBtOQLL6du8zy7Nc=
+	t=1769553865; cv=none; b=J9c+ZoXkdn77Q6iLLGQe69D55rkjZVB4B4R/oVWQ+hdkJhNhCzZu7JRErEMiz8JKNSfjBQw0yThtiIOvRfgZsdRB56gRGK5luaB+kkYpZhDk3lpXhUirK/14NFUTakxZZiET374OfO7vBXwiEexn0v+NhXjtciueK7hqBiIu7s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769551728; c=relaxed/simple;
-	bh=zNVhpK/eZkgjDcqYKfDXwfMPXICvW52/vsM2Le5DWTY=;
+	s=arc-20240116; t=1769553865; c=relaxed/simple;
+	bh=uKfrKsEvu0RZTLIvVNqWI3LmcP14/n9T3QIUjROtNZ4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=abPv/yNpDWsIBrpVzZkLkbt/AfJABKjCKpi4uwpAsui9QpRbrv0EAtwp/0IRww5em2LPz5kuVjOUmLC4Hv3szX+AkGvoBQy3McZRiwTcOKFcYNX3AIcxoAhY8w/y/9CjLctpjr9F+5iwsXRGrr2DUappzEJCY0cv7l0OGWhzJHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=L/jbmUyY; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [172.27.2.41] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 60RM8DIF3885489
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 27 Jan 2026 14:08:17 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 60RM8DIF3885489
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2026012301; t=1769551703;
-	bh=y6oQ+uU7Q3nNg8DhxvmUv17AhGXlIrzJZrr4lvC2aak=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=L/jbmUyY8rTYcmXtCACsourh+UsnYa5sLFXMiTh5vsW9LvP623NbcECoo6P0I4XAr
-	 F2x8JjtqADk1Jr4uOgcRal76ZYdDU0Atr9lDOxpqXSSr5kteGRve8JranIWKWRbK5L
-	 nAjr3Ugfdt5CvzlVK+ptm1y/PfzGjQJF8IjfLJ81MfNIQfHTAneFxeIdqRhySihZbN
-	 979g0YiEJqdgdnC8kBHvNN3D2T8skbw8AaS9/HCghG5+bHEMJVF8+qjE1t4SS/6Nrg
-	 i4lc4luY+87ZydMSy5rk/ThKHc5oDi04N7r7w6N5H6wjWZysF/+LB2mBkBEALO0Gy7
-	 OALr36iXO0eZg==
-Message-ID: <93b5c10e-747d-4164-9733-947a63b4f25d@zytor.com>
-Date: Tue, 27 Jan 2026 14:08:07 -0800
+	 In-Reply-To:Content-Type; b=p6ZcPW/9jrDk0O2Zpg9ZTafEGAVnylF0OEcqPaH3CQmW09ByylMc5poYpxtmFODi1XgOilt2ui+k23AiFh6yaw0foUGEWPJhdM+/alM7OyhFDeXVgDVKZn/meHfahHckeUNHvbpFGDTwZ/uXEnAyg8FLBELxQJrMkroaWx2OLaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=RQ71i25t; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EHK13jj0; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id D7134EC00F2;
+	Tue, 27 Jan 2026 17:44:22 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Tue, 27 Jan 2026 17:44:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1769553862;
+	 x=1769640262; bh=dCH+e+Sb3AYsoUHbD0ywtC42NFzwIIXmkMm4NkTbzpo=; b=
+	RQ71i25toiNsEBIVe1xDWuyqfrjcFp/Y/+ybj0BjlvrBevL3jMF/i07WbgDKJNlr
+	X0B3wkNFUvhtY/jzgEG6cjWuEveL293FohM7oj/oXkjzjYyVnkeB1sVaw91LqvIk
+	gi6Jeiv8zU5M5Df5WJUjsu6guFAN7O6VdYJcV6KTEOemawaWKSNfvHPxkN5Mg1lE
+	3sioVk8+QKu+6mXYcY59E+oAenY73A8drgX+20g8BbGT8x6E/AvLk6ieNNZi97TC
+	Ld7tM3PGQ/5irDpoKGDAQ01qAeCAVp7QJkMZW6H6MnNu98PrzfjM1sYtiFlMbTL4
+	oHoUKEmLhvsVCDc/8hxbZg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1769553862; x=
+	1769640262; bh=dCH+e+Sb3AYsoUHbD0ywtC42NFzwIIXmkMm4NkTbzpo=; b=E
+	HK13jj08KoNbTzy+GUJIUgp8LBBPSnt5oV3SsZ6s5YX5C6SNPCKRWGFHslbFCe2N
+	S9k+FN/HNrCE51Roh3XUU8uDIw3aRZP5Li19TVCJ6DjWbINKKOWcVI4EAC+oiU3h
+	Vo8Hu4mYmY/Odx82KDzoZDShOiXinumnkRDE0zfps2sLwvT4jtRFPWVI2FklOFcW
+	OrFYchHExFvg2h59BANmIzV3MTe4HzoDwr52/WZXFpifVeohvFLwpQ3JLf9LSD3V
+	Q3kQaQoM8Wht7bgnZkIk+XdrBWLLgWrn7wN/P1B9P72h1P7oBlhva2HBZH5GZ5+n
+	8cTqi4xGm6LwpbEjqdiIQ==
+X-ME-Sender: <xms:xT95aanBi4LTrfUpFckDnaQInneaU0i4jCVcQuxkUjnviOkNzHYSVA>
+    <xme:xT95aU5MwGsZ3hHM8tpe9WE1zoAXT3jO8swM7R7GRWnxee0o2y9HtnetikCUEbehM
+    vT4wgSw_RAt5wLOv85Kf7YPaClHrtEi7Flkyy73O6sMs_piqppp>
+X-ME-Received: <xmr:xT95aTRpdP0oywWzIzgOdmwKzvuMt6gJxAK4zJgP0_mForMOKc5EyqvXGWWjTbupvH8kozmcRqv9BSIjJfKJ4mUY0TmskBk_wNUUrO0X6CcLZBz4UQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduiedujedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghrnhgu
+    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
+    htthgvrhhnpeefgeegfeffkeduudelfeehleelhefgffehudejvdfgteevvddtfeeiheef
+    lefgvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    gsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgtphhtthhopedutddpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrd
+    gtohhmpdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrdgukhdprhgtphhtthhopehm
+    ihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheptghsrghnuggvrhesphhurh
+    gvshhtohhrrghgvgdrtghomhdprhgtphhtthhopehkrhhishhmrghnsehsuhhsvgdruggv
+    pdhrtghpthhtohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrdgtohhmpdhrtghpthhtohep
+    gihirghosghinhhgrdhlihesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopehsrghfih
+    hnrghskhgrrhesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:xj95aaz6B25VWAtS24Utz8a8ra7Uqo2DFK-sc1xyzwoq5bXK_G96BQ>
+    <xmx:xj95aTqs7NaCOeFcSd-6OdPnOU7L3YWXhE4cisJ1W25sGap3h6zKlg>
+    <xmx:xj95aV2Ba_np9YAf5sbYWNLfpmqoG_-O95mK2b1LAMgSZaM3jiqgdQ>
+    <xmx:xj95abxkNjpu0cSAa2kh6cK9v6g9JPs7Z8uN8nVn4FyeolFEwtkNZQ>
+    <xmx:xj95ac_859Xu-olhUat9iRWI9s2LMwuWmoNVEtIwOlo9qLsv_NFgRF6X>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 27 Jan 2026 17:44:20 -0500 (EST)
+Message-ID: <d6eb86a9-c5b0-4660-8cf2-9c853b43b494@bsbernd.com>
+Date: Tue, 27 Jan 2026 23:44:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,83 +101,77 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/4] initramfs: Refactor to use hex2bin() instead of
- custom approach
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        David Disseldorp <ddiss@suse.de>
-Cc: Christian Brauner <brauner@kernel.org>, Petr Mladek <pmladek@suse.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20260119204151.1447503-1-andriy.shevchenko@linux.intel.com>
- <20260119204151.1447503-3-andriy.shevchenko@linux.intel.com>
- <20260120230030.5813bfb1.ddiss@suse.de> <aW_m5eRzqRJzFWnF@smile.fi.intel.com>
- <20260121080015.6aca8808.ddiss@suse.de> <aW_xA0wbC2bf981d@smile.fi.intel.com>
-Content-Language: en-US, sv-SE
-From: "H. Peter Anvin" <hpa@zytor.com>
-In-Reply-To: <aW_xA0wbC2bf981d@smile.fi.intel.com>
+Subject: Re: [PATCH v4 00/25] fuse/io-uring: add kernel-managed buffer rings
+ and zero-copy
+To: Joanne Koong <joannelkoong@gmail.com>, axboe@kernel.dk, miklos@szeredi.hu
+Cc: csander@purestorage.com, krisman@suse.de, io-uring@vger.kernel.org,
+ asml.silence@gmail.com, xiaobing.li@samsung.com, safinaskar@gmail.com,
+ linux-fsdevel@vger.kernel.org
+References: <20260116233044.1532965-1-joannelkoong@gmail.com>
+ <CAJnrk1Z-9rsP86Fc=57P9gy=vFjfjT8nuAgE2_snL3_vfbbBmg@mail.gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJnrk1Z-9rsP86Fc=57P9gy=vFjfjT8nuAgE2_snL3_vfbbBmg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[zytor.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[zytor.com:s=2026012301];
+	DMARC_POLICY_ALLOW(-0.50)[bsbernd.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_DKIM_ALLOW(-0.20)[bsbernd.com:s=fm1,messagingengine.com:s=fm2];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75657-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[purestorage.com,suse.de,vger.kernel.org,gmail.com,samsung.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	DKIM_TRACE(0.00)[zytor.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hpa@zytor.com,linux-fsdevel@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com,kernel.dk,szeredi.hu];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75658-lists,linux-fsdevel=lfdr.de];
+	DKIM_TRACE(0.00)[bsbernd.com:+,messagingengine.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[bernd@bsbernd.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[10];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[zytor.com:mid,zytor.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,opengroup.org:url]
-X-Rspamd-Queue-Id: 9807A9AE91
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 6D3529B315
 X-Rspamd-Action: no action
 
-On 2026-01-20 13:17, Andy Shevchenko wrote:
+
+
+On 1/27/26 21:12, Joanne Koong wrote:
+> On Fri, Jan 16, 2026 at 3:31 PM Joanne Koong <joannelkoong@gmail.com> wrote:
 >>
->> I.e. a "0x" isn't specified as valid prefix. I don't feel strongly
->> regarding diverging from existing behaviour,
+>> This series adds buffer ring and zero-copy capabilities to fuse over io-uring.
+>> This requires adding a new kernel-managed buf (kmbuf) ring type to io-uring
+>> where the buffers are provided and managed by the kernel instead of by
+>> userspace.
+>>
+>> On the io-uring side, the kmbuf interface is basically identical to pbufs.
+>> They differ mostly in how the memory region is set up and whether it is
+>> userspace or kernel that recycles back the buffer. Internally, the
+>> IOBL_KERNEL_MANAGED flag is used to mark the buffer ring as kernel-managed.
+>>
+>> The zero-copy work builds on top of the infrastructure added for
+>> kernel-managed buffer rings (the bulk of which is in patch 19: "fuse: add
+>> io-uring kernel-managed buffer ring") and that informs some of the design
+>> choices for how fuse uses the kernel-managed buffer ring without zero-copy.
 > 
->> but it should still be
->> considered (and documented) as a potentially user-visible regression.
-> 
-> I disagree, this is not specified and should not be used. The CPIO archive in
-> the original form doesn't specify leading 0 for octals (at least how I read it,
-> please correct me, if I'm wrong).
-> 
-> https://pubs.opengroup.org/onlinepubs/007908799/xcu/pax.html
-> 
+> Could anyone on the fuse side review the fuse changes in patches 19 and 24?
 
-This is the "newc" or "crc" format used by BSD (header magic 070701 and
-070702, respectively), those were never standardized by POSIX.
-
-These formats use 8-character hexadecimal (%08x).
-
-As far as a 0x prefix, or upper case -- no, that is technically not according
-to spec, but we DO NOT break user space tools that have been working for 20+
-years, unless it is either (a) a security problem or (b) is holding back
-further development (e.g. because the format is ambiguous. This is Postel's
-law in action.
-
-	-hpa
+I will really do this week, getting persistently other "urgent" work :/
 
 
+Sorry for late reviews,
+Bernd
 
