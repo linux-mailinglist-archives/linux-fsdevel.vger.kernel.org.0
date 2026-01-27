@@ -1,118 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-75590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75591-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yBPENxmUeGmxrAEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 11:31:53 +0100
+	id aOctKCOWeGnmrAEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75591-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 11:40:35 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B1F492D4D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 11:31:53 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FF5E92F19
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 11:40:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 470663019FCA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 10:31:41 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3F7E23044A4B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 10:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A44341ACA;
-	Tue, 27 Jan 2026 10:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646A434251A;
+	Tue, 27 Jan 2026 10:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jCsabYyg"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="PlASQXNv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28AB533FE08;
-	Tue, 27 Jan 2026 10:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769509895; cv=none; b=A8LNp97CUmwRfqNXBoq/uQZrkaLI8F7suq/gM1vZ8Mq4OilvoweVgAHWQWEsG2LKG1c5O3/UrQFxERJhZOH8aEDyqS3necWkdKlSF7KnLp1+IWqvxTOVmduoW/q7/95pNkay8wKF9jBmG9tufxqIaBULVgIdGmLFhifsu2kBNes=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769509895; c=relaxed/simple;
-	bh=yez8CxCaJvQdm0pFsZYXYFvGPQwxl8sc40KXS7WLMao=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rco23tuptvjxy5JHrU3kZgK5yts18VE1Xd7EPWIjABHFf+Cm9hvCaXMMgrXWXche/TUln6c9Y5lna+dUvqwEiln8bgVexKKb2YOs891heTnp4NiWzNIKDxeSrgbLh7hEOaumJLRp+06Cdo+MzOCzKprE/bhKe0YoKqsVhSvXYg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jCsabYyg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA25BC116C6;
-	Tue, 27 Jan 2026 10:31:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769509895;
-	bh=yez8CxCaJvQdm0pFsZYXYFvGPQwxl8sc40KXS7WLMao=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jCsabYyg1Yh0toV4raRWeB0w052zRrIQIPMTaAsVzG58wRJzE/U3nUnLpzCJLN2jY
-	 dKFHFv/Y97VUUIgUc5+0LfDfHoRCnTHkjHU5SSGTIgA42bqhDfUyr5YlSKqRls6g1Z
-	 E2dA1E62ZAjsLfu3getHhtKVtFBQlxrkW4Vn4mfiDetWqiellOrBpALD3bISUOwLVL
-	 01SxuohvYEQ9bfSPvaDCzRdkF8D1MC1z2lxIUPU5OyfsrqF9jRom7FBm3L9u2GWM1I
-	 LIPNeZ8sde/d1d832ikbCUW8g1GztzNi3nMkpCiZcOdwStCLKGrmYwGHzwKeRBGdG4
-	 SpM8Mh7BiJtsA==
-Date: Tue, 27 Jan 2026 11:31:30 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, "Darrick J. Wong" <djwong@kernel.org>, 
-	Carlos Maiolino <cem@kernel.org>, Qu Wenruo <wqu@suse.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	linux-block@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: block or iomap tree, was: Re: bounce buffer direct I/O when
- stable pages are required v2
-Message-ID: <20260127-dezent-ungunsten-0cc7a56917ba@brauner>
-References: <20260119074425.4005867-1-hch@lst.de>
- <20260123-zuerst-viadukt-b61b8db7f1c5@brauner>
- <20260123141032.GA24964@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CA4342507
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 10:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.172
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769510275; cv=pass; b=cc3idzODXgsoOJtj9CzCryOn6tOtz2M7+MgR6J0+HcPJKKLoyIUgXOykp8NlaWhJY/15y/KIiah8Fl4jV3iIaj+exyeXKksqX2MR8hJlIeJIUbsIA1kib60QMy2MT9s+g4dmv5Kf4OKOElTGrr3ENAqT/IhbrKntIcSikgI4x3Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769510275; c=relaxed/simple;
+	bh=WqPkvZ8KHcRfRYdzliNwWh2JqKb+7oynYZqyX7Rfp+k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fR7oZeFw2TW7i0+3na6bo4QC/0kmj6UBRYJ5LB6qS9gfZkEdYhMxPNXVxAfNX3ckW4YulGm2an9YKq3yfAamjuoQQFE3A9/vcqg7APe6PGmlfzELEFxqBsLChY7gyZMwQlcF1GVFBCuxAnqvWihzcbmF2wobZ2GOsx+U2CwQmdE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=PlASQXNv; arc=pass smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-5014e1312c6so35027671cf.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 02:37:53 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769510272; cv=none;
+        d=google.com; s=arc-20240605;
+        b=H2h6lnGsk/tzhJkBAw7Q1uIL66eETpldPyoRd2xBSsA/lKb4eWF+Yh+S0J1wptnGVf
+         4LuwJQnGsNr2/Fob7yjjnXOnabZAk3ONZlS9SDlxAgI3bKPMZ6flQ4eE/vVScA9eGQ60
+         c1dF2i4Xg4GyqCRpL2nNlRHIscEXrdW8CmyW6Ml5sZ6hKEIiclrDxMRQO4rwT6DRw4LB
+         EAFSZOUKAGBN52QA6Lmca0vusjFWejduBPUhh/TZD0cpPzCtGEgTJNTcX+sxx6N3ZVXj
+         hFIAYdbMYaHg4p2uql01MHw/CO5/9lDzlw+BwDI8mD3BCwZEBZywcXAGFvfies/ieSxc
+         xW3A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=WqPkvZ8KHcRfRYdzliNwWh2JqKb+7oynYZqyX7Rfp+k=;
+        fh=N4E6HkQvjimOTMdnqP/vlUXQqYiQOXQD7XByIUaFesI=;
+        b=e5edhWFtPZ7u3cT4942+Votr52CBlcKTaEgFF78bTcGSPhz0Sscdkbij/YUqXoAl8l
+         TvExMucW7ieq/gT4ye8s7wVJe2G6NffvGPaKGqkl6McJMtTSTcbttySpiTQ8QrZXNMyQ
+         //ktnJKSJlcrrApsElZI1t66fqoUIJ/DeHzSffRDrmLdyxAfpBu2lf0+IWw5aYgA0XaF
+         HfsojjXvM+TuadE0mkbbMbKflWcQZLAyRQTDkG6EAbJIQlSCwhyYOCCna57TrPv12vfX
+         d71HwLrH9mbM8Itv4QXoe8o3zgEB4/tVQ5lsNfAY3HSBp58PKTnfOLDlZRNjTVFe6hBd
+         et8Q==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1769510272; x=1770115072; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WqPkvZ8KHcRfRYdzliNwWh2JqKb+7oynYZqyX7Rfp+k=;
+        b=PlASQXNvANpNnHx7pQDss88mvmgXEzzLdzhyOEXa0a9xCkm5qmVa1wPa7mZY1AKNMR
+         /+njSimb+uMFkmmS1MWkMJRLtVx7tcmhxyHH7i2Wnxy+1gar7eRWoWsVRVvHCgZSihlM
+         BtqiO+ibe/zHlk6rOdc6en8+XLxwc0Qh5LKR0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769510272; x=1770115072;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WqPkvZ8KHcRfRYdzliNwWh2JqKb+7oynYZqyX7Rfp+k=;
+        b=vG05CKZdvzhjfXTmU/ma7Whd6SgcbP/2fHzb70J2dZvny/s4T5fP7YklMSi1WpqDp0
+         ZmiwRiIh+gODVWc8MmWLMwDmItdWw3DJsskz/4x6iJhSBOo4RU45L9+3HK0IPweNt/y5
+         iEPP5LUpYRmBnXj4JqDtmoI/PLxOiiK6spEYlp5CYBjYOCgdJ8uw4SjiP6rqk6vj2fPP
+         jZE+/lyBcdcL6feDjNxmZFHgnmvTRgFxmoSbATBdFtPMsnLnv7BagDRegkitWGa7iPux
+         WYrCXfCYkWzeprimP/hN/YaUEfHqfljGkRnJZRWjB9Tq68/0lcDcj82Z1AhQjzY6J/8N
+         EyPg==
+X-Gm-Message-State: AOJu0Yy8p67yKxb6Bo/M0OR15pKYeq52GnoZekEheC+I7Oteb1nKr456
+	SIEUX/lj5yyDipASdvB3771tjH342uCpu5KH0ZkX4RUHFwwdo5C0bH26okbnDit91quMhdIVG+b
+	Hics/CHBQbMe54BoxWxbSaecFJsrT8DenmGzy1ifk2w==
+X-Gm-Gg: AZuq6aILpjiay+2jnbsCEyuao2A4TZHlyjaBAUJDDfpCR59kFPvV1iOCum0+NSfiDJu
+	G3JmKnEzuBGXOUMShuOyK06Wzq5Xfl6rbCeXFDg+Ws/FSV14sHbjPnfIDVdGat7R6vUrjX9Nc6Q
+	Ov8/wPfk6fg1k6lAnQtCxlnkr3Sho5Pjv86PpVdZ8Ml1kgH1/DbL5U4Oz+SwYEn2hnl66iwn7A2
+	y598cZNZybyDiBmcldGaorWIU1Ha99K0J+WSrzogcAM4N0jRxyo3Fb3RiCjIjeZXvnwp4A=
+X-Received: by 2002:ac8:7f07:0:b0:503:2f21:6358 with SMTP id
+ d75a77b69052e-5032f9f0ffbmr13767741cf.39.1769510272502; Tue, 27 Jan 2026
+ 02:37:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260123141032.GA24964@lst.de>
+References: <20251225110318.46261-1-zhangtianci.1997@bytedance.com>
+In-Reply-To: <20251225110318.46261-1-zhangtianci.1997@bytedance.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 27 Jan 2026 11:37:41 +0100
+X-Gm-Features: AZwV_QgkNoyGPsJwcsG5StOe16tRb4cohuOufFQuLjYWOQcSRj7esuNs5HmWz-w
+Message-ID: <CAJfpeguDR4RqfNgaGSxSA9GKtFD7605pMo80fM4EEGV42bi80g@mail.gmail.com>
+Subject: Re: [PATCH] fuse: fix the bug of missing EPOLLET event wakeup
+To: Zhang Tianci <zhangtianci.1997@bytedance.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Geng Xueyu <gengxueyu.520@bytedance.com>, Wang Jian <wangjian.pg@bytedance.com>, 
+	Xie Yongji <xieyongji@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [2.34 / 15.00];
-	MID_END_EQ_FROM_USER_PART(4.00)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
+	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75590-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	MISSING_XM_UA(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TAGGED_FROM(0.00)[bounces-75591-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 5B1F492D4D
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[szeredi.hu:+];
+	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_FIVE(0.00)[6];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid,bytedance.com:email,szeredi.hu:dkim]
+X-Rspamd-Queue-Id: 0FF5E92F19
 X-Rspamd-Action: no action
 
-On Fri, Jan 23, 2026 at 03:10:32PM +0100, Christoph Hellwig wrote:
-> On Fri, Jan 23, 2026 at 01:24:08PM +0100, Christian Brauner wrote:
-> > Applied to the vfs-7.0.iomap branch of the vfs/vfs.git tree.
-> > Patches in the vfs-7.0.iomap branch should appear in linux-next soon.
-> 
-> Hmm, I have another minor revision in the making.  This is mostly
-> spelling fixes, removing a duplicate page_folio call, adding a new
-> comment and adding symbolic constants for the max bvec_iter/bio sizes.
-> 
-> I also have some other work that would conflict with this in the block
-> layer.
-> 
-> What do you and Jens think of waiting for another quick respin and
-> merging it through the block tree or a shared branch in the block
-> tree?  There really is nothing in the iomap branch that conflicts,
+On Thu, 25 Dec 2025 at 12:03, Zhang Tianci
+<zhangtianci.1997@bytedance.com> wrote:
+>
+> Users using Go have reported an issue to us:
+> When performing read/write operations with goroutines,
+> since fuse's file->f_ops->poll is not empty,
 
-I don't mind per se. I haven't pushed this into -next yet. We can also
-just wait for the next merge window given how close we're cutting it.
+Another one of those historical mistakes...
+
+> read/write operations are conducted via epoll.
+> Additionally, goroutines use the EPOLLET wake-up mode.
+>
+> Currently, the implementation of fuse_file_poll has
+> the following problem:
+> After receiving EAGAIN during read/write operations,
+
+Why is read/write returning EAGAIN?
+
+Thanks,
+Miklos
 
