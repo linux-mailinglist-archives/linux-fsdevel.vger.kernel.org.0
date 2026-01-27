@@ -1,210 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-75666-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75667-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GIz/EJhKeWmXwQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75666-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 00:30:32 +0100
+	id uFLBC1dLeWmXwQEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75667-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 00:33:43 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AC219B672
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 00:30:31 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B14B9B6C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 00:33:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E72CD300DE25
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 23:30:28 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 07BC630055EA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jan 2026 23:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56341245031;
-	Tue, 27 Jan 2026 23:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4CF72DF13E;
+	Tue, 27 Jan 2026 23:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KE8A0BsW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q5FPFfyI"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACB718FC86
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 23:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A40284689;
+	Tue, 27 Jan 2026 23:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769556627; cv=none; b=koFm9LlzgmT6M0LReFYPTjcVLaAPhEvjd92KB7P69mXXk057Iwx9RpSyePVIs02dbfgyABDnixJ38ebnCgk0KJt3DmB1pG93/MD1B/yzDr8BHa1P6fSstVRMAKLMwbVuP+fxR5pfWo27U5pNMjKMjwZTwA4I0wQ8rCF3BV3uMEE=
+	t=1769556818; cv=none; b=A4NQJiFR9QptZ86PQvDgyEKzT3JnuqsnQwmFLt30K9CVkUgSZJm8vAnzjGLzhZZclAB6Sn8dYx1Bp18HOc7peE+PM4yyiM4sqD6l+V0cVm4TPYGtc8dnyhg2fIV0S1yeuMdwScHvcFlez3gURZmxYd6vNh9u4HqBNuxhnqR3ECo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769556627; c=relaxed/simple;
-	bh=YRqEwMEdkLaxC9S1OI825gIwjnYSKlKGr4MlbB7GmNM=;
+	s=arc-20240116; t=1769556818; c=relaxed/simple;
+	bh=STgkijcigGlMrJsij4S3qXbKeizuWURck/hf+kHmMX8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zrcvy6sfbggBwFunktJmbta7DPR1ztMniTn0veQ3Ig2VF133KIjO+4rJvsuLrZ++OeBVC9zc0DloHpZEB7JGOWMJIjm//V3OUcyI+b9uZAW8lhbMi9XecLVOSUZ8Mm63RwHlp83aVnflWnyJWAu4VQu212ZUqrS1F3BQ4ruxY34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KE8A0BsW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F1E3C116C6;
-	Tue, 27 Jan 2026 23:30:27 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=WMG5z5F1CcX6mOOcAS/ybqWba1PKUW5+L6zAhVwlRmz0Q6fNL3LvmiFL28LuLD9e3hdmvMCFvq2oECQGH9d2cbft7O+emMPJ/KwuKXdPOm92IfcMpG8Hla5ys+NbE50PhnkLx60Bs0crajEGahz+sagEczJSdz1/JQMWkNpTR5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q5FPFfyI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20577C116C6;
+	Tue, 27 Jan 2026 23:33:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769556627;
-	bh=YRqEwMEdkLaxC9S1OI825gIwjnYSKlKGr4MlbB7GmNM=;
+	s=k20201202; t=1769556818;
+	bh=STgkijcigGlMrJsij4S3qXbKeizuWURck/hf+kHmMX8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KE8A0BsWbtKMoaCLN3X/RVEDUMT1ik8EZjNbquk+AerdDEvR3mG2zwAU1BUu5I0+Z
-	 jdhjIONXyKMCUBeHi+917I0/kIneXLQDdlQDl35+SV3/4fD+v/oNj94C+lEfSaDjRz
-	 EDD5ILJnJ1QoiG5Ckh6iWYssUiSJUViFrgucPJLPdUV5QLwOUpdly9DJhY5+p1Gf79
-	 Z9ffaiT2B8sQR22fUIOycLwwUVpAhpfp0GF29fxys3uOYmGZHcCCbV7/V959wjaaoP
-	 nmIKbuxJWxnSlX9utpA2L48gK9aywS6L776vLVnwI472cg9s6t/9x1gVyOZPZckX74
-	 tUQmrKJiTYPsA==
-Date: Tue, 27 Jan 2026 15:30:27 -0800
+	b=q5FPFfyI66KqhE3+dDxNMiBReccL7OctdNiVrWZB9H4Y7Jhh7Q6hJKeIGbSHBqmNo
+	 dxgba6l7JXeIPbBTZs8sQIaccVA9PwLDyU4D7OivyjeppoE4XIkQ/or6pr2ltSueXN
+	 nnRyfY6M8dlx06lyMZgBx3xS/LDyW19s8LnC3uLseuXRJiKA5mwCZVwPVhNYBZsoHq
+	 1bonx30pSqdzbNuXF6gyEO3ykriPsOQN6gRM4j8eQWxkAleVQfFx38FJmslxmqT1g1
+	 qXIWhxVXRmrtugd7tdNzMYxClp+Ih4sFbNwDHbAsT9VuKsD1tyZnfZ26lSNkhQh/Pr
+	 ZIarzQrdyhKJQ==
+Date: Tue, 27 Jan 2026 15:33:37 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Sergio Lopez Pascual <slp@redhat.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fuse: mark DAX inode releases as blocking
-Message-ID: <20260127233027.GB5966@frogsfrogsfrogs>
-References: <20260118232411.536710-1-slp@redhat.com>
- <20260126184015.GC5900@frogsfrogsfrogs>
- <CAAiTLFU3Shv-YvizuvFj-4i0LArDmcO=KYxLwUrCT7GJLbZw1A@mail.gmail.com>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, bernd@bsbernd.com, neal@gompa.dev,
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 07/31] fuse: create a per-inode flag for toggling iomap
+Message-ID: <20260127233337.GH5900@frogsfrogsfrogs>
+References: <176169810144.1424854.11439355400009006946.stgit@frogsfrogsfrogs>
+ <176169810502.1424854.13869957103489591272.stgit@frogsfrogsfrogs>
+ <CAJnrk1ZDeYytdjuCdg6-O-PGjcmwS33LOnfFT_YY9SPE=x=Qxw@mail.gmail.com>
+ <20260122222233.GA5900@frogsfrogsfrogs>
+ <CAJnrk1ZYp=+ho02gMAPGLsGBo3a84ScuE92xP68=1SR-ixAs+g@mail.gmail.com>
+ <20260124165430.GT5966@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAAiTLFU3Shv-YvizuvFj-4i0LArDmcO=KYxLwUrCT7GJLbZw1A@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260124165430.GT5966@frogsfrogsfrogs>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	MID_RHS_NOT_FQDN(0.50)[];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75666-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75667-lists,linux-fsdevel=lfdr.de];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
 	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 8AC219B672
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 5B14B9B6C7
 X-Rspamd-Action: no action
 
-On Tue, Jan 27, 2026 at 05:12:35AM -0600, Sergio Lopez Pascual wrote:
-> "Darrick J. Wong" <djwong@kernel.org> writes:
+On Sat, Jan 24, 2026 at 08:54:30AM -0800, Darrick J. Wong wrote:
+> On Fri, Jan 23, 2026 at 10:05:32AM -0800, Joanne Koong wrote:
+> > On Thu, Jan 22, 2026 at 2:22 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> > >
+> > > On Wed, Jan 21, 2026 at 05:13:39PM -0800, Joanne Koong wrote:
+> > > > On Tue, Oct 28, 2025 at 5:46 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> > > > >
+> > > > > From: Darrick J. Wong <djwong@kernel.org>
+> > > > >
+> > > > > Create a per-inode flag to control whether or not this inode actually
+> > > > > uses iomap.  This is required for non-regular files because iomap
+> > > > > doesn't apply there; and enables fuse filesystems to provide some
+> > > > > non-iomap files if desired.
+> > > > >
+> > > > > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+> > > >
+> > > > The logic in this makes sense to me, left just a few comments below.
+> > > >
+> > > > Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
+> > >
+> > > Thanks!
+> > >
+> > > > > ---
+> > > > >  fs/fuse/fuse_i.h          |   17 ++++++++++++++++
+> > > > >  include/uapi/linux/fuse.h |    3 +++
+> > > > >  fs/fuse/file.c            |    1 +
+> > > > >  fs/fuse/file_iomap.c      |   49 +++++++++++++++++++++++++++++++++++++++++++++
+> > > > >  fs/fuse/inode.c           |   26 ++++++++++++++++++------
+> > > > >  5 files changed, 90 insertions(+), 6 deletions(-)
+> > > > >
+> > > > > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> > > > > index f1ef77a0be05bb..42c85c19f3b13b 100644
+> > > > > --- a/fs/fuse/file.c
+> > > > > +++ b/fs/fuse/file.c
+> > > > > +void fuse_iomap_init_reg_inode(struct inode *inode, unsigned attr_flags)
+> > > > > +{
+> > > > > +       struct fuse_conn *conn = get_fuse_conn(inode);
+> > > > > +       struct fuse_inode *fi = get_fuse_inode(inode);
+> > > > > +
+> > > > > +       ASSERT(S_ISREG(inode->i_mode));
+> > > > > +
+> > > > > +       if (conn->iomap && (attr_flags & FUSE_ATTR_IOMAP)) {
+> > > > > +               set_bit(FUSE_I_EXCLUSIVE, &fi->state);
+> > > > > +               fuse_inode_set_iomap(inode);
+> > > > > +       }
+> > > > > +}
+> > > > > +
+> > > > > +void fuse_iomap_evict_inode(struct inode *inode)
+> > > > > +{
+> > > > > +       struct fuse_conn *conn = get_fuse_conn(inode);
+> > > > > +       struct fuse_inode *fi = get_fuse_inode(inode);
+> > > > > +
+> > > > > +       if (fuse_inode_has_iomap(inode))
+> > > >
+> > > > If I'm understanding this correctly, a fuse inode can't have
+> > > > FUSE_I_IOMAP set on it if conn>iomap is not enabled, correct?
+> > >
+> > > Correct.
+> > >
+> > > > Maybe it makes sense to just return if (!conn->iomap) at the very
+> > > > beginning, to make that more clear?
+> > >
+> > > <shrug> fuse_inode_has_iomap only checks FUSE_I_IOMAP...
+> > >
+> > > > > +               fuse_inode_clear_iomap(inode);
+> > > > > +       if (conn->iomap && fuse_inode_is_exclusive(inode))
+> > > > > +               clear_bit(FUSE_I_EXCLUSIVE, &fi->state);
+> > >
+> > > ...but I wasn't going to assume that iomap is the only way that
+> > > FUSE_I_EXCLUSIVE could get set.
+> > >
+> > > On the other hand, for non-regular files we set FUSE_I_EXCLUSIVE only if
+> > > conn->iomap is nonzero *and* attr->flags contains FUSE_ATTR_IOMAP.  So
+> > > this clearing code isn't quite the same as the setting code.
+> > >
+> > > I wonder if that means we should set FUSE_I_IOMAP for non-regular files?
+> > > They don't use iomap itself, but I suppose it would be neat if "iomap
+> > > directories" also meant that timestamps and whatnot worked in the same
+> > > as they do for regular files.
+> > >
+> > 
+> > That seems like a good idea to me. I think that also makes the mental
+> > model (at least for me) simpler.
 > 
-> > On Mon, Jan 19, 2026 at 12:24:11AM +0100, Sergio Lopez wrote:
-> >> Commit 26e5c67deb2e ("fuse: fix livelock in synchronous file put from
-> >> fuseblk workers") made fputs on closing files always asynchronous.
-> >>
-> >> As cleaning up DAX inodes may require issuing a number of synchronous
-> >> request for releasing the mappings, completing the release request from
-> >> the worker thread may lead to it hanging like this:
-> >>
-> >> [   21.386751] Workqueue: events virtio_fs_requests_done_work
-> >> [   21.386769] Call trace:
-> >> [   21.386770]  __switch_to+0xe4/0x140
-> >> [   21.386780]  __schedule+0x294/0x72c
-> >> [   21.386787]  schedule+0x24/0x90
-> >> [   21.386794]  request_wait_answer+0x184/0x298
-> >> [   21.386799]  __fuse_simple_request+0x1f4/0x320
-> >> [   21.386805]  fuse_send_removemapping+0x80/0xa0
-> >> [   21.386810]  dmap_removemapping_list+0xac/0xfc
-> >> [   21.386814]  inode_reclaim_dmap_range.constprop.0+0xd0/0x204
-> >> [   21.386820]  fuse_dax_inode_cleanup+0x28/0x5c
-> >> [   21.386825]  fuse_evict_inode+0x120/0x190
-> >> [   21.386834]  evict+0x188/0x320
-> >> [   21.386847]  iput_final+0xb0/0x20c
-> >> [   21.386854]  iput+0xa0/0xbc
-> >> [   21.386862]  fuse_release_end+0x18/0x2c
-> >> [   21.386868]  fuse_request_end+0x9c/0x2c0
-> >
-> > Ok, so this is the reply from the async FUSE_RELEASE command.  But then
-> > we iput the inode, which results in fuse issuing a new synchronous
-> > command from within the completion for the first command.
-> >
-> > Ouch.
-> >
-> >> [   21.386872]  virtio_fs_request_complete+0x150/0x384
-> >> [   21.386879]  virtio_fs_requests_done_work+0x18c/0x37c
-> >> [   21.386885]  process_one_work+0x15c/0x2e8
-> >> [   21.386891]  worker_thread+0x278/0x480
-> >> [   21.386898]  kthread+0xd0/0xdc
-> >> [   21.386902]  ret_from_fork+0x10/0x20
-> >>
-> >> Here, the virtio-fs worker_thread is waiting on request_wait_answer()
-> >> for a reply from the virtio-fs server that is already in the virtqueue
-> >> but will never be processed since it's that same worker thread the one
-> >> in charge of consuming the elements from the virtqueue.
-> >
-> > Yes.  Ow.
-> >
-> >> To address this issue, when relesing a DAX inode mark the operation as
-> >> potentially blocking. Doing this will ensure these release requests are
-> >> processed on a different worker thread.
-> >
-> > I wonder if you've solved this problem report?
-> > https://github.com/Nevuly/WSL2-Rolling-Kernel-Issue/issues/38
-> >
-> > Naturally they reverted the patch, emailed me, and refused to talk about
-> > this on the public list, which is why nobody's heard of this until now.
-> 
-> If they're using DAX, that's very likely. I've discovered it while
-> testing a new kernel with libkrun/muvm, which does use multiple
-> virtio-fs devices, one of them as root and another one with DAX, which
-> turns to be a pretty good testbed for virtio-fs (nothing better than
-> running Steam, and bunch of games under FEX+Proton for stress-testing
-> multiple subsystems with a real-world workload ;-).
+> I tried that, and generic/476 immediately broke.  I'll get back to that
+> next week, but turning it on unconditionally is not trivial
+> unfortunately. :/
 
-Hehe. :)
+I've tentatively fixed this by defining a FUSE_ATTR_EXCLUSIVE flag in
+the uapi so that the fuse server can tell the kernel which files are
+"exclusive" files, and hence which ones should have FUSE_I_EXCLUSIVE
+set.
 
-> >> Signed-off-by: Sergio Lopez <slp@redhat.com>
-> >> ---
-> >>  fs/fuse/file.c | 6 ++++++
-> >>  1 file changed, 6 insertions(+)
-> >>
-> >> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> >> index 3b2a171e652f..a65c5d32a34b 100644
-> >> --- a/fs/fuse/file.c
-> >> +++ b/fs/fuse/file.c
-> >> @@ -117,6 +117,12 @@ static void fuse_file_put(struct fuse_file *ff, bool sync)
-> >>  			fuse_simple_request(ff->fm, args);
-> >>  			fuse_release_end(ff->fm, args, 0);
-> >>  		} else {
-> >> +			/*
-> >> +			 * DAX inodes may need to issue a number of synchronous
-> >> +			 * request for clearing the mappings.
-> >> +			 */
-> >> +			if (ra && ra->inode && FUSE_IS_DAX(ra->inode))
-> >> +				args->may_block = true;
-> >
-> > There's no documentation for what may_block does, but there are so few
-> > uses of it that I can tell that this is kicking the FUSE_RELEASE
-> > completion to a workqueue instead of processing it directly, which
-> > eliminates the livelock.
-> >
-> > I wonder if fuse ought to grow the ability to whine when something is
-> > trying to issue a synchronous fuse command while running in a command
-> > queue completion context (aka the worker threads) but I don't know how
-> > difficult that would *really* be.
-> 
-> Perhaps we could check for PF_WQ_WORKER and, at the very least, emit a
-> warning.
-
-I don't think that will work:
-
-PF_WQ_WORKER only tells us if the current process is a kernel workqueue.
-Replies to fuse command are written to the fuse device, which means that
-we're running in the process context of the fuse server when we get to
-fuse_dev_do_write -> fuse_request_end -> req->args->end ->
-fuse_release_end.
+(These are ofc files where the kernel can transmogrify ACLs into i_mode
+changes and do ACL inheritance because there is no other principal that
+could be writing to the ondisk metadata.)
 
 --D
 
-> Thanks,
-> Sergio.
+> --D
+> 
+> > Thanks,
+> > Joanne
 > 
 
