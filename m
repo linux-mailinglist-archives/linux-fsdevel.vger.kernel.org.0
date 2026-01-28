@@ -1,658 +1,475 @@
-Return-Path: <linux-fsdevel+bounces-75743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UL6vHtIsemnd3gEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 16:35:46 +0100
+	id UAzZFSItemnd3gEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 16:37:06 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC719A4066
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 16:35:45 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8D37A4137
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 16:37:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 7A92530465E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 15:29:14 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id A892D3012955
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 15:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DFD36E46B;
-	Wed, 28 Jan 2026 15:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38EE2D660E;
+	Wed, 28 Jan 2026 15:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZEA0CRSL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FFbLVbKy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38D636B07E;
-	Wed, 28 Jan 2026 15:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769614108; cv=none; b=NUl9OkgWe7y/DKhJOm0vLUBPLrI2CCXT9N83wYUrXbw8oEYtfdMk5i511wW5NB2wVCmsHPe7L+9iGjYA35iM86blVQfNzNWO4cY/FR1KlGslrx4J2pmaxElyBvRysm/qmf6a2HPWjod73QI7F9cK+9xxkGyOUqdz5uvUhjWlmFs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769614108; c=relaxed/simple;
-	bh=InOHrcWaK6R00Y4Cg+atGACYR+OvTc0YlpKmKeFKUrs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KjrXhSUH7Pa8wACfi/tFsc3nNZ7yttXun7nKdvBajDmxPudzgBfi8y1hVnYrau4hlrKEERNmcWyYkQ+WhaRInXMrp54grccbgKYGAzZW4KR0TQUEM0SGu21QTnHkjc16rQsY80SVdQq2gUFOCykvspSWkA0UkyTDIy/Bt10v5Gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZEA0CRSL; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=9TYvYMNBTFy3T6A9RuGYVpBIrbWVK2LuM7tlhiG4Ny4=; b=ZEA0CRSL+VpaCZHM95UYIWWjkG
-	2kv4S64Q8S2frHk11MIglEdGn17qG34TMWcSvX6x26gD0qOJwVSTj3FKPhjdoyCNurhBMsDdPb5n+
-	Y7qdzavbAf/xhKeOtmpw7d4LEy79fHKD+VMYYFHMD+30UdkDpQv340fHr971pcPeH63zEEZPegk2L
-	N0Tw9UbMvjRQZmah95Dh0X3RVR02SjtsxGkddxXZu2pA4eGY3dgbTcWpVhQuTpf3PWrXE7pVKnJdx
-	fz73s3cOoyQ4GSQyqpucjkPbaG6s/bApLQ0cXvu6Wl7PbwxUyTG2TJtgCmsPgxHxohGkk763g5ikC
-	pgeTGHNw==;
-Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vl7Sx-0000000GHbW-3PNE;
-	Wed, 28 Jan 2026 15:28:24 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	David Sterba <dsterba@suse.com>,
-	"Theodore Ts'o" <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>,
-	Andrey Albershteyn <aalbersh@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	fsverity@lists.linux.dev,
-	"Darrick J. Wong" <djwong@kernel.org>
-Subject: [PATCH 15/15] fsverity: use a hashtable to find the fsverity_info
-Date: Wed, 28 Jan 2026 16:26:27 +0100
-Message-ID: <20260128152630.627409-16-hch@lst.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260128152630.627409-1-hch@lst.de>
-References: <20260128152630.627409-1-hch@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B362D5408
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 15:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.169
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769614606; cv=pass; b=q2W3/f25LtssqNXhYKKCjxEbSP1dJECrRnWmOfSfIugq7jU6z3O2W4zTV068YoS6Zcpk1Wrg6OTT8Lsz5OzvUrMRIgfKStsgdiCb3ZTFMu5GI/LMv8FZDLx+YRkf3O8hrgEL4k8C7N9eg1k2dul9I1pMXlq/ryVo3MZKXyYh3T4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769614606; c=relaxed/simple;
+	bh=7zXVIknH4ehIRtCBnTdf6a0bIKLMMTjayaGHW92kfq0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GMYuh1zzy0vngdnBV07/rhxdS6y3EKS+W74+I1XOiklhQ8ITxXEygGJ6tpl8IrnpANWf683SUW1AFrJTpYkGpKabpXH9AksgCWNKwvaHfM8GO5WDbjV6YNgTaIzTrNnUFTkTjGvpP8py3hfWAD+NJ9Oeg71JWbAK2y3lp12Eges=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FFbLVbKy; arc=pass smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-559f4801609so2954685e0c.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 07:36:44 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769614603; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Vl7O0tywRoH7DyTIqIBEt8GqYNsR96HT5d4gF6/BM5tMng75rfBN2CbtT0L/hWDKzm
+         zos1KkVtEbcbc5lR6kNDWK0Noao0OgVbX1GME23nzorHmoSK7q8CX0PzcIYCW/WbmCgZ
+         pjnJEs4/VFD+1l6KTHh7ZR/5YuqyxCehR3rXFTXt7iJqlGZzjkCnq64raDz5JCRF7mA2
+         eeupmSUVaJmMrywroPCOgtopa37uAoGqECXc+mfXQzBKCm/EoPWi1Cr+2mysJqmCrPX1
+         zCVsRHj2btPzJvpxphGcqDvVGLgb8c4IIWVwB0EsVDaCAKVja9alUrXlXxTznjlqSBPb
+         S/yA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=RJxlmr5jeUa8zBWPjQHSC6PqXSlyh6rIMyIPjh7RV2Y=;
+        fh=jgsd5EeLgyKhfyWJbwXLAsr1YUB9aneFkr3EZlTIlHQ=;
+        b=hcXd3SBaA8ZP45mqhnCZEkayEJxeZ+M0jOk+HY7OmodlUtB9snd7nbPq8IMgdBptBC
+         7rLUyBk4jjRz8d2Eg7YTZtgO/AlWHqARCDnJMN8ETN8zFepw8laC7+qn92Jk8r0jao6/
+         +apbre3sZO1UsMI+Bq0T0tCkCVdMKcMDhZDg2PNyruVrtts0BiazZAQsAdK9pNidd1Q/
+         L3BQaq5pkuhUEH2qgEL7sy6q15hiyE7ZXM/x/xKuMAQE17MK30bs9EZoAVPf8Q+qmTmb
+         9pRNC9Kt1glDn1kElfewbv4cJ0kREef1caGJXXzNL6RkWbTAu6qEoYCBHmiViHj9SWVh
+         RTHA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769614603; x=1770219403; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RJxlmr5jeUa8zBWPjQHSC6PqXSlyh6rIMyIPjh7RV2Y=;
+        b=FFbLVbKyDzWF2GAsXEkiawMh73T3u9vrMDuIo+hg7qHCpqHet21nnZQw2rAgy4/27n
+         QljJ7iaZqB8zm627vuEN18SyrRKX8wHaXac4S26BbWi9GVLQeZdqW8j2+tUgkaFl3wMM
+         /MxrA3USFfpnBkQbKywyKBhhJ0Qnl5RYUYKMniBWWZ/cDa/VnusXA+ZVnz54tDfjUIg9
+         DAZEg4MnSrgi41d+NCKmuvoAT5eYu/emfsQV4k/7dtan9kcuPwPAi8hR8mj1FqlxjWiD
+         dX1RDxLsCmmNgg+4QRKP7+jaWb7dqLe/YkGofeueBM7MIE7/GM7v0Yy+LJlp2bvhwuS5
+         QEAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769614603; x=1770219403;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=RJxlmr5jeUa8zBWPjQHSC6PqXSlyh6rIMyIPjh7RV2Y=;
+        b=BcQnR51trfgPD/DPvjor1tsXgy/B80OWI1lHBIRYfRpIf3s4ijGf6K3s8Hh8eO5H1b
+         kCCjy1Zlr8X4Tt/M087B6DlMrOdr+v+oxzQOxC2EwfG7KSF1Cmtv0dhpxW+2eWDsHM4N
+         3SyaJvlo+Nxpz7y8Yz8e/cl+BShAjtlnznB0Sk0JIjMYkughhNorNQYTtMI2IzmK28BI
+         Qzjq+bXwGFxkUyMjR7Eha4SZGoCHeobnd+0ivOA/5DVzW59tT01Umku03HM7cuREBt4C
+         FnORZ8O5T/gmFT/6x8rS+sM9hQiTtNte+JmzmKPBldcb1fiJEusKnWf/QvmE+ael7jE6
+         Ai9w==
+X-Gm-Message-State: AOJu0Yw959dKOhsl5JicvXu6Wp5xhFhiTH1DuLP0AxzxMdxKIWEDJBw3
+	s5IWIYLJK6P3qC8V6lVNh2JMpZgkeh8F05Toc56dxB56HakGilbpt/W2d6QaynpiRudtl7oskyc
+	w5oi4xY0CttDNFT8J/r9a+ZcigI/nu2E=
+X-Gm-Gg: AZuq6aImX05Iauum7HQ+ePQUzJW8l4LuZ+IvHdz0MV1u0LUM+FVjTWBOqWj6I5eJYx5
+	eDiot469M03WGZGJIwicL1Rrp5TxwHNWGnvQqmMG0LuaHsUfTkNkBGJQ5m0Vy0sFMOrR/Cu4c9S
+	CiRD2ehNIfUYqkLwP+gQEuqsW+apnj8g2xd2ELizgF1iSVuJIPg5UQFQjdYTAws76+GPeLhRV0U
+	uQ45xb7MLrHncXRnYcuCgpd4JH9mHx85wsxIdMiSSCnyjSofbOjmNEx3Y8no03sX5iX7K+OGvp6
+	QNWm6uIsH+b9rVaOzo+dM0vYvGs7xPo=
+X-Received: by 2002:a05:6122:1d4c:b0:566:26ce:546e with SMTP id
+ 71dfb90a1353d-566794ef197mr1997390e0c.5.1769614603205; Wed, 28 Jan 2026
+ 07:36:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20260127180109.66691-1-dorjoychy111@gmail.com>
+ <20260127180109.66691-2-dorjoychy111@gmail.com> <1c6cccc3e058ef16fa8b296ef6126b76a12db136.camel@kernel.org>
+In-Reply-To: <1c6cccc3e058ef16fa8b296ef6126b76a12db136.camel@kernel.org>
+From: Dorjoy Chowdhury <dorjoychy111@gmail.com>
+Date: Wed, 28 Jan 2026 21:36:32 +0600
+X-Gm-Features: AZwV_QiDjM_g9KAizMTQulrKnRDV0aYq3Xvzi08IzeHbbXpwKcddpiK7UH_xub8
+Message-ID: <CAFfO_h5yrXR0-igVayH0ent1t12rm=6DUEGjUDW0zqfqy3=ZoQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] open: new O_REGULAR flag support
+To: Jeff Layton <jlayton@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	chuck.lever@oracle.com, alex.aring@gmail.com, arnd@arndb.de, 
+	adilger@dilger.ca
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.06 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
-	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), DKIM not aligned (relaxed),none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-75744-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
 	RCVD_COUNT_THREE(0.00)[4];
-	TAGGED_FROM(0.00)[bounces-75743-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[infradead.org:+];
-	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FREEMAIL_CC(0.00)[vger.kernel.org,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,arndb.de,dilger.ca];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,lst.de:mid,lst.de:email,infradead.org:dkim]
-X-Rspamd-Queue-Id: AC719A4066
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[dorjoychy111@gmail.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: E8D37A4137
 X-Rspamd-Action: no action
 
-Use the kernel's resizable hash table (rhashtable) to find the
-fsverity_info.  This way file systems that want to support fsverity don't
-have to bloat every inode in the system with an extra pointer.  The
-trade-off is that looking up the fsverity_info is a bit more expensive
-now, but the main operations are still dominated by I/O and hashing
-overhead.
+On Wed, Jan 28, 2026 at 5:52=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+>
+> On Tue, 2026-01-27 at 23:58 +0600, Dorjoy Chowdhury wrote:
+> > This flag indicates the path should be opened if it's a regular file.
+> > This is useful to write secure programs that want to avoid being tricke=
+d
+> > into opening device nodes with special semantics while thinking they
+> > operate on regular files.
+> >
+> > A corresponding error code ENOTREG has been introduced. For example, if
+> > open is called on path /dev/null with O_REGULAR in the flag param, it
+> > will return -ENOTREG.
+> >
+> > When used in combination with O_CREAT, either the regular file is
+> > created, or if the path already exists, it is opened if it's a regular
+> > file. Otherwise, -ENOTREG is returned.
+> >
+> > -EINVAL is returned when O_REGULAR is combined with O_DIRECTORY (not
+> > part of O_TMPFILE) because it doesn't make sense to open a path that
+> > is both a directory and a regular file.
+> >
+> > Signed-off-by: Dorjoy Chowdhury <dorjoychy111@gmail.com>
+> > ---
+> >  arch/alpha/include/uapi/asm/errno.h        | 2 ++
+> >  arch/alpha/include/uapi/asm/fcntl.h        | 1 +
+> >  arch/mips/include/uapi/asm/errno.h         | 2 ++
+> >  arch/parisc/include/uapi/asm/errno.h       | 2 ++
+> >  arch/parisc/include/uapi/asm/fcntl.h       | 1 +
+> >  arch/sparc/include/uapi/asm/errno.h        | 2 ++
+> >  arch/sparc/include/uapi/asm/fcntl.h        | 1 +
+> >  fs/fcntl.c                                 | 2 +-
+> >  fs/namei.c                                 | 6 ++++++
+> >  fs/open.c                                  | 4 +++-
+> >  include/linux/fcntl.h                      | 2 +-
+> >  include/uapi/asm-generic/errno.h           | 2 ++
+> >  include/uapi/asm-generic/fcntl.h           | 4 ++++
+> >  tools/arch/alpha/include/uapi/asm/errno.h  | 2 ++
+> >  tools/arch/mips/include/uapi/asm/errno.h   | 2 ++
+> >  tools/arch/parisc/include/uapi/asm/errno.h | 2 ++
+> >  tools/arch/sparc/include/uapi/asm/errno.h  | 2 ++
+> >  tools/include/uapi/asm-generic/errno.h     | 2 ++
+> >  18 files changed, 38 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/arch/alpha/include/uapi/asm/errno.h b/arch/alpha/include/u=
+api/asm/errno.h
+> > index 6791f6508632..8bbcaa9024f9 100644
+> > --- a/arch/alpha/include/uapi/asm/errno.h
+> > +++ b/arch/alpha/include/uapi/asm/errno.h
+> > @@ -127,4 +127,6 @@
+> >
+> >  #define EHWPOISON    139     /* Memory page has hardware error */
+> >
+> > +#define ENOTREG              140     /* Not a regular file */
+> > +
+> >  #endif
+> > diff --git a/arch/alpha/include/uapi/asm/fcntl.h b/arch/alpha/include/u=
+api/asm/fcntl.h
+> > index 50bdc8e8a271..4da5a64c23bd 100644
+> > --- a/arch/alpha/include/uapi/asm/fcntl.h
+> > +++ b/arch/alpha/include/uapi/asm/fcntl.h
+> > @@ -34,6 +34,7 @@
+> >
+> >  #define O_PATH               040000000
+> >  #define __O_TMPFILE  0100000000
+> > +#define O_REGULAR    0200000000
+> >
+> >  #define F_GETLK              7
+> >  #define F_SETLK              8
+> > diff --git a/arch/mips/include/uapi/asm/errno.h b/arch/mips/include/uap=
+i/asm/errno.h
+> > index c01ed91b1ef4..293c78777254 100644
+> > --- a/arch/mips/include/uapi/asm/errno.h
+> > +++ b/arch/mips/include/uapi/asm/errno.h
+> > @@ -126,6 +126,8 @@
+> >
+> >  #define EHWPOISON    168     /* Memory page has hardware error */
+> >
+> > +#define ENOTREG              169     /* Not a regular file */
+> > +
+> >  #define EDQUOT               1133    /* Quota exceeded */
+> >
+> >
+> > diff --git a/arch/parisc/include/uapi/asm/errno.h b/arch/parisc/include=
+/uapi/asm/errno.h
+> > index 8cbc07c1903e..442917484f99 100644
+> > --- a/arch/parisc/include/uapi/asm/errno.h
+> > +++ b/arch/parisc/include/uapi/asm/errno.h
+> > @@ -124,4 +124,6 @@
+> >
+> >  #define EHWPOISON    257     /* Memory page has hardware error */
+> >
+> > +#define ENOTREG              258     /* Not a regular file */
+> > +
+> >  #endif
+> > diff --git a/arch/parisc/include/uapi/asm/fcntl.h b/arch/parisc/include=
+/uapi/asm/fcntl.h
+> > index 03dee816cb13..0cc3320fe326 100644
+> > --- a/arch/parisc/include/uapi/asm/fcntl.h
+> > +++ b/arch/parisc/include/uapi/asm/fcntl.h
+> > @@ -19,6 +19,7 @@
+> >
+> >  #define O_PATH               020000000
+> >  #define __O_TMPFILE  040000000
+> > +#define O_REGULAR    0100000000
+> >
+> >  #define F_GETLK64    8
+> >  #define F_SETLK64    9
+> > diff --git a/arch/sparc/include/uapi/asm/errno.h b/arch/sparc/include/u=
+api/asm/errno.h
+> > index 4a41e7835fd5..8dce0bfeab74 100644
+> > --- a/arch/sparc/include/uapi/asm/errno.h
+> > +++ b/arch/sparc/include/uapi/asm/errno.h
+> > @@ -117,4 +117,6 @@
+> >
+> >  #define EHWPOISON    135     /* Memory page has hardware error */
+> >
+> > +#define ENOTREG              136     /* Not a regular file */
+> > +
+> >  #endif
+> > diff --git a/arch/sparc/include/uapi/asm/fcntl.h b/arch/sparc/include/u=
+api/asm/fcntl.h
+> > index 67dae75e5274..a93d18d2c23e 100644
+> > --- a/arch/sparc/include/uapi/asm/fcntl.h
+> > +++ b/arch/sparc/include/uapi/asm/fcntl.h
+> > @@ -37,6 +37,7 @@
+> >
+> >  #define O_PATH               0x1000000
+> >  #define __O_TMPFILE  0x2000000
+> > +#define O_REGULAR    0x4000000
+> >
+> >  #define F_GETOWN     5       /*  for sockets. */
+> >  #define F_SETOWN     6       /*  for sockets. */
+> > diff --git a/fs/fcntl.c b/fs/fcntl.c
+> > index f93dbca08435..62ab4ad2b6f5 100644
+> > --- a/fs/fcntl.c
+> > +++ b/fs/fcntl.c
+> > @@ -1169,7 +1169,7 @@ static int __init fcntl_init(void)
+> >        * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
+> >        * is defined as O_NONBLOCK on some platforms and not on others.
+> >        */
+> > -     BUILD_BUG_ON(20 - 1 /* for O_RDONLY being 0 */ !=3D
+> > +     BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=3D
+> >               HWEIGHT32(
+> >                       (VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
+> >                       __FMODE_EXEC));
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index b28ecb699f32..f5504ae4b03c 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -4616,6 +4616,10 @@ static int do_open(struct nameidata *nd,
+> >               if (unlikely(error))
+> >                       return error;
+> >       }
+> > +
+> > +     if ((open_flag & O_REGULAR) && !d_is_reg(nd->path.dentry))
+> > +             return -ENOTREG;
+> > +
+> >       if ((nd->flags & LOOKUP_DIRECTORY) && !d_can_lookup(nd->path.dent=
+ry))
+> >               return -ENOTDIR;
+> >
+> > @@ -4765,6 +4769,8 @@ static int do_o_path(struct nameidata *nd, unsign=
+ed flags, struct file *file)
+> >       struct path path;
+> >       int error =3D path_lookupat(nd, flags, &path);
+> >       if (!error) {
+> > +             if ((file->f_flags & O_REGULAR) && !d_is_reg(path.dentry)=
+)
+> > +                     return -ENOTREG;
+> >               audit_inode(nd->name, path.dentry, 0);
+> >               error =3D vfs_open(&path, file);
+> >               path_put(&path);
+> > diff --git a/fs/open.c b/fs/open.c
+> > index 74c4c1462b3e..82153e21907e 100644
+> > --- a/fs/open.c
+> > +++ b/fs/open.c
+> > @@ -1173,7 +1173,7 @@ struct file *kernel_file_open(const struct path *=
+path, int flags,
+> >  EXPORT_SYMBOL_GPL(kernel_file_open);
+> >
+> >  #define WILL_CREATE(flags)   (flags & (O_CREAT | __O_TMPFILE))
+> > -#define O_PATH_FLAGS         (O_DIRECTORY | O_NOFOLLOW | O_PATH | O_CL=
+OEXEC)
+> > +#define O_PATH_FLAGS         (O_DIRECTORY | O_NOFOLLOW | O_PATH | O_CL=
+OEXEC | O_REGULAR)
+> >
+> >  inline struct open_how build_open_how(int flags, umode_t mode)
+> >  {
+> > @@ -1250,6 +1250,8 @@ inline int build_open_flags(const struct open_how=
+ *how, struct open_flags *op)
+> >                       return -EINVAL;
+> >               if (!(acc_mode & MAY_WRITE))
+> >                       return -EINVAL;
+> > +     } else if ((flags & O_DIRECTORY) && (flags & O_REGULAR)) {
+> > +             return -EINVAL;
+> >       }
+> >       if (flags & O_PATH) {
+> >               /* O_PATH only permits certain other flags to be set. */
+> > diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
+> > index a332e79b3207..4fd07b0e0a17 100644
+> > --- a/include/linux/fcntl.h
+> > +++ b/include/linux/fcntl.h
+> > @@ -10,7 +10,7 @@
+> >       (O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_T=
+RUNC | \
+> >        O_APPEND | O_NDELAY | O_NONBLOCK | __O_SYNC | O_DSYNC | \
+> >        FASYNC | O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
+> > -      O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
+> > +      O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_REGULAR)
+> >
+> >  /* List of all valid flags for the how->resolve argument: */
+> >  #define VALID_RESOLVE_FLAGS \
+> > diff --git a/include/uapi/asm-generic/errno.h b/include/uapi/asm-generi=
+c/errno.h
+> > index 92e7ae493ee3..2216ab9aa32e 100644
+> > --- a/include/uapi/asm-generic/errno.h
+> > +++ b/include/uapi/asm-generic/errno.h
+> > @@ -122,4 +122,6 @@
+> >
+> >  #define EHWPOISON    133     /* Memory page has hardware error */
+> >
+> > +#define ENOTREG              134     /* Not a regular file */
+> > +
+> >  #endif
+> > diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generi=
+c/fcntl.h
+> > index 613475285643..3468b352a575 100644
+> > --- a/include/uapi/asm-generic/fcntl.h
+> > +++ b/include/uapi/asm-generic/fcntl.h
+> > @@ -88,6 +88,10 @@
+> >  #define __O_TMPFILE  020000000
+> >  #endif
+> >
+> > +#ifndef O_REGULAR
+> > +#define O_REGULAR    040000000
+> > +#endif
+> > +
+> >  /* a horrid kludge trying to make sure that this will fail on old kern=
+els */
+> >  #define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
+> >
+> > diff --git a/tools/arch/alpha/include/uapi/asm/errno.h b/tools/arch/alp=
+ha/include/uapi/asm/errno.h
+> > index 6791f6508632..8bbcaa9024f9 100644
+> > --- a/tools/arch/alpha/include/uapi/asm/errno.h
+> > +++ b/tools/arch/alpha/include/uapi/asm/errno.h
+> > @@ -127,4 +127,6 @@
+> >
+> >  #define EHWPOISON    139     /* Memory page has hardware error */
+> >
+> > +#define ENOTREG              140     /* Not a regular file */
+> > +
+> >  #endif
+> > diff --git a/tools/arch/mips/include/uapi/asm/errno.h b/tools/arch/mips=
+/include/uapi/asm/errno.h
+> > index c01ed91b1ef4..293c78777254 100644
+> > --- a/tools/arch/mips/include/uapi/asm/errno.h
+> > +++ b/tools/arch/mips/include/uapi/asm/errno.h
+> > @@ -126,6 +126,8 @@
+> >
+> >  #define EHWPOISON    168     /* Memory page has hardware error */
+> >
+> > +#define ENOTREG              169     /* Not a regular file */
+> > +
+> >  #define EDQUOT               1133    /* Quota exceeded */
+> >
+> >
+> > diff --git a/tools/arch/parisc/include/uapi/asm/errno.h b/tools/arch/pa=
+risc/include/uapi/asm/errno.h
+> > index 8cbc07c1903e..442917484f99 100644
+> > --- a/tools/arch/parisc/include/uapi/asm/errno.h
+> > +++ b/tools/arch/parisc/include/uapi/asm/errno.h
+> > @@ -124,4 +124,6 @@
+> >
+> >  #define EHWPOISON    257     /* Memory page has hardware error */
+> >
+> > +#define ENOTREG              258     /* Not a regular file */
+> > +
+> >  #endif
+> > diff --git a/tools/arch/sparc/include/uapi/asm/errno.h b/tools/arch/spa=
+rc/include/uapi/asm/errno.h
+> > index 4a41e7835fd5..8dce0bfeab74 100644
+> > --- a/tools/arch/sparc/include/uapi/asm/errno.h
+> > +++ b/tools/arch/sparc/include/uapi/asm/errno.h
+> > @@ -117,4 +117,6 @@
+> >
+> >  #define EHWPOISON    135     /* Memory page has hardware error */
+> >
+> > +#define ENOTREG              136     /* Not a regular file */
+> > +
+> >  #endif
+> > diff --git a/tools/include/uapi/asm-generic/errno.h b/tools/include/uap=
+i/asm-generic/errno.h
+> > index 92e7ae493ee3..2216ab9aa32e 100644
+> > --- a/tools/include/uapi/asm-generic/errno.h
+> > +++ b/tools/include/uapi/asm-generic/errno.h
+> > @@ -122,4 +122,6 @@
+> >
+> >  #define EHWPOISON    133     /* Memory page has hardware error */
+> >
+> > +#define ENOTREG              134     /* Not a regular file */
+> > +
+> >  #endif
+>
+> One thing this patch is missing is handling for ->atomic_open(). I
+> imagine most of the filesystems that provide that op can't support
+> O_REGULAR properly (maybe cifs can? idk). What you probably want to do
+> is add in some patches that make all of the atomic_open operations in
+> the kernel return -EINVAL if O_REGULAR is set.
+>
+> Then, once the basic support is in, you or someone else can go back and
+> implement support for O_REGULAR where possible.
 
-The rhashtable implementations requires no external synchronization, and
-the _fast versions of the APIs provide the RCU critical sections required
-by the implementation.  Because struct fsverity_info is only removed on
-inode eviction and does not contain a reference count, there is no need
-for an extended critical section to grab a reference or validate the
-object state.  The file open path uses rhashtable_lookup_get_insert_fast,
-which can either find an existing object for the hash key or insert a
-new one in a single atomic operation, so that concurrent opens never
-instatiate duplicate fsverity_info structure.  FS_IOC_ENABLE_VERITY must
-already be synchronized by a combination of i_rwsem and file system flags
-and uses rhashtable_lookup_insert_fast, which errors out on an existing
-object for the hash key as an additional safety check.
+Thank you for the feedback. I don't quite understand what I need to
+fix. I thought open system calls always create regular files, so
+atomic_open probably always creates regular files? Can you please give
+me some more details as to where I need to fix this and what the
+actual bug here is that is related to atomic_open?  I think I had done
+some normal testing and when using O_CREAT | O_REGULAR, if the file
+doesn't exist, the file gets created and the file that gets created is
+a regular file, so it probably makes sense? Or should the behavior be
+that if file doesn't exist, -EINVAL is returned and if file exists it
+is opened if regular, otherwise -ENOTREG is returned?
 
-Because insertion into the hash table now happens before S_VERITY is set,
-fsverity just becomes a barrier and a flag check and doesn't have to look
-up the fsverity_info at all, so there is only a single lookup per
-->read_folio or ->readahead invocation.  For btrfs there is an additional
-one for each bio completion, while for ext4 and f2fs the fsverity_info
-is stored in the per-I/O context and reused for the completion workqueue.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
----
- fs/btrfs/btrfs_inode.h       |  4 --
- fs/btrfs/inode.c             |  3 --
- fs/btrfs/verity.c            |  2 -
- fs/ext4/ext4.h               |  4 --
- fs/ext4/super.c              |  3 --
- fs/ext4/verity.c             |  2 -
- fs/f2fs/f2fs.h               |  3 --
- fs/f2fs/super.c              |  3 --
- fs/f2fs/verity.c             |  2 -
- fs/verity/enable.c           | 30 +++++++-----
- fs/verity/fsverity_private.h | 17 +++----
- fs/verity/open.c             | 75 +++++++++++++++++++-----------
- fs/verity/verify.c           |  2 +-
- include/linux/fsverity.h     | 90 ++++++++++++++----------------------
- 14 files changed, 109 insertions(+), 131 deletions(-)
-
-diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
-index 73602ee8de3f..55c272fe5d92 100644
---- a/fs/btrfs/btrfs_inode.h
-+++ b/fs/btrfs/btrfs_inode.h
-@@ -339,10 +339,6 @@ struct btrfs_inode {
- 
- 	struct rw_semaphore i_mmap_lock;
- 
--#ifdef CONFIG_FS_VERITY
--	struct fsverity_info *i_verity_info;
--#endif
--
- 	struct inode vfs_inode;
- };
- 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 67c64efc5099..93b2ce75fb06 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -8097,9 +8097,6 @@ static void init_once(void *foo)
- 	struct btrfs_inode *ei = foo;
- 
- 	inode_init_once(&ei->vfs_inode);
--#ifdef CONFIG_FS_VERITY
--	ei->i_verity_info = NULL;
--#endif
- }
- 
- void __cold btrfs_destroy_cachep(void)
-diff --git a/fs/btrfs/verity.c b/fs/btrfs/verity.c
-index c152bef71e8b..cd96fac4739f 100644
---- a/fs/btrfs/verity.c
-+++ b/fs/btrfs/verity.c
-@@ -795,8 +795,6 @@ static int btrfs_write_merkle_tree_block(struct file *file, const void *buf,
- }
- 
- const struct fsverity_operations btrfs_verityops = {
--	.inode_info_offs         = (int)offsetof(struct btrfs_inode, i_verity_info) -
--				   (int)offsetof(struct btrfs_inode, vfs_inode),
- 	.begin_enable_verity     = btrfs_begin_enable_verity,
- 	.end_enable_verity       = btrfs_end_enable_verity,
- 	.get_verity_descriptor   = btrfs_get_verity_descriptor,
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 56112f201cac..60c549bc894e 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1205,10 +1205,6 @@ struct ext4_inode_info {
- #ifdef CONFIG_FS_ENCRYPTION
- 	struct fscrypt_inode_info *i_crypt_info;
- #endif
--
--#ifdef CONFIG_FS_VERITY
--	struct fsverity_info *i_verity_info;
--#endif
- };
- 
- /*
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 86131f4d8718..1fb0c90c7a4b 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1484,9 +1484,6 @@ static void init_once(void *foo)
- #ifdef CONFIG_FS_ENCRYPTION
- 	ei->i_crypt_info = NULL;
- #endif
--#ifdef CONFIG_FS_VERITY
--	ei->i_verity_info = NULL;
--#endif
- }
- 
- static int __init init_inodecache(void)
-diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
-index 54ae4d4a176c..e3ab3ba8799b 100644
---- a/fs/ext4/verity.c
-+++ b/fs/ext4/verity.c
-@@ -380,8 +380,6 @@ static int ext4_write_merkle_tree_block(struct file *file, const void *buf,
- }
- 
- const struct fsverity_operations ext4_verityops = {
--	.inode_info_offs	= (int)offsetof(struct ext4_inode_info, i_verity_info) -
--				  (int)offsetof(struct ext4_inode_info, vfs_inode),
- 	.begin_enable_verity	= ext4_begin_enable_verity,
- 	.end_enable_verity	= ext4_end_enable_verity,
- 	.get_verity_descriptor	= ext4_get_verity_descriptor,
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f2fcadc7a6fe..8ee8a7bc012c 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -974,9 +974,6 @@ struct f2fs_inode_info {
- #ifdef CONFIG_FS_ENCRYPTION
- 	struct fscrypt_inode_info *i_crypt_info; /* filesystem encryption info */
- #endif
--#ifdef CONFIG_FS_VERITY
--	struct fsverity_info *i_verity_info; /* filesystem verity info */
--#endif
- };
- 
- static inline void get_read_extent_info(struct extent_info *ext,
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index c4c225e09dc4..cd00d030edda 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -504,9 +504,6 @@ static void init_once(void *foo)
- #ifdef CONFIG_FS_ENCRYPTION
- 	fi->i_crypt_info = NULL;
- #endif
--#ifdef CONFIG_FS_VERITY
--	fi->i_verity_info = NULL;
--#endif
- }
- 
- #ifdef CONFIG_QUOTA
-diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
-index 628e8eafa96a..4f5230d871f7 100644
---- a/fs/f2fs/verity.c
-+++ b/fs/f2fs/verity.c
-@@ -278,8 +278,6 @@ static int f2fs_write_merkle_tree_block(struct file *file, const void *buf,
- }
- 
- const struct fsverity_operations f2fs_verityops = {
--	.inode_info_offs	= (int)offsetof(struct f2fs_inode_info, i_verity_info) -
--				  (int)offsetof(struct f2fs_inode_info, vfs_inode),
- 	.begin_enable_verity	= f2fs_begin_enable_verity,
- 	.end_enable_verity	= f2fs_end_enable_verity,
- 	.get_verity_descriptor	= f2fs_get_verity_descriptor,
-diff --git a/fs/verity/enable.c b/fs/verity/enable.c
-index c56c18e2605b..94c88c419054 100644
---- a/fs/verity/enable.c
-+++ b/fs/verity/enable.c
-@@ -265,9 +265,24 @@ static int enable_verity(struct file *filp,
- 		goto rollback;
- 	}
- 
-+	/*
-+	 * Add the fsverity_info into the hash table before finishing the
-+	 * initialization so that we don't have to undo the enabling when memory
-+	 * allocation for the hash table fails.  This is safe because looking up
-+	 * the fsverity_info always first checks the S_VERITY flag on the inode,
-+	 * which will only be set at the very end of the ->end_enable_verity
-+	 * method.
-+	 */
-+	err = fsverity_set_info(vi);
-+	if (err)
-+		goto rollback;
-+
- 	/*
- 	 * Tell the filesystem to finish enabling verity on the file.
--	 * Serialized with ->begin_enable_verity() by the inode lock.
-+	 * Serialized with ->begin_enable_verity() by the inode lock.  The file
-+	 * system needs to set the S_VERITY flag on the inode at the very end of
-+	 * the method, at which point the fsverity information can be accessed
-+	 * by other threads.
- 	 */
- 	inode_lock(inode);
- 	err = vops->end_enable_verity(filp, desc, desc_size, params.tree_size);
-@@ -275,19 +290,10 @@ static int enable_verity(struct file *filp,
- 	if (err) {
- 		fsverity_err(inode, "%ps() failed with err %d",
- 			     vops->end_enable_verity, err);
--		fsverity_free_info(vi);
-+		fsverity_remove_info(vi);
- 	} else if (WARN_ON_ONCE(!IS_VERITY(inode))) {
-+		fsverity_remove_info(vi);
- 		err = -EINVAL;
--		fsverity_free_info(vi);
--	} else {
--		/* Successfully enabled verity */
--
--		/*
--		 * Readers can start using the inode's verity info immediately,
--		 * so it can't be rolled back once set.  So don't set it until
--		 * just after the filesystem has successfully enabled verity.
--		 */
--		fsverity_set_info(inode, vi);
- 	}
- out:
- 	kfree(params.hashstate);
-diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
-index f9f3936b0a89..4d4a0a560562 100644
---- a/fs/verity/fsverity_private.h
-+++ b/fs/verity/fsverity_private.h
-@@ -11,6 +11,7 @@
- #define pr_fmt(fmt) "fs-verity: " fmt
- 
- #include <linux/fsverity.h>
-+#include <linux/rhashtable.h>
- 
- /*
-  * Implementation limit: maximum depth of the Merkle tree.  For now 8 is plenty;
-@@ -63,13 +64,14 @@ struct merkle_tree_params {
-  * fsverity_info - cached verity metadata for an inode
-  *
-  * When a verity file is first opened, an instance of this struct is allocated
-- * and a pointer to it is stored in the file's in-memory inode.  It remains
-- * until the inode is evicted.  It caches information about the Merkle tree
-- * that's needed to efficiently verify data read from the file.  It also caches
-- * the file digest.  The Merkle tree pages themselves are not cached here, but
-- * the filesystem may cache them.
-+ * and a pointer to it is stored in the global hash table, indexed by the inode
-+ * pointer value.  It remains alive until the inode is evicted.  It caches
-+ * information about the Merkle tree that's needed to efficiently verify data
-+ * read from the file.  It also caches the file digest.  The Merkle tree pages
-+ * themselves are not cached here, but the filesystem may cache them.
-  */
- struct fsverity_info {
-+	struct rhash_head rhash_head;
- 	struct merkle_tree_params tree_params;
- 	u8 root_hash[FS_VERITY_MAX_DIGEST_SIZE];
- 	u8 file_digest[FS_VERITY_MAX_DIGEST_SIZE];
-@@ -127,9 +129,8 @@ int fsverity_init_merkle_tree_params(struct merkle_tree_params *params,
- struct fsverity_info *fsverity_create_info(struct inode *inode,
- 					   struct fsverity_descriptor *desc);
- 
--void fsverity_set_info(struct inode *inode, struct fsverity_info *vi);
--
--void fsverity_free_info(struct fsverity_info *vi);
-+int fsverity_set_info(struct fsverity_info *vi);
-+void fsverity_remove_info(struct fsverity_info *vi);
- 
- int fsverity_get_descriptor(struct inode *inode,
- 			    struct fsverity_descriptor **desc_ret);
-diff --git a/fs/verity/open.c b/fs/verity/open.c
-index 128502cf0a23..1bde8fe79b3f 100644
---- a/fs/verity/open.c
-+++ b/fs/verity/open.c
-@@ -12,6 +12,14 @@
- #include <linux/slab.h>
- 
- static struct kmem_cache *fsverity_info_cachep;
-+static struct rhashtable fsverity_info_hash;
-+
-+static const struct rhashtable_params fsverity_info_hash_params = {
-+	.key_len		= sizeof_field(struct fsverity_info, inode),
-+	.key_offset		= offsetof(struct fsverity_info, inode),
-+	.head_offset		= offsetof(struct fsverity_info, rhash_head),
-+	.automatic_shrinking	= true,
-+};
- 
- /**
-  * fsverity_init_merkle_tree_params() - initialize Merkle tree parameters
-@@ -170,6 +178,13 @@ static void compute_file_digest(const struct fsverity_hash_alg *hash_alg,
- 	desc->sig_size = sig_size;
- }
- 
-+static void fsverity_free_info(struct fsverity_info *vi)
-+{
-+	kfree(vi->tree_params.hashstate);
-+	kvfree(vi->hash_block_verified);
-+	kmem_cache_free(fsverity_info_cachep, vi);
-+}
-+
- /*
-  * Create a new fsverity_info from the given fsverity_descriptor (with optional
-  * appended builtin signature), and check the signature if present.  The
-@@ -241,33 +256,18 @@ struct fsverity_info *fsverity_create_info(struct inode *inode,
- 	return ERR_PTR(err);
- }
- 
--void fsverity_set_info(struct inode *inode, struct fsverity_info *vi)
-+int fsverity_set_info(struct fsverity_info *vi)
- {
--	/*
--	 * Multiple tasks may race to set the inode's verity info pointer, so
--	 * use cmpxchg_release().  This pairs with the smp_load_acquire() in
--	 * fsverity_get_info().  I.e., publish the pointer with a RELEASE
--	 * barrier so that other tasks can ACQUIRE it.
--	 */
--	if (cmpxchg_release(fsverity_info_addr(inode), NULL, vi) != NULL) {
--		/* Lost the race, so free the verity info we allocated. */
--		fsverity_free_info(vi);
--		/*
--		 * Afterwards, the caller may access the inode's verity info
--		 * directly, so make sure to ACQUIRE the winning verity info.
--		 */
--		(void)fsverity_get_info(inode);
--	}
-+	return rhashtable_lookup_insert_fast(&fsverity_info_hash,
-+			&vi->rhash_head, fsverity_info_hash_params);
- }
- 
--void fsverity_free_info(struct fsverity_info *vi)
-+struct fsverity_info *__fsverity_get_info(const struct inode *inode)
- {
--	if (!vi)
--		return;
--	kfree(vi->tree_params.hashstate);
--	kvfree(vi->hash_block_verified);
--	kmem_cache_free(fsverity_info_cachep, vi);
-+	return rhashtable_lookup_fast(&fsverity_info_hash, &inode,
-+			fsverity_info_hash_params);
- }
-+EXPORT_SYMBOL_GPL(__fsverity_get_info);
- 
- static bool validate_fsverity_descriptor(struct inode *inode,
- 					 const struct fsverity_descriptor *desc,
-@@ -352,7 +352,7 @@ int fsverity_get_descriptor(struct inode *inode,
- 
- static int ensure_verity_info(struct inode *inode)
- {
--	struct fsverity_info *vi = fsverity_get_info(inode);
-+	struct fsverity_info *vi = fsverity_get_info(inode), *found;
- 	struct fsverity_descriptor *desc;
- 	int err;
- 
-@@ -369,8 +369,18 @@ static int ensure_verity_info(struct inode *inode)
- 		goto out_free_desc;
- 	}
- 
--	fsverity_set_info(inode, vi);
--	err = 0;
-+	/*
-+	 * Multiple tasks may race to set the inode's verity info, in which case
-+	 * we might find an existing fsverity_info in the hash table.
-+	 */
-+	found = rhashtable_lookup_get_insert_fast(&fsverity_info_hash,
-+			&vi->rhash_head, fsverity_info_hash_params);
-+	if (found) {
-+		fsverity_free_info(vi);
-+		if (IS_ERR(found))
-+			err = PTR_ERR(found);
-+	}
-+
- out_free_desc:
- 	kfree(desc);
- 	return err;
-@@ -384,16 +394,25 @@ int __fsverity_file_open(struct inode *inode, struct file *filp)
- }
- EXPORT_SYMBOL_GPL(__fsverity_file_open);
- 
-+void fsverity_remove_info(struct fsverity_info *vi)
-+{
-+	rhashtable_remove_fast(&fsverity_info_hash, &vi->rhash_head,
-+			fsverity_info_hash_params);
-+	fsverity_free_info(vi);
-+}
-+
- void fsverity_cleanup_inode(struct inode *inode)
- {
--	struct fsverity_info **vi_addr = fsverity_info_addr(inode);
-+	struct fsverity_info *vi = fsverity_get_info(inode);
- 
--	fsverity_free_info(*vi_addr);
--	*vi_addr = NULL;
-+	if (vi)
-+		fsverity_remove_info(vi);
- }
- 
- void __init fsverity_init_info_cache(void)
- {
-+	if (rhashtable_init(&fsverity_info_hash, &fsverity_info_hash_params))
-+		panic("failed to initialize fsverity hash\n");
- 	fsverity_info_cachep = KMEM_CACHE_USERCOPY(
- 					fsverity_info,
- 					SLAB_RECLAIM_ACCOUNT | SLAB_PANIC,
-diff --git a/fs/verity/verify.c b/fs/verity/verify.c
-index 98685bbb21f6..fe132a19a877 100644
---- a/fs/verity/verify.c
-+++ b/fs/verity/verify.c
-@@ -320,7 +320,7 @@ fsverity_init_verification_context(struct fsverity_verification_context *ctx,
- 	ctx->inode = vi->inode;
- 	ctx->vi = vi;
- 	ctx->num_pending = 0;
--	if (vi->tree_params.hash_alg->algo_id == HASH_ALGO_SHA256 &&
-+	if (ctx->vi->tree_params.hash_alg->algo_id == HASH_ALGO_SHA256 &&
- 	    sha256_finup_2x_is_optimized())
- 		ctx->max_pending = 2;
- 	else
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index 1d70b270e90a..dc2d7b229844 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -30,13 +30,6 @@ struct fsverity_info;
- 
- /* Verity operations for filesystems */
- struct fsverity_operations {
--	/**
--	 * The offset of the pointer to struct fsverity_info in the
--	 * filesystem-specific part of the inode, relative to the beginning of
--	 * the common part of the inode (the 'struct inode').
--	 */
--	ptrdiff_t inode_info_offs;
--
- 	/**
- 	 * Begin enabling verity on the given file.
- 	 *
-@@ -142,38 +135,43 @@ struct fsverity_operations {
- };
- 
- #ifdef CONFIG_FS_VERITY
--
--/*
-- * Returns the address of the verity info pointer within the filesystem-specific
-- * part of the inode.  (To save memory on filesystems that don't support
-- * fsverity, a field in 'struct inode' itself is no longer used.)
-+/**
-+ * fsverity_active() - do reads from the inode need to go through fs-verity?
-+ * @inode: inode to check
-+ *
-+ * This checks whether the inode's verity info has been set, and reads need
-+ * to verify the file data.
-+ *
-+ * Return: true if reads need to go through fs-verity, otherwise false
-  */
--static inline struct fsverity_info **
--fsverity_info_addr(const struct inode *inode)
-+static inline bool fsverity_active(const struct inode *inode)
- {
--	VFS_WARN_ON_ONCE(inode->i_sb->s_vop->inode_info_offs == 0);
--	return (void *)inode + inode->i_sb->s_vop->inode_info_offs;
-+	if (IS_VERITY(inode)) {
-+		/*
-+		 * This pairs with the try_cmpxchg in set_mask_bits()
-+		 * used to set the S_VERITY bit in i_flags.
-+		 */
-+		smp_mb();
-+		return true;
-+	}
-+
-+	return false;
- }
- 
-+/**
-+ * fsverity_get_info - get fsverity information for an inode
-+ * @inode: inode to operate on.
-+ *
-+ * This gets the fsverity_info for @inode if it exists.  Safe to call without
-+ * knowin that a fsverity_info exist for @inode, including on file systems that
-+ * do not support fsverity.
-+ */
-+struct fsverity_info *__fsverity_get_info(const struct inode *inode);
- static inline struct fsverity_info *fsverity_get_info(const struct inode *inode)
- {
--	/*
--	 * Since this function can be called on inodes belonging to filesystems
--	 * that don't support fsverity at all, and fsverity_info_addr() doesn't
--	 * work on such filesystems, we have to start with an IS_VERITY() check.
--	 * Checking IS_VERITY() here is also useful to minimize the overhead of
--	 * fsverity_active() on non-verity files.
--	 */
--	if (!IS_VERITY(inode))
-+	if (!fsverity_active(inode))
- 		return NULL;
--
--	/*
--	 * Pairs with the cmpxchg_release() in fsverity_set_info().  I.e.,
--	 * another task may publish the inode's verity info concurrently,
--	 * executing a RELEASE barrier.  Use smp_load_acquire() here to safely
--	 * ACQUIRE the memory the other task published.
--	 */
--	return smp_load_acquire(fsverity_info_addr(inode));
-+	return __fsverity_get_info(inode);
- }
- 
- /* enable.c */
-@@ -204,12 +202,10 @@ void fsverity_enqueue_verify_work(struct work_struct *work);
- 
- #else /* !CONFIG_FS_VERITY */
- 
--/*
-- * Provide a stub to allow code using this to compile.  All callsites should be
-- * guarded by compiler dead code elimination, and this forces a link error if
-- * not.
-- */
--struct fsverity_info **fsverity_info_addr(const struct inode *inode);
-+static inline bool fsverity_active(const struct inode *inode)
-+{
-+	return false;
-+}
- 
- static inline struct fsverity_info *fsverity_get_info(const struct inode *inode)
- {
-@@ -292,24 +288,6 @@ static inline bool fsverity_verify_page(struct fsverity_info *vi,
- 	return fsverity_verify_blocks(vi, page_folio(page), PAGE_SIZE, 0);
- }
- 
--/**
-- * fsverity_active() - do reads from the inode need to go through fs-verity?
-- * @inode: inode to check
-- *
-- * This checks whether the inode's verity info has been set.
-- *
-- * Filesystems call this from ->readahead() to check whether the pages need to
-- * be verified or not.  Don't use IS_VERITY() for this purpose; it's subject to
-- * a race condition where the file is being read concurrently with
-- * FS_IOC_ENABLE_VERITY completing.  (S_VERITY is set before the verity info.)
-- *
-- * Return: true if reads need to go through fs-verity, otherwise false
-- */
--static inline bool fsverity_active(const struct inode *inode)
--{
--	return fsverity_get_info(inode) != NULL;
--}
--
- /**
-  * fsverity_file_open() - prepare to open a verity file
-  * @inode: the inode being opened
--- 
-2.47.3
-
+Regards,
+Dorjoy
 
