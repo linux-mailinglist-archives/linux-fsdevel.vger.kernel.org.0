@@ -1,292 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-75727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cCcIGgoiemmv2wEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 15:49:46 +0100
+	id 2JH0N5sremnd3gEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 16:30:35 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DE5BA3286
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 15:49:45 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BCCEA3E05
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 16:30:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 66D693007B39
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 14:49:29 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 53B1E30A5221
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 15:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE343502AB;
-	Wed, 28 Jan 2026 14:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F8636BCF5;
+	Wed, 28 Jan 2026 15:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="AjrzvFwc"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pdSh+5NQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6A029827E
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 14:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE5536BCCA;
+	Wed, 28 Jan 2026 15:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769611764; cv=none; b=DF+4xZTvAsqGSyR08LkeI6RXxRSL4vtAH0ZyOj0WhU6w2skAYJC+OBR5ON20snqBre4Mo/ged0oArMNej3UWoVd0u96bL0ERMN2QQ6fHt8GDFThI8958aINFdmOLOP+abfl8Bas3aA9we9sj6ayH0a7kbZNiiVAjj4Utz22Xw7I=
+	t=1769614007; cv=none; b=VSJ3MMCKVzpkVSkZCkGtUpJIogSI7+FMJupapWW7o6DL2rbTY4YyWNQrQyUb4oHU3Y2kVO5a9d7T4AymchI5j+p2YTNCjBLoo2Ay7OvNQjrJWV+9FzutfO+r4V5qDIHqKknYdGPj20MVl0ERBS0Q+C9iAOx4O1Y6311lLAYdfmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769611764; c=relaxed/simple;
-	bh=IkJWJMJLpcyV9VSmZouqP4mDwwtFFzlba0fucljUEpk=;
-	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:Mime-Version; b=sWjZPSAhGDZYZLI/IjV2xP7ES1LtEhKLAfpmKice+/P7ZAzxo6CSws4TE6GVdga0wEFKvMTsp5pL557MT79erlkjW0mVnFjaE9kBe6IC9rCdyMCWCpz7r//QEyJopA3VSQk2koZw9Du9lIG84PfxumATHXS7V7CnP/AKlBc21Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=AjrzvFwc; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com [209.85.210.70])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 7B1F33F887
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 14:49:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1769611760;
-	bh=XraBybXD5tsGtLLp8ozxwcFptvRhogq8Wf8sKZhViPA=;
-	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:Mime-Version;
-	b=AjrzvFwcPNdEtDOjeAxeQoGdATwaEuFvCAVEQ8HLJdUjXMKVIYXWuzhL/huTk1+Nd
-	 Pg3XaxYBH67nRBb3xN6G9yQIg7BRWSDyaSibMk5P1biBZo44SNDk9dKF6dYeaN9nuD
-	 tSV5g6zCrf1fMcZx1FBnqC7nPyNncynfvAyTTSIXvtUEtgtqlqsnAtSUbSGutXWBNv
-	 XPKpTb538UIimIMXUENWii7qsq4S+LKx3qeVZo8J/oMV5uefPcIainwyfIqNA4DxPt
-	 +kPqB7tBKvGu/i162l5O1bgEBVr29mS/gwwapEqOd6xgpaLaStEMO5IqjRAObdEpRF
-	 JIzMv9FdGxsdzYbpbUOmzrdAf1RKQmLYjKPMNcUfohgw9w+bMMzy0n57CFF0QqfwiU
-	 xXKb16N9AQhK8nopciFygo26i+ACdm0pbNWxJOOpI0Drg2Jksut5ZLRvJUfGV52zW4
-	 zPkutFs0+ugkRjLDBTq39caXlTPQKbIRRt5t95qbvJqaCaA9mkL9sR87K2rGtoVMKm
-	 UwC1sm9kQsExumrLi5XY9y+1lKpmA9bKvwvQQKLPcU9+8bdY7TjU1vEawx6eI8MxS4
-	 oecwfC49BAAP4GB0+W8FOTXu6TuG+l4gGmvNeCrOl7I2fjZSy2jIuvS+TGlLrPtVoJ
-	 hyJdCzIGJ5/Vz+3xSJqd1xbc=
-Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-7d18e9ab16fso2133635a34.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 06:49:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769611759; x=1770216559;
-        h=mime-version:content-transfer-encoding:subject:cc:to:from
-         :message-id:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XraBybXD5tsGtLLp8ozxwcFptvRhogq8Wf8sKZhViPA=;
-        b=i9cD0I80KLf3KT41fZmXokHzStzHJ94R2A9ASJjVLNzQHgQ0lYhEi9cBgltTKvL6Dw
-         tt9zX2oZ+Yc8Pi2wf+b8k7CQLEZKJwbaPCDkEIMjGZ8M/XJ3ppd3GyY48dhf1dJ19qQG
-         RiSweMC9l2gVKE4VN2exFkSVZTGwCkvz5C1xhvgByWiNVTwP/zNEUROPbNhKCQIJQv7/
-         IF0eqyeOOgdBacnC4/XIv/Y+BBb7+930mA948iQB3fTO24VuGZB2ECwUVhblZ9mrb9H9
-         PO4+vQTyOvCCXLMugHRDqF9fL3cTI6XG+lSE1VXNYA2TOuYoID0tYyDivSULVJiid/54
-         nr4w==
-X-Gm-Message-State: AOJu0Yze3ioQRj3q5+W3age7n+0WPQiWkVP5U+xUCuqvW/1BMBvnuPrs
-	rGi67cVTUzViW6Wod1cy9r7pMRBcFWMseYBls80dp/3iNInDuyjFPSemMe3L5IQmYONmaWu63hD
-	kohPSnTl7VtOgMzVLhKSCKSlQ9oqkCUvvk3QEA7izF1ImgPNQGMqpIzpozRgLQnpqFe9OwXRVWs
-	B5YPT/Lfw=
-X-Gm-Gg: AZuq6aJXuBkcW/P6BYZX61kPQePoPubGewB3Zv3KnjT/Pm+5chp1LMh2xm2FX/d6H/u
-	FXYwZp23fByJ/9nJpmhp+Cp/T9LsgPp8fR533bIuzoXtHvFD5+lrz8fFYgxQcEVcR058t4YKoAe
-	NDn4MlZW34s96Z0iqjgwkXqq1lnDNH21T89JlfFxaQtZ9Zp192GgVefY2GlUne6sr5PwlC+YHJT
-	ZR6sn48k0yI3O+Nmp0PzhRruX8EuNjGxZzqciT+Y1jFWvAxeiekYz5z/QyS/QaQpv1rJ8npIpK8
-	n30WGDsWSDjaUix1bctxENFgkeC38dT+CONSbh22cfzpkxy/vg4pDbl5EyYAFHGf/1BbhLuA+1H
-	mzEvhFApTAHOC8yBsP2p6
-X-Received: by 2002:a05:6820:458d:b0:662:5684:d108 with SMTP id 006d021491bc7-662f2041140mr2631116eaf.20.1769611759348;
-        Wed, 28 Jan 2026 06:49:19 -0800 (PST)
-X-Received: by 2002:a05:6820:458d:b0:662:5684:d108 with SMTP id 006d021491bc7-662f2041140mr2631037eaf.20.1769611754179;
-        Wed, 28 Jan 2026 06:49:14 -0800 (PST)
-Received: from localhost ([2601:444:703:15b0:cfc8:ccb2:2ef8:893a])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-662f99447b5sm1483115eaf.2.2026.01.28.06.49.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Jan 2026 06:49:13 -0800 (PST)
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 28 Jan 2026 08:49:12 -0600
-Message-Id: <DG0B0GEW323Q.29Y4J0A0Q5DQ5@canonical.com>
-From: "Zachary M. Raines" <zachary.raines@canonical.com>
-To: "Alexander Viro" <viro@zeniv.linux.org.uk>, "Christian Brauner"
- <brauner@kernel.org>
-Cc: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: PROBLEM: Duplicated entries in /proc/<pid>/mountinfo
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1769614007; c=relaxed/simple;
+	bh=Qv96bq1R4l+P0AlqlNQr3M3cd7C8DHbj97fp/5ZTzPw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y/A7JQjOrMS2zeMan96SyKhoX3sPwQd8q5Y6XlzLCnb7SzrSsZfgtTD7pidnVqMLeX3rmlW8WIIxQSeEOnC5NRUsVm3Z0h6FUiucn8SvPxgSgEveR/ztyNFaxoViPvPRJPMEOFYA4qrv4KEePvstNko0yu59GvdJy6IXwVFuX90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pdSh+5NQ; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=V4gzpQ2cI1n1D9pDC+6TS0qJqy9O+aRgiUvOw1bVFC4=; b=pdSh+5NQiI2K3lcSaijooTJsfh
+	6qzoCa3ADP9YMFgR3h/B1s/BIcAC9VGll1ImR7tDl1tKZ2ceSJ03Tp+ms0wIZFioZLoP68kMsm1YW
+	p9qeWDjjsaIZgv4k5edvUcioQV3q9BGvlqub2/q/fKSQw/QSNRAPhizfs6rYTYrJ1qu8/kjlzsgdW
+	ZtJXRGD3iTYRAXt1yGYBAcpg0JhlaEGNZRdaWEoA1zFU/thPhKD1hDpTycRzOMQgKyRX+8n6c//Cw
+	JRMSmnSqB3JjtL89qPdrZw8R74BTCGGNdew1j0DtSrP1zgU72bMsSZto9/6zJcS0bUFGr+ISMGVN8
+	Whn5rFvA==;
+Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vl7RG-0000000GHDn-3mz7;
+	Wed, 28 Jan 2026 15:26:39 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	David Sterba <dsterba@suse.com>,
+	"Theodore Ts'o" <tytso@mit.edu>,
+	Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>,
+	Andrey Albershteyn <aalbersh@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	fsverity@lists.linux.dev
+Subject: fsverity cleanups, speedup and memory usage optimization v4
+Date: Wed, 28 Jan 2026 16:26:12 +0100
+Message-ID: <20260128152630.627409-1-hch@lst.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: aerc 0.20.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-0.06 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[canonical.com,reject];
-	MV_CASE(0.50)[];
-	R_DKIM_ALLOW(-0.20)[canonical.com:s=20251003];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
+	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), DKIM not aligned (relaxed),none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-75727-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-75728-lists,linux-fsdevel=lfdr.de];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[canonical.com:+];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[zachary.raines@canonical.com,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[infradead.org:+];
 	NEURAL_HAM(-0.00)[-1.000];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[canonical.com:mid,canonical.com:dkim,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 7DE5BA3286
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:mid,infradead.org:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 3BCCEA3E05
 X-Rspamd-Action: no action
 
-Greetings,
+Hi all,
 
-When mounting and unmounting many filesystems, /proc/<pid>/mountinfo someti=
-mes
-contains entries which are duplicated many times.
+this series has a hodge podge of fsverity enhances that I looked into as
+part of the review of the xfs fsverity support series.
 
-Summary
-=3D=3D=3D=3D=3D=3D=3D
+The first part calls fsverity code from VFS code instead of requiring
+boilerplate in the file systems.
 
-Sometimes on a system that is mounting and unmounting filesystems frequentl=
-y,
-for example running lots of docker containers, the size of /proc/1/mountinf=
-o,
-can become very large -- 100s, to 1000s of entries or more -- with the vast
-majority being a single entry duplicated many times.
+The first patch fixes a bug in btrfs as part of that, as btrfs was missing
+a check.  An xfstests test case for this was submitted already.
+Can we expedite this fix?
 
-This causes other problems on the system, due to systemd parsing the mount =
-table
-whenever it changes, and eating up a lot of memory, for example [1]. Waitin=
-g
-long enough there are rare events where the length of mountinfo can go into=
- the
-millions of lines and lead to OOM and kernel panics.
+The middle part optimizes the fsverity read path by kicking off readahead
+for the fsverity hashes from the data read submission context, which in my
+simply testing showed huge benefits for sequential reads using dd.
+I haven't been able to get fio to run on a preallocated fio file, but
+I expect random read benefits would be significantly better than that
+still.
 
-Running the reproducers below, I pretty reliably see an Ubuntu virtual mach=
-ine
-kernel panic due to lack of memory within about 24hrs.
+The last part avoids the need for a pointer in every inode for fsverity
+and instead uses a rhashtable lookup, which is done once per read_folio
+or ->readahead invocation plus for btrfs only for each bio completion.
+Right now this does not increse the number of inodes in
+each slab, but for ext4 we are getting very close to that (within
+16 bytes by my count).
 
-Versions
-=3D=3D=3D=3D=3D=3D=3D=3D
+Changes since v4:
+ - drop the constification of ctx->vi again
+ - fix __filemap_get_folio error handling again
+ - don't use "pgoff_t long"
+ - improve documentation of the new pagecache helpers
+ - reduce the number of fsverity_info lookups in btrfs
+ - improve the documentation for fsverity_active
 
-Bisecting the kernel git history, I was able to track the issue back to
-'2eea9ce4310d8 mounts: keep list of mounts in an rbtree' [2].
+Changes since v2:
+ - use sizeof_field for .key_len
+ - fix a rebase error that caused an extra fsverity_get_info in
+   fsverity_init_verification_context
+ - add verify.o to the build in the correct patch
+ - fix handling of non-ENOENT ERR_PTR folios in
+   generic_readahead_merkle_tree
+ - split fixing the __filemap_get_folio error handling into a
+   separate patch
+ - fix the readahead range in fsverity_read_merkle_tree
+ - remove __fsverity_readahead as a result of the above
+ - simplify the start/end_hidx calculation in fsverity_readahead
+ - drop the > i_size check in fsverity_readahead
+ - use pgoff_t where applicable
+ - constify fsverity_info pointers in the verification path
+ - use IS_ENABLED to disable code not used for non-fsverity builds in
+   ext4 and f2fs
+ - allow bisection for non-fsverity builds by provinding a stub
+   fsverity_info_addr prototype
+ - drop the now superflous inode argument to
+   fsverity_init_verification_context
+ - improve the kerneldoc for fsverity_readahead
+ - improve various commit messages
+ - fix the barrier placement in fsverity_active
+ - mark fsverity_active to work around stupid compilers
 
-I've tested on 6.19-rc7 in a virtual machine and the issue is still present
-there. /proc/version:
+Changes since v1:
+ - reorder to keep the most controversial part last
+ - drop moving the open handling to common code (for now)
+ - factor the page cache read code into common code
+ - reduce the number of hash lookups
+ - add a barrier in the fsverity_active that pairs with the cmpxchg
+   that sets the inode flag.
 
-Linux version 6.19.0-rc7+ (ubuntu@kernel-builder) (gcc (Ubuntu 15.2.0-4ubun=
-tu4)
-15.2.0, GNU ld (GNU Binutils for Ubuntu) 2.45) #8 SMP PREEMPT_DYNAMIC Tue J=
-an 27
-22:33:35 UTC 2026
-
-running on Ubuntu 25.10
-
-Reproducer
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-The problem can be reproduced by mounting and then unmounting tmpfs in a lo=
-op
-and in a seperate process reading /proc/1/mountinfo and checking for duplic=
-ates.
-
-I used the following scripts:
-
-1. Mounts and unmounts tmpfs
-
-#!/bin/bash
-counter=3D0
-while true; do
-    unique_name=3D"tmpfs_$$_$counter"
-   	mkdir -p "/tmp/$unique_name"
-   	sudo mount -t tmpfs "$unique_name" "/tmp/$unique_name"
-   	sudo umount "/tmp/$unique_name"
-   	rmdir "/tmp/$unique_name"
-   	((counter++))
-   	sleep 0.1
-done
-
-2. Reads `/prod/1/mountinfo` and checks for duplicates
-
-#!/bin/bash
-THRESHOLD=3D75
-echo "Starting monitoring at $(date)"
-while true; do
-    # Get mountinfo entries and count total
-    mountinfo=3D"$(cat /proc/1/mountinfo)"
-    mountinfo_count=3D$(echo "$mountinfo" | wc -l)
-
-    if ((mountinfo_count > THRESHOLD)); then
-        echo "$(date): Mount count ($mountinfo_count) exceeds threshold ($T=
-HRESHOLD)"
-
-        # Find and log duplicate mount points with their counts
-        duplicates=3D$(echo "$mountinfo" | sort | uniq -cd)
-
-        if [[ -n "$duplicates" ]]; then
-            echo "Duplicate mounts :"
-            echo "$duplicates"
-        fi
-        echo "=3D=3D=3D=3D=3D"
-        echo "$mountinfo"
-        echo "---"
-    fi
-
-    sleep 0.1
-done
-
-Typically, within 5-10 minutes duplicates can be observed, often including
-hundreds or thousands of copies of the same mount point -- although the num=
-ber
-can rarely spike to much higher values. Given a long enough uptime, I've
-observed up to 1.4 million duplicates at a time.
-
-The duplication in mountinfo is very intermittent. `cat /proc/1/mountinfo` =
-100ms
-later shows no duplication.
-
-Additional diagnostics
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-While running the script (2.) above, I also ran the following bpftrace scri=
-pt
-
-3. Trace vfs_mounts as by `cat /proc/1/mountinfo`
-
-#!/usr/bin/env bpftrace
-
-fentry:show_mountinfo / comm =3D=3D "cat"/ {
-    @mnts[args->mnt] =3D count();
-}
-
-tracepoint:sched:sched_process_exit / comm =3D=3D "cat"/ {
-    for ($mnt : @mnts) {
-        if ($mnt.1 > 1) {
-            printf("Duplicate mount %p\n", $mnt.0);
-            @dups[$mnt.0] =3D $mnt.1;
-        }
-    }
-    clear(@mnts);
-}
-
-and observed that a single mount struct was reached multiple times -- perha=
-ps
-unsurprisingly exactly the same number as there were duplicates detected by
-the above script.
-
-Typical outputs of script (2.) and the bpftrace script above are
-
-Starting monitoring at Tue Jan 27 20:48:13 UTC 2026
-Tue Jan 27 20:50:43 UTC 2026: Mount count (696) exceeds threshold (75)
-Duplicate mounts :
-  /proc/sys/fs/binfmt_misc: 2 occurrences
-  /tmp/tmpfs_856614_41491: 666 occurrences
-
-and
-
-@dups[0xffff88e5fb9f10a0]: 666
-
-Best,
-Zachary Raines
-
-[1]: https://github.com/systemd/systemd/issues/37939
-[2]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/com=
-mit/?id=3D2eea9ce4310d8c0f8ef1dbe7b0e7d9219ff02b97
+Diffstat:
+ fs/attr.c                    |   12 ++
+ fs/btrfs/btrfs_inode.h       |    4 
+ fs/btrfs/extent_io.c         |   53 +++++++-----
+ fs/btrfs/inode.c             |   13 --
+ fs/btrfs/verity.c            |   11 --
+ fs/buffer.c                  |   25 ++---
+ fs/ext4/ext4.h               |    4 
+ fs/ext4/inode.c              |    4 
+ fs/ext4/readpage.c           |   34 ++++---
+ fs/ext4/super.c              |    4 
+ fs/ext4/verity.c             |   34 ++-----
+ fs/f2fs/compress.c           |    7 -
+ fs/f2fs/data.c               |   72 ++++++++++------
+ fs/f2fs/f2fs.h               |   12 --
+ fs/f2fs/file.c               |    4 
+ fs/f2fs/inode.c              |    1 
+ fs/f2fs/super.c              |    3 
+ fs/f2fs/verity.c             |   34 ++-----
+ fs/inode.c                   |    9 ++
+ fs/verity/Makefile           |    1 
+ fs/verity/enable.c           |   39 +++++---
+ fs/verity/fsverity_private.h |   21 ++--
+ fs/verity/open.c             |   82 ++++++++++--------
+ fs/verity/pagecache.c        |   56 ++++++++++++
+ fs/verity/read_metadata.c    |   17 ++-
+ fs/verity/verify.c           |   94 +++++++++++++--------
+ include/linux/fsverity.h     |  188 ++++++++++++++++---------------------------
+ 27 files changed, 451 insertions(+), 387 deletions(-)
 
