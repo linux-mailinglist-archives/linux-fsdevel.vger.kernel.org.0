@@ -1,214 +1,271 @@
-Return-Path: <linux-fsdevel+bounces-75713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75714-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YDpGFUf1eWnT1AEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 12:38:47 +0100
+	id YFo1EDP4eWkE1QEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75714-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 12:51:15 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5AF2A09BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 12:38:46 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD514A0D79
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 12:51:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 4675F3073B5B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 11:33:34 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 83CA23041BFC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 11:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21AC353EDE;
-	Wed, 28 Jan 2026 11:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC79314D15;
+	Wed, 28 Jan 2026 11:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l0gGi0up"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FR8mdWDW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323A03502A6;
-	Wed, 28 Jan 2026 11:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769599851; cv=none; b=HQg835D/12FSqFZum/3AAFBIgYop2qI1sbc6nSLEAhIzBKl0X+nLtlBfTf0rnMqglIJrsNWiM5kZKYckm415hluTstHtmx7s7L5TmzIjAfgfK7hUWCiVfim8y3XjMeBJQ3juw4M2rfvw/HEle4hFcsaWA8zmj6IoGeLnAVKhF+w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769599851; c=relaxed/simple;
-	bh=e8woQflNeRVbz8kBu2VEgntvVWsLZO2JGthGuNEQDts=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SBol4vQt2zx7Mj//GN1gV9wM8RDeDW8W9DkKInQa2SBwWgQ/qSZSRiV/KsdUbid+SuwO3oG0/QIhpg3tqyjZnbHQ+sy6zVPgAFmRhZNI2X44+G3v0y4l6ucn/RZKituFNLmqk1Hfx8j995f8mUH0NTk5hFxoL2J9tX21t2zuZuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l0gGi0up; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5E0EC19422;
-	Wed, 28 Jan 2026 11:30:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769599850;
-	bh=e8woQflNeRVbz8kBu2VEgntvVWsLZO2JGthGuNEQDts=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=l0gGi0up4o2Pb5npozWzXoJ/8FoFQCh75G0JVYNIUkrsaEWPtwjOsfXZxHJsrSZwx
-	 Pykb3+SI2ZhJbC9BflwvAyZb/dQg9kiaBgpK/cgiVD+aRrXcNaf6fJX0Sv2QukpVu4
-	 m3jcS5dLK8YbQmcA277SO/hBV/FJOFdRpFqPjvR0FIOzUBs7YgJcHJ5EiT8nba8EOY
-	 ixaotHMuG+0E7wZ9aVMTg0EL3TXXErloGb9GhUoTkjrDDBRcONMpa6G5uIV5Lhx7iI
-	 AlXB+5FEa4qfvpJtdMuq2CdxfOK4wfEx6vHHDsV/c6qDGjxmjhXKkS5ubfvZPers5g
-	 6NZoAWn6x5HMg==
-Message-ID: <4ebd0e6d9c91d1851d284ea02f9663a928a18888.camel@kernel.org>
-Subject: Re: [PATCH v3 0/2] nfsd and special kernel filesystems
-From: Jeff Layton <jlayton@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>, Christian Brauner
- <brauner@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Christoph Hellwig <hch@lst.de>, 
- Neil Brown <neil@brown.name>, Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org, 	linux-nfs@vger.kernel.org
-Date: Wed, 28 Jan 2026 06:30:48 -0500
-In-Reply-To: <20260128111645.902932-1-amir73il@gmail.com>
-References: <20260128111645.902932-1-amir73il@gmail.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.2 (3.58.2-1.fc43) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF9F32C92B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 11:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769601001; cv=pass; b=uIlXFoDRCne5L9CPS2WbkQFgw/exHFdR5Y9XZq0QpCFtRBbjd0i7EZjvCXG26UMy0o3qg0vniQJkKtxuHZ5Icmyvci4n12oXC1pPqwfQBbfT5Rl7oPk3CHi+/5z1phz4qvUBlREcSNceMTXBG80AoMESmNs1p3EZR/LQy1DHcU4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769601001; c=relaxed/simple;
+	bh=hSMXOh0Oo+nPWIXGNy6Xy2ffhiMjw7bfObWyXyyTRFw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p98cJlynBQFcnBzEo/t2uZC6OcO0rLhBQrXwKxpzfHBocq3dfCsHLHxuYr8lvP3t7kiEr7oO3O3ffPV4UgkbcPUwy7CpFbeJIz11Ze08TxyY5R2hURyyM1+ifBYBnB94XvEiKAwsItqls37EaJw/ZvUOXjbAFHcj8zEmO+M3rDM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FR8mdWDW; arc=pass smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-65815ec51d3so12263551a12.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 03:49:59 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769600998; cv=none;
+        d=google.com; s=arc-20240605;
+        b=LlJ8GZl1Gn+7AmwlbP3PXUQ823SafOA37Ilrv7UPCDtMoaoXmIRw1UaNOz+y+QoQOS
+         Ich8Ym0sXK9Eu9TcMzyySJGcrzAfuUYBeof6bsPcw75YkKRG9VuPQX0Io7detgX9QyVa
+         xwRxSLi0hJqY3a5cMdWKHHpEWc51TjSEx17UmfuXxZ+pfj5vsHrqV0ZtHM3hihJRwQ5E
+         69bgvFvsMFzAV3RyTTzm/OAxOdJRXhS5CXOhkRfb+CLNJkeywiI6XQJ1n5TsPZH9pmZg
+         0H9lZVH7ezWR+ql0uNefMkfh/A0cS8Iek9JpZgPYweQXpkbhX7G8rkFpyn5z2To43er9
+         SD0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=OOBXUmD9goqwIlvz3iQRg+SdG5i2nFccs0lUKwf+dUE=;
+        fh=OQMX+IIwIBS0KsrFoUcuZcA0wRRkZgJMEgXe7dk587s=;
+        b=kRsKgoWSrBXXTzPhCl5zwmNt5w/rcHu64PxSCacJjBGA9smcfVn8VwBbAyERliYsFl
+         Kv0w7pCkuEVesNEjr+LyXSXNEObtQKrpUR7fVS/IRLdH8mVOPaBqF+lKTv8e/qiKe1Gd
+         2ZRwqyM0hcE7RbpgGfsETjo31L6tl1JwDYULnsiumsWBv75Odalg7qVl7/PVj4YKkhpW
+         yniULFtfZNR/JDxmb+RWUpipujAknocgxQHSMUmd6nwdBwEI1U/wxLcoV8YF0InaO42r
+         quHNxHcmzkK4jBy2rOlNuCsVWfvuvtYljEYwUFB99ZayKlLnlp1XvVs+6QhKP3vJRfH8
+         A4rA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769600998; x=1770205798; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OOBXUmD9goqwIlvz3iQRg+SdG5i2nFccs0lUKwf+dUE=;
+        b=FR8mdWDWBW61A+py/5HoKRuev9mIZIpSmqKtTdkiRzhJx4yurwTyHJqiayDAei1JJV
+         D8rE15bAbp4yruitOxN9ghocp5wUSHwvtzUpipos6frHL91+9nHe4nsGR8VxAuGxJkQY
+         tnIovD3EuXHOfvTUV81DwMwIcNnJFeO2rPKJTX5gK5nMutc6lAxKlRsr0kF9eQb13l1F
+         xQMfKXrVAS1lxlIvk+4hGHrRSlVu7uUqk3G2YfvExfFWKiyZE0qMJQgnaSXieYTrDUCR
+         0hHT05bTTVJeGqZ/a5iyA5Rp/Ex6gwYwk1F7BGNNHEbliXytUdSPaj5GtEEG8G+yy+Bx
+         714w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769600998; x=1770205798;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=OOBXUmD9goqwIlvz3iQRg+SdG5i2nFccs0lUKwf+dUE=;
+        b=jfBNA5DTqDjwC0dWH7JMQtGoCxR1eJ+kXnbA+r5KH7wvUaV7Q3+d/OnSfzjZnRhMT2
+         Gsqv4u+C/kmz4YGXie49fAmoyv+/AFoNL6/1vcLw1HqsMyuJjljgsslHLhYrg1pdIWzo
+         ogYjsKFywcOEoOcTpb2bJzSIKQFElGxZDg+LfIBn7fj1k3yxhmgK80+XsFkuNBSZhCU1
+         bJHHPA/q2KLpMmyayUlNkIO10smTX5dyN6FJmGfxzFOk0CZZqT4wr9/PxHF/RSNWxe4X
+         n/Ia7/aNUz3gFyNQx8mHzdGw9ND8Db/xsoU7KiydbdPxGwixqASfgxH/clMhQzJzVQzd
+         zrBw==
+X-Forwarded-Encrypted: i=1; AJvYcCULykyrOUDaqSb/eq19CUwg8SPjZE8M332G7onIOXBegKdBuTqrfwu11RPY/DZbkMWdGI9auF7C34xpvyRM@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQlYzZUEobtUxgmpoMFOfDf9RXhrmB4jPp6nBB2fYLOeKLa8Qz
+	SRDlPYZBnxVINtoa1dQm1CLOe2uvRAfPSKRPQJ4FrMXF3ZQyVz/JXTrkNcG9+StcED6EwWy/eyo
+	dgKeRh8srYp0sMDoZszp1EDXM0gKt49s=
+X-Gm-Gg: AZuq6aJwZxwDols94Yu8FXXFDddsN9f0XfqIAfdQY9P+orVt69rsjcP+DRSNx4EflnK
+	g1TTVmEhzGFW0WUMvTd8KFYMQqa1Q29nlx/mbdkwKdIwaL7SbtusbRB68lKX+br9QVnOiKCQ9Bk
+	0Wo1kCyHll/ZDusVRYkjiI9RaqTqU5qepNz++P8/+0eAbl7tHxJdPqjc3m6w1J1RUjluX4QMHdC
+	kZCxXiC1rk6mtZsQHDluPBRT1zGZ4rV34pS0VJVIB1wpHzyMEF9dnqdNFzNleMWoLbjMpJVGxK1
+	TpztRjMneO1F8KAa9rWqm/EEnBR6nA==
+X-Received: by 2002:a05:6402:35c1:b0:658:2fd1:b0ab with SMTP id
+ 4fb4d7f45d1cf-658a60b78d2mr2846925a12.29.1769600997470; Wed, 28 Jan 2026
+ 03:49:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com>
+ <20260114-tonyk-get_disk_uuid-v1-3-e6a319e25d57@igalia.com>
+ <20260114062608.GB10805@lst.de> <5334ebc6-ceee-4262-b477-6b161c5ca704@igalia.com>
+ <20260115062944.GA9590@lst.de> <633bb5f3-4582-416c-b8b9-fd1f3b3452ab@suse.com>
+ <20260115072311.GA10352@lst.de> <22b16e24-d10e-43f6-bc2b-eeaa94310e3a@igalia.com>
+ <CAOQ4uxhbz7=XT=C3R8XqL0K_o7KwLKsoNwgk=qJGuw2375MTJw@mail.gmail.com>
+ <0241e2c4-bf11-4372-9eda-cccaba4a6d7d@igalia.com> <CAOQ4uxi988PutUi=Owm5zf6NaCm90PUCJLu7dw8firH8305w-A@mail.gmail.com>
+ <33c1ccbd-abbe-4278-8ab1-d7d645c8b6e8@igalia.com> <CAOQ4uxgCM=q29Vs+35y-2K9k7GP2A2NfPkuqCrUiMUHW+KhbWw@mail.gmail.com>
+ <75a9247a-12f4-4066-9712-c70ab41c274f@igalia.com> <CAOQ4uxig==FAd=2hO0B_CVBDSuBwdqL-zaXkpf-QXn5iEL364g@mail.gmail.com>
+ <CAOQ4uxg6dKr4XB3yAkfGd_ehZkBMcoNHiF5CeB9=3aca44yHRg@mail.gmail.com>
+ <ee38734b-c4c3-4b96-8ff2-b4ce5730b57c@igalia.com> <8ab387b1-c4aa-40a5-946f-f4510d8afd02@igalia.com>
+ <CAOQ4uxiRpwuyfj_Wy3Zj+HAi+jgQOq8nPQK8wmn6Hgsz-9i1fw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxiRpwuyfj_Wy3Zj+HAi+jgQOq8nPQK8wmn6Hgsz-9i1fw@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 28 Jan 2026 12:49:45 +0100
+X-Gm-Features: AZwV_QiAes4F6-nhL9J4dFPbEOm7D7xrxYRKJxjry6rXeIbQy7RViH-qtuWr0fQ
+Message-ID: <CAOQ4uxhHFvYNAgES9wpM_C-7GvfwXC2xet1ensfeQOyPJRAuNQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] ovl: Use real disk UUID for origin file handles
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: Christoph Hellwig <hch@lst.de>, Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
+	NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+	Tom Talpey <tom@talpey.com>, Carlos Maiolino <cem@kernel.org>, Chris Mason <clm@fb.com>, 
+	David Sterba <dsterba@suse.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	kernel-dev@igalia.com, vivek@collabora.com, 
+	Ludovico de Nittis <ludovico.denittis@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75713-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_TO(0.00)[gmail.com,kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-75714-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[25];
 	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jlayton@kernel.org,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[amir73il@gmail.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: D5AF2A09BB
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,igalia.com:email]
+X-Rspamd-Queue-Id: AD514A0D79
 X-Rspamd-Action: no action
 
-On Wed, 2026-01-28 at 12:16 +0100, Amir Goldstein wrote:
-> Christian,
->=20
-> I noticed that the kernel-doc refactoring queued on vfs-7.0.misc was
-> going to conflict with v2 [1], so I rebased over vfs-7.0.misc and split
-> it into doc update and nfsd fix patch that could be backported.
->=20
-> RVBs by Chuck and Jeff were removed due to the slight changes in wording.
->=20
-> I'd like to acknowledge that Christoph wrote on v2 that:
-> "As last time I'd be happy to help write documentation, but even
->  after looking at the methods, their documentations and the commits
->  adding them I do not understand them.  So getting an explanation
->  from Christian would be really helpful to move forward here."
->=20
-> IMO, further clarifications of the new methods is very much welcome,
-> but should not be blocking the merge of this patch set, which at least
-> clarifies the WHAT (to use them for) if not the HOW (to use them).
->=20
-> Thanks,
-> Amir.
->=20
-> Changes since v2:
-> - Rebase over vfs-7.0.misc
-> - Split to doc/fix patches
-> - Remove RVBs
->=20
-> [1] https://lore.kernel.org/linux-fsdevel/20260122141942.660948-1-amir73i=
-l@gmail.com/
->=20
-> Amir Goldstein (2):
->   exportfs: clarify the documentation of open()/permission() expotrfs
->     ops
->   nfsd: do not allow exporting of special kernel filesystems
->=20
->  fs/nfsd/export.c         |  8 +++++---
->  include/linux/exportfs.h | 25 ++++++++++++++++++++++---
->  2 files changed, 27 insertions(+), 6 deletions(-)
+On Sat, Jan 24, 2026 at 11:45=E2=80=AFAM Amir Goldstein <amir73il@gmail.com=
+> wrote:
+>
+> On Fri, Jan 23, 2026 at 9:08=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@i=
+galia.com> wrote:
+> >
+> > Em 23/01/2026 10:24, Andr=C3=A9 Almeida escreveu:
+> > >
+> > > Em 22/01/2026 17:07, Amir Goldstein escreveu:
+> > >> On Tue, Jan 20, 2026 at 4:12=E2=80=AFPM Amir Goldstein <amir73il@gma=
+il.com>
+> > >> wrote:
+> > >>>
+> > >>> On Mon, Jan 19, 2026 at 5:56=E2=80=AFPM Andr=C3=A9 Almeida
+> > >>> <andrealmeid@igalia.com> wrote:
+> > >>>>
+> > >> ...
+> > >>>> Actually they are not in the same fs, upper and lower are coming f=
+rom
+> > >>>> different fs', so when trying to mount I get the fallback to
+> > >>>> `uuid=3Dnull`. A quick hack circumventing this check makes the mou=
+nt
+> > >>>> work.
+> > >>>>
+> > >>>> If you think this is the best way to solve this issue (rather than
+> > >>>> following the VFS helper path for instance),
+> > >>>
+> > >>> That's up to you if you want to solve the "all lower layers on same=
+ fs"
+> > >>> or want to also allow lower layers on different fs.
+> > >>> The former could be solved by relaxing the ovl rules.
+> > >>>
+> > >>>> please let me know how can
+> > >>>> I safely lift this restriction, like maybe adding a new flag for t=
+his?
+> > >>>
+> > >>> I think the attached patch should work for you and should not
+> > >>> break anything.
+> > >>>
+> > >>> It's only sanity tested and will need to write tests to verify it.
+> > >>>
+> > >>
+> > >> Andre,
+> > >>
+> > >> I tested the patch and it looks good on my side.
+> > >> If you want me to queue this patch for 7.0,
+> > >> please let me know if it addresses your use case.
+> > >>
+> > >
+> > > Hi Amir,
+> > >
+> > > I'm still testing it to make sure it works my case, I will return to =
+you
+> > > ASAP. Thanks for the help!
+> > >
+> >
+> > So, your patch wasn't initially working in my setup here, and after som=
+e
+> > debugging it turns out that on ovl_verify_fh() *fh would have a NULL
+> > UUID, but *ofh would have a valid UUID, so the compare would then fail.
+> >
+> > Adding this line at ovl_get_fh() fixed the issue for me and made the
+> > patch work as I was expecting:
+> >
+> > +       if (!ovl_origin_uuid(ofs))
+> > +               fh->fb.uuid =3D uuid_null;
+> > +
+> >          return fh;
+> >
+> > Please let me know if that makes sense to you.
+>
+> It does not make sense to me.
+> I think you may be using the uuid=3Doff feature in the wrong way.
+> What you did was to change the stored UUID, but this NOT the
+> purpose of uuid=3Doff.
+>
+> The purpose of uuid=3Doff is NOT to allow mounting an overlayfs
+> that was previously using a different lower UUID.
+> The purpose is to mount overlayfs the from the FIRST time with
+> uuid=3Doff so that ovl_verify_origin_fh() gets null uuid from the
+> first call that sets the ORIGIN xattr.
+>
+> IOW, if user want to be able to change underlying later UUID
+> user needs to declare from the first overlayfs mount that this
+> is expected to happen, otherwise, overlayfs will assume that
+> an unintentional wrong configuration was used.
+>
+> I updated the documentation to try to explain this better:
+>
+> Is my understanding of the problems you had correct?
+> Is my solution understood and applicable to your use case?
+>
 
-Updated version seems reasonable:
+Hi Andre,
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Sorry to nag you, but if you'd like me to queue the suggested change to 7.0=
+,
+I would need your feedback soon.
+
+FWIW, I think that this change of restrictions for uuid=3Dnull could be bac=
+kported
+to stable kernels, but I am not going to mark it for auto select, because
+I'd rather see if anyone shouts with upstream kernel first when (if) we mak=
+e
+this change and manually backport later per demand.
+
+Thanks,
+Amir.
 
