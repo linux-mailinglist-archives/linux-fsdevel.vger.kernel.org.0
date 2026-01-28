@@ -1,360 +1,316 @@
-Return-Path: <linux-fsdevel+bounces-75790-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id kP3lImRVemnk5AEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75790-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 19:28:52 +0100
+	id wNEECkxWemlm5QEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 19:32:44 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04260A7C3B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 19:28:51 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78303A7CB4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 19:32:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 1A6983017BE2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 18:28:47 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 34B45302C5DF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 18:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5454F37105C;
-	Wed, 28 Jan 2026 18:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172CD25A2B4;
+	Wed, 28 Jan 2026 18:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="iYX4NjbP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p7Jfe186"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970AB32F74D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 18:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0AA37105B;
+	Wed, 28 Jan 2026 18:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769624923; cv=none; b=hukvole7Z0r2xjU1y27eXDlwNwm3VP6nk2wsxPdeBJTX0wnlKnw/Lyi5PGwXZBHWFLUh2eI2U1Ml1TfJqwjTckvgONgpaF3u5miUWKe7kUP4bny9zY5m5H0lbnsM8sOVJlbgEdhacaPyHPKFtw4uRgQ5SGTz95sGV6U582QNNGU=
+	t=1769625155; cv=none; b=tEK5uwbO5Eb0EbIgBYySGnwB4IvzAsnJX0fOyqfoAuhNyNGqZGU8N79jgYAEtb0hM/8hVuY1Gf/P92DF60cqBwsLLM699QCrT4L6FW4zMosR0mzMDH2AdUBD6BjfB4ITYzXkiTGqyZgvEPJfIaQacYDeiVx1XPK0ty8jeobqgwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769624923; c=relaxed/simple;
-	bh=CdhBpB1ZCtEE4ieyjq9E1Pk0TrArQS2Ka78YbLwQIWI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=p6TL0dSRnLBl84CWJ7a2u7Tulz3HTk7P6Low/tyKRsUadET0CobI47UaV3hK+kECc0vaFzTu+fqxmFD8fX9fnlO1b7pJ42yLoxQo7sMuL9QmYSFmrIQvu7kBN5eAnKvUsFdrvcErFGX27eckmkitmQxHo6nVjhSBXEvNxCG19ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=iYX4NjbP; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20260128182832epoutp02190cc49419bcecd83b1d86cb01109371~O_HtScDyn2051120511epoutp02e
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 18:28:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20260128182832epoutp02190cc49419bcecd83b1d86cb01109371~O_HtScDyn2051120511epoutp02e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1769624912;
-	bh=Gv/5Xt5C0T/YMiB+ioPeuN7YCtbrmm2qxsQAlrljD6Y=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=iYX4NjbPBd+DYQo+o5WCO8ERNTfIep1jhDC/a5T/0558AL1eOhPx2dTSPP0HYVg59
-	 upTXe94Mc68C/IU48OM7JZGr3JExW+BXPhRAJQ0IxhXdywmLryhM6MLE9YgJfmorbv
-	 BPuG46Av8oYzBr+LlRbY2s9Rm6yTPF2PsbzCyIck=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20260128182831epcas5p3fde99bd45f69e11c6dce8036e6f425c3~O_HsdlJIA0474704747epcas5p3U;
-	Wed, 28 Jan 2026 18:28:31 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.86]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4f1W4G2GGfz6B9m4; Wed, 28 Jan
-	2026 18:28:30 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20260128182829epcas5p4398956f380795d9a862229c6766da668~O_HrDPcjj1514815148epcas5p4E;
-	Wed, 28 Jan 2026 18:28:29 +0000 (GMT)
-Received: from [107.111.86.57] (unknown [107.111.86.57]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260128182826epsmtip13b5776ddc5ea3f1f65ffa668a59ca21a~O_HoEqOlZ0743607436epsmtip10;
-	Wed, 28 Jan 2026 18:28:26 +0000 (GMT)
-Message-ID: <e7413e3b-3fae-4aab-90a1-4a6695156b2e@samsung.com>
-Date: Wed, 28 Jan 2026 23:58:25 +0530
+	s=arc-20240116; t=1769625155; c=relaxed/simple;
+	bh=5AjA3SD0xtDmV2WAyXS75p4kFdb/OZYhRaqk/aoUYd0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QnERSklcYWaOL0IAte/3h9E6yBiPXsrUt5fdAUOuITsAFrpIo81jXARqFjh4VDcPpg2jSHhNcpEsiLkbEXvnSX9bJ/9AQrqShTeZilrdNXtyBODEagd+gD5AFVMvBUgLcSkYIbWE5GrHtWbPSkFoYquWxcoc32YgoUTgtN2mR6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p7Jfe186; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82008C4CEF1;
+	Wed, 28 Jan 2026 18:32:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769625154;
+	bh=5AjA3SD0xtDmV2WAyXS75p4kFdb/OZYhRaqk/aoUYd0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=p7Jfe186jOgLmm0hMq43yYaHnhprtnzy4DIBtzcG5cKXPCngjbAhBiLyHqXc2l40O
+	 fiAbrvhnXi814RtYUT/fFAQH0Y3pqf9D5dknCTrkFafk35HLulmKc0tm1hUNTP9g47
+	 aGKyo1wCozxhks3bF9L6LrfRMiSjt3wJkYvWpoFHDcXr9tkuJRTdpebrXex+8h23LA
+	 BWvd5jkG4AyEEU82ivbMAVKlIZxE7tFreZDVOlpuarygoNKk8v00Yl//PIEpLZ2mAj
+	 a8R7sg71qmKMYhcxbqUNDI8pIkiLXMecxTvOk3PcbbtKV9tiF62BRhxL933U5LTl9w
+	 gS2I8rCUq3enw==
+From: Andrii Nakryiko <andrii@kernel.org>
+To: akpm@linux-foundation.org,
+	linux-mm@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	surenb@google.com,
+	Andrii Nakryiko <andrii@kernel.org>,
+	syzbot+4e70c8e0a2017b432f7a@syzkaller.appspotmail.com
+Subject: [PATCH mm-stable] procfs: avoid fetching build ID while holding VMA lock
+Date: Wed, 28 Jan 2026 10:32:32 -0800
+Message-ID: <20260128183232.2854138-1-andrii@kernel.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/6] AG aware parallel writeback for XFS
-Content-Language: en-US
-To: Brian Foster <bfoster@redhat.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	willy@infradead.org, mcgrof@kernel.org, clm@meta.com, david@fromorbit.com,
-	amir73il@gmail.com, axboe@kernel.dk, hch@lst.de, ritesh.list@gmail.com,
-	djwong@kernel.org, dave@stgolabs.net, cem@kernel.org, wangyufei@vivo.com,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-xfs@vger.kernel.org, gost.dev@samsung.com, anuj20.g@samsung.com,
-	vishak.g@samsung.com, joshi.k@samsung.com
-From: Kundan Kumar <kundan.kumar@samsung.com>
-In-Reply-To: <aXN3EtxKFXX8DEbl@bfoster>
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20260128182829epcas5p4398956f380795d9a862229c6766da668
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20260116101236epcas5p12ba3de776976f4ea6666e16a33ab6ec4
-References: <CGME20260116101236epcas5p12ba3de776976f4ea6666e16a33ab6ec4@epcas5p1.samsung.com>
-	<20260116100818.7576-1-kundan.kumar@samsung.com> <aXEvAD5Rf5QLp4Ma@bfoster>
-	<ca048ecf-5aec-4a0d-8faf-ad9fcd310e21@samsung.com>
-	<aXN3EtxKFXX8DEbl@bfoster>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [0.84 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[samsung.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[samsung.com:s=mail20170921];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,infradead.org,meta.com,fromorbit.com,gmail.com,kernel.dk,lst.de,stgolabs.net,vivo.com,vger.kernel.org,kvack.org,samsung.com];
-	TAGGED_FROM(0.00)[bounces-75790-lists,linux-fsdevel=lfdr.de];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[samsung.com:mid,samsung.com:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[23];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[samsung.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75791-lists,linux-fsdevel=lfdr.de];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[kundan.kumar@samsung.com,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[andrii@kernel.org,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel,4e70c8e0a2017b432f7a];
+	RCPT_COUNT_SEVEN(0.00)[7];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[8]
-X-Rspamd-Queue-Id: 04260A7C3B
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 78303A7CB4
 X-Rspamd-Action: no action
 
-On 1/23/2026 6:56 PM, Brian Foster wrote:
-> On Thu, Jan 22, 2026 at 09:45:05PM +0530, Kundan Kumar wrote:
->>>
->>> Could you provide more detail on how you're testing here? I threw this
->>> at some beefier storage I have around out of curiosity and I'm not
->>> seeing much of a difference. It could be I'm missing some details or
->>> maybe the storage outweighs the processing benefit. But for example, is
->>> this a fio test command being used? Is there preallocation? What type of
->>> storage? Is a particular fs geometry being targeted for this
->>> optimization (i.e. smaller AGs), etc.?
->>
->> Thanks Brian for the detailed review and for taking the time to
->> look through the code.
->>
->> The numbers quoted were from fio buffered write workloads on NVMe
->> (Optane devices), using multiple files placed in different
->> directories mapping to different AGs. Jobs were buffered
->> randwrite with multiple jobs. This can be tested with both
->> fallocate=none or otherwise.
->>
->> Sample script for 12 jobs to 12 directories(AGs) :
->>
->> mkfs.xfs -f -d agcount=12 /dev/nvme0n1
->> mount /dev/nvme0n1 /mnt
->> sync
->> echo 3 > /proc/sys/vm/drop_caches
->>
->> for i in {1..12}; do
->>     mkdir -p /mnt/dir$i
->> done
->>
->> fio job.fio
->>
->> umount /mnt
->> echo 3 > /proc/sys/vm/drop_caches
->>
->> The job file :
->>
->> [global]
->> bs=4k
->> iodepth=32
->> rw=randwrite
->> ioengine=io_uring
->> fallocate=none
->> nrfiles=12
->> numjobs=1
->> size=6G
->> direct=0
->> group_reporting=1
->> create_on_open=1
->> name=test
->>
->> [job1]
->> directory=/mnt/dir1
->>
->> [job2]
->> directory=/mnt/dir2
->> ...
->> ...
->> [job12]
->> directory=/mnt/dir12
->>
-> 
-> Thanks..
-> 
->>>
->>> FWIW, I skimmed through the code a bit and the main thing that kind of
->>> stands out to me is the write time per-folio hinting. Writeback handling
->>> for the overwrite (i.e. non-delalloc) case is basically a single lookup
->>> per mapping under shared inode lock. The question that comes to mind
->>> there is what is the value of per-ag batching as opposed to just adding
->>> generic concurrency? It seems unnecessary to me to take care to shuffle
->>> overwrites into per-ag based workers when the underlying locking is
->>> already shared.
->>>
->>
->> That’s a fair point. For the overwrite (non-delalloc) case, the
->> per-folio AG hinting is not meant to change allocation behavior, and
->> I agree the underlying inode locking remains shared. The primary value
->> I’m seeing there is the ability to partition writeback iteration and
->> submission when dirty data spans multiple AGs.
->> I will try routing overwrite writeback to workers irrespective of AG
->> (e.g. hash/inode based), to compare between generic concurrency vs AG
->> batching.
->>
->>> WRT delalloc, it looks like we're basically taking the inode AG as the
->>> starting point and guessing based on the on-disk AGF free blocks counter
->>> at the time of the write. The delalloc accounting doesn't count against
->>> the AGF, however, so ISTM that in many cases this would just effectively
->>> land on the inode AG for larger delalloc writes. Is that not the case?
->>>
->>> Once we get to delalloc writeback, we're under exclusive inode lock and
->>> fall into the block allocator. The latter trylock iterates the AGs
->>> looking for a good candidate. So what's the advantage of per-ag
->>> splitting delalloc at writeback time if we're sending the same inode to
->>> per-ag workers that all 1. require exclusive inode lock and 2. call into
->>> an allocator that is designed to be scalable (i.e. if one AG is locked
->>> it will just move to the next)?
->>>
->>
->> The intent of per-AG splitting is not to parallelize allocation
->> within a single inode or override allocator behavior, but to
->> partition writeback scheduling so that inodes associated with
->> different AGs are routed to different workers. This implicitly
->> distributes inodes across AG workers, even though each inode’s
->> delalloc conversion remains serialized.
->>
->>> Yet another consideration is how delalloc conversion works at the
->>> xfs_bmapi_convert_delalloc() -> xfs_bmapi_convert_one_delalloc() level.
->>> If you take a look at the latter, we look up the entire delalloc extent
->>> backing the folio under writeback and attempt to allocate it all at once
->>> (not just the blocks backing the folio). So in theory if we were to end
->>> up tagging a sequence of contiguous delalloc backed folios at buffered
->>> write time with different AGs, we're still going to try to allocate all
->>> of that in one AG at writeback time. So the per-ag hinting also sort of
->>> competes with this by shuffling writeback of the same potential extent
->>> into different workers, making it a little hard to try and reason about.
->>>
->>
->> Agreed — delalloc conversion happens at extent granularity, so
->> per-folio AG hints are not meant to steer final allocation. In this
->> series the hints are used purely as writeback scheduling tokens;
->> allocation still occurs once per extent under XFS_ILOCK_EXCL using
->> existing allocator logic. The goal is to partition writeback work and
->> avoid funneling multiple inodes through a single writeback path, not
->> to influence extent placement.
->>
-> 
-> Yeah.. I realize none of this is really intended to drive allocation
-> behavior. The observation that all this per-folio tracking ultimately
-> boils down to either sharding based on information we have at writeback
-> time (i.e. overwrites) or effectively batching based on on-disk AG state
-> at the time of the write is kind of what suggests that the folio
-> granular hinting is potentially overkill.
-> 
->>> So stepping back it kind of feels to me like the write time hinting has
->>> so much potential for inaccuracy and unpredictability of writeback time
->>> behavior (for the delalloc case), that it makes me wonder if we're
->>> effectively just enabling arbitrary concurrency at writeback time and
->>> perhaps seeing benefit from that. If so, that makes me wonder if the
->>> associated value can be gained by somehow simplifying this to not
->>> require write time hinting at all.
->>>
->>> Have you run any experiments that perhaps rotors inodes to the
->>> individual wb workers based on the inode AG (i.e. basically ignoring all
->>> the write time stuff) by chance? Or anything that otherwise helps
->>> quantify the value of per-ag batching over just basic concurrency? I'd
->>> be interested to see if/how behavior changes with something like that.
->>
->> Yes, inode-AG based routing has been explored as part of earlier
->> higher-level writeback work (link below), where inodes are affined to
->> writeback contexts based on inode AG. That effectively provides
->> generic concurrency and serves as a useful baseline.
->> https://lore.kernel.org/all/20251014120845.2361-1-kundan.kumar@samsung.com/
->>
-> 
-> Ah, I recall seeing that. A couple questions..
-> 
-> That link states the following:
-> 
-> "For XFS, affining inodes to writeback threads resulted in a decline
-> in IOPS for certain devices. The issue was caused by AG lock contention
-> in xfs_end_io, where multiple writeback threads competed for the same
-> AG lock."
-> 
-> Can you quantify that? It seems like xfs_end_io() mostly cares about
-> things like unwritten conversion, COW remapping, etc., so block
-> allocation shouldn't be prominent. Is this producing something where
-> frequent unwritten conversion results in a lot of bmapbt splits or
-> something?
-> 
+Fix PROCMAP_QUERY to fetch optional build ID only after dropping mmap_lock or
+per-VMA lock, whichever was used to lock VMA under question, to avoid deadlock
+reported by syzbot:
 
-I captured stacks from the contending completion workers and the hotspot
-is in the unwritten conversion path
-(xfs_end_io() -> xfs_iomap_write_unwritten()). We were repeatedly
-contending on the AGF buffer lock via xfs_alloc_fix_freelist() /
-xfs_alloc_read_agf() when writeback threads were affined per-inode.
-This contention went away once writeback was distributed across
-AG-based workers, pointing to reduced AGF hotspotting during unwritten
-conversion (rmap/btree updates and freelist fixes), rather than block
-allocation in the write path itself.
+ -> #1 (&mm->mmap_lock){++++}-{4:4}:
+        __might_fault+0xed/0x170
+        _copy_to_iter+0x118/0x1720
+        copy_page_to_iter+0x12d/0x1e0
+        filemap_read+0x720/0x10a0
+        blkdev_read_iter+0x2b5/0x4e0
+        vfs_read+0x7f4/0xae0
+        ksys_read+0x12a/0x250
+        do_syscall_64+0xcb/0xf80
+        entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-> Also, how safe is it is to break off writeback tasks at the XFS layer
-> like this? For example, is it safe to spread around the wbc to a bunch
-> of tasks like this? What about serialization for things like bandwidth
-> accounting and whatnot in the core/calling code?  Should the code that
-> splits off wq tasks in XFS be responsible to wait for parallel
-> submission completion before returning (I didn't see anything doing that
-> on a scan, but could have missed it)..?
-> 
+ -> #0 (&sb->s_type->i_mutex_key#8){++++}-{4:4}:
+        __lock_acquire+0x1509/0x26d0
+        lock_acquire+0x185/0x340
+        down_read+0x98/0x490
+        blkdev_read_iter+0x2a7/0x4e0
+        __kernel_read+0x39a/0xa90
+        freader_fetch+0x1d5/0xa80
+        __build_id_parse.isra.0+0xea/0x6a0
+        do_procmap_query+0xd75/0x1050
+        procfs_procmap_ioctl+0x7a/0xb0
+        __x64_sys_ioctl+0x18e/0x210
+        do_syscall_64+0xcb/0xf80
+        entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-You are right that core writeback accounting assumes serialized
-updates. The current series copies wbc per worker to avoid concurrent
-mutation, but that is not sufficient for strict global accounting
-semantics.
+ other info that might help us debug this:
 
-For this series we only offload the async path
-(wbc->sync_mode != WB_SYNC_ALL), so we do not wait for worker completion
-before returning from ->writepages(). Sync writeback continues down the
-existing iomap_writepages path.
+  Possible unsafe locking scenario:
 
->> The motivation for this series is the complementary case where a
->> single inode’s dirty data spans multiple AGs on aged/fragmented
->> filesystems, where inode-AG affinity breaks down. The folio-level AG
->> hinting here is intended to explore whether finer-grained partitioning
->> provides additional benefit beyond inode-based routing.
->>
-> 
-> But also I'm not sure I follow the high level goal here. I have the same
-> question as Pankaj in that regard.. is this series intended to replace
-> the previous bdi level approach, or go along with it somehow? Doing
-> something at the bdi level seems like a more natural approach in
-> general, so I'm curious why the change in direction.
-> 
-> Brian
-> 
+        CPU0                    CPU1
+        ----                    ----
+   rlock(&mm->mmap_lock);
+                                lock(&sb->s_type->i_mutex_key#8);
+                                lock(&mm->mmap_lock);
+   rlock(&sb->s_type->i_mutex_key#8);
 
-This series is intended to replace the earlier BDI-level approach for
-XFS, not to go alongside it. While BDI-level sharding is the more
-natural generic mechanism, we saw XFS regressions on some setups when
-inodes were affined to wb threads due to completion-side AG contention.
+  *** DEADLOCK ***
 
-The goal here is to make concurrency an XFS policy decision by routing
-writeback using AG-aware folio tags, so we avoid inode-affinity
-hotspots and handle cases where a single inode spans multiple AGs on
-aged or fragmented filesystems.
+To make this safe, we need to grab file refcount while VMA is still locked, but
+other than that everything is pretty straightforward. Internal build_id_parse()
+API assumes VMA is passed, but it only needs the underlying file reference, so
+just add another variant build_id_parse_file() that expects file passed
+directly.
 
-If this approach does not hold up across workloads and devices, we can
-fall back to the generic BDI sharding model.
+Fixes: ed5d583a88a9 ("fs/procfs: implement efficient VMA querying API for /proc/<pid>/maps")
+Reported-by: syzbot+4e70c8e0a2017b432f7a@syzkaller.appspotmail.com
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+---
+ fs/proc/task_mmu.c      | 42 ++++++++++++++++++++++++++---------------
+ include/linux/buildid.h |  3 +++
+ lib/buildid.c           | 34 +++++++++++++++++++++++++--------
+ 3 files changed, 56 insertions(+), 23 deletions(-)
 
-- Kundan
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 480db575553e..dd3b5cf9f0b7 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -656,6 +656,7 @@ static int do_procmap_query(struct mm_struct *mm, void __user *uarg)
+ 	struct proc_maps_locking_ctx lock_ctx = { .mm = mm };
+ 	struct procmap_query karg;
+ 	struct vm_area_struct *vma;
++	struct file *vm_file = NULL;
+ 	const char *name = NULL;
+ 	char build_id_buf[BUILD_ID_SIZE_MAX], *name_buf = NULL;
+ 	__u64 usize;
+@@ -727,21 +728,6 @@ static int do_procmap_query(struct mm_struct *mm, void __user *uarg)
+ 		karg.inode = 0;
+ 	}
+ 
+-	if (karg.build_id_size) {
+-		__u32 build_id_sz;
+-
+-		err = build_id_parse(vma, build_id_buf, &build_id_sz);
+-		if (err) {
+-			karg.build_id_size = 0;
+-		} else {
+-			if (karg.build_id_size < build_id_sz) {
+-				err = -ENAMETOOLONG;
+-				goto out;
+-			}
+-			karg.build_id_size = build_id_sz;
+-		}
+-	}
+-
+ 	if (karg.vma_name_size) {
+ 		size_t name_buf_sz = min_t(size_t, PATH_MAX, karg.vma_name_size);
+ 		const struct path *path;
+@@ -775,10 +761,34 @@ static int do_procmap_query(struct mm_struct *mm, void __user *uarg)
+ 		karg.vma_name_size = name_sz;
+ 	}
+ 
++	if (karg.build_id_size && vma->vm_file)
++		vm_file = get_file(vma->vm_file);
++
+ 	/* unlock vma or mmap_lock, and put mm_struct before copying data to user */
+ 	query_vma_teardown(&lock_ctx);
+ 	mmput(mm);
+ 
++	if (karg.build_id_size) {
++		__u32 build_id_sz;
++
++		if (vm_file)
++			err = build_id_parse_file(vm_file, build_id_buf, &build_id_sz);
++		else
++			err = -ENOENT;
++		if (err) {
++			karg.build_id_size = 0;
++		} else {
++			if (karg.build_id_size < build_id_sz) {
++				err = -ENAMETOOLONG;
++				goto out;
++			}
++			karg.build_id_size = build_id_sz;
++		}
++	}
++
++	if (vm_file)
++		fput(vm_file);
++
+ 	if (karg.vma_name_size && copy_to_user(u64_to_user_ptr(karg.vma_name_addr),
+ 					       name, karg.vma_name_size)) {
+ 		kfree(name_buf);
+@@ -798,6 +808,8 @@ static int do_procmap_query(struct mm_struct *mm, void __user *uarg)
+ out:
+ 	query_vma_teardown(&lock_ctx);
+ 	mmput(mm);
++	if (vm_file)
++		fput(vm_file);
+ 	kfree(name_buf);
+ 	return err;
+ }
+diff --git a/include/linux/buildid.h b/include/linux/buildid.h
+index 831c1b4b626c..7acc06b22fb7 100644
+--- a/include/linux/buildid.h
++++ b/include/linux/buildid.h
+@@ -7,7 +7,10 @@
+ #define BUILD_ID_SIZE_MAX 20
+ 
+ struct vm_area_struct;
++struct file;
++
+ int build_id_parse(struct vm_area_struct *vma, unsigned char *build_id, __u32 *size);
++int build_id_parse_file(struct file *file, unsigned char *build_id, __u32 *size);
+ int build_id_parse_nofault(struct vm_area_struct *vma, unsigned char *build_id, __u32 *size);
+ int build_id_parse_buf(const void *buf, unsigned char *build_id, u32 buf_size);
+ 
+diff --git a/lib/buildid.c b/lib/buildid.c
+index 818331051afe..dc643a6293c1 100644
+--- a/lib/buildid.c
++++ b/lib/buildid.c
+@@ -279,7 +279,7 @@ static int get_build_id_64(struct freader *r, unsigned char *build_id, __u32 *si
+ /* enough for Elf64_Ehdr, Elf64_Phdr, and all the smaller requests */
+ #define MAX_FREADER_BUF_SZ 64
+ 
+-static int __build_id_parse(struct vm_area_struct *vma, unsigned char *build_id,
++static int __build_id_parse(struct file *file, unsigned char *build_id,
+ 			    __u32 *size, bool may_fault)
+ {
+ 	const Elf32_Ehdr *ehdr;
+@@ -287,11 +287,7 @@ static int __build_id_parse(struct vm_area_struct *vma, unsigned char *build_id,
+ 	char buf[MAX_FREADER_BUF_SZ];
+ 	int ret;
+ 
+-	/* only works for page backed storage  */
+-	if (!vma->vm_file)
+-		return -EINVAL;
+-
+-	freader_init_from_file(&r, buf, sizeof(buf), vma->vm_file, may_fault);
++	freader_init_from_file(&r, buf, sizeof(buf), file, may_fault);
+ 
+ 	/* fetch first 18 bytes of ELF header for checks */
+ 	ehdr = freader_fetch(&r, 0, offsetofend(Elf32_Ehdr, e_type));
+@@ -332,7 +328,10 @@ static int __build_id_parse(struct vm_area_struct *vma, unsigned char *build_id,
+  */
+ int build_id_parse_nofault(struct vm_area_struct *vma, unsigned char *build_id, __u32 *size)
+ {
+-	return __build_id_parse(vma, build_id, size, false /* !may_fault */);
++	if (!vma->vm_file)
++		return -EINVAL;
++
++	return __build_id_parse(vma->vm_file, build_id, size, false /* !may_fault */);
+ }
+ 
+ /*
+@@ -348,7 +347,26 @@ int build_id_parse_nofault(struct vm_area_struct *vma, unsigned char *build_id,
+  */
+ int build_id_parse(struct vm_area_struct *vma, unsigned char *build_id, __u32 *size)
+ {
+-	return __build_id_parse(vma, build_id, size, true /* may_fault */);
++	if (!vma->vm_file)
++		return -EINVAL;
++
++	return __build_id_parse(vma->vm_file, build_id, size, true /* may_fault */);
++}
++
++/*
++ * Parse build ID of ELF file
++ * @vma:      file object
++ * @build_id: buffer to store build id, at least BUILD_ID_SIZE long
++ * @size:     returns actual build id size in case of success
++ *
++ * Assumes faultable context and can cause page faults to bring in file data
++ * into page cache.
++ *
++ * Return: 0 on success; negative error, otherwise
++ */
++int build_id_parse_file(struct file *file, unsigned char *build_id, __u32 *size)
++{
++	return __build_id_parse(file, build_id, size, true /* may_fault */);
+ }
+ 
+ /**
+-- 
+2.47.3
 
 
