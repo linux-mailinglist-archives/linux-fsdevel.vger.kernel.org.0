@@ -1,148 +1,292 @@
-Return-Path: <linux-fsdevel+bounces-75726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uApoB3kgemmv2wEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 15:43:05 +0100
+	id cCcIGgoiemmv2wEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 15:49:46 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA9BA302D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 15:43:04 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE5BA3286
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 15:49:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 4F54A301584B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 14:41:53 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 66D693007B39
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 14:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2C33612FC;
-	Wed, 28 Jan 2026 14:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE343502AB;
+	Wed, 28 Jan 2026 14:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XArbwGGs"
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="AjrzvFwc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC32F274670;
-	Wed, 28 Jan 2026 14:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6A029827E
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 14:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769611310; cv=none; b=NT5inurKiKdWEg29TCAaWlTc1h2fzVCETsd1AfGfMozR0fRRL6k+0Ncq2eibwqjeWA8z00Co/clLYiWq/XF955sra+keE8Fr6BSVkZPobIv0huV+76C1LsMAZoCfDjQioTccq+CCLEXRcwqOsrpzQ8JViEjtg4lyEZ5BIh1VV4c=
+	t=1769611764; cv=none; b=DF+4xZTvAsqGSyR08LkeI6RXxRSL4vtAH0ZyOj0WhU6w2skAYJC+OBR5ON20snqBre4Mo/ged0oArMNej3UWoVd0u96bL0ERMN2QQ6fHt8GDFThI8958aINFdmOLOP+abfl8Bas3aA9we9sj6ayH0a7kbZNiiVAjj4Utz22Xw7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769611310; c=relaxed/simple;
-	bh=eaglsE8/gh41Pv/4uZDqiEy1NKc+8kx3Y5GXq4lMU/s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZJQSXA/TgiWDtNtQO4Op2UGMOIg3+IpLusZFD+UUbBhUlcTnWoAyJ20PoYeJjDYjyaCA96uJCCbTTzM9CvBeGMhQK/3jhTdQHwvvz2kI1kE3zV60YdvbCSv3YucXteFWNF/s4G3nKHc3MhxtOV7Ci4S/s/pONGamIe2KBb+a110=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XArbwGGs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC324C4CEF1;
-	Wed, 28 Jan 2026 14:41:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769611309;
-	bh=eaglsE8/gh41Pv/4uZDqiEy1NKc+8kx3Y5GXq4lMU/s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XArbwGGsJ6ShSlGxbPiN1HzTvjw9CLByogKuzIH0DDgj2SltlXZEnbNeCcZ6fsDSU
-	 aGlYNj9zDLfec/bHwHEm2/yWrg0c5oaTMVuLiEEfzQYMy/qSuiTZP+Z0QZsBhdGJq8
-	 hgcbjqGdD2+5pvd8JGTVW63ud582Lar0oP1kI2BbXxgYbIXE+p9sG87IKmIsa736rx
-	 cQpcTd7e9XMFJKpP8wfQ/zNfLkCXM8rtr1X3bqiH82xVCss5vN95E27LtGzIgBhulB
-	 rYWBSu4/gqRzTRSp85N29q/u6kYkG6oeFfiQAfmXnbpEZ0Ry53GtDumzHAf3gadvQC
-	 jxIbk8OXPtBQQ==
-Message-ID: <041a37d8-c114-4ac0-875d-022e9d07aac8@kernel.org>
-Date: Wed, 28 Jan 2026 09:41:37 -0500
+	s=arc-20240116; t=1769611764; c=relaxed/simple;
+	bh=IkJWJMJLpcyV9VSmZouqP4mDwwtFFzlba0fucljUEpk=;
+	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:Mime-Version; b=sWjZPSAhGDZYZLI/IjV2xP7ES1LtEhKLAfpmKice+/P7ZAzxo6CSws4TE6GVdga0wEFKvMTsp5pL557MT79erlkjW0mVnFjaE9kBe6IC9rCdyMCWCpz7r//QEyJopA3VSQk2koZw9Du9lIG84PfxumATHXS7V7CnP/AKlBc21Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=AjrzvFwc; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com [209.85.210.70])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 7B1F33F887
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 14:49:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20251003; t=1769611760;
+	bh=XraBybXD5tsGtLLp8ozxwcFptvRhogq8Wf8sKZhViPA=;
+	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:Mime-Version;
+	b=AjrzvFwcPNdEtDOjeAxeQoGdATwaEuFvCAVEQ8HLJdUjXMKVIYXWuzhL/huTk1+Nd
+	 Pg3XaxYBH67nRBb3xN6G9yQIg7BRWSDyaSibMk5P1biBZo44SNDk9dKF6dYeaN9nuD
+	 tSV5g6zCrf1fMcZx1FBnqC7nPyNncynfvAyTTSIXvtUEtgtqlqsnAtSUbSGutXWBNv
+	 XPKpTb538UIimIMXUENWii7qsq4S+LKx3qeVZo8J/oMV5uefPcIainwyfIqNA4DxPt
+	 +kPqB7tBKvGu/i162l5O1bgEBVr29mS/gwwapEqOd6xgpaLaStEMO5IqjRAObdEpRF
+	 JIzMv9FdGxsdzYbpbUOmzrdAf1RKQmLYjKPMNcUfohgw9w+bMMzy0n57CFF0QqfwiU
+	 xXKb16N9AQhK8nopciFygo26i+ACdm0pbNWxJOOpI0Drg2Jksut5ZLRvJUfGV52zW4
+	 zPkutFs0+ugkRjLDBTq39caXlTPQKbIRRt5t95qbvJqaCaA9mkL9sR87K2rGtoVMKm
+	 UwC1sm9kQsExumrLi5XY9y+1lKpmA9bKvwvQQKLPcU9+8bdY7TjU1vEawx6eI8MxS4
+	 oecwfC49BAAP4GB0+W8FOTXu6TuG+l4gGmvNeCrOl7I2fjZSy2jIuvS+TGlLrPtVoJ
+	 hyJdCzIGJ5/Vz+3xSJqd1xbc=
+Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-7d18e9ab16fso2133635a34.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 06:49:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769611759; x=1770216559;
+        h=mime-version:content-transfer-encoding:subject:cc:to:from
+         :message-id:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XraBybXD5tsGtLLp8ozxwcFptvRhogq8Wf8sKZhViPA=;
+        b=i9cD0I80KLf3KT41fZmXokHzStzHJ94R2A9ASJjVLNzQHgQ0lYhEi9cBgltTKvL6Dw
+         tt9zX2oZ+Yc8Pi2wf+b8k7CQLEZKJwbaPCDkEIMjGZ8M/XJ3ppd3GyY48dhf1dJ19qQG
+         RiSweMC9l2gVKE4VN2exFkSVZTGwCkvz5C1xhvgByWiNVTwP/zNEUROPbNhKCQIJQv7/
+         IF0eqyeOOgdBacnC4/XIv/Y+BBb7+930mA948iQB3fTO24VuGZB2ECwUVhblZ9mrb9H9
+         PO4+vQTyOvCCXLMugHRDqF9fL3cTI6XG+lSE1VXNYA2TOuYoID0tYyDivSULVJiid/54
+         nr4w==
+X-Gm-Message-State: AOJu0Yze3ioQRj3q5+W3age7n+0WPQiWkVP5U+xUCuqvW/1BMBvnuPrs
+	rGi67cVTUzViW6Wod1cy9r7pMRBcFWMseYBls80dp/3iNInDuyjFPSemMe3L5IQmYONmaWu63hD
+	kohPSnTl7VtOgMzVLhKSCKSlQ9oqkCUvvk3QEA7izF1ImgPNQGMqpIzpozRgLQnpqFe9OwXRVWs
+	B5YPT/Lfw=
+X-Gm-Gg: AZuq6aJXuBkcW/P6BYZX61kPQePoPubGewB3Zv3KnjT/Pm+5chp1LMh2xm2FX/d6H/u
+	FXYwZp23fByJ/9nJpmhp+Cp/T9LsgPp8fR533bIuzoXtHvFD5+lrz8fFYgxQcEVcR058t4YKoAe
+	NDn4MlZW34s96Z0iqjgwkXqq1lnDNH21T89JlfFxaQtZ9Zp192GgVefY2GlUne6sr5PwlC+YHJT
+	ZR6sn48k0yI3O+Nmp0PzhRruX8EuNjGxZzqciT+Y1jFWvAxeiekYz5z/QyS/QaQpv1rJ8npIpK8
+	n30WGDsWSDjaUix1bctxENFgkeC38dT+CONSbh22cfzpkxy/vg4pDbl5EyYAFHGf/1BbhLuA+1H
+	mzEvhFApTAHOC8yBsP2p6
+X-Received: by 2002:a05:6820:458d:b0:662:5684:d108 with SMTP id 006d021491bc7-662f2041140mr2631116eaf.20.1769611759348;
+        Wed, 28 Jan 2026 06:49:19 -0800 (PST)
+X-Received: by 2002:a05:6820:458d:b0:662:5684:d108 with SMTP id 006d021491bc7-662f2041140mr2631037eaf.20.1769611754179;
+        Wed, 28 Jan 2026 06:49:14 -0800 (PST)
+Received: from localhost ([2601:444:703:15b0:cfc8:ccb2:2ef8:893a])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-662f99447b5sm1483115eaf.2.2026.01.28.06.49.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Jan 2026 06:49:13 -0800 (PST)
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 28 Jan 2026 08:49:12 -0600
+Message-Id: <DG0B0GEW323Q.29Y4J0A0Q5DQ5@canonical.com>
+From: "Zachary M. Raines" <zachary.raines@canonical.com>
+To: "Alexander Viro" <viro@zeniv.linux.org.uk>, "Christian Brauner"
+ <brauner@kernel.org>
+Cc: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: PROBLEM: Duplicated entries in /proc/<pid>/mountinfo
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] NFSD: Sign filehandles
-To: Benjamin Coddington <bcodding@hammerspace.com>
-Cc: Trond Myklebust <trondmy@kernel.org>, NeilBrown <neil@brown.name>,
- Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
- Anna Schumaker <anna@kernel.org>, Eric Biggers <ebiggers@kernel.org>,
- Rick Macklem <rick.macklem@gmail.com>, linux-nfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-crypto@vger.kernel.org
-References: <> <e545c35e-31fc-4069-8d83-1f9585e82532@app.fastmail.com>
- <176921979948.16766.5458950508894093690@noble.neil.brown.name>
- <686CBEE5-D524-409D-8508-D3D48706CC02@hammerspace.com>
- <77e7a645-66bd-4ce2-b963-2a2488595b00@kernel.org>
- <8be0a065a84bed02735141b4333e9c49a2ab0c90.camel@kernel.org>
- <33c02e5a-03e7-42ef-8ccd-790a9b29a763@kernel.org>
- <D3263C1D-A15E-48EC-B05A-8DC6A0C2B37A@hammerspace.com>
-From: Chuck Lever <cel@kernel.org>
-Content-Language: en-US
-Organization: kernel.org
-In-Reply-To: <D3263C1D-A15E-48EC-B05A-8DC6A0C2B37A@hammerspace.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: aerc 0.20.0
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	DMARC_POLICY_ALLOW(-0.50)[canonical.com,reject];
+	MV_CASE(0.50)[];
+	R_DKIM_ALLOW(-0.20)[canonical.com:s=20251003];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75726-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	HAS_ORG_HEADER(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,brown.name,oracle.com,gmail.com,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-75727-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[canonical.com:+];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[cel@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
+	FROM_NEQ_ENVFROM(0.00)[zachary.raines@canonical.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: BAA9BA302D
+	DBL_BLOCKED_OPENRESOLVER(0.00)[canonical.com:mid,canonical.com:dkim,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 7DE5BA3286
 X-Rspamd-Action: no action
 
-On 1/26/26 1:22 PM, Benjamin Coddington wrote:
-> On 24 Jan 2026, at 14:48, Chuck Lever wrote:
-> 
->> I can't recall if Wireshark is smart enough to introspect Linux NFSD
->> file handles (I thought it could). It would be sensible to have some
->> Wireshark update code in hand before making the final decision about
->> keeping the new auth_type.
-> 
-> I've gone digging and wireshark has a surprising amount of filehandle
-> dissection code - it currently can "Decode As:"
-> 
-> dissect_fhandle_data_SVR4
-> dissect_fhandle_data_LINUX_KNFSD_LE
-> dissect_fhandle_data_LINUX_NFSD_LE
-> dissect_fhandle_data_NETAPP
-> dissect_fhandle_data_NETAPP_V4
-> dissect_fhandle_data_NETAPP_GX_v3
-> dissect_fhandle_data_LINUX_KNFSD_NEW
-> dissect_fhandle_data_GLUSTER
-> dissect_fhandle_data_DCACHE
-> dissect_fhandle_data_PRIMARY_DATA
-> dissect_fhandle_data_CELERRA_VNX
-> dissect_fhandle_data_unknown
-> 
-> .. almost all with finer grained filehandle components.  I certainly can add
-> patches to parse FH_AT_MAC for the linux(s) decoders, but I admit I don't
-> have any use case.
-> 
-> I'm completely neutral on keeping FH_AT_MAC at this point.
+Greetings,
 
-If we can't find a use case or need for something, the usual practice is
-to remove it from your patches until we have one.
+When mounting and unmounting many filesystems, /proc/<pid>/mountinfo someti=
+mes
+contains entries which are duplicated many times.
 
-Is anyone working on Wireshark patches to handle signed Linux file
-handles in some kind of sensible way?
+Summary
+=3D=3D=3D=3D=3D=3D=3D
 
+Sometimes on a system that is mounting and unmounting filesystems frequentl=
+y,
+for example running lots of docker containers, the size of /proc/1/mountinf=
+o,
+can become very large -- 100s, to 1000s of entries or more -- with the vast
+majority being a single entry duplicated many times.
 
--- 
-Chuck Lever
+This causes other problems on the system, due to systemd parsing the mount =
+table
+whenever it changes, and eating up a lot of memory, for example [1]. Waitin=
+g
+long enough there are rare events where the length of mountinfo can go into=
+ the
+millions of lines and lead to OOM and kernel panics.
+
+Running the reproducers below, I pretty reliably see an Ubuntu virtual mach=
+ine
+kernel panic due to lack of memory within about 24hrs.
+
+Versions
+=3D=3D=3D=3D=3D=3D=3D=3D
+
+Bisecting the kernel git history, I was able to track the issue back to
+'2eea9ce4310d8 mounts: keep list of mounts in an rbtree' [2].
+
+I've tested on 6.19-rc7 in a virtual machine and the issue is still present
+there. /proc/version:
+
+Linux version 6.19.0-rc7+ (ubuntu@kernel-builder) (gcc (Ubuntu 15.2.0-4ubun=
+tu4)
+15.2.0, GNU ld (GNU Binutils for Ubuntu) 2.45) #8 SMP PREEMPT_DYNAMIC Tue J=
+an 27
+22:33:35 UTC 2026
+
+running on Ubuntu 25.10
+
+Reproducer
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+The problem can be reproduced by mounting and then unmounting tmpfs in a lo=
+op
+and in a seperate process reading /proc/1/mountinfo and checking for duplic=
+ates.
+
+I used the following scripts:
+
+1. Mounts and unmounts tmpfs
+
+#!/bin/bash
+counter=3D0
+while true; do
+    unique_name=3D"tmpfs_$$_$counter"
+   	mkdir -p "/tmp/$unique_name"
+   	sudo mount -t tmpfs "$unique_name" "/tmp/$unique_name"
+   	sudo umount "/tmp/$unique_name"
+   	rmdir "/tmp/$unique_name"
+   	((counter++))
+   	sleep 0.1
+done
+
+2. Reads `/prod/1/mountinfo` and checks for duplicates
+
+#!/bin/bash
+THRESHOLD=3D75
+echo "Starting monitoring at $(date)"
+while true; do
+    # Get mountinfo entries and count total
+    mountinfo=3D"$(cat /proc/1/mountinfo)"
+    mountinfo_count=3D$(echo "$mountinfo" | wc -l)
+
+    if ((mountinfo_count > THRESHOLD)); then
+        echo "$(date): Mount count ($mountinfo_count) exceeds threshold ($T=
+HRESHOLD)"
+
+        # Find and log duplicate mount points with their counts
+        duplicates=3D$(echo "$mountinfo" | sort | uniq -cd)
+
+        if [[ -n "$duplicates" ]]; then
+            echo "Duplicate mounts :"
+            echo "$duplicates"
+        fi
+        echo "=3D=3D=3D=3D=3D"
+        echo "$mountinfo"
+        echo "---"
+    fi
+
+    sleep 0.1
+done
+
+Typically, within 5-10 minutes duplicates can be observed, often including
+hundreds or thousands of copies of the same mount point -- although the num=
+ber
+can rarely spike to much higher values. Given a long enough uptime, I've
+observed up to 1.4 million duplicates at a time.
+
+The duplication in mountinfo is very intermittent. `cat /proc/1/mountinfo` =
+100ms
+later shows no duplication.
+
+Additional diagnostics
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+While running the script (2.) above, I also ran the following bpftrace scri=
+pt
+
+3. Trace vfs_mounts as by `cat /proc/1/mountinfo`
+
+#!/usr/bin/env bpftrace
+
+fentry:show_mountinfo / comm =3D=3D "cat"/ {
+    @mnts[args->mnt] =3D count();
+}
+
+tracepoint:sched:sched_process_exit / comm =3D=3D "cat"/ {
+    for ($mnt : @mnts) {
+        if ($mnt.1 > 1) {
+            printf("Duplicate mount %p\n", $mnt.0);
+            @dups[$mnt.0] =3D $mnt.1;
+        }
+    }
+    clear(@mnts);
+}
+
+and observed that a single mount struct was reached multiple times -- perha=
+ps
+unsurprisingly exactly the same number as there were duplicates detected by
+the above script.
+
+Typical outputs of script (2.) and the bpftrace script above are
+
+Starting monitoring at Tue Jan 27 20:48:13 UTC 2026
+Tue Jan 27 20:50:43 UTC 2026: Mount count (696) exceeds threshold (75)
+Duplicate mounts :
+  /proc/sys/fs/binfmt_misc: 2 occurrences
+  /tmp/tmpfs_856614_41491: 666 occurrences
+
+and
+
+@dups[0xffff88e5fb9f10a0]: 666
+
+Best,
+Zachary Raines
+
+[1]: https://github.com/systemd/systemd/issues/37939
+[2]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/com=
+mit/?id=3D2eea9ce4310d8c0f8ef1dbe7b0e7d9219ff02b97
 
