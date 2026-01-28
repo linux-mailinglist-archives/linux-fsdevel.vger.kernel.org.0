@@ -1,524 +1,366 @@
-Return-Path: <linux-fsdevel+bounces-75771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UGriA4I5eml+4gEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 17:29:54 +0100
+	id oB0UH4lAemmr4wEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 17:59:53 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECEDEA5B72
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 17:29:48 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAF96A6720
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 17:59:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 4F84630071D3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 16:29:48 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id B2B6D3014483
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 16:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE39A3148A7;
-	Wed, 28 Jan 2026 16:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BCE1314B9A;
+	Wed, 28 Jan 2026 16:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O+qCPPtF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oFayFCeA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C09B313E23
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 16:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.222.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769617784; cv=pass; b=W8iuGMwKfl8YtHjWy+fzZVQAW3kZ0VjE7FbSGRJvIVhFAimsXMBJD4mTxh5yJSTsnWRhhm0yFOcxHKs4tQvGp3+227/pL7ki/dQJoiSMQkNAlBzbhQN2OyNC75EtbpClC6TRRnfnCiHmze1vmQQudxYJmJrI+S35YnxJdZOLMJM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769617784; c=relaxed/simple;
-	bh=KzK9NQyvf1wbEYFVxuwtRrAGYkCo7RujFJLuiEJeQtY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gE2+GK/4W38SO+KrBF/v5JscpNH1HCBE+RUvbEC2eFTbC08cml8RzkwuYxvORBjp3DdBOPk0zHBipZhO9VmAElKUtOzVTi4BVTCYvsCz5eMywlCQgwDVZVewIbWMBuAvAnmdRNNur93+YbVARPekPTNjLPbRgu4sA9RVPe2P/Dc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O+qCPPtF; arc=pass smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-941063da73eso26522241.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 08:29:42 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769617781; cv=none;
-        d=google.com; s=arc-20240605;
-        b=NuOEYwQmo0C9+wzcpToOpTKEXIqYGo4+iVXb0LXvbzcbm0gYnFqAKODxFnajy9w+Jd
-         kQlwnTRpDlEV1NP4c9HTMnL7zuXKpwMSiHsOhoCQ4Fgt5cdKLdFQ96iaTl8rsSgf1Miz
-         zbnfbZTic/tbD1RU2lMTQDhgdj+asNSjzHyKmeJicLYC06T4OiGXP6OkhgSi74f+nc9Z
-         DoqJQeoMZ034cS05iBPMpU9n83AtPyh7yxU+51b+GVZMjkiniYnZyTh2p/w05CAOT4Ji
-         s2RliMzJbUqlDaspbf30qAI5iH0rRf+Qlm8FazSwadgI4EbeZtkrb1Qj8YFWJ6s+WpBn
-         NhMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Hh3Cxuzu9CdC5N7BUB5MAWkk7Q62ZXyCJgJ2ZJAgwLU=;
-        fh=jgsd5EeLgyKhfyWJbwXLAsr1YUB9aneFkr3EZlTIlHQ=;
-        b=BPD/KEY8zdFh3axaHZGlwzBzbH2noo57wd24Uo7UanHNo2JMfBDd8gQ1eEfSDG33X7
-         IvRO2yPQkL2TEt1cf8IY6BnxaqTOkHfM9rML1zlnjpRtgRQ1Tb2WkF7Sq1ze2X1YNG3g
-         yi/gx+FYRmlaNiq7zxjNuTgQp3Lo5u9aQoqqXEXBafKk6wDBbR0hH4jF+UailwBiWIxO
-         qG5Ygf9fdCn5/ZgikiwaDPmQdfKKCznd56AYurg4x8AeIh8ykudW5QpAyDjP8LOU/5DU
-         Twlk/kb8A/G/ZGsSbLDSOCGF4wrnDWklx7Sw4bqjvewE72IHPha1Liclrz/x7Olgy1XD
-         phkQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769617781; x=1770222581; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hh3Cxuzu9CdC5N7BUB5MAWkk7Q62ZXyCJgJ2ZJAgwLU=;
-        b=O+qCPPtFcZQsIONKpqoEx/XX9YJ3q1gr+9ZZBMKyudz7zrpK4PhbJEnSzMhOiWfI77
-         Zla/G0TtnnTj+YHQh4egmOyw538Q+PO1pQ7JpFqIDvJSlH73b0cWl6f9K7b+rCLjY4dH
-         gKzD4PU+k07DrTsfXQk7O9exanBDAMOb4SqBvwiKXQmWrFRmpJAsDHajGtqmhNiDBPYm
-         dxZzJf8RRYm18MUGBCxabiHxkRiP083wS1VfOF4iSk54Ipa+1+mnNICFEPtfmb4I5tma
-         VxRVsTfawFFL5rJII4i+Qo3P9yZH/FS4Q5wxImhxYI4+RbiRkdUtgOC54VIoYQ/3C4+l
-         cwKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769617781; x=1770222581;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Hh3Cxuzu9CdC5N7BUB5MAWkk7Q62ZXyCJgJ2ZJAgwLU=;
-        b=aP4bD4y0hE74yYaahQqO25V77nBWD3skq+T3ZLqV0R44MkEn/tQHGWG4woDgrgThBQ
-         9VejiIJ0XfKClLrYQ6hWnun/mD28whfC0290KcJEwKgGPk8OiouO0Uz2hn9a6PIzmNki
-         Din+7PaZgPbrukfzAQlyK9hK3Ozd59L7WV24GH6xw8jXrO/NRW5dxAoR2wUkApFQWLrp
-         XCXYOlImzvHkfSo5Kq+1U/PSHFxoJ3KqtB/pe0JxJR+6OhAh3PcVfxhkbHllpF75/lAU
-         zWs/hP60ArVnfP7hqsSsJZDZ+TGABV4x9OUecb4queRz1ZsryCOQPODrKerCNHgzyoXE
-         2wCQ==
-X-Gm-Message-State: AOJu0YxEaWnWycuFzYBZJV5tGocwI8YiqbwrE8Mu1tW8jKEUH37J0kBU
-	nHBjItQT/i/kq4PP+FkNd/8MVJQjEKZwg3E8q0zZhraFbLbBg9efc7bv3JrNcVFQxV7PbRH7iEX
-	9sqmCdm7unAmXt9w/3RtUOsJh4sJVxNg=
-X-Gm-Gg: AZuq6aLbg8dBroqOJZzlOhkIN9LbLmNnJMsO+0JDQDV1scgdnDn2U45qZHWvT4Dbiiu
-	Gme4PWG7qr6bM29zpuB+3c+t4Yj4q+YPGX3ihq05fUgVxG7NRhCnKbvFINIoJDpieoKF7kJkUD3
-	+mziru+xtsW111xLRr1GqJ+QD14ggZ5/rheQLnrRhJKGz+IQyzDzSeEIvLKXX1UzfcHT9wLqRnm
-	3xk0x3eJPNUlELZsVZrIZ4Xxf/NafXhiBSyhEs6XGRQBo5d5cMT+SFm+TP6iDU7QIaWS0gSzbq7
-	t/NgRjgM3YQYo0LkYxI7GMFyy9WP6YY=
-X-Received: by 2002:a05:6102:390c:b0:5f1:7aad:7c04 with SMTP id
- ada2fe7eead31-5f7237f183bmr2234478137.41.1769617780610; Wed, 28 Jan 2026
- 08:29:40 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81673148A6;
+	Wed, 28 Jan 2026 16:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769617825; cv=none; b=IOtyl/iRlA2BPvcmgKmJutt4MoutMEK4dj1CEHwgrEkXrU1IdMgM3Ak52eSwJmbfT5BQxxZSAYr/oKssmkuNc6Vy9x9tn2pXkqWDyVUeuAyExyMmjCnqMyFFckVeo+mhh3KU6xwhblE6/b+wxnFJ9TZH81yng33Aqc0RitlDaOI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769617825; c=relaxed/simple;
+	bh=9DFeQhH17k3ORAyeTtciuBwXLMRcyeAQGqLayswUMTI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jfFz7+GtBHbd/BuD57eJHoCrn56gMBs7gKp8yUqmes12hb2xDmP1/5b94vDQpuFRx/newaPGwt4euENdEYg8I8SJUivLbj5qbM5KMx4p89S9EAyTWD3eoW11q4jwvnFm3UHHedciWNzzPTwP7jdrq47Z+9Lc4U1oInVELQ+UBac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oFayFCeA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FFC4C4CEF1;
+	Wed, 28 Jan 2026 16:30:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769617825;
+	bh=9DFeQhH17k3ORAyeTtciuBwXLMRcyeAQGqLayswUMTI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oFayFCeAFKw6YBRBmDr/dgQbBqzoJTVc2rPdB9AgOV8MpxXrvV1GUImqwmMheOwlo
+	 vF858e6IBSS2JxlH/O8xJGDkI+l3S8HMbxd4BP4MamPFtvGJ5t0tpZzPqi5PemOWws
+	 CFEAl+6q3CNPLWt1cmZ+7lLXCkC8FYyhPfpQjRmzbNgLJHZALWz76DYXALTgGNv5bM
+	 b29jn2BS56uuCU/zK+n1+7OftAYTeOHwXLPbVDSgaSgdRVvbHNOZVZXvFkwObKh8KB
+	 iKLLd0hfMyflzk6ZlSHNS9/KEJD65hjyJ8SSOCJwIRF87Y0nFWkrzWKLDAsEjh1Jdl
+	 waO5x09egalvA==
+Date: Wed, 28 Jan 2026 08:30:24 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
+	Carlos Maiolino <cem@kernel.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Anuj Gupta <anuj20.g@samsung.com>,
+	Kanchan Joshi <joshi.k@samsung.com>, linux-block@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 14/15] iomap: support T10 protection information
+Message-ID: <20260128163024.GY5945@frogsfrogsfrogs>
+References: <20260128161517.666412-1-hch@lst.de>
+ <20260128161517.666412-15-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260127180109.66691-1-dorjoychy111@gmail.com>
- <20260127180109.66691-2-dorjoychy111@gmail.com> <1c6cccc3e058ef16fa8b296ef6126b76a12db136.camel@kernel.org>
- <CAFfO_h5yrXR0-igVayH0ent1t12rm=6DUEGjUDW0zqfqy3=ZoQ@mail.gmail.com> <b6749fa99a728189e745f1769140be3ac8950af5.camel@kernel.org>
-In-Reply-To: <b6749fa99a728189e745f1769140be3ac8950af5.camel@kernel.org>
-From: Dorjoy Chowdhury <dorjoychy111@gmail.com>
-Date: Wed, 28 Jan 2026 22:29:29 +0600
-X-Gm-Features: AZwV_Qi8tRZ2bk3FMtn2_dRf5eyGu0hMTXS_Va64e3c9cswyI3OIfP82dTSBaDg
-Message-ID: <CAFfO_h78piy+DUGPMNnnVh734PBUPb-v_jVpJ_MWjDbnN9QqBw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] open: new O_REGULAR flag support
-To: Jeff Layton <jlayton@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	chuck.lever@oracle.com, alex.aring@gmail.com, arnd@arndb.de, 
-	adilger@dilger.ca
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260128161517.666412-15-hch@lst.de>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+X-Spamd-Result: default: False [-1.66 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,arndb.de,dilger.ca];
-	TAGGED_FROM(0.00)[bounces-75771-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	TO_DN_SOME(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-75772-lists,linux-fsdevel=lfdr.de];
+	FROM_HAS_DN(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
+	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	MISSING_XM_UA(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	MSBL_EBL_FAIL(0.00)[dorjoychy111@gmail.com:query timed out];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[dorjoychy111@gmail.com,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: ECEDEA5B72
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:email,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,samsung.com:email]
+X-Rspamd-Queue-Id: AAF96A6720
 X-Rspamd-Action: no action
 
-On Wed, Jan 28, 2026 at 9:51=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
-ote:
->
-> On Wed, 2026-01-28 at 21:36 +0600, Dorjoy Chowdhury wrote:
-> > On Wed, Jan 28, 2026 at 5:52=E2=80=AFAM Jeff Layton <jlayton@kernel.org=
-> wrote:
-> > >
-> > > On Tue, 2026-01-27 at 23:58 +0600, Dorjoy Chowdhury wrote:
-> > > > This flag indicates the path should be opened if it's a regular fil=
-e.
-> > > > This is useful to write secure programs that want to avoid being tr=
-icked
-> > > > into opening device nodes with special semantics while thinking the=
-y
-> > > > operate on regular files.
-> > > >
-> > > > A corresponding error code ENOTREG has been introduced. For example=
-, if
-> > > > open is called on path /dev/null with O_REGULAR in the flag param, =
-it
-> > > > will return -ENOTREG.
-> > > >
-> > > > When used in combination with O_CREAT, either the regular file is
-> > > > created, or if the path already exists, it is opened if it's a regu=
-lar
-> > > > file. Otherwise, -ENOTREG is returned.
-> > > >
-> > > > -EINVAL is returned when O_REGULAR is combined with O_DIRECTORY (no=
-t
-> > > > part of O_TMPFILE) because it doesn't make sense to open a path tha=
-t
-> > > > is both a directory and a regular file.
-> > > >
-> > > > Signed-off-by: Dorjoy Chowdhury <dorjoychy111@gmail.com>
-> > > > ---
-> > > >  arch/alpha/include/uapi/asm/errno.h        | 2 ++
-> > > >  arch/alpha/include/uapi/asm/fcntl.h        | 1 +
-> > > >  arch/mips/include/uapi/asm/errno.h         | 2 ++
-> > > >  arch/parisc/include/uapi/asm/errno.h       | 2 ++
-> > > >  arch/parisc/include/uapi/asm/fcntl.h       | 1 +
-> > > >  arch/sparc/include/uapi/asm/errno.h        | 2 ++
-> > > >  arch/sparc/include/uapi/asm/fcntl.h        | 1 +
-> > > >  fs/fcntl.c                                 | 2 +-
-> > > >  fs/namei.c                                 | 6 ++++++
-> > > >  fs/open.c                                  | 4 +++-
-> > > >  include/linux/fcntl.h                      | 2 +-
-> > > >  include/uapi/asm-generic/errno.h           | 2 ++
-> > > >  include/uapi/asm-generic/fcntl.h           | 4 ++++
-> > > >  tools/arch/alpha/include/uapi/asm/errno.h  | 2 ++
-> > > >  tools/arch/mips/include/uapi/asm/errno.h   | 2 ++
-> > > >  tools/arch/parisc/include/uapi/asm/errno.h | 2 ++
-> > > >  tools/arch/sparc/include/uapi/asm/errno.h  | 2 ++
-> > > >  tools/include/uapi/asm-generic/errno.h     | 2 ++
-> > > >  18 files changed, 38 insertions(+), 3 deletions(-)
-> > > >
-> > > > diff --git a/arch/alpha/include/uapi/asm/errno.h b/arch/alpha/inclu=
-de/uapi/asm/errno.h
-> > > > index 6791f6508632..8bbcaa9024f9 100644
-> > > > --- a/arch/alpha/include/uapi/asm/errno.h
-> > > > +++ b/arch/alpha/include/uapi/asm/errno.h
-> > > > @@ -127,4 +127,6 @@
-> > > >
-> > > >  #define EHWPOISON    139     /* Memory page has hardware error */
-> > > >
-> > > > +#define ENOTREG              140     /* Not a regular file */
-> > > > +
-> > > >  #endif
-> > > > diff --git a/arch/alpha/include/uapi/asm/fcntl.h b/arch/alpha/inclu=
-de/uapi/asm/fcntl.h
-> > > > index 50bdc8e8a271..4da5a64c23bd 100644
-> > > > --- a/arch/alpha/include/uapi/asm/fcntl.h
-> > > > +++ b/arch/alpha/include/uapi/asm/fcntl.h
-> > > > @@ -34,6 +34,7 @@
-> > > >
-> > > >  #define O_PATH               040000000
-> > > >  #define __O_TMPFILE  0100000000
-> > > > +#define O_REGULAR    0200000000
-> > > >
-> > > >  #define F_GETLK              7
-> > > >  #define F_SETLK              8
-> > > > diff --git a/arch/mips/include/uapi/asm/errno.h b/arch/mips/include=
-/uapi/asm/errno.h
-> > > > index c01ed91b1ef4..293c78777254 100644
-> > > > --- a/arch/mips/include/uapi/asm/errno.h
-> > > > +++ b/arch/mips/include/uapi/asm/errno.h
-> > > > @@ -126,6 +126,8 @@
-> > > >
-> > > >  #define EHWPOISON    168     /* Memory page has hardware error */
-> > > >
-> > > > +#define ENOTREG              169     /* Not a regular file */
-> > > > +
-> > > >  #define EDQUOT               1133    /* Quota exceeded */
-> > > >
-> > > >
-> > > > diff --git a/arch/parisc/include/uapi/asm/errno.h b/arch/parisc/inc=
-lude/uapi/asm/errno.h
-> > > > index 8cbc07c1903e..442917484f99 100644
-> > > > --- a/arch/parisc/include/uapi/asm/errno.h
-> > > > +++ b/arch/parisc/include/uapi/asm/errno.h
-> > > > @@ -124,4 +124,6 @@
-> > > >
-> > > >  #define EHWPOISON    257     /* Memory page has hardware error */
-> > > >
-> > > > +#define ENOTREG              258     /* Not a regular file */
-> > > > +
-> > > >  #endif
-> > > > diff --git a/arch/parisc/include/uapi/asm/fcntl.h b/arch/parisc/inc=
-lude/uapi/asm/fcntl.h
-> > > > index 03dee816cb13..0cc3320fe326 100644
-> > > > --- a/arch/parisc/include/uapi/asm/fcntl.h
-> > > > +++ b/arch/parisc/include/uapi/asm/fcntl.h
-> > > > @@ -19,6 +19,7 @@
-> > > >
-> > > >  #define O_PATH               020000000
-> > > >  #define __O_TMPFILE  040000000
-> > > > +#define O_REGULAR    0100000000
-> > > >
-> > > >  #define F_GETLK64    8
-> > > >  #define F_SETLK64    9
-> > > > diff --git a/arch/sparc/include/uapi/asm/errno.h b/arch/sparc/inclu=
-de/uapi/asm/errno.h
-> > > > index 4a41e7835fd5..8dce0bfeab74 100644
-> > > > --- a/arch/sparc/include/uapi/asm/errno.h
-> > > > +++ b/arch/sparc/include/uapi/asm/errno.h
-> > > > @@ -117,4 +117,6 @@
-> > > >
-> > > >  #define EHWPOISON    135     /* Memory page has hardware error */
-> > > >
-> > > > +#define ENOTREG              136     /* Not a regular file */
-> > > > +
-> > > >  #endif
-> > > > diff --git a/arch/sparc/include/uapi/asm/fcntl.h b/arch/sparc/inclu=
-de/uapi/asm/fcntl.h
-> > > > index 67dae75e5274..a93d18d2c23e 100644
-> > > > --- a/arch/sparc/include/uapi/asm/fcntl.h
-> > > > +++ b/arch/sparc/include/uapi/asm/fcntl.h
-> > > > @@ -37,6 +37,7 @@
-> > > >
-> > > >  #define O_PATH               0x1000000
-> > > >  #define __O_TMPFILE  0x2000000
-> > > > +#define O_REGULAR    0x4000000
-> > > >
-> > > >  #define F_GETOWN     5       /*  for sockets. */
-> > > >  #define F_SETOWN     6       /*  for sockets. */
-> > > > diff --git a/fs/fcntl.c b/fs/fcntl.c
-> > > > index f93dbca08435..62ab4ad2b6f5 100644
-> > > > --- a/fs/fcntl.c
-> > > > +++ b/fs/fcntl.c
-> > > > @@ -1169,7 +1169,7 @@ static int __init fcntl_init(void)
-> > > >        * Exceptions: O_NONBLOCK is a two bit define on parisc; O_ND=
-ELAY
-> > > >        * is defined as O_NONBLOCK on some platforms and not on othe=
-rs.
-> > > >        */
-> > > > -     BUILD_BUG_ON(20 - 1 /* for O_RDONLY being 0 */ !=3D
-> > > > +     BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=3D
-> > > >               HWEIGHT32(
-> > > >                       (VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY))=
- |
-> > > >                       __FMODE_EXEC));
-> > > > diff --git a/fs/namei.c b/fs/namei.c
-> > > > index b28ecb699f32..f5504ae4b03c 100644
-> > > > --- a/fs/namei.c
-> > > > +++ b/fs/namei.c
-> > > > @@ -4616,6 +4616,10 @@ static int do_open(struct nameidata *nd,
-> > > >               if (unlikely(error))
-> > > >                       return error;
-> > > >       }
-> > > > +
-> > > > +     if ((open_flag & O_REGULAR) && !d_is_reg(nd->path.dentry))
-> > > > +             return -ENOTREG;
-> > > > +
-> > > >       if ((nd->flags & LOOKUP_DIRECTORY) && !d_can_lookup(nd->path.=
-dentry))
-> > > >               return -ENOTDIR;
-> > > >
-> > > > @@ -4765,6 +4769,8 @@ static int do_o_path(struct nameidata *nd, un=
-signed flags, struct file *file)
-> > > >       struct path path;
-> > > >       int error =3D path_lookupat(nd, flags, &path);
-> > > >       if (!error) {
-> > > > +             if ((file->f_flags & O_REGULAR) && !d_is_reg(path.den=
-try))
-> > > > +                     return -ENOTREG;
-> > > >               audit_inode(nd->name, path.dentry, 0);
-> > > >               error =3D vfs_open(&path, file);
-> > > >               path_put(&path);
-> > > > diff --git a/fs/open.c b/fs/open.c
-> > > > index 74c4c1462b3e..82153e21907e 100644
-> > > > --- a/fs/open.c
-> > > > +++ b/fs/open.c
-> > > > @@ -1173,7 +1173,7 @@ struct file *kernel_file_open(const struct pa=
-th *path, int flags,
-> > > >  EXPORT_SYMBOL_GPL(kernel_file_open);
-> > > >
-> > > >  #define WILL_CREATE(flags)   (flags & (O_CREAT | __O_TMPFILE))
-> > > > -#define O_PATH_FLAGS         (O_DIRECTORY | O_NOFOLLOW | O_PATH | =
-O_CLOEXEC)
-> > > > +#define O_PATH_FLAGS         (O_DIRECTORY | O_NOFOLLOW | O_PATH | =
-O_CLOEXEC | O_REGULAR)
-> > > >
-> > > >  inline struct open_how build_open_how(int flags, umode_t mode)
-> > > >  {
-> > > > @@ -1250,6 +1250,8 @@ inline int build_open_flags(const struct open=
-_how *how, struct open_flags *op)
-> > > >                       return -EINVAL;
-> > > >               if (!(acc_mode & MAY_WRITE))
-> > > >                       return -EINVAL;
-> > > > +     } else if ((flags & O_DIRECTORY) && (flags & O_REGULAR)) {
-> > > > +             return -EINVAL;
-> > > >       }
-> > > >       if (flags & O_PATH) {
-> > > >               /* O_PATH only permits certain other flags to be set.=
- */
-> > > > diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-> > > > index a332e79b3207..4fd07b0e0a17 100644
-> > > > --- a/include/linux/fcntl.h
-> > > > +++ b/include/linux/fcntl.h
-> > > > @@ -10,7 +10,7 @@
-> > > >       (O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY |=
- O_TRUNC | \
-> > > >        O_APPEND | O_NDELAY | O_NONBLOCK | __O_SYNC | O_DSYNC | \
-> > > >        FASYNC | O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW |=
- \
-> > > > -      O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
-> > > > +      O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_REGULAR)
-> > > >
-> > > >  /* List of all valid flags for the how->resolve argument: */
-> > > >  #define VALID_RESOLVE_FLAGS \
-> > > > diff --git a/include/uapi/asm-generic/errno.h b/include/uapi/asm-ge=
-neric/errno.h
-> > > > index 92e7ae493ee3..2216ab9aa32e 100644
-> > > > --- a/include/uapi/asm-generic/errno.h
-> > > > +++ b/include/uapi/asm-generic/errno.h
-> > > > @@ -122,4 +122,6 @@
-> > > >
-> > > >  #define EHWPOISON    133     /* Memory page has hardware error */
-> > > >
-> > > > +#define ENOTREG              134     /* Not a regular file */
-> > > > +
-> > > >  #endif
-> > > > diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-ge=
-neric/fcntl.h
-> > > > index 613475285643..3468b352a575 100644
-> > > > --- a/include/uapi/asm-generic/fcntl.h
-> > > > +++ b/include/uapi/asm-generic/fcntl.h
-> > > > @@ -88,6 +88,10 @@
-> > > >  #define __O_TMPFILE  020000000
-> > > >  #endif
-> > > >
-> > > > +#ifndef O_REGULAR
-> > > > +#define O_REGULAR    040000000
-> > > > +#endif
-> > > > +
-> > > >  /* a horrid kludge trying to make sure that this will fail on old =
-kernels */
-> > > >  #define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
-> > > >
-> > > > diff --git a/tools/arch/alpha/include/uapi/asm/errno.h b/tools/arch=
-/alpha/include/uapi/asm/errno.h
-> > > > index 6791f6508632..8bbcaa9024f9 100644
-> > > > --- a/tools/arch/alpha/include/uapi/asm/errno.h
-> > > > +++ b/tools/arch/alpha/include/uapi/asm/errno.h
-> > > > @@ -127,4 +127,6 @@
-> > > >
-> > > >  #define EHWPOISON    139     /* Memory page has hardware error */
-> > > >
-> > > > +#define ENOTREG              140     /* Not a regular file */
-> > > > +
-> > > >  #endif
-> > > > diff --git a/tools/arch/mips/include/uapi/asm/errno.h b/tools/arch/=
-mips/include/uapi/asm/errno.h
-> > > > index c01ed91b1ef4..293c78777254 100644
-> > > > --- a/tools/arch/mips/include/uapi/asm/errno.h
-> > > > +++ b/tools/arch/mips/include/uapi/asm/errno.h
-> > > > @@ -126,6 +126,8 @@
-> > > >
-> > > >  #define EHWPOISON    168     /* Memory page has hardware error */
-> > > >
-> > > > +#define ENOTREG              169     /* Not a regular file */
-> > > > +
-> > > >  #define EDQUOT               1133    /* Quota exceeded */
-> > > >
-> > > >
-> > > > diff --git a/tools/arch/parisc/include/uapi/asm/errno.h b/tools/arc=
-h/parisc/include/uapi/asm/errno.h
-> > > > index 8cbc07c1903e..442917484f99 100644
-> > > > --- a/tools/arch/parisc/include/uapi/asm/errno.h
-> > > > +++ b/tools/arch/parisc/include/uapi/asm/errno.h
-> > > > @@ -124,4 +124,6 @@
-> > > >
-> > > >  #define EHWPOISON    257     /* Memory page has hardware error */
-> > > >
-> > > > +#define ENOTREG              258     /* Not a regular file */
-> > > > +
-> > > >  #endif
-> > > > diff --git a/tools/arch/sparc/include/uapi/asm/errno.h b/tools/arch=
-/sparc/include/uapi/asm/errno.h
-> > > > index 4a41e7835fd5..8dce0bfeab74 100644
-> > > > --- a/tools/arch/sparc/include/uapi/asm/errno.h
-> > > > +++ b/tools/arch/sparc/include/uapi/asm/errno.h
-> > > > @@ -117,4 +117,6 @@
-> > > >
-> > > >  #define EHWPOISON    135     /* Memory page has hardware error */
-> > > >
-> > > > +#define ENOTREG              136     /* Not a regular file */
-> > > > +
-> > > >  #endif
-> > > > diff --git a/tools/include/uapi/asm-generic/errno.h b/tools/include=
-/uapi/asm-generic/errno.h
-> > > > index 92e7ae493ee3..2216ab9aa32e 100644
-> > > > --- a/tools/include/uapi/asm-generic/errno.h
-> > > > +++ b/tools/include/uapi/asm-generic/errno.h
-> > > > @@ -122,4 +122,6 @@
-> > > >
-> > > >  #define EHWPOISON    133     /* Memory page has hardware error */
-> > > >
-> > > > +#define ENOTREG              134     /* Not a regular file */
-> > > > +
-> > > >  #endif
-> > >
-> > > One thing this patch is missing is handling for ->atomic_open(). I
-> > > imagine most of the filesystems that provide that op can't support
-> > > O_REGULAR properly (maybe cifs can? idk). What you probably want to d=
-o
-> > > is add in some patches that make all of the atomic_open operations in
-> > > the kernel return -EINVAL if O_REGULAR is set.
-> > >
-> > > Then, once the basic support is in, you or someone else can go back a=
-nd
-> > > implement support for O_REGULAR where possible.
-> >
-> > Thank you for the feedback. I don't quite understand what I need to
-> > fix. I thought open system calls always create regular files, so
-> > atomic_open probably always creates regular files? Can you please give
-> > me some more details as to where I need to fix this and what the
-> > actual bug here is that is related to atomic_open?  I think I had done
-> > some normal testing and when using O_CREAT | O_REGULAR, if the file
-> > doesn't exist, the file gets created and the file that gets created is
-> > a regular file, so it probably makes sense? Or should the behavior be
-> > that if file doesn't exist, -EINVAL is returned and if file exists it
-> > is opened if regular, otherwise -ENOTREG is returned?
-> >
->
-> atomic_open() is a combination lookup+open for when the dentry isn't
-> present in the dcache. The normal open codepath that you're patching
-> does not get called in this case when ->atomic_open is set for the
-> filesystem. It's mostly used by network filesystems that need to
-> optimize away the lookup since it's wasted round trip, and is often
-> racy anyway. Your patchset doesn't address those filesystems. They will
-> likely end up ignoring O_REGULAR in that case, which is not what you
-> want.
->
-> What I was suggesting is that, as an interim step, you find all of the
-> atomic_open operations in the kernel (there are maybe a dozen or so),
-> and just make them return -EINVAL if someone sets O_DIRECTORY. Later,
+On Wed, Jan 28, 2026 at 05:15:09PM +0100, Christoph Hellwig wrote:
+> Add support for generating / verifying protection information in iomap.
+> This is done by hooking into the bio submission and then using the
+> generic PI helpers.  Compared to just using the block layer auto PI
+> this extends the protection envelope and also prepares for eventually
+> passing through PI from userspace at least for direct I/O.
+> 
+> To generate or verify PI, the file system needs to set the
+> IOMAP_F_INTEGRITY flag on the iomap for the request, and ensure the
+> ioends are used for all integrity I/O.  Additionally the file system
+> must defer read I/O completions to user context so that the guard
+> tag validation isn't run from interrupt context.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Tested-by: Anuj Gupta <anuj20.g@samsung.com>
 
-Sorry, I am just trying to fully understand this. Do you mean to
-return -EINVAL from all atomic_open implementations in the kernel if
-both O_REGULAR and O_DIRECTORY are set (or just only if O_REGULAR is
-set, we need to return -EINVAL)? I am already returning -EINVAL when
-both these are set from the build_open_flags function, so that should
-already handle the cases, right? I think after atomic_open get called,
-all code paths eventually go through the do_open function where I have
-this check "if ((open_flag & O_REGULAR) && !d_is_reg(nd->path.dentry))
-return -ENOTREG". This is right before if ((nd->flags &
-LOOKUP_DIRECTORY) && !d_can_lookup(nd->path.dentry)) return -ENOTDIR;
-which I had initially followed. So should I just return -EINVAL from
-the atomic_open functions too if both O_REGULAR and O_DIRECTORY are
-set? Sorry if I am misunderstanding this.
+Thanks for the commit message update;
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
-Regards,
-Dorjoy
+--D
+
+> ---
+>  fs/iomap/bio.c        | 24 +++++++++++++++++++++---
+>  fs/iomap/direct-io.c  | 15 ++++++++++++++-
+>  fs/iomap/internal.h   | 13 +++++++++++++
+>  fs/iomap/ioend.c      | 20 ++++++++++++++++++--
+>  include/linux/iomap.h |  7 +++++++
+>  5 files changed, 73 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/iomap/bio.c b/fs/iomap/bio.c
+> index b4de67bdd513..f989ffcaac96 100644
+> --- a/fs/iomap/bio.c
+> +++ b/fs/iomap/bio.c
+> @@ -3,6 +3,7 @@
+>   * Copyright (C) 2010 Red Hat, Inc.
+>   * Copyright (C) 2016-2023 Christoph Hellwig.
+>   */
+> +#include <linux/bio-integrity.h>
+>  #include <linux/iomap.h>
+>  #include <linux/pagemap.h>
+>  #include "internal.h"
+> @@ -17,6 +18,8 @@ static u32 __iomap_read_end_io(struct bio *bio, int error)
+>  		iomap_finish_folio_read(fi.folio, fi.offset, fi.length, error);
+>  		folio_count++;
+>  	}
+> +	if (bio_integrity(bio))
+> +		fs_bio_integrity_free(bio);
+>  	bio_put(bio);
+>  	return folio_count;
+>  }
+> @@ -34,7 +37,11 @@ u32 iomap_finish_ioend_buffered_read(struct iomap_ioend *ioend)
+>  static void iomap_bio_submit_read(const struct iomap_iter *iter,
+>  		struct iomap_read_folio_ctx *ctx)
+>  {
+> -	submit_bio(ctx->read_ctx);
+> +	struct bio *bio = ctx->read_ctx;
+> +
+> +	if (iter->iomap.flags & IOMAP_F_INTEGRITY)
+> +		fs_bio_integrity_alloc(bio);
+> +	submit_bio(bio);
+>  }
+>  
+>  static struct bio_set *iomap_read_bio_set(struct iomap_read_folio_ctx *ctx)
+> @@ -91,6 +98,7 @@ int iomap_bio_read_folio_range(const struct iomap_iter *iter,
+>  
+>  	if (!bio ||
+>  	    bio_end_sector(bio) != iomap_sector(&iter->iomap, iter->pos) ||
+> +	    bio->bi_iter.bi_size > iomap_max_bio_size(&iter->iomap) - plen ||
+>  	    !bio_add_folio(bio, folio, plen, offset_in_folio(folio, iter->pos)))
+>  		iomap_read_alloc_bio(iter, ctx, plen);
+>  	return 0;
+> @@ -107,11 +115,21 @@ int iomap_bio_read_folio_range_sync(const struct iomap_iter *iter,
+>  		struct folio *folio, loff_t pos, size_t len)
+>  {
+>  	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+> +	sector_t sector = iomap_sector(srcmap, pos);
+>  	struct bio_vec bvec;
+>  	struct bio bio;
+> +	int error;
+>  
+>  	bio_init(&bio, srcmap->bdev, &bvec, 1, REQ_OP_READ);
+> -	bio.bi_iter.bi_sector = iomap_sector(srcmap, pos);
+> +	bio.bi_iter.bi_sector = sector;
+>  	bio_add_folio_nofail(&bio, folio, len, offset_in_folio(folio, pos));
+> -	return submit_bio_wait(&bio);
+> +	if (srcmap->flags & IOMAP_F_INTEGRITY)
+> +		fs_bio_integrity_alloc(&bio);
+> +	error = submit_bio_wait(&bio);
+> +	if (srcmap->flags & IOMAP_F_INTEGRITY) {
+> +		if (!error)
+> +			error = fs_bio_integrity_verify(&bio, sector, len);
+> +		fs_bio_integrity_free(&bio);
+> +	}
+> +	return error;
+>  }
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 952815eb5992..831378a6ced4 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -3,6 +3,7 @@
+>   * Copyright (C) 2010 Red Hat, Inc.
+>   * Copyright (c) 2016-2025 Christoph Hellwig.
+>   */
+> +#include <linux/bio-integrity.h>
+>  #include <linux/blk-crypto.h>
+>  #include <linux/fscrypt.h>
+>  #include <linux/pagemap.h>
+> @@ -215,6 +216,9 @@ static void __iomap_dio_bio_end_io(struct bio *bio, bool inline_completion)
+>  {
+>  	struct iomap_dio *dio = bio->bi_private;
+>  
+> +	if (bio_integrity(bio))
+> +		fs_bio_integrity_free(bio);
+> +
+>  	if (dio->flags & IOMAP_DIO_BOUNCE) {
+>  		bio_iov_iter_unbounce(bio, !!dio->error,
+>  				dio->flags & IOMAP_DIO_USER_BACKED);
+> @@ -325,8 +329,10 @@ static ssize_t iomap_dio_bio_iter_one(struct iomap_iter *iter,
+>  	bio->bi_private = dio;
+>  	bio->bi_end_io = iomap_dio_bio_end_io;
+>  
+> +
+>  	if (dio->flags & IOMAP_DIO_BOUNCE)
+> -		ret = bio_iov_iter_bounce(bio, dio->submit.iter, BIO_MAX_SIZE);
+> +		ret = bio_iov_iter_bounce(bio, dio->submit.iter,
+> +				iomap_max_bio_size(&iter->iomap));
+>  	else
+>  		ret = bio_iov_iter_get_pages(bio, dio->submit.iter,
+>  					     alignment - 1);
+> @@ -343,6 +349,13 @@ static ssize_t iomap_dio_bio_iter_one(struct iomap_iter *iter,
+>  		goto out_put_bio;
+>  	}
+>  
+> +	if (iter->iomap.flags & IOMAP_F_INTEGRITY) {
+> +		if (dio->flags & IOMAP_DIO_WRITE)
+> +			fs_bio_integrity_generate(bio);
+> +		else
+> +			fs_bio_integrity_alloc(bio);
+> +	}
+> +
+>  	if (dio->flags & IOMAP_DIO_WRITE)
+>  		task_io_account_write(ret);
+>  	else if ((dio->flags & IOMAP_DIO_USER_BACKED) &&
+> diff --git a/fs/iomap/internal.h b/fs/iomap/internal.h
+> index b39dbc17e3f0..74e898b196dc 100644
+> --- a/fs/iomap/internal.h
+> +++ b/fs/iomap/internal.h
+> @@ -4,6 +4,19 @@
+>  
+>  #define IOEND_BATCH_SIZE	4096
+>  
+> +/*
+> + * Normally we can build bios as big as the data structure supports.
+> + *
+> + * But for integrity protected I/O we need to respect the maximum size of the
+> + * single contiguous allocation for the integrity buffer.
+> + */
+> +static inline size_t iomap_max_bio_size(const struct iomap *iomap)
+> +{
+> +	if (iomap->flags & IOMAP_F_INTEGRITY)
+> +		return max_integrity_io_size(bdev_limits(iomap->bdev));
+> +	return BIO_MAX_SIZE;
+> +}
+> +
+>  u32 iomap_finish_ioend_buffered_read(struct iomap_ioend *ioend);
+>  u32 iomap_finish_ioend_direct(struct iomap_ioend *ioend);
+>  
+> diff --git a/fs/iomap/ioend.c b/fs/iomap/ioend.c
+> index 72f20e8c8893..a2931f8c454c 100644
+> --- a/fs/iomap/ioend.c
+> +++ b/fs/iomap/ioend.c
+> @@ -2,6 +2,7 @@
+>  /*
+>   * Copyright (c) 2016-2025 Christoph Hellwig.
+>   */
+> +#include <linux/bio-integrity.h>
+>  #include <linux/iomap.h>
+>  #include <linux/list_sort.h>
+>  #include <linux/pagemap.h>
+> @@ -59,6 +60,8 @@ static u32 iomap_finish_ioend_buffered_write(struct iomap_ioend *ioend)
+>  		folio_count++;
+>  	}
+>  
+> +	if (bio_integrity(bio))
+> +		fs_bio_integrity_free(bio);
+>  	bio_put(bio);	/* frees the ioend */
+>  	return folio_count;
+>  }
+> @@ -92,6 +95,8 @@ int iomap_ioend_writeback_submit(struct iomap_writepage_ctx *wpc, int error)
+>  		return error;
+>  	}
+>  
+> +	if (wpc->iomap.flags & IOMAP_F_INTEGRITY)
+> +		fs_bio_integrity_generate(&ioend->io_bio);
+>  	submit_bio(&ioend->io_bio);
+>  	return 0;
+>  }
+> @@ -113,10 +118,13 @@ static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writepage_ctx *wpc,
+>  }
+>  
+>  static bool iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t pos,
+> -		u16 ioend_flags)
+> +		unsigned int map_len, u16 ioend_flags)
+>  {
+>  	struct iomap_ioend *ioend = wpc->wb_ctx;
+>  
+> +	if (ioend->io_bio.bi_iter.bi_size >
+> +	    iomap_max_bio_size(&wpc->iomap) - map_len)
+> +		return false;
+>  	if (ioend_flags & IOMAP_IOEND_BOUNDARY)
+>  		return false;
+>  	if ((ioend_flags & IOMAP_IOEND_NOMERGE_FLAGS) !=
+> @@ -181,7 +189,7 @@ ssize_t iomap_add_to_ioend(struct iomap_writepage_ctx *wpc, struct folio *folio,
+>  	if (pos == wpc->iomap.offset && (wpc->iomap.flags & IOMAP_F_BOUNDARY))
+>  		ioend_flags |= IOMAP_IOEND_BOUNDARY;
+>  
+> -	if (!ioend || !iomap_can_add_to_ioend(wpc, pos, ioend_flags)) {
+> +	if (!ioend || !iomap_can_add_to_ioend(wpc, pos, map_len, ioend_flags)) {
+>  new_ioend:
+>  		if (ioend) {
+>  			error = wpc->ops->writeback_submit(wpc, 0);
+> @@ -258,6 +266,14 @@ static u32 iomap_finish_ioend(struct iomap_ioend *ioend, int error)
+>  
+>  	if (!atomic_dec_and_test(&ioend->io_remaining))
+>  		return 0;
+> +
+> +	if (!ioend->io_error &&
+> +	    bio_integrity(&ioend->io_bio) &&
+> +	    bio_op(&ioend->io_bio) == REQ_OP_READ) {
+> +		ioend->io_error = fs_bio_integrity_verify(&ioend->io_bio,
+> +			ioend->io_sector, ioend->io_size);
+> +	}
+> +
+>  	if (ioend->io_flags & IOMAP_IOEND_DIRECT)
+>  		return iomap_finish_ioend_direct(ioend);
+>  	if (bio_op(&ioend->io_bio) == REQ_OP_READ)
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index de730970998f..f0e3ed8ad6a6 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -65,6 +65,8 @@ struct vm_fault;
+>   *
+>   * IOMAP_F_ATOMIC_BIO indicates that (write) I/O will be issued as an atomic
+>   * bio, i.e. set REQ_ATOMIC.
+> + *
+> + * IOMAP_F_INTEGRITY indicates that the filesystems handles integrity metadata.
+>   */
+>  #define IOMAP_F_NEW		(1U << 0)
+>  #define IOMAP_F_DIRTY		(1U << 1)
+> @@ -79,6 +81,11 @@ struct vm_fault;
+>  #define IOMAP_F_BOUNDARY	(1U << 6)
+>  #define IOMAP_F_ANON_WRITE	(1U << 7)
+>  #define IOMAP_F_ATOMIC_BIO	(1U << 8)
+> +#ifdef CONFIG_BLK_DEV_INTEGRITY
+> +#define IOMAP_F_INTEGRITY	(1U << 9)
+> +#else
+> +#define IOMAP_F_INTEGRITY	0
+> +#endif /* CONFIG_BLK_DEV_INTEGRITY */
+>  
+>  /*
+>   * Flag reserved for file system specific usage
+> -- 
+> 2.47.3
+> 
+> 
 
