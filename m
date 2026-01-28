@@ -1,578 +1,341 @@
-Return-Path: <linux-fsdevel+bounces-75774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GNQJN0pBemmr4wEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 18:03:06 +0100
+	id AHxmMYs9emlB4wEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 17:47:07 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id D591DA67ED
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 18:03:04 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 427AAA61A1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 17:47:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id DCE5C303BB50
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 16:33:54 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 2803330431E4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 16:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885FA31690A;
-	Wed, 28 Jan 2026 16:33:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2682FF661;
+	Wed, 28 Jan 2026 16:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QKqM9B0I"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="G7PPwhgr";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="fGnLY0Q5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1072C1D5CC9;
-	Wed, 28 Jan 2026 16:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769618030; cv=none; b=CppmLgnqwfznk9ucwFm1g0S2m3viEgNJGm7Dn2olNGgEdLgCZoj1f8t44FyeOo1mMSwXqGSRS1tTdDbuy3yTq7kC2Wj40VNnIHPKRBYkkkGbW1hP6t9j83CCCbK/s54JET7av3WmG/pS4+Trau9fKTWIzC3C+ZWbZFr9O+VioR4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769618030; c=relaxed/simple;
-	bh=4LjajQ0YTojoKM0Q1tBzVUkhA9MQWanA/L5xPkJffUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zx5M6Lav2H38y5gOZ5nywnusZ21SRYjlCfzRMs7MisHE1CzsctWqesYIa4Iz3QHVyjBdtkmBZQJegGJUv5lw9776y7BjsviUIi74HQEh5H6L6wgVEEK1WNQlyJd3+EkQ10zEHxNg7Fbg/it/JEbCuywW7fv9lFeRYXVNef4OgJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QKqM9B0I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F9D6C4CEF1;
-	Wed, 28 Jan 2026 16:33:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769618029;
-	bh=4LjajQ0YTojoKM0Q1tBzVUkhA9MQWanA/L5xPkJffUY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QKqM9B0INvVl6WgQd4Yt6MTeE0DFtVWYshROs2GCuPdoq0hzkB5r2BxRBgwAFsjaE
-	 Q/+5wSMj24FK/rPuihd0fhKLHxc4aj9n3hhoqp4OVAU/sB8unmaxb1IAHFiez6bWrC
-	 7d/hL7EkPxElrEExB/f8gtZ9XOf/exEXbz3LkpKZLzKifNIM577PIDdQwTrLEfNZl7
-	 A6QilO9TSzKEyQx/pWOg2GOzDo2l1dQsKXYyzUHJGO2n1VSPDyIocj08TAMrf4uXz2
-	 y7zt8AVWEHuytBw9StON28tts2nRaXTreZ6PwMW1PhMOuuQl1k+dOey7nKqJkgL4MV
-	 ltnll6bgWgR0A==
-Date: Wed, 28 Jan 2026 08:33:49 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Eric Biggers <ebiggers@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	Andrey Albershteyn <aalbersh@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net, fsverity@lists.linux.dev
-Subject: Re: [PATCH 08/15] fsverity: kick off hash readahead at data I/O
- submission time
-Message-ID: <20260128163349.GA5910@frogsfrogsfrogs>
-References: <20260128152630.627409-1-hch@lst.de>
- <20260128152630.627409-9-hch@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58CC2C21DF;
+	Wed, 28 Jan 2026 16:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769618721; cv=fail; b=ObCrQzR6AWLrDEGDpokFy3dZ7mJjJnhGNhBcHgKSsfAuzBcBkD4BtIrP8YeAMMIZOG+9AQxz0ikJ+sHmMFHyi6VKf9wMVKkYE4DV3efRmNdgsrckW00vA1ymJmOGiTByAiJ0jZwd8/RgszpsPm5VLx2Ap54ZZSdUkLFcd8gbPEc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769618721; c=relaxed/simple;
+	bh=BgP4n0Cf54Zp8Vf/uP4IAL7Kkmno9v4hA4n/WBOwrQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=LUQKQB+lxwQxqJVKtiwNTukNQ+W6L+ShMHbhDwPYSzB3yh5UPTQzYqXpH9GS4v5EqBQCZeljQn3vGQwgEH8/EPMB2ozT3tdMGWG2n+xq3fKOGJsF9grz/ww7dP7MC7A07SM2eBFISQyvKIjYzv5tLJSFkxQK8twyzVx7LhBTBS8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=G7PPwhgr; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=fGnLY0Q5; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60S4C6fC1432082;
+	Wed, 28 Jan 2026 16:44:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=opu0x7FeVMzcAlmS8d
+	PWKS7gc5jBEPD0/D78+u6NWys=; b=G7PPwhgrLKw8QEMf5XWD7w3MJbyJxiUq1W
+	+JXWNq7MBozkvpQldYDKVmynYdLZ/1oZaivUpfEx8AnN2R4ZHd7r4xH+g05EGO67
+	f4rhssNNT8xssUIieKgYwUWUykxUXrcGI7ZeIZdyXy0KcoVSkjbY7GuW4yW7UB/x
+	XcZvtmaDSeIquxKHPv9/VAMAl+AloKezTRK+/OEnSWEVUHJlZpuW/xz30zth8wh5
+	I+B5cy2FMeyUCmKqG7rdqGPd/SqTJPd/eeTV/sU+4XpVR43kn7OWaMBJ5bhbsZzm
+	seu0VzVVycUiUEnG/tb0rKd2rGiWf/iWE8oRPnlUeVUGwGJjsNgg==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4by5dj1cah-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 28 Jan 2026 16:44:24 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 60SFNTUZ020001;
+	Wed, 28 Jan 2026 16:44:24 GMT
+Received: from sn4pr2101cu001.outbound.protection.outlook.com (mail-southcentralusazon11012040.outbound.protection.outlook.com [40.93.195.40])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4bvmhgf1xf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 28 Jan 2026 16:44:23 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rgbnES/GllpFsPIcUf2ZE+8NUlvVBLHN+iiqs17JnhoTnSm6bkYMDLby5ohGsY4W+/hcVEHOprDuzPsWs4TG7PbVIbYAaRJSdSgu38My+bYFEMRhrgG52BrLo8pvFLU9e4f3waaQzLRDGJOiL6a2tgl9t9e9WeOCaKN3D91FZ5ulmToeqsl80vXarfwRmGP0TngWW1jtaZ5/5BobLUEWccpzxYlQl7gO3iH1q97Y01xNDSEOAJ8uwW+4IsFir3I373dTYcy+5Stji+cKHHzmpzdP/R2eGRGNCJNXsExeggD2KVePbI2s00yyWGPw4pCSSST4UUkSVKuHt74YertU1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=opu0x7FeVMzcAlmS8dPWKS7gc5jBEPD0/D78+u6NWys=;
+ b=XJCmWpo0h3xO91lLF3YTtium4zRa0h+KrAjwEPjSarfES+Rexcfs+h0d7tgpTjsBfmfMQfpm87uW+CkSGhHKE5Zc0fOiLBw0jystcJn4QRv3Wqhmg5Emv15PS3URuTiLEuPr2rETj/rpQAbXk3D7sA8xxI/KxzgpNXtbTc0USzGLysL6lLBUjsWrI/h9X0/NwWoyYFBSC09KeQkil4uDBoMuOSpJ9ya3q5BN2j2tNXiOKLrRQbisXplcxFXdPdob0ICdnqXF4gvVlQabu8z87jWnwhf2FvT+4okXcFynwxa7k3bPMBBnNVmmjfr1kyqoqky7TrCvYkGiAz4bIqmCpg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=opu0x7FeVMzcAlmS8dPWKS7gc5jBEPD0/D78+u6NWys=;
+ b=fGnLY0Q5nmwq0s7XFHIg9VFkzWvpWWBCUtHfhTG1cQ5w74T/6O6QLTTK7P42qDvUDnG1pLcJs3YmUZB1mMIrTwKMSDM4DPJDZXdksvFxY03iRr17IkMLH+s11Avb6eszc3yfCgsv7WRkWLgD8FTOBnZcFnW/0YyA5MnB4Hv3htg=
+Received: from BL4PR10MB8229.namprd10.prod.outlook.com (2603:10b6:208:4e6::14)
+ by IA1PR10MB7198.namprd10.prod.outlook.com (2603:10b6:208:3f3::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.8; Wed, 28 Jan
+ 2026 16:44:15 +0000
+Received: from BL4PR10MB8229.namprd10.prod.outlook.com
+ ([fe80::552b:16d2:af:c582]) by BL4PR10MB8229.namprd10.prod.outlook.com
+ ([fe80::552b:16d2:af:c582%6]) with mapi id 15.20.9520.005; Wed, 28 Jan 2026
+ 16:44:15 +0000
+Date: Wed, 28 Jan 2026 16:44:12 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tursulin@ursulin.net>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>,
+        Matthew Brost <matthew.brost@intel.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Benjamin LaHaise <bcrl@kvack.org>, Gao Xiang <xiang@kernel.org>,
+        Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Sandeep Dhavale <dhavale@google.com>,
+        Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Muchun Song <muchun.song@linux.dev>,
+        Oscar Salvador <osalvador@suse.de>,
+        David Hildenbrand <david@kernel.org>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
+        Babu Moger <babu.moger@amd.com>, Carlos Maiolino <cem@kernel.org>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Hugh Dickins <hughd@google.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>, Zi Yan <ziy@nvidia.com>,
+        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+        Lance Yang <lance.yang@linux.dev>, Jann Horn <jannh@google.com>,
+        Pedro Falcato <pfalcato@suse.de>, David Howells <dhowells@redhat.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Yury Norov <yury.norov@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+        linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, linux-erofs@lists.ozlabs.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev,
+        devel@lists.orangefs.org, linux-xfs@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH v2 07/13] mm: update secretmem to use VMA flags on
+ mmap_prepare
+Message-ID: <3aab9ab1-74b4-405e-9efb-08fc2500c06e@lucifer.local>
+References: <cover.1769097829.git.lorenzo.stoakes@oracle.com>
+ <a243a09b0a5d0581e963d696de1735f61f5b2075.1769097829.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a243a09b0a5d0581e963d696de1735f61f5b2075.1769097829.git.lorenzo.stoakes@oracle.com>
+X-ClientProxiedBy: LO4P265CA0238.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:350::11) To BL4PR10MB8229.namprd10.prod.outlook.com
+ (2603:10b6:208:4e6::14)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260128152630.627409-9-hch@lst.de>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL4PR10MB8229:EE_|IA1PR10MB7198:EE_
+X-MS-Office365-Filtering-Correlation-Id: f93b3cd6-62bd-4e6c-3ecc-08de5e8c78ec
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Nfd4jrR37+I4JjuqOag+LkVrWVENa9nJNfakhfix+8ewq7mrgPq8XnusvV24?=
+ =?us-ascii?Q?ajV1BW9RDrAV0hP6YX8lOV+l8Rel3uPN62kWxiN8Jo5dpMv1/B2vpk/4GMHA?=
+ =?us-ascii?Q?hoATZ6aa1UR/WeSccQZSjYpBs51/HhixSyIsys0LCD99PxTvkfcqg4GVBsAL?=
+ =?us-ascii?Q?sva79tXOiYvX8IjXv+nt3E8wxBJrVimBMnQWqa9akHji7McHnK8l1cS2C3R7?=
+ =?us-ascii?Q?a1mM2we5LQKULQIVo5wHSFVvDrgAM+PKDa3LqBhbNYaE/NzDEH9+QbIFcieL?=
+ =?us-ascii?Q?5VCm/ZCrS214WKw1es1SPCWoMmDmhkNhG/MwdYLg3Hj83iZqYhTajWmnnqGR?=
+ =?us-ascii?Q?gBXiAcnWeIyBroCmvV4xdU1ytQAWFtfGDZFCMRkV0WX7I3A5hF4bseOjGWQ8?=
+ =?us-ascii?Q?qIG8aP9diiO10c1j0d09E72thGwJWNbNwJjC2E7L6kCCl//ZGAUVaz2s89sl?=
+ =?us-ascii?Q?vAjbqSFjLzO9F6/C3lCrDf+mwumPyh0rvp2aRzBbdtov+zdkHOYhnkrdnjo8?=
+ =?us-ascii?Q?/NkhQsm0iGZD6kSfeVYyTGTriVQ0MyhrdacH/RkcbvjKYb+RJAw87Y4/7pBS?=
+ =?us-ascii?Q?rIl+aurA7XeM5tTO5ZRxWaal6I7o+qKRXC1ESMATH00301SpfSsjQaROcHu2?=
+ =?us-ascii?Q?DLXMKn0UVxfMDrSmOO6itAzo/7TDs6Ap0271TXbLl2M9Z8iOh06DzbQihebR?=
+ =?us-ascii?Q?SFGLcuLRn7WrkuftFGybtdCAnssL4QB/lNBG9vx2wzM7OovcurKm+92O44Fu?=
+ =?us-ascii?Q?ETXC035vlwbAEfsR4Zde63XXRywvDpP6URPWTzmFEUnGP18KbO/pKRSAOMpC?=
+ =?us-ascii?Q?imSW0yVpxaYeJlXo0tt/aJtZ+QBcILWn01ygX51cwf9WWlNvZcZ2qfhIhJE2?=
+ =?us-ascii?Q?Hb5IJGDCqqP7L2ZOuNPUlkHoT1N3DitdTaOrcE4IleUDJgQ8CwF81ZjVfqg/?=
+ =?us-ascii?Q?Coij5W7OwA20zAgFiFXsKWODMFPfkXOHyDV85LUWxnADG60f2thmaOuPK/Re?=
+ =?us-ascii?Q?XeX1BMc3kZ5ByrpPxQ6AdCs/KYggAOfaLsrQceYKqVpLYqaQTEICBI0pQbO7?=
+ =?us-ascii?Q?NBToZho1vaDJ9QjWmlccYeS6qsUbQPI/+UPj/E79xcPzUwl0zMJHhadGOOpH?=
+ =?us-ascii?Q?80fK8d58Ru5yCPxInGcRoEqx9rqUah9RO4Joryxladp0waT2Q0nPJVvg7JpK?=
+ =?us-ascii?Q?ILcI6XQzgGUCWl+4QsKifkhg+Wmv6bRjI/0eAeUA4BNyfFYO3bE/EcssheUC?=
+ =?us-ascii?Q?iR8kBDJ6fuESnVjuCZ6E0L4JYkR2HrBdsBP9hGDLXUJO8ZlEpHtrVpsr/ha2?=
+ =?us-ascii?Q?6IH1xYlIldo57Vj4+3r4fdAxANXTvtX9wpYSowPwjfdJIQKxtlW3qw94yr7K?=
+ =?us-ascii?Q?9QBPdy7dUywsNZVLYWZnjwLa6gV8wYN4DdNL6l+N7WePPmISoMvjWglxQpQC?=
+ =?us-ascii?Q?LRLYBXft420t2yovf+5iVxkhbfsxUyBez8RlBBjYvCE3VJXwdypAHptjzjxM?=
+ =?us-ascii?Q?33dWXHkFCLK107O9RzCn3jDn7XcUIo/7uYZkziNa7NzF7tFJZQzEUXMMRvrT?=
+ =?us-ascii?Q?uJucOKlyZ5Z2fRDSrnM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR10MB8229.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Q4G/hEbqprUEaZgXH65Ikvwor0IWWvhxOyThD2pNGHWD6eZDd4zb98gzFXNT?=
+ =?us-ascii?Q?XV7JlUTyj1vyDsta3ST2vloDfDF2+LQViGFQ4D68YY+uUIbI4iDgrWWaJEsZ?=
+ =?us-ascii?Q?iTMzNMdVADQ9QHHIzhp7o5JPJF87POYZ5wavHhdToCF8MlJzMoPnJVCKtuwG?=
+ =?us-ascii?Q?3tLe+Y2QMvdQKxOTJkKzVOh/9QD5VCG8Q61eXc/I2EPxGY1wS2yVFCq3jGou?=
+ =?us-ascii?Q?5/egDA5Ip69H8jC7/6HXTJFB+GzWa7kfARLPezGXEhJDdhE4zEwdHNgxcsM6?=
+ =?us-ascii?Q?HHAifDzXcp2YQZUmHt8ecFcATzhige1uYAywB2112CHDNZW2FuSOs4OaTd30?=
+ =?us-ascii?Q?ruGEbXh++H6TL9XSxMR1a2xesdbRmbndCPBVrsGOjbKc/R1jWzCgxlhS/BYQ?=
+ =?us-ascii?Q?Ac1ufAH7BlhBhdISw/ZJ07Ux91UunmAfc6aVrCxCRHpAzo08u1SIGEyBZsN6?=
+ =?us-ascii?Q?MPteu9wuGX5GCDrwIOUNAJ6F0v6eAnYJzCu0CHEojQh1K2qc2EZGcw2FFU3d?=
+ =?us-ascii?Q?oOzdev+8cxtuIZZNlM71iTSIrYQIwBh6YRsfCu6U9AlqFk6vBLeYLprW+0y2?=
+ =?us-ascii?Q?ODBVS99AWIIMS67rk9id+NVL9q7/fSgpMoVXL+Gjs+fEJkdiqiTIxI2vwIzo?=
+ =?us-ascii?Q?kjzSBTEfF6SPw+b+hwRQW0dw94elC9yS+mx8tqCwgnhSWth4MBixn2Jzsc56?=
+ =?us-ascii?Q?p77saWxXySUcVtxwOCdMOt+8zsJn6DpZA0R78QunFBPZoEt4o3RxG+bcU2C9?=
+ =?us-ascii?Q?Cen7ZE1WGLPs/e/KsPd4mQHWrZ9mQr2Isu2715UZcS1y6KtyPDUZjRL4uOFH?=
+ =?us-ascii?Q?elA5s/5HFsTpKy1VZuL3y+5Sjw9RBMaGXLsReNKkxDEDKh90j+G/MIaYPx7m?=
+ =?us-ascii?Q?98uYFebyKez8LvVVOc11LMt2HgbjPKyyWKhC384vTvbMPZ12S9Y7QEFrZKYQ?=
+ =?us-ascii?Q?Uo3cyV5vSpNS3sqRfJ3X2MXnG81PW/aK88lFmfXxzD4QH6TSqQUu+7hEj5hG?=
+ =?us-ascii?Q?gFTMFTG7TnHhhXUKDG6eQULlnarFtiYsbb42C2Rxk7aj0n9y0DAG+9gV4HlG?=
+ =?us-ascii?Q?7xeoCNAsuAO90fKTSJ93op1o635zcVNWnJjQQS3MIpWr9WLEJAgMkANnO6zZ?=
+ =?us-ascii?Q?S9fslqu1q/lF/3SF004ixL1tU4Q3Q+cWw/7KQC0E2Az3t7rmNTRoUX55Hkbk?=
+ =?us-ascii?Q?HNYBYs3hL6RlLaxT9S7cEJjO5jgGNaaya6VErIGdAixfWbTsaiIj2eNNX2Ww?=
+ =?us-ascii?Q?H4spZlyvk97G6Eed2t6hT0KOXf9BZPFyh1o1JkXg5oeEsvAYKGJnqJ1G9ffM?=
+ =?us-ascii?Q?kwiGiHpRbgDyIMec3f+bRNz2EgkKJ2hCOVDZLJzk6pMzN5w7iKEUx0bQyXmo?=
+ =?us-ascii?Q?gyiTDL61tLJsNcTyDxAG6v3j3HwGyn8D9rpbA2MP9DYCqqbnAgjG/BvWZURg?=
+ =?us-ascii?Q?vYoiqgZTWUJr66m5sSZKXL/SPCXsXFGAbd9c9br0eRrN2SCTkUgmWb7lkcF/?=
+ =?us-ascii?Q?zJebMEhSQ8sOtB9DpJaQa9OaB9m0kRU29MA3tzBlc6E6mgycXH9OI7YbFtyV?=
+ =?us-ascii?Q?GVopTtKJAOItYFpP/oc/of7TkVoEe2BY0MKnUue6Yzr8/wRWzxRTpe0RbUNa?=
+ =?us-ascii?Q?sSASe8EmRQu2CoRXk1vE9IeYF/4JXzvEJJMzAuJgRgSDXo0aaTSSsPoMN2ne?=
+ =?us-ascii?Q?xp8jF8cYzeN7I8WpeCCRUuAeE6tinmra1Dxav9wMSmAiID6RQVDgWRWlN1qe?=
+ =?us-ascii?Q?lr0O5FlheMIgYhmzK0L2LsnUyIdhRlg=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	UIMhI4yE04TGD8YouozrZ0ciab4Kwj7mhubXi8fwxyCUi0OyK4Ac96RARKQcQyKgkpv9K1tu1Ys6K2p5cXNGeboxLhOeZrf8tJ0xC459En3FdBf0S8/gjJdnqefxtjx8SHc3vREd0hopdHYt4s7FwBpkMNegW9b1MvnkY+ygw6/7xfZmLfK5xlAp0SAIukLkplvnvKuBMwLQV0n5Qm6W6gYZ0F00W59NHjhdCwvne11BVS3+RKeLSVS1Gm163svdKq2Zk3DQ3wqtiK1o4APg/B4NL9VvqkPoNP43HQM6OswYur0MrIOdCOVCQ7lCoeQsJzGNuA2Cw3SULNJm5UYRjCu3PpDwGQPzNglMhiWlLkSGfpe+h9mLOI4+qUeeDDrN9ygIMymBcLJ6vUKDJd3sZ5nE0espktBUGTRPsSvJkIM1C97eBwXyuxZchuYzE7mXdIQlgYpWyqm8lUBBKPncBkRB1U2lL0wEKP94EHb63JRCpgl2aqWwuaskP45t4BWOU/WwfJz3AYlhPLcHVUGcb4KdEfB6rMGlTvGSAuEwo3fid4m/vX9rSXcM0Pm29+ssidYy9yrSdovvhde1/3cd3PS4M23COXsi6y8BMuSdyyM=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f93b3cd6-62bd-4e6c-3ecc-08de5e8c78ec
+X-MS-Exchange-CrossTenant-AuthSource: BL4PR10MB8229.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jan 2026 16:44:15.2130
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: t3ma2GMRC6GWNaDE1YJ81RbNfpAVtVWo+6eTvANoLL2VB6UACrpNKM/7LthpEXUB7TLJ21BsLQPCBKQYoQce4DmEj9jvUL/vFryHNIldlgg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB7198
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-01-28_03,2026-01-28_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 phishscore=0
+ mlxlogscore=999 mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2601150000
+ definitions=main-2601280138
+X-Proofpoint-ORIG-GUID: FlZPLo73qH5dlmnq9SqtNdXqvFhWjvGL
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTI4MDEzNyBTYWx0ZWRfXz3JaJCLZI9Yh
+ plFd4btUPADJWMSeUglpMWbTzcrt8ZxW6+LJZ55Pu38vougQ5HCzmNiqnsOfi1f44ZzEC0hawkH
+ Y9camBZlXXVAU8o/o3VwO7/EbeykxXxpXOUaS8MofhlRVfN8nUvnSWSn8vfFs+ZKY5AUHWoWj/K
+ kRGeEuXkNtZQQSlr8sjGeU4oO6cm5/BPPgQl+497PaFevnqQ0KqbSBKg+6z7Rk1JBLWw6CHHW6l
+ wu8AeKGlqtN7FRLvVG4W50j2aW5+K6RnjVFX83L9+zkQSP6AEIxZ+z2ZQIgL68c52nOaH74RqEp
+ T87CqNtkOKAUU09G+mBMozlbmxmxC6VDv049EU+IdclzjMJqxaRZvS6xGryQgbACmVQtOX/1061
+ ITvT8CfiFk2skfqEg9fEFlx7yWc5f2TXKoQ2S+7Tn7tPElw0flb+omqLlWYwo9oXhN03zCUgapM
+ hKD3gh5Hl0MiLlrBrX+StKLm6ZCit3mb3G23XlKo=
+X-Authority-Analysis: v=2.4 cv=IrsTsb/g c=1 sm=1 tr=0 ts=697a3ce8 b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=vUbySO9Y5rIA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=yPCof4ZbAAAA:8 a=REBL0svVakopdHju3rAA:9 a=CjuIK1q_8ugA:10 cc=ntf
+ awl=host:12103
+X-Proofpoint-GUID: FlZPLo73qH5dlmnq9SqtNdXqvFhWjvGL
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+X-Spamd-Result: default: False [1.34 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_REJECT(1.00)[cv is fail on i=2];
+	DMARC_POLICY_ALLOW(-0.50)[oracle.com,reject];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[oracle.com:s=corp-2025-04-25,oracle.onmicrosoft.com:s=selector2-oracle-onmicrosoft-com];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,redhat.com,alien8.de,zytor.com,arndb.de,linuxfoundation.org,intel.com,suse.de,gmail.com,ffwll.ch,ursulin.net,amd.com,zeniv.linux.org.uk,suse.cz,kvack.org,linux.alibaba.com,google.com,huawei.com,vivo.com,mit.edu,dilger.ca,linux.dev,paragon-software.com,omnibond.com,arm.com,wdc.com,infradead.org,oracle.com,suse.com,nvidia.com,paul-moore.com,namei.org,hallyn.com,rasmusvillemoes.dk,vger.kernel.org,lists.linux.dev,lists.freedesktop.org,lists.ozlabs.org,lists.orangefs.org];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,oracle.com:email,oracle.com:dkim,oracle.onmicrosoft.com:dkim];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75774-lists,linux-fsdevel=lfdr.de];
-	RCPT_COUNT_TWELVE(0.00)[16];
+	TAGGED_FROM(0.00)[bounces-75775-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[oracle.com:+,oracle.onmicrosoft.com:+];
 	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,lst.de:email]
-X-Rspamd-Queue-Id: D591DA67ED
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[lorenzo.stoakes@oracle.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[93];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	RCVD_COUNT_SEVEN(0.00)[9]
+X-Rspamd-Queue-Id: 427AAA61A1
 X-Rspamd-Action: no action
 
-On Wed, Jan 28, 2026 at 04:26:20PM +0100, Christoph Hellwig wrote:
-> Currently all reads of the fsverity hashes is kicked off from the data
-> I/O completion handler, leading to needlessly dependent I/O.  This is
-> worked around a bit by performing readahead on the level 0 nodes, but
-> still fairly ineffective.
-> 
-> Switch to a model where the ->read_folio and ->readahead methods instead
-> kick off explicit readahead of the fsverity hashed so they are usually
-> available at I/O completion time.
-> 
-> For 64k sequential reads on my test VM this improves read performance
-> from 2.4GB/s - 2.6GB/s to 3.5GB/s - 3.9GB/s.  The improvements for
-> random reads are likely to be even bigger.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Acked-by: David Sterba <dsterba@suse.com> [btrfs]
+Hi Andrew,
 
-Thanks for updating the kerneldoc and fixing the 'pgoff_t long' thing
-from the last round;
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+Could you apply the below fix-patch to resolve the issue Chris's AI checks
+detected, I missed out one caller of mlock_future_ok() (a very human mistake
+;)).
 
---D
+Cheers, Lorenzo
 
-> ---
->  fs/btrfs/verity.c         |  4 +--
->  fs/ext4/readpage.c        |  7 ++++
->  fs/ext4/verity.c          | 13 +++++--
->  fs/f2fs/data.c            |  7 ++++
->  fs/f2fs/verity.c          | 13 +++++--
->  fs/verity/pagecache.c     | 39 ++++++++++++++------
->  fs/verity/read_metadata.c | 17 ++++++---
->  fs/verity/verify.c        | 76 +++++++++++++++++++++++++--------------
->  include/linux/fsverity.h  | 29 ++++++++++-----
->  9 files changed, 146 insertions(+), 59 deletions(-)
-> 
-> diff --git a/fs/btrfs/verity.c b/fs/btrfs/verity.c
-> index e7643c22a6bf..c152bef71e8b 100644
-> --- a/fs/btrfs/verity.c
-> +++ b/fs/btrfs/verity.c
-> @@ -697,7 +697,6 @@ int btrfs_get_verity_descriptor(struct inode *inode, void *buf, size_t buf_size)
->   *
->   * @inode:         inode to read a merkle tree page for
->   * @index:         page index relative to the start of the merkle tree
-> - * @num_ra_pages:  number of pages to readahead. Optional, we ignore it
->   *
->   * The Merkle tree is stored in the filesystem btree, but its pages are cached
->   * with a logical position past EOF in the inode's mapping.
-> @@ -705,8 +704,7 @@ int btrfs_get_verity_descriptor(struct inode *inode, void *buf, size_t buf_size)
->   * Returns the page we read, or an ERR_PTR on error.
->   */
->  static struct page *btrfs_read_merkle_tree_page(struct inode *inode,
-> -						pgoff_t index,
-> -						unsigned long num_ra_pages)
-> +						pgoff_t index)
->  {
->  	struct folio *folio;
->  	u64 off = (u64)index << PAGE_SHIFT;
-> diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-> index 267594ef0b2c..e99072c8a619 100644
-> --- a/fs/ext4/readpage.c
-> +++ b/fs/ext4/readpage.c
-> @@ -227,6 +227,7 @@ int ext4_mpage_readpages(struct inode *inode,
->  	unsigned relative_block = 0;
->  	struct ext4_map_blocks map;
->  	unsigned int nr_pages, folio_pages;
-> +	bool first_folio = true;
->  
->  	map.m_pblk = 0;
->  	map.m_lblk = 0;
-> @@ -242,6 +243,12 @@ int ext4_mpage_readpages(struct inode *inode,
->  		if (rac)
->  			folio = readahead_folio(rac);
->  
-> +		if (first_folio) {
-> +			if (ext4_need_verity(inode, folio->index))
-> +				fsverity_readahead(folio, nr_pages);
-> +			first_folio = false;
-> +		}
-> +
->  		folio_pages = folio_nr_pages(folio);
->  		prefetchw(&folio->flags);
->  
-> diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
-> index a071860ad36a..54ae4d4a176c 100644
-> --- a/fs/ext4/verity.c
-> +++ b/fs/ext4/verity.c
-> @@ -358,11 +358,17 @@ static int ext4_get_verity_descriptor(struct inode *inode, void *buf,
->  }
->  
->  static struct page *ext4_read_merkle_tree_page(struct inode *inode,
-> -					       pgoff_t index,
-> -					       unsigned long num_ra_pages)
-> +					       pgoff_t index)
->  {
->  	index += ext4_verity_metadata_pos(inode) >> PAGE_SHIFT;
-> -	return generic_read_merkle_tree_page(inode, index, num_ra_pages);
-> +	return generic_read_merkle_tree_page(inode, index);
-> +}
-> +
-> +static void ext4_readahead_merkle_tree(struct inode *inode, pgoff_t index,
-> +		unsigned long nr_pages)
-> +{
-> +	index += ext4_verity_metadata_pos(inode) >> PAGE_SHIFT;
-> +	generic_readahead_merkle_tree(inode, index, nr_pages);
->  }
->  
->  static int ext4_write_merkle_tree_block(struct file *file, const void *buf,
-> @@ -380,5 +386,6 @@ const struct fsverity_operations ext4_verityops = {
->  	.end_enable_verity	= ext4_end_enable_verity,
->  	.get_verity_descriptor	= ext4_get_verity_descriptor,
->  	.read_merkle_tree_page	= ext4_read_merkle_tree_page,
-> +	.readahead_merkle_tree	= ext4_readahead_merkle_tree,
->  	.write_merkle_tree_block = ext4_write_merkle_tree_block,
->  };
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index c30e69392a62..49bdc7e771f2 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -2359,6 +2359,7 @@ static int f2fs_mpage_readpages(struct inode *inode,
->  	unsigned nr_pages = rac ? readahead_count(rac) : 1;
->  	unsigned max_nr_pages = nr_pages;
->  	int ret = 0;
-> +	bool first_folio = true;
->  
->  #ifdef CONFIG_F2FS_FS_COMPRESSION
->  	if (f2fs_compressed_file(inode)) {
-> @@ -2383,6 +2384,12 @@ static int f2fs_mpage_readpages(struct inode *inode,
->  			prefetchw(&folio->flags);
->  		}
->  
-> +		if (first_folio) {
-> +			if (f2fs_need_verity(inode, folio->index))
-> +				fsverity_readahead(folio, nr_pages);
-> +			first_folio = false;
-> +		}
-> +
->  #ifdef CONFIG_F2FS_FS_COMPRESSION
->  		index = folio->index;
->  
-> diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
-> index d37e584423af..628e8eafa96a 100644
-> --- a/fs/f2fs/verity.c
-> +++ b/fs/f2fs/verity.c
-> @@ -256,11 +256,17 @@ static int f2fs_get_verity_descriptor(struct inode *inode, void *buf,
->  }
->  
->  static struct page *f2fs_read_merkle_tree_page(struct inode *inode,
-> -					       pgoff_t index,
-> -					       unsigned long num_ra_pages)
-> +					       pgoff_t index)
->  {
->  	index += f2fs_verity_metadata_pos(inode) >> PAGE_SHIFT;
-> -	return generic_read_merkle_tree_page(inode, index, num_ra_pages);
-> +	return generic_read_merkle_tree_page(inode, index);
-> +}
-> +
-> +static void f2fs_readahead_merkle_tree(struct inode *inode, pgoff_t index,
-> +		unsigned long nr_pages)
-> +{
-> +	index += f2fs_verity_metadata_pos(inode) >> PAGE_SHIFT;
-> +	generic_readahead_merkle_tree(inode, index, nr_pages);
->  }
->  
->  static int f2fs_write_merkle_tree_block(struct file *file, const void *buf,
-> @@ -278,5 +284,6 @@ const struct fsverity_operations f2fs_verityops = {
->  	.end_enable_verity	= f2fs_end_enable_verity,
->  	.get_verity_descriptor	= f2fs_get_verity_descriptor,
->  	.read_merkle_tree_page	= f2fs_read_merkle_tree_page,
-> +	.readahead_merkle_tree	= f2fs_readahead_merkle_tree,
->  	.write_merkle_tree_block = f2fs_write_merkle_tree_block,
->  };
-> diff --git a/fs/verity/pagecache.c b/fs/verity/pagecache.c
-> index eae419d8d091..196072bbe284 100644
-> --- a/fs/verity/pagecache.c
-> +++ b/fs/verity/pagecache.c
-> @@ -16,8 +16,30 @@
->   * to ->read_merkle_tree_page to the actual index where the Merkle tree is
->   * stored in the page cache for @inode.
->   */
-> -struct page *generic_read_merkle_tree_page(struct inode *inode, pgoff_t index,
-> -		unsigned long num_ra_pages)
-> +struct page *generic_read_merkle_tree_page(struct inode *inode, pgoff_t index)
-> +{
-> +	struct folio *folio;
-> +
-> +	folio = read_mapping_folio(inode->i_mapping, index, NULL);
-> +	if (IS_ERR(folio))
-> +		return ERR_CAST(folio);
-> +	return folio_file_page(folio, index);
-> +}
-> +EXPORT_SYMBOL_GPL(generic_read_merkle_tree_page);
-> +
-> +/**
-> + * generic_readahead_merkle_tree() - generic ->readahead_merkle_tree helper
-> + * @inode:	inode containing the Merkle tree
-> + * @index:	0-based index of the first Merkle tree page to read ahead in the
-> + *		inode
-> + * @nr_pages:	the number of Merkle tree pages that should be read ahead
-> + *
-> + * The caller needs to adjust @index from the Merkle-tree relative index passed
-> + * to ->read_merkle_tree_page to the actual index where the Merkle tree is
-> + * stored in the page cache for @inode.
-> + */
-> +void generic_readahead_merkle_tree(struct inode *inode, pgoff_t index,
-> +		unsigned long nr_pages)
->  {
->  	struct folio *folio;
->  
-> @@ -26,14 +48,9 @@ struct page *generic_read_merkle_tree_page(struct inode *inode, pgoff_t index,
->  	    (!IS_ERR(folio) && !folio_test_uptodate(folio))) {
->  		DEFINE_READAHEAD(ractl, NULL, NULL, inode->i_mapping, index);
->  
-> -		if (!IS_ERR(folio))
-> -			folio_put(folio);
-> -		else if (num_ra_pages > 1)
-> -			page_cache_ra_unbounded(&ractl, num_ra_pages, 0);
-> -		folio = read_mapping_folio(inode->i_mapping, index, NULL);
-> -		if (IS_ERR(folio))
-> -			return ERR_CAST(folio);
-> +		page_cache_ra_unbounded(&ractl, nr_pages, 0);
->  	}
-> -	return folio_file_page(folio, index);
-> +	if (!IS_ERR(folio))
-> +		folio_put(folio);
->  }
-> -EXPORT_SYMBOL_GPL(generic_read_merkle_tree_page);
-> +EXPORT_SYMBOL_GPL(generic_readahead_merkle_tree);
-> diff --git a/fs/verity/read_metadata.c b/fs/verity/read_metadata.c
-> index cba5d6af4e04..81b82e9ddb1d 100644
-> --- a/fs/verity/read_metadata.c
-> +++ b/fs/verity/read_metadata.c
-> @@ -28,24 +28,31 @@ static int fsverity_read_merkle_tree(struct inode *inode,
->  	if (offset >= end_offset)
->  		return 0;
->  	offs_in_page = offset_in_page(offset);
-> +	index = offset >> PAGE_SHIFT;
->  	last_index = (end_offset - 1) >> PAGE_SHIFT;
->  
-> +	/*
-> +	 * Kick off readahead for the range we are going to read to ensure a
-> +	 * single large sequential read instead of lots of small ones.
-> +	 */
-> +	if (inode->i_sb->s_vop->readahead_merkle_tree) {
-> +		inode->i_sb->s_vop->readahead_merkle_tree(inode, index,
-> +				last_index - index + 1);
-> +	}
-> +
->  	/*
->  	 * Iterate through each Merkle tree page in the requested range and copy
->  	 * the requested portion to userspace.  Note that the Merkle tree block
->  	 * size isn't important here, as we are returning a byte stream; i.e.,
->  	 * we can just work with pages even if the tree block size != PAGE_SIZE.
->  	 */
-> -	for (index = offset >> PAGE_SHIFT; index <= last_index; index++) {
-> -		unsigned long num_ra_pages =
-> -			min_t(unsigned long, last_index - index + 1,
-> -			      inode->i_sb->s_bdi->io_pages);
-> +	for (; index <= last_index; index++) {
->  		unsigned int bytes_to_copy = min_t(u64, end_offset - offset,
->  						   PAGE_SIZE - offs_in_page);
->  		struct page *page;
->  		const void *virt;
->  
-> -		page = vops->read_merkle_tree_page(inode, index, num_ra_pages);
-> +		page = vops->read_merkle_tree_page(inode, index);
->  		if (IS_ERR(page)) {
->  			err = PTR_ERR(page);
->  			fsverity_err(inode,
-> diff --git a/fs/verity/verify.c b/fs/verity/verify.c
-> index 86067c8b40cf..f5bea750b427 100644
-> --- a/fs/verity/verify.c
-> +++ b/fs/verity/verify.c
-> @@ -9,6 +9,7 @@
->  
->  #include <linux/bio.h>
->  #include <linux/export.h>
-> +#include <linux/pagemap.h>
->  
->  #define FS_VERITY_MAX_PENDING_BLOCKS 2
->  
-> @@ -21,7 +22,6 @@ struct fsverity_pending_block {
->  struct fsverity_verification_context {
->  	struct inode *inode;
->  	struct fsverity_info *vi;
-> -	unsigned long max_ra_pages;
->  
->  	/*
->  	 * This is the queue of data blocks that are pending verification.  When
-> @@ -37,6 +37,49 @@ struct fsverity_verification_context {
->  
->  static struct workqueue_struct *fsverity_read_workqueue;
->  
-> +/**
-> + * fsverity_readahead() - kick off readahead on fsverity hashes
-> + * @folio:		first file data folio that is being read
-> + * @nr_pages:		number of file data pages to be read
-> + *
-> + * Start readahead on the fsverity hashes that are needed to verity the file
-> + * data in the range from folio->index to folio->index + nr_pages.
-> + *
-> + * To be called from the file systems' ->read_folio and ->readahead methods to
-> + * ensure that the hashes are already cached on completion of the file data
-> + * read if possible.
-> + */
-> +void fsverity_readahead(struct folio *folio, unsigned long nr_pages)
-> +{
-> +	struct inode *inode = folio->mapping->host;
-> +	const struct fsverity_info *vi = *fsverity_info_addr(inode);
-> +	const struct merkle_tree_params *params = &vi->tree_params;
-> +	u64 start_hidx = (u64)folio->index << params->log_blocks_per_page;
-> +	u64 end_hidx = (((u64)folio->index + nr_pages) <<
-> +			params->log_blocks_per_page) - 1;
-> +	int level;
-> +
-> +	if (!inode->i_sb->s_vop->readahead_merkle_tree)
-> +		return;
-> +
-> +	for (level = 0; level < params->num_levels; level++) {
-> +		unsigned long level_start = params->level_start[level];
-> +		unsigned long next_start_hidx = start_hidx >> params->log_arity;
-> +		unsigned long next_end_hidx = end_hidx >> params->log_arity;
-> +		pgoff_t start_idx = (level_start + next_start_hidx) >>
-> +				params->log_blocks_per_page;
-> +		pgoff_t end_idx = (level_start + next_end_hidx) >>
-> +				params->log_blocks_per_page;
-> +
-> +		inode->i_sb->s_vop->readahead_merkle_tree(inode, start_idx,
-> +				end_idx - start_idx + 1);
-> +
-> +		start_hidx = next_start_hidx;
-> +		end_hidx = next_end_hidx;
-> +	}
-> +}
-> +EXPORT_SYMBOL_GPL(fsverity_readahead);
-> +
->  /*
->   * Returns true if the hash block with index @hblock_idx in the tree, located in
->   * @hpage, has already been verified.
-> @@ -114,8 +157,7 @@ static bool is_hash_block_verified(struct fsverity_info *vi, struct page *hpage,
->   * Return: %true if the data block is valid, else %false.
->   */
->  static bool verify_data_block(struct inode *inode, struct fsverity_info *vi,
-> -			      const struct fsverity_pending_block *dblock,
-> -			      unsigned long max_ra_pages)
-> +			      const struct fsverity_pending_block *dblock)
->  {
->  	const u64 data_pos = dblock->pos;
->  	const struct merkle_tree_params *params = &vi->tree_params;
-> @@ -200,8 +242,7 @@ static bool verify_data_block(struct inode *inode, struct fsverity_info *vi,
->  			  (params->block_size - 1);
->  
->  		hpage = inode->i_sb->s_vop->read_merkle_tree_page(inode,
-> -				hpage_idx, level == 0 ? min(max_ra_pages,
-> -					params->tree_pages - hpage_idx) : 0);
-> +				hpage_idx);
->  		if (IS_ERR(hpage)) {
->  			fsverity_err(inode,
->  				     "Error %ld reading Merkle tree page %lu",
-> @@ -272,14 +313,12 @@ static bool verify_data_block(struct inode *inode, struct fsverity_info *vi,
->  
->  static void
->  fsverity_init_verification_context(struct fsverity_verification_context *ctx,
-> -				   struct inode *inode,
-> -				   unsigned long max_ra_pages)
-> +				   struct inode *inode)
->  {
->  	struct fsverity_info *vi = *fsverity_info_addr(inode);
->  
->  	ctx->inode = inode;
->  	ctx->vi = vi;
-> -	ctx->max_ra_pages = max_ra_pages;
->  	ctx->num_pending = 0;
->  	if (vi->tree_params.hash_alg->algo_id == HASH_ALGO_SHA256 &&
->  	    sha256_finup_2x_is_optimized())
-> @@ -322,8 +361,7 @@ fsverity_verify_pending_blocks(struct fsverity_verification_context *ctx)
->  	}
->  
->  	for (i = 0; i < ctx->num_pending; i++) {
-> -		if (!verify_data_block(ctx->inode, vi, &ctx->pending_blocks[i],
-> -				       ctx->max_ra_pages))
-> +		if (!verify_data_block(ctx->inode, vi, &ctx->pending_blocks[i]))
->  			return false;
->  	}
->  	fsverity_clear_pending_blocks(ctx);
-> @@ -373,7 +411,7 @@ bool fsverity_verify_blocks(struct folio *folio, size_t len, size_t offset)
->  {
->  	struct fsverity_verification_context ctx;
->  
-> -	fsverity_init_verification_context(&ctx, folio->mapping->host, 0);
-> +	fsverity_init_verification_context(&ctx, folio->mapping->host);
->  
->  	if (fsverity_add_data_blocks(&ctx, folio, len, offset) &&
->  	    fsverity_verify_pending_blocks(&ctx))
-> @@ -403,22 +441,8 @@ void fsverity_verify_bio(struct bio *bio)
->  	struct inode *inode = bio_first_folio_all(bio)->mapping->host;
->  	struct fsverity_verification_context ctx;
->  	struct folio_iter fi;
-> -	unsigned long max_ra_pages = 0;
-> -
-> -	if (bio->bi_opf & REQ_RAHEAD) {
-> -		/*
-> -		 * If this bio is for data readahead, then we also do readahead
-> -		 * of the first (largest) level of the Merkle tree.  Namely,
-> -		 * when a Merkle tree page is read, we also try to piggy-back on
-> -		 * some additional pages -- up to 1/4 the number of data pages.
-> -		 *
-> -		 * This improves sequential read performance, as it greatly
-> -		 * reduces the number of I/O requests made to the Merkle tree.
-> -		 */
-> -		max_ra_pages = bio->bi_iter.bi_size >> (PAGE_SHIFT + 2);
-> -	}
->  
-> -	fsverity_init_verification_context(&ctx, inode, max_ra_pages);
-> +	fsverity_init_verification_context(&ctx, inode);
->  
->  	bio_for_each_folio_all(fi, bio) {
->  		if (!fsverity_add_data_blocks(&ctx, fi.folio, fi.length,
-> diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-> index 121703625cc8..bade511cf3aa 100644
-> --- a/include/linux/fsverity.h
-> +++ b/include/linux/fsverity.h
-> @@ -97,10 +97,6 @@ struct fsverity_operations {
->  	 *
->  	 * @inode: the inode
->  	 * @index: 0-based index of the page within the Merkle tree
-> -	 * @num_ra_pages: The number of Merkle tree pages that should be
-> -	 *		  prefetched starting at @index if the page at @index
-> -	 *		  isn't already cached.  Implementations may ignore this
-> -	 *		  argument; it's only a performance optimization.
->  	 *
->  	 * This can be called at any time on an open verity file.  It may be
->  	 * called by multiple processes concurrently, even with the same page.
-> @@ -110,8 +106,23 @@ struct fsverity_operations {
->  	 * Return: the page on success, ERR_PTR() on failure
->  	 */
->  	struct page *(*read_merkle_tree_page)(struct inode *inode,
-> -					      pgoff_t index,
-> -					      unsigned long num_ra_pages);
-> +					      pgoff_t index);
-> +
-> +	/**
-> +	 * Perform readahead of a Merkle tree for the given inode.
-> +	 *
-> +	 * @inode: the inode
-> +	 * @index: 0-based index of the first page within the Merkle tree
-> +	 * @nr_pages: number of pages to be read ahead.
-> +	 *
-> +	 * This can be called at any time on an open verity file.  It may be
-> +	 * called by multiple processes concurrently, even with the same range.
-> +	 *
-> +	 * Optional method so that ->read_merkle_tree_page preferably finds
-> +	 * cached data instead of issuing dependent I/O.
-> +	 */
-> +	void (*readahead_merkle_tree)(struct inode *inode, pgoff_t index,
-> +			unsigned long nr_pages);
->  
->  	/**
->  	 * Write a Merkle tree block to the given inode.
-> @@ -308,8 +319,10 @@ static inline int fsverity_file_open(struct inode *inode, struct file *filp)
->  }
->  
->  void fsverity_cleanup_inode(struct inode *inode);
-> +void fsverity_readahead(struct folio *folio, unsigned long nr_pages);
->  
-> -struct page *generic_read_merkle_tree_page(struct inode *inode, pgoff_t index,
-> -		unsigned long num_ra_pages);
-> +struct page *generic_read_merkle_tree_page(struct inode *inode, pgoff_t index);
-> +void generic_readahead_merkle_tree(struct inode *inode, pgoff_t index,
-> +		unsigned long nr_pages);
->  
->  #endif	/* _LINUX_FSVERITY_H */
-> -- 
-> 2.47.3
-> 
-> 
+----8<----
+From 652146b4d93a31bb6f9da9428ddaab8a4a53e170 Mon Sep 17 00:00:00 2001
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Date: Wed, 28 Jan 2026 16:41:55 +0000
+Subject: [PATCH] fix
+
+Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+---
+ mm/mmap.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 354479c95896..5dfe57b6d69a 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -108,7 +108,8 @@ static int check_brk_limits(unsigned long addr, unsigned long len)
+ 	if (IS_ERR_VALUE(mapped_addr))
+ 		return mapped_addr;
+
+-	return mlock_future_ok(current->mm, current->mm->def_flags, len)
++	return mlock_future_ok(current->mm,
++			      current->mm->def_flags & VM_LOCKED, len)
+ 		? 0 : -EAGAIN;
+ }
+
+--
+2.52.0
 
