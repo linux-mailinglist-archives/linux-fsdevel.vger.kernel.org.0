@@ -1,77 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-75703-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UIcIKqfNeWnEzgEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75703-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 09:49:43 +0100
+	id EGpdAKnPeWnezgEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 09:58:17 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 266D89E66B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 09:49:43 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9508C9E866
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 09:58:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0D632300EFA6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 08:49:01 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D0972304D964
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 08:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113183382D2;
-	Wed, 28 Jan 2026 08:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE5F33ADB9;
+	Wed, 28 Jan 2026 08:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ikN+zYJO"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IiNsTsjt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1130C337BBC
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 08:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872F229A1;
+	Wed, 28 Jan 2026 08:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769590138; cv=none; b=PPsU5nkyf8ZfQt/gyXlb+7DttVAFrlDGAWwykeuNLXKACMFb68s3YQkOx24NzTKpFRj0WifMDBwmC/jRd4ETzGTDyNYpH/Z3oNoSksWEN5LzE34kLFWem5515fJM5c9G9Ph2R5YVTfhOXZoRlhUWlJfN/ciA/c/iJe9HJyZtDRk=
+	t=1769590442; cv=none; b=pqODf9Fr+XwzPgBCc/en9dsuZEdm0QnSwto1QI4kDdobsk3omjigA08sbGWdyv0VTcclu39tehcynIdyFJHYeKOPWpVynZPQMq/DZ5ls3gNpmBUDMGDnbmhDZGGs7CS9HlQ94OlLcKvRhfz51hf9gWlbQ0Kriw4cvOj16x0jbbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769590138; c=relaxed/simple;
-	bh=Z7MlY2axWxq8E3SWbd6gQj/fN3uQVFDxTaFddi0rkVk=;
+	s=arc-20240116; t=1769590442; c=relaxed/simple;
+	bh=sp8ZzgKfLYBf6n5dvtaPV7JJtZoVmZtARJEfnOlvgnA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tR8uuTuzok6NtNAmYq0lRJXpg3aehXrqLy3Sp78TrQaKLFTM3GK0HtmM/54xkL47MbpZtjgYbtMBO+RDth6VlEy0glnjk/29WC3e0FAr3mJljia5jqfndQiMUccPmyR8RqURrUR00DFYnwv8347CFyKNAeEuH5Q+bhjIbLD/sBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ikN+zYJO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1769590136;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CgruSQvmurWSg0KfNFN9sWLaWLbPbPhYkfx2vIhIsKo=;
-	b=ikN+zYJOO6TJJVIz9wqszEHZ/2GSRFP9H59GM0UlQGp0swd6QwJxaRgG/uh3ikPu4tnRLF
-	Lw/sXRlLrG4Vu30cySyyTRFtyZLGKAypkDHLSEKeW1fGEPjEqvb/xv43cLCZCiNCQ2T5Yk
-	PtV9CQnh2xEe7WS0b9iClBdySecnvvc=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-206-nlh7bbIQMm6zovQzEo7xLw-1; Wed,
- 28 Jan 2026 03:48:51 -0500
-X-MC-Unique: nlh7bbIQMm6zovQzEo7xLw-1
-X-Mimecast-MFC-AGG-ID: nlh7bbIQMm6zovQzEo7xLw_1769590130
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7D96218002C7;
-	Wed, 28 Jan 2026 08:48:49 +0000 (UTC)
-Received: from fedora (unknown [10.45.224.8])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 78EB130001A2;
-	Wed, 28 Jan 2026 08:48:45 +0000 (UTC)
-Received: by fedora (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 28 Jan 2026 09:48:49 +0100 (CET)
-Date: Wed, 28 Jan 2026 09:48:43 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: alexjlzheng@gmail.com
-Cc: usamaarif642@gmail.com, david@kernel.org, akpm@linux-foundation.org,
-	lorenzo.stoakes@oracle.com, mingo@kernel.org,
-	alexjlzheng@tencent.com, ruippan@tencent.com, mjguzik@gmail.com,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] procfs: fix missing RCU protection when reading
- real_parent in do_task_stat()
-Message-ID: <aXnNa2jymiJYjzij@redhat.com>
-References: <20260128083007.3173016-1-alexjlzheng@tencent.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=R6ZvZr/5mQrosxadFsrLddvF4Vd1H49DEwSoGAr7XYrgEqQnyUbvBpkGWsWfYDxqvrTCXEyU1qUSyIV3vKOpz2WEFSHu0rgrgl56Zuy9kQvOHDqtKpnSBUXhya0AJ9MwrFCtCxl3JAeBBcHacgTynSBnpZh7F1Rf8v61DV6Q68o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IiNsTsjt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75B35C4CEF1;
+	Wed, 28 Jan 2026 08:54:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1769590442;
+	bh=sp8ZzgKfLYBf6n5dvtaPV7JJtZoVmZtARJEfnOlvgnA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IiNsTsjt7/JJEy7yHNve/JooAIlH0pnM87ZGvmgdHepEWko5EVz56NLPJSRbmXI8w
+	 sxKEPaOCpGXqDtQ0OHpQYWN7Mt9VjqvMvARm+eLYaHLPTNohEerYQif5fI9Qezgjy+
+	 G4XDfI/hst0WjbqQ1xzHMsJI6EzUETgPfOt5Yvr0=
+Date: Wed, 28 Jan 2026 09:53:58 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Samuel Wu <wusamuel@google.com>, linux-fsdevel@vger.kernel.org,
+	brauner@kernel.org, jack@suse.cz, raven@themaw.net,
+	miklos@szeredi.hu, neil@brown.name, a.hindborg@kernel.org,
+	linux-mm@kvack.org, linux-efi@vger.kernel.org,
+	ocfs2-devel@lists.linux.dev, kees@kernel.org, rostedt@goodmis.org,
+	linux-usb@vger.kernel.org, paul@paul-moore.com,
+	casey@schaufler-ca.com, linuxppc-dev@lists.ozlabs.org,
+	john.johansen@canonical.com, selinux@vger.kernel.org,
+	borntraeger@linux.ibm.com, bpf@vger.kernel.org, clm@meta.com,
+	android-kernel-team <android-kernel-team@google.com>
+Subject: Re: [PATCH v4 00/54] tree-in-dcache stuff
+Message-ID: <2026012812-jurist-whoops-0ef5@gregkh>
+References: <20251118051604.3868588-1-viro@zeniv.linux.org.uk>
+ <CAG2KctrjSP+XyBiOB7hGA2DWtdpg3diRHpQLKGsVYxExuTZazA@mail.gmail.com>
+ <2026012715-mantra-pope-9431@gregkh>
+ <CAHk-=whME4fu2Gn+W7MPiFHqwn51VByhpttf-wHdhAqQAQXpqw@mail.gmail.com>
+ <20260127201454.GQ3183987@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,63 +70,64 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260128083007.3173016-1-alexjlzheng@tencent.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+In-Reply-To: <20260127201454.GQ3183987@ZenIV>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [2.34 / 15.00];
+	MID_END_EQ_FROM_USER_PART(4.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
+	DMARC_POLICY_ALLOW(-0.50)[linuxfoundation.org,none];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[linuxfoundation.org:s=korg];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DKIM_TRACE(0.00)[redhat.com:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,kernel.org,linux-foundation.org,oracle.com,tencent.com,vger.kernel.org];
-	TAGGED_FROM(0.00)[bounces-75703-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,tencent.com:email];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[oleg@redhat.com,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75704-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
+	RCPT_COUNT_TWELVE(0.00)[25];
 	MIME_TRACE(0.00)[0:+];
-	TO_DN_NONE(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: 266D89E66B
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[gregkh@linuxfoundation.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[linuxfoundation.org:+];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linuxfoundation.org:email,linuxfoundation.org:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 9508C9E866
 X-Rspamd-Action: no action
 
-On 01/28, alexjlzheng@gmail.com wrote:
->
-> From: Jinliang Zheng <alexjlzheng@tencent.com>
->
-> When reading /proc/[pid]/stat, do_task_stat() accesses task->real_parent
-> without proper RCU protection, which leads:
->
->   cpu 0                               cpu 1
->   -----                               -----
->   do_task_stat
->     var = task->real_parent
->                                       release_task
->                                         call_rcu(delayed_put_task_struct)
->     task_tgid_nr_ns(var)
->       rcu_read_lock   <--- Too late to protect task->real_parent!
->       task_pid_ptr    <--- UAF!
->       rcu_read_unlock
->
-> This patch use task_ppid_nr_ns() instead of task_tgid_nr_ns() to adds
-> proper RCU protection for accessing task->real_parent.
->
-> Fixes: 06fffb1267c9 ("do_task_stat: don't take rcu_read_lock()")
-> Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+On Tue, Jan 27, 2026 at 08:14:54PM +0000, Al Viro wrote:
+> On Tue, Jan 27, 2026 at 10:39:04AM -0800, Linus Torvalds wrote:
+> > On Mon, 26 Jan 2026 at 23:42, Greg KH <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > Note that I had to revert commit e5bf5ee26663 ("functionfs: fix the
+> > > open/removal races") from the stable backports, as it was causing issues
+> > > on the pixel devices it got backported to.  So perhaps look there?
+> > 
+> > Hmm. That commit is obviously still upstream, do we understand why it
+> > caused problems in the backports?
+> 
+> This is all I've seen:
+> 
+> | It has been reported to cause test problems in Android devices.  As the
+> | other functionfs changes were not also backported at the same time,
+> | something is out of sync.  So just revert this one for now and it can
+> | come back in the future as a patch series if it is tested.
+> 
+> My apologies for not following up on that one; Greg, could you give some
+> references to those reports?
 
-Acked-by: Oleg Nesterov <oleg@redhat.com>
+Sorry, all I got was a "this commit caused devices to fail" and was
+found from bisection, on the 6.18.y tree.  Samuel has much more
+information as to exactly what is happening here as he can see the test
+results properly, I'll let him work through this, thanks!
 
+greg k-h
 
