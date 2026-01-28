@@ -1,213 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-75698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75699-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id wLRrC2OpeWl/yQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 07:14:59 +0100
+	id uJEMHdu2eWlHygEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75699-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 08:12:27 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8781A9D5FD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 07:14:58 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 788CD9D994
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 08:12:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3F77830115A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 06:14:54 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id BB4E73006921
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 07:12:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2BEB336ECD;
-	Wed, 28 Jan 2026 06:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59FD8325714;
+	Wed, 28 Jan 2026 07:12:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Zbl1bQn8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nUubFZEc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071F52D94A4
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 06:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.182
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769580892; cv=pass; b=URkRNF6JRB/SBu7qfWry5D94t4LGFeQwor+LvpeM4If1/EDleRumuPVgixygppF0BWuLV50t7/w+Zp3K2koV6hJvT8vWiUWWRyeWyBp4CcvZvGIXTM5FEgjvwpSck6zQ6lIQtEIqdQRz+L0EV2qBXKlpdegTQGD34tW5C1M2a48=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769580892; c=relaxed/simple;
-	bh=FNljWqWQt9qOCbIGPzq9ziKcW75YO4zn9RCnX/Z50n0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XdzGUgN24gkHe38Py76wkGxbt1Kzd2xy5MTcsV6kySsRkEBOOY0sopy9rMKo8lLB2WKtxQ1cDMBTjYKfhyGKZh1VdZO6nQadNEE9f11uKBH2JdJDBRqXxxRUQSuad0gtQwkiz+0KwbDUR5pvRF2Me85i68HE5IxIFtCUHNXTIG4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Zbl1bQn8; arc=pass smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-c2a9a9b43b1so3663136a12.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 22:14:50 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769580890; cv=none;
-        d=google.com; s=arc-20240605;
-        b=GDwn0tcc3xJiYxmJQVrUGMjAHBmx0e9Jsb3hHQRGSkRdLT8WtCSJoaZKTAzFhJx4lJ
-         K5CjcXGDD7Z1fdOsGt2dor3b8dBnoKcHhaRNm9k5YebH409LdoRg58jynUl+VS/sgwax
-         4H69OkIdS4EWqxqAcVqNeleAh2N2m9i2mWOYkdEbfIDPSdP6DdLU11Pz+Ibx40DayPfT
-         Q0dnQZ/BWUFkR1bYdTeKarfFtJFfSlwweij4P5kYMLcSG/QND3TC5UO5wZXqX5lJZB6S
-         H4dUqdcxSmR50xkVQUvaMX8kg0Ffe6V+pRF3XnXxAkca92xL8iGGhEYdOsVeNIMedl8I
-         sUEw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=83TsjpurtD8OBIUEHarXgB49R5wZ/IDo2qjIBUDI8U4=;
-        fh=w9f/pANwTsVNDBLB/mcgx3U+flsdhnCYXP60aPqA/5U=;
-        b=e4unXjA5bDNsSnm0fm5RMTPJId46W5raluut8XaxgHXpIPxci25VzHLqqxKDCFiq+K
-         CcOaBG2TNfeHNU9vE3tQKVZakCt4Btpv9ik04kUu0+JXUo/j7KILQz6+GMo7+Tx9/31V
-         dpAWRBvEcGdiEEBI+iq4dOfVt7taau3o1q0v4L2S8hC/pbCde+DonzWqH1GbbMtFxlvf
-         9PRBL26f22e1MINYJ2jBM5aW4pyI0wihxSqXMuiJRdO2hIUtZuUaJiQP9ltO1r2sE1Xn
-         lgqMrhM0ROpXQWpXHDiivqKPUF2AgdrbZbDzY49HVbFqosoS/6L+DgoxtXQkYkp0vTCW
-         NsJg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FA02E8B6B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 07:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769584338; cv=none; b=By6xHm48NRh8qFaIyJKJir6f7bRJZtoT2xnA1fhEIMrRx47TFw8bkPyoIE3u6Z+DuaR19vrJmtwhlpQs1cvGhca+pLvqOyXGmRMCdjBv0g/KAyQhe6nNi4Ya5OZxD1v1hbALg4ISYxvVQEYY7jONTVelZ7yd5XRpSiBfnxUveg0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769584338; c=relaxed/simple;
+	bh=muLONNMstIKkJHu3WR3lD+z5+kctvlw9FA4jPF2gKFU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cnLlbSxU/Cs7Pcpk+8/BlqcuHZZ9670wLD1+JwdgJjLndaXv3VGOvlg409HZP/uIHw+Fu26+MyKNQTcEgUUY3MWoKHjmc9rGrFp+0igEG6JUZT/xe9VU/KPCw+ZtgWXLt5/nudtAj2aocip06W0EZrR+2WFPRqrlDuvJh3zjCkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nUubFZEc; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-48049955f7fso56053435e9.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 23:12:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1769580890; x=1770185690; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=83TsjpurtD8OBIUEHarXgB49R5wZ/IDo2qjIBUDI8U4=;
-        b=Zbl1bQn8//RUIoOQd9gGoB/rTBWwBtYI5hy1TPoMtLUd5zvf7ssPGKH+5XEquIl6g0
-         3RECZHG/v7kfjHtoVTQDZVtpFN6DEKrUapo7I3SSbCQiVA53K/QU45dhBCsJQhuE3NS4
-         zc9NWuvcGXMNMFBVSkY7lQehMAJZgNc5/bYuO06Tz3Y+HOMgHYAs5TH7Jk2uJJExORMc
-         apper1NYBYZwZ2NtnMqqmepp38nFuIL4/A6djUyDAxp01RMctE2WBXuxCu3HzXSB9sGA
-         6NL1WTwLm+qSi21jY68dPhSYALrK63mgq1Cu4xCAn8t7Ptwn+U8YYQVcuhnA3oKmP2Bn
-         D5Ig==
+        d=gmail.com; s=20230601; t=1769584336; x=1770189136; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yupyqgTinsJTxzanc9/JLcyGpyZKwhADJIofZzWDenQ=;
+        b=nUubFZEcRO9REn7fXjU76vNhLMOxJFcF/TNcylEiK/OWT/nibxUCF4C2insVTDrG6F
+         4VZ5iJC6lf4Ffe4vJ57TK3tENSDZTaWzjUOVz40I+hcTT6qHH+OvoMIGt3fdva0XpYCf
+         3Hh4JhBZAx8GpqunmxVi0ooaqViSWjcLoZpNc+5Htj3GmuAEdlMdSM4+M50na/yy2mrf
+         MbL+0oTANQmb+Ob1BaOJMQysjT1eig5Q0/yOWFHy4wGkbiYqjtqf0OMA2juvYMqzejtj
+         swdT5vDgbbGredL+BQE50G/xI1GNVyqZOieqANZDVIltUNHxanBhWIoLD2SNVmGovCqt
+         dNGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769580890; x=1770185690;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=83TsjpurtD8OBIUEHarXgB49R5wZ/IDo2qjIBUDI8U4=;
-        b=ZHOZrct8f5FlRRMeT3KNuHiE8UchxKlmL9elZOXVpn306dJVKqorTfKXlmCfqIy7XA
-         F57Id/25aB4tHuEtwVMFngIvRKEB1yGAum4t893gnveb0pLDnChCLS9fXyEjOGUJmZtU
-         YxORTd0zXeeQBw40xwLeJA0rxmNKbdNRzPzOL8uz4gVThverRkvgX7urf3mfqt3bw3xT
-         RcCErgYibv9wIO3q/Vipgh3kCo7fGLtb+ApN4JbbcSabx5TwbpZjQJD7tylDKFipbeFN
-         7e6sCsKV0DixiKWleLufrDPCQheTJ2se1P1xAUT2PQeYPFpcgaODsSFtWrLNh7x/mDG9
-         HoRw==
-X-Gm-Message-State: AOJu0YwLxcC6Hh+fWX/cFVKCrmOeKyr3c+j9a2joZdgAeaTIOb7zIC+8
-	uoJNEicqsPrR8fdMy80D7B6nnQvdqJUYupX8DaQrlTjm2ZhLNhV9xUwDivrFOrejDDr9cs7mj8T
-	IKjCMyRT1z0j02ZaoYNazHe2T8siAiMX4jJXV1lwikA==
-X-Gm-Gg: AZuq6aKmI1p9ROhOq+O0Q+J5Q7sHS49uYuZ2HTB5qEEjnYZHmH/469r14y000fwc6WV
-	6hucT5R3lXJPBg2VWXGYKLmY8mM6Y+imuOlkgZKBza2mp6ox+1qqiVadt5ixgWj5FDqMtzhPJ34
-	RpYY1N3qrNZcsNOFnwy9h9TybXNd7E20VPE2pQ6gMvIjhmFhuDKdOzY8r73Owc8tR8y3tat4dC1
-	YiQQeRn4L16SKm6H+0TbF7FcnXAOKWxCM7cCq7H/D89GyOyrGaQRwn+MJwxXQHWhsaupkyNZOTJ
-	14MIkGW7jOpQ
-X-Received: by 2002:a17:90b:2882:b0:353:38b3:dccf with SMTP id
- 98e67ed59e1d1-353fed5caf5mr4163725a91.23.1769580890360; Tue, 27 Jan 2026
- 22:14:50 -0800 (PST)
+        d=1e100.net; s=20230601; t=1769584336; x=1770189136;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yupyqgTinsJTxzanc9/JLcyGpyZKwhADJIofZzWDenQ=;
+        b=hToVsaSQ3p0O/AAMKCFjXoLnSe8OE0GMmbJNg0zS20SdyvVFfefA9gCW9fogVjYUjX
+         tfAmo6Mxx6x8aK+DToxVxDOPeW/EXoVaAmr5uU835jbncRycjG0p5u6lO+Wqujo9N4Tm
+         Lrv4O+XFUC0kJWFXQ7o5kHOhzNxBKSSu552WbSq13BcKA/Ad0UV1JMRIdTXRpYKZL+Tt
+         CH4fqp24mI6Oj6rgPC5Af57OwclaSfQ6P4wGMnSusXY1HfXga4VdxYcTmvjrn8jXIL22
+         2LZFq7hyaw2q0N8L6YjX7V7sU4eiYEzsw95U2dXka5/TbY/0pysOR5cn7JEnQZ15k1P1
+         qKfw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+t6PIkWEnGMXoCO00VxEh84XqWOYmhm7qOlHuj22pbQ0lb7okxAy2sCyuB1L/AxWZnZLhEJW6s1h7R6Q4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo9Krcuu0SMJKmktnxwNzyTwhshLRxaubSp+qe8kaetmRPZdPN
+	zW/APP3BUcqmXaRxbieESe9/rYFzO00bUMDZQ+I9PY5plRuiUtTBSpBp
+X-Gm-Gg: AZuq6aKzwf8bJNtS2qVZRvLLU3MMYF3Xg9QeGPhWwNUK07VctqmoHEgJ+3iAvYuzLSk
+	cGg4lsPD7IFvZbOozuFsAeP5c6gyGyuvWSzyGR6mN9RofmIYnPK7FIk+WEabliGCWxuH0PLkVkM
+	659VOWhYTLPglPi0V0MVuTOqXULD2FzcWJBPv++R5EgXLGzTKwjULGvsV9FJwEqfJrWQpKLcZ3T
+	RdjT0yPAZDRupeT/fy9IuZeaMjD+PWVefj0e8Rg5V8exah+oss1L86c51kt/Wy8VMhnYt3UwDFR
+	NNOEUgWs19prAUH2aiEMmLs5meCTj73tiX5IwhAbJ0eCWGdVx1xvZszZdwlSr4C29wUbQlMzmvn
+	GVW7R/5GHwPagD7XCPdOU82KUeqLHTDaxa9rif5AryfK1XJ0vguGrvKME4L4oikG500BfAUxf63
+	7V/r4iuHM8wCbcHuj9riE+L8SzoHCM+gmRzAzlChFT6misRbuAy8z5KrTCk5I=
+X-Received: by 2002:a05:600c:4746:b0:47e:e9c9:23bc with SMTP id 5b1f17b1804b1-48069c5547amr55469465e9.30.1769584335773;
+        Tue, 27 Jan 2026 23:12:15 -0800 (PST)
+Received: from f (cst-prg-85-136.cust.vodafone.cz. [46.135.85.136])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4806d98c8desm31914585e9.3.2026.01.27.23.12.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Jan 2026 23:12:14 -0800 (PST)
+Date: Wed, 28 Jan 2026 08:12:07 +0100
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Dorjoy Chowdhury <dorjoychy111@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, jack@suse.cz, jlayton@kernel.org, chuck.lever@oracle.com, 
+	alex.aring@gmail.com, arnd@arndb.de, adilger@dilger.ca
+Subject: Re: [PATCH v3 1/4] open: new O_REGULAR flag support
+Message-ID: <vhq3osjqs3nn764wrp2lxp66b4dxpb3n5x3dijhe2yr53qfgy3@tfswbjskc3y6>
+References: <20260127180109.66691-1-dorjoychy111@gmail.com>
+ <20260127180109.66691-2-dorjoychy111@gmail.com>
+ <2026-01-27-awake-stony-flair-patrol-g4abX8@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAP4dvsfs55KqSNmdv_LM1_4moUUcVxvjCrj5zjGFxOH4mi8xOQ@mail.gmail.com>
- <CAJfpegtmBUSYVkx7_dB1p4XQsd2b156B_vCr=BNx-0yySHOhOg@mail.gmail.com>
-In-Reply-To: <CAJfpegtmBUSYVkx7_dB1p4XQsd2b156B_vCr=BNx-0yySHOhOg@mail.gmail.com>
-From: Zhang Tianci <zhangtianci.1997@bytedance.com>
-Date: Wed, 28 Jan 2026 14:14:39 +0800
-X-Gm-Features: AZwV_Qh77OGou_HWDvfesHWRrmsfGaFVqyJ4nvUJodlO2qOjs-NzNx4B4H20nwQ
-Message-ID: <CAP4dvsc0BXH+gBL6F9CjCWSw2bD3k8S0CGN2Ym-fZniZH61bag@mail.gmail.com>
-Subject: Re: [External] Re: [QUESTION] fuse: why invalidate all page cache in truncate()
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, =?UTF-8?B?6LCi5rC45ZCJ?= <xieyongji@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2026-01-27-awake-stony-flair-patrol-g4abX8@cyphar.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[bytedance.com,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[bytedance.com:s=google];
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TO_DN_ALL(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75698-lists,linux-fsdevel=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	DKIM_TRACE(0.00)[bytedance.com:+];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75699-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[zhangtianci.1997@bytedance.com,linux-fsdevel@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[4];
-	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MIME_TRACE(0.00)[0:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,bytedance.com:email,bytedance.com:dkim,mail.gmail.com:mid,szeredi.hu:email]
-X-Rspamd-Queue-Id: 8781A9D5FD
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,arndb.de,dilger.ca];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[mjguzik@gmail.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	NEURAL_HAM(-0.00)[-1.000];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 788CD9D994
 X-Rspamd-Action: no action
 
-Hi Miklos,
+On Wed, Jan 28, 2026 at 12:23:45AM +0100, Aleksa Sarai wrote:
+> In my view, this should be an openat2(2)-only API.
 
-On Tue, Jan 27, 2026 at 5:44=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
-wrote:
->
-> On Sun, 4 Jan 2026 at 07:51, Zhang Tianci
-> <zhangtianci.1997@bytedance.com> wrote:
-> >
-> > Hi all,
-> >
-> > We have recently encountered a case where aria2c adopts the following
-> > IO pattern when downloading files(We enabled writeback_cache option):
-> >
-> > It allocates file space via fallocate. If fallocate is not supported,
-> > it will circularly write 256KB of zero-filled data to the file until it=
- reaches
-> > an enough size, and then truncate the file to the desired size. Subsequ=
-ently,
-> > it fills non-zero data into the file through random writes.
-> >
-> > This causes aria2c to run extremely slowly, which does not meet our
-> > expectations,
-> > because we have enabled writeback_cache, random writes should not be th=
-is slow.
-> > After investigation, I found that a readpage operation is performed in =
-every
-> > write_begin callback. This is quite odd, as the file was just fully fil=
-led with
-> > zeros via write operations; the file's page cache should all be uptodat=
-e,
-> > so there is no need for a readpage. Upon further analysis, I discovered=
- that the
-> > root cause is that truncate has invalidated all the page cache.
-> >
-> > I would like to know why the invalidation is performed. After checking =
-the code
-> > commit history, I found that this has been the implementation since FUS=
-E added
-> > support for the writeback cache mode.
->
-> This in fact goes back to the very first version committed into Linus' tr=
-ee:
->
-> $ git show d8a5ba45457e4 | grep -C 3 invalidate_inode_pages
-> +void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr)
-> +{
-> +       if (S_ISREG(inode->i_mode) && i_size_read(inode) !=3D attr->size)
-> +               invalidate_inode_pages(inode->i_mapping);
->
-> This pattern was copied into setattr and, since it was harmless, left
-> there for two centuries.
+fwiw +1 from me, the O_ flag situation is already terrible even without
+the validation woes.
 
-Thanks for sharing your memories.
+I find it most unfortunate the openat2 syscall reuses the O_ namespace.
+For my taste it would be best closed for business, with all new flag
+additions using a different space.
 
->
-> And because it was there for so long there's a minute chance that some
-> fuse filesystem is relying on this behavior, so I'm a bit reluctant to
-> change it.
->
-> And fixing this does not in fact fix the underlying issue.  Manually
-> preallocating disk space by writing zero blocks has the size effect of
-> priming the page cache as well, which makes the random writes faster.
-> Doing the same with fallocate() does not have this side effect and
-> would leave the fuse filesystem with the bad performance.
+I can easily see people passing O_WHATEVER to open and openat by blindly
+assuming they are supported just based on the name.
 
-Yep, I agree. I'm just wondering if we can or should optimize for this
-specific case.
+that's a side mini-rant, too late to do anything here now
 
-Thanks,
-Tianci
+> In addition, I would
+> propose that (instead of burning another O_* flag bit for this as a
+> special-purpose API just for regular files) you could have a mask of
+> which S_IFMT bits should be rejected as a new field in "struct
+> open_how". This would let you reject sockets or device inodes but permit
+> FIFOs and regular files or directories, for instance. This could even be
+> done without a new O_* flag at all (the zero-value how->sfmt_mask would
+> allow everything and so would work well with extensible structs), but we
+> could add an O2_* flag anyway.
+
+I don't think this works because the vars have overlapping bits:
+  #define S_IFBLK  0060000
+  #define S_IFDIR  0040000
+
+So you very much can't select what you want off of a bitmask.
+
+At best the field could be used to select the one type you are fine with.
+
+If one was to pursue the idea, some other defines with unique bits would
+need to be provided. But even then, semantics should be to only *allow*
+the bits you are fine with and reject the rest.
+
+But I'm not at all confident this is worth any effort -- with
+O_DIRECTORY already being there and O_REGULAR proposed, is there a use
+case which wants something else?
+
+> 
+> > +#define ENOTREG		134	/* Not a regular file */
+> > +
+> 
+[..]
+> Then to be fair, the existence of ENOTBLK, ENOTDIR, ENOTSOCK, etc. kind
+> of justify the existence of ENOTREG too. Unfortunately, you won't be
+> able to use ENOTREG if you go with my idea of having mask bits in
+> open_how... (And what errno should we use then...? Hm.)
+> 
+
+The most useful behavior would indicate what was found (e.g., a pipe).
+
+The easiest way to do it would create errnos for all types (EISDIR
+already exists for one), but I can't seriously propose that.
+
+Going the other way, EBADTYPE or something else reusable would be my
+idea.
 
