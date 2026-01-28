@@ -1,101 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-75701-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id qOInKkjGeWl0zAEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75701-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 09:18:16 +0100
+	id EFixMWvJeWkezgEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 09:31:39 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 065629E227
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 09:18:15 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27C3F9E38A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 09:31:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 6AF57300C7D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 08:10:53 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D23FB301703E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 08:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6AE43382C4;
-	Wed, 28 Jan 2026 08:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA75A30FC39;
+	Wed, 28 Jan 2026 08:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iazI3kXr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cO1jMpWX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com [74.125.82.182])
+Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A742337694
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 08:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126362EE611
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 08:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769587849; cv=none; b=s34cSAXwIVyLnOaAdDOfVVjuk0pWSSjlTG4KLYR9FZImbqxaffaB939ca1W7V70THtHAVG8C7ktpCFM3cUbvWKh0TPLSJTlNHm4wz3GdnN6u8gMAQAID5ZrqhIKEXPDLTJprKtxJiCFWeQzu23rkufO8LnQuVWhQkOxb47SqRoU=
+	t=1769589013; cv=none; b=MI/wYWbdGOTyY7+Ok2xZmLJxUBKePT8CHYFx8CAQ39L/T7EikSdMk/H1761IpN8ULTIe2WLShDVEaOhwA+TS9MdZ2dIS7mk5uH2P/sHwgGWkMc9FlkFAI6wf3ZKCMHOKYw9brFZWIme42LZXKwXQn5bHkJu4wxGDi8xR76VGADQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769587849; c=relaxed/simple;
-	bh=VvaeVmuRI7CwYGqdVxKWNm5HmUN4mUtptE9EHW7ao6E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r2xvq/TARY20cI1zhCiAFMA3M/j+TvJ6mU7CEIxUtlP08kqNpz7CKDU9UR0lHMO+UbVCc8qeGTWqF0fI4lCU7bnU6JUJQWdcVCaLVV4zl1GcDr8ooa558UYWWMDtvVaeepaWedUY4nWopPDSNMbhg9CK23UpAr8NsYPkX008dX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iazI3kXr; arc=none smtp.client-ip=74.125.82.182
+	s=arc-20240116; t=1769589013; c=relaxed/simple;
+	bh=i7jIMtgn5v7k2mHdb0BICegbJX4JV3eIH5WClHRS1vg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K1VcFhj0w5KR2c+OA8UBpjLiHrIh2DfaMxB9GY4AmfaS/U85G0JcDsTqBML4Ml7T9c4teEvXI9iU2hWp0Vtb8BJEjkcsy8msV96Qvj6N5jjC4n83yKRH5sbtQeN0FIPEymhIkZrWMLM1S/etmG1G45xTXv0G8hQdp6S8y/KAgkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cO1jMpWX; arc=none smtp.client-ip=74.125.82.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-dy1-f182.google.com with SMTP id 5a478bee46e88-2b714f30461so5831068eec.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 00:10:47 -0800 (PST)
+Received: by mail-dl1-f49.google.com with SMTP id a92af1059eb24-11f36012fb2so9364504c88.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 00:30:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769587847; x=1770192647; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ztBy2YnQIGFAzybi0JuQPxDYq2lTOWQlLD52L+pzkeo=;
-        b=iazI3kXrYBArObOGxGmjhq+86n7ZKfKV2Ojgdq/brdYdMaJHuVfTjVsRFRlEtvlBBQ
-         bZYd6OhEO7wjf6dDd4qmojHJ2ScYLO4lV4W140Z5d/9bE1DyAvVPjQma+t/35hGg/50N
-         KVOeRCHT0fyGQ4L0ZS+NqPlrHr79biWAEiZz15wrMHngIzhjden6ZyKWgltxEhB5UJ9Q
-         Xh6egIkvTOeU3v+Uauf8wcD04Rcs69AwZmK+vMpou/Tacb0DSgeSnCo7iWFD4uBY6Rsp
-         zoNiClZWp5D+V9qXBO0TtlshaAxuuSujx71ErttsYVt+8IilzbtJf9z2qO+lSjEbn23J
-         ynkg==
+        d=gmail.com; s=20230601; t=1769589011; x=1770193811; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UWNDXOn4e3ISKUfrp4YI7kPUB09IKnTiOMAEzDBRtkg=;
+        b=cO1jMpWXOrxr8Lok2WclqSPtn2IfZUmiR5LCksNoHWTvJJgKxmqW4bpNn7BZPi2TSe
+         FQspOQHTiKpHEXDey44xKcutCJBaCDbQbkSI+VY287+JUv6g4/Ro/i/6XXCKHQ9ZasLs
+         MxmgRjH5bsxs16KLeHfRryuM251P3AOVMMW/ZScIniZj0WgMQ5InS3bY/nUb0B0iJyBk
+         tzoD1UPq/IPrMLDPCu7FPSWr9AzK9+BBW+pZLPO1akDt56jXfWlbltSBXsy2MQk845Zz
+         fmZTEIV5qISTvJ6AYeAVxCXErWZHfoeyjFDHkQEOmSQhblzMfZbwzN9wRmX8C+JafDc8
+         QCEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769587847; x=1770192647;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ztBy2YnQIGFAzybi0JuQPxDYq2lTOWQlLD52L+pzkeo=;
-        b=aYsC/Ug84xMA4J3AdZTFRz32C1FcmbZcyQHbJ3eS1wUNq/oOUtlwB4cbqilyFfqg5b
-         fYPnHgdi/3mjyMZxVAWQg6tI4ZMn3SHoV7072ML/iPYw/lOt2IqmQ6xImub0sSzJKvd5
-         A1bWSQb0ExHl+B1ANRZfOcbGMh4PTAFoxFkBybcH96LdI9JQk6U0kIwwi+/embwUq8pQ
-         YHF6zXzffCZHFCqA2tylZI8d0ZPjTsLORs07m7a7+l0Kf80GPUW8Se9PHWGmphH48MY3
-         L3Ap8K+eHj5peYegqldazjY/JL29oQQfULtWpv1KI7d8s95QjkNj8DVe/6Y7xpQVQVhX
-         g4vA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrOjDf0c5zf8IKIGu9HQydwgYGoq4GqKJLLZVrWqHR6t2Kqb407EF99zHqce8rJml8jVg8zSly1z+5Oc/8@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw51oWc+sZB6xZfY/ykUAQ/abuc5boD1YZ/TIqysyeKaAXhW+JY
-	5xLhYGVpN3h4wcM5gkw3FKLWYEAeNxWMz2HZEG8evKwYNadsv67MuKp8
-X-Gm-Gg: AZuq6aIRLdhTWvtTHnxIn+GLqGxOgS2OiREg4o3yRvCUld6qNL8bGXwU4hI3bNP2Z6g
-	7sSaEeeq4XrdLRdC5rjw+MCqI3Rd6w04OHqIeEsGLn30SN22Ry/pvarpBeUEV7ydz3Vc5h4diWo
-	houerf3QTMxkexsIBEJqCcfTel1604soNgXw/oXwlaiEHNQk/RPGS12wJ3SFWJ7VNxglUd8gCBz
-	GgfR16cvrEVm9EQS8Nvw31zeoGdsFwgZRnGBvL67Bh97lJvSICgTNhxjO+sugeWSlR2DDR0Llof
-	/jQVXoIq7ZCWFmZ99WEq4CXMTgx1Aw1yb73iQRNbM9viupOQx/oipQqichKvA9F7kUkUOf4+Flh
-	W9iqt84LWpOIcSl/NBntkIMAFSNwLry8VaC2qgL25VqviZaYuRjycNIaBnOpFqWoOoYW2xrO4iy
-	Pji2hE6ncZJoLpTwiFVWNeIEn0jBb0+sdgQA==
-X-Received: by 2002:a05:7301:fa8b:b0:2ae:581f:ce5 with SMTP id 5a478bee46e88-2b78d8a8841mr2800563eec.7.1769587847034;
-        Wed, 28 Jan 2026 00:10:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1769589011; x=1770193811;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UWNDXOn4e3ISKUfrp4YI7kPUB09IKnTiOMAEzDBRtkg=;
+        b=Fw8FB2cC2fcMpjB1eZiAH66iX3eJ6l5gJkhLDWHqmZnkuSwMLmDLJ5+M4empy806N8
+         lIBriu+CyCeoTkbiJckrwP+CvpmvmRRvlZDVTwQ/hxTN6HKyYA5pCGUW7VQJ6Td96gXL
+         7sBPmS/9pTZxoBx/PLaJjTL9Pppu/Bcf48tg+S738gajcfA6A9EJ11yGXlw1Azoa3GYQ
+         XAQQpfP2uut3vNbCQ/nRf5xuVxWBMlHH8ppbSHHQWBjYCUb/LilNAPXyuRMRAy7g9AnE
+         FgK5BtaWAmECsDv3SdUqIVWdTRl007N+m/v7GF5tnK1JXX30fpabdJgaz8/KyrYvizFt
+         XSUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2VXDHpjf5Hc3cRakF3r3aSkbgEpuP24v3z37+tNQGnH5zIOj3N7po1hZKS0N9ofi/8Xc9keJpWmX6mbXo@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjqyXsDZojH4c2PBGh8P8ox9z1j23uXy/Ko8iUrdpvaaVtIulj
+	SwLN7lUqnvXy01N6/s5t1DoXXh0K9Nll/3onjaX6hwprFamMQVczpFOM
+X-Gm-Gg: AZuq6aIf2K6OsLO2TUQ6wwqXfVYEvjihws5GNNiFUQ1IODiLWMuMTiuDp0xzeUPbDvE
+	W66g+gtVbhu1ZzR1P4uG0MzfJjxZPewDG8Y0hiJaqcwrmrN9WxdwNaCQFPW76P3lTxG6UbhW0cx
+	3EpZLomgPJ49IMaYUAH1mNzrTUd7Jw8bXTSsT/roIaHWcGl5QHk7Zw2Vel5z0TE8PtArFRRWwTJ
+	+4e94Bd0cxHZ/kdbpL/f5qWkksmY7PTu6ZzjkLi1vtUPNAiksb0gvvOfA5grhJtu5qyFz6Lf5JM
+	L/oDZJ2Ki6iBqjAmWEqXONzQfZPwcqonPj/gLv7S1lM0f8tt1rKKpfdoFZWXHduUDzE/fd4KQ6Y
+	d8leQsIthhDE3iyu9h1zbHICq1zOX/jdc6/JVZxYF4zwoZ+txVE0Rbzfxx8IJDlxufE4TdFEk1a
+	TilTSVBReBWlXFPqxC2CEjp6TPrAR8XFQPJw==
+X-Received: by 2002:a05:7022:b90:b0:119:e56b:91da with SMTP id a92af1059eb24-124a006e3b7mr2906966c88.11.1769589010506;
+        Wed, 28 Jan 2026 00:30:10 -0800 (PST)
 Received: from VM-16-24-fedora.. ([43.153.32.141])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b7a16cfa25sm1642435eec.5.2026.01.28.00.10.46
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b7a1abe938sm1750841eec.16.2026.01.28.00.30.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jan 2026 00:10:46 -0800 (PST)
-From: Jinliang Zheng <alexjlzheng@gmail.com>
-X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: oleg@redhat.com
-Cc: akpm@linux-foundation.org,
-	alexjlzheng@gmail.com,
-	alexjlzheng@tencent.com,
+        Wed, 28 Jan 2026 00:30:09 -0800 (PST)
+From: alexjlzheng@gmail.com
+X-Google-Original-From: alexjlzheng@tencent.com
+To: oleg@redhat.com,
+	usamaarif642@gmail.com,
 	david@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
 	lorenzo.stoakes@oracle.com,
 	mingo@kernel.org,
-	mjguzik@gmail.com,
+	alexjlzheng@tencent.com,
 	ruippan@tencent.com,
-	usamaarif642@gmail.com
-Subject: Re: [PATCH] procfs: fix missing RCU protection when reading real_parent in do_task_stat()
-Date: Wed, 28 Jan 2026 16:10:45 +0800
-Message-ID: <20260128081045.2833487-1-alexjlzheng@tencent.com>
+	mjguzik@gmail.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2] procfs: fix missing RCU protection when reading real_parent in do_task_stat()
+Date: Wed, 28 Jan 2026 16:30:07 +0800
+Message-ID: <20260128083007.3173016-1-alexjlzheng@tencent.com>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <aXnCX7SmABmQJis3@redhat.com>
-References: <aXnCX7SmABmQJis3@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -108,96 +103,77 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75701-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[linux-foundation.org,gmail.com,tencent.com,kernel.org,vger.kernel.org,oracle.com];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FROM_NEQ_ENVFROM(0.00)[alexjlzheng@gmail.com,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	TAGGED_FROM(0.00)[bounces-75702-lists,linux-fsdevel=lfdr.de];
 	TO_DN_NONE(0.00)[];
+	FREEMAIL_TO(0.00)[redhat.com,gmail.com,kernel.org,linux-foundation.org,oracle.com,tencent.com];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	DKIM_TRACE(0.00)[gmail.com:+];
+	FROM_NO_DN(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	NEURAL_HAM(-0.00)[-1.000];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	FREEMAIL_FROM(0.00)[gmail.com];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
-	FROM_HAS_DN(0.00)[]
-X-Rspamd-Queue-Id: 065629E227
+	FROM_NEQ_ENVFROM(0.00)[alexjlzheng@gmail.com,linux-fsdevel@vger.kernel.org]
+X-Rspamd-Queue-Id: 27C3F9E38A
 X-Rspamd-Action: no action
 
-On Wed, 28 Jan 2026 09:01:35 +0100, oleg@redhat.com wrote:
-> On 01/27, Mateusz Guzik wrote:
-> >
-> > On Tue, Jan 27, 2026 at 06:25:25PM +0100, Oleg Nesterov wrote:
-> > > On 01/27, alexjlzheng@gmail.com wrote:
-> > > > --- a/fs/proc/array.c
-> > > > +++ b/fs/proc/array.c
-> > > > @@ -528,7 +528,9 @@ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
-> > > >  		}
-> > > >
-> > > >  		sid = task_session_nr_ns(task, ns);
-> > > > -		ppid = task_tgid_nr_ns(task->real_parent, ns);
-> > > > +		rcu_read_lock();
-> > > > +		ppid = task_tgid_nr_ns(rcu_dereference(task->real_parent), ns);
-> > > > +		rcu_read_unlock();
-> > >
-> > > But this can't really help. If task->real_parent has already exited and
-> > > it was reaped, then it is actually "Too late!" for rcu_read_lock().
-> > >
-> > > Please use task_ppid_nr_ns() which does the necessary pid_alive() check.
-> 
-> Ah, I was wrong, I forgot about lock_task_sighand(task). So in this case
-> pid_alive() is not necessary, and the patch is fine.
-> 
-> But unless you have a strong opinion, I'd still suggest to use
-> task_ppid_nr_ns(), see below.
+From: Jinliang Zheng <alexjlzheng@tencent.com>
 
-I don't have a strong opinion on this. Your suggestion makes sense - task_ppid_nr_ns()
-is more maintainable. I'm happy to update the patch as you recommend.
+When reading /proc/[pid]/stat, do_task_stat() accesses task->real_parent
+without proper RCU protection, which leads:
 
-Thanks,
-Jinliang Zheng. :)
+  cpu 0                               cpu 1
+  -----                               -----
+  do_task_stat
+    var = task->real_parent
+                                      release_task
+                                        call_rcu(delayed_put_task_struct)
+    task_tgid_nr_ns(var)
+      rcu_read_lock   <--- Too late to protect task->real_parent!
+      task_pid_ptr    <--- UAF!
+      rcu_read_unlock
 
-> 
-> > Suppose it fits the time window between the current parent exiting and
-> > the task being reassigned to init. Then you transiently see 0 as the pid,
-> > instead of 1 (or whatever). This reads like a bug to me.
-> 
-> But we can't avoid this. Without tasklist_lock even
-> 
->  	task_tgid_nr_ns(current->real_parent, ns);
-> 
-> can return zero if we race with reparenting. If ->real_parent is reaped
-> right after we read the ->real_parent pointer, it has no pids. See
-> __unhash_process() -> detach_pid().
-> 
-> > It probably should do precisely the same thing proposed in this patch,
-> > as in:
-> > 	rcu_read_lock();
-> > 	ppid = task_tgid_nr_ns(rcu_dereference(task->real_parent), ns);
-> > 	rcu_read_unlock();
-> 
-> No, task_ppid_nr_ns(tsk) does need the pid_alive() check. If tsk exits,
-> tsk->real_parent points to nowhere, rcu_read_lock() can't help.
-> 
-> This all needs cleanups. ->real_parent and ->group_leader need the helpers
-> (probably with some CONFIG_PROVE_RCU checks) and they should be moved to
-> signal_struct.
-> 
-> So far I have only sent some trivial initial cleanups/preparations, see
-> https://lore.kernel.org/all/aXY_h8i78n6yD9JY@redhat.com/
-> 
-> I'll try to do the next step this week. If I have time ;) I am on a
-> forced PTO caused by renovations in our apartment.
-> 
-> Oleg.
+This patch use task_ppid_nr_ns() instead of task_tgid_nr_ns() to adds
+proper RCU protection for accessing task->real_parent.
+
+Fixes: 06fffb1267c9 ("do_task_stat: don't take rcu_read_lock()")
+Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+---
+changelog:
+
+v2: - use task_ppid_nr_ns(), suggested by Oleg Nesterov
+    - clear commit message
+
+v1: https://lore.kernel.org/linux-fsdevel/20260127150450.2073236-1-alexjlzheng@tencent.com/
+---
+ fs/proc/array.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/proc/array.c b/fs/proc/array.c
+index 42932f88141a..5571177e0435 100644
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -528,7 +528,7 @@ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
+ 		}
+ 
+ 		sid = task_session_nr_ns(task, ns);
+-		ppid = task_tgid_nr_ns(task->real_parent, ns);
++		ppid = task_ppid_nr_ns(task, ns);
+ 		pgid = task_pgrp_nr_ns(task, ns);
+ 
+ 		unlock_task_sighand(task, &flags);
+-- 
+2.49.0
+
 
