@@ -1,246 +1,338 @@
-Return-Path: <linux-fsdevel+bounces-75677-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75678-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 4EahI2dYeWldwgEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75677-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 01:29:27 +0100
+	id SGmtFLBZeWlnwgEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75678-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 01:34:56 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E88079BA81
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 01:29:26 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73DA79BAE9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 01:34:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E02AC301C899
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 00:29:11 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 7CEC5300A5BA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 00:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7601F5846;
-	Wed, 28 Jan 2026 00:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553B81F3BA2;
+	Wed, 28 Jan 2026 00:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RoTkF48w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rlcxSH0i"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B492A1E9B1A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 00:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.217.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769560149; cv=pass; b=hHUDi4V3H56zaEfr+TyKjOhUw/kXCDGZKUyDdXwaENPWIRgvSKqf1+OFSbJcr5sjViOKWb68XM/mwY0KlTkN8SNERNlC5YQxqrMf60H4+y8enof1XC7yt7OrEKznW8aiR0E/tTcf1MxZzypAqkP3YnZ5cvjxBDb6r6oyniLxFjQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769560149; c=relaxed/simple;
-	bh=afdfdT2YOMsD0iZJQSrtAQ+axiAIWjxn1C3TT/YCmDM=;
-	h=From:In-Reply-To:References:MIME-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZyFzONxJ9ZwM3VUwWoUJUIpHwzCJ1ix74v6d5mQr1wDBI6NQKftIb59tAy66L7J3KPFVaU79BmIHI+MFGJ8lhHDAlqdj3HSZU+/BKrYCikz3SnTHglvS48c8L/IWYl4JPq7LUAR1SM45zD37O9LTl0Oyuh3sq1vBRKae2Mr6TYY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RoTkF48w; arc=pass smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-5efa6d5dbf5so1852311137.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 16:29:07 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769560146; cv=none;
-        d=google.com; s=arc-20240605;
-        b=f7Ze9xTaUhVoh7OUjAyL42qnQKpCfCNktk6axpmk9uBf5dfST/VAssRu2plE7G2xnz
-         CDCZ82/VxJ8RniyBzpQfuWtol3gC+NBET4e9zwDGghZo8Pl1UBkAtWa0Y4pvy397+HVl
-         mQUA79HoN6hvjWRWpJVuIegM1jI3IMpYIXvAbLcotoGz2IYCS/XlArX+S+WSzgy/C4T0
-         ZXtLA7i2fRWILQE+6kk5g1Bp+3gKiG9do0Wjo2DY+e3sMUfrgKt8gJBGh3zwKNYIcjv9
-         eFmISllAjGTn9UrWEiyktxM3xx+m6lcvl57CtlJCdIBzWihJqiphelE5qdn4qnfQh684
-         ZomA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date
-         :mime-version:references:in-reply-to:from:dkim-signature;
-        bh=afdfdT2YOMsD0iZJQSrtAQ+axiAIWjxn1C3TT/YCmDM=;
-        fh=o4R5g/xlPRvx7hbghIPoTp2+isbFGZD95yfZXH/EUi0=;
-        b=IQ0uwULnd79xlm4I1HES0Y8nBeaQcZxvJPep76imTRBwFiI/Mt/dl1sJWNlm1N+fGf
-         TPAC2qnuf/yEmXNyNfMB/tU92wMU2D0U36VK3JV8fSHLlri04gvl6/qbJIYKE3l+MHvW
-         lB4svNVA+h/KPs9sM4UGgwoH8y7H5Papm6jE71YxYvpwZZFpjbOQLQFBQeXy/mtw1kde
-         CeEfudGeUypagwLNc+HFgwb8XdxZAC/KDi+PXSPnqWxRpZmJyQZgmXLMmrZqvrewRLFX
-         UQPS6BTAr6ledvZojLKD1FVHS8kFHfc5wFxsO4IqdcRh8IZYzcLGVOl0F/HWRXUKAq9q
-         wYKQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1769560146; x=1770164946; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date
-         :mime-version:references:in-reply-to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=afdfdT2YOMsD0iZJQSrtAQ+axiAIWjxn1C3TT/YCmDM=;
-        b=RoTkF48w++rpKI98DbFbYQgosbq5Z9QYSnnq2r0pJkWKQL7IXk+tBiTjV3OruM/GGg
-         ODyn1mmKK+G87tX796IdJALpF+WQsSR4L1Vxu5SJc+ZvRFEwpfNQRL3hcRj5/OEI2soa
-         6tWPkr57+6vqerzADKUP6NUF13qgXMGoptBRWRkx1Ax6eUQ6DQwyvVYbU3mlNTlofdzs
-         HUJH460iLD2dejAHI07YqaoXQXLkT5ymt+DtUkE7p5CWNgbbwZpBXSjB8RmKNABMm+sb
-         ALXGe3FrNfDccfBmdSvM+tZA37dZs+apXke4UFlxZ/l3FUpPzcVJTVRjdqdDnck/TP4s
-         kwmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769560146; x=1770164946;
-        h=content-transfer-encoding:cc:to:subject:message-id:date
-         :mime-version:references:in-reply-to:from:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=afdfdT2YOMsD0iZJQSrtAQ+axiAIWjxn1C3TT/YCmDM=;
-        b=vAbhQ1xyyTR34Iq8oI0fdy+ABpldW/ID5+OBQgX/BMSnbG8M7SRIWluD7/uXG8wDS3
-         2dcH+nl0Qizbb4Zd4B49/fT0NdzAmzd8QInG17ZEKRq+OpEFvWWBUMkQ8xdC7Qy4uFfI
-         OrOS1mlW/nQ37NNlMpSPeyl7xPHMxKyU8v1LMoj+JsgrN+X7Musp8iebjwwjZdPtWnvr
-         xzOmVAa/WcI/Ke7/NYwqo9WqzSJPD3rBlxh7UQDnHJxmskmAAPxxL3twOPcckfayPC/A
-         eqMtF4Z63Xk5WsOlBfWuiJuf3Y4AoJMK/oBVsvZw4e+gEHyweIaHgOIg23OsXMU9fqz7
-         D/pA==
-X-Forwarded-Encrypted: i=1; AJvYcCWboi2x+Jcl8rvDmSOGZ2mwbDaN8o3CqcLBpcXg+uF68vtqoX5hiUxwNKgzIu9nfqfuFyRM6L0OyyppqEhY@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjDgdFTfeFXKKZ/B6DjWGS8JmxRazM25KfgyxIckblNSAsdDyv
-	BMwxi8wHvslOJK+ZhM6JsQnQgeywYMgEuYzE9HsT5CMy/EJLLPTQdUEObrLL8MXb1sH4a4XaPKB
-	NCzVYwCHaPz+hDlNT9iLShhdpHoN/vv7Rddc5uaGQ
-X-Gm-Gg: AZuq6aIfUbsAZQtyOBCib8L5FjVrttlwgccl6ufb4fo0oXmpNLHn7oG6ifBZdChvDsH
-	6gVpf7197NNnH1X8FKmHxlFLSzQYy33AhNBQFyfThEy5APum/jjQOYg/0q1mS6yj5T7JaMaZoeg
-	+GH1cBHV11LZAPgXs0h7AZjciOBv6HMKh4o/j/L8LD7vaIKlw1evvaHDxRndP+dAhM71kUt6Zds
-	mvPtpXPolWPdZbeVp8wbm71bgf+xPmbdI+biQ4rylCtPKL9zOqy156Ug9Sgt6EghbOLCM4i8l0J
-	pMGQl3zN6Uehw5yv19OogxboeS9f7BKD2dqt
-X-Received: by 2002:a05:6102:94f:b0:5db:cba0:941 with SMTP id
- ada2fe7eead31-5f72380ed5bmr1335024137.38.1769560145803; Tue, 27 Jan 2026
- 16:29:05 -0800 (PST)
-Received: from 176938342045 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 27 Jan 2026 16:29:05 -0800
-Received: from 176938342045 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 27 Jan 2026 16:29:04 -0800
-From: Ackerley Tng <ackerleytng@google.com>
-In-Reply-To: <f4f2a0297e38ac45e4438342ac2c882b91544acb.camel@intel.com>
-References: <20260114134510.1835-1-kalyazin@amazon.com> <20260114134510.1835-8-kalyazin@amazon.com>
- <ed01838830679880d3eadaf6f11c539b9c72c22d.camel@intel.com>
- <CAGtprH_qGGRvk3uT74-wWXDiQyY1N1ua+_P2i-0UMmGWovaZuw@mail.gmail.com>
- <8c1fb4092547e2453ddcdcfab97f06e273ad17d8.camel@intel.com>
- <CAEvNRgEbG-RhCTsX1D8a3MgEKN2dfMuKj0tY0MZZioEzjw=4Xw@mail.gmail.com>
- <ee9c649eed3893d852c3d20fb96bdc4904b7c295.camel@intel.com>
- <CAEvNRgEz0+ic9uvcsWYqWgR5EV=TfY0SAGC39zAL+n19SoBXmw@mail.gmail.com> <f4f2a0297e38ac45e4438342ac2c882b91544acb.camel@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F7C2745E;
+	Wed, 28 Jan 2026 00:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769560472; cv=none; b=FtXRnMUsTolKInbITMkAG7XXtxKplERac2jffvY8U4tKpLWeLEfRSeENjYoGChyvWl0nUeE0L/fWWPAXgRV06ETTebpM68YPk8oPv1+xCuviGkWeXECwTHadW+Aym8fKFMFYoHcZjfIeS8C2P84k4/dxTyP5FfFo4Zpf3Uh3DKY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769560472; c=relaxed/simple;
+	bh=SsPTekksUpq7TEr4XTUb0fDNtPBNokKQnxykvA6ML+M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RpaM7HHgP4X2gHncS4OrOfdy8k3UYuYGP+m6uRFwnsvhPU1ZdBpJyg1xiRVGr3VvX+nnkVGziAS7mmVYGv9wvVbcfDTU38eT6J+GxnSP1nMqLBIqOZaiQiq5cERTBaEvBcYihmrmiFl49xAdZCoVQOscMA4m2H076uJt4YrcT1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rlcxSH0i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49572C2BC86;
+	Wed, 28 Jan 2026 00:34:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769560472;
+	bh=SsPTekksUpq7TEr4XTUb0fDNtPBNokKQnxykvA6ML+M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rlcxSH0iKg1A3upDFu/j2Mr5b278KD6h17gLS7v+E4OSBcLKNxKRDKRaA8IR4lJo5
+	 IQ4lXDk3Klkaro/KUNNKByVaAqstesRUmINMTFflCaxMPnF6p9WuYME54lbvo/7z0F
+	 9a9jz2CgL9QjE5TJ7IDZPhocibMDKm2kr/p4MVzMdxe0hsZYBV6ohj0y+fQGTyY2Ty
+	 bSOrBhYxsC56GR1ZoUI6DwOgae4zer0RPqaKivAnWTrcugRRLwxoGtTPUbGoc/MWFO
+	 vMyxwUMrs2/ZU3nwj2FzwWIOQplwKj/FcpBfGaKZqDWfbbHvWtlPBEHaN6PPjZoYt2
+	 /iH5SHqkS1lBQ==
+Date: Tue, 27 Jan 2026 16:34:31 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, bernd@bsbernd.com, neal@gompa.dev,
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCHSET v6 4/8] fuse: allow servers to use iomap for better
+ file IO performance
+Message-ID: <20260128003431.GX5910@frogsfrogsfrogs>
+References: <20251029002755.GK6174@frogsfrogsfrogs>
+ <176169810144.1424854.11439355400009006946.stgit@frogsfrogsfrogs>
+ <CAJnrk1Z05QZmos90qmWtnWGF+Kb7rVziJ51UpuJ0O=A+6N1vrg@mail.gmail.com>
+ <20260127022235.GG5900@frogsfrogsfrogs>
+ <CAJnrk1bSVy4=c=N_FfOajs1FE4o8T=Br=jFm7gBDaCGvRpgGVA@mail.gmail.com>
+ <20260127232125.GA5966@frogsfrogsfrogs>
+ <CAJnrk1bxhw2u0qwjw0dJPGdmxEXbcEyKn-=iFrszqof2c8wGCA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 27 Jan 2026 16:29:04 -0800
-X-Gm-Features: AZwV_Qi5-DP-v6wjOnL-aDMsdDCx4XY7-YGdXQ0tP6_jJk0lLjibrIAwkazF3pk
-Message-ID: <CAEvNRgHMOWfCRnkx7YJoAzNpBBOHCgvR5GHe66uHJX45WDT-YA@mail.gmail.com>
-Subject: Re: [PATCH v9 07/13] KVM: guest_memfd: Add flag to remove from direct map
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "Annapurve, Vishal" <vannapurve@google.com>
-Cc: "david@kernel.org" <david@kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "svens@linux.ibm.com" <svens@linux.ibm.com>, 
-	"jgross@suse.com" <jgross@suse.com>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
-	"surenb@google.com" <surenb@google.com>, "vbabka@suse.cz" <vbabka@suse.cz>, 
-	"riel@surriel.com" <riel@surriel.com>, "pfalcato@suse.de" <pfalcato@suse.de>, "x86@kernel.org" <x86@kernel.org>, 
-	"rppt@kernel.org" <rppt@kernel.org>, "thuth@redhat.com" <thuth@redhat.com>, 
-	"borntraeger@linux.ibm.com" <borntraeger@linux.ibm.com>, "maz@kernel.org" <maz@kernel.org>, 
-	"palmer@dabbelt.com" <palmer@dabbelt.com>, "ast@kernel.org" <ast@kernel.org>, 
-	"peterx@redhat.com" <peterx@redhat.com>, "alex@ghiti.fr" <alex@ghiti.fr>, "pjw@kernel.org" <pjw@kernel.org>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"hca@linux.ibm.com" <hca@linux.ibm.com>, "willy@infradead.org" <willy@infradead.org>, 
-	"wyihan@google.com" <wyihan@google.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
-	"jolsa@kernel.org" <jolsa@kernel.org>, 
-	"yang@os.amperecomputing.com" <yang@os.amperecomputing.com>, "jmattson@google.com" <jmattson@google.com>, 
-	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>, "luto@kernel.org" <luto@kernel.org>, 
-	"haoluo@google.com" <haoluo@google.com>, "patrick.roy@linux.dev" <patrick.roy@linux.dev>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "coxu@redhat.com" <coxu@redhat.com>, 
-	"mhocko@suse.com" <mhocko@suse.com>, 
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, 
-	"mlevitsk@redhat.com" <mlevitsk@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
-	"loongarch@lists.linux.dev" <loongarch@lists.linux.dev>, "song@kernel.org" <song@kernel.org>, 
-	"oupton@kernel.org" <oupton@kernel.org>, "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>, 
-	"kernel@xen0n.name" <kernel@xen0n.name>, 
-	"Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>, 
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>, "jhubbard@nvidia.com" <jhubbard@nvidia.com>, 
-	"jthoughton@google.com" <jthoughton@google.com>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
-	"Yu, Yu-cheng" <yu-cheng.yu@intel.com>, "peterz@infradead.org" <peterz@infradead.org>, 
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
-	"hpa@zytor.com" <hpa@zytor.com>, "yonghong.song@linux.dev" <yonghong.song@linux.dev>, 
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "shuah@kernel.org" <shuah@kernel.org>, 
-	"chenhuacai@kernel.org" <chenhuacai@kernel.org>, "prsampat@amd.com" <prsampat@amd.com>, 
-	"kevin.brodsky@arm.com" <kevin.brodsky@arm.com>, "maobibo@loongson.cn" <maobibo@loongson.cn>, 
-	"shijie@os.amperecomputing.com" <shijie@os.amperecomputing.com>, 
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, "itazur@amazon.co.uk" <itazur@amazon.co.uk>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "yuzenghui@huawei.com" <yuzenghui@huawei.com>, 
-	"gor@linux.ibm.com" <gor@linux.ibm.com>, "dev.jain@arm.com" <dev.jain@arm.com>, 
-	"daniel@iogearbox.net" <daniel@iogearbox.net>, "jackabt@amazon.co.uk" <jackabt@amazon.co.uk>, 
-	"agordeev@linux.ibm.com" <agordeev@linux.ibm.com>, "andrii@kernel.org" <andrii@kernel.org>, 
-	"mingo@redhat.com" <mingo@redhat.com>, 
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, 
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, "joey.gouly@arm.com" <joey.gouly@arm.com>, 
-	"derekmn@amazon.com" <derekmn@amazon.com>, "xmarcalx@amazon.co.uk" <xmarcalx@amazon.co.uk>, 
-	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
-	"kalyazin@amazon.co.uk" <kalyazin@amazon.co.uk>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "sdf@fomichev.me" <sdf@fomichev.me>, 
-	"jackmanb@google.com" <jackmanb@google.com>, "bp@alien8.de" <bp@alien8.de>, "corbet@lwn.net" <corbet@lwn.net>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "jannh@google.com" <jannh@google.com>, 
-	"john.fastabend@gmail.com" <john.fastabend@gmail.com>, "kas@kernel.org" <kas@kernel.org>, 
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "will@kernel.org" <will@kernel.org>, 
-	"seanjc@google.com" <seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1bxhw2u0qwjw0dJPGdmxEXbcEyKn-=iFrszqof2c8wGCA@mail.gmail.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
-	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+X-Spamd-Result: default: False [-1.66 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[kernel.org,vger.kernel.org,arm.com,linux.ibm.com,suse.com,google.com,suse.cz,surriel.com,suse.de,redhat.com,dabbelt.com,ghiti.fr,linux.intel.com,linutronix.de,infradead.org,os.amperecomputing.com,linux.dev,linux-foundation.org,ziepe.ca,lists.linux.dev,oracle.com,xen0n.name,huawei.com,nvidia.com,intel.com,gmail.com,zytor.com,amd.com,loongson.cn,amazon.co.uk,iogearbox.net,lists.infradead.org,eecs.berkeley.edu,amazon.com,fomichev.me,alien8.de,lwn.net,kvack.org];
-	TAGGED_FROM(0.00)[bounces-75677-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[google.com:+];
-	MISSING_XM_UA(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[ackerleytng@google.com,linux-fsdevel@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-75678-lists,linux-fsdevel=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[96];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: E88079BA81
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 73DA79BAE9
 X-Rspamd-Action: no action
 
-"Edgecombe, Rick P" <rick.p.edgecombe@intel.com> writes:
+On Tue, Jan 27, 2026 at 04:10:43PM -0800, Joanne Koong wrote:
+> On Tue, Jan 27, 2026 at 3:21 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> > On Tue, Jan 27, 2026 at 11:47:31AM -0800, Joanne Koong wrote:
+> > > On Mon, Jan 26, 2026 at 6:22 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> > > >
+> > > > On Mon, Jan 26, 2026 at 04:59:16PM -0800, Joanne Koong wrote:
+> > > > > On Tue, Oct 28, 2025 at 5:38 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> > > > > >
+> > > > > > Hi all,
+> > > > > >
+> > > > > > This series connects fuse (the userspace filesystem layer) to fs-iomap
+> > > > > > to get fuse servers out of the business of handling file I/O themselves.
+> > > > > > By keeping the IO path mostly within the kernel, we can dramatically
+> > > > > > improve the speed of disk-based filesystems.  This enables us to move
+> > > > > > all the filesystem metadata parsing code out of the kernel and into
+> > > > > > userspace, which means that we can containerize them for security
+> > > > > > without losing a lot of performance.
+> > > > >
+> > > > > I haven't looked through how the fuse2fs or fuse4fs servers are
+> > > > > implemented yet (also, could you explain the difference between the
+> > > > > two? Which one should we look at to see how it all ties together?),
+> > > >
+> > > > fuse4fs is a lowlevel fuse server; fuse2fs is a high(?) level fuse
+> > > > server.  fuse4fs is the successor to fuse2fs, at least on Linux and BSD.
+> > >
+> > > Ah I see, thanks for the explanation. In that case, I'll just look at
+> > > fuse4fs then.
+> > >
+> > > >
+> > > > > but I wonder if having bpf infrastructure hooked up to fuse would be
+> > > > > especially helpful for what you're doing here with fuse iomap. afaict,
+> > > > > every read/write whether it's buffered or direct will incur at least 1
+> > > > > call to ->iomap_begin() to get the mapping metadata, which will be 2
+> > > > > context-switches (and if the server has ->iomap_end() implemented,
+> > > > > then 2 more context-switches).
+> > > >
+> > > > Yes, I agree that's a lot of context switching for file IO...
+> > > >
+> > > > > But it seems like the logic for retrieving mapping
+> > > > > offsets/lengths/metadata should be pretty straightforward?
+> > > >
+> > > > ...but it gets very cheap if the fuse server can cache mappings in the
+> > > > kernel to avoid all that.  That is, incidentally, what patchset #7
+> > > > implements.
+> > > >
+> > > > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=fuse-iomap-cache_2026-01-22
+> > > >
+> > > > > If the extent lookups are table lookups or tree
+> > > > > traversals without complex side effects, then having
+> > > > > ->iomap_begin()/->iomap_end() be executed as a bpf program would avoid
+> > > > > the context switches and allow all the caching logic to be moved from
+> > > > > the kernel to the server-side (eg using bpf maps).
+> > > >
+> > > > Hrmm.  Now that /is/ an interesting proposal.  Does BPF have a data
+> > > > structure that supports interval mappings?  I think the existing bpf map
+> > >
+> > > Not yet but I don't see why a b+ tree like data strucutre couldn't be added.
+> > > Maybe one workaround in the meantime that could work is using a sorted
+> > > array map and doing binary search on that, until interval mappings can
+> > > be natively supported?
+> >
+> > I guess, though I already had a C structure to borrow from xfs ;)
+> >
+> > > > only does key -> value.  Also, is there an upper limit on the size of a
+> > > > map?  You could have hundreds of millions of maps for a very fragmented
+> > > > regular file.
+> > >
+> > > If I'm remembering correctly, there's an upper limit on the number of
+> > > map entries, which is bounded by u32
+> >
+> > That's problematic, since files can have 64-bit logical block numbers.
+> 
+> The key size supports 64-bits. The u32 bound would be the limit on the
+> number of extents for the file.
 
-> On Thu, 2026-01-22 at 14:47 -0800, Ackerley Tng wrote:
->>
->> There's no use case I can think of for unmapping TDX private memory
->> from the host direct map, but Sean's suggestion
->> https://lore.kernel.org/all/aWpcDrGVLrZOqdcg@google.com/=C2=A0won't even
->> let shared guest_memfd memory be unmapped from the direct map for TDX
->> VMs.
->
-> Ah!
->
->>
->> Actually, does TDX's clflush that assumes presence in the direct map
->> apply only for private pages, or all pages?
->>
->> If TDX's clflush only happens for private pages, then we could
->> restore private pages to the direct map, and then we'd be safe even
->> for TDX?
->
-> Yes, just private pages need the special treatment. But it will be much
-> simpler to start with just blocking the option for TDX. A shared pages
-> only mode could come later.
->
-> In general I think we should try to break things up like this when we
-> can. Kernel code is not set in stone, only ABI. I think it will lead to
-> overall faster upstreaming, because the series' can be simpler.
+Oh, ok.  If one treats the incore map as a cache and evicts things when
+they get too old, then that would be fine.  I misread that as an upper
+limit on the *range* of the map entry keys. :/
 
-I agree on splitting the feature up :), agree that simpler series are
-better.
+As it stands, I need to figure out a way to trim the iomap btree when
+memory gets tight.  Right now it'll drop the cache whenever someone
+closes the file, but that won't help for long-life processes that open a
+heavily fragmented file and never close it.
 
-Perhaps just for my understanding,
+A coding-intensive way to do that would be to register a shrinker and
+deal with that, but ugh.  A really stupid way would be to drop the whole
+cache once you get beyond (say) 64k of memory usage (~2000 mappings).
 
-+ shared pages =3D> not in direct map =3D> no TDX clflush
-+ private pages =3D> always in direct map =3D> TDX performs clflush
+> > > > At one point I suggested to the famfs maintainer that it might be
+> > > > easier/better to implement the interleaved mapping lookups as bpf
+> > > > programs instead of being stuck with a fixed format in the fuse
+> > > > userspace abi, but I don't know if he ever implemented that.
+> > >
+> > > This seems like a good use case for it too
+> > > >
+> > > > > Is this your
+> > > > > assessment of it as well or do you think the server-side logic for
+> > > > > iomap_begin()/iomap_end() is too complicated to make this realistic?
+> > > > > Asking because I'm curious whether this direction makes sense, not
+> > > > > because I think it would be a blocker for your series.
+> > > >
+> > > > For disk-based filesystems I think it would be difficult to model a bpf
+> > > > program to do mappings, since they can basically point anywhere and be
+> > > > of any size.
+> > >
+> > > Hmm I'm not familiar enough with disk-based filesystems to know what
+> > > the "point anywhere and be of any size" means. For the mapping stuff,
+> > > doesn't it just point to a block number? Or are you saying the problem
+> > > would be there's too many mappings since a mapping could be any size?
+> >
+> > The second -- mappings can be any size, and unprivileged userspace can
+> > control the mappings.
+> 
+> If I'm understanding what you're saying here, this is the same
+> discussion as the one above about the u32 bound, correct?
 
-(I could put pages back into the direct map while doing shared to
-private conversions).
+A different thing -- file data mappings are irregularly sized, can
+contain sparse holes, etc.  Userspace controls the size and offset of
+each mapping record (thanks to magic things like fallocate) so it'd be
+very difficult to create a bpf program to generate mappings on the fly.
 
-Is everything good then? Or does TDX code not apply the special
-treatment, as in clflush only for private pages, as of now?
+Also you could have 2^33 mappings records for a file, so I think you
+can't even write a bpf program that large.
+
+> > > I was thinking the issue would be more that there might be other logic
+> > > inside ->iomap_begin()/->iomap_end() besides the mapping stuff that
+> > > would need to be done that would be too out-of-scope for bpf. But I
+> > > think I need to read through the fuse4fs stuff to understand more what
+> > > it's doing in those functions.
+> 
+> Looking at fuse4fs logic cursorily, it seems doable? What I like about
+> offloading this to bpf too is it would also then allow John's famfs to
+> just go through your iomap plumbing as a use case of it instead of
+> being an entirely separate thing. Though maybe there's some other
+> reason for that that you guys have discussed prior. In any case, I'll
+> ask this on John's main famfs patchset. It kind of seems to me that
+> you guys are pretty much doing the exact same thing conceptually.
+
+Yes, though John's famfs has the nice property that memory controller
+interleaving is mathematically regular and likely makes for a compact
+bpf program.
+
+--D
+
+> Thanks,
+> Joanne
+> 
+> >
+> > <nod>
+> >
+> > --D
+> >
+> > >
+> > > Thanks,
+> > > Joanne
+> > >
+> > > >
+> > > > OTOH it would be enormously hilarious to me if one could load a file
+> > > > mapping predictive model into the kernel as a bpf program and use that
+> > > > as a first tier before checking the in-memory btree mapping cache from
+> > > > patchset 7.  Quite a few years ago now there was a FAST paper
+> > > > establishing that even a stupid linear regression model could in theory
+> > > > beat a disk btree lookup.
+> > > >
+> > > > --D
+> > > >
+> > > > > Thanks,
+> > > > > Joanne
+> > > > >
+> > > > > >
+> > > > > > If you're going to start using this code, I strongly recommend pulling
+> > > > > > from my git trees, which are linked below.
+> > > > > >
+> > > > > > This has been running on the djcloud for months with no problems.  Enjoy!
+> > > > > > Comments and questions are, as always, welcome.
+> > > > > >
+> > > > > > --D
+> > > > > >
+> > > > > > kernel git tree:
+> > > > > > https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=fuse-iomap-fileio
+> > > > > > ---
+> > > > > > Commits in this patchset:
+> > > > > >  * fuse: implement the basic iomap mechanisms
+> > > > > >  * fuse_trace: implement the basic iomap mechanisms
+> > > > > >  * fuse: make debugging configurable at runtime
+> > > > > >  * fuse: adapt FUSE_DEV_IOC_BACKING_{OPEN,CLOSE} to add new iomap devices
+> > > > > >  * fuse_trace: adapt FUSE_DEV_IOC_BACKING_{OPEN,CLOSE} to add new iomap devices
+> > > > > >  * fuse: flush events and send FUSE_SYNCFS and FUSE_DESTROY on unmount
+> > > > > >  * fuse: create a per-inode flag for toggling iomap
+> > > > > >  * fuse_trace: create a per-inode flag for toggling iomap
+> > > > > >  * fuse: isolate the other regular file IO paths from iomap
+> > > > > >  * fuse: implement basic iomap reporting such as FIEMAP and SEEK_{DATA,HOLE}
+> > > > > >  * fuse_trace: implement basic iomap reporting such as FIEMAP and SEEK_{DATA,HOLE}
+> > > > > >  * fuse: implement direct IO with iomap
+> > > > > >  * fuse_trace: implement direct IO with iomap
+> > > > > >  * fuse: implement buffered IO with iomap
+> > > > > >  * fuse_trace: implement buffered IO with iomap
+> > > > > >  * fuse: implement large folios for iomap pagecache files
+> > > > > >  * fuse: use an unrestricted backing device with iomap pagecache io
+> > > > > >  * fuse: advertise support for iomap
+> > > > > >  * fuse: query filesystem geometry when using iomap
+> > > > > >  * fuse_trace: query filesystem geometry when using iomap
+> > > > > >  * fuse: implement fadvise for iomap files
+> > > > > >  * fuse: invalidate ranges of block devices being used for iomap
+> > > > > >  * fuse_trace: invalidate ranges of block devices being used for iomap
+> > > > > >  * fuse: implement inline data file IO via iomap
+> > > > > >  * fuse_trace: implement inline data file IO via iomap
+> > > > > >  * fuse: allow more statx fields
+> > > > > >  * fuse: support atomic writes with iomap
+> > > > > >  * fuse_trace: support atomic writes with iomap
+> > > > > >  * fuse: disable direct reclaim for any fuse server that uses iomap
+> > > > > >  * fuse: enable swapfile activation on iomap
+> > > > > >  * fuse: implement freeze and shutdowns for iomap filesystems
+> > > > > > ---
+> > > > > >  fs/fuse/fuse_i.h          |  161 +++
+> > > > > >  fs/fuse/fuse_trace.h      |  939 +++++++++++++++++++
+> > > > > >  fs/fuse/iomap_i.h         |   52 +
+> > > > > >  include/uapi/linux/fuse.h |  219 ++++
+> > > > > >  fs/fuse/Kconfig           |   48 +
+> > > > > >  fs/fuse/Makefile          |    1
+> > > > > >  fs/fuse/backing.c         |   12
+> > > > > >  fs/fuse/dev.c             |   30 +
+> > > > > >  fs/fuse/dir.c             |  120 ++
+> > > > > >  fs/fuse/file.c            |  133 ++-
+> > > > > >  fs/fuse/file_iomap.c      | 2230 +++++++++++++++++++++++++++++++++++++++++++++
+> > > > > >  fs/fuse/inode.c           |  162 +++
+> > > > > >  fs/fuse/iomode.c          |    2
+> > > > > >  fs/fuse/trace.c           |    2
+> > > > > >  14 files changed, 4056 insertions(+), 55 deletions(-)
+> > > > > >  create mode 100644 fs/fuse/iomap_i.h
+> > > > > >  create mode 100644 fs/fuse/file_iomap.c
+> > > > > >
+> > > > >
+> 
 
