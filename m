@@ -1,225 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-75798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id qJrrNbVkemmB5gEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 20:34:13 +0100
+	id SJ7zNE1jemmB5gEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 20:28:13 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6126EA8314
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 20:34:13 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80F0EA826C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 20:28:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 9591E303604D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 19:34:07 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0FCEC303DD4C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 19:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A694537419B;
-	Wed, 28 Jan 2026 19:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4222D374192;
+	Wed, 28 Jan 2026 19:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="qyMe6sHr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ap7b+u1I"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330CE1DF271;
-	Wed, 28 Jan 2026 19:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769628845; cv=none; b=SXv1HHnzgC5RehPN0IKLYJPXvT9pRrZl45OSajVg13D2pQWewvyoobMv84NEJLFPfw8GjHuhIui2CZga7UfyfLFsD3sIEM4DpYKOXdl9T1PXtDbAFzlVPdtJhJuNq9wtvB+Mzm0600dapNIdKpIi2GnnyI2TR7bUXGFogsyaqGU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769628845; c=relaxed/simple;
-	bh=E81YN0w3GVPjc+iDX0A+4oREVX4YpgEaEIg49fJXdok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XM2UtVeSlfcr1/MvrI+XkxxTXu9rMgAYrN0uvJojOoTSezQBDxKLkTLh6P9vxS9KXKGZOjC83HrXlmLxxhIoBKXesigD6RHKsOmMEfvYe/A2JQrtRwJbnpbuy/nLoT2rolk+DdRsAbu3+9ZV29vaBJ0/+y45peT6t2VokHzEE+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=qyMe6sHr; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4f1XMf501Zz9t7s;
-	Wed, 28 Jan 2026 20:26:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1769628414;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vCd7H1TJ4ks7SnfKeArmFODsoCEHZ0gXvt5SKnHjEac=;
-	b=qyMe6sHrmcAtAOqNng+0jevKFmvdKns49VJD1nn8ZWLKSLD7uojEW4g+39ms9kgqf9sj5T
-	M9DLxAdMoyPuwR461YGficMzb1minOXC383KmRmfHjfPoRVqQ4wRDMobL4PcXU22kNTw7c
-	y2zFdFYP+ndkq/FgZ0oRrJR50qV4CGawFq76XHtSql1sHvqjOA2WBrZGJDk941Kkwzmcj/
-	PeWrtYx87B2gJKX2x662/CJ/ZRuI4M9dP1bk3TiQsQeZPP3gdOO2mIcb5vrMRDYXoo9+sc
-	XbxtdwmInMegh87H3fh0BcJQTAS9/ndcuZFz9QQo1b1+UFTMrH+WYXmdqOT6oQ==
-Date: Wed, 28 Jan 2026 20:26:48 +0100
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Dorjoy Chowdhury <dorjoychy111@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, jlayton@kernel.org, chuck.lever@oracle.com, 
-	alex.aring@gmail.com, arnd@arndb.de, adilger@dilger.ca
-Subject: Re: [PATCH v3 1/4] open: new O_REGULAR flag support
-Message-ID: <2026-01-28-content-sandy-strife-cartels-hShKtl@cyphar.com>
-References: <20260127180109.66691-1-dorjoychy111@gmail.com>
- <20260127180109.66691-2-dorjoychy111@gmail.com>
- <2026-01-27-awake-stony-flair-patrol-g4abX8@cyphar.com>
- <vhq3osjqs3nn764wrp2lxp66b4dxpb3n5x3dijhe2yr53qfgy3@tfswbjskc3y6>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9EE372B53
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 19:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769628485; cv=pass; b=CBUMhkGfPnT7oqS5mjUoaJ608SOTY3mGpr8z/UAE867Fz2tWXRYuJ5h0OtTMGWxgyIkSSIbJaWZs5Jre28OqEaioCwOT3F/GVqY2kxLU8AQvLgj/N7PvLmWQyPvnCxva1QR59qKrdvtdKM8hpJrnEYZsVmvY0HHXl5gLKwh/H88=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769628485; c=relaxed/simple;
+	bh=hJeEAKiKD4yBbMJhZMhUaDnJz5O9vpsTRwVDafXrX6A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JF41GbnbDndJzuhsudnpbZSBPgAGB02aMJS9unO62cIVrvZSb/0N8xxYOiO3FEuxzkAV1OVFrz4po+xIdzFIoll139CEStm18vB2EbO8eDiu7eCjqX/6gDH/BcMzaZ5+Qt8dDo2gk9HX8M4tlPGS+XYOP+blzEhHAxFbPR/WjsM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ap7b+u1I; arc=pass smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-658b5e57584so476407a12.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 11:28:04 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769628483; cv=none;
+        d=google.com; s=arc-20240605;
+        b=hl0vWw5x1tAa/h9iy8IWweFHutmFEc7c7VJg7XISLsvyWYIJ3bgVLSocvRAy2HPR5r
+         KZWQYe4CSUBUrRA4WUF2fRYKMkD+EUPKAUzPqv/YtEEx4FRdGBnbsd6nda4BKn2QT+L/
+         3tKHKcaEljGIF4KqbbI5VHfxMQb8V2TfT4Kr3vqAjjy3+B50IMtJsHy9aMB6w2jeIaio
+         w5kMtT+H/8JDy5VWsYYigT1+uIELI6W6EmBiC4tgjC6mRQd0Io8yw8U9E/vYvh0J53xo
+         KkCaCT4laBZbB2Gmy6zNJXsFZVBfHUTsbHrkCikQy9ut0WBo887fxL5o8kH0rlbiuOAX
+         lKQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=GePnCPMULS4ZH5+nWQOFHXb1cucdY2lNKyMwVx2+ph0=;
+        fh=NoRqsc9KL9dHgfb7B0w/XS3Rg/HhGXWtH6HKR8YqXNs=;
+        b=c/Vm9dD7B+4uYPfWah5Nnaj6XKuzQzVK27Ju7NldFm6iw6ZxipebQdo3AZQuCu09uB
+         OLTFOW0vrpvMEiK1iSu24ujaw+/JjWDCdtyoDtltpsGaofIa5Mrkl1qGQSXYQrcrayKI
+         Q/DjvHrqfOvyVOod630tpHUTE0qW7nHk7YvlmSjdpwUEkB2nPQ/Ci9N7PGZguY6MXsBj
+         Er2UrTRXF+E0PaoaBXl9mF35cCVpPmh9aoLooSnbX5uSbFtUDON0NpNh3hlFrzGWModS
+         3+3rUj/6lRwS/wJoXiKglKkT+s4UODUDrAFIXWkt3bMLI1TOVsEUH3j45aAcWQU9qoip
+         0ItQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769628483; x=1770233283; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GePnCPMULS4ZH5+nWQOFHXb1cucdY2lNKyMwVx2+ph0=;
+        b=ap7b+u1IgglPywgU7la4B1fIQpGSCTleF+P+Zuv73i1LoP+i0OA3i2KmngojsDIiaU
+         4VA/hfnongAJ+NIMmuZZtij9TX5WT4ErDXJ+StwwRMnUmEvcKmkeKUyXRJ5B0bf/9o1j
+         fqFcrpKUUQpudL487L7zOpAqXUe0oA9CgcsHe8Yuzr1w52B+jQkPr7zYB3T9B9O03OgH
+         988L+kl+qYcns1pTvbF3a5eKmH0YzyLu4xcwjv+Rdav6nbuunDiCQqWMsn5c+7NlF/k9
+         c8HlWuRvtAwN1odqk5e9gb1jz1RuKgeAZ6kvjMilcBUsL+U8i/wQdQfR9nv4QmUarZb8
+         9xnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769628483; x=1770233283;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=GePnCPMULS4ZH5+nWQOFHXb1cucdY2lNKyMwVx2+ph0=;
+        b=pPl8VJU9uBxYsVTViwD4+bdQ6z7WR3nEYu2FDp9QnVhhxK184u3xoPga1U1hgl6hU0
+         6o2K/bxEYwHKZMyAMEvfGJJZVCTqxaw4+wQy9hGZW10v2umBZcqUeUjm87aTRGn0aLOP
+         o1EGiU5CeevcTYbXAl1ArkEtZ0QygLs/f5IaBUxSbh8XSCFGXbZvEExlnnubp2mRi1b2
+         lYP8Qw873Pai65ujF3imkhHAR9VW6CfrOX6Ib59zlV0VlU3yYFtRNi7yMtddW06yPwPh
+         7xUagmeA95hYD9jnATCdKMBdiXC68LU7hfJEpgMoz9kioGpiLK5PggQE/R/pSuYXQQxP
+         CuwA==
+X-Forwarded-Encrypted: i=1; AJvYcCXsMPNfR0grry4HyKwT1T2RWsuP2kfkgaOaVYNkm9YPcT+gE4ch+3B8XWu56ahDJqPv+TnWtWl1hm4G5YIl@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqiAACy9pnKRL0QMXYbaZSM9Ekr7EzffTIWDkVnEY8r67ofeGL
+	j0vvef0tCytcPX0ylMM9ShNT6N1UCdPt3/r0deIoggGn5/wBHeQEskAoFGjc51HM6T04KN8/L98
+	jEWiojmd2T8AMqAVS72YSqfnTDD60v78=
+X-Gm-Gg: AZuq6aLn5aceRPuyiHZptSIVlMhRSWf8MqT+yFWeNDsjm+Fby+jkMOm40qULieVldZh
+	11BknhD4KI9itYSbSl6z4eyyLFGLyBnMOsneLmBlIJncADp7L4VHKrBbRw+fX2IQjhxJwY52FW+
+	Loco1T6lKbN0z3CVy9KSUV4NC+ZzufvOnlWoE7PhtOcDFwTAkxeZNB/mRnxCOcM8nY3/x4GmJ4R
+	8yuJIpnO5VeOBml/3DsQpsvJy8f0tftTJSi/XeSrm5AYUkcqnmQzbZigMyLhPBLwrsnPHkqIFZX
+	JZNd1AiYTS6uPTg9GwNBDoEiMakUbw==
+X-Received: by 2002:a17:906:6a25:b0:b87:6b9a:3016 with SMTP id
+ a640c23a62f3a-b8dab4128b3mr438177266b.60.1769628482187; Wed, 28 Jan 2026
+ 11:28:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pmls3g2k4wci75pm"
-Content-Disposition: inline
-In-Reply-To: <vhq3osjqs3nn764wrp2lxp66b4dxpb3n5x3dijhe2yr53qfgy3@tfswbjskc3y6>
+References: <20260128111645.902932-1-amir73il@gmail.com> <20260128111645.902932-2-amir73il@gmail.com>
+ <34bda263-4b41-4388-b58a-6fdab6d1fb49@app.fastmail.com>
+In-Reply-To: <34bda263-4b41-4388-b58a-6fdab6d1fb49@app.fastmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 28 Jan 2026 20:27:51 +0100
+X-Gm-Features: AZwV_QgreAtAH7FDuCqbPK5kltExclmyKfjvr3XllZoQUxupqijk5qdN7jwW7bI
+Message-ID: <CAOQ4uxgjxeLMv5d0BB=KrrzB64LMSoAo9HSkQZmP4Bu_De20Sg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] exportfs: clarify the documentation of
+ open()/permission() expotrfs ops
+To: Chuck Lever <cel@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
+	Jeff Layton <jlayton@kernel.org>, Christoph Hellwig <hch@lst.de>, NeilBrown <neil@brown.name>, 
+	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.76 / 15.00];
-	SIGNED_PGP(-2.00)[];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[cyphar.com,reject];
-	R_DKIM_ALLOW(-0.20)[cyphar.com:s=MBO0001];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	MIME_GOOD(-0.20)[multipart/signed,text/plain];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
+	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75798-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75796-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+,1:+,2:~];
-	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,arndb.de,dilger.ca];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	MISSING_XM_UA(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[cyphar@cyphar.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[cyphar.com:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[amir73il@gmail.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,cyphar.com:dkim,cyphar.com:url,cyphar.com:mid]
-X-Rspamd-Queue-Id: 6126EA8314
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 80F0EA826C
 X-Rspamd-Action: no action
 
+On Wed, Jan 28, 2026 at 5:10=E2=80=AFPM Chuck Lever <cel@kernel.org> wrote:
+>
+> Typo in Subject: s/expotrfs/exportfs
+>
+>
+> On Wed, Jan 28, 2026, at 6:16 AM, Amir Goldstein wrote:
+> > pidfs and nsfs recently gained support for encode/decode of file handle=
+s
+> > via name_to_handle_at(2)/opan_by_handle_at(2).
+>
+> s/opan/open
+>
+> And one more below:
+>
+>
+> > These special kernel filesystems have custom ->open() and ->permission(=
+)
+> > export methods, which nfsd does not respect and it was never meant to b=
+e
+> > used for exporting those filesystems by nfsd.
+> >
+> > Update kernel-doc comments to express the fact the those methods are fo=
+r
+> > open_by_handle(2) system only and not compatible with nfsd.
+> >
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > ---
+> >  include/linux/exportfs.h | 16 +++++++++++++---
+> >  1 file changed, 13 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
+> > index 262e24d833134..fafd22ed4c648 100644
+> > --- a/include/linux/exportfs.h
+> > +++ b/include/linux/exportfs.h
+> > @@ -192,7 +192,9 @@ struct handle_to_path_ctx {
+> >  #define FILEID_VALID_USER_FLAGS      (FILEID_IS_CONNECTABLE | FILEID_I=
+S_DIR)
+> >
+> >  /**
+> > - * struct export_operations - for nfsd to communicate with file system=
+s
+> > + * struct export_operations
+> > + *
+> > + * Methods for nfsd to communicate with file systems:
+>
+> Let's not remove the brief description for the export_operations
+> struct in the Doxygen output.
+>
 
---pmls3g2k4wci75pm
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 1/4] open: new O_REGULAR flag support
-MIME-Version: 1.0
+OK. will fix for v4.
 
-On 2026-01-28, Mateusz Guzik <mjguzik@gmail.com> wrote:
-> On Wed, Jan 28, 2026 at 12:23:45AM +0100, Aleksa Sarai wrote:
-> > In my view, this should be an openat2(2)-only API.
->=20
-> fwiw +1 from me, the O_ flag situation is already terrible even without
-> the validation woes.
->=20
-> I find it most unfortunate the openat2 syscall reuses the O_ namespace.
-> For my taste it would be best closed for business, with all new flag
-> additions using a different space.
-
-We don't have any openat2(2)-only O_* flags yet, I agree that new flag
-additions (except for very rare cases where you can make them backward
-compatible -- such as a hypothetical O_EMPTYPATH) should be O2_* or
-OEXT_* or something.
-
-> I can easily see people passing O_WHATEVER to open and openat by blindly
-> assuming they are supported just based on the name.
-
-Yeah, if we don't do that it'll lead to confusion. openat2(2) has
-exclusive rights to the 64-bit flag bits so we could start with those
-before we need to cross with the O_* flag space.
-
-> that's a side mini-rant, too late to do anything here now
->=20
-> > In addition, I would
-> > propose that (instead of burning another O_* flag bit for this as a
-> > special-purpose API just for regular files) you could have a mask of
-> > which S_IFMT bits should be rejected as a new field in "struct
-> > open_how". This would let you reject sockets or device inodes but permit
-> > FIFOs and regular files or directories, for instance. This could even be
-> > done without a new O_* flag at all (the zero-value how->sfmt_mask would
-> > allow everything and so would work well with extensible structs), but we
-> > could add an O2_* flag anyway.
->=20
-> I don't think this works because the vars have overlapping bits:
->   #define S_IFBLK  0060000
->   #define S_IFDIR  0040000
->=20
-> So you very much can't select what you want off of a bitmask.
-
-Well, you can filter on S_IFCHR if you want to block both block/char
-devices, but yeah the overlap is quite unfortunate... (That would also
-mean blocking directories would also block S_IFBLK -- I remembered there
-was an overlap but I forgot it coincided with S_IFDIR... Damn wacky
-APIs.)
-
-> At best the field could be used to select the one type you are fine with.
->=20
-> If one was to pursue the idea, some other defines with unique bits would
-> need to be provided. But even then, semantics should be to only *allow*
-> the bits you are fine with and reject the rest.
->=20
-> But I'm not at all confident this is worth any effort -- with
-> O_DIRECTORY already being there and O_REGULAR proposed, is there a use
-> case which wants something else?
-
-There's also O_NOFOLLOW in a similar vein.
-
-I can see someone wanting to permit FIFOs, regular files, and
-directories being fine but blocking everything else. None of O_REGULAR,
-O_DIRECTORY, nor O_NOFOLLOW provide that.
-
-> > > +#define ENOTREG		134	/* Not a regular file */
-> > > +
-> >=20
-> [..]
-> > Then to be fair, the existence of ENOTBLK, ENOTDIR, ENOTSOCK, etc. kind
-> > of justify the existence of ENOTREG too. Unfortunately, you won't be
-> > able to use ENOTREG if you go with my idea of having mask bits in
-> > open_how... (And what errno should we use then...? Hm.)
-> >=20
->=20
-> The most useful behavior would indicate what was found (e.g., a pipe).
->=20
-> The easiest way to do it would create errnos for all types (EISDIR
-> already exists for one), but I can't seriously propose that.
-
-It might be kinda neat from a potential re-use perspective in other APIs
-but yeah it would be quite wasteful to burn 3-5 errnos for this when we
-already have ~4 that are logical inverses.
-
-> Going the other way, EBADTYPE or something else reusable would be my
-> idea.
-
-I think that would be reasonable and if you word the error message
-carefully you can even see it being a fairly generic errno for other
-places to use.
-
---=20
-Aleksa Sarai
-https://www.cyphar.com/
-
---pmls3g2k4wci75pm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaXpi9BsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG//4QEA7qu8ZDfJ003C5x6tfJ6V
-9CNBG+pF0IuGbN1cwc53KlwBAMvdkb3wXqrCh1sJ07UQKE+BF+3sc8tK9QIJVXPP
-NX0F
-=fMeG
------END PGP SIGNATURE-----
-
---pmls3g2k4wci75pm--
+Thanks,
+Amir.
 
