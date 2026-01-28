@@ -1,185 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-75682-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75683-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +L1aIZFyeWn2xAEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75682-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 03:21:05 +0100
+	id AGBDB25+eWmIxQEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75683-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 04:11:42 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3FAF9C31D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 03:21:04 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 741DE9C86B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 04:11:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id B1D0D300D47D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 02:20:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 14B4530209C2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 03:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F512877FC;
-	Wed, 28 Jan 2026 02:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8092FBDE0;
+	Wed, 28 Jan 2026 03:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6dwva0K"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2450C1DC997;
-	Wed, 28 Jan 2026 02:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928952FBE02
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 03:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769566846; cv=none; b=B3LEvOSP8ufhIFMb38evGiaojXXXGt50qC24SNvOKgE42hmkcbQYVEG7uYt+HSmyvMiyoyCppvJpwscxYhtVlvQxaXDPM2ipx/g2j71LpU9dwrmJkOFFRH9n6yOrQmmN81mM+i6/T221rXsFU0d4SpZ1gfAzooWmbBNDPU7w2ZY=
+	t=1769569866; cv=none; b=nBXMY1uXz3WZWyr0X0USUVmzSNLp2HEqrelVW4xKHdOKhfY2XuweyRbKqweGX7sVsCaIEUrf39Vt2uvJl3ApEOfcsCHzXHi3frlcitK2dgQIywdwVnY9ZyNRTWQ8BkqUYSFl6I2uqqyZnmAx4+uZKwRisIbxNJvym/Q1YkddpjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769566846; c=relaxed/simple;
-	bh=8bPNlRSRv2AZEv8dpGv0opFY2PkUMGBnwl0qOls0MeU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t0RIS8zTv6rwm/ae50QTqz35nkg1ykxxeaicFkMLSlWF+btaXP1poWDoO+Pf2tjTR9y5F7aUtbjzhHIMPW8IYf/xkVl5+4/v2akSI6yHlOKLncIKxngGAscCS673NADp8AsHy9G+6iqMrpisqBAlWWOWQY08iXHiLcpL8J/H81g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.198])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4f15Zj6305zYQtlf;
-	Wed, 28 Jan 2026 10:19:57 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 61F6340539;
-	Wed, 28 Jan 2026 10:20:34 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.50.85.155])
-	by APP4 (Coremail) with SMTP id gCh0CgB3JPVqcnlpnzB5FQ--.31477S4;
-	Wed, 28 Jan 2026 10:20:34 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1769569866; c=relaxed/simple;
+	bh=7s3ZPWD7L/hxVtH81vzKlYQvIHiVdDU71Ms3su09RyM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IFXb+kWQGNqN/izNJuwb37FHwi73fV+CDsibGEx3qsmcGF0dOlkikLGkb29mnO+pgK+ZrNg/8PZlQy+m3s2kHlhQmn2aa6nq5N1t3jwPNpvPYhV9SIxly4YMTBhMaSQnorzW5vOw37GvpYBFzWqvvXg5GlIvb5QG5k8IWFqMI4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G6dwva0K; arc=none smtp.client-ip=74.125.82.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-dl1-f48.google.com with SMTP id a92af1059eb24-1248d27f293so2403624c88.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jan 2026 19:11:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769569861; x=1770174661; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J8aE4fJ3sPMbiTvaUSBnTb2V/aV6aI6bDnZe8VbiSww=;
+        b=G6dwva0K7E4XFKGAPRljQRdGGbuT4SRfjDznfAMwd48r23dV+BX0DLJQO+KFKazOR6
+         7wX3+zJDDAgQEdjtfO49+sNAwUP7hYkSGEwFYlzDSZEYc6+/u3Khd2mRVjiSvTAX3EtS
+         gsK0LbvzPpSAFRfQluyaCvkMLk6Fnk1jAIPud05r5+lgp1Pnz/xg53X1JUd+V0T8F2DX
+         dSExYEjEKblFwxwgt6RFoY7S2LBeJG6lA2tweJbVzm8lAtiC35BF445xbpYx3TG83h7M
+         f0ndcwe2x69p5ujGEMymgDVENKyNdIeFGocafQCcacesyOLbI4Ok2ajDc4vYccTAk52D
+         KfgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769569861; x=1770174661;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=J8aE4fJ3sPMbiTvaUSBnTb2V/aV6aI6bDnZe8VbiSww=;
+        b=cDtDOQzzWXKPO0BYDkrw/j79I8Lm+NlKpC9hTitK3mpJJjlHYeHKhPp6xi1AkyJjpm
+         gfDQP8QyNTlxC4k1OTqF/XJGnMtJlVJZqNoUqMVX3vP1eJMTgTF39K91BPJVdd7mLsaU
+         uGCAORjMLcffJN9yNPRbPRj1FRB/SD7kIwuGX/hKthQEJLntyJTeI+2kjHeMs9wER1O3
+         o7Hjkxnm7EU7HzCYQAyX8MoXQtMTDT6niKjXhCtctETuhAWmbEpbwAT6J0+KuttsCnh4
+         4CATdXCCsg55VXv0ikvxx4NtWXREW8etQhNYZoMszRny8bqowsI/zcKQIWtFZI9vumR1
+         jIdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2BELQn80NhuE2Dw7R7wuJ85s4ZxVEHKODpBDLYt5eU7y9Cp/lDYq3+GB8ki62GJITIgWgMcxT5yEVDLPR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9FylsqD+R3MQSN/oDVFE9NMBvzn8RqlGvtnHUVbx3EmaJxKkQ
+	CsSu35vqk2d+hTddud0rffLwUGpPJo1cG2vVU/2yr/EdeuRQE8/tU3B9
+X-Gm-Gg: AZuq6aJlBlt+eQiQY6OutXNIbnkH2a94U8tfws08Qed+FIQMAv3cc5ksxfmQQ5CfEoq
+	drVMRxiHnXDLu6nHNPfQseSF5u5ziZ2Rb7eFeefYbUVbyZQhk/Zc20l5/gQ5dHg4y1haqmbJKaC
+	PkhMka6gl3pt7mUBFqOb9JzCS8tBZHU8MibTOuyO9lA2I4DTsdHvyks6P4A10XbMKoz5cFbguSK
+	dq87GZeWGusbmnQxLWyiwY8Hb8pZG9a2vUiUvunX+Y97S+cSFjPYQcVxJAV/yySE+lk8XWH0Zn5
+	h+pY6e+3y+0J0siXU1h+Iz1QgjI020qKSQx/SoAt8s8/cJqvRF6mMptm50PQHVzMW8URC2VmQam
+	9O5EmeCI6HB9b/GKURvLDWVQa/fhHEwNdKQxfFSqgyCrSVA8XrdkBS1+6Q7qSRF8i7JEZRUTQGf
+	Pw0hWiplIIPivC7WNLw8eGsyk=
+X-Received: by 2002:a05:7300:bc8e:b0:2b0:1607:6d02 with SMTP id 5a478bee46e88-2b78da0f5b7mr2592634eec.31.1769569861112;
+        Tue, 27 Jan 2026 19:11:01 -0800 (PST)
+Received: from VM-16-24-fedora.. ([43.153.32.141])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b7a1abe57csm1077430eec.22.2026.01.27.19.10.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Jan 2026 19:11:00 -0800 (PST)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: oleg@redhat.com
+Cc: akpm@linux-foundation.org,
+	alexjlzheng@gmail.com,
+	alexjlzheng@tencent.com,
+	david@kernel.org,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	yizhang089@gmail.com,
-	libaokun1@huawei.com,
-	yangerkun@huawei.com,
-	yukuai@fnnas.com
-Subject: [PATCH] ext4: do not check fast symlink during orphan recovery
-Date: Wed, 28 Jan 2026 10:16:09 +0800
-Message-ID: <20260128021609.4061686-1-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.52.0
+	lorenzo.stoakes@oracle.com,
+	mingo@kernel.org,
+	ruippan@tencent.com,
+	usamaarif642@gmail.com
+Subject: Re: [PATCH] procfs: fix missing RCU protection when reading real_parent in do_task_stat()
+Date: Wed, 28 Jan 2026 11:10:57 +0800
+Message-ID: <20260128031059.2762637-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <aXj1BZY0P_NQp0yI@redhat.com>
+References: <aXj1BZY0P_NQp0yI@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3JPVqcnlpnzB5FQ--.31477S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZFWkKr4kWrWxWF15KFyrXrb_yoW8KF4kpa
-	yaka4kGr48XF9Ygw4IqrW7Xr1Fq3WYyr4UAFZ3Ar4UZr98Ja4xKF1qgF15Zay5trWkAw4F
-	qFyxKry3Cwn8CFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
-	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
-	VFxhVjvjDU0xZFpf9x0JUpwZcUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [1.54 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75682-lists,linux-fsdevel=lfdr.de];
-	TO_DN_NONE(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[huaweicloud.com];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	FREEMAIL_CC(0.00)[linux-foundation.org,gmail.com,tencent.com,kernel.org,vger.kernel.org,oracle.com];
 	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,linux.ibm.com,gmail.com,huawei.com,huaweicloud.com,fnnas.com];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75683-lists,linux-fsdevel=lfdr.de];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	R_DKIM_NA(0.00)[];
-	NEURAL_HAM(-0.00)[-0.645];
-	FROM_NEQ_ENVFROM(0.00)[yi.zhang@huaweicloud.com,linux-fsdevel@vger.kernel.org];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huaweicloud.com:mid,huawei.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: C3FAF9C31D
+	FROM_NEQ_ENVFROM(0.00)[alexjlzheng@gmail.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	TO_DN_NONE(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	NEURAL_HAM(-0.00)[-1.000];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 741DE9C86B
 X-Rspamd-Action: no action
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On Tue, 27 Jan 2026 18:25:25 +0100, oleg@redhat.com wrote:
+> On 02/27, alexjlzheng@gmail.com wrote:
+> >
+> > From: Jinliang Zheng <alexjlzheng@tencent.com>
+> >
+> > When reading /proc/[pid]/stat, do_task_stat() accesses task->real_parent
+> > without proper RCU protection, which leads:
+> 
+> Thanks for the patch...
+> 
+> >   cpu 0                               cpu 1
+> >   -----                               -----
+> >   do_task_stat
+> >     var = task->real_parent
+> >                                       release_task
+> >                                         call_rcu(delayed_put_task_struct)
+> >     task_tgid_nr_ns(var)
+> >       rcu_read_lock   <--- Too late!
+> 
+> Almost off-topic, but I can't resist. This looks confusing to me.
+> It is not "Too late", this rcu_read_lock() protects another thing.
+> Nevermind.
 
-Commit '5f920d5d6083 ("ext4: verify fast symlink length")' causes the
-generic/475 test to fail during orphan cleanup of zero-length symlinks.
+Yes, and would "Too late to protect task->real_parent!" be better?
 
-  generic/475  84s ... _check_generic_filesystem: filesystem on /dev/vde is inconsistent
+> 
+> I think that the changelog could be more clear. It should probably
+> mention that forget_original_parent() doesn't take child->signal->siglock
+> and thus we have a race... I dunno.
+> 
+> > --- a/fs/proc/array.c
+> > +++ b/fs/proc/array.c
+> > @@ -528,7 +528,9 @@ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
+> >  		}
+> >
+> >  		sid = task_session_nr_ns(task, ns);
+> > -		ppid = task_tgid_nr_ns(task->real_parent, ns);
+> > +		rcu_read_lock();
+> > +		ppid = task_tgid_nr_ns(rcu_dereference(task->real_parent), ns);
+> > +		rcu_read_unlock();
+> 
+> But this can't really help. If task->real_parent has already exited and
+> it was reaped, then it is actually "Too late!" for rcu_read_lock().
 
-The fsck reports are provided below:
+I think this is acceptable, because we tolerate obtaining a stale value as
+long as it doesn’t lead to a Use-After-Free (UAF) bug. This is similar to
+the comments in the syscall getppid().
 
-  Deleted inode 9686 has zero dtime.
-  Deleted inode 158230 has zero dtime.
-  ...
-  Inode bitmap differences:  -9686 -158230
-  Orphan file (inode 12) block 13 is not clean.
-  Failed to initialize orphan file.
+With the protection of rcu_read_lock()/rcu_read_unlock() for loading
+task->real_parent, we can guarantee that the task_struct of real_parent
+itself will not be freed.
 
-In ext4_symlink(), a newly created symlink can be added to the orphan
-list due to ENOSPC. Its data has not been initialized, and its size is
-zero. Therefore, we need to disregard the length check of the symbolic
-link when cleaning up orphan inodes.
+Or, do I miss something?
 
-Fixes: 5f920d5d6083 ("ext4: verify fast symlink length")
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext4/inode.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+Thanks,
+Jinliang Zheng. :)
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 6fba4948e040..44054a04fc4b 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -6079,18 +6079,22 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
- 			inode->i_op = &ext4_encrypted_symlink_inode_operations;
- 		} else if (ext4_inode_is_fast_symlink(inode)) {
- 			inode->i_op = &ext4_fast_symlink_inode_operations;
--			if (inode->i_size == 0 ||
--			    inode->i_size >= sizeof(ei->i_data) ||
--			    strnlen((char *)ei->i_data, inode->i_size + 1) !=
--								inode->i_size) {
--				ext4_error_inode(inode, function, line, 0,
--					"invalid fast symlink length %llu",
--					 (unsigned long long)inode->i_size);
--				ret = -EFSCORRUPTED;
--				goto bad_inode;
-+
-+			/* Orphan cleanup can get a zero-sized symlink. */
-+			if (!(EXT4_SB(sb)->s_mount_state & EXT4_ORPHAN_FS)) {
-+				if (inode->i_size == 0 ||
-+				    inode->i_size >= sizeof(ei->i_data) ||
-+				    strnlen((char *)ei->i_data, inode->i_size + 1) !=
-+						inode->i_size) {
-+					ext4_error_inode(inode, function, line, 0,
-+						"invalid fast symlink length %llu",
-+						(unsigned long long)inode->i_size);
-+					ret = -EFSCORRUPTED;
-+					goto bad_inode;
-+				}
-+				inode_set_cached_link(inode, (char *)ei->i_data,
-+						      inode->i_size);
- 			}
--			inode_set_cached_link(inode, (char *)ei->i_data,
--					      inode->i_size);
- 		} else {
- 			inode->i_op = &ext4_symlink_inode_operations;
- 		}
--- 
-2.52.0
+> 
+> Please use task_ppid_nr_ns() which does the necessary pid_alive() check.
 
+
+
+> 
+> Oleg.
 
