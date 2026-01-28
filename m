@@ -1,475 +1,278 @@
-Return-Path: <linux-fsdevel+bounces-75744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75745-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UAzZFSItemnd3gEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 16:37:06 +0100
+	id eBmKB+42eml+4gEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75745-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 17:18:54 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8D37A4137
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 16:37:05 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE384A5675
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 17:18:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id A892D3012955
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 15:36:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id EB79D30B7C98
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 15:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38EE2D660E;
-	Wed, 28 Jan 2026 15:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A1F2F7ACA;
+	Wed, 28 Jan 2026 15:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FFbLVbKy"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="eLzmjl02"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012018.outbound.protection.outlook.com [52.101.43.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B362D5408
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 15:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD7E2DB784;
+	Wed, 28 Jan 2026 15:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.18
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769614606; cv=pass; b=q2W3/f25LtssqNXhYKKCjxEbSP1dJECrRnWmOfSfIugq7jU6z3O2W4zTV068YoS6Zcpk1Wrg6OTT8Lsz5OzvUrMRIgfKStsgdiCb3ZTFMu5GI/LMv8FZDLx+YRkf3O8hrgEL4k8C7N9eg1k2dul9I1pMXlq/ryVo3MZKXyYh3T4=
+	t=1769614807; cv=fail; b=hl1BKeNN1w2+ka6gVhevNTtn9x9hcyEd0AZlq3TNnsgxfatMay1dxEKaxPSgsxi6Z29uyZYsPHp8zj0EBb0QCe1qPwNeA+EKjeP/dXx0F3zW59/pfnDw+vqwH+jAirSG/xZXkC32MYlgibC+7qKSewySF4bG4AK2zxwe2Hkt/Sk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769614606; c=relaxed/simple;
-	bh=7zXVIknH4ehIRtCBnTdf6a0bIKLMMTjayaGHW92kfq0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GMYuh1zzy0vngdnBV07/rhxdS6y3EKS+W74+I1XOiklhQ8ITxXEygGJ6tpl8IrnpANWf683SUW1AFrJTpYkGpKabpXH9AksgCWNKwvaHfM8GO5WDbjV6YNgTaIzTrNnUFTkTjGvpP8py3hfWAD+NJ9Oeg71JWbAK2y3lp12Eges=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FFbLVbKy; arc=pass smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-559f4801609so2954685e0c.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 07:36:44 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769614603; cv=none;
-        d=google.com; s=arc-20240605;
-        b=Vl7O0tywRoH7DyTIqIBEt8GqYNsR96HT5d4gF6/BM5tMng75rfBN2CbtT0L/hWDKzm
-         zos1KkVtEbcbc5lR6kNDWK0Noao0OgVbX1GME23nzorHmoSK7q8CX0PzcIYCW/WbmCgZ
-         pjnJEs4/VFD+1l6KTHh7ZR/5YuqyxCehR3rXFTXt7iJqlGZzjkCnq64raDz5JCRF7mA2
-         eeupmSUVaJmMrywroPCOgtopa37uAoGqECXc+mfXQzBKCm/EoPWi1Cr+2mysJqmCrPX1
-         zCVsRHj2btPzJvpxphGcqDvVGLgb8c4IIWVwB0EsVDaCAKVja9alUrXlXxTznjlqSBPb
-         S/yA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=RJxlmr5jeUa8zBWPjQHSC6PqXSlyh6rIMyIPjh7RV2Y=;
-        fh=jgsd5EeLgyKhfyWJbwXLAsr1YUB9aneFkr3EZlTIlHQ=;
-        b=hcXd3SBaA8ZP45mqhnCZEkayEJxeZ+M0jOk+HY7OmodlUtB9snd7nbPq8IMgdBptBC
-         7rLUyBk4jjRz8d2Eg7YTZtgO/AlWHqARCDnJMN8ETN8zFepw8laC7+qn92Jk8r0jao6/
-         +apbre3sZO1UsMI+Bq0T0tCkCVdMKcMDhZDg2PNyruVrtts0BiazZAQsAdK9pNidd1Q/
-         L3BQaq5pkuhUEH2qgEL7sy6q15hiyE7ZXM/x/xKuMAQE17MK30bs9EZoAVPf8Q+qmTmb
-         9pRNC9Kt1glDn1kElfewbv4cJ0kREef1caGJXXzNL6RkWbTAu6qEoYCBHmiViHj9SWVh
-         RTHA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769614603; x=1770219403; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RJxlmr5jeUa8zBWPjQHSC6PqXSlyh6rIMyIPjh7RV2Y=;
-        b=FFbLVbKyDzWF2GAsXEkiawMh73T3u9vrMDuIo+hg7qHCpqHet21nnZQw2rAgy4/27n
-         QljJ7iaZqB8zm627vuEN18SyrRKX8wHaXac4S26BbWi9GVLQeZdqW8j2+tUgkaFl3wMM
-         /MxrA3USFfpnBkQbKywyKBhhJ0Qnl5RYUYKMniBWWZ/cDa/VnusXA+ZVnz54tDfjUIg9
-         DAZEg4MnSrgi41d+NCKmuvoAT5eYu/emfsQV4k/7dtan9kcuPwPAi8hR8mj1FqlxjWiD
-         dX1RDxLsCmmNgg+4QRKP7+jaWb7dqLe/YkGofeueBM7MIE7/GM7v0Yy+LJlp2bvhwuS5
-         QEAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769614603; x=1770219403;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=RJxlmr5jeUa8zBWPjQHSC6PqXSlyh6rIMyIPjh7RV2Y=;
-        b=BcQnR51trfgPD/DPvjor1tsXgy/B80OWI1lHBIRYfRpIf3s4ijGf6K3s8Hh8eO5H1b
-         kCCjy1Zlr8X4Tt/M087B6DlMrOdr+v+oxzQOxC2EwfG7KSF1Cmtv0dhpxW+2eWDsHM4N
-         3SyaJvlo+Nxpz7y8Yz8e/cl+BShAjtlnznB0Sk0JIjMYkughhNorNQYTtMI2IzmK28BI
-         Qzjq+bXwGFxkUyMjR7Eha4SZGoCHeobnd+0ivOA/5DVzW59tT01Umku03HM7cuREBt4C
-         FnORZ8O5T/gmFT/6x8rS+sM9hQiTtNte+JmzmKPBldcb1fiJEusKnWf/QvmE+ael7jE6
-         Ai9w==
-X-Gm-Message-State: AOJu0Yw959dKOhsl5JicvXu6Wp5xhFhiTH1DuLP0AxzxMdxKIWEDJBw3
-	s5IWIYLJK6P3qC8V6lVNh2JMpZgkeh8F05Toc56dxB56HakGilbpt/W2d6QaynpiRudtl7oskyc
-	w5oi4xY0CttDNFT8J/r9a+ZcigI/nu2E=
-X-Gm-Gg: AZuq6aImX05Iauum7HQ+ePQUzJW8l4LuZ+IvHdz0MV1u0LUM+FVjTWBOqWj6I5eJYx5
-	eDiot469M03WGZGJIwicL1Rrp5TxwHNWGnvQqmMG0LuaHsUfTkNkBGJQ5m0Vy0sFMOrR/Cu4c9S
-	CiRD2ehNIfUYqkLwP+gQEuqsW+apnj8g2xd2ELizgF1iSVuJIPg5UQFQjdYTAws76+GPeLhRV0U
-	uQ45xb7MLrHncXRnYcuCgpd4JH9mHx85wsxIdMiSSCnyjSofbOjmNEx3Y8no03sX5iX7K+OGvp6
-	QNWm6uIsH+b9rVaOzo+dM0vYvGs7xPo=
-X-Received: by 2002:a05:6122:1d4c:b0:566:26ce:546e with SMTP id
- 71dfb90a1353d-566794ef197mr1997390e0c.5.1769614603205; Wed, 28 Jan 2026
- 07:36:43 -0800 (PST)
+	s=arc-20240116; t=1769614807; c=relaxed/simple;
+	bh=sG67u10d0l+481xemmJVI66Bhfz8ArJE8oKGpyV0jic=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=W6HkuvWdQdZiLwHiugzx/dE/0mMwgETWo8et3fla8RXlCh/QHtiyb74Kkbfop8aeiJJrUxC3P5bFTJERz2fymhMJgQ0hyZJd4GzZX0c+eIvb6fTDdpMFkJD1zQN9kQYpylsL4xqNa1NPp73mrWZmuIw/GIfiVA1Q1z4+jERfpMQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=eLzmjl02; arc=fail smtp.client-ip=52.101.43.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WbdRGYnX2xzlMHGIocq96TCQux0yfaoJlLo3qIst+znxCgurbwgmC59Bz95Me+qvBrqGZIb+Im/KNL0TA0p7DazeUVV+29qzOlNT6ux0fciedtei20Rtp+MGvqoB9KP9sa04NQOPYEP1TVKjZ17EHjoyjt7SAOrtvholujLePVoMyytV6G+UCAQT5+ows8gwcg5rXJHh9l+7fnKb6afr+1N06FSN3w70k95Y2TKbHApQccSlaBBSW5XZ8mfE8e9s6vMHIL9ZsqBtzI3kv5n+IUuGBD3yXKS0ipPH+r3M0t8AtIDIlFFrc3hx8PNZpyuDpTmcTpROLHHz4r3Cph9ucA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AVKbcrgDlTXfxg2hRJn25jqXKlpA4hcKgyyO2hFUn30=;
+ b=L9VNY4kzoQ4dqp94hS8Op4wxHZa7rgft0VXZxPgckq8me6cPGb8uF6xLF4sOus7M5pyYqEJ3neDGugYRkj91TdBfK1XCYQ2ppohWcmsWxDCOo+qgCOCECzQPywtmDpGimC+n2O8KqE6S7YSd8RXzPx7XMrP5UwnMlmfRowDVfLSvVlIX6y5bJjqLnIHOd3mlLkhHbGjQmolUAUqXGNmEYnGbV2+oKtj1zKl5e3rvj8/m0IZePhECmx3HsQf2JZCB+1PJ0Uj4IwAIFXSRCDDdnRG6VH4n89dT0kWlYJhgveJJcmzKAFvnNkURkUsB7BjUThsuAXJVXkF1pCFXzy88EQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AVKbcrgDlTXfxg2hRJn25jqXKlpA4hcKgyyO2hFUn30=;
+ b=eLzmjl02/QWB8Ia/w3oO41QFd8jvUr04v9ODgOjC7mV48UVSCi1H09QwZ6aWWGoyTWLDV7wU9UghC4nwzZOkIKi2bcrk8PfqluV1lU4NowRFk/2fqfgPP/ttu9wQwWyQ1SIFmQYMirf3YSCMMoHGAVBs9AXcMMAoJfMvmiiCRfk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM6PR12MB4202.namprd12.prod.outlook.com (2603:10b6:5:219::22)
+ by CY8PR12MB7705.namprd12.prod.outlook.com (2603:10b6:930:84::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.8; Wed, 28 Jan
+ 2026 15:40:00 +0000
+Received: from DM6PR12MB4202.namprd12.prod.outlook.com
+ ([fe80::9e55:f616:6a93:7a3d]) by DM6PR12MB4202.namprd12.prod.outlook.com
+ ([fe80::9e55:f616:6a93:7a3d%4]) with mapi id 15.20.9564.006; Wed, 28 Jan 2026
+ 15:40:00 +0000
+Message-ID: <04e92860-e616-4e74-a349-1397b3a0db81@amd.com>
+Date: Wed, 28 Jan 2026 15:39:51 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/7] cxl/region: Skip decoder reset on detach for
+ autodiscovered regions
+Content-Language: en-US
+To: dan.j.williams@intel.com,
+ "Koralahalli Channabasappa, Smita" <skoralah@amd.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-pm@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Yazen Ghannam <yazen.ghannam@amd.com>, Dave Jiang <dave.jiang@intel.com>,
+ Davidlohr Bueso <dave@stgolabs.net>, Matthew Wilcox <willy@infradead.org>,
+ Jan Kara <jack@suse.cz>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Len Brown <len.brown@intel.com>, Pavel Machek <pavel@kernel.org>,
+ Li Ming <ming.li@zohomail.com>, Jeff Johnson
+ <jeff.johnson@oss.qualcomm.com>, Ying Huang <huang.ying.caritas@gmail.com>,
+ Yao Xingtao <yaoxt.fnst@fujitsu.com>, Peter Zijlstra <peterz@infradead.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Nathan Fontenot <nathan.fontenot@amd.com>,
+ Terry Bowman <terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>,
+ Benjamin Cheatham <benjamin.cheatham@amd.com>,
+ Zhijian Li <lizhijian@fujitsu.com>, Borislav Petkov <bp@alien8.de>,
+ Tomasz Wolski <tomasz.wolski@fujitsu.com>
+References: <20260122045543.218194-1-Smita.KoralahalliChannabasappa@amd.com>
+ <20260122045543.218194-4-Smita.KoralahalliChannabasappa@amd.com>
+ <20260122161858.00004b0c@huawei.com>
+ <9c5150ba-c443-4ce1-a750-57736f0dabf0@amd.com>
+ <69794c2512bfc_1d3310087@dwillia2-mobl4.notmuch>
+From: Alejandro Lucero Palau <alucerop@amd.com>
+In-Reply-To: <69794c2512bfc_1d3310087@dwillia2-mobl4.notmuch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P265CA0221.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:33a::20) To DM6PR12MB4202.namprd12.prod.outlook.com
+ (2603:10b6:5:219::22)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260127180109.66691-1-dorjoychy111@gmail.com>
- <20260127180109.66691-2-dorjoychy111@gmail.com> <1c6cccc3e058ef16fa8b296ef6126b76a12db136.camel@kernel.org>
-In-Reply-To: <1c6cccc3e058ef16fa8b296ef6126b76a12db136.camel@kernel.org>
-From: Dorjoy Chowdhury <dorjoychy111@gmail.com>
-Date: Wed, 28 Jan 2026 21:36:32 +0600
-X-Gm-Features: AZwV_QiDjM_g9KAizMTQulrKnRDV0aYq3Xvzi08IzeHbbXpwKcddpiK7UH_xub8
-Message-ID: <CAFfO_h5yrXR0-igVayH0ent1t12rm=6DUEGjUDW0zqfqy3=ZoQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] open: new O_REGULAR flag support
-To: Jeff Layton <jlayton@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	chuck.lever@oracle.com, alex.aring@gmail.com, arnd@arndb.de, 
-	adilger@dilger.ca
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB4202:EE_|CY8PR12MB7705:EE_
+X-MS-Office365-Filtering-Correlation-Id: ec3918f5-06e9-4cfa-8e01-08de5e837f0b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VFNMZE1tR2ZNYkpuVVVKZlY4NVVwdERlakFaeG41UENEQ0lINDJmb01BV3dJ?=
+ =?utf-8?B?VjBrb3o3TmU4Z2tmM1creDlRaE1zbmw1R1BTSCtsNW9tbjBFaEtiMEtRUDJn?=
+ =?utf-8?B?R09YeU5UOXpYOGVRcm9QZWJSZXE5N2xrcGEvdkVVcUVYZkJxRXp4OG5pOFZ0?=
+ =?utf-8?B?NGFXSXlVd1Jpa1pBSnY0YXBXRUtOblczL29IbmZTM3ZDWENlQVFVRVVVbXpP?=
+ =?utf-8?B?cWRVNnhabFVObngrREJQYU9BU1lUbm1FRjZidXluL1EzZFcwRzI4dlpxRGEz?=
+ =?utf-8?B?eHJOdVEwVVhnSThYZmRxemhUNlVzVEgweVZ2WGJOdVBWb3IxcnNHRFYvU1lV?=
+ =?utf-8?B?QytSYmJQSEo2NDhmdnhNZlB3MVRjSFFIWUEyd3JpUU9sbmc3cUN6OXhjT0VK?=
+ =?utf-8?B?NVF4SithZmtvVG83QVBEK1RiV0ZYMTdybTNEQ1p1cXVHc1hXU09xMG9zVW5p?=
+ =?utf-8?B?SWp4Qit3Nk9zMnhjblNIY0I3Vk1YUUhKZmpzR2ttUCsyNDNhSzVrd0tiM214?=
+ =?utf-8?B?RU1iVjhvS2pQQm5YL1lBUkhNbG4wWHRWZ2JqUkJnWDFFOUZPejl6RVlFWW9C?=
+ =?utf-8?B?MXVNQ0hydnZlUFlJVnMwMGkzNXpSMy9Ucnp3cEVCd25MaXlEYnZxLzE2akdq?=
+ =?utf-8?B?TnhxN2pTTCtIM1dNSURXaWh5NEo1NVRKSFFLVFh1dUNoZmpxc01Ra1NRazdM?=
+ =?utf-8?B?QUpCaWxsalBVWDdHcy9UTXB2WnpoSVQ3NVhkL0tsMk91d29OQ0I3WHJIcUx6?=
+ =?utf-8?B?eWhOSkNKNEFZL0RWZWtwWEp3ZFFiZDNhdmhlRDRDZjVDWVBTbzJCVWlsVmlD?=
+ =?utf-8?B?RUdDRlBhZWUyL1hNYXVrMUpQcjI5a0M2OE9MUXJnRFc1M3p5OGlhSmNKSHJw?=
+ =?utf-8?B?NU1kWTk4TCtKUHVyZzZsRjVMM1FNWi9DV0RKVkhVWkJmclJLVk5GNzY0UVV5?=
+ =?utf-8?B?VFQ1T1RNVVRGWFBYMFdiWWJub3JtOWpVS1pQZVgxYm1TaVFkWE5VVEZWS05J?=
+ =?utf-8?B?cjU2b1o4cUFTTFBtNVp1dHJkWGNhSXc2L3BLdWRpL3EyWEp0bWlCTURyVlFU?=
+ =?utf-8?B?VlVTWkhPRjNyZVppK1ZjdXFocXlOQ0xqbXRSckFhUWxLWmFVRjBZaCtpWHJW?=
+ =?utf-8?B?U2Z0UFlzb0pDMEk2RHFYT29Fc3A4d3lvaG5zNE55T1VvdnFERWx1NEx0S3F2?=
+ =?utf-8?B?d1BnbTN2cHoyNVltQ2hhSXlHWDBSRENaOTVMMnV4TGVqRUJGSm5qZUlvSlY1?=
+ =?utf-8?B?UFdIL0I1Qy9QUjZvcVU1aUdaZ0llVDB5ZjlnUG9UVlNvcGkvcU41RnVITVFO?=
+ =?utf-8?B?VFFJSTNIRnZQdHkybUNVanRwV1RaK3A5VVhiRUVLTFV6Zzc5ME8xK0pXL3Vy?=
+ =?utf-8?B?dTRaSVhQYVgrMjBOZG1DM2w5ZUZKSVFhUllrWnAwQ0hUa0pleFkxL09sT0Fo?=
+ =?utf-8?B?RWhPM01IS1dxUUQ1bVlDOUp0TVVmWDlENnBhUExVenlRb1lOV2dVRVdGYkZN?=
+ =?utf-8?B?SWFNQkJtN3N1V1krK3B0NHdLTUZwNDdPK0RiVFdqQzljV0kySjlwT0NjR0hq?=
+ =?utf-8?B?ZmNLQXNXT2FDc3hFYTVFdWIvWjZsOVJkYXZQYkpVNHBoTUF4dHZQdjNLNUFx?=
+ =?utf-8?B?UWhyT3VYVkhRN0tvRytLRVliL3NBOGxXRm5udkU1dkRFZkwrMi91eGFDN00z?=
+ =?utf-8?B?WEN6OHZreWMvTzFuYmhMMG5Ma2l3QTJyamhpTmpGc3k3djhmSnJYZTRJcmJM?=
+ =?utf-8?B?eW1aNUgrNDdlU1FSa0s5WitBMWJia1AzQTdLSHBNWm40TmN0bVFFTkxSNDRj?=
+ =?utf-8?B?ZWlMVk53OWg1WHVaTUR2d3JzZDYxQWszSUN2U01EdEQzSUoycGZqQTAvQzZp?=
+ =?utf-8?B?RkVzUGVObU5RMnU0b2tYdnpBS0hyT1cvMDNhMjNxYStDMTJmd1dYeE5Tb1ZB?=
+ =?utf-8?B?TER1V2xGNGdmRWNYS01VNVpWWlF5YXVHN0xEcnZEMkU0VlUzTEZGQ2hzQis2?=
+ =?utf-8?B?YVJ3bGd0dzlKSG9XTGErK3J1MURXZDZOMEJtamEyMnc4emFjVjBqK04wREE5?=
+ =?utf-8?B?ZGg2QVJrVDRSdzVOeW9TUXNzM01jR3gxZ2hQTnBqRW94eXhLT1VRdm85dVZM?=
+ =?utf-8?Q?OVLY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4202.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?R0RSWGZ3dFdJbTdDRTJjMlZhZG43UnhDV0lMbTRWYTVqQjk2VS9HSllJVmRS?=
+ =?utf-8?B?Qkc0SzNKZGx6Z3JMM0FXU3BXMktZYlZaTDVOSjdtRGlUb3QvRlRyWVJlR0ps?=
+ =?utf-8?B?T2FUSTNmTWlHdzJqZmFtTGg5TURrODI3a3hXYXEzSUR2aVV6elJwSGtORUtV?=
+ =?utf-8?B?U1g4WjBnMlpwaXM2SDRheFQwb0VWYmIrbnk3TkhIRlY1aC9hZ0UxSlpKeHlQ?=
+ =?utf-8?B?RFdTT1FIVUVqVU1HS3drS1dGMWtGa1lOTUIwRU9UaTJmRWhiaEFnOE5qdklp?=
+ =?utf-8?B?RXo3TmJCcE1uZjJwbEVlMUtWY00xcnRwSm8zOUJSNFBLV0FyaFNlU0hXS3F0?=
+ =?utf-8?B?bHFsRnRRQ2t0Q2xWVzExRzAzMVhyakIzTGhmcGwzK0FxWkU0NmhiS2NNcS85?=
+ =?utf-8?B?NE84N05KdzEvQThzaytJT2Y1L0ZWME5QZmlsVTFXeEx3QUVMNWptcitVRXBx?=
+ =?utf-8?B?cGN3cThmZlhMaldIZlRrNTBMLyt5Y1oxVzhrYWxkcVNQL1ErVW43MzE2KzZa?=
+ =?utf-8?B?WkRxOGdiT3hsdmdBNG50cURSN09RWk5lNXVkWUx4MXp3Q3VPbHkrbXM1dzRh?=
+ =?utf-8?B?cnUxdEgzeTFxWDhKazlEN25oWHhaQzNUSFhvRThqWjdtaDB1ZDJyRkh1ZFAz?=
+ =?utf-8?B?cHgyM2pJVFNoUE04VTRZS3dWSGltSGNPNFc5UkRZNWhLV3paazJneDJ0YURF?=
+ =?utf-8?B?THl5ZnVrYXZZYnFMdnNmazk0OHg4b0ZISUxkOTlTK0w4dmhzVU4ydS83UVRM?=
+ =?utf-8?B?VWVMVnU0RmFxbFZsME14RUZXVGhBOFVZdXloRExQMmdGRTJweXNPOWJlMEVD?=
+ =?utf-8?B?bThXeU5VUGh1OFE5OERiTENSVWpJeC84a2YvV3FLTFpaczcwRVE3ZHJuc1dH?=
+ =?utf-8?B?bS9oYnQydlQ3cXV6Z1BtbVFkT25LNm01dlAvUUtTREoyYm5wY2szbHVuTThZ?=
+ =?utf-8?B?TU54Y2N0VUlCT1E4N200N1E3TjFNT3BLTFdjRkk0azJQajhuRWxkV1lha0w2?=
+ =?utf-8?B?MURPOCtLTXk4b3VzcjZuTmp1aUZaSWtleFZ0OG5ZcXM3NUp3U2M5ZU1zYnZC?=
+ =?utf-8?B?dDQ2d0dxU255bm10ZFI4NDA4cEkvY2FoU2pObDFlWVdmd2hPcCt6SGpCRTR4?=
+ =?utf-8?B?TzBObEZJZTFRQmkvQVBOcHIwa1EwSmpQQ1lHWW1GNG9kb1pQTGhNUUhIVGpJ?=
+ =?utf-8?B?NnBlYnQ5UHhvTmsvWjBzWDdHaGNFYTB3aDhVSm1ia3ZEMWJiL013SDFIaWFD?=
+ =?utf-8?B?ZDFna1FadDhPYlVmRUx4VFBPVmFMcHQxZTRVYWpaamR4NHNWelFaTTRqYzNE?=
+ =?utf-8?B?eDNoQUcxekZtaXlLSXA4T2dCeHVXb0ZtRUZweG8zZzh2NlZKdjEwaUc3eVZW?=
+ =?utf-8?B?M2VPUlhYWHpqeW9HeE9TNG1PZGVFeFNGWXZGcUhiYUtWWkFDT1Y4UDIxb3NJ?=
+ =?utf-8?B?VGpSVjFBeWhEVEtPYWFlNEVxTFN0Zmsza2lrVFBmRFRUZnFrZFJOOSt4ak5n?=
+ =?utf-8?B?ejNhYmVUZlVtR3ByWkNaL1dweUtTWE1iWE9WS1F4aWZMQnYvWU5rTjFPQ2Ry?=
+ =?utf-8?B?d21GcU9QTktjSDRFWENFVjFERjZ2em1ORHViYi9rTDErVVEvMVI1NVp3K1lj?=
+ =?utf-8?B?WWJGTjc5eDVpWnB2SDVkTkxxbTBVT3BtMURvOURDYWEwVEt5L0k4NkgzVnpV?=
+ =?utf-8?B?ejQ5UWR3RUpXZXVXUHNMbFVWamVWTzlJN0U5cDlCdzlNMS9tdElUMUFGK1pk?=
+ =?utf-8?B?cmN1MlA3MkxJck5wMkVIZEhoSU1QVzVaUklIdkxGTXp2c1h3QlpRMGF5UFhZ?=
+ =?utf-8?B?a0pFY3QxVlh1UkZLbi9JazNZYTd3NzVQbXBHQ3ROcFVoZ0Y4WjVDb29lVm0v?=
+ =?utf-8?B?enowTlVEQWI3QnI0dmYrMm8rRVVEU01BS0tXb0J1YU0raTM2OElEUjBsK3JY?=
+ =?utf-8?B?Qm9xSm42cGllQ1RaTnp3Z29NTkUrREtQM2RvOVV6cTIyOEVlb2VIN3l3Ykx1?=
+ =?utf-8?B?MDMrOHRFOXpOb0JiaXZMRHJKNEtuVm5VQm9wcnp3QzZIQTc2VVFHbE9tcVpW?=
+ =?utf-8?B?YWRCRndmYzF5SUo5dnFnYnlJN0pGN0NQTGoyWmNoWHR6Uno5Qy9RZDByWkJJ?=
+ =?utf-8?B?VFFRY3BLUCsxc1lET3U0T201b1FNQ05VR2VSTGFKa2NDTGYyV2xwSTlwK1NX?=
+ =?utf-8?B?dHpXRExkVVRPeUhrd3IvcDNiMUxuenhmaWZNUDJXREtPZFliS1JFWERDNlEw?=
+ =?utf-8?B?Q0J3OXBUaTl3QUdWZXUrb2lYSXZRZ2hnZTd4VS9mQm0reW9oU0Qza2tJYWNk?=
+ =?utf-8?B?VDlITEJIQ05KZ250Y3F5c1hGN29UWXZ1MTJ4L1YrSGlHZ1ZzZktsUT09?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec3918f5-06e9-4cfa-8e01-08de5e837f0b
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4202.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jan 2026 15:39:59.9774
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zs6eMMrInNyfqgcH7PbliIdxZepiky+bAweublYDwrLQYoHJ7YY3HSBpVKHV1auqnrDZy0Mddr5IJJSJxAxT+g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7705
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [1.34 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	ARC_REJECT(1.00)[cv is fail on i=2];
+	DMARC_POLICY_ALLOW(-0.50)[amd.com,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[amd.com:s=selector1];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75744-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,arndb.de,dilger.ca];
-	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[34];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75745-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[vger.kernel.org,lists.linux.dev,kernel.org,intel.com,amd.com,stgolabs.net,infradead.org,suse.cz,zohomail.com,oss.qualcomm.com,gmail.com,fujitsu.com,linuxfoundation.org,alien8.de];
+	RCVD_TLS_LAST(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	NEURAL_HAM(-0.00)[-1.000];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[dorjoychy111@gmail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[alucerop@amd.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[amd.com:+];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: E8D37A4137
+	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[amd.com:mid,amd.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,intel.com:email]
+X-Rspamd-Queue-Id: AE384A5675
 X-Rspamd-Action: no action
 
-On Wed, Jan 28, 2026 at 5:52=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
-ote:
->
-> On Tue, 2026-01-27 at 23:58 +0600, Dorjoy Chowdhury wrote:
-> > This flag indicates the path should be opened if it's a regular file.
-> > This is useful to write secure programs that want to avoid being tricke=
-d
-> > into opening device nodes with special semantics while thinking they
-> > operate on regular files.
-> >
-> > A corresponding error code ENOTREG has been introduced. For example, if
-> > open is called on path /dev/null with O_REGULAR in the flag param, it
-> > will return -ENOTREG.
-> >
-> > When used in combination with O_CREAT, either the regular file is
-> > created, or if the path already exists, it is opened if it's a regular
-> > file. Otherwise, -ENOTREG is returned.
-> >
-> > -EINVAL is returned when O_REGULAR is combined with O_DIRECTORY (not
-> > part of O_TMPFILE) because it doesn't make sense to open a path that
-> > is both a directory and a regular file.
-> >
-> > Signed-off-by: Dorjoy Chowdhury <dorjoychy111@gmail.com>
-> > ---
-> >  arch/alpha/include/uapi/asm/errno.h        | 2 ++
-> >  arch/alpha/include/uapi/asm/fcntl.h        | 1 +
-> >  arch/mips/include/uapi/asm/errno.h         | 2 ++
-> >  arch/parisc/include/uapi/asm/errno.h       | 2 ++
-> >  arch/parisc/include/uapi/asm/fcntl.h       | 1 +
-> >  arch/sparc/include/uapi/asm/errno.h        | 2 ++
-> >  arch/sparc/include/uapi/asm/fcntl.h        | 1 +
-> >  fs/fcntl.c                                 | 2 +-
-> >  fs/namei.c                                 | 6 ++++++
-> >  fs/open.c                                  | 4 +++-
-> >  include/linux/fcntl.h                      | 2 +-
-> >  include/uapi/asm-generic/errno.h           | 2 ++
-> >  include/uapi/asm-generic/fcntl.h           | 4 ++++
-> >  tools/arch/alpha/include/uapi/asm/errno.h  | 2 ++
-> >  tools/arch/mips/include/uapi/asm/errno.h   | 2 ++
-> >  tools/arch/parisc/include/uapi/asm/errno.h | 2 ++
-> >  tools/arch/sparc/include/uapi/asm/errno.h  | 2 ++
-> >  tools/include/uapi/asm-generic/errno.h     | 2 ++
-> >  18 files changed, 38 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/arch/alpha/include/uapi/asm/errno.h b/arch/alpha/include/u=
-api/asm/errno.h
-> > index 6791f6508632..8bbcaa9024f9 100644
-> > --- a/arch/alpha/include/uapi/asm/errno.h
-> > +++ b/arch/alpha/include/uapi/asm/errno.h
-> > @@ -127,4 +127,6 @@
-> >
-> >  #define EHWPOISON    139     /* Memory page has hardware error */
-> >
-> > +#define ENOTREG              140     /* Not a regular file */
-> > +
-> >  #endif
-> > diff --git a/arch/alpha/include/uapi/asm/fcntl.h b/arch/alpha/include/u=
-api/asm/fcntl.h
-> > index 50bdc8e8a271..4da5a64c23bd 100644
-> > --- a/arch/alpha/include/uapi/asm/fcntl.h
-> > +++ b/arch/alpha/include/uapi/asm/fcntl.h
-> > @@ -34,6 +34,7 @@
-> >
-> >  #define O_PATH               040000000
-> >  #define __O_TMPFILE  0100000000
-> > +#define O_REGULAR    0200000000
-> >
-> >  #define F_GETLK              7
-> >  #define F_SETLK              8
-> > diff --git a/arch/mips/include/uapi/asm/errno.h b/arch/mips/include/uap=
-i/asm/errno.h
-> > index c01ed91b1ef4..293c78777254 100644
-> > --- a/arch/mips/include/uapi/asm/errno.h
-> > +++ b/arch/mips/include/uapi/asm/errno.h
-> > @@ -126,6 +126,8 @@
-> >
-> >  #define EHWPOISON    168     /* Memory page has hardware error */
-> >
-> > +#define ENOTREG              169     /* Not a regular file */
-> > +
-> >  #define EDQUOT               1133    /* Quota exceeded */
-> >
-> >
-> > diff --git a/arch/parisc/include/uapi/asm/errno.h b/arch/parisc/include=
-/uapi/asm/errno.h
-> > index 8cbc07c1903e..442917484f99 100644
-> > --- a/arch/parisc/include/uapi/asm/errno.h
-> > +++ b/arch/parisc/include/uapi/asm/errno.h
-> > @@ -124,4 +124,6 @@
-> >
-> >  #define EHWPOISON    257     /* Memory page has hardware error */
-> >
-> > +#define ENOTREG              258     /* Not a regular file */
-> > +
-> >  #endif
-> > diff --git a/arch/parisc/include/uapi/asm/fcntl.h b/arch/parisc/include=
-/uapi/asm/fcntl.h
-> > index 03dee816cb13..0cc3320fe326 100644
-> > --- a/arch/parisc/include/uapi/asm/fcntl.h
-> > +++ b/arch/parisc/include/uapi/asm/fcntl.h
-> > @@ -19,6 +19,7 @@
-> >
-> >  #define O_PATH               020000000
-> >  #define __O_TMPFILE  040000000
-> > +#define O_REGULAR    0100000000
-> >
-> >  #define F_GETLK64    8
-> >  #define F_SETLK64    9
-> > diff --git a/arch/sparc/include/uapi/asm/errno.h b/arch/sparc/include/u=
-api/asm/errno.h
-> > index 4a41e7835fd5..8dce0bfeab74 100644
-> > --- a/arch/sparc/include/uapi/asm/errno.h
-> > +++ b/arch/sparc/include/uapi/asm/errno.h
-> > @@ -117,4 +117,6 @@
-> >
-> >  #define EHWPOISON    135     /* Memory page has hardware error */
-> >
-> > +#define ENOTREG              136     /* Not a regular file */
-> > +
-> >  #endif
-> > diff --git a/arch/sparc/include/uapi/asm/fcntl.h b/arch/sparc/include/u=
-api/asm/fcntl.h
-> > index 67dae75e5274..a93d18d2c23e 100644
-> > --- a/arch/sparc/include/uapi/asm/fcntl.h
-> > +++ b/arch/sparc/include/uapi/asm/fcntl.h
-> > @@ -37,6 +37,7 @@
-> >
-> >  #define O_PATH               0x1000000
-> >  #define __O_TMPFILE  0x2000000
-> > +#define O_REGULAR    0x4000000
-> >
-> >  #define F_GETOWN     5       /*  for sockets. */
-> >  #define F_SETOWN     6       /*  for sockets. */
-> > diff --git a/fs/fcntl.c b/fs/fcntl.c
-> > index f93dbca08435..62ab4ad2b6f5 100644
-> > --- a/fs/fcntl.c
-> > +++ b/fs/fcntl.c
-> > @@ -1169,7 +1169,7 @@ static int __init fcntl_init(void)
-> >        * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
-> >        * is defined as O_NONBLOCK on some platforms and not on others.
-> >        */
-> > -     BUILD_BUG_ON(20 - 1 /* for O_RDONLY being 0 */ !=3D
-> > +     BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=3D
-> >               HWEIGHT32(
-> >                       (VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
-> >                       __FMODE_EXEC));
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > index b28ecb699f32..f5504ae4b03c 100644
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -4616,6 +4616,10 @@ static int do_open(struct nameidata *nd,
-> >               if (unlikely(error))
-> >                       return error;
-> >       }
-> > +
-> > +     if ((open_flag & O_REGULAR) && !d_is_reg(nd->path.dentry))
-> > +             return -ENOTREG;
-> > +
-> >       if ((nd->flags & LOOKUP_DIRECTORY) && !d_can_lookup(nd->path.dent=
-ry))
-> >               return -ENOTDIR;
-> >
-> > @@ -4765,6 +4769,8 @@ static int do_o_path(struct nameidata *nd, unsign=
-ed flags, struct file *file)
-> >       struct path path;
-> >       int error =3D path_lookupat(nd, flags, &path);
-> >       if (!error) {
-> > +             if ((file->f_flags & O_REGULAR) && !d_is_reg(path.dentry)=
-)
-> > +                     return -ENOTREG;
-> >               audit_inode(nd->name, path.dentry, 0);
-> >               error =3D vfs_open(&path, file);
-> >               path_put(&path);
-> > diff --git a/fs/open.c b/fs/open.c
-> > index 74c4c1462b3e..82153e21907e 100644
-> > --- a/fs/open.c
-> > +++ b/fs/open.c
-> > @@ -1173,7 +1173,7 @@ struct file *kernel_file_open(const struct path *=
-path, int flags,
-> >  EXPORT_SYMBOL_GPL(kernel_file_open);
-> >
-> >  #define WILL_CREATE(flags)   (flags & (O_CREAT | __O_TMPFILE))
-> > -#define O_PATH_FLAGS         (O_DIRECTORY | O_NOFOLLOW | O_PATH | O_CL=
-OEXEC)
-> > +#define O_PATH_FLAGS         (O_DIRECTORY | O_NOFOLLOW | O_PATH | O_CL=
-OEXEC | O_REGULAR)
-> >
-> >  inline struct open_how build_open_how(int flags, umode_t mode)
-> >  {
-> > @@ -1250,6 +1250,8 @@ inline int build_open_flags(const struct open_how=
- *how, struct open_flags *op)
-> >                       return -EINVAL;
-> >               if (!(acc_mode & MAY_WRITE))
-> >                       return -EINVAL;
-> > +     } else if ((flags & O_DIRECTORY) && (flags & O_REGULAR)) {
-> > +             return -EINVAL;
-> >       }
-> >       if (flags & O_PATH) {
-> >               /* O_PATH only permits certain other flags to be set. */
-> > diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-> > index a332e79b3207..4fd07b0e0a17 100644
-> > --- a/include/linux/fcntl.h
-> > +++ b/include/linux/fcntl.h
-> > @@ -10,7 +10,7 @@
-> >       (O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_T=
-RUNC | \
-> >        O_APPEND | O_NDELAY | O_NONBLOCK | __O_SYNC | O_DSYNC | \
-> >        FASYNC | O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
-> > -      O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
-> > +      O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_REGULAR)
-> >
-> >  /* List of all valid flags for the how->resolve argument: */
-> >  #define VALID_RESOLVE_FLAGS \
-> > diff --git a/include/uapi/asm-generic/errno.h b/include/uapi/asm-generi=
-c/errno.h
-> > index 92e7ae493ee3..2216ab9aa32e 100644
-> > --- a/include/uapi/asm-generic/errno.h
-> > +++ b/include/uapi/asm-generic/errno.h
-> > @@ -122,4 +122,6 @@
-> >
-> >  #define EHWPOISON    133     /* Memory page has hardware error */
-> >
-> > +#define ENOTREG              134     /* Not a regular file */
-> > +
-> >  #endif
-> > diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generi=
-c/fcntl.h
-> > index 613475285643..3468b352a575 100644
-> > --- a/include/uapi/asm-generic/fcntl.h
-> > +++ b/include/uapi/asm-generic/fcntl.h
-> > @@ -88,6 +88,10 @@
-> >  #define __O_TMPFILE  020000000
-> >  #endif
-> >
-> > +#ifndef O_REGULAR
-> > +#define O_REGULAR    040000000
-> > +#endif
-> > +
-> >  /* a horrid kludge trying to make sure that this will fail on old kern=
-els */
-> >  #define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
-> >
-> > diff --git a/tools/arch/alpha/include/uapi/asm/errno.h b/tools/arch/alp=
-ha/include/uapi/asm/errno.h
-> > index 6791f6508632..8bbcaa9024f9 100644
-> > --- a/tools/arch/alpha/include/uapi/asm/errno.h
-> > +++ b/tools/arch/alpha/include/uapi/asm/errno.h
-> > @@ -127,4 +127,6 @@
-> >
-> >  #define EHWPOISON    139     /* Memory page has hardware error */
-> >
-> > +#define ENOTREG              140     /* Not a regular file */
-> > +
-> >  #endif
-> > diff --git a/tools/arch/mips/include/uapi/asm/errno.h b/tools/arch/mips=
-/include/uapi/asm/errno.h
-> > index c01ed91b1ef4..293c78777254 100644
-> > --- a/tools/arch/mips/include/uapi/asm/errno.h
-> > +++ b/tools/arch/mips/include/uapi/asm/errno.h
-> > @@ -126,6 +126,8 @@
-> >
-> >  #define EHWPOISON    168     /* Memory page has hardware error */
-> >
-> > +#define ENOTREG              169     /* Not a regular file */
-> > +
-> >  #define EDQUOT               1133    /* Quota exceeded */
-> >
-> >
-> > diff --git a/tools/arch/parisc/include/uapi/asm/errno.h b/tools/arch/pa=
-risc/include/uapi/asm/errno.h
-> > index 8cbc07c1903e..442917484f99 100644
-> > --- a/tools/arch/parisc/include/uapi/asm/errno.h
-> > +++ b/tools/arch/parisc/include/uapi/asm/errno.h
-> > @@ -124,4 +124,6 @@
-> >
-> >  #define EHWPOISON    257     /* Memory page has hardware error */
-> >
-> > +#define ENOTREG              258     /* Not a regular file */
-> > +
-> >  #endif
-> > diff --git a/tools/arch/sparc/include/uapi/asm/errno.h b/tools/arch/spa=
-rc/include/uapi/asm/errno.h
-> > index 4a41e7835fd5..8dce0bfeab74 100644
-> > --- a/tools/arch/sparc/include/uapi/asm/errno.h
-> > +++ b/tools/arch/sparc/include/uapi/asm/errno.h
-> > @@ -117,4 +117,6 @@
-> >
-> >  #define EHWPOISON    135     /* Memory page has hardware error */
-> >
-> > +#define ENOTREG              136     /* Not a regular file */
-> > +
-> >  #endif
-> > diff --git a/tools/include/uapi/asm-generic/errno.h b/tools/include/uap=
-i/asm-generic/errno.h
-> > index 92e7ae493ee3..2216ab9aa32e 100644
-> > --- a/tools/include/uapi/asm-generic/errno.h
-> > +++ b/tools/include/uapi/asm-generic/errno.h
-> > @@ -122,4 +122,6 @@
-> >
-> >  #define EHWPOISON    133     /* Memory page has hardware error */
-> >
-> > +#define ENOTREG              134     /* Not a regular file */
-> > +
-> >  #endif
->
-> One thing this patch is missing is handling for ->atomic_open(). I
-> imagine most of the filesystems that provide that op can't support
-> O_REGULAR properly (maybe cifs can? idk). What you probably want to do
-> is add in some patches that make all of the atomic_open operations in
-> the kernel return -EINVAL if O_REGULAR is set.
->
-> Then, once the basic support is in, you or someone else can go back and
-> implement support for O_REGULAR where possible.
 
-Thank you for the feedback. I don't quite understand what I need to
-fix. I thought open system calls always create regular files, so
-atomic_open probably always creates regular files? Can you please give
-me some more details as to where I need to fix this and what the
-actual bug here is that is related to atomic_open?  I think I had done
-some normal testing and when using O_CREAT | O_REGULAR, if the file
-doesn't exist, the file gets created and the file that gets created is
-a regular file, so it probably makes sense? Or should the behavior be
-that if file doesn't exist, -EINVAL is returned and if file exists it
-is opened if regular, otherwise -ENOTREG is returned?
+On 1/27/26 23:37, dan.j.williams@intel.com wrote:
+> Koralahalli Channabasappa, Smita wrote:
+> [..]
+>> I’m re reading Dan’s note here:
+>> https://lore.kernel.org/all/6930dacd6510f_198110020@dwillia2-mobl4.notmuch/
+>>
+>> Specifically this part:
+>> "If the administrator actually wants to destroy and reclaim that
+>> physical address space then they need to forcefully de-commit that
+>> auto-assembled region via the @commit sysfs attribute. So that means
+>> commit_store() needs to clear CXL_REGION_F_AUTO to get the decoder reset
+>> to happen."
+>>
+>> Today the sysfs commit=0 path inside commit_store() resets decoders
+>> without the AUTO check whereas the detach path now skips the reset when
+>> CXL_REGION_F_AUTO is set.
+>>
+>> I think the same rationale should apply to the sysfs de-commit path as
+>> well? I’m trying to understand the implications of not guarding the
+>> reset with AUTO in commit_store().
+> Linux tends to give the administrator the ability to know better than the
+> kernel. So if the root forcefully decommits the region, root gets to
+> keep the pieces.
 
-Regards,
-Dorjoy
+
+I have been trying to figure out how to preserve the decoders for Type2 
+auto discover regions since, I think, this was demanded after v22 sent 
+upstream. This patch/change is what I was looking for, and although I 
+did implement it in another way requiring "consensus", this one seems 
+good enough and already discussed and approved, so all good.
+
+
+However, I think it would be also interesting to give the Type2 driver 
+the option of resetting decoders as well, what I have been using for v22 
+and successfully tested. But this change will preclude that other 
+possibility, so, what about an option for clearing CXL_REGION_F_AUTO by 
+Type2 drivers? If you want this only to be done by admin/root, I guess a 
+module param would do it.
+
+
 
