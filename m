@@ -1,90 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-75720-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75721-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id mOPJAGMOemmS2AEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75720-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 14:25:55 +0100
+	id cIsmLgAOemmS2AEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75721-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 14:24:16 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96995A216F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 14:25:54 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9351FA2131
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 14:24:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0592830136A7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 13:24:12 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 034093006015
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 13:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4229C352FA1;
-	Wed, 28 Jan 2026 13:24:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654AB352FAC;
+	Wed, 28 Jan 2026 13:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gchs8YhE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W7nt6ktY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AB62F0C45
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 13:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95009352C48
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 13:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769606650; cv=none; b=Rza68lUuvGh/DRLjjtZWRPUHvVpkZk2JQCQ+ir70qaKFf45ehUFNM/aW2NSPyaApwTRMVr9N/DxVm5UCDIrQmym5UrW6JGjvT20wu0BruVa8A0yA7yYQKiowgYlJb4Ff/MBrXCgd4Noc9fH4wg+3X85U2aDHsGLrz0H1CiO4M1U=
+	t=1769606652; cv=none; b=DUoYMpkIalQ9D5JGNP1WUNni8iqDzXUTozS9uQ2thz9EJvajtryRWNJv7/FMP6AvJA6l+toqgB9/pbZUTDoAq3rMS8Cpue07HJY5nVr4GUg0UK5DBcR8m79bKeau4EO98h2oGyiRgfH+W8Io197+JTEkYCBmQNqcIPZfrnRf344=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769606650; c=relaxed/simple;
-	bh=5mj9f+jiqWsP8JUwxAFNqRoV0N/RWg4pBZ79Q5rxyLU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IAjCMiqvUR+7WO4/cpM+ygFDlwa7u0R7jYGHeXGLAsAAKazZgYk3F0cJv7Gv7AMDUPjFYFD1ePe2GX6CPDSTWZ18UPKS7WipS8JDMawCF5UeWe60YLVQOuyKmXVpJHOg+PkJNYEqRHFboZ4x35u23faanaTJOT8kEXJha4VZ21s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gchs8YhE; arc=none smtp.client-ip=209.85.208.42
+	s=arc-20240116; t=1769606652; c=relaxed/simple;
+	bh=by5c7OBWmvzWhVys6tF6T+VYllXJ1/+r8xSpNq3nuBQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=LtdrvhDHjX1FuDb1TXSif5XewDwUxIhJz4W/lQlySG36naqg6w1yORajhlsEY7tTuwGSkyqtXjvk10aHQa2lomr3p6vbdI3/VNLHi6ZtM2AaMnAbmU07pBMj8KB0TNGqZJK5O/OZLwy7VH+5JlxmNbW6qIuYWY8bKSdh51OF1so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W7nt6ktY; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6581327d6baso10528529a12.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 05:24:09 -0800 (PST)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-658b5e57584so1810884a12.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 05:24:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769606648; x=1770211448; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2C0U7hvt67M0jhge/Mq6BbLukFcgthoPBAq2udkVqlA=;
-        b=Gchs8YhEuiqjm7UISgnUjThDUVDjst+urDIUMDvEB+B31Ai5cUSrRb3Qd2uWZnojlA
-         jE+uY/UYXdxaPhQKj/vTQbpygTlD6GYbeszZyAkIXsAVkFM5/Ludp+69wuF/CPmwGDIn
-         9wcjCFDjXBrziTjElQLGG3RzWEsLb2yFOUPYOAWyEUQzyUQy0Op9Rc7Fk+TXyO4mtgPK
-         6jcVnDRPs5m5BO9Fylo0AQQKDS6x40LuSQ2PN7p6JI4w/1QjvWFydOFjAP7Jh8RFkX5H
-         Alb/TM8kxyD3Nhr402gfxfnZpwW5YN9Xmx04SRjjheRMSckdoA/tyQZrWuIZ3B2Q+sDn
-         NWzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769606648; x=1770211448;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1769606649; x=1770211449; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2C0U7hvt67M0jhge/Mq6BbLukFcgthoPBAq2udkVqlA=;
-        b=pUO+QaOXXFrApyVaGUJbQx/vhf2GhAL8iJZog+MpZGQ9e4j4i9kDGMOVKfrU+zyL0+
-         9NLVdcK2BKpeJ9gkpGLMFxy4sg3aPdYkM6/FUCcSD27pKzzeG01ZRyc7keKhP/N8fzrG
-         QJ6yKG9CtJ3RcR5KpSFENc7ewVrSLhQ+F5u+2JTxWjGlmS9dcxS61g0biOGY4P71O07Y
-         y4TVgxY8pdKfDuvPZY+nCobP+TFYqPUK+qEFx1+Z9JzTW6cyS+j6MYmTMNgz5JExTGOA
-         R4Ns8W8eU+XyygtKjVw6RjRseRO7AbSHs7mS7tGj3klG9HNfk9AryQjhQUIWeAquAQVk
-         JLUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWTETOGyQGh+fi0lZ9FN03+xu0ldnrvjR+EOJL0zREYyo8TRMUcmO5ppT9YyZV+q3BXTf/OVNPeHdfKJY6v@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHE4qpZp//zEt1n+K4JbfPELvigwWWhKu2+PI183ZHgZvDBfRj
-	Jey8p21XTL8cbTUApffTxk3bbXMTAQS0AIs6ZPAaja7UdNIGReqxNb9C
-X-Gm-Gg: AZuq6aLY6lkK9eXb69BNl7SIAfktYSU0jPHSb1CTYUGaBLoXblPUfYLH2FtHic8xhN/
-	FeEgDnrk5uEAMrurawLqvBTvEHYlUExaPz/T3jtSojsDO/Xz8m3r8ZSzv9eBmKItHfblVwNA0w8
-	OUqRdTXprohjJWpz3dr+bc/42JMkB/eaP80mt6x4wjsx6kArIy9iQ0aVaGmc99V8wfb7tjyfhMF
-	pdwmVEiBjDsKWR1mW7ZWmamEK6YUPLqbDLaxdZLXM+b0FYdreoVuhJf7S/4Q8sr4mB3FmwSo3IF
-	UwJI6eRjPCOAH3j3F3wiiaPYvmNpXztApZOc1mD5Y5pWeaY2xBTe/CbdZfdSsJx/poxQsW2QVOx
-	bZw7YZs0GZ5sH26xc8Th3PrskbSzux1ONRoWP3yXmJo8qxbClIYQsH9rxsBa0qg55qiq8vHTo27
-	KSv/SgB9zr6FPOrDSZd62d7ztKwpUpFXeUO+9ClvOpn5WW3oklfFJA50UPDPBKR8W4B3mRErP/A
-	cAk7oFyanShJw15
-X-Received: by 2002:a05:6402:430a:b0:658:b922:22e0 with SMTP id 4fb4d7f45d1cf-658b922246emr1251224a12.28.1769606647432;
-        Wed, 28 Jan 2026 05:24:07 -0800 (PST)
+        bh=kxRM277namVFNLdkVHTNF4KV4lqJB7EgGMx8/qf8f94=;
+        b=W7nt6ktYD1RiYz7pLN3PILLQbdb08/u009q6bRnAlNJiVOEJHRL0t1SR22otnk1NOC
+         R2+KUUGfOWhX931UJKyosaYw2rNAzzXfb+Wfo+bxZWeW2FQRLcIlBfSOyaIPZqrGLKtY
+         Y9CEKp+y3CrTHht6gaBKb/4cprKUfaF4iFMbIi1kXePlPeTgFgZbPZvTKwwSuVH14EyW
+         hzNK5NDI5N/QoOoVjPlcgLd06+aFpLLNX1nmV2mcfqynHEKWf53Hpg+ilU8gPxVP7LBZ
+         J747uuQqwoxIUG9shomO9o5KIt1eP1a4GFNZaJ59P+5blXfNNIc+V8ZEGoKVbdsD3Ifw
+         eBnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769606649; x=1770211449;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=kxRM277namVFNLdkVHTNF4KV4lqJB7EgGMx8/qf8f94=;
+        b=I9Q15+vAnXoUoeIDNfaFvdPgvz/2mct9B1Sxzd4mVACJB8ZjEdicGH+ChMkpoaSiip
+         GjgYlazrSY37oC36EjJ2+ZA/+TZyGhM0U5SSI6rnG35Q7leEaVj3sAky7Ly/uligxz6K
+         Vp8nBkodE1hFiN7kye4cX44zz6+Jr8YWVnaNBeAc+4UeCEdM3n5jcOegoMf6ExJl+NP7
+         9ToSUWpi4E/dQ7FSHh8IfC89VDkBArjDr96zwRnbOHnRlUimLsYZ3jsvsxoKL/YAySbv
+         60QGASQ/83u8Wwy1AUgW+yQiVwFAizSuc2Volax82py77APzv9TrrHGGhGuGEdue/XG7
+         jJpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUggP1Y68HolpgCaDM/2OscPXnAdgLAPvGNjZrpTxZm0qvzgscLDTV6cnvheD15kNwJe7frqEseVVpM6aOz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9CbRYsiNRqPuhdLhkWrbx+ONDsHaRpI2I94f6XHuKK3dVJH7z
+	gE0Avra4eaLHDjPQGNErUdLw7PCW5x7qVQnmN/jdszosCib7j8AXObDt
+X-Gm-Gg: AZuq6aLfnkQJrNajSMxycL9WcE2ZTmhXx86gS26Zd3fkYV5rb8GmAmh1qWhvfaqZDXi
+	Vof5UTY4JzkwwQn9VwVx6k1QhKWiQv86CgnHWfsYdCNcoawkzuAz859Uj3UxQIyHs7S+eTAhM2k
+	ebed1VnL1YJBOsyqOu1pmkq+e6E6d8HMbZL3ABKoLALFZrfzAiisj3mEX/GL88O46baHa7ItjBc
+	g0Y3QNkyfPbtXQ08aqNxPl90klxD78Yh5IloSSwky/5WxcoDBeb0ZClTCwNeq1T36NryhLZcA5n
+	UEbT8CiLcKok8Xj7CKmz+e6Umm0/MBSD2iPVhpaG8ijfQLbUTHqR/D2PVblz0qP/l/I8M+S3d7k
+	DWaq7jFwh68jHXecmGp4ukCGQaWNS4i0KfH+OHMQkhZgDVCETBRCRrcPfRjftgTSBimRnFtHskk
+	g43nYlsHhDkT+254ezSj/Dc8RG/cR7ElzPTT8VZFXSvQBuupmmwJUUTNb9G1sAg8GAgpJMBIVrF
+	8jDML9xiBAEjmOnRLujxToVYmk=
+X-Received: by 2002:a17:907:6d0a:b0:b87:1c74:a8c6 with SMTP id a640c23a62f3a-b8dab3f022dmr389917666b.57.1769606648807;
+        Wed, 28 Jan 2026 05:24:08 -0800 (PST)
 Received: from localhost (2001-1c00-570d-ee00-c84e-f30e-bdab-df5a.cable.dynamic.v6.ziggo.nl. [2001:1c00:570d:ee00:c84e:f30e:bdab:df5a])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-658b4691d0asm1545885a12.18.2026.01.28.05.24.06
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8dbf184343sm122306466b.33.2026.01.28.05.24.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jan 2026 05:24:06 -0800 (PST)
+        Wed, 28 Jan 2026 05:24:08 -0800 (PST)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Miklos Szeredi <miklos@szeredi.hu>,
 	Christian Brauner <brauner@kernel.org>
 Cc: Qing Wang <wangqing7171@gmail.com>,
 	linux-fsdevel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org
-Subject: [PATCH 0/3] name_is_dot* cleanup
-Date: Wed, 28 Jan 2026 14:24:03 +0100
-Message-ID: <20260128132406.23768-1-amir73il@gmail.com>
+	linux-unionfs@vger.kernel.org,
+	syzbot+d130f98b2c265fae5297@syzkaller.appspotmail.com
+Subject: [PATCH 1/3] ovl: Fix uninit-value in ovl_fill_real
+Date: Wed, 28 Jan 2026 14:24:04 +0100
+Message-ID: <20260128132406.23768-2-amir73il@gmail.com>
 X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260128132406.23768-1-amir73il@gmail.com>
+References: <20260128132406.23768-1-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,80 +98,83 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [0.84 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_CONTAINS_FROM(1.00)[];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75720-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org];
+	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,syzkaller.appspotmail.com];
 	FREEMAIL_FROM(0.00)[gmail.com];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-75721-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	RECEIVED_HELO_LOCALHOST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
+	RCPT_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[amir73il@gmail.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[gmail.com:+];
 	RCVD_COUNT_FIVE(0.00)[5];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TAGGED_RCPT(0.00)[linux-fsdevel,d130f98b2c265fae5297];
 	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 96995A216F
+	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,appspotmail.com:email]
+X-Rspamd-Queue-Id: 9351FA2131
 X-Rspamd-Action: no action
 
-Miklos,
+From: Qing Wang <wangqing7171@gmail.com>
 
-Following the syzbot ovl bug report and a fix by Qing Wang,
-I decided to follow up with a small vfs cleanup of some
-open coded version of checking "." and ".." name in readdir.
+Syzbot reported a KMSAN uninit-value issue in ovl_fill_real.
 
-The fix patch is applied at the start of this cleanup series to allow
-for easy backporting, but it is not an urgent fix so I don't think
-there is a need to fast track it.
+This iusse's call chain is:
+__do_sys_getdents64()
+    -> iterate_dir()
+        ...
+            -> ext4_readdir()
+                -> fscrypt_fname_alloc_buffer() // alloc
+                -> fscrypt_fname_disk_to_usr // write without tail '\0'
+                -> dir_emit()
+                    -> ovl_fill_real() // read by strcmp()
 
-Christian,
+The string is used to store the decrypted directory entry name for an
+encrypted inode. As shown in the call chain, fscrypt_fname_disk_to_usr()
+write it without null-terminate. However, ovl_fill_real() uses strcmp() to
+compare the name against "..", which assumes a null-terminated string and
+may trigger a KMSAN uninit-value warning when the buffer tail contains
+uninit data.
 
-I am assuming that you would want to take the vfs cleanup
-via your tree, so might as well take the ovl adjacent patches
-with it.
+Reported-by: syzbot+d130f98b2c265fae5297@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=d130f98b2c265fae5297
+Fixes: 4edb83bb1041 ("ovl: constant d_ino for non-merge dirs")
+Signed-off-by: Qing Wang <wangqing7171@gmail.com>
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
+ fs/overlayfs/readdir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If you want me to drive this entire series via ovl tree, please
-ack the vfs cleanup patch.
-
-Thanks,
-Amir.
-
-[1] https://lore.kernel.org/linux-unionfs/20260127105248.1485922-1-wangqing7171@gmail.com/
-
-Amir Goldstein (2):
-  fs: add helpers name_is_dot{,dot,_dotdot}
-  ovl: use name_is_dot* helpers in readdir code
-
-Qing Wang (1):
-  ovl: Fix uninit-value in ovl_fill_real
-
- fs/crypto/fname.c      |  2 +-
- fs/ecryptfs/crypto.c   |  2 +-
- fs/exportfs/expfs.c    |  3 ++-
- fs/f2fs/dir.c          |  2 +-
- fs/f2fs/hash.c         |  2 +-
- fs/namei.c             |  2 +-
- fs/overlayfs/readdir.c | 39 +++++++++++++++------------------------
- fs/smb/server/vfs.c    |  2 +-
- include/linux/fs.h     | 14 ++++++++++++--
- 9 files changed, 35 insertions(+), 33 deletions(-)
-
+diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+index 160960bb0ad0b..724ec9d93fc82 100644
+--- a/fs/overlayfs/readdir.c
++++ b/fs/overlayfs/readdir.c
+@@ -755,7 +755,7 @@ static bool ovl_fill_real(struct dir_context *ctx, const char *name,
+ 	struct dir_context *orig_ctx = rdt->orig_ctx;
+ 	bool res;
+ 
+-	if (rdt->parent_ino && strcmp(name, "..") == 0) {
++	if (rdt->parent_ino && namelen == 2 && !strncmp(name, "..", 2)) {
+ 		ino = rdt->parent_ino;
+ 	} else if (rdt->cache) {
+ 		struct ovl_cache_entry *p;
 -- 
 2.52.0
 
