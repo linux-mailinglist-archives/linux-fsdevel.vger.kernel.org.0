@@ -1,346 +1,316 @@
-Return-Path: <linux-fsdevel+bounces-75777-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75778-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0Oy9Kk9Cemmr4wEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75777-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 18:07:27 +0100
+	id 4JYAC2dDemmr4wEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75778-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 18:12:07 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C0A0A6898
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 18:07:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98D5DA6981
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 18:12:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 839343015842
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 16:58:37 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 5E4D0307A7AE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 17:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90EAC311963;
-	Wed, 28 Jan 2026 16:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7821732A3C5;
+	Wed, 28 Jan 2026 17:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=owlfolio.org header.i=@owlfolio.org header.b="fBGTHIOQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KViTMDzL"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JS6heE0f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6E9265CC2;
-	Wed, 28 Jan 2026 16:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769619513; cv=none; b=gt60dbakVRPloLGguurVjhbx9FomzBQEaILkza35ZP1ugzpd8hsweIWGSJSs/BpN4dM0BgTdQuUqFbOfy+cWxg1+DojJvxGse74IIuDwUX9IfI8wmnoAWF/VYW2SP9WRz/iCMnHkOL/Pc4lOUA9vHKg9/osABzyIXhbvGJqYlVo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769619513; c=relaxed/simple;
-	bh=xR1Krxifpyg086yZHDGLmylUBf6UCzlZqS4eAl7Y74I=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=lqnoOME/n0AzPwsjmtj29E1oivgQvp8ykvpGAMwBW4H0uJpNu0LsuPGAeiwv4IpPkqHHl5er1KGPFFxCnYAe44Gtl2OyMOY1ZtyHI06Wnp5MmaLv8JosSTQf+NM5sE+7xx03eOfHS/9X2yGh4rD2/8W242ddGBgD02+Dt3YOrqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=owlfolio.org; spf=pass smtp.mailfrom=owlfolio.org; dkim=pass (2048-bit key) header.d=owlfolio.org header.i=@owlfolio.org header.b=fBGTHIOQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KViTMDzL; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=owlfolio.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=owlfolio.org
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id C68F8140005B;
-	Wed, 28 Jan 2026 11:58:28 -0500 (EST)
-Received: from phl-imap-14 ([10.202.2.87])
-  by phl-compute-01.internal (MEProxy); Wed, 28 Jan 2026 11:58:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=owlfolio.org; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1769619508;
-	 x=1769705908; bh=zFLSMhSBtSz/kqy2k31nrRV1RnwJeNNpaO0Z16KVnI4=; b=
-	fBGTHIOQiy9yi+NVlY/c+8BHnraGEKL2lEVDamh3sO3O+vM86AyT9TKU1zseSy+o
-	NgT4jxZGbB2HExY4mcp0yoY6Wx2EVJopJFH8F8PusFzV5QX+VokbTbICwtwQPiz2
-	P9IYCs3FLmwCSDwNqgAhZosrjP880yTZzeSVd6v+FSzhGzcsOSXzXAdetiT76Tci
-	x2762MBJoVX+p6Q8kr444MtHIM5VBl9UQsOtAV+9QV/gaCikzXfRitTbj7oIwusq
-	U1xwECdbNu5sMteuf4eRd6VrzUVYYHgoE6Pu4O1r2Jw61gGGtd1DpW0898xLwe0n
-	oJ9xIs1yM9uGKSLLmKNPgQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1769619508; x=
-	1769705908; bh=zFLSMhSBtSz/kqy2k31nrRV1RnwJeNNpaO0Z16KVnI4=; b=K
-	ViTMDzL5AJ6udO13ku+tRgTvtpLXCAyNX7uwHdZTCfmBXdXZ14U1PEsTI2YwAsXj
-	6CUcG5eOkrbK9iJc1R3BFj76vdr1Fs2A8AIxFTPl6hXT86kGPdlJ1Bq2Ktz0dZCc
-	soyp2zwvxlXNMEFQ/ineWPQBvsVLwBSXiVUBUdeur4G7b62gPr/Pl5tJouqcuwwI
-	vFQKjYaQPDyQLApvANFIuWWfiUeABR02W3gWClTQqyaA0mcwVBWCefAjLN9Sfemu
-	K7ArSwnChV4uDfw5v9pw1Z6EHwhpZr5UiY2aAXi78FNZTRlrQPrGC34M4H4sIE1G
-	CGcfJ2t/pI48wMZtlcfog==
-X-ME-Sender: <xms:NEB6aQ7Ktx72Oflm9nT77RvGKP97ruCq9mxYzGhFaFxpwUXd0C1puw>
-    <xme:NEB6actvQHh8OItohKSPng2U9xaypTA44odnvBJUtxXNc6zP0UC-W4o1RcEuB7t1U
-    o9R0xb_1qCft3ty9m-A3zeKN8DM3eFZHP4T57zU1E3oGP4uH56lmw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduieefkeeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedfkggrtghk
-    ucghvghinhgsvghrghdfuceoiigrtghksehofihlfhholhhiohdrohhrgheqnecuggftrf
-    grthhtvghrnhepffffleeihfekfeetheeiieelueffleegvdejgffhhffhheehgfethfeg
-    jeduueehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epiigrtghksehofihlfhholhhiohdrohhrghdpnhgspghrtghpthhtohepuddvpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopehkvghrnhgvlhesihhnfhhinhhithgvqdhsoh
-    hurhgtvgdruggvpdhrtghpthhtoheprghlgieskhgvrhhnvghlrdhorhhgpdhrtghpthht
-    ohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhlrgihthhonh
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrlhhirghssehlihgstgdrohhrghdp
-    rhgtphhtthhopehlihgstgdqrghlphhhrgesshhouhhrtggvfigrrhgvrdhorhhgpdhrtg
-    hpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtohepthhmghhrohhsshesuhhm
-    ihgthhdrvgguuhdprhgtphhtthhopehlihhnuhigqdgrphhisehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhg
-X-ME-Proxy: <xmx:NEB6aRJGf4fTAe30aCnsaSZ6MFLjNugF_39DzUz5iT62LJEWm00lWg>
-    <xmx:NEB6aTqhKqQaGjg14guVoWHUyyZSJ8EfZRULYmhaDXruxPFUEd8wEg>
-    <xmx:NEB6aXvMYrmNvwz-RCxyHRt5yDDhMwKUoqXS8kimpB2lgEyjliM2ww>
-    <xmx:NEB6aVLe1etySSCpQv15HGV29s2ymlEMxtaeGsqVT14KXUouEMjiSQ>
-    <xmx:NEB6aSnQ-Ssy5vNoVfoHjTNbRDxKod9dLc62yysOynt_nuX-sMTWsK3k>
-Feedback-ID: i876146a2:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 03D2BC4006E; Wed, 28 Jan 2026 11:58:28 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD99322B8C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 17:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.173
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769620030; cv=pass; b=ivOZRqAp7+VpqMMstna0gXWlLzHId4ABSGN6MXU8cvleN+bYkoNR2bE6VKP28sigsiCBlz0mEfwfvneKygJ69ViGKwucWD7EcqO60dM9UbLKDYCAW35oebJlz3A6EvtYPB0ovbRm35PmVz1hsmKCQOy7pHIdPl8WgBEkhRbJwaQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769620030; c=relaxed/simple;
+	bh=gWij/TH8QPr+IwLvH0/2/fUh1RCAU2KJ3dVcD1USFIU=;
+	h=From:In-Reply-To:References:MIME-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mzc1w4wrrzCKzru4zsgGgBUX1nAeet1PiTowzRYdQ3XlrjCW56M/AScTsIwOgywopSr7zT1A/lSWf4GIoIJwckm2HFAJrK6xsF178GIt7ywh2YoMbNqsWsM8g0E191/xm+dUwRJx0TNUa7ds5x/EKzujgAtVPJoMp5PFjhpZSBg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JS6heE0f; arc=pass smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5663724e4daso20101e0c.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 09:07:07 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769620026; cv=none;
+        d=google.com; s=arc-20240605;
+        b=kfBuCZ3E3kTW2Vqq9A3z+1WpxF2IF1xEwbdhzpZX6bETaI4JzWGV1/1xl24OPAv0JP
+         iAQKO+FnQVvXA65euE0ZQh2AtRS2DsQvhlIXxP3u6D4GrS2UCqaBTHO5cqzJk8e9DzLV
+         eg/bcl643A6auD1nZwDAASZJ9YGtn1Ef4PsY82IFkNVjEj9HyZzaTB/5FFbN77YD5jC/
+         UbGrgNkcFJL6qkPxRcoV9IrGp0/RTALcKHrPvEQnv/u2hoGEnrj7OHKC71wVZgS63dlw
+         DFEMlZIx847dVXAZD8tnfxU/bEojDE2jn/fvV2OYyiTX7tEJObnbRUrVnKzmffZTpXp1
+         QOsw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date
+         :mime-version:references:in-reply-to:from:dkim-signature;
+        bh=hQ2ByvmYGALpHjwu0udZOzYr4BMUegwRg7Tc5bSaMn8=;
+        fh=t4DAATT5nHe9YbrSwstRmAy0ul4Ds5C0CJZBszok5kQ=;
+        b=lPgf6FIzwUA9qLoUtfWsY3lY1PeEYj1bQ+YXfd1KPnoefvd4aiDXj7NLdLCX6iDd1y
+         XZxMYIrc5P5qSU8M2j3D80q+5OId4JCRccuycQBfs3EWDjzCdkxOlaqQXG8L+OY35fs1
+         z2X7AFU6HdRmxqPZ+AMdyx48Ex9qYN0PTiZeS+Dg70qa65RR1kwqseIK7OO1unwmKffX
+         oLzQiIdquwoQi8bEnFsyZjMaMJU18WSUzYeqYoPzFY0/HwoK08hfKXZGVSwoCou91ifa
+         y8HLHYk8cQJ+6w8+f52w0/TBmclhz9wdj/taHcjet9NoY5PTXgXNQAVzoHlKmtudh0aD
+         aHmg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1769620026; x=1770224826; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date
+         :mime-version:references:in-reply-to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hQ2ByvmYGALpHjwu0udZOzYr4BMUegwRg7Tc5bSaMn8=;
+        b=JS6heE0f4DJMjmBufL78cbbgFc3tXStJhNFZSB7w4D9RdPaRft+59kETp8NXqy5eUt
+         yyFGbrPcnCIu3T8hdoXRzuOcfjZkVPjeFrWbcvcFDog9qna8n7ZOYof0xtFYSrPFoTXn
+         E57qAMjQVF/kXr6sC18641QtVgsvERg7ITeS7cJEoCvRUbyfuyONLK5OEtiU/w5Z4/ji
+         q5HHLFaqIXmT7ti9vqgri4WtDeIor8DY1O1Vb2NJ8rLb8RYbfhTAo1n4Y3g8gDMxQ1m3
+         BU/xtpMdz0FfsuubtAJHCoPo+wFYo5VJ/FUR8l0E+RAot+qNqZKUOUEZni16PEhrbaYS
+         EcAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769620026; x=1770224826;
+        h=content-transfer-encoding:cc:to:subject:message-id:date
+         :mime-version:references:in-reply-to:from:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hQ2ByvmYGALpHjwu0udZOzYr4BMUegwRg7Tc5bSaMn8=;
+        b=p/S0Qz+9PodUHqf3GzM/I37CQHX1fk6vzkRs3dd3EBw9BpTNTO3GdVXNnP8a0F/uUr
+         pesZBncYWOWGj1utmMLgIVAQdcm4WVu38flpzAqUiHUBVTw2car8G50Z/8hYG6aG3HYT
+         6lUxyPBNdd5Z9DJ4AEhMRVSeFD5yTqTzvRtQIl1x6gNQucNx6nmb6T+FfNIAAJ+hc8Zt
+         DrB0WDT8NNTLHqu4SA6DULzLPmcoVDONYh3dfjB3foTgDcmJl563OfmgRYqhyhFHZzVI
+         Vf4wpi1Lho8JwZMgEczFZf4kupcxbqiLFN34gJHLHx5W1QNngeUWcEE/Uy2Vr+61sOVn
+         G7eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSenfGNrJGqPcMM/FrHPsha/66RPsWDSQmsN9ly5bEYu/xo9UEuUr1st48iUCI5I6pEXW0XeVMaxq1oN7s@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDEEg95Ka8GlC52mqQQ9GUtmvbTOJkpxNChhc6sdUTHFYIrhTH
+	v20dJBc0XBlyqzZjN8m9A3l5zjALCCcpDW2zLIVWdmpZsPG+6xlXewf9mbIKdUsxTSOyFDZzD+i
+	2rvIElvOS0OWeDXaJiQ6mtBEW9l/GJm+KBLp+tMMyf8PxiE4iIAIlAfrIQOA=
+X-Gm-Gg: AZuq6aJ/uFD2fNI7RryJnjJMJOzvkJhezge93Ux9QTIBXQODBbQo5b/0aR4F9mZSaXX
+	FRePcGHhn+rkfLiIbvp1S4MUUNfmX9XaSP46CZpVUI9NKdSkxxYvSFmyBs9FGBz2pDuqFUBxpfP
+	JIoZlKVCm/2oKU++5uuCxQM/YkkZfS9T4c81QaLK3gis+WQg9B/1hoCf4x85/87bN8XBzERc5lO
+	VuVOvxAQjqhlRx+YDtGJiGFnilnv2EmY+JmHwl8uUMl0Fjup4d/Bc55C6+mOWTiMZmep5JTblW0
+	Hxe4mfLWI6Bc/kDjl0Yba8YIr7kMnFelBbVz
+X-Received: by 2002:a05:6122:ca5:b0:54a:992c:815e with SMTP id
+ 71dfb90a1353d-56679502f80mr1751301e0c.8.1769620025275; Wed, 28 Jan 2026
+ 09:07:05 -0800 (PST)
+Received: from 176938342045 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 28 Jan 2026 09:07:04 -0800
+Received: from 176938342045 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 28 Jan 2026 09:07:04 -0800
+From: Ackerley Tng <ackerleytng@google.com>
+In-Reply-To: <ab3f297e-44d5-4f42-aa17-f2e7c135580e@linux.intel.com>
+References: <cover.1760731772.git.ackerleytng@google.com> <638600e19c6e23959bad60cf61582f387dff6445.1760731772.git.ackerleytng@google.com>
+ <ab3f297e-44d5-4f42-aa17-f2e7c135580e@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: ANFeMez8yEXZ
-Date: Wed, 28 Jan 2026 11:58:07 -0500
-From: "Zack Weinberg" <zack@owlfolio.org>
-To: "Jeff Layton" <jlayton@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
- "Jan Kara" <jack@suse.cz>, "The 8472" <kernel@infinite-source.de>
-Cc: "Rich Felker" <dalias@libc.org>, "Alejandro Colomar" <alx@kernel.org>,
- "Vincent Lefevre" <vincent@vinc17.net>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-api@vger.kernel.org, "GNU libc development" <libc-alpha@sourceware.org>
-Message-Id: <037a7546-cbbf-4c00-bebd-57cee38785e1@app.fastmail.com>
-In-Reply-To: <2d6276fca349357f56733268681424b0de5179f7.camel@kernel.org>
-References: <20260120174659.GE6263@brightrain.aerifal.cx>
- <aW_jz7nucPBjhu0C@devuan> <aW_olRn5s1lbbjdH@devuan>
- <1ec25e49-841e-4b04-911d-66e3b9ff4471@app.fastmail.com>
- <0f60995f-370f-4c2d-aaa6-731716657f9d@infinite-source.de>
- <20260124213934.GI6263@brightrain.aerifal.cx>
- <7654b75b-6697-4aad-93fc-29fa9b734bdb@infinite-source.de>
- <de07d292-99d8-44e8-b7d6-c491ac5fe5be@app.fastmail.com>
- <whaocgx6bopndbpag2wazn2ko4skxl4pe6owbavj3wblxjps4s@ntdfvzwggxv3>
- <c59361e4-ad50-4cdf-888e-3d9a4aa6f69b@infinite-source.de>
- <pt7hcmgnzwveyzxdfpxtrmz2bt5tki5wosu3kkboil7bjrolyr@hd4ctkpzzqzi>
- <72100ec4b1ec0e77623bfdb927746dddc77ed116.camel@kernel.org>
- <DFYW8O4499ZS.2L1ABA5T5XFF2@umich.edu>
- <2d6276fca349357f56733268681424b0de5179f7.camel@kernel.org>
-Subject: Re: [RFC v1] man/man2/close.2: CAVEATS: Document divergence from POSIX.1-2024
-Content-Type: text/plain; charset=utf-8
+Date: Wed, 28 Jan 2026 09:07:04 -0800
+X-Gm-Features: AZwV_QhaOE_wJlLL_hX7tpT0otF_GVqIj23tN-vGGdhqYGAPjKuSGPxvod54AXo
+Message-ID: <CAEvNRgEo2UZ63uv0F7Pv8VfeJipyu82b=Rgiz2gnttdRu9aEPQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 01/37] KVM: guest_memfd: Introduce per-gmem
+ attributes, use to guard user mappings
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: cgroups@vger.kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, 
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org, akpm@linux-foundation.org, 
+	bp@alien8.de, brauner@kernel.org, chao.p.peng@intel.com, 
+	chenhuacai@kernel.org, corbet@lwn.net, dave.hansen@intel.com, 
+	dave.hansen@linux.intel.com, david@redhat.com, dmatlack@google.com, 
+	erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, haibo1.xu@intel.com, 
+	hannes@cmpxchg.org, hch@infradead.org, hpa@zytor.com, hughd@google.com, 
+	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
+	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
+	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
+	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
+	kent.overstreet@linux.dev, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, 
+	maobibo@loongson.cn, mathieu.desnoyers@efficios.com, maz@kernel.org, 
+	mhiramat@kernel.org, mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com, 
+	mingo@redhat.com, mlevitsk@redhat.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, peterx@redhat.com, 
+	pgonda@google.com, prsampat@amd.com, pvorel@suse.cz, qperret@google.com, 
+	richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com, 
+	rostedt@goodmis.org, roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com, 
+	shakeel.butt@linux.dev, shuah@kernel.org, steven.price@arm.com, 
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
+	tglx@linutronix.de, thomas.lendacky@amd.com, vannapurve@google.com, 
+	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
+	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, wyihan@google.com, 
+	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
+	yuzenghui@huawei.com, zhiquan1.li@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.15 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[owlfolio.org,quarantine];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
 	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[owlfolio.org:s=fm2,messagingengine.com:s=fm3];
+	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-75777-lists,linux-fsdevel=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kvack.org,kernel.org,linux-foundation.org,alien8.de,intel.com,lwn.net,linux.intel.com,redhat.com,google.com,cmpxchg.org,infradead.org,zytor.com,suse.cz,arm.com,ziepe.ca,amazon.com,nvidia.com,suse.de,linux.dev,oracle.com,maciej.szmigiero.name,loongson.cn,efficios.com,digikod.net,amd.com,ellerman.id.au,amazon.es,dabbelt.com,sifive.com,gmail.com,goodmis.org,amazon.co.uk,linutronix.de,zeniv.linux.org.uk,huawei.com];
 	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75778-lists,linux-fsdevel=lfdr.de];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[google.com:+];
 	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[zack@owlfolio.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[owlfolio.org:+,messagingengine.com:+];
+	MISSING_XM_UA(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[ackerleytng@google.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[96];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	NEURAL_HAM(-0.00)[-1.000];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[owlfolio.org:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,app.fastmail.com:mid,messagingengine.com:dkim]
-X-Rspamd-Queue-Id: 3C0A0A6898
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,intel.com:email,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: 98D5DA6981
 X-Rspamd-Action: no action
 
-On Mon, Jan 26, 2026, at 7:49 PM, Jeff Layton wrote:
-> On Mon, 2026-01-26 at 17:01 -0600, Trevor Gross wrote:
->> On Mon Jan 26, 2026 at 10:43 AM CST, Jeff Layton wrote:
->> > On Mon, 2026-01-26 at 16:56 +0100, Jan Kara wrote:
->> > > On Mon 26-01-26 14:53:12, The 8472 wrote:
->> > > > On 26/01/2026 13:15, Jan Kara wrote:
->> > > > > On Sun 25-01-26 10:37:01, Zack Weinberg wrote:
->> > > > > > On Sat, Jan 24, 2026, at 4:57 PM, The 8472 wrote:
-...
->> > > > > > In particular, I really hope delayed errors *aren=E2=80=99t=
-* ever reported
->> > > > > > when you close a file descriptor that *isn=E2=80=99t* the l=
-ast reference
->> > > > > > to its open file description, because the thread-safe way t=
-o close
->> > > > > > stdout without losing write errors[2] depends on that not h=
-appening.
->> > > > >
->> > > > > So I've checked and in Linux ->flush callback for the file is=
- called
->> > > > > whenever you close a file descriptor (regardless whether ther=
-e are other
->> > > > > file descriptors pointing to the same file description) so it=
-'s upto
->> > > > > filesystem implementation what it decides to do and which err=
-or it will
->> > > > > return... Checking the implementations e.g. FUSE and NFS *wil=
-l* return
->> > > > > delayed writeback errors on *first* descriptor close even if =
-there are
->> > > > > other still open descriptors for the description AFAICS.
->> >
->> > ...and I really wish they _didn't_.
->> >
->> > Reporting a writeback error on close is not particularly useful. Mo=
-st
->> > filesystems don't require you to write back all data on a close(). A
->> > successful close() on those just means that no error has happened y=
-et.
->> >
->> > Any application that cares about writeback errors needs to fsync(),
->> > full stop.
+Binbin Wu <binbin.wu@linux.intel.com> writes:
+
+> On 10/18/2025 4:11 AM, Ackerley Tng wrote:
+> [...]
 >>
->> Is there a good middle ground solution here?
-...
->> I was wondering if it could be worth a new fnctl that provides this k=
-ind
->> of "best effort" error checking behavior without having the strict
->> requirements of fsync. In effect, to report the errors that you might
->> currently get at close() before actually calling close() and losing t=
-he
->> fd.
-...
-> A new fcntl(..., F_CHECKERR, ...) command that does a
-> file_check_and_advance_wb_err() on the fd and reports the result would
-> be pretty straightforward.
+>> +static int kvm_gmem_init_inode(struct inode *inode, loff_t size, u64 fl=
+ags)
+>> +{
+>> +	struct gmem_inode *gi =3D GMEM_I(inode);
+>> +	MA_STATE(mas, &gi->attributes, 0, (size >> PAGE_SHIFT) - 1);
+>> +	u64 attrs;
+>> +	int r;
+>> +
+>> +	inode->i_op =3D &kvm_gmem_iops;
+>> +	inode->i_mapping->a_ops =3D &kvm_gmem_aops;
+>> +	inode->i_mode |=3D S_IFREG;
+>> +	inode->i_size =3D size;
+>> +	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
+>> +	mapping_set_inaccessible(inode->i_mapping);
+>> +	/* Unmovable mappings are supposed to be marked unevictable as well. *=
+/
+> AS_UNMOVABLE has been removed and got merged into AS_INACCESSIBLE, not su=
+re if
+> it's better to use "Inaccessible" instead of "Unmovable"
 >
-> Would that be helpful for your use-case? This would be like a non-
-> blocking fsync that just reports whether an error has occurred since
-> the last F_CHECKERR or fsync().
 
-I feel I need to point out that =E2=80=9Cshould the kernel report errors=
- on
-close()=E2=80=9D and =E2=80=9Cshould the kernel add a new API to make li=
-fe better for
-programs that currently expect close() to report [some] errors=E2=80=9D =
-and
-=E2=80=9Cshould the Rust standard library propagate errors produced by c=
-lose()
-back up to the application=E2=80=9D and =E2=80=9Cwhat should the close(2=
-) manpage say
-about errors=E2=80=9D are four different conversation topics.
+Thanks, will update comment as follows:
 
-I am all in favor of moving toward a world where close() never fails
-and there=E2=80=99s _something_ that reports write errors like fsync() w=
-ithout
-also kicking your application off a performance cliff.  But that=E2=80=99=
-s not
-the world we live in today, and this thread started as a conversation
-about revising the close(2) manpage, and I=E2=80=99d kinda like to *fini=
-sh*
-revising the manpage in, like, the next couple weeks, not several
-years from now :-)  So I=E2=80=99d like to refocus on that topic.
+	/*
+	 * guest_memfd memory is not migratable or swappable - set
+         * inaccessible to gate off both.
+	 */
+	mapping_set_inaccessible(inode->i_mapping);
+	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
 
-Given what Jan Kara said earlier...
-
-> Checking the implementations e.g. FUSE and NFS *will* return delayed
-> writeback errors on *first* descriptor close even if there are other
-> still open descriptors for the description AFAICS.
-...
-> fsync(2) must make sure data is persistently stored and return error if
-> it was not. Thus as a VFS person I'd consider it a filesystem bug if an
-> error preveting reading data later was not returned from fsync(2). OTOH
-> that doesn't necessarily mean that later close doesn't return an error=
- -
-> e.g. FUSE does communicate with the server on close that can fail and
-> error can be returned.
->
-> With this in mind let me now try to answer your remaining questions:
->
->> >>         - The OFD was opened with O_RDONLY
->
-> If the filesystem supports atime, close can in principle report that a=
-time
-> update failed.
->
->> >>         - The OFD was opened with O_RDWR but has never actually
->> >>           been written to
->
-> The same as above but with inode mtime updates.
->
->> >>         - No data has been written to the OFD since the last call =
-to
->> >>           fsync() for that OFD
->
-> No writeback errors should happen in this case. As I wrote above I'd
-> consider this a filesystem bug.
->
->> >>
->> >>         - No data has been written to the OFD since the last call =
-to
->> >>           fdatasync() for that OFD
->
-> Errors can happen because some inode metadata (in practice probably on=
+>> +	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
+>> +
+>> +	gi->flags =3D flags;
+>> +
+>> +	mt_set_external_lock(&gi->attributes,
+>> +			     &inode->i_mapping->invalidate_lock);
+>> +
+>> +	/*
+>> +	 * Store default attributes for the entire gmem instance. Ensuring eve=
+ry
+>> +	 * index is represented in the maple tree at all times simplifies the
+>> +	 * conversion and merging logic.
+>> +	 */
+>> +	attrs =3D gi->flags & GUEST_MEMFD_FLAG_INIT_SHARED ? 0 : KVM_MEMORY_AT=
+TRIBUTE_PRIVATE;
+>> +
+>> +	/*
+>> +	 * Acquire the invalidation lock purely to make lockdep happy. There
+>> +	 * should be no races at this time since the inode hasn't yet been ful=
 ly
-> inode time stamps) may still need to be written out.
+>> +	 * created.
+>> +	 */
+>> +	filemap_invalidate_lock(inode->i_mapping);
+>> +	r =3D mas_store_gfp(&mas, xa_mk_value(attrs), GFP_KERNEL);
+>> +	filemap_invalidate_unlock(inode->i_mapping);
+>> +
+>> +	return r;
+>> +}
+>> +
+> [...]
+>> @@ -925,13 +986,39 @@ static struct inode *kvm_gmem_alloc_inode(struct s=
+uper_block *sb)
+>>
+>>   	mpol_shared_policy_init(&gi->policy, NULL);
+>>
+>> +	/*
+>> +	 * Memory attributes are protected the filemap invalidation lock, but
+>  =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0^
+>  =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 protected by
+
+Thanks!
+
+>> +	 * the lock structure isn't available at this time.  Immediately mark
+>> +	 * maple tree as using external locking so that accessing the tree
+>> +	 * before its fully initialized results in NULL pointer dereferences
+>> +	 * and not more subtle bugs.
+>> +	 */
+>> +	mt_init_flags(&gi->attributes, MT_FLAGS_LOCK_EXTERN);
+>> +
+>>   	gi->flags =3D 0;
+>>   	return &gi->vfs_inode;
+>>   }
+>>
+>>   static void kvm_gmem_destroy_inode(struct inode *inode)
+>>   {
+>> -	mpol_free_shared_policy(&GMEM_I(inode)->policy);
+>> +	struct gmem_inode *gi =3D GMEM_I(inode);
+>> +
+>> +	mpol_free_shared_policy(&gi->policy);
+>> +
+>> +	/*
+>> +	 * Note!  Checking for an empty tree is functionally necessary to avoi=
+d
+>> +	 * explosions if the tree hasn't been initialized, i.e. if the inode i=
+s
 >
-> So in the cases described above (except for fsync()) you may get delay=
-ed
-> errors on close. But since in all those cases no data is lost, I don't
-> think 99.9% of applications care at all...
+> It makes sense to skip __mt_destroy() when mtree is empty.
+> But what explosions it could trigger if mtree is empty?
+> It seems __mt_destroy() can handle the case if the external lock is not s=
+et.
+>
+>
 
-... regrettably I think this does mean the close(3) manpage still needs
-to tell people to watch out for errors, and should probably say that
-errors _can_ happen even if the file wasn=E2=80=99t written to, but are =
-much
-less likely to be important in that case.
+Hope this updated comment clarify the explosion:
 
-And my =E2=80=9Chow to close stdout in a thread-safe manner=E2=80=9D sam=
-ple code is
-wrong, because I was wrong to think that the error reporting only
-happened on the _final_ close, when the OFD is destroyed.
+	/*
+	 * Note!  Checking for an empty tree is functionally necessary
+	 * to avoid explosions if the tree hasn't been fully
+	 * initialized, i.e. if the inode is being destroyed before
+	 * guest_memfd can set the external lock, lockdep would find
+	 * that the tree's internal ma_lock was not held.
+	 */
 
-... What happens if the close is implicit in a dup2() operation? Here=E2=
-=80=99s
-that erroneous =E2=80=9Chow to close stdout=E2=80=9D fragment, with comm=
-ents
-indicating what I thought could and could not fail at the time I wrote
-it:
-
-    // These allocate new fds, which can always fail, e.g. because
-    // the program already has too many files open.
-    int new_stdout =3D open("/dev/null", O_WRONLY);
-    if (new_stdout =3D=3D -1) perror_exit("/dev/null");
-    int old_stdout =3D dup(1);
-    if (old_stdout =3D=3D -1) perror_exit("dup(1)");
-
-    flockfile(stdout);
-    if (fflush(stdout)) perror_exit("stdout: write error");
-    dup2(new_stdout, 1); // cannot fail, atomically replaces fd 1
-    funlockfile(stdout);
-
-    // this close may receive delayed write errors from previous writes
-    // to stdout
-    if (close(old_stdout)) perror_exit("stdout: write error");
-
-    // this close cannot fail, because it only drops an alternative
-    // reference to the open file description now installed as fd 1
-    close(new_stdout);
-
-Note in particular that the first close _operation_ on fd 1 is in
-consequence of dup2(new_stdout, 1).  The dup2() manpage specifically
-says =E2=80=9Cthe close is performed silently (i.e. any errors during the
-close are not reported by dup()=E2=80=9D but, if stdout points to a file=
- on
-an NFS mount, are those errors _lost_, or will they actually be
-reported by the subsequent close(old_stdout)?
-
-Incidentally, the dup2() manpage has a very similar example in its
-NOTES section, also presuming that close only reports errors on the
-_final_ close, not when it =E2=80=9Cmerely=E2=80=9D drops reference >=3D=
-2 to an OFD.
-
-(I=E2=80=99m starting to think we need dup3(old, new, O_SWAP_FDS).  Or i=
-s that
-already a thing somehow?)
-
-zw
+>> +	 * being destroyed before guest_memfd can set the external lock.
+>> +	 */
+>> +	if (!mtree_empty(&gi->attributes)) {
+>> +		/*
+>> +		 * Acquire the invalidation lock purely to make lockdep happy,
+>> +		 * the inode is unreachable at this point.
+>> +		 */
+>> +		filemap_invalidate_lock(inode->i_mapping);
+>> +		__mt_destroy(&gi->attributes);
+>> +		filemap_invalidate_unlock(inode->i_mapping);
+>> +	}
+>>   }
+>>
+>>   static void kvm_gmem_free_inode(struct inode *inode)
+>> --
+>> 2.51.0.858.gf9c4a03a3a-goog
 
