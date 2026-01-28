@@ -1,143 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-75718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id ELyyNXn+eWm71QEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 13:18:01 +0100
+	id mBIdH+z+eWm71QEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 13:19:56 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E25EA1157
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 13:18:01 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7059A1204
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 13:19:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 95E2C30166C0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 12:17:57 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 72483302D5E0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 12:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A1529993D;
-	Wed, 28 Jan 2026 12:17:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7ED34E771;
+	Wed, 28 Jan 2026 12:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="a2G1Lxk7"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TGlHRR6F"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B2E19E97F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 12:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DADFA20125F;
+	Wed, 28 Jan 2026 12:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769602675; cv=none; b=kks138hBF7EvvWI8h92dOraHp7W/sCvAMuolutH8ysYr77iF6JI2vdCLe7ikG1KMKxmq3N7ojiO3teEvv2af4RAetohM+lQFIS8WS6y4UciTvWBJy7A3pWCUCQhc7dB2wLdGDPALJXy8yPlZ3NAcU+7PD8GRrUDimlWaDlTA/Fc=
+	t=1769602724; cv=none; b=AhChG77u/DmFJSDKJKuQ2HiTalYHiXVVhOY6rcPv49DJYhwSrsqinyB0niJWvxSDPGnqcVrL11SvvZchL2B/KA+R/haxcmOUyNnwOItyNTSPBhTdElGne16CzA56k/VRodK4nlA7+rrNy1jhyvZ+Tbqpo+NfPyBmJIu2SawgtNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769602675; c=relaxed/simple;
-	bh=vFWdb3PBX2zBDqdrtWvluSHxOAFMa8qzzSmnhwckFpM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BaSDM6NZxOiytH++OuMc1+yaBkPZLFtxwOYIkI97I+V4YwOH+174RG9FG8MDt3jqas+1cnLwzhwRJFBWWIoDaas2qRwCbuT8jOepnv0aHg/+Zy/ygw7wE0DgCvEyyROzi2PuP2W+N9atJcTtHv1wuyP9svU2rTcMzon2H/m+yjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=a2G1Lxk7; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-5014db8e268so107128601cf.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 04:17:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1769602673; x=1770207473; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oUdr6DX+iZadrtnG4gSybF93zfd1qmcT/Pp5WRh3xdg=;
-        b=a2G1Lxk7CIFt4ENvf74rVs3dqeguCzXVUM6iwL4ie2uAmZoILtB/RsgMsZDjMrwbD1
-         id4dtvofNsrVaclLtDvNYmjZZSWjTdS33c2RkE2Q+aJeeRwT6heUpJeGFMX6FI2lWgxl
-         kA0BblUvbtLUPsehbivOin7icBcePugSvEozowjSo6kUZDj4wumtkk+A50qhK1FqE7+U
-         WN/z6rHu4qEwq9f0nJm4yzRHFTPeizc2UFb5ayHqKzUEldB+9ygKHVJdcWeZu1WR/r6R
-         6DPpK+aQMoOZeQ+OYZVAIjyBDng+k4y+d7z0nMedmYXprQYZBGGTRdiCmvmUC/+/bKNH
-         cA9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769602673; x=1770207473;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oUdr6DX+iZadrtnG4gSybF93zfd1qmcT/Pp5WRh3xdg=;
-        b=KJkX0M/P7/QxDYII+OucHt/0/gzMaGHAeeZO8eP1YWQcxL6eUeWuD3MzL8f3fDleaX
-         fC9wb982NzzuMGIunMbctOtzESpdsIpGjslShOh9xpnRwhHTElgRhoXTCOPFYYCf+xOD
-         N40+ONtWpJHT10fkckDaQNeHJe88cKWIVcHmv6dbse9DrkAdCHQtolEegP7cFcfaQWQ/
-         3poFgGv58gOOzh+lrL8z+zbNL2duPNj/5d1jy3AMFEy164W/DF7CGg/c+f9RksZ2sdyy
-         g1yOExQ9l288Y/PZoJfLcPeiI+op35EEYplz8OBMn2vigNpotOCfsqi5LgGBHCff1Eia
-         EmUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWsLWNIRef3ZaX9lPUtDadyYzsEL1b86OUZIR+aKQEyTUDBaNH+N1J/lcqjmEYx2xU3oTrnYBGpLJfb0m0p@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyyku9Av04KOx1CJjW/fi0a29zFt1Y6s8z9EfLTOq76UHta9ws1
-	5halCCxBs3appQKYQtjy0fjyW4xxjfl9t7qkoQ2FqshlnrZBWSFvJu4CkO2U0r4uCLU=
-X-Gm-Gg: AZuq6aIBUglD4+/ijTGoSSNqjPCvEdN4ufr6M1U/jNsV4UI8ZUQvXhccLeHX8+46ohz
-	4p2Ob8nMiWXntlLXdmBQ/KxuPaCwUr6vza+l0OT0vDvGhvgwrLTgEbMNkOIgyvYp5DZV3WbQ6sh
-	r+Ej1hAVHa2nqsYTvH00vDPxTFfP742Xge8wDMIxOxj9QFCeus/jINj7nrPwVD4xwGvbqxkPF2i
-	e+S8TwhnlSUwyVGxGkaONqzc5kmS5p8Eb86ZVE+LpEVB/yKqLajGlibbtCYveAeZbjlRq6ijkFL
-	rPTdeV/ZuViWD6UTVrnRBhWGplVyI8ja5EI4RaZCMP0J9snIXJuT31ChssZmAj3IE/YrtUtlNAw
-	LSx54fmuAB/IwcTA7lTLmQjbawOLA3UwPkyV8lfNC2E0Qo/ndjWAFgqP4Udh7X5WyPN0YgdjtT6
-	+FOPO/zEWEhrKYkcCBxPMfEAZMddemA7zMj/0HOx5ye/e0p53iwyQqbQ9g1nD3g9mY05z+KHM=
-X-Received: by 2002:a05:622a:2d5:b0:502:6ed5:7b0d with SMTP id d75a77b69052e-5032f8f0e01mr63543941cf.48.1769602665322;
-        Wed, 28 Jan 2026 04:17:45 -0800 (PST)
-Received: from [192.168.201.17] ([50.234.116.5])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5033745c4e3sm14749451cf.6.2026.01.28.04.17.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Jan 2026 04:17:44 -0800 (PST)
-Message-ID: <16e41d3d-401f-4600-a304-08f1d2ba6892@kernel.dk>
-Date: Wed, 28 Jan 2026 05:17:42 -0700
+	s=arc-20240116; t=1769602724; c=relaxed/simple;
+	bh=irHF387VhKHjsOnpsnW9NUk3sxxbxWzln/uy9xgtwqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=awkHM1aP4xodEhPeiEM8aN85iNxQ3jt2azKUTCmW2qnmc8HjM6PWRiB43xi2VEpHkb/MQ73nskNgWNAagvetip7B/aQYPU2knFMXvAJfUeQHZRA+h3bcL7MQrSTa0Lq2uWI+WtQMIaSJpmH9/06TJ9jFYeMMlkH5mmuZyHxxZtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TGlHRR6F; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1769602723; x=1801138723;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=irHF387VhKHjsOnpsnW9NUk3sxxbxWzln/uy9xgtwqM=;
+  b=TGlHRR6F94rKBRysVGoeJUVVWNt0zxHcxUUHuGMVDEqG6cxjzZLmjTVh
+   zigjLlb+2U1wBFRVoTfL3919JzOQG/KyWzA3jTIUOyz58xeQBP0FdLJ+z
+   spzvXvY2wrp4kTwZD+hxyWWnzz6JXZWYzzqjcZAe2oGIZPXJspe6r+RvC
+   BJbktKaB0UGBZtPrNs2Z3M5R+ROzLzeE0qXwcvh3yz9xw4S+kCAnAPVlM
+   nVNfUL7B3UrEtVrHcp902Qq2ykB+vNPTTbEvSVuNxGVpxPlLTkb/OWSQ8
+   sivcrokU6gFz9flZablWyus71nF16DvcXnceFNs9VIDfN1LwwbItjmn74
+   Q==;
+X-CSE-ConnectionGUID: BeKq8/W3QImhw2GFekEqtA==
+X-CSE-MsgGUID: yBW1TNNqRJGfBg1J7jsj5Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11684"; a="93469830"
+X-IronPort-AV: E=Sophos;i="6.21,258,1763452800"; 
+   d="scan'208";a="93469830"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2026 04:18:43 -0800
+X-CSE-ConnectionGUID: Q7Z5V0R1RjCKaaK9/1JSxA==
+X-CSE-MsgGUID: tIAdhHReTWOiiIA7g/WWbw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,258,1763452800"; 
+   d="scan'208";a="212353797"
+Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 28 Jan 2026 04:18:35 -0800
+Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vl4VE-00000000ZeC-2fMW;
+	Wed, 28 Jan 2026 12:18:32 +0000
+Date: Wed, 28 Jan 2026 20:18:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"kernel@xen0n.name" <kernel@xen0n.name>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+	"loongarch@lists.linux.dev" <loongarch@lists.linux.dev>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"corbet@lwn.net" <corbet@lwn.net>,
+	"maz@kernel.org" <maz@kernel.org>,
+	"oupton@kernel.org" <oupton@kernel.org>,
+	"joey.gouly@arm.com" <joey.gouly@arm.com>,
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"tglx@kernel.org" <tglx@kernel.org>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	"luto@kernel.org" <luto@kernel.org>
+Subject: Re: [PATCH v10 01/15] set_memory: set_direct_map_* to take address
+Message-ID: <202601282023.vzRHJBfU-lkp@intel.com>
+References: <20260126164445.11867-2-kalyazin@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: bounce buffer direct I/O when stable pages are required v3
-To: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, Carlos Maiolino <cem@kernel.org>,
- Qu Wenruo <wqu@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
- linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <20260126055406.1421026-1-hch@lst.de>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20260126055406.1421026-1-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260126164445.11867-2-kalyazin@amazon.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-1.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	MID_CONTAINS_FROM(1.00)[];
+	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75718-lists,linux-fsdevel=lfdr.de];
-	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
-	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75719-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[33];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[intel.com:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	MISSING_XM_UA(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,linux-fsdevel@vger.kernel.org];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[lkp@intel.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel-dk.20230601.gappssmtp.com:dkim,kernel.dk:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 6E25EA1157
+	NEURAL_HAM(-0.00)[-1.000];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,intel.com:dkim,intel.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: A7059A1204
 X-Rspamd-Action: no action
 
-On 1/25/26 10:53 PM, Christoph Hellwig wrote:
-> Hi all,
-> 
-> [note to maintainers:  we're ready to merge I think, and Christian
-> already said he'd do on Friday.  If acceptable to everyone I'd like
-> to merge it through the block tree, or topic branch in it due to
-> pending work on top of this]
+Hi Nikita,
 
-Queued up in a fork off for-7.0/block, for-7.0/block-stable-pages.
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on 0499add8efd72456514c6218c062911ccc922a99]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Kalyazin-Nikita/set_memory-set_direct_map_-to-take-address/20260127-005641
+base:   0499add8efd72456514c6218c062911ccc922a99
+patch link:    https://lore.kernel.org/r/20260126164445.11867-2-kalyazin%40amazon.com
+patch subject: [PATCH v10 01/15] set_memory: set_direct_map_* to take address
+config: loongarch-allnoconfig (https://download.01.org/0day-ci/archive/20260128/202601282023.vzRHJBfU-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 9b8addffa70cee5b2acc5454712d9cf78ce45710)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260128/202601282023.vzRHJBfU-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202601282023.vzRHJBfU-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> arch/loongarch/mm/pageattr.c:211:16: error: redefinition of 'addr' with a different type: 'unsigned long' vs 'const void *'
+     211 |         unsigned long addr = (unsigned long)addr;
+         |                       ^
+   arch/loongarch/mm/pageattr.c:209:48: note: previous definition is here
+     209 | int set_direct_map_invalid_noflush(const void *addr)
+         |                                                ^
+   1 error generated.
+
+
+vim +211 arch/loongarch/mm/pageattr.c
+
+   208	
+   209	int set_direct_map_invalid_noflush(const void *addr)
+   210	{
+ > 211		unsigned long addr = (unsigned long)addr;
+   212	
+   213		if ((unsigned long)addr < vm_map_base)
+   214			return 0;
+   215	
+   216		return __set_memory((unsigned long)addr, 1, __pgprot(0),
+   217				    __pgprot(_PAGE_PRESENT | _PAGE_VALID));
+   218	}
+   219	
 
 -- 
-Jens Axboe
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
