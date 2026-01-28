@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-75757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OJnuJtY3eml+4gEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 17:22:46 +0100
+	id WBEqHFQ9emlB4wEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 17:46:12 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D362A57FB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 17:22:46 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD4EA6146
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 17:46:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id D5ADB308BBE0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 16:16:08 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id ACCE532BE4FC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jan 2026 16:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0C4310774;
-	Wed, 28 Jan 2026 16:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3979A30FC16;
+	Wed, 28 Jan 2026 16:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2/FVXGDG"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sK4ZLftj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0E12417C6;
-	Wed, 28 Jan 2026 16:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810972417C6;
+	Wed, 28 Jan 2026 16:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769616964; cv=none; b=s9FEMvgft26OGu37+CnIIsV8uIDwC6M2r0pSd90dvclHFzIO6m/ERYKqgaJjL8mAKJgc+SzbtfsbFSngfTe9RVBmCd3yyAoCN7om4PJSUXM0vopZFgdi0IyEheJ4JuyLLJdI4R30RegpZ6OpN5IVt1kA+v4q3lFkgGbULvsWcig=
+	t=1769616969; cv=none; b=oy7vxP8D1NR9M6udwlLqYI/arNvGMOn55Zl4RYZLETPBHdI5C7qjCTglqf5ZIpXSIWCpPcGpQ9ciN32q6pf5r/WvJCJ3wyKWDkYJ3waHCBpNerJjT2CczQ05diUgTNNyNEcN7GqVIToPgGmphK5O/3I5lxlMLwzLnn6zI7QQAIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769616964; c=relaxed/simple;
-	bh=ddiLOcWt0Ob8kvVACq4PRZ925uF8NRfLbWWJm1nKlVQ=;
+	s=arc-20240116; t=1769616969; c=relaxed/simple;
+	bh=qnB/GGJvy1ZdSQ5Uwv9vm1K2/xChzCo7uhkZp5J7Eac=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DqV9i/F7Ym7aNy69nKkc796SSSivcXHETQKNwpJCdwnHpR3ExMlzSJBG2HbWYp1xp3DD3UrxVwLZ/KGzhmgSXBJbZufhzOkn3fWPKY8gKRWrcgnGfl0RMTDCDYBRewnGLqzCdjLmKLV+aBVNNus9pPPUYfWCNGkmrnM0DrnuT0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=2/FVXGDG; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=itVsBpTvH/tipEazeke9x6yllkZgEZwE/Axxawwu3S2kgJLPmGvfJlDn+O0wPgJYTAnZwjQ4T9V1yTC332Jx4LLJapr1jFC86obXY0MENxhu2aEZVoWgq7MmM3DP74SQQ9+V4FR+4pxYrRCfUtYgVbXchQgYWc2XTbrx7mlbTo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sK4ZLftj; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=jpSbt0tAR10Q5c0DPZZ2W0/np43VEEStHe5T2lcPdiI=; b=2/FVXGDG9pkAamJ8vj3o4oehGW
-	p3++0y875M2AUyl/1PxrAaQRdb/DNsKGhWWavr2Pcuv3FUiDKxXyQkBeRcO6OftjB2myCo0260PS7
-	KjXSlXrgsgPBhXIE2O2O7r1Uhdfq/aPeWPN0eksxILndVRZsqojcf3IgUxKKCyYSTUOO9GD+ZX7Ec
-	csoQLKzPXKDzorvPqsivYhHPlhGFYrdcW1QUMbz1JePdi1KikXCxUoyh/WhLlhC1B9VoqybF0kkgh
-	axzP17Dy6hrD0PnJYGsqnxkN06DvBHUuEPNYkzeQ4gV1YA3LeBSX99uJ3Mhu0NBtm7rnQs7cY4FFM
-	InyMpOmQ==;
+	bh=FGWxq6GOgdNG9LB80h5Lsank5Dr7Bs+9g9TDZSCymnY=; b=sK4ZLftjffel1qoG4Z1g7b9FVe
+	ycsKl+bPHfoN3xrySpBUuQLS/RujW29+483J8t5xbVLFV8yWfpzfEamY0dHO5yvQLLy++7YOYdV4L
+	1oW2en5JNqDfqw3J1nF0sOBuuGhpo+tl0sPhcN1zoLtQf1WcDfJX6mnu1o5AeDJ8e/8mr8ghOdwUN
+	+URyC1YSsbY8rj1e3Pd4p3BxUrVeSAMPTXo2D7PaXe2Qsk6KntACiCDVzNF4rVKfriTuaRcsv5rrF
+	gdIFiITaU/eWtBnp1rD/SBshKOaAYFKrYfZjJh+ZDDb19vl3lPJZwaMxKT1JQPyo/wgUy09TnFgIM
+	fhPs2v1Q==;
 Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vl8D2-0000000GN0G-3rwZ;
-	Wed, 28 Jan 2026 16:16:01 +0000
+	id 1vl8D9-0000000GN0p-06rA;
+	Wed, 28 Jan 2026 16:16:07 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>,
 	Christian Brauner <brauner@kernel.org>
@@ -60,9 +60,9 @@ Cc: "Darrick J. Wong" <djwong@kernel.org>,
 	nvdimm@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org,
 	linux-xfs@vger.kernel.org
-Subject: [PATCH 06/15] block: add fs_bio_integrity helpers
-Date: Wed, 28 Jan 2026 17:15:01 +0100
-Message-ID: <20260128161517.666412-7-hch@lst.de>
+Subject: [PATCH 07/15] block: pass a maxlen argument to bio_iov_iter_bounce
+Date: Wed, 28 Jan 2026 17:15:02 +0100
+Message-ID: <20260128161517.666412-8-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260128161517.666412-1-hch@lst.de>
 References: <20260128161517.666412-1-hch@lst.de>
@@ -79,7 +79,7 @@ X-Spamd-Result: default: False [-0.06 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
 	MAILLIST(-0.15)[generic];
 	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), DKIM not aligned (relaxed),none];
@@ -89,7 +89,7 @@ X-Spamd-Result: default: False [-0.06 / 15.00];
 	RCVD_COUNT_THREE(0.00)[4];
 	PRECEDENCE_BULK(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75757-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-75758-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
@@ -100,15 +100,14 @@ X-Spamd-Result: default: False [-0.06 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:mid,lst.de:email,oracle.com:email,samsung.com:email,infradead.org:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 1D362A57FB
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,samsung.com:email,infradead.org:dkim,lst.de:mid,lst.de:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 1BD4EA6146
 X-Rspamd-Action: no action
 
-Add a set of helpers for file system initiated integrity information.
-These include mempool backed allocations and verifying based on a passed
-in sector and size which is often available from file system completion
-routines.
+Allow the file system to limit the size processed in a single
+bounce operation.  This is needed when generating integrity data
+so that the size of a single integrity segment can't overflow.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Anuj Gupta <anuj20.g@samsung.com>
@@ -116,127 +115,90 @@ Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
 Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 Tested-by: Anuj Gupta <anuj20.g@samsung.com>
 ---
- block/Makefile                |  2 +-
- block/bio-integrity-fs.c      | 81 +++++++++++++++++++++++++++++++++++
- include/linux/bio-integrity.h |  6 +++
- 3 files changed, 88 insertions(+), 1 deletion(-)
- create mode 100644 block/bio-integrity-fs.c
+ block/bio.c          | 17 ++++++++++-------
+ fs/iomap/direct-io.c |  2 +-
+ include/linux/bio.h  |  2 +-
+ 3 files changed, 12 insertions(+), 9 deletions(-)
 
-diff --git a/block/Makefile b/block/Makefile
-index c65f4da93702..7dce2e44276c 100644
---- a/block/Makefile
-+++ b/block/Makefile
-@@ -26,7 +26,7 @@ bfq-y				:= bfq-iosched.o bfq-wf2q.o bfq-cgroup.o
- obj-$(CONFIG_IOSCHED_BFQ)	+= bfq.o
+diff --git a/block/bio.c b/block/bio.c
+index 49f7548a31d6..44bfd1b435a2 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -1293,9 +1293,10 @@ static void bio_free_folios(struct bio *bio)
+ 	}
+ }
  
- obj-$(CONFIG_BLK_DEV_INTEGRITY) += bio-integrity.o blk-integrity.o t10-pi.o \
--				   bio-integrity-auto.o
-+				   bio-integrity-auto.o bio-integrity-fs.o
- obj-$(CONFIG_BLK_DEV_ZONED)	+= blk-zoned.o
- obj-$(CONFIG_BLK_WBT)		+= blk-wbt.o
- obj-$(CONFIG_BLK_DEBUG_FS)	+= blk-mq-debugfs.o
-diff --git a/block/bio-integrity-fs.c b/block/bio-integrity-fs.c
-new file mode 100644
-index 000000000000..acb1e5f270d2
---- /dev/null
-+++ b/block/bio-integrity-fs.c
-@@ -0,0 +1,81 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2025 Christoph Hellwig.
-+ */
-+#include <linux/blk-integrity.h>
-+#include <linux/bio-integrity.h>
-+#include "blk.h"
-+
-+struct fs_bio_integrity_buf {
-+	struct bio_integrity_payload	bip;
-+	struct bio_vec			bvec;
-+};
-+
-+static struct kmem_cache *fs_bio_integrity_cache;
-+static mempool_t fs_bio_integrity_pool;
-+
-+unsigned int fs_bio_integrity_alloc(struct bio *bio)
-+{
-+	struct fs_bio_integrity_buf *iib;
-+	unsigned int action;
-+
-+	action = bio_integrity_action(bio);
-+	if (!action)
-+		return 0;
-+
-+	iib = mempool_alloc(&fs_bio_integrity_pool, GFP_NOIO);
-+	bio_integrity_init(bio, &iib->bip, &iib->bvec, 1);
-+
-+	bio_integrity_alloc_buf(bio, action & BI_ACT_ZERO);
-+	if (action & BI_ACT_CHECK)
-+		bio_integrity_setup_default(bio);
-+	return action;
-+}
-+
-+void fs_bio_integrity_free(struct bio *bio)
-+{
-+	struct bio_integrity_payload *bip = bio_integrity(bio);
-+
-+	bio_integrity_free_buf(bip);
-+	mempool_free(container_of(bip, struct fs_bio_integrity_buf, bip),
-+			&fs_bio_integrity_pool);
-+
-+	bio->bi_integrity = NULL;
-+	bio->bi_opf &= ~REQ_INTEGRITY;
-+}
-+
-+void fs_bio_integrity_generate(struct bio *bio)
-+{
-+	if (fs_bio_integrity_alloc(bio))
-+		bio_integrity_generate(bio);
-+}
-+EXPORT_SYMBOL_GPL(fs_bio_integrity_generate);
-+
-+int fs_bio_integrity_verify(struct bio *bio, sector_t sector, unsigned int size)
-+{
-+	struct blk_integrity *bi = blk_get_integrity(bio->bi_bdev->bd_disk);
-+	struct bio_integrity_payload *bip = bio_integrity(bio);
-+
-+	/*
-+	 * Reinitialize bip->bip_iter.
-+	 *
-+	 * This is for use in the submitter after the driver is done with the
-+	 * bio.  Requires the submitter to remember the sector and the size.
-+	 */
-+	memset(&bip->bip_iter, 0, sizeof(bip->bip_iter));
-+	bip->bip_iter.bi_sector = sector;
-+	bip->bip_iter.bi_size = bio_integrity_bytes(bi, size >> SECTOR_SHIFT);
-+	return blk_status_to_errno(bio_integrity_verify(bio, &bip->bip_iter));
-+}
-+
-+static int __init fs_bio_integrity_init(void)
-+{
-+	fs_bio_integrity_cache = kmem_cache_create("fs_bio_integrity",
-+			sizeof(struct fs_bio_integrity_buf), 0,
-+			SLAB_HWCACHE_ALIGN | SLAB_PANIC, NULL);
-+	if (mempool_init_slab_pool(&fs_bio_integrity_pool, BIO_POOL_SIZE,
-+			fs_bio_integrity_cache))
-+		panic("fs_bio_integrity: can't create pool\n");
-+	return 0;
-+}
-+fs_initcall(fs_bio_integrity_init);
-diff --git a/include/linux/bio-integrity.h b/include/linux/bio-integrity.h
-index 232b86b9bbcb..af5178434ec6 100644
---- a/include/linux/bio-integrity.h
-+++ b/include/linux/bio-integrity.h
-@@ -145,4 +145,10 @@ void bio_integrity_alloc_buf(struct bio *bio, bool zero_buffer);
- void bio_integrity_free_buf(struct bio_integrity_payload *bip);
- void bio_integrity_setup_default(struct bio *bio);
+-static int bio_iov_iter_bounce_write(struct bio *bio, struct iov_iter *iter)
++static int bio_iov_iter_bounce_write(struct bio *bio, struct iov_iter *iter,
++		size_t maxlen)
+ {
+-	size_t total_len = iov_iter_count(iter);
++	size_t total_len = min(maxlen, iov_iter_count(iter));
  
-+unsigned int fs_bio_integrity_alloc(struct bio *bio);
-+void fs_bio_integrity_free(struct bio *bio);
-+void fs_bio_integrity_generate(struct bio *bio);
-+int fs_bio_integrity_verify(struct bio *bio, sector_t sector,
-+		unsigned int size);
-+
- #endif /* _LINUX_BIO_INTEGRITY_H */
+ 	if (WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED)))
+ 		return -EINVAL;
+@@ -1333,9 +1334,10 @@ static int bio_iov_iter_bounce_write(struct bio *bio, struct iov_iter *iter)
+ 	return 0;
+ }
+ 
+-static int bio_iov_iter_bounce_read(struct bio *bio, struct iov_iter *iter)
++static int bio_iov_iter_bounce_read(struct bio *bio, struct iov_iter *iter,
++		size_t maxlen)
+ {
+-	size_t len = min(iov_iter_count(iter), SZ_1M);
++	size_t len = min3(iov_iter_count(iter), maxlen, SZ_1M);
+ 	struct folio *folio;
+ 
+ 	folio = folio_alloc_greedy(GFP_KERNEL, &len);
+@@ -1372,6 +1374,7 @@ static int bio_iov_iter_bounce_read(struct bio *bio, struct iov_iter *iter)
+  * bio_iov_iter_bounce - bounce buffer data from an iter into a bio
+  * @bio:	bio to send
+  * @iter:	iter to read from / write into
++ * @maxlen:	maximum size to bounce
+  *
+  * Helper for direct I/O implementations that need to bounce buffer because
+  * we need to checksum the data or perform other operations that require
+@@ -1379,11 +1382,11 @@ static int bio_iov_iter_bounce_read(struct bio *bio, struct iov_iter *iter)
+  * copies the data into it.  Needs to be paired with bio_iov_iter_unbounce()
+  * called on completion.
+  */
+-int bio_iov_iter_bounce(struct bio *bio, struct iov_iter *iter)
++int bio_iov_iter_bounce(struct bio *bio, struct iov_iter *iter, size_t maxlen)
+ {
+ 	if (op_is_write(bio_op(bio)))
+-		return bio_iov_iter_bounce_write(bio, iter);
+-	return bio_iov_iter_bounce_read(bio, iter);
++		return bio_iov_iter_bounce_write(bio, iter, maxlen);
++	return bio_iov_iter_bounce_read(bio, iter, maxlen);
+ }
+ 
+ static void bvec_unpin(struct bio_vec *bv, bool mark_dirty)
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 9c572de0d596..952815eb5992 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -326,7 +326,7 @@ static ssize_t iomap_dio_bio_iter_one(struct iomap_iter *iter,
+ 	bio->bi_end_io = iomap_dio_bio_end_io;
+ 
+ 	if (dio->flags & IOMAP_DIO_BOUNCE)
+-		ret = bio_iov_iter_bounce(bio, dio->submit.iter);
++		ret = bio_iov_iter_bounce(bio, dio->submit.iter, BIO_MAX_SIZE);
+ 	else
+ 		ret = bio_iov_iter_get_pages(bio, dio->submit.iter,
+ 					     alignment - 1);
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 69d56b1d1bd2..7955916cc69f 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -473,7 +473,7 @@ void __bio_release_pages(struct bio *bio, bool mark_dirty);
+ extern void bio_set_pages_dirty(struct bio *bio);
+ extern void bio_check_pages_dirty(struct bio *bio);
+ 
+-int bio_iov_iter_bounce(struct bio *bio, struct iov_iter *iter);
++int bio_iov_iter_bounce(struct bio *bio, struct iov_iter *iter, size_t maxlen);
+ void bio_iov_iter_unbounce(struct bio *bio, bool is_error, bool mark_dirty);
+ 
+ extern void bio_copy_data_iter(struct bio *dst, struct bvec_iter *dst_iter,
 -- 
 2.47.3
 
