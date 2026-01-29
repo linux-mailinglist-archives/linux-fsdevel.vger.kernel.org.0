@@ -1,180 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-75871-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75872-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OJDmMpmBe2mvFAIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75871-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 16:49:45 +0100
+	id OGQ1LtOBe2mvFAIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75872-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 16:50:43 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A092B19F0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 16:49:45 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C3C7B1A33
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 16:50:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id B650A30265B7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 15:49:18 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 1993B300CA02
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 15:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41482F7449;
-	Thu, 29 Jan 2026 15:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926F133122E;
+	Thu, 29 Jan 2026 15:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hQzdGwJZ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bkjxntEa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9C8218E91;
-	Thu, 29 Jan 2026 15:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D099B3090C4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jan 2026 15:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769701757; cv=none; b=Qs8QUzT6i9muNgcnYmBub0vBVSkmiC8AWDtWtEcow76xBCCDZowbQs77TS69bD98fRueEcaXd5Wfhq30kBNOObOtFzGAg63UbCVY/19hbYLIgGak/GInmCbbma8F1tRxoD6xFQ8YKCWPcZYeO5iclOczyUge/Qmmpa9FRrTgO2g=
+	t=1769701834; cv=none; b=j5bNftGO6Vm+pTH8LZbqoSGdc4XWg15TugQTshnYuutB+sa9Kd1yN6WruIhjueZkhPnnhMqUAHwh8nh6Gm7DZBblUIlDnhQjK5MuLNBK3WjMEUrWh1SlS/XDwb8iQQQJeaIeariCYhPsWveC8qojwh1IXnAniivPfN8BOp4S0RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769701757; c=relaxed/simple;
-	bh=mNAdcd8Uug5E9TbgdvTMNslor1NXEZZ9HmmtiVPHXh4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bAWvPn4KRsRpnkO/ysxHKsDyloGWxPzZqKx8k+7Et4/b4ElGgF6NcjiYJau310GXgTzWEwawddZWc/DiRzJCvF/WlbZHsWp0IlzLLyv7N/jNExpo63ZWo/l9hUe7TQ7y9sxqdqh/+JAQOC6GUOX0T5llhBThCNRRq7EJ6mlUZEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hQzdGwJZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC22BC116D0;
-	Thu, 29 Jan 2026 15:49:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769701757;
-	bh=mNAdcd8Uug5E9TbgdvTMNslor1NXEZZ9HmmtiVPHXh4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hQzdGwJZtSr0QTo8S3qI9F4gHLh2RPuVCxs7vSCUNFvIsvIGiJ1fLWVJNNxpKUrUe
-	 PszPtgl7+U41M0bymKaRFW86CFYXjAkdfLc62L7fzV1eFj7svYBRDQSR8SQkelvtdl
-	 FznGDQ2piYr7VYSmC89bopZRVyfAIgRAw4HIyy1KL/xmeItml9EDadQcOFd9u6yTo+
-	 x8IyQ6Mv+xUsMy0hnSUg7462JV5GzhKnY2uOsyAU1p958TDLG0jADhc98QkcjYJtcY
-	 6louAHlJdFZR/RKmlApn+tbAwtcfq05AdSj6N+PHjiFQ38EhN+O64+V5MFs2zsm35Q
-	 G+PwMxZA4vwrQ==
-Date: Thu, 29 Jan 2026 16:49:12 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Alexander Mikhalitsyn <alexander@mihalicyn.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH] fs: don't allow non-init s_user_ns for filesystems
- without FS_USERNS_MOUNT
-Message-ID: <20260129-zielgebiet-zutiefst-d9d9cb902f1b@brauner>
-References: <20240724-s_user_ns-fix-v1-1-895d07c94701@kernel.org>
- <b02d93c9cd1ccda04127031155ec9b4c29ee69d5.camel@kernel.org>
+	s=arc-20240116; t=1769701834; c=relaxed/simple;
+	bh=dVoci7UurIKaLWVhEEQyOA/oRtbZVi8H/yVXGSLOoME=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Sbv6cDlLCcvFO/gz2JM5rmX8p2WaMThokloTIdz9PqVqHk4UyyiXZELKLo/B87k4NbqT8t5MUI5j1MePGNwKjm/5Kdu+ntkizCwQIs3YBxlHsSWpWTtXu5NeKrGmb7bLBvSOMxOGra0g6ZrLDMXWTNGeiCzRTMHPT392H5ScJlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bkjxntEa; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1769701831;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=f6i3WlIu8fBaSjICdJuR/n+CyzTL3A1o0ivoFGDjDtQ=;
+	b=bkjxntEaWpvQtpM4naeRanax2hil3GNUxMWMoLMKVLTETjmc/Pm/g87hsTYfZmeN84mWED
+	WoeXikLRQY4G0LlQ3Qaf25oacex63rnkbUwsz8r3sxfuXN16HxwfoWr8qGLD9ag8werUEa
+	0KhzcLY5KODiDUSwzQFJJRDH9cHVsCM=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-688-4ZKjX25YN3GuGvp1pn5uyA-1; Thu,
+ 29 Jan 2026 10:50:30 -0500
+X-MC-Unique: 4ZKjX25YN3GuGvp1pn5uyA-1
+X-Mimecast-MFC-AGG-ID: 4ZKjX25YN3GuGvp1pn5uyA_1769701829
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 41AEA1956060;
+	Thu, 29 Jan 2026 15:50:29 +0000 (UTC)
+Received: from bfoster.redhat.com (unknown [10.22.81.70])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B2F901800109;
+	Thu, 29 Jan 2026 15:50:28 +0000 (UTC)
+From: Brian Foster <bfoster@redhat.com>
+To: linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: [PATCH v2 0/5] iomap, xfs: improve zero range flushing and lookup
+Date: Thu, 29 Jan 2026 10:50:23 -0500
+Message-ID: <20260129155028.141110-1-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b02d93c9cd1ccda04127031155ec9b4c29ee69d5.camel@kernel.org>
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [2.34 / 15.00];
-	MID_END_EQ_FROM_USER_PART(4.00)[];
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	MID_CONTAINS_FROM(1.00)[];
+	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75871-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,gmail.com,cyphar.com,mihalicyn.com,vger.kernel.org];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75872-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	RCPT_COUNT_TWO(0.00)[2];
+	FROM_NEQ_ENVFROM(0.00)[bfoster@redhat.com,linux-fsdevel@vger.kernel.org];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	DKIM_TRACE(0.00)[redhat.com:+];
 	MISSING_XM_UA(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
+	NEURAL_HAM(-0.00)[-1.000];
+	TO_DN_NONE(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 7A092B19F0
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	MIME_TRACE(0.00)[0:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 6C3C7B1A33
 X-Rspamd-Action: no action
 
-On Thu, Jan 29, 2026 at 09:36:54AM -0500, Jeff Layton wrote:
-> On Wed, 2024-07-24 at 09:53 -0500, Seth Forshee (DigitalOcean) wrote:
-> > Christian noticed that it is possible for a privileged user to mount
-> > most filesystems with a non-initial user namespace in sb->s_user_ns.
-> > When fsopen() is called in a non-init namespace the caller's namespace
-> > is recorded in fs_context->user_ns. If the returned file descriptor is
-> > then passed to a process priviliged in init_user_ns, that process can
-> > call fsconfig(fd_fs, FSCONFIG_CMD_CREATE), creating a new superblock
-> > with sb->s_user_ns set to the namespace of the process which called
-> > fsopen().
-> > 
-> > This is problematic. We cannot assume that any filesystem which does not
-> > set FS_USERNS_MOUNT has been written with a non-initial s_user_ns in
-> > mind, increasing the risk for bugs and security issues.
-> > 
-> > Prevent this by returning EPERM from sget_fc() when FS_USERNS_MOUNT is
-> > not set for the filesystem and a non-initial user namespace will be
-> > used. sget() does not need to be updated as it always uses the user
-> > namespace of the current context, or the initial user namespace if
-> > SB_SUBMOUNT is set.
-> > 
-> > Fixes: cb50b348c71f ("convenience helpers: vfs_get_super() and sget_fc()")
-> > Reported-by: Christian Brauner <brauner@kernel.org>
-> > Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
-> > ---
-> >  fs/super.c | 11 +++++++++++
-> >  1 file changed, 11 insertions(+)
-> > 
-> > diff --git a/fs/super.c b/fs/super.c
-> > index 095ba793e10c..d681fb7698d8 100644
-> > --- a/fs/super.c
-> > +++ b/fs/super.c
-> > @@ -736,6 +736,17 @@ struct super_block *sget_fc(struct fs_context *fc,
-> >  	struct user_namespace *user_ns = fc->global ? &init_user_ns : fc->user_ns;
-> >  	int err;
-> >  
-> > +	/*
-> > +	 * Never allow s_user_ns != &init_user_ns when FS_USERNS_MOUNT is
-> > +	 * not set, as the filesystem is likely unprepared to handle it.
-> > +	 * This can happen when fsconfig() is called from init_user_ns with
-> > +	 * an fs_fd opened in another user namespace.
-> > +	 */
-> > +	if (user_ns != &init_user_ns && !(fc->fs_type->fs_flags & FS_USERNS_MOUNT)) {
-> > +		errorfc(fc, "mounting from non-initial user namespace is not allowed");
-> > +		return ERR_PTR(-EPERM);
-> > +	}
-> > +
-> >  retry:
-> >  	spin_lock(&sb_lock);
-> >  	if (test) {
-> > 
-> > ---
-> > base-commit: 256abd8e550ce977b728be79a74e1729438b4948
-> > change-id: 20240723-s_user_ns-fix-b00c31de1cb8
-> > 
-> > Best regards,
-> 
-> I sent an incorrect RFC patch for this yesterday, but this patch breaks
+Hi all,
 
-Oh? I did not see it.
+Here's v2 of the iomap zero range flush cleanup patches. Patch 1 in v1
+has already been merged separately, so that's dropped off. Otherwise no
+major changes from v1. The remaining patches here lift the flush into
+XFS, fix up the insert range issue that the flush implicitly suppressed,
+streamlines the .iomap_begin() logic a bit, and finally replaces the
+just lifted flush with proper use of the folio batch mechanism. The end
+result is that the flush remains in iomap zero range purely as a
+fallback for callers who do not provide a folio batch for pagecache
+dirty unwritten mappings.
 
-> NFS mounting in containers for us, as the prohibited activity is
-> exactly the process we use to do them.
-> 
-> We basically have a task in the container do an fsopen() and then pass
-> the fd to a daemon in the init namespace via unix socket. The daemon
-> vets the NFS mount parameters (ensuring that the mount options are
-> sane, and that we trust the server), and then does the mount inside the
-> container.
+WRT some of the discussion on v1.. I looked into changing how COW blocks
+over data fork holes are reported in XFS as a first step, but I
+eventually ran into complexity that would essentially duplicate some of
+the hacks I'm trying to clean up. For example, we'd have to determine
+whether to report as a hole or "data" mapping based on pagecache state,
+and this series adds some of that by the end by explicitly doing the
+dirty folio lookup in this scenario. I'll plan to revisit this on top of
+this series as a standalone XFS improvement, but haven't got there yet.
 
-The mountfsd model - kinda.
+The other thing that is a little more annoying was failure of the idea
+to essentially prep the shift where patch 2 adds an EOF folio flush [1].
+This ordering leads to potential pagecache inconsistency because the
+i_size update can zero and repopulate pagecache. I'm open to other ideas
+here, but otherwise haven't been able to think of anything more
+clever/simple (including futzing around for suggestions with AI). All in
+all I still think this is more clear having the flush isolated in insert
+range where it is actually required than having a flush in iomap
+indirectly suppress the problem.
 
-> 
-> We don't want to set FS_USERNS_MOUNT on NFS, because that would give
-> the container carte blanche to mount anything it likes, even a
-> malicious server. Do we need to split that flag into two? Maybe
-> FS_USERNS_SAFE and FS_USERNS_MOUNT?
+Thoughts, reviews, flames appreciated.
 
-I think you can simply add FS_USERNS_DELEGATABLE and raise it for nfs.
+Brian
+
+[1] https://lore.kernel.org/linux-fsdevel/20251105001445.GW196370@frogsfrogsfrogs/
+
+v2:
+- Patch 1 from v1 merged separately.
+- Fixed up iomap_fill_dirty_folios() call in patch 5.
+v1: https://lore.kernel.org/linux-fsdevel/20251016190303.53881-1-bfoster@redhat.com/
+
+Brian Foster (5):
+  iomap, xfs: lift zero range hole mapping flush into xfs
+  xfs: flush eof folio before insert range size update
+  xfs: look up cow fork extent earlier for buffered iomap_begin
+  xfs: only flush when COW fork blocks overlap data fork holes
+  xfs: replace zero range flush with folio batch
+
+ fs/iomap/buffered-io.c |  6 +--
+ fs/xfs/xfs_file.c      | 17 +++++++++
+ fs/xfs/xfs_iomap.c     | 87 ++++++++++++++++++++++++++++++------------
+ 3 files changed, 81 insertions(+), 29 deletions(-)
+
+-- 
+2.52.0
+
 
