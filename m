@@ -1,211 +1,301 @@
-Return-Path: <linux-fsdevel+bounces-75833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GFNLOqC2emma9QEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 02:23:44 +0100
+	id EHAfH+a2emma9QEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 02:24:54 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 569FFAAAA0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 02:23:44 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F261AAAD6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 02:24:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id B3D56307EF66
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 01:18:39 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id D53F8301D4D8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 01:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8E7350A1F;
-	Thu, 29 Jan 2026 01:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3FA343D71;
+	Thu, 29 Jan 2026 01:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="JimtEvw/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gFn7qH7S"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5886733E35C
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jan 2026 01:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769649383; cv=none; b=RmxXosQ6uzGEwIO/j8W8jmdxQc/h40dwfnleZGJahUtgT4oZ932juz0oxLoEivNcmL9XtIdD+BTJAeiJGBo5zPZRpcpVGfvBEGDaJXuKIDmM6azbV6anSwQvYrzoko9qkRgZUfKhwa5pAawBk6AZovueJ3DX1pAmvuA+q8S+fq4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769649383; c=relaxed/simple;
-	bh=nHJ7z1F0QJ+ff3YYPLezHicV71ohVDGuIQUyQzSTkzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NbnrojcSQMMWolc5G4jDX6UwcJ14ondqRD/gGaNiCFRKeSSIM/vtdg67s8GXYBHYN3lRhWeHEOpjUZ8sevOoM0ENHn9VagrhdI8ttHVYHlk4mWZiiJuOP5N0jPqHKokouUQNt3tyKcfXG2gjupAp1nqwO/r9Wc4OWl1PI03dxpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=JimtEvw/; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-8c717f2b654so71055085a.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 17:16:21 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A09B379972
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jan 2026 01:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.222.175
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769649417; cv=pass; b=BrPM4GkLVjhLaD08Pdn13YplYQlOq+5f7OGDrs2MPmxwNaVTZxXCPZCwQsYuk4zuXfh5QWgEQWwq6prkE8UJE8QFFQD5ZtPFHvudCpjn8gzGFmu0y5z2wZQPQmIHzbVK/0orlSXJOiyN7xVHWIao8/DFIN5yXUIiX4GWgAII42Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769649417; c=relaxed/simple;
+	bh=Ha1tIN7hHGKpkhiGYJaEWRTlSqz76f1xHZV/A88CtXs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UMIUsdNiQZNl6n64SJAes9l4y4FZBSYOPiAzEiR6iehydx/P/1OPoMkzJmhZkQMGN764ucWoNRgwh0b96mg4RCduxxPPpXj8Z7KIE9ccWSzH8Dyqh8EKqiAaKP5VdBfHWYsMAwSvHikFyePjwmPmsMXNBfC90dactuH5Y6qBGWw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gFn7qH7S; arc=pass smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-8c6a7638f42so62619685a.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 17:16:54 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769649414; cv=none;
+        d=google.com; s=arc-20240605;
+        b=fhlUZah2x00P0M7W9veBuSaaZCehthxU+ghTxyKZBif55m9iYa03xqvTOUSTZSAGgt
+         dPmuUuNoMZjSZm/ZoMdppTCn9YuZwnzAMgjt8CZxjBfdKixjtIZX0IvYv8ww/s8mS0YQ
+         DQfbYTse0qkW1zuCVbEhm0q4rN7EqLaUzKmOqxY1Vy4RQDwovoiF23vdUWQQyIzWbAJG
+         U9swhazh0NdY6NSyR7+JwimKDLR7KmFiFBHu9j2LwJEccX8SDOhwwlfNi+J9k28lImvq
+         tBYibMEgBx/elWs2sARfMCVDUFepkRFwGU+jrUXAQjhDDc7s6ZxVYT/LyjCbGL4x/XKH
+         lz+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=134hHTGFx4DsoZAW9zkpXmrMLO/ZOkI8ziAgMpQNXTI=;
+        fh=L1e1MjGjVQfIwhvJxpQJpL905A/S21KGd6wE2w1Dzww=;
+        b=iIiDEinJGbubCIZG+yvp/Dsc66zD3rzbL9Ee6VcZ4JH8e5628Ko1WUFopdHjtLBWY4
+         CoSRyKE0ZpXrHYdLT2qGSB0u/b2/ahZ2huHRjkQYfYeDF5cEk//1KO7Y35tfGmMG5ps6
+         rlWXNXookLxoUY/veW++ogFP2Z0kNMzfhpt5yWaBJFWn+b9KM8boHnElNkDQDORFyoZA
+         EIeD6VvmW0OPZ3kjoNgBy74ksI2+M7dAqvL00NxGKsjHAB7rGsWDfXbWYItxsrqnT9as
+         gDhfKnZowWbsSdnAQXOof3RDF/8NAEQOPA6UcTdl0AmdwcI1X6fSKjutx+qUB6XDSq7m
+         NY/A==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1769649380; x=1770254180; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WReYS7VDfIh+dvxdrk0biwhaBbpxlirvLLAI4b8c7GA=;
-        b=JimtEvw/M9s1zQiNQoK5XBOJVKAPBC0ZPH+Ww+nhg7HM120zXzPPDFQ66dxw3qVIkh
-         41KFAv5+ldYueku3BLZMrAHudLNNK/pjzR325IvCVYgAjfezrdFp+Ypjnmcs8Z2WWpms
-         Hnkz7ru3rUgn6MmQTBlVKZp0y6quJVwOYGhjcKcvZIbHB6f3VZF4HrJ7ENAeKE+2Ukuy
-         zFMq8IZPJX1HkYQk1TQQorMGWwZZ6+bCDV3o+M0HD2kYBy6jefimyqAQy7F5U5BqRVtD
-         kUo6mdW+EKWp7Wa5NI1ztftQRXc17I8/6KEDYfze9hhVxHgoa/rcyB0qcWZAHLRDjYK9
-         vixQ==
+        d=gmail.com; s=20230601; t=1769649414; x=1770254214; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=134hHTGFx4DsoZAW9zkpXmrMLO/ZOkI8ziAgMpQNXTI=;
+        b=gFn7qH7S8g8q3qAzcDll3SRs5GXqLNC8fJJJuwZtapJCyQ74XpyHl23OsR6xVB8bK/
+         cstmS041f0JrEUUMlkZ+2ezn1VdYyTWLTBM4j9zDnS6L0zpbUX4K0kmVxz1rmT3YxP+T
+         OGcXXaRJxJ9ESMk1BPXwWwrNTOngVGiqCUh9XwZ7e9MX9k4fdfHVaO1JgXi+PkXJdQk+
+         JpomBbC2gKHra2mtsUNKhWiy1Dm8fhIpvv8EEVo9tnDDDhhO/6aDvLlahhsiVRKuzi6c
+         lAx9T/RKznSxC+IDDnYgmcMF9gqzNIKbsJMTHn3V155irWCN+cUMzRGLR37EHWJpec1v
+         2Itw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769649380; x=1770254180;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WReYS7VDfIh+dvxdrk0biwhaBbpxlirvLLAI4b8c7GA=;
-        b=OB9t/QC3rIKbzSXdao/hSdkMn8S3gKsIgUL1it4fjXuIlRH3hubpUQRMOvOkH67KFj
-         cXZTCh0w5IBmi/USba0I5ej4loTfYXAPSwUH3okIluwvjnbqj7OQ2FE0I+ahmWe+AanU
-         hLq/qmK4y8JtGX6fBq4bqsXg/dbBcbX+aXAIE8ubZO/GGdGiQ2BS1iOla8mTLpdv/ij+
-         bMtfS92/N+BNdpI/VHr5Sg4+JiF1jKDK47vBBHZkWAlmOKWrM83bA6a+4s0r4C8AHF/U
-         nxyks8h7s1rtIku55PBudNBEigqkSX+iVAdS+Wpgu47nzAZLovlAhyScuIhqyeRNdIs6
-         WOPA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3c+uSdWdrbzYgmzWaEigrRcPG6eb0uaSAkiR1MxbDgrS1QpPW7oeH/Tu+OztH5EtGtR7/qs6AyejOZWty@vger.kernel.org
-X-Gm-Message-State: AOJu0YwocZm/rAGdQGST3CxIn3dmwi/Ut2rcLKvE3kXHYFjccLebxTCY
-	nhS4svLtXec29FiE9Lm4qu8fPWpBXm9L6ZqHW0Qi20wTkqD+vqCGbYH/EiN1zWMqw44=
-X-Gm-Gg: AZuq6aLjI3kiGFHEij67Bsi94v7v54ibdlCPU8gMGqtPeCYkQwaZOMVkDj2pvQSUB8z
-	Uu825uizn3VfV30eyLNKDs2mOsPIFm7+upQ5MPUogL10AbNddPoOKyhKGW0maYnkHPzKq73Ydan
-	UUEzjkdvMRPg12YBE866WIOQuv9CY3x2xNk63hsHXNfJeIX7BOblRWSloyFLA+UhLYLsLs700fo
-	xZrnrbEtq13YoQThBD16yBhfrxZ0t75l/cHV/CF1anNgDxWcnjBHCOIzyiySd6n2AakF80EmzAY
-	LYWbkjOHmMKrkwFuuLdVMevkb8pZR2EqPPrqXCKaQ7+91Epue5pWr1dvOKB82SUeKqfQWTBPhVu
-	DCbnwEhQCk5L7EA17H874kZiOSCxIq6jLqpAm1NQuNlWeQ9I0s2c0rVmsrEYjEDvmL36WtH7aZ5
-	vWeGw8iRVAZIXYot2x4xWDGsL5KxyzXheRqWICGqun3B+ZTEwWQcYHfNfLlvdVFkrq4Sg=
-X-Received: by 2002:a05:620a:d88:b0:8c5:2ce6:dca with SMTP id af79cd13be357-8c70b841159mr939733985a.6.1769649380018;
-        Wed, 28 Jan 2026 17:16:20 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-162-112-119.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.112.119])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c711d2ab04sm283038485a.25.2026.01.28.17.16.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jan 2026 17:16:19 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1vlGdu-00000009gKo-3mMh;
-	Wed, 28 Jan 2026 21:16:18 -0400
-Date: Wed, 28 Jan 2026 21:16:18 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Ackerley Tng <ackerleytng@google.com>,
-	Alexey Kardashevskiy <aik@amd.com>, cgroups@vger.kernel.org,
-	kvm@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org, x86@kernel.org,
-	akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de,
-	brauner@kernel.org, chao.p.peng@intel.com, chenhuacai@kernel.org,
-	corbet@lwn.net, dave.hansen@intel.com, dave.hansen@linux.intel.com,
-	david@redhat.com, dmatlack@google.com, erdemaktas@google.com,
-	fan.du@intel.com, fvdl@google.com, haibo1.xu@intel.com,
-	hannes@cmpxchg.org, hch@infradead.org, hpa@zytor.com,
-	hughd@google.com, ira.weiny@intel.com, isaku.yamahata@intel.com,
-	jack@suse.cz, james.morse@arm.com, jarkko@kernel.org,
-	jgowans@amazon.com, jhubbard@nvidia.com, jroedel@suse.de,
-	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com,
-	keirf@google.com, kent.overstreet@linux.dev,
-	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
-	mail@maciej.szmigiero.name, maobibo@loongson.cn,
-	mathieu.desnoyers@efficios.com, maz@kernel.org, mhiramat@kernel.org,
-	mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com,
-	mingo@redhat.com, mlevitsk@redhat.com, mpe@ellerman.id.au,
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es,
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com,
-	paul.walmsley@sifive.com, pbonzini@redhat.com, peterx@redhat.com,
-	pgonda@google.com, prsampat@amd.com, pvorel@suse.cz,
-	qperret@google.com, richard.weiyang@gmail.com,
-	rick.p.edgecombe@intel.com, rientjes@google.com,
-	rostedt@goodmis.org, roypat@amazon.co.uk, rppt@kernel.org,
-	shakeel.butt@linux.dev, shuah@kernel.org, steven.price@arm.com,
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com,
-	tglx@linutronix.de, thomas.lendacky@amd.com, vannapurve@google.com,
-	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com,
-	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org,
-	wyihan@google.com, xiaoyao.li@intel.com, yan.y.zhao@intel.com,
-	yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
-Subject: Re: [RFC PATCH v1 05/37] KVM: guest_memfd: Wire up
- kvm_get_memory_attributes() to per-gmem attributes
-Message-ID: <20260129011618.GA2307128@ziepe.ca>
-References: <cover.1760731772.git.ackerleytng@google.com>
- <071a3c6603809186e914fe5fed939edee4e11988.1760731772.git.ackerleytng@google.com>
- <07836b1d-d0d8-40f2-8f7b-7805beca31d0@amd.com>
- <CAEvNRgEuez=JbArRf2SApLAL0usv5-Q6q=nBPOFMHrHGaKAtMw@mail.gmail.com>
- <20260129003753.GZ1641016@ziepe.ca>
- <aXqx3_eE0rNh6nP0@google.com>
+        d=1e100.net; s=20230601; t=1769649414; x=1770254214;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=134hHTGFx4DsoZAW9zkpXmrMLO/ZOkI8ziAgMpQNXTI=;
+        b=RWhPJS8lUDtN7goke6JY4ivN8WXYFlHjkOgriDN0JZmj0y15e6O2nZAGCcPUx2si3B
+         DMwaXCJ4MGM+ZAxJHFwoqZj6h6hLpn0RPntZ0e+5xFFRWuRsVfuInslMmq4Fm3mEk32E
+         F2eU6XIJmmlLNeK6Zw6EQkkgqwdiUfPUK2Fvdm/ekh2b2BDffZClBXgd15b4jI6oDKxs
+         s9K1tjH+AYPXIkkTkYhEhqo6n85sXe4BKKcg4X+6nf8pK7yBs1uuKujyumpagME5FnrM
+         uSHY375xw6+ssAraLtycT3+letohtTpRmTOeJpSd+i382OxqykAwflcIlnv1BMzyGqHz
+         1R1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUgwTU5fXoBW2iWO9vU5fwb7gci1ZDHpb0v6MBHvU/WAOooKZjVyyIiZmm2+7J/9T0KioYmAzcGCGrDI/Pn@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi12zXerakAJk8POs4RFL4/cwEUUH27Htfp1+ZkTBjfC1B6Owq
+	BKR1CtMWf627eF9Vg+JvYC91x7SbOlsuZjUUwBe7l3w8LcHYJ1ea/JfoQ6lHE3Fi2MbKmXgqy0T
+	jzllOTONnuMgAz1UfYoyoTqTgX7YNWWY=
+X-Gm-Gg: AZuq6aJaYZrpKzgVYxsjB94L7AcVjqs6RjeRFMPCTe6L9w8/OPX1NU1+9NJUp5BcUkC
+	J8zOjlblLAI7Wc/3EeqB3F0wrg7T9tDwAyI1hkCDmFZAJguwcAdOh+xicNzOv2JptK70kkjgE/o
+	IO1LvpjPnczFbb5VeEKdHoAdAyLREwaewvcTB1w1z1YBp+o2S4chb0iv7orfIrkN/BdnctIt3nx
+	hENjXBEcPXZH0GgdN+eUCmoHqYk5LUwPTNYhHeXAgxGS0Iel45rcNMFftpH3/r3xUq3kg==
+X-Received: by 2002:ac8:5dd1:0:b0:501:4e87:70b7 with SMTP id
+ d75a77b69052e-5032f74b0f6mr93787571cf.1.1769649414123; Wed, 28 Jan 2026
+ 17:16:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aXqx3_eE0rNh6nP0@google.com>
+References: <20260116233044.1532965-1-joannelkoong@gmail.com>
+ <20260116233044.1532965-19-joannelkoong@gmail.com> <68b3ff9d-ebcf-45c9-a50a-b5a59d332f4c@ddn.com>
+ <CAJnrk1bn6A2i4Kr-W=VTUVqeewhR-eVNZXoQtDi8v4=Qyme6DQ@mail.gmail.com> <be475a3b-fe3f-43b2-ace6-3a7158d4d96c@bsbernd.com>
+In-Reply-To: <be475a3b-fe3f-43b2-ace6-3a7158d4d96c@bsbernd.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 28 Jan 2026 17:16:43 -0800
+X-Gm-Features: AZwV_Qhx5ybxot0C94y6kD51M3S2Jxwo3z5pmQyFPryjEscwAW9LSyz9j8Fsg3w
+Message-ID: <CAJnrk1bBQYW6rVXK=nHis+emO2v-rif-GnvXGbSaSk1if-fo9w@mail.gmail.com>
+Subject: Re: [PATCH v4 18/25] fuse: support buffer copying for kernel addresses
+To: Bernd Schubert <bernd@bsbernd.com>
+Cc: Bernd Schubert <bschubert@ddn.com>, axboe@kernel.dk, miklos@szeredi.hu, 
+	csander@purestorage.com, krisman@suse.de, io-uring@vger.kernel.org, 
+	asml.silence@gmail.com, xiaobing.li@samsung.com, safinaskar@gmail.com, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[ziepe.ca:s=google];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[google.com,amd.com,vger.kernel.org,kvack.org,kernel.org,linux-foundation.org,linux.intel.com,alien8.de,intel.com,lwn.net,redhat.com,cmpxchg.org,infradead.org,zytor.com,suse.cz,arm.com,amazon.com,nvidia.com,suse.de,linux.dev,oracle.com,maciej.szmigiero.name,loongson.cn,efficios.com,digikod.net,ellerman.id.au,amazon.es,dabbelt.com,sifive.com,gmail.com,goodmis.org,amazon.co.uk,linutronix.de,zeniv.linux.org.uk,huawei.com];
-	DKIM_TRACE(0.00)[ziepe.ca:+];
-	MIME_TRACE(0.00)[0:+];
-	DMARC_NA(0.00)[ziepe.ca];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75834-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75833-lists,linux-fsdevel=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[ddn.com,kernel.dk,szeredi.hu,purestorage.com,suse.de,vger.kernel.org,gmail.com,samsung.com];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jgg@ziepe.ca,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCPT_COUNT_GT_50(0.00)[97];
-	MID_RHS_MATCH_FROM(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[ziepe.ca:mid,ziepe.ca:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 569FFAAAA0
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,bsbernd.com:email]
+X-Rspamd-Queue-Id: 1F261AAAD6
 X-Rspamd-Action: no action
 
-On Wed, Jan 28, 2026 at 05:03:27PM -0800, Sean Christopherson wrote:
+On Wed, Jan 28, 2026 at 1:14=E2=80=AFPM Bernd Schubert <bernd@bsbernd.com> =
+wrote:
+>
+>
+>
+> On 1/28/26 01:23, Joanne Koong wrote:
+> > On Tue, Jan 27, 2026 at 3:40=E2=80=AFPM Bernd Schubert <bschubert@ddn.c=
+om> wrote:
+> >>
+> >> On 1/17/26 00:30, Joanne Koong wrote:
+> >>> This is a preparatory patch needed to support kernel-managed ring
+> >>> buffers in fuse-over-io-uring. For kernel-managed ring buffers, we ge=
+t
+> >>> the vmapped address of the buffer which we can directly use.
+> >>>
+> >>> Currently, buffer copying in fuse only supports extracting underlying
+> >>> pages from an iov iter and kmapping them. This commit allows buffer
+> >>> copying to work directly on a kaddr.
+> >>>
+> >>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> >>> ---
+> >>>  fs/fuse/dev.c        | 23 +++++++++++++++++------
+> >>>  fs/fuse/fuse_dev_i.h |  7 ++++++-
+> >>>  2 files changed, 23 insertions(+), 7 deletions(-)
+> >>>
+> >>> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> >>> index 6d59cbc877c6..ceb5d6a553c0 100644
+> >>> --- a/fs/fuse/dev.c
+> >>> +++ b/fs/fuse/dev.c
+> >>> @@ -848,6 +848,9 @@ void fuse_copy_init(struct fuse_copy_state *cs, b=
+ool write,
+> >>>  /* Unmap and put previous page of userspace buffer */
+> >>>  void fuse_copy_finish(struct fuse_copy_state *cs)
+> >>>  {
+> >>> +     if (cs->is_kaddr)
+> >>> +             return;
+> >>> +
+> >>>       if (cs->currbuf) {
+> >>>               struct pipe_buffer *buf =3D cs->currbuf;
+> >>>
+> >>> @@ -873,6 +876,9 @@ static int fuse_copy_fill(struct fuse_copy_state =
+*cs)
+> >>>       struct page *page;
+> >>>       int err;
+> >>>
+> >>> +     if (cs->is_kaddr)
+> >>> +             return 0;
+> >>> +
+> >>>       err =3D unlock_request(cs->req);
+> >>>       if (err)
+> >>>               return err;
+> >>> @@ -931,15 +937,20 @@ static int fuse_copy_do(struct fuse_copy_state =
+*cs, void **val, unsigned *size)
+> >>>  {
+> >>>       unsigned ncpy =3D min(*size, cs->len);
+> >>>       if (val) {
+> >>> -             void *pgaddr =3D kmap_local_page(cs->pg);
+> >>> -             void *buf =3D pgaddr + cs->offset;
+> >>> +             void *pgaddr, *buf;
+> >>> +             if (!cs->is_kaddr) {
+> >>> +                     pgaddr =3D kmap_local_page(cs->pg);
+> >>> +                     buf =3D pgaddr + cs->offset;
+> >>> +             } else {
+> >>> +                     buf =3D cs->kaddr + cs->offset;
+> >>> +             }
+> >>>
+> >>>               if (cs->write)
+> >>>                       memcpy(buf, *val, ncpy);
+> >>>               else
+> >>>                       memcpy(*val, buf, ncpy);
+> >>> -
+> >>> -             kunmap_local(pgaddr);
+> >>> +             if (!cs->is_kaddr)
+> >>> +                     kunmap_local(pgaddr);
+> >>>               *val +=3D ncpy;
+> >>>       }
+> >>>       *size -=3D ncpy;
+> >>> @@ -1127,7 +1138,7 @@ static int fuse_copy_folio(struct fuse_copy_sta=
+te *cs, struct folio **foliop,
+> >>>       }
+> >>>
+> >>>       while (count) {
+> >>> -             if (cs->write && cs->pipebufs && folio) {
+> >>> +             if (cs->write && cs->pipebufs && folio && !cs->is_kaddr=
+) {
+> >>>                       /*
+> >>>                        * Can't control lifetime of pipe buffers, so a=
+lways
+> >>>                        * copy user pages.
+> >>> @@ -1139,7 +1150,7 @@ static int fuse_copy_folio(struct fuse_copy_sta=
+te *cs, struct folio **foliop,
+> >>>                       } else {
+> >>>                               return fuse_ref_folio(cs, folio, offset=
+, count);
+> >>>                       }
+> >>> -             } else if (!cs->len) {
+> >>> +             } else if (!cs->len && !cs->is_kaddr) {
+> >>>                       if (cs->move_folios && folio &&
+> >>>                           offset =3D=3D 0 && count =3D=3D size) {
+> >>>                               err =3D fuse_try_move_folio(cs, foliop)=
+;
+> >>> diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
+> >>> index 134bf44aff0d..aa1d25421054 100644
+> >>> --- a/fs/fuse/fuse_dev_i.h
+> >>> +++ b/fs/fuse/fuse_dev_i.h
+> >>> @@ -28,12 +28,17 @@ struct fuse_copy_state {
+> >>>       struct pipe_buffer *currbuf;
+> >>>       struct pipe_inode_info *pipe;
+> >>>       unsigned long nr_segs;
+> >>> -     struct page *pg;
+> >>> +     union {
+> >>> +             struct page *pg;
+> >>> +             void *kaddr;
+> >>> +     };
+> >>>       unsigned int len;
+> >>>       unsigned int offset;
+> >>>       bool write:1;
+> >>>       bool move_folios:1;
+> >>>       bool is_uring:1;
+> >>> +     /* if set, use kaddr; otherwise use pg */
+> >>> +     bool is_kaddr:1;
+> >>>       struct {
+> >>>               unsigned int copied_sz; /* copied size into the user bu=
+ffer */
+> >>>       } ring;
+> >>
+> >>
+> >> I'm confused here, how cs->len will get initialized. So far that was
+> >> done from fuse_copy_fill?
+> >
+> > With kaddrs, cs->len is initialized when the copy state is set up (in
+> > setup_fuse_copy_state()) before we do any copying to/from the ring.
+> > The changes for that are in the later patch that adds the ringbuffer
+> > logic ("fuse: add io-uring kernel-managed buffer ring"). The kaddr and
+> > len correspond to the address and length of the buffer that was
+> > selected from the ring buffer (in fuse_uring_select_buffer()).
+>
+>
+>
+> Maybe we could add a sanity check into fuse_copy_do() or even into
+> fuse_copy_fill in the cs->is_kaddr condition that cs->len is > 0?
 
-> For a dmabuf fd, the story is the same as guest_memfd.  Unless private vs. shared
-> is all or nothing, and can never change, then the only entity that can track that
-> info is the owner of the dmabuf.  And even if the private vs. shared attributes
-> are constant, tracking it external to KVM makes sense, because then the provider
-> can simply hardcode %true/%false.
+I will add a WARN_ON for this in the next version. Thanks for reviewing thi=
+s.
 
-Oh my I had not given that bit any thought. My remarks were just about
-normal non-CC systems.
-
-So MMIO starts out shared, and then converts to private when the guest
-triggers it. It is not all or nothing, there are permanent shared
-holes in the MMIO ranges too.
-
-Beyond that I don't know what people are thinking.
-
-Clearly VFIO has to revoke and disable the DMABUF once any of it
-becomes private. VFIO will somehow have to know when it changes modes
-from the TSM subsystem.
-
-I guess we could have a special channel for KVM to learn the
-shared/private page by page from VFIO as some kind of "aware of CC"
-importer.
-
-I suppose AMD needs to mangle the RMP when it changes, and KVM has to
-do that.
-
-I forget what ARM does, but I seem to recall there is a call to create
-a vPCI function and that is what stuffs the S2? So maybe KVM isn't
-even involved? (IIRC people were talking that something else would
-call the vPCI function but I haven't seen patches)
-
-No idea what x86 does beyond it has to unmap all the MMIO otherwise
-the machine crashes :P
-
-Oh man, what a horrible mess to even contemplate. I'm going to bed.
-
-Jason
+Thanks,
+Joanne
+>
+> Otherwise looks good.
+>
+> Reviewed-by: Bernd Schubert <bernd@bsbernd.com>
 
