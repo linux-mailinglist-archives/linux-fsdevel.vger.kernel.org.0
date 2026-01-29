@@ -1,87 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-75884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 2L0eFFObe2nOGAIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 18:39:31 +0100
+	id SLt6NmWae2nOGAIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 18:35:33 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAA59B3082
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 18:39:30 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54034B2F8C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 18:35:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0F839305E9FA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 17:35:21 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 0AB30301704E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 17:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21E8353ED7;
-	Thu, 29 Jan 2026 17:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9FCC353EEE;
+	Thu, 29 Jan 2026 17:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=snai.pe header.i=@snai.pe header.b="qFsb+WB4"
+	dkim=pass (2048-bit key) header.d=snai.pe header.i=@snai.pe header.b="khlKxKWl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2315F2BE043
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B752C352C52
 	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jan 2026 17:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769708119; cv=none; b=smjwqA0/O0D84Y0VVkOnA6TxSSAus+zICaw2YrsJwfNT6a22X8iL7i7A339J0J6Fqn6EH0z/saUa7GpeyZYd661yZfaYQyeTTIP+hJKxiJbAQMgVBddHayDU7aE70mG98MM1j0Pni7XLdaw1Rjxkt//yqZatOHepWpDYhdhLz34=
+	t=1769708120; cv=none; b=FRLu0pVUoWN9f7bHuhWTjgueZPNbSRh6XrzHGKx/Px3LH6Rv8f+aoTyRzgnJLh5fZIf+EeDAe9xPW4UBsYI4qOHacwGSJBIuhwKKockubtOPrI5hY8vtIwW8yM/rD4yh54PAsPDB//aYwbP1kihl6+GF0Hf6H9mnMBnG4sWh6Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769708119; c=relaxed/simple;
-	bh=PakxINc96R+AFjBhGVOOEJJEttHcKEAiHetixSTEjxE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r+AI39/Z7NXvsHf8IfBxwqKRZlTW8mL4hOsDdC0/LijY4Nd0DHMowomnhF/Opxx796NpDjS8nBj0o/RpT99wxF0QnYGCMFQBPPZes8MeuhzJhT9iIHSOt/8QLeH6+68Nl5jCw4Fu/wbxIdfcFfjNfcN2zr854qSsDGBMAmr913A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=snai.pe; spf=pass smtp.mailfrom=snai.pe; dkim=pass (2048-bit key) header.d=snai.pe header.i=@snai.pe header.b=qFsb+WB4; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1769708120; c=relaxed/simple;
+	bh=g4FdhAWorzinYXns0c9DK6X5UO/oeqcHe4vyhOu4vIE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Xwi7fgQW+R9bJ7TZVaz07XqCu004hmt0oAXqD6YvWTxGeI6scMNjAKNOH7Hego9CrZ6OOlNPIy8e2ODcuyysRjruauA0Igf/TEew7IqMOpUkNo4WzBkLUttJi3sk+27jOgJhlX4z7FlzOMThTW7YedkPTa65I6wa/0Ojtm+aC/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=snai.pe; spf=pass smtp.mailfrom=snai.pe; dkim=pass (2048-bit key) header.d=snai.pe header.i=@snai.pe header.b=khlKxKWl; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=snai.pe
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=snai.pe
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-42fb4eeb482so957473f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jan 2026 09:35:17 -0800 (PST)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-430f3ef2d37so1068843f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jan 2026 09:35:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=snai.pe; s=snai.pe; t=1769708116; x=1770312916; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Td/1webZFtgsexoz6A4dWJ1XKLPDFkv6w3Bvpiy14F4=;
-        b=qFsb+WB4q5wHqJhrDG4qTYgF69lMWTv1DOUXP+JMkVEkk5MVa0TpFTzLxof9tjjCb1
-         nWFttresLcEDVtId4EJUGb2tMHxVIwyASfp1NV9wW2vMvmy3rboxD7ZZ8KHejetEEw4+
-         Aq5niWej3cYgvEuyysVkiW+CU2943iZkkT63UPI0cbT9gOBtjojFifF6pYFcUVZUpxj+
-         hWcEnLprrnujgeAIWA6CpFTKhPX9jJ0LtfU75pPMVNQqaNtC2Rn+C9u+FSTbVGKhqNAc
-         fMHMs96JobLjIJAnlIDNHMW21uCzrV4GghPTWGmiu2COoy8XZbEJpoXrt8pksME2eSEp
-         z6lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769708116; x=1770312916;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=snai.pe; s=snai.pe; t=1769708117; x=1770312917; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Td/1webZFtgsexoz6A4dWJ1XKLPDFkv6w3Bvpiy14F4=;
-        b=oLyJjsCJPW/ux6jnxupvuoJ3ygtj2J75UnvBFd1yIYmcb6YPtNgL/MnrjNlKQHv3MR
-         d7RgJgWGd/MYmVf6ZVAesqHlK6cTfoVNIZ8AaOIK4ghaFsySuXcPtP0I5tlKPZUwrn7J
-         +hnrrKZXVnSE1uxx19ie8GoIBxDLod8paHD4FnW+WXg8pKFnnqUkVhK8GRxNuhCGnn/4
-         eUH0VYWJ69ip8TdfU9of28DV/L8YHGjZ8+rFvJJkbXPbZSU2UsLKMyzTjT7qlkqIhemu
-         NnLAFuiy1v8SV8gPV6D155GuZ9XRkMvxFvRP01nMRVtYJnk0JaXK/gl0u/C6jWEZdfIL
-         dlIA==
-X-Gm-Message-State: AOJu0YxQNmIMnw8GNqDj2KsF+iGDI2HoEI19e37c543gLnmWfULMuq9M
-	QynFSNTKjlRKR7LkYo5EdEZFtE4lQSw8ySe/Y4cJCshXb0fVtrAMAbGQCHSD1oUfC/9Y2Qagqmk
-	P9dk+ytU=
-X-Gm-Gg: AZuq6aIV3O5KRZBFW1rQlCXwlLEuvRbuslsXINwVoS9FiYoixNMUKcnyC1n7ec0nOqW
-	GOLvouOojg2/bYX9kgRb2v5naGtts29HnxtmNB3EWi7WcC488xSSrbM0QqwxrksEPwY/cuqHYNz
-	oBCfIjRM6pjffm+qS4s7cAJmMCgZqhL5O9sDh3XvkTDItG1NTREo5g8elAX3eKVEvNOk0kt7pR8
-	HYhivVFMB3u0otuPeZhRArjGYeeYKbJ3K5aIWAdvRd+Obrxy6sdK4FweH7JdBaYKeFqTshmc0/N
-	4VhdpkUg210rIy+SnEsREABDNXgZYeHUM/H+yPM8+KaKA7vxnatpoC289bjShZqI3G9lAIwOxM7
-	EXupVTKK5iZNjF8RcGjhhgVYGzigXVmFR15O1pidX8id2Ix1pv4UcUrqfdMWefxXKFSEC1wiEmr
-	ghwRPDi1dqxt7X2jE0sSxQf/LLThtmkT5JhEb2VcoIQufwoQ8jhDmGemfOwDkzYGzeKtoGyc9DU
-	Df1xMVrsZ+X5g==
-X-Received: by 2002:a5d:588f:0:b0:435:a9ad:d21a with SMTP id ffacd0b85a97d-435f3aae39emr604940f8f.40.1769708116233;
+        bh=9Phc9qAk4f5Y7siOZluWOGyZS8E5U/JFAMjIiUncQyU=;
+        b=khlKxKWlqYz+ph0xUUrM/0rz7pYhV5qO6qEEOIsVvM9G/Inj6l0grc5qOyYiaNR0IQ
+         reuzofvoV2+UkVEHwMMKxk+OVPLSoS+ytPSfFKy6j+AvjuIOWwyNlDuj+qAu7yuCrFkR
+         yMydeGuUpe4lyhKGqceMuCrXmO7ftDoAJoXZhvtkbhPkmM8dhRNgzBmT5VlC9oDmfChl
+         ZUeNyJrN0bGaUDIgeIkOvxcEX4kQWgeUzVhmx6uMzPPc2g/UyvifRWUlKFL/l0a4TI37
+         QTXUtcBNYloKpk7Am3a0jeoAPZyIy6z5qwbymJFz2IYCpPDXd5Cutmi9DSGAelcmFJyW
+         zQ/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769708117; x=1770312917;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=9Phc9qAk4f5Y7siOZluWOGyZS8E5U/JFAMjIiUncQyU=;
+        b=jbi90xfUdj/fdQX6rtpoFSutt8B/H/gV3/TvhXc4LaL4TDHP23I6nASwGOJ4GbTx78
+         bzzfbflmRKDi/rDQK4tT5dTzSVP4EPkeWyhKhBQVSUxBIF3A7LxovUpKkmiT5JZzAQzA
+         SKDd3Qi0TSK/CNsaju/xsZMcAVFYTVaVBhOvQGQkMl8BCgqNN8SXAPJv8h0Lijsi9kmW
+         0aRD6adSK4NUTjgjSqJuVND2qx7DEqkmyACRzVfoSnLtYLvI/mLRxzUPs0TXTyM5jbx9
+         PLj7VQG2u2Qn4muDRk1psD5pGW1PdVstqK9mx4FLJ25M74nrKgvesNjRcfYeV0X2TQtw
+         zCeQ==
+X-Gm-Message-State: AOJu0YxtFiYXxk9MWkPaHPVNbM3e4xBb6ywL5Q2H/d4enq+kWbIQDz9N
+	mlnYA/Lgk4lnylao+Htqg1l8lcjDXS4PXI0sUGCOILy7oUqsS8iLU1GmJwJBp64p9vSvxVfK2EL
+	Nd1l/034=
+X-Gm-Gg: AZuq6aKJK8+x/o59xu+GTWz5FUA1B3WNtaUM2H/Z9FuZow7iQRnxKYKehlS1L5o4qhj
+	lkTL6NPL5GvnHysktFTg6SKwSzdt4XsUPkUEHvbOLXPP0Ieep4qM/Vjsu1kFkhzBWSUkIuf1b/J
+	3EJIjW6+Bu/uEhRGk86FNjIBVf+9D0dMYLRGYGBttzzikBLdgEPfjho27hTfzSu+Qj05lV115iZ
+	wYLdFWG9p1o+grJl8WOIPdOZSOv6jTmI9By/MvAmZ5qxcO8PDYpjh8/8jcSsD8l0x5t3XjVOojy
+	vioP8znT4GKN46Cyii2oS46ZI3RKpLQ/6fig7f6KwyqJ+3FAERDI9Yhm0cDxVCZ/S8k/fYXwWNp
+	iaPurYBpFKz6TRn7ixoTfl40rK5SV/RL6sXSVNlTA17Zrc8ns+dreYRWN58Ia/tQcLZtwdsCuRV
+	GvbgJ6rzmq8tgezpa4cUQgf3GY3dTXCKHNfwia9Fytyfra3BoO+Rcg7hzUDXSWq+hqzsuAvBHgv
+	gcVYGk8dUCDnQ==
+X-Received: by 2002:a05:6000:4007:b0:435:a2f8:1515 with SMTP id ffacd0b85a97d-435f3a62efamr583681f8f.10.1769708116859;
         Thu, 29 Jan 2026 09:35:16 -0800 (PST)
 Received: from snaipe-arista.aristanetworks.com ([81.255.216.45])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435e131cf16sm16904163f8f.22.2026.01.29.09.35.15
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435e131cf16sm16904163f8f.22.2026.01.29.09.35.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Jan 2026 09:35:15 -0800 (PST)
+        Thu, 29 Jan 2026 09:35:16 -0800 (PST)
 From: Snaipe <me@snai.pe>
 To: linux-fsdevel@vger.kernel.org
 Cc: linux-mm@kvack.org
-Subject: [RFC PATCH 0/1] Bind-mounting memfds
-Date: Thu, 29 Jan 2026 18:35:14 +0100
-Message-ID: <20260129173515.1649305-1-me@snai.pe>
+Subject: [RFC PATCH 1/1] fs,ns: allow copying of shm_mnt mount trees
+Date: Thu, 29 Jan 2026 18:35:15 +0100
+Message-ID: <20260129173515.1649305-2-me@snai.pe>
 X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260129173515.1649305-1-me@snai.pe>
+References: <20260129173515.1649305-1-me@snai.pe>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -94,7 +98,7 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	R_DKIM_ALLOW(-0.20)[snai.pe:s=snai.pe];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
@@ -104,45 +108,110 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	RCVD_TLS_LAST(0.00)[];
 	DMARC_NA(0.00)[snai.pe];
 	RCPT_COUNT_TWO(0.00)[2];
-	TAGGED_FROM(0.00)[bounces-75884-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-75885-lists,linux-fsdevel=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[me@snai.pe,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	RCVD_COUNT_FIVE(0.00)[5];
 	NEURAL_HAM(-0.00)[-1.000];
 	TO_DN_NONE(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[snai.pe:email,snai.pe:dkim,snai.pe:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: AAA59B3082
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,snai.pe:email,snai.pe:dkim,snai.pe:mid]
+X-Rspamd-Queue-Id: 54034B2F8C
 X-Rspamd-Action: no action
 
 From: "Franklin \"Snaipe\" Mathieu" <me@snai.pe>
 
-Hi folks,
+The main motivation for this change is to be able to bind-mount memfd file
+descriptors. Prior to this change, it was not easy for a process to
+create a private in-memory handle that could then be bind-mounted.
 
-I'm sending this patch that allows the use of open_tree on a memfd with
-the intent of bind-mounting it.
+A process had to have access to a tmpfs, create a file in it, call
+open_tree on the resulting file descriptor, close the original file
+descriptor, unlink the file, and then check that no other process raced
+the process to open the new file. Doable, but not great for mounting
+sensitive content like secrets.
 
-I am unsure about the execution of this patch. shm_mnt fails the is_mounted
-check, but unlike pidfs and nsfs I can't compare the dentry's d_op
-against a known dentry ops global.
+With this change, it is now possible for a process to prepare a memfd,
+and call open_tree on it:
 
-I opted for a simple check of path->mnt against shm_mnt but I'm not sure
-it's the best approach. Please advise if there's anything better,
-otherwise, the patch itself should be straigtforward enough.
+    int tmpfd = memfd_create("secret", 0);
+    fchmod(tmpfd, 0600);
+    write(tmpfd, "SecretKey", 9);
 
-Franklin "Snaipe" Mathieu (1):
-  fs,ns: allow copying of shm_mnt mount trees
+    int treefd = open_tree(tmpfd, "", OPEN_TREE_CLONE|AT_EMPTY_PATH|AT_RECURSIVE);
+    move_mount(treefd, "", -1, "/secret.txt", MOVE_MOUNT_F_EMPTY_PATH);
 
+Signed-off-by: Franklin "Snaipe" Mathieu <me@snai.pe>
+---
  fs/namespace.c | 8 ++++++++
  mm/internal.h  | 2 ++
  mm/shmem.c     | 2 +-
  3 files changed, 11 insertions(+), 1 deletion(-)
 
+diff --git a/fs/namespace.c b/fs/namespace.c
+index d82910f33dc4..f51ad2013662 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -38,6 +38,9 @@
+ #include "pnode.h"
+ #include "internal.h"
+ 
++/* For checking memfd bind-mounts via shm_mnt */
++#include "../mm/internal.h"
++
+ /* Maximum number of mounts in a mount namespace */
+ static unsigned int sysctl_mount_max __read_mostly = 100000;
+ 
+@@ -2901,6 +2904,8 @@ static int do_change_type(const struct path *path, int ms_flags)
+  * (3) The caller tries to copy a pidfs mount referring to a pidfd.
+  * (4) The caller is trying to copy a mount tree that belongs to an
+  *     anonymous mount namespace.
++ * (5) The caller is trying to copy a mount tree belonging to shm_mnt
++ *     (e.g. bind-mounting a file descriptor obtained from memfd_create)
+  *
+  *     For that to be safe, this helper enforces that the origin mount
+  *     namespace the anonymous mount namespace was created from is the
+@@ -2943,6 +2948,9 @@ static inline bool may_copy_tree(const struct path *path)
+ 	if (d_op == &pidfs_dentry_operations)
+ 		return true;
+ 
++	if (path->mnt == shm_mnt)
++		return true;
++
+ 	if (!is_mounted(path->mnt))
+ 		return false;
+ 
+diff --git a/mm/internal.h b/mm/internal.h
+index 1561fc2ff5b8..aa45c5576b16 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -24,6 +24,8 @@
+ 
+ struct folio_batch;
+ 
++extern struct vfsmount *shm_mnt __ro_after_init;
++
+ /*
+  * Maintains state across a page table move. The operation assumes both source
+  * and destination VMAs already exist and are specified by the user.
+diff --git a/mm/shmem.c b/mm/shmem.c
+index b9081b817d28..449d6bc813ae 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -43,7 +43,7 @@
+ #include <linux/unicode.h>
+ #include "swap.h"
+ 
+-static struct vfsmount *shm_mnt __ro_after_init;
++struct vfsmount *shm_mnt __ro_after_init;
+ 
+ #ifdef CONFIG_SHMEM
+ /*
 -- 
 2.52.0
 
