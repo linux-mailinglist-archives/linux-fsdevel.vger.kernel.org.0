@@ -1,162 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-75845-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QOQ0HyAoe2nRBwIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75845-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 10:28:00 +0100
+	id 0PHuOjAwe2n2CAIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 11:02:24 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 283BCAE20B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 10:28:00 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 676C0AE542
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 11:02:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C4422302D134
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 09:27:29 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 6658530292FB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 10:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2A637998A;
-	Thu, 29 Jan 2026 09:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934AE3803C1;
+	Thu, 29 Jan 2026 10:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GzzAzzTV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P0SQHdJM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3D737C0EB
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jan 2026 09:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971EC37C0E5
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jan 2026 10:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769678847; cv=none; b=dOo1y1Bwl2h2rk35RZarANelkEQUZOguXT0NgjVzUAU5lRmnOTyaeGwyoY9wxDS5+3feSf95ukFh8TVOr0SYwhPqgUjVf3PFoaA68HTLtaeHspWslQ6cn7Hs5zcOTT0oDtobT5IzcFY9KuunGs9qQJd2tTnMyRkwb+8kPiBu+kU=
+	t=1769680937; cv=none; b=tji9S6G9joA5AovILUSI8tmTNSBMbPwGjV+DuC2fgG7QPPzsjQs9HizsN970KkKO5cOVaGPIJ57vOdSladdJoUskcuPOkXYe6W4pYAqRWueMY5ZsePsNqAlLSnnEz9rf2YQQbhOL3vrYzrfXzruycSUBM9SnXSXqz+5J6vWZbmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769678847; c=relaxed/simple;
-	bh=4bRaTgrCKseoLnMwWid7iSb2X5Y0CMnCnaMIQDLYSAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=XqWaTpnr6Xfbu8ZDDJ1+4Rdp13b3AGPYGUrDrFfnMlKURL9SjITQGu3mdWHb3C2gw/7a3RJYi8WwPC6aJmjNUYKN5SiKp6EPu869elS7hvPJXFpZIv16AMcTaj3zDYBfaQf8W61CfANPda3OF9ybXD6l7rq3WwQNHoRLpBqRTSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GzzAzzTV; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20260129092724epoutp038172e3db59d89f32134908651904d12e~PKYhgbHwd0459904599epoutp031
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jan 2026 09:27:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20260129092724epoutp038172e3db59d89f32134908651904d12e~PKYhgbHwd0459904599epoutp031
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1769678844;
-	bh=HTJkzz/t9Yvine6k3rYUCcimE1lwu9jEJYFkbVE5xQA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GzzAzzTVXzlBQLcffAa6J4diAS2/dcKB9/cCFco2XOO6/hCKRPCrjmuuLQsRxD/ZM
-	 lP73gbJdsDnsgnXQcfO6VHflm4/8wNP9Chs+Vvk4C0kWqEw/158wqIDR7IhE/8ylsf
-	 4tlt6ECACReaM66Pu2bEbcpp31HCX+4Er5ZCKhKQ=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20260129092723epcas5p17ea68069b8cddc520c61ea4540435011~PKYhIRM8v2500625006epcas5p1j;
-	Thu, 29 Jan 2026 09:27:23 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.90]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4f1v1Q6K97z6B9mC; Thu, 29 Jan
-	2026 09:27:22 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20260129092722epcas5p262db49c6db5e12931dc0433090b20e57~PKYfn3rZJ2444824448epcas5p2R;
-	Thu, 29 Jan 2026 09:27:22 +0000 (GMT)
-Received: from green245.gost (unknown [107.99.41.245]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260129092720epsmtip186b0b3daa7cec921ec0d647610f08fd1~PKYeDuLvH0871908719epsmtip1L;
-	Thu, 29 Jan 2026 09:27:20 +0000 (GMT)
-Date: Thu, 29 Jan 2026 14:53:06 +0530
-From: Anuj Gupta <anuj20.g@samsung.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Anuj gupta <anuj1072538@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-	Christian Brauner <brauner@kernel.org>, "Darrick J. Wong"
-	<djwong@kernel.org>, Carlos Maiolino <cem@kernel.org>, "Martin K. Petersen"
-	<martin.petersen@oracle.com>, Kanchan Joshi <joshi.k@samsung.com>,
-	linux-block@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: support file system generated / verified integrity information
-Message-ID: <20260129092306.7kxrizlwwk2ee756@green245.gost>
+	s=arc-20240116; t=1769680937; c=relaxed/simple;
+	bh=/R6zPehcG8kSCTSccnaxmWXL+iN0Hg7FAzOIobDMk+g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NhZJFFCYQ0vZWD54t7+UkVphcs+UNycRu3/tL//5jOuHU8HeRYLT8KgUloh/L1uhLb45wgipi5m17mJ2D8OvfxB+b3JL4SILGK1ScjTSxwwYmYgzC0eHI1NzQuq84PQET6kEhqCe3Z9LN3dn9+9EE0CR5h6cO1sQOcbv6C+FCJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P0SQHdJM; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-658ad86082dso1488984a12.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jan 2026 02:02:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769680934; x=1770285734; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TGi9TKff2FQIiNpZEU1Gy6dGbKGBKPIZDz2TT0oN7OQ=;
+        b=P0SQHdJMFqo8YGB5MqQHbGdjFLLQZ5nrSsoyJi/fEZgm2RfLW1JmNqQXMfC7bzpi2q
+         J1UdAp/KCZ3ZsSXk0ePmpADURqrRoB84xy+UmFDd3GQgUU5F5+MpGT2sBxgwVrgbD0qN
+         gcBHDH+acj363PBR3XGHndoGsRAc7V45MvXptdYPkBG9xi5eoRxeh13XZH3wD1nBNu/b
+         kGPrV3M/DFC2bjlND6LTbjYLL6y5X1443OVRR2ohdKiHGP1vWhIFVQ+PqfwoqU0K5aJA
+         tp+C31QQmURJ0qms+Cka+4K/zoltw9OnzPDKC2wg8xsjTQxA3Fha9sJhsXxTB7HQ5bMe
+         a39w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769680934; x=1770285734;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TGi9TKff2FQIiNpZEU1Gy6dGbKGBKPIZDz2TT0oN7OQ=;
+        b=cb4XIU8hZdcwDuZKaZzj3OOw3hZ4QXKGpb6Ilg254RwSEyD95UD5whVxiLro+fMCDr
+         qZXSOKlJqXqk2r782vQM613r9mkjTY09VaqrrBYxxclCfp/ZopcdUbeES+PXuy5aEOOp
+         QC0o9aN70m3pfSqmpYDyTeDcpRQ9lrtwD5IeSsmmWSGmKANyQXaCXUA5nFvGE/x7vn/K
+         5NdXTmuwmsOWQi3Im6eDA+h+H03JMACJ8vRMUlHgvDP3gSa+GeLwic6NJKKeJdqMi/eZ
+         s0DJg4/pOWnQ2IUFgr74gWb8IBUyG7HYxeM33LPeD3t3YM1MdKuO0wF/fotQZp5B7y6f
+         s4/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWW8NZUNE24pXcFnTVDlFipe9OZkXBIHIvj2Aed3B69M499ki8OoXymsgTuCl6FDE5/B3LfwHLpKsvzJGV5@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJImup7qsyBH5jjLp+iH6u8MOMxa1fqCvw36DNBSREU3poV5X3
+	WzSAwFPXoVNcZwIAfLsZVi+4VdogT21EoHpVI4SVToKbgvEgteSv2fwQ
+X-Gm-Gg: AZuq6aK+AHHBs8LbVIH8nZqQseO9RKC0045YjIQM8KFfD3QTN8nH24ru+VYkWrpmXXy
+	jmBWrgmjZVDT0ZPTS+OO5mBnHuSP8XgK6YJ/++QKdiuK89wQ3koUCKN4Wi2BkibnNPZY/2ezfYg
+	8wRa2jymtoP23r1yiWuVIrWGrrRcPgnCOwg4iO55nc/yWm7hdFFhZnsRsr4jXJ3x7hlyeBF81tD
+	36KEKdaeKktLw97QVvo4LaqpE8UIDTuS7cmvIA7iaCeFOZEpyg+D15pHA+/zm0ns1h9zzyiBpDS
+	kdJgOoMAgz9fSoa5BfimyWa7ZjQj/pess/Sd5Fc8bUZrBxsqvKc/SFlKE98a1oA7UKS5Tak2IQw
+	t82NPWfc9Phc7I5h4hRwFVT/T8OBb18CkCwixHIiIFALDea/MpDZpcz5rrsS0t0SLcXCU4/MpRC
+	1kZrqqoTzRPo2umA4JoIP2NoXZlOx1e1a6CtwNtOCfHoGgbdu+RKzHu3lRfOdKQRRyamzxI5au4
+	5vT/5CKHw+mkaUiy4nSwF86v+g=
+X-Received: by 2002:a17:907:c1f:b0:b87:2536:fd9a with SMTP id a640c23a62f3a-b8dab3d22a9mr557819566b.59.1769680933548;
+        Thu, 29 Jan 2026 02:02:13 -0800 (PST)
+Received: from localhost (2001-1c00-570d-ee00-983a-6411-8910-8120.cable.dynamic.v6.ziggo.nl. [2001:1c00:570d:ee00:983a:6411:8910:8120])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8dbeffed15sm237896766b.31.2026.01.29.02.02.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Jan 2026 02:02:12 -0800 (PST)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Neil Brown <neil@brown.name>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org
+Subject: [PATCH v4 0/2] nfsd and special kernel filesystems
+Date: Thu, 29 Jan 2026 11:02:10 +0100
+Message-ID: <20260129100212.49727-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20260127151609.GA1883@lst.de>
-X-CMS-MailID: 20260129092722epcas5p262db49c6db5e12931dc0433090b20e57
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----bVwHse4Nykw-L2c5iRRXKf-G.8k0lxUwrpcTFjGaDb9lfltx=_136471_"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20260129092722epcas5p262db49c6db5e12931dc0433090b20e57
-References: <20260121064339.206019-1-hch@lst.de>
-	<CACzX3AuDkwEw3v0bNmYLk8updk1ghVJa-T9o=EHXor9FA7badw@mail.gmail.com>
-	<20260127151609.GA1883@lst.de>
-	<CGME20260129092722epcas5p262db49c6db5e12931dc0433090b20e57@epcas5p2.samsung.com>
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	CTYPE_MIXED_BOGUS(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[samsung.com,none];
-	R_DKIM_ALLOW(-0.20)[samsung.com:s=mail20170921];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	MID_CONTAINS_FROM(1.00)[];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
-	MIME_GOOD(-0.10)[multipart/mixed,text/plain];
+	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75845-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[gmail.com,kernel.dk,kernel.org,oracle.com,samsung.com,vger.kernel.org,lists.linux.dev];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[green245.gost:mid,samsung.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	TAGGED_FROM(0.00)[bounces-75846-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+,1:+,2:+];
-	DKIM_TRACE(0.00)[samsung.com:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[anuj20.g@samsung.com,linux-fsdevel@vger.kernel.org];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[amir73il@gmail.com,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCVD_COUNT_SEVEN(0.00)[8]
-X-Rspamd-Queue-Id: 283BCAE20B
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 676C0AE542
 X-Rspamd-Action: no action
 
-------bVwHse4Nykw-L2c5iRRXKf-G.8k0lxUwrpcTFjGaDb9lfltx=_136471_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+Christian,
 
-On 27/01/26 04:16PM, Christoph Hellwig wrote:
->On Tue, Jan 27, 2026 at 08:24:28PM +0530, Anuj gupta wrote:
->> Hi Christoph,
->>
->> Here are the QD1 latency numbers (in usec)
->
->Thanks a lot!
->
->Adding in the baseline numbers, as I wanted to compare those:
->
->> Intel Optane:
->>
->> Sequential read
->>   | size | baseline | xfs-bounce |  xfs-pi  |
->>   +------+----------+-----------+-----------+
->>   |   4k |    7.18  |    13.62   |     7.20 |
->>   |  64K |   36.40  |    99.66   |    34.16 |
->>   |   1M |  206.38  |   258.88   |   306.23 |
->>   +------+----------+------------+----------+
->
->So for 4k and 64k reads we basically get back to the baseline.
->The 1M numbers are puzzling, though.  I wonder if we need to
->add WQ_CPU_INTENSIVE or do some other tweaks to the XFS I/O
->completion workqueue so that we don't overload the scheduler.
+This v4 addresses Chuck and Jeff's review on v3.
 
-Tried adding WQ_CPU_INTENSIVE[1] but didn't see any change in the 1M
-latency. Looks like this needs something beyond just workqueue tuning.
+The first doc patch is applicable to the doc update in vfs-7.0.misc.
+The 2nd fix patch is independent of the doc changes in vfs-7.0.misc,
+so it should be easier to backport.
 
-------bVwHse4Nykw-L2c5iRRXKf-G.8k0lxUwrpcTFjGaDb9lfltx=_136471_
-Content-Type: text/plain; charset="utf-8"
+Thanks,
+Amir.
 
+Changes since v3:
+- Fix typo and doc comments from Chunk
+- Add RVB
 
-------bVwHse4Nykw-L2c5iRRXKf-G.8k0lxUwrpcTFjGaDb9lfltx=_136471_--
+Changes since v2:
+- Rebase over vfs-7.0.misc
+- Split to doc/fix patches
+- Remove RVBs
+
+Amir Goldstein (2):
+  exportfs: clarify the documentation of open()/permission() expotrfs
+    ops
+  nfsd: do not allow exporting of special kernel filesystems
+
+ fs/nfsd/export.c         |  8 +++++---
+ include/linux/exportfs.h | 21 +++++++++++++++++++--
+ 2 files changed, 24 insertions(+), 5 deletions(-)
+
+-- 
+2.52.0
+
 
