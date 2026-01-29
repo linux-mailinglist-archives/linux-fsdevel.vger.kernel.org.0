@@ -1,130 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-75824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75825-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id EPtXOPSremmv9AEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 01:38:12 +0100
+	id 8PxjGH2temmv9AEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75825-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 01:44:45 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45E71AA44F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 01:38:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A555EAA549
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 01:44:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id EA60C301D6B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 00:37:59 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7518E3024137
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 00:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B852252917;
-	Thu, 29 Jan 2026 00:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9C52580D7;
+	Thu, 29 Jan 2026 00:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="k3z974Mo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NI7vmT9C"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF02224677D
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jan 2026 00:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ABB3247280;
+	Thu, 29 Jan 2026 00:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769647077; cv=none; b=NrsZIfMA0qkn3P79UX/Klb2eqeRMNmvP/QUKWOx7f5JbpyHpNyutCw62JMc7S35clTcBSA0VNHY/CArONCgEZjAuf7VKW6v8YPIhspHCsSbg2nlMZjrL7h/oAWCMgoL+0epj9BuMsH2N22xwn0Yb9A8gGK5184MyGLcsVWPGuWc=
+	t=1769647446; cv=none; b=sVoV+V6t/0wND2w2tKrWs0yTlZSA7o3b+90BZpjgbt96HW3wjjp188gWg/qediHqpUQqdX7u1m/HL7ylyBGqeqPTYhxWhj2LLOTeBCYHkzcVO5YN+vJ5NmPMCPUw7s6I5enyncdGaPvXtvtZauuqXfqu3rEG0ymd7T2v5HeQMHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769647077; c=relaxed/simple;
-	bh=tXNj0V0FG3jDHp0sl6ptuF//zDhb0DbdK89SgU01AH4=;
+	s=arc-20240116; t=1769647446; c=relaxed/simple;
+	bh=du+Chat2KKUjWi9KMstZ4LpJLC7xzl/p+SbRJ5Wo4Zk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UT0l1wv8vey7YpbwtnKvyRFsvqCJ6OdQKmLUq1vDWhlLLwBYqSz60nsG/PCFGmlSJJ78DgiyuAxyDexCFOP0H4gYsuGrer3RITKKZd/oDIyx1VF34wAfDE70k4NXroT2gSeqgdicnfXc62ZaqW27umknI5U7oZxsmnvW/KygGV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=k3z974Mo; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-8c6af798a83so56250685a.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jan 2026 16:37:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1769647075; x=1770251875; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1OWzBPKnyrz01i64zQ4S/hZaAIPcGy0JKcdMQLZXMgA=;
-        b=k3z974MoBekrskW+4yDuSvtzoUeR4tzTJU2yvyD4rQigVuBdm4BzN3Xg8Zzela1ij1
-         PtIBJOHG+48zicSasaJj88LsAp9Idss6arEvECeDPDvI1+/bGMecOxg2xZIYwnFVlh0e
-         N0DvTFOVBrdLgm2SKMS+gRiwkBiRJcJWUntisKKjBYWClnHFRtNhDwWc+rSNwr+1UjqW
-         hx681JKT5lyNNWCAUjt1BcDoxqd1Xi1LEySTm+fAhUY0zEB5n4V31HSnaVxU+vLpaw6P
-         OslVl70bntspz23oY0Aox/yOyL0R7Sg8jXzzls2Zxn0sc+rXC4pcAybAV0qWKdtqzTn8
-         u/Ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769647075; x=1770251875;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1OWzBPKnyrz01i64zQ4S/hZaAIPcGy0JKcdMQLZXMgA=;
-        b=ESHwbKYbSzYSTyqE5sqMT62IV8Y+mLpVWCv/HlNoihSCgJjzaGC1osvHUAJnvg3S4r
-         TuUYt+0CbthHPcuknHwEIJTiKgFqXSfzggNeMXD9xkyfES5jmwnct6keONt9Z9P0JGtc
-         PhFlLITfkeQVVL+ORkzJUi1t9D6CZ8H0uJJElwV8ahjVlYOu6mRleoxjxf74qRKqqELp
-         zZDtbCuRmww+Tk6/dmuCvAFQhsZmOFI/XzZS5N8hK/J4cFQ4dKlrd0ZTeB/UiLYQrByB
-         LMGl3fYW8KtBXBEDxV2H9sfzHM4F21b0WWsQo7TlSjP5GqLfmWwWg1/qtC3wpOX6trqI
-         xaRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZFG9A8LNQXMaH9+3PwDbaXdApguHvL6AMlSkPnuW+gHL1wdk7Z+EnU1vLpxgpaDgZusJXRfMBh6qDYNCB@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHcU7VzG8R8Q/gm2jFeaPXn+7/F5xndLPbl8ibRi9yD/Dv4iKe
-	mUGerOD8hi1KQrUouVqf8h6av9iAeCrDUk4TVJJ+IHvwzT2xN+YQ0qycH5bmNKRkGE8=
-X-Gm-Gg: AZuq6aLjwzfLNb6mjfcqnlNO/KkyjjX3ewPgh9uQnnfMhcgYxT7HeFqVq4XEEbO1Vo8
-	HsMwwnkGop+t1yCBp42d11HzH7xNwJnjRrToCUrIPrq54NEMKYoUYUzCp8Xt7HBKpZx/FH7lLF8
-	E0WhlZvx8OikFLxVUY3ErFp1AxjR95wDEgP4hCwF1wTZ0fMgTjeHMtf2Saf1rM96WdN+JA3gw43
-	e7Ly9uETDwIkDajzlTqnPh37KkY5mb+NAUS0hCtA89FcRhaOCTVclwe8emCRsaFOd73IJFdrd1Y
-	L7ROkqJ6VXS/GkenmNmVl2i86fmYoFfwYGgdJiMBfRP5l8X8HrzQyNQthlGCBVTj6mwy6yChkcj
-	lYcwA9rIOr05wFJwu2JQ3A1GjctBjVr303dQ7C9GHWP27heCI66iUEtJCoU4oJLrH8vf/kkmz1D
-	/i/CINez8lUsxK631nEhw7RPACyAc+G5xQCIh6rYRtAQIWNMcrOsGFV+I3fhuhs+jiCNs=
-X-Received: by 2002:ae9:c202:0:b0:8c7:126e:e901 with SMTP id af79cd13be357-8c7126eeb1amr465687985a.22.1769647074488;
-        Wed, 28 Jan 2026 16:37:54 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-162-112-119.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.112.119])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c711d29aa2sm294243485a.35.2026.01.28.16.37.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jan 2026 16:37:53 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1vlG2j-00000009g5p-04Lm;
-	Wed, 28 Jan 2026 20:37:53 -0400
-Date: Wed, 28 Jan 2026 20:37:53 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: Alexey Kardashevskiy <aik@amd.com>, cgroups@vger.kernel.org,
-	kvm@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org, x86@kernel.org,
-	akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de,
-	brauner@kernel.org, chao.p.peng@intel.com, chenhuacai@kernel.org,
-	corbet@lwn.net, dave.hansen@intel.com, dave.hansen@linux.intel.com,
-	david@redhat.com, dmatlack@google.com, erdemaktas@google.com,
-	fan.du@intel.com, fvdl@google.com, haibo1.xu@intel.com,
-	hannes@cmpxchg.org, hch@infradead.org, hpa@zytor.com,
-	hughd@google.com, ira.weiny@intel.com, isaku.yamahata@intel.com,
-	jack@suse.cz, james.morse@arm.com, jarkko@kernel.org,
-	jgowans@amazon.com, jhubbard@nvidia.com, jroedel@suse.de,
-	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com,
-	keirf@google.com, kent.overstreet@linux.dev,
-	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
-	mail@maciej.szmigiero.name, maobibo@loongson.cn,
-	mathieu.desnoyers@efficios.com, maz@kernel.org, mhiramat@kernel.org,
-	mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com,
-	mingo@redhat.com, mlevitsk@redhat.com, mpe@ellerman.id.au,
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es,
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com,
-	paul.walmsley@sifive.com, pbonzini@redhat.com, peterx@redhat.com,
-	pgonda@google.com, prsampat@amd.com, pvorel@suse.cz,
-	qperret@google.com, richard.weiyang@gmail.com,
-	rick.p.edgecombe@intel.com, rientjes@google.com,
-	rostedt@goodmis.org, roypat@amazon.co.uk, rppt@kernel.org,
-	seanjc@google.com, shakeel.butt@linux.dev, shuah@kernel.org,
-	steven.price@arm.com, steven.sistare@oracle.com,
-	suzuki.poulose@arm.com, tabba@google.com, tglx@linutronix.de,
-	thomas.lendacky@amd.com, vannapurve@google.com, vbabka@suse.cz,
-	viro@zeniv.linux.org.uk, vkuznets@redhat.com, wei.w.wang@intel.com,
-	will@kernel.org, willy@infradead.org, wyihan@google.com,
-	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com,
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Subject: Re: [RFC PATCH v1 05/37] KVM: guest_memfd: Wire up
- kvm_get_memory_attributes() to per-gmem attributes
-Message-ID: <20260129003753.GZ1641016@ziepe.ca>
-References: <cover.1760731772.git.ackerleytng@google.com>
- <071a3c6603809186e914fe5fed939edee4e11988.1760731772.git.ackerleytng@google.com>
- <07836b1d-d0d8-40f2-8f7b-7805beca31d0@amd.com>
- <CAEvNRgEuez=JbArRf2SApLAL0usv5-Q6q=nBPOFMHrHGaKAtMw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SlsrajPAlbhJX77TAeO/ACPLhXrRtRGEIRbixcH0QdvhoP492Bx612OkBPKwqKm9b40m+vnvOGGqFfzTjzTOLJ2DL6yplfFx09pduuaWWEFx1FYlvZKK3zIXeZw324T24jeD7st7/O5N2fWeqgCCHXSYRSYLzuMoVELWmiXfaPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NI7vmT9C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D83AC4CEF1;
+	Thu, 29 Jan 2026 00:44:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769647445;
+	bh=du+Chat2KKUjWi9KMstZ4LpJLC7xzl/p+SbRJ5Wo4Zk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NI7vmT9CRQFjO8mg1hFcsnq+/zwLSuSJG5XMxheGO3KEhe7eyZQdBY7VfZb+1nCGe
+	 R9woJsKNb3DCaoOzYBoG/vEBz6HwICn+EunyGgRGlbqhx2UAmewFUiSdIJZmHZJDFz
+	 MbCo2VP9ytTKwTlIePkAuci6DO7CYMhxir91QvsfJQhVaIk5fHM81UQd3OdOdJiYj2
+	 uaTuRP+cbyJ6/d24vJgrmraoutXjgUHHfsutaqzIJ5i9nteMYtT7QxBzSxQ3papiPZ
+	 WihvCxMaKaukGT/qogCcD6Vtgg0RXFDPE/CFY9yjx4v20buEFL4QTRGtIr0HCTv4Oz
+	 7XF37cwgR/2FA==
+Date: Wed, 28 Jan 2026 16:44:04 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Kundan Kumar <kundan.kumar@samsung.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	willy@infradead.org, mcgrof@kernel.org, clm@meta.com,
+	david@fromorbit.com, amir73il@gmail.com, axboe@kernel.dk,
+	hch@lst.de, ritesh.list@gmail.com, dave@stgolabs.net,
+	cem@kernel.org, wangyufei@vivo.com, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-xfs@vger.kernel.org, gost.dev@samsung.com,
+	anuj20.g@samsung.com, vishak.g@samsung.com, joshi.k@samsung.com
+Subject: Re: [PATCH v3 3/6] xfs: add per-inode AG prediction map and dirty-AG
+ bitmap
+Message-ID: <20260129004404.GA7712@frogsfrogsfrogs>
+References: <20260116100818.7576-1-kundan.kumar@samsung.com>
+ <CGME20260116101251epcas5p1cf5b48f2efb14fe4387be3053b3c3ebc@epcas5p1.samsung.com>
+ <20260116100818.7576-4-kundan.kumar@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -133,80 +68,141 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAEvNRgEuez=JbArRf2SApLAL0usv5-Q6q=nBPOFMHrHGaKAtMw@mail.gmail.com>
+In-Reply-To: <20260116100818.7576-4-kundan.kumar@samsung.com>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.16 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[ziepe.ca:s=google];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[amd.com,vger.kernel.org,kvack.org,kernel.org,linux-foundation.org,linux.intel.com,alien8.de,intel.com,lwn.net,redhat.com,google.com,cmpxchg.org,infradead.org,zytor.com,suse.cz,arm.com,amazon.com,nvidia.com,suse.de,linux.dev,oracle.com,maciej.szmigiero.name,loongson.cn,efficios.com,digikod.net,ellerman.id.au,amazon.es,dabbelt.com,sifive.com,gmail.com,goodmis.org,amazon.co.uk,linutronix.de,zeniv.linux.org.uk,huawei.com];
-	DKIM_TRACE(0.00)[ziepe.ca:+];
-	MIME_TRACE(0.00)[0:+];
-	DMARC_NA(0.00)[ziepe.ca];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75825-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75824-lists,linux-fsdevel=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MISSING_XM_UA(0.00)[];
 	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,infradead.org,meta.com,fromorbit.com,gmail.com,kernel.dk,lst.de,stgolabs.net,vivo.com,vger.kernel.org,kvack.org,samsung.com];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jgg@ziepe.ca,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCPT_COUNT_GT_50(0.00)[97];
-	MID_RHS_MATCH_FROM(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,ziepe.ca:mid,ziepe.ca:dkim]
-X-Rspamd-Queue-Id: 45E71AA44F
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,samsung.com:email]
+X-Rspamd-Queue-Id: A555EAA549
 X-Rspamd-Action: no action
 
-On Wed, Jan 28, 2026 at 01:47:50PM -0800, Ackerley Tng wrote:
-> Alexey Kardashevskiy <aik@amd.com> writes:
+On Fri, Jan 16, 2026 at 03:38:15PM +0530, Kundan Kumar wrote:
+> Add per-inode structures to track predicted AGs of dirty folios using
+> an xarray and bitmap. This enables efficient identification of AGs
+> involved in writeback.
 > 
-> >
-> > [...snip...]
-> >
-> >
+> Signed-off-by: Kundan Kumar <kundan.kumar@samsung.com>
+> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+> ---
+>  fs/xfs/xfs_icache.c | 27 +++++++++++++++++++++++++++
+>  fs/xfs/xfs_inode.h  |  5 +++++
+>  2 files changed, 32 insertions(+)
 > 
-> Thanks for bringing this up!
-> 
-> > I am trying to make it work with TEE-IO where fd of VFIO MMIO is a dmabuf fd while the rest (guest RAM) is gmemfd. The above suggests that if there is gmemfd - then the memory attributes are handled by gmemfd which is... expected?
-> >
-> 
-> I think this is not expected.
-> 
-> IIUC MMIO guest physical addresses don't have an associated memslot, but
-> if you managed to get to that line in kvm_gmem_get_memory_attributes(),
-> then there is an associated memslot (slot != NULL)?
+> diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
+> index e44040206851..f97aa6d66271 100644
+> --- a/fs/xfs/xfs_icache.c
+> +++ b/fs/xfs/xfs_icache.c
+> @@ -80,6 +80,25 @@ static inline xa_mark_t ici_tag_to_mark(unsigned int tag)
+>  	return XFS_PERAG_BLOCKGC_MARK;
+>  }
+>  
+> +static int xfs_inode_init_ag_bitmap(struct xfs_inode *ip)
+> +{
+> +	unsigned int bits = ip->i_mount->m_sb.sb_agcount;
+> +	unsigned int nlongs;
+> +
+> +	xa_init_flags(&ip->i_ag_pmap, XA_FLAGS_LOCK_IRQ);
 
-I think they should have a memslot, shouldn't they? I imagine creating
-a memslot from a FD and the FD can be memfd, guestmemfd, dmabuf, etc,
-etc ?
+This increases the size of struct xfs_inode by 40 bytes...
 
-> Either way, guest_memfd shouldn't store attributes for guest physical
-> addresses that don't belong to some guest_memfd memslot.
+> +	ip->i_ag_dirty_bitmap = NULL;
+> +	ip->i_ag_dirty_bits = bits;
+> +
+> +	if (!bits)
+> +		return 0;
+> +
+> +	nlongs = BITS_TO_LONGS(bits);
+> +	ip->i_ag_dirty_bitmap = kcalloc(nlongs, sizeof(unsigned long),
+> +					GFP_NOFS);
+
+...and there could be hundreds or thousands of AGs for each filesystem.
+That's a lot of kernel memory to handle this prediction stuff, and I"m
+not even sure what ag_dirty_bitmap does yet.
+
+> +
+> +	return ip->i_ag_dirty_bitmap ? 0 : -ENOMEM;
+> +}
+> +
+>  /*
+>   * Allocate and initialise an xfs_inode.
+>   */
+> @@ -131,6 +150,8 @@ xfs_inode_alloc(
+>  	ip->i_next_unlinked = NULLAGINO;
+>  	ip->i_prev_unlinked = 0;
+>  
+> +	xfs_inode_init_ag_bitmap(ip);
+
+Unchecked return value???
+
+> +
+>  	return ip;
+>  }
+>  
+> @@ -194,6 +215,12 @@ xfs_inode_free(
+>  	ip->i_ino = 0;
+>  	spin_unlock(&ip->i_flags_lock);
+>  
+> +	/* free xarray contents (values are immediate packed ints) */
+> +	xa_destroy(&ip->i_ag_pmap);
+> +	kfree(ip->i_ag_dirty_bitmap);
+> +	ip->i_ag_dirty_bitmap = NULL;
+> +	ip->i_ag_dirty_bits = 0;
+> +
+>  	__xfs_inode_free(ip);
+>  }
+>  
+> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+> index bd6d33557194..dee449168605 100644
+> --- a/fs/xfs/xfs_inode.h
+> +++ b/fs/xfs/xfs_inode.h
+> @@ -99,6 +99,11 @@ typedef struct xfs_inode {
+>  	spinlock_t		i_ioend_lock;
+>  	struct work_struct	i_ioend_work;
+>  	struct list_head	i_ioend_list;
+> +
+> +	/* AG prediction map: pgoff_t -> packed u32 */
+
+What about blocksize < pagesize filesystems?  Which packed agno do you
+associate with the pgoff_t?
+
+Also, do you have an xarray entry for each pgoff_t in a large folio?
+
+--D
+
+> +	struct xarray           i_ag_pmap;
+> +	unsigned long           *i_ag_dirty_bitmap;
+> +	unsigned int            i_ag_dirty_bits;
+>  } xfs_inode_t;
+>  
+>  static inline bool xfs_inode_on_unlinked_list(const struct xfs_inode *ip)
+> -- 
+> 2.25.1
 > 
-> I think we need a broader discussion for this on where to store memory
-> attributes for MMIO addresses.
 > 
-> I think we should at least have line of sight to storing memory
-> attributes for MMIO addresses, in case we want to design something else,
-> since we're putting vm_memory_attributes on a deprecation path with this
-> series.
-
-I don't know where you want to store them in KVM long term, but they
-need to come from the dmabuf itself (probably via a struct
-p2pdma_provider) and currently it is OK to assume all DMABUFs are
-uncachable MMIO that is safe for the VM to convert into "write
-combining" (eg Normal-NC on ARM)
-
-Jason
-
 
