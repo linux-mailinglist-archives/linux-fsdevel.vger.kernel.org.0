@@ -1,69 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-75867-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75868-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id MACeHcx0e2mMEgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75867-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 15:55:08 +0100
+	id 8D0ZO192e2mMEgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75868-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 16:01:51 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3EF6B131F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 15:55:07 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76D9FB1419
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 16:01:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 2F15A301D30B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 14:55:02 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 6F459300AB1C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 15:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84AA5335562;
-	Thu, 29 Jan 2026 14:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A073C238D52;
+	Thu, 29 Jan 2026 15:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z4Trdntd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u0kZRNMf"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AED52868B2
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jan 2026 14:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F77B8462;
+	Thu, 29 Jan 2026 15:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769698498; cv=none; b=RClRE4pNLQa8jtfnuRlTzmQD2oaQBqY5Jk60bw56aCgrT7WDKCKNoZvGxQj6sNWSJwyM+Oex+zYkXYQKL4YIX9HhOsapnyhHlrjoyZrTWpd5v9oENacy1tB44J/kKsroTqLFnHpA2EVImWQyAKtosTkgQ5d+wct4h87boaPZ21U=
+	t=1769698895; cv=none; b=NiEWtuzBSnmLYKQNyxtv8VLCUgOOxyw4BilqR79fp3xBROKTv1EIyAsUrjy/QLjP4ODCLRmro+Zikm32QH/q9NmxFt3x4NsFtdBY6QteNCJIuslwZyDcWkW0lL5HFG6n/noIRPY2xKIE53ta3xt3SZmkfjL5Cyz6oee8R+z4dJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769698498; c=relaxed/simple;
-	bh=JwsuFUvcV38W/nzp8OudayMuAd3zQXeogkZP0VuEVFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JcaE3s1MHAok2NoA+q/lYqvUG7tufzGre7CbVircpfsCNH0gq/ZchC4bb4tgVT6IAKTSv/mL/L4ER531n3MnuLIFB8shhwAo0T4ubj0D+2a+qvQhujykXTHKMbvC+D1A9iniOwsv17JbkvUWEfaLjOnBCSNuANYdaDSLVvfIlZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z4Trdntd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C7D7C4CEF7;
-	Thu, 29 Jan 2026 14:54:56 +0000 (UTC)
+	s=arc-20240116; t=1769698895; c=relaxed/simple;
+	bh=zoRMlhgqaDvcPEwMvPATnYjEC5iG1KLGfWHXZQJfNeo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HT4MdmvYo3C82XWh5oyEGYKVZwiPtmX4qN6c2fRSwVUyoZgLnJamhiG+TX25VlfYdisLyeGFEdioPzXhYujrSyD+TmudFiwikqutpEjjXtHQwwK1ene3jDLdhchtM1wzpzrJHPD4+mK2WVgyxfJE3Eag9OmiSvMYXKuXIjWhARU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u0kZRNMf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40BBAC4CEF7;
+	Thu, 29 Jan 2026 15:01:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769698497;
-	bh=JwsuFUvcV38W/nzp8OudayMuAd3zQXeogkZP0VuEVFU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z4TrdntdiiVQWBVL49NTbIB3BKB8DAWixzy5s09/Ws+q/Urdvny3xQ1UGGze9N4dF
-	 1ILTogzmoP8nli53bc3mpfhYomvtcxda4/7reX5X0q63CaVUg6CCEtxppw0xIpH5YK
-	 /9LAvpG/I1PR4+TPiYcJiZvk9TLDoI3ES9FRxGM9fTxXN9M4+xFwP/VZC4mzFN8p4q
-	 jnTtcIqyZT19AhiA5rsKK+m935xPQ5TwUiV6Z8S/nO9RkkPqOu/fuuwSh8vQ1DIMva
-	 ijc4vT1w3hR7xicp/T7M11zwIJBVw0jXxrouOpWgPruINCRGy//N3sEK93EJCqk4FJ
-	 yQ+pze3YJQsUA==
-Date: Thu, 29 Jan 2026 15:54:53 +0100
+	s=k20201202; t=1769698894;
+	bh=zoRMlhgqaDvcPEwMvPATnYjEC5iG1KLGfWHXZQJfNeo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=u0kZRNMfUOVXGxuI8qOkVx606SiaAKMWSIRorS0JuyX5QgN697knVrwyshmnyeBXC
+	 87GTzkPpwG0Ka66yqVrUSYc6MphOcw5ip4xIMkmWM4jvMotu4YF/1+Gpa8tmVXrfMo
+	 oMvw9XJRWcBufIHJVUo0IUoCFO4a9+Klcr411X0N05PAo/nPYQ6pEa/JxouJWcBiFO
+	 kx/y3w150vKVt3KJU6uQkc/IEvmG6ZHsZcVfklOyEsRwU0Db9BSr+dI7wTh04XtnVE
+	 RbjHEl6UqzpxSP8e0CwsHNMvj7uRO+UQTlcS9X2CCisXTl8qNmXz2mFCt4u8c2+lZH
+	 1ZMcZ+A25wdkg==
 From: Christian Brauner <brauner@kernel.org>
-To: Snaipe <me@snai.pe>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: open_tree, and bind-mounting directories across mount namespaces
-Message-ID: <20260129-hummel-teilweise-43b0ba55723c@brauner>
-References: <CACyTCKhcoetvvokawDc4EsKwJcEDaLgmtXyb1gvqD59NNgh=_A@mail.gmail.com>
- <20251105-rotwild-wartung-e0c391fe559a@brauner>
- <CACyTCKjojw0M=9NEzTpASd+OhgaPxU4hFRV2c6GEDFLZ8K2bWw@mail.gmail.com>
- <CACyTCKifDxhGBY0S9AYZBCw6S7-mf+0WYv=0VjBq_a+S0sWuiA@mail.gmail.com>
+To: fsverity@lists.linux.dev,
+	ebiggers@kernel.org,
+	Andrey Albershteyn <aalbersh@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	"Darrick J. Wong" <djwong@kernel.org>
+Subject: Re: [PATCH v3 0/2] Add traces and file attributes for fs-verity
+Date: Thu, 29 Jan 2026 16:01:29 +0100
+Message-ID: <20260129-beieinander-klein-bcbb23eb6c7b@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260126115658.27656-1-aalbersh@kernel.org>
+References: <20260126115658.27656-1-aalbersh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CACyTCKifDxhGBY0S9AYZBCw6S7-mf+0WYv=0VjBq_a+S0sWuiA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1547; i=brauner@kernel.org; h=from:subject:message-id; bh=zoRMlhgqaDvcPEwMvPATnYjEC5iG1KLGfWHXZQJfNeo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRWl3mxtjTJqSbNa6phUOS6c/LnuSnnSgK/NEWc0Z27w 7pfa9rEjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgInkajL8D3mQ0rF1D4OA9c3K VwmiAsvsbGf1ZuoETGTf+82Q1bXyCiPDz403vJydlor9Mhf6P3sPt80sg9vvb4fuPvXh7R1T+Z8 CPAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [2.34 / 15.00];
 	MID_END_EQ_FROM_USER_PART(4.00)[];
@@ -71,88 +74,66 @@ X-Spamd-Result: default: False [2.34 / 15.00];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	MID_RHS_NOT_FQDN(0.50)[];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75867-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75868-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
+	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	NEURAL_HAM(-0.00)[-1.000];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: E3EF6B131F
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_FIVE(0.00)[6];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 76D9FB1419
 X-Rspamd-Action: no action
 
-On Thu, Jan 29, 2026 at 02:39:19PM +0100, Snaipe wrote:
-> Hi Christian,
+On Mon, 26 Jan 2026 12:56:56 +0100, Andrey Albershteyn wrote:
+> This two small patches grew from fs-verity XFS patchset. I think they're
+> self-contained improvements which could go without XFS implementation.
 > 
-> I have time to look at this again. I'm however unclear on the
-> permission model that should be applicable here.
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: "Darrick J. Wong" <djwong@kernel.org>
 > 
-> My overarching motivation is to be able to have a process in a
-> user+mount namespace pass file descriptors to another process in a
-> different user+mount namespace, which then bind-mounts them. It seems
-> to me that the only real checks here are that 1) the file descriptor
-> points to a tree that is still mounted and 2) the caller has
-> CAP_SYS_ADMIN in the user namespace that owns the mount namespace in
-> which the caller operates, and both checks seem to be effective as of
-> today.
+> v3:
+> - Make tracepoints arguments more consistent
+> - Make tracepoint messages more consistent
+> v2:
+> - Update kernel version in the docs to v7.0
+> - Move trace point before merkle tree block hash check
+> - Update commit message in patch 2
+> - Add VERITY to FS_COMMON_FL and FS_XFLAG_COMMON constants
+> - Fix block index argument in the tree block hash trace point
 > 
-> It sounds like may_copy_tree should just be changed to this:
-> 
-> > @@ -2946,18 +2946,21 @@ static inline bool may_copy_tree(const struct path *path)
-> >         if (!is_mounted(path->mnt))
-> >                 return false;
-> >
-> > -       return check_anonymous_mnt(mnt);
-> > +       return true;
-> >  }
-> 
-> But the above worries me, because I do not think I understand enough
-> may_copy_tree to warrant the deletion of check_anonymous_mnt, and the
-> reason why the check is this way in the first place.
-> 
-> Any advice would be appreciated.
+> [...]
 
-I think I might have even left a comment somewhere in the code...
-The gist is something like:
+Applied to the vfs-7.0.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-7.0.misc branch should appear in linux-next soon.
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index ad35f8c961ef..e78aff6b3bf7 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -961,8 +961,7 @@ static inline bool check_anonymous_mnt(struct mount *mnt)
-        if (!is_anon_ns(mnt->mnt_ns))
-                return false;
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
--       seq = mnt->mnt_ns->seq_origin;
--       return !seq || (seq == current->nsproxy->mnt_ns->ns.ns_id);
-+       return ns_capable_noaudit(mnt->mnt_ns->user_ns, CAP_SYS_ADMIN);
- }
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-where we allow creating detached mounts or mounting on top of a detached
-mount provided the caller is privileged over the owning userns of the
-mount namespace.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-But then the may_mount() check would also have to be changed so that a
-caller unprivileged in their current mount namespace can still
-created/attach detached mounts in anonymous mount namespaces they are
-privileged over.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-7.0.misc
 
-Even the check_mnt() checks should be relaxed for move_mount() so that
-you can attach a detached mount in a mount namespace that you have
-privilege over. I'd need to see it in patch form though.
+[1/2] fs: add FS_XFLAG_VERITY for fs-verity files
+      https://git.kernel.org/vfs/vfs/c/0e6b7eae1fde
+[2/2] fsverity: add tracepoints
+      https://git.kernel.org/vfs/vfs/c/fa19d42cc791
 
