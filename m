@@ -1,82 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-75897-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75898-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QDbJCzHMe2lHIgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75897-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 22:08:01 +0100
+	id YNofHkzMe2lHIgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75898-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 22:08:28 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88CFAB4804
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 22:08:00 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8BF0B4819
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 22:08:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E7AAD306EB48
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 21:04:59 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A1CBC303744B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 21:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C10235C184;
-	Thu, 29 Jan 2026 21:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2247435CBCB;
+	Thu, 29 Jan 2026 21:05:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="K3maD3fP"
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="g9vz+XDJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D9835C185
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jan 2026 21:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EE135C1B4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jan 2026 21:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769720697; cv=none; b=NHjDMHcm370Zr1d6QbX+TWYs9hrriDlQFosBpdI4+MlNO7o13+0g4AicFpVYrozwoQ3SnAtdmpIdn7IjX8xF3J7spcvyaTWR+btHAOqlKHhgIuDvveb0/dqUpVhqNDj/VY8N5eZX9/NMmfcKlL6achHRAirQT/zhktkK/Vg7aqk=
+	t=1769720699; cv=none; b=nwDOmHJePTWuYL46Ey9gyOe90pRk/TDTixgk4pWF0vfya6XTqWuN2Ym8rF+I4rfiS3QKkUaopAuOqhJUpgXHYCWgintlbgbWP58J9Zd2VX2s05kRQhvZMPwpUDCsOxMx5OACErYYHck7CD80+XR1Os9DmiuSyu1a3KR1dOOH2rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769720697; c=relaxed/simple;
-	bh=VOKzczjoSR9IzZunD6EwkPNtZXVw3ooO/qAH8uc28p8=;
+	s=arc-20240116; t=1769720699; c=relaxed/simple;
+	bh=JnLujJWDw0BcQgi5wBFcpc/5Wt50jW8kOx4fggwynCI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z/HCteZxCXk0nRBOon6AunXb90gHGV8gwhu6ViqU1ODdsGaNtn5F5TSEBOLONfxZ6mFZiS4MZddAaMw1dqQfk/XXcUTWd8Z6fFb5zOWf61ieL1zAGrwUU68em4ctts45hitHOAPGuS0+FOpg0vjmrlyu2RH6jVhiDRScgVaJiH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=K3maD3fP; arc=none smtp.client-ip=209.85.222.176
+	 MIME-Version; b=VUXuTQJ/jfQ/quOF/od4uh5wOBgwxU5mX3uLwZ2pk+2+qxdNPAtkwYEa5kUxRTXgaTD6CVKEYzeC+t7C92QHWWfAaHrx6EgQ6Uvwul86GWsF/+HTKr8ZEA4JiCsx1YAeAr1RQANQW0AOx40QsjfIuyvlzzvKTSgJAje6+AxoRR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=g9vz+XDJ; arc=none smtp.client-ip=209.85.222.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-8c0f13e4424so177297685a.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jan 2026 13:04:54 -0800 (PST)
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-8c6f21c2d81so147089485a.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jan 2026 13:04:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1769720693; x=1770325493; darn=vger.kernel.org;
+        d=gourry.net; s=google; t=1769720695; x=1770325495; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Szb3YY2E1e7FJPUVmrsEdEEkJjq+khES1iOhgbFItPA=;
-        b=K3maD3fPWKjqycB32xVyDJpUSYwMM3Vjmb4iYAYEaZHxJdFCNfxSrBbO7su67plOb1
-         OMQvwZRq1ygO+ak2+eXOq1Fo6KoKUo0ALOMHMpnoD+zbSz/y8qVi8oYfm74qgORuwUdV
-         TvTsn7xicNcJvd88UdzSOVLRSjRgRTnKLh6/M5XzOEVmWYHHkoCBMXewPEA2uArYE29m
-         zzpYu2n3HAcXk40xWGCyPJnjTZtiBbrjIJoucOwe37HEhthpMUFLvC9cadsyq8BLyPBU
-         8rMPV7rto8slekx4cdkDFg9SSmuH/qDp3UIq/7knhkSDma7om1ArfEVeGEp0COoSBoXi
-         SBUw==
+        bh=+CRGF+/n1V2R5uGEqix6U/LES5Uojp7M/qLfKImGPj8=;
+        b=g9vz+XDJot6ZFC3/rlZpZoVtoDv7/BHlydoBPk4WOrXSZ7rbCPGdE7bjR84cc5TfFw
+         FGRBeB0jfBp/4CIWM27d+Nmzw2KAaIf6B8nD5ab9YNjC74gxENyJmEbcTdP7P4sD96uM
+         Jm0+M5Y6m3llk1gJTKX/WLXQN5sQwdruuSTymv/qD5rE4XtXgrM6B9C2Z9gtGW2fNcFI
+         DLPPqOL2TAQdWrldEPX4DySh+VZLjqjrjl5uKywZHRdBlumuq7DnM7E5CuZRZXZZZSpn
+         QjOlaM+pNa2o4ZhUa6IVZEahwdfwbu4HPYm5K/AvWHjY4/fWiY3JUXO+6Y+VLAkqVRBS
+         44oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769720693; x=1770325493;
+        d=1e100.net; s=20230601; t=1769720695; x=1770325495;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=Szb3YY2E1e7FJPUVmrsEdEEkJjq+khES1iOhgbFItPA=;
-        b=RoGXskKsimsx/KewD5nmZqHdAIW0/BduP2duUaDXSM3+W+VKjnne4kLBIjJmHrnjei
-         eFxXw+Z6iEsjUadmqFkxVFIIL2cKlt6I4/FiPx90AImDdtA2REvkVS6gi/K9W0FC/5Pd
-         ey9MR3OUchKJXxijBaZoby5L26ExbqCmBguEE7UXe6PQsQHzdBBFHCeCEbYnxwVIeiYP
-         IKlr2sz/Lv+ItAAjLzu0OLWLX6DVlT9acY5pANKkDgw7wHBGi8GJhtCl5bGJdOvhlxyD
-         cJIn0Mzf51jWotSTXkaCfSOK0Ack/abs14CT+NT1mALzVBK1xI9SUc3a07qBiDJzikoP
-         fo0g==
-X-Forwarded-Encrypted: i=1; AJvYcCV0tRFJ/hfNdG5ycvzog1X+bcqAm8QjGgjv+eSDDzbWWVXUgDbF+v2IdLHUq2rqpxte2NdHry8H+ZhN+ZWQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YziB5Zj2f2t2nOjGWgWiL0HoPlYmA44rlEsLAIbowA+uAF3Yola
-	mg8lP1g1OUXmT42SmxrxLcN0Uy2x/ZiqqXUaqtTukpra4csXPtC33VX9w/PVFDpzx9g=
-X-Gm-Gg: AZuq6aJMHprPT7HfWngfaw7yoa8mWFRrsTL6g3f+p8gBAKau+6+vb3nLGeAB++2x2NY
-	fc2tnXn4QUUcoW6KoRmxVceY5Lm15p6BMnjxJHK2VA+zFa6kqYN5kHhJXvW+lEaBYdoRybKaCku
-	gUW/ptmFX0Y6l3Rodj8WMkz3Yawb2epNREy+FTwDFQRfyBMkmqnlQivTU+w0SeX4t30lvPbfNiI
-	adhGH4QHV6kPVek/+5JA1iUuugQE2JW4WOQkPnMcY3iiqwLYDAtnHjgIMKJ4MO2pUWx4N+k5wci
-	ZTAQeYBTf18t2Uy1ReLKlN89rPA6EM73UxJNvAOPJQGqWWzlPPpnJXAzUfNCIMls7r9gl5aZdu+
-	97JJ0AIiM6IEuDpl2Xy9VvAl0xW/x2mUvmBd0gHhoU0hDh7mt54WI9yZvAjPYBx8aUvhn/o9zOm
-	IKdC1WjYIC1ZZEPdNZakSmuXpnkM93wvYLjwhsq7OFgb0YemoubeKTLICcTlHaV1Xtuny9dKizl
-	LoeWCt+ayAftw==
-X-Received: by 2002:a05:620a:690d:b0:8c9:ea1c:f21c with SMTP id af79cd13be357-8c9eb2fd583mr157489485a.63.1769720693221;
-        Thu, 29 Jan 2026 13:04:53 -0800 (PST)
+        bh=+CRGF+/n1V2R5uGEqix6U/LES5Uojp7M/qLfKImGPj8=;
+        b=QzJ4ZJSwyWWIYOpY3eMY4W1qXfAWPMo7FY2wJc3S9PFdE3NEnOc5O+aRA3ySj0bN6j
+         NBak8EfD6dbsfgNSpYr9ObFj4COPZtpSxblmnS7fjApZM1KUOsyRJIQLKntRLU249DQ7
+         Qeaqn5n3sUTR8VHErpsEtIW4ls2u5/VZGUH22ptf8JRd3bDPfJVnpR64l0OjGOp0TdmR
+         0lVXDoeJmrTt1/XqnIdubLpJ+Hmx8yEg5hcWhqrLiK9S2b5vq/9B2qP8jLszS4pk47pW
+         GF+W4VVQIIfboZnwYF89XL8nZPFbqW048xVE6mDWMAr2XSZDvXJyudgdmGpz0rTOoZOj
+         Kppw==
+X-Forwarded-Encrypted: i=1; AJvYcCXeTLrMxsmW7fjythRm5jZhwHQ2J72SlOxvmNaPEw6mi6gTHOlEDSdvXFXIN48bKjPLseNtEYIyiFOdzq+N@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywe8di5S7sobD9d3hKtEBc7HOJyVCgX4gY1S9oYLvpKfuxJ5Hks
+	17/wIak6b8RWUizatZTaiQzi82K0IJixJggAwnPic39GQ1ZZCq9VecaSXqrdmKeF1lryiHi9tYQ
+	xsZrHUag=
+X-Gm-Gg: AZuq6aIR4aIMYdDgcC8FKyryx94r9ClIF5qdPJ97At27YHrn6amGJWZpl7Y6d3TB8W0
+	SDkl0laUX7NtIdmbkkK9WmFWA4/gdxLnzUwCceYLai3HQWdT2cy8Lrr3KJU1ON9O+D2Vm++TD9v
+	C5qOowXwylkHwzU/vI9z8Y9mb5RS/AK50TPpYGIiG22nnjxDE4D2R1+Yn7PrkR9bzolqTb8RcDQ
+	X6xf2vEj/jmdPxvlxBR5s5ytRJ1KP+n6raObICBDbV9R94sEgsDu2i3lV/QSD+lmgfcI414JGp4
+	6ecHglY3BraGHIDjGQ2KNPnBNxK79XdewDHeKlVZKEdBXktDYHO1WGLHfF8LqTxYhn3GpFRfPKD
+	mR/9KTlXcGWr/nsJddLeM3hZZiKWsy6T8UeCmSC54O4TfLII0eLe1aD3GEwKQSCC5CVTuwpnDpE
+	+KODDPVjHiYcL2f2zeDFmEgQ/P+OPo8eWbKt/XfTXNpVe2sGh0bC+EkWl+B9fpZ3KUMjsHKAEwX
+	OM=
+X-Received: by 2002:a05:620a:17aa:b0:8c6:b2ce:f46 with SMTP id af79cd13be357-8c9eb1fc03cmr152696085a.14.1769720695300;
+        Thu, 29 Jan 2026 13:04:55 -0800 (PST)
 Received: from gourry-fedora-PF4VCD3F.lan (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c71b859eaesm282041685a.46.2026.01.29.13.04.52
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c71b859eaesm282041685a.46.2026.01.29.13.04.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Jan 2026 13:04:52 -0800 (PST)
+        Thu, 29 Jan 2026 13:04:54 -0800 (PST)
 From: Gregory Price <gourry@gourry.net>
 To: linux-mm@kvack.org
 Cc: linux-cxl@vger.kernel.org,
@@ -95,13 +96,10 @@ Cc: linux-cxl@vger.kernel.org,
 	willy@infradead.org,
 	jack@suse.cz,
 	terry.bowman@amd.com,
-	john@jagalactic.com,
-	David Hildenbrand <david@kernel.org>,
-	Oscar Salvador <osalvador@suse.de>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 2/9] mm/memory_hotplug: add __add_memory_driver_managed() with online_type arg
-Date: Thu, 29 Jan 2026 16:04:35 -0500
-Message-ID: <20260129210442.3951412-3-gourry@gourry.net>
+	john@jagalactic.com
+Subject: [PATCH 3/9] dax: plumb online_type from dax_kmem creators to hotplug
+Date: Thu, 29 Jan 2026 16:04:36 -0500
+Message-ID: <20260129210442.3951412-4-gourry@gourry.net>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260129210442.3951412-1-gourry@gourry.net>
 References: <20260129210442.3951412-1-gourry@gourry.net>
@@ -117,226 +115,244 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[gourry.net:s=google];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DMARC_NA(0.00)[gourry.net];
-	RCVD_TLS_LAST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-75897-lists,linux-fsdevel=lfdr.de];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[gourry@gourry.net,linux-fsdevel@vger.kernel.org];
-	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_COUNT_FIVE(0.00)[5];
 	DKIM_TRACE(0.00)[gourry.net:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	TO_DN_SOME(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DMARC_NA(0.00)[gourry.net];
+	TAGGED_FROM(0.00)[bounces-75898-lists,linux-fsdevel=lfdr.de];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,gourry.net:email,gourry.net:dkim,gourry.net:mid,linux-foundation.org:email,suse.de:email]
-X-Rspamd-Queue-Id: 88CFAB4804
+	RCPT_COUNT_TWELVE(0.00)[18];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[gourry@gourry.net,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCVD_COUNT_FIVE(0.00)[5];
+	NEURAL_HAM(-0.00)[-1.000];
+	TO_DN_NONE(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,gourry.net:email,gourry.net:dkim,gourry.net:mid]
+X-Rspamd-Queue-Id: D8BF0B4819
 X-Rspamd-Action: no action
 
-Enable dax kmem driver to select how to online the memory rather than
-implicitly depending on the system default.  This will allow users of
-dax to plumb through a preferred auto-online policy for their region.
+There is no way for drivers leveraging dax_kmem to plumb through a
+preferred auto-online policy - the system default policy is forced.
 
-Refactor and new interface:
-Add __add_memory_driver_managed() which accepts an explicit online_type
-and export mhp_get_default_online_type() so callers can pass it when
-they want the default behavior.
+Add online_type field to DAX device creation path to allow drivers
+to specify an auto-online policy when using the kmem driver.
 
-Refactor:
-Extract __add_memory_resource() to take an explicit online_type parameter,
-and update add_memory_resource() to pass the system default.
+Current callers initialize online_type to mhp_get_default_online_type()
+which resolves to the system default (memhp_default_online_type).
 
-No functional change for existing users.
+No functional change to existing drivers.
 
-Cc: David Hildenbrand <david@kernel.org>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc:David Hildenbrand <david@kernel.org>
 Signed-off-by: Gregory Price <gourry@gourry.net>
 ---
- include/linux/memory_hotplug.h |  3 ++
- mm/memory_hotplug.c            | 91 ++++++++++++++++++++++++----------
- 2 files changed, 67 insertions(+), 27 deletions(-)
+ drivers/cxl/core/region.c |  2 ++
+ drivers/cxl/cxl.h         |  1 +
+ drivers/dax/bus.c         |  3 +++
+ drivers/dax/bus.h         |  1 +
+ drivers/dax/cxl.c         |  1 +
+ drivers/dax/dax-private.h |  2 ++
+ drivers/dax/hmem/hmem.c   |  2 ++
+ drivers/dax/kmem.c        | 13 +++++++++++--
+ drivers/dax/pmem.c        |  2 ++
+ 9 files changed, 25 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-index f2f16cdd73ee..1eb63d1a247d 100644
---- a/include/linux/memory_hotplug.h
-+++ b/include/linux/memory_hotplug.h
-@@ -293,6 +293,9 @@ extern int __add_memory(int nid, u64 start, u64 size, mhp_t mhp_flags);
- extern int add_memory(int nid, u64 start, u64 size, mhp_t mhp_flags);
- extern int add_memory_resource(int nid, struct resource *resource,
- 			       mhp_t mhp_flags);
-+int __add_memory_driver_managed(int nid, u64 start, u64 size,
-+				const char *resource_name, mhp_t mhp_flags,
-+				int online_type);
- extern int add_memory_driver_managed(int nid, u64 start, u64 size,
- 				     const char *resource_name,
- 				     mhp_t mhp_flags);
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 87796b617d9e..d3ca95b872bd 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -239,6 +239,7 @@ int mhp_get_default_online_type(void)
+diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+index 5bd1213737fa..eef5d5fe3f95 100644
+--- a/drivers/cxl/core/region.c
++++ b/drivers/cxl/core/region.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /* Copyright(c) 2022 Intel Corporation. All rights reserved. */
+ #include <linux/memregion.h>
++#include <linux/memory_hotplug.h>
+ #include <linux/genalloc.h>
+ #include <linux/debugfs.h>
+ #include <linux/device.h>
+@@ -3459,6 +3460,7 @@ static int devm_cxl_add_dax_region(struct cxl_region *cxlr)
+ 	if (IS_ERR(cxlr_dax))
+ 		return PTR_ERR(cxlr_dax);
  
- 	return mhp_default_online_type;
- }
-+EXPORT_SYMBOL_GPL(mhp_get_default_online_type);
++	cxlr_dax->online_type = mhp_get_default_online_type();
+ 	dev = &cxlr_dax->dev;
+ 	rc = dev_set_name(dev, "dax_region%d", cxlr->id);
+ 	if (rc)
+diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+index ba17fa86d249..07d57d13f4c7 100644
+--- a/drivers/cxl/cxl.h
++++ b/drivers/cxl/cxl.h
+@@ -591,6 +591,7 @@ struct cxl_dax_region {
+ 	struct device dev;
+ 	struct cxl_region *cxlr;
+ 	struct range hpa_range;
++	int online_type; /* MMOP_ value for kmem driver */
+ };
  
- void mhp_set_default_online_type(int online_type)
- {
-@@ -1490,7 +1491,8 @@ static int create_altmaps_and_memory_blocks(int nid, struct memory_group *group,
-  *
-  * we are OK calling __meminit stuff here - we have CONFIG_MEMORY_HOTPLUG
+ /**
+diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
+index fde29e0ad68b..121a6dd0afe7 100644
+--- a/drivers/dax/bus.c
++++ b/drivers/dax/bus.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /* Copyright(c) 2017-2018 Intel Corporation. All rights reserved. */
+ #include <linux/memremap.h>
++#include <linux/memory_hotplug.h>
+ #include <linux/device.h>
+ #include <linux/mutex.h>
+ #include <linux/list.h>
+@@ -395,6 +396,7 @@ static ssize_t create_store(struct device *dev, struct device_attribute *attr,
+ 			.size = 0,
+ 			.id = -1,
+ 			.memmap_on_memory = false,
++			.online_type = mhp_get_default_online_type(),
+ 		};
+ 		struct dev_dax *dev_dax = __devm_create_dev_dax(&data);
+ 
+@@ -1494,6 +1496,7 @@ static struct dev_dax *__devm_create_dev_dax(struct dev_dax_data *data)
+ 	ida_init(&dev_dax->ida);
+ 
+ 	dev_dax->memmap_on_memory = data->memmap_on_memory;
++	dev_dax->online_type = data->online_type;
+ 
+ 	inode = dax_inode(dax_dev);
+ 	dev->devt = inode->i_rdev;
+diff --git a/drivers/dax/bus.h b/drivers/dax/bus.h
+index cbbf64443098..4ac92a4edfe7 100644
+--- a/drivers/dax/bus.h
++++ b/drivers/dax/bus.h
+@@ -24,6 +24,7 @@ struct dev_dax_data {
+ 	resource_size_t size;
+ 	int id;
+ 	bool memmap_on_memory;
++	int online_type;	/* MMOP_ value for kmem driver */
+ };
+ 
+ struct dev_dax *devm_create_dev_dax(struct dev_dax_data *data);
+diff --git a/drivers/dax/cxl.c b/drivers/dax/cxl.c
+index 13cd94d32ff7..856a0cd24f3b 100644
+--- a/drivers/dax/cxl.c
++++ b/drivers/dax/cxl.c
+@@ -27,6 +27,7 @@ static int cxl_dax_region_probe(struct device *dev)
+ 		.id = -1,
+ 		.size = range_len(&cxlr_dax->hpa_range),
+ 		.memmap_on_memory = true,
++		.online_type = cxlr_dax->online_type,
+ 	};
+ 
+ 	return PTR_ERR_OR_ZERO(devm_create_dev_dax(&data));
+diff --git a/drivers/dax/dax-private.h b/drivers/dax/dax-private.h
+index c6ae27c982f4..9559718cc988 100644
+--- a/drivers/dax/dax-private.h
++++ b/drivers/dax/dax-private.h
+@@ -77,6 +77,7 @@ struct dev_dax_range {
+  * @dev: device core
+  * @pgmap: pgmap for memmap setup / lifetime (driver owned)
+  * @memmap_on_memory: allow kmem to put the memmap in the memory
++ * @online_type: MMOP_* online type for memory hotplug
+  * @nr_range: size of @ranges
+  * @ranges: range tuples of memory used
   */
--int add_memory_resource(int nid, struct resource *res, mhp_t mhp_flags)
-+static int __add_memory_resource(int nid, struct resource *res, mhp_t mhp_flags,
-+				 int online_type)
- {
- 	struct mhp_params params = { .pgprot = pgprot_mhp(PAGE_KERNEL) };
- 	enum memblock_flags memblock_flags = MEMBLOCK_NONE;
-@@ -1580,12 +1582,9 @@ int add_memory_resource(int nid, struct resource *res, mhp_t mhp_flags)
- 		merge_system_ram_resource(res);
+@@ -91,6 +92,7 @@ struct dev_dax {
+ 	struct device dev;
+ 	struct dev_pagemap *pgmap;
+ 	bool memmap_on_memory;
++	int online_type;
+ 	int nr_range;
+ 	struct dev_dax_range *ranges;
+ };
+diff --git a/drivers/dax/hmem/hmem.c b/drivers/dax/hmem/hmem.c
+index c18451a37e4f..119914b08fd9 100644
+--- a/drivers/dax/hmem/hmem.c
++++ b/drivers/dax/hmem/hmem.c
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <linux/platform_device.h>
++#include <linux/memory_hotplug.h>
+ #include <linux/memregion.h>
+ #include <linux/module.h>
+ #include <linux/dax.h>
+@@ -36,6 +37,7 @@ static int dax_hmem_probe(struct platform_device *pdev)
+ 		.id = -1,
+ 		.size = region_idle ? 0 : range_len(&mri->range),
+ 		.memmap_on_memory = false,
++		.online_type = mhp_get_default_online_type(),
+ 	};
  
- 	/* online pages if requested */
--	if (mhp_get_default_online_type() != MMOP_OFFLINE) {
--		int online_type = mhp_get_default_online_type();
--
-+	if (online_type != MMOP_OFFLINE)
- 		walk_memory_blocks(start, size, &online_type,
- 				   online_memory_block);
--	}
+ 	return PTR_ERR_OR_ZERO(devm_create_dev_dax(&data));
+diff --git a/drivers/dax/kmem.c b/drivers/dax/kmem.c
+index c036e4d0b610..550dc605229e 100644
+--- a/drivers/dax/kmem.c
++++ b/drivers/dax/kmem.c
+@@ -16,6 +16,11 @@
+ #include "dax-private.h"
+ #include "bus.h"
  
- 	return ret;
- error:
-@@ -1601,7 +1600,13 @@ int add_memory_resource(int nid, struct resource *res, mhp_t mhp_flags)
- 	return ret;
- }
- 
--/* requires device_hotplug_lock, see add_memory_resource() */
-+int add_memory_resource(int nid, struct resource *res, mhp_t mhp_flags)
-+{
-+	return __add_memory_resource(nid, res, mhp_flags,
-+				     mhp_get_default_online_type());
-+}
++/* Internal function exported only to kmem module */
++extern int __add_memory_driver_managed(int nid, u64 start, u64 size,
++				       const char *resource_name,
++				       mhp_t mhp_flags, int online_type);
 +
-+/* requires device_hotplug_lock, see __add_memory_resource() */
- int __add_memory(int nid, u64 start, u64 size, mhp_t mhp_flags)
- {
- 	struct resource *res;
-@@ -1629,29 +1634,24 @@ int add_memory(int nid, u64 start, u64 size, mhp_t mhp_flags)
- }
- EXPORT_SYMBOL_GPL(add_memory);
- 
--/*
-- * Add special, driver-managed memory to the system as system RAM. Such
-- * memory is not exposed via the raw firmware-provided memmap as system
-- * RAM, instead, it is detected and added by a driver - during cold boot,
-- * after a reboot, and after kexec.
-- *
-- * Reasons why this memory should not be used for the initial memmap of a
-- * kexec kernel or for placing kexec images:
-- * - The booting kernel is in charge of determining how this memory will be
-- *   used (e.g., use persistent memory as system RAM)
-- * - Coordination with a hypervisor is required before this memory
-- *   can be used (e.g., inaccessible parts).
-+/**
-+ * __add_memory_driver_managed - add driver-managed memory with explicit online_type
-+ * @nid: NUMA node ID where the memory will be added
-+ * @start: Start physical address of the memory range
-+ * @size: Size of the memory range in bytes
-+ * @resource_name: Resource name in format "System RAM ($DRIVER)"
-+ * @mhp_flags: Memory hotplug flags
-+ * @online_type: Online behavior (MMOP_ONLINE, MMOP_ONLINE_KERNEL,
-+ *               MMOP_ONLINE_MOVABLE, or MMOP_OFFLINE)
-  *
-- * For this memory, no entries in /sys/firmware/memmap ("raw firmware-provided
-- * memory map") are created. Also, the created memory resource is flagged
-- * with IORESOURCE_SYSRAM_DRIVER_MANAGED, so in-kernel users can special-case
-- * this memory as well (esp., not place kexec images onto it).
-+ * Add driver-managed memory with explicit online_type specification.
-+ * The resource_name must have the format "System RAM ($DRIVER)".
-  *
-- * The resource_name (visible via /proc/iomem) has to have the format
-- * "System RAM ($DRIVER)".
-+ * Return: 0 on success, negative error code on failure.
-  */
--int add_memory_driver_managed(int nid, u64 start, u64 size,
--			      const char *resource_name, mhp_t mhp_flags)
-+int __add_memory_driver_managed(int nid, u64 start, u64 size,
-+				const char *resource_name, mhp_t mhp_flags,
-+				int online_type)
- {
- 	struct resource *res;
- 	int rc;
-@@ -1661,6 +1661,9 @@ int add_memory_driver_managed(int nid, u64 start, u64 size,
- 	    resource_name[strlen(resource_name) - 1] != ')')
- 		return -EINVAL;
- 
-+	if (online_type < 0 || online_type > MMOP_ONLINE_MOVABLE)
-+		return -EINVAL;
-+
- 	lock_device_hotplug();
- 
- 	res = register_memory_resource(start, size, resource_name);
-@@ -1669,7 +1672,7 @@ int add_memory_driver_managed(int nid, u64 start, u64 size,
- 		goto out_unlock;
- 	}
- 
--	rc = add_memory_resource(nid, res, mhp_flags);
-+	rc = __add_memory_resource(nid, res, mhp_flags, online_type);
- 	if (rc < 0)
- 		release_memory_resource(res);
- 
-@@ -1677,6 +1680,40 @@ int add_memory_driver_managed(int nid, u64 start, u64 size,
- 	unlock_device_hotplug();
- 	return rc;
- }
-+EXPORT_SYMBOL_FOR_MODULES(__add_memory_driver_managed, "kmem");
-+
-+/*
-+ * Add special, driver-managed memory to the system as system RAM. Such
-+ * memory is not exposed via the raw firmware-provided memmap as system
-+ * RAM, instead, it is detected and added by a driver - during cold boot,
-+ * after a reboot, and after kexec.
-+ *
-+ * Reasons why this memory should not be used for the initial memmap of a
-+ * kexec kernel or for placing kexec images:
-+ * - The booting kernel is in charge of determining how this memory will be
-+ *   used (e.g., use persistent memory as system RAM)
-+ * - Coordination with a hypervisor is required before this memory
-+ *   can be used (e.g., inaccessible parts).
-+ *
-+ * For this memory, no entries in /sys/firmware/memmap ("raw firmware-provided
-+ * memory map") are created. Also, the created memory resource is flagged
-+ * with IORESOURCE_SYSRAM_DRIVER_MANAGED, so in-kernel users can special-case
-+ * this memory as well (esp., not place kexec images onto it).
-+ *
-+ * The resource_name (visible via /proc/iomem) has to have the format
-+ * "System RAM ($DRIVER)".
-+ *
-+ * Memory will be onlined using the system default online type.
-+ *
-+ * Returns 0 on success, negative error code on failure.
-+ */
-+int add_memory_driver_managed(int nid, u64 start, u64 size,
-+			      const char *resource_name, mhp_t mhp_flags)
-+{
-+	return __add_memory_driver_managed(nid, start, size, resource_name,
-+					   mhp_flags,
-+					   mhp_get_default_online_type());
-+}
- EXPORT_SYMBOL_GPL(add_memory_driver_managed);
- 
  /*
+  * Default abstract distance assigned to the NUMA node onlined
+  * by DAX/kmem if the low level platform driver didn't initialize
+@@ -72,6 +77,7 @@ static int dev_dax_kmem_probe(struct dev_dax *dev_dax)
+ 	struct dax_kmem_data *data;
+ 	struct memory_dev_type *mtype;
+ 	int i, rc, mapped = 0;
++	int online_type;
+ 	mhp_t mhp_flags;
+ 	int numa_node;
+ 	int adist = MEMTIER_DEFAULT_DAX_ADISTANCE;
+@@ -134,6 +140,8 @@ static int dev_dax_kmem_probe(struct dev_dax *dev_dax)
+ 		goto err_reg_mgid;
+ 	data->mgid = rc;
+ 
++	online_type = dev_dax->online_type;
++
+ 	for (i = 0; i < dev_dax->nr_range; i++) {
+ 		struct resource *res;
+ 		struct range range;
+@@ -174,8 +182,9 @@ static int dev_dax_kmem_probe(struct dev_dax *dev_dax)
+ 		 * Ensure that future kexec'd kernels will not treat
+ 		 * this as RAM automatically.
+ 		 */
+-		rc = add_memory_driver_managed(data->mgid, range.start,
+-				range_len(&range), kmem_name, mhp_flags);
++		rc = __add_memory_driver_managed(data->mgid, range.start,
++				range_len(&range), kmem_name, mhp_flags,
++				online_type);
+ 
+ 		if (rc) {
+ 			dev_warn(dev, "mapping%d: %#llx-%#llx memory add failed\n",
+diff --git a/drivers/dax/pmem.c b/drivers/dax/pmem.c
+index bee93066a849..a5925146b09f 100644
+--- a/drivers/dax/pmem.c
++++ b/drivers/dax/pmem.c
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /* Copyright(c) 2016 - 2018 Intel Corporation. All rights reserved. */
++#include <linux/memory_hotplug.h>
+ #include <linux/memremap.h>
+ #include <linux/module.h>
+ #include "../nvdimm/pfn.h"
+@@ -63,6 +64,7 @@ static struct dev_dax *__dax_pmem_probe(struct device *dev)
+ 		.pgmap = &pgmap,
+ 		.size = range_len(&range),
+ 		.memmap_on_memory = false,
++		.online_type = mhp_get_default_online_type(),
+ 	};
+ 
+ 	return devm_create_dev_dax(&data);
 -- 
 2.52.0
 
