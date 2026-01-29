@@ -1,211 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-75887-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KO4tIOKbe2nOGAIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75887-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 18:41:54 +0100
+	id GOgSLqive2l3HwIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 20:06:16 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23B45B31D9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 18:41:54 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B9D6B3C82
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 20:06:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 608D230098A1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 17:41:53 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 26E20301ABB4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jan 2026 19:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA3B3542F5;
-	Thu, 29 Jan 2026 17:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EFBD311C21;
+	Thu, 29 Jan 2026 19:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QshS1DE8"
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="MwVKP/Np"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FCF93542C6
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jan 2026 17:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.222.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769708508; cv=pass; b=L9a5NpNTLE2eZ7X/+K6D3o2k9nVEZuwaHusgu05NNBt1eyc6uuRcknLgYQ5V2l1VX2gfo2r3PRLRIrrU2g0QsaV6Knf/rnj9yt0EyIrPw6cgZS9CWV18qZ3wc42FoYeUjND53HRJDkp3p5aM5tFxjMwJoNJOyDedNIrCx61iwjQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769708508; c=relaxed/simple;
-	bh=/8NbqHnxT5RKiMS0/GkD6tEPsHwxJGkgOeDvilo8E/8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GKnUDo8HkYyBmRx9Qi5RQh7yCdtzXu3uNwEJsgmupN4LwMHm1IjX1ftEm0tLYkh/Z9Zp7ngjslwWDWgTjB17GBre/wqktSovNtX6T5Nmz1TxSfjOr6GTgOXPFW/ZlHc4/Red6klpXRIIcSlUp3bl37QEFQbhgq6RBlFnefEczoc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QshS1DE8; arc=pass smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-93f5729f159so729300241.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jan 2026 09:41:47 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769708506; cv=none;
-        d=google.com; s=arc-20240605;
-        b=eJkRfoBNv2NnIA4DrhFFwmEzXYL08fZ28h06pGRNFVS70X73ij/TCtpbadwcDUboAY
-         1ehfEvXAaayLOF7uNYNGhl6JsdgI5DPa1Iw/TXp2+2qB9hBZAghZub+M1I5502+9YNWw
-         K4DQXitLl9eB0xtLPalnR5JZMMTCo4bkuJI/zEaA8PZsJ0L1DaDZqeQiwfysE6roVPaG
-         NH2aJNXdaRVc/CVsvWaOKlC/IuIqOuiYTJQDff4FsNryZY2yFAkh5Wj2uqp6pljbzYw3
-         Out+qbiF0lsjUmFd/3TdtsiSrCXF4igAFkkcB7FZqoa9c9bdzkiMQYNHJZM+tooG6E9Y
-         G0sQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=/8NbqHnxT5RKiMS0/GkD6tEPsHwxJGkgOeDvilo8E/8=;
-        fh=PlVw6/2N1j4C8owxR94IGvIL6pG98x5/2nJQCtbQ3uo=;
-        b=PMwh0P85OhJtk9hAkFV6FQT2A37BYGK0gFSFRurVvraCPRpzD9gBgiChLWFXulIW+9
-         jToBVIx+TA/QIQfTBYJBOPYfu/eZWpYmamQGqzTvAh3AmTqzeMCygQPl4MVZbbgF22EB
-         C4vgEabKWy0lRFlq0+mejISzeZK46o9YDNzFBzQxL+SyZtU6JqPSqXcUsqkLPrDT7gee
-         RLmKslT65thOcTwwsk4VLBkULq4xr0Bu3VYdeGmqshglj3PEp0F/ko3qr+VXChuBTRgG
-         T8LuHxuKwl6SCppHqCTyiy2KiSdA5QlFdMh1ntVrCQRA6BJ+H8lcQafZ0w+SsAgPXmHR
-         j9Qw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769708506; x=1770313306; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/8NbqHnxT5RKiMS0/GkD6tEPsHwxJGkgOeDvilo8E/8=;
-        b=QshS1DE8UDJsdIeul4bbY6vGxbmENosSF7Kqxn01nB0CzkeaJEHxql6Z99XvO0pTQI
-         LULtr/cLRqH5SKuN/9wARVzRPZ5/DTrtTlXrDwN1DW7Qd6v6VGanWpD6LLu1yGMAUYMq
-         q6u5csWb+w9uwTuuB7tO0dgd1zco5HMp9/JkPSRDSE5qnx4QguoOIrNKslroBi5M6TYU
-         LWqLA3M8k+tekoZPPMV3H5tYVOIu+pv1+8YwKQalTeLG0e6Fw7Sb8bAkvf+f6fwcPLWU
-         FvDedIBa+qmzTKl8Da3jCuxVECwBNlAtnUvARPXkBG4aPT+RQX9D8PafmbipXorjCJ/m
-         QXew==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCC72D838B
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jan 2026 19:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769713556; cv=none; b=GCwfczwb+ifsY1xXanaK6tFrNiDWB3y6WQY9ADWMLS7kkdaRk0f4gDVs5IcF5h2vBJZviqUJ/bXo7Ppp1075QnfCV9lj6zGpcxFx0Uj/tXjWWOpOLA2xn+V0mfy0hEnT4CwEqtqFpO4bJigrriBfGtfFbDECw+lIm6GgTa3BYFE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769713556; c=relaxed/simple;
+	bh=lOluY+kohGK59RnEdPozu9jf5kxwl95BMHOqO2h81u4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=b/xXGuKaNmKfTt/ccZn4424UZjf2lyVrbRYFN5630JTT35P8sG9YUgcIhZUS0BOhpT2rFthrNfaEt20uSz6GsKBH2HgeAW4AONSBCcL6dj4aj/AjDXDq+WUn2AdeFt3ngrBGKj2P0DD+QZhJ8mtadGhaoIUFFAtYp8yrJWW5nq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=MwVKP/Np; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 838863F915
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jan 2026 19:05:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20251003; t=1769713502;
+	bh=3YUwGhSe5cmulYnP+zjzxZ+VOJXRSZEIvRudrnykpq0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To;
+	b=MwVKP/NphefDyhkCzZFfYA58vOfbIU2efKcfNpBLjz16wRnxOCKPTXZajhXX/zPKA
+	 k/pG62jGCK9+QzPmgaVQcdF2W9qxjxuDRj2ZBKkBnXMfVy13M7UmYp2uKKuYwk0JoD
+	 5IzFbzaaeC0+0AJvSM3XF6KTPcuxNS3663846hGAP/OJFwCgRqnZZj0Acf5EiurdgO
+	 L0JeA4tvrSvT5e0weWZ3+Xroso6ZIJ5d4bs2mtlD/DLV2NDGvcwC7+7CrxjMOtJurd
+	 svQFV8VEsrC8/GX9LR5C7W1/DGJJOAw2CMTidu/RuA4+o84JPKNmdmRCTqxzvwwCv1
+	 QYrC5w674/EFRfyPvAWVH5UaAJL+UInDy50fTbvV8cHXpkJgTxWIhEgCEzlETxyT8r
+	 tuDaI8v34s7hM18fZ3Ql+oSIpMlICxslbDBltZIIehkZJr4fJalXii4z6LBo3eOxel
+	 n4ybcCjMOMG1CVKPDXkPBwDt9ku/8wCGaZM1eM/3bIh7LLQXhiFJiuui3L01iHAUUK
+	 cI2zN0bDB+oEWVxk9k69dgViS4MwMiQJgaI/ZbbL/3/7UWoGoolZJqybGyuvAE1TzK
+	 OWgXIkooxjZpTwnjblzlD/z+qUSnbNvUqw9/717PV7zPpaBd1BLflgL6Xuz5VZAB/O
+	 Hqj1lbJg4vjbLD06SJ+/qCRU=
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-48069a43217so12695345e9.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jan 2026 11:05:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769708506; x=1770313306;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=/8NbqHnxT5RKiMS0/GkD6tEPsHwxJGkgOeDvilo8E/8=;
-        b=hDYGcO04Khkm4uy7plrzNvMPGPUBn427lgN8zOD/ter8M/iBfTuB9UvN8FZLpa7+ga
-         d458AMKaYWrt7Qs8PoNfcNUPVPhtncI+g1lwsKPyX1iNBGHbtH75CaE0MnbwmZvkhsT4
-         oa4iwKhHHWM2SLuOUR18giujzKCDO1Lcjsh8DV4xAb5BtP1gzp1gjEqTxELgRLLP0b3i
-         vhMkykEz2dDDjj5U9kBpcHQ6e6cNbWr7cjHZ1yFHsqvE7adr/mSM+4ig4ycVjvTDiIEb
-         I4LM7Yjloor0YfbWSzxoQcjeyErACrhivMWIlr6hhCa0obHsNhxKv/d7nxP4g+eYnuRs
-         U41A==
-X-Forwarded-Encrypted: i=1; AJvYcCUEkwAZCk7GmlCe3A8l0JFUQ1uaPNO0gzktYSSoPKWCpM/0rieScwf2a0BGf3S1Vm/TdjjOvobSlXx9rdtM@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4QZhIGLuoLmydoqrVlNmt6fcrZccJDbT7UDjeA/OKX00BHreM
-	mPJlv6I8hyQlg92KSoZNm5nJllYBMbo3G9Fhyg6AXT+Ruj5xmRJA/Fpzz9y2RJxYDJi0OS0/OLc
-	190gz5rPaX+eXHVam0G6XksFReCPjfV0=
-X-Gm-Gg: AZuq6aJ3Z0ZzcPETvy3Ix24lz62w5uXLtYMpC8x/gvTT4ENttUzGSI+JHFJeOHAdrde
-	pUPGVUHF6Plg19hW77+ecWmvS8tG0sM52qh6wpXjoeH2VRcsCJWefzHmiepy0LsJFfWxrjaVQlh
-	5sdZy8NuB4XyIMeV1rN3cw/tHz6M51RBKAURWFVInoUd9A2WY2a6cRkYffNqNOAft1QfutmE3U1
-	5M3EGHLOeBQTV80MfCU+Ih13gCNRy7M2eM/+fgyyzqiws5o2uXaWpnK4cnTs2EFnRn4npI1Q4HM
-	VKZOw2EXXfuR0AYi5Mxq0YrHlOlvHm8=
-X-Received: by 2002:a05:6102:cc7:b0:5df:b2cd:12c9 with SMTP id
- ada2fe7eead31-5f8e2620183mr103475137.40.1769708506271; Thu, 29 Jan 2026
- 09:41:46 -0800 (PST)
+        d=1e100.net; s=20230601; t=1769713502; x=1770318302;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3YUwGhSe5cmulYnP+zjzxZ+VOJXRSZEIvRudrnykpq0=;
+        b=MCK366EvAV5AtvMHJK3ujfFyO/QbIbyQ+7G4YigfNC+uIDVUFXFHm0H0oI5yGfNJGF
+         z7ghie3lIkipSEcCYcr1iEjWlF5qExKb4vOU8O82Lw12dNeEw1E7+yBb/TYukhv3Slc1
+         beiugj0Sib4ruxbESa0x52HvM5qrgtSCQPhkCtdQa2/hJSKftFTqgUYVelJI07rvL3El
+         NyTUyBfZiugDhcVuRCiRo/RDlZ0lW/xSPFVo3Mtv4PJDTfiAMJlmCluTJeiZ9UqM+TBB
+         bO0bwsGf1boc4Jm5BUtzWtYr11gg2QVRHIiA1W/qydrntdxUdfz2SNYzwdfkWNjFeHP2
+         8USQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXteHQMhl2RY+C8rvYxKlpCRlreQdO8xD3MYdNNevIrZ+1T4/X93AvSkPPn/p6TUAhkV+D4UCUDBtCEYRsb@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8oHYgj7B0pOHRvsCRAz2BED+hM77pXJmhli4eZGqDaA5e1AAw
+	zoormjckFUfEucR9PKb3GYhRp0Czwk76ZcJEN5veSEJJJ3X5lR2oicUQvpNkDyBmh3GFQ05YU/3
+	IUQKjGRunkLtXpeYNR0BSfiZk1JRyZN2eR4pSO6UZomGRjNaz+Lre+8/Qm2yAAaJOBVgk/EC1y6
+	rDmNI8TbDk13/RqtYIOw==
+X-Gm-Gg: AZuq6aJrSKY/WjbakOtnZL26i0h73oCOTBwiyTduDMP0gsTsDZBFrpnO9IIQyCwYgWL
+	5gYIqDM4+Uf9jpy3XFmonqBR39wc9H/UQLI3BzfZKb542jHJctNU1xc2D4roCr8ZGyKgHR5428f
+	yaaSVs/cj6PbOndcuHF47dt/MVT9fPGacb8aWg9Eg1mFXY99S/zdYdKGHM06TR9cWTdI35/TcAD
+	a8gdzgcDCAObkUz2cv++Lz3O43egINvZ6FHt22zglbnD5Fy3tLxFM972/H4MB4Kr6vIAf1kkm5W
+	p+CAcsKeTcnxG0ZH2Bi7KhaynQMBRkcihhlfdc3jqxtEH+m8H6Pzq+DH0mTOULemXOi19TBtHQx
+	Xrg8kW4VE
+X-Received: by 2002:a05:600c:1385:b0:47e:dc64:f1c6 with SMTP id 5b1f17b1804b1-482db493eb4mr2539185e9.6.1769713502060;
+        Thu, 29 Jan 2026 11:05:02 -0800 (PST)
+X-Received: by 2002:a05:600c:1385:b0:47e:dc64:f1c6 with SMTP id 5b1f17b1804b1-482db493eb4mr2538845e9.6.1769713501608;
+        Thu, 29 Jan 2026 11:05:01 -0800 (PST)
+Received: from localhost ([2001:67c:1562:8007::aac:4abc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-482da909669sm1850615e9.9.2026.01.29.11.04.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Jan 2026 11:05:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20260127180109.66691-1-dorjoychy111@gmail.com>
- <20260127180109.66691-2-dorjoychy111@gmail.com> <20260129-siebzehn-adler-efe74ff8f1a9@brauner>
- <2026-01-29-shifty-aquatic-tyrant-gypsy-9XYQeE@cyphar.com>
-In-Reply-To: <2026-01-29-shifty-aquatic-tyrant-gypsy-9XYQeE@cyphar.com>
-From: Dorjoy Chowdhury <dorjoychy111@gmail.com>
-Date: Thu, 29 Jan 2026 23:41:35 +0600
-X-Gm-Features: AZwV_QgUmgRxqGG7u0gYdXkgbsXqlMMg0UM5YE-KsxdJyK7aG_S89R3ER2sYwVM
-Message-ID: <CAFfO_h5yHUB5UPzod9fHeRui1GgC4ofVskQB_ZsZQbwgBBf2AA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] open: new O_REGULAR flag support
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	jlayton@kernel.org, chuck.lever@oracle.com, alex.aring@gmail.com, 
-	arnd@arndb.de, adilger@dilger.ca
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 29 Jan 2026 13:04:57 -0600
+Message-Id: <DG1B2T5I7REV.30XR7YCI0RSZ4@canonical.com>
+Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: PROBLEM: Duplicated entries in /proc/<pid>/mountinfo
+From: "Zachary M. Raines" <zachary.raines@canonical.com>
+To: "Christian Brauner" <brauner@kernel.org>
+X-Mailer: aerc 0.20.0-2ubuntu1~jmap
+References: <DG0B0GEW323Q.29Y4J0A0Q5DQ5@canonical.com>
+ <20260129-geleckt-treuhand-4bb940acacd9@brauner>
+In-Reply-To: <20260129-geleckt-treuhand-4bb940acacd9@brauner>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+X-Spamd-Result: default: False [-1.66 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[canonical.com,reject];
+	MV_CASE(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[canonical.com:s=20251003];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75887-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,vger.kernel.org,zeniv.linux.org.uk,suse.cz,oracle.com,gmail.com,arndb.de,dilger.ca];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75888-lists,linux-fsdevel=lfdr.de];
+	DKIM_TRACE(0.00)[canonical.com:+];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[dorjoychy111@gmail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[zachary.raines@canonical.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,cyphar.com:email]
-X-Rspamd-Queue-Id: 23B45B31D9
+	NEURAL_HAM(-0.00)[-1.000];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,canonical.com:mid,canonical.com:dkim]
+X-Rspamd-Queue-Id: 4B9D6B3C82
 X-Rspamd-Action: no action
 
-On Thu, Jan 29, 2026 at 11:03=E2=80=AFPM Aleksa Sarai <cyphar@cyphar.com> w=
-rote:
->
-> On 2026-01-29, Christian Brauner <brauner@kernel.org> wrote:
-> > On Tue, Jan 27, 2026 at 11:58:17PM +0600, Dorjoy Chowdhury wrote:
-> > > This flag indicates the path should be opened if it's a regular file.
-> > > This is useful to write secure programs that want to avoid being tric=
-ked
-> > > into opening device nodes with special semantics while thinking they
-> > > operate on regular files.
-> > >
-> > > A corresponding error code ENOTREG has been introduced. For example, =
-if
-> > > open is called on path /dev/null with O_REGULAR in the flag param, it
-> > > will return -ENOTREG.
-> > >
-> > > When used in combination with O_CREAT, either the regular file is
-> > > created, or if the path already exists, it is opened if it's a regula=
-r
-> > > file. Otherwise, -ENOTREG is returned.
-> > >
-> > > -EINVAL is returned when O_REGULAR is combined with O_DIRECTORY (not
-> > > part of O_TMPFILE) because it doesn't make sense to open a path that
-> > > is both a directory and a regular file.
-> > >
-> > > Signed-off-by: Dorjoy Chowdhury <dorjoychy111@gmail.com>
-> > > ---
-> >
-> > Yeah, we shouldn't add support for this outside of openat2(). We also
-> > shouldn't call this OEXT_* or O2_*. Let's just follow the pattern where
-> > we prefix the flag space with the name of the system call
-> > OPENAT2_REGULAR.
-> >
-> > There's also no real need to make O_DIRECTORY exclusive with
-> > OPENAT2_REGULAR. Callers could legimitately want to open a directory or
-> > regular file but not anything else. If someone wants to operate on a
-> > whole filesystem tree but only wants to interact with regular files and
-> > directories and ignore devices, sockets, fifos etc it's very handy to
-> > just be able to set both in flags.
-> >
-> > Frankly, this shouldn't be a flag at all but we already have O_DIRECTOR=
-Y
-> > in there so no need to move this into a new field.
->
-> You could even say O_NOFOLLOW is kinda like that too.
->
-> In my other mail I proposed a bitmask of S_IFMT to reject opening (which
-> would let you allow FIFOs and regular files but block devices, etc).
-> Unfortunately I forgot that S_IFBLK is S_IFCHR|S_IFDIR. This isn't fatal
-> to the idea but it kinda sucks. Grr.
->
+On Thu Jan 29, 2026 at 8:28 AM CST, Christian Brauner wrote:
+> On Wed, Jan 28, 2026 at 08:49:12AM -0600, Zachary M. Raines wrote:
+>> ...
+>> 2. Reads `/prod/1/mountinfo` and checks for duplicates
+>>
+>> #!/bin/bash
+>> THRESHOLD=3D75
+>> echo "Starting monitoring at $(date)"
+>> while true; do
+>>     # Get mountinfo entries and count total
+>>     mountinfo=3D"$(cat /proc/1/mountinfo)"
+>>     mountinfo_count=3D$(echo "$mountinfo" | wc -l)
+>>
+>>     if ((mountinfo_count > THRESHOLD)); then
+>>         echo "$(date): Mount count ($mountinfo_count) exceeds threshold =
+($THRESHOLD)"
+>>
+>>         # Find and log duplicate mount points with their counts
+>>         duplicates=3D$(echo "$mountinfo" | sort | uniq -cd)
+>>
+>>         if [[ -n "$duplicates" ]]; then
+>>             echo "Duplicate mounts :"
+>>             echo "$duplicates"
+>>         fi
+>>         echo "=3D=3D=3D=3D=3D"
+>>         echo "$mountinfo"
+>>         echo "---"
+>>     fi
+>>
+>>     sleep 0.1
+>> done
+>> ...
 
-It is a good suggestion. I guess we can still introduce a new
-how->sfmt_allow field and have new bits (instead of keeping in sync
-with S_IF* ones) that allow types and just start with regular file
-allow bit for now, right? But I guess it would be cumbersome for users
-as an api to use different bits?
+> Thanks for the report. So it's a bit unfortunate that you're showing
+> duplication by source path. That's not as useful as that can
+> legitimately happen. So the better test would be to see whether you get
+> any duplicated unique mount ids, i.e., whether the same
+> mnt->mnt_id_unique appears multiple times. Because that's a bug for
+> sure.
 
-Regards,
-Dorjoy
+It turns out I pasted the output of an old version of my test script,
+above, but if you look at the script itself, it checks for duplicates,
+of the entire mountinfo line, i.e., duplicates have the same unique id.
+
+> I suspect the issue is real though. I'm appending a patch as a proposed
+> fix. Can you test that and report back, please? I'm traveling tomorrow
+> so might take a little.
+
+Thank you for the quick turnaround on that patch. I applied it on top
+of 6.19-rc7 and after about 3 hrs I haven't seen any duplicates, in
+contrast to without the patch where they appear in under 10 minutes.
+
+Let me know if there's any other testing that would help.
+
+Best,
+Zach
 
