@@ -1,185 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-75955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id qGltOkrqfGmdPQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 18:28:42 +0100
+	id 0PPoNH7sfGnEPQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 18:38:06 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC7CDBD218
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 18:28:42 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74246BD560
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 18:38:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 3CE5C30303ED
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 17:27:53 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0A32E3030B2E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 17:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40009364E9A;
-	Fri, 30 Jan 2026 17:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2185036C0B5;
+	Fri, 30 Jan 2026 17:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4vjFnCId";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="520kqiAp"
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="L71RnFMu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5256A364024;
-	Fri, 30 Jan 2026 17:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD3A364E86
+	for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jan 2026 17:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769794051; cv=none; b=JX0ZdVqwWBpvbt/Yd9xh20CpEznH90ket8328KKx2r9suj6lMrKowIgR2zNGnSYngHtWXYA/Qlc30/Om1JUSEBNr2AuL3qgXRotGs2tPfZU4xYsMygVwiDV5pxuUDZXXPaH+yRUV56K5AbpfdkN0JHhDvu6zhr7tI8foRGD1+sE=
+	t=1769794480; cv=none; b=udHXBPbu7tWH00A230r/5fynLM/X+4qnU27Wz3gHHoQhca+7V/OLvDdl6aLxdEtUf80c6eUx4NvSR6XcVD7q2C0ojWl2j1Zlz//BxJ21HzPZSGr9sdUU2ooN+U+NAh6c5iBLugbFLm2XEp67y9ePUFTS31zpaTbrlWTsD8IgdkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769794051; c=relaxed/simple;
-	bh=2+OMGUQcuKS2tJWaxFiW0o1E0ku3RG+1C/hjNsN6rPI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=u3gwN9Z0FlK4ZcRip2xnSiFJhvWnwHb6LEvvFZEoKYkAz2+YXPIETKyWwJ+th5tr9MYxG05JPOFHjs/0Vb9wjDc/5iZkMkuNihWyohlRqoABM2YxTrHeqpruJoCz7BLpHjbbB7TTjJI0nwTIk2r353W16h9r9fjs3t3A/IUzqdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4vjFnCId; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=520kqiAp; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1769794048;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o3M3i7fOsBJJ8QZ7iZoiOC82WHRYdzsj5QwfB37tvhM=;
-	b=4vjFnCIdprQ4bapgrR0W30E28e5XqGnWTzlLJRIchP5KT0mQiU7C2HocIuX1Kdz8pUDo0Y
-	qc+5Orpl1l1vZoFNRQKL24RKcgRr4rbqO02DrPCVc+5aUzHom7b8+oniEw+b53sZSdrxJg
-	+9kDxpq15AQ1xIFUPYwfQgdiBumRwsh+faRgD4dNJMyLkXr/A+P3jXB+CHRA0Hld9eIR+Y
-	7xvqnLxeTCF6EQZwTVn1wPEr2oy9Q/+88+eiC8F7PD8kB/n3dpKOZdgpjEsqUgdQZXqqI6
-	yQRXOGphajl9ppYkFrEud4nWZdOCa3/Ob9kGErESIR3cRVjE/LChlCPSJd3YTA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1769794048;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o3M3i7fOsBJJ8QZ7iZoiOC82WHRYdzsj5QwfB37tvhM=;
-	b=520kqiApVkDPFPboRTL5PTkP4fVPei7/H7ecnPwf1SVFxrBJQEXzDTADXeZGZGuaQ0gr4c
-	ZZ61wAzhpOPpFsDw==
-To: Marcos Paulo de Souza <mpdesouza@suse.com>, Richard Weinberger
- <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes
- Berg <johannes@sipsolutions.net>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Jason Wessel <jason.wessel@windriver.com>,
- Daniel Thompson <danielt@kernel.org>, Douglas Anderson
- <dianders@chromium.org>, Petr Mladek <pmladek@suse.com>, Steven Rostedt
- <rostedt@goodmis.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, Jiri
- Slaby <jirislaby@kernel.org>, Breno Leitao <leitao@debian.org>, Andrew
- Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Geert Uytterhoeven
- <geert@linux-m68k.org>, Kees Cook <kees@kernel.org>, Tony Luck
- <tony.luck@intel.com>, "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman
- <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Christophe
- Leroy <christophe.leroy@csgroup.eu>, Andreas Larsson
- <andreas@gaisler.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Jacky Huang <ychuang3@nuvoton.com>,
- Shan-Chun Hung <schung@nuvoton.com>, Laurentiu Tudor
- <laurentiu.tudor@nxp.com>
-Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
- kgdb-bugreport@lists.sourceforge.net, linux-serial@vger.kernel.org,
- netdev@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
- linux-hardening@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- Marcos Paulo de Souza <mpdesouza@suse.com>
-Subject: Re: [PATCH 05/19] printk: Add more context to suspend/resume functions
-In-Reply-To: <20251227-printk-cleanup-part3-v1-5-21a291bcf197@suse.com>
-References: <20251227-printk-cleanup-part3-v1-0-21a291bcf197@suse.com>
- <20251227-printk-cleanup-part3-v1-5-21a291bcf197@suse.com>
-Date: Fri, 30 Jan 2026 18:33:27 +0106
-Message-ID: <87343n3ta8.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1769794480; c=relaxed/simple;
+	bh=po7edBQiBk8FP/oPhiDSEZOovfiZ88dORRyTLqEoIfI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UqsYBH/VQdjjsS/ANmykI24SYhBRBfXn6g3+x6FLwPVmacGNtHNHqoAkI8rt23AuXok0vT28UtVwCo50S11ihOyl/an+t3M+2sntcNZ70fR7NPFNDMbOkhRkwCJLzdxHQxD+U6gu+d3USSmAMD5zapJzMZ7JEYL83eClNHey0pM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=L71RnFMu; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-5029aa94f28so19469251cf.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jan 2026 09:34:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1769794477; x=1770399277; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lr0ACEC4r9sTM7XeNDuo4Q3LP3+bjrKF/ES76GEt9Qc=;
+        b=L71RnFMuwoe3Ek0MuUPPS7wKLzWEorMVAxd8HctR0ufV82jVho936kBw/HmxtBPsgK
+         zfrliDrL/2p+9/IbkhajqgNsKVtT7sxpyVtoXpL3vhg3/zYfPZn+b2zqPFqRFELkoodB
+         ydZ9YVZxowejJKFWtG+eXCQ2/anE3L/4nGui6xzDX9EQ6DivwMBvXoyhIfoV8fDCB6tX
+         NDxBjJe7pdJaznD9GmqP8LWLTwsg9b87bmcqZRZTyUntxQGfvgcChmQweY9IcwmySh/c
+         7bXklbMWtxiXGKlEHmn6E+TYx9tODPoHjY+CqubKIxVMfXIGFk2I4FyYKc+zOaIKTaQi
+         RSOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769794477; x=1770399277;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Lr0ACEC4r9sTM7XeNDuo4Q3LP3+bjrKF/ES76GEt9Qc=;
+        b=L9DWPgiNXolNV/143yU3iWkZkkCHFAJ9b72BOnlRM7LOh3ccbwOgLqusDeM0ZJGXLo
+         UHarvhaXtcjMZiMwTiMvH97XwuwmpfH94xRShJn2zuF/eqi6vP+ujzT6MDryvgbwZSM0
+         GhtL4P3ARSo0sW+YoOTEFe3JefwQp4cKbOSEt3cgQJOKymlr6izeXaEOhDzPHTkZNc/H
+         fPUqHsBW5JtFL+gsvM23p0hvbr/GzOGmAksL90310ZFMNu4Ls1eTcHMXdW+Mb3Ie3+8Y
+         bH/Nz3u1jEH6AIHOnxIZtahm74vobNKbJV+hAR2V8uLE2Tfv+gomikjA4MhBFfjvibKN
+         tjqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWnBRwXugSqsmW4DrSe7zA7eRp+8SHsgEtBua+tTYlZo15Z+OxYGtO2lpxZaWHG53GCEepg06UVjWd81rIJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNQwa//Usw1QEdcYnJB/Ln/TQ8pzTuaQKcflSxno28OcLNmwuh
+	WD+gGIea1rOX4hGuYDbBQCxsDa3R36uZ83IE90LkRFYHcmXOFhWyA4XpC5xRbUZaBqE=
+X-Gm-Gg: AZuq6aKdj26NbjTYHDixdbDck7bJ5JFLI0+xrCD7gND32RKgyTVbLrC9Dq0Nm2DOPBB
+	zELTD/YVWhrupvyxI4pH8Lh6ZsRNStdR0eYrs/I4C1JhU39faKZlU5WkyLMCmVg630Vt64+cMal
+	YpI0cswOOe0yNE8CJTGIrLlNk6/8by9cEPC/xA6/qs7REwPmHsiCQbbaFVvVhUgfUoXaxquIR4h
+	j6PecuYzeb2OpLKtcu+qUDTuY2MVRHbALfvP/u6NhUUBXgB+kwTzv4BHR7lOrhDJY6XKhtCiniu
+	pWOWXNcPVv8hBVIfRwVsSxaQPIZYR1M8xloizYSRDF/s97FHOmYLhqvYHI5VHhOfgXON/+ILHiv
+	vZcSBgqSQ52U8wJNMB50MDeAdH83erzvVsijfHKkomarEtRHD2S0/37jausI/koOti9jsc/I764
+	xL1ccJxlUjz4Gc6Bi5wbKjBxGh4sa9heaEDh7nm5MF0jTmLT+yaOV3jVU8zlSemg9UxfeVQA==
+X-Received: by 2002:a05:622a:20c:b0:502:a1c6:3487 with SMTP id d75a77b69052e-505d289da0emr31891651cf.1.1769794475777;
+        Fri, 30 Jan 2026 09:34:35 -0800 (PST)
+Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5033746eec5sm60844171cf.9.2026.01.30.09.34.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Jan 2026 09:34:35 -0800 (PST)
+Date: Fri, 30 Jan 2026 12:34:33 -0500
+From: Gregory Price <gourry@gourry.net>
+To: linux-mm@kvack.org
+Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, kernel-team@meta.com, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	ira.weiny@intel.com, dan.j.williams@intel.com, willy@infradead.org,
+	jack@suse.cz, terry.bowman@amd.com, john@jagalactic.com
+Subject: Re: [PATCH 0/9] cxl: explicit DAX driver selection and hotplug
+Message-ID: <aXzrqYOmgo15NZ7s@gourry-fedora-PF4VCD3F>
+References: <20260129210442.3951412-1-gourry@gourry.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260129210442.3951412-1-gourry@gourry.net>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[linutronix.de,none];
-	R_DKIM_ALLOW(-0.20)[linutronix.de:s=2020,linutronix.de:s=2020e];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[gourry.net:s=google];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75955-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75956-lists,linux-fsdevel=lfdr.de];
+	DKIM_TRACE(0.00)[gourry.net:+];
 	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[46];
-	FREEMAIL_TO(0.00)[suse.com,nod.at,cambridgegreys.com,sipsolutions.net,linuxfoundation.org,windriver.com,kernel.org,chromium.org,goodmis.org,debian.org,lunn.ch,davemloft.net,google.com,redhat.com,linux-m68k.org,intel.com,igalia.com,linux.ibm.com,ellerman.id.au,gmail.com,csgroup.eu,gaisler.com,linux.intel.com,foss.st.com,nuvoton.com,nxp.com];
-	MISSING_XM_UA(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DMARC_NA(0.00)[gourry.net];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[john.ogness@linutronix.de,linux-fsdevel@vger.kernel.org];
+	MISSING_XM_UA(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[linutronix.de:+];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[gourry@gourry.net,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	TO_DN_NONE(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
 	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[linux-fsdevel,netdev];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,suse.com:email,linutronix.de:dkim,jogness.linutronix.de:mid]
-X-Rspamd-Queue-Id: CC7CDBD218
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 74246BD560
 X-Rspamd-Action: no action
 
-On 2025-12-27, Marcos Paulo de Souza <mpdesouza@suse.com> wrote:
-> The new comments clarifies from where the functions are supposed to be
-> called.
->
-> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
-> ---
->  kernel/printk/printk.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
->
-> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> index 173c14e08afe..85a8b6521d9e 100644
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -2734,7 +2734,8 @@ MODULE_PARM_DESC(console_no_auto_verbose, "Disable console loglevel raise to hig
->  /**
->   * console_suspend_all - suspend the console subsystem
->   *
-> - * This disables printk() while we go into suspend states
-> + * This disables printk() while we go into suspend states. Called by the power
-> + * management subsystem.
+On Thu, Jan 29, 2026 at 04:04:33PM -0500, Gregory Price wrote:
+> Currently, CXL regions that create DAX devices have no mechanism to
+> control select the hotplug online policy for kmem regions at region
+> creation time. Users must either rely on a build-time default or
+> manually configure each memory block after hotplug occurs.
+> 
 
-Since you are touching this comment, I would prefer to make it
-technically accurate. It is not printk() that is disabled, it is console
-printing that is disabled. Perhaps something like:
+Looks like build regression on configs without hotplug
 
- * Block all console printing while the system goes into suspend state.
- * Called by the power management subsystem.
-   
->   */
->  void console_suspend_all(void)
->  {
-> @@ -2766,6 +2767,12 @@ void console_suspend_all(void)
->  	synchronize_srcu(&console_srcu);
->  }
->  
-> +/**
-> + * console_resume_all - resume the console subsystem
-> + *
-> + * This resumes printk() when the system is being restored. Called by the power
-> + * management subsystem.
+MMOP_ defines and mhp_get_default_online_type() undefined
 
-And something similar here:
+Will let this version sit for a bit before spinning a v2
 
- * Allow all console printing when the system resumes from suspend. Called by
- * the power management system.
- 
-> + */
->  void console_resume_all(void)
->  {
->  	struct console_flush_type ft;
-
-John Ogness
+~Gregory
 
