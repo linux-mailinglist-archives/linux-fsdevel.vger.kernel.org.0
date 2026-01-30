@@ -1,150 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-75960-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75961-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aNPXKE38fGnLPgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75960-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 19:45:33 +0100
+	id /iljLZEQfWmUQAIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75961-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 21:12:01 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C8BEBDEDD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 19:45:33 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16380BE50D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 21:12:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id A29FF300C0EB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 18:45:32 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id BD9AF301AA4E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 20:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E19E3816F0;
-	Fri, 30 Jan 2026 18:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BFE3195EC;
+	Fri, 30 Jan 2026 20:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="b/hp4WsF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZyE31yWN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC882D2390;
-	Fri, 30 Jan 2026 18:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769798727; cv=none; b=m+GpZ8/bYSb5muM7qcIONNJHs1lXO6ivpYJ6OYUTEvaQw8420+3L++ywjrNKn0uYTvcJYGHrKIG6mt+Y1dmuZHrqDlfgaQEzYMvftMPjDQzjTtCwzdUueJUZtb/50eEupOFYteAcHY7pmUJidq2gYaJonId758Y6zfU3gutUnSI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769798727; c=relaxed/simple;
-	bh=GV1EDzSVnR14uH0ML62kANZdik6ElsHLicNglYyVUE8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gk0bspX4ZUVqKIgOPCeZr+wPMkltw7UlI2TQ5XGayDnP8lNleKfvyNeNyw6sQ4uz1ZuJ8Ic2thEqJ1ACgj7qjwZk0AIL7BP9NwcyxlkmqhqRTZCds0f1fAFYpTF34L5dy0kfjCIhXUvZR8HdY6XQ8saG7YLFUCHzDx93OuawWqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=b/hp4WsF; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=OUUR4v1IqP1ZGcGCcmEMkan62AxQPG+ILCLFSj4KfZs=; b=b/hp4WsFoBHaxdPIVr4tMGdI77
-	fnEo2nNJTw40VH/mtv4ccBLGybaVqvKiPJ8f36La/lLLP6m5qO9RfT6BZstx4Wy+CqLpYnRtEFQzR
-	AOid2Vd9X0K7lyz8Vxn7sKl9CWl45hi6eXb5b1hv8hnTh8q9yEv1v2PeQmuFh8A+qx2hxBldwXdb/
-	S430MkWcTCpL3FIsIjb+a4QPeinZD+H9KqjU53Do0Vs0Jn7F80Bb9COaLDLPcnbIHGHqZ6NbkKK/5
-	d4TmvdQnbO62OQRNKcomu2x/H35rr46JGBN4WNyX2Vc0pgCM7zowDeS81/ZIq/mk3ikjRXjp7NodW
-	AyCBt5Pw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vltUZ-00000001r5K-31E3;
-	Fri, 30 Jan 2026 18:45:15 +0000
-Message-ID: <5917d82f-742e-4c19-993e-182551153c6d@infradead.org>
-Date: Fri, 30 Jan 2026 10:45:14 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DFA2DF3CC
+	for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jan 2026 20:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.181
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769803906; cv=pass; b=Wi65bFJjK4Y3C6MXYQi0VtAmwOnxGPvJgAo5E/PMBHsksiFzvFA5t5oExi0fOJYwK5wd9ssQD7FIA8Ut435pIMVa80UR7041eIYooyIiMQXCYFtC8L0moyvBg9pYEqL8RtoCxRyES9YFsMOMXi6tBAwwhIs7oJPyHbudwQuoLMQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769803906; c=relaxed/simple;
+	bh=rQg2XAmvCjv6Pxt+pWb6hjO1zF2ufQcWZb17Q9FMzPg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uaRwt4Y1tx0JoFLxTjKqnq3HkskCk4HhlZhEdrhxDQ9iOtXcTd5vN2IUvRd+RgtY9HruRkY8FsemY7B/O+F8+nSRwVMc38ru5iVIF9Jaqsml7dqVLqhuqgG8Auw07JcK21Q+rMI3rZfjgl4+fkJ3JN1aS8tWHAn0/YPIQxJJor0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZyE31yWN; arc=pass smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-c635559e1c3so1044959a12.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jan 2026 12:11:44 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769803904; cv=none;
+        d=google.com; s=arc-20240605;
+        b=J1MCSZ0QvK4pNp3nU9vRUSNEH1ACJyhVVRzRWtWJehxFlBSpejn9TZYhSsarMk6HXj
+         Hq8oK3xO8IWCLhoyUKS8qXE6snzSWd/CnAoFoKi3ff78upb9qNY4BWIglryihqNNA5JH
+         TFh5t1qK1VBQ43sNR7R6wFWGqGK01LYFre7jVu0sNZM2o5a2gWWxAy9eicKERiDcnzWK
+         wF9j7U5ZqNZomO6TYhIY9bnNoVQ/RmGG2DluVM1LmE6Lehg/LzlcmzmaAJOU/h6KOqWu
+         3QWZ3sgz1Ca41UNTVWgKbvpj4ytikqNQcGqXKmLkuiKatipSNkfm3Ng4kxcGRP0JYgj8
+         5qQw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=KqTERH/+2h6DWpnL/jhYC24xZ6zypIXUC8x2yGcNW24=;
+        fh=E9rBYURn3cvxSLLDeFxx1teF6/shY+ovDrVPhBE0hxY=;
+        b=izxtPHF3GJBluCYZF+ezIdpxP2jJYqM6lYecUsCz/IdTUqjDk+is7MAipfh+RlsDjN
+         hUgFYSfqSBpgDUIUGXI7+cFD5Jyk90OpE3Zox5Mp4fpovDjx5pGkv72rmo+1VcOx7f3S
+         9KM1X93mug7PAA2/uOwvL4TQjRk7qjgZlgQqtTZtjyUxjMcgn+lRhn9dmglk9sBFVMRO
+         tsZEiYZVbIk+bjm1Ce9LPQiF5n88h9Evkt/vqQ86/y1kgG1/AQzWxS19Tf3f7Uv7klcB
+         YuDyFkUwXpTV5nJ1vqJfy3zpWbhHZY6LEjQQ0ffuFrII6eusBDLO9i1UnSZ5QzshJq36
+         q23w==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769803904; x=1770408704; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KqTERH/+2h6DWpnL/jhYC24xZ6zypIXUC8x2yGcNW24=;
+        b=ZyE31yWNSqzEjtKHvg3//CTFyIXR+qPm2f22n6bCJas3JQ8lwMlI8z7DUDGlv51Q7a
+         Il4eLZpdm2j6G2DEGsngfTjuOJnUP//5HDi5ibQKxul/deEwowBgJvE240m9MgnsQr5N
+         0cG+MnocgRWkgHUfnArhtditIY6yh0f1hn/iIMCpMBh66VN6tgSgOls46pzR8bEVtOpW
+         Ablj1bVl7jLnsXT5A9L1TxkwwJcn7xxkDZdaIE0h72UpVDlVCPV1vHNkGNOx3XkU7o60
+         TBFuXZbqowEdU7OEAH7GA37OQVl/ntSG+FI55vaSbbUJv9AHAHjYK+BHHpucmcbavb/O
+         CN+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769803904; x=1770408704;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=KqTERH/+2h6DWpnL/jhYC24xZ6zypIXUC8x2yGcNW24=;
+        b=rwDO7MIb0zA2+kzROHrvWFCp3iH9RpNEZsbKmXSXKG6SrsUVBrADRPQI+1mY5T5BsS
+         aPl+ztnJSEwK8u1xGJWmmQ8c1Hd1bA7ohpzZLKTOtm8a4TDfBDXI5UCs3V+mb+6il6JA
+         lEq47fQhcjSo+oK8BZOppZsKvSjBHEMqQCM5wyxqstdbtmD48CmkSG++WGACxJ6/MpQ6
+         d2JH/URlNQUpIbp5vtx/kkUINl1lGQS5mHTutApX/LBY9MEg7IDptDfYMaXrk9cBh1Mc
+         FGNqh8ljQwSpS0kuyPXfvKU3hg3utHBk/3gmr69G9F9a9yLBrCToOWdkpQbkUMXqiXd7
+         fdlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX063T+VreHIt1ooY40QKYpbxDoGjB6w0W+BWCmXyFHQWC3BzOWUlp/vKkTttYcu+HleJQrMpS0tqUl1l81@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6UfKIWsE9NozODdkkjpd2c89TRE+KScNDD7IgzO6gIv+SvYy7
+	E+kGEO1FxfWX2cFb8Evoc67oRrEIux21fRQwj/eHawR7JVmMIX4lwt7iLYPTgWyOo6XadkqGxhx
+	HM7LyFn7LuGvOmg7Y2YgR2JtjstM1jIM=
+X-Gm-Gg: AZuq6aLD3ofpF+077/mLl0wb8uGuoov3NiEnrY7WiJXzaac/BpAqA+gvw3PtdOyJeKl
+	qP1WYJYPOk1KOPUqv/mqnUXKe5EYNbxEBOSZJgfif0rFmTE2aSolv5px0AUumAntXobEdzLPCD3
+	I3d/aMsCZ/vuz4nJJfml7XPIEQ2aotv9uMxlWbo0wzDVsUwJB8aKiLeLCAniFDFgzDBaea8zzUB
+	kNF1QdA+8iKiGAwORG5faOGW5KJie8Wq5iZ5adUJEvDrDyNb+sG2uK+cEOrWQVAzkaKgHfyi1vz
+	aWdLgkHgehs=
+X-Received: by 2002:a17:90a:d2c6:b0:34a:a16d:77c3 with SMTP id
+ 98e67ed59e1d1-3543c3a6c21mr3874104a91.2.1769803904268; Fri, 30 Jan 2026
+ 12:11:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: filesystems: ensure proc pid substitutable is
- complete
-To: =?UTF-8?Q?Thomas_B=C3=B6hler?= <witcher@wiredspace.de>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <20260130-ksm_stat-v1-1-a6aa0da78de6@wiredspace.de>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20260130-ksm_stat-v1-1-a6aa0da78de6@wiredspace.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20260129215340.3742283-1-andrii@kernel.org> <202601301121.zr5U6ixA-lkp@intel.com>
+In-Reply-To: <202601301121.zr5U6ixA-lkp@intel.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 30 Jan 2026 12:11:31 -0800
+X-Gm-Features: AZwV_Qj7wDya2OBtNs7PUmH8JcxUTODcuVx2e0LmJSjVryNSnlC4sk5utSn3GV0
+Message-ID: <CAEf4BzZthAONGByqvk3pHRT3GaA8=fNbz+d1V1CY1N8sHEcsjA@mail.gmail.com>
+Subject: Re: [PATCH v2 mm-stable] procfs: avoid fetching build ID while
+ holding VMA lock
+To: akpm@linux-foundation.org
+Cc: kernel test robot <lkp@intel.com>, Andrii Nakryiko <andrii@kernel.org>, linux-mm@kvack.org, 
+	oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	bpf@vger.kernel.org, surenb@google.com, shakeel.butt@linux.dev, 
+	syzbot+4e70c8e0a2017b432f7a@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75960-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-75961-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DKIM_TRACE(0.00)[infradead.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	RCPT_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[rdunlap@infradead.org,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,seibold.net:email,wiredspace.de:email]
-X-Rspamd-Queue-Id: 3C8BEBDEDD
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[andriinakryiko@gmail.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel,4e70c8e0a2017b432f7a];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,01.org:url,intel.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,git-scm.com:url]
+X-Rspamd-Queue-Id: 16380BE50D
 X-Rspamd-Action: no action
 
+On Thu, Jan 29, 2026 at 7:55=E2=80=AFPM kernel test robot <lkp@intel.com> w=
+rote:
+>
+> Hi Andrii,
+>
+> kernel test robot noticed the following build warnings:
+>
+> [auto build test WARNING on bpf-next/net]
+> [also build test WARNING on bpf-next/master bpf/master linus/master v6.19=
+-rc7]
+> [cannot apply to akpm-mm/mm-everything next-20260129]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Andrii-Nakryiko/pr=
+ocfs-avoid-fetching-build-ID-while-holding-VMA-lock/20260130-055639
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git =
+net
+> patch link:    https://lore.kernel.org/r/20260129215340.3742283-1-andrii%=
+40kernel.org
+> patch subject: [PATCH v2 mm-stable] procfs: avoid fetching build ID while=
+ holding VMA lock
+> config: nios2-allnoconfig (https://download.01.org/0day-ci/archive/202601=
+30/202601301121.zr5U6ixA-lkp@intel.com/config)
+> compiler: nios2-linux-gcc (GCC) 11.5.0
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20260130/202601301121.zr5U6ixA-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202601301121.zr5U6ixA-lkp=
+@intel.com/
+>
+> All warnings (new ones prefixed by >>):
+>
+> >> Warning: lib/buildid.c:348 This comment starts with '/**', but isn't a=
+ kernel-doc comment. Refer to Documentation/doc-guide/kernel-doc.rst
+>     * Parse build ID of ELF file
+
+So AI tells me to be a proper kernel-doc comment this should have been:
+
+* build_id_parse_file() - Parse build ID of ELF file
+
+Andrew, should I send v3 or you can just patch it up in-place? Thanks!
 
 
-On 1/30/26 7:25 AM, Thomas Böhler wrote:
-> The entry in proc.rst for 3.14 is missing the closing ">" of the "pid"
-> field for the ksm_stat file. Add this for both the table of contents and
-> the actual header for the "ksm_stat" file.
-> 
-> Signed-off-by: Thomas Böhler <witcher@wiredspace.de>
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
-> ---
->  Documentation/filesystems/proc.rst | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> index 8256e857e2d7..346816b02bac 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -48,7 +48,7 @@ fixes/update part 1.1  Stefani Seibold <stefani@seibold.net>    June 9 2009
->    3.11	/proc/<pid>/patch_state - Livepatch patch operation state
->    3.12	/proc/<pid>/arch_status - Task architecture specific information
->    3.13  /proc/<pid>/fd - List of symlinks to open files
-> -  3.14  /proc/<pid/ksm_stat - Information about the process's ksm status.
-> +  3.14  /proc/<pid>/ksm_stat - Information about the process's ksm status.
->  
->    4	Configuring procfs
->    4.1	Mount options
-> @@ -2289,7 +2289,7 @@ The number of open files for the process is stored in 'size' member
->  of stat() output for /proc/<pid>/fd for fast access.
->  -------------------------------------------------------
->  
-> -3.14 /proc/<pid/ksm_stat - Information about the process's ksm status
-> +3.14 /proc/<pid>/ksm_stat - Information about the process's ksm status
->  ---------------------------------------------------------------------
->  When CONFIG_KSM is enabled, each process has this file which displays
->  the information of ksm merging status.
-> 
-> ---
-> base-commit: 6b8edfcd661b569f077cc1ea1f7463ec38547779
-> change-id: 20260130-ksm_stat-4d14366630ea
-> 
-> Best regards,
-
--- 
-~Randy
+>
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
