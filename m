@@ -1,173 +1,230 @@
-Return-Path: <linux-fsdevel+bounces-75967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GHk/NHoxfWntQgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 23:32:26 +0100
+	id qG3NHH02fWkuQwIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 23:53:49 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33514BF234
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 23:32:26 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4FFFBF3C7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 23:53:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 9EBBF301952F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 22:32:12 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8771B30420A4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 22:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7573038A2A3;
-	Fri, 30 Jan 2026 22:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A0535B65F;
+	Fri, 30 Jan 2026 22:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xSsduIhT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FuX4Sh3x"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF81834A773
-	for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jan 2026 22:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3765A358D38
+	for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jan 2026 22:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.176
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769812330; cv=pass; b=q8vb53GpB4kXLEdkmRYbQqxGiAeznriMaMipmbo4+HnJ/PsoDwib3+N6ppU2t7cUjGxhpvlJlkU6JeXYw0JU9NgNVVeHqjW6266SL5VwP+8xb1AXUjOo1IvIGCKGXb0ws/pgVaqH3tPWAicEbDFHoACyWPJjQk9/jmtSenLKUtk=
+	t=1769813606; cv=pass; b=sAFnEAoE66ifZUM35/F1Xn0bcml9TBiYAFN1AFV6ZjUa3yByjGJ20ocVmIw7aaJiojctLpeDUT1j1cw835W3aP0tHsdrO1QOytM0uE1V3iH46voKf6KO5faulUvbIWhp55lJcmpuJhDyc5foyk5jqG5BeAOFJ6KCecKnd3suTDE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769812330; c=relaxed/simple;
-	bh=1L9Z4WjLTMd/nETiB4o0uKotvQN4Rh7dUtNkmBInouo=;
+	s=arc-20240116; t=1769813606; c=relaxed/simple;
+	bh=I6AA9LJQkjtH8pRVXBRtk0eb0kKxzR2imNiewT90hbk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TC5lYGwERIc4Z4U+oxKDFKWxc5k7ah3jPfSU8dj/0clB1aNbPaDoNXkdArN8wtDmEKPiSt6gt1ybnDMiFuibpXEbLMT+R1xOV5sdPHd9C7o0jS6aWFzzpdSrOLcUFOVWB+UOjHP7XSfjMoY8YdgrmmZ+x72nSHeYNXcW8WN5tSA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xSsduIhT; arc=pass smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-658d54197d3so3815974a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jan 2026 14:32:07 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769812326; cv=none;
+	 To:Cc:Content-Type; b=fo+WM7TpjwU+gWhpVnpzo7kXxT2z3qTlZVqDDvjm90TlIygoua6uq3h9bUrtdmFKwSbhLk3H227tHpXqKWU9P+fc1JhxsgSVdRQrlN5RvzeRUsSFN+bfwRgqYoWrrymQdELmZjv9JBt6RY3b/VSlq6Gx29pplqi9gRR9pHskhsg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FuX4Sh3x; arc=pass smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-50145d27b4cso28366021cf.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jan 2026 14:53:25 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769813604; cv=none;
         d=google.com; s=arc-20240605;
-        b=Rp1a6wR0bcoPEaC7rz9KTANiCsI/l8nEXTramiD/IYLD44A3WvblwQNmOH9+bvpkAW
-         WCNjVZZGED/A8JqHjwCEBiL7DT0hZv65pp3CcgeNBOmfm8ugezERe9uZyH4u3e0QJfF2
-         BWuby/QZYQ+HMnV/I9YaiTGP3Tkg9hQ17W0t0Gi0IXQiFNckS7xaEXxBWscNWRS3zVnE
-         nWNq1RUUH0e/gky+3y0ZU26pmG40Jh3jgOBuR/b0/aam6mdrLBdclK9SvxbwYDK9OJQs
-         s6Y1qx6vFeUuvSOXaeRXp8CLUZ+HmEAibl4AvYiaxJ8fRo3Q59TMdTx7bz2Csfm8LEP/
-         aDAg==
+        b=H1xqEqhB0SmxZqHBkBrfXdLRA7ap0/CWkgd6u3ciWbKab02sHyImpGePhZxRxHpGV5
+         eeqy9Cr5pYfFIFGmsiqtsauaPpA5A/rZxnnvy31zgKwOIv3eYVgDKPyaIBlA0T0Lsn+f
+         k+d5fs9dSd9jdurHEQon2lACI303DY5Wd8ia12NKfj7XWCcNKYodSeDX4/6lUvrx4DpH
+         d/S1yrxGS0owGAIBW08SPHu6lVc1AB2gPeTbUUIHX+Qh2D76z1gBhtethVsrN3wedTdz
+         6SV1Jy/rnY25F0VJ5rcsWmvByjHiA1N4xNbVDH/f5BbTG0ZebzmkRkUgkc3rTOEgqV4l
+         uSPA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=V5nbc6oPm8LRFAHxRjfK4s+TrvKdniacoUK6JWeX1CM=;
-        fh=Rms7xpd+Y3EBDQlYw1MQXdKdDf2yHZqGEPnKtZi7n3k=;
-        b=jPkRBzazyDGOsk8wHwWz7XeKKB69fe9i1d4nJBwsqafqY6x2wWNSoUQ7LEGFVa0gRc
-         Y/RY/sxbwtCxvC7Tc17153D0ftTan1qNmeOEHOODbuAy/ednjNGyT9viCNpNUtV3e74b
-         UCE1KYOIoJwVAAFUN3oTG/hK7WTcFCYBoSTmsnx6O3k5vla2xrHnoyjwD7MyEChUkYDw
-         ojVQiFToFOWHucSeCkIeeiSFrD3hsdRUnCUIt5yJHoOGCZe4DUXLK652o5n/JeAaw06e
-         Pq151reo1L5uZIq60A/gVoPhz9Ii9jU1UqRNWUrCGBkh0mVas9RjA2Df9vne0E0M8wJU
-         O8RA==;
+        bh=RvpDJGr4SwO80ntJbbklM7U7D7aCaEah0HNbCRkVHSs=;
+        fh=yQ3VZZgg/5RP6PBMKhx17SDKhcWKv+jHVIDOUxeE6IE=;
+        b=PK6uXS+D7Qs+qkEpzSvd/xPlushQksrsy8ElfJ+brRXLHOSeK0Gdif8sU9MW31Hq3V
+         2WKSQ1p8hYBIq+4QUloa0s1h/nDj+czFq5DZjweQsudde1rTVEcL4r3/Yc80LwmkCqhw
+         d4ktZe3Tm/wmFblYCQFyIKkor/Ga7dOWU0hn5zsaTL2pSkPSv2pdu1PnrM1IeUXROREE
+         LnwbHNCkDDX0BWRCnjugbhXUNF/SWx+gkXgS6BIViCJGXzI+W/5qk4WBDpqg5CMZ9TvN
+         /SRp4JMmGrX/An6xLx0GaM/sXWsO7g9lN4AnzUmOyV1IStzDf7bsRGPAWAfIPgewsW7B
+         MaUQ==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1769812326; x=1770417126; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1769813604; x=1770418404; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=V5nbc6oPm8LRFAHxRjfK4s+TrvKdniacoUK6JWeX1CM=;
-        b=xSsduIhTCrRwZ3JLNdbKh8tE+MdhFL5H9uFQ+5tllsHBric51bEYgyU7uP/nPJVuVm
-         PXBuoZbGBGhd9jC11zRL1GU483f7Fvm6uslzLapeb6QBFVPq0QqUEi22Yh4za+kn63ZO
-         VYPzScWvoAqGFSaLLyA8MHrbxgl4Go5rekjKE33pKIWosCL170UwdnhFMbcWW6Jy1nHl
-         BTUoIyOiMwtb7w1k7xMz4I30jgy1NoIFY4KeyxuPTUlWRVzku48qag4B+Mw5y3wg9X4J
-         7qYXltKRhjuTRa93Kg/i5KMrUJXJP9GaY7mIYlek1UyxtuCoSVeghV/7vYzm2MaotHdL
-         Ekpg==
+        bh=RvpDJGr4SwO80ntJbbklM7U7D7aCaEah0HNbCRkVHSs=;
+        b=FuX4Sh3xtBiDnHAg9EFEEZ2NvuXwTyuY5kH5yeju3QvvNNpRwES0yiHLoqFqYCEzM/
+         erqkzG8/DUskaWzzQur0Z5aWpXSXuzDpNUpc9MsRR1GDIS9QKij2f8A3hPSiC/IkpuEw
+         ltrMleIWg+zQSK8wVnGP5P4RVf1jv3GorwW9ObvyRVB1A80qEviOSF+GUDHIenpm5U+i
+         PT3DhhATtxe6fYVpEf1U9qiN5Ckh26v87FKM4gybE412l43MPoKrsy7k6bUa3rjv2Abc
+         5ToqgZmyRng2xg6qMNxdyjcWzow4ld3hwb1N6SfWwpclON182bdqNIfjaiy1lNmVXAG8
+         J/Lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769812326; x=1770417126;
+        d=1e100.net; s=20230601; t=1769813604; x=1770418404;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=V5nbc6oPm8LRFAHxRjfK4s+TrvKdniacoUK6JWeX1CM=;
-        b=SNnNvr7E9Lk0BBfjzFYA5hih/xvBaDJnpPsZ8KwzD1CbtgbfRrXuAB+KigIcTZRXJ1
-         plMm2AGpqK7q/S9IRhMEkEMJRNAUoKFltTwGaJCT5SehFxiUa63wguVOO5n98rpZkWVH
-         IEfQ7GsEpB+TBc6XqQlr1yra2lRAlxbddDJ/DL37iZD2yhAVlnvFxRGQxVJL0y8GPeT0
-         pMXHbM67VYBknd4DgWeeoBOn/ZhQ33v3ss8kQNS9VesqALLFsDQmjE6J9L5w8xP1M8Ve
-         Y+E/kOCcPx/xqsd1+tHU0WoAQxoGmyJYOI8DC72MHFEF1Hy+E4I8OLxR5T12Xu0jK0gf
-         vqhA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5ZDQqhSS/jTooAWQcxpc+NS9ueGQARCM0gDKlDcisB0KfMHJh1g9yKUqi2C85dXizXnkjyjp3Srjxj8J/@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuiVCfkyVRYNs89AXB23mynPME2GZoxvi+atqWZDJ5ic+p1Kl7
-	uLe6qhdYAQ5IqcwsfHVuk9g/rZFrmBBy3JulQryuKtECXRac02TKw25dBP7ti3rlj4SGSJ7Op/b
-	P77uluqI2rxrDGoXCDrdzwdWJnTnAr2dP+yEZOUAr
-X-Gm-Gg: AZuq6aKKP3SX4BT1mJJwGes1EPRFrzfTONE11AfQsMry04CKAg8z1/yVDT9Ngahl2mB
-	kRDn4y+s3YkAEsH9g9/Ya+0/iBCqB+CCe+U6pS2K9ys4YGurqjHddwAbP8PHLINOwwDTt1ubC8a
-	vcouPNC5qlHsnEv8MNKJsYNNbkbTLXfn/8AbUXaV7arNj2YEAV2A4J3Qk5eti7aAacWv6zkqUeL
-	kbASZ+o9UoiQrWUQK3z86PnW5pdsOycBSTDlrnXrRyLSOHmjJN65deHNzE/lh15yZ7Y
-X-Received: by 2002:a17:907:e0d8:b0:b8e:14cc:9197 with SMTP id
- a640c23a62f3a-b8e14cca990mr91520566b.15.1769812325869; Fri, 30 Jan 2026
- 14:32:05 -0800 (PST)
+        bh=RvpDJGr4SwO80ntJbbklM7U7D7aCaEah0HNbCRkVHSs=;
+        b=iST40IbgPRo9Nw7paJ1J39SM6EXFBXQU39mg4LFM/Mgx1IqVz5ZkkR2++z7zd1f4zG
+         VDavUE9b/tM3NgP0s9st36VTqHKHIL3ru/+EE//WJmoafC4pmOeSXn+JRAxywebFUQbt
+         xEg7ngh7CtV8a9Nh7Ull0K+C87dD+ObK79Ic/zB8nQsVLqm2Zv633YQawtrhMxFEzb+t
+         Z2FaDGCY5e16VR5y5kipDdHPOg/tFUit4I2dza2z/KkTpgibk7I+w5+qjnnVNI6Z46sf
+         SdSNCV2ffjfx9rkgtBMxMrmMu64cjsMWI9Zt7W9IDGLMFvbUsQhnsOaWnZCwmfR6rbri
+         7Q/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWM/GCjkxc8Ys0IM/YmLaQBsS4Ld8EjrUxrUalA5iaN6pKBswrKGXL7UMzctEJlSphlt8P473/ilm/Rb9AO@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSq791OJl2mEU5CZQyEVdaC4aRYkejjtWn7ZwVObtuVCjNVqb1
+	vyuTtVwoP7+9rJs8y03JOG5K5RAq6IuMmKHEqVh6/eNZkxzUQpiCh9ZcM+ZlfoTO3kPJcDxpswS
+	N93Vb8VDAjVUy3113UslhMLMGo4WJRqU=
+X-Gm-Gg: AZuq6aKvn5viJsJH3IYyeOVrSmuakwZbUbbBJkh59LfHGHvdcUDQ7/NvKerb8BWG6jD
+	854qPsWVqOOl+ofs84lS73iPAbt6Eh0q5vYEdFOzcGjNIcEncOAFu2x35j6mFP6Cf/4dhcSBVtw
+	7w9lEqX8PTTswenQaDOlaowoEdjnJ/AY3DDzBgeYG75uV5+1aij/I4ksurYgMGXS8CyTXvsPKYm
+	s2u8bVDb54LqnZbX6s7DD7t+em8N0+WqxZ/yrddZG465yG2+tkG8z2PPrrPuHShImRoeg==
+X-Received: by 2002:ac8:5ac1:0:b0:502:9f71:6458 with SMTP id
+ d75a77b69052e-505d223e5afmr53898871cf.44.1769813604047; Fri, 30 Jan 2026
+ 14:53:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251118051604.3868588-1-viro@zeniv.linux.org.uk>
- <CAG2KctrjSP+XyBiOB7hGA2DWtdpg3diRHpQLKGsVYxExuTZazA@mail.gmail.com>
- <2026012715-mantra-pope-9431@gregkh> <CAG2Kctoo=xiVdhRZnLaoePuu2cuQXMCdj2q6L-iTnb8K1RMHkw@mail.gmail.com>
- <20260128045954.GS3183987@ZenIV> <CAG2KctqWy-gnB4o6FAv3kv6+P2YwqeWMBu7bmHZ=Acq+4vVZ3g@mail.gmail.com>
- <20260129032335.GT3183987@ZenIV> <20260129225433.GU3183987@ZenIV>
- <CAG2KctoNjktJTQqBb7nGeazXe=ncpwjsc+Lm+JotcpaO3Sf9gw@mail.gmail.com> <20260130070424.GV3183987@ZenIV>
-In-Reply-To: <20260130070424.GV3183987@ZenIV>
-From: Samuel Wu <wusamuel@google.com>
-Date: Fri, 30 Jan 2026 14:31:54 -0800
-X-Gm-Features: AZwV_QjYrhpLENkXIfDxcZ9u-zvP7f57lE4mcVebqUxFVKgl6ULvCT7XG0RHQoc
-Message-ID: <CAG2Kctoqja9R1bBzdEAV15_yt=sBGkcub6C2nGE6VHMJh13=FQ@mail.gmail.com>
-Subject: Re: [PATCH v4 00/54] tree-in-dcache stuff
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Greg KH <gregkh@linuxfoundation.org>, linux-fsdevel@vger.kernel.org, 
-	torvalds@linux-foundation.org, brauner@kernel.org, jack@suse.cz, 
-	raven@themaw.net, miklos@szeredi.hu, neil@brown.name, a.hindborg@kernel.org, 
-	linux-mm@kvack.org, linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev, 
-	kees@kernel.org, rostedt@goodmis.org, linux-usb@vger.kernel.org, 
-	paul@paul-moore.com, casey@schaufler-ca.com, linuxppc-dev@lists.ozlabs.org, 
-	john.johansen@canonical.com, selinux@vger.kernel.org, 
-	borntraeger@linux.ibm.com, bpf@vger.kernel.org, clm@meta.com, 
-	android-kernel-team <android-kernel-team@google.com>
+References: <20260118223516.92753-1-john@jagalactic.com> <0100019bd33f2761-af1fb233-73d0-4b99-a0c0-d239266aec91-000000@email.amazonses.com>
+ <0100019bd33fb644-94215a33-24d2-4474-b9eb-ddae39b29bd8-000000@email.amazonses.com>
+In-Reply-To: <0100019bd33fb644-94215a33-24d2-4474-b9eb-ddae39b29bd8-000000@email.amazonses.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Fri, 30 Jan 2026 14:53:13 -0800
+X-Gm-Features: AZwV_QgH1KMH2vlFTNGo85feW4dv-AHS4Ad-yDU5HTglx7x3SJ0Y27UEufrkPHc
+Message-ID: <CAJnrk1Z9BuCLZv576Ro9iYUPRDpW=1euG0rQ2wC_19sBcR18pw@mail.gmail.com>
+Subject: Re: [PATCH V7 1/3] fuse_kernel.h: bring up to baseline 6.19
+To: John Groves <john@jagalactic.com>
+Cc: John Groves <John@groves.net>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Dan Williams <dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, 
+	Alison Schofield <alison.schofield@intel.com>, John Groves <jgroves@micron.com>, 
+	John Groves <jgroves@fastmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, David Hildenbrand <david@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, "Darrick J . Wong" <djwong@kernel.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Stefan Hajnoczi <shajnocz@redhat.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, James Morse <james.morse@arm.com>, 
+	Fuad Tabba <tabba@google.com>, Sean Christopherson <seanjc@google.com>, Shivank Garg <shivankg@amd.com>, 
+	Ackerley Tng <ackerleytng@google.com>, Gregory Price <gourry@gourry.net>, 
+	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>, 
+	"venkataravis@micron.com" <venkataravis@micron.com>, 
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>, 
+	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
-	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75967-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-75968-lists,linux-fsdevel=lfdr.de];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FREEMAIL_CC(0.00)[groves.net,szeredi.hu,intel.com,ddn.com,micron.com,fastmail.com,lwn.net,infradead.org,suse.cz,zeniv.linux.org.uk,kernel.org,gmail.com,huawei.com,redhat.com,toxicpanda.com,arm.com,google.com,amd.com,gourry.net,vger.kernel.org,lists.linux.dev];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	RCVD_COUNT_THREE(0.00)[4];
-	RCPT_COUNT_TWELVE(0.00)[25];
+	RCPT_COUNT_TWELVE(0.00)[38];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[wusamuel@google.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[google.com:+];
+	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid,linux.org.uk:email]
-X-Rspamd-Queue-Id: 33514BF234
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[jagalactic.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: C4FFFBF3C7
 X-Rspamd-Action: no action
 
-On Thu, Jan 29, 2026 at 11:02=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> =
-wrote:
-> OK.  Could you take a clone of mainline repository and in there run
-> ; git fetch git://git.kernel.org:/pub/scm/linux/kernel/git/viro/vfs.git f=
-or-wsamuel:for-wsamuel
-> then
-> ; git diff for-wsamuel e5bf5ee26663
-> to verify that for-wsamuel is identical to tree you've seen breakage on
-> ; git diff for-wsamuel-base 1544775687f0
-> to verify that for-wsamuel-base is the tree where the breakage did not re=
-produce
-> Then bisect from for-wsamuel-base to for-wsamuel.
+On Sun, Jan 18, 2026 at 2:35=E2=80=AFPM John Groves <john@jagalactic.com> w=
+rote:
 >
-> Basically, that's the offending commit split into steps; let's try to fig=
-ure
-> out what causes the breakage with better resolution...
+> From: John Groves <john@groves.net>
+>
+> This is copied from include/uapi/linux/fuse.h in 6.19 with no changes.
+>
+> Signed-off-by: John Groves <john@groves.net>
 
-Confirming that bisect points to this patch: 09e88dc22ea2 (serialize
-ffs_ep0_open() on ffs->mutex)
+This LGTM. We could probably just merge this in already.
+
+Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
+
+> ---
+>  include/fuse_kernel.h | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/fuse_kernel.h b/include/fuse_kernel.h
+> index 94621f6..c13e1f9 100644
+> --- a/include/fuse_kernel.h
+> +++ b/include/fuse_kernel.h
+> @@ -239,6 +239,7 @@
+>   *  7.45
+>   *  - add FUSE_COPY_FILE_RANGE_64
+>   *  - add struct fuse_copy_file_range_out
+> + *  - add FUSE_NOTIFY_PRUNE
+>   */
+>
+>  #ifndef _LINUX_FUSE_H
+> @@ -680,7 +681,7 @@ enum fuse_notify_code {
+>         FUSE_NOTIFY_DELETE =3D 6,
+>         FUSE_NOTIFY_RESEND =3D 7,
+>         FUSE_NOTIFY_INC_EPOCH =3D 8,
+> -       FUSE_NOTIFY_CODE_MAX,
+> +       FUSE_NOTIFY_PRUNE =3D 9,
+>  };
+>
+>  /* The read buffer is required to be at least 8k, but may be much larger=
+ */
+> @@ -1119,6 +1120,12 @@ struct fuse_notify_retrieve_in {
+>         uint64_t        dummy4;
+>  };
+>
+> +struct fuse_notify_prune_out {
+> +       uint32_t        count;
+> +       uint32_t        padding;
+> +       uint64_t        spare;
+> +};
+> +
+>  struct fuse_backing_map {
+>         int32_t         fd;
+>         uint32_t        flags;
+> @@ -1131,6 +1138,7 @@ struct fuse_backing_map {
+>  #define FUSE_DEV_IOC_BACKING_OPEN      _IOW(FUSE_DEV_IOC_MAGIC, 1, \
+>                                              struct fuse_backing_map)
+>  #define FUSE_DEV_IOC_BACKING_CLOSE     _IOW(FUSE_DEV_IOC_MAGIC, 2, uint3=
+2_t)
+> +#define FUSE_DEV_IOC_SYNC_INIT         _IO(FUSE_DEV_IOC_MAGIC, 3)
+>
+>  struct fuse_lseek_in {
+>         uint64_t        fh;
+> --
+> 2.52.0
+>
 
