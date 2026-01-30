@@ -1,228 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-75966-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id AC+sJO0sfWmYQgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75966-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 23:13:01 +0100
+	id GHk/NHoxfWntQgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 23:32:26 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53CC4BF0D5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 23:13:01 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33514BF234
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 23:32:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id E34B430157DD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 22:12:57 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9EBBF301952F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 22:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542A33074BA;
-	Fri, 30 Jan 2026 22:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7573038A2A3;
+	Fri, 30 Jan 2026 22:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="Vfu4rnir"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xSsduIhT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CFF9313E21
-	for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jan 2026 22:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769811175; cv=none; b=CUBZ49lwEwbeF4V1w2ymSoXPI4mkt8sYBPSGW5VA4I5NZgV/+T//sBWTjxavypSi7PImr2XV76hS9RCIYXnyqr7x9IiWQthzOrcEGawZdZhJsuWUdLqVOvI+Jmgnaa/aySBJU2EYsbDW/usVYYr/1OF6bnsWxF7Ch1ojGk8bbw0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769811175; c=relaxed/simple;
-	bh=EE75EBg/m8/QKw8DcaNmQh/kzwsKHHG6eLPdctJoZDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tuzWL8Qm5gbPNX+pa0bsz5FVuzh6Rs5TgyuijMxvVmvFOe+mkP1a0OiaIcVYkZLv6zeQr4cx3yUpxf/q0FTE+jF1brxH+D6ZkvRjlZwhj+rdTwpoSyH+mD16MuVJIo+qLOUPewaXT6kOMRsyV6/Kds9Trb29+B+xFOC5IJ6nPXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=Vfu4rnir; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-8c70c6b2bcaso266601685a.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jan 2026 14:12:54 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF81834A773
+	for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jan 2026 22:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769812330; cv=pass; b=q8vb53GpB4kXLEdkmRYbQqxGiAeznriMaMipmbo4+HnJ/PsoDwib3+N6ppU2t7cUjGxhpvlJlkU6JeXYw0JU9NgNVVeHqjW6266SL5VwP+8xb1AXUjOo1IvIGCKGXb0ws/pgVaqH3tPWAicEbDFHoACyWPJjQk9/jmtSenLKUtk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769812330; c=relaxed/simple;
+	bh=1L9Z4WjLTMd/nETiB4o0uKotvQN4Rh7dUtNkmBInouo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TC5lYGwERIc4Z4U+oxKDFKWxc5k7ah3jPfSU8dj/0clB1aNbPaDoNXkdArN8wtDmEKPiSt6gt1ybnDMiFuibpXEbLMT+R1xOV5sdPHd9C7o0jS6aWFzzpdSrOLcUFOVWB+UOjHP7XSfjMoY8YdgrmmZ+x72nSHeYNXcW8WN5tSA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xSsduIhT; arc=pass smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-658d54197d3so3815974a12.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jan 2026 14:32:07 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769812326; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Rp1a6wR0bcoPEaC7rz9KTANiCsI/l8nEXTramiD/IYLD44A3WvblwQNmOH9+bvpkAW
+         WCNjVZZGED/A8JqHjwCEBiL7DT0hZv65pp3CcgeNBOmfm8ugezERe9uZyH4u3e0QJfF2
+         BWuby/QZYQ+HMnV/I9YaiTGP3Tkg9hQ17W0t0Gi0IXQiFNckS7xaEXxBWscNWRS3zVnE
+         nWNq1RUUH0e/gky+3y0ZU26pmG40Jh3jgOBuR/b0/aam6mdrLBdclK9SvxbwYDK9OJQs
+         s6Y1qx6vFeUuvSOXaeRXp8CLUZ+HmEAibl4AvYiaxJ8fRo3Q59TMdTx7bz2Csfm8LEP/
+         aDAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=V5nbc6oPm8LRFAHxRjfK4s+TrvKdniacoUK6JWeX1CM=;
+        fh=Rms7xpd+Y3EBDQlYw1MQXdKdDf2yHZqGEPnKtZi7n3k=;
+        b=jPkRBzazyDGOsk8wHwWz7XeKKB69fe9i1d4nJBwsqafqY6x2wWNSoUQ7LEGFVa0gRc
+         Y/RY/sxbwtCxvC7Tc17153D0ftTan1qNmeOEHOODbuAy/ednjNGyT9viCNpNUtV3e74b
+         UCE1KYOIoJwVAAFUN3oTG/hK7WTcFCYBoSTmsnx6O3k5vla2xrHnoyjwD7MyEChUkYDw
+         ojVQiFToFOWHucSeCkIeeiSFrD3hsdRUnCUIt5yJHoOGCZe4DUXLK652o5n/JeAaw06e
+         Pq151reo1L5uZIq60A/gVoPhz9Ii9jU1UqRNWUrCGBkh0mVas9RjA2Df9vne0E0M8wJU
+         O8RA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1769811173; x=1770415973; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WcwIl3uOXu5+/SwXKBFd7tJC/YnUbnTLiMTfGdoJxgA=;
-        b=Vfu4rnirf6tUU6Op6gz9zfSlaQ/xS6HrNz6IrKjYfsPUFn3H9VJ/0vUDDnap8JC1wk
-         Ug63j10puTm1tEgfoI+vcOs8HvvpwMTuksektMoYToFWkfxJL6Sdh3AA9Shxp2NCJ7v+
-         +6f3rTt/IRYVhTpckGIsH/apnsXap4kUIQjdz0wSPMLK+XsQK3AKArOlXRjsmNZmPIp1
-         +q9KIukLVQu9PSlMMwu13GVxVaZjIyJfTi6lqQ/u1o3oIAtf4m8Fv9ymMqE+IATtRCms
-         RyQcHspXtamZiPY2s+b3lQSbyVu/IP1QXbMPwc9Eq6uryM0I/KbyTZ9siz/vVoaNdlU0
-         0Dww==
+        d=google.com; s=20230601; t=1769812326; x=1770417126; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V5nbc6oPm8LRFAHxRjfK4s+TrvKdniacoUK6JWeX1CM=;
+        b=xSsduIhTCrRwZ3JLNdbKh8tE+MdhFL5H9uFQ+5tllsHBric51bEYgyU7uP/nPJVuVm
+         PXBuoZbGBGhd9jC11zRL1GU483f7Fvm6uslzLapeb6QBFVPq0QqUEi22Yh4za+kn63ZO
+         VYPzScWvoAqGFSaLLyA8MHrbxgl4Go5rekjKE33pKIWosCL170UwdnhFMbcWW6Jy1nHl
+         BTUoIyOiMwtb7w1k7xMz4I30jgy1NoIFY4KeyxuPTUlWRVzku48qag4B+Mw5y3wg9X4J
+         7qYXltKRhjuTRa93Kg/i5KMrUJXJP9GaY7mIYlek1UyxtuCoSVeghV/7vYzm2MaotHdL
+         Ekpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769811173; x=1770415973;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WcwIl3uOXu5+/SwXKBFd7tJC/YnUbnTLiMTfGdoJxgA=;
-        b=fiSRPVGkeZbr2zfRKSMxEMcUCCTWVVzP66YInNpba8GbgF6PjCK/rm3Q2SxFbm+7sZ
-         833PNLFEitHMDBV+xv8PQ/0ymdL3dUOWXZldBGVoNSLxKgPFbPou8pRRj5dvpWn/G+e7
-         o4Ba5klNX0okk8sThQ8X6AvYOaexLo7pxBMUGktpD/qk7orGWSqOZ02xOtsxYMIGJIUQ
-         iGOt85meUEqwquCJcPaNPu9J2v/4YppmOEwCHi8E8787pOX89Z6ict50ZFIii2yOvj+y
-         2DaYv8xawBITX2XnUJhsdr1qdZHtIjFU87OOTJU9tqYbPefRGVcbQcTk9p2YzO1XSe9H
-         AV0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXXAM7+j6fAL2kHUK8BvRulSg7z9xGa65rtY4tWd0i9cuQ6B6qMVX+u68y3iY0RRibaBjDU4/17MXD23nk3@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCn9feXP0Vmp9rgOk42Gt0Jcpvzsup8PWtky7y7CQwAUau1D+m
-	24touPoMP3vOesTMCk1k2O+vmgDOTiKsr39j2lIBIaAtKE33Q0Gt1jE9l4iQxRAEhGVI3rbs8Ix
-	edJoGc0E=
-X-Gm-Gg: AZuq6aKq+DoZr8VJjB2xk11+jYqoXChNYlegfcb+6vfpFkXtQLAMgj9ekq6hTHPfXDP
-	zaamJ7bS64XgnV2VWSm01FYWSDc8AOXB/sY+blY5gKSYQkbmV4qsDUgrBx2IvOSADJ99UUHBDcg
-	DcbJRe8bx2yIfTTdunLkBw+jwpHh4BYPYfZDJ6P0oz62YtfAr/awF1makCnGnTQ1jTu852ycN8Z
-	mJ9yE2GdBkAUJNRmQb/yl90VuLIwXauaxRMBSfPwsDf+Ek84hBoDmhVMgSwvRbNA6ZBu7E9rYbZ
-	Zm3J7hDZ885nEL0CZ0VtSrGoA5Q0D+8ukAFunzrLJvCQEIQi07ezgluyYr/JFcBuANZJnJ+rwBs
-	ZKoUiK4QldYgBzFHp1vfX8Za4hqmqmdxs0oLf0pR8a1VJjq4WaoX7w0yVovQtwZ+d91QhfGLyKi
-	MQNXYcFf1KGRRUhFtstUfUfgcZoS2WtpLgyLrI6/XvCpvr920D/97VUMNvmwJM/KIc9eONMpwj0
-	wY0gvRL
-X-Received: by 2002:a05:620a:408d:b0:8b5:9fc7:812b with SMTP id af79cd13be357-8c9eb215f79mr587853885a.6.1769811173102;
-        Fri, 30 Jan 2026 14:12:53 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-894d36ab208sm66770586d6.1.2026.01.30.14.12.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Jan 2026 14:12:52 -0800 (PST)
-Date: Fri, 30 Jan 2026 17:12:50 -0500
-From: Gregory Price <gourry@gourry.net>
-To: "Cheatham, Benjamin" <benjamin.cheatham@amd.com>
-Cc: linux-mm@kvack.org, linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, kernel-team@meta.com, dave@stgolabs.net,
-	jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, dan.j.williams@intel.com, willy@infradead.org,
-	jack@suse.cz, terry.bowman@amd.com, john@jagalactic.com
-Subject: Re: [PATCH 8/9] cxl/core: Add dax_kmem_region and sysram_region
- drivers
-Message-ID: <aX0s4i5OqFhHkEUp@gourry-fedora-PF4VCD3F>
-References: <20260129210442.3951412-1-gourry@gourry.net>
- <20260129210442.3951412-9-gourry@gourry.net>
- <c1d7d137-b7c2-4713-8ca4-33b6bc2bea2b@amd.com>
+        d=1e100.net; s=20230601; t=1769812326; x=1770417126;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=V5nbc6oPm8LRFAHxRjfK4s+TrvKdniacoUK6JWeX1CM=;
+        b=SNnNvr7E9Lk0BBfjzFYA5hih/xvBaDJnpPsZ8KwzD1CbtgbfRrXuAB+KigIcTZRXJ1
+         plMm2AGpqK7q/S9IRhMEkEMJRNAUoKFltTwGaJCT5SehFxiUa63wguVOO5n98rpZkWVH
+         IEfQ7GsEpB+TBc6XqQlr1yra2lRAlxbddDJ/DL37iZD2yhAVlnvFxRGQxVJL0y8GPeT0
+         pMXHbM67VYBknd4DgWeeoBOn/ZhQ33v3ss8kQNS9VesqALLFsDQmjE6J9L5w8xP1M8Ve
+         Y+E/kOCcPx/xqsd1+tHU0WoAQxoGmyJYOI8DC72MHFEF1Hy+E4I8OLxR5T12Xu0jK0gf
+         vqhA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5ZDQqhSS/jTooAWQcxpc+NS9ueGQARCM0gDKlDcisB0KfMHJh1g9yKUqi2C85dXizXnkjyjp3Srjxj8J/@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuiVCfkyVRYNs89AXB23mynPME2GZoxvi+atqWZDJ5ic+p1Kl7
+	uLe6qhdYAQ5IqcwsfHVuk9g/rZFrmBBy3JulQryuKtECXRac02TKw25dBP7ti3rlj4SGSJ7Op/b
+	P77uluqI2rxrDGoXCDrdzwdWJnTnAr2dP+yEZOUAr
+X-Gm-Gg: AZuq6aKKP3SX4BT1mJJwGes1EPRFrzfTONE11AfQsMry04CKAg8z1/yVDT9Ngahl2mB
+	kRDn4y+s3YkAEsH9g9/Ya+0/iBCqB+CCe+U6pS2K9ys4YGurqjHddwAbP8PHLINOwwDTt1ubC8a
+	vcouPNC5qlHsnEv8MNKJsYNNbkbTLXfn/8AbUXaV7arNj2YEAV2A4J3Qk5eti7aAacWv6zkqUeL
+	kbASZ+o9UoiQrWUQK3z86PnW5pdsOycBSTDlrnXrRyLSOHmjJN65deHNzE/lh15yZ7Y
+X-Received: by 2002:a17:907:e0d8:b0:b8e:14cc:9197 with SMTP id
+ a640c23a62f3a-b8e14cca990mr91520566b.15.1769812325869; Fri, 30 Jan 2026
+ 14:32:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c1d7d137-b7c2-4713-8ca4-33b6bc2bea2b@amd.com>
+References: <20251118051604.3868588-1-viro@zeniv.linux.org.uk>
+ <CAG2KctrjSP+XyBiOB7hGA2DWtdpg3diRHpQLKGsVYxExuTZazA@mail.gmail.com>
+ <2026012715-mantra-pope-9431@gregkh> <CAG2Kctoo=xiVdhRZnLaoePuu2cuQXMCdj2q6L-iTnb8K1RMHkw@mail.gmail.com>
+ <20260128045954.GS3183987@ZenIV> <CAG2KctqWy-gnB4o6FAv3kv6+P2YwqeWMBu7bmHZ=Acq+4vVZ3g@mail.gmail.com>
+ <20260129032335.GT3183987@ZenIV> <20260129225433.GU3183987@ZenIV>
+ <CAG2KctoNjktJTQqBb7nGeazXe=ncpwjsc+Lm+JotcpaO3Sf9gw@mail.gmail.com> <20260130070424.GV3183987@ZenIV>
+In-Reply-To: <20260130070424.GV3183987@ZenIV>
+From: Samuel Wu <wusamuel@google.com>
+Date: Fri, 30 Jan 2026 14:31:54 -0800
+X-Gm-Features: AZwV_QjYrhpLENkXIfDxcZ9u-zvP7f57lE4mcVebqUxFVKgl6ULvCT7XG0RHQoc
+Message-ID: <CAG2Kctoqja9R1bBzdEAV15_yt=sBGkcub6C2nGE6VHMJh13=FQ@mail.gmail.com>
+Subject: Re: [PATCH v4 00/54] tree-in-dcache stuff
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Greg KH <gregkh@linuxfoundation.org>, linux-fsdevel@vger.kernel.org, 
+	torvalds@linux-foundation.org, brauner@kernel.org, jack@suse.cz, 
+	raven@themaw.net, miklos@szeredi.hu, neil@brown.name, a.hindborg@kernel.org, 
+	linux-mm@kvack.org, linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev, 
+	kees@kernel.org, rostedt@goodmis.org, linux-usb@vger.kernel.org, 
+	paul@paul-moore.com, casey@schaufler-ca.com, linuxppc-dev@lists.ozlabs.org, 
+	john.johansen@canonical.com, selinux@vger.kernel.org, 
+	borntraeger@linux.ibm.com, bpf@vger.kernel.org, clm@meta.com, 
+	android-kernel-team <android-kernel-team@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[gourry.net:s=google];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
+	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DMARC_NA(0.00)[gourry.net];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75966-lists,linux-fsdevel=lfdr.de];
-	RCPT_COUNT_TWELVE(0.00)[19];
+	TAGGED_FROM(0.00)[bounces-75967-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
+	RCPT_COUNT_TWELVE(0.00)[25];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[gourry.net:+];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	FROM_HAS_DN(0.00)[];
 	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[gourry@gourry.net,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[wusamuel@google.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[google.com:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,gourry.net:dkim]
-X-Rspamd-Queue-Id: 53CC4BF0D5
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid,linux.org.uk:email]
+X-Rspamd-Queue-Id: 33514BF234
 X-Rspamd-Action: no action
 
-On Fri, Jan 30, 2026 at 03:27:12PM -0600, Cheatham, Benjamin wrote:
-> On 1/29/2026 3:04 PM, Gregory Price wrote:
-> > In the current kmem driver binding process, the only way for users
-> > to define hotplug policy is via a build-time option, or by not
-> > onlining memory by default and setting each individual memory block
-> > online after hotplug occurs.  We can solve this with a configuration
-> > step between region-probe and dax-probe.
-> > 
-> > Add the infrastructure for a two-stage driver binding for kmem-mode
-> > dax regions. The cxl_dax_kmem_region driver probes cxl_sysram_region
-> > devices and creates cxl_dax_region with dax_driver=kmem.
-> > 
-> > This creates an interposition step where users can configure policy.
-> > 
-> > Device hierarchy:
-> >   region0 -> sysram_region0 -> dax_region0 -> dax0.0
-> 
-> This technically comes up in the devdax_region driver patch first, but I noticed it here
-> so this is where I'm putting it:
-> 
-> I like the idea here, but the implementation is all off. Firstly, devm_cxl_add_sysram_region()
-> is never called outside of sysram_region_driver::probe(), so I'm not sure how they ever get
-> added to the system (same with devdax regions).
-> 
-> Second, there's this weird pattern of adding sub-region (sysram, devdax, etc.) devices being added
-> inside of the sub-region driver probe. I would expect the devices are added then the probe function
-> is called. 
+On Thu, Jan 29, 2026 at 11:02=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> =
+wrote:
+> OK.  Could you take a clone of mainline repository and in there run
+> ; git fetch git://git.kernel.org:/pub/scm/linux/kernel/git/viro/vfs.git f=
+or-wsamuel:for-wsamuel
+> then
+> ; git diff for-wsamuel e5bf5ee26663
+> to verify that for-wsamuel is identical to tree you've seen breakage on
+> ; git diff for-wsamuel-base 1544775687f0
+> to verify that for-wsamuel-base is the tree where the breakage did not re=
+produce
+> Then bisect from for-wsamuel-base to for-wsamuel.
+>
+> Basically, that's the offending commit split into steps; let's try to fig=
+ure
+> out what causes the breakage with better resolution...
 
-I originally tried doing with region0/region_driver, but that design
-pattern is also confusing - and it creates differently bad patterns.
-
-    echo region0 > decoder0.0/create_ram_region   -> creates region0
-
-    # Current pattern
-    echo region > driver/region/probe  /* auto-region behavior */
-
-    # region_driver attribute pattern
-    echo "sysram" > region0/region_driver
-    echo region0 > driver/region/probe   /* uses sysram region driver */
-
-https://lore.kernel.org/linux-cxl/20260113202138.3021093-1-gourry@gourry.net/
-
-Ira pointed out that this design makes the "implicit" design of the
-driver worse.  The user doesn't actually know what driver is being used
-under the hood - it just knows something is being used.
-
-This at least makes it explicit which driver is being used - and splits
-the uses-case logic up into discrete drivers (dax users don't have to
-worry about sysram users breaking their stuff).
-
-If it makes more sense, you could swap the ordering of the names
-
-    echo region0 > region/bind
-    echo region0 > region_sysram/bind
-    echo region0 > region_daxdev/bind
-    echo region0 > region_dax_kmem/bind
-    echo region0 > region_pony/bind
-
---- 
-
-The  underlying issue is that region::probe() is trying to be a
-god-function for every possible use case, and hiding the use case
-behind an attribute vs a driver is not good.
-
-(also the default behavior for region::probe() in an otherwise
- unconfigured region is required for backwards compatibility)
-
-> What I think should be going on here (and correct me if I'm wrong) is:
-> 	1. a cxl_region device is added to the system
-> 	2. cxl_region::probe() is called on said device (one in cxl/core/region.c)
-> 	3. Said probe function figures out the device is a dax_region or whatever else and creates that type of region device
-> 	(i.e. cxl_region::probe() -> device_add(&cxl_sysram_device))
-> 	4. if the device's dax driver type is DAXDRV_DEVICE_TYPE it gets sent to the daxdev_region driver
-> 	5a. if the device's dax driver type is DAXDRV_KMEM_TYPE it gets sent to the sysram_region driver which holds it until
-> 	the online_type is set
-> 	5b. Once the online_type is set, the device is forwarded to the dax_kmem_region driver? Not sure on this part
-> 
-> What seems to be happening is that the cxl_region is added, all of these region drivers try
-> to bind to it since they all use the same device id (CXL_DEVICE_REGION) and the correct one is
-> figured out by magic? I'm somewhat confused at this point :/.
-> 
-
-For auto-regions:
-   region_probe() eats it and you get the default behavior.
-
-For non-auto regions:
-   create_x_region generates an un-configured region and fails to probe
-   until the user commits it and probes it.
-
-auto-regions are evil and should be discouraged.
-
-~Gregory
+Confirming that bisect points to this patch: 09e88dc22ea2 (serialize
+ffs_ep0_open() on ffs->mutex)
 
