@@ -1,98 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-75987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YFkmFqORfWmiSgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 06:22:43 +0100
+	id WPFHCraRfWmiSgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 06:23:02 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAD60C0BCB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 06:22:42 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7E58C0BD9
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 06:23:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E66733019B88
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 05:22:11 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C6EF13024109
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 05:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3672F3624;
-	Sat, 31 Jan 2026 05:22:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7494329E5A;
+	Sat, 31 Jan 2026 05:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1V2Pat9K"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aAK8OpyR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A822F1CFBA
-	for <linux-fsdevel@vger.kernel.org>; Sat, 31 Jan 2026 05:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F0B324B1C
+	for <linux-fsdevel@vger.kernel.org>; Sat, 31 Jan 2026 05:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.49
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769836931; cv=pass; b=HwQfgw05L9JowNmbCE5MO86luH04Rnor+tB1nie1ohAaYA6ji6ouPxuq7rqLrs4Ahqq0nuGCskKSxUxezwVD+ieDVIexPb93TBk6qKT7Tc3ZMuzUAmfguy6mJBYFaeTjM1ve6Z27wkENDzQz4RbpIZygQfX1Iv3SY41sfcnp08w=
+	t=1769836934; cv=pass; b=ij+1TKw6nxz1oQehIZ16NLJFWa4FHWgsReybrE0NyjtAvDfcHg5x/YQTAzgojzUmFlZ1sVs9WjqhOqPJaZFkf+X659JoOcAVM9tKMZsbn7ZHew0go/K7OqoUjjfOwbRj+KjUzPBPQ6lw653Wp2wcL4QcFy491AlLIkf5l4SH6rY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769836931; c=relaxed/simple;
-	bh=4aEk83ehjwKG8jWwggLEsodNUomAms6VWlLOicW8zOE=;
+	s=arc-20240116; t=1769836934; c=relaxed/simple;
+	bh=XoYGY3dVjMKj+fSor4glUM8Cil1fyHoalW7RRC74P4M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rnsQLmGQQdhS/5ClOLSErshlES7ApL31oi4DwEqLWWSppK8o8ivEOjrkN98xOo4GSiCiZ7qr10HmQDoJ6UJ46ah4vIPsmS9yS93bU8dQn2xs3p90RO5BQTTomXGNs51h8o+8GtJyzWVwIWeDgsaOrv5eY0omwHCPUOqS5Ew4W2A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1V2Pat9K; arc=pass smtp.client-ip=209.85.128.54
+	 To:Cc:Content-Type; b=B7js02oRxhKZD8g7IxZV50bADg4yw4BYPuL2bolmGmWEyiPFbPmbhHcmweFES4feg+5oowiUi0X/5we7hbATURAtSfiF/NgliYDsFasRXRkXynxQ9MKIvRjZB/0KWy9DMOovpvQgnNfs7bM3gYCsNU0RZ1Imh0mby7F8uRbDEKE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aAK8OpyR; arc=pass smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-47a95a96d42so20855e9.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jan 2026 21:22:08 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769836927; cv=none;
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4806b0963a9so23965e9.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jan 2026 21:22:11 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769836930; cv=none;
         d=google.com; s=arc-20240605;
-        b=P7LfjpMoLmZgC8OMA5J7bVs4WbcdqPaVtE0Ci3Z2F3Fehmf4y8dTPlweNO+vKsi20c
-         DC+VXgSF4Q93DxM6DK2lZJATWJdLXuWiQoDCqs+SqCixOC1/L1Pcn01zbNHYN7a4KCeG
-         AeNk/+TQiVT8Y+GZ/c5FUctWm0QUY430h9zL0F+Bls0xLtWyMEs27+WvZSwMtyftrG/F
-         XWXyp8iYC0pvfhebR7Lj5FpNl/UTZyo2Z5Sh1I3VgXqvqDrA8UXmJQ9F7UZlnNv4/XPY
-         vmtmE11dYyQ6fzrRkWpAZGfpm/hfp2Tn0Q2UIDNEnnMQTGM7/7HkPlwQC5usEt9HhWb+
-         Ap8g==
+        b=W68P8QIk/qgQxJ5lVs8jfwQgQwnxY5favNpc/v4d4QOwdWoRulRg2nb1JVmgVNT2WP
+         O0RUcbjXUp6mMny797uISfd/VWG6zBYUEr+stlKNdrHALpryO/QVOEezUk05wHl4mnN8
+         GL4lMLnqUK7HpTKgeyiOJjRxaoqPkY8y3NfCJMqdXJTLgPX0YqevT9stEaw7HWK/sw/W
+         6zuv3bYAtr5WjJSauMuxD3xGbxGhzjOy8p9o2ypw9oHiOeK03SSbYjEYUxTy26FYfJP1
+         F05awrusZVK5E6fNit72T+kioRkn4CW2ByyPRLDOjUanRc4BPXpK42JdpU4EeGPdUTLl
+         hYBA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=rVmcHOkfAgmMukrR8Ac5vQ5gZbrTc9ghNV4+NJ/SnHA=;
-        fh=6rdCGqGGnaJdY9OMacAASu0bBPY4PnyOc8s5zYIxeHU=;
-        b=h0zAlvQQxTzVD6knsgm7PvkeFmCbApJz3Sr1tZ6Vvf6n798LOVm5hsjcdnqLhwFnGO
-         kDWvPOsXJHiiW9dddwiy8nr2SZdOwfX9r9INRTR+KWgisO8YkzpnSQwaeWoM+i/qygYR
-         no9xYxrYtMU+Jm/6YRbKC3SdnrqhYYp83qMVO7Tp2KLhItalxD+LRcTmNw2fMqIAmRAB
-         FveobNdlvPiMoUNqx6HBvC3nMn8KBNf5iBDpuNQcBj28yJm7TaDeLtH8XBh7PCpUcXmB
-         Hip7100e5GRkSYWrbX618JPipg1hk8k92tXoV1KsGIypIQcz5G8ZiBGls0Mdx4+soQN+
-         JNpw==;
+        bh=aqbuj1RcfrAvy7V6cbhroU0aoAlPDCA0FikcXviwmoc=;
+        fh=sF7nsOZNxu9aX7mAPG8YfSZo4EZmJb19Nlr2ajXKDNs=;
+        b=ObPdWBOXYWP63GwkumQ4lj8MT1dV1OfM894EDxMyGGqXG5eahA4Atl9bqJGxaMVexN
+         zatbvRHI1jA/y9LU78n6o2yRDf53KcDOknFb3tYNGVLfB01+80t2qfVdnnUK2V+yyVG7
+         RnsLUV1N0qAxLxcxpCvaVvWETcyrLLYsSl1IMg0ApEsK7YA1lrBDmJ1btzLOH/eMQfKA
+         M/wmZ0xITKg921KaCi8vu7MnbFLmT6LO9JsDcVqnuznbWJcGg6GLrJE9cpbxi9+FeQ9m
+         ClJHYGFD0SDu2L/JFcBGm23MCaikZobC4I9FKCNmOeVj7j31ry8TFxau81TLKlFCyLGQ
+         iOIg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1769836927; x=1770441727; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1769836930; x=1770441730; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rVmcHOkfAgmMukrR8Ac5vQ5gZbrTc9ghNV4+NJ/SnHA=;
-        b=1V2Pat9Ku5mOk106K5F8eBbGxzNYch8HUijwzZZPl6lRVhzby5vxhWgKr+nPJ8TxIo
-         BJF/25UqlE14Lj0hW1VGHDDxozh9la6qWTjktoWG57M5nxRoH5/+zfto3XOVqbnI1F51
-         6LuNJtLC1VVn5Ry5n/NRdHskv18lWSLQ1swbTwYzZ70hVk1WmofgGf6IGTPtN18AbiEw
-         vsc/SusOmn0HW1KH7HIi5VCzc35db42ovoyqkNr7hw1jgnxrExO2Pf7vgKMZG1KT9hSr
-         AuoolAb5mzIiWnOx1bijHZ4rkQVhWjvxHmUuW2HUxz6GuSUACrHjLN4Aceq5IvmdnjEH
-         YFYQ==
+        bh=aqbuj1RcfrAvy7V6cbhroU0aoAlPDCA0FikcXviwmoc=;
+        b=aAK8OpyRRBytPjYaJh264k1eNqd+8ji3ioTskKG93jts3ElY1erD6PUyHa4B6grlcd
+         8ZYTwv5Xynv5sF9ZR3REmo31VMV/1xVu/dlPGk5hERsAh9Ij7rJ7RmQyBZs1ikykTmxF
+         2loFEuIMM7tE8QUsRzBSk87s4d36r0nEk/NjmdejXfDcjtPwWEKsQonCig4kxkYSEmj+
+         szyCDD1J4jGV7FSJgGPrvlj6CA0yPHoZ6bpKFtYRJXpDtlI/Z6Pz23GCYJzcEJfpJ8gU
+         WY4tfbfqrPhGK8HWa5EAonxPdxa6Cy6adc84tQy86xJEIM7nxm1j/p8WC0T/yIWi+VbK
+         gqWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769836927; x=1770441727;
+        d=1e100.net; s=20230601; t=1769836930; x=1770441730;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=rVmcHOkfAgmMukrR8Ac5vQ5gZbrTc9ghNV4+NJ/SnHA=;
-        b=ePut1nBLNVvuMS8F3Hg309y1NjZW0twhzqh62FQWnbbcC9Q+vXHfr0rfRJpT5h7In4
-         ckI9XzMyetp+EEEu0ZtOVazGP+n2dlGKRjZbv/7sxU/sbkJkKXcAEhwEoj0iX9bh7BJ+
-         cRzbko9rzx0naxCtaEm1yXTFwx2UTNr+ewpjBGo+qalY+9dHKPZW6ASQoGLB0JiShdMM
-         g6emQEVU5zq/+mlOFOMia+yFacU2gjcl6E4jCn44J/5V7N3e8H7hbGzMjrDFnkvOsMq/
-         xht1Cabck1OqH3tz0n0vpTtSx6KEO3Z1wCjhlOHpQATzkhr2e6dRs78KcgxpS2GX+ByY
-         yiPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWlVHCsgPqkEbB2FvpPcsJ+oMD86mAdKtW0HpTPdvx2cCc6ndsz82DDqpONEB3wzjALKGnGmzGkTNSSp+eN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+AnetKsapnr1TaXywwokiOiIj3Q8flJX8JwihlyiEJoRepq7i
-	t/h4asnkPIY3oXdK+8HK+7gI8VOCXFsteRY1YUccuqFPeaJCiFhIZOmhRvP9T4zxvLan8o1yUqw
-	9HVPYK0qYLgnFUSWVeyppZK9m72esavMAoN8V/Cna
-X-Gm-Gg: AZuq6aLoH+bCJgtnQnuUxVgbyyuTP/gy26atlaBE4Xdhc3xWSbpePmcRKy76d/igseQ
-	8sWUSb2/haU7SHYwTAb8DJ2r9/YOq0MmDQTid3mfkhkYjVFX3yHYGnWlY4NTllkUi4ylQdSFgJX
-	kKQwCtWS/cNZVfHSeaaXzzVxWxNn+7LNzJ54YCFawId93buKfaIR2wymBiSoQaSfQzwQOuEEMMQ
-	/114cCfh9Lpxl6R8//jsQkKZeMcmgEyGCeKnfFcGgjSn+vTBACLprktl3I4+qe7zy+eCyV/q//T
-	8pGGyOAAxVxQYlwzeSBjw9LhbtXJ
-X-Received: by 2002:a05:600c:8a09:20b0:477:95a8:3803 with SMTP id
- 5b1f17b1804b1-482ea466dd7mr175575e9.13.1769836926634; Fri, 30 Jan 2026
- 21:22:06 -0800 (PST)
+        bh=aqbuj1RcfrAvy7V6cbhroU0aoAlPDCA0FikcXviwmoc=;
+        b=LijXvsvhRIUyUuCKsJSOaJtu6QzIVjrVvaazMIAT9QqPS4TGfJIRtT43ng0h8hot1k
+         /yyMp1LyivEwyZwjWlEOGkzJASglOq41DplFU2wX4ie0nidVPG/U0ifh8pRDPg9ETZDQ
+         rBZPuyPtU/kcQ1hS7Z/I8a5txAX9W9cu+GjlVgFjYTEX2Kn4mKv5opNubf7eb90TjHD/
+         XPdraQqToyq2PuselKWsgG1NWBuI+WKhktj/tbMJd2/ZoMaQiBWdnkJRAbwHiHdavtDT
+         SjBqbTNHKKXWKKEqRDsJWj6KzaKqph862hQYv5oeQGf5DLpYMIkl0uSwZNsK3n2uaOwO
+         7rQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJFJXjcRvZvZvUp7UQID1K/WuoF+p4dHL6H8xG3JwAK+v89JTh9eE3DREzh4RIoDWaEQ0aqYB7GDBhDhT9@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPOyG+OQk5sqe5iFO+MbZo4/dJoqKfo23WssPHbA6L6F61gyPT
+	5ngP8FQiP2rTKvUX0BsHVqsYU99g/zLdr27RnuZpKFsxlJ0ODD09cL1yXivohnwEQaI1FCgPx5s
+	2ihEbnSyr1+L9QSS8XwZeQfXFTyTe1asyVpy1ScoC
+X-Gm-Gg: AZuq6aJfZGX6z+HYKTueEQS/r8Dl18zO9LVf8Ui6injO3NfOu7lMA/41LZGna+TQGca
+	aL9FDFyVTs2QsspYijlpMN7NbUPin1IPw/I0jHPJP8iR4GNdPcLqs8Amj8CRrPbPqSt0OEgjCRe
+	DhAAST+xjukeksy5QgZtRY7Fx1FP4TOAFikrTM4exAzXtN1LQEl1ciXNf8b3SNBPycW4qwW/AYD
+	FnmYN8dGyzCyFnumiJXSxlFgewFvJWZKxUKuTx5usWYymm7zdHTfdMJPS5jLeAjhj57orw31/Jr
+	pALY2WXYuMOm+CCXJdQt4gOpfQuq
+X-Received: by 2002:a05:600c:64ce:b0:477:772e:9b76 with SMTP id
+ 5b1f17b1804b1-482ea45ea83mr312635e9.7.1769836929183; Fri, 30 Jan 2026
+ 21:22:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -100,18 +100,18 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20251116013223.1557158-1-jiaqiyan@google.com> <20251116013223.1557158-2-jiaqiyan@google.com>
- <7aac28a9-e2d3-454d-bb6a-2110565f0907@oracle.com>
-In-Reply-To: <7aac28a9-e2d3-454d-bb6a-2110565f0907@oracle.com>
+ <8e1b84f9-e14f-4946-8097-12325516cdfa@oracle.com>
+In-Reply-To: <8e1b84f9-e14f-4946-8097-12325516cdfa@oracle.com>
 From: Jiaqi Yan <jiaqiyan@google.com>
-Date: Fri, 30 Jan 2026 21:21:54 -0800
-X-Gm-Features: AZwV_QhsBQPQ8so8VFi51hacsCT2syq1CWK-MSKp3zSPQMYxY43vjvpxfvitPNs
-Message-ID: <CACw3F51pThWzNWav-80LK-Rk=qFbe5SZCP7KVsmM8Sp0243BUA@mail.gmail.com>
+Date: Fri, 30 Jan 2026 21:21:57 -0800
+X-Gm-Features: AZwV_QjV7b28BUeDy66odxvU6FaINtY1e_-1X3YiYRTV9Y4bIzVUNPn9UO814ds
+Message-ID: <CACw3F519AtT-d8K3ur3S=5Z7entLZMpxmpZTgn=i_cfz15HUcA@mail.gmail.com>
 Subject: Re: [PATCH v2 1/3] mm: memfd/hugetlb: introduce memfd-based userspace
  MFR policy
-To: jane.chu@oracle.com
-Cc: nao.horiguchi@gmail.com, linmiaohe@huawei.com, william.roche@oracle.com, 
-	harry.yoo@oracle.com, tony.luck@intel.com, wangkefeng.wang@huawei.com, 
-	willy@infradead.org, akpm@linux-foundation.org, osalvador@suse.de, 
+To: William Roche <william.roche@oracle.com>
+Cc: nao.horiguchi@gmail.com, linmiaohe@huawei.com, harry.yoo@oracle.com, 
+	tony.luck@intel.com, wangkefeng.wang@huawei.com, willy@infradead.org, 
+	jane.chu@oracle.com, akpm@linux-foundation.org, osalvador@suse.de, 
 	rientjes@google.com, duenwen@google.com, jthoughton@google.com, 
 	jgg@nvidia.com, ankita@nvidia.com, peterx@redhat.com, 
 	sidhartha.kumar@oracle.com, ziy@nvidia.com, david@redhat.com, 
@@ -124,172 +124,65 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
 	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-75987-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-75988-lists,linux-fsdevel=lfdr.de];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	RCPT_COUNT_TWELVE(0.00)[24];
 	FREEMAIL_CC(0.00)[gmail.com,huawei.com,oracle.com,intel.com,infradead.org,linux-foundation.org,suse.de,google.com,nvidia.com,redhat.com,linux.intel.com,linux.dev,kvack.org,vger.kernel.org];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_NONE(0.00)[];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[jiaqiyan@google.com,linux-fsdevel@vger.kernel.org];
 	DKIM_TRACE(0.00)[google.com:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_TWELVE(0.00)[24];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid,fbatch.nr:url]
-X-Rspamd-Queue-Id: AAD60C0BCB
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid,oracle.com:email]
+X-Rspamd-Queue-Id: A7E58C0BD9
 X-Rspamd-Action: no action
 
-Hi Jane,
+Hi William,
 
 Thanks for your reviews, I should be able to address your comments in v3.
 
-On Tue, Dec 2, 2025 at 8:11=E2=80=AFPM <jane.chu@oracle.com> wrote:
+On Tue, Nov 25, 2025 at 2:04=E2=80=AFPM William Roche <william.roche@oracle=
+.com> wrote:
 >
-> Hi, Jiaqi,
+> Sorry, resending for the non-HTML version.
+>   --
 >
-> Thanks for the work, my comments inline.
+> Hello Jiaqi,
 >
-> On 11/15/2025 5:32 PM, Jiaqi Yan wrote:
-> > Sometimes immediately hard offlining a large chunk of contigous memory
-> > having uncorrected memory errors (UE) may not be the best option.
-> > Cloud providers usually serve capacity- and performance-critical guest
-> > memory with 1G HugeTLB hugepages, as this significantly reduces the
-> > overhead associated with managing page tables and TLB misses. However,
-> > for today's HugeTLB system, once a byte of memory in a hugepage is
-> > hardware corrupted, the kernel discards the whole hugepage, including
-> > the healthy portion. Customer workload running in the VM can hardly
-> > recover from such a great loss of memory.
-> >
-> > Therefore keeping or discarding a large chunk of contiguous memory
-> > owned by userspace (particularly to serve guest memory) due to
-> > recoverable UE may better be controlled by userspace process
-> > that owns the memory, e.g. VMM in Cloud environment.
-> >
-> > Introduce a memfd-based userspace memory failure (MFR) policy,
-> > MFD_MF_KEEP_UE_MAPPED. It is intended to be supported for other memfd,
-> > but the current implementation only covers HugeTLB.
-> >
-> > For any hugepage associated with the MFD_MF_KEEP_UE_MAPPED enabled memf=
-d,
-> > whenever it runs into a UE, MFR doesn't hard offline the HWPoison-ed
-> > huge folio. IOW the HWPoison-ed memory remains accessible via the memor=
-y
-> > mapping created with that memfd. MFR still sends SIGBUS to the process
-> > as required. MFR also still maintains HWPoison metadata for the hugepag=
-e
-> > having the UE.
-> >
-> > A HWPoison-ed hugepage will be immediately isolated and prevented from
-> > future allocation once userspace truncates it via the memfd, or the
-> > owning memfd is closed.
-> >
-> > By default MFD_MF_KEEP_UE_MAPPED is not set, and MFR hard offlines
-> > hugepages having UEs.
-> >
-> > Tested with selftest in the follow-up commit.
-> >
-> > Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
-> > Tested-by: William Roche <william.roche@oracle.com>
-> > ---
-> >   fs/hugetlbfs/inode.c       |  25 +++++++-
-> >   include/linux/hugetlb.h    |   7 +++
-> >   include/linux/pagemap.h    |  24 +++++++
-> >   include/uapi/linux/memfd.h |   6 ++
-> >   mm/hugetlb.c               |  20 +++++-
-> >   mm/memfd.c                 |  15 ++++-
-> >   mm/memory-failure.c        | 124 +++++++++++++++++++++++++++++++++---=
--
-> >   7 files changed, 202 insertions(+), 19 deletions(-)
-> >
-> > diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-> > index f42548ee9083c..f8a5aa091d51d 100644
-> > --- a/fs/hugetlbfs/inode.c
-> > +++ b/fs/hugetlbfs/inode.c
-> > @@ -532,6 +532,18 @@ static bool remove_inode_single_folio(struct hstat=
-e *h, struct inode *inode,
-> >       }
-> >
-> >       folio_unlock(folio);
-> > +
-> > +     /*
-> > +      * There may be pending HWPoison-ed folios when a memfd is being
-> > +      * removed or part of it is being truncated.
-> > +      *
-> > +      * HugeTLBFS' error_remove_folio keeps the HWPoison-ed folios in
-> > +      * page cache until mm wants to drop the folio at the end of the
-> > +      * of the filemap. At this point, if memory failure was delayed
-> > +      * by MFD_MF_KEEP_UE_MAPPED in the past, we can now deal with it.
-> > +      */
-> > +     filemap_offline_hwpoison_folio(mapping, folio);
-> > +
-> >       return ret;
-> >   }
+> Here is a summary of a few nits in this code:
 >
-> Looks okay.
+>   - Some functions declarations are problematic according to me
+>   - The parameter testing to activate the feature looks incorrect
+>   - The function signature change is probably not necessary
+>   - Maybe we should wait for an agreement on your other proposal:
+> [PATCH v1 0/2] Only free healthy pages in high-order HWPoison folio
 >
-> >
-> > @@ -563,13 +575,13 @@ static void remove_inode_hugepages(struct inode *=
-inode, loff_t lstart,
-> >       const pgoff_t end =3D lend >> PAGE_SHIFT;
-> >       struct folio_batch fbatch;
-> >       pgoff_t next, index;
-> > -     int i, freed =3D 0;
-> > +     int i, j, freed =3D 0;
-> >       bool truncate_op =3D (lend =3D=3D LLONG_MAX);
-> >
-> >       folio_batch_init(&fbatch);
-> >       next =3D lstart >> PAGE_SHIFT;
-> >       while (filemap_get_folios(mapping, &next, end - 1, &fbatch)) {
-> > -             for (i =3D 0; i < folio_batch_count(&fbatch); ++i) {
-> > +             for (i =3D 0, j =3D 0; i < folio_batch_count(&fbatch); ++=
-i) {
-> >                       struct folio *folio =3D fbatch.folios[i];
-> >                       u32 hash =3D 0;
-> >
-> > @@ -584,8 +596,17 @@ static void remove_inode_hugepages(struct inode *i=
-node, loff_t lstart,
-> >                                                       index, truncate_o=
-p))
-> >                               freed++;
-> >
-> > +                     /*
-> > +                      * Skip HWPoison-ed hugepages, which should no
-> > +                      * longer be hugetlb if successfully dissolved.
-> > +                      */
-> > +                     if (folio_test_hugetlb(folio))
-> > +                             fbatch.folios[j++] =3D folio;
-> > +
-> >                       mutex_unlock(&hugetlb_fault_mutex_table[hash]);
-> >               }
-> > +             fbatch.nr =3D j;
-> > +
-> >               folio_batch_release(&fbatch);
-> >               cond_resched();
-> >       }
->
-> Looks okay.
->
-> But this reminds me that for now remove_inode_single_folio() has no path
-> to return 'false' anyway, and if it does, remove_inode_hugepages() will
-> be broken since it has no logic to account for failed to be
-> removed folios.  Do you mind to make remove_inode_single_folio() a void
-> function in order to avoid the confusion?
-
-Aha, looks like so. Let me do it in a new commit for clarity.
-
+> The last item is not a nit, but as your above proposal may require to
+> keep all data of a
+> hugetlb folio to recycle it correctly (especially the list of poisoned
+> sub-pages), and
+> to avoid the race condition with returning poisoned pages to the
+> freelist right before
+> removing them; you may need to change some aspects of this current code.
 >
 >
+>
+>
+> On 11/16/25 02:32, Jiaqi Yan wrote:
+> > [...]
 > > diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
 > > index 8e63e46b8e1f0..b7733ef5ee917 100644
 > > --- a/include/linux/hugetlb.h
@@ -315,11 +208,55 @@ ce *mapping)
 > > +}
 > >   #endif
 >
-> It appears that hugetlb_should_keep_hwpoison_mapped() is only called
-> within mm/memory-failure.c.  How about moving it there ?
+> You are conditionally declaring this
+> hugetlb_should_keep_hwpoison_mapped() function and implementing
+> it into mm/hugetlb.c, but this file can be compiled in both cases
+> (CONFIG_MEMORY_FAILURE enabled or not)
+> So you either need to have a single consistent declaration with the
+> implementation and use something like that:
+>
+>   bool hugetlb_should_keep_hwpoison_mapped(struct folio *folio,
+>                                           struct address_space *mapping)
+>   {
+> +#ifdef CONFIG_MEMORY_FAILURE
+>          if (WARN_ON_ONCE(!folio_test_hugetlb(folio)))
+>                  return false;
+>
+> @@ -6087,6 +6088,9 @@ bool hugetlb_should_keep_hwpoison_mapped(struct
+> folio *folio,
+>                  return false;
+>
+>          return mapping_mf_keep_ue_mapped(mapping);
+> +#else
+> +       return false;
+> +#endif
+>   }
+>
+> Or keep your double declaration and hide the implementation when
+> CONFIG_MEMORY_FAILURE is enabled:
+>
+> +#ifdef CONFIG_MEMORY_FAILURE
+>   bool hugetlb_should_keep_hwpoison_mapped(struct folio *folio,
+>                                           struct address_space *mapping)
+>   {
+>          if (WARN_ON_ONCE(!folio_test_hugetlb(folio)))
+>                  return false;
+>
+>   @@ -6087,6 +6088,9 @@ bool hugetlb_should_keep_hwpoison_mapped(struct
+> folio *folio,
+>                  return false;
+>
+>          return mapping_mf_keep_ue_mapped(mapping);
+>   }
+> +#endif
+>
 
-Yep, will do in v3.
+Thanks for your suggestions! I think probably I can move the real
+hugetlb_should_keep_hwpoison_mapped() implementation to
+memory_failure.c, similar to how folio_clear_hugetlb_hwpoison() is
+implemented.
 
+>
 >
 > >
 > >   #ifdef CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION
@@ -343,8 +280,6 @@ on_reclaim(const struct addres
 lags);
 > >   }
 > >
-> Okay.
->
 > > +static inline bool mapping_mf_keep_ue_mapped(const struct address_spac=
 e *mapping)
 > > +{
@@ -379,91 +314,24 @@ memfd.
 > > +{
 > > +}
 > > +#endif
->
-> Okay.
->
 > >   loff_t mapping_seek_hole_data(struct address_space *, loff_t start, l=
 off_t end,
 > >               int whence);
 > >
-> > diff --git a/include/uapi/linux/memfd.h b/include/uapi/linux/memfd.h
-> > index 273a4e15dfcff..d9875da551b7f 100644
-> > --- a/include/uapi/linux/memfd.h
-> > +++ b/include/uapi/linux/memfd.h
-> > @@ -12,6 +12,12 @@
-> >   #define MFD_NOEXEC_SEAL             0x0008U
-> >   /* executable */
-> >   #define MFD_EXEC            0x0010U
-> > +/*
-> > + * Keep owned folios mapped when uncorrectable memory errors (UE) caus=
-es
-> > + * memory failure (MF) within the folio. Only at the end of the mappin=
-g
-> > + * will its HWPoison-ed folios be dealt with.
-> > + */
-> > +#define MFD_MF_KEEP_UE_MAPPED        0x0020U
-> >
-> >   /*
-> >    * Huge page size encoding when MFD_HUGETLB is specified, and a huge =
-page
-> > diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> > index 0455119716ec0..dd3bc0b75e059 100644
-> > --- a/mm/hugetlb.c
-> > +++ b/mm/hugetlb.c
-> > @@ -6415,6 +6415,18 @@ static bool hugetlb_pte_stable(struct hstate *h,=
- struct mm_struct *mm, unsigned
-> >       return same;
-> >   }
-> >
-> > +bool hugetlb_should_keep_hwpoison_mapped(struct folio *folio,
-> > +                                      struct address_space *mapping)
-> > +{
-> > +     if (WARN_ON_ONCE(!folio_test_hugetlb(folio)))
-> > +             return false;
-> > +
-> > +     if (!mapping)
-> > +             return false;
-> > +
-> > +     return mapping_mf_keep_ue_mapped(mapping);
-> > +}
-> > +
 >
-> Okay.
+> This filemap_offline_hwpoison_folio() declaration also is problematic in
+> the case without
+> CONFIG_MEMORY_FAILURE, as we implement a public function
+> filemap_offline_hwpoison_folio()
+> in all the files including this "pagemap.h" header.
 >
-> >   static vm_fault_t hugetlb_no_page(struct address_space *mapping,
-> >                       struct vm_fault *vmf)
-> >   {
-> > @@ -6537,9 +6549,11 @@ static vm_fault_t hugetlb_no_page(struct address=
-_space *mapping,
-> >                * So we need to block hugepage fault by PG_hwpoison bit =
-check.
-> >                */
-> >               if (unlikely(folio_test_hwpoison(folio))) {
-> > -                     ret =3D VM_FAULT_HWPOISON_LARGE |
-> > -                             VM_FAULT_SET_HINDEX(hstate_index(h));
-> > -                     goto backout_unlocked;
-> > +                     if (!mapping_mf_keep_ue_mapped(mapping)) {
-> > +                             ret =3D VM_FAULT_HWPOISON_LARGE |
-> > +                                   VM_FAULT_SET_HINDEX(hstate_index(h)=
-);
-> > +                             goto backout_unlocked;
-> > +                     }
-> >               }
-> >
->
-> Looks okay, but am curious at Miaohe and others' take.
->
-> To allow a known poisoned hugetlb page to be faulted in is for the sake
-> of capacity, so this, versus a SIGBUS from the MF handler indicating a
-> disruption and loss of both data and capacity.
-> No strong opinion here, just wondering if there is any merit to limit
-> the scope to the MF handler only.
+> This coud be solved using "static inline" in this second case.
 
-Are you suggesting to prevent hugetlb_no_page() (when a hugepage is
-not yet faulted) from faulting in a known HWPoison HugeTLB page?
+Yep, will do in v3.
 
 >
-> >               /* Check for page in userfault range. */
+>
+>
 > > diff --git a/mm/memfd.c b/mm/memfd.c
 > > index 1d109c1acf211..bfdde4cf90500 100644
 > > --- a/mm/memfd.c
@@ -508,12 +376,22 @@ ot
 > > +     if (flags & (MFD_HUGETLB | MFD_MF_KEEP_UE_MAPPED))
 > > +             mapping_set_mf_keep_ue_mapped(file->f_mapping);
 > > +
+>
+> The flags value that we need to have in order to set the "keep" value on
+> the address space
+> is MFD_MF_KEEP_UE_MAPPED alone, as we already verified that the value is
+> only given combined
+> to MFD_HUGETLB.
+> This is a nit identified by Harry Yoo during our internal conversations.
+> Thanks Harry !
+
+Yeah, this is redundant to sanitize_flags(). Will simplify in v3.
+
+>
+>
 > >       if (flags & MFD_NOEXEC_SEAL) {
 > >               struct inode *inode =3D file_inode(file);
 > >
->
-> Okay.
->
 > > diff --git a/mm/memory-failure.c b/mm/memory-failure.c
 > > index 3edebb0cda30b..c5e3e28872797 100644
 > > --- a/mm/memory-failure.c
@@ -530,9 +408,24 @@ p,
 > >                         struct vm_area_struct *vma, struct list_head *t=
 o_kill,
 > >                         unsigned long addr)
+>
+> Is there any reason to remove the "const" on the page structure in the
+> signature ?
+> It looks like you only do that for the new call to page_folio(p), but we
+> don't touch the page
+>
+>
 > >   {
 > >       struct to_kill *tk;
 > > +     struct folio *folio;
+>
+> You could use a "const" struct folio *folio too.
+
+Yes, will revert the changes to "const" all over the places.
+
+>
+>
+>
 > > +     struct address_space *mapping;
 > >
 > >       tk =3D kmalloc(sizeof(struct to_kill), GFP_ATOMIC);
@@ -547,6 +440,11 @@ r);
 > > -             tk->size_shift =3D folio_shift(page_folio(p));
 > > +     else {
 > > +             folio =3D page_folio(p);
+>
+> Now with both folio and p being "const", the code should work.
+>
+>
+>
 > > +             mapping =3D folio_mapping(folio);
 > > +             if (mapping && mapping_mf_keep_ue_mapped(mapping))
 > > +                     /*
@@ -570,6 +468,12 @@ const struct page *p,
 t page *p,
 > > +static void add_to_kill_anon_file(struct task_struct *tsk, struct page=
  *p,
+>
+> No need to change the signature here too (otherwise you would have
+> missed both functions
+> add_to_kill_fsdax() and add_to_kill_ksm().
+>
+>
 > >               struct vm_area_struct *vma, struct list_head *to_kill,
 > >               unsigned long addr)
 > >   {
@@ -580,6 +484,10 @@ uct *tsk, int force_early)
 > >   static void collect_procs_anon(const struct folio *folio,
 > > -             const struct page *page, struct list_head *to_kill,
 > > +             struct page *page, struct list_head *to_kill,
+>
+> No need to change
+>
+>
 > >               int force_early)
 > >   {
 > >       struct task_struct *tsk;
@@ -591,6 +499,9 @@ folio,
 > > -             const struct page *page, struct list_head *to_kill,
 > > +             struct page *page, struct list_head *to_kill,
 > >               int force_early)
+>
+> No need to change
+>
 > >   {
 > >       struct vm_area_struct *vma;
 > > @@ -655,7 +668,7 @@ static void collect_procs_fsdax(const struct page *=
@@ -617,9 +528,6 @@ truct page *p)
 > > +     if (hugetlb_should_keep_hwpoison_mapped(folio, mapping))
 > > +             return res;
 > > +
->
-> Okay.
->
 > >       if (has_extra_refcount(ps, p, extra_pins))
 > >               res =3D MF_FAILED;
 > >
@@ -659,9 +567,6 @@ folio, struct page *p,
 > > -     return unmap_success;
 > > +     return unmap_success || keep_mapped;
 > >   }
->
-> Okay.
->
 > >
 > >   static int identify_page_state(unsigned long pfn, struct page *p,
 > > @@ -1862,6 +1887,13 @@ static unsigned long __folio_free_raw_hwp(struct=
@@ -677,6 +582,10 @@ io,
 > > +     if (head =3D=3D NULL)
 > > +             return 0;
 > > +
+>
+> This may not be necessary depending on how we recycle hugetlb pages --
+> see below too.
+>
 > >       llist_for_each_entry_safe(p, next, head, node) {
 > >               if (move_flag)
 > >                       SetPageHWPoison(p->page);
@@ -721,9 +630,6 @@ o *folio, struct page *page)
 > > +
 > > +     return has_hwpoison ? -EHWPOISON : 0;
 > >   }
->
-> Okay.
->
 > >
 > >   static unsigned long folio_free_raw_hwp(struct folio *folio, bool mov=
 e_flag)
@@ -747,6 +653,13 @@ fn, int flags,
 > > +      */
 > > +     folio_put_refs(folio, 1);
 > > +     head =3D llist_del_all(raw_hwp_list_head(folio));
+>
+> According to me we should wait until your other patch set is approved to
+> decide if the folio raw_hwp_list
+> has to be removed from the folio or if is should be left there so that
+> the recycling of this huge page
+> works correctly...
+>
 > > +
 > > +     /*
 > > +      * Release refcounts held by try_memory_failure_hugetlb, one per
@@ -777,6 +690,20 @@ n", pfn);
 > > +             pr_info("%#lx: pending hard offline completed\n", pfn);
 > > +     }
 > > +}
+>
+> Let's revisit this above function when an agreement is reached on the
+> recycling hugetlb pages proposal.
+
+From what I can tell, free_has_hwpoisoned() is promising. So in v3 I
+will post much simplified filemap_offline_hwpoison_folio_hugetlb(),
+assuming dissolve_free_hugetlb_folio() recycles only the healthy
+pages.
+
+>
+>
+>
+>
+>
 > > +
 > > +void filemap_offline_hwpoison_folio(struct address_space *mapping,
 > > +                                 struct folio *folio)
@@ -797,8 +724,8 @@ tions
 > >    * with basic operations like hugepage allocation/free/demotion.
 >
 >
-> Looks good.
+> HTH
 >
-> thanks,
-> -jane
+> Best regards,
+> William.
 
