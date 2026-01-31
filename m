@@ -1,238 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-75971-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id gJUGBzFFfWkaRQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75971-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 00:56:33 +0100
+	id GIvkGJZJfWlZRQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 01:15:18 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4BFCBF77B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 00:56:32 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9009DBF8C4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 01:15:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 4587A3019C84
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jan 2026 23:56:09 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id E40F8300BC9C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 00:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB5538BDA7;
-	Fri, 30 Jan 2026 23:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5C82DB7AE;
+	Sat, 31 Jan 2026 00:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="AO+G3MI/"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VL7UTlDC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B790C38B999;
-	Fri, 30 Jan 2026 23:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E472D8DBB
+	for <linux-fsdevel@vger.kernel.org>; Sat, 31 Jan 2026 00:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769817360; cv=none; b=lwQ2Zp7dZdUcIY218nGkPjtXUbzS8BsNX2KRLPJa3pyrZc3XaXhcMKiK8CEYNBCnNtCgnR3+RGB08Yp7wYvGeUEFyWooABLR9m5wNjuAqkgl5TQdw8iD9IK3KchpmX2stt05Y0ksg4Jjqgr1G63uiKctJakY1BJUZEJlrYl5FwM=
+	t=1769818511; cv=none; b=FX+MYtCqk8qONkOqHWCtOskXzC/lhu2oGZM2eGfgCfoIo07XMLC/Ts5zJnEZZ6qCwZGcCQuDk7taNgjW5hA9ledRTZ3lgE7SOFLLOwTUYd5ZuLjSOWJwoD0DVQn4tjMCVWgQyWhR0EUvd/XjVSUxTa97EXY1xInMLWOgllsDS2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769817360; c=relaxed/simple;
-	bh=Mstrtl107/xwKexWntN6sYj5esBWVe7AT7Q+cHnsYRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MVrfO9mNvE3529L9QeDUN3gEi2j+0WgewnfvEHlK7CunK+ve6Z21N/AhW1BSyt+L7Wex3MulHEp2MZrQWnAjafixmx/UOrAKFY1VUOCx8N5nHqKg+6mUXKBv6IAkM+SWEIT0iZljHobCvPgtF67Vq0qJyzp+p2CuhKobckpUTnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=AO+G3MI/; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=WunDx0fb3GW0z9IYkcolqOlpoStL9vS1z9b/3h7/9sA=; b=AO+G3MI/5/op50vRQvZ2KSjky2
-	o2ePb5Zukk3sXqeoNldFFJbSdw+Qp7uPktsF7JIRKDMKPcu/acltZPsnYWSewa2lLpyc2Gx9MlnMF
-	O3a5gu9xLnoZ1RZqF9iA05zLoPaHp5rsq+K1gR3L76DF8WbF9zlg8f6xM6E2G1VQAn9TaPm+Tk5Y2
-	s5bwYJffBoYET1FOa8HR7vJwT9oiZweshSD1mXBXH7uapwklcxfNchd2/QTs+ZWS3FHEhaI0q2NAO
-	4iOY76PwJp8GPEtE84eZvCDEagFHnDbFvVFgCapOv8se+c1FU82xSEGXvHZNGQbgXWrdNVN6O9s2V
-	gVLXLJfQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1vlyMx-0000000ChF7-0kg1;
-	Fri, 30 Jan 2026 23:57:43 +0000
-Date: Fri, 30 Jan 2026 23:57:43 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Samuel Wu <wusamuel@google.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, linux-fsdevel@vger.kernel.org,
-	torvalds@linux-foundation.org, brauner@kernel.org, jack@suse.cz,
-	raven@themaw.net, miklos@szeredi.hu, neil@brown.name,
-	a.hindborg@kernel.org, linux-mm@kvack.org,
-	linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev,
-	kees@kernel.org, rostedt@goodmis.org, linux-usb@vger.kernel.org,
-	paul@paul-moore.com, casey@schaufler-ca.com,
-	linuxppc-dev@lists.ozlabs.org, john.johansen@canonical.com,
-	selinux@vger.kernel.org, borntraeger@linux.ibm.com,
-	bpf@vger.kernel.org, clm@meta.com,
-	android-kernel-team <android-kernel-team@google.com>
-Subject: Re: [PATCH v4 00/54] tree-in-dcache stuff
-Message-ID: <20260130235743.GW3183987@ZenIV>
-References: <CAG2KctrjSP+XyBiOB7hGA2DWtdpg3diRHpQLKGsVYxExuTZazA@mail.gmail.com>
- <2026012715-mantra-pope-9431@gregkh>
- <CAG2Kctoo=xiVdhRZnLaoePuu2cuQXMCdj2q6L-iTnb8K1RMHkw@mail.gmail.com>
- <20260128045954.GS3183987@ZenIV>
- <CAG2KctqWy-gnB4o6FAv3kv6+P2YwqeWMBu7bmHZ=Acq+4vVZ3g@mail.gmail.com>
- <20260129032335.GT3183987@ZenIV>
- <20260129225433.GU3183987@ZenIV>
- <CAG2KctoNjktJTQqBb7nGeazXe=ncpwjsc+Lm+JotcpaO3Sf9gw@mail.gmail.com>
- <20260130070424.GV3183987@ZenIV>
- <CAG2Kctoqja9R1bBzdEAV15_yt=sBGkcub6C2nGE6VHMJh13=FQ@mail.gmail.com>
+	s=arc-20240116; t=1769818511; c=relaxed/simple;
+	bh=w7+B8N3XRoFg3Of/Fw9iyPoy/mghU2Qrl0CPBbBgDGk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=foWAod1NT8HGDh4Egz744nj6efnca1uQ9Tk1nlO4DIq8PPPs2O7CSqMDfdM0prL88gzKGXoonQo3oRfqWkGL2CZ3EFrRE01hsjRNOVOUPofWlyguW37JZ4bULlxFPX/K6I0FFRWmvJsUMj3tQjMFrSS+U/SkZbBPc3SnMgIf6KU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VL7UTlDC; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6505d141d02so3818118a12.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jan 2026 16:15:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1769818505; x=1770423305; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qV4mmOV+uOXX/Y9XduJfQAli873FtpKVEKD92eDGYCM=;
+        b=VL7UTlDChcJa2PjZiznhPkBQ74jppyCs6t1eZZ+ZriJNhsFTdKenuCsI0e2iJuz+HY
+         ZpfC4O+qJz9WVU/HzqY4q4DpaadaAYI5nA6gHHgjOZkoz18Ox8tOXoeAd5M/TZxcKSZs
+         OupLGt/VcAOOflV/9RiYm+75G2NAxYO26YIRM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769818505; x=1770423305;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qV4mmOV+uOXX/Y9XduJfQAli873FtpKVEKD92eDGYCM=;
+        b=wZ/Jr9zV89wJshwsNTJKqjw38KIhs5952MirH+ypmR4koI5FEwTLFgEEkOdG6M2bT0
+         Rp/b3p7VGY0dcjohxEbaqjZ8FZljs4TBNmdcW7nT9lUMfAQ2EQgSgrzniK6CUu4kzibs
+         Te/D+TxC9qLfFf/1LPXD/oIO6NYIA4o+Qc7i00vbBQvZ/7DvoXe5k2sfKTCALOvxRWtl
+         G6Mw1IXxqvhNZq3Q6I02bTIfLYtawubLGS9GeQ6AqCHNaX3BQ/YI05A6TF+XpAXV9mCQ
+         8173B47NpXpOcS5AUJxUw7jt9DluiBMZE2mbholAuvtE7WL/bwj34PRuPen7Vo/xSQ/C
+         8/fw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQCJEduF2FRQY7X1s9UjMR0Rrj4mse62f0a08hZjNUt6cCX/y/muwwmo4DjPHNWOUtISFfjKbUzqvS4pyL@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbqinnUDiNlHC4G2BjijOlZA6FfllqvxbhuvOPAtdnIQoHf1oO
+	oWFoRVk4Wu0ROjo/dAuTR7K6S+pzkghG132JssOf4bSBIYBgtUf7slrW0hAEK2Q0cFis4RZb8Zy
+	/BPwSf0g=
+X-Gm-Gg: AZuq6aKM8EFjzOQaGOXZTAMRJeGwcbljkTrU0KpvS1NdTdULg9i9vRXS/ho0CFC+8Nb
+	8/DfYKDG7gjUbV+parWkIQAqRPbAu7+zsSDamL+MNvzUy6PTmNZBe5H7raginq35FswpgXIbXhQ
+	vuuhKhbYIL1EmnAP94+yT1SJpsrAV0RoFCjC7Nh/b5ZwHsnoafy/pj7Q8aia+PIvzimXXeiA160
+	xaohA/6AKFEa/s8aVupQu4+QcgoSxjtXuB0G90kaQkCrn+2us3U7+87jEqXabOjZ5vLKoNxgqKS
+	qA9DhQyWai4wc+ajB9BQVQfT/KIYI/7iODkfMEEbCcPQ+6K0etbkc7jUl233OuiNpPAC6nHwvzM
+	VZziWdLTvqEyNoirGf3kr8+KDSEBvBhJvfvcZ+nmOy8d9ygwXRwcjrrY3/X3e+D49yDVUnwMhUv
+	TVzxMmlplxdB2G8znu4u+2DfLJpMsQqWH9Dgnc8qZ7Fr52Sull+fga8UA+3E4l
+X-Received: by 2002:a05:6402:2552:b0:658:b4b4:5c91 with SMTP id 4fb4d7f45d1cf-658de548596mr2991125a12.10.1769818505431;
+        Fri, 30 Jan 2026 16:15:05 -0800 (PST)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-658b4256a92sm4771457a12.5.2026.01.30.16.15.04
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Jan 2026 16:15:04 -0800 (PST)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6582e8831aeso4323505a12.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jan 2026 16:15:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVQ3+9bDZuQcvB5goYyBYt46WsGc5VFniKWXTtYfUx20n0xfxMp2fBIhjcypHPrvPZrWp2QLxMSvxlBWopH@vger.kernel.org
+X-Received: by 2002:a05:6402:1d54:b0:64b:4f44:60ef with SMTP id
+ 4fb4d7f45d1cf-658de593957mr2779765a12.27.1769818504441; Fri, 30 Jan 2026
+ 16:15:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG2Kctoqja9R1bBzdEAV15_yt=sBGkcub6C2nGE6VHMJh13=FQ@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <CAG2KctrjSP+XyBiOB7hGA2DWtdpg3diRHpQLKGsVYxExuTZazA@mail.gmail.com>
+ <2026012715-mantra-pope-9431@gregkh> <CAG2Kctoo=xiVdhRZnLaoePuu2cuQXMCdj2q6L-iTnb8K1RMHkw@mail.gmail.com>
+ <20260128045954.GS3183987@ZenIV> <CAG2KctqWy-gnB4o6FAv3kv6+P2YwqeWMBu7bmHZ=Acq+4vVZ3g@mail.gmail.com>
+ <20260129032335.GT3183987@ZenIV> <20260129225433.GU3183987@ZenIV>
+ <CAG2KctoNjktJTQqBb7nGeazXe=ncpwjsc+Lm+JotcpaO3Sf9gw@mail.gmail.com>
+ <20260130070424.GV3183987@ZenIV> <CAG2Kctoqja9R1bBzdEAV15_yt=sBGkcub6C2nGE6VHMJh13=FQ@mail.gmail.com>
+ <20260130235743.GW3183987@ZenIV>
+In-Reply-To: <20260130235743.GW3183987@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 30 Jan 2026 16:14:48 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgk7MRBj4iwQLHocVCa94Jf0cMEz2HzUAS9+6rGtnp4JA@mail.gmail.com>
+X-Gm-Features: AZwV_QjK3epqif7-e_sBGUc-n0f418Z3nV80PkvQC8yX5DIdQ4ynfWKt9EE0KMI
+Message-ID: <CAHk-=wgk7MRBj4iwQLHocVCa94Jf0cMEz2HzUAS9+6rGtnp4JA@mail.gmail.com>
+Subject: Re: [PATCH v4 00/54] tree-in-dcache stuff
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Samuel Wu <wusamuel@google.com>, Greg KH <gregkh@linuxfoundation.org>, 
+	linux-fsdevel@vger.kernel.org, brauner@kernel.org, jack@suse.cz, 
+	raven@themaw.net, miklos@szeredi.hu, neil@brown.name, a.hindborg@kernel.org, 
+	linux-mm@kvack.org, linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev, 
+	kees@kernel.org, rostedt@goodmis.org, linux-usb@vger.kernel.org, 
+	paul@paul-moore.com, casey@schaufler-ca.com, linuxppc-dev@lists.ozlabs.org, 
+	john.johansen@canonical.com, selinux@vger.kernel.org, 
+	borntraeger@linux.ibm.com, bpf@vger.kernel.org, clm@meta.com, 
+	android-kernel-team <android-kernel-team@google.com>
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[zeniv.linux.org.uk,none];
-	R_DKIM_ALLOW(-0.20)[linux.org.uk:s=zeniv-20220401];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[linux-foundation.org:s=google];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-75972-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	FROM_HAS_DN(0.00)[];
+	DMARC_NA(0.00)[linux-foundation.org];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75971-lists,linux-fsdevel=lfdr.de];
+	DKIM_TRACE(0.00)[linux-foundation.org:+];
 	RCPT_COUNT_TWELVE(0.00)[25];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[viro@zeniv.linux.org.uk,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[linux.org.uk:+];
-	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FROM_NEQ_ENVFROM(0.00)[torvalds@linux-foundation.org,linux-fsdevel@vger.kernel.org];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.org.uk:email,linux.org.uk:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: C4BFCBF77B
+	RCVD_COUNT_FIVE(0.00)[6];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	NEURAL_HAM(-0.00)[-1.000];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linux-foundation.org:dkim,mail.gmail.com:mid,linux.org.uk:email,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 9009DBF8C4
 X-Rspamd-Action: no action
 
-On Fri, Jan 30, 2026 at 02:31:54PM -0800, Samuel Wu wrote:
-> On Thu, Jan 29, 2026 at 11:02 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > OK.  Could you take a clone of mainline repository and in there run
-> > ; git fetch git://git.kernel.org:/pub/scm/linux/kernel/git/viro/vfs.git for-wsamuel:for-wsamuel
-> > then
-> > ; git diff for-wsamuel e5bf5ee26663
-> > to verify that for-wsamuel is identical to tree you've seen breakage on
-> > ; git diff for-wsamuel-base 1544775687f0
-> > to verify that for-wsamuel-base is the tree where the breakage did not reproduce
-> > Then bisect from for-wsamuel-base to for-wsamuel.
-> >
-> > Basically, that's the offending commit split into steps; let's try to figure
-> > out what causes the breakage with better resolution...
-> 
-> Confirming that bisect points to this patch: 09e88dc22ea2 (serialize
-> ffs_ep0_open() on ffs->mutex)
+On Fri, 30 Jan 2026 at 15:55, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> So we have something that does O_NDELAY opens of ep0 *and* does not retry on
+> EAGAIN?
+>
+> How lovely...
 
-So we have something that does O_NDELAY opens of ep0 *and* does not retry on
-EAGAIN?
+Actually, I think that is pretty normal behavior.
 
-How lovely...  Could you slap
-	WARN_ON(ret == -EAGAIN);
-right before that
-	if (ret < 0)
-		return ret;
-in there and see which process is doing that?  Regression is a regression, 
-odd userland or not, but I would like to see what is that userland actually
-trying to do there.
+Generally, O_NDELAY and friends should *NOT* turn locks into trylocks
+- because user space has no sane way to deal with kernel lock issues,
+and user space simply shouldn't care.
 
-*grumble*
+So O_NDELAY should be about avoiding IO, not about avoiding perfectly
+normal locks.
 
-IMO at that point we have two problems - one is how to avoid a revert of the
-tail of tree-in-dcache series, another is how to deal with quite real
-preexisting bugs in functionfs.
+Of course, that horrendous driver locking is broken, since it holds
+the lock over IO, so that driver basically conflates IO and locking,
+and that's arguably the fundamental problem here.
 
-Another thing to try (not as a suggestion of a fix, just an attempt to figure
-out how badly would the things break): in current mainline replace that
-	ffs_mutex_lock(&ffs->mutex, file->f_flags & O_NONBLOCK)
-in ffs_ep0_open() with
-	ffs_mutex_lock(&ffs->mutex, false)
-and see how badly do the things regress for userland.  Again, I'm not saying
-that this is a fix - just trying to get some sense of what's the userland
-is doing.
+But I suspect that for this case, we should just pass in zero to
+ffs_mutex_lock() on open, and say that the O_NONBLOCK flag is purely
+about the subsequent IO, not about the open() itself.
 
-FWIW, it might make sense to try a lighter serialization in ffs_ep0_open() -
-taking it there is due to the following scenario (assuming 6.18 or earlier):
-ffs->state is FFS_DEACTIVATED.  ffs->opened is 0.  Two threads attempt to
-open ep0.  Here's what happens prior to these patches:
+That is, after all, how the driver used to work.
 
-static int ffs_ep0_open(struct inode *inode, struct file *file)
-{
-        struct ffs_data *ffs = inode->i_private;
- 
-        if (ffs->state == FFS_CLOSING)
-                return -EBUSY;
- 
-        file->private_data = ffs;
-        ffs_data_opened(ffs);
-
-with
-static void ffs_data_opened(struct ffs_data *ffs)
-{
-        refcount_inc(&ffs->ref);
-        if (atomic_add_return(1, &ffs->opened) == 1 &&
-                        ffs->state == FFS_DEACTIVATED) {
-                ffs->state = FFS_CLOSING;
-                ffs_data_reset(ffs);
-        }
-}
-
-IOW, the sequence is
-	if (state == FFS_CLOSING)
-		return -EBUSY;
-	n = atomic_add_return(1, &opened);
-	if (n == 1 && state == FFS_DEACTIVATED) {
-		state = FFS_CLOSING;
-		ffs_data_reset();
-
-See the race there?  If the second open() comes between the
-increment of ffs->opened and setting the state to FFS_CLOSING,
-it will *not* fail with EBUSY - it will proceed to return to
-userland, while the first sucker is crawling through the work
-in ffs_data_reset()/ffs_data_clear()/ffs_epfiles_destroy().
-
-What's more, there's nothing to stop that second opener from
-calling write() on the descriptor it got.  No exclusion there -
-        ffs->state = FFS_READ_DESCRIPTORS;
-        ffs->setup_state = FFS_NO_SETUP;
-        ffs->flags = 0;
-in ffs_data_reset() is *not* serialized against ffs_ep0_write().
-Get preempted right after setting ->state and that write()
-will go just fine, only to be surprised when the first thread
-regains CPU and continues modifying the contents of *ffs
-under whatever the second thread is doing.
-
-That code obviously relies upon that kind of shit being prevented
-by that -EBUSY logics in ep0 open() and that logics is obviously
-racy as it is.  Note that other callers of ffs_data_reset() have
-similar problem: ffs_func_set_alt(), for example has
-        if (ffs->state == FFS_DEACTIVATED) {
-                ffs->state = FFS_CLOSING;
-                INIT_WORK(&ffs->reset_work, ffs_reset_work);
-                schedule_work(&ffs->reset_work);
-                return -ENODEV;
-        }
-again, with no exclusion.  Lose CPU just after seeing FFS_DEACTIVATED,
-then have another thread open() the sucker and start going through
-ffs_data_reset(), only to have us regain CPU and schedule this for
-execution:
-static void ffs_reset_work(struct work_struct *work)
-{
-        struct ffs_data *ffs = container_of(work,
-                struct ffs_data, reset_work);
-        ffs_data_reset(ffs);
-}
-IOW, stray ffs_data_reset() coming to surprise the opener who'd
-just finished ffs_data_reset() during open(2) and proceeded to
-write to the damn thing, etc.
-
-That's obviously on the "how do we fix the preexisting bugs" side
-of things, though - regression needs to be dealt with ASAP anyway.
+                Linus
 
