@@ -1,161 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-75976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75977-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id ALlCHT5PfWm+RQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 01:39:26 +0100
+	id AB8UIsJPfWnERQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75977-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 01:41:38 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C943BFA94
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 01:39:26 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F0ABFACB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 01:41:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D9D683025D16
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 00:39:17 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id D6A9A300A266
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 00:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2DF3016E3;
-	Sat, 31 Jan 2026 00:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17BA3033FC;
+	Sat, 31 Jan 2026 00:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Top7DyDo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mMsEdPnp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F7C2D3EE5;
-	Sat, 31 Jan 2026 00:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D295A30148B;
+	Sat, 31 Jan 2026 00:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769819956; cv=none; b=QuWvO09Y56C9OcjuaIAggTCwolgFCHZNK6Ml9MdJZB+cqM5MDcRAsrMAh2IifrdYHmVLoq2KuCB9RkaAqjiVPbjqzk1UXwtdWH9AkMcFoDj4UlhkRZoz1tHLCsYTKmuKHtjCzgqi2LxW1Q9SpJyQSryi14Y2UMCITFz8Lw5JhN4=
+	t=1769820083; cv=none; b=IA3cLipRk+Fcu8KNcNl08eC5lfbFcdgby9yQyvSm/+PvfsPgVs+ThHG+dQ7UI8IVF5gmGPfZA8cjdEWNHxKahEDGOAug8C84DzY/UxYiAA3IzM0fYnJwLUPzGwWpSownH34WUvegtqTpWNi72X7TrcsfM1MZnIPgqwiy7PORD9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769819956; c=relaxed/simple;
-	bh=8cXBQNCdQxCaRXIFna2676wPV2abi47edMOp/wOXg2M=;
+	s=arc-20240116; t=1769820083; c=relaxed/simple;
+	bh=l9n3mLPGeUos34mQWVNVH+sXbJpO8kREK6u0HCyRDH8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p8Dme7qy28vMqKT8a+KyEiz90s5RHREu5sYS3zP6UjHaqyqdqMDmYskGruHI0hutyZGSUnXjaa8JJ9mnoO3wITxiAtKnoHfSckzhLsuXbVy7jPQhnmFbwmRJboaMOCq1KRNo0InFsjSu73b/v/iZaw+lORPfRR8En4l8nUO08QQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Top7DyDo; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1769819953; x=1801355953;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=8cXBQNCdQxCaRXIFna2676wPV2abi47edMOp/wOXg2M=;
-  b=Top7DyDol+tVGFcOEKfyZdEM+VygqSq0hpNxrKdcR1S1BNQJVUamsw0m
-   VuM+x/Hu37I6jJBsz2FkwTzBL+zoomV2/bcFUG+LKQvnwm17c4udlqTeQ
-   WlGv+WRpgRkDA62r+G6yVmnhMbHm884RT2kGUCi3jtwBD245MepJ2a+8k
-   q91okJQFceX/oj51EQDSZzGWzmXGC/ZySxws9yMkfYrO0mjAaoEokecxg
-   aeKu4uuJGGN/oxdZ/kU6VkdjvdbSsj6j6q+SjnzPDYVkf/+ALYLanUeCl
-   SYmBdp/ON5Dm2lfCAQnse2yqIbykYBGF1IOhqCqgmKqsH73kRknDNN3xY
-   w==;
-X-CSE-ConnectionGUID: Ina9h9mZT5ua+vw7PujZQQ==
-X-CSE-MsgGUID: lSCduzbcSzW+Siz1FhIs/A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11687"; a="82443497"
-X-IronPort-AV: E=Sophos;i="6.21,264,1763452800"; 
-   d="scan'208";a="82443497"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jan 2026 16:39:12 -0800
-X-CSE-ConnectionGUID: g3rJi/AKTPmZP30c67YFtw==
-X-CSE-MsgGUID: D2q0tBQuSz2sKtT48A7x0g==
-X-ExtLoop1: 1
-Received: from igk-lkp-server01.igk.intel.com (HELO afc5bfd7f602) ([10.211.93.152])
-  by fmviesa003.fm.intel.com with ESMTP; 30 Jan 2026 16:39:11 -0800
-Received: from kbuild by afc5bfd7f602 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vlz12-000000002bZ-3lTR;
-	Sat, 31 Jan 2026 00:39:08 +0000
-Date: Sat, 31 Jan 2026 01:38:15 +0100
-From: kernel test robot <lkp@intel.com>
-To: Thomas =?iso-8859-1?Q?B=F6hler?= <witcher@wiredspace.de>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=hMFDwndD8uTwhsIP825L2ifXAQVpF2gt8g4uLDVsQIFcJGgBUE5GRh8KZUUK7Yh9k5sxhmx9yCJygW8tfCLnffdZ2tubo+CxJLKR0gGsaykhGF8z4zND689wxqNrkQVSX/ImSgFoME+zjOuD1xleFtmU/nhmID+lzh8Bemc1xEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mMsEdPnp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98317C4CEF7;
+	Sat, 31 Jan 2026 00:41:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769820080;
+	bh=l9n3mLPGeUos34mQWVNVH+sXbJpO8kREK6u0HCyRDH8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mMsEdPnphkANsAifUMsiluDLCuBvGpxyU9AkKFfAhE5w7P+4XiRBIGwLGCcG7vifN
+	 0e5p5LSgUKdB09L0ZyZhZChMFIzkCf00rqD59kagFHbfCn7wkTc52LAGUyeLSJGWBA
+	 yb4Ai5GXz21SJx8SZUJMKZ3ZzoB3S9OlVTLS1R10L76gz/7wOfQToSe1gSAta7OOf5
+	 WLAe+9fQctgmRaFwIgr93AITzPyS48CtiZw/r9Lzc6c3ipNrkft3YxD7STpkxA6pim
+	 QtWzkdJU5Opa6KH72Xryi4R8MZHvoI52TB8z0UnAKk5ts5h73CFk1W1Vd+H6RFlE+K
+	 f6BUC/CZP/9cA==
+Date: Fri, 30 Jan 2026 16:41:19 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: John Groves <john@jagalactic.com>, John Groves <John@groves.net>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Bernd Schubert <bschubert@ddn.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	John Groves <jgroves@micron.com>,
+	John Groves <jgroves@fastmail.com>,
 	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-	Thomas =?iso-8859-1?Q?B=F6hler?= <witcher@wiredspace.de>
-Subject: Re: [PATCH] docs: filesystems: ensure proc pid substitutable is
- complete
-Message-ID: <202601310140.l1CiA2nu-lkp@intel.com>
-References: <20260130-ksm_stat-v1-1-a6aa0da78de6@wiredspace.de>
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	David Hildenbrand <david@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Stefan Hajnoczi <shajnocz@redhat.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	James Morse <james.morse@arm.com>, Fuad Tabba <tabba@google.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Shivank Garg <shivankg@amd.com>,
+	Ackerley Tng <ackerleytng@google.com>,
+	Gregory Price <gourry@gourry.net>,
+	Aravind Ramesh <arramesh@micron.com>,
+	Ajay Joshi <ajayjoshi@micron.com>,
+	"venkataravis@micron.com" <venkataravis@micron.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
+	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH V7 1/3] fuse_kernel.h: bring up to baseline 6.19
+Message-ID: <20260131004119.GA104658@frogsfrogsfrogs>
+References: <20260118223516.92753-1-john@jagalactic.com>
+ <0100019bd33f2761-af1fb233-73d0-4b99-a0c0-d239266aec91-000000@email.amazonses.com>
+ <0100019bd33fb644-94215a33-24d2-4474-b9eb-ddae39b29bd8-000000@email.amazonses.com>
+ <CAJnrk1Z9BuCLZv576Ro9iYUPRDpW=1euG0rQ2wC_19sBcR18pw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260130-ksm_stat-v1-1-a6aa0da78de6@wiredspace.de>
+In-Reply-To: <CAJnrk1Z9BuCLZv576Ro9iYUPRDpW=1euG0rQ2wC_19sBcR18pw@mail.gmail.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FROM_HAS_DN(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[intel.com:+];
-	TAGGED_FROM(0.00)[bounces-75976-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-75977-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[38];
+	FREEMAIL_CC(0.00)[jagalactic.com,groves.net,szeredi.hu,intel.com,ddn.com,micron.com,fastmail.com,lwn.net,infradead.org,suse.cz,zeniv.linux.org.uk,kernel.org,gmail.com,huawei.com,redhat.com,toxicpanda.com,arm.com,google.com,amd.com,gourry.net,vger.kernel.org,lists.linux.dev];
 	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[lkp@intel.com,linux-fsdevel@vger.kernel.org];
-	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	RCPT_COUNT_SEVEN(0.00)[8];
+	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	NEURAL_HAM(-0.00)[-1.000];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,intel.com:dkim,intel.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 0C943BFA94
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,jagalactic.com:email]
+X-Rspamd-Queue-Id: A6F0ABFACB
 X-Rspamd-Action: no action
 
-Hi Thomas,
+On Fri, Jan 30, 2026 at 02:53:13PM -0800, Joanne Koong wrote:
+> On Sun, Jan 18, 2026 at 2:35â€¯PM John Groves <john@jagalactic.com> wrote:
+> >
+> > From: John Groves <john@groves.net>
+> >
+> > This is copied from include/uapi/linux/fuse.h in 6.19 with no changes.
+> >
+> > Signed-off-by: John Groves <john@groves.net>
+> 
+> This LGTM. We could probably just merge this in already.
+> 
+> Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
+> 
+> > ---
+> >  include/fuse_kernel.h | 10 +++++++++-
+> >  1 file changed, 9 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/include/fuse_kernel.h b/include/fuse_kernel.h
+> > index 94621f6..c13e1f9 100644
+> > --- a/include/fuse_kernel.h
+> > +++ b/include/fuse_kernel.h
+> > @@ -239,6 +239,7 @@
+> >   *  7.45
+> >   *  - add FUSE_COPY_FILE_RANGE_64
+> >   *  - add struct fuse_copy_file_range_out
+> > + *  - add FUSE_NOTIFY_PRUNE
+> >   */
+> >
+> >  #ifndef _LINUX_FUSE_H
+> > @@ -680,7 +681,7 @@ enum fuse_notify_code {
+> >         FUSE_NOTIFY_DELETE = 6,
+> >         FUSE_NOTIFY_RESEND = 7,
+> >         FUSE_NOTIFY_INC_EPOCH = 8,
+> > -       FUSE_NOTIFY_CODE_MAX,
+> > +       FUSE_NOTIFY_PRUNE = 9,
 
-kernel test robot noticed the following build warnings:
+This insertion ought to preserve FUSE_NOTIFY_CODE_MAX, right?
 
-[auto build test WARNING on 6b8edfcd661b569f077cc1ea1f7463ec38547779]
+--D
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-B-hler/docs-filesystems-ensure-proc-pid-substitutable-is-complete/20260130-232903
-base:   6b8edfcd661b569f077cc1ea1f7463ec38547779
-patch link:    https://lore.kernel.org/r/20260130-ksm_stat-v1-1-a6aa0da78de6%40wiredspace.de
-patch subject: [PATCH] docs: filesystems: ensure proc pid substitutable is complete
-reproduce: (https://download.01.org/0day-ci/archive/20260131/202601310140.l1CiA2nu-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202601310140.l1CiA2nu-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   ERROR: Cannot find file ./include/linux/jbd2.h
-   ERROR: Cannot find file ./include/linux/jbd2.h
-   WARNING: No kernel-doc for file ./include/linux/jbd2.h
-   ERROR: Cannot find file ./include/linux/netfs.h
-   WARNING: No kernel-doc for file ./include/linux/netfs.h
->> Documentation/filesystems/proc.rst:2293: WARNING: Title underline too short.
---
-   3.14 /proc/<pid>/ksm_stat - Information about the process's ksm status
-   --------------------------------------------------------------------- [docutils]
->> Documentation/filesystems/proc.rst:2293: WARNING: Title underline too short.
-
-
-vim +2293 Documentation/filesystems/proc.rst
-
-f1f1f2569901ec Ivan Babrou   2022-09-22  2291  
-d5424c31b9e465 Thomas Böhler 2026-01-30  2292  3.14 /proc/<pid>/ksm_stat - Information about the process's ksm status
-91fe0e4d044044 Andrew Morton 2025-01-10 @2293  ---------------------------------------------------------------------
-3ab76c767bc783 xu xin        2025-01-10  2294  When CONFIG_KSM is enabled, each process has this file which displays
-3ab76c767bc783 xu xin        2025-01-10  2295  the information of ksm merging status.
-3ab76c767bc783 xu xin        2025-01-10  2296  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> >  };
+> >
+> >  /* The read buffer is required to be at least 8k, but may be much larger */
+> > @@ -1119,6 +1120,12 @@ struct fuse_notify_retrieve_in {
+> >         uint64_t        dummy4;
+> >  };
+> >
+> > +struct fuse_notify_prune_out {
+> > +       uint32_t        count;
+> > +       uint32_t        padding;
+> > +       uint64_t        spare;
+> > +};
+> > +
+> >  struct fuse_backing_map {
+> >         int32_t         fd;
+> >         uint32_t        flags;
+> > @@ -1131,6 +1138,7 @@ struct fuse_backing_map {
+> >  #define FUSE_DEV_IOC_BACKING_OPEN      _IOW(FUSE_DEV_IOC_MAGIC, 1, \
+> >                                              struct fuse_backing_map)
+> >  #define FUSE_DEV_IOC_BACKING_CLOSE     _IOW(FUSE_DEV_IOC_MAGIC, 2, uint32_t)
+> > +#define FUSE_DEV_IOC_SYNC_INIT         _IO(FUSE_DEV_IOC_MAGIC, 3)
+> >
+> >  struct fuse_lseek_in {
+> >         uint64_t        fh;
+> > --
+> > 2.52.0
+> >
 
