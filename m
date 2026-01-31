@@ -1,255 +1,256 @@
-Return-Path: <linux-fsdevel+bounces-75994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-75995-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id qBHhNwUMfmlAVAIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-75994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 15:04:53 +0100
+	id CMNbBqUYfmmMVgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-75995-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 15:58:45 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EF4AC2282
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 15:04:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2AC4C29A3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 15:58:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 782113003837
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 14:04:52 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id DA70F3003826
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Jan 2026 14:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EBAD352C2A;
-	Sat, 31 Jan 2026 14:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70EA83590AF;
+	Sat, 31 Jan 2026 14:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Twf2s1Mc"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OvHzB4qP";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ik1dSwSL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CBB1C5D5E
-	for <linux-fsdevel@vger.kernel.org>; Sat, 31 Jan 2026 14:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769868287; cv=none; b=XvZmasE+HpF0jps0SYwXnJuQpZeqdIDoENd+W5eEWoMDSfgKcxb3rxSRQVd2dc+3QSpZzbw3U1sMcN4MPzh6Hh096k1KExy/WmQVQaiPUegmvlNVMIBoTMT0apvxy/iPlqSVVFosou3Tj7vcQHeeHp9ub3L9q3DyQSkhJuQ8vBM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769868287; c=relaxed/simple;
-	bh=mwBp7x4hVmaNNrPtxczG3bkd4QIaoO+QTTP3OUZ8WoE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RIBzGuoqtrtHfJTmyEJislbF7snc6k1MQuTcv/EXMZENMPWkTOcy1YjniIGgMzV+1yRdvkN+lAyYP52UFtCjDJXWe8xyTmx2SHvweapyynclvlkwLd9l8c/7te/TChd9+wA/x3X0Jb7hdbL3v4yLPWIEAsE+KgsbWcDmgMOGCuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Twf2s1Mc; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-82361bcbd8fso1809770b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 31 Jan 2026 06:04:46 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782393587C3
+	for <linux-fsdevel@vger.kernel.org>; Sat, 31 Jan 2026 14:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=205.220.180.131
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769871510; cv=pass; b=MkqFFfeA59WtHbOsLAp/saINjUFB74xJC/QM19DccZszs4yfYEALh6gB5IsCHxekJhrgdW8uBqS6vRcDgYXthZeCUOam1y+1jce3TWrlLcbSslPR1b3w3IlFqT0e1VP9PhmRIZY8MQb6FYhIBRcDrxMeRfCMc74nuzLNLm1c+ek=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769871510; c=relaxed/simple;
+	bh=XoPjc3FsSnhAH36Ksfm3BAJI9jxzPUWZyt5vdnTXd18=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uDEkN+2B6dzG9U3LMQL5eFqzgoaak6JMlG5SX4jzCMjX5AU6cYBY3vRW6+2btWeLQE9Zu7ypZKwBLn2s2qhz0JRH3sBlhyY4OLV8cSfDoE9R1G+cnpx8/XD1V897OhNPosM5S+l67IQBwH4lB+5vq4p4ZxGbnVnDloQSWRlqP2I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OvHzB4qP; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ik1dSwSL; arc=pass smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60V4U0lD447021
+	for <linux-fsdevel@vger.kernel.org>; Sat, 31 Jan 2026 14:58:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	UjEvOy2WGDJOvuBTZY4HtZUR5P6Q5ANbgXFoz/CfBwA=; b=OvHzB4qP/0jw0pjw
+	qHWpKU9MTVgAy76IZFOwvomNtT5ojMnLFjv9vAMABxUYDDdhCdM/mdh/1U5ckbR1
+	OHXys8Fv+a3PchmsefgHP4EyfqjCbDSoUrH0Z9vDG2TJsjY7dmvbMOIBYgB07cQC
+	ID8YMzju3Vh/8MpgAyNwHRivnN+v5eYDr5CIhLCfTj2mGS4XRYyxzAUFh9cINBG3
+	4lbqX8kwiPdpC2X1VC+X57Yc4hGnLxfwp4WoeziP1V7KW8OWpTYzBS2/84Kelkij
+	c7Hl5zdRcBv8uYhTITx455LsNqpLBdwF+tnJlsXg2fGzqhfqDBQ8OAyarNxVhK3m
+	+a43bA==
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com [209.85.128.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4c1arrry48-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-fsdevel@vger.kernel.org>; Sat, 31 Jan 2026 14:58:27 +0000 (GMT)
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-793b9a4787cso42209407b3.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 31 Jan 2026 06:58:27 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769871507; cv=none;
+        d=google.com; s=arc-20240605;
+        b=bt9fXCNT5sn1whAakFhSK7Ry3BoF95lYy2l/iBpgMq/9KQbRrmhu1dUpirKxJPbPYm
+         vQmdPt9AnLyG8a5koCXauMQ36+buSp4kcZRDYim+fY9VhVDtTJ++IHOrApZjBFZcbYEA
+         SBrE5S0yDYtYwUbYZQnVs4Dy2BlFFi/lgiDwRtVeIpjjUrPCzTBoXLR7trOBs7P45OD3
+         baUbbYMFAx/PlS+lYEtC1QGao2J0EQKlLDjbj7z1ZGVFnJgL+ebw6uP9LNcHUzlXr0ex
+         m3hvrnn9/c0AorMr6qhnr5YEzOzujEYZ7xJHGmBCJkkoDEsyd+Se8IQ/VEkEJTz7EhT8
+         qSPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=UjEvOy2WGDJOvuBTZY4HtZUR5P6Q5ANbgXFoz/CfBwA=;
+        fh=fu0GU7lLkKEXc5SQIKZcP/nNrCKcLdZHY2Oh4A0h5qQ=;
+        b=PJzG3wmhiu61u3xup7b6zQvhmi+sAfwakqGs2AVmJcwVs8g9qfqLDRhZ5HLvJF3jtC
+         avYoSF+2SiousIk30bFNgB7RSAEh40ZhiS2tuS6VLlRpDphumAfF3DtpayPkNSS4S0VZ
+         nlc/I5pecmEKhSCwjQ/c5+6JOikMDGXMRM8WYCTYDx2OTGXmX2QuY+g4DcnYqCTQweRb
+         8Y5xj5a3bMoyuEE0JdHh91o4WXdsx08sPdxWZYLqAUklHHRrUdmlJiMauLPRXztdVnIx
+         YCiwg55J9FCsJ5I2hrfWkwSI6MEQ8HWXXweyUM1ZRXqpsQ1srHneUezXrGlC44PXk9uD
+         xF+A==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769868286; x=1770473086; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=f+uFfXX98rrE6cCUxtqdP0wdsRpFU7nQkUtzyDsPgvw=;
-        b=Twf2s1McOXt5UdZ4j7bETMyAFu+cmIXxm4DOxxczhNN0rFKEdtIVlEUNjvbiz6RY++
-         6XCFBUBGWCtHrWCN6tzOrj22BEYHQO0yC+IaqXgFYtYE3mOQWo3UTgoDJcv8o2eW83Db
-         mW128FmK9O0JlUtfOHn9tish1fnfgb2f5SH0VClEsRKWwKdW8v5iJgUqxpy/fyG8K4Pn
-         E4F7wjpfuQHCb537IZLrIJs4kql+a+lyBxv3fBQbfx06yMxNc/CfnqKPJ8YxUV3SiCnK
-         0gz0VR9lEhg3EwmKQxyI+1NKoOd9r+M3xkltfNZSbKSpu6c9sG1O095ILkCsaC3CDXmX
-         QskQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769868286; x=1770473086;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=oss.qualcomm.com; s=google; t=1769871507; x=1770476307; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=f+uFfXX98rrE6cCUxtqdP0wdsRpFU7nQkUtzyDsPgvw=;
-        b=bBfk60By3a7K+Q8oFbY/3eukfnRiFbEQGzIDBPyNfcvXf96h5ciVYqhXvadVLvMLI9
-         RI0qLUCnCUcqt1hkvqrjA2fDgGKO5dX3EmGPiK1kiZ10CNrLtOAk61NAZOynqDYL7TIJ
-         lD7ZC76AqDp8Y3sp7IlhZQpBzTyOKpXSQWzvNvqpZLHarDOGwiR6Sxa4lSXGfkR6B81Q
-         0qAUyIBvfH3/N60Zxkww5zwCUwHYU3iTAcn5dQ6vNirjfCU7YcujwB2ioruCacZVcU0k
-         Z8//lcM+PfMJyz5DGE/WJsFSG00fZi/dbpjuBwpsFfWO5iRQ43xGm4oSvFGWj6lFxfJZ
-         eXzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5mI1R7MpfzlDbwkWR1s5W71Fkvf05B4evXnJ2ksV07KieYsjtrzOuBeEUR9wOyToCGk8/SZIF3oK50Zoa@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkIZgeej/vna+weN/UYNQnNx3603rzSudALWKMSNviogvfkiCu
-	1fDeEcnJRqNHni9HGTPz0tlaq4QUNRyrJQVtwfXS+0iUmma8YsHTjwsYz25WnpVG
-X-Gm-Gg: AZuq6aJ6SQhsUVu4TbkFct0/RVJ18eUnJMZ4oX5a9j+glzVCYXHKwBwXoxcIc7VkzNq
-	DAr4SvemHyR/N50iFY8QLTx3MQEdJiNChcakK9NpYanBXq3S881WWnnCmc1S3CbYye6nx+bP4ZQ
-	J0nrw2oO6jUw4G/UBBX71P4x24ohEhzyMvh+EBvY1rpfX+KTzGVZon3lEfmnM21krSMKv3aCaIX
-	JxlwwcUVvyEu7Oyv5G0Q29OWzJ/ohaadql3ZeAD/q0rONgoRCQ2D+Mde/mWkMuM5wLCmmYRVTYQ
-	UMPmremIdNrh3f60NjBNDLZNbVHHfi4/xGZG76XPzumfpTjYErBah/Vp61IhHjjICZUNO1xETz3
-	cpx7bwQ7eEBuqcpxxP/uUanl4kiDQPSkt8CzoWVx8+HuW6mCPNahbpSXyQNfLRcrcZwrgDLr1U+
-	vUenHEdQMRvP6oPZEghOvMaHRIAEKpfA+IUjtbp4E=
-X-Received: by 2002:a05:6a00:1392:b0:81f:4a36:1c7c with SMTP id d2e1a72fcca58-823ab67551cmr5939571b3a.23.1769868285687;
-        Sat, 31 Jan 2026 06:04:45 -0800 (PST)
-Received: from Shardul.tailddf38c.ts.net ([223.185.36.73])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82379b1f45dsm10021792b3a.5.2026.01.31.06.04.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Jan 2026 06:04:45 -0800 (PST)
-From: Shardul Bankar <shardulsb08@gmail.com>
-X-Google-Original-From: Shardul Bankar <shardul.b@mpiricsoftware.com>
-To: slava@dubeyko.com,
-	glaubitz@physik.fu-berlin.de,
-	frank.li@vivo.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: janak@mpiricsoftware.com,
-	shardulsb08@gmail.com,
-	Shardul Bankar <shardul.b@mpiricsoftware.com>,
-	syzbot+1c8ff72d0cd8a50dfeaa@syzkaller.appspotmail.com
-Subject: [PATCH v3] hfsplus: validate btree bitmap during mount and handle corruption gracefully
-Date: Sat, 31 Jan 2026 19:34:38 +0530
-Message-Id: <20260131140438.2296273-1-shardul.b@mpiricsoftware.com>
-X-Mailer: git-send-email 2.34.1
+        bh=UjEvOy2WGDJOvuBTZY4HtZUR5P6Q5ANbgXFoz/CfBwA=;
+        b=ik1dSwSLQ5gKPr8itJihjb1p2ii6Z3jsGGCTSkLMElBTfrxMKk2BzSGAZs6Y3u/2Rm
+         5Jc6JSviSstpkzoM62LilXKmZWvAB9DOuIyh5Gb+T0bn5eaFS/fm+ubSY0bwOoKcsOy0
+         uUtdXIcMt8Yss89aVvVX6L4TWX7ziVDAwkZMGPY0zF71BzqoENGzauAVtQ4TysgmoZlo
+         JTHS3Hq7Z/oREAC5DERRmVVlk1h39H69Q2dO8oZHQipUVCajubHib4a4IvOOCF6qUMnD
+         V0QpB+SrFFffsYYxdEviApG9Tsmxy5nAA4c6446S0S+5+7eyl2juS3VlFK3vrM2U/7eF
+         ejDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769871507; x=1770476307;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=UjEvOy2WGDJOvuBTZY4HtZUR5P6Q5ANbgXFoz/CfBwA=;
+        b=Rt1VyL8orWxnBqQheREvEZCOPlwnvpk0azAUupTBPCiBftVe3rQ274IxrkLW8AjAwC
+         uXCYA9RgErHVtm/9ShILX78xWYoY4uWgBIXbujLb+x4HbFn4rvENZzH2MLQZHlCye4XR
+         zn0UaweoFBHU928j51K2iA6TvbHAT4/jHkD6Caf/EyKOkTrzdtPsXuv7h5yGGJS1xbim
+         HfnhswrzMczKZFCurFjr72Jstv9dFUlvqARcqosRRqB0JGcWWwds9ii+8l/nb2rw8ImA
+         3OxaIkWQHy3IFsnql8yifMHTcGiG/CMAJt0BcZyrlYjThJz1RSlWRjeeuAxzLbtBNI5h
+         e9jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbWyMfOTsJgK9pcxMtPWu/4UXa1BNuBKqRsiS9X9InXon/Kw71THc3F9z3bUghXSSoTds3ONjb9+HAAs0G@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg4xAI9zvA8mL+WPLyC5tr5BL0pMzjU71eq6GAdoZ25Dzw3ANR
+	8ALQEdG+OVlB68Saa8AAQSm7WYZQPfrwbWkFNi2UEv+jE5Y3X+2UV7wit7uQFZnvhYcmPGzHg9T
+	ZcKFT8jg558zshBqg3d9H17ezaU0PaYa0ZuEjqmpCmLAcvgBDf7UYW2ww55pb186//EUSltHq4/
+	YUM/xDNdTn1pWZx4GOhlJX1AJs6gIHCc9yICqkL1DHEqE=
+X-Gm-Gg: AZuq6aKFZwmLVKdk6ii3m1Fl0F9XZEg2I53sZyA0ZSGW0LU7YoTS9Js1IXfnEI9m7lP
+	giPY80ONfYhko7R4K/kHnVwzoNh29kfFij55tOAQ3B/lbqcan4TWVL2oG9IyIi3bv9WB1eQpUHr
+	Jego8DhGXrzmzwKsSyNlrGFR+MdWFpMB1zZZI9zWmjns/ul22EeKtXnfBWCx5NTReIaQo=
+X-Received: by 2002:a05:690e:4107:b0:649:7c5c:88e3 with SMTP id 956f58d0204a3-649a8547db8mr4403464d50.95.1769871506946;
+        Sat, 31 Jan 2026 06:58:26 -0800 (PST)
+X-Received: by 2002:a05:690e:4107:b0:649:7c5c:88e3 with SMTP id
+ 956f58d0204a3-649a8547db8mr4403441d50.95.1769871506570; Sat, 31 Jan 2026
+ 06:58:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251118051604.3868588-1-viro@zeniv.linux.org.uk>
+ <CAG2KctrjSP+XyBiOB7hGA2DWtdpg3diRHpQLKGsVYxExuTZazA@mail.gmail.com>
+ <2026012715-mantra-pope-9431@gregkh> <CAG2Kctoo=xiVdhRZnLaoePuu2cuQXMCdj2q6L-iTnb8K1RMHkw@mail.gmail.com>
+ <20260128045954.GS3183987@ZenIV> <CAG2KctqWy-gnB4o6FAv3kv6+P2YwqeWMBu7bmHZ=Acq+4vVZ3g@mail.gmail.com>
+ <20260129032335.GT3183987@ZenIV> <20260129225433.GU3183987@ZenIV> <CAG2KctoNjktJTQqBb7nGeazXe=ncpwjsc+Lm+JotcpaO3Sf9gw@mail.gmail.com>
+In-Reply-To: <CAG2KctoNjktJTQqBb7nGeazXe=ncpwjsc+Lm+JotcpaO3Sf9gw@mail.gmail.com>
+From: Krishna Kurapati PSSNV <krishna.kurapati@oss.qualcomm.com>
+Date: Sat, 31 Jan 2026 20:28:15 +0530
+X-Gm-Features: AZwV_Qjt6-X-XbfNyo2_bleHjewtRG1qoA5gEXW9Hu9LjqRyKmxz-97xcVzcIio
+Message-ID: <CAEiyvppoiL2EiSmVvNV3DEkr7wwyC1Fbwhm14h7Rfus4Z8uP7g@mail.gmail.com>
+Subject: Re: [PATCH v4 00/54] tree-in-dcache stuff
+To: Samuel Wu <wusamuel@google.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Greg KH <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+        brauner@kernel.org, jack@suse.cz, raven@themaw.net, miklos@szeredi.hu,
+        neil@brown.name, a.hindborg@kernel.org, linux-mm@kvack.org,
+        linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev,
+        kees@kernel.org, rostedt@goodmis.org, linux-usb@vger.kernel.org,
+        paul@paul-moore.com, casey@schaufler-ca.com,
+        linuxppc-dev@lists.ozlabs.org, john.johansen@canonical.com,
+        selinux@vger.kernel.org, borntraeger@linux.ibm.com,
+        bpf@vger.kernel.org, clm@meta.com,
+        android-kernel-team <android-kernel-team@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-ORIG-GUID: SY4LatczBEqeQFJXf23l_s33rvt9IfhW
+X-Authority-Analysis: v=2.4 cv=FNYWBuos c=1 sm=1 tr=0 ts=697e1893 cx=c_pps
+ a=0mLRTIufkjop4KoA/9S1MA==:117 a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10
+ a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=1XWaLZrsAAAA:8 a=drOt6m5kAAAA:8 a=wEBb_YokH4NsbSDSc3AA:9 a=QEXdDO2ut3YA:10
+ a=WgItmB6HBUc_1uVUp3mg:22 a=RMMjzBEyIzXRtoq5n5K6:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTMxMDEyNSBTYWx0ZWRfXzSQFr0tsWQM8
+ Fmie13cMBoAFxOHdTOKv0OrecSAZIaqYolkV6p/sxSYMR/rFQm0S/AGwFvv+8ICHecvpD6KZQvV
+ ejwrJLJIbBOyOOarvhcU4QlSlGRF1WTYC/T5A9zsjbjzxx0Ggbj0IQ1sQsL3k/Yb0t+LIWTEAC9
+ h3tHmKZxCiCtrnRK0p/EcewjAyczJASZTlbvKHkfz3exDgh7n7ewImbNYOuTOl+CjVFW4ii149W
+ Wpg+govOLV4byWokzA4lzL4xe5UPZV0rsKFrx9bzvpgNWrfNNXvp3sNx7C5m8Wb4zaL3papR76B
+ MQzHMFZs/3cxAaaJhwOOLNlBRvT5igvAmXQNReB7J9AC1uZ4cRFtM4zsB75t+/r05nfm91zvua4
+ yO4/zonvLYOX3tK8XLLwzCLNd8dFliosqfUm+wuZgyTzxHSo1yK6RIm5CbH2ofJi6l7M8mk77Uo
+ 9MGgtEzDqFl6mcKGfdA==
+X-Proofpoint-GUID: SY4LatczBEqeQFJXf23l_s33rvt9IfhW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-01-31_02,2026-01-30_04,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 bulkscore=0 priorityscore=1501 clxscore=1011
+ spamscore=0 adultscore=0 lowpriorityscore=0 phishscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2601310125
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[qualcomm.com,reject];
+	R_DKIM_ALLOW(-0.20)[qualcomm.com:s=qcppdkim1,oss.qualcomm.com:s=google];
 	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-75995-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	TAGGED_FROM(0.00)[bounces-75994-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_FIVE(0.00)[5];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[mpiricsoftware.com,gmail.com,syzkaller.appspotmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[shardulsb08@gmail.com,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	NEURAL_HAM(-0.00)[-1.000];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel,1c8ff72d0cd8a50dfeaa];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[26];
+	DKIM_TRACE(0.00)[qualcomm.com:+,oss.qualcomm.com:+];
 	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[appspotmail.com:email,syzkaller.appspot.com:url]
-X-Rspamd-Queue-Id: 7EF4AC2282
+	MISSING_XM_UA(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[krishna.kurapati@oss.qualcomm.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	NEURAL_HAM(-0.00)[-1.000];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[oss.qualcomm.com:dkim,qualcomm.com:dkim,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: B2AC4C29A3
 X-Rspamd-Action: no action
 
-Add bitmap validation during HFS+ btree open to detect corruption where
-node 0 (header node) is not marked allocated.
+On Fri, Jan 30, 2026 at 6:46=E2=80=AFAM Samuel Wu <wusamuel@google.com> wro=
+te:
+>
+> On Thu, Jan 29, 2026 at 2:52=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk>=
+ wrote:
+>
 
-Syzkaller reported issues with corrupted HFS+ images where the btree
-allocation bitmap indicates that the header node is free. Node 0 must
-always be allocated as it contains the btree header record and the
-allocation bitmap itself. Violating this invariant can lead to kernel
-panics or undefined behavior when the filesystem attempts to allocate
-blocks or manipulate the btree.
+[...]
 
-The validation checks the node allocation bitmap in the btree header
-node (record #2) and verifies that bit 7 (MSB) of the first byte is
-set.
+> I'm exploring a few other paths, but not having USB access makes
+> traditional tools a bit difficult. One thing I'm rechecking and is
+> worth mentioning is the lockdep below: it's been present for quite
+> some time now, but I'm not sure if it would have some undesired
+> interaction with your patch.
+>
+> [ BUG: Invalid wait context ]
+> 6.18.0-rc5-mainline-maybe-dirty-4k
+> -----------------------------
+> irq/360-dwc3/352 is trying to lock:
+> ffffff800792deb8 (&psy->extensions_sem){.+.+}-{3:3}, at:
+> __power_supply_set_property+0x40/0x180
+> other info that might help us debug this:
+> context-{4:4}
+> 1 lock held by irq/360-dwc3/352:
+>  #0: ffffff8017bb98f0 (&gi->spinlock){....}-{2:2}, at:
+> configfs_composite_suspend+0x28/0x68
+> Call trace:
+>  show_stack+0x18/0x28 (C)
+>  __dump_stack+0x28/0x3c
+>  dump_stack_lvl+0xac/0xf0
+>  dump_stack+0x18/0x3c
+>  __lock_acquire+0x794/0x2bec
+>  lock_acquire+0x148/0x2cc
+>  down_read+0x3c/0x194
+>  __power_supply_set_property+0x40/0x180
+>  power_supply_set_property+0x14/0x20
+>  dwc3_gadget_vbus_draw+0x8c/0xcc
+>  usb_gadget_vbus_draw+0x48/0x130
+>  composite_suspend+0xcc/0xe4
+>  configfs_composite_suspend+0x44/0x68
+>  dwc3_thread_interrupt+0x8f8/0xc88
+>  irq_thread_fn+0x48/0xa8
+>  irq_thread+0x150/0x31c
+>  kthread+0x150/0x280
+>  ret_from_fork+0x10/0x20
+>
 
-Implementation details:
-- Perform validation inside hfs_btree_open() to allow identifying the
-  specific tree (Extents, Catalog, or Attributes) involved.
-- Use hfs_bnode_find() and hfs_brec_lenoff() to safely access the
-  bitmap record using existing infrastructure, ensuring correct handling
-  of multi-page nodes and endianness.
-- If corruption is detected, print a warning identifying the specific
-  btree and force the filesystem to mount read-only (SB_RDONLY).
+Hi Samuel,
 
-This prevents kernel panics from corrupted syzkaller-generated images
-while enabling data recovery by allowing the mount to proceed in
-read-only mode rather than failing completely.
+ Not sure if it helps, but Prashanth recently pushed a patch to
+address this vbus_draw kernel panic:
+ https://lore.kernel.org/all/20260129111403.3081730-1-prashanth.k@oss.qualc=
+omm.com/
 
-Reported-by: syzbot+1c8ff72d0cd8a50dfeaa@syzkaller.appspotmail.com
-Link: https://syzkaller.appspot.com/bug?extid=1c8ff72d0cd8a50dfeaa
-Link: https://lore.kernel.org/all/b78c1e380a17186b73bc8641b139eca56a8de964.camel@ibm.com/
-Signed-off-by: Shardul Bankar <shardul.b@mpiricsoftware.com>
----
-v3:
-  - Moved validation logic inline into hfs_btree_open() to allow
-    reporting the specific corrupted tree ID.
-  - Replaced custom offset calculations with existing hfs_bnode_find()
-    and hfs_brec_lenoff() infrastructure to handle node sizes and
-    page boundaries correctly.
-  - Removed temporary 'btree_bitmap_corrupted' superblock flag; setup
-    SB_RDONLY directly upon detection.
-  - Moved logging to hfs_btree_open() to include the specific tree ID in
-    the warning message
-  - Used explicit bitwise check (&) instead of test_bit() to ensure
-    portability. test_bit() bit-numbering is architecture-dependent
-    (e.g., bit 0 vs bit 7 can swap meanings on BE vs LE), whereas
-    masking 0x80 consistently targets the MSB required by the HFS+
-    on-disk format.
-v2:
-  - Fix compiler warning about comparing u16 bitmap_off with PAGE_SIZE which
-can exceed u16 maximum on some architectures
-  - Cast bitmap_off to unsigned int for the PAGE_SIZE comparison to avoid
-tautological constant-out-of-range comparison warning.
-  - Link: https://lore.kernel.org/oe-kbuild-all/202601251011.kJUhBF3P-lkp@intel.com/
+ Can you check if it fixes the above crash in vbus_draw.
 
- fs/hfsplus/btree.c         | 27 +++++++++++++++++++++++++++
- include/linux/hfs_common.h |  2 ++
- 2 files changed, 29 insertions(+)
-
-diff --git a/fs/hfsplus/btree.c b/fs/hfsplus/btree.c
-index 229f25dc7c49..ae81608ba3cf 100644
---- a/fs/hfsplus/btree.c
-+++ b/fs/hfsplus/btree.c
-@@ -135,9 +135,12 @@ struct hfs_btree *hfs_btree_open(struct super_block *sb, u32 id)
- 	struct hfs_btree *tree;
- 	struct hfs_btree_header_rec *head;
- 	struct address_space *mapping;
-+	struct hfs_bnode *node;
-+	u16 len, bitmap_off;
- 	struct inode *inode;
- 	struct page *page;
- 	unsigned int size;
-+	u8 bitmap_byte;
- 
- 	tree = kzalloc(sizeof(*tree), GFP_KERNEL);
- 	if (!tree)
-@@ -242,6 +245,30 @@ struct hfs_btree *hfs_btree_open(struct super_block *sb, u32 id)
- 
- 	kunmap_local(head);
- 	put_page(page);
-+
-+	/*
-+	 * Validate bitmap: node 0 (header node) must be marked allocated.
-+	 */
-+
-+	node = hfs_bnode_find(tree, 0);
-+	if (IS_ERR(node))
-+		goto free_inode;
-+
-+	len = hfs_brec_lenoff(node,
-+			HFSPLUS_BTREE_HDR_MAP_REC, &bitmap_off);
-+
-+	if (len != 0 && bitmap_off >= sizeof(struct hfs_bnode_desc)) {
-+		hfs_bnode_read(node, &bitmap_byte, bitmap_off, 1);
-+		if (!(bitmap_byte & HFSPLUS_BTREE_NODE0_BIT)) {
-+			pr_warn("(%s): Btree 0x%x bitmap corruption detected, forcing read-only.\n",
-+					sb->s_id, id);
-+			pr_warn("Run fsck.hfsplus to repair.\n");
-+			sb->s_flags |= SB_RDONLY;
-+		}
-+	}
-+
-+	hfs_bnode_put(node);
-+
- 	return tree;
- 
-  fail_page:
-diff --git a/include/linux/hfs_common.h b/include/linux/hfs_common.h
-index dadb5e0aa8a3..8d21d476cb57 100644
---- a/include/linux/hfs_common.h
-+++ b/include/linux/hfs_common.h
-@@ -510,7 +510,9 @@ struct hfs_btree_header_rec {
- #define HFSPLUS_NODE_MXSZ			32768
- #define HFSPLUS_ATTR_TREE_NODE_SIZE		8192
- #define HFSPLUS_BTREE_HDR_NODE_RECS_COUNT	3
-+#define HFSPLUS_BTREE_HDR_MAP_REC		2	/* Map (bitmap) record in header node */
- #define HFSPLUS_BTREE_HDR_USER_BYTES		128
-+#define HFSPLUS_BTREE_NODE0_BIT		0x80
- 
- /* btree key type */
- #define HFSPLUS_KEY_CASEFOLDING		0xCF	/* case-insensitive */
--- 
-2.34.1
-
+Regards,
+Krishna,
 
