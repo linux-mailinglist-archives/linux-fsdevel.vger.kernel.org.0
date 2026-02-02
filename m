@@ -1,126 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-76056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76057-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id ML2+CIDOgGkuBwMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 17:19:12 +0100
+	id IBe+D5bPgGlBBwMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76057-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 17:23:50 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F4F2CED56
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 17:19:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90AB6CEE7C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 17:23:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4F7F1305DB90
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 16:05:56 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E29B03002FBA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 16:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E879B37C11A;
-	Mon,  2 Feb 2026 16:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A09C37D130;
+	Mon,  2 Feb 2026 16:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dFy8BgK8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e7B5tOuw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7B2271464;
-	Mon,  2 Feb 2026 16:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770048352; cv=none; b=px4T9pHGtqKUAx58Sz7cBr+OnbaZBOzAosRJy0Yl0OkU3mmn914XSBUvyddg3Y0wnoiIIFGWt01/g9tFYXsafOKVDMvjFr61UXqmXVpiJkqPZKNN8p5urRCOyUGI37eXYYTyukUgL28tZv+skUZuUNSFjf+U0Ko+KtpQE5e2Ims=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770048352; c=relaxed/simple;
-	bh=ygzOtupooNTepvxoUWjaHEvjuLS7Q89q+udmj5bYQXg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VZQsI5o8M+R2beEQtrg5NtDHNmh3HZEaZq+B+DyVqbyV4b9DQDDgKKjlSGl1k0NK0hUd9rg0CAtzKWvxNQ8+Fju9acalyCXDvJRGuE1tFpUv0fcjOQIeszRphaPuM091bJbtTli3+OSWlmABo0O71xfYaqYn6HBqpLG+YatgMWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dFy8BgK8; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=bqVSryV38mdCL0eVX/lowdw9tG4bE60oeMG1mMMKxPY=; b=dFy8BgK8EJvpphdClPg47j63Yu
-	3qPuBNa8PASiRQhuREzw8fKIsnYQ6NDaRBfSbC+l1xEuXaM0Rnzzk0gcXeNn8sEX1kOUg6oKpmpEc
-	febuNWpBYJSkrkWZX4b/ZYIQH8cKzPGglWB+QWMkJ0jMeVtJZ78pD2mlOgYbD0MDEzFpmaLtc3KXr
-	cAykU2aQpRMbk6+XO5rwrPNKa0zj1K4gPQRGaUsyzx0sSZigteEbHUqFfbDsrkaTadJ6ePwCfMUjM
-	i2t9iomcJzsGjDLfxvK6PW/JpbpsgxxxvbuYRECzBbRlmS6G8BQ0fegX1zVbeVqIHvFERKl1krlX9
-	TWLKW8Jg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vmwQu-00000005GQr-1HCx;
-	Mon, 02 Feb 2026 16:05:48 +0000
-Date: Mon, 2 Feb 2026 08:05:48 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Piyush Patle <piyushpatle228@gmail.com>, brauner@kernel.org,
-	djwong@kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzbot+bd5ca596a01d01bfa083@syzkaller.appspotmail.com
-Subject: Re: [PATCH] iomap: handle iterator position advancing beyond current
- mapping
-Message-ID: <aYDLXHqHmkdTL-M0@infradead.org>
-References: <20260202130044.567989-1-piyushpatle228@gmail.com>
- <aYC5Utav-rTKigTw@infradead.org>
- <aYDES-sGwCEr80Z3@casper.infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C29D37D11C
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Feb 2026 16:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770048891; cv=pass; b=NpOfemCi2L+zX9maIXrLoYLVfys+vlIKDbKxCsbpOcuOWcJojYbvqqfC85afqstLBcQROyuJeya6/a4PUDHiuLa1SzQ1m84CqTmSvrC44NXbZjlqsr/6v1rX3pO48a7PuajN3k6HBfe5vNOxWA7MZclvwsxMlHkDs/RSLhZMigI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770048891; c=relaxed/simple;
+	bh=BHmy71N6ruX8WA/uOambMiTdpdd5muqzkwSC3gL2WVw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eKLZM4WxpVOL21MY2DC5QBV/MAH18YvWPwkO7QLcez93byaR8IlEfiEGzwW4ooT5yByWQjp8Y9+AbTu3xw15+2psXFcgodu7Hwhd051gaAj35Ws1eTbVVizMgtKKzU0LDz9sdMQd2BvuDOSBtc5/jnzsSe0Q3rEnhW1J9vlcYyc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e7B5tOuw; arc=pass smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-65832e566edso6265719a12.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Feb 2026 08:14:49 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770048888; cv=none;
+        d=google.com; s=arc-20240605;
+        b=NMFbRrCmyBHuOApZnCF4ma8m1IKUlixhVc1M1j0zcfw6WJvoJ+dRyba18M86aW9On+
+         s3YDxpvf/zGRutYgkAAb8f97PvgpQjdqx2iFclX6ax0wRAwScfWzws2ui49cXCiQ6RRZ
+         smzDpAcvS4rG+EI7b3CCT3jGmvS7e21pb0pyUR7RFt6DWlOdJkvYtWAtB2Oj0A/8XbCI
+         LqXNecBHuy/V7txDZEo8kCNK5CWSMvN6JWwwtG/rsYwh0ouzwrKVPwtCnT/s8/N/nt8R
+         G3bG3AwIcxg7JY70RqSmn5cB7KnQ0mZyv6cl9jEkbhFcFrT65Ex2VjHQE7V58O20XAfR
+         Fa+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=WL2YL2ov8cFEmqK9tEDSnpzHt+UOiyNEnQaOQnZCrtI=;
+        fh=zrdOx4MPITjd3L8aZ5WDT3mcTZG5XEP4uSg82H6dR8M=;
+        b=EEJbtGwFvAkD1BmMIkl8KIgbRoSpAPcN3ks1z7WcCnwywhL3wXcNEN0vmxp6Ekh8el
+         QQABX9qqitR5wKh+rqLxq9wCIMeb/TAadGXK1HvA9/JAnixA2f+ApPK4l+oJo+uBtB5z
+         UBF6ngvLGc7tZCemz2I4ldoa/nJoyEKyByYpLtv9TSJ3qBAh7p+OTgCuPY5CapDP5238
+         eMS4c96mgxoRBHWUZGiyHDnTyNPVh9ppKwHvJ1vEYGuhoRWEjTyhWEoyGcP40dvPR/UY
+         ZPeJNiiTvdCYSP7aRXajKPnm1hYPlV+j0T2Ih01/FAKIQtTEZ1k4JrUOm9PXbcI+otsw
+         sU/g==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770048888; x=1770653688; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WL2YL2ov8cFEmqK9tEDSnpzHt+UOiyNEnQaOQnZCrtI=;
+        b=e7B5tOuwktysoE3ZFOb8gT3W38aC/eNS7pWQD2ebfxxVr7ysTl0HtQNrcQWUZ70cbQ
+         xoGk2GDPzoCwsXGl/adnY+JQkTsMv167S7K4J8B8I9reJtlOI/35em6sfLRF9CO68POe
+         /2Sw9omHpNUCI30+gDNB04Ij522kqJk+3ys0uCni2Kcu1K0G519dxbprRVQSV9IVeLGc
+         F804QO4aQ0SLg1I0wIHfxBuQdKf1AbRuChzc7/G40kIRAol3NJHnID9LwvPnVwWk1cws
+         +xwaNXOfTEP+7jkNpMme/LBUn3DTdR5j9sSxUBCFKzMmDbWmVy9ooJJgeHT+X2Q028xR
+         0JPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770048888; x=1770653688;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=WL2YL2ov8cFEmqK9tEDSnpzHt+UOiyNEnQaOQnZCrtI=;
+        b=ZHmRwiivEaiM5+NqSYRgVLXlecX7NdcnuaMrFQFKTuiiogwUT3CHctvMyAlTO+bhpx
+         hdvuXPy8uiA4mvnWi7x+ELPCC4lIgg5ealV3n7GFoXMuo1j4M/8AT9/A+pq9OkNKYJYU
+         8/FTImHff3Q/0t1lbkwAUGvi4avO1EZwI5sTju09MjolAxWsxt8RNxRcRT5iPXP3z/fy
+         9fwXzQ+ZB8vYsElpfkSfnc0kdsrpd/PfVYI1Tj1h+hN2z/66ZJNuNu/LjZwVqzjZIqdL
+         KiRCAS3C4y2YVkz0vEGlO8wqJeqAD7uK96u8MOvM22e+030uPiI7C/F3oLcD8tAQdJQy
+         9BiA==
+X-Gm-Message-State: AOJu0YwfKVhQL8MKkWFq/TKNpCsxk2WjncumxXDAHTrY8/C9D5ZJkNyY
+	z+5mktefCqy3D2nOodxuSCcZ8FLljN0SPCGLrdPtwmOat0KOtr1GgFJ9WSQnDl5fSo6Wrp/a1i0
+	cnPR7reTQLbXoJhTxM0AE8yQQ8g6wv1E=
+X-Gm-Gg: AZuq6aI4qGi2zK/R3YnNi/s5znr42fA6nHjGIu912ogjUfK3r0qZUKyTOxQm/1n/gZ2
+	z386U28lZcQ12RoAOstsaP8VBye42LyZb3DORbuobjJQcq3Kyk/QhflcBuvYUi3xD3SXr4QqOhP
+	4Bi7QnafffLPJV/TamDjresTRaihjpZD3zNCWF/RND8t4fCb3tjYYAcDWbAxofysHsBN8eT3HRG
+	JHNpsgdUu9FixaJpyJY9+8FC1mOi7HEfuuIohQbpp2Jm97NaB4sTujSIC+uGueg/w7f2p0Pctlt
+	TW4qn6Vhw4bQPGHBP/PrVhfo1jXaww==
+X-Received: by 2002:a05:6402:27c8:b0:658:31f9:9ab8 with SMTP id
+ 4fb4d7f45d1cf-658de544ea5mr8162213a12.6.1770048888258; Mon, 02 Feb 2026
+ 08:14:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aYDES-sGwCEr80Z3@casper.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <CAJfpegtzYdy3fGGO5E1MU8n+u1j8WVc2eCoOQD_1qq0UV92wRw@mail.gmail.com>
+In-Reply-To: <CAJfpegtzYdy3fGGO5E1MU8n+u1j8WVc2eCoOQD_1qq0UV92wRw@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 2 Feb 2026 17:14:37 +0100
+X-Gm-Features: AZwV_QjFbt1O6hxWnVNxYL15GhS3dl7l6fX_tmy2Sc_b2ToZx99dbUSWE2wuU-M
+Message-ID: <CAOQ4uxjEdJHjbfCFM364V=tBrEyczYvzo-b-Xo0UPOCA2cnPGQ@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Where is fuse going? API cleanup,
+ restructuring and more
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>, 
+	"Darrick J . Wong" <djwong@kernel.org>, John Groves <John@groves.net>, Bernd Schubert <bernd@bsbernd.com>, 
+	Luis Henriques <luis@igalia.com>, Horst Birthelmer <horst@birthelmer.de>, 
+	lsf-pc <lsf-pc@lists.linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[infradead.org,gmail.com,kernel.org,vger.kernel.org,syzkaller.appspotmail.com];
-	TAGGED_FROM(0.00)[bounces-76056-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
+	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com,kernel.org,groves.net,bsbernd.com,igalia.com,birthelmer.de,lists.linux-foundation.org];
+	TAGGED_FROM(0.00)[bounces-76057-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
-	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[infradead.org:+];
+	RCVD_TLS_LAST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[gmail.com:+];
 	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	MISSING_XM_UA(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@infradead.org,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[amir73il@gmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel,bd5ca596a01d01bfa083];
+	NEURAL_HAM(-0.00)[-1.000];
 	RCPT_COUNT_SEVEN(0.00)[9];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:mid,infradead.org:dkim,syzkaller.appspot.com:url,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 6F4F2CED56
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Rspamd-Queue-Id: 90AB6CEE7C
 X-Rspamd-Action: no action
 
-On Mon, Feb 02, 2026 at 03:35:39PM +0000, Matthew Wilcox wrote:
-> On Mon, Feb 02, 2026 at 06:48:50AM -0800, Christoph Hellwig wrote:
-> > On Mon, Feb 02, 2026 at 06:30:44PM +0530, Piyush Patle wrote:
-> > > Closes: https://syzkaller.appspot.com/bug?id=bd5ca596a01d01bfa083
-> > 
-> > This link doesn't work.  And the commit log has zero details of what's
-> > happening either.
-> 
-> Looks like this one:
-> 
-> https://syzkaller.appspot.com/bug?extid=bd5ca596a01d01bfa083
-> 
-> but there's no reproducer.  Looks like it's through the blockdev rather
-> than a filesystem being involved.
+[Fixed lsf-pc address typo]
 
-Let's wait for a reproducer.  The fix looks incorrect for anything I
-could think of, so I'd rather fix a real bug.  Given that lack of
-reproducer I'm also not confident that it fixes anything.  The fact
-that the Fixes tag points to a merge commit doesn't really increase
-the trust I have in it either.
+On Mon, Feb 2, 2026 at 2:51=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> w=
+rote:
+>
+> I propose a session where various topics of interest could be
+> discussed including but not limited to the below list
+>
+> New features being proposed at various stages of readiness:
+>
+>  - fuse4fs: exporting the iomap interface to userspace
+>
+>  - famfs: export distributed memory
+>
+>  - zero copy for fuse-io-uring
+>
+>  - large folios
+>
+>  - file handles on the userspace API
+>
+>  - compound requests
+>
+>  - BPF scripts
+>
+> How do these fit into the existing codebase?
+>
+> Cleaner separation of layers:
+>
+>  - transport layer: /dev/fuse, io-uring, viriofs
+>
+>  - filesystem layer: local fs, distributed fs
+>
+> Introduce new version of cleaned up API?
+>
+>  - remove async INIT
+>
+>  - no fixed ROOT_ID
+>
+>  - consolidate caching rules
+>
+>  - who's responsible for updating which metadata?
+>
+>  - remove legacy and problematic flags
+>
+>  - get rid of splice on /dev/fuse for new API version?
+>
+> Unresolved issues:
+>
+>  - locked / writeback folios vs. reclaim / page migration
+>
+>  - strictlimiting vs. large folios
 
+All important topics which I am sure will be discussed on a FUSE BoF.
+
+I think that at least one question of interest to the wider fs audience is
+
+Can any of the above improvements be used to help phase out some
+of the old under maintained fs and reduce the burden on vfs maintainers?
+
+Thanks,
+Amir.
 
