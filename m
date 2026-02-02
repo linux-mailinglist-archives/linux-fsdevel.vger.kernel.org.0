@@ -1,183 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-76094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UDSFFGsZgWm0EAMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 22:38:51 +0100
+	id 2KamOeQagWm0EAMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 22:45:08 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0B60D1B0D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 22:38:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AFDBD1C08
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 22:45:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 14B0F304DE99
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 21:37:13 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 2A9B93055D41
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 21:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18A42EC0A6;
-	Mon,  2 Feb 2026 21:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDA4313E15;
+	Mon,  2 Feb 2026 21:43:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="Mzx9Hd/R"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqCRjkv8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E872EDD41
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Feb 2026 21:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B05B2BD022;
+	Mon,  2 Feb 2026 21:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770068231; cv=none; b=IVUyGoDT5p5qwqU6fQktvpzsm3wd0k+hlwXz/A/s11Nc8NTJcrBJoNSYSqzIaJ8hZyDfdXhfahLhU9OVbUe5qg6npYwBPrhf0/vG8sxuf1icKV2GdPGPkKaxAkGU3of3JKONJdyd8KqWy/yCvC/Tn/r2guVHtJL/dL67ZooAJgE=
+	t=1770068591; cv=none; b=EvCITRFaK/bRMvLOOx4LXYRJzyOf3TqMWnSsuyNKNBA57qY+jc5K8AXDzXxEg/FKETMRffo5KRRFeweDQPxooTOvwZiNwAPRMliDSuKpI1WgXa3Y44+05yEslMFWdmi/+F8BMpww8z2arrRIPWg6f5GdOv6XilNKswOAZxv+Dsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770068231; c=relaxed/simple;
-	bh=kWEypPVGwJEMybutYPQAIuFoGDfenpYyYtSso4g6JH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=INzTPW3BsD/iia7p2ZhNntHLfxVVC2d0quxm2kVWK9D+fuVI1UIwh5OaqM9jTQEua0WNu8smjllTy+PXJElJlo8IyHcqSTC7eepUuskHCZLdZj+6QQcFXkoZz4sJWuaJXwq+fc/oJxdYA3Jhto3IDJhq2GbSllLc3gJQg9WpJTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=Mzx9Hd/R; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-8c6af798a83so568885785a.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Feb 2026 13:37:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1770068228; x=1770673028; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8laAOVGcrjt3grREBpdlanB8iPI5gP36V5MB+/CpDTw=;
-        b=Mzx9Hd/Rzt+M+pJq9wOJRdRLoK7Svg7rFWFXH2nBvx1PV9vaNObCnNYbF5O2Kk4OLb
-         VjdBr7JKdmQzzE7uEqmt9JLCMpvCohdG2P1YFr2uBfPFwoKU3TPlMPjzgW62pD/yEXh8
-         wPAvQ2YR6/lVWr2aZXP7mV+0JIu88qFTCOcSoPvqmFz83INXqVooueaHMy00oCZlmgys
-         XC+QiXVYxKLHy3bY7XOqqu0tjlENqGPiyXu+s2SLdl5vuVqJTvO5OQcwCEGokRqsm6S9
-         B6n3U3wEoh96z1SiUNTjG044xBGkEWryo/9BUQepQmGkdG9rpXMy4P/C638jFPArwfiw
-         poKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770068228; x=1770673028;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8laAOVGcrjt3grREBpdlanB8iPI5gP36V5MB+/CpDTw=;
-        b=DN1SIQ4pgWlaU1b1AQg0Ofi1E3V+QeaViJvv6SwQdwBaQHVNHOdlMK6OzIpv1Ip8d5
-         hTMITTQ1piEUibkbVtw/I0J5CA844Dpl9ctoNNmCwYb418MBSImCGKj/DJ65uvdhGNZ3
-         MuEl3ICM+42ZsjcWvmzFn4gxfq45QlZrPAB5pat/uJwzExX7iSdw8NwIrtBuWLU9grrF
-         S1PlKPD0q1GQ8/HTaYM2xnitJ2pbqnZDux87zXMKE9aWjhw4+c7sh0y9SYtbh14uOZ9m
-         dwD7AbWMedmBtpBP+45NB6Upa4brTdSYDXadQDpgLht9cPE0X2eFz2fulkr1JkQZ4yDU
-         e9XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXiWRnGL3KNCB8n5a0NSgBNlCR6aWnKHxGNdklZGT4+D0hMMTfXaRkISogdeFvP1BMKEQghrXofkU12rf1P@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFo3hB7Dc1+NmTjHSDU2sG84aIcGUadEVFdgTP0H1aY40X5/wn
-	t7EWHdGDhzJyIHkZzO7yCl04JyeABnsCBa69KBA4XTJJgXrWx3744kMHgGoLDNo4ZNI=
-X-Gm-Gg: AZuq6aLhHbuGaMsji/SDDSgbpnb9FHPAESOGgJEQ10GCm0agLhGCJ71gGfdUpio2EJA
-	31HXPsC29hzhLpHZI4BOr4V0pbIuF0lu073h1UwMbLWcC8Ss4gBqZ9nQYYsNkNe8fB8ZldvuXkq
-	b9r35YGR2mr5I+tdVdqW0/74Meq0cbhUf7TytKUh3cuxxnDVW6pJCPxSpTnE7dY3fkNiJ6qa6RR
-	tpkiCpR+/gEjUPPT3mFvy4vZPotGVY11syU2LzFs2nlgmPRAlJtRQI346VYEcutAcORSnVJxA67
-	rNWVoVgsd0p1idh46MnMCRGXJMFoVvX4zt7oXM4hxmwlsBNLQyivTXCEhUoSjqFKfKm9hD+LHxt
-	esX+8bEvExtttC0sQYoDzPFSAIG9ywc/UgHAsXwdUXtL1yMr8100P0dsHR4AJL+17R7R2fYhI7p
-	iOD4wVYNs6XnaOlnP5uBz09+oC2MnUCNZg1piu2u7TN3nzzsZjaTb9C9WKxlu3FSqyG5GOPA==
-X-Received: by 2002:a05:620a:46a6:b0:8c6:e22b:25f7 with SMTP id af79cd13be357-8c9eb1fc204mr1562950785a.18.1770068228565;
-        Mon, 02 Feb 2026 13:37:08 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c711d61c6fsm1317392985a.47.2026.02.02.13.37.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Feb 2026 13:37:08 -0800 (PST)
-Date: Mon, 2 Feb 2026 16:37:05 -0500
-From: Gregory Price <gourry@gourry.net>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: linux-mm@kvack.org, linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, kernel-team@meta.com, dave@stgolabs.net,
-	dave.jiang@intel.com, alison.schofield@intel.com,
-	vishal.l.verma@intel.com, ira.weiny@intel.com,
-	dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
-	terry.bowman@amd.com, john@jagalactic.com,
-	David Hildenbrand <david@kernel.org>,
-	Oscar Salvador <osalvador@suse.de>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 2/9] mm/memory_hotplug: add __add_memory_driver_managed()
- with online_type arg
-Message-ID: <aYEZAUJMLWvaug50@gourry-fedora-PF4VCD3F>
-References: <20260129210442.3951412-1-gourry@gourry.net>
- <20260129210442.3951412-3-gourry@gourry.net>
- <20260202172524.00000c6d@huawei.com>
- <aYDmor_ruasxaZ-7@gourry-fedora-PF4VCD3F>
- <20260202184609.00004a02@huawei.com>
+	s=arc-20240116; t=1770068591; c=relaxed/simple;
+	bh=7YJAivDabmVCaffYZ+xp/KQQPYrFGABB229oqayuGzs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kcrANN3xgQg97k7rrC4N/Q7oL72qdba6tB5fb91VSl02VRxqarcRaE8ZDw5f+wtTjEcM4b+oL2d4QZ1XXdaqgz51ghwjR1pUVyR175endAN5ZFQBfVkZzhO3TL+eJI3rRT6H6Cu36RYcub8j1nGaOBysAL//zRBzr/9QcnP2vTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqCRjkv8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74A99C116C6;
+	Mon,  2 Feb 2026 21:43:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770068590;
+	bh=7YJAivDabmVCaffYZ+xp/KQQPYrFGABB229oqayuGzs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tqCRjkv8yvKMlMj/zFrGc4tJrGt/LlZHd1KpVxl9qf0gm0jtb5V0yKAAd4EwiLELQ
+	 7hckBhslU2rxHyGsvtliGEvOLVj3CQrV8Pk0EWu6YGBiD3VFOLPodvuTmCQhJh7l2+
+	 EMy0TaFF/DQeY+ZVfOxUb18vQ2OoZKO3aGLw+BwmWBKqgoprnJ5SBMAuzx0wUQPoFm
+	 tFJLTFloR0gTAwE1xG0gA6c5AiBly/TVLkum9PDHnaoai9p8BH29dNc0BMFtEuJoig
+	 SukvtshFrTMo3YEgoMjUV6/Le2Y2wHpeQYyfDIniuaj3CoTspm3z9qx/ObnqSlOPts
+	 NxZqDIdaNPFkg==
+From: Eric Biggers <ebiggers@kernel.org>
+To: fsverity@lists.linux.dev
+Cc: linux-fsdevel@vger.kernel.org,
+	Christoph Hellwig <hch@lst.de>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH] fsverity: add missing fsverity_free_info()
+Date: Mon,  2 Feb 2026 13:43:06 -0800
+Message-ID: <20260202214306.153492-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260202184609.00004a02@huawei.com>
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[gourry.net:s=google];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DMARC_NA(0.00)[gourry.net];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76094-lists,linux-fsdevel=lfdr.de];
-	RCPT_COUNT_TWELVE(0.00)[21];
+	TAGGED_FROM(0.00)[bounces-76095-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[gourry.net:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[gourry@gourry.net,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[ebiggers@kernel.org,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	NEURAL_HAM(-0.00)[-1.000];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: B0B60D1B0D
+X-Rspamd-Queue-Id: 4AFDBD1C08
 X-Rspamd-Action: no action
 
-On Mon, Feb 02, 2026 at 06:46:09PM +0000, Jonathan Cameron wrote:
-> > 
-> > I can add a cleanup-patch prior to use the enum, but i don't think this
-> > actually enables the compiler to do anything new at the moment?
-> 
-> Good point. More coffee needed (or sleep)
-> 
-> It lets sparse do some checking, but sadly only for wrong enum assignment.
-> (Gcc has -Wenum-conversion as well which I think is effectively the same)
-> I.e. you can't assign a value from a different enum without casting.
-> 
-> It can't do anything if people just pass in an out of range int.
-> 
+If fsverity_set_info() fails, we need to call fsverity_free_info().
 
-Which, after looking a bit... mm/memory_hotplug.c does this quite a bit
-internally - except it uses a uint8_t
-
-Example:
-
-static int try_offline_memory_block(struct memory_block *mem, void *arg)
-{
-        uint8_t online_type = MMOP_ONLINE_KERNEL;
-        uint8_t **online_types = arg;
-	... snip ...
-}
-
-int offline_and_remove_memory(u64 start, u64 size)
-{
-        uint8_t *online_types, *tmp;
-	... snip ...
-        online_types = kmalloc_array(mb_count, sizeof(*online_types),
-                                     GFP_KERNEL);
-}
-
-So that's fun.
-
-I'm not sure it's worth the churn here, but happy to do it if there are
-strong opinions.
-
+Fixes: ada3a1a48d5a ("fsverity: use a hashtable to find the fsverity_info")
+Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
+ fs/verity/enable.c           |  4 +++-
+ fs/verity/fsverity_private.h |  1 +
+ fs/verity/open.c             | 14 +++++++-------
+ 3 files changed, 11 insertions(+), 8 deletions(-)
 
-David do you have thoughts here?
+diff --git a/fs/verity/enable.c b/fs/verity/enable.c
+index 94c88c419054c..c9448074cce17 100644
+--- a/fs/verity/enable.c
++++ b/fs/verity/enable.c
+@@ -272,12 +272,14 @@ static int enable_verity(struct file *filp,
+ 	 * the fsverity_info always first checks the S_VERITY flag on the inode,
+ 	 * which will only be set at the very end of the ->end_enable_verity
+ 	 * method.
+ 	 */
+ 	err = fsverity_set_info(vi);
+-	if (err)
++	if (err) {
++		fsverity_free_info(vi);
+ 		goto rollback;
++	}
+ 
+ 	/*
+ 	 * Tell the filesystem to finish enabling verity on the file.
+ 	 * Serialized with ->begin_enable_verity() by the inode lock.  The file
+ 	 * system needs to set the S_VERITY flag on the inode at the very end of
+diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
+index 4d4a0a560562b..2887cb849ceca 100644
+--- a/fs/verity/fsverity_private.h
++++ b/fs/verity/fsverity_private.h
+@@ -128,10 +128,11 @@ int fsverity_init_merkle_tree_params(struct merkle_tree_params *params,
+ 
+ struct fsverity_info *fsverity_create_info(struct inode *inode,
+ 					   struct fsverity_descriptor *desc);
+ 
+ int fsverity_set_info(struct fsverity_info *vi);
++void fsverity_free_info(struct fsverity_info *vi);
+ void fsverity_remove_info(struct fsverity_info *vi);
+ 
+ int fsverity_get_descriptor(struct inode *inode,
+ 			    struct fsverity_descriptor **desc_ret);
+ 
+diff --git a/fs/verity/open.c b/fs/verity/open.c
+index 04b2e05a95d73..dfa0d1afe0feb 100644
+--- a/fs/verity/open.c
++++ b/fs/verity/open.c
+@@ -176,17 +176,10 @@ static void compute_file_digest(const struct fsverity_hash_alg *hash_alg,
+ 	desc->sig_size = 0;
+ 	fsverity_hash_buffer(hash_alg, desc, sizeof(*desc), file_digest);
+ 	desc->sig_size = sig_size;
+ }
+ 
+-static void fsverity_free_info(struct fsverity_info *vi)
+-{
+-	kfree(vi->tree_params.hashstate);
+-	kvfree(vi->hash_block_verified);
+-	kmem_cache_free(fsverity_info_cachep, vi);
+-}
+-
+ /*
+  * Create a new fsverity_info from the given fsverity_descriptor (with optional
+  * appended builtin signature), and check the signature if present.  The
+  * fsverity_descriptor must have already undergone basic validation.
+  */
+@@ -394,10 +387,17 @@ int __fsverity_file_open(struct inode *inode, struct file *filp)
+ 		return -EPERM;
+ 	return ensure_verity_info(inode);
+ }
+ EXPORT_SYMBOL_GPL(__fsverity_file_open);
+ 
++void fsverity_free_info(struct fsverity_info *vi)
++{
++	kfree(vi->tree_params.hashstate);
++	kvfree(vi->hash_block_verified);
++	kmem_cache_free(fsverity_info_cachep, vi);
++}
++
+ void fsverity_remove_info(struct fsverity_info *vi)
+ {
+ 	rhashtable_remove_fast(&fsverity_info_hash, &vi->rhash_head,
+ 			       fsverity_info_hash_params);
+ 	fsverity_free_info(vi);
 
-~Gregory
+base-commit: 8866b64d3d59f5c9ac5c1c1e3acc6ebeb730f1c2
+-- 
+2.52.0
+
 
