@@ -1,115 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-76028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76029-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KN1/OZJGgGkE5gIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 07:39:14 +0100
+	id 0EuCIHxVgGkd6gIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76029-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 08:42:52 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 617B1C8DED
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 07:39:14 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD301C9458
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 08:42:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id CC76E308036C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 06:31:55 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 14C1F30226A2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 07:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A85E30149E;
-	Mon,  2 Feb 2026 06:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1GahBN3U"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89EC129BDBC;
+	Mon,  2 Feb 2026 07:39:39 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from mail01.ukr.de (mail01.ukr.de [193.175.194.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967322FFF8D;
-	Mon,  2 Feb 2026 06:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5F721FF5F;
+	Mon,  2 Feb 2026 07:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.194.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770013751; cv=none; b=Ek483nTNeHRmKoje7hoCkIzxtVqt0qoiG3PR3Nx7rYPLGzc50eOR2EkTXtyaAkuiN2HlYHlAMddHF7W7WiSNJJD3Z3K6T+ea50LEu/aIiOjIIK+lZ3tf8A0EJ1Mc1JWvoWgSO3j+lDHs6gL3SyNf7w1lccIcAH82zOAxhBWyrp4=
+	t=1770017978; cv=none; b=puv3ATkwr2wZXnyLmfeDD0GrL6ofX0yI+EtGah9MYaiN1kT4eFl/V+/pn/9A0Mets2tgm3+OsHzBElBVVJ1olD2A21vsxhJzd8HVgAaLOBgTLWsI/xrRFogLUJ18RH5yydUhcuYJcOa6ZtOMq1zmdEaDiUwD5nTF8X6TD2jynzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770013751; c=relaxed/simple;
-	bh=USoIlGY2W29ToM4EFnIWwqqfgO2VY0cok7WrY2g5CbI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JAUBTyd+TezWEWr5uGrTvUb+fPi8KqnrIdKZ6WVaxYw//2biC6of0ocTuG8Wu/GJfqxb1WvJiXEr+sfngm9YaW5jrJS5wcDhIuYdOkJiAu90mxC2xv9KG5+aH0zpYE2TEZ+BEXV1CaJIuQ/hVVTQOr0XMCqnvEMmYTLMw30V8/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=1GahBN3U; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/oKjHTVG6CyAT8j6qbVMz//QsWPZewlOwFkp4rGlQEw=; b=1GahBN3U6+mmZ2qIYiduF81d7K
-	BbzNQaOvzG5FIn30dmH6YUt8Y6tGO4GWXdDgQu7K5672XX25tRGn1so1rMa8AsoZCwH9sahAcWJ9E
-	bJEUhjGue+By5C5bDbQG4uzH9LNmISuQc2tz1XtbiUEIGF0vO7X2EcMvkYR/nJuuAkjkA130rZOFN
-	dgSkA//FaHq+f8V4TxSoA14HCAhA2n5zE7F2rZZ8q0xesw7DDK1t7ce6BYdZjpApX4XijCqOrOo+c
-	GBmlXd42iMbm+FegR4CqplBf6gCnWu3547YbGIn4GRV5YUCWmZ1ekEMwdQ56go/juMLmVkLSDwe3/
-	H2fc04uQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vmnQr-00000004Vwn-36uL;
-	Mon, 02 Feb 2026 06:29:09 +0000
-Date: Sun, 1 Feb 2026 22:29:09 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	Cong Wang <cwang@multikernel.io>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Subject: Re: [PATCH] dma-buf: add SB_I_NOEXEC flag to dmabuf pseudo-filesystem
-Message-ID: <aYBENSqGtp0XUZBw@infradead.org>
-References: <20260201170953.19800-1-xiyou.wangcong@gmail.com>
+	s=arc-20240116; t=1770017978; c=relaxed/simple;
+	bh=+Pts+qy34nNJTSg0Q4nyvFfkxhkO9rQKpVGpGbpZ7V8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=RWDxY/ltA0iX9GtDvFvIfxKpgHOGyP5nGTURujfUGUMpWEKqoMwQGUkZbN37xtWc6o9kTttyJc6I7KJZuMIGHuZT2h9ys0Ugj1+XKWWl3w77rEsatkYTfNCAKIYe4omwJpZiVVT9mv7qXo/PjHeHgbo01W5M2dyat5hlNMzR18E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ukr.de; spf=pass smtp.mailfrom=ukr.de; arc=none smtp.client-ip=193.175.194.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ukr.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ukr.de
+X-CSE-ConnectionGUID: LkNsD08bQi+Y45I06WsNBw==
+X-CSE-MsgGUID: TJS8Az6HQESDNgsGIQt/QA==
+X-ThreatScanner-Verdict: Negative
+X-IronPort-AV: E=McAfee;i="6800,10657,11689"; a="2534877"
+X-IronPort-AV: E=Sophos;i="6.21,268,1763420400"; 
+   d="scan'208";a="2534877"
+Received: from unknown (HELO ukr.de) ([172.24.2.107])
+  by dmz-infcsg01.ukr.dmz with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2026 08:38:24 +0100
+Received: from ukr-excmb07.ukr.local (172.24.2.107) by ukr-excmb07.ukr.local
+ (172.24.2.107) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.35; Mon, 2 Feb
+ 2026 08:38:23 +0100
+Received: from ukr-excmb07.ukr.local ([fe80::4dee:3e0b:b33f:60ac]) by
+ ukr-excmb07.ukr.local ([fe80::4dee:3e0b:b33f:60ac%8]) with mapi id
+ 15.02.2562.035; Mon, 2 Feb 2026 08:38:23 +0100
+From: "Windl, Ulrich" <u.windl@ukr.de>
+To: "H. Peter Anvin" <hpa@zytor.com>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+	<jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>
+CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Lennart
+ Poettering" <lennart@poettering.net>, "systemd-devel@lists.freedesktop.org"
+	<systemd-devel@lists.freedesktop.org>
+Subject: RE: [EXT] [systemd-devel] [PATCH 0/3] Add the ability to mount
+ filesystems during initramfs expansion
+Thread-Topic: [EXT] [systemd-devel] [PATCH 0/3] Add the ability to mount
+ filesystems during initramfs expansion
+Thread-Index: AQHcjMt8Qr920kO9zkquhZDKntdOELVvE4ZA
+Date: Mon, 2 Feb 2026 07:38:23 +0000
+Message-ID: <51265a7170d7408a92192c5112c1e613@ukr.de>
+References: <20260124003939.426931-1-hpa@zytor.com>
+In-Reply-To: <20260124003939.426931-1-hpa@zytor.com>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-tm-snts-smtp: B9CBB8B8612B45BE3480AB84915063B64470FD77E2D8070E0A0CE1770EBF5B212000:8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260201170953.19800-1-xiyou.wangcong@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-0.36 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
+	MIME_BASE64_TEXT_BOGUS(1.00)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
+	MIME_BASE64_TEXT(0.10)[];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-76028-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[infradead.org:+];
-	MISSING_XM_UA(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76029-lists,linux-fsdevel=lfdr.de];
 	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@infradead.org,linux-fsdevel@vger.kernel.org];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	DMARC_NA(0.00)[ukr.de];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[u.windl@ukr.de,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	NEURAL_HAM(-0.00)[-1.000];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	R_DKIM_NA(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:mid,infradead.org:dkim,multikernel.io:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 617B1C8DED
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,lwn.net:email,lists.freedesktop.org:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,zytor.com:email,poettering.net:email,linux.org.uk:email]
+X-Rspamd-Queue-Id: DD301C9458
 X-Rspamd-Action: no action
 
-On Sun, Feb 01, 2026 at 09:09:52AM -0800, Cong Wang wrote:
-> From: Cong Wang <cwang@multikernel.io>
-> 
-> The dmabuf filesystem uses alloc_anon_inode() to create anonymous inodes
-> but does not set the SB_I_NOEXEC flag on its superblock. This triggers a
-> VFS warning in path_noexec() when userspace mmaps a dma-buf:
-
-As last time, I think it would be much preferable to set SB_I_NOEXEC and
-SB_I_NODEV by default in init_pseudo and just clear it if needed.
-
-I can't think of anything would need to clear them from a quick look.
-
+SGkhDQoNCkkgd29uZGVyOiB3b3VsZG4ndCBpdCBiZSBuaWNlciB0byB1c2UgYSBzdWJkaXJlY3Rv
+cnkgbGlrZSAiLnN5c3RlbWQtbWFnaWMiIHRvIHBsYWNlIHN1Y2ggbWFnaWMgZmlsZXMgdGhlcmUg
+dGhhdCBhcmUgaW50ZXJwcmV0ZWQgYnkgc3lzdGVtZD8gVGhlbiAiISEhTU9VTlQhISEiIHdvdWxk
+IGJlY29tZSBhIHNpbXBsZSAibW91bnQiIG9yIG1heWJlICJmc3RhYiIgb3IgIm1vdW50dHRhYiIs
+IC4uLg0KDQpLaW5kIHJlZ2FyZHMsDQpVbHJpY2ggV2luZGwNCg0KPiAtLS0tLU9yaWdpbmFsIE1l
+c3NhZ2UtLS0tLQ0KPiBGcm9tOiBzeXN0ZW1kLWRldmVsIDxzeXN0ZW1kLWRldmVsLWJvdW5jZXNA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnPiBPbg0KPiBCZWhhbGYgT2YgSC4gUGV0ZXIgQW52aW4NCj4g
+U2VudDogU2F0dXJkYXksIEphbnVhcnkgMjQsIDIwMjYgMTo0MCBBTQ0KPiBUbzogQWxleGFuZGVy
+IFZpcm8gPHZpcm9AemVuaXYubGludXgub3JnLnVrPjsgQ2hyaXN0aWFuIEJyYXVuZXINCj4gPGJy
+YXVuZXJAa2VybmVsLm9yZz47IEphbiBLYXJhIDxqYWNrQHN1c2UuY3o+OyBKb25hdGhhbiBDb3Ji
+ZXQNCj4gPGNvcmJldEBsd24ubmV0PjsgSC4gUGV0ZXIgQW52aW4gPGhwYUB6eXRvci5jb20+DQo+
+IENjOiBsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtZG9jQHZnZXIua2VybmVs
+Lm9yZzsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IExlbm5hcnQgUG9ldHRlcmlu
+ZyA8bGVubmFydEBwb2V0dGVyaW5nLm5ldD47DQo+IHN5c3RlbWQtZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnDQo+IFN1YmplY3Q6IFtFWFRdIFtzeXN0ZW1kLWRldmVsXSBbUEFUQ0ggMC8zXSBB
+ZGQgdGhlIGFiaWxpdHkgdG8gbW91bnQNCj4gZmlsZXN5c3RlbXMgZHVyaW5nIGluaXRyYW1mcyBl
+eHBhbnNpb24NCj4gDQo+IA0KPiBBdCBQbHVtYmVyJ3MgMjAyNCwgTGVubmFydCBQb2V0dGVyaW5n
+IG9mIHRoZSBzeXN0ZW1kIHByb2plY3QgcmVxdWVzdGVkDQo+IHRoZSBhYmlsaXR5IHRvIG92ZXJt
+b3VudCB0aGUgcm9vdGZzIHdpdGggYSBzZXBhcmF0ZSB0bXBmcyBiZWZvcmUNCj4gaW5pdHJhbWZz
+IGV4cGFuc2lvbiwgc28gdGhlIHBvcHVsYXRlZCB0bXBmcyBjYW4gYmUgdW5tb3VudGVkLg0KPiAN
+Cj4gVGhpcyBwYXRjaHNldCB0YWtlcyB0aGlzIHJlcXVlc3QgYW5kIGdvZXMgb25lIHN0ZXAgZnVy
+dGhlcjogaXQgYWxsb3dzDQo+IChtb3N0bHkpIGFyYml0cmFyeSBmaWxlc3lzdGVtcyBtb3VudHMg
+ZHVyaW5nIGluaXRyYW1mcyBwcm9jZXNzaW5nLg0KPiANCj4gVGhpcyBpcyBkb25lIGJ5IGhhdmlu
+ZyB0aGUgaW5pdHJhbWZzIGV4cGFuc2lvbiBjb2RlIGRldGVjdCB0aGUgc3BlY2lhbA0KPiBmaWxl
+bmFtZSAiISEhTU9VTlQhISEiIHdoaWNoIGlzIHRoZW4gcGFyc2VkIGludG8gYSBzaW1wbGlmaWVk
+DQo+IGZzdGFiLXR5cGUgbW91bnQgc3BlY2lmaWNhdGlvbiBhbmQgdGhlIGRpcmVjdG9yeSBpbiB3
+aGljaCB0aGUNCj4gISEhTU9VTlQhISEgZW50cnkgaXMgdXNlZCBhcyB0aGUgbW91bnQgcG9pbnQu
+DQo+IA0KPiBUaGlzIHNwZWNpZmljIG1ldGhvZCB3YXMgY2hvc2VuIGZvciB0aGUgZm9sbG93aW5n
+IHJlYXNvbnM6DQo+IA0KPiAxLiBUaGlzIGluZm9ybWF0aW9uIGlzIHNwZWNpZmljIHRvIHRoZSBl
+eHBlY3RhdGlvbnMgb2YgdGhlIGluaXRyYW1mczsNCj4gICAgdGhlcmVmb3JlIHVzaW5nIGtlcm5l
+bCBjb21tYW5kIGxpbmUgb3B0aW9ucyBpcyBub3QNCj4gICAgYXBwcm9wcmlhdGUuIFRoaXMgd2F5
+IHRoZSBpbmZvcm1hdGlvbiBpcyBmdWxseSBjb250YWluZWQgd2l0aGluIHRoZQ0KPiAgICBpbml0
+cmFtZnMgaXRzZWxmLg0KPiAyLiBUaGUgc2VxdWVuY2UgISEhIGlzIGFscmVhZHkgc3BlY2lhbCBp
+biBjcGlvLCBkdWUgdG8gdGhlICJUUkFJTEVSISEhIg0KPiAgICBlbnRyaWVzLg0KPiAzLiBUaGUg
+ZmlsZW5hbWUgIiEhIU1PVU5UISEhIiB3aWxsIHR5cGljYWxseSBiZSBzb3J0ZWQgZmlyc3QsIHdo
+aWNoDQo+ICAgIG1lYW5zIHVzaW5nIHN0YW5kYXJkIGZpbmQrY3BpbyB0b29scyB0byBjcmVhdGUg
+dGhlIGluaXRyYW1mcyBzdGlsbA0KPiAgICB3b3JrLg0KPiA0LiBTaW1pbGFybHksIHN0YW5kYXJk
+IGNwaW8gY2FuIHN0aWxsIGV4cGFuZCB0aGUgaW5pdHJhbWZzLg0KPiA1LiBJZiBydW4gb24gYSBs
+ZWdhY3kga2VybmVsLCB0aGUgISEhTU9VTlQhISEgZmlsZSBpcyBjcmVhdGVkLCB3aGljaA0KPiAg
+ICBpcyBlYXN5IHRvIGRldGVjdCBpbiB0aGUgaW5pdHJhbWZzIGNvZGUgd2hpY2ggY2FuIHRoZW4g
+YWN0aXZhdGUNCj4gICAgc29tZSBmYWxsYmFjayBjb2RlLg0KPiA2LiBJdCBhbGxvd3MgZm9yIG11
+bHRpcGxlIGZpbGVzeXN0ZW1zIHRvIGJlIG1vdW50ZWQsIHBvc3NpYmx5IG9mDQo+ICAgIGRpZmZl
+cmVudCB0eXBlcyBhbmQgaW4gZGlmZmVyZW50IGxvY2F0aW9ucywgZS5nLiB0aGUgaW5pdHJhbWZz
+IGNhbg0KPiAgICBnZXQgc3RhcnRlZCB3aXRoIC9kZXYsIC9wcm9jLCBhbmQgL3N5cyBhbHJlYWR5
+IGJvb3RlZC4NCj4gDQo+IFRoZSBwYXRjaGVzIGFyZToNCj4gDQo+ICAgICAxLzM6IGZzL2luaXQ6
+IG1vdmUgY3JlYXRpbmcgdGhlIG1vdW50IGRhdGFfcGFnZSBpbnRvIGluaXRfbW91bnQoKQ0KPiAg
+ICAgMi8zOiBpbml0cmFtZnM6IHN1cHBvcnQgbW91bnRpbmcgZmlsZXN5c3RlbXMgZHVyaW5nIGlu
+aXRyYW1mcyBleHBhbnNpb24NCj4gICAgIDMvMzogRG9jdW1lbnRhdGlvbi9pbml0cmFtZnM6IGRv
+Y3VtZW50IG1vdW50IHBvaW50cyBpbiBpbml0cmFtZnMNCj4gDQo+IC0tLQ0KPiAgLi4uL2RyaXZl
+ci1hcGkvZWFybHktdXNlcnNwYWNlL2J1ZmZlci1mb3JtYXQucnN0ICAgfCA2MCArKysrKysrKysr
+KysrLQ0KPiAgZnMvaW5pdC5jICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgfCAyMyArKysrKy0NCj4gIGluY2x1ZGUvbGludXgvaW5pdF9zeXNjYWxscy5oICAgICAgICAg
+ICAgICAgICAgICAgIHwgIDMgKy0NCj4gIGluaXQvZG9fbW91bnRzLmMgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIHwgMTcgKy0tLQ0KPiAgaW5pdC9pbml0cmFtZnMuYyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgfCA5NSArKysrKysrKysrKysrKysrKysrKystDQo+
+ICA1IGZpbGVzIGNoYW5nZWQsIDE3NSBpbnNlcnRpb25zKCspLCAyMyBkZWxldGlvbnMoLSkNCg==
 
