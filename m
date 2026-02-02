@@ -1,169 +1,442 @@
-Return-Path: <linux-fsdevel+bounces-76029-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0EuCIHxVgGkd6gIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76029-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 08:42:52 +0100
+	id 6M1HNHB5gGne8gIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 11:16:16 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD301C9458
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 08:42:51 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 338B7CAB5C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 11:16:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 14C1F30226A2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 07:39:40 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 6E2F130CF5B8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 10:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89EC129BDBC;
-	Mon,  2 Feb 2026 07:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79116357729;
+	Mon,  2 Feb 2026 10:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iedtDU2z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail01.ukr.de (mail01.ukr.de [193.175.194.181])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5F721FF5F;
-	Mon,  2 Feb 2026 07:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.194.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA92E356A17;
+	Mon,  2 Feb 2026 10:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770017978; cv=none; b=puv3ATkwr2wZXnyLmfeDD0GrL6ofX0yI+EtGah9MYaiN1kT4eFl/V+/pn/9A0Mets2tgm3+OsHzBElBVVJ1olD2A21vsxhJzd8HVgAaLOBgTLWsI/xrRFogLUJ18RH5yydUhcuYJcOa6ZtOMq1zmdEaDiUwD5nTF8X6TD2jynzg=
+	t=1770026835; cv=none; b=eJIPD2LP7+he2Ob0sF6gnQGUwSLQ1texYJCKxMZ8Aw4arY89e9dDlhw0A/p8EBRZS93+zZmO6Omk6lL34btdlkny80VXue63mQY1ljiIfbHkJ8A+At40KhPsMtCsHuu1ZMpRx/4fTQYiF1MxxV7CWOqnYcVdzKzUUgaXi34j7Mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770017978; c=relaxed/simple;
-	bh=+Pts+qy34nNJTSg0Q4nyvFfkxhkO9rQKpVGpGbpZ7V8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=RWDxY/ltA0iX9GtDvFvIfxKpgHOGyP5nGTURujfUGUMpWEKqoMwQGUkZbN37xtWc6o9kTttyJc6I7KJZuMIGHuZT2h9ys0Ugj1+XKWWl3w77rEsatkYTfNCAKIYe4omwJpZiVVT9mv7qXo/PjHeHgbo01W5M2dyat5hlNMzR18E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ukr.de; spf=pass smtp.mailfrom=ukr.de; arc=none smtp.client-ip=193.175.194.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ukr.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ukr.de
-X-CSE-ConnectionGUID: LkNsD08bQi+Y45I06WsNBw==
-X-CSE-MsgGUID: TJS8Az6HQESDNgsGIQt/QA==
-X-ThreatScanner-Verdict: Negative
-X-IronPort-AV: E=McAfee;i="6800,10657,11689"; a="2534877"
-X-IronPort-AV: E=Sophos;i="6.21,268,1763420400"; 
-   d="scan'208";a="2534877"
-Received: from unknown (HELO ukr.de) ([172.24.2.107])
-  by dmz-infcsg01.ukr.dmz with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2026 08:38:24 +0100
-Received: from ukr-excmb07.ukr.local (172.24.2.107) by ukr-excmb07.ukr.local
- (172.24.2.107) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.35; Mon, 2 Feb
- 2026 08:38:23 +0100
-Received: from ukr-excmb07.ukr.local ([fe80::4dee:3e0b:b33f:60ac]) by
- ukr-excmb07.ukr.local ([fe80::4dee:3e0b:b33f:60ac%8]) with mapi id
- 15.02.2562.035; Mon, 2 Feb 2026 08:38:23 +0100
-From: "Windl, Ulrich" <u.windl@ukr.de>
-To: "H. Peter Anvin" <hpa@zytor.com>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
-	<jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>
-CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Lennart
- Poettering" <lennart@poettering.net>, "systemd-devel@lists.freedesktop.org"
-	<systemd-devel@lists.freedesktop.org>
-Subject: RE: [EXT] [systemd-devel] [PATCH 0/3] Add the ability to mount
- filesystems during initramfs expansion
-Thread-Topic: [EXT] [systemd-devel] [PATCH 0/3] Add the ability to mount
- filesystems during initramfs expansion
-Thread-Index: AQHcjMt8Qr920kO9zkquhZDKntdOELVvE4ZA
-Date: Mon, 2 Feb 2026 07:38:23 +0000
-Message-ID: <51265a7170d7408a92192c5112c1e613@ukr.de>
-References: <20260124003939.426931-1-hpa@zytor.com>
-In-Reply-To: <20260124003939.426931-1-hpa@zytor.com>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tm-snts-smtp: B9CBB8B8612B45BE3480AB84915063B64470FD77E2D8070E0A0CE1770EBF5B212000:8
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1770026835; c=relaxed/simple;
+	bh=Wry2JuYYSa8yAreaLGBkPhexHXm4HG/T1KgIp1vm03g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=q+Nj+HLIBrdYndjaSyyuHnhR/0l1eLC8957m0NYCWSH6LxUDEU2x82/kE3TpcXk4++Tvw/EK2SY1PZ6EThBkwbbv6Z+N6UWTcJDQBoFgFt/CkPWnk8QaG36TZYZN8KMFmq/SdMJdwBqwxWjNS+kaW+hlx8lMgBB8kPo0KtvPwx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iedtDU2z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DE68C116C6;
+	Mon,  2 Feb 2026 10:07:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770026834;
+	bh=Wry2JuYYSa8yAreaLGBkPhexHXm4HG/T1KgIp1vm03g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=iedtDU2zqvWzZTw+aiJDW9Apou6W8kQKd+z8bD7JbF+jzNiZb/iMTIlJwxmk4jN8D
+	 Lf2BNqIztf4bcKs/gT78V+ycDOyUI+e2j8tvnsxRLCBy5bHV6vaBiw+DKXdS4PxobN
+	 QM3mNyDUtMYjYu50PTJX8aUfNRjhQhUHKeyjqvjaqig2IADWvQKeB9DUvyNVC8MAGL
+	 fdWx8WNBhoGS0DR83HUjiZ29c0t5cwNjwljpz7i667GjtMvxQtYTfxGrsa69EwBqKz
+	 l9JUYo+MJCD2R9bb+uPVAy7TbGENZ9ZpkxamHOxES8SG21ksOa+3XavYcjST1OhO25
+	 NTv6sIES9DVmQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Daniel Almeida <daniel.almeida@collabora.com>, Oliver Mangold
+ <oliver.mangold@pm.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn?= Roy
+ Baron <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Benno Lossin <lossin@kernel.org>, Danilo
+ Krummrich <dakr@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, Ira
+ Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Lorenzo
+ Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Viresh Kumar <vireshk@kernel.org>, Nishanth
+ Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Bjorn Helgaas
+ <bhelgaas@google.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, Paul
+ Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, Asahi Lina
+ <lina+kernel@asahilina.net>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-pm@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v13 1/4] rust: types: Add Ownable/Owned types
+In-Reply-To: <C95B13F7-B3F5-4508-A862-EAD22EF56FE2@collabora.com>
+References: <20251117-unique-ref-v13-0-b5b243df1250@pm.me>
+ <20251117-unique-ref-v13-1-b5b243df1250@pm.me>
+ <C95B13F7-B3F5-4508-A862-EAD22EF56FE2@collabora.com>
+Date: Mon, 02 Feb 2026 10:14:50 +0100
+Message-ID: <875x8fqzg5.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.36 / 15.00];
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MIME_BASE64_TEXT_BOGUS(1.00)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	MIME_BASE64_TEXT(0.10)[];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-76029-lists,linux-fsdevel=lfdr.de];
-	TO_DN_SOME(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[ukr.de];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
+	RCPT_COUNT_TWELVE(0.00)[43];
+	FREEMAIL_CC(0.00)[kernel.org,gmail.com,garyguo.net,protonmail.com,google.com,umich.edu,linuxfoundation.org,intel.com,linux.intel.com,suse.de,ffwll.ch,zeniv.linux.org.uk,suse.cz,oracle.com,ti.com,paul-moore.com,asahilina.net,vger.kernel.org,lists.freedesktop.org,kvack.org];
+	TAGGED_FROM(0.00)[bounces-76034-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[4];
+	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[u.windl@ukr.de,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[a.hindborg@kernel.org,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	R_DKIM_NA(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,lwn.net:email,lists.freedesktop.org:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,zytor.com:email,poettering.net:email,linux.org.uk:email]
-X-Rspamd-Queue-Id: DD301C9458
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel,kernel];
+	TO_DN_SOME(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[asahilina.net:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,collabora.com:email,types.rs:url,pm.me:email,t14s.mail-host-address-is-not-set:mid]
+X-Rspamd-Queue-Id: 338B7CAB5C
 X-Rspamd-Action: no action
 
-SGkhDQoNCkkgd29uZGVyOiB3b3VsZG4ndCBpdCBiZSBuaWNlciB0byB1c2UgYSBzdWJkaXJlY3Rv
-cnkgbGlrZSAiLnN5c3RlbWQtbWFnaWMiIHRvIHBsYWNlIHN1Y2ggbWFnaWMgZmlsZXMgdGhlcmUg
-dGhhdCBhcmUgaW50ZXJwcmV0ZWQgYnkgc3lzdGVtZD8gVGhlbiAiISEhTU9VTlQhISEiIHdvdWxk
-IGJlY29tZSBhIHNpbXBsZSAibW91bnQiIG9yIG1heWJlICJmc3RhYiIgb3IgIm1vdW50dHRhYiIs
-IC4uLg0KDQpLaW5kIHJlZ2FyZHMsDQpVbHJpY2ggV2luZGwNCg0KPiAtLS0tLU9yaWdpbmFsIE1l
-c3NhZ2UtLS0tLQ0KPiBGcm9tOiBzeXN0ZW1kLWRldmVsIDxzeXN0ZW1kLWRldmVsLWJvdW5jZXNA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnPiBPbg0KPiBCZWhhbGYgT2YgSC4gUGV0ZXIgQW52aW4NCj4g
-U2VudDogU2F0dXJkYXksIEphbnVhcnkgMjQsIDIwMjYgMTo0MCBBTQ0KPiBUbzogQWxleGFuZGVy
-IFZpcm8gPHZpcm9AemVuaXYubGludXgub3JnLnVrPjsgQ2hyaXN0aWFuIEJyYXVuZXINCj4gPGJy
-YXVuZXJAa2VybmVsLm9yZz47IEphbiBLYXJhIDxqYWNrQHN1c2UuY3o+OyBKb25hdGhhbiBDb3Ji
-ZXQNCj4gPGNvcmJldEBsd24ubmV0PjsgSC4gUGV0ZXIgQW52aW4gPGhwYUB6eXRvci5jb20+DQo+
-IENjOiBsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtZG9jQHZnZXIua2VybmVs
-Lm9yZzsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IExlbm5hcnQgUG9ldHRlcmlu
-ZyA8bGVubmFydEBwb2V0dGVyaW5nLm5ldD47DQo+IHN5c3RlbWQtZGV2ZWxAbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnDQo+IFN1YmplY3Q6IFtFWFRdIFtzeXN0ZW1kLWRldmVsXSBbUEFUQ0ggMC8zXSBB
-ZGQgdGhlIGFiaWxpdHkgdG8gbW91bnQNCj4gZmlsZXN5c3RlbXMgZHVyaW5nIGluaXRyYW1mcyBl
-eHBhbnNpb24NCj4gDQo+IA0KPiBBdCBQbHVtYmVyJ3MgMjAyNCwgTGVubmFydCBQb2V0dGVyaW5n
-IG9mIHRoZSBzeXN0ZW1kIHByb2plY3QgcmVxdWVzdGVkDQo+IHRoZSBhYmlsaXR5IHRvIG92ZXJt
-b3VudCB0aGUgcm9vdGZzIHdpdGggYSBzZXBhcmF0ZSB0bXBmcyBiZWZvcmUNCj4gaW5pdHJhbWZz
-IGV4cGFuc2lvbiwgc28gdGhlIHBvcHVsYXRlZCB0bXBmcyBjYW4gYmUgdW5tb3VudGVkLg0KPiAN
-Cj4gVGhpcyBwYXRjaHNldCB0YWtlcyB0aGlzIHJlcXVlc3QgYW5kIGdvZXMgb25lIHN0ZXAgZnVy
-dGhlcjogaXQgYWxsb3dzDQo+IChtb3N0bHkpIGFyYml0cmFyeSBmaWxlc3lzdGVtcyBtb3VudHMg
-ZHVyaW5nIGluaXRyYW1mcyBwcm9jZXNzaW5nLg0KPiANCj4gVGhpcyBpcyBkb25lIGJ5IGhhdmlu
-ZyB0aGUgaW5pdHJhbWZzIGV4cGFuc2lvbiBjb2RlIGRldGVjdCB0aGUgc3BlY2lhbA0KPiBmaWxl
-bmFtZSAiISEhTU9VTlQhISEiIHdoaWNoIGlzIHRoZW4gcGFyc2VkIGludG8gYSBzaW1wbGlmaWVk
-DQo+IGZzdGFiLXR5cGUgbW91bnQgc3BlY2lmaWNhdGlvbiBhbmQgdGhlIGRpcmVjdG9yeSBpbiB3
-aGljaCB0aGUNCj4gISEhTU9VTlQhISEgZW50cnkgaXMgdXNlZCBhcyB0aGUgbW91bnQgcG9pbnQu
-DQo+IA0KPiBUaGlzIHNwZWNpZmljIG1ldGhvZCB3YXMgY2hvc2VuIGZvciB0aGUgZm9sbG93aW5n
-IHJlYXNvbnM6DQo+IA0KPiAxLiBUaGlzIGluZm9ybWF0aW9uIGlzIHNwZWNpZmljIHRvIHRoZSBl
-eHBlY3RhdGlvbnMgb2YgdGhlIGluaXRyYW1mczsNCj4gICAgdGhlcmVmb3JlIHVzaW5nIGtlcm5l
-bCBjb21tYW5kIGxpbmUgb3B0aW9ucyBpcyBub3QNCj4gICAgYXBwcm9wcmlhdGUuIFRoaXMgd2F5
-IHRoZSBpbmZvcm1hdGlvbiBpcyBmdWxseSBjb250YWluZWQgd2l0aGluIHRoZQ0KPiAgICBpbml0
-cmFtZnMgaXRzZWxmLg0KPiAyLiBUaGUgc2VxdWVuY2UgISEhIGlzIGFscmVhZHkgc3BlY2lhbCBp
-biBjcGlvLCBkdWUgdG8gdGhlICJUUkFJTEVSISEhIg0KPiAgICBlbnRyaWVzLg0KPiAzLiBUaGUg
-ZmlsZW5hbWUgIiEhIU1PVU5UISEhIiB3aWxsIHR5cGljYWxseSBiZSBzb3J0ZWQgZmlyc3QsIHdo
-aWNoDQo+ICAgIG1lYW5zIHVzaW5nIHN0YW5kYXJkIGZpbmQrY3BpbyB0b29scyB0byBjcmVhdGUg
-dGhlIGluaXRyYW1mcyBzdGlsbA0KPiAgICB3b3JrLg0KPiA0LiBTaW1pbGFybHksIHN0YW5kYXJk
-IGNwaW8gY2FuIHN0aWxsIGV4cGFuZCB0aGUgaW5pdHJhbWZzLg0KPiA1LiBJZiBydW4gb24gYSBs
-ZWdhY3kga2VybmVsLCB0aGUgISEhTU9VTlQhISEgZmlsZSBpcyBjcmVhdGVkLCB3aGljaA0KPiAg
-ICBpcyBlYXN5IHRvIGRldGVjdCBpbiB0aGUgaW5pdHJhbWZzIGNvZGUgd2hpY2ggY2FuIHRoZW4g
-YWN0aXZhdGUNCj4gICAgc29tZSBmYWxsYmFjayBjb2RlLg0KPiA2LiBJdCBhbGxvd3MgZm9yIG11
-bHRpcGxlIGZpbGVzeXN0ZW1zIHRvIGJlIG1vdW50ZWQsIHBvc3NpYmx5IG9mDQo+ICAgIGRpZmZl
-cmVudCB0eXBlcyBhbmQgaW4gZGlmZmVyZW50IGxvY2F0aW9ucywgZS5nLiB0aGUgaW5pdHJhbWZz
-IGNhbg0KPiAgICBnZXQgc3RhcnRlZCB3aXRoIC9kZXYsIC9wcm9jLCBhbmQgL3N5cyBhbHJlYWR5
-IGJvb3RlZC4NCj4gDQo+IFRoZSBwYXRjaGVzIGFyZToNCj4gDQo+ICAgICAxLzM6IGZzL2luaXQ6
-IG1vdmUgY3JlYXRpbmcgdGhlIG1vdW50IGRhdGFfcGFnZSBpbnRvIGluaXRfbW91bnQoKQ0KPiAg
-ICAgMi8zOiBpbml0cmFtZnM6IHN1cHBvcnQgbW91bnRpbmcgZmlsZXN5c3RlbXMgZHVyaW5nIGlu
-aXRyYW1mcyBleHBhbnNpb24NCj4gICAgIDMvMzogRG9jdW1lbnRhdGlvbi9pbml0cmFtZnM6IGRv
-Y3VtZW50IG1vdW50IHBvaW50cyBpbiBpbml0cmFtZnMNCj4gDQo+IC0tLQ0KPiAgLi4uL2RyaXZl
-ci1hcGkvZWFybHktdXNlcnNwYWNlL2J1ZmZlci1mb3JtYXQucnN0ICAgfCA2MCArKysrKysrKysr
-KysrLQ0KPiAgZnMvaW5pdC5jICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgfCAyMyArKysrKy0NCj4gIGluY2x1ZGUvbGludXgvaW5pdF9zeXNjYWxscy5oICAgICAgICAg
-ICAgICAgICAgICAgIHwgIDMgKy0NCj4gIGluaXQvZG9fbW91bnRzLmMgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgIHwgMTcgKy0tLQ0KPiAgaW5pdC9pbml0cmFtZnMuYyAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgfCA5NSArKysrKysrKysrKysrKysrKysrKystDQo+
-ICA1IGZpbGVzIGNoYW5nZWQsIDE3NSBpbnNlcnRpb25zKCspLCAyMyBkZWxldGlvbnMoLSkNCg==
+Hi Daniel,
+
+I'll send the next iteration of this series.
+
+Daniel Almeida <daniel.almeida@collabora.com> writes:
+
+> Hi Oliver,
+>
+>> On 17 Nov 2025, at 07:07, Oliver Mangold <oliver.mangold@pm.me> wrote:
+>> 
+>> From: Asahi Lina <lina+kernel@asahilina.net>
+>> 
+>> By analogy to `AlwaysRefCounted` and `ARef`, an `Ownable` type is a
+>> (typically C FFI) type that *may* be owned by Rust, but need not be. Unlike
+>> `AlwaysRefCounted`, this mechanism expects the reference to be unique
+>> within Rust, and does not allow cloning.
+>> 
+>> Conceptually, this is similar to a `KBox<T>`, except that it delegates
+>> resource management to the `T` instead of using a generic allocator.
+>> 
+>> [ om:
+>>  - Split code into separate file and `pub use` it from types.rs.
+>>  - Make from_raw() and into_raw() public.
+>>  - Remove OwnableMut, and make DerefMut dependent on Unpin instead.
+>>  - Usage example/doctest for Ownable/Owned.
+>>  - Fixes to documentation and commit message.
+>> ]
+>> 
+>> Link: https://lore.kernel.org/all/20250202-rust-page-v1-1-e3170d7fe55e@asahilina.net/
+>> Signed-off-by: Asahi Lina <lina+kernel@asahilina.net>
+>> Co-developed-by: Oliver Mangold <oliver.mangold@pm.me>
+>> Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
+>> Co-developed-by: Andreas Hindborg <a.hindborg@kernel.org>
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+>> ---
+>> rust/kernel/lib.rs       |   1 +
+>> rust/kernel/owned.rs     | 195 +++++++++++++++++++++++++++++++++++++++++++++++
+>> rust/kernel/sync/aref.rs |   5 ++
+>> rust/kernel/types.rs     |   2 +
+>> 4 files changed, 203 insertions(+)
+>> 
+>> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+>> index 3dd7bebe7888..e0ee04330dd0 100644
+>> --- a/rust/kernel/lib.rs
+>> +++ b/rust/kernel/lib.rs
+>> @@ -112,6 +112,7 @@
+>> pub mod of;
+>> #[cfg(CONFIG_PM_OPP)]
+>> pub mod opp;
+>> +pub mod owned;
+>> pub mod page;
+>> #[cfg(CONFIG_PCI)]
+>> pub mod pci;
+>> diff --git a/rust/kernel/owned.rs b/rust/kernel/owned.rs
+>> new file mode 100644
+>> index 000000000000..a2cdd2cb8a10
+>> --- /dev/null
+>> +++ b/rust/kernel/owned.rs
+>> @@ -0,0 +1,195 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +//! Unique owned pointer types for objects with custom drop logic.
+>> +//!
+>> +//! These pointer types are useful for C-allocated objects which by API-contract
+>> +//! are owned by Rust, but need to be freed through the C API.
+>> +
+>> +use core::{
+>> +    mem::ManuallyDrop,
+>> +    ops::{Deref, DerefMut},
+>> +    pin::Pin,
+>> +    ptr::NonNull,
+>> +};
+>> +
+>> +/// Type allocated and destroyed on the C side, but owned by Rust.
+>> +///
+>> +/// Implementing this trait allows types to be referenced via the [`Owned<Self>`] pointer type. This
+>> +/// is useful when it is desirable to tie the lifetime of the reference to an owned object, rather
+>> +/// than pass around a bare reference. [`Ownable`] types can define custom drop logic that is
+>> +/// executed when the owned reference [`Owned<Self>`] pointing to the object is dropped.
+>> +///
+>> +/// Note: The underlying object is not required to provide internal reference counting, because it
+>> +/// represents a unique, owned reference. If reference counting (on the Rust side) is required,
+>> +/// [`AlwaysRefCounted`](crate::types::AlwaysRefCounted) should be implemented.
+>> +///
+>> +/// # Safety
+>> +///
+>> +/// Implementers must ensure that the [`release()`](Self::release) function frees the underlying
+>> +/// object in the correct way for a valid, owned object of this type.
+>> +///
+>> +/// # Examples
+>> +///
+>> +/// A minimal example implementation of [`Ownable`] and its usage with [`Owned`] looks like this:
+>> +///
+>> +/// ```
+>> +/// # #![expect(clippy::disallowed_names)]
+>> +/// # use core::cell::Cell;
+>> +/// # use core::ptr::NonNull;
+>> +/// # use kernel::sync::global_lock;
+>> +/// # use kernel::alloc::{flags, kbox::KBox, AllocError};
+>> +/// # use kernel::types::{Owned, Ownable};
+>> +///
+>> +/// // Let's count the allocations to see if freeing works.
+>> +/// kernel::sync::global_lock! {
+>> +///     // SAFETY: we call `init()` right below, before doing anything else.
+>> +///     unsafe(uninit) static FOO_ALLOC_COUNT: Mutex<usize> = 0;
+>> +/// }
+>> +/// // SAFETY: We call `init()` only once, here.
+>> +/// unsafe { FOO_ALLOC_COUNT.init() };
+>> +///
+>> +/// struct Foo {
+>> +/// }
+>
+> nit: this can be simply:
+>
+> struct Foo;
+
+Got it.
+
+>
+>> +///
+>> +/// impl Foo {
+>> +///     fn new() -> Result<Owned<Self>, AllocError> {
+>> +///         // We are just using a `KBox` here to handle the actual allocation, as our `Foo` is
+>> +///         // not actually a C-allocated object.
+>> +///         let result = KBox::new(
+>> +///             Foo {},
+>> +///             flags::GFP_KERNEL,
+>> +///         )?;
+>> +///         let result = NonNull::new(KBox::into_raw(result))
+>> +///             .expect("Raw pointer to newly allocation KBox is null, this should never happen.");
+>> +///         // Count new allocation
+>> +///         *FOO_ALLOC_COUNT.lock() += 1;
+>> +///         // SAFETY: We just allocated the `Self`, thus it is valid and there cannot be any other
+>> +///         // Rust references. Calling `into_raw()` makes us responsible for ownership and we won't
+>> +///         // use the raw pointer anymore. Thus we can transfer ownership to the `Owned`.
+>> +///         Ok(unsafe { Owned::from_raw(result) })
+>> +///     }
+>> +/// }
+>> +///
+>> +/// // SAFETY: What out `release()` function does is safe of any valid `Self`.
+>> +/// unsafe impl Ownable for Foo {
+>> +///     unsafe fn release(this: NonNull<Self>) {
+>> +///         // The `Foo` will be dropped when `KBox` goes out of scope.
+>> +///         // SAFETY: The [`KBox<Self>`] is still alive. We can pass ownership to the [`KBox`], as
+>> +///         // by requirement on calling this function, the `Self` will no longer be used by the
+>> +///         // caller.
+>> +///         unsafe { KBox::from_raw(this.as_ptr()) };
+>> +///         // Count released allocation
+>> +///         *FOO_ALLOC_COUNT.lock() -= 1;
+>> +///     }
+>> +/// }
+>> +///
+>> +/// {
+>> +///    let foo = Foo::new().expect("Failed to allocate a Foo. This shouldn't happen");
+>> +///    assert!(*FOO_ALLOC_COUNT.lock() == 1);
+>> +/// }
+>> +/// // `foo` is out of scope now, so we expect no live allocations.
+>> +/// assert!(*FOO_ALLOC_COUNT.lock() == 0);
+>> +/// ```
+>> +pub unsafe trait Ownable {
+>> +    /// Releases the object.
+>> +    ///
+>> +    /// # Safety
+>> +    ///
+>> +    /// Callers must ensure that:
+>> +    /// - `this` points to a valid `Self`.
+>> +    /// - `*this` is no longer used after this call.
+>> +    unsafe fn release(this: NonNull<Self>);
+>> +}
+>> +
+>> +/// An owned reference to an owned `T`.
+>> +///
+>> +/// The [`Ownable`] is automatically freed or released when an instance of [`Owned`] is
+>> +/// dropped.
+>> +///
+>> +/// # Invariants
+>> +///
+>> +/// - The [`Owned<T>`] has exclusive access to the instance of `T`.
+>> +/// - The instance of `T` will stay alive at least as long as the [`Owned<T>`] is alive.
+>> +pub struct Owned<T: Ownable> {
+>> +    ptr: NonNull<T>,
+>> +}
+>> +
+>> +// SAFETY: It is safe to send an [`Owned<T>`] to another thread when the underlying `T` is [`Send`],
+>> +// because of the ownership invariant. Sending an [`Owned<T>`] is equivalent to sending the `T`.
+>> +unsafe impl<T: Ownable + Send> Send for Owned<T> {}
+>> +
+>> +// SAFETY: It is safe to send [`&Owned<T>`] to another thread when the underlying `T` is [`Sync`],
+>> +// because of the ownership invariant. Sending an [`&Owned<T>`] is equivalent to sending the `&T`.
+>> +unsafe impl<T: Ownable + Sync> Sync for Owned<T> {}
+>> +
+>> +impl<T: Ownable> Owned<T> {
+>
+> Can you make sure that impl Owned<T> follows the struct declaration?
+>
+> IOW: please move the Send and Sync impls to be after the impl above.
+
+I don't really see the point, but moving them is no problem, so let's do that.
+
+>
+>> +    /// Creates a new instance of [`Owned`].
+>> +    ///
+>> +    /// It takes over ownership of the underlying object.
+>> +    ///
+>> +    /// # Safety
+>> +    ///
+>> +    /// Callers must ensure that:
+>> +    /// - `ptr` points to a valid instance of `T`.
+>> +    /// - Ownership of the underlying `T` can be transferred to the `Self<T>` (i.e. operations
+>> +    ///   which require ownership will be safe).
+>> +    /// - No other Rust references to the underlying object exist. This implies that the underlying
+>> +    ///   object is not accessed through `ptr` anymore after the function call (at least until the
+>> +    ///   the `Self<T>` is dropped.
+>
+> It looks like this can be written more succinctly as:
+>
+> "This implies that the underlying object is not accessed through `ptr` anymore until `Self<T>` is dropped."
+
+I'll rephrase with that text.
+
+>
+>> +    /// - The C code follows the usual shared reference requirements. That is, the kernel will never
+>> +    ///   mutate or free the underlying object (excluding interior mutability that follows the usual
+>> +    ///   rules) while Rust owns it.
+>> +    /// - In case `T` implements [`Unpin`] the previous requirement is extended from shared to
+>> +    ///   mutable reference requirements. That is, the kernel will not mutate or free the underlying
+>> +    ///   object and is okay with it being modified by Rust code.
+>> +    pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
+>> +        Self {
+>> +            ptr,
+>> +        }
+>> +    }
+>> +
+>> +    /// Consumes the [`Owned`], returning a raw pointer.
+>> +    ///
+>> +    /// This function does not actually relinquish ownership of the object. After calling this
+>> +    /// function, the caller is responsible for ownership previously managed
+>> +    /// by the [`Owned`].
+>> +    pub fn into_raw(me: Self) -> NonNull<T> {
+>> +        ManuallyDrop::new(me).ptr
+>> +    }
+>> +
+>> +    /// Get a pinned mutable reference to the data owned by this `Owned<T>`.
+>> +    pub fn get_pin_mut(&mut self) -> Pin<&mut T> {
+>> +        // SAFETY: The type invariants guarantee that the object is valid, and that we can safely
+>> +        // return a mutable reference to it.
+>> +        let unpinned = unsafe { self.ptr.as_mut() };
+>> +
+>> +        // SAFETY: We never hand out unpinned mutable references to the data in
+>> +        // `Self`, unless the contained type is `Unpin`.
+>> +        unsafe { Pin::new_unchecked(unpinned) }
+>> +    }
+>> +}
+>> +
+>> +impl<T: Ownable> Deref for Owned<T> {
+>> +    type Target = T;
+>> +
+>> +    fn deref(&self) -> &Self::Target {
+>> +        // SAFETY: The type invariants guarantee that the object is valid.
+>> +        unsafe { self.ptr.as_ref() }
+>> +    }
+>> +}
+>> +
+>> +impl<T: Ownable + Unpin> DerefMut for Owned<T> {
+>> +    fn deref_mut(&mut self) -> &mut Self::Target {
+>> +        // SAFETY: The type invariants guarantee that the object is valid, and that we can safely
+>> +        // return a mutable reference to it.
+>> +        unsafe { self.ptr.as_mut() }
+>> +    }
+>> +}
+>> +
+>> +impl<T: Ownable> Drop for Owned<T> {
+>> +    fn drop(&mut self) {
+>> +        // SAFETY: The type invariants guarantee that the `Owned` owns the object we're about to
+>> +        // release.
+>> +        unsafe { T::release(self.ptr) };
+>> +    }
+>> +}
+>> diff --git a/rust/kernel/sync/aref.rs b/rust/kernel/sync/aref.rs
+>> index 0d24a0432015..e175aefe8615 100644
+>> --- a/rust/kernel/sync/aref.rs
+>> +++ b/rust/kernel/sync/aref.rs
+>> @@ -29,6 +29,11 @@
+>> /// Rust code, the recommendation is to use [`Arc`](crate::sync::Arc) to create reference-counted
+>> /// instances of a type.
+>> ///
+>> +/// Note: Implementing this trait allows types to be wrapped in an [`ARef<Self>`]. It requires an
+>> +/// internal reference count and provides only shared references. If unique references are required
+>> +/// [`Ownable`](crate::types::Ownable) should be implemented which allows types to be wrapped in an
+>> +/// [`Owned<Self>`](crate::types::Owned).
+>> +///
+>> /// # Safety
+>> ///
+>> /// Implementers must ensure that increments to the reference count keep the object alive in memory
+>> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+>> index dc0a02f5c3cf..7bc07c38cd6c 100644
+>> --- a/rust/kernel/types.rs
+>> +++ b/rust/kernel/types.rs
+>> @@ -11,6 +11,8 @@
+>> };
+>> use pin_init::{PinInit, Wrapper, Zeroable};
+>> 
+>> +pub use crate::owned::{Ownable, Owned};
+>> +
+>> pub use crate::sync::aref::{ARef, AlwaysRefCounted};
+>> 
+>> /// Used to transfer ownership to and from foreign (non-Rust) languages.
+>> 
+>> -- 
+>> 2.51.2
+>> 
+>> 
+>> 
+>
+> With the changes above,
+>
+> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+
+Thanks!
+
 
