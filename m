@@ -1,181 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-76013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uKarNsftf2kI0gIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 01:20:23 +0100
+	id QEflM8QLgGkL2AIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 03:28:20 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 441C8C79EE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 01:20:23 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37150C7DF6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 03:28:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 60E5030053CA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 00:20:20 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 2792D30056EF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 02:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711DF14EC73;
-	Mon,  2 Feb 2026 00:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BA121D3C0;
+	Mon,  2 Feb 2026 02:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B5IqcbA7"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="D78dTBlj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36CE3EBF14
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Feb 2026 00:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3A51F91E3
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Feb 2026 02:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769991619; cv=none; b=EkWm36iUrhe+OLCoGJm65szjkds9Fb9eGQt1NbPLirvH35rs2oMLCQUhKgaooy/MdCmfCL4jYppAiFKDeSU4/88faLV0Ks9mRgllGi+0pGK9sEYzqEez6spu/M3Di5bk9zAcq4QR2NO8wxv+N7+uzo7bYapNidDomm4/Tdr+XL4=
+	t=1769999280; cv=none; b=pTEAGsZM4dziQ1Ln0TD4NSHQifSIQTWBZiZZte/iHCpvyxuO3TjEDEzN7UcKaXxDhFUJ2gP2XrZUM6/S253VMr6ooIa/RW2CT5SdxoAXlM4UUpjxChnAYSSPXhiABGKeUALG4e0a+G9EjPA2EAGVyyLpQnXQrSqIjNQj3DyR8u4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769991619; c=relaxed/simple;
-	bh=7AlHNqOd+boo1iYYNHvXoLG3MGSH+Iw9k7O2hAc+xiU=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=l+cIlLeG/gMgFKxLLUX9cWju0QHKCipt9p+ByS+PgglqcRTsjyCLw7nZWQJttRcpI9ixRZRo6IbHqJgfPe+1/XCLYv4YG4xH52pRIQoQnPb3iXsXnaWm6k3V2DjuVT58N/Z8aikecGed2jnCtEEL7mko40/0NY8EOg+Wl73F8+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B5IqcbA7; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1769991617; x=1801527617;
-  h=date:from:to:cc:subject:message-id;
-  bh=7AlHNqOd+boo1iYYNHvXoLG3MGSH+Iw9k7O2hAc+xiU=;
-  b=B5IqcbA7h06smOem55+u+3RKf++VCJWZRI51Qne5wpUxEDU91GYVz0Ng
-   4ytkoIpDXRFKiowWgMmhyaR3HIv238jzGr0Tg+wrCaq1PXZJ/CJQoq8TR
-   70KxL9E4RZ3aEtRYTAJyWnfXzXeKG3NUvwuNnm4XUf4GpCEJiuceBWj43
-   DQSpDFkHtcdGJcNhcKekIVlc9f9bUxpqshLj0EeevNwApIpuqFQnT3+zG
-   CY2E3tlKSOXIHi5BT/5SyoSLBej8cD4TeYnc3fROGNzlxnEZAiqpdqMRA
-   XDBPBkJE34RpPtCyd2x49G0b/QB96jiNn/GpLJ4oLU8BVKHUCPVOcnm0z
-   w==;
-X-CSE-ConnectionGUID: Allph9W6TIe+fPgovr+trg==
-X-CSE-MsgGUID: mrYbY7RaTDqLsjkZmLEl0w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11689"; a="71064140"
-X-IronPort-AV: E=Sophos;i="6.21,267,1763452800"; 
-   d="scan'208";a="71064140"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2026 16:20:17 -0800
-X-CSE-ConnectionGUID: Y9bJsDcoRY+Cdf0qsI7/uA==
-X-CSE-MsgGUID: bc0dIpXnRUafn0B/g7qs+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,267,1763452800"; 
-   d="scan'208";a="246978077"
-Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 01 Feb 2026 16:20:16 -0800
-Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vmhfp-00000000f8J-15n0;
-	Mon, 02 Feb 2026 00:20:13 +0000
-Date: Mon, 02 Feb 2026 08:19:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
- linux-fsdevel@vger.kernel.org
-Subject: [viro-vfs:work.coda 1/4] fs/coda/dir.c:471:1: warning:
- unused label 'bad'
-Message-ID: <202602020838.i1jbfynn-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1769999280; c=relaxed/simple;
+	bh=c18aY+u6puIMVPmuCxKY+tqBdy/i964ilbAn+cS1m8g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GF6OMbazquXc0UElKdlrzqjNII56YK+4KiTU3gIMp2rmhsckoM5nlxWo2Q1tgP0dyXaZMX2tflYCZKjtugnEjbztiQjlsO8zzb4LePjivJEJ0rZiX77i2ZvqVPgp+7K/2dKE5U/vRPi7UaudbTNIWkUzghI9gbqB6q6r9nmr6Ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=D78dTBlj; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-34abc7da414so2424262a91.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Feb 2026 18:27:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1769999277; x=1770604077; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ib1/7wDujkxaZJbA6XE/xuPmxkcPG0qS3D0QygAAiJo=;
+        b=D78dTBljEP/laJiq2oBjhhl7MkCD4Yz418eE87w4eK4X3uvotIXTYkT75vbPqNwz58
+         QXHurnvF4kzvphwnPCoMmi75HkloUKJV29Wd1sIbIW8TJwQWVG2bUhhg/Bmf31OSP1Lj
+         +BmXJpqY6AW+/Ewz7MPMOPP/8cIhkwcg/kA2bUFRYRmU+bB7Kye6+JwMOdvzeZFnqfQJ
+         lL5eP4cG7CR0hXpgvjAV6St53AY9FwVQA3tzOIgLziKKXswQikSieZYCGeA2fMgvq+nS
+         C5olY/JKQxm2R7nS68vK9zJryKyonqeox3YBu1GBC/woCVhgDUXrn4ouPo8QX/JXquFA
+         p3OA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769999277; x=1770604077;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ib1/7wDujkxaZJbA6XE/xuPmxkcPG0qS3D0QygAAiJo=;
+        b=g7mJrPmqA/YHiclYr4qdY4y+qHOcm7XRLASzgGNxJuCPWkZGkVXqOKgDqD6HDxXamd
+         y43uXmY+YubC/NvGl8+QMNUSrTojVyieGbAuVHXgL5WL/9dW8c4+WkKhDOu20odDGkC/
+         4du7Sxc8Z7Ie4NO+KEfPmmyv3Vi5IT53u6zjlN/zUI4tyrEIRZTgOWmmfH/ukBMREzmL
+         iTdAYKrkhk78Wi+e32+v0Q7SqPpryknDubqETpVZUI1xNCf2ARK+f4K0WWolEsK+7evr
+         kCb5yIbIT55Cq0OZKfwC+JWyBihgFsC4CXT02Zr8xsp68ap8K4l7y0UeZeJnKlQpwO5b
+         3eFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWNQglbno60WbZ2dmF1ch9pYJsYdjKDVsUKURVclEeOrj2gSHlADoGRrdRHzLUUvnnzUCg0ypQmn5GFt3UA@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG1aHcD+nZE8SpvkBX4N5A8AQyP6vXlQrhIMQvWVkO4q0I8j8B
+	isFkoqVZp0sFT6bbYI7IJbXZsAXKhW9YMZBIPCCWmWRgY2bjuKhBY5zVIxOIrE4EfQ8=
+X-Gm-Gg: AZuq6aKqXQ0DxW5iPBOouazWM8xrNCRf9qolzXyAZOGwsRXEM4kxldAc0FYz61Jna76
+	yoMp858I/PgtH20OSYLkzr0b2sIYUF7TyguNgHU/MknFmGBnQ1P69nzrI3XZYDl5rtsOZvm1o7X
+	rSeSMFbykiXc9Lbal0v7PkcE9A4ItA2oKwimurNucOAAHhdAXClYSkukyWnX6YKKAcbnJT51XLc
+	ZLEiObl7cSx8Vn3nNj5T00iNOTkdqV5hoKuxURCjugh78lGkWzXsjXQotZxpG20Z2HapuTNBZhP
+	xw4Gsx0boL5/Ga+gz00QIZoDgXx7qnXo1qO1snrxjHXAM7k40NY5bmd+7u4NC8eirQvOIR2M3Bi
+	h+azyFlZnpbWO3rJIruFaucAaoXE0dwSJTQ2queG5dUP6xyE0AL8Jh7Q/c1NipLq0aXJt6Gqo8p
+	5iAzqRLFRPV0zChc7NLFUE5j0rB5ZVD1g3vdI=
+X-Received: by 2002:a17:90a:d886:b0:341:88c9:ca62 with SMTP id 98e67ed59e1d1-3543b3d120fmr8851545a91.31.1769999276970;
+        Sun, 01 Feb 2026 18:27:56 -0800 (PST)
+Received: from [10.254.198.225] ([139.177.225.253])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3543d73386asm3333466a91.14.2026.02.01.18.27.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 01 Feb 2026 18:27:56 -0800 (PST)
+Message-ID: <2538bda2-e14a-4ae0-a32d-e944ca44b37f@bytedance.com>
+Date: Mon, 2 Feb 2026 10:27:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] writeback: Fix wakeup and logging timeouts for
+ !DETECT_HUNG_TASK
+To: Huacai Chen <chenhuacai@loongson.cn>, Huacai Chen
+ <chenhuacai@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+ Xuefeng Li <lixuefeng@loongson.cn>, linux-kernel@vger.kernel.org
+References: <20260131090724.4128443-1-chenhuacai@loongson.cn>
+From: Julian Sun <sunjunchao@bytedance.com>
+In-Reply-To: <20260131090724.4128443-1-chenhuacai@loongson.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
+	DMARC_POLICY_ALLOW(-0.50)[bytedance.com,quarantine];
+	R_DKIM_ALLOW(-0.20)[bytedance.com:s=google];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DKIM_TRACE(0.00)[intel.com:+];
+	DKIM_TRACE(0.00)[bytedance.com:+];
+	TAGGED_FROM(0.00)[bounces-76014-lists,linux-fsdevel=lfdr.de];
+	FROM_HAS_DN(0.00)[];
+	SUBJECT_HAS_EXCLAIM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76013-lists,linux-fsdevel=lfdr.de];
-	RCPT_COUNT_THREE(0.00)[4];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	TO_DN_SOME(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[lkp@intel.com,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[sunjunchao@bytedance.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_COUNT_FIVE(0.00)[6];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[01.org:url,osdl.org:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,intel.com:email,intel.com:dkim,intel.com:mid]
-X-Rspamd-Queue-Id: 441C8C79EE
+	DBL_BLOCKED_OPENRESOLVER(0.00)[loongson.cn:email]
+X-Rspamd-Queue-Id: 37150C7DF6
 X-Rspamd-Action: no action
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.coda
-head:   00a1de29cfe3a361a653e043d5277a5d4263b90b
-commit: 59769809e38dc6250c396dd38f95d2ba05be2ced [1/4] coda: is_bad_inode() is always false there
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20260202/202602020838.i1jbfynn-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260202/202602020838.i1jbfynn-lkp@intel.com/reproduce)
+On 1/31/26 5:07 PM, Huacai Chen wrote:
+> Recent changes of fs-writeback cause such warnings if DETECT_HUNG_TASK
+> is not enabled:
+> 
+> INFO: The task sync:1342 has been waiting for writeback completion for more than 1 seconds.
+> 
+> The reason is sysctl_hung_task_timeout_secs is 0 when DETECT_HUNG_TASK
+> is not enabled, then it causes the warning message even if the writeback
+> lasts for only one second.
+> 
+> I believe the wakeup and logging is also useful for !DETECT_HUNG_TASK,
+> so I don't want to disable them completely. As DEFAULT_HUNG_TASK_TIMEOUT
+> is 120 seconds, so for the !DETECT_HUNG_TASK case let's use 120 seconds
+> instead of sysctl_hung_task_timeout_secs.
+> 
+> Fixes: 1888635532fb ("writeback: Wake up waiting tasks when finishing the writeback of a chunk.")
+> Fixes: d6e621590764 ("writeback: Add logging for slow writeback (exceeds sysctl_hung_task_timeout_secs)")
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> ---
+>   fs/fs-writeback.c | 15 ++++++++++++---
+>   1 file changed, 12 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index 5444fc706ac7..847e46f0e019 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -198,10 +198,15 @@ static void wb_queue_work(struct bdi_writeback *wb,
+>   
+>   static bool wb_wait_for_completion_cb(struct wb_completion *done)
+>   {
+> +#ifndef CONFIG_DETECT_HUNG_TASK
+> +	unsigned long hung_secs = 120;
+> +#else
+> +	unsigned long hung_secs = sysctl_hung_task_timeout_secs;
+> +#endif
+>   	unsigned long waited_secs = (jiffies - done->wait_start) / HZ;
+>   
+>   	done->progress_stamp = jiffies;
+> -	if (waited_secs > sysctl_hung_task_timeout_secs)
+> +	if (waited_secs > hung_secs)
+>   		pr_info("INFO: The task %s:%d has been waiting for writeback "
+>   			"completion for more than %lu seconds.",
+>   			current->comm, current->pid, waited_secs);
+> @@ -1947,6 +1952,11 @@ static long writeback_sb_inodes(struct super_block *sb,
+>   	long write_chunk;
+>   	long total_wrote = 0;  /* count both pages and inodes */
+>   	unsigned long dirtied_before = jiffies;
+> +#ifndef CONFIG_DETECT_HUNG_TASK
+> +	unsigned long hung_secs = 120;
+> +#else
+> +	unsigned long hung_secs = sysctl_hung_task_timeout_secs;
+> +#endif
+>   
+>   	if (work->for_kupdate)
+>   		dirtied_before = jiffies -
+> @@ -2031,8 +2041,7 @@ static long writeback_sb_inodes(struct super_block *sb,
+>   
+>   		/* Report progress to inform the hung task detector of the progress. */
+>   		if (work->done && work->done->progress_stamp &&
+> -		   (jiffies - work->done->progress_stamp) > HZ *
+> -		   sysctl_hung_task_timeout_secs / 2)
+> +		   (jiffies - work->done->progress_stamp) > HZ * hung_secs / 2)
+>   			wake_up_all(work->done->waitq);
+>   
+>   		wbc_detach_inode(&wbc);
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202602020838.i1jbfynn-lkp@intel.com/
+Thanks for the patch, looks good to me.
 
-All warnings (new ones prefixed by >>):
+Reviewed-by: Julian Sun <sunjunchao@bytedance.com>
 
->> fs/coda/dir.c:471:1: warning: unused label 'bad' [-Wunused-label]
-     471 | bad:
-         | ^~~~
-   1 warning generated.
-
-
-vim +/bad +471 fs/coda/dir.c
-
-b625032b10222c Fabian Frederick 2015-02-17  438  
-^1da177e4c3f41 Linus Torvalds   2005-04-16  439  /* called when a cache lookup succeeds */
-5be1fa8abd7b04 Al Viro          2024-12-08  440  static int coda_dentry_revalidate(struct inode *dir, const struct qstr *name,
-5be1fa8abd7b04 Al Viro          2024-12-08  441  				  struct dentry *de, unsigned int flags)
-^1da177e4c3f41 Linus Torvalds   2005-04-16  442  {
-34286d6662308d Nicholas Piggin  2011-01-07  443  	struct inode *inode;
-^1da177e4c3f41 Linus Torvalds   2005-04-16  444  	struct coda_inode_info *cii;
-^1da177e4c3f41 Linus Torvalds   2005-04-16  445  
-0b728e1911cbe6 Al Viro          2012-06-10  446  	if (flags & LOOKUP_RCU)
-34286d6662308d Nicholas Piggin  2011-01-07  447  		return -ECHILD;
-34286d6662308d Nicholas Piggin  2011-01-07  448  
-2b0143b5c986be David Howells    2015-03-17  449  	inode = d_inode(de);
-a7400222e3eb7d Al Viro          2014-10-21  450  	if (!inode || is_root_inode(inode))
-^1da177e4c3f41 Linus Torvalds   2005-04-16  451  		goto out;
-^1da177e4c3f41 Linus Torvalds   2005-04-16  452  
-2b0143b5c986be David Howells    2015-03-17  453  	cii = ITOC(d_inode(de));
-^1da177e4c3f41 Linus Torvalds   2005-04-16  454  	if (!(cii->c_flags & (C_PURGE | C_FLUSH)))
-^1da177e4c3f41 Linus Torvalds   2005-04-16  455  		goto out;
-^1da177e4c3f41 Linus Torvalds   2005-04-16  456  
-^1da177e4c3f41 Linus Torvalds   2005-04-16  457  	shrink_dcache_parent(de);
-^1da177e4c3f41 Linus Torvalds   2005-04-16  458  
-^1da177e4c3f41 Linus Torvalds   2005-04-16  459  	/* propagate for a flush */
-^1da177e4c3f41 Linus Torvalds   2005-04-16  460  	if (cii->c_flags & C_FLUSH) 
-^1da177e4c3f41 Linus Torvalds   2005-04-16  461  		coda_flag_inode_children(inode, C_FLUSH);
-^1da177e4c3f41 Linus Torvalds   2005-04-16  462  
-84d08fa888e7c2 Al Viro          2013-07-05  463  	if (d_count(de) > 1)
-^1da177e4c3f41 Linus Torvalds   2005-04-16  464  		/* pretend it's valid, but don't change the flags */
-^1da177e4c3f41 Linus Torvalds   2005-04-16  465  		goto out;
-^1da177e4c3f41 Linus Torvalds   2005-04-16  466  
-^1da177e4c3f41 Linus Torvalds   2005-04-16  467  	/* clear the flags. */
-b5ce1d83a62fc1 Yoshihisa Abe    2010-10-25  468  	spin_lock(&cii->c_lock);
-^1da177e4c3f41 Linus Torvalds   2005-04-16  469  	cii->c_flags &= ~(C_VATTR | C_PURGE | C_FLUSH);
-b5ce1d83a62fc1 Yoshihisa Abe    2010-10-25  470  	spin_unlock(&cii->c_lock);
-^1da177e4c3f41 Linus Torvalds   2005-04-16 @471  bad:
-^1da177e4c3f41 Linus Torvalds   2005-04-16  472  	return 0;
-^1da177e4c3f41 Linus Torvalds   2005-04-16  473  out:
-^1da177e4c3f41 Linus Torvalds   2005-04-16  474  	return 1;
-^1da177e4c3f41 Linus Torvalds   2005-04-16  475  }
-^1da177e4c3f41 Linus Torvalds   2005-04-16  476  
-
-:::::: The code at line 471 was first introduced by commit
-:::::: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 Linux-2.6.12-rc2
-
-:::::: TO: Linus Torvalds <torvalds@ppc970.osdl.org>
-:::::: CC: Linus Torvalds <torvalds@ppc970.osdl.org>
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Julian Sun <sunjunchao@bytedance.com>
 
