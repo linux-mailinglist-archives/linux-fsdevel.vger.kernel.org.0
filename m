@@ -1,375 +1,305 @@
-Return-Path: <linux-fsdevel+bounces-76065-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76066-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id MHTHDD/WgGmFBwMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76065-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 17:52:15 +0100
+	id UIv3CS7agGnMBwMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76066-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 18:09:02 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADD2BCF2EA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 17:52:14 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CC1ACF63F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 18:09:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 1315A301FBCA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 16:51:38 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 3EE1F308E57B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 17:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2623816F2;
-	Mon,  2 Feb 2026 16:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E559F238C03;
+	Mon,  2 Feb 2026 17:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="J46ag3Lo"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QxygLPEf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11021082.outbound.protection.outlook.com [52.101.62.82])
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012068.outbound.protection.outlook.com [52.101.43.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE831400C;
-	Mon,  2 Feb 2026 16:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7707B3816E9;
+	Mon,  2 Feb 2026 17:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.68
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770051088; cv=fail; b=r/DVKIW3B5mt/9ffxxZcT/2VtO+CFB0FOP3W5t3pn0Batt4/1UHZhuDv/EqWr7TPK+e5GV+61uUu3S5b8c8ae5rexgBQEYp+ed0aNNu9Oa+q93NdIldblVV+RH0DMY+LZkE7ufevbyMfcYWTJsV5vPPldCzMpIumuFqwN57GO78=
+	t=1770051769; cv=fail; b=WR3zquS8w8BJhl4wdo8Eat50yJbwUE2sChipkFRdLYoyaJl5fIwIipzs9spT/A5s61YtqTmZG8u/G92sykzzvaDCuZub9x2ll/sAFGVlvIQZQl1PktGe1V0CgrbuPKVLAh3mOO5bfEdZWXWylWWCAIbSQ/8ZXIQcLfx1TrNvBsg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770051088; c=relaxed/simple;
-	bh=wiKqM4dtDMfv6nZxW0wfCbRnKoBOGl/cM+JFXt467DI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=seM1QnZJDW3O9tPIej5nQiV1iIYlii5IA/+RJyJbJih3uAWyNnFzPjtYCH058b90gR4d56nFvJ2Rdioaj19GnrRqs1ZlOpXNdU58q764cHm6gVCGBcNnCXn8QvV1xtifmLa/tviIiInFD6zOS32l/e4H/W6Z95+m1eHVkWXjISY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com; spf=pass smtp.mailfrom=hammerspace.com; dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b=J46ag3Lo; arc=fail smtp.client-ip=52.101.62.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hammerspace.com
+	s=arc-20240116; t=1770051769; c=relaxed/simple;
+	bh=XGUjRo2jojA1AFM1b9X8DUD21Bh0bb8nywNqsEjKYAg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=C6Z5+hYYtndG/Tslkm+JUw2bXvBZuJ//kFas4gSNp2SGgEbLvhTQfQJ3OKkR2jGV3XOCaqTmDjJ+ge795W3u3HPewUy1FQ2fG+E6JCWUXomr9KAMKnwXNd5dCoM4KtrbW34EbXItksXbtZvSFzy8v+Dw0urul1KiwCWJfIWnqoM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QxygLPEf; arc=fail smtp.client-ip=52.101.43.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=A8kMNpN7oNkxTO9XDVP+4b5vtHceP1AMiPcF2svgNvznNN0LfDn5agURs1Ql4LMQxsiJlYjMg88OOZXZIO/mrZFXGPXrB5ZAXsJc0/CW8jqJGy/254dokt4HAV3cfB5fX3NNemNlSZKfMLUKYbIAFiKLE08ZN9D5csmLR+wxc2/+xttsTRtbn6D7hjUnzlkoaXR9z2DzvmCBWMoRWKWMqKoShaonmZ1kpTA/g5UGANmEclxJ6naNgJ6MkwRg5nZQXIKxYKqhpe+J2DFPi55/b+AFfsfPw94ZoGati9BsdmZ40k2oDe1GsyrAVkwbvvd8VEmcAGWVHqK3y9KZ+SbkUQ==
+ b=Cq/iM1g1wg1rqiMoKEGEjB6AzrwG+n2ZanMSLHEu5D+XkouikfH6Aht3jULJoRbcKT5g5gpx70w1JdzJXUtKRktsEsSWlINzuBBHzAudrgWIuGmtbERbh9fv71YhAseq2URrKWpHd+8pKeWpP+Bf1xYbwORMhiyOCUispi84MUHwDLTZEJr7u8hA2+3N54cwkbodBvXFYXlDttSKay9e+RYj1K2iSVJcJv+eEOEkYGddX2yLwMP/tUJVxyeC1ab6UBzz30Wb6y2dzux0xpK7kNu8noyjZd0I7hmsHZYDSEazdBH0Gx+NcZBJCVknjH2mJjIuJ8sg7/F5ZfzTF4qDzA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nm7cZ0jG0W2wPWbCOlJkxMATHvuyH1yyA8frGtX+X2U=;
- b=YY2/mwrbQs34DRyVkKdweGA+/XF3fm8TVh0Luq/4HobTwZW+wuWhCDrlSGVRbhBFYDLQVDQqhIVoedBkz7/nPteSQg8Wxi5qts4/VD2X69dUfIODrCyq7McCwaMhA4S2Kf0qZeJ9yqmpy2b/7dWVQD6oHkM25mt+vopWgU1niL360QYbvow45kG/Cue7SW/LqsgJ8744wHiNn9EzQ6Xt18Ikrxf1pXzgKLD0SOLhAQzjhLrMFyL5uPr8+PocIRVKsgHzFfzijWcu7CIDRFMyJFS/F5oNIQLIauMSsgoYsQpHKTPjw2BJku2Rryj0nbnAWsvIr4e/YUaWn7W1fG1z+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=hammerspace.com; dmarc=pass action=none
- header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
- s=selector2;
+ bh=ZS3wNG1ZQrNPgkiWVP7CWSgc1UurS5y2H0Vo1LQEZrs=;
+ b=BFThIP9CFOapv28LrmNaYl7MD6AsMRcYgPH4wJ+Ip5zPMVeladse92JzyaRPG54xbePDygB0FztkaTVnzeZ7VV/nr53rOn3rg0ldDhaYJWWC7gYAKz4BHh2f0YZTvkVgNFci+ZyfmBkqGkvO92TitKRyxIhntcpGKD4hdWhyXyQsFL+h3RQuiy888bR2nNLmqUAlnmtQ2zTWgg4g2aok1ghly/yY9Em/h3zun3M+L7Bkio4EUuk0TXFU7776IWKP5tZKlBNgLfm9ayWtUtm1RG3c8KtUGZzlQhZP9ZbO2KcLH/9u3JWMyq/TlrhtTiH4MGocoivgyX6Zo443q5mBSA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=gourry.net smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nm7cZ0jG0W2wPWbCOlJkxMATHvuyH1yyA8frGtX+X2U=;
- b=J46ag3LoeGPyY1p8AH7qtFVdYUEq4NOFlrS8r3lf0UN4Fx4UWZmJsBKRIs/zEKxqf+DgQLvelEhsSjBTPdAkoLF9tRI+JrZgL54r86A2Gk66aNWxoH8QRu2JNx6Rdysv2qeecKOHbJnqthS//W0GXzfMq18OM9E72T23HbVbX1s=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=hammerspace.com;
-Received: from BN0PR13MB5246.namprd13.prod.outlook.com (2603:10b6:408:159::12)
- by DS7PR13MB4686.namprd13.prod.outlook.com (2603:10b6:5:3a3::5) with
+ bh=ZS3wNG1ZQrNPgkiWVP7CWSgc1UurS5y2H0Vo1LQEZrs=;
+ b=QxygLPEf+Y6DOQ9bKI39D0hhwnpU6zm9aAZ+wrSxImddBHB5jP3lAi4sqk69CTdsC6qk/I4rPu6zfRtb1pkFD/DLcZsyWvTIPsoC72ou7RB9tHFz9A9Crmxqcwi7MQa4gdOOcd8tNzq6Mo06F2S/qzN20NSntR5vUZiGh0F8JqE=
+Received: from BN0PR04CA0173.namprd04.prod.outlook.com (2603:10b6:408:eb::28)
+ by PH7PR12MB8123.namprd12.prod.outlook.com (2603:10b6:510:2bb::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.16; Mon, 2 Feb
- 2026 16:51:12 +0000
-Received: from BN0PR13MB5246.namprd13.prod.outlook.com
- ([fe80::39d0:ce59:f47d:5577]) by BN0PR13MB5246.namprd13.prod.outlook.com
- ([fe80::39d0:ce59:f47d:5577%6]) with mapi id 15.20.9564.014; Mon, 2 Feb 2026
- 16:51:11 +0000
-From: Benjamin Coddington <bcodding@hammerspace.com>
-To: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
- NeilBrown <neil@brown.name>, Trond Myklebust <trondmy@kernel.org>,
- Anna Schumaker <anna@kernel.org>,
- Benjamin Coddington <bcodding@hammerspace.com>,
- Eric Biggers <ebiggers@kernel.org>, Rick Macklem <rick.macklem@gmail.com>
-Cc: <linux-nfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-crypto@vger.kernel.org>
-Subject: Re: [PATCH v3 1/3] NFSD: Add a key for signing filehandles
-Date: Mon, 02 Feb 2026 11:51:03 -0500
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <45956CAA-4AA1-4216-8B83-C4D3F2FFD67D@hammerspace.com>
-In-Reply-To: <e3806f53c351c03725ecb12fb7ad100786df04f6.1770046529.git.bcodding@hammerspace.com>
-References: <cover.1770046529.git.bcodding@hammerspace.com>
- <e3806f53c351c03725ecb12fb7ad100786df04f6.1770046529.git.bcodding@hammerspace.com>
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: PH8P220CA0030.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:510:348::15) To BN0PR13MB5246.namprd13.prod.outlook.com
- (2603:10b6:408:159::12)
+ 2026 17:02:42 +0000
+Received: from BN1PEPF00006000.namprd05.prod.outlook.com
+ (2603:10b6:408:eb:cafe::c0) by BN0PR04CA0173.outlook.office365.com
+ (2603:10b6:408:eb::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9564.16 via Frontend Transport; Mon,
+ 2 Feb 2026 17:02:05 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ BN1PEPF00006000.mail.protection.outlook.com (10.167.243.232) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9587.10 via Frontend Transport; Mon, 2 Feb 2026 17:02:41 +0000
+Received: from [10.254.59.95] (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 2 Feb
+ 2026 11:02:39 -0600
+Message-ID: <9652a424-6eb1-462f-8cbd-181af880f98b@amd.com>
+Date: Mon, 2 Feb 2026 11:02:37 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/9] cxl/core: Add dax_kmem_region and sysram_region
+ drivers
+To: Gregory Price <gourry@gourry.net>
+CC: <linux-mm@kvack.org>, <linux-cxl@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<kernel-team@meta.com>, <dave@stgolabs.net>, <jonathan.cameron@huawei.com>,
+	<dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>,
+	<dan.j.williams@intel.com>, <willy@infradead.org>, <jack@suse.cz>,
+	<terry.bowman@amd.com>, <john@jagalactic.com>
+References: <20260129210442.3951412-1-gourry@gourry.net>
+ <20260129210442.3951412-9-gourry@gourry.net>
+ <c1d7d137-b7c2-4713-8ca4-33b6bc2bea2b@amd.com>
+ <aX0s4i5OqFhHkEUp@gourry-fedora-PF4VCD3F>
+Content-Language: en-US
+From: "Cheatham, Benjamin" <benjamin.cheatham@amd.com>
+In-Reply-To: <aX0s4i5OqFhHkEUp@gourry-fedora-PF4VCD3F>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb08.amd.com
+ (10.181.42.217)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN0PR13MB5246:EE_|DS7PR13MB4686:EE_
-X-MS-Office365-Filtering-Correlation-Id: 249c5dc9-7734-45e2-0bd8-08de627b4554
-X-MS-Exchange-AtpMessageProperties: SA
+X-MS-TrafficTypeDiagnostic: BN1PEPF00006000:EE_|PH7PR12MB8123:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0da34349-4baa-4f6a-27a6-08de627ce0ac
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|7142099003;
+	BCL:0;ARA:13230040|376014|82310400026|7416014|36860700013|1800799024|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?IPe4JqXPARJA8hsqj834DjfTOjfMIS/du8i7sPpvDCpcqZKjm2JO5vr+EHzP?=
- =?us-ascii?Q?Me2Wk7ac5ot5/NWk0JsCtFC4WqQldmpooMdiIbpDvXOM/EpEM81W0NEtUrps?=
- =?us-ascii?Q?y6lrAotrL3vjyTEsuLJaqWoCvaRhXlJCsgiQPW0wjWNJS85Xo2JBReeYNXPV?=
- =?us-ascii?Q?8AXrvOy8aIs3SuM0RdASGvrVkfTEzRQ09kaAGnrvILDF6n3q9klVpsV0/DtC?=
- =?us-ascii?Q?8jRjpQyoWrGDamS7NbXneQ2HRMhwjys0Ee17O59hAQVov5B0aJFjBB//Ccfj?=
- =?us-ascii?Q?p+Mfrznr8oOcPzaAtRtxhPiaVAaju1Wq2CpBSIQTbgB/Ddx3/YYihjDYb2w7?=
- =?us-ascii?Q?+V5nHW+0CONirtPTdFyG64lRjSKRk2+LGj5j8r9Yk0pB9vbzzEcfnVDOMa4X?=
- =?us-ascii?Q?ZUIDX7lGVXKvbR4RnoSA9HHJzr/+/1zg1KTuxkTKmJ+Cj9duK6orr7kwU2Qu?=
- =?us-ascii?Q?eESOKWDxRhaNT4GxeDhtAEnNAY0SvciJw/CqNwMzo+hQEiPuyFXHDMjfs3SJ?=
- =?us-ascii?Q?E8kAye8J4yOcFKCJIyjPdXMoN3p46+phALTl+A6aVR/6ylPiDI1eVPO3m/s4?=
- =?us-ascii?Q?fqTqrAdmM9PMwf9i4MAJr7VX0bpFoF2owluzgM0/NC5tnbiy2x5W2WczlXZY?=
- =?us-ascii?Q?+cvu6g2EwmvkwQvpHIM30vOummlDfBEnhQrjQfWaFPQ74pacRBw/OGCcRL+s?=
- =?us-ascii?Q?UM4WPkQ0bFYeTmMIQn9hCDThRh/Ds27cbA1GbSwy7W4OHcd9rrMAkFJZfbMf?=
- =?us-ascii?Q?07+tIIpCNalFJVoCo+JOatBSnFAQ3uBcX4RXVfCPwR22wFkmygsUJe4xt2ey?=
- =?us-ascii?Q?xdQHFDhAKGF5mpkTRGYZvVlyc3gAmyUsC8hEzlrl1KVZkjCHo2kjxfBYMxos?=
- =?us-ascii?Q?MKhO6RnzyY9MFnviIBCqSIk0McAyITb4TJI0daT1uD+wJPMkbax0nuRtqq+4?=
- =?us-ascii?Q?58jLFSDRoBma0xeIsGk1+YybNCvkzOUpInhfHZZizYeunT31c2ECgaYkiJIa?=
- =?us-ascii?Q?BIdCtTCanIBSokcW1Ez5ksOyb5UU+AM7Bo0G6NX7EX8j41K3qYPXlyRGi7jJ?=
- =?us-ascii?Q?FfLWUqAoW2RyeUKYhJ5rFUE6Uc7MtTE5logf4KpMaq/tNRLoC6KOdoIb28HL?=
- =?us-ascii?Q?/51QRKasbYp6A4nRlmyFSkUIC6J/m33+ykBNQ+9RNGXNSWR0s+PCQwPvphuz?=
- =?us-ascii?Q?ymwAAVdfXogFTbrsUgmjLQqUD6Infl9SyJf1Wvx/IOjySKO9beqN6r0hf+J5?=
- =?us-ascii?Q?Dz2PQ8V8vhOv/m+96OaYQdqu6lnpqGJdHODms9jeKn3SCSR6CmCw4SHN5OXX?=
- =?us-ascii?Q?+DUo5ELw9M0q2aM6F1m2xOyh1qBQDb6cBrhF6walik8zrMwWKyOAb6ka8ssv?=
- =?us-ascii?Q?u/+7NFe0Qy0qJR1zG+BOiv8/uO53gYsbXJBJHCqfzNlMbg0qVaEciWSyUDxb?=
- =?us-ascii?Q?s2OzUR8pLbIJGoxrnJW8eraQjtg3eacIkN0XlSIZBuUlhYrOHtarWjdQW+s/?=
- =?us-ascii?Q?dTSnvewICQFPW4uDgRdthmtMpRPoyfwkiTrKpcUzVgFgXtsx6KzciLmFjwWq?=
- =?us-ascii?Q?ZoY9OZBu7P8ug279o4I=3D?=
+	=?utf-8?B?OHVQcGM1blNWWEl0dFJuVW5PVGtyVDViRHNSTzNyK0RacCt1bUVHcjBtUEtz?=
+ =?utf-8?B?d0RBNVlRWFNTcVg3cU5qTVQzV29BelY3c1Rsd3BoTjdSNFRRbWYyUHVhK0xY?=
+ =?utf-8?B?S3RIRzduZ2Q4aWlaTWdaTnRLVDc3SkRsTGJYM1NQVmtTbi9yakdwS3NmU0J0?=
+ =?utf-8?B?RnArMlJVcHpMU0FXMHhLTC9ZK1VkNXVLanVkZyt5VG9zdFltZ0JDaUJTV3oz?=
+ =?utf-8?B?S0FFKzA2U1dMdjFqU2YzMk96Wi84VGQydFdaU2ZmcUVtL0RTWnBXeHlFV2Z2?=
+ =?utf-8?B?RTQzWkY3ZHVNZlZ2SWJ5V2o5dzMwYlMzQ09JTW1INTFYbGt3WGZyM1F3aXAx?=
+ =?utf-8?B?d0ZUU0FaNHNPaGN6bDdpWXNtNC9RRDZnbmRBZTRISzBPZTducnVYMWM4N1ZE?=
+ =?utf-8?B?a0d3QU90VzRHMjNXT2hJREh1M0tHQjRleHZZYlUxTSs2V3ZyVVZCSGxOQjJx?=
+ =?utf-8?B?aU1zVFBxUSttNlNzV0NHS202MTJqMUoxdVl0d3o5eDVNTU4xRGFCc3VsVEJJ?=
+ =?utf-8?B?ZFhaeHFVcHg1ZUg0em9jTm4yUzVvZ2tSMzZCV3ErU2dtZzhndzA0MUZPWmt6?=
+ =?utf-8?B?N2RUNDA2bHhWd3hZWTJnK0YyZ2NDcmdCQTl5b29JVzB2UmZ5eUdJcDJmT2wr?=
+ =?utf-8?B?QUpOdDRnbjVkTHg5UnVEbllDeEJLaVZyTFR3YXNxZ1dvdytPckNXdnlCUi9x?=
+ =?utf-8?B?dVdDSmdXU2gyWTV0dGJKdFkybUZlUlpKajllTUtiMktiRWl3OGRnaXVEUDFM?=
+ =?utf-8?B?aUVCNGZWbzFISVNKVEd5aDRyL0pBS3dqREo2dDVLZk5xSDlETTQxaWFWSlNM?=
+ =?utf-8?B?VmJsYi9CR2FmRVVtbEZmbU1zQ1I4MDJ6YytoNmpxeHpMb3VxTWtUZWJFYTZa?=
+ =?utf-8?B?S1hZS0FPRzh6V0UyYkZkVU12QzZFN21POWZ4L3E1cnVVQXZ5K1hMdlVTWWJa?=
+ =?utf-8?B?dnNDZFdoZmoyQXNlTjM5a01IQnVkM1d6akw3emQwMm9qMFFlRzQrWFlTNFdk?=
+ =?utf-8?B?d0lkM3lzdFJYa2dWREx3a3doTDhtNmo0dUdhdHl4aDFZdjRrVmlMQlZ2cndF?=
+ =?utf-8?B?SzlVMEVHekZwVDI3akRhN25SMVl2SStrR2RJOU92clFTZjNWc0JmdmFoaEpm?=
+ =?utf-8?B?dW55RkJxMnZOMUNVUWQzKzhuMnhyUHVDMUdmbWdzZHpyL2hjRFdFd0U3ek1F?=
+ =?utf-8?B?RTEzWEMyU0dkOFRYYWMvUDh5SlRrK1U1b24wRUU0bG1rNDBxV2FudUpmOTJn?=
+ =?utf-8?B?YkdCSmxaR1FSOFRkcGFMdm5xeGxXejVIZDVHSk5zb3pjTkNVcU9IcGw4cmVt?=
+ =?utf-8?B?YTBFSHRHSnFMWDhncEZDaTVyWXpCUzhBNTdEeG04M3hqYXlqc0dmSzVIMk5F?=
+ =?utf-8?B?bXlObkY1alZJbk15enl2eHRvWW9RSkREQUZGQW9rd2J4bWNkR2J5WExpa01t?=
+ =?utf-8?B?YlJrSzg3T3Q5T3dSY0RCaHN3M1Z6cW5waHYzK05qZ2xxbGFQN2d1YnhKbU94?=
+ =?utf-8?B?VzlpSktCd2VGTFkybVlLNEFFVVlYU3EvREY3ZjUycFJQdXVaWlBydU00QnVE?=
+ =?utf-8?B?c3J3aENTVkFYdzhGRVRzVGcremoybEFKWmo2cWhPWEpPdUVVK0poRm9XSkI2?=
+ =?utf-8?B?dlRHRUF3TGFjdXAyK2pZTVIyYTljaXB6bWRlenN4SnhvM1M3dGx5U3pMMCt5?=
+ =?utf-8?B?WURoZkxCTzlYdy9SNC9VUS90OWFucE1kWWhYY3NaSFgrSVoyUVdlWHFKYWk4?=
+ =?utf-8?B?ZTdVdmF0K2t2dFg2ZWZueEN6Vm1GR0pndDBkVk1qRWJHZUpwQmlyNXptaGk4?=
+ =?utf-8?B?ZjRWU2pZeFhrN2JqaERJeGJzR0crK3I5ME1oRWNPKys4dEhQR0Y3WEJLVEdO?=
+ =?utf-8?B?NGJucDBzMWtEbFVPZll5NnlJYVRwakREVnIxdFlPY1JIbHRIU0dqY3ZTRVpt?=
+ =?utf-8?B?aEdQd1pkWXRoRUJub1ZLUFUxYzhIMGFURjk2MjFxZHlEOVU3dFJQT2haSVZz?=
+ =?utf-8?B?elBCVk5nVzgzSlZtMGtXelFXZEdlVjFCa1VGMEZBWU5ubG5tUi9BTjlTK3ZP?=
+ =?utf-8?B?R3ZzMzYydnNMdmNLaGMwUTYwQTBZTGxpMGNnMzBHbjBUcXN0M2puc0JGenNG?=
+ =?utf-8?B?U0ZPZWMxTUtTZVY4QStXU3Y1YmoxZ1krMFNraTNFdVg2a0ZWVFcydXhBTjha?=
+ =?utf-8?B?clYyYXZLZlNybFQ1anBtdXRWaDVlVklsRHRpRDJpZmVUT1M3dExmclc3dm1N?=
+ =?utf-8?B?MGVmeVpFRlgrVDBtSGM4SkUxbFZBPT0=?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR13MB5246.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(7142099003);DIR:OUT;SFP:1102;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(7416014)(36860700013)(1800799024)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?UXTY0kWZnCIStUuzTaL426utG/W/O1q9RmFClhrBwgWSHYIqixodUL730D/m?=
- =?us-ascii?Q?s+efVLX/v37goDAknpScIOtrWqcvxWrvzjcxU0b6UJeRb62uvC5GT4mZ0DUR?=
- =?us-ascii?Q?ZE50bHLONKHkz80f5VHRzd2lREY0szR76khtBZApQRI1AOASyP1J5cRa4jpM?=
- =?us-ascii?Q?/3pMi/3CPfVvV+f9M0SkWjunWRz3b8E2oZMKcouua7QTqMxJapdalCDZFgEd?=
- =?us-ascii?Q?mhCKhlx9jLdYet3Q4I4rHoMW4KfSezdvQx98MXVZoBAnlQdjS8UnaFATEIFs?=
- =?us-ascii?Q?yG2/2cb/Y4micAYlbiQswb5iRipD2YinatLWNHUFCniRDi4o7Di+12x1RJcg?=
- =?us-ascii?Q?nFFRBNYL4YvOloXltuKlrMgRukzml+mhp3MpMISJdH3kti7DXozAFyKgQj16?=
- =?us-ascii?Q?n47HhkZOmPXfhEPr4B4N8B9T4HnSN+2u7qy+qPKlNHLx07L3CkIRII7LWuz1?=
- =?us-ascii?Q?2OfAPjv4M7wLCaksvZHAenxqbKkQhKwtHmksL3wJ/OCAGYWRfyr5nGJ1jSuz?=
- =?us-ascii?Q?iw8w3LGXAtMT1aTqsK+rYiMupy+yItXsBq43KONOueuekUA2jAu15ZhmwHoT?=
- =?us-ascii?Q?7dM4jhp9bf7HfLelhFQTI641OTcQIHY8D3ixOVN4ojmywCU7qSs14ReVphvW?=
- =?us-ascii?Q?bMEV9X+SHfEiPQ/VcCHFHV7eAwJ61kC1ZsfcepXl96X+N9ZZlPUxYM4+kMsk?=
- =?us-ascii?Q?y+AgwWFrup4yINmrcRXQscJ+QbR5Pzkg7pE9isn/soitRrWOaidhGFnww6hX?=
- =?us-ascii?Q?c/tcPeSC1YinIMrxNpNxZtpqc20bwSWsE4DdyaZ2Pl/bqiErpWPdLIMpz1bM?=
- =?us-ascii?Q?qqzgmLxWaT2BQ9FlgvRnoQEia5qR4sLb17mYsR2ema5nhvnggWB9RHdTbbv/?=
- =?us-ascii?Q?J3fYZm93SN7wWadqB3E7s6zJkLZBYX/EuG/9jZoJrYKxoStszsDuMmtjQQM5?=
- =?us-ascii?Q?o5U2Lpj5ZcUn/V0ZSx3zwZiw7kyPdAaLKlTuAwnOwJveCEhqGCGV+kL58ICe?=
- =?us-ascii?Q?czkOwO1McjIIY1K3MrJmwQUyDtccguCY4P4DT55kRSdQ31tuyGWdAOb1oLnO?=
- =?us-ascii?Q?j9A3DiGiij23Pbkcky93zh8tfFp+cmolkOJRY0krH5rj9YR9I014vJH2/nbz?=
- =?us-ascii?Q?6kmAamMHNsZBkhpo/1J1NadsR1GtbOpPO9cQZru54U+feF8ER2ebvvq20Ago?=
- =?us-ascii?Q?mJi+nCj/gAmTatL5HfgpgXX759nNqG4jHyko1wDFvdDWx7T6AzuUu04DEyln?=
- =?us-ascii?Q?WaIwYQixj0/cZw0PwWmdcN2ZDUyUFGlKKrJvALKbcnPsBebcpfmUwkJrPjBM?=
- =?us-ascii?Q?vKX5aidI2bCJr9kjniebRDjrj7+vynkNV4JRuVemFyYrxjbeHyPfG+Bz0yfL?=
- =?us-ascii?Q?KYolQQ7jWUjkW8QxSCEE4MFCqz0LM66vvNfw1aHRO9XeUwf3Pvb+ctQqqsyN?=
- =?us-ascii?Q?Km/xXSEOkilqtFm58IQReBVs+uyU4JfI5OiBGpSQzInfEGoyqC/Cr/NjC+GK?=
- =?us-ascii?Q?J7EZLNJ3VmNdQWLvQX6XgcNvwUBUggq8XfOSH+7zOz52gC7jK6+Fp1TQUdRS?=
- =?us-ascii?Q?35nzrHch75UqGQKXvTa/vG6J3gohyXMn+a5bj790VnZKPazE6Xv6oIQFyVuf?=
- =?us-ascii?Q?vzcsrE7c3tPijEP4pUD8b2CrBgn4mcrVCiRPvW7kcGHJ4SEYFI0MBzFwYFrS?=
- =?us-ascii?Q?+KM8wStqpd5cPymlu00gMqsjMrYzb2KWcMORPgg/8jLLjRbaqYqcLfvxp7fY?=
- =?us-ascii?Q?3TyHfth2kYYDqWfZ0INW8ANFMd7M8Ro=3D?=
-X-OriginatorOrg: hammerspace.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 249c5dc9-7734-45e2-0bd8-08de627b4554
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR13MB5246.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Feb 2026 16:51:11.8289
+	HChHCTy9IZFNnyPpZ3/DN8VKjfsgI+ZECtRztZIIvo0RLrCC4WImtgCzPsQI2nXbrqTJRgbyVtQmx1cmWWe/4monJPMnDnKIPbiWriHMwQRPkbvVD+18cLrqVU4cpwrg+EKOS3hWPDF6BPbLCb3nuwIv4ZhN6qPdPkJ8flyG8mk4tlimwqOhQjydR+4sjXU2kaUv/49cXKVR9WZyjYJUZbyRlGGUuR0drxHj0qqXnbEI4ysYiTRy/OIz8S5JeNkTUSGLJbkwG64D1FAU22xTnlO25cPFrCzMdJnKJEWnfq9KhuuXYTHr93A1wkOZQyI+Jvt7LMo6syS/ChQQmTih4AYGAzuai9LS73/Wl+CkFg1CvCCAQGFNS+bUwis8tRNCyJ2qebZUGdRQ2nQUTmYVGvUHWnBZw9CDGEwMhXps0al5PJZmiuxo9ft0huwk+Jbd
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Feb 2026 17:02:41.7586
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sd4IXtASjRupsLjOa5R27F/0w/BZuR7bEziRTpg99V1RfvxTG20P8nrwe93Beplmt5riGqmwqsLe6Xd9z8sURb6FPW5LYvxbC5c5UsNzkMo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR13MB4686
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0da34349-4baa-4f6a-27a6-08de627ce0ac
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00006000.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8123
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [1.84 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-0.16 / 15.00];
 	ARC_REJECT(1.00)[cv is fail on i=2];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[hammerspace.com,none];
-	R_DKIM_ALLOW(-0.20)[hammerspace.com:s=selector2];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	DMARC_POLICY_ALLOW(-0.50)[amd.com,quarantine];
+	R_DKIM_ALLOW(-0.20)[amd.com:s=selector1];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[oracle.com,kernel.org,brown.name,hammerspace.com,gmail.com];
+	TAGGED_FROM(0.00)[bounces-76066-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76065-lists,linux-fsdevel=lfdr.de];
-	DKIM_TRACE(0.00)[hammerspace.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,amd.com:mid,amd.com:dkim];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	DKIM_TRACE(0.00)[amd.com:+];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[bcodding@hammerspace.com,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[benjamin.cheatham@amd.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
 	MID_RHS_MATCH_FROM(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,hammerspace.com:email,hammerspace.com:dkim,hammerspace.com:mid]
-X-Rspamd-Queue-Id: ADD2BCF2EA
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: 8CC1ACF63F
 X-Rspamd-Action: no action
 
-On 2 Feb 2026, at 11:19, Benjamin Coddington wrote:
+On 1/30/2026 4:12 PM, Gregory Price wrote:
+> On Fri, Jan 30, 2026 at 03:27:12PM -0600, Cheatham, Benjamin wrote:
+>> On 1/29/2026 3:04 PM, Gregory Price wrote:
+>>> In the current kmem driver binding process, the only way for users
+>>> to define hotplug policy is via a build-time option, or by not
+>>> onlining memory by default and setting each individual memory block
+>>> online after hotplug occurs.  We can solve this with a configuration
+>>> step between region-probe and dax-probe.
+>>>
+>>> Add the infrastructure for a two-stage driver binding for kmem-mode
+>>> dax regions. The cxl_dax_kmem_region driver probes cxl_sysram_region
+>>> devices and creates cxl_dax_region with dax_driver=kmem.
+>>>
+>>> This creates an interposition step where users can configure policy.
+>>>
+>>> Device hierarchy:
+>>>   region0 -> sysram_region0 -> dax_region0 -> dax0.0
+>>
+>> This technically comes up in the devdax_region driver patch first, but I noticed it here
+>> so this is where I'm putting it:
+>>
+>> I like the idea here, but the implementation is all off. Firstly, devm_cxl_add_sysram_region()
+>> is never called outside of sysram_region_driver::probe(), so I'm not sure how they ever get
+>> added to the system (same with devdax regions).
+>>
+>> Second, there's this weird pattern of adding sub-region (sysram, devdax, etc.) devices being added
+>> inside of the sub-region driver probe. I would expect the devices are added then the probe function
+>> is called. 
+> 
+> I originally tried doing with region0/region_driver, but that design
+> pattern is also confusing - and it creates differently bad patterns.
+> 
+>     echo region0 > decoder0.0/create_ram_region   -> creates region0
+> 
+>     # Current pattern
+>     echo region > driver/region/probe  /* auto-region behavior */
+> 
+>     # region_driver attribute pattern
+>     echo "sysram" > region0/region_driver
+>     echo region0 > driver/region/probe   /* uses sysram region driver */
+> 
+> https://lore.kernel.org/linux-cxl/20260113202138.3021093-1-gourry@gourry.net/
+> 
+> Ira pointed out that this design makes the "implicit" design of the
+> driver worse.  The user doesn't actually know what driver is being used
+> under the hood - it just knows something is being used.
+> 
+> This at least makes it explicit which driver is being used - and splits
+> the uses-case logic up into discrete drivers (dax users don't have to
+> worry about sysram users breaking their stuff).
+> 
+> If it makes more sense, you could swap the ordering of the names
+> 
+>     echo region0 > region/bind
+>     echo region0 > region_sysram/bind
+>     echo region0 > region_daxdev/bind
+>     echo region0 > region_dax_kmem/bind
+>     echo region0 > region_pony/bind
+> 
+> --- 
+> 
+> The  underlying issue is that region::probe() is trying to be a
+> god-function for every possible use case, and hiding the use case
+> behind an attribute vs a driver is not good.
+> 
+> (also the default behavior for region::probe() in an otherwise
+>  unconfigured region is required for backwards compatibility)
 
-> A future patch will enable NFSD to sign filehandles by appending a Mess=
-age
-> Authentication Code(MAC).  To do this, NFSD requires a secret 128-bit k=
-ey
-> that can persist across reboots.  A persisted key allows the server to
-> accept filehandles after a restart.  Enable NFSD to be configured with =
-this
-> key the netlink interface.
->
-> Link: https://lore.kernel.org/linux-nfs/cover.1770046529.git.bcodding@h=
-ammerspace.com
-> Signed-off-by: Benjamin Coddington <bcodding@hammerspace.com>
-> ---
->  Documentation/netlink/specs/nfsd.yaml |  6 +++++
->  fs/nfsd/netlink.c                     |  5 ++--
->  fs/nfsd/netns.h                       |  2 ++
->  fs/nfsd/nfsctl.c                      | 37 ++++++++++++++++++++++++++-=
+Ok, that makes sense. I think I just got lost in the sauce while looking at this last
+week and this explanation helped a lot.> 
+>> What I think should be going on here (and correct me if I'm wrong) is:
+>> 	1. a cxl_region device is added to the system
+>> 	2. cxl_region::probe() is called on said device (one in cxl/core/region.c)
+>> 	3. Said probe function figures out the device is a dax_region or whatever else and creates that type of region device
+>> 	(i.e. cxl_region::probe() -> device_add(&cxl_sysram_device))
+>> 	4. if the device's dax driver type is DAXDRV_DEVICE_TYPE it gets sent to the daxdev_region driver
+>> 	5a. if the device's dax driver type is DAXDRV_KMEM_TYPE it gets sent to the sysram_region driver which holds it until
+>> 	the online_type is set
+>> 	5b. Once the online_type is set, the device is forwarded to the dax_kmem_region driver? Not sure on this part
+>>
+>> What seems to be happening is that the cxl_region is added, all of these region drivers try
+>> to bind to it since they all use the same device id (CXL_DEVICE_REGION) and the correct one is
+>> figured out by magic? I'm somewhat confused at this point :/.
+>>
+> 
+> For auto-regions:
+>    region_probe() eats it and you get the default behavior.
+> 
+> For non-auto regions:
+>    create_x_region generates an un-configured region and fails to probe
+>    until the user commits it and probes it.
 
->  fs/nfsd/trace.h                       | 25 ++++++++++++++++++
->  include/uapi/linux/nfsd_netlink.h     |  1 +
->  6 files changed, 73 insertions(+), 3 deletions(-)
->
-> diff --git a/Documentation/netlink/specs/nfsd.yaml b/Documentation/netl=
-ink/specs/nfsd.yaml
-> index badb2fe57c98..d348648033d9 100644
-> --- a/Documentation/netlink/specs/nfsd.yaml
-> +++ b/Documentation/netlink/specs/nfsd.yaml
-> @@ -81,6 +81,11 @@ attribute-sets:
->        -
->          name: min-threads
->          type: u32
-> +      -
-> +        name: fh-key
-> +        type: binary
-> +        checks:
-> +            exact-len: 16
->    -
->      name: version
->      attributes:
-> @@ -163,6 +168,7 @@ operations:
->              - leasetime
->              - scope
->              - min-threads
-> +            - fh-key
->      -
->        name: threads-get
->        doc: get the number of running threads
-> diff --git a/fs/nfsd/netlink.c b/fs/nfsd/netlink.c
-> index 887525964451..4e08c1a6b394 100644
-> --- a/fs/nfsd/netlink.c
-> +++ b/fs/nfsd/netlink.c
-> @@ -24,12 +24,13 @@ const struct nla_policy nfsd_version_nl_policy[NFSD=
-_A_VERSION_ENABLED + 1] =3D {
->  };
->
->  /* NFSD_CMD_THREADS_SET - do */
-> -static const struct nla_policy nfsd_threads_set_nl_policy[NFSD_A_SERVE=
-R_MIN_THREADS + 1] =3D {
-> +static const struct nla_policy nfsd_threads_set_nl_policy[NFSD_A_SERVE=
-R_FH_KEY + 1] =3D {
->  	[NFSD_A_SERVER_THREADS] =3D { .type =3D NLA_U32, },
->  	[NFSD_A_SERVER_GRACETIME] =3D { .type =3D NLA_U32, },
->  	[NFSD_A_SERVER_LEASETIME] =3D { .type =3D NLA_U32, },
->  	[NFSD_A_SERVER_SCOPE] =3D { .type =3D NLA_NUL_STRING, },
->  	[NFSD_A_SERVER_MIN_THREADS] =3D { .type =3D NLA_U32, },
-> +	[NFSD_A_SERVER_FH_KEY] =3D NLA_POLICY_EXACT_LEN(16),
->  };
->
->  /* NFSD_CMD_VERSION_SET - do */
-> @@ -58,7 +59,7 @@ static const struct genl_split_ops nfsd_nl_ops[] =3D =
-{
->  		.cmd		=3D NFSD_CMD_THREADS_SET,
->  		.doit		=3D nfsd_nl_threads_set_doit,
->  		.policy		=3D nfsd_threads_set_nl_policy,
-> -		.maxattr	=3D NFSD_A_SERVER_MIN_THREADS,
-> +		.maxattr	=3D NFSD_A_SERVER_MAX,
->  		.flags		=3D GENL_ADMIN_PERM | GENL_CMD_CAP_DO,
->  	},
->  	{
-> diff --git a/fs/nfsd/netns.h b/fs/nfsd/netns.h
-> index 9fa600602658..c8ed733240a0 100644
-> --- a/fs/nfsd/netns.h
-> +++ b/fs/nfsd/netns.h
-> @@ -16,6 +16,7 @@
->  #include <linux/percpu-refcount.h>
->  #include <linux/siphash.h>
->  #include <linux/sunrpc/stats.h>
-> +#include <linux/siphash.h>
->
->  /* Hash tables for nfs4_clientid state */
->  #define CLIENT_HASH_BITS                 4
-> @@ -224,6 +225,7 @@ struct nfsd_net {
->  	spinlock_t              local_clients_lock;
->  	struct list_head	local_clients;
->  #endif
-> +	siphash_key_t		*fh_key;
->  };
->
->  /* Simple check to find out if a given net was properly initialized */=
+I think this was the source of my misunderstanding. I was trying to understand how it
+works for auto regions when it's never meant to apply to them.
 
-> diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-> index 4d8e3c1a7be3..590584952bf6 100644
-> --- a/fs/nfsd/nfsctl.c
-> +++ b/fs/nfsd/nfsctl.c
-> @@ -1571,6 +1571,31 @@ int nfsd_nl_rpc_status_get_dumpit(struct sk_buff=
- *skb,
->  	return ret;
->  }
->
-> +/**
-> + * nfsd_nl_fh_key_set - helper to copy fh_key from userspace
-> + * @attr: nlattr NFSD_A_SERVER_FH_KEY
-> + * @nn: nfsd_net
-> + *
-> + * Callers should hold nfsd_mutex, returns 0 on success or negative er=
-rno.
-> + */
-> +static int nfsd_nl_fh_key_set(const struct nlattr *attr, struct nfsd_n=
-et *nn)
-> +{
-> +	siphash_key_t *fh_key;
-> +
-> +	if (nla_len(attr) !=3D sizeof(siphash_key_t))
-> +		return -EINVAL;
-> +
-> +	if (!nn->fh_key) {
-> +		fh_key =3D kmalloc(sizeof(siphash_key_t), GFP_KERNEL);
-> +		if (!fh_key)
-> +			return -ENOMEM;
-> +	}
-> +
-> +	memcpy(fh_key, nla_data(attr), sizeof(siphash_key_t));
-> +	nn->fh_key =3D fh_key;
-> +	return 0;
-> +}
-> +
+Sorry if this is a stupid question, but what stops auto regions from binding to the
+sysram/dax region drivers? They all bind to region devices, so I assume there's something
+keeping them from binding before the core region driver gets a chance.
 
-Oof, I messed it up right here^^ this hunk needed to be folded in.. can s=
-end another version on this one:
-
-diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-index 590584952bf6..9b94e1ed98e0 100644
---- a/fs/nfsd/nfsctl.c
-+++ b/fs/nfsd/nfsctl.c
-@@ -1580,19 +1580,18 @@ int nfsd_nl_rpc_status_get_dumpit(struct sk_buff =
-*skb,
-  */
- static int nfsd_nl_fh_key_set(const struct nlattr *attr, struct nfsd_net=
- *nn)
- {
--       siphash_key_t *fh_key;
-+       siphash_key_t *fh_key =3D nn->fh_key;
-
-        if (nla_len(attr) !=3D sizeof(siphash_key_t))
-                return -EINVAL;
-
--       if (!nn->fh_key) {
-+       if (!fh_key) {
-                fh_key =3D kmalloc(sizeof(siphash_key_t), GFP_KERNEL);
-                if (!fh_key)
-                        return -ENOMEM;
-+               nn->fh_key =3D fh_key;
-        }
--
-        memcpy(fh_key, nla_data(attr), sizeof(siphash_key_t));
--       nn->fh_key =3D fh_key;
-        return 0;
- }
-
-
+Thanks,
 Ben
+> 
+> auto-regions are evil and should be discouraged.
+> 
+> ~Gregory
+
 
