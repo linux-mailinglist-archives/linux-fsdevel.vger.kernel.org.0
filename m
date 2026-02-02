@@ -1,158 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-76087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 6HflIw3/gGk6DgMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 20:46:21 +0100
+	id 2DlAEgMBgWlyDgMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 20:54:43 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC194D0A86
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 20:46:20 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id D30CAD0D81
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 20:54:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 38128301492D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 19:43:53 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 3AD5530071C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 19:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC0530DEAC;
-	Mon,  2 Feb 2026 19:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE8630648A;
+	Mon,  2 Feb 2026 19:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="utBPvsVE"
+	dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b="afE8850W"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-08.mail-europe.com (mail-08.mail-europe.com [57.129.93.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E917330B538
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Feb 2026 19:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF01305E32
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Feb 2026 19:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.129.93.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770061420; cv=none; b=bjcRgSPYktIDd02dcY0woAjD7WqIL0hCXZ2tkJl+5lTIhnvK6Xn/2qNB80lTUYvjd4U283IOPN/dk9mkSzjh1wRMQHtXTB4HUfsKWd7sP9+MHqLH5+ZQuXU+XXNhdL2Sbapzfgo4NEfShJjSf73ks6zNZJopFcYiHvJM2X6C8RQ=
+	t=1770062078; cv=none; b=Cjd+c4tDoFVHtet26/IsZYNPQZJufpTxlXbCO1HNuAsOFL+q6Rge62PeB87/OUoVs69KEL3FZGgC6TpJV3/Q0fKIJ3pgS295ZtFl27aCQs8WK7LBVQmrGOA6iL6JrJ9aEUhv2bG6NWU5+LNUH1kdJU7u1RlzzQTyXS4hZkW46gA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770061420; c=relaxed/simple;
-	bh=hq/wkgdPnsy/n7unUoWg2bNDVpMpHe1tPcwYEi7v2Ho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cYYuzhPhRe805pn6cs1LoeNGKgj+4b3DT1pI2oR/r6xfu0LXKB55E9OnSLe5ZHoLf+v29gminDHVwTUBzG80dQoRkg/utonjFU08MSI3nqfwreeXSi6AARyP8rczKiQC8bWCC4HkWs3vqf08SSk+DS55VKWt4qAvG4CJiNCbCNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=utBPvsVE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72ECAC19425;
-	Mon,  2 Feb 2026 19:43:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770061419;
-	bh=hq/wkgdPnsy/n7unUoWg2bNDVpMpHe1tPcwYEi7v2Ho=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=utBPvsVEODaRCMfLB7ORx2MPLqLsfljOjbRy6a8CbKkOvkPoWWGDlgbsJ1t9BOUN7
-	 SXTnFqw1B8ZBbKyDZ6wZvrzIu+XtWPEC6YX8pkEPoHKlMchwqt7aFWmw4sQ68wmAcf
-	 y7IUpHuie9G+JZq7NEzh5Z5OuZTp4pNA5Vzh2Lgl4qjmB/OQ6ETbUjb/8gTB29z/uK
-	 cmlsSGKcF9eoFb0UEqGVh+kZNqL7Q73+ElJdDQ1L4JOMBHPfwUFwfbEuGlJZHhk6ks
-	 DHE1mvbixEuVLnBXhwN+k5RdKVkRLZgEYJblZeLD7tsGt+j86guUkZSZ1Q4Zhxx80C
-	 5Xy+yRY9IXG0A==
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 6D9F5F40068;
-	Mon,  2 Feb 2026 14:43:38 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Mon, 02 Feb 2026 14:43:38 -0500
-X-ME-Sender: <xms:av6Aacqc4713DP2VCEM5iEU3nGx90At0PO-Shp-WB0S05uxb8X2a9g>
-    <xme:av6AabbZJ6xWyECVYpaWCYXvtBi1KW2_bo7G39p0SDUqE-P9y6VMUjkN0eaxk4yjx
-    H5ACX-Yclqyqoe3l_XXDKWqT2Z0MovzcqyNjtVTirQF2zdVqrAIonPq>
-X-ME-Received: <xmr:av6Aaf5V-OxVEQ7aGlxoqHrzrOFW-ijFfCDTZyIboC-YhJKqweif2sDYC6ZFQA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddujeekheduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkrghssehkvghrnhgvlhdrohhrgheqnecuggftrfgrthhtvg
-    hrnhepueeijeeiffekheeffffftdekleefleehhfefhfduheejhedvffeluedvudefgfek
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirh
-    hilhhlodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduieduudeivdeiheeh
-    qddvkeeggeegjedvkedqkhgrsheppehkvghrnhgvlhdrohhrghesshhhuhhtvghmohhvrd
-    hnrghmvgdpnhgspghrtghpthhtohepudeipdhmohguvgepshhmthhpohhuthdprhgtphht
-    thhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepsg
-    hrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrtghksehsuhhsvgdr
-    tgiipdhrtghpthhtohephhhughhhugesghhoohhglhgvrdgtohhmpdhrtghpthhtohepsg
-    grohhlihhnrdifrghngheslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthho
-    pehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfsh
-    guvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidq
-    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:av6AaWRoQe9VwPYMBlQnL1SkVdwA0x1tw2nKDSWyA0I9U3uE2G8uxg>
-    <xmx:av6AafsJijIxdd9W07yMw9SOLzRlEyO3gGmYdGMMfb9Zocc_md8ghw>
-    <xmx:av6AaYZ4GGvUFXcYHwUJ4Q5phX5mB35MkDKLX-P9tXhwmD-DNeTugw>
-    <xmx:av6AaZ--4frUTtd_I8rDNcRQk-QbMwywmsxTwBjk4ZHdIncliPp68g>
-    <xmx:av6AaUph2FTNUmZmEoMPzWEyysX2n6saY4iVUtIJ38MQRhchdQMqCIFF>
-Feedback-ID: i10464835:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 2 Feb 2026 14:43:37 -0500 (EST)
-Date: Mon, 2 Feb 2026 19:43:36 +0000
-From: Kiryl Shutsemau <kas@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Orphan filesystems after mount namespace destruction and tmpfs
- "leak"
-Message-ID: <aYD7zpZQeeRpy9ho@thinkstation>
-References: <aYDjHJstnz2V-ZZg@thinkstation>
- <20260202184356.GD3183987@ZenIV>
+	s=arc-20240116; t=1770062078; c=relaxed/simple;
+	bh=Z52zhiTDtDi1FKy+m0xZ+u+Ml0395yRGO6Svo4hV6CI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RfsurE4Xnjqve83KO0jVgFiS5+ewELTqDCDdDFN/S7hSg0/lZohvn4Lv+f5EvTzywQnN2nmFnHLtuilxVqLNlXJ6sTtGyMmx6gn3NQbfx7K+Vhr/RkhHfXMhYNEKixeFgXtuzeyG9TUM43OcKtKdUNxGcFMGfXfVpHkG1WYYbE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link; spf=pass smtp.mailfrom=spawn.link; dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b=afE8850W; arc=none smtp.client-ip=57.129.93.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=spawn.link
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=spawn.link;
+	s=protonmail; t=1770062059; x=1770321259;
+	bh=Z52zhiTDtDi1FKy+m0xZ+u+Ml0395yRGO6Svo4hV6CI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=afE8850WWA8r+MHHeWj/1VwUgaHDjwOd14o0i/t4XKR/26nuUTqyDJrZ5rVViaiP5
+	 ftiQTZb2Pk0OBYP3776bQWcFlWTQhG3hkaI6IOR6HK3lTBCETZYs9GLpFMOKLKlXkN
+	 zFxjQIjs/S3lm6cCUl75fJWIHNvvR+yM3FvaYboikrww0bE7F9x+KHO4M4WULKO8Ls
+	 iiXR0t9J+KC+Qv1Eydm0yAX8wzUdMweeq/Fn2tlj9alAVD1yfkUZ5PxDu2hjmTG7wt
+	 KHljdCGNY6IfpMlRyR5wPXspplDiuZNCKAcXNhgDXL3myw6hq6P3KuwHWUscCiqPJt
+	 ORJQYIJyIuc+w==
+Date: Mon, 02 Feb 2026 19:54:16 +0000
+To: Miklos Szeredi <miklos@szeredi.hu>, Trond Myklebust <trondmy@kernel.org>
+From: Antonio SJ Musumeci <trapexit@spawn.link>
+Cc: =?utf-8?Q?Johannes_Sch=C3=BCth?= <j.schueth@jotschi.de>, linux-fsdevel@vger.kernel.org, Bernd Schubert <bernd.schubert@fastmail.fm>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Subject: Re: NFSv4 + FUSE xattr user namespace regression/change?
+Message-ID: <3DMb18lL2VzwORom5oMGlQizKpO_Na6Rhmv5GDA9GpN3ELrsA5plqhzezDxDs_UcXaqFQ9qUHb9y4cY4JRy7TjQ108_dVkZH9D2Yj48ABH0=@spawn.link>
+In-Reply-To: <998f6d6819c2e0c3745599d61d8452c3bc478765.camel@kernel.org>
+References: <32Xtx4IaYj8nhPIXtt0gPimTRQy4RNjzmsqI1vQB1YBpRes0TEgu6zVzWbBEcn2U6ZxB14BD9vakmezNyhdXDt3CVGO8WYGxHSZZ1qtQVy8=@spawn.link> <8f5bb04853073dc620b5a6ebc116942a9b0a2b5c.camel@kernel.org> <e5-exnk0NS5Bsw0Ir_wplkePzOzCUPSsez9oqF7OVAAq3DASvNJ62B9EuQbvIqHitDgxtVnu74QYDYVEQ8rCCU74p4YupWxaKZNN34EPKUY=@spawn.link> <9ceb6cbcef39f8e82ab979b3d617b521aa0fcf83.camel@kernel.org> <CA+zj3DKAraQASpyVfkcDyGXu_oaR9SnYY18pDkN+jDgi54kRMQ@mail.gmail.com> <998f6d6819c2e0c3745599d61d8452c3bc478765.camel@kernel.org>
+Feedback-ID: 55718373:user:proton
+X-Pm-Message-ID: 35045d81b388499f3315b52992f74e6dd6221fc2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260202184356.GD3183987@ZenIV>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-1.16 / 15.00];
+	SUBJECT_ENDS_QUESTION(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[spawn.link,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_DKIM_ALLOW(-0.20)[spawn.link:s=protonmail];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76087-lists,linux-fsdevel=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76088-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_CC(0.00)[jotschi.de,vger.kernel.org,fastmail.fm,linuxfoundation.org];
 	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[kas@kernel.org,linux-fsdevel@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[trapexit@spawn.link,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[spawn.link:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: BC194D0A86
+	RCPT_COUNT_FIVE(0.00)[6];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,jotschi.de:url,spawn.link:mid,spawn.link:dkim]
+X-Rspamd-Queue-Id: D30CAD0D81
 X-Rspamd-Action: no action
 
-On Mon, Feb 02, 2026 at 06:43:56PM +0000, Al Viro wrote:
-> > I am not sure what a possible solution would be here. I can only think
-> > of blocking exit(2) for the last process in the namespace until all
-> > filesystems are cleanly unmounted, but that is not very informative
-> > either.
-> 
-> That's insane - if nothing else, the process that holds the sucker
-> opened may very well be waiting for the one you've blocked.
+On Thursday, January 15th, 2026 at 1:20 PM, Trond Myklebust <trondmy@kernel=
+.org> wrote:
 
-Good point. I obviously don't underhand lifecycle here.
+>
+>
+> On Thu, 2026-01-15 at 17:18 +0100, Johannes Sch=C3=BCth wrote:
+>
+> > Here are the two requested dumps:
+> > https://www.jotschi.de/files/fuse_nfs_mount_6_18_5.pcap
+> > https://www.jotschi.de/files/fuse_nfs_setfattr_6_18_5.pcap
+> >
+> > I see XAW (xattr write?) being denied on nfs mount:
+> > Opcode: ACCESS (3), [Access Denied: MD XT DL XAW], [Allowed: RD LU
+> > XAR XAL]
+> >
+> > Testing system/security xattr was just a test. My userland code only
+> > uses user.* xattr.
+>
+>
+> If you look at frame #103, when the client is querying the properties
+> of the filesystem mounted under "merged": it asks for the value of the
+> attribute "Xattr_support", and the server responds with a value "0"
+> (i.e. "No").
+>
+> So as far as I can see, the client behaviour you are observing is the
+> correct one, given the response from the server.
+>
+> Now as to the question about why the server is reporting "No", it looks
+> as if it bases that information on the reply from the VFS call to
+> xattr_supports_user_prefix() on the root inode for that filesystem. I
+> guess in this case, FUSE is disallowing setting a "user" xattr on that
+> inode.
+>
+> So this is not a regression from the point of view of the NFS client,
+> but rather that commit a8ffee4abd8e ("NFS: Fix the setting of
+> capabilities when automounting a new filesystem") fixed the bug that
+> was masking the actual server response for this FUSE filesystem.
 
-> You are getting exactly what you asked for - same as you would on
-> lazy umount, for that matter.
-> 
-> Filesystem may be active without being attached to any namespace;
-> it's an intentional behaviour.  What's more, it _is_ visible to
-> ustat(2), as well as lsof(1) and similar userland tools in case
-> of opened file keeping it busy.
-
-I can only see the opened file, not the rest of filesystem, right?
-
-Do you see the USB stick scenario problematic? It is weird to me that
-umount would fail with -EBUSY here, but kill full namespace is fine.
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+So where do we go from here? Bring in NFS server folks? Miklos?
 
