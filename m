@@ -1,66 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-76110-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76111-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id eK0YCEUjgWmlEQMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76110-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 23:20:53 +0100
+	id OPw1Dr0jgWmlEQMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76111-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 23:22:53 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A07ED21B6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 23:20:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87924D21DD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 23:22:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 08EF6302C6D3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 22:20:34 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3AC1B304C7D5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 22:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5674434889F;
-	Mon,  2 Feb 2026 22:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9967734B410;
+	Mon,  2 Feb 2026 22:21:52 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5FF346AC6
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Feb 2026 22:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58BB234B19F
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Feb 2026 22:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770070833; cv=none; b=g4Ms5JRtnbtPWnP09w/7AXDailGTWKYM7qtHWMBqHUcj6Usf5L2ybmdlFNeYBD9OnDcO1hCU871PZgzxjjw+2ERXV6w66H+/tMoPqjRGkvOIUoL2i1K3yhHTOIR9IUPLBXGO+Gu2YzdV+3cQ9rQj6lA1TPTOsLTAkYCNcR1ZoYg=
+	t=1770070910; cv=none; b=hbdhLeA9dguJJcWNB7RjCr8M+A+3pdhqd0JqT5tqCQclrHBAlWHXN6EOx2t80hJljebo/KTlDt3EWFkU+dUXlsKjuqQr/UzdXsoOx750L4JNi5XndR6ypBVOwRs7Odke8Q7iE4xngKWefW2klaN3/TTekNTwjnlO3RTkrP7PK88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770070833; c=relaxed/simple;
-	bh=NGNnGb9HMYzg6DUzO6JDruI95XNiQJRLXg6k9nvWI1s=;
+	s=arc-20240116; t=1770070910; c=relaxed/simple;
+	bh=qIsACIMhslriEhiQTa5CM6EP3aeLfHepgJwOdBT3nEQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CGM5Yhk+xiJJ6X6/QEoxNdMR++Nsq93bmtM+W+34+hBR5yUmG/3qqznKBtPUB3UvZTGjsRFyAYGXg0/23MStD1UcsRlf5kotg/vA849yznXVts7gzDnlBIJVpikguxepClLQlNwkaGwfJkG/RTP+XsQNmLnKxJHYM6TxHVNPtuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.173
+	 MIME-Version; b=panHQ2/OfhzUfYxrjH9lvcvdbyjk0ZCW3gjwTXbSH98jDFLcc59JrpHoNLY1QweJWPWL1jpYcIpU2Ydm8nqbIIqvhzL5SQyosjRyyarUepw4D8tPT6IpCzjmY/BxGhJBLW09sxH+bZfEJ4wiaq417Thr/MaA9YKD8BvuTmnTeuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-823f9f81da5so612616b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Feb 2026 14:20:31 -0800 (PST)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2a871daa98fso32141935ad.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Feb 2026 14:21:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770070831; x=1770675631;
+        d=1e100.net; s=20230601; t=1770070907; x=1770675707;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=iQPPYdmCWrupYkVsjIEYVtX1IMWSTBF9TpY5yweTef8=;
-        b=cLtnJBDBbIPBj9C7SQ3zsAU0hPPoyN1IuXjHFcP+9nHem3Elrt3aVJOOsfWWFD5Vgy
-         9RrBAd4K0P/afH+ZF0ANVd71aA0SYYm98DHbmZZ7BIbhnMOXJAwZdV7GLEQBfYWVkSTf
-         u7Kewh/uwNTOJV6XEKXv5nHzwBDNfJivG2E0o1AvaalXnuz1q8sMLwcx/O/yyIJEKWm3
-         abW7wupaTznWaAqaTAULQyykwsFEooRS9FYMj7v1pVIHA3QhVZ5efMc/Wv82+EeqQIlp
-         AfygMvRTrvUZrcNkiTZaeLjwjJRmhkigrWHHZXu7oidJvLcEhHyI41htEybDe/cFeAhf
-         IPqg==
-X-Gm-Message-State: AOJu0Yzc3K+AIGaA8HvIiTNeAqSiVO0eHLM9e3R9Abm89tgOyNAvBnZY
-	9D60vjONiDGRkA39mCCeKlJf26LakOU52l3T7xq8GrHpcORej5eOmhgq
-X-Gm-Gg: AZuq6aJNz/CTOcJSB8Q5Rk5e/HINJfOffTtx+6j8cuCL9RvDZWPW5UU2meRnFmaexXU
-	JcacDCNmwCosfZ806jxtEdmVI9S28GXbKu+a67b4DMyEjIKervajeJtnzI6V4LFD38ttbhNZOqe
-	ppgC5ih4OlHGi70puaje6K1Kf4kIodHKcag/Uw/0eY43B7iWWJH2Kfg1jeFLUweomBvl0hI555Q
-	/VO+u1zOXXoMAbo27be5N8tP1z9HpMInKqau32CrwU5cu96QpNGWcpfkoRhLj+a7hzppSLNawXw
-	RZlQCUxwbrWUb927Hkov/AbUaIKi2bGNnMqkyRCQ8zpUcJrBO+4jkPsQvib1Ixo2qmR1Gew2Wx4
-	llKXq93xqkWBgrt9nvllYMtVT6QELjprLxnT0iNxSrwpc4sArE7yJOQzA8LuemrNgLF50/T2oKb
-	moutQy72VsQSENEp8VSZGDRik5zA==
-X-Received: by 2002:a05:6a00:2e98:b0:823:1276:9a86 with SMTP id d2e1a72fcca58-823ab720690mr12445733b3a.39.1770070831184;
-        Mon, 02 Feb 2026 14:20:31 -0800 (PST)
+        bh=C24sTJzvWiJfSjj9cTXtwuMyinaZ+9glC5BRRHwlXDY=;
+        b=rd78i/c1uYopJsx9Ae1HnUX6ttFitr8zSJzeNt0mAFr/4RX4jzJmHWLkwycsbYcl7p
+         QEo4s07fM2Pf3sNWeAWef3W6kloWTkwQnJXvkB/7jcUZvva2rK/mTD6HS1aMEMuDQ8bN
+         tdVanDtJ3V5ATBih210IwMZbv4ivz9EQyRjtUCMuWH9ToAgz7PbTVC+w6boScjT3n9m/
+         57GpxoAcVqJ+MZUFRpKbD7/xzpH6tSSBuAyLa9LrWypbt8lCDZG7qXeBxCjyMvP2c0A+
+         LL9FuFtPBPgwNuo5I2Utu/2nFlqKp2P7GD6iGgwrDge6VMXewq8J/mrYnv3x0EQ6t7nP
+         hzAA==
+X-Gm-Message-State: AOJu0YyaVY8fM7vWOlwR9pwpEAaOO1225fseK00fHlpbJba0kVfvDBSJ
+	QwbUGaGwJVdp65u935J8Ta9MhAJxK1+GxJrSCfvP4kafnszQE2P7IKKXwnY0ag==
+X-Gm-Gg: AZuq6aKbW+f7V/ZJljMjwRVCfQEMfgdVRSWncn9HbBIIu8DT9wmeiQjZewA2jc2c5NK
+	mKex1113SyHAHFFmbeFVn0N89PQkFkMJT65o9wlBa+aZV0zAqK6yNqcBKgaRuBJYhzVexul8tjb
+	qL0bk8RUtzAb+XIVdDzQnTE0FJ4UF3gC+cDs4yLwS4/GDTwKOjcZRM3hhjy68kvTgF23eBaGfcy
+	krGhk581GoaejY9VBPPXMc+Oq0Z0cAFqDo63i4MLA/NZzQmGPHQwxHcyF8GYZSLldtV2kw80+f5
+	RwJ/iLqLLUv2XTFSAR53QTgrvc7IYTvBICEyZmE7uNyhDKWgISwoeZIvbynYLEWMy4JGSzrh1Uk
+	xaMqWN/0j+1hjnW9LWShkKlq9Jmz7D7snyAncIlNy478+hLtYgkuUq8o/u4wjnqz7pkyTw9K0d2
+	8om1TSmRKFPb2N3l2gdfyX/2zadA==
+X-Received: by 2002:a17:902:f78e:b0:2a0:9755:2e97 with SMTP id d9443c01a7336-2a8d9699b82mr124403205ad.15.1770070906686;
+        Mon, 02 Feb 2026 14:21:46 -0800 (PST)
 Received: from localhost.localdomain ([1.227.206.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82379b6b277sm21019732b3a.29.2026.02.02.14.20.27
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82379b6b277sm21019732b3a.29.2026.02.02.14.21.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Feb 2026 14:20:30 -0800 (PST)
+        Mon, 02 Feb 2026 14:21:46 -0800 (PST)
 From: Namjae Jeon <linkinjeon@kernel.org>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -84,10 +84,11 @@ Cc: linux-fsdevel@vger.kernel.org,
 	cheol.lee@lge.com,
 	jay.sim@lge.com,
 	gunho.lee@lge.com,
-	Namjae Jeon <linkinjeon@kernel.org>
-Subject: [PATCH v6 15/16] ntfs: add Kconfig and Makefile
-Date: Tue,  3 Feb 2026 07:02:01 +0900
-Message-Id: <20260202220202.10907-16-linkinjeon@kernel.org>
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Anton Altaparmakov <anton@tuxera.com>
+Subject: [PATCH v6 16/16] MAINTAINERS: update ntfs filesystem entry
+Date: Tue,  3 Feb 2026 07:02:02 +0900
+Message-Id: <20260202220202.10907-17-linkinjeon@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260202220202.10907-1-linkinjeon@kernel.org>
 References: <20260202220202.10907-1-linkinjeon@kernel.org>
@@ -109,10 +110,10 @@ X-Spamd-Result: default: False [-0.46 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[23];
+	RCPT_COUNT_TWELVE(0.00)[24];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76110-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76111-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,lst.de,mit.edu,infradead.org,suse.cz,toxicpanda.com,sandeen.net,suse.com,brown.name,gmail.com];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
@@ -125,131 +126,62 @@ X-Spamd-Result: default: False [-0.46 / 15.00];
 	R_DKIM_NA(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 7A07ED21B6
+	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,tuxera.com:url,tuxera.com:email,cam.ac.uk:url]
+X-Rspamd-Queue-Id: 87924D21DD
 X-Rspamd-Action: no action
 
-This introduce Kconfig and Makefile for remade ntfs.
-And this patch make ntfs and ntfs3 mutually exclusive so only one can be
-built-in(y), while both can still be built as modules(m).
+Add myself and Hyunchul Lee as ntfs maintainer.
+Since Anton is already listed in CREDITS, only his outdated information
+is updated here. the web address in the W: field in his entry is no longer
+accessible. Update his CREDITS with the web and email address found in
+the ntfs filesystem entry.
 
+Cc: Anton Altaparmakov <anton@tuxera.com>
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+Acked-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
 ---
- fs/Kconfig       |  1 +
- fs/Makefile      |  1 +
- fs/ntfs/Kconfig  | 47 +++++++++++++++++++++++++++++++++++++++++++++++
- fs/ntfs/Makefile | 10 ++++++++++
- fs/ntfs3/Kconfig |  1 +
- 5 files changed, 60 insertions(+)
- create mode 100644 fs/ntfs/Kconfig
- create mode 100644 fs/ntfs/Makefile
+ CREDITS     |  4 ++--
+ MAINTAINERS | 11 +++++------
+ 2 files changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 0bfdaecaa877..43cb06de297f 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -152,6 +152,7 @@ menu "DOS/FAT/EXFAT/NT Filesystems"
+diff --git a/CREDITS b/CREDITS
+index 52f4df2cbdd1..4cf780e71775 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -80,8 +80,8 @@ S: B-2610 Wilrijk-Antwerpen
+ S: Belgium
  
- source "fs/fat/Kconfig"
- source "fs/exfat/Kconfig"
-+source "fs/ntfs/Kconfig"
- source "fs/ntfs3/Kconfig"
+ N: Anton Altaparmakov
+-E: aia21@cantab.net
+-W: http://www-stu.christs.cam.ac.uk/~aia21/
++E: anton@tuxera.com
++W: http://www.tuxera.com/
+ D: Author of new NTFS driver, various other kernel hacks.
+ S: Christ's College
+ S: Cambridge CB2 3BU
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a8af534cdfd4..adf80c8207f1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18647,12 +18647,11 @@ T:	git https://github.com/davejiang/linux.git
+ F:	drivers/ntb/hw/intel/
  
- endmenu
-diff --git a/fs/Makefile b/fs/Makefile
-index a04274a3c854..6893496697c4 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -90,6 +90,7 @@ obj-$(CONFIG_NLS)		+= nls/
- obj-y				+= unicode/
- obj-$(CONFIG_SMBFS)		+= smb/
- obj-$(CONFIG_HPFS_FS)		+= hpfs/
-+obj-$(CONFIG_NTFS_FS)		+= ntfs/
- obj-$(CONFIG_NTFS3_FS)		+= ntfs3/
- obj-$(CONFIG_UFS_FS)		+= ufs/
- obj-$(CONFIG_EFS_FS)		+= efs/
-diff --git a/fs/ntfs/Kconfig b/fs/ntfs/Kconfig
-new file mode 100644
-index 000000000000..e5fd1378fbbf
---- /dev/null
-+++ b/fs/ntfs/Kconfig
-@@ -0,0 +1,47 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+config NTFS_FS
-+	tristate "NTFS file system support"
-+	select NLS
-+	help
-+	  NTFS is the file system of Microsoft Windows NT, 2000, XP and 2003.
-+	  This allows you to mount devices formatted with the ntfs file system.
-+
-+	  To compile this as a module, choose M here: the module will be called
-+	  ntfs.
-+
-+config NTFS_DEBUG
-+	bool "NTFS debugging support"
-+	depends on NTFS_FS
-+	help
-+	  If you are experiencing any problems with the NTFS file system, say
-+	  Y here.  This will result in additional consistency checks to be
-+	  performed by the driver as well as additional debugging messages to
-+	  be written to the system log.  Note that debugging messages are
-+	  disabled by default.  To enable them, supply the option debug_msgs=1
-+	  at the kernel command line when booting the kernel or as an option
-+	  to insmod when loading the ntfs module.  Once the driver is active,
-+	  you can enable debugging messages by doing (as root):
-+	  echo 1 > /proc/sys/fs/ntfs-debug
-+	  Replacing the "1" with "0" would disable debug messages.
-+
-+	  If you leave debugging messages disabled, this results in little
-+	  overhead, but enabling debug messages results in very significant
-+	  slowdown of the system.
-+
-+	  When reporting bugs, please try to have available a full dump of
-+	  debugging messages while the misbehaviour was occurring.
-+
-+config NTFS_FS_POSIX_ACL
-+	bool "NTFS POSIX Access Control Lists"
-+	depends on NTFS_FS
-+	select FS_POSIX_ACL
-+	help
-+	  POSIX Access Control Lists (ACLs) support additional access rights
-+	  for users and groups beyond the standard owner/group/world scheme.
-+
-+	  This option enables ACL support for ntfs, providing functional parity
-+	  with ntfs3 drivier.
-+
-+	  NOTE: this is linux only feature. Windows will ignore these ACLs.
-+
-+	  If you don't know what Access Control Lists are, say N.
-diff --git a/fs/ntfs/Makefile b/fs/ntfs/Makefile
-new file mode 100644
-index 000000000000..0ce4d9a9388a
---- /dev/null
-+++ b/fs/ntfs/Makefile
-@@ -0,0 +1,10 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+obj-$(CONFIG_NTFS_FS) += ntfs.o
-+
-+ntfs-y := aops.o attrib.o collate.o dir.o file.o index.o inode.o \
-+	  mft.o mst.o namei.o runlist.o super.o unistr.o attrlist.o ea.o \
-+	  upcase.o bitmap.o lcnalloc.o logfile.o reparse.o compress.o \
-+	  iomap.o debug.o sysctl.o quota.o object_id.o bdev-io.o
-+
-+ccflags-$(CONFIG_NTFS_DEBUG) += -DDEBUG
-diff --git a/fs/ntfs3/Kconfig b/fs/ntfs3/Kconfig
-index cdfdf51e55d7..876dbc613ae6 100644
---- a/fs/ntfs3/Kconfig
-+++ b/fs/ntfs3/Kconfig
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config NTFS3_FS
- 	tristate "NTFS Read-Write file system support"
-+	depends on !NTFS_FS || m
- 	select BUFFER_HEAD
- 	select NLS
- 	select LEGACY_DIRECT_IO
+ NTFS FILESYSTEM
+-M:	Anton Altaparmakov <anton@tuxera.com>
+-R:	Namjae Jeon <linkinjeon@kernel.org>
+-L:	linux-ntfs-dev@lists.sourceforge.net
+-S:	Supported
+-W:	http://www.tuxera.com/
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/aia21/ntfs.git
++M:	Namjae Jeon <linkinjeon@kernel.org>
++M:	Hyunchul Lee <hyc.lee@gmail.com>
++L:	linux-fsdevel@vger.kernel.org
++S:	Maintained
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/ntfs.git
+ F:	Documentation/filesystems/ntfs.rst
+ F:	fs/ntfs/
+ 
 -- 
 2.25.1
 
