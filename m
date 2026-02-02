@@ -1,85 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-76112-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CJtOLIcogWnsEQMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76112-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 23:43:19 +0100
+	id EH5pNaMogWkxEgMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 23:43:47 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CC09D25D3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 23:43:19 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D0E5D2606
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 23:43:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 53A8C313C5E1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 22:38:23 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4C727314A06A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 22:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E1E378D94;
-	Mon,  2 Feb 2026 22:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D230E389E1A;
+	Mon,  2 Feb 2026 22:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wwo3Yrxf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ss2zz3/z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D26B652;
-	Mon,  2 Feb 2026 22:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5851635E548;
+	Mon,  2 Feb 2026 22:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770071554; cv=none; b=aJwbFihdVhqLoCGO/TLaYimihEyovLias9B4KmkN1Xvnm+Mo5lQW7jH2RXlO7KXg5kBiw+KmoUl8pSJ5UjOF03L6OA/OJRAeHpLzM0JjMjxe3mVldRCqAf9S8l+SlqtT+/edpKFzOM5JQGm6Q9/mDPMundXF1+G8zdZKqzkaKe0=
+	t=1770071648; cv=none; b=K2zb7T6v8hG2y+iiaHq98ZpmZehaQuGu/2RSw8vdkayzruqht8u/Mlplt11UuNWlA0ijnul0x90mon8BcfGPWNW6FIOh7I0IWCw72XSadyjmuE8LRULLQBmYw1KAT/cY0b0ZP/4pBz2c/mSIoh8ITHzEhtokdS8RocX+XPPJec8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770071554; c=relaxed/simple;
-	bh=RkwvJ/eaG/ubSf4GeTmV9ctxLTvA9ARikKcdQA5n5PA=;
+	s=arc-20240116; t=1770071648; c=relaxed/simple;
+	bh=2BLw8V36q4ZcoZntEthTMAW+cHIrT5ib6z9TbOGuvgM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P8fOeegz4d3fGo7NpUJAWXN3PxdAt5GIBnFkWpJ4eLfoXTLhkWQn06iEsDdwkupLcrfkdz0L351kbor3dKvkc+J6hw2BsxO0SNj5pIumwtw7NH//wrzfixl/RKEdKTIs0eLhch3lRBW7cP4Do9xql9oNGV+WyM3wPRhk0vUDdWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wwo3Yrxf; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1770071551; x=1801607551;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RkwvJ/eaG/ubSf4GeTmV9ctxLTvA9ARikKcdQA5n5PA=;
-  b=Wwo3Yrxf+7RnT7YVLqPmFJVkmyK5vM4YmLhWMgJgimZAbXV4bElJDHO5
-   unZ5JSV8/MUx4N3bT4Lw4TC9sXg3d7aFkKf/vLq1CBk1Hn4sSkS1hm3kO
-   E6s9/SCiuFfLlcQzsZ8LmU57j/VQUMlXN2o6o40R36VscHJOlcqKlY/a1
-   7F0fyQ+ClJE6ExZcNfOdcY8fnhs3NyHelQ73uiT93pghAUQZk6PO3uFUS
-   kQDo+d41opkJ6qGUNDhPUBsJifIgj+fiUBglvUGwxqVvyYO6njlqGEcsU
-   zx0QYg1pS1cVwErVhLS8V5dsx40JNr/OUcDqhE1vSXF3EqFT3ykq6iDVN
-   A==;
-X-CSE-ConnectionGUID: l0VF0J8gRPufzvYr2QI2kQ==
-X-CSE-MsgGUID: JILgaMbASCin1EUGr4lZlg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11690"; a="71276589"
-X-IronPort-AV: E=Sophos;i="6.21,269,1763452800"; 
-   d="scan'208";a="71276589"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2026 14:32:31 -0800
-X-CSE-ConnectionGUID: Hbxrtp+LSiCoLVQlQdZWyA==
-X-CSE-MsgGUID: Ek3RB598Quy6MtEbEFKVDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,269,1763452800"; 
-   d="scan'208";a="208938576"
-Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 02 Feb 2026 14:32:28 -0800
-Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vn2T3-00000000g1O-13HM;
-	Mon, 02 Feb 2026 22:32:25 +0000
-Date: Tue, 3 Feb 2026 06:31:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: Benjamin Coddington <bcodding@hammerspace.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Rick Macklem <rick.macklem@gmail.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-crypto@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] NFSD: Add a key for signing filehandles
-Message-ID: <202602030619.d8NUY35L-lkp@intel.com>
-References: <e3806f53c351c03725ecb12fb7ad100786df04f6.1770046529.git.bcodding@hammerspace.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UMTelsopuhibCaM/2n+m1yyFSppWe7FrwmiU9SMxIX3zv9P44C3EUM612DlEtWNIYmA7beavNqECRl+b0GmYsXagFCDhg4/9xQwlnWosPa8es2TX5n1BUZsbY3UEQU9PFJLC8tpOhyErsZwd6Q6c6Lz46uecuAveOdW/A0kMAtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ss2zz3/z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2840C116C6;
+	Mon,  2 Feb 2026 22:34:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770071647;
+	bh=2BLw8V36q4ZcoZntEthTMAW+cHIrT5ib6z9TbOGuvgM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ss2zz3/zaUboc6X/2TuV+KFtnflhkrpnIr6d8/rxpr8ixW69zHo15BSkfX7C+GrrG
+	 3dxxe8R18qUeUaWY6nisKn2wmrZy9dl4o1heG4kk/K8kzQwV31QMPww5ZQis+db3y1
+	 sUNB3MzBBKSAX/TifSu+FMYAccP/HfGZvUCLqmtopz3b9AU+rS3GnhInsnw4q7GRNU
+	 0qwPxcnVei484r2+HKkAN3+ed4bSRmzSErbAbjvNW8U/46uXtDcaJiilALdBmk+n+Z
+	 EqNcbKlhmyF7FQNNK+sDUH/6bc91lQLmusrhVPXRnKkh41P6MBg+RtcfyL5f5q7jeX
+	 20vZJrM+KKiLg==
+Date: Mon, 2 Feb 2026 14:34:04 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Christoph Hellwig <hch@lst.de>, Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+	Andrey Albershteyn <aalbersh@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net, fsverity@lists.linux.dev
+Subject: Re: fsverity speedup and memory usage optimization v5
+Message-ID: <20260202223404.GA173552@quark>
+References: <20260202060754.270269-1-hch@lst.de>
+ <20260202211423.GB4838@quark>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -88,107 +68,142 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e3806f53c351c03725ecb12fb7ad100786df04f6.1770046529.git.bcodding@hammerspace.com>
+In-Reply-To: <20260202211423.GB4838@quark>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.34 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
-	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76112-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_TO(0.00)[hammerspace.com,oracle.com,kernel.org,brown.name,gmail.com];
-	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
+	TAGGED_FROM(0.00)[bounces-76113-lists,linux-fsdevel=lfdr.de];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[lkp@intel.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[intel.com:+];
-	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,intel.com:dkim,intel.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 5CC09D25D3
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[ebiggers@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 5D0E5D2606
 X-Rspamd-Action: no action
 
-Hi Benjamin,
+On Mon, Feb 02, 2026 at 01:14:23PM -0800, Eric Biggers wrote:
+> On Mon, Feb 02, 2026 at 07:06:29AM +0100, Christoph Hellwig wrote:
+> > Hi all,
+> > 
+> > this series has a hodge podge of fsverity enhances that I looked into as
+> > part of the review of the xfs fsverity support series.
+> > 
+> > The first part optimizes the fsverity read path by kicking off readahead
+> > for the fsverity hashes from the data read submission context, which in my
+> > simply testing showed huge benefits for sequential reads using dd.
+> > I haven't been able to get fio to run on a preallocated fio file, but
+> > I expect random read benefits would be significantly better than that
+> > still.
+> > 
+> > The second part avoids the need for a pointer in every inode for fsverity
+> > and instead uses a rhashtable lookup, which is done once per read_folio
+> > or ->readahead invocation plus for btrfs only for each bio completion.
+> > Right now this does not increse the number of inodes in
+> > each slab, but for ext4 we are getting very close to that (within
+> > 16 bytes by my count).
+> > 
+> > Changes since v5:
+> >  - drop already merged patches
+> >  - fix a bisection hazard for non-ENOENT error returns from
+> >    generic_read_merkle_tree_page
+> >  - don't recurse on invalidate_lock
+> >  - refactor page_cache_ra_unbounded locking to support the above
+> >  - refactor ext4 and f2fs fsverity readahead to remove the need for the
+> >    first_folio branch in the main readpages loop
+> 
+> Applied to https://git.kernel.org/pub/scm/fs/fsverity/linux.git/log/?h=for-next
+> 
+> (Though it's getting late for v6.20 / v7.0.  So if there are any
+> additional issues reported, I may have to drop it.)
 
-kernel test robot noticed the following build warnings:
+Unfortunately this silently conflicts with changes in the f2fs tree.
+Resolution doesn't look too bad, but we'll need to handle this.
+Christoph, Jaegeuk, and Chao, let me know if this looks okay:
 
-[auto build test WARNING on dabff11003f9aaf293bd8f907a62f3366bd5e65f]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Benjamin-Coddington/NFSD-Add-a-key-for-signing-filehandles/20260203-002703
-base:   dabff11003f9aaf293bd8f907a62f3366bd5e65f
-patch link:    https://lore.kernel.org/r/e3806f53c351c03725ecb12fb7ad100786df04f6.1770046529.git.bcodding%40hammerspace.com
-patch subject: [PATCH v3 1/3] NFSD: Add a key for signing filehandles
-config: x86_64-buildonly-randconfig-003-20260203 (https://download.01.org/0day-ci/archive/20260203/202602030619.d8NUY35L-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-rustc: rustc 1.88.0 (6b00bc388 2025-06-23)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260203/202602030619.d8NUY35L-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202602030619.d8NUY35L-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> fs/nfsd/nfsctl.c:1588:6: warning: variable 'fh_key' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-    1588 |         if (!nn->fh_key) {
-         |             ^~~~~~~~~~~
-   fs/nfsd/nfsctl.c:1594:9: note: uninitialized use occurs here
-    1594 |         memcpy(fh_key, nla_data(attr), sizeof(siphash_key_t));
-         |                ^~~~~~
-   fs/nfsd/nfsctl.c:1588:2: note: remove the 'if' if its condition is always true
-    1588 |         if (!nn->fh_key) {
-         |         ^~~~~~~~~~~~~~~~
-   fs/nfsd/nfsctl.c:1583:23: note: initialize the variable 'fh_key' to silence this warning
-    1583 |         siphash_key_t *fh_key;
-         |                              ^
-         |                               = NULL
-   1 warning generated.
-
-
-vim +1588 fs/nfsd/nfsctl.c
-
-  1573	
-  1574	/**
-  1575	 * nfsd_nl_fh_key_set - helper to copy fh_key from userspace
-  1576	 * @attr: nlattr NFSD_A_SERVER_FH_KEY
-  1577	 * @nn: nfsd_net
-  1578	 *
-  1579	 * Callers should hold nfsd_mutex, returns 0 on success or negative errno.
-  1580	 */
-  1581	static int nfsd_nl_fh_key_set(const struct nlattr *attr, struct nfsd_net *nn)
-  1582	{
-  1583		siphash_key_t *fh_key;
-  1584	
-  1585		if (nla_len(attr) != sizeof(siphash_key_t))
-  1586			return -EINVAL;
-  1587	
-> 1588		if (!nn->fh_key) {
-  1589			fh_key = kmalloc(sizeof(siphash_key_t), GFP_KERNEL);
-  1590			if (!fh_key)
-  1591				return -ENOMEM;
-  1592		}
-  1593	
-  1594		memcpy(fh_key, nla_data(attr), sizeof(siphash_key_t));
-  1595		nn->fh_key = fh_key;
-  1596		return 0;
-  1597	}
-  1598	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index d9085d1236d97..081c441c59e71 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2449,11 +2449,13 @@ static void ffs_detach_free(struct folio *folio)
+ 	WARN_ON_ONCE(ffs->read_pages_pending != 0);
+ 	kmem_cache_free(ffs_entry_slab, ffs);
+ }
+ 
+ static int f2fs_read_data_large_folio(struct inode *inode,
+-		struct readahead_control *rac, struct folio *folio)
++				      struct fsverity_info *vi,
++				      struct readahead_control *rac,
++				      struct folio *folio)
+ {
+ 	struct bio *bio = NULL;
+ 	sector_t last_block_in_bio = 0;
+ 	struct f2fs_map_blocks map = {0, };
+ 	pgoff_t index, offset, next_pgofs = 0;
+@@ -2519,13 +2521,12 @@ static int f2fs_read_data_large_folio(struct inode *inode,
+ 				ret = -EFSCORRUPTED;
+ 				goto err_out;
+ 			}
+ 		} else {
+ 			folio_zero_range(folio, offset << PAGE_SHIFT, PAGE_SIZE);
+-			if (f2fs_need_verity(inode, index) &&
+-			    !fsverity_verify_page(folio_file_page(folio,
+-								index))) {
++			if (vi && !fsverity_verify_page(
++					  vi, folio_file_page(folio, index))) {
+ 				ret = -EIO;
+ 				goto err_out;
+ 			}
+ 			continue;
+ 		}
+@@ -2552,14 +2553,14 @@ static int f2fs_read_data_large_folio(struct inode *inode,
+ submit_and_realloc:
+ 			f2fs_submit_read_bio(F2FS_I_SB(inode), bio, DATA);
+ 			bio = NULL;
+ 		}
+ 		if (bio == NULL)
+-			bio = f2fs_grab_read_bio(inode, block_nr,
+-					max_nr_pages,
+-					f2fs_ra_op_flags(rac),
+-					index, false);
++			bio = f2fs_grab_read_bio(inode, vi, block_nr,
++						 max_nr_pages,
++						 f2fs_ra_op_flags(rac), index,
++						 false);
+ 
+ 		/*
+ 		 * If the page is under writeback, we need to wait for
+ 		 * its completion to see the correct decrypted data.
+ 		 */
+@@ -2627,11 +2628,11 @@ static int f2fs_mpage_readpages(struct inode *inode, struct fsverity_info *vi,
+ 	struct address_space *mapping = rac ? rac->mapping : folio->mapping;
+ 	unsigned max_nr_pages = nr_pages;
+ 	int ret = 0;
+ 
+ 	if (mapping_large_folio_support(mapping))
+-		return f2fs_read_data_large_folio(inode, rac, folio);
++		return f2fs_read_data_large_folio(inode, vi, rac, folio);
+ 
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+ 	if (f2fs_compressed_file(inode)) {
+ 		index = rac ? readahead_index(rac) : folio->index;
+ 		max_nr_pages = round_up(index + nr_pages, cc.cluster_size) -
 
