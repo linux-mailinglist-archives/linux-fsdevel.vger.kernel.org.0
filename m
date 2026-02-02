@@ -1,75 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-76012-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id sKWjAdnZf2mJygIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76012-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Feb 2026 23:55:21 +0100
+	id uKarNsftf2kI0gIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 01:20:23 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6502EC775F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Feb 2026 23:55:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 441C8C79EE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 01:20:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E74173005D00
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Feb 2026 22:55:17 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 60E5030053CA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 00:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0432E2EC55C;
-	Sun,  1 Feb 2026 22:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711DF14EC73;
+	Mon,  2 Feb 2026 00:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OmiHIpZ6"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B5IqcbA7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74FC26A0B9
-	for <linux-fsdevel@vger.kernel.org>; Sun,  1 Feb 2026 22:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36CE3EBF14
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Feb 2026 00:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769986516; cv=none; b=WH9XGWRd/Xrt3EiLxuVsuKpQ5hZ9cukUjc5A+mk/Cix9KlQii2QP/Z4YSjZs7579qP1bsA5zasJDOmoCWOj6R+VPOT0AWpexEyYE+mbeJIQEJMtpOlWTDZQTgma34PMLTv0lHKTiZP9+CtJbVfnneGmJvp5TEjyaDjVMd4cbjPs=
+	t=1769991619; cv=none; b=EkWm36iUrhe+OLCoGJm65szjkds9Fb9eGQt1NbPLirvH35rs2oMLCQUhKgaooy/MdCmfCL4jYppAiFKDeSU4/88faLV0Ks9mRgllGi+0pGK9sEYzqEez6spu/M3Di5bk9zAcq4QR2NO8wxv+N7+uzo7bYapNidDomm4/Tdr+XL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769986516; c=relaxed/simple;
-	bh=AADVXV62MJdxCLet4QqojGJdxzxqPvcR7wX7Ssri9vo=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=JVu0wJD5UCXc8zDTTcXW7mq1l9D3JQwli7UaoWdoQdp31UqqWT7A1zrO8/i8pSq6m8o23XbFIR7Bmq2g9Sa161KmjkLDmUK5zXOTrq+SjeX5S79wbVPZqN5GGcPij0q7d5aWnRtNOvEEdK9M0df3YVdvZVuiw+RWediehHJ042E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OmiHIpZ6; arc=none smtp.client-ip=192.198.163.14
+	s=arc-20240116; t=1769991619; c=relaxed/simple;
+	bh=7AlHNqOd+boo1iYYNHvXoLG3MGSH+Iw9k7O2hAc+xiU=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=l+cIlLeG/gMgFKxLLUX9cWju0QHKCipt9p+ByS+PgglqcRTsjyCLw7nZWQJttRcpI9ixRZRo6IbHqJgfPe+1/XCLYv4YG4xH52pRIQoQnPb3iXsXnaWm6k3V2DjuVT58N/Z8aikecGed2jnCtEEL7mko40/0NY8EOg+Wl73F8+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B5IqcbA7; arc=none smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1769986514; x=1801522514;
+  t=1769991617; x=1801527617;
   h=date:from:to:cc:subject:message-id;
-  bh=AADVXV62MJdxCLet4QqojGJdxzxqPvcR7wX7Ssri9vo=;
-  b=OmiHIpZ6MWRcllmYBmMms6Rqy9eHyIcbnr6xDVXMvC95BF7dKg7c9c4d
-   KvNiZsavVsInHaJUa9Rq6gneVuQhFfGZX1PuaTJ5kb5fkXuJ2tYrNOfaT
-   oSS3rj7Z1XriAFeBb48w4L1X0/JazHoPzA0RBL59iJ1VzKwA3DbF3xpWH
-   O/PbqDvAWNjAQQ6IRx6dcdyObEkuCEpi5x+ywEYfOTLDsCkLAoGNLqFdm
-   UrSJCFFbtvJaf8Z7xl5obkIk8PPbP7J8TUVW1dGWxGzH07+jF/b5SBoER
-   wTlZZoAJy4WZYCE8r3POToS++QvTNw1HAIQmupn/2BSBmy5CUGfi5v9oq
-   g==;
-X-CSE-ConnectionGUID: UTsSwvqcRpOVzf52cg00wQ==
-X-CSE-MsgGUID: N9vvoCHjQvuA+WGGxyDcPg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11689"; a="71205387"
+  bh=7AlHNqOd+boo1iYYNHvXoLG3MGSH+Iw9k7O2hAc+xiU=;
+  b=B5IqcbA7h06smOem55+u+3RKf++VCJWZRI51Qne5wpUxEDU91GYVz0Ng
+   4ytkoIpDXRFKiowWgMmhyaR3HIv238jzGr0Tg+wrCaq1PXZJ/CJQoq8TR
+   70KxL9E4RZ3aEtRYTAJyWnfXzXeKG3NUvwuNnm4XUf4GpCEJiuceBWj43
+   DQSpDFkHtcdGJcNhcKekIVlc9f9bUxpqshLj0EeevNwApIpuqFQnT3+zG
+   CY2E3tlKSOXIHi5BT/5SyoSLBej8cD4TeYnc3fROGNzlxnEZAiqpdqMRA
+   XDBPBkJE34RpPtCyd2x49G0b/QB96jiNn/GpLJ4oLU8BVKHUCPVOcnm0z
+   w==;
+X-CSE-ConnectionGUID: Allph9W6TIe+fPgovr+trg==
+X-CSE-MsgGUID: mrYbY7RaTDqLsjkZmLEl0w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11689"; a="71064140"
 X-IronPort-AV: E=Sophos;i="6.21,267,1763452800"; 
-   d="scan'208";a="71205387"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2026 14:55:13 -0800
-X-CSE-ConnectionGUID: doKqf15vRTqxx/wJss/xxw==
-X-CSE-MsgGUID: Z4m9iE0NReev7xGF2dOgRg==
+   d="scan'208";a="71064140"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2026 16:20:17 -0800
+X-CSE-ConnectionGUID: Y9bJsDcoRY+Cdf0qsI7/uA==
+X-CSE-MsgGUID: bc0dIpXnRUafn0B/g7qs+g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.21,267,1763452800"; 
-   d="scan'208";a="209242250"
+   d="scan'208";a="246978077"
 Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 01 Feb 2026 14:55:11 -0800
+  by orviesa001.jf.intel.com with ESMTP; 01 Feb 2026 16:20:16 -0800
 Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1vmgLV-00000000f5U-2NMZ;
-	Sun, 01 Feb 2026 22:55:09 +0000
-Date: Mon, 02 Feb 2026 06:54:51 +0800
+	id 1vmhfp-00000000f8J-15n0;
+	Mon, 02 Feb 2026 00:20:13 +0000
+Date: Mon, 02 Feb 2026 08:19:13 +0800
 From: kernel test robot <lkp@intel.com>
 To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Subject: [viro-vfs:work.coda 1/4] fs/coda/dir.c:471:1: warning: label
- 'bad' defined but not used
-Message-ID: <202602020633.nOeExEVJ-lkp@intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org
+Subject: [viro-vfs:work.coda 1/4] fs/coda/dir.c:471:1: warning:
+ unused label 'bad'
+Message-ID: <202602020838.i1jbfynn-lkp@intel.com>
 User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -91,8 +92,8 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76012-lists,linux-fsdevel=lfdr.de];
-	RCPT_COUNT_THREE(0.00)[3];
+	TAGGED_FROM(0.00)[bounces-76013-lists,linux-fsdevel=lfdr.de];
+	RCPT_COUNT_THREE(0.00)[4];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	TO_DN_SOME(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[lkp@intel.com,linux-fsdevel@vger.kernel.org];
@@ -102,28 +103,28 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	NEURAL_HAM(-0.00)[-1.000];
 	RCVD_COUNT_FIVE(0.00)[6];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[01.org:url,intel.com:email,intel.com:dkim,intel.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 6502EC775F
+	DBL_BLOCKED_OPENRESOLVER(0.00)[01.org:url,osdl.org:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,intel.com:email,intel.com:dkim,intel.com:mid]
+X-Rspamd-Queue-Id: 441C8C79EE
 X-Rspamd-Action: no action
 
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.coda
 head:   00a1de29cfe3a361a653e043d5277a5d4263b90b
 commit: 59769809e38dc6250c396dd38f95d2ba05be2ced [1/4] coda: is_bad_inode() is always false there
-config: arc-allyesconfig (https://download.01.org/0day-ci/archive/20260202/202602020633.nOeExEVJ-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 15.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260202/202602020633.nOeExEVJ-lkp@intel.com/reproduce)
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20260202/202602020838.i1jbfynn-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260202/202602020838.i1jbfynn-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202602020633.nOeExEVJ-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202602020838.i1jbfynn-lkp@intel.com/
 
 All warnings (new ones prefixed by >>):
 
-   fs/coda/dir.c: In function 'coda_dentry_revalidate':
->> fs/coda/dir.c:471:1: warning: label 'bad' defined but not used [-Wunused-label]
+>> fs/coda/dir.c:471:1: warning: unused label 'bad' [-Wunused-label]
      471 | bad:
-         | ^~~
+         | ^~~~
+   1 warning generated.
 
 
 vim +/bad +471 fs/coda/dir.c
