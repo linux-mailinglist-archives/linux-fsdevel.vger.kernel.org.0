@@ -1,66 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-76108-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iLmtJGwigWmVEQMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76108-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 23:17:16 +0100
+	id mEOtF/UigWmVEQMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 23:19:33 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E890D2183
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 23:17:16 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F258D219C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 23:19:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 5C242300558C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 22:17:15 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id BC8E6300531D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 22:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5173469E4;
-	Mon,  2 Feb 2026 22:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD09B346AF4;
+	Mon,  2 Feb 2026 22:19:27 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7403434676B
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Feb 2026 22:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C76346AC4
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Feb 2026 22:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770070633; cv=none; b=i+88RAZBQyO86ues2RhBNG7HELA8CpZ7Hvmk7gLX4ITkoDtA58kreXMokfKpGNzeyAodW3Ee3fqPzKX5tKqiif7QsNT48ot8A5MH4E7cdkuqkrUy98LQhrXtEkyX49afpV91pvisFzGGFRzcqJAsvPVCuipT1/n5lRLal+l6aOg=
+	t=1770070767; cv=none; b=kt0KHlvszvL/n/IMK7EWJtC2D87Ph5xBbnJd3y5outLkOu2uIuyrbKnyVEV+RwBk6DSTRSmDuIvZo5DbxXh8Idh3gLwzmwmcEa/mOsB3MCWs2dDKgoWHhkdHZ44c3a1wejv+G0NzeFFR6J9DlE6wbAACyMvUZBkwIqRPLvEPCMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770070633; c=relaxed/simple;
-	bh=OXV0XuVUj+jcDi0r9ITL09PNhWLqNA8Ag9OJhekB/oY=;
+	s=arc-20240116; t=1770070767; c=relaxed/simple;
+	bh=9B1/qe9fS4OMMJVHJtefueGBv0iCGADk9h8r4R4vDHk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HXhRDh988ak7jswe0yBCaO4WHy52RApRt4xJQbcOgt9OFdaFAFla4UiLTBSpNrjypyITy87wUbOLr9sZ2qkGDpOhd0U5eTk+lhIx0x5FZ01efgJcirZ0ZGtDIWlPClDJ6kMrw9DjQ586dFy6qOU/Qygb9euxt3/Rlgv5cDsfJAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.180
+	 MIME-Version; b=Z9U/VDET4enPCQdT+mUu34i6GGnsB5x9kdWmH93iQpHwLee+e3PgNFqpdQMWIObeww8p5EZJrGEDLN1GaAAid7Zy9wPg5LjuRiFe9Z3uITIQo1qcfvYZOU3dRWx7Ygva9X8sHfQhkZXt9L1DE6XNcvIDn5RI7wS0mHqjjNEKIXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-81f4e136481so2444012b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Feb 2026 14:17:11 -0800 (PST)
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-8230c33f477so2241143b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Feb 2026 14:19:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770070631; x=1770675431;
+        d=1e100.net; s=20230601; t=1770070765; x=1770675565;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=2OWKBTs+dR69CVqSfHv/SIkriafTcmFGOr0MfuL+0HM=;
-        b=AKcq/4wECpK7SFrPDzqs2c5Z1VFgmiwAGBAwlLpwUQZVk+ky7bqCeQYaOc+TD3EI1N
-         9c1oPnZ/2OQ4fwbicwk4kWqLvcHgPBoYmyyQCeK7bJLoHvMIHBsnEihb0rb62l6kDpyg
-         iYeZoAsD0LIVCpZX39KgTPDSQ5U/Zzfu/M7/6WGvQpl/Mc+YAiePsEbfBtUASsvMlRV3
-         +I4ddpmxfNVjt7+jhG6/BNw7FQvOr7Fs72pnLYDL2+c7GQixpJNrvQCStI0zWVrkQ8Q5
-         hvCElVtxBzpw1/YvrCu3lwE9l4bHc+MYtzSS6Gp2cSrpABesqawlRZUdqQr0Qh/AgW6L
-         Ff1Q==
-X-Gm-Message-State: AOJu0YxdZ+54AWCiewTz9KhjDqGtcfQSV9jw6pvced+TatlpP3V/tkAH
-	V4KXFZ1VqbflK9Gzu8yFg62lAdAGSKPn4QFIvdizhP0LTHrqUALhiNwyGEQVLQ==
-X-Gm-Gg: AZuq6aKZeUpONXEemFODOVH+o7KIgYmFu8nq2NVf532j9ofQ3I6hA9WSn0lYDpLbplj
-	vdrc4D49u9qmfK9rsgqi7vNjlDnACkn29ONZuxRhW2eBVbFuIPMrITIlVK75HnE3KphidAqF/xr
-	zPc96Ff8/ZY+7wRRZ7VRj9VGIPBuXOYmtiHlLJ2ApqKUmn0dgqJFZEalMiyvXeb/052vSXflB3d
-	zBMTq6HKO8Ut2QKYx2UNHnPtWeZcqSlb8BrrTMkbuAlGz+f0gq7vfXkb4s73i3tce1WHoY8WjvV
-	MKAH/QRXWR0cuevWV/H92UNPhd0gfkY47HrLMBMu0rCk+iIaqagMVX2W/eEHiL47C6CrlU/MrAu
-	7jC7GRiGjaKHW0giNieqj0Bz3nYBUuGJKwGozQ1CU7t64tYCL6Ui828aCRNcJ/9VgLtdsEa1LOy
-	wbpJbUCvnjBY3A5iyYqmPV5duy1g==
-X-Received: by 2002:a05:6a00:ae0e:b0:81f:50ea:5d96 with SMTP id d2e1a72fcca58-823ab65f8demr11130744b3a.18.1770070630601;
-        Mon, 02 Feb 2026 14:17:10 -0800 (PST)
+        bh=Lz8iAve24z80w7uvaD5L+7iMrBJ1WUFOp4RKbcgPJEs=;
+        b=jpihzpE5Vd33qyePZfDaXKxW9+oPvxddLxnRk4Y9wngJAYj/RXBEVafdEYMVAOFjGh
+         6Df9Jk+cFDERjdmDoI4Ie/NiA2/EPzo86nsrzvlOR2uIeXdAxuLkWV2xhQGZpmv2204e
+         8q40AjKA4a4Rth+GkAMDbSYJ6TgfCuvByRLMCeQmsUEWfJtYQamrONw1JtknPXxVgwnm
+         ixqFnOem//oouaW8ylcliIKJRxcNEdI23z276gueTa2cJTbyHyX0Y1QgpnzIarxKrNuc
+         +bhm7uS5cyB/WQ76AkS+rATeKEMuaXvKXF7xB0OU/ueVWwtWEcG2zbz54dmsbNQLDwNj
+         zQJA==
+X-Gm-Message-State: AOJu0YzUc4MngCNNHLtKK8TflutWvwWXxeCxbVNIbTSSnhfXGSWtRjP7
+	21zBdgEC/xOHtf5vTKbzxQEYxNMM5A3xXC6A4rzAPyzTT7P0ClmhesJc
+X-Gm-Gg: AZuq6aIfE884xv279zRaqNwiwzlLsH/zGRiSu+MYqT9jTz6Ulb1emcA6/mcZolgd1oO
+	1nKa/bI7NvVGHGLHZaJPk1/fAd4DWc/Em8Q71NQrBr5ODbQBwwskSniN1M9KUWufX6lQItuFppF
+	e5n6/TLhsI16bKlCforbIYf46rNZo1rC9CN64bMLzPZxZjvTCJXNO52N8dLXdP/yNpbt1I3q0+y
+	rRfv6qEyyBGKhsBEJH1pjwzPhioLZ8pNxlqLQi/p+F5h4GYuwlbCXdOK37k3WpCA+S7e+iDZTzu
+	Fm/nr4BRDUzeIj+ljhQQ3ofpIDAbz7LwvTo6uN7Ktmc2p/dmeTwECOeRl0uPI/rkZQLbmkVCH8k
+	0DcISmvUsRYa3QZTeb9bckmbzGmZoejXglrPmNFSSNWlmWZ/408t2c5169qJIGNqw6HfGPYbfg2
+	gGP7+PxyDzdbeVSRdvrA+AevQsLw==
+X-Received: by 2002:a05:6a00:a226:b0:819:5db9:6ac0 with SMTP id d2e1a72fcca58-823ab758d86mr12586849b3a.37.1770070765248;
+        Mon, 02 Feb 2026 14:19:25 -0800 (PST)
 Received: from localhost.localdomain ([1.227.206.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82379b6b277sm21019732b3a.29.2026.02.02.14.17.06
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82379b6b277sm21019732b3a.29.2026.02.02.14.19.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Feb 2026 14:17:09 -0800 (PST)
+        Mon, 02 Feb 2026 14:19:24 -0800 (PST)
 From: Namjae Jeon <linkinjeon@kernel.org>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -85,9 +85,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	jay.sim@lge.com,
 	gunho.lee@lge.com,
 	Namjae Jeon <linkinjeon@kernel.org>
-Subject: [PATCH v6 12/16] ntfs: add reparse and ea operations
-Date: Tue,  3 Feb 2026 07:01:58 +0900
-Message-Id: <20260202220202.10907-13-linkinjeon@kernel.org>
+Subject: [PATCH v6 14/16] ntfs3: remove legacy ntfs driver support
+Date: Tue,  3 Feb 2026 07:02:00 +0900
+Message-Id: <20260202220202.10907-15-linkinjeon@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260202220202.10907-1-linkinjeon@kernel.org>
 References: <20260202220202.10907-1-linkinjeon@kernel.org>
@@ -104,7 +104,7 @@ X-Spamd-Result: default: False [-0.46 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
@@ -112,7 +112,7 @@ X-Spamd-Result: default: False [-0.46 / 15.00];
 	RCPT_COUNT_TWELVE(0.00)[23];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76108-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76109-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,lst.de,mit.edu,infradead.org,suse.cz,toxicpanda.com,sandeen.net,suse.com,brown.name,gmail.com];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
@@ -120,1542 +120,292 @@ X-Spamd-Result: default: False [-0.46 / 15.00];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[linkinjeon@kernel.org,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	RCVD_COUNT_FIVE(0.00)[5];
 	R_DKIM_NA(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 2E890D2183
+	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:email,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 7F258D219C
 X-Rspamd-Action: no action
 
-This patch implements support for Extended Attributes and Reparse Points,
-enabling file operations, Access Control Lists, and compatibility with
-Windows Subsystem for Linux (WSL) metadata.
+This patch reverts the following commits that introduced legacy ntfs
+driver alias and related support code:
 
- - Implement xattr handlers for get/set/list operations.
- - Support POSIX ACLs.
- - Implement handling for WSL attributes to map Linux permissions and
-   ownership to NTFS EAs.
- - Implement handling for NTFS reparse points, including creating and
-   reading symbolic links.
- - Support special files via WSL reparse tags.
+74871791ffa9 ntfs3: serve as alias for the legacy ntfs driver
+1ff2e956608c fs/ntfs3: Redesign legacy ntfs support
+9b872cc50daa ntfs3: add legacy ntfs file operations
+d55f90e9b243 ntfs3: enforce read-only when used as legacy ntfs driver
 
+The legacy ntfs driver has been remade as a new implementation, so the
+alias and related codes in ntfs3 are no longer needed.
+
+Acked-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
 ---
- fs/ntfs/ea.c      | 947 ++++++++++++++++++++++++++++++++++++++++++++++
- fs/ntfs/reparse.c | 548 +++++++++++++++++++++++++++
- 2 files changed, 1495 insertions(+)
- create mode 100644 fs/ntfs/ea.c
- create mode 100644 fs/ntfs/reparse.c
+ fs/ntfs3/Kconfig   |  9 -------
+ fs/ntfs3/dir.c     |  9 -------
+ fs/ntfs3/file.c    | 10 --------
+ fs/ntfs3/inode.c   | 16 ++++---------
+ fs/ntfs3/ntfs_fs.h | 11 ---------
+ fs/ntfs3/super.c   | 59 +---------------------------------------------
+ 6 files changed, 5 insertions(+), 109 deletions(-)
 
-diff --git a/fs/ntfs/ea.c b/fs/ntfs/ea.c
-new file mode 100644
-index 000000000000..8620305aceec
---- /dev/null
-+++ b/fs/ntfs/ea.c
-@@ -0,0 +1,947 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Pocessing of EA's
-+ *
-+ * Part of this file is based on code from the NTFS-3G.
-+ *
-+ * Copyright (c) 2014-2021 Jean-Pierre Andre
-+ * Copyright (c) 2025 LG Electronics Co., Ltd.
-+ */
-+
-+#include <linux/fs.h>
-+#include <linux/posix_acl.h>
-+#include <linux/posix_acl_xattr.h>
-+#include <linux/xattr.h>
-+
-+#include "layout.h"
-+#include "attrib.h"
-+#include "index.h"
-+#include "dir.h"
-+#include "ea.h"
-+
-+static int ntfs_write_ea(struct ntfs_inode *ni, __le32 type, char *value, s64 ea_off,
-+		s64 ea_size, bool need_truncate)
-+{
-+	struct inode *ea_vi;
-+	int err = 0;
-+	s64 written;
-+
-+	ea_vi = ntfs_attr_iget(VFS_I(ni), type, AT_UNNAMED, 0);
-+	if (IS_ERR(ea_vi))
-+		return PTR_ERR(ea_vi);
-+
-+	written = ntfs_inode_attr_pwrite(ea_vi, ea_off, ea_size, value, false);
-+	if (written != ea_size)
-+		err = -EIO;
-+	else {
-+		struct ntfs_inode *ea_ni = NTFS_I(ea_vi);
-+
-+		if (need_truncate && ea_ni->data_size > ea_off + ea_size)
-+			ntfs_attr_truncate(ea_ni, ea_off + ea_size);
-+		mark_mft_record_dirty(ni);
-+	}
-+
-+	iput(ea_vi);
-+	return err;
-+}
-+
-+static int ntfs_ea_lookup(char *ea_buf, s64 ea_buf_size, const char *name,
-+		int name_len, s64 *ea_offset, s64 *ea_size)
-+{
-+	const struct ea_attr *p_ea;
-+	s64 offset;
-+	unsigned int next;
-+
-+	if (ea_buf_size < sizeof(struct ea_attr))
-+		goto out;
-+
-+	offset = 0;
-+	do {
-+		p_ea = (const struct ea_attr *)&ea_buf[offset];
-+		next = le32_to_cpu(p_ea->next_entry_offset);
-+
-+		if (offset + next > ea_buf_size ||
-+		    ((1 + p_ea->ea_name_length) > (ea_buf_size - offset)))
-+			break;
-+
-+		if (p_ea->ea_name_length == name_len &&
-+		    !memcmp(p_ea->ea_name, name, name_len)) {
-+			*ea_offset = offset;
-+			if (next)
-+				*ea_size = next;
-+			else {
-+				unsigned int ea_len = 1 + p_ea->ea_name_length +
-+						le16_to_cpu(p_ea->ea_value_length);
-+
-+				if ((ea_buf_size - offset) < ea_len)
-+					goto out;
-+
-+				*ea_size = ALIGN(struct_size(p_ea, ea_name,
-+							1 + p_ea->ea_name_length +
-+							le16_to_cpu(p_ea->ea_value_length)), 4);
-+			}
-+
-+			if (ea_buf_size < *ea_offset + *ea_size)
-+				goto out;
-+
-+			return 0;
-+		}
-+		offset += next;
-+	} while (next > 0 && offset < ea_buf_size &&
-+		 sizeof(struct ea_attr) < (ea_buf_size - offset));
-+
-+out:
-+	return -ENOENT;
-+}
-+
-+/*
-+ * Return the existing EA
-+ *
-+ * The EA_INFORMATION is not examined and the consistency of the
-+ * existing EA is not checked.
-+ *
-+ * If successful, the full attribute is returned unchanged
-+ * and its size is returned.
-+ * If the designated buffer is too small, the needed size is
-+ * returned, and the buffer is left unchanged.
-+ * If there is an error, a negative value is returned and errno
-+ * is set according to the error.
-+ */
-+static int ntfs_get_ea(struct inode *inode, const char *name, size_t name_len,
-+		void *buffer, size_t size)
-+{
-+	struct ntfs_inode *ni = NTFS_I(inode);
-+	const struct ea_attr *p_ea;
-+	char *ea_buf;
-+	s64 ea_off, ea_size, all_ea_size, ea_info_size;
-+	int err;
-+	u32 ea_info_qlen;
-+	u16 ea_value_len;
-+	struct ea_information *p_ea_info;
-+
-+	if (!NInoHasEA(ni))
-+		return -ENODATA;
-+
-+	p_ea_info = ntfs_attr_readall(ni, AT_EA_INFORMATION, NULL, 0,
-+			&ea_info_size);
-+	if (!p_ea_info || ea_info_size != sizeof(struct ea_information)) {
-+		kvfree(p_ea_info);
-+		return -ENODATA;
-+	}
-+
-+	ea_info_qlen = le32_to_cpu(p_ea_info->ea_query_length);
-+	kvfree(p_ea_info);
-+
-+	ea_buf = ntfs_attr_readall(ni, AT_EA, NULL, 0, &all_ea_size);
-+	if (!ea_buf)
-+		return -ENODATA;
-+
-+	err = ntfs_ea_lookup(ea_buf, ea_info_qlen, name, name_len, &ea_off,
-+			&ea_size);
-+	if (!err) {
-+		p_ea = (struct ea_attr *)&ea_buf[ea_off];
-+		ea_value_len = le16_to_cpu(p_ea->ea_value_length);
-+		if (!buffer) {
-+			kvfree(ea_buf);
-+			return ea_value_len;
-+		}
-+
-+		if (ea_value_len > size) {
-+			err = -ERANGE;
-+			goto free_ea_buf;
-+		}
-+
-+		memcpy(buffer, &p_ea->ea_name[p_ea->ea_name_length + 1],
-+				ea_value_len);
-+		kvfree(ea_buf);
-+		return ea_value_len;
-+	}
-+
-+	err = -ENODATA;
-+free_ea_buf:
-+	kvfree(ea_buf);
-+	return err;
-+}
-+
-+static inline int ea_packed_size(const struct ea_attr *p_ea)
-+{
-+	/*
-+	 * 4 bytes for header (flags and lengths) + name length + 1 +
-+	 * value length.
-+	 */
-+	return 5 + p_ea->ea_name_length + le16_to_cpu(p_ea->ea_value_length);
-+}
-+
-+/*
-+ * Set a new EA, and set EA_INFORMATION accordingly
-+ *
-+ * This is roughly the same as ZwSetEaFile() on Windows, however
-+ * the "offset to next" of the last EA should not be cleared.
-+ *
-+ * Consistency of the new EA is first checked.
-+ *
-+ * EA_INFORMATION is set first, and it is restored to its former
-+ * state if setting EA fails.
-+ */
-+static int ntfs_set_ea(struct inode *inode, const char *name, size_t name_len,
-+		const void *value, size_t val_size, int flags,
-+		__le16 *packed_ea_size)
-+{
-+	struct ntfs_inode *ni = NTFS_I(inode);
-+	struct ea_information *p_ea_info = NULL;
-+	int ea_packed, err = 0;
-+	struct ea_attr *p_ea;
-+	u32 ea_info_qsize = 0;
-+	char *ea_buf = NULL;
-+	size_t new_ea_size = ALIGN(struct_size(p_ea, ea_name, 1 + name_len + val_size), 4);
-+	s64 ea_off, ea_info_size, all_ea_size, ea_size;
-+
-+	if (name_len > 255)
-+		return -ENAMETOOLONG;
-+
-+	if (ntfs_attr_exist(ni, AT_EA_INFORMATION, AT_UNNAMED, 0)) {
-+		p_ea_info = ntfs_attr_readall(ni, AT_EA_INFORMATION, NULL, 0,
-+						&ea_info_size);
-+		if (!p_ea_info || ea_info_size != sizeof(struct ea_information))
-+			goto out;
-+
-+		ea_buf = ntfs_attr_readall(ni, AT_EA, NULL, 0, &all_ea_size);
-+		if (!ea_buf) {
-+			ea_info_qsize = 0;
-+			kvfree(p_ea_info);
-+			goto create_ea_info;
-+		}
-+
-+		ea_info_qsize = le32_to_cpu(p_ea_info->ea_query_length);
-+	} else {
-+create_ea_info:
-+		p_ea_info = kzalloc(sizeof(struct ea_information), GFP_NOFS);
-+		if (!p_ea_info)
-+			return -ENOMEM;
-+
-+		ea_info_qsize = 0;
-+		err = ntfs_attr_add(ni, AT_EA_INFORMATION, AT_UNNAMED, 0,
-+				(char *)p_ea_info, sizeof(struct ea_information));
-+		if (err)
-+			goto out;
-+
-+		if (ntfs_attr_exist(ni, AT_EA, AT_UNNAMED, 0)) {
-+			err = ntfs_attr_remove(ni, AT_EA, AT_UNNAMED, 0);
-+			if (err)
-+				goto out;
-+		}
-+
-+		goto alloc_new_ea;
-+	}
-+
-+	if (ea_info_qsize > all_ea_size) {
-+		err = -EIO;
-+		goto out;
-+	}
-+
-+	err = ntfs_ea_lookup(ea_buf, ea_info_qsize, name, name_len, &ea_off,
-+			&ea_size);
-+	if (ea_info_qsize && !err) {
-+		if (flags & XATTR_CREATE) {
-+			err = -EEXIST;
-+			goto out;
-+		}
-+
-+		p_ea = (struct ea_attr *)(ea_buf + ea_off);
-+
-+		if (val_size &&
-+		    le16_to_cpu(p_ea->ea_value_length) == val_size &&
-+		    !memcmp(p_ea->ea_name + p_ea->ea_name_length + 1, value,
-+			    val_size))
-+			goto out;
-+
-+		le16_add_cpu(&p_ea_info->ea_length, 0 - ea_packed_size(p_ea));
-+
-+		if (p_ea->flags & NEED_EA)
-+			le16_add_cpu(&p_ea_info->need_ea_count, -1);
-+
-+		memmove((char *)p_ea, (char *)p_ea + ea_size, ea_info_qsize - (ea_off + ea_size));
-+		ea_info_qsize -= ea_size;
-+		p_ea_info->ea_query_length = cpu_to_le32(ea_info_qsize);
-+
-+		err = ntfs_write_ea(ni, AT_EA_INFORMATION, (char *)p_ea_info, 0,
-+				sizeof(struct ea_information), false);
-+		if (err)
-+			goto out;
-+
-+		err = ntfs_write_ea(ni, AT_EA, ea_buf, 0, ea_info_qsize, true);
-+		if (err)
-+			goto out;
-+
-+		if ((flags & XATTR_REPLACE) && !val_size) {
-+			/* Remove xattr. */
-+			goto out;
-+		}
-+	} else {
-+		if (flags & XATTR_REPLACE) {
-+			err = -ENODATA;
-+			goto out;
-+		}
-+	}
-+	kvfree(ea_buf);
-+
-+alloc_new_ea:
-+	ea_buf = kzalloc(new_ea_size, GFP_NOFS);
-+	if (!ea_buf) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
-+	/*
-+	 * EA and REPARSE_POINT compatibility not checked any more,
-+	 * required by Windows 10, but having both may lead to
-+	 * problems with earlier versions.
-+	 */
-+	p_ea = (struct ea_attr *)ea_buf;
-+	memcpy(p_ea->ea_name, name, name_len);
-+	p_ea->ea_name_length = name_len;
-+	p_ea->ea_name[name_len] = 0;
-+	memcpy(p_ea->ea_name + name_len + 1, value, val_size);
-+	p_ea->ea_value_length = cpu_to_le16(val_size);
-+	p_ea->next_entry_offset = cpu_to_le32(new_ea_size);
-+
-+	ea_packed = le16_to_cpu(p_ea_info->ea_length) + ea_packed_size(p_ea);
-+	p_ea_info->ea_length = cpu_to_le16(ea_packed);
-+	p_ea_info->ea_query_length = cpu_to_le32(ea_info_qsize + new_ea_size);
-+
-+	if (ea_packed > 0xffff ||
-+	    ntfs_attr_size_bounds_check(ni->vol, AT_EA, new_ea_size)) {
-+		err = -EFBIG;
-+		goto out;
-+	}
-+
-+	/*
-+	 * no EA or EA_INFORMATION : add them
-+	 */
-+	if (!ntfs_attr_exist(ni, AT_EA, AT_UNNAMED, 0)) {
-+		err = ntfs_attr_add(ni, AT_EA, AT_UNNAMED, 0, (char *)p_ea,
-+				new_ea_size);
-+		if (err)
-+			goto out;
-+	} else {
-+		err = ntfs_write_ea(ni, AT_EA, (char *)p_ea, ea_info_qsize,
-+				new_ea_size, false);
-+		if (err)
-+			goto out;
-+	}
-+
-+	err = ntfs_write_ea(ni, AT_EA_INFORMATION, (char *)p_ea_info, 0,
-+			sizeof(struct ea_information), false);
-+	if (err)
-+		goto out;
-+
-+	if (packed_ea_size)
-+		*packed_ea_size = p_ea_info->ea_length;
-+	mark_mft_record_dirty(ni);
-+out:
-+	if (ea_info_qsize > 0)
-+		NInoSetHasEA(ni);
-+	else
-+		NInoClearHasEA(ni);
-+
-+	kvfree(ea_buf);
-+	kvfree(p_ea_info);
-+
-+	return err;
-+}
-+
-+/*
-+ * Check for the presence of an EA "$LXDEV" (used by WSL)
-+ * and return its value as a device address
-+ */
-+int ntfs_ea_get_wsl_inode(struct inode *inode, dev_t *rdevp, unsigned int flags)
-+{
-+	int err;
-+	__le32 v;
-+
-+	if (!(flags & NTFS_VOL_UID)) {
-+		/* Load uid to lxuid EA */
-+		err = ntfs_get_ea(inode, "$LXUID", sizeof("$LXUID") - 1, &v,
-+				sizeof(v));
-+		if (err < 0)
-+			return err;
-+		i_uid_write(inode, le32_to_cpu(v));
-+	}
-+
-+	if (!(flags & NTFS_VOL_UID)) {
-+		/* Load gid to lxgid EA */
-+		err = ntfs_get_ea(inode, "$LXGID", sizeof("$LXGID") - 1, &v,
-+				sizeof(v));
-+		if (err < 0)
-+			return err;
-+		i_gid_write(inode, le32_to_cpu(v));
-+	}
-+
-+	/* Load mode to lxmod EA */
-+	err = ntfs_get_ea(inode, "$LXMOD", sizeof("$LXMOD") - 1, &v, sizeof(v));
-+	if (err > 0) {
-+		inode->i_mode = le32_to_cpu(v);
-+	} else {
-+		/* Everyone gets all permissions. */
-+		inode->i_mode |= 0777;
-+	}
-+
-+	/* Load mode to lxdev EA */
-+	err = ntfs_get_ea(inode, "$LXDEV", sizeof("$LXDEV") - 1, &v, sizeof(v));
-+	if (err > 0)
-+		*rdevp = le32_to_cpu(v);
-+	err = 0;
-+
-+	return err;
-+}
-+
-+int ntfs_ea_set_wsl_inode(struct inode *inode, dev_t rdev, __le16 *ea_size,
-+		unsigned int flags)
-+{
-+	__le32 v;
-+	int err;
-+
-+	if (flags & NTFS_EA_UID) {
-+		/* Store uid to lxuid EA */
-+		v = cpu_to_le32(i_uid_read(inode));
-+		err = ntfs_set_ea(inode, "$LXUID", sizeof("$LXUID") - 1, &v,
-+				sizeof(v), 0, ea_size);
-+		if (err)
-+			return err;
-+	}
-+
-+	if (flags & NTFS_EA_GID) {
-+		/* Store gid to lxgid EA */
-+		v = cpu_to_le32(i_gid_read(inode));
-+		err = ntfs_set_ea(inode, "$LXGID", sizeof("$LXGID") - 1, &v,
-+				sizeof(v), 0, ea_size);
-+		if (err)
-+			return err;
-+	}
-+
-+	if (flags & NTFS_EA_MODE) {
-+		/* Store mode to lxmod EA */
-+		v = cpu_to_le32(inode->i_mode);
-+		err = ntfs_set_ea(inode, "$LXMOD", sizeof("$LXMOD") - 1, &v,
-+				sizeof(v), 0, ea_size);
-+		if (err)
-+			return err;
-+	}
-+
-+	if (rdev) {
-+		v = cpu_to_le32(rdev);
-+		err = ntfs_set_ea(inode, "$LXDEV", sizeof("$LXDEV") - 1, &v, sizeof(v),
-+				0, ea_size);
-+	}
-+
-+	return err;
-+}
-+
-+ssize_t ntfs_listxattr(struct dentry *dentry, char *buffer, size_t size)
-+{
-+	struct inode *inode = d_inode(dentry);
-+	struct ntfs_inode *ni = NTFS_I(inode);
-+	const struct ea_attr *p_ea;
-+	s64 offset, ea_buf_size, ea_info_size;
-+	int next, err = 0, ea_size;
-+	u32 ea_info_qsize;
-+	char *ea_buf = NULL;
-+	ssize_t ret = 0;
-+	struct ea_information *ea_info;
-+
-+	if (!NInoHasEA(ni))
-+		return 0;
-+
-+	mutex_lock(&NTFS_I(inode)->mrec_lock);
-+	ea_info = ntfs_attr_readall(ni, AT_EA_INFORMATION, NULL, 0,
-+			&ea_info_size);
-+	if (!ea_info || ea_info_size != sizeof(struct ea_information))
-+		goto out;
-+
-+	ea_info_qsize = le32_to_cpu(ea_info->ea_query_length);
-+
-+	ea_buf = ntfs_attr_readall(ni, AT_EA, NULL, 0, &ea_buf_size);
-+	if (!ea_buf)
-+		goto out;
-+
-+	if (ea_info_qsize > ea_buf_size)
-+		goto out;
-+
-+	if (ea_buf_size < sizeof(struct ea_attr))
-+		goto out;
-+
-+	offset = 0;
-+	do {
-+		p_ea = (const struct ea_attr *)&ea_buf[offset];
-+		next = le32_to_cpu(p_ea->next_entry_offset);
-+		if (next)
-+			ea_size = next;
-+		else
-+			ea_size = ALIGN(struct_size(p_ea, ea_name,
-+						1 + p_ea->ea_name_length +
-+						le16_to_cpu(p_ea->ea_value_length)),
-+					4);
-+		if (buffer) {
-+			if (offset + ea_size > ea_info_qsize)
-+				break;
-+
-+			if (ret + p_ea->ea_name_length + 1 > size) {
-+				err = -ERANGE;
-+				goto out;
-+			}
-+
-+			if (p_ea->ea_name_length + 1 > (ea_info_qsize - offset))
-+				break;
-+
-+			memcpy(buffer + ret, p_ea->ea_name, p_ea->ea_name_length);
-+			buffer[ret + p_ea->ea_name_length] = 0;
-+		}
-+
-+		ret += p_ea->ea_name_length + 1;
-+		offset += ea_size;
-+	} while (next > 0 && offset < ea_info_qsize &&
-+		 sizeof(struct ea_attr) < (ea_info_qsize - offset));
-+
-+out:
-+	mutex_unlock(&NTFS_I(inode)->mrec_lock);
-+	kvfree(ea_info);
-+	kvfree(ea_buf);
-+
-+	return err ? err : ret;
-+}
-+
-+// clang-format off
-+#define SYSTEM_DOS_ATTRIB     "system.dos_attrib"
-+#define SYSTEM_NTFS_ATTRIB    "system.ntfs_attrib"
-+#define SYSTEM_NTFS_ATTRIB_BE "system.ntfs_attrib_be"
-+// clang-format on
-+
-+static int ntfs_getxattr(const struct xattr_handler *handler,
-+		struct dentry *unused, struct inode *inode, const char *name,
-+		void *buffer, size_t size)
-+{
-+	struct ntfs_inode *ni = NTFS_I(inode);
-+	int err;
-+
-+	if (NVolShutdown(ni->vol))
-+		return -EIO;
-+
-+	if (!strcmp(name, SYSTEM_DOS_ATTRIB)) {
-+		if (!buffer) {
-+			err = sizeof(u8);
-+		} else if (size < sizeof(u8)) {
-+			err = -ENODATA;
-+		} else {
-+			err = sizeof(u8);
-+			*(u8 *)buffer = (u8)(le32_to_cpu(ni->flags) & 0x3F);
-+		}
-+		goto out;
-+	}
-+
-+	if (!strcmp(name, SYSTEM_NTFS_ATTRIB) ||
-+	    !strcmp(name, SYSTEM_NTFS_ATTRIB_BE)) {
-+		if (!buffer) {
-+			err = sizeof(u32);
-+		} else if (size < sizeof(u32)) {
-+			err = -ENODATA;
-+		} else {
-+			err = sizeof(u32);
-+			*(u32 *)buffer = le32_to_cpu(ni->flags);
-+			if (!strcmp(name, SYSTEM_NTFS_ATTRIB_BE))
-+				*(__be32 *)buffer = cpu_to_be32(*(u32 *)buffer);
-+		}
-+		goto out;
-+	}
-+
-+	mutex_lock(&ni->mrec_lock);
-+	err = ntfs_get_ea(inode, name, strlen(name), buffer, size);
-+	mutex_unlock(&ni->mrec_lock);
-+
-+out:
-+	return err;
-+}
-+
-+static int ntfs_new_attr_flags(struct ntfs_inode *ni, __le32 fattr)
-+{
-+	struct ntfs_attr_search_ctx *ctx;
-+	struct mft_record *m;
-+	struct attr_record *a;
-+	__le16 new_aflags;
-+	int mp_size, mp_ofs, name_ofs, arec_size, err;
-+
-+	m = map_mft_record(ni);
-+	if (IS_ERR(m))
-+		return PTR_ERR(m);
-+
-+	ctx = ntfs_attr_get_search_ctx(ni, m);
-+	if (!ctx) {
-+		err = -ENOMEM;
-+		goto err_out;
-+	}
-+
-+	err = ntfs_attr_lookup(ni->type, ni->name, ni->name_len,
-+			CASE_SENSITIVE, 0, NULL, 0, ctx);
-+	if (err) {
-+		err = -EINVAL;
-+		goto err_out;
-+	}
-+
-+	a = ctx->attr;
-+	new_aflags = ctx->attr->flags;
-+
-+	if (fattr & FILE_ATTR_SPARSE_FILE)
-+		new_aflags |= ATTR_IS_SPARSE;
-+	else
-+		new_aflags &= ~ATTR_IS_SPARSE;
-+
-+	if (fattr & FILE_ATTR_COMPRESSED)
-+		new_aflags |= ATTR_IS_COMPRESSED;
-+	else
-+		new_aflags &= ~ATTR_IS_COMPRESSED;
-+
-+	if (new_aflags == a->flags)
-+		return 0;
-+
-+	if ((new_aflags & (ATTR_IS_SPARSE | ATTR_IS_COMPRESSED)) ==
-+			  (ATTR_IS_SPARSE | ATTR_IS_COMPRESSED)) {
-+		pr_err("file can't be sparsed and compressed\n");
-+		err = -EOPNOTSUPP;
-+		goto err_out;
-+	}
-+
-+	if (!a->non_resident)
-+		goto out;
-+
-+	if (a->data.non_resident.data_size) {
-+		pr_err("Can't change sparsed/compressed for non-empty file");
-+		err = -EOPNOTSUPP;
-+		goto err_out;
-+	}
-+
-+	if (new_aflags & (ATTR_IS_SPARSE | ATTR_IS_COMPRESSED))
-+		name_ofs = (offsetof(struct attr_record,
-+				     data.non_resident.compressed_size) +
-+					sizeof(a->data.non_resident.compressed_size) + 7) & ~7;
-+	else
-+		name_ofs = (offsetof(struct attr_record,
-+				     data.non_resident.compressed_size) + 7) & ~7;
-+
-+	mp_size = ntfs_get_size_for_mapping_pairs(ni->vol, ni->runlist.rl, 0, -1, -1);
-+	if (unlikely(mp_size < 0)) {
-+		err = mp_size;
-+		ntfs_debug("Failed to get size for mapping pairs array, error code %i.\n", err);
-+		goto err_out;
-+	}
-+
-+	mp_ofs = (name_ofs + a->name_length * sizeof(__le16) + 7) & ~7;
-+	arec_size = (mp_ofs + mp_size + 7) & ~7;
-+
-+	err = ntfs_attr_record_resize(m, a, arec_size);
-+	if (unlikely(err))
-+		goto err_out;
-+
-+	if (new_aflags & (ATTR_IS_SPARSE | ATTR_IS_COMPRESSED)) {
-+		a->data.non_resident.compression_unit = 0;
-+		if (new_aflags & ATTR_IS_COMPRESSED || ni->vol->major_ver < 3)
-+			a->data.non_resident.compression_unit = 4;
-+		a->data.non_resident.compressed_size = 0;
-+		ni->itype.compressed.size = 0;
-+		if (a->data.non_resident.compression_unit) {
-+			ni->itype.compressed.block_size = 1U <<
-+				(a->data.non_resident.compression_unit +
-+				 ni->vol->cluster_size_bits);
-+			ni->itype.compressed.block_size_bits =
-+					ffs(ni->itype.compressed.block_size) -
-+					1;
-+			ni->itype.compressed.block_clusters = 1U <<
-+					a->data.non_resident.compression_unit;
-+		} else {
-+			ni->itype.compressed.block_size = 0;
-+			ni->itype.compressed.block_size_bits = 0;
-+			ni->itype.compressed.block_clusters = 0;
-+		}
-+
-+		if (new_aflags & ATTR_IS_SPARSE) {
-+			NInoSetSparse(ni);
-+			ni->flags |= FILE_ATTR_SPARSE_FILE;
-+		}
-+
-+		if (new_aflags & ATTR_IS_COMPRESSED) {
-+			NInoSetCompressed(ni);
-+			ni->flags |= FILE_ATTR_COMPRESSED;
-+		}
-+	} else {
-+		ni->flags &= ~(FILE_ATTR_SPARSE_FILE | FILE_ATTR_COMPRESSED);
-+		a->data.non_resident.compression_unit = 0;
-+		NInoClearSparse(ni);
-+		NInoClearCompressed(ni);
-+	}
-+
-+	a->name_offset = cpu_to_le16(name_ofs);
-+	a->data.non_resident.mapping_pairs_offset = cpu_to_le16(mp_ofs);
-+
-+out:
-+	a->flags = new_aflags;
-+	mark_mft_record_dirty(ctx->ntfs_ino);
-+err_out:
-+	ntfs_attr_put_search_ctx(ctx);
-+	unmap_mft_record(ni);
-+	return err;
-+}
-+
-+static int ntfs_setxattr(const struct xattr_handler *handler,
-+		struct mnt_idmap *idmap, struct dentry *unused,
-+		struct inode *inode, const char *name, const void *value,
-+		size_t size, int flags)
-+{
-+	struct ntfs_inode *ni = NTFS_I(inode);
-+	int err;
-+	__le32 fattr;
-+
-+	if (NVolShutdown(ni->vol))
-+		return -EIO;
-+
-+	if (!strcmp(name, SYSTEM_DOS_ATTRIB)) {
-+		if (sizeof(u8) != size) {
-+			err = -EINVAL;
-+			goto out;
-+		}
-+		fattr = cpu_to_le32(*(u8 *)value);
-+		goto set_fattr;
-+	}
-+
-+	if (!strcmp(name, SYSTEM_NTFS_ATTRIB) ||
-+	    !strcmp(name, SYSTEM_NTFS_ATTRIB_BE)) {
-+		if (size != sizeof(u32)) {
-+			err = -EINVAL;
-+			goto out;
-+		}
-+		if (!strcmp(name, SYSTEM_NTFS_ATTRIB_BE))
-+			fattr = cpu_to_le32(be32_to_cpu(*(__be32 *)value));
-+		else
-+			fattr = cpu_to_le32(*(u32 *)value);
-+
-+		if (S_ISREG(inode->i_mode)) {
-+			mutex_lock(&ni->mrec_lock);
-+			err = ntfs_new_attr_flags(ni, fattr);
-+			mutex_unlock(&ni->mrec_lock);
-+			if (err)
-+				goto out;
-+		}
-+
-+set_fattr:
-+		if (S_ISDIR(inode->i_mode))
-+			fattr |= FILE_ATTR_DIRECTORY;
-+		else
-+			fattr &= ~FILE_ATTR_DIRECTORY;
-+
-+		if (ni->flags != fattr) {
-+			ni->flags = fattr;
-+			if (fattr & FILE_ATTR_READONLY)
-+				inode->i_mode &= ~0222;
-+			else
-+				inode->i_mode |= 0222;
-+			NInoSetFileNameDirty(ni);
-+			mark_inode_dirty(inode);
-+		}
-+		err = 0;
-+		goto out;
-+	}
-+
-+	mutex_lock(&ni->mrec_lock);
-+	err = ntfs_set_ea(inode, name, strlen(name), value, size, flags, NULL);
-+	mutex_unlock(&ni->mrec_lock);
-+
-+out:
-+	inode_set_ctime_current(inode);
-+	mark_inode_dirty(inode);
-+	return err;
-+}
-+
-+static bool ntfs_xattr_user_list(struct dentry *dentry)
-+{
-+	return true;
-+}
-+
-+// clang-format off
-+static const struct xattr_handler ntfs_other_xattr_handler = {
-+	.prefix	= "",
-+	.get	= ntfs_getxattr,
-+	.set	= ntfs_setxattr,
-+	.list	= ntfs_xattr_user_list,
-+};
-+
-+const struct xattr_handler * const ntfs_xattr_handlers[] = {
-+	&ntfs_other_xattr_handler,
-+	NULL,
-+};
-+// clang-format on
-+
-+#ifdef CONFIG_NTFS_FS_POSIX_ACL
-+struct posix_acl *ntfs_get_acl(struct mnt_idmap *idmap, struct dentry *dentry,
-+			       int type)
-+{
-+	struct inode *inode = d_inode(dentry);
-+	struct ntfs_inode *ni = NTFS_I(inode);
-+	const char *name;
-+	size_t name_len;
-+	struct posix_acl *acl;
-+	int err;
-+	void *buf;
-+
-+	/* Allocate PATH_MAX bytes. */
-+	buf = __getname();
-+	if (!buf)
-+		return ERR_PTR(-ENOMEM);
-+
-+	/* Possible values of 'type' was already checked above. */
-+	if (type == ACL_TYPE_ACCESS) {
-+		name = XATTR_NAME_POSIX_ACL_ACCESS;
-+		name_len = sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1;
-+	} else {
-+		name = XATTR_NAME_POSIX_ACL_DEFAULT;
-+		name_len = sizeof(XATTR_NAME_POSIX_ACL_DEFAULT) - 1;
-+	}
-+
-+	mutex_lock(&ni->mrec_lock);
-+	err = ntfs_get_ea(inode, name, name_len, buf, PATH_MAX);
-+	mutex_unlock(&ni->mrec_lock);
-+
-+	/* Translate extended attribute to acl. */
-+	if (err >= 0)
-+		acl = posix_acl_from_xattr(&init_user_ns, buf, err);
-+	else if (err == -ENODATA)
-+		acl = NULL;
-+	else
-+		acl = ERR_PTR(err);
-+
-+	if (!IS_ERR(acl))
-+		set_cached_acl(inode, type, acl);
-+
-+	__putname(buf);
-+
-+	return acl;
-+}
-+
-+static noinline int ntfs_set_acl_ex(struct mnt_idmap *idmap,
-+				    struct inode *inode, struct posix_acl *acl,
-+				    int type, bool init_acl)
-+{
-+	const char *name;
-+	size_t size, name_len;
-+	void *value;
-+	int err;
-+	int flags;
-+	umode_t mode;
-+
-+	if (S_ISLNK(inode->i_mode))
-+		return -EOPNOTSUPP;
-+
-+	mode = inode->i_mode;
-+	switch (type) {
-+	case ACL_TYPE_ACCESS:
-+		/* Do not change i_mode if we are in init_acl */
-+		if (acl && !init_acl) {
-+			err = posix_acl_update_mode(idmap, inode, &mode, &acl);
-+			if (err)
-+				return err;
-+		}
-+		name = XATTR_NAME_POSIX_ACL_ACCESS;
-+		name_len = sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1;
-+		break;
-+
-+	case ACL_TYPE_DEFAULT:
-+		if (!S_ISDIR(inode->i_mode))
-+			return acl ? -EACCES : 0;
-+		name = XATTR_NAME_POSIX_ACL_DEFAULT;
-+		name_len = sizeof(XATTR_NAME_POSIX_ACL_DEFAULT) - 1;
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	if (!acl) {
-+		/* Remove xattr if it can be presented via mode. */
-+		size = 0;
-+		value = NULL;
-+		flags = XATTR_REPLACE;
-+	} else {
-+		size = posix_acl_xattr_size(acl->a_count);
-+		value = kmalloc(size, GFP_NOFS);
-+		if (!value)
-+			return -ENOMEM;
-+		err = posix_acl_to_xattr(&init_user_ns, acl, value, size);
-+		if (err < 0)
-+			goto out;
-+		flags = 0;
-+	}
-+
-+	mutex_lock(&NTFS_I(inode)->mrec_lock);
-+	err = ntfs_set_ea(inode, name, name_len, value, size, flags, NULL);
-+	mutex_unlock(&NTFS_I(inode)->mrec_lock);
-+	if (err == -ENODATA && !size)
-+		err = 0; /* Removing non existed xattr. */
-+	if (!err) {
-+		__le16 ea_size = 0;
-+		umode_t old_mode = inode->i_mode;
-+
-+		inode->i_mode = mode;
-+		mutex_lock(&NTFS_I(inode)->mrec_lock);
-+		err = ntfs_ea_set_wsl_inode(inode, 0, &ea_size, NTFS_EA_MODE);
-+		if (err) {
-+			ntfs_set_ea(inode, name, name_len, NULL, 0,
-+				    XATTR_REPLACE, NULL);
-+			mutex_unlock(&NTFS_I(inode)->mrec_lock);
-+			inode->i_mode = old_mode;
-+			goto out;
-+		}
-+		mutex_unlock(&NTFS_I(inode)->mrec_lock);
-+
-+		set_cached_acl(inode, type, acl);
-+		inode_set_ctime_current(inode);
-+		mark_inode_dirty(inode);
-+	}
-+
-+out:
-+	kfree(value);
-+
-+	return err;
-+}
-+
-+int ntfs_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
-+		 struct posix_acl *acl, int type)
-+{
-+	return ntfs_set_acl_ex(idmap, d_inode(dentry), acl, type, false);
-+}
-+
-+int ntfs_init_acl(struct mnt_idmap *idmap, struct inode *inode,
-+		  struct inode *dir)
-+{
-+	struct posix_acl *default_acl, *acl;
-+	int err;
-+
-+	err = posix_acl_create(dir, &inode->i_mode, &default_acl, &acl);
-+	if (err)
-+		return err;
-+
-+	if (default_acl) {
-+		err = ntfs_set_acl_ex(idmap, inode, default_acl,
-+				      ACL_TYPE_DEFAULT, true);
-+		posix_acl_release(default_acl);
-+	} else {
-+		inode->i_default_acl = NULL;
-+	}
-+
-+	if (acl) {
-+		if (!err)
-+			err = ntfs_set_acl_ex(idmap, inode, acl,
-+					      ACL_TYPE_ACCESS, true);
-+		posix_acl_release(acl);
-+	} else {
-+		inode->i_acl = NULL;
-+	}
-+
-+	return err;
-+}
-+#endif
-diff --git a/fs/ntfs/reparse.c b/fs/ntfs/reparse.c
-new file mode 100644
-index 000000000000..49cadb875719
---- /dev/null
-+++ b/fs/ntfs/reparse.c
-@@ -0,0 +1,548 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Processing of reparse points
-+ *
-+ * Part of this file is based on code from the NTFS-3G.
-+ *
-+ * Copyright (c) 2008-2021 Jean-Pierre Andre
-+ * Copyright (c) 2025 LG Electronics Co., Ltd.
-+ */
-+
-+#include "ntfs.h"
-+#include "layout.h"
-+#include "attrib.h"
-+#include "inode.h"
-+#include "dir.h"
-+#include "volume.h"
-+#include "mft.h"
-+#include "index.h"
-+#include "lcnalloc.h"
-+#include "reparse.h"
-+
-+struct WSL_LINK_REPARSE_DATA {
-+	__le32	type;
-+	char	link[];
-+};
-+
-+struct REPARSE_INDEX {			/* index entry in $Extend/$Reparse */
-+	struct index_entry_header header;
-+	struct reparse_index_key key;
-+	__le32 filling;
-+};
-+
-+__le16 reparse_index_name[] = {cpu_to_le16('$'), cpu_to_le16('R'), 0};
-+
-+/*
-+ * Do some sanity checks on reparse data
-+ *
-+ * Microsoft reparse points have an 8-byte header whereas
-+ * non-Microsoft reparse points have a 24-byte header.  In each case,
-+ * 'reparse_data_length' must equal the number of non-header bytes.
-+ *
-+ * If the reparse data looks like a junction point or symbolic
-+ * link, more checks can be done.
-+ */
-+static bool valid_reparse_data(struct ntfs_inode *ni,
-+		const struct reparse_point *reparse_attr, size_t size)
-+{
-+	bool ok;
-+	const struct WSL_LINK_REPARSE_DATA *wsl_reparse_data;
-+
-+	ok = ni && reparse_attr && (size >= sizeof(struct reparse_point)) &&
-+		(reparse_attr->reparse_tag != IO_REPARSE_TAG_RESERVED_ZERO) &&
-+		(((size_t)le16_to_cpu(reparse_attr->reparse_data_length) +
-+		  sizeof(struct reparse_point) +
-+		  ((reparse_attr->reparse_tag & IO_REPARSE_TAG_IS_MICROSOFT) ?
-+		   0 : sizeof(struct guid))) == size);
-+	if (ok) {
-+		switch (reparse_attr->reparse_tag) {
-+		case IO_REPARSE_TAG_LX_SYMLINK:
-+			wsl_reparse_data = (const struct WSL_LINK_REPARSE_DATA *)
-+						reparse_attr->reparse_data;
-+			if ((le16_to_cpu(reparse_attr->reparse_data_length) <=
-+			     sizeof(wsl_reparse_data->type)) ||
-+			    (wsl_reparse_data->type != cpu_to_le32(2)))
-+				ok = false;
-+			break;
-+		case IO_REPARSE_TAG_AF_UNIX:
-+		case IO_REPARSE_TAG_LX_FIFO:
-+		case IO_REPARSE_TAG_LX_CHR:
-+		case IO_REPARSE_TAG_LX_BLK:
-+			if (reparse_attr->reparse_data_length ||
-+			    !(ni->flags & FILE_ATTRIBUTE_RECALL_ON_OPEN))
-+				ok = false;
-+			break;
-+		default:
-+			break;
-+		}
-+	}
-+	return ok;
-+}
-+
-+static unsigned int ntfs_reparse_tag_mode(struct reparse_point *reparse_attr)
-+{
-+	unsigned int mode = 0;
-+
-+	switch (reparse_attr->reparse_tag) {
-+	case IO_REPARSE_TAG_SYMLINK:
-+	case IO_REPARSE_TAG_LX_SYMLINK:
-+		mode = S_IFLNK;
-+		break;
-+	case IO_REPARSE_TAG_AF_UNIX:
-+		mode = S_IFSOCK;
-+		break;
-+	case IO_REPARSE_TAG_LX_FIFO:
-+		mode = S_IFIFO;
-+		break;
-+	case IO_REPARSE_TAG_LX_CHR:
-+		mode = S_IFCHR;
-+		break;
-+	case IO_REPARSE_TAG_LX_BLK:
-+		mode = S_IFBLK;
-+	}
-+
-+	return mode;
-+}
-+
-+/*
-+ * Get the target for symbolic link
-+ */
-+unsigned int ntfs_make_symlink(struct ntfs_inode *ni)
-+{
-+	s64 attr_size = 0;
-+	unsigned int lth;
-+	struct reparse_point *reparse_attr;
-+	struct WSL_LINK_REPARSE_DATA *wsl_link_data;
-+	unsigned int mode = 0;
-+
-+	reparse_attr = ntfs_attr_readall(ni, AT_REPARSE_POINT, NULL, 0,
-+					 &attr_size);
-+	if (reparse_attr && attr_size &&
-+	    valid_reparse_data(ni, reparse_attr, attr_size)) {
-+		switch (reparse_attr->reparse_tag) {
-+		case IO_REPARSE_TAG_LX_SYMLINK:
-+			wsl_link_data = (struct WSL_LINK_REPARSE_DATA *)reparse_attr->reparse_data;
-+			if (wsl_link_data->type == cpu_to_le32(2)) {
-+				lth = le16_to_cpu(reparse_attr->reparse_data_length) -
-+						  sizeof(wsl_link_data->type);
-+				ni->target = kvzalloc(lth + 1, GFP_NOFS);
-+				if (ni->target) {
-+					memcpy(ni->target, wsl_link_data->link, lth);
-+					ni->target[lth] = 0;
-+					mode = ntfs_reparse_tag_mode(reparse_attr);
-+				}
-+			}
-+			break;
-+		default:
-+			mode = ntfs_reparse_tag_mode(reparse_attr);
-+		}
-+	} else
-+		ni->flags &= ~FILE_ATTR_REPARSE_POINT;
-+
-+	if (reparse_attr)
-+		kvfree(reparse_attr);
-+
-+	return mode;
-+}
-+
-+unsigned int ntfs_reparse_tag_dt_types(struct ntfs_volume *vol, unsigned long mref)
-+{
-+	s64 attr_size = 0;
-+	struct reparse_point *reparse_attr;
-+	unsigned int dt_type = DT_UNKNOWN;
-+	struct inode *vi;
-+
-+	vi = ntfs_iget(vol->sb, mref);
-+	if (IS_ERR(vi))
-+		return PTR_ERR(vi);
-+
-+	reparse_attr = (struct reparse_point *)ntfs_attr_readall(NTFS_I(vi),
-+			AT_REPARSE_POINT, NULL, 0, &attr_size);
-+
-+	if (reparse_attr && attr_size) {
-+		switch (reparse_attr->reparse_tag) {
-+		case IO_REPARSE_TAG_SYMLINK:
-+		case IO_REPARSE_TAG_LX_SYMLINK:
-+			dt_type = DT_LNK;
-+			break;
-+		case IO_REPARSE_TAG_AF_UNIX:
-+			dt_type = DT_SOCK;
-+			break;
-+		case IO_REPARSE_TAG_LX_FIFO:
-+			dt_type = DT_FIFO;
-+			break;
-+		case IO_REPARSE_TAG_LX_CHR:
-+			dt_type = DT_CHR;
-+			break;
-+		case IO_REPARSE_TAG_LX_BLK:
-+			dt_type = DT_BLK;
-+		}
-+	}
-+
-+	if (reparse_attr)
-+		kvfree(reparse_attr);
-+
-+	iput(vi);
-+	return dt_type;
-+}
-+
-+/*
-+ * Set the index for new reparse data
-+ */
-+static int set_reparse_index(struct ntfs_inode *ni, struct ntfs_index_context *xr,
-+		__le32 reparse_tag)
-+{
-+	struct REPARSE_INDEX indx;
-+	u64 file_id_cpu;
-+	__le64 file_id;
-+
-+	file_id_cpu = MK_MREF(ni->mft_no, ni->seq_no);
-+	file_id = cpu_to_le64(file_id_cpu);
-+	indx.header.data.vi.data_offset =
-+		cpu_to_le16(sizeof(struct index_entry_header) + sizeof(struct reparse_index_key));
-+	indx.header.data.vi.data_length = 0;
-+	indx.header.data.vi.reservedV = 0;
-+	indx.header.length = cpu_to_le16(sizeof(struct REPARSE_INDEX));
-+	indx.header.key_length = cpu_to_le16(sizeof(struct reparse_index_key));
-+	indx.header.flags = 0;
-+	indx.header.reserved = 0;
-+	indx.key.reparse_tag = reparse_tag;
-+	/* danger on processors which require proper alignment! */
-+	memcpy(&indx.key.file_id, &file_id, 8);
-+	indx.filling = 0;
-+	ntfs_index_ctx_reinit(xr);
-+
-+	return ntfs_ie_add(xr, (struct index_entry *)&indx);
-+}
-+
-+/*
-+ * Remove a reparse data index entry if attribute present
-+ */
-+static int remove_reparse_index(struct inode *rp, struct ntfs_index_context *xr,
-+				__le32 *preparse_tag)
-+{
-+	struct reparse_index_key key;
-+	u64 file_id_cpu;
-+	__le64 file_id;
-+	s64 size;
-+	struct ntfs_inode *ni = NTFS_I(rp);
-+	int err = 0, ret = ni->data_size;
-+
-+	if (ni->data_size == 0)
-+		return 0;
-+
-+	/* read the existing reparse_tag */
-+	size = ntfs_inode_attr_pread(rp, 0, 4, (char *)preparse_tag);
-+	if (size != 4)
-+		return -ENODATA;
-+
-+	file_id_cpu = MK_MREF(ni->mft_no, ni->seq_no);
-+	file_id = cpu_to_le64(file_id_cpu);
-+	key.reparse_tag = *preparse_tag;
-+	/* danger on processors which require proper alignment! */
-+	memcpy(&key.file_id, &file_id, 8);
-+	if (!ntfs_index_lookup(&key, sizeof(struct reparse_index_key), xr)) {
-+		err = ntfs_index_rm(xr);
-+		if (err)
-+			ret = err;
-+	}
-+	return ret;
-+}
-+
-+/*
-+ * Open the $Extend/$Reparse file and its index
-+ */
-+static struct ntfs_index_context *open_reparse_index(struct ntfs_volume *vol)
-+{
-+	struct ntfs_index_context *xr = NULL;
-+	u64 mref;
-+	__le16 *uname;
-+	struct ntfs_name *name = NULL;
-+	int uname_len;
-+	struct inode *vi, *dir_vi;
-+
-+	/* do not use path_name_to inode - could reopen root */
-+	dir_vi = ntfs_iget(vol->sb, FILE_Extend);
-+	if (IS_ERR(dir_vi))
-+		return NULL;
-+
-+	uname_len = ntfs_nlstoucs(vol, "$Reparse", 8, &uname,
-+				  NTFS_MAX_NAME_LEN);
-+	if (uname_len < 0) {
-+		iput(dir_vi);
-+		return NULL;
-+	}
-+
-+	mutex_lock_nested(&NTFS_I(dir_vi)->mrec_lock, NTFS_EXTEND_MUTEX_PARENT);
-+	mref = ntfs_lookup_inode_by_name(NTFS_I(dir_vi), uname, uname_len,
-+					 &name);
-+	mutex_unlock(&NTFS_I(dir_vi)->mrec_lock);
-+	kfree(name);
-+	kmem_cache_free(ntfs_name_cache, uname);
-+	if (IS_ERR_MREF(mref))
-+		goto put_dir_vi;
-+
-+	vi = ntfs_iget(vol->sb, MREF(mref));
-+	if (IS_ERR(vi))
-+		goto put_dir_vi;
-+
-+	xr = ntfs_index_ctx_get(NTFS_I(vi), reparse_index_name, 2);
-+	if (!xr)
-+		iput(vi);
-+put_dir_vi:
-+	iput(dir_vi);
-+	return xr;
-+}
-+
-+
-+/*
-+ * Update the reparse data and index
-+ *
-+ * The reparse data attribute should have been created, and
-+ * an existing index is expected if there is an existing value.
-+ *
-+ */
-+static int update_reparse_data(struct ntfs_inode *ni, struct ntfs_index_context *xr,
-+		char *value, size_t size)
-+{
-+	struct inode *rp_inode;
-+	int err = 0;
-+	s64 written;
-+	int oldsize;
-+	__le32 reparse_tag;
-+	struct ntfs_inode *rp_ni;
-+
-+	rp_inode = ntfs_attr_iget(VFS_I(ni), AT_REPARSE_POINT, AT_UNNAMED, 0);
-+	if (IS_ERR(rp_inode))
-+		return -EINVAL;
-+	rp_ni = NTFS_I(rp_inode);
-+
-+	/* remove the existing reparse data */
-+	oldsize = remove_reparse_index(rp_inode, xr, &reparse_tag);
-+	if (oldsize < 0) {
-+		err = oldsize;
-+		goto put_rp_inode;
-+	}
-+
-+	/* overwrite value if any */
-+	written = ntfs_inode_attr_pwrite(rp_inode, 0, size, value, false);
-+	if (written != size) {
-+		ntfs_error(ni->vol->sb, "Failed to update reparse data\n");
-+		err = -EIO;
-+		goto put_rp_inode;
-+	}
-+
-+	if (set_reparse_index(ni, xr, ((const struct reparse_point *)value)->reparse_tag) &&
-+	    oldsize > 0) {
-+		/*
-+		 * If cannot index, try to remove the reparse
-+		 * data and log the error. There will be an
-+		 * inconsistency if removal fails.
-+		 */
-+		ntfs_attr_rm(rp_ni);
-+		ntfs_error(ni->vol->sb,
-+			   "Failed to index reparse data. Possible corruption.\n");
-+	}
-+
-+	mark_mft_record_dirty(ni);
-+put_rp_inode:
-+	iput(rp_inode);
-+
-+	return err;
-+}
-+
-+/*
-+ * Delete a reparse index entry
-+ */
-+int ntfs_delete_reparse_index(struct ntfs_inode *ni)
-+{
-+	struct inode *vi;
-+	struct ntfs_index_context *xr;
-+	struct ntfs_inode *xrni;
-+	__le32 reparse_tag;
-+	int err = 0;
-+
-+	if (!(ni->flags & FILE_ATTR_REPARSE_POINT))
-+		return 0;
-+
-+	vi = ntfs_attr_iget(VFS_I(ni), AT_REPARSE_POINT, AT_UNNAMED, 0);
-+	if (IS_ERR(vi))
-+		return PTR_ERR(vi);
-+
-+	/*
-+	 * read the existing reparse data (the tag is enough)
-+	 * and un-index it
-+	 */
-+	xr = open_reparse_index(ni->vol);
-+	if (xr) {
-+		xrni = xr->idx_ni;
-+		mutex_lock_nested(&xrni->mrec_lock, NTFS_EXTEND_MUTEX_PARENT);
-+		err = remove_reparse_index(vi, xr, &reparse_tag);
-+		if (err < 0) {
-+			ntfs_index_ctx_put(xr);
-+			mutex_unlock(&xrni->mrec_lock);
-+			iput(VFS_I(xrni));
-+			goto out;
-+		}
-+		mark_mft_record_dirty(xrni);
-+		ntfs_index_ctx_put(xr);
-+		mutex_unlock(&xrni->mrec_lock);
-+		iput(VFS_I(xrni));
-+	}
-+
-+	ni->flags &= ~FILE_ATTR_REPARSE_POINT;
-+	NInoSetFileNameDirty(ni);
-+	mark_mft_record_dirty(ni);
-+
-+out:
-+	iput(vi);
-+	return err;
-+}
-+
-+/*
-+ * Set the reparse data from an extended attribute
-+ */
-+static int ntfs_set_ntfs_reparse_data(struct ntfs_inode *ni, char *value, size_t size)
-+{
-+	int err = 0;
-+	struct ntfs_inode *xrni;
-+	struct ntfs_index_context *xr;
-+
-+	if (!ni)
-+		return -EINVAL;
-+
-+	/*
-+	 * reparse data compatibily with EA is not checked
-+	 * any more, it is required by Windows 10, but may
-+	 * lead to problems with earlier versions.
-+	 */
-+	if (valid_reparse_data(ni, (const struct reparse_point *)value, size) == false)
-+		return -EINVAL;
-+
-+	xr = open_reparse_index(ni->vol);
-+	if (!xr)
-+		return -EINVAL;
-+	xrni = xr->idx_ni;
-+
-+	if (!ntfs_attr_exist(ni, AT_REPARSE_POINT, AT_UNNAMED, 0)) {
-+		u8 dummy = 0;
-+
-+		/*
-+		 * no reparse data attribute : add one,
-+		 * apparently, this does not feed the new value in
-+		 * Note : NTFS version must be >= 3
-+		 */
-+		if (ni->vol->major_ver < 3) {
-+			err = -EOPNOTSUPP;
-+			ntfs_index_ctx_put(xr);
-+			goto out;
-+		}
-+
-+		err = ntfs_attr_add(ni, AT_REPARSE_POINT, AT_UNNAMED, 0, &dummy, 0);
-+		if (err) {
-+			ntfs_index_ctx_put(xr);
-+			goto out;
-+		}
-+		ni->flags |= FILE_ATTR_REPARSE_POINT;
-+		NInoSetFileNameDirty(ni);
-+		mark_mft_record_dirty(ni);
-+	}
-+
-+	/* update value and index */
-+	mutex_lock_nested(&xrni->mrec_lock, NTFS_EXTEND_MUTEX_PARENT);
-+	err = update_reparse_data(ni, xr, value, size);
-+	if (err) {
-+		ni->flags &= ~FILE_ATTR_REPARSE_POINT;
-+		NInoSetFileNameDirty(ni);
-+		mark_mft_record_dirty(ni);
-+	}
-+	ntfs_index_ctx_put(xr);
-+	mutex_unlock(&xrni->mrec_lock);
-+
-+out:
-+	if (!err)
-+		mark_mft_record_dirty(xrni);
-+	iput(VFS_I(xrni));
-+
-+	return err;
-+}
-+
-+/*
-+ * Set reparse data for a WSL type symlink
-+ */
-+int ntfs_reparse_set_wsl_symlink(struct ntfs_inode *ni,
-+		const __le16 *target, int target_len)
-+{
-+	int err = 0;
-+	int len;
-+	int reparse_len;
-+	unsigned char *utarget = NULL;
-+	struct reparse_point *reparse;
-+	struct WSL_LINK_REPARSE_DATA *data;
-+
-+	utarget = (char *)NULL;
-+	len = ntfs_ucstonls(ni->vol, target, target_len, &utarget, 0);
-+	if (len <= 0)
-+		return -EINVAL;
-+
-+	reparse_len = sizeof(struct reparse_point) + sizeof(data->type) + len;
-+	reparse = kvzalloc(reparse_len, GFP_NOFS);
-+	if (!reparse) {
-+		err = -ENOMEM;
-+		kvfree(utarget);
-+	} else {
-+		data = (struct WSL_LINK_REPARSE_DATA *)reparse->reparse_data;
-+		reparse->reparse_tag = IO_REPARSE_TAG_LX_SYMLINK;
-+		reparse->reparse_data_length =
-+			cpu_to_le16(sizeof(data->type) + len);
-+		reparse->reserved = 0;
-+		data->type = cpu_to_le32(2);
-+		memcpy(data->link, utarget, len);
-+		err = ntfs_set_ntfs_reparse_data(ni,
-+				(char *)reparse, reparse_len);
-+		kvfree(reparse);
-+		if (!err)
-+			ni->target = utarget;
-+	}
-+	return err;
-+}
-+
-+/*
-+ * Set reparse data for a WSL special file other than a symlink
-+ * (socket, fifo, character or block device)
-+ */
-+int ntfs_reparse_set_wsl_not_symlink(struct ntfs_inode *ni, mode_t mode)
-+{
-+	int err;
-+	int len;
-+	int reparse_len;
-+	__le32 reparse_tag;
-+	struct reparse_point *reparse;
-+
-+	len = 0;
-+	if (S_ISSOCK(mode))
-+		reparse_tag = IO_REPARSE_TAG_AF_UNIX;
-+	else if (S_ISFIFO(mode))
-+		reparse_tag = IO_REPARSE_TAG_LX_FIFO;
-+	else if (S_ISCHR(mode))
-+		reparse_tag = IO_REPARSE_TAG_LX_CHR;
-+	else if (S_ISBLK(mode))
-+		reparse_tag = IO_REPARSE_TAG_LX_BLK;
-+	else
-+		return -EOPNOTSUPP;
-+
-+	reparse_len = sizeof(struct reparse_point) + len;
-+	reparse = kvzalloc(reparse_len, GFP_NOFS);
-+	if (!reparse)
-+		err = -ENOMEM;
-+	else {
-+		reparse->reparse_tag = reparse_tag;
-+		reparse->reparse_data_length = cpu_to_le16(len);
-+		reparse->reserved = cpu_to_le16(0);
-+		err = ntfs_set_ntfs_reparse_data(ni, (char *)reparse,
-+						 reparse_len);
-+		kvfree(reparse);
-+	}
-+
-+	return err;
-+}
+diff --git a/fs/ntfs3/Kconfig b/fs/ntfs3/Kconfig
+index 7bc31d69f680..cdfdf51e55d7 100644
+--- a/fs/ntfs3/Kconfig
++++ b/fs/ntfs3/Kconfig
+@@ -46,12 +46,3 @@ config NTFS3_FS_POSIX_ACL
+ 	  NOTE: this is linux only feature. Windows will ignore these ACLs.
+ 
+ 	  If you don't know what Access Control Lists are, say N.
+-
+-config NTFS_FS
+-	tristate "NTFS file system support"
+-	select NTFS3_FS
+-	select BUFFER_HEAD
+-	select NLS
+-	help
+-	  This config option is here only for backward compatibility. NTFS
+-	  filesystem is now handled by the NTFS3 driver.
+diff --git a/fs/ntfs3/dir.c b/fs/ntfs3/dir.c
+index b98e95d6b4d9..fc39e7330365 100644
+--- a/fs/ntfs3/dir.c
++++ b/fs/ntfs3/dir.c
+@@ -631,13 +631,4 @@ const struct file_operations ntfs_dir_operations = {
+ 	.compat_ioctl   = ntfs_compat_ioctl,
+ #endif
+ };
+-
+-#if IS_ENABLED(CONFIG_NTFS_FS)
+-const struct file_operations ntfs_legacy_dir_operations = {
+-	.llseek		= generic_file_llseek,
+-	.read		= generic_read_dir,
+-	.iterate_shared	= ntfs_readdir,
+-	.open		= ntfs_file_open,
+-};
+-#endif
+ // clang-format on
+diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+index 2e7b2e566ebe..0faa856fc470 100644
+--- a/fs/ntfs3/file.c
++++ b/fs/ntfs3/file.c
+@@ -1478,14 +1478,4 @@ const struct file_operations ntfs_file_operations = {
+ 	.fallocate	= ntfs_fallocate,
+ 	.release	= ntfs_file_release,
+ };
+-
+-#if IS_ENABLED(CONFIG_NTFS_FS)
+-const struct file_operations ntfs_legacy_file_operations = {
+-	.llseek		= generic_file_llseek,
+-	.read_iter	= ntfs_file_read_iter,
+-	.splice_read	= ntfs_file_splice_read,
+-	.open		= ntfs_file_open,
+-	.release	= ntfs_file_release,
+-};
+-#endif
+ // clang-format on
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index 0a9ac5efeb67..826840c257d3 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -444,9 +444,7 @@ static struct inode *ntfs_read_mft(struct inode *inode,
+ 		 * Usually a hard links to directories are disabled.
+ 		 */
+ 		inode->i_op = &ntfs_dir_inode_operations;
+-		inode->i_fop = unlikely(is_legacy_ntfs(sb)) ?
+-				       &ntfs_legacy_dir_operations :
+-				       &ntfs_dir_operations;
++		inode->i_fop = &ntfs_dir_operations;
+ 		ni->i_valid = 0;
+ 	} else if (S_ISLNK(mode)) {
+ 		ni->std_fa &= ~FILE_ATTRIBUTE_DIRECTORY;
+@@ -456,9 +454,7 @@ static struct inode *ntfs_read_mft(struct inode *inode,
+ 	} else if (S_ISREG(mode)) {
+ 		ni->std_fa &= ~FILE_ATTRIBUTE_DIRECTORY;
+ 		inode->i_op = &ntfs_file_inode_operations;
+-		inode->i_fop = unlikely(is_legacy_ntfs(sb)) ?
+-				       &ntfs_legacy_file_operations :
+-				       &ntfs_file_operations;
++		inode->i_fop = &ntfs_file_operations;
+ 		inode->i_mapping->a_ops = is_compressed(ni) ? &ntfs_aops_cmpr :
+ 							      &ntfs_aops;
+ 		if (ino != MFT_REC_MFT)
+@@ -1590,9 +1586,7 @@ int ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
+ 
+ 	if (S_ISDIR(mode)) {
+ 		inode->i_op = &ntfs_dir_inode_operations;
+-		inode->i_fop = unlikely(is_legacy_ntfs(sb)) ?
+-				       &ntfs_legacy_dir_operations :
+-				       &ntfs_dir_operations;
++		inode->i_fop = &ntfs_dir_operations;
+ 	} else if (S_ISLNK(mode)) {
+ 		inode->i_op = &ntfs_link_inode_operations;
+ 		inode->i_fop = NULL;
+@@ -1601,9 +1595,7 @@ int ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
+ 		inode_nohighmem(inode);
+ 	} else if (S_ISREG(mode)) {
+ 		inode->i_op = &ntfs_file_inode_operations;
+-		inode->i_fop = unlikely(is_legacy_ntfs(sb)) ?
+-				       &ntfs_legacy_file_operations :
+-				       &ntfs_file_operations;
++		inode->i_fop = &ntfs_file_operations;
+ 		inode->i_mapping->a_ops = is_compressed(ni) ? &ntfs_aops_cmpr :
+ 							      &ntfs_aops;
+ 		init_rwsem(&ni->file.run_lock);
+diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
+index a4559c9f64e6..326644d23110 100644
+--- a/fs/ntfs3/ntfs_fs.h
++++ b/fs/ntfs3/ntfs_fs.h
+@@ -501,7 +501,6 @@ struct inode *dir_search_u(struct inode *dir, const struct cpu_str *uni,
+ 			   struct ntfs_fnd *fnd);
+ bool dir_is_empty(struct inode *dir);
+ extern const struct file_operations ntfs_dir_operations;
+-extern const struct file_operations ntfs_legacy_dir_operations;
+ 
+ /* Globals from file.c */
+ int ntfs_getattr(struct mnt_idmap *idmap, const struct path *path,
+@@ -516,7 +515,6 @@ long ntfs_compat_ioctl(struct file *filp, u32 cmd, unsigned long arg);
+ extern const struct inode_operations ntfs_special_inode_operations;
+ extern const struct inode_operations ntfs_file_inode_operations;
+ extern const struct file_operations ntfs_file_operations;
+-extern const struct file_operations ntfs_legacy_file_operations;
+ 
+ /* Globals from frecord.c */
+ void ni_remove_mi(struct ntfs_inode *ni, struct mft_inode *mi);
+@@ -1160,13 +1158,4 @@ static inline void le64_sub_cpu(__le64 *var, u64 val)
+ 	*var = cpu_to_le64(le64_to_cpu(*var) - val);
+ }
+ 
+-#if IS_ENABLED(CONFIG_NTFS_FS)
+-bool is_legacy_ntfs(struct super_block *sb);
+-#else
+-static inline bool is_legacy_ntfs(struct super_block *sb)
+-{
+-	return false;
+-}
+-#endif
+-
+ #endif /* _LINUX_NTFS3_NTFS_FS_H */
+diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+index 8b0cf0ed4f72..4e0448af3e7e 100644
+--- a/fs/ntfs3/super.c
++++ b/fs/ntfs3/super.c
+@@ -415,12 +415,6 @@ static int ntfs_fs_reconfigure(struct fs_context *fc)
+ 	struct ntfs_mount_options *new_opts = fc->fs_private;
+ 	int ro_rw;
+ 
+-	/* If ntfs3 is used as legacy ntfs enforce read-only mode. */
+-	if (is_legacy_ntfs(sb)) {
+-		fc->sb_flags |= SB_RDONLY;
+-		goto out;
+-	}
+-
+ 	ro_rw = sb_rdonly(sb) && !(fc->sb_flags & SB_RDONLY);
+ 	if (ro_rw && (sbi->flags & NTFS_FLAGS_NEED_REPLAY)) {
+ 		errorf(fc,
+@@ -447,7 +441,6 @@ static int ntfs_fs_reconfigure(struct fs_context *fc)
+ 		return -EINVAL;
+ 	}
+ 
+-out:
+ 	sync_filesystem(sb);
+ 	swap(sbi->options, fc->fs_private);
+ 
+@@ -1670,8 +1663,6 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 
+ 	ntfs_create_procdir(sb);
+ 
+-	if (is_legacy_ntfs(sb))
+-		sb->s_flags |= SB_RDONLY;
+ 	return 0;
+ 
+ put_inode_out:
+@@ -1796,7 +1787,7 @@ static const struct fs_context_operations ntfs_context_ops = {
+  * This will called when mount/remount. We will first initialize
+  * options so that if remount we can use just that.
+  */
+-static int __ntfs_init_fs_context(struct fs_context *fc)
++static int ntfs_init_fs_context(struct fs_context *fc)
+ {
+ 	struct ntfs_mount_options *opts;
+ 	struct ntfs_sb_info *sbi;
+@@ -1850,11 +1841,6 @@ static int __ntfs_init_fs_context(struct fs_context *fc)
+ 	return -ENOMEM;
+ }
+ 
+-static int ntfs_init_fs_context(struct fs_context *fc)
+-{
+-	return __ntfs_init_fs_context(fc);
+-}
+-
+ static void ntfs3_kill_sb(struct super_block *sb)
+ {
+ 	struct ntfs_sb_info *sbi = sb->s_fs_info;
+@@ -1876,47 +1862,6 @@ static struct file_system_type ntfs_fs_type = {
+ 	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
+ };
+ 
+-#if IS_ENABLED(CONFIG_NTFS_FS)
+-static int ntfs_legacy_init_fs_context(struct fs_context *fc)
+-{
+-	int ret;
+-
+-	ret = __ntfs_init_fs_context(fc);
+-	/* If ntfs3 is used as legacy ntfs enforce read-only mode. */
+-	fc->sb_flags |= SB_RDONLY;
+-	return ret;
+-}
+-
+-static struct file_system_type ntfs_legacy_fs_type = {
+-	.owner			= THIS_MODULE,
+-	.name			= "ntfs",
+-	.init_fs_context	= ntfs_legacy_init_fs_context,
+-	.parameters		= ntfs_fs_parameters,
+-	.kill_sb		= ntfs3_kill_sb,
+-	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
+-};
+-MODULE_ALIAS_FS("ntfs");
+-
+-static inline void register_as_ntfs_legacy(void)
+-{
+-	int err = register_filesystem(&ntfs_legacy_fs_type);
+-	if (err)
+-		pr_warn("ntfs3: Failed to register legacy ntfs filesystem driver: %d\n", err);
+-}
+-
+-static inline void unregister_as_ntfs_legacy(void)
+-{
+-	unregister_filesystem(&ntfs_legacy_fs_type);
+-}
+-bool is_legacy_ntfs(struct super_block *sb)
+-{
+-	return sb->s_type == &ntfs_legacy_fs_type;
+-}
+-#else
+-static inline void register_as_ntfs_legacy(void) {}
+-static inline void unregister_as_ntfs_legacy(void) {}
+-#endif
+-
+ // clang-format on
+ 
+ static int __init init_ntfs_fs(void)
+@@ -1945,7 +1890,6 @@ static int __init init_ntfs_fs(void)
+ 		goto out1;
+ 	}
+ 
+-	register_as_ntfs_legacy();
+ 	err = register_filesystem(&ntfs_fs_type);
+ 	if (err)
+ 		goto out;
+@@ -1965,7 +1909,6 @@ static void __exit exit_ntfs_fs(void)
+ 	rcu_barrier();
+ 	kmem_cache_destroy(ntfs_inode_cachep);
+ 	unregister_filesystem(&ntfs_fs_type);
+-	unregister_as_ntfs_legacy();
+ 	ntfs3_exit_bitmap();
+ 	ntfs_remove_proc_root();
+ }
 -- 
 2.25.1
 
