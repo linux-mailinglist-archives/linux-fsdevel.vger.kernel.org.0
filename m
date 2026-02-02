@@ -1,193 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-76078-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76079-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id EBMDB2DogGleCAMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76078-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 19:09:36 +0100
+	id IHRMFfbrgGleCAMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76079-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 19:24:54 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 885B6CFEFF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 19:09:35 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A91E8D021B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 19:24:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3B0823043032
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 18:05:33 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id DBF683062971
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 18:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B4738BF74;
-	Mon,  2 Feb 2026 18:05:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A110D2EB859;
+	Mon,  2 Feb 2026 18:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lWzn33rD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f205.google.com (mail-oi1-f205.google.com [209.85.167.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92E238BF64
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Feb 2026 18:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0BE2E22AA;
+	Mon,  2 Feb 2026 18:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770055531; cv=none; b=N2gDf0BZBSk0GEzKcMcVwB6NdfZEZndDyQ314+FCF7YfguhMOP8k81QwvG8PqHCo4kxUCN0lkAzb6/ygzdgDL1390KZwIlZ95YJ43w38oVaQZgYPnSQhBy5+eqPDPnYlZflSvGT2vfqquctShGoZVBoUKzp0N6fjceTOZRevad8=
+	t=1770056375; cv=none; b=nojN8CThxRRehH8dRvUjjmmpWC+Zx37y8PciFkqIWZvXnIObiUHQZZSuFTNfShN5Ym8kCireTzscm0AvimCyo6SoFEtR4BY328p87b6+zK1x1ERYFmD2SWqijVEtYBAGgsOSwQmHvPOiO87trQbqN63SGLEDqlwQstz9pYo4CLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770055531; c=relaxed/simple;
-	bh=pGX447dP/kFz8kz84koXOJ2/fnkIBeoenbCZ3+X4X9o=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=s0c0UxXZBmM0z+qs/Ysq2Sgo+ZwFb+l8fdajd1tlfXhrOyL4L1lyfdLZ2EHQJ0GWffP11zSpWPPs0FuAou6nl2j0Q05ltF2Po/b/zfOXSF6tF9ZKp2BQzj/jyltLyYzUgdgLjMnOr3qnJbQHyvTshCbIQT4+warWqRLupncIsrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oi1-f205.google.com with SMTP id 5614622812f47-45c8d5caf62so9183739b6e.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Feb 2026 10:05:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770055528; x=1770660328;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OTr9+EynYv4FeyVlmNp2C92imZ52otdcDv9Jige4oVQ=;
-        b=OQqyONZfouIPrZ9zl+7CK7XLeoVI4TcoTo3GfM3gitnf8bIaAxQD7im6SzP8WC147y
-         W5B9hmVRd8fGoEOsl+ee5Vt4TEbEKNUGs9uvhYULmIjsIA/RZmyvEIgf7o59Y357jAx3
-         I6JRGUmzaYUgo99WtNgEcaXaj5jLjVChPSIn+i4ShCO39g9Ith/7yu7zTQlX2yctygQy
-         dQkC9stsobcFoGfkJLdGjnE/Voe1538i+Dw+aIpyLBi1StOWIbWNGSsLTG3XV7HJGnKq
-         x/N4GXFsWjBBlEqjh7asbgNdH3n6nus8hbirXzBfxI4BLtF/dYKT9YRBia2a81z1Y2Va
-         Jdzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmUXpJWPMqi4sXYwRhZflRHCud0Xrw+T02BGo0RNGPNaj462rxOPfWehf0i+iX7FBCMwh8Wsqw9q9kD4gu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc5041pLb/mv/HR/nJ7w41BgBtsfT+728qL9cGTPgvNNa56qk8
-	zefi+lf46ocd2xH//XpAoK31/aogLUvs9q3/nOGeLsJ8zdYKgUY5eqOwVzzLEfYNPVnEz1iNQeS
-	YkRG0GCZfBbjwrlPOsY3WnljKKTEd1ZXehVshsvViBPd0wGfYq/cMwQg973c=
+	s=arc-20240116; t=1770056375; c=relaxed/simple;
+	bh=vVl96LCrbznZU72nHAStgcberNXB57p0T9mJjmMM7zo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pBnkHW0RMIHWjVbUkMs0HpZfrP7fZBV3W38GJsdjM2LfW+OD+FfTlgUNwpUVW1YRC10Mm0pFUwOtkknfVxA6v0Mt0UECxdUMURHWJJMaeg91wF0ORnX948oxc0eFndaTQGnp6IxpdVSJ5BHkZb+1d2CgjEtfezhS4hAgJ/JbYXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lWzn33rD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70B38C116C6;
+	Mon,  2 Feb 2026 18:19:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770056375;
+	bh=vVl96LCrbznZU72nHAStgcberNXB57p0T9mJjmMM7zo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lWzn33rDKAeo1uglcKo5+ED21YZQlTtMyncGVp98W8LeQTfq+Ls1ok0krxqzidDnv
+	 yhYHzHx5alQF7XM6SRMw6296y0EJ32Yah37oJUznjdfW3AXNC/3z7jBchFLM0twiO+
+	 y8Hd5pZsl5HvludQonyKouxabDyLkyOFEvIXTi5BRv/KNlxEVGldPyYmNJCMmASSlR
+	 bjzTYG+vGZ/rtCFcABBqIeHHxSFY3pcQhkVf44AmuLjdrP3+Pfa0bYbE7e9O9PcCVe
+	 DUieRFald+XCkixtgm5m2pnGzM4Wo1uS3T8s7D9dvZ+GD8sdMtfXMw81zwUZEso4fk
+	 WrkaG3K3BjNMQ==
+Date: Mon, 2 Feb 2026 10:19:32 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Benjamin Coddington <bcodding@hammerspace.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>, Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Rick Macklem <rick.macklem@gmail.com>, linux-nfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] NFSD: Sign filehandles
+Message-ID: <20260202181932.GA2036@quark>
+References: <cover.1770046529.git.bcodding@hammerspace.com>
+ <11253ead28024160aaf8abf5c234de6605cc93b5.1770046529.git.bcodding@hammerspace.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:4dfb:b0:662:f244:3530 with SMTP id
- 006d021491bc7-6630f004232mr5547317eaf.17.1770055528543; Mon, 02 Feb 2026
- 10:05:28 -0800 (PST)
-Date: Mon, 02 Feb 2026 10:05:28 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6980e768.050a0220.16b13.00a8.GAE@google.com>
-Subject: [syzbot] [hfs?] INFO: task hung in worker_thread (6)
-From: syzbot <syzbot+fa1cc3e4b001b79309ec@syzkaller.appspotmail.com>
-To: frank.li@vivo.com, glaubitz@physik.fu-berlin.de, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	slava@dubeyko.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <11253ead28024160aaf8abf5c234de6605cc93b5.1770046529.git.bcodding@hammerspace.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.36 / 15.00];
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=1b94612779ae7173];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
-	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-76078-lists,linux-fsdevel=lfdr.de,fa1cc3e4b001b79309ec];
-	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-76079-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_CC(0.00)[oracle.com,kernel.org,brown.name,gmail.com,vger.kernel.org];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	SUBJECT_HAS_QUESTION(0.00)[];
-	REDIRECTOR_URL(0.00)[goo.gl];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	TO_DN_NONE(0.00)[];
-	R_DKIM_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[ebiggers@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,appspotmail.com:email,storage.googleapis.com:url,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,googlegroups.com:email,goo.gl:url]
-X-Rspamd-Queue-Id: 885B6CFEFF
+	TO_DN_SOME(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: A91E8D021B
 X-Rspamd-Action: no action
 
-Hello,
+On Mon, Feb 02, 2026 at 11:19:38AM -0500, Benjamin Coddington wrote:
+> +/*
+> + * Append an 8-byte MAC to the filehandle hashed from the server's fh_key:
+> + */
+> +static int fh_append_mac(struct svc_fh *fhp, struct net *net)
+> +{
+> +	struct nfsd_net *nn = net_generic(net, nfsd_net_id);
+> +	struct knfsd_fh *fh = &fhp->fh_handle;
+> +	siphash_key_t *fh_key = nn->fh_key;
+> +	u64 hash;
+> +
+> +	if (!(fhp->fh_export->ex_flags & NFSEXP_SIGN_FH))
+> +		return 0;
+> +
+> +	if (!fh_key) {
+> +		pr_warn_ratelimited("NFSD: unable to sign filehandles, fh_key not set.\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (fh->fh_size + sizeof(hash) > fhp->fh_maxsize) {
+> +		pr_warn_ratelimited("NFSD: unable to sign filehandles, fh_size %d would be greater"
+> +			" than fh_maxsize %d.\n", (int)(fh->fh_size + sizeof(hash)), fhp->fh_maxsize);
+> +		return -EINVAL;
+> +	}
+> +
+> +	hash = siphash(&fh->fh_raw, fh->fh_size, fh_key);
+> +	memcpy(&fh->fh_raw[fh->fh_size], &hash, sizeof(hash));
+> +	fh->fh_size += sizeof(hash);
+> +
+> +	return 0;
 
-syzbot found the following issue on:
+Note that this is still creating endianness-specific MAC values,
+considering that siphash() returns a u64 which is being copied directly
+into a byte array.  Maybe not what was intended?
 
-HEAD commit:    33a647c659ff Add linux-next specific files for 20260129
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15aa1644580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1b94612779ae7173
-dashboard link: https://syzkaller.appspot.com/bug?extid=fa1cc3e4b001b79309ec
-compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16cc1c52580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17849588580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9d0ce0a8fecd/disk-33a647c6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4369620c4390/vmlinux-33a647c6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/18ae695e8dfc/bzImage-33a647c6.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/20bb3c39107f/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+fa1cc3e4b001b79309ec@syzkaller.appspotmail.com
-
-INFO: task kworker/u8:5:78 blocked for more than 143 seconds.
-      Not tainted syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/u8:5    state:D stack:23136 pid:78    tgid:78    ppid:2      task_flags:0x4208060 flags:0x00080000
-Workqueue: writeback wb_workfn (flush-7:0)
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5295 [inline]
- __schedule+0x1539/0x5080 kernel/sched/core.c:6907
- process_scheduled_works kernel/workqueue.c:3362 [inline]
- worker_thread+0xb46/0x1140 kernel/workqueue.c:3443
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-1 lock held by khungtaskd/30:
- #0: 
-ffffffff8e7601a0
- (
-){....}-{1:3}
-ffff8880206a0148
- (
-(wq_completion)writeback
-){+.+.}-{0:0}
-, at: process_one_work+0x855/0x15a0 kernel/workqueue.c:3254
-, at: super_trylock_shared+0x20/0xf0 fs/super.c:565
-, at: hfsplus_find_init+0x168/0x2d0 fs/hfsplus/bfind.c:28
-4 locks held by kworker/u8:3/49:
- #0: 
-ffff8880206a0148
- (
-(wq_completion)writeback
-){+.+.}-{0:0}
-, at: process_one_work+0x855/0x15a0 kernel/workqueue.c:3254
- #1: 
-ffffc90000ba7c40
- ((work_completion)(&(&wb->dwork)->work)){+.+.}-{0:0}, at: process_one_work+0x87c/0x15a0 kernel/workqueue.c:3255
- #2: ffff88802b4f00e0 (&type->s_umount_key#55){.+.+}-{4:4}, at: super_trylock_shared+0x20/0xf0 fs/super.c:565
- #3: ffff88802b4f20b0 (&tree->tree_lock){+.+.}-{4:4}, at: hfsplus_find_init+0x168/0x2d0 fs/hfsplus/bfind.c:28
-4 locks held by kworker/u8:5/78:
- #0: ffff8880206a0148 ((wq_completion)writeback){+.+.}-{0:0}, at: process_one_work+0x855/0x15a0 kernel/workqueue.c:3254
- #1: ffffc900025cfc40 ((work_completion)(&(&wb->dwork)->work)){+.+.}-{0:0}, at: process_one_work+0x87c/0x15a0 kernel/workqueue.c:3255
- #2: ffff8880348a80e0 (&type->s_umount_key#55){.+.+}-{4:4}, at: super_trylock_shared+0x20/0xf0 fs/super.c:565
- #3: ffff8880361ee0b0 (&tree->tree_lock){+.+.}-{4:4}, at: hfsplus_find_init+0x168/0x2d0 fs/hfsplus/bfind.c:28
-4 locks held by kworker/u8:6/1143:
- #0: ffff8880206a0148 ((wq_completion)writeback){+.+.}-{0:0}, at: process_one_work+0x855/0x15a0 kernel/workqueue.c:3254
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+- Eric
 
