@@ -1,185 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-76095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 2KamOeQagWm0EAMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 22:45:08 +0100
+	id QOBeJhAdgWm0EAMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 22:54:24 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AFDBD1C08
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 22:45:08 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1381AD1E10
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 22:54:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2A9B93055D41
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 21:43:12 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 7F43330327CE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 21:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDA4313E15;
-	Mon,  2 Feb 2026 21:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqCRjkv8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FF5314A7A;
+	Mon,  2 Feb 2026 21:51:42 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B05B2BD022;
-	Mon,  2 Feb 2026 21:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5355A26FA6F;
+	Mon,  2 Feb 2026 21:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770068591; cv=none; b=EvCITRFaK/bRMvLOOx4LXYRJzyOf3TqMWnSsuyNKNBA57qY+jc5K8AXDzXxEg/FKETMRffo5KRRFeweDQPxooTOvwZiNwAPRMliDSuKpI1WgXa3Y44+05yEslMFWdmi/+F8BMpww8z2arrRIPWg6f5GdOv6XilNKswOAZxv+Dsw=
+	t=1770069102; cv=none; b=dCj5KtuB/q0D1pm4poLLNpikWlU+WHEd86zuywLr3qCnsY9ZTnNC0zqKlj0NEwbwCCOjJd3k9YudUghq/bhYprjU6T5b3MjVFkOKrs65qgHyvFepThfUH3xYMG3YQxTLZOf5xUXCpwEWdMPKvHoraASRkOqBfaLGjCiWV+innbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770068591; c=relaxed/simple;
-	bh=7YJAivDabmVCaffYZ+xp/KQQPYrFGABB229oqayuGzs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kcrANN3xgQg97k7rrC4N/Q7oL72qdba6tB5fb91VSl02VRxqarcRaE8ZDw5f+wtTjEcM4b+oL2d4QZ1XXdaqgz51ghwjR1pUVyR175endAN5ZFQBfVkZzhO3TL+eJI3rRT6H6Cu36RYcub8j1nGaOBysAL//zRBzr/9QcnP2vTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqCRjkv8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74A99C116C6;
-	Mon,  2 Feb 2026 21:43:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770068590;
-	bh=7YJAivDabmVCaffYZ+xp/KQQPYrFGABB229oqayuGzs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=tqCRjkv8yvKMlMj/zFrGc4tJrGt/LlZHd1KpVxl9qf0gm0jtb5V0yKAAd4EwiLELQ
-	 7hckBhslU2rxHyGsvtliGEvOLVj3CQrV8Pk0EWu6YGBiD3VFOLPodvuTmCQhJh7l2+
-	 EMy0TaFF/DQeY+ZVfOxUb18vQ2OoZKO3aGLw+BwmWBKqgoprnJ5SBMAuzx0wUQPoFm
-	 tFJLTFloR0gTAwE1xG0gA6c5AiBly/TVLkum9PDHnaoai9p8BH29dNc0BMFtEuJoig
-	 SukvtshFrTMo3YEgoMjUV6/Le2Y2wHpeQYyfDIniuaj3CoTspm3z9qx/ObnqSlOPts
-	 NxZqDIdaNPFkg==
-From: Eric Biggers <ebiggers@kernel.org>
-To: fsverity@lists.linux.dev
-Cc: linux-fsdevel@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH] fsverity: add missing fsverity_free_info()
-Date: Mon,  2 Feb 2026 13:43:06 -0800
-Message-ID: <20260202214306.153492-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.52.0
+	s=arc-20240116; t=1770069102; c=relaxed/simple;
+	bh=3h9SY0d1v4cFAzvBUc/m0UD2epR8s2CuluXajEhqRZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QBXG/ypGlB+aVVbRCHzjCwSdAkCHe9KeYyGbEtiqSM3fipvCKyy+V9lKln2qGYbwEi29L/9mPWe+jwXKxd+uM6YAQyM58xgVeTU5EQfUT2Jp5CH5ixk+fGJvgBBCs4+Vskm3yZQtPzbWx8mmW82oRlcT6IP+/E3FcqSsCRPBnKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 612Loxak045220;
+	Tue, 3 Feb 2026 06:50:59 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 612LoxRW045216
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 3 Feb 2026 06:50:59 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <322f98bb-128e-4138-9871-ae9d5bafb055@I-love.SAKURA.ne.jp>
+Date: Tue, 3 Feb 2026 06:50:59 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] hfsplus: pretend special inodes as regular files
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+        "brauner@kernel.org" <brauner@kernel.org>
+Cc: "jack@suse.cz" <jack@suse.cz>, "frank.li@vivo.com" <frank.li@vivo.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "slava@dubeyko.com" <slava@dubeyko.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "syzbot+f98189ed18c1f5f32e00@syzkaller.appspotmail.com"
+ <syzbot+f98189ed18c1f5f32e00@syzkaller.appspotmail.com>,
+        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
+        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "kapoorarnav43@gmail.com" <kapoorarnav43@gmail.com>
+References: <da5dde25-e54e-42a4-8ce6-fa74973895c5@I-love.SAKURA.ne.jp>
+ <20260113-lecken-belichtet-d10ec1dfccc3@brauner>
+ <92748f200068dc1628f8e42c671e5a3a16c40734.camel@ibm.com>
+ <20260114-kleben-blitzen-4b50f7bad660@brauner>
+ <ad88d665-1df2-41f8-a76c-3722dcb68bb6@I-love.SAKURA.ne.jp>
+ <de541759cfa4d216e342bf15b07f93a21f46498b.camel@ibm.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <de541759cfa4d216e342bf15b07f93a21f46498b.camel@ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav101.rs.sakura.ne.jp
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [0.04 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76095-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	FREEMAIL_CC(0.00)[suse.cz,vivo.com,vger.kernel.org,dubeyko.com,syzkaller.appspotmail.com,googlegroups.com,physik.fu-berlin.de,zeniv.linux.org.uk,gmail.com];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[ebiggers@kernel.org,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	NEURAL_HAM(-0.00)[-1.000];
+	TAGGED_FROM(0.00)[bounces-76096-lists,linux-fsdevel=lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DMARC_NA(0.00)[i-love.sakura.ne.jp];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 4AFDBD1C08
+	TAGGED_RCPT(0.00)[linux-fsdevel,f98189ed18c1f5f32e00];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[penguin-kernel@I-love.SAKURA.ne.jp,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	R_DKIM_NA(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,I-love.SAKURA.ne.jp:mid]
+X-Rspamd-Queue-Id: 1381AD1E10
 X-Rspamd-Action: no action
 
-If fsverity_set_info() fails, we need to call fsverity_free_info().
+On 2026/02/03 2:30, Viacheslav Dubeyko wrote:
+>>>> I've already taken this patch into HFS/HFS+ tree. :) Should I remove it from the
+>>>> tree?
+>>>
+>>> No, I'll drop it.
+>>
+>> I still can't see this patch in linux-next tree. What is happening?
+> 
+> The patch in HFS/HFS+ tree. I will send it in pull request for 6.20-rc1.
+> 
 
-Fixes: ada3a1a48d5a ("fsverity: use a hashtable to find the fsverity_info")
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
- fs/verity/enable.c           |  4 +++-
- fs/verity/fsverity_private.h |  1 +
- fs/verity/open.c             | 14 +++++++-------
- 3 files changed, 11 insertions(+), 8 deletions(-)
-
-diff --git a/fs/verity/enable.c b/fs/verity/enable.c
-index 94c88c419054c..c9448074cce17 100644
---- a/fs/verity/enable.c
-+++ b/fs/verity/enable.c
-@@ -272,12 +272,14 @@ static int enable_verity(struct file *filp,
- 	 * the fsverity_info always first checks the S_VERITY flag on the inode,
- 	 * which will only be set at the very end of the ->end_enable_verity
- 	 * method.
- 	 */
- 	err = fsverity_set_info(vi);
--	if (err)
-+	if (err) {
-+		fsverity_free_info(vi);
- 		goto rollback;
-+	}
- 
- 	/*
- 	 * Tell the filesystem to finish enabling verity on the file.
- 	 * Serialized with ->begin_enable_verity() by the inode lock.  The file
- 	 * system needs to set the S_VERITY flag on the inode at the very end of
-diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
-index 4d4a0a560562b..2887cb849ceca 100644
---- a/fs/verity/fsverity_private.h
-+++ b/fs/verity/fsverity_private.h
-@@ -128,10 +128,11 @@ int fsverity_init_merkle_tree_params(struct merkle_tree_params *params,
- 
- struct fsverity_info *fsverity_create_info(struct inode *inode,
- 					   struct fsverity_descriptor *desc);
- 
- int fsverity_set_info(struct fsverity_info *vi);
-+void fsverity_free_info(struct fsverity_info *vi);
- void fsverity_remove_info(struct fsverity_info *vi);
- 
- int fsverity_get_descriptor(struct inode *inode,
- 			    struct fsverity_descriptor **desc_ret);
- 
-diff --git a/fs/verity/open.c b/fs/verity/open.c
-index 04b2e05a95d73..dfa0d1afe0feb 100644
---- a/fs/verity/open.c
-+++ b/fs/verity/open.c
-@@ -176,17 +176,10 @@ static void compute_file_digest(const struct fsverity_hash_alg *hash_alg,
- 	desc->sig_size = 0;
- 	fsverity_hash_buffer(hash_alg, desc, sizeof(*desc), file_digest);
- 	desc->sig_size = sig_size;
- }
- 
--static void fsverity_free_info(struct fsverity_info *vi)
--{
--	kfree(vi->tree_params.hashstate);
--	kvfree(vi->hash_block_verified);
--	kmem_cache_free(fsverity_info_cachep, vi);
--}
--
- /*
-  * Create a new fsverity_info from the given fsverity_descriptor (with optional
-  * appended builtin signature), and check the signature if present.  The
-  * fsverity_descriptor must have already undergone basic validation.
-  */
-@@ -394,10 +387,17 @@ int __fsverity_file_open(struct inode *inode, struct file *filp)
- 		return -EPERM;
- 	return ensure_verity_info(inode);
- }
- EXPORT_SYMBOL_GPL(__fsverity_file_open);
- 
-+void fsverity_free_info(struct fsverity_info *vi)
-+{
-+	kfree(vi->tree_params.hashstate);
-+	kvfree(vi->hash_block_verified);
-+	kmem_cache_free(fsverity_info_cachep, vi);
-+}
-+
- void fsverity_remove_info(struct fsverity_info *vi)
- {
- 	rhashtable_remove_fast(&fsverity_info_hash, &vi->rhash_head,
- 			       fsverity_info_hash_params);
- 	fsverity_free_info(vi);
-
-base-commit: 8866b64d3d59f5c9ac5c1c1e3acc6ebeb730f1c2
--- 
-2.52.0
+Patches are expected to be tested in the linux-next tree
+before sending a pull request for the linux tree.
 
 
