@@ -1,245 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-76040-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76041-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id sKW6EoyegGl2/wIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76040-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 13:54:36 +0100
+	id YI9NDoKggGni/wIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76041-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 14:02:58 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63B88CC844
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 13:54:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88128CC90C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 14:02:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 49BEF3031306
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 12:51:30 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 43775304AAE3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 13:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE381B4224;
-	Mon,  2 Feb 2026 12:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CCBB366573;
+	Mon,  2 Feb 2026 13:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qOtBRb8M";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="F+TTT06b";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qOtBRb8M";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="F+TTT06b"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fddfBVP8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475F819E839
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Feb 2026 12:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2013EBF3B
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Feb 2026 13:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770036688; cv=none; b=uCeij5Avxch8WRcHNUjYlB2esvGUSBoObE4BX+kryUIetI5UuWatF7uoY6q3vzSSADlg/O0KYDS5/lcvv+yw7RWPKfV3AUgKfweC/Va8LMq6c91sUbkSk7vUlhZC/9H7T0vgWxew1PHCXNbqUrU8kv1m9ObQ4MXXKIsk207+ejY=
+	t=1770037267; cv=none; b=Ki4dkh0wbi1zVnrLAXq2ctB5wLtUTOCKqx2reSPzU11WSvfHd7MdgRD/SGlNo/S5NUSguAUDp9en/HBHNxZHyI1HitMlCXcA1M6FE3T6vsVKr6M5MdpMcQ3U8M75F82cABZVPjwoDV/sB3JCz9QQmQEfJktraEiuWCOe2bx60+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770036688; c=relaxed/simple;
-	bh=Rmi9fbqyYVLu5YFs9mHQOkJEiYezJ90ad93nF6DF5bo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mnV+h7ounx8pOQEiwOQsjzkBLxKNZXCLkVSJNPcOOFggUybyZfk2BNEUQr6DVot26izc6o/j7dgd2gVPCE5Df7cE8pIkHSngXl8QEJhVJXfKZA2BPfiJXQ4h0Qp3/9OCs0loP7DWlDqnyq6bDCoCUy8V8Eu0YtOla4i7tmwrynU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qOtBRb8M; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=F+TTT06b; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qOtBRb8M; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=F+TTT06b; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6DE8E3E719;
-	Mon,  2 Feb 2026 12:51:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1770036685; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KiMj2ZUH+N+OMxKqetmePeOKgPl4RibYfT9Pkjzu2DU=;
-	b=qOtBRb8MZDZl5FzgWyIMDCcBSLvJJAvwr7ocOigaPJXHIX4NtpTyYUzX0bGi9INAIthMnG
-	csSluu9tGaVF8xCp1ZuC97M1BfmM1LwLTA0RSP7zV0V63JbbmgM6/5gu04U6jmjEeU1BmU
-	xSLZhR3mG3rknfv40/tsVYFXMu6X5rw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1770036685;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KiMj2ZUH+N+OMxKqetmePeOKgPl4RibYfT9Pkjzu2DU=;
-	b=F+TTT06b63kjAZ9cstZLTfrSF/eXciwaAz2TcWxExtykyqjRKmxyHOyAZ5JBz554Psjx/a
-	9iWIzWTuWAjSnGBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1770036685; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KiMj2ZUH+N+OMxKqetmePeOKgPl4RibYfT9Pkjzu2DU=;
-	b=qOtBRb8MZDZl5FzgWyIMDCcBSLvJJAvwr7ocOigaPJXHIX4NtpTyYUzX0bGi9INAIthMnG
-	csSluu9tGaVF8xCp1ZuC97M1BfmM1LwLTA0RSP7zV0V63JbbmgM6/5gu04U6jmjEeU1BmU
-	xSLZhR3mG3rknfv40/tsVYFXMu6X5rw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1770036685;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KiMj2ZUH+N+OMxKqetmePeOKgPl4RibYfT9Pkjzu2DU=;
-	b=F+TTT06b63kjAZ9cstZLTfrSF/eXciwaAz2TcWxExtykyqjRKmxyHOyAZ5JBz554Psjx/a
-	9iWIzWTuWAjSnGBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 55E2F3EA62;
-	Mon,  2 Feb 2026 12:51:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QuTvFM2dgGlOVQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 02 Feb 2026 12:51:25 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1FC2DA08F8; Mon,  2 Feb 2026 13:51:25 +0100 (CET)
-Date: Mon, 2 Feb 2026 13:51:25 +0100
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com, yi.zhang@huawei.com, yizhang089@gmail.com, 
-	libaokun1@huawei.com, yangerkun@huawei.com, yukuai@fnnas.com
-Subject: Re: [PATCH v2] ext4: do not check fast symlink during orphan recovery
-Message-ID: <2sdp5frarezu3rq2pbg35i3lnlwby3mfnpayv7xnokiarx6qvs@nhus35dvxm3f>
-References: <20260131091156.1733648-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1770037267; c=relaxed/simple;
+	bh=RP6S1ivaYAK6Fs5+VhDcT3M8k5FicM0n51mqRABDv7k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hepulm7ies4NQvFIhk4T6tl/aRxxRMn+S0yhEp4jiHORFT5nnSIasPGop0IwprA5wi1n+rKkbuhuCvOssWnOf6G/OLMk+/JaF5KKHqlnEaOWRpL6l/wraLGRsv0A5wORJshOWw89m1G43KoFUxR2EHrYQFXs8KAScOjiQTfdjmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fddfBVP8; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-81dab89f286so2153818b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Feb 2026 05:01:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770037264; x=1770642064; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=n05z2JgZ055VI92yGkVjhSrgVttdCiXX4GMR4DMFah4=;
+        b=fddfBVP8UIFQqZbOTkv2622/ujj7xN6O5ywbBO2It8D89SfN0y7G8RyqQvqDdBJV4O
+         j40HB9YGKNcXxPk51dkhJAgvQmeoIRBf7nheI2FpJc33HvEh9Zu0UM+kMxHo3Y62wLny
+         yd0Clmi9Q7jkMGgIi0DTp0J1/z+LXFt/2gF+K0dnmqH3exi5yPfuSaLw37jN+qiqAnJ2
+         1hIQoJdYN5QNefGZd1kvZjn3S7LjjnbOXGV0XpqJVFB+8yrkQpE7HSiVvvGs3a66CSLg
+         zWBjjy1yuOhoBqpVIokNPRY0tNE/VZoLiBBchRvtUiiP4xcVOy3CRajNufMQVQumoazB
+         bVhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770037264; x=1770642064;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n05z2JgZ055VI92yGkVjhSrgVttdCiXX4GMR4DMFah4=;
+        b=fN06qOGrg2JMKzFghcVTN5rm1vnxDOhb3tFNdWQeCWMzHvjMHBASQqyEpS74aODRSU
+         Esqmb7Nhw4xoM9nv3mK8nHLH2PeNZEeKHi0rPAckl430zAqcka8wKnWYsXUAtS7uNgq3
+         HPLj4rgthOlG6Mkq6gT9O7s6BzXdWLpyhoaziCkjtfGSceedRTzFvqjbdC6u1Us8CHLQ
+         g046xvvGoQxYJrArR0/jKmCQuPPjb7GUbyD7LEvMVY0ABYmiMuucjuVEZ34zbCQZOIxj
+         8Tjncy0QQyCXI1ulMQIp4EAcAYGMTp0nmZqkuLprOeqklGFBf2trtKb3nIzMIn/uLNau
+         8uTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUiPtwUg9/QBIeZMxCpxvTB/btLhjh230yv9ppjGx21HNtfv81C7jhbSGOOhy3z17LfFHRVGgx8fsPY5s7J@vger.kernel.org
+X-Gm-Message-State: AOJu0YyufcHlFJZAWIr2ln5Q8KiEpCf2q+4A75NJ2trrGB1Wq6LMl4tY
+	HFuB3vPXB8McbJPmGw4SwMoxf3iOrPaw11UAIaqMVbeVM4gC/ZyY9zYq
+X-Gm-Gg: AZuq6aJSZblBzD/q74efRvu2Xfim/h8Bh2sOZbxsseglc2ZDqxkgIihk9ktL71pHyeF
+	q1o1a6p1a45cRTOUG3dUsARcMaBip4vIdaacI9r0wFWdW94Tg8M8gePJVB9ftzJZnPFH+wP0ieU
+	eCTUx4zjXtCJEIAoX73osEZweACfmQrlzoh2N/eFcRtDZjaIV08R8pzhfenmMS/Xhmb/NJwzlI9
+	nQGn3uDB1AgwPDl7WEL4RUWme2dAuHkWme5P59Gyoce9pgvtsZGi3WjWXSh1zKEmvm7W5wXRcVh
+	4bQ2m9ogKrKy3PyNBMSlmCpe5de/qCJoKwh7TvYd4veLb10H1lw7AnXHdpGPcyHCa8QXdkVY2FA
+	WQH/juvY+zG0EQ9VUUCFRpRA2p6gw8IeB/saPLab10pXwGJ31kQn/E9/sBWY/ITr04enUlEXu/C
+	4UszPstSh/4HSKmORkBsFQzCGYlv0kldjukf7WX2MQkzlnRBiiXPgyeQlkloAm2+pMtho7GOZCy
+	1ajf3NrXXByKSDRvLmFupULyZCVQwUiwWZzF0eD6OcqbA==
+X-Received: by 2002:a05:6a21:2d4a:b0:38b:e70c:63f5 with SMTP id adf61e73a8af0-392e0163a0cmr11067617637.70.1770037263916;
+        Mon, 02 Feb 2026 05:01:03 -0800 (PST)
+Received: from lorddaniel-VivoBook-ASUSLaptop-K3502ZA-S3502ZA.www.tendawifi.com ([14.139.108.62])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a88b6ed92dsm149584745ad.93.2026.02.02.05.01.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Feb 2026 05:01:03 -0800 (PST)
+From: Piyush Patle <piyushpatle228@gmail.com>
+To: brauner@kernel.org
+Cc: djwong@kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+bd5ca596a01d01bfa083@syzkaller.appspotmail.com
+Subject: [PATCH] iomap: handle iterator position advancing beyond current mapping
+Date: Mon,  2 Feb 2026 18:30:44 +0530
+Message-Id: <20260202130044.567989-1-piyushpatle228@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260131091156.1733648-1-yi.zhang@huaweicloud.com>
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.34 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64];
+	MID_CONTAINS_FROM(1.00)[];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_MISSING_CHARSET(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-76041-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76040-lists,linux-fsdevel=lfdr.de];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,suse.cz:email,suse.cz:dkim,huawei.com:email,suse.com:email];
-	DMARC_NA(0.00)[suse.cz];
-	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_FIVE(0.00)[5];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,linux.ibm.com,gmail.com,huawei.com,fnnas.com];
-	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	FROM_NEQ_ENVFROM(0.00)[piyushpatle228@gmail.com,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
 	NEURAL_HAM(-0.00)[-1.000];
+	TO_DN_NONE(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	TAGGED_RCPT(0.00)[linux-fsdevel,bd5ca596a01d01bfa083];
+	RCPT_COUNT_FIVE(0.00)[6];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	TO_DN_SOME(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: 63B88CC844
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,appspotmail.com:email]
+X-Rspamd-Queue-Id: 88128CC90C
 X-Rspamd-Action: no action
 
-On Sat 31-01-26 17:11:56, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Commit '5f920d5d6083 ("ext4: verify fast symlink length")' causes the
-> generic/475 test to fail during orphan cleanup of zero-length symlinks.
-> 
->   generic/475  84s ... _check_generic_filesystem: filesystem on /dev/vde is inconsistent
-> 
-> The fsck reports are provided below:
-> 
->   Deleted inode 9686 has zero dtime.
->   Deleted inode 158230 has zero dtime.
->   ...
->   Inode bitmap differences:  -9686 -158230
->   Orphan file (inode 12) block 13 is not clean.
->   Failed to initialize orphan file.
-> 
-> In ext4_symlink(), a newly created symlink can be added to the orphan
-> list due to ENOSPC. Its data has not been initialized, and its size is
-> zero. Therefore, we need to disregard the length check of the symbolic
-> link when cleaning up orphan inodes. Instead, we should ensure that the
-> nlink count is zero.
-> 
-> Fixes: 5f920d5d6083 ("ext4: verify fast symlink length")
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+syzbot reports a WARN_ON in iomap_iter_done() when iter->pos advances
+past the end of the current iomap during buffered writes.
 
-Looks good! Feel free to add:
+This happens when a write completes and updates iter->pos beyond the
+mapped extent before a new iomap is obtained, violating the invariant
+that iter->pos must lie within the active iomap range.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Detect this condition early and mark the mapping stale so the iterator
+restarts with a fresh iomap covering the current position.
 
-								Honza
+Fixes: a66191c590b3b58eaff05d2277971f854772bd5b ("iomap: tighten iterator state validation")
+Tested-by: Piyush Patle <piyushpatle288@gmail.com>
+Signed-off-by: Piyush Patle <piyushpatle228@gmail.com>
+Reported-by: syzbot+bd5ca596a01d01bfa083@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?id=bd5ca596a01d01bfa083
+---
+ fs/iomap/iter.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> ---
-> Changes since v1:
->  - Improve the comment and add nlink check during orphan cleanup as Jan
->    suggested.
-> 
->  fs/ext4/inode.c | 40 +++++++++++++++++++++++++++++-----------
->  1 file changed, 29 insertions(+), 11 deletions(-)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 129594bf8311..cfb66f7ad3d7 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -6073,18 +6073,36 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
->  			inode->i_op = &ext4_encrypted_symlink_inode_operations;
->  		} else if (ext4_inode_is_fast_symlink(inode)) {
->  			inode->i_op = &ext4_fast_symlink_inode_operations;
-> -			if (inode->i_size == 0 ||
-> -			    inode->i_size >= sizeof(ei->i_data) ||
-> -			    strnlen((char *)ei->i_data, inode->i_size + 1) !=
-> -								inode->i_size) {
-> -				ext4_error_inode(inode, function, line, 0,
-> -					"invalid fast symlink length %llu",
-> -					 (unsigned long long)inode->i_size);
-> -				ret = -EFSCORRUPTED;
-> -				goto bad_inode;
-> +
-> +			/*
-> +			 * Orphan cleanup can see inodes with i_size == 0
-> +			 * and i_data uninitialized. Skip size checks in
-> +			 * that case. This is safe because the first thing
-> +			 * ext4_evict_inode() does for fast symlinks is
-> +			 * clearing of i_data and i_size.
-> +			 */
-> +			if ((EXT4_SB(sb)->s_mount_state & EXT4_ORPHAN_FS)) {
-> +				if (inode->i_nlink != 0) {
-> +					ext4_error_inode(inode, function, line, 0,
-> +						"invalid orphan symlink nlink %d",
-> +						inode->i_nlink);
-> +					ret = -EFSCORRUPTED;
-> +					goto bad_inode;
-> +				}
-> +			} else {
-> +				if (inode->i_size == 0 ||
-> +				    inode->i_size >= sizeof(ei->i_data) ||
-> +				    strnlen((char *)ei->i_data, inode->i_size + 1) !=
-> +						inode->i_size) {
-> +					ext4_error_inode(inode, function, line, 0,
-> +						"invalid fast symlink length %llu",
-> +						(unsigned long long)inode->i_size);
-> +					ret = -EFSCORRUPTED;
-> +					goto bad_inode;
-> +				}
-> +				inode_set_cached_link(inode, (char *)ei->i_data,
-> +						      inode->i_size);
->  			}
-> -			inode_set_cached_link(inode, (char *)ei->i_data,
-> -					      inode->i_size);
->  		} else {
->  			inode->i_op = &ext4_symlink_inode_operations;
->  		}
-> -- 
-> 2.52.0
-> 
+diff --git a/fs/iomap/iter.c b/fs/iomap/iter.c
+index c04796f6e57f..466a12b0c094 100644
+--- a/fs/iomap/iter.c
++++ b/fs/iomap/iter.c
+@@ -111,6 +111,13 @@ int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
+ 			       &iter->iomap, &iter->srcmap);
+ 	if (ret < 0)
+ 		return ret;
++	if (iter->iomap.length &&
++	    iter->iomap.offset + iter->iomap.length <= iter->pos) {
++		iter->iomap.flags |= IOMAP_F_STALE;
++		iomap_iter_reset_iomap(iter);
++		return 1;
++	}
++
+ 	iomap_iter_done(iter);
+ 	return 1;
+ }
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.34.1
+
 
