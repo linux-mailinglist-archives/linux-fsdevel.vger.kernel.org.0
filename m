@@ -1,139 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-76088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 2DlAEgMBgWlyDgMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 20:54:43 +0100
+	id aNdDCcEDgWnZDgMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 21:06:25 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id D30CAD0D81
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 20:54:42 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A27D0EC5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 21:06:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 3AD5530071C9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 19:54:42 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A6F3D3083962
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 20:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE8630648A;
-	Mon,  2 Feb 2026 19:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7BF30DD2F;
+	Mon,  2 Feb 2026 20:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b="afE8850W"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bfpcaieJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-08.mail-europe.com (mail-08.mail-europe.com [57.129.93.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF01305E32
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Feb 2026 19:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.129.93.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0498D3093D2
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Feb 2026 20:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770062078; cv=none; b=Cjd+c4tDoFVHtet26/IsZYNPQZJufpTxlXbCO1HNuAsOFL+q6Rge62PeB87/OUoVs69KEL3FZGgC6TpJV3/Q0fKIJ3pgS295ZtFl27aCQs8WK7LBVQmrGOA6iL6JrJ9aEUhv2bG6NWU5+LNUH1kdJU7u1RlzzQTyXS4hZkW46gA=
+	t=1770062599; cv=none; b=uUzrwz/FoVypuCv2hdTCU215Z8pCS21AF6a38u2csHAJZYAX9dV1OyxU7V4fPfHtSCarujSlxVOxII1/xeNdHGFxHoeHzHGsJ80/Be4nbjhqRrSr/uS5Cb/BCAW82iFnAenypfP6/1AheLLXuQby9ERuiAkeJGZSbDZyaC5I/YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770062078; c=relaxed/simple;
-	bh=Z52zhiTDtDi1FKy+m0xZ+u+Ml0395yRGO6Svo4hV6CI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RfsurE4Xnjqve83KO0jVgFiS5+ewELTqDCDdDFN/S7hSg0/lZohvn4Lv+f5EvTzywQnN2nmFnHLtuilxVqLNlXJ6sTtGyMmx6gn3NQbfx7K+Vhr/RkhHfXMhYNEKixeFgXtuzeyG9TUM43OcKtKdUNxGcFMGfXfVpHkG1WYYbE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link; spf=pass smtp.mailfrom=spawn.link; dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b=afE8850W; arc=none smtp.client-ip=57.129.93.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=spawn.link
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=spawn.link;
-	s=protonmail; t=1770062059; x=1770321259;
-	bh=Z52zhiTDtDi1FKy+m0xZ+u+Ml0395yRGO6Svo4hV6CI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=afE8850WWA8r+MHHeWj/1VwUgaHDjwOd14o0i/t4XKR/26nuUTqyDJrZ5rVViaiP5
-	 ftiQTZb2Pk0OBYP3776bQWcFlWTQhG3hkaI6IOR6HK3lTBCETZYs9GLpFMOKLKlXkN
-	 zFxjQIjs/S3lm6cCUl75fJWIHNvvR+yM3FvaYboikrww0bE7F9x+KHO4M4WULKO8Ls
-	 iiXR0t9J+KC+Qv1Eydm0yAX8wzUdMweeq/Fn2tlj9alAVD1yfkUZ5PxDu2hjmTG7wt
-	 KHljdCGNY6IfpMlRyR5wPXspplDiuZNCKAcXNhgDXL3myw6hq6P3KuwHWUscCiqPJt
-	 ORJQYIJyIuc+w==
-Date: Mon, 02 Feb 2026 19:54:16 +0000
-To: Miklos Szeredi <miklos@szeredi.hu>, Trond Myklebust <trondmy@kernel.org>
-From: Antonio SJ Musumeci <trapexit@spawn.link>
-Cc: =?utf-8?Q?Johannes_Sch=C3=BCth?= <j.schueth@jotschi.de>, linux-fsdevel@vger.kernel.org, Bernd Schubert <bernd.schubert@fastmail.fm>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Subject: Re: NFSv4 + FUSE xattr user namespace regression/change?
-Message-ID: <3DMb18lL2VzwORom5oMGlQizKpO_Na6Rhmv5GDA9GpN3ELrsA5plqhzezDxDs_UcXaqFQ9qUHb9y4cY4JRy7TjQ108_dVkZH9D2Yj48ABH0=@spawn.link>
-In-Reply-To: <998f6d6819c2e0c3745599d61d8452c3bc478765.camel@kernel.org>
-References: <32Xtx4IaYj8nhPIXtt0gPimTRQy4RNjzmsqI1vQB1YBpRes0TEgu6zVzWbBEcn2U6ZxB14BD9vakmezNyhdXDt3CVGO8WYGxHSZZ1qtQVy8=@spawn.link> <8f5bb04853073dc620b5a6ebc116942a9b0a2b5c.camel@kernel.org> <e5-exnk0NS5Bsw0Ir_wplkePzOzCUPSsez9oqF7OVAAq3DASvNJ62B9EuQbvIqHitDgxtVnu74QYDYVEQ8rCCU74p4YupWxaKZNN34EPKUY=@spawn.link> <9ceb6cbcef39f8e82ab979b3d617b521aa0fcf83.camel@kernel.org> <CA+zj3DKAraQASpyVfkcDyGXu_oaR9SnYY18pDkN+jDgi54kRMQ@mail.gmail.com> <998f6d6819c2e0c3745599d61d8452c3bc478765.camel@kernel.org>
-Feedback-ID: 55718373:user:proton
-X-Pm-Message-ID: 35045d81b388499f3315b52992f74e6dd6221fc2
+	s=arc-20240116; t=1770062599; c=relaxed/simple;
+	bh=bIlM/4QQa7ihj6Fxhl8KrmmDbU4/lwS9+INy3m5qDKA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=oYwZOJiPE+/xJUHc4rM1SWGReb4dSVHxjMogptP+5ljB+JpcheF4YaLCySGmnk3WXCEA4l+iERcqwTUjPzCfJ/N+H9HL4u4lv9WlF61HaqtMmP6Xsw3WU3mhmEBXO9Rn4Jl/SdalXXfNDmrOcqruFCbrhUjZ+QReauWfJ0Lqsis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bfpcaieJ; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4806e0f6b69so35755865e9.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Feb 2026 12:03:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770062596; x=1770667396; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Oeyy3A9F0h68gai95rKC/WKtYz02tqXoxrCeMHYnONw=;
+        b=bfpcaieJRa67PWwcQjz5+s1PDDFlX5vaehv2dj5WTGocasY8LgUys6EQEzr3ksjpLj
+         +rIfA4QlKwM/qcnYmJPZzmbx9J10YWK4/8wRx6PblTus7sCfdUJxL2IkyES/iji5afZR
+         YaSRrvlkEU4st8OpqnzSQHa1ejVoBWqQB5PB0G4utMrJmsc8QtsLDMHoZHE1KSIl5zUf
+         L0MpddMgnfOtf/bzFNMqRtwJG5SrbewlXOvRZekoorCfTmYdEkRVnIAuUSJf0VNMQvsV
+         86ire3FRP37u3RkwkcXo6gy7tCpBPhBOPyQUtakRJ+Yvb4CyfkMSFRCkHvL5FPS3s2c1
+         j2Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770062596; x=1770667396;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Oeyy3A9F0h68gai95rKC/WKtYz02tqXoxrCeMHYnONw=;
+        b=a6B/FnQst7/yqRa6xR7SIi9IvvrO1fe5vjgu56kWcMCpzqfyeVt3g/1ds/6vQvUlo7
+         GWuMPEn/lGxtoJdcCSB9KmB9KcQVOE1D5f2q7R6N8Xul4nSpp+LEWFKTqxbLCjt1tQfB
+         wkYHp66sngaj1ChYzvYkoRTiZIgpD7n1PKR6Ykvhqo+KExVVt7oVEEOFQWp2tJo8uTrn
+         zfbx1ELNwQ+no4A5+oFiqxdskQmAByzew6IM0l2fKzFpjBLBFy9cmMBz6J6lT/5k6yE9
+         i1kO+BzDwhiZ39gny4SZAQ2i8k4NeLpXJpQ/VWBieYZeN2LY9v4UclhifBXDmqAUx+mw
+         06Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCUDt+nG21ik2K9Va4tLC7qAIhQRzgEbDm5MJcrK67O9BVllr7dXxFjdY3qXx++85pXSe7NAoBy6a2crcar5@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnq37fpboiZmUM/VmytSvW/wCKVceGqezVM6IL8jn8lafBcZwE
+	iORb/eL3AGsaAIKKOA3QFYEycjCqUBrvYIxwAikFlaIos5ZCqb3YhiuyZIw+CQ==
+X-Gm-Gg: AZuq6aLVURfEnOc1aEn/B4dNbnwGY5w1zS4mTYSZe+bOTAWDthHAVMopZbFfxq+/TA2
+	eZSnB31Y8Rcl0a665N4euofB7gn6u0hlqBzbb6bA3OSuUDULJI6TO0b8oIpnfVkTAK9Tzq8NUTn
+	d8dRBcA1i2H/4gFpbfcd5L3zHQY14KZpyEtz0BV5U4LXcCwsi7C7xUDdg0IHC7jCDa44tMvJ1A3
+	OIL9UiyiarXeBzaqgjjg2jE6wz/DwVTanwwLhSHY0513Twme17UsiK7P1LHW80+dfU+6RjKXE6I
+	aiWzzeHy9zKNGe1ao7dxhoETdtRGN9yN9ltRNefM9lw8/R+3FZdE1E1XPgxPcJmB/DvWa4gSBwg
+	hWfB+dMYP/xqwdXDv5D/VyOYO+qbuy5jtXmDvTfuzZ2URTHnb66zA3EQPJrUzrScg01XMgT5P+l
+	zbw60ZIRo=
+X-Received: by 2002:a05:600c:4507:b0:480:39ad:3b7c with SMTP id 5b1f17b1804b1-482db45e244mr170114895e9.16.1770062596185;
+        Mon, 02 Feb 2026 12:03:16 -0800 (PST)
+Received: from localhost ([212.73.77.104])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-483051626c1sm9918025e9.13.2026.02.02.12.03.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Feb 2026 12:03:15 -0800 (PST)
+From: Askar Safin <safinaskar@gmail.com>
+To: kas@kernel.org
+Cc: baolin.wang@linux.alibaba.com,
+	brauner@kernel.org,
+	hughd@google.com,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	viro@zeniv.linux.org.uk
+Subject: Re: Orphan filesystems after mount namespace destruction and tmpfs "leak"
+Date: Mon,  2 Feb 2026 23:03:00 +0300
+Message-ID: <20260202200300.2719301-1-safinaskar@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <aYDjHJstnz2V-ZZg@thinkstation>
+References: <aYDjHJstnz2V-ZZg@thinkstation>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
-	SUBJECT_ENDS_QUESTION(1.00)[];
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[spawn.link,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
-	R_DKIM_ALLOW(-0.20)[spawn.link:s=protonmail];
+	MID_CONTAINS_FROM(1.00)[];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76089-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76088-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_CC(0.00)[jotschi.de,vger.kernel.org,fastmail.fm,linuxfoundation.org];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_NEQ_ENVFROM(0.00)[safinaskar@gmail.com,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[trapexit@spawn.link,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[spawn.link:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	NEURAL_HAM(-0.00)[-1.000];
+	TO_DN_NONE(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_FIVE(0.00)[6];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,jotschi.de:url,spawn.link:mid,spawn.link:dkim]
-X-Rspamd-Queue-Id: D30CAD0D81
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 73A27D0EC5
 X-Rspamd-Action: no action
 
-On Thursday, January 15th, 2026 at 1:20 PM, Trond Myklebust <trondmy@kernel=
-.org> wrote:
+Kiryl Shutsemau <kas@kernel.org>:
+> Hi,
 
->
->
-> On Thu, 2026-01-15 at 17:18 +0100, Johannes Sch=C3=BCth wrote:
->
-> > Here are the two requested dumps:
-> > https://www.jotschi.de/files/fuse_nfs_mount_6_18_5.pcap
-> > https://www.jotschi.de/files/fuse_nfs_setfattr_6_18_5.pcap
-> >
-> > I see XAW (xattr write?) being denied on nfs mount:
-> > Opcode: ACCESS (3), [Access Denied: MD XT DL XAW], [Allowed: RD LU
-> > XAR XAL]
-> >
-> > Testing system/security xattr was just a test. My userland code only
-> > uses user.* xattr.
->
->
-> If you look at frame #103, when the client is querying the properties
-> of the filesystem mounted under "merged": it asks for the value of the
-> attribute "Xattr_support", and the server responds with a value "0"
-> (i.e. "No").
->
-> So as far as I can see, the client behaviour you are observing is the
-> correct one, given the response from the server.
->
-> Now as to the question about why the server is reporting "No", it looks
-> as if it bases that information on the reply from the VFS call to
-> xattr_supports_user_prefix() on the root inode for that filesystem. I
-> guess in this case, FUSE is disallowing setting a "user" xattr on that
-> inode.
->
-> So this is not a regression from the point of view of the NFS client,
-> but rather that commit a8ffee4abd8e ("NFS: Fix the setting of
-> capabilities when automounting a new filesystem") fixed the bug that
-> was masking the actual server response for this FUSE filesystem.
+I think I know how to fix the problem.
 
-So where do we go from here? Bring in NFS server folks? Miklos?
+The problem is in your container manager. It seems that the container
+manager doesn't unmount filesystems or unmounts them with MNT_DETACH
+(i. e. lazy).
+
+What you should do is to make your container manager actually iterate
+over all filesystems and unmount them without MNT_DETACH.
+
+Of course, this will not work in your scenario. "umount" call will fail.
+But at very least you will actually get failing syscall. I. e. you will
+get fail instead of silent leak.
+
+You may go further: if umount on tmpfs fails, then simply go and remove
+all files in that tmpfs. And then unmount it using MNT_DETACH.
+
+In fact, this will not remove all files. This process will remove all files
+it can remove. I. e. exactly what you need! I. e. it will remove whole
+47 GiB of data and just keep 4k, which are actually busy.
+
+Feel free to ask me any questions.
+
+
+-- 
+Askar Safin
 
