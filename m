@@ -1,66 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-76099-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iCYbNswfgWm0EAMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76099-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 23:06:04 +0100
+	id WFSmAgkggWm0EAMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 23:07:05 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1BDFD1EEA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 23:06:03 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61E95D1F09
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 23:07:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 6F28930074D3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 22:05:55 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 88FB93023345
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 22:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BC931D750;
-	Mon,  2 Feb 2026 22:05:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8174320CAC;
+	Mon,  2 Feb 2026 22:06:52 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C31B31B107
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Feb 2026 22:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C1131B839
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Feb 2026 22:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770069950; cv=none; b=Ta9EINZh6XOyNzJr5cjTcgC2U6efLCBgOb3q/Ij4e86PYlVO/WPiaM72gw6aV/yq+1FDkKNcRo9TOaPbVuXs/WPMBK164G3wngFCMn0cSCxB+BgGR29rKyn+xZ0XLXKbRXRRS15SlMgF5sZbmSRnK7cUXFevujnbzfDCYkrjGJE=
+	t=1770070012; cv=none; b=oFrArtnNgjku42UGiI4v8bf8okkS8mvcWTiDqWvUhO6s32lheEZ4VjhY9or9IR6wZMYbsHYu3npTGOTsDCbnZ3UuNXimuyvj+BXkjjqozl2t4BQD4AdTAmcEdxjgLCmNeUfa50KAm3WtRl11mWU1zx8bcQtzozUwVEwh/F1gqxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770069950; c=relaxed/simple;
-	bh=Huqggkmo56u5liYXyJRGPwnLjrxf8DOEQLNH+Wy2PzQ=;
+	s=arc-20240116; t=1770070012; c=relaxed/simple;
+	bh=fvA0PrASi0IEQdDf3f1fGp12n+7yWLtrlVdlPB6P9Bs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HkGcABiEevI6bzprdT3qi+9mccWvCG7qp5xf/u1henwelojYKFpPWH7yzli2WyW06pWZRgWW+hFAwmBbXmuexuMHrRkim3Q1HacSuC6j6AGaTzDEGBL9GLIhYrF1KSAaDkTxo4OM9Q/OHqqgn32N4da29oyQufDk7IR4R5gR6XM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.193
+	 MIME-Version; b=DOl/N0aaN129qtbhvB2oqZd6bxoYZ68Gye7W3ye9d4fZsZ/qLPIzJ1bKaWI3VcRV2p4YKcZfwc6OXs9TWHSpML+fe48WTQTOixxisoFH7VLAjW5OuYFK6mn1LmopsFDfgm3O1ZjpXByH6ZVuRIcMb3wUY04VY1oRWoX36okjsRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-823081bb15fso2599171b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Feb 2026 14:05:47 -0800 (PST)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-8220bd582ddso2884570b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Feb 2026 14:06:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770069947; x=1770674747;
+        d=1e100.net; s=20230601; t=1770070011; x=1770674811;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=goFQEbLUF6HeddydKTnrXz6eL4WBpcpA0Uo9sSH5p84=;
-        b=NlAYLP8pG0iepzQnIUX4K75+vxqDxqYABb+aNb+QLuH51L7XxU02j73ZVgVKCfLSPk
-         0BxN31z4sopnWK9voM7FgksNfyaLlfa6Afgw2jG+EGvJlvUqU686wwSU9ENDI+0F7LFs
-         QHCHAa3i30ws8gJ5M+sKVO0qtVivxpB3i0VG/t8Q9WHOwswN6EFToKBU+PomG1iEDC9D
-         RZ0GxZkRwBTSqv9QEH8+ep/vEtlkDGIwT46byRRZuc5RoDenfF2M7vadg4roSY8QzCVx
-         fgjor14ThbJEJ01a4yJ1pmQo+KhGYLKv0MWaTcPT+SJd0nRLirMl4Zo+Eg+raeB8Ij4+
-         RiMg==
-X-Gm-Message-State: AOJu0Yy4keIinPCDBVaBOIGm0hNd6QJ8HNLlo6qKpSr9pGR33sw7NA3O
-	6oN3rWSC2aP8+4AbjCIJpv0DT+TaD+zjylopPhybuZoZTi5sqEEhW0KS
-X-Gm-Gg: AZuq6aIuVBueSSFfKEHtWM9ZPhFf49v4if16c8E63qFxjcWQxUBhN6gQYOK5J8/N+uO
-	NBKCnXzokhlbYCiiXsNL5Ki1mK40ojOMiSCxC7b3bjd+PtGTA+SnjO7VMTW9nEJkkg7NvMdZkG4
-	UKmgOGA3XZu9RCal2dP0RAkzAEajzk3RwhAFWQEfwnJx2Ka1r9hR7JG5XIZVPjwXiUP0TZqLBNQ
-	MTIi9859uhEqGUz/xLCPx5EQG3jR5LGj7keNh87A2h1XY67oqf3348gpxVggkdlnc1GpbHX+0xV
-	iq8P46qcGuxRjMW/bOeKacvoRIFHqTMybgaqC9uNjZqHzHKSHVN/m/QlCPR07GSKoD01nxHBZJF
-	/WfyCG982AsQN7AHZVRNrYoCXdbXyqQt03nqDekU+1xDMkhcRap8dYTV66RUkIWwy9LMrhzmYrE
-	rvnzfjpPuUhdkt4rJQGG1rnVuuIg==
-X-Received: by 2002:a05:6a00:1c93:b0:81f:3957:2770 with SMTP id d2e1a72fcca58-823aa6eed22mr12929132b3a.38.1770069946375;
-        Mon, 02 Feb 2026 14:05:46 -0800 (PST)
+        bh=9lgtSUZzde++Bz8uhOIABUkDKpLi6HbwbfVMl9KEQwY=;
+        b=stnUlxUffEaPQ8g2+t+cyiDEzYNuFSvHV5xuHecf720N189U24WRiW+gE6N+Xb9w49
+         HhPZ1JYaJshqkTCldIDciFJfBArBcC11k4QzoYGJRdYwhSaR2QbsdOtPxaQYv6B4z2Z0
+         6/jVy4ykYR4lKgIglmKre/GZSQffNHoa95RH7dFMf1Km+mdiEs/tvTTJ525On2Ai2WOa
+         4vN8FS+NTgPR3F6vRos0G/i/WqyXk00TOR894vhoymXvmOpEkcCGUXiP8nk6Eu/teLy8
+         /HlujZMCStKgEAUqBJ3D5gmHgHL/OvsLtlbCUbYrmPc5XzMgJl602yKj/mnxFZPNrFh3
+         /x3g==
+X-Gm-Message-State: AOJu0YzoSGVXf8qPAKkgC1Ek/cwVrfij2VbHJxzlYtp8JAFcocEeY+5R
+	dDPCoLAHfERT5lJQ9/8oiCiQwMj3i9m0rOuEud4SwBDmwp75NeBqubQi
+X-Gm-Gg: AZuq6aLYaEe6Z050NfXpPRZ2Ng5a5vrwAg/CoucHrWFzuzuTlFKJi13atpTtpe1qZfG
+	D/Ecn3XJfC+IY6wtt8yHd7CBj/LFkS67tbT3F+r7Z8+KmBlBQitTo9KBjmuML6fvB+vi+UREzEV
+	xvANVbm2jmLergS2G4h2i9F0OLOJM+yQUa45Ou+wCCmqeBaARWtlC0UWf3DwMTaFaL8QR1GT+78
+	+dZyjPOI/qP2XEMqU38N6f58sNBvNCETOsI3LvHtpax1QkQN3Bcn0MhYNmq7IFIaU1rupa+5/Wi
+	bQz3cbluY2xQ3ipLbzTuvXxpi5ap28dofvisnBtb4K4BGvxI5zv782E3DGcworzKzjXHQkXjCb5
+	Z8H9Yq/6aHALeSLW72vo1XZX81VW/7xZuPh85QM2Kt0poGsLxZKVqtKhqd7fGW7dwAy6yl61EDV
+	hlfzK29nn/tNAUAnlXJozot2ZzJA==
+X-Received: by 2002:a05:6a00:8f0c:b0:81f:5ec1:8bd2 with SMTP id d2e1a72fcca58-823aab6f87dmr11472886b3a.54.1770070010681;
+        Mon, 02 Feb 2026 14:06:50 -0800 (PST)
 Received: from localhost.localdomain ([1.227.206.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82379b6b277sm21019732b3a.29.2026.02.02.14.05.42
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82379b6b277sm21019732b3a.29.2026.02.02.14.06.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Feb 2026 14:05:45 -0800 (PST)
+        Mon, 02 Feb 2026 14:06:50 -0800 (PST)
 From: Namjae Jeon <linkinjeon@kernel.org>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -85,9 +85,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	jay.sim@lge.com,
 	gunho.lee@lge.com,
 	Namjae Jeon <linkinjeon@kernel.org>
-Subject: [PATCH v6 02/16] Documentation: filesystems: update NTFS driver documentation
-Date: Tue,  3 Feb 2026 07:01:48 +0900
-Message-Id: <20260202220202.10907-3-linkinjeon@kernel.org>
+Subject: [PATCH v6 03/16] fs: add generic FS_IOC_SHUTDOWN definitions
+Date: Tue,  3 Feb 2026 07:01:49 +0900
+Message-Id: <20260202220202.10907-4-linkinjeon@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260202220202.10907-1-linkinjeon@kernel.org>
 References: <20260202220202.10907-1-linkinjeon@kernel.org>
@@ -104,7 +104,7 @@ X-Spamd-Result: default: False [-0.46 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
@@ -112,7 +112,7 @@ X-Spamd-Result: default: False [-0.46 / 15.00];
 	RCPT_COUNT_TWELVE(0.00)[23];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76099-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76100-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,lst.de,mit.edu,infradead.org,suse.cz,toxicpanda.com,sandeen.net,suse.com,brown.name,gmail.com];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
@@ -120,632 +120,54 @@ X-Spamd-Result: default: False [-0.46 / 15.00];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[linkinjeon@kernel.org,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	RCVD_COUNT_FIVE(0.00)[5];
 	R_DKIM_NA(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,linux-ntfs.org:url,freenode.net:url]
-X-Rspamd-Queue-Id: F1BDFD1EEA
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 61E95D1F09
 X-Rspamd-Action: no action
 
-Update the NTFS driver documentation (Documentation/filesystems/ntfs.rst)
-to reflect the current implementation state after switching to iomap and
-folio instead buffer-head.
+Currently, several filesystems (e.g., xfs, ext4, btrfs) implement
+a "shutdown" or "going down" ioctl to simulate filesystem force a shutdown.
+While they often use the same underlying numeric value, the definition is
+duplicated across filesystem headers or private definitions.
 
-Changes include:
-  - Remove outdated sections (web site, old features list, known bugs,
-    volume/stripe sets with MD/DM driver, limitations of old driver)
-  - Add concise overview of current driver features (full r/w, iomap,
-    folio, long-term maintenance focus)
-  - Add utilities support section pointing to ntfsprogs-plus project
-  - Update mount options list with current supported options
+This patch adds generic definitions for FS_IOC_SHUTDOWN in uapi/linux/fs.h.
+This allows new filesystems (like ntfs) to implement this feature using
+a standard VFS definition and paves the way for existing filesystems
+to unify their definitions later.
+
+The flag names are standardized as FS_SHUTDOWN_* to be consistent with
+the ioctl name, replacing the historical GOING_DOWN naming convention.
 
 Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
 ---
- Documentation/filesystems/index.rst |   1 +
- Documentation/filesystems/ntfs.rst  | 539 ++++++----------------------
- 2 files changed, 117 insertions(+), 423 deletions(-)
+ include/uapi/linux/fs.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-index f4873197587d..0d1f88185b73 100644
---- a/Documentation/filesystems/index.rst
-+++ b/Documentation/filesystems/index.rst
-@@ -98,6 +98,7 @@ Documentation for filesystem implementations.
-    isofs
-    nilfs2
-    nfs/index
-+   ntfs
-    ntfs3
-    ocfs2
-    ocfs2-online-filecheck
-diff --git a/Documentation/filesystems/ntfs.rst b/Documentation/filesystems/ntfs.rst
-index 5bb093a26485..337d1172d92a 100644
---- a/Documentation/filesystems/ntfs.rst
-+++ b/Documentation/filesystems/ntfs.rst
-@@ -1,466 +1,159 @@
- .. SPDX-License-Identifier: GPL-2.0
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 66ca526cf786..32e24778c9e5 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -656,4 +656,16 @@ struct procmap_query {
+ 	__u64 build_id_addr;		/* in */
+ };
  
--================================
-+=================================
- The Linux NTFS filesystem driver
--================================
-+=================================
- 
- 
- .. Table of contents
- 
-    - Overview
--   - Web site
--   - Features
-+   - Utilities support
-    - Supported mount options
--   - Known bugs and (mis-)features
--   - Using NTFS volume and stripe sets
--     - The Device-Mapper driver
--     - The Software RAID / MD driver
--     - Limitations when using the MD driver
- 
- 
- Overview
- ========
- 
--Linux-NTFS comes with a number of user-space programs known as ntfsprogs.
--These include mkntfs, a full-featured ntfs filesystem format utility,
--ntfsundelete used for recovering files that were unintentionally deleted
--from an NTFS volume and ntfsresize which is used to resize an NTFS partition.
--See the web site for more information.
-+NTFS is a Linux kernel filesystem driver that provides full read and write
-+support for NTFS volumes. It is designed for high performance, modern
-+kernel infrastructure (iomap, folio), and stable long-term maintenance.
- 
--To mount an NTFS 1.2/3.x (Windows NT4/2000/XP/2003) volume, use the file
--system type 'ntfs'.  The driver currently supports read-only mode (with no
--fault-tolerance, encryption or journalling) and very limited, but safe, write
--support.
- 
--For fault tolerance and raid support (i.e. volume and stripe sets), you can
--use the kernel's Software RAID / MD driver.  See section "Using Software RAID
--with NTFS" for details.
-+Utilities support
-+=================
- 
-+The NTFS utilities project, called ntfsprogs-plus, provides mkfs.ntfs,
-+fsck.ntfs, and other related tools (e.g., ntfsinfo, ntfsclone, etc.) for
-+creating, checking, and managing NTFS volumes. These utilities can be used
-+for filesystem testing with xfstests as well as for recovering corrupted
-+NTFS devices.
- 
--Web site
--========
-+The project is available at:
- 
--There is plenty of additional information on the linux-ntfs web site
--at http://www.linux-ntfs.org/
-+  https://github.com/ntfsprogs-plus/ntfsprogs-plus
- 
--The web site has a lot of additional information, such as a comprehensive
--FAQ, documentation on the NTFS on-disk format, information on the Linux-NTFS
--userspace utilities, etc.
--
--
--Features
--========
--
--- This is a complete rewrite of the NTFS driver that used to be in the 2.4 and
--  earlier kernels.  This new driver implements NTFS read support and is
--  functionally equivalent to the old ntfs driver and it also implements limited
--  write support.  The biggest limitation at present is that files/directories
--  cannot be created or deleted.  See below for the list of write features that
--  are so far supported.  Another limitation is that writing to compressed files
--  is not implemented at all.  Also, neither read nor write access to encrypted
--  files is so far implemented.
--- The new driver has full support for sparse files on NTFS 3.x volumes which
--  the old driver isn't happy with.
--- The new driver supports execution of binaries due to mmap() now being
--  supported.
--- The new driver supports loopback mounting of files on NTFS which is used by
--  some Linux distributions to enable the user to run Linux from an NTFS
--  partition by creating a large file while in Windows and then loopback
--  mounting the file while in Linux and creating a Linux filesystem on it that
--  is used to install Linux on it.
--- A comparison of the two drivers using::
--
--	time find . -type f -exec md5sum "{}" \;
--
--  run three times in sequence with each driver (after a reboot) on a 1.4GiB
--  NTFS partition, showed the new driver to be 20% faster in total time elapsed
--  (from 9:43 minutes on average down to 7:53).  The time spent in user space
--  was unchanged but the time spent in the kernel was decreased by a factor of
--  2.5 (from 85 CPU seconds down to 33).
--- The driver does not support short file names in general.  For backwards
--  compatibility, we implement access to files using their short file names if
--  they exist.  The driver will not create short file names however, and a
--  rename will discard any existing short file name.
--- The new driver supports exporting of mounted NTFS volumes via NFS.
--- The new driver supports async io (aio).
--- The new driver supports fsync(2), fdatasync(2), and msync(2).
--- The new driver supports readv(2) and writev(2).
--- The new driver supports access time updates (including mtime and ctime).
--- The new driver supports truncate(2) and open(2) with O_TRUNC.  But at present
--  only very limited support for highly fragmented files, i.e. ones which have
--  their data attribute split across multiple extents, is included.  Another
--  limitation is that at present truncate(2) will never create sparse files,
--  since to mark a file sparse we need to modify the directory entry for the
--  file and we do not implement directory modifications yet.
--- The new driver supports write(2) which can both overwrite existing data and
--  extend the file size so that you can write beyond the existing data.  Also,
--  writing into sparse regions is supported and the holes are filled in with
--  clusters.  But at present only limited support for highly fragmented files,
--  i.e. ones which have their data attribute split across multiple extents, is
--  included.  Another limitation is that write(2) will never create sparse
--  files, since to mark a file sparse we need to modify the directory entry for
--  the file and we do not implement directory modifications yet.
- 
- Supported mount options
- =======================
- 
--In addition to the generic mount options described by the manual page for the
--mount command (man 8 mount, also see man 5 fstab), the NTFS driver supports the
--following mount options:
-+The NTFS+ driver supports the following mount options:
- 
--======================= =======================================================
--iocharset=name		Deprecated option.  Still supported but please use
--			nls=name in the future.  See description for nls=name.
-+======================= ===================================================
-+iocharset=name		Character set to use for converting between
-+                        the encoding is used for user visible filename and
-+                        16 bit Unicode characters.
- 
--nls=name		Character set to use when returning file names.
--			Unlike VFAT, NTFS suppresses names that contain
--			unconvertible characters.  Note that most character
--			sets contain insufficient characters to represent all
--			possible Unicode characters that can exist on NTFS.
--			To be sure you are not missing any files, you are
--			advised to use nls=utf8 which is capable of
--			representing all Unicode characters.
--
--utf8=<bool>		Option no longer supported.  Currently mapped to
--			nls=utf8 but please use nls=utf8 in the future and
--			make sure utf8 is compiled either as module or into
--			the kernel.  See description for nls=name.
-+nls=name		Deprecated option.  Still supported but please use
-+                        iocharset=name in the future.
- 
- uid=
- gid=
- umask=			Provide default owner, group, and access mode mask.
- 			These options work as documented in mount(8).  By
--			default, the files/directories are owned by root and
--			he/she has read and write permissions, as well as
--			browse permission for directories.  No one else has any
--			access permissions.  I.e. the mode on all files is by
--			default rw------- and for directories rwx------, a
--			consequence of the default fmask=0177 and dmask=0077.
-+			default, the files/directories are owned by root
-+                        and he/she has read and write permissions, as well
-+                        as browse permission for directories.  No one else
-+                        has any access permissions.  I.e. the mode on all
-+                        files is by default rw------- and
-+                        for directories rwx------, a consequence of
-+                        the default fmask=0177 and dmask=0077.
- 			Using a umask of zero will grant all permissions to
--			everyone, i.e. all files and directories will have mode
--			rwxrwxrwx.
-+			everyone, i.e. all files and directories will have
-+                        mode rwxrwxrwx.
- 
- fmask=
- dmask=			Instead of specifying umask which applies both to
--			files and directories, fmask applies only to files and
--			dmask only to directories.
--
--sloppy=<BOOL>		If sloppy is specified, ignore unknown mount options.
--			Otherwise the default behaviour is to abort mount if
--			any unknown options are found.
--
--show_sys_files=<BOOL>	If show_sys_files is specified, show the system files
--			in directory listings.  Otherwise the default behaviour
--			is to hide the system files.
--			Note that even when show_sys_files is specified, "$MFT"
--			will not be visible due to bugs/mis-features in glibc.
--			Further, note that irrespective of show_sys_files, all
--			files are accessible by name, i.e. you can always do
--			"ls -l \$UpCase" for example to specifically show the
--			system file containing the Unicode upcase table.
--
--case_sensitive=<BOOL>	If case_sensitive is specified, treat all file names as
--			case sensitive and create file names in the POSIX
--			namespace.  Otherwise the default behaviour is to treat
--			file names as case insensitive and to create file names
--			in the WIN32/LONG name space.  Note, the Linux NTFS
--			driver will never create short file names and will
--			remove them on rename/delete of the corresponding long
--			file name.
--			Note that files remain accessible via their short file
--			name, if it exists.  If case_sensitive, you will need
--			to provide the correct case of the short file name.
-+			files and directories, fmask applies only to files
-+                        and dmask only to directories.
++/*
++ * Shutdown the filesystem.
++ */
++#define FS_IOC_SHUTDOWN _IOR('X', 125, __u32)
 +
-+showmeta=<BOOL>
-+show_sys_files=<BOOL>	If show_sys_files is specified, show the system
-+                        files in directory listings.  Otherwise the default
-+                        behaviour is to hide the system files.
-+			Note that even when show_sys_files is specified,
-+                        "$MFT" will not be visible due to bugs/mis-features
-+                        in glibc. Further, note that irrespective of
-+                        show_sys_files, all files are accessible by name,
-+                        i.e. you can always do "ls -l \$UpCase" for example
-+                        to specifically show the system file containing
-+                        the Unicode upcase table.
++/*
++ * Flags for FS_IOC_SHUTDOWN
++ */
++#define FS_SHUTDOWN_FLAGS_DEFAULT	0x0
++#define FS_SHUTDOWN_FLAGS_LOGFLUSH	0x1	/* flush log but not data*/
++#define FS_SHUTDOWN_FLAGS_NOLOGFLUSH	0x2	/* don't flush log nor data */
 +
-+case_sensitive=<BOOL>	If case_sensitive is specified, treat all filenames
-+                        as case sensitive and create file names in
-+                        the POSIX namespace (default behavior). Note,
-+                        the Linux NTFS driver will never create short
-+                        filenames and will remove them on rename/delete of
-+                        the corresponding long file name. Note that files
-+                        remain accessible via their short file name, if it
-+                        exists.
-+
-+nocase=<BOOL>		If nocase is specified, treat filenames
-+                        case-insensitively.
- 
- disable_sparse=<BOOL>	If disable_sparse is specified, creation of sparse
--			regions, i.e. holes, inside files is disabled for the
--			volume (for the duration of this mount only).  By
--			default, creation of sparse regions is enabled, which
--			is consistent with the behaviour of traditional Unix
--			filesystems.
--
--errors=opt		What to do when critical filesystem errors are found.
--			Following values can be used for "opt":
--
--			  ========  =========================================
--			  continue  DEFAULT, try to clean-up as much as
--				    possible, e.g. marking a corrupt inode as
--				    bad so it is no longer accessed, and then
--				    continue.
--			  recover   At present only supported is recovery of
--				    the boot sector from the backup copy.
--				    If read-only mount, the recovery is done
--				    in memory only and not written to disk.
--			  ========  =========================================
--
--			Note that the options are additive, i.e. specifying::
--
--			   errors=continue,errors=recover
--
--			means the driver will attempt to recover and if that
--			fails it will clean-up as much as possible and
--			continue.
-+			regions, i.e. holes, inside files is disabled for
-+                        the volume (for the duration of this mount only).
-+                        By default, creation of sparse regions is enabled,
-+                        which is consistent with the behaviour of
-+                        traditional Unix filesystems.
-+
-+errors=opt		Specify NTFS+ behavior on critical errors: panic,
-+                        remount the partition in read-only mode or
-+                        continue without doing anything (default behavior).
- 
- mft_zone_multiplier=	Set the MFT zone multiplier for the volume (this
- 			setting is not persistent across mounts and can be
--			changed from mount to mount but cannot be changed on
--			remount).  Values of 1 to 4 are allowed, 1 being the
--			default.  The MFT zone multiplier determines how much
--			space is reserved for the MFT on the volume.  If all
--			other space is used up, then the MFT zone will be
--			shrunk dynamically, so this has no impact on the
--			amount of free space.  However, it can have an impact
--			on performance by affecting fragmentation of the MFT.
--			In general use the default.  If you have a lot of small
--			files then use a higher value.  The values have the
--			following meaning:
--
--			      =====	    =================================
--			      Value	     MFT zone size (% of volume size)
--			      =====	    =================================
--				1		12.5%
-+			changed from mount to mount but cannot be changed
-+                        on remount).  Values of 1 to 4 are allowed, 1 being
-+                        the default.  The MFT zone multiplier determines
-+                        how much space is reserved for the MFT on the
-+                        volume.  If all other space is used up, then the
-+                        MFT zone will be shrunk dynamically, so this has no
-+                        impact on the amount of free space.  However, it
-+                        can have an impact on performance by affecting
-+                        fragmentation of the MFT. In general use the
-+                        default.  If you have a lot of small files then use
-+                        a higher value.  The values have the following
-+                        meaning:
-+
-+			      =====	 =================================
-+			      Value	  MFT zone size (% of volume size)
-+			      =====	 =================================
-+				1	        12.5%
- 				2		25%
- 				3		37.5%
- 				4		50%
--			      =====	    =================================
--
--			Note this option is irrelevant for read-only mounts.
--======================= =======================================================
--
--
--Known bugs and (mis-)features
--=============================
--
--- The link count on each directory inode entry is set to 1, due to Linux not
--  supporting directory hard links.  This may well confuse some user space
--  applications, since the directory names will have the same inode numbers.
--  This also speeds up ntfs_read_inode() immensely.  And we haven't found any
--  problems with this approach so far.  If you find a problem with this, please
--  let us know.
--
--
--Please send bug reports/comments/feedback/abuse to the Linux-NTFS development
--list at sourceforge: linux-ntfs-dev@lists.sourceforge.net
--
--
--Using NTFS volume and stripe sets
--=================================
--
--For support of volume and stripe sets, you can either use the kernel's
--Device-Mapper driver or the kernel's Software RAID / MD driver.  The former is
--the recommended one to use for linear raid.  But the latter is required for
--raid level 5.  For striping and mirroring, either driver should work fine.
--
--
--The Device-Mapper driver
--------------------------
--
--You will need to create a table of the components of the volume/stripe set and
--how they fit together and load this into the kernel using the dmsetup utility
--(see man 8 dmsetup).
--
--Linear volume sets, i.e. linear raid, has been tested and works fine.  Even
--though untested, there is no reason why stripe sets, i.e. raid level 0, and
--mirrors, i.e. raid level 1 should not work, too.  Stripes with parity, i.e.
--raid level 5, unfortunately cannot work yet because the current version of the
--Device-Mapper driver does not support raid level 5.  You may be able to use the
--Software RAID / MD driver for raid level 5, see the next section for details.
--
--To create the table describing your volume you will need to know each of its
--components and their sizes in sectors, i.e. multiples of 512-byte blocks.
--
--For NT4 fault tolerant volumes you can obtain the sizes using fdisk.  So for
--example if one of your partitions is /dev/hda2 you would do::
--
--    $ fdisk -ul /dev/hda
--
--    Disk /dev/hda: 81.9 GB, 81964302336 bytes
--    255 heads, 63 sectors/track, 9964 cylinders, total 160086528 sectors
--    Units = sectors of 1 * 512 = 512 bytes
--
--	Device Boot      Start         End      Blocks   Id  System
--	/dev/hda1   *          63     4209029     2104483+  83  Linux
--	/dev/hda2         4209030    37768814    16779892+  86  NTFS
--	/dev/hda3        37768815    46170809     4200997+  83  Linux
--
--And you would know that /dev/hda2 has a size of 37768814 - 4209030 + 1 =
--33559785 sectors.
--
--For Win2k and later dynamic disks, you can for example use the ldminfo utility
--which is part of the Linux LDM tools (the latest version at the time of
--writing is linux-ldm-0.0.8.tar.bz2).  You can download it from:
--
--	http://www.linux-ntfs.org/
--
--Simply extract the downloaded archive (tar xvjf linux-ldm-0.0.8.tar.bz2), go
--into it (cd linux-ldm-0.0.8) and change to the test directory (cd test).  You
--will find the precompiled (i386) ldminfo utility there.  NOTE: You will not be
--able to compile this yourself easily so use the binary version!
--
--Then you would use ldminfo in dump mode to obtain the necessary information::
--
--    $ ./ldminfo --dump /dev/hda
--
--This would dump the LDM database found on /dev/hda which describes all of your
--dynamic disks and all the volumes on them.  At the bottom you will see the
--VOLUME DEFINITIONS section which is all you really need.  You may need to look
--further above to determine which of the disks in the volume definitions is
--which device in Linux.  Hint: Run ldminfo on each of your dynamic disks and
--look at the Disk Id close to the top of the output for each (the PRIVATE HEADER
--section).  You can then find these Disk Ids in the VBLK DATABASE section in the
--<Disk> components where you will get the LDM Name for the disk that is found in
--the VOLUME DEFINITIONS section.
--
--Note you will also need to enable the LDM driver in the Linux kernel.  If your
--distribution did not enable it, you will need to recompile the kernel with it
--enabled.  This will create the LDM partitions on each device at boot time.  You
--would then use those devices (for /dev/hda they would be /dev/hda1, 2, 3, etc)
--in the Device-Mapper table.
--
--You can also bypass using the LDM driver by using the main device (e.g.
--/dev/hda) and then using the offsets of the LDM partitions into this device as
--the "Start sector of device" when creating the table.  Once again ldminfo would
--give you the correct information to do this.
--
--Assuming you know all your devices and their sizes things are easy.
--
--For a linear raid the table would look like this (note all values are in
--512-byte sectors)::
--
--    # Offset into	Size of this	Raid type	Device		Start sector
--    # volume	device						of device
--    0		1028161		linear		/dev/hda1	0
--    1028161		3903762		linear		/dev/hdb2	0
--    4931923		2103211		linear		/dev/hdc1	0
--
--For a striped volume, i.e. raid level 0, you will need to know the chunk size
--you used when creating the volume.  Windows uses 64kiB as the default, so it
--will probably be this unless you changes the defaults when creating the array.
--
--For a raid level 0 the table would look like this (note all values are in
--512-byte sectors)::
--
--    # Offset   Size	    Raid     Number   Chunk  1st        Start	2nd	  Start
--    # into     of the   type     of	      size   Device	in	Device	  in
--    # volume   volume	     stripes			device		  device
--    0	   2056320  striped  2	      128    /dev/hda1	0	/dev/hdb1 0
--
--If there are more than two devices, just add each of them to the end of the
--line.
--
--Finally, for a mirrored volume, i.e. raid level 1, the table would look like
--this (note all values are in 512-byte sectors)::
--
--    # Ofs Size   Raid   Log  Number Region Should Number Source  Start Target Start
--    # in  of the type   type of log size   sync?  of     Device  in    Device in
--    # vol volume		 params		     mirrors	     Device	  Device
--    0    2056320 mirror core 2	16     nosync 2	   /dev/hda1 0   /dev/hdb1 0
--
--If you are mirroring to multiple devices you can specify further targets at the
--end of the line.
--
--Note the "Should sync?" parameter "nosync" means that the two mirrors are
--already in sync which will be the case on a clean shutdown of Windows.  If the
--mirrors are not clean, you can specify the "sync" option instead of "nosync"
--and the Device-Mapper driver will then copy the entirety of the "Source Device"
--to the "Target Device" or if you specified multiple target devices to all of
--them.
--
--Once you have your table, save it in a file somewhere (e.g. /etc/ntfsvolume1),
--and hand it over to dmsetup to work with, like so::
--
--    $ dmsetup create myvolume1 /etc/ntfsvolume1
--
--You can obviously replace "myvolume1" with whatever name you like.
--
--If it all worked, you will now have the device /dev/device-mapper/myvolume1
--which you can then just use as an argument to the mount command as usual to
--mount the ntfs volume.  For example::
--
--    $ mount -t ntfs -o ro /dev/device-mapper/myvolume1 /mnt/myvol1
--
--(You need to create the directory /mnt/myvol1 first and of course you can use
--anything you like instead of /mnt/myvol1 as long as it is an existing
--directory.)
--
--It is advisable to do the mount read-only to see if the volume has been setup
--correctly to avoid the possibility of causing damage to the data on the ntfs
--volume.
--
--
--The Software RAID / MD driver
-------------------------------
--
--An alternative to using the Device-Mapper driver is to use the kernel's
--Software RAID / MD driver.  For which you need to set up your /etc/raidtab
--appropriately (see man 5 raidtab).
--
--Linear volume sets, i.e. linear raid, as well as stripe sets, i.e. raid level
--0, have been tested and work fine (though see section "Limitations when using
--the MD driver with NTFS volumes" especially if you want to use linear raid).
--Even though untested, there is no reason why mirrors, i.e. raid level 1, and
--stripes with parity, i.e. raid level 5, should not work, too.
--
--You have to use the "persistent-superblock 0" option for each raid-disk in the
--NTFS volume/stripe you are configuring in /etc/raidtab as the persistent
--superblock used by the MD driver would damage the NTFS volume.
--
--Windows by default uses a stripe chunk size of 64k, so you probably want the
--"chunk-size 64k" option for each raid-disk, too.
--
--For example, if you have a stripe set consisting of two partitions /dev/hda5
--and /dev/hdb1 your /etc/raidtab would look like this::
--
--    raiddev /dev/md0
--	    raid-level	0
--	    nr-raid-disks	2
--	    nr-spare-disks	0
--	    persistent-superblock	0
--	    chunk-size	64k
--	    device		/dev/hda5
--	    raid-disk	0
--	    device		/dev/hdb1
--	    raid-disk	1
--
--For linear raid, just change the raid-level above to "raid-level linear", for
--mirrors, change it to "raid-level 1", and for stripe sets with parity, change
--it to "raid-level 5".
--
--Note for stripe sets with parity you will also need to tell the MD driver
--which parity algorithm to use by specifying the option "parity-algorithm
--which", where you need to replace "which" with the name of the algorithm to
--use (see man 5 raidtab for available algorithms) and you will have to try the
--different available algorithms until you find one that works.  Make sure you
--are working read-only when playing with this as you may damage your data
--otherwise.  If you find which algorithm works please let us know (email the
--linux-ntfs developers list linux-ntfs-dev@lists.sourceforge.net or drop in on
--IRC in channel #ntfs on the irc.freenode.net network) so we can update this
--documentation.
--
--Once the raidtab is setup, run for example raid0run -a to start all devices or
--raid0run /dev/md0 to start a particular md device, in this case /dev/md0.
--
--Then just use the mount command as usual to mount the ntfs volume using for
--example::
--
--    mount -t ntfs -o ro /dev/md0 /mnt/myntfsvolume
--
--It is advisable to do the mount read-only to see if the md volume has been
--setup correctly to avoid the possibility of causing damage to the data on the
--ntfs volume.
--
--
--Limitations when using the Software RAID / MD driver
-------------------------------------------------------
--
--Using the md driver will not work properly if any of your NTFS partitions have
--an odd number of sectors.  This is especially important for linear raid as all
--data after the first partition with an odd number of sectors will be offset by
--one or more sectors so if you mount such a partition with write support you
--will cause massive damage to the data on the volume which will only become
--apparent when you try to use the volume again under Windows.
--
--So when using linear raid, make sure that all your partitions have an even
--number of sectors BEFORE attempting to use it.  You have been warned!
--
--Even better is to simply use the Device-Mapper for linear raid and then you do
--not have this problem with odd numbers of sectors.
-+			      =====	 =================================
-+
-+			Note this option is irrelevant for read-only mount.
-+
-+preallocated_size=	Set preallocated size to optimize runlist merge
-+                        overhead with small chunck size.(64KB size by
-+                        default)
-+
-+acl=<BOOL>		Enable POSIX ACL support. When specified, POSIX
-+                        ACLs stored in extended attributes are enforced.
-+                        Default is off. Requires kernel config
-+                        NTFS_FS_POSIX_ACL enabled.
-+
-+sys_immutable=<BOOL>	Make NTFS system files (e.g. $MFT, $LogFile,
-+                        $Bitmap, $UpCase, etc.) immutable to user initiated
-+                        modifications for extra safety. Default is off.
-+
-+nohidden=<BOOL>		Hide files and directories marked with the Windows
-+			"hidden" attribute. By default hidden items are
-+                        shown.
-+
-+hide_dot_files=<BOOL>	Hide names beginning with a dot ("."). By default
-+                        dot files are shown. When enabled, files and
-+                        directories created with a leading '.' will be
-+                        hidden from directory listings.
-+
-+windows_names=<BOOL>	Refuse creation/rename of files with characters or
-+			reserved device names disallowed on Windows (e.g.
-+                        CON, NUL, AUX, COM1, LPT1, etc.). Default is off.
-+discard=<BOOL>		Issue block device discard for clusters freed on
-+			file deletion/truncation to inform underlying
-+                        storage.
-+======================= ==================================================
+ #endif /* _UAPI_LINUX_FS_H */
 -- 
 2.25.1
 
