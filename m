@@ -1,204 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-76014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QEflM8QLgGkL2AIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 03:28:20 +0100
+	id ACwsL1U/gGk65QIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 07:08:21 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37150C7DF6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 03:28:20 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66691C87A1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 07:08:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2792D30056EF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 02:28:02 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 20E76300CCA5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 06:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BA121D3C0;
-	Mon,  2 Feb 2026 02:28:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B802F5319;
+	Mon,  2 Feb 2026 06:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="D78dTBlj"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Jra1hwO/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3A51F91E3
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Feb 2026 02:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F2F48CFC;
+	Mon,  2 Feb 2026 06:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769999280; cv=none; b=pTEAGsZM4dziQ1Ln0TD4NSHQifSIQTWBZiZZte/iHCpvyxuO3TjEDEzN7UcKaXxDhFUJ2gP2XrZUM6/S253VMr6ooIa/RW2CT5SdxoAXlM4UUpjxChnAYSSPXhiABGKeUALG4e0a+G9EjPA2EAGVyyLpQnXQrSqIjNQj3DyR8u4=
+	t=1770012491; cv=none; b=EQpCkH6ssUf+pt2FvSqCQlV2LFLGCXMWl7imUg+8ihu0YfMF/djhJL/nuZCNpKJBQdK5POW3EAQQ+XUfkVTJ0CFlMhxj7nIadRQF+JIpPVs+uN3EypGrCxpjReSibCcfZJ1iOs/dEXnkkHfkVDXYQyK72b5trmVIeIGRGAMPymg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769999280; c=relaxed/simple;
-	bh=c18aY+u6puIMVPmuCxKY+tqBdy/i964ilbAn+cS1m8g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GF6OMbazquXc0UElKdlrzqjNII56YK+4KiTU3gIMp2rmhsckoM5nlxWo2Q1tgP0dyXaZMX2tflYCZKjtugnEjbztiQjlsO8zzb4LePjivJEJ0rZiX77i2ZvqVPgp+7K/2dKE5U/vRPi7UaudbTNIWkUzghI9gbqB6q6r9nmr6Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=D78dTBlj; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-34abc7da414so2424262a91.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Feb 2026 18:27:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1769999277; x=1770604077; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ib1/7wDujkxaZJbA6XE/xuPmxkcPG0qS3D0QygAAiJo=;
-        b=D78dTBljEP/laJiq2oBjhhl7MkCD4Yz418eE87w4eK4X3uvotIXTYkT75vbPqNwz58
-         QXHurnvF4kzvphwnPCoMmi75HkloUKJV29Wd1sIbIW8TJwQWVG2bUhhg/Bmf31OSP1Lj
-         +BmXJpqY6AW+/Ewz7MPMOPP/8cIhkwcg/kA2bUFRYRmU+bB7Kye6+JwMOdvzeZFnqfQJ
-         lL5eP4cG7CR0hXpgvjAV6St53AY9FwVQA3tzOIgLziKKXswQikSieZYCGeA2fMgvq+nS
-         C5olY/JKQxm2R7nS68vK9zJryKyonqeox3YBu1GBC/woCVhgDUXrn4ouPo8QX/JXquFA
-         p3OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769999277; x=1770604077;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ib1/7wDujkxaZJbA6XE/xuPmxkcPG0qS3D0QygAAiJo=;
-        b=g7mJrPmqA/YHiclYr4qdY4y+qHOcm7XRLASzgGNxJuCPWkZGkVXqOKgDqD6HDxXamd
-         y43uXmY+YubC/NvGl8+QMNUSrTojVyieGbAuVHXgL5WL/9dW8c4+WkKhDOu20odDGkC/
-         4du7Sxc8Z7Ie4NO+KEfPmmyv3Vi5IT53u6zjlN/zUI4tyrEIRZTgOWmmfH/ukBMREzmL
-         iTdAYKrkhk78Wi+e32+v0Q7SqPpryknDubqETpVZUI1xNCf2ARK+f4K0WWolEsK+7evr
-         kCb5yIbIT55Cq0OZKfwC+JWyBihgFsC4CXT02Zr8xsp68ap8K4l7y0UeZeJnKlQpwO5b
-         3eFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWNQglbno60WbZ2dmF1ch9pYJsYdjKDVsUKURVclEeOrj2gSHlADoGRrdRHzLUUvnnzUCg0ypQmn5GFt3UA@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG1aHcD+nZE8SpvkBX4N5A8AQyP6vXlQrhIMQvWVkO4q0I8j8B
-	isFkoqVZp0sFT6bbYI7IJbXZsAXKhW9YMZBIPCCWmWRgY2bjuKhBY5zVIxOIrE4EfQ8=
-X-Gm-Gg: AZuq6aKqXQ0DxW5iPBOouazWM8xrNCRf9qolzXyAZOGwsRXEM4kxldAc0FYz61Jna76
-	yoMp858I/PgtH20OSYLkzr0b2sIYUF7TyguNgHU/MknFmGBnQ1P69nzrI3XZYDl5rtsOZvm1o7X
-	rSeSMFbykiXc9Lbal0v7PkcE9A4ItA2oKwimurNucOAAHhdAXClYSkukyWnX6YKKAcbnJT51XLc
-	ZLEiObl7cSx8Vn3nNj5T00iNOTkdqV5hoKuxURCjugh78lGkWzXsjXQotZxpG20Z2HapuTNBZhP
-	xw4Gsx0boL5/Ga+gz00QIZoDgXx7qnXo1qO1snrxjHXAM7k40NY5bmd+7u4NC8eirQvOIR2M3Bi
-	h+azyFlZnpbWO3rJIruFaucAaoXE0dwSJTQ2queG5dUP6xyE0AL8Jh7Q/c1NipLq0aXJt6Gqo8p
-	5iAzqRLFRPV0zChc7NLFUE5j0rB5ZVD1g3vdI=
-X-Received: by 2002:a17:90a:d886:b0:341:88c9:ca62 with SMTP id 98e67ed59e1d1-3543b3d120fmr8851545a91.31.1769999276970;
-        Sun, 01 Feb 2026 18:27:56 -0800 (PST)
-Received: from [10.254.198.225] ([139.177.225.253])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3543d73386asm3333466a91.14.2026.02.01.18.27.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 01 Feb 2026 18:27:56 -0800 (PST)
-Message-ID: <2538bda2-e14a-4ae0-a32d-e944ca44b37f@bytedance.com>
-Date: Mon, 2 Feb 2026 10:27:50 +0800
+	s=arc-20240116; t=1770012491; c=relaxed/simple;
+	bh=59sKMYHYUkHcuzmycWYRWJqMLtKg4/oxldleCjxqwio=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dHfWOv8eF0HRDSi8NesqBMdZwn2MCjMQXgqDcHnFmOI04r6zGe6XMeETy3CjXEUOwu7YJg6PwK9z4JAW09ccYbUpSOTtToRvrin2pVU4Mj8iAW1G3pjAGJG0iISDxymiFG1d9G2+1KhpOsZm7OCKhyXAv86tQ3k6xtZpuFp/x1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Jra1hwO/; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=oTPY6jfHkqoUdgBhijgDg7Uy+7YMZ6k6go+QoIjkenI=; b=Jra1hwO/RMjiIcL+dw8Uk4as9f
+	Tskg/31TTNJRxn6dlkqX7TocDdZMNpfkqeMfKIbiJ6IGWI/5D7HxToyBXx2Wq5GvHn6PMPU7gcBWV
+	LkevtmUSLkPC4n4Sq7hV7XciuurRs/q4NXx88JaJzpcnE1A5OlQ2c7tUN78V4HHFlx2PcOuD0tWeg
+	ncMmgaw4F18ytwj4huPjyf5YBhDMkT+TKDIlRRhX5sfNWBiczZVNZ9oQzbcuqNNjsRBXFGuGRlmux
+	VuTka/qlk9387FpcLAmWMWf9ze8mIimrs9YXsWNp7aSrI/clH6QduExNY7iQvaKC/CUVHKXH4McO+
+	eMJJysBA==;
+Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vmn6N-00000004UjI-3VFw;
+	Mon, 02 Feb 2026 06:08:00 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	David Sterba <dsterba@suse.com>,
+	"Theodore Ts'o" <tytso@mit.edu>,
+	Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>,
+	Andrey Albershteyn <aalbersh@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	fsverity@lists.linux.dev
+Subject: fsverity speedup and memory usage optimization v5
+Date: Mon,  2 Feb 2026 07:06:29 +0100
+Message-ID: <20260202060754.270269-1-hch@lst.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] writeback: Fix wakeup and logging timeouts for
- !DETECT_HUNG_TASK
-To: Huacai Chen <chenhuacai@loongson.cn>, Huacai Chen
- <chenhuacai@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
- Xuefeng Li <lixuefeng@loongson.cn>, linux-kernel@vger.kernel.org
-References: <20260131090724.4128443-1-chenhuacai@loongson.cn>
-From: Julian Sun <sunjunchao@bytedance.com>
-In-Reply-To: <20260131090724.4128443-1-chenhuacai@loongson.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-0.06 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[bytedance.com,quarantine];
-	R_DKIM_ALLOW(-0.20)[bytedance.com:s=google];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
+	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), DKIM not aligned (relaxed),none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DKIM_TRACE(0.00)[bytedance.com:+];
-	TAGGED_FROM(0.00)[bounces-76014-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	SUBJECT_HAS_EXCLAIM(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-76015-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[sunjunchao@bytedance.com,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[infradead.org:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[loongson.cn:email]
-X-Rspamd-Queue-Id: 37150C7DF6
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 66691C87A1
 X-Rspamd-Action: no action
 
-On 1/31/26 5:07 PM, Huacai Chen wrote:
-> Recent changes of fs-writeback cause such warnings if DETECT_HUNG_TASK
-> is not enabled:
-> 
-> INFO: The task sync:1342 has been waiting for writeback completion for more than 1 seconds.
-> 
-> The reason is sysctl_hung_task_timeout_secs is 0 when DETECT_HUNG_TASK
-> is not enabled, then it causes the warning message even if the writeback
-> lasts for only one second.
-> 
-> I believe the wakeup and logging is also useful for !DETECT_HUNG_TASK,
-> so I don't want to disable them completely. As DEFAULT_HUNG_TASK_TIMEOUT
-> is 120 seconds, so for the !DETECT_HUNG_TASK case let's use 120 seconds
-> instead of sysctl_hung_task_timeout_secs.
-> 
-> Fixes: 1888635532fb ("writeback: Wake up waiting tasks when finishing the writeback of a chunk.")
-> Fixes: d6e621590764 ("writeback: Add logging for slow writeback (exceeds sysctl_hung_task_timeout_secs)")
-> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> ---
->   fs/fs-writeback.c | 15 ++++++++++++---
->   1 file changed, 12 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index 5444fc706ac7..847e46f0e019 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -198,10 +198,15 @@ static void wb_queue_work(struct bdi_writeback *wb,
->   
->   static bool wb_wait_for_completion_cb(struct wb_completion *done)
->   {
-> +#ifndef CONFIG_DETECT_HUNG_TASK
-> +	unsigned long hung_secs = 120;
-> +#else
-> +	unsigned long hung_secs = sysctl_hung_task_timeout_secs;
-> +#endif
->   	unsigned long waited_secs = (jiffies - done->wait_start) / HZ;
->   
->   	done->progress_stamp = jiffies;
-> -	if (waited_secs > sysctl_hung_task_timeout_secs)
-> +	if (waited_secs > hung_secs)
->   		pr_info("INFO: The task %s:%d has been waiting for writeback "
->   			"completion for more than %lu seconds.",
->   			current->comm, current->pid, waited_secs);
-> @@ -1947,6 +1952,11 @@ static long writeback_sb_inodes(struct super_block *sb,
->   	long write_chunk;
->   	long total_wrote = 0;  /* count both pages and inodes */
->   	unsigned long dirtied_before = jiffies;
-> +#ifndef CONFIG_DETECT_HUNG_TASK
-> +	unsigned long hung_secs = 120;
-> +#else
-> +	unsigned long hung_secs = sysctl_hung_task_timeout_secs;
-> +#endif
->   
->   	if (work->for_kupdate)
->   		dirtied_before = jiffies -
-> @@ -2031,8 +2041,7 @@ static long writeback_sb_inodes(struct super_block *sb,
->   
->   		/* Report progress to inform the hung task detector of the progress. */
->   		if (work->done && work->done->progress_stamp &&
-> -		   (jiffies - work->done->progress_stamp) > HZ *
-> -		   sysctl_hung_task_timeout_secs / 2)
-> +		   (jiffies - work->done->progress_stamp) > HZ * hung_secs / 2)
->   			wake_up_all(work->done->waitq);
->   
->   		wbc_detach_inode(&wbc);
+Hi all,
 
-Thanks for the patch, looks good to me.
+this series has a hodge podge of fsverity enhances that I looked into as
+part of the review of the xfs fsverity support series.
 
-Reviewed-by: Julian Sun <sunjunchao@bytedance.com>
+The first part optimizes the fsverity read path by kicking off readahead
+for the fsverity hashes from the data read submission context, which in my
+simply testing showed huge benefits for sequential reads using dd.
+I haven't been able to get fio to run on a preallocated fio file, but
+I expect random read benefits would be significantly better than that
+still.
 
+The second part avoids the need for a pointer in every inode for fsverity
+and instead uses a rhashtable lookup, which is done once per read_folio
+or ->readahead invocation plus for btrfs only for each bio completion.
+Right now this does not increse the number of inodes in
+each slab, but for ext4 we are getting very close to that (within
+16 bytes by my count).
 
--- 
-Julian Sun <sunjunchao@bytedance.com>
+Changes since v5:
+ - drop already merged patches
+ - fix a bisection hazard for non-ENOENT error returns from
+   generic_read_merkle_tree_page
+ - don't recurse on invalidate_lock
+ - refactor page_cache_ra_unbounded locking to support the above
+ - refactor ext4 and f2fs fsverity readahead to remove the need for the
+   first_folio branch in the main readpages loop
+
+Changes since v4:
+ - drop the constification of ctx->vi again
+ - fix __filemap_get_folio error handling again
+ - don't use "pgoff_t long"
+ - improve documentation of the new pagecache helpers
+ - reduce the number of fsverity_info lookups in btrfs
+ - improve the documentation for fsverity_active
+
+Changes since v2:
+ - use sizeof_field for .key_len
+ - fix a rebase error that caused an extra fsverity_get_info in
+   fsverity_init_verification_context
+ - add verify.o to the build in the correct patch
+ - fix handling of non-ENOENT ERR_PTR folios in
+   generic_readahead_merkle_tree
+ - split fixing the __filemap_get_folio error handling into a
+   separate patch
+ - fix the readahead range in fsverity_read_merkle_tree
+ - remove __fsverity_readahead as a result of the above
+ - simplify the start/end_hidx calculation in fsverity_readahead
+ - drop the > i_size check in fsverity_readahead
+ - use pgoff_t where applicable
+ - constify fsverity_info pointers in the verification path
+ - use IS_ENABLED to disable code not used for non-fsverity builds in
+   ext4 and f2fs
+ - allow bisection for non-fsverity builds by provinding a stub
+   fsverity_info_addr prototype
+ - drop the now superflous inode argument to
+   fsverity_init_verification_context
+ - improve the kerneldoc for fsverity_readahead
+ - improve various commit messages
+ - fix the barrier placement in fsverity_active
+ - mark fsverity_active to work around stupid compilers
+
+Changes since v1:
+ - reorder to keep the most controversial part last
+ - drop moving the open handling to common code (for now)
+ - factor the page cache read code into common code
+ - reduce the number of hash lookups
+ - add a barrier in the fsverity_active that pairs with the cmpxchg
+   that sets the inode flag.
+
+Diffstat:
+ fs/btrfs/btrfs_inode.h       |    4 -
+ fs/btrfs/extent_io.c         |   53 ++++++++++------
+ fs/btrfs/inode.c             |    3 
+ fs/btrfs/verity.c            |    6 -
+ fs/buffer.c                  |   25 +++----
+ fs/ext4/ext4.h               |    8 --
+ fs/ext4/inode.c              |   27 --------
+ fs/ext4/readpage.c           |   62 +++++++++++++++----
+ fs/ext4/super.c              |    3 
+ fs/ext4/verity.c             |   15 +++-
+ fs/f2fs/compress.c           |    7 +-
+ fs/f2fs/data.c               |   88 +++++++++++++++++----------
+ fs/f2fs/f2fs.h               |   12 ---
+ fs/f2fs/file.c               |    2 
+ fs/f2fs/super.c              |    3 
+ fs/f2fs/verity.c             |   15 +++-
+ fs/verity/enable.c           |   30 +++++----
+ fs/verity/fsverity_private.h |   21 +++---
+ fs/verity/open.c             |   77 +++++++++++++++---------
+ fs/verity/pagecache.c        |   44 ++++++++++---
+ fs/verity/read_metadata.c    |   19 ++++--
+ fs/verity/verify.c           |   94 ++++++++++++++++++-----------
+ include/linux/fsverity.h     |  136 ++++++++++++++++++++++---------------------
+ mm/readahead.c               |   13 ++--
+ 24 files changed, 440 insertions(+), 327 deletions(-)
 
