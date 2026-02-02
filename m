@@ -1,65 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-76113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id EH5pNaMogWkxEgMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 23:43:47 +0100
+	id UBj6JMIogWkwEgMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 23:44:18 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D0E5D2606
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 23:43:47 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF521D262F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Feb 2026 23:44:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4C727314A06A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 22:38:45 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 15D36315BEB4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Feb 2026 22:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D230E389E1A;
-	Mon,  2 Feb 2026 22:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCA038E111;
+	Mon,  2 Feb 2026 22:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ss2zz3/z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UwDrIUW2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5851635E548;
-	Mon,  2 Feb 2026 22:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F0238E107;
+	Mon,  2 Feb 2026 22:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770071648; cv=none; b=K2zb7T6v8hG2y+iiaHq98ZpmZehaQuGu/2RSw8vdkayzruqht8u/Mlplt11UuNWlA0ijnul0x90mon8BcfGPWNW6FIOh7I0IWCw72XSadyjmuE8LRULLQBmYw1KAT/cY0b0ZP/4pBz2c/mSIoh8ITHzEhtokdS8RocX+XPPJec8=
+	t=1770071818; cv=none; b=PBbZtLJj5aP7urlSkcOY6pS91iZWxdSTC+TFdPMVw4zbuM84fPUcp3wyjH90AOmAy85xdHsQj/jqH6ehoIrlzYPgm4vjb/m1xS1l1//0NhcSTQHXSn1mnD9r3sEwjNpwslSQZ9UesYeML0OT0sUwTKS0TNMBrvyIKf2r+ockUic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770071648; c=relaxed/simple;
-	bh=2BLw8V36q4ZcoZntEthTMAW+cHIrT5ib6z9TbOGuvgM=;
+	s=arc-20240116; t=1770071818; c=relaxed/simple;
+	bh=5MJVPCVbmtzuCZwL83PoTDuizJyOCLSnPH7N+xyLpvY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UMTelsopuhibCaM/2n+m1yyFSppWe7FrwmiU9SMxIX3zv9P44C3EUM612DlEtWNIYmA7beavNqECRl+b0GmYsXagFCDhg4/9xQwlnWosPa8es2TX5n1BUZsbY3UEQU9PFJLC8tpOhyErsZwd6Q6c6Lz46uecuAveOdW/A0kMAtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ss2zz3/z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2840C116C6;
-	Mon,  2 Feb 2026 22:34:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=re3o5xFiJs7PMgc/oIl+26uZ6O3PGDFv96u83WmwTAfjZRgqDHNjO18wp+XEmguj23lCjePP6LlfAVC2v9XXznV13BHmHiUtllWffD6iinHsUmKkwVPSBN6tmQB+K8plULc4r3xqhCPB7N/S2zucknZn9tpiXhg09CIfx3xKT4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UwDrIUW2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E431C116C6;
+	Mon,  2 Feb 2026 22:36:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770071647;
-	bh=2BLw8V36q4ZcoZntEthTMAW+cHIrT5ib6z9TbOGuvgM=;
+	s=k20201202; t=1770071818;
+	bh=5MJVPCVbmtzuCZwL83PoTDuizJyOCLSnPH7N+xyLpvY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ss2zz3/zaUboc6X/2TuV+KFtnflhkrpnIr6d8/rxpr8ixW69zHo15BSkfX7C+GrrG
-	 3dxxe8R18qUeUaWY6nisKn2wmrZy9dl4o1heG4kk/K8kzQwV31QMPww5ZQis+db3y1
-	 sUNB3MzBBKSAX/TifSu+FMYAccP/HfGZvUCLqmtopz3b9AU+rS3GnhInsnw4q7GRNU
-	 0qwPxcnVei484r2+HKkAN3+ed4bSRmzSErbAbjvNW8U/46uXtDcaJiilALdBmk+n+Z
-	 EqNcbKlhmyF7FQNNK+sDUH/6bc91lQLmusrhVPXRnKkh41P6MBg+RtcfyL5f5q7jeX
-	 20vZJrM+KKiLg==
-Date: Mon, 2 Feb 2026 14:34:04 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Christoph Hellwig <hch@lst.de>, Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	Andrey Albershteyn <aalbersh@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net, fsverity@lists.linux.dev
-Subject: Re: fsverity speedup and memory usage optimization v5
-Message-ID: <20260202223404.GA173552@quark>
-References: <20260202060754.270269-1-hch@lst.de>
- <20260202211423.GB4838@quark>
+	b=UwDrIUW2iWb+B3Povsgz/e7h+6zhA+KK7tSRBVKQwki/OOCcSr/BirLZ5e6W/zpYc
+	 6YYiBVW9Rf8j4FauTtnE/rgg90x9TN7b/7xoDFt4ODEM2Igf6zVnhzakCv+4+vU9Tj
+	 xuwbO9WIYbNKrgfdfSZUAB5RcDoYtEKfH8cFlCpERawUbUcTqWMc76rMVu980wxKNO
+	 fPwYP8ruAXsAeXo1jtA3Kgzuu8YsRUw9CHCP7IqwHa7iLeTyulKb2AGzgH9UpVSniC
+	 xvd+xWME6doh0vOUbSpd2fUEKq2HCPBYRGImpwS+XUlTJYup1HyZXt98bZCOmJcGtT
+	 vxFN5/0TRLTmA==
+Date: Mon, 2 Feb 2026 14:36:57 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@lst.de, tytso@mit.edu,
+	willy@infradead.org, jack@suse.cz, josef@toxicpanda.com,
+	sandeen@sandeen.net, rgoldwyn@suse.com, xiang@kernel.org,
+	dsterba@suse.com, pali@kernel.org, ebiggers@kernel.org,
+	neil@brown.name, amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, iamjoonsoo.kim@lge.com,
+	cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com
+Subject: Re: [PATCH v6 03/16] fs: add generic FS_IOC_SHUTDOWN definitions
+Message-ID: <20260202223657.GB1535390@frogsfrogsfrogs>
+References: <20260202220202.10907-1-linkinjeon@kernel.org>
+ <20260202220202.10907-4-linkinjeon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,142 +66,100 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260202211423.GB4838@quark>
+In-Reply-To: <20260202220202.10907-4-linkinjeon@kernel.org>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76114-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76113-lists,linux-fsdevel=lfdr.de];
-	RCPT_COUNT_TWELVE(0.00)[17];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,lst.de,mit.edu,infradead.org,suse.cz,toxicpanda.com,sandeen.net,suse.com,brown.name,gmail.com,vger.kernel.org,lge.com];
+	RCPT_COUNT_TWELVE(0.00)[22];
 	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[ebiggers@kernel.org,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 5D0E5D2606
+X-Rspamd-Queue-Id: EF521D262F
 X-Rspamd-Action: no action
 
-On Mon, Feb 02, 2026 at 01:14:23PM -0800, Eric Biggers wrote:
-> On Mon, Feb 02, 2026 at 07:06:29AM +0100, Christoph Hellwig wrote:
-> > Hi all,
-> > 
-> > this series has a hodge podge of fsverity enhances that I looked into as
-> > part of the review of the xfs fsverity support series.
-> > 
-> > The first part optimizes the fsverity read path by kicking off readahead
-> > for the fsverity hashes from the data read submission context, which in my
-> > simply testing showed huge benefits for sequential reads using dd.
-> > I haven't been able to get fio to run on a preallocated fio file, but
-> > I expect random read benefits would be significantly better than that
-> > still.
-> > 
-> > The second part avoids the need for a pointer in every inode for fsverity
-> > and instead uses a rhashtable lookup, which is done once per read_folio
-> > or ->readahead invocation plus for btrfs only for each bio completion.
-> > Right now this does not increse the number of inodes in
-> > each slab, but for ext4 we are getting very close to that (within
-> > 16 bytes by my count).
-> > 
-> > Changes since v5:
-> >  - drop already merged patches
-> >  - fix a bisection hazard for non-ENOENT error returns from
-> >    generic_read_merkle_tree_page
-> >  - don't recurse on invalidate_lock
-> >  - refactor page_cache_ra_unbounded locking to support the above
-> >  - refactor ext4 and f2fs fsverity readahead to remove the need for the
-> >    first_folio branch in the main readpages loop
+On Tue, Feb 03, 2026 at 07:01:49AM +0900, Namjae Jeon wrote:
+> Currently, several filesystems (e.g., xfs, ext4, btrfs) implement
+> a "shutdown" or "going down" ioctl to simulate filesystem force a shutdown.
+> While they often use the same underlying numeric value, the definition is
+> duplicated across filesystem headers or private definitions.
 > 
-> Applied to https://git.kernel.org/pub/scm/fs/fsverity/linux.git/log/?h=for-next
+> This patch adds generic definitions for FS_IOC_SHUTDOWN in uapi/linux/fs.h.
+> This allows new filesystems (like ntfs) to implement this feature using
+> a standard VFS definition and paves the way for existing filesystems
+> to unify their definitions later.
 > 
-> (Though it's getting late for v6.20 / v7.0.  So if there are any
-> additional issues reported, I may have to drop it.)
+> The flag names are standardized as FS_SHUTDOWN_* to be consistent with
+> the ioctl name, replacing the historical GOING_DOWN naming convention.
+> 
+> Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+> ---
+>  include/uapi/linux/fs.h | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+> index 66ca526cf786..32e24778c9e5 100644
+> --- a/include/uapi/linux/fs.h
+> +++ b/include/uapi/linux/fs.h
+> @@ -656,4 +656,16 @@ struct procmap_query {
+>  	__u64 build_id_addr;		/* in */
+>  };
+>  
+> +/*
+> + * Shutdown the filesystem.
+> + */
+> +#define FS_IOC_SHUTDOWN _IOR('X', 125, __u32)
+> +
+> +/*
+> + * Flags for FS_IOC_SHUTDOWN
+> + */
+> +#define FS_SHUTDOWN_FLAGS_DEFAULT	0x0
+> +#define FS_SHUTDOWN_FLAGS_LOGFLUSH	0x1	/* flush log but not data*/
+> +#define FS_SHUTDOWN_FLAGS_NOLOGFLUSH	0x2	/* don't flush log nor data */
 
-Unfortunately this silently conflicts with changes in the f2fs tree.
-Resolution doesn't look too bad, but we'll need to handle this.
-Christoph, Jaegeuk, and Chao, let me know if this looks okay:
+Hoisting this to reduce the copy-pasting already going on in filesystems
+sounds like a good idea to me:
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index d9085d1236d97..081c441c59e71 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2449,11 +2449,13 @@ static void ffs_detach_free(struct folio *folio)
- 	WARN_ON_ONCE(ffs->read_pages_pending != 0);
- 	kmem_cache_free(ffs_entry_slab, ffs);
- }
- 
- static int f2fs_read_data_large_folio(struct inode *inode,
--		struct readahead_control *rac, struct folio *folio)
-+				      struct fsverity_info *vi,
-+				      struct readahead_control *rac,
-+				      struct folio *folio)
- {
- 	struct bio *bio = NULL;
- 	sector_t last_block_in_bio = 0;
- 	struct f2fs_map_blocks map = {0, };
- 	pgoff_t index, offset, next_pgofs = 0;
-@@ -2519,13 +2521,12 @@ static int f2fs_read_data_large_folio(struct inode *inode,
- 				ret = -EFSCORRUPTED;
- 				goto err_out;
- 			}
- 		} else {
- 			folio_zero_range(folio, offset << PAGE_SHIFT, PAGE_SIZE);
--			if (f2fs_need_verity(inode, index) &&
--			    !fsverity_verify_page(folio_file_page(folio,
--								index))) {
-+			if (vi && !fsverity_verify_page(
-+					  vi, folio_file_page(folio, index))) {
- 				ret = -EIO;
- 				goto err_out;
- 			}
- 			continue;
- 		}
-@@ -2552,14 +2553,14 @@ static int f2fs_read_data_large_folio(struct inode *inode,
- submit_and_realloc:
- 			f2fs_submit_read_bio(F2FS_I_SB(inode), bio, DATA);
- 			bio = NULL;
- 		}
- 		if (bio == NULL)
--			bio = f2fs_grab_read_bio(inode, block_nr,
--					max_nr_pages,
--					f2fs_ra_op_flags(rac),
--					index, false);
-+			bio = f2fs_grab_read_bio(inode, vi, block_nr,
-+						 max_nr_pages,
-+						 f2fs_ra_op_flags(rac), index,
-+						 false);
- 
- 		/*
- 		 * If the page is under writeback, we need to wait for
- 		 * its completion to see the correct decrypted data.
- 		 */
-@@ -2627,11 +2628,11 @@ static int f2fs_mpage_readpages(struct inode *inode, struct fsverity_info *vi,
- 	struct address_space *mapping = rac ? rac->mapping : folio->mapping;
- 	unsigned max_nr_pages = nr_pages;
- 	int ret = 0;
- 
- 	if (mapping_large_folio_support(mapping))
--		return f2fs_read_data_large_folio(inode, rac, folio);
-+		return f2fs_read_data_large_folio(inode, vi, rac, folio);
- 
- #ifdef CONFIG_F2FS_FS_COMPRESSION
- 	if (f2fs_compressed_file(inode)) {
- 		index = rac ? readahead_index(rac) : folio->index;
- 		max_nr_pages = round_up(index + nr_pages, cc.cluster_size) -
+$ git grep '_IOR.*X.*125'
+fs/ntfs3/file.c:26:#define NTFS3_IOC_SHUTDOWN _IOR('X', 125, __u32)
+fs/smb/client/cifs_ioctl.h:117:#define CIFS_IOC_SHUTDOWN _IOR('X', 125, __u32)
+fs/xfs/libxfs/xfs_fs.h:1266:#define XFS_IOC_GOINGDOWN        _IOR ('X', 125, uint32_t)
+include/uapi/linux/btrfs.h:1230:#define BTRFS_IOC_SHUTDOWN      _IOR('X', 125, __u32)
+include/uapi/linux/exfat.h:15:#define EXFAT_IOC_SHUTDOWN _IOR('X', 125, __u32)
+include/uapi/linux/ext4.h:39:#define EXT4_IOC_SHUTDOWN _IOR('X', 125, __u32)
+include/uapi/linux/f2fs.h:53:#define F2FS_IOC_SHUTDOWN  _IOR('X', 125, __u32)   /* Shutdown */
+
+Christian: any chance we could get this api cleanup queued for 7.0 even
+though we're past -rc8?
+
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+
+--D
+
+> +
+>  #endif /* _UAPI_LINUX_FS_H */
+> -- 
+> 2.25.1
+> 
 
