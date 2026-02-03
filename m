@@ -1,160 +1,208 @@
-Return-Path: <linux-fsdevel+bounces-76161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id AKzoGh+ggWkoIAMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 08:13:35 +0100
+	id eAyZMvKggWkoIAMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 08:17:06 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A54ED598F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 08:13:34 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 495D5D5A37
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 08:17:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 8088B3017FE1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 07:12:06 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id D48313040696
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 07:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98898392810;
-	Tue,  3 Feb 2026 07:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8896520010C;
+	Tue,  3 Feb 2026 07:15:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dZ+sz8Cz"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZHGnFYrs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396423921F9;
-	Tue,  3 Feb 2026 07:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E502FB616
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 07:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770102711; cv=none; b=kI3flw9usneL+8vzKZNXBXfdMJa4YxNCEHL4sFKUNOo5d+oxO4pd9ZsggNf5eN/Ku9eg102X41siNE68igAQwwamWueCmZ2VSGmsgscyV8c8SFWsqk+d7x9Us2+6foNIQxPGDAlP3qnLwN3Qm4T4QOsTdsg2r9HHBhei2wIvaBc=
+	t=1770102948; cv=none; b=hKJciyaLmjkNUYNjl6D7ExOj4ATM8ynfu97FkueAUix6MmIEA82X0hBf3MaOnQ+QRfmTci47uS3FZQ4VrQqsV7ZI9RLdK1eEnU2BZWlCz2XT367t7qxZ11Q0pz6lYtBZsOpuGNZ/TWSLUR2AfPCO7+SwrtYbtLvd2FtbWV8w5GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770102711; c=relaxed/simple;
-	bh=Tg20fcLNMaoCzT6bisqT/GU9JY66d1uJBrhI2VyXOUg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ISf+nER1CFv+i75wrds4+RxsH6tbdjVA7v6ziu/ui1JE6yCNYNBjecweCKW64oz+4CblT5+cMzuwRDvcHFvjAsH7kFCMHTzBPOrcGfUK9Daopmv85HUAzheyK6xeLuyX6tjubKppgJ1886QVHhWpNgwm1nbbSLGw8RSDbFvYEhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dZ+sz8Cz; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1770102710; x=1801638710;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Tg20fcLNMaoCzT6bisqT/GU9JY66d1uJBrhI2VyXOUg=;
-  b=dZ+sz8CzpjR5abLdgUswDaYT7b99Pkeghl7dbQjgS27ZNoj19giJINac
-   wkjNIdgNlvu1Pibq2iMvKQKJVOCkbAVFgeqfxTfZnQMwbF2h7flmADLzG
-   wxs6ZfRse44ug1v3CRqxnxJ79jTNxMtLdvtvazjiW6zXUENsROtL+ziQe
-   TjelLysz8Er1xJpVwDSH3VusLcNc8u7BkTUa8cDvFGjiJsL1Kw3sSPLu2
-   NeNkfx6ivQQzX+TpiUwQmn5cs2mPg8GaQyF/ikgIUtHux1JiRunshj4Zz
-   3vxb66vSh8AGQMEnglnjIHkhkWIWJahfxmhrw+LMZ9xRVEOS/YPhp+882
-   w==;
-X-CSE-ConnectionGUID: SEZEDzM0SCuAnyuyTIWk2A==
-X-CSE-MsgGUID: YTO3cywHQYWZesUrgsGgRA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11690"; a="70991639"
-X-IronPort-AV: E=Sophos;i="6.21,270,1763452800"; 
-   d="scan'208";a="70991639"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2026 23:11:49 -0800
-X-CSE-ConnectionGUID: 3YTZ7BrnRSW1lPu5CbhUaw==
-X-CSE-MsgGUID: 6PERgo2rQkeGrLgSaXIB0w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,270,1763452800"; 
-   d="scan'208";a="213883170"
-Received: from igk-lkp-server01.igk.intel.com (HELO afc5bfd7f602) ([10.211.93.152])
-  by orviesa003.jf.intel.com with ESMTP; 02 Feb 2026 23:11:46 -0800
-Received: from kbuild by afc5bfd7f602 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vnAZc-000000003KX-061T;
-	Tue, 03 Feb 2026 07:11:44 +0000
-Date: Tue, 3 Feb 2026 08:11:17 +0100
-From: kernel test robot <lkp@intel.com>
-To: Benjamin Coddington <bcodding@hammerspace.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Rick Macklem <rick.macklem@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-nfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-crypto@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] NFSD: Sign filehandles
-Message-ID: <202602030854.mD7cfzBx-lkp@intel.com>
-References: <11253ead28024160aaf8abf5c234de6605cc93b5.1770046529.git.bcodding@hammerspace.com>
+	s=arc-20240116; t=1770102948; c=relaxed/simple;
+	bh=rrnfMF5Gw/03Xz2iJfcPcj7unPPA1LlzMAHjHX9k970=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=A97t1Vh1eri16JQBKNx/VTU1CJZcymarPsTt2d3E9t1JX99pkOd5DhVO/jyPV2UCg2aH5RwzAVLCpJIGl7HjQuuv7r6DSbxa2rQ78D7C1GQxklShgiEO0uJ3z/vQsXh5uJ4g0pR0hXLTKoaBeJ/o5M1kZxgj8t23tDjlro66Bak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZHGnFYrs; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20260203071543epoutp021587604e37bf21ca4b31c5f7f710db44~Qqz_irR8x0651606516epoutp02W
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 07:15:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20260203071543epoutp021587604e37bf21ca4b31c5f7f710db44~Qqz_irR8x0651606516epoutp02W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1770102943;
+	bh=mhDRh09aq7ene7b0Wx3I828jJ7FXb0oFahb4ybdLzdE=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=ZHGnFYrsEGHR5WEdM3oYqTBo+J7B82HitMUTi8WIwBcuUu/2n+wKFyM/+J/Vgez4B
+	 66099rLstqCeg5/X2je/TT2w1g9Gk6Ia8sspLmCVeunpHeDP9W4rXzJLW8hz9peKgJ
+	 2en0g7XO9jasqwnIEJ9osw+zD4IdJ0n47j1M+HK0=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20260203071542epcas5p16fdef2bcb44947af20950be109a442ad~Qqz91U7801323313233epcas5p10;
+	Tue,  3 Feb 2026 07:15:42 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.95]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4f4vs858Wdz3hhTF; Tue,  3 Feb
+	2026 07:15:40 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20260203071540epcas5p39a0e65b6e769f43b7ab430d99a160e6c~Qqz7mf75Z0178601786epcas5p3a;
+	Tue,  3 Feb 2026 07:15:40 +0000 (GMT)
+Received: from [107.111.86.57] (unknown [107.111.86.57]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20260203071535epsmtip1f2a061d1861720ddc1b1d166faad35eb~Qqz2_Weqx1731617316epsmtip1x;
+	Tue,  3 Feb 2026 07:15:34 +0000 (GMT)
+Message-ID: <4a795b10-95ed-4bba-90c8-9fee57454948@samsung.com>
+Date: Tue, 3 Feb 2026 12:45:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <11253ead28024160aaf8abf5c234de6605cc93b5.1770046529.git.bcodding@hammerspace.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/6] xfs: add helpers to pack AG prediction info for
+ per-folio tracking
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	willy@infradead.org, mcgrof@kernel.org, clm@meta.com, david@fromorbit.com,
+	amir73il@gmail.com, axboe@kernel.dk, hch@lst.de, ritesh.list@gmail.com,
+	dave@stgolabs.net, cem@kernel.org, wangyufei@vivo.com,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-xfs@vger.kernel.org, gost.dev@samsung.com, anuj20.g@samsung.com,
+	vishak.g@samsung.com, joshi.k@samsung.com
+Content-Language: en-US
+From: Kundan Kumar <kundan.kumar@samsung.com>
+In-Reply-To: <20260129004548.GB7712@frogsfrogsfrogs>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20260203071540epcas5p39a0e65b6e769f43b7ab430d99a160e6c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20260116101245epcas5p30269c6aa35784db67e6d6ca800a683a7
+References: <20260116100818.7576-1-kundan.kumar@samsung.com>
+	<CGME20260116101245epcas5p30269c6aa35784db67e6d6ca800a683a7@epcas5p3.samsung.com>
+	<20260116100818.7576-3-kundan.kumar@samsung.com>
+	<20260129004548.GB7712@frogsfrogsfrogs>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.34 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
-	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[samsung.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[samsung.com:s=mail20170921];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76161-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_TO(0.00)[hammerspace.com,oracle.com,kernel.org,brown.name,gmail.com];
-	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,infradead.org,meta.com,fromorbit.com,gmail.com,kernel.dk,lst.de,stgolabs.net,vivo.com,vger.kernel.org,kvack.org,samsung.com];
+	TAGGED_FROM(0.00)[bounces-76162-lists,linux-fsdevel=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,samsung.com:email,samsung.com:dkim,samsung.com:mid];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[samsung.com:+];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[kundan.kumar@samsung.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[lkp@intel.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[intel.com:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[01.org:url,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 9A54ED598F
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_SEVEN(0.00)[8]
+X-Rspamd-Queue-Id: 495D5D5A37
 X-Rspamd-Action: no action
 
-Hi Benjamin,
+On 1/29/2026 6:15 AM, Darrick J. Wong wrote:
+> On Fri, Jan 16, 2026 at 03:38:14PM +0530, Kundan Kumar wrote:
+>> Introduce helper routines to pack and unpack AG prediction metadata
+>> for folios. This provides a compact and self-contained representation
+>> for AG tracking.
+>>
+>> The packed layout uses:
+>>   - bit 31	: valid
+>>   - bit 24-30	: iomap type
+>>   - bit 0-23	: AG number
+> 
+> There are only 5 iomap types, why do you need 7 bits for that?
+> 
+> Also, can you store more bits on a 64-bit system to avoid truncating the
+> AG number?
+> 
+> --D
 
-kernel test robot noticed the following build warnings:
+I’ll reduce the type field to 3 bits (8 values).
 
-[auto build test WARNING on dabff11003f9aaf293bd8f907a62f3366bd5e65f]
+For the AG number, I can drop the artificial 24-bit cap by packing into 
+an unsigned long and storing it via xa_mk_value(), which provides ~60 
+bits on 64-bit systems and ~28 bits on 32-bit systems.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Benjamin-Coddington/NFSD-Add-a-key-for-signing-filehandles/20260203-002703
-base:   dabff11003f9aaf293bd8f907a62f3366bd5e65f
-patch link:    https://lore.kernel.org/r/11253ead28024160aaf8abf5c234de6605cc93b5.1770046529.git.bcodding%40hammerspace.com
-patch subject: [PATCH v3 3/3] NFSD: Sign filehandles
-reproduce: (https://download.01.org/0day-ci/archive/20260203/202602030854.mD7cfzBx-lkp@intel.com/reproduce)
+> 
+>> Signed-off-by: Kundan Kumar <kundan.kumar@samsung.com>
+>> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+>> ---
+>>   fs/xfs/xfs_iomap.h | 31 +++++++++++++++++++++++++++++++
+>>   1 file changed, 31 insertions(+)
+>>
+>> diff --git a/fs/xfs/xfs_iomap.h b/fs/xfs/xfs_iomap.h
+>> index ebcce7d49446..eaf4513f6759 100644
+>> --- a/fs/xfs/xfs_iomap.h
+>> +++ b/fs/xfs/xfs_iomap.h
+>> @@ -12,6 +12,37 @@ struct xfs_inode;
+>>   struct xfs_bmbt_irec;
+>>   struct xfs_zone_alloc_ctx;
+>>   
+>> +/* pack prediction in a u32 stored in xarray */
+>> +#define XFS_AGP_VALID_SHIFT 31
+>> +#define XFS_AGP_TYPE_SHIFT 24
+>> +#define XFS_AGP_TYPE_MASK 0x7fu
+>> +#define XFS_AGP_AGNO_MASK 0x00ffffffu
+>> +
+>> +static inline u32 xfs_agp_pack(u32 agno, u8 iomap_type, bool valid)
+>> +{
+>> +	u32 v = agno & XFS_AGP_AGNO_MASK;
+>> +
+>> +	v |= ((u32)iomap_type & XFS_AGP_TYPE_MASK) << XFS_AGP_TYPE_SHIFT;
+>> +	if (valid)
+>> +		v |= (1u << XFS_AGP_VALID_SHIFT);
+>> +	return v;
+>> +}
+>> +
+>> +static inline bool xfs_agp_valid(u32 v)
+>> +{
+>> +	return v >> XFS_AGP_VALID_SHIFT;
+>> +}
+>> +
+>> +static inline u32 xfs_agp_agno(u32 v)
+>> +{
+>> +	return v & XFS_AGP_AGNO_MASK;
+>> +}
+>> +
+>> +static inline u8 xfs_agp_type(u32 v)
+>> +{
+>> +	return (u8)((v >> XFS_AGP_TYPE_SHIFT) & XFS_AGP_TYPE_MASK);
+>> +}
+>> +
+>>   int xfs_iomap_write_direct(struct xfs_inode *ip, xfs_fileoff_t offset_fsb,
+>>   		xfs_fileoff_t count_fsb, unsigned int flags,
+>>   		struct xfs_bmbt_irec *imap, u64 *sequence);
+>> -- 
+>> 2.25.1
+>>
+>>
+> 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202602030854.mD7cfzBx-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   ERROR: Cannot find file ./include/linux/jbd2.h
-   ERROR: Cannot find file ./include/linux/jbd2.h
-   WARNING: No kernel-doc for file ./include/linux/jbd2.h
-   ERROR: Cannot find file ./include/linux/netfs.h
-   WARNING: No kernel-doc for file ./include/linux/netfs.h
->> Documentation/filesystems/nfs/exporting.rst:264: WARNING: Title underline too short.
-
-
-vim +264 Documentation/filesystems/nfs/exporting.rst
-
-   262	
-   263	Configuration
- > 264	~~~~~~~~~~~~
-   265	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
