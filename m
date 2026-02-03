@@ -1,67 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-76163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76164-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id kPJyMuihgWmJIAMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 08:21:12 +0100
+	id GJZ5LbSjgWnuIAMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76164-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 08:28:52 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 055BFD5A7D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 08:21:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3984D5B21
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 08:28:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id D668030028EA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 07:21:08 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 6C3433003BE4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 07:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7D13921F6;
-	Tue,  3 Feb 2026 07:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C873921C0;
+	Tue,  3 Feb 2026 07:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FtDqY0jO"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WX4Yqe79"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B1338F22E
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 07:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49234392814
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 07:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770103267; cv=none; b=VBq9tUUC4JKu1R/PvRbWL9D3zKo9rEP8BzMQ6qhM5fDiAM0N3OuSXHmLRAD2AkJTXVOvvOU4o0HhcEr4Sj12FFBCTu0a05isl2hlgzBkTALBGjdlfVDN7lREy4UnJ1VrY4zAOtxXQ5InHDivqXADx8Nry5+MiNFFVDTpZ8+tfeA=
+	t=1770103726; cv=none; b=YgmEhmk1PSurg1HR8i9+++Eo4a4wqoGxgl2j4eeh2N6WXpldVCtnXJlhJfLtfPrjGLFvX6i5mCSaVDar0MsXDnw1MJgW/R7yln0UjGQ3C4k3loHwu8daapncdDtla2H9YjVN4VM4KQD4XozPYYV3cxHy7J8jC/iU+NOGz9RhcPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770103267; c=relaxed/simple;
-	bh=uKcHvwJ2vE/MavK0G4hw29ISn3VqewE5bb6skSgnXKM=;
+	s=arc-20240116; t=1770103726; c=relaxed/simple;
+	bh=bbNZ7NIwDBvrQMoRulPfQNw2JKiEB5LPYaqB36YjD/w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=GI0ZOktWD5VBPcqf+XQLya42r0YL9HyoBXUTSvwNNfhWni8I4Rfp73gIHfOz1qL1kESvXNJuqpL9QYzlap2tx6hn+Oipr24kGSd1ll1a14DGXwhNvr2erWTyiU/wUBhO6ah9x71xBHRm8MWb885dSHOW+3S8qqCsZhblLwJGvak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FtDqY0jO; arc=none smtp.client-ip=203.254.224.25
+	 Content-Type:References; b=A1umVq8FTJ9LWv+2moSdKF46QNSI0FiwnqgjeZLebvIcS9miyARi6gjhsRz1lgIX/PLypHNE6BIO6IXAbi0Pz+imJUeeKhmQ/VlFiUI9ubcQLTwnh/+YX/bYhPnRDzuSVazCFLfacCuWv6Z1AWGLFi9aLh+P1vL+wjBCwiGtW7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=WX4Yqe79; arc=none smtp.client-ip=203.254.224.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20260203072102epoutp0290d1f712f407983a450612a87006aa9b~Qq4oGPJ5C1237512375epoutp02G
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 07:21:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20260203072102epoutp0290d1f712f407983a450612a87006aa9b~Qq4oGPJ5C1237512375epoutp02G
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20260203072841epoutp02d4eb7cc8b23c81d93b02c99f1033c349~Qq-THybVm2142921429epoutp02B
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 07:28:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20260203072841epoutp02d4eb7cc8b23c81d93b02c99f1033c349~Qq-THybVm2142921429epoutp02B
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1770103262;
-	bh=fU5UyW4TQBK4QZd2CbsYlFx1O86s7n1w5wLjdGsNZ+A=;
+	s=mail20170921; t=1770103721;
+	bh=hVnXV5I1ungw4oMzJjmOhnnPWVP5XkxXpd/tF3zKk2U=;
 	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=FtDqY0jO+eLa9u3h4UKS4StbEmZBUfqc82VxuvSvynZ87jXBtdJdPE0cdFrSNgzuL
-	 +enY5i3DeVdavugczdsrGAGQTyJ43A/YArU8TGkKv/icsvI1Yq/CFk11BBVE/Vs9ka
-	 1oPd9b94SHLzqaVX5Vkx084Q68WSxqOTpLbSuXNo=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20260203072102epcas5p1c5d76f538d2ab9b98fc1da3fc8f740ca~Qq4nc4qhl2896128961epcas5p11;
-	Tue,  3 Feb 2026 07:21:02 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.90]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4f4vzJ60CMz6B9mX; Tue,  3 Feb
-	2026 07:21:00 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	b=WX4Yqe79e+sqXjef+Sh+x/yUXP/GYVAitaXMBt05wbkhGni2dyzuxqIa/b+Io0X8l
+	 4BBr/zf2CGXlQqXqaA3y50iKZQwJRI9GQiq8wMipWYgdmHFIKDsWxMR3YfDyxKSNx4
+	 He9vfRFZhbgXyq+GLOz4Exfvzxo9R9auvz98CR1U=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20260203072840epcas5p3b5d281879db8a64669f9c7123300df04~Qq-SYfO8L0974709747epcas5p34;
+	Tue,  3 Feb 2026 07:28:40 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.92]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4f4w872S54z2SSKb; Tue,  3 Feb
+	2026 07:28:39 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
 	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260203072100epcas5p1a872be2e07362e5a2206231d7bf44630~Qq4lnf84l1044110441epcas5p1U;
-	Tue,  3 Feb 2026 07:21:00 +0000 (GMT)
+	20260203072838epcas5p1076f207b2f19cada65df4a04ead3408e~Qq-QP4EUR2252922529epcas5p1l;
+	Tue,  3 Feb 2026 07:28:38 +0000 (GMT)
 Received: from [107.111.86.57] (unknown [107.111.86.57]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20260203072054epsmtip25565e34a3716ee5a6822dcc5c6176bb6~Qq4gwBjnd2486424864epsmtip2i;
-	Tue,  3 Feb 2026 07:20:54 +0000 (GMT)
-Message-ID: <2c485586-83c9-4697-91fc-7b0cee697704@samsung.com>
-Date: Tue, 3 Feb 2026 12:50:53 +0530
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20260203072835epsmtip1689fa13a25b0afd7d679874f42ec2e2e~Qq-Ndf7TL2522925229epsmtip1U;
+	Tue,  3 Feb 2026 07:28:35 +0000 (GMT)
+Message-ID: <7dc267e7-b6e0-4be2-a60e-9d90dcf472eb@samsung.com>
+Date: Tue, 3 Feb 2026 12:58:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,8 +69,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/6] xfs: add per-inode AG prediction map and
- dirty-AG bitmap
+Subject: Re: [PATCH v3 4/6] xfs: tag folios with AG number during buffered
+ write via iomap attach hook
 Content-Language: en-US
 To: "Darrick J. Wong" <djwong@kernel.org>
 Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
@@ -81,19 +81,19 @@ Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
 	linux-xfs@vger.kernel.org, gost.dev@samsung.com, anuj20.g@samsung.com,
 	vishak.g@samsung.com, joshi.k@samsung.com
 From: Kundan Kumar <kundan.kumar@samsung.com>
-In-Reply-To: <20260129004404.GA7712@frogsfrogsfrogs>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20260203072100epcas5p1a872be2e07362e5a2206231d7bf44630
+In-Reply-To: <20260129004745.GC7712@frogsfrogsfrogs>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20260203072838epcas5p1076f207b2f19cada65df4a04ead3408e
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 cpgsPolicy: CPGSC10-542,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20260116101251epcas5p1cf5b48f2efb14fe4387be3053b3c3ebc
+X-CMS-RootMailID: 20260116101256epcas5p2d6125a6bcad78c33f737fdc3484aca79
 References: <20260116100818.7576-1-kundan.kumar@samsung.com>
-	<CGME20260116101251epcas5p1cf5b48f2efb14fe4387be3053b3c3ebc@epcas5p1.samsung.com>
-	<20260116100818.7576-4-kundan.kumar@samsung.com>
-	<20260129004404.GA7712@frogsfrogsfrogs>
+	<CGME20260116101256epcas5p2d6125a6bcad78c33f737fdc3484aca79@epcas5p2.samsung.com>
+	<20260116100818.7576-5-kundan.kumar@samsung.com>
+	<20260129004745.GC7712@frogsfrogsfrogs>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
@@ -105,8 +105,8 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,infradead.org,meta.com,fromorbit.com,gmail.com,kernel.dk,lst.de,stgolabs.net,vivo.com,vger.kernel.org,kvack.org,samsung.com];
-	TAGGED_FROM(0.00)[bounces-76163-lists,linux-fsdevel=lfdr.de];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,samsung.com:email,samsung.com:dkim,samsung.com:mid];
+	TAGGED_FROM(0.00)[bounces-76164-lists,linux-fsdevel=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[samsung.com:email,samsung.com:dkim,samsung.com:mid,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
 	RCPT_COUNT_TWELVE(0.00)[22];
@@ -123,136 +123,181 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	RCVD_COUNT_SEVEN(0.00)[8]
-X-Rspamd-Queue-Id: 055BFD5A7D
+X-Rspamd-Queue-Id: E3984D5B21
 X-Rspamd-Action: no action
 
-On 1/29/2026 6:14 AM, Darrick J. Wong wrote:
-> On Fri, Jan 16, 2026 at 03:38:15PM +0530, Kundan Kumar wrote:
->> Add per-inode structures to track predicted AGs of dirty folios using
->> an xarray and bitmap. This enables efficient identification of AGs
->> involved in writeback.
+On 1/29/2026 6:17 AM, Darrick J. Wong wrote:
+> On Fri, Jan 16, 2026 at 03:38:16PM +0530, Kundan Kumar wrote:
+>> Use the iomap attach hook to tag folios with their predicted
+>> allocation group at write time. Mapped extents derive AG directly;
+>> delalloc and hole cases use a lightweight predictor.
 >>
 >> Signed-off-by: Kundan Kumar <kundan.kumar@samsung.com>
 >> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
 >> ---
->>   fs/xfs/xfs_icache.c | 27 +++++++++++++++++++++++++++
->>   fs/xfs/xfs_inode.h  |  5 +++++
->>   2 files changed, 32 insertions(+)
+>>   fs/xfs/xfs_iomap.c | 114 +++++++++++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 114 insertions(+)
 >>
->> diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
->> index e44040206851..f97aa6d66271 100644
->> --- a/fs/xfs/xfs_icache.c
->> +++ b/fs/xfs/xfs_icache.c
->> @@ -80,6 +80,25 @@ static inline xa_mark_t ici_tag_to_mark(unsigned int tag)
->>   	return XFS_PERAG_BLOCKGC_MARK;
+>> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+>> index 490e12cb99be..3c927ce118fe 100644
+>> --- a/fs/xfs/xfs_iomap.c
+>> +++ b/fs/xfs/xfs_iomap.c
+>> @@ -12,6 +12,9 @@
+>>   #include "xfs_trans_resv.h"
+>>   #include "xfs_mount.h"
+>>   #include "xfs_inode.h"
+>> +#include "xfs_alloc.h"
+>> +#include "xfs_ag.h"
+>> +#include "xfs_ag_resv.h"
+>>   #include "xfs_btree.h"
+>>   #include "xfs_bmap_btree.h"
+>>   #include "xfs_bmap.h"
+>> @@ -92,8 +95,119 @@ xfs_iomap_valid(
+>>   	return true;
 >>   }
 >>   
->> +static int xfs_inode_init_ag_bitmap(struct xfs_inode *ip)
+>> +static xfs_agnumber_t
+>> +xfs_predict_delalloc_agno(const struct xfs_inode *ip, loff_t pos, loff_t len)
 >> +{
->> +	unsigned int bits = ip->i_mount->m_sb.sb_agcount;
->> +	unsigned int nlongs;
+>> +	struct xfs_mount *mp = ip->i_mount;
+>> +	xfs_agnumber_t start_agno, agno, best_agno;
+>> +	struct xfs_perag *pag;
 >> +
->> +	xa_init_flags(&ip->i_ag_pmap, XA_FLAGS_LOCK_IRQ);
-> 
-> This increases the size of struct xfs_inode by 40 bytes...
-> 
-
-I’ll make this lazy and sparse: move AG writeback state behind a pointer
-allocated on first use, and replace the bitmap with a sparse dirty-AG
-set(xarray keyed by agno) so memory scales with AGs actually touched by
-the inode.
-
->> +	ip->i_ag_dirty_bitmap = NULL;
->> +	ip->i_ag_dirty_bits = bits;
+>> +	xfs_extlen_t free, resv, avail;
+>> +	xfs_extlen_t need_fsbs, min_free_fsbs;
+>> +	xfs_extlen_t best_free = 0;
+>> +	xfs_agnumber_t agcount = mp->m_sb.sb_agcount;
 >> +
->> +	if (!bits)
->> +		return 0;
+>> +	/* RT inodes allocate from the realtime volume */
+>> +	if (XFS_IS_REALTIME_INODE(ip))
+>> +		return XFS_INO_TO_AGNO(mp, ip->i_ino);
 >> +
->> +	nlongs = BITS_TO_LONGS(bits);
->> +	ip->i_ag_dirty_bitmap = kcalloc(nlongs, sizeof(unsigned long),
->> +					GFP_NOFS);
-> 
-> ...and there could be hundreds or thousands of AGs for each filesystem.
-> That's a lot of kernel memory to handle this prediction stuff, and I"m
-> not even sure what ag_dirty_bitmap does yet.
-> 
-
-The bit for an AG is set in ag_dirty_bitmap at write time. During
-writeback, we check which AG bits are set, wake only those AG-specific
-workers, and each worker scans the page cache, filters folios tagged for
-its AG, and submits the I/O.
-
+>> +	start_agno =  XFS_INO_TO_AGNO(mp, ip->i_ino);
 >> +
->> +	return ip->i_ag_dirty_bitmap ? 0 : -ENOMEM;
+>> +	/*
+>> +	 * size-based minimum free requirement.
+>> +	 * Convert bytes to fsbs and require some slack.
+>> +	 */
+>> +	need_fsbs = XFS_B_TO_FSB(mp, (xfs_fsize_t)len);
+>> +	min_free_fsbs = need_fsbs + max_t(xfs_extlen_t, need_fsbs >> 2, 128);
+>> +
+>> +	/*
+>> +	 * scan AGs starting at start_agno and wrapping.
+>> +	 * Pick the first AG that meets min_free_fsbs after reservations.
+>> +	 * Keep a "best" fallback = maximum (free - resv).
+>> +	 */
+>> +	best_agno = start_agno;
+>> +
+>> +	for (xfs_agnumber_t i = 0; i < agcount; i++) {
+>> +		agno = (start_agno + i) % agcount;
+>> +		pag = xfs_perag_get(mp, agno);
+>> +
+>> +		if (!xfs_perag_initialised_agf(pag))
+>> +			goto next;
+>> +
+>> +		free = READ_ONCE(pag->pagf_freeblks);
+>> +		resv = xfs_ag_resv_needed(pag, XFS_AG_RESV_NONE);
+>> +
+>> +		if (free <= resv)
+>> +			goto next;
+>> +
+>> +		avail = free - resv;
+>> +
+>> +		if (avail >= min_free_fsbs) {
+>> +			xfs_perag_put(pag);
+>> +			return agno;
+>> +		}
+>> +
+>> +		if (avail > best_free) {
+>> +			best_free = avail;
+>> +			best_agno = agno;
+>> +		}
+>> +next:
+>> +		xfs_perag_put(pag);
+>> +	}
+>> +
+>> +	return best_agno;
 >> +}
 >> +
->>   /*
->>    * Allocate and initialise an xfs_inode.
->>    */
->> @@ -131,6 +150,8 @@ xfs_inode_alloc(
->>   	ip->i_next_unlinked = NULLAGINO;
->>   	ip->i_prev_unlinked = 0;
->>   
->> +	xfs_inode_init_ag_bitmap(ip);
+>> +static inline xfs_agnumber_t xfs_ag_from_iomap(const struct xfs_mount *mp,
+>> +		const struct iomap *iomap,
+>> +		const struct xfs_inode *ip, loff_t pos, size_t len)
+>> +{
+>> +	if (iomap->type == IOMAP_MAPPED || iomap->type == IOMAP_UNWRITTEN) {
+>> +		/* iomap->addr is byte address on device for buffered I/O */
+>> +		xfs_fsblock_t fsb = XFS_BB_TO_FSBT(mp, BTOBB(iomap->addr));
+>> +
+>> +		return XFS_FSB_TO_AGNO(mp, fsb);
+>> +	} else if (iomap->type == IOMAP_HOLE || iomap->type == IOMAP_DELALLOC) {
+>> +		return xfs_predict_delalloc_agno(ip, pos, len);
 > 
-> Unchecked return value???
+> Is it worth doing an AG scan to guess where the allocation might come
+> from?  The predictions could turn out to be wrong by virtue of other
+> delalloc regions being written back between the time that xfs_agp_set is
+> called, and the actual bmapi_write call.
+> 
 
-Will correct in next version
+The delalloc prediction works well in the common cases: (1) when an AG 
+has sufficient free space and allocations stay within it, and (2) when 
+an AG becomes full and allocation naturally moves to the next suitable AG.
 
-> 
+The only case where the prediction can be wrong is when an AG is in the
+process of being exhausted concurrently with writeback, so allocation
+shifts between the time we tag the folio and the actual bmapi_write.
+My understanding is that window is narrow, and only a small fraction of 
+IOs would be misrouted.
+
+>> +	}
 >> +
->>   	return ip;
->>   }
->>   
->> @@ -194,6 +215,12 @@ xfs_inode_free(
->>   	ip->i_ino = 0;
->>   	spin_unlock(&ip->i_flags_lock);
->>   
->> +	/* free xarray contents (values are immediate packed ints) */
->> +	xa_destroy(&ip->i_ag_pmap);
->> +	kfree(ip->i_ag_dirty_bitmap);
->> +	ip->i_ag_dirty_bitmap = NULL;
->> +	ip->i_ag_dirty_bits = 0;
+>> +	return XFS_INO_TO_AGNO(mp, ip->i_ino);
+>> +}
 >> +
->>   	__xfs_inode_free(ip);
->>   }
->>   
->> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
->> index bd6d33557194..dee449168605 100644
->> --- a/fs/xfs/xfs_inode.h
->> +++ b/fs/xfs/xfs_inode.h
->> @@ -99,6 +99,11 @@ typedef struct xfs_inode {
->>   	spinlock_t		i_ioend_lock;
->>   	struct work_struct	i_ioend_work;
->>   	struct list_head	i_ioend_list;
+>> +static void xfs_agp_set(struct xfs_inode *ip, pgoff_t index,
+>> +			xfs_agnumber_t agno, u8 type)
+>> +{
+>> +	u32 packed = xfs_agp_pack((u32)agno, type, true);
 >> +
->> +	/* AG prediction map: pgoff_t -> packed u32 */
+>> +	/* store as immediate value */
+>> +	xa_store(&ip->i_ag_pmap, index, xa_mk_value(packed), GFP_NOFS);
+>> +
+>> +	/* Mark this AG as having potential dirty work */
+>> +	if (ip->i_ag_dirty_bitmap && (u32)agno < ip->i_ag_dirty_bits)
+>> +		set_bit((u32)agno, ip->i_ag_dirty_bitmap);
+>> +}
+>> +
+>> +static void
+>> +xfs_iomap_tag_folio(const struct iomap *iomap, struct folio *folio,
+>> +		loff_t pos, size_t len)
+>> +{
+>> +	struct inode *inode;
+>> +	struct xfs_inode *ip;
+>> +	struct xfs_mount *mp;
+>> +	xfs_agnumber_t agno;
+>> +
+>> +	inode = folio_mapping(folio)->host;
+>> +	ip = XFS_I(inode);
+>> +	mp = ip->i_mount;
+>> +
+>> +	agno = xfs_ag_from_iomap(mp, iomap, ip, pos, len);
+>> +
+>> +	xfs_agp_set(ip, folio->index, agno, (u8)iomap->type);
 > 
-> What about blocksize < pagesize filesystems?  Which packed agno do you
-> associate with the pgoff_t?
-> 
-> Also, do you have an xarray entry for each pgoff_t in a large folio?
+> Hrm, so no, the ag_pmap only caches the ag number for the index of a
+> folio, even if it spans many many blocks.
 > 
 > --D
 > 
 
-pgoff_t here is the pagecache index (folio->index), i.e. file offset in
-PAGE_SIZE units, not a filesystem block index. So blocksize < PAGE_SIZE
-doesn’t change the association, the packed agno is attached to the folio
-at that pagecache index.
+Thanks for pointing out, I will rework to handle this case.
 
-We store one xarray entry per folio index (the start of the folio). We 
-do not create entries for each base-page inside a large folio. If a 
-large folio could span multiple extents/AGs, we’ll treat the hint as 
-advisory and tag it invalid (fallback to normal writeback routing) 
-rather than trying to encode per-subpage AGs.
-
->> +	struct xarray           i_ag_pmap;
->> +	unsigned long           *i_ag_dirty_bitmap;
->> +	unsigned int            i_ag_dirty_bits;
->>   } xfs_inode_t;
+>> +}
+>> +
+>>   const struct iomap_write_ops xfs_iomap_write_ops = {
+>>   	.iomap_valid		= xfs_iomap_valid,
+>> +	.tag_folio		= xfs_iomap_tag_folio,
+>>   };
 >>   
->>   static inline bool xfs_inode_on_unlinked_list(const struct xfs_inode *ip)
+>>   int
 >> -- 
 >> 2.25.1
 >>
