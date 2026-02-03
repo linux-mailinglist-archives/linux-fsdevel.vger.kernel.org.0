@@ -1,273 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-76173-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76174-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id SJnII569gWm7JAMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76173-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 10:19:26 +0100
+	id qErQGa69gWm7JAMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76174-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 10:19:42 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38CA9D6B6B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 10:19:26 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92D1DD6B81
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 10:19:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E020C305EF52
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 09:18:20 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id E2576300729F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 09:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B7A396D1B;
-	Tue,  3 Feb 2026 09:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C461E396B86;
+	Tue,  3 Feb 2026 09:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rbry8uo1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VTZ97+wf";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rbry8uo1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VTZ97+wf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48AC730CD95;
-	Tue,  3 Feb 2026 09:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E88D2EC08C
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 09:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770110300; cv=none; b=kWv2PS/L01OUJedw6pCVGyv3ubrlO0JokDRt9CO9z/LYAPwrWkk+X71ZLGBVYvApXc++mTppgQRrN7e99P8hvO0Ax3VzY0wWs1pOxfhxilW22wFm+lLzcdWscJrLaJmm5d9pzJ+wUqozbp2Ui8snnlvFNtmDnwmBJgL/3v3OZ7M=
+	t=1770110374; cv=none; b=oz3hJM45cboYs+tUOfMWdN+Wbh1P4phqWVJkUk5BEdsEybk/C/Rp2WzAJzcRP0ufI7e5GFDqzBOgU1+qm+zeQfrYSr3hWXeWI+DsUHMD+e4uSHAnT1iJ2eFNiSgMoqRU9bFVcHdSF6FfAWRC//lrLGRCa9Dh3VRuPegYnoVD+eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770110300; c=relaxed/simple;
-	bh=fVkwbUOOKlSgxGlwFPz9wKQ0vaYDWfgpQZ1O84RdCKw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ih4MCI7NJgZJ3KHqm72h6B5fRbmZDLrPUc7XFJKU2nwWdv1SX5QJu4FYDqnXzPVQNz85yOK0qTOSo8Q0q/W7Ks7TrDIXV7afBej8GLdX7XvOu/uFBWVxYl0fqHQProz3uBOVAqC200naXZ6RPXIcZBNRcA3OXFNyf0KWAmP7p5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.170])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4f4yZ70T8JzKHMjx;
-	Tue,  3 Feb 2026 17:17:51 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 8BBCA40539;
-	Tue,  3 Feb 2026 17:18:12 +0800 (CST)
-Received: from [10.174.178.152] (unknown [10.174.178.152])
-	by APP4 (Coremail) with SMTP id gCh0CgAHZ_dSvYFpxWVpGA--.22248S3;
-	Tue, 03 Feb 2026 17:18:12 +0800 (CST)
-Message-ID: <77c14b3e-33f9-4a00-83a4-0467f73a7625@huaweicloud.com>
-Date: Tue, 3 Feb 2026 17:18:10 +0800
+	s=arc-20240116; t=1770110374; c=relaxed/simple;
+	bh=3Or78jMj5Xlk/VTh3hSCWrSDHyPu3DJXz0lWNpB2qL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i0T34xGUQpZcf+9pufpw/DOBuSY8InRzeSHWiIsCt8raOm30WRPQC9yVcKLSOSFmteXyVfQVaogNupftoc8Lr/86HkihBjvfJYx4O6Smixw+6lIXky23QbUlhPW7RMVn43RWWKUEGlkgskS6RA0IvkXpDCesptma5hpcVR5DUY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rbry8uo1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VTZ97+wf; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rbry8uo1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VTZ97+wf; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4BA613E6C3;
+	Tue,  3 Feb 2026 09:19:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1770110371; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jaxu/aq7gvWt3kARxgGaAWQwBGrkn5SfTbbQgcomQxo=;
+	b=rbry8uo1Yj2v/I/EhivsTo25Y0Wv/V47CvTRLlwObItc9nKk86j1fvh/+eKw4weeAm6ye8
+	/B56BzDNnpcSZTL0Ynb5U48j9SMatKs9FR3CxFU+x9Pduj/pcHtKUNduEbcpR3BgbTJzWk
+	dZ2mHMmXCYpS7nmRdhcTVbeVwfx4WLI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1770110371;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jaxu/aq7gvWt3kARxgGaAWQwBGrkn5SfTbbQgcomQxo=;
+	b=VTZ97+wf2g1jq6uGx3O3w/Y6N4fk4elkhP1k/3DHec8bobiy1h5s2UdzSTY1ffXje91wx6
+	yRAdH9HZjVmqYoDA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1770110371; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jaxu/aq7gvWt3kARxgGaAWQwBGrkn5SfTbbQgcomQxo=;
+	b=rbry8uo1Yj2v/I/EhivsTo25Y0Wv/V47CvTRLlwObItc9nKk86j1fvh/+eKw4weeAm6ye8
+	/B56BzDNnpcSZTL0Ynb5U48j9SMatKs9FR3CxFU+x9Pduj/pcHtKUNduEbcpR3BgbTJzWk
+	dZ2mHMmXCYpS7nmRdhcTVbeVwfx4WLI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1770110371;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jaxu/aq7gvWt3kARxgGaAWQwBGrkn5SfTbbQgcomQxo=;
+	b=VTZ97+wf2g1jq6uGx3O3w/Y6N4fk4elkhP1k/3DHec8bobiy1h5s2UdzSTY1ffXje91wx6
+	yRAdH9HZjVmqYoDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 352833EA62;
+	Tue,  3 Feb 2026 09:19:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id QZ/zDKO9gWmTLgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 03 Feb 2026 09:19:31 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id E9D78A08F8; Tue,  3 Feb 2026 10:19:30 +0100 (CET)
+Date: Tue, 3 Feb 2026 10:19:30 +0100
+From: Jan Kara <jack@suse.cz>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	Joanne Koong <joannelkoong@gmail.com>, "Darrick J . Wong" <djwong@kernel.org>, 
+	John Groves <John@groves.net>, Bernd Schubert <bernd@bsbernd.com>, 
+	Luis Henriques <luis@igalia.com>, Horst Birthelmer <horst@birthelmer.de>, 
+	lsf-pc <lsf-pc@lists.linux-foundation.org>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Where is fuse going? API cleanup,
+ restructuring and more
+Message-ID: <janl2lzct3nz5zlbhlzaasfi7juy3qvajd2jd53qdcb23dbprd@hignhm2ig7s4>
+References: <CAJfpegtzYdy3fGGO5E1MU8n+u1j8WVc2eCoOQD_1qq0UV92wRw@mail.gmail.com>
+ <CAOQ4uxjEdJHjbfCFM364V=tBrEyczYvzo-b-Xo0UPOCA2cnPGQ@mail.gmail.com>
+ <CAJfpegvg=hqM1vMCyrb61VT6uA+4gdGwvqHe5Djg2RF+DTUMiw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next v2 00/22] ext4: use iomap for regular file's
- buffered I/O path
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- jack@suse.cz, ojaswin@linux.ibm.com, ritesh.list@gmail.com,
- djwong@kernel.org, Zhang Yi <yi.zhang@huawei.com>, yi.zhang@huaweicloud.com,
- yizhang089@gmail.com, libaokun1@huawei.com, yangerkun@huawei.com,
- yukuai@fnnas.com
-References: <20260203062523.3869120-1-yi.zhang@huawei.com>
- <aYGZB_hugPRXCiSI@infradead.org>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <aYGZB_hugPRXCiSI@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgAHZ_dSvYFpxWVpGA--.22248S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3GFW3Aw4kXw45tr4kKrWfXwb_yoW7ZF1kpF
-	Z8KFyftrn2gryjk3Z7Aa1Iqr40k3yrJFy3Gr1rKrs7urZ0gF1FyFWqqw1YgFyUGr1xCry2
-	vw4YvryIkFykZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9j14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
-	42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvf
-	C2KfnxnUUI43ZEXa7VUbmsjUUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegvg=hqM1vMCyrb61VT6uA+4gdGwvqHe5Djg2RF+DTUMiw@mail.gmail.com>
+X-Spam-Score: -3.80
+X-Spam-Level: 
+X-Spam-Flag: NO
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.04 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,kernel.org,groves.net,bsbernd.com,igalia.com,birthelmer.de,lists.linux-foundation.org];
+	DKIM_TRACE(0.00)[suse.cz:+];
 	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	TAGGED_FROM(0.00)[bounces-76173-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[huaweicloud.com];
+	DMARC_NA(0.00)[suse.cz];
+	TAGGED_FROM(0.00)[bounces-76174-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,linux.ibm.com,gmail.com,kernel.org,huawei.com,huaweicloud.com,fnnas.com];
+	RCVD_TLS_LAST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[yi.zhang@huaweicloud.com,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim];
+	RCPT_COUNT_SEVEN(0.00)[10];
 	NEURAL_HAM(-0.00)[-1.000];
-	MID_RHS_MATCH_FROM(0.00)[];
-	R_DKIM_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,huaweicloud.com:mid]
-X-Rspamd-Queue-Id: 38CA9D6B6B
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: 92D1DD6B81
 X-Rspamd-Action: no action
 
-Hi, Christoph!
-
-On 2/3/2026 2:43 PM, Christoph Hellwig wrote:
->> Original Cover (Updated):
+On Tue 03-02-26 08:55:26, Miklos Szeredi via Lsf-pc wrote:
+> On Mon, 2 Feb 2026 at 17:14, Amir Goldstein <amir73il@gmail.com> wrote:
+> > I think that at least one question of interest to the wider fs audience is
+> >
+> > Can any of the above improvements be used to help phase out some
+> > of the old under maintained fs and reduce the burden on vfs maintainers?
 > 
-> This really should always be first.  The updates are rather minor
-> compared to the overview that the cover letter provides.
-> 
->> Key notes on the iomap implementations in this series.
->>  - Don't use ordered data mode to prevent exposing stale data when
->>    performing append write and truncating down.
-> 
-> I can't parse this.
+> I think the major show stopper is that nobody is going to put a major
+> effort into porting unmaintained kernel filesystems to a different
+> framework.
 
-Thank you for looking into this series, and sorry for the lack of
-clarity. The reasons of these key notes have been described in
-detail in patch 12-13.
+There's some interest from people doing vfs maintenance work (as it has
+potential to save their work) and it is actually a reasonable task for
+someone wanting to get acquainted with filesystem development work. So I
+think there are chances of some progress. For example there was some
+interest in doing this for minix. Of course we'll be sure only when it
+happens :)
 
-This means that the ordered journal mode is no longer in ext4 used
-under the iomap infrastructure.  The main reason is that iomap
-processes each folio one by one during writeback. It first holds the
-folio lock and then starts a transaction to create the block mapping.
-If we still use the ordered mode, we need to perform writeback in
-the logging process, which may require initiating a new transaction,
-potentially leading to deadlock issues. In addition, ordered journal
-mode indeed has many synchronization dependencies, which increase
-the risk of deadlocks, and I believe this is one of the reasons why
-ext4_do_writepages() is implemented in such a complicated manner.
-Therefore, I think we need to give up using the ordered data mode.
+> Alternatively someone could implement a "VFS emulator" library.  But
+> keeping that in sync with the kernel, together with all the old fs
+> would be an even greater burden...
 
-Currently, there are three scenarios where the ordered mode is used:
-1) append write,
-2) partial block truncate down, and
-3) online defragmentation.
+Full VFS emulator would be too much I think. Maybe some helper library to
+ease some tasks would be useful but I think time for comming up with
+libraries is when someone commits to actually doing some conversion.
 
-For append write, we can always allocate unwritten blocks to avoid
-using the ordered journal mode. For partial block truncate down, we
-can explicitly perform a write-back. The third case is the only one
-that will be somewhat more complex. It needs to use the ordered mode
-to ensure the atomicity of data copying and extents exchange when
-exchanging extents and copying data between two files, preventing
-data loss. Considering performance, we cannot explicitly perform a
-writeback for each extent exchange. I have not yet thought of a
-simple way to handle this. This will require consideration of other
-solutions when supporting online defragmentation in the future.
+								Honza
 
-> 
->>  - Override dioread_nolock mount option, always allocate unwritten
->>    extents for new blocks.
-> 
-> Why do you override it?
-
-There are two reasons:
-
-The first one is the previously mentioned reason of not using
-ordered journal mode. To prevent exposing stale data during a power
-failure that occurs while performing append writes, unwritten
-extents are always requested for newly allocated blocks.
-
-The second one is to consider performance during writeback. When
-doing writeback, we should allocate blocks as long as possible when
-first calling ->writeback_range() based on the writeback length,
-rather than mapping each folio individually. Therefore, to avoid the
-situation where more blocks are allocated than actually written
-(which could cause fsck to complain), we cannot directly allocate
-written blocks before performing writeback.
-
-> 
->>  - When performing write back, don't use reserved journal handle and
->>    postponing updating i_disksize until I/O is done.
-> 
-> Again missing the why and the implications.
-
-The reserved journal handle is used to solve deadlock issues in
-transaction dependencies when writeback occurs in ordered journal
-mode. This mechanism is no longer necessary if the ordered mode is
-not used.
-
-> 
->>  buffered write
->>  ==============
->>
->>   buffer_head:
->>   bs      write cache    uncached write
->>   1k       423  MiB/s      36.3 MiB/s
->>   4k       1067 MiB/s      58.4 MiB/s
->>   64k      4321 MiB/s      869  MiB/s
->>   1M       4640 MiB/s      3158 MiB/s
->>   
->>   iomap:
->>   bs      write cache    uncached write
->>   1k       403  MiB/s      57   MiB/s
->>   4k       1093 MiB/s      61   MiB/s
->>   64k      6488 MiB/s      1206 MiB/s
->>   1M       7378 MiB/s      4818 MiB/s
-> 
-> This would read better if you actually compated buffered_head
-> vs iomap side by side.
-> 
-> What is the bs?  The read unit size?  I guess not the file system
-> block size as some of the values are too large for that.
-
-The 'bs' is the read/write unit size, and the fs block size is the
-default 4KB.
-
-> 
-> Looks like iomap is faster, often much faster except for the
-> 1k cached case, where it is slightly slower.  Do you have
-> any idea why?
-
-I observed the on-cpu flame graph. I think the main reason is the
-buffer_head loop path detects the folio and buffer_head status.
-It saves the uptodate flag in the buffer_head structure when the
-first 1KB write for each 4KB folio, it doesn't need to get blocks
-for the remaining three writes.  However, the iomap infrastructure
-always call ->iomap_begin() to acquire the mapping info for each
-1KB write.  Although the first call to ->iomap_begin() has already
-allocated the block extent, there are still some overheads due to
-synchronization operations such as locking when subsequent calls
-are made. The smaller the unit size, the greater the impact, and
-this will also have a greater impact on pure cache writes than on
-uncached writes.
-
-> 
->>  buffered read
->>  =============
->>
->>   buffer_head:
->>   bs      read hole   read cache      read data
->>   1k       635  MiB/s    661  MiB/s    605  MiB/s
->>   4k       1987 MiB/s    2128 MiB/s    1761 MiB/s
->>   64k      6068 MiB/s    9472 MiB/s    4475 MiB/s
->>   1M       5471 MiB/s    8657 MiB/s    4405 MiB/s
->>
->>   iomap:
->>   bs      read hole   read cache       read data
->>   1k       643  MiB/s    653  MiB/s    602  MiB/s
->>   4k       2075 MiB/s    2159 MiB/s    1716 MiB/s
->>   64k      6267 MiB/s    9545MiB/s     4451 MiB/s
->>   1M       6072 MiB/s    9191MiB/s     4467 MiB/s
-> 
-> What is read cache vs read data here?
-> 
-
-The 'read cache' means that preread is set to 1 during fio tests,
-causing it to read cached data. In contrast, the 'read data'
-preread is set to 0, so it always reads data directly from the
-disk.
-
-Thanks,
-Yi.
-
-
-> Otherwise same comments as for the write case.
-> 
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
