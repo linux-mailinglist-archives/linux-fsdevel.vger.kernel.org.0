@@ -1,45 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-76144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76137-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iO53L7CXgWl/HAMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 07:37:36 +0100
+	id aAPuI92WgWl/HAMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76137-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 07:34:05 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 409C9D5572
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 07:37:36 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A67CD54A3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 07:34:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 35C0E30358BB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 06:31:37 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 6E21A308775C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 06:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4724138B7D6;
-	Tue,  3 Feb 2026 06:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3494337F0F5;
+	Tue,  3 Feb 2026 06:30:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A3C37F8BD;
-	Tue,  3 Feb 2026 06:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A421A2DECBA;
+	Tue,  3 Feb 2026 06:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770100223; cv=none; b=ihczkh5oxf3rWMNwuXSC5Mn/sUH8ThNYsPBV3kA5+exfWQze030QvuYP93W5TBJFynQ6yl97fKATa4yDIxIfbBrAiFOzIvCb2DnCw6DwIYAF++U37XcNwQWK/1T7PYXvCNs1Heu4+CxVEJl6vuD6EWSBHgR20QLeflDhKAhv/sM=
+	t=1770100219; cv=none; b=de8sB445GvFf9NxOxVpGeAV+p5WbTUlPNeC2r8WRE62RY6WHMcB7+czgtzT+uLZWvRoWWf+7L5mjkQ2Lny3FZSNh8MkICRfv1wGheuKjPlEfyldfHnH3HE7Y+4CCpIhh7WOUscZE0orxaHkii0fiWXYa2j+dl631nm/SGdoroig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770100223; c=relaxed/simple;
-	bh=n8Fey6ZMPVRbrgmyZndXPZXpheYwkacJ4YbQOvQNnO0=;
+	s=arc-20240116; t=1770100219; c=relaxed/simple;
+	bh=m6IuXLODPsEfc30QQhnkRmrGf/hgVBy9Bw5It6YvUHo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cio4X1I2J9ebEf+PdKlmWGrVEyYIxUEY0mHILZ310p20A8fKU5bVYP2dmiIRtnvOaOmQhhLcWrshEvlYGBK7jw/tJg2Z4eU8OBNutZFoY1bAHiV+vW9C0XFaFIuh2qPTvOpaf8SgNDLC+HvhY0y6wSw/oNKT9lnCognUkIxGlHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=QCi8U3z3IDwl9Nn/Q3pNkM6ZOWLzsmfhbjxgM4wQZBbr4Wd0RAne5Rsb+y6Ep5f62sLOZsbNFT71sAHK+MqjIWWXx9TDIeGcQQ49vaMpFIi0TSBNtjfiXnWC4xnHcwrnX5unpoH4g9HckB+bybfpgdBcecAn9g61l3SzSwpfLm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.170])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4f4tqq4KBXzYQtyP;
-	Tue,  3 Feb 2026 14:29:27 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.198])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4f4trK23z2zKHMbt;
+	Tue,  3 Feb 2026 14:29:53 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 861AD4056B;
+	by mail.maildlp.com (Postfix) with ESMTP id 94E2E40575;
 	Tue,  3 Feb 2026 14:30:14 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.50.85.155])
-	by APP4 (Coremail) with SMTP id gCh0CgAHaPjnlYFpiadbGA--.27803S14;
+	by APP4 (Coremail) with SMTP id gCh0CgAHaPjnlYFpiadbGA--.27803S15;
 	Tue, 03 Feb 2026 14:30:14 +0800 (CST)
 From: Zhang Yi <yi.zhang@huawei.com>
 To: linux-ext4@vger.kernel.org
@@ -58,9 +58,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	libaokun1@huawei.com,
 	yangerkun@huawei.com,
 	yukuai@fnnas.com
-Subject: [PATCH -next v2 10/22] ext4: implement buffered read iomap path
-Date: Tue,  3 Feb 2026 14:25:10 +0800
-Message-ID: <20260203062523.3869120-11-yi.zhang@huawei.com>
+Subject: [PATCH -next v2 11/22] ext4: pass out extent seq counter when mapping da blocks
+Date: Tue,  3 Feb 2026 14:25:11 +0800
+Message-ID: <20260203062523.3869120-12-yi.zhang@huawei.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260203062523.3869120-1-yi.zhang@huawei.com>
 References: <20260203062523.3869120-1-yi.zhang@huawei.com>
@@ -71,10 +71,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHaPjnlYFpiadbGA--.27803S14
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zr15Wr1UtrWDuFyxWw48WFg_yoW8Kw13pF
-	Z0kFy5Gr47XrnI9F4SqFZrJr1Fk3WxtF4UWryfGwnxuFyYkrW2gayUWFyYvF15tw47AF18
-	XF4jkr1xGF4UArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:gCh0CgAHaPjnlYFpiadbGA--.27803S15
+X-Coremail-Antispam: 1UD129KBjvJXoW7tF1kJF1rJr4rXrW5tw1xuFg_yoW8WFWkp3
+	9Ykr1rGw1xZ34v9ay0q3W7ZFyrKa15AFW7GrWfXw18Ka4DWFySqF4jkF12yFy0gr4xXr1F
+	vF4FkryUCw4fCFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUHqb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
 	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
@@ -99,20 +99,20 @@ X-Spamd-Result: default: False [3.04 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,linux.ibm.com,gmail.com,infradead.org,kernel.org,huawei.com,huaweicloud.com,fnnas.com];
 	FROM_HAS_DN(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76144-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76137-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[yi.zhang@huawei.com,linux-fsdevel@vger.kernel.org];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	R_DKIM_NA(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
 	TO_DN_NONE(0.00)[];
@@ -120,85 +120,44 @@ X-Spamd-Result: default: False [3.04 / 15.00];
 	RCVD_COUNT_FIVE(0.00)[6];
 	RCPT_COUNT_TWELVE(0.00)[16];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:mid,huawei.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 409C9D5572
+X-Rspamd-Queue-Id: 4A67CD54A3
 X-Rspamd-Action: no action
 
-Introduce a new iomap_ops instance, ext4_iomap_buffer_read_ops, to
-implement the iomap read path for ext4, specifically the read_folio()
-and readahead() callbacks of ext4_iomap_aops.
-
-ext4_iomap_map_blocks() invokes ext4_map_blocks() to query the extent
-mapping status of the read range and then converts the mapping
-information to iomap type.
+The iomap buffered write path does not hold any locks between querying
+the inode extent mapping information and performing buffered writes. It
+relies on the sequence counter saved in the inode to determine whether
+the mapping information is stale. Commit 07c440e8da8f ("ext4: pass out
+extent seq counter when mapping blocks") passed out the sequence number
+when mapping blocks, but missed two places where it would be used later
+in the iomap buffered delayed write path; these have now been filled in.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/inode.c | 45 ++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 44 insertions(+), 1 deletion(-)
+ fs/ext4/inode.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index fb7e75de2065..25d9462d2da7 100644
+index 25d9462d2da7..c9489978358e 100644
 --- a/fs/ext4/inode.c
 +++ b/fs/ext4/inode.c
-@@ -3903,14 +3903,57 @@ const struct iomap_ops ext4_iomap_report_ops = {
- 	.iomap_begin = ext4_iomap_begin_report,
- };
+@@ -1903,7 +1903,7 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map)
+ 	ext4_check_map_extents_env(inode);
  
-+static int ext4_iomap_map_blocks(struct inode *inode, loff_t offset,
-+		loff_t length, struct ext4_map_blocks *map)
-+{
-+	u8 blkbits = inode->i_blkbits;
-+
-+	if ((offset >> blkbits) > EXT4_MAX_LOGICAL_BLOCK)
-+		return -EINVAL;
-+
-+	/* Calculate the first and last logical blocks respectively. */
-+	map->m_lblk = offset >> blkbits;
-+	map->m_len = min_t(loff_t, (offset + length - 1) >> blkbits,
-+			   EXT4_MAX_LOGICAL_BLOCK) - map->m_lblk + 1;
-+
-+	return ext4_map_blocks(NULL, inode, map, 0);
-+}
-+
-+static int ext4_iomap_buffered_read_begin(struct inode *inode, loff_t offset,
-+		loff_t length, unsigned int flags, struct iomap *iomap,
-+		struct iomap *srcmap)
-+{
-+	struct ext4_map_blocks map;
-+	int ret;
-+
-+	if (unlikely(ext4_forced_shutdown(inode->i_sb)))
-+		return -EIO;
-+
-+	/* Inline data support is not yet available. */
-+	if (WARN_ON_ONCE(ext4_has_inline_data(inode)))
-+		return -ERANGE;
-+
-+	ret = ext4_iomap_map_blocks(inode, offset, length, &map);
-+	if (ret < 0)
-+		return ret;
-+
-+	ext4_set_iomap(inode, iomap, &map, offset, length, flags);
-+	return 0;
-+}
-+
-+const struct iomap_ops ext4_iomap_buffered_read_ops = {
-+	.iomap_begin = ext4_iomap_buffered_read_begin,
-+};
-+
- static int ext4_iomap_read_folio(struct file *file, struct folio *folio)
- {
-+	iomap_bio_read_folio(folio, &ext4_iomap_buffered_read_ops);
- 	return 0;
- }
+ 	/* Lookup extent status tree firstly */
+-	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, NULL)) {
++	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, &map->m_seq)) {
+ 		map->m_len = min_t(unsigned int, map->m_len,
+ 				   es.es_len - (map->m_lblk - es.es_lblk));
  
- static void ext4_iomap_readahead(struct readahead_control *rac)
- {
--
-+	iomap_bio_readahead(rac, &ext4_iomap_buffered_read_ops);
- }
+@@ -1956,7 +1956,7 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map)
+ 	 * is held in write mode, before inserting a new da entry in
+ 	 * the extent status tree.
+ 	 */
+-	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, NULL)) {
++	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, &map->m_seq)) {
+ 		map->m_len = min_t(unsigned int, map->m_len,
+ 				   es.es_len - (map->m_lblk - es.es_lblk));
  
- static int ext4_iomap_writepages(struct address_space *mapping,
 -- 
 2.52.0
 
