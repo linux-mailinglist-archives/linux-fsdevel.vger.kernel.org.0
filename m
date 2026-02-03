@@ -1,225 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-76181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76186-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +FbgEVfMgWl1JwMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 11:22:15 +0100
+	id COHGHXPpgWkFMAMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76186-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 13:26:27 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9826CD784B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 11:22:14 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 992E8D8FBC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 13:26:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id BC04B303AB56
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 10:20:27 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id EB5EB3004D15
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 12:26:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA3A3115A1;
-	Tue,  3 Feb 2026 10:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3495340A6C;
+	Tue,  3 Feb 2026 12:26:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHQWJLGc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FauuZ3H1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F94E304BB4
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 10:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770114026; cv=pass; b=bif+v5fmE5ILBY4H3X70ZZgtDujYelPnPmAj/T8KVYeofCj14ACR5vNAFUUKHjpqxbTUYSvicbhU92NVbZySvenQ9QjmoNNDlRyrdwjmk1mXg4CaqrAQcTTMGkBosA+RDlGpt/eF32MoQFEpotwRrY2pvKsEXWoAJjkEbVpJ+VM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770114026; c=relaxed/simple;
-	bh=sVM0+hEP4PdpJC59WffH3ZxbPipWAX0zZaMuRpIJiF4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G5/OHClSGuZAYvIMQiuGIUuuZKUzfsQGEs61Pbo/i1oo/5ZNaab/HVQG5ZcAR+x43VUT1I3HrtXPHqd/Uqln/nxMMTpRbwNpIdf2Z8YUffxBMxl5kkNrx1Ek7akUbIHCUd3Jfb0TdCGcARyhC+yHZc59fD/IztLd+ZfiM6+j8Kk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IHQWJLGc; arc=pass smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D160338931
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 12:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770121581; cv=none; b=EU8u6Vzu/NCGnphaeufjWadSkjcx1ZnJl7oWMW9NBd0WJysAUdNDoUWfJzrhKGn7hH6Fz2ZBx4EqfEzlh8TIqionMyy+SDVPbEcnGhFebUMMD/yNmyh9zle7NBst8kUY88g1z66JAwHCpSeDANDy+bfBrZ//jvQrHoa1/pP4jz0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770121581; c=relaxed/simple;
+	bh=VCQKXK/b6w1p0rJZZ0YdDkePSLgf9Ak6OzkldxZRzdo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VNb8mgZRF0x3UpzV6BvhbSTCLqndkV03DV69saJ6IYSttmSZGy4m74DUhTIHoDsTZfURmVRSKlwZaP5MOXqfzurONU1nrHs3HCk4hefnSnHPdyPy3kujVktXryIMwgHREil97x7da4l4n/NuyZ2WZwI4KAqfTBwmd16nK63mYyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FauuZ3H1; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-65941c07fb4so229147a12.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Feb 2026 02:20:25 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770114023; cv=none;
-        d=google.com; s=arc-20240605;
-        b=EhUN6iGEgnXy1spcHsUVE+gY468VOFytGyntaXoDT4LDUcZ6TfGoDYbZv4u+lVieQ7
-         vyNP0aCv+tkDQg36KlZFvg3e/UTWC3692Wgu3xXmKPs26sI+Yx92l5WBSbKUFIZ3GgkO
-         Hl0zqR0jbW/jD7r4ZziigBh5Ioiq3IrVUnYErnCghHSms4GiWmnmZOlA2ULeo7/qnxq3
-         B9v2FY5ua9Ln842GdzKlvSTljr0M1AQhYEybTBgT1L/QNmYzZHR+Csl2M1gq7u0Mdhnv
-         y00vMoGNz8lE62efEzfDx0Ylk7s0rtsFyMjAdbiirESpW318hrW2aLAGR6nodn+ANR6F
-         +AzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=gjTcDMssS6pyQf8XKQ4J7kd/rjxdjsXPIt+uqkYRZO8=;
-        fh=Gmi6GZsnAKYGi8ZNBqMcwIrlyDkF0NLRnka3IiQe3v4=;
-        b=Yz1YJk/Fc33V//ILCVPEkl4MBzjxLDX6bPKL16ywkPVOhfLgpsgMog7WMfAHNvldzf
-         u2vmqg9Fd4bFZJUq9C3lmfsNE7JuG1Dlbd7Og14F261kYPIklrDi00Eh040eGAfUMdef
-         LD/qFaoOgORyco9K2tKfQTNrIkCzBpQObvxifw0GrYXouM4C57SqKYdOswHnq9UmKWga
-         D9zS7HczY4+RZV9pOG2blmFwmTS3UNa1GAWHGLYUm0xEFxs+pDZ+8+23nuvedwL7mzqI
-         qKUkv2LCCQ7nHMDINi9Ii3dJ0JDDqDkuXtFZKPeL3F45M45T0x9FoxQzXHYg1JwHHg7W
-         /IVA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b8850aa5b56so893592966b.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Feb 2026 04:26:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770114023; x=1770718823; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1770121578; x=1770726378; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gjTcDMssS6pyQf8XKQ4J7kd/rjxdjsXPIt+uqkYRZO8=;
-        b=IHQWJLGcJqbE5TbUthlxgJQoqd467zxTdbexLgxZZOlA2O/a798YBJPLiRnKMnxb5W
-         3dQx3SYPXMJOAPfxHnREmmvMmd9KDDgZmOSCh/TbfMEaL2Cpv9Qx7Jfu17JPnxg3KvX7
-         dfRjJASQYt++pdol/0FiycE1crkiKblRlS1NPFI2UJmjX4P6AsbGq/oE3BIWPU8B7SNh
-         uA1ArhZLmVrsHwUZpbQvTxyAWDfSUMdRIFPBaGvKo5m/UC0Ipu6LiXOnyHEz3vLrauHX
-         GSDPFvB0ZJHzbIkXSw1T1DofOCiV5p4tb8FpDy4LJ1fHlAdzSNhQiquPRoNIus9LPXKg
-         yUwA==
+        bh=z1+6Ooei3qcktWMsNzPcdbmfIrr0F/PihFSzcD/XR6E=;
+        b=FauuZ3H1yH9N03ATMhKz/QNUdiVlnNlGyCdhk2LNv46+WnfKhyi2oTCP/IKljsYpPP
+         UCXR0nmEqbdgv6LtHEzCSor5Mfg/xpdrjWEliR272hp01TidLlcFU/0J7qshXkjG1rSO
+         0kpVoust/jomzT9Cl91uObSkL9urO5dLooaVViDGr0Sz29w4kR0XbAgwAKmGvWjXLqZr
+         bHiEd4/ixJUPnr97Gi6ppr37PQARXNeAS/P/Lqyqa8WUi1F+itsntRL19GlkEwVreLwP
+         cOX2wARAk7XARIEhj8ZcjsvR/rcu/DbEJlBpJn2mjopLlibj1n+uVVo2TbzX+Aq6AncL
+         MnwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770114023; x=1770718823;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1770121578; x=1770726378;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=gjTcDMssS6pyQf8XKQ4J7kd/rjxdjsXPIt+uqkYRZO8=;
-        b=YlfYHGRlfqImchsomtFrm/c1gWWwt6oGfloQtlS9yIElH+r5dWghesJqacQCof1oCJ
-         7/tpAtFXsr2hsubl7ZIdyzJ6WMfkyF85xiqMFmxcVg5Lu80TgP2B/5tZjVv3R1hGl67m
-         CNOka/XcmGC6X9VEbAW84Zk2coXth/ApQ7dr6gA7zX90wEky8+rcx9YYxOXa6mFmnHrb
-         eMDShOGImfL8u+LA3ivSqaHZfdydj4ivkKGLwlwjFbe/B4kXNooXNCKhplKfVIABnDhF
-         Izp7WzEjs/+dpvgvfGqRN5i6NNSG1zZUIG/SaYmK4Qvk9bQosM7hWg1muQrdrl100I5D
-         XeNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWl71zBuHPfU2Xh3jApmIEV7ziZclz5gXU2+px+/e933q/vx9p1Ax1/i8jzjS6CDk4glyhRROd/SQ3haBlx@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAPhczcQQ9UybJ6L+1/YD6JXE5OIdNp2wWMx+UjR0LGM+w8+tD
-	T5m3p13FNs/I2GFVe3ye9GtTmXtVGdoQ/jF+UX0GC7B2eEjaInN0xBNJ4YR1iuHNcfNrqAkBUEe
-	aqIxufkp1MK7qBma/8j23w1EVhI4PkMU=
-X-Gm-Gg: AZuq6aIHIKhtJ9feQV7IRVirdimDRDMehedtb/I6vZvtBiZjhJVsJHoFG8w/iSX31T9
-	mxqd88bkQDKIFv9LhHXd08W6TNIRvNV9cE4/pg2RZTQgSkzojir3w8SAcJEfWJAAJFb6AQOkqqb
-	btJH+cv4b9WVfBxfpWrJwrrXy4xTpA4J3p8HlqWsPo1r3ErcubnLJgvhoFjRn0jHw5Ir5b7IUMF
-	lIq2cwIYfRVvVm5LKGvWA8XGQU/zPDdxvfT1JT4D2fcvOAwvtAmaE4soylm5EBUsmNiLZkWnD1P
-	zfRXfSL7BmaOl4OYw/cC44d7XuRUag==
-X-Received: by 2002:a05:6402:42c5:b0:64d:498b:aefd with SMTP id
- 4fb4d7f45d1cf-658de54f012mr8656942a12.5.1770114023260; Tue, 03 Feb 2026
- 02:20:23 -0800 (PST)
+        bh=z1+6Ooei3qcktWMsNzPcdbmfIrr0F/PihFSzcD/XR6E=;
+        b=SgwVBn/jTUvxi5rfKTKM2Zz+SmqvLpGMT0iEFIXEyUejosnnzhr8P86yvOCxcsA7bx
+         wraSkvQdPLkJMiX31tlOsDAvGBYXCGdSnJhG7MbcpD2pStSy1FKVyQ7mpERyW7MSwPut
+         IL01ouHYNYEBMC4ap52h3uh73vtisYB6f/Pdn9e8we+6HooxhtJkM1C9Ey8wDeL0uBuq
+         meCxn3VfnGb0v7PN3WqVywVfhPB++DohTsV3hvAKt3cj8FNCLkDOzK4I/e3L4aYV6ZYV
+         xOoUS5dnptofYNhk+6iYPTxRQMaGbVVL96EAI0dC6cLEfQptrvZRNordk9/V8awOT7Q8
+         1xrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZlFwhqlBgvl9zRJFJbrupvQN7LUGUwA5WTIv19fUe41wyii9vU3/w4Wrnavi7o5v1fPcYT1+F02zvfwWd@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBTpfKDCMTHIgSlTrfQt8gjl5rr4k5Lnq39C+7qLmJYxRtplkS
+	GfrElsN8deexlFM+wrvT1xV+3AHs9iuyWbG9RJd4PvwY8V54bErUxY9T
+X-Gm-Gg: AZuq6aIYxU0Fxgyo95O1u8vVXYAMz81muFI0lKtFo54/XNhzpTlObUEkjaVNgvR9YHw
+	gMNJgcTeo4Qijf4ww9Mkad1P6lYonFD1p/8MBxBxIxC+jS97IwYyu16Jl5UxW+p+vpWAvAxUruA
+	pxPf+vq2ZReNPzjSndytv5dVZm4XjrkNINH9ezqjR4NJrjVlEH4SPm8Gyz12wr2hCj041dRD8FO
+	sfy9+uOVe5a9C5as26DW9mYmL5CitoWaaImeKpj+cLeaP9cJvn5OIWmiopspV8K4X8fvQxqa5X4
+	J9UPPRDPkz8OCcaPqUmAUSeaqQe0qhdRQdbqmuV31XyQl1DJgvxaZef/BGRxTbU5JbstdtEdy7u
+	IvoyHq1T2FWf/I5ta8ildgofyRfLca1SjFBi+al5r+R74GaVQzVic69gMawchJfaCa/sjDvqsKy
+	dbWA0oLRA=
+X-Received: by 2002:a05:6000:184f:b0:435:9d70:f299 with SMTP id ffacd0b85a97d-435f3a7e644mr22293614f8f.22.1770114553095;
+        Tue, 03 Feb 2026 02:29:13 -0800 (PST)
+Received: from localhost ([212.73.77.104])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-435e10e4762sm49060917f8f.6.2026.02.03.02.29.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Feb 2026 02:29:12 -0800 (PST)
+From: Askar Safin <safinaskar@gmail.com>
+To: dhowells@redhat.com
+Cc: axboe@kernel.dk,
+	brauner@kernel.org,
+	cem@kernel.org,
+	djwong@kernel.org,
+	hch@lst.de,
+	kundan.kumar@samsung.com,
+	linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	viro@zeniv.linux.org.uk,
+	willy@infradead.org,
+	wqu@suse.com
+Subject: Re: [PATCH 03/14] iov_iter: extract a iov_iter_extract_bvecs helper from bio code
+Date: Tue,  3 Feb 2026 13:28:21 +0300
+Message-ID: <20260203102821.3017412-1-safinaskar@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <1763225.1769180226@warthog.procyon.org.uk>
+References: <1763225.1769180226@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJfpegtzYdy3fGGO5E1MU8n+u1j8WVc2eCoOQD_1qq0UV92wRw@mail.gmail.com>
- <CAOQ4uxjEdJHjbfCFM364V=tBrEyczYvzo-b-Xo0UPOCA2cnPGQ@mail.gmail.com> <87cy2myvyu.fsf@wotan.olymp>
-In-Reply-To: <87cy2myvyu.fsf@wotan.olymp>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 3 Feb 2026 11:20:12 +0100
-X-Gm-Features: AZwV_Qg75JZKui3VPxcY59EJLbTYypK2pwBrPu4und1ir7d3h5i87YqZo7ZwE-M
-Message-ID: <CAOQ4uxjKHptXXCJzpwU6jvGKiqTuRBOSesmpzGGUTgcJqW_gbQ@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Where is fuse going? API cleanup,
- restructuring and more
-To: Luis Henriques <luis@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
-	Joanne Koong <joannelkoong@gmail.com>, "Darrick J . Wong" <djwong@kernel.org>, 
-	John Groves <John@groves.net>, Bernd Schubert <bernd@bsbernd.com>, 
-	Horst Birthelmer <horst@birthelmer.de>, lsf-pc <lsf-pc@lists.linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[igalia.com:email,mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,szeredi.hu:email];
-	FREEMAIL_CC(0.00)[szeredi.hu,vger.kernel.org,gmail.com,kernel.org,groves.net,bsbernd.com,birthelmer.de,lists.linux-foundation.org];
-	TAGGED_FROM(0.00)[bounces-76181-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-76186-lists,linux-fsdevel=lfdr.de];
 	DKIM_TRACE(0.00)[gmail.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[amir73il@gmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[safinaskar@gmail.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
+	RCVD_COUNT_FIVE(0.00)[5];
+	NEURAL_HAM(-0.00)[-0.999];
+	TO_DN_NONE(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Rspamd-Queue-Id: 9826CD784B
+	DBL_BLOCKED_OPENRESOLVER(0.00)[lwn.net:url]
+X-Rspamd-Queue-Id: 992E8D8FBC
 X-Rspamd-Action: no action
 
-On Tue, Feb 3, 2026 at 11:15=E2=80=AFAM Luis Henriques <luis@igalia.com> wr=
-ote:
->
-> On Mon, Feb 02 2026, Amir Goldstein wrote:
->
-> > [Fixed lsf-pc address typo]
-> >
-> > On Mon, Feb 2, 2026 at 2:51=E2=80=AFPM Miklos Szeredi <miklos@szeredi.h=
-u> wrote:
-> >>
-> >> I propose a session where various topics of interest could be
-> >> discussed including but not limited to the below list
-> >>
-> >> New features being proposed at various stages of readiness:
-> >>
-> >>  - fuse4fs: exporting the iomap interface to userspace
-> >>
-> >>  - famfs: export distributed memory
-> >>
-> >>  - zero copy for fuse-io-uring
-> >>
-> >>  - large folios
-> >>
-> >>  - file handles on the userspace API
-> >>
-> >>  - compound requests
-> >>
-> >>  - BPF scripts
-> >>
-> >> How do these fit into the existing codebase?
-> >>
-> >> Cleaner separation of layers:
-> >>
-> >>  - transport layer: /dev/fuse, io-uring, viriofs
-> >>
-> >>  - filesystem layer: local fs, distributed fs
-> >>
-> >> Introduce new version of cleaned up API?
-> >>
-> >>  - remove async INIT
-> >>
-> >>  - no fixed ROOT_ID
-> >>
-> >>  - consolidate caching rules
-> >>
-> >>  - who's responsible for updating which metadata?
-> >>
-> >>  - remove legacy and problematic flags
-> >>
-> >>  - get rid of splice on /dev/fuse for new API version?
-> >>
-> >> Unresolved issues:
-> >>
-> >>  - locked / writeback folios vs. reclaim / page migration
-> >>
-> >>  - strictlimiting vs. large folios
-> >
-> > All important topics which I am sure will be discussed on a FUSE BoF.
->
-> I wonder if the topic I proposed separately (on restarting FUSE servers)
-> should also be merged into this list.  It's already a very comprehensive
-> list, so I'm not sure it's worth having a separate topic if most of it
-> will (likely) be touched here already.
->
-> What do you think?
+David Howells <dhowells@redhat.com>:
+> Can we make vmsplice() just copy data?
 
-We are likely going to do a FUSE BoF, likely Wed afternoon,
-so we can have an internal schedule for that.
+vmsplice already caused at least one security issue in the past:
+CVE-2020-29374 (see https://lwn.net/Articles/849638/ ). There may be other
+CVEs, try to search CVE database.
 
-Restartability and stable FUSE handles is one of the requirements
-to replace an existing fs if that fs is NFS exportrable.
+Also, I think vmsplice is rarely used.
 
-Thanks,
-Amir.
+So, if you author a patch, which makes vmsplice equivalent to readv/writev,
+and mention these CVEs, then, I think, such patch has high chance to
+succeed.
+
+
+Also, as well as I understand, this patch introduces kbufs,
+which are modern uring-based alternative to whatever splice/pipe originally
+meant to be:
+https://lore.kernel.org/all/20260116233044.1532965-4-joannelkoong@gmail.com/ .
+
+I. e. these kbufs provide kernel-managed buffer for fast I/O.
+
+So, I think it is good idea to deprecate splice in favor of these kbufs.
+
+-- 
+Askar Safin
 
