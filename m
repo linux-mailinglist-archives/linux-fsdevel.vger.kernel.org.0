@@ -1,202 +1,260 @@
-Return-Path: <linux-fsdevel+bounces-76169-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id qMWsJua3gWkrJAMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76169-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 09:55:02 +0100
+	id SLkQJdu4gWm7JAMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 09:59:07 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D6D6D6731
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 09:55:02 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0805D67D8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 09:59:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E1B6B3035270
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 08:54:53 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 9CD553005179
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 08:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 814FF396B7B;
-	Tue,  3 Feb 2026 08:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2755B396B7E;
+	Tue,  3 Feb 2026 08:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qfg9UBIG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="85VGgXzr";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qfg9UBIG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="85VGgXzr"
+	dkim=pass (1024-bit key) header.d=mpiricsoftware.com header.i=shardul.b@mpiricsoftware.com header.b="kdfrrdhU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-of-o54.zoho.com (sender4-of-o54.zoho.com [136.143.188.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9900D38F243
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 08:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770108892; cv=none; b=jZobWAjhK2RwjTAejMSzFmU3TWbrFBuVSt8QBaHKhwE2FFQ7424WMmr985n55hlSWOjkZLlV2BlJ9eSzQS5vWQyy7AB1Ca+GhWqlTB/SDgBuiuR6inagDjHJJonHLZgiAyugU713gyGHE85k6huyI98Jp00vP9RibFRDHkziBZU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770108892; c=relaxed/simple;
-	bh=BWryBZZRyshDE7htWrmHtWdd9zfVnuMfoFW6bFs3XPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nbVWeQrI9LCfKyPRRZXds1FGUTgg2Q9W3+K4j6bfvvGMqIg34amI6UDowF9+ij7xEmZs6utvEtDDypcEu3VS6wq5K9aYMDmQAvd4EUgzohB7lgke7PlIvjaQ/qcTsE4NpQ/x3w/5erarn6pU9VR/H0niZgr0s9VWyvLRzmVWwSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qfg9UBIG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=85VGgXzr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qfg9UBIG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=85VGgXzr; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B9FD95BCC3;
-	Tue,  3 Feb 2026 08:54:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1770108888; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hQTOyqizWTLSvlPvLkvLsGi8wPAIQqJDpShjC5krox0=;
-	b=qfg9UBIGSgH//o2pc7XzE2Tdrsec5tHD04CTrKO4yR1hgamlnEAXgveGY5xySc6kVTDBMM
-	FBtTNiy6cnBKNV5lFqic0T51+J3VDWmkipaUNI2E4ut3F7OCxCiWYdxXXTuQdbcoLeZSD2
-	vSZF29nV5M0K0gmHt2Jx1nUeU9cJCWc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1770108888;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hQTOyqizWTLSvlPvLkvLsGi8wPAIQqJDpShjC5krox0=;
-	b=85VGgXzrSzNkeSzq0o2VP6XObTC1XHtiYK5eyLdXWvx6ikNfrtbCTBjad4A/Ni2ndY0Xl4
-	MkFZLxN+stAHjnCw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1770108888; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hQTOyqizWTLSvlPvLkvLsGi8wPAIQqJDpShjC5krox0=;
-	b=qfg9UBIGSgH//o2pc7XzE2Tdrsec5tHD04CTrKO4yR1hgamlnEAXgveGY5xySc6kVTDBMM
-	FBtTNiy6cnBKNV5lFqic0T51+J3VDWmkipaUNI2E4ut3F7OCxCiWYdxXXTuQdbcoLeZSD2
-	vSZF29nV5M0K0gmHt2Jx1nUeU9cJCWc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1770108888;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hQTOyqizWTLSvlPvLkvLsGi8wPAIQqJDpShjC5krox0=;
-	b=85VGgXzrSzNkeSzq0o2VP6XObTC1XHtiYK5eyLdXWvx6ikNfrtbCTBjad4A/Ni2ndY0Xl4
-	MkFZLxN+stAHjnCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A21253EA62;
-	Tue,  3 Feb 2026 08:54:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +GaJJ9i3gWm2HQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 03 Feb 2026 08:54:48 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 51467A08F8; Tue,  3 Feb 2026 09:54:44 +0100 (CET)
-Date: Tue, 3 Feb 2026 09:54:44 +0100
-From: Jan Kara <jack@suse.cz>
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@lst.de, tytso@mit.edu, 
-	willy@infradead.org, jack@suse.cz, djwong@kernel.org, josef@toxicpanda.com, 
-	sandeen@sandeen.net, rgoldwyn@suse.com, xiang@kernel.org, dsterba@suse.com, 
-	pali@kernel.org, ebiggers@kernel.org, neil@brown.name, amir73il@gmail.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, iamjoonsoo.kim@lge.com, 
-	cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com
-Subject: Re: [PATCH v6 03/16] fs: add generic FS_IOC_SHUTDOWN definitions
-Message-ID: <lr73r5xefcyv3je5ietj5wsqgdi5xwlut7u6nmxbnaxvtanmi4@zhgycwippa6o>
-References: <20260202220202.10907-1-linkinjeon@kernel.org>
- <20260202220202.10907-4-linkinjeon@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875FE29BDBA;
+	Tue,  3 Feb 2026 08:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770109138; cv=pass; b=XX5ntqRr2EwpynhNgoUbcCEFZnj+mQ1wFRpQUp3FPi6DKdua4IjRwo7t9BQBZh3dNZS50PEVdbkOeli37gjb1BT0ZzMXB0JXGN/ywAgJGSApShWRK/RpMGYx9BH6kE1urSaU3Y7h2UqNwxrbVRYfGK6Ci/zQQuvv478wmCT89/g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770109138; c=relaxed/simple;
+	bh=LlDCcuwADaoB+3xceGYerPLIitEpeAu31eqUTMZAwEE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QznTx4uMLmOGY50Hr/QZWbrifgrrt/rDrjdPy3EJVeaqYEIAkpTL1WxV0QOQn9FxYZiXKu/wCwiiofP7nyj7J4IJ9CgMX5k/wB4+FC/PIJv7g9EkfpvZxL6dhI+ED+zWKXlh/V9xokITgPp0mswo4FAxFSwZAi+B95u+9Bhd8K4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mpiricsoftware.com; spf=pass smtp.mailfrom=mpiricsoftware.com; dkim=pass (1024-bit key) header.d=mpiricsoftware.com header.i=shardul.b@mpiricsoftware.com header.b=kdfrrdhU; arc=pass smtp.client-ip=136.143.188.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mpiricsoftware.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mpiricsoftware.com
+ARC-Seal: i=1; a=rsa-sha256; t=1770109108; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ElCdHCFHdnL1Qlj2wg9y/+RpFbiFcLNMzE1mLr+oTGn6RsiSPkycqJEmuPu+lNweNLRiHex6/k2vaR/1mi6Ly0fHBsnHMcWnqDDFQp1TXak/oBVs8Xpk5pKHHUc92rPNcXyaNF9C4aQeG7DCOdKWk+PBUxnLGSKDw6qIIjRpQW8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1770109108; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=3pdYLWfsDO9TIfg2PLJt+0E/7ayVJHCutB0QAepJ6AE=; 
+	b=AmmDqdJu6sLHp3jZnIdx6bEbtG1zJ3VmAcVr6GnQRT/mYKISULaCnHr/U2Jf8xpnoOULWXmy0djSBzGdCEvGsnD6D+54Cdz+R/w1EJMWpqjZgMpZPdDc8VqOXXz0t+fkA6aKfihyREC5uqQW0wyNTCP452s4slmOKqRXLLBB3JI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=mpiricsoftware.com;
+	spf=pass  smtp.mailfrom=shardul.b@mpiricsoftware.com;
+	dmarc=pass header.from=<shardul.b@mpiricsoftware.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1770109108;
+	s=mpiric; d=mpiricsoftware.com; i=shardul.b@mpiricsoftware.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=3pdYLWfsDO9TIfg2PLJt+0E/7ayVJHCutB0QAepJ6AE=;
+	b=kdfrrdhUA0y3bYH66lzy0XvVZ2MSBKkFYO37Hcnb9CJKwkL4Eo2P5saUGOiNnosg
+	MXtFGAcveUG6/w8pU/hvlPS71nW+Z0f46ijKSbfW+Ahou3PS58YWlVSwkr6W8ysvwU9
+	B3qUB+7bM5SNVM+ji8pJ31mm9lMuUp825Kj8o0yI=
+Received: by mx.zohomail.com with SMTPS id 1770109106606845.6673497740397;
+	Tue, 3 Feb 2026 00:58:26 -0800 (PST)
+Message-ID: <ec19e0e22401f2e372dde0aa81061401ebb4bedc.camel@mpiricsoftware.com>
+Subject: Re:  [PATCH v3] hfsplus: validate btree bitmap during mount and
+ handle corruption gracefully
+From: Shardul Bankar <shardul.b@mpiricsoftware.com>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, 
+	"glaubitz@physik.fu-berlin.de"
+	 <glaubitz@physik.fu-berlin.de>, "slava@dubeyko.com" <slava@dubeyko.com>, 
+	"frank.li@vivo.com"
+	 <frank.li@vivo.com>, "linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>, "linux-fsdevel@vger.kernel.org"
+	 <linux-fsdevel@vger.kernel.org>
+Cc: "janak@mpiricsoftware.com" <janak@mpiricsoftware.com>, 
+	"syzbot+1c8ff72d0cd8a50dfeaa@syzkaller.appspotmail.com"
+	 <syzbot+1c8ff72d0cd8a50dfeaa@syzkaller.appspotmail.com>, 
+	shardulsb08@gmail.com
+Date: Tue, 03 Feb 2026 14:28:20 +0530
+In-Reply-To: <85f6521bf179942b12363acbe641efa5c360865f.camel@ibm.com>
+References: <20260131140438.2296273-1-shardul.b@mpiricsoftware.com>
+	 <85f6521bf179942b12363acbe641efa5c360865f.camel@ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2.1 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260202220202.10907-4-linkinjeon@kernel.org>
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spam-Flag: NO
+X-ZohoMailClient: External
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[mpiricsoftware.com,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_DKIM_ALLOW(-0.20)[mpiricsoftware.com:s=mpiric];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-76169-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76170-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,suse.com:email,suse.cz:email,suse.cz:dkim];
-	DMARC_NA(0.00)[suse.cz];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,lst.de,mit.edu,infradead.org,suse.cz,toxicpanda.com,sandeen.net,suse.com,brown.name,gmail.com,vger.kernel.org,lge.com];
-	RCPT_COUNT_TWELVE(0.00)[23];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FREEMAIL_CC(0.00)[mpiricsoftware.com,syzkaller.appspotmail.com,gmail.com];
 	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: 2D6D6D6731
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[shardul.b@mpiricsoftware.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[mpiricsoftware.com:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel,1c8ff72d0cd8a50dfeaa];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: F0805D67D8
 X-Rspamd-Action: no action
 
-On Tue 03-02-26 07:01:49, Namjae Jeon wrote:
-> Currently, several filesystems (e.g., xfs, ext4, btrfs) implement
-> a "shutdown" or "going down" ioctl to simulate filesystem force a shutdown.
-> While they often use the same underlying numeric value, the definition is
-> duplicated across filesystem headers or private definitions.
-> 
-> This patch adds generic definitions for FS_IOC_SHUTDOWN in uapi/linux/fs.h.
-> This allows new filesystems (like ntfs) to implement this feature using
-> a standard VFS definition and paves the way for existing filesystems
-> to unify their definitions later.
-> 
-> The flag names are standardized as FS_SHUTDOWN_* to be consistent with
-> the ioctl name, replacing the historical GOING_DOWN naming convention.
-> 
-> Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+On Mon, 2026-02-02 at 20:52 +0000, Viacheslav Dubeyko wrote:
+> On Sat, 2026-01-31 at 19:34 +0530, Shardul Bankar wrote:
+> >=20
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/*
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Validate bitmap: node 0 (=
+header node) must be marked
+> > allocated.
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0node =3D hfs_bnode_find(tree=
+, 0);
+>=20
+> If you introduce named constant for herder node, then you don't need
+> add this
+> comment. And I don't like hardcoded value, anyway. :)
 
-Good idea. Feel free to add:
+Hi Slava, thank you for the review.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Ack'ed. I will use HFSPLUS_TREE_HEAD (0) in v4.
 
-								Honza
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0len =3D hfs_brec_lenoff(node=
+,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0HFSPLU=
+S_BTREE_HDR_MAP_REC, &bitmap_off);
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (len !=3D 0 && bitmap_off=
+ >=3D sizeof(struct
+> > hfs_bnode_desc)) {
+>=20
+> If we read incorrect len and/or bitmap_off, then it sounds like
+> corruption too.
+> We need to process this issue somehow but you ignore this, currently.
+> ;)
+>=20
 
-> ---
->  include/uapi/linux/fs.h | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-> index 66ca526cf786..32e24778c9e5 100644
-> --- a/include/uapi/linux/fs.h
-> +++ b/include/uapi/linux/fs.h
-> @@ -656,4 +656,16 @@ struct procmap_query {
->  	__u64 build_id_addr;		/* in */
->  };
->  
-> +/*
-> + * Shutdown the filesystem.
-> + */
-> +#define FS_IOC_SHUTDOWN _IOR('X', 125, __u32)
-> +
-> +/*
-> + * Flags for FS_IOC_SHUTDOWN
-> + */
-> +#define FS_SHUTDOWN_FLAGS_DEFAULT	0x0
-> +#define FS_SHUTDOWN_FLAGS_LOGFLUSH	0x1	/* flush log but not data*/
-> +#define FS_SHUTDOWN_FLAGS_NOLOGFLUSH	0x2	/* don't flush log nor data */
-> +
->  #endif /* _UAPI_LINUX_FS_H */
-> -- 
-> 2.25.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I agree that invalid offsets constitute corruption. However, properly
+validating the structure of the record table and offsets is a larger
+scope change. I prefer to keep this patch focused specifically on the
+"unallocated node 0" vulnerability reported by syzbot. I am happy to
+submit a follow-up patch to harden hfs_brec_lenoff usage. As per your
+suggestion, ignoring this currently. ;)
+
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0hfs_bnode_read(node, &bitmap_byte, bitmap_off, 1);
+>=20
+> I assume that 1 is the size of byte, then sizeof(u8) or
+> sizeof(bitmap_byte)
+> could look much better than hardcoded value.
+
+Ack'ed. Changing to sizeof(bitmap_byte).
+
+>=20
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0if (!(bitmap_byte & HFSPLUS_BTREE_NODE0_BIT)) {
+>=20
+> Why don't use the test_bit() [1] here? I believe that code will be
+> more simple
+> in such case.
+
+I reviewed test_bit(), but I believe the explicit mask is safer and
+more correct here for three reasons:
+1. Endianness:
+The value we=E2=80=99re checking is an on-disk bitmap byte (MSB of the firs=
+t
+byte in the header map record). test_bit() is designed for CPU-native
+memory bitmaps. HFS+ bitmaps use Big-Endian bit ordering (Node 0 is the
+MSB/0x80). On Little-Endian architectures (like x86), test_bit(0, ...)
+checks the LSB (0x01). Using it here could introduce bit-numbering
+ambiguity.
+
+For example, reading into an unsigned long:
+    unsigned long word =3D 0;
+    hfs_bnode_read(node, &word, bitmap_off, sizeof(word));
+    if (!test_bit(N, &word))
+        ...
+
+...but now N is not obviously =E2=80=9CMSB of first on-disk byte=E2=80=9D; =
+it depends
+on CPU endianness/bit numbering conventions, so it becomes easy to get
+wrong.
+
+2. Consistency with Existing HFS+ Bitmap Code:
+The existing allocator code already handles on-disk bitmap bytes via
+explicit masking (hfs_bmap_alloc uses 0x80, 0x40, ...), so for
+consistency with existing on-disk bitmap handling and to avoid the
+above ambiguity, I kept the explicit mask check here as well:
+    if (!(bitmap_byte & HFSPLUS_BTREE_NODE0_BIT))   (with
+HFSPLUS_BTREE_NODE0_BIT =3D BIT(7) (or (1 <<7)))
+
+3. Buffer safety:
+Reading exactly 1 byte (u8) guarantees we never read more data than
+strictly required, avoiding potential boundary issues.
+
+Am I missing something here or does this make sense?
+
+If there's a strong preference for bitops helpers, I could investigate
+the big-endian bit helpers (*_be), but for this single-byte invariant
+check, the explicit mask seems clearest and most consistent with
+existing code.
+
+>=20
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pr_war=
+n("(%s): Btree 0x%x bitmap corruption
+> > detected, forcing read-only.\n",
+>=20
+> I prefer to mention what do we mean by 0x%x. Currently, it looks
+> complicated to
+> follow.
+
+Ack'ed. I am adding a lookup to print the human-readable tree name
+(Catalog, Extents, Attributes) alongside the ID.
+
+>=20
+> > =C2=A0#define HFSPLUS_ATTR_TREE_NODE_SIZE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A08192
+> > =C2=A0#define HFSPLUS_BTREE_HDR_NODE_RECS_COUNT=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A03
+> > +#define HFSPLUS_BTREE_HDR_MAP_REC=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A02=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0/* Map
+> > (bitmap) record in header node */
+>=20
+> Maybe, HFSPLUS_BTREE_HDR_MAP_REC_INDEX?
+
+Ack'ed.
+
+>=20
+> > =C2=A0#define HFSPLUS_BTREE_HDR_USER_BYTES=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0128
+> > +#define HFSPLUS_BTREE_NODE0_BIT=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00x80
+>=20
+> Maybe, (1 << something) instead of 0x80? I am OK with constant too.
+
+Ack'ed, will use (1 << 7). Can also use BIT(7) if you prefer.
+
+> Thanks,
+Shardul
+
 
