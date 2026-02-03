@@ -1,217 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-76216-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76218-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CPZsIco7gmmVQgMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76216-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 19:17:46 +0100
+	id IE+bNlhAgmlHRQMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76218-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 19:37:12 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF3A9DD710
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 19:17:45 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55C35DDB0C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 19:37:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id CB7E1309F8AC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 18:16:24 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 66B7730BF62A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 18:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAFA366DC4;
-	Tue,  3 Feb 2026 18:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7344365A10;
+	Tue,  3 Feb 2026 18:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Mniz/5oy"
+	dkim=pass (2048-bit key) header.d=jotschi-de.20230601.gappssmtp.com header.i=@jotschi-de.20230601.gappssmtp.com header.b="lhZtyPgR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105673612D8
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 18:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770142582; cv=none; b=Byg1eDoxz3/zsDxuQ6W7Soc2hkp8NzUaAZNpCXkQhwbghrYjjJCZbdnUAJaGTWjDUgALairmPpc2TeUGhaZcu3uPPzfSee5RoPpobtNXPgtNFJeUHRWmnkhZOixVDPFdk7WWiNHmp4VQzRgtgy8/Q5jBvb52MFxmNLmMcUKxpC0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770142582; c=relaxed/simple;
-	bh=Qt7o89VltFIBegDzasIbqnP3PJ+WPuTLLON/GuX+fRQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YeGjnKwaXhxlxzIEe+xU/tSWvI/Dm6Ympv/nCAuTUaiPyrf6NzMU6E58YMZB545JzUmy52L3dP3h6UgDERfUbGRsnvcc/beMsuev4m/hGJsynEz/+XI1E1itCV4d4cDeZgEOvZALbtO+5mE9guGl8vUqWnic8iI3qFf8+GxYIVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Mniz/5oy; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-8947e6ffd30so70834916d6.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Feb 2026 10:16:20 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E987531B83B
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 18:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.175
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770143384; cv=pass; b=dUaNv4tb6wwkwWxc4RV88+CM/Gg0MP8iRGrI30aUo5476c/NpiWkTuOpVWhF7B8oH8mqfAqy1Cz0vzxstOoWKOhdg/TJBlY350VCprndrY5sg1tarKUsRqplFvlzVDz4T8X2MJIK7Ilgz50YH3fULjS99wlsmGIoKMl45rfhhE0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770143384; c=relaxed/simple;
+	bh=+O8+UcYgnJABqa1+tztj9i2L3+z5VJHlpVYliL8nobQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SBlQY4vPleL9QRcsclZMpu6FF/WKrM2EZegSvnN+8vUhB5FdaqIeudz5UsmRkeJ0huVWs+ZW8m+w1ssI4HQyerX2gr5lbUEooppbCFRiFv9dcFheEM3BVrK+9awMO6vvINJDSjJh7/MRwm2JLfcTmTqgge8gltILYHEZJIxuWLI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jotschi.de; spf=none smtp.mailfrom=jotschi.de; dkim=pass (2048-bit key) header.d=jotschi-de.20230601.gappssmtp.com header.i=@jotschi-de.20230601.gappssmtp.com header.b=lhZtyPgR; arc=pass smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jotschi.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=jotschi.de
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-82418b0178cso247891b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Feb 2026 10:29:41 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770143381; cv=none;
+        d=google.com; s=arc-20240605;
+        b=VMN4ROJTVpOLf2K1MfTFkdEjY9aKiaggpaUdLsIZQhtAohxgNgp6GsBoBs2ypGi5/g
+         6B2HBwEkH3hROdt/pCwGWLnK+6Y6iarLwYnVLRKAHp4Dz9VHluNVZRhwc/++raDicIR7
+         q49jyct6pN/nElwso9kct/FvVrhK/nTPsQsRPCd0u089b7cUD6GtlnD7wr1Vlq0HS8R8
+         n9ppX2bSgLw5sq3njSTxQJ79rrx0hZxgqTxvVnw02FuqyvRa1gzpHrLUfUkUe7dw+zal
+         RySsQZOuO8X2om8TiH9WTB5GxXtqsDlSS1bjcpAndnuGWZ2KKdqhHiOB/AyYMMh6bVuh
+         gLPw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=+O8+UcYgnJABqa1+tztj9i2L3+z5VJHlpVYliL8nobQ=;
+        fh=S4qsqFUL/mjEqk8g3SK/38+tBxxlFYJ19ivX8AP7+Qs=;
+        b=a5pAV5bpIjuh5YKofqNkaZCnuM1OGKR71iEC2zuzOS+d9J8Qu7Ukz3Fc4VU7PVZloV
+         RZ73i6ZnC5JDbO8jF8BPQ7RKfvmDiK4wm52IEPl4y/ds7MuSpVSbgPaz4G7nqLF5Rm4a
+         PhH7tvqDZNT2GXnHygMcg3zNSO1XHV4mM5H+p1ol4e4cqdR6t/QqvL2eAY6UviLra6Fl
+         dgXDJe9s1+aNY7iABxSlv17tqhhdiv+faO8Tr5Hl4A8bWJX2QbupW6Xhlws0Tr1czcYe
+         5wOINQqMuRw4hggzh/0PkXNAnBeue9tMKrMF3lAtBU6NfzM6X5tYwFf0FJ8oxTt8SxNb
+         9aEA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1770142580; x=1770747380; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mu1la4UZlbEX7cvXzj/Z/hgnRFrqjHU+qKtYtW0dmkY=;
-        b=Mniz/5oynk/qOI64zPIe8E+PNEyixk4fEB611FX5soFdbulK6R9KmPQtOu4aEAXjcB
-         efjpn/kLP3vsSPGaHohVu6/Rt0K9qXP7QtNggw4Y7iGiQ+lb7Btklx97aDYTLAlUztFI
-         h5yvBEF6xvd6QNj3f/5Rq9dS5pMAQ/wKBPWuMCDaLEXtmpFbJnXArLI2UIvYnmp155Zy
-         0b+yLcNYyG0uUnOruupOuHumm/8Fat9UIruRUI37sLCEsgtmT6QSkgWJF1h0NEiROxuz
-         1abL4IMKxz9NUHd0G1V4nEtr6+1cDHCJ7YB1uyGxhcm0aubd+Dk72keMw16xEPt7BDo4
-         yQIw==
+        d=jotschi-de.20230601.gappssmtp.com; s=20230601; t=1770143381; x=1770748181; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+O8+UcYgnJABqa1+tztj9i2L3+z5VJHlpVYliL8nobQ=;
+        b=lhZtyPgRIWwtdcQEEOmitbN73LxyFZ9uyzCNkVdE5+mx5yiWmmbjWSCzdqaiIBYGUc
+         yolntBsJNxK1H6ebG/80y3x7QE1/sT7UufBqNIP5tD+iYKtYvJ2mflHdHZGFG+x7mMeu
+         WITgEZl8SdwhwSL2j/cUd5Ii50jV4Txa1lNRW/7dOEHqfE76i7mVf1ZoJhvfUE4MwGCb
+         Geyt4QhFkmWp/OtXfl7o8sZeiL8qtnjK+9uR05aDGVkzD30CKpK+6RpXCMuulJYlKLOw
+         9S5DtagWU6i7NFfBSZk69vgCRM+8gwrzraF8S0mPdT3rg3ZEI/1FVdc77EXyKGcUi+xM
+         z3mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770142580; x=1770747380;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mu1la4UZlbEX7cvXzj/Z/hgnRFrqjHU+qKtYtW0dmkY=;
-        b=SXS43QjWZ0jTyw/gTsuL3lh5eYYXYjH9p73aUFfHPah62BSKSVRXb+tHIqv57orsPq
-         L5fITzX34l8OLoxxsMLVKGLgcn5Psrh0nFCWc6tQWvSfHGAHYaSjB5ztNgB5e3uPuQdn
-         yEqYRYB5y7MXEco1S5gqfyP7ubJhOtWVU1UhsbX71clw83XbQc8l9A3YvnGny7H6ia7Z
-         kdLWFim4BLCMf9IpagDvhtIyZi8D0L8gGfCNSQttxk0S3fo/HXDtwBHEfdErcpOdgGP1
-         4mvSycpWT4nES4iQl8q7FsREZrwG3H9orG89jhgOwWSmX5M+WEawa+COJRZ4bOdZIU5s
-         I3sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgNrPWeejsZVDvATbLKeaWhjGOkL4UKQIrLPuPcikPqlabjc8ZQgMPNuvjIAvWa2Q/qqFyhbkCvjrO7SNK@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwPal3IwWoaArZcmpNdQM2/smaHTWDbvGpyovqswu9LbVdUy0u
-	ZAQO8n/4nn5Cr1ARuLl8plbmiTaT6Hfd142bR+Y2x55NzwSPadyJENmohpmRM/NCRD8=
-X-Gm-Gg: AZuq6aK1l3bWnqcKpjK4QW1THS0rZbNa3ALiRmGHa/ZfwKZPlpNfgdBCLBKV251AKNU
-	K3SaDsDMyBddsdpxd8txxknU0euiBDpsi9jyE1tPEkw3VSbHjiSMsSmy7NoNXnN7PtNSVRydN3Z
-	hH8jCGUzov6165LBPQZQU1drXv6hvoPeFzcENUw/My/MG3Z4tcs9wD87XODT52A2fL4FoEzC37b
-	0FbKUpCMNFPjKDMwmFnDtyuOL0TVjQK7qgYrbAjxcbj6ErYnp7+Z6LN5G8I+6mhTJ8da/X0SJk6
-	gVwgDQbTAhPqndgoZ12dJ3yd4+NQ02pa7fXC6jFuFMZryehANlM5rktilX1X5EGFnDhjZluY4dC
-	ZHur3/oz0Bk8bp5gk1SiTBxWyL37uSve8tybni9DOBEuBXAuj+u9YrX91JVrADdiNQB6hlcrEZt
-	rtGG3lj9RXMJLaNQIICm8CXPf8QWHyfYcdYlOsjZlCpHIwQdUDJeFodDbqtYXW2K0HVc8=
-X-Received: by 2002:a05:6214:20ab:b0:87c:22f9:dac4 with SMTP id 6a1803df08f44-8952210b4a5mr5192876d6.15.1770142579616;
-        Tue, 03 Feb 2026 10:16:19 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-162-112-119.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.112.119])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89521c00173sm2728446d6.12.2026.02.03.10.16.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Feb 2026 10:16:18 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1vnKwk-0000000Gah4-0kfw;
-	Tue, 03 Feb 2026 14:16:18 -0400
-Date: Tue, 3 Feb 2026 14:16:18 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Xu Yilun <yilun.xu@linux.intel.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Ackerley Tng <ackerleytng@google.com>,
-	Alexey Kardashevskiy <aik@amd.com>, cgroups@vger.kernel.org,
-	kvm@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org, x86@kernel.org,
-	akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de,
-	brauner@kernel.org, chao.p.peng@intel.com, chenhuacai@kernel.org,
-	corbet@lwn.net, dave.hansen@intel.com, dave.hansen@linux.intel.com,
-	david@redhat.com, dmatlack@google.com, erdemaktas@google.com,
-	fan.du@intel.com, fvdl@google.com, haibo1.xu@intel.com,
-	hannes@cmpxchg.org, hch@infradead.org, hpa@zytor.com,
-	hughd@google.com, ira.weiny@intel.com, isaku.yamahata@intel.com,
-	jack@suse.cz, james.morse@arm.com, jarkko@kernel.org,
-	jgowans@amazon.com, jhubbard@nvidia.com, jroedel@suse.de,
-	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com,
-	keirf@google.com, kent.overstreet@linux.dev,
-	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
-	mail@maciej.szmigiero.name, maobibo@loongson.cn,
-	mathieu.desnoyers@efficios.com, maz@kernel.org, mhiramat@kernel.org,
-	mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com,
-	mingo@redhat.com, mlevitsk@redhat.com, mpe@ellerman.id.au,
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es,
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com,
-	paul.walmsley@sifive.com, pbonzini@redhat.com, peterx@redhat.com,
-	pgonda@google.com, prsampat@amd.com, pvorel@suse.cz,
-	qperret@google.com, richard.weiyang@gmail.com,
-	rick.p.edgecombe@intel.com, rientjes@google.com,
-	rostedt@goodmis.org, roypat@amazon.co.uk, rppt@kernel.org,
-	shakeel.butt@linux.dev, shuah@kernel.org, steven.price@arm.com,
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com,
-	tglx@linutronix.de, thomas.lendacky@amd.com, vannapurve@google.com,
-	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com,
-	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org,
-	wyihan@google.com, xiaoyao.li@intel.com, yan.y.zhao@intel.com,
-	yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
-Subject: Re: [RFC PATCH v1 05/37] KVM: guest_memfd: Wire up
- kvm_get_memory_attributes() to per-gmem attributes
-Message-ID: <20260203181618.GY2328995@ziepe.ca>
-References: <cover.1760731772.git.ackerleytng@google.com>
- <071a3c6603809186e914fe5fed939edee4e11988.1760731772.git.ackerleytng@google.com>
- <07836b1d-d0d8-40f2-8f7b-7805beca31d0@amd.com>
- <CAEvNRgEuez=JbArRf2SApLAL0usv5-Q6q=nBPOFMHrHGaKAtMw@mail.gmail.com>
- <20260129003753.GZ1641016@ziepe.ca>
- <aXqx3_eE0rNh6nP0@google.com>
- <aYHGVQTF6RUs7r3g@yilunxu-OptiPlex-7050>
+        d=1e100.net; s=20230601; t=1770143381; x=1770748181;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+O8+UcYgnJABqa1+tztj9i2L3+z5VJHlpVYliL8nobQ=;
+        b=d6ch/vhB1rOElMmPaCjpykcPNBaRFLw1C9ynOimenRGXPbXeEWeaIbQcSujughOx9P
+         EeuHv1FMBctKgTUddHToWICaoguFV3dE/3qi9TtUF7FMovlWqk3nQgcDyOwQqg5fO5/K
+         +Nzt42b93lOPVjeOTAWUWwKrn4WgCpooE1dfzffGPu40RVDY/JuiiulWIoEtb8HAsi01
+         O2ZR8iPpql2FMrZC9V/T96WOfIi0eVpivtWmC5UrM5lzJisIbqEd7E0ph1A9ugXmeju0
+         BON5EawVOCfIxY58CwF28R1sbHXLSEAnVagTymqqk6Xr9wi6Kgf/n6XePalZuB48PvTD
+         GzBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVi9MXtIvz5+M4Jj9H9Gb49NORQD81//XUBuMfY7esKEvbc4LaiO4J9Q4LbW5jiIsnlNTWbbA0A/5dkaaao@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpJhVnj+8OlQP6uiZXwsjq1TWm0+qoVeGZqiaZ99Fj7rQilGmK
+	t0OxuOO4A0yNHp/spkzQjfpsfcs4Zpr3gnMNTkQu6WMAVg9RrBowhEr4geJbkMKUJONIr8exu+H
+	zWHLTLkGzzyEg9/ASUXrA3CreijcIXMmFl94N4dVJ
+X-Gm-Gg: AZuq6aJd/rww0gTTTxf3hC2LolR+mzpRIrtc3a2Ir8Cc/Uq4H7FpBQaKUUo7vE2OXze
+	L5Y6eCnwq9bvTfJoHPI7D7HXbXmtY0n8WFwhDFNhB0ri7BAKpbu2ZO50Xn4y4i6QhIB180hICBW
+	yBjPwcMrEeayvef9H6RIb5Qz86Mc8WiTeuyW4lkQwM7IaGl1Cd1avSIk3Zq3qGb5bQjiScHh3Sc
+	I39h3qOCaa51Rv2jQj/7LQOhFH/gyTpTJaMjAVj42mieMGWIucGhWPuVLJLyLFmdLUyxSLtx+WT
+	wDnp
+X-Received: by 2002:a17:90b:28cc:b0:340:be4d:a718 with SMTP id
+ 98e67ed59e1d1-354870ae629mr234033a91.7.1770143381135; Tue, 03 Feb 2026
+ 10:29:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aYHGVQTF6RUs7r3g@yilunxu-OptiPlex-7050>
+References: <32Xtx4IaYj8nhPIXtt0gPimTRQy4RNjzmsqI1vQB1YBpRes0TEgu6zVzWbBEcn2U6ZxB14BD9vakmezNyhdXDt3CVGO8WYGxHSZZ1qtQVy8=@spawn.link>
+ <8f5bb04853073dc620b5a6ebc116942a9b0a2b5c.camel@kernel.org>
+ <e5-exnk0NS5Bsw0Ir_wplkePzOzCUPSsez9oqF7OVAAq3DASvNJ62B9EuQbvIqHitDgxtVnu74QYDYVEQ8rCCU74p4YupWxaKZNN34EPKUY=@spawn.link>
+ <9ceb6cbcef39f8e82ab979b3d617b521aa0fcf83.camel@kernel.org>
+ <CA+zj3DKAraQASpyVfkcDyGXu_oaR9SnYY18pDkN+jDgi54kRMQ@mail.gmail.com>
+ <998f6d6819c2e0c3745599d61d8452c3bc478765.camel@kernel.org>
+ <3DMb18lL2VzwORom5oMGlQizKpO_Na6Rhmv5GDA9GpN3ELrsA5plqhzezDxDs_UcXaqFQ9qUHb9y4cY4JRy7TjQ108_dVkZH9D2Yj48ABH0=@spawn.link>
+ <CAJfpegu5tAFr3+sEQGi6YWGHMEVpVByFoVxzCONERGvJJdk5vg@mail.gmail.com>
+In-Reply-To: <CAJfpegu5tAFr3+sEQGi6YWGHMEVpVByFoVxzCONERGvJJdk5vg@mail.gmail.com>
+From: =?UTF-8?Q?Johannes_Sch=C3=BCth?= <j.schueth@jotschi.de>
+Date: Tue, 3 Feb 2026 19:29:29 +0100
+X-Gm-Features: AZwV_QjcPJsBNwsBRk14wh7tKfyhfH6Ut0d8gg2IlveK_YYbqsMVUYcYYqFBzQY
+Message-ID: <CA+zj3DLwu20Q-1qUU-o8fSvnz9V_us35uQ5nqi7AEPNwZ=DAbA@mail.gmail.com>
+Subject: Re: NFSv4 + FUSE xattr user namespace regression/change?
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Antonio SJ Musumeci <trapexit@spawn.link>, Trond Myklebust <trondmy@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, Bernd Schubert <bernd.schubert@fastmail.fm>, 
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[ziepe.ca:s=google];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUBJECT_ENDS_QUESTION(1.00)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[jotschi-de.20230601.gappssmtp.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[google.com,amd.com,vger.kernel.org,kvack.org,kernel.org,linux-foundation.org,linux.intel.com,alien8.de,intel.com,lwn.net,redhat.com,cmpxchg.org,infradead.org,zytor.com,suse.cz,arm.com,amazon.com,nvidia.com,suse.de,linux.dev,oracle.com,maciej.szmigiero.name,loongson.cn,efficios.com,digikod.net,ellerman.id.au,amazon.es,dabbelt.com,sifive.com,gmail.com,goodmis.org,amazon.co.uk,linutronix.de,zeniv.linux.org.uk,huawei.com];
-	DKIM_TRACE(0.00)[ziepe.ca:+];
-	MIME_TRACE(0.00)[0:+];
-	DMARC_NA(0.00)[ziepe.ca];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76216-lists,linux-fsdevel=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MISSING_XM_UA(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	DMARC_NA(0.00)[jotschi.de];
 	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jgg@ziepe.ca,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCPT_COUNT_GT_50(0.00)[98];
-	MID_RHS_MATCH_FROM(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-76218-lists,linux-fsdevel=lfdr.de];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[jotschi-de.20230601.gappssmtp.com:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[j.schueth@jotschi.de,linux-fsdevel@vger.kernel.org];
+	FREEMAIL_CC(0.00)[spawn.link,kernel.org,vger.kernel.org,fastmail.fm,linuxfoundation.org];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[ziepe.ca:mid,ziepe.ca:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: CF3A9DD710
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	RCPT_COUNT_FIVE(0.00)[6];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[jotschi.de:url,spawn.link:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,szeredi.hu:email,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: 55C35DDB0C
 X-Rspamd-Action: no action
 
-On Tue, Feb 03, 2026 at 05:56:37PM +0800, Xu Yilun wrote:
-> > +1.  For guest_memfd, we initially defined per-VM memory attributes to track
-> > private vs. shared.  But as Ackerley noted, we are in the process of deprecating
-> > that support, e.g. by making it incompatible with various guest_memfd features,
-> > in favor of having each guest_memfd instance track the state of a given page.
-> > 
-> > The original guest_memfd design was that it would _only_ hold private pages, and
-> > so tracking private vs. shared in guest_memfd didn't make any sense.  As we've
-> > pivoted to in-place conversion, tracking private vs. shared in the guest_memfd
-> > has basically become mandatory.  We could maaaaaybe make it work with per-VM
-> > attributes, but it would be insanely complex.
-> > 
-> > For a dmabuf fd, the story is the same as guest_memfd.  Unless private vs. shared
-> > is all or nothing, and can never change, then the only entity that can track that
-> > info is the owner of the dmabuf.  And even if the private vs. shared attributes
-> > are constant, tracking it external to KVM makes sense, because then the provider
-> > can simply hardcode %true/%false.  
-> 
-> For CoCo-VM and Tee-IO, I'm wondering if host or KVM has to maintain
-> the private/shared attribute for "assigned MMIO". I'm not naming them
-> "host MMIO" cause unlike RAM host never needs to access them, either in
-> private manner or shared manner.
-> 
-> Traditionally, host maps these MMIOs only because KVM needs HVA->HPA
-> mapping to find pfn and setup KVM MMU.
+Thank you for the patch. I applied it to 6.18.8 and 6.15.11.
+Unfortunately the xattr operations still fail in the same way.
+Note that 6.15.10 was still working for me.
+I included the wireshark dumps [0] [1] from the mount process. The
+access rights show up as:
+Access Denied: MD XT DL XAW, [Allowed RD LU XAR XAL] in 6.18.8
 
-This is not actually completely true, the host mapping still ends up
-being used by KVM if it happens to trap and emulate a MMIO touching
-instruction.
+Greetings, Johannes
 
-It really shouldn't do this, but there is a whole set of complex
-machinery in KVM and qemu to handle this case.
+[0] https://www.jotschi.de/files/fuse_nfs_mount_6_18_8-xattr-fuse-patch.pcap
+[1] https://www.jotschi.de/files/fuse_nfs_mount_6_15_11-xattr-fuse-patch.pcap
 
-For example if the MSI-X window is not properly aligned then you have
-some MMIO that is trapped and must be reflected to real HW.
 
-So the sharable parts of the BAR should still end up being mmaped into
-userspace, I think.
-
-Which means we need VFIO to know what they are, and hopefully it is
-just static based on the TDISP reports..
-
-Jason
+Am Di., 3. Feb. 2026 um 10:28 Uhr schrieb Miklos Szeredi <miklos@szeredi.hu>:
+>
+> On Mon, 2 Feb 2026 at 20:54, Antonio SJ Musumeci <trapexit@spawn.link> wrote:
+>
+> > So where do we go from here? Bring in NFS server folks? Miklos?
+>
+> Can you please try the attached patch on the server?
+>
+> Thanks,
+> Miklos
 
