@@ -1,171 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-76207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76209-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iPIeG9wYgmmZPAMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 16:48:44 +0100
+	id SIrNLWQggmlIPgMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76209-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 17:20:52 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB0DDB818
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 16:48:43 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16DCBDBD4C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 17:20:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3C4FC30EC5E0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 15:42:16 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 743EC3177E10
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 16:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513823B9610;
-	Tue,  3 Feb 2026 15:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C7B3C1998;
+	Tue,  3 Feb 2026 16:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTiJRmMc"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Q0RF4LZp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33973B9605
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 15:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58CB23C1961;
+	Tue,  3 Feb 2026 16:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770133334; cv=none; b=baqQ9RtJbBn81QyXiCFTkqIU4TGmlMDrrLziMExqXxewCZO80s0R7Eo2fBv+w6X1HB5q14saSgiDiRSJHcng2CzUM97Z6J+LiMIghlJJ6YnhEi2ReVARnKZeHqMdtOORwqtMFq5hE9n58Unvd0gYnwPoHLAimhpOMJk5IUuR52g=
+	t=1770135146; cv=none; b=mN5iXyC9FrBKWQfhvourYp9RwNOpNJ6Lk1nHIVMM+F7HFfePYHSwoogPxrJlPHOOoeQfnatjDy1ILpI7m4KqcNTBjAEyW5SGEQPmG1vE67SFRmotr0xN9n/m+tvaJirxVF+ZA91m79Rc5BeDCAYcG4Zld6OspFhs6H0CGxvQSeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770133334; c=relaxed/simple;
-	bh=3m6PM7BiTfYOv0eengmhgqKYzAjLzI/HkhF1VU3RCnE=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Xn7+syeMDPDpC8SgvCGeqDlFH6BG+z8W/n2JHcB9JsLxdWYsukYDB7J2QrN/Ah6zh/nORxOdOkXIUjqV8tg2OD7H6xROflFOYeW8nNmkQOQWyMeR44ZMe9jdqsSKYbWJDHOQzzCayooYbSb/vsTOzV2YL0fp0tLskmOt1vDKtts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTiJRmMc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94ABFC116D0
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 15:42:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770133334;
-	bh=3m6PM7BiTfYOv0eengmhgqKYzAjLzI/HkhF1VU3RCnE=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=hTiJRmMc68PzXZzo3rk5pIHo3FEuKZml110/dH+yBPj9fc/bJN36Dx9Q+o2k479ZA
-	 dbuE9BBrj1WJtd5wyDm7EubV0GqhspK0H9JwezrOEY+9W96fR8Ve1XZ7x45D2CwpCW
-	 4WBJxyYKhJOgv41Vnh6DcAWyinUJ3keH7uYnosdbeW20zi+b/HEsAYWmxGcjKljnFm
-	 pM3lxpzXod3O9rZdGJhCe5IgAzkkSz7SjzygqwolymRxKpaJQlyJtjZz+X4G7MuL/Q
-	 S6hOEHveJVyypTfKLko/waDS3leLV/YHSJ9KQ+Posp3EMsPPcciiNL22fAAPKB0nj4
-	 R7MlqhPT29AdQ==
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 8DC2BF40068;
-	Tue,  3 Feb 2026 10:42:13 -0500 (EST)
-Received: from phl-imap-04 ([10.202.2.82])
-  by phl-compute-02.internal (MEProxy); Tue, 03 Feb 2026 10:42:13 -0500
-X-ME-Sender: <xms:VReCaU0E5VQhxrnNNTWe65aDJ6kepY_g3IIqitt9hes8da2Rt9DnxA>
-    <xme:VReCaZ7W6n-4zRjEx4MHIJnHx9ijV-ZDAlPlowGJ9AEdVDAqJbucbRQmHDCvcE-t9
-    hfCOad93jHYFGVeFai5VWltDxk7_v7MgXM-7FsSnsBxTscmbqNJz04j>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukedtgeefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehnnhgr
-    ucfutghhuhhmrghkvghrfdcuoegrnhhnrgeskhgvrhhnvghlrdhorhhgqeenucggtffrrg
-    htthgvrhhnpeeuudehieehteekfeeuffeugfeihfeugeevfeejveffueehieevjeeggffh
-    jeehkeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghnnhgrodhmvghsmhhtphgruhhthhhp
-    vghrshhonhgrlhhithihqdduieejjeduvddtjeelqdeffedvvdefgeejuddqrghnnhgrpe
-    epkhgvrhhnvghlrdhorhhgsehnohifhhgvhigtrhgvrghmvghrhidrtghomhdpnhgspghr
-    tghpthhtohepuddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhgruhhnvg
-    hrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjlhgrhihtohhnsehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehsfhhorhhshhgvvgeskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htohepthhrohhnughmhieskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrghn
-    uggvrhesmhhihhgrlhhitgihnhdrtghomhdprhgtphhtthhopehjrggtkhesshhushgvrd
-    gtiidprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrgh
-X-ME-Proxy: <xmx:VReCacZSz_jgt5atIJ--lInunwoUf_isHc7F7f0nwjc_cHMfN3ou_A>
-    <xmx:VReCaTT1EC4fWDniDuKQ2Me9lJxiTm4td5OSILSt4XZCAVIQmEkIMQ>
-    <xmx:VReCaT86QM07ak_slf_X29BRCht82VBoicniuk5tFtzsExWl2sh-KQ>
-    <xmx:VReCabjR8il8TUDpKzGbNwkbEdN0pkVzCRh4DKX3zlLl3SA03udurQ>
-    <xmx:VReCacbUv7Kv8kTmg9ART5cfjxcWuMGqbu-x3HKCu88NHSYvThRS6rBg>
-Feedback-ID: i20964851:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 647D0B6006E; Tue,  3 Feb 2026 10:42:13 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1770135146; c=relaxed/simple;
+	bh=R0xn/ph76keQkirSk8vJn5LNC+ZuEE02jOlzNQ5lMcg=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=dvCtAEThV5m4f0CKevrBqEsmbnoemwocwB5RJd7f6V+eNh1oGgbUzSnrQrg89aYUIJ6/dLLVma0vwPt9NoBrCaOPThDssvTgaiy7S3fhxRli8YoE0VC6L8PdVY3yE8pcVyP1+792v0lBR+pD//u0ii6eiOdN2K2pTqF1tY2FWvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Q0RF4LZp; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 613GBxBI3465813
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 3 Feb 2026 08:11:59 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 613GBxBI3465813
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2026012301; t=1770135120;
+	bh=QeXaSNMyaXFBNUH1ojI9c1CisP1DJE8s7Y+PWQeSj4I=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=Q0RF4LZpy0WWpQZismHHgtW2AS4pAAuH1tRF+Y83DQ+lckhgjT7bjjzRyWdGUobTn
+	 zgjfkWwJ/Xh6GDgdTHIz5W2Dfz956qUjK9SKFlJsGIhkQfiNbFjd7DNb3ElpJSgws8
+	 tQc9a19Y2i4ohjuFKvHizoKh43okVLH4ADfvtJYKSguODZUZJLU0dqrCIy3Sw9he+i
+	 ZDI2vZtaPDpizoDk7Zavi3KdvS6c1QynF0ySWnKwDBfWeNJpR1ZPqPf3ZgG59c9t3j
+	 7oHPsLpDg2byl+uJzmozezg1PAnYRSsu8ohuJsigQxvdwC81+S5/huWswk5RFLPg25
+	 uF6ufRPydUZnQ==
+Date: Tue, 03 Feb 2026 08:11:54 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: "Windl, Ulrich" <u.windl@ukr.de>, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Jonathan Corbet <corbet@lwn.net>
+CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Lennart Poettering <lennart@poettering.net>,
+        "systemd-devel@lists.freedesktop.org" <systemd-devel@lists.freedesktop.org>
+Subject: =?US-ASCII?Q?RE=3A_=5BEXT=5D_=5Bsystemd-devel=5D?=
+ =?US-ASCII?Q?_=5BPATCH_0/3=5D_Add_the_abil?=
+ =?US-ASCII?Q?ity_to_mount_filesystems_during_initramfs_expansion?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <51265a7170d7408a92192c5112c1e613@ukr.de>
+References: <20260124003939.426931-1-hpa@zytor.com> <51265a7170d7408a92192c5112c1e613@ukr.de>
+Message-ID: <7F889C39-4D60-4A12-9F60-D4F4B7B75474@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AQ5zJGJASj87
-Date: Tue, 03 Feb 2026 10:41:52 -0500
-From: "Anna Schumaker" <anna@kernel.org>
-To: "Christian Brauner" <brauner@kernel.org>,
- "Jeff Layton" <jlayton@kernel.org>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, "Trond Myklebust" <trondmy@kernel.org>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>,
- "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>,
- "Alexander Mikhalitsyn" <alexander@mihalicyn.com>
-Message-Id: <b9e9b0dd-745b-46fb-9e62-807d53dd417c@app.fastmail.com>
-In-Reply-To: <20260203-leimen-kundgeben-7be98e9cd156@brauner>
-References: <20260129-twmount-v1-1-4874ed2a15c4@kernel.org>
- <20260203-leimen-kundgeben-7be98e9cd156@brauner>
-Subject: Re: [PATCH] vfs: add FS_USERNS_DELEGATABLE flag and set it for NFS
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.15 / 15.00];
+X-Spamd-Result: default: False [-0.96 / 15.00];
+	SUBJ_EXCESS_QP(1.20)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	DMARC_POLICY_ALLOW(-0.50)[zytor.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[zytor.com:s=2026012301];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76207-lists,linux-fsdevel=lfdr.de];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,app.fastmail.com:mid,oracle.com:email];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[anna@kernel.org,linux-fsdevel@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-76209-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	NEURAL_HAM(-0.00)[-0.996];
+	RCVD_COUNT_THREE(0.00)[4];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[zytor.com:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[hpa@zytor.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[10];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: CBB0DDB818
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,poettering.net:email,linux.org.uk:email,lists.freedesktop.org:email,lwn.net:email,ukr.de:email]
+X-Rspamd-Queue-Id: 16DCBDBD4C
 X-Rspamd-Action: no action
 
+On February 1, 2026 11:38:23 PM PST, "Windl, Ulrich" <u=2Ewindl@ukr=2Ede> w=
+rote:
+>Hi!
+>
+>I wonder: wouldn't it be nicer to use a subdirectory like "=2Esystemd-mag=
+ic" to place such magic files there that are interpreted by systemd? Then "=
+!!!MOUNT!!!" would become a simple "mount" or maybe "fstab" or "mountttab",=
+ =2E=2E=2E
+>
+>Kind regards,
+>Ulrich Windl
+>
+>> -----Original Message-----
+>> From: systemd-devel <systemd-devel-bounces@lists=2Efreedesktop=2Eorg> O=
+n
+>> Behalf Of H=2E Peter Anvin
+>> Sent: Saturday, January 24, 2026 1:40 AM
+>> To: Alexander Viro <viro@zeniv=2Elinux=2Eorg=2Euk>; Christian Brauner
+>> <brauner@kernel=2Eorg>; Jan Kara <jack@suse=2Ecz>; Jonathan Corbet
+>> <corbet@lwn=2Enet>; H=2E Peter Anvin <hpa@zytor=2Ecom>
+>> Cc: linux-fsdevel@vger=2Ekernel=2Eorg; linux-doc@vger=2Ekernel=2Eorg; l=
+inux-
+>> kernel@vger=2Ekernel=2Eorg; Lennart Poettering <lennart@poettering=2Ene=
+t>;
+>> systemd-devel@lists=2Efreedesktop=2Eorg
+>> Subject: [EXT] [systemd-devel] [PATCH 0/3] Add the ability to mount
+>> filesystems during initramfs expansion
+>>=20
+>>=20
+>> At Plumber's 2024, Lennart Poettering of the systemd project requested
+>> the ability to overmount the rootfs with a separate tmpfs before
+>> initramfs expansion, so the populated tmpfs can be unmounted=2E
+>>=20
+>> This patchset takes this request and goes one step further: it allows
+>> (mostly) arbitrary filesystems mounts during initramfs processing=2E
+>>=20
+>> This is done by having the initramfs expansion code detect the special
+>> filename "!!!MOUNT!!!" which is then parsed into a simplified
+>> fstab-type mount specification and the directory in which the
+>> !!!MOUNT!!! entry is used as the mount point=2E
+>>=20
+>> This specific method was chosen for the following reasons:
+>>=20
+>> 1=2E This information is specific to the expectations of the initramfs;
+>>    therefore using kernel command line options is not
+>>    appropriate=2E This way the information is fully contained within th=
+e
+>>    initramfs itself=2E
+>> 2=2E The sequence !!! is already special in cpio, due to the "TRAILER!!=
+!"
+>>    entries=2E
+>> 3=2E The filename "!!!MOUNT!!!" will typically be sorted first, which
+>>    means using standard find+cpio tools to create the initramfs still
+>>    work=2E
+>> 4=2E Similarly, standard cpio can still expand the initramfs=2E
+>> 5=2E If run on a legacy kernel, the !!!MOUNT!!! file is created, which
+>>    is easy to detect in the initramfs code which can then activate
+>>    some fallback code=2E
+>> 6=2E It allows for multiple filesystems to be mounted, possibly of
+>>    different types and in different locations, e=2Eg=2E the initramfs c=
+an
+>>    get started with /dev, /proc, and /sys already booted=2E
+>>=20
+>> The patches are:
+>>=20
+>>     1/3: fs/init: move creating the mount data_page into init_mount()
+>>     2/3: initramfs: support mounting filesystems during initramfs expan=
+sion
+>>     3/3: Documentation/initramfs: document mount points in initramfs
+>>=20
+>> ---
+>>  =2E=2E=2E/driver-api/early-userspace/buffer-format=2Erst   | 60 ++++++=
++++++++-
+>>  fs/init=2Ec                                          | 23 +++++-
+>>  include/linux/init_syscalls=2Eh                      |  3 +-
+>>  init/do_mounts=2Ec                                   | 17 +---
+>>  init/initramfs=2Ec                                   | 95 ++++++++++++=
++++++++++-
+>>  5 files changed, 175 insertions(+), 23 deletions(-)
+>
 
+The point is that this is done during initramfs deencapsulation=2E
 
-On Tue, Feb 3, 2026, at 10:08 AM, Christian Brauner wrote:
-> On Thu, 29 Jan 2026 16:47:43 -0500, Jeff Layton wrote:
->> Commit e1c5ae59c0f2 ("fs: don't allow non-init s_user_ns for filesystems
->> without FS_USERNS_MOUNT") prevents the mount of any filesystem inside a
->> container that doesn't have FS_USERNS_MOUNT set.
->> 
->> This broke NFS mounts in our containerized environment. We have a daemon
->> somewhat like systemd-mountfsd running in the init_ns. A process does a
->> fsopen() inside the container and passes it to the daemon via unix
->> socket.
->> 
->> [...]
->
-> Applied to the vfs-7.0.misc branch of the vfs/vfs.git tree.
-> Patches in the vfs-7.0.misc branch should appear in linux-next soon.
->
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
->
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
-
-Acked-by: Anna Schumaker <anna.schumaker@oracle.com>
-
->
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs-7.0.misc
->
-> [1/1] vfs: add FS_USERNS_DELEGATABLE flag and set it for NFS
->       https://git.kernel.org/vfs/vfs/c/269c46e936f3
+Either way, it doesn't seem like there is interest=2E
 
