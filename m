@@ -1,213 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-76213-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id gKvdKCwmgmnPPgMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76213-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 17:45:32 +0100
+	id 0EUAIZEtgmlFQAMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 18:17:05 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 479F7DC2DB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 17:45:32 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91599DCA25
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 18:17:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id ABBDD3028B8C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 16:45:31 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id C811C300A583
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 17:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6223D3321;
-	Tue,  3 Feb 2026 16:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44D13D522C;
+	Tue,  3 Feb 2026 17:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="JRxvx7iu"
+	dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b="YQEdKaoq";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="S659JPgG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from a10-70.smtp-out.amazonses.com (a10-70.smtp-out.amazonses.com [54.240.10.70])
+	(using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65973242B8
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 16:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770137129; cv=pass; b=Mux/AziBNLtdXreTqRSpur15t4s8hLbMQg+OnuvhYiYK4e+kCAkt/0hioUDfVlkG9PigojilXxF1h9/vCMw0iLg32D6/liA5C1O+DvQ8dx8eCBiQT5JlqrUDxxHyPYZE6ZVCivJzXJ2wkPHGXOqx76dDqvi1/Bbyr0GIeLStSXI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770137129; c=relaxed/simple;
-	bh=bO8dhNUjJ4X670TfqZgQ2YUgd1dsCj0kbvqJU6a2u1U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hp0xuLkpOnQp8q9QGkIGyV0WUjBpuR2t3/BSC0WC9yJFN2gPUKQhuGDcSP1fwhsYtMreTWXYaXE+qJVpLs8zPlKeRSUEByG/PXj0R6WAg/w1VO5kMxsf5fBtP4BRMQoup4mSgBHHr49SMhohj7RIxxXNKVr5ZTzUctTLE7Vpjwc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=JRxvx7iu; arc=pass smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-59de8155501so5866612e87.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Feb 2026 08:45:27 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770137126; cv=none;
-        d=google.com; s=arc-20240605;
-        b=a7ybq/Vp2dmKmuxLudmNOp91zp4ZT8raXDF74mYYDtkxAxo9RXFsLgH9Vr0DRjZgLv
-         2JmXygho13LnIwPC0ZyjKUjmMMdJHi3TZjwFIHkwYeFcsIqxetNZomiVCzID7v88jrxH
-         xvfgDQHo+n6e2tndqMmPTyRva3zgTctCx1mvfqSNubbpSURcN7Y1iQarRp+yAUD5i1vu
-         5+sI2CRhtgptFIOcN07nduzm0N3JlYnIFnouSKj0ztuRurlUk8sdCK0TcbGgv2ktFthv
-         aA3t/XepyipfoLkCXepRZeLLnhvkGqwfqg7b4r00Ns9jETtFlyNtHZvooVPqb4uerm3r
-         J09Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=ygUUZtDkOgFMPRztTwX96v8DDz1QuLmF2t43V3sE79A=;
-        fh=oti58R7cvrF/R+50rdIJ5Vs66LAe3pr2Xq0as48pFGQ=;
-        b=MgbcgY3PbsNm1DfT2ep3miLZmk8p+XfX8a4W3hGkirMlLzbzsG6uxbx3rPFCJ4KnU0
-         Go+o/oh8391ZGg+VMwL851+rUk7nO+oSeg0SsJG/s7O1N1XZHXNIIHMjV63qPnemFHrO
-         m8ohKnWHNCTR3QQ8aICmDVRhFFmX8YR5gim43xzjd/NYIu/hPwdE5psgncPUHyJZoE3+
-         Iy6PWmcNVc/KKp7OdXkgD0kPw5cNh/Q5K9eNAOmOuIE55K4g8pAzE10279Qm+1WLwUP8
-         TzLsQK7n9gL9s/LJrMLsUrt5b/A+Dz2xX/dxHRmNvFpEMeXumYd/xh0K2Yy3rphnXRmu
-         toOQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mihalicyn.com; s=mihalicyn; t=1770137126; x=1770741926; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ygUUZtDkOgFMPRztTwX96v8DDz1QuLmF2t43V3sE79A=;
-        b=JRxvx7iudoAYOhNvTeURknB/2jI7vfKyrHcTGNjdEgRZor6HoBLtEe+lVvTKXla07V
-         TodE4/SQSSizO0it8nsKjnpktroWxPQYCOfoth2WCZzR+EYrDO0WyFSwBB+TiD2VjENn
-         vNNufCWcuZp+yiZJ/m8OGWr8vcJ6R40re6yRs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770137126; x=1770741926;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ygUUZtDkOgFMPRztTwX96v8DDz1QuLmF2t43V3sE79A=;
-        b=PCE5stKOvt0+kgwILog6pEb50q6TfRy23gPDK4591Up8stHQNttPAghafakwbEonsf
-         bWy6KWyGa/46ZrIg4EY1cj+K7vZbhNZHKdXolCRqb5gHzlZi3Zh9h3FOFPeHhCjh+HZn
-         CwLx7JN1RL0i819s1bz9ujR4mxv6mH1L/LlNjXW3FTHcoil/Ki55N7He9oqqVaZEjjhy
-         HqFkLKc63Klk988c9KvyJiqG8LiN5f1fCtY5aVaLAWyQaJMsMdV66GGI6yb3x7PPGgw3
-         Y33a7I0EXOE+/RKlcKvPN2MDwb8RZfJbCWGMFpjDIdnyR3gqcXRNuS6hhqbbCkh9Lmys
-         Dymg==
-X-Forwarded-Encrypted: i=1; AJvYcCVplGev+8hDvVzjuI+ccmiESDTxoqmBlAoDvhPZRYEUmAPXv7Akd17UPz0B2APM5E0YmF3TvNlMvSI1RplQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4iYa3IbRi0D0JjikNAsmRpH/TIcxT0UehVVMlWKjWKfaUvYzi
-	Ba0d38Ncfqo9iuXHviSm8OBvzfWE65DRdiAZH/7IKTjDQOdhtdNVo5OHnxSsHc7Vx9uK6BzOjQA
-	BGrjdxvdWMGsdk0TpwyQFLVR4H1rzk8puqhY+WFzNew==
-X-Gm-Gg: AZuq6aKDYfl6s/NbYBRxaq1Xt/6nJCEW79wqHdgCLBUR17a8jysyEfQRY2O/glUnRxQ
-	hQQHlik0N8osvE25/Niq9rhPAkwTfCqNURlO7+bikVsJU/wvrm6otHfrTq26gTx6Mvz/xu/icYi
-	bnK5f9oS0iEAIMNhPvjH2PBe80XCRIMbSpaQfcHkMmgSN6HHsYK055PfyuEdKlVKrImvP/XguBw
-	7PTf+XvfbR4Jt20dztH6YTkisiK0q31rHqlOzXQ3HMQBssc2Xe1vvgY+qYHCXvDMIYMpA==
-X-Received: by 2002:a05:6512:4012:b0:59e:2020:7e53 with SMTP id
- 2adb3069b0e04-59e20207f54mr4877220e87.11.1770137125969; Tue, 03 Feb 2026
- 08:45:25 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261FB31AF25
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 17:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.10.70
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770138821; cv=none; b=sZUjAcHk6wpJ0HnTNcvI/XQniOOLcSag4X8yH8AcYF3BHUtBcZ/fRW1BXGsLki3Pcz653k0tNv8p9/TifXaWm1b/DP2Q1h/sWsx3JDaQTR4NQSCFz/DeEH0NsGTSnIKeR9b1QjjkQisnAK8tSM8XiSE5e2x7yJ3lmc0tgRum0Vk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770138821; c=relaxed/simple;
+	bh=Fs1Pnax7C6WGnOU6Gwi74/7UWOiZlFIKwN9irIfAa0Q=;
+	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:In-Reply-To:
+	 References:Message-ID; b=Nwlln9E49X4I/4+ZHcyrC+/DWIZ44AwaphbL4+pUqN5payH24E5bz2rhPXvXXHx06IAERJnMrtBvfGIQpLUtbjUPdCUBcT8Tuzxl+m2jWFpQARW/DMxjAR+rwJql9JTcrBwKIxOakCvpCG/7ifoP7/ZvMbfh9k7OJoWAEk8svh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jagalactic.com; spf=pass smtp.mailfrom=amazonses.com; dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b=YQEdKaoq; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=S659JPgG; arc=none smtp.client-ip=54.240.10.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jagalactic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=o25mqk5iffcfzgc3wo2zjhkohcyjzsoq; d=jagalactic.com; t=1770138817;
+	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:References:Reply-To:Message-Id;
+	bh=Fs1Pnax7C6WGnOU6Gwi74/7UWOiZlFIKwN9irIfAa0Q=;
+	b=YQEdKaoqYbd3ALalswl7q9JY7w89mBpj4a7s0P2D9FxfGHrCH3JM7jBFocbQ9cq8
+	nW0czK5CZwDbPBT7+zWWgv/P7pB8Yfa2h4+0WAyPrSisrZt8pfVeP3X2MSGrVZqJCkj
+	icStg+CfzngJeZTeLjgvOTNOesMTYKEMK/6RUa24=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1770138817;
+	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:References:Reply-To:Message-Id:Feedback-ID;
+	bh=Fs1Pnax7C6WGnOU6Gwi74/7UWOiZlFIKwN9irIfAa0Q=;
+	b=S659JPgGCsAYj9YjGT+7n/IDy4ajE4zTYFqujBp2YqO5Vnv4gDv19P3XMqszHOrt
+	yP/xkLp02xJQYZRNiFf+lYhptUakbaHyHhpYFeOFCH8snEggHytQGEELCF6L2LNMphd
+	4FUDNLs3L+ucM2p6d5+HOL+OfJqwRrFc/ioRPvsE=
+Subject: Re: [LSF/MM/BPF TOPIC] Where is fuse going? API cleanup,
+ restructuring and more
+From: =?UTF-8?Q?John_Groves?= <john@jagalactic.com>
+To: =?UTF-8?Q?Miklos_Szeredi?= <miklos@szeredi.hu>
+Cc: 
+	=?UTF-8?Q?f-pc=40lists=2Elinux-foundation=2Eorg?= <f-pc@lists.linux-foundation.org>, 
+	=?UTF-8?Q?linux-fsdevel=40vger=2Eke?= =?UTF-8?Q?rnel=2Eorg?= <linux-fsdevel@vger.kernel.org>, 
+	=?UTF-8?Q?Joanne_Koong?= <joannelkoong@gmail.com>, 
+	=?UTF-8?Q?Darrick_J_=2E?= =?UTF-8?Q?_Wong?= <djwong@kernel.org>, 
+	=?UTF-8?Q?John_Groves?= <John@groves.net>, 
+	=?UTF-8?Q?Bernd_Schubert?= <bernd@bsbernd.com>, 
+	=?UTF-8?Q?Amir_Goldstein?= <amir73il@gmail.com>, 
+	=?UTF-8?Q?Luis_Henriques?= <luis@igalia.com>, 
+	=?UTF-8?Q?Horst_Birthelmer?= <horst@birthelmer.de>
+Date: Tue, 3 Feb 2026 17:13:36 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20260129-twmount-v1-1-4874ed2a15c4@kernel.org>
- <CAJqdLrphO1GnAZ2=n8wQAP7B+ZwFnD0wSLY7sAjacZTpLZrqBg@mail.gmail.com>
- <6dd181bf9f6371339a6c31f58f582a9aac3bc36a.camel@kernel.org> <20260203-genehm-senden-f0375c2ca2b6@brauner>
-In-Reply-To: <20260203-genehm-senden-f0375c2ca2b6@brauner>
-From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date: Tue, 3 Feb 2026 17:45:13 +0100
-X-Gm-Features: AZwV_QhbCo7XE4Hglp7OWCWOuSnYjjdtA-Lepc4tiiQWFh3d9Uj7O2E0mh_yXBU
-Message-ID: <CAJqdLrp-LMVNng0F2xx1C0BtYvcidokZm6_tdssE+Z57v+tpqA@mail.gmail.com>
-Subject: Re: [PATCH] vfs: add FS_USERNS_DELEGATABLE flag and set it for NFS
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jeff Layton <jlayton@kernel.org>, Trond Myklebust <trondmy@kernel.org>, 
-	Anna Schumaker <anna@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	"Seth Forshee (DigitalOcean)" <sforshee@kernel.org>, linux-nfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+In-Reply-To: 
+ <CAJfpegtzYdy3fGGO5E1MU8n+u1j8WVc2eCoOQD_1qq0UV92wRw@mail.gmail.com>
+References: 
+ <CAJfpegtzYdy3fGGO5E1MU8n+u1j8WVc2eCoOQD_1qq0UV92wRw@mail.gmail.com> 
+ <aYIsRc03fGhQ7vbS@groves.net>
+X-Mailer: Amazon WorkMail
+Thread-Index: AQHclTBulzBvpdDlRkWaruEdNxtF6g==
+Thread-Topic: [LSF/MM/BPF TOPIC] Where is fuse going? API cleanup,
+ restructuring and more
+Reply-To: john@groves.net
+X-Wm-Sent-Timestamp: 1770138815
+Message-ID: <0100019c247ed1a1-966e181f-c23b-47ba-bb45-bbc80bcf1c56-000000@email.amazonses.com>
+Feedback-ID: ::1.us-east-1.LF00NED762KFuBsfzrtoqw+Brn/qlF9OYdxWukAhsl8=:AmazonSES
+X-SES-Outgoing: 2026.02.03-54.240.10.70
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[mihalicyn.com,quarantine];
-	R_DKIM_ALLOW(-0.20)[mihalicyn.com:s=mihalicyn];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+X-Spamd-Result: default: False [0.75 / 15.00];
+	TO_EXCESS_QP(1.20)[];
+	CC_EXCESS_QP(1.20)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MV_CASE(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[jagalactic.com,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_DKIM_ALLOW(-0.20)[jagalactic.com:s=o25mqk5iffcfzgc3wo2zjhkohcyjzsoq,amazonses.com:s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
 	HAS_LIST_UNSUB(-0.01)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[alexander@mihalicyn.com,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	PRECEDENCE_BULK(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76213-lists,linux-fsdevel=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76214-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[mihalicyn.com:+]
-X-Rspamd-Queue-Id: 479F7DC2DB
+	FROM_HAS_DN(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_CC(0.00)[lists.linux-foundation.org,vger.kernel.org,gmail.com,kernel.org,groves.net,bsbernd.com,igalia.com,birthelmer.de];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	DKIM_TRACE(0.00)[jagalactic.com:+,amazonses.com:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[john@jagalactic.com,linux-fsdevel@vger.kernel.org];
+	REPLYTO_DOM_NEQ_FROM_DOM(0.00)[];
+	FROM_EXCESS_QP(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	NEURAL_HAM(-0.00)[-0.996];
+	HAS_REPLYTO(0.00)[john@groves.net];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Rspamd-Queue-Id: 91599DCA25
 X-Rspamd-Action: no action
 
-Am Di., 3. Feb. 2026 um 17:41 Uhr schrieb Christian Brauner
-<brauner@kernel.org>:
->
-> On Tue, Feb 03, 2026 at 11:21:25AM -0500, Jeff Layton wrote:
-> > On Tue, 2026-02-03 at 17:11 +0100, Alexander Mikhalitsyn wrote:
-> > > Am Do., 29. Jan. 2026 um 22:48 Uhr schrieb Jeff Layton <jlayton@kernel.org>:
-> > > >
-> > > > Commit e1c5ae59c0f2 ("fs: don't allow non-init s_user_ns for filesystems
-> > > > without FS_USERNS_MOUNT") prevents the mount of any filesystem inside a
-> > > > container that doesn't have FS_USERNS_MOUNT set.
-> > > >
-> > >
-> > > Hi Jeff,
-> > >
-> > > > This broke NFS mounts in our containerized environment. We have a daemon
-> > > > somewhat like systemd-mountfsd running in the init_ns. A process does a
-> > > > fsopen() inside the container and passes it to the daemon via unix
-> > > > socket.
-> > > >
-> > > > The daemon then vets that the request is for an allowed NFS server and
-> > > > performs the mount. This now fails because the fc->user_ns is set to the
-> > > > value in the container and NFS doesn't set FS_USERNS_MOUNT.  We don't
-> > > > want to add FS_USERNS_MOUNT to NFS since that would allow the container
-> > > > to mount any NFS server (even malicious ones).
-> > > >
-> > > > Add a new FS_USERNS_DELEGATABLE flag, and enable it on NFS.
-> > >
-> > > Great idea, very similar to what we have with BPFFS/BPF Tokens.
-> > >
-> > > Taking into account this patch, shouldn't we drop FS_USERNS_MOUNT and
-> > > replace it with
-> > > FS_USERNS_DELEGATABLE for bpffs too?
-> > >
-> > > I mean something like:
-> > >
-> > > ======================
-> > > $ git diff
-> > > diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
-> > > index 9f866a010dad..d8dfdc846bd0 100644
-> > > --- a/kernel/bpf/inode.c
-> > > +++ b/kernel/bpf/inode.c
-> > > @@ -1009,10 +1009,6 @@ static int bpf_fill_super(struct super_block
-> > > *sb, struct fs_context *fc)
-> > >         struct inode *inode;
-> > >         int ret;
-> > >
-> > > -       /* Mounting an instance of BPF FS requires privileges */
-> > > -       if (fc->user_ns != &init_user_ns && !capable(CAP_SYS_ADMIN))
-> > > -               return -EPERM;
-> > > -
-> > >         ret = simple_fill_super(sb, BPF_FS_MAGIC, bpf_rfiles);
-> > >         if (ret)
-> > >                 return ret;
-> > > @@ -1085,7 +1081,7 @@ static struct file_system_type bpf_fs_type = {
-> > >         .init_fs_context = bpf_init_fs_context,
-> > >         .parameters     = bpf_fs_parameters,
-> > >         .kill_sb        = bpf_kill_super,
-> > > -       .fs_flags       = FS_USERNS_MOUNT,
-> > > +       .fs_flags       = FS_USERNS_DELEGATABLE,
-> > >  };
-> > >
-> > >  static int __init bpf_init(void)
-> > > ======================
-> > >
-> > > Because it feels like we were basically implementing this FS_USERNS_DELEGATABLE
-> > > flag implicitly for BPFFS before. I can submit a patch for BPFFS later
-> > > after testing.
->
-> Can you send that to the list, please?
+On 26/02/02 02:51PM, Miklos Szeredi wrote:
+> I propose a session where various topics of interest could be
+> discussed including but not limited to the below list
+> 
+> New features being proposed at various stages of readiness:
+> 
+>  - fuse4fs: exporting the iomap interface to userspace
+> 
+>  - famfs: export distributed memory
 
-Sure, I'll do that a bit later! I'm still in Brussels ;-)
+I plan to attend, and have been on the fence about whether a proper famfs
+session is needed. I'm open to ideas on that, but would certainly
+participate in this sort of overview session too.
 
-> Thanks!
+JG
+
+> 
+>  - zero copy for fuse-io-uring
+> 
+>  - large folios
+> 
+>  - file handles on the userspace API
+> 
+>  - compound requests
+> 
+>  - BPF scripts
+> 
+> How do these fit into the existing codebase?
+> 
+> Cleaner separation of layers:
+> 
+>  - transport layer: /dev/fuse, io-uring, viriofs
+> 
+>  - filesystem layer: local fs, distributed fs
+> 
+> Introduce new version of cleaned up API?
+> 
+>  - remove async INIT
+> 
+>  - no fixed ROOT_ID
+> 
+>  - consolidate caching rules
+> 
+>  - who's responsible for updating which metadata?
+> 
+>  - remove legacy and problematic flags
+> 
+>  - get rid of splice on /dev/fuse for new API version?
+> 
+> Unresolved issues:
+> 
+>  - locked / writeback folios vs. reclaim / page migration
+> 
+>  - strictlimiting vs. large folios
 
