@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-76224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +H6KOldLgmnNRwMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 20:24:07 +0100
+	id GP4+LWBLgmnNRwMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 20:24:16 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 677EADE217
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 20:24:07 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B2C1DE21E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 20:24:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id B36B83049EC9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 19:24:00 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id A4E26309F2FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 19:24:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BBE335555;
-	Tue,  3 Feb 2026 19:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BD2329378;
+	Tue,  3 Feb 2026 19:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TG055Aqv"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Fb4Ff997"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F3933D6C6
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 19:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554573570D1
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 19:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770146639; cv=none; b=etnmiIEcWYnqut7UlrH4tp3+1odkJoVuGcf8OmGY/Qsgk5WziS7x3+AycKAgH87fab5vfd4nhk2dISHRbsQvBh0Lf0/JMQyHld7bIA7i/ltdxpvKzyGHv9io3x+WPMlowr/neCopebnJ38SnXgXxYn6zoZ6wHoBa39zuq6TVRDQ=
+	t=1770146641; cv=none; b=bc2ZNuH5rqfPq0A3ZrBN/+5zHq41rBWf8WgjVhJHC64VpNUSv92AByzdLBVvQvft5YE0NVsTNwZzD7iPKdvlwi17V+H5SrAigo4ub+Mlp3lmiTIr8Tu7+gVhnIh2gvu97q18G5WOaynqVa9grwOtB/nALVs+sHSh3ubaYXWzZqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770146639; c=relaxed/simple;
-	bh=6IqnRCrViob2jHjruRgCQRHUhWeTbKyrzvYNIza1hdM=;
+	s=arc-20240116; t=1770146641; c=relaxed/simple;
+	bh=0w4YgQ3XBgJ/xRPJAs39Nc0jXU5ZQmqnnH9JMqCZzEM=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=asJPbEkExEFXKmCj6P7WW6ncCGbXRPR/IKAfteKSafNnU7uwu/S9mZ01sunkPWQVQ8QLXo3mZju04JPFX3VArjthld2tdAoIH/2HQ9i4svBcEBUUfYk6zdXII4FIaWTRIHvDHWSQE3Hwje7i7KHU8wGnyvZFp9I+E5CPCVfTuxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jiaqiyan.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TG055Aqv; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=RLb3FqpaZK3c/BVQ5oOmgA2pecwcUpqyXm7gJrHCRyZuLRrQbyk7d28JiBU0mmf9rQI8E4ZbmXGvm8HE3x7PHxiluVKQXBbnRS98AZmPZOdNfE7rIfYXG5rSOV+ZAyICml9iLnSsoNgul6wK2U+EhEQ4FiKtS5cvI1SY3s/F6O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jiaqiyan.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Fb4Ff997; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jiaqiyan.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2a773db3803so61341715ad.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Feb 2026 11:23:57 -0800 (PST)
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-8216fece04cso104412b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Feb 2026 11:23:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1770146637; x=1770751437; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1770146639; x=1770751439; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dYF1G0Gg7ErYo3r8AiHFjVFEHimFbEWfFEP1Omqr704=;
-        b=TG055AqvXI1S2IpNRhLnk3mFWPPnupDGoq1aHB5Mgo7vL6sFEGro19q6vR2JFSg5Od
-         SkNNvfxw/3yq8C54yORSeAHnRGnR1E6smJszT3D9KdcHQDW0+mB2oq7hdRVkB4DRwYBg
-         SsggyJ2CUkHk2FRiFoT6v7dZo2L9sxn7SJ/b++AiAjrfgoXEgkKz7eHAEh63zJzxVzm9
-         fAZvCAz0yYRbLb68j0UjstG/Es8+DYx6vmEi3KKeA6vWL29kBfCl41kxdl15/G4r4X8G
-         siFh8ic//pnnq3736SjycOW2XN7rx/HNfpMmSrXI0ea+rOADqMplGwqy3n9UhVfG08wK
-         +Vhw==
+        bh=/tlxC7jV4F7Lz2K5ysVxinzelO7YC4ddlq8CWE746MQ=;
+        b=Fb4Ff997dnrrKkZWK9Y/u+JvAxDBn7kJA3/HX10a4akJlIeAKc0yWZPoxV38xCGktW
+         86RkjKf+KEuKRUnO6fJZCFzVi7Ioxr08Sx/Q4xnnGheMyWDrHdhJCnpEchUjrU9AD/D0
+         IMisldXbH1qPt31oE+HCw+Cn7Z4af2OowEn4XPmXJdexQrLPDt+TgEkDjdlwCdtHqRcI
+         QqnrsYm0QsshSz+dF0xK1uCLNO5Ri9/12oXE4hmWIVZMZmjxyuR+R4tKg6ImxOuTzl9W
+         5ehi91x92kxJkFeJgPYPkHflIKj/0M3LbOJ5o7UJeWxRy9NSqN1TkayPJv+/ova0XsyF
+         /vuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770146637; x=1770751437;
+        d=1e100.net; s=20230601; t=1770146639; x=1770751439;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dYF1G0Gg7ErYo3r8AiHFjVFEHimFbEWfFEP1Omqr704=;
-        b=nL81WVHG+5loUioJrATaJHKgDui3N9kAnX5Kksxt5m2NO7fcifyClzoaqWKp3d9OB1
-         1HQTKLM7L7FSXfnkwBI4SZhrylnOmVZDwfOpz7UpNkRnOZJjINCpF/Rfqb9kfEGlrHlx
-         zLXjhftw+xQ9OzSTjweOo987fWae0yH9SmO23kSry1SsmQbURpsYzK7OjXtMUxQTut7n
-         n/IAEywAs7NNxoTFksI6JnhHSlYBOXj3LMQZ8JDzqRqVqTC6bSHK/AfMpK0PZPWlGVOF
-         XhiRb2FSiSKTu/LZpz7Cje6jSuqUhJVteO9pkXAwDk3Oa4djgh1BWmASI/CVodTufwvi
-         sIPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnyYfxrwX1IKHOlgosnOAQyun/n40j5kebX4cgok/PvO4yJLTFQgmYHz5Pzp+HzEoE9TVTeqgNcWDBR8QB@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgktTDsaKbEAImrpNqi3K4haSOZrxRuap2H8dQhgP9BKTVRus/
-	BfJ5M3+YrNaI3VWJEzZ8pqu0kX3Y6//wZ5OkNWzmkofP798suTYIDtHiccxBiPd6JYbxYrfqh1B
-	45so6YwUUNKTjJg==
-X-Received: from pjuj5.prod.google.com ([2002:a17:90a:d005:b0:34c:2f52:23aa])
+        bh=/tlxC7jV4F7Lz2K5ysVxinzelO7YC4ddlq8CWE746MQ=;
+        b=bNmeVKtT3YSBaSNBSGWEuIlZa7ibkbssBzg1o+LXxL+NIIbStOfCECP3J2ubZ6ocGV
+         5Kna+uBdgtwfh+OmkGuUKrKYorDWh/HxC1RKEJwSiYfL35aNqt0nDrCh23LsMDgqxB2r
+         5NsuHa900SNEBasVdCg/GH9T9mNz7/lwHbL6EhDTmwomMeXd/W89o90+y2DDXfu5yTZY
+         nW8dUc4vQO42EMbz9kKQAmNonQ0N8he2EXuWLVnQVnO/ChaSkAWUYXzKvcvzmdDsfZVz
+         KJEcNtUfFTbR+Sri0lJsIAJKxIy8CCrqZaZ/R0cWFj7p0atzCXZr8HG+ySzYA5O5+MoT
+         HB/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVgNGpw8cBzb7UlR5Bfc8HOe6pWJ9jeKsdvBDn89H4epgT0E0TMIpc436AET0bNNxjIr0/zGlW4vNu4I8T9@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCatWycnsUrXHJQhMaPPoDTxQx88gOH9P1kn6PyBYV+Q/w4/ox
+	usNRyGaoZgNEzD58iflY4frETo0w/GluHTWnJf8z5iupc4MnccvP3yXLwwHQxAO5EYrE23fqd4A
+	et14JbN8tjOUQEg==
+X-Received: from pfh34.prod.google.com ([2002:a05:6a00:12e2:b0:7dd:8bba:639b])
  (user=jiaqiyan job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:e847:b0:2a9:29d4:1099 with SMTP id d9443c01a7336-2a933d12187mr2786895ad.24.1770146637002;
- Tue, 03 Feb 2026 11:23:57 -0800 (PST)
-Date: Tue,  3 Feb 2026 19:23:50 +0000
+ 2002:a05:6a00:2171:b0:824:1c29:f1c3 with SMTP id d2e1a72fcca58-8241c29f7dfmr368201b3a.21.1770146638563;
+ Tue, 03 Feb 2026 11:23:58 -0800 (PST)
+Date: Tue,  3 Feb 2026 19:23:51 +0000
 In-Reply-To: <20260203192352.2674184-1-jiaqiyan@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -76,8 +76,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20260203192352.2674184-1-jiaqiyan@google.com>
 X-Mailer: git-send-email 2.53.0.rc2.204.g2597b5adb4-goog
-Message-ID: <20260203192352.2674184-2-jiaqiyan@google.com>
-Subject: [PATCH v3 1/3] mm: memfd/hugetlb: introduce memfd-based userspace MFR policy
+Message-ID: <20260203192352.2674184-3-jiaqiyan@google.com>
+Subject: [PATCH v3 2/3] selftests/mm: test userspace MFR for HugeTLB hugepage
 From: Jiaqi Yan <jiaqiyan@google.com>
 To: linmiaohe@huawei.com, william.roche@oracle.com, harry.yoo@oracle.com, 
 	jane.chu@oracle.com
@@ -97,12 +97,12 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
 	MV_CASE(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64];
 	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-76224-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76225-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
@@ -115,509 +115,450 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	FROM_NEQ_ENVFROM(0.00)[jiaqiyan@google.com,linux-fsdevel@vger.kernel.org];
 	FREEMAIL_CC(0.00)[gmail.com,intel.com,huawei.com,infradead.org,linux-foundation.org,suse.de,google.com,nvidia.com,redhat.com,oracle.com,linux.intel.com,linux.dev,kvack.org,vger.kernel.org];
 	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,nvidia.com:email]
-X-Rspamd-Queue-Id: 677EADE217
+	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 2B2C1DE21E
 X-Rspamd-Action: no action
 
-Sometimes immediately hard offlining a large chunk of contigous memory
-having uncorrected memory errors (UE) may not be the best option.
-Cloud providers usually serve capacity- and performance-critical guest
-memory with 1G HugeTLB hugepages, as this significantly reduces the
-overhead associated with managing page tables and TLB misses. However,
-for today's HugeTLB system, once a byte of memory in a hugepage is
-hardware corrupted, the kernel discards the whole hugepage, including
-the healthy portion. Customer workload running in the VM can hardly
-recover from such a great loss of memory.
+Test the userspace memory failure recovery (MFR) policy for HugeTLB:
 
-Therefore keeping or discarding a large chunk of contiguous memory
-owned by userspace (particularly to serve guest memory) due to
-recoverable UE may better be controlled by userspace process
-that owns the memory, e.g. VMM in the Cloud environment.
+1. Create a memfd backed by HugeTLB and had MFD_MF_KEEP_UE_MAPPED set.
 
-Introduce a memfd-based userspace memory failure (MFR) policy,
-MFD_MF_KEEP_UE_MAPPED. It is possible to support for other memfd,
-but the current implementation only covers HugeTLB.
+2. Allocate and map 4 hugepages to the process.
 
-For a hugepage associated with MFD_MF_KEEP_UE_MAPPED enabled memfd,
-whenever it runs into a new UE,
+3. Create sub-threads to MADV_HWPOISON inner addresses of the 1st hugepage.
 
-* MFR defers hard offline operations, i.e., unmapping and
-  dissolving. MFR still sets HWPoison flag, holds a refcount
-  for every raw HWPoison page, record them in a list, sends SIGBUS
-  to the consuming thread, but si_addr_lsb is reduced to PAGE_SHIFT.
-  If userspace is able to handle the SIGBUS, the HWPoison hugepage
-  remains accessible via the mapping created with that memfd.
+4. Check if the process gets correct SIGBUS for each poisoned raw page.
 
-* If the memory was not faulted in yet, the fault handler also
-  allows fault in the HWPoison folio.
+5. Check if all memory are still accessible and content valid.
 
-For a MFD_MF_KEEP_UE_MAPPED enabled memfd, when it is closed, or
-when userspace process truncates its hugepages:
+6. Check if the poisoned hugepage is dealt with after memfd released.
 
-* When the HugeTLB in-memory file system removes the filemap's
-  folios one by one, it asks MFR to deal with HWPoison folios
-  on the fly, implemented by filemap_offline_hwpoison_folio().
+Two configurables in the test:
 
-* MFR drops the refcounts being held for the raw HWPoison
-  pages within the folio. Now that the HWPoison folio becomes
-  free, MFR dissolves it into a set of raw pages. The healthy pages
-  are recycled into buddy allocator, while the HWPoison ones are
-  prevented from re-allocation.
+- hugepage_size: size of the hugepage, 1G or 2M.
 
-By default MFD_MF_KEEP_UE_MAPPED is not set, so MFR immediately hard
-offlines hugepages having UEs.
+- nr_hwp_pages: number of pages within the 1st hugepage to MADV_HWPOISON.
 
-Tested with new selftest hugetlb-mfr in the follow-up commit.
-
-Co-developed-by: William Roche <william.roche@oracle.com>
-Signed-off-by: William Roche <william.roche@oracle.com>
-Tested-by: William Roche <william.roche@oracle.com>
-Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+Reviewed-by: Jane Chu <jane.chu@oracle.com>
 Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
 ---
- fs/hugetlbfs/inode.c       |  25 +++++++-
- include/linux/hugetlb.h    |   7 +++
- include/linux/pagemap.h    |  23 +++++++
- include/uapi/linux/memfd.h |   6 ++
- mm/hugetlb.c               |   8 ++-
- mm/memfd.c                 |  15 ++++-
- mm/memory-failure.c        | 124 ++++++++++++++++++++++++++++++++++---
- 7 files changed, 193 insertions(+), 15 deletions(-)
+ tools/testing/selftests/mm/.gitignore    |   1 +
+ tools/testing/selftests/mm/Makefile      |   3 +
+ tools/testing/selftests/mm/hugetlb-mfr.c | 369 +++++++++++++++++++++++
+ 3 files changed, 373 insertions(+)
+ create mode 100644 tools/testing/selftests/mm/hugetlb-mfr.c
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 3b4c152c5c73a..8b0f5aa49711f 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -551,6 +551,18 @@ static bool remove_inode_single_folio(struct hstate *h, struct inode *inode,
- 	}
+diff --git a/tools/testing/selftests/mm/.gitignore b/tools/testing/selftests/mm/.gitignore
+index c2a8586e51a1f..11664d20935db 100644
+--- a/tools/testing/selftests/mm/.gitignore
++++ b/tools/testing/selftests/mm/.gitignore
+@@ -5,6 +5,7 @@ hugepage-mremap
+ hugepage-shm
+ hugepage-vmemmap
+ hugetlb-madvise
++hugetlb-mfr
+ hugetlb-read-hwpoison
+ hugetlb-soft-offline
+ khugepaged
+diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
+index eaf9312097f7b..7469142a87dcc 100644
+--- a/tools/testing/selftests/mm/Makefile
++++ b/tools/testing/selftests/mm/Makefile
+@@ -63,6 +63,7 @@ TEST_GEN_FILES += hmm-tests
+ TEST_GEN_FILES += hugetlb-madvise
+ TEST_GEN_FILES += hugetlb-read-hwpoison
+ TEST_GEN_FILES += hugetlb-soft-offline
++TEST_GEN_FILES += hugetlb-mfr
+ TEST_GEN_FILES += hugepage-mmap
+ TEST_GEN_FILES += hugepage-mremap
+ TEST_GEN_FILES += hugepage-shm
+@@ -233,6 +234,8 @@ $(OUTPUT)/migration: LDLIBS += -lnuma
  
- 	folio_unlock(folio);
+ $(OUTPUT)/rmap: LDLIBS += -lnuma
+ 
++$(OUTPUT)/hugetlb-mfr: LDLIBS += -lnuma
 +
-+	/*
-+	 * There may be pending HWPoison-ed folios when a memfd is being
-+	 * removed or part of it is being truncated.
-+	 *
-+	 * HugeTLBFS' error_remove_folio keeps the HWPoison-ed folios in
-+	 * page cache until mm wants to drop the folio at the end of the
-+	 * of the filemap. At this point, if memory failure was delayed
-+	 * by MFD_MF_KEEP_UE_MAPPED in the past, we can now deal with it.
-+	 */
-+	filemap_offline_hwpoison_folio(mapping, folio);
+ local_config.mk local_config.h: check_config.sh
+ 	/bin/sh ./check_config.sh $(CC)
+ 
+diff --git a/tools/testing/selftests/mm/hugetlb-mfr.c b/tools/testing/selftests/mm/hugetlb-mfr.c
+new file mode 100644
+index 0000000000000..6de59efdb101f
+--- /dev/null
++++ b/tools/testing/selftests/mm/hugetlb-mfr.c
+@@ -0,0 +1,369 @@
++// SPDX-License-Identifier: GPL-2.0
 +
- 	return ret;
- }
- 
-@@ -582,13 +594,13 @@ static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
- 	const pgoff_t end = lend >> PAGE_SHIFT;
- 	struct folio_batch fbatch;
- 	pgoff_t next, index;
--	int i, freed = 0;
-+	int i, j, freed = 0;
- 	bool truncate_op = (lend == LLONG_MAX);
- 
- 	folio_batch_init(&fbatch);
- 	next = lstart >> PAGE_SHIFT;
- 	while (filemap_get_folios(mapping, &next, end - 1, &fbatch)) {
--		for (i = 0; i < folio_batch_count(&fbatch); ++i) {
-+		for (i = 0, j = 0; i < folio_batch_count(&fbatch); ++i) {
- 			struct folio *folio = fbatch.folios[i];
- 			u32 hash = 0;
- 
-@@ -603,8 +615,17 @@ static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
- 							index, truncate_op))
- 				freed++;
- 
-+			/*
-+			 * Skip HWPoison-ed hugepages, which should no
-+			 * longer be hugetlb if successfully dissolved.
-+			 */
-+			if (folio_test_hugetlb(folio))
-+				fbatch.folios[j++] = folio;
-+
- 			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
- 		}
-+		fbatch.nr = j;
-+
- 		folio_batch_release(&fbatch);
- 		cond_resched();
- 	}
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index e51b8ef0cebd9..7fadf1772335d 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -879,10 +879,17 @@ int dissolve_free_hugetlb_folios(unsigned long start_pfn,
- 
- #ifdef CONFIG_MEMORY_FAILURE
- extern void folio_clear_hugetlb_hwpoison(struct folio *folio);
-+extern bool hugetlb_should_keep_hwpoison_mapped(struct folio *folio,
-+						struct address_space *mapping);
- #else
- static inline void folio_clear_hugetlb_hwpoison(struct folio *folio)
- {
- }
-+static inline bool hugetlb_should_keep_hwpoison_mapped(struct folio *folio
-+						       struct address_space *mapping)
-+{
-+	return false;
-+}
- #endif
- 
- #ifdef CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index ec442af3f8861..53772c29451eb 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -211,6 +211,7 @@ enum mapping_flags {
- 	AS_KERNEL_FILE = 10,	/* mapping for a fake kernel file that shouldn't
- 				   account usage to user cgroups */
- 	AS_NO_DATA_INTEGRITY = 11, /* no data integrity guarantees */
-+	AS_MF_KEEP_UE_MAPPED = 12, /* For MFD_MF_KEEP_UE_MAPPED. */
- 	/* Bits 16-25 are used for FOLIO_ORDER */
- 	AS_FOLIO_ORDER_BITS = 5,
- 	AS_FOLIO_ORDER_MIN = 16,
-@@ -356,6 +357,16 @@ static inline bool mapping_no_data_integrity(const struct address_space *mapping
- 	return test_bit(AS_NO_DATA_INTEGRITY, &mapping->flags);
- }
- 
-+static inline bool mapping_mf_keep_ue_mapped(const struct address_space *mapping)
-+{
-+	return test_bit(AS_MF_KEEP_UE_MAPPED, &mapping->flags);
-+}
-+
-+static inline void mapping_set_mf_keep_ue_mapped(struct address_space *mapping)
-+{
-+	set_bit(AS_MF_KEEP_UE_MAPPED, &mapping->flags);
-+}
-+
- static inline gfp_t mapping_gfp_mask(const struct address_space *mapping)
- {
- 	return mapping->gfp_mask;
-@@ -1303,6 +1314,18 @@ void replace_page_cache_folio(struct folio *old, struct folio *new);
- void delete_from_page_cache_batch(struct address_space *mapping,
- 				  struct folio_batch *fbatch);
- bool filemap_release_folio(struct folio *folio, gfp_t gfp);
-+#ifdef CONFIG_MEMORY_FAILURE
 +/*
-+ * Provided by memory failure to offline HWPoison-ed folio managed by memfd.
++ * Test the userspace memory failure recovery (MFR) policy for HugeTLB
++ * hugepage case:
++ * 1. Create a memfd backed by HugeTLB and MFD_MF_KEEP_UE_MAPPED bit set.
++ * 2. Allocate and map 4 hugepages.
++ * 3. Create sub-threads to MADV_HWPOISON inner addresses of the 1st hugepage.
++ * 4. Check if each sub-thread get correct SIGBUS for the poisoned raw pages.
++ * 5. Check if all memory are still accessible and content still valid.
++ * 6. Check if the poisoned hugepage is dealt with after memfd released.
++ *
++ * Test takes two arguments:
++ * - hugepage_size: size of the hugepage, 1G or 2M.
++ * - nr_hwp_pages: number of pages within the 1st hugepage to MADV_HWPOISON.
++ *
++ * Example ways to run the test:
++ *   ./hugetlb-mfr 2M 3
++ * or
++ *   ./hugetlb-mfr 1G 1
++ * assuming /sys/kernel/mm/hugepages/hugepages-${xxx}kB/nr_hugepages > 4
 + */
-+void filemap_offline_hwpoison_folio(struct address_space *mapping,
-+				    struct folio *folio);
-+#else
-+static inline void filemap_offline_hwpoison_folio(struct address_space *mapping,
-+						  struct folio *folio)
++
++#define _GNU_SOURCE
++#include <assert.h>
++#include <errno.h>
++#include <numaif.h>
++#include <numa.h>
++#include <pthread.h>
++#include <signal.h>
++#include <stdbool.h>
++#include <stdlib.h>
++#include <stdio.h>
++#include <string.h>
++#include <unistd.h>
++
++#include <linux/magic.h>
++#include <linux/memfd.h>
++#include <sys/mman.h>
++#include <sys/prctl.h>
++#include <sys/statfs.h>
++#include <sys/types.h>
++
++#include "../kselftest.h"
++#include "vm_util.h"
++
++#define min(a, b) ((a) < (b) ? (a) : (b))
++
++#define EPREFIX			" !!! "
++#define BYTE_LENTH_IN_1G	0x40000000UL
++#define BYTE_LENTH_IN_2M	0x200000UL
++#define HUGETLB_1GB_STR		"1G"
++#define HUGETLB_2MB_STR		"2M"
++#define HUGETLB_FILL		0xab
++
++static const unsigned long offsets_1g[] = {
++	0x200000, 0x3ff000, 0x801000, 0x2000000,
++	0x3fff000, 0x4001000, 0x7fff000, 0x8011000
++};
++static const unsigned long offsets_2m[] = {
++	0x020000, 0x041000, 0x07f000, 0x120000,
++	0x13f000, 0x141000, 0x17f000, 0x18f000
++};
++static size_t nr_hwp_pages;
++
++static void *sigbus_addr;
++static int sigbus_addr_lsb;
++static bool expecting_sigbus;
++static bool got_sigbus;
++static bool was_mceerr;
++
++static int create_hugetlbfs_file(struct statfs *file_stat,
++				 unsigned long hugepage_size)
 +{
++	int fd;
++	int flags = MFD_HUGETLB | MFD_MF_KEEP_UE_MAPPED;
++
++	if (hugepage_size == BYTE_LENTH_IN_2M)
++		flags |= MFD_HUGE_2MB;
++	else
++		flags |= MFD_HUGE_1GB;
++
++	fd = memfd_create("hugetlb_tmp", flags);
++	if (fd < 0)
++		ksft_exit_fail_perror("Failed to memfd_create");
++
++	memset(file_stat, 0, sizeof(*file_stat));
++	if (fstatfs(fd, file_stat)) {
++		close(fd);
++		ksft_exit_fail_perror("Failed to fstatfs");
++	}
++	if (file_stat->f_type != HUGETLBFS_MAGIC) {
++		close(fd);
++		ksft_exit_fail_msg("Not hugetlbfs file");
++	}
++
++	ksft_print_msg("Created hugetlb_tmp file\n");
++	ksft_print_msg("hugepagesize=%#lx\n", file_stat->f_bsize);
++	if (file_stat->f_bsize != hugepage_size)
++		ksft_exit_fail_msg("Hugepage size is not %#lx", hugepage_size);
++
++	return fd;
 +}
-+#endif
- loff_t mapping_seek_hole_data(struct address_space *, loff_t start, loff_t end,
- 		int whence);
- 
-diff --git a/include/uapi/linux/memfd.h b/include/uapi/linux/memfd.h
-index 273a4e15dfcff..d9875da551b7f 100644
---- a/include/uapi/linux/memfd.h
-+++ b/include/uapi/linux/memfd.h
-@@ -12,6 +12,12 @@
- #define MFD_NOEXEC_SEAL		0x0008U
- /* executable */
- #define MFD_EXEC		0x0010U
++
 +/*
-+ * Keep owned folios mapped when uncorrectable memory errors (UE) causes
-+ * memory failure (MF) within the folio. Only at the end of the mapping
-+ * will its HWPoison-ed folios be dealt with.
++ * SIGBUS handler for "do_hwpoison" thread that mapped and MADV_HWPOISON
 + */
-+#define MFD_MF_KEEP_UE_MAPPED	0x0020U
- 
- /*
-  * Huge page size encoding when MFD_HUGETLB is specified, and a huge page
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index a1832da0f6236..2a161c281da2a 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -5836,9 +5836,11 @@ static vm_fault_t hugetlb_no_page(struct address_space *mapping,
- 		 * So we need to block hugepage fault by PG_hwpoison bit check.
- 		 */
- 		if (unlikely(folio_test_hwpoison(folio))) {
--			ret = VM_FAULT_HWPOISON_LARGE |
--				VM_FAULT_SET_HINDEX(hstate_index(h));
--			goto backout_unlocked;
-+			if (!mapping_mf_keep_ue_mapped(mapping)) {
-+				ret = VM_FAULT_HWPOISON_LARGE |
-+				      VM_FAULT_SET_HINDEX(hstate_index(h));
-+				goto backout_unlocked;
-+			}
- 		}
- 
- 		/* Check for page in userfault range. */
-diff --git a/mm/memfd.c b/mm/memfd.c
-index ab5312aff14b9..f9fdf014b67ba 100644
---- a/mm/memfd.c
-+++ b/mm/memfd.c
-@@ -340,7 +340,8 @@ long memfd_fcntl(struct file *file, unsigned int cmd, unsigned int arg)
- #define MFD_NAME_PREFIX_LEN (sizeof(MFD_NAME_PREFIX) - 1)
- #define MFD_NAME_MAX_LEN (NAME_MAX - MFD_NAME_PREFIX_LEN)
- 
--#define MFD_ALL_FLAGS (MFD_CLOEXEC | MFD_ALLOW_SEALING | MFD_HUGETLB | MFD_NOEXEC_SEAL | MFD_EXEC)
-+#define MFD_ALL_FLAGS (MFD_CLOEXEC | MFD_ALLOW_SEALING | MFD_HUGETLB | \
-+		       MFD_NOEXEC_SEAL | MFD_EXEC | MFD_MF_KEEP_UE_MAPPED)
- 
- static int check_sysctl_memfd_noexec(unsigned int *flags)
- {
-@@ -414,6 +415,8 @@ static int sanitize_flags(unsigned int *flags_ptr)
- 	if (!(flags & MFD_HUGETLB)) {
- 		if (flags & ~MFD_ALL_FLAGS)
- 			return -EINVAL;
-+		if (flags & MFD_MF_KEEP_UE_MAPPED)
-+			return -EINVAL;
- 	} else {
- 		/* Allow huge page size encoding in flags. */
- 		if (flags & ~(MFD_ALL_FLAGS |
-@@ -486,6 +489,16 @@ static struct file *alloc_file(const char *name, unsigned int flags)
- 	file->f_mode |= FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE;
- 	file->f_flags |= O_LARGEFILE;
- 
-+	/*
-+	 * MFD_MF_KEEP_UE_MAPPED can only be specified in memfd_create;
-+	 * no API to update it once memfd is created. MFD_MF_KEEP_UE_MAPPED
-+	 * is not seal-able.
-+	 *
-+	 * For now MFD_MF_KEEP_UE_MAPPED is only supported by HugeTLBFS.
-+	 */
-+	if (flags & MFD_MF_KEEP_UE_MAPPED)
-+		mapping_set_mf_keep_ue_mapped(file->f_mapping);
-+
- 	if (flags & MFD_NOEXEC_SEAL) {
- 		inode->i_mode &= ~0111;
- 		file_seals = memfd_file_seals_ptr(file);
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index 58b34f5d2c05d..b9cecbbe08dae 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -410,6 +410,8 @@ static void __add_to_kill(struct task_struct *tsk, const struct page *p,
- 			  unsigned long addr)
- {
- 	struct to_kill *tk;
-+	const struct folio *folio;
-+	struct address_space *mapping;
- 
- 	tk = kmalloc(sizeof(struct to_kill), GFP_ATOMIC);
- 	if (!tk) {
-@@ -420,8 +422,19 @@ static void __add_to_kill(struct task_struct *tsk, const struct page *p,
- 	tk->addr = addr;
- 	if (is_zone_device_page(p))
- 		tk->size_shift = dev_pagemap_mapping_shift(vma, tk->addr);
--	else
--		tk->size_shift = folio_shift(page_folio(p));
-+	else {
-+		folio = page_folio(p);
-+		mapping = folio_mapping(folio);
-+		if (mapping && mapping_mf_keep_ue_mapped(mapping))
-+			/*
-+			 * Let userspace know the radius of HWPoison is
-+			 * the size of raw page; accessing other pages
-+			 * inside the folio is still ok.
-+			 */
-+			tk->size_shift = PAGE_SHIFT;
-+		else
-+			tk->size_shift = folio_shift(folio);
-+	}
- 
- 	/*
- 	 * Send SIGKILL if "tk->addr == -EFAULT". Also, as
-@@ -844,6 +857,8 @@ static int kill_accessing_process(struct task_struct *p, unsigned long pfn,
- 				  int flags)
- {
- 	int ret;
-+	struct folio *folio;
-+	struct address_space *mapping;
- 	struct hwpoison_walk priv = {
- 		.pfn = pfn,
- 	};
-@@ -861,8 +876,14 @@ static int kill_accessing_process(struct task_struct *p, unsigned long pfn,
- 	 * ret = 0 when poison page is a clean page and it's dropped, no
- 	 * SIGBUS is needed.
- 	 */
--	if (ret == 1 && priv.tk.addr)
-+	if (ret == 1 && priv.tk.addr) {
-+		folio = pfn_folio(pfn);
-+		mapping = folio_mapping(folio);
-+		if (mapping && mapping_mf_keep_ue_mapped(mapping))
-+			priv.tk.size_shift = PAGE_SHIFT;
-+
- 		kill_proc(&priv.tk, pfn, flags);
-+	}
- 	mmap_read_unlock(p->mm);
- 
- 	return ret > 0 ? -EHWPOISON : 0;
-@@ -1206,6 +1227,13 @@ static int me_huge_page(struct page_state *ps, struct page *p)
- 		}
- 	}
- 
-+	/*
-+	 * MF still needs to holds a refcount for the deferred actions in
-+	 * filemap_offline_hwpoison_folio.
-+	 */
-+	if (hugetlb_should_keep_hwpoison_mapped(folio, mapping))
-+		return res;
-+
- 	if (has_extra_refcount(ps, p, extra_pins))
- 		res = MF_FAILED;
- 
-@@ -1602,6 +1630,7 @@ static bool hwpoison_user_mappings(struct folio *folio, struct page *p,
- {
- 	LIST_HEAD(tokill);
- 	bool unmap_success;
-+	bool keep_mapped;
- 	int forcekill;
- 	bool mlocked = folio_test_mlocked(folio);
- 
-@@ -1629,8 +1658,12 @@ static bool hwpoison_user_mappings(struct folio *folio, struct page *p,
- 	 */
- 	collect_procs(folio, p, &tokill, flags & MF_ACTION_REQUIRED);
- 
--	unmap_success = !unmap_poisoned_folio(folio, pfn, flags & MF_MUST_KILL);
--	if (!unmap_success)
-+	keep_mapped = hugetlb_should_keep_hwpoison_mapped(folio, folio->mapping);
-+	if (!keep_mapped)
-+		unmap_poisoned_folio(folio, pfn, flags & MF_MUST_KILL);
-+
-+	unmap_success = !folio_mapped(folio);
-+	if (!keep_mapped && !unmap_success)
- 		pr_err("%#lx: failed to unmap page (folio mapcount=%d)\n",
- 		       pfn, folio_mapcount(folio));
- 
-@@ -1655,7 +1688,7 @@ static bool hwpoison_user_mappings(struct folio *folio, struct page *p,
- 		    !unmap_success;
- 	kill_procs(&tokill, forcekill, pfn, flags);
- 
--	return unmap_success;
-+	return unmap_success || keep_mapped;
- }
- 
- static int identify_page_state(unsigned long pfn, struct page *p,
-@@ -1896,6 +1929,13 @@ static unsigned long __folio_free_raw_hwp(struct folio *folio, bool move_flag)
- 	unsigned long count = 0;
- 
- 	head = llist_del_all(raw_hwp_list_head(folio));
-+	/*
-+	 * If filemap_offline_hwpoison_folio_hugetlb is handling this folio,
-+	 * it has already taken off the head of the llist.
-+	 */
-+	if (head == NULL)
-+		return 0;
-+
- 	llist_for_each_entry_safe(p, next, head, node) {
- 		if (move_flag)
- 			SetPageHWPoison(p->page);
-@@ -1912,7 +1952,8 @@ static int folio_set_hugetlb_hwpoison(struct folio *folio, struct page *page)
- 	struct llist_head *head;
- 	struct raw_hwp_page *raw_hwp;
- 	struct raw_hwp_page *p;
--	int ret = folio_test_set_hwpoison(folio) ? -EHWPOISON : 0;
-+	struct address_space *mapping = folio->mapping;
-+	bool has_hwpoison = folio_test_set_hwpoison(folio);
- 
- 	/*
- 	 * Once the hwpoison hugepage has lost reliable raw error info,
-@@ -1931,8 +1972,15 @@ static int folio_set_hugetlb_hwpoison(struct folio *folio, struct page *page)
- 	if (raw_hwp) {
- 		raw_hwp->page = page;
- 		llist_add(&raw_hwp->node, head);
-+		if (hugetlb_should_keep_hwpoison_mapped(folio, mapping))
-+			/*
-+			 * A new raw HWPoison page. Don't return HWPOISON.
-+			 * Error event will be counted in action_result().
-+			 */
-+			return 0;
-+
- 		/* the first error event will be counted in action_result(). */
--		if (ret)
-+		if (has_hwpoison)
- 			num_poisoned_pages_inc(page_to_pfn(page));
- 	} else {
- 		/*
-@@ -1947,7 +1995,8 @@ static int folio_set_hugetlb_hwpoison(struct folio *folio, struct page *page)
- 		 */
- 		__folio_free_raw_hwp(folio, false);
- 	}
--	return ret;
-+
-+	return has_hwpoison ? -EHWPOISON : 0;
- }
- 
- static unsigned long folio_free_raw_hwp(struct folio *folio, bool move_flag)
-@@ -1980,6 +2029,18 @@ void folio_clear_hugetlb_hwpoison(struct folio *folio)
- 	folio_free_raw_hwp(folio, true);
- }
- 
-+bool hugetlb_should_keep_hwpoison_mapped(struct folio *folio,
-+					 struct address_space *mapping)
++static void sigbus_handler(int signo, siginfo_t *info, void *context)
 +{
-+	if (WARN_ON_ONCE(!folio_test_hugetlb(folio)))
-+		return false;
++	if (!expecting_sigbus)
++		ksft_exit_fail_msg("unexpected sigbus with addr=%p",
++				   info->si_addr);
 +
-+	if (!mapping)
-+		return false;
-+
-+	return mapping_mf_keep_ue_mapped(mapping);
++	got_sigbus = true;
++	was_mceerr = (info->si_code == BUS_MCEERR_AO ||
++		      info->si_code == BUS_MCEERR_AR);
++	sigbus_addr = info->si_addr;
++	sigbus_addr_lsb = info->si_addr_lsb;
 +}
 +
- /*
-  * Called from hugetlb code with hugetlb_lock held.
-  *
-@@ -2037,6 +2098,51 @@ int __get_huge_page_for_hwpoison(unsigned long pfn, int flags,
- 	return ret;
- }
- 
-+static void filemap_offline_hwpoison_folio_hugetlb(struct folio *folio)
++static void *do_hwpoison(void *hwpoison_addr)
 +{
++	int hwpoison_size = getpagesize();
++
++	ksft_print_msg("MADV_HWPOISON hwpoison_addr=%p, len=%d\n",
++		       hwpoison_addr, hwpoison_size);
++	if (madvise(hwpoison_addr, hwpoison_size, MADV_HWPOISON) < 0)
++		ksft_exit_fail_perror("Failed to MADV_HWPOISON");
++
++	pthread_exit(NULL);
++}
++
++static void test_hwpoison_multiple_pages(unsigned char *start_addr,
++					 unsigned long hugepage_size)
++{
++	pthread_t pthread;
 +	int ret;
-+	struct llist_node *head;
-+	struct raw_hwp_page *curr, *next;
++	unsigned char *hwpoison_addr;
++	const unsigned long *offsets;
++	size_t i;
 +
-+	/*
-+	 * Since folio is still in the folio_batch, drop the refcount
-+	 * elevated by filemap_get_folios.
-+	 */
-+	folio_put_refs(folio, 1);
-+	head = llist_del_all(raw_hwp_list_head(folio));
++	if (hugepage_size == BYTE_LENTH_IN_2M)
++		offsets = offsets_2m;
++	else
++		offsets = offsets_1g;
 +
-+	/*
-+	 * Release refcounts held by try_memory_failure_hugetlb, one per
-+	 * HWPoison-ed page in the raw hwp list.
-+	 *
-+	 * Set HWPoison flag on each page so that free_has_hwpoisoned()
-+	 * can exclude them during dissolve_free_hugetlb_folio().
-+	 */
-+	llist_for_each_entry_safe(curr, next, head, node) {
-+		folio_put(folio);
-+		SetPageHWPoison(curr->page);
-+		kfree(curr);
++	for (i = 0; i < nr_hwp_pages; ++i) {
++		sigbus_addr = (void *)0xBADBADBAD;
++		sigbus_addr_lsb = 0;
++		was_mceerr = false;
++		got_sigbus = false;
++		expecting_sigbus = true;
++		hwpoison_addr = start_addr + offsets[i];
++
++		ret = pthread_create(&pthread, NULL, &do_hwpoison, hwpoison_addr);
++		if (ret)
++			ksft_exit_fail_perror("Failed to create hwpoison thread");
++
++		ksft_print_msg("Created thread to hwpoison and access hwpoison_addr=%p\n",
++			       hwpoison_addr);
++
++		pthread_join(pthread, NULL);
++
++		if (!got_sigbus)
++			ksft_test_result_fail("Didn't get a SIGBUS\n");
++		if (!was_mceerr)
++			ksft_test_result_fail("Didn't get a BUS_MCEERR_A(R|O)\n");
++		if (sigbus_addr != hwpoison_addr)
++			ksft_test_result_fail("Incorrect address: got=%p, expected=%p\n",
++					      sigbus_addr, hwpoison_addr);
++		if (sigbus_addr_lsb != pshift())
++			ksft_test_result_fail("Incorrect address LSB: got=%d, expected=%d\n",
++					      sigbus_addr_lsb, pshift());
++
++		ksft_print_msg("Received expected and correct SIGBUS\n");
++	}
++}
++
++static int read_nr_hugepages(unsigned long hugepage_size,
++			     unsigned long *nr_hugepages)
++{
++	char buffer[256] = {0};
++	char cmd[256] = {0};
++
++	sprintf(cmd, "cat /sys/kernel/mm/hugepages/hugepages-%ldkB/nr_hugepages",
++		hugepage_size);
++	FILE *cmdfile = popen(cmd, "r");
++
++	if (cmdfile == NULL) {
++		ksft_perror(EPREFIX "failed to popen nr_hugepages");
++		return -1;
 +	}
 +
-+	/* Refcount now should be zero and ready to dissolve folio. */
-+	ret = dissolve_free_hugetlb_folio(folio);
-+	if (ret)
-+		pr_err("failed to dissolve hugetlb folio: %d\n", ret);
++	if (!fgets(buffer, sizeof(buffer), cmdfile)) {
++		ksft_perror(EPREFIX "failed to read nr_hugepages");
++		pclose(cmdfile);
++		return -1;
++	}
++
++	*nr_hugepages = atoll(buffer);
++	pclose(cmdfile);
++	return 0;
 +}
 +
-+void filemap_offline_hwpoison_folio(struct address_space *mapping,
-+				    struct folio *folio)
++/*
++ * Main thread that drives the test.
++ */
++static void test_main(int fd, unsigned long hugepage_size)
 +{
-+	WARN_ON_ONCE(!mapping);
++	unsigned char *map, *iter;
++	struct sigaction new, old;
++	const unsigned long hugepagesize_kb = hugepage_size / 1024;
++	unsigned long nr_hugepages_before = 0;
++	unsigned long nr_hugepages_after = 0;
++	unsigned long nodemask = 1UL << 0;
++	unsigned long len = hugepage_size * 4;
++	int ret;
 +
-+	if (!folio_test_hwpoison(folio))
-+		return;
++	if (read_nr_hugepages(hugepagesize_kb, &nr_hugepages_before) != 0) {
++		close(fd);
++		ksft_exit_fail_msg("Failed to read nr_hugepages\n");
++	}
++	ksft_print_msg("NR hugepages before MADV_HWPOISON is %ld\n", nr_hugepages_before);
 +
-+	/* Pending MFR currently only exist for hugetlb. */
-+	if (hugetlb_should_keep_hwpoison_mapped(folio, mapping))
-+		filemap_offline_hwpoison_folio_hugetlb(folio);
++	if (ftruncate(fd, len) < 0)
++		ksft_exit_fail_perror("Failed to ftruncate");
++
++	ksft_print_msg("Allocated %#lx bytes to HugeTLB file\n", len);
++
++	map = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
++	if (map == MAP_FAILED)
++		ksft_exit_fail_msg("Failed to mmap");
++
++	ksft_print_msg("Created HugeTLB mapping: %p\n", map);
++
++	ret = mbind(map, len, MPOL_BIND, &nodemask, sizeof(nodemask) * 8,
++		    MPOL_MF_STRICT | MPOL_MF_MOVE);
++	if (ret < 0) {
++		perror("mbind");
++		ksft_exit_fail_msg("Failed to bind to node\n");
++	}
++
++	memset(map, HUGETLB_FILL, len);
++	ksft_print_msg("Memset every byte to 0xab\n");
++
++	new.sa_sigaction = &sigbus_handler;
++	new.sa_flags = SA_SIGINFO;
++	if (sigaction(SIGBUS, &new, &old) < 0)
++		ksft_exit_fail_msg("Failed to setup SIGBUS handler");
++
++	ksft_print_msg("Setup SIGBUS handler successfully\n");
++
++	test_hwpoison_multiple_pages(map, hugepage_size);
++
++	/*
++	 * Since MADV_HWPOISON doesn't corrupt the memory in hardware, and
++	 * MFD_MF_KEEP_UE_MAPPED keeps the hugepage mapped, every byte should
++	 * remain accessible and hold original data.
++	 */
++	expecting_sigbus = false;
++	for (iter = map; iter < map + len; ++iter) {
++		if (*iter != HUGETLB_FILL) {
++			ksft_print_msg("At addr=%p: got=%#x, expected=%#x\n",
++				       iter, *iter, HUGETLB_FILL);
++			ksft_test_result_fail("Memory content corrupted\n");
++			break;
++		}
++	}
++	ksft_print_msg("Memory content all valid\n");
++
++	if (read_nr_hugepages(hugepagesize_kb, &nr_hugepages_after) != 0) {
++		close(fd);
++		ksft_exit_fail_msg("Failed to read nr_hugepages\n");
++	}
++
++	/*
++	 * After MADV_HWPOISON, hugepage should still be in HugeTLB pool.
++	 */
++	ksft_print_msg("NR hugepages after MADV_HWPOISON is %ld\n", nr_hugepages_after);
++	if (nr_hugepages_before != nr_hugepages_after)
++		ksft_test_result_fail("NR hugepages reduced by %ld after MADV_HWPOISON\n",
++				      nr_hugepages_before - nr_hugepages_after);
++
++	/* End of the lifetime of the created HugeTLB memfd. */
++	if (ftruncate(fd, 0) < 0)
++		ksft_exit_fail_perror("Failed to ftruncate to 0");
++	munmap(map, len);
++	close(fd);
++
++	/*
++	 * After freed by userspace, MADV_HWPOISON-ed hugepage should be
++	 * dissolved into raw pages and removed from HugeTLB pool.
++	 */
++	if (read_nr_hugepages(hugepagesize_kb, &nr_hugepages_after) != 0) {
++		close(fd);
++		ksft_exit_fail_msg("Failed to read nr_hugepages\n");
++	}
++	ksft_print_msg("NR hugepages after closure is %ld\n", nr_hugepages_after);
++	if (nr_hugepages_before != nr_hugepages_after + 1)
++		ksft_test_result_fail("NR hugepages is not reduced after memfd closure\n");
++
++	ksft_test_result_pass("All done\n");
 +}
 +
- /*
-  * Taking refcount of hugetlb pages needs extra care about race conditions
-  * with basic operations like hugepage allocation/free/demotion.
++static unsigned long parse_hugepage_size(char *argv)
++{
++	if (strncasecmp(argv, HUGETLB_1GB_STR, strlen(HUGETLB_1GB_STR)) == 0)
++		return BYTE_LENTH_IN_1G;
++
++	if (strncasecmp(argv, HUGETLB_2MB_STR, strlen(HUGETLB_2MB_STR)) == 0)
++		return BYTE_LENTH_IN_2M;
++
++	ksft_print_msg("Please provide valid hugepage_size: 1G or 2M\n");
++	assert(false);
++}
++
++static size_t parse_nr_hwp_pages(char *argv)
++{
++	unsigned long val;
++	char *endptr;
++	size_t limit = min(ARRAY_SIZE(offsets_1g), ARRAY_SIZE(offsets_2m));
++
++	if (strlen(argv) < 1) {
++		ksft_print_msg("Please provide valid nr_hwpoison: 1-8\n");
++		assert(false);
++	}
++
++	errno = 0;
++	val = strtoul(argv, &endptr, 10);
++
++	if (*endptr != '\0') {
++		ksft_print_msg("Found invalid chars: '%s", endptr);
++		assert(false);
++	}
++
++	if (errno == ERANGE) {
++		ksft_print_msg("Value '%s' out of range for size_t\n", argv);
++		assert(false);
++	}
++
++	if (val > limit) {
++		ksft_print_msg("Value '%s' must < %lu\n", argv, limit);
++		assert(false);
++	}
++
++	return val;
++}
++
++int main(int argc, char **argv)
++{
++	int fd;
++	struct statfs file_stat;
++	unsigned long hugepage_size;
++
++	if (argc != 3) {
++		ksft_print_msg("Usage: %s <hugepage_size=1G|2M> <nr_hwp_pages>\n", argv[0]);
++		return -EINVAL;
++	}
++
++	ksft_print_header();
++	ksft_set_plan(1);
++
++	hugepage_size = parse_hugepage_size(argv[1]);
++	nr_hwp_pages = parse_nr_hwp_pages(argv[2]);
++	fd = create_hugetlbfs_file(&file_stat, hugepage_size);
++	test_main(fd, hugepage_size);
++
++	ksft_finished();
++}
 -- 
 2.53.0.rc2.204.g2597b5adb4-goog
 
