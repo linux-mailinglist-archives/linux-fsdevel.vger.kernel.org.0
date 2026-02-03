@@ -1,114 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-76180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uPUsBxDLgWl1JwMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 11:16:48 +0100
+	id YLxfKc/HgWl1JwMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 11:02:55 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F96D76D8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 11:16:47 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27506D7435
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 11:02:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id CF238306681E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 10:15:35 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 956B630E4691
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 09:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF832D29C2;
-	Tue,  3 Feb 2026 10:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF53E39A81E;
+	Tue,  3 Feb 2026 09:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WHfJCxHU"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QI0mA7F+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tnQQIRd5";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QI0mA7F+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tnQQIRd5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC5823183F;
-	Tue,  3 Feb 2026 10:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED8839A810
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 09:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770113729; cv=none; b=XqWlP+Gx8IK4tVkZo0NrmJEiXFqfAVEjAoWZBbG6u9FBPi9dTLrpn/LFr4+FRvY28Vbn5vwCO54n/VIxOribdfNb/a6PTLeTy8joPsYncOHD5n9yimBW9X9bEidpk2+SrARHphkrP03S7sN3C+38Oki2E5c/qNoYuU5rJt2C1T0=
+	t=1770112756; cv=none; b=ZGqnV3spNeu82xkKlLkEa4k9KmP3sbnXhd7aT6lH/IBGzxi/g7r8GXaiJd7n0WRaf4NAoQ8M4irSxf9O/+g87tB09lJ7loTbNVc9kCm9Po8XqGOYfp7nERhXCvLp1AkpP7V/17nPSmoRr/u64JZPaa2IbhrIznJCOdda1aAFsBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770113729; c=relaxed/simple;
-	bh=ltTqItvs5DEbQAayR00+PqL/+NRtgJq6ixieEinQSY4=;
+	s=arc-20240116; t=1770112756; c=relaxed/simple;
+	bh=JzxGlbAqWJguO/brDfWBiPpZifs77eJ7VtxL7GT6jH4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q5jjG2QEVNkNXRP2RTfrK1GMOiUYH6UPKgEbwKpBdLGeZyIapCP4xIUdjduYYCelC1/8WjH3KNQMilVzd2sxP9LXQ2iMElxruLRgEvQq6IqpmH4FPc8DmCQ31z/Gd3mxq8IqLIGIX2TTULSA5lfMctxJNBPC4HBqUqSuVoQi/Mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WHfJCxHU; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1770113728; x=1801649728;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ltTqItvs5DEbQAayR00+PqL/+NRtgJq6ixieEinQSY4=;
-  b=WHfJCxHU6+m/HKsG1GEUHnC7LYEAoVlCp5pDuHNDURLYdoEDYFbRORys
-   Lk4D7f7h02Orrykg+0t+tdqw6ZDWUlqyALFWmthEf98FPXaS0PGAQBtwm
-   QgjKlOvAaqcH35dSuq9S9Za8hua/CidmhLAnv34VmjsDGLRHy3R6uWSvY
-   c6YMNE8Le7rCnOAbslhhonhRo5jiZ7H17FnEfMCleDQ+iVn4X1jZH6A5O
-   xRcF5tFZxKA5PklK5l89LpJq4MuTnFWaCO5jLhV90cjGpkqYi/GLgYZmA
-   rd1cFOH+ZyF1x+tHM4dFEJpBLyNtmrBZofZhwQVPcScqg/lICl94yNpww
-   w==;
-X-CSE-ConnectionGUID: Q43I6yY3TF6pmKIhbq1+8Q==
-X-CSE-MsgGUID: ou9M2qUoRwCLUcxP0tEM4A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11690"; a="96738240"
-X-IronPort-AV: E=Sophos;i="6.21,270,1763452800"; 
-   d="scan'208";a="96738240"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2026 02:15:26 -0800
-X-CSE-ConnectionGUID: QSwRDmD1RvONYQUf1EbLaA==
-X-CSE-MsgGUID: +XVLnH3CSfiSKxpDX9/BtA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,270,1763452800"; 
-   d="scan'208";a="209093662"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa010.jf.intel.com with ESMTP; 03 Feb 2026 02:15:05 -0800
-Date: Tue, 3 Feb 2026 17:56:37 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Ackerley Tng <ackerleytng@google.com>,
-	Alexey Kardashevskiy <aik@amd.com>, cgroups@vger.kernel.org,
-	kvm@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org, x86@kernel.org,
-	akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de,
-	brauner@kernel.org, chao.p.peng@intel.com, chenhuacai@kernel.org,
-	corbet@lwn.net, dave.hansen@intel.com, dave.hansen@linux.intel.com,
-	david@redhat.com, dmatlack@google.com, erdemaktas@google.com,
-	fan.du@intel.com, fvdl@google.com, haibo1.xu@intel.com,
-	hannes@cmpxchg.org, hch@infradead.org, hpa@zytor.com,
-	hughd@google.com, ira.weiny@intel.com, isaku.yamahata@intel.com,
-	jack@suse.cz, james.morse@arm.com, jarkko@kernel.org,
-	jgowans@amazon.com, jhubbard@nvidia.com, jroedel@suse.de,
-	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com,
-	keirf@google.com, kent.overstreet@linux.dev,
-	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
-	mail@maciej.szmigiero.name, maobibo@loongson.cn,
-	mathieu.desnoyers@efficios.com, maz@kernel.org, mhiramat@kernel.org,
-	mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com,
-	mingo@redhat.com, mlevitsk@redhat.com, mpe@ellerman.id.au,
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es,
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com,
-	paul.walmsley@sifive.com, pbonzini@redhat.com, peterx@redhat.com,
-	pgonda@google.com, prsampat@amd.com, pvorel@suse.cz,
-	qperret@google.com, richard.weiyang@gmail.com,
-	rick.p.edgecombe@intel.com, rientjes@google.com,
-	rostedt@goodmis.org, roypat@amazon.co.uk, rppt@kernel.org,
-	shakeel.butt@linux.dev, shuah@kernel.org, steven.price@arm.com,
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com,
-	tglx@linutronix.de, thomas.lendacky@amd.com, vannapurve@google.com,
-	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com,
-	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org,
-	wyihan@google.com, xiaoyao.li@intel.com, yan.y.zhao@intel.com,
-	yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
-Subject: Re: [RFC PATCH v1 05/37] KVM: guest_memfd: Wire up
- kvm_get_memory_attributes() to per-gmem attributes
-Message-ID: <aYHGVQTF6RUs7r3g@yilunxu-OptiPlex-7050>
-References: <cover.1760731772.git.ackerleytng@google.com>
- <071a3c6603809186e914fe5fed939edee4e11988.1760731772.git.ackerleytng@google.com>
- <07836b1d-d0d8-40f2-8f7b-7805beca31d0@amd.com>
- <CAEvNRgEuez=JbArRf2SApLAL0usv5-Q6q=nBPOFMHrHGaKAtMw@mail.gmail.com>
- <20260129003753.GZ1641016@ziepe.ca>
- <aXqx3_eE0rNh6nP0@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Df3iVsW0ph01U9EJKo/DOXgT4zUD25xPY6TBExKSZDGlQWDCT7d1n2wL2qaH6wpSORrc9f8epsIxsJynXviNSNnUToJQTAXVVLBkM/zi1o+ROMaNuFIPUnFnGQ7BsFiIEXKJ/qHOyr6VvWAPHFoJSx1uV2nAmdlnNM2wE5AUzd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QI0mA7F+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tnQQIRd5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QI0mA7F+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tnQQIRd5; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 72CAF5BCC3;
+	Tue,  3 Feb 2026 09:59:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1770112751; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EmU1bMf85qYOnBafAe0nQ9ZZaSRn0hZPJl49++fUnGM=;
+	b=QI0mA7F+bHBAK/qqdGj78Hjd9BVT8niQOV8o+YBW5+T91JjpYrjpyZJv7cgyxqp/HInipR
+	68ROMzLMAMv+RxXxE0EF3lQJjqg57b5MAKllAafGrfQx7peZ33suwIo4xr/5R0FlqufxQk
+	fjVVd+P1tR3rnwfCibZdocyVc6+GSGE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1770112751;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EmU1bMf85qYOnBafAe0nQ9ZZaSRn0hZPJl49++fUnGM=;
+	b=tnQQIRd5KZAJAETGYi9KOi64CqIh5f3x3HupIwoqFmNx4z3nmz9sMHZoHD4wCu6g38q31v
+	kXN5Fd16IQ7VEoCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=QI0mA7F+;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=tnQQIRd5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1770112751; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EmU1bMf85qYOnBafAe0nQ9ZZaSRn0hZPJl49++fUnGM=;
+	b=QI0mA7F+bHBAK/qqdGj78Hjd9BVT8niQOV8o+YBW5+T91JjpYrjpyZJv7cgyxqp/HInipR
+	68ROMzLMAMv+RxXxE0EF3lQJjqg57b5MAKllAafGrfQx7peZ33suwIo4xr/5R0FlqufxQk
+	fjVVd+P1tR3rnwfCibZdocyVc6+GSGE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1770112751;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EmU1bMf85qYOnBafAe0nQ9ZZaSRn0hZPJl49++fUnGM=;
+	b=tnQQIRd5KZAJAETGYi9KOi64CqIh5f3x3HupIwoqFmNx4z3nmz9sMHZoHD4wCu6g38q31v
+	kXN5Fd16IQ7VEoCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5AFFC3EA62;
+	Tue,  3 Feb 2026 09:59:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id idoyFu/GgWlZMQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 03 Feb 2026 09:59:11 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1D3E6A08F8; Tue,  3 Feb 2026 10:59:07 +0100 (CET)
+Date: Tue, 3 Feb 2026 10:59:07 +0100
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huawei.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com, hch@infradead.org, djwong@kernel.org, 
+	yi.zhang@huaweicloud.com, yizhang089@gmail.com, libaokun1@huawei.com, yangerkun@huawei.com, 
+	yukuai@fnnas.com
+Subject: Re: [PATCH -next v2 03/22] ext4: only order data when partially
+ block truncating down
+Message-ID: <jgotl7vzzuzm6dvz5zfgk6haodxvunb4hq556pzh4hqqwvnhxq@lr3jiedhqh7c>
+References: <20260203062523.3869120-1-yi.zhang@huawei.com>
+ <20260203062523.3869120-4-yi.zhang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -117,73 +111,157 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aXqx3_eE0rNh6nP0@google.com>
+In-Reply-To: <20260203062523.3869120-4-yi.zhang@huawei.com>
+X-Spam-Flag: NO
+X-Spam-Score: -2.51
+X-Spam-Level: 
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
+X-Spamd-Result: default: False [0.34 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
-	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[ziepe.ca,google.com,amd.com,vger.kernel.org,kvack.org,kernel.org,linux-foundation.org,linux.intel.com,alien8.de,intel.com,lwn.net,redhat.com,cmpxchg.org,infradead.org,zytor.com,suse.cz,arm.com,amazon.com,nvidia.com,suse.de,linux.dev,oracle.com,maciej.szmigiero.name,loongson.cn,efficios.com,digikod.net,ellerman.id.au,amazon.es,dabbelt.com,sifive.com,gmail.com,goodmis.org,amazon.co.uk,linutronix.de,zeniv.linux.org.uk,huawei.com];
-	FROM_HAS_DN(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76180-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76177-lists,linux-fsdevel=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.cz:dkim,suse.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
+	DMARC_NA(0.00)[suse.cz];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[intel.com:+];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,linux.ibm.com,gmail.com,infradead.org,kernel.org,huaweicloud.com,huawei.com,fnnas.com];
 	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[yilun.xu@linux.intel.com,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[98];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,intel.com:dkim]
-X-Rspamd-Queue-Id: 86F96D76D8
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TO_DN_SOME(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: 27506D7435
 X-Rspamd-Action: no action
 
-> +1.  For guest_memfd, we initially defined per-VM memory attributes to track
-> private vs. shared.  But as Ackerley noted, we are in the process of deprecating
-> that support, e.g. by making it incompatible with various guest_memfd features,
-> in favor of having each guest_memfd instance track the state of a given page.
+On Tue 03-02-26 14:25:03, Zhang Yi wrote:
+> Currently, __ext4_block_zero_page_range() is called in the following
+> four cases to zero out the data in partial blocks:
 > 
-> The original guest_memfd design was that it would _only_ hold private pages, and
-> so tracking private vs. shared in guest_memfd didn't make any sense.  As we've
-> pivoted to in-place conversion, tracking private vs. shared in the guest_memfd
-> has basically become mandatory.  We could maaaaaybe make it work with per-VM
-> attributes, but it would be insanely complex.
+> 1. Truncate down.
+> 2. Truncate up.
+> 3. Perform block allocation (e.g., fallocate) or append writes across a
+>    range extending beyond the end of the file (EOF).
+> 4. Partial block punch hole.
 > 
-> For a dmabuf fd, the story is the same as guest_memfd.  Unless private vs. shared
-> is all or nothing, and can never change, then the only entity that can track that
-> info is the owner of the dmabuf.  And even if the private vs. shared attributes
-> are constant, tracking it external to KVM makes sense, because then the provider
-> can simply hardcode %true/%false.  
-
-For CoCo-VM and Tee-IO, I'm wondering if host or KVM has to maintain
-the private/shared attribute for "assigned MMIO". I'm not naming them
-"host MMIO" cause unlike RAM host never needs to access them, either in
-private manner or shared manner.
-
-Traditionally, host maps these MMIOs only because KVM needs HVA->HPA
-mapping to find pfn and setup KVM MMU. Now we have FD based approach so
-with dmabuf fd, host no longer needs mapping. Does that give confidence
-that KVM only needs to setup MMU for this type of MMIO as private/shared
-according to guest's intension (which is fault->is_private)?
-
-We don't need to track private/shared in VFIO MMIO dmabuf, only to keep
-them unmappable.
-
+> If the default ordered data mode is used, __ext4_block_zero_page_range()
+> will write back the zeroed data to the disk through the order mode after
+> zeroing out.
 > 
-> As for _how_ to do that, no matter where the attributes are stored, we're going
-> to have to teach KVM to play nice with a non-guest_memfd provider of private
-> memory.
+> Among the cases 1,2 and 3 described above, only case 1 actually requires
+> this ordered write. Assuming no one intentionally bypasses the file
+> system to write directly to the disk. When performing a truncate down
+> operation, ensuring that the data beyond the EOF is zeroed out before
+> updating i_disksize is sufficient to prevent old data from being exposed
+> when the file is later extended. In other words, as long as the on-disk
+> data in case 1 can be properly zeroed out, only the data in memory needs
+> to be zeroed out in cases 2 and 3, without requiring ordered data.
+
+Hum, I'm not sure this is correct. The tail block of the file is not
+necessarily zeroed out beyond EOF (as mmap writes can race with page
+writeback and modify the tail block contents beyond EOF before we really
+submit it to the device). Thus after this commit if you truncate up, just
+zero out the newly exposed contents in the page cache and dirty it, then
+the transaction with the i_disksize update commits (I see nothing
+preventing it) and then you crash, you can observe file with the new size
+but non-zero content in the newly exposed area. Am I missing something?
+
+> Case 4 does not require ordered data because the entire punch hole
+> operation does not provide atomicity guarantees. Therefore, it's safe to
+> move the ordered data operation from __ext4_block_zero_page_range() to
+> ext4_truncate().
+
+I agree hole punching can already expose intermediate results in case of
+crash so there removing the ordered mode handling is safe.
+
+								Honza
+
+> It should be noted that after this change, we can only determine whether
+> to perform ordered data operations based on whether the target block has
+> been zeroed, rather than on the state of the buffer head. Consequently,
+> unnecessary ordered data operations may occur when truncating an
+> unwritten dirty block. However, this scenario is relatively rare, so the
+> overall impact is minimal.
 > 
+> This is prepared for the conversion to the iomap infrastructure since it
+> doesn't use ordered data mode and requires active writeback, which
+> reduces the complexity of the conversion.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> ---
+>  fs/ext4/inode.c | 32 +++++++++++++++++++-------------
+>  1 file changed, 19 insertions(+), 13 deletions(-)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index f856ea015263..20b60abcf777 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -4106,19 +4106,10 @@ static int __ext4_block_zero_page_range(handle_t *handle,
+>  	folio_zero_range(folio, offset, length);
+>  	BUFFER_TRACE(bh, "zeroed end of block");
+>  
+> -	if (ext4_should_journal_data(inode)) {
+> +	if (ext4_should_journal_data(inode))
+>  		err = ext4_dirty_journalled_data(handle, bh);
+> -	} else {
+> +	else
+>  		mark_buffer_dirty(bh);
+> -		/*
+> -		 * Only the written block requires ordered data to prevent
+> -		 * exposing stale data.
+> -		 */
+> -		if (!buffer_unwritten(bh) && !buffer_delay(bh) &&
+> -		    ext4_should_order_data(inode))
+> -			err = ext4_jbd2_inode_add_write(handle, inode, from,
+> -					length);
+> -	}
+>  	if (!err && did_zero)
+>  		*did_zero = true;
+>  
+> @@ -4578,8 +4569,23 @@ int ext4_truncate(struct inode *inode)
+>  		goto out_trace;
+>  	}
+>  
+> -	if (inode->i_size & (inode->i_sb->s_blocksize - 1))
+> -		ext4_block_truncate_page(handle, mapping, inode->i_size);
+> +	if (inode->i_size & (inode->i_sb->s_blocksize - 1)) {
+> +		unsigned int zero_len;
+> +
+> +		zero_len = ext4_block_truncate_page(handle, mapping,
+> +						    inode->i_size);
+> +		if (zero_len < 0) {
+> +			err = zero_len;
+> +			goto out_stop;
+> +		}
+> +		if (zero_len && !IS_DAX(inode) &&
+> +		    ext4_should_order_data(inode)) {
+> +			err = ext4_jbd2_inode_add_write(handle, inode,
+> +					inode->i_size, zero_len);
+> +			if (err)
+> +				goto out_stop;
+> +		}
+> +	}
+>  
+>  	/*
+>  	 * We add the inode to the orphan list, so that if this
+> -- 
+> 2.52.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
