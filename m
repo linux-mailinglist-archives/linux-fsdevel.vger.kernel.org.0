@@ -1,167 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-76156-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OKSjDFmZgWl/HAMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76156-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 07:44:41 +0100
+	id IIhxMZeZgWl/HAMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 07:45:43 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CC17D56C4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 07:44:40 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BFCED56E2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 07:45:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id A0BAA308C864
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 06:34:19 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 9EE0C30AB5C6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 06:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A8437E2F0;
-	Tue,  3 Feb 2026 06:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4773E37B415;
+	Tue,  3 Feb 2026 06:34:45 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D7035971B;
-	Tue,  3 Feb 2026 06:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19AD36D51B;
+	Tue,  3 Feb 2026 06:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770100245; cv=none; b=lcUvaeOEXdX2lpRiFKS+YnIpUK7I8AE6Xe87SNpEx9Mh2QizbP5Keiesl/rXr4Htytir8Q3M0zDVk9+kg71CY6Ny7C9NzfZyA2TRxW3TRX6v0ZzeVcLTX/xSp5Li98PQESXoGUo/U9ovNQmeFQ4LQQBpGAK6QGlmA1cHzFr8W78=
+	t=1770100484; cv=none; b=iAAUzeK42VWd+Oqm5EHpiEC8B4bLv3SpuWPOhCdDhPSlmosdCOTDtoh8e6vVSuAI44u3XlSOOCHUP45xMMtsceoMTLMpnAJyIw7nwfA4PPqHSvPcs9sBVennxY/2aBDHbtR42u7o3P6FC/Ja9Rv6NManamKT2ag1bNHB3C+6L98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770100245; c=relaxed/simple;
-	bh=zo2I6k8/xlGq0PtkAsWQuRfNUucflvH2Yo+nLd/eEMw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QWhuxiv+lfqOKTCvOvEO6CAkL/8zjiWTUKvX4/Ujj2JrMudtfamGuX/VNWUdHFJAOxrIW7ip+c8NERN8h2N9aeLULAMqeZq4ZmnPqAgr2gfG98ArU/HN0FsyBxyFLJNAbGkPUvBB3xxf6TfX5BxmE1826gOMC82RjvRyBBAUp+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.69.42])
-	by gateway (Coremail) with SMTP id _____8DxvsMRloFpVkUPAA--.49940S3;
-	Tue, 03 Feb 2026 14:30:41 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.69.42])
-	by front1 (Coremail) with SMTP id qMiowJCxecEMloFp4e4+AA--.24733S2;
-	Tue, 03 Feb 2026 14:30:40 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	Xuefeng Li <lixuefeng@loongson.cn>,
-	Julian Sun <sunjunchao@bytedance.com>,
-	linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH V2] writeback: Fix wakeup and logging timeouts for !DETECT_HUNG_TASK
-Date: Tue,  3 Feb 2026 14:30:23 +0800
-Message-ID: <20260203063023.2159073-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1770100484; c=relaxed/simple;
+	bh=brXpaqfz6gFQfBh7CR5kIfCOmQZoZKHuDiPVZWWOZxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NiDQHIgTUU7os8tXeFObNTzDFawj6VGZvaYo2QyVbS2PaxM0HLOYRu7pS2HK03y17KKcX+oYvUGWFqbyNlVxx22xI0RCrE5EoXdCsbT8HChMmxuLYuAJ3Iyfrj9GTuid8e9sdrxpwTufD/f5tAL2y5eG9bkXh7ILbyTnOw9yHr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 3FAD468B05; Tue,  3 Feb 2026 07:34:39 +0100 (CET)
+Date: Tue, 3 Feb 2026 07:34:39 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@lst.de, tytso@mit.edu,
+	willy@infradead.org, jack@suse.cz, djwong@kernel.org,
+	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com,
+	xiang@kernel.org, dsterba@suse.com, pali@kernel.org,
+	ebiggers@kernel.org, neil@brown.name, amir73il@gmail.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com,
+	gunho.lee@lge.com, Hyunchul Lee <hyc.lee@gmail.com>
+Subject: Re: [PATCH v6 11/16] ntfs: update runlist handling and cluster
+ allocator
+Message-ID: <20260203063439.GA18053@lst.de>
+References: <20260202220202.10907-1-linkinjeon@kernel.org> <20260202220202.10907-12-linkinjeon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJCxecEMloFp4e4+AA--.24733S2
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7Kw4xur1fCFWrtF47JF15ZFc_yoW8uw1rpF
-	WfGF1jyayvy34xKr1kG3ZFgF1Y93ykCr4xWr17WayIvw1fXa95tFW7Kry5tF13JrZxXFyS
-	vFWqyrWfJF1jqagCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9Fb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	tVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
-	AKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v2
-	6r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
-	CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26ryj6F1UMIIF
-	0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIx
-	AIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2
-	KfnxnUUI43ZEXa7IU8EeHDUUUUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260202220202.10907-12-linkinjeon@kernel.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.04 / 15.00];
+X-Spamd-Result: default: False [0.14 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
+	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-76156-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_FIVE(0.00)[5];
-	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[loongson.cn];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	SUBJECT_HAS_EXCLAIM(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76157-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	FROM_NEQ_ENVFROM(0.00)[chenhuacai@loongson.cn,linux-fsdevel@vger.kernel.org];
-	R_DKIM_NA(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[24];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,lst.de,mit.edu,infradead.org,suse.cz,toxicpanda.com,sandeen.net,suse.com,brown.name,gmail.com,vger.kernel.org,lge.com];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	MID_RHS_MATCH_FROM(0.00)[];
+	R_DKIM_NA(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[loongson.cn:mid,loongson.cn:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 9CC17D56C4
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,lst.de:mid]
+X-Rspamd-Queue-Id: 8BFCED56E2
 X-Rspamd-Action: no action
 
-Recent changes of fs-writeback cause such warnings if DETECT_HUNG_TASK
-is not enabled:
+Suggested commit message:
 
-INFO: The task sync:1342 has been waiting for writeback completion for more than 1 seconds.
+Updates runlist handling and cluster allocation to support
+contiguous allocations and filesystem trimming.
 
-The reason is sysctl_hung_task_timeout_secs is 0 when DETECT_HUNG_TASK
-is not enabled, then it causes the warning message even if the writeback
-lasts for only one second.
+Improve the runlist API to handle allocation failures and introduces
+discard support.
 
-So guard the wakeup and logging with "#ifdef CONFIG_DETECT_HUNG_TASK",
-so as to eliminate the warning messages.
+> +		if (is_dealloc == true)
+> +			ntfs_release_dirty_clusters(vol, rl->length);
+>  		up_write(&vol->lcnbmp_lock);
+> +		memalloc_nofs_restore(memalloc_flags);
+>  		ntfs_debug("Done.");
+> +		return rl == NULL ? ERR_PTR(-EIO) : rl;
 
-Fixes: 1888635532fb ("writeback: Wake up waiting tasks when finishing the writeback of a chunk.")
-Fixes: d6e621590764 ("writeback: Add logging for slow writeback (exceeds sysctl_hung_task_timeout_secs)")
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
-V2: Disable wakeup and logging for !DETECT_HUNG_TASK.
-
- fs/fs-writeback.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 5444fc706ac7..bfe469fff97c 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -198,13 +198,15 @@ static void wb_queue_work(struct bdi_writeback *wb,
- 
- static bool wb_wait_for_completion_cb(struct wb_completion *done)
- {
-+#ifdef CONFIG_DETECT_HUNG_TASK
- 	unsigned long waited_secs = (jiffies - done->wait_start) / HZ;
- 
--	done->progress_stamp = jiffies;
- 	if (waited_secs > sysctl_hung_task_timeout_secs)
- 		pr_info("INFO: The task %s:%d has been waiting for writeback "
- 			"completion for more than %lu seconds.",
- 			current->comm, current->pid, waited_secs);
-+#endif
-+	done->progress_stamp = jiffies;
- 
- 	return !atomic_read(&done->cnt);
- }
-@@ -2029,11 +2031,13 @@ static long writeback_sb_inodes(struct super_block *sb,
- 		 */
- 		__writeback_single_inode(inode, &wbc);
- 
-+#ifdef CONFIG_DETECT_HUNG_TASK
- 		/* Report progress to inform the hung task detector of the progress. */
- 		if (work->done && work->done->progress_stamp &&
- 		   (jiffies - work->done->progress_stamp) > HZ *
- 		   sysctl_hung_task_timeout_secs / 2)
- 			wake_up_all(work->done->waitq);
-+#endif
- 
- 		wbc_detach_inode(&wbc);
- 		work->nr_pages -= write_chunk - wbc.nr_to_write;
--- 
-2.47.3
+In general you want the memalloc_nofs_restore to be after goto
+labels in a single place, as otherwise debugging is really hard.
+In doubt a separate wrapper doing it my be even better.
 
 
