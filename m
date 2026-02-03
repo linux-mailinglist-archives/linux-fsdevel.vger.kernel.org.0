@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-76225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76226-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GP4+LWBLgmnNRwMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 20:24:16 +0100
+	id EMiqNpRLgmnNRwMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76226-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 20:25:08 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B2C1DE21E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 20:24:16 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FBFADE243
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 20:25:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id A4E26309F2FA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 19:24:02 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E7C7E30EF606
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 19:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BD2329378;
-	Tue,  3 Feb 2026 19:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579CB364026;
+	Tue,  3 Feb 2026 19:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Fb4Ff997"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1CV82F2g"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554573570D1
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 19:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD73836405E
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 19:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770146641; cv=none; b=bc2ZNuH5rqfPq0A3ZrBN/+5zHq41rBWf8WgjVhJHC64VpNUSv92AByzdLBVvQvft5YE0NVsTNwZzD7iPKdvlwi17V+H5SrAigo4ub+Mlp3lmiTIr8Tu7+gVhnIh2gvu97q18G5WOaynqVa9grwOtB/nALVs+sHSh3ubaYXWzZqs=
+	t=1770146642; cv=none; b=H3BNw+rEn0/wtjLej/6QbpyPfTrQoggpeQyZonX7tZ9MOvrkv9IKJb4yB4qrV4CV1FJz90cxITSilbeIKgz3pRLusnsOYQ6nq9CjIDiuQJ4z+clW/LRdDDnGz6tA0HuY63k7sPgYMBlc/+Rjak0EIKnbXfj0t7iUhTsHHQf6ebs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770146641; c=relaxed/simple;
-	bh=0w4YgQ3XBgJ/xRPJAs39Nc0jXU5ZQmqnnH9JMqCZzEM=;
+	s=arc-20240116; t=1770146642; c=relaxed/simple;
+	bh=xSXUV2Py7qWOXZ0kXPtRSXoGc7TMmvAZq4THKRHLYqg=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=RLb3FqpaZK3c/BVQ5oOmgA2pecwcUpqyXm7gJrHCRyZuLRrQbyk7d28JiBU0mmf9rQI8E4ZbmXGvm8HE3x7PHxiluVKQXBbnRS98AZmPZOdNfE7rIfYXG5rSOV+ZAyICml9iLnSsoNgul6wK2U+EhEQ4FiKtS5cvI1SY3s/F6O0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jiaqiyan.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Fb4Ff997; arc=none smtp.client-ip=209.85.210.202
+	 To:Cc:Content-Type; b=hXi66MA43htV1ZfKEqFYaDJQerUw57ywLXXIwxrkR8+o8Z4nYVyl8g8FMJRlTeVtAnrjnNCUsLnF6n5HKgL12GHAYc10Vtmioh2mBa4BkQvZyAWstAJWWN5wyKcpM5fdtVYtbRW4vEJfeGe0r1/H/Eby1T+R/qlGF+0lvA+c3Q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jiaqiyan.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1CV82F2g; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jiaqiyan.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-8216fece04cso104412b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Feb 2026 11:23:59 -0800 (PST)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2a8f8c81d02so32800815ad.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Feb 2026 11:24:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1770146639; x=1770751439; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1770146640; x=1770751440; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/tlxC7jV4F7Lz2K5ysVxinzelO7YC4ddlq8CWE746MQ=;
-        b=Fb4Ff997dnrrKkZWK9Y/u+JvAxDBn7kJA3/HX10a4akJlIeAKc0yWZPoxV38xCGktW
-         86RkjKf+KEuKRUnO6fJZCFzVi7Ioxr08Sx/Q4xnnGheMyWDrHdhJCnpEchUjrU9AD/D0
-         IMisldXbH1qPt31oE+HCw+Cn7Z4af2OowEn4XPmXJdexQrLPDt+TgEkDjdlwCdtHqRcI
-         QqnrsYm0QsshSz+dF0xK1uCLNO5Ri9/12oXE4hmWIVZMZmjxyuR+R4tKg6ImxOuTzl9W
-         5ehi91x92kxJkFeJgPYPkHflIKj/0M3LbOJ5o7UJeWxRy9NSqN1TkayPJv+/ova0XsyF
-         /vuQ==
+        bh=Aquur2bWSawAVy++fhfPAogrKIXUck0YPKC9WFv0tRU=;
+        b=1CV82F2gf00mXb32dHCazM+iIEfRUf7IrK6WSwtcLVGQtb3kwfGE6CSS+OeMyzYBiI
+         fURXn76wW9y98UMuTzRHtCtnP1DWgLcXzIl75MwQ/GuFHBaKaIRwEOAuKTdpikumhJzn
+         56R2fvGvqQt6fIhEmS8+F5bnwTQpXARo5cYAMp9aVAC+9V1TtuIXLxQftMVryTFA4pML
+         J7vqQoxQPxyT85WyRlUeveB4utSEyimy87FJOhH0yvwlkAn55wziUa0IOZsxMk1NdFCz
+         sL426eBaJwitevEuXAaSxeyRWdPyIiyW+CIItkTfpNtYrNBt6wlkOd0CtLYxxiXHVOk0
+         8oIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770146639; x=1770751439;
+        d=1e100.net; s=20230601; t=1770146640; x=1770751440;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/tlxC7jV4F7Lz2K5ysVxinzelO7YC4ddlq8CWE746MQ=;
-        b=bNmeVKtT3YSBaSNBSGWEuIlZa7ibkbssBzg1o+LXxL+NIIbStOfCECP3J2ubZ6ocGV
-         5Kna+uBdgtwfh+OmkGuUKrKYorDWh/HxC1RKEJwSiYfL35aNqt0nDrCh23LsMDgqxB2r
-         5NsuHa900SNEBasVdCg/GH9T9mNz7/lwHbL6EhDTmwomMeXd/W89o90+y2DDXfu5yTZY
-         nW8dUc4vQO42EMbz9kKQAmNonQ0N8he2EXuWLVnQVnO/ChaSkAWUYXzKvcvzmdDsfZVz
-         KJEcNtUfFTbR+Sri0lJsIAJKxIy8CCrqZaZ/R0cWFj7p0atzCXZr8HG+ySzYA5O5+MoT
-         HB/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVgNGpw8cBzb7UlR5Bfc8HOe6pWJ9jeKsdvBDn89H4epgT0E0TMIpc436AET0bNNxjIr0/zGlW4vNu4I8T9@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCatWycnsUrXHJQhMaPPoDTxQx88gOH9P1kn6PyBYV+Q/w4/ox
-	usNRyGaoZgNEzD58iflY4frETo0w/GluHTWnJf8z5iupc4MnccvP3yXLwwHQxAO5EYrE23fqd4A
-	et14JbN8tjOUQEg==
-X-Received: from pfh34.prod.google.com ([2002:a05:6a00:12e2:b0:7dd:8bba:639b])
+        bh=Aquur2bWSawAVy++fhfPAogrKIXUck0YPKC9WFv0tRU=;
+        b=k+wkRUImQrReMsjRzVSLMEXz8Pm8zr3NpQXtLWFhSTQeydtu7nKHFAQmAQfv3WkDZD
+         Wyji5I/+tNCxdWR6wl4MJaFTC8KDVMFI98nk5zzGT5a//lWkW04lfkF4bVNhGzZayZZL
+         oJUE243b5+hcSxYbhNf3g7HiuqNZxgD2V33BCtBvF2Cos7lH+UfrJHHzztKIjeuDGaX6
+         mUcZYpEGlFIexF5Bv3r60YMrfR5TSNvM89k/yPJ/TZtJLFaQlupyDg8FpF7edTGT0BNq
+         80n4Qh0Z50poykXMJtJn3n8XWuSRagv29i1hc58L+ZmgzX/bTdALWzCz2zBzBud1fUzK
+         QSyA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRVa6+tmkvQXS7tt15c3nDRIJrKA8yePTmkld/9UET0a3MWQJuhYBkqZtHY46wKg47FdlOO2v3QakdmoDT@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTqLF5uCvEStsv5clPk+WKilsPYfu5X78FoGyEUXRjcOObN6UD
+	wWidq+Dtrt7MyKZrBT5cOdno6UPZstqq0o1NEWyUNUSQK56DsWPGicaSThzP7f4u9/RXDWSrAPK
+	hvoSc+L/jfZrG3A==
+X-Received: from pjvv12.prod.google.com ([2002:a17:90b:588c:b0:352:bd7e:99e7])
  (user=jiaqiyan job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:2171:b0:824:1c29:f1c3 with SMTP id d2e1a72fcca58-8241c29f7dfmr368201b3a.21.1770146638563;
- Tue, 03 Feb 2026 11:23:58 -0800 (PST)
-Date: Tue,  3 Feb 2026 19:23:51 +0000
+ 2002:a17:903:40ce:b0:2a7:c8db:488a with SMTP id d9443c01a7336-2a933b9d168mr3697935ad.7.1770146640258;
+ Tue, 03 Feb 2026 11:24:00 -0800 (PST)
+Date: Tue,  3 Feb 2026 19:23:52 +0000
 In-Reply-To: <20260203192352.2674184-1-jiaqiyan@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -76,8 +76,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20260203192352.2674184-1-jiaqiyan@google.com>
 X-Mailer: git-send-email 2.53.0.rc2.204.g2597b5adb4-goog
-Message-ID: <20260203192352.2674184-3-jiaqiyan@google.com>
-Subject: [PATCH v3 2/3] selftests/mm: test userspace MFR for HugeTLB hugepage
+Message-ID: <20260203192352.2674184-4-jiaqiyan@google.com>
+Subject: [PATCH v3 3/3] Documentation: add documentation for MFD_MF_KEEP_UE_MAPPED
 From: Jiaqi Yan <jiaqiyan@google.com>
 To: linmiaohe@huawei.com, william.roche@oracle.com, harry.yoo@oracle.com, 
 	jane.chu@oracle.com
@@ -97,12 +97,12 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
 	MV_CASE(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-76225-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76226-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
@@ -115,450 +115,101 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	FROM_NEQ_ENVFROM(0.00)[jiaqiyan@google.com,linux-fsdevel@vger.kernel.org];
 	FREEMAIL_CC(0.00)[gmail.com,intel.com,huawei.com,infradead.org,linux-foundation.org,suse.de,google.com,nvidia.com,redhat.com,oracle.com,linux.intel.com,linux.dev,kvack.org,vger.kernel.org];
 	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 2B2C1DE21E
+	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 3FBFADE243
 X-Rspamd-Action: no action
 
-Test the userspace memory failure recovery (MFR) policy for HugeTLB:
-
-1. Create a memfd backed by HugeTLB and had MFD_MF_KEEP_UE_MAPPED set.
-
-2. Allocate and map 4 hugepages to the process.
-
-3. Create sub-threads to MADV_HWPOISON inner addresses of the 1st hugepage.
-
-4. Check if the process gets correct SIGBUS for each poisoned raw page.
-
-5. Check if all memory are still accessible and content valid.
-
-6. Check if the poisoned hugepage is dealt with after memfd released.
-
-Two configurables in the test:
-
-- hugepage_size: size of the hugepage, 1G or 2M.
-
-- nr_hwp_pages: number of pages within the 1st hugepage to MADV_HWPOISON.
+Document its motivation, userspace API, behaviors, and limitations.
 
 Reviewed-by: Jane Chu <jane.chu@oracle.com>
 Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
 ---
- tools/testing/selftests/mm/.gitignore    |   1 +
- tools/testing/selftests/mm/Makefile      |   3 +
- tools/testing/selftests/mm/hugetlb-mfr.c | 369 +++++++++++++++++++++++
- 3 files changed, 373 insertions(+)
- create mode 100644 tools/testing/selftests/mm/hugetlb-mfr.c
+ Documentation/userspace-api/index.rst         |  1 +
+ .../userspace-api/mfd_mfr_policy.rst          | 60 +++++++++++++++++++
+ 2 files changed, 61 insertions(+)
+ create mode 100644 Documentation/userspace-api/mfd_mfr_policy.rst
 
-diff --git a/tools/testing/selftests/mm/.gitignore b/tools/testing/selftests/mm/.gitignore
-index c2a8586e51a1f..11664d20935db 100644
---- a/tools/testing/selftests/mm/.gitignore
-+++ b/tools/testing/selftests/mm/.gitignore
-@@ -5,6 +5,7 @@ hugepage-mremap
- hugepage-shm
- hugepage-vmemmap
- hugetlb-madvise
-+hugetlb-mfr
- hugetlb-read-hwpoison
- hugetlb-soft-offline
- khugepaged
-diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
-index eaf9312097f7b..7469142a87dcc 100644
---- a/tools/testing/selftests/mm/Makefile
-+++ b/tools/testing/selftests/mm/Makefile
-@@ -63,6 +63,7 @@ TEST_GEN_FILES += hmm-tests
- TEST_GEN_FILES += hugetlb-madvise
- TEST_GEN_FILES += hugetlb-read-hwpoison
- TEST_GEN_FILES += hugetlb-soft-offline
-+TEST_GEN_FILES += hugetlb-mfr
- TEST_GEN_FILES += hugepage-mmap
- TEST_GEN_FILES += hugepage-mremap
- TEST_GEN_FILES += hugepage-shm
-@@ -233,6 +234,8 @@ $(OUTPUT)/migration: LDLIBS += -lnuma
+diff --git a/Documentation/userspace-api/index.rst b/Documentation/userspace-api/index.rst
+index 8a61ac4c1bf19..6d8d94028a6cd 100644
+--- a/Documentation/userspace-api/index.rst
++++ b/Documentation/userspace-api/index.rst
+@@ -68,6 +68,7 @@ Everything else
+    futex2
+    perf_ring_buffer
+    ntsync
++   mfd_mfr_policy
  
- $(OUTPUT)/rmap: LDLIBS += -lnuma
+ .. only::  subproject and html
  
-+$(OUTPUT)/hugetlb-mfr: LDLIBS += -lnuma
-+
- local_config.mk local_config.h: check_config.sh
- 	/bin/sh ./check_config.sh $(CC)
- 
-diff --git a/tools/testing/selftests/mm/hugetlb-mfr.c b/tools/testing/selftests/mm/hugetlb-mfr.c
+diff --git a/Documentation/userspace-api/mfd_mfr_policy.rst b/Documentation/userspace-api/mfd_mfr_policy.rst
 new file mode 100644
-index 0000000000000..6de59efdb101f
+index 0000000000000..c5a25df39791a
 --- /dev/null
-+++ b/tools/testing/selftests/mm/hugetlb-mfr.c
-@@ -0,0 +1,369 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Test the userspace memory failure recovery (MFR) policy for HugeTLB
-+ * hugepage case:
-+ * 1. Create a memfd backed by HugeTLB and MFD_MF_KEEP_UE_MAPPED bit set.
-+ * 2. Allocate and map 4 hugepages.
-+ * 3. Create sub-threads to MADV_HWPOISON inner addresses of the 1st hugepage.
-+ * 4. Check if each sub-thread get correct SIGBUS for the poisoned raw pages.
-+ * 5. Check if all memory are still accessible and content still valid.
-+ * 6. Check if the poisoned hugepage is dealt with after memfd released.
-+ *
-+ * Test takes two arguments:
-+ * - hugepage_size: size of the hugepage, 1G or 2M.
-+ * - nr_hwp_pages: number of pages within the 1st hugepage to MADV_HWPOISON.
-+ *
-+ * Example ways to run the test:
-+ *   ./hugetlb-mfr 2M 3
-+ * or
-+ *   ./hugetlb-mfr 1G 1
-+ * assuming /sys/kernel/mm/hugepages/hugepages-${xxx}kB/nr_hugepages > 4
-+ */
-+
-+#define _GNU_SOURCE
-+#include <assert.h>
-+#include <errno.h>
-+#include <numaif.h>
-+#include <numa.h>
-+#include <pthread.h>
-+#include <signal.h>
-+#include <stdbool.h>
-+#include <stdlib.h>
-+#include <stdio.h>
-+#include <string.h>
-+#include <unistd.h>
-+
-+#include <linux/magic.h>
-+#include <linux/memfd.h>
-+#include <sys/mman.h>
-+#include <sys/prctl.h>
-+#include <sys/statfs.h>
-+#include <sys/types.h>
-+
-+#include "../kselftest.h"
-+#include "vm_util.h"
-+
-+#define min(a, b) ((a) < (b) ? (a) : (b))
-+
-+#define EPREFIX			" !!! "
-+#define BYTE_LENTH_IN_1G	0x40000000UL
-+#define BYTE_LENTH_IN_2M	0x200000UL
-+#define HUGETLB_1GB_STR		"1G"
-+#define HUGETLB_2MB_STR		"2M"
-+#define HUGETLB_FILL		0xab
-+
-+static const unsigned long offsets_1g[] = {
-+	0x200000, 0x3ff000, 0x801000, 0x2000000,
-+	0x3fff000, 0x4001000, 0x7fff000, 0x8011000
-+};
-+static const unsigned long offsets_2m[] = {
-+	0x020000, 0x041000, 0x07f000, 0x120000,
-+	0x13f000, 0x141000, 0x17f000, 0x18f000
-+};
-+static size_t nr_hwp_pages;
-+
-+static void *sigbus_addr;
-+static int sigbus_addr_lsb;
-+static bool expecting_sigbus;
-+static bool got_sigbus;
-+static bool was_mceerr;
-+
-+static int create_hugetlbfs_file(struct statfs *file_stat,
-+				 unsigned long hugepage_size)
-+{
-+	int fd;
-+	int flags = MFD_HUGETLB | MFD_MF_KEEP_UE_MAPPED;
-+
-+	if (hugepage_size == BYTE_LENTH_IN_2M)
-+		flags |= MFD_HUGE_2MB;
-+	else
-+		flags |= MFD_HUGE_1GB;
-+
-+	fd = memfd_create("hugetlb_tmp", flags);
-+	if (fd < 0)
-+		ksft_exit_fail_perror("Failed to memfd_create");
-+
-+	memset(file_stat, 0, sizeof(*file_stat));
-+	if (fstatfs(fd, file_stat)) {
-+		close(fd);
-+		ksft_exit_fail_perror("Failed to fstatfs");
-+	}
-+	if (file_stat->f_type != HUGETLBFS_MAGIC) {
-+		close(fd);
-+		ksft_exit_fail_msg("Not hugetlbfs file");
-+	}
-+
-+	ksft_print_msg("Created hugetlb_tmp file\n");
-+	ksft_print_msg("hugepagesize=%#lx\n", file_stat->f_bsize);
-+	if (file_stat->f_bsize != hugepage_size)
-+		ksft_exit_fail_msg("Hugepage size is not %#lx", hugepage_size);
-+
-+	return fd;
-+}
-+
-+/*
-+ * SIGBUS handler for "do_hwpoison" thread that mapped and MADV_HWPOISON
-+ */
-+static void sigbus_handler(int signo, siginfo_t *info, void *context)
-+{
-+	if (!expecting_sigbus)
-+		ksft_exit_fail_msg("unexpected sigbus with addr=%p",
-+				   info->si_addr);
-+
-+	got_sigbus = true;
-+	was_mceerr = (info->si_code == BUS_MCEERR_AO ||
-+		      info->si_code == BUS_MCEERR_AR);
-+	sigbus_addr = info->si_addr;
-+	sigbus_addr_lsb = info->si_addr_lsb;
-+}
-+
-+static void *do_hwpoison(void *hwpoison_addr)
-+{
-+	int hwpoison_size = getpagesize();
-+
-+	ksft_print_msg("MADV_HWPOISON hwpoison_addr=%p, len=%d\n",
-+		       hwpoison_addr, hwpoison_size);
-+	if (madvise(hwpoison_addr, hwpoison_size, MADV_HWPOISON) < 0)
-+		ksft_exit_fail_perror("Failed to MADV_HWPOISON");
-+
-+	pthread_exit(NULL);
-+}
-+
-+static void test_hwpoison_multiple_pages(unsigned char *start_addr,
-+					 unsigned long hugepage_size)
-+{
-+	pthread_t pthread;
-+	int ret;
-+	unsigned char *hwpoison_addr;
-+	const unsigned long *offsets;
-+	size_t i;
-+
-+	if (hugepage_size == BYTE_LENTH_IN_2M)
-+		offsets = offsets_2m;
-+	else
-+		offsets = offsets_1g;
-+
-+	for (i = 0; i < nr_hwp_pages; ++i) {
-+		sigbus_addr = (void *)0xBADBADBAD;
-+		sigbus_addr_lsb = 0;
-+		was_mceerr = false;
-+		got_sigbus = false;
-+		expecting_sigbus = true;
-+		hwpoison_addr = start_addr + offsets[i];
-+
-+		ret = pthread_create(&pthread, NULL, &do_hwpoison, hwpoison_addr);
-+		if (ret)
-+			ksft_exit_fail_perror("Failed to create hwpoison thread");
-+
-+		ksft_print_msg("Created thread to hwpoison and access hwpoison_addr=%p\n",
-+			       hwpoison_addr);
-+
-+		pthread_join(pthread, NULL);
-+
-+		if (!got_sigbus)
-+			ksft_test_result_fail("Didn't get a SIGBUS\n");
-+		if (!was_mceerr)
-+			ksft_test_result_fail("Didn't get a BUS_MCEERR_A(R|O)\n");
-+		if (sigbus_addr != hwpoison_addr)
-+			ksft_test_result_fail("Incorrect address: got=%p, expected=%p\n",
-+					      sigbus_addr, hwpoison_addr);
-+		if (sigbus_addr_lsb != pshift())
-+			ksft_test_result_fail("Incorrect address LSB: got=%d, expected=%d\n",
-+					      sigbus_addr_lsb, pshift());
-+
-+		ksft_print_msg("Received expected and correct SIGBUS\n");
-+	}
-+}
-+
-+static int read_nr_hugepages(unsigned long hugepage_size,
-+			     unsigned long *nr_hugepages)
-+{
-+	char buffer[256] = {0};
-+	char cmd[256] = {0};
-+
-+	sprintf(cmd, "cat /sys/kernel/mm/hugepages/hugepages-%ldkB/nr_hugepages",
-+		hugepage_size);
-+	FILE *cmdfile = popen(cmd, "r");
-+
-+	if (cmdfile == NULL) {
-+		ksft_perror(EPREFIX "failed to popen nr_hugepages");
-+		return -1;
-+	}
-+
-+	if (!fgets(buffer, sizeof(buffer), cmdfile)) {
-+		ksft_perror(EPREFIX "failed to read nr_hugepages");
-+		pclose(cmdfile);
-+		return -1;
-+	}
-+
-+	*nr_hugepages = atoll(buffer);
-+	pclose(cmdfile);
-+	return 0;
-+}
-+
-+/*
-+ * Main thread that drives the test.
-+ */
-+static void test_main(int fd, unsigned long hugepage_size)
-+{
-+	unsigned char *map, *iter;
-+	struct sigaction new, old;
-+	const unsigned long hugepagesize_kb = hugepage_size / 1024;
-+	unsigned long nr_hugepages_before = 0;
-+	unsigned long nr_hugepages_after = 0;
-+	unsigned long nodemask = 1UL << 0;
-+	unsigned long len = hugepage_size * 4;
-+	int ret;
-+
-+	if (read_nr_hugepages(hugepagesize_kb, &nr_hugepages_before) != 0) {
-+		close(fd);
-+		ksft_exit_fail_msg("Failed to read nr_hugepages\n");
-+	}
-+	ksft_print_msg("NR hugepages before MADV_HWPOISON is %ld\n", nr_hugepages_before);
-+
-+	if (ftruncate(fd, len) < 0)
-+		ksft_exit_fail_perror("Failed to ftruncate");
-+
-+	ksft_print_msg("Allocated %#lx bytes to HugeTLB file\n", len);
-+
-+	map = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-+	if (map == MAP_FAILED)
-+		ksft_exit_fail_msg("Failed to mmap");
-+
-+	ksft_print_msg("Created HugeTLB mapping: %p\n", map);
-+
-+	ret = mbind(map, len, MPOL_BIND, &nodemask, sizeof(nodemask) * 8,
-+		    MPOL_MF_STRICT | MPOL_MF_MOVE);
-+	if (ret < 0) {
-+		perror("mbind");
-+		ksft_exit_fail_msg("Failed to bind to node\n");
-+	}
-+
-+	memset(map, HUGETLB_FILL, len);
-+	ksft_print_msg("Memset every byte to 0xab\n");
-+
-+	new.sa_sigaction = &sigbus_handler;
-+	new.sa_flags = SA_SIGINFO;
-+	if (sigaction(SIGBUS, &new, &old) < 0)
-+		ksft_exit_fail_msg("Failed to setup SIGBUS handler");
-+
-+	ksft_print_msg("Setup SIGBUS handler successfully\n");
-+
-+	test_hwpoison_multiple_pages(map, hugepage_size);
-+
-+	/*
-+	 * Since MADV_HWPOISON doesn't corrupt the memory in hardware, and
-+	 * MFD_MF_KEEP_UE_MAPPED keeps the hugepage mapped, every byte should
-+	 * remain accessible and hold original data.
-+	 */
-+	expecting_sigbus = false;
-+	for (iter = map; iter < map + len; ++iter) {
-+		if (*iter != HUGETLB_FILL) {
-+			ksft_print_msg("At addr=%p: got=%#x, expected=%#x\n",
-+				       iter, *iter, HUGETLB_FILL);
-+			ksft_test_result_fail("Memory content corrupted\n");
-+			break;
-+		}
-+	}
-+	ksft_print_msg("Memory content all valid\n");
-+
-+	if (read_nr_hugepages(hugepagesize_kb, &nr_hugepages_after) != 0) {
-+		close(fd);
-+		ksft_exit_fail_msg("Failed to read nr_hugepages\n");
-+	}
-+
-+	/*
-+	 * After MADV_HWPOISON, hugepage should still be in HugeTLB pool.
-+	 */
-+	ksft_print_msg("NR hugepages after MADV_HWPOISON is %ld\n", nr_hugepages_after);
-+	if (nr_hugepages_before != nr_hugepages_after)
-+		ksft_test_result_fail("NR hugepages reduced by %ld after MADV_HWPOISON\n",
-+				      nr_hugepages_before - nr_hugepages_after);
-+
-+	/* End of the lifetime of the created HugeTLB memfd. */
-+	if (ftruncate(fd, 0) < 0)
-+		ksft_exit_fail_perror("Failed to ftruncate to 0");
-+	munmap(map, len);
-+	close(fd);
-+
-+	/*
-+	 * After freed by userspace, MADV_HWPOISON-ed hugepage should be
-+	 * dissolved into raw pages and removed from HugeTLB pool.
-+	 */
-+	if (read_nr_hugepages(hugepagesize_kb, &nr_hugepages_after) != 0) {
-+		close(fd);
-+		ksft_exit_fail_msg("Failed to read nr_hugepages\n");
-+	}
-+	ksft_print_msg("NR hugepages after closure is %ld\n", nr_hugepages_after);
-+	if (nr_hugepages_before != nr_hugepages_after + 1)
-+		ksft_test_result_fail("NR hugepages is not reduced after memfd closure\n");
-+
-+	ksft_test_result_pass("All done\n");
-+}
-+
-+static unsigned long parse_hugepage_size(char *argv)
-+{
-+	if (strncasecmp(argv, HUGETLB_1GB_STR, strlen(HUGETLB_1GB_STR)) == 0)
-+		return BYTE_LENTH_IN_1G;
-+
-+	if (strncasecmp(argv, HUGETLB_2MB_STR, strlen(HUGETLB_2MB_STR)) == 0)
-+		return BYTE_LENTH_IN_2M;
-+
-+	ksft_print_msg("Please provide valid hugepage_size: 1G or 2M\n");
-+	assert(false);
-+}
-+
-+static size_t parse_nr_hwp_pages(char *argv)
-+{
-+	unsigned long val;
-+	char *endptr;
-+	size_t limit = min(ARRAY_SIZE(offsets_1g), ARRAY_SIZE(offsets_2m));
-+
-+	if (strlen(argv) < 1) {
-+		ksft_print_msg("Please provide valid nr_hwpoison: 1-8\n");
-+		assert(false);
-+	}
-+
-+	errno = 0;
-+	val = strtoul(argv, &endptr, 10);
-+
-+	if (*endptr != '\0') {
-+		ksft_print_msg("Found invalid chars: '%s", endptr);
-+		assert(false);
-+	}
-+
-+	if (errno == ERANGE) {
-+		ksft_print_msg("Value '%s' out of range for size_t\n", argv);
-+		assert(false);
-+	}
-+
-+	if (val > limit) {
-+		ksft_print_msg("Value '%s' must < %lu\n", argv, limit);
-+		assert(false);
-+	}
-+
-+	return val;
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	int fd;
-+	struct statfs file_stat;
-+	unsigned long hugepage_size;
-+
-+	if (argc != 3) {
-+		ksft_print_msg("Usage: %s <hugepage_size=1G|2M> <nr_hwp_pages>\n", argv[0]);
-+		return -EINVAL;
-+	}
-+
-+	ksft_print_header();
-+	ksft_set_plan(1);
-+
-+	hugepage_size = parse_hugepage_size(argv[1]);
-+	nr_hwp_pages = parse_nr_hwp_pages(argv[2]);
-+	fd = create_hugetlbfs_file(&file_stat, hugepage_size);
-+	test_main(fd, hugepage_size);
-+
-+	ksft_finished();
-+}
++++ b/Documentation/userspace-api/mfd_mfr_policy.rst
+@@ -0,0 +1,60 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++==================================================
++Userspace Memory Failure Recovery Policy via memfd
++==================================================
++
++:Author:
++    Jiaqi Yan <jiaqiyan@google.com>
++
++
++Motivation
++==========
++
++When a userspace process is able to recover from memory failures (MF)
++caused by uncorrected memory error (UE) in the DIMM, especially when it is
++able to avoid consuming known UEs, keeping the memory page mapped and
++accessible is benifical to the owning process for a couple of reasons:
++
++- The memory pages affected by UE have a large smallest granularity, for
++  example 1G hugepage, but the actual corrupted amount of the page is only
++  several cachlines. Losing the entire hugepage of data is unacceptable to
++  the application.
++
++- In addition to keeping the data accessible, the application still wants
++  to access with a large page size for the fastest virtual-to-physical
++  translations.
++
++Memory failure recovery for 1G or larger HugeTLB is a good example. With
++memfd userspace process can control whether the kernel hard offlines its
++hugepages that backs the in-RAM file created by memfd.
++
++
++User API
++========
++
++``int memfd_create(const char *name, unsigned int flags)``
++
++``MFD_MF_KEEP_UE_MAPPED``
++
++	When ``MFD_MF_KEEP_UE_MAPPED`` bit is set in ``flags``, MF recovery
++	in the kernel does not hard offline memory due to UE until the
++	returned ``memfd`` is released. IOW, the HWPoison-ed memory remains
++	accessible via the returned ``memfd`` or the memory mapping created
++	with the returned ``memfd``. Note the affected memory will be
++	immediately isolated and prevented from future use once the memfd
++	is closed. By default ``MFD_MF_KEEP_UE_MAPPED`` is not set, and
++	kernel hard offlines memory having UEs.
++
++Notes about the behavior and limitations
++
++- Even if the page affected by UE is kept, a portion of the (huge)page is
++  already lost due to hardware corruption, and the size of the portion
++  is the smallest page size that kernel uses to manages memory on the
++  architecture, i.e. PAGESIZE. Accessing a virtual address within any of
++  these parts results in a SIGBUS; accessing virtual address outside these
++  parts are good until it is corrupted by new memory error.
++
++- ``MFD_MF_KEEP_UE_MAPPED`` currently only works for HugeTLB, so
++  ``MFD_HUGETLB`` must also be set when setting ``MFD_MF_KEEP_UE_MAPPED``.
++  Otherwise ``memfd_create`` returns EINVAL.
 -- 
 2.53.0.rc2.204.g2597b5adb4-goog
 
