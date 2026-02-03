@@ -1,139 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-76204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id SLLwLR4Ggmn3OAMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 15:28:46 +0100
+	id KOssAbUPgmm9OwMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 16:09:41 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E4CADA96B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 15:28:46 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78541DB18C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 16:09:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8069A3154E74
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 14:22:33 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 4980830B3304
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 14:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BC93A901B;
-	Tue,  3 Feb 2026 14:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8003A784F;
+	Tue,  3 Feb 2026 14:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YZKw0Qym"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MS1vH3Y2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464AD3A9008
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 14:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0ABF3ACF1A;
+	Tue,  3 Feb 2026 14:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770128552; cv=none; b=Udi655RwY03rImUaoseKXR2QuLqRgNOi5iIIlkznGhKEyJHya8bL9n8eeA5W4jbMMW2BRnZRbJTx0ZZp3i9DPn+5lTjbLc7MwBDHxQYLrYyeRx9M4e9F/Atxhdv/BBH3pCUD//787ipoCqKGqyx5p0JstCdJ9KABGgYGmsm2MKQ=
+	t=1770130737; cv=none; b=sitXhuKGxIj8O8cs2bBc64lnzNU1tSX5ObCuwPpgxGqrJctEoqAc6U3HcV0SSOTrQoK1HRRbsRyh9CjW2jgzNi5IIwWYivq8HQFF1guEFTVEjdI65CMkuh8tJmPuMDvAAojKOWzCVNIJ/LkKvZHUVPzY5m8hSS6bk8d4I6gBGvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770128552; c=relaxed/simple;
-	bh=600Cb/ex2AXl+Dj4aeROeIImV3MkOrj5sa1uMbrlCc8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=anKqIaeCnWN4qLgQY91497QSBdW0wVbyEIxkt9LUwf/uIvr/WO/0Dni3GFdDNwiY9POxBVzrw8PmB17TPSr2yBekGLFl+r59HUORDsmcCFZtJuJo9cx6cwOeH4tImXXcB4NZuT0RyORf/3KJp/DbaY4pzjQ0MUh+MOpWN8WuIck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YZKw0Qym; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2850CC2BC86
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 14:22:32 +0000 (UTC)
+	s=arc-20240116; t=1770130737; c=relaxed/simple;
+	bh=AB+11IgAHQ4Zv4sJxXwOskKIaf0y0aebH7UdqQsEi0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M2jU/DaLae2It9Dk19gbQ0pIGJNnIv8tJ+G3EKvGLWNYHGC4mTwH5iijmUkAZEfL75buj5jwx+CwfK8HCFg+ubQg/lj/wgp35JXbQ486kg1FmNTQec7/iufhaPFh0npcrbCdStRE1D/aUaZigFvhu3AaM7nDcQzbKMbNsvvsJEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MS1vH3Y2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5148C116D0;
+	Tue,  3 Feb 2026 14:58:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770128552;
-	bh=600Cb/ex2AXl+Dj4aeROeIImV3MkOrj5sa1uMbrlCc8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YZKw0QymJdULLgrMOGZwCRHkefZPNO7ltx+PQYyIB7omIskLYv9xnHLSzgrIb/+kt
-	 CmXG1RpNE5fDoHDJFBsVhnKZdjfXEkxEBu2G29JPDvDk4cNCLDEzS9Y6/NvE1TA4U8
-	 0AMWrI7eJlKdypfkf0YcFy+O4lxrCmQn8dmduWJ5xtsCgwMrqmgkD8v1lVna1fzQRU
-	 T/b9xuB1k2y2zZS6hlHXVjh/FmymAonwWEtG0GCHzNFWJ4JqJxQKOMfPFqP/SKaRG4
-	 QOQYO21hy+in/UIBUTjk+2YXypXXUx4AZkPvjh6ZUaRs4t5QYBmHpM+0vcvzR5vjzP
-	 e89+OhZ6TQZ6g==
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-65832e566edso7789945a12.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Feb 2026 06:22:32 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUoGESujgZySmN2m386xpt6468Gxn4hyRwS6rrXXMGWSXV8EvnYqvBf55aNOBW1to9/HWI7jadkzmwEYe/1@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXoTsh7zR5nfhnhGJtf5NNi31gQn8RYTxgTaX8naQKvnkUiT5t
-	ZPxxF8HY9POeWwRFXfPWINKui/GT09pgE9oImZfIwNR4arWfoJqny+ur554F3Z8zQ1SVKNCpkos
-	+4+esMHaYksrUVtZIp2VMI14rydXcOBI=
-X-Received: by 2002:a17:907:96a8:b0:b8a:8537:e399 with SMTP id
- a640c23a62f3a-b8dff7a3018mr1142288666b.48.1770128550715; Tue, 03 Feb 2026
- 06:22:30 -0800 (PST)
+	s=k20201202; t=1770130736;
+	bh=AB+11IgAHQ4Zv4sJxXwOskKIaf0y0aebH7UdqQsEi0o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MS1vH3Y2DMgMyWcZy2ZZW+2ypjiCAnvnVbtcMm+3lbwH06ZJR2uDgYG0vS6Q1hafs
+	 wl6Z5IfS7D1zRbjLReVr/J1NGgPe2YjLyfZQ8TwDargAkg9+aDGa9eS4VSKy+cwkKh
+	 EvM9QNUX3IbOsIyuWyLbyZTnnf7KWd1C++cELzeDLGuZUvhwo56ghlUsHkiMPwsVY4
+	 UgZvmtxvNrXXXEhOAmfySsizMhFwP9pZRVP6nVXus/IUltVsMOC5d8xJT19mPKfvOm
+	 YNNqoQb6teNygNh7yFC8j7zj9dNdJS6uoNpCpdMkr2JHnmmmCbm5u745p60BxS/BEk
+	 6SQWSp6bWV6EA==
+Date: Tue, 3 Feb 2026 15:58:52 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Kiryl Shutsemau <kas@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Orphan filesystems after mount namespace destruction and tmpfs
+ "leak"
+Message-ID: <20260203-bestanden-ballhaus-941e4c365701@brauner>
+References: <aYDjHJstnz2V-ZZg@thinkstation>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260202220202.10907-1-linkinjeon@kernel.org> <20260202220202.10907-12-linkinjeon@kernel.org>
- <20260203063439.GA18053@lst.de>
-In-Reply-To: <20260203063439.GA18053@lst.de>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Tue, 3 Feb 2026 23:22:18 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-Kpyi_2CVWZoKGTMiMLPwZ7iye-H+A50S6N=bzYyj64Q@mail.gmail.com>
-X-Gm-Features: AZwV_QjvqTqmT_dra60qDf9qsRS4K7bp32VmhMhsBbOz48IZSKmmwyP298LDt5U
-Message-ID: <CAKYAXd-Kpyi_2CVWZoKGTMiMLPwZ7iye-H+A50S6N=bzYyj64Q@mail.gmail.com>
-Subject: Re: [PATCH v6 11/16] ntfs: update runlist handling and cluster allocator
-To: Christoph Hellwig <hch@lst.de>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu, 
-	willy@infradead.org, jack@suse.cz, djwong@kernel.org, josef@toxicpanda.com, 
-	sandeen@sandeen.net, rgoldwyn@suse.com, xiang@kernel.org, dsterba@suse.com, 
-	pali@kernel.org, ebiggers@kernel.org, neil@brown.name, amir73il@gmail.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com, 
-	Hyunchul Lee <hyc.lee@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aYDjHJstnz2V-ZZg@thinkstation>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [2.34 / 15.00];
+	MID_END_EQ_FROM_USER_PART(4.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-76204-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,mit.edu,infradead.org,suse.cz,toxicpanda.com,sandeen.net,suse.com,brown.name,gmail.com,vger.kernel.org,lge.com];
 	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76205-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[23];
+	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[linkinjeon@kernel.org,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: 0E4CADA96B
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 78541DB18C
 X-Rspamd-Action: no action
 
-On Tue, Feb 3, 2026 at 3:39=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrote=
-:
->
-> Suggested commit message:
->
-> Updates runlist handling and cluster allocation to support
-> contiguous allocations and filesystem trimming.
->
-> Improve the runlist API to handle allocation failures and introduces
-> discard support.
-Okay, I will use it.
->
-> > +             if (is_dealloc =3D=3D true)
-> > +                     ntfs_release_dirty_clusters(vol, rl->length);
-> >               up_write(&vol->lcnbmp_lock);
-> > +             memalloc_nofs_restore(memalloc_flags);
-> >               ntfs_debug("Done.");
-> > +             return rl =3D=3D NULL ? ERR_PTR(-EIO) : rl;
->
-> In general you want the memalloc_nofs_restore to be after goto
-> labels in a single place, as otherwise debugging is really hard.
-> In doubt a separate wrapper doing it my be even better.
-Okay, I will change it as you pointed out.
-Thanks for your review!
->
->
+On Mon, Feb 02, 2026 at 05:50:30PM +0000, Kiryl Shutsemau wrote:
+> Hi,
+> 
+> In the Meta fleet, we saw a problem where destroying a container didn't
+> lead to freeing the shmem memory attributed to a tmpfs mounted inside
+> that container. It triggered an OOM when a new container attempted to
+> start.
+> 
+> Investigation has shown that this happened because a process outside of
+> the container kept a file from the tmpfs mapped. The mapped file is
+> small (4k), but it holds all the contents of the tmpfs (~47GiB) from
+> being freed.
+> 
+> When a tmpfs filesystem is mounted inside a mount namespace (e.g., a
+> container), and a process outside that namespace holds an open file
+> descriptor to a file on that tmpfs, the tmpfs superblock remains in
+> kernel memory indefinitely after:
+> 
+> 1. All processes inside the mount namespace have exited.
+> 2. The mount namespace has been destroyed.
+> 3. The tmpfs is no longer visible in any mount namespace.
+> 
+> The superblock persists with mnt_ns = NULL in its mount structures,
+> keeping all tmpfs contents pinned in memory until the external file
+> descriptor is closed.
+> 
+> The problem is not specific to tmpfs, but for filesystems with backing
+> storage, the memory impact is not as severe since the page cache is
+> reclaimable.
+> 
+> The obvious solution to the problem is "Don't do that": the file should
+> be unmapped/closed upon container destruction.
+> 
+> But I wonder if the kernel can/should do better here? Currently, this
+> scenario is hard to diagnose. It looks like a leak of shmem pages.
+> 
+> Also, I wonder if the current behavior can lead to data loss on a
+> filesystem with backing storage:
+>  - The mount namespace where my USB stick was mounted is gone.
+>  - The USB stick is no longer mounted anywhere.
+>  - I can pull the USB stick out.
+>  - Oops, someone was writing there: corruption/data loss.
+
+If the USB stick is yanked and the filesystem uses fs_holder_ops it will
+be notified about sudden device removal and can decide to handle it as
+it sees fit. That works for all devices; including log devices or rt
+devices or what have you. Usually it will shut the filesystem down and
+tell userspace to EIO. I've switched all major filesystems to this model
+a few kernel releases ago.
+
+> I am not sure what a possible solution would be here. I can only think
+
+None from the kernel's perspective. It's intended semantics that
+userspace relies upon (For example, if you have an fdstore then you very
+much want that persistence.).
+
+We could zap all files and make the fds cataonic. But that's just insane
+from the start. It would be a drastic deviation from basic semantics
+we've had since forever. It would also be extremly difficult to get
+right and performant because you'd need algorithms to find all of them.
+Keeping a global map for all files open on a filesystem instance is just
+insane so is walking all processes and inspecting their fdtables.
+
+I don't believe we need to do anything here unless you want some tmpfs
+specific black magic where you can issue a shutdown ioctl on tmpfs that
+magically frees memory. And I'd still expect that this would fsck
+userspace over that doesn't expect this behavior.
+
+> of blocking exit(2) for the last process in the namespace until all
+> filesystems are cleanly unmounted, but that is not very informative
+> either.
+
+If you just wanted the ability to wait for a filesystem to have gone
+away completely that's an easier thing to achieve. Inotify has support
+for this via IN_UNMOUNT. But as you say I doubt that's actually helpful.
 
