@@ -1,143 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-76200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UFNeK1UDgmmYNgMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 15:16:53 +0100
+	id IHtSOgYEgmmYNgMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 15:19:50 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1AD7DA757
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 15:16:52 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 733EADA7A0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Feb 2026 15:19:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id A49FD3007B28
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 14:16:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 966AA30CBBD0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Feb 2026 14:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8153A7849;
-	Tue,  3 Feb 2026 14:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78573A7F4B;
+	Tue,  3 Feb 2026 14:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k5XDxMzW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vz9wTatK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EF43A1E60;
-	Tue,  3 Feb 2026 14:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA703A7F53
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 14:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770128204; cv=none; b=eOiLR6s4GExux259pVSA+siOBUCiG1op0tUKl1KwH2yXW3gHIFz49MtrvF7s3B8c2LkHJgBYoR+xyU9o6z7TewGwUy6r0bOx1wa+xrIUrPDD811b/DePDQChbFgLm8C4wV1ObrwsOEKKFY0DFJetZJ0iJnRf1x05EfiE5zVb9yI=
+	t=1770128258; cv=none; b=cSHC3j2+34KBPBI4S4raEb3xnr6x8tq058t05v+4wPmsy/V+OhQ6hI2a9goM/+y6png4XlEPv7yPtzSdHNtN2AJfH3uoX51/W2C5FI8KkTabpOLAdTdsIGQHrz29hL+UdZPDwToHdG4qwRfmQhKO3Bx0Sbp/l5e2JZ0cfvJ+0EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770128204; c=relaxed/simple;
-	bh=FwDWH4+EWaS0ssfiC4uUSaW04MIsJXeVJZBqZsvQhJI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LVkYTlzLTCD7EXMWKLeeoKSCCdkVRLe0IgQ/8vJ41YWmyqo9fa6Y2fqjuEqcnUy9bNkCyngfz2lh1i+Qg3zZ6rSr1udyG4p3ler7W32pqVBGv4cxkNxg2+KKpYvoG7lNIM/mW5pK8zxdf1lK2M4QiJC2dxd9xrEip7/kAC/mjIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k5XDxMzW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8FD7C116D0;
-	Tue,  3 Feb 2026 14:16:42 +0000 (UTC)
+	s=arc-20240116; t=1770128258; c=relaxed/simple;
+	bh=+GS4XNQ51ixbh5dkWAnRESBpCyK6L48WlPDwptdcWlU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eSWo+CVKMxzI9T4WmN+jz7fjbMtiBU+uFC7P7mEuvRV1jhodr9dTE9Rrg2m/Rp3jx0YWaOALB1QZejClorvmKSHd0gVoy3782XZJBYpUuR5/8YmMmC10LGdXPpJv23Yry6Ug6FmyPf2YGqXEJBWOBbNqtEYiaMhmT/JBoBJCFv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vz9wTatK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B642C2BCB2
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Feb 2026 14:17:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770128204;
-	bh=FwDWH4+EWaS0ssfiC4uUSaW04MIsJXeVJZBqZsvQhJI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k5XDxMzW19gfBFjDD4mYolpdGibizAunKFiLgHazT4N5NMIHkLANNWRc+VCb4DcMX
-	 d538lkFa+RLOKN8NsOGTBSig1zGGzORgHmi054Y/IOW4mcgJq2pXnhxHYKi5PoZOMA
-	 LgINPinxv5DC3HpeiAJl1d96MY/lQB0PeL3Xc0G8ijA1tLacQczbe4qEhmq8wYjwlu
-	 d4x/mcWBpkesKeFs/+V9tkNedCRfj1lBBlN1OVxgbzMnIRDoevp+42BurpfzFBH/RN
-	 seUiW8zWD2ImlDTJxq6WK+oql30nzMllYbqI3PHq9A+x2IRNS9+jY6EaSZUcaqYVx1
-	 tyE08W8VSZy5A==
-Date: Tue, 3 Feb 2026 15:16:40 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: fsverity@lists.linux.dev, Andrey Albershteyn <aalbersh@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, "Darrick J. Wong" <djwong@kernel.org>
-Subject: Re: [PATCH v3 0/2] Add traces and file attributes for fs-verity
-Message-ID: <20260203-wasser-universal-5cc36f5a273e@brauner>
-References: <20260126115658.27656-1-aalbersh@kernel.org>
- <20260129-beieinander-klein-bcbb23eb6c7b@brauner>
- <20260129174015.GA2240@sol>
+	s=k20201202; t=1770128258;
+	bh=+GS4XNQ51ixbh5dkWAnRESBpCyK6L48WlPDwptdcWlU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Vz9wTatKWAtwiYCnjtYSJEDzfUfmE+EqOQxmRjimDbIl4L6fpzxK1VKCpfkeh+/Yu
+	 lekjmGsS6XZr+uQNV2W0pJh+C87dPI9JEStsvpP0IK7H7mF+epZdzfXpkbUKJVXvZf
+	 07HwvChRHHIWbs9VOWKwRgE4SRfho0mAVAvQkVif9JoV1ttNEzE8RFbVnsLyRFKjDb
+	 fAQV4MNp8iBoYwdPg9xwmi/puUUTuuYR8axYYzdnI6l1zSfhiwyshY1MmMTfPQMV9D
+	 dpOtolFpVzCrnnU+W7vF6frrLsnpydwlXWNc/GX0wMmFStwUoYSRglNqlZcFmJVbKG
+	 fIcF5y1nB7Zew==
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b8845cb580bso941421966b.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Feb 2026 06:17:38 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUNvupOAHOupoP7WwEjal2Nkwgp/SSa7illZqt/gyg4mZXjRnJWAGa1VkkF593Hh8Cvh53NiEnYZ/Zoi5xU@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoTigVUCcWqUUvLT7TUIue+JZ/cUfjglz80rj2H2AJ4LOdbgW0
+	oeOD/Qt9eRj4YGVd02odhi/STLoyz0TySuF6+exWBcTsajpQzAp4oxCxSEFZ6QrOcwIWlrfZp0L
+	4E1bsF7KeXpbL6UdtFh1rEtjpAHN0T/4=
+X-Received: by 2002:a17:906:ee82:b0:b87:7250:ad8f with SMTP id
+ a640c23a62f3a-b8dff528bf8mr992086866b.10.1770128256763; Tue, 03 Feb 2026
+ 06:17:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260129174015.GA2240@sol>
+References: <20260202220202.10907-1-linkinjeon@kernel.org> <20260202220202.10907-13-linkinjeon@kernel.org>
+ <20260203063758.GB18053@lst.de>
+In-Reply-To: <20260203063758.GB18053@lst.de>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Tue, 3 Feb 2026 23:17:24 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9v_BzopZptrdeEONO9rdegT+XFVb0CLJHe16fDP9jNWQ@mail.gmail.com>
+X-Gm-Features: AZwV_QijYccZY627qi7yJrba77Q61Tc1Wg360vJHgHHohUBxzoTw-Wb3SjK6k14
+Message-ID: <CAKYAXd9v_BzopZptrdeEONO9rdegT+XFVb0CLJHe16fDP9jNWQ@mail.gmail.com>
+Subject: Re: [PATCH v6 12/16] ntfs: add reparse and ea operations
+To: Christoph Hellwig <hch@lst.de>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu, 
+	willy@infradead.org, jack@suse.cz, djwong@kernel.org, josef@toxicpanda.com, 
+	sandeen@sandeen.net, rgoldwyn@suse.com, xiang@kernel.org, dsterba@suse.com, 
+	pali@kernel.org, ebiggers@kernel.org, neil@brown.name, amir73il@gmail.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [2.34 / 15.00];
-	MID_END_EQ_FROM_USER_PART(4.00)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76200-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-76201-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,mit.edu,infradead.org,suse.cz,toxicpanda.com,sandeen.net,suse.com,brown.name,gmail.com,vger.kernel.org,lge.com];
 	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	MISSING_XM_UA(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[linkinjeon@kernel.org,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: C1AD7DA757
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid,lst.de:email]
+X-Rspamd-Queue-Id: 733EADA7A0
 X-Rspamd-Action: no action
 
-On Thu, Jan 29, 2026 at 09:40:15AM -0800, Eric Biggers wrote:
-> On Thu, Jan 29, 2026 at 04:01:29PM +0100, Christian Brauner wrote:
-> > On Mon, 26 Jan 2026 12:56:56 +0100, Andrey Albershteyn wrote:
-> > > This two small patches grew from fs-verity XFS patchset. I think they're
-> > > self-contained improvements which could go without XFS implementation.
-> > > 
-> > > Cc: linux-fsdevel@vger.kernel.org
-> > > Cc: "Darrick J. Wong" <djwong@kernel.org>
-> > > 
-> > > v3:
-> > > - Make tracepoints arguments more consistent
-> > > - Make tracepoint messages more consistent
-> > > v2:
-> > > - Update kernel version in the docs to v7.0
-> > > - Move trace point before merkle tree block hash check
-> > > - Update commit message in patch 2
-> > > - Add VERITY to FS_COMMON_FL and FS_XFLAG_COMMON constants
-> > > - Fix block index argument in the tree block hash trace point
-> > > 
-> > > [...]
-> > 
-> > Applied to the vfs-7.0.misc branch of the vfs/vfs.git tree.
-> > Patches in the vfs-7.0.misc branch should appear in linux-next soon.
-> > 
-> > Please report any outstanding bugs that were missed during review in a
-> > new review to the original patch series allowing us to drop it.
-> > 
-> > It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> > patch has now been applied. If possible patch trailers will be updated.
-> > 
-> > Note that commit hashes shown below are subject to change due to rebase,
-> > trailer updates or similar. If in doubt, please check the listed branch.
-> > 
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> > branch: vfs-7.0.misc
-> > 
-> > [1/2] fs: add FS_XFLAG_VERITY for fs-verity files
-> >       https://git.kernel.org/vfs/vfs/c/0e6b7eae1fde
-> > [2/2] fsverity: add tracepoints
-> >       https://git.kernel.org/vfs/vfs/c/fa19d42cc791
-> 
-> I guess this means you want me to drop them.  So, dropped now.
-
-Hm, sorry if I missed to reply to another mail on list. That wasn't
-intentional.
+On Tue, Feb 3, 2026 at 3:38=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrote=
+:
+>
+> Suggested commit message:
+>
+> Implement support for Extended Attributes and Reparse Points, enabling
+> Posix ACL support and, and compatibility with Windows Subsystem for
+> Linux (WSL) metadata.
+Okay, I will use it.
+>
+> > +struct WSL_LINK_REPARSE_DATA {
+> > +     __le32  type;
+> > +     char    link[];
+> > +};
+> > +
+> > +struct REPARSE_INDEX {                       /* index entry in $Extend=
+/$Reparse */
+>
+> Why are these using all upper case names unlike the rest of the
+> code?
+Right, I will change it.
+>
+> > +     ok =3D ni && reparse_attr && (size >=3D sizeof(struct reparse_poi=
+nt)) &&
+> > +             (reparse_attr->reparse_tag !=3D IO_REPARSE_TAG_RESERVED_Z=
+ERO) &&
+> > +             (((size_t)le16_to_cpu(reparse_attr->reparse_data_length) =
++
+> > +               sizeof(struct reparse_point) +
+> > +               ((reparse_attr->reparse_tag & IO_REPARSE_TAG_IS_MICROSO=
+FT) ?
+> > +                0 : sizeof(struct guid))) =3D=3D size);
+>
+> A bunch of superflous braces.  But in general decomposing such complex
+> operations into an inline helper using multiple if statements and
+> adding comments improves the readability a lot.
+Okay, I will update and add the comments.
+>
+> > +     if (ok) {
+>
+> ... and just return here for !ok and reduce the indentation for
+> the rest of the function?
+Right, I will change it like this.
+>
+> > +             switch (reparse_attr->reparse_tag) {
+> > +             case IO_REPARSE_TAG_LX_SYMLINK:
+> > +                     wsl_reparse_data =3D (const struct WSL_LINK_REPAR=
+SE_DATA *)
+> > +                                             reparse_attr->reparse_dat=
+a;
+> > +                     if ((le16_to_cpu(reparse_attr->reparse_data_lengt=
+h) <=3D
+> > +                          sizeof(wsl_reparse_data->type)) ||
+> > +                         (wsl_reparse_data->type !=3D cpu_to_le32(2)))
+> > +                             ok =3D false;
+> > +                     break;
+> > +             case IO_REPARSE_TAG_AF_UNIX:
+> > +             case IO_REPARSE_TAG_LX_FIFO:
+> > +             case IO_REPARSE_TAG_LX_CHR:
+> > +             case IO_REPARSE_TAG_LX_BLK:
+> > +                     if (reparse_attr->reparse_data_length ||
+> > +                         !(ni->flags & FILE_ATTRIBUTE_RECALL_ON_OPEN))
+> > +                             ok =3D false;
+> > +                     break;
+>
+> ... and then directly return from inside the switch as well?
+Right, I will change it.
+Thanks for the review!
+>
+>
 
