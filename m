@@ -1,149 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-76348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76349-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 6H8rJjCig2kLqQMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 20:46:56 +0100
+	id kOm+MIewg2l1swMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76349-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 21:48:07 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6E18EC35E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 20:46:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CFEFEC92D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 21:48:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 5CBBA3013862
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Feb 2026 19:46:54 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id D089D3013EC6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Feb 2026 20:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DF5365A0A;
-	Wed,  4 Feb 2026 19:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3177A43C041;
+	Wed,  4 Feb 2026 20:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="opFEprRT";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EwkR12nX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp04-ext3.udag.de (smtp04-ext3.udag.de [62.146.106.41])
+Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AE933B945
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Feb 2026 19:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.146.106.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A42438FF0
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Feb 2026 20:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770234410; cv=none; b=MTPQCUzNFdrZKPj2sekPtU6afFIu0dIC/sxCy0d9vXR4JYwN05edsGYNiG2vrS6fJ1jd0D5JkyLSj4CSMulhTYNOffvLULm+OZxk2/B3/jGDXfzu1rVmSwRLvCG2O+h04zo86+F/ltkQqYTYXsOvPWMhkMuz67QWPrViN1BHrIs=
+	t=1770238084; cv=none; b=HoqTKqGjl/6JUcZvolGvvem1hPQHwJKX1AMOR+qfgk5A+deXNO6tQhLaILuY1qVCnesCq/k2BNSBOOseh9CbdPzWHfdg08tPVGPgVTR8SniuRUZOc9ZIAIZLk58m0nUhEHkGvQXJmzSGmcCdXhi6RJF3AkwMcaryscQ572QmX34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770234410; c=relaxed/simple;
-	bh=IKX/LFE8ZmwYk/3sg84rjJgIJQXfx/aumErENzHX5Pc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZUlD6fCSwuZ2Sips+7abIziFhSUgQ1HUJ5aHbn/Ii22yvK77jUrIzRD/W47DsKMPC9b2sTGvYVIDhKOTHmy/O369zQZCDcrjSQ0a+hxkwyDajVBA4NaPbptt3QEwEtENIVVAOV+aGeWw/i4mCJhbM7bjKUM3eWDuViJnfdYF66w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de; spf=pass smtp.mailfrom=birthelmer.de; arc=none smtp.client-ip=62.146.106.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birthelmer.de
-Received: from localhost (200-143-067-156.ip-addr.inexio.net [156.67.143.200])
-	by smtp04-ext3.udag.de (Postfix) with ESMTPA id C4433E0498;
-	Wed,  4 Feb 2026 20:38:27 +0100 (CET)
-Authentication-Results: smtp04-ext3.udag.de;
-	auth=pass smtp.auth=birthelmercom-0001 smtp.mailfrom=horst@birthelmer.de
-Date: Wed, 4 Feb 2026 20:38:27 +0100
-From: Horst Birthelmer <horst@birthelmer.de>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, f-pc@lists.linux-foundation.org, 
-	linux-fsdevel@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>, 
-	John Groves <John@groves.net>, Bernd Schubert <bernd@bsbernd.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Luis Henriques <luis@igalia.com>
-Subject: Re: Re: [LSF/MM/BPF TOPIC] Where is fuse going? API cleanup,
- restructuring and more
-Message-ID: <aYOeZA7_zzvD0Dyd@fedora.fritz.box>
-References: <CAJfpegtzYdy3fGGO5E1MU8n+u1j8WVc2eCoOQD_1qq0UV92wRw@mail.gmail.com>
- <20260204190649.GB7693@frogsfrogsfrogs>
+	s=arc-20240116; t=1770238084; c=relaxed/simple;
+	bh=OIVK1WNTokJUiYCQtjO2PSxxRS0Igut+M1dTHI3IaVc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jINEwFgVNZr+oUwvQh0naozCrKm3X5onoMORotftvlcnntdSHO3byakJ+kuBjP45GVZTAA7u7nAUGG6SIwrcMURiaF9nSVMdvJRklNxwNx+G81MofZ7bHgopSo6kZhQFHmbWDmpAcRsf3RyzCOQjOtTTGUr/GNGN6hLbubIpbZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=opFEprRT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EwkR12nX; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 4D7D7140007D;
+	Wed,  4 Feb 2026 15:48:03 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Wed, 04 Feb 2026 15:48:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1770238083;
+	 x=1770324483; bh=1U1mY9+dO3/EG1E8wzcgUrCCPNsC2zedZxHvhA79k+s=; b=
+	opFEprRTyUYL1LWuKFsxxTqjlbwJF8iQ0J9SlG4IjLDPCica9xenKSYMA54X2aHm
+	OjddUDo2/ZsU80FHsmfO04PB59Ip+zYJFMHSnBnkJV4gg0qWQ7RDB3L21REh8QJZ
+	bpqezwn8RB+YuLzISwVtX0XtDUJb6nX9LvSb/Rncbmuu1VdEfeFq6WTiUecRj8CJ
+	yS/Tgpkv7tVV6oM/qVtMZti79NyqmRHMThsIMuG31+7KxdIPHWPfPOj1BSGtKRpT
+	H0We6CA+yX3joLR3h6B2Pn8LfWGVZ0N1+QbylbERszXKP7eCHKY4S53M/mutFNJ2
+	R3FjbaR7XrY0d78iBfsSMQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1770238083; x=
+	1770324483; bh=1U1mY9+dO3/EG1E8wzcgUrCCPNsC2zedZxHvhA79k+s=; b=E
+	wkR12nXSkDnpo9lG8w1H5jP2p/qJ4KKYLX/Ia0mlJsud/4w4dA8x8A9FZ8BpBQre
+	AlJfqlG81jcaWPfdERCH3J4DHyGR4QkXhoK2PkNYsq5ZO04ON+m7taBP4BQS0oz3
+	es3+x0MeOxjHPJExO0tZ37s6rBWqcr1MoYWEBmcCuDRx4/QnAmnSbdPQGFICkl+n
+	AbnYNFzgWDskZ7S5hplxQFnHwwgQiAlRkJR/h9gDMWU1bgzVz2vgN2mXfjqXaC60
+	KzDDco47dON9RtQ4Lrd0CefG8LHDs2RB9x/wMSejP/xwYNrYYtqMSx5AqrqHhrLn
+	2cfLa9a5Fi+AvEjce/bEg==
+X-ME-Sender: <xms:grCDaf3lXt5JxFl4FStaQnY99zbqjJkY2SOJE69fBUngf0QrXaEEUw>
+    <xme:grCDaTDw0WmTTcAuM3hI-iUOfV0Bb8_JQ2eGepygc02L8GsuWAZPEmjRX-vx-K-vs
+    A2sRs-otxA-lY1aV0ivIpMxmrkoM-gMXrUO4GSXwFmNmZH2Tgs>
+X-ME-Received: <xmr:grCDaUKU7jnIQzmZ5kRCUGtnYsRE1ifyY3BQUYy4GazdkOLZkvyOSihZaT_TxSpXTSNjTLtGEF5PZ8rYAnZg-X8G9cE0R29JWPutAhpTuRjtbkOiSw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukeefgeegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghrnhgu
+    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
+    htthgvrhhnpeefgeegfeffkeduudelfeehleelhefgffehudejvdfgteevvddtfeeiheef
+    lefgvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    gsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgtphhtthhopeelpdhmohguvgep
+    shhmthhpohhuthdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtg
+    homhdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtohep
+    rghmihhrjeefihhlsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhsug
+    gvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegujhifohhnghes
+    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhohhhnsehgrhhovhgvshdrnhgvthdprh
+    gtphhtthhopehluhhishesihhgrghlihgrrdgtohhmpdhrtghpthhtohephhhorhhsthes
+    sghirhhthhgvlhhmvghrrdguvgdprhgtphhtthhopehlshhfqdhptgeslhhishhtshdrlh
+    hinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
+X-ME-Proxy: <xmx:grCDaUkiQv4wLIW-DsK7LGQtBGxbj4bl9Tm8QzXsV26il0FnMm4pxQ>
+    <xmx:grCDaVYrSV9ni0PsVuCmI-RbNl3T077F1LH_saakps2Hpu2WkQYBUQ>
+    <xmx:grCDaY-eKk5FvnsRFlqlEAWETVh9xVbUv4amGGOd5QY9TP42UCiEBw>
+    <xmx:grCDacY1FDQt7J2xMaK5A5wj06z1QWawbDKQlwsqZ7dSh_PZ482bmA>
+    <xmx:g7CDafUF1gvhiht3Fk71sQUO0UUNdyovRoqXmxQ7BEGF0PSP2ElGRdo3>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 4 Feb 2026 15:48:00 -0500 (EST)
+Message-ID: <6d3cfc5f-5f27-4b20-a28f-add3c9637c48@bsbernd.com>
+Date: Wed, 4 Feb 2026 21:47:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260204190649.GB7693@frogsfrogsfrogs>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [LSF/MM/BPF TOPIC] Where is fuse going? API cleanup,
+ restructuring and more
+To: Joanne Koong <joannelkoong@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
+ "Darrick J . Wong" <djwong@kernel.org>, John Groves <John@groves.net>,
+ Luis Henriques <luis@igalia.com>, Horst Birthelmer <horst@birthelmer.de>,
+ lsf-pc <lsf-pc@lists.linux-foundation.org>
+References: <CAJfpegtzYdy3fGGO5E1MU8n+u1j8WVc2eCoOQD_1qq0UV92wRw@mail.gmail.com>
+ <CAOQ4uxjEdJHjbfCFM364V=tBrEyczYvzo-b-Xo0UPOCA2cnPGQ@mail.gmail.com>
+ <CAJfpegvg=hqM1vMCyrb61VT6uA+4gdGwvqHe5Djg2RF+DTUMiw@mail.gmail.com>
+ <CAJnrk1YKDi9e-eTQyGBD-rFScxGTcsfz3tnmnE_EshPd18aMrw@mail.gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJnrk1YKDi9e-eTQyGBD-rFScxGTcsfz3tnmnE_EshPd18aMrw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.36 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[bsbernd.com,none];
 	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[bsbernd.com:s=fm1,messagingengine.com:s=fm3];
 	MAILLIST(-0.15)[generic];
-	DMARC_POLICY_SOFTFAIL(0.10)[birthelmer.de : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[szeredi.hu,lists.linux-foundation.org,vger.kernel.org,gmail.com,groves.net,bsbernd.com,igalia.com];
-	TAGGED_FROM(0.00)[bounces-76348-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,kernel.org,groves.net,igalia.com,birthelmer.de,lists.linux-foundation.org];
+	DKIM_TRACE(0.00)[bsbernd.com:+,messagingengine.com:+];
+	TAGGED_FROM(0.00)[bounces-76349-lists,linux-fsdevel=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,bsbernd.com:mid,bsbernd.com:dkim,messagingengine.com:dkim,szeredi.hu:email];
+	FREEMAIL_TO(0.00)[gmail.com,szeredi.hu];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[horst@birthelmer.de,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[bernd@bsbernd.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	NEURAL_HAM(-0.00)[-0.984];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	R_DKIM_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	MID_RHS_MATCH_FROM(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,fedora.fritz.box:mid]
-X-Rspamd-Queue-Id: D6E18EC35E
+	RCPT_COUNT_SEVEN(0.00)[9];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Rspamd-Queue-Id: 0CFEFEC92D
 X-Rspamd-Action: no action
 
-On Wed, Feb 04, 2026 at 11:06:49AM -0800, Darrick J. Wong wrote:
-> On Mon, Feb 02, 2026 at 02:51:04PM +0100, Miklos Szeredi wrote:
-> > I propose a session where various topics of interest could be
-> > discussed including but not limited to the below list
-> > 
-> > New features being proposed at various stages of readiness:
-> > 
-> >  - fuse4fs: exporting the iomap interface to userspace
-> 
-> FYI, I took a semi-break from fuse-iomap for 7.0 because I was too busy
-> working on xfs_healer, but I was planning to repost the patchbomb with
-> many many cleanups and reorganizations (thanks Joanne!) as soon as
-> possible after Linus tags 7.0-rc1.
-> 
-> I don't think LSFMM is a good venue for discussing a gigantic pile of
-> code, because (IMO) LSF is better spent either (a) retrying in person to
-> reach consensus on things that we couldn't do online; or (b) discussing
-> roadmaps and/or people problems.  In other words, I'd rather use
-> in-person time to go through broader topics that affect multiple people,
-> and the mailing lists for detailed examination of a large body of text.
-> 
-> However -- do you have questions about the design?  That could be a good
-> topic for email /and/ for a face to face meeting.  Though I strongly
-> suspect that there are so many other sub-topics that fuse-iomap could
-> eat up an entire afternoon at LSFMM:
-> 
->  0 How do we convince $managers to spend money on porting filesystems
->    to fuse?  Even if they use the regular slow mode?
-> 
->  1 What's the process for merging all the code changes into libfuse?
->    The iomap parts are pretty straightforward because libfuse passes
->    the request/reply straight through to fuse server, but...
-> 
-Just convince Bernd ... ;-)
 
->  2 ...the fuse service container part involves a bunch of architecture
->    shifts to libfuse.  First you need a new mount helper to connect to
->    a unix socket to start the service, pass some resources (fds and
->    mount options) through the unix socket to the service.  Obviously
->    that requires new library code for a fuse server to see the unix
->    socket and request those resources.  After that you also need to
->    define a systemd service file that stands up the appropriate
->    sandboxing.  I've not written examples, but that needs to be in the
->    final product.
+
+On 2/4/26 10:22, Joanne Koong wrote:
+> On Mon, Feb 2, 2026 at 11:55 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+>>
+>> On Mon, 2 Feb 2026 at 17:14, Amir Goldstein <amir73il@gmail.com> wrote:
+>>
+>>> All important topics which I am sure will be discussed on a FUSE BoF.
 > 
-This really sounds like a good topic for an afternoon and in person the 
-bandwith for passing ideas is higher.
-I'd be really interested in what those architectural shifts are. It is
-clearly a lot more than the passage above.
-
+> Two other items I'd like to add to the potential discussion list are:
 > 
-> --D
+> * leveraging io-uring multishot for batching fuse writeback and
+> readahead requests, ie maximizing the throughput per roundtrip context
+> switch [1]
+> 
+> * settling how load distribution should be done for configurable
+> queues. We came to a bit of a standstill on Bernd's patchset [2] and
+> it would be great to finally get this resolved and the feature landed.
+> imo configurable queues and incremental buffer consumption are the two
+> main features needed to make fuse-over-io-uring more feasible on
+> large-scale systems.
 
-Looking forward to seeing you there.
+Coincidentally I looked into this today because we had totally
+imbalanced queues when this was activated - slip through in the queue
+assignment, should be fixed in our branches. v4 basically has all your
+comment addressed, our branch(es) have 3 bug fixes now to what I thought
+would be v4 - unless I get pulled into other things again (which is
+unfortunately likely), v4 will come tomorrow.
 
-Horst
+
+Thanks,
+Bernd
 
