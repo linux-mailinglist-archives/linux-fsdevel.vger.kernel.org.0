@@ -1,83 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-76243-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0HbuM37JgmkJbQMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76243-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 05:22:22 +0100
+	id +A8kGu7Sgml5cQMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 06:02:38 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 568E3E1881
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 05:22:22 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB754E1A42
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 06:02:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 75A1630B5A4C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Feb 2026 04:22:13 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 1CE923041BEB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Feb 2026 05:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B649634CFCB;
-	Wed,  4 Feb 2026 04:22:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9EAC350A1D;
+	Wed,  4 Feb 2026 05:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mjK4iycE"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mVgo4JZw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEF034C830;
-	Wed,  4 Feb 2026 04:22:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD22C34F257;
+	Wed,  4 Feb 2026 05:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770178931; cv=none; b=O6qqgmtElPdv2pmqWBDO2B3iVb40a6sdNaX+vd4/N8fPKY9vKB2YgMaG9jDe6kWa41zsDpdW0BrORvDchrFunQPM2yD1hasYsFvCM12qOVTLYhzn4G3AGOlmvRuMCVoT9aESXQ1TH2lOVBseN/VPyUhzwM8XCMihaqTCj3WC3R4=
+	t=1770181334; cv=none; b=k3TQ0TNzvgQrVpSj4S38IBt/s5qC9I5rxmxCSHEQonZwUGRO1BWSU9cbmwC6u0ihNGUBnzSCDzYOgF2d5WBanvyyQxAzrkMVrf1Ry31ujrnR9GNEgBFrA6uGHF/otaXMVtJ2koJtDalS5y3+XZTLN2WNLWQcTPNNOHaqPICc2Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770178931; c=relaxed/simple;
-	bh=xAr1MaLBjTmJh1EIvHVY9qAFaejUI/5HqFZckEJcElM=;
+	s=arc-20240116; t=1770181334; c=relaxed/simple;
+	bh=BssClzJli42sqwnuhq7EEp2oGu8Z3L8cVPtpreDMGtc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lzJJZXphl11ryT9DuVpv68INWsMtgEeIyPRd3m9fTizze7KrCfe6Yf3Kg54GafVlx4eOv6A/QpOnXUr9Np1vC6vQsHQIao54/uSa4zr2slpsoee7dWsxzBO3JygIV0EphQdzCu9yMa+fLfCO6XeQk2vUY7Rx5W9lRcDPn5JmXPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mjK4iycE; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=EMEmgBok5BMinqtA/PK1ZNMeHYkK8Sr4VkRzbcwu5FbfjJfB3TqfGIQBSXrtm83sgH1GzCCzprpVcNX6ZdynrNTSUlV6QlKdpn03MZEAWOjbv2Dtr6GNYawHQx0JeN0ZEoQkPvZCik3JrfdJ6oBYKi3vuHWaggjHx5SSE0p9PfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mVgo4JZw; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1770178930; x=1801714930;
+  t=1770181334; x=1801717334;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=xAr1MaLBjTmJh1EIvHVY9qAFaejUI/5HqFZckEJcElM=;
-  b=mjK4iycElGTEwlgjfamlOsJBDp/oloBHiy57a9XRIQpbX5MDz8ufH/Dj
-   za0nr23jg6o2b9Y7Mrj6XhPnuvBRHZJllY9oWiF6+N26F4cOqLQspSRoX
-   N4Oe2Y/EC+HPm+18vUkuIGyL4JyVpNyPKvT1+EDVOyG7NkPS1UjFjstpy
-   x0n9Y3wWQd82Ak+HOzNZW/oJkCBUw4lm9iZCPRe1duoVg6uZH3DutB9sP
-   hSJY3dVL8QjqpdYWT8EnIdBN7BFg19+FldAIq6pxHrw2ov1SnvI+ulP1w
-   dWNP1hFtFfzixjOm/8mfdRN0ZWNbLAJ4i+PCoArViXR9PjKB3blGoL7pD
-   Q==;
-X-CSE-ConnectionGUID: Lmag3X5kTuiYU36BrRcRzw==
-X-CSE-MsgGUID: CoWsnVZjRyWWnZzcDVlsUw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11691"; a="74979366"
+  bh=BssClzJli42sqwnuhq7EEp2oGu8Z3L8cVPtpreDMGtc=;
+  b=mVgo4JZwFyU56rcObsmZRQVRlWYJGQiWb+dOGnrZg0ONCbgf/rPeTBj9
+   vb6UtP4JjGW6BVXQTbZjqbu2WjN3SLNHNVqVsfktj5ARuulkbNHADqtKV
+   VLzBbmXUiB+fMFjjEsEwNX9KTJ5RQMJIQ7FLOLChdXKUSxTHgCMqMVeaK
+   Bm6smQqgLZuxg7WaRyPSiq2Jjjjl/wp3rimW8Ke4ml/IVqGbfJtM4IEGJ
+   ok7coKSNpIgSELHUK3JsyzH6tgLu/UGWUG0nBGlxoAs29M5ltAsaDlpXb
+   cvKz6GdMfLqToH41rZD8OFkuWddRIIZt9RkBFo+SUxq6W4zM2yB1zUFBP
+   w==;
+X-CSE-ConnectionGUID: l/PZ6WedTyueOgh/uO1g1w==
+X-CSE-MsgGUID: 4rWHnChQRHGPOjkfHOmxdQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11691"; a="71086376"
 X-IronPort-AV: E=Sophos;i="6.21,272,1763452800"; 
-   d="scan'208";a="74979366"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2026 20:22:09 -0800
-X-CSE-ConnectionGUID: K9a77kKNQlCvpvsT37pm5Q==
-X-CSE-MsgGUID: U0IMYBoYTtGKmJ6qBBepqg==
+   d="scan'208";a="71086376"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2026 21:02:13 -0800
+X-CSE-ConnectionGUID: r6WIlB3hRYOB1WMvBCSX1g==
+X-CSE-MsgGUID: 4L+xrWR+RMKF3IcyS644EA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.21,272,1763452800"; 
-   d="scan'208";a="214753861"
-Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 03 Feb 2026 20:22:05 -0800
-Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vnUOw-00000000hRg-4B3c;
-	Wed, 04 Feb 2026 04:22:02 +0000
-Date: Wed, 4 Feb 2026 12:21:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: Zhang Yi <yi.zhang@huawei.com>, linux-ext4@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com, hch@infradead.org, djwong@kernel.org,
-	yi.zhang@huawei.com, yi.zhang@huaweicloud.com, yizhang089@gmail.com,
-	libaokun1@huawei.com, yangerkun@huawei.com, yukuai@fnnas.com
-Subject: Re: [PATCH -next v2 03/22] ext4: only order data when partially
- block truncating down
-Message-ID: <202602041239.JFyNwVcg-lkp@intel.com>
-References: <20260203062523.3869120-4-yi.zhang@huawei.com>
+   d="scan'208";a="240739427"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa002.jf.intel.com with ESMTP; 03 Feb 2026 21:01:47 -0800
+Date: Wed, 4 Feb 2026 12:43:16 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Ackerley Tng <ackerleytng@google.com>,
+	Alexey Kardashevskiy <aik@amd.com>, cgroups@vger.kernel.org,
+	kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org,
+	akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de,
+	brauner@kernel.org, chao.p.peng@intel.com, chenhuacai@kernel.org,
+	corbet@lwn.net, dave.hansen@intel.com, dave.hansen@linux.intel.com,
+	david@redhat.com, dmatlack@google.com, erdemaktas@google.com,
+	fan.du@intel.com, fvdl@google.com, haibo1.xu@intel.com,
+	hannes@cmpxchg.org, hch@infradead.org, hpa@zytor.com,
+	hughd@google.com, ira.weiny@intel.com, isaku.yamahata@intel.com,
+	jack@suse.cz, james.morse@arm.com, jarkko@kernel.org,
+	jgowans@amazon.com, jhubbard@nvidia.com, jroedel@suse.de,
+	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com,
+	keirf@google.com, kent.overstreet@linux.dev,
+	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
+	mail@maciej.szmigiero.name, maobibo@loongson.cn,
+	mathieu.desnoyers@efficios.com, maz@kernel.org, mhiramat@kernel.org,
+	mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com,
+	mingo@redhat.com, mlevitsk@redhat.com, mpe@ellerman.id.au,
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es,
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com,
+	paul.walmsley@sifive.com, pbonzini@redhat.com, peterx@redhat.com,
+	pgonda@google.com, prsampat@amd.com, pvorel@suse.cz,
+	qperret@google.com, richard.weiyang@gmail.com,
+	rick.p.edgecombe@intel.com, rientjes@google.com,
+	rostedt@goodmis.org, roypat@amazon.co.uk, rppt@kernel.org,
+	shakeel.butt@linux.dev, shuah@kernel.org, steven.price@arm.com,
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com,
+	tglx@linutronix.de, thomas.lendacky@amd.com, vannapurve@google.com,
+	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com,
+	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org,
+	wyihan@google.com, xiaoyao.li@intel.com, yan.y.zhao@intel.com,
+	yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
+Subject: Re: [RFC PATCH v1 05/37] KVM: guest_memfd: Wire up
+ kvm_get_memory_attributes() to per-gmem attributes
+Message-ID: <aYLOZIZU0nwk+0UN@yilunxu-OptiPlex-7050>
+References: <cover.1760731772.git.ackerleytng@google.com>
+ <071a3c6603809186e914fe5fed939edee4e11988.1760731772.git.ackerleytng@google.com>
+ <07836b1d-d0d8-40f2-8f7b-7805beca31d0@amd.com>
+ <CAEvNRgEuez=JbArRf2SApLAL0usv5-Q6q=nBPOFMHrHGaKAtMw@mail.gmail.com>
+ <20260129003753.GZ1641016@ziepe.ca>
+ <aXqx3_eE0rNh6nP0@google.com>
+ <aYHGVQTF6RUs7r3g@yilunxu-OptiPlex-7050>
+ <20260203181618.GY2328995@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,218 +120,96 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260203062523.3869120-4-yi.zhang@huawei.com>
+In-Reply-To: <20260203181618.GY2328995@ziepe.ca>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.34 / 15.00];
+X-Spamd-Result: default: False [-0.16 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	FREEMAIL_CC(0.00)[lists.linux.dev,vger.kernel.org,mit.edu,dilger.ca,suse.cz,linux.ibm.com,gmail.com,infradead.org,kernel.org,huawei.com,huaweicloud.com,fnnas.com];
-	TAGGED_FROM(0.00)[bounces-76243-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[google.com,amd.com,vger.kernel.org,kvack.org,kernel.org,linux-foundation.org,linux.intel.com,alien8.de,intel.com,lwn.net,redhat.com,cmpxchg.org,infradead.org,zytor.com,suse.cz,arm.com,amazon.com,nvidia.com,suse.de,linux.dev,oracle.com,maciej.szmigiero.name,loongson.cn,efficios.com,digikod.net,ellerman.id.au,amazon.es,dabbelt.com,sifive.com,gmail.com,goodmis.org,amazon.co.uk,linutronix.de,zeniv.linux.org.uk,huawei.com];
 	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[lkp@intel.com,linux-fsdevel@vger.kernel.org];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76244-lists,linux-fsdevel=lfdr.de];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[intel.com:+];
-	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,intel.com:email,intel.com:dkim,intel.com:mid]
-X-Rspamd-Queue-Id: 568E3E1881
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[yilun.xu@linux.intel.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[98];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	NEURAL_HAM(-0.00)[-0.999];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,intel.com:dkim]
+X-Rspamd-Queue-Id: DB754E1A42
 X-Rspamd-Action: no action
 
-Hi Zhang,
+On Tue, Feb 03, 2026 at 02:16:18PM -0400, Jason Gunthorpe wrote:
+> On Tue, Feb 03, 2026 at 05:56:37PM +0800, Xu Yilun wrote:
+> > > +1.  For guest_memfd, we initially defined per-VM memory attributes to track
+> > > private vs. shared.  But as Ackerley noted, we are in the process of deprecating
+> > > that support, e.g. by making it incompatible with various guest_memfd features,
+> > > in favor of having each guest_memfd instance track the state of a given page.
+> > > 
+> > > The original guest_memfd design was that it would _only_ hold private pages, and
+> > > so tracking private vs. shared in guest_memfd didn't make any sense.  As we've
+> > > pivoted to in-place conversion, tracking private vs. shared in the guest_memfd
+> > > has basically become mandatory.  We could maaaaaybe make it work with per-VM
+> > > attributes, but it would be insanely complex.
+> > > 
+> > > For a dmabuf fd, the story is the same as guest_memfd.  Unless private vs. shared
+> > > is all or nothing, and can never change, then the only entity that can track that
+> > > info is the owner of the dmabuf.  And even if the private vs. shared attributes
+> > > are constant, tracking it external to KVM makes sense, because then the provider
+> > > can simply hardcode %true/%false.  
+> > 
+> > For CoCo-VM and Tee-IO, I'm wondering if host or KVM has to maintain
+> > the private/shared attribute for "assigned MMIO". I'm not naming them
+> > "host MMIO" cause unlike RAM host never needs to access them, either in
+> > private manner or shared manner.
+> > 
+> > Traditionally, host maps these MMIOs only because KVM needs HVA->HPA
+> > mapping to find pfn and setup KVM MMU.
+> 
+> This is not actually completely true, the host mapping still ends up
+> being used by KVM if it happens to trap and emulate a MMIO touching
+> instruction.
+> 
+> It really shouldn't do this, but there is a whole set of complex
+> machinery in KVM and qemu to handle this case.
+> 
+> For example if the MSI-X window is not properly aligned then you have
+> some MMIO that is trapped and must be reflected to real HW.
 
-kernel test robot noticed the following build warnings:
+In this case, the affected pages are not assigned MMIOs and KVM won't
+import them. Mapping them is just OK.
 
-[auto build test WARNING on next-20260202]
+> 
+> So the sharable parts of the BAR should still end up being mmaped into
+> userspace, I think.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Zhang-Yi/ext4-make-ext4_block_zero_page_range-pass-out-did_zero/20260203-144244
-base:   next-20260202
-patch link:    https://lore.kernel.org/r/20260203062523.3869120-4-yi.zhang%40huawei.com
-patch subject: [PATCH -next v2 03/22] ext4: only order data when partially block truncating down
-config: riscv-randconfig-r071-20260204 (https://download.01.org/0day-ci/archive/20260204/202602041239.JFyNwVcg-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 9b8addffa70cee5b2acc5454712d9cf78ce45710)
-smatch version: v0.5.0-8994-gd50c5a4c
+This does mean we can't make VFIO totally unmappable. But VFIO can still
+try to create unmappable dmabufs for assigned MMIO regions, fail dmabuf
+creation or fail mmap() based on the addresses.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202602041239.JFyNwVcg-lkp@intel.com/
+> 
+> Which means we need VFIO to know what they are, and hopefully it is
+> just static based on the TDISP reports..
 
-New smatch warnings:
-fs/ext4/inode.c:4577 ext4_truncate() warn: unsigned 'zero_len' is never less than zero.
+I don't think VMM need to check TDISP report. The only special thing is
+the MSI-X mixed pages which can be figured out by standard PCI
+discovery.
 
-Old smatch warnings:
-fs/ext4/inode.c:2651 mpage_prepare_extent_to_map() warn: missing error code 'err'
-fs/ext4/inode.c:5129 check_igot_inode() warn: missing unwind goto?
-
-vim +/zero_len +4577 fs/ext4/inode.c
-
-  4494	
-  4495	/*
-  4496	 * ext4_truncate()
-  4497	 *
-  4498	 * We block out ext4_get_block() block instantiations across the entire
-  4499	 * transaction, and VFS/VM ensures that ext4_truncate() cannot run
-  4500	 * simultaneously on behalf of the same inode.
-  4501	 *
-  4502	 * As we work through the truncate and commit bits of it to the journal there
-  4503	 * is one core, guiding principle: the file's tree must always be consistent on
-  4504	 * disk.  We must be able to restart the truncate after a crash.
-  4505	 *
-  4506	 * The file's tree may be transiently inconsistent in memory (although it
-  4507	 * probably isn't), but whenever we close off and commit a journal transaction,
-  4508	 * the contents of (the filesystem + the journal) must be consistent and
-  4509	 * restartable.  It's pretty simple, really: bottom up, right to left (although
-  4510	 * left-to-right works OK too).
-  4511	 *
-  4512	 * Note that at recovery time, journal replay occurs *before* the restart of
-  4513	 * truncate against the orphan inode list.
-  4514	 *
-  4515	 * The committed inode has the new, desired i_size (which is the same as
-  4516	 * i_disksize in this case).  After a crash, ext4_orphan_cleanup() will see
-  4517	 * that this inode's truncate did not complete and it will again call
-  4518	 * ext4_truncate() to have another go.  So there will be instantiated blocks
-  4519	 * to the right of the truncation point in a crashed ext4 filesystem.  But
-  4520	 * that's fine - as long as they are linked from the inode, the post-crash
-  4521	 * ext4_truncate() run will find them and release them.
-  4522	 */
-  4523	int ext4_truncate(struct inode *inode)
-  4524	{
-  4525		struct ext4_inode_info *ei = EXT4_I(inode);
-  4526		unsigned int credits;
-  4527		int err = 0, err2;
-  4528		handle_t *handle;
-  4529		struct address_space *mapping = inode->i_mapping;
-  4530	
-  4531		/*
-  4532		 * There is a possibility that we're either freeing the inode
-  4533		 * or it's a completely new inode. In those cases we might not
-  4534		 * have i_rwsem locked because it's not necessary.
-  4535		 */
-  4536		if (!(inode_state_read_once(inode) & (I_NEW | I_FREEING)))
-  4537			WARN_ON(!inode_is_locked(inode));
-  4538		trace_ext4_truncate_enter(inode);
-  4539	
-  4540		if (!ext4_can_truncate(inode))
-  4541			goto out_trace;
-  4542	
-  4543		if (inode->i_size == 0 && !test_opt(inode->i_sb, NO_AUTO_DA_ALLOC))
-  4544			ext4_set_inode_state(inode, EXT4_STATE_DA_ALLOC_CLOSE);
-  4545	
-  4546		if (ext4_has_inline_data(inode)) {
-  4547			int has_inline = 1;
-  4548	
-  4549			err = ext4_inline_data_truncate(inode, &has_inline);
-  4550			if (err || has_inline)
-  4551				goto out_trace;
-  4552		}
-  4553	
-  4554		/* If we zero-out tail of the page, we have to create jinode for jbd2 */
-  4555		if (inode->i_size & (inode->i_sb->s_blocksize - 1)) {
-  4556			err = ext4_inode_attach_jinode(inode);
-  4557			if (err)
-  4558				goto out_trace;
-  4559		}
-  4560	
-  4561		if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
-  4562			credits = ext4_chunk_trans_extent(inode, 1);
-  4563		else
-  4564			credits = ext4_blocks_for_truncate(inode);
-  4565	
-  4566		handle = ext4_journal_start(inode, EXT4_HT_TRUNCATE, credits);
-  4567		if (IS_ERR(handle)) {
-  4568			err = PTR_ERR(handle);
-  4569			goto out_trace;
-  4570		}
-  4571	
-  4572		if (inode->i_size & (inode->i_sb->s_blocksize - 1)) {
-  4573			unsigned int zero_len;
-  4574	
-  4575			zero_len = ext4_block_truncate_page(handle, mapping,
-  4576							    inode->i_size);
-> 4577			if (zero_len < 0) {
-  4578				err = zero_len;
-  4579				goto out_stop;
-  4580			}
-  4581			if (zero_len && !IS_DAX(inode) &&
-  4582			    ext4_should_order_data(inode)) {
-  4583				err = ext4_jbd2_inode_add_write(handle, inode,
-  4584						inode->i_size, zero_len);
-  4585				if (err)
-  4586					goto out_stop;
-  4587			}
-  4588		}
-  4589	
-  4590		/*
-  4591		 * We add the inode to the orphan list, so that if this
-  4592		 * truncate spans multiple transactions, and we crash, we will
-  4593		 * resume the truncate when the filesystem recovers.  It also
-  4594		 * marks the inode dirty, to catch the new size.
-  4595		 *
-  4596		 * Implication: the file must always be in a sane, consistent
-  4597		 * truncatable state while each transaction commits.
-  4598		 */
-  4599		err = ext4_orphan_add(handle, inode);
-  4600		if (err)
-  4601			goto out_stop;
-  4602	
-  4603		ext4_fc_track_inode(handle, inode);
-  4604		ext4_check_map_extents_env(inode);
-  4605	
-  4606		down_write(&EXT4_I(inode)->i_data_sem);
-  4607		ext4_discard_preallocations(inode);
-  4608	
-  4609		if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
-  4610			err = ext4_ext_truncate(handle, inode);
-  4611		else
-  4612			ext4_ind_truncate(handle, inode);
-  4613	
-  4614		up_write(&ei->i_data_sem);
-  4615		if (err)
-  4616			goto out_stop;
-  4617	
-  4618		if (IS_SYNC(inode))
-  4619			ext4_handle_sync(handle);
-  4620	
-  4621	out_stop:
-  4622		/*
-  4623		 * If this was a simple ftruncate() and the file will remain alive,
-  4624		 * then we need to clear up the orphan record which we created above.
-  4625		 * However, if this was a real unlink then we were called by
-  4626		 * ext4_evict_inode(), and we allow that function to clean up the
-  4627		 * orphan info for us.
-  4628		 */
-  4629		if (inode->i_nlink)
-  4630			ext4_orphan_del(handle, inode);
-  4631	
-  4632		inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
-  4633		err2 = ext4_mark_inode_dirty(handle, inode);
-  4634		if (unlikely(err2 && !err))
-  4635			err = err2;
-  4636		ext4_journal_stop(handle);
-  4637	
-  4638	out_trace:
-  4639		trace_ext4_truncate_exit(inode);
-  4640		return err;
-  4641	}
-  4642	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Seems this doesn't impact the idea that KVM needs no implication of
+Private/Shared from VFIO, as long as VFIO keeps exported dmabufs
+unmapped.
 
