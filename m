@@ -1,136 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-76315-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +Hh1FANAg2kPkQMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76315-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 13:48:03 +0100
+	id YKUmBvxCg2nqkgMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 14:00:44 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B26EE5FC0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 13:48:02 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C0B6E61D8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 14:00:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id DDCF63003817
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Feb 2026 12:47:20 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4E0E1300914B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Feb 2026 12:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996A240756F;
-	Wed,  4 Feb 2026 12:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BCEE407577;
+	Wed,  4 Feb 2026 12:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="GW4VHNlj"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="j+QP+jzK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jZnWLqXf";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="j+QP+jzK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jZnWLqXf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CDD284B2F
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Feb 2026 12:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712873F23AF
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Feb 2026 12:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770209238; cv=none; b=pTE7QiabPTlE8IpDn9KxeWb6nUwasGUNShTODAs9/Sh3CunBnwihMVRyFblsnnxkdQCyZcxfOFGHZcvO/u8DLZcE8QFVTcXctdzWwXBa6tWPc+r2562NsN/BoUs8L79OL9uaGbjqh/n2fm/fpZI7bh49drnXjTc80HLEP4a2Mlk=
+	t=1770209791; cv=none; b=j7/+PcPcXSV4h3BV1qaPpkwqpCq227Ud0yM3eelatRhIpf1AGQuyyTwDPDcU+nCSQ6d7z68gVL8b7Z5q27jFrszqo4bh/WdoRPCofzHl3g6jdOBtJIwkNfPmb5z6j63txzZWatYKQvlqCtp+4bAmlwsntZQ3s8s4YUcd3s2/I00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770209238; c=relaxed/simple;
-	bh=sIl8zPvTMavW7op27NWntwAoYxbkYCvD1OGJGO1W/G4=;
+	s=arc-20240116; t=1770209791; c=relaxed/simple;
+	bh=pr+QHI3XS89hX/EEdX444PxJm+KJZrxw+2E7xjrYKVw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CbPXcnjC4mpGnCKawrTA43gl2his5GWbscKvWap2zNYqSLRX65Vn/dkA5HtPY6kT9EhqkrH3hCAR67qs743CWa9lJn13k4zmxNuGmIPF61n29X2aZieSXHtWAq1wb8UGOSiApXUmghNCWoZTtVrLwjfzZGUMcwtufi4MH4thhvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=GW4VHNlj; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-89476eaaf16so67778466d6.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Feb 2026 04:47:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1770209237; x=1770814037; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+U8LpVemtW+m+yu1KTxoehmwVgUgV8X5ud3ORfVCCrA=;
-        b=GW4VHNljJYFgI4mruLbg7vYCpHKew/dRjvlqzTeNn86+wrDMfx4zpIj/dioyccLJXP
-         XACl0ggJFwCgkw29MoP/25q6//IrEkYd5b1PaWKqIt2jogVrM5cjO4x8m4SXMm5gCTeq
-         7+sRa7wqOIMHi2uMMWQ4hgsHW3KpXETuwQdLYmSxbznzYiFF/OpfJ5wYd2+ZEE/Uq1FI
-         Y4nSEVvDEDY7SKTbbuouPMPgd9Kb81K7EZt/IwblUTd+zVebhGIivCskRSb47BFJPge9
-         pAIPD6qNA+nYIkrf2Ayi8x0N4WX83p8Cy9t0L1BJVFY9mZOU1Aekk1WQ1812YLGIQSQW
-         a64g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770209237; x=1770814037;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+U8LpVemtW+m+yu1KTxoehmwVgUgV8X5ud3ORfVCCrA=;
-        b=ux0UT1/w0ncVOx1pzEEWy5fgnqTx7YUSlV1NEJS3rPSmeZirENenO51djfgc7UGHn/
-         xjIvDahaok2/pF8aPu6IoKupwA5/ppXhauljrniuuAUV3vB8G/1wwAjDFi0448jbUnb7
-         KqKXCQhOMhwuPQIcfXRoLmBvCFMBvRabmei9deZv/BCPjOQ5r93htrn9DWXRrqhyQDdr
-         u37uXW2AhjzTgwXEg+Rx9HT9+IKK6eBzHWAMgoQHeQ5uXVYT92IDzt8M00qF2h5UOemp
-         Xhf6+i7LsI6xEPVo5I3hRfZP0XHYo9XeWTbIQsK5Sh8Zx0GXim4A2kv2bCFP8huwwfx+
-         auGg==
-X-Forwarded-Encrypted: i=1; AJvYcCViT/1ofESWr+/c0YDt+qWnWmASbF48V6kqIRGY86+UI+DZcbUhQUinlBUOd8OPsKM1hIwj4aRhuOQ1yRad@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRtf46m+tHR650SDqFvJJGJr3wToQOr0hiZMXGlrEynsGpWUFd
-	XC8qQCuZvRlNbU6bNSYCu3pluJQ2guMF6HjYmRcXDOOVGQzBhVa4VEkxuRCkxwRmVrI=
-X-Gm-Gg: AZuq6aIViSP2ZnLkFUCY3eb0O+wDqLbUJhrEp6rq+o6UlUYRh6a0I2FAsIcEAHj/R70
-	M8YjgSKvm2qNlezXEqcuMr7UFnY0zbCCg7yzV6tak7kfcyte17LGXzONBf5U+nPtxBKx5lcaKkA
-	i8TVgk8B9MdxHnK+/az3gqyAFmM7rpSfSg2Ti53TyR9NhkzRpfn6rV2QvOFFYwTNljDsAKmDkGA
-	bXB30DXpdz7W396RtUzlZBygzz3zaxlliN7LoBJKJnbWi494ONa+ZnXqryzEGKGzH2TZja9SxfG
-	ZXosbAKNzDCAF+7juZPA2RsRdXznRxxtZEkYl66QLYXnc/duS1W+GJ8i5/1ppM5iqo5GlcUpGFz
-	QcQ+z2SSQz9jLVRiENZcV2HcZWW54jGndhVq6+Xkh1mZ6Q4sAcFAI7cHe/e4jQi0IjLk9Uu1q9X
-	TfuJf1qDyMB5hfX0nj8MBj1yx8Q2k9gR7CDBH/rFbUBmrvq2Zck9t69WIxM6u92CCtKfA=
-X-Received: by 2002:ac8:7f4d:0:b0:4ee:5fc:43d9 with SMTP id d75a77b69052e-5061c0d57d6mr32950401cf.16.1770209236488;
-        Wed, 04 Feb 2026 04:47:16 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-162-112-119.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.112.119])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5061c14815asm18573661cf.6.2026.02.04.04.47.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Feb 2026 04:47:15 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1vncHr-0000000Gzio-1QmV;
-	Wed, 04 Feb 2026 08:47:15 -0400
-Date: Wed, 4 Feb 2026 08:47:15 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Xu Yilun <yilun.xu@linux.intel.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Ackerley Tng <ackerleytng@google.com>,
-	Alexey Kardashevskiy <aik@amd.com>, cgroups@vger.kernel.org,
-	kvm@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org, x86@kernel.org,
-	akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de,
-	brauner@kernel.org, chao.p.peng@intel.com, chenhuacai@kernel.org,
-	corbet@lwn.net, dave.hansen@intel.com, dave.hansen@linux.intel.com,
-	david@redhat.com, dmatlack@google.com, erdemaktas@google.com,
-	fan.du@intel.com, fvdl@google.com, haibo1.xu@intel.com,
-	hannes@cmpxchg.org, hch@infradead.org, hpa@zytor.com,
-	hughd@google.com, ira.weiny@intel.com, isaku.yamahata@intel.com,
-	jack@suse.cz, james.morse@arm.com, jarkko@kernel.org,
-	jgowans@amazon.com, jhubbard@nvidia.com, jroedel@suse.de,
-	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com,
-	keirf@google.com, kent.overstreet@linux.dev,
-	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
-	mail@maciej.szmigiero.name, maobibo@loongson.cn,
-	mathieu.desnoyers@efficios.com, maz@kernel.org, mhiramat@kernel.org,
-	mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com,
-	mingo@redhat.com, mlevitsk@redhat.com, mpe@ellerman.id.au,
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es,
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com,
-	paul.walmsley@sifive.com, pbonzini@redhat.com, peterx@redhat.com,
-	pgonda@google.com, prsampat@amd.com, pvorel@suse.cz,
-	qperret@google.com, richard.weiyang@gmail.com,
-	rick.p.edgecombe@intel.com, rientjes@google.com,
-	rostedt@goodmis.org, roypat@amazon.co.uk, rppt@kernel.org,
-	shakeel.butt@linux.dev, shuah@kernel.org, steven.price@arm.com,
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com,
-	tglx@linutronix.de, thomas.lendacky@amd.com, vannapurve@google.com,
-	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com,
-	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org,
-	wyihan@google.com, xiaoyao.li@intel.com, yan.y.zhao@intel.com,
-	yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
-Subject: Re: [RFC PATCH v1 05/37] KVM: guest_memfd: Wire up
- kvm_get_memory_attributes() to per-gmem attributes
-Message-ID: <20260204124715.GA2328995@ziepe.ca>
-References: <cover.1760731772.git.ackerleytng@google.com>
- <071a3c6603809186e914fe5fed939edee4e11988.1760731772.git.ackerleytng@google.com>
- <07836b1d-d0d8-40f2-8f7b-7805beca31d0@amd.com>
- <CAEvNRgEuez=JbArRf2SApLAL0usv5-Q6q=nBPOFMHrHGaKAtMw@mail.gmail.com>
- <20260129003753.GZ1641016@ziepe.ca>
- <aXqx3_eE0rNh6nP0@google.com>
- <aYHGVQTF6RUs7r3g@yilunxu-OptiPlex-7050>
- <20260203181618.GY2328995@ziepe.ca>
- <aYLOZIZU0nwk+0UN@yilunxu-OptiPlex-7050>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KG4feZHek71SXERra53vhatv19kwv9HmaN8PmCHV9zFgV2BGQZ4Bx0PrN32fgqhkfKzjZnwPPRHxVZxXGBmy4QpVTva1hwFxDRtcnaCTtserAsQJdups2fQJSBY5554GfK9nWnQgnLrL4UPiJDia4RvVjKZZzR8T6poWcoReY2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=j+QP+jzK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jZnWLqXf; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=j+QP+jzK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jZnWLqXf; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B43195BD1E;
+	Wed,  4 Feb 2026 12:56:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1770209788; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+pFsO8VEkqNeQuzb+W7X/xq1SeWJK3QNdFbLN+DmM9U=;
+	b=j+QP+jzKmHstzTjPkmCddMPXr5C9b6BvHXyjHpJeWexC7XktQsfdUwOsi/xQcoy4wc7IJZ
+	cJlHQ8tRnR6/ztMEMcQMenVYHze0qN1V3O9Do273b+StZJWM8mP94YGezpPI8i5IZC4Fsk
+	0HdSSX5+6Y9RcvNGlJb93gFIjEaRAWQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1770209788;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+pFsO8VEkqNeQuzb+W7X/xq1SeWJK3QNdFbLN+DmM9U=;
+	b=jZnWLqXfJ/UIsuj8rRtYQJjsn9GEFY477zNDYcCBDmBBk6oh/JYiKj8nKYAlGk4yYCYnBy
+	qfNsI1TqVOrnI9DQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=j+QP+jzK;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=jZnWLqXf
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1770209788; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+pFsO8VEkqNeQuzb+W7X/xq1SeWJK3QNdFbLN+DmM9U=;
+	b=j+QP+jzKmHstzTjPkmCddMPXr5C9b6BvHXyjHpJeWexC7XktQsfdUwOsi/xQcoy4wc7IJZ
+	cJlHQ8tRnR6/ztMEMcQMenVYHze0qN1V3O9Do273b+StZJWM8mP94YGezpPI8i5IZC4Fsk
+	0HdSSX5+6Y9RcvNGlJb93gFIjEaRAWQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1770209788;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+pFsO8VEkqNeQuzb+W7X/xq1SeWJK3QNdFbLN+DmM9U=;
+	b=jZnWLqXfJ/UIsuj8rRtYQJjsn9GEFY477zNDYcCBDmBBk6oh/JYiKj8nKYAlGk4yYCYnBy
+	qfNsI1TqVOrnI9DQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 961153EA63;
+	Wed,  4 Feb 2026 12:56:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xBahJPxBg2ncZwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 04 Feb 2026 12:56:28 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 45E61A09D8; Wed,  4 Feb 2026 13:56:28 +0100 (CET)
+Date: Wed, 4 Feb 2026 13:56:28 +0100
+From: Jan Kara <jack@suse.cz>
+To: Jinseok Kim <always.starving0@gmail.com>
+Cc: shuah@kernel.org, Jan Kara <jack@suse.cz>, 
+	Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH] selftests: fanotify: Add basic create/modify/delete
+ event test
+Message-ID: <dnncglg3x26gdsshcniw5yb4l2zlxz6qcwjqyekkpngb6v26q4@ftqnoe5eeapy>
+References: <20260203181549.21750-1-always.starving0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -139,53 +108,241 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aYLOZIZU0nwk+0UN@yilunxu-OptiPlex-7050>
+In-Reply-To: <20260203181549.21750-1-always.starving0@gmail.com>
+X-Spam-Flag: NO
+X-Spam-Score: -2.51
+X-Spam-Level: 
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
+X-Spamd-Result: default: False [0.34 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
-	R_DKIM_ALLOW(-0.20)[ziepe.ca:s=google];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[google.com,amd.com,vger.kernel.org,kvack.org,kernel.org,linux-foundation.org,linux.intel.com,alien8.de,intel.com,lwn.net,redhat.com,cmpxchg.org,infradead.org,zytor.com,suse.cz,arm.com,amazon.com,nvidia.com,suse.de,linux.dev,oracle.com,maciej.szmigiero.name,loongson.cn,efficios.com,digikod.net,ellerman.id.au,amazon.es,dabbelt.com,sifive.com,gmail.com,goodmis.org,amazon.co.uk,linutronix.de,zeniv.linux.org.uk,huawei.com];
-	DKIM_TRACE(0.00)[ziepe.ca:+];
-	MIME_TRACE(0.00)[0:+];
-	DMARC_NA(0.00)[ziepe.ca];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76316-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76315-lists,linux-fsdevel=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
+	DMARC_NA(0.00)[suse.cz];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[kernel.org,suse.cz,gmail.com,google.com,vger.kernel.org];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
 	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jgg@ziepe.ca,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
-	RCPT_COUNT_GT_50(0.00)[98];
-	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,ziepe.ca:mid,ziepe.ca:dkim]
-X-Rspamd-Queue-Id: 7B26EE5FC0
+	RCPT_COUNT_SEVEN(0.00)[8];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: 8C0B6E61D8
 X-Rspamd-Action: no action
 
-On Wed, Feb 04, 2026 at 12:43:16PM +0800, Xu Yilun wrote:
-> > Which means we need VFIO to know what they are, and hopefully it is
-> > just static based on the TDISP reports..
+Hello!
+
+On Wed 04-02-26 03:15:43, Jinseok Kim wrote:
+> Currently there are almost no automated selftests for fanotify notification
+> events in tools/testing/selftests/ (only mount namespace
+> related tests exist).
+
+Thanks for the patch but we have a very comprehensive tests for inotify and
+fanotify in LTP so I don't see a reason to duplicate those inside the
+kernel...
+
+								Honza
+
 > 
-> I don't think VMM need to check TDISP report. The only special thing is
-> the MSI-X mixed pages which can be figured out by standard PCI
-> discovery.
-
-Either that or follow along with the guests's choices on
-shared/private.
-
-We can't let VFIO mmap a private MMIO page, so it has to know which
-pages are private at any moment, and it can't guess.
-
-Jason
+> This patch adds a very basic selftest that exercises three fundamental
+> fanotify events:
+>     - FAN_CREATE (file creation)
+>     - FAN_MODIFY (file content modification via write())
+>     - FAN_DELETE (file removal)
+> 
+> The test
+>     - creates a test file, appends data, and removes it
+>     - verifies that corresponding events are received and the masks contain
+>       the expected bits (0x100, 0x2, 0x200)
+> 
+> Test TAP output:
+>     ok 1 FAN_CREATE detected
+>     ok 2 FAN_MODIFY detected
+>     ok 3 FAN_DELETE detected
+>     # PASSED: 1 / 1 tests passed.
+> 
+> This is intentionally kept minimal as a starting point.
+> 
+> Future work ideas (not in this patch):
+>     - Test permission events
+>     - Test rename/move events
+>     - Verify file names
+>     - Run under different filesystems
+> 
+> Any feedback on the direction, style, or additional test cases
+> would be greatly appreciated.
+> 
+> Thanks,
+> Jinseok.
+> 
+> Signed-off-by: Jinseok Kim <always.starving0@gmail.com>
+> ---
+>  tools/testing/selftests/filesystems/Makefile  |   7 +
+>  .../selftests/filesystems/fanotify_basic.c    | 122 ++++++++++++++++++
+>  2 files changed, 129 insertions(+)
+>  create mode 100644 tools/testing/selftests/filesystems/Makefile
+>  create mode 100644 tools/testing/selftests/filesystems/fanotify_basic.c
+> 
+> diff --git a/tools/testing/selftests/filesystems/Makefile b/tools/testing/selftests/filesystems/Makefile
+> new file mode 100644
+> index 0000000..c0e0242
+> --- /dev/null
+> +++ b/tools/testing/selftests/filesystems/Makefile
+> @@ -0,0 +1,7 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +CFLAGS += $(KHDR_INCLUDES)
+> +TEST_GEN_PROGS := devpts_pts file_stressor anon_inode_test kernfs_test fclog fanotify_basic
+> +TEST_GEN_PROGS_EXTENDED := dnotify_test
+> +
+> +include ../lib.mk
+> diff --git a/tools/testing/selftests/filesystems/fanotify_basic.c b/tools/testing/selftests/filesystems/fanotify_basic.c
+> new file mode 100644
+> index 0000000..4a4fbb4
+> --- /dev/null
+> +++ b/tools/testing/selftests/filesystems/fanotify_basic.c
+> @@ -0,0 +1,122 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#define _GNU_SOURCE
+> +#include <stdio.h>
+> +#include <fcntl.h>
+> +#include <sys/fanotify.h>
+> +#include <linux/fanotify.h>
+> +#include "../kselftest_harness.h"
+> +#include "wrappers.h"
+> +
+> +static void create_file(const char *filename)
+> +{
+> +	int fd;
+> +	int ret;
+> +
+> +	fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+> +	if (fd == -1)
+> +		ksft_exit_fail_msg("(create)open failed: %s\n", strerror(errno));
+> +	ret = write(fd, "create_file", 11);
+> +	if (ret == -1)
+> +		ksft_exit_fail_msg("(create) writing failed: %s\n", strerror(errno));
+> +	close(fd);
+> +}
+> +
+> +static void modify_file(const char *filename)
+> +{
+> +	int fd;
+> +	int ret;
+> +
+> +	fd = open(filename, O_RDWR);
+> +	if (fd == -1)
+> +		ksft_exit_fail_msg("(modify)open failed :%s\n", strerror(errno));
+> +	if (lseek(fd, 0, SEEK_END) < 0)
+> +		ksft_exit_fail_msg("(modify)lseek failed");
+> +	ret = write(fd, "modify_file", 11);
+> +	if (ret == -1)
+> +		ksft_exit_fail_msg("(modify)write failed :%s\n", strerror(errno));
+> +	if (fsync(fd) == -1)
+> +		ksft_exit_fail_msg("(modify)fsync failed: %s\n", strerror(errno));
+> +
+> +	close(fd);
+> +}
+> +
+> +TEST(fanotify_cud_test)
+> +{
+> +	int fan_fd;
+> +	char buf[4096];
+> +	int ret;
+> +	ssize_t len;
+> +	struct fanotify_event_metadata *meta;
+> +
+> +	fan_fd = fanotify_init(FAN_CLASS_NOTIF | FAN_REPORT_FID, O_RDONLY);
+> +	ASSERT_GE(fan_fd, 0)
+> +	TH_LOG("fanotify_init failed: %s", strerror(errno));
+> +
+> +	ret = fanotify_mark(fan_fd, FAN_MARK_ADD,
+> +				  FAN_EVENT_ON_CHILD | FAN_CREATE |
+> +				  FAN_MODIFY | FAN_DELETE,
+> +				  AT_FDCWD, "/tmp");
+> +	ASSERT_GE(ret, 0)
+> +	TH_LOG("fanotify_mark failed: %s", strerror(errno));
+> +
+> +	// FAN_CREATE Test
+> +	create_file("/tmp/fanotify_test");
+> +	len = read(fan_fd, buf, sizeof(buf));
+> +	ASSERT_GT(len, 0)
+> +	TH_LOG("No event after create_file");
+> +
+> +	meta = (void *)buf;
+> +	if (FAN_EVENT_OK(meta, len)) {
+> +		TH_LOG("Event after create: mask = 0x%llx, pid=%d",
+> +		       (unsigned long long)meta->mask, meta->pid);
+> +		if (meta->mask & FAN_CREATE)
+> +			ksft_test_result_pass("FAN_CREATE detected\n");
+> +		else
+> +			TH_LOG("FAN_CREATE missing");
+> +	} else
+> +		ksft_test_result_fail("Invalid event metadata after create\n");
+> +
+> +	// FAN_MODIFY Test
+> +	modify_file("/tmp/fanotify_test");
+> +	len = read(fan_fd, buf, sizeof(buf));
+> +	ASSERT_GT(len, 0)
+> +		TH_LOG("No event after modify_file");
+> +
+> +	meta = (void *)buf;
+> +	if (FAN_EVENT_OK(meta, len)) {
+> +		TH_LOG("Event after modify: mask = 0x%llx, pid=%d",
+> +		       (unsigned long long)meta->mask, meta->pid);
+> +		if (meta->mask & FAN_MODIFY)
+> +			ksft_test_result_pass("FAN_MODIFY detected\n");
+> +		else
+> +			ksft_test_result_fail("FAN_MODIFY missing\n");
+> +	} else
+> +		ksft_test_result_fail("Invalid event metadata after modify\n");
+> +
+> +	// FAN_DELETE
+> +	ASSERT_EQ(unlink("/tmp/fanotify_test"), 0)
+> +		TH_LOG("unlink failed: %s", strerror(errno));
+> +
+> +	len = read(fan_fd, buf, sizeof(buf));
+> +	ASSERT_GT(len, 0)
+> +		TH_LOG("No event after unlink");
+> +
+> +	meta = (void *)buf;
+> +	if (FAN_EVENT_OK(meta, len)) {
+> +		TH_LOG("Event after delete: mask = 0x%llx, pid=%d",
+> +		       (unsigned long long)meta->mask, meta->pid);
+> +		if (meta->mask & FAN_DELETE)
+> +			ksft_test_result_pass("FAN_DELETE detected\n");
+> +		else
+> +			ksft_test_result_fail("FAN_DELETE missing\n");
+> +	} else
+> +		ksft_test_result_fail("Invalid event metadata after delete\n");
+> +
+> +	// Clean up
+> +	if (fan_fd >= 0) {
+> +		fanotify_mark(fan_fd, FAN_MARK_REMOVE, 0, AT_FDCWD, ".");
+> +		close(fan_fd);
+> +	}
+> +}
+> +
+> +TEST_HARNESS_MAIN
+> --
+> 2.43.0
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
