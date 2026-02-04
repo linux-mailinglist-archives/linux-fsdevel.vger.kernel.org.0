@@ -1,180 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-76324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76325-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WH+/Dndcg2mJlQMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 15:49:27 +0100
+	id AFllBbRdg2mJlQMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76325-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 15:54:44 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id B86B6E7681
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 15:49:26 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93019E7906
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 15:54:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id DD7FF30154A1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Feb 2026 14:49:23 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id D7004300DEDA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Feb 2026 14:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E1C2C08AC;
-	Wed,  4 Feb 2026 14:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C6E41B372;
+	Wed,  4 Feb 2026 14:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cnPhJVF0"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oxZnN3K5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yx1-f51.google.com (mail-yx1-f51.google.com [74.125.224.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9482C0F79
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Feb 2026 14:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770216562; cv=pass; b=OoK0FYAxEUE5g3qrwj11v8r8wPDx7I9ihhucmMIEjVdIp0Ky+JmX89BxMNBCHv29nDO1svqJTaLkOSaCZPcNBIf3jIKVdVyv0tfMyJjXAYVKNeyCo0cqzA3XFFuIdd89Hmz+VosGwAm9OmQbBRf2qLp6FIGc2dhf/E+8dgM5HoE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770216562; c=relaxed/simple;
-	bh=Y4LZu8QKoDxQan2rRLck/+luzrXPq1Xsu4TeMZmhNkw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vw66crpiVJavqbhUztMuLGr2emXgkifUIdttrU/YWRcQKa84RuNi350Zmvzc/6LbG8k4Lf5tafh5CME5iCClyJrtCPz4CPPqOBbPiVZ/wTHFjNy+dKmn0avZDk4EsSsG+SSqD4j5MuaZlrxwl8+LcxA0nZQwWbYd6Jo2d5cHL5o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cnPhJVF0; arc=pass smtp.client-ip=74.125.224.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f51.google.com with SMTP id 956f58d0204a3-649b31e9010so897160d50.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Feb 2026 06:49:22 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770216561; cv=none;
-        d=google.com; s=arc-20240605;
-        b=Nnx25fF+GCtd7rFho9Hl6mux1PdJ/Y/d/cm8zyoZDDBkvFZv5n0jsCAWRsordOgSy4
-         Zy8Ec5rGRgm+kGUROfCfnSpQO/5DrP7QaJk7T5YtW+RyPj05g74taB50Bp//Kv2PsC9l
-         ym/XkGN4Jn3ckQ/VCxyLuGtN41zVy+XIFVikAv8ot5iybY2YawUk0e0ZFE1XJbH2ia2O
-         U7e4WqRnMToR6ToK5oS0Ye6jfvlbYuJ4lER0BqjbYkR4oRj9wYwKpqeBSRVsfMFvHLkA
-         wsrYr8GBdNijKOr+pU2MvdQ8mhWAnlfk84qXoALfFO079PHuvZ/mWcLwKx0rzatIY2Uf
-         7cMQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Y4LZu8QKoDxQan2rRLck/+luzrXPq1Xsu4TeMZmhNkw=;
-        fh=ChtOuQNq0IDMVhbUnXmECOHiwO+WNi2zRC6KZIJnKF8=;
-        b=FIsP9Cm80NmmvFxyK7Aj8nmKDpWPE+56xSs+L6eCMHJgYZvxeLlHq3B7QXgAZn9DwA
-         76z53FilopYvL2NduAiG6/n7fiMDN8UISudShxWv0j+i13L1n7r+MzLYNYhHE9IZgzrn
-         DTtX5x2vUoaGCkrRuIk6umb8AuXehIjq6ZhQScM2K13BOsiv2Qj1y0LhG7x/JmoG8zVN
-         0OWTBaLm8uxsr8LVi+enxhHnxtdupKNN8utn/kIXpuAlOzzVjnR8QwE4Ej7nGiLORjVi
-         Ew+/7XoPoowNrDmbb2wzWs9hTdLJiPvseTjvukhh+brFkFCia1By09XqIPE3/CARCg7/
-         lazA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770216561; x=1770821361; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y4LZu8QKoDxQan2rRLck/+luzrXPq1Xsu4TeMZmhNkw=;
-        b=cnPhJVF0V+R23MwZvEFDk/kMXj8R57uKAl/fIMrrJ6c5JuL7cV/9oYgpl+RSZ8Cvqw
-         eVR/CV2/s4ie+LoLnF/Znp4G8tL1yEhfV2RnuBiT1WbCo8j5UYf15erusx5JANgj+vIx
-         yn+ZnZHSqjESVGY3zQGOv4stNlJ9ms2D9yBoazmshnY1AjezUPKb/tcTBBEBcpT8xUpz
-         M4PGo4OWWaW1t5goRzttOVE7k1aZ2oEquwJiVkp5mIk91ieWrsqRrvBFzpODfvLkTPu6
-         3xhb5mGLNJGlSl+rNjs1eXYtOloaqpgtbFOM+JPWyTv8gnIo3v1dg029UVIJT3O4qCqX
-         u2AQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770216561; x=1770821361;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Y4LZu8QKoDxQan2rRLck/+luzrXPq1Xsu4TeMZmhNkw=;
-        b=tAD8OjUCEIoh6btLS8pWrWHddjOKQqibzuk6ezWiK+iqbWA6B6YOLIhWVWq+5XSQ2Q
-         WO+mEz1AIl1mteg6bo9baiMzooZSYYZKg47526jvG/yvDdIv77anTTXb8szS6qz8pZBq
-         +weUyaklXCefVPy9My8go89AWtauuYv5Ew3bgx8ppbtO7OK49Dorb1kmV1fPYeqVHQJg
-         2oIgwi5l6o9F6j8s1yUJ3F529BCENnts3LJcfKpobh3ZpoqTEgokMrzoVlL/7Xouh57Z
-         pMpOlGtGvFZIrhmKHpjLIyxSfm5fXA4PEzuRGSMSyaz1fdLXFZuT9Q68A2p5R/vmykaj
-         Sl9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVxw6/p+gibHvrm+fKdfI5BlGRuGQMedabS/wSK26KheNhObNc8tDYcFr1IoIp8bkozfI9LYOMDvSqiFZU5@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg2Hc2UIP0qeLXnqw/CJWQyAdWa/Xirds8fZnIHcXREQnjh/L+
-	/3duLB5iYFgbjH2MJPUOrWCsmNwzJW5NcnlobxSgr1HOM16KUi2L8/JghOx7Htl7zeEptP3bAio
-	5DIQ8fP2CoX446v7ec7LaDrCwnRawTsk=
-X-Gm-Gg: AZuq6aLeiFEq6oVuqFHp3xVsrBgJ0aFAFQ14TFUxxhbCha2RbclOw9TwxhlRnyMDVAp
-	GcIMxgsHk8W1g7U1orekkAFibUB8nkKTor+I8R979zAWnKr9w6/aZTgJu2VpNuRTNgT809lWb3i
-	pPH9Usk29vCYzt3aCb6r36vSE4ZAP8TrZYZfmdfmM1EQCVjlSYVBWmcl1cLeLZNBzF6/JK0/cHG
-	sR24C+8uERRl+KUi4iGUgf0HL+YlwZNuwZJm4bi9vNEC3wBYNoYZqPzJLlY/bZzf2/Rfng=
-X-Received: by 2002:a05:690e:1508:b0:63f:af33:e413 with SMTP id
- 956f58d0204a3-649db34a3c1mr2779141d50.24.1770216561010; Wed, 04 Feb 2026
- 06:49:21 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6F23D413D;
+	Wed,  4 Feb 2026 14:54:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770216865; cv=none; b=h2JROxLbn1arHzLTEnxhlRoDbDxoryWG2D5r7qHet44/9pWvFMnSorHp6BxdhITx0jra9ljAkCOQv3lRCu7CjMC1/Z1EN+wypXFZWA0+NPAxRqMw/8rGnnD4wKxOljXyKdJWlvsF4kkzHYT6ej+JB7prJrOPcWx3hEFYqx+d218=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770216865; c=relaxed/simple;
+	bh=bQJBM1CzMKaGOt+OTMHIALAKEUrXTLnZcnSE9Mi8+BE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dl8vfzYQCDXdPhxfO7aIHCPrmU0CFJ9kKQk3Nal/VJsXWv9YRERO9WCe/bXFUTWzyu8PFygvmpMqo5JuLqnU/HSc2m5bgJgRBNpH7AB85OxZ5elq4sJldK7eusmOCKuFwWcrOctGFxBv7VZSfLWb9/Yv7nLrWc8m5EzFpypl9JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oxZnN3K5; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=NSFwipYtJGppFo1niPpuRr+jtuErqeP9kDtjaWPeRb4=; b=oxZnN3K5faDjoL5v5OXKHO0/5B
+	ALVraMASeOdO1r04MRFOfO4rurUs6RmI865xOx4yso0ar7+P20MsCkTabs1ya5R7FJMXs0ce/Ez/q
+	rbw7GcQz34Rv1Uu4uCXSYS/vjKmtDX7MWB90vI8Y6XrnLPQCQXb9VQLbaHpe2XJ1FOsYrzz4EAtTD
+	0pejcPBsHfrRajM4IfKrqCUr02C6nMxD982pRJhIo8toILLn2rYjgRPmHchK/LCdN/5qjKs6HNCj7
+	f/o5jziZ7q20pft0KQB2Xb21eynAKosZ7IXbGzJcIEHSVLJzQUdCffAiCsqVd3oLW659nU25c/4ST
+	czQtWaFQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vneGo-00000002DxS-1MWR;
+	Wed, 04 Feb 2026 14:54:18 +0000
+Date: Wed, 4 Feb 2026 14:54:18 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+	Andrey Albershteyn <aalbersh@redhat.com>,
+	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	fsverity@lists.linux.dev
+Subject: Re: fsverity speedup and memory usage optimization v5
+Message-ID: <aYNdmk1EE5etfUYE@casper.infradead.org>
+References: <20260202060754.270269-1-hch@lst.de>
+ <20260202211423.GB4838@quark>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260112-work-immutable-rootfs-v2-0-88dd1c34a204@kernel.org>
- <20260201195531.1480148-1-safinaskar@gmail.com> <20260203-prost-lorbeerblatt-abd2df8c83bc@brauner>
-In-Reply-To: <20260203-prost-lorbeerblatt-abd2df8c83bc@brauner>
-From: Askar Safin <safinaskar@gmail.com>
-Date: Wed, 4 Feb 2026 17:48:45 +0300
-X-Gm-Features: AZwV_QggcuX2I10WK2N_MAlIFYH5fFixDaE1iHycnt6z4Zzioth3_9pqZ8ncajQ
-Message-ID: <CAPnZJGBUGa=LExdU5KTSndeXPvtfxXo-2AqK_uU4VWi6mXoG0w@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] fs: add immutable rootfs
-To: Christian Brauner <brauner@kernel.org>
-Cc: amir73il@gmail.com, jack@suse.cz, jlayton@kernel.org, josef@toxicpanda.com, 
-	lennart@poettering.net, linux-fsdevel@vger.kernel.org, stable@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, zbyszek@in.waw.pl
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260202211423.GB4838@quark>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_DKIM_ALLOW(-0.20)[infradead.org:s=casper.20170209];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-76324-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[gmail.com,suse.cz,kernel.org,toxicpanda.com,poettering.net,vger.kernel.org,zeniv.linux.org.uk,in.waw.pl];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76325-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[gmail.com:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	DKIM_TRACE(0.00)[infradead.org:+];
 	MISSING_XM_UA(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	NEURAL_HAM(-0.00)[-1.000];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[safinaskar@gmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[willy@infradead.org,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
+	NEURAL_HAM(-0.00)[-0.999];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,bootlin.com:url]
-X-Rspamd-Queue-Id: B86B6E7681
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,casper.infradead.org:mid,infradead.org:dkim]
+X-Rspamd-Queue-Id: 93019E7906
 X-Rspamd-Action: no action
 
-On Wed, Feb 4, 2026 at 4:01=E2=80=AFPM Christian Brauner <brauner@kernel.or=
-g> wrote:
->
-> On Sun, Feb 01, 2026 at 10:55:31PM +0300, Askar Safin wrote:
-> > Christian, important! Your patchset breaks userspace! (And I tested thi=
-s.)
->
-> If a bug is found in a piece of code we _calmly_ point it out and fix it.
+On Mon, Feb 02, 2026 at 01:14:23PM -0800, Eric Biggers wrote:
+> - Used the code formatting from 'git clang-format' in the cases where it
+>   looks better than the ad-hoc formatting
 
-Okay, I will be calmer next time.
+clang-format makes some bad choices.
 
-> > I tested listmount behavior I'm talking about. On both vfs.all (i. e. w=
-ith
-> > nullfs patches applied) and on some older vfs.git commit (without nullf=
-s).
->
-> Looking at a foreign mount namespace over which the caller is privileged
-> intentionally lists all mounts on top of the namespace root. In contrast
-> to mountinfo which always looks at another mount namespace from the
-> perspective of the process that is located within that mount namespace
-> listmount() on a foreing mount namespace looks at the namespace itself
-> and aims to list all mounts in that namespace. Since it is a new api
-> there can be no regressions.
+>  static int ext4_mpage_readpages(struct inode *inode, struct fsverity_info *vi,
+> -		struct readahead_control *rac, struct folio *folio)
+> +				struct readahead_control *rac,
+> +				struct folio *folio)
 
-Okay. Thank you for your explanation.
+Aligning to the opening bracket is one of them.  If anything changes
+in a subsequent patch (eg function name, whether or not it's static,
+adding a function attribute like __must_check, converting the return
+type from int to bool), you have to eitheer break the formatting or
+needlessly change the lines which have the subsequent arguments.
 
-But then instead of a loop (
-https://elixir.bootlin.com/linux/v6.19-rc5/source/fs/namespace.c#L5518
-)
-I suggest simply using ns->root->overmount.
+Also, you've consumed an extra line in this case.  Just leave the
+two tab indent, it's actually easier to read.
 
---=20
-Askar Safin
 
