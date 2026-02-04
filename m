@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-76257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76258-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 8PX8F9zVgmmWcgMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 06:15:08 +0100
+	id bjj6HIvVgmmUcgMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76258-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 06:13:47 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17B2AE1D59
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 06:15:08 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D27E1CF9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 06:13:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 166A5315A3DF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Feb 2026 05:10:03 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id D0D6330E0266
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Feb 2026 05:10:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA26356A1C;
-	Wed,  4 Feb 2026 05:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C2135CBCA;
+	Wed,  4 Feb 2026 05:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="X6NQdBUW";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kmB+ot27"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="IA/OH9nB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VvpC2+sx"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from flow-a6-smtp.messagingengine.com (flow-a6-smtp.messagingengine.com [103.168.172.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003743542D4;
-	Wed,  4 Feb 2026 05:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9733235503B;
+	Wed,  4 Feb 2026 05:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770181781; cv=none; b=nGzTN5lMRUfRPU3CVS25x+cwYqWREo1DnZXWLyzi/b/FSHA+LRqVNV1LH43Y1r3atyYw6Tyfra+4tr/iuDuvc3W/GvXqcsMyJ22ePSFgQvEhStRW6Au4PJGxJGMMsakwC14WC3MY6DAAJphd9rtQWu6+u7QV8cPuJW8rekl+gIM=
+	t=1770181788; cv=none; b=CjB0s7cfL9OvLGfgheDcMovh69Txv5i5QIuneFIc09tqQz/BI48W8KZG0upBxg0AmIVHpvIzdv/cMH2QJG1E6YHlxjiPsNlID5LlHipo/083ngST1Wm80ITxFPirLY8AyzT0xhc8su/1H1DKmzjb47e2zJqvGRkmPRrWCV7fHXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770181781; c=relaxed/simple;
-	bh=nqWal0iOV1tfqu1iiBXDGnrZqyugYCtEuXBL3nFrC9M=;
+	s=arc-20240116; t=1770181788; c=relaxed/simple;
+	bh=EcuUci3NrafWHA9mqFebcPpgK+jW1TgeLPfYj6hWJgo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s2TF5rhWfDctAaYLtq2jhbrmkbNL+8RnE5aR6TVJDQSbdB88/+BLEAbSEz0bkrNhk9xK1EP4ypjHgQAvbsmq7fhw2bF9XnMwZEzOPbbMXT2h2ZQRHAv1B++1qdSwBGizTpmS6hlwgoyzaZceDV5mNk+hUu6+R5ttu4wwkY4m1xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=X6NQdBUW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kmB+ot27; arc=none smtp.client-ip=103.168.172.141
+	 MIME-Version; b=Cqd8zYgwRIS3Q7LC7HhU9SIc2FFLxrpaBZZiQOWY0cyLUL52JEf5gH49Bn2sKojAPICLIRUuN7UydqWDK0vn/G+RvXZnhlqTa2PPqStHdHtH8Svo+KjdVUA1T+Du1T2gYVMWViBoCnt/IkKuolMMPpXZirXAKjg55L2G8GE9rt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=IA/OH9nB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VvpC2+sx; arc=none smtp.client-ip=103.168.172.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
 Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailflow.phl.internal (Postfix) with ESMTP id 4099F1380795;
-	Wed,  4 Feb 2026 00:09:40 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Wed, 04 Feb 2026 00:09:40 -0500
+	by mailflow.phl.internal (Postfix) with ESMTP id C45231380795;
+	Wed,  4 Feb 2026 00:09:47 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Wed, 04 Feb 2026 00:09:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
 	cc:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to; s=fm3; t=1770181780;
-	 x=1770188980; bh=8uvFxwZx470aImGVKlG0uaaAm+xyg6DFqB4tuvF9Ezc=; b=
-	X6NQdBUWgv9UAfWXzK36C8w6nTRgTe0N5Z1gJvzM7DoG6VAuIZku11+m9hcSC/ZB
-	aXmrlSfdDvDZS2SmrHomjEjDLoAkT8Uq3jau2H9dzWwcHwtzpzdWk+2NE+52+v5h
-	zsxOwTsy93vCnnsXnNLsxPeikb/9IpQ7v8C9GVWepGp59Na98ypFSUEoye89WJC0
-	5CSgMh28x6lqapknOxx3AdHOiG8qXXTxBeXjCHRDfr11qfc8p59PqRqB0i97pYIw
-	DJMCB0SZgzHSH69zxksTi56OMZSkna58XtCRmfNHnvSqHJ/XmYBa56CaApY0rwhk
-	Mqlax1kLntLtkzG4xh4Qvw==
+	:reply-to:reply-to:subject:subject:to:to; s=fm3; t=1770181787;
+	 x=1770188987; bh=FodiWxTGOrcO4kqPhH8V5J2d81hZRju7CaAdC0kBghU=; b=
+	IA/OH9nBkl0L/V4jFP0mIYu5PuKIWyyOkTV1eMHW4QZ7laA9FwSl+rvwQD8LUZIp
+	unDzrnaePoojghi7bR9bhXeZN06pX2dwTMqHCe9tI2g/fRs+DQIix/0+kn6nxe9T
+	hsMLoe0UHc3+8Vy+XcMCdLkvasUKBJ7HwwMkdy8dFVFW/QTWdqwOtPjAe32LnlbH
+	HQiWbqoxnPWmxAgTymOh89AME4UI3S9tm9r+x6bDau0zH6ZV8haZEJ0Xf2lZIOlU
+	Gyp9nLt58dFVVQMHoXoGcNmfvQagYknwlVX8k7P9hbOdpFiGdxL6JXqayrorAjmG
+	+L3C6kyZ83Yk/IpCvuiFGA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1770181780; x=1770188980; bh=8
-	uvFxwZx470aImGVKlG0uaaAm+xyg6DFqB4tuvF9Ezc=; b=kmB+ot27SP14nRc3Z
-	ExPswFqN3VilfHWndDFQ6rvtgXowfuRBGj2WbnZiuzvRMypLthjxQR5eIYSI425k
-	QFNCsHUt7piO42NFv8jXjEucTrpD4+IB+MEqx1o7fL7w3pUvciWSopZL9AeNHsCO
-	+YpHhHGTKuvM1bwldq0VVCXBIW99BoOxpIXFzBSg6gSBvDmW8oRn9029PN46PdmC
-	U0eG3+7Jjpp3FyYZM57sq6htOJJEVNBsUHuUMmA/8YA12DW/PkiDqTE8uE1XyqAr
-	Ron7Q2ikWLhSnc2+x18eAVSwnrRbB8SZx9RQNGy9UqUDHFmsol3+XnTeE01Jx6ev
-	H5+nQ==
-X-ME-Sender: <xms:lNSCaRvUsZFXgscOuwBvgEkQMj-pMEreyZpFm0CQGdrEuf9qYIKOFQ>
-    <xme:lNSCaestJo6rqe8WHLLbMXBFsrpETLhnMWpAmr-juUDmydPwhT2eJyOqwPb3-aVf3
-    h9rVCbRyyGXm91Jez78MaswVRL8H0BlrLGmGxqkoceWPiTH0A>
-X-ME-Received: <xmr:lNSCaYWid_SHr9146bclU6qiijgMEDdNSfgJ_JjFJcuBx6tJr7lKm1iRK2bUYW7X8GbpVY-jYP4LmSvpGC2dFt2mzGMDbdv8XuQOEYkscQXu>
+	:x-me-sender:x-sasl-enc; s=fm3; t=1770181787; x=1770188987; bh=F
+	odiWxTGOrcO4kqPhH8V5J2d81hZRju7CaAdC0kBghU=; b=VvpC2+sxldBw2tIOW
+	77AL6W0NTYq6ye2ZXiZ6qd6fJui28cxi+I6rws1ykZaKi8AO5OrEWElgFhEZrjW0
+	DNHvITXcnfTkgCsX6s6duFifX3jwG8J5XNp1iGHv0fFCAiLwqn3c7jmhrt+GhSZY
+	cmh4lZmKT0BIAZBJqjxaYyuf53nTkzqLtPRTbnmxMDndi6K3W7OU9B6eHmueuARz
+	7g5vX6ai8jIhDKtxb/CqwfxGxnNY2FNSxW0H0img3B+L8yvltu+hOkXcCHsIWzsI
+	PPDD37WzgTyV7h/3LSwqo+hU6AcUKoUNXOVsA2Hv9E6PXTzKf4e7DrjTfKRASpSy
+	NpyOg==
+X-ME-Sender: <xms:m9SCaReHppifkN_Cf5pTv_545vMDS_sv_yJ9eBTKCHZ1YTNCXkRCIw>
+    <xme:m9SCaazVi91ief2zLXDLLQWt7rXy2ZSNzJqjO4DnknaJU9H6B-uYqXxzL6ZYoJRue
+    d2ihvs9jQk0PwqTuKHRvYPN5oQAPii3NDr8dYRArtqGlE9I2A>
+X-ME-Received: <xmr:m9SCaageDee_ewTZdEfo4v5irqih55Q_MG6RsNlHJ4hIyo3audOAfLi9JZMEfZMB_hVGeOQApdLuRPyEuHvlgNNt9VgK56EXDH5euRUdiBYt>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukedukeeiucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
     gurhephffvvefufffkofgjfhhrggfgsedtkeertdertddtnecuhfhrohhmpefpvghilheu
     rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
     epveevkeffudeuvefhieeghffgudektdelkeejiedtjedugfeukedvkeffvdefvddunecu
-    vehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    vehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
     esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepvddupdhmohguvgepshhmthhp
     ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
     hrtghpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
@@ -85,14 +85,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukedukeeiucetufdote
     vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvg
     hrnhgvlhdrohhrghdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhr
     tghpthhtohepjhgrtghksehsuhhsvgdrtgii
-X-ME-Proxy: <xmx:lNSCaXXBuxMhe3vw7s_YyZoqDu3S3BkNP6jqbcKkggELA3GhVossbA>
-    <xmx:lNSCabRMP_HWealeI6a3NCdH_a1ZCd10Rx68kMEFlrCV9DTK5Mapew>
-    <xmx:lNSCaeG5FQH0LJEzLVABJgJz-dlcqgItcb1S7TG7N05_sJvEHQuWng>
-    <xmx:lNSCaTSS1kJX5znMbZHuXS0jOW3AAQg-_cDjhvd9fpfnUXkMiKS5Fg>
-    <xmx:lNSCaXNYPc1adEhH2bDN-sBbKMGpCx1YdDRPdm_O8hKfrfv1o6u2nrOW>
+X-ME-Proxy: <xmx:m9SCaf7wUR-6rC9qxE37Pn-XLmXMIJbY-YfMMuv6gX6Hfc4oF7ghwA>
+    <xmx:m9SCafrgu7obCByNluMMGgzqCW9uKie2YIniIl8drQyqVYXq9fa8lA>
+    <xmx:m9SCaVU2Oo14aWIcBSdLi7nwxx2H6Jjh6w-fdwFVHtOG6gTrp4vHPg>
+    <xmx:m9SCaW7ZPddf_NbC6pITmfJZdwCMnXFE3qGdi2pLlgQhx_l0N3-XFQ>
+    <xmx:m9SCaYGk926uEosUz1L3DRfHiJX2djLrvwovEuCTy8dCgWLI-yIwGImH>
 Feedback-ID: iab3e480c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 4 Feb 2026 00:09:34 -0500 (EST)
+ 4 Feb 2026 00:09:42 -0500 (EST)
 From: NeilBrown <neilb@ownmail.net>
 To: Christian Brauner <brauner@kernel.org>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -115,9 +115,9 @@ Cc: linux-kernel@vger.kernel.org,
 	apparmor@lists.ubuntu.com,
 	linux-security-module@vger.kernel.org,
 	selinux@vger.kernel.org
-Subject: [PATCH 12/13] ovl: remove ovl_lock_rename_workdir()
-Date: Wed,  4 Feb 2026 15:57:56 +1100
-Message-ID: <20260204050726.177283-13-neilb@ownmail.net>
+Subject: [PATCH 13/13] VFS: unexport lock_rename(), lock_rename_child(), unlock_rename()
+Date: Wed,  4 Feb 2026 15:57:57 +1100
+Message-ID: <20260204050726.177283-14-neilb@ownmail.net>
 X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
 In-Reply-To: <20260204050726.177283-1-neilb@ownmail.net>
 References: <20260204050726.177283-1-neilb@ownmail.net>
@@ -137,7 +137,7 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	DMARC_POLICY_ALLOW(-0.50)[ownmail.net,none];
 	R_MISSING_CHARSET(0.50)[];
 	R_DKIM_ALLOW(-0.20)[ownmail.net:s=fm3,messagingengine.com:s=fm3];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
@@ -145,7 +145,7 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	REPLYTO_DN_EQ_FROM_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
 	RCPT_COUNT_TWELVE(0.00)[21];
-	TAGGED_FROM(0.00)[bounces-76257-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76258-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_FROM(0.00)[ownmail.net];
 	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
@@ -162,70 +162,98 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	DKIM_TRACE(0.00)[ownmail.net:+,messagingengine.com:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[brown.name:replyto,brown.name:email,ownmail.net:mid,ownmail.net:dkim,messagingengine.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 17B2AE1D59
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[brown.name:replyto,brown.name:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,messagingengine.com:dkim,ownmail.net:mid,ownmail.net:dkim]
+X-Rspamd-Queue-Id: 90D27E1CF9
 X-Rspamd-Action: no action
 
 From: NeilBrown <neil@brown.name>
 
-This function is unused.
+These three function are now only used in namei.c, so they don't need to
+be exported.
 
 Signed-off-by: NeilBrown <neil@brown.name>
 ---
- fs/overlayfs/overlayfs.h |  2 --
- fs/overlayfs/util.c      | 25 -------------------------
- 2 files changed, 27 deletions(-)
+ Documentation/filesystems/porting.rst | 7 +++++++
+ fs/namei.c                            | 9 +++------
+ include/linux/namei.h                 | 3 ---
+ 3 files changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index 4fb4750a83e4..3eedc2684c23 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -569,8 +569,6 @@ bool ovl_is_inuse(struct dentry *dentry);
- bool ovl_need_index(struct dentry *dentry);
- int ovl_nlink_start(struct dentry *dentry);
- void ovl_nlink_end(struct dentry *dentry);
--int ovl_lock_rename_workdir(struct dentry *workdir, struct dentry *work,
--			    struct dentry *upperdir, struct dentry *upper);
- int ovl_check_metacopy_xattr(struct ovl_fs *ofs, const struct path *path,
- 			     struct ovl_metacopy *data);
- int ovl_set_metacopy_xattr(struct ovl_fs *ofs, struct dentry *d,
-diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-index 94986d11a166..810c8752b4f7 100644
---- a/fs/overlayfs/util.c
-+++ b/fs/overlayfs/util.c
-@@ -1213,31 +1213,6 @@ void ovl_nlink_end(struct dentry *dentry)
- 	ovl_inode_unlock(inode);
- }
+diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
+index ed86c95d9d01..5f7008172f14 100644
+--- a/Documentation/filesystems/porting.rst
++++ b/Documentation/filesystems/porting.rst
+@@ -1347,3 +1347,10 @@ implementation should set it to generic_setlease().
  
--int ovl_lock_rename_workdir(struct dentry *workdir, struct dentry *work,
--			    struct dentry *upperdir, struct dentry *upper)
--{
--	struct dentry *trap;
--
--	/* Workdir should not be subdir of upperdir and vice versa */
--	trap = lock_rename(workdir, upperdir);
--	if (IS_ERR(trap))
--		goto err;
--	if (trap)
--		goto err_unlock;
--	if (work && (work->d_parent != workdir || d_unhashed(work)))
--		goto err_unlock;
--	if (upper && (upper->d_parent != upperdir || d_unhashed(upper)))
--		goto err_unlock;
--
--	return 0;
--
--err_unlock:
--	unlock_rename(workdir, upperdir);
--err:
--	pr_err("failed to lock workdir+upperdir\n");
--	return -EIO;
--}
--
+ lookup_one_qstr_excl() is no longer exported - use start_creating() or
+ similar.
++---
++
++** mandatory**
++
++lock_rename(), lock_rename_child(), unlock_rename() are no
++longer available.  Use start_renaming() or similar.
++
+diff --git a/fs/namei.c b/fs/namei.c
+index 307b4d0866b8..0bc82bf90adc 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3713,7 +3713,7 @@ static struct dentry *lock_two_directories(struct dentry *p1, struct dentry *p2)
  /*
-  * err < 0, 0 if no metacopy xattr, metacopy data size if xattr found.
-  * an empty xattr returns OVL_METACOPY_MIN_SIZE to distinguish from no xattr value.
+  * p1 and p2 should be directories on the same fs.
+  */
+-struct dentry *lock_rename(struct dentry *p1, struct dentry *p2)
++static struct dentry *lock_rename(struct dentry *p1, struct dentry *p2)
+ {
+ 	if (p1 == p2) {
+ 		inode_lock_nested(p1->d_inode, I_MUTEX_PARENT);
+@@ -3723,12 +3723,11 @@ struct dentry *lock_rename(struct dentry *p1, struct dentry *p2)
+ 	mutex_lock(&p1->d_sb->s_vfs_rename_mutex);
+ 	return lock_two_directories(p1, p2);
+ }
+-EXPORT_SYMBOL(lock_rename);
+ 
+ /*
+  * c1 and p2 should be on the same fs.
+  */
+-struct dentry *lock_rename_child(struct dentry *c1, struct dentry *p2)
++static struct dentry *lock_rename_child(struct dentry *c1, struct dentry *p2)
+ {
+ 	if (READ_ONCE(c1->d_parent) == p2) {
+ 		/*
+@@ -3765,9 +3764,8 @@ struct dentry *lock_rename_child(struct dentry *c1, struct dentry *p2)
+ 	mutex_unlock(&c1->d_sb->s_vfs_rename_mutex);
+ 	return NULL;
+ }
+-EXPORT_SYMBOL(lock_rename_child);
+ 
+-void unlock_rename(struct dentry *p1, struct dentry *p2)
++static void unlock_rename(struct dentry *p1, struct dentry *p2)
+ {
+ 	inode_unlock(p1->d_inode);
+ 	if (p1 != p2) {
+@@ -3775,7 +3773,6 @@ void unlock_rename(struct dentry *p1, struct dentry *p2)
+ 		mutex_unlock(&p1->d_sb->s_vfs_rename_mutex);
+ 	}
+ }
+-EXPORT_SYMBOL(unlock_rename);
+ 
+ /**
+  * __start_renaming - lookup and lock names for rename
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index c7a7288cdd25..2ad6dd9987b9 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -165,9 +165,6 @@ extern int follow_down_one(struct path *);
+ extern int follow_down(struct path *path, unsigned int flags);
+ extern int follow_up(struct path *);
+ 
+-extern struct dentry *lock_rename(struct dentry *, struct dentry *);
+-extern struct dentry *lock_rename_child(struct dentry *, struct dentry *);
+-extern void unlock_rename(struct dentry *, struct dentry *);
+ int start_renaming(struct renamedata *rd, int lookup_flags,
+ 		   struct qstr *old_last, struct qstr *new_last);
+ int start_renaming_dentry(struct renamedata *rd, int lookup_flags,
 -- 
 2.50.0.107.gf914562f5916.dirty
 
