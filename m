@@ -1,340 +1,272 @@
-Return-Path: <linux-fsdevel+bounces-76332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76333-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YBYJNXd6g2nyngMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 17:57:27 +0100
+	id OCwbJml6g2kpnwMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76333-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 17:57:13 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F177EAA41
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 17:57:27 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E52FEAA33
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 17:57:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 979083040212
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Feb 2026 16:51:15 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id A4845303A3F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Feb 2026 16:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E84D33C519;
-	Wed,  4 Feb 2026 16:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D672033EB10;
+	Wed,  4 Feb 2026 16:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D9k7tIE3"
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="nf6NThav"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from LO0P265CU003.outbound.protection.outlook.com (mail-uksouthazon11022102.outbound.protection.outlook.com [52.101.96.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F28C33C1A9
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Feb 2026 16:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770223874; cv=none; b=gfnUujEp3pN8eGWMgJFBtkSKzBfh+wZ+dhcSnY5nLr8arCYkgM2ha7xzDLiR/u6JEpP4FSpKX8AmcOT8PZll88/iK9JxGHfVrVgoV7FWf/rZI3c5/9qdUk7LOnrKkIaAkgB2xLPeVRQBD1CyA2DN4rFTGCDZNRX2ZAnOWzHkbrA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770223874; c=relaxed/simple;
-	bh=9yju6q+ofsFqcseB6FiksXGpBHaUWDzcaMIwa69Ny8U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rH0nPX+9B4Xcs8RQGlalVlBjrG26/PuaVQ6rB5HGrWhjqMYmcIrQw/yprvCAEBtiNPHTcEd1groKZiknM0ZHTHcNzpfW050FINL+fCKLrHTrlXQQbz2gGm/9TwAZlFPutYGv/ToHO7V7h6kHWtCo0xXG0ETPE9Y2X9oJ0etSy2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D9k7tIE3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDA29C4CEF7;
-	Wed,  4 Feb 2026 16:51:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770223873;
-	bh=9yju6q+ofsFqcseB6FiksXGpBHaUWDzcaMIwa69Ny8U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D9k7tIE3z5/7vyQThvrnSrW2LHaj8/vAIgtcw2ZILjmaEe18P997idkF6gHtMESJJ
-	 O8/bFSLpZwFNDaijdqgLyGVpg5ht5VDQjK23EqoYeE4ruisd18NEcLDGMcND4U3ruU
-	 nUquxAZXBfRR+8gGOYXuGYHU2hj9yG6LAZ8pfkQAii1U/Qmm1nx933qOF/rxSajRjK
-	 eMCLqDOCRRRu12xg3pwVqjrKnFZ50Qyg4QLbm0nU0hIfyNEkpyIhYXWsqFf2Jc/ZSy
-	 EErcokVxn7NNUHIKEgOXFN5xIFNl8L1GSlifyv3iyw8KiRrOcL2kErIBvpGS0s8VTR
-	 z47zZFkEVWfLg==
-Date: Wed, 4 Feb 2026 17:51:10 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Snaipe <me@snai.pe>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH 1/1] fs,ns: allow copying of shm_mnt mount trees
-Message-ID: <20260204-unsicher-bejubeln-7aaeb5a6d40c@brauner>
-References: <20260129173515.1649305-1-me@snai.pe>
- <20260129173515.1649305-2-me@snai.pe>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077E733E34B;
+	Wed,  4 Feb 2026 16:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.96.102
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770224129; cv=fail; b=CW0lc9DVLRWfc3wCLuqyXelDknggl7O5sk3G/8adn6HNM9WKqcomHvx1L3fBMwlsXmFAYApkK+ORDISRvpeADqqk+F/siRqMChIgr6HC41aiXQVRtb58EQwZqirvyZTNPGa3A+HwUNCVeRVI48P4ZWYHQKGkvVDGDeQ2CFVSfys=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770224129; c=relaxed/simple;
+	bh=c3GtvJisYUaeXU+VSgjH7Wjs1n662gxUkzVIVITWg8M=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=IFk8JpIKJX6aTYzIKtUUoqUoukli5CQUDNXGRNMN28OyxGiA9KxPMIaR6WjK9lXq0PkI+R2Hf4mqR1rSY/lo8AqQNO9pbg0diS3Y9yRnZOSqTykLeMCJOVhUtu53vUPrRX1+UNR8+d7W4/QzwdbXXvAFl75rdx19C7BoSYgS0+g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=nf6NThav; arc=fail smtp.client-ip=52.101.96.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JrzluGkuSy6If2owxworGDtFFn/GUlb7Ij8y3WsxZPxyPgP+SVIMbc9wkhvijxzAUIOrSAC9lgqe4wvaMbehqoNDcZi+HiaBuIh6rvKViK+ZC4XFr6OrNQintvd0oqzc8I25U4NsZwHRocaTw4WzfGrnxtWMF7fiTu1cZmN6UBrFzv26ndPp+bxhPKMctrmGs+XAq2BHs8LMPHwz/RPcmD0iY5KQCqFgsYUXQQWrVrUXdAEu1PrQWDG/hyGpfc7ObIPLa9GYfQFqBPpkywG+jA84munirRU/CPk+TIuY4rEDRvsrX5x4jeIzYq1kZ8mzSiASCCkua0oYBZzHLdeXtQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=c3GtvJisYUaeXU+VSgjH7Wjs1n662gxUkzVIVITWg8M=;
+ b=xpfm304iDBugGyi6ANZFoJgiyMxhXF3odJ7+uyoad7mpn+hkVo2cWshZwMJ6p9BgVuXpR/4cTbwiaSNbZj2cn/rKCH1Gzy9rmVApaB3lFYQkhhYO4BG+Mnj+HkfLDokCPMdlMGIEOQOE4VkD++nDXnxYsHJu9MIX+Vg6UcYrchZ+I+/xjBp/lpifRcRzOySerHzAAKrSSJdzwnUwmlMgVqhu/Hbkvhw+AsF7Bh4QsIgIEWUhoLnJUIsWtClIBs/rETc/AQgaLPwUir/IL+ahOjMWgFOQiFaZxpSKPNAShyGDgyzZW0ZFas0wPlpzTFlSFfM+WKOAZMM8gHYMs0OQwQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c3GtvJisYUaeXU+VSgjH7Wjs1n662gxUkzVIVITWg8M=;
+ b=nf6NThavl6KRnXeEqgeh4UZSDudNikRGAhp4/pMRJyEfB5KSSVTvZctJJ8q7cGVdoNbo6EjJ6nBLTWyevvtYqTwsmZR1eTjW9rjKex+NJzYQ0VTskGtNOMi/NWQ37MayeGOX3tRCzBCdcdoapOWRmSH3RBgoXNiuKnGgVc5zvWM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:488::16)
+ by LOYP265MB2128.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:111::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.13; Wed, 4 Feb
+ 2026 16:55:25 +0000
+Received: from LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1c3:ceba:21b4:9986]) by LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1c3:ceba:21b4:9986%5]) with mapi id 15.20.9564.016; Wed, 4 Feb 2026
+ 16:55:25 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 04 Feb 2026 16:55:24 +0000
+Message-Id: <DG6C2VV8D15R.2DEPKS467SJ6F@garyguo.net>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Dave Ertman"
+ <david.m.ertman@intel.com>, "Ira Weiny" <ira.weiny@intel.com>, "Leon
+ Romanovsky" <leon@kernel.org>, "Paul Moore" <paul@paul-moore.com>, "Serge
+ Hallyn" <sergeh@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>, "Christian Brauner"
+ <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>, "Igor Korotin"
+ <igor.korotin.linux@gmail.com>, "Daniel Almeida"
+ <daniel.almeida@collabora.com>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ "Viresh Kumar" <vireshk@kernel.org>, "Nishanth Menon" <nm@ti.com>, "Stephen
+ Boyd" <sboyd@kernel.org>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-block@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-mm@kvack.org>, <linux-pm@vger.kernel.org>,
+ <linux-pci@vger.kernel.org>, "Asahi Lina" <lina+kernel@asahilina.net>
+Subject: Re: [PATCH v14 1/9] rust: types: Add Ownable/Owned types
+From: "Gary Guo" <gary@garyguo.net>
+To: "Danilo Krummrich" <dakr@kernel.org>, "Andreas Hindborg"
+ <a.hindborg@kernel.org>
+X-Mailer: aerc 0.21.0
+References: <20260204-unique-ref-v14-0-17cb29ebacbb@kernel.org>
+ <20260204-unique-ref-v14-1-17cb29ebacbb@kernel.org>
+ <7uftlTZxNVxMw7VNqETbf9dBIWLrQ1Px16pM3qnAcc6FPgQj-ERdWfAACc5aDSAdeHM5lLTdSBZYkcOIgu7mWA==@protonmail.internalid> <DG6AIA0QK77C.EKG7X4NBEJ00@kernel.org> <87fr7gpk6d.fsf@t14s.mail-host-address-is-not-set> <DG6BWC5SOHUG.2K1ZXGYNVB69V@kernel.org>
+In-Reply-To: <DG6BWC5SOHUG.2K1ZXGYNVB69V@kernel.org>
+X-ClientProxiedBy: LO4P265CA0037.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2ac::11) To LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:488::16)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260129173515.1649305-2-me@snai.pe>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LOVP265MB8871:EE_|LOYP265MB2128:EE_
+X-MS-Office365-Filtering-Correlation-Id: d1d4121e-995f-4ed2-2111-08de640e311f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d2Fyd0lOamNhTVZraEpxMy9rVWN3bTd2STBVWFRwWFRnZGUvTEtXRkhZQitx?=
+ =?utf-8?B?aGROVE1yS1htdnEramdKcWUwZ3Z0UUQvSGR6RDRjekdENVhOalRJamc2M2dL?=
+ =?utf-8?B?cUN6eFVzcEJ6Z25CWDlGUG1kY3llRWc0WEw2MDBnQ3g0alVEQ0pPbDcvUm91?=
+ =?utf-8?B?UlA1VTQ3Rno4YzZHdHdhUUZIc3EvVGVyQWNsTEJSVU92Ykxsei9LaFBwOWZU?=
+ =?utf-8?B?NzlSTzJEeEp5dmRlRUNoRUhJbUhmQXNkNFZCU3NRTGtJdmpHUnlWQXFtZXh0?=
+ =?utf-8?B?UFpudFpLZUFSdFA4aDJ5aG0rWWRVaS9TeGNxVUp3NkZjWFQ3dGk4VnpsRFRk?=
+ =?utf-8?B?aFZUSzZtdW9Id29BeWdlTVJTVHFjWTVSNHpCTm42ZUdWTGl5dFhkVnBEOTB6?=
+ =?utf-8?B?c014eTI5V2JnQ0VaKzlZb3RyaHExRnZ3VHZ6UmlGMkhxbkgzNUlGQ24xczhO?=
+ =?utf-8?B?TzNyOFZTNkRyUmRkekdzdDRxcGYxZW9QSU9nZFhVbVh1WHdtbHNjWm1tcUJP?=
+ =?utf-8?B?d3YzN2wreVkyVk81WVo0YnpuSjRsU0QwV2o3eHJ0T1BMa3J2RWJSeldJZDRh?=
+ =?utf-8?B?QkJkVnZuRXYvb1BuTWFzdndSL3Fxb1ZyYVZNTjFZZERoeVpDUXIxREtZVmZa?=
+ =?utf-8?B?clFzNWZPSWtlTVhPNnZwRHBKdjgzbFg1TEx4ZlE1MnRJelZTK0RtbXcrWTBO?=
+ =?utf-8?B?cFpyL0ZVZmw4cXBvM2lNby9QWmZRVS9HVHphVXRpYXVWWGhsVW5oSVRSZFdt?=
+ =?utf-8?B?K0ttd1ZXcGJ5Zk5HcmF3M1cyTmw5M0NRV3pSb3NQNW41L3Vtb2ZhOVNoQkl6?=
+ =?utf-8?B?anNGQkJNdlVUTGFrcE95bGdTQUJnbjVSbmgvdFBMeDZ2NVVaclE3Y0Y4OXc2?=
+ =?utf-8?B?c1drV1BjUkNZeDFiQktNenljTTE5QUJUWHltMmt5V0paWDZ0bkFmdlVWVE5E?=
+ =?utf-8?B?bVlDYkl2d3oyZDRQNTBydW8rd2RJTlNNaVQvaWdOS1BwcHMwT25NdVJuelRi?=
+ =?utf-8?B?QkVPWkExbEErSkVXV25wcnNEMzZ0dm1OdnU2Vm9VbW5lR3Q0VzhpS015QjVn?=
+ =?utf-8?B?VGtibGN2RlJrVm9uYml4aUU2ZkdtOXcxR2pCaFMxRHVNSUdvUU5CSWxFNndz?=
+ =?utf-8?B?TFJRL1lLa04rY1hpUjRRbVAvTnVNWEJ4VFV2N2dPU3VMSnBlLzZ2MWZQcHZD?=
+ =?utf-8?B?Sng1NzlHNzd4dStENDhHbExoSGRzSkVWR3paN2ZuU0F6L24wRlRidVh0WHVZ?=
+ =?utf-8?B?TEd1UGRrTUhXQ3AzZUczLzJvTVlDVk9xNXE5R3NQc1FNYkdrZzdJeWg3ZlpE?=
+ =?utf-8?B?Qko4azRDdjRvWjR3QU13UnByQW4zRjdSRXdpSTh1WXlPdHd5Rk8waTRIdGJD?=
+ =?utf-8?B?cUdwTmRyZDFXdytObHZhUzhKcHBCOFRjTi8rRUNyS29XRmFyZnBvZUZWNXZ1?=
+ =?utf-8?B?MGFjVlo1Q2ZibVYrT3JpL1kzMWljVWVSeklRY1Jaa3ZGOURsTjJ3c0JtMmE4?=
+ =?utf-8?B?SHJCWEFXNWlHR1o1NnUyR1RuVDltSnJnUTZQWktpVkU3d0gxK2gzYkhHT0ZO?=
+ =?utf-8?B?RFJNWXpEUjFXQ0d5WTIyejg3bGNWZTV1WEszeFg1SmVWNVRWTmZ5cjkveEUy?=
+ =?utf-8?B?TUp4UUU5K3dkU0xSNitrK3UxcGJDYjc1SnoxRnBjNjAzTjJLWlJsWTkzZ3Jv?=
+ =?utf-8?B?MlR0UnV5aXdUODRPdkUvd3J0Rkg4WFNjZVBFalJIbmZ4Q1JmSTJqL1QrUWJq?=
+ =?utf-8?B?b09qZnRUZm4zMDVOUENCd0FDVDZzQzJHL1MrZ2RtbWhJdVpzVnN0NU5HSDlr?=
+ =?utf-8?B?R2gwRUU4MWQ0V0tkMkU5TXVLWGlXWXB6VTF4RW5vQkxUQ0h1SDhSSkUzU2FQ?=
+ =?utf-8?B?SkJicmJuSTc2aGNGYnVhMGlOaitBakFRSjFGQ3NmVGdoWUdkWkpWNEFKOW5E?=
+ =?utf-8?B?SjQ0VkN1aHJCbnorMklvNEkxZ3dJeXFlNmhnbjFvRjhycWxIV3RMOVFyUDNN?=
+ =?utf-8?B?R0JSRG9PYnRJeUU5TktqZnRSejA3a3FVN3IzQ1pOdWZ3Zk5Id05KMTRFNTJh?=
+ =?utf-8?B?bDZRd0drczg5aWN2WE5qcDIrVG4yc1ZGcDM1Z1FwaUFxUzBhYm9oN3BObnY2?=
+ =?utf-8?Q?/AsU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(10070799003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QkVhTlNMOGJvRmI3M0d6bDd0TVBURjhld3RJK015WnZrYXEyK3hueXRRTldi?=
+ =?utf-8?B?NWVCbjM2RElxM1g2SUxLeWxKaGNNUTFOVHBQVXBMMnBNM2xNNHV2OGFSQjlM?=
+ =?utf-8?B?RURJNEhLVEgreTNRVkprK0lIY2xpY3Urb1N3RE01VHBYb1FQZ0ZEdXlsUWFu?=
+ =?utf-8?B?NHVWUUlTWWhkSXJ4c1RraTBtUlp4ZjNaM2dWdGJKemFJVUFnM1lWQnh6bnJD?=
+ =?utf-8?B?RmpUUGkveWdHQTEwWXdNaEwrLzQ5WkJxR1d0N2xGTEhUM2VrT1hpcWp6Snpl?=
+ =?utf-8?B?bHliaExuZ29Zek1HSnZPMkR0bWpGVnJEUEJaTmUxckNPTExOU3k5UGhqWDNV?=
+ =?utf-8?B?SkhlTE9KelZneE16MTJ5TXNCUXpZdER1bGRtWDd5a0NwVTdnQzl1REtGaUM5?=
+ =?utf-8?B?WUtVakNvdGd2dDQ5dzlFSnlIMVlXNnUrU2FDZVhzd1pzT0lqU21EakpnaUpl?=
+ =?utf-8?B?Vjl1bXdsRlQ0YnlZR1l2R25hWHBweHFETUFZUlBicFh4UTh5OGlEb1ZFYTkw?=
+ =?utf-8?B?MlFoaENwL1cwd0QxaGVEVkZxa0YzeElQeGFoNExzOWEwZlBZOHczWXFvSEha?=
+ =?utf-8?B?OWRkYmYxOGQyWkpUNmFWR01WNzFhVzBxNzRPeXlvOC9PVWlBekRod2hTam9W?=
+ =?utf-8?B?NEVyOXNrZFNqVTIxcFBHRjZFbTBsS1pvbjdpWm5lRldlWkR2Y255dnkvZUc4?=
+ =?utf-8?B?MXl0TmtVZmlPZ1pkRGRpRkJ2L2VHQ3RPaW53dzVnaG9Pa2N2b0JIRkhFRHA5?=
+ =?utf-8?B?TjVzZ2o3OFhGaE1HM1FKRWpUcTVka3pRWlBrQVFkbDczRXoxK3R4bFlQdFhw?=
+ =?utf-8?B?bG1iaS9tRTFuYzZGNW1uL240Q0xtN1k2T2lMaTZBWG9DTkN4YXQrU2ZSQUZN?=
+ =?utf-8?B?UC9KME02RzRKTXBMNW5JTk9jQXlNcE9UWDZTT1dVS1ZJY085UW0rVzRpOTVp?=
+ =?utf-8?B?cllXMVV4Q2pta1M3WGxyazdQWm5xdXk3UjN3dVQ0aVU3dGRhdEU2WERPVElN?=
+ =?utf-8?B?WHBZdjdlaXBjSWpZS3NCTTh0TWZHMWdPWXpFeVk2ZGlzUm1YV3dpekNHdUF6?=
+ =?utf-8?B?M1VrWHNhd24wU2JMWXJLY0YvUlVzaVJ4bE1Oc3ExdHB0UGEvVzVUa0tIYm9S?=
+ =?utf-8?B?QW5UeDFoUkIrdE5oekh0c09YR2NOVnAwNHlYcEFTamMvV0w4OENqU3pSQjZY?=
+ =?utf-8?B?UXAwdlpkU1dZcUhuN1N1dmd1MC8vaElhMDhqUWcyL3MySURQMys4TXMweUtl?=
+ =?utf-8?B?ZURqRXR6KzdtRTBwdS9ubXdOaWlXOHhoOERQbmE2eSs5cXFCa3Z1M3VzYmd0?=
+ =?utf-8?B?elFrUXQyN052Njh2Q0hDR1FLTnAyVGpxYUpMNHBaWjY4VERzMk5RREJkSWpR?=
+ =?utf-8?B?dCtwcjU1OFk0UjQ2ZU9tYmN4dlBuZ2dRVG1WS3A1akJDblAwOHRQVnhYMmlr?=
+ =?utf-8?B?NHFiZ3gvR1pReXBhWEM3am1DaW5hZ2xTUjVtbXFBZGxyVDZjYWVoRkZlVzlz?=
+ =?utf-8?B?VzVDSXVkdkRMd0tlc1dHTjR1NXliODJBc1YxSi9EeU43b3kvNEJFbU9ySUQ3?=
+ =?utf-8?B?M1pmdmh0MDBlZVVYTytTcVArQ2Q0d2xtNjBZNjhWZHRNOThBZDNhM2o2dnZC?=
+ =?utf-8?B?M0l3SzIxN2NRNE9WZGhqMklMdGxSUWQvRzYvcktBMGJ4dys3UFVrRE1wUVRO?=
+ =?utf-8?B?b2xGOW1hUmp6R0hId2FpVEdLSjBDZWo2eC8xa3hLb1V4MVZqT21oQmxBSExk?=
+ =?utf-8?B?Zy8wWWg4S053Y0ZpTjJZOWw1VjNlWUFrRjVGaWJHazVHSDJpa0JaVjN5b3kw?=
+ =?utf-8?B?Q0JqVE9sdjVVbzdnZnhTOHNMOEREeHFJNHdHc3c2TTd0OXZua29rSkM2YTFY?=
+ =?utf-8?B?c3ZxNnJ0K2x6enRFU29MQmVpNnlYbFI2K1lydzIvRGxKRkpvc2pOWmF0ckFl?=
+ =?utf-8?B?WE9BMnpXZ1NFWGRnR216VHFkRndxajNXT2JybW84bGQzY1RhYXBuZTBkbHpL?=
+ =?utf-8?B?VlRhV2wzZm5QMHJBK0RBT25aNUxvTG15Q21nUE50MGRlVVZ1MTJPSEsvbldF?=
+ =?utf-8?B?UVZZNHU3M2k2Ryt5ZDlVTFRLVDhsd1FONjF1ckM1Mzd3MEVxc1RENTlpT1hj?=
+ =?utf-8?B?MTRON1FYM1BnWGxVQVEwNmhETHhDU2JtUm03N2RzVzNCZjNCZE9DbHZ4QkVH?=
+ =?utf-8?B?Yk15RHkxZTQ5bDFjWFhnVEVWWmdrbDEwSTcvL3czbnh0SjErclgwS1FhMi9r?=
+ =?utf-8?B?M2trak1oN2VMN1ZaVlBJQnZabTUxTHdrbmZiaWgwSWRjd0JvZ3F3ZjJPRVV1?=
+ =?utf-8?B?WWF3Q2Z3VSs0KytXNkRWa3I1UFRONkRaSlNJaVZjSG5UcFBwODdOdz09?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1d4121e-995f-4ed2-2111-08de640e311f
+X-MS-Exchange-CrossTenant-AuthSource: LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Feb 2026 16:55:25.0262
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: iQnVLIoh0jm+w9Dp2ZA0ra1AQxUgN71SfFjXnCifMCPJSdfO2d9Dh+VvepLHWTCt5PELtMebQshI1Q7JaVCDbw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LOYP265MB2128
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [2.34 / 15.00];
-	MID_END_EQ_FROM_USER_PART(4.00)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+X-Spamd-Result: default: False [1.34 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_REJECT(1.00)[cv is fail on i=2];
+	DMARC_POLICY_ALLOW(-0.50)[garyguo.net,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[garyguo.net:s=selector1];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76332-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[40];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76333-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[kernel.org,gmail.com,garyguo.net,protonmail.com,google.com,umich.edu,linuxfoundation.org,intel.com,paul-moore.com,ffwll.ch,zeniv.linux.org.uk,suse.cz,collabora.com,oracle.com,ti.com,vger.kernel.org,lists.freedesktop.org,kvack.org,asahilina.net];
+	RCVD_TLS_LAST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[snai.pe:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 3F177EAA41
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[gary@garyguo.net,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[garyguo.net:+];
+	NEURAL_HAM(-0.00)[-1.000];
+	TAGGED_RCPT(0.00)[linux-fsdevel,kernel];
+	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,garyguo.net:mid,garyguo.net:dkim]
+X-Rspamd-Queue-Id: 2E52FEAA33
 X-Rspamd-Action: no action
 
-On Thu, Jan 29, 2026 at 06:35:15PM +0100, Snaipe wrote:
-> From: "Franklin \"Snaipe\" Mathieu" <me@snai.pe>
-> 
-> The main motivation for this change is to be able to bind-mount memfd file
-> descriptors. Prior to this change, it was not easy for a process to
-> create a private in-memory handle that could then be bind-mounted.
-> 
-> A process had to have access to a tmpfs, create a file in it, call
-> open_tree on the resulting file descriptor, close the original file
-> descriptor, unlink the file, and then check that no other process raced
-> the process to open the new file. Doable, but not great for mounting
-> sensitive content like secrets.
-> 
-> With this change, it is now possible for a process to prepare a memfd,
-> and call open_tree on it:
-> 
->     int tmpfd = memfd_create("secret", 0);
->     fchmod(tmpfd, 0600);
->     write(tmpfd, "SecretKey", 9);
-> 
->     int treefd = open_tree(tmpfd, "", OPEN_TREE_CLONE|AT_EMPTY_PATH|AT_RECURSIVE);
->     move_mount(treefd, "", -1, "/secret.txt", MOVE_MOUNT_F_EMPTY_PATH);
-> 
-> Signed-off-by: Franklin "Snaipe" Mathieu <me@snai.pe>
-> ---
->  fs/namespace.c | 8 ++++++++
->  mm/internal.h  | 2 ++
->  mm/shmem.c     | 2 +-
->  3 files changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index d82910f33dc4..f51ad2013662 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -38,6 +38,9 @@
->  #include "pnode.h"
->  #include "internal.h"
->  
-> +/* For checking memfd bind-mounts via shm_mnt */
-> +#include "../mm/internal.h"
-> +
->  /* Maximum number of mounts in a mount namespace */
->  static unsigned int sysctl_mount_max __read_mostly = 100000;
->  
-> @@ -2901,6 +2904,8 @@ static int do_change_type(const struct path *path, int ms_flags)
->   * (3) The caller tries to copy a pidfs mount referring to a pidfd.
->   * (4) The caller is trying to copy a mount tree that belongs to an
->   *     anonymous mount namespace.
-> + * (5) The caller is trying to copy a mount tree belonging to shm_mnt
-> + *     (e.g. bind-mounting a file descriptor obtained from memfd_create)
->   *
->   *     For that to be safe, this helper enforces that the origin mount
->   *     namespace the anonymous mount namespace was created from is the
-> @@ -2943,6 +2948,9 @@ static inline bool may_copy_tree(const struct path *path)
->  	if (d_op == &pidfs_dentry_operations)
->  		return true;
->  
-> +	if (path->mnt == shm_mnt)
-> +		return true;
+On Wed Feb 4, 2026 at 4:46 PM GMT, Danilo Krummrich wrote:
+> On Wed Feb 4, 2026 at 5:06 PM CET, Andreas Hindborg wrote:
+>> It is my understanding that the SoB needs confirmation from the author
+>> if the code was changed. I changed the code and did not want to bother
+>> the original author, because it is my understanding they do not wish to
+>> be contacted. I did not want to misrepresent the original author, and so
+>> I did not change the "From:" line.
+>
+> Frankly, I don't know what's the correct thing to do in this case; maybe =
+the
+> correct thing is to just keep the SoB, but list all the changes that have=
+ been
+> made.
+>
+> Technically, the same thing is common practice when maintainers (includin=
+g
+> myself) apply (minor) changes to a patch when applying them to their tree=
+.
+>
+>> How would you prefer to account for the work by Abdiel and Boqun?
+>
+> I mean, I don't have a preference and if I would have one, it wouldn't be
+> relevant. :) I just wanted to bring it up since the very first version wa=
+s sent
+> by the two of them. So, I think we should just ask.
 
-The problem with this approach is that it allows to bind-mount anything
-that uses the internal tmpfs mount and that while it allows to
-bind-mount tmpfs it exludes memfd_create() calls that are hugetlb
-backed. So this would allow:
+It looks to me that they're independent works, there're very clear differen=
+ce
+between the two patches. Lina's patch closely follows the ARef design, and =
+it
+looks it also takes into account the dropck (by having `PhantomData`) and h=
+ave
+send/sync considerations.
 
-arch/x86/kernel/cpu/sgx/ioctl.c:        backing = shmem_file_setup("SGX backing", encl_size + (encl_size >> 5),
-drivers/gpu/drm/drm_gem.c:              filp = shmem_file_setup("drm mm object", size, VM_NORESERVE);
-drivers/gpu/drm/i915/gem/i915_gem_shmem.c:              filp = shmem_file_setup("i915", size, flags);
-drivers/gpu/drm/i915/gem/i915_gem_ttm.c:                filp = shmem_file_setup("i915-shmem-tt", size, VM_NORESERVE);
-drivers/gpu/drm/i915/gt/shmem_utils.c:  file = shmem_file_setup(name, PAGE_ALIGN(len), VM_NORESERVE);
-drivers/gpu/drm/ttm/tests/ttm_tt_test.c:        shmem = shmem_file_setup("ttm swap", BO_SIZE, 0);
-drivers/gpu/drm/ttm/ttm_backup.c:       return shmem_file_setup("ttm shmem backup", size, 0);
-drivers/gpu/drm/ttm/ttm_tt.c:   swap_storage = shmem_file_setup("ttm swap", size, 0);
-include/linux/shmem_fs.h:extern struct file *shmem_file_setup(const char *name,
-mm/memfd.c:             file = shmem_file_setup(name, 0, VM_NORESERVE);
-mm/memfd_luo.c: file = shmem_file_setup("", 0, VM_NORESERVE);
-mm/shmem.c:static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name,
-mm/shmem.c:     return __shmem_file_setup(shm_mnt, name, size, flags, S_PRIVATE);
-mm/shmem.c:struct file *shmem_file_setup(const char *name, loff_t size, unsigned long flags)
-mm/shmem.c:     return __shmem_file_setup(shm_mnt, name, size, flags, 0);
-mm/shmem.c:     return __shmem_file_setup(mnt, name, size, flags, 0);
-fs/xfs/scrub/xfile.c:   xf->file = shmem_kernel_file_setup(description, isize, VM_NORESERVE);
-fs/xfs/xfs_buf_mem.c:   file = shmem_kernel_file_setup(descr, 0, 0);
-include/linux/shmem_fs.h:extern struct file *shmem_kernel_file_setup(const char *name, loff_t size,
-ipc/shm.c:              file = shmem_kernel_file_setup(name, size, acctflag);
-mm/shmem.c: * shmem_kernel_file_setup - get an unlinked file living in tmpfs which must be
-mm/shmem.c:struct file *shmem_kernel_file_setup(const char *name, loff_t size, unsigned long flags)
-mm/shmem.c:EXPORT_SYMBOL_GPL(shmem_kernel_file_setup);
-mm/shmem.c:      * bypass file security, in the same way as shmem_kernel_file_setup().
-mm/shmem.c:     return shmem_kernel_file_setup("dev/zero", size, vm_flags);
-security/keys/big_key.c:                file = shmem_kernel_file_setup("", enclen, 0);
-
-which is a no-no. If we want to support that we might need to come up
-with something more granular.
-
-One way to work around this is something like the DRAFT, UNTESTED, BREAKS,
-DOESN'T COMPILE thing below [1]. It copies the shm_mnt for memfds. If
-you have multiple things that want to bind-mount and that rely on the
-internal tmpfs mount this code should instead create an internal
-shm_mnt_clonable mount that can be reused by the respective subsystems.
-
-The problem is hugetlbfs which creates a couple of mounts but it's max 5
-so it's probably ok to do that as well. But ugly as sin.
-
-The other option is to fsck around with the file operations - also ugly
-as sin. The third option is [3] via an inode flag. It's also not
-completely clean but it's preferable to the other ones. Then you can
-check for an inode flag. pidfs and nsfs could also be switched over to
-this unless I'm missing something.
-
-So what will it be: Pest or Cholera?
-
-[3]:
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 78699d2ec0bb..f806ee130b37 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2122,6 +2122,7 @@ extern loff_t vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
- #define S_VERITY       (1 << 16) /* Verity file (using fs/verity/) */
- #define S_KERNEL_FILE  (1 << 17) /* File is in use by the kernel (eg. fs/cachefiles) */
- #define S_ANON_INODE   (1 << 19) /* Inode is an anonymous inode */
-+#define S_KERN_MOUNTABLE (1 << 20) /* Inode is kernel internal but mountable. */
-
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 88ef1fd5cd38..93e443e580b2 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -5880,6 +5880,11 @@ struct file *shmem_file_setup(const char *name, loff_t size, unsigned long flags
- }
- EXPORT_SYMBOL_GPL(shmem_file_setup);
-
-+struct file *shmem_file_mountable(const char *name, loff_t size, unsigned long flags)
-+{
-+       return __shmem_file_setup(shm_mnt, name, size, flags, S_KERN_MOUNTABLE);
-+}
-+
- /**
-  * shmem_file_setup_with_mnt - get an unlinked file living in tmpfs
-  * @mnt: the tmpfs mount where the file will be created
-
-diff --git a/mm/memfd.c b/mm/memfd.c
-index ab5312aff14b..75fd0f5b7b27 100644
---- a/mm/memfd.c
-+++ b/mm/memfd.c
-@@ -464,12 +464,13 @@ static struct file *alloc_file(const char *name, unsigned int flags)
-        int err = 0;
-
-        if (flags & MFD_HUGETLB) {
-+               /* Do the same for hugetblfs. */
-                file = hugetlb_file_setup(name, 0, VM_NORESERVE,
-                                        HUGETLB_ANONHUGE_INODE,
-                                        (flags >> MFD_HUGE_SHIFT) &
-                                        MFD_HUGE_MASK);
-        } else {
--               file = shmem_file_setup(name, 0, VM_NORESERVE);
-+               file = shmem_file_mountable(name, 0, VM_NORESERVE);
-        }
-        if (IS_ERR(file))
-                return file;
-
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 080659ea7e62..1c6be54b2f08 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2399,6 +2399,23 @@ struct vfsmount *clone_private_mount(const struct path *path)
- }
- EXPORT_SYMBOL_GPL(clone_private_mount);
-
-+struct vfsmount *vfs_clone_kern_mount(const struct vfsmount *mnt)
-+{
-+       struct mount *new_mnt;
-+
-+       guard(namespace_shared)();
-+
-+       if (WARN_ON_ONCE(mnt->mnt_ns != MNT_NS_INTERNAL))
-+               return ERR_PTR(-EINVAL);
-+
-+       new_mnt = clone_mnt(mnt, mnt->mnt_root, CL_PRIVATE);
-+       if (IS_ERR(new_mnt))
-+               return ERR_PTR(-EINVAL);
-+
-+       new_mnt->mnt_ns = MNT_NS_INTERNAL;
-+       return &new_mnt->mnt;
-+}
-+
- static void lock_mnt_tree(struct mount *mnt)
- {
-        struct mount *p;
-diff --git a/include/linux/mount.h b/include/linux/mount.h
-index acfe7ef86a1b..8faa864d8f05 100644
---- a/include/linux/mount.h
-+++ b/include/linux/mount.h
-@@ -80,6 +80,7 @@ extern bool __mnt_is_readonly(const struct vfsmount *mnt);
- extern bool mnt_may_suid(struct vfsmount *mnt);
-
- extern struct vfsmount *clone_private_mount(const struct path *path);
-+struct vfsmount *vfs_clone_kern_mount(const struct vfsmount *mnt);
- int mnt_get_write_access(struct vfsmount *mnt);
- void mnt_put_write_access(struct vfsmount *mnt);
-
-diff --git a/mm/memfd.c b/mm/memfd.c
-index ab5312aff14b..bffb5281e082 100644
---- a/mm/memfd.c
-+++ b/mm/memfd.c
-@@ -22,6 +22,9 @@
- #include <uapi/linux/memfd.h>
- #include "swap.h"
-
-+static struct vfsmount *memfd_shm_mnt __ro_after_init;
-+static struct vfsmount *__memfd_internal_mnt __ro_after_init;
-+
- /*
-  * We need a tag: a new tag would expand every xa_node by 8 bytes,
-  * so reuse a tag which we firmly believe is never set or cleared on tmpfs
-@@ -464,12 +467,13 @@ static struct file *alloc_file(const char *name, unsigned int flags)
-        int err = 0;
-
-        if (flags & MFD_HUGETLB) {
-+               /* Do the same for hugetblfs. */
-                file = hugetlb_file_setup(name, 0, VM_NORESERVE,
-                                        HUGETLB_ANONHUGE_INODE,
-                                        (flags >> MFD_HUGE_SHIFT) &
-                                        MFD_HUGE_MASK);
-        } else {
--               file = shmem_file_setup(name, 0, VM_NORESERVE);
-+               file = shmem_file_setup_with_mnt(__memfd_internal_mnt, name, 0, VM_NORESERVE);
-        }
-        if (IS_ERR(file))
-                return file;
-@@ -522,3 +526,12 @@ SYSCALL_DEFINE2(memfd_create,
-        fd_flags = (flags & MFD_CLOEXEC) ? O_CLOEXEC : 0;
-        return FD_ADD(fd_flags, alloc_file(name, flags));
- }
-+
-+void __init memfd_secret_init(const struct vfsmount *mnt)
-+{
-+       memfd_shm_mnt = vfs_clone_kern_mount(mnt);
-+       if (ERR_PTR(memfd_shm_mnt)) /* leave memfd_shm_mnt as an error pointer so comparison against another mount always fails. */
-+               __memfd_internal_mnt = mnt;
-+       else
-+               __memfd_internal_mnt = memfd_shm_mnt;
-+}
+Best,
+Gary
 
