@@ -1,528 +1,290 @@
-Return-Path: <linux-fsdevel+bounces-76350-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76351-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id IJ4hG7uxg2n9swMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76350-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 21:53:15 +0100
+	id gA6JKRSzg2k0tAMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76351-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 21:59:00 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id C28A0EC999
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 21:53:14 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B10B2EC9DB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 21:58:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id CB05E30209C0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Feb 2026 20:52:55 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 90ADD3004C9C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Feb 2026 20:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F59643C06C;
-	Wed,  4 Feb 2026 20:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD4443C072;
+	Wed,  4 Feb 2026 20:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="y5ZUgxCl"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="E9chXpur";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mI4Xx9F7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E95C43C04D
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Feb 2026 20:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D966427A16
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Feb 2026 20:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770238373; cv=none; b=shQ+KigPUx4xWTqD/5DMSUY3CnrcLqgmo29HMTFiB+lsih63WMAvLFKHYIW0C43WkIwRzysFc1RqaD5UIdthXru5Th2C5IMCvuAY5rv9DINJXDQ+gMSzgkbefUdQqvkcAmPdTgOndVagP0ynqjYYGsdXoLxrKkmRU6ebzHkRe5I=
+	t=1770238734; cv=none; b=OosC4oZ9pWTOxQN+G2pwOJ7p7V/6j9ERYjhaLx0oONcKhinJfpf8RCuSM2Vg5T0NASh42HXpWMWSldzsrL/YS+cucJtci7uTNR/KN96QTJk9y/YxR04xCCJ3r6oQgbqVQSvBXa0WOAUcSiET7Mu1nPreSojWcf2uYLv0tjo5qN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770238373; c=relaxed/simple;
-	bh=alGhJXGGY6Iz2Si5V/0nyHNmqevF+XB3BsJv8FreziA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hQ971RB2hhdfSR+9ILIngIOKzCPSY68eC1lVQ2OPOY4Zp/ADzMb/SzzZEERW0sCfh2gzGJGyO4KhsDRevamXN2/4tnZBxLgFVG41snpqzp0pPA2ZTiZsgiy79yzGw3pbduQWiI5YM3ceALMbiKGHU+umNPi5Oy+sTLe/BRomNNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=y5ZUgxCl; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-794ed669269so5041887b3.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Feb 2026 12:52:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1770238372; x=1770843172; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ElXV7L8yNNTd3x7ycBpeFNQKlfvA3rXKb0tVCq9jgFY=;
-        b=y5ZUgxClAlXy8dc8TL9f055hHbxvqR+td3WAu94ThLhTwJ8kDSC2Oqyd+VBSAA6iH6
-         EneKrGpKfu5+qQ7j8bQIMTj4tcUSYIgmShSkwbG/XIMQ48ZCxrP3By5Yout6oL6E+Ybw
-         /cja7Q5aFk38h0zf9RTQICRgX6zDYgrOjhlVP2REm8wuBkVl0v2WLtagCtU9Hd0MKZOZ
-         8wXmis7p7+6XL/tivmMWxdWL/yc6XL8yZda23HHx0/ttgETuMwZ3xBwLu+3Hg+eNAEG4
-         BHas/JpMNY12Qud7gSbFHtVbWREPoaGkAq4YcMqXPb82kNJxbX8VqvG0Gs6eYLAt7sVJ
-         5LDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770238372; x=1770843172;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ElXV7L8yNNTd3x7ycBpeFNQKlfvA3rXKb0tVCq9jgFY=;
-        b=fzpTsEzAzsTeiMKBkPrbDbePUd+w4snOnvYmTVz/Lw8ZcwDUT8swGw191ZKtFFHqnd
-         WYrjpmUlZNZzmfAyPw8j8MSL//nZRbJ66iCBw173OP9ghP4oMozzavD6cgnz7NvRCLNZ
-         BGWxDsayWtowFAMW/bBhY3f7X05ph0g3/nT2oQFMlrozXqpVbxHZGQkpymSO8NfvjSxu
-         1WvQGiACEO8OknE/teVuTHhws1182k/gfhpWRBW/lx5lY8uK2pNNFvvGtl2V1aAsKhj4
-         vBQlOCFYw8hn6u4pdaktMXAaXUTJyjJtvkJpPcieTaryg09jXKIDJjkyt/ni3oWw33hf
-         M0hw==
-X-Gm-Message-State: AOJu0YwXe/nM0ZyjePTxdJMnjHJBg+IOSEx+0DPc+P1UxJJoWB9n6JD7
-	EcCMakjK2uSalIiZ25O5PieIOQ+GQOBzXD7cLUJOkRdWJ/jJ1yys50UoY893ncWrWv0=
-X-Gm-Gg: AZuq6aKqvhvLSImFp2ZPv0kaLFc7Vtzycm1VlAZLlFQykVT463NIWf6gO2dnF0RmuIW
-	lWOXJON6bWCi3FHq/p67io3Q/hB95ous736DIK4Uzt/LY67jc9bUxot96HHfmUH6jbUsXzjOxsd
-	Xdp5DsRLai/Mw+mhp5OaQlR8sc6AVBGYA4cuztd7TPQkCsT7c7ATwzQCKA6F90xmgPlnpfQLMTX
-	piiDajpLc4n6KKl632QNby0Cahw/jQYpp2uJo/UfLo5q3nd/DulZv0bnl7nNDN3x1QL7njVL6k0
-	O/CILJJCnUY8HfcfGpHWipCzgWRpD7gWbyHOoigAdhZyJ1eycKcREpdws/b3khApaAc+esnmnub
-	hRLPQ6LUu5O0Xos8NwPnmqFQxJIyZMOyi5AK9QE9VRAS5gSE7jkGqOM9T/m2lldm5xVSfkUqROb
-	1ZBDUENdrIyJ4S9OzH74iOdwGR9Cmn59SQlb24OsWvOpItSPh2Dbks5EoVC+0uewx2diRQVbw3m
-	NWGr3O2FlPKqKZnGs0=
-X-Received: by 2002:a05:690c:399:b0:78f:cd29:51b9 with SMTP id 00721157ae682-7951539d963mr5990267b3.10.1770238372246;
-        Wed, 04 Feb 2026 12:52:52 -0800 (PST)
-Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:9097:bcaa:e172:33af])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-794feed1a2dsm30349297b3.25.2026.02.04.12.52.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Feb 2026 12:52:51 -0800 (PST)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: ceph-devel@vger.kernel.org,
-	idryomov@gmail.com,
-	pdonnell@redhat.com
-Cc: linux-fsdevel@vger.kernel.org,
-	amarkuze@redhat.com,
-	Slava.Dubeyko@ibm.com,
-	slava@dubeyko.com,
-	vdubeyko@redhat.com,
-	khiremat@redhat.com,
-	Pavan.Rallabhandi@ibm.com
-Subject: [PATCH v7] ceph: fix kernel crash in ceph_open()
-Date: Wed,  4 Feb 2026 12:51:59 -0800
-Message-ID: <20260204205158.1521777-2-slava@dubeyko.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1770238734; c=relaxed/simple;
+	bh=gS+nXSHSl3yLTbrM6HETi75DdB43Auzaya8OwuiAoMY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PDjmvta5ZmcmRrg6oyXwz0anRqG5jC0v6m5i3l837wFRLE0Y2raw1JndJkDL63Aiw/65aOO3N/eXElTL89me74332PVSpyxPrjZDXk+aZlqlycyetkOTNM0asaAcv7uyc+UukksmSGwn2rcYJWGGzla0usolpS65Fz5c84F+NUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=E9chXpur; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mI4Xx9F7; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id AF4D81400094;
+	Wed,  4 Feb 2026 15:58:53 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Wed, 04 Feb 2026 15:58:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1770238733;
+	 x=1770325133; bh=euciqyBfay3pbborA7Zj/CYln3JbSJQBpLLp03ntCOo=; b=
+	E9chXpurBMCN3AtNM5WAqSN7Oc7mkpvkLByxTBKwkfueN8Aa1Cl2kFIAxjb8wM4Y
+	GyI0xNkUaerYJAPA3SMXqYTcp28j84R+qdWNOAc4SqoqiQfVfRItbhcnWwogQjEI
+	VmcTUjqs2i/EoPHdMMNmdLoGj8fdGz91Ed/eqXd5oYghzLNIlzg64DBEONFuf3mG
+	2wqAQQGJxH32LB3vl1WYeTF6Op4BYoBX1byKKqKkHllckfjfRvgjG9CcKrusdf0+
+	8OBVZ3CCvh0TOTyxu1obMNBBIVsQo8bn7qoNP2jScQTIbm8+Km6YjOzQ4lQqvUa+
+	fu2tcHEdh0DBfgmVrv7iXQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1770238733; x=
+	1770325133; bh=euciqyBfay3pbborA7Zj/CYln3JbSJQBpLLp03ntCOo=; b=m
+	I4Xx9F765gxDSEs+ClDMd/1/Fm4SUAuDZvRk23YtwGlksjMeNJmepUc86q4p3NP0
+	xvma05rYdmYaNcAzC8312Jp+rDfWRKW7JkSiVUlpI4lX2MTagUJ8b+/sYqVLSBrA
+	CV5VoAu1mw70m2jSzCxI8QDTfl/bzycD4o7nqPCLRAA3uPyT15aX8vKQ5wLflB1A
+	Con48EJuBj7QiL2bCS6UAd1yuVEZoYburqjuPbp9pW5dXt2OR3TwrwGhaMc6M8p7
+	AHzL/PfT5FaL2xMcCOEhvSDLOgeU874P8lrLb/17Z3bOrjsyhGEuZaaHba0DrlHC
+	xQKPdWKkaCKRgfsvsjJLA==
+X-ME-Sender: <xms:DbODadPGJcFV0bUQ1FM5x3WgqzFn0pQI0l6KvTpEO82YXj0qgesGkw>
+    <xme:DbODaU7vx3-mRE8oNh7MyUEiMcaUb-w-3PeKirpVd3jebp8xWGbszrg4UDIvnLOnh
+    WHOVol1_Sz4rVnmkp5HBzwSlZ1fjtmeQbaB4WQlLrMNiL-Dcyw>
+X-ME-Received: <xmr:DbODaQgoicpH8q9mkujhMMXmXToQGl_WLoY4Vv0_ZiaTgE9dOwiaeqd4dn7SWnkMKUhAUKCUVByGEKP5kQHItS-a1FKEwmj8ss_SPbWibQHc-05HtQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukeefgeeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghrnhgu
+    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
+    htthgvrhhnpeejgfeljeeuffehhfeukedvudfhteethedtheefjefhveduteehhfdttedv
+    keekveenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtgho
+    mhdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepug
+    hjfihonhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmihhklhhoshesshiivghr
+    vgguihdrhhhupdhrtghpthhtohepfhdqphgtsehlihhsthhsrdhlihhnuhigqdhfohhunh
+    gurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgv
+    rhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmh
+    grihhlrdgtohhmpdhrtghpthhtohepjhhohhhnsehgrhhovhgvshdrnhgvthdprhgtphht
+    thhopegrmhhirhejfehilhesghhmrghilhdrtghomhdprhgtphhtthhopehluhhishesih
+    hgrghlihgrrdgtohhmpdhrtghpthhtohephhhorhhsthessghirhhthhgvlhhmvghrrdgu
+    vg
+X-ME-Proxy: <xmx:DbODaZfxXl-4KlwcdDPLOgityTqIdi4yHvYTMPCnFdyF1XTv25Dlyw>
+    <xmx:DbODaYyDtVqHrLareOER09zlo44sHYcI_U_RHForXPMKDL3Iqj3iUA>
+    <xmx:DbODaY2xVNjFBDRPaLjUA9hL7XudPUxZxNHZAXzwjpYbK8rcJUkLag>
+    <xmx:DbODaex_NpsIPYMYGsy2E1Q-pGZ6oIYhfCHBj5aQ-FnMe7oSaU4_hA>
+    <xmx:DbODabMEEBen24GzOjLspgc6tqriDI5hlgDofSkt86Epe7JqXBnTdJ44>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 4 Feb 2026 15:58:51 -0500 (EST)
+Message-ID: <61a68025-f8c9-451a-9df7-a6a70764bf36@bsbernd.com>
+Date: Wed, 4 Feb 2026 21:58:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [LSF/MM/BPF TOPIC] Where is fuse going? API cleanup,
+ restructuring and more
+To: "Darrick J. Wong" <djwong@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: f-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+ Joanne Koong <joannelkoong@gmail.com>, John Groves <John@groves.net>,
+ Amir Goldstein <amir73il@gmail.com>, Luis Henriques <luis@igalia.com>,
+ Horst Birthelmer <horst@birthelmer.de>
+References: <CAJfpegtzYdy3fGGO5E1MU8n+u1j8WVc2eCoOQD_1qq0UV92wRw@mail.gmail.com>
+ <20260204190649.GB7693@frogsfrogsfrogs>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <20260204190649.GB7693@frogsfrogsfrogs>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[dubeyko-com.20230601.gappssmtp.com:s=20230601];
+	DMARC_POLICY_ALLOW(-0.50)[bsbernd.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_DKIM_ALLOW(-0.20)[bsbernd.com:s=fm1,messagingengine.com:s=fm3];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[bsbernd.com:+,messagingengine.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[lists.linux-foundation.org,vger.kernel.org,gmail.com,groves.net,igalia.com,birthelmer.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,bsbernd.com:mid,bsbernd.com:dkim,messagingengine.com:dkim];
 	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[dubeyko-com.20230601.gappssmtp.com:+];
-	TAGGED_FROM(0.00)[bounces-76350-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_TO(0.00)[vger.kernel.org,gmail.com,redhat.com];
-	DMARC_NA(0.00)[dubeyko.com];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	TAGGED_FROM(0.00)[bounces-76351-lists,linux-fsdevel=lfdr.de];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[slava@dubeyko.com,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[bernd@bsbernd.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_FIVE(0.00)[5];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	MID_RHS_MATCH_FROM(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	TO_DN_NONE(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[bootlin.com:url,ceph.com:url,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,dubeyko-com.20230601.gappssmtp.com:dkim]
-X-Rspamd-Queue-Id: C28A0EC999
+	RCPT_COUNT_SEVEN(0.00)[9];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Rspamd-Queue-Id: B10B2EC9DB
 X-Rspamd-Action: no action
 
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-The CephFS kernel client has regression starting from 6.18-rc1.
 
-sudo ./check -g quick
-FSTYP         -- ceph
-PLATFORM      -- Linux/x86_64 ceph-0005 6.18.0-rc5+ #52 SMP PREEMPT_DYNAMIC Fri
-Nov 14 11:26:14 PST 2025
-MKFS_OPTIONS  -- 192.168.1.213:3300:/scratch
-MOUNT_OPTIONS -- -o name=admin,ms_mode=secure 192.168.1.213:3300:/scratch
-/mnt/cephfs/scratch
+On 2/4/26 20:06, Darrick J. Wong wrote:
+> On Mon, Feb 02, 2026 at 02:51:04PM +0100, Miklos Szeredi wrote:
+>> I propose a session where various topics of interest could be
+>> discussed including but not limited to the below list
+>>
+>> New features being proposed at various stages of readiness:
+>>
+>>  - fuse4fs: exporting the iomap interface to userspace
+> 
+> FYI, I took a semi-break from fuse-iomap for 7.0 because I was too busy
+> working on xfs_healer, but I was planning to repost the patchbomb with
+> many many cleanups and reorganizations (thanks Joanne!) as soon as
+> possible after Linus tags 7.0-rc1.
+> 
+> I don't think LSFMM is a good venue for discussing a gigantic pile of
+> code, because (IMO) LSF is better spent either (a) retrying in person to
+> reach consensus on things that we couldn't do online; or (b) discussing
+> roadmaps and/or people problems.  In other words, I'd rather use
+> in-person time to go through broader topics that affect multiple people,
+> and the mailing lists for detailed examination of a large body of text.
+> 
+> However -- do you have questions about the design?  That could be a good
+> topic for email /and/ for a face to face meeting.  Though I strongly
+> suspect that there are so many other sub-topics that fuse-iomap could
+> eat up an entire afternoon at LSFMM:
+> 
+>  0 How do we convince $managers to spend money on porting filesystems
+>    to fuse?  Even if they use the regular slow mode?
+> 
+>  1 What's the process for merging all the code changes into libfuse?
+>    The iomap parts are pretty straightforward because libfuse passes
+>    the request/reply straight through to fuse server, but...
 
-Killed
+To be honest, I'm rather lost with your patch bomb - in which order do I
+need to review what? And what can be merged without?
+Regarding libfuse patches - certainly helpful if you also post them
+here, but I don't want to create PRs out of your series, which then
+might fail the PR tests and I would have to fix it on my own ;)
+So the right order is to create libfuse PRs, let the test run, let
+everyone review here or via PR and then it gets merged.
 
-Nov 14 11:48:10 ceph-0005 kernel: [  154.723902] libceph: mon0
-(2)192.168.1.213:3300 session established
-Nov 14 11:48:10 ceph-0005 kernel: [  154.727225] libceph: client167616
-Nov 14 11:48:11 ceph-0005 kernel: [  155.087260] BUG: kernel NULL pointer
-dereference, address: 0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.087756] #PF: supervisor read access in
-kernel mode
-Nov 14 11:48:11 ceph-0005 kernel: [  155.088043] #PF: error_code(0x0000) - not-
-present page
-Nov 14 11:48:11 ceph-0005 kernel: [  155.088302] PGD 0 P4D 0
-Nov 14 11:48:11 ceph-0005 kernel: [  155.088688] Oops: Oops: 0000 [#1] SMP KASAN
-NOPTI
-Nov 14 11:48:11 ceph-0005 kernel: [  155.090080] CPU: 4 UID: 0 PID: 3453 Comm:
-xfs_io Not tainted 6.18.0-rc5+ #52 PREEMPT(voluntary)
-Nov 14 11:48:11 ceph-0005 kernel: [  155.091245] Hardware name: QEMU Standard PC
-(i440FX + PIIX, 1996), BIOS 1.17.0-5.fc42 04/01/2014
-Nov 14 11:48:11 ceph-0005 kernel: [  155.092103] RIP: 0010:strcmp+0x1c/0x40
-Nov 14 11:48:11 ceph-0005 kernel: [  155.092493] Code: 90 90 90 90 90 90 90 90
-90 90 90 90 90 90 31 c0 eb 14 66 66 2e 0f 1f 84 00 00 00 00 00 90 48 83 c0 01 84
-d2 74 19 0f b6 14 07 <3a> 14 06 74 ef 19 c0 83 c8 01 31 d2 31 f6 31 ff c3 cc cc
-cc cc 31
-Nov 14 11:48:11 ceph-0005 kernel: [  155.094057] RSP: 0018:ffff8881536875c0
-EFLAGS: 00010246
-Nov 14 11:48:11 ceph-0005 kernel: [  155.094522] RAX: 0000000000000000 RBX:
-ffff888116003200 RCX: 0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.095114] RDX: 0000000000000063 RSI:
-0000000000000000 RDI: ffff88810126c900
-Nov 14 11:48:11 ceph-0005 kernel: [  155.095714] RBP: ffff8881536876a8 R08:
-0000000000000000 R09: 0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.096297] R10: 0000000000000000 R11:
-0000000000000000 R12: dffffc0000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.096889] R13: ffff8881061d0000 R14:
-0000000000000000 R15: 0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.097490] FS:  000074a85c082840(0000)
-GS:ffff8882401a4000(0000) knlGS:0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.098146] CS:  0010 DS: 0000 ES: 0000
-CR0: 0000000080050033
-Nov 14 11:48:11 ceph-0005 kernel: [  155.098630] CR2: 0000000000000000 CR3:
-0000000110ebd001 CR4: 0000000000772ef0
-Nov 14 11:48:11 ceph-0005 kernel: [  155.099219] PKRU: 55555554
-Nov 14 11:48:11 ceph-0005 kernel: [  155.099476] Call Trace:
-Nov 14 11:48:11 ceph-0005 kernel: [  155.099686]  <TASK>
-Nov 14 11:48:11 ceph-0005 kernel: [  155.099873]  ?
-ceph_mds_check_access+0x348/0x1760
-Nov 14 11:48:11 ceph-0005 kernel: [  155.100267]  ?
-__kasan_check_write+0x14/0x30
-Nov 14 11:48:11 ceph-0005 kernel: [  155.100671]  ? lockref_get+0xb1/0x170
-Nov 14 11:48:11 ceph-0005 kernel: [  155.100979]  ?
-__pfx__raw_spin_lock+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.101372]  ceph_open+0x322/0xef0
-Nov 14 11:48:11 ceph-0005 kernel: [  155.101669]  ? __pfx_ceph_open+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.101996]  ?
-__pfx_apparmor_file_open+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.102434]  ?
-__ceph_caps_issued_mask_metric+0xd6/0x180
-Nov 14 11:48:11 ceph-0005 kernel: [  155.102911]  do_dentry_open+0x7bf/0x10e0
-Nov 14 11:48:11 ceph-0005 kernel: [  155.103249]  ? __pfx_ceph_open+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.103508]  vfs_open+0x6d/0x450
-Nov 14 11:48:11 ceph-0005 kernel: [  155.103697]  ? may_open+0xec/0x370
-Nov 14 11:48:11 ceph-0005 kernel: [  155.103893]  path_openat+0x2017/0x50a0
-Nov 14 11:48:11 ceph-0005 kernel: [  155.104110]  ? __pfx_path_openat+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.104345]  ?
-__pfx_stack_trace_save+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.104599]  ?
-stack_depot_save_flags+0x28/0x8f0
-Nov 14 11:48:11 ceph-0005 kernel: [  155.104865]  ? stack_depot_save+0xe/0x20
-Nov 14 11:48:11 ceph-0005 kernel: [  155.105063]  do_filp_open+0x1b4/0x450
-Nov 14 11:48:11 ceph-0005 kernel: [  155.105253]  ?
-__pfx__raw_spin_lock_irqsave+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.105538]  ? __pfx_do_filp_open+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.105748]  ? __link_object+0x13d/0x2b0
-Nov 14 11:48:11 ceph-0005 kernel: [  155.105949]  ?
-__pfx__raw_spin_lock+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.106169]  ?
-__check_object_size+0x453/0x600
-Nov 14 11:48:11 ceph-0005 kernel: [  155.106428]  ? _raw_spin_unlock+0xe/0x40
-Nov 14 11:48:11 ceph-0005 kernel: [  155.106635]  do_sys_openat2+0xe6/0x180
-Nov 14 11:48:11 ceph-0005 kernel: [  155.106827]  ?
-__pfx_do_sys_openat2+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.107052]  __x64_sys_openat+0x108/0x240
-Nov 14 11:48:11 ceph-0005 kernel: [  155.107258]  ?
-__pfx___x64_sys_openat+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.107529]  ?
-__pfx___handle_mm_fault+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.107783]  x64_sys_call+0x134f/0x2350
-Nov 14 11:48:11 ceph-0005 kernel: [  155.108007]  do_syscall_64+0x82/0xd50
-Nov 14 11:48:11 ceph-0005 kernel: [  155.108201]  ?
-fpregs_assert_state_consistent+0x5c/0x100
-Nov 14 11:48:11 ceph-0005 kernel: [  155.108467]  ? do_syscall_64+0xba/0xd50
-Nov 14 11:48:11 ceph-0005 kernel: [  155.108626]  ? __kasan_check_read+0x11/0x20
-Nov 14 11:48:11 ceph-0005 kernel: [  155.108801]  ?
-count_memcg_events+0x25b/0x400
-Nov 14 11:48:11 ceph-0005 kernel: [  155.109013]  ? handle_mm_fault+0x38b/0x6a0
-Nov 14 11:48:11 ceph-0005 kernel: [  155.109216]  ? __kasan_check_read+0x11/0x20
-Nov 14 11:48:11 ceph-0005 kernel: [  155.109457]  ?
-fpregs_assert_state_consistent+0x5c/0x100
-Nov 14 11:48:11 ceph-0005 kernel: [  155.109724]  ?
-irqentry_exit_to_user_mode+0x2e/0x2a0
-Nov 14 11:48:11 ceph-0005 kernel: [  155.109991]  ? irqentry_exit+0x43/0x50
-Nov 14 11:48:11 ceph-0005 kernel: [  155.110180]  ? exc_page_fault+0x95/0x100
-Nov 14 11:48:11 ceph-0005 kernel: [  155.110389]
-entry_SYSCALL_64_after_hwframe+0x76/0x7e
-Nov 14 11:48:11 ceph-0005 kernel: [  155.110638] RIP: 0033:0x74a85bf145ab
-Nov 14 11:48:11 ceph-0005 kernel: [  155.110821] Code: 25 00 00 41 00 3d 00 00
-41 00 74 4b 64 8b 04 25 18 00 00 00 85 c0 75 67 44 89 e2 48 89 ee bf 9c ff ff ff
-b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 0f 87 91 00 00 00 48 8b 54 24 28 64 48
-2b 14 25
-Nov 14 11:48:11 ceph-0005 kernel: [  155.111724] RSP: 002b:00007ffc77d316d0
-EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-Nov 14 11:48:11 ceph-0005 kernel: [  155.112080] RAX: ffffffffffffffda RBX:
-0000000000000002 RCX: 000074a85bf145ab
-Nov 14 11:48:11 ceph-0005 kernel: [  155.112442] RDX: 0000000000000000 RSI:
-00007ffc77d32789 RDI: 00000000ffffff9c
-Nov 14 11:48:11 ceph-0005 kernel: [  155.112790] RBP: 00007ffc77d32789 R08:
-00007ffc77d31980 R09: 0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.113125] R10: 0000000000000000 R11:
-0000000000000246 R12: 0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.113502] R13: 00000000ffffffff R14:
-0000000000000180 R15: 0000000000000001
-Nov 14 11:48:11 ceph-0005 kernel: [  155.113838]  </TASK>
-Nov 14 11:48:11 ceph-0005 kernel: [  155.113957] Modules linked in:
-intel_rapl_msr intel_rapl_common intel_uncore_frequency_common intel_pmc_core
-pmt_telemetry pmt_discovery pmt_class intel_pmc_ssram_telemetry intel_vsec
-kvm_intel kvm joydev irqbypass polyval_clmulni ghash_clmulni_intel aesni_intel
-rapl floppy input_leds psmouse i2c_piix4 vga16fb mac_hid i2c_smbus vgastate
-serio_raw bochs qemu_fw_cfg pata_acpi sch_fq_codel rbd msr parport_pc ppdev lp
-parport efi_pstore
-Nov 14 11:48:11 ceph-0005 kernel: [  155.116339] CR2: 0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.116574] ---[ end trace 0000000000000000
-]---
-Nov 14 11:48:11 ceph-0005 kernel: [  155.116826] RIP: 0010:strcmp+0x1c/0x40
-Nov 14 11:48:11 ceph-0005 kernel: [  155.117058] Code: 90 90 90 90 90 90 90 90
-90 90 90 90 90 90 31 c0 eb 14 66 66 2e 0f 1f 84 00 00 00 00 00 90 48 83 c0 01 84
-d2 74 19 0f b6 14 07 <3a> 14 06 74 ef 19 c0 83 c8 01 31 d2 31 f6 31 ff c3 cc cc
-cc cc 31
-Nov 14 11:48:11 ceph-0005 kernel: [  155.118070] RSP: 0018:ffff8881536875c0
-EFLAGS: 00010246
-Nov 14 11:48:11 ceph-0005 kernel: [  155.118362] RAX: 0000000000000000 RBX:
-ffff888116003200 RCX: 0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.118748] RDX: 0000000000000063 RSI:
-0000000000000000 RDI: ffff88810126c900
-Nov 14 11:48:11 ceph-0005 kernel: [  155.119116] RBP: ffff8881536876a8 R08:
-0000000000000000 R09: 0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.119492] R10: 0000000000000000 R11:
-0000000000000000 R12: dffffc0000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.119865] R13: ffff8881061d0000 R14:
-0000000000000000 R15: 0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.120242] FS:  000074a85c082840(0000)
-GS:ffff8882401a4000(0000) knlGS:0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.120704] CS:  0010 DS: 0000 ES: 0000
-CR0: 0000000080050033
-Nov 14 11:48:11 ceph-0005 kernel: [  155.121008] CR2: 0000000000000000 CR3:
-0000000110ebd001 CR4: 0000000000772ef0
-Nov 14 11:48:11 ceph-0005 kernel: [  155.121409] PKRU: 55555554
+> 
+>  2 ...the fuse service container part involves a bunch of architecture
+>    shifts to libfuse.  First you need a new mount helper to connect to
+>    a unix socket to start the service, pass some resources (fds and
+>    mount options) through the unix socket to the service.  Obviously
+>    that requires new library code for a fuse server to see the unix
+>    socket and request those resources.  After that you also need to
+>    define a systemd service file that stands up the appropriate
+>    sandboxing.  I've not written examples, but that needs to be in the
+>    final product.
+> 
+>  3 What tooling changes to we need to make to /sbin/mount so that it
+>    can discover fuse-service-container support and the caller's
+>    preferences in using the f-s-c vs. the kernel and whatnot?  Do we
+>    add another weird x-foo-bar "mount option" so that preferences may
+>    be specified explicitly?
+> 
+>  4 For defaults situations, where do we make policy about when to use
+>    f-s-c and when do we allow use of the kernel driver?  I would guess
+>    that anything in /etc/fstab could use the kernel driver, and
+>    everything else should use a fuse container if possible.  For
+>    unprivileged non-root-ns mounts I think we'd only allow the
+>    container?
+> 
+> <shrug> If we made progress on merging the kernel code in the next three
+> months, does that clear the way for discussions of 2-4 at LSF?
+> 
+> Also, I hear that FOSSY 2026 will have kernel and KDE tracks, and it's
+> in Vancouver BC, which could be a good venu to talk to the DE people.
+> 
+>>  - famfs: export distributed memory
+> 
+> This has been, uh, hanging out for an extraordinarily long time.
+> 
+>>  - zero copy for fuse-io-uring
+>>
+>>  - large folios
+>>
+>>  - file handles on the userspace API
+> 
+> (also all that restart stuff, but I think that was already proposed)
+> 
+>>  - compound requests
+>>
+>>  - BPF scripts
+> 
+> Is this an extension of the fuse-bpf filtering discussion that happened
+> in 2023?  (I wondered why you wouldn't just do bpf hooks in the vfs
+> itself, but maybe hch already NAKed that?)
+> 
+> As for fuse-iomap -- this week Joanne and I have been working on making
+> it so that fuse servers can upload ->iomap_{begin,end,ioend} functions
+> into the kernel as BPF programs to avoid server upcalls.  This might be
+> a better way to handle the repeating-pattern-iomapping pattern that
+> seems to exist in famfs than hardcoding things in yet another "upload
+> iomap mappings" fuse request.
+> 
+> (Yes I see you FUSE_SETUPMAPPING...)
+> 
+>> How do these fit into the existing codebase?
+>>
+>> Cleaner separation of layers:
+>>
+>>  - transport layer: /dev/fuse, io-uring, viriofs
+> 
+> I've noticed that each thread in the libfuse uring backend collects a
+> pile of CQEs and processes them linearly.  So if it receives 5 CQEs and
+> the first request takes 30 seconds, the other four just get stuck in
+> line...?
 
-We have issue here [1] if fs_name == NULL:
+I'm certainly open for suggestions and patches :)
+At DDN the queues are polled from reactors (co-routine line), that
+additional libfuse API will never go public, but I definitely want to
+finish and if possible implement a new API before I leave (less than 2
+months left). We had a bit of discussion with Stefan Hajnoczi about that
+around last March, but I never came even close that task the whole year.
 
-const char fs_name = mdsc->fsc->mount_options->mds_namespace;
-    ...
-    if (auth->match.fs_name && strcmp(auth->match.fs_name, fs_name)) {
-            / fsname mismatch, try next one */
-            return 0;
-    }
+> 
+>>  - filesystem layer: local fs, distributed fs
+> 
+> <nod>
+> 
+>> Introduce new version of cleaned up API?
+>>
+>>  - remove async INIT
+>>
+>>  - no fixed ROOT_ID
+> 
+> Can we just merge this?
+> https://lore.kernel.org/linux-fsdevel/176169811231.1426070.12996939158894110793.stgit@frogsfrogsfrogs/
 
-v2
-Patrick Donnelly suggested that: In summary, we should definitely start
-decoding `fs_name` from the MDSMap and do strict authorizations checks
-against it. Note that the `--mds_namespace` should only be used for
-selecting the file system to mount and nothing else. It's possible
-no mds_namespace is specified but the kernel will mount the only
-file system that exists which may have name "foo".
+Could you create a libfuse PR please?
 
-v3
-The namespace_equals() logic has been generalized into
-__namespace_equals() with the goal of using it in
-ceph_mdsc_handle_fsmap() and ceph_mds_auth_match().
-The misspelling of CEPH_NAMESPACE_WILDCARD has been corrected.
 
-v4
-The __namespace_equals() now supports wildcard check.
-
-v5
-Patrick Donnelly suggested to add the sanity check of
-kstrdup() returned pointer in ceph_mdsmap_decode()
-added logic. Also, he suggested much simpler logic of
-namespace strings comparison in the form of
-ceph_namespace_match() logic.
-
-v6
-Only ceph_namespace_match() compares the names
-with CEPH_NAMESPACE_WILDCARD.
-
-v7
-Ilya Dryomov suggested cleanup in ceph_mdsmap_decode(),
-ceph_namespace_match(), and rollback the logic of
-namespace_equals().
-
-This patch reworks ceph_mdsmap_decode() and namespace_equals() with
-the goal of supporting the suggested concept. Now struct ceph_mdsmap
-contains m_fs_name field that receives copy of extracted FS name
-by ceph_extract_encoded_string(). For the case of "old" CephFS file systems,
-it is used "cephfs" name. Also, namespace_equals() method has been
-reworked with the goal of proper names comparison.
-
-[1] https://elixir.bootlin.com/linux/v6.18-rc4/source/fs/ceph/mds_client.c#L5666
-[2] https://tracker.ceph.com/issues/73886
-
-Fixes: 22c73d52a6d0 ("ceph: fix multifs mds auth caps issue")
-Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-cc: Kotresh Hiremath Ravishankar <khiremat@redhat.com>
-cc: Alex Markuze <amarkuze@redhat.com>
-cc: Ilya Dryomov <idryomov@gmail.com>
-cc: Patrick Donnelly <pdonnell@redhat.com>
-cc: Ceph Development <ceph-devel@vger.kernel.org>
----
- fs/ceph/mds_client.c         | 11 +++++------
- fs/ceph/mdsmap.c             | 26 +++++++++++++++++++-------
- fs/ceph/mdsmap.h             |  1 +
- fs/ceph/super.h              | 16 ++++++++++++++--
- include/linux/ceph/ceph_fs.h |  6 ++++++
- 5 files changed, 45 insertions(+), 15 deletions(-)
-
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 7e4eab824dae..a4b9254b74a5 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -5671,7 +5671,7 @@ static int ceph_mds_auth_match(struct ceph_mds_client *mdsc,
- 	u32 caller_uid = from_kuid(&init_user_ns, cred->fsuid);
- 	u32 caller_gid = from_kgid(&init_user_ns, cred->fsgid);
- 	struct ceph_client *cl = mdsc->fsc->client;
--	const char *fs_name = mdsc->fsc->mount_options->mds_namespace;
-+	const char *fs_name = mdsc->mdsmap->m_fs_name;
- 	const char *spath = mdsc->fsc->mount_options->server_path;
- 	bool gid_matched = false;
- 	u32 gid, tlen, len;
-@@ -5679,7 +5679,8 @@ static int ceph_mds_auth_match(struct ceph_mds_client *mdsc,
- 
- 	doutc(cl, "fsname check fs_name=%s  match.fs_name=%s\n",
- 	      fs_name, auth->match.fs_name ? auth->match.fs_name : "");
--	if (auth->match.fs_name && strcmp(auth->match.fs_name, fs_name)) {
-+
-+	if (!ceph_namespace_match(auth->match.fs_name, fs_name)) {
- 		/* fsname mismatch, try next one */
- 		return 0;
- 	}
-@@ -6122,7 +6123,6 @@ void ceph_mdsc_handle_fsmap(struct ceph_mds_client *mdsc, struct ceph_msg *msg)
- {
- 	struct ceph_fs_client *fsc = mdsc->fsc;
- 	struct ceph_client *cl = fsc->client;
--	const char *mds_namespace = fsc->mount_options->mds_namespace;
- 	void *p = msg->front.iov_base;
- 	void *end = p + msg->front.iov_len;
- 	u32 epoch;
-@@ -6157,9 +6157,8 @@ void ceph_mdsc_handle_fsmap(struct ceph_mds_client *mdsc, struct ceph_msg *msg)
- 		namelen = ceph_decode_32(&info_p);
- 		ceph_decode_need(&info_p, info_end, namelen, bad);
- 
--		if (mds_namespace &&
--		    strlen(mds_namespace) == namelen &&
--		    !strncmp(mds_namespace, (char *)info_p, namelen)) {
-+		if (namespace_equals(fsc->mount_options,
-+				     (char *)info_p, namelen)) {
- 			mount_fscid = fscid;
- 			break;
- 		}
-diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
-index 2c7b151a7c95..b228e5ecfb92 100644
---- a/fs/ceph/mdsmap.c
-+++ b/fs/ceph/mdsmap.c
-@@ -353,22 +353,33 @@ struct ceph_mdsmap *ceph_mdsmap_decode(struct ceph_mds_client *mdsc, void **p,
- 		__decode_and_drop_type(p, end, u8, bad_ext);
- 	}
- 	if (mdsmap_ev >= 8) {
--		u32 fsname_len;
-+		size_t fsname_len;
-+
- 		/* enabled */
- 		ceph_decode_8_safe(p, end, m->m_enabled, bad_ext);
-+
- 		/* fs_name */
--		ceph_decode_32_safe(p, end, fsname_len, bad_ext);
-+		m->m_fs_name = ceph_extract_encoded_string(p, end,
-+							   &fsname_len,
-+							   GFP_NOFS);
-+		if (IS_ERR(m->m_fs_name)) {
-+			m->m_fs_name = NULL;
-+			goto nomem;
-+		}
- 
- 		/* validate fsname against mds_namespace */
--		if (!namespace_equals(mdsc->fsc->mount_options, *p,
-+		if (!namespace_equals(mdsc->fsc->mount_options, m->m_fs_name,
- 				      fsname_len)) {
--			pr_warn_client(cl, "fsname %*pE doesn't match mds_namespace %s\n",
--				       (int)fsname_len, (char *)*p,
-+			pr_warn_client(cl, "fsname %s doesn't match mds_namespace %s\n",
-+				       m->m_fs_name,
- 				       mdsc->fsc->mount_options->mds_namespace);
- 			goto bad;
- 		}
--		/* skip fsname after validation */
--		ceph_decode_skip_n(p, end, fsname_len, bad);
-+	} else {
-+		m->m_enabled = false;
-+		m->m_fs_name = kstrdup(CEPH_OLD_FS_NAME, GFP_NOFS);
-+		if (!m->m_fs_name)
-+			goto nomem;
- 	}
- 	/* damaged */
- 	if (mdsmap_ev >= 9) {
-@@ -430,6 +441,7 @@ void ceph_mdsmap_destroy(struct ceph_mdsmap *m)
- 		kfree(m->m_info);
- 	}
- 	kfree(m->m_data_pg_pools);
-+	kfree(m->m_fs_name);
- 	kfree(m);
- }
- 
-diff --git a/fs/ceph/mdsmap.h b/fs/ceph/mdsmap.h
-index 1f2171dd01bf..d48d07c3516d 100644
---- a/fs/ceph/mdsmap.h
-+++ b/fs/ceph/mdsmap.h
-@@ -45,6 +45,7 @@ struct ceph_mdsmap {
- 	bool m_enabled;
- 	bool m_damaged;
- 	int m_num_laggy;
-+	char *m_fs_name;
- };
- 
- static inline struct ceph_entity_addr *
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index a1f781c46b41..29a980e22dc2 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -104,14 +104,26 @@ struct ceph_mount_options {
- 	struct fscrypt_dummy_policy dummy_enc_policy;
- };
- 
-+#define CEPH_NAMESPACE_WILDCARD		"*"
-+
-+static inline bool ceph_namespace_match(const char *pattern,
-+					const char *target)
-+{
-+	if (!pattern || !pattern[0] ||
-+	    !strcmp(pattern, CEPH_NAMESPACE_WILDCARD))
-+		return true;
-+
-+	return !strcmp(pattern, target);
-+}
-+
- /*
-  * Check if the mds namespace in ceph_mount_options matches
-  * the passed in namespace string. First time match (when
-  * ->mds_namespace is NULL) is treated specially, since
-  * ->mds_namespace needs to be initialized by the caller.
-  */
--static inline int namespace_equals(struct ceph_mount_options *fsopt,
--				   const char *namespace, size_t len)
-+static inline bool namespace_equals(struct ceph_mount_options *fsopt,
-+				    const char *namespace, size_t len)
- {
- 	return !(fsopt->mds_namespace &&
- 		 (strlen(fsopt->mds_namespace) != len ||
-diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
-index c7f2c63b3bc3..08e5dbe15ca4 100644
---- a/include/linux/ceph/ceph_fs.h
-+++ b/include/linux/ceph/ceph_fs.h
-@@ -31,6 +31,12 @@
- #define CEPH_INO_CEPH   2            /* hidden .ceph dir */
- #define CEPH_INO_GLOBAL_SNAPREALM  3 /* global dummy snaprealm */
- 
-+/*
-+ * name for "old" CephFS file systems,
-+ * see ceph.git e2b151d009640114b2565c901d6f41f6cd5ec652
-+ */
-+#define CEPH_OLD_FS_NAME	"cephfs"
-+
- /* arbitrary limit on max # of monitors (cluster of 3 is typical) */
- #define CEPH_MAX_MON   31
- 
--- 
-2.52.0
-
+Thanks,
+Bernd
 
