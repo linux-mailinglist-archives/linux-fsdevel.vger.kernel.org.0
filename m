@@ -1,73 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-76246-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76247-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OOZtKInUgml5cQMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76246-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 06:09:29 +0100
+	id aAmbB1DUgml5cQMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76247-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 06:08:32 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EE8FE1B62
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 06:09:29 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89D7EE1AEC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 06:08:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4D56A308B829
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Feb 2026 05:08:18 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id EA288300BEA7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Feb 2026 05:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696C2353EE0;
-	Wed,  4 Feb 2026 05:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD44353EE9;
+	Wed,  4 Feb 2026 05:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="DhtD8bzC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="w89hP2rE"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="KiIPM8T+";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RvJkWztt"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from flow-a6-smtp.messagingengine.com (flow-a6-smtp.messagingengine.com [103.168.172.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A335B1632E7;
-	Wed,  4 Feb 2026 05:08:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414DD32F759;
+	Wed,  4 Feb 2026 05:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770181695; cv=none; b=i2gPW6BIWWDbUWrqnxY/Tl/JcB7IsxhMirjflJ91sDIW6XMajinMOWn4X27IlHGRoiabC/d2z1ISn2AA5/GCyNJpFkbL3zo5sapBqW9j7hdtLnYcoNYvPaT+FhqGjiqYj5GM92Bvl0jNd4ReGwmznJC3/ZakSOoaag+3jXMPDHM=
+	t=1770181703; cv=none; b=Ql9joq8I4PnLUP3BOMXRK20NDt8xfo/9lgOKR4POidl7JqBy+j06f6+KMxVZ/aKMDdls+mxL6rujoDTPudoPZYoHV3MW1BGqwN4KAbtPbL1bhAqTevbvSWN0f2/l3HBNI3WabPl3P+y+xr4JAWHonSNGrKmcMSBNIbDQUqpVvn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770181695; c=relaxed/simple;
-	bh=FB/uc3IA68XJYpoaP3UA2p1FkWkGkzu0EoP3vo0ZfU8=;
+	s=arc-20240116; t=1770181703; c=relaxed/simple;
+	bh=WcuGfAaU+Z2+KHqcZEi7NR4U2jlWhd5mTxC/d64/YfY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W7ZdYMflYHA0UCfsLai6FkkPnM6IH34h5QkOqZfiHyK4JCWZKu5GdbDvYWSqqYKCz4BbimdyjgNOgZ1epIBSvpLYxHSxt5ngpR2j50PJofftavMVh8tWHFVb9R878IZ+Er/QszgGRXNVESGLI2orE9K0112Six+G7noJY/T9XKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=DhtD8bzC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=w89hP2rE; arc=none smtp.client-ip=103.168.172.141
+	 MIME-Version; b=XKlzqlJxIG/7Hfe2cnz/wqKQaa3XZI6TzzHBDMqwWwnyXM1m8hKmtnGHBKuLnof68YqjV2lwLAmzda+phCStG4o29DcTY6QqbKSmFmalis5jssjs0eucYVol5ww0HD7TNf4kHB086q3Q4dTXdrByi+/GcimUmz47gT37Wa+GAxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=KiIPM8T+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RvJkWztt; arc=none smtp.client-ip=103.168.172.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailflow.phl.internal (Postfix) with ESMTP id EA7B0138077B;
-	Wed,  4 Feb 2026 00:08:14 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Wed, 04 Feb 2026 00:08:14 -0500
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailflow.phl.internal (Postfix) with ESMTP id 863B21380781;
+	Wed,  4 Feb 2026 00:08:22 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Wed, 04 Feb 2026 00:08:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
 	cc:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to; s=fm3; t=1770181694;
-	 x=1770188894; bh=3vylP70Td4gLvBkKBkP+NDaQ107NjHxVZqjmkf4RPM4=; b=
-	DhtD8bzCE/oNQIkGTTjyqSX4LQFUqFhjVSWKj/iXxrgRLl9NMJgIFm1xZ4/+udL+
-	/9QWvwMQV6geJ18mtU4+cgzDERVj1ReQO2ExjsJaVPBAVXtasGRepSdMNCEs3Cen
-	CSHYUma0vbM4ukuPPL8Z+pOn/nj6EBbbHKgw+8Uy+6hKfGk7XO7tQ6p6EyhH6c8C
-	6p87VF0V5HVZ3l4zZJvwKWrqJ1tuJ4YK8Vb4OGfaZgK4ZEwkYmQGCwmBQcSAAb+W
-	YTqNDXuE4QXcuT2g5nwtYr+JVfmjJkqqHAoAEzlxhbyx6v3JmJad53Gh8DcrsokT
-	ZZ8ubTAUQbE5Utbhr9g6Ng==
+	:reply-to:reply-to:subject:subject:to:to; s=fm3; t=1770181702;
+	 x=1770188902; bh=czLckKBE0Hyt9Dd+uhzinS1Ik9k72RW9/tiMvXjH9ZE=; b=
+	KiIPM8T+9Qs7OMViXU2ryPo92F7MQmvanDSVUIjj5kC57ZcpVQaFnv4rQ1NMLi4B
+	+0RV73AC3r13JN5qIK1EhD+Tu70qyQCgvG1EHuvV5EPBAXYRAVPdX8jol3tDjUl+
+	xCuDDT+BHlg+nhgNj7Q16RBLeutN55zpthaytVCWQGcbSeQxYiM4BYvrGKScCx3J
+	ZdcE5j4rU3uZZYWzLeOdqIF+ZKUo3CNqxDFnJaQTY3nVKvxowyR9+UkPlD+N5g+F
+	NdWf52di24JGw/l9PriGoDD7z/vEmDmWIwFDlbPXl2AazB1bGjPw9gG2E3Nmypf4
+	xBdB1ZxRbTl2gKxhSjEUjQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1770181694; x=1770188894; bh=3
-	vylP70Td4gLvBkKBkP+NDaQ107NjHxVZqjmkf4RPM4=; b=w89hP2rEFqQl9e3q2
-	g2FP5CWLzoLxvBPctBENFDxM58CxydFLvse3FHdP6d0+csiZVe2ZvqhGTbwvpjLN
-	8RZExjMi7fsXAsrW2rNHsW8myHB3LnaOhRbyUB74IWtr8/qkS7dOTCDnbVKBtB1o
-	TkoG0g9EuxvgI28XT+UnTGzKof8yNAjVTmIBkM2hvmtfEnwcacSmkVx000eCS3VM
-	GKno6xlQSBDJjHWqV8Jzuvr5kjZ3q7qpw40XTCPMFdJu7SnRFt3E98DL/BqeNVEF
-	P+RWyaXoyUXGMz2W7fIKHBAtXLUjLtTMg1lzqsBu+G8WvZ+9okCIlHHVcJNQBI95
-	IeHAQ==
-X-ME-Sender: <xms:PtSCaRWK9CbwYmtwwlh5aoV8Dyt096I5dx4dm5-UQ2ahT-mugdIwog>
-    <xme:PtSCadJPm5HNUHC82q7naFpsh7T9mJ46Be5jIwHNl69dpLD-CxhuM2O2thJ8k_Ur8
-    IaAnukIuBfqVdHk1DOtI5ax30L0AChNU-7_9TfKpwrWh3vwqg>
-X-ME-Received: <xmr:PtSCadZEaggWHYq0wx4dK8BuY-9dGYzUuqF2q6qf-sxhwmMWZQ-R_uLTVUYkVeWcBDFKqwc2gTH0q1PsjPJRVRlloKGWvQXJOycNcA_OjKEG>
+	:x-me-sender:x-sasl-enc; s=fm3; t=1770181702; x=1770188902; bh=c
+	zLckKBE0Hyt9Dd+uhzinS1Ik9k72RW9/tiMvXjH9ZE=; b=RvJkWztt3XeqOopzq
+	Z3hLdDpnoBpjoznAYPP7N0yKlbOsq5EXH1Bszoir1vuBAX48a9NgeogyHQ73wHEo
+	z/oizouEHIODIXBpnV33EA61RMDPTbwj+rAepzhBlc4VLCUYJ1uI7KRdrHOs6hw1
+	JTLepBfzI+42m6l5+4R8v1tBuvf1ywnQauoadNBniqZM39DAExI68jtT1Qxyko5U
+	d82AM3QiOyxyn/v9u3WQ4Tt8iHhnjHFIZKeWhGRK27Ns1sIjLIcma7JtZgJS/ygA
+	pq5sgU4k8HHaFdrU4XtoAZdA37ixRm5dktHh7MMsltzrp/PAW5dkeo2C3XPrwUmw
+	RwEZw==
+X-ME-Sender: <xms:RtSCaSaTeFPpwZ9ad5ECOH79gWBgfv8Uw60jM-icIBHcn9J8GK85Rg>
+    <xme:RtSCaQ9ypD_gg3ssbVAeszvRJFosEo9N69T_G15GjBZU5L-iwWmp6WBNYiaNyziD5
+    YU7MBzgrQ8Qc4aCJOnqCWOTrAjUD2Kfsz7lprM5fmJFK3A>
+X-ME-Received: <xmr:RtSCac-mTM3MPBtazCIE51UTNsCjLtw-TALLZJD84jeacmyiwAssCyXhRQdhS3MdhL4epXsdBpPj2_uW4QfaAGxWY_OTLVzmbTPjZqE5Q7T8>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukedukeeiucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
@@ -85,14 +85,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukedukeeiucetufdote
     vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvg
     hrnhgvlhdrohhrghdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhr
     tghpthhtohepjhgrtghksehsuhhsvgdrtgii
-X-ME-Proxy: <xmx:PtSCaZSGsBqfYqbFFS8dtfzI2ivVNXNwDGaqiKOPBmwCVKJrs0LH5g>
-    <xmx:PtSCadhVrra5MkiI8N6tG94c5mXG8tip-xJcKGrKu_bp0501UG2d7A>
-    <xmx:PtSCadtsHemgaPVocEe53BqPbwoeWP6Fz8DlHNPTF7gvd3V3UWs00A>
-    <xmx:PtSCaXx0gJHSWG2JkZc3PQb04rk9gpV4HtUVRHcN2h3onw-czQ39mA>
-    <xmx:PtSCaU9Mqd1v6-21hkHMOFCVfaR5earMybe2t_lXznNPm_tYkXKs48Ir>
+X-ME-Proxy: <xmx:RtSCaZnzpZLunuK6z5TIO8Aj7lUMUd_Fy0B2rnFKFFVaYfWAJQyMpQ>
+    <xmx:RtSCafk-vCA_IzafYYcNyxP39V2qQpHXVCREOmBpqllj7uWP2ErqUQ>
+    <xmx:RtSCaehV6RiZ72St-j3GmlBEVQEJq95INHC71585LPTuTSPtdKqpFA>
+    <xmx:RtSCaQVdsDxSUpYL_PlDqbsr5oWbrM8KhOJ9NixtxGdE520zekBqoQ>
+    <xmx:RtSCaXhYhR2dry0tYUo7vtVGScp-vIyzxkT3enECCHJuTuKSjv22NqRf>
 Feedback-ID: iab3e480c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 4 Feb 2026 00:08:09 -0500 (EST)
+ 4 Feb 2026 00:08:16 -0500 (EST)
 From: NeilBrown <neilb@ownmail.net>
 To: Christian Brauner <brauner@kernel.org>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -115,9 +115,9 @@ Cc: linux-kernel@vger.kernel.org,
 	apparmor@lists.ubuntu.com,
 	linux-security-module@vger.kernel.org,
 	selinux@vger.kernel.org
-Subject: [PATCH 01/13] fs/proc: Don't lock root inode when creating "self" and "thread-self"
-Date: Wed,  4 Feb 2026 15:57:45 +1100
-Message-ID: <20260204050726.177283-2-neilb@ownmail.net>
+Subject: [PATCH 02/13] VFS: move the start_dirop() kerndoc comment to before start_dirop()
+Date: Wed,  4 Feb 2026 15:57:46 +1100
+Message-ID: <20260204050726.177283-3-neilb@ownmail.net>
 X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
 In-Reply-To: <20260204050726.177283-1-neilb@ownmail.net>
 References: <20260204050726.177283-1-neilb@ownmail.net>
@@ -137,7 +137,7 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	DMARC_POLICY_ALLOW(-0.50)[ownmail.net,none];
 	R_MISSING_CHARSET(0.50)[];
 	R_DKIM_ALLOW(-0.20)[ownmail.net:s=fm3,messagingengine.com:s=fm3];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
@@ -145,7 +145,7 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	REPLYTO_DN_EQ_FROM_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
 	RCPT_COUNT_TWELVE(0.00)[21];
-	TAGGED_FROM(0.00)[bounces-76246-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76247-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_FROM(0.00)[ownmail.net];
 	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
@@ -162,78 +162,73 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	DKIM_TRACE(0.00)[ownmail.net:+,messagingengine.com:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[ownmail.net:mid,ownmail.net:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,brown.name:replyto,brown.name:email,messagingengine.com:dkim]
-X-Rspamd-Queue-Id: 2EE8FE1B62
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[brown.name:replyto,brown.name:email,ownmail.net:mid,ownmail.net:dkim,messagingengine.com:dkim]
+X-Rspamd-Queue-Id: 89D7EE1AEC
 X-Rspamd-Action: no action
 
 From: NeilBrown <neil@brown.name>
 
-proc_setup_self() and proc_setup_thread_self() are only called from
-proc_fill_super() which is before the filesystem is "live".  So there is
-no need to lock the root directory when adding "self" and "thread-self".
-This is clear from simple_fill_super() which provides similar
-functionality for other filesystems and does not lock anything.
+This kerneldoc comment was always meant for start_dirop(), not for
+__start_dirop() which is a static function and doesn't need
+documentation.
 
-The locking is not harmful, except that it may be confusing to a reader.
-As part of a an effort to centralise all locking for directories for
-name-based operations (prior to changing some locking rules), it is
-simplest to remove the locking here.
+It was in the wrong place and was then incorrectly renamed (instead of
+moved) and useless "documentation" was added for "@state" was provided.
+
+This patch reverts the name, removes the mention of @state, and moves
+the comment to where it belongs.
 
 Signed-off-by: NeilBrown <neil@brown.name>
 ---
- fs/proc/self.c        | 3 ---
- fs/proc/thread_self.c | 3 ---
- 2 files changed, 6 deletions(-)
+ fs/namei.c | 27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
 
-diff --git a/fs/proc/self.c b/fs/proc/self.c
-index 62d2c0cfe35c..56adf1c68f7a 100644
---- a/fs/proc/self.c
-+++ b/fs/proc/self.c
-@@ -35,11 +35,9 @@ unsigned self_inum __ro_after_init;
+diff --git a/fs/namei.c b/fs/namei.c
+index b28ecb699f32..40af78ddfb1b 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2841,20 +2841,6 @@ static int filename_parentat(int dfd, struct filename *name,
+ 	return __filename_parentat(dfd, name, flags, parent, last, type, NULL);
+ }
  
- int proc_setup_self(struct super_block *s)
+-/**
+- * __start_dirop - begin a create or remove dirop, performing locking and lookup
+- * @parent:       the dentry of the parent in which the operation will occur
+- * @name:         a qstr holding the name within that parent
+- * @lookup_flags: intent and other lookup flags.
+- * @state:        task state bitmask
+- *
+- * The lookup is performed and necessary locks are taken so that, on success,
+- * the returned dentry can be operated on safely.
+- * The qstr must already have the hash value calculated.
+- *
+- * Returns: a locked dentry, or an error.
+- *
+- */
+ static struct dentry *__start_dirop(struct dentry *parent, struct qstr *name,
+ 				    unsigned int lookup_flags,
+ 				    unsigned int state)
+@@ -2876,6 +2862,19 @@ static struct dentry *__start_dirop(struct dentry *parent, struct qstr *name,
+ 	return dentry;
+ }
+ 
++/**
++ * start_dirop - begin a create or remove dirop, performing locking and lookup
++ * @parent:       the dentry of the parent in which the operation will occur
++ * @name:         a qstr holding the name within that parent
++ * @lookup_flags: intent and other lookup flags.
++ *
++ * The lookup is performed and necessary locks are taken so that, on success,
++ * the returned dentry can be operated on safely.
++ * The qstr must already have the hash value calculated.
++ *
++ * Returns: a locked dentry, or an error.
++ *
++ */
+ struct dentry *start_dirop(struct dentry *parent, struct qstr *name,
+ 			   unsigned int lookup_flags)
  {
--	struct inode *root_inode = d_inode(s->s_root);
- 	struct dentry *self;
- 	int ret = -ENOMEM;
- 
--	inode_lock(root_inode);
- 	self = d_alloc_name(s->s_root, "self");
- 	if (self) {
- 		struct inode *inode = new_inode(s);
-@@ -55,7 +53,6 @@ int proc_setup_self(struct super_block *s)
- 		}
- 		dput(self);
- 	}
--	inode_unlock(root_inode);
- 
- 	if (ret)
- 		pr_err("proc_fill_super: can't allocate /proc/self\n");
-diff --git a/fs/proc/thread_self.c b/fs/proc/thread_self.c
-index d6113dbe58e0..61ac62c3fd9f 100644
---- a/fs/proc/thread_self.c
-+++ b/fs/proc/thread_self.c
-@@ -35,11 +35,9 @@ unsigned thread_self_inum __ro_after_init;
- 
- int proc_setup_thread_self(struct super_block *s)
- {
--	struct inode *root_inode = d_inode(s->s_root);
- 	struct dentry *thread_self;
- 	int ret = -ENOMEM;
- 
--	inode_lock(root_inode);
- 	thread_self = d_alloc_name(s->s_root, "thread-self");
- 	if (thread_self) {
- 		struct inode *inode = new_inode(s);
-@@ -55,7 +53,6 @@ int proc_setup_thread_self(struct super_block *s)
- 		}
- 		dput(thread_self);
- 	}
--	inode_unlock(root_inode);
- 
- 	if (ret)
- 		pr_err("proc_fill_super: can't allocate /proc/thread-self\n");
 -- 
 2.50.0.107.gf914562f5916.dirty
 
