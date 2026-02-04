@@ -1,148 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-76239-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76240-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iPiUAH62gmnVYwMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76239-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 04:01:18 +0100
+	id cEYiO8e8gmk4ZgMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76240-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 04:28:07 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA36E119C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 04:01:17 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8405DE13FB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 04:28:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3BDB930BECB7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Feb 2026 03:00:04 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id B2F1630C3D08
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Feb 2026 03:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370D32DCF46;
-	Wed,  4 Feb 2026 03:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="JFLmvONT"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D432E22BA;
+	Wed,  4 Feb 2026 03:28:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE672DB7A0
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Feb 2026 03:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.180
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770174002; cv=pass; b=tt0BmOSFSNtp9R9MNeH8KiTTYFxK4MjNcYmM1q3HV29Sx2yMI9reBw4yc/jZfnhIzCOtp9buD+qUDVVhYbsiLsRjfZfjemtPjYDog1uXa7YYH7C5MZlcZaQbdqaXSKrjs/fa+/lHpyzAq6Ybc0VIfiMOosNuZiQFoxePIzZSg84=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770174002; c=relaxed/simple;
-	bh=kCQtGJA1J1ca1PYZnYNoeOv+iumuc90YwdUUifn6ZLU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OFLtIwf3MJj+m8NhAKnK7AOo3VG+FfmeA8zMb0BC37fVz6uzmXio6YCHb93iHFOx6VZI2jwGUSYWIeSHjI4Lsx4N8W6WDlyKQ7o2G0Kb64iJQ8KB/tx550/hGN/9lcUe4X/wdc5wz2JOd4x3L5lWCuPL+UvjV1k9NMpOsW1FBPY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=JFLmvONT; arc=pass smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-c54f700b5b1so4037048a12.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Feb 2026 19:00:01 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770174001; cv=none;
-        d=google.com; s=arc-20240605;
-        b=DYUEO8z9OfHmeslWsVBWn+s3QeiDs3CcI121Ve6xtcAf7KPVEvNEyPKhM0qX19KYw7
-         G1cfrJLBitl7TAB0Bvsto66MjqCq0pS1PSW8QBjGIBWfMDU7s+7DljuL51PXdsnXqVhM
-         pXzjsosSCibe9FvmP8uFgy+AkFva+1IFMwB1bzmxh2p5E4FBWm5zgrMJTItBXetu6gTm
-         O6yiZkYP6HnL2dhkrvxa9I+YZBE2ryt0IWn5TEFDBpEFmm/y1eRdmtZg8kIQhvpTU+ef
-         4vGFUFEN8AlrSZQL04g7c+hMhOM5Ij4OXITYAxGjm3FWBkRp3fb/08xkykzAM2FgMaR2
-         LsNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=kCQtGJA1J1ca1PYZnYNoeOv+iumuc90YwdUUifn6ZLU=;
-        fh=EKjBSE6A8pE/FJb3uk/d9cmpSbswKUDG2Uu+5bfIRdg=;
-        b=TxfsnMgEoE3BwYFfeLyJ3VsGMlc0OXA6EJ3CsqENULNFPCoHsvZ8xLnL4H8XccYU/t
-         mTFP+wSVu3jfB9AJ3UjW0+8+EpawXuKEvE9NwfJd96uTs5qfmLNx4q9TNxPZn/i1hslL
-         tXnrbX+z1kVhW914kWjyynRZ9BYaWMj33ZbFrlhqYicOETDAekL9s7zoVdqc3AdfPuZy
-         BWh4lnTmXPQg7/7BKGoJdJM8f/l9tagICTe3v1qcnJZ9ZFF8J18i18YPDpbWDs9XRWHg
-         e8n2Yi2JA6wo/5xgKGWQiCAf/QP1SBB5EPb9qI9E7LZlkCkmm49GUtYUul6ry9Bj+27m
-         b5NQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1770174001; x=1770778801; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kCQtGJA1J1ca1PYZnYNoeOv+iumuc90YwdUUifn6ZLU=;
-        b=JFLmvONTKcqupxVzUvIQL3YzlSnwmRVrL96PLk8ZOGEJpR3H+CyE8toP4hpxd6OQ4i
-         QRuN8YJShgaXyZ7gFbYRQTDQPlN4BMCjFutRlQ3fGUj9ltSBGQxJOUSMBrO+ISsY7ZvW
-         wGyW7Dgs/ulZE/heSWvNDw4x5CwGbLE1CiZzVeQY37EiX68taLuj6iEFIumx8cyfsNUv
-         m2WjKGCD75yMJVOpeXhs5m5MJ0e3n3iBKCMRT6XgJGzjxqHwGFWU/1S7YZ1y/DOE9OHF
-         aikIxkjrOltxI+uWV7JtosUb4m+g9ncJ0RYIrC8xlvEHPl2jwymPO83Yp5Aslkyk7L8p
-         ps8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770174001; x=1770778801;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kCQtGJA1J1ca1PYZnYNoeOv+iumuc90YwdUUifn6ZLU=;
-        b=N5DCPvJV8p2eH7jdgOXAMMcO/1jcMAb4/u7dsH2H1LON5GKgrEOtU0C2hLUXahMGCF
-         ZqFJhMuc8+OoySpkgnMZv3y41p4sSHvDLRyG1Nxpjy/LmAOi6LPVfoFBA0ddhLZaY3cA
-         ENo7H3rQOyyIOx3NCNM87z40MxKfUFJ1IJLUeQDiH5OrP2CzZTSByuEFe9idGACPiTl6
-         jwQtSWSSkXxX1siZ3IwOpEbFYse56snfP7zJUUL1AituxRSp8VpRe4X4irpqmygh5Qy+
-         TyRgOoSc2pbrrKSuHm2gCBoLp5o43M8m6ViAV0ZBoISwfj4YwTgCc+qsHCGYalwbj2TD
-         TWZw==
-X-Forwarded-Encrypted: i=1; AJvYcCWxxMujcGNAeSlsUheTRE6aJNLAFlnEmK3BFLCAdvuhkWmgP/qhs/QqNJJNvZFnYzKhB3zU5btAo7ie1s+B@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyal0qNTdbV5Lo3dFUhlpWYz1x/YEFZ1eWSpSH5a6008DJX3T4t
-	eWP1atB9NRjyuZ+elvdQbLlP8/xCTvHLjTLBFZzSxTEhLBLEwFAW0VERAANBSiB8/6iMAbPlNxu
-	giWrPZufBbkvW+gBb2bRFAo3i8LJq1jmsxJIJevEn3CBC3JWpNOxGQmyPSF1zNqs=
-X-Gm-Gg: AZuq6aKP0sq3q3wleUhk/jjeznCbVGQTXEjgpKRbGxQSPngRQFUMwV0Nnyu/8EknBMD
-	AfpgAc0oZP1vMX6J4JTIeCeqrmLoBtHSWRz8mZUAZoAEi3hkZp4eUkOL4YUG93YKW6OhvNUm5fc
-	GZHCWGhryxLseKAwF7lQ7+nOcSwPN6/vbWLSUmPn3la9T/lLl/uENZIqw87q3eLUYNTEt8zz7vP
-	15hsycHgTumRK/fKlbYnGMenoPCEACZZIuQ5C+WvvLIuWagKGryfuIz9YvHDzESFCZxHOHJ9CdW
-	yQPSbP+fy0Q2
-X-Received: by 2002:a05:6300:2206:b0:38e:87b6:a036 with SMTP id
- adf61e73a8af0-393724bf6f0mr1379799637.54.1770174000747; Tue, 03 Feb 2026
- 19:00:00 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639F63BB48;
+	Wed,  4 Feb 2026 03:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770175684; cv=none; b=FJd7AJg59INcTgV5reLg3J0CSavdE4uSoDuvKzqqUnHBIh5FYuFpsNM/gujnD9m4s7g5n33qqV7CSlwd9W2jh17/WJcH4j4pJstKd2lD4PWxN4Zs6N/DrLvqnRJPTzLzxIlLTzQEaONDVwGycdfiQSp3FaPdDmPGN4hU/DVQvUs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770175684; c=relaxed/simple;
+	bh=Kx0Xsx6OVQM7onpJtBNqFldxby+LrFH2z+tVYjsh9AE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=q5iAgmgl1Uxuyp794si2rIIicCev9jIbeSHSC/s3Qbcvx7zdTcBccaT5uO/eiXLDY48jceeShtj/ur3diXewcBnSJ0dob1YPhHFV8teJcFuyXA+eM4/Lz5fY9AN6JinN/MHnzmFQ/jcSo37zSU39a7YHOWdtk7aJX0NgFInWNmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.177])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4f5Ql12MTdzYQtkM;
+	Wed,  4 Feb 2026 11:27:09 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id B65124058A;
+	Wed,  4 Feb 2026 11:27:57 +0800 (CST)
+Received: from [10.174.178.46] (unknown [10.174.178.46])
+	by APP4 (Coremail) with SMTP id gCh0CgBnFPW8vIJp7gfEGA--.60535S3;
+	Wed, 04 Feb 2026 11:27:57 +0800 (CST)
+Subject: Re: [PATCH] dcache: Limit the minimal number of bucket to two
+To: Zhihao Cheng <chengzhihao1@huawei.com>, viro@zeniv.linux.org.uk,
+ brauner@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yangerkun@huawei.com
+References: <20260130034853.215819-1-chengzhihao1@huawei.com>
+From: Zhihao Cheng <chengzhihao@huaweicloud.com>
+Message-ID: <e3a58914-4e7d-8ce9-a813-e09a87cf1bf5@huaweicloud.com>
+Date: Wed, 4 Feb 2026 11:27:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260202120023.74357-1-zhangtianci.1997@bytedance.com> <4f66008e-228f-4e49-a860-314dd82116ad@bsbernd.com>
-In-Reply-To: <4f66008e-228f-4e49-a860-314dd82116ad@bsbernd.com>
-From: Zhang Tianci <zhangtianci.1997@bytedance.com>
-Date: Wed, 4 Feb 2026 10:59:49 +0800
-X-Gm-Features: AZwV_QjyMqKmvohZIX8OYC9o4SfwWGO5reH6hXBKxsy6SIV8hOGe4MlkfegqVOc
-Message-ID: <CAP4dvsdaHNPuO2_ZLZ_8W-vPteR-Yyo67JhRrYuK67ZhvWkJrw@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] fuse: send forget req when lookup outarg
- is invalid
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Xie Yongji <xieyongji@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20260130034853.215819-1-chengzhihao1@huawei.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBnFPW8vIJp7gfEGA--.60535S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7tw48ZFykKF4xuFWxWr4kJFb_yoW8trWDpr
+	WxWF1Ykr95Aa97ua1fuw1DGFykWa9rC3W7WFyIkw1rA3y5Crn8KFnrC3yfZFyDArWrZa47
+	tF1Iqw15Ww4Fq3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
+	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHD
+	UUUUU==
+X-CM-SenderInfo: xfkh0wx2klxt3r6k3tpzhluzxrxghudrp/
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[bytedance.com,quarantine];
-	R_DKIM_ALLOW(-0.20)[bytedance.com:s=google];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+X-Spamd-Result: default: False [-1.46 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MID_RHS_MATCH_FROM(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76239-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	NEURAL_HAM(-0.00)[-0.976];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
+	R_DKIM_NA(0.00)[];
+	DMARC_NA(0.00)[huaweicloud.com];
+	RCVD_TLS_LAST(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[chengzhihao@huaweicloud.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[zhangtianci.1997@bytedance.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[bytedance.com:+];
-	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 6DA36E119C
+	RCVD_COUNT_FIVE(0.00)[6];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76240-lists,linux-fsdevel=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 8405DE13FB
 X-Rspamd-Action: no action
 
-Hi Bernd,
+friendly ping...
 
-Thanks for your comments, I'll fix them and send the v2 patch later.
+ÔÚ 2026/1/30 11:48, Zhihao Cheng Ð´µÀ:
+> There is an OOB read problem on dentry_hashtable when user sets
+> 'dhash_entries=1':
+>    BUG: unable to handle page fault for address: ffff888b30b774b0
+>    #PF: supervisor read access in kernel mode
+>    #PF: error_code(0x0000) - not-present page
+>    Oops: Oops: 0000 [#1] SMP PTI
+>    RIP: 0010:__d_lookup+0x56/0x120
+>     Call Trace:
+>      d_lookup.cold+0x16/0x5d
+>      lookup_dcache+0x27/0xf0
+>      lookup_one_qstr_excl+0x2a/0x180
+>      start_dirop+0x55/0xa0
+>      simple_start_creating+0x8d/0xa0
+>      debugfs_start_creating+0x8c/0x180
+>      debugfs_create_dir+0x1d/0x1c0
+>      pinctrl_init+0x6d/0x140
+>      do_one_initcall+0x6d/0x3d0
+>      kernel_init_freeable+0x39f/0x460
+>      kernel_init+0x2a/0x260
+> 
+> There will be only one bucket in dentry_hashtable when dhash_entries is
+> set as one, and d_hash_shift is calculated as 32 by dcache_init(). Then,
+> following process will access more than one buckets(which memory region
+> is not allocated) in dentry_hashtable:
+>   d_lookup
+>    b = d_hash(hash)
+>      dentry_hashtable + ((u32)hashlen >> d_hash_shift)
+>      // The C standard defines the behavior of right shift amounts
+>      // exceeding the bit width of the operand as undefined. The
+>      // result of '(u32)hashlen >> d_hash_shift' becomes 'hashlen',
+>      // so 'b' will point to an unallocated memory region.
+>    hlist_bl_for_each_entry_rcu(b)
+>     hlist_bl_first_rcu(head)
+>      h->first  // read OOB!
+> 
+> Fix it by limiting the minimal number of dentry_hashtable bucket to two,
+> so that 'd_hash_shift' won't exceeds the bit width of type u32.
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
+> ---
+>   fs/dcache.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index 66dd1bb830d1..957a44d2c44a 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -3260,7 +3260,7 @@ static void __init dcache_init_early(void)
+>   					HASH_EARLY | HASH_ZERO,
+>   					&d_hash_shift,
+>   					NULL,
+> -					0,
+> +					2,
+>   					0);
+>   	d_hash_shift = 32 - d_hash_shift;
+>   
+> @@ -3292,7 +3292,7 @@ static void __init dcache_init(void)
+>   					HASH_ZERO,
+>   					&d_hash_shift,
+>   					NULL,
+> -					0,
+> +					2,
+>   					0);
+>   	d_hash_shift = 32 - d_hash_shift;
+>   
+> 
 
-Thanks,
-Tianci
 
