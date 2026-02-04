@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-76263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id AI3eIL7ygmmWfQMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 08:18:22 +0100
+	id AK/2IiXzgmmWfQMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 08:20:05 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C3BFE2997
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 08:18:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 337B7E2A0C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Feb 2026 08:20:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 3ACD4301C522
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Feb 2026 07:18:21 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 7D94A301AEF7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Feb 2026 07:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9F038BF6F;
-	Wed,  4 Feb 2026 07:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F6538BF68;
+	Wed,  4 Feb 2026 07:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="GeIa5APP"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="g/vTZuG2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B020337D130;
-	Wed,  4 Feb 2026 07:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9117538B9B3;
+	Wed,  4 Feb 2026 07:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770189499; cv=none; b=WTeBnkKHvOdDfxEh6wufXqZfwN+nYj0GX0mdK++WloiFQ68xcaJRMLEAzxT59wo+P3SPGAigkNAhFPTeUtzf1w/GOFWILFWO0A96DzXv93YZonyIo++UIHEEuIsx3MfXkwdXqIOv8+8j/SI4aMIuGvB9nGlpy6HFwSZzofP2sMI=
+	t=1770189599; cv=none; b=VhUzESxCDmwrtBB7mCKf8ogVkP4fX+4uZQ6N8fDbxDIXsW23I2g5rxiKHj/VTIFb1Z8jqVOmh1I1PugdjjZPowFXVsSrB7cXcG57jYtEaQslnZdrGXpx2HbZiTZ3jIcmNVlWr+CW5o3puMr/ETllr2hBMTBjj0klYmmON/SUgeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770189499; c=relaxed/simple;
+	s=arc-20240116; t=1770189599; c=relaxed/simple;
 	bh=QmUvrXA1CMnsiFhKY0S/1+xRcpqsYXAI4IggRRqoZGk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nup6a//SpDrbnmWLuHDZYFG4sIlAw97osW71aeL70Ny4nTJkL5pufhSOPf/tz0TsTLh0uH0LdVqck6ghIlObkBG4JY8UKYKR92P+sc+oXtai/zDccfOGJ28ZAsjLe4uhrRmDSGeiAgKE/I2Dig+jOJfiPRTlj7dAIv1pOsfeMPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=GeIa5APP; arc=none smtp.client-ip=117.135.210.2
+	 MIME-Version; b=lwNIYMK8TC+c2bDcLoirU2q9vmdEIu/Y+vfoT9YWQwq7IPYS8gl2KilnGmHvyKTz3dnlMZBH7fZmUaAu0WJzdGYml5cufHWJ/uRbep0QKxWeTnU9h5LpKP5gwPbXXC46NNZdYKNOOstIrOrLN8qd9NlhF7aWuYYKCb5ESyP728M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=g/vTZuG2; arc=none smtp.client-ip=117.135.210.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
 	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=hj
-	wgeuDR24g0MAouNTQp5oxxHUQ9AC4uhSnrMBlNBP0=; b=GeIa5APPqRueTFX8sg
-	9SP2aZ/zwrVrrzZhjys+Gw87L5b52E2vuBAFDBn5KvsJtVMSetQvuucreynqACdw
-	DIgZLsEJZn5duTcQCXBPQOEK3g7xcXPs42FUtpNVVSlOX5hvhlk+nyvdMSv/mk0j
-	qdUvi7jMT+wzGDrYd+pVWZ/Aw=
+	wgeuDR24g0MAouNTQp5oxxHUQ9AC4uhSnrMBlNBP0=; b=g/vTZuG20O8IlymAUg
+	N/W596rrrH4QjyIdle9URiwOwSjFX0ORmT21787AC1jLdhfJPOC05FtLgpsBT/KH
+	mUYt7hu3afSyg2bOVDyPqWjlUPrqJD2HqjqVpF0WhbKjLQhEEQqDiF3Lth1sysHW
+	d0BOGM5S6vUOpjPtfiBaUREeE=
 Received: from czl-ubuntu-pc.. (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id PigvCgB3TegF8oJpYIHPNw--.186S5;
-	Wed, 04 Feb 2026 15:15:21 +0800 (CST)
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wAnd5Hx8oJpSIlnJA--.5785S2;
+	Wed, 04 Feb 2026 15:19:13 +0800 (CST)
 From: Chi Zhiling <chizhiling@163.com>
 To: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
@@ -51,8 +51,8 @@ Cc: Namjae Jeon <linkinjeon@kernel.org>,
 	Yuezhang Mo <yuezhang.mo@sony.com>,
 	Chi Zhiling <chizhiling@kylinos.cn>
 Subject: [PATCH v1 3/3] exfat: optimize exfat_chain_cont_cluster with cached buffer heads
-Date: Wed,  4 Feb 2026 15:14:35 +0800
-Message-ID: <20260204071435.602246-4-chizhiling@163.com>
+Date: Wed,  4 Feb 2026 15:19:06 +0800
+Message-ID: <20260204071906.602404-1-chizhiling@163.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260204071435.602246-1-chizhiling@163.com>
 References: <20260204071435.602246-1-chizhiling@163.com>
@@ -63,12 +63,12 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PigvCgB3TegF8oJpYIHPNw--.186S5
+X-CM-TRANSID:_____wAnd5Hx8oJpSIlnJA--.5785S2
 X-Coremail-Antispam: 1Uf129KBjvJXoWxAFy8tFyDXr48KF15tw1DKFg_yoWrJr1UpF
 	ZIka93Kr4UJ3ZFv3Z7tw4kZr1fC397Ja4kGw43G34fAr90yFnYvry8Kryrtry0kayDuFyY
 	vF4UtF15CwnrGFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jl9a9UUUUU=
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbC2wm5V2mC8glSbwAA3R
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jnkuxUUUUU=
+X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbC+BHzkWmC8vE5IQAA37
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
@@ -81,7 +81,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-76263-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76264-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
 	RCVD_TLS_LAST(0.00)[];
 	FREEMAIL_FROM(0.00)[163.com];
@@ -96,8 +96,8 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	NEURAL_HAM(-0.00)[-1.000];
 	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,kylinos.cn:email]
-X-Rspamd-Queue-Id: 4C3BFE2997
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kylinos.cn:email,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 337B7E2A0C
 X-Rspamd-Action: no action
 
 From: Chi Zhiling <chizhiling@kylinos.cn>
