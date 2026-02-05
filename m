@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-76437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id sBTgKHuPhGkh3gMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:39:23 +0100
+	id IDTqNE2QhGkh3gMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:42:53 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7099F2AEB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:39:22 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9848CF2BA6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:42:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id CA5793007B07
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:38:39 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id D551F30686D8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD4C3D3D13;
-	Thu,  5 Feb 2026 12:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC173D3D13;
+	Thu,  5 Feb 2026 12:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KBjBx33o"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AH2UzJ0o"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DC03B8D5C;
-	Thu,  5 Feb 2026 12:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC253B8D5C;
+	Thu,  5 Feb 2026 12:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770295114; cv=none; b=nNGnaThO9rP2kGDXfX+2DujQ7gZjVgsFnYsBm2h2IOH8lm4X0VZsgLFhne0Ni/8aiNb5gddqw8TjW3EC2jI5paSZ/wTq6m2889kVUlly/+hwL0PjrUZfNlzRxglSY4Cq2PoM8NAgRwBpMFiWzbRSuMq9+Ns/wrQQKEhhr+qvZCQ=
+	t=1770295135; cv=none; b=OoqVnDVoEBfbqE9Hjr8l3ATTjpNKf3a8Osgz77TckD0bMOyz4Bs2Uqus+VhHh3Y6aLJyrMICwH4myPPOz458aj9CpUhS/XvW7YF4WN9Vo6yWkiuJxvuQl+4uQtqViEF4vCcwp8aAEm1SXXv1knZ049LQQhhuf2WuLZAu5YGjGXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770295114; c=relaxed/simple;
-	bh=ZFCAVurOAODnUWuC42DcwQ1f8hacTr/mLSJJhxqxUJE=;
+	s=arc-20240116; t=1770295135; c=relaxed/simple;
+	bh=G9qHb9p0MPYty9W2bqZeDirLOVPesrzx4Ei/lgeOCRA=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NeA9PQuqMvnLq8IxoEZ74km0vEukrvEwteY//ko6USZdWh5ctdqgIIALDVWV/qAokEQ3ASbvBSDzH+N7qMB5SX0YdGk/frmD8wYLgIZayBMwtno+VWCfW9v6Axb9JZnlQptUtq+JCVmRPLH9w/+KXStkmN8oYWqS0r9uqhUYXNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KBjBx33o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8B16C16AAE;
-	Thu,  5 Feb 2026 12:38:31 +0000 (UTC)
+	 Content-Type:MIME-Version; b=c+kXV5O2BfoxgF1NwxuEebv+pbNQSnMebMFhzWiamgYD7fEHYFOjKLr4tZ6hOdw3bGng19MTUTcw0MsQ31TuvaagqIONq6G9QogJKUhxTNc2UpiCgwOR/BJoG9KsTdxodLPHLg0hMdsaO4OLCUxXfoBJO/1Z6FdgDFXMa3akPh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AH2UzJ0o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1042BC4CEF7;
+	Thu,  5 Feb 2026 12:38:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770295113;
-	bh=ZFCAVurOAODnUWuC42DcwQ1f8hacTr/mLSJJhxqxUJE=;
+	s=k20201202; t=1770295135;
+	bh=G9qHb9p0MPYty9W2bqZeDirLOVPesrzx4Ei/lgeOCRA=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=KBjBx33oVnMR9gFD5SCO3tA1yh1XFz0bmnu2AneWHNpOYVSruH05XhP/Mp38yecGa
-	 sUbdRkUWAP0n0mJxp3G22N2PTV0W+u3/PT5xe3sV6bG9ngAONpiTVQ/czJtA8aXZ9A
-	 rAMgH+4iNVeYTSxT+KI3oQlAc7Ngbih98XreqyfxiN7WctB6CMVNJKi1YP5Ywh1WEO
-	 Xrs7jZKWZiJEYR8ou82aFGU50tf21JUDdAIeW36CWqQoZ0dbJj0kYIZCXcB47Y002O
-	 fdvy8PUqeaQAJsdtvD3PZnSPVAghvjHAiWgES8M0vav55p4PCWarwRAaEgEg55cuZ4
-	 sTdY0SSdgJkYA==
-Message-ID: <4d2c35c1b627f1ad26062a92d653677d7b79bd81.camel@kernel.org>
-Subject: Re: [PATCH 09/13] cachefiles: change cachefiles_bury_object to use
- start_renaming_dentry()
+	b=AH2UzJ0oUDVcL390IygZ5kEiEAojgl8odoQ3KAjqbiFXfHBGLmz5bMu51boYaY+VD
+	 sAdILXp3eIJngbsv0/hIvYZNP9usrSjIp1vqGT5x51WhcxUN4NOg5i0D92Fkt3onWj
+	 Z6k8Lrgcq8NhtRpCBsSkxMklVvogfeWyn2TF89SHArhTOh2myE8CITFFMhH9k5KwgN
+	 X3rbQZQpCJfxSEERajtHka8wsvMw1fDk8idcYs7NfRKDwlPKGAjewutiezQm2na7Fr
+	 1vDGRIPsPDHUgCsiVe1GcvsXveA0CuG1G4tTDyYNNGmepDqEYYrKqYrUO40iI0Awe6
+	 +3/gkPxG11tfw==
+Message-ID: <c7445f68809ea699c73da0282a9e2b3f99ff3bcf.camel@kernel.org>
+Subject: Re: [PATCH 11/13] ovl: use is_subdir() for testing if one thing is
+ a subdir of another
 From: Jeff Layton <jlayton@kernel.org>
 To: NeilBrown <neil@brown.name>, Christian Brauner <brauner@kernel.org>, 
  Alexander Viro <viro@zeniv.linux.org.uk>, David Howells
@@ -60,10 +60,10 @@ Cc: linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
 	linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com, 
 	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Date: Thu, 05 Feb 2026 07:38:30 -0500
-In-Reply-To: <20260204050726.177283-10-neilb@ownmail.net>
+Date: Thu, 05 Feb 2026 07:38:52 -0500
+In-Reply-To: <20260204050726.177283-12-neilb@ownmail.net>
 References: <20260204050726.177283-1-neilb@ownmail.net>
-	 <20260204050726.177283-10-neilb@ownmail.net>
+	 <20260204050726.177283-12-neilb@ownmail.net>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -153,12 +153,12 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76437-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76439-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_TO(0.00)[brown.name,kernel.org,zeniv.linux.org.uk,redhat.com,suse.cz,oracle.com,szeredi.hu,gmail.com,canonical.com,paul-moore.com,namei.org,hallyn.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
@@ -174,159 +174,58 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,brown.name:email]
-X-Rspamd-Queue-Id: B7099F2AEB
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[brown.name:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 9848CF2BA6
 X-Rspamd-Action: no action
 
 On Wed, 2026-02-04 at 15:57 +1100, NeilBrown wrote:
 > From: NeilBrown <neil@brown.name>
 >=20
-> Rather then using lock_rename() and lookup_one() etc we can use
-> the new start_renaming_dentry().  This is part of centralising dir
-> locking and lookup so that locking rules can be changed.
+> Rather than using lock_rename(), use the more obvious is_subdir() for
+> ensuring that neither upper nor workdir contain the other.
+> Also be explicit in the comment that the two directories cannot be the
+> same.
 >=20
-> Some error check are removed as not necessary.  Checks for rep being a
-> non-dir or IS_DEADDIR and the check that ->graveyard is still a
-> directory only provide slightly more informative errors and have been
-> dropped.
+> As this is a point-it-time sanity check and does not provide any
+> on-going guarantees, the removal of locking does not introduce any
+> interesting races.
 >=20
 > Signed-off-by: NeilBrown <neil@brown.name>
 > ---
->  fs/cachefiles/namei.c | 76 ++++++++-----------------------------------
->  1 file changed, 14 insertions(+), 62 deletions(-)
+>  fs/overlayfs/super.c | 15 +++++----------
+>  1 file changed, 5 insertions(+), 10 deletions(-)
 >=20
-> diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-> index e5ec90dccc27..3af42ec78411 100644
-> --- a/fs/cachefiles/namei.c
-> +++ b/fs/cachefiles/namei.c
-> @@ -270,7 +270,8 @@ int cachefiles_bury_object(struct cachefiles_cache *c=
-ache,
->  			   struct dentry *rep,
->  			   enum fscache_why_object_killed why)
->  {
-> -	struct dentry *grave, *trap;
-> +	struct dentry *grave;
-> +	struct renamedata rd =3D {};
->  	struct path path, path_to_graveyard;
->  	char nbuffer[8 + 8 + 1];
->  	int ret;
-> @@ -302,77 +303,36 @@ int cachefiles_bury_object(struct cachefiles_cache =
-*cache,
->  		(uint32_t) ktime_get_real_seconds(),
->  		(uint32_t) atomic_inc_return(&cache->gravecounter));
-> =20
-> -	/* do the multiway lock magic */
-> -	trap =3D lock_rename(cache->graveyard, dir);
-> -	if (IS_ERR(trap))
-> -		return PTR_ERR(trap);
-> -
-> -	/* do some checks before getting the grave dentry */
-> -	if (rep->d_parent !=3D dir || IS_DEADDIR(d_inode(rep))) {
-> -		/* the entry was probably culled when we dropped the parent dir
-> -		 * lock */
-> -		unlock_rename(cache->graveyard, dir);
-> -		_leave(" =3D 0 [culled?]");
-> -		return 0;
-> -	}
-> -
-> -	if (!d_can_lookup(cache->graveyard)) {
-> -		unlock_rename(cache->graveyard, dir);
-> -		cachefiles_io_error(cache, "Graveyard no longer a directory");
-> -		return -EIO;
-> -	}
-> -
-> -	if (trap =3D=3D rep) {
-> -		unlock_rename(cache->graveyard, dir);
-> -		cachefiles_io_error(cache, "May not make directory loop");
-> +	rd.mnt_idmap =3D &nop_mnt_idmap;
-> +	rd.old_parent =3D dir;
-> +	rd.new_parent =3D cache->graveyard;
-> +	rd.flags =3D 0;
-> +	ret =3D start_renaming_dentry(&rd, 0, rep, &QSTR(nbuffer));
-> +	if (ret) {
-> +		cachefiles_io_error(cache, "Cannot lock/lookup in graveyard");
->  		return -EIO;
->  	}
-> =20
->  	if (d_mountpoint(rep)) {
-> -		unlock_rename(cache->graveyard, dir);
-> +		end_renaming(&rd);
->  		cachefiles_io_error(cache, "Mountpoint in cache");
->  		return -EIO;
->  	}
-> =20
-> -	grave =3D lookup_one(&nop_mnt_idmap, &QSTR(nbuffer), cache->graveyard);
-> -	if (IS_ERR(grave)) {
-> -		unlock_rename(cache->graveyard, dir);
-> -		trace_cachefiles_vfs_error(object, d_inode(cache->graveyard),
-> -					   PTR_ERR(grave),
-> -					   cachefiles_trace_lookup_error);
-> -
-> -		if (PTR_ERR(grave) =3D=3D -ENOMEM) {
-> -			_leave(" =3D -ENOMEM");
-> -			return -ENOMEM;
-> -		}
-> -
-> -		cachefiles_io_error(cache, "Lookup error %ld", PTR_ERR(grave));
-> -		return -EIO;
-> -	}
-> -
-> +	grave =3D rd.new_dentry;
->  	if (d_is_positive(grave)) {
-> -		unlock_rename(cache->graveyard, dir);
-> -		dput(grave);
-> +		end_renaming(&rd);
->  		grave =3D NULL;
->  		cond_resched();
->  		goto try_again;
->  	}
-> =20
->  	if (d_mountpoint(grave)) {
-> -		unlock_rename(cache->graveyard, dir);
-> -		dput(grave);
-> +		end_renaming(&rd);
->  		cachefiles_io_error(cache, "Mountpoint in graveyard");
->  		return -EIO;
->  	}
-> =20
-> -	/* target should not be an ancestor of source */
-> -	if (trap =3D=3D grave) {
-> -		unlock_rename(cache->graveyard, dir);
-> -		dput(grave);
-> -		cachefiles_io_error(cache, "May not make directory loop");
-> -		return -EIO;
-> -	}
-> -
->  	/* attempt the rename */
->  	path.mnt =3D cache->mnt;
->  	path.dentry =3D dir;
-> @@ -382,13 +342,6 @@ int cachefiles_bury_object(struct cachefiles_cache *=
-cache,
->  	if (ret < 0) {
->  		cachefiles_io_error(cache, "Rename security error %d", ret);
->  	} else {
-> -		struct renamedata rd =3D {
-> -			.mnt_idmap	=3D &nop_mnt_idmap,
-> -			.old_parent	=3D dir,
-> -			.old_dentry	=3D rep,
-> -			.new_parent	=3D cache->graveyard,
-> -			.new_dentry	=3D grave,
-> -		};
->  		trace_cachefiles_rename(object, d_inode(rep)->i_ino, why);
->  		ret =3D cachefiles_inject_read_error();
->  		if (ret =3D=3D 0)
-> @@ -402,8 +355,7 @@ int cachefiles_bury_object(struct cachefiles_cache *c=
-ache,
->  	}
-> =20
->  	__cachefiles_unmark_inode_in_use(object, d_inode(rep));
-> -	unlock_rename(cache->graveyard, dir);
-> -	dput(grave);
-> +	end_renaming(&rd);
->  	_leave(" =3D 0");
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index ba9146f22a2c..2fd3e0aee50e 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -451,18 +451,13 @@ static int ovl_lower_dir(const char *name, const st=
+ruct path *path,
 >  	return 0;
 >  }
+> =20
+> -/* Workdir should not be subdir of upperdir and vice versa */
+> +/*
+> + * Workdir should not be subdir of upperdir and vice versa, and
+> + * they should not be the same.
+> + */
+>  static bool ovl_workdir_ok(struct dentry *workdir, struct dentry *upperd=
+ir)
+>  {
+> -	bool ok =3D false;
+> -
+> -	if (workdir !=3D upperdir) {
+> -		struct dentry *trap =3D lock_rename(workdir, upperdir);
+> -		if (!IS_ERR(trap))
+> -			unlock_rename(workdir, upperdir);
+> -		ok =3D (trap =3D=3D NULL);
+> -	}
+> -	return ok;
+> +	return !is_subdir(workdir, upperdir) && !is_subdir(upperdir, workdir);
+>  }
+> =20
+>  static int ovl_setup_trap(struct super_block *sb, struct dentry *dir,
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
