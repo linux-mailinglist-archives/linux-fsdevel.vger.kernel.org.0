@@ -1,71 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-76471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id kIyuFkjnhGlf6QMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 19:54:00 +0100
+	id wEgKM4vohGnb6QMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 19:59:23 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CF81F6997
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 19:53:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE4EF6A5A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 19:59:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 5B0C630022C6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 18:53:59 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id C3C173004F1F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 18:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231553090FF;
-	Thu,  5 Feb 2026 18:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EAD130BB80;
+	Thu,  5 Feb 2026 18:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="BMLI+Civ"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="nq9fGIh9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDF43090C6;
-	Thu,  5 Feb 2026 18:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7D630B500;
+	Thu,  5 Feb 2026 18:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770317636; cv=none; b=oW+Y99UYrqE9j9zmSscqKg+heMhlTm7g/gZyiAVbXgXjYqGu2bM7J/MS9NvoocOWpdmfHwTD1qbfcPbSg8+PSKEH0+7DD2rN1VDSbxkkM/VcJVVxoP6iQ+3uiF0FuRoUc428/ojjJE5L4fEeccEZo0qJnPbaOFGcn4pqhUQrVnQ=
+	t=1770317961; cv=none; b=CcNbtTee5KVYP9w3CcQk6WGFgYqUmli+R7yTasJPjJdHLMnlBPd4Dap3f+JsfkgrzOgjvqDQb+m3mG7wNbMTLSmBQYzOWHFBTywjq3GluVPtySYkXiNvVO5498BvVcz85z7ccSr0hi43ki5WfXz48wXszY4QSjNOF1Ad8bHsDGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770317636; c=relaxed/simple;
-	bh=07TbCI5INlmWPopytll6rKjff9teMw2UVZiJgkF3NY8=;
+	s=arc-20240116; t=1770317961; c=relaxed/simple;
+	bh=UfFRVTPXD11iUuz+54SZELk+drb9rvoSzirgUSxZlG4=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kx/4idpn4vOmcMmJ3Ddp/1skR//3qs4hxFrvfWx7EkjPbi30Ax/QN/NUcTxtMNedi+C/wJ9sbmYO3+hRl99Xw8AbIRmYI8P0SOusg6mxCnyYsvuonivuHKmaXKzOky8CMU6Jnc4IPNIXT5YVH0QLeQt3TIeNZ3gTDIaPNiiNxw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=BMLI+Civ; arc=none smtp.client-ip=67.231.145.42
+	 MIME-Version:Content-Type; b=ukN5GDH4YFxrtBYBmuSuzD8NnW9NF58ZxW8oGqYgeuw9RtOLYGNZj+qir0+JvE0JLxQbGze/6TiapKOD15Ft8bs7togyKUv169XSQrR6l5Hz1ID8lpqRM7R2Oh8gz2H0N/kVCA3rAd58axAd5NAsgB9BeUWXCoesTLaDRi5vOLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=nq9fGIh9; arc=none smtp.client-ip=67.231.145.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 615FfXbt2704529;
-	Thu, 5 Feb 2026 10:53:42 -0800
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 615HvhLc1358636;
+	Thu, 5 Feb 2026 10:59:06 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
-	 bh=gIdWc1sFEToCD+IrI2keWvjFpsdEtF2ee1Jr9uIu+XI=; b=BMLI+CivJVH4
-	zek1bpjMoQ2A/om2pSDlKSfmiv2EnncNvXYNNj43nDYct4daZMIV0CkSWNO9h4/q
-	SVE7sIJ3Bk8T4gioKUiLiaiI5tO/clr9furGr8hRm+fCEmiDa+R5QmK82RtWuNsF
-	IcBNfcSpShVcgDj1k7l2eopouAXEEDk1SJ/JyQ61X+cKQIs8w/sGJHQbLhryveYu
-	TWmwlgvgOUQBuJJleGVWv6NBuJ8bpLrr2Rnj3TAp8c2FJz4IUIv1HISkRSgcC6VU
-	xHSjMoCwnEphUf4vC3S3JclnnguHcJSV/l91Vv68fpltRD++QV/bBYEpdS3DuQ41
-	vbBW5AE9fQ==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4c4x2sjkb4-1
+	 bh=NSAdsTTskRQr5NjDgUj1AfesrpNCutBTl5jpF9aXAA4=; b=nq9fGIh9j/jR
+	uV35bbFTBfmcFWEbRioLehjsh0bSN6AiKHJ2vBK38QOTc5PChTBhkmTtyfbtpCXU
+	9gcN1OWR3xB/qkLRrupc7QdXNJG0OImcWBRfWQDbqImm2/561ZCuOIphYKRXgPu0
+	4YTLXr5RkZj8Op7RworvX72ptabxGY657BVxBNBBatA1Yb3d28bXNT2t6T1UDGKU
+	Z8UrsWc+iiJp7DvKsGSMWU2jdvJBQ/L1Nmnt1bYAhZHDWqMtq0XQQhyTUiUE4DCv
+	bQt5kNhfJHYWIV2d/f7moUkPs0H2hk/tWc+CLonAKiRH/a1/EFCCRcOKIl6d1Gv9
+	o4ohHPasIg==
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4c4tvqcmfv-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Thu, 05 Feb 2026 10:53:42 -0800 (PST)
-Received: from devbig003.atn7.facebook.com (2620:10d:c085:108::4) by
- mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
+	Thu, 05 Feb 2026 10:59:06 -0800 (PST)
+Received: from devbig003.atn7.facebook.com (2620:10d:c0a8:1b::8e35) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.35; Thu, 5 Feb 2026 18:53:41 +0000
+ 15.2.2562.35; Thu, 5 Feb 2026 18:59:04 +0000
 From: Chris Mason <clm@meta.com>
 To: "Darrick J. Wong" <djwong@kernel.org>
 CC: <miklos@szeredi.hu>, <joannelkoong@gmail.com>, <bernd@bsbernd.com>,
         <neal@gompa.dev>, <linux-ext4@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 03/10] fuse: use the iomap cache for iomap_begin
-Date: Thu, 5 Feb 2026 10:52:04 -0800
-Message-ID: <20260205185327.1776495-1-clm@meta.com>
+Subject: Re: [PATCH 29/31] fuse: disable direct reclaim for any fuse server that uses iomap
+Date: Thu, 5 Feb 2026 10:57:15 -0800
+Message-ID: <20260205185842.1833542-1-clm@meta.com>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <176169812141.1426649.7329768881025739080.stgit@frogsfrogsfrogs>
-References: <176169812012.1426649.16037866918992398523.stgit@frogsfrogsfrogs> <176169812141.1426649.7329768881025739080.stgit@frogsfrogsfrogs>
+In-Reply-To: <176169810980.1424854.10557015500766654898.stgit@frogsfrogsfrogs>
+References: <176169810144.1424854.11439355400009006946.stgit@frogsfrogsfrogs> <176169810980.1424854.10557015500766654898.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -74,20 +74,20 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: J7tO8Q1BkhE8wThwSbXU6DaxEEOdnygK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjA1MDE0MyBTYWx0ZWRfXzsaJgmfszfAL
- oOLmKL7L6nDvcH0bt+ZNGDQMGaok38VpHyRus/6G/81n15g9xsfT+gxqw+gdHbHmqunGj+/U7Qe
- A1VDz61qU0cTi60u8TDtqkAxvFv4WI9aayx/7NyKvsFMi/pyGWi8J5e03W2LgAZOAVfyfsU6/AD
- /HNsYjwsWbsHzzXfA8l1Y1WbvMTSPOgVm0RjQKmvtPN9u+IJxEIWrQ9BnKFvO7C3nZG0UsJ/LLC
- iQvHXctzwN1Jav5Zwvy7606azzqW1Ux7xCUjJtNjBpaL896BFXzdu5dKuhZAg1XfibLXJQddY4n
- BuQWVJvgZEs/HpxkXIfB12ioVuOPnk9an5z3cySmkflbrPAMTs2gnjzMpu5XlxqGAO7KzX6H8pI
- n4XVzI8/ynPubpl3C2T4Yuw2Uhm4ATFD6oh5YwtfE0Hv6Cqr4i4STsf7s4LX64VfYvbu/sztCxn
- 9mx444j4iFFgPOc2R4Q==
-X-Authority-Analysis: v=2.4 cv=aPz9aL9m c=1 sm=1 tr=0 ts=6984e736 cx=c_pps
- a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
+X-Proofpoint-GUID: fEqkTIID2uJ7QLR9MH-s2PW73TNm1KqN
+X-Proofpoint-ORIG-GUID: fEqkTIID2uJ7QLR9MH-s2PW73TNm1KqN
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjA1MDE0NCBTYWx0ZWRfX0PX2TCPxLVOi
+ pQeHwt/Ubr6xlu7rjXZyjAi9Wb4PIqoRsGYqfxD35SL0G++pkj+pX3StliXQ8LstHtSBH/S42+n
+ Fd8gKKWva1cWeM8rekwlOlFc7BTu8BZ3omYBg7RWu6ohp7Al0QouNhDS4B4SVjOBO/VuR7WbqKm
+ ZXndP0tkpmW+2oFffiIDMaleSZCrFduRLkTIDOVBotoLoTb2J6OX6Jp1qWUYQoEJPk5QMY2Jkg2
+ MHWAMC4GECxMnfST38R32i6OvxIrqx3G3DDJ3pEbta5p0hDN9RkW0/JjruaYicAakn0sCV3scxv
+ pGbyHblL4VigM7CMIq+QS9S1j0THulD7xnYUXptC7xWAafCnShl3l3DDZZdGF+k3HLkK2Woc8KU
+ XRXytsFzOn0rUcpXbRHiy15sdRGn0sX/f2Lswb5xkrnmCV0tJ0paGcXwevT3Xt+jBlnjDwb67R/
+ N5JjNiW66YxOefJrWYQ==
+X-Authority-Analysis: v=2.4 cv=W4g1lBWk c=1 sm=1 tr=0 ts=6984e87a cx=c_pps
+ a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
  a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8
- a=_XhwcmBIarpN5NAkK3sA:9
-X-Proofpoint-ORIG-GUID: J7tO8Q1BkhE8wThwSbXU6DaxEEOdnygK
+ a=S1QKfWfzKFdLYBOa6hQA:9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-02-05_04,2026-02-05_03,2025-10-01_01
@@ -103,7 +103,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76471-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76473-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_CC(0.00)[szeredi.hu,gmail.com,bsbernd.com,gompa.dev,vger.kernel.org];
 	RCVD_COUNT_FIVE(0.00)[6];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -118,15 +118,19 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[meta.com:mid,meta.com:dkim,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 0CF81F6997
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,meta.com:mid,meta.com:dkim]
+X-Rspamd-Queue-Id: 7DE4EF6A5A
 X-Rspamd-Action: no action
 
 "Darrick J. Wong" <djwong@kernel.org> wrote:
 > From: Darrick J. Wong <djwong@kernel.org>
 > 
-> Look inside the iomap cache to try to satisfy iomap_begin.
-> 
+> Any fuse server that uses iomap can create a substantial amount of dirty
+> pages in the pagecache because we don't write dirty stuff until reclaim
+> or fsync.  Therefore, memory reclaim on any fuse iomap server musn't
+> ever recurse back into the same filesystem.  We must also never throttle
+> the fuse server writes to a bdi because that will just slow down
+> metadata operations.
 
 Hi everyone,
 
@@ -141,78 +145,70 @@ Hopefully the review below is useful, please let me know if there are places it
 has gone wildly wrong.  I kept the header to make it obvious exactly which
 commit I'd run through:
 
-commit 705acf20a7890a2ba0ab24fe6bf523b99c1a1f32
+commit 3bdd586d6fa00e067dbc3676642ac75e54ec3031
 Author: Darrick J. Wong <djwong@kernel.org>
 
-fuse: use the iomap cache for iomap_begin
+fuse: disable direct reclaim for any fuse server that uses iomap
 
-Look inside the iomap cache to try to satisfy iomap_begin.
+Any fuse server that uses iomap can create a substantial amount of dirty
+pages in the pagecache because we don't write dirty stuff until reclaim
+or fsync. Therefore, memory reclaim on any fuse iomap server must avoid
+recursing back into the same filesystem and throttling the fuse server.
 
 > diff --git a/fs/fuse/fuse_iomap.c b/fs/fuse/fuse_iomap.c
-> index eade8dad8a570..cf46824dc50bf 100644
 > --- a/fs/fuse/fuse_iomap.c
 > +++ b/fs/fuse/fuse_iomap.c
-
-[ ... ]
-
-> @@ -238,9 +239,14 @@ static inline bool fuse_iomap_check_mapping(const struct inode *inode,
->  	const unsigned int blocksize = i_blocksize(inode);
->  	uint64_t end;
+> @@ -1019,6 +1019,12 @@ static void fuse_iomap_config_reply(struct fuse_mount *fm,
+>  	 */
+>  	fc->sync_fs = true;
 >
-> -	/* Type and flags must be known */
 > +	/*
-> +	 * Type and flags must be known.  Mapping type "retry cache" doesn't
-> +	 * use any of the other fields.
+> +	 * We could be on the hook for a substantial amount of writeback, so
+> +	 * prohibit reclaim from recursing into fuse or the kernel from
+> +	 * throttling any bdis that the fuse server might write to.
 > +	 */
->  	if (BAD_DATA(!fuse_iomap_check_type(map->type)))
->  		return false;
-> +	if (map->type == FUSE_IOMAP_TYPE_RETRY_CACHE)
-> +		return true;
->  	if (BAD_DATA(!fuse_iomap_check_flags(map->flags)))
->  		return false;
+> +	current->flags |= PF_MEMALLOC_NOFS | PF_LOCAL_THROTTLE;
 
-[ ... ]
+Are these process flags being set on the correct process? Looking at the
+call chain:
 
-> @@ -271,6 +277,14 @@ static inline bool fuse_iomap_check_mapping(const struct inode *inode,
->  		if (BAD_DATA(map->addr == FUSE_IOMAP_NULL_ADDR))
->  			return false;
->  		break;
-> +	case FUSE_IOMAP_TYPE_RETRY_CACHE:
-> +		/*
-> +		 * We only accept cache retries if we have a cache to query.
-> +		 * There must not be a device addr.
-> +		 */
-> +		if (BAD_DATA(!fuse_inode_caches_iomaps(inode)))
-> +			return false;
-> +		fallthrough;
->  	case FUSE_IOMAP_TYPE_DELALLOC:
->  	case FUSE_IOMAP_TYPE_HOLE:
->  	case FUSE_IOMAP_TYPE_INLINE:
+Sync path:
+  fuse_fill_super() -> fuse_iomap_mount() -> fuse_iomap_config_reply()
 
-Does the validation at lines 280-287 ever execute? Looking at
-fuse_iomap_check_mapping(), the early return at line 248-249 handles
-FUSE_IOMAP_TYPE_RETRY_CACHE:
+Async path:
+  fuse_request_end() -> args->end() -> fuse_iomap_config_reply()
 
-    if (map->type == FUSE_IOMAP_TYPE_RETRY_CACHE)
-        return true;
+In the sync path, current points to the mount(2) process which exits
+after mounting completes. In the async path, current points to whichever
+process writes the reply to /dev/fuse (the fuse daemon thread) or a
+kernel worker thread for virtio-fs.
 
-This means the function returns before reaching the switch statement that
-contains the new RETRY_CACHE case. The validation check 'if (BAD_DATA(!
-fuse_inode_caches_iomaps(inode))) return false;' at lines 284-285 appears
-to be dead code because RETRY_CACHE mappings are accepted without verifying
-the inode has a cache, contradicting the comment "We only accept cache
-retries if we have a cache to query."
+The commit message states the goal is to prohibit reclaim from recursing
+into the fuse server, but the fuse server is a separate userspace process.
+Setting flags on the mount process (which exits) or on a random fuse
+daemon thread (only once during init) doesn't protect the fuse server
+threads that actually perform I/O operations.
 
-Either the fuse_inode_caches_iomaps check should move to the early return
-path like this:
+Should the flags be set on the correct process context? Or if they need
+to be set here, should they follow the pattern used in fs/nfsd/vfs.c and
+fs/nfs/localio.c which save and restore the flags?
 
-    if (map->type == FUSE_IOMAP_TYPE_RETRY_CACHE) {
-        if (BAD_DATA(!fuse_inode_caches_iomaps(inode)))
-            return false;
-        return true;
-    }
+Looking at fs/nfsd/vfs.c:1438-1509:
 
-or the early return should be removed to let RETRY_CACHE fall through to
-the switch statement validation.
+  unsigned long old_flags = current->flags;
+  current->flags |= PF_LOCAL_THROTTLE;
+  ...
+  current_restore_flags(pflags, PF_LOCAL_THROTTLE);
+
+and fs/nfs/localio.c:824-828:
+
+  unsigned long old_flags = current->flags;
+  current->flags |= PF_LOCAL_THROTTLE;
+  ...
+  current_restore_flags(old_flags, PF_LOCAL_THROTTLE);
+
+Without saving and restoring, the flags permanently alter the process
+state. For the mount process this is wasted when it exits, and for fuse
+daemon threads this causes permanent behavior changes.
 
 
