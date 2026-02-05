@@ -1,52 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-76439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76440-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id IDTqNE2QhGkh3gMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:42:53 +0100
+	id mN8nKXmQhGkh3gMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76440-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:43:37 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9848CF2BA6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:42:53 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F023F2BBD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:43:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id D551F30686D8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:39:01 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id E44B0302A56E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC173D3D13;
-	Thu,  5 Feb 2026 12:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159253D3D00;
+	Thu,  5 Feb 2026 12:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AH2UzJ0o"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pq5gKTGX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC253B8D5C;
-	Thu,  5 Feb 2026 12:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED103AA1B8;
+	Thu,  5 Feb 2026 12:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770295135; cv=none; b=OoqVnDVoEBfbqE9Hjr8l3ATTjpNKf3a8Osgz77TckD0bMOyz4Bs2Uqus+VhHh3Y6aLJyrMICwH4myPPOz458aj9CpUhS/XvW7YF4WN9Vo6yWkiuJxvuQl+4uQtqViEF4vCcwp8aAEm1SXXv1knZ049LQQhhuf2WuLZAu5YGjGXE=
+	t=1770295222; cv=none; b=Fner33/OCTkOzk3VZMdSMqjyv22p87eYlA2CsC9lYnDbgrZVTUjq2mnmSEqQEl2uBNcxhdFPiphDgx7eSjOU3G3EodHv0/1iHBsd865mjR9kQYUIzjo/ssFXlc+lSuZ/JM/NO0SzXVrMRuU0+L6Zxrbc2eY/Snz9/PLTZdgK//w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770295135; c=relaxed/simple;
-	bh=G9qHb9p0MPYty9W2bqZeDirLOVPesrzx4Ei/lgeOCRA=;
+	s=arc-20240116; t=1770295222; c=relaxed/simple;
+	bh=TTo8r9PU9WJ6p301M7VHEuMS9EHbRX/m7krx1R/8ncs=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=c+kXV5O2BfoxgF1NwxuEebv+pbNQSnMebMFhzWiamgYD7fEHYFOjKLr4tZ6hOdw3bGng19MTUTcw0MsQ31TuvaagqIONq6G9QogJKUhxTNc2UpiCgwOR/BJoG9KsTdxodLPHLg0hMdsaO4OLCUxXfoBJO/1Z6FdgDFXMa3akPh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AH2UzJ0o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1042BC4CEF7;
-	Thu,  5 Feb 2026 12:38:52 +0000 (UTC)
+	 Content-Type:MIME-Version; b=g67HDM18LJd7lwX1YM/Nsnjv/O0BggaqJxNkCnfMlbZQfKIo561aL/2N9LHOQC+7TYaYZL0WhW3htcoUFPQHqQOqkznklbWKuxF3K2dyQSorM2ZH1n4m2hqglPJ1nU5eAamQhGCylJOI9tw6VMmt+mt04S2vNr6eWLS7GFd35NY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pq5gKTGX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C7C9C4CEF7;
+	Thu,  5 Feb 2026 12:40:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770295135;
-	bh=G9qHb9p0MPYty9W2bqZeDirLOVPesrzx4Ei/lgeOCRA=;
+	s=k20201202; t=1770295222;
+	bh=TTo8r9PU9WJ6p301M7VHEuMS9EHbRX/m7krx1R/8ncs=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=AH2UzJ0oUDVcL390IygZ5kEiEAojgl8odoQ3KAjqbiFXfHBGLmz5bMu51boYaY+VD
-	 sAdILXp3eIJngbsv0/hIvYZNP9usrSjIp1vqGT5x51WhcxUN4NOg5i0D92Fkt3onWj
-	 Z6k8Lrgcq8NhtRpCBsSkxMklVvogfeWyn2TF89SHArhTOh2myE8CITFFMhH9k5KwgN
-	 X3rbQZQpCJfxSEERajtHka8wsvMw1fDk8idcYs7NfRKDwlPKGAjewutiezQm2na7Fr
-	 1vDGRIPsPDHUgCsiVe1GcvsXveA0CuG1G4tTDyYNNGmepDqEYYrKqYrUO40iI0Awe6
-	 +3/gkPxG11tfw==
-Message-ID: <c7445f68809ea699c73da0282a9e2b3f99ff3bcf.camel@kernel.org>
-Subject: Re: [PATCH 11/13] ovl: use is_subdir() for testing if one thing is
- a subdir of another
+	b=Pq5gKTGXx6JR3lb+qq6orh1a1VSzWc+mhFsNflnQAHNDOD+e0X+VUoDNVHDF26Fnz
+	 VIE/m9nsND5GMTC8Z/0Nl9Xyv7SzJ81zcexFaknJBM4VhlTyiT3ShA0f+xyVCsIXbS
+	 34rqXsllKty+OFDsF6+1APR7/Nd8qS9IHmsMS8i9yYg0sXTPbmkxT2REbFFs+723Uf
+	 8tb0bn967E8RaJgVIPT7C3bbJncnXyVSAVDsfaZPIPhiHnOPvWjAMfEYrtwm1xmZuB
+	 hCBXa+7G1ykhGEdZIupfQp6Abwf22GAouhF5X9rpkQ9fSA/+j5aMII7cyZHA36SjNE
+	 Zu8MBdCpLjsdQ==
+Message-ID: <11fd2fde84cffcc39798160570e24e54684c5b71.camel@kernel.org>
+Subject: Re: [PATCH 12/13] ovl: remove ovl_lock_rename_workdir()
 From: Jeff Layton <jlayton@kernel.org>
 To: NeilBrown <neil@brown.name>, Christian Brauner <brauner@kernel.org>, 
  Alexander Viro <viro@zeniv.linux.org.uk>, David Howells
@@ -60,10 +59,10 @@ Cc: linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
 	linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com, 
 	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Date: Thu, 05 Feb 2026 07:38:52 -0500
-In-Reply-To: <20260204050726.177283-12-neilb@ownmail.net>
+Date: Thu, 05 Feb 2026 07:40:19 -0500
+In-Reply-To: <20260204050726.177283-13-neilb@ownmail.net>
 References: <20260204050726.177283-1-neilb@ownmail.net>
-	 <20260204050726.177283-12-neilb@ownmail.net>
+	 <20260204050726.177283-13-neilb@ownmail.net>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -153,12 +152,12 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76439-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76440-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_TO(0.00)[brown.name,kernel.org,zeniv.linux.org.uk,redhat.com,suse.cz,oracle.com,szeredi.hu,gmail.com,canonical.com,paul-moore.com,namei.org,hallyn.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
@@ -174,58 +173,73 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[brown.name:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 9848CF2BA6
+X-Rspamd-Queue-Id: 0F023F2BBD
 X-Rspamd-Action: no action
 
 On Wed, 2026-02-04 at 15:57 +1100, NeilBrown wrote:
 > From: NeilBrown <neil@brown.name>
 >=20
-> Rather than using lock_rename(), use the more obvious is_subdir() for
-> ensuring that neither upper nor workdir contain the other.
-> Also be explicit in the comment that the two directories cannot be the
-> same.
->=20
-> As this is a point-it-time sanity check and does not provide any
-> on-going guarantees, the removal of locking does not introduce any
-> interesting races.
+> This function is unused.
 >=20
 > Signed-off-by: NeilBrown <neil@brown.name>
 > ---
->  fs/overlayfs/super.c | 15 +++++----------
->  1 file changed, 5 insertions(+), 10 deletions(-)
+>  fs/overlayfs/overlayfs.h |  2 --
+>  fs/overlayfs/util.c      | 25 -------------------------
+>  2 files changed, 27 deletions(-)
 >=20
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index ba9146f22a2c..2fd3e0aee50e 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -451,18 +451,13 @@ static int ovl_lower_dir(const char *name, const st=
-ruct path *path,
->  	return 0;
+> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> index 4fb4750a83e4..3eedc2684c23 100644
+> --- a/fs/overlayfs/overlayfs.h
+> +++ b/fs/overlayfs/overlayfs.h
+> @@ -569,8 +569,6 @@ bool ovl_is_inuse(struct dentry *dentry);
+>  bool ovl_need_index(struct dentry *dentry);
+>  int ovl_nlink_start(struct dentry *dentry);
+>  void ovl_nlink_end(struct dentry *dentry);
+> -int ovl_lock_rename_workdir(struct dentry *workdir, struct dentry *work,
+> -			    struct dentry *upperdir, struct dentry *upper);
+>  int ovl_check_metacopy_xattr(struct ovl_fs *ofs, const struct path *path=
+,
+>  			     struct ovl_metacopy *data);
+>  int ovl_set_metacopy_xattr(struct ovl_fs *ofs, struct dentry *d,
+> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+> index 94986d11a166..810c8752b4f7 100644
+> --- a/fs/overlayfs/util.c
+> +++ b/fs/overlayfs/util.c
+> @@ -1213,31 +1213,6 @@ void ovl_nlink_end(struct dentry *dentry)
+>  	ovl_inode_unlock(inode);
 >  }
 > =20
-> -/* Workdir should not be subdir of upperdir and vice versa */
-> +/*
-> + * Workdir should not be subdir of upperdir and vice versa, and
-> + * they should not be the same.
-> + */
->  static bool ovl_workdir_ok(struct dentry *workdir, struct dentry *upperd=
-ir)
->  {
-> -	bool ok =3D false;
+> -int ovl_lock_rename_workdir(struct dentry *workdir, struct dentry *work,
+> -			    struct dentry *upperdir, struct dentry *upper)
+> -{
+> -	struct dentry *trap;
 > -
-> -	if (workdir !=3D upperdir) {
-> -		struct dentry *trap =3D lock_rename(workdir, upperdir);
-> -		if (!IS_ERR(trap))
-> -			unlock_rename(workdir, upperdir);
-> -		ok =3D (trap =3D=3D NULL);
-> -	}
-> -	return ok;
-> +	return !is_subdir(workdir, upperdir) && !is_subdir(upperdir, workdir);
->  }
-> =20
->  static int ovl_setup_trap(struct super_block *sb, struct dentry *dir,
+> -	/* Workdir should not be subdir of upperdir and vice versa */
+> -	trap =3D lock_rename(workdir, upperdir);
+> -	if (IS_ERR(trap))
+> -		goto err;
+> -	if (trap)
+> -		goto err_unlock;
+> -	if (work && (work->d_parent !=3D workdir || d_unhashed(work)))
+> -		goto err_unlock;
+> -	if (upper && (upper->d_parent !=3D upperdir || d_unhashed(upper)))
+> -		goto err_unlock;
+> -
+> -	return 0;
+> -
+> -err_unlock:
+> -	unlock_rename(workdir, upperdir);
+> -err:
+> -	pr_err("failed to lock workdir+upperdir\n");
+> -	return -EIO;
+> -}
+> -
+>  /*
+>   * err < 0, 0 if no metacopy xattr, metacopy data size if xattr found.
+>   * an empty xattr returns OVL_METACOPY_MIN_SIZE to distinguish from no x=
+attr value.
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
