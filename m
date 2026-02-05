@@ -1,51 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-76435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QNdSCXePhGkh3gMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:39:19 +0100
+	id UBATKN2PhGkh3gMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:41:01 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1156F2AE2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:39:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40622F2B34
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:41:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 11593303430B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:37:26 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id BBFE83052AFA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB1C3D3D0A;
-	Thu,  5 Feb 2026 12:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044783D3D0E;
+	Thu,  5 Feb 2026 12:38:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zw3Uhqqs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qSHNMtIn"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5EE1F1537;
-	Thu,  5 Feb 2026 12:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8083AE70E;
+	Thu,  5 Feb 2026 12:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770295039; cv=none; b=TTk8yCUWUyKXyl107ds+XBJ7i/G8ZvjKII8CIztV2Yv5y0VvkWgDuCvhf0hjL44uUPWSjBN2krok90rxm4aot2ZYjNTUwimTESSvmucePenSei0s/qgvIr+MZACLjD72qt5Lpsum2meEZShdTp2iAr0buPFDZYs7f461RVgpmsw=
+	t=1770295087; cv=none; b=Gw/+IHJsseLpRf3hz83Izk7yBR+Xda2v74AEvNRZjw5yckwm8pVmY8hv/xrqkIwRhCnKXeJbNb/6ZS8Zzj/AGxlYkwsn4XzEFMnK2hWzwKmXXwAgVrn12DqsaM2a3XjoEuZWMLtgDEl+eg8vK2hyclHDEZ2HLH/ssjRWPPVzMkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770295039; c=relaxed/simple;
-	bh=qwvMiU/KWGK3LOe0YnOjOtPEHLKm5l+8XVgH4OXZYyw=;
+	s=arc-20240116; t=1770295087; c=relaxed/simple;
+	bh=QbRCtR0CacyYKzFJoIJunN+5tZHIJYiysqUP3sn1Aqc=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cmx6dEU8J+Y43i117VrWp+m48ffJq2FXstJfUj5kpc9EVwBMNEiKn+9U81E9usm1y8vIKh8ADdVtwLzPgHJo59kDsgEUDe6h3OBOoIZE3xm8dqZ9XFOQyMEkhByBROTVNmAtVuEFa3CLY8xX2650lVFfG3VYjgc1g8E7w/jF5M4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zw3Uhqqs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86450C4CEF7;
-	Thu,  5 Feb 2026 12:37:17 +0000 (UTC)
+	 Content-Type:MIME-Version; b=Nm847cGv8l1pFxgDv1xUQDcoEOTr3CQ4i6zE2qx1tEqj2KRcbljJQYdY0zqODudVnAX+/VCeYdaKm7MLeCvXyOuXFrX4CMJ9hrFeOZQK+avdcj3PhWTmE42mVqFbsHE6apZzN2LinlM7/d3mjQrPYqA961taicyMCWLKrELhnFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qSHNMtIn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2A69C16AAE;
+	Thu,  5 Feb 2026 12:38:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770295039;
-	bh=qwvMiU/KWGK3LOe0YnOjOtPEHLKm5l+8XVgH4OXZYyw=;
+	s=k20201202; t=1770295087;
+	bh=QbRCtR0CacyYKzFJoIJunN+5tZHIJYiysqUP3sn1Aqc=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Zw3Uhqqsl5sEIBDs+48xVy9J8BqbHU8Jg9NSjlZECqpdI/9v9nAhbjQZS45nGXLz5
-	 1HKs7tBc4wOESmXb0E4bY6nLrAtwFusMX52qfC7r05IlT0uP/ZvYDu16BgUcxrBqr1
-	 6SIIiha0u0p+QFerWNKdWiPjuJu6LA0AshCbe90yuKVpze5l9XUyXdd9KLjbgLzu52
-	 jLzUJR0082JtwVu5cHsB6yVFbFNvIDrp07tx6vyGwo88KJHFus3670Wn3nOkiVOQ5q
-	 cyVWTXHCHuO60m7U1Z5EZ7vrhak9zqmI/2GvOOQQ0STUfGbBAENCZExKRVBOGIdgO0
-	 KtinMIlW96BqQ==
-Message-ID: <1a317bea80f827b85c5b43766cdbcd0bcb85463d.camel@kernel.org>
-Subject: Re: [PATCH 07/13] VFS: make lookup_one_qstr_excl() static.
+	b=qSHNMtIn2aYx7PISfiGAyJQ1vWR63E1VyXMRnILSIUleY28dg+XQ8lfpFgpLmC5lI
+	 5JY94j5zofPxM4tDfogBiYojMv291jnvC/1OTe6kQTRGBXHBosRlUQhQ/MPMmV1XaO
+	 pbD0VlyOR4TJP2mKeJvVP7wFkUFs+ySFPCAe0dKdCGM0j35SzMe4GOrt931U+yEKP+
+	 c4Lb6rd5NKQFR30D0YqwATn9IP/9nCvVcFInpXmBon+VwCbRVidWZm+K6dMagp9DTB
+	 rD6r/o8JQ7mpqJ836GNtcImMjLksL9+c3djR4Xmtyg4XQyabJOIlKkIeaUEnQsqJ35
+	 l0tdvX9eXc0Gw==
+Message-ID: <5d273a008fc51a2fded785efbe30e5bd2a89b985.camel@kernel.org>
+Subject: Re: [PATCH 08/13] ovl: Simplify ovl_lookup_real_one()
 From: Jeff Layton <jlayton@kernel.org>
 To: NeilBrown <neil@brown.name>, Christian Brauner <brauner@kernel.org>, 
  Alexander Viro <viro@zeniv.linux.org.uk>, David Howells
@@ -59,10 +59,10 @@ Cc: linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
 	linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com, 
 	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Date: Thu, 05 Feb 2026 07:37:16 -0500
-In-Reply-To: <20260204050726.177283-8-neilb@ownmail.net>
+Date: Thu, 05 Feb 2026 07:38:03 -0500
+In-Reply-To: <20260204050726.177283-9-neilb@ownmail.net>
 References: <20260204050726.177283-1-neilb@ownmail.net>
-	 <20260204050726.177283-8-neilb@ownmail.net>
+	 <20260204050726.177283-9-neilb@ownmail.net>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -157,7 +157,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76435-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76436-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_TO(0.00)[brown.name,kernel.org,zeniv.linux.org.uk,redhat.com,suse.cz,oracle.com,szeredi.hu,gmail.com,canonical.com,paul-moore.com,namei.org,hallyn.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
@@ -175,82 +175,132 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,brown.name:email]
-X-Rspamd-Queue-Id: A1156F2AE2
+X-Rspamd-Queue-Id: 40622F2B34
 X-Rspamd-Action: no action
 
 On Wed, 2026-02-04 at 15:57 +1100, NeilBrown wrote:
 > From: NeilBrown <neil@brown.name>
 >=20
-> lookup_one_qstr_excl() is no longer used outside of namei.c, so
-> make it static.
+> The primary purpose of this patch is to remove the locking from
+> ovl_lookup_real_one() as part of centralising all locking of directories
+> for name operations.
+>=20
+> The locking here isn't needed.  By performing consistency tests after
+> the lookup we can be sure that the result of the lookup was valid at
+> least for a moment, which is all the original code promised.
+>=20
+> lookup_noperm_unlocked() is used for the lookup and it will take the
+> lock if needed only where it is needed.
+>=20
+> Also:
+>  - don't take a reference to real->d_parent.  The parent is
+>    only use for a pointer comparison, and no reference is needed for
+>    that.
+>  - Several "if" statements have a "goto" followed by "else" - the
+>    else isn't needed: the following statement can directly follow
+>    the "if" as a new statement
+>  - Use a consistent pattern of setting "err" before performing a test
+>    and possibly going to "fail".
+>  - remove the "out" label (now that we don't need to dput(parent) or
+>    unlock) and simply return from fail:.
 >=20
 > Signed-off-by: NeilBrown <neil@brown.name>
 > ---
->  Documentation/filesystems/porting.rst | 7 +++++++
->  fs/namei.c                            | 5 ++---
->  include/linux/namei.h                 | 3 ---
->  3 files changed, 9 insertions(+), 6 deletions(-)
+>  fs/overlayfs/export.c | 61 ++++++++++++++++++-------------------------
+>  1 file changed, 26 insertions(+), 35 deletions(-)
 >=20
-> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesy=
-stems/porting.rst
-> index ed3ac56e3c76..ed86c95d9d01 100644
-> --- a/Documentation/filesystems/porting.rst
-> +++ b/Documentation/filesystems/porting.rst
-> @@ -1340,3 +1340,10 @@ The ->setlease() file_operation must now be explic=
-itly set in order to provide
->  support for leases. When set to NULL, the kernel will now return -EINVAL=
- to
->  attempts to set a lease. Filesystems that wish to use the kernel-interna=
-l lease
->  implementation should set it to generic_setlease().
-> +
-> +---
-> +
-> +**mandatory**
-> +
-> +lookup_one_qstr_excl() is no longer exported - use start_creating() or
-> +similar.
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 40af78ddfb1b..307b4d0866b8 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1730,8 +1730,8 @@ static struct dentry *lookup_dcache(const struct qs=
-tr *name,
->   * Will return -ENOENT if name isn't found and LOOKUP_CREATE wasn't pass=
-ed.
->   * Will return -EEXIST if name is found and LOOKUP_EXCL was passed.
->   */
-> -struct dentry *lookup_one_qstr_excl(const struct qstr *name,
-> -				    struct dentry *base, unsigned int flags)
-> +static struct dentry *lookup_one_qstr_excl(const struct qstr *name,
-> +					   struct dentry *base, unsigned int flags)
+> diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
+> index 83f80fdb1567..dcd28ffc4705 100644
+> --- a/fs/overlayfs/export.c
+> +++ b/fs/overlayfs/export.c
+> @@ -359,59 +359,50 @@ static struct dentry *ovl_lookup_real_one(struct de=
+ntry *connected,
+>  					  struct dentry *real,
+>  					  const struct ovl_layer *layer)
 >  {
->  	struct dentry *dentry;
->  	struct dentry *old;
-> @@ -1768,7 +1768,6 @@ struct dentry *lookup_one_qstr_excl(const struct qs=
-tr *name,
->  	}
->  	return dentry;
+> -	struct inode *dir =3D d_inode(connected);
+> -	struct dentry *this, *parent =3D NULL;
+> +	struct dentry *this;
+>  	struct name_snapshot name;
+>  	int err;
+> =20
+>  	/*
+> -	 * Lookup child overlay dentry by real name. The dir mutex protects us
+> -	 * from racing with overlay rename. If the overlay dentry that is above
+> -	 * real has already been moved to a parent that is not under the
+> -	 * connected overlay dir, we return -ECHILD and restart the lookup of
+> -	 * connected real path from the top.
+> +	 * @connected is a directory in the overlay and @real is an object
+> +	 * on @layer which is expected to be a child of @connected.
+> +	 * The goal is to return a dentry from the overlay which corresponds
+> +	 * to @real.  This is done by looking up the name from @real in
+> +	 * @connected and checking that the result meets expectations.
+> +	 *
+> +	 * Return %-ECHILD if the parent of @real no-longer corresponds to
+> +	 * @connected, and %-ESTALE if the dentry found by lookup doesn't
+> +	 * correspond to @real.
+>  	 */
+> -	inode_lock_nested(dir, I_MUTEX_PARENT);
+> -	err =3D -ECHILD;
+> -	parent =3D dget_parent(real);
+> -	if (ovl_dentry_real_at(connected, layer->idx) !=3D parent)
+> -		goto fail;
+> =20
+> -	/*
+> -	 * We also need to take a snapshot of real dentry name to protect us
+> -	 * from racing with underlying layer rename. In this case, we don't
+> -	 * care about returning ESTALE, only from dereferencing a free name
+> -	 * pointer because we hold no lock on the real dentry.
+> -	 */
+>  	take_dentry_name_snapshot(&name, real);
+> -	/*
+> -	 * No idmap handling here: it's an internal lookup.
+> -	 */
+> -	this =3D lookup_noperm(&name.name, connected);
+> +	this =3D lookup_noperm_unlocked(&name.name, connected);
+>  	release_dentry_name_snapshot(&name);
+> +
+> +	err =3D -ECHILD;
+> +	if (ovl_dentry_real_at(connected, layer->idx) !=3D real->d_parent)
+> +		goto fail;
+> +
+>  	err =3D PTR_ERR(this);
+> -	if (IS_ERR(this)) {
+> +	if (IS_ERR(this))
+>  		goto fail;
+> -	} else if (!this || !this->d_inode) {
+> -		dput(this);
+> -		err =3D -ENOENT;
+> +
+> +	err =3D -ENOENT;
+> +	if (!this || !this->d_inode)
+>  		goto fail;
+> -	} else if (ovl_dentry_real_at(this, layer->idx) !=3D real) {
+> -		dput(this);
+> -		err =3D -ESTALE;
+> +
+> +	err =3D -ESTALE;
+> +	if (ovl_dentry_real_at(this, layer->idx) !=3D real)
+>  		goto fail;
+> -	}
+> =20
+> -out:
+> -	dput(parent);
+> -	inode_unlock(dir);
+>  	return this;
+> =20
+>  fail:
+>  	pr_warn_ratelimited("failed to lookup one by real (%pd2, layer=3D%d, co=
+nnected=3D%pd2, err=3D%i)\n",
+>  			    real, layer->idx, connected, err);
+> -	this =3D ERR_PTR(err);
+> -	goto out;
+> +	if (!IS_ERR(this))
+> +		dput(this);
+> +	return ERR_PTR(err);
 >  }
-> -EXPORT_SYMBOL(lookup_one_qstr_excl);
 > =20
->  /**
->   * lookup_fast - do fast lockless (but racy) lookup of a dentry
-> diff --git a/include/linux/namei.h b/include/linux/namei.h
-> index 58600cf234bc..c7a7288cdd25 100644
-> --- a/include/linux/namei.h
-> +++ b/include/linux/namei.h
-> @@ -54,9 +54,6 @@ extern int path_pts(struct path *path);
-> =20
->  extern int user_path_at(int, const char __user *, unsigned, struct path =
-*);
-> =20
-> -struct dentry *lookup_one_qstr_excl(const struct qstr *name,
-> -				    struct dentry *base,
-> -				    unsigned int flags);
->  extern int kern_path(const char *, unsigned, struct path *);
->  struct dentry *kern_path_parent(const char *name, struct path *parent);
-> =20
+>  static struct dentry *ovl_lookup_real(struct super_block *sb,
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
