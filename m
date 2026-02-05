@@ -1,52 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-76434-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id SK3vFfSOhGl43QMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76434-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:37:08 +0100
+	id QNdSCXePhGkh3gMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:39:19 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB5FBF2A0C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:37:07 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1156F2AE2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:39:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 2F0E130071FB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:37:05 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 11593303430B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9193AE70E;
-	Thu,  5 Feb 2026 12:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB1C3D3D0A;
+	Thu,  5 Feb 2026 12:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFZT7KVA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zw3Uhqqs"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DC21F1537;
-	Thu,  5 Feb 2026 12:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5EE1F1537;
+	Thu,  5 Feb 2026 12:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770295019; cv=none; b=sbe9soMpkyWAAaExtX1C2RGmadQc2UPAW+bejkeYEa0LRY/DocV1fHicfOWwF2ql+8NN0V9lAyFCwSmvKL5UYSBygV4Lkd0bm6ma5IMxK+qrcjqI7QW3OEhXePWVEzp6P8Et3eUrOvgJHWE9FHCDKKuGLr4pFcdKJs6QAWG0Z/s=
+	t=1770295039; cv=none; b=TTk8yCUWUyKXyl107ds+XBJ7i/G8ZvjKII8CIztV2Yv5y0VvkWgDuCvhf0hjL44uUPWSjBN2krok90rxm4aot2ZYjNTUwimTESSvmucePenSei0s/qgvIr+MZACLjD72qt5Lpsum2meEZShdTp2iAr0buPFDZYs7f461RVgpmsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770295019; c=relaxed/simple;
-	bh=r/RWmitTDtOL5zacBcM1kz+XoL+DdBMTmApl8Pq8ui8=;
+	s=arc-20240116; t=1770295039; c=relaxed/simple;
+	bh=qwvMiU/KWGK3LOe0YnOjOtPEHLKm5l+8XVgH4OXZYyw=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MH0TW7Mz2/eE2k/QQhXCFz1aWy58ZxxTL/hiZ5gzXhssXulLcZK//zt7oSK+hJlV9CqOE5L829g7ndJb3PO1+7BWUnQftrK1E7mqIuGHsQlJl8PCk4p7d5AyLhz6yP19XvvwmHST/VNa2aXFL7SoWJ8FBr9rW4TzgTaE+0co+Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFZT7KVA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37E9CC19423;
-	Thu,  5 Feb 2026 12:36:57 +0000 (UTC)
+	 Content-Type:MIME-Version; b=cmx6dEU8J+Y43i117VrWp+m48ffJq2FXstJfUj5kpc9EVwBMNEiKn+9U81E9usm1y8vIKh8ADdVtwLzPgHJo59kDsgEUDe6h3OBOoIZE3xm8dqZ9XFOQyMEkhByBROTVNmAtVuEFa3CLY8xX2650lVFfG3VYjgc1g8E7w/jF5M4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zw3Uhqqs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86450C4CEF7;
+	Thu,  5 Feb 2026 12:37:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770295019;
-	bh=r/RWmitTDtOL5zacBcM1kz+XoL+DdBMTmApl8Pq8ui8=;
+	s=k20201202; t=1770295039;
+	bh=qwvMiU/KWGK3LOe0YnOjOtPEHLKm5l+8XVgH4OXZYyw=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=YFZT7KVAa5p4zKtTDyCaxee5VRJZOnFGXi4oTMUzFY2FBOD/pz7iS7JCcxsiuntfC
-	 mv1CnHEWss1lbx5p1myttORt3TyAbZhdG6hloq3KrhXWNbOoKp2vvUyKbIxgicUIWD
-	 nf8sRBPWihATme4F0s0uGzZeLtyLkB1eDL2ngwHEjv7JeWvBa/p+PS7naOtX99zVMW
-	 ijOfqZwmruNnbGvSyw9bmI2fa/qDoxdiBqnERWam1XRUrT+QDu29LG4EMiiIvVVrW9
-	 4cOED4MLS8Jg26e5FUt7rR+dJGDalHZ1oM0w9C338s5NGMod5ptrYd5OZ9wWgmDScG
-	 sHQ6UN/jEeROA==
-Message-ID: <b4cc667f93cd16b251ba063898055b3a754e3496.camel@kernel.org>
-Subject: Re: [PATCH 06/13] nfsd: switch purge_old() to use
- start_removing_noperm()
+	b=Zw3Uhqqsl5sEIBDs+48xVy9J8BqbHU8Jg9NSjlZECqpdI/9v9nAhbjQZS45nGXLz5
+	 1HKs7tBc4wOESmXb0E4bY6nLrAtwFusMX52qfC7r05IlT0uP/ZvYDu16BgUcxrBqr1
+	 6SIIiha0u0p+QFerWNKdWiPjuJu6LA0AshCbe90yuKVpze5l9XUyXdd9KLjbgLzu52
+	 jLzUJR0082JtwVu5cHsB6yVFbFNvIDrp07tx6vyGwo88KJHFus3670Wn3nOkiVOQ5q
+	 cyVWTXHCHuO60m7U1Z5EZ7vrhak9zqmI/2GvOOQQ0STUfGbBAENCZExKRVBOGIdgO0
+	 KtinMIlW96BqQ==
+Message-ID: <1a317bea80f827b85c5b43766cdbcd0bcb85463d.camel@kernel.org>
+Subject: Re: [PATCH 07/13] VFS: make lookup_one_qstr_excl() static.
 From: Jeff Layton <jlayton@kernel.org>
 To: NeilBrown <neil@brown.name>, Christian Brauner <brauner@kernel.org>, 
  Alexander Viro <viro@zeniv.linux.org.uk>, David Howells
@@ -60,10 +59,10 @@ Cc: linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
 	linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com, 
 	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Date: Thu, 05 Feb 2026 07:36:56 -0500
-In-Reply-To: <20260204050726.177283-7-neilb@ownmail.net>
+Date: Thu, 05 Feb 2026 07:37:16 -0500
+In-Reply-To: <20260204050726.177283-8-neilb@ownmail.net>
 References: <20260204050726.177283-1-neilb@ownmail.net>
-	 <20260204050726.177283-7-neilb@ownmail.net>
+	 <20260204050726.177283-8-neilb@ownmail.net>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -153,12 +152,12 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76434-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76435-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_TO(0.00)[brown.name,kernel.org,zeniv.linux.org.uk,redhat.com,suse.cz,oracle.com,szeredi.hu,gmail.com,canonical.com,paul-moore.com,namei.org,hallyn.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
@@ -174,48 +173,84 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[brown.name:email,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: EB5FBF2A0C
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,brown.name:email]
+X-Rspamd-Queue-Id: A1156F2AE2
 X-Rspamd-Action: no action
 
 On Wed, 2026-02-04 at 15:57 +1100, NeilBrown wrote:
 > From: NeilBrown <neil@brown.name>
 >=20
-> Rather than explicit locking, use the start_removing_noperm() and
-> end_removing() wrappers.
-> This was not done with other start_removing changes due to conflicting
-> in-flight patches.
+> lookup_one_qstr_excl() is no longer used outside of namei.c, so
+> make it static.
 >=20
 > Signed-off-by: NeilBrown <neil@brown.name>
 > ---
->  fs/nfsd/nfs4recover.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+>  Documentation/filesystems/porting.rst | 7 +++++++
+>  fs/namei.c                            | 5 ++---
+>  include/linux/namei.h                 | 3 ---
+>  3 files changed, 9 insertions(+), 6 deletions(-)
 >=20
-> diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
-> index 441dfbfe2d2b..52fbe723a3c8 100644
-> --- a/fs/nfsd/nfs4recover.c
-> +++ b/fs/nfsd/nfs4recover.c
-> @@ -351,16 +351,14 @@ purge_old(struct dentry *parent, char *cname, struc=
-t nfsd_net *nn)
->  	if (nfs4_has_reclaimed_state(name, nn))
->  		goto out_free;
-> =20
-> -	inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
-> -	child =3D lookup_one(&nop_mnt_idmap, &QSTR(cname), parent);
-> +	child =3D start_removing_noperm(parent, &QSTR(cname));
->  	if (!IS_ERR(child)) {
->  		status =3D vfs_rmdir(&nop_mnt_idmap, d_inode(parent), child, NULL);
->  		if (status)
->  			printk("failed to remove client recovery directory %pd\n",
->  			       child);
-> -		dput(child);
+> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesy=
+stems/porting.rst
+> index ed3ac56e3c76..ed86c95d9d01 100644
+> --- a/Documentation/filesystems/porting.rst
+> +++ b/Documentation/filesystems/porting.rst
+> @@ -1340,3 +1340,10 @@ The ->setlease() file_operation must now be explic=
+itly set in order to provide
+>  support for leases. When set to NULL, the kernel will now return -EINVAL=
+ to
+>  attempts to set a lease. Filesystems that wish to use the kernel-interna=
+l lease
+>  implementation should set it to generic_setlease().
+> +
+> +---
+> +
+> +**mandatory**
+> +
+> +lookup_one_qstr_excl() is no longer exported - use start_creating() or
+> +similar.
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 40af78ddfb1b..307b4d0866b8 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1730,8 +1730,8 @@ static struct dentry *lookup_dcache(const struct qs=
+tr *name,
+>   * Will return -ENOENT if name isn't found and LOOKUP_CREATE wasn't pass=
+ed.
+>   * Will return -EEXIST if name is found and LOOKUP_EXCL was passed.
+>   */
+> -struct dentry *lookup_one_qstr_excl(const struct qstr *name,
+> -				    struct dentry *base, unsigned int flags)
+> +static struct dentry *lookup_one_qstr_excl(const struct qstr *name,
+> +					   struct dentry *base, unsigned int flags)
+>  {
+>  	struct dentry *dentry;
+>  	struct dentry *old;
+> @@ -1768,7 +1768,6 @@ struct dentry *lookup_one_qstr_excl(const struct qs=
+tr *name,
 >  	}
-> -	inode_unlock(d_inode(parent));
-> +	end_removing(child);
+>  	return dentry;
+>  }
+> -EXPORT_SYMBOL(lookup_one_qstr_excl);
 > =20
->  out_free:
->  	kfree(name.data);
+>  /**
+>   * lookup_fast - do fast lockless (but racy) lookup of a dentry
+> diff --git a/include/linux/namei.h b/include/linux/namei.h
+> index 58600cf234bc..c7a7288cdd25 100644
+> --- a/include/linux/namei.h
+> +++ b/include/linux/namei.h
+> @@ -54,9 +54,6 @@ extern int path_pts(struct path *path);
+> =20
+>  extern int user_path_at(int, const char __user *, unsigned, struct path =
+*);
+> =20
+> -struct dentry *lookup_one_qstr_excl(const struct qstr *name,
+> -				    struct dentry *base,
+> -				    unsigned int flags);
+>  extern int kern_path(const char *, unsigned, struct path *);
+>  struct dentry *kern_path_parent(const char *name, struct path *parent);
+> =20
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
