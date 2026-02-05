@@ -1,52 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-76446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id wLhBBB6UhGk43gMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:59:10 +0100
+	id mHxOBk2VhGmL3gMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 14:04:13 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAB79F2E60
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:59:09 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id A52CDF2F0A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 14:04:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 85AC13023E38
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:58:58 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A4DD93078F6B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3743D5256;
-	Thu,  5 Feb 2026 12:58:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767F23D6493;
+	Thu,  5 Feb 2026 12:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d0PDIpJq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TrZzsXq8"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9349D3ACF0D;
-	Thu,  5 Feb 2026 12:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E194B3D523F;
+	Thu,  5 Feb 2026 12:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770296335; cv=none; b=AXYunK3XiITsWPcbhMuBWsLfuJOvNr74tCqq00qWoz1dVONZ3KMUSjf/gfmPtRY/rwaIq9HPwxUmQei593SGClyEnuJgguvZO48n38yah32sp+5veYkc4ApZv+GuwtT+4xJ2mBVIB1hYKq/ETUTdsIsASFQOwDI0LqKqAaQTqAY=
+	t=1770296339; cv=none; b=fRuNg1k3y74PYu+s38CQNy3hAynKBYpnFCa0Y0bX1StjggK04HJFdiy06xfYmvrwsIFm7OQwZ8EAyVDy2fFIw/+d+000AtluqcihLDiZdlnF1EKa6scHtW+4vgRXX95du0cCuci7ZF+bad70I0nUP9s6dFAp9Mc8rG9rrPbkh6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770296335; c=relaxed/simple;
-	bh=9Q7RomOb06jXqeFlfjuA47rwkNfZ48q07KB0txG+cDU=;
+	s=arc-20240116; t=1770296339; c=relaxed/simple;
+	bh=TTo8r9PU9WJ6p301M7VHEuMS9EHbRX/m7krx1R/8ncs=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=g/6+SIMlIbscZOztGaMxumfKht2yM0uuzCc35e4Xm7wogXSDyQTs/DEgvt1DkRX9ajLwRME1cRyzgun+g98JWUyD6QM/nwiK/ZRWkAyxQBfGg/cYzFbJ2LDU42Jh3aXGIeoQfKaAj1tcSGFNGzTsYP632I3H5FUev/h3nNE0ZgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d0PDIpJq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B856C19424;
-	Thu,  5 Feb 2026 12:58:53 +0000 (UTC)
+	 Content-Type:MIME-Version; b=LN1NqO8eEUfRdlZU3jrxtv2+5odWd9tf4GP0hhES3fe1wev/le3xR3XpeGMMzD9u2xEOLWFVM3YSNayrYYYvEDmsVZlEd3oK2kRfQQ194b628+Fhc/qvd+bWE0mA+STgSUUk2iOZgLYdVMN4qLugr1i+bDxNd6GvdhNaOKPq1n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TrZzsXq8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BBE0C4CEF7;
+	Thu,  5 Feb 2026 12:58:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770296335;
-	bh=9Q7RomOb06jXqeFlfjuA47rwkNfZ48q07KB0txG+cDU=;
+	s=k20201202; t=1770296338;
+	bh=TTo8r9PU9WJ6p301M7VHEuMS9EHbRX/m7krx1R/8ncs=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=d0PDIpJqdaagnxHuoM+slc3pVT8cJDMtTaD6ptFqt4pbITjYOIIBy92VgM8dFquWp
-	 gHCC72pgm3N2zYkM+SKGDi1y74CJr9ny0oJ3aWBQ7ige4nCo586bJfwRqcv/McH/+A
-	 DN6Cy52ELCGQNpT7B1YMYEpiPGTE1pp1yDpP9w1begCDMOhy4M5SpzomdVrtLp8Sox
-	 QBWnNZFlOuzKSBXcXE1H5KaTnXaFRhc+sdmEBAPezbSo3Z3rc7gC9rohb7vuw054nH
-	 tNPaaTijYXxpyTOkVAJv+oD5lyTmwITC6Fbv9tyeXC3CdjfcG3rwcv1574GXblSDzQ
-	 FYYfj7rQPrZDQ==
-Message-ID: <7fbfbeb0d57484172304b727bd888d1a1105f96d.camel@kernel.org>
-Subject: Re: [PATCH 04/13] Apparmor: Use simple_start_creating() /
- simple_done_creating()
+	b=TrZzsXq8/IeJGvekWOJD8/evsUIm5SOl9z+KhoV8UyThlwVrA90ZXHIqaANB3LS98
+	 HSuuuT+GFT7d2Tj6/a5rABk67obWc553Y6YdmBYeG23Nc5lcTX4HzKlr+mM1Ksm7Nl
+	 e8jzNqyUnTMo3CIMJEnhUSI0mTi8P/VnTwapLnplUSZ2zHfGKKHl9q/rm9YUw/oiKq
+	 2wUXacanqbEhFFO8DtDfpu1pijzMi1ui2PWp8Qvhfp6m85Td8VNBHTnXmSYUAQ1RXv
+	 ND87CwlOH4KhjLBXNIcNjxo4W9BlJ+zwxClBCS10rS+HivlnOf978+IqfHk4lOjX94
+	 9fypZSAAf7OXQ==
+Message-ID: <00ea86285ce8dcf7860b9df3bcbcf77af87e4686.camel@kernel.org>
+Subject: Re: [PATCH 12/13] ovl: remove ovl_lock_rename_workdir()
 From: Jeff Layton <jlayton@kernel.org>
 To: NeilBrown <neil@brown.name>, Christian Brauner <brauner@kernel.org>, 
  Alexander Viro <viro@zeniv.linux.org.uk>, David Howells
@@ -60,10 +59,10 @@ Cc: linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
 	linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com, 
 	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Date: Thu, 05 Feb 2026 07:58:52 -0500
-In-Reply-To: <20260204050726.177283-5-neilb@ownmail.net>
+Date: Thu, 05 Feb 2026 07:58:55 -0500
+In-Reply-To: <20260204050726.177283-13-neilb@ownmail.net>
 References: <20260204050726.177283-1-neilb@ownmail.net>
-	 <20260204050726.177283-5-neilb@ownmail.net>
+	 <20260204050726.177283-13-neilb@ownmail.net>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -153,12 +152,12 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76446-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76447-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_TO(0.00)[brown.name,kernel.org,zeniv.linux.org.uk,redhat.com,suse.cz,oracle.com,szeredi.hu,gmail.com,canonical.com,paul-moore.com,namei.org,hallyn.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
@@ -174,118 +173,73 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[brown.name:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: BAB79F2E60
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,brown.name:email]
+X-Rspamd-Queue-Id: A52CDF2F0A
 X-Rspamd-Action: no action
 
 On Wed, 2026-02-04 at 15:57 +1100, NeilBrown wrote:
 > From: NeilBrown <neil@brown.name>
 >=20
-> Instead of explicitly locking the parent and performing a look up in
-> apparmor, use simple_start_creating(), and then simple_done_creating()
-> to unlock and drop the dentry.
->=20
-> This removes the need to check for an existing entry (as
-> simple_start_creating() acts like an exclusive create and can return
-> -EEXIST), simplifies error paths, and keeps dir locking code
-> centralised.
+> This function is unused.
 >=20
 > Signed-off-by: NeilBrown <neil@brown.name>
 > ---
->  security/apparmor/apparmorfs.c | 38 ++++++++--------------------------
->  1 file changed, 9 insertions(+), 29 deletions(-)
+>  fs/overlayfs/overlayfs.h |  2 --
+>  fs/overlayfs/util.c      | 25 -------------------------
+>  2 files changed, 27 deletions(-)
 >=20
-> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorf=
-s.c
-> index 907bd2667e28..7f78c36e6e50 100644
-> --- a/security/apparmor/apparmorfs.c
-> +++ b/security/apparmor/apparmorfs.c
-> @@ -282,32 +282,19 @@ static struct dentry *aafs_create(const char *name,=
- umode_t mode,
-> =20
->  	dir =3D d_inode(parent);
-> =20
-> -	inode_lock(dir);
-> -	dentry =3D lookup_noperm(&QSTR(name), parent);
-> +	dentry =3D simple_start_creating(parent, name);
->  	if (IS_ERR(dentry)) {
->  		error =3D PTR_ERR(dentry);
-> -		goto fail_lock;
-> -	}
-> -
-> -	if (d_really_is_positive(dentry)) {
-> -		error =3D -EEXIST;
-> -		goto fail_dentry;
-> +		goto fail;
->  	}
-> =20
->  	error =3D __aafs_setup_d_inode(dir, dentry, mode, data, link, fops, iop=
-s);
-> +	simple_done_creating(dentry);
->  	if (error)
-> -		goto fail_dentry;
-> -	inode_unlock(dir);
-> -
-> -	return dentry;
-> -
-> -fail_dentry:
-> -	dput(dentry);
-> -
-> -fail_lock:
-> -	inode_unlock(dir);
-> +		goto fail;
-> +	return 0;
-
-As KTR points out, this should be "return NULL;"
-
-> +fail:
->  	simple_release_fs(&aafs_mnt, &aafs_count);
-> -
->  	return ERR_PTR(error);
+> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> index 4fb4750a83e4..3eedc2684c23 100644
+> --- a/fs/overlayfs/overlayfs.h
+> +++ b/fs/overlayfs/overlayfs.h
+> @@ -569,8 +569,6 @@ bool ovl_is_inuse(struct dentry *dentry);
+>  bool ovl_need_index(struct dentry *dentry);
+>  int ovl_nlink_start(struct dentry *dentry);
+>  void ovl_nlink_end(struct dentry *dentry);
+> -int ovl_lock_rename_workdir(struct dentry *workdir, struct dentry *work,
+> -			    struct dentry *upperdir, struct dentry *upper);
+>  int ovl_check_metacopy_xattr(struct ovl_fs *ofs, const struct path *path=
+,
+>  			     struct ovl_metacopy *data);
+>  int ovl_set_metacopy_xattr(struct ovl_fs *ofs, struct dentry *d,
+> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+> index 94986d11a166..810c8752b4f7 100644
+> --- a/fs/overlayfs/util.c
+> +++ b/fs/overlayfs/util.c
+> @@ -1213,31 +1213,6 @@ void ovl_nlink_end(struct dentry *dentry)
+>  	ovl_inode_unlock(inode);
 >  }
 > =20
-> @@ -2572,8 +2559,7 @@ static int aa_mk_null_file(struct dentry *parent)
->  	if (error)
->  		return error;
-> =20
-> -	inode_lock(d_inode(parent));
-> -	dentry =3D lookup_noperm(&QSTR(NULL_FILE_NAME), parent);
-> +	dentry =3D simple_start_creating(parent, NULL_FILE_NAME);
->  	if (IS_ERR(dentry)) {
->  		error =3D PTR_ERR(dentry);
->  		goto out;
-> @@ -2581,7 +2567,7 @@ static int aa_mk_null_file(struct dentry *parent)
->  	inode =3D new_inode(parent->d_inode->i_sb);
->  	if (!inode) {
->  		error =3D -ENOMEM;
-> -		goto out1;
-> +		goto out;
->  	}
-> =20
->  	inode->i_ino =3D get_next_ino();
-> @@ -2593,18 +2579,12 @@ static int aa_mk_null_file(struct dentry *parent)
->  	aa_null.dentry =3D dget(dentry);
->  	aa_null.mnt =3D mntget(mount);
-> =20
-> -	error =3D 0;
+> -int ovl_lock_rename_workdir(struct dentry *workdir, struct dentry *work,
+> -			    struct dentry *upperdir, struct dentry *upper)
+> -{
+> -	struct dentry *trap;
 > -
-> -out1:
-> -	dput(dentry);
->  out:
-> -	inode_unlock(d_inode(parent));
-> +	simple_done_creating(dentry);
->  	simple_release_fs(&mount, &count);
->  	return error;
->  }
-> =20
+> -	/* Workdir should not be subdir of upperdir and vice versa */
+> -	trap =3D lock_rename(workdir, upperdir);
+> -	if (IS_ERR(trap))
+> -		goto err;
+> -	if (trap)
+> -		goto err_unlock;
+> -	if (work && (work->d_parent !=3D workdir || d_unhashed(work)))
+> -		goto err_unlock;
+> -	if (upper && (upper->d_parent !=3D upperdir || d_unhashed(upper)))
+> -		goto err_unlock;
 > -
+> -	return 0;
 > -
->  static const char *policy_get_link(struct dentry *dentry,
->  				   struct inode *inode,
->  				   struct delayed_call *done)
-
-Assuming you fix the minor problem above.
+> -err_unlock:
+> -	unlock_rename(workdir, upperdir);
+> -err:
+> -	pr_err("failed to lock workdir+upperdir\n");
+> -	return -EIO;
+> -}
+> -
+>  /*
+>   * err < 0, 0 if no metacopy xattr, metacopy data size if xattr found.
+>   * an empty xattr returns OVL_METACOPY_MIN_SIZE to distinguish from no x=
+attr value.
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
