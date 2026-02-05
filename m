@@ -1,113 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-76502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76503-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OHafBx4phWkk9QMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 00:34:54 +0100
+	id LkyHF8gphWmT9QMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76503-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 00:37:44 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82B3FF85D4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 00:34:53 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC830F85E5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 00:37:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C2134300EFB8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 23:34:50 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 32D3A3004DEF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 23:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09BF33C536;
-	Thu,  5 Feb 2026 23:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1614B33D6FF;
+	Thu,  5 Feb 2026 23:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rvdj/m7r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hHOLfnJo"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD5533B6C4
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 23:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E332C026C
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 23:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770334489; cv=none; b=hBvc9GTotBjPPJWIyvkr3eaKqCyT5Q9iDZ9vWYApc9CEgSKD4VzY0+qFWSgq+2cr1K2cpKV6pGFprd8fbVw3XTDKo+6zBtdtwtsooNNVdxi1iwAYqkSUK6pKPc9aNB+ppmrPGlzcNzEaD5GK3MiuQGWe7jGHIRG9EMS7aZILO/4=
+	t=1770334660; cv=none; b=XuqUTclVIlZLj0gehgrDY1xCKVT1Pjy1dU1TbsGSHDQ3xmTGPXMALiWDOypzoqfnYSBtGKAcKPo0ip9lvK7j7G85McNGDDa09WvEE6b5VvvXq1K+vmaoCnTHogras9QOa2TZklwX8Ayy5WKTE1KwDtZ2mPP9k0Q5JFpLpNoRNCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770334489; c=relaxed/simple;
-	bh=D6BWpgFwk9MKVgjRM2UJuBbXHagFe08SXtKvvAS3/0U=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=LNdck3mo28n29STILudjAEIg8+R9fNNisHoAA2CLsekZAaqEzg/H1K0KpQTOBS/gPT1Tc88Tcx7T2sU9Q7B1LI1ezu6IJCoFjztudyA5wy6TZbgvUHhsVay+MmtD8uy4zPx+BCuU4aNsSA+v3Jy1PIlbXILQ/DUHpsmL9Pvx0WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rvdj/m7r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4952C4CEF7;
-	Thu,  5 Feb 2026 23:34:48 +0000 (UTC)
+	s=arc-20240116; t=1770334660; c=relaxed/simple;
+	bh=9fsQs8XyfGV7KTfiHy+W3SDSyzHyIaPegIt6rYd4HUQ=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=EPyaqvLCbcC7IrLqOIzQyXntGknJFTVC3fWxOm6WYV/9kYyjIKQYhzo5GaedVxqLaQZIg9VebFqf9cytkmscSCsODu+oIMSv7g1pG3k9U/OyUaQ1E1K9xA1wjEuLoC8+REUpTwBlUDi1oAeFvQuYS6/XzoSuSjN4N/cr21dfh2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hHOLfnJo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10D86C19421
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 23:37:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770334488;
-	bh=D6BWpgFwk9MKVgjRM2UJuBbXHagFe08SXtKvvAS3/0U=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=rvdj/m7rGDsyc6x6ZQiC1OkcpVctynsnKJ66usd7GQ+dBzAvjkF06MJfENvXClMWN
-	 1g6ck+ZPR/M4bqwwIu1Si4UxQIFlF4jAxAKxA6dnLIqnhmFpcfcmuyUa0WwDnB5d5b
-	 0fySacARGtwRiaRILGlRnJWuXPUaZ+WVwunX+RPuvynz8d9SVnvPMd+PoS7FVWCv/M
-	 vNEqj40yHy6sb7XcNoyMVR4wOUReOgyOOOwjsJBDudpkv6qb5BrGjx5gAl0XqG1l/R
-	 o3/gIlcynjOqtznFk13MLJBO4psxTG/RKhefITKF6eE1o26eKMIf0lORsLQA46ld9+
-	 Cgr3gDPrW2pxw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id C231B3808200;
-	Thu,  5 Feb 2026 23:34:47 +0000 (UTC)
-Subject: Re: [git pull] tree-in-dcache regression fixes (rust_binderfs and
- functionfs)
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20260205185915.GS3183987@ZenIV>
-References: <20260205185915.GS3183987@ZenIV>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20260205185915.GS3183987@ZenIV>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-fixes
-X-PR-Tracked-Commit-Id: 2005aabe94eaab8608879d98afb901bc99bc3a31
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 49233c41cf8546b94d213a5dd877ef07e61b1f3f
-Message-Id: <177033448651.607944.11307485102298460822.pr-tracker-bot@kernel.org>
-Date: Thu, 05 Feb 2026 23:34:46 +0000
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+	s=k20201202; t=1770334660;
+	bh=9fsQs8XyfGV7KTfiHy+W3SDSyzHyIaPegIt6rYd4HUQ=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=hHOLfnJor7JN/Fk+Ipfr8313t5UcmUT4+/bPAdvLFp9KcVAfrJlCXC8jeZxgK7ZKu
+	 UAJnyL9LitnG/o8sqDUIAmZimtnaV0qSBIgOgU79OEIu9eSm/a1F+63Ss8jx4Do+KO
+	 GuTNTdFKXU2kWHSMSqEK0xI7TaRGf2z9/dNBzYdmxI5vi0m4PDh8FrovW1Nk+1eU7w
+	 L3T2TEnWpIExy6AiXi+lNdpEHyiz4EkoyWUyR5/tlqzqSTrFEfdbPk/CLgdk361JYG
+	 CkNqnKu1IfP6tZPpZomk3ZcFK+pl4Zk3glIkVSvLvqq9IoPedZOIqQZkJ8PWvoTaiy
+	 nw++dTLuaZfVw==
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id E87B0F4006A;
+	Thu,  5 Feb 2026 18:37:38 -0500 (EST)
+Received: from phl-imap-15 ([10.202.2.104])
+  by phl-compute-10.internal (MEProxy); Thu, 05 Feb 2026 18:37:38 -0500
+X-ME-Sender: <xms:wimFaezCUfDBlfEYFLVzioBh4Z28aXLdgMUqYRP7In0ecaqYyjkS3A>
+    <xme:wimFaVHaDv2KDpCVAjlmDegnwZVQgiqhxr9FnqgPQ0iTm-cn1LuamV8rTKH1VUpnP
+    S4FlQLC3N7ywiRAqAgcyzlOnGsGxzXlAqlWr0_YEhESQZKIliMPuYA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukeeiieefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfvehhuhgt
+    khcunfgvvhgvrhdfuceotggvlheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
+    hnpeejvefhudehleetvdejhfejvefghfelgeejvedvgfduuefffeegtdejuefhiedukeen
+    ucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomheptghhuhgtkhhlvghvvghrodhmvghsmhhtphgruhht
+    hhhpvghrshhonhgrlhhithihqdduieefgeelleelheelqdefvdelkeeggedvfedqtggvlh
+    eppehkvghrnhgvlhdrohhrghesfhgrshhtmhgrihhlrdgtohhmpdhnsggprhgtphhtthho
+    peehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehjrghmvghsrdgsohhtthhomh
+    hlvgihsehhrghnshgvnhhprghrthhnvghrshhhihhprdgtohhmpdhrtghpthhtohephhgr
+    rhhishdrihhqsggrlhesihhonhhoshdrtghomhdprhgtphhtthhopehlihhnuhigqdgslh
+    hotghksehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhs
+    uggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
+    hstghsihesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:wimFaamcC7LS6xrIjGsMcMZp71GshtwnFO8kurRootLvqHU_R_jxjQ>
+    <xmx:wimFaVjL7i6qC9voVRUaffyClSrEoJlSoaJFyDWh_Iny7Xu1P3fAUA>
+    <xmx:wimFaSf_QJSDBvyWiOup5ZVVb7suhF6dRJl3aCXmQQQIReXQvjIQIg>
+    <xmx:wimFaVgdy3IKuQ1KTgm-5i6Bwf4XabBaGrrPTB3_TXGXioZM0Cpn-A>
+    <xmx:wimFaaxdbiCLgKb98sy8mIrBvP2vGFFF7YXJVyISgZbPkJGq3fwgVK1e>
+Feedback-ID: ifa6e4810:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id BF118780070; Thu,  5 Feb 2026 18:37:38 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-ThreadId: Ag-6jdtruc1N
+Date: Thu, 05 Feb 2026 18:37:03 -0500
+From: "Chuck Lever" <cel@kernel.org>
+To: "James Bottomley" <James.Bottomley@hansenpartnership.com>,
+ "Haris Iqbal" <haris.iqbal@ionos.com>
+Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org
+Message-Id: <8cf8658a-4cea-45d6-b098-0c44da503e44@app.fastmail.com>
+In-Reply-To: 
+ <5cfff8c0b44968cf75d74aef17de6dce73e1a26d.camel@HansenPartnership.com>
+References: 
+ <32e620691c0ecf76f469a21bffaba396f207ccb9.camel@HansenPartnership.com>
+ <CAJpMwyg4Etv3qOw2Ur+L9YmWbt7Rw19uTs0=RsRtuORaEOoHnQ@mail.gmail.com>
+ <5cfff8c0b44968cf75d74aef17de6dce73e1a26d.camel@HansenPartnership.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Documenting the correct pushback on AI inspired (and
+ other) fixes in older drivers
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [-2.15 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	XM_UA_NO_VERSION(0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76502-lists,linux-fsdevel=lfdr.de];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	FROM_NO_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76503-lists,linux-fsdevel=lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[pr-tracker-bot@kernel.org,linux-fsdevel@vger.kernel.org]
-X-Rspamd-Queue-Id: 82B3FF85D4
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[cel@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	NEURAL_HAM(-0.00)[-0.996];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: EC830F85E5
 X-Rspamd-Action: no action
 
-The pull request you sent on Thu, 5 Feb 2026 18:59:15 +0000:
+Hello James,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-fixes
+On Thu, Feb 5, 2026, at 5:40 PM, James Bottomley wrote:
+> On Thu, 2026-02-05 at 17:40 +0100, Haris Iqbal wrote:
+> [...]
+>> It is an interesting proposal, but I feel the problem statement
+>> overlaps with some other, already being discussed, or covered topics.
+>> For example, the topic of fixes requiring effort and time of the
+>> maintainer/reviewer, and the fact that AI now potentially leads to
+>> too many such fixes is being discussed in the following link,
+>> 
+>> https://lore.kernel.org/ksummit/20251114183528.1239900-1-dave.hansen@linux.intel.com/#t
+>
+> They are actually pretty orthogonal.  The email is about identifying AI
+> tools used in submission.  I may suspect the uptick in the fixes is due
+> to the use of AI, but I don't really care.  The problem isn't what tool
+> you used it's that the risk vs benefit of actually fixing the driver
+> isn't favourable.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/49233c41cf8546b94d213a5dd877ef07e61b1f3f
+Agreed, the fire hose of patches that a maintainer has to deal with
+is a perennial problem, no matter the source of the patches.
 
-Thank you!
+Seems to me that benefits/cost analysis is part of patch review. But
+when using AI for review, you can ask it to do an initial analysis
+for you, rather than legislating contributor behavior (over which you
+have no control).
+
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Chuck Lever
 
