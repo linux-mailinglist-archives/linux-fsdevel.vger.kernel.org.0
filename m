@@ -1,187 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-76384-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id EFWfAP9ohGlK2wMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76384-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 10:55:11 +0100
+	id AAjZKFVrhGl82wMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 11:05:09 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96EA8F111F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 10:55:10 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBC5BF12AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 11:05:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1E92A3035D6F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 09:54:50 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 458203002919
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 10:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1B93A1E7C;
-	Thu,  5 Feb 2026 09:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F22A3A4F46;
+	Thu,  5 Feb 2026 10:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OIztZXVg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FlylkwtZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC76A3A1E93
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 09:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8611B3A4F2F
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 10:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770285286; cv=none; b=dmgBU6hXkIrrs8qoYfji3ErEZ5p1YVksja1dphcmS6Uu8X7I4CA6lhwzmUDYN+JDfXeRSJgPqKPjLPx9L9cAd8iZKcA0VLYtucEW/THdK3LIGu5mKNnligcwhYPsvWuUoNCkz3zUZrD84EjQFK3XPI0MH0N3zYIwYRWpCzvAxNg=
+	t=1770285903; cv=none; b=Zd7lEUZzzbj2WrVZC0NgHMznGQJ5QnMs7KZRKpSAWDrOOElWsPzGL+tgAHlIrPPqv1VqvvG0nl7m6kWLG+/5Xiu4HFLY5R0UVB15BDp8ryVLVz5nDshwlUOFJ/ohDoYMwzH/VlIUbm6fbt+2N6qzwWdKXT+b5XjuHWo0880ZxtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770285286; c=relaxed/simple;
-	bh=+gH07T7gJ7+X3xesrNA2+Bs3sMLJhA4gaSIsoseJoFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f08utrXbOV3zGb/QOzOSeYY4bD43dkB82J08MqdvrOuqxohRkC+1c0qpPVx9bN1pyItTNsPIJcYLA4OCFyPFVzwoGOaBuVWx99ssAMRtWYwIjrdXCtR6q0tNXwh052kKwbv18aPSDGzl9VT1vapw2qQMmQVSfmWM8lulcgEAwek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OIztZXVg; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-34c868b197eso484664a91.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Feb 2026 01:54:46 -0800 (PST)
+	s=arc-20240116; t=1770285903; c=relaxed/simple;
+	bh=cUCjXOzyNXfUHrVbFUTqxxw85y4D9L+9PaTcZvGpLiQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=MdlxkbdTWCSZ69zL9wsMQ3VhKxerkdcQEpp0HcIyAOyS8JPyMXSnM3PPO5ZgCNZ7m0emo61+huCWWNwgB/tC5Y4YaU/BrmmUSv4Q2Giar7XkVoJMafoTYyQpU9/sIJH63ghy2PsRQrrODde9MGV0sTA2HIKE8qJkU61dFDTBezQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FlylkwtZ; arc=none smtp.client-ip=209.85.214.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-2a9042df9a2so4256125ad.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Feb 2026 02:05:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1770285286; x=1770890086; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9xBIY0mav+3IAaN2sDOZsKW4O0cnUlRHLSnJJ3/BuhM=;
-        b=OIztZXVg1hLazuEkmqd8LlclnaLE4rA0fxlphw3KvArdlCYxrvdQZyDtKojtlalHtG
-         1a66CHSgueLHo3e7wgPFL5SSykTdE+DP/Wqo/IzjGPPDm4GcyVlPjTjvAduAfl8knaW9
-         NrADuUlm153qtL+TZOZwB02E5FIxQEvXf8VcuyXxGRlrop4XdAcCjNyZpmvoKpOXaqx5
-         iTqPuOKTZ61EEAXWEtUzcfKjsOfoqd6olMTXQbZ52wRe3LltSc6K1bAuQ04//rTzOU9I
-         efFMVyoMMVC/Y1sfaoxEqpR0CYhnFWHReEGc2mHEIYgZfGzJCicUald9h2trI26NPIf1
-         gaXw==
+        d=gmail.com; s=20230601; t=1770285903; x=1770890703; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dsv48T5s7siDt+dbP9XLn3MeHYejAgqP+nja3QugRLg=;
+        b=FlylkwtZCJEhtsohuFXzHFpNibTN9in+ujtxaS4qFtOx/7om108lV8AK4iyKt7xh00
+         EyCRgR2kW5qKOLExINP0NqAZ2T1OcpJVJ7VAl48+tuaiE5oYxHjUEt4D5vy6hopAWBnz
+         mlRj7UQh6k4ynn+drSUvtHl+Wf3f6QwXz7lMirch0JayzGYdg8kMIGMaZo4qHSRPtrt4
+         /8+AlTf88IgdFwlDmoZWdGUntbQZ8JhJur2O1YS2K3UXbtw01avkt5E2iKFxmht5wuxR
+         rbK9pcolUHrBPwNCOab1pxQi7MIO99CccYJ/Sg+4MXnLfNNIxwT9egCZJhI2khmVE+vZ
+         UYDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770285286; x=1770890086;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9xBIY0mav+3IAaN2sDOZsKW4O0cnUlRHLSnJJ3/BuhM=;
-        b=AdDn8Ujw8+xzuSqto0xyGBRFQwib0aF48OWSYwSgEcR61KgZJGQESXPOVK1jwbByM4
-         M1+mEJ9VlfkdX1WYyu/21+WO2BxKyJelTTxQCQ+/i5U753oHczxLx9mqeiNMkM5QaG9c
-         yuxqUDM4klEqjJ+y4a1PxKZQSBQb1QA0uUzjJp5UtjM4KKqykY0cn3a7qPKr1uvavIcf
-         2rH/SG7gCLrBfWbCJVrq5THCTkIL6tmOkKl9jRCSGqhTIQ97pAnGpOT3nO3KVCpNr3za
-         lTwevn4HG+djs9X0JApkRFrRx2zOj9dWYYp6MovX+E1IvseSwzTEOyH2ddrlF6qa49O0
-         DSZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWggPvrrgb2PEGaaLM3Mbsp8Zyi3sJBQ9jsA8im6b8hBG1mlT/REiaw/jr+A3zLJGHIUik0eQ3EN6IxfVRX@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQQjMXfM42at40LzYTIHk5WTj02MvQVkYS6C1KxmOjEiyp3+JU
-	1WRZapggk05eAK3xN78JhKMbs/jH9HXdhPCrjzfp8wFX2aXu2uIujsJt7GYKkb2QC5Q=
-X-Gm-Gg: AZuq6aLtxGstXGYZc9CfYI2ekb6dJAJ0wzLN4qMVMI8Kuc9njQXvsUX6zjuFI5kw+Ei
-	jljv2c9cgy1mWsr6y5TgEZZwfncbUIZMYIu2s1uOa537QHXlYODXZR0qJBk5gQ/p/QehhdkEtwZ
-	uLA4eHLhwep+ShNj4P/1vvBwlDbnbJdIltja1NAG0VIo3HEZxoevuQSeGCKeh8WMUUT0Hn5+VZZ
-	QSBhlrCWyGTtcCN6yHqqMXpdazj9RkdJvvFrBBLg9CWH4QhFnJYaJllpEQCqXBWJ+QFa4pq7ljy
-	4zWPXa6gnJXiqvdxtkhv2ei1i0uFPwlTjsTe2OJuVL3XeAvejRZin4VlGAdV+/iii3I7r/GGPCG
-	bewPjDhajrsSl0nGibzyld74NT6qf0gNrLvTrgwKsSMaejtY32kWClXlyPMf5JK8/eFkzR+GZ5s
-	vLgFUW2gWoEQE=
-X-Received: by 2002:a17:90a:c110:b0:354:a05d:9dc2 with SMTP id 98e67ed59e1d1-354a05da864mr1522955a91.9.1770285285886;
-        Thu, 05 Feb 2026 01:54:45 -0800 (PST)
-Received: from localhost ([122.172.80.63])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-354894533dbsm2000361a91.7.2026.02.05.01.54.44
+        d=1e100.net; s=20230601; t=1770285903; x=1770890703;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Dsv48T5s7siDt+dbP9XLn3MeHYejAgqP+nja3QugRLg=;
+        b=RBT7gDP6iZaR47+i/k4FZbrm8tyGGfiCcTjB1bvRrIAc5GyJ0xz6nR/OmMwiGyLB2I
+         qlezMoEwJq0Dzc3HM/I68IvTmKgycHzJJDGFFiVQx2r2C6xywkCcuhOoC9IVTpO+BCiS
+         dxvZksFOSrJqcHLGKIa/i0Od02OzQzK8idBXV3jt36jB9XtI8TLiZLmiOWTq8Ejmk9dc
+         LGv3L7PRlP3IbNOMAnuoMj5BHK6RQrGlE3LGQmo63uxi4XTlWKyYOfp8AR6d+sBNztmg
+         8Qo9S2/+DEbJu36g9FX7jFGeEpXYtqBOLbSce02yahiNM1yFkXx1aWoM1/lofPyz0Dgn
+         liSA==
+X-Forwarded-Encrypted: i=1; AJvYcCX3ID0YjjvJ4VRb+xvwygFEwS1Kewjy8p86//kq3iIB2NCyAfNWT/oN0pKo9iVs49k3V7vXHvkaIGuKIggx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+8tZIADh0naRpz+9KQwhvVGgUKoau7EgkNzf0MDJ3en7g7tqe
+	OX47KICJVxa0viPbUkHgiwOLc9Zh3j8EYsiB4c2lRnd8I4sxGwv/GAI=
+X-Gm-Gg: AZuq6aL/MsNr7KGXtPWDdoNtUXx19Z6inOecWcnQFmVD8Cy0UEk/7AUYhe9y0PC7phy
+	PEYiMQM+jB3qFVNuxm9FpNyCmmj48jOUTz3iDRDeH2i93kO3KraGkYrvkGLkKfzLLRxFfq7SHMt
+	F9dwmOVZ+qU1LW/+SRkWYwyn2RzZ4SKxlM0hhf7hHAr2xLfUAbd8vhPjIq13oZf4clSbeZ6T4nn
+	mAfgB70UtJRW1aJdl1fju0jD9Ao8MrHBghpLUMX6BMq4+jPmf+qu5SVMsa3yxeR+/7zsWDcstxr
+	TT2g87NgP4I5zEQj31Flfr5UqvI73T4GmZVUHydvufV9u5vapZ/bbfvwh0aSSbyK0vSVSwQ7INe
+	/cp8gUVd2xOQU9pEgnH9uMTx6/j3i4gfzp36LceRNRVftoazy1MD9eO3GEu5l+P49sMG4scqz3Z
+	0fvcfYqS/NGEc069rmUrOIfd+3OJoenw==
+X-Received: by 2002:a17:902:e884:b0:29f:3042:407f with SMTP id d9443c01a7336-2a933e4082amr70434625ad.21.1770285902784;
+        Thu, 05 Feb 2026 02:05:02 -0800 (PST)
+Received: from localhost.localdomain ([59.16.109.172])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a93396b2eesm49360365ad.78.2026.02.05.02.05.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Feb 2026 01:54:45 -0800 (PST)
-Date: Thu, 5 Feb 2026 15:24:42 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Igor Korotin <igor.korotin.linux@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, 
-	Oliver Mangold <oliver.mangold@pm.me>
-Subject: Re: [PATCH v14 2/9] rust: rename `AlwaysRefCounted` to `RefCounted`.
-Message-ID: <xh3iuwlz4wapmgzojg4v3sen4oezfua4vsedskvrqhc7ryyclj@jggikwra6dmj>
-References: <20260204-unique-ref-v14-0-17cb29ebacbb@kernel.org>
- <20260204-unique-ref-v14-2-17cb29ebacbb@kernel.org>
+        Thu, 05 Feb 2026 02:05:02 -0800 (PST)
+From: Jinseok Kim <always.starving0@gmail.com>
+To: jack@suse.cz
+Cc: amir73il@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	repnop@google.com,
+	shuah@kernel.org
+Subject: [RFC PATCH] selftests: fanotify: Add basic create/modify/delete event
+Date: Thu,  5 Feb 2026 19:04:34 +0900
+Message-ID: <20260205100437.1834-1-always.starving0@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <dnncglg3x26gdsshcniw5yb4l2zlxz6qcwjqyekkpngb6v26q4@ftqnoe5eeapy>
+References: <dnncglg3x26gdsshcniw5yb4l2zlxz6qcwjqyekkpngb6v26q4@ftqnoe5eeapy>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260204-unique-ref-v14-2-17cb29ebacbb@kernel.org>
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[linaro.org,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[linaro.org:s=google];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[40];
+	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,google.com,kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[alwaysstarving0@gmail.com,linux-fsdevel@vger.kernel.org];
+	TO_DN_NONE(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76385-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76384-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[kernel.org,gmail.com,garyguo.net,protonmail.com,google.com,umich.edu,linuxfoundation.org,intel.com,paul-moore.com,ffwll.ch,zeniv.linux.org.uk,suse.cz,collabora.com,oracle.com,ti.com,vger.kernel.org,lists.freedesktop.org,kvack.org,pm.me];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
 	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[viresh.kumar@linaro.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[linaro.org:+];
-	NEURAL_HAM(-0.00)[-0.999];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	RCVD_COUNT_FIVE(0.00)[5];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,linaro.org:email,linaro.org:dkim]
-X-Rspamd-Queue-Id: 96EA8F111F
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: BBC5BF12AE
 X-Rspamd-Action: no action
 
-On 04-02-26, 12:56, Andreas Hindborg wrote:
-> diff --git a/rust/kernel/opp.rs b/rust/kernel/opp.rs
-> index a760fac287655..06fe2ca776a4f 100644
-> --- a/rust/kernel/opp.rs
-> +++ b/rust/kernel/opp.rs
-> @@ -16,8 +16,8 @@
->      ffi::{c_char, c_ulong},
->      prelude::*,
->      str::CString,
-> -    sync::aref::{ARef, AlwaysRefCounted},
-> -    types::Opaque,
-> +    sync::aref::RefCounted,
-> +    types::{ARef, AlwaysRefCounted, Opaque},
->  };
->  
->  #[cfg(CONFIG_CPU_FREQ)]
-> @@ -1041,7 +1041,7 @@ unsafe impl Send for OPP {}
->  unsafe impl Sync for OPP {}
->  
->  /// SAFETY: The type invariants guarantee that [`OPP`] is always refcounted.
-> -unsafe impl AlwaysRefCounted for OPP {
-> +unsafe impl RefCounted for OPP {
->      fn inc_ref(&self) {
->          // SAFETY: The existence of a shared reference means that the refcount is nonzero.
->          unsafe { bindings::dev_pm_opp_get(self.0.get()) };
-> @@ -1053,6 +1053,10 @@ unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
->      }
->  }
->  
-> +// SAFETY: We do not implement `Ownable`, thus it is okay to obtain an `ARef<OPP>` from an
-> +// `&OPP`.
-> +unsafe impl AlwaysRefCounted for OPP {}
-> +
->  impl OPP {
->      /// Creates an owned reference to a [`OPP`] from a valid pointer.
->      ///
+Thanks for the feedback!
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+I agree LTP has very comprehensive fanotify/inotify tests.
 
--- 
-viresh
+However, the motivation for adding basic tests to kernel selftests is:
+    - Quick and lightweight regression checking during kernel
+    development/boot (no external LTP install needed)
+    - Non-root basic cases (many LTP tests require root or complex setup)
+
+Similar to how selftests/mm or selftests/net have basic syscall wrappers
+even though LTP covers them deeply.
+
+Do you think a different approach (LTP improvement instead)
+would be better?
+
+Thanks,
+Jinseok
 
