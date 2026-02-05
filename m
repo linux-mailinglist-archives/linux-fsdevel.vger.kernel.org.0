@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-76390-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UDwMIe52hGkX3AMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76390-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 11:54:38 +0100
+	id MDojIkF3hGkX3AMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 11:56:01 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E22C7F1819
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 11:54:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E42C2F1846
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 11:56:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 65600305542B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 10:51:52 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3B6B1307121D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 10:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E623E3ACA46;
-	Thu,  5 Feb 2026 10:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02B83ACA7A;
+	Thu,  5 Feb 2026 10:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HMvBOGpX"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kqpZJP7U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209033AA1B2
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 10:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7213AA1BD
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 10:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770288707; cv=none; b=diNoCruELkfUnOZqVdsellU7dwuYBEa7yZOI1dOiKfDZ22vWLhPKSo1qNpXeOkoaaQ6GEPiRWFoR0cu44uglkFUyIP/jFg7lGJDr1bVGSSGsNts+MY+3Qtt04D0Ha3hVlbnipLPmQJpGkyU8/SDV7jq7voupQhTpBJ+Nf7KOjBg=
+	t=1770288711; cv=none; b=I5WL3T18E/EHKXl1fdEorfrpNfDI6Rk4EuAqLXIgxgCNupyoqHk6hnaBBC50kgDzpDrVk0XE/UKCEz0EZKeV/OXA2LoDr5DETm9CkopItDqhIWod1zQcrVigTvDz4b84nxEY1DUrHwH8Zsk2sLtrztIleCXdOuMDxHCuOaXQ2YU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770288707; c=relaxed/simple;
-	bh=7nNbabhQli00eKYXyBEya1GgL6seGPzs0VSa7Ef6UeU=;
+	s=arc-20240116; t=1770288711; c=relaxed/simple;
+	bh=ZUybTZ8FVCkafIsHSFbfu9SLz5ANj6JGje2uaPHESaU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kF0S70Ch2eEctkpFzwf3ydoLXnPzuvdiykZ3K9buowChhHP4U0NWMjexCoSlncDOQcCmDew8k217hFijj/uBlBCBRDlx1lIgD1m3ZqQul0maNPLlrTLIav+2rdMS3a9mWMVpda4vXq3NX2G94B1NR04PfBRZwvDvVZpU/i83eRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HMvBOGpX; arc=none smtp.client-ip=209.85.208.74
+	 To:Cc:Content-Type; b=D0UP447rLWS2RmjqOgVitM8iiXoSD5IQNowb8AMzf0ta0P0ismz2/8dczsEsdj1xMGQcpATxuQgkZrkwfEQ4ZeGDvAwwcyuJEDlA+nFvy/LdG2MS3ORvloGXdCMukGoqjjfqqjEcBdMtoQ0LBQTB7pfwUHwqRqK9JQJksvvf0xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kqpZJP7U; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-658b82db375so839317a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Feb 2026 02:51:46 -0800 (PST)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4803e8b6007so6486435e9.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Feb 2026 02:51:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1770288705; x=1770893505; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1770288707; x=1770893507; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AP/JFqXWkX3OpU6TUDwkTdWwj0hDDWhh2cwk4JKQ6LM=;
-        b=HMvBOGpXSjah3Hqt5NzouuDxnE+K80hYBkMpaxDxUdYBE0Zl8xQkre1/EAeAZsviGR
-         onB5bRnfYalzo4pMZbX1oZbYb9wwYfSgSm1TZs3+79EoYgSjNVJj+wuUVg+XQrWVwLOd
-         cqI6nCf3QN0GYokbEg0sA/SosNsuefQkX8ssQTtrL0fnqIZqpo0ExKLY98Wf7FPPPlqu
-         p5fvOWVSXzk74MtHl0LiTssE0DcSJwwggNJWuSc+nQbFo9ddF9O2UroNHHkibK6Wuujx
-         QzvDS77Yu/nm4gCO4U0/j2n2Mk4FpphRppcE7CsAKp7ha+0t9kBa5OMVz4alZnK4ZqqY
-         gq9Q==
+        bh=wazCAdh5UgcB5estAlNP9lpZPIwk5UhZor5+EOBIZsE=;
+        b=kqpZJP7U2TlmC/6cR1KI3Tdlkl51g004POIaw2ohBfOEHUaVFi8HpiGEuwXo4i/uNs
+         pdCgnwkeeEAQrYT2ABWdoEXaDvvudHlh2l1zu1MKHWViZFSx07TZOYBg6inOZnvWd/4m
+         Lb/O1RQ7am4I9KuctNKaBMk+Pk/saZlXOWr2BrcNW70Lwo/YyVjt/1GSLmCvltAga/Pi
+         ghAaNtEvj8YkUjIvZjd+6OiSdOpFakoyiq3pD+Qnu8YA+P9XFv2+RXBSHaIEP0MYFa6X
+         WAhD7YkqOVzqNHMb8N+47n/0l8PtI1T9sbJvgBBPjCBeAuDI9fYkkG81TKduTtGMhdBy
+         7zFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770288705; x=1770893505;
+        d=1e100.net; s=20230601; t=1770288707; x=1770893507;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AP/JFqXWkX3OpU6TUDwkTdWwj0hDDWhh2cwk4JKQ6LM=;
-        b=qZP/v7p/F9F6bqg0+ACwWzxVzA3+C3Xc/CDmu4wTDvadItBjkTn7PdtKWiNLQCXLv3
-         FwGpYD4n0Xdrlzt7v1TeKHHH7xn437oJUi5EeRmoFKnoNv6SYPtAUyh7CWK3GSCRq1dT
-         NCpDY2q40THHbWda1mHXtWs3z21CbEL+IWCct19q8WGW3Gcxkat5wEJnI+xBe4i40NC4
-         mBTtldHE+P9JU0eCrqdZinGS/oLXUmcifHR/m+6Lmp5Na1FSZho1AkYFNr8sDe0vQfhI
-         sdJyxsGv5hAEyCZNZOZMoSIhoeW1+kL7BtYE9zohOx0CKQBg89CXAYrjPEpLuM0clgoP
-         C6Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCXS5b8VXqxzvZNnRibL09z5s+FoNWC7ighdz935HGp73wukZX9bTyASq3rACCcZzggDJ4JiurXoqQBlWlNX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWDQ+7R47S1UUfj9FyS/5mGX+911tNh/4qcImPfC33hSLJBJXj
-	AJDUI8UyG1y7m+z3pJR+pGFml8XZiiPacMnJDLRAVhyPaMhOdtT7AKBQJZEGq7UsQMKi5T4jTbJ
-	9+S/HWBaKZw6eo7GVLQ==
-X-Received: from edxv16.prod.google.com ([2002:a05:6402:1750:b0:640:f53e:dd40])
+        bh=wazCAdh5UgcB5estAlNP9lpZPIwk5UhZor5+EOBIZsE=;
+        b=pEWTI84EQMZ2chqfp8/N8hX07Y6g5H017186rs+kgeHU0Dn5FBvnG6n1yLM4M5O8yV
+         +NofWSS+2M798bu7jDqCVNjeuIt7w1kiffQkaLt18xAudYPeCnNi56uLyPL7HAyK95c7
+         /uz28iRRWVyrvn7yUYoWeJJSQ3hP7FmaBVR/ROh/fUQsPUBMCmgStAMdBwS50ZB4+e5L
+         n0guMya1HEvp2cLaEhrKhDnzx+vcn6T6jaIePLJe29AZDWAr/MyZdYQKZttYN2RLC6mw
+         75LmdbfrGbYYjaYlwrYS4hXFpoJbmHF7Rd0hylVGP2W+EWtrARcv83cNlPOyhZfK9CRc
+         NgUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQYgR/5L+Ut90QeKwYOTvNCQt9W//PRC4V4ujNeVippYQYqAVsoIKSn0vfcVm1uyCMGvar/JA+iE6Bupxe@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxoHIX983pfh8CtPStwval57/NxNxwteZVxvSIpVvkeKBBmN7W
+	K9bvLZa4+epjxDOkH5zbqdGJtCklNLToAn5GxR7VNjcsjn05JfJEM8ZvZ8nqPXcoR6WzLbBDsKl
+	m7++4UE9CK/6/jK2QNQ==
+X-Received: from wmmr8.prod.google.com ([2002:a05:600c:4248:b0:480:1b84:b6e])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6402:1ed5:b0:659:408e:b7e6 with SMTP id 4fb4d7f45d1cf-65949ecd24emr3465734a12.29.1770288705209;
- Thu, 05 Feb 2026 02:51:45 -0800 (PST)
-Date: Thu, 05 Feb 2026 10:51:28 +0000
+ 2002:a05:600c:3514:b0:477:b734:8c22 with SMTP id 5b1f17b1804b1-4830e92a7a9mr89953605e9.8.1770288707220;
+ Thu, 05 Feb 2026 02:51:47 -0800 (PST)
+Date: Thu, 05 Feb 2026 10:51:29 +0000
 In-Reply-To: <20260205-binder-tristate-v1-0-dfc947c35d35@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -76,22 +76,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20260205-binder-tristate-v1-0-dfc947c35d35@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1866; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=7nNbabhQli00eKYXyBEya1GgL6seGPzs0VSa7Ef6UeU=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBphHY4GykYgqnAddZwhAJstuhv/o/aLQBkNGp9h
- QcRdesjbOWJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaYR2OAAKCRAEWL7uWMY5
- Rq6YD/wKnkqeQiAcPzLSP8eM33RuuO4YudSw/EWJpzvDVL2FRsvqG+V2wVizffdP/6LYRWB/v6p
- Jqxwl3WBoPazV6eYFmbQ7WkUae/bNPfKpw2rRI+GxtPrA0EXUWSHDGB0bCp3kpDiWkIW9piV+jc
- zyAyp192j/gCxBD9q5VGxNqj3fglu4FV2cwElNzQIPs3nL+6cljxCnHhUAuzD1oSAYWZqAkuAsT
- MqEzlL5SSG2Rfiwbmhejf/KqCgG9blnH33kNdm3KehQq321SPc6PgGPT50jqjD3ay4+dmITJvnQ
- wOPK+VLCMD+OsMCS/P9DqxPhY7KXw6hQPtDyqRyI1jaGiHSj/7gj3OdnaZ3Bfux2anW+MdT5lRj
- ACUeamuoq1SUSCgNh2Vn7wSbZQMaYKsvyUfk6Mh/qK/OlkHOM/tVGClAsne/JWWu1WdhIy6UqrW
- rViiGmDhW/0oqW+hkQuWxEGoGRQWErMDsiWkA5VuMf/eh4LogZDWpEqKFr0ZQYv3G204RGVoRdR
- HzwRdgPSztNDiMJUf3XdQ8l4/BWYvULyzliWBh8Bav+Ia+fRIw8T84VjQJWazB68y1lXSTqSzVj
- YlhURKpOqlpm9XqDLSINCdFRkmGY0keD/CPIvSuvRKsQcd3rcnRoub0YtmTklMJCkMXUvre3Jze jjS185bhgckt4IQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1060; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=ZUybTZ8FVCkafIsHSFbfu9SLz5ANj6JGje2uaPHESaU=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBphHY5UiLUswz39KqBhHpeX2xIwcn8Oq7WgVuCN
+ 6qlYNhg4peJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaYR2OQAKCRAEWL7uWMY5
+ RrC/EACaH/NwT7xKuwuN3MecASBmi9sF5WLKGr/aOsN9x+VVGOQWNcCz930/ZijztwT5T197Til
+ wSVJS5LzKRV6rWMo0D7Vo6S6samyRUH1a3ZiDMa/giFTTrQs44r/Ph41BzSfPa0wWLOzBSaYWuU
+ AmgMBo0+NGS9nqEOgTIGNAbxzSuMMVXvT6c5TtGeckYWfZ6vFjt+yI/jgsUhxFZ/jSCbUV3f7ZS
+ kwbX3KgW3p6gbT+VnRci3kOwssFbZ7sNLTr78qtwmbNvI30b4v4jEUuU/C7parTf7LMIVzCqqDv
+ nBta4IqMi8wqL8Dzsef7IpowXzq/mmV9brjxqUfgo3owxWj9fOUDVlw3fo3QrqrGPir/x03hNcd
+ DlD07GP+M15auwzqri/MVlh0HcR/w1aNAqTSjZEM8+owD61r175YHqmlv2FtTCrnPE50VP8ddMN
+ FN4H/uPH+K4lEjTHUIs51s8h1NlbGxFti65qOi4xKsTxYyEUI8VF8ceegUm9m8PNI/mBwryG8wd
+ LFX/cBaXNkOe4dpuMfYhQqDd1jTzxwSbevCNqa275wy6QuQCzbCF2s9pKe3G8zDJfDws5QKM5bL
+ y5oeKQkmFafvjThVLyen/QCXN5pIFkiSVDUETMSZE6cp/hmCaPgrf85ZSqIxz//JGZRhBCtPERL HEaoFDqsHlGyvQw==
 X-Mailer: b4 0.14.2
-Message-ID: <20260205-binder-tristate-v1-3-dfc947c35d35@google.com>
-Subject: [PATCH 3/5] mm: export zap_page_range_single and list_lru_add/del
+Message-ID: <20260205-binder-tristate-v1-4-dfc947c35d35@google.com>
+Subject: [PATCH 4/5] ipc: export init_ipc_ns and put_ipc_ns
 From: Alice Ryhl <aliceryhl@google.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Carlos Llamas <cmllamas@google.com>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
@@ -122,7 +122,7 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76390-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76392-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
@@ -139,58 +139,42 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	NEURAL_HAM(-0.00)[-1.000];
 	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: E22C7F1819
+X-Rspamd-Queue-Id: E42C2F1846
 X-Rspamd-Action: no action
 
-These are the functions needed by Binder's shrinker.
-
-Binder uses zap_page_range_single in the shrinker path to remove an
-unused page from the mmap'd region. Note that pages are only removed
-from the mmap'd region lazily when shrinker asks for it.
-
-Binder uses list_lru_add/del to keep track of the shrinker lru list, and
-it can't use _obj because the list head is not stored inline in the page
-actually being lru freed, so page_to_nid(virt_to_page(item)) on the list
-head computes the nid of the wrong page.
+These symbols are used by binderfs as part of the info stored with the
+file system.
 
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- mm/list_lru.c | 2 ++
- mm/memory.c   | 1 +
- 2 files changed, 3 insertions(+)
+ ipc/msgutil.c   | 1 +
+ ipc/namespace.c | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/mm/list_lru.c b/mm/list_lru.c
-index ec48b5dadf519a5296ac14cda035c067f9e448f8..bf95d73c9815548a19db6345f856cee9baad22e3 100644
---- a/mm/list_lru.c
-+++ b/mm/list_lru.c
-@@ -179,6 +179,7 @@ bool list_lru_add(struct list_lru *lru, struct list_head *item, int nid,
- 	unlock_list_lru(l, false);
- 	return false;
- }
-+EXPORT_SYMBOL_GPL(list_lru_add);
+diff --git a/ipc/msgutil.c b/ipc/msgutil.c
+index e28f0cecb2ec942a4f6ee93df8384716bd026011..024faedd07c333b23f1e8733833b84ecf5aed9a7 100644
+--- a/ipc/msgutil.c
++++ b/ipc/msgutil.c
+@@ -30,6 +30,7 @@ struct ipc_namespace init_ipc_ns = {
+ 	.ns = NS_COMMON_INIT(init_ipc_ns),
+ 	.user_ns = &init_user_ns,
+ };
++EXPORT_SYMBOL(init_ipc_ns);
  
- bool list_lru_add_obj(struct list_lru *lru, struct list_head *item)
+ struct msg_msgseg {
+ 	struct msg_msgseg *next;
+diff --git a/ipc/namespace.c b/ipc/namespace.c
+index 535f16ea40e187a9152a03a7345e00b6c5611dbe..c6355020641a74c3be7737b9da15022b961d8f2a 100644
+--- a/ipc/namespace.c
++++ b/ipc/namespace.c
+@@ -210,6 +210,7 @@ void put_ipc_ns(struct ipc_namespace *ns)
+ 			schedule_work(&free_ipc_work);
+ 	}
+ }
++EXPORT_SYMBOL(put_ipc_ns);
+ 
+ static struct ns_common *ipcns_get(struct task_struct *task)
  {
-@@ -216,6 +217,7 @@ bool list_lru_del(struct list_lru *lru, struct list_head *item, int nid,
- 	unlock_list_lru(l, false);
- 	return false;
- }
-+EXPORT_SYMBOL_GPL(list_lru_del);
- 
- bool list_lru_del_obj(struct list_lru *lru, struct list_head *item)
- {
-diff --git a/mm/memory.c b/mm/memory.c
-index da360a6eb8a48e29293430d0c577fb4b6ec58099..64083ace239a2caf58e1645dd5d91a41d61492c4 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -2168,6 +2168,7 @@ void zap_page_range_single(struct vm_area_struct *vma, unsigned long address,
- 	zap_page_range_single_batched(&tlb, vma, address, size, details);
- 	tlb_finish_mmu(&tlb);
- }
-+EXPORT_SYMBOL(zap_page_range_single);
- 
- /**
-  * zap_vma_ptes - remove ptes mapping the vma
 
 -- 
 2.53.0.rc2.204.g2597b5adb4-goog
