@@ -1,165 +1,230 @@
-Return-Path: <linux-fsdevel+bounces-76458-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0JCqDfrGhGk45QMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76458-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 17:36:10 +0100
+	id oBbLGULHhGk45QMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 17:37:22 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83633F54CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 17:36:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFCCEF54F4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 17:37:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id EA6A83098A05
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 16:30:59 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 021003018097
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 16:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF65743900D;
-	Thu,  5 Feb 2026 16:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F32C439008;
+	Thu,  5 Feb 2026 16:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Z3uG1hcR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MlLp2Za6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from 013.lax.mailroute.net (013.lax.mailroute.net [199.89.1.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222013D3488;
-	Thu,  5 Feb 2026 16:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20B6438FF3;
+	Thu,  5 Feb 2026 16:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770309057; cv=none; b=PYDc8QMw1uqBggvK1FqKh4ywJU2l0/ygPmEwcdWaEa7VVWuELQaEB/2ll0J90RuyWmKd1DFSEIWFIhpi69sUFkhWjDzA4F1A2ve98eeYtIbT97SNiuOsEnBrX1eAj9jPEL/6LjzyEZnBBHuMZhBooRLis0/7JExRXUwKwscSp5U=
+	t=1770309138; cv=none; b=P/FRR1cFQMNbJC53e63fQvQlZ8LbxuYc6aYoezYIZ5Be38ZOiAiZGB926ckyEdzQ+s+N9XdOgRBIXDkDMWysZTPMeu84AH5gsmD2ScL9Q6R5ZgDLaP8/eJXk7eZijw9IHTvLSD96yHiglv/j3u/DmKuzCyEf3FDjMSzKngbJuzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770309057; c=relaxed/simple;
-	bh=8TG+lTgRzgGsPO2DgnP1ru1aDD9gu26O85oU6t1o9Ns=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=CCQHepIYvb4qtvxxh/GekZifF2f1ADVmeyYx/SvS4QZ2DhNGqmQ+CW5Ovkast6ERcjw+akGLN7GJ4Bw2SJ+P/4XNLEFbl3o9FLruGX/AdnFL5RQmu3/SxRgTVXEvw5xieI0yprkxHJgbeW5tJpP5oURXs22k5ViK11zVOaGOsH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Z3uG1hcR; arc=none smtp.client-ip=199.89.1.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 013.lax.mailroute.net (Postfix) with ESMTP id 4f6N4w55RnzlgyFx;
-	Thu,  5 Feb 2026 16:30:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1770309055; x=1772901056; bh=fbcV4cnmo4NZOCdTRC3DqWxy
-	r72GNnL+1HdHZL0/F2Y=; b=Z3uG1hcRVJVWZ2y1wmKM1OgwF1mKBki8FPc6Wfne
-	uGhRueKRBsNN7WrEIOfYFPkfFdWxj7qPpxSHGDIRR0jhQ4/WXwR1fWw7zsZ1Gymk
-	BqHBVbCQK//w8lsDw2spuOSo4u6VfK6ArBNtLU6hP+L2O5fBA/o6gJ/vu5MKHQJS
-	qeYB/NwoaesOchSN69g/SSdGllzWXm62GaNRLAzbTWkLRj3gCUamQ/Z8lOX7R9m9
-	DDn3XLVItWSwtcXe+q2aFluebm135rZfml3xLe2d2J55irxv2NX7YKWgPPsZTRMg
-	qjjLN6Au/YAQMOeVDkxjgmJcWZOItEuKbpCCudbuauqQtA==
-X-Virus-Scanned: by MailRoute
-Received: from 013.lax.mailroute.net ([127.0.0.1])
- by localhost (013.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id lDPSgkPPM4F5; Thu,  5 Feb 2026 16:30:55 +0000 (UTC)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 013.lax.mailroute.net (Postfix) with ESMTPSA id 4f6N4t3n1tzlgwMq;
-	Thu,  5 Feb 2026 16:30:54 +0000 (UTC)
-Message-ID: <8075dab2-49db-408e-bff6-5de6b0b372cd@acm.org>
-Date: Thu, 5 Feb 2026 08:30:53 -0800
+	s=arc-20240116; t=1770309138; c=relaxed/simple;
+	bh=ox88WtHGiiYOhH4XqdUloyEH4N3O9sMbYGPBhwJX4g0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VIAvFVSxXBMTtksulrRtz+sipc6fRiBwMoiu/W1WIirNjYKmRi7/Op1XpVrKAq0TZ3YLNaG9SFwl4JlvxnTEHzlvQSPWrjTDev2eULwWXGBqsVrvK86jZDyu4QPrv+ebyxEPzbWNolXTA+/jBpy/7okHG89lf7vI7C1fqXDW0AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MlLp2Za6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34BFCC4CEF7;
+	Thu,  5 Feb 2026 16:32:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770309138;
+	bh=ox88WtHGiiYOhH4XqdUloyEH4N3O9sMbYGPBhwJX4g0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MlLp2Za6W5x+2McLgpSsTvMJpbAxSVZaRee1JEt6IBwhlzVZDa2wBdk+583Z0ILAk
+	 9Zq+JNWNnu/UgH7ZoB0ZQ4RaiW69mH7Kk0/v6KJPTjzcOmiEZ32xgghNIfXWZqOh2O
+	 hdDg1EFIXgmNh9Bt6zsC9bq6NgHmF8BeklvKk81oflkULGakWcYx8SXLisNltZPj+f
+	 iZTQaVn7wW7Di7TFwnLrkiU3ng9a9kTCquMMj8v6Ob47LUn4MZ7ChCa2XZz9dV/lOj
+	 kDeHBdZtqJWQhFjUVjPDkhwuxB9Px76fioXmwq5jZaS50G2kEaN1mWdMyENBapvO9y
+	 1CswA5QUbsviw==
+Date: Thu, 5 Feb 2026 08:32:17 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: "Nirjhar Roy (IBM)" <nirjhar.roy.lists@gmail.com>
+Cc: Kundan Kumar <kundan.kumar@samsung.com>, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, willy@infradead.org,
+	mcgrof@kernel.org, clm@meta.com, david@fromorbit.com,
+	amir73il@gmail.com, axboe@kernel.dk, hch@lst.de,
+	ritesh.list@gmail.com, dave@stgolabs.net, cem@kernel.org,
+	wangyufei@vivo.com, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-xfs@vger.kernel.org, gost.dev@samsung.com,
+	anuj20.g@samsung.com, vishak.g@samsung.com, joshi.k@samsung.com
+Subject: Re: [PATCH v3 3/6] xfs: add per-inode AG prediction map and dirty-AG
+ bitmap
+Message-ID: <20260205163217.GP7712@frogsfrogsfrogs>
+References: <20260116100818.7576-1-kundan.kumar@samsung.com>
+ <CGME20260116101251epcas5p1cf5b48f2efb14fe4387be3053b3c3ebc@epcas5p1.samsung.com>
+ <20260116100818.7576-4-kundan.kumar@samsung.com>
+ <20260129004404.GA7712@frogsfrogsfrogs>
+ <90870969cb6f04346d6dba603838abf993a42f5b.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [LSF/MM/BPF TOPIC] Documenting the correct pushback on AI
- inspired (and other) fixes in older drivers
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
- linux-fsdevel@vger.kernel.org
-References: <32e620691c0ecf76f469a21bffaba396f207ccb9.camel@HansenPartnership.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <32e620691c0ecf76f469a21bffaba396f207ccb9.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <90870969cb6f04346d6dba603838abf993a42f5b.camel@gmail.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[acm.org,reject];
-	R_DKIM_ALLOW(-0.20)[acm.org:s=mr01];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76458-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[acm.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[bvanassche@acm.org,linux-fsdevel@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76459-lists,linux-fsdevel=lfdr.de];
+	RCPT_COUNT_TWELVE(0.00)[23];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_COUNT_THREE(0.00)[4];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	TO_DN_SOME(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	FREEMAIL_CC(0.00)[samsung.com,zeniv.linux.org.uk,kernel.org,suse.cz,infradead.org,meta.com,fromorbit.com,gmail.com,kernel.dk,lst.de,stgolabs.net,vivo.com,vger.kernel.org,kvack.org];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 83633F54CF
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[samsung.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: BFCCEF54F4
 X-Rspamd-Action: no action
 
-On 2/5/26 1:51 AM, James Bottomley wrote:
-> I'm not even sure they're all AI found [...]
+On Thu, Feb 05, 2026 at 12:14:35PM +0530, Nirjhar Roy (IBM) wrote:
+> On Wed, 2026-01-28 at 16:44 -0800, Darrick J. Wong wrote:
+> > On Fri, Jan 16, 2026 at 03:38:15PM +0530, Kundan Kumar wrote:
+> > > Add per-inode structures to track predicted AGs of dirty folios using
+> > > an xarray and bitmap. This enables efficient identification of AGs
+> > > involved in writeback.
+> > > 
+> > > Signed-off-by: Kundan Kumar <kundan.kumar@samsung.com>
+> > > Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+> > > ---
+> > >  fs/xfs/xfs_icache.c | 27 +++++++++++++++++++++++++++
+> > >  fs/xfs/xfs_inode.h  |  5 +++++
+> > >  2 files changed, 32 insertions(+)
+> > > 
+> > > diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
+> > > index e44040206851..f97aa6d66271 100644
+> > > --- a/fs/xfs/xfs_icache.c
+> > > +++ b/fs/xfs/xfs_icache.c
+> > > @@ -80,6 +80,25 @@ static inline xa_mark_t ici_tag_to_mark(unsigned int tag)
+> > >  	return XFS_PERAG_BLOCKGC_MARK;
+> > >  }
+> > >  
+> > > +static int xfs_inode_init_ag_bitmap(struct xfs_inode *ip)
+> > > +{
+> > > +	unsigned int bits = ip->i_mount->m_sb.sb_agcount;
+> > > +	unsigned int nlongs;
+> > > +
+> > > +	xa_init_flags(&ip->i_ag_pmap, XA_FLAGS_LOCK_IRQ);
+> > 
+> > This increases the size of struct xfs_inode by 40 bytes...
+> > 
+> > > +	ip->i_ag_dirty_bitmap = NULL;
+> > > +	ip->i_ag_dirty_bits = bits;
+> > > +
+> > > +	if (!bits)
+> > > +		return 0;
+> > > +
+> > > +	nlongs = BITS_TO_LONGS(bits);
+> > > +	ip->i_ag_dirty_bitmap = kcalloc(nlongs, sizeof(unsigned long),
+> > > +					GFP_NOFS);
+> > 
+> > ...and there could be hundreds or thousands of AGs for each filesystem.
+> > That's a lot of kernel memory to handle this prediction stuff, and I"m
+> > not even sure what ag_dirty_bitmap does yet.
+> > 
+> > > +
+> > > +	return ip->i_ag_dirty_bitmap ? 0 : -ENOMEM;
+> > > +}
+> > > +
+> > >  /*
+> > >   * Allocate and initialise an xfs_inode.
+> > >   */
+> > > @@ -131,6 +150,8 @@ xfs_inode_alloc(
+> > >  	ip->i_next_unlinked = NULLAGINO;
+> > >  	ip->i_prev_unlinked = 0;
+> > >  
+> > > +	xfs_inode_init_ag_bitmap(ip);
+> > 
+> > Unchecked return value???
+> > 
+> > > +
+> > >  	return ip;
+> > >  }
+> > >  
+> > > @@ -194,6 +215,12 @@ xfs_inode_free(
+> > >  	ip->i_ino = 0;
+> > >  	spin_unlock(&ip->i_flags_lock);
+> > >  
+> > > +	/* free xarray contents (values are immediate packed ints) */
+> > > +	xa_destroy(&ip->i_ag_pmap);
+> > > +	kfree(ip->i_ag_dirty_bitmap);
+> > > +	ip->i_ag_dirty_bitmap = NULL;
+> > > +	ip->i_ag_dirty_bits = 0;
+> > > +
+> > >  	__xfs_inode_free(ip);
+> > >  }
+> > >  
+> > > diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+> > > index bd6d33557194..dee449168605 100644
+> > > --- a/fs/xfs/xfs_inode.h
+> > > +++ b/fs/xfs/xfs_inode.h
+> > > @@ -99,6 +99,11 @@ typedef struct xfs_inode {
+> > >  	spinlock_t		i_ioend_lock;
+> > >  	struct work_struct	i_ioend_work;
+> > >  	struct list_head	i_ioend_list;
+> > > +
+> > > +	/* AG prediction map: pgoff_t -> packed u32 */
+> > 
+> > What about blocksize < pagesize filesystems?  Which packed agno do you
+> > associate with the pgoff_t?
+> Sorry but I am bit unfamiliar with the term packed agno? Can you please briefly explain does packed
+> agno mean?
 
-Some people use the checkpatch output or scripts from
-scripts/coccinelle/ to create patches (I don't do this).
+I was talking about the "xfs_agp" numbers introduced in the previous
+patch, which seem to contain the bottom 25 bits of the ag number.
 
-> I'd like to see us formulate a document we can put into the kernel and
-> point to when they come along. Probably formulated along the lines of
-> "first do no harm" and pointing out that every "fix" carries risk and
-> we have to set that risk against what we actually get in terms of
-> benefits. So require the submitter to specify:
->=20
->   * What are the user visible effects (memory leak =3D none), transient
->     bad stats data, or actual data corruption or kernel crash (latter
->     being most serious)
->   * how likely (or often) will this be seen?  If about once a kernel bo=
-ot(
->     or less), at this point if you have anything less than corruption o=
-r
->     a crash, don't bother fixing it because the effect is too minor
->   * For bad stats data, is there an existing tool that uses the data, i=
-f
->     not don't bother and even if so show it leads to issues
->   * How was the fix tested (to reduce risk) i.e. do you have the
->     hardware or an acceptable emulation? =C2=A0If not, report the issue=
-, but
->     don't bother sending the fix.
->=20
-> I think this is just a starting point, and, obviously, it's a bit
-> driver centric, but we can probably add generalizations for filesystems
-> (and even mm and bpf).
+Really I was just asking about multi-fsblock folios -- which block
+within that folio do we map to an AG for tagging purposes?
 
-We don't want to forbid tree-wide API changes, isn't it? See also
-Documentation/process/stable-api-nonsense.rst.
+I think Kundan replied elsewhere that it's the first block.
 
-Sometimes I post patches myself that only have been compile-tested.=20
-These patches could help with deciding where to draw the line. A few
-examples:
-* [PATCH] scsi: mpt3sas: Simplify the workqueue allocation code,
-   January 2026
- =20
-(https://lore.kernel.org/linux-scsi/20260106185655.2526800-1-bvanassche@a=
-cm.org/).
-* [PATCH 0/2] Fix locking bugs in error paths, February 2025
-(https://lore.kernel.org/linux-scsi/20250210203936.2946494-1-bvanassche@a=
-cm.org/)
+--D
 
-Thanks,
-
-Bart.
+> --NR
+> > 
+> > Also, do you have an xarray entry for each pgoff_t in a large folio?
+> > 
+> > --D
+> > 
+> > > +	struct xarray           i_ag_pmap;
+> > > +	unsigned long           *i_ag_dirty_bitmap;
+> > > +	unsigned int            i_ag_dirty_bits;
+> > >  } xfs_inode_t;
+> > >  
+> > >  static inline bool xfs_inode_on_unlinked_list(const struct xfs_inode *ip)
+> > > -- 
+> > > 2.25.1
+> > > 
+> > > 
+> 
+> 
 
