@@ -1,51 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-76412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 8CPwCiyIhGl43QMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:08:12 +0100
+	id 4POUD7aIhGl43QMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:10:30 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D53AF2399
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:08:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0E35F23DC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:10:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 37AC8306ACE9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:03:49 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 54CEE303A93C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA17D3D331B;
-	Thu,  5 Feb 2026 12:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44AD3D330B;
+	Thu,  5 Feb 2026 12:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iB8TpwPL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJwEqcWj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF693AA1BF;
-	Thu,  5 Feb 2026 12:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC682D46D6;
+	Thu,  5 Feb 2026 12:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770293027; cv=none; b=ZhwmwdYUL9qW2vWv401f9PfodCNlL0yUSh3vAe2mGKAnMK6UCcjzZ3Sj7lqGJwoXQuy1fcEuQKPbJSHXPZEzyjpVYgsjQ2/37wfw03flLfzNkW6B4TfNxpMG97xwmYLnEep9cdlbUFoz/z3YYeU2A3FW3JYIRWomVakm7NibOUc=
+	t=1770293182; cv=none; b=b6LDyfVJUgS3p/AtANqFgatDrfWE2zuC+Jw+pj8S6kOMJq2L/zUcRJaMfNvPJX83mAUMW0zzcGXM4n4dGqDPHJUoZt00WlUhhIjuMA723GgAu/9oG1sRfXmCtG92WKP5g9Xj91nTnUnSwfYajC3xg7ebO2rd3EBAcF0MgaiAhy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770293027; c=relaxed/simple;
-	bh=zfq4qj3iLBvccfTblZ0Z7fVCeUnHgrtGgZzNA+DYoQM=;
+	s=arc-20240116; t=1770293182; c=relaxed/simple;
+	bh=Ts8Bruh1Flf8jwX9Vrdlbnz85maJtke/C0sk6jffhuQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TXPyCdW5ZvGx4sXWjiAOhv2dDaP8rD+AtckM/zlrSmvczLAk56kEJ1lZcfYIdhLGalMlkNfOrVwsbuHyaH0VCXuOSV5rD4CZ6AKD7r2SEwQQujvI8ivc4lCXwM9w0WudAdfyHDquUpbuoSzWMdDrUm/5tJVa9F2z+l9yit91Xek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iB8TpwPL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56E33C4CEF7;
-	Thu,  5 Feb 2026 12:03:37 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=XlkvKsWHYi4jh6DFcGAj2YMG2e5WbJVEQfLJKqBbOsR0FAAoMWJSIyBYa3PY+jT3oeXxLRzEgBqNDToXy0s3snG3TmlOZRhO3x9m14IpZJpWpu9qdgiPIBuwTvQq1m1xh03zT13ketGG4m9UJI4vYYZlWbdNibqfdvlmFehTYto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJwEqcWj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C7DAC4CEF7;
+	Thu,  5 Feb 2026 12:06:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770293026;
-	bh=zfq4qj3iLBvccfTblZ0Z7fVCeUnHgrtGgZzNA+DYoQM=;
+	s=k20201202; t=1770293181;
+	bh=Ts8Bruh1Flf8jwX9Vrdlbnz85maJtke/C0sk6jffhuQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iB8TpwPLF4c34Fd7ZWYKxYeEbiCxrIVVcxOPLVTsfHfQlx9RqDu3pkZ+svMudOkJl
-	 JIqjXaGWmlIgLmVjhUr5CqiT7Q/IYIoeTzvwWMXSBAcFWdnucJo0PizFhrvpMkckMj
-	 V43itHLCt7VRR2G/zLMOxyeZFlRS1cRuEvxe8R7U2hLXZx6UxRR9UyTt2R90gwO9u0
-	 hN5L2f3nQDQn+Bo8fr1gEmqRPx0DxdGx4GG1Bhlbk4wvF/RHqN1iYnxy1jLJZUtnkw
-	 dJ/VM2dGHy8E+dRe46y7O9OE/E7ABjsMQ9UAnjt4bdDzz98ddGyr/UOA9g4jImZT86
-	 sh6RW+WFrHaiA==
-Message-ID: <507d24e0-4563-4b33-864c-cd1a499fe517@kernel.org>
-Date: Thu, 5 Feb 2026 13:03:35 +0100
+	b=hJwEqcWjgpIb9N7DaK1KxzXaJqv+iveC1urcCbK9WJQo/ywqLOFtFyxvoJwZ4qH6D
+	 O03Z5w5uTQFMbE55VHm6fADsSrE/Ax/aX80tm8VM8w/5DwWlWTYjCjbIBPoO3w0CY2
+	 DK6fXoR+SZo6e7pim46CQ7vS6qCviXy3FUX0+hjgxxmqq5w3n1kB02WsMzmYHT+Pkk
+	 OWHfVm+2zvxLtO06jnE58eX52YaIDuUTopkNy9p+KnJYDHUyl4qeYVByLeoVzgOYhE
+	 NIRPzS4QIscihiH5UFr/4tHYujOv0jlUfsd0qOj2IX+Mjz7jWQQC2RdqKeYBzqH20e
+	 hzpEM0sHbMjow==
+Message-ID: <d309b3f6-8959-4767-b262-7fdb957669aa@kernel.org>
+Date: Thu, 5 Feb 2026 13:06:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -75,12 +75,13 @@ Cc: Alice Ryhl <aliceryhl@google.com>,
  Danilo Krummrich <dakr@kernel.org>, kernel-team@android.com,
  linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-security-module@vger.kernel.org, linux-mm@kvack.org,
- rust-for-linux@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
+ rust-for-linux@vger.kernel.org
 References: <20260205-binder-tristate-v1-0-dfc947c35d35@google.com>
  <20260205-binder-tristate-v1-3-dfc947c35d35@google.com>
  <02801464-f4cb-4e38-8269-f8b9cf0a5965@lucifer.local>
  <21d90844-1cb1-46ab-a2bb-62f2478b7dfb@kernel.org>
- <ab63390c-9e75-4a45-9bf4-4ceb112ef07f@lucifer.local>
+ <d122f9be-48d6-40b1-9da8-cec445bd8daf@kernel.org>
+ <4a36c1e7-e51a-4c06-8f7c-728b278af972@lucifer.local>
 From: "David Hildenbrand (arm)" <david@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=david@kernel.org; keydata=
@@ -127,7 +128,7 @@ Autocrypt: addr=david@kernel.org; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <ab63390c-9e75-4a45-9bf4-4ceb112ef07f@lucifer.local>
+In-Reply-To: <4a36c1e7-e51a-4c06-8f7c-728b278af972@lucifer.local>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
@@ -140,12 +141,12 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-76412-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76413-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[google.com,linuxfoundation.org,zeniv.linux.org.uk,kernel.org,suse.cz,paul-moore.com,namei.org,hallyn.com,linux-foundation.org,fromorbit.com,bytedance.com,linux.dev,oracle.com,suse.com,gmail.com,garyguo.net,protonmail.com,umich.edu,android.com,vger.kernel.org,kvack.org,infradead.org];
-	RCPT_COUNT_TWELVE(0.00)[35];
+	FREEMAIL_CC(0.00)[google.com,linuxfoundation.org,zeniv.linux.org.uk,kernel.org,suse.cz,paul-moore.com,namei.org,hallyn.com,linux-foundation.org,fromorbit.com,bytedance.com,linux.dev,oracle.com,suse.com,gmail.com,garyguo.net,protonmail.com,umich.edu,android.com,vger.kernel.org,kvack.org];
+	RCPT_COUNT_TWELVE(0.00)[34];
 	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
@@ -159,65 +160,29 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 8D53AF2399
+X-Rspamd-Queue-Id: B0E35F23DC
 X-Rspamd-Action: no action
 
-On 2/5/26 12:57, Lorenzo Stoakes wrote:
-> +cc Christoph for his input on exports here.
+On 2/5/26 13:01, Lorenzo Stoakes wrote:
+> On Thu, Feb 05, 2026 at 12:57:04PM +0100, David Hildenbrand (arm) wrote:
 > 
-> On Thu, Feb 05, 2026 at 12:43:03PM +0100, David Hildenbrand (arm) wrote:
->> On 2/5/26 12:29, Lorenzo Stoakes wrote:
->>>
->>> Same point as before about exporting symbols, but given the _obj variants are
->>> exported already this one is more valid.
->>>
->>>
->>> Sorry but I don't want this exported at all.
->>>
->>> This is an internal implementation detail which allows fine-grained control of
->>> behaviour via struct zap_details (which binder doesn't use, of course :)
->>
->> I don't expect anybody to set zap_details, but yeah, it could be abused.
->> It could be abused right now from anywhere else in the kernel
->> where we don't build as a module :)
->>
->> Apparently we export a similar function in rust where we just removed the last parameter.
+> Dude you have to capitalise that 'a' in Arm it's driving me crazy ;)
 > 
-> What??
+> Then again should it be ARM? OK this is tricky
+
+Yeah, I should likely adjust that at some point. For the time being, I 
+enjoy driving you crazy :P
+
 > 
-> Alice - can you confirm rust isn't exporting stuff that isn't explicitly marked
-> EXPORT_SYMBOL*() for use by other rust modules?
-> 
-> It's important we keep this in sync, otherwise rust is overriding kernel policy.
+> [snip]
 > 
 >>
->> I think zap_page_range_single() is only called with non-NULL from mm/memory.c.
->>
->> So the following makes likely sense even outside of the context of this series:
->>
+>> The following should compile :)
 > 
-> Yeah this looks good so feel free to add a R-b from me tag when you send it
-> BUT...
-> 
-> I'm still _very_ uncomfortable with exporting this just for binder which seems
-> to be doing effectively mm tasks itself in a way that makes me think it needs a
-> rework to not be doing that and to update core mm to add functionality if it's
-> needed.
-> 
-> In any case, if we _do_ export this I think I'm going to insist on this being
-> EXPORT_SYMBOL_FOR_MODULES() _only_ for the binder in-tree module.
+> Err... yeah. OK my R-b obviously depends on the code being compiling + working
+> :P But still feel free to add when you break it out + _test_ it ;)
 
-Works for me.
-
-Staring at it again, I think I landed in cleanup land.
-
-zap_vma_ptes() is exported and does the same thing as 
-zap_page_range_single(), just with some additional safety checks.
-
-Fun.
-
-
-Let me cleanup. Good finger exercise after one month of almost-not coding :)
+Better to add your R-b when I send it out officially :)
 
 -- 
 Cheers,
