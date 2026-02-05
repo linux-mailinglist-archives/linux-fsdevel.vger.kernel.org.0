@@ -1,51 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-76440-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76441-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id mN8nKXmQhGkh3gMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76440-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:43:37 +0100
+	id OFYfOZ6QhGkh3gMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76441-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:44:14 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F023F2BBD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:43:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DD3BF2BF0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:44:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id E44B0302A56E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:40:27 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 6E576303E3AD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159253D3D00;
-	Thu,  5 Feb 2026 12:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2BBC3D3D18;
+	Thu,  5 Feb 2026 12:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pq5gKTGX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dneZ39GP"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED103AA1B8;
-	Thu,  5 Feb 2026 12:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498C83A7F51;
+	Thu,  5 Feb 2026 12:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770295222; cv=none; b=Fner33/OCTkOzk3VZMdSMqjyv22p87eYlA2CsC9lYnDbgrZVTUjq2mnmSEqQEl2uBNcxhdFPiphDgx7eSjOU3G3EodHv0/1iHBsd865mjR9kQYUIzjo/ssFXlc+lSuZ/JM/NO0SzXVrMRuU0+L6Zxrbc2eY/Snz9/PLTZdgK//w=
+	t=1770295272; cv=none; b=j7FcbIlLtuqsIU12IbqtiA51c9egaC5LL/9/HzVQmUNhDf/DzsI+5OrzbKj9XGNBY4xUqXr4xtsbMusnOQXu/6PMQrbugEdGZVl5HemqEmdOTdiTcYZ4Fbtg8hh+E9/roJGnh/EC9UWGaM9LQmGYjiYpggOsKnLQbPNtlbijNpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770295222; c=relaxed/simple;
-	bh=TTo8r9PU9WJ6p301M7VHEuMS9EHbRX/m7krx1R/8ncs=;
+	s=arc-20240116; t=1770295272; c=relaxed/simple;
+	bh=10eAJGMMlh2msWrD5lNiwhWZEbQLdS27Ko9J4kfQK+Q=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=g67HDM18LJd7lwX1YM/Nsnjv/O0BggaqJxNkCnfMlbZQfKIo561aL/2N9LHOQC+7TYaYZL0WhW3htcoUFPQHqQOqkznklbWKuxF3K2dyQSorM2ZH1n4m2hqglPJ1nU5eAamQhGCylJOI9tw6VMmt+mt04S2vNr6eWLS7GFd35NY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pq5gKTGX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C7C9C4CEF7;
-	Thu,  5 Feb 2026 12:40:20 +0000 (UTC)
+	 Content-Type:MIME-Version; b=I7/JcLWhS7q2vtXd2NDwOV8sLyjPU9H78pPE3n2W6xvlABuZgtPqyZxff2Uw7BhJ3j5v2wMhEd1RxTfVuxZWoScpxGMgIkzfT5JHxup02a72nZfUNJMgi0sK3UoYzm4tGcsuhgHetT1flAddZ9xYlGOImYwmtJq8cHvpxVziOoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dneZ39GP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1615C4CEF7;
+	Thu,  5 Feb 2026 12:41:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770295222;
-	bh=TTo8r9PU9WJ6p301M7VHEuMS9EHbRX/m7krx1R/8ncs=;
+	s=k20201202; t=1770295271;
+	bh=10eAJGMMlh2msWrD5lNiwhWZEbQLdS27Ko9J4kfQK+Q=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Pq5gKTGXx6JR3lb+qq6orh1a1VSzWc+mhFsNflnQAHNDOD+e0X+VUoDNVHDF26Fnz
-	 VIE/m9nsND5GMTC8Z/0Nl9Xyv7SzJ81zcexFaknJBM4VhlTyiT3ShA0f+xyVCsIXbS
-	 34rqXsllKty+OFDsF6+1APR7/Nd8qS9IHmsMS8i9yYg0sXTPbmkxT2REbFFs+723Uf
-	 8tb0bn967E8RaJgVIPT7C3bbJncnXyVSAVDsfaZPIPhiHnOPvWjAMfEYrtwm1xmZuB
-	 hCBXa+7G1ykhGEdZIupfQp6Abwf22GAouhF5X9rpkQ9fSA/+j5aMII7cyZHA36SjNE
-	 Zu8MBdCpLjsdQ==
-Message-ID: <11fd2fde84cffcc39798160570e24e54684c5b71.camel@kernel.org>
-Subject: Re: [PATCH 12/13] ovl: remove ovl_lock_rename_workdir()
+	b=dneZ39GPuhzf31gcrpTN7Cl2LZ+TxQQ/ao5oPqvmPt4fhyzOnIr5MhcWr0/vdzPuj
+	 ve6frqT01HTU9e3cvYsM1FnuhoWotd21A6UC0f+uAdw9ajzhKI1zy1yYANPWHnPuUK
+	 bE55el8DPBP8HVZC5ShIoGLjS1xzpZw3WYvw4sEm6QPzDmhky943sa0aH0vQiQW0xz
+	 1Ogvc+0xIXseN6ajAVr+EP6dxMkooK9eACrwDjT6jm21+QmvGP2udgmvieRO6Tpl+u
+	 uC2lkK7yK5seTjqqy4Zd+1oHUvVwMpH2ikiik/xTVom2z7kv8bYEnUeA6rB3XCh/Qi
+	 iBSrV0iBInikw==
+Message-ID: <3e5726689975c3436ec134a299c538183f6763b1.camel@kernel.org>
+Subject: Re: [PATCH 13/13] VFS: unexport lock_rename(), lock_rename_child(),
+ unlock_rename()
 From: Jeff Layton <jlayton@kernel.org>
 To: NeilBrown <neil@brown.name>, Christian Brauner <brauner@kernel.org>, 
  Alexander Viro <viro@zeniv.linux.org.uk>, David Howells
@@ -59,10 +60,10 @@ Cc: linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
 	linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com, 
 	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Date: Thu, 05 Feb 2026 07:40:19 -0500
-In-Reply-To: <20260204050726.177283-13-neilb@ownmail.net>
+Date: Thu, 05 Feb 2026 07:41:09 -0500
+In-Reply-To: <20260204050726.177283-14-neilb@ownmail.net>
 References: <20260204050726.177283-1-neilb@ownmail.net>
-	 <20260204050726.177283-13-neilb@ownmail.net>
+	 <20260204050726.177283-14-neilb@ownmail.net>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -157,7 +158,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76440-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76441-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_TO(0.00)[brown.name,kernel.org,zeniv.linux.org.uk,redhat.com,suse.cz,oracle.com,szeredi.hu,gmail.com,canonical.com,paul-moore.com,namei.org,hallyn.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
@@ -174,72 +175,106 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[brown.name:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 0F023F2BBD
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,brown.name:email]
+X-Rspamd-Queue-Id: 5DD3BF2BF0
 X-Rspamd-Action: no action
 
 On Wed, 2026-02-04 at 15:57 +1100, NeilBrown wrote:
 > From: NeilBrown <neil@brown.name>
 >=20
-> This function is unused.
+> These three function are now only used in namei.c, so they don't need to
+> be exported.
 >=20
 > Signed-off-by: NeilBrown <neil@brown.name>
 > ---
->  fs/overlayfs/overlayfs.h |  2 --
->  fs/overlayfs/util.c      | 25 -------------------------
->  2 files changed, 27 deletions(-)
+>  Documentation/filesystems/porting.rst | 7 +++++++
+>  fs/namei.c                            | 9 +++------
+>  include/linux/namei.h                 | 3 ---
+>  3 files changed, 10 insertions(+), 9 deletions(-)
 >=20
-> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> index 4fb4750a83e4..3eedc2684c23 100644
-> --- a/fs/overlayfs/overlayfs.h
-> +++ b/fs/overlayfs/overlayfs.h
-> @@ -569,8 +569,6 @@ bool ovl_is_inuse(struct dentry *dentry);
->  bool ovl_need_index(struct dentry *dentry);
->  int ovl_nlink_start(struct dentry *dentry);
->  void ovl_nlink_end(struct dentry *dentry);
-> -int ovl_lock_rename_workdir(struct dentry *workdir, struct dentry *work,
-> -			    struct dentry *upperdir, struct dentry *upper);
->  int ovl_check_metacopy_xattr(struct ovl_fs *ofs, const struct path *path=
-,
->  			     struct ovl_metacopy *data);
->  int ovl_set_metacopy_xattr(struct ovl_fs *ofs, struct dentry *d,
-> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-> index 94986d11a166..810c8752b4f7 100644
-> --- a/fs/overlayfs/util.c
-> +++ b/fs/overlayfs/util.c
-> @@ -1213,31 +1213,6 @@ void ovl_nlink_end(struct dentry *dentry)
->  	ovl_inode_unlock(inode);
->  }
+> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesy=
+stems/porting.rst
+> index ed86c95d9d01..5f7008172f14 100644
+> --- a/Documentation/filesystems/porting.rst
+> +++ b/Documentation/filesystems/porting.rst
+> @@ -1347,3 +1347,10 @@ implementation should set it to generic_setlease()=
+.
 > =20
-> -int ovl_lock_rename_workdir(struct dentry *workdir, struct dentry *work,
-> -			    struct dentry *upperdir, struct dentry *upper)
-> -{
-> -	struct dentry *trap;
-> -
-> -	/* Workdir should not be subdir of upperdir and vice versa */
-> -	trap =3D lock_rename(workdir, upperdir);
-> -	if (IS_ERR(trap))
-> -		goto err;
-> -	if (trap)
-> -		goto err_unlock;
-> -	if (work && (work->d_parent !=3D workdir || d_unhashed(work)))
-> -		goto err_unlock;
-> -	if (upper && (upper->d_parent !=3D upperdir || d_unhashed(upper)))
-> -		goto err_unlock;
-> -
-> -	return 0;
-> -
-> -err_unlock:
-> -	unlock_rename(workdir, upperdir);
-> -err:
-> -	pr_err("failed to lock workdir+upperdir\n");
-> -	return -EIO;
-> -}
-> -
+>  lookup_one_qstr_excl() is no longer exported - use start_creating() or
+>  similar.
+> +---
+> +
+> +** mandatory**
+> +
+> +lock_rename(), lock_rename_child(), unlock_rename() are no
+> +longer available.  Use start_renaming() or similar.
+> +
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 307b4d0866b8..0bc82bf90adc 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3713,7 +3713,7 @@ static struct dentry *lock_two_directories(struct d=
+entry *p1, struct dentry *p2)
 >  /*
->   * err < 0, 0 if no metacopy xattr, metacopy data size if xattr found.
->   * an empty xattr returns OVL_METACOPY_MIN_SIZE to distinguish from no x=
-attr value.
+>   * p1 and p2 should be directories on the same fs.
+>   */
+> -struct dentry *lock_rename(struct dentry *p1, struct dentry *p2)
+> +static struct dentry *lock_rename(struct dentry *p1, struct dentry *p2)
+>  {
+>  	if (p1 =3D=3D p2) {
+>  		inode_lock_nested(p1->d_inode, I_MUTEX_PARENT);
+> @@ -3723,12 +3723,11 @@ struct dentry *lock_rename(struct dentry *p1, str=
+uct dentry *p2)
+>  	mutex_lock(&p1->d_sb->s_vfs_rename_mutex);
+>  	return lock_two_directories(p1, p2);
+>  }
+> -EXPORT_SYMBOL(lock_rename);
+> =20
+>  /*
+>   * c1 and p2 should be on the same fs.
+>   */
+> -struct dentry *lock_rename_child(struct dentry *c1, struct dentry *p2)
+> +static struct dentry *lock_rename_child(struct dentry *c1, struct dentry=
+ *p2)
+>  {
+>  	if (READ_ONCE(c1->d_parent) =3D=3D p2) {
+>  		/*
+> @@ -3765,9 +3764,8 @@ struct dentry *lock_rename_child(struct dentry *c1,=
+ struct dentry *p2)
+>  	mutex_unlock(&c1->d_sb->s_vfs_rename_mutex);
+>  	return NULL;
+>  }
+> -EXPORT_SYMBOL(lock_rename_child);
+> =20
+> -void unlock_rename(struct dentry *p1, struct dentry *p2)
+> +static void unlock_rename(struct dentry *p1, struct dentry *p2)
+>  {
+>  	inode_unlock(p1->d_inode);
+>  	if (p1 !=3D p2) {
+> @@ -3775,7 +3773,6 @@ void unlock_rename(struct dentry *p1, struct dentry=
+ *p2)
+>  		mutex_unlock(&p1->d_sb->s_vfs_rename_mutex);
+>  	}
+>  }
+> -EXPORT_SYMBOL(unlock_rename);
+> =20
+>  /**
+>   * __start_renaming - lookup and lock names for rename
+> diff --git a/include/linux/namei.h b/include/linux/namei.h
+> index c7a7288cdd25..2ad6dd9987b9 100644
+> --- a/include/linux/namei.h
+> +++ b/include/linux/namei.h
+> @@ -165,9 +165,6 @@ extern int follow_down_one(struct path *);
+>  extern int follow_down(struct path *path, unsigned int flags);
+>  extern int follow_up(struct path *);
+> =20
+> -extern struct dentry *lock_rename(struct dentry *, struct dentry *);
+> -extern struct dentry *lock_rename_child(struct dentry *, struct dentry *=
+);
+> -extern void unlock_rename(struct dentry *, struct dentry *);
+>  int start_renaming(struct renamedata *rd, int lookup_flags,
+>  		   struct qstr *old_last, struct qstr *new_last);
+>  int start_renaming_dentry(struct renamedata *rd, int lookup_flags,
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
