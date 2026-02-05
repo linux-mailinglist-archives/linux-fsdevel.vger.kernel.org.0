@@ -1,315 +1,286 @@
-Return-Path: <linux-fsdevel+bounces-76448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id AEDVNVeWhGk43gMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 14:08:39 +0100
+	id OM2HE4qZhGmh3gMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 14:22:18 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAB90F2FF4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 14:08:38 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0EA3F32BC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 14:22:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 35E7030428B0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 13:04:58 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3DB05300F5C4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 13:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB133D523E;
-	Thu,  5 Feb 2026 13:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEEE43D668C;
+	Thu,  5 Feb 2026 13:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eFj/Wgov"
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="KVkjzVur"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CWXP265CU008.outbound.protection.outlook.com (mail-ukwestazon11020108.outbound.protection.outlook.com [52.101.195.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCBE3B8D5C
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 13:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9A378F39;
+	Thu,  5 Feb 2026 13:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.195.108
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770296696; cv=pass; b=F2r71Ey4O1+wAPS2N3XHXSd+6bl4PPIuE/OX9EiNARn8K9urwaFCUHp26sJDSzjK74yZkDhyC/h7axGGdeP7kOBI3jyCbFXOs7tL6a2cusRr0eGqeiCOWFTL6nwydvVioc3/xgkDMGI/R3uu3z7iJsR8Z1bClwSQlBe1EpQ7DeA=
+	t=1770297715; cv=fail; b=h9SXG8iQlc75zXyKU0nuAScgsGEVSdYVyqBm7Hf91uNPgbgTHqw4FSGCJt/u8nTArhgnRDDjC+VrgujgXCbJ+hsE6YoT1YMgRUv2n9lxPuVrgwyEowGpqwX5IRprkFcoNsEGgiBJlR/QyQIrkggdGShOUGSY/1S0+7kTyAQ2A98=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770296696; c=relaxed/simple;
-	bh=N2c1RM0b4ERNHu8Wc50fN3R9BsKRWCfa11p9n8FFco4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Eok5C+7ffALHn+vK+LUNGzMJRcGbFUsSdo8UJSz/5WlLjcetqaE39uZ2E8AjMbOUSW36BYagf0Tp7/ckuc6BjOTKz9NnXc4kpJJ36qwDziz0PgMXD8f6DPkaWCTdiYDU3u4dlsRRg+M6hksM/7RcLsV7WhE3FujonheQYhSOjSo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eFj/Wgov; arc=pass smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-435a11957f6so680291f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Feb 2026 05:04:55 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770296694; cv=none;
-        d=google.com; s=arc-20240605;
-        b=SXxBb/8WHy24+qcjw9IYme5JlrH8Bfk33NNdjUggourBj0QUSlJcDJLh07UmPhKab+
-         jSmnhfk7RkliLR9HLEGS/JGB0qXyawnB1+eqpu9mQ4WV9qThyr9tRmtTGwwEjvWQ/CmY
-         cQyKigLHHnnEvh1bkacq9337Nu7mdc+pTxtNV+mLnuRIodbNxnB7lpVYDKQxQpbotDQq
-         P5YbB9N9ahtmY4E/OUH4WgynWqv4KjhgPt1LMgMFcXW4NO3n9h6DFlG+P7C4kQlOae/Y
-         2bsK0PEdls9dEviGZ464FyTy/SfHymJccQVDCoQ0+XFLveWdUlKunQTRXi56342Q8bS/
-         DgIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=5QIFMxkl9qDrU626LjrUWWxNqKmOaBddIPVVlA8pXoo=;
-        fh=V8VAE105abqrGpam92mCVxv37c3pA76SxMEnGtEV/tw=;
-        b=D4yhAQfzuzYSt10t+UgVArSgVhcH1rH93J8U+vu2bQOCrd9e6HPdauNTyzm3KsBT68
-         Y2kRhB6WzlUjTmunsqc6cEvYeUremWXTiWBhdSWrQfebt0o6msHJunDu0iSyl1ifUc23
-         54i88GV+xKLLeYgBQdzjSWMMdXF3INN495FQrqvQwN4ccXj3rGADelgep7qyWSUTSgUF
-         6B4fhDMe098gMnJAy9V4iYLDu03B5iwZD4K7c98xqnHgM7A4ykS3l9BwIeVR8MNDOnSd
-         tUE7iUJbKyl78mHyf/S7gOayUaVUenJjBpaoHedyazDqa2YqBxRT+0iUZEl0S6qTOyFQ
-         Vm2g==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770296694; x=1770901494; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5QIFMxkl9qDrU626LjrUWWxNqKmOaBddIPVVlA8pXoo=;
-        b=eFj/Wgovw5nx28AuntEcmYhTLWrcShD+FEPlxv8t7bORKwNp4fZgpa1A8jYpx19B7V
-         zpkQAXJ4K4F1Rv7pM72BhwnMUSRonxs65fpBhDO4SGuX0qAlWPM8t4D5sePSeStUIeFr
-         q/hMmt72lMyU9ipFKtciig6U6q4SzUh9UN7CUoRKLW2gH8q1i1KthFAMEUcimBVmwnkX
-         fbv53HjAq8YAWe/nohi9dOQlYvBcBwPjRxIto8GV/ST/gaM13N9HphSRgAZAg+w0Rq6K
-         YgOePfLA4Z3vgrxDj4Z5paCLoAaxyEGqvGJgUxqAYNThBSY9LBmewV+08tHdpfqS5uF6
-         B8fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770296694; x=1770901494;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=5QIFMxkl9qDrU626LjrUWWxNqKmOaBddIPVVlA8pXoo=;
-        b=wMSAoRpNkEKXGlRBf7691sAXtiFJHFbMr6eZ/Vr5QGwCE3Dva7sYcFL4XWoX7eJOIS
-         Kg79UqxwwEphADPX5oS3eQ9Z18u/AfGyls5Bj7q1ZIUk4aCJlGkY9/Vu1AkuOB906i6u
-         Ux/04ByDDgzJRtwM1ar4w3SE/EzQTGoeg8ztndy8G0/R/NpRP5DgnJGWAkc2S5AmlB2c
-         PlZnhvOTlMPpgFd/MxDgxo3Kn2bpgsrWEZLACIr0iBqMdd+1vkV7OpCmaY82B5bw06Pm
-         Pm0qkLlydUFrEZdF+erQRRpOH6fPBgY+dVwxhQo9DPaQyafvgp8Zn3SVdAHmNuAvQM/a
-         QQMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKotvcJmGo/lhzyt5UtqIfbv0zZTgt/LoVBHRMykBp4CmtVDe/scF3+VWFYErMec7pl6FqEgotXtJc8V4m@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyxi7HRf1eBGLG7k/nQ0CymgWpKUW3Jv4sIue6iJeNT9Et8EOfq
-	tjLp7T7Zd1k20AB/xAEIlodMjcocRqCqS9ErhRr20/PwyD1taLFrQOufEe0EL3xYJH+xJnhIoA5
-	d8yROCz5PnlK/CTS1WJUxbTAFYcy+wfU=
-X-Gm-Gg: AZuq6aKwMVwBUKeUFfZdImq7n5Vv6H7owohVhEJVrdyosjCDMYaGv3w2lg8pJdrnszZ
-	nsskyFy5M10FtO85GroiLtImvVF8+Uun+56NXl52VNZmdeEgpY+IBWklv0J8wufsJrIK+K4rLE8
-	EuoTOQH4F9bOUn2Am4DI1daJJBFKF76X8sjDMZD7Bbs/m/ihCM8acSibUeamw73ZIQ0MNsqkBCS
-	q3zniOk9n776Z9v9XsBnPOuMf7F77Ap59magIhvkL3FsUP23c3qPGIppPqqi8IDIjMLHwpo3eIb
-	I56Iz29zUCg5hLnx7bftLayCFMQOig==
-X-Received: by 2002:a05:6000:1acb:b0:432:5bac:3915 with SMTP id
- ffacd0b85a97d-43618053bc4mr9962281f8f.39.1770296693827; Thu, 05 Feb 2026
- 05:04:53 -0800 (PST)
+	s=arc-20240116; t=1770297715; c=relaxed/simple;
+	bh=zQDSG/o7UA4wU0lybdORzLVJjPGdZItxqjgeQTNY2co=;
+	h=Content-Type:Date:Message-Id:Subject:From:To:Cc:References:
+	 In-Reply-To:MIME-Version; b=h3OijdpFulFUtRzskFPb2n7ev/gT5n686Fi+4zNal2W3X34dEW3M/5YtLvfqyZQe8bepidvpVd3MaPOTZ7EAXwDoRvwZFcYFwZy41LlebMhVyDopj5v08IktwUfkQWqzMn1prud/D6eKQXPbfJ9dJ+YFO9Q0Pd41OuEI+HQy8u4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=KVkjzVur; arc=fail smtp.client-ip=52.101.195.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=anK59EADLUXSieWh614vOyBeLlywjGnd1+wnAbl9TGKnO9iVORL9X5ASFNAD8uto8PGEAZzFPULup3MP7ZbU7cJ1Y7GjFU1Dj1SfUGmgTRdgDZbwJtPH1MY5QTAlKzUNArV07X7w009AEonfCIoRhW5mNzyLTV9R5doX3rj5oh9he+GRw90A+TE8gVtp7aNJztvPkMvFnloxvFWds7rqZYDqVgeO2oiG1mKX/1I7hadeFKkuOBvMWPhfoIwCCHA1qaaoh1ScrBPdJSX4qs0GAtxIO+GjCEhjEe72tYpcAZV8xz0vyXf5eZ2uLRYU/vYea4iDV+B5122fQ2uNAisxLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1wh8qW6xwR3Y83irtAbziNc0hGcc/XN0c+iRXooG2XQ=;
+ b=D2t8XRsJP/og/PQEsUCUcZIBUTeMU+JNtTOTxxFRaks98QbsVV3MO4Dqea1gjs1FbwFYfb+LsMLFnWImw8p6V63Z0AgeMRkkEWq26gjsy8wKgkV0f8OjmZDkRhu9AXNKkgiTQUReThUltFOuUtfMARIcylljB2yXHXOWAEjRzUxXFb3dOfh3GBlDKs0zoKhQ0kaWrIRGYWd1MoSDvRjhIxC5YIQe3MybnzHL9lF5AucGYq23VQOG6DdpGtsS0mZI09Ds+7NSCa2P0viy/JqgkaAtVgGWVrzdD8TWt+V5rlP2tiB1q3Pk3DnI95qR2lVn6gbasYiITUpfpiCDszvGpQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1wh8qW6xwR3Y83irtAbziNc0hGcc/XN0c+iRXooG2XQ=;
+ b=KVkjzVurxhFP8qjDQQ2inBid1sdGrsdqjKGOBUvXPIpv8gNUlDCHAXgluJDFh9tB0gKCNdbmgW4PL05VfSRx0oX9wVPiNmonRNWm9vGQ5M2rhJNOR35vvaQed5upYOSa8fAN9k883plxsBE3yKzPzWj5wZ9Ix5uNvb4pOANt8FI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:488::16)
+ by LO2P265MB3296.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:177::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.14; Thu, 5 Feb
+ 2026 13:21:51 +0000
+Received: from LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1c3:ceba:21b4:9986]) by LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1c3:ceba:21b4:9986%5]) with mapi id 15.20.9564.016; Thu, 5 Feb 2026
+ 13:21:51 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 05 Feb 2026 13:21:51 +0000
+Message-Id: <DG725XBFQBWE.286RQFKOIX19J@garyguo.net>
+Subject: Re: [PATCH 5/5] rust_binder: mark ANDROID_BINDER_IPC_RUST tristate
+From: "Gary Guo" <gary@garyguo.net>
+To: "Alice Ryhl" <aliceryhl@google.com>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Carlos Llamas" <cmllamas@google.com>
+Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>, "Christian Brauner"
+ <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, "Andrew Morton" <akpm@linux-foundation.org>,
+ "Dave Chinner" <david@fromorbit.com>, "Qi Zheng"
+ <zhengqi.arch@bytedance.com>, "Roman Gushchin" <roman.gushchin@linux.dev>,
+ "Muchun Song" <muchun.song@linux.dev>, "David Hildenbrand"
+ <david@kernel.org>, "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Liam
+ R. Howlett" <Liam.Howlett@oracle.com>, "Vlastimil Babka" <vbabka@suse.cz>,
+ "Mike Rapoport" <rppt@kernel.org>, "Suren Baghdasaryan"
+ <surenb@google.com>, "Michal Hocko" <mhocko@suse.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, <kernel-team@android.com>,
+ <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-security-module@vger.kernel.org>, <linux-mm@kvack.org>,
+ <rust-for-linux@vger.kernel.org>
+X-Mailer: aerc 0.21.0
+References: <20260205-binder-tristate-v1-0-dfc947c35d35@google.com>
+ <20260205-binder-tristate-v1-5-dfc947c35d35@google.com>
+In-Reply-To: <20260205-binder-tristate-v1-5-dfc947c35d35@google.com>
+X-ClientProxiedBy: LO4P123CA0126.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:192::23) To LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:488::16)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260204050726.177283-1-neilb@ownmail.net> <20260204050726.177283-9-neilb@ownmail.net>
- <5d273a008fc51a2fded785efbe30e5bd2a89b985.camel@kernel.org>
-In-Reply-To: <5d273a008fc51a2fded785efbe30e5bd2a89b985.camel@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 5 Feb 2026 14:04:42 +0100
-X-Gm-Features: AZwV_QhEkTNuUX-zP-udJB3TTtiGdaNYEr11QFKjoqWXaHOUCtxdu5bQUZv0f1A
-Message-ID: <CAOQ4uxh_Ugyy9=Vx_XOzWMTdhqVx6kAu43q+F+afhNF_Zv_9TA@mail.gmail.com>
-Subject: Re: [PATCH 08/13] ovl: Simplify ovl_lookup_real_one()
-To: Jeff Layton <jlayton@kernel.org>
-Cc: NeilBrown <neil@brown.name>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>, 
-	Chuck Lever <chuck.lever@oracle.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	John Johansen <john.johansen@canonical.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, linux-kernel@vger.kernel.org, 
-	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LOVP265MB8871:EE_|LO2P265MB3296:EE_
+X-MS-Office365-Filtering-Correlation-Id: 723d31f8-c37e-49fb-2059-08de64b98641
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eDF2NXd5am1WNzNkZmdzRktQZC9lUVNxeXl6aVE3N0YrU2tqdlRqQ2IwZlhl?=
+ =?utf-8?B?SkEzRWloWnc2K09HaS9hMjlnS2dxZGJTcVRHdEkrczYza3d6Sk9oV1E0WVMx?=
+ =?utf-8?B?L2h1WlM1ZHNrQURPMU5pd01FS2dHYXg4UWJPbXNxa2ExdDVsM2lSWjk3Z0lV?=
+ =?utf-8?B?WnVaZnlTNzR6OG94Zm5UblJrekNQZEdpOWVmY1ZLTjJtQzJoaXM0YzVZSUs2?=
+ =?utf-8?B?RnVwc2l3MWFPQzJjYmRrdlYrVkZDNGh6dlBUb251N2tPcTFqVWVlVS9FWTBU?=
+ =?utf-8?B?czc3d1ZzdWE2anYxMEFUNXl6b1FIeVBEZEhsUWphUGpaRDdvSFd0RCtxNWM1?=
+ =?utf-8?B?bkM3OEpPV0M0bU50OXFYZXdkeXIxWWdGdnRTSzBJYW1NRnJWVnZlczI3Nkhx?=
+ =?utf-8?B?K09YajlNWEhoZjhGZFFKdXlUeXlqZmdUeldKOWNWZ0Z4Ky96clBvQktwUHlT?=
+ =?utf-8?B?T0dLanhJVHVRclVwallFRDZQOEVvMlF1aHBiSWdQejNBTFRHelZWbzNGYXBn?=
+ =?utf-8?B?QzVFNVRZV2tKYnJaU2VTYU5lb21yNjdyamVsN3lKdWpWazNEbFlzTTQzczFz?=
+ =?utf-8?B?QVhjQjkyOEZzTWkvZnNaNGlBaUdWUnFsSVF0OWc2V29kbXJseDJmeXFBbWlR?=
+ =?utf-8?B?OTNQL3VSYWFzVDVQZ2ljYTRFd1ZyTE51VGtMcTJnaldxZjFvcldJMWhCSVlw?=
+ =?utf-8?B?UHNvQnB6eWd3VFdQZ3pRQjlxVWx1UU42a0N2SVJ2M05XRGhueFRhWHA1WnI4?=
+ =?utf-8?B?d3Z0QjZuQnU5RGtzVWVjbVppYVdweTZWNnVMQURLRnpHYmc1WG1ZcVFQRTlu?=
+ =?utf-8?B?SzMrYVRVZFdrblR2bnJTVFVtNWJDOUxsaC9jOEVWR09uK05JOStMNVl4K3E4?=
+ =?utf-8?B?SFhHeTMvblZVZ1dwbnpXbTVsOWFTU282czJ1bjNuNU5FWWpFREY3TGtBOE00?=
+ =?utf-8?B?bUVBVVM1VzJ3eEx5V1Ztclh5M1pyK3puZ3pmSmhpbDRlRlltSTZOSEdYdkhn?=
+ =?utf-8?B?elE4R0tuY3dNMzg1eGhxOFJUMlZuS3pwVmpKK2pYTVdoY0Vkd2krTHRMTEM5?=
+ =?utf-8?B?c3ozM1dOUzRXbWl4MHhoUDB1bnBIYzFJUmVQSWVuV2hiWDlheE9lZ1ovMjVq?=
+ =?utf-8?B?TDRYM1lFekU0OFFYdnY2S3BnNk5KTGU5VW1tTE94dG9mQ1AvMDYyVHE5bGh0?=
+ =?utf-8?B?SzlYRkRPdm5lMnFxSkFNeHFpaTBYbWZkOWw0QitjRTZmUC9nSk1BSmxqSmZs?=
+ =?utf-8?B?QjR2empXaEFkT2M0M3gvY3c2QmVYTU1hM1VreGliNUhESm9jZVBhVTYwYURp?=
+ =?utf-8?B?QUtUVnlYaDBnWDhHSnhXT1JjYXVremlVWFZOeG5UZ2g2SzJ6ZGp5bFBiN1VV?=
+ =?utf-8?B?QVhzbXl1aDZ0SzNua0I1dzE2bFVwZFl2cmtic28zMC9zUFluVVBsMlRBMGlX?=
+ =?utf-8?B?M2tFQkZ4UXVweGJxeGhjdDh1a2lsSmZCVnU4MnF0SWtQaFZJU2x6Q241NmRM?=
+ =?utf-8?B?bnNna0RrdHJxV3NrVWNPOHBNTlRjVGtZaFF5d3dPRzdmVjFPR2pBenpISzVS?=
+ =?utf-8?B?eDFPWUMrc0N5VkdJWEtEdXVFai96cXJBR3dwdzVnL3F6a1dZUFhVTHl1YXV0?=
+ =?utf-8?B?MkVGUEJMclhCMFBZdkJsMVROcXFFeEg2TWMvRzE4YTI2R2FLSlAwSWJnYzNT?=
+ =?utf-8?B?QzFHKzZJNlArUUE3SWxHT3BBS2RWS2E0ZC9EWUp2b1piajhiV3FodEFCWWw5?=
+ =?utf-8?B?S2ZMQmlka0xXb29JOUl5K29wOVdCOTU5OTFzT1VtUjVMK1Ntdnd0TnViOHJM?=
+ =?utf-8?B?M1NHQVZnWVlnSjNFYUg5dzhSTU40cHR4VEZQeklYYitFNDUwczBHVnluOE5x?=
+ =?utf-8?B?TWhaa3FTUDdkK1ZRUlc1cStxNUptYzdTVDhsTzhuUk03ZjBtQSs3ay95Z0lB?=
+ =?utf-8?B?cWl1SlhTMXdJVy9hVXNuWVk0VW5IQ29IMy9KRVFqekdmZzJ6bHFwNU5TRnpn?=
+ =?utf-8?B?bnptMW9qTGZEUHZYQjJXaUpBMG81ekx6MTh4NFUxajNldlhqZHFKUngwcDIx?=
+ =?utf-8?B?Q0NGTE1SYnc3WDdPR09RYmhPMEFnTjkyNUI3NklhSGpLZmo4a2FlSHBRczg0?=
+ =?utf-8?Q?wkvg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bWZ1OG0yb1pyZHFDN1JqMy82cGVJYlJJS3EyY1BkRmxvU0lEODRlT2NmYk1J?=
+ =?utf-8?B?cWd4cUlkM1l3NWlzMDJhMlphQmNicWZBcjdQblpjOUdXWE9GbDlVN0pEVFU3?=
+ =?utf-8?B?SnlqbFpvU01QOEtHdHByK05YSmJYZlducEIzWEpnZWN1MVQza2pOZjB5Y3NH?=
+ =?utf-8?B?TURRU2pkc2dNZG9EK3NxQThZUzZ2d3Yvd2RSL1BJb3VzcnplZjJHV3JQa2Qx?=
+ =?utf-8?B?QngwWDd1NktleXhxVklGYkhpQjBMTnV5V29wSk9Fb0FxVkhyTzlQa1FYSXlk?=
+ =?utf-8?B?M2hBWGYxLyt5bDh0RFF4aStETG9Oeld5SVRnTTlaN2kwVzlDUVZ5L3UzbUdR?=
+ =?utf-8?B?ZEdoOG50LysyYldBUkR2REdYdlpaYllmVCtIYS9IaWVTWVhvcEpVclcycVRH?=
+ =?utf-8?B?SXpUaDdqaVlzWDMvNW0rKy8rakI0U3ptV1pWMG9uS1lsOUN6UmV1ejV1NnN5?=
+ =?utf-8?B?S2RMUDNab2tMWFZuK2g1ODd1OXRKcGZjUVcvVVJtdTJoajdLeCthM0RndGJz?=
+ =?utf-8?B?SXkvMkZrMWhCUlhHSVFBVkl4LzIzODdzOHpUUGxuR1M4WnJYc0R5d0JMMjlZ?=
+ =?utf-8?B?QzdNVmkva2tzRWs5T2hsWGF6SnRJRlA4NFJUNkRDcVJpcjd4a0ZZZDRWREw3?=
+ =?utf-8?B?Z2lOQ2lVMGt0NU1PWTBaeWpscGpuNlBPYVRuNll2c3RBaVUrK0NSUTQ0RUd2?=
+ =?utf-8?B?VGtuamdBQzJ1V2tKRmR0UmdSRXp4MTFIUERTeXIzNGc4MC9PZUd3MDFLRkg0?=
+ =?utf-8?B?Y2M4VHh0MVFRK0dNU3hZZFBiVjR5cVl5bkkrVjhxa1pueEx2RzQzTFpPVFlP?=
+ =?utf-8?B?aU9ha0tCOEJLQ1ZzckE3U21ibmsrQWt6ME9YcDdDTjVJNmZEUDV4K3c2aFRy?=
+ =?utf-8?B?d280R004aEVhRWJEMEMvU2dDQk1EMWdOamd3SXZXSlNCd0c5ZUFuZWlKNnRp?=
+ =?utf-8?B?VkwwOWF2cmJ5aUpLa0ExSnloRHRIWVp3Y2pxNUlnaVVtMGVCbU9oS3p1QXhC?=
+ =?utf-8?B?VTFVQWNRa25nZStVTGJxK3NvajYrQi95VmN1QXJ1eGN0NlVJUXlnSXRnUmVM?=
+ =?utf-8?B?cUxsbFRZNkFNR0IvRUVDVU1ldXhkQ3d3NlNsVXFXcHZFMnhtNWJGTmNoY0Y3?=
+ =?utf-8?B?SnQ4c28xbHE1MWdNS2hTVHk3bUQvS0sybUdxYk1ZdUdMaC9kRGxMSFZHL3Mv?=
+ =?utf-8?B?dlNqZ1FsUkpYTldPbnJ5VnpHOWYrdzJvVnFlQjVpS3lCMmwrYTkrSmp0LzBU?=
+ =?utf-8?B?M0ZKSXk1OURxVzdxa2ZLZmtKUTRxc0Jxa284c3REb1ZqTE14cFF6bWxkN2wx?=
+ =?utf-8?B?LzIrcXJIellXMzM5MW9MWnZ3eHdGbkNKVXhOam0wU0wxbFRqT3F4TTNlRFZV?=
+ =?utf-8?B?Z1BhMVplV1JiSFZXNkowbHlBZGNtWHhrODFhU2xZQVRidUF5YjhzdE55U2tG?=
+ =?utf-8?B?NlN5MlhvSmRGOGpkUFlhbVh6SE9wUWl0M3ltdHBBWkhGcUYxMjUrL0tyeTZN?=
+ =?utf-8?B?Mll2Qnc4RytGNnpzRmtvclBFMkhaMjlzS2tOMUh3SkQvaWZUTkFFaEFUTmd3?=
+ =?utf-8?B?aWlkeGNLM3dxL2VZcUsyaHNYd0RMU0RPNWJQT2dtZld3Q253aHJyS2dCTHNV?=
+ =?utf-8?B?ZWdrYmhKczErdlgzVnBETmtUamZqeU5IcndZSE5ld2NXbzN1a3JIV2ltVTNT?=
+ =?utf-8?B?alIxQ243eGpEZDhpWHBaOEJvZW1vcjRHajZQUVlrY2plU3M3SE1HNFJkVXYz?=
+ =?utf-8?B?YUczMjBjZ0xyRk5oZzB0UzdKRWZ1NXU4ZVNNVzRGa3VzYmR4bk4xS0Njbmxq?=
+ =?utf-8?B?ZFlqM0RBaUhkMGZqS21PVTcyT01NV0FhbCsxTlpteHJJOS8xNUNEZWh3TkxC?=
+ =?utf-8?B?NWlpSDlZZUdmT2tZLzR5NFpCSUxLbkFBeVdMM0dWMkZDVzJCWk0rKzc2Z3pR?=
+ =?utf-8?B?UHZjNEVUdkRWZjFFZlkya0htNTdLTHJoV0hkc093ZjB6UHpxRWt2Q2tITHBH?=
+ =?utf-8?B?L2RuMWFzNlRzcnZGeUpyeVdqZFRkWlFpYjdoeXBHeFNDK1VEZlc3cGNWRk1T?=
+ =?utf-8?B?QTdxb2NuQWlNYmhJQVFQck4zbTRZYzJGd0w1bnA2VWFYYWFkVUxCanJoU2M0?=
+ =?utf-8?B?R2doeXZRY0tId29yaFdJSzBDeG9UR0VoWmZ4QkF5d0owOXI3VVNMbW1RSDQ0?=
+ =?utf-8?B?bzk3R0MzOG96SmEzS1Z6QjlLS2pvR3Rtck1MdG9xK1p2UGdWSUdSRllPTFJm?=
+ =?utf-8?B?cXlmZDZGdDNNT1I2S0dTT3J4a0JldmdLVVVCVUNiY05JRmZBTFZ2RFJhcUJw?=
+ =?utf-8?Q?jHTN5aqD1iiR3fXYVJ?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: 723d31f8-c37e-49fb-2059-08de64b98641
+X-MS-Exchange-CrossTenant-AuthSource: LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Feb 2026 13:21:51.8158
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WXvQrc7Z0VqnWfRl+nNeGI0pIcPbRGYYOy+lmFrln3HEWas4gDSnhF05NC9cbGEyyUyrqWw8UV2E5RXIiSXr0g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO2P265MB3296
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [1.34 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	ARC_REJECT(1.00)[cv is fail on i=2];
+	DMARC_POLICY_ALLOW(-0.50)[garyguo.net,none];
+	R_DKIM_ALLOW(-0.20)[garyguo.net:s=selector1];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76448-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	FREEMAIL_CC(0.00)[brown.name,kernel.org,zeniv.linux.org.uk,redhat.com,suse.cz,oracle.com,szeredi.hu,canonical.com,paul-moore.com,namei.org,hallyn.com,gmail.com,vger.kernel.org,lists.linux.dev,lists.ubuntu.com];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,paul-moore.com,namei.org,hallyn.com,linux-foundation.org,fromorbit.com,bytedance.com,linux.dev,oracle.com,google.com,suse.com,gmail.com,garyguo.net,protonmail.com,umich.edu,android.com,vger.kernel.org,kvack.org];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76449-lists,linux-fsdevel=lfdr.de];
+	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	RCPT_COUNT_TWELVE(0.00)[35];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[amir73il@gmail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[gary@garyguo.net,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[garyguo.net:+];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,brown.name:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: DAB90F2FF4
+	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Queue-Id: D0EA3F32BC
 X-Rspamd-Action: no action
 
-On Thu, Feb 5, 2026 at 1:38=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wro=
-te:
+On Thu Feb 5, 2026 at 10:51 AM GMT, Alice Ryhl wrote:
+> Currently Binder only builds as built-in module, but in downstream
+> Android branches we update the build system to make Rust Binder
+> buildable as a module. The same situation applies to distros, as there
+> are many distros that enable Binder for support of apps such as
+> waydroid, which would benefit from the ability to build Binder as a
+> module.
 >
-> On Wed, 2026-02-04 at 15:57 +1100, NeilBrown wrote:
-> > From: NeilBrown <neil@brown.name>
-> >
-> > The primary purpose of this patch is to remove the locking from
-> > ovl_lookup_real_one() as part of centralising all locking of directorie=
-s
-> > for name operations.
-> >
-> > The locking here isn't needed.  By performing consistency tests after
-> > the lookup we can be sure that the result of the lookup was valid at
-> > least for a moment, which is all the original code promised.
-> >
-> > lookup_noperm_unlocked() is used for the lookup and it will take the
-> > lock if needed only where it is needed.
-> >
-> > Also:
-> >  - don't take a reference to real->d_parent.  The parent is
-> >    only use for a pointer comparison, and no reference is needed for
-> >    that.
-> >  - Several "if" statements have a "goto" followed by "else" - the
-> >    else isn't needed: the following statement can directly follow
-> >    the "if" as a new statement
-> >  - Use a consistent pattern of setting "err" before performing a test
-> >    and possibly going to "fail".
-> >  - remove the "out" label (now that we don't need to dput(parent) or
-> >    unlock) and simply return from fail:.
-> >
-> > Signed-off-by: NeilBrown <neil@brown.name>
-> > ---
-> >  fs/overlayfs/export.c | 61 ++++++++++++++++++-------------------------
-> >  1 file changed, 26 insertions(+), 35 deletions(-)
-> >
-> > diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
-> > index 83f80fdb1567..dcd28ffc4705 100644
-> > --- a/fs/overlayfs/export.c
-> > +++ b/fs/overlayfs/export.c
-> > @@ -359,59 +359,50 @@ static struct dentry *ovl_lookup_real_one(struct =
-dentry *connected,
-> >                                         struct dentry *real,
-> >                                         const struct ovl_layer *layer)
-> >  {
-> > -     struct inode *dir =3D d_inode(connected);
-> > -     struct dentry *this, *parent =3D NULL;
-> > +     struct dentry *this;
-> >       struct name_snapshot name;
-> >       int err;
-> >
-> >       /*
-> > -      * Lookup child overlay dentry by real name. The dir mutex protec=
-ts us
-> > -      * from racing with overlay rename. If the overlay dentry that is=
- above
-> > -      * real has already been moved to a parent that is not under the
-> > -      * connected overlay dir, we return -ECHILD and restart the looku=
-p of
-> > -      * connected real path from the top.
-> > +      * @connected is a directory in the overlay and @real is an objec=
-t
-> > +      * on @layer which is expected to be a child of @connected.
-> > +      * The goal is to return a dentry from the overlay which correspo=
-nds
-
-As the header comment already says:
-"...return a connected overlay dentry whose real dentry is @real"
-
-The wording "corresponds to @real" reduces clarity IMO.
-
-> > +      * to @real.  This is done by looking up the name from @real in
-> > +      * @connected and checking that the result meets expectations.
-> > +      *
-> > +      * Return %-ECHILD if the parent of @real no-longer corresponds t=
-o
-> > +      * @connected, and %-ESTALE if the dentry found by lookup doesn't
-> > +      * correspond to @real.
-> >        */
-
-I dislike kernel-doc inside code comments.
-I think this is actively discouraged and I haven't found a single example
-of this style in fs code.
-
-If you want to keep this format, please lift the comment to function
-header comment - it is anyway a very generic comment that explains the
-function in general.
-
-> > -     inode_lock_nested(dir, I_MUTEX_PARENT);
-> > -     err =3D -ECHILD;
-> > -     parent =3D dget_parent(real);
-> > -     if (ovl_dentry_real_at(connected, layer->idx) !=3D parent)
-> > -             goto fail;
-> >
-> > -     /*
-> > -      * We also need to take a snapshot of real dentry name to protect=
- us
-> > -      * from racing with underlying layer rename. In this case, we don=
-'t
-> > -      * care about returning ESTALE, only from dereferencing a free na=
-me
-> > -      * pointer because we hold no lock on the real dentry.
-> > -      */
-> >       take_dentry_name_snapshot(&name, real);
-> > -     /*
-> > -      * No idmap handling here: it's an internal lookup.
-> > -      */
-> > -     this =3D lookup_noperm(&name.name, connected);
-> > +     this =3D lookup_noperm_unlocked(&name.name, connected);
-> >       release_dentry_name_snapshot(&name);
-> > +
-> > +     err =3D -ECHILD;
-> > +     if (ovl_dentry_real_at(connected, layer->idx) !=3D real->d_parent=
-)
-> > +             goto fail;
-> > +
-> >       err =3D PTR_ERR(this);
-> > -     if (IS_ERR(this)) {
-> > +     if (IS_ERR(this))
-> >               goto fail;
-> > -     } else if (!this || !this->d_inode) {
-> > -             dput(this);
-> > -             err =3D -ENOENT;
-> > +
-> > +     err =3D -ENOENT;
-> > +     if (!this || !this->d_inode)
-> >               goto fail;
-> > -     } else if (ovl_dentry_real_at(this, layer->idx) !=3D real) {
-> > -             dput(this);
-> > -             err =3D -ESTALE;
-> > +
-> > +     err =3D -ESTALE;
-> > +     if (ovl_dentry_real_at(this, layer->idx) !=3D real)
-> >               goto fail;
-> > -     }
-> >
-> > -out:
-> > -     dput(parent);
-> > -     inode_unlock(dir);
-> >       return this;
-> >
-> >  fail:
-> >       pr_warn_ratelimited("failed to lookup one by real (%pd2, layer=3D=
-%d, connected=3D%pd2, err=3D%i)\n",
-> >                           real, layer->idx, connected, err);
-> > -     this =3D ERR_PTR(err);
-> > -     goto out;
-> > +     if (!IS_ERR(this))
-> > +             dput(this);
-> > +     return ERR_PTR(err);
-> >  }
-> >
-> >  static struct dentry *ovl_lookup_real(struct super_block *sb,
+> Note that although the situation in Android may be temporary - once we
+> no longer have a C implementation, it makes sense for Rust Binder to be
+> built-in. But that will both take a while, and in any case, distros
+> enabling Binder will benefit from it being a module even if Android goes
+> back to built-in.
 >
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> This doesn't mark C Binder buildable as a module. That would require
+> more intrusive Makefile changes as it's built from multiple objects, and
+> I'm not sure there's any way to produce a file called 'binder.ko'
+> containing all of those objects linked together without renaming
+> 'binder.c', as right now there will be naming conflicts between the
+> object built from binder.c, and the object that results from linking
+> binder.o,binderfs.o,binder_alloc.o and so on together. (As an aside,
+> this issue is why the Rust Binder entry-point is called
+> rust_binder_main.rs instead of just rust_binder.rs)
+>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  drivers/android/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/android/Kconfig b/drivers/android/Kconfig
+> index e2e402c9d1759c81591473ad02ab7ad011bc61d0..3c1755e53195b0160d0ed244f=
+078eed96e16272c 100644
+> --- a/drivers/android/Kconfig
+> +++ b/drivers/android/Kconfig
+> @@ -15,7 +15,7 @@ config ANDROID_BINDER_IPC
+>  	  between said processes.
+> =20
+>  config ANDROID_BINDER_IPC_RUST
+> -	bool "Rust version of Android Binder IPC Driver"
+> +	tristate "Rust version of Android Binder IPC Driver"
+>  	depends on RUST && MMU && !ANDROID_BINDER_IPC
+>  	help
+>  	  This enables the Rust implementation of the Binder driver.
 
-Otherwise, it looks fine.
+Hi Alice,
 
-Thanks,
-Amir.
+AFAIK Rust binder doesn't specifically handle module unloading, so global
+statics (e.g. CONTEXTS doesn't get dropped).
+
+If we're going to build Binder as module, we need to ensure that we have th=
+e
+mechanism in the module macro to prevent unloading of Binder.
+
+Best,
+Gary
 
