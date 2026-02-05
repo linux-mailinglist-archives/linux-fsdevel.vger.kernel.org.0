@@ -1,256 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-76463-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76464-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uIirIqPIhGk45QMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76463-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 17:43:15 +0100
+	id 0IvjFdjIhGk45QMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76464-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 17:44:08 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ACC7F561A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 17:43:15 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAA1FF5654
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 17:44:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id E826730205FA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 16:42:43 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id DBEE7302E0E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 16:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4964D439012;
-	Thu,  5 Feb 2026 16:42:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97A7439017;
+	Thu,  5 Feb 2026 16:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IIHoEhLf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="keRh4j1A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB56F423143;
-	Thu,  5 Feb 2026 16:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770309759; cv=none; b=CZqKfEQOL6XW1MY8+xprRps5r76GWZ7KgxZyqRjV+sya5KG66KkiOnGf50d5JvNynedXeSOjxUuG3eEeIDKnabrCmsbWMm5p8JDQVYtgxCpETy8btc5cFd7eMG2Ij+z3PPh0aP1lakQWC1z1BpSNAdT6ZYtH3VhG1y4xgZgih5c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770309759; c=relaxed/simple;
-	bh=qtCIuwxbUz6nAxAm44y57E2QMBh06l1dKLAKWSKgEDA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dzNeVyJKLGuLkoXwHu/hDBd5ure52/h/Ka6qZCql5mu9/ZuMAEZ71RGibrU6BGMACZh0gFd6lagnWU0lstoswntchXO5xMptDWp2BPFaRdyxq9hVjjCBIAZpJedCObpiCvydO5Dfgk6EsRiXtVvWVFCWlFR48CpgQ/WCK/6L5G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IIHoEhLf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A177C4CEF7;
-	Thu,  5 Feb 2026 16:42:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770309759;
-	bh=qtCIuwxbUz6nAxAm44y57E2QMBh06l1dKLAKWSKgEDA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IIHoEhLfk5gLa6aiZb8rIG5WH5MvQz2EcqscXHWOJSfjO9XtyLKuihjRP4fkRIDuv
-	 xQ5tqTAHKA7tlox5BoOiDOKTYW0zOvTxvWqnMz9Qk9kb+RBflXQnKCh3b9uPyhv6m6
-	 NMXKGnyZJ9PlM1/e+12kS4IgXvVjWG9qnpSs55GwGz+obvdjAbjxLOJfoY9GE9A22j
-	 IvLLS7PM5l7wfgzp/+Gqj8IIhKvGcMldeYPIXTFSfzSsNup6mjA3qymBryVRboUu3Z
-	 iWcYvj3APifqtCh8ulKn0JM6Vxzm6tK1HNZp7+leExEEZYA9USJEbYOH4DYsEbIrYe
-	 EVCVymgbXiqJQ==
-Date: Thu, 5 Feb 2026 08:42:38 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Kundan Kumar <kundan.kumar@samsung.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	willy@infradead.org, mcgrof@kernel.org, clm@meta.com,
-	david@fromorbit.com, amir73il@gmail.com, axboe@kernel.dk,
-	hch@lst.de, ritesh.list@gmail.com, dave@stgolabs.net,
-	cem@kernel.org, wangyufei@vivo.com, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-xfs@vger.kernel.org, gost.dev@samsung.com,
-	anuj20.g@samsung.com, vishak.g@samsung.com, joshi.k@samsung.com
-Subject: Re: [PATCH v3 3/6] xfs: add per-inode AG prediction map and dirty-AG
- bitmap
-Message-ID: <20260205164238.GS7712@frogsfrogsfrogs>
-References: <20260116100818.7576-1-kundan.kumar@samsung.com>
- <CGME20260116101251epcas5p1cf5b48f2efb14fe4387be3053b3c3ebc@epcas5p1.samsung.com>
- <20260116100818.7576-4-kundan.kumar@samsung.com>
- <20260129004404.GA7712@frogsfrogsfrogs>
- <2c485586-83c9-4697-91fc-7b0cee697704@samsung.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473223EDAC9
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 16:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770309818; cv=pass; b=S70QUOH8HqsAZ7SwSHUilzJvz1DQWbQgm/Ij3w/ZuTww5NA3bBdRFC3pLXjWVcn3nSF1biVZGomk39cuG8yLf2L+zD8P464+yLtF0aBXifXz97iYvR8bPGWNeDyjC61XfehlUspWSl/o4Jo/UsFFkbX2MAYfJu/xrxQlLf3CbGE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770309818; c=relaxed/simple;
+	bh=gTr98O/DYzbyUlRuEsGi1UGtuGUdlDO/0L6WtpJZlQw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TrqGis3prkbUE4fbDHwkcEoK6pogBS5wULnNViMCqgI+slOwmikuiTTsdrwxZff1D3BB74S5aYQp1TXfk4gWF+iU/gB7WFOLneW+RGbeUTgPg+1ZXGMPzw012MK7nLKCmHiM1KftjXKST+w+HFMeX6JriNWyPc/QCQw2p+PFMY4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=keRh4j1A; arc=pass smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-432d2c7dd52so1246839f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Feb 2026 08:43:38 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770309817; cv=none;
+        d=google.com; s=arc-20240605;
+        b=QWucUeiLc/+oM/ZEOISgnxD6+M7qnYDiLzaLoqjLcRs3xrlPXz6BmutbGEwYyrfNC1
+         M+a22BRCDYekcls34FBeHPncmzGHZ+ODz9FTeHgdcH1q059fMH0xEnHZjph6MK34OuTQ
+         o+4SDw1EPfmpaPQOfcPwk1m5TzrGhSiUtgZ+wYL6PPPBfGljk8WvJs/zf9Sjb8NRZzBM
+         hIvPNi3WBLOY1VkE9X2ISHQNjvw7QLeHtSD54tL+5wo4xYi+TObIUm8M6uqfJuD11Teb
+         j8t3bmzIqK+wK2JN0c6DCw1Xj1b4vzu2eMpUlbUwBFaaqPbRaI1MtIuE+GtegpygE+9O
+         Aa3A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=UgbA8L5X3UGyVPXB+Do1ZNMkWOmroS+AR1xUyGD8l3Y=;
+        fh=qQDEEANl/IoKCtcnxMc1hO176Gpnk2/tA/3PwN/2JXE=;
+        b=J9D2gJdflKnX/YJfUuVIl/3atQBkWSPelqg/E8xlOAxF8upddbZfmq2XtEQn9C23dh
+         xw9/shGmWmw7Mk+6ym/UWUdqdsvz+FRs7SkVhtyil5U7uhQzxs6AjaCOw0Aalzbt3aIw
+         bNx25A4E88XcdFXL0YWdmkXGBMx9Hj+md40RpEuT7u1mM5EB+u9FxmtCV1JOq4OXG1Nq
+         5Dat4xmL9Sb49/y64ipyjH3iHDsRVVozm13TCAJ0zo0NgnG/amt/3Pzr1iPp5g81giZI
+         2elTJ930+BYSRngQsapBVV8s9nfIHhHoNZ96bd+x6Wyo6gtJLh6LUQAVRbxTX8ao6WE7
+         1aJQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770309817; x=1770914617; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UgbA8L5X3UGyVPXB+Do1ZNMkWOmroS+AR1xUyGD8l3Y=;
+        b=keRh4j1A/2sSPssu0N5iEK85lBjEnmPpr4qnUXVP+jpQ5uIHwwstNGXKeTSY0LO0ec
+         lt4r2dTZt9wf97oHVg51WybBVbaPvv1cxcIOThZH1vNH09ubsEXirX8Y6Irjgb2b9+TG
+         Igz7ffSUGte9ifDtjnjyhn9C0D82Tbs1/CfDE9o09R/8EXypB9tnspiyayj0hrqqjIQG
+         XiPp+qdcrt0/EPADXkPV8yW8EGeh3quuzKxaHRisQUAkXvZ0J26jxk+48DsyFSaoa8xs
+         kXNjLQpQlT5pdc4qSEEotZJ0dXZ4mb6l+ei3NhcO6sdowDNLeUV5JzKHNEqNw+cPuRr3
+         NF5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770309817; x=1770914617;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=UgbA8L5X3UGyVPXB+Do1ZNMkWOmroS+AR1xUyGD8l3Y=;
+        b=IoqtVfVyax1SHMAkUumRMZuHgA+rYayWYt9mGrUbmrSdnT+KVph2V0MKxNGW5fw1rA
+         3BsPrVn7QfCQZ4JT44jtpGc7paH7TCJWBAqOrrJJTwFwqM4H/zO2GbxHNoVyYhta5Vgc
+         D4YLWDuHJerkfK0BUKlmJU2C6AWj5fOBPGRIT2uAriVXlHqpXb3vn3EeARSxdMYKuCag
+         opBvboyD0yvtucEnWlX/5VfRI8yjlqwB3WImdXIDMCI+lMAqnWr0OThzdtSQAmmDny4I
+         o2qK5oHtHgwXLyH73jDKlF8P7uvfPS+Ppvz6wNFoW1sKU9qagK/Gd2NOnKojVsCxZCm0
+         PdXg==
+X-Forwarded-Encrypted: i=1; AJvYcCX8WfaJmUNNyCLAHkJ4ajG7rcIOjmHObNxeWYNr92itMmBhHQivRePvHie/k0VUsS7NpSs5q+030cJL/t3q@vger.kernel.org
+X-Gm-Message-State: AOJu0YxETx0yBzpYs0pT5PLkJaUixAqFHe6Q9K3pQFE+2uVJ2/hU7AKK
+	vXe4ysrzE99rqv3LTy30xI39jLrbiU31uBEdVge/xTthLkSOTSkNyegBkEcpb6pwOETY57Ojghc
+	MSgi0fqRIopfiV9DDVOuffi5jlPkTvio=
+X-Gm-Gg: AZuq6aKadzYkF0t0ensy9hB6gYe5+sLx5iVflPyOkZ59ofbaDv4/0oFhHwvqNpVdJZN
+	/Shtjmzwsbqnr7vtDImzFVI4fi5zk2d6iz7kWW4JG33wtEQIEUW02TX/4mUI7hzReEszcN+8FZs
+	SGsnECeJxUiNV3MxzTwrEaQG22/vV5iUO9Z6YI4DAYxU2nPjQqrJubbmjrQhxRiT4cYfaEfV3ex
+	ZAnjWzkS3mU17mRdm3RP9K6ThK3AlCTXZOWBxAEp/v8WKqf7oQ6w/ommsSuul9qPg6/AbUkFlCE
+	OyJtYEqXaMadpOpx133VWhZDRFWze3aDfPzPpbOsKVR0NZsbDVfd6ozjSLTHgJBGQ+4T2HDc91Z
+	PNrvRpAs=
+X-Received: by 2002:a5d:64e9:0:b0:430:fc0f:8fb3 with SMTP id
+ ffacd0b85a97d-4361805108amr11435730f8f.38.1770309816579; Thu, 05 Feb 2026
+ 08:43:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2c485586-83c9-4697-91fc-7b0cee697704@samsung.com>
+References: <20260205104541.171034-1-alexander@mihalicyn.com>
+ <4502642b48f31719673001628df90526071649bc4555c5432d88d2212db3f925@mail.kernel.org>
+ <CAJqdLrqRBhmrQQA0MA9f5Js6rTZkJFf6-=KT+eZahakgX4_3fw@mail.gmail.com>
+In-Reply-To: <CAJqdLrqRBhmrQQA0MA9f5Js6rTZkJFf6-=KT+eZahakgX4_3fw@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 5 Feb 2026 08:43:25 -0800
+X-Gm-Features: AZwV_Qjb6S-iktO4Dnfz_v9yb534efgmChlpNeMneF3ap-F0hPrqSmgKQJpJcKA
+Message-ID: <CAADnVQJqL0FUKZ5Vo4thH1Xk-O6d4BSO2M6kPNRZP0V=opEMNg@mail.gmail.com>
+Subject: Re: [PATCH] bpf: use FS_USERNS_DELEGATABLE for bpffs
+To: Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Cc: bot+bpf-ci@kernel.org, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	aleksandr.mikhalitsyn@futurfusion.io, 
+	Martin KaFai Lau <martin.lau@kernel.org>, Chris Mason <clm@meta.com>, 
+	Ihor Solodrai <ihor.solodrai@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-76463-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76464-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	RCPT_COUNT_TWELVE(0.00)[22];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,infradead.org,meta.com,fromorbit.com,gmail.com,kernel.dk,lst.de,stgolabs.net,vivo.com,vger.kernel.org,kvack.org,samsung.com];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[23];
+	FREEMAIL_CC(0.00)[kernel.org,iogearbox.net,linux.dev,gmail.com,fomichev.me,google.com,vger.kernel.org,futurfusion.io,meta.com];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[alexeistarovoitov@gmail.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	TAGGED_RCPT(0.00)[linux-fsdevel,bpf-ci];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,samsung.com:email]
-X-Rspamd-Queue-Id: 1ACC7F561A
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mihalicyn.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: CAA1FF5654
 X-Rspamd-Action: no action
 
-On Tue, Feb 03, 2026 at 12:50:53PM +0530, Kundan Kumar wrote:
-> On 1/29/2026 6:14 AM, Darrick J. Wong wrote:
-> > On Fri, Jan 16, 2026 at 03:38:15PM +0530, Kundan Kumar wrote:
-> >> Add per-inode structures to track predicted AGs of dirty folios using
-> >> an xarray and bitmap. This enables efficient identification of AGs
-> >> involved in writeback.
-> >>
-> >> Signed-off-by: Kundan Kumar <kundan.kumar@samsung.com>
-> >> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
-> >> ---
-> >>   fs/xfs/xfs_icache.c | 27 +++++++++++++++++++++++++++
-> >>   fs/xfs/xfs_inode.h  |  5 +++++
-> >>   2 files changed, 32 insertions(+)
-> >>
-> >> diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-> >> index e44040206851..f97aa6d66271 100644
-> >> --- a/fs/xfs/xfs_icache.c
-> >> +++ b/fs/xfs/xfs_icache.c
-> >> @@ -80,6 +80,25 @@ static inline xa_mark_t ici_tag_to_mark(unsigned int tag)
-> >>   	return XFS_PERAG_BLOCKGC_MARK;
-> >>   }
-> >>   
-> >> +static int xfs_inode_init_ag_bitmap(struct xfs_inode *ip)
-> >> +{
-> >> +	unsigned int bits = ip->i_mount->m_sb.sb_agcount;
-> >> +	unsigned int nlongs;
-> >> +
-> >> +	xa_init_flags(&ip->i_ag_pmap, XA_FLAGS_LOCK_IRQ);
-> > 
-> > This increases the size of struct xfs_inode by 40 bytes...
-> > 
-> 
-> I’ll make this lazy and sparse: move AG writeback state behind a pointer
-> allocated on first use, and replace the bitmap with a sparse dirty-AG
-> set(xarray keyed by agno) so memory scales with AGs actually touched by
-> the inode.
-> 
-> >> +	ip->i_ag_dirty_bitmap = NULL;
-> >> +	ip->i_ag_dirty_bits = bits;
-> >> +
-> >> +	if (!bits)
-> >> +		return 0;
-> >> +
-> >> +	nlongs = BITS_TO_LONGS(bits);
-> >> +	ip->i_ag_dirty_bitmap = kcalloc(nlongs, sizeof(unsigned long),
-> >> +					GFP_NOFS);
-> > 
-> > ...and there could be hundreds or thousands of AGs for each filesystem.
-> > That's a lot of kernel memory to handle this prediction stuff, and I"m
-> > not even sure what ag_dirty_bitmap does yet.
-> > 
-> 
-> The bit for an AG is set in ag_dirty_bitmap at write time. During
-> writeback, we check which AG bits are set, wake only those AG-specific
-> workers, and each worker scans the page cache, filters folios tagged for
-> its AG, and submits the I/O.
-> 
-> >> +
-> >> +	return ip->i_ag_dirty_bitmap ? 0 : -ENOMEM;
-> >> +}
-> >> +
-> >>   /*
-> >>    * Allocate and initialise an xfs_inode.
-> >>    */
-> >> @@ -131,6 +150,8 @@ xfs_inode_alloc(
-> >>   	ip->i_next_unlinked = NULLAGINO;
-> >>   	ip->i_prev_unlinked = 0;
-> >>   
-> >> +	xfs_inode_init_ag_bitmap(ip);
-> > 
-> > Unchecked return value???
-> 
-> Will correct in next version
-> 
-> > 
-> >> +
-> >>   	return ip;
-> >>   }
-> >>   
-> >> @@ -194,6 +215,12 @@ xfs_inode_free(
-> >>   	ip->i_ino = 0;
-> >>   	spin_unlock(&ip->i_flags_lock);
-> >>   
-> >> +	/* free xarray contents (values are immediate packed ints) */
-> >> +	xa_destroy(&ip->i_ag_pmap);
-> >> +	kfree(ip->i_ag_dirty_bitmap);
-> >> +	ip->i_ag_dirty_bitmap = NULL;
-> >> +	ip->i_ag_dirty_bits = 0;
-> >> +
-> >>   	__xfs_inode_free(ip);
-> >>   }
-> >>   
-> >> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-> >> index bd6d33557194..dee449168605 100644
-> >> --- a/fs/xfs/xfs_inode.h
-> >> +++ b/fs/xfs/xfs_inode.h
-> >> @@ -99,6 +99,11 @@ typedef struct xfs_inode {
-> >>   	spinlock_t		i_ioend_lock;
-> >>   	struct work_struct	i_ioend_work;
-> >>   	struct list_head	i_ioend_list;
-> >> +
-> >> +	/* AG prediction map: pgoff_t -> packed u32 */
-> > 
-> > What about blocksize < pagesize filesystems?  Which packed agno do you
-> > associate with the pgoff_t?
-> > 
-> > Also, do you have an xarray entry for each pgoff_t in a large folio?
-> > 
-> > --D
-> > 
-> 
-> pgoff_t here is the pagecache index (folio->index), i.e. file offset in
-> PAGE_SIZE units, not a filesystem block index. So blocksize < PAGE_SIZE
-> doesn’t change the association, the packed agno is attached to the folio
-> at that pagecache index.
+On Thu, Feb 5, 2026 at 3:27=E2=80=AFAM Alexander Mikhalitsyn
+<alexander@mihalicyn.com> wrote:
+>
+> Am Do., 5. Feb. 2026 um 12:20 Uhr schrieb <bot+bpf-ci@kernel.org>:
+> >
+> > > diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
+> > > index 005ea3a2c..c350857b2 100644
+> >
+> > [ ... ]
+> >
+> > > @@ -1077,7 +1073,7 @@ static struct file_system_type bpf_fs_type =3D =
+{
+> > >       .init_fs_context =3D bpf_init_fs_context,
+> > >       .parameters     =3D bpf_fs_parameters,
+> > >       .kill_sb        =3D bpf_kill_super,
+> > > -     .fs_flags       =3D FS_USERNS_MOUNT,
+> > > +     .fs_flags       =3D FS_USERNS_DELEGATABLE,
+> > >  };
+> >
+> > FS_USERNS_DELEGATABLE does not appear to be defined anywhere in the ker=
+nel
+> > tree. A search of include/linux/fs.h shows only FS_USERNS_MOUNT is defi=
+ned
+> > (at line 2268), not FS_USERNS_DELEGATABLE.
+> >
+> > The commit message states this flag was "recently introduced", but it i=
+s not
+> > present in this codebase. Will this cause a build failure due to an und=
+efined
+> > identifier?
+>
+> Yeah, this should be applied on top of
+> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=3Dv=
+fs-7.0.misc&id=3D269c46e936f3b5f2b6b567ca124d5f5ea07a371c
+> in vfs/vfs-7.0.misc I think.
 
-Ok, so the tag is entirely determined by the AG of the first fsblock
-within the folio.
-
-> We store one xarray entry per folio index (the start of the folio). We 
-> do not create entries for each base-page inside a large folio. If a 
-> large folio could span multiple extents/AGs, we’ll treat the hint as 
-> advisory and tag it invalid (fallback to normal writeback routing) 
-> rather than trying to encode per-subpage AGs.
-
-Oh, ok, so if you have the mapping and the folio at the same time you
-can determine that the entire large folio maps to a single extent, and
-tag the whole large folio as belonging to a single AG.  That clears
-things up, thank you.
-
-It's only in the case of extreme fragmentation that a large folio gets
-flung at the old writeback paths, which is probably good enough anyway.
-
---D
-
-> >> +	struct xarray           i_ag_pmap;
-> >> +	unsigned long           *i_ag_dirty_bitmap;
-> >> +	unsigned int            i_ag_dirty_bits;
-> >>   } xfs_inode_t;
-> >>   
-> >>   static inline bool xfs_inode_on_unlinked_list(const struct xfs_inode *ip)
-> >> -- 
-> >> 2.25.1
-> >>
-> >>
-> > 
-> 
-> 
+I think it's better to go via bpf-next this after the merge window
+to make sure it goes through full CI run with AI review, etc.
 
