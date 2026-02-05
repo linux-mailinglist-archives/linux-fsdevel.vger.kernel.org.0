@@ -1,179 +1,231 @@
-Return-Path: <linux-fsdevel+bounces-76468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 8MTkC4nahGna5wMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 18:59:37 +0100
+	id OAQDOVfkhGlf6QMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 19:41:27 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BCA5F6419
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 18:59:37 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87DF2F681E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 19:41:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 5820030078B3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 17:59:33 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 1A4463021E40
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 18:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D518E304BDE;
-	Thu,  5 Feb 2026 17:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF20304BA3;
+	Thu,  5 Feb 2026 18:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DxKGDeJz"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="t+9eOfVu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C577303CAA;
-	Thu,  5 Feb 2026 17:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED573033D9;
+	Thu,  5 Feb 2026 18:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770314370; cv=none; b=Zo0USpi/4c0wmdbvrD2gKzRFhrr/1oQ/pFASP/kH8OMhN0pe4+BisoBlq2pYWpYLBvis114qq1zNhmPw/QoV+h0ifniHunObAgbV773oSM2R/GpHyuAU9h3aNYqThXmfGC8Jh+OkytkSa6W8cUAx65dW2DhqbrBhP38E0iffBhU=
+	t=1770316879; cv=none; b=swyhcNkLSoGkxYB34n9WJSel39jQsYaJwiHoovI6zIA8ojUOfbPXTatLYwLAwow/zDBLn5h3Zk34I+N7Tz/G+ucc5iMpBbklGeTX5D8zDyNyPoQpZV9STI27OY1zZjXz9eh6MI4heVK3DArv0Pf2QSpq5ArrHBIirHnPaIyOk4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770314370; c=relaxed/simple;
-	bh=QPnMGMiiqKGmwJXq9xUjekruFfRDSmqjNebQDbWjscg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y9449ewNO3Iicd1sX+2+wkbw7MAfdrBSo8OuvzyWsBhZuxKvmPMaml8bED6dxT+BHA5E5FqtyNEMmgtiJWCqBbJLVG/8t2gWGVbNaFiuBlN0vAUpA/m2PE/a084Kr90tjkcM//jFDycqESONgJudynQOPAB8Gk40Tn62O+LlSqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DxKGDeJz; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1770314370; x=1801850370;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QPnMGMiiqKGmwJXq9xUjekruFfRDSmqjNebQDbWjscg=;
-  b=DxKGDeJzHFWs8z1oBdM38Nw4cYlVyBYOQlmURJZ07uC7UcckyITyHs5D
-   yW9rMkAZeMGyr8AyZv7RR6QWj9LJpZpHOPJgMnsRmBhlmReWNB1XpqGDu
-   gWF1fTQDZGIm9xGNEDkgylHJyVEXiJD21OWGFDHo6SYTior7U4wOTT1lM
-   yhQxl+AiKRXeuOYVjSzzG2wHxocQoty5qlzSkfq3bomofiMAudHdmb+4a
-   La1m4PWOG+hc5Xbn984UvOQ3vI3q1vyvmMKYJBNYS3E9TzKywb+smih+X
-   E+hyQnriTiK/dQZ97wZBcjq09t8QsJKs5D9PhdWQsy8SNqTxKR+cophtW
-   Q==;
-X-CSE-ConnectionGUID: xgWg5Dd8SC+UpaPAc9dvcg==
-X-CSE-MsgGUID: gimbldOFRXG+T86jeSeFLw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11692"; a="82957294"
-X-IronPort-AV: E=Sophos;i="6.21,275,1763452800"; 
-   d="scan'208";a="82957294"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2026 09:59:29 -0800
-X-CSE-ConnectionGUID: 1Qo+LnH2Rw2K6QGdWD9sPg==
-X-CSE-MsgGUID: DNX37lliSDuSAIS8oirMcw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,275,1763452800"; 
-   d="scan'208";a="233552840"
-Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 05 Feb 2026 09:59:25 -0800
-Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vo3dS-00000000k5A-16zC;
-	Thu, 05 Feb 2026 17:59:22 +0000
-Date: Fri, 6 Feb 2026 01:58:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alexander Mikhalitsyn <alexander@mihalicyn.com>, ast@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Christian Brauner <brauner@kernel.org>, bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@futurfusion.io>
-Subject: Re: [PATCH] bpf: use FS_USERNS_DELEGATABLE for bpffs
-Message-ID: <202602060128.qfggT7Pd-lkp@intel.com>
-References: <20260205104541.171034-1-alexander@mihalicyn.com>
+	s=arc-20240116; t=1770316879; c=relaxed/simple;
+	bh=Hi5UQjuU/DZJSJZTH5qYUoP+Sdou/oFrvriHbYA6PuM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lMTE30I2xz7in5q34qL1j+fmSAJJIIV7/JfCN/Hjw2H4QtKM27QXIWtjJ4YDYiTnhi9d/j5AkqREVLeeVKjwwMsgy0V9pJz4fjVRR4MZ8jLT82rFZM6y2jTczlYcAtN9zFqhAPnVsovsp42ASCCd7PGPsjulm2oc7UYx9xxn9+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=t+9eOfVu; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+	by m0089730.ppops.net (8.18.1.11/8.18.1.11) with ESMTP id 615IHT2c2552915;
+	Thu, 5 Feb 2026 10:41:06 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
+	 bh=oM3xrDYNgnBPMbFcD9YzGCr8W3sRHxsocFRPcAhDQAY=; b=t+9eOfVuJ0lh
+	8o8aOadc6aewYQhc+yectZHQUqm+KDpZnbFr1txcOfb4GBv6QfSwEzqOI15Rlc3l
+	8XED5X4Jx16FPDZiAr+7Pe1nhJBd0GouslCZNODT+CXh/9VhZmpYijf94+XKhk9E
+	J9tI2hDWayJiYONNv+9U9WT4PJpitslsu2heD0Jp9rHiJMgfxVdyKjL94DE4ZuJ1
+	DID6XS56gZPBd7JbfNhKp1IQ8GJdFQjymQ6+dpW8xzjVQnVnuk81Mv8wUE+b0CWT
+	WFAtK1TBRxiEqfiIp5g9el36kWWeRt1/mBan/nKrG4oR2Gyu6sxZWXxVkCawm4q6
+	QTPe0jIH+w==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by m0089730.ppops.net (PPS) with ESMTPS id 4c4v053t8v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 05 Feb 2026 10:41:06 -0800 (PST)
+Received: from devbig003.atn7.facebook.com (2620:10d:c085:208::7cb7) by
+ mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.35; Thu, 5 Feb 2026 18:41:05 +0000
+From: Chris Mason <clm@meta.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+CC: <miklos@szeredi.hu>, <joannelkoong@gmail.com>, <bernd@bsbernd.com>,
+        <neal@gompa.dev>, <linux-ext4@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 07/10] fuse: enable iomap cache management
+Date: Thu, 5 Feb 2026 10:33:26 -0800
+Message-ID: <20260205184044.1551228-1-clm@meta.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <176169812229.1426649.17695442505194165425.stgit@frogsfrogsfrogs>
+References: <176169812012.1426649.16037866918992398523.stgit@frogsfrogsfrogs> <176169812229.1426649.17695442505194165425.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260205104541.171034-1-alexander@mihalicyn.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: xbfyWG5S63BgPpVffR03KRbbIGhfvgxt
+X-Authority-Analysis: v=2.4 cv=YLOSCBGx c=1 sm=1 tr=0 ts=6984e442 cx=c_pps
+ a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
+ a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8
+ a=h9-URPGDUGhjHTz5WgkA:9
+X-Proofpoint-ORIG-GUID: xbfyWG5S63BgPpVffR03KRbbIGhfvgxt
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjA1MDE0MiBTYWx0ZWRfXxJQrvAJZn65F
+ fLWtvD+1kHAsQ7ITfHRZW38ayOC9A2HYcfxntHYhsgC7XIOjQr4YfAjv/eJNl/rWBcMY7351BzK
+ 4iWninrNtR3BMRFDDIwWhxb0Y4hXJvvxJGrjzfrnp0caULjbuzcehSe487/dOxihSHYCCFkvUE1
+ tbBqWEf4yXX4pllsmFi4gOAyS8PAoN7UVsyaMhwABEfb+llQaZ5MnRSEtSpZik9AFY7ar6+8qvI
+ q5t5ObEOw5AqV1R6bf5ZnL2uSo0fBrAeLaUj5vFhW8EgbG0boz71clSaPCMS5Xy54s8sDJr3pPm
+ mh1co7vESLzmVJDXz9A0+jvDn0P4t2FBaYGldxShiuK7peQK8jbSZHJqlmz3mfCJ0ad04F59UmR
+ NzingXA8MtI5m1uYI7x6Hm3Vrlp7Y4pTyO3iQUCxea/YCrjb4bxAPkE1qTcXCAR2UTEx5zUIuAN
+ FrvTx36HABBBkxT3QGQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-05_04,2026-02-05_03,2025-10-01_01
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.34 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
-	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
+	MID_CONTAINS_FROM(1.00)[];
+	DMARC_POLICY_ALLOW(-0.50)[meta.com,reject];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[meta.com:s=s2048-2025-q2];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	FREEMAIL_CC(0.00)[lists.linux.dev,iogearbox.net,kernel.org,linux.dev,gmail.com,fomichev.me,google.com,vger.kernel.org,futurfusion.io];
-	TAGGED_FROM(0.00)[bounces-76468-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76469-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[szeredi.hu,gmail.com,bsbernd.com,gompa.dev,vger.kernel.org];
+	RCVD_COUNT_FIVE(0.00)[6];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_NEQ_ENVFROM(0.00)[clm@meta.com,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[lkp@intel.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[intel.com:+];
+	RCPT_COUNT_SEVEN(0.00)[7];
 	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	DKIM_TRACE(0.00)[meta.com:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,intel.com:dkim,intel.com:mid,git-scm.com:url,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,01.org:url]
-X-Rspamd-Queue-Id: 0BCA5F6419
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[meta.com:mid,meta.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 87DF2F681E
 X-Rspamd-Action: no action
 
-Hi Alexander,
+"Darrick J. Wong" <djwong@kernel.org> wrote:
+> From: Darrick J. Wong <djwong@kernel.org>
+> 
+> Provide a means for the fuse server to upload iomappings to the kernel
+> and invalidate them.  This is how we enable iomap caching for better
+> performance.  This is also required for correct synchronization between
+> pagecache writes and writeback.
+> 
 
-kernel test robot noticed the following build errors:
+Hi everyone,
 
-[auto build test ERROR on bpf-next/net]
-[also build test ERROR on bpf-next/master bpf/master brauner-vfs/vfs.all linus/master v6.19-rc8 next-20260205]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I'm trying out my AI review prompts on a few more trees, and I ran it
+on the fuse-iomap-cache branch:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Alexander-Mikhalitsyn/bpf-use-FS_USERNS_DELEGATABLE-for-bpffs/20260205-184845
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git net
-patch link:    https://lore.kernel.org/r/20260205104541.171034-1-alexander%40mihalicyn.com
-patch subject: [PATCH] bpf: use FS_USERNS_DELEGATABLE for bpffs
-config: i386-buildonly-randconfig-002-20260205 (https://download.01.org/0day-ci/archive/20260206/202602060128.qfggT7Pd-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260206/202602060128.qfggT7Pd-lkp@intel.com/reproduce)
+https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=fuse-iomap-cache
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202602060128.qfggT7Pd-lkp@intel.com/
+This was the latest email lore could find, apologies if I grabbed the wrong one.
 
-All errors (new ones prefixed by >>):
+Hopefully the review below is useful, please let me know if there are places it
+has gone wildly wrong.  I kept the header to make it obvious exactly which
+commit I'd run through:
 
->> kernel/bpf/inode.c:1084:14: error: use of undeclared identifier 'FS_USERNS_DELEGATABLE'; did you mean 'CFTYPE_NS_DELEGATABLE'?
-    1084 |         .fs_flags       = FS_USERNS_DELEGATABLE,
-         |                           ^~~~~~~~~~~~~~~~~~~~~
-         |                           CFTYPE_NS_DELEGATABLE
-   include/linux/cgroup-defs.h:137:2: note: 'CFTYPE_NS_DELEGATABLE' declared here
-     137 |         CFTYPE_NS_DELEGATABLE   = (1 << 2),     /* writeable beyond delegation boundaries */
-         |         ^
-   1 error generated.
+commit 84c726dd312b652c0fd2d4f43d65eefd16bfa901
+Author: Darrick J. Wong <djwong@kernel.org>
 
+fuse: enable iomap cache management
 
-vim +1084 kernel/bpf/inode.c
+This commit provides a means for the fuse server to upload iomappings to
+the kernel and invalidate them, enabling iomap caching for better
+performance and ensuring correct synchronization between pagecache writes
+and writeback.
 
-  1077	
-  1078	static struct file_system_type bpf_fs_type = {
-  1079		.owner		= THIS_MODULE,
-  1080		.name		= "bpf",
-  1081		.init_fs_context = bpf_init_fs_context,
-  1082		.parameters	= bpf_fs_parameters,
-  1083		.kill_sb	= bpf_kill_super,
-> 1084		.fs_flags	= FS_USERNS_DELEGATABLE,
-  1085	};
-  1086	
+> diff --git a/fs/fuse/fuse_iomap.c b/fs/fuse/fuse_iomap.c
+> index b56718dd256a6..dcadd66f6ec95 100644
+> --- a/fs/fuse/fuse_iomap.c
+> +++ b/fs/fuse/fuse_iomap.c
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+[ ... ]
+
+> +int fuse_iomap_inval(struct fuse_conn *fc,
+> +		     const struct fuse_iomap_inval_out *outarg)
+> +{
+> +	struct inode *inode;
+> +	struct fuse_inode *fi;
+> +	int ret = 0, ret2 = 0;
+> +
+> +	if (!fc->iomap)
+> +		return -EINVAL;
+> +
+> +	down_read(&fc->killsb);
+> +	inode = fuse_ilookup(fc, outarg->nodeid, NULL);
+> +	if (!inode) {
+> +		ret = -ESTALE;
+> +		goto out_sb;
+> +	}
+> +
+> +	fi = get_fuse_inode(inode);
+> +	if (BAD_DATA(fi->orig_ino != outarg->attr_ino)) {
+> +		ret = -EINVAL;
+> +		goto out_inode;
+> +	}
+> +
+> +	if (fuse_is_bad(inode)) {
+> +		ret = -EIO;
+> +		goto out_inode;
+> +	}
+> +
+> +	if (!fuse_iomap_inval_validate(inode, outarg->write_offset,
+> +				       outarg->write_length)) {
+> +		ret = -EFSCORRUPTED;
+> +		goto out_inode;
+> +	}
+> +
+> +	if (!fuse_iomap_inval_validate(inode, outarg->read_offset,
+> +				       outarg->read_length)) {
+> +		ret = -EFSCORRUPTED;
+> +		goto out_inode;
+> +	}
+> +
+> +	fuse_iomap_cache_lock(inode);
+> +	if (outarg->read_length)
+> +		ret2 = fuse_iomap_cache_remove(inode, READ_MAPPING,
+> +					       outarg->read_offset,
+> +					       outarg->read_length);
+> +	if (outarg->write_length)
+> +		ret = fuse_iomap_cache_remove(inode, WRITE_MAPPING,
+> +					      outarg->write_offset,
+> +					      outarg->write_length);
+> +	fuse_iomap_cache_unlock(inode);
+>                    ^^^^
+
+Can fuse_iomap_cache_lock() dereference a NULL pointer here? Looking at
+fuse_iomap_upsert() above, there's a check for fuse_inode_caches_iomaps()
+before accessing the cache and allocating if necessary. In fuse_iomap_inval(),
+there's no such check before calling fuse_iomap_cache_lock().
+
+fuse_iomap_cache_lock() accesses fi->cache and calls down_write(&ic->ic_lock),
+which will crash if fi->cache is NULL. This could happen when a fuse server
+sends FUSE_NOTIFY_IOMAP_INVAL for an inode that never had mappings upserted
+to it.
+
+Should fuse_iomap_inval() check fuse_inode_caches_iomaps(inode) before
+calling fuse_iomap_cache_lock()? If the cache doesn't exist, there's
+nothing to invalidate, so returning early (perhaps with 0 or -EINVAL)
+would be appropriate.
+
 
