@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-76433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76434-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 8G3LHO6OhGl43QMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:37:02 +0100
+	id SK3vFfSOhGl43QMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76434-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:37:08 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD945F2A04
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:37:01 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB5FBF2A0C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:37:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 944DC300860F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:36:46 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 2F0E130071FB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C043D3D03;
-	Thu,  5 Feb 2026 12:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9193AE70E;
+	Thu,  5 Feb 2026 12:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OfcJU9pP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFZT7KVA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE101F1537;
-	Thu,  5 Feb 2026 12:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DC21F1537;
+	Thu,  5 Feb 2026 12:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770295000; cv=none; b=PeE4Z3o8K8Faa8BQh+OzYkEKtUGMGwRXeLDtrTHFYaGjf3+oUEUmblilWsHsT4q4BNhzbKg54+KiAevoV7wqYnCcrFsnhXN7KDZYOxCHPwIZkUPzFgg8pWgclyAaZrVR8DyT8KGDQ/8pE2ZLW/XPCbvC/srGoySsUDIWqGksjFQ=
+	t=1770295019; cv=none; b=sbe9soMpkyWAAaExtX1C2RGmadQc2UPAW+bejkeYEa0LRY/DocV1fHicfOWwF2ql+8NN0V9lAyFCwSmvKL5UYSBygV4Lkd0bm6ma5IMxK+qrcjqI7QW3OEhXePWVEzp6P8Et3eUrOvgJHWE9FHCDKKuGLr4pFcdKJs6QAWG0Z/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770295000; c=relaxed/simple;
-	bh=Z4RrUOar5IY07sVSkNFHddtdmN+HsMiaWLmTRVAtFeE=;
+	s=arc-20240116; t=1770295019; c=relaxed/simple;
+	bh=r/RWmitTDtOL5zacBcM1kz+XoL+DdBMTmApl8Pq8ui8=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NPNoz4sW4nTnr1sF6lzc3d5hzlXi6PY7DxshNJnZe9Dly+DgrB9GTDMQ5ryGp0JbXYaS/gMSJ5P38ukhvdA8zz9JsURRbgFl6V/NEH9GeYzmm7JSykXRlFj9uF5iu6Lvy8gWWlDPT/xeKEzLqdaLIH7d32MmO4YvwDj7Pe+Vky0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OfcJU9pP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39CABC4CEF7;
-	Thu,  5 Feb 2026 12:36:38 +0000 (UTC)
+	 Content-Type:MIME-Version; b=MH0TW7Mz2/eE2k/QQhXCFz1aWy58ZxxTL/hiZ5gzXhssXulLcZK//zt7oSK+hJlV9CqOE5L829g7ndJb3PO1+7BWUnQftrK1E7mqIuGHsQlJl8PCk4p7d5AyLhz6yP19XvvwmHST/VNa2aXFL7SoWJ8FBr9rW4TzgTaE+0co+Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFZT7KVA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37E9CC19423;
+	Thu,  5 Feb 2026 12:36:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770295000;
-	bh=Z4RrUOar5IY07sVSkNFHddtdmN+HsMiaWLmTRVAtFeE=;
+	s=k20201202; t=1770295019;
+	bh=r/RWmitTDtOL5zacBcM1kz+XoL+DdBMTmApl8Pq8ui8=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=OfcJU9pPQwfzqsf0wBl/LDo5tOJtRaNxRidTai1u56gqbtkAqS/poI2CbgA9tKIEx
-	 aEO7kOhrFJSs0vZEqA9blM/oE/ZwvKUyu6Z6DVhEhNtrznTWhzIG9xq1hphG0q00x3
-	 QlujwkGLEDeVfyOBXmElE+l6AuxJYE6q4VZJcYg4TZ/z7GIf2C+9z4sEFrBvI76Jrg
-	 EOtbFNNbVyZDS6h7064Lf1NjXRHOWbaeNaiHggGGufNEksNvxrUSwavWvGXP5X1ftd
-	 8kctTHWRB3Odnywbk5+QtGCpAohYDifllS6yP0d+md4umWSX0rCzsIDb71BfNIUfBj
-	 ERIcrfho9tLNQ==
-Message-ID: <3d8aeaea14712ad2cd0199cba62bc1398f7cc4a0.camel@kernel.org>
-Subject: Re: [PATCH 05/13] selinux: Use simple_start_creating() /
- simple_done_creating()
+	b=YFZT7KVAa5p4zKtTDyCaxee5VRJZOnFGXi4oTMUzFY2FBOD/pz7iS7JCcxsiuntfC
+	 mv1CnHEWss1lbx5p1myttORt3TyAbZhdG6hloq3KrhXWNbOoKp2vvUyKbIxgicUIWD
+	 nf8sRBPWihATme4F0s0uGzZeLtyLkB1eDL2ngwHEjv7JeWvBa/p+PS7naOtX99zVMW
+	 ijOfqZwmruNnbGvSyw9bmI2fa/qDoxdiBqnERWam1XRUrT+QDu29LG4EMiiIvVVrW9
+	 4cOED4MLS8Jg26e5FUt7rR+dJGDalHZ1oM0w9C338s5NGMod5ptrYd5OZ9wWgmDScG
+	 sHQ6UN/jEeROA==
+Message-ID: <b4cc667f93cd16b251ba063898055b3a754e3496.camel@kernel.org>
+Subject: Re: [PATCH 06/13] nfsd: switch purge_old() to use
+ start_removing_noperm()
 From: Jeff Layton <jlayton@kernel.org>
 To: NeilBrown <neil@brown.name>, Christian Brauner <brauner@kernel.org>, 
  Alexander Viro <viro@zeniv.linux.org.uk>, David Howells
@@ -60,10 +60,10 @@ Cc: linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
 	linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com, 
 	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Date: Thu, 05 Feb 2026 07:36:37 -0500
-In-Reply-To: <20260204050726.177283-6-neilb@ownmail.net>
+Date: Thu, 05 Feb 2026 07:36:56 -0500
+In-Reply-To: <20260204050726.177283-7-neilb@ownmail.net>
 References: <20260204050726.177283-1-neilb@ownmail.net>
-	 <20260204050726.177283-6-neilb@ownmail.net>
+	 <20260204050726.177283-7-neilb@ownmail.net>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -153,12 +153,12 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76433-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76434-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_TO(0.00)[brown.name,kernel.org,zeniv.linux.org.uk,redhat.com,suse.cz,oracle.com,szeredi.hu,gmail.com,canonical.com,paul-moore.com,namei.org,hallyn.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
@@ -174,71 +174,48 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,brown.name:email]
-X-Rspamd-Queue-Id: CD945F2A04
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[brown.name:email,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: EB5FBF2A0C
 X-Rspamd-Action: no action
 
 On Wed, 2026-02-04 at 15:57 +1100, NeilBrown wrote:
 > From: NeilBrown <neil@brown.name>
 >=20
-> Instead of explicitly locking the parent and performing a lookup in
-> selinux, use simple_start_creating(), and then use
-> simple_done_creating() to unlock.
->=20
-> This extends the region that the directory is locked for, and also
-> performs a lookup.
-> The lock extension is of no real consequence.
-> The lookup uses simple_lookup() and so always succeeds.  Thus when
-> d_make_persistent() is called the dentry will already be hashed.
-> d_make_persistent() handles this case.
+> Rather than explicit locking, use the start_removing_noperm() and
+> end_removing() wrappers.
+> This was not done with other start_removing changes due to conflicting
+> in-flight patches.
 >=20
 > Signed-off-by: NeilBrown <neil@brown.name>
 > ---
->  security/selinux/selinuxfs.c | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
+>  fs/nfsd/nfs4recover.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 >=20
-> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-> index 896acad1f5f7..97e02cd5a9dc 100644
-> --- a/security/selinux/selinuxfs.c
-> +++ b/security/selinux/selinuxfs.c
-> @@ -1930,15 +1930,16 @@ static const struct inode_operations swapover_dir=
-_inode_operations =3D {
->  static struct dentry *sel_make_swapover_dir(struct super_block *sb,
->  						unsigned long *ino)
->  {
-> -	struct dentry *dentry =3D d_alloc_name(sb->s_root, ".swapover");
-> +	struct dentry *dentry;
->  	struct inode *inode;
+> diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
+> index 441dfbfe2d2b..52fbe723a3c8 100644
+> --- a/fs/nfsd/nfs4recover.c
+> +++ b/fs/nfsd/nfs4recover.c
+> @@ -351,16 +351,14 @@ purge_old(struct dentry *parent, char *cname, struc=
+t nfsd_net *nn)
+>  	if (nfs4_has_reclaimed_state(name, nn))
+>  		goto out_free;
 > =20
-> -	if (!dentry)
-> +	inode =3D sel_make_inode(sb, S_IFDIR);
-> +	if (!inode)
->  		return ERR_PTR(-ENOMEM);
-> =20
-> -	inode =3D sel_make_inode(sb, S_IFDIR);
-> -	if (!inode) {
-> -		dput(dentry);
-> +	dentry =3D simple_start_creating(sb->s_root, ".swapover");
-> +	if (!dentry) {
-> +		iput(inode);
->  		return ERR_PTR(-ENOMEM);
+> -	inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
+> -	child =3D lookup_one(&nop_mnt_idmap, &QSTR(cname), parent);
+> +	child =3D start_removing_noperm(parent, &QSTR(cname));
+>  	if (!IS_ERR(child)) {
+>  		status =3D vfs_rmdir(&nop_mnt_idmap, d_inode(parent), child, NULL);
+>  		if (status)
+>  			printk("failed to remove client recovery directory %pd\n",
+>  			       child);
+> -		dput(child);
 >  	}
+> -	inode_unlock(d_inode(parent));
+> +	end_removing(child);
 > =20
-> @@ -1946,11 +1947,9 @@ static struct dentry *sel_make_swapover_dir(struct=
- super_block *sb,
->  	inode->i_ino =3D ++(*ino);
->  	/* directory inodes start off with i_nlink =3D=3D 2 (for "." entry) */
->  	inc_nlink(inode);
-> -	inode_lock(sb->s_root->d_inode);
->  	d_make_persistent(dentry, inode);
->  	inc_nlink(sb->s_root->d_inode);
-> -	inode_unlock(sb->s_root->d_inode);
-> -	dput(dentry);
-> +	simple_done_creating(dentry);
->  	return dentry;	// borrowed
->  }
-> =20
+>  out_free:
+>  	kfree(name.data);
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
