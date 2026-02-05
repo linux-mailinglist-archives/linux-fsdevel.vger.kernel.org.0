@@ -1,67 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-76495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OEzyJPcbhWkO8gMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 23:38:47 +0100
+	id SINTAFkchWkp8gMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 23:40:25 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBF16F8280
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 23:38:46 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86E6BF8298
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 23:40:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 99D483014960
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 22:38:10 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id DCD2C300681F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 22:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA1833A000;
-	Thu,  5 Feb 2026 22:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2693382C0;
+	Thu,  5 Feb 2026 22:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="J7Cxe9W5"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="CsvMfRkc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585A832D7F9;
-	Thu,  5 Feb 2026 22:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566BC26AF4;
+	Thu,  5 Feb 2026 22:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770331088; cv=none; b=A3OtY8Qgdya0WdcI+nKRkluc93W87N+iEMTOyyRjjMTS4fbO22gbqYShCr9cudFnA6JZT+WXDYkmkKQXSLWAYP5jc3CfuSF2T0ZhZHBCLRzru11fDSznJZiGaXPPeg6balyFWWNV2eWP97mN/6qfoau5MH2VuOJDVk1qyNMQ2wk=
+	t=1770331218; cv=none; b=rYk2f98MST+PEkVlbFyniK8ePbXWnp5cbJ3DLGeVPEUwSRK2va+jn8nYuGaI8s+bBUMUyaCpVMHt1XaIrlaH4o5n2MGbvKNBJeyrx6g47IkBu8M2VNd8q/mAdPzfjfEQf6e3e/+457gpK0hdu/uBgG5nCnCq3CjsibgWIeOpay0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770331088; c=relaxed/simple;
-	bh=H+dfKlprfiTATtJSMxIy1CPWCZQP23MCeTbdncNYdRM=;
+	s=arc-20240116; t=1770331218; c=relaxed/simple;
+	bh=VfdkClobzaTUx3KtgpgD7tQ5mPXJsDSwaxaTVyxIphk=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UPcY9uIKsIkbHBSFgGKZPlH7x06k5cf4CaUk1yWqt2CzzBHZ1hqA0y80rdldOw6DFGcwSWfVFxbfzP8KjqzKNfWrKp68mbpSy3GmJj/vA3L0p3LNtdieTc7TXUinfHUGObqVBJ2ChOlkUmzqt019gWqb1EWFzyhhayJbS9IYbBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=J7Cxe9W5; arc=none smtp.client-ip=198.37.111.173
+	 Content-Type:MIME-Version; b=RQauYPaOTBWuENxMjnqZDn3mUNbggi1hMl1KQzqJo54swiUzP3xTBZkLlsoMDJtzfudObg3Wl9aeezVMBCJi7Dc9l4tu54yHVe5hHF1rT4zwftxDXOGaqHYoIVKTQ2lrhhVXolnSMuW2Eikd1E/8L9uTCgvRuyf/yNlx84hPIlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=CsvMfRkc; arc=none smtp.client-ip=198.37.111.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1770331086;
-	bh=H+dfKlprfiTATtJSMxIy1CPWCZQP23MCeTbdncNYdRM=;
+	d=hansenpartnership.com; s=20151216; t=1770331217;
+	bh=VfdkClobzaTUx3KtgpgD7tQ5mPXJsDSwaxaTVyxIphk=;
 	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=J7Cxe9W5kQv7CxPPEAVBHxHg2TYoyxgThE5Yl2C5yInyFqAJAqyrnU7RKooaCTm6o
-	 4tp/5ri3DNsdePegWX29oURIzAJgjac1cHIZo6IW64rqmE6RtAEM/Oqx0fgoAi4G7I
-	 2WcT3bRDT+Snc1dneA37m7fku7Jkw+AKkum+kzRE=
+	b=CsvMfRkc/nHYV1l4ByNkmoM/Uo/FqimGyeiy1sObi/ZlWrJH82SiSumiRX2nQjrEg
+	 vefaAs4hkI9bO+FZ42C8ZJqqlZk8raWcenHsCvxJZ6PNt6VlKblBdnD7bEBFdejuJK
+	 GhufzI3XnHVto/BSuPOgBRB/Vq8TsqVQ1kAkJ9Bg=
 Received: from [10.10.7.5] (unknown [51.52.16.146])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 217A01C0326;
-	Thu, 05 Feb 2026 17:38:04 -0500 (EST)
-Message-ID: <3f7b81e718763960ff77e3181fbeb6dfbaf3505a.camel@HansenPartnership.com>
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 654251C0083;
+	Thu, 05 Feb 2026 17:40:16 -0500 (EST)
+Message-ID: <5cfff8c0b44968cf75d74aef17de6dce73e1a26d.camel@HansenPartnership.com>
 Subject: Re: [LSF/MM/BPF TOPIC] Documenting the correct pushback on AI
  inspired (and other) fixes in older drivers
 From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Matthew Wilcox <willy@infradead.org>, Bart Van Assche
- <bvanassche@acm.org>
+To: Haris Iqbal <haris.iqbal@ionos.com>
 Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, 
 	"linux-block@vger.kernel.org"
 	 <linux-block@vger.kernel.org>, linux-fsdevel@vger.kernel.org
-Date: Thu, 05 Feb 2026 22:38:02 +0000
-In-Reply-To: <aYUDj5zge6amIkTv@casper.infradead.org>
+Date: Thu, 05 Feb 2026 22:40:12 +0000
+In-Reply-To: <CAJpMwyg4Etv3qOw2Ur+L9YmWbt7Rw19uTs0=RsRtuORaEOoHnQ@mail.gmail.com>
 References: 
 	<32e620691c0ecf76f469a21bffaba396f207ccb9.camel@HansenPartnership.com>
-	 <8075dab2-49db-408e-bff6-5de6b0b372cd@acm.org>
-	 <aYUDj5zge6amIkTv@casper.infradead.org>
+	 <CAJpMwyg4Etv3qOw2Ur+L9YmWbt7Rw19uTs0=RsRtuORaEOoHnQ@mail.gmail.com>
 Autocrypt: addr=James.Bottomley@HansenPartnership.com;
  prefer-encrypt=mutual;
  keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNElecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHURfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvdHRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAml2ZBIFCS3GUMIACgkQgUrkfCFIVNZKjQf/deRzlXZClKxTC/Ee2yEPqqS7mm/INUA49KdQQ5oIhSxkUBy09J4qjMIo5F8ZFkFTqikBqeL35LKu7O7rn8WETfX8Bxvos3HUsl3jHo34DES4MUFIpoQPgtiLRGwLbK0cVCAArR2u2qj4ABmTRrs1I1kvdjEw6gatOuXtEe/j5O2fvfzTq9GBr0Q3n2IAsFXi4hLlx6VPE8tyWUZ8BWJKtih3JAeUiXFvASL3McV0rV9RnU0VbjEQEhSE7PMYhWpnDC9AyBb0lXJllQRvC3NSkUB8KVQgNNxRPss0WE/nBoZ4dFA42jTyzTz8lNylxZoAWV7WJb3QxVg4oCodRVrxxrQhSmFtZXMgQm90dG9tbGV5IDxqZWpiQGtlcm5lbC5vcmc+iQFVBBMBCAA/AhsDBgsJCAcDAgYVCAIJCgsEFgIDA
@@ -83,21 +81,21 @@ X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[hansenpartnership.com,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	R_DKIM_ALLOW(-0.20)[hansenpartnership.com:s=20151216];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76496-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
 	TO_DN_EQ_ADDR_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-76495-lists,linux-fsdevel=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	RCPT_COUNT_THREE(0.00)[4];
 	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[James.Bottomley@HansenPartnership.com,linux-fsdevel@vger.kernel.org];
@@ -105,23 +103,27 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,HansenPartnership.com:mid,hansenpartnership.com:dkim]
-X-Rspamd-Queue-Id: EBF16F8280
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,hansenpartnership.com:dkim,HansenPartnership.com:mid]
+X-Rspamd-Queue-Id: 86E6BF8298
 X-Rspamd-Action: no action
 
-On Thu, 2026-02-05 at 20:54 +0000, Matthew Wilcox wrote:
-> On Thu, Feb 05, 2026 at 08:30:53AM -0800, Bart Van Assche wrote:
-> > We don't want to forbid tree-wide API changes, isn't it? See also
-> > Documentation/process/stable-api-nonsense.rst.
+On Thu, 2026-02-05 at 17:40 +0100, Haris Iqbal wrote:
+[...]
+> It is an interesting proposal, but I feel the problem statement
+> overlaps with some other, already being discussed, or covered topics.
+> For example, the topic of fixes requiring effort and time of the
+> maintainer/reviewer, and the fact that AI now potentially leads to
+> too many such fixes is being discussed in the following link,
 >=20
-> That's plainly not what James was talking about.=C2=A0 Tree-wide API
-> changes have an obvious benefit (... or if not, they'll be
-> rejected).=C2=A0 The question is what benefit does anyone receive from
-> fixing an unlikely memory leak in the ncr53c8xx driver?
+> https://lore.kernel.org/ksummit/20251114183528.1239900-1-dave.hansen@linu=
+x.intel.com/#t
 
-Well, even for API changes it wouldn't be unreasonable to do a cost
-benefit analysis, but, as Matthew said, they're clearly not fixes.
+They are actually pretty orthogonal.  The email is about identifying AI
+tools used in submission.  I may suspect the uptick in the fixes is due
+to the use of AI, but I don't really care.  The problem isn't what tool
+you used it's that the risk vs benefit of actually fixing the driver
+isn't favourable.
 
 Regards,
 
