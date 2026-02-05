@@ -1,95 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-76385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id AAjZKFVrhGl82wMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 11:05:09 +0100
+	id UFQ+GBJ1hGkI3AMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 11:46:42 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBC5BF12AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 11:05:08 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7809F1716
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 11:46:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 458203002919
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 10:05:06 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 97AA030238C5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 10:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F22A3A4F46;
-	Thu,  5 Feb 2026 10:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50ADD3A7836;
+	Thu,  5 Feb 2026 10:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FlylkwtZ"
+	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="TaZk3GHv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8611B3A4F2F
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 10:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544791F1537
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 10:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770285903; cv=none; b=Zd7lEUZzzbj2WrVZC0NgHMznGQJ5QnMs7KZRKpSAWDrOOElWsPzGL+tgAHlIrPPqv1VqvvG0nl7m6kWLG+/5Xiu4HFLY5R0UVB15BDp8ryVLVz5nDshwlUOFJ/ohDoYMwzH/VlIUbm6fbt+2N6qzwWdKXT+b5XjuHWo0880ZxtY=
+	t=1770288388; cv=none; b=Q/yjNGpGPTgTodkAYSEMM5caXU3MgSPp2kW2aWgJwdIu7hqIT6ymNG0a6QfOZcuI21xTv+5pKyzpgX2G97uh1uNP8EXkBeEQK1Eb1fQhGKYyQvk9j7DkTCleqhUBQDocYZqFhLeahi4o9Y0n3BILTBWn95QOjkYgbbA6eejboJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770285903; c=relaxed/simple;
-	bh=cUCjXOzyNXfUHrVbFUTqxxw85y4D9L+9PaTcZvGpLiQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MdlxkbdTWCSZ69zL9wsMQ3VhKxerkdcQEpp0HcIyAOyS8JPyMXSnM3PPO5ZgCNZ7m0emo61+huCWWNwgB/tC5Y4YaU/BrmmUSv4Q2Giar7XkVoJMafoTYyQpU9/sIJH63ghy2PsRQrrODde9MGV0sTA2HIKE8qJkU61dFDTBezQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FlylkwtZ; arc=none smtp.client-ip=209.85.214.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-2a9042df9a2so4256125ad.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Feb 2026 02:05:03 -0800 (PST)
+	s=arc-20240116; t=1770288388; c=relaxed/simple;
+	bh=FntRL1qpxfsNfmvPILCwbU6dqigMGKuJ0zJnx7gXrxs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lgDsWvczxshwQE2Q08MCHVKDbdkrdhVcTPXUb/NhebwY/56G03w/XuoQLHDzaDLiT5Xo5riQDAH4talmYaHLopKDJYgEHJHNsSWXb0f9FW+J3D4RUhaeNpb+ipgOeDibkMTw+AyVEmk+qSthNJGPwkhCMGtIeZ5FEFVCEdbmW/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=TaZk3GHv; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-4359228b7c6so542686f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Feb 2026 02:46:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770285903; x=1770890703; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dsv48T5s7siDt+dbP9XLn3MeHYejAgqP+nja3QugRLg=;
-        b=FlylkwtZCJEhtsohuFXzHFpNibTN9in+ujtxaS4qFtOx/7om108lV8AK4iyKt7xh00
-         EyCRgR2kW5qKOLExINP0NqAZ2T1OcpJVJ7VAl48+tuaiE5oYxHjUEt4D5vy6hopAWBnz
-         mlRj7UQh6k4ynn+drSUvtHl+Wf3f6QwXz7lMirch0JayzGYdg8kMIGMaZo4qHSRPtrt4
-         /8+AlTf88IgdFwlDmoZWdGUntbQZ8JhJur2O1YS2K3UXbtw01avkt5E2iKFxmht5wuxR
-         rbK9pcolUHrBPwNCOab1pxQi7MIO99CccYJ/Sg+4MXnLfNNIxwT9egCZJhI2khmVE+vZ
-         UYDQ==
+        d=mihalicyn.com; s=mihalicyn; t=1770288386; x=1770893186; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pI+I8Y4vd8PrLGBnjDW8Sa0zt5Y1hsnun0xp3Gdhd6o=;
+        b=TaZk3GHvcIEe2sT+plbieP5K2VYopl7ILZjpw4m5IHR16O9JXem0J9GvruTYqwJwzo
+         phVz2+hSLhhob1YfzZo+BYuvdb7uipF1JFO+X+UWPi0LlSr+Pgs8Nqli9x+tBQfFvtyG
+         mYOGqORAEAfAo28anmd2r8YSydNK/zGpgBfRs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770285903; x=1770890703;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Dsv48T5s7siDt+dbP9XLn3MeHYejAgqP+nja3QugRLg=;
-        b=RBT7gDP6iZaR47+i/k4FZbrm8tyGGfiCcTjB1bvRrIAc5GyJ0xz6nR/OmMwiGyLB2I
-         qlezMoEwJq0Dzc3HM/I68IvTmKgycHzJJDGFFiVQx2r2C6xywkCcuhOoC9IVTpO+BCiS
-         dxvZksFOSrJqcHLGKIa/i0Od02OzQzK8idBXV3jt36jB9XtI8TLiZLmiOWTq8Ejmk9dc
-         LGv3L7PRlP3IbNOMAnuoMj5BHK6RQrGlE3LGQmo63uxi4XTlWKyYOfp8AR6d+sBNztmg
-         8Qo9S2/+DEbJu36g9FX7jFGeEpXYtqBOLbSce02yahiNM1yFkXx1aWoM1/lofPyz0Dgn
-         liSA==
-X-Forwarded-Encrypted: i=1; AJvYcCX3ID0YjjvJ4VRb+xvwygFEwS1Kewjy8p86//kq3iIB2NCyAfNWT/oN0pKo9iVs49k3V7vXHvkaIGuKIggx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+8tZIADh0naRpz+9KQwhvVGgUKoau7EgkNzf0MDJ3en7g7tqe
-	OX47KICJVxa0viPbUkHgiwOLc9Zh3j8EYsiB4c2lRnd8I4sxGwv/GAI=
-X-Gm-Gg: AZuq6aL/MsNr7KGXtPWDdoNtUXx19Z6inOecWcnQFmVD8Cy0UEk/7AUYhe9y0PC7phy
-	PEYiMQM+jB3qFVNuxm9FpNyCmmj48jOUTz3iDRDeH2i93kO3KraGkYrvkGLkKfzLLRxFfq7SHMt
-	F9dwmOVZ+qU1LW/+SRkWYwyn2RzZ4SKxlM0hhf7hHAr2xLfUAbd8vhPjIq13oZf4clSbeZ6T4nn
-	mAfgB70UtJRW1aJdl1fju0jD9Ao8MrHBghpLUMX6BMq4+jPmf+qu5SVMsa3yxeR+/7zsWDcstxr
-	TT2g87NgP4I5zEQj31Flfr5UqvI73T4GmZVUHydvufV9u5vapZ/bbfvwh0aSSbyK0vSVSwQ7INe
-	/cp8gUVd2xOQU9pEgnH9uMTx6/j3i4gfzp36LceRNRVftoazy1MD9eO3GEu5l+P49sMG4scqz3Z
-	0fvcfYqS/NGEc069rmUrOIfd+3OJoenw==
-X-Received: by 2002:a17:902:e884:b0:29f:3042:407f with SMTP id d9443c01a7336-2a933e4082amr70434625ad.21.1770285902784;
-        Thu, 05 Feb 2026 02:05:02 -0800 (PST)
-Received: from localhost.localdomain ([59.16.109.172])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a93396b2eesm49360365ad.78.2026.02.05.02.05.00
+        d=1e100.net; s=20230601; t=1770288386; x=1770893186;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pI+I8Y4vd8PrLGBnjDW8Sa0zt5Y1hsnun0xp3Gdhd6o=;
+        b=OYKqMw/jcKRZIIChUyOmg7f9vQVGvXcYKZDO/IM0v5cdmB0XVLnkwRo8z1oiwnzxAD
+         VYGsDtj5y5VyFpH3iierKaeI2+9TQQjsLLvJaiIMe9ZcxzxfVA7TBI/Pz5RqnxcUSOji
+         TK5LwOs2NS2aa2in08EwGs5uCXS4+ethpRI12env5BkMEvgzeVvFKhfRPV7OWV0TfgPt
+         T6BPf+sTpklSm2E+6OdUbRvvr/fxsUCqdOtawdhSvs/R7lWY9Wx0sNejrsp2M07x2gKV
+         BL2Iu7ILG05f6mCMWhVtDa1MBZwz6/nwGdbtriemNiR7RKR5uW2KXfBpfl6oxp5Og6SK
+         tnFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxeeWwSJAOd1ly6SnhtmAl1WkoAWDL45LdkEzpAvqykP456HWt5yYJggmG27f6IH03GS9F3T6rIT2OFlj3@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRy3fVa7xZMZJ7xlLQi4jW8ohnXvZ3chICcEf1ys/YUGmYuLtO
+	ZPrWVBFnR4PKXivaaq8TMyxO+RTJ2GRi0q6wcFMEoLlXWkii2LI/kxYr8ZlargAtMJg=
+X-Gm-Gg: AZuq6aKpJqT2zv1IRdCFfCpgXsUU+HzyRDpM6IdUWZ/wrKCvmZ3u1xXnKgyodjLYLlm
+	G6xX4dlb+y5yWfYxLGnnVGV5uV93rxotEFW479Ugcm5mIA6tesGjcY8ueI3aMp10UopB/x+qbrX
+	pwqJ4KmckwZwNTdiU5H4P76bkEO0ZwX8/m/YgZG2DYEmcEHpLTzQraAyOEv1Dksm7wbcByQ8QZX
+	oYQch5cmgdfQI9WLzVq3N2SuRUvuKXzSxJZ2l1I8bkOaPDrctnOD2tz9Rg3KcuEr1OgWAsRk0d0
+	S1Cu8+3hfWTysTo3VeF4wLGuoSYC1d7NfbCvce7/24746j9YP2x477SUtO524flvET4dT+Js2ss
+	gUFuxzgrs0z6/fdoMIsnvShSQKxGXvZutDLIPMO+2Ypipqfnq0iViBKj+tistOHZwxzzhzEILVG
+	M/QC2SvExrykjJck/qzE1pf5KjbotYE8IJWKOJdkEtuU0EN0v8nD6eI8k2BmSZWbA+t95Ikp5nE
+	EYcgKT5JAs=
+X-Received: by 2002:a05:6000:2207:b0:435:faa5:c154 with SMTP id ffacd0b85a97d-43618053a3fmr9052159f8f.37.1770288386357;
+        Thu, 05 Feb 2026 02:46:26 -0800 (PST)
+Received: from alex-laptop.lan (p200300cf574bcf00678f3cb95ec6a9da.dip0.t-ipconnect.de. [2003:cf:574b:cf00:678f:3cb9:5ec6:a9da])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43618057f66sm12351476f8f.25.2026.02.05.02.46.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Feb 2026 02:05:02 -0800 (PST)
-From: Jinseok Kim <always.starving0@gmail.com>
-To: jack@suse.cz
-Cc: amir73il@gmail.com,
+        Thu, 05 Feb 2026 02:46:25 -0800 (PST)
+From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
+To: ast@kernel.org
+Cc: Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	bpf@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	repnop@google.com,
-	shuah@kernel.org
-Subject: [RFC PATCH] selftests: fanotify: Add basic create/modify/delete event
-Date: Thu,  5 Feb 2026 19:04:34 +0900
-Message-ID: <20260205100437.1834-1-always.starving0@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <dnncglg3x26gdsshcniw5yb4l2zlxz6qcwjqyekkpngb6v26q4@ftqnoe5eeapy>
-References: <dnncglg3x26gdsshcniw5yb4l2zlxz6qcwjqyekkpngb6v26q4@ftqnoe5eeapy>
+	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@futurfusion.io>
+Subject: [PATCH] bpf: use FS_USERNS_DELEGATABLE for bpffs
+Date: Thu,  5 Feb 2026 11:45:41 +0100
+Message-ID: <20260205104541.171034-1-alexander@mihalicyn.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -98,53 +103,103 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [0.84 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[mihalicyn.com,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[mihalicyn.com:s=mihalicyn];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,google.com,kernel.org];
-	FROM_NEQ_ENVFROM(0.00)[alwaysstarving0@gmail.com,linux-fsdevel@vger.kernel.org];
-	TO_DN_NONE(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76385-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
+	FREEMAIL_CC(0.00)[iogearbox.net,kernel.org,linux.dev,gmail.com,fomichev.me,google.com,vger.kernel.org,futurfusion.io];
+	RCPT_COUNT_TWELVE(0.00)[18];
 	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-76386-lists,linux-fsdevel=lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	PRECEDENCE_BULK(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	FROM_NEQ_ENVFROM(0.00)[alexander@mihalicyn.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[mihalicyn.com:+];
 	RCVD_COUNT_FIVE(0.00)[5];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FREEMAIL_FROM(0.00)[gmail.com];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
+	NEURAL_HAM(-0.00)[-1.000];
+	TO_DN_SOME(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: BBC5BF12AE
+	DBL_BLOCKED_OPENRESOLVER(0.00)[futurfusion.io:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,linux.dev:email]
+X-Rspamd-Queue-Id: B7809F1716
 X-Rspamd-Action: no action
 
-Thanks for the feedback!
+From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@futurfusion.io>
 
-I agree LTP has very comprehensive fanotify/inotify tests.
+Instead of FS_USERNS_MOUNT we should use recently introduced
+FS_USERNS_DELEGATABLE cause it better expresses what we
+really want to get there. Filesystem should not be allowed
+to be mounted by an unprivileged user, but at the same time
+we want to have sb->s_user_ns to point to the container's
+user namespace, at the same time superblock can only
+be created if capable(CAP_SYS_ADMIN) check is successful.
 
-However, the motivation for adding basic tests to kernel selftests is:
-    - Quick and lightweight regression checking during kernel
-    development/boot (no external LTP install needed)
-    - Non-root basic cases (many LTP tests require root or complex setup)
+Tested and no regressions noticed.
 
-Similar to how selftests/mm or selftests/net have basic syscall wrappers
-even though LTP covers them deeply.
+No functional change intended.
 
-Do you think a different approach (LTP improvement instead)
-would be better?
+Link: https://lore.kernel.org/linux-fsdevel/6dd181bf9f6371339a6c31f58f582a9aac3bc36a.camel@kernel.org [1]
+Fixes: 6fe01d3cbb92 ("bpf: Add BPF token delegation mount options to BPF FS")
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Andrii Nakryiko <andrii@kernel.org>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>
+Cc: Eduard Zingerman <eddyz87@gmail.com>
+Cc: Song Liu <song@kernel.org>
+Cc: Yonghong Song <yonghong.song@linux.dev>
+Cc: John Fastabend <john.fastabend@gmail.com>
+Cc: KP Singh <kpsingh@kernel.org>
+Cc: Stanislav Fomichev <sdf@fomichev.me>
+Cc: Hao Luo <haoluo@google.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: bpf@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@futurfusion.io>
+- RWB-tag from Jeff [1]
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+---
+ kernel/bpf/inode.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Thanks,
-Jinseok
+diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
+index 9f866a010dad..d8dfdc846bd0 100644
+--- a/kernel/bpf/inode.c
++++ b/kernel/bpf/inode.c
+@@ -1009,10 +1009,6 @@ static int bpf_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	struct inode *inode;
+ 	int ret;
+ 
+-	/* Mounting an instance of BPF FS requires privileges */
+-	if (fc->user_ns != &init_user_ns && !capable(CAP_SYS_ADMIN))
+-		return -EPERM;
+-
+ 	ret = simple_fill_super(sb, BPF_FS_MAGIC, bpf_rfiles);
+ 	if (ret)
+ 		return ret;
+@@ -1085,7 +1081,7 @@ static struct file_system_type bpf_fs_type = {
+ 	.init_fs_context = bpf_init_fs_context,
+ 	.parameters	= bpf_fs_parameters,
+ 	.kill_sb	= bpf_kill_super,
+-	.fs_flags	= FS_USERNS_MOUNT,
++	.fs_flags	= FS_USERNS_DELEGATABLE,
+ };
+ 
+ static int __init bpf_init(void)
+-- 
+2.47.3
+
 
