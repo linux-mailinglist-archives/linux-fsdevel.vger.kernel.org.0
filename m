@@ -1,202 +1,230 @@
-Return-Path: <linux-fsdevel+bounces-76461-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76462-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id wDI/D6/IhGk45QMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76461-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 17:43:27 +0100
+	id gGeDKzTIhGk45QMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76462-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 17:41:24 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96418F562F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 17:43:26 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF978F55B9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 17:41:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 9049230440B2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 16:39:06 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id A048230091FB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 16:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C655F43635A;
-	Thu,  5 Feb 2026 16:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BB1439012;
+	Thu,  5 Feb 2026 16:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t3WV8VyN"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="I7gIGQDG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5413024113C;
-	Thu,  5 Feb 2026 16:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770309545; cv=none; b=fiqM67Y98aPumtSOAO83NBDulrIDI5orodg/dqZvIv8IVuen3i+s9kHcIuKNbLHEIg+rgm/kwfzHE6Exk6yU8wX2UhFMvsU9x1m7leuwaIy8L5SxYWG//owujndSZ7V4PY4PHB5v9yhc50LLQkDeZQsbXMf+w7zHFq884vGqFVY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770309545; c=relaxed/simple;
-	bh=UcmZwxtVevu/4LmJwiavf3o+e72PF0+okJOM508h4sM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VdApGXLYj9B/JpcLbkza4JSpTlFqWYgUyz1XVdkcBRW7Rcwz9FN/afqxvzphHUeFm9NvTpQUANE3QDf21flldZLghazFxsJ3vz0G0wE39H5OvxAlkcUNAKe/WuMD78gKLvloroNp/x38+1kLpqjIWnDRlrb8N49ATbiE8Sx0G4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t3WV8VyN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC302C4CEF7;
-	Thu,  5 Feb 2026 16:39:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770309545;
-	bh=UcmZwxtVevu/4LmJwiavf3o+e72PF0+okJOM508h4sM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t3WV8VyNUEUimcDIrcCkevC+zvskn8I+KSeQJ8GZh3XXaNxGxwSYR2WQf+ennWmXn
-	 dvkfUYd1YrrGsqA+2BM5Tv3B6z9x22eie/5OSWmrENMSYHHWQ11DeR2WJ7qgC/xwXx
-	 IC1yB3pRoG2UwGkUB+yWpHofXG/gU30SGWlRhi6DWHzF85+f75DLjBFZJYLJtS1JEi
-	 64GbIbUBD4MQmLdeT9IrxClslHB8F8VFjNXp5RclMzo2Jxu3NCnaBXoUGM+iXfiqXH
-	 ViCai7tvqJwdwOalzp5+rG4m+4ncbkGyzRM1pizXA5ERD7dTV0zLjq0KBQmOfGtwMG
-	 t+8gPSPNR3piA==
-Date: Thu, 5 Feb 2026 08:39:04 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Kundan Kumar <kundan.kumar@samsung.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	willy@infradead.org, mcgrof@kernel.org, clm@meta.com,
-	david@fromorbit.com, amir73il@gmail.com, axboe@kernel.dk,
-	hch@lst.de, ritesh.list@gmail.com, dave@stgolabs.net,
-	cem@kernel.org, wangyufei@vivo.com, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-xfs@vger.kernel.org, gost.dev@samsung.com,
-	anuj20.g@samsung.com, vishak.g@samsung.com, joshi.k@samsung.com
-Subject: Re: [PATCH v3 2/6] xfs: add helpers to pack AG prediction info for
- per-folio tracking
-Message-ID: <20260205163904.GR7712@frogsfrogsfrogs>
-References: <20260116100818.7576-1-kundan.kumar@samsung.com>
- <CGME20260116101245epcas5p30269c6aa35784db67e6d6ca800a683a7@epcas5p3.samsung.com>
- <20260116100818.7576-3-kundan.kumar@samsung.com>
- <20260129004548.GB7712@frogsfrogsfrogs>
- <4a795b10-95ed-4bba-90c8-9fee57454948@samsung.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76CDF3D9027
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 16:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.176
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770309652; cv=pass; b=qfuNhEL0LDnsMY5PVB48WeXwO60kaY8/x1a+kRNDpZ+d5BIsrt9GJH1zfV3WY60wgNMxAiDLgnm7eRA8Rmj3rso9P3z9sevY4Fk32c82TTAum8REmVotRsLHEr28GYxs5PE+XclMzqqNhaViccl2y1XdjYOUSKahQcRkrHchN7w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770309652; c=relaxed/simple;
+	bh=xwzG2Ogh4J2uFhZawtzchjseHiH8POO4drcnSGr4eYI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UFvMfmrp/umN3KsQXn98vjNHQzcSww0wp22sFQKNYuKwLHDMqzAvNdrt2TvDYc6b1tpE1Zrnj680KCIXbRhBun0ZQQNWMuqIK668IWa1ISJVMBl8ydrW6Mdxtb1M6WoJZpIviRJMeL6dN3ibkOmkCLKOvcOiia0qXSma9KcC68Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=I7gIGQDG; arc=pass smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-385da75c6e6so11331301fa.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Feb 2026 08:40:51 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770309650; cv=none;
+        d=google.com; s=arc-20240605;
+        b=dwekom0S+QE7woyUMbZaNVFzybTOH2Qkg0BtExDukdvXiOlBIl2EXoMXkherQ7/KkT
+         DycPaxoe3+S4lcfwz8nWiFueSsx7UqIG1vhlMbWPfijUFJXX/4sCoDXN6YfE/Y/2zbnJ
+         R56PkxgD4nk6fjBuXV0LR1LiZt6ihPpiGLbg2lfMTuAJIIHgiKH5+rvI+IT0NO4Y+iua
+         ZXFXULtvY5hqMmk1844LwXwEmgtae+EEy3rX4uNQL4+1tBAJTrHYBg8P8YrLjgombuv9
+         G5J46tOnKAyxshU2DCTHdHOnyAPbCHaqGkBUinFwUNCMPlNj4x6i9wgVEthTmOvoe2B7
+         qfsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=j8o2goC0ypz7sAm3yTvsQ1LLpo4GKpdQO8NpPSiwx6c=;
+        fh=5Sur3Je9a5VK4xShblqtOeqetA4cBrCHyi6BnMJixeI=;
+        b=cqoVIaXeH7uVkSUznyaNdGRDfHnZigKoGv8dmphg/RquPdy2ZsTRVZYkObGQlzWIPs
+         ayyzW860i1EsoLxh2e4thhel8qz+onag8c9mB3+VvFMjvCU2m4/a2QBBY0IgvjOGZ4Rd
+         lxTFQpYDBZiM9firlv7uQ/w98aTS24cdgnUifP7wAQ+2R/h0X6omDNVlZ0qWsh/aFTWu
+         UAzrXvpSEYARB/MZF/20N9L4kEvjc0Q7bedpzXRXi1y0GIBcT28teLkvNjhARzQZkOGT
+         WzT+GdBozjqZBYI+FIISQQ15RhWuP2oOI0hSJ3sckvNUD+CZTw8GTiiOny2Ej2JrUXKZ
+         Xg8g==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1770309650; x=1770914450; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j8o2goC0ypz7sAm3yTvsQ1LLpo4GKpdQO8NpPSiwx6c=;
+        b=I7gIGQDGevnIjfO3BC9CI7Y6QpFDKEaHHK9ja4EqIoCuHGWfasDEKHuF37GeN0iKp9
+         pWmTBaCcVdEbyucTBQbBH10GOqnxAm8N4igijj7XaD9pwuU0je8UX/SkGUSaq8SbJiM8
+         DEpPfQk3zfL5/QLKb03UazTWf9Q84BzOEx7jEpTb6QXdlI0en3/u5frmYII4zHOB9uDf
+         WfzpUfXCUp4xiHR3JwUB3A43JxhGqhtNaF8vOvrcAxM5VtGa8OiR+EbivKzfDKez6ePX
+         r1QKCcK6md2WlOrdzxr0Rp+uImMlI3w6y7VX58HTlYDmB5b5Co9ylG+spuVDWjNsGGkl
+         MsZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770309650; x=1770914450;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=j8o2goC0ypz7sAm3yTvsQ1LLpo4GKpdQO8NpPSiwx6c=;
+        b=P6ZPgqEWfqxTlkiwe3mHEHiQdYU4vCxB8TZ77P4rnHbLQHsfvm+I7q6qelac0IbO+e
+         atRatTUvtjkihFXg83LKOK9kd0fj4EiX8mbqs9zeklXFLzKw5FA6Gv5DnoZVFKATYtb4
+         tddGmtjDG/Br+JRTr2GOZLON2UgHdhwMyw07TV8sNn9qZOUR4GzwpAoPBRxkYdAaxfkR
+         8/LKt+GFRaF303lCJNgCUvWX1oBVV8pR/2qnju60iuRPJYKrZZ4oFwn2VcadLhBulfPO
+         icwEAWsnxsNO0+ZrY4zPpuvpd5f/vqDMwJOEpQabWTqBqQMa89TxRJxiC0PYAyRAlFsg
+         Eang==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ0tl+f+zosMQXKqBLohiLvzdNbKaEZE8ormxma25dC1cz0nfbsIeid8N0PEk0NF6oq18z0Fabkq3jIA93@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyoudfk0/IjVNxwA4g9mjyogB8n0AVqPl7T+qCxxSBHj2tNsdDw
+	KBPU7BKq7Bempbj+BLrVtgKx6IlL8p24/mdnnPpRgt5y2ev0bnLiClZFUs1pIFqL2IlwUvPu840
+	unkZ6CRWzLXqaikkDG04eQaPQ1JPr7DME6NoZ3g5l7A==
+X-Gm-Gg: AZuq6aK8ZJooirE4KrsVnGzZTqf2CLdMMueKaifpIldQqwyeCPkrsVeu5zTril7cCHe
+	mhtgNoBCd1PAlvKGPt0wNRqumSD5HYcQCMAKq5OGVxr45/+AmN6qaY9GVknp7R3MI3zNPE45UAg
+	UyBXoJpIQGkV/1UxPCusKX385nRPnS+nyL93h3nsGqE96nkXYU9Xm65GWvlrPyh82aHJyeG4gqQ
+	C5Kw90X/iaL/KJTHs8r+k/NXDtsqh0cO/Y3SId9BvnGtXGg2xCEYj3yxuOGzYtQf5naWdg9Oj1z
+	Hg3DrqM9VHUlHooGG5XRbz9Nc3gOVir/SgrCh8iDxb1By2UQWEEtUm1y
+X-Received: by 2002:a05:651c:31ce:b0:385:da28:1e4d with SMTP id
+ 38308e7fff4ca-38691e38f7cmr23240501fa.24.1770309649567; Thu, 05 Feb 2026
+ 08:40:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4a795b10-95ed-4bba-90c8-9fee57454948@samsung.com>
+References: <32e620691c0ecf76f469a21bffaba396f207ccb9.camel@HansenPartnership.com>
+In-Reply-To: <32e620691c0ecf76f469a21bffaba396f207ccb9.camel@HansenPartnership.com>
+From: Haris Iqbal <haris.iqbal@ionos.com>
+Date: Thu, 5 Feb 2026 17:40:37 +0100
+X-Gm-Features: AZwV_QjmZRCeTXVDFflMu1LZl_ZSuoZx08sEIUmia56TUKmCgVvLJHiLQYSMHpw
+Message-ID: <CAJpMwyg4Etv3qOw2Ur+L9YmWbt7Rw19uTs0=RsRtuORaEOoHnQ@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Documenting the correct pushback on AI
+ inspired (and other) fixes in older drivers
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, 
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[ionos.com,reject];
+	R_DKIM_ALLOW(-0.20)[ionos.com:s=google];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-76461-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76462-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	RCPT_COUNT_TWELVE(0.00)[22];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,infradead.org,meta.com,fromorbit.com,gmail.com,kernel.dk,lst.de,stgolabs.net,vivo.com,vger.kernel.org,kvack.org,samsung.com];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
 	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	DKIM_TRACE(0.00)[ionos.com:+];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
+	FROM_NEQ_ENVFROM(0.00)[haris.iqbal@ionos.com,linux-fsdevel@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[4];
+	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,samsung.com:email]
-X-Rspamd-Queue-Id: 96418F562F
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,hansenpartnership.com:email,ionos.com:dkim]
+X-Rspamd-Queue-Id: CF978F55B9
 X-Rspamd-Action: no action
 
-On Tue, Feb 03, 2026 at 12:45:33PM +0530, Kundan Kumar wrote:
-> On 1/29/2026 6:15 AM, Darrick J. Wong wrote:
-> > On Fri, Jan 16, 2026 at 03:38:14PM +0530, Kundan Kumar wrote:
-> >> Introduce helper routines to pack and unpack AG prediction metadata
-> >> for folios. This provides a compact and self-contained representation
-> >> for AG tracking.
-> >>
-> >> The packed layout uses:
-> >>   - bit 31	: valid
-> >>   - bit 24-30	: iomap type
-> >>   - bit 0-23	: AG number
-> > 
-> > There are only 5 iomap types, why do you need 7 bits for that?
-> > 
-> > Also, can you store more bits on a 64-bit system to avoid truncating the
-> > AG number?
-> > 
-> > --D
-> 
-> I’ll reduce the type field to 3 bits (8 values).
-> 
-> For the AG number, I can drop the artificial 24-bit cap by packing into 
-> an unsigned long and storing it via xa_mk_value(), which provides ~60 
-> bits on 64-bit systems and ~28 bits on 32-bit systems.
+On Thu, Feb 5, 2026 at 10:52=E2=80=AFAM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+>
+> To set the stage, we in SCSI have seen an uptick in patches to older
+> drivers mostly fixing missing free (data leak) and data race problems.
+> I'm not even sure they're all AI found, but we don't really need to
+> know that. The problem, that the submitters often don't appreciate, is
+> that every "fix" has some chance of being wrong, so it requires code
+> inspection (which is also not free, and which may get it wrong too) and
+> testing, for which, often, no-one has any immediate hardware. The
+> problems we see is that missed frees (often in error legs) represent
+> tiny amounts of memory over the lifetime of the driver (they're often
+> in the remove legs) and so we have to ask set against the risk of a
+> wrong patch, is the problem even worth fixing? The same goes for data
+> races ... and here the suggested fixes are often somewhat complex and,
+> on analysis, problematic in some way. I've cc'd fsdevel, because I
+> think you're seeing a similar thing for less well maintained
+> filesystems.
+>
+> I'd like to see us formulate a document we can put into the kernel and
+> point to when they come along. Probably formulated along the lines of
+> "first do no harm" and pointing out that every "fix" carries risk and
+> we have to set that risk against what we actually get in terms of
+> benefits. So require the submitter to specify:
+>
+>  * What are the user visible effects (memory leak =3D none), transient
+>    bad stats data, or actual data corruption or kernel crash (latter
+>    being most serious)
+>  * how likely (or often) will this be seen?  If about once a kernel boot(
+>    or less), at this point if you have anything less than corruption or
+>    a crash, don't bother fixing it because the effect is too minor
+>  * For bad stats data, is there an existing tool that uses the data, if
+>    not don't bother and even if so show it leads to issues
+>  * How was the fix tested (to reduce risk) i.e. do you have the
+>    hardware or an acceptable emulation?  If not, report the issue, but
+>    don't bother sending the fix.
+>
+> I think this is just a starting point, and, obviously, it's a bit
+> driver centric, but we can probably add generalizations for filesystems
+> (and even mm and bpf).
 
-<nod>
+It is an interesting proposal, but I feel the problem statement
+overlaps with some other, already being discussed, or covered topics.
+For example, the topic of fixes requiring effort and time of the
+maintainer/reviewer, and the fact that AI now potentially leads to too
+many such fixes is being discussed in the following link,
 
-> > 
-> >> Signed-off-by: Kundan Kumar <kundan.kumar@samsung.com>
-> >> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
-> >> ---
-> >>   fs/xfs/xfs_iomap.h | 31 +++++++++++++++++++++++++++++++
-> >>   1 file changed, 31 insertions(+)
-> >>
-> >> diff --git a/fs/xfs/xfs_iomap.h b/fs/xfs/xfs_iomap.h
-> >> index ebcce7d49446..eaf4513f6759 100644
-> >> --- a/fs/xfs/xfs_iomap.h
-> >> +++ b/fs/xfs/xfs_iomap.h
-> >> @@ -12,6 +12,37 @@ struct xfs_inode;
-> >>   struct xfs_bmbt_irec;
-> >>   struct xfs_zone_alloc_ctx;
-> >>   
-> >> +/* pack prediction in a u32 stored in xarray */
-> >> +#define XFS_AGP_VALID_SHIFT 31
-> >> +#define XFS_AGP_TYPE_SHIFT 24
-> >> +#define XFS_AGP_TYPE_MASK 0x7fu
-> >> +#define XFS_AGP_AGNO_MASK 0x00ffffffu
-> >> +
-> >> +static inline u32 xfs_agp_pack(u32 agno, u8 iomap_type, bool valid)
-> >> +{
-> >> +	u32 v = agno & XFS_AGP_AGNO_MASK;
-> >> +
-> >> +	v |= ((u32)iomap_type & XFS_AGP_TYPE_MASK) << XFS_AGP_TYPE_SHIFT;
-> >> +	if (valid)
-> >> +		v |= (1u << XFS_AGP_VALID_SHIFT);
-> >> +	return v;
-> >> +}
-> >> +
-> >> +static inline bool xfs_agp_valid(u32 v)
-> >> +{
-> >> +	return v >> XFS_AGP_VALID_SHIFT;
+https://lore.kernel.org/ksummit/20251114183528.1239900-1-dave.hansen@linux.=
+intel.com/#t
 
-Isn't this just a mask?
+TL;DR
+The submitter has to mention the tools used to generate the fix.
+And the maintainer can choose how to handle fixes from certain tools,
 
-	return v & (1U << XFS_AGP_VALID_SHIFT)
++As with all contributions, individual maintainers have discretion to
++choose how they handle the contribution. For example, they might:
++
++ - Treat it just like any other contribution.
++ - Reject it outright.
++ - Treat the contribution specially like reviewing with extra scrutiny,
++   or at a lower priority than human-generated content
++ - Suggest a better prompt instead of suggesting specific code changes.
++ - Ask for some other special steps, like asking the contributor to
++   elaborate on how the tool or model was trained.
++ - Ask the submitter to explain in more detail about the contribution
++   so that the maintainer can feel comfortable that the submitter fully
++   understands how the code works.
 
-> >> +}
-> >> +
-> >> +static inline u32 xfs_agp_agno(u32 v)
-> >> +{
-> >> +	return v & XFS_AGP_AGNO_MASK;
-> >> +}
-> >> +
-> >> +static inline u8 xfs_agp_type(u32 v)
-> >> +{
-> >> +	return (u8)((v >> XFS_AGP_TYPE_SHIFT) & XFS_AGP_TYPE_MASK);
-> >> +}
+The topic of how big are the effects, or how likely (or often) the
+effects happens may just be linked to the main and IMHO an important
+topic; availability of the hardware for testing.
+For this too, the previous discussion explicitly asks the submitter
+for the following,
 
-And as Nirjhar noted, please try to use richer types when possible.
-s/u32 agno/xfs_agnumber_t agno/
++ - How is the submission tested and tools used to test the fix?
 
---D
+I am not sure if this discussion can be linked to the above mentioned
+one, but there are definitely parallels here.
 
-> >> +
-> >>   int xfs_iomap_write_direct(struct xfs_inode *ip, xfs_fileoff_t offset_fsb,
-> >>   		xfs_fileoff_t count_fsb, unsigned int flags,
-> >>   		struct xfs_bmbt_irec *imap, u64 *sequence);
-> >> -- 
-> >> 2.25.1
-> >>
-> >>
-> > 
-> 
-> 
+>
+> Regards,
+>
+> James
+>
+>
 
