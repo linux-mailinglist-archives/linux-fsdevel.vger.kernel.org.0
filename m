@@ -1,289 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-76376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id ENWCJAZWhGlb2gMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 09:34:14 +0100
+	id kEFpLpxWhGlb2gMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 09:36:44 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A7E7EFEF9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 09:34:14 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62EC6EFF62
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 09:36:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 3F2E43028371
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 08:33:41 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 5CF353008C1C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 08:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81BB35E533;
-	Thu,  5 Feb 2026 08:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7E13624AE;
+	Thu,  5 Feb 2026 08:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.cn header.i=@sina.cn header.b="rd9ZLEIm"
+	dkim=pass (2048-bit key) header.d=venturex.pl header.i=@venturex.pl header.b="Ql2O1LKp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail115-171.sinamail.sina.com.cn (mail115-171.sinamail.sina.com.cn [218.30.115.171])
+Received: from mail.venturex.pl (mail.venturex.pl [141.95.86.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122B436403B
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 08:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E3C31ED7D
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 08:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.95.86.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770280416; cv=none; b=g9L9lYf6weDf8NUgUkfW1wUvyhAogSQa9dNGjA44e62ynkiKFtXSRLNihCqfB5aWLdTJ6+Utl7w7jVS7bm29Tj9SdY54cspLjdyVKE6Fec1vAW4xHqTKfQDIvbGKcljiGXlTrvNlOlizB+gBtFp1HY4FEHxbRurMg/7h5hQZX3U=
+	t=1770280599; cv=none; b=QFIS4aoyU5kixKWkpVo7xb9DfBNFyoGBe8KzykbG0DcC0QqcqK6cj3EHlKPLfkJR7p0f7LRzv/Ph4aNf+WFODTYNjzDT6BKYGnr76IJwCpwDCDnfXo5uYZooqT16Bap84ZJiXSBB9Gcn+SD+YtX5pBBLQ1f10gQmIKDW1JAaULY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770280416; c=relaxed/simple;
-	bh=wEVv8T/l2e5VLViyGk29Z1dMUZpNy+7JK81iE3kixKA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CVNXQCkmc5VFPmCZIxwB3PkJcfqR7rs8ZdRcme6WkhzLd7OAO/EcoCery8HgZgXhCbtkr5wvb/fPEs3kb93xwCxmA2/iLPXtRvoqkCFw2FuJf1rlFBTQ9I82HFp3KlVY9WjBDIxDNtPdkEe1RdQkGSjzdP/DeAW4PUk24nU2230=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.cn; spf=pass smtp.mailfrom=sina.cn; dkim=pass (1024-bit key) header.d=sina.cn header.i=@sina.cn header.b=rd9ZLEIm; arc=none smtp.client-ip=218.30.115.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.cn; s=201208; t=1770280415;
-	bh=Ee7FKqy9atWjHxbOqpoI9elszLEX76cuv6kxn7RUAbI=;
-	h=From:Subject:Date:Message-Id;
-	b=rd9ZLEImHGHyg4hV8h6MANgcfvrrd2qmouKlek+Jvp0WhrFPYgSkeZirLDX+qo/EW
-	 zdhbY/Mln3RC3PLIb+mueXXckGf/bePDEJEa5aLX0SryVbbtCKnSNW0knQ76R9zjQW
-	 xx+RoUPCGwCoCMNGGnSn2Zly9wrJyleHd6uHFte8=
-X-SMAIL-HELO: NTT-kernel-dev
-Received: from unknown (HELO NTT-kernel-dev)([60.247.85.88])
-	by sina.cn (10.185.250.24) with ESMTP
-	id 698455D7000022D4; Thu, 5 Feb 2026 16:33:33 +0800 (CST)
-X-Sender: jianqkang@sina.cn
-X-Auth-ID: jianqkang@sina.cn
-Authentication-Results: sina.cn;
-	 spf=none smtp.mailfrom=jianqkang@sina.cn;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=jianqkang@sina.cn
-X-SMAIL-MID: 2830710748017
-X-SMAIL-UIID: FB2F1B6537744D9F9286BAC31B1B5048-20260205-163333-1
-From: Jianqiang kang <jianqkang@sina.cn>
-To: gregkh@linuxfoundation.org,
-	stable@vger.kernel.org,
-	k.chen@smail.nju.edu.cn
-Cc: patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	slava@dubeyko.com,
-	sashal@kernel.org,
-	yang.chenzhi@vivo.com,
-	frank.li@vivo.com,
-	penguin-kernel@I-love.SAKURA.ne.jp,
-	liushixin2@huawei.com,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 6.6.y] hfsplus: fix slab-out-of-bounds read in hfsplus_uni2asc()
-Date: Thu,  5 Feb 2026 16:33:27 +0800
-Message-Id: <20260205083327.2883594-1-jianqkang@sina.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1770280599; c=relaxed/simple;
+	bh=86VIaF2unP4vg5OpX+J8tHPXWoQ8hu3kSDMcmnIkxvQ=;
+	h=Message-ID:Date:From:To:Subject:MIME-Version:Content-Type; b=s4O21TqdfH10tEMQQVeBb9pP5F2HHD6iwUh/FJmNVfXPnRTQdqljd+tK4tsh049bushu9+pGN+xIUoNRCIFLbdGJdWlbAALdXOM/ud7okhPnWjgLycSnoITyLrZUtpWNOmC3U+fh9/MvFnp/LzxxAVKOZ3VG9ygR1Vqhjl3ygdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=venturex.pl; spf=pass smtp.mailfrom=venturex.pl; dkim=pass (2048-bit key) header.d=venturex.pl header.i=@venturex.pl header.b=Ql2O1LKp; arc=none smtp.client-ip=141.95.86.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=venturex.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=venturex.pl
+Received: by mail.venturex.pl (Postfix, from userid 1002)
+	id 6FBDB243E3; Thu,  5 Feb 2026 09:36:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=venturex.pl; s=mail;
+	t=1770280597; bh=86VIaF2unP4vg5OpX+J8tHPXWoQ8hu3kSDMcmnIkxvQ=;
+	h=Date:From:To:Subject:From;
+	b=Ql2O1LKp7sNtfnwtpNAoTEvwvWEtKRV4qd1Z9O+spoWmFOc4ss4aHV6ODpilx/VRV
+	 XEBt6MjxN19o6aJcje5//f+7+2W8V03U1hHldKuVyg8oMVhvSo8Ofy/Ihd3vybNrS1
+	 YHVSdfZfxt/uLBUhYNNvYTR45bYYsdORb3TODZgLddUSbvVw8aDMU+B7Lv9QvBhxX0
+	 Pn+z13t2MJFVs9D93VATvYg6cw+E0hueh2pdY9EZWNyUhf7VLLPUPVwk222m9/mfhN
+	 wqAn5c1C1ar9GakkLRMgi6Gg+Gg181qGwEt5hbBjzew+xPoGfWitI7O2ToBTxa0G7j
+	 DGBnmkPb2aU2Q==
+Received: by mail.venturex.pl for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 08:35:40 GMT
+Message-ID: <20260205084500-0.1.ci.2jefs.0.hxf2zoiqik@venturex.pl>
+Date: Thu,  5 Feb 2026 08:35:40 GMT
+From: =?UTF-8?Q?"Miko=C5=82aj_Rak"?= <mikolaj.rak@venturex.pl>
+To: <linux-fsdevel@vger.kernel.org>
+Subject: Fundacja Rodzina a optymalizacja podatkowa 
+X-Mailer: mail.venturex.pl
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[sina.cn,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[sina.cn:s=201208];
+X-Spamd-Result: default: False [12.35 / 15.00];
+	FUZZY_DENIED(12.00)[1:b639f4eae7:1.00:txt];
+	SUBJECT_ENDS_SPACES(0.50)[];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
+	BAD_REP_POLICIES(0.10)[];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76376-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
+	XM_UA_NO_VERSION(0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	RCVD_COUNT_THREE(0.00)[4];
+	DMARC_POLICY_ALLOW(0.00)[venturex.pl,reject];
+	TAGGED_FROM(0.00)[bounces-76377-lists,linux-fsdevel=lfdr.de];
+	FROM_HAS_DN(0.00)[];
+	R_DKIM_ALLOW(0.00)[venturex.pl:s=mail];
+	DKIM_TRACE(0.00)[venturex.pl:+];
+	RCPT_COUNT_ONE(0.00)[1];
+	GREYLIST(0.00)[pass,body];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FREEMAIL_FROM(0.00)[sina.cn];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jianqkang@sina.cn,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[sina.cn:+];
+	FROM_NEQ_ENVFROM(0.00)[mikolaj.rak@venturex.pl,linux-fsdevel@vger.kernel.org];
+	NEURAL_SPAM(0.00)[0.999];
 	TO_DN_NONE(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	FROM_HAS_DN(0.00)[]
-X-Rspamd-Queue-Id: 0A7E7EFEF9
-X-Rspamd-Action: no action
+	MID_RHS_MATCH_FROM(0.00)[];
+	ARC_ALLOW(0.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_SPF_ALLOW(0.00)[+ip4:172.232.135.74:c];
+	FORGED_SENDER_MAILLIST(0.00)[]
+X-Rspamd-Queue-Id: 62EC6EFF62
+X-Rspamd-Action: add header
+X-Spam: Yes
 
-From: Kang Chen <k.chen@smail.nju.edu.cn>
+Szanowni Pa=C5=84stwo,
 
-[ Upstream commit bea3e1d4467bcf292c8e54f080353d556d355e26 ]
+czy byliby Pa=C5=84stwo zainteresowani rozmow=C4=85 o mo=C5=BCliwych rozw=
+i=C4=85zaniach dla swojej firmy i rodziny?
 
-BUG: KASAN: slab-out-of-bounds in hfsplus_uni2asc+0xa71/0xb90 fs/hfsplus/unicode.c:186
-Read of size 2 at addr ffff8880289ef218 by task syz.6.248/14290
+Nowelizacja ustawy o Fundacjach Rodzinnych otwiera przed przedsi=C4=99bio=
+rcami zupe=C5=82nie nowe mo=C5=BCliwo=C5=9Bci ochrony maj=C4=85tku i plan=
+owania sukcesji. Fundacja Rodzinna pozwala oddzieli=C4=87 aktywa od ryzyk=
+ biznesowych, prawnych i podatkowych, a jednocze=C5=9Bnie zachowa=C4=87 k=
+ontrol=C4=99 nad swoim maj=C4=85tkiem i zadba=C4=87 o jego trwa=C5=82o=C5=
+=9B=C4=87 dla kolejnych pokole=C5=84.
 
-CPU: 0 UID: 0 PID: 14290 Comm: syz.6.248 Not tainted 6.16.4 #1 PREEMPT(full)
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1b0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xca/0x5f0 mm/kasan/report.c:482
- kasan_report+0xca/0x100 mm/kasan/report.c:595
- hfsplus_uni2asc+0xa71/0xb90 fs/hfsplus/unicode.c:186
- hfsplus_listxattr+0x5b6/0xbd0 fs/hfsplus/xattr.c:738
- vfs_listxattr+0xbe/0x140 fs/xattr.c:493
- listxattr+0xee/0x190 fs/xattr.c:924
- filename_listxattr fs/xattr.c:958 [inline]
- path_listxattrat+0x143/0x360 fs/xattr.c:988
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcb/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe0e9fae16d
-Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fe0eae67f98 EFLAGS: 00000246 ORIG_RAX: 00000000000000c3
-RAX: ffffffffffffffda RBX: 00007fe0ea205fa0 RCX: 00007fe0e9fae16d
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000200000000000
-RBP: 00007fe0ea0480f0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fe0ea206038 R14: 00007fe0ea205fa0 R15: 00007fe0eae48000
- </TASK>
+Co istotne, po up=C5=82ywie 10 lat od wniesienia aktyw=C3=B3w do fundacji=
+, roszczenia o zachowek przestaj=C4=85 obowi=C4=85zywa=C4=87. Ustawodawca=
+ przewidzia=C5=82 r=C3=B3wnie=C5=BC liczne zwolnienia podatkowe obejmuj=C4=
+=85ce m.in. dochody z dzia=C5=82alno=C5=9Bci gospodarczej czy wynajem nie=
+ruchomo=C5=9Bci.
 
-Allocated by task 14290:
- kasan_save_stack+0x24/0x50 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __do_kmalloc_node mm/slub.c:4333 [inline]
- __kmalloc_noprof+0x219/0x540 mm/slub.c:4345
- kmalloc_noprof include/linux/slab.h:909 [inline]
- hfsplus_find_init+0x95/0x1f0 fs/hfsplus/bfind.c:21
- hfsplus_listxattr+0x331/0xbd0 fs/hfsplus/xattr.c:697
- vfs_listxattr+0xbe/0x140 fs/xattr.c:493
- listxattr+0xee/0x190 fs/xattr.c:924
- filename_listxattr fs/xattr.c:958 [inline]
- path_listxattrat+0x143/0x360 fs/xattr.c:988
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcb/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+B=C4=99d=C4=99 wdzi=C4=99czny za informacj=C4=99, czy chcieliby Pa=C5=84s=
+two pozna=C4=87 mo=C5=BCliwo=C5=9B=C4=87 stworzenia Fundacji Rodzinnej?
 
-When hfsplus_uni2asc is called from hfsplus_listxattr,
-it actually passes in a struct hfsplus_attr_unistr*.
-The size of the corresponding structure is different from that of hfsplus_unistr,
-so the previous fix (94458781aee6) is insufficient.
-The pointer on the unicode buffer is still going beyond the allocated memory.
 
-This patch introduces two warpper functions hfsplus_uni2asc_xattr_str and
-hfsplus_uni2asc_str to process two unicode buffers,
-struct hfsplus_attr_unistr* and struct hfsplus_unistr* respectively.
-When ustrlen value is bigger than the allocated memory size,
-the ustrlen value is limited to an safe size.
-
-Fixes: 94458781aee6 ("hfsplus: fix slab-out-of-bounds read in hfsplus_uni2asc()")
-Signed-off-by: Kang Chen <k.chen@smail.nju.edu.cn>
-Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Link: https://lore.kernel.org/r/20250909031316.1647094-1-k.chen@smail.nju.edu.cn
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Signed-off-by: Jianqiang kang <jianqkang@sina.cn>
----
- fs/hfsplus/dir.c        |  2 +-
- fs/hfsplus/hfsplus_fs.h |  8 ++++++--
- fs/hfsplus/unicode.c    | 24 +++++++++++++++++++-----
- fs/hfsplus/xattr.c      |  6 +++---
- 4 files changed, 29 insertions(+), 11 deletions(-)
-
-diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
-index 33154c720a4e..d23f8c4cd717 100644
---- a/fs/hfsplus/dir.c
-+++ b/fs/hfsplus/dir.c
-@@ -204,7 +204,7 @@ static int hfsplus_readdir(struct file *file, struct dir_context *ctx)
- 			fd.entrylength);
- 		type = be16_to_cpu(entry.type);
- 		len = NLS_MAX_CHARSET_SIZE * HFSPLUS_MAX_STRLEN;
--		err = hfsplus_uni2asc(sb, &fd.key->cat.name, strbuf, &len);
-+		err = hfsplus_uni2asc_str(sb, &fd.key->cat.name, strbuf, &len);
- 		if (err)
- 			goto out;
- 		if (type == HFSPLUS_FOLDER) {
-diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
-index e67b35cb5ccc..595e5fd4dfdd 100644
---- a/fs/hfsplus/hfsplus_fs.h
-+++ b/fs/hfsplus/hfsplus_fs.h
-@@ -518,8 +518,12 @@ int hfsplus_strcasecmp(const struct hfsplus_unistr *s1,
- 		       const struct hfsplus_unistr *s2);
- int hfsplus_strcmp(const struct hfsplus_unistr *s1,
- 		   const struct hfsplus_unistr *s2);
--int hfsplus_uni2asc(struct super_block *sb, const struct hfsplus_unistr *ustr,
--		    char *astr, int *len_p);
-+int hfsplus_uni2asc_str(struct super_block *sb,
-+			const struct hfsplus_unistr *ustr, char *astr,
-+			int *len_p);
-+int hfsplus_uni2asc_xattr_str(struct super_block *sb,
-+			      const struct hfsplus_attr_unistr *ustr,
-+			      char *astr, int *len_p);
- int hfsplus_asc2uni(struct super_block *sb, struct hfsplus_unistr *ustr,
- 		    int max_unistr_len, const char *astr, int len);
- int hfsplus_hash_dentry(const struct dentry *dentry, struct qstr *str);
-diff --git a/fs/hfsplus/unicode.c b/fs/hfsplus/unicode.c
-index ebd326799f35..11e08a4a18b2 100644
---- a/fs/hfsplus/unicode.c
-+++ b/fs/hfsplus/unicode.c
-@@ -143,9 +143,8 @@ static u16 *hfsplus_compose_lookup(u16 *p, u16 cc)
- 	return NULL;
- }
- 
--int hfsplus_uni2asc(struct super_block *sb,
--		const struct hfsplus_unistr *ustr,
--		char *astr, int *len_p)
-+static int hfsplus_uni2asc(struct super_block *sb, const struct hfsplus_unistr *ustr,
-+		    int max_len, char *astr, int *len_p)
- {
- 	const hfsplus_unichr *ip;
- 	struct nls_table *nls = HFSPLUS_SB(sb)->nls;
-@@ -158,8 +157,8 @@ int hfsplus_uni2asc(struct super_block *sb,
- 	ip = ustr->unicode;
- 
- 	ustrlen = be16_to_cpu(ustr->length);
--	if (ustrlen > HFSPLUS_MAX_STRLEN) {
--		ustrlen = HFSPLUS_MAX_STRLEN;
-+	if (ustrlen > max_len) {
-+		ustrlen = max_len;
- 		pr_err("invalid length %u has been corrected to %d\n",
- 			be16_to_cpu(ustr->length), ustrlen);
- 	}
-@@ -280,6 +279,21 @@ int hfsplus_uni2asc(struct super_block *sb,
- 	return res;
- }
- 
-+inline int hfsplus_uni2asc_str(struct super_block *sb,
-+			       const struct hfsplus_unistr *ustr, char *astr,
-+			       int *len_p)
-+{
-+	return hfsplus_uni2asc(sb, ustr, HFSPLUS_MAX_STRLEN, astr, len_p);
-+}
-+
-+inline int hfsplus_uni2asc_xattr_str(struct super_block *sb,
-+				     const struct hfsplus_attr_unistr *ustr,
-+				     char *astr, int *len_p)
-+{
-+	return hfsplus_uni2asc(sb, (const struct hfsplus_unistr *)ustr,
-+			       HFSPLUS_ATTR_MAX_STRLEN, astr, len_p);
-+}
-+
- /*
-  * Convert one or more ASCII characters into a single unicode character.
-  * Returns the number of ASCII characters corresponding to the unicode char.
-diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
-index d5fd8e068486..a86399942745 100644
---- a/fs/hfsplus/xattr.c
-+++ b/fs/hfsplus/xattr.c
-@@ -737,9 +737,9 @@ ssize_t hfsplus_listxattr(struct dentry *dentry, char *buffer, size_t size)
- 			goto end_listxattr;
- 
- 		xattr_name_len = NLS_MAX_CHARSET_SIZE * HFSPLUS_ATTR_MAX_STRLEN;
--		if (hfsplus_uni2asc(inode->i_sb,
--			(const struct hfsplus_unistr *)&fd.key->attr.key_name,
--					strbuf, &xattr_name_len)) {
-+		if (hfsplus_uni2asc_xattr_str(inode->i_sb,
-+					      &fd.key->attr.key_name, strbuf,
-+					      &xattr_name_len)) {
- 			pr_err("unicode conversion failed\n");
- 			res = -EIO;
- 			goto end_listxattr;
--- 
-2.34.1
-
+Pozdrawiam
+Miko=C5=82aj Rak
 
