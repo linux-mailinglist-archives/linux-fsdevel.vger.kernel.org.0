@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-76431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76432-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YPBXG0SOhGl43QMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:34:12 +0100
+	id gLj3C2KOhGkO3gMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76432-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:34:42 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D45A9F291D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:34:11 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4F06F2970
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:34:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id E3F6E30215BD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:33:34 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 7BC03302FEB9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1694A3D3D0A;
-	Thu,  5 Feb 2026 12:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9983D3309;
+	Thu,  5 Feb 2026 12:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HLHfN/zT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="svlmrh2e"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9121F3A9621;
-	Thu,  5 Feb 2026 12:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D4C3D34BC;
+	Thu,  5 Feb 2026 12:33:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770294810; cv=none; b=aMeXhMYMQeq9GRJ0DQI6HM84NWJZ4GqOcBMJpDF2itXXPc5BamGFqvm9eeIn1FPu1gkQAA6Og9KdeG32sYPGUon+NZvN4um0XtymAoeBv32YL0wpbX4twnIt9RW0WZPW3Hh71G1mVFkBsBLuKkJSRBxKXFpseG1hOqanmQfHuNA=
+	t=1770294823; cv=none; b=V/SUP78cwQ0L3KOsjVl6NMSclSVEe9vEs+skN1XUO5P3rsD30oQJS3EeK4URmsfq2d1DLZcwdta5l5tCwaOdkgj39IbiSgNmAmR3fk61ShqP/i9MeOfiawR9CvA1pwOW2Ifg3FfgSnmhfVab4oiW2lBZ27KIS0HbIuCJI274HSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770294810; c=relaxed/simple;
-	bh=VcYawSYKQWzcGxTHl4C7MZ/rlIG2I3H8pMBKM6kljoE=;
+	s=arc-20240116; t=1770294823; c=relaxed/simple;
+	bh=CaXL8ohZ+lkHdRJ/tD+tctQc0FL7TkIgyk0SVIeXBEw=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uAbMysOJhvqcrSQsuD125FLPqkc+gkL6bHl1aPhdHnfHk1S2YI/XEgMFKpJJ1B5ASuwH50yoQ6auHJMqxUtX5FSCQRXYFgCnsaRcD4u+eKluvh950KrRsFon/LGMEwBkaQzsvS1rkbjBL0RC/PKhNQcK8+pIBIf1WBwKQd5R9ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HLHfN/zT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29711C4CEF7;
-	Thu,  5 Feb 2026 12:33:28 +0000 (UTC)
+	 Content-Type:MIME-Version; b=ttSUBDBQQ+oey1PMeTPRzYbi+aJqGJFXDhW1kSW9XzjvBc6J6jbFF8IYHGib3dUBzsQ2tGrFgTxFNCPVQefsysCJNPGHHmrImWx2aD3qvlaH3wIUCnR6aIWjlBAmXTEHiujJWOAEHeaB07u+uBHaces4VmOvPa9x1aU6fJ32VQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=svlmrh2e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9121EC4CEF7;
+	Thu,  5 Feb 2026 12:33:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770294810;
-	bh=VcYawSYKQWzcGxTHl4C7MZ/rlIG2I3H8pMBKM6kljoE=;
+	s=k20201202; t=1770294823;
+	bh=CaXL8ohZ+lkHdRJ/tD+tctQc0FL7TkIgyk0SVIeXBEw=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=HLHfN/zT02Wa01eqev1yUCpZ/2m8H9NBw3WndZsNBuRDv5s9pesffgQTxC+TZ3+A6
-	 B3cExM8vIiwJf2aaCZm9Y7GNGxmjBXFQ+YcIisj2Im/YUcv+Qq6WG8m4ZVqKwL8C9q
-	 /AnX3QIeu6BMRo/GMZH/kDtK3TAJPD3ZJ+GMLHSR7lKyheiekj8TcdgERuQE2bgLjd
-	 XRiiz797NrfCOxE40wgOzQGuxmzDP038kx4cJmCb0peUFlgW9PMmh0JHv22xUPEMMF
-	 2xKpI03yl702Nlk0Pil3e3fv9nUh1GQPlWaQB5irVVhi3c/ITzMxqgx+hdtVmwdQB2
-	 +Lk6EgMrPWEIQ==
-Message-ID: <b62d43c08545d26772a5fff45f13832767d766bb.camel@kernel.org>
-Subject: Re: [PATCH 01/13] fs/proc: Don't lock root inode when creating
- "self" and "thread-self"
+	b=svlmrh2e4/PYJ/R1UYry2jKf8WEzkrJomGEu/0jiA+w2/HrFywaH1c0xtHdTF0yox
+	 JdchkjWy10jWkN5jY6ScsEAXLVurARxBncLP4M47jPABPU29vgjJ+XyOH0E16o+Kaa
+	 NEpgdfeEOWapbWWpWDCOSwpFTzrgZpABzIGkYPbYdTkpWV2qcDBClohlxu7y1tDqHE
+	 Y5EW4mpBaT7MxG+rrSje/KdsKv19GOgpVLa7H4XItKyb22gT+j1kf3wZ6P4fPQI3PT
+	 niajs2NJkEe3Enor23mG/AO7QSGMQH9C5BTk0hh+cut3+Vsghi0t7LS4iOUnQLWXBb
+	 eFnZdXAbbreTA==
+Message-ID: <bcb8c138027576d6e3c9d6816b372c3b4c26695c.camel@kernel.org>
+Subject: Re: [PATCH 02/13] VFS: move the start_dirop() kerndoc comment to
+ before start_dirop()
 From: Jeff Layton <jlayton@kernel.org>
 To: NeilBrown <neil@brown.name>, Christian Brauner <brauner@kernel.org>, 
  Alexander Viro <viro@zeniv.linux.org.uk>, David Howells
@@ -60,10 +60,10 @@ Cc: linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
 	linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com, 
 	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Date: Thu, 05 Feb 2026 07:33:26 -0500
-In-Reply-To: <20260204050726.177283-2-neilb@ownmail.net>
+Date: Thu, 05 Feb 2026 07:33:40 -0500
+In-Reply-To: <20260204050726.177283-3-neilb@ownmail.net>
 References: <20260204050726.177283-1-neilb@ownmail.net>
-	 <20260204050726.177283-2-neilb@ownmail.net>
+	 <20260204050726.177283-3-neilb@ownmail.net>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -153,12 +153,12 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76431-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76432-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_TO(0.00)[brown.name,kernel.org,zeniv.linux.org.uk,redhat.com,suse.cz,oracle.com,szeredi.hu,gmail.com,canonical.com,paul-moore.com,namei.org,hallyn.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
@@ -174,79 +174,83 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[brown.name:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: D45A9F291D
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,brown.name:email]
+X-Rspamd-Queue-Id: B4F06F2970
 X-Rspamd-Action: no action
 
 On Wed, 2026-02-04 at 15:57 +1100, NeilBrown wrote:
 > From: NeilBrown <neil@brown.name>
 >=20
-> proc_setup_self() and proc_setup_thread_self() are only called from
-> proc_fill_super() which is before the filesystem is "live".  So there is
-> no need to lock the root directory when adding "self" and "thread-self".
-> This is clear from simple_fill_super() which provides similar
-> functionality for other filesystems and does not lock anything.
+> This kerneldoc comment was always meant for start_dirop(), not for
+> __start_dirop() which is a static function and doesn't need
+> documentation.
 >=20
-> The locking is not harmful, except that it may be confusing to a reader.
-> As part of a an effort to centralise all locking for directories for
-> name-based operations (prior to changing some locking rules), it is
-> simplest to remove the locking here.
+> It was in the wrong place and was then incorrectly renamed (instead of
+> moved) and useless "documentation" was added for "@state" was provided.
+>=20
+> This patch reverts the name, removes the mention of @state, and moves
+> the comment to where it belongs.
 >=20
 > Signed-off-by: NeilBrown <neil@brown.name>
 > ---
->  fs/proc/self.c        | 3 ---
->  fs/proc/thread_self.c | 3 ---
->  2 files changed, 6 deletions(-)
+>  fs/namei.c | 27 +++++++++++++--------------
+>  1 file changed, 13 insertions(+), 14 deletions(-)
 >=20
-> diff --git a/fs/proc/self.c b/fs/proc/self.c
-> index 62d2c0cfe35c..56adf1c68f7a 100644
-> --- a/fs/proc/self.c
-> +++ b/fs/proc/self.c
-> @@ -35,11 +35,9 @@ unsigned self_inum __ro_after_init;
+> diff --git a/fs/namei.c b/fs/namei.c
+> index b28ecb699f32..40af78ddfb1b 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2841,20 +2841,6 @@ static int filename_parentat(int dfd, struct filen=
+ame *name,
+>  	return __filename_parentat(dfd, name, flags, parent, last, type, NULL);
+>  }
 > =20
->  int proc_setup_self(struct super_block *s)
+> -/**
+> - * __start_dirop - begin a create or remove dirop, performing locking an=
+d lookup
+> - * @parent:       the dentry of the parent in which the operation will o=
+ccur
+> - * @name:         a qstr holding the name within that parent
+> - * @lookup_flags: intent and other lookup flags.
+> - * @state:        task state bitmask
+> - *
+> - * The lookup is performed and necessary locks are taken so that, on suc=
+cess,
+> - * the returned dentry can be operated on safely.
+> - * The qstr must already have the hash value calculated.
+> - *
+> - * Returns: a locked dentry, or an error.
+> - *
+> - */
+>  static struct dentry *__start_dirop(struct dentry *parent, struct qstr *=
+name,
+>  				    unsigned int lookup_flags,
+>  				    unsigned int state)
+> @@ -2876,6 +2862,19 @@ static struct dentry *__start_dirop(struct dentry =
+*parent, struct qstr *name,
+>  	return dentry;
+>  }
+> =20
+> +/**
+> + * start_dirop - begin a create or remove dirop, performing locking and =
+lookup
+> + * @parent:       the dentry of the parent in which the operation will o=
+ccur
+> + * @name:         a qstr holding the name within that parent
+> + * @lookup_flags: intent and other lookup flags.
+> + *
+> + * The lookup is performed and necessary locks are taken so that, on suc=
+cess,
+> + * the returned dentry can be operated on safely.
+> + * The qstr must already have the hash value calculated.
+> + *
+> + * Returns: a locked dentry, or an error.
+> + *
+> + */
+>  struct dentry *start_dirop(struct dentry *parent, struct qstr *name,
+>  			   unsigned int lookup_flags)
 >  {
-> -	struct inode *root_inode =3D d_inode(s->s_root);
->  	struct dentry *self;
->  	int ret =3D -ENOMEM;
-> =20
-> -	inode_lock(root_inode);
->  	self =3D d_alloc_name(s->s_root, "self");
->  	if (self) {
->  		struct inode *inode =3D new_inode(s);
-> @@ -55,7 +53,6 @@ int proc_setup_self(struct super_block *s)
->  		}
->  		dput(self);
->  	}
-> -	inode_unlock(root_inode);
-> =20
->  	if (ret)
->  		pr_err("proc_fill_super: can't allocate /proc/self\n");
-> diff --git a/fs/proc/thread_self.c b/fs/proc/thread_self.c
-> index d6113dbe58e0..61ac62c3fd9f 100644
-> --- a/fs/proc/thread_self.c
-> +++ b/fs/proc/thread_self.c
-> @@ -35,11 +35,9 @@ unsigned thread_self_inum __ro_after_init;
-> =20
->  int proc_setup_thread_self(struct super_block *s)
->  {
-> -	struct inode *root_inode =3D d_inode(s->s_root);
->  	struct dentry *thread_self;
->  	int ret =3D -ENOMEM;
-> =20
-> -	inode_lock(root_inode);
->  	thread_self =3D d_alloc_name(s->s_root, "thread-self");
->  	if (thread_self) {
->  		struct inode *inode =3D new_inode(s);
-> @@ -55,7 +53,6 @@ int proc_setup_thread_self(struct super_block *s)
->  		}
->  		dput(thread_self);
->  	}
-> -	inode_unlock(root_inode);
-> =20
->  	if (ret)
->  		pr_err("proc_fill_super: can't allocate /proc/thread-self\n");
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
