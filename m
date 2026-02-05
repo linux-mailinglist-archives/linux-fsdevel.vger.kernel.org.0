@@ -1,191 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-76413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 4POUD7aIhGl43QMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:10:30 +0100
+	id EGMXOQGJhGl43QMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:11:45 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0E35F23DC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:10:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7080AF2402
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:11:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 54CEE303A93C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:06:24 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 773353048E30
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44AD3D330B;
-	Thu,  5 Feb 2026 12:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B713D3308;
+	Thu,  5 Feb 2026 12:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJwEqcWj"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U1HAe1g8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC682D46D6;
-	Thu,  5 Feb 2026 12:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2DB3A9D96
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 12:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770293182; cv=none; b=b6LDyfVJUgS3p/AtANqFgatDrfWE2zuC+Jw+pj8S6kOMJq2L/zUcRJaMfNvPJX83mAUMW0zzcGXM4n4dGqDPHJUoZt00WlUhhIjuMA723GgAu/9oG1sRfXmCtG92WKP5g9Xj91nTnUnSwfYajC3xg7ebO2rd3EBAcF0MgaiAhy8=
+	t=1770293222; cv=none; b=unXJlebvzGRzcDK7/OY8iBS40qgv+Sipx6SZVYto1tFf+7pVbLGE2wPxYtttv3T44s+MvOtvWWDobwwqOjOQmXPA1gWGs+6bRi/q3oD9GZ5WgWMkJtRZudpCSCzITpVB58Kif3vu1jEz6Cbml8xSPb+5WFemdsqsKQpgvOM2030=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770293182; c=relaxed/simple;
-	bh=Ts8Bruh1Flf8jwX9Vrdlbnz85maJtke/C0sk6jffhuQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XlkvKsWHYi4jh6DFcGAj2YMG2e5WbJVEQfLJKqBbOsR0FAAoMWJSIyBYa3PY+jT3oeXxLRzEgBqNDToXy0s3snG3TmlOZRhO3x9m14IpZJpWpu9qdgiPIBuwTvQq1m1xh03zT13ketGG4m9UJI4vYYZlWbdNibqfdvlmFehTYto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJwEqcWj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C7DAC4CEF7;
-	Thu,  5 Feb 2026 12:06:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770293181;
-	bh=Ts8Bruh1Flf8jwX9Vrdlbnz85maJtke/C0sk6jffhuQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hJwEqcWjgpIb9N7DaK1KxzXaJqv+iveC1urcCbK9WJQo/ywqLOFtFyxvoJwZ4qH6D
-	 O03Z5w5uTQFMbE55VHm6fADsSrE/Ax/aX80tm8VM8w/5DwWlWTYjCjbIBPoO3w0CY2
-	 DK6fXoR+SZo6e7pim46CQ7vS6qCviXy3FUX0+hjgxxmqq5w3n1kB02WsMzmYHT+Pkk
-	 OWHfVm+2zvxLtO06jnE58eX52YaIDuUTopkNy9p+KnJYDHUyl4qeYVByLeoVzgOYhE
-	 NIRPzS4QIscihiH5UFr/4tHYujOv0jlUfsd0qOj2IX+Mjz7jWQQC2RdqKeYBzqH20e
-	 hzpEM0sHbMjow==
-Message-ID: <d309b3f6-8959-4767-b262-7fdb957669aa@kernel.org>
-Date: Thu, 5 Feb 2026 13:06:10 +0100
+	s=arc-20240116; t=1770293222; c=relaxed/simple;
+	bh=u+peTVHK2V5GDnlUQ9nOUzZqoANTtWMS/ko4tHyGhtY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=SYNRS/2kllo7qi7NRH76Hpy1xbSCHcgZwszo81ISKCz0Ieg61CotK/uiRzndu8jPR2EHJj4W5WYlkms02x1aRP51u4KuPDFFbqqV3wjYeA2y6gzWvuRZeMinUTQGs/RnoG5FWhiXfX+aohCVtXVcQ9tLz21cQlAv2nTMyShZ68k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U1HAe1g8; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-480711d09f1so11598565e9.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Feb 2026 04:07:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1770293221; x=1770898021; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=u+peTVHK2V5GDnlUQ9nOUzZqoANTtWMS/ko4tHyGhtY=;
+        b=U1HAe1g8u4Hn34NcjAQhfrM9jb0n7yHtW2HTGFaZ/vruZ7iHfQqKOE1RSOLNV/QhI6
+         oAmnO/2bFLTBWeJ9sOPYjohICu/jqEJZaNyQuA3cI5//gB9+M4KDHPXLGq5nuy6PmRGW
+         D+XycDPDi2Vj+6lAcvxcuYr7l40jZ7nC37lxjKj72G1KzQGpesmVoEWUF+EhmQaAV87w
+         6FkNIbTES0vDwWnHg7vW34E4WpFpogHZNeQQkTYS2B6W5a8NeLXERWXR9LoDZv/4Edwz
+         e0KwQAnt/HaLf8mB0tXjpwR+JZ+F6u4eXBvhlogfwgfuXHcKmUDinzKIZWqa7xOIzRJf
+         wEmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770293221; x=1770898021;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u+peTVHK2V5GDnlUQ9nOUzZqoANTtWMS/ko4tHyGhtY=;
+        b=tA3kBp8yl4HRiOnC0DNrBjxAh8UTRD90KzaX0JXhHzQbAW8nbbybqp9bBVvcHLP8CH
+         CIommfEm/u7pSZafsQf0gN/Q3TPrl91Cs8ug/grJfeppV46QIFpNiMKc8UDhdAE4D30u
+         oKvaajGg3TAjva9XvioXYUd1tiQ5c6/4bEgDpUdTcYQeYkmE2ZTFT6EAW66q6VO0iyLP
+         CUfRUyRaEMdirwuwRoosGwRUu7zNguZpAgBNRjfxdICuZcGWXUMAA7r85I0gwfDmwN25
+         r2fIcq5cgw25ufJ3OhAepIOwvw8Bc5FSOUAMltKHHt2Eg3l+BWIczDwH1Bfao/FKgFM/
+         E7gA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6rlFeqGtZi4Vzq8JkiUyOjWqRxFnLmmlpgPV0YUNwz66fJKQVNUii3KGiEDe8suRoJp+hfRPU0/5glnt4@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsR1ohAhDTFdwwInX2Ut1Xz5zFbOhJNcFpU06+gdllzQVxyisE
+	j3AHkA9fexpPkxrS8ZgOgbgVJrOWYOiLqrZ565kyhM9gXPQ4Ya1mwuG5QyrQNkB2wxvSJQIxCBv
+	1nzkp3P0gLyytShfOEQ==
+X-Received: from wmmi24.prod.google.com ([2002:a05:600c:4018:b0:46f:b32b:55f])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:c04b:10b0:483:a21:774a with SMTP id 5b1f17b1804b1-4830e9926cbmr64195215e9.26.1770293220868;
+ Thu, 05 Feb 2026 04:07:00 -0800 (PST)
+Date: Thu, 5 Feb 2026 12:07:00 +0000
+In-Reply-To: <02801464-f4cb-4e38-8269-f8b9cf0a5965@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] mm: export zap_page_range_single and list_lru_add/del
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Alice Ryhl <aliceryhl@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Carlos Llamas <cmllamas@google.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- Andrew Morton <akpm@linux-foundation.org>, Dave Chinner
- <david@fromorbit.com>, Qi Zheng <zhengqi.arch@bytedance.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>, kernel-team@android.com,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-mm@kvack.org,
- rust-for-linux@vger.kernel.org
+Mime-Version: 1.0
 References: <20260205-binder-tristate-v1-0-dfc947c35d35@google.com>
- <20260205-binder-tristate-v1-3-dfc947c35d35@google.com>
- <02801464-f4cb-4e38-8269-f8b9cf0a5965@lucifer.local>
- <21d90844-1cb1-46ab-a2bb-62f2478b7dfb@kernel.org>
- <d122f9be-48d6-40b1-9da8-cec445bd8daf@kernel.org>
- <4a36c1e7-e51a-4c06-8f7c-728b278af972@lucifer.local>
-From: "David Hildenbrand (arm)" <david@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=david@kernel.org; keydata=
- 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
- qIws/H2t
-In-Reply-To: <4a36c1e7-e51a-4c06-8f7c-728b278af972@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+ <20260205-binder-tristate-v1-3-dfc947c35d35@google.com> <02801464-f4cb-4e38-8269-f8b9cf0a5965@lucifer.local>
+Message-ID: <aYSH5KG36fVQFePL@google.com>
+Subject: Re: [PATCH 3/5] mm: export zap_page_range_single and list_lru_add/del
+From: Alice Ryhl <aliceryhl@google.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Carlos Llamas <cmllamas@google.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Dave Chinner <david@fromorbit.com>, Qi Zheng <zhengqi.arch@bytedance.com>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	David Hildenbrand <david@kernel.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, kernel-team@android.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-mm@kvack.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [-0.16 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	MV_CASE(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
+	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-76413-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76414-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[google.com,linuxfoundation.org,zeniv.linux.org.uk,kernel.org,suse.cz,paul-moore.com,namei.org,hallyn.com,linux-foundation.org,fromorbit.com,bytedance.com,linux.dev,oracle.com,suse.com,gmail.com,garyguo.net,protonmail.com,umich.edu,android.com,vger.kernel.org,kvack.org];
+	FREEMAIL_CC(0.00)[linuxfoundation.org,google.com,zeniv.linux.org.uk,kernel.org,suse.cz,paul-moore.com,namei.org,hallyn.com,linux-foundation.org,fromorbit.com,bytedance.com,linux.dev,oracle.com,suse.com,gmail.com,garyguo.net,protonmail.com,umich.edu,android.com,vger.kernel.org,kvack.org];
 	RCPT_COUNT_TWELVE(0.00)[34];
 	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[david@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
 	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[aliceryhl@google.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[google.com:+];
+	NEURAL_HAM(-0.00)[-1.000];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: B0E35F23DC
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[archlinux.org:url,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,gitlab.com:url]
+X-Rspamd-Queue-Id: 7080AF2402
 X-Rspamd-Action: no action
 
-On 2/5/26 13:01, Lorenzo Stoakes wrote:
-> On Thu, Feb 05, 2026 at 12:57:04PM +0100, David Hildenbrand (arm) wrote:
-> 
-> Dude you have to capitalise that 'a' in Arm it's driving me crazy ;)
-> 
-> Then again should it be ARM? OK this is tricky
+On Thu, Feb 05, 2026 at 11:29:04AM +0000, Lorenzo Stoakes wrote:
+> We either need a wrapper that eliminates this parameter (but then we're adding a
+> wrapper to this behaviour that is literally for one driver that is _temporarily_
+> being modularised which is weak justifiction), or use of a function that invokes
+> it that is currently exported.
 
-Yeah, I should likely adjust that at some point. For the time being, I 
-enjoy driving you crazy :P
+I have not talked with distros about it, but quite a few of them enable
+Binder because one or two applications want to use Binder to emulate
+Android. I imagine that even if Android itself goes back to built-in,
+distros would want it as a module so that you don't have to load it for
+every user, rather than for the few users that want to use waydroid or
+similar.
 
-> 
-> [snip]
-> 
->>
->> The following should compile :)
-> 
-> Err... yeah. OK my R-b obviously depends on the code being compiling + working
-> :P But still feel free to add when you break it out + _test_ it ;)
+A few examples:
+https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/blob/5711a17344ec7cfd90443374a30d5cd3e9a9439e/config#L10993
+https://salsa.debian.org/kernel-team/linux/-/blob/debian/latest/debian/config/arm64/config?ref_type=heads#L106
+https://gitlab.com/cki-project/kernel-ark/-/blob/os-build/redhat/configs/fedora/generic/x86/CONFIG_ANDROID_BINDER_IPC?ref_type=heads
 
-Better to add your R-b when I send it out officially :)
-
--- 
-Cheers,
-
-David
+Alice
 
