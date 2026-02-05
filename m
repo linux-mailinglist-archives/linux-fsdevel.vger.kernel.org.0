@@ -1,176 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-76382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76383-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +KMuMAFnhGkh2wMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 10:46:41 +0100
+	id 4CPCG1FohGlK2wMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76383-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 10:52:17 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E16CF1010
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 10:46:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EA5FF10B9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 10:52:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A85DD301BCDA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 09:45:55 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 53C2D3033502
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 09:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41E339E6CA;
-	Thu,  5 Feb 2026 09:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650C33A4F31;
+	Thu,  5 Feb 2026 09:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7wZYF6o"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="borAD4Az"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6052FFF8D
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 09:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770284753; cv=pass; b=VljXfOqkcBXsFwKctqauW3wJmIA25arpnjcW3dn0BozDaO469SXPmsuvAeFbxtsslX4l9zX8LAlmC8YtovGGGOxQAs/miUUCkC2Cpy0pMRwYRtNdBAYUobQNFieg3EHzsB/0bwtLRUkXq3aDRMV2cofxNTnJ5JIjwMR+9vhQfnw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770284753; c=relaxed/simple;
-	bh=gTHjRNg48uqIhlFUjNVy6w29gFOiVNhUd1etS9WljNU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NFsENoh4XI4q5jBQB3HDvxKMotvDVBnRiGnS1zUobp1DuSCw0VvclCKrtNQfvKhPqum2EBHzL61M40Tcz3spUbMPAlgLnmQmrB3RFlrWyRW+vggM7oiuz2w9BRARRDxaotMcHAizqeb0Ib1D5O8YcpWJOSJx0yCHIzT/bdkidu4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X7wZYF6o; arc=pass smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b79f8f7ea43so136731266b.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Feb 2026 01:45:53 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770284751; cv=none;
-        d=google.com; s=arc-20240605;
-        b=gi8Nq6autNZTgnjiPvBVGilT7cpPAe9khduCCjsvgoy9C7Rkx1gXd9wpcVGBQDTko6
-         UjFyqC3SO9Ys52b7gRNfdzV7ktlZnFEbClDzPGA1du63/RQ9rvLuGLdZv7we+66f87cY
-         23KviAIPjl5MW1pV+v8819BIEp3uZy44sA5n8Ih0xR5jMkCp7GxoveE18R6ZnvajHy8D
-         aDIRQUTRdpIcuEbKW8+6txzLo2KnuIua7Gr8RoJCyd0PS1Sie7LTdKIGWc66PiUgDAim
-         ERjxWbwX78CqoDWesZifaSWemBdH7j3ef1nr/vSyuTlA6ClHlKimvW/T59rBGa54K8xZ
-         b8ew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=gTHjRNg48uqIhlFUjNVy6w29gFOiVNhUd1etS9WljNU=;
-        fh=F5dSsb8sDxp71nHWVMubUAU23eEnkBiU5iV6INFjsfk=;
-        b=Jsyr2KbaXMw2QJt49b31aY0u5CAiVvNwVJU9/aRTY5hMn4tQl8aPR7mP1YAVw58ddx
-         JWo80JB/EZbZBl4Bm5oJt+0kH2ueOvjKVdGu3m6HcTWlOaIDzHKYGsx4MupnR0w5b8nJ
-         BA//s7awq00UvZG0rAKwa2Ed/05Uc8QsYAPVpFi6+M5sHNZv8TgDl8zleJzAkhskSi1l
-         K4gughnusPcuzW6py0RgVrF4weFXngcixruIF47O8p/Zis2u6KY9GvW/5FhfTyqCv7l8
-         aUG7JCRu5ZS8xrvnDrqj/gX+J5PiKwRk4WWHJ2FZB1rWJsF6CiQ1NK1hs8Hxa4FDXI+S
-         upIQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770284751; x=1770889551; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gTHjRNg48uqIhlFUjNVy6w29gFOiVNhUd1etS9WljNU=;
-        b=X7wZYF6oGkxVE+gLTBtcX28o4eYBAX3e3P5/p1DkotCtFvnSm+dNdGmggiKQnap9HF
-         uJoR8Y/7jQwtGKgtwXZNQtMOcaDouskzI9DbFRdinBwM2G8kpSDc+wVOPd9ayKvPaZtX
-         qDZsWavmVfL8txVAZaxKDRyNO2gl3nDKYj6Y08WRzZFoXlLH4OBDdd4dCHPmAv9LaYhV
-         aYyqyMoVjKFMXFsylm9qYTAL0LLdTNasCpSpfzLfkc3XzkPNORx9OBQJnvhWeWVvJgyV
-         IFPElSh1GAM0WngNDgAYeJbIEwtbP3kxmdE1hnqP1mOoFVug/wkO0WrOFsaHCyIytL65
-         aJVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770284751; x=1770889551;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=gTHjRNg48uqIhlFUjNVy6w29gFOiVNhUd1etS9WljNU=;
-        b=chQy2U/2gXzZRR7vB3ncRQCnJ4Im6pSsM/h8IRfZKPWSm3kk2T2pdF10XiZWz9sER5
-         rAVn8Zk0x+8K/oo/UnCCxrx/Id/Nzr9h7PY+thhpqd0k3UOHTOakI4wqvKYZkfKjZLCq
-         a2Kaq1dqPJpLFpgLuBPwHd+a8IwtPF6dCv2D9CQaeJwjkdaWLcvkxq5i9NNh6/cYgBer
-         JM6+ISeLqxpbH71+0NzeEsSSjVSggEJf9JIPDdXFL59o9lPkMp05B82PCO5oLOy1omHo
-         7EzlYzmPRo5p5blUov6X4sVCm6Cm+Myw7I202+kN1sZEce/C+n8R3c6S6+DSnXXSFImv
-         aMNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWcyZxqJzXdBys2zuDNvMtuiV52BJvnoFEGiTzB0knbDMcJtMY7iPgXaUADvJAY/VcWRIHGcEUl/3P+8Lm6@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEYcr815Doas/rQZjsHerOxLgzyewaxQEQ4JfQGObe2K7VRp2q
-	ctAXDALV5sAQbHZCd08PcgLqbszHaP4v7Rb3UFm4WWlDqNlmd3QGvDUtrqmWR+T7TTZ3uqFiSpU
-	dnzMScW8ecdki/vG39pBBQ6VTQWcWK+U=
-X-Gm-Gg: AZuq6aKLCiAZCJV3B4nAdiC4KD+OObhtnIAKAjpAkcYBDNn48EUEkJw3EFNhOJ9Ewg3
-	5riWCGXapofEb+8HSqk91s4NP7TIPQfQmFd9v6DK96AeQM85lvukga1cDzxX9QUa7ZqUhvoIVNK
-	8x3F0d1guF4sdZk80hyQtmhwuAawK+BRtR0O9G+147QKf+UTM7mkDw61rbI4kQRdd26lnecK+Co
-	Tz33Hqd5i7Y/mLVoxsHKBCzJTNLkYQb4jsSrNu4uBdjdDjyg3tLxdsJhBBxeqRZ6UwraNGeixYJ
-	ZLyyOysi+a6AMOt3dJwQ8i9t6EWE6Q==
-X-Received: by 2002:a17:907:7f92:b0:b87:31d1:4131 with SMTP id
- a640c23a62f3a-b8e9f64603cmr435430866b.60.1770284751163; Thu, 05 Feb 2026
- 01:45:51 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DAAA260588;
+	Thu,  5 Feb 2026 09:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770285090; cv=none; b=IT3EuWU/dhrCSaBjKWztzG74E/6pAIXosRlaNv4e+BN4EyfQ1XmwXqveyY0eOfpaQMni/IbIRz4Cr6DtsOyggUdEQu+Aes1wjOokJ8aPi/94rsRlcE0zHVVOs/rRcnrdPIMRGgw9ckLGBPPhLoEh3fQwnYF0fCdUwrC3bgfGJCM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770285090; c=relaxed/simple;
+	bh=ZzcmRFurz0umv4heyjbHKrDb04DTP0QA52AQrPzk6Cs=;
+	h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version; b=b/f3WNfzOQzRZ/ZKF6QqNf9IrlnIDAVJxlFjbCgjt+fjrU9ypA0djGK+nBMopqPb8tM0PEEt6SXfIKEwf3T/z4X1TCOJOKixhHmVUHOBKqs7efAxyquUJq3hb8YHBg6pbnObCBx5EKxrDK6AvDwBgOA02m1j6XBGYCqNkJks5Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=borAD4Az; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1770285088;
+	bh=ZzcmRFurz0umv4heyjbHKrDb04DTP0QA52AQrPzk6Cs=;
+	h=Message-ID:Subject:From:To:Date:From;
+	b=borAD4AzcEj9swR785erA/tRi8QAWNDFAyorxUmqs0J7dWiGRaPNdW0TEbYyI9xmz
+	 +geFggTqo1Zi9gf8UA4azcWTiTWNlmr4tDElp6jCyk4tzecgZXeY4IUzmu1mUYsB92
+	 4dH3c9uBTDDmQ89qyQrnp0XKzljcYnzUsY2zwP2E=
+Received: from [10.10.7.5] (unknown [51.52.16.146])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 72E1E1C0106;
+	Thu, 05 Feb 2026 04:51:28 -0500 (EST)
+Message-ID: <32e620691c0ecf76f469a21bffaba396f207ccb9.camel@HansenPartnership.com>
+Subject: [LSF/MM/BPF TOPIC] Documenting the correct pushback on AI inspired
+ (and other) fixes in older drivers
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, 
+	"linux-block@vger.kernel.org"
+	 <linux-block@vger.kernel.org>, linux-fsdevel@vger.kernel.org
+Date: Thu, 05 Feb 2026 09:51:26 +0000
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260204050726.177283-1-neilb@ownmail.net> <20260204050726.177283-13-neilb@ownmail.net>
-In-Reply-To: <20260204050726.177283-13-neilb@ownmail.net>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 5 Feb 2026 10:45:38 +0100
-X-Gm-Features: AZwV_Qg7CM-kXxjB2Qin-euJkaOUd7ni190R_n_ZLhun34eHr5T-i9uF6CbqXdo
-Message-ID: <CAOQ4uxi3bNYq1b4=qL-JLi19hRwurntfLZXhUMVL003NarBdGg@mail.gmail.com>
-Subject: Re: [PATCH 12/13] ovl: remove ovl_lock_rename_workdir()
-To: NeilBrown <neil@brown.name>
-Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
-	Jeff Layton <jlayton@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, 
-	John Johansen <john.johansen@canonical.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, linux-kernel@vger.kernel.org, 
-	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[hansenpartnership.com,quarantine];
+	R_DKIM_ALLOW(-0.20)[hansenpartnership.com:s=20151216];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-76383-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76382-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
+	DKIM_TRACE(0.00)[hansenpartnership.com:+];
 	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,redhat.com,suse.cz,oracle.com,szeredi.hu,canonical.com,paul-moore.com,namei.org,hallyn.com,gmail.com,vger.kernel.org,lists.linux.dev,lists.ubuntu.com];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[amir73il@gmail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[James.Bottomley@HansenPartnership.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[brown.name:email,mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,ownmail.net:email]
-X-Rspamd-Queue-Id: 3E16CF1010
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[hansenpartnership.com:dkim,HansenPartnership.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 0EA5FF10B9
 X-Rspamd-Action: no action
 
-On Wed, Feb 4, 2026 at 6:09=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote:
->
-> From: NeilBrown <neil@brown.name>
->
-> This function is unused.
->
+To set the stage, we in SCSI have seen an uptick in patches to older
+drivers mostly fixing missing free (data leak) and data race problems.
+I'm not even sure they're all AI found, but we don't really need to
+know that. The problem, that the submitters often don't appreciate, is
+that every "fix" has some chance of being wrong, so it requires code
+inspection (which is also not free, and which may get it wrong too) and
+testing, for which, often, no-one has any immediate hardware. The
+problems we see is that missed frees (often in error legs) represent
+tiny amounts of memory over the lifetime of the driver (they're often
+in the remove legs) and so we have to ask set against the risk of a
+wrong patch, is the problem even worth fixing? The same goes for data
+races ... and here the suggested fixes are often somewhat complex and,
+on analysis, problematic in some way. I've cc'd fsdevel, because I
+think you're seeing a similar thing for less well maintained
+filesystems.
 
-I am confused.
-What was this "fix" fixing an unused function:
+I'd like to see us formulate a document we can put into the kernel and
+point to when they come along. Probably formulated along the lines of
+"first do no harm" and pointing out that every "fix" carries risk and
+we have to set that risk against what we actually get in terms of
+benefits. So require the submitter to specify:
 
-e9c70084a64e5 ovl: fail ovl_lock_rename_workdir() if either target is unhas=
-hed
+ * What are the user visible effects (memory leak =3D none), transient
+   bad stats data, or actual data corruption or kernel crash (latter
+   being most serious)
+ * how likely (or often) will this be seen?  If about once a kernel boot(
+   or less), at this point if you have anything less than corruption or
+   a crash, don't bother fixing it because the effect is too minor
+ * For bad stats data, is there an existing tool that uses the data, if
+   not don't bother and even if so show it leads to issues
+ * How was the fix tested (to reduce risk) i.e. do you have the
+   hardware or an acceptable emulation? =C2=A0If not, report the issue, but
+   don't bother sending the fix.
 
-What am I missing?
+I think this is just a starting point, and, obviously, it's a bit
+driver centric, but we can probably add generalizations for filesystems
+(and even mm and bpf).
 
-Otherwise, feel free to add:
+Regards,
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+James
 
-Thanks,
-Amir.
 
