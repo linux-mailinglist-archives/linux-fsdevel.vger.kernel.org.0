@@ -1,186 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-76442-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KKq7JkSRhGkh3gMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76442-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:47:00 +0100
+	id SHcaOsmShGk43gMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:53:29 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id E563EF2C51
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:46:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EBD1F2D6B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 13:53:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 9C501301A395
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:46:43 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 685CE306377C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 12:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D5E3D3CFA;
-	Thu,  5 Feb 2026 12:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE103D412F;
+	Thu,  5 Feb 2026 12:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TRl95ldt";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4soEF88X";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TRl95ldt";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4soEF88X"
+	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="AMOJ8QmY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307AD13C918
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 12:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770295601; cv=none; b=jfMFtSs17BJRDIJwgpaah7iF3/UqmvMq+oih3DFF3eVIevYExzqwrSwFEVGIcMpu++3QIxQCYfhlYsoGgPBZMoc8/WegV0uV3uQfW7I/uBgsaTIAB8UPFTGgIe3tICSn1WKxG3vVpLhupVOqRvyw+C1FFNp46NkDCv8daaojMGM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770295601; c=relaxed/simple;
-	bh=OlqSvt3kbAQEnZKyJVl0KhLrrslsUBhZTXyrRZIlrXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e+eNHSIB9gh4286rtYGVgUJ6OntVbV+2V8tn6nliCmZpFhjbw5vCO3v5plMM5re0SOyNqMf1iUAwJA3oAgCvuIofYNr39CnySwuDrNEXFPJmzJJ1JiydJVm+mgkyo33VyYCvj+0qEXsACxhWBWx66Dmg0+D+2T1viW308AQyIDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TRl95ldt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4soEF88X; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TRl95ldt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4soEF88X; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3E35C3E7BE;
-	Thu,  5 Feb 2026 12:46:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1770295599; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Je5VLpD0iKMyLn3VUeOuAVknySQtLEMYXII+8K2luRA=;
-	b=TRl95ldtNRl1encWD6NCcdicCw2T85sXGSrcf30xV1vtCHoSZUdXFJFMsvcr7oTCL+QLef
-	RVANzGQRym92gVWj6uMn2zRjzqJjbM9XfynwTOxUTE0bbadhhwtXKRThd9T0pf4PVSX428
-	6Fi0X2m3uXyYQtOo+zSkbMyTihK6nRY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1770295599;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Je5VLpD0iKMyLn3VUeOuAVknySQtLEMYXII+8K2luRA=;
-	b=4soEF88XS70nN/E7cfsOykjbol23a2G/0NzoT/ZYpeDlixJLYxy/5FvVlzQtk2UyYu6AKq
-	rNsGvKE5YDHCvwCA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=TRl95ldt;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=4soEF88X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1770295599; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Je5VLpD0iKMyLn3VUeOuAVknySQtLEMYXII+8K2luRA=;
-	b=TRl95ldtNRl1encWD6NCcdicCw2T85sXGSrcf30xV1vtCHoSZUdXFJFMsvcr7oTCL+QLef
-	RVANzGQRym92gVWj6uMn2zRjzqJjbM9XfynwTOxUTE0bbadhhwtXKRThd9T0pf4PVSX428
-	6Fi0X2m3uXyYQtOo+zSkbMyTihK6nRY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1770295599;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Je5VLpD0iKMyLn3VUeOuAVknySQtLEMYXII+8K2luRA=;
-	b=4soEF88XS70nN/E7cfsOykjbol23a2G/0NzoT/ZYpeDlixJLYxy/5FvVlzQtk2UyYu6AKq
-	rNsGvKE5YDHCvwCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 261E13EA63;
-	Thu,  5 Feb 2026 12:46:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id x6lBCS+RhGlvRAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 05 Feb 2026 12:46:39 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C6AFDA09D8; Thu,  5 Feb 2026 13:46:38 +0100 (CET)
-Date: Thu, 5 Feb 2026 13:46:38 +0100
-From: Jan Kara <jack@suse.cz>
-To: Baokun Li <libaokun1@huawei.com>
-Cc: Jan Kara <jack@suse.cz>, Theodore Tso <tytso@mit.edu>, 
-	Zhang Yi <yi.zhang@huaweicloud.com>, Christoph Hellwig <hch@infradead.org>, 
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	adilger.kernel@dilger.ca, ojaswin@linux.ibm.com, ritesh.list@gmail.com, djwong@kernel.org, 
-	Zhang Yi <yi.zhang@huawei.com>, yizhang089@gmail.com, yangerkun@huawei.com, 
-	yukuai@alb-78bjiv52429oh8qptp.cn-shenzhen.alb.aliyuncs.com, libaokun9@gmail.com
-Subject: Re: [PATCH -next v2 00/22] ext4: use iomap for regular file's
- buffered I/O path
-Message-ID: <xxr5myyy2dkumgqmqk3qpwkkvwiwxntx2ovl6cuxifn7ody4bv@2ni65ps2mhjy>
-References: <20260203062523.3869120-1-yi.zhang@huawei.com>
- <aYGZB_hugPRXCiSI@infradead.org>
- <77c14b3e-33f9-4a00-83a4-0467f73a7625@huaweicloud.com>
- <20260203131407.GA27241@macsyma.lan>
- <9666679c-c9f7-435c-8b67-c67c2f0c19ab@huawei.com>
- <eldlhdvhc4sdlmfed5omg6huv5rl6m7ummstlygh2bownaejqn@bykrybkyywzp>
- <4a210be6-eced-4a47-a54b-3f2bc3f3bfbf@huawei.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E6E3BFE25
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 12:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770295796; cv=pass; b=Q0ZQR/KhVL3W/+2NfUD78l4mE1jo5GGSrKlXwyXs0GzGdgU+ObvQQHZ4uP+PiqNYspfHsQtM0NrBKU1mubsFPbFxqre9Zum8TNJTNPKyrBBbw73YTVPv8rSQJBHA5+fpRFsmkhpLYgqAA+NW56XXxZ9vngDI66cJDXt/Le2jOs0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770295796; c=relaxed/simple;
+	bh=0IV88BrpvTHgfPYK0mSBgTtEV2ZqRryzAk6hOcvufqM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TfLzkJiTa6Amv8JgGVL6tlNkebWPqyyXt0IbflIEe4ZUSPx8fZEpnvPs8iFMs1gy7Z6+3KlzaFKejQFwLPZ0wKYIB8cT3oYwcZjiUJCzChCXmQDXQTdIhEA8atHffGRRKlWQEdtBXtLCZzzj0IwwCpwszcgg3pNZMfzrJY1oUDo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=AMOJ8QmY; arc=pass smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-59dea2f2ef2so1087337e87.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Feb 2026 04:49:56 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770295794; cv=none;
+        d=google.com; s=arc-20240605;
+        b=bf4cbwqSBWVYqf/mcwpja7v/YTVN+QTWzB5rojC6ZRthg+B7/z446222zqPSvgLwY8
+         4y4bxplUg7ZWvO+BWTb8aXY0AEca+3bCNisVgsgdZ6EP2YsrVBV8ArKASwHrRSwQTgA7
+         DxwaVO8sQ0+tFwUAYc2txb0bkQQpqbM8TyyfiBMK0P4Qggj2bBkGK1jX+rLk4m+Iz+Yv
+         MbYS5FpmgqBlYoHnWbhqSTHVGPzAMbCRtEfrenSiGjDeYDnzEcjf5pAU3eiKkufiMkzX
+         4U9Y35ltd3bb/z65Wd4wUmQvTMAJBK6bZbfVUFrAezjLcWw3K7Xz2AoersR/IXqH4qR/
+         klDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=xUfCxD01pAqNYSrDhfC2Admgs/AauiNaUapYDxklD98=;
+        fh=Y2njxQUuuZuUDYT8GBAVor08uyPlQoanpG3QlP02mOw=;
+        b=gYkgsf1/Z7UPcHMpuuW3jTIqe0KTTVp0qZmhYslE7WBzmpy9RjdzNEIMo71cEOiCcx
+         QnJooxRGXgY7Yn7T2ivC5k02xuAy+FKrPgmpP7zyrq+0ZzUramuGY1zF1QA9Y2fExy9p
+         d86fxZIMdYUwaIDLHA7byfjMmOdkFV8xQ2OHFH/n1FVCnpDPXNA1dIlo7c0DesWCZPLy
+         4NIq82hNTdUkI/Kpqv4kOTJGzzo+43loVQ0ZJ/fA3Sz0je0JxAjtb7W+g9vXRpwG2z/e
+         DGuOjCpKD97at8LvVGww5FQ6+IwIJwvdvzuStOhHNQmjKrikhLd/oW5H+SpJGNNTJSHq
+         Ycbw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mihalicyn.com; s=mihalicyn; t=1770295794; x=1770900594; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=xUfCxD01pAqNYSrDhfC2Admgs/AauiNaUapYDxklD98=;
+        b=AMOJ8QmY8pMPxFmJxn63DWhTbMBIESOEqGJS4IDlrWZL5PECLi+PBQ4TtaUWP7qr1F
+         JtjlPV+xCKdFG0n2n0aMFNYKsFtl/0mtKeneFdUA2T7tA+qqw7znVN1zOCT5/l9Jh1s7
+         7rpVCRM8A1VOmWub2IzpwoB4m0VQ6RYhdXz+o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770295794; x=1770900594;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xUfCxD01pAqNYSrDhfC2Admgs/AauiNaUapYDxklD98=;
+        b=q1fdtsfMo05wv4nd/+pD9ndKHpYppKaZMJJWQJ9oOFWKjQfBkm1JB1HzEkPZ941k9F
+         xtoVGcHmUG2CJHpmJx5AXoMatQ2pB+QLeKC0YFD6pyIJI5UQF8JjC8pAGL5uK7XvKoIT
+         jot+ZUDMFHntxij9yntyQWunTq6nuaPEUBquTnjWumNntipEijRskrpzbnwAq47QWpyz
+         zi4asERkMx1UlwwGavA1q27JT7RxEsQid6IEQ6gCejbFRynshEge9fBixPWPnzjKOynk
+         uD+Z5ttiYMwTFEtqCEHOgpN901z6Y3Ya2n3xzNokOEN6xUU4+nOUj3SK6o3VDS5Oa/yu
+         2D9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV49dThdYTxjKr/OeMJk6lWNq943pRYg8AM53Ds1Qrs+6xPJ5TrCi8ZN+vs07df2Wr8zEXC2CrTq64Eg9rZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKLDdOsFY3pFsBo1E/lW0vFToiI2GWAUcENhCIMscV02XS4Ek9
+	ZOGsXUjDjIW1iy0O47LMj5xW8zywAOTlqWOwkjjbwcwlarIltslif5ue4SOCtoerfAIsvK/ThiY
+	8u2WB9/myulVJV068jmNJSAfGXE72nDzERxqpZtfeeg==
+X-Gm-Gg: AZuq6aKr6OMp4WiQH6WZMgj3MPfe7N+VJxWW9ic+ff27t3/IBYhMiEZno3j9zZTvRAw
+	6xGrAXeXqwN2C2xNn50zuk0m6EfocUt+i52yMhq5Jwv3sj0mv125Ei3Evupk7lDAmIJCc9a1O6l
+	8istqmoCWuquZLJOyY4d2KKhpGExOHpi6VKCyTwOaDnQe8hA/hBeSiFJgu7lWYGU2mUIpnpaECd
+	WG1WglothHWcZIMWe/G9aAI350bnU1EwLOioMy977GQO/7GgHIEbi4SmE8kfuwJC0v3phJbKRNi
+	VUx2Wb4uQWWjOJUfDHSqp0FVYjQ=
+X-Received: by 2002:a05:6512:3c9e:b0:59d:f474:656b with SMTP id
+ 2adb3069b0e04-59e38c3b99amr2303693e87.42.1770295794441; Thu, 05 Feb 2026
+ 04:49:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4a210be6-eced-4a47-a54b-3f2bc3f3bfbf@huawei.com>
-X-Spam-Score: -2.51
-X-Spam-Level: 
-X-Spam-Flag: NO
+References: <20260205104541.171034-1-alexander@mihalicyn.com>
+ <4502642b48f31719673001628df90526071649bc4555c5432d88d2212db3f925@mail.kernel.org>
+ <CAJqdLrqRBhmrQQA0MA9f5Js6rTZkJFf6-=KT+eZahakgX4_3fw@mail.gmail.com> <174025c0-e13c-49a1-8835-5d971c024bb5@iogearbox.net>
+In-Reply-To: <174025c0-e13c-49a1-8835-5d971c024bb5@iogearbox.net>
+From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Date: Thu, 5 Feb 2026 13:49:43 +0100
+X-Gm-Features: AZwV_QiBdeLrN6qoIZklCvfKrZACYbBqxhI-762jltOk6f5fGR71l2wgmgEW5PE
+Message-ID: <CAJqdLroDeo2CFQA_BT_zV+1NC7WGBo_eb5xG1+hna7sOyAF_Pg@mail.gmail.com>
+Subject: Re: [PATCH] bpf: use FS_USERNS_DELEGATABLE for bpffs
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: bot+bpf-ci@kernel.org, ast@kernel.org, andrii@kernel.org, 
+	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, jlayton@kernel.org, 
+	brauner@kernel.org, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, aleksandr.mikhalitsyn@futurfusion.io, 
+	martin.lau@kernel.org, clm@meta.com, ihor.solodrai@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.34 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[mihalicyn.com,quarantine];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[mihalicyn.com:s=mihalicyn];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76442-lists,linux-fsdevel=lfdr.de];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email];
-	DMARC_NA(0.00)[suse.cz];
+	TAGGED_FROM(0.00)[bounces-76443-lists,linux-fsdevel=lfdr.de];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	FREEMAIL_CC(0.00)[suse.cz,mit.edu,huaweicloud.com,infradead.org,vger.kernel.org,dilger.ca,linux.ibm.com,gmail.com,kernel.org,huawei.com,alb-78bjiv52429oh8qptp.cn-shenzhen.alb.aliyuncs.com];
-	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	FREEMAIL_CC(0.00)[kernel.org,linux.dev,gmail.com,fomichev.me,google.com,vger.kernel.org,futurfusion.io,meta.com];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[alexander@mihalicyn.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[mihalicyn.com:+];
+	NEURAL_HAM(-0.00)[-1.000];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: E563EF2C51
+	TAGGED_RCPT(0.00)[linux-fsdevel,bpf-ci];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,iogearbox.net:email,mihalicyn.com:dkim]
+X-Rspamd-Queue-Id: 4EBD1F2D6B
 X-Rspamd-Action: no action
 
-On Thu 05-02-26 10:55:59, Baokun Li wrote:
-> > I don't see how you want to get rid of data=journal mode - perhaps that's
-> > related to the COW functionality?
-> 
-> Yes. The only real advantage of data=journal mode over data=ordered is
-> its guarantee of data atomicity for overwrites.
-> 
-> If we can achieve this through COW-based software atomic writes, we can
-> move away from the performance-heavy data=journal mode.
+Am Do., 5. Feb. 2026 um 13:38 Uhr schrieb Daniel Borkmann
+<daniel@iogearbox.net>:
+>
+> Hi Alexander,
+>
+> On 2/5/26 12:27 PM, Alexander Mikhalitsyn wrote:
+> > Am Do., 5. Feb. 2026 um 12:20 Uhr schrieb <bot+bpf-ci@kernel.org>:
+> >>
+> >>> diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
+> >>> index 005ea3a2c..c350857b2 100644
+> >>
+> >> [ ... ]
+> >>
+> >>> @@ -1077,7 +1073,7 @@ static struct file_system_type bpf_fs_type = {
+> >>>        .init_fs_context = bpf_init_fs_context,
+> >>>        .parameters     = bpf_fs_parameters,
+> >>>        .kill_sb        = bpf_kill_super,
+> >>> -     .fs_flags       = FS_USERNS_MOUNT,
+> >>> +     .fs_flags       = FS_USERNS_DELEGATABLE,
+> >>>   };
+> >>
+> >> FS_USERNS_DELEGATABLE does not appear to be defined anywhere in the kernel
+> >> tree. A search of include/linux/fs.h shows only FS_USERNS_MOUNT is defined
+> >> (at line 2268), not FS_USERNS_DELEGATABLE.
+> >>
+> >> The commit message states this flag was "recently introduced", but it is not
+> >> present in this codebase. Will this cause a build failure due to an undefined
+> >> identifier?
+> >
+> > Yeah, this should be applied on top of
+> > https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs-7.0.misc&id=269c46e936f3b5f2b6b567ca124d5f5ea07a371c
+> > in vfs/vfs-7.0.misc I think.
 
-Hum, I don't think data=journal actually currently offers overwrite
-atomicity - even in data=journal mode you can observe only part of the
-write completed after a crash. But what it does offer and why people tend
-to use it is that it offers strict linear ordering guarantees between all
-data and metadata operations happening in the system. Thus if you can prove
-that operation A completed before operation B started, then you are
-guaranteed that even after crash you will not see B done and A not done.
-This is a very strong consistency guarantee that makes life simpler for the
-applications so people that can afford the performance cost and care a lot
-about crash safety like it.
+Hi Daniel,
 
-I think you are correct that with COW and a bit of care it could be
-possible to achieve these guarantees even without journalling data. But I'd
-need to think more about it.
+> If this goes via Christian's vfs tree, it would make sense at least to open a
+> test PR against https://github.com/kernel-patches/bpf to run this through the
+> BPF CI with the vfs branch + your patch on top to make sure the tests don't
+> break.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Sure, https://github.com/kernel-patches/bpf/pull/10970#issue-3901410145
+
+Thanks for suggestion ;-)
+
+Kind regards,
+Alex
+
+>
+> Thanks,
+> Daniel
 
