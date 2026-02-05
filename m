@@ -1,112 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-76381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id kAjyOGplhGkh2wMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 10:39:54 +0100
+	id +KMuMAFnhGkh2wMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 10:46:41 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8492BF0EC1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 10:39:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E16CF1010
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 10:46:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A7252302D125
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 09:37:33 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A85DD301BCDA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 09:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34DC639E6D7;
-	Thu,  5 Feb 2026 09:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41E339E6CA;
+	Thu,  5 Feb 2026 09:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FjUGTiXw"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7wZYF6o"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765BD399013
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 09:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6052FFF8D
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 09:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.45
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770284251; cv=pass; b=KzKj/y9hRdo8oAxEXEFx1hI5YeNcK/Er37sm0p54REw7VkwQVLXAJ/ucBmpU5ZKpNAfhxpqXCgyJWEg2BnwgNAlRWRsiFWOWYEUIci7LyJk3xqsSDt5uwb3QxA8yWVBcTIi3MXe4V2yS9OXxLgQGPYODrl/fBUx7f9Ih2xUR4yk=
+	t=1770284753; cv=pass; b=VljXfOqkcBXsFwKctqauW3wJmIA25arpnjcW3dn0BozDaO469SXPmsuvAeFbxtsslX4l9zX8LAlmC8YtovGGGOxQAs/miUUCkC2Cpy0pMRwYRtNdBAYUobQNFieg3EHzsB/0bwtLRUkXq3aDRMV2cofxNTnJ5JIjwMR+9vhQfnw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770284251; c=relaxed/simple;
-	bh=O3zjcpb1gIgdrnZIOWkOIcCmTAMhdJCAtczZfkl8Mgo=;
+	s=arc-20240116; t=1770284753; c=relaxed/simple;
+	bh=gTHjRNg48uqIhlFUjNVy6w29gFOiVNhUd1etS9WljNU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WAzYR/ZgXqDUhQfl0FcWGaky8U5CYVpZtKdwoWWc0pXwiOqhxQUKA72zFm5xTrEgiS9Z6t0FrhTrjwSpcsqBmHXn+gTRucJ192H+l76+PGFfVcj0nELJ96/zEv4ceKfwKxpJjQSwZQ04l4ksDArzNMn2EdYxI9FzfLjxvniLD/o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FjUGTiXw; arc=pass smtp.client-ip=209.85.208.48
+	 To:Cc:Content-Type; b=NFsENoh4XI4q5jBQB3HDvxKMotvDVBnRiGnS1zUobp1DuSCw0VvclCKrtNQfvKhPqum2EBHzL61M40Tcz3spUbMPAlgLnmQmrB3RFlrWyRW+vggM7oiuz2w9BRARRDxaotMcHAizqeb0Ib1D5O8YcpWJOSJx0yCHIzT/bdkidu4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X7wZYF6o; arc=pass smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-65956402da9so1336262a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Feb 2026 01:37:31 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770284250; cv=none;
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b79f8f7ea43so136731266b.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Feb 2026 01:45:53 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770284751; cv=none;
         d=google.com; s=arc-20240605;
-        b=KnHSUZGcXHUzDz9HvbEdHZUhAxjAbgiMKOIzyCnwmYzgtJEiQSgANpDn6LpAljO+sa
-         5hyG178SplwvdY0mYNdIXZs1dxQmyZfGP83hV3cnCB9E9443lCecSYHz0Dpg0g45qNR8
-         A8B9BLW+Q36bZeZfKU8cP1yMrAM0nH//q4fD3/QLzytoQ4AfI1MAT3NUn2RPQfBXDBbd
-         AexQOv1UHVR8sBsnTG/TpwSumt050F97UiReLTmC8ODt40cbek62uA8WzKPGo/qEvQHf
-         17Q2ivsnrjDK2tuVU9dcKzoogpWA2iqIZN7LexQT/QFS6st2lH65/DDjlhXgVgD7uwcv
-         JIRA==
+        b=gi8Nq6autNZTgnjiPvBVGilT7cpPAe9khduCCjsvgoy9C7Rkx1gXd9wpcVGBQDTko6
+         UjFyqC3SO9Ys52b7gRNfdzV7ktlZnFEbClDzPGA1du63/RQ9rvLuGLdZv7we+66f87cY
+         23KviAIPjl5MW1pV+v8819BIEp3uZy44sA5n8Ih0xR5jMkCp7GxoveE18R6ZnvajHy8D
+         aDIRQUTRdpIcuEbKW8+6txzLo2KnuIua7Gr8RoJCyd0PS1Sie7LTdKIGWc66PiUgDAim
+         ERjxWbwX78CqoDWesZifaSWemBdH7j3ef1nr/vSyuTlA6ClHlKimvW/T59rBGa54K8xZ
+         b8ew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=ts7BIpqOHUIYO1yz8UgL/PwCOZwIbnvcvFeQ/hBIaCk=;
-        fh=561jpH20lYEfxBioiwpT4FzVBphKqQe6rLZ1w6KNll4=;
-        b=f7GjwGoa6byyAutrCxmrmgXM0Q8YRn6TOIbSHCMHbge3pVN8qv0w0vIGbzqaXCWXUi
-         gIrU2RffB4kvZP5oGkxkI9dSOMhHICAvdb2zfqvKnfJvPtWkCghIKyALEkmPgMyx3O6e
-         Pebbvd0lT4lcQwxGzB0Fw6BcB0LTwaFfqy8WoXlKE5ZnTGXc/zFWdFRhg6qfOL2L2nbJ
-         zO/+Sv1QDWqyV8A8WX4P3obbpsGze52u2vDQJnsbO0NnDGpNPQOjhok3cGKDr8P9fy6z
-         T0tkMLeFy89Q46zzo6x2ezjlnQ2Ebm2yQN5clA0g1+ttSE6DoBi69hNFET3hSIZKzK94
-         cD0Q==;
+        bh=gTHjRNg48uqIhlFUjNVy6w29gFOiVNhUd1etS9WljNU=;
+        fh=F5dSsb8sDxp71nHWVMubUAU23eEnkBiU5iV6INFjsfk=;
+        b=Jsyr2KbaXMw2QJt49b31aY0u5CAiVvNwVJU9/aRTY5hMn4tQl8aPR7mP1YAVw58ddx
+         JWo80JB/EZbZBl4Bm5oJt+0kH2ueOvjKVdGu3m6HcTWlOaIDzHKYGsx4MupnR0w5b8nJ
+         BA//s7awq00UvZG0rAKwa2Ed/05Uc8QsYAPVpFi6+M5sHNZv8TgDl8zleJzAkhskSi1l
+         K4gughnusPcuzW6py0RgVrF4weFXngcixruIF47O8p/Zis2u6KY9GvW/5FhfTyqCv7l8
+         aUG7JCRu5ZS8xrvnDrqj/gX+J5PiKwRk4WWHJ2FZB1rWJsF6CiQ1NK1hs8Hxa4FDXI+S
+         upIQ==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770284250; x=1770889050; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1770284751; x=1770889551; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ts7BIpqOHUIYO1yz8UgL/PwCOZwIbnvcvFeQ/hBIaCk=;
-        b=FjUGTiXw2YWjuQ7I+GqvszU9ONy2XE3+0JTAxPXHkvt5eZPZz+J5Ufml3pqOgP8T2L
-         rGpjc6btwhogLQMha/Jf6R6/yMMHusEbVvvB9GvauRcrLVSE37m/5NRzEmxkn7UFT56a
-         iuPSJZkpndM52iukwsc73xY8GdCH4GozIXR7BrzDyyEcwiI2UfOmNraXaq/qo6qKWX5v
-         Js4guz62jAPbbEGBBruoJBw9nESFq2rhHfK5hAw/E3v3AMLBniyg3HEQD/EO70aNkSpl
-         fnmqT9r0YmS9KqEzDR/y8yvYgP0e5gBj2781l3djCI2R2Qr30Ey5NTf0YpiUPWKYhCsR
-         bKZQ==
+        bh=gTHjRNg48uqIhlFUjNVy6w29gFOiVNhUd1etS9WljNU=;
+        b=X7wZYF6oGkxVE+gLTBtcX28o4eYBAX3e3P5/p1DkotCtFvnSm+dNdGmggiKQnap9HF
+         uJoR8Y/7jQwtGKgtwXZNQtMOcaDouskzI9DbFRdinBwM2G8kpSDc+wVOPd9ayKvPaZtX
+         qDZsWavmVfL8txVAZaxKDRyNO2gl3nDKYj6Y08WRzZFoXlLH4OBDdd4dCHPmAv9LaYhV
+         aYyqyMoVjKFMXFsylm9qYTAL0LLdTNasCpSpfzLfkc3XzkPNORx9OBQJnvhWeWVvJgyV
+         IFPElSh1GAM0WngNDgAYeJbIEwtbP3kxmdE1hnqP1mOoFVug/wkO0WrOFsaHCyIytL65
+         aJVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770284250; x=1770889050;
+        d=1e100.net; s=20230601; t=1770284751; x=1770889551;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=ts7BIpqOHUIYO1yz8UgL/PwCOZwIbnvcvFeQ/hBIaCk=;
-        b=YTQ53ez4pVHrizIq/EroOPNeOoV/Bd7YCJH5S+xmVPYwQy8L3NoJre98xB3dfvcrCk
-         B06kdsFFODPBrdl6UEwHkHyfZF+vuMU0Vmze2EVOIxwNrdxZTB7v6daMHQEu3yOiPfcN
-         idpLlPmdWaVB2RCm2JHKxV4wBxnamjIYcj7tb8GJT5MAhPbaNkdMYXIE0zWfR1SFHJFr
-         QBZcfMbMHyGk4QlRvvq9nyplh8R0X0O7ifNqpWp10PbZhR7uHKURbp6lY3K0Q31v7ODB
-         nEUjCJ8431vaQDx9bibtoz4pNhGzKR3/eTkkCVTddRSM1s6uveX4s84H1qu3Gvh+U5qh
-         DNnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUeMpT3loJFJhAh5W0M6cvwQUNWSVjBUlWncQ9+k3OHWEvkzAqmFwS+v7VhlpZu9f2AiubbuEZNO6CthMCq@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFStKkDgEZtKvMQ1+mh+u6exZZJ/Kyu/nwzgsMMJY/7V+JehaZ
-	mCWQx2JfEMnpsNMS0Y6DuiCJUzqwskNarO6IMLDKyjzDbJiuTu+ji0DnmgcT2gJWqKWwl6Tcmfl
-	EY0ZoM0bgQZcfD8iIFtEE2ZRHdOFXsQ8=
-X-Gm-Gg: AZuq6aIYgkzmJKnA2nG406430va7FyF9yIpdH5N6eEhxpRI5E3MAonMIOdYwGDoiw+k
-	UtV42DjF4qufyle2fwXmpRCfIvF5/IL2bjR3p6u0CAI8VvXmYVaMYQeZv++wtprHX7NPh0mXA0i
-	Hlx7gvNooML9abFSIPbi0D/y0igOm1jAHYJadrJGbKlwBPwnab/iDvX9QiyuY46NW4rqMzwrlww
-	+QdprqaNLDPtLn5vc2hXwvyRrxQ4n3TT8/d5IbEFu5z/9Rt5ybxDDHPqaQeEPcE9ek9NCMdW4NL
-	T/+gof8P1d/krmRhNd23T7mxXWqe9Q==
-X-Received: by 2002:a05:6402:2688:b0:658:cf28:90ed with SMTP id
- 4fb4d7f45d1cf-65949cc1e5emr3920680a12.15.1770284249654; Thu, 05 Feb 2026
- 01:37:29 -0800 (PST)
+        bh=gTHjRNg48uqIhlFUjNVy6w29gFOiVNhUd1etS9WljNU=;
+        b=chQy2U/2gXzZRR7vB3ncRQCnJ4Im6pSsM/h8IRfZKPWSm3kk2T2pdF10XiZWz9sER5
+         rAVn8Zk0x+8K/oo/UnCCxrx/Id/Nzr9h7PY+thhpqd0k3UOHTOakI4wqvKYZkfKjZLCq
+         a2Kaq1dqPJpLFpgLuBPwHd+a8IwtPF6dCv2D9CQaeJwjkdaWLcvkxq5i9NNh6/cYgBer
+         JM6+ISeLqxpbH71+0NzeEsSSjVSggEJf9JIPDdXFL59o9lPkMp05B82PCO5oLOy1omHo
+         7EzlYzmPRo5p5blUov6X4sVCm6Cm+Myw7I202+kN1sZEce/C+n8R3c6S6+DSnXXSFImv
+         aMNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWcyZxqJzXdBys2zuDNvMtuiV52BJvnoFEGiTzB0knbDMcJtMY7iPgXaUADvJAY/VcWRIHGcEUl/3P+8Lm6@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEYcr815Doas/rQZjsHerOxLgzyewaxQEQ4JfQGObe2K7VRp2q
+	ctAXDALV5sAQbHZCd08PcgLqbszHaP4v7Rb3UFm4WWlDqNlmd3QGvDUtrqmWR+T7TTZ3uqFiSpU
+	dnzMScW8ecdki/vG39pBBQ6VTQWcWK+U=
+X-Gm-Gg: AZuq6aKLCiAZCJV3B4nAdiC4KD+OObhtnIAKAjpAkcYBDNn48EUEkJw3EFNhOJ9Ewg3
+	5riWCGXapofEb+8HSqk91s4NP7TIPQfQmFd9v6DK96AeQM85lvukga1cDzxX9QUa7ZqUhvoIVNK
+	8x3F0d1guF4sdZk80hyQtmhwuAawK+BRtR0O9G+147QKf+UTM7mkDw61rbI4kQRdd26lnecK+Co
+	Tz33Hqd5i7Y/mLVoxsHKBCzJTNLkYQb4jsSrNu4uBdjdDjyg3tLxdsJhBBxeqRZ6UwraNGeixYJ
+	ZLyyOysi+a6AMOt3dJwQ8i9t6EWE6Q==
+X-Received: by 2002:a17:907:7f92:b0:b87:31d1:4131 with SMTP id
+ a640c23a62f3a-b8e9f64603cmr435430866b.60.1770284751163; Thu, 05 Feb 2026
+ 01:45:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260204050726.177283-1-neilb@ownmail.net> <20260204050726.177283-12-neilb@ownmail.net>
-In-Reply-To: <20260204050726.177283-12-neilb@ownmail.net>
+References: <20260204050726.177283-1-neilb@ownmail.net> <20260204050726.177283-13-neilb@ownmail.net>
+In-Reply-To: <20260204050726.177283-13-neilb@ownmail.net>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 5 Feb 2026 10:37:18 +0100
-X-Gm-Features: AZwV_QjDs8XEOiRuWGAHzisKUrokVjcatEGo5N0FYjLzK48UQXH5p374RE5BkHo
-Message-ID: <CAOQ4uxiYUTi=8BjRFbY_GdBZR_5CuP6680me=_xQaPcQk7EFuQ@mail.gmail.com>
-Subject: Re: [PATCH 11/13] ovl: use is_subdir() for testing if one thing is a
- subdir of another
+Date: Thu, 5 Feb 2026 10:45:38 +0100
+X-Gm-Features: AZwV_Qg7CM-kXxjB2Qin-euJkaOUd7ni190R_n_ZLhun34eHr5T-i9uF6CbqXdo
+Message-ID: <CAOQ4uxi3bNYq1b4=qL-JLi19hRwurntfLZXhUMVL003NarBdGg@mail.gmail.com>
+Subject: Re: [PATCH 12/13] ovl: remove ovl_lock_rename_workdir()
 To: NeilBrown <neil@brown.name>
 Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
 	David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
@@ -131,7 +130,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76381-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76382-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
@@ -149,65 +148,29 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,ownmail.net:email,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: 8492BF0EC1
+	DBL_BLOCKED_OPENRESOLVER(0.00)[brown.name:email,mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,ownmail.net:email]
+X-Rspamd-Queue-Id: 3E16CF1010
 X-Rspamd-Action: no action
 
 On Wed, Feb 4, 2026 at 6:09=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote:
 >
 > From: NeilBrown <neil@brown.name>
 >
-> Rather than using lock_rename(), use the more obvious is_subdir() for
-> ensuring that neither upper nor workdir contain the other.
-> Also be explicit in the comment that the two directories cannot be the
-> same.
+> This function is unused.
 >
-> As this is a point-it-time sanity check and does not provide any
-> on-going guarantees, the removal of locking does not introduce any
-> interesting races.
->
-> Signed-off-by: NeilBrown <neil@brown.name>
 
-Looks reasonable
+I am confused.
+What was this "fix" fixing an unused function:
+
+e9c70084a64e5 ovl: fail ovl_lock_rename_workdir() if either target is unhas=
+hed
+
+What am I missing?
+
+Otherwise, feel free to add:
 
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-> ---
->  fs/overlayfs/super.c | 15 +++++----------
->  1 file changed, 5 insertions(+), 10 deletions(-)
->
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index ba9146f22a2c..2fd3e0aee50e 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -451,18 +451,13 @@ static int ovl_lower_dir(const char *name, const st=
-ruct path *path,
->         return 0;
->  }
->
-> -/* Workdir should not be subdir of upperdir and vice versa */
-> +/*
-> + * Workdir should not be subdir of upperdir and vice versa, and
-> + * they should not be the same.
-> + */
->  static bool ovl_workdir_ok(struct dentry *workdir, struct dentry *upperd=
-ir)
->  {
-> -       bool ok =3D false;
-> -
-> -       if (workdir !=3D upperdir) {
-> -               struct dentry *trap =3D lock_rename(workdir, upperdir);
-> -               if (!IS_ERR(trap))
-> -                       unlock_rename(workdir, upperdir);
-> -               ok =3D (trap =3D=3D NULL);
-> -       }
-> -       return ok;
-> +       return !is_subdir(workdir, upperdir) && !is_subdir(upperdir, work=
-dir);
->  }
->
->  static int ovl_setup_trap(struct super_block *sb, struct dentry *dir,
-> --
-> 2.50.0.107.gf914562f5916.dirty
->
+Thanks,
+Amir.
 
