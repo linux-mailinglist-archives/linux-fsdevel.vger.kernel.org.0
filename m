@@ -1,156 +1,238 @@
-Return-Path: <linux-fsdevel+bounces-76365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76366-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QBAnLoEbhGmyywMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 05:24:33 +0100
+	id 0EvPKHw6hGnX1QMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76366-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 07:36:44 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66AFDEE859
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 05:24:33 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05E79EF0B1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Feb 2026 07:36:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3D5BC3027971
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 04:23:46 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 1FFA030131F9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Feb 2026 06:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DAE82E888C;
-	Thu,  5 Feb 2026 04:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25EB133343B;
+	Thu,  5 Feb 2026 06:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="MLDTEQO6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KTDDmLy6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D537F2E8B8A
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 04:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0468334389
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Feb 2026 06:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770265424; cv=none; b=SCS81nFNrdxaWSawxfm2RbYkmWusd6Obd1Pflp1sALTs4GfG8M1Ybc85TyMONIlOl0cGo4HhHFG8TkViXrPogD8aQMtMLzGYCcSSwqCMNecSdCh2COFOOUs0y8Y8nLRjpP6X8uRliD+fhD3dN/aB4ACdyrHGafffGNHmrkNdoa8=
+	t=1770273391; cv=none; b=UJpWrKbmb/8rYTqhRSLRXuqKb1O5yZezSqkhoKEBXllzf7kDI7vq+sTQHF5ADfQMjew/YL8j6xWLD4OJkCW8vZvyjlvQ6ZbprCnlszpyi0bU0pB7dAEk3C6nODI5CSDe2kcYFlWGGK97opOzWUhwlNpTomi2Y9FwpD79f7LPiMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770265424; c=relaxed/simple;
-	bh=L03384jtDexDfzkRHHtzPIVJ4BKFBQWzJGNmJuCR4wU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j/DQ87ZEdqGY/2/bderNZBzf6JT2n9IcEmHTd2DjUUYiNML33VOn5N0ARbs67Si9xZx2cFGqV70OpLpAQNMFBFYbdzPqFpXLECYyLoPDfIU1JMRx/6aKZW0CZMUvBH9LaTaSMWqb80WalJtrPpMHd5oxN9Q7bSxbwowbHrwp+ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=MLDTEQO6; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-8c5349ba802so45189085a.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Feb 2026 20:23:43 -0800 (PST)
+	s=arc-20240116; t=1770273391; c=relaxed/simple;
+	bh=IE6utOrbsdv697v+Q5HtuDyYMfbCRwnXcUnUjrd1deY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:Mime-Version; b=S8/Ed/lX47czQWs78aFzUxRV5/fDw5gHMRzF0VSxH0L3J/FIxFkhtREWpWNawog87vqivYpWRT4XhoPENIn1l3l6RUP5I/g0v9AD8uD/s6FOUG9R3Lj7JFm9ruBiK5FCnQchVgdvIBkSasFpc8a+1to/99doW1dYEuP54O+qEFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KTDDmLy6; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-c6c444e89bcso166384a12.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Feb 2026 22:36:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1770265423; x=1770870223; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qW0+moZctApASOdwQkaNncsGOVFnNExxcEZS6yJkS4M=;
-        b=MLDTEQO6exn21nK7WldrR1aIYxSKV0SetMJnEH6Pq9GFGudIeAuYOU2mKG4qNXd77p
-         njiQp3vvn/XwQGj8U/pVscEkN7VUqTj/4rs6WF2nJh7NVgxPJOUGQ65Wpllt+WITmwjp
-         L4Kd/7cFByLsMZuqVWlCALtotsWYWhVqrhtPsk97ZKxM60Fx+PuD440tbELBKDsFEN72
-         fujBWqAsGz2bl14GxXX0stTlfIAFczr+vIq6muJQpN0ZtMa3P4RF2TiteF1IFNrsYK9q
-         YTEQxJGJSJPn+21BExh4UjvWTHw4NwtQp5EX21CrP/UolEeBumKNm9SaUOFpUdNo3amE
-         aUXA==
+        d=gmail.com; s=20230601; t=1770273391; x=1770878191; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:date
+         :cc:to:from:subject:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vH999gu9cF8Ex6UpWJyf9ehfO8DS1HfN7WwuwJxfEkk=;
+        b=KTDDmLy6a+k2mCqp0SCBcenrUJfI+vId1eEDkUMtM1P5VNlxtCTRfVJMc78gYk9qbd
+         j9YslvakJEsyduvarmgnju2tErT8kVFbzrkK6Gps0Wgrhe9ztjLOYJ6x5h3YkR2m1ALw
+         8CcEs3XGUh/vhs5P0JfYhkRWPErOtlcZJl2zqSyxxlURphLb25tlju8tQRPswOpCCH0D
+         ABjmF+06KGaD0vnYmjJhGHqcJS+4y2YWoWk8t0sJmYgDcibtHgtlD8g+NAejwjZql6c7
+         SBOjRLfmrLHiy7QsvWX3XwgYsCKN111gjTUj2KTtVwiWY/PTCXkIhO6/9zTO1XJJcGhJ
+         62xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770265423; x=1770870223;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1770273391; x=1770878191;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:date
+         :cc:to:from:subject:message-id:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qW0+moZctApASOdwQkaNncsGOVFnNExxcEZS6yJkS4M=;
-        b=oXQq8SOv3h+92pZQvioctrYO5UNWD1MTPNuvlPYyDQEBhakZN52IE1COv8Q0XZfbAo
-         EciL7xjZtrFmixzOKqqQIbR6HyI2MSbQHwLhotDYEzOk8TDLPViYIljUW9Vgt6P2mniU
-         T0pPQACYnSYDxzNnIqFpdG8CZ6gbJMTDdWXOx/MPkBTDFzZ1mAm1em/HMSQf2hlMtkZj
-         ESLEJJkMiMw15K3H/UvkercfJRDJGtPjlvuEFC1t3Zf2/sj04nGgXhkB/93/efaWXHBq
-         MhD9GXzxbL1bYPSKZjMbOYK6HD9qZ61AHcS9a1LjsI4Q+Rs+JYHM8f2PmDaSuCS3bIb9
-         1SNw==
-X-Forwarded-Encrypted: i=1; AJvYcCVegpO7yeMS/JXPNRK5YfN0Tj4Xyh8p2/9j2pFH8dequdTNchf286oTL5jVHWdYCBBD0f7d1UNeAffwzIaT@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzjz5M7WizExlBXkdDDWiKqX4ta6Pwfeb1bFPk0+57FSUCuBp7F
-	+cTb1CXhooe5IcbxnQ++vb0nBnUwxQoe5ZgVctJxE+3cKe7ZhFJS4uCHi/d83ckGHUM=
-X-Gm-Gg: AZuq6aL1jkuI7LpWtbG9DjgbImRbAu2eSi3O/rRz1jGd6BmJ6csi63+KG4cjjTlG/1E
-	ZENxn9s/eQnBVFBY6lXBAfpc9z5JB28NpoicAR8ck7rRj1KiDhcgYbax7qrYPP00AwgZjQhKXC1
-	bv2DY8Z3LbLl0JeIEmU50OAvu6Lv8VKbOgTt8NguEyr2HaFP+LPdGbwzJCb59RfxJpj5igoFHyE
-	q9FLPq7vHuOvf5ADRBQQE8WGk8Dj8vHSBPvJBuWByn/oUgOj6nYLnDZIHcDmpMD+BAoSIqM+Ulp
-	quktX6o+RxDpy62DIfcPlQIjuHRz4QVd3PMpOlFWYYvynv0M9/VDi5+hSgA34ypiOIfCRGQ/lKS
-	9SEr2zKH84X3vvdqBOYKZMcUwlYSOEZH6ju4jp8MpJHVxoxPAhaiMmSyUa22Ln4Xa7K92dp3YaZ
-	YyMGitf6T1yY14jnBjE+XqTpN5jNCOpqv7sE3Cdx/q0m+SCUl7Lgk+o029kKLALccnYkmXog==
-X-Received: by 2002:a05:620a:c4d:b0:8c6:f74f:9b69 with SMTP id af79cd13be357-8ca2fa5e50cmr701545185a.83.1770265422854;
-        Wed, 04 Feb 2026 20:23:42 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89521cf8619sm34240906d6.32.2026.02.04.20.23.41
+        bh=vH999gu9cF8Ex6UpWJyf9ehfO8DS1HfN7WwuwJxfEkk=;
+        b=EUd1nASBKxotkWiZJIqE2rqJfvSbIlc5gEpPo2A6q2FW/t0u64bmw9u5JOSQHgyVwP
+         mf71ntTxBbVPdHfdLTHqVNK/HTGHt+Eo9XU5wHa4edRw0SGDGRaUA1DEPr+z1Esarj0N
+         KgzEwxnlKOr1BCUbVAE3ZpQmn1TxTIkzue+/0euc3PjhRGxqD6i9aKWhuJLCoOEBxVAI
+         I2uHGxjvKD2/W7ZJYWgb/TWvWtLuHF1qFCrQu8Fg2HprXzebIcyN3XpOgZAHDWC6stzM
+         MRsc0q1Iu4Ty6S8isN0sBgCnJgoCtpgJsBoKV/+jChRp+4gKQ1e+z2v3LCO4mi45anSO
+         l4Ag==
+X-Gm-Message-State: AOJu0YzR2g5FSEqJNk9qxiK0RiEpw78KdIG6zjlxPaC6AfjEQXNhxZdg
+	Tmj9kpmIpLBEfhrLELqYW05ip0gPnLsfjS86yUVRKA32djJCGTORNVg0
+X-Gm-Gg: AZuq6aIY7VHKqBFD0tT4H9MULRstAhL0c3yQHP67NueqZEjHG1V3UR+RVZ5Di4zkRzG
+	X6lzq/L3FFWQGTnUXp2ZlohNhnIRBLRD4zb7xX8cnkn4AgQFnU0M5dfG/J5DuvHS69n4XRr9dJL
+	+uXwbqyI/w6dvz+hual/xPaS9E9fh/9L35yVQkxRd5i3i7IshXy5/6dxDlsVmtBHQfMLKU45mUT
+	wZyc1v8KqTX2UL9xx+aYckc/5gZ4ikpjOH0a3BzQ8nfFj1lnhm3zEoChiDW3VnJqCBvIJYpbh5s
+	Ib3+EBXkCO9VcDo9JDLvlvjRFACok4T2+r9yL7HXxtAbAHeuEPrWNoponikMplEAcOwf8cxTFn7
+	0LhzsOYmPFwisT+GalUvyeEwIeKDVRd9HbhFHUV6ZIOCp7q8qdyLfypuk7epa5aLPefy9fQPX2r
+	t7Jxx/apzpKJXpBJSheO6/zByIlxxBAkqGFcWup6hCjtnA0YpkR2rZPh5NpK3RfRdr
+X-Received: by 2002:a05:6a21:150d:b0:38c:627f:873f with SMTP id adf61e73a8af0-393723a5662mr5102313637.45.1770273390885;
+        Wed, 04 Feb 2026 22:36:30 -0800 (PST)
+Received: from li-5d80d4cc-2782-11b2-a85c-bed59fe4c9e5.ibm.com ([49.207.208.177])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c6c8321cb78sm3885009a12.8.2026.02.04.22.36.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Feb 2026 20:23:42 -0800 (PST)
-Date: Wed, 4 Feb 2026 23:23:40 -0500
-From: Gregory Price <gourry@gourry.net>
-To: "David Hildenbrand (arm)" <david@kernel.org>
-Cc: Jonathan Cameron <jonathan.cameron@huawei.com>, linux-mm@kvack.org,
-	linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, kernel-team@meta.com, dave@stgolabs.net,
-	dave.jiang@intel.com, alison.schofield@intel.com,
-	vishal.l.verma@intel.com, ira.weiny@intel.com,
-	dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
-	terry.bowman@amd.com, john@jagalactic.com,
-	Oscar Salvador <osalvador@suse.de>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 2/9] mm/memory_hotplug: add __add_memory_driver_managed()
- with online_type arg
-Message-ID: <aYQbTFLTRHiAnrKr@gourry-fedora-PF4VCD3F>
-References: <20260129210442.3951412-1-gourry@gourry.net>
- <20260129210442.3951412-3-gourry@gourry.net>
- <20260202172524.00000c6d@huawei.com>
- <aYDmor_ruasxaZ-7@gourry-fedora-PF4VCD3F>
- <20260202184609.00004a02@huawei.com>
- <aYEZAUJMLWvaug50@gourry-fedora-PF4VCD3F>
- <3424eba7-523b-4351-abd0-3a888a3e5e61@kernel.org>
+        Wed, 04 Feb 2026 22:36:30 -0800 (PST)
+Message-ID: <87a16d4d9c1e568a37fa07a97dda5777e14e9a8b.camel@gmail.com>
+Subject: Re: [PATCH v3 3/6] xfs: add per-inode AG prediction map and
+ dirty-AG bitmap
+From: "Nirjhar Roy (IBM)" <nirjhar.roy.lists@gmail.com>
+To: Kundan Kumar <kundan.kumar@samsung.com>, viro@zeniv.linux.org.uk, 
+ brauner@kernel.org, jack@suse.cz, willy@infradead.org, mcgrof@kernel.org, 
+ clm@meta.com, david@fromorbit.com, amir73il@gmail.com, axboe@kernel.dk,
+ hch@lst.de,  ritesh.list@gmail.com, djwong@kernel.org, dave@stgolabs.net,
+ cem@kernel.org,  wangyufei@vivo.com
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-xfs@vger.kernel.org, gost.dev@samsung.com, anuj20.g@samsung.com, 
+	vishak.g@samsung.com, joshi.k@samsung.com
+Date: Thu, 05 Feb 2026 12:06:19 +0530
+In-Reply-To: <20260116100818.7576-4-kundan.kumar@samsung.com>
+References: <20260116100818.7576-1-kundan.kumar@samsung.com>
+	 <CGME20260116101251epcas5p1cf5b48f2efb14fe4387be3053b3c3ebc@epcas5p1.samsung.com>
+	 <20260116100818.7576-4-kundan.kumar@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-27.el8_10) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3424eba7-523b-4351-abd0-3a888a3e5e61@kernel.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[gourry.net:s=google];
+	MV_CASE(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DMARC_NA(0.00)[gourry.net];
+	TAGGED_FROM(0.00)[bounces-76366-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76365-lists,linux-fsdevel=lfdr.de];
-	RCPT_COUNT_TWELVE(0.00)[21];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[gourry.net:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	MISSING_XM_UA(0.00)[];
+	FREEMAIL_TO(0.00)[samsung.com,zeniv.linux.org.uk,kernel.org,suse.cz,infradead.org,meta.com,fromorbit.com,gmail.com,kernel.dk,lst.de,stgolabs.net,vivo.com];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[23];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[gourry@gourry.net,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[nirjharroylists@gmail.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
+	NEURAL_HAM(-0.00)[-1.000];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[gourry.net:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 66AFDEE859
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,samsung.com:email]
+X-Rspamd-Queue-Id: 05E79EF0B1
 X-Rspamd-Action: no action
 
-On Wed, Feb 04, 2026 at 10:08:45PM +0100, David Hildenbrand (arm) wrote:
-> > 
-> > David do you have thoughts here?
+On Fri, 2026-01-16 at 15:38 +0530, Kundan Kumar wrote:
+> Add per-inode structures to track predicted AGs of dirty folios using
+> an xarray and bitmap. This enables efficient identification of AGs
+> involved in writeback.
 > 
-> I guess we should clean that all up where easily possible, but I don't
-> expect you to do that.
+> Signed-off-by: Kundan Kumar <kundan.kumar@samsung.com>
+> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+> ---
+>  fs/xfs/xfs_icache.c | 27 +++++++++++++++++++++++++++
+>  fs/xfs/xfs_inode.h  |  5 +++++
+>  2 files changed, 32 insertions(+)
 > 
-> For online_types I used it, obviously, to save memory. So I'd expect it to
-> stay at least there, but cast it to the proper type once we take it out the
-> array.
-> 
+> diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
+> index e44040206851..f97aa6d66271 100644
+> --- a/fs/xfs/xfs_icache.c
+> +++ b/fs/xfs/xfs_icache.c
+> @@ -80,6 +80,25 @@ static inline xa_mark_t ici_tag_to_mark(unsigned int tag)
+>  	return XFS_PERAG_BLOCKGC_MARK;
+>  }
+>  
+> +static int xfs_inode_init_ag_bitmap(struct xfs_inode *ip)
+Similar comment as before:
+static int
+xfs_inode_init...()
+> +{
+> +	unsigned int bits = ip->i_mount->m_sb.sb_agcount;
+> +	unsigned int nlongs;
+> +
+> +	xa_init_flags(&ip->i_ag_pmap, XA_FLAGS_LOCK_IRQ);
+Nit: The name of the functions suggests that it is initializing the tracking bitmap which it does -
+however, the above line does slightly different thing? Maybe move the xarray init outside the bitmap
+init function? 
+> +	ip->i_ag_dirty_bitmap = NULL;
+> +	ip->i_ag_dirty_bits = bits;
+> +
+> +	if (!bits)
+Umm, !bits means agcount is 0. Shouldn't we ASSERT that bits >= 2? Or am I missing something?
+> +		return 0;
+> +
+> +	nlongs = BITS_TO_LONGS(bits);
+> +	ip->i_ag_dirty_bitmap = kcalloc(nlongs, sizeof(unsigned long),
+> +					GFP_NOFS);
+> +
+> +	return ip->i_ag_dirty_bitmap ? 0 : -ENOMEM;
+> +}
+> +
+>  /*
+>   * Allocate and initialise an xfs_inode.
+>   */
+> @@ -131,6 +150,8 @@ xfs_inode_alloc(
+>  	ip->i_next_unlinked = NULLAGINO;
+>  	ip->i_prev_unlinked = 0;
+>  
+> +	xfs_inode_init_ag_bitmap(ip);
+xfs_inode_init_ag_bitmap() returns int - error handling for -ENOMEM?
+> +
+>  	return ip;
+>  }
+>  
+> @@ -194,6 +215,12 @@ xfs_inode_free(
+>  	ip->i_ino = 0;
+>  	spin_unlock(&ip->i_flags_lock);
+>  
+> +	/* free xarray contents (values are immediate packed ints) */
+> +	xa_destroy(&ip->i_ag_pmap);
+Nit:Maybe have a small wrapper for freeing it the prediction map? No hard preferences though.
+> +	kfree(ip->i_ag_dirty_bitmap);
+> +	ip->i_ag_dirty_bitmap = NULL;
+Nit: Usually while freeing the pointers I prefer:
+t = ip->i_ag_dirty_bitmap;
+ip->i_ag_dirty_bitmap = NULL;
+kfree(t);
+In this way, the pointer(i_ag_dirty_bitmap in this case) that I am freeing never points to an
+already freed address.
 
-I can do it pretty easily and pull it out ahead.
+> +	ip->i_ag_dirty_bits = 0;
+> +
+>  	__xfs_inode_free(ip);
+>  }
+>  
+> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+> index bd6d33557194..dee449168605 100644
+> --- a/fs/xfs/xfs_inode.h
+> +++ b/fs/xfs/xfs_inode.h
+> @@ -99,6 +99,11 @@ typedef struct xfs_inode {
+>  	spinlock_t		i_ioend_lock;
+>  	struct work_struct	i_ioend_work;
+>  	struct list_head	i_ioend_list;
+> +
+> +	/* AG prediction map: pgoff_t -> packed u32 */
+> +	struct xarray           i_ag_pmap;
+> +	unsigned long           *i_ag_dirty_bitmap;
+> +	unsigned int            i_ag_dirty_bits;
+Not sure but, I mostly see the typedefed versions of data types being used like uint32 etc. Darrick,
+hch, are the above fine?
+--NR
+>  } xfs_inode_t;
+>  
+>  static inline bool xfs_inode_on_unlinked_list(const struct xfs_inode *ip)
 
-~Gregory
 
