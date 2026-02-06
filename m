@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-76528-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76529-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id eFkgCUpxhWn5BgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76528-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 05:42:50 +0100
+	id 0CdIAdhzhWlzBwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76529-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 05:53:44 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2FBFFA26F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 05:42:49 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57C65FA2B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 05:53:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 25D6F3019BAC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 04:42:40 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C8E70301BF71
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 04:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D4B2E62C0;
-	Fri,  6 Feb 2026 04:42:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E0C337B8C;
+	Fri,  6 Feb 2026 04:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pYXJkcbp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f1m6wVNc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C309F1F4181;
-	Fri,  6 Feb 2026 04:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021862E62C3;
+	Fri,  6 Feb 2026 04:53:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770352958; cv=none; b=hqyPiv053YhGdKZiO+Ldx/Ompu34et0pR0g7tCKtlEdpIsqLaHlUo1hTGdF+IgtM1Kltbs3IoHkhnVYxPUwo5l9O2lW3kz4EAbK8clJW88VBibVW+Pog2cafjIhdmMGoISXA4AJYRbRNM6mtZGDDxlxTD0N+PkVRunM+Xpoz9Pk=
+	t=1770353613; cv=none; b=IjGQlRG/kJjqqRT7Y1AWIxXqsOhZyiVXta7v4WUEONu9CQ0KuarkQjogFoucOJppo8pLJkkLNW79Ecvq2Ez3G/kVvAeOviNX/PCLvXlnNpD3V7wvyFw7xhgNuCGvOGhEVsDht9PZ15j9MSGvJ6xsTFW+SkPr/MpxImlzzwE2lNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770352958; c=relaxed/simple;
-	bh=I2urq3HRSZd2U/WKLQGeb2xlxwHQeMuAVFdmWb2qq6k=;
+	s=arc-20240116; t=1770353613; c=relaxed/simple;
+	bh=XM9pzmK6p/zuNzks2AL7EdLS9nP7GMziA1jh2NiPmiY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=had3cQwcJtOWpdz2byXX7Gq5k7RrYTus6S+5ShnmgnPf12HRnhPJlSpWShdMcYLDHJIbMMiTsW+Kjmoc9+MGX5DcSo4B31GWIS7SIvO0rMCUhtON/kXPi9wb+UbxYcLpOxvecXdWUCFAhWve0NUKeN3tAanNNSqfznpHD9hwolU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pYXJkcbp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47E31C116C6;
-	Fri,  6 Feb 2026 04:42:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=q0vpyDIzKF2Bcu1lfopXDHMF4eVnbug841KPWq7bE1xNrsAvwsiYYGxnxJqJbxDwGC31dyN1WbkChMbVwI81lmPYulSf8Aw8ZJK/5/WJLWteVHDbO0YPESGtvYrwyfzoMtMyjmD+G2lDzNNSnlDGGVkBICtcyvyLqx1pEqg9p/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f1m6wVNc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB965C116C6;
+	Fri,  6 Feb 2026 04:53:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770352958;
-	bh=I2urq3HRSZd2U/WKLQGeb2xlxwHQeMuAVFdmWb2qq6k=;
+	s=k20201202; t=1770353612;
+	bh=XM9pzmK6p/zuNzks2AL7EdLS9nP7GMziA1jh2NiPmiY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pYXJkcbpf/IzfxQglbUnm6L8CbnibxemyyTRXseMEttDj6QjibMYrrm2OW9IKYyvV
-	 ehK8ZL6oLvNTL8Oa2nHjp8Pl6VudgRyBkENdfU77hSYZfEJYdZ95j3BmWJ19zQRv3L
-	 Z0FsxBcToI/1mfF68AnYbjg9eNgq1k0jSCVlMsc/TvhTIZ0V284iSHBUfflAQOpc5m
-	 HzdsvRHx61tm8B4MbsBEhja7eKT12cVwBzxA+7+Z8deiryjGGuOMusYyRKKeVopUiE
-	 viUJQfmScM8DPOFKg961Gf8CTVX5IfP35HG6NEVLCMCt9kopfnhDNaqaJUPjhxoxqQ
-	 eep5pzCQ+sl/A==
-Date: Thu, 5 Feb 2026 20:42:37 -0800
+	b=f1m6wVNcftdteUSXfxvrd7BPsvqnw28dovBjsiVLzm5bCffAcmwIzhAQtriipJX+Q
+	 vjwomq1DxaCIX2GVA40tGqAfqwQZMRuLEzUzxVfT90oGN0tVCO/PaDSJ7jDloWx5vL
+	 TDrh8ysZI+nQwvYHJT3qo9grKBfo1xBNIf3IYXSbyEohIgliz8c956AAvGfwHAAh8X
+	 wwQL6c8hJNC4J8mybWZJcRvfqeaIbEpimNQOcADDpZNu/vK5bHlTGMyOdKLjs2bZZP
+	 UCFxX05rBbNtO+7hsHpwwUb0LYzNKCFdBmBOXHByGlAqvFSnWwwdUfeHtuk72H/4A3
+	 bIGvkm4UssZEQ==
+Date: Thu, 5 Feb 2026 20:53:32 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Chris Mason <clm@meta.com>
-Cc: miklos@szeredi.hu, joannelkoong@gmail.com, bernd@bsbernd.com,
-	neal@gompa.dev, linux-ext4@vger.kernel.org,
+Cc: cem@kernel.org, hch@lst.de, linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 07/10] fuse: enable iomap cache management
-Message-ID: <20260206044237.GM7686@frogsfrogsfrogs>
-References: <176169812012.1426649.16037866918992398523.stgit@frogsfrogsfrogs>
- <176169812229.1426649.17695442505194165425.stgit@frogsfrogsfrogs>
- <20260205184044.1551228-1-clm@meta.com>
+Subject: Re: [PATCH v6.1 11/11] xfs: add media verification ioctl
+Message-ID: <20260206045332.GU7712@frogsfrogsfrogs>
+References: <176852588473.2137143.1604994842772101197.stgit@frogsfrogsfrogs>
+ <176852588776.2137143.7103003682733018282.stgit@frogsfrogsfrogs>
+ <20260120041226.GJ15551@frogsfrogsfrogs>
+ <20260206030527.2506821-1-clm@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,48 +63,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260205184044.1551228-1-clm@meta.com>
+In-Reply-To: <20260206030527.2506821-1-clm@meta.com>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[szeredi.hu,gmail.com,bsbernd.com,gompa.dev,vger.kernel.org];
-	TAGGED_FROM(0.00)[bounces-76528-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	MISSING_XM_UA(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76529-lists,linux-fsdevel=lfdr.de];
 	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: C2FBFFA26F
+X-Rspamd-Queue-Id: 57C65FA2B3
 X-Rspamd-Action: no action
 
-On Thu, Feb 05, 2026 at 10:33:26AM -0800, Chris Mason wrote:
+On Thu, Feb 05, 2026 at 07:01:32PM -0800, Chris Mason wrote:
 > "Darrick J. Wong" <djwong@kernel.org> wrote:
 > > From: Darrick J. Wong <djwong@kernel.org>
 > > 
-> > Provide a means for the fuse server to upload iomappings to the kernel
-> > and invalidate them.  This is how we enable iomap caching for better
-> > performance.  This is also required for correct synchronization between
-> > pagecache writes and writeback.
-> > 
+> > Add a new privileged ioctl so that xfs_scrub can ask the kernel to
+> > verify the media of the devices backing an xfs filesystem, and have any
+> > resulting media errors reported to fsnotify and xfs_healer.
 > 
 > Hi everyone,
 > 
@@ -117,102 +114,102 @@ On Thu, Feb 05, 2026 at 10:33:26AM -0800, Chris Mason wrote:
 > 
 > Hopefully the review below is useful, please let me know if there are places it
 > has gone wildly wrong.  I kept the header to make it obvious exactly which
-> commit I'd run through:
+> commit I'd run through.
 > 
-> commit 84c726dd312b652c0fd2d4f43d65eefd16bfa901
+> (This is another XFS commit that ended up in my rev-list range, low confidence
+> in the actual review, but I'm curious if AI got this one right)
+> 
+> commit 2e5c40a5b6ca722202bc0e99830b6ecf8755d19c
 > Author: Darrick J. Wong <djwong@kernel.org>
 > 
-> fuse: enable iomap cache management
-> 
-> This commit provides a means for the fuse server to upload iomappings to
-> the kernel and invalidate them, enabling iomap caching for better
-> performance and ensuring correct synchronization between pagecache writes
-> and writeback.
-> 
-> > diff --git a/fs/fuse/fuse_iomap.c b/fs/fuse/fuse_iomap.c
-> > index b56718dd256a6..dcadd66f6ec95 100644
-> > --- a/fs/fuse/fuse_iomap.c
-> > +++ b/fs/fuse/fuse_iomap.c
+> xfs: add media verification ioctl
 > 
 > [ ... ]
 > 
-> > +int fuse_iomap_inval(struct fuse_conn *fc,
-> > +		     const struct fuse_iomap_inval_out *outarg)
+> > diff --git a/fs/xfs/xfs_verify_media.c b/fs/xfs/xfs_verify_media.c
+> > --- /dev/null
+> > +++ b/fs/xfs/xfs_verify_media.c
+> > @@ -0,0 +1,445 @@
+> 
+> [ ... ]
+> 
+> > +/* Walk reverse mappings to look for all file data loss */
+> > +static int
+> > +xfs_verify_report_losses(
+> > +	struct xfs_mount	*mp,
+> > +	enum xfs_group_type	type,
+> > +	xfs_daddr_t		daddr,
+> > +	u64			bblen)
 > > +{
-> > +	struct inode *inode;
-> > +	struct fuse_inode *fi;
-> > +	int ret = 0, ret2 = 0;
+> > +	struct xfs_group	*xg = NULL;
+> > +	struct xfs_trans	*tp;
+> > +	xfs_fsblock_t		start_bno, end_bno;
+> > +	uint32_t		start_gno, end_gno;
+> > +	int			error;
 > > +
-> > +	if (!fc->iomap)
-> > +		return -EINVAL;
-> > +
-> > +	down_read(&fc->killsb);
-> > +	inode = fuse_ilookup(fc, outarg->nodeid, NULL);
-> > +	if (!inode) {
-> > +		ret = -ESTALE;
-> > +		goto out_sb;
+> > +	if (type == XG_TYPE_RTG) {
+> > +		start_bno = xfs_daddr_to_rtb(mp, daddr);
+> > +		end_bno = xfs_daddr_to_rtb(mp, daddr + bblen - 1);
+> > +	} else {
+> > +		start_bno = XFS_DADDR_TO_FSB(mp, daddr);
+> > +		end_bno = XFS_DADDR_TO_FSB(mp, daddr + bblen - 1);
 > > +	}
 > > +
-> > +	fi = get_fuse_inode(inode);
-> > +	if (BAD_DATA(fi->orig_ino != outarg->attr_ino)) {
-> > +		ret = -EINVAL;
-> > +		goto out_inode;
-> > +	}
+> > +	tp = xfs_trans_alloc_empty(mp);
+> > +	start_gno = xfs_fsb_to_gno(mp, start_bno, type);
+> > +	end_gno = xfs_fsb_to_gno(mp, end_bno, type);
+> > +	while ((xg = xfs_group_next_range(mp, xg, start_gno, end_gno, type))) {
+> > +		struct xfs_buf		*agf_bp = NULL;
+> > +		struct xfs_rtgroup	*rtg = NULL;
+> > +		struct xfs_btree_cur	*cur;
+> > +		struct xfs_rmap_irec	ri_low = { };
+> > +		struct xfs_rmap_irec	ri_high;
+> > +		struct xfs_group_data_lost lost;
 > > +
-> > +	if (fuse_is_bad(inode)) {
-> > +		ret = -EIO;
-> > +		goto out_inode;
-> > +	}
+> > +		if (type == XG_TYPE_AG) {
+> > +			struct xfs_perag	*pag = to_perag(xg);
 > > +
-> > +	if (!fuse_iomap_inval_validate(inode, outarg->write_offset,
-> > +				       outarg->write_length)) {
-> > +		ret = -EFSCORRUPTED;
-> > +		goto out_inode;
-> > +	}
+> > +			error = xfs_alloc_read_agf(pag, tp, 0, &agf_bp);
+> > +			if (error) {
+> > +				xfs_perag_put(pag);
+> > +				break;
+> > +			}
 > > +
-> > +	if (!fuse_iomap_inval_validate(inode, outarg->read_offset,
-> > +				       outarg->read_length)) {
-> > +		ret = -EFSCORRUPTED;
-> > +		goto out_inode;
-> > +	}
-> > +
-> > +	fuse_iomap_cache_lock(inode);
-> > +	if (outarg->read_length)
-> > +		ret2 = fuse_iomap_cache_remove(inode, READ_MAPPING,
-> > +					       outarg->read_offset,
-> > +					       outarg->read_length);
-> > +	if (outarg->write_length)
-> > +		ret = fuse_iomap_cache_remove(inode, WRITE_MAPPING,
-> > +					      outarg->write_offset,
-> > +					      outarg->write_length);
-> > +	fuse_iomap_cache_unlock(inode);
-> >                    ^^^^
+> > +			cur = xfs_rmapbt_init_cursor(mp, tp, agf_bp, pag);
+> > +		} else {
+> > +			rtg = to_rtg(xg);
+> > +			xfs_rtgroup_lock(rtg, XFS_RTGLOCK_RMAP);
+> > +			cur = xfs_rtrmapbt_init_cursor(tp, rtg);
+> > +		}
 > 
-> Can fuse_iomap_cache_lock() dereference a NULL pointer here? Looking at
-
-Yes.  For those of you reading the parent message you might be confused
-because the 29 Oct posting embedded the iomap cache directly in struct
-fuse_inode so there was no possibility of a NULL pointer dereference.
-
-Based on feedback from Joanne I changed fuse_inode to point to a
-fuse_iomap_cache object, which the AI has now caught.  Excellent!
-
-> fuse_iomap_upsert() above, there's a check for fuse_inode_caches_iomaps()
-> before accessing the cache and allocating if necessary. In fuse_iomap_inval(),
-> there's no such check before calling fuse_iomap_cache_lock().
+> Does this code have a reference counting mismatch in the error paths?
 > 
-> fuse_iomap_cache_lock() accesses fi->cache and calls down_write(&ic->ic_lock),
-> which will crash if fi->cache is NULL. This could happen when a fuse server
-> sends FUSE_NOTIFY_IOMAP_INVAL for an inode that never had mappings upserted
-> to it.
+> The xfs_group returned by xfs_group_next_range() is acquired via
+> xfs_group_grab() which increments xg_active_ref.
 > 
-> Should fuse_iomap_inval() check fuse_inode_caches_iomaps(inode) before
-> calling fuse_iomap_cache_lock()? If the cache doesn't exist, there's
-> nothing to invalidate, so returning early (perhaps with 0 or -EINVAL)
-> would be appropriate.
+> In the error path at line 120, the code uses xfs_perag_put() to release
+> the reference:
+> 
+> 	error = xfs_alloc_read_agf(pag, tp, 0, &agf_bp);
+> 	if (error) {
+> 		xfs_perag_put(pag);
+> 		break;
+> 	}
+> 
+> And later in the loop, line 144 uses xfs_group_put().
+> 
+> Both xfs_perag_put() and xfs_group_put() decrement xg_ref, not
+> xg_active_ref. Looking at the reference counting implementation:
+> 
+> xfs_group_grab() calls atomic_inc_not_zero(&xg->xg_active_ref)
+> xfs_group_rele() calls atomic_dec(&xg->xg_active_ref)
+> xfs_group_put() calls atomic_dec(&xg->xg_ref)
+> 
+> Should these error paths use xfs_group_rele() instead to match the
+> xfs_group_grab() in xfs_group_next_range()?
 
-I'll have it return 0 because no cache means cache invalidation is a
-nop.  Thanks for your review help, Chris!
+Yep.  Wouldn't it be nice if our type system could keep those things
+straight... :/
 
 --D
 
