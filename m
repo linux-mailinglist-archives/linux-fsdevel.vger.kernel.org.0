@@ -1,266 +1,281 @@
-Return-Path: <linux-fsdevel+bounces-76534-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76535-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id qLozNyh/hWlmCgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76534-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 06:42:00 +0100
+	id aBSyMH+AhWlmCgQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76535-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 06:47:43 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F904FA661
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 06:42:00 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60A61FA702
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 06:47:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id B90E6303503D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 05:41:57 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id B0F54300CA04
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 05:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A259033A6F7;
-	Fri,  6 Feb 2026 05:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382771E5018;
+	Fri,  6 Feb 2026 05:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mtWKo1AU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ucTI1UEx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B9C33A6E9
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Feb 2026 05:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD643288B8
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Feb 2026 05:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770356513; cv=none; b=mISTFbuDtLDDc68Hgc1Wnl/NX1JIjZcZP1vCw584ex0hF/5oEFHSuHXXxZAqES/6s76z4M6LfIrJHwzakA+jshF0wWPWgrjZxy3j92R+TPEkM524R7UnyKF1x0GMsd2plVraj9G16MIcIWcGW8vAKWlmO7RlRQGfHlmBJ0i5n0A=
+	t=1770356858; cv=none; b=lbowQ0E11C2T7GJA00GAsX6bB35i8U1GnbCWAkobw7kxiCPcvJ20IKWKxg3KutU7Fz9/dK1p/bSQk22tO2APCNrI3IwJA4dMBCxsXABXeontnY/I/RI5uuHcRpSqi/IazWW8G4V8sJZpJXS2no7G9MEsxnAIl4zigSdji7Waufg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770356513; c=relaxed/simple;
-	bh=GqRttaOziVl7ls4Fij3x2ZnkHrXkXL4bDJJEMfcsWl8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:Mime-Version; b=boyj7V8c/nuPTyRXLAWMRsd8MMpxlxiXCAUOY+xj6+xKJ8p+hEGHYuPbr4WT9z72QxbG+hnioKsgxZiU0UL0nvwUXJPjamCuRKanUdcMfxX/9vrkQqZwSe4iXqTAcJ9nb/9yHr86Iq/xwZnNOvSIzORWuZOvR2qv8YHS9iybau4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mtWKo1AU; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-82311f4070cso1239109b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Feb 2026 21:41:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770356512; x=1770961312; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MACMIIoQrOmHwo4XgAmQe5Pv+MCpYfJt20up7XQ2jCM=;
-        b=mtWKo1AUKy0cJAMu7FeOD+S+c+UidziFpgHmaj0ArO2FFjLTBdc1wpmvuqq2peIHpx
-         eVS+4wn9zmFWoDPQvfZCO5BHBJv0C2bRZcyUPkWoooJ504GcpSwIIw9T3dxTUNRiI8f1
-         AOoeQ/GFps9tRqiDHIKc0XwMfAuepLFVowM12dYcJVSnVZQnnw7CJTtyFvLCJ2PSfQiZ
-         vcBLnrHkfD/P05RVrke5sqOvRgubymB0uqeAAciiAAjijdU/Ow4cRabNZopML67zgkaq
-         wiiciWHVGwHtdl0H4UF2Cb+sDMBs1Vsvt72KmL+HweR5fxC+Xe3aX/hEEppWeAcB3dxz
-         h+vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770356512; x=1770961312;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MACMIIoQrOmHwo4XgAmQe5Pv+MCpYfJt20up7XQ2jCM=;
-        b=RSxa5yFKZ8UwGbH9OGthKzN3f6ImuNDwNlai63YyDjwbqFWRb9+9urvGYYYAv7mEZ4
-         qEkwOmaR2PocxZ6kWlFeJSLr5/ItQhDzRuTR3/XyNdKngJEEL8lkiak1qZRQcB0F/U/2
-         TTIhtAkwrb9l3vxf5MGrt3/jnzlOs20Jmv/J0gFBi54/13Ewon93100ENKp7u0m769pr
-         UI/ZSyWKcMWMY7Sg6bfRfIXTteaSca/3ooy4hjNq/vbXd9kSDgH6xT/eHOPc0J/SRj02
-         REBFNc/jZuQcz/c3J55dWje2PSfaw44tFeKgA76doPXtm7It01ud2S8NDijJbm4tuMtp
-         XopQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZZjnL18ve+OXd271otPbqE8prUTm8bUnnOU6r02vhPQ99IN7pjmS8B4fFPi3LdQ+t0PpLfEE17Jwa5Xmj@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXpPbFH7QpqDxtBwvdeUvfstUTeqp27DzVduJu1/LCAKwsHTOC
-	C/g9bTB9qVL89jiwmRidlYO5PQmJEV/OIcCeOata8eH/Dt0lS812hwFB
-X-Gm-Gg: AZuq6aKwyEwMGFy/KzyPVYB5x2LNCSZtUQPpD5EQakWs2vLYHkMPQLxj+RuRf+yE9IG
-	+Qhx0A0JpsuHb3Frvkm2ybHWLFTsJSw/M6kdwd5DUKZu2sa6kFspURpaH7PUMQoBTozflZcDbhM
-	iLD22FZMdo1e7BaWUVYiEwTCms7acWZLhBzguT81f+Mto6HeWkvVRK46zGykIHpdJlSxccLmK+D
-	Xz+QrW/KtfZbthLYjwaYC1ylu4fncH4UOUhOL/E+AnUO14ObH1AnpgrcUlfzReJRTqO3plmql6u
-	m/fPbxbq9ajFTdDwJrH4HOmXwm1Iu3upDE9ry6CNaO+4Xhm6TFbY9XtvLWBRap3gsJIbIyoKcBd
-	jV1riKSsgcISDoG33RQvhnVN92jsnFS7A7FRW6iwawef0NjDta3vkfbfkLwHiICnO3TD4lBHPvU
-	lTyDC8fImU62dhvf0KDUWrIaS1gwDgnr4uEWhlblOkKBNXD7AJQn/LIESlud/3hDSMpHNDKZBMv
-	F8=
-X-Received: by 2002:a05:6a00:ac86:b0:7a9:d8a8:992a with SMTP id d2e1a72fcca58-8242d42ef5emr5239630b3a.13.1770356512310;
-        Thu, 05 Feb 2026 21:41:52 -0800 (PST)
-Received: from li-5d80d4cc-2782-11b2-a85c-bed59fe4c9e5.ibm.com ([49.207.208.177])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-824418ff231sm1173972b3a.69.2026.02.05.21.41.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Feb 2026 21:41:51 -0800 (PST)
-Message-ID: <c2a090bde81de463d3e2cc88f9ba06233e97cf5d.camel@gmail.com>
-Subject: Re: [PATCH v3 3/6] xfs: add per-inode AG prediction map and
- dirty-AG bitmap
-From: "Nirjhar Roy (IBM)" <nirjhar.roy.lists@gmail.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Kundan Kumar <kundan.kumar@samsung.com>, viro@zeniv.linux.org.uk, 
- brauner@kernel.org, jack@suse.cz, willy@infradead.org, mcgrof@kernel.org, 
- clm@meta.com, david@fromorbit.com, amir73il@gmail.com, axboe@kernel.dk,
- hch@lst.de,  ritesh.list@gmail.com, dave@stgolabs.net, cem@kernel.org,
- wangyufei@vivo.com,  linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-xfs@vger.kernel.org,  gost.dev@samsung.com, anuj20.g@samsung.com,
- vishak.g@samsung.com,  joshi.k@samsung.com
-Date: Fri, 06 Feb 2026 11:11:43 +0530
-In-Reply-To: <20260205163217.GP7712@frogsfrogsfrogs>
-References: <20260116100818.7576-1-kundan.kumar@samsung.com>
-	 <CGME20260116101251epcas5p1cf5b48f2efb14fe4387be3053b3c3ebc@epcas5p1.samsung.com>
-	 <20260116100818.7576-4-kundan.kumar@samsung.com>
-	 <20260129004404.GA7712@frogsfrogsfrogs>
-	 <90870969cb6f04346d6dba603838abf993a42f5b.camel@gmail.com>
-	 <20260205163217.GP7712@frogsfrogsfrogs>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-27.el8_10) 
+	s=arc-20240116; t=1770356858; c=relaxed/simple;
+	bh=weQCcnZsjL9bU/MLVvxtiJyvp5HVK4XtfAfYZ7tjx0U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JE27VteoRNbc+AR0q+DrG4tkxgktVjWWSvkosOdos63/jZMyfmmVCtVfr55lmEw45TQdK4pUZsEHVhmywXB3OEDRrBjz98iubZE1DJ4ztMRR/W/gINEfypb6nowUWIoeaUYB8ZCdJZSGEQH6y2vspPjL/0FelJlMmLPDcDBt1YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ucTI1UEx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F843C116C6;
+	Fri,  6 Feb 2026 05:47:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770356858;
+	bh=weQCcnZsjL9bU/MLVvxtiJyvp5HVK4XtfAfYZ7tjx0U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ucTI1UExErG3TbeTOvwe6QiQd8GARA8YoDOYU4vn1W6bHXqZhfTC5eDFbpVUzT5SY
+	 /hB4r4lmGSJbvI6vgIXDotB16JPtJnhJnpcr01E4MaFJXwv+wW0Ejqc6UGGTPcXcqw
+	 F8sTr+3JS3lcUT2gi4arliYso7K1u4zlkxWudoTo3BWyxpySNLqRoTPMhMXb1QmaW6
+	 CodIPwsA6IHuu5C4rQpIV58XwjxU2oQsy0cZqGGQ0Ne1oNbVmGFYXB8vUUb21OqaTA
+	 UtWNetL+8rhg6q7CDwjs7f0mKbFJ9DoQig2x9Zpg4nWH74P7kEznE+4LRD5y+J5las
+	 eVZu8Kz4g90ng==
+Date: Thu, 5 Feb 2026 21:47:38 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Bernd Schubert <bernd@bsbernd.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, f-pc@lists.linux-foundation.org,
+	linux-fsdevel@vger.kernel.org,
+	Joanne Koong <joannelkoong@gmail.com>,
+	John Groves <John@groves.net>, Amir Goldstein <amir73il@gmail.com>,
+	Luis Henriques <luis@igalia.com>,
+	Horst Birthelmer <horst@birthelmer.de>
+Subject: Re: [LSF/MM/BPF TOPIC] Where is fuse going? API cleanup,
+ restructuring and more
+Message-ID: <20260206054738.GE7693@frogsfrogsfrogs>
+References: <CAJfpegtzYdy3fGGO5E1MU8n+u1j8WVc2eCoOQD_1qq0UV92wRw@mail.gmail.com>
+ <20260204190649.GB7693@frogsfrogsfrogs>
+ <61a68025-f8c9-451a-9df7-a6a70764bf36@bsbernd.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <61a68025-f8c9-451a-9df7-a6a70764bf36@bsbernd.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	MV_CASE(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-76534-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[szeredi.hu,lists.linux-foundation.org,vger.kernel.org,gmail.com,groves.net,igalia.com,birthelmer.de];
+	TAGGED_FROM(0.00)[bounces-76535-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[samsung.com,zeniv.linux.org.uk,kernel.org,suse.cz,infradead.org,meta.com,fromorbit.com,gmail.com,kernel.dk,lst.de,stgolabs.net,vivo.com,vger.kernel.org,kvack.org];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	RCPT_COUNT_TWELVE(0.00)[23];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[nirjharroylists@gmail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	NEURAL_HAM(-0.00)[-1.000];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	MISSING_XM_UA(0.00)[];
 	TO_DN_SOME(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,samsung.com:email]
-X-Rspamd-Queue-Id: 9F904FA661
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Rspamd-Queue-Id: 60A61FA702
 X-Rspamd-Action: no action
 
-On Thu, 2026-02-05 at 08:32 -0800, Darrick J. Wong wrote:
-> On Thu, Feb 05, 2026 at 12:14:35PM +0530, Nirjhar Roy (IBM) wrote:
-> > On Wed, 2026-01-28 at 16:44 -0800, Darrick J. Wong wrote:
-> > > On Fri, Jan 16, 2026 at 03:38:15PM +0530, Kundan Kumar wrote:
-> > > > Add per-inode structures to track predicted AGs of dirty folios using
-> > > > an xarray and bitmap. This enables efficient identification of AGs
-> > > > involved in writeback.
-> > > > 
-> > > > Signed-off-by: Kundan Kumar <kundan.kumar@samsung.com>
-> > > > Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
-> > > > ---
-> > > >  fs/xfs/xfs_icache.c | 27 +++++++++++++++++++++++++++
-> > > >  fs/xfs/xfs_inode.h  |  5 +++++
-> > > >  2 files changed, 32 insertions(+)
-> > > > 
-> > > > diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-> > > > index e44040206851..f97aa6d66271 100644
-> > > > --- a/fs/xfs/xfs_icache.c
-> > > > +++ b/fs/xfs/xfs_icache.c
-> > > > @@ -80,6 +80,25 @@ static inline xa_mark_t ici_tag_to_mark(unsigned int tag)
-> > > >  	return XFS_PERAG_BLOCKGC_MARK;
-> > > >  }
-> > > >  
-> > > > +static int xfs_inode_init_ag_bitmap(struct xfs_inode *ip)
-> > > > +{
-> > > > +	unsigned int bits = ip->i_mount->m_sb.sb_agcount;
-> > > > +	unsigned int nlongs;
-> > > > +
-> > > > +	xa_init_flags(&ip->i_ag_pmap, XA_FLAGS_LOCK_IRQ);
-> > > 
-> > > This increases the size of struct xfs_inode by 40 bytes...
-> > > 
-> > > > +	ip->i_ag_dirty_bitmap = NULL;
-> > > > +	ip->i_ag_dirty_bits = bits;
-> > > > +
-> > > > +	if (!bits)
-> > > > +		return 0;
-> > > > +
-> > > > +	nlongs = BITS_TO_LONGS(bits);
-> > > > +	ip->i_ag_dirty_bitmap = kcalloc(nlongs, sizeof(unsigned long),
-> > > > +					GFP_NOFS);
-> > > 
-> > > ...and there could be hundreds or thousands of AGs for each filesystem.
-> > > That's a lot of kernel memory to handle this prediction stuff, and I"m
-> > > not even sure what ag_dirty_bitmap does yet.
-> > > 
-> > > > +
-> > > > +	return ip->i_ag_dirty_bitmap ? 0 : -ENOMEM;
-> > > > +}
-> > > > +
-> > > >  /*
-> > > >   * Allocate and initialise an xfs_inode.
-> > > >   */
-> > > > @@ -131,6 +150,8 @@ xfs_inode_alloc(
-> > > >  	ip->i_next_unlinked = NULLAGINO;
-> > > >  	ip->i_prev_unlinked = 0;
-> > > >  
-> > > > +	xfs_inode_init_ag_bitmap(ip);
-> > > 
-> > > Unchecked return value???
-> > > 
-> > > > +
-> > > >  	return ip;
-> > > >  }
-> > > >  
-> > > > @@ -194,6 +215,12 @@ xfs_inode_free(
-> > > >  	ip->i_ino = 0;
-> > > >  	spin_unlock(&ip->i_flags_lock);
-> > > >  
-> > > > +	/* free xarray contents (values are immediate packed ints) */
-> > > > +	xa_destroy(&ip->i_ag_pmap);
-> > > > +	kfree(ip->i_ag_dirty_bitmap);
-> > > > +	ip->i_ag_dirty_bitmap = NULL;
-> > > > +	ip->i_ag_dirty_bits = 0;
-> > > > +
-> > > >  	__xfs_inode_free(ip);
-> > > >  }
-> > > >  
-> > > > diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-> > > > index bd6d33557194..dee449168605 100644
-> > > > --- a/fs/xfs/xfs_inode.h
-> > > > +++ b/fs/xfs/xfs_inode.h
-> > > > @@ -99,6 +99,11 @@ typedef struct xfs_inode {
-> > > >  	spinlock_t		i_ioend_lock;
-> > > >  	struct work_struct	i_ioend_work;
-> > > >  	struct list_head	i_ioend_list;
-> > > > +
-> > > > +	/* AG prediction map: pgoff_t -> packed u32 */
-> > > 
-> > > What about blocksize < pagesize filesystems?  Which packed agno do you
-> > > associate with the pgoff_t?
-> > Sorry but I am bit unfamiliar with the term packed agno? Can you please briefly explain does packed
-> > agno mean?
+On Wed, Feb 04, 2026 at 09:58:51PM +0100, Bernd Schubert wrote:
 > 
-> I was talking about the "xfs_agp" numbers introduced in the previous
-> patch, which seem to contain the bottom 25 bits of the ag number.
-Okay, right. Thank you. 
 > 
-> Really I was just asking about multi-fsblock folios -- which block
-> within that folio do we map to an AG for tagging purposes?
+> On 2/4/26 20:06, Darrick J. Wong wrote:
+> > On Mon, Feb 02, 2026 at 02:51:04PM +0100, Miklos Szeredi wrote:
+> >> I propose a session where various topics of interest could be
+> >> discussed including but not limited to the below list
+> >>
+> >> New features being proposed at various stages of readiness:
+> >>
+> >>  - fuse4fs: exporting the iomap interface to userspace
+> > 
+> > FYI, I took a semi-break from fuse-iomap for 7.0 because I was too busy
+> > working on xfs_healer, but I was planning to repost the patchbomb with
+> > many many cleanups and reorganizations (thanks Joanne!) as soon as
+> > possible after Linus tags 7.0-rc1.
+> > 
+> > I don't think LSFMM is a good venue for discussing a gigantic pile of
+> > code, because (IMO) LSF is better spent either (a) retrying in person to
+> > reach consensus on things that we couldn't do online; or (b) discussing
+> > roadmaps and/or people problems.  In other words, I'd rather use
+> > in-person time to go through broader topics that affect multiple people,
+> > and the mailing lists for detailed examination of a large body of text.
+> > 
+> > However -- do you have questions about the design?  That could be a good
+> > topic for email /and/ for a face to face meeting.  Though I strongly
+> > suspect that there are so many other sub-topics that fuse-iomap could
+> > eat up an entire afternoon at LSFMM:
+> > 
+> >  0 How do we convince $managers to spend money on porting filesystems
+> >    to fuse?  Even if they use the regular slow mode?
+> > 
+> >  1 What's the process for merging all the code changes into libfuse?
+> >    The iomap parts are pretty straightforward because libfuse passes
+> >    the request/reply straight through to fuse server, but...
 > 
-> I think Kundan replied elsewhere that it's the first block.
-Okay.
---NR
-> 
-> --D
-> 
-> > --NR
-> > > Also, do you have an xarray entry for each pgoff_t in a large folio?
-> > > 
-> > > --D
-> > > 
-> > > > +	struct xarray           i_ag_pmap;
-> > > > +	unsigned long           *i_ag_dirty_bitmap;
-> > > > +	unsigned int            i_ag_dirty_bits;
-> > > >  } xfs_inode_t;
-> > > >  
-> > > >  static inline bool xfs_inode_on_unlinked_list(const struct xfs_inode *ip)
-> > > > -- 
-> > > > 2.25.1
-> > > > 
-> > > > 
+> To be honest, I'm rather lost with your patch bomb - in which order do I
+> need to review what? And what can be merged without?
 
+If there are any fixes they're usually at the beginning.
+
+At the moment you actually /have/ merged everything that can be. :)
+
+The rest relies on kernel patches that aren't upstream.
+
+> Regarding libfuse patches - certainly helpful if you also post them
+> here, but I don't want to create PRs out of your series, which then
+> might fail the PR tests and I would have to fix it on my own ;)
+> So the right order is to create libfuse PRs, let the test run, let
+> everyone review here or via PR and then it gets merged.
+
+I can generate pull requests for the libfuse things, no problem.  The
+hard question is, can your CI system build a kernel with the relevant
+patches or do we have to wait until Miklos merges them into upstream?
+
+> >  2 ...the fuse service container part involves a bunch of architecture
+> >    shifts to libfuse.  First you need a new mount helper to connect to
+> >    a unix socket to start the service, pass some resources (fds and
+> >    mount options) through the unix socket to the service.  Obviously
+> >    that requires new library code for a fuse server to see the unix
+> >    socket and request those resources.  After that you also need to
+> >    define a systemd service file that stands up the appropriate
+> >    sandboxing.  I've not written examples, but that needs to be in the
+> >    final product.
+> > 
+> >  3 What tooling changes to we need to make to /sbin/mount so that it
+> >    can discover fuse-service-container support and the caller's
+> >    preferences in using the f-s-c vs. the kernel and whatnot?  Do we
+> >    add another weird x-foo-bar "mount option" so that preferences may
+> >    be specified explicitly?
+> > 
+> >  4 For defaults situations, where do we make policy about when to use
+> >    f-s-c and when do we allow use of the kernel driver?  I would guess
+> >    that anything in /etc/fstab could use the kernel driver, and
+> >    everything else should use a fuse container if possible.  For
+> >    unprivileged non-root-ns mounts I think we'd only allow the
+> >    container?
+> > 
+> > <shrug> If we made progress on merging the kernel code in the next three
+> > months, does that clear the way for discussions of 2-4 at LSF?
+> > 
+> > Also, I hear that FOSSY 2026 will have kernel and KDE tracks, and it's
+> > in Vancouver BC, which could be a good venu to talk to the DE people.
+> > 
+> >>  - famfs: export distributed memory
+> > 
+> > This has been, uh, hanging out for an extraordinarily long time.
+> > 
+> >>  - zero copy for fuse-io-uring
+> >>
+> >>  - large folios
+> >>
+> >>  - file handles on the userspace API
+> > 
+> > (also all that restart stuff, but I think that was already proposed)
+> > 
+> >>  - compound requests
+> >>
+> >>  - BPF scripts
+> > 
+> > Is this an extension of the fuse-bpf filtering discussion that happened
+> > in 2023?  (I wondered why you wouldn't just do bpf hooks in the vfs
+> > itself, but maybe hch already NAKed that?)
+> > 
+> > As for fuse-iomap -- this week Joanne and I have been working on making
+> > it so that fuse servers can upload ->iomap_{begin,end,ioend} functions
+> > into the kernel as BPF programs to avoid server upcalls.  This might be
+> > a better way to handle the repeating-pattern-iomapping pattern that
+> > seems to exist in famfs than hardcoding things in yet another "upload
+> > iomap mappings" fuse request.
+> > 
+> > (Yes I see you FUSE_SETUPMAPPING...)
+> > 
+> >> How do these fit into the existing codebase?
+> >>
+> >> Cleaner separation of layers:
+> >>
+> >>  - transport layer: /dev/fuse, io-uring, viriofs
+> > 
+> > I've noticed that each thread in the libfuse uring backend collects a
+> > pile of CQEs and processes them linearly.  So if it receives 5 CQEs and
+> > the first request takes 30 seconds, the other four just get stuck in
+> > line...?
+> 
+> I'm certainly open for suggestions and patches :)
+
+The only things I can think of are
+
+(a) a pool of threads pinned to the same CPU as the CQE reader, but I
+don't think that's going to be good for low latency;
+
+(b) as long as the request is still in libfuse, maybe it can decide "I'm
+taking too long" and spawn a pthread to hand the request to; or
+
+(c) can other threads steal a CQE to work on if they go idle?  That
+might only work for FUSE_DESTROY though, since there won't be new
+requests issued after that.
+
+For the particular problems I was seeing with FUSE_DESTROY I picked (b).
+https://git.kernel.org/pub/scm/linux/kernel/git/djwong/libfuse.git/commit/?h=djwong-wtf&id=e2784aaa0bc0d396fe1c75b826fc140366f576bc
+
+But that also only happens if your kernel has
+https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/commit/?h=fuse-fixes&id=a9df193a5913e747d8c2830197c4f36d56f42e4c
+so there's no action to be taken for libfuse right now.
+
+> At DDN the queues are polled from reactors (co-routine line), that
+> additional libfuse API will never go public, but I definitely want to
+> finish and if possible implement a new API before I leave (less than 2
+> months left). We had a bit of discussion with Stefan Hajnoczi about that
+> around last March, but I never came even close that task the whole year.
+
+<nod>
+
+> > 
+> >>  - filesystem layer: local fs, distributed fs
+> > 
+> > <nod>
+> > 
+> >> Introduce new version of cleaned up API?
+> >>
+> >>  - remove async INIT
+> >>
+> >>  - no fixed ROOT_ID
+> > 
+> > Can we just merge this?
+> > https://lore.kernel.org/linux-fsdevel/176169811231.1426070.12996939158894110793.stgit@frogsfrogsfrogs/
+> 
+> Could you create a libfuse PR please?
+
+Well we'd have to get the kernel patch merged first, and (AFAIK) it's
+not queued up for Linux 7.0.
+
+--D
+
+> 
+> Thanks,
+> Bernd
+> 
 
