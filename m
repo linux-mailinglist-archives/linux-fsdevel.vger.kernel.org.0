@@ -1,113 +1,567 @@
-Return-Path: <linux-fsdevel+bounces-76551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76552-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id wBTAJKeRhWl7DgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 08:00:55 +0100
+	id eBmPG/+VhWk7DwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76552-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 08:19:27 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3D6BFACB7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 08:00:54 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA70FAE6C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 08:19:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 9111E3017C07
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 07:00:47 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A7ABB301701A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 07:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11435302773;
-	Fri,  6 Feb 2026 07:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F063730AD1A;
+	Fri,  6 Feb 2026 07:19:13 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FFA2AEE1;
-	Fri,  6 Feb 2026 07:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90185302773
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Feb 2026 07:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770361245; cv=none; b=BG2iCk97Q4y++yN2tN3C0uwFJ859NYK0zPtZHGcyq5Arf65h+oTAUQdaSofBEEhSjBIru/SPuU9eAmYxsSz8IdMJYes5NFG8MMkHtyCEntwfTdFGLnT0NbGm+Bv9OfEMvDSh6hP9scc2ADluRUyF8VBNwMTmDu+NpJhpq192VQs=
+	t=1770362353; cv=none; b=OJ6f8/Y4vZAHPELigRJbA5NG4deA4OpkAXO+hQWmjknablXz/UcxSEyLjzimjohHYbZ1s/J7hlrN3T+DtImPStpoNJqvXAAVXf5HsmXmqqWdkhKU+qBg9zAsbUpgNqCrMMSGbLpOHcBssN9aJ3SH+fRXv8otLIecmjHi7XRvCkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770361245; c=relaxed/simple;
-	bh=5RkE58I9bnJUYy9fpyAjkANrjCa9fz9cE9tSkRjbU6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XK6/5z0ArIPPcFEtirZm1A5K07in4FOY5YuzFwUZg0UJ9oFuVvdn99Yor0dAaTc//F/XLHlgnRH/cZEgdTCF/bJ2cT0NE/iLTGVEq0DO+t8pviDS5AejrNC6z0rFZDayWyBdRiClkDgGPQ2KeSbYwd+F2xw2edI/rhkW8b/nH1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 6DCD468D3E; Fri,  6 Feb 2026 08:00:34 +0100 (CET)
-Date: Fri, 6 Feb 2026 08:00:31 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Kundan Kumar <kundan.kumar@samsung.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	willy@infradead.org, mcgrof@kernel.org, clm@meta.com,
-	david@fromorbit.com, amir73il@gmail.com, axboe@kernel.dk,
-	hch@lst.de, ritesh.list@gmail.com, djwong@kernel.org,
-	dave@stgolabs.net, cem@kernel.org, wangyufei@vivo.com,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-xfs@vger.kernel.org, gost.dev@samsung.com,
-	anuj20.g@samsung.com, vishak.g@samsung.com, joshi.k@samsung.com
-Subject: Re: [PATCH v3 3/6] xfs: add per-inode AG prediction map and
- dirty-AG bitmap
-Message-ID: <20260206070030.GA26818@lst.de>
-References: <20260116100818.7576-1-kundan.kumar@samsung.com> <CGME20260116101251epcas5p1cf5b48f2efb14fe4387be3053b3c3ebc@epcas5p1.samsung.com> <20260116100818.7576-4-kundan.kumar@samsung.com>
+	s=arc-20240116; t=1770362353; c=relaxed/simple;
+	bh=GIWK4FaXYQyvSFA7NTA69hYeGmudrqVDprSSU+OZUlI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=iyYPPzq8VHG1soU29byuKEKSK2L7GIxzfcsUScCBNbGDeHCiH6/Ll60QaKNnCL8k+Fq7AVCVAULpy/ZhndCTKWM2b6G2WZAXJRaMNsy5YAWE51ZWatqv0grmKeVLjRUtF+xjXCwhmJDXkhkzkAUOlE7KGjVKRmJpvLzQzm6uKEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2a09757004cso15426805ad.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Feb 2026 23:19:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770362353; x=1770967153;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5tieXyIqjagbdOTLgcDe96H09aIh/nifZQXt+/aq83w=;
+        b=kStkRku+aQNO//bz+UjTAXLQI96kGyY+1B2QsM9P5I2KlNEsQpsW1c5G7Z7Ex93Cyl
+         tP/pOqguDN9jV0FWnrTzYlZJs61dthpLLxqYqdcOqlNyu0ALNYHO0k4CMg3d0abtG6Fy
+         96Zy18rGKKKdiaRUK0WmMCASGcTK3aL1sr9vEfG6B4SAnUPZMqNEfZpD2OEi0iZh7rMd
+         +QLXKNTjAdMOrWYvNC888iOn0S78tC//Ku+w4Te5SO+G8s/2i/fNn5sxiUFe6cVFzXV4
+         fbEyijVj0KtdqFTwzn1UCF/2+ipMjOeBAYHu9n9Yw7Z+/ervUeEcqW74OosSeB31yzel
+         eRbw==
+X-Gm-Message-State: AOJu0YyR8dlyX00ogtL+Iduy3Tai7zYZqHfh2P/zmOrFp9fcsi5FK24g
+	+EGqmtlQowJHbnR/gId/xAgfOmzrtsTKHPRb9J5fvoWR2EWM7BwHdgZS
+X-Gm-Gg: AZuq6aKTrXuA3pUOcd4OmbKuy4betIOWaUmDjVLRD8DhPiaFa4YEdhgXaEFMRYTM7EY
+	e6E4IoZPGr8rK4imZfGL+WaTKGtqkySx2V1YwP5hMKm4IJMMmasCOS2K5YyiN+utDGD57D8tXjr
+	NskIbc4n7tIWdW/seoJegfHDbmUO95sahe7Y1ME7wcdpDEapfPlIELXFuRpeKwAmljWpiY81kAL
+	3iU09lk8sedSS1ANyRIB1mRGADhw8R7OT3HeLO2Q+eezeGHTmna+1eAYF5YvPxna3lJeThgfYgF
+	mestD7JbARD4zFTesGwkAeoT0stXct9bjHUMIk5Xwy9QuSou8wC+PPBjxf7Ni5JRcBfupw8o+lc
+	FUFraCzE68LdlSfJt75XRNMQS395xiUe/GXM2I5VA0uSX17//hHaeSmTJFuItTe/u9SDNfCYFYG
+	nZqMpsIiWdU/pl1h3jtWFl9OVzvg==
+X-Received: by 2002:a17:902:fc87:b0:2a2:f0cb:df98 with SMTP id d9443c01a7336-2a95164e574mr23130585ad.25.1770362352632;
+        Thu, 05 Feb 2026 23:19:12 -0800 (PST)
+Received: from localhost.localdomain ([1.227.206.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a951c7a047sm13575125ad.27.2026.02.05.23.19.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Feb 2026 23:19:11 -0800 (PST)
+From: Namjae Jeon <linkinjeon@kernel.org>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	hch@lst.de,
+	tytso@mit.edu,
+	willy@infradead.org,
+	jack@suse.cz,
+	djwong@kernel.org,
+	dsterba@suse.com,
+	pali@kernel.org,
+	amir73il@gmail.com,
+	xiang@kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Namjae Jeon <linkinjeon@kernel.org>
+Subject: [PATCH v8 00/17] ntfs filesystem remake
+Date: Fri,  6 Feb 2026 16:18:43 +0900
+Message-Id: <20260206071900.6800-1-linkinjeon@kernel.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260116100818.7576-4-kundan.kumar@samsung.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.14 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-0.96 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
-	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76551-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76552-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[23];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,infradead.org,meta.com,fromorbit.com,gmail.com,kernel.dk,lst.de,stgolabs.net,vivo.com,vger.kernel.org,kvack.org,samsung.com];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
+	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,lst.de,mit.edu,infradead.org,suse.cz,suse.com,gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.988];
-	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MAILSPIKE_FAIL(0.00)[2600:3c0a:e001:db::12fc:5321:query timed out];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[linkinjeon@kernel.org,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCVD_COUNT_FIVE(0.00)[5];
 	R_DKIM_NA(0.00)[];
+	NEURAL_HAM(-0.00)[-0.994];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: E3D6BFACB7
+	DBL_BLOCKED_OPENRESOLVER(0.00)[wikipedia.org:url,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: CFA70FAE6C
 X-Rspamd-Action: no action
 
-On Fri, Jan 16, 2026 at 03:38:15PM +0530, Kundan Kumar wrote:
-> @@ -99,6 +99,11 @@ typedef struct xfs_inode {
->  	spinlock_t		i_ioend_lock;
->  	struct work_struct	i_ioend_work;
->  	struct list_head	i_ioend_list;
-> +
-> +	/* AG prediction map: pgoff_t -> packed u32 */
-> +	struct xarray           i_ag_pmap;
-> +	unsigned long           *i_ag_dirty_bitmap;
-> +	unsigned int            i_ag_dirty_bits;
+v8:
+ - Acked-by from Christoph Hellwig for the whole series.
+ - Remove unneeded check for unsigned lowest_vcn found by smatch.
+ - Use LCN_HOLE in runlist validation instead of magic value.
 
-I don't think bloating the inode like this is acceptable.
+Introduction
+============
 
-As said in my reply to patch 5, I think we're better off with more coarse
-grained sharding anyway.  i.e. just track an ag per inode.  We did this
-for zoned xfs by pointing to the open zone using the existing and
-otherwise unused inode->i_private field with great success.   You won't
-get as good placement for some use cases where files are fragmented over
-multiple AGs and you can please near close blocks right now, but you'll
-save a lot of overhead searching the alloc btrees, and probably generate
-a write pattern more suitable for SSDs.
+The NTFS filesystem[1] still remains the default filesystem for Windows
+and The well-maintained NTFS driver in the Linux kernel enhances
+interoperability with Windows devices, making it easier for Linux users
+to work with NTFS-formatted drives. Currently, ntfs support in Linux was
+the long-neglected NTFS Classic (read-only), which has been removed from
+the Linux kernel, leaving the poorly maintained ntfs3. ntfs3 still has
+many problems and is poorly maintained, so users and distributions are
+still using the old legacy ntfs-3g.
+
+The remade ntfs is an implementation that supports write and the essential
+requirements(iomap, no buffer-head, utilities, xfstests test result) based
+on read-only classic NTFS.
+The old read-only ntfs code is much cleaner, with extensive comments,
+offers readability that makes understanding NTFS easier. This is why
+new ntfs was developed on old read-only NTFS base.
+The target is to provide current trends(iomap, no buffer head, folio),
+enhanced performance, stable maintenance, utility support including fsck.
+
+
+Key Features
+============
+
+- Write support:
+   Implement write support on classic read-only NTFS. Additionally,
+   integrate delayed allocation to enhance write performance through
+   multi-cluster allocation and minimized fragmentation of cluster bitmap.
+
+- Switch to using iomap:
+   Use iomap for buffered IO writes, reads, direct IO, file extent mapping,
+   readpages, writepages operations.
+
+- Stop using the buffer head:
+   The use of buffer head in old ntfs and switched to use folio instead.
+   As a result, CONFIG_BUFFER_HEAD option enable is removed in Kconfig also.
+
+- Public utilities include fsck[2]:
+   While ntfs-3g includes ntfsprogs as a component, it notably lacks
+   the fsck implementation. So we have launched a new ntfs utilitiies
+   project called ntfsprogs-plus by forking from ntfs-3g after removing
+   unnecessary ntfs fuse implementation. fsck.ntfs can be used for ntfs
+   testing with xfstests as well as for recovering corrupted NTFS device.
+
+- Performance Enhancements:
+
+   - ntfs vs. ntfs3:
+
+     * Performance was benchmarked using iozone with various chunk size.
+        - In single-thread(1T) write tests, ntfs show approximately
+          3~5% better performance.
+        - In multi-thread(4T) write tests, ntfs show approximately
+          35~110% better performance.
+        - Read throughput is identical for both ntfs implementations.
+
+     1GB file      size:4096           size:16384           size:65536
+     MB/sec       ntfs | ntfs3        ntfs | ntfs3        ntfs | ntfs3
+     ─────────────────────────────────────────────────────────────────
+     read          399 | 399           426 | 424           429 | 430
+     ─────────────────────────────────────────────────────────────────
+     write(1T)     291 | 276           325 | 305           333 | 317
+     write(4T)     105 | 50            113 | 78            114 | 99.6
+
+
+     * File list browsing performance. (about 12~14% faster)
+
+                  files:100000        files:200000        files:400000
+     Sec          ntfs | ntfs3        ntfs | ntfs3        ntfs | ntfs3
+     ─────────────────────────────────────────────────────────────────
+     ls -lR       7.07 | 8.10        14.03 | 16.35       28.27 | 32.86
+
+
+     * mount time.
+
+             parti_size:1TB      parti_size:2TB      parti_size:4TB
+     Sec          ntfs | ntfs3        ntfs | ntfs3        ntfs | ntfs3
+     ─────────────────────────────────────────────────────────────────
+     mount        0.38 | 2.03         0.39 | 2.25         0.70 | 4.51
+
+   The following are the reasons why ntfs performance is higher
+    compared to ntfs3:
+     - Use iomap aops.
+     - Delayed allocation support.
+     - Optimize zero out for newly allocated clusters.
+     - Optimize runlist merge overhead with small chunck size.
+     - pre-load mft(inode) blocks and index(dentry) blocks to improve
+       readdir + stat performance.
+     - Load lcn bitmap on background.
+
+- Stability improvement:
+   a. Pass more xfstests tests:
+      ntfs passed 326 tests, significantly higher than ntfs3's 256.
+      ntfs passed tests are a complete superset of the tests passed
+      by ntfs3. ntfs implement fallocate, idmapped mount and permission,
+      etc, resulting in a significantly high number of xfstests passing
+      compared to ntfs3.
+   b. Bonnie++ issue[3]:
+      The Bonnie++ benchmark fails on ntfs3 with a "Directory not empty"
+      error during file deletion. ntfs3 currently iterates directory
+      entries by reading index blocks one by one. When entries are deleted
+      concurrently, index block merging or entry relocation can cause
+      readdir() to skip some entries, leaving files undeleted in
+      workloads(bonnie++) that mix unlink and directory scans.
+      ntfs implement leaf chain traversal in readdir to avoid entry skip
+      on deletion.
+
+- Journaling support:
+   ntfs3 does not provide full journaling support. It only implement journal
+   replay[4], which in our testing did not function correctly. My next task
+   after upstreaming will be to add full journal support to ntfs.
+
+
+The feature comparison summary
+==============================
+
+Feature                               ntfs       ntfs3
+===================================   ========   ===========
+Write support                         Yes        Yes
+iomap support                         Yes        No
+No buffer head                        Yes        No
+Public utilities(mkfs, fsck, etc.)    Yes        No
+xfstests passed                       326        256
+Idmapped mount                        Yes        No
+Delayed allocation                    Yes        No
+Bonnie++                              Pass       Fail
+Journaling                            Planned    Inoperative
+===================================   ========   ===========
+
+
+References
+==========
+[1] https://en.wikipedia.org/wiki/NTFS
+[2] https://github.com/ntfsprogs-plus/ntfsprogs-plus
+[3] https://lore.kernel.org/ntfs3/CAOZgwEd7NDkGEpdF6UQTcbYuupDavaHBoj4WwTy3Qe4Bqm6V0g@mail.gmail.com/
+[4] https://marc.info/?l=linux-fsdevel&m=161738417018673&q=mbox
+
+
+Available in the Git repository at:
+===================================
+git://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/ntfs.git ntfs-next
+
+
+Appendix: xfstests Results on ntfs
+==================================
+
+Summary
+- Total tests run: 787
+- Passed: 326
+- Failed: 38
+- Not run / skipped: 423
+
+Failed test cases and reasons
+  - Requires metadata journaling (34 tests)
+    043, 056, 051, 057, 065, 066, 073, 104, 225, 335, 336, 341, 342, 343,
+    348, 376, 388, 417, 475, 498, 502, 510, 526, 527, 530, 552,
+    640, 690, 764, 771, 779, 782, 784, 785
+
+  - Others (4 tests)
+    094: Not supported by NTFS on-disk format (no unwritten extent concept).
+    563: cgroup v2 aware writeback accounting not supported.
+    631: RENAME_WHITEOUT support is required on ntfs.
+    787: NFS delegation test.
+
+v7:
+ - Fix mount options indentation in Documentation.
+ - Add FMODE_CAN_ODIRECT in file open.
+ - Use -EOPNOTSUPP for unsupported EFS-encrypted I/O and add the comments.
+ - Remove lcn_seek_trunc field and O_TRUNC workaround codes.
+ - Move preallocated size trim to helper in file release.
+ - Use lowercase for reparse data structures.
+ - Split complex reparse validation into readable checks.
+ - Use early return in reparse tag validation.
+ - Consolidate memalloc_nofs_restore to single exit point.
+ - Remove useless headers from aops.c.
+ - Fix comment in ntfs_readahead.
+ - Rename mark_ntfs_record_dirty to ntfs_mft_mark_dirty.
+ - Move ntfs_mft_mark_dirty to mft.c.
+ - Remove empty aops.h.
+ - Simplify __ntfs_iomap_read_begin.
+ - Split ntfs_zero_range.
+ - Refactor __ntfs_write_iomap_begin, ntfs_write_iomap_end and
+   ntfs_iomap_put_folio.
+
+v6:
+ - Update ntfs.rst documentation.(Removed historical comparisons and
+   temporal terms as per review feedback)
+ - Remove outdated Linux-NTFS project references.
+ - Add missing return comments for functions.
+ - Move comments above in structure.
+ - Replace wait_for_stable_page with filemap_write_and_wait_range.
+ - Dereference the ntfs_inode field instead of the casts.
+ - Remove malloc.h file and use kvmalloc and friends.
+ - Update help text for NTFS_FS_POSIX_ACL in Kconfig.
+ - Remove __always_unused directives.
+ - Change #ifndef to #ifdef in debug.
+ - Refactor ntfs_collate_ntofs_ulongs.
+ - Change type of key length for index.
+ - Remove verbose debug logs from ntfs_collate.
+ - Fix sparse warnings.
+ - Move initialization into declaration line.
+ - Don't type cast from pointer to void.
+ - Refactor ntfs_collate.
+ - Re-implement llseek using iomap.
+ - Don't allow acl mount option when config is disabled.
+ - Fix kerneldoc warnings.
+ - Update comments for magic constants.
+ - Use sizeof(unsigned char) instead of UCHAR_T_SIZE_BITS.
+ - Replace macros with inline helpers.
+ - Add/use generic FS_IOC_SHUTDOWN definitions.
+ - Remove flush_dcache_folio.
+ - Introduce address space operations for $MFT.
+ - Add comment for ntfs_bio_end_io.
+ - Add ntfs_get_locked_folio helper.
+ - Remove outdated ntfs_setattr comment.
+ - Remove unnecessary kernel-doc comments.
+ - Fix missing error handling for compressed/encrypted files in setattr.
+ - Refactor ATTR_SIZE handling into ntfs_setattr_size().
+ - Rely on iomap for direct I/O alignment state.
+ - Report advanced file attributes and DIO alignment in getattr.
+ - Move ntfs_attr_expand and ntfs_extend_initialized_size to ntfs iomap.
+ - Factor out ntfs_dio_write_iter from ntfs_write_iter().
+ - Remove unneeded IS_IMMUTABLE in ntfs_filemap_page_mkwrite.
+ - Remove regular file check in ntfs_fallocate.
+ - Change COMPRESS_CONTEXT to lowercase.
+ - Add the comment for hash multiplier.
+ - Fix potential deadlock when inode is freed.
+ - Fix generic/321 failure when acl is enabled.
+ - use bdev_rw_virt in ntfs_bdev_read.
+ - Remove mft_writepage from ntfs_writepages.
+ - let ntfs_mft_writepages call ntfs_write_mft_block instead of
+   ntfs_mft_writepage.
+ - Move ntfs_write_mft_block into mft.c.
+ - Move ntfs_bdev_read/write into bdev-io.c
+ - Move ntfs_mft_writepages to mft.c.
+
+v5:
+ - Update outdated comments to match implementation.
+ - Remove unused types.h and endians.h.
+ - Replace submit_bio_wait() with submit_bio().
+ - Fix lockdep warnings caused by the latest xfstets and scratch_mkfs_sized support.
+ - Rename ntfs_convert_folio_index_into_lcn() to lcn_from_index().
+ - Fix warnings reported by Smatch static checker.
+ - Fix typos patch description of MAINTAINERS.
+
+v4:
+ - remove choice variable in fs/Kconfig and make ntfs and ntfs3 mutually
+   exclusive in simpler way.
+ - Original revert commit includes MAINTAINERS and CREDITS and update ntfs
+   entry in MAITAINERS and Anton's info in CREDITS.
+ - Original revert commit include documentation and update it instead of
+   adding a new one.
+ - Fix generic/401 test failure and indicate that ntfs passed tests are
+   a complete superset of those for ntfs3.
+ - Remove unnecessary comments and warning options from Makefile.
+ - Add patch description to original revert patch and the patch that
+   remove legacy ntfs driver related codes in ntfs.
+ - Support timestamps prior to epoch (fix generic/258).
+ - Fix xfstests generic/683, 684, 686, 687, 688.
+
+v3:
+ - Add generic helpers to convert cluster to folio index, cluster to
+   byte, byte to sector, etc.
+ - Remove bio null check and ntfs_setup_bio().
+ - Remove unneeded extra handling from old ntfs leftover.
+ - Allow readahead for $MFT file.
+ - Change memcpy to memcpy_from_folio or memcpy_to_folio.
+ - Never switche between compressed and non-compressed for live inodes.
+ - Add the comments for iomap_valid and iomap_put_folio.
+ - Split the resident and non-resident cases into separate helpers.
+ - Use kmalloc instead of page allocation for iomap inline data.
+ - Use iomap_zero_range instead of ntfs_buffered_zero_clusters.
+ - Use blkdev_issue_zeroout instead of ntfs_zero_clusters.
+ - Remove 2TB limitation on 32-bit system.
+ - Rename ntfsplus to ntfs.
+ - Remove -EINTR handing for read_mapping_folio.
+ - Rename ntfs_iomap.c to iomap.c
+ - Revert alias for the legacy ntfs driver in ntfs3.
+ - Restrict built-in NTFS seclection to one driver, allow both as
+   modules.
+ - Use static_assert() instead of the sizeof comments.
+ - Update the wrong iocharset comments in ntfs.rst.
+
+v2:
+ - Add ntfs3-compatible mount options(sys_immutable, nohidden,
+   hide_dot_files, nocase, acl, windows_names, disable_sparse, discard).
+ - Add iocharset mount option.
+ - Add ntfs3-compatible dos attribute and ntfs attribute load/store
+   in setxattr/getattr().
+ - Add support for FS_IOC_{GET,SET}FSLABEL ioctl.
+ - Add support for FITRIM ioctl.
+ - Fix the warnings(duplicate symbol, __divdi3, etc) from kernel test robot.
+ - Prefix pr_xxx() with ntfsplus.
+ - Add support for $MFT File extension.
+ - Add Documentation/filesystems/ntfsplus.rst.
+ - Mark experimental.
+ - Remove BUG traps warnings from checkpatch.pl.
+
+
+Namjae Jeon (17):
+  Revert "fs: Remove NTFS classic"
+  fs: add generic FS_IOC_SHUTDOWN definitions
+  ntfs: update in-memory, on-disk structures and headers
+  ntfs: update super block operations
+  ntfs: update inode operations
+  ntfs: update mft operations
+  ntfs: update directory operations
+  ntfs: update file operations
+  ntfs: update iomap and address space operations
+  ntfs: update attrib operations
+  ntfs: update runlist handling and cluster allocator
+  ntfs: add reparse and ea operations
+  ntfs: update misc operations
+  ntfs3: remove legacy ntfs driver support
+  ntfs: add Kconfig and Makefile
+  Documentation: filesystems: update NTFS driver documentation
+  MAINTAINERS: update ntfs filesystem entry
+
+ CREDITS                             |    9 +-
+ Documentation/filesystems/index.rst |    1 +
+ Documentation/filesystems/ntfs.rst  |  159 +
+ MAINTAINERS                         |    9 +
+ fs/Kconfig                          |    1 +
+ fs/Makefile                         |    1 +
+ fs/ntfs/Kconfig                     |   47 +
+ fs/ntfs/Makefile                    |   10 +
+ fs/ntfs/aops.c                      |  263 ++
+ fs/ntfs/attrib.c                    | 5425 +++++++++++++++++++++++++++
+ fs/ntfs/attrib.h                    |  164 +
+ fs/ntfs/attrlist.c                  |  289 ++
+ fs/ntfs/attrlist.h                  |   20 +
+ fs/ntfs/bdev-io.c                   |  109 +
+ fs/ntfs/bitmap.c                    |  287 ++
+ fs/ntfs/bitmap.h                    |  100 +
+ fs/ntfs/collate.c                   |  146 +
+ fs/ntfs/collate.h                   |   36 +
+ fs/ntfs/compress.c                  | 1577 ++++++++
+ fs/ntfs/debug.c                     |  171 +
+ fs/ntfs/debug.h                     |   63 +
+ fs/ntfs/dir.c                       | 1233 ++++++
+ fs/ntfs/dir.h                       |   32 +
+ fs/ntfs/ea.c                        |  947 +++++
+ fs/ntfs/ea.h                        |   30 +
+ fs/ntfs/file.c                      | 1158 ++++++
+ fs/ntfs/index.c                     | 2117 +++++++++++
+ fs/ntfs/index.h                     |  111 +
+ fs/ntfs/inode.c                     | 3821 +++++++++++++++++++
+ fs/ntfs/inode.h                     |  359 ++
+ fs/ntfs/iomap.c                     |  870 +++++
+ fs/ntfs/iomap.h                     |   23 +
+ fs/ntfs/layout.h                    | 2346 ++++++++++++
+ fs/ntfs/lcnalloc.c                  | 1047 ++++++
+ fs/ntfs/lcnalloc.h                  |  134 +
+ fs/ntfs/logfile.c                   |  778 ++++
+ fs/ntfs/logfile.h                   |  245 ++
+ fs/ntfs/malloc.h                    |   77 +
+ fs/ntfs/mft.c                       | 2920 ++++++++++++++
+ fs/ntfs/mft.h                       |   94 +
+ fs/ntfs/mst.c                       |  194 +
+ fs/ntfs/namei.c                     | 1695 +++++++++
+ fs/ntfs/ntfs.h                      |  294 ++
+ fs/ntfs/object_id.c                 |  158 +
+ fs/ntfs/object_id.h                 |   14 +
+ fs/ntfs/quota.c                     |   95 +
+ fs/ntfs/quota.h                     |   15 +
+ fs/ntfs/reparse.c                   |  573 +++
+ fs/ntfs/reparse.h                   |   20 +
+ fs/ntfs/runlist.c                   | 2066 ++++++++++
+ fs/ntfs/runlist.h                   |   97 +
+ fs/ntfs/super.c                     | 2769 ++++++++++++++
+ fs/ntfs/sysctl.c                    |   55 +
+ fs/ntfs/sysctl.h                    |   26 +
+ fs/ntfs/time.h                      |   87 +
+ fs/ntfs/unistr.c                    |  477 +++
+ fs/ntfs/upcase.c                    |   70 +
+ fs/ntfs/volume.h                    |  296 ++
+ fs/ntfs3/Kconfig                    |   10 +-
+ fs/ntfs3/dir.c                      |    9 -
+ fs/ntfs3/file.c                     |   10 -
+ fs/ntfs3/inode.c                    |   16 +-
+ fs/ntfs3/ntfs_fs.h                  |   11 -
+ fs/ntfs3/super.c                    |   59 +-
+ include/uapi/linux/fs.h             |   12 +
+ 65 files changed, 36241 insertions(+), 116 deletions(-)
+ create mode 100644 Documentation/filesystems/ntfs.rst
+ create mode 100644 fs/ntfs/Kconfig
+ create mode 100644 fs/ntfs/Makefile
+ create mode 100644 fs/ntfs/aops.c
+ create mode 100644 fs/ntfs/attrib.c
+ create mode 100644 fs/ntfs/attrib.h
+ create mode 100644 fs/ntfs/attrlist.c
+ create mode 100644 fs/ntfs/attrlist.h
+ create mode 100644 fs/ntfs/bdev-io.c
+ create mode 100644 fs/ntfs/bitmap.c
+ create mode 100644 fs/ntfs/bitmap.h
+ create mode 100644 fs/ntfs/collate.c
+ create mode 100644 fs/ntfs/collate.h
+ create mode 100644 fs/ntfs/compress.c
+ create mode 100644 fs/ntfs/debug.c
+ create mode 100644 fs/ntfs/debug.h
+ create mode 100644 fs/ntfs/dir.c
+ create mode 100644 fs/ntfs/dir.h
+ create mode 100644 fs/ntfs/ea.c
+ create mode 100644 fs/ntfs/ea.h
+ create mode 100644 fs/ntfs/file.c
+ create mode 100644 fs/ntfs/index.c
+ create mode 100644 fs/ntfs/index.h
+ create mode 100644 fs/ntfs/inode.c
+ create mode 100644 fs/ntfs/inode.h
+ create mode 100644 fs/ntfs/iomap.c
+ create mode 100644 fs/ntfs/iomap.h
+ create mode 100644 fs/ntfs/layout.h
+ create mode 100644 fs/ntfs/lcnalloc.c
+ create mode 100644 fs/ntfs/lcnalloc.h
+ create mode 100644 fs/ntfs/logfile.c
+ create mode 100644 fs/ntfs/logfile.h
+ create mode 100644 fs/ntfs/malloc.h
+ create mode 100644 fs/ntfs/mft.c
+ create mode 100644 fs/ntfs/mft.h
+ create mode 100644 fs/ntfs/mst.c
+ create mode 100644 fs/ntfs/namei.c
+ create mode 100644 fs/ntfs/ntfs.h
+ create mode 100644 fs/ntfs/object_id.c
+ create mode 100644 fs/ntfs/object_id.h
+ create mode 100644 fs/ntfs/quota.c
+ create mode 100644 fs/ntfs/quota.h
+ create mode 100644 fs/ntfs/reparse.c
+ create mode 100644 fs/ntfs/reparse.h
+ create mode 100644 fs/ntfs/runlist.c
+ create mode 100644 fs/ntfs/runlist.h
+ create mode 100644 fs/ntfs/super.c
+ create mode 100644 fs/ntfs/sysctl.c
+ create mode 100644 fs/ntfs/sysctl.h
+ create mode 100644 fs/ntfs/time.h
+ create mode 100644 fs/ntfs/unistr.c
+ create mode 100644 fs/ntfs/upcase.c
+ create mode 100644 fs/ntfs/volume.h
+
+-- 
+2.25.1
+
 
