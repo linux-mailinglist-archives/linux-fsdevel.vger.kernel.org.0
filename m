@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-76606-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76607-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iGRkNhodhmmTJwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76606-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 17:55:54 +0100
+	id zq3XOq4chmmTJwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76607-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 17:54:06 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A431009CD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 17:55:53 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF99E10094A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 17:54:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 4DE15302E24C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 16:52:25 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id E74AD3019595
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 16:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA392395247;
-	Fri,  6 Feb 2026 16:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BF23B5314;
+	Fri,  6 Feb 2026 16:51:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TvPZ3526"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R8AxzhBy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FCC38F92C;
-	Fri,  6 Feb 2026 16:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50B73AA197;
+	Fri,  6 Feb 2026 16:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770396696; cv=none; b=WgqHClylCWl4+WXYCIVl3hIzT1FafWgthKAm9mVJ+XtBthPEP5ToIHiwfG9L1wrMuAQ/tRDnw/9rluN2KIt9FU/P3zpDi6YqddpNNyH3mfwXh7gaN6FZOMZkV/zHIMBKYCYaiyzPjlItGGZgu0x9HKVKtZOfWZ7vOAhmFNhDdrk=
+	t=1770396698; cv=none; b=rIDcVwent52A/koLDEZOYVV5YeoaxB4xkkJDXaAq0AM6+DzG7/kvzxT50SMHyvYNxNDIq7YwcaCRXIC2TfAdoaHI2W2JQCpaCO9cl2Jp9KzA8uM5zZTJYVKk5nflhEy7FS6p50g/plVzGuKPCAPMwvgnSxTYRwgzJ2tCVSwnWO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770396696; c=relaxed/simple;
-	bh=lplwV6b1bn/Na2m41GcdODxECKL7k8furN+dNpvdYAs=;
+	s=arc-20240116; t=1770396698; c=relaxed/simple;
+	bh=GuMmtVB1YWYBA0yB69k38sQLGwquxaqwXfAjnEB1NUM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OqTOAN5nH2qU5UmTvllHvkT8l/W9xwGQKFbiVqIMJ4Gh6Im6lg9BtXzvbeqxgGnbUdPAvPs8/rUSoQDorPsx1hNCMn0vhMn1KSthG/Sg5BDErzS2mn4/7Mw0mVZQ4x1tM0fW7rhJVaCSarrfC3PBqwZ+VLFJOGB+xeoSe3RZebA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TvPZ3526; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02025C19423;
-	Fri,  6 Feb 2026 16:51:34 +0000 (UTC)
+	 MIME-Version; b=aPSsrqa0Rfa+vkgfiSKSATcRtPvc+nqz0wF+/ZT1GvWdCNp3HOOi7B06IqXH8oBbPLmkndQRwcIVuCcsGED65klLG7SPOcwCpLXSyUhTujrc7iWYR0OOHwcF/VzVUKvf669blHCZWgCB6NRcS/q648Acye/buy/2eE6u5nb9cfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R8AxzhBy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EB8AC116C6;
+	Fri,  6 Feb 2026 16:51:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770396696;
-	bh=lplwV6b1bn/Na2m41GcdODxECKL7k8furN+dNpvdYAs=;
+	s=k20201202; t=1770396697;
+	bh=GuMmtVB1YWYBA0yB69k38sQLGwquxaqwXfAjnEB1NUM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TvPZ35269JXmLaQTNEpCW94BnqIDabtOH8E++pXmOLb76RrwPmqyixs1gud1WNVN3
-	 0I09V6gMeJzazvf16fxJq83FyQ+2dLWedU/kOKXkrHXQZdi1zJOEZfrvE6O1rTR7Y7
-	 LyfyVaWXxKCwjQMySYhbpYGKegb+0f5D+3/PHuDFZ69VeNS4l1HLuhDOGSUNUQYMQd
-	 ovf5e9spenxoJHPNv5X4mp6TtpvAyxFzaw2e9pn6UIIFBF/bg0FmJvZNfbLjw8i8DN
-	 /inl1SJOo2Oh6J8rXzhOJF7AccqtJyGKkSlUAR2hAlhh8v1+27PySFEzkYV75rT0M1
-	 bP1AhMjKtNpAw==
+	b=R8AxzhByRzDBc437/jzlS1l5iaa4O8NbZp2CNfS+JPGiEM89rBvsqyotfG2RECadk
+	 W4JqSFAOEbGgDhsM5PupSbtkBgPFTRpCQSyAcmMcCpqq6rZtdoAaEbt0nZQ6eQcUPf
+	 mDakmE8Yvc2EC1bO7UGLIJPGF8FQf8FA+Gz5w25OrX3WXPBITxHVRiNyaTpVxkM1FC
+	 nk+TGBhrNS3QNmcxyzvFc9gDlyzityggmu5+Q5F5bXs6kXk49UCRW8TMGypcIuAfYI
+	 8QFiT+pY2CTWYhX/1VbCiUvgExsZbaNR5z/IDmkEDHxJjZzx+rv+fmeGc0u1GsVk/r
+	 54Sg3VPSacW5w==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL 08/12 for v7.0] vfs nullfs
-Date: Fri,  6 Feb 2026 17:50:04 +0100
-Message-ID: <20260206-vfs-nullfs-v70-20f5788c0c2f@brauner>
+Subject: [GIT PULL 09/12 for v7.0] vfs atomic_open
+Date: Fri,  6 Feb 2026 17:50:05 +0100
+Message-ID: <20260206-vfs-atomic_open-v70-7297c622297a@brauner>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260206-vfs-v70-7df0b750d594@brauner>
 References: <20260206-vfs-v70-7df0b750d594@brauner>
@@ -61,7 +61,7 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4330; i=brauner@kernel.org; h=from:subject:message-id; bh=lplwV6b1bn/Na2m41GcdODxECKL7k8furN+dNpvdYAs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWS2Se/acufFR4a1fiJ3ba45O+tW34v9vunbjze/E7TE2 g7Zby1f3VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRdgWGfxq/jOZ82HtoyZRg kz8zF9s8cWPrrPx+cBJ/gLzjj9jwm5yMDO/+7ee7ZcQtKh+60bjI3n6XveN8Tua9mi8qon+YHF7 hxAkA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2289; i=brauner@kernel.org; h=from:subject:message-id; bh=GuMmtVB1YWYBA0yB69k38sQLGwquxaqwXfAjnEB1NUM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWS2Se+yM1Odbdu5dW/Mkd9LQz0u3pd92NSTfDlZ+EKHC VOhTPSWjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImsqmf4yfhu44EJHIaqfNN2 t7pNUSgSMOvwa5ds1Z+06PbN/1XrpjH8Uy24rWFQsDLwxaP/wgl+l7vlryR7HNWMtVmeJc96NaS dGwA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
@@ -71,18 +71,18 @@ X-Spamd-Result: default: False [2.84 / 15.00];
 	MID_RHS_NOT_FQDN(0.50)[];
 	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	TAGGED_FROM(0.00)[bounces-76606-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76607-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
 	RCPT_COUNT_THREE(0.00)[4];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
@@ -92,50 +92,26 @@ X-Spamd-Result: default: False [2.84 / 15.00];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 03A431009CD
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: AF99E10094A
 X-Rspamd-Action: no action
 
 Hey Linus,
 
 /* Summary */
 
-Add a completely catatonic minimal pseudo filesystem called "nullfs" and
-make pivot_root() work in the initramfs.
+Allow knfsd to use atomic_open():
 
-Currently pivot_root() does not work on the real rootfs because it
-cannot be unmounted. Userspace has to recursively delete initramfs
-contents manually before continuing boot, using the fragile switch_root
-sequence (overmount + chroot).
+  While knfsd offers combined exclusive create and open results to
+  clients, on some filesystems those results are not atomic. The
+  separate vfs_create() + vfs_open() sequence in dentry_create() can
+  produce races and unexpected errors. For example, open O_CREAT with
+  mode 0 will succeed in creating the file but return -EACCES from
+  vfs_open(). Additionally, network filesystems benefit from reducing
+  remote round-trip operations by using a single atomic_open() call.
 
-Add nullfs, a minimal immutable filesystem that serves as the true root
-of the mount hierarchy. The mutable rootfs (tmpfs/ramfs) is mounted on
-top of it. This allows userspace to simply:
-
-      chdir(new_root);
-      pivot_root(".", ".");
-      umount2(".", MNT_DETACH);
-
-without the traditional switch_root workarounds. systemd already handles
-this correctly. It tries pivot_root() first and falls back to MS_MOVE
-only when that fails.
-
-This also means rootfs mounts in unprivileged namespaces no longer need
-MNT_LOCKED, since the immutable nullfs guarantees nothing can be
-revealed by unmounting the covering mount.
-
-nullfs is a single-instance filesystem (get_tree_single()) marked
-SB_NOUSER | SB_I_NOEXEC | SB_I_NODEV with an immutable empty root
-directory. This means sooner or later it can be used to overmount other
-directories to hide their contents without any additional protection
-needed.
-
-We enable it unconditionally. If we see any real regression we'll hide
-it behind a boot option.
-
-nullfs has extensions beyond this in the future. It will serve as a
-concept to support the creation of completely empty mount namespaces -
-which is work coming up in the next cycle.
+  Teach dentry_create() -- whose sole caller is knfsd -- to use
+  atomic_open() for filesystems that support it.
 
 /* Testing */
 
@@ -146,27 +122,10 @@ No build failures or warnings were observed.
 
 /* Conflicts */
 
-Merge conflicts with mainline or other vfs branches
-====================================================
+Merge conflicts with mainline
+=============================
 
-Conflict with the vfs fserror branch in fs/Makefile. The fserror branch
-added fserror.o, while the nullfs branch added nullfs.o. The resolution
-includes both.
-
-diff --cc fs/Makefile
-index f238cc5ea2e9,becf133e4791..cf4a745e9679
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@@ -16,7 -16,7 +16,7 @@@ obj-y :=	open.o read_write.o file_table
- 		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
- 		fs_dirent.o fs_context.o fs_parser.o fsopen.o init.o \
- 		kernel_read_file.o mnt_idmapping.o remap_range.o pidfs.o \
-- 		file_attr.o fserror.o
- -		file_attr.o nullfs.o
-++		file_attr.o fserror.o nullfs.o
-
- obj-$(CONFIG_BUFFER_HEAD)	+= buffer.o mpage.o
- obj-$(CONFIG_PROC_FS)		+= proc_namespace.o
+No known conflicts.
 
 Merge conflicts with other trees
 ================================
@@ -177,39 +136,35 @@ The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1e8:
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-7.0-rc1.nullfs
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-7.0-rc1.atomic_open
 
-for you to fetch changes up to 313c47f4fe4d07eb2969f429a66ad331fe2b3b6f:
+for you to fetch changes up to 6ea258d1f6895c61af212473b51477d39b8c99d2:
 
-  fs: use nullfs unconditionally as the real rootfs (2026-01-14 11:23:39 +0100)
+  fs/namei: fix kernel-doc markup for dentry_create (2026-01-20 14:54:01 +0100)
 
 ----------------------------------------------------------------
-vfs-7.0-rc1.nullfs
+vfs-7.0-rc1.atomic_open
 
-Please consider pulling these changes from the signed vfs-7.0-rc1.nullfs tag.
+Please consider pulling these changes from the signed vfs-7.0-rc1.atomic_open tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-Christian Brauner (6):
-      fs: ensure that internal tmpfs mount gets mount id zero
-      fs: add init_pivot_root()
-      fs: add immutable rootfs
-      docs: mention nullfs
-      Merge patch series "fs: add immutable rootfs"
-      fs: use nullfs unconditionally as the real rootfs
+Benjamin Coddington (3):
+      VFS: move dentry_create() from fs/open.c to fs/namei.c
+      VFS: Prepare atomic_open() for dentry_create()
+      VFS/knfsd: Teach dentry_create() to use atomic_open()
 
- .../filesystems/ramfs-rootfs-initramfs.rst         |  26 ++--
- fs/Makefile                                        |   2 +-
- fs/init.c                                          |  17 +++
- fs/internal.h                                      |   1 +
- fs/mount.h                                         |   1 +
- fs/namespace.c                                     | 159 +++++++++++++--------
- fs/nullfs.c                                        |  70 +++++++++
- include/linux/init_syscalls.h                      |   1 +
- include/uapi/linux/magic.h                         |   1 +
- init/do_mounts.c                                   |  12 +-
- 10 files changed, 216 insertions(+), 74 deletions(-)
- create mode 100644 fs/nullfs.c
+Christian Brauner (1):
+      Merge patch series "Allow knfsd to use atomic_open()"
+
+Jay Winston (1):
+      fs/namei: fix kernel-doc markup for dentry_create
+
+ fs/namei.c         | 80 +++++++++++++++++++++++++++++++++++++++++++++++++-----
+ fs/nfsd/nfs4proc.c | 11 ++++++--
+ fs/open.c          | 39 --------------------------
+ include/linux/fs.h |  2 +-
+ 4 files changed, 82 insertions(+), 50 deletions(-)
 
