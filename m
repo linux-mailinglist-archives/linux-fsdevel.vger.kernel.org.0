@@ -1,136 +1,277 @@
-Return-Path: <linux-fsdevel+bounces-76594-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76595-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id IDPEKS4HhmkRJQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76594-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 16:22:22 +0100
+	id 8HggEmEKhmkRJQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76595-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 16:36:01 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2801EFFB03
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 16:22:22 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1AB9FFCE6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 16:36:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 5CC773055BFB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 15:20:23 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id F1B8E300E5C9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 15:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C26535DD0C;
-	Fri,  6 Feb 2026 15:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18C12BDC04;
+	Fri,  6 Feb 2026 15:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WAdYV5Fh";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hIku7Ikp";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WAdYV5Fh";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hIku7Ikp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from cventin.lip.ens-lyon.fr (cventin.lip.ens-lyon.fr [140.77.13.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A75395247;
-	Fri,  6 Feb 2026 15:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.77.13.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3606C26FD9B
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Feb 2026 15:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770391218; cv=none; b=ReGr+XL21PL+qtYjsngK8oD7tlUTNELvilquxdUjuWLQhQGYYo8yWcBXK2PjF75TbsL37TGJC0v+WqgfhAj5Vs4Jk6OPw8K8gtiIhzH1gUsEUzjR3lnEtchCigj+hH+YUG4LM+TBC5rE3fSK9kgT27ELl7T8L+k5ji+HkYuYaQ8=
+	t=1770392157; cv=none; b=k9q3znIFgOa1PhKaXvl0F5mG7uyh2bJ+3LZYCbEZqoZIxJYpNp8whplOwVS2U98347aDBka9CfJuqzWncIKkCkd+7hB4WVRZy9McBHP4+GI8VqWFkECYpUMEI/UAZjo9BAcmuiIbj1JcdrTBMiMrmRf5o3UFkM3HynlMuyE+8Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770391218; c=relaxed/simple;
-	bh=f/+yWBn1FLl5XdChkJD1jPYZj7i5IyJjy2+4/F5Wzd0=;
+	s=arc-20240116; t=1770392157; c=relaxed/simple;
+	bh=7BSdG8O1SD2/Z6DqYe2xZ60FxCTzKX4RjOvnd335ncU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f9dJaVqkLU5zshTUx4Brtj65PWgtdaeixVRTP8Ymz0H+ax+v1mG+jNwfFh4+AkVsRvqEKvjceqDUSMhMmICWeBx4QoMoyP8PlyVJvmOwW4DtS2RESXgBND1jihCB8diTuzPaYvH8CwNw3P4XBqK0fm/H5gbZTHC+lAceqkChv4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vinc17.net; spf=pass smtp.mailfrom=vinc17.net; arc=none smtp.client-ip=140.77.13.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vinc17.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vinc17.net
-Received: from vlefevre by cventin.lip.ens-lyon.fr with local (Exim 4.99.1)
-	(envelope-from <vincent@vinc17.net>)
-	id 1voNW2-000000007WV-0YSB;
-	Fri, 06 Feb 2026 16:13:02 +0100
-Date: Fri, 6 Feb 2026 16:13:02 +0100
-From: Vincent Lefevre <vincent@vinc17.net>
-To: Rich Felker <dalias@libc.org>
-Cc: Alejandro Colomar <alx@kernel.org>, Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-	libc-alpha@sourceware.org
-Subject: Re: [RFC v1] man/man2/close.2: CAVEATS: Document divergence from
- POSIX.1-2024
-Message-ID: <20260206151302.GB2951@cventin.lip.ens-lyon.fr>
-Mail-Followup-To: Vincent Lefevre <vincent@vinc17.net>,
-	Rich Felker <dalias@libc.org>, Alejandro Colomar <alx@kernel.org>,
-	Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-	libc-alpha@sourceware.org
-References: <a5tirrssh3t66q4vpwpgmxgxaumhqukw5nyxd4x6bevh7mtuvy@wtwdsb4oloh4>
- <efaffc5a404cf104f225c26dbc96e0001cede8f9.1747399542.git.alx@kernel.org>
- <20250516130547.GV1509@brightrain.aerifal.cx>
- <20250516143957.GB5388@qaa.vinc17.org>
- <20250517133251.GY1509@brightrain.aerifal.cx>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I5SXQRHOzBWD9ht5uBQJqjIQvXgWu3z5GZubS+ZUMny3pv7oMwzZMWJkNM3al8sSie7pBu0M5+bNElS6xnn2TMlWSN7Ogo+ypr3y2e5718BIOhzjTOfxY218mJWSpx5r3/dSUAVC1/icKm2v8x2gcKaOy7jdx1WoR3/afYIzNJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WAdYV5Fh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hIku7Ikp; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WAdYV5Fh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hIku7Ikp; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6FCA23E6E8;
+	Fri,  6 Feb 2026 15:35:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1770392155; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Iqg0VauHz5OEUAgvtmJ6LPTPfRvzttMRzxEn5z628Hc=;
+	b=WAdYV5Fhy1Zvfg+YwH4WKi7rqjpQGIBzsI2eFYSkYEvtVZzwjG03KpCc99a/aIg4mrgKC7
+	DmTDtu2J+UNdKavwaOvilvqKG7QZfeKB6zIROQuntInAzZgk38y3owTRy/Qlg06qa5NOtF
+	z6JqBOx52bZ8KcNZ4ZNWLyyo6McBK6Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1770392155;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Iqg0VauHz5OEUAgvtmJ6LPTPfRvzttMRzxEn5z628Hc=;
+	b=hIku7IkpFOEXRH9rnZS15B4m5ehbV0vsxQJHYT48dPrCmPZfjGDFJ4uN8ZlCWTBgAzmyCt
+	XdGZCuVo0xQtY2Cg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=WAdYV5Fh;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=hIku7Ikp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1770392155; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Iqg0VauHz5OEUAgvtmJ6LPTPfRvzttMRzxEn5z628Hc=;
+	b=WAdYV5Fhy1Zvfg+YwH4WKi7rqjpQGIBzsI2eFYSkYEvtVZzwjG03KpCc99a/aIg4mrgKC7
+	DmTDtu2J+UNdKavwaOvilvqKG7QZfeKB6zIROQuntInAzZgk38y3owTRy/Qlg06qa5NOtF
+	z6JqBOx52bZ8KcNZ4ZNWLyyo6McBK6Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1770392155;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Iqg0VauHz5OEUAgvtmJ6LPTPfRvzttMRzxEn5z628Hc=;
+	b=hIku7IkpFOEXRH9rnZS15B4m5ehbV0vsxQJHYT48dPrCmPZfjGDFJ4uN8ZlCWTBgAzmyCt
+	XdGZCuVo0xQtY2Cg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 56E903EA63;
+	Fri,  6 Feb 2026 15:35:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 358xFVsKhmmyCAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 06 Feb 2026 15:35:55 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id EECF3A09E9; Fri,  6 Feb 2026 16:35:50 +0100 (CET)
+Date: Fri, 6 Feb 2026 16:35:50 +0100
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu, 
+	adilger.kernel@dilger.ca, ojaswin@linux.ibm.com, ritesh.list@gmail.com, hch@infradead.org, 
+	djwong@kernel.org, Zhang Yi <yi.zhang@huawei.com>, yizhang089@gmail.com, 
+	libaokun1@huawei.com, yangerkun@huawei.com, yukuai@fnnas.com
+Subject: Re: [PATCH -next v2 03/22] ext4: only order data when partially
+ block truncating down
+Message-ID: <yhy4cgc4fnk7tzfejuhy6m6ljo425ebpg6khss6vtvpidg6lyp@5xcyabxrl6zm>
+References: <20260203062523.3869120-1-yi.zhang@huawei.com>
+ <20260203062523.3869120-4-yi.zhang@huawei.com>
+ <jgotl7vzzuzm6dvz5zfgk6haodxvunb4hq556pzh4hqqwvnhxq@lr3jiedhqh7c>
+ <b889332b-9c0c-46d1-af61-1f2426c8c305@huaweicloud.com>
+ <ocwepmhnw45k5nwwrooe2li2mzavw5ps2ncmowrc32u4zeitgp@gqsz3iee3axr>
+ <1dad3113-7b84-40a0-8c7e-da30ae5cba8e@huaweicloud.com>
+ <7hy5g3bp5whis4was5mqg3u6t37lwayi6j7scvpbuoqsbe5adc@mh5zxvml3oe7>
+ <3ea033c1-8d32-4c82-baea-c383fa1d9e2a@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250517133251.GY1509@brightrain.aerifal.cx>
-X-Mailer-Info: https://www.vinc17.net/mutt/
-User-Agent: Mutt/2.3+4 (71f3e314) vl-169878 (2026-01-27)
+In-Reply-To: <3ea033c1-8d32-4c82-baea-c383fa1d9e2a@huaweicloud.com>
+X-Spam-Flag: NO
+X-Spam-Score: -2.51
+X-Spam-Level: 
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.46 / 15.00];
+X-Spamd-Result: default: False [0.34 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns];
-	NEURAL_HAM(-0.00)[-0.942];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	DMARC_NA(0.00)[vinc17.net];
-	TO_DN_SOME(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[vincent@vinc17.net,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	R_DKIM_NA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76594-lists,linux-fsdevel=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[]
-X-Rspamd-Queue-Id: 2801EFFB03
+	TAGGED_FROM(0.00)[bounces-76595-lists,linux-fsdevel=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns];
+	DMARC_NA(0.00)[suse.cz];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,mit.edu,dilger.ca,linux.ibm.com,gmail.com,infradead.org,kernel.org,huawei.com,fnnas.com];
+	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	NEURAL_HAM(-0.00)[-0.998];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TO_DN_SOME(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: B1AB9FFCE6
 X-Rspamd-Action: no action
 
-On 2025-05-17 09:32:52 -0400, Rich Felker wrote:
-> On Fri, May 16, 2025 at 04:39:57PM +0200, Vincent Lefevre wrote:
-> > On 2025-05-16 09:05:47 -0400, Rich Felker wrote:
-> > > FWIW musl adopted the EINPROGRESS as soon as we were made aware of the
-> > > issue, and later changed it to returning 0 since applications
-> > > (particularly, any written prior to this interpretation) are prone to
-> > > interpret EINPROGRESS as an error condition rather than success and
-> > > possibly misinterpret it as meaning the fd is still open and valid to
-> > > pass to close again.
-> > 
-> > If I understand correctly, this is a poor choice. POSIX.1-2024 says:
-> > 
-> > ERRORS
-> >   The close() and posix_close() functions shall fail if:
-> > [...]
-> >   [EINPROGRESS]
-> >     The function was interrupted by a signal and fildes was closed
-> >     but the close operation is continuing asynchronously.
-> > 
-> > But this does not mean that the asynchronous close operation will
-> > succeed.
+On Fri 06-02-26 19:09:53, Zhang Yi wrote:
+> On 2/5/2026 11:05 PM, Jan Kara wrote:
+> > So how about the following:
 > 
-> There are no asynchronous behaviors specified for there to be a
-> conformance distinction here. The only observable behaviors happen
-> instantly, mainly the release of the file descriptor and the process's
-> handle on the underlying resource. Abstractly, there is no async
-> operation that could succeed or fail.
+> Let me see, please correct me if my understanding is wrong, ana there are
+> also some points I don't get.
+> 
+> > We expand our io_end processing with the
+> > ability to journal i_disksize updates after page writeback completes. Then
+> > when doing truncate up or appending writes, we keep i_disksize at the old
+> > value and just zero folio tails in the page cache, mark the folio dirty and
+> > update i_size.
+> 
+> I think we need to submit this zeroed folio here as well. Because,
+> 
+> 1) In the case of truncate up, if we don't submit, the i_disksize may have to
+>    wait a long time (until the folio writeback is complete, which takes about
+>    30 seconds by default) before being updated, which is too long.
 
-Sorry, this is old. But a consequence may be memory leak if something
-unexpected occurred during what was done asynchronously. There is no
-guarantee that *every* resource has been released.
+Correct but I'm not sure it matters. Current delalloc writes behave in the
+same way already. For simplicity I'd thus prefer to not treat truncate up
+in a special way but if we decide this indeed desirable, we can either
+submit the tail folio immediately, or schedule work with earlier writeback.
 
+> 2) In the case of appending writes. Assume that the folio written beyond this
+>    one is written back first, we have to wait this zeroed folio to be write
+>    back and then update i_disksize, so we can't wait too long either.
+
+Correct, update of i_disksize after writeback of folios beyond current
+i_disksize is blocked by the writeback of the tail folio.
+
+> > When submitting writeback for a folio beyond current
+> > i_disksize we make sure writepages submits IO for all the folios from
+> > current i_disksize upwards.
+> 
+> Why "all the folios"? IIUC, we only wait the zeroed EOF folio is sufficient.
+
+I was worried about a case like:
+
+We have 4k blocksize, file is i_disksize 2k. Now you do:
+pwrite(file, buf, 1, 6k);
+pwrite(file, buf, 1, 10k);
+pwrite(file, buf, 1, 14k);
+
+The pwrite at offset 6k needs to zero the tail of the folio with index 0,
+pwrite at 10k needs to zero the tail of the folio with index 1, etc. And
+for us to safely advance i_disksize to 14k+1, I though all the folios (and
+zeroed out tails) need to be written out. But that's actually not the case.
+We need to make sure the zeroed tail is written out only if the underlying
+block is already allocated and marked as written at the time of zeroing.
+And the blocks underlying intermediate i_size values will never be allocated
+and written without advancing i_disksize to them. So I think you're
+correct, we always have at most one tail folio - the one surrounding
+current i_disksize - which needs to be written out to safely advance
+i_disksize and we don't care about folios inbetween.
+
+> > When io_end processing happens after completed
+> > folio writeback, we update i_disksize to min(i_size, end of IO).
+> 
+> Yeah, in the case of append write back. Assume we append write the folio 2
+> and folio 3,
+> 
+>        old_idisksize  new_isize
+>        |             |
+>      [WWZZ][WWWW][WWWW]
+>        1  |  2     3
+>           A
+> 
+> Assume that folio 1 first completes the writeback, then we update i_disksize
+> to pos A when the writeback is complete. Assume that folio 2 or 3 completes
+> first, we should wait(e.g. call filemap_fdatawait_range_keep_errors() or
+> something like) folio 1 to complete and then update i_disksize to new_isize.
+> 
+> But in the case of truncate up, We will only write back this zeroed folio. If
+> the new i_size exceeds the end of this folio, how should we update i_disksize
+> to the correct value?
+> 
+> For example, we truncate the file from old old_idisksize to new_isize, but we
+> only zero and writeback folio 1, in the end_io processing of folio 1, we can
+> only update the i_disksize to A, but we can never update it to new_isize. Am
+> I missing something ?
+> 
+>        old_idisksize new_isize
+>        |             |
+>      [WWZZ]...hole ...
+>        1  |
+>           A
+
+Good question. Based on the analysis above one option would be to setup
+writeback of page straddling current i_disksize to update i_disksize to
+current i_size on completion. That would be simple but would have an
+unpleasant side effect that in case of a crash after append write we could
+see increased i_disksize but zeros instead of written data. Another option
+would be to update i_disksize on completion to the beginning of the first
+dirty folio behind the written back range or i_size of there's not such
+folio. This would still be relatively simple and mostly deal with "zeros
+instead of data" problem.
+
+> > This
+> > should take care of non-zero data exposure issues and with "delay map"
+> > processing Baokun works on all the inode metadata updates will happen after
+> > IO completion anyway so it will be nicely batched up in one transaction.
+> 
+> Currently, my iomap convert implementation always enables dioread_nolock,
+
+Yes, BTW I think you could remove no-dioread_nolock paths before doing the
+conversion to simplify matters a bit. I don't think it's seriously used
+anywhere anymore.
+
+> so I feel that this solution can be achieved even without the "delay map"
+> feature. After we have the "delay map", we can extend this to the
+> buffer_head path.
+
+I agree, delay map is not necessary for this to work. But it will make
+things likely faster.
+
+								Honza
 -- 
-Vincent Lefèvre <vincent@vinc17.net> - Web: <https://www.vinc17.net/>
-100% accessible validated (X)HTML - Blog: <https://www.vinc17.net/blog/>
-Work: CR INRIA - computer arithmetic / Pascaline project (LIP, ENS-Lyon)
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
