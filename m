@@ -1,235 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-76520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76521-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 2LOoIDhbhWnNAQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 04:08:40 +0100
+	id cz79LQBihWkZBAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76521-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 04:37:36 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id F08DBF990A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 04:08:39 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46AE0F9C96
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 04:37:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 6197D305D2A6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 03:05:59 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id AB245300A31A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 03:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2212B2F1FDB;
-	Fri,  6 Feb 2026 03:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="LB8cB+2G"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4AA3321B3;
+	Fri,  6 Feb 2026 03:37:31 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f79.google.com (mail-ot1-f79.google.com [209.85.210.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EADA244692;
-	Fri,  6 Feb 2026 03:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59382701C4
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Feb 2026 03:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770347154; cv=none; b=n2vuZTvNQC5PGIekKjoA5OuFPd/A+jMXZbb2599EhhdFFNSaYkvO8dbELQskKV40rTqYtb3Uo3uQkHv1YwlSAN8dFQEdjTy7ergp1etK16FWd6H073zwXSmSaEe+8LhqZZ9CJO372KM8ZRyrLO65qznvFoCvM6caNfdIV3+hZ58=
+	t=1770349051; cv=none; b=XcpoTwpXu0po1dXNaU0+zm4cjffcsNCZksqsu7Jn+knMsiO2+IfNuepAn1gJ9VoAZjQyVkbACnbF9oam6yCigHw8cuu//thME13VKWK1jsPFVyNkZSYsom0cT6cDt3hKH9Onb9aSG2EBVC6MmhfqP1vD+rZnq84BzW4T3m5wI7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770347154; c=relaxed/simple;
-	bh=CY9Kv9GJarmK3bvhoFDjW6CPCrn0G5WIA3KR1uW3xAE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=th3Ye922DIcgzMwH8Eqmnt5jwaueAHe0nyv1KAtjUv2EyUISWwmywnAltQ0ATggNhXZC++cdJHFp6vZWA4XXlplsM5cV5U1GAIIiQwjooFZ33ABu0vb+GOvjswV33bDHLp8k2md0INHPzdoU1vzU2W21CglKfx2DEuu89UEVCFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=LB8cB+2G; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6160VsIJ4121925;
-	Thu, 5 Feb 2026 19:05:49 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
-	 bh=YzpQxNSfABSpsRLuyFgi7FBTpgot1zzgWPUDF/SFIzE=; b=LB8cB+2GqiQj
-	cK11HiRAZKwyylOBsvBH4KOo/q/HbwPJL02V+wRHR9YGf0/3mGrcLw9R2glZl/Ln
-	PzpnBdxKPVqmYv2sPDycCuuihLQJXOEb1HTNvdANj5gKWmA1fk/Sawv8QWMenZUx
-	+sb4u/GJ8BW5tKLmjDR1x5e5po1XomliKaeaCVIiW4uhbtdfEgn0sbqeFBBp+J+g
-	mDxArVD7eBfrLGPTLuPy2kEjjBdHBKIGlR1E7cUnXRRaw8PXTeLLPjVmk/4fT8Oq
-	Op1WPKhNHan9Ez/bX+M5usq3zEdUy9wn5sSPGd7P8ZAxQDspAv0ALZj36BdDmoZT
-	sr1ZP/xgww==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4c55ud15yf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Thu, 05 Feb 2026 19:05:48 -0800 (PST)
-Received: from devbig003.atn7.facebook.com (2620:10d:c085:208::7cb7) by
- mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.35; Fri, 6 Feb 2026 03:05:47 +0000
-From: Chris Mason <clm@meta.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-CC: <cem@kernel.org>, <hch@lst.de>, <linux-xfs@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v6.1 11/11] xfs: add media verification ioctl
-Date: Thu, 5 Feb 2026 19:01:32 -0800
-Message-ID: <20260206030527.2506821-1-clm@meta.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260120041226.GJ15551@frogsfrogsfrogs>
-References: <176852588473.2137143.1604994842772101197.stgit@frogsfrogsfrogs> <176852588776.2137143.7103003682733018282.stgit@frogsfrogsfrogs> <20260120041226.GJ15551@frogsfrogsfrogs>
+	s=arc-20240116; t=1770349051; c=relaxed/simple;
+	bh=lP7AHwLQGEuPvN8uqzqzr5g1HPkzOVrZpSim3Z63GqA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hHWmbC/JvCVu9TB556X3prWHcmWcVxvl9iM1nWO5xMId08S9iNKVhgxTq0WekwGVbXhejko4rS/Fymhb1GAp8VtxvzWvAPO5vtVFFSiI0aofvKdx2BsgvrSTRBLpRx/MM0R/gsAWlamGCdzH2xIDXNqSSirkb+gcS5WOy46hsOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.210.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-ot1-f79.google.com with SMTP id 46e09a7af769-7d195fe3eb4so6913242a34.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Feb 2026 19:37:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770349050; x=1770953850;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=95xTLcshfo8zJpBkBOaICZBlbfeD59W6ADSPHs4aGk8=;
+        b=Xs4Em3TM43qtdGwV62rma4nN70OZGLxyPfJp8i8utA97f56unViHctih7/VEc+A+Pa
+         p5JiYV2SO7/lQ38gXv093P2sDP9ucEYHROLXH3+oMsgKelUU9w/hwkEfqJlx5KzZwGVQ
+         OZgqb3GUf3bcF5ftscz1SJEl8oY3YnFHT35droy8FncsmGmMssq85OLQlYVtRr3UcPTo
+         hpxO7GqRL9q4EtcnkD3WOL4GNb+vZwpL548SRRaf5zV9JnVjbeQsjrm9i2vB3m2KeGx1
+         jL36AoXbXAwtzUzEtZR1+UUNISLuUR+g5eiohxdmgTxadZSFfjy1eKkw5kG972XXZ/uz
+         7KnA==
+X-Gm-Message-State: AOJu0YxcxIVZ3AJaGsv+QI9E1DhM9r1akRAYAEhVt1i6Q+B/sXv+ZGqN
+	zU9giDPGcfXIBaSYmMWKJlbo23OCqIe8G7w/4PXkPJMob657HuBQUmL+uoU8tNn6gLv6uwkXJf3
+	OoRRkVeSEcm3LsKjIRvWrY2+dLcGTtrjg9HE2f4BoqbOXQwuPkz/TajomSvdn3Q==
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: dJ4r7jhJ9AcUmxcP1aueW9i2zL2X-9lO
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjA2MDAxOSBTYWx0ZWRfX0SGgwv/gzY3N
- 3zBmkb3BO7lBWBD3ySfc1RbMiiNYCa1xdb2uUu94apcPl0q209iTuIOQ4QfynFbJFdFSYvEsZti
- R25L6PnA8u9VgPZSLZTAIBf3vHx9sNH5kORE5sG2hHR8k14tD+C/6iOSD0Jz0Ft75bBof7d5m4V
- qh1N8LlR03zjcw3hBPZC2f8lGOFJV7dgHbXykWT0Om6iVgQ3Jrwhgsgxpyv1pn7oiYovzADag4t
- J6RtL3FY+v5J7RY/2h8g/1AICyUjeiBKhxKuSrQVsCRK9YYyjq9UXqEilKgPRmvISroCsTYNqTt
- lvVVndIwySGxj2fI2OoEhbKQYaKV7l9HfbURvn1zzPYEP71h/1jAK8B0uSapmgAicxp5UQ1XSmz
- PGLeFZVVw/ZYa1Pg1Ws30xbTikzAAKxSwLzgyR478be4C0OkvieuqxQvcyaNkI03uaHAhPx6luy
- H9s/A9DLjXjWz2/I0PA==
-X-Authority-Analysis: v=2.4 cv=T6CBjvKQ c=1 sm=1 tr=0 ts=69855a8c cx=c_pps
- a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
- a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22 a=Mpw57Om8IfrbqaoTuvik:22
- a=GgsMoib0sEa3-_RKJdDe:22 a=VwQbUJbxAAAA:8 a=ttdpyjjdJhq82aQT230A:9
-X-Proofpoint-GUID: dJ4r7jhJ9AcUmxcP1aueW9i2zL2X-9lO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-02-06_01,2026-02-05_03,2025-10-01_01
+X-Received: by 2002:a4a:ee10:0:b0:664:8baa:fcda with SMTP id
+ 006d021491bc7-66d0d2fb048mr691886eaf.81.1770349049785; Thu, 05 Feb 2026
+ 19:37:29 -0800 (PST)
+Date: Thu, 05 Feb 2026 19:37:29 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <698561f9.a00a0220.34fa92.0022.GAE@google.com>
+Subject: [syzbot] [fuse?] KMSAN: uninit-value in fuse_fileattr_get
+From: syzbot <syzbot+7c31755f2cea07838b0c@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [-0.36 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[meta.com,reject];
-	R_DKIM_ALLOW(-0.20)[meta.com:s=s2048-2025-q2];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=9682a42d8ec8b05c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
+	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76520-lists,linux-fsdevel=lfdr.de];
-	DKIM_TRACE(0.00)[meta.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_NEQ_ENVFROM(0.00)[clm@meta.com,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-76521-lists,linux-fsdevel=lfdr.de,7c31755f2cea07838b0c];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	SUBJECT_HAS_QUESTION(0.00)[];
+	REDIRECTOR_URL(0.00)[goo.gl];
 	PRECEDENCE_BULK(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_COUNT_FIVE(0.00)[6];
+	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_NONE(0.00)[];
+	R_DKIM_NA(0.00)[];
+	NEURAL_HAM(-0.00)[-0.998];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[meta.com:mid,meta.com:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: F08DBF990A
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,appspotmail.com:email,storage.googleapis.com:url,goo.gl:url]
+X-Rspamd-Queue-Id: 46AE0F9C96
 X-Rspamd-Action: no action
 
-"Darrick J. Wong" <djwong@kernel.org> wrote:
-> From: Darrick J. Wong <djwong@kernel.org>
-> 
-> Add a new privileged ioctl so that xfs_scrub can ask the kernel to
-> verify the media of the devices backing an xfs filesystem, and have any
-> resulting media errors reported to fsnotify and xfs_healer.
+Hello,
 
-Hi everyone,
+syzbot found the following issue on:
 
-I'm trying out my AI review prompts on a few more trees, and I ran it
-on the fuse-iomap-cache branch:
+HEAD commit:    18f7fcd5e69a Linux 6.19-rc8
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16bafc5a580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9682a42d8ec8b05c
+dashboard link: https://syzkaller.appspot.com/bug?extid=7c31755f2cea07838b0c
+compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1329b322580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=178a425a580000
 
-https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=fuse-iomap-cache
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c8e19a1c3a97/disk-18f7fcd5.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ffdc9733836e/vmlinux-18f7fcd5.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8cdf30f0d2d2/bzImage-18f7fcd5.xz
 
-This was the latest email lore could find, apologies if I grabbed the wrong one.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7c31755f2cea07838b0c@syzkaller.appspotmail.com
 
-Hopefully the review below is useful, please let me know if there are places it
-has gone wildly wrong.  I kept the header to make it obvious exactly which
-commit I'd run through.
+=====================================================
+BUG: KMSAN: uninit-value in fuse_fileattr_get+0xeb4/0x1450 fs/fuse/ioctl.c:517
+ fuse_fileattr_get+0xeb4/0x1450 fs/fuse/ioctl.c:517
+ vfs_fileattr_get fs/file_attr.c:94 [inline]
+ __do_sys_file_getattr fs/file_attr.c:416 [inline]
+ __se_sys_file_getattr+0x6cb/0xbd0 fs/file_attr.c:372
+ __x64_sys_file_getattr+0xe4/0x150 fs/file_attr.c:372
+ x64_sys_call+0x17cd/0x3e70 arch/x86/include/generated/asm/syscalls_64.h:469
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xc9/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-(This is another XFS commit that ended up in my rev-list range, low confidence
-in the actual review, but I'm curious if AI got this one right)
+Local variable fa.i created at:
+ __do_sys_file_getattr fs/file_attr.c:380 [inline]
+ __se_sys_file_getattr+0x8c/0xbd0 fs/file_attr.c:372
+ __x64_sys_file_getattr+0xe4/0x150 fs/file_attr.c:372
 
-commit 2e5c40a5b6ca722202bc0e99830b6ecf8755d19c
-Author: Darrick J. Wong <djwong@kernel.org>
+CPU: 1 UID: 0 PID: 6065 Comm: syz.0.18 Not tainted syzkaller #0 PREEMPT(voluntary) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/24/2026
+=====================================================
 
-xfs: add media verification ioctl
 
-[ ... ]
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> diff --git a/fs/xfs/xfs_verify_media.c b/fs/xfs/xfs_verify_media.c
-> --- /dev/null
-> +++ b/fs/xfs/xfs_verify_media.c
-> @@ -0,0 +1,445 @@
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-[ ... ]
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-> +/* Walk reverse mappings to look for all file data loss */
-> +static int
-> +xfs_verify_report_losses(
-> +	struct xfs_mount	*mp,
-> +	enum xfs_group_type	type,
-> +	xfs_daddr_t		daddr,
-> +	u64			bblen)
-> +{
-> +	struct xfs_group	*xg = NULL;
-> +	struct xfs_trans	*tp;
-> +	xfs_fsblock_t		start_bno, end_bno;
-> +	uint32_t		start_gno, end_gno;
-> +	int			error;
-> +
-> +	if (type == XG_TYPE_RTG) {
-> +		start_bno = xfs_daddr_to_rtb(mp, daddr);
-> +		end_bno = xfs_daddr_to_rtb(mp, daddr + bblen - 1);
-> +	} else {
-> +		start_bno = XFS_DADDR_TO_FSB(mp, daddr);
-> +		end_bno = XFS_DADDR_TO_FSB(mp, daddr + bblen - 1);
-> +	}
-> +
-> +	tp = xfs_trans_alloc_empty(mp);
-> +	start_gno = xfs_fsb_to_gno(mp, start_bno, type);
-> +	end_gno = xfs_fsb_to_gno(mp, end_bno, type);
-> +	while ((xg = xfs_group_next_range(mp, xg, start_gno, end_gno, type))) {
-> +		struct xfs_buf		*agf_bp = NULL;
-> +		struct xfs_rtgroup	*rtg = NULL;
-> +		struct xfs_btree_cur	*cur;
-> +		struct xfs_rmap_irec	ri_low = { };
-> +		struct xfs_rmap_irec	ri_high;
-> +		struct xfs_group_data_lost lost;
-> +
-> +		if (type == XG_TYPE_AG) {
-> +			struct xfs_perag	*pag = to_perag(xg);
-> +
-> +			error = xfs_alloc_read_agf(pag, tp, 0, &agf_bp);
-> +			if (error) {
-> +				xfs_perag_put(pag);
-> +				break;
-> +			}
-> +
-> +			cur = xfs_rmapbt_init_cursor(mp, tp, agf_bp, pag);
-> +		} else {
-> +			rtg = to_rtg(xg);
-> +			xfs_rtgroup_lock(rtg, XFS_RTGLOCK_RMAP);
-> +			cur = xfs_rtrmapbt_init_cursor(tp, rtg);
-> +		}
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-Does this code have a reference counting mismatch in the error paths?
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-The xfs_group returned by xfs_group_next_range() is acquired via
-xfs_group_grab() which increments xg_active_ref.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-In the error path at line 120, the code uses xfs_perag_put() to release
-the reference:
-
-	error = xfs_alloc_read_agf(pag, tp, 0, &agf_bp);
-	if (error) {
-		xfs_perag_put(pag);
-		break;
-	}
-
-And later in the loop, line 144 uses xfs_group_put().
-
-Both xfs_perag_put() and xfs_group_put() decrement xg_ref, not
-xg_active_ref. Looking at the reference counting implementation:
-
-xfs_group_grab() calls atomic_inc_not_zero(&xg->xg_active_ref)
-xfs_group_rele() calls atomic_dec(&xg->xg_active_ref)
-xfs_group_put() calls atomic_dec(&xg->xg_ref)
-
-Should these error paths use xfs_group_rele() instead to match the
-xfs_group_grab() in xfs_group_next_range()?
-
+If you want to undo deduplication, reply with:
+#syz undup
 
