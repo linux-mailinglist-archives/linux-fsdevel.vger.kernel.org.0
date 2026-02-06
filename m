@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-76602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76603-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id IMWtDcIchmmTJwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 17:54:26 +0100
+	id QO87IU0dhmmTJwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76603-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 17:56:45 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517E210096D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 17:54:25 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C16100A18
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 17:56:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 148923021CC1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 16:51:58 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 231CA305464A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 16:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00BF2DECB1;
-	Fri,  6 Feb 2026 16:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2454034C9AB;
+	Fri,  6 Feb 2026 16:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lExUHATh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u61HCP3Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E591335BA7;
-	Fri,  6 Feb 2026 16:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5FE9346A0C;
+	Fri,  6 Feb 2026 16:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770396690; cv=none; b=NZ/77rfygQ90X+jI/8BlLvz+ket7IkbPjvrD85guBD4Nzzqk7cwv0anOgDNfcGPfwxIXQm96+3e3zNMYW/+4st56AkTiUQtxLq838lC9uF2svsmIXG0kcn0lF89NQ1FD+xpLltZ/SR8skqdzVGDAImUsA7qObKtBRV9y8QKZF50=
+	t=1770396691; cv=none; b=nZpn/6PfI7rITaPFlH9WVQx/OQPNGdbVr0vHjb4U+LCPePCwORIAAjjklGAUOpxYWCCS6HqsJUidLQuYt7ZZSh3MNw07U9T7V1jz5d5W5Bko9DMZWCDORAvP9Wlq7ymqIWtaHlnyZla3aki+xjR3rY6pUZqZtCGYS+gzoZkmDoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770396690; c=relaxed/simple;
-	bh=Pet4EAtK3c5M0AM2vXvuPKy464a9XTf038KI7Nqwy4k=;
+	s=arc-20240116; t=1770396691; c=relaxed/simple;
+	bh=dJuzU3uEgcWyh/8iVhdyj3dQCzEGwQ5bacFDfCQRSKs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MJnBJeirER1MgQ9spI7MJOof8AiVlPIPZ/x5Bz2xWowuQ7aEvaN6s1ErguAzhqf1Kx8rNN4IOSMEvPTyyXGHttnGH1zN5SsUj0vwtDuRRQTQi5qTpS1MkOCmvo04Ba2UXD9dnVy+yQYh8u4CJb2ihXIGl/7aWH0Q1J9NbnHQHhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lExUHATh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8197EC116C6;
-	Fri,  6 Feb 2026 16:51:28 +0000 (UTC)
+	 MIME-Version; b=N/pnJpCDo/XirHkvbFKaZbixQT235ONJ7yvrj3X/UgwEJAtAmxwxm7vokqtYW3UVNKDOH/rqGYBrzENoAS6ebKgpANvJ8mNF5mtXZlB9z7aSfC9tvIp8aK4gsbIJGddnoqyRz2XbN82jYRLQW2EZxOwTKjT8PqwnDDkp1c1FWcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u61HCP3Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4855BC19423;
+	Fri,  6 Feb 2026 16:51:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770396689;
-	bh=Pet4EAtK3c5M0AM2vXvuPKy464a9XTf038KI7Nqwy4k=;
+	s=k20201202; t=1770396691;
+	bh=dJuzU3uEgcWyh/8iVhdyj3dQCzEGwQ5bacFDfCQRSKs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lExUHAThMKznX44Ll00JY8eHDgaKlIH5ysflcKAVoXEUIiLAGrCA9vrKouw0n8JJQ
-	 gKwdiPKEBz4qkNWmoKbQrqMruQxTpjW9UNB/VOFx9LDav9oZ2OxgsY4+17eY1tFSFf
-	 TA/9H0vzF03H4epq7SD5vIY8bWMvnrrEHmVHTpRB7+uAn/BHNWp+RF5BZyuOQt+lRw
-	 y83gO0fchfNmt4P2VxVdu8u3sTFu9KC/lFkdFL1Qa7cBIeQLGKlXYFbxQ56eWD/hVK
-	 ipHTRIR1DV1wpOk0y1zTLoCHNsQ2PcYq74acLH4LLJCsn2ynrTaBjRSacWI3ZBNjVP
-	 kdRroaQZp1x4g==
+	b=u61HCP3YCv7tFU8JSi2o2J/dcsOmBuLitUpqV1mvnl3AZFSJU5CrT4wj+vsXAQ7zb
+	 FvKdaWcuwByOFOKHJWTD1rz1In6PnJWP1IgLCbxkHYn/XAkn1Kxai9ZYvancu3dS2T
+	 9JA4YW4U0ufDDApLQ58syXsdNuCTpm+iPr884o0cwYHRdAgZqmjJtDO5X5uZVTtIj3
+	 APVNwisjmIPbZrtPJeC0w6u66Ah1jigyycSxaB58Zpu62IJ/+HOoTk0hvUVosxTCu3
+	 LdaI8iP0s359zaQml8WjVaYEJ4MqYb+qGpG6pSdVRE8uuBB4BOBBzNquLRzT4JEqEh
+	 hL8ugL19LP6qg==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL 04/12 for v7.0] vfs leases
-Date: Fri,  6 Feb 2026 17:50:00 +0100
-Message-ID: <20260206-vfs-leases-v70-bff7da8bfd23@brauner>
+Subject: [GIT PULL 05/12 for v7.0] vfs fserror
+Date: Fri,  6 Feb 2026 17:50:01 +0100
+Message-ID: <20260206-vfs-fserror-v70-7d1adc65b98d@brauner>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260206-vfs-v70-7df0b750d594@brauner>
 References: <20260206-vfs-v70-7df0b750d594@brauner>
@@ -61,7 +61,7 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7240; i=brauner@kernel.org; h=from:subject:message-id; bh=Pet4EAtK3c5M0AM2vXvuPKy464a9XTf038KI7Nqwy4k=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWS2Se+cka/TlSuj3s0buuPGZJZd2h2nDc9kqU8s6KjZt +n5t5yqjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIk8tWFkuGl1buOurXmzSj3/ +SkW2LrJcBT0ifkGuLtnWwdNDj92i+G/J5vi8pfMz6T8Zj6tYnG+LfjZZWITp6eWSWMHZyWbnQA XAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4336; i=brauner@kernel.org; h=from:subject:message-id; bh=dJuzU3uEgcWyh/8iVhdyj3dQCzEGwQ5bacFDfCQRSKs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWS2Se9crvjpJmdPVfbZP4qRTPPdHj/NOOD+4lbiqvlz5 02JVVlh2lHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjARvZ+MDLOkFxmxrtJ//W3G sdmXFV3jWXTWPNefcMXZ7VPqfR/e/XsZ/hdNSfuiJiHJPv9WVPru95OYog7brfB6eP8Hs2jlUW3 +bEYA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
@@ -71,18 +71,18 @@ X-Spamd-Result: default: False [2.84 / 15.00];
 	MID_RHS_NOT_FQDN(0.50)[];
 	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	TAGGED_FROM(0.00)[bounces-76602-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76603-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	RCPT_COUNT_THREE(0.00)[4];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
@@ -92,30 +92,34 @@ X-Spamd-Result: default: False [2.84 / 15.00];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 517E210096D
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 00C16100A18
 X-Rspamd-Action: no action
 
 Hey Linus,
 
 /* Summary */
 
-This contains updates for lease support to require filesystems to
-explicitly opt-in to lease support
+This contains the changes to support generif I/O error reporting.
 
-Currently kernel_setlease() falls through to generic_setlease() when a
-filesystem does not define ->setlease(), silently granting lease support
-to every filesystem regardless of whether it is prepared for it. This is
-a poor default: most filesystems never intended to support leases, and
-the silent fallthrough makes it impossible to distinguish "supports
-leases" from "never thought about it".
+Filesystems currently have no standard mechanism for reporting metadata
+corruption and file I/O errors to userspace via fsnotify. Each
+filesystem (xfs, ext4, erofs, f2fs, etc.) privately defines
+EFSCORRUPTED, and error reporting to fanotify is inconsistent or absent
+entirely.
 
-This series inverts the default. It adds explicit .setlease =
-generic_setlease assignments to every in-tree filesystem that should
-retain lease support, then changes kernel_setlease() to return -EINVAL
-when ->setlease is NULL. With the new default in place,
-simple_nosetlease() is redundant and is removed along with all
-references to it.
+This series introduces a generic fserror infrastructure built around
+struct super_block that gives filesystems a standard way to queue
+metadata and file I/O error reports for delivery to fsnotify. Errors
+are queued via mempools and queue_work to avoid holding filesystem locks
+in the notification path; unmount waits for pending events to drain. A
+new super_operations::report_error callback lets filesystem drivers
+respond to file I/O errors themselves (to be used by an upcoming XFS
+self-healing patchset).
+
+On the uapi side, EFSCORRUPTED and EUCLEAN are promoted from private
+per-filesystem definitions to canonical errno.h values across all
+architectures.
 
 /* Testing */
 
@@ -134,142 +138,70 @@ No known conflicts.
 Merge conflicts with other trees
 ================================
 
-diff --cc Documentation/filesystems/porting.rst
-index ed3ac56e3c76,2b4dddfe6c66..000000000000
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@@ -1336,7 -1339,6 +1336,15 @@@ in-tree filesystems have done)
+The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1e8:
 
- **mandatory**
-
-+The ->setlease() file_operation must now be explicitly set in order to provide
-+support for leases. When set to NULL, the kernel will now return -EINVAL to
-+attempts to set a lease. Filesystems that wish to use the kernel-internal lease
-+implementation should set it to generic_setlease().
-++
-++---
-++
-++**mandatory**
-++
-+ do_{mkdir,mknod,link,symlink,renameat2,rmdir,unlink}() are gone; filename_...()
-+ counterparts replace those.  The difference is that the former used to consume
-+ filename references; the latter do not.
-
-[1]: https://lore.kernel.org/linux-next/20260115093828.318572ea@canb.auug.org.au/
-[2]: https://lore.kernel.org/linux-next/aW41jU88O4Hfnt9i@sirena.org.uk/
-
-The following changes since commit 7d42f2b1cc3a60a71784967384ddcf29fe3f35ed:
-
-  Merge patch series "vfs: properly deny directory leases on filesystems with special lease handling" (2026-01-12 10:54:52 +0100)
+  Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-7.0-rc1.leases
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-7.0-rc1.fserror
 
-for you to fetch changes up to 056a96e65f3e2a3293b99a336de92376407af5fa:
+for you to fetch changes up to 347b7042fb26beaae1ea46d0f6c47251fb52985f:
 
-  fuse: add setlease file operation (2026-01-13 09:56:11 +0100)
+  Merge patch series "fs: generic file IO error reporting" (2026-01-13 09:58:07 +0100)
 
 ----------------------------------------------------------------
-vfs-7.0-rc1.leases
+vfs-7.0-rc1.fserror
 
-Please consider pulling these changes from the signed vfs-7.0-rc1.leases tag.
+Please consider pulling these changes from the signed vfs-7.0-rc1.fserror tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
 Christian Brauner (1):
-      Merge patch series "vfs: require filesystems to explicitly opt-in to lease support"
+      Merge patch series "fs: generic file IO error reporting"
 
-Jeff Layton (25):
-      fs: add setlease to generic_ro_fops and read-only filesystem directory operations
-      affs: add setlease file operation
-      btrfs: add setlease file operation
-      erofs: add setlease file operation
-      ext2: add setlease file operation
-      ext4: add setlease file operation
-      exfat: add setlease file operation
-      f2fs: add setlease file operation
-      fat: add setlease file operation
-      gfs2: add a setlease file operation
-      jffs2: add setlease file operation
-      jfs: add setlease file operation
-      nilfs2: add setlease file operation
-      ntfs3: add setlease file operation
-      ocfs2: add setlease file operation
-      orangefs: add setlease file operation
-      overlayfs: add setlease file operation
-      squashfs: add setlease file operation
-      tmpfs: add setlease file operation
-      udf: add setlease file operation
-      ufs: add setlease file operation
-      xfs: add setlease file operation
-      filelock: default to returning -EINVAL when ->setlease operation is NULL
-      fs: remove simple_nosetlease()
-      fuse: add setlease file operation
+Darrick J. Wong (6):
+      uapi: promote EFSCORRUPTED and EUCLEAN to errno.h
+      fs: report filesystem and file I/O errors to fsnotify
+      iomap: report file I/O errors to the VFS
+      xfs: report fs metadata errors via fsnotify
+      xfs: translate fsdax media errors into file "data lost" errors when convenient
+      ext4: convert to new fserror helpers
 
- Documentation/filesystems/porting.rst |  9 +++++++++
- Documentation/filesystems/vfs.rst     |  9 ++++++---
- fs/9p/vfs_dir.c                       |  2 --
- fs/9p/vfs_file.c                      |  2 --
- fs/affs/dir.c                         |  2 ++
- fs/affs/file.c                        |  2 ++
- fs/befs/linuxvfs.c                    |  2 ++
- fs/btrfs/file.c                       |  2 ++
- fs/btrfs/inode.c                      |  2 ++
- fs/ceph/dir.c                         |  2 --
- fs/ceph/file.c                        |  1 -
- fs/cramfs/inode.c                     |  2 ++
- fs/efs/dir.c                          |  2 ++
- fs/erofs/data.c                       |  2 ++
- fs/erofs/dir.c                        |  2 ++
- fs/exfat/dir.c                        |  2 ++
- fs/exfat/file.c                       |  2 ++
- fs/ext2/dir.c                         |  2 ++
- fs/ext2/file.c                        |  2 ++
- fs/ext4/dir.c                         |  2 ++
- fs/ext4/file.c                        |  2 ++
- fs/f2fs/dir.c                         |  2 ++
- fs/f2fs/file.c                        |  2 ++
- fs/fat/dir.c                          |  2 ++
- fs/fat/file.c                         |  2 ++
- fs/freevxfs/vxfs_lookup.c             |  2 ++
- fs/fuse/dir.c                         |  1 -
- fs/fuse/file.c                        |  1 +
- fs/gfs2/file.c                        |  3 +--
- fs/isofs/dir.c                        |  2 ++
- fs/jffs2/dir.c                        |  2 ++
- fs/jffs2/file.c                       |  2 ++
- fs/jfs/file.c                         |  2 ++
- fs/jfs/namei.c                        |  2 ++
- fs/libfs.c                            | 20 ++------------------
- fs/locks.c                            |  3 +--
- fs/nfs/dir.c                          |  1 -
- fs/nfs/file.c                         |  1 -
- fs/nilfs2/dir.c                       |  3 ++-
- fs/nilfs2/file.c                      |  2 ++
- fs/ntfs3/dir.c                        |  3 +++
- fs/ntfs3/file.c                       |  3 +++
- fs/ocfs2/file.c                       |  5 +++++
- fs/orangefs/dir.c                     |  4 +++-
- fs/orangefs/file.c                    |  1 +
- fs/overlayfs/file.c                   |  2 ++
- fs/overlayfs/readdir.c                |  2 ++
- fs/qnx4/dir.c                         |  2 ++
- fs/qnx6/dir.c                         |  2 ++
- fs/read_write.c                       |  2 ++
- fs/smb/client/cifsfs.c                |  1 -
- fs/squashfs/dir.c                     |  2 ++
- fs/squashfs/file.c                    |  4 +++-
- fs/udf/dir.c                          |  2 ++
- fs/udf/file.c                         |  2 ++
- fs/ufs/dir.c                          |  2 ++
- fs/ufs/file.c                         |  2 ++
- fs/vboxsf/dir.c                       |  1 -
- fs/vboxsf/file.c                      |  1 -
- fs/xfs/xfs_file.c                     |  3 +++
- include/linux/fs.h                    |  1 -
- mm/shmem.c                            |  2 ++
- 62 files changed, 117 insertions(+), 42 deletions(-)
+ arch/alpha/include/uapi/asm/errno.h        |   2 +
+ arch/mips/include/uapi/asm/errno.h         |   2 +
+ arch/parisc/include/uapi/asm/errno.h       |   2 +
+ arch/sparc/include/uapi/asm/errno.h        |   2 +
+ fs/Makefile                                |   2 +-
+ fs/erofs/internal.h                        |   2 -
+ fs/ext2/ext2.h                             |   1 -
+ fs/ext4/ext4.h                             |   3 -
+ fs/ext4/ioctl.c                            |   2 +
+ fs/ext4/super.c                            |  13 +-
+ fs/f2fs/f2fs.h                             |   3 -
+ fs/fserror.c                               | 194 +++++++++++++++++++++++++++++
+ fs/iomap/buffered-io.c                     |  23 +++-
+ fs/iomap/direct-io.c                       |  12 ++
+ fs/iomap/ioend.c                           |   6 +
+ fs/minix/minix.h                           |   2 -
+ fs/super.c                                 |   3 +
+ fs/udf/udf_sb.h                            |   2 -
+ fs/xfs/xfs_fsops.c                         |   4 +
+ fs/xfs/xfs_health.c                        |  14 +++
+ fs/xfs/xfs_linux.h                         |   2 -
+ fs/xfs/xfs_notify_failure.c                |   4 +
+ include/linux/fs/super_types.h             |   7 ++
+ include/linux/fserror.h                    |  75 +++++++++++
+ include/linux/jbd2.h                       |   3 -
+ include/uapi/asm-generic/errno.h           |   2 +
+ tools/arch/alpha/include/uapi/asm/errno.h  |   2 +
+ tools/arch/mips/include/uapi/asm/errno.h   |   2 +
+ tools/arch/parisc/include/uapi/asm/errno.h |   2 +
+ tools/arch/sparc/include/uapi/asm/errno.h  |   2 +
+ tools/include/uapi/asm-generic/errno.h     |   2 +
+ 31 files changed, 373 insertions(+), 24 deletions(-)
+ create mode 100644 fs/fserror.c
+ create mode 100644 include/linux/fserror.h
 
