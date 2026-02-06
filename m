@@ -1,213 +1,207 @@
-Return-Path: <linux-fsdevel+bounces-76545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0HC7EteJhWkWDQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 07:27:35 +0100
+	id iLfRJbmNhWmrDQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 07:44:09 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id F37FCFAA96
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 07:27:34 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA2ADFABA2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 07:44:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id EFFD73015100
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 06:27:11 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 5A4B23033AB1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 06:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214AC3385A3;
-	Fri,  6 Feb 2026 06:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="enwQcnT7"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209A5330322;
+	Fri,  6 Feb 2026 06:43:25 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f79.google.com (mail-oo1-f79.google.com [209.85.161.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45F53382DF
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Feb 2026 06:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3832D837C
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Feb 2026 06:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770359215; cv=none; b=RAAUeRfD7xYeGjX4vkbiyMLT/yoPuXH9AG3HpjIU2/Ovj9MlMSR3vRSBUcXIwsi9+onVYFFQi0JHZ4EmOtvEwKXTxcidixpbk6+4pSrddAm/qAqdsdDyQPUPelt0NiMvoypxDceXq8jbAOwTudEIQ1bG2USciJVpK2d0sWhTtxA=
+	t=1770360204; cv=none; b=XnYW4ouxuCp5U8fsXWWFwYecfBCw8ot/mVeAuTdP7V7q/H7rUxnOCokeXiCSiRi1mrhLLHSNM+ZTSrVSKvSua5sUIf6NO7UZVpEFJr0vADgZmkwU8WZR2T69tDazodyQQOwAyrkatP+Al3NOyxKZkPPl3IejZMeMTKSATtIKJWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770359215; c=relaxed/simple;
-	bh=XhU8Qoh5dtPBKStKad9CzzN9lgP3YPtPMriWYmrqSmA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tqxRD0difRzLhiW6oXMWWgZfJWtGeeoWHl9z8WnHf1Wz3B5mQ7KNcU6c9YMwCtAGY1Z+JlrxWh/Luw9QtyGhxTRdsnmfKVro9mZTf4RBdj+C5l6AqZJx2vE4BTZSQJi2fA/lpcKAi5aJtqUyQP8gg/cX1TyDfB+pArLQ98WBgfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=enwQcnT7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43D10C19424;
-	Fri,  6 Feb 2026 06:26:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770359215;
-	bh=XhU8Qoh5dtPBKStKad9CzzN9lgP3YPtPMriWYmrqSmA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=enwQcnT7YHhRVoGA8o/R+Yxr5n+aerEJQbgG3C/pJ3CO3an/DIJTM51ogP/coKc/E
-	 egIYkDEd0o729IBQcy2RF35K9NIYSqEt2Q/fmwjOK/qF0Rz4x68DLVnZ4vF+NufevP
-	 yfb0j4SxKOfpAcVHJ7aYV2t+EaswnSi0KvbB4iwQw3rDdB3noaxw8NHv3Szp/gPPCP
-	 sepucSDZNy3FWpeudmg8JIpcTcATsWgXXGtMxKXJKJeQQ3aykYQQmPbhSm3LXRIkyT
-	 Z6WrN55GTG/Z0E++VPX7ak0ZnfDy4C5WkWlJX9d4gH8foCY5gienqFLZGytXMWV/wF
-	 yl93MuG2siidg==
-Date: Thu, 5 Feb 2026 22:26:54 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
-	linux-fsdevel@vger.kernel.org, John Groves <John@groves.net>,
-	Bernd Schubert <bernd@bsbernd.com>,
-	Luis Henriques <luis@igalia.com>,
-	Horst Birthelmer <horst@birthelmer.de>,
-	lsf-pc <lsf-pc@lists.linux-foundation.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Where is fuse going? API cleanup,
- restructuring and more
-Message-ID: <20260206062654.GH7693@frogsfrogsfrogs>
-References: <CAJfpegtzYdy3fGGO5E1MU8n+u1j8WVc2eCoOQD_1qq0UV92wRw@mail.gmail.com>
- <CAOQ4uxjEdJHjbfCFM364V=tBrEyczYvzo-b-Xo0UPOCA2cnPGQ@mail.gmail.com>
- <CAJfpegvg=hqM1vMCyrb61VT6uA+4gdGwvqHe5Djg2RF+DTUMiw@mail.gmail.com>
- <CAJnrk1YKDi9e-eTQyGBD-rFScxGTcsfz3tnmnE_EshPd18aMrw@mail.gmail.com>
+	s=arc-20240116; t=1770360204; c=relaxed/simple;
+	bh=+cO6t/lm9/k+28VlcTkIE9ZjzGYW1aFL5zWAsUWAWpY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jaVq44vSXnn3KCxxSZXhRCaYwxL71q7lJp0bdfT5WKRLpxd+37aWJDwCQ0/Yo1dNr5BDqdEsTAh9R4S9wF7GOzVGSvLATZ/SHKn3tUZlt7NFQeb9GhmfuUE4GVdm9zskqrxA5+yii+GgoxZhjeSCZ3HUkzDxkFPSQ9EmIEEcwGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo1-f79.google.com with SMTP id 006d021491bc7-6630d58662aso8303234eaf.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Feb 2026 22:43:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770360203; x=1770965003;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=j1a5dRNKFJ6iLwot47+qs/BzICGmio9RFVJIwM5Coxo=;
+        b=BUJPnUVBaoulVU+u5/+yqutaPY+T4AHWbKlwjlZUQW5gh3e4hvi4iudOHYRwLRDH0J
+         JeX8bYivKD/vEbEh4yf66YTGf/gfn4bHaSf9+Jx+64UlkprEbOxfCaupkbtoGymCzSjf
+         DJOfX/GKgXYsNU0ydnilDaW1vyCYIbbWtRQS5RBlzJ/PccMcWYixjtrpx0A2VFExtpLZ
+         BOVd0uOxR+4h3S/xLKAMRQHdhtjLddbtnzHq9PsmaGwfK83NHdaTZ3WCVigZdVef420U
+         w64ZFGDnZwcPLynvKO+fPGfbPDx3Xyn7XcPLjkwxtDUzNdX+kq8zcpBBWEgAFo3fLGF2
+         syTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtUz8rT8bkY5EMtXTn7d+eZCYHysBEacdb8/XYd8qMYqY92hs0309atnHdaVBAGD0/xrp1onIWDgY3VUpo@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUzJet7swKAnCFUumC8laLAGO4jjKj8hbDztPtQjOmdzqMAcJl
+	M1cfhHUuPOVeDsg8Y55BdJPcl2+M2QDhuYRbDxtVq4uTrJWoLe0FH6EOO0uVpgq2rPPcDY1XMI3
+	MrUxPF7QmzVlhvv9Pve1JvNsU70LbM3udBVJB7Ha0jCeg5eYDTxX/g7M2rPk=
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1YKDi9e-eTQyGBD-rFScxGTcsfz3tnmnE_EshPd18aMrw@mail.gmail.com>
+X-Received: by 2002:a05:6820:998:b0:65f:66c5:c6b with SMTP id
+ 006d021491bc7-66d099c57b9mr841928eaf.9.1770360203561; Thu, 05 Feb 2026
+ 22:43:23 -0800 (PST)
+Date: Thu, 05 Feb 2026 22:43:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69858d8b.050a0220.3b3015.0031.GAE@google.com>
+Subject: [syzbot] [exfat?] KCSAN: data-race in fat12_ent_put / fat_mirror_bhs
+From: syzbot <syzbot+51b4c65bb770155d058f@syzkaller.appspotmail.com>
+To: hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-0.36 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=8e27f4588a0f2183];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
+	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[szeredi.hu,gmail.com,vger.kernel.org,groves.net,bsbernd.com,igalia.com,birthelmer.de,lists.linux-foundation.org];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76545-lists,linux-fsdevel=lfdr.de];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[szeredi.hu:email,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-76546-lists,linux-fsdevel=lfdr.de,51b4c65bb770155d058f];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	SUBJECT_HAS_QUESTION(0.00)[];
+	REDIRECTOR_URL(0.00)[goo.gl];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_DN_NONE(0.00)[];
+	R_DKIM_NA(0.00)[];
+	NEURAL_HAM(-0.00)[-0.999];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Rspamd-Queue-Id: F37FCFAA96
+	DBL_BLOCKED_OPENRESOLVER(0.00)[storage.googleapis.com:url,appspotmail.com:email,googlegroups.com:email,goo.gl:url,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,syzkaller.appspot.com:url]
+X-Rspamd-Queue-Id: AA2ADFABA2
 X-Rspamd-Action: no action
 
-On Wed, Feb 04, 2026 at 01:22:02AM -0800, Joanne Koong wrote:
-> On Mon, Feb 2, 2026 at 11:55 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> > On Mon, 2 Feb 2026 at 17:14, Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > > All important topics which I am sure will be discussed on a FUSE BoF.
-> 
-> Two other items I'd like to add to the potential discussion list are:
-> 
-> * leveraging io-uring multishot for batching fuse writeback and
-> readahead requests, ie maximizing the throughput per roundtrip context
-> switch [1]
-> 
-> * settling how load distribution should be done for configurable
-> queues. We came to a bit of a standstill on Bernd's patchset [2] and
-> it would be great to finally get this resolved and the feature landed.
-> imo configurable queues and incremental buffer consumption are the two
-> main features needed to make fuse-over-io-uring more feasible on
-> large-scale systems.
-> 
-> >
-> > I see your point.   Maybe the BPF one could be useful as a cross track
-> > discussion, though I'm not sure the fuse side of the design is mature
-> > enough for that.  Joanne, you did some experiments with that, no?
-> 
-> The discussion on this was started in response [3] to Darrick's iomap
-> containerization patchset. I have a prototype based on [4] I can get
-> into reviewable shape this month or next, if there's interest in
-> getting something concrete before May. I did a quick check with the
+Hello,
 
-(Which we're working on :D)
+syzbot found the following issue on:
 
-> bpf team a few days ago and confirmed with them that struct ops is the
-> way to go for adding the hook point for fuse. For attaching the bpf
-> progs to the fuse connection, going through the bpf link interface is
-> the modern/preferred way of doing this.
+HEAD commit:    de0674d9bc69 Merge tag 'for-6.19-rc8-tag' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15f240aa580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8e27f4588a0f2183
+dashboard link: https://syzkaller.appspot.com/bug?extid=51b4c65bb770155d058f
+compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
 
-Yes.  That conversion turned out not to be too difficult, but the
-resulting uapi is a little awkward because you have to pass the
-/dev/fuse fd in one of the structs that you pass to the bpf syscall,
-and then the bpf functions have to go find the struct file and use that
-to get back to the fuse_conn.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> Discussion wise, imo on the
-> fuse side what would be most useful to discuss in May would be what
-> other interception points do we think would be the most useful in fuse
-> and what should the API interfaces that we expose for those look like
-> (eg should these just take the in/out request structs already defined
-> in the uapi? or expose more state information?). imo, we should take
-> an incremental approach and add interception points more
-> conservatively than liberally, on a per-need basis as use cases
-> actually come up.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/bfedab2f6279/disk-de0674d9.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f012a4cb8d82/vmlinux-de0674d9.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/acb727c49110/bzImage-de0674d9.xz
 
-I would start by only allowing iomap_{begin,end,ioend} bpf functions,
-and only let them access the same in-arguments and outarg struct as the
-fuse server upcall would have.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+51b4c65bb770155d058f@syzkaller.appspotmail.com
 
-(I don't have any opinions on the fuse-bpf filtering stuff that was
-discussed at lsfmm 2023)
+==================================================================
+BUG: KCSAN: data-race in fat12_ent_put / fat_mirror_bhs
 
-> > > I think that at least one question of interest to the wider fs audience is
-> > >
-> > > Can any of the above improvements be used to help phase out some
-> > > of the old under maintained fs and reduce the burden on vfs maintainers?
-> 
-> I think it might be helpful to know ahead of time where the main
-> hesitation lies. Is it performance? Maybe it'd be helpful if before
-> May there was a prototype converting a simpler filesystem (Darrick and
-> I were musing about fat maybe being a good one) and getting a sense of
-> what the delta is between the native kernel implementation and a
-> fuse-based version? In the past year fuse added a lot of new
-> capabilities that improved performance by quite a bit so I'm curious
-> to see where the delta now lies. Or maybe the hesitation is something
-> else entirely, in which case that's probably a conversation better
-> left for May.
+read-write to 0xffff888129151032 of 1 bytes by task 4937 on cpu 1:
+ fat12_ent_put+0xc4/0x170 fs/fat/fatent.c:165
+ fat_ent_write+0x6c/0xe0 fs/fat/fatent.c:417
+ fat_chain_add+0x16c/0x490 fs/fat/misc.c:136
+ fat_add_cluster fs/fat/inode.c:113 [inline]
+ __fat_get_block fs/fat/inode.c:155 [inline]
+ fat_get_block+0x46c/0x5e0 fs/fat/inode.c:190
+ __block_write_begin_int+0x400/0xf90 fs/buffer.c:2145
+ block_write_begin fs/buffer.c:2256 [inline]
+ cont_write_begin+0x5fe/0x970 fs/buffer.c:2594
+ fat_write_begin+0x4f/0xe0 fs/fat/inode.c:230
+ generic_perform_write+0x183/0x490 mm/filemap.c:4314
+ __generic_file_write_iter+0x9e/0x120 mm/filemap.c:4431
+ generic_file_write_iter+0x8d/0x310 mm/filemap.c:4457
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0x5a6/0x9f0 fs/read_write.c:686
+ ksys_write+0xdc/0x1a0 fs/read_write.c:738
+ __do_sys_write fs/read_write.c:749 [inline]
+ __se_sys_write fs/read_write.c:746 [inline]
+ __x64_sys_write+0x40/0x50 fs/read_write.c:746
+ x64_sys_call+0x2847/0x3000 arch/x86/include/generated/asm/syscalls_64.h:2
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xc0/0x2a0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-TBH I think it's mostly inertia because the current solutions aren't so
-bad that our managers are screaming at us to get 'er done now. :P
+read to 0xffff888129151000 of 512 bytes by task 4940 on cpu 0:
+ fat_mirror_bhs+0x1df/0x320 fs/fat/fatent.c:395
+ fat_alloc_clusters+0xb48/0xc50 fs/fat/fatent.c:543
+ fat_add_cluster fs/fat/inode.c:108 [inline]
+ __fat_get_block fs/fat/inode.c:155 [inline]
+ fat_get_block+0x258/0x5e0 fs/fat/inode.c:190
+ __block_write_begin_int+0x400/0xf90 fs/buffer.c:2145
+ block_write_begin fs/buffer.c:2256 [inline]
+ cont_write_begin+0x5fe/0x970 fs/buffer.c:2594
+ fat_write_begin+0x4f/0xe0 fs/fat/inode.c:230
+ generic_perform_write+0x183/0x490 mm/filemap.c:4314
+ __generic_file_write_iter+0x9e/0x120 mm/filemap.c:4431
+ generic_file_write_iter+0x8d/0x310 mm/filemap.c:4457
+ __kernel_write_iter+0x319/0x590 fs/read_write.c:619
+ dump_emit_page fs/coredump.c:1298 [inline]
+ dump_user_range+0xa7d/0xdb0 fs/coredump.c:1372
+ elf_core_dump+0x21a2/0x2330 fs/binfmt_elf.c:2111
+ coredump_write+0xacf/0xdf0 fs/coredump.c:1049
+ do_coredump fs/coredump.c:1126 [inline]
+ vfs_coredump+0x26bc/0x3120 fs/coredump.c:1200
+ get_signal+0xd7b/0xf60 kernel/signal.c:3019
+ arch_do_signal_or_restart+0x96/0x450 arch/x86/kernel/signal.c:337
+ __exit_to_user_mode_loop kernel/entry/common.c:41 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:75 [inline]
+ __exit_to_user_mode_prepare include/linux/irq-entry-common.h:226 [inline]
+ irqentry_exit_to_user_mode_prepare include/linux/irq-entry-common.h:270 [inline]
+ irqentry_exit_to_user_mode include/linux/irq-entry-common.h:339 [inline]
+ irqentry_exit+0xf7/0x510 kernel/entry/common.c:196
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:618
 
-That and conversion is a lot of work.
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 0 UID: 0 PID: 4940 Comm: syz.3.398 Not tainted syzkaller #0 PREEMPT(voluntary) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/25/2025
+==================================================================
+syz.3.398 (4940) used greatest stack depth: 8696 bytes left
 
---D
 
-> Thanks,
-> Joanne
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/CAJnrk1Z3mTdZdfe5rTukKOnU0y5dpM8aFTCqbctBWsa-S301TQ@mail.gmail.com/
-> 
-> [2] https://lore.kernel.org/linux-fsdevel/20251013-reduced-nr-ring-queues_3-v3-4-6d87c8aa31ae@ddn.com/t/#u
-> 
-> [3] https://lore.kernel.org/linux-fsdevel/CAJnrk1Z05QZmos90qmWtnWGF+Kb7rVziJ51UpuJ0O=A+6N1vrg@mail.gmail.com/t/#u
-> 
-> [4] https://lore.kernel.org/linux-fsdevel/176169810144.1424854.11439355400009006946.stgit@frogsfrogsfrogs/T/#m4998d92f6210d50d0bf6760490689c029bda9231
-> 
-> >
-> > I think the major show stopper is that nobody is going to put a major
-> > effort into porting unmaintained kernel filesystems to a different
-> > framework.
-> >
-> > Alternatively someone could implement a "VFS emulator" library.  But
-> > keeping that in sync with the kernel, together with all the old fs
-> > would be an even greater burden...
-> >
-> > Thanks,
-> > Miklos
-> 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
