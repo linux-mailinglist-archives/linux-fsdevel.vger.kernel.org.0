@@ -1,66 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-76566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QHFRDGaahWmUDwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 08:38:14 +0100
+	id GHnIMqeahWmUDwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 08:39:19 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id C156BFB0D2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 08:38:13 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 189F4FB0E8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 08:39:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E8C6F302BA5E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 07:38:03 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id A646D300BEB2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 07:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007D031771E;
-	Fri,  6 Feb 2026 07:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE98318EE1;
+	Fri,  6 Feb 2026 07:39:12 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4353176E1
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Feb 2026 07:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520C3318BBB
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Feb 2026 07:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770363482; cv=none; b=axYf67wNNrCpGxMgXMCYtZvEke32NWLz8IuQT5/FS/U00SABe22RbBG8lz7ADcRdrrSmx/Cdam7n3reMlNc0dfGrS1xzFa2x1lQJbWvQDOaVJ32jNvfGWyIWZ1n4+HmqAyE3JveXk4zx0XNNuHK31OS5kbntO6wlVQr62Kpq/T8=
+	t=1770363552; cv=none; b=rXJiEsJ8fLVnSvKfFmAD6JMuUmkzItPyStjJloeFU2dS3Ed3m+X6pXdjTkvnHvL31QX/hS7mTaZ7Bw+KEa/rUUh9J8n08zTEyS7lY/Q2fRmze24J8cXkVJq36cW+EWg3dbNjmIL2u+UGkkR9o1SJwv0SvKG2WfOGtl3EK2IYmoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770363482; c=relaxed/simple;
-	bh=FtGAImhGqEhVtX0zHRa7DJU+z6h9tTp2OGcS6JMiljQ=;
+	s=arc-20240116; t=1770363552; c=relaxed/simple;
+	bh=DU5nBjug+RoHFUzP1AJtDUCWFbe/rRBS/EngWIAV3fU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cFP8yYQIO1CwRqNiQ0k5CKzf7nMpvA/9jMKdvnI+Y5UTCQCCeVk178zCL7hq7UQC//nqn8HiAAkJExQtY2PVXV/qtHBbqIM6EYy7umMkFxP9h4n0gK/vqlikFDJ7NVHAW3f48ewvrjqbGKprozaw2y+CB9IjrUWusR7Gi313M1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.170
+	 MIME-Version; b=fOELeUAKxgvvvUaXcs789BbUe5cchpKse3cnGvLD+zZRjXs3vSqi1v2QjPkbwSDsHh1GuAYWu7CEPQ+XUntSbW+Di+qXd+7HYhd53Z+eBRF7EVkfiI/e3SES7b+hHmuv8lpSMG+jD67l0oYefAYmcw0wgZWgs7PlQoTJh8JnTUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2a7a9b8ed69so19319155ad.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Feb 2026 23:38:02 -0800 (PST)
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-c6dd0ec465aso147588a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Feb 2026 23:39:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770363482; x=1770968282;
+        d=1e100.net; s=20230601; t=1770363552; x=1770968352;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=dCAfHrSfR18VntHAODdOnFSa464mI2bSCdLh2YJx6jQ=;
-        b=eX0ywzuaH+2PVTHsSEqlq3GLNfj6d4gF39820QcspCIAfqJQuZ6QuY5bnZYXrlFJCG
-         akNqDjx/VBUpo3+SPfJRWvlwNipaxjnX5bB0uoSfLDBd9mRydE4nGvFKnKNVSFUDmrlk
-         nZiT4WZvlPgZZRbG3Rv6+YeQFfj536JA8NuaYMBI+7xsxv5D9A6eK108BlX3zFBSGU6X
-         7YzSRbssnbQ59pDTORwJ9tqkNCayQx6TcyUJbvlgiM4mgVpAEWIvtswpPmwr9r541IFQ
-         JEDZ0NzjxLINPIgc0mp/KdrQDvLr/VC7erLpRFfyv/ukL81Tb/aC9MxhiM4QgsU4tKfL
-         q0NA==
-X-Gm-Message-State: AOJu0Yz0d2Mdfb2/gWBhedY4HJwkMBahMDoZm9PofxMc39307+Q7c50V
-	WtoiKsrbjT0bUniOgdOuQ3w9mlWOkBZIbxeqSAonMO1WwqpIZL3Rs2Ng
-X-Gm-Gg: AZuq6aInPG7i4KJ3MPzlHBYeRNa3eUXQ1PZNjs3aPR7gHogTkS7aPg3yvrIPcGJ0tid
-	FUUjXS/OzeTLoJeKLKOdGIhVISGnE9EyLo2u7e37kWv4SyhWqDmJtmGD363QDGL8SJxcZs2rbYq
-	65f5vk6xG4E3Z2x80Vw/R7ZfFwPav/vmGJ0q4u4Gvgc/E18OFm515rqHGAuLA1vx/jTjWFbIPt8
-	g0s7DQHcf//1kcEn8rv2U3Dm8s3U62Jn/A4b7laZfJPSLjWdAmpvUssZPgfM64yFWSEbcdstA1V
-	nmHFGU+dBGl5dcjBnqyI8Ebe1h5Rajyd6Rn3eqPu6LobHY1H0LShYOvDkn7xrWn20GULmpPU0Yt
-	J9JS+QDT8aXKGchvmV/iV1faVvxVbnEFYAQ6hIHkBv9jpumuB19kYHYNzCnpeJ55wnyA+c9YoKs
-	5InWbpaFwatTktxfd+jCinQCFR7Q==
-X-Received: by 2002:a17:903:2984:b0:2a0:c84f:4124 with SMTP id d9443c01a7336-2a9519bcc43mr20464555ad.52.1770363481974;
-        Thu, 05 Feb 2026 23:38:01 -0800 (PST)
+        bh=/BZzhuG+YFcQ1jYJ+o4osI6kDB/iI0cOTuEHSjHPzZE=;
+        b=u8O6Ceg1sm9jV+MCyB1JG/pWkgG11oxzEQtRJ9Ug7+oVuiSZl0A/r+2yZ1UjMDlFvP
+         wzmjRdNM/5E7NHoiyXolwy/DV+6/B8HonTO2prs+C8Xw75fxHWq5MiEBCtD1fyQwnIzQ
+         VfDlX3sI3rxNO213OmbPOdMrpSPCNXb6q/3/HRAPA3ZVTipFultmXJk3L3vPBaN32/M/
+         Zy0E5ddU5Hb1mq+msEpqrGFZn3K9QYG80N4Gtg8fyeLTkwzSSM/OuF3ihsoNNW1bO95H
+         2HrTiO9HOWQx86PwSKlXBv8nDf4dZWswMSXOzrRUX1ci9Nrozc2p0XDuit+s4mZwo4lK
+         WyNQ==
+X-Gm-Message-State: AOJu0YzcEtvEgVlOVVDwKnio9dwXARIWBqYdTbMq/rbraHJhvz8KUeGb
+	lcso5kInI7oiq7c1DP62/VoiapXp7hZnjXwr/P6QnnlM5kbWdDnuGwTr
+X-Gm-Gg: AZuq6aKPNm6V9TYVl+Jhl7jQwUfkWaDgytZl/K+lsarE9+gjjQJs4zMHU8K+b6qgW1E
+	vMyos7IKEuNjz+TUmjWQFyDcCQBjzDQQifajq8PLp5R3sajAUI3Ejj+AHZd67rYSu/CADrvOWJp
+	e1m356B9nhxinV7k99bcEJnLikC93hcz1jYRjOmBdZ+tLBZAdUiEAf8yqHbiQtzz/smvFwD2fZJ
+	cJuul4fki318jgWrMs+DaFo7JEuPp6up4h/A6lvXs0amlqg5+zhoS2alCyxe60kXItDDVsfx846
+	mSQn8uE927+q6vn/HJzZSJgaOG+Yu28dJlHjtPpJ/OKlzW45lf77Jd0BfUA9lIiEKaqPl1GbF/a
+	A8wTaJzSPZUd/h38brbklJiQcCNtMVFuFVLrQ/HlfTZ3WqIndB83qsMhwJ8KFtvAZ2XASUNNnoB
+	mSh11D/QvYlrOSmfmjoAEDW0BAbQ==
+X-Received: by 2002:a17:902:fc44:b0:2a0:c92e:a378 with SMTP id d9443c01a7336-2a9516cd921mr25618055ad.7.1770363551702;
+        Thu, 05 Feb 2026 23:39:11 -0800 (PST)
 Received: from localhost.localdomain ([1.227.206.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a951c7a047sm13575125ad.27.2026.02.05.23.37.58
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a951c7a047sm13575125ad.27.2026.02.05.23.39.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Feb 2026 23:38:01 -0800 (PST)
+        Thu, 05 Feb 2026 23:39:11 -0800 (PST)
 From: Namjae Jeon <linkinjeon@kernel.org>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -76,9 +76,9 @@ To: viro@zeniv.linux.org.uk,
 Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Namjae Jeon <linkinjeon@kernel.org>
-Subject: [PATCH v8 14/17] ntfs3: remove legacy ntfs driver support
-Date: Fri,  6 Feb 2026 16:18:57 +0900
-Message-Id: <20260206071900.6800-15-linkinjeon@kernel.org>
+Subject: [PATCH v8 15/17] ntfs: add Kconfig and Makefile
+Date: Fri,  6 Feb 2026 16:18:58 +0900
+Message-Id: <20260206071900.6800-16-linkinjeon@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260206071900.6800-1-linkinjeon@kernel.org>
 References: <20260206071900.6800-1-linkinjeon@kernel.org>
@@ -95,7 +95,7 @@ X-Spamd-Result: default: False [-0.46 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
@@ -103,7 +103,7 @@ X-Spamd-Result: default: False [-0.46 / 15.00];
 	RCPT_COUNT_TWELVE(0.00)[14];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76566-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76567-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,lst.de,mit.edu,infradead.org,suse.cz,suse.com,gmail.com];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
@@ -111,292 +111,138 @@ X-Spamd-Result: default: False [-0.46 / 15.00];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[linkinjeon@kernel.org,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	RCVD_COUNT_FIVE(0.00)[5];
 	R_DKIM_NA(0.00)[];
-	NEURAL_HAM(-0.00)[-0.996];
+	NEURAL_HAM(-0.00)[-0.987];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,lst.de:email]
-X-Rspamd-Queue-Id: C156BFB0D2
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,lst.de:email]
+X-Rspamd-Queue-Id: 189F4FB0E8
 X-Rspamd-Action: no action
 
-Reverts the following commits that introduced legacy ntfs
-driver alias and related support code:
+Introduce Kconfig and Makefile for remade ntfs.
+And this patch make ntfs and ntfs3 mutually exclusive so only one can be
+built-in(y), while both can still be built as modules(m).
 
-74871791ffa9 ntfs3: serve as alias for the legacy ntfs driver
-1ff2e956608c fs/ntfs3: Redesign legacy ntfs support
-9b872cc50daa ntfs3: add legacy ntfs file operations
-d55f90e9b243 ntfs3: enforce read-only when used as legacy ntfs driver
-
-The legacy ntfs driver has been remade as a new implementation, so the
-alias and related codes in ntfs3 are no longer needed.
-
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Acked-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
 ---
- fs/ntfs3/Kconfig   |  9 -------
- fs/ntfs3/dir.c     |  9 -------
- fs/ntfs3/file.c    | 10 --------
- fs/ntfs3/inode.c   | 16 ++++---------
- fs/ntfs3/ntfs_fs.h | 11 ---------
- fs/ntfs3/super.c   | 59 +---------------------------------------------
- 6 files changed, 5 insertions(+), 109 deletions(-)
+ fs/Kconfig       |  1 +
+ fs/Makefile      |  1 +
+ fs/ntfs/Kconfig  | 47 +++++++++++++++++++++++++++++++++++++++++++++++
+ fs/ntfs/Makefile | 10 ++++++++++
+ fs/ntfs3/Kconfig |  1 +
+ 5 files changed, 60 insertions(+)
+ create mode 100644 fs/ntfs/Kconfig
+ create mode 100644 fs/ntfs/Makefile
 
+diff --git a/fs/Kconfig b/fs/Kconfig
+index 0bfdaecaa877..43cb06de297f 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -152,6 +152,7 @@ menu "DOS/FAT/EXFAT/NT Filesystems"
+ 
+ source "fs/fat/Kconfig"
+ source "fs/exfat/Kconfig"
++source "fs/ntfs/Kconfig"
+ source "fs/ntfs3/Kconfig"
+ 
+ endmenu
+diff --git a/fs/Makefile b/fs/Makefile
+index a04274a3c854..6893496697c4 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -90,6 +90,7 @@ obj-$(CONFIG_NLS)		+= nls/
+ obj-y				+= unicode/
+ obj-$(CONFIG_SMBFS)		+= smb/
+ obj-$(CONFIG_HPFS_FS)		+= hpfs/
++obj-$(CONFIG_NTFS_FS)		+= ntfs/
+ obj-$(CONFIG_NTFS3_FS)		+= ntfs3/
+ obj-$(CONFIG_UFS_FS)		+= ufs/
+ obj-$(CONFIG_EFS_FS)		+= efs/
+diff --git a/fs/ntfs/Kconfig b/fs/ntfs/Kconfig
+new file mode 100644
+index 000000000000..e5fd1378fbbf
+--- /dev/null
++++ b/fs/ntfs/Kconfig
+@@ -0,0 +1,47 @@
++# SPDX-License-Identifier: GPL-2.0-only
++config NTFS_FS
++	tristate "NTFS file system support"
++	select NLS
++	help
++	  NTFS is the file system of Microsoft Windows NT, 2000, XP and 2003.
++	  This allows you to mount devices formatted with the ntfs file system.
++
++	  To compile this as a module, choose M here: the module will be called
++	  ntfs.
++
++config NTFS_DEBUG
++	bool "NTFS debugging support"
++	depends on NTFS_FS
++	help
++	  If you are experiencing any problems with the NTFS file system, say
++	  Y here.  This will result in additional consistency checks to be
++	  performed by the driver as well as additional debugging messages to
++	  be written to the system log.  Note that debugging messages are
++	  disabled by default.  To enable them, supply the option debug_msgs=1
++	  at the kernel command line when booting the kernel or as an option
++	  to insmod when loading the ntfs module.  Once the driver is active,
++	  you can enable debugging messages by doing (as root):
++	  echo 1 > /proc/sys/fs/ntfs-debug
++	  Replacing the "1" with "0" would disable debug messages.
++
++	  If you leave debugging messages disabled, this results in little
++	  overhead, but enabling debug messages results in very significant
++	  slowdown of the system.
++
++	  When reporting bugs, please try to have available a full dump of
++	  debugging messages while the misbehaviour was occurring.
++
++config NTFS_FS_POSIX_ACL
++	bool "NTFS POSIX Access Control Lists"
++	depends on NTFS_FS
++	select FS_POSIX_ACL
++	help
++	  POSIX Access Control Lists (ACLs) support additional access rights
++	  for users and groups beyond the standard owner/group/world scheme.
++
++	  This option enables ACL support for ntfs, providing functional parity
++	  with ntfs3 drivier.
++
++	  NOTE: this is linux only feature. Windows will ignore these ACLs.
++
++	  If you don't know what Access Control Lists are, say N.
+diff --git a/fs/ntfs/Makefile b/fs/ntfs/Makefile
+new file mode 100644
+index 000000000000..0ce4d9a9388a
+--- /dev/null
++++ b/fs/ntfs/Makefile
+@@ -0,0 +1,10 @@
++# SPDX-License-Identifier: GPL-2.0
++
++obj-$(CONFIG_NTFS_FS) += ntfs.o
++
++ntfs-y := aops.o attrib.o collate.o dir.o file.o index.o inode.o \
++	  mft.o mst.o namei.o runlist.o super.o unistr.o attrlist.o ea.o \
++	  upcase.o bitmap.o lcnalloc.o logfile.o reparse.o compress.o \
++	  iomap.o debug.o sysctl.o quota.o object_id.o bdev-io.o
++
++ccflags-$(CONFIG_NTFS_DEBUG) += -DDEBUG
 diff --git a/fs/ntfs3/Kconfig b/fs/ntfs3/Kconfig
-index 7bc31d69f680..cdfdf51e55d7 100644
+index cdfdf51e55d7..876dbc613ae6 100644
 --- a/fs/ntfs3/Kconfig
 +++ b/fs/ntfs3/Kconfig
-@@ -46,12 +46,3 @@ config NTFS3_FS_POSIX_ACL
- 	  NOTE: this is linux only feature. Windows will ignore these ACLs.
- 
- 	  If you don't know what Access Control Lists are, say N.
--
--config NTFS_FS
--	tristate "NTFS file system support"
--	select NTFS3_FS
--	select BUFFER_HEAD
--	select NLS
--	help
--	  This config option is here only for backward compatibility. NTFS
--	  filesystem is now handled by the NTFS3 driver.
-diff --git a/fs/ntfs3/dir.c b/fs/ntfs3/dir.c
-index b98e95d6b4d9..fc39e7330365 100644
---- a/fs/ntfs3/dir.c
-+++ b/fs/ntfs3/dir.c
-@@ -631,13 +631,4 @@ const struct file_operations ntfs_dir_operations = {
- 	.compat_ioctl   = ntfs_compat_ioctl,
- #endif
- };
--
--#if IS_ENABLED(CONFIG_NTFS_FS)
--const struct file_operations ntfs_legacy_dir_operations = {
--	.llseek		= generic_file_llseek,
--	.read		= generic_read_dir,
--	.iterate_shared	= ntfs_readdir,
--	.open		= ntfs_file_open,
--};
--#endif
- // clang-format on
-diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-index 2e7b2e566ebe..0faa856fc470 100644
---- a/fs/ntfs3/file.c
-+++ b/fs/ntfs3/file.c
-@@ -1478,14 +1478,4 @@ const struct file_operations ntfs_file_operations = {
- 	.fallocate	= ntfs_fallocate,
- 	.release	= ntfs_file_release,
- };
--
--#if IS_ENABLED(CONFIG_NTFS_FS)
--const struct file_operations ntfs_legacy_file_operations = {
--	.llseek		= generic_file_llseek,
--	.read_iter	= ntfs_file_read_iter,
--	.splice_read	= ntfs_file_splice_read,
--	.open		= ntfs_file_open,
--	.release	= ntfs_file_release,
--};
--#endif
- // clang-format on
-diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-index 0a9ac5efeb67..826840c257d3 100644
---- a/fs/ntfs3/inode.c
-+++ b/fs/ntfs3/inode.c
-@@ -444,9 +444,7 @@ static struct inode *ntfs_read_mft(struct inode *inode,
- 		 * Usually a hard links to directories are disabled.
- 		 */
- 		inode->i_op = &ntfs_dir_inode_operations;
--		inode->i_fop = unlikely(is_legacy_ntfs(sb)) ?
--				       &ntfs_legacy_dir_operations :
--				       &ntfs_dir_operations;
-+		inode->i_fop = &ntfs_dir_operations;
- 		ni->i_valid = 0;
- 	} else if (S_ISLNK(mode)) {
- 		ni->std_fa &= ~FILE_ATTRIBUTE_DIRECTORY;
-@@ -456,9 +454,7 @@ static struct inode *ntfs_read_mft(struct inode *inode,
- 	} else if (S_ISREG(mode)) {
- 		ni->std_fa &= ~FILE_ATTRIBUTE_DIRECTORY;
- 		inode->i_op = &ntfs_file_inode_operations;
--		inode->i_fop = unlikely(is_legacy_ntfs(sb)) ?
--				       &ntfs_legacy_file_operations :
--				       &ntfs_file_operations;
-+		inode->i_fop = &ntfs_file_operations;
- 		inode->i_mapping->a_ops = is_compressed(ni) ? &ntfs_aops_cmpr :
- 							      &ntfs_aops;
- 		if (ino != MFT_REC_MFT)
-@@ -1590,9 +1586,7 @@ int ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
- 
- 	if (S_ISDIR(mode)) {
- 		inode->i_op = &ntfs_dir_inode_operations;
--		inode->i_fop = unlikely(is_legacy_ntfs(sb)) ?
--				       &ntfs_legacy_dir_operations :
--				       &ntfs_dir_operations;
-+		inode->i_fop = &ntfs_dir_operations;
- 	} else if (S_ISLNK(mode)) {
- 		inode->i_op = &ntfs_link_inode_operations;
- 		inode->i_fop = NULL;
-@@ -1601,9 +1595,7 @@ int ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
- 		inode_nohighmem(inode);
- 	} else if (S_ISREG(mode)) {
- 		inode->i_op = &ntfs_file_inode_operations;
--		inode->i_fop = unlikely(is_legacy_ntfs(sb)) ?
--				       &ntfs_legacy_file_operations :
--				       &ntfs_file_operations;
-+		inode->i_fop = &ntfs_file_operations;
- 		inode->i_mapping->a_ops = is_compressed(ni) ? &ntfs_aops_cmpr :
- 							      &ntfs_aops;
- 		init_rwsem(&ni->file.run_lock);
-diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
-index a4559c9f64e6..326644d23110 100644
---- a/fs/ntfs3/ntfs_fs.h
-+++ b/fs/ntfs3/ntfs_fs.h
-@@ -501,7 +501,6 @@ struct inode *dir_search_u(struct inode *dir, const struct cpu_str *uni,
- 			   struct ntfs_fnd *fnd);
- bool dir_is_empty(struct inode *dir);
- extern const struct file_operations ntfs_dir_operations;
--extern const struct file_operations ntfs_legacy_dir_operations;
- 
- /* Globals from file.c */
- int ntfs_getattr(struct mnt_idmap *idmap, const struct path *path,
-@@ -516,7 +515,6 @@ long ntfs_compat_ioctl(struct file *filp, u32 cmd, unsigned long arg);
- extern const struct inode_operations ntfs_special_inode_operations;
- extern const struct inode_operations ntfs_file_inode_operations;
- extern const struct file_operations ntfs_file_operations;
--extern const struct file_operations ntfs_legacy_file_operations;
- 
- /* Globals from frecord.c */
- void ni_remove_mi(struct ntfs_inode *ni, struct mft_inode *mi);
-@@ -1160,13 +1158,4 @@ static inline void le64_sub_cpu(__le64 *var, u64 val)
- 	*var = cpu_to_le64(le64_to_cpu(*var) - val);
- }
- 
--#if IS_ENABLED(CONFIG_NTFS_FS)
--bool is_legacy_ntfs(struct super_block *sb);
--#else
--static inline bool is_legacy_ntfs(struct super_block *sb)
--{
--	return false;
--}
--#endif
--
- #endif /* _LINUX_NTFS3_NTFS_FS_H */
-diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-index 8b0cf0ed4f72..4e0448af3e7e 100644
---- a/fs/ntfs3/super.c
-+++ b/fs/ntfs3/super.c
-@@ -415,12 +415,6 @@ static int ntfs_fs_reconfigure(struct fs_context *fc)
- 	struct ntfs_mount_options *new_opts = fc->fs_private;
- 	int ro_rw;
- 
--	/* If ntfs3 is used as legacy ntfs enforce read-only mode. */
--	if (is_legacy_ntfs(sb)) {
--		fc->sb_flags |= SB_RDONLY;
--		goto out;
--	}
--
- 	ro_rw = sb_rdonly(sb) && !(fc->sb_flags & SB_RDONLY);
- 	if (ro_rw && (sbi->flags & NTFS_FLAGS_NEED_REPLAY)) {
- 		errorf(fc,
-@@ -447,7 +441,6 @@ static int ntfs_fs_reconfigure(struct fs_context *fc)
- 		return -EINVAL;
- 	}
- 
--out:
- 	sync_filesystem(sb);
- 	swap(sbi->options, fc->fs_private);
- 
-@@ -1670,8 +1663,6 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- 	ntfs_create_procdir(sb);
- 
--	if (is_legacy_ntfs(sb))
--		sb->s_flags |= SB_RDONLY;
- 	return 0;
- 
- put_inode_out:
-@@ -1796,7 +1787,7 @@ static const struct fs_context_operations ntfs_context_ops = {
-  * This will called when mount/remount. We will first initialize
-  * options so that if remount we can use just that.
-  */
--static int __ntfs_init_fs_context(struct fs_context *fc)
-+static int ntfs_init_fs_context(struct fs_context *fc)
- {
- 	struct ntfs_mount_options *opts;
- 	struct ntfs_sb_info *sbi;
-@@ -1850,11 +1841,6 @@ static int __ntfs_init_fs_context(struct fs_context *fc)
- 	return -ENOMEM;
- }
- 
--static int ntfs_init_fs_context(struct fs_context *fc)
--{
--	return __ntfs_init_fs_context(fc);
--}
--
- static void ntfs3_kill_sb(struct super_block *sb)
- {
- 	struct ntfs_sb_info *sbi = sb->s_fs_info;
-@@ -1876,47 +1862,6 @@ static struct file_system_type ntfs_fs_type = {
- 	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
- };
- 
--#if IS_ENABLED(CONFIG_NTFS_FS)
--static int ntfs_legacy_init_fs_context(struct fs_context *fc)
--{
--	int ret;
--
--	ret = __ntfs_init_fs_context(fc);
--	/* If ntfs3 is used as legacy ntfs enforce read-only mode. */
--	fc->sb_flags |= SB_RDONLY;
--	return ret;
--}
--
--static struct file_system_type ntfs_legacy_fs_type = {
--	.owner			= THIS_MODULE,
--	.name			= "ntfs",
--	.init_fs_context	= ntfs_legacy_init_fs_context,
--	.parameters		= ntfs_fs_parameters,
--	.kill_sb		= ntfs3_kill_sb,
--	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
--};
--MODULE_ALIAS_FS("ntfs");
--
--static inline void register_as_ntfs_legacy(void)
--{
--	int err = register_filesystem(&ntfs_legacy_fs_type);
--	if (err)
--		pr_warn("ntfs3: Failed to register legacy ntfs filesystem driver: %d\n", err);
--}
--
--static inline void unregister_as_ntfs_legacy(void)
--{
--	unregister_filesystem(&ntfs_legacy_fs_type);
--}
--bool is_legacy_ntfs(struct super_block *sb)
--{
--	return sb->s_type == &ntfs_legacy_fs_type;
--}
--#else
--static inline void register_as_ntfs_legacy(void) {}
--static inline void unregister_as_ntfs_legacy(void) {}
--#endif
--
- // clang-format on
- 
- static int __init init_ntfs_fs(void)
-@@ -1945,7 +1890,6 @@ static int __init init_ntfs_fs(void)
- 		goto out1;
- 	}
- 
--	register_as_ntfs_legacy();
- 	err = register_filesystem(&ntfs_fs_type);
- 	if (err)
- 		goto out;
-@@ -1965,7 +1909,6 @@ static void __exit exit_ntfs_fs(void)
- 	rcu_barrier();
- 	kmem_cache_destroy(ntfs_inode_cachep);
- 	unregister_filesystem(&ntfs_fs_type);
--	unregister_as_ntfs_legacy();
- 	ntfs3_exit_bitmap();
- 	ntfs_remove_proc_root();
- }
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config NTFS3_FS
+ 	tristate "NTFS Read-Write file system support"
++	depends on !NTFS_FS || m
+ 	select BUFFER_HEAD
+ 	select NLS
+ 	select LEGACY_DIRECT_IO
 -- 
 2.25.1
 
