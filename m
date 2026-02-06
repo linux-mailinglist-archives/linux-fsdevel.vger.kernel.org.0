@@ -1,299 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-76508-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76509-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oJJXG+0/hWme+gMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76508-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 02:12:13 +0100
+	id OI/pNaRAhWme+gMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76509-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 02:15:16 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2147AF8E34
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 02:12:12 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35851F8E75
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 02:15:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 26C75302DE0F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 01:12:06 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C4344301AA53
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 01:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD9F238C29;
-	Fri,  6 Feb 2026 01:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F7B239570;
+	Fri,  6 Feb 2026 01:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="MNZ6BVRi";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PfZZa1dC"
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="ABe+Ds0i"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from flow-a7-smtp.messagingengine.com (flow-a7-smtp.messagingengine.com [103.168.172.142])
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3378C22D4D3;
-	Fri,  6 Feb 2026 01:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E5019C54E;
+	Fri,  6 Feb 2026 01:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770340320; cv=none; b=AJZiuWx2PsXVimKg+SHG4rxP8R6PNK0w8A2Ukh3EV144PqviaL/dsYdpzzMY/A3nYe74Ob6g9u4n2pov81GR0Pd/DrKGH2am1hOESbNmUSgQS6ZtoM89sqbxmGnbH94UqNuNzrTPOuS+0yJdSW8GZbPDkjVE8WnmhLkmwpfInrk=
+	t=1770340505; cv=none; b=ppXUMM97sFWJ+GhbCK31EZ7WhPgHd/OiuJlFMuY6kUWNLujrMiAYSp+Xo0arDWwLqqNoFLtzVFwNQ9iiPlWQNX3PP5kxkzzuvNkCMLZNT4Kv27slAjVOxSY7z7nfQz8a+/eNr1dZTMmAwcFc/J/0NvZo31/dsNuqSa9xZ9HZwvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770340320; c=relaxed/simple;
-	bh=ayCDfpzcj1jMB7bidxqby4/XW3dWDd0LiUFbQTwfKDc=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=M4HFhF1iVpZOYCeewt3uep2SOfdbdpKxC67amL5tUMZincbq/a7bsr1ZVx9KsiSZK27DnhHazWzybxLjMSvS0Jwl5s4CbzPyVPpBmd4JBMkgpXAQK3AQlnFoBhlmOmGwOl/OGd2hOLxzImglCEzM2nffWO7+ttZgH1VyA1AvC+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=MNZ6BVRi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PfZZa1dC; arc=none smtp.client-ip=103.168.172.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailflow.phl.internal (Postfix) with ESMTP id 6E3EC13802E2;
-	Thu,  5 Feb 2026 20:11:59 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Thu, 05 Feb 2026 20:11:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
-	1770340319; x=1770347519; bh=OElqf5JNJ6wb7vQBQFRxNPu5laMFIrMj1jf
-	v0Fgyffc=; b=MNZ6BVRiC13zdWbee8cGp2aje7ct2FEZ9mbd2iT9XImE4H66gt0
-	Z9K9+VNJh3BNngmXAAbrKjwBYgXryraTQnw689PtTXJ8SOQ0aMq8H0aj6O7iINry
-	fD/FOge5iWcu8TOlyoTawmKYahZHpSvZ+QhhlcGNaoP+ne+mfgL0L8613CVw/0Ck
-	TXuJVvojD4OhmjtA/fMrGbwfAeB3V6NmMekMvCKAXg06RwbCDm/dd/QUfyPXLKon
-	phrwNHkdNibJ0sDQH4zO1im9TmSNQfVN2eSLSiW5y8AJwrcjRy3k+umeFyVxrG3a
-	kH6gLmIbi+06yWVjjkAgDGi4XwpIewYNUPA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1770340319; x=
-	1770347519; bh=OElqf5JNJ6wb7vQBQFRxNPu5laMFIrMj1jfv0Fgyffc=; b=P
-	fZZa1dCvWAZ1mZprxbhpHzSQ1TJnfWMdJXs1jfFipfrk1ok1tPHguXy5LuZGIIgz
-	+Hn/mg451In/5eBXd46RfTHc3y53Sci8hwZhU8/S8VQIj7Z7S65Gu6NCCpJ8Sbqx
-	QzKvVA4+90Vcf5FykpVY3MWLig/mpzuzkMz4rypz1JE4JpYG4DZjW1zlLKjc7fU4
-	1AkL4dPoWFY8fJ+R++dRf3nGpaW+fOaMztYokr3WlW57Ao1drED9n0c3rTyqGDzH
-	kNNEZdIC4kdQxI0d5A5GQdVbqxFzh6IPxoXdBbs701CXH7URwcpDxc3PQm6phyaY
-	u8+8zpMZS7pJ4ff8tS62w==
-X-ME-Sender: <xms:3j-FaVOjIxKw4KeYsaHlAiI9xDZi7cdTvIjoI6JFiE5jZiWk-93baw>
-    <xme:3j-FaTjDfg5P27mbJCCabLPaAur9EBu-IR0bvXR_b1GyWlGTzgxf4QJcvi1NpUd0K
-    OpkSj2XWTpVZl3-1aM8R96knqmUn992K9ml7uEvy0F3MaFgXA>
-X-ME-Received: <xmr:3j-FaUQL-GT-NwpNzj-mEuloTAJgYNUsTChDIBbaafv1RkZPnA5dihcPDpFPYxBeNNA-7dsuE3w5l9X8TUE9IKNqPtFz4S75tLl51JSRTv_J>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukeeikedvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepvddupdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
-    hrtghpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhr
-    tghpthhtohepjhgrtghksehsuhhsvgdrtgii
-X-ME-Proxy: <xmx:3j-FaWrXvDSAtKnpLE1EES9TJqj3M9eaNlxWMNxF7eldvJ4ju1DI6g>
-    <xmx:3j-FafYE1ffdA5E279WF2FpLYN73djNnfJiz7FIpHonxk7POMQ_tTA>
-    <xmx:3j-FaaHwktvOfyhsnLVCQZzgLj6nLPBxSlKoRRAl_TYfcqZuTqY-wA>
-    <xmx:3j-FacpzdZBpCXRqkaGc4DXpL2XANHcEa9oKlvQb76UW_WYYyBgk1Q>
-    <xmx:3z-Facitt6SaplvTAhjJr6j8Y1FQ-mY9ikZnOPpINMYSce6ySceYnCBy>
-Feedback-ID: i9d664b8f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 5 Feb 2026 20:11:52 -0500 (EST)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1770340505; c=relaxed/simple;
+	bh=A0AjAjUsGSSu5NFAHmcb2Nj/utizFM0hGfJTsGlv1dU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=iepVUqLBHb14bQSyXkmKSZJuVdQW+Pji+LtBuRyhYBbWuxv5igAIDCQbZLXlCEtsr2IlsI3VT5naz7QGrr3JSmFCZRm1TlyZkqRw8Ip/bx2anEp50IDe9j4S437LzEOipVryfcK9Iw9X1gyVFcc08dJ066YSgCOsWOj5Je3cXcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=ABe+Ds0i; arc=none smtp.client-ip=113.46.200.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=sQ8ZYm9EKNt348xD3uEYD5yQpwEtVLoM1aN86AiBAxA=;
+	b=ABe+Ds0imj040vkRYzyHi2HGsgfk8ivxdDHrk2ni3E2N5oZ6RqptAnbPbEEa5nKltWfji+o4k
+	DLHNPBECZNmrcniAuMCydPM3S7G/edovD+Q50oahr3K3l+AZTRMKM2Yagvc4xVKlNbflpQ+4V8l
+	uEiISooKC6KVpxiZjkbctPc=
+Received: from mail.maildlp.com (unknown [172.19.163.0])
+	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4f6bc948Cdz1prKt;
+	Fri,  6 Feb 2026 09:10:17 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 40F5E4036C;
+	Fri,  6 Feb 2026 09:14:55 +0800 (CST)
+Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 6 Feb
+ 2026 09:14:53 +0800
+Message-ID: <6b3fddd2-047b-4639-b54f-554b16a0ef36@huawei.com>
+Date: Fri, 6 Feb 2026 09:14:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Amir Goldstein" <amir73il@gmail.com>
-Cc: "Christian Brauner" <brauner@kernel.org>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "David Howells" <dhowells@redhat.com>, "Jan Kara" <jack@suse.cz>,
- "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
- "Miklos Szeredi" <miklos@szeredi.hu>,
- "John Johansen" <john.johansen@canonical.com>,
- "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- "Stephen Smalley" <stephen.smalley.work@gmail.com>,
- linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
- linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH 10/13] ovl: change ovl_create_real() to get a new lock
- when re-opening created file.
-In-reply-to:
- <CAOQ4uxh-MLgwZCstwr6HyPXHVRmtj2F_=xS8pE3FN6Ex-wex4w@mail.gmail.com>
-References: <20260204050726.177283-1-neilb@ownmail.net>,
- <20260204050726.177283-11-neilb@ownmail.net>,
- <CAOQ4uxh-MLgwZCstwr6HyPXHVRmtj2F_=xS8pE3FN6Ex-wex4w@mail.gmail.com>
-Date: Fri, 06 Feb 2026 12:11:50 +1100
-Message-id: <177034031005.16766.246184445940612287@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next v2 03/22] ext4: only order data when partially block
+ truncating down
+Content-Language: en-GB
+To: Jan Kara <jack@suse.cz>
+CC: Zhang Yi <yi.zhang@huaweicloud.com>, <linux-ext4@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<tytso@mit.edu>, <adilger.kernel@dilger.ca>, <ojaswin@linux.ibm.com>,
+	<ritesh.list@gmail.com>, <hch@infradead.org>, <djwong@kernel.org>, Zhang Yi
+	<yi.zhang@huawei.com>, <yizhang089@gmail.com>, <yangerkun@huawei.com>,
+	<yukuai@fnnas.com>, <libaokun9@gmail.com>, <libaokun9@gmail.com>
+References: <20260203062523.3869120-1-yi.zhang@huawei.com>
+ <20260203062523.3869120-4-yi.zhang@huawei.com>
+ <jgotl7vzzuzm6dvz5zfgk6haodxvunb4hq556pzh4hqqwvnhxq@lr3jiedhqh7c>
+ <b889332b-9c0c-46d1-af61-1f2426c8c305@huaweicloud.com>
+ <ocwepmhnw45k5nwwrooe2li2mzavw5ps2ncmowrc32u4zeitgp@gqsz3iee3axr>
+ <9b7e93da-65dd-4574-be7f-4ec88bce4da7@huawei.com>
+ <s434ifpengcthkmohmc6vvmvppx4o2k2ctk2p3it55ncgce3je@irbt7xpdnnzu>
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <s434ifpengcthkmohmc6vvmvppx4o2k2ctk2p3it55ncgce3je@irbt7xpdnnzu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[ownmail.net,none];
-	R_DKIM_ALLOW(-0.20)[ownmail.net:s=fm3,messagingengine.com:s=fm3];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[huawei.com,quarantine];
+	R_DKIM_ALLOW(-0.20)[huawei.com:s=dkim];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	REPLYTO_DN_EQ_FROM_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76509-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76508-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_FROM(0.00)[ownmail.net];
+	FREEMAIL_CC(0.00)[huaweicloud.com,vger.kernel.org,mit.edu,dilger.ca,linux.ibm.com,gmail.com,infradead.org,kernel.org,huawei.com,fnnas.com];
+	RCPT_COUNT_TWELVE(0.00)[17];
 	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,redhat.com,suse.cz,oracle.com,szeredi.hu,canonical.com,paul-moore.com,namei.org,hallyn.com,gmail.com,vger.kernel.org,lists.linux.dev,lists.ubuntu.com];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	HAS_REPLYTO(0.00)[neil@brown.name];
-	RCVD_COUNT_FIVE(0.00)[6];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[neilb@ownmail.net,linux-fsdevel@vger.kernel.org];
-	REPLYTO_DOM_NEQ_FROM_DOM(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	DKIM_TRACE(0.00)[ownmail.net:+,messagingengine.com:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[brown.name:replyto,brown.name:email,messagingengine.com:dkim,ownmail.net:email,ownmail.net:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 2147AF8E34
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[libaokun1@huawei.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[huawei.com:+];
+	NEURAL_HAM(-0.00)[-0.999];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,huawei.com:mid,huawei.com:dkim]
+X-Rspamd-Queue-Id: 35851F8E75
 X-Rspamd-Action: no action
 
-On Thu, 05 Feb 2026, Amir Goldstein wrote:
-> On Wed, Feb 4, 2026 at 6:09=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote:
-> >
-> > From: NeilBrown <neil@brown.name>
-> >
-> > When ovl_create_real() is used to create a file on the upper filesystem
-> > it needs to return the resulting dentry - positive and hashed.
-> > It is usually the case the that dentry passed to the create function
-> > (e.g.  vfs_create()) will be suitable but this is not guaranteed.  The
-> > filesystem may unhash that dentry forcing a repeat lookup next time the
-> > name is wanted.
-> >
-> > So ovl_create_real() must be (and is) aware of this and prepared to
-> > perform that lookup to get a hash positive dentry.
-> >
-> > This is currently done under that same directory lock that provided
-> > exclusion for the create.  Proposed changes to locking will make this
-> > not possible - as the name, rather than the directory, will be locked.
-> > The new APIs provided for lookup and locking do not and cannot support
-> > this pattern.
-> >
-> > The lock isn't needed.  ovl_create_real() can drop the lock and then get
-> > a new lock for the lookup - then check that the lookup returned the
-> > correct inode.  In a well-behaved configuration where the upper
-> > filesystem is not being modified by a third party, this will always work
-> > reliably, and if there are separate modification it will fail cleanly.
-> >
-> > So change ovl_create_real() to drop the lock and call
-> > ovl_start_creating_upper() to find the correct dentry.  Note that
-> > start_creating doesn't fail if the name already exists.
-> >
-> > This removes the only remaining use of ovl_lookup_upper, so it is
-> > removed.
-> >
-> > Signed-off-by: NeilBrown <neil@brown.name>
-> > ---
-> >  fs/overlayfs/dir.c       | 24 ++++++++++++++++++------
-> >  fs/overlayfs/overlayfs.h |  7 -------
-> >  2 files changed, 18 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> > index ff3dbd1ca61f..ec08904d084d 100644
-> > --- a/fs/overlayfs/dir.c
-> > +++ b/fs/overlayfs/dir.c
-> > @@ -219,21 +219,33 @@ struct dentry *ovl_create_real(struct ovl_fs *ofs, =
-struct dentry *parent,
-> >                 err =3D -EIO;
-> >         } else if (d_unhashed(newdentry)) {
-> >                 struct dentry *d;
-> > +               struct name_snapshot name;
-> >                 /*
-> >                  * Some filesystems (i.e. casefolded) may return an unhas=
-hed
-> > -                * negative dentry from the ovl_lookup_upper() call before
-> > +                * negative dentry from the ovl_start_creating_upper() ca=
-ll before
-> >                  * ovl_create_real().
->=20
->=20
-> According to the new locking rules, if the hashed dentry itself is
-> the synchronization object, is it going to be allowed to
-> filesystem to unhash the dentry while the dentry still in the
-> "creating" scope? It is hard for me to wrap my head around this.
+On 2026-02-05 22:07, Jan Kara wrote:
+> On Thu 05-02-26 11:27:09, Baokun Li wrote:
+>> On 2026-02-04 22:18, Jan Kara wrote:
+>>> Hi Zhang!
+>>>
+>>> On Wed 04-02-26 14:42:46, Zhang Yi wrote:
+>>>> On 2/3/2026 5:59 PM, Jan Kara wrote:
+>>>>> On Tue 03-02-26 14:25:03, Zhang Yi wrote:
+>>>>>> Currently, __ext4_block_zero_page_range() is called in the following
+>>>>>> four cases to zero out the data in partial blocks:
+>>>>>>
+>>>>>> 1. Truncate down.
+>>>>>> 2. Truncate up.
+>>>>>> 3. Perform block allocation (e.g., fallocate) or append writes across a
+>>>>>>    range extending beyond the end of the file (EOF).
+>>>>>> 4. Partial block punch hole.
+>>>>>>
+>>>>>> If the default ordered data mode is used, __ext4_block_zero_page_range()
+>>>>>> will write back the zeroed data to the disk through the order mode after
+>>>>>> zeroing out.
+>>>>>>
+>>>>>> Among the cases 1,2 and 3 described above, only case 1 actually requires
+>>>>>> this ordered write. Assuming no one intentionally bypasses the file
+>>>>>> system to write directly to the disk. When performing a truncate down
+>>>>>> operation, ensuring that the data beyond the EOF is zeroed out before
+>>>>>> updating i_disksize is sufficient to prevent old data from being exposed
+>>>>>> when the file is later extended. In other words, as long as the on-disk
+>>>>>> data in case 1 can be properly zeroed out, only the data in memory needs
+>>>>>> to be zeroed out in cases 2 and 3, without requiring ordered data.
+>>>>> Hum, I'm not sure this is correct. The tail block of the file is not
+>>>>> necessarily zeroed out beyond EOF (as mmap writes can race with page
+>>>>> writeback and modify the tail block contents beyond EOF before we really
+>>>>> submit it to the device). Thus after this commit if you truncate up, just
+>>>>> zero out the newly exposed contents in the page cache and dirty it, then
+>>>>> the transaction with the i_disksize update commits (I see nothing
+>>>>> preventing it) and then you crash, you can observe file with the new size
+>>>>> but non-zero content in the newly exposed area. Am I missing something?
+>>>>>
+>>>> Well, I think you are right! I missed the mmap write race condition that
+>>>> happens during the writeback submitting I/O. Thank you a lot for pointing
+>>>> this out. I thought of two possible solutions:
+>>>>
+>>>> 1. We also add explicit writeback operations to the truncate-up and
+>>>>    post-EOF append writes. This solution is the most straightforward but
+>>>>    may cause some performance overhead. However, since at most only one
+>>>>    block is written, the impact is likely limited. Additionally, I
+>>>>    observed that the implementation of the XFS file system also adopts a
+>>>>    similar approach in its truncate up and down operation. (But it is
+>>>>    somewhat strange that XFS also appears to have the same issue with
+>>>>    post-EOF append writes; it only zero out the partial block in
+>>>>    xfs_file_write_checks(), but it neither explicitly writeback zeroed
+>>>>    data nor employs any other mechanism to ensure that the zero data
+>>>>    writebacks before the metadata is written to disk.)
+>>>>
+>>>> 2. Resolve this race condition, ensure that there are no non-zero data
+>>>>    in the post-EOF partial blocks on the disk. I observed that after the
+>>>>    writeback holds the folio lock and calls folio_clear_dirty_for_io(),
+>>>>    mmap writes will re-trigger the page fault. Perhaps we can filter out
+>>>>    the EOF folio based on i_size in ext4_page_mkwrite(),
+>>>>    block_page_mkwrite() and iomap_page_mkwrite(), and then call
+>>>>    folio_wait_writeback() to wait for this partial folio writeback to
+>>>>    complete. This seems can break the race condition without introducing
+>>>>    too much overhead (no?).
+>>>>
+>>>> What do you think? Any other suggestions are also welcome.
+>>> Hum, I like the option 2 because IMO non-zero data beyond EOF is a
+>>> corner-case quirk which unnecessarily complicates rather common paths. But
+>>> I'm not sure we can easily get rid of it. It can happen for example when
+>>> you do appending write inside a block. The page is written back but before
+>>> the transaction with i_disksize update commits we crash. Then again we have
+>>> a non-zero content inside the block beyond EOF.
+>>>
+>>> So the only realistic option I see is to ensure tail of the block gets
+>>> zeroed on disk before the transaction with i_disksize update commits in the
+>>> cases of truncate up or write beyond EOF. data=ordered mode machinery is an
+>>> asynchronous way how to achieve this. We could also just synchronously
+>>> writeback the block where needed but the latency hit of such operation is
+>>> going to be significant so I'm quite sure some workload somewhere will
+>>> notice although the truncate up / write beyond EOF operations triggering this
+>>> are not too common. So why do you need to get rid of these data=ordered
+>>> mode usages? I guess because with iomap keeping our transaction handle ->
+>>> folio lock ordering is complicated? Last time I looked it seemed still
+>>> possible to keep it though.
+>>>
+>>> Another possibility would be to just *submit* the write synchronously and
+>>> use data=ordered mode machinery only to wait for IO to complete before the
+>>> transaction commits. That way it should be safe to start a transaction
+>>> while holding folio lock and thus the iomap conversion would be easier.
+>>>
+>>> 								Honza
+>> Can we treat EOF blocks as metadata and update them in the same
+>> transaction as i_disksize? Although this would introduce some
+>> management and journaling overhead, it could avoid the deadlock
+>> of "writeback -> start handle -> trigger writeback".
+> No, IMHO that would get too difficult. Just look at the hoops data=journal
+> mode has to jump through to make page cache handling work with the
+> journalling machinery. And you'd now have that for all the inodes. So I
+> think some form of data=ordered machinery is much simpler to reason about.
+>
+> 								Honza
 
-It can be confusing....
-
-It will be important for the name the remain locked (and hashed) until
-the operation (create, remove, rename) either succeeds or fails.  So
-leaving a dentry unhashed will be OK providing a subsequent lookup will
-also succeed or fail in the same way.  The caller must be able to use
-the dentry to access the object (i.e.  the inode) on success, but they
-is nothing in POSIX that requires that the object still has any
-particular name.
-
->=20
-> Or do we need this here because some filesystems (casefold in
-> particular) are not going to support parallel creations?
-
-There is no reason that a casefolding filesystem would not support parallel
-ops. And it isn't just casefolding that acts like this.  At least one of
-the special filesystems (tracefs maybe) always unhashes on create.  You
-only ever get a hashed positive dentry as a result of lookup.
-(overlayfs would never see this case of course).
-
->=20
-> >                  * In that case, lookup again after making the newdentry
-> >                  * positive, so ovl_create_upper() always returns a hashed
-> >                  * positive dentry.
-> > +                * As we have to drop the lock before the lookup a race
-> > +                * could result in a lookup failure.  In that case we ret=
-urn
-> > +                * an error.
-> >                  */
-> > -               d =3D ovl_lookup_upper(ofs, newdentry->d_name.name, paren=
-t,
-> > -                                    newdentry->d_name.len);
-> > -               dput(newdentry);
-> > -               if (IS_ERR_OR_NULL(d))
-> > +               take_dentry_name_snapshot(&name, newdentry);
-> > +               end_creating_keep(newdentry);
-> > +               d =3D ovl_start_creating_upper(ofs, parent, &name.name);
-> > +               release_dentry_name_snapshot(&name);
->=20
-> OK. not saying no to this (yet) but I have to admit that it is pretty
-> ugly that the callers of ovl_create_real() want to create a specific
-> stable name, which is could be passed in as const char *name
-> and yet we end up doing this weird dance here just to keep the name
-> from newdentry.
-
-There are three callers of ovl_create_real()
-
-ovl_lookup_or_create() does have a "const char *name".
-ovl_create_upper() has a stable dentry from which it can copy a QSTR
-ovl_create_temp() would need some sort of dance to keep hold of the
-temporary name that was allocated.
-
-If it weren't for ovl_create_temp() I would agree with you.
-
-Though we could have the three callers of ovl_start_creating_temp() pass a
-"char name[OVL_TEMPNAME_SIZE]" in, then ovl_create_temp() would have
-easy access.
-I could do that if you like.
-
-Thanks,
-NeilBrown
+Indeed, this is a bit tricky.
 
 
->=20
-> Thanks,
-> Amir.
->=20
+Regards,
+Baokun
 
 
