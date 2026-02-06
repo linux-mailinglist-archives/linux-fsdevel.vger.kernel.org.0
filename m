@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-76516-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uGeXB2JPhWn5/gMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76516-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 03:18:10 +0100
+	id eBseEvlRhWmV/wMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 03:29:13 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id A24D4F92F6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 03:18:09 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E868F94E2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 03:29:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 63E37302E7CD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 02:18:04 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id B4AD7301940A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 02:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5356B231A23;
-	Fri,  6 Feb 2026 02:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA372641FC;
+	Fri,  6 Feb 2026 02:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lU0bhYT7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TV7J+ZPn"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C5013D638;
-	Fri,  6 Feb 2026 02:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E46226056D;
+	Fri,  6 Feb 2026 02:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770344278; cv=none; b=GXVai6Vzx16saOotWaf/7UsJTHQHrt6xsy+E/xSoido2zNyJm14kBdfR4zRDPUNbxr4qkGD7m4gcKVpI3+t3m04TD2GJS/tcrAbObVTNV52pJLIhCbuQ8RrVc3WUcli+vwuDYlUsrfriKWHkzwfr5DIYEHXeE9Sxloo1Z9yyJd8=
+	t=1770344831; cv=none; b=On3dINc+IspghJm8EkB3/jMzXBGtbUUc2u9zDvjKu/KRz/uQ6aGYErwXk3w1BNe8UVTaSpiBbwuOKULshlHQkxQNaOu3yPPWvSsrvp61eqjNQTaYW6nl+w2+7vXeWynmPlm8XTz7wGWfSBO46J9GKhAZIyEc6/psAeByM6aUq7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770344278; c=relaxed/simple;
-	bh=H7hcb4yD74v+ArCF3EQg+vG8Omg40qciQ9LrMi5+vco=;
+	s=arc-20240116; t=1770344831; c=relaxed/simple;
+	bh=OgultMdtKlAnkcqfSuJC4xDW6u4QRyvvLiMlJor9E3c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OGw4AI284ydWuKImZ1wTueJI+skeSCxmRikxVf9bVwgSaD1L6/EPGpo9MIg9pO/jel5mQ9cIe8dA/YWm7JiE9aAVlc/HvRoLs01iU6oyPj8+kSIfv0PQ3oDMq4f6e4jSYJMZE6KcDH2Ba39SzXrUBSqh21TVSWFqGPEaUtKhN/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lU0bhYT7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B3FDC4CEF7;
-	Fri,  6 Feb 2026 02:17:58 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FdDN9H/XtGNsoG7qeVHyV5pXEi2x3MxAgKReFnRDwNbBFm5GAsbtlPthEFsLyPASWqfnpIvoXXqiFkirKgzCvQGNbVEpRMC97hDIGqpSdPoy/zlXIE78WblsI4gcclriCqknJtFP13Nws0xAxYTMeYRy2h0mNcERzjBYCRkvcf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TV7J+ZPn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 209D2C4CEF7;
+	Fri,  6 Feb 2026 02:27:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770344278;
-	bh=H7hcb4yD74v+ArCF3EQg+vG8Omg40qciQ9LrMi5+vco=;
+	s=k20201202; t=1770344831;
+	bh=OgultMdtKlAnkcqfSuJC4xDW6u4QRyvvLiMlJor9E3c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lU0bhYT7KhkQYUTGnwX8e1qmQEHMRwPQcerlIlCK1l/U1y23BAwXJcdcGbmjo9mYR
-	 ZjZxJfPMTnyxM/iRU5bkFGzxjtEWQ2w8GTkfHblEZgDHMmmQKasn2sf+3p5gSZcxUR
-	 DwFHx/MLzAF7r5cwZRS00H18YsheVwNyVDmSvlE0KHJ3Oe/Zfp3/aUdrOSb9b7Nrm7
-	 1IY4TC/9jgEZi7jhNmJIzGp/rJkCO5w/fazeKoxrX8LFgbpw6bHsmDDBVH9JUIWT7n
-	 uKQVwvUMdo75VUiA5v7fhycxuxP83zDtJzVXT2z4P17J8flnC7HS1KYOODt3OwSgRH
-	 VanoG4+fDTV5Q==
-Date: Thu, 5 Feb 2026 18:17:57 -0800
+	b=TV7J+ZPngfM7BKREpPPyHLkCp4aYBif0FSnJeIn1wzYU6q3nn/SSum/30rX682MQ+
+	 Z3lLTy20PRfwTbrlF2ptjyRqHw9nuckJfcZiT9CrqAh3r8tSviijXPqccC41pptDRJ
+	 1tuJCUUHfJy2KRR2+z0h9ykRbAKel1NIeARSCZmnrTVV7FVuIjJIkh/T6z0/40/Kd3
+	 BpjxLKo9PE2OZGpcx7VCsl3qzQmlGqfNn9My9gqQ6eyQzt+5bIEAgxtOIrDXYLAsE2
+	 R1h6gvvRRdUUhAecY80SWq1TqYrC67/jfqaqCdt0yW/VaDf5LlGNCHZLxKxHJCcEUV
+	 Z6sVnu16gTFaQ==
+Date: Thu, 5 Feb 2026 18:27:10 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Chris Mason <clm@meta.com>
 Cc: miklos@szeredi.hu, joannelkoong@gmail.com, bernd@bsbernd.com,
 	neal@gompa.dev, linux-ext4@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 19/31] fuse: query filesystem geometry when using iomap
-Message-ID: <20260206021757.GH7686@frogsfrogsfrogs>
+Subject: Re: [PATCH 24/31] fuse: implement inline data file IO via iomap
+Message-ID: <20260206022710.GI7686@frogsfrogsfrogs>
 References: <176169810144.1424854.11439355400009006946.stgit@frogsfrogsfrogs>
- <176169810765.1424854.10969346031644824992.stgit@frogsfrogsfrogs>
- <20260205190840.1958463-1-clm@meta.com>
+ <176169810874.1424854.5037707950055785011.stgit@frogsfrogsfrogs>
+ <20260205190206.1890644-1-clm@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,19 +63,19 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260205190840.1958463-1-clm@meta.com>
+In-Reply-To: <20260205190206.1890644-1-clm@meta.com>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_CC(0.00)[szeredi.hu,gmail.com,bsbernd.com,gompa.dev,vger.kernel.org];
-	TAGGED_FROM(0.00)[bounces-76516-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76517-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -91,18 +91,17 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	RCPT_COUNT_SEVEN(0.00)[7];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: A24D4F92F6
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 6E868F94E2
 X-Rspamd-Action: no action
 
-On Thu, Feb 05, 2026 at 11:07:55AM -0800, Chris Mason wrote:
+On Thu, Feb 05, 2026 at 11:01:07AM -0800, Chris Mason wrote:
 > "Darrick J. Wong" <djwong@kernel.org> wrote:
 > > From: Darrick J. Wong <djwong@kernel.org>
 > > 
-> > Add a new upcall to the fuse server so that the kernel can request
-> > filesystem geometry bits when iomap mode is in use.
-> > 
+> > Implement inline data file IO by issuing FUSE_READ/FUSE_WRITE commands
+> > in response to an inline data mapping.
 > 
 > Hi everyone,
 > 
@@ -117,84 +116,118 @@ On Thu, Feb 05, 2026 at 11:07:55AM -0800, Chris Mason wrote:
 > has gone wildly wrong.  I kept the header to make it obvious exactly which
 > commit I'd run through:
 > 
-> commit d529d13100b2e00c33a507c371b6c1b19f2206ae
+> commit 1263eae0852acb1359182377ad94d570701e2274
 > Author: Darrick J. Wong <djwong@kernel.org>
 > 
-> fuse_trace: query filesystem geometry when using iomap
+> fuse: implement inline data file IO via iomap
 > 
-> This commit adds tracepoints for the FUSE_IOMAP_CONFIG operation,
-> enabling tracing of filesystem geometry queries when using iomap with
-> FUSE. The tracepoint captures configuration flags, block size, link
-> limits, time granularity and ranges, maximum file size, and UUID length.
+> Implement inline data file IO by issuing FUSE_READ/FUSE_WRITE commands
+> in response to an inline data mapping.
 > 
 > > diff --git a/fs/fuse/fuse_iomap.c b/fs/fuse/fuse_iomap.c
 > > --- a/fs/fuse/fuse_iomap.c
 > > +++ b/fs/fuse/fuse_iomap.c
-> > @@ -743,6 +743,8 @@ static int fuse_iomap_process_config(struct fuse_mount *fm, int error,
-> >  		return error;
-> >  	}
+> > @@ -398,6 +398,150 @@ fuse_iomap_find_dev(struct fuse_conn *fc, const struct fuse_iomap_io *map)
+> >  	return ret;
+> >  }
 > >
-> > +	trace_fuse_iomap_config(fm, outarg);
+> > +/*
+> > + * Use the FUSE_READ command to read inline file data from the fuse server.
+> > + * Note that there's no file handle attached, so the fuse server must be able
+> > + * to reconnect to the inode via the nodeid.
+> > + */
+> > +static int fuse_iomap_inline_read(struct inode *inode, loff_t pos,
+> > +				  loff_t count, struct iomap *iomap)
+> > +{
+> > +	struct fuse_read_in in = {
+> > +		.offset = pos,
+> > +		.size = count,
+> > +	};
+> > +	struct fuse_inode *fi = get_fuse_inode(inode);
+> > +	struct fuse_mount *fm = get_fuse_mount(inode);
+> > +	FUSE_ARGS(args);
+> > +	ssize_t ret;
 > > +
-> >  	if (outarg->flags & ~FUSE_IOMAP_CONFIG_ALL)
-> >  		return -EINVAL;
-> >
+> > +	if (BAD_DATA(!iomap_inline_data_valid(iomap)))
+> > +		return -EFSCORRUPTED;
 > 
-> [ ... ]
+> Does this code leak memory when the BAD_DATA check fails?  Looking at
+> the call chain:
 > 
-> > diff --git a/fs/fuse/fuse_trace.h b/fs/fuse/fuse_trace.h
-> > --- a/fs/fuse/fuse_trace.h
-> > +++ b/fs/fuse/fuse_trace.h
+> fuse_iomap_set_inline()->fuse_iomap_inline_alloc() allocates
+> iomap->inline_data via kvzalloc.  If the iomap_inline_data_valid check
+> fails (i.e., iomap->length > PAGE_SIZE - offset_in_page(iomap->inline_data)),
+> the function returns -EFSCORRUPTED without freeing iomap->inline_data.
 > 
-> [ ... ]
+> Other error paths in this function (around the fuse_simple_request call)
+> properly call fuse_iomap_inline_free(iomap) before returning errors.
 > 
-> > @@ -1005,6 +1014,45 @@
-> >  		  __entry->mode,
-> >  		  __entry->newsize)
-> >  );
-> > +
-> > +TRACE_EVENT(fuse_iomap_config,
-> > +	TP_PROTO(const struct fuse_mount *fm,
-> > +		 const struct fuse_iomap_config_out *outarg),
-> > +	TP_ARGS(fm, outarg),
-> > +
-> > +	TP_STRUCT__entry(
-> > +		__field(dev_t,			connection)
-> > +
-> > +		__field(uint32_t,		flags)
-> > +		__field(uint32_t,		blocksize)
-> > +		__field(uint32_t,		max_links)
-> > +		__field(uint32_t,		time_gran)
-> > +
-> > +		__field(int64_t,		time_min)
-> > +		__field(int64_t,		time_max)
-> > +		__field(int64_t,		maxbytes)
-> > +		__field(uint8_t,		uuid_len)
-> > +	),
-> > +
-> > +	TP_fast_assign(
-> > +		__entry->connection	=	fm->fc->dev;
-> > +		__entry->flags		=	outarg->flags;
->                                                            ^^^^
-> 
-> Does this truncate the upper 32 bits of the flags field? The flags field
-> in struct fuse_iomap_config_out (include/uapi/linux/fuse.h:1471) is
-> defined as uint64_t:
-> 
-> struct fuse_iomap_config_out {
-> 	uint64_t flags;		/* FUSE_IOMAP_CONFIG_* */
-> 	...
-> }
-> 
-> But the trace event declares it as uint32_t in TP_STRUCT__entry. While
-> current flag definitions (FUSE_IOMAP_CONFIG_SID through
-> FUSE_IOMAP_CONFIG_MAXBYTES) only use bits 0-5, using uint32_t will lose
-> the upper 32 bits if future flags use them.
-> 
-> Should the trace event field be declared as uint64_t to match the
-> structure definition?
+> The caller fuse_iomap_set_inline doesn't clean up iomap->inline_data on
+> error in the read path (line 538: 'if (err) return err;'), so the
+> allocation is leaked when a FUSE server returns an IOMAP_INLINE mapping
+> with length > PAGE_SIZE.
 
-Yes.  Fixed, thanks!
+Yep, it does leak the ioend and the bio.  I'll amend this to call
+fuse_iomap_inline_free on its way out.
+
+> > +
+> > +	args.opcode = FUSE_READ;
+> > +	args.nodeid = fi->nodeid;
+> > +	args.in_numargs = 1;
+> > +	args.in_args[0].size = sizeof(in);
+> > +	args.in_args[0].value = &in;
+> > +	args.out_argvar = true;
+> > +	args.out_numargs = 1;
+> > +	args.out_args[0].size = count;
+> > +	args.out_args[0].value = iomap_inline_data(iomap, pos);
+> > +
+> > +	ret = fuse_simple_request(fm, &args);
+> > +	if (ret < 0) {
+> > +		fuse_iomap_inline_free(iomap);
+> > +		return ret;
+> > +	}
+> > +	/* no readahead means something bad happened */
+> > +	if (ret == 0) {
+> > +		fuse_iomap_inline_free(iomap);
+> > +		return -EIO;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> 
+> [ ... ]
+> 
+> > @@ -511,8 +663,28 @@ static int fuse_iomap_end(struct inode *inode, loff_t pos, loff_t count,
+> >  {
+> >  	struct fuse_inode *fi = get_fuse_inode(inode);
+> >  	struct fuse_mount *fm = get_fuse_mount(inode);
+> > +	struct iomap_iter *iter = container_of(iomap, struct iomap_iter, iomap);
+> > +	struct iomap *srcmap = &iter->srcmap;
+> 
+> Can this container_of usage corrupt memory?  Looking at
+> fuse_iomap_writeback_range, it calls fuse_iomap_end with &write_iomap,
+> which is a stack-local struct iomap variable (not embedded in an
+> iomap_iter):
+> 
+> fuse_iomap_writeback_range()
+>     struct iomap write_iomap = { };
+>     ...
+>     fuse_iomap_end(inode, offset, len, 0,
+>                    FUSE_IOMAP_OP_WRITEBACK, &write_iomap);
+> 
+> The container_of macro computes an invalid pointer by subtracting the
+> offset of the iomap member from the address, resulting in iter pointing
+> to garbage memory on the stack.  Subsequently, accessing iter->srcmap
+> reads from invalid memory, potentially causing undefined behavior or
+> crashes.
+> 
+> The iomap core calls fuse_iomap_end via fuse_iomap_ops where iomap IS
+> properly embedded in iomap_iter, but the direct call from
+> fuse_iomap_writeback_range violates this assumption.
+
+Oops, that's a severe bug.  fuse_iomap_writeback_range should indeed
+define a whole iomap_iter instead of just the iomap.  I'll fix that,
+thanks for pointing out these bugs.
 
 --D
 
