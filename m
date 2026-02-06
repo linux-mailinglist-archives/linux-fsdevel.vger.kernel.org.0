@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-76636-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76637-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GPWAA10/hmnzLAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76636-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 20:22:05 +0100
+	id AFvKAmQ/hmnzLAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76637-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 20:22:12 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBD36102A6F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 20:22:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 971BC102A78
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 20:22:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 596E4309D83B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 19:14:47 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 2DDC530396A0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 19:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8B442E01B;
-	Fri,  6 Feb 2026 19:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A8943E48B;
+	Fri,  6 Feb 2026 19:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="sdYCdS6y"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="qMUZ3y7v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+Received: from mail-yx1-f42.google.com (mail-yx1-f42.google.com [74.125.224.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24EE442E001
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Feb 2026 19:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3FB42E001
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Feb 2026 19:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770405192; cv=none; b=HFotWbxbkyPNQTlU+gxS/RKtfnWVEii5zPwTotpgnWrw+4HuIQLq032v5H9z/6SlU+7k9fNlEgdn67989z0C79s2t4OfC/WNDk5FaqiQwj3vuxhccGU1NiAVuRpYnaa1kf8aEQiIo/m+/Wk9frx7WsELYjtC0ds7wP/bdkAJjaw=
+	t=1770405193; cv=none; b=P3+JZIbw7A1qEmzmQ0XtyJKbKIVXCuBx4PokxZyZVw9Pt1lPGChZKUMunKpWh5PI8+MZ9/nt994GytZhyoY2xTQtc0mvgHjfwh0AyAvFO8sUFO/gGXuAitUwv0qyNL7kdGlQaQ2TCYKnPNrDPfgby9QfOa6zLKjJd6sghr58w5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770405192; c=relaxed/simple;
-	bh=uzb0Wmip9GI4B1gGq8HYrnW2SoCSKaczLTjwlI4YvRs=;
+	s=arc-20240116; t=1770405193; c=relaxed/simple;
+	bh=8DOELj3d1YF5vnkKTf0ls4Z7dKSAOmVY1KhPtSJlYno=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=G+4u6KzxNEWGSVUqb1aVeswW1uF0cmYPLDZgOcZPbNgyLU00zQTh9Hh7zcPVC1iyyMOXXSqfC1gUos7MJ107rxSyyFuskA0v3bx3q3Eqx3AamHvVZGp9qu+rdJaNQgoM8CkVWZXOSDG0iX2k5/jTpiBT6k0KK2yDsoruyeLHHVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=sdYCdS6y; arc=none smtp.client-ip=209.85.128.181
+	 MIME-Version; b=G//phFgPa2Th5Vr4WzjKmdBQk0OD72GLjx/wFWOYIQWgkVXsNaTYpcgjrzpAVzlJWQKaMLqeB7AbWSRONu5rHEDXcRgK3jZQnoqbPS8RvrhvGOHn9uTc5h96xS916aukKLQkf2xQ+k0a5VZr4aSFoeqxjmLHI6yIRH9nPqfq9Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=qMUZ3y7v; arc=none smtp.client-ip=74.125.224.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-7948e902fadso23505657b3.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Feb 2026 11:13:11 -0800 (PST)
+Received: by mail-yx1-f42.google.com with SMTP id 956f58d0204a3-649e456e8a2so2539221d50.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Feb 2026 11:13:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1770405191; x=1771009991; darn=vger.kernel.org;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1770405192; x=1771009992; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eb1OdGpCtAwc8beSe19LPmFPW+UDoGnStsGyK3KBbAk=;
-        b=sdYCdS6yPNJcxM9SkyHcwMajxeK1f1j0kNTWs4p52la1wEkLGwnK724yqo2OAuqBcJ
-         Opa2pNvGV4tVB1xbqmlMR4QVnMO26AjHNYWxgNsLY5MX5T3l9Pvbde5U1wp9kexriSRU
-         x9wRZOsnxjoS7NUkqpkabil6lcI4B+i6SKNpoqwmHAIcyQwThPHmq3Acs5ds3DrM03Ee
-         B16t9PRvU2LLirh5cu901TXbS0ESqn65WpDnCQWkdbjBgj7DFHgTIK3p8t6hmXVo1kEM
-         znBkhBfazcwQbmMsQT0RVH3Bow8wbRQe08jBmtnjea9PVz54mZVGnsBas09JNLpuv/69
-         gsRQ==
+        bh=YEXgdq0izXJsGpGxsVLN8S/Y6PSgZJ5yVJf6Tpti494=;
+        b=qMUZ3y7v4CUyHnCq9dui3zjSqmd7Vbk3gInTWAmUREBPnJnHU+Uugjs6XhxEbztUJY
+         6MIAuVy7i4q17GZzyT3vqqUbzI0iZbrPR11PXUvNUqkUgSZaQmoL3dQJxn7ON80uRcCB
+         0MdK7XDrS0SvPeodUezrKPUZAknAXJ2383hc+mACzyvortOxi+JlfE6qcv50cH/qeGho
+         T7WRppCGoFPndU7EJTf65pl9ipgGgsXFcIJ/XbfLbplNKBuS3zpJWq9Oj+DORvN4gUTM
+         ABKB4YRV+55SHIx4WiiiCLtC8DkzZAIucRHCjxkTx+AH5gW3EFE+GodfGEj+IwWc30qr
+         rCvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770405191; x=1771009991;
+        d=1e100.net; s=20230601; t=1770405192; x=1771009992;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=eb1OdGpCtAwc8beSe19LPmFPW+UDoGnStsGyK3KBbAk=;
-        b=h78zB6zhXsXcylIcSRs6/B6SsGepC9Mg78uMz7ras5UJ9WhBCf7K3+1WjzaCBz5ELE
-         RzgRZ3VVKjNIPyQdKyhgm9RQKrAb/KgixG9vLen6s8HjFoXqka1uOSZUnYP4iOO2lNuc
-         BFIMqDyvsMDMGo3iLfSxGYZBkmz6Zd7d/553r0phbMIMmzqpBAVaRBYUi2Luih5l2acJ
-         x8Bn9aFm2aDUW9gDv73D3q/GqRU51vteRwAkdCErx3Db1GffLsYtxEhfeeuTKl6GCNnJ
-         0NS1DiY1mNvM84TFC9k0Maz/fsWRHUATwkS7nE+IXQTpHwWZDL2Ysw8biXwXO/XM8ccJ
-         un6Q==
-X-Gm-Message-State: AOJu0YyI8ZyclViydxcjcrnZepYOAev4Tg5U2uT8XvvjTBRyAshU6IzY
-	P8jN7HErvR9EQA2cExFV7kiISYpqOlxCkS2dE9tP2pjTmZI+rsgM+G0pILK3mOsQLQwrG+A6+iB
-	K2iT8JTo=
-X-Gm-Gg: AZuq6aJ+125/MXujmMzMv85CKjLZSH8QLnSsuXR74x1xMIZZSAMBgR/Womkh6jB12uF
-	OMOdbxJhKUWA5idGPT1wL4AQMZcX+vxQ+vbXbYadePsRQti0arMUhboNGM5Co/8XRMYZLPupmt0
-	jEaCAfgGBkxjyRrKac6VRJqZoCudNxRE5Ag/pzG1nvOfdy24CotLvg/q6rLmU5v+Hl7BYD1l54w
-	KCLsNJXB5+jTdW2Xbjc47QHATCOymlH8rBWbMRdDGzcbkZ8dO9cb7EPJqbaBipQ9MPphEA462M8
-	aClc3r5Qf8p1nUuoSf0MKXxwD8liFPMwn5B5FRguroPKCRqnXrWm1OowjIM9Ii35Rmcxv6Fxda2
-	P6liejkMisazFHHmn/o31WaPRXQnZ9ygKPhffWfrM0S2xCXmK1vBG6NvE2pH1BQWZPnsvmfMJxO
-	z2vbk9Y+hfwoDZFL6AwLhJQa6v2Dxdj5zcpBpicsHKUoSJYGvrTkSRDsIJCwSwPLwWWLcpCMJB5
-	SE9Yw5sfVmJ
-X-Received: by 2002:a05:690c:6b09:b0:795:294c:fd30 with SMTP id 00721157ae682-7952ab3fc08mr29459087b3.39.1770405190554;
-        Fri, 06 Feb 2026 11:13:10 -0800 (PST)
+        bh=YEXgdq0izXJsGpGxsVLN8S/Y6PSgZJ5yVJf6Tpti494=;
+        b=JYJVYGE/yI/qEY7+hC3OSaORWq81Rtv90xEYkaulc8OmJdEhmVB1P8bIUd9NhimnAJ
+         lf6OpfPaCYp+fyY0FnpXaC3FMyBMQB48P6acP673uL5WYowOZuZPWNmT2jpzVv2sq4cc
+         f6xS86rNNFt7s9Rky+9aPnX/xHdvEd+IC1V8U8ueMd1gOxKVfbc9C+osNVMCiNvJn38u
+         RcD4OJoL6yu13IqBAuDeVHlt5v06//l6xG5vGp2YNruBFrIkvR8LYcuRBiY+JsHFKbRU
+         njjEkYYWrdGB1T+MbvmRY6SKZ3gfKvpVS5RipAmhLEtvMGxya014Od7hkZF/SWbGGoZ7
+         edsQ==
+X-Gm-Message-State: AOJu0YwBIM+uslx2DsWTCIMYPKYz8I7MYy0yLXOyhKeY0/3y6njjkqVF
+	ehlYdiXIaw27aes2BHDrQFm1UcF2QUmeXxlC0I2YM913Lg5gEZl1sYV5St00YTpWqjd8XhE0KkC
+	uA149qck=
+X-Gm-Gg: AZuq6aK0FrMKpgxiWit8Zca9kHU6ojqTcN+bVPXj0LpUsBNVIwNSJvsNjPIltsSaC4f
+	+qajRx8xQ8jth+0E2Q7l6VgXChHrBEBs1hqfN7oCr/BDENnsH0AywZRDMsJFDQGiS6Du63HFMcQ
+	ou45P9xFqI6G+H4ch4VLi1DdjzCxao711b+4Gwu3HzBByUP83va7WmSIZVq6GvXOWwZCmRgqnDn
+	cVTPD2RJ+JNsG76O2rSlQjtM8a7Kihicja+0k4SU+dmtddl8MJ8knYZsUPnbaa28BlInrIPwYgC
+	e9Av4m0cMKR8kcHv+hX2ez4dMYJDjgj+Y9fUxO9bVKgaY5NBdtWsTx55fDxPVAS8omROrE1Q1fi
+	yypblxDGyeoPwSlWeEy96L3U227NL0IsjmPFEqFENi7hBrp4uQY3QdqfGxJ410CzuPdKO+aWUqk
+	S/mHURQqoDul5E+EVsvgtHhrnxbnfjomfxSSUy8JCtlU2Hm+aTNg7GSKXU5yhbffx+BeM3DGfQG
+	JznBxROSKG3
+X-Received: by 2002:a05:690c:9c04:b0:796:1eee:b8f7 with SMTP id 00721157ae682-7961eeebef9mr45307667b3.58.1770405191900;
+        Fri, 06 Feb 2026 11:13:11 -0800 (PST)
 Received: from pop-os.attlocal.net ([2600:1700:6476:1430:9fc0:ed7d:72bd:ecd1])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-7952a28697fsm29051277b3.50.2026.02.06.11.13.09
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7952a28697fsm29051277b3.50.2026.02.06.11.13.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Feb 2026 11:13:09 -0800 (PST)
+        Fri, 06 Feb 2026 11:13:11 -0800 (PST)
 From: Viacheslav Dubeyko <slava@dubeyko.com>
 To: linux-fsdevel@vger.kernel.org,
 	linux-mm@kvack.org,
@@ -84,9 +84,9 @@ To: linux-fsdevel@vger.kernel.org,
 Cc: Slava.Dubeyko@ibm.com,
 	slava@dubeyko.com,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v1 2/4] ml-lib: Implement PoC of Machine Learning (ML) library functionality
-Date: Fri,  6 Feb 2026 11:11:34 -0800
-Message-Id: <20260206191136.2609767-3-slava@dubeyko.com>
+Subject: [RFC PATCH v1 3/4] ml-lib: Implement simple testing character device driver
+Date: Fri,  6 Feb 2026 11:11:35 -0800
+Message-Id: <20260206191136.2609767-4-slava@dubeyko.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260206191136.2609767-1-slava@dubeyko.com>
 References: <20260206191136.2609767-1-slava@dubeyko.com>
@@ -112,7 +112,7 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	DMARC_NA(0.00)[dubeyko.com];
-	TAGGED_FROM(0.00)[bounces-76636-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76637-lists,linux-fsdevel=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	RCPT_COUNT_FIVE(0.00)[6];
@@ -124,1107 +124,838 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	NEURAL_HAM(-0.00)[-0.998];
 	TO_DN_NONE(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[dubeyko.com:mid,dubeyko.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: BBD36102A6F
+	DBL_BLOCKED_OPENRESOLVER(0.00)[dubeyko.com:mid,dubeyko.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,dubeyko-com.20230601.gappssmtp.com:dkim]
+X-Rspamd-Queue-Id: 971BC102A78
 X-Rspamd-Action: no action
 
-ML model can be represented by process/thread running in user-space.
-Particular kernel subsystem needs to implement ML model proxy
-on kernel-space side. The process of loading kernel subsystem
-creates and intializes the ML model proxy, create sysfs entries,
-and character device, for example. The sysfs entries and character
-device create the mechanism of interaction and collaboration of
-kernel subsystem and ML model in user-space.
-
-The simplest model of collaboration could include such steps:
-(1) user-space process/thread (ML model) sends START command
-    to kernel subsystem through sysfs control entry;
-(2) user-space process/thread (ML model) requests to prepare
-    a dataset by means of PREPARE_DATASET command through
-    sysfs control entry;
-(3) user-space process/thread (ML model) extracts the dataset
-    by means of reading data from character device;
-(4) dataset can be marked as obsolete after extraction
-    by means of DISCARD_DATASET command through sysfs control entry
-    and new dataset can be requested and extracted;
-(5) extracted data can be used as training data by ML model
-    on user-space side;
-(6) ML model can execute the inference after some number of
-    training cycles and to elaborate some recommendations or
-    optimized logic for kernel subsystem;
-(7) ML model's recommendations can be written into character
-    device, for example, by user-space process/thread and
-    kernel subsystem can use this recommendations for
-    optimization or changing the logic;
-(8) based on kernel subsystem's mode, recommendations can be
-    completely ignored, partially applied, tested, or
-    used instead of default configuration/logic;
-(9) every time efficiency of applied recommendations or
-    logic needs to be estimated;
-(10) if ML model recommendations degrade efficiency of kernel
-     subsystem, then error backpropagation needs to be used
-     for ML model correction on user-space side.
+Implement simple testing character device driver
 
 Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
 ---
- lib/Kconfig              |   6 +
- lib/Makefile             |   2 +
- lib/ml-lib/Kconfig       |  18 +
- lib/ml-lib/Makefile      |   7 +
- lib/ml-lib/ml_lib_main.c | 758 +++++++++++++++++++++++++++++++++++++++
- lib/ml-lib/sysfs.c       | 187 ++++++++++
- lib/ml-lib/sysfs.h       |  17 +
- 7 files changed, 995 insertions(+)
- create mode 100644 lib/ml-lib/Kconfig
- create mode 100644 lib/ml-lib/Makefile
- create mode 100644 lib/ml-lib/ml_lib_main.c
- create mode 100644 lib/ml-lib/sysfs.c
- create mode 100644 lib/ml-lib/sysfs.h
+ lib/ml-lib/test_driver/Kconfig           |  22 +
+ lib/ml-lib/test_driver/Makefile          |   5 +
+ lib/ml-lib/test_driver/README.md         | 233 ++++++++++
+ lib/ml-lib/test_driver/ml_lib_char_dev.c | 530 +++++++++++++++++++++++
+ 4 files changed, 790 insertions(+)
+ create mode 100644 lib/ml-lib/test_driver/Kconfig
+ create mode 100644 lib/ml-lib/test_driver/Makefile
+ create mode 100644 lib/ml-lib/test_driver/README.md
+ create mode 100644 lib/ml-lib/test_driver/ml_lib_char_dev.c
 
-diff --git a/lib/Kconfig b/lib/Kconfig
-index 2923924bea78..2d56977c0638 100644
---- a/lib/Kconfig
-+++ b/lib/Kconfig
-@@ -604,6 +604,12 @@ config LWQ_TEST
- 	help
-           Run boot-time test of light-weight queuing.
- 
-+#
-+# Machine Learning (ML) library configuration
-+#
-+
-+source "lib/ml-lib/Kconfig"
-+
- endmenu
- 
- config GENERIC_IOREMAP
-diff --git a/lib/Makefile b/lib/Makefile
-index aaf677cf4527..154e7fd220ab 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -332,3 +332,5 @@ obj-$(CONFIG_GENERIC_LIB_DEVMEM_IS_ALLOWED) += devmem_is_allowed.o
- obj-$(CONFIG_FIRMWARE_TABLE) += fw_table.o
- 
- subdir-$(CONFIG_FORTIFY_SOURCE) += test_fortify
-+
-+obj-$(CONFIG_ML_LIB) += ml-lib/
-diff --git a/lib/ml-lib/Kconfig b/lib/ml-lib/Kconfig
+diff --git a/lib/ml-lib/test_driver/Kconfig b/lib/ml-lib/test_driver/Kconfig
 new file mode 100644
-index 000000000000..d2f2ea40a833
+index 000000000000..183fc1de57a8
 --- /dev/null
-+++ b/lib/ml-lib/Kconfig
-@@ -0,0 +1,18 @@
-+# SPDX-License-Identifier: GPL-2.0-only
++++ b/lib/ml-lib/test_driver/Kconfig
+@@ -0,0 +1,22 @@
++# SPDX-License-Identifier: GPL-2.0
 +
-+#
-+# Machine Learning (ML) library configuration
-+#
-+
-+config ML_LIB
-+	tristate "ML library support"
++config ML_LIB_TEST_DRIVER
++	tristate "ML library testing character device driver"
++	depends on ML_LIB
++	default n
 +	help
-+	  Machine Learning (ML) library has goal to provide
-+	  the interaction and communication of ML models in
-+	  user-space with kernel subsystems. It implements
-+	  the basic code primitives that builds the way of
-+	  ML models integration into Linux kernel functionality.
++	  This is a ML library testing character device driver for
++	  testing generic ML library functionality. It provides:
++
++	  - Basic read/write operations
++	  - IOCTL interface for device control
++	  - Sysfs attributes for runtime information
++	  - Procfs entry for debugging
++
++	  The driver creates a /dev/mllibdev device node that can be
++	  used to read and write data to a kernel buffer.
 +
 +	  If unsure, say N.
 +
-+source "lib/ml-lib/test_driver/Kconfig"
-diff --git a/lib/ml-lib/Makefile b/lib/ml-lib/Makefile
++	  To compile this driver as a module, choose M here: the
++	  module will be called mllibdev.
+diff --git a/lib/ml-lib/test_driver/Makefile b/lib/ml-lib/test_driver/Makefile
 new file mode 100644
-index 000000000000..b1103ab3e1c8
+index 000000000000..6444bcf8985b
 --- /dev/null
-+++ b/lib/ml-lib/Makefile
-@@ -0,0 +1,7 @@
-+# SPDX-License-Identifier: GPL-2.0-only
++++ b/lib/ml-lib/test_driver/Makefile
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0
 +
-+obj-$(CONFIG_ML_LIB) += ml_lib.o
++obj-$(CONFIG_ML_LIB_TEST_DRIVER) += ml_lib_test_dev.o
 +
-+ml_lib-y := sysfs.o ml_lib_main.o
-+
-+obj-$(CONFIG_ML_LIB_TEST_DRIVER) += test_driver/
-diff --git a/lib/ml-lib/ml_lib_main.c b/lib/ml-lib/ml_lib_main.c
++ml_lib_test_dev-y := ml_lib_char_dev.o
+diff --git a/lib/ml-lib/test_driver/README.md b/lib/ml-lib/test_driver/README.md
 new file mode 100644
-index 000000000000..ef336d6a83fb
+index 000000000000..0bb4105c8aa4
 --- /dev/null
-+++ b/lib/ml-lib/ml_lib_main.c
-@@ -0,0 +1,758 @@
-+// SPDX-License-Identifier: GPL-2.0-only
++++ b/lib/ml-lib/test_driver/README.md
+@@ -0,0 +1,233 @@
++# ML Library Testing Device Driver (mllibdev)
++
++ML library testing character device driver for the Linux kernel:
++- Basic read/write operations
++- IOCTL interface for device control
++- Sysfs attributes for runtime information
++- Procfs entry for debugging
++
++## Features
++
++### Character Device Operations
++- **Open/Close**: Device can be opened and closed multiple times
++- **Read**: Read data from a kernel buffer
++- **Write**: Write data to a kernel buffer (1KB capacity)
++- **Seek**: Support for lseek() operations
++
++### IOCTL Commands
++- `ML_LIB_TEST_DEV_IOCRESET`: Clear the device buffer
++- `ML_LIB_TEST_DEV_IOCGETSIZE`: Get current data size
++- `ML_LIB_TEST_DEV_IOCSETSIZE`: Set data size
++
++### Sysfs Attributes
++Located at `/sys/class/ml_lib_test/mllibdev`:
++- `buffer_size`: Maximum buffer capacity (read-only)
++- `data_size`: Current amount of data in buffer (read-only)
++- `access_count`: Number of times device has been opened (read-only)
++- `stats`: Comprehensive statistics (opens, reads, writes)
++
++### Procfs Entry
++Located at `/proc/mllibdev`: Provides formatted driver information
++
++## Building the Driver
++
++### Option 1: Build as a Module
++
++1. Configure the kernel to build mllibdev as a module:
++   ```bash
++   make menuconfig
++   # Navigate to: Library routines -> ML library testing character device driver
++   # Select: <M> ML library testing character device driver
++   ```
++
++2. Build the module:
++   ```bash
++   make -j$(nproc) M=lib/ml-lib/test_driver
++   ```
++
++### Option 2: Build into Kernel
++
++1. Configure the kernel:
++   ```bash
++   make menuconfig
++   # Navigate to: Library routines -> ML library testing character device driver
++   # Select: <*> ML library testing character device driver
++   ```
++
++2. Build the kernel:
++   ```bash
++   make -j$(nproc)
++   ```
++
++### Option 3: Quick Module Build (Out-of-Tree)
++
++For quick testing, you can build just the module:
++
++```bash
++cd lib/ml-lib/test_driver
++make -C /lib/modules/$(uname -r)/build M=$(pwd) modules
++```
++
++## Loading the Driver
++
++If built as a module:
++
++```bash
++# Load the module
++sudo insmod /lib/modules/$(uname -r)/build/lib/ml-lib/test_driver/ml_lib_test_dev.ko
++
++# Verify it's loaded
++sudo lsmod | grep ml_lib_test_dev
++
++# Check kernel messages
++sudo dmesg | tail -20
++```
++
++You should see messages like:
++```
++ml_lib_test_dev: Initializing driver
++ml_lib_test_dev: Device number allocated: XXX:0
++ml_lib_test_dev: Driver initialized successfully
++ml_lib_test_dev: Device created at /dev/mllibdev
++ml_lib_test_dev: Proc entry created at /proc/mllibdev
++```
++
++## Testing the Driver
++
++### Quick Manual Test
++
++```bash
++# Write data to the device
++sudo su
++echo "Hello, kernel!" > /dev/mllibdev
++
++# Read data back
++sudo su
++cat /dev/mllibdev
++
++# Check sysfs attributes
++cat /sys/class/ml_lib_test/mllibdev/stats
++
++# Check proc entry
++cat /proc/mllibdev
++```
++
++### Using the Test Program
++
++1. Compile the test program:
++   ```bash
++   cd lib/ml-lib/test_driver/test_application
++   gcc -o ml_lib_test_dev test_ml_lib_char_dev.c
++   ```
++
++2. Run the test program:
++   ```bash
++   sudo ./ml_lib_test_dev
++   ```
++
++The test program will:
++- Open the device
++- Write test data
++- Read the data back
++- Test all IOCTL commands
++- Display sysfs attributes
++- Show procfs information
++
++### Example Test Output
++
++```
++ML Library Testing Device Driver Test Program
++==================================
++Device opened successfully: /dev/mllibdev
++
++========== Write Test ==========
++Successfully wrote 62 bytes
++Data: "Hello from userspace! This is a test of the mllibdev driver."
++
++========== Read Test ==========
++Successfully read 62 bytes
++Data: "Hello from userspace! This is a test of the mllibdev driver."
++
++========== IOCTL Tests ==========
++Current data size: 62 bytes
++Set data size to: 50 bytes
++Verified new size: 50 bytes
++Buffer reset successfully
++Size after reset: 0 bytes
++
++========== Sysfs Attributes ==========
++buffer_size: 1024
++data_size: 0
++access_count: 1
++
++stats: Opens: 1
++Reads: 1
++Writes: 1
++
++========== Procfs Information ==========
++ML Library Testing Device Driver Information
++=================================
++Device name:     mllibdev
++Buffer size:     1024 bytes
++Data size:       0 bytes
++Access count:    1
++Read count:      1
++Write count:     1
++
++========== Final Test ==========
++All tests completed successfully!
++```
++
++## Unloading the Driver
++
++```bash
++# Remove the module
++sudo rmmod ml_lib_test_dev
++
++# Verify it's unloaded
++sudo lsmod | grep ml_lib_test_dev
++
++# Check cleanup messages
++sudo dmesg | tail -10
++```
++
++## Troubleshooting
++
++### Device node doesn't exist
++```bash
++# Check if udev created the device
++ls -l /dev/mllibdev
++
++# Manually create if needed (shouldn't be necessary)
++sudo mknod /dev/mllibdev c MAJOR MINOR
++```
++
++### Permission denied
++```bash
++# Run commands with sudo
++sudo cat /dev/mllibdev
++
++# Or change permissions
++sudo chmod 666 /dev/mllibdev
++```
++
++### Module won't load
++```bash
++# Check kernel messages for errors
++dmesg | tail -20
++
++# Verify module dependencies
++modinfo lib/ml-lib/test_driver/ml_lib_test_dev.ko
++```
++
++## License
++
++This driver is licensed under GPL-2.0.
++
++## Author
++
++Viacheslav Dubeyko <slava@dubeyko.com>
++
++## Version
++
++1.0
+diff --git a/lib/ml-lib/test_driver/ml_lib_char_dev.c b/lib/ml-lib/test_driver/ml_lib_char_dev.c
+new file mode 100644
+index 000000000000..b2d6e27ece28
+--- /dev/null
++++ b/lib/ml-lib/test_driver/ml_lib_char_dev.c
+@@ -0,0 +1,530 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Machine Learning (ML) library
++ * Testing Character Device Driver
 + *
 + * Copyright (C) 2025-2026 Viacheslav Dubeyko <slava@dubeyko.com>
 + */
 +
 +#include <linux/module.h>
 +#include <linux/kernel.h>
-+
++#include <linux/init.h>
++#include <linux/fs.h>
++#include <linux/cdev.h>
++#include <linux/device.h>
++#include <linux/slab.h>
++#include <linux/uaccess.h>
++#include <linux/proc_fs.h>
++#include <linux/seq_file.h>
++#include <linux/mutex.h>
 +#include <linux/ml-lib/ml_lib.h>
 +
-+#include "sysfs.h"
++#define DEVICE_NAME "mllibdev"
++#define CLASS_NAME "ml_lib_test"
++#define BUFFER_SIZE 1024
 +
-+#define UNKNOWN_SUBSYSTEM_NAME "unknown_subsystem"
-+#define UNKNOWN_ML_MODEL_NAME "unknown_model"
++/* IOCTL commands */
++#define ML_LIB_TEST_DEV_IOC_MAGIC   'M'
++#define ML_LIB_TEST_DEV_IOCRESET    _IO(ML_LIB_TEST_DEV_IOC_MAGIC, 0)
++#define ML_LIB_TEST_DEV_IOCGETSIZE  _IOR(ML_LIB_TEST_DEV_IOC_MAGIC, 1, int)
++#define ML_LIB_TEST_DEV_IOCSETSIZE  _IOW(ML_LIB_TEST_DEV_IOC_MAGIC, 2, int)
 +
-+/*
-+ * default_ml_model_ops - default ML model operations
-+ */
-+struct ml_lib_model_operations default_ml_model_ops = {
-+	.create				= generic_create_ml_model,
-+	.init				= generic_init_ml_model,
-+	.re_init			= generic_re_init_ml_model,
-+	.start				= generic_start_ml_model,
-+	.stop				= generic_stop_ml_model,
-+	.destroy			= generic_destroy_ml_model,
-+	.get_system_state		= generic_get_system_state,
-+	.get_dataset			= generic_get_dataset,
-+	.preprocess_data		= generic_preprocess_data,
-+	.publish_data			= generic_publish_data,
-+	.preprocess_recommendation	= generic_preprocess_recommendation,
-+	.estimate_system_state		= generic_estimate_system_state,
-+	.apply_recommendation		= generic_apply_recommendation,
-+	.execute_operation		= generic_execute_operation,
-+	.estimate_efficiency		= generic_estimate_efficiency,
-+	.error_backpropagation		= generic_error_backpropagation,
-+	.correct_system_state		= generic_correct_system_state,
++/* Device data structure */
++struct ml_lib_test_dev_data {
++	struct cdev cdev;
++	struct device *device;
++	char *dataset_buf;
++	size_t dataset_buf_size;
++	size_t dataset_size;
++	char *recommendations_buf;
++	size_t recommendations_buf_size;
++	size_t recommendations_size;
++	struct mutex lock;
++	unsigned long access_count;
++	unsigned long read_count;
++	unsigned long write_count;
++
++	struct ml_lib_model *ml_model1;
 +};
 +
-+/******************************************************************************
-+ *                             ML library API                                 *
-+ ******************************************************************************/
++#define ML_MODEL_1_NAME "ml_model1"
 +
-+void *allocate_ml_model(size_t size, gfp_t gfp)
++static
++int ml_lib_test_dev_extract_dataset(struct ml_lib_model *ml_model,
++				    struct ml_lib_dataset *dataset);
++
++static struct ml_lib_dataset_operations ml_lib_test_dev_dataset_ops = {
++	.extract = ml_lib_test_dev_extract_dataset,
++};
++
++static dev_t dev_number;
++static struct class *ml_lib_test_dev_class;
++static struct ml_lib_test_dev_data *dev_data;
++static struct proc_dir_entry *proc_entry;
++
++/* ML model operations */
++static
++int ml_lib_test_dev_extract_dataset(struct ml_lib_model *ml_model,
++				    struct ml_lib_dataset *dataset)
 +{
-+	struct ml_lib_model *ml_model;
++	struct ml_lib_test_dev_data *data =
++		(struct ml_lib_test_dev_data *)ml_model->parent->private;
++	u8 pattern;
 +
-+	if (size < sizeof(struct ml_lib_model))
-+		return ERR_PTR(-EINVAL);
++	mutex_lock(&data->lock);
++	get_random_bytes(&pattern, 1);
++	memset(data->dataset_buf, pattern, data->dataset_buf_size);
++	data->dataset_size = data->dataset_buf_size;
++	atomic_set(&dataset->type, ML_LIB_MEMORY_STREAM_DATASET);
++	atomic_set(&dataset->state, ML_LIB_DATASET_CLEAN);
++	dataset->allocated_size = data->dataset_buf_size;
++	dataset->portion_offset = 0;
++	dataset->portion_size = data->dataset_buf_size;
++	mutex_unlock(&data->lock);
 +
-+	ml_model = kzalloc(size, gfp);
-+	if (unlikely(!ml_model))
-+		return ERR_PTR(-ENOMEM);
-+
-+	atomic_set(&ml_model->mode, ML_LIB_UNKNOWN_MODE);
-+	atomic_set(&ml_model->state, ML_LIB_UNKNOWN_MODEL_STATE);
-+	ml_model->model_ops = &default_ml_model_ops;
-+
-+	return (void *)ml_model;
++	return 0;
 +}
-+EXPORT_SYMBOL(allocate_ml_model);
 +
-+void free_ml_model(struct ml_lib_model *ml_model)
++/* File operations */
++static int ml_lib_test_dev_open(struct inode *inode, struct file *file)
 +{
-+	if (!ml_model)
-+		return;
++	struct ml_lib_test_dev_data *data = container_of(inode->i_cdev,
++						struct ml_lib_test_dev_data,
++						cdev);
 +
-+	free_subsystem_object(ml_model->parent);
-+	kfree(ml_model);
++	file->private_data = data;
++
++	mutex_lock(&data->lock);
++	data->access_count++;
++	mutex_unlock(&data->lock);
++
++	pr_info("ml_lib_test_dev: Device opened (total opens: %lu)\n",
++		data->access_count);
++
++	return 0;
 +}
-+EXPORT_SYMBOL(free_ml_model);
 +
-+void *allocate_subsystem_object(size_t size, gfp_t gfp)
++static int ml_lib_test_dev_release(struct inode *inode, struct file *file)
 +{
-+	struct ml_lib_subsystem *subsystem;
-+
-+	if (size < sizeof(struct ml_lib_subsystem))
-+		return ERR_PTR(-EINVAL);
-+
-+	subsystem = kzalloc(size, gfp);
-+	if (unlikely(!subsystem))
-+		return ERR_PTR(-ENOMEM);
-+
-+	subsystem->size = size;
-+	atomic_set(&subsystem->type, ML_LIB_UNKNOWN_SUBSYSTEM_TYPE);
-+
-+	return (void *)subsystem;
++	pr_info("ml_lib_test_dev: Device closed\n");
++	return 0;
 +}
-+EXPORT_SYMBOL(allocate_subsystem_object);
 +
-+void free_subsystem_object(struct ml_lib_subsystem *object)
++static ssize_t ml_lib_test_dev_read(struct file *file, char __user *buf,
++				    size_t count, loff_t *ppos)
 +{
-+	if (!object)
-+		return;
++	struct ml_lib_test_dev_data *data = file->private_data;
++	size_t to_read;
++	int ret;
 +
-+	kfree(object);
-+}
-+EXPORT_SYMBOL(free_subsystem_object);
++	mutex_lock(&data->lock);
 +
-+void *allocate_ml_model_options(size_t size, gfp_t gfp)
-+{
-+	struct ml_lib_model_options *options;
-+
-+	if (size < sizeof(struct ml_lib_model_options))
-+		return ERR_PTR(-EINVAL);
-+
-+	options = kzalloc(size, gfp);
-+	if (unlikely(!options))
-+		return ERR_PTR(-ENOMEM);
-+
-+	options->sleep_timeout = U32_MAX;
-+
-+	return (void *)options;
-+}
-+EXPORT_SYMBOL(allocate_ml_model_options);
-+
-+void free_ml_model_options(struct ml_lib_model_options *options)
-+{
-+	if (!options)
-+		return;
-+
-+	kfree(options);
-+}
-+EXPORT_SYMBOL(free_ml_model_options);
-+
-+void *allocate_subsystem_state(size_t size, gfp_t gfp)
-+{
-+	return NULL;
-+}
-+EXPORT_SYMBOL(allocate_subsystem_state);
-+
-+void free_subsystem_state(struct ml_lib_subsystem_state *state)
-+{
-+}
-+EXPORT_SYMBOL(free_subsystem_state);
-+
-+void *allocate_dataset(size_t size, gfp_t gfp)
-+{
-+	struct ml_lib_dataset *dataset;
-+
-+	if (size < sizeof(struct ml_lib_dataset))
-+		return ERR_PTR(-EINVAL);
-+
-+	dataset = kzalloc(size, gfp);
-+	if (unlikely(!dataset))
-+		return ERR_PTR(-ENOMEM);
-+
-+	atomic_set(&dataset->type, ML_LIB_UNKNOWN_DATASET_TYPE);
-+	atomic_set(&dataset->state, ML_LIB_UNKNOWN_DATASET_STATE);
-+
-+	return (void *)dataset;
-+}
-+EXPORT_SYMBOL(allocate_dataset);
-+
-+void free_dataset(struct ml_lib_dataset *dataset)
-+{
-+	if (!dataset)
-+		return;
-+
-+	kfree(dataset);
-+}
-+EXPORT_SYMBOL(free_dataset);
-+
-+void *allocate_request_config(size_t size, gfp_t gfp)
-+{
-+	return NULL;
-+}
-+EXPORT_SYMBOL(allocate_request_config);
-+
-+void free_request_config(struct ml_lib_request_config *config)
-+{
-+}
-+EXPORT_SYMBOL(free_request_config);
-+
-+int ml_model_create(struct ml_lib_model *ml_model,
-+		    const char *subsystem_name,
-+		    const char *model_name,
-+		    struct kobject *subsystem_kobj)
-+{
-+	struct kobject *parent = NULL;
-+	size_t size;
-+	int err = 0;
-+
-+	if (!ml_model)
-+		return -EINVAL;
-+
-+	if (!subsystem_name)
-+		ml_model->subsystem_name = UNKNOWN_SUBSYSTEM_NAME;
-+	else
-+		ml_model->subsystem_name = subsystem_name;
-+
-+	if (!model_name)
-+		ml_model->model_name = UNKNOWN_ML_MODEL_NAME;
-+	else
-+		ml_model->model_name = model_name;
-+
-+	if (!subsystem_kobj)
-+		parent = kernel_kobj;
-+	else
-+		parent = subsystem_kobj;
-+
-+	spin_lock_init(&ml_model->parent_state_lock);
-+	spin_lock_init(&ml_model->options_lock);
-+	spin_lock_init(&ml_model->dataset_lock);
-+
-+	err = ml_model_create_sysfs_group(ml_model, parent);
-+	if (err) {
-+		pr_err("ml_lib: failed to create sysfs group: err %d\n", err);
-+		goto finish_model_create;
++	if (*ppos >= data->dataset_size) {
++		mutex_unlock(&data->lock);
++		return 0;
 +	}
 +
-+	if (!ml_model->model_ops || !ml_model->model_ops->create) {
-+		size = sizeof(struct ml_lib_subsystem);
++	to_read = min(count, data->dataset_size - (size_t)*ppos);
 +
-+		ml_model->parent = allocate_subsystem_object(size, GFP_KERNEL);
-+		if (unlikely(!ml_model->parent)) {
-+			err = -ENOMEM;
-+			goto remove_sysfs_group;
-+		}
-+
-+		atomic_set(&ml_model->parent->type, ML_LIB_GENERIC_SUBSYSTEM);
-+	} else {
-+		err = ml_model->model_ops->create(ml_model);
-+		if (unlikely(err)) {
-+			pr_err("ml_lib: failed to create ML model: err %d\n",
-+				err);
-+			goto remove_sysfs_group;
-+		}
++	ret = copy_to_user(buf, data->dataset_buf + *ppos, to_read);
++	if (ret) {
++		mutex_unlock(&data->lock);
++		return -EFAULT;
 +	}
 +
-+	atomic_set(&ml_model->state, ML_LIB_MODEL_CREATED);
++	*ppos += to_read;
++	data->read_count++;
 +
-+	return 0;
++	mutex_unlock(&data->lock);
 +
-+remove_sysfs_group:
-+	ml_model_delete_sysfs_group(ml_model);
++	pr_info("ml_lib_test_dev: Read %zu bytes\n", to_read);
 +
-+finish_model_create:
-+	return err;
++	return to_read;
 +}
-+EXPORT_SYMBOL(ml_model_create);
 +
-+int ml_model_init(struct ml_lib_model *ml_model,
-+		  struct ml_lib_model_options *options)
++static ssize_t ml_lib_test_dev_write(struct file *file, const char __user *buf,
++				     size_t count, loff_t *ppos)
 +{
-+	struct ml_lib_model_options *old_options;
-+	int err = 0;
++	struct ml_lib_test_dev_data *data = file->private_data;
++	size_t to_write;
++	int ret;
 +
-+	if (!ml_model)
-+		return -EINVAL;
++	mutex_lock(&data->lock);
 +
-+	if (!ml_model->model_ops || !ml_model->model_ops->init)
-+		options->sleep_timeout = ML_LIB_SLEEP_TIMEOUT_DEFAULT;
-+	else {
-+		err = ml_model->model_ops->init(ml_model, options);
-+		if (unlikely(err)) {
-+			pr_err("ml_lib: failed to init ML model: err %d\n",
-+				err);
-+			goto finish_model_init;
-+		}
++	if (*ppos >= data->recommendations_buf_size) {
++		mutex_unlock(&data->lock);
++		return -ENOSPC;
 +	}
 +
-+	spin_lock(&ml_model->options_lock);
-+	old_options = rcu_dereference_protected(ml_model->options,
-+				lockdep_is_held(&ml_model->options_lock));
-+	rcu_assign_pointer(ml_model->options, options);
-+	spin_unlock(&ml_model->options_lock);
-+	synchronize_rcu();
-+	free_ml_model_options(old_options);
++	to_write = min(count, data->recommendations_buf_size - (size_t)*ppos);
 +
-+	atomic_set(&ml_model->state, ML_LIB_MODEL_INITIALIZED);
++	ret = copy_from_user(data->recommendations_buf + *ppos, buf, to_write);
++	if (ret) {
++		mutex_unlock(&data->lock);
++		return -EFAULT;
++	}
 +
-+finish_model_init:
-+	return err;
++	*ppos += to_write;
++	if (*ppos > data->recommendations_size)
++		data->recommendations_size = *ppos;
++
++	data->write_count++;
++
++	mutex_unlock(&data->lock);
++
++	pr_info("ml_lib_test_dev: Wrote %zu bytes\n", to_write);
++
++	return to_write;
 +}
-+EXPORT_SYMBOL(ml_model_init);
 +
-+int ml_model_re_init(struct ml_lib_model *ml_model,
-+		     struct ml_lib_model_options *options)
++static long ml_lib_test_dev_ioctl(struct file *file, unsigned int cmd,
++				  unsigned long arg)
 +{
-+	struct ml_lib_model_options *old_options;
++	struct ml_lib_test_dev_data *data = file->private_data;
++	int size;
 +
-+	if (!ml_model)
-+		return -EINVAL;
++	switch (cmd) {
++	case ML_LIB_TEST_DEV_IOCRESET:
++		mutex_lock(&data->lock);
++		memset(data->dataset_buf,
++			0, data->dataset_buf_size);
++		data->dataset_size = 0;
++		memset(data->recommendations_buf,
++			0, data->recommendations_buf_size);
++		data->recommendations_size = 0;
++		mutex_unlock(&data->lock);
++		pr_info("ml_lib_test_dev: Buffer reset via IOCTL\n");
++		break;
 +
-+	spin_lock(&ml_model->options_lock);
-+	old_options = rcu_dereference_protected(ml_model->options,
-+				lockdep_is_held(&ml_model->options_lock));
-+	rcu_assign_pointer(ml_model->options, options);
-+	spin_unlock(&ml_model->options_lock);
-+	synchronize_rcu();
-+	free_ml_model_options(old_options);
++	case ML_LIB_TEST_DEV_IOCGETSIZE:
++		mutex_lock(&data->lock);
++		size = data->dataset_size;
++		mutex_unlock(&data->lock);
++		if (copy_to_user((int __user *)arg, &size, sizeof(size)))
++			return -EFAULT;
++		break;
 +
-+	return 0;
-+}
-+EXPORT_SYMBOL(ml_model_re_init);
-+
-+int ml_model_start(struct ml_lib_model *ml_model,
-+		   struct ml_lib_model_run_config *config)
-+{
-+	if (!ml_model)
-+		return -EINVAL;
-+
-+	/* TODO: implement ML model start logic*/
-+	atomic_set(&ml_model->state, ML_LIB_MODEL_STARTED);
-+	pr_err("ml_lib: TODO: implement start ML model\n");
-+	return 0;
-+}
-+EXPORT_SYMBOL(ml_model_start);
-+
-+int ml_model_stop(struct ml_lib_model *ml_model)
-+{
-+	if (!ml_model)
-+		return -EINVAL;
-+
-+	/* TODO: implement ML model stop logic*/
-+	atomic_set(&ml_model->state, ML_LIB_MODEL_STOPPED);
-+	pr_err("ml_lib: TODO: implement stop ML model\n");
-+	return 0;
-+}
-+EXPORT_SYMBOL(ml_model_stop);
-+
-+void ml_model_destroy(struct ml_lib_model *ml_model)
-+{
-+	struct ml_lib_model_options *old_options;
-+	struct ml_lib_dataset *old_dataset;
-+
-+	if (!ml_model)
-+		return;
-+
-+	atomic_set(&ml_model->state, ML_LIB_MODEL_SHUTTING_DOWN);
-+
-+	ml_model_delete_sysfs_group(ml_model);
-+
-+	spin_lock(&ml_model->options_lock);
-+	old_options = rcu_dereference_protected(ml_model->options,
-+				lockdep_is_held(&ml_model->options_lock));
-+	rcu_assign_pointer(ml_model->options, NULL);
-+	spin_unlock(&ml_model->options_lock);
-+	synchronize_rcu();
-+	free_ml_model_options(old_options);
-+
-+	spin_lock(&ml_model->dataset_lock);
-+	old_dataset = rcu_dereference_protected(ml_model->dataset,
-+				lockdep_is_held(&ml_model->dataset_lock));
-+	rcu_assign_pointer(ml_model->dataset, NULL);
-+	spin_unlock(&ml_model->dataset_lock);
-+	synchronize_rcu();
-+
-+	if (!ml_model->dataset_ops || !ml_model->dataset_ops->destroy) {
-+		/*
-+		 * Do nothing
-+		 */
-+	} else
-+		ml_model->dataset_ops->destroy(old_dataset);
-+
-+	if (!ml_model->dataset_ops || !ml_model->dataset_ops->free)
-+		free_dataset(old_dataset);
-+	else
-+		ml_model->dataset_ops->free(old_dataset);
-+
-+	if (!ml_model->model_ops || !ml_model->model_ops->destroy) {
-+		atomic_set(&ml_model->parent->type,
-+			   ML_LIB_UNKNOWN_SUBSYSTEM_TYPE);
-+	} else
-+		ml_model->model_ops->destroy(ml_model);
-+
-+	atomic_set(&ml_model->state, ML_LIB_MODEL_STATE_MAX);
-+}
-+EXPORT_SYMBOL(ml_model_destroy);
-+
-+struct ml_lib_subsystem_state *get_system_state(struct ml_lib_model *ml_model)
-+{
-+	return NULL;
-+}
-+EXPORT_SYMBOL(get_system_state);
-+
-+int ml_model_get_dataset(struct ml_lib_model *ml_model,
-+			 struct ml_lib_request_config *config,
-+			 struct ml_lib_user_space_request *request)
-+{
-+	struct ml_lib_dataset *old_dataset;
-+	struct ml_lib_dataset *new_dataset;
-+	size_t desc_size = sizeof(struct ml_lib_dataset);
-+	int state;
-+	int err = 0;
-+
-+	if (!ml_model)
-+		return -EINVAL;
-+
-+	atomic_set(&ml_model->state, ML_LIB_MODEL_RUNNING);
-+
-+	rcu_read_lock();
-+	old_dataset = rcu_dereference(ml_model->dataset);
-+	if (old_dataset)
-+		state = atomic_read(&old_dataset->state);
-+	else
-+		state = ML_LIB_UNKNOWN_DATASET_STATE;
-+	rcu_read_unlock();
-+
-+	switch (state) {
-+	case ML_LIB_DATASET_CLEAN:
-+	case ML_LIB_DATASET_EXTRACTED_PARTIALLY:
-+	case ML_LIB_DATASET_EXTRACTED_COMPLETELY:
-+		/* nothing should be done */
-+		goto finish_get_dataset;
++	case ML_LIB_TEST_DEV_IOCSETSIZE:
++		if (copy_from_user(&size, (int __user *)arg, sizeof(size)))
++			return -EFAULT;
++		if (size < 0 || size > data->recommendations_buf_size)
++			return -EINVAL;
++		mutex_lock(&data->lock);
++		data->recommendations_size = size;
++		mutex_unlock(&data->lock);
++		pr_info("ml_lib_test_dev: Data size set to %d via IOCTL\n", size);
++		break;
 +
 +	default:
-+		/* continue logic */
-+		break;
++		return -ENOTTY;
 +	}
-+
-+	if (!ml_model->dataset_ops || !ml_model->dataset_ops->allocate)
-+		new_dataset = allocate_dataset(desc_size, GFP_KERNEL);
-+	else {
-+		new_dataset = ml_model->dataset_ops->allocate(desc_size,
-+							      GFP_KERNEL);
-+	}
-+
-+	if (IS_ERR(new_dataset)) {
-+		err = PTR_ERR(new_dataset);
-+		pr_err("ml_lib: Failed to allocate dataset\n");
-+		return err;
-+	} else if (!new_dataset) {
-+		err = -ENOMEM;
-+		pr_err("ml_lib: Failed to allocate dataset\n");
-+		return err;
-+	}
-+
-+	if (!ml_model->dataset_ops || !ml_model->dataset_ops->init) {
-+		/*
-+		 * Do nothing
-+		 */
-+	} else {
-+		err = ml_model->dataset_ops->init(new_dataset);
-+		if (err) {
-+			pr_err("ml_lib: Failed to init dataset: err %d\n",
-+				err);
-+			goto fail_get_dataset;
-+		}
-+	}
-+
-+	if (!ml_model->dataset_ops || !ml_model->dataset_ops->extract) {
-+		atomic_set(&new_dataset->type, ML_LIB_EMPTY_DATASET);
-+		atomic_set(&new_dataset->state, ML_LIB_DATASET_CLEAN);
-+		new_dataset->allocated_size = 0;
-+		new_dataset->portion_offset = 0;
-+		new_dataset->portion_size = 0;
-+	} else {
-+		err = ml_model->dataset_ops->extract(ml_model, new_dataset);
-+		if (err) {
-+			pr_err("ml_lib: Failed to extract dataset: err %d\n",
-+				err);
-+			goto fail_get_dataset;
-+		}
-+	}
-+
-+	spin_lock(&ml_model->dataset_lock);
-+	old_dataset = rcu_dereference_protected(ml_model->dataset,
-+				lockdep_is_held(&ml_model->dataset_lock));
-+	rcu_assign_pointer(ml_model->dataset, new_dataset);
-+	spin_unlock(&ml_model->dataset_lock);
-+	synchronize_rcu();
-+
-+	if (!ml_model->dataset_ops || !ml_model->dataset_ops->destroy) {
-+		/*
-+		 * Do nothing
-+		 */
-+	} else
-+		ml_model->dataset_ops->destroy(old_dataset);
-+
-+	if (!ml_model->dataset_ops || !ml_model->dataset_ops->free)
-+		free_dataset(old_dataset);
-+	else
-+		ml_model->dataset_ops->free(old_dataset);
-+
-+finish_get_dataset:
-+	return 0;
-+
-+fail_get_dataset:
-+	if (!ml_model->dataset_ops || !ml_model->dataset_ops->destroy) {
-+		/*
-+		 * Do nothing
-+		 */
-+	} else
-+		ml_model->dataset_ops->destroy(new_dataset);
-+
-+	if (!ml_model->dataset_ops || !ml_model->dataset_ops->free)
-+		free_dataset(new_dataset);
-+	else
-+		ml_model->dataset_ops->free(new_dataset);
-+
-+	return err;
-+}
-+EXPORT_SYMBOL(ml_model_get_dataset);
-+
-+int ml_model_discard_dataset(struct ml_lib_model *ml_model)
-+{
-+	struct ml_lib_dataset *old_dataset;
-+	struct ml_lib_dataset *new_dataset;
-+	size_t desc_size = sizeof(struct ml_lib_dataset);
-+	int err;
-+
-+	if (!ml_model->dataset_ops || !ml_model->dataset_ops->allocate)
-+		new_dataset = allocate_dataset(desc_size, GFP_KERNEL);
-+	else {
-+		new_dataset = ml_model->dataset_ops->allocate(desc_size,
-+							      GFP_KERNEL);
-+	}
-+
-+	if (IS_ERR(new_dataset)) {
-+		err = PTR_ERR(new_dataset);
-+		pr_err("ml_lib: Failed to allocate dataset\n");
-+		return err;
-+	} else if (!new_dataset) {
-+		err = -ENOMEM;
-+		pr_err("ml_lib: Failed to allocate dataset\n");
-+		return err;
-+	}
-+
-+	spin_lock(&ml_model->dataset_lock);
-+	old_dataset = rcu_dereference_protected(ml_model->dataset,
-+				lockdep_is_held(&ml_model->dataset_lock));
-+	if (old_dataset) {
-+		atomic_set(&new_dataset->type, atomic_read(&old_dataset->type));
-+		new_dataset->allocated_size = old_dataset->allocated_size;
-+		new_dataset->portion_offset = old_dataset->portion_offset;
-+		new_dataset->portion_size = old_dataset->portion_size;
-+	} else {
-+		atomic_set(&new_dataset->type, ML_LIB_EMPTY_DATASET);
-+		new_dataset->allocated_size = 0;
-+		new_dataset->portion_offset = 0;
-+		new_dataset->portion_size = 0;
-+	}
-+	atomic_set(&new_dataset->state, ML_LIB_DATASET_OBSOLETE);
-+	rcu_assign_pointer(ml_model->dataset, new_dataset);
-+	spin_unlock(&ml_model->dataset_lock);
-+	synchronize_rcu();
-+
-+	if (!ml_model->dataset_ops || !ml_model->dataset_ops->free)
-+		free_dataset(old_dataset);
-+	else
-+		ml_model->dataset_ops->free(old_dataset);
 +
 +	return 0;
 +}
-+EXPORT_SYMBOL(ml_model_discard_dataset);
 +
-+int ml_model_preprocess_data(struct ml_lib_model *ml_model,
-+			     struct ml_lib_dataset *dataset)
++static const struct file_operations ml_lib_test_dev_fops = {
++	.owner = THIS_MODULE,
++	.open = ml_lib_test_dev_open,
++	.release = ml_lib_test_dev_release,
++	.read = ml_lib_test_dev_read,
++	.write = ml_lib_test_dev_write,
++	.unlocked_ioctl = ml_lib_test_dev_ioctl,
++	.llseek = default_llseek,
++};
++
++/* Sysfs attributes */
++static ssize_t buffer_size_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
 +{
-+	return -EOPNOTSUPP;
++	struct ml_lib_test_dev_data *data = dev_get_drvdata(dev);
++
++	return sprintf(buf, "%zu\n", data->dataset_buf_size);
 +}
-+EXPORT_SYMBOL(ml_model_preprocess_data);
 +
-+int ml_model_publish_data(struct ml_lib_model *ml_model,
-+			  struct ml_lib_dataset *dataset,
-+			  struct ml_lib_user_space_notification *notify)
++static ssize_t data_size_show(struct device *dev,
++			      struct device_attribute *attr, char *buf)
 +{
-+	return -EOPNOTSUPP;
++	struct ml_lib_test_dev_data *data = dev_get_drvdata(dev);
++	size_t size;
++
++	mutex_lock(&data->lock);
++	size = data->dataset_size;
++	mutex_unlock(&data->lock);
++
++	return sprintf(buf, "%zu\n", size);
 +}
-+EXPORT_SYMBOL(ml_model_publish_data);
 +
-+int ml_model_preprocess_recommendation(struct ml_lib_model *ml_model,
-+			 struct ml_lib_user_space_recommendation *hint)
++static ssize_t access_count_show(struct device *dev,
++				 struct device_attribute *attr, char *buf)
 +{
-+	return -EOPNOTSUPP;
++	struct ml_lib_test_dev_data *data = dev_get_drvdata(dev);
++
++	return sprintf(buf, "%lu\n", data->access_count);
 +}
-+EXPORT_SYMBOL(ml_model_preprocess_recommendation);
 +
-+int estimate_system_state(struct ml_lib_model *ml_model)
++static ssize_t stats_show(struct device *dev,
++			  struct device_attribute *attr, char *buf)
 +{
-+	return -EOPNOTSUPP;
++	struct ml_lib_test_dev_data *data = dev_get_drvdata(dev);
++
++	return sprintf(buf, "Opens: %lu\nReads: %lu\nWrites: %lu\n",
++		       data->access_count, data->read_count,
++		       data->write_count);
 +}
-+EXPORT_SYMBOL(estimate_system_state);
 +
-+int apply_ml_model_recommendation(struct ml_lib_model *ml_model,
-+			 struct ml_lib_user_space_recommendation *hint)
++static DEVICE_ATTR_RO(buffer_size);
++static DEVICE_ATTR_RO(data_size);
++static DEVICE_ATTR_RO(access_count);
++static DEVICE_ATTR_RO(stats);
++
++static struct attribute *ml_lib_test_dev_attrs[] = {
++	&dev_attr_buffer_size.attr,
++	&dev_attr_data_size.attr,
++	&dev_attr_access_count.attr,
++	&dev_attr_stats.attr,
++	NULL,
++};
++
++static const struct attribute_group ml_lib_test_dev_attr_group = {
++	.attrs = ml_lib_test_dev_attrs,
++};
++
++/* Procfs operations */
++static int ml_lib_test_dev_proc_show(struct seq_file *m, void *v)
 +{
-+	return -EOPNOTSUPP;
++	struct ml_lib_test_dev_data *data = dev_data;
++
++	seq_printf(m, "ML Library Testing Device Driver Information\n");
++	seq_printf(m, "=================================\n");
++	seq_printf(m, "Device name:     %s\n", DEVICE_NAME);
++	seq_printf(m, "Buffer size:     %zu bytes\n", data->dataset_buf_size);
++	seq_printf(m, "Data size:       %zu bytes\n", data->dataset_size);
++	seq_printf(m, "Access count:    %lu\n", data->access_count);
++	seq_printf(m, "Read count:      %lu\n", data->read_count);
++	seq_printf(m, "Write count:     %lu\n", data->write_count);
++
++	return 0;
 +}
-+EXPORT_SYMBOL(apply_ml_model_recommendation);
 +
-+int execute_ml_model_operation(struct ml_lib_model *ml_model,
-+			 struct ml_lib_user_space_recommendation *hint,
-+			 struct ml_lib_user_space_request *request)
++static int ml_lib_test_dev_proc_open(struct inode *inode, struct file *file)
 +{
-+	return -EOPNOTSUPP;
++	return single_open(file, ml_lib_test_dev_proc_show, NULL);
 +}
-+EXPORT_SYMBOL(execute_ml_model_operation);
 +
-+int estimate_ml_model_efficiency(struct ml_lib_model *ml_model,
-+			 struct ml_lib_user_space_recommendation *hint,
-+			 struct ml_lib_user_space_request *request)
++static const struct proc_ops ml_lib_test_dev_proc_ops = {
++	.proc_open = ml_lib_test_dev_proc_open,
++	.proc_read = seq_read,
++	.proc_lseek = seq_lseek,
++	.proc_release = single_release,
++};
++
++/* Module initialization */
++static int __init ml_lib_test_dev_init(void)
 +{
-+	return -EOPNOTSUPP;
-+}
-+EXPORT_SYMBOL(estimate_ml_model_efficiency);
++	struct ml_lib_model_options *options;
++	int ret;
 +
-+int ml_model_error_backpropagation(struct ml_lib_model *ml_model,
-+			    struct ml_lib_backpropagation_feedback *feedback,
-+			    struct ml_lib_user_space_notification *notify)
-+{
-+	return -EOPNOTSUPP;
-+}
-+EXPORT_SYMBOL(ml_model_error_backpropagation);
++	pr_info("ml_lib_test_dev: Initializing driver\n");
 +
-+int correct_system_state(struct ml_lib_model *ml_model)
-+{
-+	return -EOPNOTSUPP;
-+}
-+EXPORT_SYMBOL(correct_system_state);
-+
-+/******************************************************************************
-+ *              Generic implementation of ML model's methods                  *
-+ ******************************************************************************/
-+
-+int generic_create_ml_model(struct ml_lib_model *ml_model)
-+{
-+	size_t size = sizeof(struct ml_lib_subsystem);
-+
-+	ml_model->parent = allocate_subsystem_object(size, GFP_KERNEL);
-+	if (unlikely(!ml_model->parent))
++	/* Allocate device data */
++	dev_data = kzalloc(sizeof(struct ml_lib_test_dev_data), GFP_KERNEL);
++	if (!dev_data)
 +		return -ENOMEM;
 +
-+	atomic_set(&ml_model->parent->type, ML_LIB_GENERIC_SUBSYSTEM);
-+	atomic_set(&ml_model->mode, ML_LIB_EMERGENCY_MODE);
++	/* Allocate dataset buffer */
++	dev_data->dataset_buf = kzalloc(BUFFER_SIZE, GFP_KERNEL);
++	if (!dev_data->dataset_buf) {
++		ret = -ENOMEM;
++		goto err_free_data;
++	}
++
++	dev_data->dataset_buf_size = BUFFER_SIZE;
++	dev_data->dataset_size = 0;
++
++	/* Allocate recomendations buffer */
++	dev_data->recommendations_buf = kzalloc(BUFFER_SIZE, GFP_KERNEL);
++	if (!dev_data->recommendations_buf) {
++		ret = -ENOMEM;
++		goto err_free_dataset_buffer;
++	}
++
++	dev_data->recommendations_buf_size = BUFFER_SIZE;
++	dev_data->recommendations_size = 0;
++
++	mutex_init(&dev_data->lock);
++
++	/* Allocate device number */
++	ret = alloc_chrdev_region(&dev_number, 0, 1, DEVICE_NAME);
++	if (ret < 0) {
++		pr_err("ml_lib_test_dev: Failed to allocate device number\n");
++		goto err_free_recommendations_buffer;
++	}
++
++	pr_info("ml_lib_test_dev: Device number allocated: %d:%d\n",
++		MAJOR(dev_number), MINOR(dev_number));
++
++	/* Create device class */
++	ml_lib_test_dev_class = class_create(CLASS_NAME);
++	if (IS_ERR(ml_lib_test_dev_class)) {
++		ret = PTR_ERR(ml_lib_test_dev_class);
++		pr_err("ml_lib_test_dev: Failed to create class\n");
++		goto err_unregister_chrdev;
++	}
++
++	/* Initialize and add cdev */
++	cdev_init(&dev_data->cdev, &ml_lib_test_dev_fops);
++	dev_data->cdev.owner = THIS_MODULE;
++
++	ret = cdev_add(&dev_data->cdev, dev_number, 1);
++	if (ret < 0) {
++		pr_err("ml_lib_test_dev: Failed to add cdev\n");
++		goto err_class_destroy;
++	}
++
++	/* Create device */
++	dev_data->device = device_create(ml_lib_test_dev_class,
++					 NULL, dev_number,
++					 dev_data, DEVICE_NAME);
++	if (IS_ERR(dev_data->device)) {
++		ret = PTR_ERR(dev_data->device);
++		pr_err("ml_lib_test_dev: Failed to create device\n");
++		goto err_cdev_del;
++	}
++
++	/* Create sysfs attributes */
++	ret = sysfs_create_group(&dev_data->device->kobj,
++				 &ml_lib_test_dev_attr_group);
++	if (ret < 0) {
++		pr_err("ml_lib_test_dev: Failed to create sysfs group\n");
++		goto err_device_destroy;
++	}
++
++	/* Create procfs entry */
++	proc_entry = proc_create(DEVICE_NAME, 0444, NULL,
++				 &ml_lib_test_dev_proc_ops);
++	if (!proc_entry) {
++		pr_err("ml_lib_test_dev: Failed to create proc entry\n");
++		ret = -ENOMEM;
++		goto err_sysfs_remove;
++	}
++
++	dev_data->ml_model1 = allocate_ml_model(sizeof(struct ml_lib_model),
++						GFP_KERNEL);
++	if (IS_ERR(dev_data->ml_model1)) {
++		ret = PTR_ERR(dev_data->ml_model1);
++		pr_err("ml_lib_test_dev: Failed to allocate ML model\n");
++		goto err_procfs_remove;
++	} else if (!dev_data->ml_model1) {
++		ret = -ENOMEM;
++		pr_err("ml_lib_test_dev: Failed to allocate ML model\n");
++		goto err_procfs_remove;
++	}
++
++	ret = ml_model_create(dev_data->ml_model1, CLASS_NAME,
++			      ML_MODEL_1_NAME, &dev_data->device->kobj);
++	if (ret < 0) {
++		pr_err("ml_lib_test_dev: Failed to create ML model\n");
++		goto err_ml_model_free;
++	}
++
++	dev_data->ml_model1->parent->private = dev_data;
++	dev_data->ml_model1->model_ops = NULL;
++	dev_data->ml_model1->dataset_ops = &ml_lib_test_dev_dataset_ops;
++
++	options = allocate_ml_model_options(sizeof(struct ml_lib_model_options),
++					    GFP_KERNEL);
++	if (IS_ERR(options)) {
++		ret = PTR_ERR(options);
++		pr_err("ml_lib_test_dev: Failed to allocate ML model options\n");
++		goto err_ml_model_destroy;
++	} else if (!options) {
++		ret = -ENOMEM;
++		pr_err("ml_lib_test_dev: Failed to allocate ML model options\n");
++		goto err_ml_model_destroy;
++	}
++
++	ret = ml_model_init(dev_data->ml_model1, options);
++	if (ret < 0) {
++		pr_err("ml_lib_test_dev: Failed to init ML model\n");
++		goto err_ml_model_options_free;
++	}
++
++	pr_info("ml_lib_test_dev: Driver initialized successfully\n");
++	pr_info("ml_lib_test_dev: Device created at /dev/%s\n",
++		DEVICE_NAME);
++	pr_info("ml_lib_test_dev: Proc entry created at /proc/%s\n",
++		DEVICE_NAME);
 +
 +	return 0;
-+}
-+EXPORT_SYMBOL(generic_create_ml_model);
 +
-+int generic_init_ml_model(struct ml_lib_model *ml_model,
-+			  struct ml_lib_model_options *options)
++err_ml_model_options_free:
++	free_ml_model_options(options);
++err_ml_model_destroy:
++	ml_model_destroy(dev_data->ml_model1);
++err_ml_model_free:
++	free_ml_model(dev_data->ml_model1);
++err_procfs_remove:
++	proc_remove(proc_entry);
++err_sysfs_remove:
++	sysfs_remove_group(&dev_data->device->kobj,
++			   &ml_lib_test_dev_attr_group);
++err_device_destroy:
++	device_destroy(ml_lib_test_dev_class, dev_number);
++err_cdev_del:
++	cdev_del(&dev_data->cdev);
++err_class_destroy:
++	class_destroy(ml_lib_test_dev_class);
++err_unregister_chrdev:
++	unregister_chrdev_region(dev_number, 1);
++err_free_recommendations_buffer:
++	kfree(dev_data->recommendations_buf);
++err_free_dataset_buffer:
++	kfree(dev_data->dataset_buf);
++err_free_data:
++	kfree(dev_data);
++	return ret;
++}
++
++/* Module cleanup */
++static void __exit ml_lib_test_dev_exit(void)
 +{
-+	options->sleep_timeout = ML_LIB_SLEEP_TIMEOUT_DEFAULT;
-+	return 0;
-+}
-+EXPORT_SYMBOL(generic_init_ml_model);
++	pr_info("ml_lib_test_dev: Cleaning up driver\n");
 +
-+int generic_re_init_ml_model(struct ml_lib_model *ml_model,
-+			     struct ml_lib_model_options *options)
-+{
-+	options->sleep_timeout = ML_LIB_SLEEP_TIMEOUT_DEFAULT;
-+	return 0;
-+}
-+EXPORT_SYMBOL(generic_re_init_ml_model);
++	/* Destroy ML model */
++	ml_model_destroy(dev_data->ml_model1);
++	free_ml_model(dev_data->ml_model1);
 +
-+int generic_start_ml_model(struct ml_lib_model *ml_model,
-+			   struct ml_lib_model_run_config *config)
-+{
-+	return -EOPNOTSUPP;
-+}
-+EXPORT_SYMBOL(generic_start_ml_model);
++	/* Remove procfs entry */
++	proc_remove(proc_entry);
 +
-+int generic_stop_ml_model(struct ml_lib_model *ml_model)
-+{
-+	return -EOPNOTSUPP;
-+}
-+EXPORT_SYMBOL(generic_stop_ml_model);
++	/* Remove sysfs attributes */
++	sysfs_remove_group(&dev_data->device->kobj,
++			   &ml_lib_test_dev_attr_group);
 +
-+void generic_destroy_ml_model(struct ml_lib_model *ml_model)
-+{
-+	atomic_set(&ml_model->parent->type, ML_LIB_UNKNOWN_SUBSYSTEM_TYPE);
-+	atomic_set(&ml_model->mode, ML_LIB_UNKNOWN_MODE);
-+}
-+EXPORT_SYMBOL(generic_destroy_ml_model);
++	/* Destroy device */
++	device_destroy(ml_lib_test_dev_class, dev_number);
 +
-+struct ml_lib_subsystem_state *
-+generic_get_system_state(struct ml_lib_model *ml_model)
-+{
-+	return NULL;
-+}
-+EXPORT_SYMBOL(generic_get_system_state);
++	/* Delete cdev */
++	cdev_del(&dev_data->cdev);
 +
-+int generic_get_dataset(struct ml_lib_model *ml_model,
-+			struct ml_lib_dataset *dataset)
-+{
-+	atomic_set(&dataset->type, ML_LIB_EMPTY_DATASET);
-+	atomic_set(&dataset->state, ML_LIB_DATASET_CLEAN);
-+	dataset->allocated_size = 0;
-+	dataset->portion_offset = 0;
-+	dataset->portion_size = 0;
++	/* Destroy class */
++	class_destroy(ml_lib_test_dev_class);
 +
-+	return 0;
-+}
-+EXPORT_SYMBOL(generic_get_dataset);
++	/* Unregister device number */
++	unregister_chrdev_region(dev_number, 1);
 +
-+int generic_preprocess_data(struct ml_lib_model *ml_model,
-+			    struct ml_lib_dataset *dataset)
-+{
-+	return -EOPNOTSUPP;
-+}
-+EXPORT_SYMBOL(generic_preprocess_data);
++	/* Free buffers */
++	kfree(dev_data->recommendations_buf);
++	kfree(dev_data->dataset_buf);
++	kfree(dev_data);
 +
-+int generic_publish_data(struct ml_lib_model *ml_model,
-+			 struct ml_lib_dataset *dataset,
-+			 struct ml_lib_user_space_notification *notify)
-+{
-+	return -EOPNOTSUPP;
++	pr_info("ml_lib_test_dev: Driver removed successfully\n");
 +}
-+EXPORT_SYMBOL(generic_publish_data);
 +
-+int generic_preprocess_recommendation(struct ml_lib_model *ml_model,
-+			 struct ml_lib_user_space_recommendation *hint)
-+{
-+	return -EOPNOTSUPP;
-+}
-+EXPORT_SYMBOL(generic_preprocess_recommendation);
-+
-+int generic_estimate_system_state(struct ml_lib_model *ml_model)
-+{
-+	return -EOPNOTSUPP;
-+}
-+EXPORT_SYMBOL(generic_estimate_system_state);
-+
-+int generic_apply_recommendation(struct ml_lib_model *ml_model,
-+			 struct ml_lib_user_space_recommendation *hint)
-+{
-+	return -EOPNOTSUPP;
-+}
-+EXPORT_SYMBOL(generic_apply_recommendation);
-+
-+int generic_execute_operation(struct ml_lib_model *ml_model,
-+			 struct ml_lib_user_space_recommendation *hint,
-+			 struct ml_lib_user_space_request *request)
-+{
-+	return -EOPNOTSUPP;
-+}
-+EXPORT_SYMBOL(generic_execute_operation);
-+
-+int generic_estimate_efficiency(struct ml_lib_model *ml_model,
-+			 struct ml_lib_user_space_recommendation *hint,
-+			 struct ml_lib_user_space_request *request)
-+{
-+	return -EOPNOTSUPP;
-+}
-+EXPORT_SYMBOL(generic_estimate_efficiency);
-+
-+int generic_error_backpropagation(struct ml_lib_model *ml_model,
-+			    struct ml_lib_backpropagation_feedback *feedback,
-+			    struct ml_lib_user_space_notification *notify)
-+{
-+	return -EOPNOTSUPP;
-+}
-+EXPORT_SYMBOL(generic_error_backpropagation);
-+
-+int generic_correct_system_state(struct ml_lib_model *ml_model)
-+{
-+	return -EOPNOTSUPP;
-+}
-+EXPORT_SYMBOL(generic_correct_system_state);
++module_init(ml_lib_test_dev_init);
++module_exit(ml_lib_test_dev_exit);
 +
 +MODULE_LICENSE("GPL");
 +MODULE_AUTHOR("Viacheslav Dubeyko <slava@dubeyko.com>");
-+MODULE_DESCRIPTION("ML library");
++MODULE_DESCRIPTION("ML libraray testing character device driver");
 +MODULE_VERSION("1.0");
-diff --git a/lib/ml-lib/sysfs.c b/lib/ml-lib/sysfs.c
-new file mode 100644
-index 000000000000..fb4b7f44f793
---- /dev/null
-+++ b/lib/ml-lib/sysfs.c
-@@ -0,0 +1,187 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Machine Learning (ML) library
-+ *
-+ * Copyright (C) 2025-2026 Viacheslav Dubeyko <slava@dubeyko.com>
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+
-+#include <linux/ml-lib/ml_lib.h>
-+
-+#include "sysfs.h"
-+
-+struct ml_lib_feature_attr {
-+	struct attribute attr;
-+	ssize_t (*show)(struct ml_lib_feature_attr *,
-+			struct ml_lib_model *,
-+			char *);
-+	ssize_t (*store)(struct ml_lib_feature_attr *,
-+				struct ml_lib_model *,
-+				const char *, size_t);
-+};
-+
-+#define ML_LIB_ATTR(type, name, mode, show, store) \
-+	static struct ml_lib_##type##_attr ml_lib_##type##_attr_##name = \
-+		__ATTR(name, mode, show, store)
-+
-+#define ML_LIB_FEATURE_INFO_ATTR(name) \
-+	ML_LIB_ATTR(feature, name, 0444, NULL, NULL)
-+#define ML_LIB_FEATURE_RO_ATTR(name) \
-+	ML_LIB_ATTR(feature, name, 0444, ml_lib_feature_##name##_show, NULL)
-+#define ML_LIB_FEATURE_W_ATTR(name) \
-+	ML_LIB_ATTR(feature, name, 0220, NULL, ml_lib_feature_##name##_store)
-+#define ML_LIB_FEATURE_RW_ATTR(name) \
-+	ML_LIB_ATTR(feature, name, 0644, \
-+		    ml_lib_feature_##name##_show, ml_lib_feature_##name##_store)
-+
-+enum {
-+	ML_LIB_START_COMMAND,
-+	ML_LIB_STOP_COMMAND,
-+	ML_LIB_PREPARE_DATASET_COMMAND,
-+	ML_LIB_DISCARD_DATASET_COMMAND,
-+	ML_LIB_COMMAND_NUMBER
-+};
-+
-+static const char *control_command_str[ML_LIB_COMMAND_NUMBER] = {
-+	"start",
-+	"stop",
-+	"prepare_dataset",
-+	"discard_dataset",
-+};
-+
-+static ssize_t ml_lib_feature_control_store(struct ml_lib_feature_attr *attr,
-+					    struct ml_lib_model *ml_model,
-+					    const char *buf, size_t len)
-+{
-+	struct ml_lib_model_run_config config = {0};
-+	int i;
-+	int err;
-+
-+	for (i = 0; i < ML_LIB_COMMAND_NUMBER; i++) {
-+		size_t iter_len = min(len, strlen(control_command_str[i]));
-+
-+		if (strncmp(control_command_str[i], buf, iter_len) == 0)
-+			break;
-+	}
-+
-+	if (i >= ML_LIB_COMMAND_NUMBER)
-+		return -EOPNOTSUPP;
-+
-+	switch (i) {
-+	case ML_LIB_START_COMMAND:
-+		err = ml_model_start(ml_model, &config);
-+		break;
-+
-+	case ML_LIB_STOP_COMMAND:
-+		err = ml_model_stop(ml_model);
-+		break;
-+
-+	case ML_LIB_PREPARE_DATASET_COMMAND:
-+		err = ml_model_get_dataset(ml_model, NULL, NULL);
-+		break;
-+
-+	case ML_LIB_DISCARD_DATASET_COMMAND:
-+		err = ml_model_discard_dataset(ml_model);
-+		break;
-+	}
-+
-+	if (unlikely(err))
-+		return err;
-+
-+	return len;
-+}
-+
-+ML_LIB_FEATURE_W_ATTR(control);
-+
-+static struct attribute *ml_model_attrs[] = {
-+	&ml_lib_feature_attr_control.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group ml_model_group = {
-+	.attrs = ml_model_attrs,
-+};
-+
-+static const struct attribute_group *ml_model_groups[] = {
-+	&ml_model_group,
-+	NULL,
-+};
-+
-+static
-+ssize_t ml_model_attr_show(struct kobject *kobj,
-+			   struct attribute *attr,
-+			   char *buf)
-+{
-+	struct ml_lib_model *ml_model = container_of(kobj,
-+						     struct ml_lib_model,
-+						     kobj);
-+	struct ml_lib_feature_attr *ml_model_attr =
-+			container_of(attr, struct ml_lib_feature_attr, attr);
-+
-+	if (!ml_model_attr->show)
-+		return -EIO;
-+
-+	return ml_model_attr->show(ml_model_attr, ml_model, buf);
-+}
-+
-+static
-+ssize_t ml_model_attr_store(struct kobject *kobj,
-+			    struct attribute *attr,
-+			    const char *buf, size_t len)
-+{
-+	struct ml_lib_model *ml_model = container_of(kobj,
-+						     struct ml_lib_model,
-+						     kobj);
-+	struct ml_lib_feature_attr *ml_model_attr =
-+			container_of(attr, struct ml_lib_feature_attr, attr);
-+
-+	if (!ml_model_attr->store)
-+		return -EIO;
-+
-+	return ml_model_attr->store(ml_model_attr, ml_model, buf, len);
-+}
-+
-+static const struct sysfs_ops ml_model_attr_ops = {
-+	.show	= ml_model_attr_show,
-+	.store	= ml_model_attr_store,
-+};
-+
-+static inline
-+void ml_model_kobj_release(struct kobject *kobj)
-+{
-+	struct ml_lib_model *ml_model = container_of(kobj,
-+						     struct ml_lib_model,
-+						     kobj);
-+	complete(&ml_model->kobj_unregister);
-+}
-+
-+static struct kobj_type ml_model_ktype = {
-+	.default_groups = ml_model_groups,
-+	.sysfs_ops	= &ml_model_attr_ops,
-+	.release	= ml_model_kobj_release,
-+};
-+
-+int ml_model_create_sysfs_group(struct ml_lib_model *ml_model,
-+				struct kobject *subsystem_kobj)
-+{
-+	int err;
-+
-+	init_completion(&ml_model->kobj_unregister);
-+
-+	err = kobject_init_and_add(&ml_model->kobj, &ml_model_ktype,
-+				   subsystem_kobj,
-+				   "%s", ml_model->model_name);
-+	if (err)
-+		pr_err("ml_lib: failed to create sysfs group: err %d\n", err);
-+
-+	return err;
-+}
-+
-+void ml_model_delete_sysfs_group(struct ml_lib_model *ml_model)
-+{
-+	kobject_del(&ml_model->kobj);
-+	kobject_put(&ml_model->kobj);
-+	wait_for_completion(&ml_model->kobj_unregister);
-+}
-diff --git a/lib/ml-lib/sysfs.h b/lib/ml-lib/sysfs.h
-new file mode 100644
-index 000000000000..6bd3ab64a1c0
---- /dev/null
-+++ b/lib/ml-lib/sysfs.h
-@@ -0,0 +1,17 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Machine Learning (ML) library
-+ *
-+ * Copyright (C) 2025-2026 Viacheslav Dubeyko <slava@dubeyko.com>
-+ */
-+
-+#ifndef _LINUX_ML_LIB_SYSFS_H
-+#define _LINUX_ML_LIB_SYSFS_H
-+
-+#include <linux/sysfs.h>
-+
-+int ml_model_create_sysfs_group(struct ml_lib_model *ml_model,
-+				struct kobject *subsystem_kobj);
-+void ml_model_delete_sysfs_group(struct ml_lib_model *ml_model);
-+
-+#endif /* _LINUX_ML_LIB_SYSFS_H */
 -- 
 2.34.1
 
