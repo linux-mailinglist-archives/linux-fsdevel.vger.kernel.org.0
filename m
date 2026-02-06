@@ -1,119 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-76550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id sMjVEPOPhWkODgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 07:53:39 +0100
+	id wBTAJKeRhWl7DgQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 08:00:55 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E54EFAC84
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 07:53:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3D6BFACB7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 08:00:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 5617A3034642
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 06:53:04 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9111E3017C07
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 07:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E97F2FB09A;
-	Fri,  6 Feb 2026 06:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11435302773;
+	Fri,  6 Feb 2026 07:00:46 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com [209.85.161.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6C0313555
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Feb 2026 06:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FFA2AEE1;
+	Fri,  6 Feb 2026 07:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770360782; cv=none; b=ZntrzB1b6dY5gNOTywGGp69Xtq9ICyrIP/Utr6YVg8F3AQvxLnuSEAFuO2pM3avmY7JlMkqaI51obpHj4aZOGprt7UQ4uTxy7LNXyMxjB63jtAer3MIwiz/CAXvObRQUBnlVtZvD5t7faKmOdpZNxFbN45uo+XdkJZuixxmAnL4=
+	t=1770361245; cv=none; b=BG2iCk97Q4y++yN2tN3C0uwFJ859NYK0zPtZHGcyq5Arf65h+oTAUQdaSofBEEhSjBIru/SPuU9eAmYxsSz8IdMJYes5NFG8MMkHtyCEntwfTdFGLnT0NbGm+Bv9OfEMvDSh6hP9scc2ADluRUyF8VBNwMTmDu+NpJhpq192VQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770360782; c=relaxed/simple;
-	bh=w83NeI8K2B7LnbTZqqYhBmS7HBp+lSRhSR753kSaPMs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=dX16djL/2kb3j96soxvWk8AVm6Y7lyYjZwFaXX+QA/gmtxY6TN0ZjWVxHCnyQG8c8PceYx+iUXAOLKWJeChqj45ioV6y1ygA17zIVu43fW9WOZf5V1qKYrGv5pgpqyPwasOZ1hUNAbFJ2SWZR7cOI6xmramLWbsOinoN5402kaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-66ad005c9dfso8623938eaf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Feb 2026 22:53:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770360781; x=1770965581;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vVaUQvK9UjjsYgRWlbbVp5yS+mORyLWj2BGFNbDjMdY=;
-        b=jap2lDC7y6xrjyc608iHly+Cty4TeaWTWq8YPPBfymX7c6B1S8EiU/Bldn5iGordvX
-         gkAJw61Lh8bACQd4Z1kX59tthSPVv8j6sftE6rjstu9Sf3FTaP5ZdfK1XSg741cmt5aT
-         GVNouu206emzgHz+E5xoBC4tF/wKkV5SDTXwiogB6P8lVHjUt56RTuYLglinWzuqqrSd
-         GVXLCVxEyCSuU1EIBdxTYkMCV7IJheD/V5WvjzDOvUHeLFwwCqeK9wR9iYLWt6solnmg
-         2mUsICSAZz4UysKI/zQpJEsOjceobfm8NlhE6OHEhvTciIdk2nisBhJfME8V0gRcjVwz
-         dqaw==
-X-Gm-Message-State: AOJu0YwNCkmhh9R5wMT5wV44FrhUndUWcKoAubonCoycrRymTR/AYlQ+
-	cChlwUPA6ghZLl0y9wRunKD3Fg11421k/RJdqQYtGlN1LsggVryTd85REkEpcFHChVV80Fj0Zp+
-	NzhO9Yd5vkmTQgoipoK6Ibz+JfTCTCsUqlIhWJ5dmLIw3dSIF5Gd2poteUzs=
+	s=arc-20240116; t=1770361245; c=relaxed/simple;
+	bh=5RkE58I9bnJUYy9fpyAjkANrjCa9fz9cE9tSkRjbU6I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XK6/5z0ArIPPcFEtirZm1A5K07in4FOY5YuzFwUZg0UJ9oFuVvdn99Yor0dAaTc//F/XLHlgnRH/cZEgdTCF/bJ2cT0NE/iLTGVEq0DO+t8pviDS5AejrNC6z0rFZDayWyBdRiClkDgGPQ2KeSbYwd+F2xw2edI/rhkW8b/nH1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 6DCD468D3E; Fri,  6 Feb 2026 08:00:34 +0100 (CET)
+Date: Fri, 6 Feb 2026 08:00:31 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Kundan Kumar <kundan.kumar@samsung.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	willy@infradead.org, mcgrof@kernel.org, clm@meta.com,
+	david@fromorbit.com, amir73il@gmail.com, axboe@kernel.dk,
+	hch@lst.de, ritesh.list@gmail.com, djwong@kernel.org,
+	dave@stgolabs.net, cem@kernel.org, wangyufei@vivo.com,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-xfs@vger.kernel.org, gost.dev@samsung.com,
+	anuj20.g@samsung.com, vishak.g@samsung.com, joshi.k@samsung.com
+Subject: Re: [PATCH v3 3/6] xfs: add per-inode AG prediction map and
+ dirty-AG bitmap
+Message-ID: <20260206070030.GA26818@lst.de>
+References: <20260116100818.7576-1-kundan.kumar@samsung.com> <CGME20260116101251epcas5p1cf5b48f2efb14fe4387be3053b3c3ebc@epcas5p1.samsung.com> <20260116100818.7576-4-kundan.kumar@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:198e:b0:661:1d0c:a5c0 with SMTP id
- 006d021491bc7-66d0c667216mr1092470eaf.69.1770360781577; Thu, 05 Feb 2026
- 22:53:01 -0800 (PST)
-Date: Thu, 05 Feb 2026 22:53:01 -0800
-In-Reply-To: <20260206060017.1208322-1-wangqing7171@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69858fcd.050a0220.3b3015.0032.GAE@google.com>
-Subject: Re: [syzbot] [fuse?] KMSAN: uninit-value in fuse_fileattr_get
-From: syzbot <syzbot+7c31755f2cea07838b0c@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com, wangqing7171@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260116100818.7576-4-kundan.kumar@samsung.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.36 / 15.00];
+X-Spamd-Result: default: False [0.14 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=9682a42d8ec8b05c];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
-	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
+	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76551-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76550-lists,linux-fsdevel=lfdr.de,7c31755f2cea07838b0c];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[vger.kernel.org,szeredi.hu,googlegroups.com,gmail.com];
-	MISSING_XM_UA(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[23];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,infradead.org,meta.com,fromorbit.com,gmail.com,kernel.dk,lst.de,stgolabs.net,vivo.com,vger.kernel.org,kvack.org,samsung.com];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	TO_DN_NONE(0.00)[];
+	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-0.988];
+	MID_RHS_MATCH_FROM(0.00)[];
 	R_DKIM_NA(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,syzkaller.appspot.com:url,appspotmail.com:email]
-X-Rspamd-Queue-Id: 1E54EFAC84
+	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: E3D6BFACB7
 X-Rspamd-Action: no action
 
-Hello,
+On Fri, Jan 16, 2026 at 03:38:15PM +0530, Kundan Kumar wrote:
+> @@ -99,6 +99,11 @@ typedef struct xfs_inode {
+>  	spinlock_t		i_ioend_lock;
+>  	struct work_struct	i_ioend_work;
+>  	struct list_head	i_ioend_list;
+> +
+> +	/* AG prediction map: pgoff_t -> packed u32 */
+> +	struct xarray           i_ag_pmap;
+> +	unsigned long           *i_ag_dirty_bitmap;
+> +	unsigned int            i_ag_dirty_bits;
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I don't think bloating the inode like this is acceptable.
 
-Reported-by: syzbot+7c31755f2cea07838b0c@syzkaller.appspotmail.com
-Tested-by: syzbot+7c31755f2cea07838b0c@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         b7ff7151 Merge tag 'hwmon-for-v6.19-final' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16fe878a580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9682a42d8ec8b05c
-dashboard link: https://syzkaller.appspot.com/bug?extid=7c31755f2cea07838b0c
-compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14978a52580000
-
-Note: testing is done by a robot and is best-effort only.
+As said in my reply to patch 5, I think we're better off with more coarse
+grained sharding anyway.  i.e. just track an ag per inode.  We did this
+for zoned xfs by pointing to the open zone using the existing and
+otherwise unused inode->i_private field with great success.   You won't
+get as good placement for some use cases where files are fragmented over
+multiple AGs and you can please near close blocks right now, but you'll
+save a lot of overhead searching the alloc btrees, and probably generate
+a write pattern more suitable for SSDs.
 
