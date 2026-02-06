@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-76608-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76609-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id ODxHOsUdhmmTJwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76608-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 17:58:45 +0100
+	id qLSbEc0chmmTJwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76609-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 17:54:37 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67F8C100A5D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 17:58:45 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE2C8100977
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 17:54:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 3338230304B0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 16:52:46 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 6BC2C3012CE4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 16:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443F42E173B;
-	Fri,  6 Feb 2026 16:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4F6346A0C;
+	Fri,  6 Feb 2026 16:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2CsDpnh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rTXGQYr0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86A32D0618;
-	Fri,  6 Feb 2026 16:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2053033EC;
+	Fri,  6 Feb 2026 16:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770396699; cv=none; b=M/Mb5zN9hQGME+yJ4dY4xzciYJdarZO5KUYQbMy4sSd4G3lS9XwlZV2pGmfYbKrPa+CnTxY+q4do0vmnWU/b3HSwU86dTxZ+77Slr4Q32Q5zKU46YcNFHuUB+Xc8YI4NSer8cG2ZfvgfQw9S5VeHU4iGmbDg9BS6Ge/ck00gQ7s=
+	t=1770396701; cv=none; b=XxgLwSj3Ae2F7pKabG49lXZyB0hMjN49yX2OZw025yimRUSvdLulzravPVuf3yWC+whBmUszoBJbfR7Af3BimZ0sDhL4ywjPWXI+HXhmQUgwdKWnPCElY7XQsN5gmRSFPj3DxM3NOubRydwAtwnve20LGOdOXZyR5EoXk9hoiZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770396699; c=relaxed/simple;
-	bh=aRSn7S2oExf3r/hn00OpscBJx2trUr554oTuddpdHSA=;
+	s=arc-20240116; t=1770396701; c=relaxed/simple;
+	bh=VzHIjPTxuZwyAoSsyc5rZ2lzUTQAH908TN7QbFaBhXc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cqFp0UbJvUqMHymdLNt3+kyR3ZyhqhkT992fj/031smeZpj9glYt26WEWD3NccianfAo3xKCRpGbKGYwuO43HnSlZoyt34kkuMmXGwygdDG01bueI4umoZOgMMgKMoc18GTxpuLjevSXI8fniDr1yVqjU6tSoxGt0rOUqfRQ+aY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S2CsDpnh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F401C19422;
-	Fri,  6 Feb 2026 16:51:38 +0000 (UTC)
+	 MIME-Version:Content-Type; b=hWkBZuiKhWcWrJWhdqqDH1WIM6fp3/I/ZbUpbDMC4kOhrAM6D0ToR3BFvq+rR99n72FhoZNuN460gwT1YTdfb+VJE4wt79NL4SgK3hgirHc1teHq0A0orWYBzVB3Mo582plq7zA2gE3rjGEsg2MR7EVHXq+0QwxTLa4itu9tgEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rTXGQYr0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB554C19423;
+	Fri,  6 Feb 2026 16:51:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770396699;
-	bh=aRSn7S2oExf3r/hn00OpscBJx2trUr554oTuddpdHSA=;
+	s=k20201202; t=1770396701;
+	bh=VzHIjPTxuZwyAoSsyc5rZ2lzUTQAH908TN7QbFaBhXc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=S2CsDpnhryc4rgG+bXc2aA9XWgyjHOYOj05/BiRyvnn2Seq9zINDSDCsvUw9NutGK
-	 txyGftP7BqmgYodarR6q/ZqP1WOKi7MAnh+MtzMTvP3kpbAgUr3dmOBzGXl96qrF8+
-	 whf8XfrZTjsDYSEFoxJ6l71b/v6/k80h7X45vZ+VK2VnY/VeSHzrEWmny24mdPUpjK
-	 3JDppw5oDvizi2v4DWuETs++cM5QL2zzn6FAP05wUyU0c0vezZdfwlSIQ5zIozZ3CU
-	 zzChGeqHFZETzX+/o1M5O9mDuezkDpjMxHILu3W1LbeoYSXQA241EQclx2o6H8npwJ
-	 jzC96Rf7afkFQ==
+	b=rTXGQYr0AWpFmmxUxXOCTlzh373ZoBxYV6dvuE3tVe2H6InZebyjHuLixQvWR+sH1
+	 2AMXek/OFZZO3/gal7NtZYI4G6lZgagYobKZm6Hu+LchreQFJBnVuYvriPplEP2pZq
+	 SHST0PT1aIXPHuTZmjDg4qKmFDn9Lxy3G+tlJMnf+MstNDNacxIjk0kTTYsOuWeEn2
+	 0+ZX3QtBDvbeyvWdwGh5c58XeVgGZZc3OUYHlZwa6zF2/y51bUaq9Hbjn478SCImLf
+	 cObZ0S5uesupf5KkDc/lhCfJbTZfsQNqaooY++k8VkidgwnmAnsWiCeYsxFTGuxN9L
+	 bSjo9Le3G/aRA==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL 10/12 for v7.0] vfs namespace
-Date: Fri,  6 Feb 2026 17:50:06 +0100
-Message-ID: <20260206-vfs-namespace-v70-f8476aa664c3@brauner>
+Subject: [GIT PULL 11/12 for v7.0] vfs iomap
+Date: Fri,  6 Feb 2026 17:50:07 +0100
+Message-ID: <20260206-vfs-iomap-v70-71e0b356ce5c@brauner>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260206-vfs-v70-7df0b750d594@brauner>
 References: <20260206-vfs-v70-7df0b750d594@brauner>
@@ -61,7 +61,7 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5344; i=brauner@kernel.org; h=from:subject:message-id; bh=aRSn7S2oExf3r/hn00OpscBJx2trUr554oTuddpdHSA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWS2Se8663YwcclSrpabWgfc1lUGvfnM1bv9Y7PS3hmed bcLG9bpdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzEagfDH14b7zhvM1ftXy90 NYW4L1z6M8tW5+d+bv7g8/YpndLnfzL8ZFzQdUDGLH5H4vU8mxsacU/1D16ozj+84RLzjAfhJgy buAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3146; i=brauner@kernel.org; h=from:subject:message-id; bh=VzHIjPTxuZwyAoSsyc5rZ2lzUTQAH908TN7QbFaBhXc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWS2Se9apVx5Q7wn/PSkWc/Z/jRoxSgxLfx6Im4jD7vjp xV1mXdaOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACby8B4jw0r3Rt4X8tq+/pei HJcqJxupGn7KDHykn6xjL6UpP0toE8P/xM2H9sbviXbKiimumVrgxGVSt7T56qmLtuax289PPBr ODwA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -72,18 +72,18 @@ X-Spamd-Result: default: False [2.34 / 15.00];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	MID_RHS_NOT_FQDN(0.50)[];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76608-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76609-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
 	RCPT_COUNT_THREE(0.00)[4];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
@@ -92,53 +92,29 @@ X-Spamd-Result: default: False [2.34 / 15.00];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 67F8C100A5D
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: EE2C8100977
 X-Rspamd-Action: no action
 
 Hey Linus,
 
 /* Summary */
 
-This contains the mount changes for this cycle.
+This contains the iomap changes for this cycle.
 
-statmount: accept fd as a parameter
+Erofs page cache sharing preliminaries:
 
-  Extend struct mnt_id_req with a file descriptor field and a new
-  STATMOUNT_BY_FD flag. When set, statmount() returns mount information for the
-  mount the fd resides on — including detached mounts (unmounted via
-  umount2(MNT_DETACH)). For detached mounts the STATMOUNT_MNT_POINT and
-  STATMOUNT_MNT_NS_ID mask bits are cleared since neither is meaningful. The
-  capability check is skipped for STATMOUNT_BY_FD since holding an fd already
-  implies prior access to the mount and equivalent information is available
-  through fstatfs() and /proc/pid/mountinfo without privilege. Includes
-  comprehensive selftests covering both attached and detached mount cases.
+  Plumb a void *private parameter through iomap_read_folio() and
+  iomap_readahead() into iomap_iter->private, matching iomap DIO. Erofs
+  uses this to replace a bogus kmap_to_page() call, as preparatory work
+  for page cache sharing.
 
-fs: Remove internal old mount API code (1 patch)
+Fix for invalid folio access:
 
-  Now that every in-tree filesystem has been converted to the new mount API,
-  remove all the legacy shim code in fs_context.c that handled unconverted
-  filesystems. This deletes ~280 lines including legacy_init_fs_context(), the
-  legacy_fs_context struct, and associated wrappers. The mount(2) syscall path
-  for userspace remains untouched. Documentation references to the legacy
-  callbacks are cleaned up.
-
-mount: add OPEN_TREE_NAMESPACE (2 patches)
-
-  Add OPEN_TREE_NAMESPACE to open_tree(). Container runtimes currently use
-  CLONE_NEWNS to copy the caller's entire mount namespace — only to then
-  pivot_root() and recursively unmount everything they just copied. With large
-  mount tables and thousands of parallel container launches this creates
-  significant contention on the namespace semaphore.
-
-  OPEN_TREE_NAMESPACE copies only the specified mount tree (like
-  OPEN_TREE_CLONE) but returns a mount namespace fd instead of a detached mount
-  fd. The new namespace contains the copied tree mounted on top of a clone of
-  the real rootfs. This functions as a combined unshare(CLONE_NEWNS) +
-  pivot_root() in a single syscall. Works with user namespaces: an
-  unshare(CLONE_NEWUSER) followed by OPEN_TREE_NAMESPACE creates a mount
-  namespace owned by the new user namespace. Mount namespace file mounts are
-  excluded from the copy to prevent cycles. Includes ~1000 lines of selftests.
+  Fix an invalid folio access when a folio without iomap_folio_state is
+  fully submitted to the IO helper — the helper may call
+  folio_end_read() at any time, so ctx->cur_folio must be invalidated
+  after full submission.
 
 /* Testing */
 
@@ -157,63 +133,60 @@ No known conflicts.
 Merge conflicts with other trees
 ================================
 
+Conflict with the ntfs3 tree. commit 099ef9ab9203d ("fs/ntfs3: implement
+iomap-based file operations") calls iomap_read_folio() and iomap_readahead()
+with two arguments, but commit 8806f279244bf ("iomap: stash iomap read ctx
+in the private field of iomap_iter") added a third parameter.
+
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -678,7 +678,7 @@
+-	iomap_read_folio(&ntfs_iomap_ops, &ctx);
++	iomap_read_folio(&ntfs_iomap_ops, &ctx, NULL);
+@@ -702,7 +702,7 @@
+-	iomap_readahead(&ntfs_iomap_ops, &ctx);
++	iomap_readahead(&ntfs_iomap_ops, &ctx, NULL);
+
+[1]: https://lore.kernel.org/linux-next/aW5AGPFq0HPi440m@sirena.org.uk/
+[2]: https://lore.kernel.org/linux-next/202601201453.3N9V4NVP-lkp@intel.com/
+[3]: https://lore.kernel.org/linux-next/202601201642.SjxE1oMu-lkp@intel.com/
+[4]: https://lore.kernel.org/linux-next/aXdnKldyCVLxrk78@sirena.org.uk/
+
 The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1e8:
 
   Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-7.0-rc1.namespace
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-7.0-rc1.iomap
 
-for you to fetch changes up to 1bce1a664ac25d37a327c433a01bc347f0a81bd6:
+for you to fetch changes up to aa35dd5cbc060bc3e28ad22b1d76eefa3f024030:
 
-  Merge patch series "mount: add OPEN_TREE_NAMESPACE" (2026-01-16 19:21:40 +0100)
+  iomap: fix invalid folio access after folio_end_read() (2026-01-29 13:42:05 +0100)
 
 ----------------------------------------------------------------
-vfs-7.0-rc1.namespace
+vfs-7.0-rc1.iomap
 
-Please consider pulling these changes from the signed vfs-7.0-rc1.namespace tag.
+Please consider pulling these changes from the signed vfs-7.0-rc1.iomap tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-Bhavik Sachdev (3):
-      statmount: permission check should return EPERM
-      statmount: accept fd as a parameter
-      selftests: statmount: tests for STATMOUNT_BY_FD
+Christian Brauner (1):
+      Merge patch series "iomap: erofs page cache sharing preliminaries"
 
-Christian Brauner (4):
-      Merge patch series "statmount: accept fd as a parameter"
-      mount: add OPEN_TREE_NAMESPACE
-      selftests/open_tree: add OPEN_TREE_NAMESPACE tests
-      Merge patch series "mount: add OPEN_TREE_NAMESPACE"
+Hongbo Li (2):
+      iomap: stash iomap read ctx in the private field of iomap_iter
+      erofs: hold read context in iomap_iter if needed
 
-Eric Sandeen (1):
-      fs: Remove internal old mount API code
+Joanne Koong (1):
+      iomap: fix invalid folio access after folio_end_read()
 
- Documentation/filesystems/locking.rst              |    8 -
- Documentation/filesystems/mount_api.rst            |    2 -
- Documentation/filesystems/porting.rst              |    7 +-
- Documentation/filesystems/vfs.rst                  |   58 +-
- fs/fs_context.c                                    |  208 +---
- fs/fsopen.c                                        |   10 -
- fs/internal.h                                      |    2 +-
- fs/namespace.c                                     |  265 ++++-
- fs/nsfs.c                                          |   13 +
- include/linux/fs.h                                 |    2 -
- include/linux/fs/super_types.h                     |    1 -
- include/uapi/linux/mount.h                         |   13 +-
- .../selftests/filesystems/open_tree_ns/.gitignore  |    1 +
- .../selftests/filesystems/open_tree_ns/Makefile    |   10 +
- .../filesystems/open_tree_ns/open_tree_ns_test.c   | 1030 ++++++++++++++++++++
- .../selftests/filesystems/statmount/statmount.h    |   15 +-
- .../filesystems/statmount/statmount_test.c         |  261 ++++-
- .../filesystems/statmount/statmount_test_ns.c      |  101 +-
- tools/testing/selftests/filesystems/utils.c        |   26 +
- tools/testing/selftests/filesystems/utils.h        |    1 +
- 20 files changed, 1669 insertions(+), 365 deletions(-)
- create mode 100644 tools/testing/selftests/filesystems/open_tree_ns/.gitignore
- create mode 100644 tools/testing/selftests/filesystems/open_tree_ns/Makefile
- create mode 100644 tools/testing/selftests/filesystems/open_tree_ns/open_tree_ns_test.c
+ fs/erofs/data.c        | 67 ++++++++++++++++++++++++++++++++++----------------
+ fs/fuse/file.c         |  4 +--
+ fs/iomap/buffered-io.c | 57 ++++++++++++++++++++++--------------------
+ include/linux/iomap.h  |  8 +++---
+ 4 files changed, 83 insertions(+), 53 deletions(-)
 
