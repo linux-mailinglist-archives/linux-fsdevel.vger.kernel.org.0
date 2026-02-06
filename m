@@ -1,290 +1,299 @@
-Return-Path: <linux-fsdevel+bounces-76507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76508-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GPHCBt08hWlY+gMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 01:59:09 +0100
+	id oJJXG+0/hWme+gMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76508-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 02:12:13 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D4F5F8C6B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 01:59:08 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2147AF8E34
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 02:12:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8A731301725A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 00:59:05 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 26C75302DE0F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 01:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44F21F4181;
-	Fri,  6 Feb 2026 00:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD9F238C29;
+	Fri,  6 Feb 2026 01:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.cn header.i=@sina.cn header.b="F31i4m9O"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="MNZ6BVRi";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PfZZa1dC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail115-80.sinamail.sina.com.cn (mail115-80.sinamail.sina.com.cn [218.30.115.80])
+Received: from flow-a7-smtp.messagingengine.com (flow-a7-smtp.messagingengine.com [103.168.172.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB361A23A6
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Feb 2026 00:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3378C22D4D3;
+	Fri,  6 Feb 2026 01:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770339544; cv=none; b=C0dCozCCdLfAHQxtcf1tCML/ZmXJJ6SjouAdX3374KrUiWAKRMPl3HEAsagvHiGlu96AfWd93OVeG/ya5+GBGnQ8h5HDlcKzNoE2ny+9b2mgNQGby5OFc4ReDvU29zfodDDPZ/s230pSVGAY1PmxfizzD+7lvh9AjAmDNAo18Ks=
+	t=1770340320; cv=none; b=AJZiuWx2PsXVimKg+SHG4rxP8R6PNK0w8A2Ukh3EV144PqviaL/dsYdpzzMY/A3nYe74Ob6g9u4n2pov81GR0Pd/DrKGH2am1hOESbNmUSgQS6ZtoM89sqbxmGnbH94UqNuNzrTPOuS+0yJdSW8GZbPDkjVE8WnmhLkmwpfInrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770339544; c=relaxed/simple;
-	bh=ZDU317g5GAq9kvSjDMk+t7qlAB0oXms+LdA1thglsAg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=c5ntomY9vjIdplGHB/DeDSwUXefHXDYrs8fQD+DhJ5QgTVz7YRmvlAPI2GLObyfWGYdZLrXqJmhl7U0FUwCZmAwWeeKtyZbnOwlZL/9XfxoSG6WarwkBiXV9bYgbqmiAib1fUXMWrx5S9o0Ob5tXTk1ctTyGD4VgNFETBrL1VVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.cn; spf=pass smtp.mailfrom=sina.cn; dkim=pass (1024-bit key) header.d=sina.cn header.i=@sina.cn header.b=F31i4m9O; arc=none smtp.client-ip=218.30.115.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.cn; s=201208; t=1770339543;
-	bh=vJ2S4n+s94Fr7zM4B1DDMY6JoytNxiHt7LqmMoL4wI4=;
-	h=From:Subject:Date:Message-Id;
-	b=F31i4m9O4WTB7/uXPREDYbjrwGKxVScP/+7BrcCvjTxYmUKI9lWXW2Kqy9IO/LHRC
-	 w+Fr8Am6Glc/XSkHQOm6vLRDY58hKgMkmUXXFYUL0mI1MzFU+Ivkrn3EVSeoYpNZBc
-	 /4bWFIWDlcmxAH3hb2AV8/S2QYa7Dxg/bypFjGhQ=
-X-SMAIL-HELO: NTT-kernel-dev
-Received: from unknown (HELO NTT-kernel-dev)([60.247.85.88])
-	by sina.cn (10.185.250.23) with ESMTP
-	id 69853C4200004A9D; Fri, 6 Feb 2026 08:56:36 +0800 (CST)
-X-Sender: jianqkang@sina.cn
-X-Auth-ID: jianqkang@sina.cn
-Authentication-Results: sina.cn;
-	 spf=none smtp.mailfrom=jianqkang@sina.cn;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=jianqkang@sina.cn
-X-SMAIL-MID: 2469458912931
-X-SMAIL-UIID: 4BF725AD640D4F4FB0FE55EF7AB45E6A-20260206-085636-1
-From: Jianqiang kang <jianqkang@sina.cn>
-To: gregkh@linuxfoundation.org,
-	stable@vger.kernel.org,
-	k.chen@smail.nju.edu.cn
-Cc: patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	slava@dubeyko.com,
-	sashal@kernel.org,
-	yang.chenzhi@vivo.com,
-	frank.li@vivo.com,
-	penguin-kernel@I-love.SAKURA.ne.jp,
-	liushixin2@huawei.com,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 5.15.y] hfsplus: fix slab-out-of-bounds read in hfsplus_uni2asc()
-Date: Fri,  6 Feb 2026 08:56:33 +0800
-Message-Id: <20260206005633.3165225-1-jianqkang@sina.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1770340320; c=relaxed/simple;
+	bh=ayCDfpzcj1jMB7bidxqby4/XW3dWDd0LiUFbQTwfKDc=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=M4HFhF1iVpZOYCeewt3uep2SOfdbdpKxC67amL5tUMZincbq/a7bsr1ZVx9KsiSZK27DnhHazWzybxLjMSvS0Jwl5s4CbzPyVPpBmd4JBMkgpXAQK3AQlnFoBhlmOmGwOl/OGd2hOLxzImglCEzM2nffWO7+ttZgH1VyA1AvC+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=MNZ6BVRi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PfZZa1dC; arc=none smtp.client-ip=103.168.172.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailflow.phl.internal (Postfix) with ESMTP id 6E3EC13802E2;
+	Thu,  5 Feb 2026 20:11:59 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Thu, 05 Feb 2026 20:11:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
+	1770340319; x=1770347519; bh=OElqf5JNJ6wb7vQBQFRxNPu5laMFIrMj1jf
+	v0Fgyffc=; b=MNZ6BVRiC13zdWbee8cGp2aje7ct2FEZ9mbd2iT9XImE4H66gt0
+	Z9K9+VNJh3BNngmXAAbrKjwBYgXryraTQnw689PtTXJ8SOQ0aMq8H0aj6O7iINry
+	fD/FOge5iWcu8TOlyoTawmKYahZHpSvZ+QhhlcGNaoP+ne+mfgL0L8613CVw/0Ck
+	TXuJVvojD4OhmjtA/fMrGbwfAeB3V6NmMekMvCKAXg06RwbCDm/dd/QUfyPXLKon
+	phrwNHkdNibJ0sDQH4zO1im9TmSNQfVN2eSLSiW5y8AJwrcjRy3k+umeFyVxrG3a
+	kH6gLmIbi+06yWVjjkAgDGi4XwpIewYNUPA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1770340319; x=
+	1770347519; bh=OElqf5JNJ6wb7vQBQFRxNPu5laMFIrMj1jfv0Fgyffc=; b=P
+	fZZa1dCvWAZ1mZprxbhpHzSQ1TJnfWMdJXs1jfFipfrk1ok1tPHguXy5LuZGIIgz
+	+Hn/mg451In/5eBXd46RfTHc3y53Sci8hwZhU8/S8VQIj7Z7S65Gu6NCCpJ8Sbqx
+	QzKvVA4+90Vcf5FykpVY3MWLig/mpzuzkMz4rypz1JE4JpYG4DZjW1zlLKjc7fU4
+	1AkL4dPoWFY8fJ+R++dRf3nGpaW+fOaMztYokr3WlW57Ao1drED9n0c3rTyqGDzH
+	kNNEZdIC4kdQxI0d5A5GQdVbqxFzh6IPxoXdBbs701CXH7URwcpDxc3PQm6phyaY
+	u8+8zpMZS7pJ4ff8tS62w==
+X-ME-Sender: <xms:3j-FaVOjIxKw4KeYsaHlAiI9xDZi7cdTvIjoI6JFiE5jZiWk-93baw>
+    <xme:3j-FaTjDfg5P27mbJCCabLPaAur9EBu-IR0bvXR_b1GyWlGTzgxf4QJcvi1NpUd0K
+    OpkSj2XWTpVZl3-1aM8R96knqmUn992K9ml7uEvy0F3MaFgXA>
+X-ME-Received: <xmr:3j-FaUQL-GT-NwpNzj-mEuloTAJgYNUsTChDIBbaafv1RkZPnA5dihcPDpFPYxBeNNA-7dsuE3w5l9X8TUE9IKNqPtFz4S75tLl51JSRTv_J>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukeeikedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepvddupdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
+    hrtghpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhr
+    tghpthhtohepjhgrtghksehsuhhsvgdrtgii
+X-ME-Proxy: <xmx:3j-FaWrXvDSAtKnpLE1EES9TJqj3M9eaNlxWMNxF7eldvJ4ju1DI6g>
+    <xmx:3j-FafYE1ffdA5E279WF2FpLYN73djNnfJiz7FIpHonxk7POMQ_tTA>
+    <xmx:3j-FaaHwktvOfyhsnLVCQZzgLj6nLPBxSlKoRRAl_TYfcqZuTqY-wA>
+    <xmx:3j-FacpzdZBpCXRqkaGc4DXpL2XANHcEa9oKlvQb76UW_WYYyBgk1Q>
+    <xmx:3z-Facitt6SaplvTAhjJr6j8Y1FQ-mY9ikZnOPpINMYSce6ySceYnCBy>
+Feedback-ID: i9d664b8f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 5 Feb 2026 20:11:52 -0500 (EST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: NeilBrown <neilb@ownmail.net>
+To: "Amir Goldstein" <amir73il@gmail.com>
+Cc: "Christian Brauner" <brauner@kernel.org>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "David Howells" <dhowells@redhat.com>, "Jan Kara" <jack@suse.cz>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Miklos Szeredi" <miklos@szeredi.hu>,
+ "John Johansen" <john.johansen@canonical.com>,
+ "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ "Stephen Smalley" <stephen.smalley.work@gmail.com>,
+ linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com,
+ linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH 10/13] ovl: change ovl_create_real() to get a new lock
+ when re-opening created file.
+In-reply-to:
+ <CAOQ4uxh-MLgwZCstwr6HyPXHVRmtj2F_=xS8pE3FN6Ex-wex4w@mail.gmail.com>
+References: <20260204050726.177283-1-neilb@ownmail.net>,
+ <20260204050726.177283-11-neilb@ownmail.net>,
+ <CAOQ4uxh-MLgwZCstwr6HyPXHVRmtj2F_=xS8pE3FN6Ex-wex4w@mail.gmail.com>
+Date: Fri, 06 Feb 2026 12:11:50 +1100
+Message-id: <177034031005.16766.246184445940612287@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[sina.cn,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[sina.cn:s=201208];
+	DMARC_POLICY_ALLOW(-0.50)[ownmail.net,none];
+	R_DKIM_ALLOW(-0.20)[ownmail.net:s=fm3,messagingengine.com:s=fm3];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	TAGGED_FROM(0.00)[bounces-76507-lists,linux-fsdevel=lfdr.de];
+	REPLYTO_DN_EQ_FROM_DN(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jianqkang@sina.cn,linux-fsdevel@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-76508-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[sina.cn:+];
-	TO_DN_NONE(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_FROM(0.00)[ownmail.net];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,redhat.com,suse.cz,oracle.com,szeredi.hu,canonical.com,paul-moore.com,namei.org,hallyn.com,gmail.com,vger.kernel.org,lists.linux.dev,lists.ubuntu.com];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	HAS_REPLYTO(0.00)[neil@brown.name];
+	RCVD_COUNT_FIVE(0.00)[6];
 	NEURAL_HAM(-0.00)[-1.000];
-	FREEMAIL_FROM(0.00)[sina.cn];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[dubeyko.com:email,nju.edu.cn:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,sina.cn:email,sina.cn:dkim,sina.cn:mid]
-X-Rspamd-Queue-Id: 6D4F5F8C6B
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[neilb@ownmail.net,linux-fsdevel@vger.kernel.org];
+	REPLYTO_DOM_NEQ_FROM_DOM(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	DKIM_TRACE(0.00)[ownmail.net:+,messagingengine.com:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[brown.name:replyto,brown.name:email,messagingengine.com:dkim,ownmail.net:email,ownmail.net:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 2147AF8E34
 X-Rspamd-Action: no action
 
-From: Kang Chen <k.chen@smail.nju.edu.cn>
+On Thu, 05 Feb 2026, Amir Goldstein wrote:
+> On Wed, Feb 4, 2026 at 6:09=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote:
+> >
+> > From: NeilBrown <neil@brown.name>
+> >
+> > When ovl_create_real() is used to create a file on the upper filesystem
+> > it needs to return the resulting dentry - positive and hashed.
+> > It is usually the case the that dentry passed to the create function
+> > (e.g.  vfs_create()) will be suitable but this is not guaranteed.  The
+> > filesystem may unhash that dentry forcing a repeat lookup next time the
+> > name is wanted.
+> >
+> > So ovl_create_real() must be (and is) aware of this and prepared to
+> > perform that lookup to get a hash positive dentry.
+> >
+> > This is currently done under that same directory lock that provided
+> > exclusion for the create.  Proposed changes to locking will make this
+> > not possible - as the name, rather than the directory, will be locked.
+> > The new APIs provided for lookup and locking do not and cannot support
+> > this pattern.
+> >
+> > The lock isn't needed.  ovl_create_real() can drop the lock and then get
+> > a new lock for the lookup - then check that the lookup returned the
+> > correct inode.  In a well-behaved configuration where the upper
+> > filesystem is not being modified by a third party, this will always work
+> > reliably, and if there are separate modification it will fail cleanly.
+> >
+> > So change ovl_create_real() to drop the lock and call
+> > ovl_start_creating_upper() to find the correct dentry.  Note that
+> > start_creating doesn't fail if the name already exists.
+> >
+> > This removes the only remaining use of ovl_lookup_upper, so it is
+> > removed.
+> >
+> > Signed-off-by: NeilBrown <neil@brown.name>
+> > ---
+> >  fs/overlayfs/dir.c       | 24 ++++++++++++++++++------
+> >  fs/overlayfs/overlayfs.h |  7 -------
+> >  2 files changed, 18 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+> > index ff3dbd1ca61f..ec08904d084d 100644
+> > --- a/fs/overlayfs/dir.c
+> > +++ b/fs/overlayfs/dir.c
+> > @@ -219,21 +219,33 @@ struct dentry *ovl_create_real(struct ovl_fs *ofs, =
+struct dentry *parent,
+> >                 err =3D -EIO;
+> >         } else if (d_unhashed(newdentry)) {
+> >                 struct dentry *d;
+> > +               struct name_snapshot name;
+> >                 /*
+> >                  * Some filesystems (i.e. casefolded) may return an unhas=
+hed
+> > -                * negative dentry from the ovl_lookup_upper() call before
+> > +                * negative dentry from the ovl_start_creating_upper() ca=
+ll before
+> >                  * ovl_create_real().
+>=20
+>=20
+> According to the new locking rules, if the hashed dentry itself is
+> the synchronization object, is it going to be allowed to
+> filesystem to unhash the dentry while the dentry still in the
+> "creating" scope? It is hard for me to wrap my head around this.
 
-[ Upstream commit bea3e1d4467bcf292c8e54f080353d556d355e26 ]
+It can be confusing....
 
-BUG: KASAN: slab-out-of-bounds in hfsplus_uni2asc+0xa71/0xb90 fs/hfsplus/unicode.c:186
-Read of size 2 at addr ffff8880289ef218 by task syz.6.248/14290
+It will be important for the name the remain locked (and hashed) until
+the operation (create, remove, rename) either succeeds or fails.  So
+leaving a dentry unhashed will be OK providing a subsequent lookup will
+also succeed or fail in the same way.  The caller must be able to use
+the dentry to access the object (i.e.  the inode) on success, but they
+is nothing in POSIX that requires that the object still has any
+particular name.
 
-CPU: 0 UID: 0 PID: 14290 Comm: syz.6.248 Not tainted 6.16.4 #1 PREEMPT(full)
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1b0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xca/0x5f0 mm/kasan/report.c:482
- kasan_report+0xca/0x100 mm/kasan/report.c:595
- hfsplus_uni2asc+0xa71/0xb90 fs/hfsplus/unicode.c:186
- hfsplus_listxattr+0x5b6/0xbd0 fs/hfsplus/xattr.c:738
- vfs_listxattr+0xbe/0x140 fs/xattr.c:493
- listxattr+0xee/0x190 fs/xattr.c:924
- filename_listxattr fs/xattr.c:958 [inline]
- path_listxattrat+0x143/0x360 fs/xattr.c:988
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcb/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe0e9fae16d
-Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fe0eae67f98 EFLAGS: 00000246 ORIG_RAX: 00000000000000c3
-RAX: ffffffffffffffda RBX: 00007fe0ea205fa0 RCX: 00007fe0e9fae16d
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000200000000000
-RBP: 00007fe0ea0480f0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fe0ea206038 R14: 00007fe0ea205fa0 R15: 00007fe0eae48000
- </TASK>
+>=20
+> Or do we need this here because some filesystems (casefold in
+> particular) are not going to support parallel creations?
 
-Allocated by task 14290:
- kasan_save_stack+0x24/0x50 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __do_kmalloc_node mm/slub.c:4333 [inline]
- __kmalloc_noprof+0x219/0x540 mm/slub.c:4345
- kmalloc_noprof include/linux/slab.h:909 [inline]
- hfsplus_find_init+0x95/0x1f0 fs/hfsplus/bfind.c:21
- hfsplus_listxattr+0x331/0xbd0 fs/hfsplus/xattr.c:697
- vfs_listxattr+0xbe/0x140 fs/xattr.c:493
- listxattr+0xee/0x190 fs/xattr.c:924
- filename_listxattr fs/xattr.c:958 [inline]
- path_listxattrat+0x143/0x360 fs/xattr.c:988
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcb/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+There is no reason that a casefolding filesystem would not support parallel
+ops. And it isn't just casefolding that acts like this.  At least one of
+the special filesystems (tracefs maybe) always unhashes on create.  You
+only ever get a hashed positive dentry as a result of lookup.
+(overlayfs would never see this case of course).
 
-When hfsplus_uni2asc is called from hfsplus_listxattr,
-it actually passes in a struct hfsplus_attr_unistr*.
-The size of the corresponding structure is different from that of hfsplus_unistr,
-so the previous fix (94458781aee6) is insufficient.
-The pointer on the unicode buffer is still going beyond the allocated memory.
+>=20
+> >                  * In that case, lookup again after making the newdentry
+> >                  * positive, so ovl_create_upper() always returns a hashed
+> >                  * positive dentry.
+> > +                * As we have to drop the lock before the lookup a race
+> > +                * could result in a lookup failure.  In that case we ret=
+urn
+> > +                * an error.
+> >                  */
+> > -               d =3D ovl_lookup_upper(ofs, newdentry->d_name.name, paren=
+t,
+> > -                                    newdentry->d_name.len);
+> > -               dput(newdentry);
+> > -               if (IS_ERR_OR_NULL(d))
+> > +               take_dentry_name_snapshot(&name, newdentry);
+> > +               end_creating_keep(newdentry);
+> > +               d =3D ovl_start_creating_upper(ofs, parent, &name.name);
+> > +               release_dentry_name_snapshot(&name);
+>=20
+> OK. not saying no to this (yet) but I have to admit that it is pretty
+> ugly that the callers of ovl_create_real() want to create a specific
+> stable name, which is could be passed in as const char *name
+> and yet we end up doing this weird dance here just to keep the name
+> from newdentry.
 
-This patch introduces two warpper functions hfsplus_uni2asc_xattr_str and
-hfsplus_uni2asc_str to process two unicode buffers,
-struct hfsplus_attr_unistr* and struct hfsplus_unistr* respectively.
-When ustrlen value is bigger than the allocated memory size,
-the ustrlen value is limited to an safe size.
+There are three callers of ovl_create_real()
 
-Fixes: 94458781aee6 ("hfsplus: fix slab-out-of-bounds read in hfsplus_uni2asc()")
-Signed-off-by: Kang Chen <k.chen@smail.nju.edu.cn>
-Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Link: https://lore.kernel.org/r/20250909031316.1647094-1-k.chen@smail.nju.edu.cn
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Signed-off-by: Jianqiang kang <jianqkang@sina.cn>
----
- fs/hfsplus/dir.c        |  2 +-
- fs/hfsplus/hfsplus_fs.h |  8 ++++++--
- fs/hfsplus/unicode.c    | 24 +++++++++++++++++++-----
- fs/hfsplus/xattr.c      |  6 +++---
- 4 files changed, 29 insertions(+), 11 deletions(-)
+ovl_lookup_or_create() does have a "const char *name".
+ovl_create_upper() has a stable dentry from which it can copy a QSTR
+ovl_create_temp() would need some sort of dance to keep hold of the
+temporary name that was allocated.
 
-diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
-index 98a30ca6354c..17e651bd04ad 100644
---- a/fs/hfsplus/dir.c
-+++ b/fs/hfsplus/dir.c
-@@ -204,7 +204,7 @@ static int hfsplus_readdir(struct file *file, struct dir_context *ctx)
- 			fd.entrylength);
- 		type = be16_to_cpu(entry.type);
- 		len = NLS_MAX_CHARSET_SIZE * HFSPLUS_MAX_STRLEN;
--		err = hfsplus_uni2asc(sb, &fd.key->cat.name, strbuf, &len);
-+		err = hfsplus_uni2asc_str(sb, &fd.key->cat.name, strbuf, &len);
- 		if (err)
- 			goto out;
- 		if (type == HFSPLUS_FOLDER) {
-diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
-index 8396964b056f..610ba01f19c3 100644
---- a/fs/hfsplus/hfsplus_fs.h
-+++ b/fs/hfsplus/hfsplus_fs.h
-@@ -516,8 +516,12 @@ int hfsplus_strcasecmp(const struct hfsplus_unistr *s1,
- 		       const struct hfsplus_unistr *s2);
- int hfsplus_strcmp(const struct hfsplus_unistr *s1,
- 		   const struct hfsplus_unistr *s2);
--int hfsplus_uni2asc(struct super_block *sb, const struct hfsplus_unistr *ustr,
--		    char *astr, int *len_p);
-+int hfsplus_uni2asc_str(struct super_block *sb,
-+			const struct hfsplus_unistr *ustr, char *astr,
-+			int *len_p);
-+int hfsplus_uni2asc_xattr_str(struct super_block *sb,
-+			      const struct hfsplus_attr_unistr *ustr,
-+			      char *astr, int *len_p);
- int hfsplus_asc2uni(struct super_block *sb, struct hfsplus_unistr *ustr,
- 		    int max_unistr_len, const char *astr, int len);
- int hfsplus_hash_dentry(const struct dentry *dentry, struct qstr *str);
-diff --git a/fs/hfsplus/unicode.c b/fs/hfsplus/unicode.c
-index ebd326799f35..11e08a4a18b2 100644
---- a/fs/hfsplus/unicode.c
-+++ b/fs/hfsplus/unicode.c
-@@ -143,9 +143,8 @@ static u16 *hfsplus_compose_lookup(u16 *p, u16 cc)
- 	return NULL;
- }
- 
--int hfsplus_uni2asc(struct super_block *sb,
--		const struct hfsplus_unistr *ustr,
--		char *astr, int *len_p)
-+static int hfsplus_uni2asc(struct super_block *sb, const struct hfsplus_unistr *ustr,
-+		    int max_len, char *astr, int *len_p)
- {
- 	const hfsplus_unichr *ip;
- 	struct nls_table *nls = HFSPLUS_SB(sb)->nls;
-@@ -158,8 +157,8 @@ int hfsplus_uni2asc(struct super_block *sb,
- 	ip = ustr->unicode;
- 
- 	ustrlen = be16_to_cpu(ustr->length);
--	if (ustrlen > HFSPLUS_MAX_STRLEN) {
--		ustrlen = HFSPLUS_MAX_STRLEN;
-+	if (ustrlen > max_len) {
-+		ustrlen = max_len;
- 		pr_err("invalid length %u has been corrected to %d\n",
- 			be16_to_cpu(ustr->length), ustrlen);
- 	}
-@@ -280,6 +279,21 @@ int hfsplus_uni2asc(struct super_block *sb,
- 	return res;
- }
- 
-+inline int hfsplus_uni2asc_str(struct super_block *sb,
-+			       const struct hfsplus_unistr *ustr, char *astr,
-+			       int *len_p)
-+{
-+	return hfsplus_uni2asc(sb, ustr, HFSPLUS_MAX_STRLEN, astr, len_p);
-+}
-+
-+inline int hfsplus_uni2asc_xattr_str(struct super_block *sb,
-+				     const struct hfsplus_attr_unistr *ustr,
-+				     char *astr, int *len_p)
-+{
-+	return hfsplus_uni2asc(sb, (const struct hfsplus_unistr *)ustr,
-+			       HFSPLUS_ATTR_MAX_STRLEN, astr, len_p);
-+}
-+
- /*
-  * Convert one or more ASCII characters into a single unicode character.
-  * Returns the number of ASCII characters corresponding to the unicode char.
-diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
-index 7ad3071debd6..53c8e3c0b8c1 100644
---- a/fs/hfsplus/xattr.c
-+++ b/fs/hfsplus/xattr.c
-@@ -737,9 +737,9 @@ ssize_t hfsplus_listxattr(struct dentry *dentry, char *buffer, size_t size)
- 			goto end_listxattr;
- 
- 		xattr_name_len = NLS_MAX_CHARSET_SIZE * HFSPLUS_ATTR_MAX_STRLEN;
--		if (hfsplus_uni2asc(inode->i_sb,
--			(const struct hfsplus_unistr *)&fd.key->attr.key_name,
--					strbuf, &xattr_name_len)) {
-+		if (hfsplus_uni2asc_xattr_str(inode->i_sb,
-+					      &fd.key->attr.key_name, strbuf,
-+					      &xattr_name_len)) {
- 			pr_err("unicode conversion failed\n");
- 			res = -EIO;
- 			goto end_listxattr;
--- 
-2.34.1
+If it weren't for ovl_create_temp() I would agree with you.
+
+Though we could have the three callers of ovl_start_creating_temp() pass a
+"char name[OVL_TEMPNAME_SIZE]" in, then ovl_create_temp() would have
+easy access.
+I could do that if you like.
+
+Thanks,
+NeilBrown
+
+
+>=20
+> Thanks,
+> Amir.
+>=20
 
 
