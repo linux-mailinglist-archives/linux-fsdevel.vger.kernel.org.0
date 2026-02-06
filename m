@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-76575-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GBUKD1PchWn4HQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76575-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 13:19:31 +0100
+	id GGB+BKHdhWn4HQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 13:25:05 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D4D4FD8BC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 13:19:30 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98C6CFD95D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Feb 2026 13:25:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7A545302D945
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 12:19:19 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 6D7AD30138A0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Feb 2026 12:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED15C36403B;
-	Fri,  6 Feb 2026 12:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3543E3A7826;
+	Fri,  6 Feb 2026 12:24:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lAEiQIgE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IZIJZ1tl"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC26B67A;
-	Fri,  6 Feb 2026 12:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E2B3A6416;
+	Fri,  6 Feb 2026 12:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770380356; cv=none; b=Glsg2E5BVi2uLIi9XXrEWDgznOCmNXYIRO+Md+7vesJocovRARm67tZyBHI9BCdSlKT64hxq2JheGvdN1M0eVRe82FP4EwCjkO3u35pU3HRkjt7ulyiSqUpSm4buRu7Ajg+2bGTJQY9g+RNjtAnOMaVMxeavM4DOJePa5Z5cWwU=
+	t=1770380692; cv=none; b=JxvL9viJJzd9RxQ4uxmuRcRxQgxuMzRiSbMuvIuMrnmBx4eYj0EHLFqP+hUtGIpf2OsCAkiMkZmRzkmtV/lkZchFJXnLZGMmEhPlPG5Kjip5G9+j1C7m3CMo1BkLwK55AaLA/Zsd4wNGPCh2NQkQLpHcgU6EI1DdTRCM5BJvrQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770380356; c=relaxed/simple;
-	bh=Poc5cAnYUIssufkI0ij0bqMKpaXqwWa/aHj6tRakBiY=;
+	s=arc-20240116; t=1770380692; c=relaxed/simple;
+	bh=O7a8wY2zkizo/ijNU2invfJSeItdPymgjFUDFVkv854=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BI895YzjYekaC6I5mi1FoHIdQB8BcZp0TDcKxaEFbORsoGuhgfLgO8XFFaMnXvllPNdkMW6bMQ692IsSuM1b4eOi9G15XNWg9VYUSu/77MU3TrbnL5GPQyhuxdQpp2EK+crvlaLoUFcm8x6sC9/t6g/1Mtuu407zaQ88ow8hiOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lAEiQIgE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5AA8C116C6;
-	Fri,  6 Feb 2026 12:19:14 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=p6spEtiy5VB9vCqbEP1ght7pbKOpzc1dPBOUpJwb/dXQYEVMG5xzIFg6iO0DqLxn1sfA0k1DoGRzXzRsRgFg9ZudT91vniRCnBRqkMmNWU47a8W7Q4TRM6NXd4JTAOMh70+Wb/2gXucg+VvNT9JBbZ7n547u/aNtWyKzUi0HAXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IZIJZ1tl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9139EC19422;
+	Fri,  6 Feb 2026 12:24:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770380356;
-	bh=Poc5cAnYUIssufkI0ij0bqMKpaXqwWa/aHj6tRakBiY=;
+	s=k20201202; t=1770380692;
+	bh=O7a8wY2zkizo/ijNU2invfJSeItdPymgjFUDFVkv854=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lAEiQIgEKz5XInQTQn6inDrZzts40QRkprLw2DAfLkwbudlzI02xrutJ8+XupPpOZ
-	 bhyBxgXCwqYPrb2IKxC7KyWP7pvkqNhFsgl/Ybej707GvENG+wD5zVWLqWmww9fP4Q
-	 W5OzlQgbcLYhaCHYG4ny2M5uIAu53PP312NLPVrYFsPavncSl4VMG0hPOjFMaCaiWR
-	 Jy/ArY/z62+1h+4T6oBWlFhZNkRePjveQxV0SKq42L6IN4e2wT1EVqiy/HbUth5YOz
-	 W1fA0zxt+BEhvIvSfXhu9riuFEaDJvxYsmEBV3sKSlQuiE+HvCb7n01vEGQfOXkaml
-	 6AmptaKtKz29A==
-Date: Fri, 6 Feb 2026 13:19:12 +0100
+	b=IZIJZ1tlaooJmKV4EzSy9QGMYd/KPYLJN/nujUHugQhzq6u1LkV/0McKFni3++GtG
+	 dogEinMnXpF6hMO+MLs+jb+nNylr8WiCd67HNDFlm2doQNhGy9CnM9jeuIfCkpG7sO
+	 fG4MPeAy5wQzlUying7T2UTfgatPx56VUFGatWi8DViuk8R+Y15wCl2RPgjDx2Neyl
+	 YIuxesqevK55Mq5XfLkh7N21ZPV8be6iQxQqwHYPlrQTsknGd2T1MJ3nVKTwU5z/CC
+	 3EzQvMtto3bjPPetbUp83zcDx8AF8URrVgIQRIJR9IbtN3SPRzNun9XuTGN0wamypJ
+	 UOApmRe/nSJCA==
+Date: Fri, 6 Feb 2026 13:24:48 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <20260206-euter-weilen-610fef8cb79a@brauner>
-References: <aXilaLSzB1xsGWCb@sirena.org.uk>
- <f9afaed3-9db5-4725-a0e5-cb6d6873b3c6@sirena.org.uk>
- <ef58e561-b366-4eb8-bad6-9d0e748f49c1@sirena.org.uk>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: luca.boccassi@gmail.com, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	linux-fsdevel@vger.kernel.org, ltp@lists.linux.it, christian@brauner.io
+Subject: Re: [PATCH] pidfs: return -EREMOTE when PIDFD_GET_INFO is called on
+ another ns
+Message-ID: <20260206-fluktuation-verwachsen-3354f2185f31@brauner>
+References: <20260127225209.2293342-1-luca.boccassi@gmail.com>
+ <202602061056.b94e9170-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,90 +62,123 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ef58e561-b366-4eb8-bad6-9d0e748f49c1@sirena.org.uk>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <202602061056.b94e9170-lkp@intel.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [2.34 / 15.00];
+X-Spamd-Result: default: False [3.84 / 15.00];
 	MID_END_EQ_FROM_USER_PART(4.00)[];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76575-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-76576-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,lists.linux.dev,intel.com,vger.kernel.org,lists.linux.it,brauner.io];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	NEURAL_HAM(-0.00)[-0.999];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCPT_COUNT_SEVEN(0.00)[7];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 8D4D4FD8BC
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,intel.com:email]
+X-Rspamd-Queue-Id: 98C6CFD95D
 X-Rspamd-Action: no action
 
-On Wed, Feb 04, 2026 at 02:31:06PM +0000, Mark Brown wrote:
-> On Mon, Feb 02, 2026 at 02:58:35PM +0000, Mark Brown wrote:
-> > On Tue, Jan 27, 2026 at 11:45:44AM +0000, Mark Brown wrote:
-> > > Hi all,
-> > > 
-> > > After merging the vfs-brauner tree, today's linux-next build
-> > > (arm64 kselftest) failed like this:
-> > 
-> > This issue is still present in today's -next.
-> 
-> This means that vfs-brauner is still held at the version from
-> next-20260126 and none of the below commits have been in -next:
+On Fri, Feb 06, 2026 at 10:51:24AM +0800, kernel test robot wrote:
+>=20
+>=20
+> Hello,
+>=20
+> kernel test robot noticed "ltp.ioctl_pidfd06.fail" on:
+>=20
+> commit: 16cc0cf19e0b75a336cbf619d208e22b351bd430 ("[PATCH] pidfs: return =
+-EREMOTE when PIDFD_GET_INFO is called on another ns")
+> url: https://github.com/intel-lab-lkp/linux/commits/luca-boccassi-gmail-c=
+om/pidfs-return-EREMOTE-when-PIDFD_GET_INFO-is-called-on-another-ns/2026012=
+8-065425
+> base: https://git.kernel.org/cgit/linux/kernel/git/vfs/vfs.git vfs.all
+> patch link: https://lore.kernel.org/all/20260127225209.2293342-1-luca.boc=
+cassi@gmail.com/
+> patch subject: [PATCH] pidfs: return -EREMOTE when PIDFD_GET_INFO is call=
+ed on another ns
+>=20
+> in testcase: ltp
+> version:=20
+> with following parameters:
+>=20
+> 	disk: 1SSD
+> 	fs: btrfs
+> 	test: syscalls-00/ioctl_pidfd06
+>=20
+>=20
+>=20
+> config: x86_64-rhel-9.4-ltp
+> compiler: gcc-14
+> test machine: 4 threads 1 sockets Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz=
+ (Ivy Bridge) with 8G memory
+>=20
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+>=20
+>=20
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202602061056.b94e9170-lkp@intel.=
+com
+>=20
+>=20
+> 2026-02-03 16:33:15 kirk -U ltp -f temp_single_test --env TMPDIR=3D/fs/sd=
+b1/tmpdir
+> Host information
+>=20
+> 	Hostname:   lkp-ivb-d04
+> 	Python:     3.13.5 (main, Jun 25 2025, 18:55:22) [GCC 14.2.0]
+> 	Directory:  /tmp/kirk.root/tmppqdrj0by
+>=20
+> Connecting to SUT: default
+>=20
+> Starting suite: temp_single_test
+> ---------------------------------
+> =1B[1;37mioctl_pidfd06: =1B[0m=1B[1;31mfail=1B[0m | =1B[1;33mtainted=1B[0=
+m  (0.034s)
+>                                                                          =
+                                                      =20
+> Execution time: 0.100s
+>=20
+> 	Suite:       temp_single_test
+> 	Total runs:  1
+> 	Runtime:     0.034s
+> 	Passed:      0
+> 	Failed:      1
+> 	Skipped:     0
+> 	Broken:      0
+> 	Warnings:    0
+> 	Kernel:      Linux 6.19.0-rc5-00159-g16cc0cf19e0b #1 SMP PREEMPT_DYNAMIC=
+ Tue Feb  3 23:56:34 CST 2026
+> 	Machine:     unknown
+> 	Arch:        x86_64
+> 	RAM:         6899592 kB
+> 	Swap:        0 kB
+> 	Distro:      debian 13
+>=20
+> Disconnecting from SUT: default
+> Session stopped
 
-This should've been fixed. Not sure what happened.
-I've reassembled vfs.all completely just to be sure.
-
-> 
-> Amir Goldstein (4):
->       fs: add helpers name_is_dot{,dot,_dotdot}
->       ovl: use name_is_dot* helpers in readdir code
->       exportfs: clarify the documentation of open()/permission() expotrfs ops
->       nfsd: do not allow exporting of special kernel filesystems
-> 
-> Andrey Albershteyn (3):
->       fs: reset read-only fsflags together with xflags
->       fs: add FS_XFLAG_VERITY for fs-verity files
->       fsverity: add tracepoints
-> 
-> Chelsy Ratnawat (1):
->       fs: dcache: fix typo in enum d_walk_ret comment
-> 
-> Christian Brauner (6):
->       mount: start iterating from start of rbtree
->       mount: simplify __do_loopback()
->       mount: add FSMOUNT_NAMESPACE
->       tools: update mount.h header
->       selftests/statmount: add statmount_alloc() helper
->       selftests: add FSMOUNT_NAMESPACE tests
-> 
-> Joanne Koong (1):
->       iomap: fix invalid folio access after folio_end_read()
-> 
-> Qiliang Yuan (1):
->       fs/file: optimize close_range() complexity from O(N) to O(Sparse)
-> 
-> Qing Wang (1):
->       ovl: Fix uninit-value in ovl_fill_real
-> 
-> Tamir Duberstein (1):
->       rust: seq_file: replace `kernel::c_str!` with C-Strings
-> 
-
-
+Thanks! This is an intentional change in behavior and only affects
+systemd which is happy to adapt to that change.
 
