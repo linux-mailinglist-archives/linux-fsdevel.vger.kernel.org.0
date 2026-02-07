@@ -1,131 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-76668-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id wz2bN7cJh2liTAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76668-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 07 Feb 2026 10:45:27 +0100
+	id iDrAE6YXh2nBTQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 07 Feb 2026 11:44:54 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D79E10564D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 07 Feb 2026 10:45:22 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id A21CF1059A7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 07 Feb 2026 11:44:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 68760301F4A5
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Feb 2026 09:45:16 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id C4D7F3007229
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Feb 2026 10:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02012FFFA6;
-	Sat,  7 Feb 2026 09:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78EF933E362;
+	Sat,  7 Feb 2026 10:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jOfDjLp0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08D522156C;
-	Sat,  7 Feb 2026 09:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C072D33E34C;
+	Sat,  7 Feb 2026 10:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770457514; cv=none; b=qlj8EMNlDL6PHJIOgnhi7swzT9dQTrnHJxMosz/qnZecwjYAnP0ZEceqyjhvXmjYEpWKmIiHM6/astMAuaoD0FFDm8g4QWeJTa6VbOPfGOiN6DirXe5EgJMcB9hlS0zGkgetuPDS4owG28aVNZoLeEyhmGFj5D0PwVAA/N6ktlg=
+	t=1770461084; cv=none; b=CkleBHxLqmxWoGcWQP0Lc1N0Vdku/2Fqyw06JdNQHJuT5DVxxGChh50ZW7AN/qQkZpnX8X1hThNTROZMYY6ks/9bkffbp38ZpJZlt/7CpN05Lmoq2VRN0G20XHW2OJJaS/zPUkI5V3Kwi/2zQRnsq4cEmzKNVTK3HwcyvY08jfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770457514; c=relaxed/simple;
-	bh=Ik0Jvm5kvWOCUivx1AlDBuFmO5FHZMqdflfEhVA5p5A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pxNQmuMMiyGax/iSVBR1THwsQY5rfm7xkP7xbdGhLJ1VLeCd0ZlF61YS5Nko5qX7HRs1rT4Q/jxQ+YdqFuRwN1YJq4hP5ecDPzDOg62UWsJ/wzjop1avdgMcbqN2lp90gh0UkVWAyKsLM9JD+1f1yJG/dAw2LWCLgZsOMyN5DiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 6179ir1L047340;
-	Sat, 7 Feb 2026 18:44:53 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 6179irg5047336
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 7 Feb 2026 18:44:53 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <202dc17c-99dc-4dbd-afae-bb148e7cb025@I-love.SAKURA.ne.jp>
-Date: Sat, 7 Feb 2026 18:44:52 +0900
+	s=arc-20240116; t=1770461084; c=relaxed/simple;
+	bh=Gk1b1szSKFtgjZ1DQKUhyp77v69EzsrYNnADb+xDK+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JGR9C02JezrfA+CauyQAAgJ8xKWVxPPdn0I0MJxm0tkVeKH28H85AKeY3AmHufF5XObbx740DEx8hpAhgxpdX5ku2uM8d2RdgmSGME/V0pzmO9ij8uBiVyj8n7khGcQl43dR3TYYckdApK7ik7OMvz7XrqA38E40mlAosly3A1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jOfDjLp0; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1770461083; x=1801997083;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Gk1b1szSKFtgjZ1DQKUhyp77v69EzsrYNnADb+xDK+c=;
+  b=jOfDjLp0v0QE+rc6LRr6Ml++4Mo7JaehAK1gc4moyRJhPBw5roIZJkah
+   p5LRbvINwcKH+V5+LJzGYQ4659aDVvJykIbCkStdOPm4d1Ds0g1Eemwof
+   0deH8Om+jg/qZw5p0oKVoql/9xXfNuMytRgPCdMtvv6abYgE8vGN5G4Y8
+   toLBGmUnaVY56y30HTe+SFL5Tqoy1X2v+O1FUl1dKrRZi+Gt2QJlUZ1XI
+   vjuu9NzCUGjxPHtHopgQO0mj4+Z+oR13o2wf6uM+lSiYQxfHNAOOD4/7N
+   nLWX32x8uSu7dBcxfx2HlkBYNm5/cd43fiFMYrDoCirpwBUIj6RqhVVrN
+   g==;
+X-CSE-ConnectionGUID: 452gl6fvQuCC80sddsxEww==
+X-CSE-MsgGUID: HiTu1PgWSqyjjkNZrgfjhg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11693"; a="97109629"
+X-IronPort-AV: E=Sophos;i="6.21,278,1763452800"; 
+   d="scan'208";a="97109629"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2026 02:44:43 -0800
+X-CSE-ConnectionGUID: XaIAzb1RTseln8MDTP5P8g==
+X-CSE-MsgGUID: su1AKVbVQBSEZSzAGvWb0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,278,1763452800"; 
+   d="scan'208";a="210848523"
+Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 07 Feb 2026 02:44:40 -0800
+Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vofnq-00000000laa-0Pv3;
+	Sat, 07 Feb 2026 10:44:38 +0000
+Date: Sat, 7 Feb 2026 18:43:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Benjamin Coddington <bcodding@hammerspace.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Rick Macklem <rick.macklem@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-nfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] NFSD: Sign filehandles
+Message-ID: <202602071819.UF8h2gl7-lkp@intel.com>
+References: <d34d4f79a7d4c6b77ad260f925cb51c34fd53ce5.1770390036.git.bcodding@hammerspace.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] hfs/hfsplus changes for 7.0-rc1
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        Viacheslav Dubeyko <slava@dubeyko.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        frank.li@vivo.com, jkoolstra@xs4all.nl, mehdi.benhadjkhelifa@gmail.com,
-        shardul.b@mpiricsoftware.com, torvalds@linux-foundation.org
-References: <9ee4d3b9c7e2131f274c5d1eb2bfcd009a92c765.camel@dubeyko.com>
- <a1602ccf-73ce-46a3-b2f9-76cc7d2401e3@I-love.SAKURA.ne.jp>
- <66af2e9a17dab9f1ef79ad5812ec91aa9c0be005.camel@physik.fu-berlin.de>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <66af2e9a17dab9f1ef79ad5812ec91aa9c0be005.camel@physik.fu-berlin.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav102.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d34d4f79a7d4c6b77ad260f925cb51c34fd53ce5.1770390036.git.bcodding@hammerspace.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.04 / 15.00];
+X-Spamd-Result: default: False [0.34 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64];
+	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,vivo.com,xs4all.nl,gmail.com,mpiricsoftware.com,linux-foundation.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	DMARC_NA(0.00)[i-love.sakura.ne.jp];
+	TAGGED_FROM(0.00)[bounces-76669-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76668-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[hammerspace.com,oracle.com,kernel.org,brown.name,gmail.com];
 	FROM_HAS_DN(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCVD_COUNT_FIVE(0.00)[5];
+	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[penguin-kernel@I-love.SAKURA.ne.jp,linux-fsdevel@vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	SEM_URIBL_FRESH15_UNKNOWN_FAIL(0.00)[syzkaller.appspot.com:query timed out];
-	R_DKIM_NA(0.00)[];
-	NEURAL_HAM(-0.00)[-0.962];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[I-love.SAKURA.ne.jp:mid]
-X-Rspamd-Queue-Id: 6D79E10564D
+	FROM_NEQ_ENVFROM(0.00)[lkp@intel.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[intel.com:+];
+	NEURAL_HAM(-0.00)[-0.951];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Queue-Id: A21CF1059A7
 X-Rspamd-Action: no action
 
-On 2026/02/07 17:55, John Paul Adrian Glaubitz wrote:
-> Hi Tetsuo,
-> 
-> On Sat, 2026-02-07 at 10:18 +0900, Tetsuo Handa wrote:
->> On 2026/02/07 9:26, Viacheslav Dubeyko wrote:
->>> Hello Linus,
->>>
->>> This pull request contains several fixes of syzbot reported
->>> issues and HFS+ fixes of xfstests failures.
->>
->> Where is the flow for testing these patches in linux-next tree?
->> Are HFS/HFS+ patches directly going to linux tree without testing
->> in linux-next tree?
-> 
-> The HFS/HFS+ tree should be part of linux-next which is why it's got
-> a branch named like this [1].
-> 
-> Adrian
-> 
->> [1] https://git.kernel.org/pub/scm/linux/kernel/git/vdubeyko/hfs.git/log/?h=for-next
-> 
+Hi Benjamin,
 
-Oops, the patch with old Reported-by: was applied. That's why I can't find
-"hfsplus: pretend special inodes as regular files" as a fix commit for
-https://syzkaller.appspot.com/bug?extid=f98189ed18c1f5f32e00 as of linux-next-20250205 .
+kernel test robot noticed the following build warnings:
 
-Anyway, my patch was tested for one month in linux-next tree, and
-it seems that no side effect is reported. Please proceed.
+[auto build test WARNING on e3934bbd57c73b3835a77562ca47b5fbc6f34287]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Benjamin-Coddington/NFSD-Add-a-key-for-signing-filehandles/20260206-231407
+base:   e3934bbd57c73b3835a77562ca47b5fbc6f34287
+patch link:    https://lore.kernel.org/r/d34d4f79a7d4c6b77ad260f925cb51c34fd53ce5.1770390036.git.bcodding%40hammerspace.com
+patch subject: [PATCH v4 3/3] NFSD: Sign filehandles
+config: x86_64-randconfig-121-20260207 (https://download.01.org/0day-ci/archive/20260207/202602071819.UF8h2gl7-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260207/202602071819.UF8h2gl7-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202602071819.UF8h2gl7-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> fs/nfsd/nfsfh.c:168:14: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned long long [usertype] hash @@     got restricted __le64 [usertype] @@
+   fs/nfsd/nfsfh.c:168:14: sparse:     expected unsigned long long [usertype] hash
+   fs/nfsd/nfsfh.c:168:14: sparse:     got restricted __le64 [usertype]
+   fs/nfsd/nfsfh.c:191:14: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned long long [usertype] hash @@     got restricted __le64 [usertype] @@
+   fs/nfsd/nfsfh.c:191:14: sparse:     expected unsigned long long [usertype] hash
+   fs/nfsd/nfsfh.c:191:14: sparse:     got restricted __le64 [usertype]
+
+vim +168 fs/nfsd/nfsfh.c
+
+   143	
+   144	/*
+   145	 * Append an 8-byte MAC to the filehandle hashed from the server's fh_key:
+   146	 */
+   147	static int fh_append_mac(struct svc_fh *fhp, struct net *net)
+   148	{
+   149		struct nfsd_net *nn = net_generic(net, nfsd_net_id);
+   150		struct knfsd_fh *fh = &fhp->fh_handle;
+   151		siphash_key_t *fh_key = nn->fh_key;
+   152		u64 hash;
+   153	
+   154		if (!(fhp->fh_export->ex_flags & NFSEXP_SIGN_FH))
+   155			return 0;
+   156	
+   157		if (!fh_key) {
+   158			pr_warn_ratelimited("NFSD: unable to sign filehandles, fh_key not set.\n");
+   159			return -EINVAL;
+   160		}
+   161	
+   162		if (fh->fh_size + sizeof(hash) > fhp->fh_maxsize) {
+   163			pr_warn_ratelimited("NFSD: unable to sign filehandles, fh_size %d would be greater"
+   164				" than fh_maxsize %d.\n", (int)(fh->fh_size + sizeof(hash)), fhp->fh_maxsize);
+   165			return -EINVAL;
+   166		}
+   167	
+ > 168		hash = cpu_to_le64(siphash(&fh->fh_raw, fh->fh_size, fh_key));
+   169		memcpy(&fh->fh_raw[fh->fh_size], &hash, sizeof(hash));
+   170		fh->fh_size += sizeof(hash);
+   171	
+   172		return 0;
+   173	}
+   174	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
