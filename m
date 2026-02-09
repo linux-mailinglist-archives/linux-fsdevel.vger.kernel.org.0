@@ -1,377 +1,582 @@
-Return-Path: <linux-fsdevel+bounces-76709-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0CpEDNfpiWmdDwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76709-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 15:06:15 +0100
+	id sLeSLUrxiWnyEgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 15:38:02 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1C9B1100CD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 15:06:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21B1511094E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 15:38:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id A86D33019102
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Feb 2026 14:06:10 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id D10593033E75
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Feb 2026 14:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3033379994;
-	Mon,  9 Feb 2026 14:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GlIJTlUS";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="P+PtFuf1"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3583793DB;
+	Mon,  9 Feb 2026 14:36:35 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f79.google.com (mail-ot1-f79.google.com [209.85.210.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217E91BC2A;
-	Mon,  9 Feb 2026 14:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770645968; cv=fail; b=uZwNHYCBw9DAOis73CPulYz4OiNXaTiY+dAt3ecTgv3D3pqDsQ96QZP64JbDyce580QKR54l3BljQ93rV6i80KBvzua0rGDZV8QaxUWVbnFYoKWNf5U5JstuIeqqYdG5I6KrNnTBoEU0jJ5h0G1vEVLGttpdGOU7Re+GFRLTS3M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770645968; c=relaxed/simple;
-	bh=fJNmoPnwSxDZjM0W1WuG1j5xtRu+OnUH9fHvpeGCekU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=dMHOgL7Xfydg1JDsVjbOjeOa63bStsSegMvBPt25nVAHnI8gbx3aH1iXQ7qqZephp7JZaXfg/NCOgYx1yFAvs2Oms+xb9AGMBVWst/LvjPqEbJriUTx9TYdpKPJl2K1AStBmOpU3OcyHhhzqlVGZPAVm5UiOXtNQ6+JY6o4gO3s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=GlIJTlUS; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=P+PtFuf1; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 619BxP6L1405298;
-	Mon, 9 Feb 2026 14:04:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=XN9/pshIEtH6gcvYsx
-	YLXigG8odRQF2zRrgNU1QZn0g=; b=GlIJTlUSyVHoNcrEBz9XhmPQ3EJ7+wcTda
-	1MU8CAXZ/C7Uatg0kODeDX3JW0SziWcrKN5Vwj+OlHbq77Q6hv7iUk+1y8le1fkV
-	QSaIcuM8mz/jSkmqe5v+u4RDaYl/YuchrT/elgVLuRnEJyqG5a/5ad+N+aiApBHJ
-	ZHmHfQpDA9dP2Ew59aBGyIoe68qJRo2Yimg/VjD9pSwNkV3ruRICUYHn7R1r4m0E
-	wKZM4ZN+0yNj/ESDyplo471sDEvpywFHCOWfhTDwysIsNGw9xcidey1czMTaFoKb
-	WWc/fOzn0roPhwpdGImMRHWXxgzklwwdoKqLJ0HkYZ8QD93L8iaQ==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4c5xh8t04d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 09 Feb 2026 14:04:42 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 619C0BrF004601;
-	Mon, 9 Feb 2026 14:04:41 GMT
-Received: from dm5pr21cu001.outbound.protection.outlook.com (mail-centralusazon11011010.outbound.protection.outlook.com [52.101.62.10])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4c7ctxgyy3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 09 Feb 2026 14:04:41 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=keZQUyefymZwa2a9/TtwfFCm2MrPR71zJnbKx4CX8PU9k4R2Kkvfg5ek3kmP+kDFtclnzdf7ImcodLWv0FuSFQ5zIXaNDiivSflWsrFl5IgdKpYP3BzMvdrQs8V1j8ELhc2XNVo42WYlfbhFwW5wUufLl752UHAg6YgKrMNVQ/URA2wyeuARKEZ6/wD8XQrBChqwwqLQR5WkyOfT3Jjx1zE3m6IHK09fM5QF9OOcW3jf3n1+f2I76IlwOY6KlpWoeZPnis3qehKA81fquEBEppx6KaZNnRZQZ6XPWbk5rr76bwuRtA9Qex9vdVzPf1nsHVJCaK4Td+mgi+kOAkUfkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XN9/pshIEtH6gcvYsxYLXigG8odRQF2zRrgNU1QZn0g=;
- b=mlRBlsJrTb7gz1BF6bjNoTcSidAe1MVzTaVjIB8SVfknWK2ol1SAukNWS9CXRPIjkNViAXzRT8FZcIvXR8XoOPjAssZl0pCoT85AHlkjDBs7meivAXRnq3GbHpKfzGJdciA4b/ibsi4gxFsF/pH/UuXz/eKTdQDhlEVoJSEAKREY6Zu0nDkuqCGBzqXldaMaZERCdEWSQatziOXa9IMmI98tG60ixdSTpZbEy1YXn9mP5x/KayrTsmagtWuEVbvt1YtAL+/WSALdlixQw6AnvXsnC+hZ8UDFnp8+EFoqYX3Yh2onUXTXwdLsx/KM8JmavU0sbK66gtvfPY8NoSyuGw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XN9/pshIEtH6gcvYsxYLXigG8odRQF2zRrgNU1QZn0g=;
- b=P+PtFuf1CmX2/9w0bUrD3g2IJiInYNpHAUC5pUhKvilYpL/HgfaFkzFIPphs5PkB7qNXftUAVpV05n7blJL0s/4lP/G5+BShTx4SgaAHYVBcgVV1QrfbYT11aKAFYYpN6gL5PzPqYCoChJlZYF9xYiYY3T4uybgpfDg7mY9l6Xw=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by DS0PR10MB6222.namprd10.prod.outlook.com (2603:10b6:8:c0::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.17; Mon, 9 Feb
- 2026 14:04:29 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::f3ea:674e:7f2e:b711]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::f3ea:674e:7f2e:b711%4]) with mapi id 15.20.9587.017; Mon, 9 Feb 2026
- 14:04:29 +0000
-Date: Mon, 9 Feb 2026 14:04:29 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Pedro Falcato <pfalcato@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tursulin@ursulin.net>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>,
-        Matthew Brost <matthew.brost@intel.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Benjamin LaHaise <bcrl@kvack.org>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Sandeep Dhavale <dhavale@google.com>,
-        Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Muchun Song <muchun.song@linux.dev>,
-        Oscar Salvador <osalvador@suse.de>,
-        David Hildenbrand <david@kernel.org>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
-        Babu Moger <babu.moger@amd.com>, Carlos Maiolino <cem@kernel.org>,
-        Damien Le Moal <dlemoal@kernel.org>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <jth@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Hugh Dickins <hughd@google.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>, Zi Yan <ziy@nvidia.com>,
-        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-        Lance Yang <lance.yang@linux.dev>, Jann Horn <jannh@google.com>,
-        David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Yury Norov <yury.norov@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
-        linux-aio@kvack.org, linux-erofs@lists.ozlabs.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev,
-        devel@lists.orangefs.org, linux-xfs@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH v2 05/13] mm: add basic VMA flag operation helper
- functions
-Message-ID: <ee3a8a0b-cf20-4d6a-9a0d-a2515b32c896@lucifer.local>
-References: <cover.1769097829.git.lorenzo.stoakes@oracle.com>
- <885d4897d67a6a57c0b07fa182a7055ad752df11.1769097829.git.lorenzo.stoakes@oracle.com>
- <vrbggto75ugvpa5wtugmayr7yops6cnvygit42f2md646y6qnx@3vzc7taleijw>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <vrbggto75ugvpa5wtugmayr7yops6cnvygit42f2md646y6qnx@3vzc7taleijw>
-X-ClientProxiedBy: LO4P302CA0020.GBRP302.PROD.OUTLOOK.COM
- (2603:10a6:600:2c1::9) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3120C37BE81
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Feb 2026 14:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.79
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770647795; cv=none; b=bRcVCTg0qW5jmFWUTA498AEu5xQjQ30a4NJQsjrc+6+cFEKZ8SBYDlZvw0yrLK2Mk9TGhArNAClP5xBiHZmeCsnN8Cgeti03yVNP6pWftFC51jYOCmugiFOmmhkGyJjUAwnD3kiCUbWEqiG/Ju4ARdZW6b5CCOZf4n8Vct2K57w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770647795; c=relaxed/simple;
+	bh=UZnLH0h3kaSf6wIOP8U/qcFKwknQrIn/FGYwyQGaehg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=tITlc/G8noERiP08GaF+flzGh95aSGEZ1bqErw9msub+RYNH70LmWqLLMRFDeszw7CI+82NWAKVadeZFlCGhACXkJ3Z8ShLOpQCOKt9nEHJLeG5Ld96RwpwISd9qKscSI2oUAz3gV9QXb+wC3h89+8njgJvZ/Yq6XO/UMYr9T8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.210.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-ot1-f79.google.com with SMTP id 46e09a7af769-7cfd0f67288so7994606a34.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Feb 2026 06:36:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770647794; x=1771252594;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0lzC3FE5Gg9ui+AagGYjOf20jX4g13SU5kAdfyvpY9U=;
+        b=NE9J5PTsrlZRQWmRGD3wSEEYLQ1Qvi3nXAiLw8y+G1O++HIDQ2zCraQGpbkGiKFk3i
+         d9UL+oQmOaPKit/x1FlQrZUG3YYitjipLSJFVMG4Un70btIay9Dj5zB71eI+EC0YvlVO
+         OZqIZf47i+a77i7FtJS2f30PwbbvCqpza0WxOQoZkspiYKZHr79lp6m+vNQQuUbDO8mb
+         P3enq8pE0tX9EbrWKUzp8GKyRUdxsn6TXfrVjiMZ7MTbqQlsWsF1j00jq5fJJR1c73/B
+         fTlGRlvccdEP4JJx8NYMHFg9Q1Skdum5gYfNA/I+/HW6uMeEAEhrmAHFU5/M7DXt6Q1x
+         p15g==
+X-Forwarded-Encrypted: i=1; AJvYcCWy1xRKhge/sCn3G6r43ueNMqWo/nRsYEOMxkFDfyoX9dY1s5XtEmO0In2Gqr/YCvhgGbeeUoHmw0ATCjqH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/lkxZsC8OqFOVHdk081j3DGjTUIwlfkcmCrfw9wv0FIvqXxGR
+	3LQB3WtNciV2BFrozI74TLvbMbaErrQeR1c91Qiklez5h0xooP4wpw8msA5vLuU93uE4YafRnHW
+	+N/Ngpn6DLV3HJseLhwuA4rFuRJ+9UtZuK4Awn4CBMP+FzOXfkqrOdLpMMnc=
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DS0PR10MB6222:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3e2c49ae-110d-4de0-dd1a-08de67e4245b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?jEsDz461LlyyV8NyviRb4tOn710YT1o2Ba5wS6//mAPfboQXAU4XBx1WhlhV?=
- =?us-ascii?Q?z44tpRySJsOe/a7gURaY1h4RlsnS2j/ANDy2XeLytQrEmtVUm4CMUDMwjxna?=
- =?us-ascii?Q?SPmk7zf/cIO6rqGxqdhl6zfscIEP3oNHj2GEOqPCAOqcD5cxQ2N8es0Tf3pB?=
- =?us-ascii?Q?rww3F5gDJnLNgxDsZBPwi/xfX1XSoGC45Ak1nQb4NPcxGRgZb8n1nNU4Eq+g?=
- =?us-ascii?Q?1QT1IQVkMvRXxZfF9xeej7d9g/X9UyYzGp1kvIJq4P4LUl27k/6DjYkQiour?=
- =?us-ascii?Q?A+FrCChADqz8nvgiqQHUXBJdTn3QypTADRGcRJgGvcrXDNbrr2ctXeq9Xg/C?=
- =?us-ascii?Q?Z2lXUtzO7f0gMT41cNEay+VWeSuIJfK8nnpgLI5ISmyOlCXW7kDGfUs21Lpi?=
- =?us-ascii?Q?y4vlkgqZ5d+5yfxcVJF1iI64DB9Df0GncL9pVFWUj8SLu5c7Rv4K1tdW/kOP?=
- =?us-ascii?Q?K/pYgDiKFPU/bfKmnuE/ja/NC0438a9UC6Y+DCxP9SMub6jaIQvNPFITlEAV?=
- =?us-ascii?Q?6OthsLmtXKjVIHPWjLAya7Vq/pnLutVNX/f1IN8z+4qP2JV+3/wJHZKTI0rG?=
- =?us-ascii?Q?CZMC75GiyB9AE2kGR8uZoap9EHlsGhBomdpzX5Zy3M/qijvVDpPdIQlBJgDW?=
- =?us-ascii?Q?vytNQq9+yFLBMNseCF5afNRUI7whYv5YM/55UQ5CWXh3cWP26FSolyZs11rg?=
- =?us-ascii?Q?GY2NrulMBUDZE5GCk2QB//Wocy+swvzaq1/8j6pjwed9UZtDWavPf935+pV+?=
- =?us-ascii?Q?W2jeZjNKbknI5fxE/DcenVt+yUWdZ89wZRcFfb9segQm0RuAj2SnHAki3y7s?=
- =?us-ascii?Q?1H2hoF9l4p5NPyVqKOKQ4zvH5LUbKpnA2NZCt/SMv1UhUea4oDib1KPMknEo?=
- =?us-ascii?Q?5vRs4RuzRY6SzrCjb2MSEJaDyMJaxe3d4Mf09tBm7zvuoa1jQyb+HZNiuVw9?=
- =?us-ascii?Q?TVM4KFvhDOuqOGUaL7PFCOKVbtnNZ5CA6rHqZ1a+v5jZhDDxkqQksCu+esWm?=
- =?us-ascii?Q?X86zNjO3MITpGHc+G6iZ/DNxIG+ScIrajfBECR81LXUNEhcCbfKngm4wsBOX?=
- =?us-ascii?Q?DnADLZqxB/ZCovzqrK0UTqZ/xCDMoqbz2BSt0+PaGKFKch9WWLyNgplAt5xS?=
- =?us-ascii?Q?4xN30Ux0saYpqc9/wrKZoWfYU/i5rZYWZWyolIfL/vT53hTLQWz98EKDg9j5?=
- =?us-ascii?Q?g3VbjQ7ZkuDhmcrBniGQv17o9WMqvMaud2NdBh/muTGaVWeNPUxm5/G6BbqF?=
- =?us-ascii?Q?adhjyNrNB7tniK/814WH7OPPWKk3CB5fOWrbznW7ODAkrzTuTFj2DxiMek07?=
- =?us-ascii?Q?Z5bSx8oWpOatfdmzF+1bUz5OAcBT1HVfPElsaOQLHMn4b0rFxMEWXrdwBbTK?=
- =?us-ascii?Q?FIloEhabKEAAGgO8G6XZB+fVUeED2ooJlNsI/ZBaO4KwX3+Lf74WAwJXZjCb?=
- =?us-ascii?Q?/AQuCGbuM35CHw4iJa4Wmur8VAR52jcDMJrOCOPG1x/NGil9fXiKdOmkzHUH?=
- =?us-ascii?Q?MLgdZeHjTOnt+M8kyYa+45dlyucmQxy+o3B/n4pmydaU7uL4u0rg3WEme9ki?=
- =?us-ascii?Q?LtT/cYgA5wdj0XEa+Sc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?algm93jTIV6IFZzwqxYt45GXti4mq6xDnk+JFqjmGddBxHXQ0ug7N2WeSpc9?=
- =?us-ascii?Q?y2RsOS9Dde2N/8uUigQMlgZnhWSZYk7mfFgOoVJJh852shIX4mxWxYEIGIbC?=
- =?us-ascii?Q?nbQpYoLGsHlDt5YzwFKQAGdxd+44j9jrg3CCCQkF7/F7m5zflTCdZWGJfBAW?=
- =?us-ascii?Q?CLlfRbDRxnyGLe0SIDo8GlBSsnilfmBFExqn7ly+bcIWHHHYaNgZZgD3KpPl?=
- =?us-ascii?Q?fiem1sPpf+1upq91jHJ7HnL307NJcfKjc6DncixiUFtMcQV5K6njwZlfuqPh?=
- =?us-ascii?Q?n/4lc+ULEB0adoX1ZNPqEnqhT65VJmFVklv1mtNVTTaDJjGTn1X6abAbKbcx?=
- =?us-ascii?Q?gwjHrBuDOrcUH+i6MXIV4ZU759UgtkaA+ukilMHS+9sNilCFjgLcQaIojABZ?=
- =?us-ascii?Q?CHqpAe5SFV5v4e4I80UVM7Ak0fWSD7PNZ2C/9onAZ/sfSbmCavWNr1dS/tZU?=
- =?us-ascii?Q?9Ow1wu6vqnFqiQGiMuRWWUcWEo981gwtEfgYq5rf1cJGEy+uxB0syJzLsweC?=
- =?us-ascii?Q?S24r/jRniT+LmHaP+AADTJX6IY+Q5GCJ3GxUtPLJfid1nEJaldkghRNpO9ee?=
- =?us-ascii?Q?XtF9d4D4EkIwR6BLX8TGnQKpIBnqHXF+GrtRzFfvbLctXvvFjApGMdO49AV6?=
- =?us-ascii?Q?Jprz/u7YqoVJwngb1tsQIlCxf6TltlCFjWf4O6cQGcNpAJDS6YxyJnN7XDj3?=
- =?us-ascii?Q?PD7ajDIZFUC1gauLOANmsd7lFCsza6G+c0HYm0KericLOcb5bbTI1IQXQaBz?=
- =?us-ascii?Q?68mhSJUN/u8BmVVuzIMVkvPblb/DK4NZkZtSXpZAVwFOB5eQ876SoPrpz4NQ?=
- =?us-ascii?Q?t8OOLc19iVVRAh1XmHabvGU/RC3cuo7nNZwJXuR1IoEkje7OaZc+AIKD3IaY?=
- =?us-ascii?Q?XhvHYFzV55xX+cHKgFPoFwCAUzKzeue6Ngr08jSTHNtn13axqZbhuZJtpXWO?=
- =?us-ascii?Q?HsWtdNk8Zp3R0pHDiljaYX/W3ZkTUiy+9dx5H0ZcCInM68zcyEbefK3xHj3R?=
- =?us-ascii?Q?VMfln6jHOonW/J3bYwbbMWjVAwwZaBUmALa0WQIe4dylj7dhkAqbu+pTo2VP?=
- =?us-ascii?Q?Ao0UrK/3xmzD+5HQBVcpg/nP+DR5eF3wY4zPsTQcjws/YtBlrNWD7Q9vyHTh?=
- =?us-ascii?Q?3vJHFG8ovDOGyB2MgZWZU611iGF9Y3HNjxLAvmmRF0YDgT17IFdELVsOLmIR?=
- =?us-ascii?Q?coB9rTBQbIe9tSp7nDyntAC5sVV8ppGtsa41Q8y5P3C0SN5jDRuN5S/YLb9m?=
- =?us-ascii?Q?ilMZKB286+D4QNIegUnz4YS5xPaITd+gJQfn0TnvyO5lEoiN6sKcDHEdDl1b?=
- =?us-ascii?Q?d1sIclNM2ctM3TGfzjtsPbX09RjNE2bmBcRQre9qAb0YgKxLzjlDlUtyzK5+?=
- =?us-ascii?Q?SgTuZM8lY5nI1aWl2DhOgpyNHHKw2hKo+c3C4nV+Q/YDDEjUIjbEyiwG/NYm?=
- =?us-ascii?Q?i1na4RQV8x/sx6c4bvm9KjAFE5c8OwTI6l1uJKL47k0Imtb5B/VzWcRDrHM5?=
- =?us-ascii?Q?LZ6S1kYeqZyLCtMB21qpl6YJmUBXCB9q4It3xrwg4HJ0P6scDZecNQoa1NEy?=
- =?us-ascii?Q?aZD26czewH5cOC44rVoaP6EolHPs+DQ6oofj6yL0oBGiTq4M66TLobQ3uFAT?=
- =?us-ascii?Q?wIsJOb4x6TslkIYIy7VFFbealaWXoxjLKnwBUoYkEbQoHR7d37ftprZoixT+?=
- =?us-ascii?Q?sjYSdIHuuYV+3jZGX9OYOkon1CKM/V14C3dhbvAEFIpunpHnaYHZ6I9eVs++?=
- =?us-ascii?Q?/9pA/mJXQA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	01KqIf54eTYJ389XoHV1TTvcQJXlwFzDjf4o37w3qHuZTIQkfKvz0WQ/EOPgYm5pm/wPcHUeWM1lGaLOhX0zW+a5ONrHVrypAJAStfspOkg56Q+LnECE9bFc04MxFBbR9Rhlbgu/RzM7BrjfiFPm5CXh3dRURyd8LSutGV2pPWwbOkcVy26bogDB2c1tqHv06ZnmjMFGEUeWhDs7g5QlQ8brQBbS1tvHNy3wKd8L3DPKCjvRTDLyAP9SqAvMENlhQERX4Hy51DMPQAA30Lsdr4Sa7udse22nT8fZWxzdf2VCO/XsY4ulF9SdK3Sd+1/2xRzTK313OM7o/V4Tj/e8ELV4rskDUl4zOGyDjD5OpB2fHPQQYpfRCz374BGOCRMCpAOqIFoDjYqP2stdpQH8I7n3zvHi579KXPzd33CMP7safWeIsPhIjrKNYHvQvT6WzC6OpIw98UosqkiAaf99/EyVTAdCiMSz8bdL6fLOrwU96Yyr2FlhSPjtx6Rval6PZllN6m5CINh3k3WsBMDW4UyZ9a9cT2tuBIbfp2+Tc04QsZS5ZIAsRy1L14ccMkbQJ782/to/eDmt9ddFTtyub/U0WPKEK3D0lWks0VOGSKA=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e2c49ae-110d-4de0-dd1a-08de67e4245b
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Feb 2026 14:04:29.4558
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fnkFz3Z7dqQugpLWqynHQ/59OBxP6yCMyrlLZBi7q8cJQjoQxXAFtHLJ+WMVYiZYKXPON6/hAADKdIwmuCOMfmyxCtTptfkpyOexlwrm0E0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6222
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-02-08_05,2026-02-09_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 malwarescore=0
- mlxlogscore=999 suspectscore=0 phishscore=0 mlxscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2601150000
- definitions=main-2602090118
-X-Authority-Analysis: v=2.4 cv=YbOwJgRf c=1 sm=1 tr=0 ts=6989e97a cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=HzLeVaNsDn8A:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22 a=yPCof4ZbAAAA:8
- a=fvR3Ec5kcXMutB-RvbEA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: QZ_mHi027iN1x7vBbRhRx2U0ENVk-54g
-X-Proofpoint-GUID: QZ_mHi027iN1x7vBbRhRx2U0ENVk-54g
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjA5MDExOCBTYWx0ZWRfXzv8SoinjNsc+
- hBrjhbq4T+HLcPoG2wxRC8RU6zoG5mXEERE/X47rZq2xW/vd8a+swZ/btk+T7xInxD8LDqQL0Wl
- pPm6drnhTT65xYkld2Tug8L6f/pnA+4P1xFR3XjVjvzZhxEL7ELV/03LyUcH5H6ozPHGwpJiwgy
- H/COQGO96pfookgxb2Nf+GSt+oRLgo0q1v1aztwHisDJFI1Ae9PfF5DOsBKXGfnmQwANw9hVP/G
- Zb4LE+RetacojNFffsDkZXe5hswjd9fvU157soml/spF+LHJuwThquPlK/6ASAAm7t8bnmVbTK4
- IdgWBDg+zSUIxy0TmCYszADj1ibSe4x4qgm7sRFi4fyjotgGsLVgZsegVdzLT/LQw4GIRMcFrNb
- 92KA1P2VeTXFy0WE2wcvHhgR0Ff3pAL9js/5K06nwr8qvM6FuDZqyB9iu1L+iweAUjzRyhBGL8m
- 9QojpC+jv7Swzy8wjpQ==
+X-Received: by 2002:a05:6820:6ae6:b0:663:888:73d1 with SMTP id
+ 006d021491bc7-66d0c854006mr4808343eaf.60.1770647794068; Mon, 09 Feb 2026
+ 06:36:34 -0800 (PST)
+Date: Mon, 09 Feb 2026 06:36:34 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6989f0f2.a00a0220.34fa92.0047.GAE@google.com>
+Subject: [syzbot] [fs?] [mm?] possible deadlock in writeout_period
+From: syzbot <syzbot+d38b792a5cbd941006fc@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [1.34 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_REJECT(1.00)[cv is fail on i=2];
-	DMARC_POLICY_ALLOW(-0.50)[oracle.com,reject];
-	R_DKIM_ALLOW(-0.20)[oracle.com:s=corp-2025-04-25,oracle.onmicrosoft.com:s=selector2-oracle-onmicrosoft-com];
+X-Spamd-Result: default: False [-0.36 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=8a8594efdc14f07a];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
+	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[linux-foundation.org,kernel.org,linux.intel.com,redhat.com,alien8.de,zytor.com,arndb.de,linuxfoundation.org,intel.com,suse.de,gmail.com,ffwll.ch,ursulin.net,amd.com,zeniv.linux.org.uk,suse.cz,kvack.org,linux.alibaba.com,google.com,huawei.com,vivo.com,mit.edu,dilger.ca,linux.dev,paragon-software.com,omnibond.com,arm.com,wdc.com,infradead.org,oracle.com,suse.com,nvidia.com,paul-moore.com,namei.org,hallyn.com,rasmusvillemoes.dk,vger.kernel.org,lists.linux.dev,lists.freedesktop.org,lists.ozlabs.org,lists.orangefs.org];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76709-lists,linux-fsdevel=lfdr.de];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,oracle.com:email,oracle.com:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,oracle.onmicrosoft.com:dkim,lucifer.local:mid];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[lorenzo.stoakes@oracle.com,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[oracle.com:+,oracle.onmicrosoft.com:+];
-	RCPT_COUNT_GT_50(0.00)[93];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TAGGED_FROM(0.00)[bounces-76710-lists,linux-fsdevel=lfdr.de,d38b792a5cbd941006fc];
+	RCVD_COUNT_THREE(0.00)[4];
+	RCVD_TLS_LAST(0.00)[];
 	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[9]
-X-Rspamd-Queue-Id: B1C9B1100CD
+	SUBJECT_HAS_QUESTION(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	TO_DN_NONE(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	R_DKIM_NA(0.00)[];
+	REDIRECTOR_URL(0.00)[goo.gl];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,syzkaller.appspot.com:url,storage.googleapis.com:url,appspotmail.com:email,googlegroups.com:email]
+X-Rspamd-Queue-Id: 21B1511094E
 X-Rspamd-Action: no action
 
-On Fri, Feb 06, 2026 at 05:35:49PM +0000, Pedro Falcato wrote:
-> On Thu, Jan 22, 2026 at 04:06:14PM +0000, Lorenzo Stoakes wrote:
-> > Now we have the mk_vma_flags() macro helper which permits easy
-> > specification of any number of VMA flags, add helper functions which
-> > operate with vma_flags_t parameters.
-> >
-> > This patch provides vma_flags_test[_mask](), vma_flags_set[_mask]() and
-> > vma_flags_clear[_mask]() respectively testing, setting and clearing flags
-> > with the _mask variants accepting vma_flag_t parameters, and the non-mask
-> > variants implemented as macros which accept a list of flags.
-> >
-> > This allows us to trivially test/set/clear aggregate VMA flag values as
-> > necessary, for instance:
-> >
-> > 	if (vma_flags_test(&flags, VMA_READ_BIT, VMA_WRITE_BIT))
-> > 		goto readwrite;
->
-> I'm not a huge fan of the _test ambiguity here, but more words makes it uglier :/
-> I think I can live with it though.
+Hello,
 
-Yeah, as discussed on IRC it's a bit of a trade off here unfortunately.
+syzbot found the following issue on:
 
-I don't love having the _BIT stuff there but is necessary for now I feel until
-VM_xxx flags are finally fully deprecated.
+HEAD commit:    59e4d31a0470 Merge branches 'for-next/core' and 'for-next/..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=14454b22580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8a8594efdc14f07a
+dashboard link: https://syzkaller.appspot.com/bug?extid=d38b792a5cbd941006fc
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: arm64
 
->
-> >
-> > 	vma_flags_set(&flags, VMA_READ_BIT, VMA_WRITE_BIT);
-> >
-> > 	vma_flags_clear(&flags, VMA_READ_BIT, VMA_WRITE_BIT);
-> >
->
-> The variadic-ness here is very nice though.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Thanks!
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/746a1d5c4188/disk-59e4d31a.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2eefade79f10/vmlinux-59e4d31a.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/140624ef24ed/Image-59e4d31a.gz.xz
 
->
-> > We also add a function for testing that ALL flags are set for convenience,
-> > e.g.:
-> >
-> > 	if (vma_flags_test_all(&flags, VMA_READ_BIT, VMA_MAYREAD_BIT)) {
-> > 		/* Both READ and MAYREAD flags set */
-> > 		...
-> > 	}
-> >
-> > The compiler generates optimal assembly for each such that they behave as
-> > if the caller were setting the bitmap flags manually.
-> >
-> > This is important for e.g. drivers which manipulate flag values rather than
-> > a VMA's specific flag values.
-> >
-> > We also add helpers for testing, setting and clearing flags for VMA's and
-> > VMA descriptors to reduce boilerplate.
-> >
-> > Also add the EMPTY_VMA_FLAGS define to aid initialisation of empty flags.
-> >
-> > Finally, update the userland VMA tests to add the helpers there so they can
-> > be utilised as part of userland testing.
-> >
-> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->
-> Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d38b792a5cbd941006fc@syzkaller.appspotmail.com
 
-Thanks (also for other tags :P)
+========================================================
+WARNING: possible irq lock inversion dependency detected
+syzkaller #0 Not tainted
+--------------------------------------------------------
+syz-executor/6572 just changed the state of lock:
+ffff800097626150 (&p->sequence){+.-.}-{0:0}, at: writeout_period+0x94/0x11c mm/page-writeback.c:615
+but this lock was taken by another, HARDIRQ-safe lock in the past:
+ (&xa->xa_lock#10){-.-.}-{3:3}
 
->
-> --
-> Pedro
 
-Cheers, Lorenzo
+and interrupts could create inverse lock ordering between them.
+
+
+other info that might help us debug this:
+ Possible interrupt unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&p->sequence);
+                               local_irq_disable();
+                               lock(&xa->xa_lock#10);
+                               lock(&p->sequence);
+  <Interrupt>
+    lock(&xa->xa_lock#10);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor/6572:
+ #0: ffff800097bd7c40 ((&dom->period_timer)){+.-.}-{0:0}, at: lockdep_copy_map include/linux/lockdep.h:41 [inline]
+ #0: ffff800097bd7c40 ((&dom->period_timer)){+.-.}-{0:0}, at: call_timer_fn+0xd4/0x814 kernel/time/timer.c:1738
+
+the shortest dependencies between 2nd lock and 1st lock:
+ -> (&xa->xa_lock#10){-.-.}-{3:3} {
+    IN-HARDIRQ-W at:
+                      lock_acquire+0x140/0x2e0 kernel/locking/lockdep.c:5868
+                      __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+                      _raw_spin_lock_irqsave+0x5c/0x7c kernel/locking/spinlock.c:162
+                      __folio_end_writeback+0x10c/0x6f8 mm/page-writeback.c:2990
+                      folio_end_writeback_no_dropbehind+0xd0/0x204 mm/filemap.c:1661
+                      folio_end_writeback+0xd8/0x248 mm/filemap.c:1687
+                      end_buffer_async_write+0x20c/0x350 fs/buffer.c:419
+                      end_bio_bh_io_sync+0xb0/0x184 fs/buffer.c:2776
+                      bio_endio+0x8d4/0x910 block/bio.c:1675
+                      blk_complete_request block/blk-mq.c:908 [inline]
+                      blk_mq_end_request_batch+0x49c/0x105c block/blk-mq.c:1202
+                      nvme_complete_batch drivers/nvme/host/nvme.h:802 [inline]
+                      nvme_pci_complete_batch drivers/nvme/host/pci.c:1348 [inline]
+                      nvme_irq+0x1ec/0x240 drivers/nvme/host/pci.c:1450
+                      __handle_irq_event_percpu+0x20c/0x8e4 kernel/irq/handle.c:211
+                      handle_irq_event_percpu kernel/irq/handle.c:248 [inline]
+                      handle_irq_event+0x9c/0x1d0 kernel/irq/handle.c:265
+                      handle_fasteoi_irq+0x328/0x8d8 kernel/irq/chip.c:764
+                      generic_handle_irq_desc include/linux/irqdesc.h:172 [inline]
+                      handle_irq_desc kernel/irq/irqdesc.c:669 [inline]
+                      generic_handle_domain_irq+0xe0/0x140 kernel/irq/irqdesc.c:725
+                      __gic_handle_irq drivers/irqchip/irq-gic-v3.c:825 [inline]
+                      __gic_handle_irq_from_irqson drivers/irqchip/irq-gic-v3.c:876 [inline]
+                      gic_handle_irq+0x6c/0x18c drivers/irqchip/irq-gic-v3.c:920
+                      call_on_irq_stack+0x30/0x48 arch/arm64/kernel/entry.S:891
+                      do_interrupt_handler+0xd4/0x138 arch/arm64/kernel/entry-common.c:135
+                      __el1_irq arch/arm64/kernel/entry-common.c:497 [inline]
+                      el1_interrupt+0x3c/0x60 arch/arm64/kernel/entry-common.c:510
+                      el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:515
+                      el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:592
+                      __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:175 [inline]
+                      arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline]
+                      kasan_quarantine_put+0xbc/0x1c8 mm/kasan/quarantine.c:234
+                      __kasan_slab_free+0x8c/0xa4 mm/kasan/common.c:295
+                      kasan_slab_free include/linux/kasan.h:235 [inline]
+                      slab_free_hook mm/slub.c:2540 [inline]
+                      slab_free_after_rcu_debug+0x120/0x2f8 mm/slub.c:6729
+                      rcu_do_batch kernel/rcu/tree.c:2605 [inline]
+                      rcu_core+0x848/0x1774 kernel/rcu/tree.c:2857
+                      rcu_core_si+0x10/0x1c kernel/rcu/tree.c:2874
+                      handle_softirqs+0x31c/0xc88 kernel/softirq.c:622
+                      run_ksoftirqd+0x70/0xc0 kernel/softirq.c:1063
+                      smpboot_thread_fn+0x4d8/0x9cc kernel/smpboot.c:160
+                      kthread+0x5fc/0x75c kernel/kthread.c:463
+                      ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
+    IN-SOFTIRQ-W at:
+                      lock_acquire+0x140/0x2e0 kernel/locking/lockdep.c:5868
+                      __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+                      _raw_spin_lock_irqsave+0x5c/0x7c kernel/locking/spinlock.c:162
+                      __folio_end_writeback+0x10c/0x6f8 mm/page-writeback.c:2990
+                      folio_end_writeback_no_dropbehind+0xd0/0x204 mm/filemap.c:1661
+                      folio_end_writeback+0xd8/0x248 mm/filemap.c:1687
+                      end_buffer_async_write+0x20c/0x350 fs/buffer.c:419
+                      end_bio_bh_io_sync+0xb0/0x184 fs/buffer.c:2776
+                      bio_endio+0x8d4/0x910 block/bio.c:1675
+                      blk_complete_request block/blk-mq.c:908 [inline]
+                      blk_mq_end_request_batch+0x49c/0x105c block/blk-mq.c:1202
+                      nvme_complete_batch drivers/nvme/host/nvme.h:802 [inline]
+                      nvme_pci_complete_batch drivers/nvme/host/pci.c:1348 [inline]
+                      nvme_irq+0x1ec/0x240 drivers/nvme/host/pci.c:1450
+                      __handle_irq_event_percpu+0x20c/0x8e4 kernel/irq/handle.c:211
+                      handle_irq_event_percpu kernel/irq/handle.c:248 [inline]
+                      handle_irq_event+0x9c/0x1d0 kernel/irq/handle.c:265
+                      handle_fasteoi_irq+0x328/0x8d8 kernel/irq/chip.c:764
+                      generic_handle_irq_desc include/linux/irqdesc.h:172 [inline]
+                      handle_irq_desc kernel/irq/irqdesc.c:669 [inline]
+                      generic_handle_domain_irq+0xe0/0x140 kernel/irq/irqdesc.c:725
+                      __gic_handle_irq drivers/irqchip/irq-gic-v3.c:825 [inline]
+                      __gic_handle_irq_from_irqson drivers/irqchip/irq-gic-v3.c:876 [inline]
+                      gic_handle_irq+0x6c/0x18c drivers/irqchip/irq-gic-v3.c:920
+                      call_on_irq_stack+0x30/0x48 arch/arm64/kernel/entry.S:891
+                      do_interrupt_handler+0xd4/0x138 arch/arm64/kernel/entry-common.c:135
+                      __el1_irq arch/arm64/kernel/entry-common.c:497 [inline]
+                      el1_interrupt+0x3c/0x60 arch/arm64/kernel/entry-common.c:510
+                      el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:515
+                      el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:592
+                      __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:175 [inline]
+                      arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline]
+                      kasan_quarantine_put+0xbc/0x1c8 mm/kasan/quarantine.c:234
+                      __kasan_slab_free+0x8c/0xa4 mm/kasan/common.c:295
+                      kasan_slab_free include/linux/kasan.h:235 [inline]
+                      slab_free_hook mm/slub.c:2540 [inline]
+                      slab_free_after_rcu_debug+0x120/0x2f8 mm/slub.c:6729
+                      rcu_do_batch kernel/rcu/tree.c:2605 [inline]
+                      rcu_core+0x848/0x1774 kernel/rcu/tree.c:2857
+                      rcu_core_si+0x10/0x1c kernel/rcu/tree.c:2874
+                      handle_softirqs+0x31c/0xc88 kernel/softirq.c:622
+                      run_ksoftirqd+0x70/0xc0 kernel/softirq.c:1063
+                      smpboot_thread_fn+0x4d8/0x9cc kernel/smpboot.c:160
+                      kthread+0x5fc/0x75c kernel/kthread.c:463
+                      ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
+    INITIAL USE at:
+                     lock_acquire+0x140/0x2e0 kernel/locking/lockdep.c:5868
+                     __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
+                     _raw_spin_lock_irq+0x58/0x70 kernel/locking/spinlock.c:170
+                     spin_lock_irq include/linux/spinlock.h:376 [inline]
+                     shmem_add_to_page_cache+0x564/0xa24 mm/shmem.c:904
+                     shmem_alloc_and_add_folio+0x758/0x10c4 mm/shmem.c:1958
+                     shmem_get_folio_gfp+0x4d4/0x159c mm/shmem.c:2556
+                     shmem_read_folio_gfp+0x8c/0xf0 mm/shmem.c:5970
+                     drm_gem_get_pages+0x1cc/0x7c0 drivers/gpu/drm/drm_gem.c:654
+                     drm_gem_shmem_get_pages_locked+0x1d4/0x364 drivers/gpu/drm/drm_gem_shmem_helper.c:240
+                     drm_gem_shmem_pin_locked+0x1f8/0x410 drivers/gpu/drm/drm_gem_shmem_helper.c:301
+                     drm_gem_shmem_vmap_locked+0x3cc/0x658 drivers/gpu/drm/drm_gem_shmem_helper.c:405
+                     drm_gem_shmem_object_vmap+0x28/0x38 include/drm/drm_gem_shmem_helper.h:245
+                     drm_gem_vmap_locked drivers/gpu/drm/drm_gem.c:1273 [inline]
+                     drm_gem_vmap+0x104/0x1d8 drivers/gpu/drm/drm_gem.c:1315
+                     drm_client_buffer_vmap+0x68/0xb0 drivers/gpu/drm/drm_client.c:355
+                     drm_fbdev_shmem_driver_fbdev_probe+0x1f4/0x700 drivers/gpu/drm/drm_fbdev_shmem.c:159
+                     drm_fb_helper_single_fb_probe drivers/gpu/drm/drm_fb_helper.c:1562 [inline]
+                     __drm_fb_helper_initial_config_and_unlock+0x108c/0x1728 drivers/gpu/drm/drm_fb_helper.c:1741
+                     drm_fb_helper_initial_config+0x3c/0x58 drivers/gpu/drm/drm_fb_helper.c:1828
+                     drm_fbdev_client_hotplug+0x154/0x22c drivers/gpu/drm/clients/drm_fbdev_client.c:66
+                     drm_client_register+0x13c/0x1d4 drivers/gpu/drm/drm_client.c:143
+                     drm_fbdev_client_setup+0x194/0x3d0 drivers/gpu/drm/clients/drm_fbdev_client.c:168
+                     drm_client_setup+0x114/0x228 drivers/gpu/drm/clients/drm_client_setup.c:46
+                     vkms_create+0x370/0x420 drivers/gpu/drm/vkms/vkms_drv.c:211
+                     vkms_init+0x64/0x9c drivers/gpu/drm/vkms/vkms_drv.c:239
+                     do_one_initcall+0x248/0x9b4 init/main.c:1378
+                     do_initcall_level+0x128/0x1c4 init/main.c:1440
+                     do_initcalls+0x70/0xd0 init/main.c:1456
+                     do_basic_setup+0x78/0x8c init/main.c:1475
+                     kernel_init_freeable+0x268/0x39c init/main.c:1688
+                     kernel_init+0x24/0x1dc init/main.c:1578
+                     ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
+  }
+  ... key      at: [<ffff80009764a620>] xa_init_flags.__key+0x0/0x20
+  ... acquired at:
+   seqcount_lockdep_reader_access include/linux/seqlock.h:72 [inline]
+   fprop_fraction_percpu+0xf0/0x270 lib/flex_proportions.c:155
+   __fprop_add_percpu_max+0x130/0x1f4 lib/flex_proportions.c:186
+   wb_domain_writeout_add mm/page-writeback.c:562 [inline]
+   __wb_writeout_add+0xbc/0x27c mm/page-writeback.c:586
+   __folio_end_writeback+0x380/0x6f8 mm/page-writeback.c:2997
+   folio_end_writeback_no_dropbehind+0xd0/0x204 mm/filemap.c:1661
+   folio_end_writeback+0xd8/0x248 mm/filemap.c:1687
+   iomap_finish_folio_write+0x1c0/0x2a4 fs/iomap/buffered-io.c:1713
+   fuse_writepage_finish fs/fuse/file.c:1903 [inline]
+   fuse_writepage_end+0x238/0x454 fs/fuse/file.c:2003
+   fuse_request_end+0x898/0xc10 fs/fuse/dev.c:507
+   fuse_dev_end_requests fs/fuse/dev.c:2415 [inline]
+   fuse_abort_conn+0xe88/0x10a0 fs/fuse/dev.c:2513
+   fuse_dev_release+0x430/0x4c8 fs/fuse/dev.c:2556
+   __fput+0x340/0x75c fs/file_table.c:468
+   fput_close_sync+0x100/0x264 fs/file_table.c:573
+   __do_sys_close fs/open.c:1573 [inline]
+   __se_sys_close fs/open.c:1558 [inline]
+   __arm64_sys_close+0x7c/0x118 fs/open.c:1558
+   __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+   invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
+   el0_svc_common+0xe8/0x23c arch/arm64/kernel/syscall.c:132
+   do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+   el0_svc+0x5c/0x26c arch/arm64/kernel/entry-common.c:724
+   el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:743
+   el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+-> (&p->sequence){+.-.}-{0:0} {
+   HARDIRQ-ON-W at:
+                    lock_acquire+0x140/0x2e0 kernel/locking/lockdep.c:5868
+                    do_write_seqcount_begin_nested include/linux/seqlock.h:477 [inline]
+                    do_write_seqcount_begin include/linux/seqlock.h:503 [inline]
+                    fprop_new_period+0x3b8/0x718 lib/flex_proportions.c:74
+                    writeout_period+0x94/0x11c mm/page-writeback.c:615
+                    call_timer_fn+0x19c/0x814 kernel/time/timer.c:1748
+                    expire_timers kernel/time/timer.c:1799 [inline]
+                    __run_timers kernel/time/timer.c:2373 [inline]
+                    __run_timer_base+0x51c/0x76c kernel/time/timer.c:2385
+                    run_timer_base kernel/time/timer.c:2394 [inline]
+                    run_timer_softirq+0x11c/0x194 kernel/time/timer.c:2405
+                    handle_softirqs+0x31c/0xc88 kernel/softirq.c:622
+                    __do_softirq+0x14/0x20 kernel/softirq.c:656
+                    ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:68
+                    call_on_irq_stack+0x30/0x48 arch/arm64/kernel/entry.S:891
+                    do_softirq_own_stack+0x20/0x2c arch/arm64/kernel/irq.c:73
+                    invoke_softirq kernel/softirq.c:503 [inline]
+                    __irq_exit_rcu+0x1b0/0x478 kernel/softirq.c:723
+                    irq_exit_rcu+0x14/0x84 kernel/softirq.c:739
+                    __el1_irq arch/arm64/kernel/entry-common.c:498 [inline]
+                    el1_interrupt+0x40/0x60 arch/arm64/kernel/entry-common.c:510
+                    el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:515
+                    el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:592
+                    __daif_local_irq_enable arch/arm64/include/asm/irqflags.h:26 [inline]
+                    arch_local_irq_enable arch/arm64/include/asm/irqflags.h:48 [inline]
+                    preempt_schedule_irq+0x78/0x188 kernel/sched/core.c:7189
+                    raw_irqentry_exit_cond_resched+0x30/0x44 kernel/entry/common.c:173
+                    irqentry_exit+0x1b0/0x308 kernel/entry/common.c:216
+                    exit_to_kernel_mode+0x10/0x1c arch/arm64/kernel/entry-common.c:58
+                    __el1_irq arch/arm64/kernel/entry-common.c:500 [inline]
+                    el1_interrupt+0x4c/0x60 arch/arm64/kernel/entry-common.c:510
+                    el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:515
+                    el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:592
+                    __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:175 [inline]
+                    arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline]
+                    class_irqsave_destructor include/linux/irqflags.h:266 [inline]
+                    __free_object+0x514/0x720 lib/debugobjects.c:524
+                    free_object lib/debugobjects.c:532 [inline]
+                    debug_object_free+0x298/0x3e4 lib/debugobjects.c:976
+                    destroy_hrtimer_on_stack kernel/time/hrtimer.c:448 [inline]
+                    hrtimer_nanosleep+0x214/0x2a4 kernel/time/hrtimer.c:2178
+                    common_nsleep+0xa0/0xb8 kernel/time/posix-timers.c:1352
+                    __do_sys_clock_nanosleep kernel/time/posix-timers.c:1398 [inline]
+                    __se_sys_clock_nanosleep kernel/time/posix-timers.c:1375 [inline]
+                    __arm64_sys_clock_nanosleep+0x334/0x370 kernel/time/posix-timers.c:1375
+                    __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+                    invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
+                    el0_svc_common+0xe8/0x23c arch/arm64/kernel/syscall.c:132
+                    do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+                    el0_svc+0x5c/0x26c arch/arm64/kernel/entry-common.c:724
+                    el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:743
+                    el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+   IN-SOFTIRQ-W at:
+                    lock_acquire+0x140/0x2e0 kernel/locking/lockdep.c:5868
+                    do_write_seqcount_begin_nested include/linux/seqlock.h:477 [inline]
+                    do_write_seqcount_begin include/linux/seqlock.h:503 [inline]
+                    fprop_new_period+0x3b8/0x718 lib/flex_proportions.c:74
+                    writeout_period+0x94/0x11c mm/page-writeback.c:615
+                    call_timer_fn+0x19c/0x814 kernel/time/timer.c:1748
+                    expire_timers kernel/time/timer.c:1799 [inline]
+                    __run_timers kernel/time/timer.c:2373 [inline]
+                    __run_timer_base+0x51c/0x76c kernel/time/timer.c:2385
+                    run_timer_base kernel/time/timer.c:2394 [inline]
+                    run_timer_softirq+0x11c/0x194 kernel/time/timer.c:2405
+                    handle_softirqs+0x31c/0xc88 kernel/softirq.c:622
+                    __do_softirq+0x14/0x20 kernel/softirq.c:656
+                    ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:68
+                    call_on_irq_stack+0x30/0x48 arch/arm64/kernel/entry.S:891
+                    do_softirq_own_stack+0x20/0x2c arch/arm64/kernel/irq.c:73
+                    invoke_softirq kernel/softirq.c:503 [inline]
+                    __irq_exit_rcu+0x1b0/0x478 kernel/softirq.c:723
+                    irq_exit_rcu+0x14/0x84 kernel/softirq.c:739
+                    __el1_irq arch/arm64/kernel/entry-common.c:498 [inline]
+                    el1_interrupt+0x40/0x60 arch/arm64/kernel/entry-common.c:510
+                    el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:515
+                    el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:592
+                    __daif_local_irq_enable arch/arm64/include/asm/irqflags.h:26 [inline]
+                    arch_local_irq_enable arch/arm64/include/asm/irqflags.h:48 [inline]
+                    preempt_schedule_irq+0x78/0x188 kernel/sched/core.c:7189
+                    raw_irqentry_exit_cond_resched+0x30/0x44 kernel/entry/common.c:173
+                    irqentry_exit+0x1b0/0x308 kernel/entry/common.c:216
+                    exit_to_kernel_mode+0x10/0x1c arch/arm64/kernel/entry-common.c:58
+                    __el1_irq arch/arm64/kernel/entry-common.c:500 [inline]
+                    el1_interrupt+0x4c/0x60 arch/arm64/kernel/entry-common.c:510
+                    el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:515
+                    el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:592
+                    __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:175 [inline]
+                    arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline]
+                    class_irqsave_destructor include/linux/irqflags.h:266 [inline]
+                    __free_object+0x514/0x720 lib/debugobjects.c:524
+                    free_object lib/debugobjects.c:532 [inline]
+                    debug_object_free+0x298/0x3e4 lib/debugobjects.c:976
+                    destroy_hrtimer_on_stack kernel/time/hrtimer.c:448 [inline]
+                    hrtimer_nanosleep+0x214/0x2a4 kernel/time/hrtimer.c:2178
+                    common_nsleep+0xa0/0xb8 kernel/time/posix-timers.c:1352
+                    __do_sys_clock_nanosleep kernel/time/posix-timers.c:1398 [inline]
+                    __se_sys_clock_nanosleep kernel/time/posix-timers.c:1375 [inline]
+                    __arm64_sys_clock_nanosleep+0x334/0x370 kernel/time/posix-timers.c:1375
+                    __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+                    invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
+                    el0_svc_common+0xe8/0x23c arch/arm64/kernel/syscall.c:132
+                    do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+                    el0_svc+0x5c/0x26c arch/arm64/kernel/entry-common.c:724
+                    el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:743
+                    el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+   INITIAL READ USE at:
+                        lock_acquire+0x140/0x2e0 kernel/locking/lockdep.c:5868
+                        seqcount_lockdep_reader_access include/linux/seqlock.h:72 [inline]
+                        fprop_fraction_percpu+0xac/0x270 lib/flex_proportions.c:155
+                        __wb_calc_thresh+0xfc/0x3b0 mm/page-writeback.c:913
+                        wb_bg_dirty_limits mm/page-writeback.c:2130 [inline]
+                        domain_over_bg_thresh+0xb8/0x1f0 mm/page-writeback.c:2144
+                        wb_over_bg_thresh+0xf8/0x17c mm/page-writeback.c:2165
+                        wb_check_background_flush fs/fs-writeback.c:2278 [inline]
+                        wb_do_writeback fs/fs-writeback.c:2376 [inline]
+                        wb_workfn+0xa30/0xdc0 fs/fs-writeback.c:2403
+                        process_one_work+0x7c0/0x1558 kernel/workqueue.c:3257
+                        process_scheduled_works kernel/workqueue.c:3340 [inline]
+                        worker_thread+0x958/0xed8 kernel/workqueue.c:3421
+                        kthread+0x5fc/0x75c kernel/kthread.c:463
+                        ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
+ }
+ ... key      at: [<ffff800097b9a340>] fprop_global_init.__key.1+0x0/0x20
+ ... acquired at:
+   mark_lock+0x170/0x1d0 kernel/locking/lockdep.c:4753
+   mark_usage kernel/locking/lockdep.c:4662 [inline]
+   __lock_acquire+0x9a0/0x30a4 kernel/locking/lockdep.c:5191
+   lock_acquire+0x140/0x2e0 kernel/locking/lockdep.c:5868
+   do_write_seqcount_begin_nested include/linux/seqlock.h:477 [inline]
+   do_write_seqcount_begin include/linux/seqlock.h:503 [inline]
+   fprop_new_period+0x3b8/0x718 lib/flex_proportions.c:74
+   writeout_period+0x94/0x11c mm/page-writeback.c:615
+   call_timer_fn+0x19c/0x814 kernel/time/timer.c:1748
+   expire_timers kernel/time/timer.c:1799 [inline]
+   __run_timers kernel/time/timer.c:2373 [inline]
+   __run_timer_base+0x51c/0x76c kernel/time/timer.c:2385
+   run_timer_base kernel/time/timer.c:2394 [inline]
+   run_timer_softirq+0x11c/0x194 kernel/time/timer.c:2405
+   handle_softirqs+0x31c/0xc88 kernel/softirq.c:622
+   __do_softirq+0x14/0x20 kernel/softirq.c:656
+   ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:68
+   call_on_irq_stack+0x30/0x48 arch/arm64/kernel/entry.S:891
+   do_softirq_own_stack+0x20/0x2c arch/arm64/kernel/irq.c:73
+   invoke_softirq kernel/softirq.c:503 [inline]
+   __irq_exit_rcu+0x1b0/0x478 kernel/softirq.c:723
+   irq_exit_rcu+0x14/0x84 kernel/softirq.c:739
+   __el1_irq arch/arm64/kernel/entry-common.c:498 [inline]
+   el1_interrupt+0x40/0x60 arch/arm64/kernel/entry-common.c:510
+   el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:515
+   el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:592
+   __daif_local_irq_enable arch/arm64/include/asm/irqflags.h:26 [inline]
+   arch_local_irq_enable arch/arm64/include/asm/irqflags.h:48 [inline]
+   preempt_schedule_irq+0x78/0x188 kernel/sched/core.c:7189
+   raw_irqentry_exit_cond_resched+0x30/0x44 kernel/entry/common.c:173
+   irqentry_exit+0x1b0/0x308 kernel/entry/common.c:216
+   exit_to_kernel_mode+0x10/0x1c arch/arm64/kernel/entry-common.c:58
+   __el1_irq arch/arm64/kernel/entry-common.c:500 [inline]
+   el1_interrupt+0x4c/0x60 arch/arm64/kernel/entry-common.c:510
+   el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:515
+   el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:592
+   __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:175 [inline]
+   arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline]
+   class_irqsave_destructor include/linux/irqflags.h:266 [inline]
+   __free_object+0x514/0x720 lib/debugobjects.c:524
+   free_object lib/debugobjects.c:532 [inline]
+   debug_object_free+0x298/0x3e4 lib/debugobjects.c:976
+   destroy_hrtimer_on_stack kernel/time/hrtimer.c:448 [inline]
+   hrtimer_nanosleep+0x214/0x2a4 kernel/time/hrtimer.c:2178
+   common_nsleep+0xa0/0xb8 kernel/time/posix-timers.c:1352
+   __do_sys_clock_nanosleep kernel/time/posix-timers.c:1398 [inline]
+   __se_sys_clock_nanosleep kernel/time/posix-timers.c:1375 [inline]
+   __arm64_sys_clock_nanosleep+0x334/0x370 kernel/time/posix-timers.c:1375
+   __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+   invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
+   el0_svc_common+0xe8/0x23c arch/arm64/kernel/syscall.c:132
+   do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+   el0_svc+0x5c/0x26c arch/arm64/kernel/entry-common.c:724
+   el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:743
+   el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 6572 Comm: syz-executor Not tainted syzkaller #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/03/2025
+Call trace:
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:499 (C)
+ __dump_stack+0x30/0x40 lib/dump_stack.c:94
+ dump_stack_lvl+0xd8/0x12c lib/dump_stack.c:120
+ dump_stack+0x1c/0x28 lib/dump_stack.c:129
+ print_irq_inversion_bug+0x1f8/0x1fc kernel/locking/lockdep.c:4125
+ mark_lock_irq+0x3b4/0x47c kernel/locking/lockdep.c:-1
+ mark_lock+0x170/0x1d0 kernel/locking/lockdep.c:4753
+ mark_usage kernel/locking/lockdep.c:4662 [inline]
+ __lock_acquire+0x9a0/0x30a4 kernel/locking/lockdep.c:5191
+ lock_acquire+0x140/0x2e0 kernel/locking/lockdep.c:5868
+ do_write_seqcount_begin_nested include/linux/seqlock.h:477 [inline]
+ do_write_seqcount_begin include/linux/seqlock.h:503 [inline]
+ fprop_new_period+0x3b8/0x718 lib/flex_proportions.c:74
+ writeout_period+0x94/0x11c mm/page-writeback.c:615
+ call_timer_fn+0x19c/0x814 kernel/time/timer.c:1748
+ expire_timers kernel/time/timer.c:1799 [inline]
+ __run_timers kernel/time/timer.c:2373 [inline]
+ __run_timer_base+0x51c/0x76c kernel/time/timer.c:2385
+ run_timer_base kernel/time/timer.c:2394 [inline]
+ run_timer_softirq+0x11c/0x194 kernel/time/timer.c:2405
+ handle_softirqs+0x31c/0xc88 kernel/softirq.c:622
+ __do_softirq+0x14/0x20 kernel/softirq.c:656
+ ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:68
+ call_on_irq_stack+0x30/0x48 arch/arm64/kernel/entry.S:891
+ do_softirq_own_stack+0x20/0x2c arch/arm64/kernel/irq.c:73
+ invoke_softirq kernel/softirq.c:503 [inline]
+ __irq_exit_rcu+0x1b0/0x478 kernel/softirq.c:723
+ irq_exit_rcu+0x14/0x84 kernel/softirq.c:739
+ __el1_irq arch/arm64/kernel/entry-common.c:498 [inline]
+ el1_interrupt+0x40/0x60 arch/arm64/kernel/entry-common.c:510
+ el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:515
+ el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:592
+ __daif_local_irq_enable arch/arm64/include/asm/irqflags.h:26 [inline] (P)
+ arch_local_irq_enable arch/arm64/include/asm/irqflags.h:48 [inline] (P)
+ preempt_schedule_irq+0x78/0x188 kernel/sched/core.c:7189 (P)
+ raw_irqentry_exit_cond_resched+0x30/0x44 kernel/entry/common.c:173
+ irqentry_exit+0x1b0/0x308 kernel/entry/common.c:216
+ exit_to_kernel_mode+0x10/0x1c arch/arm64/kernel/entry-common.c:58
+ __el1_irq arch/arm64/kernel/entry-common.c:500 [inline]
+ el1_interrupt+0x4c/0x60 arch/arm64/kernel/entry-common.c:510
+ el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:515
+ el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:592
+ __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:175 [inline] (P)
+ arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline] (P)
+ class_irqsave_destructor include/linux/irqflags.h:266 [inline] (P)
+ __free_object+0x514/0x720 lib/debugobjects.c:524 (P)
+ free_object lib/debugobjects.c:532 [inline]
+ debug_object_free+0x298/0x3e4 lib/debugobjects.c:976
+ destroy_hrtimer_on_stack kernel/time/hrtimer.c:448 [inline]
+ hrtimer_nanosleep+0x214/0x2a4 kernel/time/hrtimer.c:2178
+ common_nsleep+0xa0/0xb8 kernel/time/posix-timers.c:1352
+ __do_sys_clock_nanosleep kernel/time/posix-timers.c:1398 [inline]
+ __se_sys_clock_nanosleep kernel/time/posix-timers.c:1375 [inline]
+ __arm64_sys_clock_nanosleep+0x334/0x370 kernel/time/posix-timers.c:1375
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0xe8/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x5c/0x26c arch/arm64/kernel/entry-common.c:724
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:743
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
