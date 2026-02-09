@@ -1,137 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-76746-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76747-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aJp+Lv01imm0IQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76746-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 20:31:09 +0100
+	id EAV6OVQ2immhIQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76747-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 20:32:36 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A371141D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 20:31:09 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B0311141FC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 20:32:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 393DC3026C02
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Feb 2026 19:30:51 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 2020A301C941
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Feb 2026 19:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26EE423A6A;
-	Mon,  9 Feb 2026 19:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607B83A6403;
+	Mon,  9 Feb 2026 19:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qe/57tgw"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aiV0zTQ1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5115938759B;
-	Mon,  9 Feb 2026 19:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688ED38759B
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Feb 2026 19:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770665449; cv=none; b=gAhk6w5l2vUfHNSBEGIffAcMkRI7r5qseKLdWqsLNK5V473/cGcSLGs43yeIz9gKm1Juzg/vy2hhPzjwkBWZzsImOZcBODJUFIaMTEVIX24SV+igAmDIe+ie6N5NknA7aNabj6AG9JAFzMif7hblQ5sGW2xf9KiYpOrdArQC0xQ=
+	t=1770665554; cv=none; b=nOiqvYJaJrWVM9Y377m9dxQHHuZxNs/dD9Yo37WQU+ipYbnz8QKHrijx2w7/D6lPyz4V03ilBI/SAPzIV7uZFX2SPPZJ8FGeiIozXaogaaDCeNCtusd0GDiASQTf4+YwWVoLwSVlCGpoD4VqcNdfPwfaF8IcpW+YUhCSYCGiYIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770665449; c=relaxed/simple;
-	bh=zrJUCHukbfzP557UANU8l3FaP7bX7yDd2ON1I8n/hmU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TKrX8P7YF+CgoQYOYH50RAP1z+XR+8f5TWEOeQ/9aNojBNwoncDsL4KyBUxecOwMwSCY+foyUFQwccxB/6Zjx3OSAhxH2FRt5HHdXJ5NdbPXq8lR9d7frS1c9lQyfeXV9oIFtzLUMM/g5QoawZsSuWlESDY3NrgmbL7cU7Pl+WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qe/57tgw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB629C116C6;
-	Mon,  9 Feb 2026 19:30:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770665448;
-	bh=zrJUCHukbfzP557UANU8l3FaP7bX7yDd2ON1I8n/hmU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Qe/57tgwfFP66I8oSPSWM+4H+o7kzbimhIlnmPROULjzNkOGjGRNaueaWJZ3vdpbp
-	 wJgtw+ECH1g48fEJUkfA5QVNYEQwYg1NRK+OzyYkmYFkyWBWwaOgJENDubeW5Ms5Ah
-	 OL8UlpY3OXvX7O71wQbcPB543ybz0wNQSNVJfrXHvgsrR/DKOPrpamD6vr2D+i5dsI
-	 jmFQNM2M6mnrr+4dCMnsQRAxauJaeaySISx3BrqNWq5rHiWffT47ftdBOzdAf250iE
-	 NLZSyexIQtzO8CKVyPtcca/spPVn3/qlmf9p+uVbHe5uiQ5oUa60kDvrQRu62IAz7W
-	 i58VmSprDDcKQ==
-Message-ID: <e2a7dd77-246d-4af5-a30b-ba726951ff84@kernel.org>
-Date: Mon, 9 Feb 2026 14:30:46 -0500
+	s=arc-20240116; t=1770665554; c=relaxed/simple;
+	bh=mO9KvaCxSxjaKQri3HOqdCrZdJkCwNtMjDtvvxJltKs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bny8dl4HyXTVptBMhGnea965H8D5dD73yl4n/b3JwfGKUPMhc84ryRSIRe7VEvsmlychP1HzO89Qe3HWOv9Sx2azY4PXP8ETRGXxXA9LmAlSOefWF+YP3W9p9Ohi3Mms9LwI2Mqi0Q6n9TVIzXhQ7AOLTpdI6oUp6ZO7PyFaeoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aiV0zTQ1; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1770665554; x=1802201554;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=mO9KvaCxSxjaKQri3HOqdCrZdJkCwNtMjDtvvxJltKs=;
+  b=aiV0zTQ1JYE0wdo0jhTCPW+6rh1TPL5qXHv9c/9k+iM8pDM0glpYNmOf
+   dzk+w6nZi92/U7ufVHm8YyqPkqXn9dn+chJPGj/mShrG7uJ+6Bizq0iNo
+   9sHiZLs7POqF0QidObTzkhhNlcjGxc5bTVP+/RiO+15gIHazx3SVKsyEs
+   2Rxq+S13fTfOS9FPMwKEiLFAwDwXWZS57osg7ZQCmJ7tA8irBgcvQ9F5p
+   XFXdM7LNWzybBCS9eiXSWEzmm48NlNApJ5rl8ROlFKdXE0WkM95XPW4/4
+   ksep/1nisd8jqPHVrgdywrj5dLZaBbiV3b3l4HxWTt4maOSc/LY15+p4t
+   Q==;
+X-CSE-ConnectionGUID: WQ2fL4rKTM++FSnQnCodug==
+X-CSE-MsgGUID: cKSA+NizR+uCMPwN+8WiJQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11696"; a="70802119"
+X-IronPort-AV: E=Sophos;i="6.21,282,1763452800"; 
+   d="scan'208";a="70802119"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2026 11:32:33 -0800
+X-CSE-ConnectionGUID: 1ygWWuVbRbmxaaSteuvK0Q==
+X-CSE-MsgGUID: Acs6ICtBTHueukP3Nu72Zw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,282,1763452800"; 
+   d="scan'208";a="234625411"
+Received: from tassilo.jf.intel.com ([10.54.38.190])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2026 11:32:32 -0800
+From: Andi Kleen <ak@linux.intel.com>
+To: linux-mm@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	Andi Kleen <ak@linux.intel.com>
+Subject: [PATCH] smaps: Report correct page sizes with THP
+Date: Mon,  9 Feb 2026 11:32:23 -0800
+Message-ID: <20260209193223.230797-1-ak@linux.intel.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/1] NFSD: Enforce timeout on layout recall and
- integrate lease manager fencing
-To: Dai Ngo <dai.ngo@oracle.com>, Chuck Lever <chuck.lever@oracle.com>,
- Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
- Olga Kornievskaia <okorniev@redhat.com>, Tom Talpey <tom@talpey.com>,
- Christoph Hellwig <hch@lst.de>, Alexander Aring <alex.aring@gmail.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
-References: <20260207060940.2234728-1-dai.ngo@oracle.com>
- <ebcb1893-bf03-4637-bf0c-918eb42705bd@app.fastmail.com>
- <e66142e7-ae6e-4d4a-b2fd-2507d2948f77@oracle.com>
-Content-Language: en-US
-From: Chuck Lever <cel@kernel.org>
-Organization: kernel.org
-In-Reply-To: <e66142e7-ae6e-4d4a-b2fd-2507d2948f77@oracle.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
+	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76746-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_TO(0.00)[oracle.com,kernel.org,brown.name,redhat.com,talpey.com,lst.de,gmail.com,zeniv.linux.org.uk,suse.cz];
-	HAS_ORG_HEADER(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	RCPT_COUNT_TWELVE(0.00)[13];
 	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-76747-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[intel.com:+];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[cel@kernel.org,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[ak@linux.intel.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	PRECEDENCE_BULK(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 24A371141D8
+	RCVD_COUNT_FIVE(0.00)[5];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,linux.intel.com:mid,intel.com:email,intel.com:dkim]
+X-Rspamd-Queue-Id: 5B0311141FC
 X-Rspamd-Action: no action
 
-On 2/9/26 2:24 PM, Dai Ngo wrote:
->>> diff --git a/fs/nfsd/nfs4layouts.c b/fs/nfsd/nfs4layouts.c
->>> index ad7af8cfcf1f..c02b3219ebeb 100644
->>> --- a/fs/nfsd/nfs4layouts.c
->>> +++ b/fs/nfsd/nfs4layouts.c
->>> @@ -27,6 +27,25 @@ static struct kmem_cache *nfs4_layout_stateid_cache;
->>>   static const struct nfsd4_callback_ops nfsd4_cb_layout_ops;
->>>   static const struct lease_manager_operations nfsd4_layouts_lm_ops;
->>>
->>> +/*
->>> + * By default, if the server fails to fence a client, it retries the
->>> fencing
->>> + * operation indefinitely to prevent data corruption. The admin
->>> needs to take
->>> + * the following actions to restore access to the file for other
->>> clients:
->>> + *
->>> + *    . shutdown or power off the client being fenced.
->>> + *    . manually expire the client to release all its state on the
->>> server;
->>> + *      echo 'expire' > proc/fs/nfsd/clients/clientid/ctl'.
->> Has there been any testing that shows expiring that client actually
->> breaks the fence retry loop below?
-> 
-> nfsd4_revoke_states calls nfsd4_close_layout to remove all file leases.
-> I manually tested it.
+Recently I wasted quite some time debugging why THP didn't work, when it
+was just smaps always reporting the base page size. It has separate
+counts for (non m) THP, but using them is not always obvious. For
+standard THP the page sizes can be actually derived from the existing
+counts, so do just do that. I left KernelPageSize alone.
+The mixed page size case is reported with a new MMUPageSize2 item.
+This doesn't do anything about mTHP reporting, but even the basic
+smaps is not aware of it so far.
 
-Excellent!
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+---
+ Documentation/filesystems/proc.rst |  2 +-
+ fs/proc/task_mmu.c                 | 14 +++++++++++++-
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
+diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+index 8256e857e2d7..7c776046d15a 100644
+--- a/Documentation/filesystems/proc.rst
++++ b/Documentation/filesystems/proc.rst
+@@ -483,7 +483,7 @@ entries; the page size used by the MMU when backing a VMA (in most cases,
+ the same as KernelPageSize); the amount of the mapping that is currently
+ resident in RAM (RSS); the process's proportional share of this mapping
+ (PSS); and the number of clean and dirty shared and private pages in the
+-mapping.
++mapping. If the mapping has multiple page size there might be a MMUPageSize2.
+ 
+ The "proportional set size" (PSS) of a process is the count of pages it has
+ in memory, where each page is divided by the number of processes sharing it.
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 26188a4ad1ab..9123e59dcf4c 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -1377,7 +1377,19 @@ static int show_smap(struct seq_file *m, void *v)
+ 
+ 	SEQ_PUT_DEC("Size:           ", vma->vm_end - vma->vm_start);
+ 	SEQ_PUT_DEC(" kB\nKernelPageSize: ", vma_kernel_pagesize(vma));
+-	SEQ_PUT_DEC(" kB\nMMUPageSize:    ", vma_mmu_pagesize(vma));
++
++	/* Only THP? */
++	if (mss.shmem_thp + mss.file_thp + mss.anonymous_thp == mss.resident &&
++	    mss.resident > 0) {
++		SEQ_PUT_DEC(" kB\nMMUPageSize:    ", HPAGE_PMD_SIZE);
++	} else {
++		unsigned ps = vma_mmu_pagesize(vma);
++		/* Will need adjustments when more THP page sizes are added. */
++		SEQ_PUT_DEC(" kB\nMMUPageSize:    ", ps);
++		if (mss.shmem_thp + mss.file_thp + mss.anonymous_thp > 0 &&
++		    ps != HPAGE_PMD_SIZE)
++			SEQ_PUT_DEC(" kB\nMMUPageSize2:   ", HPAGE_PMD_SIZE);
++	}
+ 	seq_puts(m, " kB\n");
+ 
+ 	__show_smap(m, &mss, false);
 -- 
-Chuck Lever
+2.52.0
+
 
