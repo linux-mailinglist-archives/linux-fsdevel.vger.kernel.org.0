@@ -1,141 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-76684-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76685-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id IJoFBNt2iWlm9gQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76684-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 06:55:39 +0100
+	id cCUsGxCAiWlx+AQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76685-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 07:34:56 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0498810BE80
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 06:55:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 102A810C21B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 07:34:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A6693302335E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Feb 2026 05:53:34 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 607BF3053AA5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Feb 2026 06:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F002D7D2E;
-	Mon,  9 Feb 2026 05:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="hAIqYxbU"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160EF2DB79E;
+	Mon,  9 Feb 2026 06:30:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57D82222B2
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Feb 2026 05:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C49254B03;
+	Mon,  9 Feb 2026 06:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770616413; cv=none; b=D3HTCKhX3QXIQltvtSIpvkbJYfVmwwl5Iv1WV1f1fiPiuNQYhFW/Bl4vLbgFy9lEWzYKZLDzEhW8vMSTjTAQP20w8hZQ6K9HfMAfosu1dDVcQu4TYllRcTEDRuxpX9SR4t5MmcbGZzLDVdUdsY7/hMvBkopqhIW/fINHi7pOeXk=
+	t=1770618625; cv=none; b=vBA1hx6ygxREW+y7ypDb8AKwfn0cvgUYJa1oWLwW2WMKQ1ltA9Ja3OcoCPDMD3gEpt7rqCrgGLSunuTGvQSFUzcfMLeUTe0RmwOAjlT3SSwBdkcHHm/CtMYI6MD1x2HNqdaPa0PNrGsCVbbDYjV2pPHdStRrQefHsIchrmcmEuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770616413; c=relaxed/simple;
-	bh=YSWVGhknRSYN6/8V+ssyrvOe3ckX2Sj+uIo5r1zB7lM=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=E+kVG/uTzj54la9TIdo78kvaouxVgHeE08MqIyfF20VlZDI5r7Qh+cXYsOq0rXPozSLqNVdt+4sNO0lQT7Loa6euMiF74HKsEUD3XAzFnEz9tUHu9B6uub7haDTJu96n8vNSseb1ImSQDma3fg9/2GYTwbjBblTEVtMxi4PA8d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=hAIqYxbU; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 6195rKKU2640801
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Sun, 8 Feb 2026 21:53:21 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 6195rKKU2640801
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2026012301; t=1770616401;
-	bh=jJ5YJqHA5U9H2Y5cb9DW/Pvkh+enhGlHyNQCSgVSI5s=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=hAIqYxbUV7YJoxy381sGyLz+mjQqldWGbOSkjgufidkjHlfsD4A09q0SrM4+TFcB5
-	 tKWdtZ6myot9RlhrRPYO9ErzxOzr/ewdq0ShPLNNdQ99056+5IXCUIri9SC/RQlBI4
-	 YckaIxio6mYoB7s3LSU3ub3TYBcry6EoqjiqYEpI7srp2BbFZ8Xy4aEt4iBMHv6e4L
-	 Z9DA8WVheGmfd6VvVHpw6XqwW8X1v1uTJQ8LIB/XIQlEDQER+BmDvnI2zlxAj9Wfna
-	 COKrmY3qOpp3IZmoOEBk9nuJiJG+4qdU7L0amEf5cXZyhGSyWOPMZpieVMSwNTbijH
-	 GPW27ZvffSkxw==
-Date: Sun, 08 Feb 2026 21:53:14 -0800
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-CC: linux-fsdevel@vger.kernel.org, Christian Brauner <christian@brauner.io>,
-        Jan Kara <jack@suse.cz>, Werner Almesberger <werner@almesberger.net>
-Subject: Re: [RFC] pivot_root(2) races
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CAHk-=whoVEhWbBJK9SiA0XoUbyurn9gN8O0gUAne88a4gXDLyQ@mail.gmail.com>
-References: <20260209003437.GF3183987@ZenIV> <CAHk-=whoVEhWbBJK9SiA0XoUbyurn9gN8O0gUAne88a4gXDLyQ@mail.gmail.com>
-Message-ID: <17624EFF-F10E-462A-95E4-6E8A1D691DAA@zytor.com>
+	s=arc-20240116; t=1770618625; c=relaxed/simple;
+	bh=N2L2HxztJFQlyH5vYhD3rePl+E4Fq4txNNYSsSY+8jQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HhHRx0IoruvDs1rp6XSwIFdePmsQvxa59i5JomXiKjKZ7zg1yY2Yxif0gOd3KL+IdZw4BB1BjK2Pm1HByhu5YG4bJ3+vXM2EAMOPPf1gn+WYGJrbq0h0WW2vBj0XNeGfSL7bZG1IFDycKDCExTpN/XEjNoEf9gvvuAnzsbL+Xbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id AA8A168B05; Mon,  9 Feb 2026 07:30:18 +0100 (CET)
+Date: Mon, 9 Feb 2026 07:30:18 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Kundan Kumar <kundan.kumar@samsung.com>
+Cc: Christoph Hellwig <hch@lst.de>, djwong@kernel.org,
+	Brian Foster <bfoster@redhat.com>, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, willy@infradead.org,
+	mcgrof@kernel.org, clm@meta.com, david@fromorbit.com,
+	amir73il@gmail.com, axboe@kernel.dk, ritesh.list@gmail.com,
+	dave@stgolabs.net, cem@kernel.org, wangyufei@vivo.com,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-xfs@vger.kernel.org, gost.dev@samsung.com,
+	anuj20.g@samsung.com, vishak.g@samsung.com, joshi.k@samsung.com
+Subject: Re: [PATCH v3 0/6] AG aware parallel writeback for XFS
+Message-ID: <20260209063018.GB9021@lst.de>
+References: <CGME20260116101236epcas5p12ba3de776976f4ea6666e16a33ab6ec4@epcas5p1.samsung.com> <20260116100818.7576-1-kundan.kumar@samsung.com> <aXEvAD5Rf5QLp4Ma@bfoster> <ca048ecf-5aec-4a0d-8faf-ad9fcd310e21@samsung.com> <aXN3EtxKFXX8DEbl@bfoster> <e7413e3b-3fae-4aab-90a1-4a6695156b2e@samsung.com> <20260206062527.GA25841@lst.de> <28bfd5b4-0c97-46dd-9579-b162e44873a2@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <28bfd5b4-0c97-46dd-9579-b162e44873a2@samsung.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [0.14 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[zytor.com,none];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[zytor.com:s=2026012301];
 	MAILLIST(-0.15)[generic];
+	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76684-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76685-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_TRACE(0.00)[zytor.com:+];
+	RCPT_COUNT_TWELVE(0.00)[24];
+	FREEMAIL_CC(0.00)[lst.de,kernel.org,redhat.com,zeniv.linux.org.uk,suse.cz,infradead.org,meta.com,fromorbit.com,gmail.com,kernel.dk,stgolabs.net,vivo.com,vger.kernel.org,kvack.org,samsung.com];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCPT_COUNT_FIVE(0.00)[6];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hpa@zytor.com,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	NEURAL_HAM(-0.00)[-0.918];
 	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.org.uk:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,zytor.com:mid,zytor.com:dkim]
-X-Rspamd-Queue-Id: 0498810BE80
+	R_DKIM_NA(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 102A810C21B
 X-Rspamd-Action: no action
 
-On February 8, 2026 9:49:40 PM PST, Linus Torvalds <torvalds@linux-foundati=
-on=2Eorg> wrote:
->On Sun, 8 Feb 2026 at 16:32, Al Viro <viro@zeniv=2Elinux=2Eorg=2Euk> wrot=
-e:
->>
->>         AFAICS, the original rationale had been about the kernel thread=
-s
->> that would otherwise keep the old root busy=2E
->
->I don't think it was even about just kernel threads, it was about the
->fact that pivot_root was done early, but after other user space things
->could have been started=2E
->
->Of course, now it's used much more widely than the original "handle
->initial root switching in user space"
->
->>         Unfortunately, the way it's been done (all the way since the
->> original posting) is racy=2E  If pivot_root() is called while another
->> thread is in the middle of fork(), it will not see the fs_struct of
->> the child to be=2E
->
->I think that what is much more serious than races is the *non*racy behavi=
-or=2E
->
->Maybe I'm missing something, but it looks like anybody can just switch
->things around for _other_ namespaces if they have CAP_SYS_ADMIN in
->_their_ namespace=2E It's just using may_mount()", which i sabout the
->permission to modify the locall namespace=2E
->
->I probably am missing something, and just took a very quick look, and
->am missing some check for "only change processes we have permission to
->change"=2E
->
->         Linus
+On Fri, Feb 06, 2026 at 03:37:38PM +0530, Kundan Kumar wrote:
+> When you say "coarse-grained sharding", do you mean tracking a single
+> "home AG" per inode (no per-folio tagging) and using it as a best-effort
+> hint for writeback routing?
 
-Kernel threads were absolutely the motivation early on=2E pivot_root() its=
-elf was expected to be run by the ramdisk pre-init which would then chroot(=
-) itself=2E
+Yes, but..
+
+> If so, we can align with that and keep the threading model generic by
+> relying on bdi writeback contexts. Concretely, XFS would set up a 
+> bounded number of bdi wb contexts at mount time, and route each inode to 
+> its home shard. Does this align with what you have in mind?
+
+Yes.
+
+> We had implemented a similar approach in earlier versions of this
+> series[1]. But the feedback[2] that we got was that mapping high level
+> writeback to eventual AG allocation can be sometimes inaccurate (aged
+> filesystems, inode spanning accross multiple AGs, etc.), so we moved to
+> per folio tagging to make the routing decision closer to the actual IO.
+> That said, I agree that the per folio approach is complex.
+
+It is inaccurate, not to say often wrong.  And that's the point I'm
+trying to make here:  start with simplifying the allocation policies
+so that they make sense in this kind of environment, and then align
+that sharding to that.
+
 
