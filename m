@@ -1,210 +1,236 @@
-Return-Path: <linux-fsdevel+bounces-76700-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76701-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id qHHSIrXTiWk3CAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76700-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 13:31:49 +0100
+	id MGJfCZTViWklCAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76701-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 13:39:48 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D45F10EA69
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 13:31:48 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B85EC10ED44
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 13:39:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 53DE03004053
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Feb 2026 11:53:24 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 9529330036C3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Feb 2026 11:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EBA6372B32;
-	Mon,  9 Feb 2026 11:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5102372B44;
+	Mon,  9 Feb 2026 11:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f/wBSrDJ"
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="PJQejhtF";
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="PJQejhtF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3654318B8A
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Feb 2026 11:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355E230C626;
+	Mon,  9 Feb 2026 11:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770638000; cv=none; b=SlCFYD4xDdCQSGqoC53v1kbr2hJFZva/atjdh4QSskbRrYeuyWs/dUXjY7Q1oOpQZnS0rdDQ8yAUmZG0hHe2YRLn3Oxe0rjwEjMeEQhacY0A8J7enJeJJd2ZAO8F3kF+0cg3mQeglsdOWg4y8nBJFP97DtdraUdBunPbwyWAVXM=
+	t=1770638080; cv=none; b=H+ZZfQN8YP+pyQAPb/+tcVujSBz58xQfbHyyIrXmMGNQA9KneI8XHHoCAvNpEnIyXQA41ISHuGwOlP7KPU8MdvtbDrXibyb3DuURXEdf6tkkYhqjLpy5z7vHsQf1T78wi9A03reB5FTKbR3EGz5BDaYT5nC7MPy6EvMVpSSUUpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770638000; c=relaxed/simple;
-	bh=/HQ63PbsITeClHs1oO78se3pu9Lmk6cOQEgDeCC6QsU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cBz8Vreee5dswa+B9j2cYIhEjGCIBLLXAG1Rom/hgiN4qfNz0RwPaQixYgE8/SHaLwRX7kULLTGnTxntTI0QEIPeDk8fnpS/MMFKwwcJfBwthPvu6vOF/2DExLJsdeozr1SUdHY5frqSKLmR7T1Dx0YpYWd5x7Cawn01fuIMNCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f/wBSrDJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC920C116C6;
-	Mon,  9 Feb 2026 11:53:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770638000;
-	bh=/HQ63PbsITeClHs1oO78se3pu9Lmk6cOQEgDeCC6QsU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f/wBSrDJIdXYApHXn6U8C7kSfdhNp+DGWaCCwVn7norvP8BwMylF3UcyPbiSSxNFY
-	 WcaoUdpDv9fOT4mRJTmfxrL2mTvr1AFgxS9zDVCrrxxTwpFbdTw/BqlA6vfSNuFVJp
-	 FLqupTav6yNp0B10P6vbPbojdpe6QY1jklRr1dpFN5H+vApAY0VL+ViZI0w2aOmF/4
-	 0SYG7g4KIKXfFQqivXOArPY1dMbq91ZacPkBHTeak1JMq5JSVo1k9IxOj+FRPeOE4Z
-	 yuG1S6gPBHNBKS/KxDy52XXO9UNreakGrI6eacQBSDGDvDhj90HzJ5dZKSq9LNw+C6
-	 vvocbPASA0X1Q==
-Date: Mon, 9 Feb 2026 12:53:16 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
-	Christian Brauner <christian@brauner.io>, Jan Kara <jack@suse.cz>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Werner Almesberger <werner@almesberger.net>
-Subject: Re: [RFC] pivot_root(2) races
-Message-ID: <20260209-veredeln-verinnerlichen-cb817f3e9853@brauner>
-References: <20260209003437.GF3183987@ZenIV>
- <CAHk-=whoVEhWbBJK9SiA0XoUbyurn9gN8O0gUAne88a4gXDLyQ@mail.gmail.com>
- <20260209063454.GI3183987@ZenIV>
- <CAHk-=wikNJ82dh097VZbqNf_jAiwwZ_opzfvMr-8Ub3_1cx3jQ@mail.gmail.com>
+	s=arc-20240116; t=1770638080; c=relaxed/simple;
+	bh=Wbgd7ZMDdQl9PFvLa4LseO/xZdDASQbGH8mtuMW1GXY=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=R6coQe+6h13p60dMKqiwWnMk8eMFdyZtQkjaGM8WxWxkLfgD9xDFp3WM2kIthGackuxIKx9IaNS/A8GFiW7SSCkG0TfAgL89XZrytEGXgC80ix0g+cLppj44VQcJhnGgUW0BeyoPocUPGzilqOF/N3CIYpN85SZodiwZcRXBWrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=PJQejhtF; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=PJQejhtF; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=87jS9hA6CNFtZFnnBnwUEZeCAKiOLm/Lt+umcyTbarg=;
+	b=PJQejhtFjpPok7RdAijwT4qVRey94d/d5Q2JD6Bgs7i9GG9/A9Yn6EDExt4Ws7Xh+HuHdPvrp
+	wstjXUuVW2s5YVPxmZhor7wF7Wm2wbIbZvkoU2pl05doyqfkjbd0244GwUnWN/a4vcBPGEto2lU
+	A2rxUzdf3cNE+sWShagONgI=
+Received: from canpmsgout02.his.huawei.com (unknown [172.19.92.185])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTPS id 4f8jl63Pdrz1BFRg;
+	Mon,  9 Feb 2026 19:53:38 +0800 (CST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=87jS9hA6CNFtZFnnBnwUEZeCAKiOLm/Lt+umcyTbarg=;
+	b=PJQejhtFjpPok7RdAijwT4qVRey94d/d5Q2JD6Bgs7i9GG9/A9Yn6EDExt4Ws7Xh+HuHdPvrp
+	wstjXUuVW2s5YVPxmZhor7wF7Wm2wbIbZvkoU2pl05doyqfkjbd0244GwUnWN/a4vcBPGEto2lU
+	A2rxUzdf3cNE+sWShagONgI=
+Received: from mail.maildlp.com (unknown [172.19.162.144])
+	by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4f8jfl2PRhzcbNJ;
+	Mon,  9 Feb 2026 19:49:51 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2B64C40567;
+	Mon,  9 Feb 2026 19:54:23 +0800 (CST)
+Received: from kwepemq500010.china.huawei.com (7.202.194.235) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 9 Feb 2026 19:54:22 +0800
+Received: from [10.173.125.37] (10.173.125.37) by
+ kwepemq500010.china.huawei.com (7.202.194.235) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 9 Feb 2026 19:54:21 +0800
+Subject: Re: [PATCH v3 1/3] mm: memfd/hugetlb: introduce memfd-based userspace
+ MFR policy
+To: Jiaqi Yan <jiaqiyan@google.com>
+CC: <nao.horiguchi@gmail.com>, <tony.luck@intel.com>,
+	<wangkefeng.wang@huawei.com>, <willy@infradead.org>,
+	<akpm@linux-foundation.org>, <osalvador@suse.de>, <rientjes@google.com>,
+	<duenwen@google.com>, <jthoughton@google.com>, <jgg@nvidia.com>,
+	<ankita@nvidia.com>, <peterx@redhat.com>, <sidhartha.kumar@oracle.com>,
+	<ziy@nvidia.com>, <david@redhat.com>, <dave.hansen@linux.intel.com>,
+	<muchun.song@linux.dev>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<william.roche@oracle.com>, <harry.yoo@oracle.com>, <jane.chu@oracle.com>
+References: <20260203192352.2674184-1-jiaqiyan@google.com>
+ <20260203192352.2674184-2-jiaqiyan@google.com>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <7ad34b69-2fb4-770b-14e5-bea13cf63d2f@huawei.com>
+Date: Mon, 9 Feb 2026 19:54:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wikNJ82dh097VZbqNf_jAiwwZ_opzfvMr-8Ub3_1cx3jQ@mail.gmail.com>
+In-Reply-To: <20260203192352.2674184-2-jiaqiyan@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemq500010.china.huawei.com (7.202.194.235)
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [2.34 / 15.00];
-	MID_END_EQ_FROM_USER_PART(4.00)[];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	DMARC_POLICY_ALLOW(-0.50)[huawei.com,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[huawei.com:s=dkim];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76700-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-76701-lists,linux-fsdevel=lfdr.de];
+	RCPT_COUNT_TWELVE(0.00)[24];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
+	FREEMAIL_CC(0.00)[gmail.com,intel.com,huawei.com,infradead.org,linux-foundation.org,suse.de,google.com,nvidia.com,redhat.com,oracle.com,linux.intel.com,linux.dev,kvack.org,vger.kernel.org];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,linux.org.uk:email]
-X-Rspamd-Queue-Id: 9D45F10EA69
+	FROM_NEQ_ENVFROM(0.00)[linmiaohe@huawei.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[huawei.com:+];
+	PRECEDENCE_BULK(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	RCVD_COUNT_SEVEN(0.00)[8]
+X-Rspamd-Queue-Id: B85EC10ED44
 X-Rspamd-Action: no action
 
-On Sun, Feb 08, 2026 at 10:44:31PM -0800, Linus Torvalds wrote:
-> On Sun, 8 Feb 2026 at 22:32, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > Not really - look at those check_mnt() in pivot_root(2).
-> > static inline int check_mnt(const struct mount *mnt)
-> > {
-> >         return mnt->mnt_ns == current->nsproxy->mnt_ns;
-> > }
-> >
-> > SYSCALL_DEFINE2(pivot_root, const char __user *, new_root,
-> >                 const char __user *, put_old)
-> > {
-> >         ...
-> >         if (!check_mnt(root_mnt) || !check_mnt(new_mnt))
-> >                 return -EINVAL;
-> >
-> > IOW, try to do that to another namespace and you'll get -EINVAL,
-> > no matter what permissions you might have in your namespace
-> > (or globally, for that matter).
+On 2026/2/4 3:23, Jiaqi Yan wrote:
+> Sometimes immediately hard offlining a large chunk of contigous memory
+> having uncorrected memory errors (UE) may not be the best option.
+> Cloud providers usually serve capacity- and performance-critical guest
+> memory with 1G HugeTLB hugepages, as this significantly reduces the
+> overhead associated with managing page tables and TLB misses. However,
+> for today's HugeTLB system, once a byte of memory in a hugepage is
+> hardware corrupted, the kernel discards the whole hugepage, including
+> the healthy portion. Customer workload running in the VM can hardly
+> recover from such a great loss of memory.
+
+Thanks for your patch. Some questions below.
+
 > 
-> It's more that you can affect *processes* in another namespace if I
-> read things right. Not other processes' namespaces, but basically
-> processes that you have no business trying to change...
+> Therefore keeping or discarding a large chunk of contiguous memory
+> owned by userspace (particularly to serve guest memory) due to
+> recoverable UE may better be controlled by userspace process
+> that owns the memory, e.g. VMM in the Cloud environment.
 > 
-> Yes, both the old and new root need to be in your own namespace, but
-> imagine that you are a process in some random container, and let's say
-> that root (the *real* root in the init namespace) is looking at your
-> container state.
+> Introduce a memfd-based userspace memory failure (MFR) policy,
+> MFD_MF_KEEP_UE_MAPPED. It is possible to support for other memfd,
+> but the current implementation only covers HugeTLB.
 > 
-> IOW, imagine that I'm system root, and I've naively done a "cd
-> /proc/<pid>/cwd" to look at the state of some sucker, and now...
+> For a hugepage associated with MFD_MF_KEEP_UE_MAPPED enabled memfd,
+> whenever it runs into a new UE,
 > 
-> Am I mis-reading things entirely, or can a random process in that
-> container (that has mount permissions in that thing) basically do
-> pivot_root(), and in the process change the CWD of that root process
-> that just happens to be looking at that container state?
+> * MFR defers hard offline operations, i.e., unmapping and
+
+So the folio can't be unpoisoned until hugetlb folio becomes free?
+
+>   dissolving. MFR still sets HWPoison flag, holds a refcount
+>   for every raw HWPoison page, record them in a list, sends SIGBUS
+>   to the consuming thread, but si_addr_lsb is reduced to PAGE_SHIFT.
+>   If userspace is able to handle the SIGBUS, the HWPoison hugepage
+>   remains accessible via the mapping created with that memfd.
 > 
-> I'm just naively looking at that for_each_process_thread() loop that does that
+> * If the memory was not faulted in yet, the fault handler also
+>   allows fault in the HWPoison folio.
 > 
->                 hits += replace_path(&fs->pwd, old_root, new_root);
+> For a MFD_MF_KEEP_UE_MAPPED enabled memfd, when it is closed, or
+> when userspace process truncates its hugepages:
 > 
-> but the keyword here is "naively".
+> * When the HugeTLB in-memory file system removes the filemap's
+>   folios one by one, it asks MFR to deal with HWPoison folios
+>   on the fly, implemented by filemap_offline_hwpoison_folio().
 > 
-> Is there some other check that I'm missing?
+> * MFR drops the refcounts being held for the raw HWPoison
+>   pages within the folio. Now that the HWPoison folio becomes
+>   free, MFR dissolves it into a set of raw pages. The healthy pages
+>   are recycled into buddy allocator, while the HWPoison ones are
+>   prevented from re-allocation.
+> 
+...
 
-Funny, I was looking at this just a very short while ago and have
-written a lengthy mail about this to Jeff here on-list. And yes, I think
-your reading is right. Let me add the braindump I did for Jeff (very
-container centric):
+>  
+> +static void filemap_offline_hwpoison_folio_hugetlb(struct folio *folio)
+> +{
+> +	int ret;
+> +	struct llist_node *head;
+> +	struct raw_hwp_page *curr, *next;
+> +
+> +	/*
+> +	 * Since folio is still in the folio_batch, drop the refcount
+> +	 * elevated by filemap_get_folios.
+> +	 */
+> +	folio_put_refs(folio, 1);
+> +	head = llist_del_all(raw_hwp_list_head(folio));
 
-  The main problem with pivot_root() is not just that it moves the
-  old rootfs to any other location on the new rootfs it also takes the
-  tasklist read lock and walks all processes on the system trying to find
-  any process that uses the old rootfs as its fs root or its pwd and then
-  rechroots and repwds all of these processes into the new rootfs.
+We might race with get_huge_page_for_hwpoison()? llist_add() might be called
+by folio_set_hugetlb_hwpoison() just after llist_del_all()?
 
-  But for 90% of the use-cases (containers) that is not needed. When the
-  container's mount namespace and rootfs are setup the task creating that
-  container is the only task that is using the old rootfs and that task
-  could very well just rechroot itself after it unmounted the old rootfs.
+> +
+> +	/*
+> +	 * Release refcounts held by try_memory_failure_hugetlb, one per
+> +	 * HWPoison-ed page in the raw hwp list.
+> +	 *
+> +	 * Set HWPoison flag on each page so that free_has_hwpoisoned()
+> +	 * can exclude them during dissolve_free_hugetlb_folio().
+> +	 */
+> +	llist_for_each_entry_safe(curr, next, head, node) {
+> +		folio_put(folio);
 
-  So in essence pivot_root() holds tasklist lock and walks all tasks on
-  the systems for no reason. If the user has a beefy and busy machine with
-  lots of processes coming and going each pivot_root() penalizes the whole
-  system.
+The hugetlb folio refcnt will only be increased once even if it contains multiple UE sub-pages.
+See __get_huge_page_for_hwpoison() for details. So folio_put() might be called more times than
+folio_try_get() in __get_huge_page_for_hwpoison().
 
-I have a patchset sitting in my tree for the 7.1 cycle that I want to
-merge that is a better alternative to pivot_root() in most cases -
-definitely the container cases.
+> +		SetPageHWPoison(curr->page);
 
-It just enables MOVE_MOUNT_BENEATH which I added a few years ago to work
-with the rootfs. This means one can stuff a new rootfs under the current
-rootfs, unmount the old rootfs and chroot and chdir into the new rootfs
-and then be done. This works for all container use-cases where you don't
-need to care about any global kernel threads picking up the updated
-root. You don't need chroot_fs_refs() for that at all.
+If hugetlb folio vmemmap is optimized, I think SetPageHWPoison might trigger BUG.
 
-With MOVE_MOUNT_BENEATH being able to mount beneath the rootfs you get
-the following benefits:
+> +		kfree(curr);
+> +	}
 
-* completely avoids the tasklist locking and rechroot/repwd logic
+Above logic is almost same as folio_clear_hugetlb_hwpoison. Maybe we can reuse that?
 
-* the pivot_root(".", ".") trick where the old rootfs is mounted on top
-  of the new rootfs is for free
+> +
+> +	/* Refcount now should be zero and ready to dissolve folio. */
+> +	ret = dissolve_free_hugetlb_folio(folio);
+> +	if (ret)
+> +		pr_err("failed to dissolve hugetlb folio: %d\n", ret);
+> +}
+> +
 
-* MOVE_MOUNT_BENEATH works with detached mounts which means one can
-  assemble a (container) rootfs and then swap the old rootfs with the
-  new rootfs
+Thanks.
+.
 
-Fwiw, there's also work I sent for this cycle that allows to completely
-sidestep pivot_root() already for containers. I'm pretty sure that
-sooner or later with that work unshare(CLONE_NEWNS) will be gone from
-most container times completely because what we did scales a lot better.
-
-I think even for the case where init pivot's root from the initramfs
-the pivot_root() system call isn't really needed anymore because iirc
-CLONE_FS guarantees that any change to its root and pwd is visible in
-kernel threads. So as long as init isn't stupid and does
-unshare(CLONE_FS) and watches what other tasks are created just doing
-MOVE_MOUNT_BENEATH might be enough. But idk. I don't think it matters
-calling pivot_root() during boot so for that case I don't care. But for
-containers I for sure care as the current situation is just a
-performance issue for no good reason.
-
-Fwiw, for the 7.1 cycle I also have a patchset for
-unshare(UNSHARE_EMPTY_MNTNS) and also for clone3() which creates a
-completely empty mount namespaces with a catatonic/immutable mount as
-its root getting rid of a bunch of the issues mentioned earlier as well.
-It's simply not needed for most modern container setups to copy the
-whole mount namespace. It's just wasteful as the rootfs setup can now
-happen way before the container is ever created via the new mount api.
 
