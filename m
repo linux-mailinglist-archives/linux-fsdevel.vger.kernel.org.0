@@ -1,162 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-76682-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76683-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +dJoIHhpiWl08gQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76682-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 05:58:32 +0100
+	id oFX4L8p1iWlm9gQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76683-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 06:51:06 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF0A910BAE1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 05:58:31 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A57B10BE29
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 06:51:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id C275130082A6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Feb 2026 04:58:30 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id B3203300515B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Feb 2026 05:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7A92BEFEB;
-	Mon,  9 Feb 2026 04:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5972741C0;
+	Mon,  9 Feb 2026 05:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M2Ou/SDb"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TGdXwc9K"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4E9AD5A
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Feb 2026 04:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542F72222B2
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Feb 2026 05:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770613109; cv=none; b=gJQ25Nj8HPdosdUCl+CoOIkmIvrtC8pNmYZ1UuEL0pvVVNkGU2O1Hq8KIaaIIKo7CZPAPYLgMsJJcuA64URZ7HjbqNAA56HK6BhNQjOQagHhR2g9QldzGspGLw+61vI34/ZnhPKDwhtsApUFgPex0E1Evmc62k4LVJFMp1geO4Q=
+	t=1770616200; cv=none; b=h6hdHsxA9J6tubdzCLUgPmJ4vSPjlq4wDnuhWVA9lMjLqJ0yMULLvbrfSTkjFIZMnv8V+IF2RSpo3qrrwQN8QcpIKAWLDOfqrCQ407BJ4oEklB4yh+8ff+Kegfu5MihMcUi3s7Oh+ZBsGmYcINAWbk36XL7VX7Yu9O44qaUmsJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770613109; c=relaxed/simple;
-	bh=kBBRCIEGOxP71duR9Pdkyw6icI+O41FhThI+xmeNQyk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DebXjtJclLFPzfhjq/q4zLmwTToQPaSoOVCQIq5XXild2k5Cj8u9bsxFDTCTVzKNce5vx0jOItpirBBEXIIw8qMQebPfS2RrWpTjb8d1auAbugKC7UZqo0lWOgDnS9VaZg29lXYv+Z3/K2A/FRj5Y+IxGjst9PJXmX8ZRBD1ao4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M2Ou/SDb; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-4362197d174so2273761f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Feb 2026 20:58:28 -0800 (PST)
+	s=arc-20240116; t=1770616200; c=relaxed/simple;
+	bh=zvbERxRIICWBxzW2Xv1Wp9+Xoc641ebErcKf7kqmly4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dK4LiWkyPRN5bjlnTPau6fFQPynRizgTyEEo6Dbgfb7TITl8PnLwlCVf/m9Qqi2Iw3zEJyCs+bqt17RYSFVfZzjql7Fzn3meqlKMfOmLLlsXbnUQpqUOEEyDAR35rtG2RqsX+6OnE1c+qtuUrxcyvnnn4ysNpGBNpoyqNegrUBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TGdXwc9K; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-658cc45847cso5946588a12.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Feb 2026 21:49:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770613107; x=1771217907; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4peVNB+5ELYTcHmDpzvkLXgbTr9tYPUTjyVW9rxozv8=;
-        b=M2Ou/SDb3JlBres7u+FI08FLc+5RxjpFScUBVas3Z156Gh+M9lam72UDYdTT64k1PC
-         xj86hp28oMUOZbX4PAZwQJEUYvTVklybKdQkBRH87EvJDb9WZULF9o2jD3+KZ3Rtam4F
-         1LR4475fCwXkLXu2nkzjwMj/kPKFSzIssS3GMqR1EIuM2WBgrEoRnI5iBtbBlvU/dkMJ
-         As6zESs4jsjBLWTjSy+A2FwEi/dNINqf3gnYZtvTqW4pRwJJH4fF/e8E932IzGxjklgP
-         5g/l2EUZcDXqUBIq6TxmqwPmIfpSauOQriCn7L5syZgD3/jWVyfPv5R9YU4d9PMIS/Jk
-         T3zg==
+        d=linux-foundation.org; s=google; t=1770616198; x=1771220998; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cKq5xRR4e9Yx6vJj96EqeBan5WGrdOP5Cs3dzQ9+flc=;
+        b=TGdXwc9KYO5xVzLWkF/jboEdOi1B4YGXmW6TIH0sBI3VOono2eHHyL05nft6l0IbTk
+         DoAVrn6h4U1Vfk/2+ux+Ii2cGVrNjIww8tsYoX+pYMJjeMAosX/uEFNMRwVo37NsPwUc
+         1WSUbVB0C5dNjd18rEKAXCGUEhsUPVQqjbEk4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770613107; x=1771217907;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4peVNB+5ELYTcHmDpzvkLXgbTr9tYPUTjyVW9rxozv8=;
-        b=m/8zTxD+IO0kUzX9WwiQKwBR9/v14dtfZuQp3zXKR3bjtGqfjybLvI8LEYkCuO7gMA
-         hAj7o3Q/VpAk4swLAj6/W02WnmsvoN3oti/iCe/ZGzkt3Zcc3hVidwCuNQCAhByvEpUY
-         ChmCIFxaQ0C9YvP1jHJc1svG3vMNXTiPTtPU+VZlkfxLJYm3mVAC4j3G5ZC3GWtcnDqK
-         /92VBHVXQ4MlnWsYP+ONPhdzfWepi3Gtkji6v1vNQlNFQ+5Vh9QLMqdY+HCJ5zABYIHr
-         Stq/k/mO4j1NOrhxWHNAKrC6AqYxNx7kxm8G5f/kmIlG7A3/rFIkghSMlCOQTClvXk5M
-         O52Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW0yQVQJ/EFMkEuD/zcEpxlJQZnhz6eaZ4B7fkuMwA1TrVtxASkOL3hQDG1E70OSg9Q5oXoeNh3Oi9SN+o6@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/jM4wGdntEOvpbNfAmcpMVaWKDvW8YMjBMscfw02MkyOIkPUC
-	ktiXp7YIHkhO3gr9GbKUoHCmwEydtRzeetS97VfQh/ERa23mHRvkSM5e
-X-Gm-Gg: AZuq6aL63H1fgCLzdQIcthAbEeksSeBTYw1woLvbNGbtZ/u7jqtmXef4BwOlPrKsASu
-	9HKaRwkrYvdz9OonWEp6FqQ22s/59mnOUIa7Q06bPcDJDI2NRBj3oqv6+TRxYDh3mmDobYX7F7N
-	XwMJvzphigGimOskSRx6VgvIpraTm/y1vaYlU++7RAf53q6odU8E6Sx7l9R+jy+BGGnrrn7tBC9
-	ZACU2VKvz8kAfdoy2eoQo5BYu3slh4hvbrgduiuLnd0ry5sRjQlKsLKRj3s2nkB93rlAAcsR1b3
-	xSX/wBjHuNk56gFAFliwrm2XmebT/Ncqyvg6h0htKJR+KhWi8dvWc5QHt9fqrW5nZdnxOl/Ufdy
-	JmJYFkZ2R7WocwARb0de4DER56Mvd0XNC5R+B0D2m11Jmfxp5ctwyO+QW1E85nPcfT/4g69wExb
-	ji80+Q3GiA4nZu1BEfD8Nrp30hXfUZZD6g7WuanhTITLNVGRk/ytiQQeg=
-X-Received: by 2002:a05:6000:2889:b0:436:1a24:df81 with SMTP id ffacd0b85a97d-4362904b702mr13678811f8f.2.1770613106865;
-        Sun, 08 Feb 2026 20:58:26 -0800 (PST)
-Received: from eldamar.lan (c-82-192-244-13.customer.ggaweb.ch. [82.192.244.13])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4376a78d796sm8070092f8f.20.2026.02.08.20.58.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Feb 2026 20:58:25 -0800 (PST)
-Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
-Received: by eldamar.lan (Postfix, from userid 1000)
-	id 587D7BE2DE0; Mon, 09 Feb 2026 05:58:24 +0100 (CET)
-Date: Mon, 9 Feb 2026 05:58:24 +0100
-From: Salvatore Bonaccorso <carnil@debian.org>
-To: Steve Dickson <steved@redhat.com>
-Cc: Linux NFS Mailing list <linux-nfs@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: ANNOUNCE: nfs-utils-2.8.5 released.
-Message-ID: <aYlpcPkq_glykQvJ@eldamar.lan>
-References: <fdf3631f-e924-4e4c-bd9f-db5b40a90bfe@redhat.com>
+        d=1e100.net; s=20230601; t=1770616198; x=1771220998;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cKq5xRR4e9Yx6vJj96EqeBan5WGrdOP5Cs3dzQ9+flc=;
+        b=fITgYWrpRbVcy6OhA1c5pQYB0KB7YDuDABwd/nhenTOG7i+5kgKBR8+yMfUh3hVbHA
+         v4utOYxz/UJea6P4eRnoLffuDGmcSIjmlxiQ9A+P0kbtW2oX/QnQcvBow/Qmn1UNM7L3
+         htGKGYg2+/aVOzVl0GMgKnuWEzwdguOgtIqJl/BR/1Pc4O6T0zre8EQgKA0bCupuBVgA
+         HO6A2F9b8DyQlJg+JWBo309RJGWFS+iZdnt8jGLCBcIgqObrPpI5BgrtuM5+I2zxRjiL
+         /zAeP7/OzoknjIOfTrEXQ0M2wfzYmHM/LLTWgMUToCYsDNSOsV2DH1oHBJdK49IjTUZp
+         A8hQ==
+X-Gm-Message-State: AOJu0YyqmyxZaKeCV4zdgA5XqGtqTs/ieTsAY6YkYaMstDSMwNdOrLmC
+	Z2+IG1D2wbDsrN0nGB9Jx881jU1549H4oVG6z0YEymHMUN7RdHAEk4DQuNUwPBvesZho9FZQ4I0
+	/9VupDbM=
+X-Gm-Gg: AZuq6aIwzVoIb/vWt6RFzvjZVcBQ+VAI4uCFxa9NS5/duW/SptT/b76Yf/8DWweAu6q
+	uEpO+bdMVCTTtB+WHRh5nhFJvm2SoK9EtmNuGw0+3kiYO2dTRZRa1JL6rzl4cMkHBmcz+hB9jyF
+	5ce+Wk1Yc+yKzvtpVz34a171ktOKGea4g+q3Q5rJJ+CGgUSIxLCQBuiOJIN5by5KfArPlQbUtCw
+	+NYji6snfOqx9aRRs6aWly07X7lxLeGf57fyRVAUxd2VrqM91pFm0b766xpm/kbl4BLr30aigjf
+	Ltvk6t/4kwo8TAilE1lpIayj93OgpMx7iCgz1+BjYtsP1s8Wj5YfdUXfmcZibd/FTnhYeKoSMmI
+	cpvRpUKZ1rdnixwTkN76sU2V+7i2qC0P534qCDZJ7cYtUT2jnBzIRkyu8n7kmCd2PEkMQ8rM+t2
+	izjv4V0uRDIymIe7x9nJxCHA06T6h5NmzNHNjPLuDjrOzjhKXSad5Y+XCMo7QrZHX0HfYKA7Y=
+X-Received: by 2002:a05:6402:2103:b0:64d:1a0f:694b with SMTP id 4fb4d7f45d1cf-6598412bb6fmr4764375a12.10.1770616198379;
+        Sun, 08 Feb 2026 21:49:58 -0800 (PST)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-65983eb67e2sm2500254a12.13.2026.02.08.21.49.57
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Feb 2026 21:49:57 -0800 (PST)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b884ad1026cso611264466b.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Feb 2026 21:49:57 -0800 (PST)
+X-Received: by 2002:a17:907:9413:b0:b7a:2ba7:197e with SMTP id
+ a640c23a62f3a-b8edf25c528mr512379266b.29.1770616197201; Sun, 08 Feb 2026
+ 21:49:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fdf3631f-e924-4e4c-bd9f-db5b40a90bfe@redhat.com>
+References: <20260209003437.GF3183987@ZenIV>
+In-Reply-To: <20260209003437.GF3183987@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 8 Feb 2026 21:49:40 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whoVEhWbBJK9SiA0XoUbyurn9gN8O0gUAne88a4gXDLyQ@mail.gmail.com>
+X-Gm-Features: AZwV_QixpikWBJ4nDRPLGV9yEyPx_ZhzFZxN7fvv-EDUmxsROYMsqMMuVs1L_0c
+Message-ID: <CAHk-=whoVEhWbBJK9SiA0XoUbyurn9gN8O0gUAne88a4gXDLyQ@mail.gmail.com>
+Subject: Re: [RFC] pivot_root(2) races
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <christian@brauner.io>, 
+	Jan Kara <jack@suse.cz>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Werner Almesberger <werner@almesberger.net>
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[linux-foundation.org:s=google];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-76682-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76683-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	DMARC_NA(0.00)[debian.org];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	DMARC_NA(0.00)[linux-foundation.org];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[linux-foundation.org:+];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	RCPT_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[torvalds@linux-foundation.org,linux-fsdevel@vger.kernel.org];
 	MISSING_XM_UA(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[carnil@debian.org,linux-fsdevel@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[3];
-	NEURAL_HAM(-0.00)[-0.996];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,eldamar.lan:mid]
-X-Rspamd-Queue-Id: EF0A910BAE1
+	NEURAL_HAM(-0.00)[-0.997];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,linux.org.uk:email]
+X-Rspamd-Queue-Id: 1A57B10BE29
 X-Rspamd-Action: no action
 
-Hi Steve,
+On Sun, 8 Feb 2026 at 16:32, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+>         AFAICS, the original rationale had been about the kernel threads
+> that would otherwise keep the old root busy.
 
-On Mon, Feb 02, 2026 at 06:45:30AM -0500, Steve Dickson wrote:
-> Hello,
-> 
-> This release contains the following:
-> 
->     * Man page corrections
->     * min-threads parameter added to nfsdctl.
->     * systemd updates to rpc-statd-notify.
->     * blkmapd not built by default (--enable-blkmapd to re-enable)
->     * A number of other bug fixes.
-> 
-> The tarballs can be found in
->   https://www.kernel.org/pub/linux/utils/nfs-utils/2.8.5/
-> or
->   http://sourceforge.net/projects/nfs/files/nfs-utils/2.8.5
-> 
-> The change log is in
->    https://www.kernel.org/pub/linux/utils/nfs-utils/2.8.5/2.8.5-Changelog
-> or
->  http://sourceforge.net/projects/nfs/files/nfs-utils/2.8.4/2.8.5-Changelog
-> 
-> 
-> The git tree is at:
->    git://linux-nfs.org/~steved/nfs-utils
+I don't think it was even about just kernel threads, it was about the
+fact that pivot_root was done early, but after other user space things
+could have been started.
 
-While 2.8.5 was released, I do not see yet a release commit and tag in
-the git repository, is this correct?
+Of course, now it's used much more widely than the original "handle
+initial root switching in user space"
 
-Regards,
-Salvatore
+>         Unfortunately, the way it's been done (all the way since the
+> original posting) is racy.  If pivot_root() is called while another
+> thread is in the middle of fork(), it will not see the fs_struct of
+> the child to be.
+
+I think that what is much more serious than races is the *non*racy behavior.
+
+Maybe I'm missing something, but it looks like anybody can just switch
+things around for _other_ namespaces if they have CAP_SYS_ADMIN in
+_their_ namespace. It's just using may_mount()", which i sabout the
+permission to modify the locall namespace.
+
+I probably am missing something, and just took a very quick look, and
+am missing some check for "only change processes we have permission to
+change".
+
+         Linus
 
