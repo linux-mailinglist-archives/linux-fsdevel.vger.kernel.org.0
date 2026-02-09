@@ -1,74 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-76706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id sBXcOvDniWmdDwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 14:58:08 +0100
+	id 2GeoMD7piWlnEAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 15:03:42 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 654FB10FF47
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 14:58:08 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2883C110010
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 15:03:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 60D13301953F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Feb 2026 13:57:05 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id ABEA93028EEF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Feb 2026 14:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E261E379992;
-	Mon,  9 Feb 2026 13:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924CD378D74;
+	Mon,  9 Feb 2026 14:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="A9bNyPOx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p5JHx7Pg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3A03793AD;
-	Mon,  9 Feb 2026 13:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A4C22B8BD;
+	Mon,  9 Feb 2026 14:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770645423; cv=none; b=u6RBfBJMAd8Yy+i46mUdaead0+GJ794sEL3WamWajsR+UizFNGAJF8r1Lj/RzPJPppPuKCN9vfD6UWz8c+W+/+jmLFUgJwK9rFChxvryIIbOIVeC3x5v92x+aaOZfsrtuZs9s7mdAQ2A+WS1AI8YPmDGQ7pKGiAXRNgb87vUaTI=
+	t=1770645686; cv=none; b=rHeud/xV2aq0FVx8npXqUKx0wXPWzN3gKOlHbkXHiFiwfEcRxoBGbiv8S81Hp5QFsxuxTbnIS2Xs54okjDO4RiHYd2Lsy+ppFg8MS50K4mlwZkpGxskAOZCZBcS9J8pZXzjdvYxBDwLh5lWbITH1GHR99HvgQznupzycPsR1E0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770645423; c=relaxed/simple;
-	bh=0PrYKRQczg+VNl5lzty4yY3HXn9K859irlTbMaToxo8=;
+	s=arc-20240116; t=1770645686; c=relaxed/simple;
+	bh=okR+EAtZhjqHaf6qo/7UrQbLty7TTHO1yWpP4wFCTMU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mpLWlao7RKu8n1rCOJ+ShffGvpRIp92ZLwqgGmxgl0RxeiEHJYlvQ9RjkgqPA/w0tWpmchhv0N3c2hqkjXP0BDQQ3l8LWbO2jqGiqEZYqM7nUjgs2fSfoxubHyibiyjoJk1J8hfcYfFwJOs/qF7mHZfNALAfToyObZZIz9/eWDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=A9bNyPOx; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Reply-To:Content-ID:Content-Description;
-	bh=0PrYKRQczg+VNl5lzty4yY3HXn9K859irlTbMaToxo8=; b=A9bNyPOxfA5exPo547YFN/1F6x
-	vhwKzEbbTagpPwpb6zeXy790szN5uK5HA5PNu9qRvTybhURAZDESi5iKqDgIo42Xh5kw8w4R0KqXK
-	eeVLD1Z/vqDReBW3aTMyfKCzJWoeIVaF3GMg2GSJq5KFL5TtBPr6mSItJl9oJm7AMCOjoBzwfcBcU
-	BSxF4au9OM9LWSF6ZDKcDZ7of2ruxFU02Bt/3+muLBmVMW50DXWMSq5xS1pCsrlP0f+g5hvHDSPtn
-	/Lh4QWy1+ErW2zjfkUP/rEBcH0m0qvD+FfNfUfErpIr74MNUWtV2sDNHBaRJxaKzuYESrLRTwrf5P
-	w0WDhAtA==;
-Received: from authenticated user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.94.2)
-	(envelope-from <leitao@debian.org>)
-	id 1vpRkm-009X0U-4k; Mon, 09 Feb 2026 13:56:40 +0000
-Date: Mon, 9 Feb 2026 05:56:34 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Matthew Wood <thepacketgeek@gmail.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org, hch@infradead.org, 
-	jlbec@evilplan.org, linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, 
-	gustavold@gmail.com, asantostc@gmail.com, calvin@wbinvd.org, kernel-team@meta.com
-Subject: Re: [PATCH RFC 0/2] configfs: enable kernel-space item registration
-Message-ID: <aYnnHJ2TQEcD_xMS@gmail.com>
-References: <fdieWSRrkaRJDRuUJYwp6EBe1NodHTz3PpVgkS662Ja0JcX3vfDbNo_bs1BM7zIkVsHmxHjeDi6jmq4sPKOCIw==@protonmail.internalid>
- <20251202-configfs_netcon-v1-0-b4738ead8ee8@debian.org>
- <878qfgx25r.fsf@t14s.mail-host-address-is-not-set>
- <-6hh70JX5nq4ruTMbNQPMoUi6wz8vmM2MQxqB3VNK3Zt97c-oxWOo3y0cQ7_h6BSfcp78fR9GmzxcTQb_WB-XA==@protonmail.internalid>
- <ineirxyguevlbqe7j4qpkcooqstpl5ogvzhg2bqutkic4lxwu5@vgtygbngs242>
- <875xakwwvz.fsf@t14s.mail-host-address-is-not-set>
- <C6V44SxiJH8NxRosmbshR-sfcBisrA5yWQpDmfQXe5vOX3uI6SM-r7wwUr7WxfPMS5ETUQ9GYDlptRs911A_Qg==@protonmail.internalid>
- <aYTWbElo_U_neJZi@deathstar>
- <87qzquuqsx.fsf@t14s.mail-host-address-is-not-set>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ektc+xEXwultlHhwdBvfUzxsZNIYmMJlOPRBOc7uiqlAr+ghXJyIpBVIYd1Gdc37xuGx/ywKcFt835TIdDDrkw2scWC9rOeehKdM/pVLkDdBNpIZ5B5BtfBw/Y2yO6l4X75iD7eVbWo29zmlYR4SQceEf7XJW3l/hVDvYxgwErs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p5JHx7Pg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AEC7C116C6;
+	Mon,  9 Feb 2026 14:01:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770645685;
+	bh=okR+EAtZhjqHaf6qo/7UrQbLty7TTHO1yWpP4wFCTMU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p5JHx7Pglta9XrUEaylUygInEiRiWXmfPPLfeI2KtvQbPYTnk4Ro1akxcHmoMu4xu
+	 a3rPUUA06pM1HLn+V8WQmnrtQB3P/O/mPbO7svaVwr5hwKY91nd8iaoeZcKL0PSYvB
+	 ut9T4TmWe70bsxgxDMg1lC3+qiXmrWOT8+pcw35qxrX2NW3EMRbCFe3XN0iH833rRv
+	 xDj19Jt4Du8LUu5kMl2q2uMOa7u+B42cNl0palnEv8OpSkyp8BO3Bqg7TfHnVeK8Xf
+	 ZCY4/xPIoJbBLVieSTAXEiUcphSRlerLDo70TWnv+PIZ+a8heIljkD/SQF3Dx85r+v
+	 uJaMv5Xr/qy/A==
+Date: Mon, 9 Feb 2026 15:01:20 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: danieldurning.work@gmail.com
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, paul@paul-moore.com, 
+	stephen.smalley.work@gmail.com, omosnace@redhat.com, Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [RFC PATCH] fs/pidfs: Add permission check to pidfd_info()
+Message-ID: <20260209-spanplatten-zerrt-73851db30f18@brauner>
+References: <20260206180248.12418-1-danieldurning.work@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -77,47 +61,110 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87qzquuqsx.fsf@t14s.mail-host-address-is-not-set>
-X-Debian-User: leitao
+In-Reply-To: <20260206180248.12418-1-danieldurning.work@gmail.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
+X-Spamd-Result: default: False [3.84 / 15.00];
+	MID_END_EQ_FROM_USER_PART(4.00)[];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_DKIM_ALLOW(-0.20)[debian.org:s=smtpauto.stravinsky];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	RCVD_COUNT_THREE(0.00)[4];
 	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[debian.org];
-	TAGGED_FROM(0.00)[bounces-76706-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76707-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[debian.org:+];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[leitao@debian.org,linux-fsdevel@vger.kernel.org];
-	FREEMAIL_CC(0.00)[gmail.com,lunn.ch,davemloft.net,google.com,kernel.org,redhat.com,vger.kernel.org,infradead.org,evilplan.org,wbinvd.org,meta.com];
-	TAGGED_RCPT(0.00)[linux-fsdevel,netdev];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[vger.kernel.org,zeniv.linux.org.uk,suse.cz,paul-moore.com,gmail.com,redhat.com];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 654FB10FF47
+X-Rspamd-Queue-Id: 2883C110010
 X-Rspamd-Action: no action
 
-On Mon, Feb 09, 2026 at 11:58:22AM +0100, Andreas Hindborg wrote:
-> Perhaps we should discuss this at a venue where we can get some more
-> people together? LPC or LSF maybe?
+On Fri, Feb 06, 2026 at 06:02:48PM +0000, danieldurning.work@gmail.com wrote:
+> From: Daniel Durning <danieldurning.work@gmail.com>
+> 
+> Added a permission check to pidfd_info(). Originally, process info
+> could be retrieved with a pidfd even if proc was mounted with hidepid
+> enabled, allowing pidfds to be used to bypass those protections. We
+> now call ptrace_may_access() to perform some DAC checking as well
+> as call the appropriate LSM hook.
+> 
+> The downside to this approach is that there are now more restrictions
+> on accessing this info from a pidfd than when just using proc (without
+> hidepid). I am open to suggestions if anyone can think of a better way
+> to handle this.
 
-Certainly, I agree. I’ve submitted my subscription to LSFMMBPF with the main
-goal to discuss this topic. I wasn’t planning to present it this, given it was
-a "overkill"?, but I’m happy to do so if that is the right direction.
+This isn't really workable since this would regress userspace quite a
+bit. I think we need a different approach. I've given it some thought
+and everything's kinda ugly but this might work.
 
-Thanks
---breno
+In struct pid_namespace record whether anyone ever mounted a procfs
+with hidepid turned on for this pidns. In pidfd_info() we check whether
+hidepid was ever turned on. If it wasn't we're done and can just return
+the info. This will be the common case. If hidepid was ever turned on
+use kern_path("/proc") to lookup procfs. If not found check
+ptrace_may_access() to decide whether to return the info or not. If
+/proc is found check it's hidepid settings and make a decision based on
+that.
+
+You can probably reorder this to call ptrace_may_access() first and then
+do the procfs lookup dance. Thoughts?
+
+> I have also noticed that it is possible to use pidfds to poll on any
+> process regardless of whether the process is a child of the caller,
+> has a different UID, or has a different security context. Is this
+> also worth addressing? If so, what exactly should the DAC checks be?
+
+Oleg and I had discusses this and decided that such polling isn't
+sensitive information so by default this should just work and it's
+relied upon in Android and in a bunch of other workloads. An LSM can of
+course restrict access via security_file_ioctl().
+
+Fwiw, pidfds now support persistent trusted extended attributes so if
+the LSM folks wanted we can add security.* extended attribute support
+and they can mark pidfds with persistent security labels - persistent as
+in for the lifetime of the task.
+
+> Signed-off-by: Daniel Durning <danieldurning.work@gmail.com>
+> ---
+>  fs/pidfs.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/fs/pidfs.c b/fs/pidfs.c
+> index dba703d4ce4a..058a7d798bca 100644
+> --- a/fs/pidfs.c
+> +++ b/fs/pidfs.c
+> @@ -365,6 +365,13 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
+>  		goto copy_out;
+>  	}
+>  
+> +	/*
+> +	 * Do a filesystem cred ptrace check to verify access
+> +	 * to the task's info.
+> +	 */
+> +	if (!ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS))
+> +		return -EACCES;
+> +
+>  	c = get_task_cred(task);
+>  	if (!c)
+>  		return -ESRCH;
+> -- 
+> 2.52.0
+> 
 
