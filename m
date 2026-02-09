@@ -1,127 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-76721-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id wBdjKa0UimlrGAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76721-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 18:09:01 +0100
+	id +EK5H10aimkjHAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 18:33:17 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E49112DEF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 18:08:58 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1FF9113137
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 18:33:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 6F0C43047E4C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Feb 2026 17:03:55 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4B34F301BF64
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Feb 2026 17:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C2B3859D6;
-	Mon,  9 Feb 2026 17:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="l9GzceMS"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8BA2E8DEB;
+	Mon,  9 Feb 2026 17:33:12 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from leontynka.twibright.com (leontynka.twibright.com [109.81.181.203])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE613239E75
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Feb 2026 17:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86172261B80
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Feb 2026 17:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.81.181.203
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770656633; cv=none; b=NFIcd279NQmkZkBRx+9c+P6MT7ljf1nki8zb0BCAqm5F5IVwdXQCxBEmWjZMAMpYJIt7CRew2PdduGLGA/6bPlLsr1pZeFlEjJEUxqeC198Z1eyxkMSuAAeU2LZ5jM1F0ex5aKalGkr4uWw+BHnA6RHCM0cUerW1k4wlZXJCKog=
+	t=1770658392; cv=none; b=geg8B9YqCBZT8vqsiBUH1tAI7THSwgIuHOW5D1z3+urCAT0+BO3zASu21UMGhNt5ZYg7g4W+8mDuoMJqnsklped3rKnB37USQSG+9AwGxvg475nivwWPI46ZFOTLuzKjNp5ApVy9k8KT+ep47e94w+3/Ay7oD0Xv5boDGtXOFEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770656633; c=relaxed/simple;
-	bh=mQU+PSy3DUt4Ba5QB/r/C8tjmtjEIXHVIDDiAfHtCV8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZXufao9JyI3r/3nx1NJJmp2G7ch2ZfRuEQ8TF808O9sw4e3hjJSs7foELiyCERoo/1ku6Snymqd4t2CZqH/AMxmxQqYz0hODP9lDwKtAVb3mE5se5HyuzomDioVMmAKet4RvzXLIYPTwiPHpFf0F1a3fw2D9w0ORkzEDO/mutDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=l9GzceMS; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=yFYT5KAsSK/+i8yjAkGONo4LAjzIcnt+WlVcpAm32c4=; b=l9GzceMScI+HVZEVOYYinRjvh+
-	Z5tpUEfnVA+FQUVvP/nxBpkm6gALeEgR33ZW54EhOnp5SOSN4KgEh5xtYjfr+PDrlMH8V83FUNGb/
-	43gMVg0iTodJXp8h3MO7BZSDKDf58lJ/5qLrreXmMNBSRzcrBOf21LH+4SFdPlvDxO7sDJFJilX37
-	I8Hx+zaIQgEU5UhLKEY+EaIcHrEBNz6rByGaAMg4Xdplv2LQqgZepkHHz7p4O3ZYzIunCEUwQHBXF
-	t4UXFd5SRnluUg6jNJ/nC2e/lH3D+GMT01y8z6gW8Z1/UZt7irqK+O7hJTpI/MiePKwMdBwdsiGUa
-	pZMLdIhA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vpUfs-00000009nTP-2BNW;
-	Mon, 09 Feb 2026 17:03:48 +0000
-Date: Mon, 9 Feb 2026 17:03:48 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: oaygnahzz <oaygnahzz@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz
-Subject: Re: [PATCH] [QUESTION] ext4: Why does fsconfig allow repeated
- mounting?
-Message-ID: <aYoTdL_6hvjrwJ3W@casper.infradead.org>
-References: <20260209165944.12649-1-oaygnahzz@gmail.com>
+	s=arc-20240116; t=1770658392; c=relaxed/simple;
+	bh=WzYpcXxHSSzXeUdBoW1H2nLswpH5cvcSoqfgQzOfCfs=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=civU3586NTdVV0JK8tDe16t5HF2Gb6gpJJIWl5JHTt029qM1n8QTTYIjRxFQWg7A3lkf00sbm4MF2NpFXbzySS1iRWPV5hO1dCZA7UbzL0QtZXjVsfo9X+PgXryJVDloy8QSxB0mnRXniO29Yqj73OjKhzc0VJoOq2eouCKEJak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=twibright.com; spf=pass smtp.mailfrom=twibright.com; arc=none smtp.client-ip=109.81.181.203
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=twibright.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=twibright.com
+Received: from mikulas (helo=localhost)
+	by leontynka.twibright.com with local-esmtp (Exim 4.96)
+	(envelope-from <mikulas@twibright.com>)
+	id 1vpUhN-005mnZ-09;
+	Mon, 09 Feb 2026 18:05:21 +0100
+Date: Mon, 9 Feb 2026 18:05:21 +0100 (CET)
+From: Mikulas Patocka <mikulas@twibright.com>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+    syzkaller <syzkaller@googlegroups.com>, 
+    Viacheslav Sablin <sjava1902@gmail.com>, 
+    Dmitry Vyukov <dvyukov@google.com>, Aleksandr Nogikh <nogikh@google.com>, 
+    Linus Torvalds <torvalds@linux-foundation.org>, Jan Kara <jack@suse.cz>, 
+    Sasha Levin <sashal@kernel.org>, Christian Brauner <brauner@kernel.org>, 
+    viro@zeniv.linux.org.uk, Deepanshu Kartikey <kartikey406@gmail.com>
+Subject: Re: [PATCH (REPOST)] hpfs: make check=none mount option excludable
+In-Reply-To: <6d2ed161-b302-4475-b32c-2feca1f84026@I-love.SAKURA.ne.jp>
+Message-ID: <31825fd6-45b8-928f-0022-0696202032ce@twibright.com>
+References: <51bdd056-61dd-4b57-8780-324b2f8bc99f@I-love.SAKURA.ne.jp> <6d2ed161-b302-4475-b32c-2feca1f84026@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260209165944.12649-1-oaygnahzz@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
+X-Spamd-Result: default: False [-1.46 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	SUBJECT_ENDS_QUESTION(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=casper.20170209];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76721-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	DMARC_NA(0.00)[twibright.com];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76723-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[vger.kernel.org,googlegroups.com,gmail.com,google.com,linux-foundation.org,suse.cz,kernel.org,zeniv.linux.org.uk];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[willy@infradead.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[infradead.org:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[mikulas@twibright.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	R_DKIM_NA(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,infradead.org:dkim,casper.infradead.org:mid]
-X-Rspamd-Queue-Id: 89E49112DEF
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,syzkaller.appspot.com:url,appspotmail.com:email]
+X-Rspamd-Queue-Id: F1FF9113137
 X-Rspamd-Action: no action
 
-On Tue, Feb 10, 2026 at 12:59:44AM +0800, oaygnahzz wrote:
-> Hi all,
-> The mount interface will report an error for repeated mounting,
-> but fsconfig seems to allow this. Why is that?
 
-The patch is incorrect and unrelated to the question
 
-> Thanks.
-> ---
->  fs/fsopen.c | 1 +
->  1 file changed, 1 insertion(+)
+On Sun, 18 Jan 2026, Tetsuo Handa wrote:
+
+> Mikulas, are you there?
 > 
-> diff --git a/fs/fsopen.c b/fs/fsopen.c
-> index 1aaf4cb2afb2..06a8711dd627 100644
-> --- a/fs/fsopen.c
-> +++ b/fs/fsopen.c
-> @@ -300,6 +300,7 @@ static int vfs_fsconfig_locked(struct fs_context *fc, int cmd,
->  
->  /**
->   * sys_fsconfig - Set parameters and trigger actions on a context
-> + *
->   * @fd: The filesystem context to act upon
->   * @cmd: The action to take
->   * @_key: Where appropriate, the parameter key to set
-> -- 
-> 2.33.0
+> A patch was posted to https://lkml.kernel.org/r/20260117054014.1252933-1-kartikey406@gmail.com
+> for a bug report which Mikulas would not accept as a valid bug because of "check=none".
+> 
+> If Mikulas keeps silence, maybe we should out-out hpfs from fuzz testing...
+
+Hi
+
+I've sent a pull request to Linus that makes the "check=none" mode 
+equivalent to the "check=normal" check mode.
+
+HPFS is not considered 'high-performance' anymore, so I think that the 
+no-check mode is not required at all.
+
+Mikulas
+
+> On 2026/01/13 19:08, Tetsuo Handa wrote:
+> > syzbot is reporting use-after-free read problem when a crafted HPFS image
+> > was mounted with "check=none" option.
+> > 
+> > The "check=none" option is intended for only users who want maximum speed
+> > and use the filesystem only on trusted input. But fuzzers are for using
+> > the filesystem on untrusted input.
+> > 
+> > Mikulas Patocka (the HPFS maintainer) thinks that there is no need to add
+> > some middle ground where "check=none" would check some structures and won't
+> > check others. Therefore, to make sure that fuzzers and careful users do not
+> > by error specify "check=none" at runtime, make "check=none" being
+> > excludable at build time.
+> > 
+> > Reported-by: syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=fa88eb476e42878f2844
+> > Link: https://lkml.kernel.org/r/9ca81125-1c7b-ddaf-09ea-638bc5712632@redhat.com
+> > Tested-by: syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
+> > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> > ---
+> > Mikulas wants fuzz testing systems not to specify "check=none" option. But it is
+> > too difficult to enforce that. It is possible that an unexpected input hides
+> > "hpfs: You really don't want any checks? You are crazy..." message due to changing
+> > loglevel, and after that the kernel may hit this problem (i.e. we will be needlessly
+> > bothered by stupid inputs).
+> > 
+> > Honestly speaking, the code that runs in the kernel space needs to be as careful as
+> > possible, for any memory access error in the kernel space can result in serious result.
+> > We are fixing various input validations for all (but HPFS) filesystems. It is strange
+> > that HPFS is exempted from this rule. I expect that "check=none" behavior (if someone
+> > wants such behavior) should be emulated in the user space using FUSE filesystem.
+> > 
+> >  fs/hpfs/Kconfig | 11 +++++++++++
+> >  fs/hpfs/super.c |  2 ++
+> >  2 files changed, 13 insertions(+)
+> > 
+> > diff --git a/fs/hpfs/Kconfig b/fs/hpfs/Kconfig
+> > index ac1e9318e65a..d3dfbe76be8a 100644
+> > --- a/fs/hpfs/Kconfig
+> > +++ b/fs/hpfs/Kconfig
+> > @@ -15,3 +15,14 @@ config HPFS_FS
+> >  
+> >  	  To compile this file system support as a module, choose M here: the
+> >  	  module will be called hpfs.  If unsure, say N.
+> > +
+> > +config HPFS_FS_ALLOW_NO_ERROR_CHECK_MODE
+> > +	bool "Allow no-error-check mode for maximum speed"
+> > +	depends on HPFS_FS
+> > +	default n
+> > +	help
+> > +	  This option enables check=none mount option. If check=none is
+> > +	  specified, users can expect maximum speed at the cost of minimum
+> > +	  robustness. Sane users should not specify check=none option, for e.g.
+> > +	  use-after-free bug will happen when the filesystem is corrupted or
+> > +	  crafted.
+> > diff --git a/fs/hpfs/super.c b/fs/hpfs/super.c
+> > index 8ab85e7ac91e..656b1ae01812 100644
+> > --- a/fs/hpfs/super.c
+> > +++ b/fs/hpfs/super.c
+> > @@ -285,7 +285,9 @@ static const struct constant_table hpfs_param_case[] = {
+> >  };
+> >  
+> >  static const struct constant_table hpfs_param_check[] = {
+> > +#ifdef CONFIG_HPFS_FS_ALLOW_NO_ERROR_CHECK_MODE
+> >  	{"none",	0},
+> > +#endif
+> >  	{"normal",	1},
+> >  	{"strict",	2},
+> >  	{}
 > 
 > 
 
