@@ -1,110 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-76744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76745-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GLAdC6Q0iml5IQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 20:25:24 +0100
+	id kKdqK5M1immhIQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76745-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 20:29:23 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF6D3114107
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 20:25:23 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CF1A114181
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Feb 2026 20:29:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id E0A51302A195
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Feb 2026 19:25:02 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8B9ED302834B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Feb 2026 19:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4307F41C2E8;
-	Mon,  9 Feb 2026 19:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E4F423A94;
+	Mon,  9 Feb 2026 19:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fFQLxnf3";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="lCjc28Zf"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="P8xcXh6D";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="BLMVnivA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9895A3A7F59;
-	Mon,  9 Feb 2026 19:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F27938A73F;
+	Mon,  9 Feb 2026 19:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770665097; cv=fail; b=ijtYf/DikYVfW/uXNzQcZsn474HH1XbdUz1+UE8+8JwKC61ZyKDuuwhkbulOy/+vzjC8kOYmR2XMdhlaUdoQiUaejhbNEQ0Of0JEvpTVY9BytBW2QMY+lMehVXNN6SAsAWXRJGwaCqrkUb99p4v91GPbxcHmhso5PTAiCI5KfRo=
+	t=1770665348; cv=fail; b=Pj9iVQs1pC++oXX4/Hkp8IX/n2pyMadbwH1LcTj5NlU9JS5/XgT1d5nWIScJUWf8lue70WnMkQZoApo91M/RlCKW0zmr9xvgzb4pOdFMJvFwtel4p3KPd1u+3mKK2VTdjy7tJhHv6lD07NuZv/vFECzsu51mhTswa1y26nkyuv8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770665097; c=relaxed/simple;
-	bh=66+DIFIKsE+HWmBKI9lLpGgqrv7Zjxx+ICDV3I6EzD4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=eOv92cwMNsvWDaMSJuylAPc6hfv7UkWnuTgYpPOadQPySdHFGbnhyH7ZOD8T81PgjTT0uGewykoJT0201rgucy18G4Yeo9j1CxD5AF/LOTxgS3pN6pWZDsk63IQQtRuuJi8R0VrZoEzA+LWlIVnby2pyBOmxKT2Ki+jmUidSD10=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fFQLxnf3; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=lCjc28Zf; arc=fail smtp.client-ip=205.220.177.32
+	s=arc-20240116; t=1770665348; c=relaxed/simple;
+	bh=OsFdMVzizFrbKKLcRhlU0HJzOQ25qyIqtj5ROmbzAs4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=kFCohY3gnS8ZBB1YZE1wN7a5GVuvkyQ8d9R7LozneLyizRK/yLd5ptV72Jg8j5Pl8rCx5wrrYOnPNKpdRwr3u6KKIN7j3qP73NhuADYtDMkAxmeZtKPq3VZrPIQaHcEqFOMG/p4eXjsbuqz90l60YveSKvI+F65xn14yagZh5PQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=P8xcXh6D; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=BLMVnivA; arc=fail smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 619ECVdF2924595;
-	Mon, 9 Feb 2026 19:24:45 GMT
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 619ECXda1228995;
+	Mon, 9 Feb 2026 19:28:06 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=kiEeEGAmLp8WlvJFucGKfhn2uW9O1UJtITfntv8U/Ag=; b=
-	fFQLxnf36gFA5YY0O3gc0QLHY2LVPYJndM+D2feMdrDTsXxHLccKYePnyLGyR0xg
-	zoa/to/KikloitgurmnJSZ/w62yjOhnv07Rj/OQgEhpKGv9FZ0LQ4htfM/WABrC5
-	OMbAMu9LildlmbDpo2HhOq+5e34o+jV5De00J+gxHj4372ylg+PV0IkT4zJ+sMa3
-	ovBzu5kAbUlV9GQm6Sq2EoZFwNF55LX7BwDptFtNqeBFy45NPiCoxGubBTFH2ZdT
-	LRs0SZTughAZmvhbZgHD1oUhthdwC2iql05njKn5wxHTPNx5uTNK90MmwKCtg03O
-	k+3UCNuDiN79D5c4aeRq1w==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4c5xf3tm6k-1
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=k895XRGI3mWamm9jti
+	TuXb6zSnBRag7IPrPqPpJwD6I=; b=P8xcXh6DrPk80juWisyMJUUOK6t7ubyA1F
+	IS87SubaTesowGLnFgg2InKtA4VorsRIfBSdytDDL6/6F78NbQQxH5fh/tQ43OcY
+	LA9MC00Y9gfr7QUc9YdXqjv+mK2Ubd3NtS4YJ+wtcxMrjZ4QmA6YAZi3X778rlG7
+	Rhf7y/z6J7Ot2qVzbgR2uN5KfulvWKKCegmH0R32P81UevUt0H9+O7gH9Q0mC2af
+	jPDODxpKDzTMHPLZEnMHG0rM+vHPjG4WObx5QIEnmeNRGAhXYgIQqyjzXMIiVsFK
+	Bv2Kc2MQ7beSd0bCBxFFOhGg/rLKT0renVpO7lmKjpWbDpSm16sg==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4c5xes2mnh-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 09 Feb 2026 19:24:45 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 619IwYCA000423;
-	Mon, 9 Feb 2026 19:24:44 GMT
-Received: from ph0pr06cu001.outbound.protection.outlook.com (mail-westus3azon11011052.outbound.protection.outlook.com [40.107.208.52])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4c5uudecay-2
+	Mon, 09 Feb 2026 19:28:06 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 619Heq8k035303;
+	Mon, 9 Feb 2026 19:28:05 GMT
+Received: from co1pr03cu002.outbound.protection.outlook.com (mail-westus2azon11010039.outbound.protection.outlook.com [52.101.46.39])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4c5uu9fpk0-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 09 Feb 2026 19:24:44 +0000
+	Mon, 09 Feb 2026 19:28:05 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=khR63a9hv7Yd0W/n+640u9bBFVaHvZeXnRNq+l9gO/qEXreZTYr+s0a1kBg4hAfz0fohzpvFmCYzrqqD1IsDaSyZoFTfsTIkMb1GOWVcA/mTtcUT0TK5EZdvAczHi3X7xKThklmkvft5fDns+Kn1Ulr8oQSnQUgovZL36QQxVvA1Fltmv808EvH7erbxRtjipUli/VAoi9PBbbg9AwPUWZOw8n5AD8pfrp5P0ilaJAHKzhQ/TmVDWcKcD+SR9PK6Qjn6xhJdwoEeZJdCfOsTt3oRvi37tUEwUxbR0AUNmSSXxyLJjExZPjBpKPninPGSrjl5GrD5tbI2mSkkIXbFVw==
+ b=Bty547FpMXNnM7ubsZPuP8kEBWkyxu/QHqMynVL45O39WsUkpKrY3dYi6pVqQdu2lYCI7yTYYGI5qP5YjYxnxun/ixQzNjAUNAEarW0g0OESZpzBMJCJwBrXS/awryNG+eOvx182HTW+qONitPANaz5NxdjqP3qhtxQRA26Ul/CuShV+DaXKQX4Acyoa+K/i+U2P/X0c4e6UwQ2xsMqXz7RviVIlcF8qRMQuOzE971A4bouCxAmkWyzfNdftCNdrdkQ6tRL7c6gTZqEUMWrbjQfMMTdFIEJdCKu8AWZ+CvLoiouCFhaIPUH5tivapEF07a+8npvctpSn9q1sY6po5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kiEeEGAmLp8WlvJFucGKfhn2uW9O1UJtITfntv8U/Ag=;
- b=XGGnLi02i5N60exfegy+mVPqiKLnw9XFz0Pnx9cmxKTPp8J36fN/d7ZnrxWtgX79NDSYqOyhRME6SnjXvnBOhK68daRfiTjutOgTfTsFS/2484eLGpvQOG0d2N8YaRHaj8O8ko/ReBzhLP1dH08dfGHXqb3PhmdLhR+8XTXyW1nkxRzRJLMB2aQjG+T0ojkZQMHoKEs/3+uxPJZRC/vRWhOkB2G/wIvXL7V32iRLhumv73Zak9Z8tvKZ0YFkzgUzhHNO2Mj1URgpuw5s4BFM+ZoycYw0c4+QufLqVnKsh3uLufDQ702LAjMneGSKfxwRzd9KoX8p0BRUZVha6qlZLw==
+ bh=k895XRGI3mWamm9jtiTuXb6zSnBRag7IPrPqPpJwD6I=;
+ b=W9GspSXkGW+2nYV73SqvQ4oVrKwhbdS7LrJt4LJhGxm3AkvG9t2Xu8j0lvgMYdYkwACUixHX7KIPEEwl1NI1+JYWo6V8P12f6JpaC8gsBNNKTg5P3wsn5yfeT4P4JhPBjieXcMSrHAPuPZNqVUMzOx9RUCpE6qYGNX/OugWDjb5KIm9StpwQojDtQgGOB/qDiSUYndsnSPzHW4KEEDfRk5eis4Gi6DXcmC4GgyrP1D6JTlYVnvR60bxzI5BgfKXm0oFNIymv0JlSHh+N+gOUT/EUwj9lLnIMrTaYiWHwGCLArjYoZQMnKDv9iCFLFk4F4HQsQrU6o76seMVSxZJE5w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kiEeEGAmLp8WlvJFucGKfhn2uW9O1UJtITfntv8U/Ag=;
- b=lCjc28ZfBTt7FzH3Xf1wnYtnWzGN1mG+qMLL0msFJti1D29uToGeE30gnkaBihiGQlsIhr23Mz4F5te5TisOt279e55HCVuFmPn4W/Xw/df24t36O32AbHjLm/m+kxqikOpwU3EEtC+7r1RMda8rxvGKHrpUFsbx3bjlJTNRPQ8=
-Received: from MW6PR10MB7639.namprd10.prod.outlook.com (2603:10b6:303:244::14)
- by IA0PR10MB6748.namprd10.prod.outlook.com (2603:10b6:208:43c::6) with
+ bh=k895XRGI3mWamm9jtiTuXb6zSnBRag7IPrPqPpJwD6I=;
+ b=BLMVnivASSuwe+7xK1s/F5g1spMuU+v70Jm8lPUzGZhP3xyBeka3m4H1TZ9Vio3s+eS9N0xxIDsVmfXd0iRI7GDCNQ3LNKzjN5izcRyfI75Fdj8FKSUH2DWDMXAC27f5+0/2IUnMPcPpS8rjasroC/iTNQB1+czVrkEFrtoIaLE=
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
+ by PH8PR10MB6672.namprd10.prod.outlook.com (2603:10b6:510:216::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.19; Mon, 9 Feb
- 2026 19:24:40 +0000
-Received: from MW6PR10MB7639.namprd10.prod.outlook.com
- ([fe80::8386:1d11:46b2:b163]) by MW6PR10MB7639.namprd10.prod.outlook.com
- ([fe80::8386:1d11:46b2:b163%6]) with mapi id 15.20.9587.017; Mon, 9 Feb 2026
- 19:24:40 +0000
-Message-ID: <e66142e7-ae6e-4d4a-b2fd-2507d2948f77@oracle.com>
-Date: Mon, 9 Feb 2026 11:24:37 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/1] NFSD: Enforce timeout on layout recall and
- integrate lease manager fencing
-To: Chuck Lever <cel@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
-        Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
-        Olga Kornievskaia <okorniev@redhat.com>, Tom Talpey <tom@talpey.com>,
-        Christoph Hellwig <hch@lst.de>, Alexander Aring <alex.aring@gmail.com>,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.17; Mon, 9 Feb
+ 2026 19:27:58 +0000
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::4b84:e58d:c708:c8ce]) by PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::4b84:e58d:c708:c8ce%4]) with mapi id 15.20.9587.017; Mon, 9 Feb 2026
+ 19:27:58 +0000
+Date: Mon, 9 Feb 2026 19:27:46 +0000
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Pedro Falcato <pfalcato@suse.de>, Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tursulin@ursulin.net>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>,
+        Matthew Brost <matthew.brost@intel.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
-References: <20260207060940.2234728-1-dai.ngo@oracle.com>
- <ebcb1893-bf03-4637-bf0c-918eb42705bd@app.fastmail.com>
-Content-Language: en-US
-From: Dai Ngo <dai.ngo@oracle.com>
-In-Reply-To: <ebcb1893-bf03-4637-bf0c-918eb42705bd@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR05CA0174.namprd05.prod.outlook.com
- (2603:10b6:a03:339::29) To MW6PR10MB7639.namprd10.prod.outlook.com
- (2603:10b6:303:244::14)
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Benjamin LaHaise <bcrl@kvack.org>, Gao Xiang <xiang@kernel.org>,
+        Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Sandeep Dhavale <dhavale@google.com>,
+        Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Muchun Song <muchun.song@linux.dev>,
+        Oscar Salvador <osalvador@suse.de>,
+        David Hildenbrand <david@kernel.org>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
+        Babu Moger <babu.moger@amd.com>, Carlos Maiolino <cem@kernel.org>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>,
+        Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Hugh Dickins <hughd@google.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>, Zi Yan <ziy@nvidia.com>,
+        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+        Lance Yang <lance.yang@linux.dev>, Jann Horn <jannh@google.com>,
+        David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Yury Norov <yury.norov@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+        linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, linux-erofs@lists.ozlabs.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev,
+        devel@lists.orangefs.org, linux-xfs@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH v2 09/13] mm: update all remaining mmap_prepare users to
+ use vma_flags_t
+Message-ID: <o5efi5bwwqapscipxhmahknjurb7rfx6vitddc7c67hgbocr2k@ndkfnucwv4k2>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Pedro Falcato <pfalcato@suse.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@kernel.org>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
+	"H . Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, Christian Koenig <christian.koenig@amd.com>, 
+	Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>, 
+	Matthew Brost <matthew.brost@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Benjamin LaHaise <bcrl@kvack.org>, 
+	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>, 
+	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>, 
+	Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Andreas Dilger <adilger.kernel@dilger.ca>, Muchun Song <muchun.song@linux.dev>, 
+	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@kernel.org>, 
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Mike Marshall <hubcap@omnibond.com>, 
+	Martin Brandenburg <martin@omnibond.com>, Tony Luck <tony.luck@intel.com>, 
+	Reinette Chatre <reinette.chatre@intel.com>, Dave Martin <Dave.Martin@arm.com>, 
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, 
+	Carlos Maiolino <cem@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, 
+	Naohiro Aota <naohiro.aota@wdc.com>, Johannes Thumshirn <jth@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Hugh Dickins <hughd@google.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Zi Yan <ziy@nvidia.com>, Nico Pache <npache@redhat.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+	Lance Yang <lance.yang@linux.dev>, Jann Horn <jannh@google.com>, 
+	David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
+	linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
+	linux-fsdevel@vger.kernel.org, linux-aio@kvack.org, linux-erofs@lists.ozlabs.org, 
+	linux-ext4@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev, 
+	devel@lists.orangefs.org, linux-xfs@vger.kernel.org, keyrings@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>
+References: <cover.1769097829.git.lorenzo.stoakes@oracle.com>
+ <fb1f55323799f09fe6a36865b31550c9ec67c225.1769097829.git.lorenzo.stoakes@oracle.com>
+ <hmc2or77xnhrdlncfzjsljljwljnp6zztqsvmgxspfilmzkyty@czxpjpdm66ov>
+ <20260206113153.c443545459474cdef6dfd7ea@linux-foundation.org>
+ <d55a0ba8-46a3-49d4-ba76-aa9658e1e8be@lucifer.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d55a0ba8-46a3-49d4-ba76-aa9658e1e8be@lucifer.local>
+User-Agent: NeoMutt/20250510
+X-ClientProxiedBy: YT4PR01CA0149.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:ac::15) To PH0PR10MB5777.namprd10.prod.outlook.com
+ (2603:10b6:510:128::16)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -112,719 +213,209 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW6PR10MB7639:EE_|IA0PR10MB6748:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6388072a-5c6a-4daf-621b-08de6810deed
-X-LD-Processed: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b,ExtAddr
+X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|PH8PR10MB6672:EE_
+X-MS-Office365-Filtering-Correlation-Id: 175b5d70-e64a-47fd-6798-08de681154e0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|376014|7416014|366016|1800799024|921020;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
 X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?YkJ2V1FNSWhVYW9QMGF2YzVLQWl5OHRjRVlWRFJyakNoZnA3UXUySmlaMWx1?=
- =?utf-8?B?ckpTb01BbUpQT1JiblEyRzh1ZDBoSms2TVpESFhkMDNUQTd0V1c1ZVNUQVM2?=
- =?utf-8?B?UjQxVzlYY2xMODlZckNaUVhFdjhBR1E3aml6by9ycXg3dXgyWXJ0U0lSeUtI?=
- =?utf-8?B?L3UyTzRzUGlrNlkyWVdORER2SEw3RUh6SHVRYW92RVJPZkpDeUVPWmZ4Ry9P?=
- =?utf-8?B?bUZlSGR4bSswM3E0bnhPVHd4bllsNWw2NlNwTk0remloaDhEQnBtRDh4V1V2?=
- =?utf-8?B?YW5uMkZhRVc3a29YaTZpeFJjWC81cG13OWtEZXZQNHluL2hGQTZaNzZRbWtx?=
- =?utf-8?B?bklTdnJ6bGc5QzZlSjVyc3piNTJ2MFlIazNpL0x1am5uTS94M3NIcE93MlBu?=
- =?utf-8?B?UTlqN2VqbXVmbzdJb0N6WVNTYi9mSkFhT2I2WnNjeXdEV3huU1AvSXJQUnd0?=
- =?utf-8?B?WjNHbGEyY3pSUG1rVnJIa0JNZzhaYmpvdHNLNHJDSDlJL3I5VU5wS1JlbU0x?=
- =?utf-8?B?ZWphRG5SZGhlQ3RoT3B2ekxxQXNRbEtGL3VFMDJtcDFNYUhKZWo0WWFiVEFS?=
- =?utf-8?B?dXlLWWowU2YzenFLekovYmtENEpMUzVXK050ajRFYUhDSkprU0F6MTk3UkJS?=
- =?utf-8?B?WlFNU0hyVTF6cFgwdzJlUmxBMnBaK3pISnJRNjJteVJjQVdHT3Bzd0pkUm03?=
- =?utf-8?B?QzRWVzNyY0NhbmY5YXp3ay83VTMyaFhhRi8rcDlpemdwN1phNFQ2WnlGYTVN?=
- =?utf-8?B?OW5GcitiSzNZR1hNcWtsOWpVKzM1UWxSN0NXbU54ZWI3MHR4eldHT1VWNjhn?=
- =?utf-8?B?WG1qZ0gxTlkrNFRWTE9Pb2swdTh3NWRGS1gvUjYzNEZDZUhHYy9yWTQ4alo1?=
- =?utf-8?B?TW5idG9BMzY1dTQrVXRtUUpWa3A1cFErdVdJcXA4ZUlQUVhzVTgvVXk3SXdL?=
- =?utf-8?B?b0xUeXRCa3JGSlkwVWNta25kcFIxTlk1QTh3T21aSlRaenBCVkhrTnh6R1lp?=
- =?utf-8?B?V0RaRk5xQlRlMTR2MG5hM3hFenFhU0g3SERXWXlyZlgxYUhMYk5wM05KSmRa?=
- =?utf-8?B?YkhmNkJzNmhYelVVdDBWalFHcGx3bHdOVkx1dDRFWHhLRDZWUDQrcCtnQU1r?=
- =?utf-8?B?Y2xHV1plNy9obWNMOFNPSTdSU3ZDWUJsN3V5d0oyYTFMb1YzUUxGY3pwMnlO?=
- =?utf-8?B?OEdWTU5vNm02eEFXMDhhTElEdEtVS1pGclFlQzgvT21ZOWpJbmJwUHdsbkNN?=
- =?utf-8?B?Y2paUkdTQ1FMNnNQMi8zL1hSekJHTTRQV2hNRjVtaDVPQVZIY1JZdVQwa0NN?=
- =?utf-8?B?eTQzQUZVNkNwR2xCWVNYd21FU2t2b1NoNGhmMkdPT3IrWUV0QWl1SHdJTmFD?=
- =?utf-8?B?WVlnL2hhZi8zUUI2NEgrN1VySzJVanlUUUhrVHI5YnJqWHFQZXkxNUc3Yk94?=
- =?utf-8?B?bEF3S2l5UHJqMXZnSlk5Y3J3OG1ITEkzbit3RTluL2diWnJZWjU2V1hvL0x2?=
- =?utf-8?B?UmJubEVUenNORURudFJEQjYxZ0pwMzRLU0tKR0RBZnRwVmZ6bjF2SHBncUVp?=
- =?utf-8?B?am1ndHZwNHRrU0U4cWs4UFZDVVBhZEcvdkVaRzhWMEEwYld1aGt4bEZnbk5R?=
- =?utf-8?B?a2Z2QkNPYVgwd2pWb0RZV3I1SlVYZjlXNmM0NkNOMTEvbEoxaFRmRXoyaDc1?=
- =?utf-8?B?aVNMZEUraHN0N2Y1bm1sMGlrZnd6RHpWVE9JSy85eGdxKzRkekozaUpUWVM4?=
- =?utf-8?B?MTBBQlpuZDJrT0JXOStlMmJ6eGoreS9QaGowTkcxSmZ0c0FleU9xb1NzeUpl?=
- =?utf-8?B?Y014V2FPRm9OMEZmV2tmYXJ3Q0ZCNzdxNHpjdTBhbVBWczdUM3hTL3ZBYlB3?=
- =?utf-8?B?Zy85UUVZcGc1M2JZZllJVTBzVDcreENtK09ZZXg4S2t1c3hWRDVySTB6WWJt?=
- =?utf-8?B?VmtRQXQ4SjQzdTBVVjJHenZTeDBIYXF0bkNvUG04MWJzR1NXRGNtcUNYUXY0?=
- =?utf-8?B?c0gyK2RPd3FSa3dvTENkcEZSNTRYUUJCeWRBdWwzSDRYYnJrN0Z5RTczMUkw?=
- =?utf-8?B?RStLNTlpOTRXY2IzNnVqZlFEN1hLNVUwSjY2bXc2Vk5IdDdzVlNTQUpodG83?=
- =?utf-8?B?a09wL0dKT0dSSlZRcFNzTFZld0ovN3NVd21MTjRtWUljdU8zZG90RDN6SU54?=
- =?utf-8?B?N2c9PQ==?=
+	=?us-ascii?Q?uoJ+uNfXALKh4cUciPEF62LzRrFu50p0ZQe+BjxVhVt3qOMHFdjsMZjMlCr2?=
+ =?us-ascii?Q?0az8wdLYZXfhaM4nNrG02OCLqbbH9P3XtZBJOyR5Xc4RUZSoBUAu8bs9d6WV?=
+ =?us-ascii?Q?7qHdEu3fzFUnfHV0+ncPvRZl0rOgsk3IbYmDZGr67HQsumAMwU+5q6UO2E6j?=
+ =?us-ascii?Q?5z/Sarw9LUq6Ax81Y0Y7UOhPqNHUuezKmuxkHGU9wQPv+CkyNSUeaqEesHGX?=
+ =?us-ascii?Q?inA4ZZ66tw7pps1lJW00iuoBnQvh8l35Ommr11mUs75dY0ZXKa5nM5tGkps4?=
+ =?us-ascii?Q?AP9/NUti9rYXDWBNe3PT7x3kry/nJkoFD4Clb87sJuZCDXdWObJ+PB5SZCOA?=
+ =?us-ascii?Q?/MhQHTpit/ScG7QF4e2Bb+20hQ4JsDwUMBqkCe6jj1mQ/Gfc7wD+4LvTrX74?=
+ =?us-ascii?Q?GMwzXF4niFRudesS+Wkkidre1ggZDHQRvtTJpljhG+S8KMJQe9lsLQHHglyl?=
+ =?us-ascii?Q?i3zHJfuWnODYamPhApkrYM7nDd5JD0DzA80V/7g/QWtyzTshMiDEJWwtY0F8?=
+ =?us-ascii?Q?H8skqaMJ4qsG2khEdttItf9ams0h2mYoFCSJmplaX5P3XlsmaBJjqpsUbSKZ?=
+ =?us-ascii?Q?H719tdeCPm2BJZdfIq97FexELTv022mZYLuEDwWgqRI0YQmh53HCRp91xjuc?=
+ =?us-ascii?Q?KWN42UCAhJeVB5gYfK6fm1O6uwTsDmZXZ/gAeobIrG9mFRV2UTozm7AkkZCo?=
+ =?us-ascii?Q?+CG/uobMSHN7nfQon+9+xFdLlIzNy3Bn2YGrkkM9Vh0uJOMEjZj325DxV6Nh?=
+ =?us-ascii?Q?XNxJOf4RJM2G8f/xGtnG8OJVN+BvgTUV/LbzN29y+q6XDFzqtRRXzAhYxon/?=
+ =?us-ascii?Q?cnJbdJA9qtVzoHm1pIi4/NT5BUkoH3VmF7zEeQIl5dhrfKjSSIJqPqEHurZV?=
+ =?us-ascii?Q?auYj86MaeZJmusn4F5ZO+yvq/6rzi5bjg+vziGctQG8Zvh3Y2fW2XMCQDNVl?=
+ =?us-ascii?Q?ipnIootWbguV0PxZZ8AfaeUBEmHUdfNX1axQXUD7jEGsA6p0H4I1xxs4rCyR?=
+ =?us-ascii?Q?f6SoMIoC+Uqt0bd5/IwCD4+bLNvxDVcaNlmHaHbgq3Awom3ckbdaR+i7XX9L?=
+ =?us-ascii?Q?rbLOyNIYiExq3Mhvjl+EeXac6s1GL0NNGvy79lhY89Wcfdg+rIskX2/OY0Wr?=
+ =?us-ascii?Q?rPuBoJgXn8IyXm3H1Af2sQZar1UiZB6jDbextHABfhMoVkIZIEFWctHJgf26?=
+ =?us-ascii?Q?toyOUNmgJgspSxdrH5RXPeoFtdZofNPNbdv0kvljYGF2fMHBLXfRxYs3OyQ7?=
+ =?us-ascii?Q?7HEpEODdqfh0Wx4OPKNawwLeUn75WqDaXNfLiGZ+qykiVG5rLx51eqNLfQje?=
+ =?us-ascii?Q?6XaQvRFs34DrsCevjnqfZr2FM1hoytsl63JOqt6nlqJl3g1zTYS3SKvh5SQp?=
+ =?us-ascii?Q?JEWzr33IHIWdmQwX87oMUTxL4Fr207ms1qKS6Yy6HEzYeaIZYRnZKc1v9zQE?=
+ =?us-ascii?Q?TyFlOFEGWa8Bahkq9y4KznBBylOpKRODbH6W0j62VrfxK+wZKlb+rTQeq6Rv?=
+ =?us-ascii?Q?qZ4/hkoXG9UzPHNMAaylF5nfVLuG2BfWEfU5VoWl36nt9bAZitNUHwpW6Oz8?=
+ =?us-ascii?Q?tCwb4HsCaYUKMTpW+zE=3D?=
 X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR10MB7639.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?dGJsOFhhekNPTVVvRUZyMU13d3dISnJtbzRncURBcVdhcm51TXpjWFFqQlVT?=
- =?utf-8?B?dld6RSt0Z053UGI4V3Z1YUlIWW9Wa1JqdFdnRHV0MUxjb2xqNThYdlVXbXBo?=
- =?utf-8?B?VEVKLzlocFZiUmw5a2FOOEpXSGVXMzExUHdwNFpCRFlJbEhWeW9MVk0zOXpS?=
- =?utf-8?B?dUZHTXJyR2UrN2M0Vmxmd0NnMFlMK051dGZNc2MzQlF2U3dzaUVhR2IvZDA4?=
- =?utf-8?B?K1N1TGdLem5OM0FqOHBjMmhvUnhmZVlsV2ZEdG9tYzlkN05wUW1kMWNTTnJs?=
- =?utf-8?B?TVN4T2FUZzh1OEo3RlJhQ2NEbk4rcWdHVElOQTBzczlzVmRtMmdJeHZORkht?=
- =?utf-8?B?V2RPQmJZUE56VE4yd0xYcUoxVDNjZkdDcjNKbklZQ1E2RmIxMzlLaHVKWEs5?=
- =?utf-8?B?dHlmQms1Q0V3U09wN2JTMCtVcXQvcXZseTRKSGd2UGN2NUVON3RwZjRtVWdp?=
- =?utf-8?B?UXY0aUxSMXlwaTdyNVBEODl2YVJxRmZIajVzZnNPZGV2UVB5NFNkeTVlNnJr?=
- =?utf-8?B?SFdCUFBEVkJTRnh5bW4wbWRTb0l6NzB3SGJiMDVrN2tpbGxHM1pERjZNSVJP?=
- =?utf-8?B?TTZwYnFZd0dTMHMreFlFTml2M1g4dUFZWHNTeEMreUZBR2FFUkprMkphKzNS?=
- =?utf-8?B?MnVYSFlkZEF2NmZ0K01YbU5PdkZLdUxnTzB5VFYybWFDSDdMMnY4NTl3M2ti?=
- =?utf-8?B?cFhaSXo3bGdQeUJQN1YrOWFMT1U0aDJlUjkzL3V0SUZ4aFpUV2hLTkVNZHRH?=
- =?utf-8?B?c28yR3RXSUdNOVNJVmNPK2djcUpKWmczdVFRMloxUWtLSGNoUGZFbXg1NHdD?=
- =?utf-8?B?dGVoZERCVTF5MHVLdTZaOXMxQW1sVDRmZ2tMdks0bk9QVHJSREZoc2FiSmFH?=
- =?utf-8?B?NUFWQlNndVc1VERTdWFFQ1VNWDVxd3A0clVCNnIySVZ4eitseC9WbSt0WkM5?=
- =?utf-8?B?L2FlZWZXL1pRaW1pSE41MGw4RllvOXVsaVpld0duSjRmSFJXazJ5Rm13bE40?=
- =?utf-8?B?bXM4UEY3NWJrN01hcndFSFVvZG5TNjBNSnRYbHdEZTBOYkNQODFlcHNvak9p?=
- =?utf-8?B?K2piMU9YeStveUV4d2NFaE9oOHVrV1BFdldDMFdFOUFiSERzSko2amRaOFla?=
- =?utf-8?B?TklLVEhvMkRESHJVeG5kaTgzR2lWYVovbDZ4UFZmejVJbjRzSUZTTEtQaUEy?=
- =?utf-8?B?V2F5SEw4M3M0ZnhmZWM4ZGUwRVdwNmt4L3BKaG5yUFNFMGwyY3NNMkhCdWEx?=
- =?utf-8?B?cy8vU1loQy84ODY0VHY5aS9vV3p2cGdWS25uT2JmcktENDdGMHJvekEyOGZn?=
- =?utf-8?B?ME51eWN2WWFaSHRKUFlicUhDNUMxWTl4bWoyWE9BWTI0dHFoLzNqaXNPV1E5?=
- =?utf-8?B?b3N2ODA3QlI2aE1kWUM3a3ZhenVoUThEbFl0U3NNcXdCU3JXK1lvNnAwUS9S?=
- =?utf-8?B?M1ZYMWxaZEpmd0RXN1RiS1BnVzRaTDlxWVpFdFcrSVpMa2FTdlBZT2dLZ09J?=
- =?utf-8?B?YU1VY3pob2dRcFcwazNPVjgrY3JMZHJnTW9kS3ZvaWNnY29vV3RobE5Vb3Vz?=
- =?utf-8?B?eU4wZkxaZHRQQW9YamRPVUpRUFZDR09ON0VMamx2MGFLd1h6MllMNmdDUVNE?=
- =?utf-8?B?OGdFZTRBK1hlaGE5L0V0MzJXZTYrbUZmQ3VFZzNXVkRKbWRFSjhQbWZPcHZn?=
- =?utf-8?B?bFlxYXhWRkNWZmxkZkc4Z2UwbSt6M01iMkY5cEg4T2E4Q3QvbmtQSis1bURV?=
- =?utf-8?B?elBmb0gwQXNWUE43UHhxV3JpRWE5WmhLSmc4SmFzQ2tnRDFWYjlTeWF1WWVw?=
- =?utf-8?B?TmlRZy9pOTJrTVpEUHZsQ1Q1dFAzK20zbGh5dE9sbklDVTI5Qkc4ZE5nU1Qx?=
- =?utf-8?B?TVArL1dENTBlT0hIUWpadnZ3Y3R3YWloR2hTa2pUT2JkdzJRTytGVWsrbFdm?=
- =?utf-8?B?ZmZxcmk0TE5DSGRDWUsyRGwyd3RHK1lZaVhUcGRnTStrclFnK2V4UCs0QTRT?=
- =?utf-8?B?bHdHcXpid1VzQ3ZKaGN1ME9IenpjMU9PZDBoN1FxNHBUQWhwcmhBYnNITkRz?=
- =?utf-8?B?REVZU08xZ2t1WjIrSjVadTE4R3lsdXZjU1Nkc1dXakUwRWZQR1ExRmZMWElL?=
- =?utf-8?B?MUJwKy9yKzZzdUdKM0U3WUx4N1V1ZzlrZ3k5aDVEVmxlTXg4ajJiT0JEczFR?=
- =?utf-8?B?S2hLTzVOeWZzN21CSVVMbk9VMDJTMmVIOW1UcjZVVDJlMVoyM2NsbEZqNUNQ?=
- =?utf-8?B?bk1Nc01Gb0xQR3U3SmNiWW5wN1RralBOemdlU2w4Ry9HenB1S0hpU2NUVFl5?=
- =?utf-8?B?aWk0Yk53d2VYS1R0d1JMYWZQcGFzUmRkdkU2Lzd2Tkp2Q2xESnRsZz09?=
+	=?us-ascii?Q?SrLQpeV7yYnlOudAPPlJpsgHDFpyP3KkUmy6I9JEjfVGuMxGZ93whvnK7TSP?=
+ =?us-ascii?Q?2LmP2orh5Ly9FsnditKoXZn7tjar47MQ+JySHJNFzyB1cIypCPUf1VfLgGXM?=
+ =?us-ascii?Q?ULb8wNdkHGoe3GR1y8t7/LVRQZHGJ//8MIujrM29j4tRkqOSiws7bWrHXgxz?=
+ =?us-ascii?Q?dNNozGSLYY3Is9As81tTEp9Pp1gqgT3lCx1OP0CIBx20/KRdVjiX02gIyFRI?=
+ =?us-ascii?Q?qNnAXdIfpcc3MN/AmYrteH4PptmLaa08cuvHWousywNwGHQV9y5f5oqdsKZP?=
+ =?us-ascii?Q?4ORqsRpe7cvVX2Ub0i5qlFDmdrDvI5jKz+1tL1Uy22KPTtOAOv/3FYmq7/4C?=
+ =?us-ascii?Q?MGn7Xz5scAzUEurCd2LCCNZ2tXuJmbAqq6NCNB9YOjzniovUjAGI4zIyRVW+?=
+ =?us-ascii?Q?pOavZ42kuTO9ty7Qb4wF8pQ16RU42Jw71094lGqOSWAeDQadCJts9AABmx2h?=
+ =?us-ascii?Q?ZhBQBgnl+08qO+xwdl+SVbM73lOTTrwyjXqmkMGVyqp5f+cGt8EMBe+sQmnd?=
+ =?us-ascii?Q?qaV8oEeYxNLPFU/0RKN1vEzdf27joWNUZSK1snsB6fi8PJMPTGIMGYRo8/9N?=
+ =?us-ascii?Q?DYMrParDlGbTRY/W1OSECTZOpKZepo9v0LemnnPQ0xrcM7tToN/L9jzPFCn2?=
+ =?us-ascii?Q?ye5RFtnEFskpHSVfCw5V8wBDMjv7cdFFvdL8kjhi3nAi94WQ0NrsjSESSBwR?=
+ =?us-ascii?Q?AOmFmmSiAplZYDBbs8GFJ46EiZn8MLIefbFh88vioq7kWanA3B0SDuDa98ge?=
+ =?us-ascii?Q?kMclW5J3K3FF8GtmZ3hEGq5gc21KUK1iYzCF9OV8WxBGFBBIKYJBSucMKkjb?=
+ =?us-ascii?Q?p+jr1pzE8uRhCQaiYq/C8tc+moRJgYopv/Pc0B50RvnCTV/XcaE+qLz7tuaT?=
+ =?us-ascii?Q?uB9z92n7Nfve8ZBG1gF4MXaxCTh31HBK/EY0R9pIf3OVuF4ezP376rGMk5hc?=
+ =?us-ascii?Q?bjdKhZalP1soIVLyjHEHwxDdXxkY9IsSj8BGTvRhO6NJG3H3MYSyGvtaDDgo?=
+ =?us-ascii?Q?o5dE4b/G0USFzGOngEm3BINgMkeRdP/EcGHOkgrQQPRJQuuHRUVpXRej6UT4?=
+ =?us-ascii?Q?2rQPArMzHPL+0iuCpNY/iVEM+hY8/09ir6zYbWp1EhGT8rRKOhXuyOxZF0r4?=
+ =?us-ascii?Q?Hz3/TPYHEC5HFF3XqnkFJhGt2oAsevAJf44fpSjsSTTeH/eGVVF0tickLlBQ?=
+ =?us-ascii?Q?iGxv1O1nGCntu0tpGP1SVHjfwZy1S37Qa6CEckQs+nkITSHCuryWx48RdNzN?=
+ =?us-ascii?Q?XPACRXEWehl2T/tDdFzAmXNqzCyFlfggOYgaglIQYsoQP+voGJbD8JVPriMo?=
+ =?us-ascii?Q?MHqauqsXvbo9PlES2WDidZIJLiaMA07LXX10ub9914MeRnDGXlQXQMFE6ACj?=
+ =?us-ascii?Q?Oh+bQ2oVlKXXDhKWqkNEMWRjBzsU/LRySFP84uC7v+w2/bmmB/Xk6n92XWjx?=
+ =?us-ascii?Q?jbr7KVmk3/wjDtKqPpSI275avNyGUNhp+qWQ+ICsz7czgA7WASk+QqKtjLgq?=
+ =?us-ascii?Q?+kNztbpfpnGVMPmpalnAi20EOpkUjcqDTRsPcNTfNinjjIxq0CY4X8hzcUfh?=
+ =?us-ascii?Q?ozvvh8VAEAP+V5XkdzBc3zKjIbsZbdLqbKyVv8FYsKJF3m3P+z5Hzi8VTqG1?=
+ =?us-ascii?Q?Zu90a0RKrpJXRXByW40c6ilcL8WmsGXfgC5qNct6/ohM5OlyCb+q8ntO2kNA?=
+ =?us-ascii?Q?r9rftx5g79ijAH3LoYCOrd3mqeotE0ZxJkdATjD35arxDcy1Lm+c/DEy7P3P?=
+ =?us-ascii?Q?XYyBsSHbjw=3D=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	FQLBbsSP3pW7yXjKHnzIFmJCJVhd6lYLRvkQqWu/C/5XMXVCSjls91OyDPSDUmJY7/sMnduJOp9qnbo1QTUXQG+Uiph3DjQkIM36OKL9rQIqpPacPG7vwTgLQwMwYJeLBiCn1CC2uLtVyOGUKTePZc8Bi7PooYG9Bl94Vb7fn5CsMRvBp6daUIZ9WST6uvMhkFW4/PiH3cprD3GgoJFqPDJVY8TDPuPChqFaIk/+YKNgeUMZJLPkT9aeGfIgzx6q3SHm6uh4WcLLEz3hNz2D6zc3HbtdYLSkBlEUtGpjWnO5+x0q10sXxg/yiW0E6IkO+9QE0xj2gt9m1OBEcj3Zm6qqB3SBIm0M7qIWR2VpEB9z5L1vT2ffj5L/mfcivzBloAo+HIin6JmjbqUYOWSGcziYAtmQCTNhZy5Dc6yNEQmNbmzQZXX2dzBCxs1U99324GUhQScHjKasdK27/yhIQA7jM8PJSyLH3zrdseZFS93BuQT0QTLqfy1hb2Qhxw9tv2jK7/VpU/2zjJnFfnyAEzwIOG1DSfimuYjY5XdLmcPz2YpDxYWvu2CiA8iXn44rE4dig/KO4ZRRS/ZFt1X597edvX2sq0gBB0XNGavpPS8=
+	X2knU29KZItDq+clC8Eqtm+xWhC4cKVkDffmBkYGo4REmpG4qrrqF5yJF2QfzDWFcM9X8pVVPJIr7o3lURHXhQID5i3m7mdeYF5AtCF/tug/wQ8lY01AUPWzpCd1k26pm6/2y7TLlN/MjoY4/Ha1+RPH4lfaXG6gJmayVNejZZrrupIhH7NQveJrvtLa4cFvGOzSVrY9IqqxtdYywy3HNjqbb4i8UdpEcp+dd+Pf9Y/5UpZ7arZNPOqlmeqhkPW05xjZVmY+K/qSVd7r0tJYIIiNZY+cv76K+ClgbE2WwB+dADEjpJUgiNPKOTUp1eu0HkEk+IQhkUPU+7bHX2VwTWhX/mZo/BQyYrRWqTixrwE2spTPmEvL6VgaWG1DhFlVTDjui3dsEmjcuQtUTdLoYlOiEx94ElUqYra+b2Emv7USUTGXrRXytvCxuAm4lvhIHmpyxISLEUPfT38eUKMLWBI97G0q89GZv6pOgbYiMv7L3N1SGa60PsjHEX0OSpbhUX4Jkn/3TmSpE+FHJ5/H29MSljbmNoEzVwT3SZCA6qFj+2oRAj6PPraomvQYtTzs41X18lCFJYKVTcq3MXFbAqtoTT9XP1QhOlIoD93FI9o=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6388072a-5c6a-4daf-621b-08de6810deed
-X-MS-Exchange-CrossTenant-AuthSource: MW6PR10MB7639.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 175b5d70-e64a-47fd-6798-08de681154e0
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Feb 2026 19:24:40.4366
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Feb 2026 19:27:58.3016
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1+8CjoclRhpAanOcLqN7f8Kqn2pntLdaaHudrgqtzZoR0SKh6YqXILfroj0msSKAV1AGwT1LXWV0aR5G3E12/w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB6748
+X-MS-Exchange-CrossTenant-UserPrincipalName: qXAgHTJPi2N6lmDPDMHQ9KxQfZa9A+i40h74ktdTLS3f/QplMHLSHSVAIxcATs2Rae/g+WwZ0WMl51NuoBDvLA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR10MB6672
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-02-09_01,2026-02-09_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 phishscore=0
- bulkscore=0 mlxlogscore=999 suspectscore=0 mlxscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2601150000
- definitions=main-2602090164
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjA5MDE2NCBTYWx0ZWRfX4wc2/ih8rMpF
- 34LVMDWrClLmCPIhixhe+15Xq70W3x2OZRP02PMgYzOeGrhwA/K/SjThblQGMQfEwfrC7eqvrQP
- kIf5ivqf9538j+FPOWOOPzdfgNvxpJ9JkaywgtDDVFNCajHcz/Nv68VvpQ3kDnFmanRVVaN1m3p
- hjuZdgchTLrQE15fCe89ArZ/eGDiFbDqDrZi5nO/PolD9Nw916P+5FHCwmT8mwvjnaGLfkpYyFM
- Bz5/+5+bjMPCq/620di7d2RHY3MP/KzWYKNLARfNgd7HiqoiGxhenMy6QzZ54pmfoY4UpPWaoAX
- 2ijZgtC1Vrq4f4s7T38ouufK3Y6Kvk8N4FgyNfEfAHfXwrkpFDWvZUjo8yb9+paz98gYrBIN8Lp
- tFQIV36ml6XX183OssJBze5Rrh2OEFAi9X8nLupaEasyyU9fzkLyjJq3RDgV2l6GVclujQ5s4Vm
- iAIV59jn0SwjCvTAUoIbTIt52T7kmhcYW0RoDz7U=
-X-Proofpoint-GUID: Ize4xjVqyF9bVHlHvJQlZWB7EF0FE35W
-X-Proofpoint-ORIG-GUID: Ize4xjVqyF9bVHlHvJQlZWB7EF0FE35W
-X-Authority-Analysis: v=2.4 cv=KLNXzVFo c=1 sm=1 tr=0 ts=698a347d b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0
+ malwarescore=0 phishscore=0 mlxscore=0 mlxlogscore=999 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2601150000 definitions=main-2602090164
+X-Authority-Analysis: v=2.4 cv=KaTfcAYD c=1 sm=1 tr=0 ts=698a3546 b=1 cx=c_pps
+ a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
  a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
  a=HzLeVaNsDn8A:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
  a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22 a=yPCof4ZbAAAA:8
- a=rdcvCkuLAcx9wSbAoSYA:9 a=QEXdDO2ut3YA:10 cc=ntf awl=host:12148
+ a=5v1go5wQdWjlzf3N9Q4A:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: 5eTbkAcIxmLS-T4lFHlmBgbDSzxLcidb
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjA5MDE2NCBTYWx0ZWRfX7xoReqbepsWu
+ 1LyzHy0RHvtHPdq6Tme+8Wy29p9fo1M66HFe++j+PBPKO5ESjxTai0eh/3//ONWYJFG3QBsEryK
+ um70IBZpNerF3OfTsjJdzUU1binrmqjzcpKY1MZL0tZZ/BlnmLlMsGPHHfcVvt5tfs1Mm9V38QA
+ KvSmmRdPnhiquok3ZtRbAy7TnLlHPP2yxW15QoqCegKwVfcqo3nObAzC4EUFJKUsmOAV8nyR2F6
+ 5zb6xPmw9mTyrkDkTlaDkHdzVtMXT9YQ5zG5ECmPKTXu1C/3FsJD1F5wQ8MB5tDr+EVMxCI0bRJ
+ nEs5dLH7XSox4XU8i9DlYJzCOAR7yIocN/DJe3S9U7teGTeuvkskmzubwbIYjeHnzqg5sj7t4P/
+ ouLaC9sLwjg0nWw4dyy0OKPni8s2M4vzQjL5KSSRVm3h/sci15EaE1vgVbG2k1KyupFL/3k1JtR
+ xQZoG9cZno3GxaUVT/w==
+X-Proofpoint-ORIG-GUID: 5eTbkAcIxmLS-T4lFHlmBgbDSzxLcidb
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [1.34 / 15.00];
+X-Spamd-Result: default: False [1.84 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_REJECT(1.00)[cv is fail on i=2];
 	DMARC_POLICY_ALLOW(-0.50)[oracle.com,reject];
+	MID_RHS_NOT_FQDN(0.50)[];
 	R_DKIM_ALLOW(-0.20)[oracle.com:s=corp-2025-04-25,oracle.onmicrosoft.com:s=selector2-oracle-onmicrosoft-com];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76744-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_TO(0.00)[kernel.org,oracle.com,brown.name,redhat.com,talpey.com,lst.de,gmail.com,zeniv.linux.org.uk,suse.cz];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-76745-lists,linux-fsdevel=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,oracle.onmicrosoft.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,oracle.com:email,oracle.com:dkim];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,oracle.com:mid,oracle.com:dkim,oracle.com:email,oracle.onmicrosoft.com:dkim];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[linux-foundation.org,suse.de,kernel.org,linux.intel.com,redhat.com,alien8.de,zytor.com,arndb.de,linuxfoundation.org,intel.com,gmail.com,ffwll.ch,ursulin.net,amd.com,zeniv.linux.org.uk,suse.cz,kvack.org,linux.alibaba.com,google.com,huawei.com,vivo.com,mit.edu,dilger.ca,linux.dev,paragon-software.com,omnibond.com,arm.com,wdc.com,infradead.org,suse.com,nvidia.com,paul-moore.com,namei.org,hallyn.com,rasmusvillemoes.dk,vger.kernel.org,lists.linux.dev,lists.freedesktop.org,lists.ozlabs.org,lists.orangefs.org];
 	DKIM_TRACE(0.00)[oracle.com:+,oracle.onmicrosoft.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[dai.ngo@oracle.com,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[Liam.Howlett@oracle.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	RCPT_COUNT_GT_50(0.00)[93];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	RCVD_COUNT_SEVEN(0.00)[9]
-X-Rspamd-Queue-Id: CF6D3114107
+X-Rspamd-Queue-Id: 2CF1A114181
 X-Rspamd-Action: no action
 
+* Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [260206 20:01]:
+> On Fri, Feb 06, 2026 at 11:31:53AM -0800, Andrew Morton wrote:
+> > On Fri, 6 Feb 2026 17:46:36 +0000 Pedro Falcato <pfalcato@suse.de> wrote:
+> >
+> > > > -#define VM_REMAP_FLAGS (VM_IO | VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP)
+> > > > +#define VMA_REMAP_FLAGS mk_vma_flags(VMA_IO_BIT, VMA_PFNMAP_BIT,	\
+> > > > +				     VMA_DONTEXPAND_BIT, VMA_DONTDUMP_BIT)
+> > >
+> > > as a sidenote, these flags are no longer constant expressions and thus
+> > >
+> > > static vma_flags_t flags = VMA_REMAP_FLAGS;
+> 
+> I mean this would be a code smell anyway :) but point taken.
+> 
+> > >
+> > > can't compile.
+> >
+> > Yup, that isn't nice.  An all-caps thing with no () is a compile-time
+> > constant.
+> 
+> There is precedence for this, e.g. TASK_SIZE_MAX and other arch defines like
+> that:
+> 
+>  error: initializer element is not a compile-time constant
+>  3309 | static unsigned long task_max = TASK_SIZE_MAX;
+>       |                                 ^~~~~~~~~~~~~
+> 
+> And this will almost certainly (and certainly in everything I tested) become a
+> compile-time constant via the optimiser so to all intents and purposes it _is_
+> essentially compile-time.
+> 
+> But the point of doing it this way is to maintain, as much as possible,
+> one-to-one translation between the previous approach and the new with as little
+> noise/friction as possible.
+> 
+> Making this a function makes things really horrible honestly.
+> 
+> Because vma_remap_flags() suddenly because a vague thing - I'd assume this was a
+> function doing something. So now do we call it get_vma_remap_flags()? Suddenly
+> something nice-ish like:
+> 
+> 	if (vma_flags_test(flags, VMA_REMAP_FLAGS)) {
+> 		...
+> 	}
+> 
+> Become:
+> 
+> 	if (vma_flags_test(flags, get_vma_remap_flags())) {
+> 		...
+> 	}
+> 
+> And now it's SUPER ambiguous as to what you're doing there. I'd assume right
+> away that get_vma_remap_flags() was going off and doing something or referencing
+> a static variable or something.
+> 
+> Given the compile will treat the former _exactly_ as if it were a compile-time
+> constant it's just adding unnecessary ambiguity.
+> 
+> So is it something we can live with?
 
-On 2/7/26 10:00 AM, Chuck Lever wrote:
->
-> On Sat, Feb 7, 2026, at 1:09 AM, Dai Ngo wrote:
->> When a layout conflict triggers a recall, enforcing a timeout is
->> necessary to prevent excessive nfsd threads from being blocked in
->> __break_lease ensuring the server continues servicing incoming
->> requests efficiently.
->>
->> This patch introduces a new function to lease_manager_operations:
->>
->> lm_breaker_timedout: Invoked when a lease recall times out and is
->> about to be disposed of. This function enables the lease manager
->> to inform the caller whether the file_lease should remain on the
->> flc_list or be disposed of.
->>
->> For the NFSD lease manager, this function now handles layout recall
->> timeouts. If the layout type supports fencing and the client has not
->> been fenced, a fence operation is triggered to prevent the client
->> from accessing the block device.
->>
->> While the fencing operation is in progress, the conflicting file_lease
->> remains on the flc_list until fencing is complete. This guarantees
->> that no other clients can access the file, and the client with
->> exclusive access is properly blocked before disposal.
->>
->> Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
->> ---
->>   Documentation/filesystems/locking.rst |   2 +
->>   fs/locks.c                            |  15 ++-
->>   fs/nfsd/blocklayout.c                 |  41 ++++++--
->>   fs/nfsd/nfs4layouts.c                 | 137 +++++++++++++++++++++++++-
->>   fs/nfsd/nfs4state.c                   |   1 +
->>   fs/nfsd/pnfs.h                        |   2 +-
->>   fs/nfsd/state.h                       |   6 ++
->>   include/linux/filelock.h              |   1 +
->>   8 files changed, 191 insertions(+), 14 deletions(-)
->>
->> v2:
->>      . Update Subject line to include fencing operation.
->>      . Allow conflicting lease to remain on flc_list until fencing
->>        is complete.
->>      . Use system worker to perform fencing operation asynchronously.
->>      . Use nfs4_stid.sc_count to ensure layout stateid remains
->>        valid before starting the fencing operation, nfs4_stid.sc_count
->>        is released after fencing operation is complete.
->>      . Rework nfsd4_scsi_fence_client to:
->>           . wait until fencing to complete before exiting.
->>           . wait until fencing in progress to complete before
->>             checking the NFSD_MDS_PR_FENCED flag.
->>      . Remove lm_need_to_retry from lease_manager_operations.
->> v3:
->>      . correct locking requirement in locking.rst.
->>      . add max retry count to fencing operation.
->>      . add missing nfs4_put_stid in nfsd4_layout_fence_worker.
->>      . remove special-casing of FL_LAYOUT in lease_modify.
->>      . remove lease_want_dispose.
->>      . move lm_breaker_timedout call to time_out_leases.
->> v4:
->>      . only increment ls_fence_retry_cnt after successfully
->>        schedule new work in nfsd4_layout_lm_breaker_timedout.
->> v5:
->>      . take reference count on layout stateid before starting
->>        fence worker.
->>      . restore comments in nfsd4_scsi_fence_client and the
->>        code that check for specific errors.
->>      . cancel fence worker before freeing layout stateid.
->>      . increase fence retry from 5 to 20.
->>
->> NOTE:
->>      I experimented with having the fence worker handle lease
->>      disposal after fencing the client. However, this requires
->>      the lease code to export the lease_dispose_list function,
->>      and for the fence worker to acquire the flc_lock in order
->>      to perform the disposal. This approach adds unnecessary
->>      complexity and reduces code clarity, as it exposes internal
->>      lease code details to the nfsd worker, which should not
->>      be the case.
->>
->>      Instead, the lm_breaker_timedout operation should simply
->>      notify the lease code about how to handle a lease that
->>      times out during a lease break, rather than directly
->>      manipulating the lease list.
->> v6:
->>     . unlock the lease as soon as the fencing is done, so that
->>       tasks waiting on it can proceed.
->>
->> v7:
->>     . Change to retry fencing on error forever by default.
->>     . add module parameter option to allow the admim to specify
->>       the maximun number of retries before giving up.
->>
->> diff --git a/Documentation/filesystems/locking.rst
->> b/Documentation/filesystems/locking.rst
->> index 04c7691e50e0..79bee9ae8bc3 100644
->> --- a/Documentation/filesystems/locking.rst
->> +++ b/Documentation/filesystems/locking.rst
->> @@ -403,6 +403,7 @@ prototypes::
->>   	bool (*lm_breaker_owns_lease)(struct file_lock *);
->>           bool (*lm_lock_expirable)(struct file_lock *);
->>           void (*lm_expire_lock)(void);
->> +        bool (*lm_breaker_timedout)(struct file_lease *);
->>
->>   locking rules:
->>
->> @@ -417,6 +418,7 @@ lm_breaker_owns_lease:	yes     	no			no
->>   lm_lock_expirable	yes		no			no
->>   lm_expire_lock		no		no			yes
->>   lm_open_conflict	yes		no			no
->> +lm_breaker_timedout     yes             no                      no
->>   ======================	=============	=================	=========
->>
->>   buffer_head
->> diff --git a/fs/locks.c b/fs/locks.c
->> index 46f229f740c8..0e77423cf000 100644
->> --- a/fs/locks.c
->> +++ b/fs/locks.c
->> @@ -1524,6 +1524,7 @@ static void time_out_leases(struct inode *inode,
->> struct list_head *dispose)
->>   {
->>   	struct file_lock_context *ctx = inode->i_flctx;
->>   	struct file_lease *fl, *tmp;
->> +	bool remove = true;
-> The "remove" variable is initialized before the loop but is never
-> reset to true at the start of each iteration. If a lease's
-> lm_breaker_timedout callback returns false, "remove" stays false
-> for all subsequent leases in the list.
->
-> A later lease that has timed out but has no lm_breaker_timedout
-> callback (or a NULL fl_lmops) would skip the conditional assignment
-> and inherit the stale false value, preventing lease_modify() from
-> disposing of it.
->
-> Should "remove" be reset to true inside the loop body before the
-> fl_break_time check?
+How many of these are there going to be?  Could we do something like:
 
-Yes, it should be initialized inside the loop. Fix in v8.
+        static inline remap_vma_flags_test(..) {
+                return vma_flags_test_all(vma_flags, ...);
+        }
 
->
->
->>   	lockdep_assert_held(&ctx->flc_lock);
->>
->> @@ -1531,8 +1532,18 @@ static void time_out_leases(struct inode *inode,
->> struct list_head *dispose)
->>   		trace_time_out_leases(inode, fl);
->>   		if (past_time(fl->fl_downgrade_time))
->>   			lease_modify(fl, F_RDLCK, dispose);
->> -		if (past_time(fl->fl_break_time))
->> -			lease_modify(fl, F_UNLCK, dispose);
->> +
->> +		if (past_time(fl->fl_break_time)) {
->> +			/*
->> +			 * Consult the lease manager when a lease break times
->> +			 * out to determine whether the lease should be disposed
->> +			 * of.
->> +			 */
->> +			if (fl->fl_lmops && fl->fl_lmops->lm_breaker_timedout)
->> +				remove = fl->fl_lmops->lm_breaker_timedout(fl);
-> I'm still not enthusiastic about holding flc_lock while calling
-> another module. Especially since holding that lock does not
-> appear to be documented in an API contract...
+        if (remap_vma_flags_test(vma_flags)) {
+                ...
+        }
 
-It's documented in Documentation/filesystems/locking.rst
-
->
->
->> +			if (remove)
->> +				lease_modify(fl, F_UNLCK, dispose);
->> +		}
->>   	}
->>   }
->>
->> diff --git a/fs/nfsd/blocklayout.c b/fs/nfsd/blocklayout.c
->> index 7ba9e2dd0875..b7030c91964c 100644
->> --- a/fs/nfsd/blocklayout.c
->> +++ b/fs/nfsd/blocklayout.c
->> @@ -443,15 +443,33 @@ nfsd4_scsi_proc_layoutcommit(struct inode *inode,
->> struct svc_rqst *rqstp,
->>   	return nfsd4_block_commit_blocks(inode, lcp, iomaps, nr_iomaps);
->>   }
->>
->> -static void
->> +/*
->> + * Perform the fence operation to prevent the client from accessing the
->> + * block device. If a fence operation is already in progress, wait for
->> + * it to complete before checking the NFSD_MDS_PR_FENCED flag. Once the
->> + * operation is complete, check the flag. If NFSD_MDS_PR_FENCED is set,
->> + * update the layout stateid by setting the ls_fenced flag to indicate
->> + * that the client has been fenced.
->> + *
->> + * The cl_fence_mutex ensures that the fence operation has been fully
->> + * completed, rather than just in progress, when returning from this
->> + * function.
->> + *
->> + * Return true if client was fenced otherwise return false.
->> + */
->> +static bool
->>   nfsd4_scsi_fence_client(struct nfs4_layout_stateid *ls, struct nfsd_file *file)
->>   {
->>   	struct nfs4_client *clp = ls->ls_stid.sc_client;
->>   	struct block_device *bdev = file->nf_file->f_path.mnt->mnt_sb->s_bdev;
->>   	int status;
->> +	bool ret;
->>
->> -	if (nfsd4_scsi_fence_set(clp, bdev->bd_dev))
->> -		return;
->> +	mutex_lock(&clp->cl_fence_mutex);
->> +	if (nfsd4_scsi_fence_set(clp, bdev->bd_dev)) {
->> +		mutex_unlock(&clp->cl_fence_mutex);
->> +		return true;
->> +	}
->>
->>   	status = bdev->bd_disk->fops->pr_ops->pr_preempt(bdev,
->> NFSD_MDS_PR_KEY,
->>   			nfsd4_scsi_pr_key(clp),
->> @@ -470,13 +488,22 @@ nfsd4_scsi_fence_client(struct
->> nfs4_layout_stateid *ls, struct nfsd_file *file)
->>   	 * PR_STS_RESERVATION_CONFLICT, which would cause an infinite
->>   	 * retry loop.
->>   	 */
->> -	if (status < 0 ||
->> -	    status == PR_STS_PATH_FAILED ||
->> -	    status == PR_STS_PATH_FAST_FAILED ||
->> -	    status == PR_STS_RETRY_PATH_FAILURE)
->> +	switch (status) {
->> +	case 0:
->> +	case PR_STS_IOERR:
->> +	case PR_STS_RESERVATION_CONFLICT:
->> +		ret = true;
->> +		break;
->> +	default:
->> +		/* retry-able and other errors */
->> +		ret = false;
->>   		nfsd4_scsi_fence_clear(clp, bdev->bd_dev);
->> +		break;
->> +	}
->> +	mutex_unlock(&clp->cl_fence_mutex);
->>
->>   	trace_nfsd_pnfs_fence(clp, bdev->bd_disk->disk_name, status);
->> +	return ret;
->>   }
->>
->>   const struct nfsd4_layout_ops scsi_layout_ops = {
->> diff --git a/fs/nfsd/nfs4layouts.c b/fs/nfsd/nfs4layouts.c
->> index ad7af8cfcf1f..c02b3219ebeb 100644
->> --- a/fs/nfsd/nfs4layouts.c
->> +++ b/fs/nfsd/nfs4layouts.c
->> @@ -27,6 +27,25 @@ static struct kmem_cache *nfs4_layout_stateid_cache;
->>   static const struct nfsd4_callback_ops nfsd4_cb_layout_ops;
->>   static const struct lease_manager_operations nfsd4_layouts_lm_ops;
->>
->> +/*
->> + * By default, if the server fails to fence a client, it retries the fencing
->> + * operation indefinitely to prevent data corruption. The admin needs to take
->> + * the following actions to restore access to the file for other clients:
->> + *
->> + *    . shutdown or power off the client being fenced.
->> + *    . manually expire the client to release all its state on the server;
->> + *      echo 'expire' > proc/fs/nfsd/clients/clientid/ctl'.
-> Has there been any testing that shows expiring that client actually
-> breaks the fence retry loop below?
-
-nfsd4_revoke_states calls nfsd4_close_layout to remove all file leases.
-I manually tested it.
-
->
->
->> + *
->> + * The admim can control this behavior by setting nfsd4_fence_max_retries
->> + * to specify the maximum number of retries. If the maximum is reached, the
->> + * server gives up and removes the conflicting lease, allowing other clients
->> + * to access the file.
->> + */
->> +static int nfsd4_fence_max_retries = 0;		/* default is retry forever */
->> +module_param(nfsd4_fence_max_retries, int, 0644);
->> +MODULE_PARM_DESC(nfsd4_fence_max_retries,
->> +	"Maximum retries for fencing operation, 0 is for retry forever.");
->> +
-> max_retries is a signed integer. What would a negative max retries value
-> mean?
->
-> I haven't seen a clear use case stated for an admin needing to set this
-> value. The documenting comment just says "The admin /can/ control this
-> behavior" (emphasis mine) but does not state /why/ she might need to do
-> that. The documenting comment does not underscore that limiting the
-> number of retries -- setting this value -- is a data corruption risk.
->
-> I'd rather not add this setting unless there is an actual real world
-> purpose in front of us.
-
-Ok, I'll remove this knob in v8.
-
->
->
->>   const struct nfsd4_layout_ops *nfsd4_layout_ops[LAYOUT_TYPE_MAX] =  {
->>   #ifdef CONFIG_NFSD_FLEXFILELAYOUT
->>   	[LAYOUT_FLEX_FILES]	= &ff_layout_ops,
->> @@ -177,6 +196,13 @@ nfsd4_free_layout_stateid(struct nfs4_stid *stid)
->>
->>   	trace_nfsd_layoutstate_free(&ls->ls_stid.sc_stateid);
->>
->> +	spin_lock(&ls->ls_lock);
->> +	if (ls->ls_fence_in_progress) {
->> +		spin_unlock(&ls->ls_lock);
->> +		cancel_delayed_work_sync(&ls->ls_fence_work);
->> +	} else
->> +		spin_unlock(&ls->ls_lock);
->> +
->>   	spin_lock(&clp->cl_lock);
->>   	list_del_init(&ls->ls_perclnt);
->>   	spin_unlock(&clp->cl_lock);
->> @@ -271,6 +297,9 @@ nfsd4_alloc_layout_stateid(struct
->> nfsd4_compound_state *cstate,
->>   	list_add(&ls->ls_perfile, &fp->fi_lo_states);
->>   	spin_unlock(&fp->fi_lock);
->>
->> +	ls->ls_fence_in_progress = false;
->> +	ls->ls_fenced = false;
->> +	ls->ls_fence_retries = 0;
->>   	trace_nfsd_layoutstate_alloc(&ls->ls_stid.sc_stateid);
->>   	return ls;
->>   }
->> @@ -747,11 +776,9 @@ static bool
->>   nfsd4_layout_lm_break(struct file_lease *fl)
->>   {
->>   	/*
->> -	 * We don't want the locks code to timeout the lease for us;
->> -	 * we'll remove it ourself if a layout isn't returned
->> -	 * in time:
->> +	 * Enforce break lease timeout to prevent NFSD
->> +	 * thread from hanging in __break_lease.
->>   	 */
->> -	fl->fl_break_time = 0;
->>   	nfsd4_recall_file_layout(fl->c.flc_owner);
->>   	return false;
->>   }
->> @@ -782,10 +809,112 @@ nfsd4_layout_lm_open_conflict(struct file *filp, int arg)
->>   	return 0;
->>   }
->>
->> +static void
->> +nfsd4_layout_fence_worker(struct work_struct *work)
->> +{
->> +	struct delayed_work *dwork = to_delayed_work(work);
->> +	struct nfs4_layout_stateid *ls = container_of(dwork,
->> +			struct nfs4_layout_stateid, ls_fence_work);
->> +	struct nfsd_file *nf;
->> +	struct block_device *bdev;
->> +	LIST_HEAD(dispose);
->> +
->> +	spin_lock(&ls->ls_lock);
->> +	if (list_empty(&ls->ls_layouts)) {
->> +		spin_unlock(&ls->ls_lock);
->> +dispose:
->> +		/* unlock the lease so that tasks waiting on it can proceed */
->> +		nfsd4_close_layout(ls);
-> nfsd4_close_layout() acquires fi_lock and calls kernel_setlease().
-> If lease code acquires locks that the fence worker holds, can a
-> deadlock occur in workqueue context?
-
-nfsd4_close_layout() releases the fi_lock before calling kernel_setlease().
-
->
->
->> +
->> +		ls->ls_fenced = true;
->> +		ls->ls_fence_in_progress = false;
->> +		nfs4_put_stid(&ls->ls_stid);
->> +		return;
->> +	}
->> +	spin_unlock(&ls->ls_lock);
->> +
->> +	rcu_read_lock();
->> +	nf = nfsd_file_get(ls->ls_file);
->> +	rcu_read_unlock();
->> +	if (!nf)
->> +		goto dispose;
->> +
->> +	if (nfsd4_layout_ops[ls->ls_layout_type]->fence_client(ls, nf)) {
->> +		/* fenced ok */
->> +		nfsd_file_put(nf);
->> +		goto dispose;
->> +	}
->> +	/* fence failed */
->> +	bdev = nf->nf_file->f_path.mnt->mnt_sb->s_bdev;
->> +	nfsd_file_put(nf);
->> +
->> +	pr_warn("%s: FENCE failed client[%pISpc] device[0x%x]\n",
->> +		__func__, (struct sockaddr *)&ls->ls_stid.sc_client,
->> +		bdev->bd_dev);
-> The %pISpc format expects a struct sockaddr pointer.
-> ls->ls_stid.sc_client is a struct nfs4_client pointer, so
-> &ls->ls_stid.sc_client yields the address of the pointer field
-> itself (a struct nfs4_client **), not a socket address.
->
-> Compare with client_info_show() in nfs4state.c which uses the
-> correct form:
->
->      (struct sockaddr *)&clp->cl_addr
->
-> Should this be (struct sockaddr *)&ls->ls_stid.sc_client->cl_addr?
-
-Yes, fix in v8.
-
->
->
->> +	if (nfsd4_fence_max_retries &&
->> +			ls->ls_fence_retries++ >= nfsd4_fence_max_retries)
->> +		goto dispose;
->> +	mod_delayed_work(system_dfl_wq, &ls->ls_fence_work, 1);
-> "1" -- is that 1 jiffy? Could this use an exponential back-off
-> instead?
-
-Fix in v8.
-
->
->
->> +}
->> +
->> +/**
->> + * nfsd4_layout_lm_breaker_timedout - The layout recall has timed out.
->> + *
-> Nit: Remove the blank comment line here, please.
-
-Fix in v8.
-
->
->
->> + * @fl: file to check
->> + *
->> + * If the layout type supports a fence operation, schedule a worker to
->> + * fence the client from accessing the block device.
->> + *
->> + * This function runs under the protection of the spin_lock flc_lock.
->> + * At this time, the file_lease associated with the layout stateid is
->> + * on the flc_list. A reference count is incremented on the layout
->> + * stateid to prevent it from being freed while the fence orker is
-> Nit: ^ orker^ worker
-
-Fix in v8.
-
-Thanks,
--Dai
-
->
->
->> + * executing. Once the fence worker finishes its operation, it releases
->> + * this reference.
->> + *
->> + * The fence worker continues to run until either the client has been
->> + * fenced or the layout becomes invalid. The layout can become invalid
->> + * as a result of a LAYOUTRETURN or when the CB_LAYOUT recall callback
->> + * has completed.
->> + *
->> + * Return true if the file_lease should be disposed of by the caller;
->> + * otherwise, return false.
->> + */
->> +static bool
->> +nfsd4_layout_lm_breaker_timedout(struct file_lease *fl)
->> +{
->> +	struct nfs4_layout_stateid *ls = fl->c.flc_owner;
->> +
->> +	if ((!nfsd4_layout_ops[ls->ls_layout_type]->fence_client) ||
->> +			ls->ls_fenced)
->> +		return true;
->> +	if (ls->ls_fence_in_progress)
->> +		return false;
->> +
->> +	INIT_DELAYED_WORK(&ls->ls_fence_work, nfsd4_layout_fence_worker);
->> +
->> +	/*
->> +	 * Make sure layout has not been returned yet before
->> +	 * taking a reference count on the layout stateid.
->> +	 */
->> +	spin_lock(&ls->ls_lock);
->> +	if (list_empty(&ls->ls_layouts)) {
->> +		spin_unlock(&ls->ls_lock);
->> +		return true;
->> +	}
->> +	refcount_inc(&ls->ls_stid.sc_count);
->> +	ls->ls_fence_in_progress = true;
->> +	spin_unlock(&ls->ls_lock);
->> +
->> +	mod_delayed_work(system_dfl_wq, &ls->ls_fence_work, 0);
->> +	return false;
->> +}
->> +
->>   static const struct lease_manager_operations nfsd4_layouts_lm_ops = {
->>   	.lm_break		= nfsd4_layout_lm_break,
->>   	.lm_change		= nfsd4_layout_lm_change,
->>   	.lm_open_conflict	= nfsd4_layout_lm_open_conflict,
->> +	.lm_breaker_timedout	= nfsd4_layout_lm_breaker_timedout,
->>   };
->>
->>   int
->> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
->> index 98da72fc6067..bad91d1bfef3 100644
->> --- a/fs/nfsd/nfs4state.c
->> +++ b/fs/nfsd/nfs4state.c
->> @@ -2387,6 +2387,7 @@ static struct nfs4_client *alloc_client(struct
->> xdr_netobj name,
->>   #endif
->>   #ifdef CONFIG_NFSD_SCSILAYOUT
->>   	xa_init(&clp->cl_dev_fences);
->> +	mutex_init(&clp->cl_fence_mutex);
->>   #endif
->>   	INIT_LIST_HEAD(&clp->async_copies);
->>   	spin_lock_init(&clp->async_lock);
->> diff --git a/fs/nfsd/pnfs.h b/fs/nfsd/pnfs.h
->> index db9af780438b..3a2f9e240e85 100644
->> --- a/fs/nfsd/pnfs.h
->> +++ b/fs/nfsd/pnfs.h
->> @@ -38,7 +38,7 @@ struct nfsd4_layout_ops {
->>   			struct svc_rqst *rqstp,
->>   			struct nfsd4_layoutcommit *lcp);
->>
->> -	void (*fence_client)(struct nfs4_layout_stateid *ls,
->> +	bool (*fence_client)(struct nfs4_layout_stateid *ls,
->>   			     struct nfsd_file *file);
->>   };
->>
->> diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
->> index 713f55ef6554..be85c9fd6a68 100644
->> --- a/fs/nfsd/state.h
->> +++ b/fs/nfsd/state.h
->> @@ -529,6 +529,7 @@ struct nfs4_client {
->>   	time64_t		cl_ra_time;
->>   #ifdef CONFIG_NFSD_SCSILAYOUT
->>   	struct xarray		cl_dev_fences;
->> +	struct mutex		cl_fence_mutex;
->>   #endif
->>   };
->>
->> @@ -738,6 +739,11 @@ struct nfs4_layout_stateid {
->>   	stateid_t			ls_recall_sid;
->>   	bool				ls_recalled;
->>   	struct mutex			ls_mutex;
->> +
->> +	struct delayed_work		ls_fence_work;
->> +	int				ls_fence_retries;
->> +	bool				ls_fence_in_progress;
->> +	bool				ls_fenced;
->>   };
->>
->>   static inline struct nfs4_layout_stateid *layoutstateid(struct nfs4_stid *s)
->> diff --git a/include/linux/filelock.h b/include/linux/filelock.h
->> index 2f5e5588ee07..13b9c9f04589 100644
->> --- a/include/linux/filelock.h
->> +++ b/include/linux/filelock.h
->> @@ -50,6 +50,7 @@ struct lease_manager_operations {
->>   	void (*lm_setup)(struct file_lease *, void **);
->>   	bool (*lm_breaker_owns_lease)(struct file_lease *);
->>   	int (*lm_open_conflict)(struct file *, int);
->> +	bool (*lm_breaker_timedout)(struct file_lease *fl);
->>   };
->>
->>   struct lock_manager {
->> -- 
->> 2.47.3
 
