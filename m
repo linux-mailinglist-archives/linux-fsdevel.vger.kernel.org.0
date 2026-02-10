@@ -1,114 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-76796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76797-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QLmSFA+DimmfLQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 01:59:59 +0100
+	id oDLfB7yCimlaLQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76797-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 01:58:36 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1F7A115DF8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 01:59:58 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9140A115D7E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 01:58:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1E05E3053646
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 00:52:49 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id E6113306D647
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 00:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4892A32FA28;
-	Tue, 10 Feb 2026 00:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1302C26ED35;
+	Tue, 10 Feb 2026 00:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JxalWT9S"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Bn34pXI4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C553F273D84;
-	Tue, 10 Feb 2026 00:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85BE124468B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Feb 2026 00:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770684638; cv=none; b=NfCJtZ2BE72u7yy4prMTorIi9HAvyjggUXHy1eQAPaM9jK1+AFtEINrQxODRqYPDSODEImEacot0r3VAvO1/7vhd7LMM0RIAVR9CcvaAueYb07q4khDS0UHBeOz4aZLl750nvTAOS9PNNlqvsjaieTtsYLiDS7g+gjGvTo7ondc=
+	t=1770684767; cv=none; b=K30MGgCVULa3mlDS1sUuqQfZBgHpCI71k7fl6Vl5JN1y3WrSCSaE4NXEWiXtkBqKTJ0iUGyWId795OEpR96wLa8aLRZnshaZljEZzP5Q1fIA07ckQcrAJSLlZAByjX2OZponUVtGrHEPr6nqMNUcY15Y6IH11JjyUuJxeqqTvTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770684638; c=relaxed/simple;
-	bh=yxLO5RnzXFJBfzH7+hA33tznVFThmhM6nOgm4pvmPZo=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=WnMte4b6VJ1/oNtWXvQ9GtDWIYB7VBFvChcsQ58r32Nb8XLFcyM7pX6OdKtXzaonLxrO/dzPHbrOTguVRgFjWYCsWRQOLoY/1cs8FtAbyPYgbpVjjqqcQEtvKHoLf7XtqFhV7ByKmqPpF4ARgGXW70E4ucfdaKzqVl8W3JoqMBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JxalWT9S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5601DC116C6;
-	Tue, 10 Feb 2026 00:50:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770684638;
-	bh=yxLO5RnzXFJBfzH7+hA33tznVFThmhM6nOgm4pvmPZo=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=JxalWT9SRvzfSQEaxe7uBVf4S1wjVeaiZDhXxNoGdODFceSYLqLfY3hZYqI585cMB
-	 3nXQu0430ViEWhGvWDsDdU46/lfc5dh73pB1SHBp/08wJsRLU0WJUlAvxUuXQy+P8o
-	 FZ/EzMcdOcx4tMS3JOqlE5tUKQOe9bgrPeni2qqRj75MhX4mzO0igOAH4pCiqfw+Kw
-	 uyXB0luyofDNUGb4CQVlW3JS3sqnJg4ziRk/JACXwOTwsLKbFTwxvb+gA7txa0s2O3
-	 GVbmWtdJekteGK2gb3AgKqAwh0FThtUHfbfiXhfQRlwnzOqiNPXQQFcJzuor8ovhjF
-	 V+L1NJUWxz9eQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 47F00380AA49;
-	Tue, 10 Feb 2026 00:50:35 +0000 (UTC)
-Subject: Re: [GIT PULL] hfs/hfsplus changes for 7.0-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <9ee4d3b9c7e2131f274c5d1eb2bfcd009a92c765.camel@dubeyko.com>
-References: <9ee4d3b9c7e2131f274c5d1eb2bfcd009a92c765.camel@dubeyko.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <9ee4d3b9c7e2131f274c5d1eb2bfcd009a92c765.camel@dubeyko.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/vdubeyko/hfs.git tags/hfs-v7.0-tag1
-X-PR-Tracked-Commit-Id: ebebb04baefdace1e0dc17f7779e5549063ca592
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 4fb7d86fbef0e294f4bb6bc46930c5789d332dc7
-Message-Id: <177068463421.3270491.9596067086097043588.pr-tracker-bot@kernel.org>
-Date: Tue, 10 Feb 2026 00:50:34 +0000
-To: Viacheslav Dubeyko <slava@dubeyko.com>
-Cc: torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, glaubitz@physik.fu-berlin.de, frank.li@vivo.com, jkoolstra@xs4all.nl, mehdi.benhadjkhelifa@gmail.com, shardul.b@mpiricsoftware.com, penguin-kernel@I-love.SAKURA.ne.jp
+	s=arc-20240116; t=1770684767; c=relaxed/simple;
+	bh=2x1c8y6EHqL6GVEB6jsoTKViDEvIoB31obecTcD7lDI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WoA5L9PcB7wypch/DSMe/lAfqs+ot8ttIkJcYwcOpLp3niuOyck8AT+zVEsFQuhrBM2XONR88ffLwLYF5Hgh8QlcgJB3plbNQ3zMCr7/qKb3V3IEaEY0mp/bMiWfekt9V+NRVbwzygMVvH5cMMJ/It4iBA8iZHfgkB0g3ibnXwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Bn34pXI4; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-45c733ccc32so171161b6e.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Feb 2026 16:52:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1770684764; x=1771289564; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6P44jKVzv4rUr9Cf5g2WNuRnFwfE4L3v+WHDzRsUhzA=;
+        b=Bn34pXI4dWw6zJwdmLRkoqqHHxFCksnkBnNYDqKrJQQeaERxfgMle3mgJoSOXLm1T9
+         fpUiZnOPK3UKrjolh6Yi+QOzFO2T3l1RuSqW8ulsOQzMi2owxU6b9wKfndQxOGCKnP3e
+         PpDVdwsziRRAgzkUljDqJRJHwjNj76hJPCDyZTGnwmOil/mGHiTiyzxsO9G6hyLCusVl
+         /I+UkqtRQOGpyRtMcAnnfg0kVURhrPUSly2ghsMdpj5OLF5fmkmFJI7+B+QxcRVSWG2z
+         UODCgeVu7gDLH3L27nRSJ/Xxn0DcYZCVCVRHavgcFnUSjjgygo4v0fGE0cVLMjvlzqE9
+         /ZYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770684764; x=1771289564;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6P44jKVzv4rUr9Cf5g2WNuRnFwfE4L3v+WHDzRsUhzA=;
+        b=SJEs2rPuCfN3i0WBVDVeJ0n/z/WVeOQWrNt+zXoR2PFtAvM7TTuapne7c4M1AIMPj+
+         XgDP9uWxr1hC3XjToPDfZkVARkT+M4CDxuYAGGJdmX0eBhhnr4b3MJtnAMqqGSAI50Q8
+         oHl7vGaCT+vG5u1/cveugGFAcFK3uo74uVGu8JfjN0QU2/ZArf0h04Rjw9AsrPtQc3tg
+         VFACtgrz+y+U2d5N2vhczopzieQ9lhQdiiIYx6pSLGSKwhC52msuCAevxLpms6klqtjw
+         2C0A7NQtwCvOfpjxzj2ACclZ+iLRWviK5TdVmf/2JBg9tKGv/D1WvNBXds3+k0HJQ3Hu
+         tkwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWkFtD4CJDxVw+qwf4vQQYRLG5V/ppKSG4ZnlgJFqLXtLExhSL4ANNUOwSwG7JS6GP3CDuvZEsMs4g/rFiW@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSOTAfO3lm9GYTpRfMcoGqzucvI92BrHGREmpDcqbM9hhkMjZ7
+	px5xHeEAothvE+yo5uqGjvmDnS56gUlXJW/K+gUuznR15EG728eDEiWGd5Jl9eLWsEc=
+X-Gm-Gg: AZuq6aKkQKIGevfkH60L7CkEdH+aGdIoTcxFrGeiTnjM21Ua8mcOlIAgOA7MQT5YCJy
+	1uubH/4m7x/d/W2rYx6+MFnDBcVNQ7kKDjSflUPPrQkiJ542iTcVokyaSRKoCNFjDBmJazl/Kjx
+	fvTfSUJPDSUtb9Vdz8wNHKl9aWjgYeXX9IHu4CbQsJULZLfyTbjzYAAJ40ig1WO49IeFlcDjP2C
+	sjV2P7gfa5grxz89GtD8oSEdcEsiycZBnaH7sTOf0Ck16CmJU1V2/GfpnC5S0VNlUA5geJzQfYw
+	vMVvBlXByAsdFdTl59yTEg5mQd9nXjhwiw2UIVwnOtxoFGTCxs8wjiaFAqHwIoU5j9BKZ73wXgJ
+	YOP0lCQMyyATuuQBi3X6nNYb+TtVY7GVjrAXJMzx8WoyFIDg52Qj0tshMhiihOhgU6zNM6A4qfw
+	VEMYfYNRMfWlITaemcJByBZpsRoyOH54CHndIQLLwZix2u+CfVmr4O3Z6sNIzEI7UNqOudQiZt0
+	LJVakx/gg==
+X-Received: by 2002:a05:6808:1520:b0:45a:552f:cbc3 with SMTP id 5614622812f47-462fcb63e27mr7069549b6e.61.1770684764458;
+        Mon, 09 Feb 2026 16:52:44 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-462feb5455dsm7256050b6e.17.2026.02.09.16.52.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Feb 2026 16:52:43 -0800 (PST)
+Message-ID: <3eb1116b-f48e-4bfd-9a0b-798a147f54ce@kernel.dk>
+Date: Mon, 9 Feb 2026 17:52:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 07/11] io_uring/kbuf: add recycling for kernel managed
+ buffer rings
+To: Joanne Koong <joannelkoong@gmail.com>, io-uring@vger.kernel.org
+Cc: csander@purestorage.com, krisman@suse.de, bernd@bsbernd.com,
+ hch@infradead.org, asml.silence@gmail.com, linux-fsdevel@vger.kernel.org
+References: <20260210002852.1394504-1-joannelkoong@gmail.com>
+ <20260210002852.1394504-8-joannelkoong@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20260210002852.1394504-8-joannelkoong@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.84 / 15.00];
+X-Spamd-Result: default: False [-0.16 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20230601.gappssmtp.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,vger.kernel.org,physik.fu-berlin.de,vivo.com,xs4all.nl,gmail.com,mpiricsoftware.com,I-love.SAKURA.ne.jp];
+	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76797-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76796-lists,linux-fsdevel=lfdr.de];
+	DMARC_NA(0.00)[kernel.dk];
+	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org];
+	FREEMAIL_CC(0.00)[purestorage.com,suse.de,bsbernd.com,infradead.org,gmail.com,vger.kernel.org];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	FROM_NO_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[kernel-dk.20230601.gappssmtp.com:+];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	TO_DN_SOME(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[pr-tracker-bot@kernel.org,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	TO_DN_SOME(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: C1F7A115DF8
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,kernel-dk.20230601.gappssmtp.com:dkim,kernel.dk:mid]
+X-Rspamd-Queue-Id: 9140A115D7E
 X-Rspamd-Action: no action
 
-The pull request you sent on Fri, 06 Feb 2026 16:26:16 -0800:
+On 2/9/26 5:28 PM, Joanne Koong wrote:
+> +int io_uring_kmbuf_recycle(struct io_uring_cmd *cmd, unsigned int buf_group,
+> +			   u64 addr, unsigned int len, unsigned int bid,
+> +			   unsigned int issue_flags)
+> +{
+> +	struct io_kiocb *req = cmd_to_io_kiocb(cmd);
+> +	struct io_ring_ctx *ctx = req->ctx;
+> +	struct io_uring_buf_ring *br;
+> +	struct io_uring_buf *buf;
+> +	struct io_buffer_list *bl;
+> +	int ret = -EINVAL;
+> +
+> +	if (WARN_ON_ONCE(req->flags & REQ_F_BUFFERS_COMMIT))
+> +		return ret;
+> +
+> +	io_ring_submit_lock(ctx, issue_flags);
+> +
+> +	bl = io_buffer_get_list(ctx, buf_group);
+> +
+> +	if (!bl || WARN_ON_ONCE(!(bl->flags & IOBL_BUF_RING)) ||
+> +	    WARN_ON_ONCE(!(bl->flags & IOBL_KERNEL_MANAGED)))
+> +		goto done;
+> +
+> +	br = bl->buf_ring;
+> +
+> +	if (WARN_ON_ONCE((br->tail - bl->head) >= bl->nr_entries))
+> +		goto done;
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/vdubeyko/hfs.git tags/hfs-v7.0-tag1
+I think you want:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/4fb7d86fbef0e294f4bb6bc46930c5789d332dc7
+	if (WARN_ON_ONCE((__u16)(br->tail - bl->head) >= bl->nr_entries))
 
-Thank you!
+here to avoid int promotion from messing this up if tail has wrapped.
+
+In general, across the patches for the WARN_ON_ONCE(), it's not a huge
+issue to have a litter of them for now. Hopefully we can prune some of
+these down the line, however.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Jens Axboe
 
