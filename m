@@ -1,114 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-76880-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76881-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id kIwyAd6Gi2nzVQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76880-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 20:28:30 +0100
+	id 8AwHLoOJi2nYVgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76881-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 20:39:47 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B6FD11EA2A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 20:28:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D31D11EB3B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 20:39:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id BBF653038171
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 19:28:15 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A090A30238E1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 19:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED288392C4B;
-	Tue, 10 Feb 2026 19:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CFF32C94D;
+	Tue, 10 Feb 2026 19:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bah4iDZU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hmI1ZZ7p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D3138A9B7
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Feb 2026 19:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770751694; cv=none; b=V4A9A1IkBFTG/JZ0YrCIKvUQATvp3PvIXyPrebSXwAUxzbknjAv5QUNyZ0oVzgnlX08j4NZSO9VS3q/n7rGIdlxpI4eGkIFslizksMuhasIjJiAjBCAWHIAgx1qU+R2U6D8hO6n+KcD+PAtslcXqc1nAOnrZDfj7zcQz6+XfNqY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770751694; c=relaxed/simple;
-	bh=nhJZhYBxkbSh8inEMgiGwAe+rPO/lbxfcRT2zbOQwKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OxW/jlo5C8FFEoTwOHJzViIRNgZ39qxKO6laNoPkm+nZ1ez9t0r0JEnxCm5SQ6EJwjJYoceoZL+UtnKqj5b5Omz8uMAm+Ky3o8aXcA9eYdMXznvu8KkHXDdjjusZWJfomKKJ5SbmsrWHQh8ZAbgWpkj7zUvDcBGnM6Ahor/v/rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bah4iDZU; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29DF22DC782
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Feb 2026 19:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.180
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770752379; cv=pass; b=i03qFBWidryUK9BdILzmqlbvJqUeqFxxtzTrXAYQz+D+U54KGdEy+xhI37Hhu9P3aft6blyx4nIlnPnU6hRoruAv53MgilTyKran02p/WHACqcVZnwELrIV2e055ouLa9JZWWEbDZq9PhIQSkK7ZsCBb09JD7YoVgsrvhWpVxRw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770752379; c=relaxed/simple;
+	bh=1eiMN9YED+bohc5f+jlBHezjbKp34B9MdQq7qe4YDbM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OfyWceevLpV7etpLEoK//R0z8xhU4DSiMS8jkR4CCUqaJvX1Wf9t3OoTeqNBABG1MGw5Bqz0s7kpOjEDFXAjAYNBXgWFh4ihQmn/KozE+rLj0ibmKIdFMlBTTcpLp4t4iRpM9Ec3zz3ypOBmjnZ8EU4XVhE94bkC7i7DZBOa6/Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hmI1ZZ7p; arc=pass smtp.client-ip=209.85.160.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-436309f1ad7so3005642f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Feb 2026 11:28:12 -0800 (PST)
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-503347dea84so53848091cf.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Feb 2026 11:39:37 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770752376; cv=none;
+        d=google.com; s=arc-20240605;
+        b=RwXlS7UdMq2NcatuhXe6uItF3ptCUwNtboublZF8gsq0lGZcCgoU62Du+gmVnmLnrN
+         nr+f+mhU/UCIXNQneV2fGczzsDO17fdmQt8jlQk0JWve9n6lOJw3upJcGzYFoUfQytHm
+         JO3FqXm5ozPsZpV0Ominto/0FBT4zTIk43olqrAJzUT1UT+CI0d9CNxJMI+FlGJbmlSP
+         QQZhTXXjAhzgCbtYMHHiwR+JjpaOn7ieypA+9iHHaQ0kAYIO3S9KATkR5N3LxzOkoQTU
+         cFedO4TF8iJgGJ/keEHIQq/y6tbFG1omoJFy837vq6e4oQtRIpNTuxYahno5Hwqs56pm
+         ktWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=soCVu+PnjoqeOTg7buf7zgGuMZiUBaN37i4ynt8LPRI=;
+        fh=2MRa6wwOuE0KznTB+q4ITovCcJ6Eawn4WwDnvyk2YZE=;
+        b=bnSdn0mVxqJ0tPjbLDpFhRPfNoMeWq7ss5nSJhW1mWV3+kjB4KjIjOgdFD5O2w8crR
+         CURAIU2r2yBXIzqYPJRohSlTD5uLn+6e4zm2X0EvQdO718sbDXK7vU3XyBSjMUwViq4/
+         G9ymzqFxY3wszNZWlVaFw4+NzaFjzs35k6JGLItPt/iPWzvk5hx5nerKWj78xl+juniS
+         MaE0e3S1VfQNTboy9IZjDfgi0tk3GAGbKWZ4JVTf2gotRtVpaZAENFlSW1/wE/ssmN+w
+         9fAVrhlfIB16xLzYvgDjNBBrWBxKtHBbiRcJzYEJEs9e6utKySBbxSy8R1iIFqUoSvuQ
+         xFIw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770751691; x=1771356491; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1770752376; x=1771357176; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LFyGR2DyLRU+91jbuLD+/fzhLRHaNo946KYs1mYXfdg=;
-        b=bah4iDZUnDoIslL3kST5oTtVXHV5jviujxuA8yyaJH9amx2VCiB5vdNlBAtRaBLrvy
-         4LWSw2AVPw8Fk04MmwcRBlTPueXevvbyapZvrKbpRIS+WjirOaDHRAL1VdTHQyAND41h
-         FsUpEnfHH+ln+1BSTdqvynAPR0+uJyl59ZR8ccjYFPDezCVWbSKDUCfjVatxKzw/eCkI
-         f2+0fDd3C3zHdyDx48pEANgo7lvKZZ7f2UOufefYU4yQ4m9lypstLlwqJk4vULohLGNe
-         IgNDF664WLuua8vpQKNDCy/HVa/rI8QcmQ4iTgXJ+cQJXvHUTArfzw1RGY0jYKxpmsRn
-         m2kg==
+        bh=soCVu+PnjoqeOTg7buf7zgGuMZiUBaN37i4ynt8LPRI=;
+        b=hmI1ZZ7pqVUDMEQDiJ859jM7i0vGh+2+p9vF5U4ADPBfx/dafnRa/VAdCXSAshPfzd
+         HdE6Hgko8UgP98MFiTe7veCwCBzMs1M7Oxq1+4QiZjyu9lFpO05qs9xNp/Ly2L6c1ve8
+         Ff8QjsT+UIfJnSkingx4cY3mKvyetGNbyzWuW59MOCksdlL1+ausHjpBPyVO9HnfWsoS
+         nJQnP/9qlUZ6JpekGua+P0Vpz2jq+E+L1qb1cY+lQhzwhSJq/Du+a0BoXbmrP5WWNfi6
+         2PpF/SutFEZO6BTel4UUE+/P4L7EbK25esuZuzeZt7j0d1mw4ha/WPhJhHmjZAZauhnj
+         iMMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770751691; x=1771356491;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1770752376; x=1771357176;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=LFyGR2DyLRU+91jbuLD+/fzhLRHaNo946KYs1mYXfdg=;
-        b=AeZ3e6tdH/FSF4/3N6bmORuY54GyCMVN4bfMQQ84Q/mRJSb36Y9H79VdJ+v7ff0yhj
-         rtjWYzr9D9pTjZscZjA9ibatBspcbgK9G9DEiiBICgE7kJuqcOcqvk35hW+8+ASX3Tz9
-         OYd8EjAarkIlXlhYRz+wvCqDjXSReelD+JbNQXI7nke3kErQvhflXpZjpFnt9szS8Cjt
-         gLQicqhtnz0jfzsqjT726OyIUw/iTh1pzDOz8zqX+tW+TDfUX8Do6peD14fh/uwMJiAO
-         qwbGMxDHqwhJl79EEiDI0kwbQbkwcLzJaM6Yw6cmT3t/Cxa9ZMVGPHUvy9ZDUF/H8NwO
-         aZKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkc01FqoAK9+79cHh4f3Yx1mUQLPnWv3yfNyPCxW2MSZMLwSlNr/rUt3pdCrQrjE0pz9k6oTiONFPH8jlb@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaSakaOX9MZ8NZoEQJbLkPkL1+tkX8fQgb5izNY2lJ9GMTibRZ
-	aLHclbolP0/giyew3rRFjT4uDT79+v1XCvGSdl55YYBHzowp9nhsnYr3
-X-Gm-Gg: AZuq6aJbEw4cI4CEMSGXHyz3MtB3Mp8+DGCy9JV0UJ5iouX5ogr7Dlks1d6lHOWIy+k
-	2cLR8pF5R+wUiHzcrWe4pP5C2H0ttOOEtVCXFXkMFt6J2/zjSU1dH1z4rey6rPjUJUeOV45rdOB
-	aWioE0CiZuSXePYiV/8trCJoP1DGTolSpXGS4o/CrFlu6Owxuqh3IiFfDrMxEB7Y7S7GOrrb6Hu
-	aPQvxgr3FqFcyRIWJicEXSnLYUTkgG79qtdz0/Nrk2RoprJ5kHwSIV/7ev0DV2+qhfFnvKksBaL
-	a8rKBv+TgbYEcM/+Z2FOI/UitXgI2XRCx7Y3aNIxXBYM5op+YVjJzljJSLdANP7b2kQkCgAHbhN
-	6FlxPuN3NcYnSw8FmIBz3CubBXnpH95zTvmbzZZLxaBT5dbd05v+Mx3v9S7RtGTqMfTIdBd/5Be
-	xqBX2gnhS9R3UiuryByDfUjiP90JY=
-X-Received: by 2002:a05:600c:470b:b0:477:7ae0:cd6e with SMTP id 5b1f17b1804b1-4835b8bbf77mr1193155e9.5.1770751691077;
-        Tue, 10 Feb 2026 11:28:11 -0800 (PST)
-Received: from grain.localdomain ([212.46.38.55])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-436297462a8sm33795335f8f.30.2026.02.10.11.28.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Feb 2026 11:28:10 -0800 (PST)
-Received: by grain.localdomain (Postfix, from userid 1000)
-	id 8CBD35A004A; Tue, 10 Feb 2026 22:28:06 +0300 (MSK)
-Date: Tue, 10 Feb 2026 22:28:06 +0300
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-To: Andrei Vagin <avagin@google.com>
-Cc: Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@kernel.org>,
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, criu@lists.linux.dev,
-	Chen Ridong <chenridong@huawei.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <david@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Michal Koutny <mkoutny@suse.com>
-Subject: Re: [PATCH 0/4 v3] exec: inherit HWCAPs from the parent process
-Message-ID: <aYuGxmLOWXhIpoMj@grain>
-References: <20260209190605.1564597-1-avagin@google.com>
+        bh=soCVu+PnjoqeOTg7buf7zgGuMZiUBaN37i4ynt8LPRI=;
+        b=RN3/R1lIXioMGARfpR+2TA7AVVktpFTHGqyqwrM6wvbFTGTUY0Gxp1URTkx5Bv149Z
+         UislJ5xEN6Q+dC+FsgJ/VFIIF8PoXeHNx0XQX0CH11qBAZ1lEPq5o5FUSfpKP3yCUdIZ
+         sKqC6oHdOysc9MdCEznK6SGvt3ygtxyh3INmMavTv2KwutcgKGnkH9DwYhxSNfDVC50i
+         O2EdVl3FS9Gv9Ikchffd8iQ0az29Bji1+FIISvLslD0F8Mk9o/WIh8aT27d+yhud7zQT
+         LPT6Uqsh7BccKppkjGM87/vTHc6QTI/YCADWYvlRTDlD0fqn/VDqJq6dbl4TXtK9oTgk
+         /lnA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/lCmTCAz6eaGcPvk2ElsgipQdOKrzLDavaVVgMpBUHDcogFilHZuBet7LpEy0NGWg5i1CV5VAP6UDonA8@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu7KeXRBo7ovWpzuEe7zb0U/ZLEZuwXaypv9e3dfwGWhu5Jaz9
+	OmwD+xbR/BXdWoPQtq7ydy4f7HsIh7KpmPW/XjPWfJ/j9oI4tsOeHPTPkLQGYEn3teW9afFBkkx
+	5Up8ro/D/VMIPzGW75sRObRky2gtha+Y=
+X-Gm-Gg: AZuq6aKj8dNMUA6mxwM7xehzd7aHIHneyXS8bgw8UWdJ51m64oaSntTh13mfnUTIcSK
+	a+TtpVGdt7WrhzRyuW5mbJo66RHETNtNQcxYJHJwYnYpwsh5VQUEfSbmcrum2U8KxX4wBdvpMTR
+	lMxrpcMX9Hy9FXGYfY6p6MBR90FB38LUB9vxskL7/6spsmJcKsj+t/BiF50FOWygn68pDJW07s4
+	1xJjyZV3iHb0O60n8z1VLPtsrWEopyHtr9fm0Zx0ns1uPprcg5EMNC+94YkyM6oeEuWRPWYIYnz
+	RdxdmBnVHm+RG+W4EsMal3E=
+X-Received: by 2002:a05:622a:f:b0:502:9a94:2f9c with SMTP id
+ d75a77b69052e-50681222149mr4965371cf.44.1770752375936; Tue, 10 Feb 2026
+ 11:39:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260209190605.1564597-1-avagin@google.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+References: <20260210002852.1394504-1-joannelkoong@gmail.com>
+ <20260210002852.1394504-4-joannelkoong@gmail.com> <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
+In-Reply-To: <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 10 Feb 2026 11:39:24 -0800
+X-Gm-Features: AZwV_QhjafehVft-q3A-gCQ9GvCAADhAOZIAXNAQcWR24lAMH2Oc3NC01lOkf00
+Message-ID: <CAJnrk1ZZyYmwtzcHAnv2x8rt=ZVsz7CXCVV6jtgMMDZytyxp3A@mail.gmail.com>
+Subject: Re: [PATCH v1 03/11] io_uring/kbuf: add support for kernel-managed
+ buffer rings
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: axboe@kernel.dk, io-uring@vger.kernel.org, csander@purestorage.com, 
+	krisman@suse.de, bernd@bsbernd.com, hch@infradead.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
@@ -116,68 +125,257 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76881-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_TO(0.00)[gmail.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-76880-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	RCPT_COUNT_TWELVE(0.00)[15];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[gorcunov@gmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
 	DKIM_TRACE(0.00)[gmail.com:+];
-	RCVD_COUNT_FIVE(0.00)[6];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,oracle.com:email,linux-foundation.org:email,xmission.com:email]
-X-Rspamd-Queue-Id: 5B6FD11EA2A
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 7D31D11EB3B
 X-Rspamd-Action: no action
 
-On Mon, Feb 09, 2026 at 07:06:01PM +0000, Andrei Vagin wrote:
-> This patch series introduces a mechanism to inherit hardware capabilities
-> (AT_HWCAP, AT_HWCAP2, etc.) from a parent process when they have been
-> modified via prctl.
-> 
-> To support C/R operations (snapshots, live migration) in heterogeneous
-> clusters, we must ensure that processes utilize CPU features available
-> on all potential target nodes. To solve this, we need to advertise a
-> common feature set across the cluster.
-> 
-> Initially, a cgroup-based approach was considered, but it was decided
-> that inheriting HWCAPs from a parent process that has set its own
-> auxiliary vector via prctl is a simpler and more flexible solution.
-> 
-> This implementation adds a new mm flag MMF_USER_HWCAP, which is set when the
-> auxiliary vector is modified via prctl(PR_SET_MM_AUXV). When execve() is
-> called, if the current process has MMF_USER_HWCAP set, the HWCAP values are
-> extracted from the current auxiliary vector and inherited by the new process.
-> 
-> The first patch fixes AUXV size calculation for ELF_HWCAP3 and ELF_HWCAP4
-> in binfmt_elf_fdpic and updates AT_VECTOR_SIZE_BASE.
-> 
-> The second patch implements the core inheritance logic in execve().
-> 
-> The third patch adds a selftest to verify that HWCAPs are correctly
-> inherited across execve().
-> 
-> v3: synchronize saved_auxv access with arg_lock
-> 
-> v1: https://lkml.org/lkml/2025/12/5/65
-> v2: https://lkml.org/lkml/2026/1/8/219
-> 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Chen Ridong <chenridong@huawei.com>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: David Hildenbrand <david@kernel.org>
-> Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: Kees Cook <kees@kernel.org>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Michal Koutny <mkoutny@suse.com>
-> Cc: Cyrill Gorcunov <gorcunov@gmail.com>
+On Tue, Feb 10, 2026 at 8:34=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
+com> wrote:
+>
+> On 2/10/26 00:28, Joanne Koong wrote:
+> > Add support for kernel-managed buffer rings (kmbuf rings), which allow
+> > the kernel to allocate and manage the backing buffers for a buffer
+> > ring, rather than requiring the application to provide and manage them.
+> >
+> > This introduces two new registration opcodes:
+> > - IORING_REGISTER_KMBUF_RING: Register a kernel-managed buffer ring
+> > - IORING_UNREGISTER_KMBUF_RING: Unregister a kernel-managed buffer ring
+> >
+> > The existing io_uring_buf_reg structure is extended with a union to
+> > support both application-provided buffer rings (pbuf) and kernel-manage=
+d
+> > buffer rings (kmbuf):
+> > - For pbuf rings: ring_addr specifies the user-provided ring address
+> > - For kmbuf rings: buf_size specifies the size of each buffer. buf_size
+> >    must be non-zero and page-aligned.
+> >
+> > The implementation follows the same pattern as pbuf ring registration,
+> > reusing the validation and buffer list allocation helpers introduced in
+> > earlier refactoring. The IOBL_KERNEL_MANAGED flag marks buffer lists as
+> > kernel-managed for appropriate handling in the I/O path.
+> >
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > ---
+> >   include/uapi/linux/io_uring.h |  15 ++++-
+> >   io_uring/kbuf.c               |  81 ++++++++++++++++++++++++-
+> >   io_uring/kbuf.h               |   7 ++-
+> >   io_uring/memmap.c             | 111 +++++++++++++++++++++++++++++++++=
++
+> >   io_uring/memmap.h             |   4 ++
+> >   io_uring/register.c           |   7 +++
+> >   6 files changed, 219 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_urin=
+g.h
+> > index fc473af6feb4..a0889c1744bd 100644
+> > --- a/include/uapi/linux/io_uring.h
+> > +++ b/include/uapi/linux/io_uring.h
+> > @@ -715,6 +715,10 @@ enum io_uring_register_op {
+> >       /* register bpf filtering programs */
+> >       IORING_REGISTER_BPF_FILTER              =3D 37,
+> >
+> > +     /* register/unregister kernel-managed ring buffer group */
+> > +     IORING_REGISTER_KMBUF_RING              =3D 38,
+> > +     IORING_UNREGISTER_KMBUF_RING            =3D 39,
+> > +
+> >       /* this goes last */
+> >       IORING_REGISTER_LAST,
+> >
+> > @@ -891,9 +895,16 @@ enum io_uring_register_pbuf_ring_flags {
+> >       IOU_PBUF_RING_INC       =3D 2,
+> >   };
+> >
+> > -/* argument for IORING_(UN)REGISTER_PBUF_RING */
+> > +/* argument for IORING_(UN)REGISTER_PBUF_RING and
+> > + * IORING_(UN)REGISTER_KMBUF_RING
+> > + */
+> >   struct io_uring_buf_reg {
+> > -     __u64   ring_addr;
+> > +     union {
+> > +             /* used for pbuf rings */
+> > +             __u64   ring_addr;
+> > +             /* used for kmbuf rings */
+> > +             __u32   buf_size;
+>
+> If you're creating a region, there should be no reason why it
+> can't work with user passed memory. You're fencing yourself off
+> optimisations that are already there like huge pages.
 
-Looks ok to me. Thanks, Andrei!
+Are there any optimizations with user-allocated buffers that wouldn't
+be possible with kernel-allocated buffers? For huge pages, can't the
+kernel do this as well (eg I see in io_mem_alloc_compound(), it calls
+into alloc_pages() with order > 0)?
 
-Reviewed-by: Cyrill Gorcunov <gorcunov@gmail.com>
+>
+> > +     };
+> >       __u32   ring_entries;
+> >       __u16   bgid;
+> >       __u16   flags;
+> > diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+> > index aa9b70b72db4..9bc36451d083 100644
+> > --- a/io_uring/kbuf.c
+> > +++ b/io_uring/kbuf.c
+> ...
+> > +static int io_setup_kmbuf_ring(struct io_ring_ctx *ctx,
+> > +                            struct io_buffer_list *bl,
+> > +                            struct io_uring_buf_reg *reg)
+> > +{
+> > +     struct io_uring_buf_ring *ring;
+> > +     unsigned long ring_size;
+> > +     void *buf_region;
+> > +     unsigned int i;
+> > +     int ret;
+> > +
+> > +     /* allocate pages for the ring structure */
+> > +     ring_size =3D flex_array_size(ring, bufs, bl->nr_entries);
+> > +     ring =3D kzalloc(ring_size, GFP_KERNEL_ACCOUNT);
+> > +     if (!ring)
+> > +             return -ENOMEM;
+> > +
+> > +     ret =3D io_create_region_multi_buf(ctx, &bl->region, bl->nr_entri=
+es,
+> > +                                      reg->buf_size);
+>
+> Please use io_create_region(), the new function does nothing new
+> and only violates abstractions.
+
+There's separate checks needed between io_create_region() and
+io_create_region_multi_buf() (eg IORING_MEM_REGION_TYPE_USER flag
+checking) and different allocation calls (eg
+io_region_allocate_pages() vs io_region_allocate_pages_multi_buf()).
+Maybe I'm misinterpreting your comment (or the code), but I'm not
+seeing how this can just use io_create_region().
+
+>
+> Provided buffer rings with kernel addresses could be an interesting
+> abstraction, but why is it also responsible for allocating buffers?
+
+Conceptually, I think it makes the interface and lifecycle management
+simpler/cleaner. With registering it from userspace, imo there's
+additional complications with no tangible benefits, eg it's not
+guaranteed that the memory regions registered for the buffers are the
+same size, with allocating it from the kernel-side we can guarantee
+that the pages are allocated physically contiguously, userspace setup
+with user-allocated buffers is less straightforward, etc. In general,
+I'm just not really seeing what advantages there are in allocating the
+buffers from userspace. Could you elaborate on that part more?
+
+> What I'd do:
+>
+> 1. Strip buffer allocation from IORING_REGISTER_KMBUF_RING.
+> 2. Replace *_REGISTER_KMBUF_RING with *_REGISTER_PBUF_RING + a new flag.
+>     Or maybe don't expose it to the user at all and create it from
+>     fuse via internal API.
+
+If kmbuf rings are squashed into pbuf rings, then pbuf rings will need
+to support pinning. In fuse, there are some contexts where you can't
+grab the uring mutex because you're running in atomic context and this
+can be encountered while recycling the buffer. I originally had a
+patch adding pinning to pbuf rings (to mitigate the overhead of
+registered buffers lookups) but dropped it when Jens and Caleb didn't
+like the idea. But for kmbuf rings, pinning will be necessary for
+fuse.
+
+> 3. Require the user to register a memory region of appropriate size,
+>     see IORING_REGISTER_MEM_REGION, ctx->param_region. Make fuse
+>     populating the buffer ring using the memory region.
+>
+> I wanted to make regions shareable anyway (need it for other purposes),
+> I can toss patches for that tomorrow.
+>
+> A separate question is whether extending buffer rings is the right
+> approach as it seems like you're only using it for fuse requests and
+> not for passing buffers to normal requests, but I don't see the
+
+What are 'normal requests'? For fuse's use case, there are only fuse reques=
+ts.
+
+Thanks,
+Joanne
+
+> big picture here.
+>
+> > +     if (ret) {
+> > +             kfree(ring);
+> > +             return ret;
+> > +     }
+> > +
+> > +     /* initialize ring buf entries to point to the buffers */
+> > +     buf_region =3D bl->region.ptr;
+>
+> io_region_get_ptr()
+>
+> > +     for (i =3D 0; i < bl->nr_entries; i++) {
+> > +             struct io_uring_buf *buf =3D &ring->bufs[i];
+> > +
+> > +             buf->addr =3D (u64)(uintptr_t)buf_region;
+> > +             buf->len =3D reg->buf_size;
+> > +             buf->bid =3D i;
+> > +
+> > +             buf_region +=3D reg->buf_size;
+> > +     }
+> > +     ring->tail =3D bl->nr_entries;
+> > +
+> > +     bl->buf_ring =3D ring;
+> > +     bl->flags |=3D IOBL_KERNEL_MANAGED;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +int io_register_kmbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
+> > +{
+> > +     struct io_uring_buf_reg reg;
+> > +     struct io_buffer_list *bl;
+> > +     int ret;
+> > +
+> > +     lockdep_assert_held(&ctx->uring_lock);
+> > +
+> > +     ret =3D io_copy_and_validate_buf_reg(arg, &reg, 0);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     if (!reg.buf_size || !PAGE_ALIGNED(reg.buf_size))
+>
+> With io_create_region_multi_buf() gone, you shouldn't need
+> to align every buffer, that could be a lot of wasted memory
+> (thinking about 64KB pages).
+>
+> > +             return -EINVAL;
+> > +
+> > +     bl =3D io_alloc_new_buffer_list(ctx, &reg);
+> > +     if (IS_ERR(bl))
+> > +             return PTR_ERR(bl);
+> > +
+> > +     ret =3D io_setup_kmbuf_ring(ctx, bl, &reg);
+> > +     if (ret) {
+> > +             kfree(bl);
+> > +             return ret;
+> > +     }
+> > +
+> > +     ret =3D io_buffer_add_list(ctx, bl, reg.bgid);
+> > +     if (ret)
+> > +             io_put_bl(ctx, bl);
+> > +
+> > +     return ret;
+>
+> --
+> Pavel Begunkov
+>
 
