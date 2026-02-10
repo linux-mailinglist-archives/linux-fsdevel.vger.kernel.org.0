@@ -1,213 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-76832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OP7sJ/n+imnJPAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 10:48:41 +0100
+	id UPL7Anz/imnJPAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 10:50:52 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E298119165
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 10:48:41 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61F431191DC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 10:50:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 6D6483015BB8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 09:48:36 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id D8182303101B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 09:50:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D507E342C88;
-	Tue, 10 Feb 2026 09:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C31342519;
+	Tue, 10 Feb 2026 09:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bF6enQai"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i1Jrfkg4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85D6342148
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Feb 2026 09:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AF9342518
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Feb 2026 09:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770716907; cv=none; b=UHr4KpER/etclaOJyNAJaAX36rJC0moFNBCzGAm7oAkuCX6zQKxqQ9lKd3Ur5AMuSL4rXVm5y+8cFQqo59fXxVhCvZsBd7Nb1RY68SkKKxpuESdUDZ4m3U9ZsRPVnFHv7xAb2rjV0tiKwutlXYsnWDut6HnZEzZNmWP29qNQp6A=
+	t=1770717047; cv=none; b=qU1L9M0RQ3tnnM7ctC96d6OjSsHXN7b06qO32CqLX21Fw46Tjpc6HDTqfqtEeKasvS+6UpLDnFAFACdtgK4uZ1m+82xT5tHfG/Y5znHbnOljvTEK6QdpHrKjeeCdtxX9lHTMer4aR4UQsTZdZXVB0iVLZxqs/DmM9cuy1wXotmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770716907; c=relaxed/simple;
-	bh=JzjL9KmnIvI+N5fZ4VXxWV6Lk6yV/WK6vGyi7HxNWlM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pKDmsIzrdQC/qSfO9909LI0ID5GH9fPAHRnFDn5bLBZ0Tz+eR7iU+6NdxYEOgVSVkpEuQwDUQ5JUO5d6jnD4nOztihcWIsLjdilG/nLkR4u++7ODmeHH2eusDEMN/dp+NkxzyvptoD6zuWUD5ridPEtWXygfHWMZ1nBMziKkM+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bF6enQai; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-480706554beso41558125e9.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Feb 2026 01:48:24 -0800 (PST)
+	s=arc-20240116; t=1770717047; c=relaxed/simple;
+	bh=FzUa2h0cznjZCgel5VHCjhSB3pMwOsaKbhc6w65ivdU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SbCXJnWLvS6ccl/60VQ8gzQGhyET43tz4VCAon7FZYehWZDgkLWbSJwwzo/o8vxiixTc4NyjBPS1OLPy/nBvd2xIzwyWvgkz3L32VFg5HY7HrTSdGw3iiJ68EHgfOaPuswF/PuQY6e2GIFu7Ziv4P4LVXlpn7H0ODXlYogQcT+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i1Jrfkg4; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-65a1b17a99aso319059a12.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Feb 2026 01:50:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1770716903; x=1771321703; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0DlsZoRVip+D7R3X4OfoBB69slLASuqjli/DRTFoTD4=;
-        b=bF6enQaiJg/0+N0Rr72kPFL5Ce1noSAAvrL165k907IQJvR9+HgC1pm/NcjhLRHA5q
-         Ob0/N5M0uJoRD/2ICfMXAe9Du938FkG62PRwhokJO6rqVwheSz5r/hN8AuiDVs66GW83
-         SA3/SlC9ulMcPUEU0wJxU7JHstlH8w3LdDmGD8v7M+o1IbChJYBjsMdig2yVOKLuq7jo
-         czFjxVeqWIbu/2qN1v5SDcQMPAFMq8qtszeeBVDq9j6HKCfyDElouFEBZntZEccvJWja
-         pc3tU8uxSvpUYlMxJ1Kv8gvpvBp5CymjPdSe2IFZyXnV0VU/e4YBlUWDsQ0u6IStIZxf
-         2Nqg==
+        d=gmail.com; s=20230601; t=1770717044; x=1771321844; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0mZEeVQ0QwOznaKfyu8Y0DuL81Ja7HibPoeTh6Jnlyo=;
+        b=i1Jrfkg4zn9F0b5KeocofCLUfX3V2Uiriu3V7iWXEEUuRMVsY2LyyOpeDrp5QPNOPd
+         ulwSubrv4mw3rJOLy61uWuIDi5SDITZJPpfz2fxVUbsQTBTJAKZP+zy/IesjxPnKirU5
+         dV7osavq2e86clkZ36F+P3x8kSYfUfb84A+Sy87nCM9l82qOG2JucpbVckKk+zg5ZFjz
+         fc5C1G8mPvmlbVC7HJWNWhnbQQm3yvZ2HlP/83hOo3kTvipJO3TSzu6WuSFngxNlSiy2
+         HAAHg6XjN/4/sIaJpptYl1ARw/D7Hz7s24AV+hNPsIaQARiV+ILcIWEt9y+GazuQ8ci/
+         2pTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770716903; x=1771321703;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0DlsZoRVip+D7R3X4OfoBB69slLASuqjli/DRTFoTD4=;
-        b=rAJimJYdPMQnaY4riAxI2aGydw/FbWi613BbeIX4Gs3WGprsCYWcGh+Ap6ieRpsPOB
-         D7eKtf8KF1SOHyDmzxC8L2H0EIEhmHya3DkpimtInYlbyiYMw4DS1Xw3wvde3slrdtuR
-         fDlCixd5sqaIDDblx1gmqB4vUl+99qHwoZ0qTtrLHsh4WTbQdMttZLnaHOHB47s3/VqW
-         +5pqCoQxoXrbzyiPhTYOdnoj/luc/y8FwhhQrMv6PCv5NxVfabSvgupR+Y2B0B8CKCda
-         35tX8mFvjkoHV0NHtNOCouBjJ1jj6A1y22sVi4fGDLeaRJUM8A/q84sRHa/oncazbi9J
-         ceZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPoT8WN418XKQWneoza6BnB2XIFMjpa/THW/pLffYgMaaUwzMxijU9ExPQVXXAXq9NQA69yjfhL8S5wwkn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4Uayjmv6N9jYw//26j0+3MjBpBtZK0Bp9O1F6KKKRitJEUDUy
-	uOSyQ9KUkda/Io6WMCG2xDiotb2is1NCWGzEce9tl+SCgGEHu1/AEvWj6usaSm4z5OI=
-X-Gm-Gg: AZuq6aJ04QLWDBnZanDX9ah3BbQZiVttekppvhEV4+Ijpwfi0rf4eUSmZaIg3FnBGPI
-	uCni/mNvXk8x3XHn5rkBqQ8p8DKHqdj4PByXzfootNz+fGG+81crjUTMoxBIV66tbE4nk/F+Hul
-	xFUdTVJMmZajTOvHGl8qNB8imsj+sJB+rbM7yG9iBrkCbNtRj9u5a4SsFAw2Ip7401qmLJHvWHI
-	wFzKvKww6fuPx/O2laV6rzplJkLXQLKRa6U86lniQnwcU2DOS8Eqswba7EkYE4OpOxAUrhf8ne3
-	LbCMp+O9AkTpvyEsqVYddas9M/PoXNntGMMq665Jx582ThordArttHRk3hKZUmtiTbxBq+7UgOD
-	f6DE9bMoBGkctEyKYdbMqelaaXC5vr2cCSBe7qixCqA2Zp0PIjelikXW2TdCESGBqoq5bMT9hcX
-	WibyYyNiyUspHtHkyWX3uOSTBAXoATYKlo0spszc/2K/HCqP+Qvlkp1Q==
-X-Received: by 2002:a05:6000:40e1:b0:435:e440:f518 with SMTP id ffacd0b85a97d-4362938c570mr22915261f8f.54.1770716903032;
-        Tue, 10 Feb 2026 01:48:23 -0800 (PST)
-Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-437699bc1cdsm18679000f8f.7.2026.02.10.01.48.21
+        d=1e100.net; s=20230601; t=1770717044; x=1771321844;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0mZEeVQ0QwOznaKfyu8Y0DuL81Ja7HibPoeTh6Jnlyo=;
+        b=FvJla+4O24BUkFHMA16eCIhNYQcEe4Tx7MliZXTxlfEerLBX8Tg3sVpr1hMVASzQuO
+         Aktm4eDAGXwvsFrwGr6aefT/igYbDa3KKRRAa8k+Qy2GVY6M6cbtY9jA2pckdoZKfWp0
+         nIhfILSwU4ZHhBnijl7C/V8f98tDij7CG/la3ViWpgr9iZt9sD2eGEDbsL2zNrDrMjOC
+         1wbBOBhsXgSdbfnZEsSuMpLG4Sh26FaoMDLbGRFYAU/L+4HX62Yz/rlwVLFHU+SaQ86L
+         dYK+fqUk+wOrIULkRDhs+gYMt/NZ/ZP1J2l4WsPWGKyj8EQ6xvgqtzICmMe/7JNctfya
+         2LDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUji2CBlf9RAkIeNiae/+FHgivRyxvOa/cYaC3sx7TWqwtbXk0ZLmUHdWa3sZm5K83K3FIIVlExfDoGO+B1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4nxHFff+8gndPlojp4qzw/v7CVHmUpeuRtsMP7ytnlPM5rFzS
+	0QaWk4K1JQkqzFyWZ8LsEl3KYqIUbko4ZtgEtVyaJJvo+SdO0IdKS3DB
+X-Gm-Gg: AZuq6aIWfddKmRBoREOIwcJvs+OeclBSdfbgkLRxdeZwYcfMebQe+sp0AEIq11VkOP+
+	nfiukGft1i8QyfTkHRa7ScDJYD3MQMXcaOXMg99//KzUqacqgL2pPccHK6ivWkHdnZN6AKjuI66
+	ktbJYujUReG9bKkbgWKnllwkyZ6ms7fVCFRq6eSVQvMn8sub80VxUEGgjGWVB3bvMtoaknuhUsE
+	kU4EdJ6BYIi5PWdb0u9zHPfkrxP01QCuMRnX8uLNMDA2Urs4atZP9nmkqWWPwMyuhdyWzRj0LQ7
+	nqbs8NpSu42z9xEwXchZmbPuz0nrCGF4qT4i567Z0aMhsV3lGeN/b6I96oU5g5DRhzqa5fmgYUt
+	7n+8G4VSf6wE8wj1vu23kOTHnp/qaNGHOEUelurM/wflwa8TuI4ZGxx5p2juDinTleIpFX4/5xl
+	ebv9pci+rb8ZcYYwfms4D/sKwB3gdgd6/9WpW6a8bQ3LU341av17ephUnQUp6FlQGLGkeP3m8OC
+	jFzLJuE4SKayWZ8Y7te8mGhyg==
+X-Received: by 2002:a05:6402:13c1:b0:659:3ff1:58fa with SMTP id 4fb4d7f45d1cf-659843bdc44mr6047224a12.29.1770717043948;
+        Tue, 10 Feb 2026 01:50:43 -0800 (PST)
+Received: from localhost (2001-1c00-570d-ee00-0695-e133-2257-07cf.cable.dynamic.v6.ziggo.nl. [2001:1c00:570d:ee00:695:e133:2257:7cf])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-65983eaa593sm3602304a12.2.2026.02.10.01.50.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Feb 2026 01:48:22 -0800 (PST)
-Date: Tue, 10 Feb 2026 10:48:19 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Andrei Vagin <avagin@google.com>
-Cc: Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Cyrill Gorcunov <gorcunov@gmail.com>, Mike Rapoport <rppt@kernel.org>, 
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, criu@lists.linux.dev, Chen Ridong <chenridong@huawei.com>, 
-	Christian Brauner <brauner@kernel.org>, David Hildenbrand <david@kernel.org>, 
-	Eric Biederman <ebiederm@xmission.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Subject: Re: [PATCH 3/4] mm: synchronize saved_auxv access with arg_lock
-Message-ID: <ilki5auwqeipwwolu7zgmj2wn2wd5t4saa5mtazn57egz45xbm@j4rl4bufrs2w>
-References: <20260209190605.1564597-1-avagin@google.com>
- <20260209190605.1564597-4-avagin@google.com>
+        Tue, 10 Feb 2026 01:50:43 -0800 (PST)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Andrey Albershteyn <aalbersh@redhat.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Jan Kara <jack@suse.cz>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	syzbot+fa79520cb6cf363d660d@syzkaller.appspotmail.com,
+	Andrey Albershteyn <aalbersh@kernel.org>,
+	stable@vger.kernel.org
+Subject: [PATCH] fs: set fsx_valid hint in file_getattr() syscall
+Date: Tue, 10 Feb 2026 10:50:42 +0100
+Message-ID: <20260210095042.506707-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6mfjdav2fdcypbkr"
-Content-Disposition: inline
-In-Reply-To: <20260209190605.1564597-4-avagin@google.com>
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-3.76 / 15.00];
-	SIGNED_PGP(-2.00)[];
+X-Spamd-Result: default: False [0.84 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[suse.com,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=google];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
-	MIME_GOOD(-0.20)[multipart/signed,text/plain];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
+	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76832-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[kernel.org,linux-foundation.org,gmail.com,mihalicyn.com,vger.kernel.org,kvack.org,lists.linux.dev,huawei.com,xmission.com,oracle.com];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+,1:+,2:~];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[mkoutny@suse.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[suse.com:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,suse.com:email,suse.com:dkim]
-X-Rspamd-Queue-Id: 4E298119165
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76833-lists,linux-fsdevel=lfdr.de];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[amir73il@gmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	RCVD_COUNT_FIVE(0.00)[5];
+	TAGGED_RCPT(0.00)[linux-fsdevel,fa79520cb6cf363d660d];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 61F431191DC
 X-Rspamd-Action: no action
 
+The vfs_fileattr_get() API is a unification of the two legacy ioctls
+FS_IOC_GETFLAGS and FS_IOC_FSGETXATTR.
 
---6mfjdav2fdcypbkr
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 3/4] mm: synchronize saved_auxv access with arg_lock
-MIME-Version: 1.0
+The legacy ioctls set a hint flag, either flags_valid or fsx_valid,
+which overlayfs and fuse may use to convert back to one of the two
+legacy ioctls.
 
-On Mon, Feb 09, 2026 at 07:06:04PM +0000, Andrei Vagin <avagin@google.com> =
-wrote:
-> The mm->saved_auxv array stores the auxiliary vector, which can be
-> modified via prctl(PR_SET_MM_AUXV) or prctl(PR_SET_MM_MAP). Previously,
-> accesses to saved_auxv were not synchronized. This was a intentional
-> trade-off, as the vector was only used to provide information to
-> userspace via /proc/PID/auxv or prctl(PR_GET_AUXV), and consistency
-> between the auxv values left to userspace.
->=20
-> With the introduction of hardware capability (HWCAP) inheritance during
-> execve, the kernel now relies on the contents of saved_auxv to configure
-> the execution environment of new processes.  An unsynchronized read
-> during execve could result in a new process inheriting an inconsistent
-> set of capabilities if the parent process updates its auxiliary vector
-> concurrently.
->=20
-> While it is still not strictly required to guarantee the consistency of
-> auxv values on the kernel side, doing so is relatively straightforward.
-> This change implements synchronization using arg_lock.
+The new file_getattr() syscall is a modern version of the ioctl
+FS_IOC_FSGETXATTR, but it does not set the fsx_valid hint leading to
+uninit-value KMSAN warning in ovl_fileattr_get() as is also expected
+to happen in fuse_fileattr_get().
 
-(For the clarification, I didn't consider the lack of synchronization a
-blocker after your previous explanation. Nevertheless)
+Reported-by: syzbot+fa79520cb6cf363d660d@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/r/698ad8b7.050a0220.3b3015.008b.GAE@google.com/
+Fixes: be7efb2d20d67 ("fs: introduce file_getattr and file_setattr syscalls")
+Cc: Andrey Albershteyn <aalbersh@kernel.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
+ fs/file_attr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks for explicit sync.
+diff --git a/fs/file_attr.c b/fs/file_attr.c
+index 53b356dd8c33a..910c346d81bcd 100644
+--- a/fs/file_attr.c
++++ b/fs/file_attr.c
+@@ -379,7 +379,7 @@ SYSCALL_DEFINE5(file_getattr, int, dfd, const char __user *, filename,
+ 	struct filename *name __free(putname) = NULL;
+ 	unsigned int lookup_flags = 0;
+ 	struct file_attr fattr;
+-	struct file_kattr fa;
++	struct file_kattr fa = { .fsx_valid = true }; /* hint only */
+ 	int error;
+ 
+ 	BUILD_BUG_ON(sizeof(struct file_attr) < FILE_ATTR_SIZE_VER0);
+-- 
+2.52.0
 
-One little nit is a missing hunk like below.
-
-
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -1205,11 +1205,10 @@ struct mm_struct {
-                spinlock_t arg_lock; /* protect the below fields */
-
-                unsigned long start_code, end_code, start_data, end_data;
-                unsigned long start_brk, brk, start_stack;
-                unsigned long arg_start, arg_end, env_start, env_end;
--
-                unsigned long saved_auxv[AT_VECTOR_SIZE]; /* for /proc/PID/=
-auxv */
-
- #ifdef CONFIG_ARCH_HAS_ELF_CORE_EFLAGS
-                /* the ABI-related flags from the ELF header. Used for core=
- dump */
-                unsigned long saved_e_flags;
-
-
-
->=20
-> Signed-off-by: Andrei Vagin <avagin@google.com>
-> ---
->  fs/exec.c      |  8 ++++++--
->  fs/proc/base.c | 12 +++++++++---
->  kernel/fork.c  |  7 ++++++-
->  kernel/sys.c   | 29 ++++++++++++++---------------
->  4 files changed, 35 insertions(+), 21 deletions(-)
-
-I can say
-Reviewed-by: Michal Koutn=FD <mkoutny@suse.com>
-
---6mfjdav2fdcypbkr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaYr+3xsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQfj0C55Tb+Ahy5AD6AjG6/lGRDcame2K5XvP7
-OVrWBpsfcwrnZvTHPoeV5UEBAKfBhTRrU7E6giMU6hZF3QDs2zNto4n4tSR+Kbn1
-4ecB
-=sc7Y
------END PGP SIGNATURE-----
-
---6mfjdav2fdcypbkr--
 
