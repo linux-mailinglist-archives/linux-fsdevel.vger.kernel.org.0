@@ -1,116 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-76834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id ED94Fa4Si2nSPQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 12:12:46 +0100
+	id YDaNLMQUi2n5PQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 12:21:40 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id A31D911A03E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 12:12:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C48111A120
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 12:21:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3FC5C3044B97
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 11:12:38 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B9C33304045D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 11:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4198D3612E6;
-	Tue, 10 Feb 2026 11:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3748D3191C0;
+	Tue, 10 Feb 2026 11:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I7CyOKTs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33C02E8DFC;
-	Tue, 10 Feb 2026 11:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE2A318BBB
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Feb 2026 11:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770721957; cv=none; b=pJ6q9+LuWWedTO0DiV84QGdlrRcLjOIDZzSMqyGELA7n5Ce+LVxDVZOGiJvJJhEGDFY47MAJLUdeMgfcFBy2fEQeq1DesHgJDoknsueBzJL15FCBYspPy2K5zphjeyNZzbcsfTCklXvdDI0Usd6zQBV4SpGU0ooX+6P8wiOpTlU=
+	t=1770722494; cv=none; b=btudpxa6B1N/7dFJDht9uzR9EBV5nb7S65zBxCrlof9FxhIpQ5816J2LcZuZmcsvHZHaRt2XYCToDn7pWmUffFYxNc0KxJ4WUpHWaNZ/n0jqSy6UdRQ9bdPCXCvCMXnEb7/2SpMoqjWwfmJH/QUOfeWU/Mbd1M9CTy9G8aACf+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770721957; c=relaxed/simple;
-	bh=cgkEJQvpoJ0K3WvdcV1S0usHKgOx1aWDifndN4ScNqQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tj5EJKFvJgLTRQN01rzVk9cvB36fb2diohFekqjJhdscZfEqL3d+uWFNs3uVFNJF9mI7g8KCsldZBPRT3uBcxYaJi1B7OxSM2Ne8KN7g1prL32yjtjcwdYvT8VK5PlNyz4Y3t9YQhELANuL9tFSZCKDZ8TpYREUKwguCBP84vK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 61ABCC4O045753;
-	Tue, 10 Feb 2026 20:12:12 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 61ABCCwR045750
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 10 Feb 2026 20:12:12 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <6a99ecc3-ba7c-4687-9252-b4ea91ce9dfa@I-love.SAKURA.ne.jp>
-Date: Tue, 10 Feb 2026 20:12:11 +0900
+	s=arc-20240116; t=1770722494; c=relaxed/simple;
+	bh=0gWumBa1+w8eGSje3A+Cg+/1eZb+4y0/WoxZtfA9AAs=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=lR0JeOpNP/6N9EFq+KKyz03JW9apbC+TcIPy7aEa8a+xO/hEDVYN4ygVL0AXtRD5TvTEC99J+geg2xOt/qpUTrP8yif4n8+IyEus1m0PtVpQ9A+XjFSVQIeO9cnvepZUJhzYnleN/gYmZFpsJd0aUlXFJGU/KjKxH0rzYWP+Y7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I7CyOKTs; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1770722492;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Bn/HijK0n86aontJ/8a34jxCjGe7rHUwAe7Sv6H1oDM=;
+	b=I7CyOKTsTE+p240WeogfWVcBTwu5s47U0ydGG/kcDjGis4vIlIphiMGsfic8FpNlFA+T9s
+	4UqqvrptzyTW/KnurKUdkxbrxsRbisV//KhiUe8CuCRr6kZfPLyrmREN0xTPhSrLfw3d4c
+	+cUbj+H5a9DDM+35DXt0/7+q5rRj/KU=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-155-nGW1tG9COHa2WuOxV3Oq_w-1; Tue,
+ 10 Feb 2026 06:21:29 -0500
+X-MC-Unique: nGW1tG9COHa2WuOxV3Oq_w-1
+X-Mimecast-MFC-AGG-ID: nGW1tG9COHa2WuOxV3Oq_w_1770722488
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 550D31955E77;
+	Tue, 10 Feb 2026 11:21:28 +0000 (UTC)
+Received: from [10.45.224.59] (unknown [10.45.224.59])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DAE0E1956056;
+	Tue, 10 Feb 2026 11:21:26 +0000 (UTC)
+Date: Tue, 10 Feb 2026 12:21:21 +0100 (CET)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: linux-fsdevel@vger.kernel.org, 
+    Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
+    syzkaller <syzkaller@googlegroups.com>
+Subject: Re: [git pull] HPFS changes for 6.20
+In-Reply-To: <CAHk-=wjmFiptPgaPx9vY3RG=rqO452UmOAPb1y_f9GQBtuJVjg@mail.gmail.com>
+Message-ID: <0a4797ab-07a5-11ef-074f-19ad637f84ea@redhat.com>
+References: <6dd35359-3ffa-8cd5-a614-5410a25335c0@redhat.com> <CAHk-=wjmFiptPgaPx9vY3RG=rqO452UmOAPb1y_f9GQBtuJVjg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] hfs/hfsplus changes for 7.0-rc1
-To: Viacheslav Dubeyko <slava@dubeyko.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        glaubitz@physik.fu-berlin.de, frank.li@vivo.com, jkoolstra@xs4all.nl,
-        mehdi.benhadjkhelifa@gmail.com, shardul.b@mpiricsoftware.com
-References: <9ee4d3b9c7e2131f274c5d1eb2bfcd009a92c765.camel@dubeyko.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <9ee4d3b9c7e2131f274c5d1eb2bfcd009a92c765.camel@dubeyko.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav305.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.04 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,physik.fu-berlin.de,vivo.com,xs4all.nl,gmail.com,mpiricsoftware.com];
+	DKIM_TRACE(0.00)[redhat.com:+];
+	TAGGED_FROM(0.00)[bounces-76835-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[i-love.sakura.ne.jp];
-	TAGGED_FROM(0.00)[bounces-76834-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_THREE(0.00)[4];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MISSING_XM_UA(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[penguin-kernel@I-love.SAKURA.ne.jp,linux-fsdevel@vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	R_DKIM_NA(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[mpatocka@redhat.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,syzkaller.appspot.com:url,I-love.SAKURA.ne.jp:mid]
-X-Rspamd-Queue-Id: A31D911A03E
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 1C48111A120
 X-Rspamd-Action: no action
 
-On 2026/02/07 9:26, Viacheslav Dubeyko wrote:
-> Jori Koolstra has fixed the syzbot reported issue of triggering
-> BUG_ON() in the case of corrupted superblock. This patch replaces
-> the BUG_ON() in multiple places with proper error handling and
-> resolves the syzbot reported bug.
-
-I think that commit b226804532a8 ("hfs: Replace BUG_ON with error handling for CNID count checks") is incomplete.
-
-Since atomic64_t is signed 64bits and U32_MAX is unsigned 32bits, the comparison
-"if (atomic64_read(&sbi->next_id) > U32_MAX)" becomes false when sbi->next_id >= ((-1ULL) / 2) + 1.
-I guess that a corrupted filesystem can have e.g. sbi->next_id == -1, and
-"if (atomic64_read(&sbi->next_id) >> 32)" would check that the upper 32bits are all 0.
 
 
+On Mon, 9 Feb 2026, Linus Torvalds wrote:
 
-Also, I confirmed that this pull request did not include a fix for
-https://syzkaller.appspot.com/bug?id=ee595bf9e099fff0610828e37bbbcdb7a2933f58 .
-I'm waiting for next version of patch for this problem.
+> On Mon, 9 Feb 2026 at 09:01, Mikulas Patocka <mpatocka@redhat.com> wrote:
+> >
+> >   hpfs: disable the no-check mode (2026-02-02 18:06:33 +0100)
+> 
+> This looks like a totally bogus commit.
+> 
+> If "check=none" suddenly means the same as "check=normal", then why
+> does that "none" thing exist at all?
+> 
+> None of this makes any sense.
+> 
+>              Linus
+
+I wanted to keep the "check=none" option so that I don't break scripts or 
+/etc/fstab configurations that people may have.
+
+If you don't like it, you can drop it, it's not a big deal. The syzbot 
+people will have to deal with it in some other way.
+
+Mikulas
 
 
