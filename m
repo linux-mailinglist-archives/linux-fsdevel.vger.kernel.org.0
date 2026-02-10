@@ -1,341 +1,618 @@
-Return-Path: <linux-fsdevel+bounces-76765-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76766-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iEuoGjprimnnKAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76765-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 00:18:18 +0100
+	id kFU+BBl2immmKgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76766-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 01:04:41 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id D21BC1155D7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 00:18:17 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66C71115864
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 01:04:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id A30C6300B44D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Feb 2026 23:17:54 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 28D03301E972
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 00:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE7932ABC1;
-	Mon,  9 Feb 2026 23:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200853EBF30;
+	Tue, 10 Feb 2026 00:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="A+Al/M3O";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="bhhbWiUf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k6ZkybjV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08EF032AABF;
-	Mon,  9 Feb 2026 23:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770679069; cv=fail; b=USBoquclxchcYX0RAuC0H7CZ3naHMIdl3j1PoWTq7rLzD+61OctroLnl9av3zZXzLBXgAjfr9HtmPugmB8pWS8WALpL7SyCKSU0TiaIdSUl2dRaYaia03vExAvos6C0inJfXRL5uxn6AE1IS33NEpwoM+Hljzb/U97OcuJuVlJM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770679069; c=relaxed/simple;
-	bh=YJ7j7qFcD5ZTexoCPZmnhM1CTTnhR0JM4Qw4+9xBBFg=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=j96tMKoAsLg3yoahPvO9BvGZhQFMVRrS6K4563Z7jwk3amclsPRZQMBSfEa4pNaw3tX1e3wBZzBN6FFkBY39u8jx7uEvA/chL6EjES1Sf1qH/pB/fxjblu4iTznIjCevteZkumw1E4hzJNGPX9ET39h0/cNk4ERbEI26wE8LI3I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=A+Al/M3O; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=bhhbWiUf; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 619MUnmx1557983;
-	Mon, 9 Feb 2026 23:17:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=AE+fA2scsEXpyPgulBkPSD8moAiRFans39LxwoPslSw=; b=
-	A+Al/M3O/pUOHL3syyyNjFaIVORAfY/H+Sz6B3nvgqfDtq/63nNNQyYSaZmeoRgV
-	0uVOlYP0A2mN5SxjVeGBHBiDYK50TXnilzGEdqkhbX7I0NRcPb+bXH3wTk8QOskf
-	TwCBclUVkaiMgKTfOTpTrzTzu04x8sNIaN9F68/LnJ7ubEyn5yrVMeuH6jxFWSVL
-	eR2MuGOGGC8vJ+i/9FGnFMt5ZPN7OKKPGOkjDeZeCYLh1ttioPHAj5rGoY6Z3sNM
-	9OBFMWKEl+/Ez2HCUo6flL8YVh85NAZTg+6bOJxtN847SoLfRsIiIR2rWm22mw6f
-	zmCNrbRvfCmpobEgTIjcQw==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4c5xhub0qc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 09 Feb 2026 23:17:08 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 619KoKBx030953;
-	Mon, 9 Feb 2026 23:17:07 GMT
-Received: from co1pr03cu002.outbound.protection.outlook.com (mail-westus2azon11010070.outbound.protection.outlook.com [52.101.46.70])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4c5uum6awj-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 09 Feb 2026 23:17:07 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=n3IOglNYLkgWtv8f00r/naewJQ2Jms3d8GH7e4Jx/nFWwEjmGyg+I2LtNQuTtBanKxdG2qZ/9CKpgtrQcgapUcOAcktL6qq00BVvdEpR5d3gn+7xhcQncmraqH6TQ9RSZCYsUq1j5LUv7B3U096DuWHXfvDkO9KetAUIsKc1hlNJmiIJjh1hHU2XHcs2VhhOM1+d6hBRQkwz8DgXpaYKTnrVX4cRDaGEI/h7S5EHhYpSjdN+o8Qf3wWQzpXpYxS/zYMNsqFC8yP94sKV8N1MCqomiBa6zww4wbc5VgOvORG43IxXthK4d1iKn/Zn31Qlq4BaEXUXpen9c6KIWOJ1kQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AE+fA2scsEXpyPgulBkPSD8moAiRFans39LxwoPslSw=;
- b=U3diAxnhb2WinyAnBkpr8ih6eyP3lObaFbEZuwbB21E+y+CbsfMSH+0RtWCsqCuv+q00N+3cr+bXm0ZjO9oAMPz358XdvIS1eZl0hwBTbB0RTSbwd+Ma+9A/FYfEB3IT/QKG9Ze76s3QpPuX7+cGycYUazFpkRd6Q54Mz9cfnej4YD+KnsME1Fy4KbftBMlsgttd0r3Q7DIDEz8Jg0Du9aDBne5hoX5pKfcCXkjP0sjTphizZMavizChhxQHdD8u6NaL9M/Kbm84ulbuKGplzEIk+ntb5S/lyKMMfYW6ObmV9/CmPKKPGihP1MGWVK1ks6sjhur19lymuDM2ant1zQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AE+fA2scsEXpyPgulBkPSD8moAiRFans39LxwoPslSw=;
- b=bhhbWiUfK6BxLpOZzQ7PfImPdW34huVlrUWRxUgctnIZShLlGMIUB9YSF9DyOK7g4UZnCE5vWp1abIwncceyeqkwnkDTglnh5rt3mZN4u/Mjltno5a5F8dsa4wtjhp5X07xuM1a8zosFIlLR9+ABZK7ZMihV9aVrCGVB1tcFVt4=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by SA6PR10MB8111.namprd10.prod.outlook.com (2603:10b6:806:446::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.15; Mon, 9 Feb
- 2026 23:17:04 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::4083:91ab:47a4:f244]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::4083:91ab:47a4:f244%4]) with mapi id 15.20.9587.010; Mon, 9 Feb 2026
- 23:17:03 +0000
-Message-ID: <44b1953f-728e-4ea1-99b4-a3e022564652@oracle.com>
-Date: Mon, 9 Feb 2026 18:17:01 -0500
-User-Agent: Mozilla Thunderbird
-From: Chuck Lever <chuck.lever@oracle.com>
-Subject: Re: [PATCH v5 3/3] NFSD: Sign filehandles
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Benjamin Coddington <bcodding@hammerspace.com>,
-        Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
-        Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
-        Rick Macklem <rick.macklem@gmail.com>, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-crypto@vger.kernel.org
-References: <cover.1770660136.git.bcodding@hammerspace.com>
- <c24f0ce95c5d2ec5b7855d6ab4e3f673b4f29321.1770660136.git.bcodding@hammerspace.com>
- <8574c412-31fb-4810-a675-edf72240ae29@oracle.com>
- <20260209210420.GA1062842@google.com>
-Content-Language: en-US
-In-Reply-To: <20260209210420.GA1062842@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CH0PR04CA0014.namprd04.prod.outlook.com
- (2603:10b6:610:76::19) To BN0PR10MB5128.namprd10.prod.outlook.com
- (2603:10b6:408:117::24)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDAC8C1F;
+	Tue, 10 Feb 2026 00:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770681871; cv=none; b=aIKR4oW3pY9FQx9ZU42ZZ8cR064yz4yTPHGJN1sWb7DSiBGocW0NYQJ8tIBI2UbeCFUcZiNLwfOxQA6yaGM9Tbi0RiIsKHoDfbsjUgKSxUeQ+U31IAGPQg8Qg6nOf1BgaSW4FpudL/QfigjWsNkGNadq2LmOeVdX09C5j6nzOhw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770681871; c=relaxed/simple;
+	bh=bXcydLhXbfRg8jbcHa6gdBu5FS8Uc0H1XE1uLH6XNBE=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=eimwLzHbMSi1Y49/mtC9o+fOPZOkW7d2iXYSMqutHI61Qgj89UA44AIdMArDGwp1XK+w9i9Xu3vyK7gUaUw5Ls/bJZU58yaTXUa7QqtVQs5GCTzV9Y4LadbIeMLBUKClmHYd1DoFF2WBbo+7e4k0TGmP3DR3V48SIhQFpBIbojQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k6ZkybjV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4C33C19425;
+	Tue, 10 Feb 2026 00:04:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770681871;
+	bh=bXcydLhXbfRg8jbcHa6gdBu5FS8Uc0H1XE1uLH6XNBE=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=k6ZkybjVlY7fyGLjY4kIbmhYkrj3PpB9HwH6U4Dg83kuCwc5evQtDf23S2FKZzoih
+	 XRQVfz3jE1l5/g7NVtt52eXNQTFHEFA26+Y94+lNbrTJXUnVDo8spCAEYyV+PjJO38
+	 t9bIq+QV37miONonoFA0SXUetxySEDTTDt11j1CFGhWfA5yoLktZ8lNyjmxdzPCTTB
+	 WRqtz98a5uKD+rKX5hz1RBimKA4/R6jD/oK7JGq0qaa8qraYXFY7pKx/84d6AfiPt1
+	 Fb3TL0ZdkywC8NCFssK0MBP/7ipcTnm4b9p/tA7746tgtiZXsSRhHNKNQO2rLfdd+e
+	 y2n4+MWSN9xRw==
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id CC45BF4006C;
+	Mon,  9 Feb 2026 19:04:29 -0500 (EST)
+Received: from phl-imap-15 ([10.202.2.104])
+  by phl-compute-10.internal (MEProxy); Mon, 09 Feb 2026 19:04:29 -0500
+X-ME-Sender: <xms:DXaKaY2BvyXRP7-kLbGv-bU74T2-fhsQSJ_fzJLrlRpmArLgkFArmQ>
+    <xme:DXaKad6qebDH28eWvem5Rs8VHMNUmR2U2RlZpnlXxgl5Pgj6JM_GcWC-fpkNpOB5i
+    NbXyMBNMt-1srna8k8mEF8imNFadM09I9GKOr8wq5ytdOAtdRiyttdw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduleekvddtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfvehhuhgt
+    khcunfgvvhgvrhdfuceotggvlheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
+    hnpefhffekffeftdfgheeiveekudeuhfdvjedvfedvueduvdegleekgeetgfduhfefleen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegthhhutg
+    hklhgvvhgvrhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeifeegleel
+    leehledqfedvleekgeegvdefqdgtvghlpeepkhgvrhhnvghlrdhorhhgsehfrghsthhmrg
+    hilhdrtghomhdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgt
+    phhtthhopehnvghilhessghrohifnhdrnhgrmhgvpdhrtghpthhtoheprghlvgigrdgrrh
+    hinhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtohepjhhlrgihthhonheskhgvrhhnvghlrdhorhhgpdhrtghpth
+    htohephhgthheslhhsthdruggvpdhrtghpthhtoheptghhuhgtkhdrlhgvvhgvrhesohhr
+    rggtlhgvrdgtohhmpdhrtghpthhtohepuggrihdrnhhgohesohhrrggtlhgvrdgtohhmpd
+    hrtghpthhtohepohhkohhrnhhivghvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehj
+    rggtkhesshhushgvrdgtii
+X-ME-Proxy: <xmx:DXaKadwIbWN1QcpAVdSvffwRD83G12OHhDJl_lXaxP4mnLTkLS2pCA>
+    <xmx:DXaKaSe1sm6_e3PjXRmkKUSZnvCk-yaLpAoH8ItZNfM2ypCsAii-jQ>
+    <xmx:DXaKaauzNqKjw--gnUEcAuY1xtVbYvik1yUx7P8LJRFFfUut76Ckrw>
+    <xmx:DXaKafBgeMAmR8RlW6e_6Uubbf9ki7md-BwGC7evyR-Uc8x5aO8g4g>
+    <xmx:DXaKaaF5FHrvQUwFREEXV67cFdiRip8nYRmN_OlJAtWnUmBg0mV8FwJZ>
+Feedback-ID: ifa6e4810:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 92CC4780070; Mon,  9 Feb 2026 19:04:29 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|SA6PR10MB8111:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9e3dc1bf-fa75-42a8-1c5d-08de683155fe
-X-LD-Processed: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|366016|1800799024|7416014|376014|7142099003|13003099007;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?b25STTR2bUdoeEs2Tm8rS3N6S2xUMHA0UkxCU0c4OU02WWJ0MW8wL2JPdG9T?=
- =?utf-8?B?QjdBd2ErRDNwU2hXMDltbnRSOEY5MEp6eWRLcURvdFcxSXdVTjJQZC9KUjlB?=
- =?utf-8?B?QmRvU1BqWXFzWkdJS25nczJleVZMRlpBQnVaK2hUaktOV3ROTWJpVk9xSWh5?=
- =?utf-8?B?V0wwZlhTMGZsRENaekkrcGsrbWhFNlFnU3ZDKzFWanFVcEtiL0FTWkhmNnUr?=
- =?utf-8?B?S29nVlNFV2V1QmErK0tqQWs5bkx1dEh1VnlsRENzM2I4SDk1a25TTm44V2Zv?=
- =?utf-8?B?RlBYcS91RnNJVWM3U25TSCtRTitpL210eVZNZWt2akd3blp5ejVycmQvMHRL?=
- =?utf-8?B?SjVqUWhOb3RvVkpTYmZ2Z2JFNGV0enZmMFNwajFZSGcyVzFlc1RLTERqdmQ4?=
- =?utf-8?B?U2lJUTZRZUcrdVp0b0JXaU9PQkhtV2FMejVUZVB6czhmN2ZocVlvT0M1VUdy?=
- =?utf-8?B?cERTZDNNN2NEUG9DR3JmNjg1WGJNdVo0WWRDblpmeWJmNi9OUDBNMnJQQjRI?=
- =?utf-8?B?VDF6SUNvQWlESUdHVkliMUpmK0s2M2tFa0tnMnY1aXBtaVhJQjlzdFBtZDYz?=
- =?utf-8?B?K0t2ZzJlVUhYT0pRNHloYld0ZmNxR2p3Zm5jR2ptem43L25hdnRDYmRWYVZE?=
- =?utf-8?B?ZUJnaWhZNlY1dkhmdjAyaXFWNi9KcFVzZjMyZlhaWmZtTWw5MU1qR2FaUVpj?=
- =?utf-8?B?bDF5elY5aXNzVS9HYjFMU3lDaHlHRnVMcnF3aXNkcnVyWWRPaThBTVBId1Ez?=
- =?utf-8?B?ZWpwWjNybURpelBKSGx5eGpKekQwZWorelRPaldzUWk4ZkkzMm9QNUpRTDJN?=
- =?utf-8?B?dnd0UzA2V1hndlBicDNMc2pSais2ZmU1QzJhOVhUc3NyTEprQmZDcXdOOFpR?=
- =?utf-8?B?a2Nzcy9qZmpqeFJrK0pZMGRkK3lMeXhWYlNTTmc5cFBOVVhZU3pJWFZvTGxn?=
- =?utf-8?B?TnVJcGgyeGNXOGZlTnlHcUR4aXUyVjNrU1graTI1VU1xRUpqMlJiMWx2VzhW?=
- =?utf-8?B?bWR5bTlXWnFvYVVuL0NMZDlIVUpBS3lPRlNMeDhESDdoK1NPbVhXak4ySWZN?=
- =?utf-8?B?WURHUTl6M21YRlAzUVJpeW8vU2tzS3RBMGpqTHZmb2hrMzRZbHQvNytIMWpm?=
- =?utf-8?B?aGFFSWtaenRlRkJvclUzUGJoc1hHU3ZNdUlaZEZWY0g5UHBmQmNyQ0NZS3ZB?=
- =?utf-8?B?T3YyWDRuY1hWQWk4ZGNpbytlN2R2bWw4RFdmTEtZRmxyRXBISStPbWxIZnRz?=
- =?utf-8?B?b1pSM0crRGpyQTJ4WHIyUWtJbkNmb3Z0VEcxYUsxdGJvZXV4ZCtPRG9JRXB1?=
- =?utf-8?B?dEREaGxIWkRiSWw5SEZ1ckJPcUhybk9ObWJpTDJTLzJNeERSRW5CUnhkbUpj?=
- =?utf-8?B?SDJ0d0R1S1h3Z0VkWDlLNzN1cG51MzAzQ2ZTWXdKNlllRGZRMk1MKzVpMkVu?=
- =?utf-8?B?R1JMSWtJT2paU0UyT0lWcDBaSTFXemZWaDhmNmNWZGEzdFk4VkhzSGt0alBy?=
- =?utf-8?B?QUlpWWFvdmUxOG9VRmc2MERIZDJveGZmSXVLSmtPYUtmWEpaQTRzZG1ZSGNx?=
- =?utf-8?B?bDRBVmxIRW12WCsvbXpEZnlxVmhZTDd1VlZXWmtzVTY1R3pjWGEzMUpVeHNU?=
- =?utf-8?B?bFlCei9oWlhTWVo3V0tPSGFiODhpNU95eGJxZXAwWVpzZS8xSzRSVjhYN3FP?=
- =?utf-8?B?M3R0VUErS0VlZkgzSUgzZStZVmsrVU9sd2R6WmZranQyOUsybE5WaUh4THAx?=
- =?utf-8?B?Mm01VjUvUTlmdXJ1ZUpWNVptTWZMckhUZjJhS0hScC8ybGc3dGt5U1RBbU1O?=
- =?utf-8?B?R1BOUmVheGk3M05lekhVRW1qelFLSlNwWXJISWVFdHIyUUwxcWdDcDN4MzV6?=
- =?utf-8?B?YTlWUE44UStHSHk5VXdpTnJiOWZSUWY5SlNYSEpmQmNGQWJJWWpwWGtSYzJH?=
- =?utf-8?B?TGtHbVB6ZDJMUUwzb3puWjZudDhCa2taUzRuL2tLNUJaeDlrL3BoWXVlQlU5?=
- =?utf-8?B?dWd1Y0czVzk4RHlpSnpGQzlET2FrM1hQWmV4ZVgyTlI2S1dBSnM4V3F0c1F4?=
- =?utf-8?Q?xMqRox?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(7142099003)(13003099007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?eUtTelR5eVNFQWxTelZZMFprZHhlRlRXLzZGZlp6S25EMzBxelRUaXZUbnpZ?=
- =?utf-8?B?bUNUTjlTNXdtQlNjUlNOL2hqY3N6ZWpXaWRCQWpEc0R5NWFUZ09KTHk0NGdL?=
- =?utf-8?B?KzZDQmcvdGcyZU5zOThYc3YrU0k3OHdyRXNtcjl6MHd0Q1NYTVV2ci9PbkM0?=
- =?utf-8?B?clNLbVl2SUQxeVZ6ejhpaEVrME5xa0NDK2lXeFFUaW02WGFZdExyTzRZZldN?=
- =?utf-8?B?bmpZRHR1QVlpVzhOaWJiWnF1UmhlVmlzMDB1QkhNeHBXZUcwc2F1UmpjWkFW?=
- =?utf-8?B?dFpLdFNLY2Y1WWZOM2M4SUMwWVdpaHZPT05aRDZOaW1hVEE3azNTblFFUEww?=
- =?utf-8?B?YnVGWkM3dlcvaUdTWG81dHl2OTBSQ21HSFp3RkRVWDRQOHlhaXdQNDA3VWhp?=
- =?utf-8?B?eGFJMnB1NTQ2RkF6bHVIaGRPT2dsd2hJbjhiUTB5R29VZnBmVURPQTJZbWlB?=
- =?utf-8?B?c3VzT3RIUUtmcHpJUk1BeTBTSjNXVndONnpmRmtpUXgrUkFVUXJVZDd0ODBO?=
- =?utf-8?B?c2taTU1GZTduYUc2Z1luV05qYVU1M2pFMEY3RlBqaHNDOFRPMEtKNWZ2S1M4?=
- =?utf-8?B?d0NTc21sei9keGlMamhYUncrTzE3bE53RHpQenB4bEQ1amNtdGs5SHFlSnlT?=
- =?utf-8?B?dkxyUTJMNUJCYlpqOVNHTjdzN3NEdXY2UDVGK2Rqb1gvQ3JERkVQVkxXd2F0?=
- =?utf-8?B?QWRBUE5VMFBuZzI3dmVuR2xDKzFjamJ3NGxJRkJVRVoreGRScnV1dWdIZi80?=
- =?utf-8?B?R011bytiRytxT2E4MnZnRHBvUXpWdVZFVlZ2clZnZjhoZzFwOVpYT1R4cWZ2?=
- =?utf-8?B?ODVBK0p5Qzh0dlRhRCsxcWF2QjZ4aEk3b0Y2bXNqZk5lQjdPWVUrTTZxcVFr?=
- =?utf-8?B?cUhac293OXkvSUgyU0VEN2tzYkhwMGtJT1lmcWxyQ2Z3aVZNcHhhbFRYNi9q?=
- =?utf-8?B?M2lFa0FWZ3N5TXlVRW5KYzRCdkRFRlFPZk5GdC9ySUJFMUF0cTNkTW9RQ0h0?=
- =?utf-8?B?QzI5NzFLbSttdHR2VGlyY3ZHRGFSVVc5b253SFVvUFJnWFA4M0wrSjY1RGZ0?=
- =?utf-8?B?Tkh0cENZVWhQSldNM09DUTdnZUVyZUIxRk9HWTA4WGhrL0lSWEI5NXVpTmhE?=
- =?utf-8?B?Y1lIK3U2cnhRQms5WW5FYnp5SmJrQ3c0UkZDcWdFOXFROUFOM0w2dnlzaUNx?=
- =?utf-8?B?T1NVeFFZejVIb0N6ZkdhYlArNmNic1FPUFBLU29xelVTV0o0VmZCbXBWWHNO?=
- =?utf-8?B?S055M2ozNWc5UG1VZWFaQXRrQk85MEhRc2NERGFKQ1B5Um1yWmRLdzFXZjZr?=
- =?utf-8?B?ajV6MUpnLzFrbmZiOFZDZ3hVWnhhYk1lQ1FjeDlZaTBSV3JUZXNiUTBobkM1?=
- =?utf-8?B?dmxEeEFGaGhGRzRDdXpGZ2hUWE9YMzlvQ2hFMXVCY2hnVnBUSEYwTFpvNHlF?=
- =?utf-8?B?NWtDWmwraGFtSENOcFpDYXlyUUM2NFZhazgyamF6VGZZeDEzNmxvdUlvNm04?=
- =?utf-8?B?ZHE1ZGpqT1MrSFFhV2cvOTM1T1EvUklEdVFpeTdLS1NXbHBrY2U0SDZ1ZjhG?=
- =?utf-8?B?aGpLVWpVb01mN3Qyc3BUWnlPSGlVcHB4M2NVUEVXWUIxYjZPeXF5RVhaVkxU?=
- =?utf-8?B?S3AzdEI1UWhjZEVJUHdJWnJNT1FJNmM3YlM2bTBiSEJZMFhTVzA2MVlqZ3BS?=
- =?utf-8?B?SzNlZ0pmaERoQ2gydUN6dWV2bUF2MlYrcE1nZENSSjNqR0l2eWJ0aGVpeUU3?=
- =?utf-8?B?c3pGbmcvWjljQ1lVVTZ5QTNFOE9GWHpMV2hOUXc2RmVHQkYvbW1SMnZ1S3Ir?=
- =?utf-8?B?Mk1Najhlem5mK3BiVnlSRitmS3NEWDE2a0xjU3UvZ0VoT0xwR1ZXWUxQenFv?=
- =?utf-8?B?RHZUc2tDaVFUdlh3NGlDSFdUR2JLVWREa29mMTJMd0tvWE1CRGtydzlsWnpp?=
- =?utf-8?B?OWdQT05PMlFIS1d5Ry9nd1Z4VTJBZUNjaEwzdnhoQlJWeXVUZGNuU2dOMitW?=
- =?utf-8?B?RXdYRzhldDJoWGxsNE5FQWYyRU9McGFKVTlsbktNOU82emkxOHkySENTaVNx?=
- =?utf-8?B?RmxwREdtWW0vaElBNXRmczErL01HWnRRTUpSSmtFaXJmR2dWSHdTUUFqNytr?=
- =?utf-8?B?NWpJY1JhUzR5Mkk2Z0lFTUNGVFNFbVYzR05EVThzbVlpNU8xL1NVWmlXWHdR?=
- =?utf-8?B?eldJbDFwNE5lekxsUWM5dm9lNXpEcmxXYlVQaVZQbWZkYlR2Vi9hYUprcmJt?=
- =?utf-8?B?a1F5c2pITmdZdDhhNE9vSFdxbkoraFhjYk1ENnJKdUYwQi9nZ3BXSFdtWW9I?=
- =?utf-8?B?ZzlnNEdLOExqRGNwaGlFVXBqRjJHNlNPcG1ncnZtWUhHRFQ4aE0xQT09?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	GJr7zrS4+os14KvUESikUish1EqTDYKlSCnXjSPbwpIjUm4ydRpLdqh9YrgajZ/NWzM1NUgZgnjpzK4WZnSQqOm+4BtQoiLQGXs+hQYZk5doi7lxbNZ2sf6A2d0v1E1qHHGdQRNl7byz8PDVe3/BTKkQDT2jWFK7nYjkHgckPIQHTYIsHxBoKCs0oT2qpADSwS/MoUnWLd/k7KDawS6YPWRiaIt78M0nVdYl6VSPPnLzJRiQXy5WuZWovWAZMoJiFJzSGTMG9APXDCVp8u8z4ZGvm47r/W3mxFz7+P+kTNaQwuVJp8dSOpdBkbBFWSXGZLm3/qAlZjnMrwQ3PNu+XRWvl2a2Xk9NAyeJr+jkKm3tnFRbkfo4aiR18/RW0zCqhPrnXY+RtO1EmwK+LtMEzAl1K8U22UBZVNkBRq4wWPIDMjVZxT1KTscG585LZhwJlfXLcJWscXv7tMwkj+VZOAiIgUZF7CiJQZOwBaK2UNjL66HluI3um0g+uqvPKxzw/O2R6gTKgwFB6G5r/1WSZVGoVJZe1/1UG1l9xM0xXA4nY3AotRVvJHBBKTGPsmjYilrelABLco5GDnV3icICo3H9DVENZgxkrmA43x9HXUQ=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e3dc1bf-fa75-42a8-1c5d-08de683155fe
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Feb 2026 23:17:03.9347
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cSMEXHpygfpCvMbefj1c5/G0kOr6uHPx+CC7h9W6nVzx6qBjYi3AN5QAisQFXCnWHfVMEvLv0ZN9Avawu79WiA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA6PR10MB8111
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-02-09_01,2026-02-09_04,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0
- mlxlogscore=999 mlxscore=0 adultscore=0 bulkscore=0 malwarescore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2601150000 definitions=main-2602090197
-X-Proofpoint-GUID: uP0WNTSblcCP4lU4ijoCAKFFVvnJhV7C
-X-Authority-Analysis: v=2.4 cv=FIsWBuos c=1 sm=1 tr=0 ts=698a6af5 b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=HzLeVaNsDn8A:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22 a=MVff1mliAAAA:8
- a=HIz5GZpxOaFRr7uDsOkA:9 a=QEXdDO2ut3YA:10 a=54LGQyWa7_ZnQzWOCYU5:22 cc=ntf
- awl=host:13697
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjA5MDE5NyBTYWx0ZWRfX/uIk8i4ImPwr
- nJ3B5WssoVz+Ry0D9xxEJIaSqVydHncqIvYy2mvnTZjWpsSUpDm7U6q0YppqMCWcFpT/gMYhc3Z
- wAA/ZSXqfXBkMHA0jYSTbG0e0yx3akYD/NnTlAbwmmqMpip/1Q43skeg0VWjKsgE5FqIBQbr7L1
- 5mq+NuYhSnnURNpp17e+l1akx66iL2sdooR+Mq/vCqLfJuCENXsPnEU+k3m1d6N0kLYgGRiFhxn
- Jz/pc0TnS6jua3qk9FM5vtHfhRuXGXzlsUoBxBW7xYV9ZKwz9WlskKOvMY7d65hfJNsUuZp+SXW
- tT4Np3YJh774eUTnXMnbj6yoaqH37fR9QrETssqNSNglt8Q5xBKnLeX4F53N7/lxlEVqh0QZmLI
- dHzKvAnL8eup4EAeIL6AFi8/2KPkN7xnqZIwGixvX7XcFYgzTRLEhY0hnPScA4yrdXKIMWsaxhc
- aiiX0Cl4a4MTjkOR8TH1uBTsu3c4ZtarXzBT/NoM=
-X-Proofpoint-ORIG-GUID: uP0WNTSblcCP4lU4ijoCAKFFVvnJhV7C
+X-ThreadId: A5l7aiVFrsZV
+Date: Mon, 09 Feb 2026 19:04:05 -0500
+From: "Chuck Lever" <cel@kernel.org>
+To: "Dai Ngo" <dai.ngo@oracle.com>, "Chuck Lever" <chuck.lever@oracle.com>,
+ "Jeff Layton" <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
+ "Olga Kornievskaia" <okorniev@redhat.com>, "Tom Talpey" <tom@talpey.com>,
+ "Christoph Hellwig" <hch@lst.de>, "Alexander Aring" <alex.aring@gmail.com>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
+Message-Id: <e957053b-53d2-4291-afaa-d5dc08f8c44b@app.fastmail.com>
+In-Reply-To: <20260209212618.366116-1-dai.ngo@oracle.com>
+References: <20260209212618.366116-1-dai.ngo@oracle.com>
+Subject: Re: [PATCH v8 1/1] NFSD: Enforce timeout on layout recall and integrate lease
+ manager fencing
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [1.34 / 15.00];
+X-Spamd-Result: default: False [-0.65 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_REJECT(1.00)[cv is fail on i=2];
-	DMARC_POLICY_ALLOW(-0.50)[oracle.com,reject];
-	R_DKIM_ALLOW(-0.20)[oracle.com:s=corp-2025-04-25,oracle.onmicrosoft.com:s=selector2-oracle-onmicrosoft-com];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[hammerspace.com,kernel.org,brown.name,gmail.com,vger.kernel.org];
+	XM_UA_NO_VERSION(0.01)[];
+	TAGGED_FROM(0.00)[bounces-76766-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76765-lists,linux-fsdevel=lfdr.de];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.onmicrosoft.com:dkim,yp.to:url,oracle.com:mid,oracle.com:dkim,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns];
+	FREEMAIL_TO(0.00)[oracle.com,kernel.org,brown.name,redhat.com,talpey.com,lst.de,gmail.com,zeniv.linux.org.uk,suse.cz];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[app.fastmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,oracle.com:email];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[chuck.lever@oracle.com,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[cel@kernel.org,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[oracle.com:+,oracle.onmicrosoft.com:+];
-	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	PRECEDENCE_BULK(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
-	RCVD_COUNT_SEVEN(0.00)[9]
-X-Rspamd-Queue-Id: D21BC1155D7
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: 66C71115864
 X-Rspamd-Action: no action
 
-On 2/9/26 4:04 PM, Eric Biggers wrote:
-> On Mon, Feb 09, 2026 at 03:29:07PM -0500, Chuck Lever wrote:
->> On 2/9/26 1:09 PM, Benjamin Coddington wrote:
->>> NFS clients may bypass restrictive directory permissions by using
->>> open_by_handle() (or other available OS system call) to guess the
->>> filehandles for files below that directory.
->>>
->>> In order to harden knfsd servers against this attack, create a method to
->>> sign and verify filehandles using siphash as a MAC (Message Authentication
->>> Code).  Filehandles that have been signed cannot be tampered with, nor can
->>> clients reasonably guess correct filehandles and hashes that may exist in
->>> parts of the filesystem they cannot access due to directory permissions.
->>
->> It's been pointed out to me that siphash is a PRF designed for hash
->> tables, not a standard MAC. We suggested siphash as it may be sufficient
->> here for preventing 8-byte tag guessing, but the commit message and
->> documentation calls it a "MAC" which is a misnomer. Can the commit
->> message (or even the new .rst file) document why siphash is adequate for
->> this threat model?
->>
->> Perhaps Eric has some thoughts on this.
+
+
+On Mon, Feb 9, 2026, at 4:26 PM, Dai Ngo wrote:
+> When a layout conflict triggers a recall, enforcing a timeout is
+> necessary to prevent excessive nfsd threads from being blocked in
+> __break_lease ensuring the server continues servicing incoming
+> requests efficiently.
+>
+> This patch introduces a new function to lease_manager_operations:
+>
+> lm_breaker_timedout: Invoked when a lease recall times out and is
+> about to be disposed of. This function enables the lease manager
+> to inform the caller whether the file_lease should remain on the
+> flc_list or be disposed of.
+>
+> For the NFSD lease manager, this function now handles layout recall
+> timeouts. If the layout type supports fencing and the client has not
+> been fenced, a fence operation is triggered to prevent the client
+> from accessing the block device.
+>
+> While the fencing operation is in progress, the conflicting file_lease
+> remains on the flc_list until fencing is complete. This guarantees
+> that no other clients can access the file, and the client with
+> exclusive access is properly blocked before disposal.
+>
+> Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
+> ---
+>  Documentation/filesystems/locking.rst |   2 +
+>  fs/locks.c                            |  16 +++-
+>  fs/nfsd/blocklayout.c                 |  41 +++++++--
+>  fs/nfsd/nfs4layouts.c                 | 127 +++++++++++++++++++++++++-
+>  fs/nfsd/nfs4state.c                   |   1 +
+>  fs/nfsd/pnfs.h                        |   2 +-
+>  fs/nfsd/state.h                       |   6 ++
+>  include/linux/filelock.h              |   1 +
+>  8 files changed, 182 insertions(+), 14 deletions(-)
+>
+> v2:
+>     . Update Subject line to include fencing operation.
+>     . Allow conflicting lease to remain on flc_list until fencing
+>       is complete.
+>     . Use system worker to perform fencing operation asynchronously.
+>     . Use nfs4_stid.sc_count to ensure layout stateid remains
+>       valid before starting the fencing operation, nfs4_stid.sc_count
+>       is released after fencing operation is complete.
+>     . Rework nfsd4_scsi_fence_client to:
+>          . wait until fencing to complete before exiting.
+>          . wait until fencing in progress to complete before
+>            checking the NFSD_MDS_PR_FENCED flag.
+>     . Remove lm_need_to_retry from lease_manager_operations.
+> v3:
+>     . correct locking requirement in locking.rst.
+>     . add max retry count to fencing operation.
+>     . add missing nfs4_put_stid in nfsd4_layout_fence_worker.
+>     . remove special-casing of FL_LAYOUT in lease_modify.
+>     . remove lease_want_dispose.
+>     . move lm_breaker_timedout call to time_out_leases.
+> v4:
+>     . only increment ls_fence_retry_cnt after successfully
+>       schedule new work in nfsd4_layout_lm_breaker_timedout.
+> v5:
+>     . take reference count on layout stateid before starting
+>       fence worker.
+>     . restore comments in nfsd4_scsi_fence_client and the
+>       code that check for specific errors.
+>     . cancel fence worker before freeing layout stateid.
+>     . increase fence retry from 5 to 20.
+>
+> NOTE:
+>     I experimented with having the fence worker handle lease
+>     disposal after fencing the client. However, this requires
+>     the lease code to export the lease_dispose_list function,
+>     and for the fence worker to acquire the flc_lock in order
+>     to perform the disposal. This approach adds unnecessary
+>     complexity and reduces code clarity, as it exposes internal
+>     lease code details to the nfsd worker, which should not
+>     be the case.
+>
+>     Instead, the lm_breaker_timedout operation should simply
+>     notify the lease code about how to handle a lease that
+>     times out during a lease break, rather than directly
+>     manipulating the lease list.
+> v6:
+>    . unlock the lease as soon as the fencing is done, so that
+>      tasks waiting on it can proceed.
+>
+> v7:
+>    . Change to retry fencing on error forever by default.
+>    . add module parameter option to allow the admim to specify
+>      the maximun number of retries before giving up.
+>
+> v8:
+>    . reinitialize 'remove' inside the loop.
+>    . remove knob to stop fence worker from retrying forever.
+>    . use exponential back off when retrying fence operation.
+>    . Fix nits.
+>
+> diff --git a/Documentation/filesystems/locking.rst 
+> b/Documentation/filesystems/locking.rst
+> index 04c7691e50e0..79bee9ae8bc3 100644
+> --- a/Documentation/filesystems/locking.rst
+> +++ b/Documentation/filesystems/locking.rst
+> @@ -403,6 +403,7 @@ prototypes::
+>  	bool (*lm_breaker_owns_lease)(struct file_lock *);
+>          bool (*lm_lock_expirable)(struct file_lock *);
+>          void (*lm_expire_lock)(void);
+> +        bool (*lm_breaker_timedout)(struct file_lease *);
 > 
-> PRFs are also MACs, though.
-
-In our case, the hash authenticates the file handle because only our NFS
-server knows the hash key. Fair enough.
-
-
-> So SipHash is also a MAC.  See the original
-> paper: https://cr.yp.to/siphash/siphash-20120918.pdf
+>  locking rules:
 > 
-> However, SipHash's tag size is only 64 bits, which limits its resistance
-> to forgeries.  There will always be at least a 1 in 2^64 chance of a
-> forgery.
+> @@ -417,6 +418,7 @@ lm_breaker_owns_lease:	yes     	no			no
+>  lm_lock_expirable	yes		no			no
+>  lm_expire_lock		no		no			yes
+>  lm_open_conflict	yes		no			no
+> +lm_breaker_timedout     yes             no                      no
+>  ======================	=============	=================	=========
 > 
-> In addition, the specific variant of SipHash implemented by the kernel's
-> siphash library is SipHash-2-4.  That's the performance-optimized
-> variant.  While no attack is known on that variant, and the SipHash
-> paper claims that even this variant is a cryptographically strong PRF
-> and thus also a MAC, SipHash-4-8 is the more conservative variant.
+>  buffer_head
+> diff --git a/fs/locks.c b/fs/locks.c
+> index 46f229f740c8..9ec36c008edd 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -1524,6 +1524,7 @@ static void time_out_leases(struct inode *inode, 
+> struct list_head *dispose)
+>  {
+>  	struct file_lock_context *ctx = inode->i_flctx;
+>  	struct file_lease *fl, *tmp;
+> +	bool remove;
 > 
-> If you'd like to be more conservative with the cryptographic primitive
-> and also bring the forgery chance down to 1 in 1^128, HMAC-SHA256 or
-> BLAKE2s with 128-bit tags could be a good choice.
-
-We're looking for good performance because file handle verification will
-be done frequently, and also I imagine that we have a hash size budget
-in certain cases. I am relying on others to do the math regarding how
-much forgery protection is needed.
-
-Since there is currently no mechanism for selecting a different hash for
-signing file handles, perhaps we should also consider the expected
-longevity of the protection offered by SipHash-2-4 versus file handle
-lifetime.
-
-
-> (In commit 2f3dd6ec901f29aef5fff3d7a63b1371d67c1760, I used HMAC-SHA256
-> with 256-bit tags for SCTP cookies.  Probably overkill, but the struct
-> already had 256 bits reserved for the tag.)
+>  	lockdep_assert_held(&ctx->flc_lock);
 > 
-> But again, SipHash (even SipHash-2-4) is indeed considered to be a MAC.
-> So if the only concern is that it's "a PRF but not a MAC", that's not
-> correct.
+> @@ -1531,8 +1532,19 @@ static void time_out_leases(struct inode *inode, 
+> struct list_head *dispose)
+>  		trace_time_out_leases(inode, fl);
+>  		if (past_time(fl->fl_downgrade_time))
+>  			lease_modify(fl, F_RDLCK, dispose);
+> -		if (past_time(fl->fl_break_time))
+> -			lease_modify(fl, F_UNLCK, dispose);
+> +
+> +		remove = true;
+> +		if (past_time(fl->fl_break_time)) {
+> +			/*
+> +			 * Consult the lease manager when a lease break times
+> +			 * out to determine whether the lease should be disposed
+> +			 * of.
+> +			 */
+> +			if (fl->fl_lmops && fl->fl_lmops->lm_breaker_timedout)
+> +				remove = fl->fl_lmops->lm_breaker_timedout(fl);
+> +			if (remove)
+> +				lease_modify(fl, F_UNLCK, dispose);
+> +		}
+>  	}
+>  }
+> 
+> diff --git a/fs/nfsd/blocklayout.c b/fs/nfsd/blocklayout.c
+> index 7ba9e2dd0875..b7030c91964c 100644
+> --- a/fs/nfsd/blocklayout.c
+> +++ b/fs/nfsd/blocklayout.c
+> @@ -443,15 +443,33 @@ nfsd4_scsi_proc_layoutcommit(struct inode *inode, 
+> struct svc_rqst *rqstp,
+>  	return nfsd4_block_commit_blocks(inode, lcp, iomaps, nr_iomaps);
+>  }
+> 
+> -static void
+> +/*
+> + * Perform the fence operation to prevent the client from accessing the
+> + * block device. If a fence operation is already in progress, wait for
+> + * it to complete before checking the NFSD_MDS_PR_FENCED flag. Once the
+> + * operation is complete, check the flag. If NFSD_MDS_PR_FENCED is set,
+> + * update the layout stateid by setting the ls_fenced flag to indicate
+> + * that the client has been fenced.
+> + *
+> + * The cl_fence_mutex ensures that the fence operation has been fully
+> + * completed, rather than just in progress, when returning from this
+> + * function.
+> + *
+> + * Return true if client was fenced otherwise return false.
+> + */
+> +static bool
+>  nfsd4_scsi_fence_client(struct nfs4_layout_stateid *ls, struct nfsd_file *file)
+>  {
+>  	struct nfs4_client *clp = ls->ls_stid.sc_client;
+>  	struct block_device *bdev = file->nf_file->f_path.mnt->mnt_sb->s_bdev;
+>  	int status;
+> +	bool ret;
+> 
+> -	if (nfsd4_scsi_fence_set(clp, bdev->bd_dev))
+> -		return;
+> +	mutex_lock(&clp->cl_fence_mutex);
+> +	if (nfsd4_scsi_fence_set(clp, bdev->bd_dev)) {
+> +		mutex_unlock(&clp->cl_fence_mutex);
+> +		return true;
+> +	}
+> 
+>  	status = bdev->bd_disk->fops->pr_ops->pr_preempt(bdev, 
+> NFSD_MDS_PR_KEY,
+>  			nfsd4_scsi_pr_key(clp),
+> @@ -470,13 +488,22 @@ nfsd4_scsi_fence_client(struct 
+> nfs4_layout_stateid *ls, struct nfsd_file *file)
+>  	 * PR_STS_RESERVATION_CONFLICT, which would cause an infinite
+>  	 * retry loop.
+>  	 */
+> -	if (status < 0 ||
+> -	    status == PR_STS_PATH_FAILED ||
+> -	    status == PR_STS_PATH_FAST_FAILED ||
+> -	    status == PR_STS_RETRY_PATH_FAILURE)
+> +	switch (status) {
+> +	case 0:
+> +	case PR_STS_IOERR:
+> +	case PR_STS_RESERVATION_CONFLICT:
+> +		ret = true;
+> +		break;
+> +	default:
+> +		/* retry-able and other errors */
+> +		ret = false;
+>  		nfsd4_scsi_fence_clear(clp, bdev->bd_dev);
+> +		break;
+> +	}
+> +	mutex_unlock(&clp->cl_fence_mutex);
+> 
+>  	trace_nfsd_pnfs_fence(clp, bdev->bd_disk->disk_name, status);
+> +	return ret;
+>  }
+> 
+>  const struct nfsd4_layout_ops scsi_layout_ops = {
+> diff --git a/fs/nfsd/nfs4layouts.c b/fs/nfsd/nfs4layouts.c
+> index ad7af8cfcf1f..3aceae6bf1af 100644
+> --- a/fs/nfsd/nfs4layouts.c
+> +++ b/fs/nfsd/nfs4layouts.c
+> @@ -177,6 +177,13 @@ nfsd4_free_layout_stateid(struct nfs4_stid *stid)
+> 
+>  	trace_nfsd_layoutstate_free(&ls->ls_stid.sc_stateid);
+> 
+> +	spin_lock(&ls->ls_lock);
+> +	if (ls->ls_fence_in_progress) {
+> +		spin_unlock(&ls->ls_lock);
+> +		cancel_delayed_work_sync(&ls->ls_fence_work);
+> +	} else
+> +		spin_unlock(&ls->ls_lock);
+> +
+>  	spin_lock(&clp->cl_lock);
+>  	list_del_init(&ls->ls_perclnt);
+>  	spin_unlock(&clp->cl_lock);
+> @@ -271,6 +278,9 @@ nfsd4_alloc_layout_stateid(struct 
+> nfsd4_compound_state *cstate,
+>  	list_add(&ls->ls_perfile, &fp->fi_lo_states);
+>  	spin_unlock(&fp->fi_lock);
+> 
+> +	ls->ls_fence_in_progress = false;
+> +	ls->ls_fenced = false;
+> +	ls->ls_fence_secs = 0;
+>  	trace_nfsd_layoutstate_alloc(&ls->ls_stid.sc_stateid);
+>  	return ls;
+>  }
+> @@ -747,11 +757,9 @@ static bool
+>  nfsd4_layout_lm_break(struct file_lease *fl)
+>  {
+>  	/*
+> -	 * We don't want the locks code to timeout the lease for us;
+> -	 * we'll remove it ourself if a layout isn't returned
+> -	 * in time:
+> +	 * Enforce break lease timeout to prevent NFSD
+> +	 * thread from hanging in __break_lease.
+>  	 */
+> -	fl->fl_break_time = 0;
+>  	nfsd4_recall_file_layout(fl->c.flc_owner);
+>  	return false;
+>  }
+> @@ -782,10 +790,121 @@ nfsd4_layout_lm_open_conflict(struct file *filp, int arg)
+>  	return 0;
+>  }
+> 
+> +static void
+> +nfsd4_layout_fence_worker(struct work_struct *work)
+> +{
+> +	struct delayed_work *dwork = to_delayed_work(work);
+> +	struct nfs4_layout_stateid *ls = container_of(dwork,
+> +			struct nfs4_layout_stateid, ls_fence_work);
+> +	struct nfsd_file *nf;
+> +	struct block_device *bdev;
+> +	LIST_HEAD(dispose);
+> +
+> +	spin_lock(&ls->ls_lock);
+> +	if (list_empty(&ls->ls_layouts)) {
+> +		spin_unlock(&ls->ls_lock);
+> +dispose:
+> +		/* unlock the lease so that tasks waiting on it can proceed */
+> +		nfsd4_close_layout(ls);
+> +
+> +		ls->ls_fenced = true;
+> +		ls->ls_fence_in_progress = false;
+> +		nfs4_put_stid(&ls->ls_stid);
+> +		return;
+> +	}
+> +	spin_unlock(&ls->ls_lock);
+> +
+> +	rcu_read_lock();
+> +	nf = nfsd_file_get(ls->ls_file);
+> +	rcu_read_unlock();
+> +	if (!nf)
+> +		goto dispose;
+> +
+> +	if (nfsd4_layout_ops[ls->ls_layout_type]->fence_client(ls, nf)) {
+> +		/* fenced ok */
+> +		nfsd_file_put(nf);
+> +		goto dispose;
+> +	}
+> +	/* fence failed */
+> +	bdev = nf->nf_file->f_path.mnt->mnt_sb->s_bdev;
+> +	nfsd_file_put(nf);
+> +
+> +	pr_warn("%s: FENCE failed client[%pISpc] device[0x%x]\n",
+> +		__func__, (struct sockaddr *)&ls->ls_stid.sc_client->cl_addr,
+> +		bdev->bd_dev);
+> +	/*
+> +	 * The fence worker retries the fencing operation indefinitely to
+> +	 * prevent data corruption. The admin needs to take the following
+> +	 * actions to restore access to the file for other clients:
+> +	 *
+> +	 *  . shutdown or power off the client being fenced.
+> +	 *  . manually expire the client to release all its state on the server;
+> +	 *    echo 'expire' > proc/fs/nfsd/clients/clientid/ctl'.
+> +	 */
+> +	ls->ls_fence_secs <<= 1;
+> +	if ((!ls->ls_fence_secs) || (ls->ls_fence_secs > 3600))
+> +		ls->ls_fence_secs = 1;
 
-Then the rationale to be added might be nothing more than "According to
-https://cr.yp.to/siphash/siphash-20120918.pdf SipHash can be used as a
-MAC, and our use of SipHash-2-4 provides a low 1 in 2^64 chance of
-forgery."
+Instead of resetting to 1 second, just let it remain at the maximum.
 
+Assuming you meant 3600 seconds and not 3600 jiffies, is an hour
+between retries too long? Maybe the maximum should be capped at 3
+minutes or something? Opinions?
+
+Let's define a constant somewhere to document the maximum number of
+timeout seconds.
+
+
+> +
+> +	mod_delayed_work(system_dfl_wq, &ls->ls_fence_work, ls->ls_fence_secs);
+
+Since mod_delayed_work() takes jiffies as its third argument,
+you need a "* HZ" here.
+
+
+> +}
+> +
+> +/**
+> + * nfsd4_layout_lm_breaker_timedout - The layout recall has timed out.
+> + * @fl: file to check
+> + *
+> + * If the layout type supports a fence operation, schedule a worker to
+> + * fence the client from accessing the block device.
+> + *
+> + * This function runs under the protection of the spin_lock flc_lock.
+> + * At this time, the file_lease associated with the layout stateid is
+> + * on the flc_list. A reference count is incremented on the layout
+> + * stateid to prevent it from being freed while the fence worker is
+> + * executing. Once the fence worker finishes its operation, it releases
+> + * this reference.
+> + *
+> + * The fence worker continues to run until either the client has been
+> + * fenced or the layout becomes invalid. The layout can become invalid
+> + * as a result of a LAYOUTRETURN or when the CB_LAYOUT recall callback
+> + * has completed.
+> + *
+> + * Return true if the file_lease should be disposed of by the caller;
+> + * otherwise, return false.
+> + */
+> +static bool
+> +nfsd4_layout_lm_breaker_timedout(struct file_lease *fl)
+> +{
+> +	struct nfs4_layout_stateid *ls = fl->c.flc_owner;
+> +
+> +	if ((!nfsd4_layout_ops[ls->ls_layout_type]->fence_client) ||
+> +			ls->ls_fenced)
+> +		return true;
+> +	if (ls->ls_fence_in_progress)
+> +		return false;
+> +
+> +	INIT_DELAYED_WORK(&ls->ls_fence_work, nfsd4_layout_fence_worker);
+
+Can this INIT_DELAYED_WORK be moved to nfsd4_alloc_layout_stateid() ?
+INIT at allocation time is more conventional and safer.
+
+
+> +
+> +	/*
+> +	 * Make sure layout has not been returned yet before
+> +	 * taking a reference count on the layout stateid.
+> +	 */
+> +	spin_lock(&ls->ls_lock);
+> +	if (list_empty(&ls->ls_layouts)) {
+> +		spin_unlock(&ls->ls_lock);
+> +		return true;
+> +	}
+> +	refcount_inc(&ls->ls_stid.sc_count);
+> +	ls->ls_fence_in_progress = true;
+> +	spin_unlock(&ls->ls_lock);
+> +
+> +	mod_delayed_work(system_dfl_wq, &ls->ls_fence_work, 0);
+> +	return false;
+> +}
+> +
+>  static const struct lease_manager_operations nfsd4_layouts_lm_ops = {
+>  	.lm_break		= nfsd4_layout_lm_break,
+>  	.lm_change		= nfsd4_layout_lm_change,
+>  	.lm_open_conflict	= nfsd4_layout_lm_open_conflict,
+> +	.lm_breaker_timedout	= nfsd4_layout_lm_breaker_timedout,
+>  };
+> 
+>  int
+> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> index 98da72fc6067..bad91d1bfef3 100644
+> --- a/fs/nfsd/nfs4state.c
+> +++ b/fs/nfsd/nfs4state.c
+> @@ -2387,6 +2387,7 @@ static struct nfs4_client *alloc_client(struct 
+> xdr_netobj name,
+>  #endif
+>  #ifdef CONFIG_NFSD_SCSILAYOUT
+>  	xa_init(&clp->cl_dev_fences);
+> +	mutex_init(&clp->cl_fence_mutex);
+>  #endif
+>  	INIT_LIST_HEAD(&clp->async_copies);
+>  	spin_lock_init(&clp->async_lock);
+> diff --git a/fs/nfsd/pnfs.h b/fs/nfsd/pnfs.h
+> index db9af780438b..3a2f9e240e85 100644
+> --- a/fs/nfsd/pnfs.h
+> +++ b/fs/nfsd/pnfs.h
+> @@ -38,7 +38,7 @@ struct nfsd4_layout_ops {
+>  			struct svc_rqst *rqstp,
+>  			struct nfsd4_layoutcommit *lcp);
+> 
+> -	void (*fence_client)(struct nfs4_layout_stateid *ls,
+> +	bool (*fence_client)(struct nfs4_layout_stateid *ls,
+>  			     struct nfsd_file *file);
+>  };
+> 
+> diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
+> index 713f55ef6554..69beaffd6c78 100644
+> --- a/fs/nfsd/state.h
+> +++ b/fs/nfsd/state.h
+> @@ -529,6 +529,7 @@ struct nfs4_client {
+>  	time64_t		cl_ra_time;
+>  #ifdef CONFIG_NFSD_SCSILAYOUT
+>  	struct xarray		cl_dev_fences;
+> +	struct mutex		cl_fence_mutex;
+>  #endif
+>  };
+> 
+> @@ -738,6 +739,11 @@ struct nfs4_layout_stateid {
+>  	stateid_t			ls_recall_sid;
+>  	bool				ls_recalled;
+>  	struct mutex			ls_mutex;
+> +
+> +	struct delayed_work		ls_fence_work;
+> +	unsigned int			ls_fence_secs;
+> +	bool				ls_fence_in_progress;
+
+Seems like there are two sources of truth about whether a fence is
+in progress here. Would it make sense to replace ls_fence_in_progress
+with a call to delayed_work_pending() ? 
+
+
+> +	bool				ls_fenced;
+>  };
+> 
+>  static inline struct nfs4_layout_stateid *layoutstateid(struct nfs4_stid *s)
+> diff --git a/include/linux/filelock.h b/include/linux/filelock.h
+> index 2f5e5588ee07..13b9c9f04589 100644
+> --- a/include/linux/filelock.h
+> +++ b/include/linux/filelock.h
+> @@ -50,6 +50,7 @@ struct lease_manager_operations {
+>  	void (*lm_setup)(struct file_lease *, void **);
+>  	bool (*lm_breaker_owns_lease)(struct file_lease *);
+>  	int (*lm_open_conflict)(struct file *, int);
+> +	bool (*lm_breaker_timedout)(struct file_lease *fl);
+>  };
+> 
+>  struct lock_manager {
+> -- 
+> 2.47.3
 
 -- 
 Chuck Lever
