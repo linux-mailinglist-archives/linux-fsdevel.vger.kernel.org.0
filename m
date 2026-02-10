@@ -1,60 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-76823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WPC6JAXximmwOwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 09:49:09 +0100
+	id 0HW+ABLximmwOwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 09:49:22 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E04E7118611
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 09:49:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DF82118618
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 09:49:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 935A9306EE1B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 08:46:34 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 9FCF33074A8B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 08:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2499533DECB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E482E33E35F;
 	Tue, 10 Feb 2026 08:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=birthelmer.com header.i=@birthelmer.com header.b="hXwJH3As"
+	dkim=pass (2048-bit key) header.d=birthelmer.com header.i=@birthelmer.com header.b="rI8B7+yY"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp01-ext2.udag.de (smtp01-ext2.udag.de [62.146.106.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11DDA2857F1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E47329E40;
 	Tue, 10 Feb 2026 08:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.146.106.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770713190; cv=none; b=HX9pPdFGOtj+kDhMKjg3WKHYS0lv1VSgi5PYanwL6Smly1u4F3k5Vpq/F/3LBv34FhO4LRg5MAcjOIlbDXWxREiMrRRU4FCm1m+DNpjXHf8tq05Dw7Mv7KmEBNOFm+QH6SsiDCgtra3JcKTfcA8xY3zX5yyA9BdgxWj74AJ7xFo=
+	t=1770713191; cv=none; b=u8CHoYQK1cJcF5UguQBnMnsHMfEw2m7w7zgd72Ay5w4yI7LDdUMlMk6zqQ8+80GS7spYU0e6P5ux/r4ioEPxdnUUu2mJ27ePojIT6MsLmxt2f73Y1CQ8+uGF02jeqg6tJhrMSFswzvoGnJyHfhZrAB3HapdaJIZ2arkTgk5Cis8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770713190; c=relaxed/simple;
-	bh=thEj7m81zXaFkuH8PMc/UfoL5Qw2HhqcWZT10qucOYU=;
+	s=arc-20240116; t=1770713191; c=relaxed/simple;
+	bh=KG8tijsylarx7CIhbgNevEW7115AEbdRWCKAEmkegyw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SqpGxpcUis+nkpvjvRIIPkqJ03y6Wx5vbe59daKOnxk0owwhU1JnZMhCuOvK+bldm5svX64PUI16eBu3wKWjPsNrFORmmFnAvA4Uf+kNsICWIMDicjanaw2xnTM2AqNhmcvDJpvp6ndrvISD1JJlumKsngaZqiusRWdRu8Gt/No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.com; spf=pass smtp.mailfrom=birthelmer.com; dkim=pass (2048-bit key) header.d=birthelmer.com header.i=@birthelmer.com header.b=hXwJH3As; arc=none smtp.client-ip=62.146.106.18
+	 In-Reply-To:To:Cc; b=tLfPkczJmnR83izWzlX0hghYdEyBvmG/OdlzPpHKgGwuMW7unwvZgnbDB7ILD3XuiWSv0IfZ3OWEYvHo5QlYsM7ZgHy+adjxd8K4+LKOMhkU14QwNOePB0T/1JkCi2jhtgw89txj/UF4EnKGi/RiFATJBovaWFWfDhYrCUuGaIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.com; spf=pass smtp.mailfrom=birthelmer.com; dkim=pass (2048-bit key) header.d=birthelmer.com header.i=@birthelmer.com header.b=rI8B7+yY; arc=none smtp.client-ip=62.146.106.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birthelmer.com
 Received: from fedora.fritz.box (200-143-067-156.ip-addr.inexio.net [156.67.143.200])
-	by smtp01-ext2.udag.de (Postfix) with ESMTPA id BED38E05EB;
-	Tue, 10 Feb 2026 09:46:19 +0100 (CET)
+	by smtp01-ext2.udag.de (Postfix) with ESMTPA id 98B88E05DB;
+	Tue, 10 Feb 2026 09:46:20 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=birthelmer.com;
 	s=uddkim-202310; t=1770713180;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=d4P5Rx+c3QyJ6fROuBa6MvqRG4jtnnEBOUbCvXMfpDk=;
-	b=hXwJH3AsUbWH3+LadTkcFUUE7ZF0DF3Y5+5V9Ge4Y5pCQmfhNLdYA3+3JHJdzxcnm29xYf
-	l8KQj4l9ShzKnbX+sQJsX39wTL8ULtrya9aLW3bSYSmCCPp+lpWdTOpLn8G/aJamjvaOwS
-	2d7JV13GODDl3TUVdoa/djX3ZtTtHmp72bsQcbps86C8wR6YhNC20ZJx3Xipco1DOAzcUn
-	XJ2OwbNAPC+Xk64h5oSghM1KMjClv7QN7IIUP4C0u9AWR3VfkfSyoACEYjoiOaIIjSj38F
-	gawId1PHjn0lPmEQuwCpG9InwZi1kvXEEeuVQkmbE+pNLEEA21Zd4ahVBF88IA==
+	bh=DjvIUg1kuDCvHNRWBW3dRsoYRtdIFdkW0a8PofdtL4g=;
+	b=rI8B7+yYYbSZ+dLxsRD681BordQ/cFThYg1xc9/4v25H+lgFa8VntcKqI+fQuli3l/j/S7
+	l//HRrSv1bh4vbrxH7ENvxWsJH5rLhTyj0o8c9vWE2ZYZJ0e90LVQb79kejMuHYG1zPD8s
+	V0lKDRX1HKGxT59gnKzziaTPLXdrUEZKWxj0Eh2dnTZm9DorocTvhQi5DlCo/IbBmh8F1K
+	CvJqKtfwfcAkmZbTCDOnG9v95BKc1XEkGuI2S/gElKLC7Hv1fPMQevoKAet8ajE+k+oLnG
+	v3PNxib0L5HE1r7JqJjGdKDUwgqWnoibsWhGS/TjUxWQKQs22T94cTnkLp0acw==
 Authentication-Results: smtp01-ext2.udag.de;
 	auth=pass smtp.auth=birthelmercom-0001 smtp.mailfrom=horst@birthelmer.com
 From: Horst Birthelmer <horst@birthelmer.com>
-Date: Tue, 10 Feb 2026 09:46:17 +0100
-Subject: [PATCH v5 2/3] fuse: create helper functions for filling in fuse
- args for open and getattr
+Date: Tue, 10 Feb 2026 09:46:18 +0100
+Subject: [PATCH v5 3/3] fuse: add an implementation of open+getattr
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,7 +62,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260210-fuse-compounds-upstream-v5-2-ea0585f62daa@ddn.com>
+Message-Id: <20260210-fuse-compounds-upstream-v5-3-ea0585f62daa@ddn.com>
 References: <20260210-fuse-compounds-upstream-v5-0-ea0585f62daa@ddn.com>
 In-Reply-To: <20260210-fuse-compounds-upstream-v5-0-ea0585f62daa@ddn.com>
 To: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, 
@@ -71,11 +70,11 @@ To: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>,
 Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Horst Birthelmer <hbirthelmer@ddn.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1770713177; l=4228;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1770713177; l=6724;
  i=hbirthelmer@ddn.com; s=20251006; h=from:subject:message-id;
- bh=pMlEWlzZop3CWtcz586lgLhHwSNGfNcjXvt2p/x52L4=;
- b=d2Zz5T428GTTqNXniY15TQm3TG6lOMwjjp9azKbNHVF4Q2IBr8Iyx/fdiXgpb2i3LkR3aAzHk
- YmKfsIi0AlOBs3p9nJhpyCw2ktova3TVosUHM2aWNqljUoHLNSwKSZw
+ bh=ooas0wlSi3drdMEixNU7ad+moqNHFP2UUOOu9XNPpcY=;
+ b=86C5G3ut1TZoKps1yzPkyJLBM5mlSnXjTmCfWxYSvLAEt+gElp0B//Aw9QZNXBp32EO7AkeJO
+ zt5DGnm2f+VDixlFALn+ASIrjtSdTatzLwctF2qiKxuH2Ip9oZrf0ka
 X-Developer-Key: i=hbirthelmer@ddn.com; a=ed25519;
  pk=v3BVDFoy16EzgHZ23ObqW+kbpURtjrwxgKu8YNDKjGg=
 X-Rspamd-Server: lfdr
@@ -83,13 +82,13 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[birthelmer.com,none];
 	R_DKIM_ALLOW(-0.20)[birthelmer.com:s=uddkim-202310];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
 	FREEMAIL_TO(0.00)[szeredi.hu,ddn.com,gmail.com,igalia.com];
-	TAGGED_FROM(0.00)[bounces-76823-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76824-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -104,130 +103,224 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[birthelmer.com:dkim,ddn.com:mid,ddn.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: E04E7118611
+X-Rspamd-Queue-Id: 8DF82118618
 X-Rspamd-Action: no action
 
 From: Horst Birthelmer <hbirthelmer@ddn.com>
 
-create fuse_getattr_args_fill() and fuse_open_args_fill() to fill in
-the parameters for the open and getattr calls.
+The discussion about compound commands in fuse was
+started over an argument to add a new operation that
+will open a file and return its attributes in the same operation.
 
-This is in preparation for implementing open+getattr and does not
-represent any functional change.
+Here is a demonstration of that use case with compound commands.
 
-Suggested-by: Joanne Koong <joannelkoong@gmail.com>
 Signed-off-by: Horst Birthelmer <hbirthelmer@ddn.com>
 ---
- fs/fuse/dir.c    | 26 ++++++++++++++++++--------
- fs/fuse/file.c   | 26 ++++++++++++++++++--------
- fs/fuse/fuse_i.h |  6 ++++++
- 3 files changed, 42 insertions(+), 16 deletions(-)
+ fs/fuse/file.c   | 111 +++++++++++++++++++++++++++++++++++++++++++++++--------
+ fs/fuse/fuse_i.h |   7 +++-
+ fs/fuse/inode.c  |   6 +++
+ fs/fuse/ioctl.c  |   2 +-
+ 4 files changed, 108 insertions(+), 18 deletions(-)
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 4b6b3d2758ff225dc389016017753b09fadff9d1..33fa5fc97ff7f65db585ee1386156ef13cf330cf 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1472,6 +1472,23 @@ static int fuse_do_statx(struct mnt_idmap *idmap, struct inode *inode,
- 	return 0;
- }
- 
-+/*
-+ * Helper function to initialize fuse_args for GETATTR operations
-+ */
-+void fuse_getattr_args_fill(struct fuse_args *args, u64 nodeid,
-+			     struct fuse_getattr_in *inarg,
-+			     struct fuse_attr_out *outarg)
-+{
-+	args->opcode = FUSE_GETATTR;
-+	args->nodeid = nodeid;
-+	args->in_numargs = 1;
-+	args->in_args[0].size = sizeof(*inarg);
-+	args->in_args[0].value = inarg;
-+	args->out_numargs = 1;
-+	args->out_args[0].size = sizeof(*outarg);
-+	args->out_args[0].value = outarg;
-+}
-+
- static int fuse_do_getattr(struct mnt_idmap *idmap, struct inode *inode,
- 			   struct kstat *stat, struct file *file)
- {
-@@ -1493,14 +1510,7 @@ static int fuse_do_getattr(struct mnt_idmap *idmap, struct inode *inode,
- 		inarg.getattr_flags |= FUSE_GETATTR_FH;
- 		inarg.fh = ff->fh;
- 	}
--	args.opcode = FUSE_GETATTR;
--	args.nodeid = get_node_id(inode);
--	args.in_numargs = 1;
--	args.in_args[0].size = sizeof(inarg);
--	args.in_args[0].value = &inarg;
--	args.out_numargs = 1;
--	args.out_args[0].size = sizeof(outarg);
--	args.out_args[0].value = &outarg;
-+	fuse_getattr_args_fill(&args, get_node_id(inode), &inarg, &outarg);
- 	err = fuse_simple_request(fm, &args);
- 	if (!err) {
- 		if (fuse_invalid_attr(&outarg.attr) ||
 diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 3b2a171e652f0c9dd1c9e37253d3d3e88caab148..a408a9668abbb361e2c1e386ebab9dfcb0a7a573 100644
+index a408a9668abbb361e2c1e386ebab9dfcb0a7a573..73c6a214b29a11fd6341f704bea140b282bb8355 100644
 --- a/fs/fuse/file.c
 +++ b/fs/fuse/file.c
-@@ -23,6 +23,23 @@
- #include <linux/task_io_accounting_ops.h>
- #include <linux/iomap.h>
+@@ -136,8 +136,71 @@ static void fuse_file_put(struct fuse_file *ff, bool sync)
+ 	}
+ }
  
-+/*
-+ * Helper function to initialize fuse_args for OPEN/OPENDIR operations
-+ */
-+static void fuse_open_args_fill(struct fuse_args *args, u64 nodeid, int opcode,
-+			 struct fuse_open_in *inarg, struct fuse_open_out *outarg)
++static int fuse_compound_open_getattr(struct fuse_mount *fm, u64 nodeid,
++				      struct inode *inode, int flags, int opcode,
++				      struct fuse_file *ff,
++				      struct fuse_attr_out *outattrp,
++				      struct fuse_open_out *outopenp)
 +{
-+	args->opcode = opcode;
-+	args->nodeid = nodeid;
-+	args->in_numargs = 1;
-+	args->in_args[0].size = sizeof(*inarg);
-+	args->in_args[0].value = inarg;
-+	args->out_numargs = 1;
-+	args->out_args[0].size = sizeof(*outarg);
-+	args->out_args[0].value = outarg;
++	struct fuse_conn *fc = fm->fc;
++	struct fuse_compound_req *compound;
++	struct fuse_args open_args = {};
++	struct fuse_args getattr_args = {};
++	struct fuse_open_in open_in = {};
++	struct fuse_getattr_in getattr_in = {};
++	int err;
++
++	compound = fuse_compound_alloc(fm, FUSE_COMPOUND_SEPARABLE);
++	if (!compound)
++		return -ENOMEM;
++
++	open_in.flags = flags & ~(O_CREAT | O_EXCL | O_NOCTTY);
++	if (!fm->fc->atomic_o_trunc)
++		open_in.flags &= ~O_TRUNC;
++
++	if (fm->fc->handle_killpriv_v2 &&
++	    (open_in.flags & O_TRUNC) && !capable(CAP_FSETID))
++		open_in.open_flags |= FUSE_OPEN_KILL_SUIDGID;
++
++	fuse_open_args_fill(&open_args, nodeid, opcode, &open_in, outopenp);
++
++	err = fuse_compound_add(compound, &open_args);
++	if (err)
++		goto out;
++
++	fuse_getattr_args_fill(&getattr_args, nodeid, &getattr_in, outattrp);
++
++	err = fuse_compound_add(compound, &getattr_args);
++	if (err)
++		goto out;
++
++	err = fuse_compound_send(compound);
++	if (err)
++		goto out;
++
++	err = fuse_compound_get_error(compound, 0);
++	if (err)
++		goto out;
++
++	ff->fh = outopenp->fh;
++	ff->open_flags = outopenp->open_flags;
++
++	err = fuse_compound_get_error(compound, 1);
++	if (err)
++		goto out;
++
++	fuse_change_attributes(inode, &outattrp->attr, NULL,
++			       ATTR_TIMEOUT(outattrp),
++			       fuse_get_attr_version(fc));
++
++out:
++	kfree(compound);
++	return err;
 +}
 +
+ struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
+-				 unsigned int open_flags, bool isdir)
++				struct inode *inode,
++				unsigned int open_flags, bool isdir)
+ {
+ 	struct fuse_conn *fc = fm->fc;
+ 	struct fuse_file *ff;
+@@ -163,23 +226,40 @@ struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
+ 	if (open) {
+ 		/* Store outarg for fuse_finish_open() */
+ 		struct fuse_open_out *outargp = &ff->args->open_outarg;
+-		int err;
++		int err = -ENOSYS;
+ 
+-		err = fuse_send_open(fm, nodeid, open_flags, opcode, outargp);
+-		if (!err) {
+-			ff->fh = outargp->fh;
+-			ff->open_flags = outargp->open_flags;
+-		} else if (err != -ENOSYS) {
+-			fuse_file_free(ff);
+-			return ERR_PTR(err);
+-		} else {
+-			if (isdir) {
++		if (inode && fc->compound_open_getattr) {
++			struct fuse_attr_out attr_outarg;
 +
- static int fuse_send_open(struct fuse_mount *fm, u64 nodeid,
- 			  unsigned int open_flags, int opcode,
- 			  struct fuse_open_out *outargp)
-@@ -40,14 +57,7 @@ static int fuse_send_open(struct fuse_mount *fm, u64 nodeid,
- 		inarg.open_flags |= FUSE_OPEN_KILL_SUIDGID;
++			err = fuse_compound_open_getattr(fm, nodeid, inode,
++							 open_flags, opcode, ff,
++							 &attr_outarg, outargp);
++		}
++
++		if (err == -ENOSYS) {
++			err = fuse_send_open(fm, nodeid, open_flags, opcode,
++					     outargp);
++			if (!err) {
++				ff->fh = outargp->fh;
++				ff->open_flags = outargp->open_flags;
++			}
++		}
++
++		if (err) {
++			if (err != -ENOSYS) {
++				/* err is not ENOSYS */
++				fuse_file_free(ff);
++				return ERR_PTR(err);
++			} else {
+ 				/* No release needed */
+ 				kfree(ff->args);
+ 				ff->args = NULL;
+-				fc->no_opendir = 1;
+-			} else {
+-				fc->no_open = 1;
++
++				/* we don't have open */
++				if (isdir)
++					fc->no_opendir = 1;
++				else
++					fc->no_open = 1;
+ 			}
+ 		}
  	}
+@@ -195,11 +275,10 @@ struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
+ int fuse_do_open(struct fuse_mount *fm, u64 nodeid, struct file *file,
+ 		 bool isdir)
+ {
+-	struct fuse_file *ff = fuse_file_open(fm, nodeid, file->f_flags, isdir);
++	struct fuse_file *ff = fuse_file_open(fm, nodeid, file_inode(file), file->f_flags, isdir);
  
--	args.opcode = opcode;
--	args.nodeid = nodeid;
--	args.in_numargs = 1;
--	args.in_args[0].size = sizeof(inarg);
--	args.in_args[0].value = &inarg;
--	args.out_numargs = 1;
--	args.out_args[0].size = sizeof(*outargp);
--	args.out_args[0].value = outargp;
-+	fuse_open_args_fill(&args, nodeid, opcode, &inarg, outargp);
- 
- 	return fuse_simple_request(fm, &args);
+ 	if (!IS_ERR(ff))
+ 		file->private_data = ff;
+-
+ 	return PTR_ERR_OR_ZERO(ff);
  }
+ EXPORT_SYMBOL_GPL(fuse_do_open);
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 9ebcd96b6b309d75c86a9c716cbd88aaa55c57ef..fba14f26b67888831fcba6e2ac73399f3c95d5ad 100644
+index fba14f26b67888831fcba6e2ac73399f3c95d5ad..3184ef864cf0b7b8598251dbb9c814d772c04026 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
-@@ -1179,6 +1179,12 @@ struct fuse_io_args {
- void fuse_read_args_fill(struct fuse_io_args *ia, struct file *file, loff_t pos,
- 			 size_t count, int opcode);
+@@ -924,6 +924,9 @@ struct fuse_conn {
+ 	/* Use io_uring for communication */
+ 	unsigned int io_uring;
  
-+/*
-+ * Helper functions to initialize fuse_args for common operations
-+ */
-+void fuse_getattr_args_fill(struct fuse_args *args, u64 nodeid,
-+			    struct fuse_getattr_in *inarg,
-+			    struct fuse_attr_out *outarg);
++	/* Does the filesystem support compound operations? */
++	unsigned int compound_open_getattr:1;
++
+ 	/** Maximum stack depth for passthrough backing files */
+ 	int max_stack_depth;
  
- struct fuse_file *fuse_file_alloc(struct fuse_mount *fm, bool release);
- void fuse_file_free(struct fuse_file *ff);
+@@ -1560,7 +1563,9 @@ void fuse_file_io_release(struct fuse_file *ff, struct inode *inode);
+ 
+ /* file.c */
+ struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
+-				 unsigned int open_flags, bool isdir);
++								struct inode *inode,
++								unsigned int open_flags,
++								bool isdir);
+ void fuse_file_release(struct inode *inode, struct fuse_file *ff,
+ 		       unsigned int open_flags, fl_owner_t id, bool isdir);
+ 
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 819e50d666224a6201cfc7f450e0bd37bfe32810..a5fd721be96d2cb1f22d58d7451165d1b33f5a5a 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -991,6 +991,12 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse_mount *fm,
+ 	fc->blocked = 0;
+ 	fc->initialized = 0;
+ 	fc->connected = 1;
++
++	/* pretend fuse server supports compound operations
++	 * until it tells us otherwise.
++	 */
++	fc->compound_open_getattr = 1;
++
+ 	atomic64_set(&fc->attr_version, 1);
+ 	atomic64_set(&fc->evict_ctr, 1);
+ 	get_random_bytes(&fc->scramble_key, sizeof(fc->scramble_key));
+diff --git a/fs/fuse/ioctl.c b/fs/fuse/ioctl.c
+index fdc175e93f74743eb4d2e5a4bc688df1c62e64c4..07a02e47b2c3a68633d213675a8cc380a0cf31d8 100644
+--- a/fs/fuse/ioctl.c
++++ b/fs/fuse/ioctl.c
+@@ -494,7 +494,7 @@ static struct fuse_file *fuse_priv_ioctl_prepare(struct inode *inode)
+ 	if (!S_ISREG(inode->i_mode) && !isdir)
+ 		return ERR_PTR(-ENOTTY);
+ 
+-	return fuse_file_open(fm, get_node_id(inode), O_RDONLY, isdir);
++	return fuse_file_open(fm, get_node_id(inode), NULL, O_RDONLY, isdir);
+ }
+ 
+ static void fuse_priv_ioctl_cleanup(struct inode *inode, struct fuse_file *ff)
 
 -- 
 2.53.0
