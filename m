@@ -1,330 +1,288 @@
-Return-Path: <linux-fsdevel+bounces-76837-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GBv7OvYci2nSPwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76837-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 12:56:38 +0100
+	id IGWGK5wei2n7QAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 13:03:40 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7710311A763
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 12:56:38 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D11611A877
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 13:03:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 65EBF303CEDB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 11:56:24 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D902C3045234
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 12:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3061C3271FD;
-	Tue, 10 Feb 2026 11:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kRzcrZSc"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA6F328613;
+	Tue, 10 Feb 2026 12:03:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8CD326D4F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Feb 2026 11:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191F131A556;
+	Tue, 10 Feb 2026 12:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770724583; cv=none; b=STkzHPqyLWAklEpquR+QyWhF407By+F4lRfx34NCI0jfMaIoTdikEPDDPunpQZvcKaY2qq3RaEL+UCuFsul/GQ2Iz12MNTvQJt2Z98HFfPc38QimyCA9Q5XsM4aL3LRtasXpYRFcuUBf9zwwgUYCMXHd3vh2KJYJjBvlckV1aOU=
+	t=1770724986; cv=none; b=WYq6kQ5GsSTpho/kdLHSNDpQ/oA9dfxZqEtbFnFraCKm2v6EwFgUKhLHQ8CXy4p0VIBU7rfonGXSOXBQYBmZ1x+vRbKqRcnyoOglwkRXlGaFYKOSdzPsOQ0wZWjiip1HKR9CcyDUZJxQHwC7qEIm3lmhbRHSR35YPzkF3TdI9Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770724583; c=relaxed/simple;
-	bh=xb0H8f0zij+2Lo5cSIubhLbaPZ+hPhQo2RxGO9SlgfA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:Mime-Version; b=kU3RLf6XAgvKpjVoLR7g9IO9/FNKTcS2f+VxWgWvudnvPM3kpC/CSNYAYyj6RqobM3X0lnGiswqOPoA22xpesG+PEidXbwPqg4KPuk3sUg9wjqRYiZp78aKVWaEVEpocS31GkeeczuGehcQmRL3+1o7L4OFPnSZqTgrQomCOEMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kRzcrZSc; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-81f4e136481so2047456b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Feb 2026 03:56:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770724580; x=1771329380; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nh7yAl8rufONh7m/CgHms/EgFK1saZrvUpQU2nWdB00=;
-        b=kRzcrZScGlMtVthGaxPh63kFFnIA2UUpZfQUAE1thEmSak1Dksxz984APw42CB09YV
-         LVYNmHJvF3HwSq1tuPKcV66UyS5E5t5f5oJ0I+tGvBGLOZSqe5sMIwWzwogPXCFKTGGp
-         i9I4G0wHhY+b78NxcC0qRJniib47Xz1uZTioXRZGm8wD3uQYNZaAZLjR2ClQD6toQ/op
-         Qwjn0alu9OkTABxXKr7kLSnTkEiwJs98xLWHQ88BfjXcue14sCRDjrhlbJVebL/NeHPb
-         wDSSwYF5PKmqIRYLsMADjOv9ykmQOa4vL+W09CdZAV05CcAIoTzfjgVE9iP2fpLiNHrV
-         Nt8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770724580; x=1771329380;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nh7yAl8rufONh7m/CgHms/EgFK1saZrvUpQU2nWdB00=;
-        b=FFHfRdxO2JsFjjXGyyiJZIkjM5HHJWuifNgKGAA7jPSXVgIn8E1VTHXSQOmn1tXOJE
-         8vRmMt7mdlnNpIOKZ1eDHCirv3T/YvC3HO9JY6I0uZryDYzMNSng16SSFx+nIyNgnn2g
-         jrYqtfM5E6JreC1r0NNkkMNirwbXGE1vZ2q/0n5nmt0s7kH+NTFc5l0ScGOg5ljsjEkN
-         sXZA0WlPpIuOvVubb5pewzAvXNWeVoml+SxHJlEd+eckFQvS4y+LAknz2XO12qVkJsSt
-         DNT7SN/tOm5IqNdHSRL8DsgsIFNNgIOmAyFGYgbzPpgbJnXNU8QTspSsrdWdJKKwbKuC
-         EWsA==
-X-Gm-Message-State: AOJu0YzPrhleQTtqlBZf7kF5HWJ17djMujHr75eiZdf2BPLK8/3hn/Yw
-	gIbRnXzvJIKdSUIGVzfjQmZLbUF9yyRXT6MxmlJcf1vZnHm6r4V7yjcxXyJVCH55
-X-Gm-Gg: AZuq6aJqm3ejtu9gebLLlpnp24u2uscnrp3+i/RLWj5PUsJT0Ka5bJEcxIUePAG2yaX
-	goFx60284JCbAwI5dxWT4F2yE6FmhKHcowUf7p4766Zrl+BYLDnz2e67YsJ+lcqt5pTY903JZps
-	U/G3dMX3QKb67CDcxcHiyE/LvQG+6jtjLXs5yhxMa9x/6RtDVVDH0y2m6yZU7dpc5+brqwrBJRR
-	HXddX904EGfDXuc7CbzZ4PMMkQA+ieunmrQ6qs3IDdJUVDZCVnKRe8XGIohShl+NZQyV75QYCsy
-	aAfL54CUV1IaqP3xuJPPv09OJ7IjDRW9O4K/sCvaiwnBBZzNHQgoE1xcoCzaL5QrmcNh62kg8Z1
-	rw0TO8DNH/uKMqJ+w9Iaiz4tOSOJjSPButiNVEnnAwHaGboad5Kk++uRZ2K2R055Yr+Yc62rMdm
-	MrC6Wtx3Mrft13GpTMrCO0Jb8C9YuEoLplxpjh5Ea/FOLjzaofAZ0aRnabck+k0ZpE2l36Nxugv
-	wbl
-X-Received: by 2002:a05:6a00:4fd6:b0:81e:96c9:1325 with SMTP id d2e1a72fcca58-824417f97cbmr13212298b3a.70.1770724580368;
-        Tue, 10 Feb 2026 03:56:20 -0800 (PST)
-Received: from li-5d80d4cc-2782-11b2-a85c-bed59fe4c9e5.ibm.com ([49.207.208.177])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-824418a70fesm12972619b3a.45.2026.02.10.03.56.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Feb 2026 03:56:19 -0800 (PST)
-Message-ID: <46a56cbf1ead927d0bc109b8106ae3b5237ec721.camel@gmail.com>
-Subject: Re: [PATCH v3 5/6] xfs: add per-AG writeback workqueue
- infrastructure
-From: "Nirjhar Roy (IBM)" <nirjhar.roy.lists@gmail.com>
-To: Kundan Kumar <kundan.kumar@samsung.com>, viro@zeniv.linux.org.uk, 
- brauner@kernel.org, jack@suse.cz, willy@infradead.org, mcgrof@kernel.org, 
- clm@meta.com, david@fromorbit.com, amir73il@gmail.com, axboe@kernel.dk,
- hch@lst.de,  ritesh.list@gmail.com, djwong@kernel.org, dave@stgolabs.net,
- cem@kernel.org,  wangyufei@vivo.com
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-xfs@vger.kernel.org, gost.dev@samsung.com, anuj20.g@samsung.com, 
-	vishak.g@samsung.com, joshi.k@samsung.com
-Date: Tue, 10 Feb 2026 17:26:11 +0530
-In-Reply-To: <20260116100818.7576-6-kundan.kumar@samsung.com>
-References: <20260116100818.7576-1-kundan.kumar@samsung.com>
-	 <CGME20260116101259epcas5p1cfa6ab02e5a01f7c46cc78df95c57ce0@epcas5p1.samsung.com>
-	 <20260116100818.7576-6-kundan.kumar@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-27.el8_10) 
+	s=arc-20240116; t=1770724986; c=relaxed/simple;
+	bh=F9Yl6wa0zMf5ZkeobHYoTCPMvPU+6N/7LiFs2T71+xg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UfzMJZIEDqrakdHWVsJ97uFdzECBIMxd5rbf/jc8rqsjo6Hgn/42ggf/DI0VtLHjCNMy3R7HbhL00EGu06s97ApwmUzhUBEkDd5ZMXzXOKMjewzx8qXTgOsTqIJtzafny1Q/jVgkMmjGMI0K/AYyboUpEgCSdviKkLaGKJzYpXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.198])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4f9KtB5HDTzYQtxY;
+	Tue, 10 Feb 2026 20:01:54 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id D38FC40575;
+	Tue, 10 Feb 2026 20:02:53 +0800 (CST)
+Received: from [10.174.178.152] (unknown [10.174.178.152])
+	by APP4 (Coremail) with SMTP id gCh0CgB3JPVrHotpVVXAGw--.6145S3;
+	Tue, 10 Feb 2026 20:02:53 +0800 (CST)
+Message-ID: <ac1f8bd8-926e-4182-a5a3-a111b49ecafc@huaweicloud.com>
+Date: Tue, 10 Feb 2026 20:02:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next v2 03/22] ext4: only order data when partially block
+ truncating down
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ ojaswin@linux.ibm.com, ritesh.list@gmail.com, hch@infradead.org,
+ djwong@kernel.org, yizhang089@gmail.com, libaokun1@huawei.com,
+ yangerkun@huawei.com, yukuai@fnnas.com, Zhang Yi <yi.zhang@huaweicloud.com>
+References: <20260203062523.3869120-1-yi.zhang@huawei.com>
+ <20260203062523.3869120-4-yi.zhang@huawei.com>
+ <jgotl7vzzuzm6dvz5zfgk6haodxvunb4hq556pzh4hqqwvnhxq@lr3jiedhqh7c>
+ <b889332b-9c0c-46d1-af61-1f2426c8c305@huaweicloud.com>
+ <ocwepmhnw45k5nwwrooe2li2mzavw5ps2ncmowrc32u4zeitgp@gqsz3iee3axr>
+ <1dad3113-7b84-40a0-8c7e-da30ae5cba8e@huaweicloud.com>
+ <7hy5g3bp5whis4was5mqg3u6t37lwayi6j7scvpbuoqsbe5adc@mh5zxvml3oe7>
+ <3ea033c1-8d32-4c82-baea-c383fa1d9e2a@huaweicloud.com>
+ <yhy4cgc4fnk7tzfejuhy6m6ljo425ebpg6khss6vtvpidg6lyp@5xcyabxrl6zm>
+ <665b8293-60a2-4d4d-aef5-cb1f9c3c0c13@huaweicloud.com>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <665b8293-60a2-4d4d-aef5-cb1f9c3c0c13@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgB3JPVrHotpVVXAGw--.6145S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3Jw4UJFWkXr4xAF1DCry5XFb_yoW3GrW5pr
+	W5K3WDKr1Dt34rAr1Iva1xtr1Fv3y5JrWUWFy5Wr42vr9093WIqFWSg3yF9FWjyrn3ta42
+	qr4qvFZ7ZF9YvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
+	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
+	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
+	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
+	evJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
+X-Spamd-Result: default: False [0.04 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	MV_CASE(0.50)[];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76837-lists,linux-fsdevel=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[samsung.com,zeniv.linux.org.uk,kernel.org,suse.cz,infradead.org,meta.com,fromorbit.com,gmail.com,kernel.dk,lst.de,stgolabs.net,vivo.com];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	RCPT_COUNT_TWELVE(0.00)[23];
-	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	TAGGED_FROM(0.00)[bounces-76838-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	DMARC_NA(0.00)[huaweicloud.com];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,linux.ibm.com,gmail.com,infradead.org,kernel.org,huawei.com,fnnas.com,huaweicloud.com];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[nirjharroylists@gmail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FROM_HAS_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[samsung.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 7710311A763
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[yi.zhang@huaweicloud.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCVD_COUNT_FIVE(0.00)[6];
+	MID_RHS_MATCH_FROM(0.00)[];
+	R_DKIM_NA(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,huaweicloud.com:mid]
+X-Rspamd-Queue-Id: 2D11611A877
 X-Rspamd-Action: no action
 
-On Fri, 2026-01-16 at 15:38 +0530, Kundan Kumar wrote:
-> Introduce per-AG writeback worker infrastructure at mount time.
-> This patch adds initialization and teardown only, without changing
-> writeback behavior.
+On 2/9/2026 4:28 PM, Zhang Yi wrote:
+> On 2/6/2026 11:35 PM, Jan Kara wrote:
+>> On Fri 06-02-26 19:09:53, Zhang Yi wrote:
+>>> On 2/5/2026 11:05 PM, Jan Kara wrote:
+>>>> So how about the following:
+>>>
+>>> Let me see, please correct me if my understanding is wrong, ana there are
+>>> also some points I don't get.
+>>>
+>>>> We expand our io_end processing with the
+>>>> ability to journal i_disksize updates after page writeback completes. Then
+
+While I was extending the end_io path of buffered_head to support updating
+i_disksize, I found another problem that requires discussion.
+
+Supporting updates to i_disksize in end_io requires starting a handle, which
+conflicts with the data=ordered mode because folios written back through the
+journal process cannot initiate any handles; otherwise, this may lead to a
+deadlock. This limitation does not affect the iomap path, as it does not use
+the data=ordered mode at all.  However, in the buffered_head path, online
+defragmentation (if this change works, it should be the last user) still uses
+the data=ordered mode.
+
+Assume that during online defragmentation, after the EOF partial block is
+copied and swapped, the transaction submitting process could be raced by a
+concurrent truncate-up operation. Then, when the journal process commits this
+block, the i_disksize needs to be updated after the I/O is complete. Finally,
+it may trigger a deadlock issue when it starting a new transaction. Conversely,
+if we do truncate up first, and then perform the EOF block swap operation just
+after it, the same problem will also occur.
+
+Even if we perform synchronous writeback for the EOF block in mext_move_extent(),
+it still won't work. This is because swapped blocks that have entered the
+ordered list could potentially become EOF blocks at any time before the
+transaction is committed (e.g., a concurrent truncate down happens).
+
+Therefore, I was thinking, perhaps currently we have to keep the buffer_head
+path as it is, and only modify the truncate up and append write for the iomap
+path. What do you think?
+
+Cheers,
+Yi.
+
+>>>> when doing truncate up or appending writes, we keep i_disksize at the old
+>>>> value and just zero folio tails in the page cache, mark the folio dirty and
+>>>> update i_size.
+>>>
+>>> I think we need to submit this zeroed folio here as well. Because,
+>>>
+>>> 1) In the case of truncate up, if we don't submit, the i_disksize may have to
+>>>    wait a long time (until the folio writeback is complete, which takes about
+>>>    30 seconds by default) before being updated, which is too long.
+>>
+>> Correct but I'm not sure it matters. Current delalloc writes behave in the
+>> same way already. For simplicity I'd thus prefer to not treat truncate up
+>> in a special way but if we decide this indeed desirable, we can either
+>> submit the tail folio immediately, or schedule work with earlier writeback.
+>>
+>>> 2) In the case of appending writes. Assume that the folio written beyond this
+>>>    one is written back first, we have to wait this zeroed folio to be write
+>>>    back and then update i_disksize, so we can't wait too long either.
+>>
+>> Correct, update of i_disksize after writeback of folios beyond current
+>> i_disksize is blocked by the writeback of the tail folio.
+>>
+>>>> When submitting writeback for a folio beyond current
+>>>> i_disksize we make sure writepages submits IO for all the folios from
+>>>> current i_disksize upwards.
+>>>
+>>> Why "all the folios"? IIUC, we only wait the zeroed EOF folio is sufficient.
+>>
+>> I was worried about a case like:
+>>
+>> We have 4k blocksize, file is i_disksize 2k. Now you do:
+>> pwrite(file, buf, 1, 6k);
+>> pwrite(file, buf, 1, 10k);
+>> pwrite(file, buf, 1, 14k);
+>>
+>> The pwrite at offset 6k needs to zero the tail of the folio with index 0,
+>> pwrite at 10k needs to zero the tail of the folio with index 1, etc. And
+>> for us to safely advance i_disksize to 14k+1, I though all the folios (and
+>> zeroed out tails) need to be written out. But that's actually not the case.
+>> We need to make sure the zeroed tail is written out only if the underlying
+>> block is already allocated and marked as written at the time of zeroing.
+>> And the blocks underlying intermediate i_size values will never be allocated
+>> and written without advancing i_disksize to them. So I think you're
+>> correct, we always have at most one tail folio - the one surrounding
+>> current i_disksize - which needs to be written out to safely advance
+>> i_disksize and we don't care about folios inbetween.
+>>
+>>>> When io_end processing happens after completed
+>>>> folio writeback, we update i_disksize to min(i_size, end of IO).
+>>>
+>>> Yeah, in the case of append write back. Assume we append write the folio 2
+>>> and folio 3,
+>>>
+>>>        old_idisksize  new_isize
+>>>        |             |
+>>>      [WWZZ][WWWW][WWWW]
+>>>        1  |  2     3
+>>>           A
+>>>
+>>> Assume that folio 1 first completes the writeback, then we update i_disksize
+>>> to pos A when the writeback is complete. Assume that folio 2 or 3 completes
+>>> first, we should wait(e.g. call filemap_fdatawait_range_keep_errors() or
+>>> something like) folio 1 to complete and then update i_disksize to new_isize.
+>>>
+>>> But in the case of truncate up, We will only write back this zeroed folio. If
+>>> the new i_size exceeds the end of this folio, how should we update i_disksize
+>>> to the correct value?
+>>>
+>>> For example, we truncate the file from old old_idisksize to new_isize, but we
+>>> only zero and writeback folio 1, in the end_io processing of folio 1, we can
+>>> only update the i_disksize to A, but we can never update it to new_isize. Am
+>>> I missing something ?
+>>>
+>>>        old_idisksize new_isize
+>>>        |             |
+>>>      [WWZZ]...hole ...
+>>>        1  |
+>>>           A
+>>
+>> Good question. Based on the analysis above one option would be to setup
+>> writeback of page straddling current i_disksize to update i_disksize to
+>> current i_size on completion. That would be simple but would have an
+>> unpleasant side effect that in case of a crash after append write we could
+>> see increased i_disksize but zeros instead of written data. Another option
+>> would be to update i_disksize on completion to the beginning of the first
+>> dirty folio behind the written back range or i_size of there's not such
+>> folio. This would still be relatively simple and mostly deal with "zeros
+>> instead of data" problem.
 > 
-> Signed-off-by: Kundan Kumar <kundan.kumar@samsung.com>
-> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
-> ---
->  fs/xfs/xfs_aops.c  | 79 ++++++++++++++++++++++++++++++++++++++++++++++
->  fs/xfs/xfs_aops.h  |  3 ++
->  fs/xfs/xfs_mount.c |  2 ++
->  fs/xfs/xfs_mount.h | 10 ++++++
->  fs/xfs/xfs_super.c |  2 ++
->  5 files changed, 96 insertions(+)
+> Ha, good idea! I think it should work. I will try the second option, thank
+> you a lot for this suggestion. :)
 > 
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index a26f79815533..9d5b65922cd2 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -23,6 +23,23 @@
->  #include "xfs_zone_alloc.h"
->  #include "xfs_rtgroup.h"
->  
-> +#define XFS_AG_TASK_POOL_MIN 1024
-> +
-> +struct xfs_ag_wb_task {
-> +	struct list_head list;
-> +	struct xfs_inode *ip;
-> +	struct writeback_control wbc;
-> +	xfs_agnumber_t agno;
-
-agno where the ip resides or the agno of any one the blocks which belongs to this ip?
-> +};
-
-Nit: Coding style - tab between data type and the indentifier
-> +
-> +struct xfs_ag_wb {
-> +	struct delayed_work ag_work;
-> +	spinlock_t lock;
-> +	struct list_head task_list;
-> +	xfs_agnumber_t agno;
-> +	struct xfs_mount *mp;
-> +};
-> +
->  struct xfs_writepage_ctx {
->  	struct iomap_writepage_ctx ctx;
->  	unsigned int		data_seq;
-> @@ -666,6 +683,68 @@ static const struct iomap_writeback_ops xfs_zoned_writeback_ops = {
->  	.writeback_submit	= xfs_zoned_writeback_submit,
->  };
->  
-> +void
-> +xfs_init_ag_writeback(struct xfs_mount *mp)
-> +{
-> +	xfs_agnumber_t agno;
-> +
-> +	mp->m_ag_wq = alloc_workqueue("xfs-ag-wb", WQ_UNBOUND | WQ_MEM_RECLAIM,
-> +				      0);
-
-Nit: I think we follow 2 tabs indentation of the parameter list length exceeds per line limit count.
-Similar comments for such changes in the below function call sites.
-> +	if (!mp->m_ag_wq)
-> +		return;
-> +
-> +	mp->m_ag_wb = kcalloc(mp->m_sb.sb_agcount,
-> +				sizeof(struct xfs_ag_wb),
-> +				GFP_KERNEL);
-> +
-> +	if (!mp->m_ag_wb) {
-> +		destroy_workqueue(mp->m_ag_wq);
-> +		mp->m_ag_wq = NULL;
-> +		return;
-> +	}
-> +
-> +	for (agno = 0; agno < mp->m_sb.sb_agcount; agno++) {
-> +		struct xfs_ag_wb *awb = &mp->m_ag_wb[agno];
-> +
-> +		spin_lock_init(&awb->lock);
-> +		INIT_LIST_HEAD(&awb->task_list);
-> +		awb->agno = agno;
-> +		awb->mp = mp;
-> +	}
-> +
-> +	mp->m_ag_task_cachep = kmem_cache_create("xfs_ag_wb_task",
-> +						sizeof(struct xfs_ag_wb_task),
-> +						0,
-> +						SLAB_RECLAIM_ACCOUNT,
-> +						NULL);
-> +
-> +	mp->m_ag_task_pool = mempool_create_slab_pool(XFS_AG_TASK_POOL_MIN,
-> +	mp->m_ag_task_cachep);
-
-Nit: 2 tabs indentation
-> +
-> +	if (!mp->m_ag_task_pool) {
-> +		kmem_cache_destroy(mp->m_ag_task_cachep);
-> +		mp->m_ag_task_cachep = NULL;
-
-Shouldn't we be also freeing mp->m_ag_wq and the array mp->m_ag_wb[] array ?
-> +	}
-> +}
-> +
-> +void
-> +xfs_destroy_ag_writeback(struct xfs_mount *mp)
-> +{
-> +	if (mp->m_ag_wq) {
-> +		flush_workqueue(mp->m_ag_wq);
-> +		destroy_workqueue(mp->m_ag_wq);
-> +		mp->m_ag_wq = NULL;
-> +	}
-> +	kfree(mp->m_ag_wb);
-> +	mp->m_ag_wb = NULL;
-> +
-> +	mempool_destroy(mp->m_ag_task_pool);
-> +	mp->m_ag_task_pool = NULL;
-> +
-> +	kmem_cache_destroy(mp->m_ag_task_cachep);
-> +	mp->m_ag_task_cachep = NULL;
-> +}
-> +
->  STATIC int
->  xfs_vm_writepages(
->  	struct address_space	*mapping,
-> diff --git a/fs/xfs/xfs_aops.h b/fs/xfs/xfs_aops.h
-> index 5a7a0f1a0b49..e84acb7e8ca8 100644
-> --- a/fs/xfs/xfs_aops.h
-> +++ b/fs/xfs/xfs_aops.h
-> @@ -12,4 +12,7 @@ extern const struct address_space_operations xfs_dax_aops;
->  int xfs_setfilesize(struct xfs_inode *ip, xfs_off_t offset, size_t size);
->  void xfs_end_bio(struct bio *bio);
->  
-> +void xfs_init_ag_writeback(struct xfs_mount *mp);
-> +void xfs_destroy_ag_writeback(struct xfs_mount *mp);
-> +
->  #endif /* __XFS_AOPS_H__ */
-> diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-> index 0953f6ae94ab..26224503c4bf 100644
-> --- a/fs/xfs/xfs_mount.c
-> +++ b/fs/xfs/xfs_mount.c
-> @@ -1323,6 +1323,8 @@ xfs_unmountfs(
->  
->  	xfs_qm_unmount(mp);
->  
-> +	xfs_destroy_ag_writeback(mp);
-> +
->  	/*
->  	 * Unreserve any blocks we have so that when we unmount we don't account
->  	 * the reserved free space as used. This is really only necessary for
-> diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-> index b871dfde372b..c44155de2883 100644
-> --- a/fs/xfs/xfs_mount.h
-> +++ b/fs/xfs/xfs_mount.h
-> @@ -342,6 +342,16 @@ typedef struct xfs_mount {
->  
->  	/* Hook to feed dirent updates to an active online repair. */
->  	struct xfs_hooks	m_dir_update_hooks;
-> +
-> +
-> +	/* global XFS AG writeback wq */
-> +	struct workqueue_struct *m_ag_wq;
-> +	/* array of [sb_agcount] */
-> +	struct xfs_ag_wb        *m_ag_wb;
-> +
-> +	/* task cache and pool */
-> +	struct kmem_cache *m_ag_task_cachep;
-> +	mempool_t *m_ag_task_pool;
-
-Again Nit: - Coding style - tab between data type and the identifier
-
-
->  } xfs_mount_t;
->  
->  #define M_IGEO(mp)		(&(mp)->m_ino_geo)
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index bc71aa9dcee8..73f8d2942df4 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -1765,6 +1765,8 @@ xfs_fs_fill_super(
->  	if (error)
->  		goto out_free_sb;
->  
-> +	xfs_init_ag_writeback(mp);
-
-So if we are not able to init the write back workqueue infra, we are still okay to mount the fs
-except that the AG aware write back facility won't be available i.e, we aren't treating it as a
-fatal error, correct?
---NR
-> +
->  	/*
->  	 * V4 support is undergoing deprecation.
->  	 *
+>>
+>>>> This
+>>>> should take care of non-zero data exposure issues and with "delay map"
+>>>> processing Baokun works on all the inode metadata updates will happen after
+>>>> IO completion anyway so it will be nicely batched up in one transaction.
+>>>
+>>> Currently, my iomap convert implementation always enables dioread_nolock,
+>>
+>> Yes, BTW I think you could remove no-dioread_nolock paths before doing the
+>> conversion to simplify matters a bit. I don't think it's seriously used
+>> anywhere anymore.
+>>
+> 
+> Sure. After removing the no-dioread_nolock paths, the behavior of the
+> buffer_head path (extents-based and no-journal data mode) and the iomap path
+> in append write and truncate operations can be made consistent.
+> 
+> Cheers,
+> Yi.
+> 
+>>> so I feel that this solution can be achieved even without the "delay map"
+>>> feature. After we have the "delay map", we can extend this to the
+>>> buffer_head path.
+>>
+>> I agree, delay map is not necessary for this to work. But it will make
+>> things likely faster.
+>>
+>> 								Honza
+> 
 
 
