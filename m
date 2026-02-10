@@ -1,682 +1,325 @@
-Return-Path: <linux-fsdevel+bounces-76886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76887-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cAPfDI+Si2kmWQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 21:18:23 +0100
+	id YNJiGvOWi2kCXAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76887-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 21:37:07 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43F9B11EFE4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 21:18:22 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEFA311F0D1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 21:37:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id E926E300F1CE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 20:18:15 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E148A3042099
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 20:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681A932F745;
-	Tue, 10 Feb 2026 20:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8947433291B;
+	Tue, 10 Feb 2026 20:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="skNxg9LQ"
+	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="CFBdwPFY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CE1329E5A;
-	Tue, 10 Feb 2026 20:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770754691; cv=none; b=Yoceak0DaT2eP30WZOg4qz3rT5D9Bk+2ay81rR3/dCBrBqw/rXJXfFy64TTeJ5Y/q1G6bS993Kw/aacQtDpg6cWLWqLuYZK8NqKf90BfzI6ysXUTor3nmwVhO3T7IbevRtQBXR/ASXWeHoJBDwjiQk3fimGbMzzxh6LUJG+GYeM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770754691; c=relaxed/simple;
-	bh=TLsPZb3FUlagNfAUS+B+boALwYB9LihQayXjavs0X6o=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=MMVB3+kOQ1ncie5cocIRV3Js0KOvNqbp4InbmQ2oQFNBVV/qLljxv7sGPLJ6mGuZVEJA6tjk3Rhm9h4A9gWWLgKzSNkDaa/+jXQeH8O0nSP3xuvaMUR7Nn+YUgjL5HxP2RyfTaREuPSvFMXRkKlFispiryxXD/7S6L/vfOYoF6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=skNxg9LQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E29D7C116C6;
-	Tue, 10 Feb 2026 20:18:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770754690;
-	bh=TLsPZb3FUlagNfAUS+B+boALwYB9LihQayXjavs0X6o=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=skNxg9LQw3oLZ0q/N8varvwDL8PnoP/9LgWRBUsYxkh2Z4pvSo2LL1nNNnPrt3tOz
-	 SQgxwKXyhahQEI2NWNh1qQpT4/jZzPGKcthh8ve/J7ypzt2p/aJGPCUFa2hHses1or
-	 /cn6kH//+6Xo8gE4a6f1tirjMSAJ2qeho83eAN+kSXfwcswc+v0RSSnIfumOfVDF/l
-	 eBQ/vjA1HujlktcHtRdWHTgy5YCmBgZfuqmVEJMd9ClDl7eHeNkwBKTgb1nDluD4IH
-	 dWEYnaA5JkxnQtSeW7lhkK2xDcHoHBysDJxl4oxcI0EiEi99SY++URwHaFK+08nxnQ
-	 HOrGOAeA+cyEA==
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id C3C05F4006A;
-	Tue, 10 Feb 2026 15:18:08 -0500 (EST)
-Received: from phl-imap-15 ([10.202.2.104])
-  by phl-compute-10.internal (MEProxy); Tue, 10 Feb 2026 15:18:08 -0500
-X-ME-Sender: <xms:gJKLaSGquxSYWkNrvF6B97K0N_Q48rcxWVXqtrWZV9sn9R9nBb6YqA>
-    <xme:gJKLaeLpu77olahbBsh5QI1eeu07U7uFlYLqX0XK8cW_Ak6luQ1RrGESbaGOjPcv_
-    82ah1BB1kG7XJWFr2CIM38pECOeQMx3Zb4VH-lP0ZzNkzsdWqKZbBY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvtddtiedvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfvehhuhgt
-    khcunfgvvhgvrhdfuceotggvlheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
-    hnpefhffekffeftdfgheeiveekudeuhfdvjedvfedvueduvdegleekgeetgfduhfefleen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegthhhutg
-    hklhgvvhgvrhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeifeegleel
-    leehledqfedvleekgeegvdefqdgtvghlpeepkhgvrhhnvghlrdhorhhgsehfrghsthhmrg
-    hilhdrtghomhdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgt
-    phhtthhopehnvghilhessghrohifnhdrnhgrmhgvpdhrtghpthhtoheprghlvgigrdgrrh
-    hinhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtohepjhhlrgihthhonheskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htohephhgthheslhhsthdruggvpdhrtghpthhtoheptghhuhgtkhdrlhgvvhgvrhesohhr
-    rggtlhgvrdgtohhmpdhrtghpthhtohepuggrihdrnhhgohesohhrrggtlhgvrdgtohhmpd
-    hrtghpthhtohepohhkohhrnhhivghvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehj
-    rggtkhesshhushgvrdgtii
-X-ME-Proxy: <xmx:gJKLaatdtLMjGJPAZULsAZ_A5xF4876i7WVsESjfi434khtlt55A3Q>
-    <xmx:gJKLad8LAlPMokpydBWlZmTjiy6dBhsmfvxDBDpS0E2TJNl5fT7IVA>
-    <xmx:gJKLaRSnOyCiSHQhYDbS-Pe79MkStILN8LgkdcWV81fuYdKOFbWlUw>
-    <xmx:gJKLafWubZLDJ4y8WatnegXifrR_z4hEYdJ031BgyV-zAIid_96bBQ>
-    <xmx:gJKLaT8coOR73NkumlupQewozWJoGo_y1Y-l59Nnj2Lc1hTsKJowA8WH>
-Feedback-ID: ifa6e4810:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 9973E780075; Tue, 10 Feb 2026 15:18:08 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE9832F745
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Feb 2026 20:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770755817; cv=pass; b=uc7WhZSLIS7pdJZsKw+t56eDk+B7T7QfqdVC1qKSwizGOSFcaMRoWpAWxmol/d24jfd5hI/kENtLpwMWpoXVk8a7l07J4ESVy1KsoCqApNr1o5to4ZzJc+GWAMf/d43jNTCLJlc9vT5TK4d4Jlw36SiDeecffi3M61QmHEBQ66A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770755817; c=relaxed/simple;
+	bh=ey7h6BYYQrtrrr8rCF85a8/FuLjvnQ7u8djxXUs8qgY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GEukDdFDPFu5jpQ50bne7778WQe+1HgVE28Q6Q41ixfwtz3huMK+WaUXZ5NbkYAlD3CeThsfL1QDd7qhPsN98HYIqTDLRhOb180M7JtRqZfDZKM7/+MLfGhjnBiybiOhAMeI88DJJS1GkmhjFenyFVKAmCXzdzzrhLZpmwDWIMM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=CFBdwPFY; arc=pass smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-59dd54b1073so4611089e87.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Feb 2026 12:36:55 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770755814; cv=none;
+        d=google.com; s=arc-20240605;
+        b=bWrtDPB7MJh54ZCAwu+c3wfHJOKYfWC1Nt95GzKrpsM59soqtea8slW9/dszJXr6C9
+         co2F9W2ECIGhldPVkY5NDsqELPYpAYeJW9GubW+39LMgIIuTVKPatJYWWcLnn96Wk2Gn
+         CRHP2ckul6yTkA4tqvNxUqii1Okdh5rYSNRBzASsaKZV7oLW7yHw2AJCMLNWpEl+RPsu
+         MmXa0NRQJuebas090MXDuQe7ILE0YVu35xUuByUNegVRqhjGPmM+KDV4+dfEqxVK82qF
+         qh7eVZa4IrzfY0Dc+j/yyzOTY8KChoGh2kCUC9R30K4b3KqX/jIiIocVeqbAewmNr3lG
+         X/xw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=/RVEjU7kEYe1QZq8m5Yk/boKMRnRFHVBS46XFdmJlx8=;
+        fh=JjAulbV9As1EAXcFOcqR9JLrvzQggguzS03zBgzVRuY=;
+        b=Rv97Hrhb66DkfK6Bbe78Te/3ocUj901LIuQA1K2I5Qr1Z2xlgK/GxoIW1N70vbBJQb
+         7LSqKq3jCuBegEiESaiP4d6MpipSy/cwHeSZzYWhCsdgAu1Rx/sqZQlMwSfxd37Kofpq
+         06WoqVpRWdufgBIjZlvywyAQuj9lH5ckE0NJ8SgJZf7mIIPd1lYn1NHl9KVn6qbNIxO5
+         LQaIFj4f9t/XRukamIs3s5jbM4+fCNYM0UzYcF0t3oAdvZVevsb64EAtuymShFcQAlkB
+         Ohfk3KJVRXyI2txxWiMBdHcn17wrTyUZWBSxwtBodn3zuoewxdinqsX5v7PySWaKF9qz
+         wtIw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mihalicyn.com; s=mihalicyn; t=1770755814; x=1771360614; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/RVEjU7kEYe1QZq8m5Yk/boKMRnRFHVBS46XFdmJlx8=;
+        b=CFBdwPFY6n/Mulx7895ZXhD3a03SN8YFIDLzIivQkRDsiB50ac64mXF6vGyLP1lsb/
+         xO/BeAuTlIN2N1/SKb5K0ELnTMssSiryfUq7yE6SGk21LASVyozQcOuVkmH3+ULYdCnc
+         xez1Gg5lbKd4oyn+Fb1nfKit5pTPHgbBFsYhg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770755814; x=1771360614;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/RVEjU7kEYe1QZq8m5Yk/boKMRnRFHVBS46XFdmJlx8=;
+        b=qKo7IyebrsAQUAPzNr/KFxSQIXSLQzhomUVCrUCjToGjkwiAmqa8bkKH2KjU/TCrVs
+         Hv4FXlO2DdIo1IMtDs5jtOyVlClCC2sAbMXlfTeLCcIKHVfjFzzrBPRsPG6WwDKPjV5X
+         E1dALTHhFmj5fmY2oy/EChWmvRnF3T2uLOf6TFSNOE1IRquQPv9Yd8RLsQMfRFy8TdlM
+         F0KapYJYb6tNuRrRuBZxG4AdOoJbfbN/wJZHNQ6hzOcEVoKnbq1gXju4tvju1tczZApa
+         s/Ax2gAVxNyBqcwKEkDVSjVk966JVtXVPCw716xxIBT0w/ctWI0sUV6O4YTvmGUoY0TG
+         ya6g==
+X-Forwarded-Encrypted: i=1; AJvYcCV5rolP91OEMwC2k0Cp5Mgjq5v2+YSNLTV/jDARBKaR60EmxCJWvnuDPNW9zMXsoO34i2Nyw/c7domM34dZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+5GlIfCXH8cnPRuBBixFpQ8gEigHmepYOa6gX1B/qOWfW88Cj
+	HYeL1ZIpphJGtbAdCC1MIQGBsyTJixmpEpKFlADMg/NbuK0TAdP0hA2vNkpDBsQcwAzYJB1c0do
+	cSp/flUxN9uWHnTwqcK9vR9HNSFN/wGlJWC1T2Cs6jg==
+X-Gm-Gg: AZuq6aJdQOh6pmEFIDEeC6s7kL+qXxQTtH+KyNobXCXiXnQjNdHI6MrzhrGQa9EBqIk
+	Qdk6j53IjwUQU/1aodXtx9o9oS7yWLG3bUpX7c7XdpChJbr9HQqnKQSX/ThjHte7lW9MebgMy4r
+	hY5YFOUN5ZwzbTXs/Nwz/K1r/432N1RImgGbkvQQ6drgpZi/EhxjCNvLo9p9QsRaEx6W/TnpxLW
+	9/yWyqYu+NLcBlFoOg9ovhh2WdOcd2UYfPDDOK93gKWC5niD+qCKLh6v6zqSxyXqe8Y2ZqAlSHX
+	l6fcGQaiatH3AQwQ/z0O6ByGy5WmQNzxvucZqME=
+X-Received: by 2002:a05:6512:1301:b0:59e:1a8:5e86 with SMTP id
+ 2adb3069b0e04-59e5c3f991amr134928e87.41.1770755808592; Tue, 10 Feb 2026
+ 12:36:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: A8Fz8tURNHz3
-Date: Tue, 10 Feb 2026 15:17:46 -0500
-From: "Chuck Lever" <cel@kernel.org>
-To: "Dai Ngo" <dai.ngo@oracle.com>, "Chuck Lever" <chuck.lever@oracle.com>,
- "Jeff Layton" <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
- "Olga Kornievskaia" <okorniev@redhat.com>, "Tom Talpey" <tom@talpey.com>,
- "Christoph Hellwig" <hch@lst.de>, "Alexander Aring" <alex.aring@gmail.com>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
-Message-Id: <a06f4c17-8227-4c04-b270-5c064b7de79c@app.fastmail.com>
-In-Reply-To: <20260210181632.1161855-1-dai.ngo@oracle.com>
-References: <20260210181632.1161855-1-dai.ngo@oracle.com>
-Subject: Re: [PATCH v10 1/1] NFSD: Enforce timeout on layout recall and integrate lease
- manager fencing
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20260209190605.1564597-1-avagin@google.com> <20260209190605.1564597-4-avagin@google.com>
+In-Reply-To: <20260209190605.1564597-4-avagin@google.com>
+From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Date: Tue, 10 Feb 2026 21:36:36 +0100
+X-Gm-Features: AZwV_QgjfoRdQrlUqWSC4XnkqPkyYSWTA1P5z4cr4cHfm0maV7oMuAR0P9Khr8M
+Message-ID: <CAJqdLrqFJm5s4qgczWUi50muoMbUm7tbDZ4vTp=3ktEDYoi7wA@mail.gmail.com>
+Subject: Re: [PATCH 3/4] mm: synchronize saved_auxv access with arg_lock
+To: Andrei Vagin <avagin@google.com>
+Cc: Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Cyrill Gorcunov <gorcunov@gmail.com>, Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, criu@lists.linux.dev, 
+	Chen Ridong <chenridong@huawei.com>, Christian Brauner <brauner@kernel.org>, 
+	David Hildenbrand <david@kernel.org>, Eric Biederman <ebiederm@xmission.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Michal Koutny <mkoutny@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.65 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[mihalicyn.com,quarantine];
+	R_DKIM_ALLOW(-0.20)[mihalicyn.com:s=mihalicyn];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	XM_UA_NO_VERSION(0.01)[];
-	TAGGED_FROM(0.00)[bounces-76886-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_TO(0.00)[oracle.com,kernel.org,brown.name,redhat.com,talpey.com,lst.de,gmail.com,zeniv.linux.org.uk,suse.cz];
+	TAGGED_FROM(0.00)[bounces-76887-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
+	FROM_HAS_DN(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	FREEMAIL_CC(0.00)[kernel.org,linux-foundation.org,gmail.com,vger.kernel.org,kvack.org,lists.linux.dev,huawei.com,xmission.com,oracle.com,suse.com];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[cel@kernel.org,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
 	PRECEDENCE_BULK(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[alexander@mihalicyn.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[mihalicyn.com:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: 43F9B11EFE4
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: BEFA311F0D1
 X-Rspamd-Action: no action
 
+Am Mo., 9. Feb. 2026 um 20:06 Uhr schrieb Andrei Vagin <avagin@google.com>:
+>
+> The mm->saved_auxv array stores the auxiliary vector, which can be
+> modified via prctl(PR_SET_MM_AUXV) or prctl(PR_SET_MM_MAP). Previously,
+> accesses to saved_auxv were not synchronized. This was a intentional
+> trade-off, as the vector was only used to provide information to
+> userspace via /proc/PID/auxv or prctl(PR_GET_AUXV), and consistency
+> between the auxv values left to userspace.
+>
+> With the introduction of hardware capability (HWCAP) inheritance during
+> execve, the kernel now relies on the contents of saved_auxv to configure
+> the execution environment of new processes.  An unsynchronized read
+> during execve could result in a new process inheriting an inconsistent
+> set of capabilities if the parent process updates its auxiliary vector
+> concurrently.
+>
+> While it is still not strictly required to guarantee the consistency of
+> auxv values on the kernel side, doing so is relatively straightforward.
+> This change implements synchronization using arg_lock.
+>
+> Signed-off-by: Andrei Vagin <avagin@google.com>
 
+Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@futurfusion.io>
 
-On Tue, Feb 10, 2026, at 1:16 PM, Dai Ngo wrote:
-> When a layout conflict triggers a recall, enforcing a timeout is
-> necessary to prevent excessive nfsd threads from being blocked in
-> __break_lease ensuring the server continues servicing incoming
-> requests efficiently.
->
-> This patch introduces a new function to lease_manager_operations:
->
-> lm_breaker_timedout: Invoked when a lease recall times out and is
-> about to be disposed of. This function enables the lease manager
-> to inform the caller whether the file_lease should remain on the
-> flc_list or be disposed of.
->
-> For the NFSD lease manager, this function now handles layout recall
-> timeouts. If the layout type supports fencing and the client has not
-> been fenced, a fence operation is triggered to prevent the client
-> from accessing the block device.
->
-> While the fencing operation is in progress, the conflicting file_lease
-> remains on the flc_list until fencing is complete. This guarantees
-> that no other clients can access the file, and the client with
-> exclusive access is properly blocked before disposal.
->
-> Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
 > ---
->  Documentation/filesystems/locking.rst |   2 +
->  fs/locks.c                            |  16 +++-
->  fs/nfsd/blocklayout.c                 |  41 +++++++--
->  fs/nfsd/nfs4layouts.c                 | 126 +++++++++++++++++++++++++-
->  fs/nfsd/nfs4state.c                   |   1 +
->  fs/nfsd/pnfs.h                        |   2 +-
->  fs/nfsd/state.h                       |   7 ++
->  include/linux/filelock.h              |   1 +
->  8 files changed, 182 insertions(+), 14 deletions(-)
+>  fs/exec.c      |  8 ++++++--
+>  fs/proc/base.c | 12 +++++++++---
+>  kernel/fork.c  |  7 ++++++-
+>  kernel/sys.c   | 29 ++++++++++++++---------------
+>  4 files changed, 35 insertions(+), 21 deletions(-)
 >
-> v2:
->     . Update Subject line to include fencing operation.
->     . Allow conflicting lease to remain on flc_list until fencing
->       is complete.
->     . Use system worker to perform fencing operation asynchronously.
->     . Use nfs4_stid.sc_count to ensure layout stateid remains
->       valid before starting the fencing operation, nfs4_stid.sc_count
->       is released after fencing operation is complete.
->     . Rework nfsd4_scsi_fence_client to:
->          . wait until fencing to complete before exiting.
->          . wait until fencing in progress to complete before
->            checking the NFSD_MDS_PR_FENCED flag.
->     . Remove lm_need_to_retry from lease_manager_operations.
-> v3:
->     . correct locking requirement in locking.rst.
->     . add max retry count to fencing operation.
->     . add missing nfs4_put_stid in nfsd4_layout_fence_worker.
->     . remove special-casing of FL_LAYOUT in lease_modify.
->     . remove lease_want_dispose.
->     . move lm_breaker_timedout call to time_out_leases.
-> v4:
->     . only increment ls_fence_retry_cnt after successfully
->       schedule new work in nfsd4_layout_lm_breaker_timedout.
-> v5:
->     . take reference count on layout stateid before starting
->       fence worker.
->     . restore comments in nfsd4_scsi_fence_client and the
->       code that check for specific errors.
->     . cancel fence worker before freeing layout stateid.
->     . increase fence retry from 5 to 20.
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 7401efbe4ba0..d7e3ad8c8051 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1793,6 +1793,7 @@ static int bprm_execve(struct linux_binprm *bprm)
 >
-> NOTE:
->     I experimented with having the fence worker handle lease
->     disposal after fencing the client. However, this requires
->     the lease code to export the lease_dispose_list function,
->     and for the fence worker to acquire the flc_lock in order
->     to perform the disposal. This approach adds unnecessary
->     complexity and reduces code clarity, as it exposes internal
->     lease code details to the nfsd worker, which should not
->     be the case.
->
->     Instead, the lm_breaker_timedout operation should simply
->     notify the lease code about how to handle a lease that
->     times out during a lease break, rather than directly
->     manipulating the lease list.
-> v6:
->    . unlock the lease as soon as the fencing is done, so that
->      tasks waiting on it can proceed.
->
-> v7:
->    . Change to retry fencing on error forever by default.
->    . add module parameter option to allow the admim to specify
->      the maximun number of retries before giving up.
->
-> v8:
->    . reinitialize 'remove' inside the loop.
->    . remove knob to stop fence worker from retrying forever.
->    . use exponential back off when retrying fence operation.
->    . Fix nits.
->
-> v9:
->    . limit fence worker max delay to 3 minutes.
->    . fix fence worker's delay argument from seconds to jiffies.
->    . move INIT_DELAYED_WORK to nfsd4_alloc_layout_stateid().
->    . remove ls_fence_inprogress, use delayed_work_pending() instead.
->
-> v10:
->    . fix initial delay of fence worker from 1 jiffies to 1 second.
->
-> diff --git a/Documentation/filesystems/locking.rst 
-> b/Documentation/filesystems/locking.rst
-> index 04c7691e50e0..79bee9ae8bc3 100644
-> --- a/Documentation/filesystems/locking.rst
-> +++ b/Documentation/filesystems/locking.rst
-> @@ -403,6 +403,7 @@ prototypes::
->  	bool (*lm_breaker_owns_lease)(struct file_lock *);
->          bool (*lm_lock_expirable)(struct file_lock *);
->          void (*lm_expire_lock)(void);
-> +        bool (*lm_breaker_timedout)(struct file_lease *);
-> 
->  locking rules:
-> 
-> @@ -417,6 +418,7 @@ lm_breaker_owns_lease:	yes     	no			no
->  lm_lock_expirable	yes		no			no
->  lm_expire_lock		no		no			yes
->  lm_open_conflict	yes		no			no
-> +lm_breaker_timedout     yes             no                      no
->  ======================	=============	=================	=========
-> 
->  buffer_head
-> diff --git a/fs/locks.c b/fs/locks.c
-> index 46f229f740c8..9ec36c008edd 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -1524,6 +1524,7 @@ static void time_out_leases(struct inode *inode, 
-> struct list_head *dispose)
+>  static void inherit_hwcap(struct linux_binprm *bprm)
 >  {
->  	struct file_lock_context *ctx = inode->i_flctx;
->  	struct file_lease *fl, *tmp;
-> +	bool remove;
-> 
->  	lockdep_assert_held(&ctx->flc_lock);
-> 
-> @@ -1531,8 +1532,19 @@ static void time_out_leases(struct inode *inode, 
-> struct list_head *dispose)
->  		trace_time_out_leases(inode, fl);
->  		if (past_time(fl->fl_downgrade_time))
->  			lease_modify(fl, F_RDLCK, dispose);
-> -		if (past_time(fl->fl_break_time))
-> -			lease_modify(fl, F_UNLCK, dispose);
-> +
-> +		remove = true;
-> +		if (past_time(fl->fl_break_time)) {
-> +			/*
-> +			 * Consult the lease manager when a lease break times
-> +			 * out to determine whether the lease should be disposed
-> +			 * of.
-> +			 */
-> +			if (fl->fl_lmops && fl->fl_lmops->lm_breaker_timedout)
-> +				remove = fl->fl_lmops->lm_breaker_timedout(fl);
-> +			if (remove)
-> +				lease_modify(fl, F_UNLCK, dispose);
-> +		}
->  	}
->  }
-> 
-> diff --git a/fs/nfsd/blocklayout.c b/fs/nfsd/blocklayout.c
-> index 7ba9e2dd0875..b7030c91964c 100644
-> --- a/fs/nfsd/blocklayout.c
-> +++ b/fs/nfsd/blocklayout.c
-> @@ -443,15 +443,33 @@ nfsd4_scsi_proc_layoutcommit(struct inode *inode, 
-> struct svc_rqst *rqstp,
->  	return nfsd4_block_commit_blocks(inode, lcp, iomaps, nr_iomaps);
->  }
-> 
-> -static void
-> +/*
-> + * Perform the fence operation to prevent the client from accessing the
-> + * block device. If a fence operation is already in progress, wait for
-> + * it to complete before checking the NFSD_MDS_PR_FENCED flag. Once the
-> + * operation is complete, check the flag. If NFSD_MDS_PR_FENCED is set,
-> + * update the layout stateid by setting the ls_fenced flag to indicate
-> + * that the client has been fenced.
-> + *
-> + * The cl_fence_mutex ensures that the fence operation has been fully
-> + * completed, rather than just in progress, when returning from this
-> + * function.
-> + *
-> + * Return true if client was fenced otherwise return false.
-> + */
-> +static bool
->  nfsd4_scsi_fence_client(struct nfs4_layout_stateid *ls, struct nfsd_file *file)
->  {
->  	struct nfs4_client *clp = ls->ls_stid.sc_client;
->  	struct block_device *bdev = file->nf_file->f_path.mnt->mnt_sb->s_bdev;
->  	int status;
-> +	bool ret;
-> 
-> -	if (nfsd4_scsi_fence_set(clp, bdev->bd_dev))
-> -		return;
-> +	mutex_lock(&clp->cl_fence_mutex);
-> +	if (nfsd4_scsi_fence_set(clp, bdev->bd_dev)) {
-> +		mutex_unlock(&clp->cl_fence_mutex);
-> +		return true;
-> +	}
-> 
->  	status = bdev->bd_disk->fops->pr_ops->pr_preempt(bdev, 
-> NFSD_MDS_PR_KEY,
->  			nfsd4_scsi_pr_key(clp),
-> @@ -470,13 +488,22 @@ nfsd4_scsi_fence_client(struct 
-> nfs4_layout_stateid *ls, struct nfsd_file *file)
->  	 * PR_STS_RESERVATION_CONFLICT, which would cause an infinite
->  	 * retry loop.
->  	 */
-> -	if (status < 0 ||
-> -	    status == PR_STS_PATH_FAILED ||
-> -	    status == PR_STS_PATH_FAST_FAILED ||
-> -	    status == PR_STS_RETRY_PATH_FAILURE)
-> +	switch (status) {
-> +	case 0:
-> +	case PR_STS_IOERR:
-> +	case PR_STS_RESERVATION_CONFLICT:
-> +		ret = true;
-> +		break;
-> +	default:
-> +		/* retry-able and other errors */
-> +		ret = false;
->  		nfsd4_scsi_fence_clear(clp, bdev->bd_dev);
-> +		break;
-> +	}
-> +	mutex_unlock(&clp->cl_fence_mutex);
-> 
->  	trace_nfsd_pnfs_fence(clp, bdev->bd_disk->disk_name, status);
-> +	return ret;
->  }
-> 
->  const struct nfsd4_layout_ops scsi_layout_ops = {
-> diff --git a/fs/nfsd/nfs4layouts.c b/fs/nfsd/nfs4layouts.c
-> index ad7af8cfcf1f..07904f404f89 100644
-> --- a/fs/nfsd/nfs4layouts.c
-> +++ b/fs/nfsd/nfs4layouts.c
-> @@ -27,6 +27,8 @@ static struct kmem_cache *nfs4_layout_stateid_cache;
->  static const struct nfsd4_callback_ops nfsd4_cb_layout_ops;
->  static const struct lease_manager_operations nfsd4_layouts_lm_ops;
-> 
-> +static void nfsd4_layout_fence_worker(struct work_struct *work);
-> +
->  const struct nfsd4_layout_ops *nfsd4_layout_ops[LAYOUT_TYPE_MAX] =  {
->  #ifdef CONFIG_NFSD_FLEXFILELAYOUT
->  	[LAYOUT_FLEX_FILES]	= &ff_layout_ops,
-> @@ -177,6 +179,13 @@ nfsd4_free_layout_stateid(struct nfs4_stid *stid)
-> 
->  	trace_nfsd_layoutstate_free(&ls->ls_stid.sc_stateid);
-> 
-> +	spin_lock(&ls->ls_lock);
-> +	if (delayed_work_pending(&ls->ls_fence_work)) {
-> +		spin_unlock(&ls->ls_lock);
-> +		cancel_delayed_work_sync(&ls->ls_fence_work);
-> +	} else
-> +		spin_unlock(&ls->ls_lock);
-> +
->  	spin_lock(&clp->cl_lock);
->  	list_del_init(&ls->ls_perclnt);
->  	spin_unlock(&clp->cl_lock);
-> @@ -271,6 +280,10 @@ nfsd4_alloc_layout_stateid(struct 
-> nfsd4_compound_state *cstate,
->  	list_add(&ls->ls_perfile, &fp->fi_lo_states);
->  	spin_unlock(&fp->fi_lock);
-> 
-> +	ls->ls_fenced = false;
-> +	ls->ls_fence_delay = 0;
-> +	INIT_DELAYED_WORK(&ls->ls_fence_work, nfsd4_layout_fence_worker);
-> +
->  	trace_nfsd_layoutstate_alloc(&ls->ls_stid.sc_stateid);
->  	return ls;
->  }
-> @@ -747,11 +760,9 @@ static bool
->  nfsd4_layout_lm_break(struct file_lease *fl)
->  {
->  	/*
-> -	 * We don't want the locks code to timeout the lease for us;
-> -	 * we'll remove it ourself if a layout isn't returned
-> -	 * in time:
-> +	 * Enforce break lease timeout to prevent NFSD
-> +	 * thread from hanging in __break_lease.
->  	 */
-> -	fl->fl_break_time = 0;
->  	nfsd4_recall_file_layout(fl->c.flc_owner);
->  	return false;
->  }
-
-With fl->fl_break_time = 0 removed, the break time set by
-__break_lease() is preserved. After the timeout expires,
-time_out_leases() calls lm_breaker_timedout which returns
-false to keep the lease on the flc_list.
-
-__break_lease() then loops back to its restart label, where
-it recomputes the wait timeout:
-
-    break_time = fl->fl_break_time;
-    if (break_time != 0)
-        break_time -= jiffies;
-
-fl_break_time is already in the past. So the subtraction
-wraps to a very large unsigned long value. Cast to the signed
-long expected by wait_event_interruptible_timeout(), the
-result is negative.
-
-schedule_timeout() treats negative values as a bug: it prints
-a KERN_ERR message with dump_stack() and returns immediately
-without sleeping. Inside the ___wait_event loop this produces
-a tight spin -- schedule_timeout() returns instantly on every
-iteration, the wait condition (lease removed from list) remains
-false until the fence worker completes, and each iteration
-emits a stack dump.
-
-The path is reachable via:
-
-    xfs_break_leased_layouts()
-      break_layout(inode, true)
-        __break_lease(inode, LEASE_BREAK_LAYOUT)
-
-On a uniprocessor system the fence worker workqueue thread
-never gets scheduled because the spinning task never calls
-schedule(), so the system hangs. On SMP the spin persists
-until the fence worker finishes the PR_PREEMPT operation and
-removes the lease via nfsd4_close_layout() ->
-kernel_setlease(F_UNLCK).
-
-When the fence fails and the worker retries with exponential
-backoff (up to MAX_FENCE_DELAY), the spin continues for the
-full delay interval.
-
-Would it make sense to have lm_breaker_timedout extend
-fl_break_time before returning false, so that __break_lease
-sleeps for a fresh interval rather than looping immediately
-with a stale timestamp?
-
-
-> @@ -782,10 +793,117 @@ nfsd4_layout_lm_open_conflict(struct file *filp, int arg)
->  	return 0;
->  }
-> 
-> +static void
-> +nfsd4_layout_fence_worker(struct work_struct *work)
-> +{
-> +	struct delayed_work *dwork = to_delayed_work(work);
-> +	struct nfs4_layout_stateid *ls = container_of(dwork,
-> +			struct nfs4_layout_stateid, ls_fence_work);
-> +	struct nfsd_file *nf;
-> +	struct block_device *bdev;
-> +	LIST_HEAD(dispose);
-
-Nit: "dispose" is no longer used and can be deleted.
-
-
-> +
-> +	spin_lock(&ls->ls_lock);
-> +	if (list_empty(&ls->ls_layouts)) {
-> +		spin_unlock(&ls->ls_lock);
-> +dispose:
-> +		/* unlock the lease so that tasks waiting on it can proceed */
-> +		nfsd4_close_layout(ls);
-> +
-> +		ls->ls_fenced = true;
-> +		nfs4_put_stid(&ls->ls_stid);
-> +		return;
-> +	}
-> +	spin_unlock(&ls->ls_lock);
-> +
-> +	rcu_read_lock();
-> +	nf = nfsd_file_get(ls->ls_file);
-> +	rcu_read_unlock();
-> +	if (!nf)
-> +		goto dispose;
-> +
-> +	if (nfsd4_layout_ops[ls->ls_layout_type]->fence_client(ls, nf)) {
-> +		/* fenced ok */
-> +		nfsd_file_put(nf);
-> +		goto dispose;
-> +	}
-> +	/* fence failed */
-> +	bdev = nf->nf_file->f_path.mnt->mnt_sb->s_bdev;
-> +	nfsd_file_put(nf);
-> +
-> +	pr_warn("%s: FENCE failed client[%pISpc] device[0x%x]\n",
-> +		__func__, (struct sockaddr *)&ls->ls_stid.sc_client->cl_addr,
-> +		bdev->bd_dev);
-> +	/*
-> +	 * The fence worker retries the fencing operation indefinitely to
-> +	 * prevent data corruption. The admin needs to take the following
-> +	 * actions to restore access to the file for other clients:
-> +	 *
-> +	 *  . shutdown or power off the client being fenced.
-> +	 *  . manually expire the client to release all its state on the server;
-> +	 *    echo 'expire' > proc/fs/nfsd/clients/clientid/ctl'.
-> +	 */
-> +	ls->ls_fence_delay <<= 1;
-> +	if (!ls->ls_fence_delay)
-> +		ls->ls_fence_delay = (1 *HZ);
-> +	else if (ls->ls_fence_delay > MAX_FENCE_DELAY)
-> +		ls->ls_fence_delay = MAX_FENCE_DELAY;
-> +	mod_delayed_work(system_dfl_wq, &ls->ls_fence_work, ls->ls_fence_delay);
-
-Let's make this:
-
--  ls->ls_fence_delay <<= 1;
-   if (!ls->ls_fence_delay)
--    ls->ls_fence_delay = (1 *HZ);
--  else if (ls->ls_fence_delay > MAX_FENCE_DELAY)
--    ls->ls_fence_delay = MAX_FENCE_DELAY;
-+    ls->ls_fence_delay = HZ;
-+  else if (ls->ls_fence_delay < MAX_FENCE_DELAY)
-+    ls->ls_fence_delay <<= 1;
-   mod_delayed_work(system_dfl_wq, &ls->ls_fence_work, ls->ls_fence_delay);
-
-
-> +}
-> +
-> +/**
-> + * nfsd4_layout_lm_breaker_timedout - The layout recall has timed out.
-> + * @fl: file to check
-> + *
-> + * If the layout type supports a fence operation, schedule a worker to
-> + * fence the client from accessing the block device.
-> + *
-> + * This function runs under the protection of the spin_lock flc_lock.
-> + * At this time, the file_lease associated with the layout stateid is
-> + * on the flc_list. A reference count is incremented on the layout
-> + * stateid to prevent it from being freed while the fence worker is
-> + * executing. Once the fence worker finishes its operation, it releases
-> + * this reference.
-> + *
-> + * The fence worker continues to run until either the client has been
-> + * fenced or the layout becomes invalid. The layout can become invalid
-> + * as a result of a LAYOUTRETURN or when the CB_LAYOUT recall callback
-> + * has completed.
-> + *
-> + * Return true if the file_lease should be disposed of by the caller;
-> + * otherwise, return false.
-> + */
-> +static bool
-> +nfsd4_layout_lm_breaker_timedout(struct file_lease *fl)
-> +{
-> +	struct nfs4_layout_stateid *ls = fl->c.flc_owner;
-> +
-> +	if ((!nfsd4_layout_ops[ls->ls_layout_type]->fence_client) ||
-> +			ls->ls_fenced)
-> +		return true;
-> +	if (delayed_work_pending(&ls->ls_fence_work))
-> +		return false;
-> +	/*
-> +	 * Make sure layout has not been returned yet before
-> +	 * taking a reference count on the layout stateid.
-> +	 */
-> +	spin_lock(&ls->ls_lock);
-> +	if (list_empty(&ls->ls_layouts)) {
-> +		spin_unlock(&ls->ls_lock);
-> +		return true;
-> +	}
-> +	refcount_inc(&ls->ls_stid.sc_count);
-> +	spin_unlock(&ls->ls_lock);
-> +
-> +	mod_delayed_work(system_dfl_wq, &ls->ls_fence_work, 0);
-> +	return false;
-> +}
-> +
->  static const struct lease_manager_operations nfsd4_layouts_lm_ops = {
->  	.lm_break		= nfsd4_layout_lm_break,
->  	.lm_change		= nfsd4_layout_lm_change,
->  	.lm_open_conflict	= nfsd4_layout_lm_open_conflict,
-> +	.lm_breaker_timedout	= nfsd4_layout_lm_breaker_timedout,
->  };
-> 
->  int
-> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> index 98da72fc6067..bad91d1bfef3 100644
-> --- a/fs/nfsd/nfs4state.c
-> +++ b/fs/nfsd/nfs4state.c
-> @@ -2387,6 +2387,7 @@ static struct nfs4_client *alloc_client(struct 
-> xdr_netobj name,
+> +       struct mm_struct *mm = current->mm;
+>         int i, n;
+>
+>  #ifdef ELF_HWCAP4
+> @@ -1805,10 +1806,12 @@ static void inherit_hwcap(struct linux_binprm *bprm)
+>         n = 1;
 >  #endif
->  #ifdef CONFIG_NFSD_SCSILAYOUT
->  	xa_init(&clp->cl_dev_fences);
-> +	mutex_init(&clp->cl_fence_mutex);
->  #endif
->  	INIT_LIST_HEAD(&clp->async_copies);
->  	spin_lock_init(&clp->async_lock);
-> diff --git a/fs/nfsd/pnfs.h b/fs/nfsd/pnfs.h
-> index db9af780438b..3a2f9e240e85 100644
-> --- a/fs/nfsd/pnfs.h
-> +++ b/fs/nfsd/pnfs.h
-> @@ -38,7 +38,7 @@ struct nfsd4_layout_ops {
->  			struct svc_rqst *rqstp,
->  			struct nfsd4_layoutcommit *lcp);
-> 
-> -	void (*fence_client)(struct nfs4_layout_stateid *ls,
-> +	bool (*fence_client)(struct nfs4_layout_stateid *ls,
->  			     struct nfsd_file *file);
->  };
-> 
-> diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
-> index 713f55ef6554..7ffb077f6fbf 100644
-> --- a/fs/nfsd/state.h
-> +++ b/fs/nfsd/state.h
-> @@ -529,6 +529,7 @@ struct nfs4_client {
->  	time64_t		cl_ra_time;
->  #ifdef CONFIG_NFSD_SCSILAYOUT
->  	struct xarray		cl_dev_fences;
-> +	struct mutex		cl_fence_mutex;
->  #endif
->  };
-> 
-> @@ -738,8 +739,14 @@ struct nfs4_layout_stateid {
->  	stateid_t			ls_recall_sid;
->  	bool				ls_recalled;
->  	struct mutex			ls_mutex;
-> +
-> +	struct delayed_work		ls_fence_work;
-> +	unsigned int			ls_fence_delay;
-> +	bool				ls_fenced;
->  };
-> 
-
-Add:
-
-/* Cap exponential backoff between fence retries at 3 minutes */
-
-> +#define	MAX_FENCE_DELAY		(180 * HZ)
-> +
->  static inline struct nfs4_layout_stateid *layoutstateid(struct nfs4_stid *s)
+>
+> +       spin_lock(&mm->arg_lock);
+>         for (i = 0; n && i < AT_VECTOR_SIZE; i += 2) {
+> -               long val = current->mm->saved_auxv[i + 1];
+> +               unsigned long type = mm->saved_auxv[i];
+> +               unsigned long val = mm->saved_auxv[i + 1];
+>
+> -               switch (current->mm->saved_auxv[i]) {
+> +               switch (type) {
+>                 case AT_NULL:
+>                         goto done;
+>                 case AT_HWCAP:
+> @@ -1835,6 +1838,7 @@ static void inherit_hwcap(struct linux_binprm *bprm)
+>                 n--;
+>         }
+>  done:
+> +       spin_unlock(&mm->arg_lock);
+>         mm_flags_set(MMF_USER_HWCAP, bprm->mm);
+>  }
+>
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 4eec684baca9..09d887741268 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -1083,14 +1083,20 @@ static ssize_t auxv_read(struct file *file, char __user *buf,
 >  {
->  	return container_of(s, struct nfs4_layout_stateid, ls_stid);
-> diff --git a/include/linux/filelock.h b/include/linux/filelock.h
-> index 2f5e5588ee07..13b9c9f04589 100644
-> --- a/include/linux/filelock.h
-> +++ b/include/linux/filelock.h
-> @@ -50,6 +50,7 @@ struct lease_manager_operations {
->  	void (*lm_setup)(struct file_lease *, void **);
->  	bool (*lm_breaker_owns_lease)(struct file_lease *);
->  	int (*lm_open_conflict)(struct file *, int);
-> +	bool (*lm_breaker_timedout)(struct file_lease *fl);
->  };
-> 
->  struct lock_manager {
-> -- 
-> 2.47.3
+>         struct mm_struct *mm = file->private_data;
+>         unsigned int nwords = 0;
+> +       unsigned long saved_auxv[AT_VECTOR_SIZE];
+>
+>         if (!mm)
+>                 return 0;
+> +
+> +       spin_lock(&mm->arg_lock);
+> +       memcpy(saved_auxv, mm->saved_auxv, sizeof(saved_auxv));
+> +       spin_unlock(&mm->arg_lock);
+> +
+>         do {
+>                 nwords += 2;
+> -       } while (mm->saved_auxv[nwords - 2] != 0); /* AT_NULL */
+> -       return simple_read_from_buffer(buf, count, ppos, mm->saved_auxv,
+> -                                      nwords * sizeof(mm->saved_auxv[0]));
+> +       } while (saved_auxv[nwords - 2] != 0); /* AT_NULL */
+> +       return simple_read_from_buffer(buf, count, ppos, saved_auxv,
+> +                                      nwords * sizeof(saved_auxv[0]));
+>  }
+>
+>  static const struct file_operations proc_auxv_operations = {
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index 0091315643de..c0a3dd94df22 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -1104,8 +1104,13 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
+>                 __mm_flags_overwrite_word(mm, mmf_init_legacy_flags(flags));
+>                 mm->def_flags = current->mm->def_flags & VM_INIT_DEF_MASK;
+>
+> -               if (mm_flags_test(MMF_USER_HWCAP, current->mm))
+> +               if (mm_flags_test(MMF_USER_HWCAP, current->mm)) {
+> +                       spin_lock(&current->mm->arg_lock);
+>                         mm_flags_set(MMF_USER_HWCAP, mm);
+> +                       memcpy(mm->saved_auxv, current->mm->saved_auxv,
+> +                              sizeof(mm->saved_auxv));
 
--- 
-Chuck Lever
+nit: I was looking for this memcpy(mm->saved_auxv,
+current->mm->saved_auxv, sizeof(mm->saved_auxv)) while reviewing
+a previous patch. Shouldn't it be there?
+
+LGTM.
+
+> +                       spin_unlock(&current->mm->arg_lock);
+> +               }
+>         } else {
+>                 __mm_flags_overwrite_word(mm, default_dump_filter);
+>                 mm->def_flags = 0;
+> diff --git a/kernel/sys.c b/kernel/sys.c
+> index 6fbd7be21a5f..eafb5f75cb5c 100644
+> --- a/kernel/sys.c
+> +++ b/kernel/sys.c
+> @@ -2147,20 +2147,11 @@ static int prctl_set_mm_map(int opt, const void __user *addr, unsigned long data
+>         mm->arg_end     = prctl_map.arg_end;
+>         mm->env_start   = prctl_map.env_start;
+>         mm->env_end     = prctl_map.env_end;
+> -       spin_unlock(&mm->arg_lock);
+> -
+> -       /*
+> -        * Note this update of @saved_auxv is lockless thus
+> -        * if someone reads this member in procfs while we're
+> -        * updating -- it may get partly updated results. It's
+> -        * known and acceptable trade off: we leave it as is to
+> -        * not introduce additional locks here making the kernel
+> -        * more complex.
+> -        */
+>         if (prctl_map.auxv_size) {
+> -               memcpy(mm->saved_auxv, user_auxv, sizeof(user_auxv));
+>                 mm_flags_set(MMF_USER_HWCAP, current->mm);
+> +               memcpy(mm->saved_auxv, user_auxv, sizeof(user_auxv));
+>         }
+> +       spin_unlock(&mm->arg_lock);
+>
+>         mmap_read_unlock(mm);
+>         return 0;
+> @@ -2190,10 +2181,10 @@ static int prctl_set_auxv(struct mm_struct *mm, unsigned long addr,
+>
+>         BUILD_BUG_ON(sizeof(user_auxv) != sizeof(mm->saved_auxv));
+>
+> -       task_lock(current);
+> -       memcpy(mm->saved_auxv, user_auxv, len);
+> +       spin_lock(&mm->arg_lock);
+>         mm_flags_set(MMF_USER_HWCAP, current->mm);
+> -       task_unlock(current);
+> +       memcpy(mm->saved_auxv, user_auxv, len);
+> +       spin_unlock(&mm->arg_lock);
+>
+>         return 0;
+>  }
+> @@ -2466,9 +2457,17 @@ static inline int prctl_get_mdwe(unsigned long arg2, unsigned long arg3,
+>  static int prctl_get_auxv(void __user *addr, unsigned long len)
+>  {
+>         struct mm_struct *mm = current->mm;
+> +       unsigned long auxv[AT_VECTOR_SIZE];
+>         unsigned long size = min_t(unsigned long, sizeof(mm->saved_auxv), len);
+>
+> -       if (size && copy_to_user(addr, mm->saved_auxv, size))
+> +       if (!size)
+> +               return sizeof(mm->saved_auxv);
+> +
+> +       spin_lock(&mm->arg_lock);
+> +       memcpy(auxv, mm->saved_auxv, size);
+> +       spin_unlock(&mm->arg_lock);
+> +
+> +       if (copy_to_user(addr, auxv, size))
+>                 return -EFAULT;
+>         return sizeof(mm->saved_auxv);
+>  }
+> --
+> 2.53.0.239.g8d8fc8a987-goog
+>
 
