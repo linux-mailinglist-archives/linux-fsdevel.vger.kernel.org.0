@@ -1,64 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-76790-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uLCAL2CBimlaLQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76790-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 01:52:48 +0100
+	id oGA1KXaBimlaLQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 01:53:10 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 631B9115C4A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 01:52:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60694115C60
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 01:53:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id A773A301253C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 00:51:35 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 713683020EB5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 00:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C337C2877E5;
-	Tue, 10 Feb 2026 00:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0111730AACA;
+	Tue, 10 Feb 2026 00:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LsePl0td"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZYeVojU6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4BD271A7C;
-	Tue, 10 Feb 2026 00:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749E331AABA;
+	Tue, 10 Feb 2026 00:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770684630; cv=none; b=rvr7ZrdVVwxkus8wXWeJ7c5cquSfxFIGq6Tm3SHphwbDMVxwUwQnrnSZ+fj+0xBklDFnI7rnWh0nTRD/XNDTsW/HMA+ezztYXUEoGEoYNNRQij56rYUpQr1b0sTIpjG5ykQG5YAiTXAlZIQzCpanq2fHmGmzA4LRYr83lcxaJUQ=
+	t=1770684631; cv=none; b=j9bQVP7ZqztUrVDf5L9nUssA1prH0kQU16y24za+d7K4hVquIeGnhN1Qnldq25RbNTACiXNKDmOvI/cL43NIy+PBHAbkS6N5liS5BbIa1pheN/FoDHgO0Qj4ebhLxsrd/wseETnBKyFXpvyVCplr0nY8IEmC05tDfuufS/bquEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770684630; c=relaxed/simple;
-	bh=VZXuxr6R8KGYzET38xqTkOMgxvgHRVTJ5XztEtlE9iU=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=svWrkLGvoiYJC0BV3NAG/ZlhpXv2mjB1XwpyaXqsevIBFwGYtO9FoGrA1zM858mNh01JHS44pQGZv4FrmzPpzFJCoF8fgmrtHZ51nviN92IErC1sV5N9rJRioRMD1LY3HmNktM7c1dcJvHq+RFBlM/2TJGRcjB/F/Kohxt/9Sqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LsePl0td; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 359CAC19422;
-	Tue, 10 Feb 2026 00:50:30 +0000 (UTC)
+	s=arc-20240116; t=1770684631; c=relaxed/simple;
+	bh=ViwLvSHEyUWo1ff6v8zU0ZhFEIZDPqEkwx0P0XxFEpQ=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=iiVzbxQciXcrGojFXwEUmQbSrcE7eZPLJy75PIAi8fRGcdgjNqEDmHgwubuZRAPYxJ59P40W0/X9syHLJA9l1PdqXq9CQ4aQJLIkf7QjjgnGgqvXddrWSMN77uKSxCTzCeO3QiQWWg46Rl1GcvE9K9T3i7jtRh1AVQTRK3yVEsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZYeVojU6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CCFAC19423;
+	Tue, 10 Feb 2026 00:50:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770684630;
-	bh=VZXuxr6R8KGYzET38xqTkOMgxvgHRVTJ5XztEtlE9iU=;
+	s=k20201202; t=1770684631;
+	bh=ViwLvSHEyUWo1ff6v8zU0ZhFEIZDPqEkwx0P0XxFEpQ=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=LsePl0tdbNBuoOpxDKikhwquA73DCQMVJHJ3C15ATeJcshpKFvpEtazwiIWN60UxH
-	 Dl02aa/UYlhwbZ9Kl5zgBea06NxiNIyoS+VwYSJxj6B5pelbjmVLq/m6SLxZnqQJD8
-	 jwNACmjcr9wGdlNhbpAg11wN9IY+HVqcXvoREDTgDJAQQMD1OvaTlELDUBJZe3Bdjp
-	 nbVmxg1i3sHAsn0PBnym13lAmjSF9D0pIJJzWCbZGSy9CBwA+aVT/F/o6F4v6ylAKm
-	 v20Q6M1ZLVJVl0/47quX9FKLbsr4OSpFX1+CXGQ4yclktA2NhBtgerZ/wcJGCsGj1m
-	 SiMhQFEwwrBJw==
+	b=ZYeVojU6ZpgnA2w38KuXMFLMqWeUWg3xaj54Sv09AlO0rpdGSTkAHZTsx/LU0g0RA
+	 VDmzuDTu6ws83HlQZySYCac7sxivVWFcJ5KhFlRgroZx96xrSS2UQeejV8aDlaUKl+
+	 OiemC9F71xXzy45dQ+roe0lVIgQRQTEgW4oRbninyyO1VO8cQ66mP7In6zr8jIC8oj
+	 B338iVRtI4q35flO94Cbt9rG1KodPm52mMUGSmy12ypTBDaBenSDUGK7V2ZII4iC2U
+	 d8whG/R1PkSNousNG8gs+XeF+bWYi+acpp1FUj2rfD/QNT774vHzY8VCAxO8tqoZCv
+	 4ldcIWGmuhJJw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 2A0F9380AA4C;
-	Tue, 10 Feb 2026 00:50:27 +0000 (UTC)
-Subject: Re: [GIT PULL 08/12 for v7.0] vfs nullfs
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 553EA380AA4B;
+	Tue, 10 Feb 2026 00:50:28 +0000 (UTC)
+Subject: Re: [GIT PULL 09/12 for v7.0] vfs atomic_open
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20260206-vfs-nullfs-v70-20f5788c0c2f@brauner>
-References: <20260206-vfs-v70-7df0b750d594@brauner> <20260206-vfs-nullfs-v70-20f5788c0c2f@brauner>
+In-Reply-To: <20260206-vfs-atomic_open-v70-7297c622297a@brauner>
+References: <20260206-vfs-v70-7df0b750d594@brauner> <20260206-vfs-atomic_open-v70-7297c622297a@brauner>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20260206-vfs-nullfs-v70-20f5788c0c2f@brauner>
-X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-7.0-rc1.nullfs
-X-PR-Tracked-Commit-Id: 313c47f4fe4d07eb2969f429a66ad331fe2b3b6f
+X-PR-Tracked-Message-Id: <20260206-vfs-atomic_open-v70-7297c622297a@brauner>
+X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-7.0-rc1.atomic_open
+X-PR-Tracked-Commit-Id: 6ea258d1f6895c61af212473b51477d39b8c99d2
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c84bb79f70c634a95929f21c14340ab2078d7977
-Message-Id: <177068462609.3270491.10745558936509155431.pr-tracker-bot@kernel.org>
-Date: Tue, 10 Feb 2026 00:50:26 +0000
+X-PR-Merge-Commit-Id: 8113b3998d5c96aca885b967e6aa47e428ebc632
+Message-Id: <177068462722.3270491.14558916523133337354.pr-tracker-bot@kernel.org>
+Date: Tue, 10 Feb 2026 00:50:27 +0000
 To: Christian Brauner <brauner@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
@@ -77,7 +77,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-76790-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-76791-lists,linux-fsdevel=lfdr.de];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -94,15 +94,15 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	RCPT_COUNT_FIVE(0.00)[5];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 631B9115C4A
+X-Rspamd-Queue-Id: 60694115C60
 X-Rspamd-Action: no action
 
-The pull request you sent on Fri,  6 Feb 2026 17:50:04 +0100:
+The pull request you sent on Fri,  6 Feb 2026 17:50:05 +0100:
 
-> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-7.0-rc1.nullfs
+> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-7.0-rc1.atomic_open
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c84bb79f70c634a95929f21c14340ab2078d7977
+https://git.kernel.org/torvalds/c/8113b3998d5c96aca885b967e6aa47e428ebc632
 
 Thank you!
 
