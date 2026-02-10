@@ -1,61 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-76907-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UJt1Os7Ai2l6aQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76907-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 00:35:42 +0100
+	id wJ6LKd/Ai2l6aQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 00:35:59 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E42D120109
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 00:35:42 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE4D1120125
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 00:35:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3E0E530C96FC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 23:31:52 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 625C630D8E5C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 23:31:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D066318BAD;
-	Tue, 10 Feb 2026 23:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F170C313287;
+	Tue, 10 Feb 2026 23:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9vtVvcv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lLNNS+Lu"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ADE219ABD8;
-	Tue, 10 Feb 2026 23:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0AE330320;
+	Tue, 10 Feb 2026 23:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770766310; cv=none; b=okxtBOAJqAcZxQmAklaOXrjlTz6LvtkKdR+LJJQhWHrOFKZDsIA0VaULLMd+dgz6AuIIy5+0I3BOLLxCyKDkk2RfZndT0UJokTJk1xx0zWexhyyOnM4OlufMzzx+E1vQ05vRopIdVqz5CcBVC7E6hjFPXcC3CUZ+4UH3bGsuvUA=
+	t=1770766312; cv=none; b=XOIk7CesWLwRaOjbMmKOQuY0wS5diJw6Dk3QQNo1hlBYhGOvyGCPO1wvxobBAbAYVGmdoM5hAe+dYx6pf245D1kdvGxFwtHBKdfG5l0sdpyP21IqTNqhmkwGjUAigdxFbaye8VhPESZERewhozEwCYAHjEI0d9YTqQlJNlXzUOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770766310; c=relaxed/simple;
-	bh=CvkOEkSV6WrAFnbR2AFy4KmtSgcVzkq/0jjIw2+XCrg=;
+	s=arc-20240116; t=1770766312; c=relaxed/simple;
+	bh=pHLQ7g6BAmHX92nJatKDdVeSH8Lk8THTaSmzsP+WyaM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AL4MCi3Nh26P1XB9b6AHDC8UWbkN8fznpevrRVTZlrPXZsWypSPG5DN6X7asNZws56DD70mLXMk00cFNCH000rt9MXtqjNuL+XgziN3S9E0HBBUwnwufPV63Rwdy58ZismxI+nseBdDtIonHHm/E/j+ItmAjpohk6EnqQLtHNXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9vtVvcv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D97B3C19425;
-	Tue, 10 Feb 2026 23:31:48 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Dggy/QtDxCw8dVFOtdznbWN8hYUyWgi4tqpDTJZmn7GLu0dBBV8ojEt2i7mBJ76nUz0pdGHkCO9mSg9fZzH3/FgfIalm0XibdcFV4f4ISWXUXngUI7RrHX4B21hGHTHBfReuFOHcP8wWUzCocm/rAy//tUPclTd1B4PcM4IsuNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lLNNS+Lu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52490C19423;
+	Tue, 10 Feb 2026 23:31:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770766309;
-	bh=CvkOEkSV6WrAFnbR2AFy4KmtSgcVzkq/0jjIw2+XCrg=;
+	s=k20201202; t=1770766312;
+	bh=pHLQ7g6BAmHX92nJatKDdVeSH8Lk8THTaSmzsP+WyaM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=n9vtVvcvbtFxnReABWR/vG9FLy08LwZlooaYvqWBUk1PS2Y1s1vLOQWnj1DuDfKqG
-	 zXhaTpdL2SqxbTcTqKg9NEcfpfXNCfKA5tjqHhz9kD2Ws6ElZN+d9GJ35YkA7D3Xo9
-	 TppxeM9B+yev06sQDivOmhLNV90d4aGR0euHZR3EKtsgYlAlbpzR5duAMSc3C2M0e8
-	 9rheDU2pDWpJK51VATzeois+TxHuUHQ4gqZr13bWivK+eOxbTu0DSq+zf1BYLGzk51
-	 mxcRZfaFJGR3oyrDfuGcONfxbYNm3HX6P8ifywNczpr7tJe4q2JF7bNDI8FPwEehq9
-	 nXD29+o1GsPwA==
+	b=lLNNS+LukH1IMfX4IRgvriqMpzp+CV/CVzWn2Rr/WmcWvB6jYn/FX4A1GxNE4ISnJ
+	 W6q6e3XsgTnRY17VPh4IH4WmpCSElubUkAngFiFlwbeLKYHcItcIi+GSGELQhrXH43
+	 xXfe6uyBnVfJvMAlV/JqrXfVb7TYOsB8zJjL/CGM8HY68BVsMKaDTJqm1S2qUDVL0M
+	 5BCNHSloLS9LCfRmajw+2DfBMaOUlUrrMPGSO1GeAJncoQ8hn+wFXl4JY62sHGgr9o
+	 ItP6NLjqqlK9QHy1OwTiEyQ0wHlt57Y8cuYQVT6qj6EuH+/qe3XLpgbFj13G1sTkdq
+	 YHLnraSAQwwgA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Bhavik Sachdev <b.sachdev1904@gmail.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Christian Brauner <brauner@kernel.org>,
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	syzbot <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>,
+	Viacheslav Dubeyko <slava@dubeyko.com>,
 	Sasha Levin <sashal@kernel.org>,
-	viro@zeniv.linux.org.uk,
+	frank.li@vivo.com,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.19-6.12] statmount: permission check should return EPERM
-Date: Tue, 10 Feb 2026 18:31:01 -0500
-Message-ID: <20260210233123.2905307-16-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.19-5.10] hfsplus: pretend special inodes as regular files
+Date: Tue, 10 Feb 2026 18:31:03 -0500
+Message-ID: <20260210233123.2905307-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260210233123.2905307-1-sashal@kernel.org>
 References: <20260210233123.2905307-1-sashal@kernel.org>
@@ -76,17 +76,16 @@ X-Spamd-Result: default: False [0.34 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[gmail.com,szeredi.hu,kernel.org,zeniv.linux.org.uk,vger.kernel.org];
-	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-76908-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76907-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
@@ -95,167 +94,208 @@ X-Spamd-Result: default: False [0.34 / 15.00];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[msgid.link:url,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,szeredi.hu:email]
-X-Rspamd-Queue-Id: 5E42D120109
+	TAGGED_RCPT(0.00)[linux-fsdevel,895c23f6917da440ed0d];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[dubeyko.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,syzkaller.appspot.com:url]
+X-Rspamd-Queue-Id: CE4D1120125
 X-Rspamd-Action: no action
 
-From: Bhavik Sachdev <b.sachdev1904@gmail.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-[ Upstream commit fccbe38a5d06dbe44bcd89196fe1d2c2272a1f4a ]
+[ Upstream commit ed8889ca21b6ab37bc1435c4009ce37a79acb9e6 ]
 
-Currently, statmount() returns ENOENT when caller is not CAP_SYS_ADMIN
-in the user namespace owner of target mount namespace. This should be
-EPERM instead.
+Since commit af153bb63a33 ("vfs: catch invalid modes in may_open()")
+requires any inode be one of S_IFDIR/S_IFLNK/S_IFREG/S_IFCHR/S_IFBLK/
+S_IFIFO/S_IFSOCK type, use S_IFREG for special inodes.
 
-Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
-Signed-off-by: Bhavik Sachdev <b.sachdev1904@gmail.com>
-Link: https://patch.msgid.link/20251129091455.757724-2-b.sachdev1904@gmail.com
-Signed-off-by: Christian Brauner <brauner@kernel.org>
+Reported-by: syzbot <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>
+Closes: https://syzkaller.appspot.com/bug?extid=895c23f6917da440ed0d
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
+Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
+Link: https://lore.kernel.org/r/d0a07b1b-8b73-4002-8e29-e2bd56871262@I-love.SAKURA.ne.jp
+Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-Good - the selftests don't check for a specific errno on the permission
-path, so the change won't break tests.
-
-Now let me summarize the analysis.
+Now I have a complete picture. Let me compile my analysis.
 
 ---
 
 ## Detailed Analysis
 
-### 1. COMMIT MESSAGE ANALYSIS
+### 1. Commit Message Analysis
 
-The commit message is clear: `statmount()` returns the wrong errno code
-(`ENOENT`) when a caller lacks `CAP_SYS_ADMIN` in the user namespace
-owning the target mount namespace. The commit changes it to `EPERM`,
-which is the standard POSIX errno for "operation not permitted."
+The commit message is clear: HFS+ special/system inodes (catalog, extent
+overflow, allocation bitmap, startup, and attributes files) never have
+`i_mode` set, leaving it at 0 after `iget_locked()`. This violates the
+new VFS requirement (from `af153bb63a33`) that all inodes must have a
+valid `S_IF*` type when opened via `may_open()`.
 
-The commit was suggested by Miklos Szeredi (a senior VFS maintainer),
-authored by Bhavik Sachdev, and merged by Christian Brauner (the VFS
-maintainer). This gives strong confidence in correctness.
+The commit is reported by syzbot with a concrete reproducer and a link
+to the syzkaller bug tracker. It's reviewed and signed off by the HFS+
+maintainer Viacheslav Dubeyko.
 
-### 2. CODE CHANGE ANALYSIS
+### 2. Code Change Analysis
 
-This is a **one-line change**: `-ENOENT` to `-EPERM` on line 5783 of
-`fs/namespace.c`.
+The fix is a single statement added to `hfsplus_system_read_inode()` in
+`fs/hfsplus/super.c`:
 
-The affected code path is in the `statmount()` syscall
-(SYSCALL_DEFINE4):
-
-```5781:5783:fs/namespace.c
-        if (kreq.mnt_ns_id && (ns != current->nsproxy->mnt_ns) &&
-            !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
-                return -ENOENT;
+```c
+inode->i_mode = S_IFREG;
 ```
 
-The condition checks: Is the caller requesting a specific mount
-namespace ID? If so, is it different from the caller's own mount
-namespace? And does the caller lack `CAP_SYS_ADMIN` in that namespace's
-user namespace? If all three conditions are true, this is a **permission
-denial**, and `-ENOENT` ("No such file or directory") is semantically
-incorrect. `-EPERM` ("Operation not permitted") is the correct error
-code.
+This is placed after the switch statement that reads the fork data for
+each special inode type (HFSPLUS_EXT_CNID, HFSPLUS_CAT_CNID,
+HFSPLUS_ALLOC_CNID, HFSPLUS_START_CNID, HFSPLUS_ATTR_CNID).
 
-### 3. BUG MECHANISM
+**The bug mechanism**: When `hfsplus_iget()` is called for a system
+inode (inode number < `HFSPLUS_FIRSTUSER_CNID` and !=
+`HFSPLUS_ROOT_CNID`), it calls `hfsplus_system_read_inode()`. This
+function sets up the fork data and address space operations but **never
+sets `i_mode`**. The `i_mode` remains 0 (the default from
+`iget_locked()` → `alloc_inode()`). Zero is not a valid file type - it
+doesn't match any of S_IFDIR, S_IFLNK, S_IFREG, S_IFCHR, S_IFBLK,
+S_IFIFO, or S_IFSOCK.
 
-This is a **wrong errno** bug introduced by commit `71aacb4c8c3d` ("fs:
-Allow statmount() in foreign mount namespace") in v6.11-rc1. The
-original author used `-ENOENT` for both "namespace doesn't exist" and
-"you don't have permission", but these are semantically different
-conditions that userspace needs to distinguish.
+When this inode is later opened via a userspace `openat()` syscall
+(triggered by syzbot with a crafted filesystem), `may_open()` is called:
 
-**Internal inconsistency**: The inner `do_statmount()` function (line
-5572-5574) already correctly returns `-EPERM` for a different permission
-check (`!is_path_reachable(...) && !ns_capable_noaudit(...)`). The outer
-syscall returning `-ENOENT` for the same type of permission check is
-inconsistent.
+```4175:4232:fs/namei.c
+static int may_open(struct mnt_idmap *idmap, const struct path *path,
+                    int acc_mode, int flag)
+{
+        // ...
+        switch (inode->i_mode & S_IFMT) {
+        case S_IFLNK:
+        // ...
+        case S_IFREG:
+        // ...
+        default:
+                VFS_BUG_ON_INODE(!IS_ANON_FILE(inode), inode);
+        }
+```
 
-**Impact on userspace**: A userspace program calling `statmount()` on a
-foreign mount namespace without sufficient privileges receives `ENOENT`,
-which it would naturally interpret as "the mount namespace doesn't
-exist." This misleads debugging and prevents proper error handling. A
-container runtime or monitoring tool, for example, would think the
-namespace is gone rather than that it lacks the right credentials —
-leading to potentially wrong recovery actions.
+With `i_mode = 0`, the switch falls to the default case, and since HFS+
+special inodes aren't anonymous files, `VFS_BUG_ON_INODE` triggers →
+**kernel BUG** (crash). This is confirmed by the syzbot crash report
+showing `kernel BUG at fs/namei.c:3474` with a full stack trace through
+`may_open` → `do_open` → `path_openat` → `do_filp_open` →
+`do_sys_openat2` → `__x64_sys_openat`.
 
-### 4. SCOPE AND RISK
+### 3. Relationship to Other Fixes
 
-- **Scope**: Single-line change, single file (`fs/namespace.c`)
-- **Risk**: Extremely low. This only changes an error code on a failure
-  path. No logic is altered. No new code paths are created.
-- **Potential concern**: If any userspace program checked `errno ==
-  ENOENT` specifically after `statmount()` to handle permission
-  failures, it would need to be updated. However, no such code exists in
-  kernel selftests, and relying on ENOENT for permission denial would be
-  poor practice.
+This is **NOT a duplicate** of `005d4b0d33f6` ("hfsplus: Verify inode
+mode when loading from disk"). That fix addresses a DIFFERENT code path:
 
-### 5. STABLE TREE APPLICABILITY
+- `005d4b0d33f6` fixes `hfsplus_get_perms()` in `fs/hfsplus/inode.c` -
+  validates mode for **user/root inodes** loaded from disk (corrupted
+  on-disk mode)
+- The commit we're analyzing fixes `hfsplus_system_read_inode()` in
+  `fs/hfsplus/super.c` - sets mode for **special/system inodes** that
+  never go through `hfsplus_get_perms()` at all
 
-The buggy code was introduced in **v6.11-rc1** and exists in stable
-branches **6.11.y** through **6.19.y**. I confirmed the exact same code
-(with `-ENOENT`) exists at the same location in both
-`stable/linux-6.11.y` and `stable/linux-6.12.y`. The patch applies
-trivially with no dependencies.
+In `hfsplus_iget()`, the two paths are clearly separated:
+- `inode->i_ino >= HFSPLUS_FIRSTUSER_CNID || inode->i_ino ==
+  HFSPLUS_ROOT_CNID` → `hfsplus_cat_read_inode()` →
+  `hfsplus_get_perms()` (fixed by `005d4b0d33f6`)
+- Otherwise → `hfsplus_system_read_inode()` (fixed by THIS commit)
 
-**Note**: `listmount()` (line 5943-5945) has the same bug (`-ENOENT`
-instead of `-EPERM` for the same permission check). The commit being
-analyzed only fixes `statmount()`, not `listmount()`. The Link URL
-contains `757724-2` suggesting this was patch 2 of a series; patch 1
-likely fixes `listmount()`. However, each fix is independent - fixing
-`statmount()` alone is valuable even without the companion `listmount()`
-fix.
+Confirmed via grep: there is literally NO `i_mode` reference in
+`fs/hfsplus/super.c` currently.
 
-### 6. CLASSIFICATION
+### 4. CONFIG_DEBUG_VFS Dependency
 
-This is a **bug fix** — returning incorrect errno values from syscalls
-is a well-understood class of bug that affects userspace programs' error
-handling. It is:
-- Small and surgical (one line)
-- Obviously correct (EPERM is the right code for permission denial)
-- Low risk (only changes a failure path's error code)
-- Fixes a real userspace-visible issue (misleading errno)
+The `VFS_BUG_ON_INODE` macro is only active when `CONFIG_DEBUG_VFS` is
+enabled. Without it, it's compiled to `BUILD_BUG_ON_INVALID(cond)` which
+is a no-op at runtime. `CONFIG_DEBUG_VFS` was introduced alongside
+`af153bb63a33` in v6.15 (commit `8b17e540969a`).
 
-### 7. CONCERNS
+So the **crash** only occurs on kernels 6.15+ with `CONFIG_DEBUG_VFS`
+enabled. However, having `i_mode = 0` is technically incorrect on ALL
+kernel versions - any code checking inode type would get wrong results
+for these inodes.
 
-- **No companion fix for listmount()**: The same bug exists in
-  `listmount()` but this commit only addresses `statmount()`. Ideally
-  both should be backported together.
-- **UAPI change**: This technically changes the behavior of a syscall
-  (different errno), which is visible to userspace. However, since the
-  previous value was incorrect and misleading, this is a correction, not
-  a regression.
+### 5. Scope and Risk Assessment
 
-### 8. VERDICT
+- **Lines changed**: 6 (including comment) - effectively 1 functional
+  line
+- **Files touched**: 1 (`fs/hfsplus/super.c`)
+- **Risk**: Essentially zero. Setting `S_IFREG` on internal filesystem
+  inodes that previously had no type is strictly an improvement. These
+  inodes are filesystem metadata (btrees, allocation bitmap) - they are
+  file-like data structures, so `S_IFREG` is appropriate.
+- **No behavioral regression**: The fix doesn't change how the
+  filesystem operates; it only ensures the inode has a valid VFS-level
+  type.
 
-This is a clear, minimal, correct bug fix to a syscall's error handling.
-It returns the correct standard POSIX errno (`EPERM`) instead of a
-misleading one (`ENOENT`) when a permission check fails. It's a one-line
-change with zero risk of regression, authored with involvement from
-senior VFS maintainers (Miklos Szeredi suggesting, Christian Brauner
-merging). It applies cleanly to all affected stable trees (6.11+).
+### 6. User Impact
+
+- **Who's affected**: Anyone mounting HFS+ filesystems on kernels 6.15+
+  with `CONFIG_DEBUG_VFS`
+- **Severity**: Kernel BUG/crash - system goes down
+- **Trigger**: syzbot demonstrated this with crafted filesystem images,
+  but it could potentially also be triggered with corrupted real HFS+
+  volumes
+- **syzbot confirmed**: 17,716 crashes recorded, reproducible with C
+  reproducer
+
+### 7. Stability Indicators
+
+- Reviewed-by: Viacheslav Dubeyko (HFS+ maintainer)
+- Signed-off-by: Viacheslav Dubeyko (maintainer)
+- syzbot reported with concrete reproducer
+- Part of a series of similar fixes across multiple filesystems (bfs,
+  cramfs, isofs, jfs, minixfs, nilfs2, ntfs3, squashfs) - the ntfs3
+  equivalent `4e8011ffec79` is already merged
+
+### 8. Dependencies
+
+The prerequisite VFS commit `af153bb63a33` exists in 6.15+. For older
+stable trees (6.14 and below), the `VFS_BUG_ON_INODE` doesn't exist, so
+the crash won't happen. However, the fix itself applies cleanly
+regardless of version since `hfsplus_system_read_inode()` has been
+stable for many years. Setting a proper i_mode is correct behavior
+independently of the VFS debug check.
+
+### Conclusion
+
+This is a clear **YES** for stable backporting:
+- Fixes a syzbot-reported kernel BUG (crash) - 17,716 crash instances
+  recorded
+- The fix is one functional line: `inode->i_mode = S_IFREG;`
+- Zero risk of regression
+- Obviously correct - internal inodes should have a valid file type
+- Reviewed and accepted by the subsystem maintainer
+- Complements the already-merged `005d4b0d33f6` by covering a different
+  code path
+- Part of a broader class of fixes across multiple filesystems for the
+  same VFS requirement
 
 **YES**
 
- fs/namespace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/hfsplus/super.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index c58674a20cad5..f6879f282daec 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -5780,7 +5780,7 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
+diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
+index aaffa9e060a0a..7f327b777ece8 100644
+--- a/fs/hfsplus/super.c
++++ b/fs/hfsplus/super.c
+@@ -53,6 +53,12 @@ static int hfsplus_system_read_inode(struct inode *inode)
+ 		return -EIO;
+ 	}
  
- 	if (kreq.mnt_ns_id && (ns != current->nsproxy->mnt_ns) &&
- 	    !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
--		return -ENOENT;
-+		return -EPERM;
++	/*
++	 * Assign a dummy file type, for may_open() requires that
++	 * an inode has a valid file type.
++	 */
++	inode->i_mode = S_IFREG;
++
+ 	return 0;
+ }
  
- 	ks = kmalloc(sizeof(*ks), GFP_KERNEL_ACCOUNT);
- 	if (!ks)
 -- 
 2.51.0
 
