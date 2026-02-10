@@ -1,196 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-76863-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76865-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id kM5OOeNui2lhUQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76863-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 18:46:11 +0100
+	id AEB4Bopxi2mgUQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76865-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 18:57:30 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FE3B11E10A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 18:46:11 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id C321B11E2C6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 18:57:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1F6DD304500F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 17:45:49 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id B34403015883
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Feb 2026 17:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BCF26A08A;
-	Tue, 10 Feb 2026 17:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7A631ED8B;
+	Tue, 10 Feb 2026 17:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QfyN6Nk0";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="uHm3KmVX"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="aSsdi1p0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833FF318BB9
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Feb 2026 17:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770745547; cv=none; b=cQ2ipSkm9xSQAX4f6em0DajxA+elhaezbM+btAO6QKsr/6vcGTJ18foWYgcUXy3BITbT8RNgg9nGdkkredNzLXGo23W3MZoEijTIsLBprd9CVrOQ5+LluoLVff4uS4o9KEDSnYwkqOPcKsgl3nRGCTWYF1wqUBcI6kjjTDmSgKE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770745547; c=relaxed/simple;
-	bh=CPkvK7XkxBtLfxrYYEVvyrGgJ1BgYqj5KCtOpBrIFu0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kseGE7cTuK3bieuIIjXmZANUDxmohWL5nOxtOxnkz9Lis24WxL+aWsAym+G4gtgs9dW8cEpYvblDhi+8kiOsaLlhj/NP1zF8gSq09QUXt7Y9TYnc4fp0++My20PyK2yV+fxXWHa6CnjogcPG5q+g7hsvzzjY0vxnECRgiVsqFhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QfyN6Nk0; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=uHm3KmVX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1770745545;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v97i6pXJR3OS2M9QPJY31R/eAhpPw43HPcZzC/bD1aM=;
-	b=QfyN6Nk0XFVn1RhRcDP9F44sEaj8IubQYq0djS39niI5eoOEladEnWaN1GGmXqSxEXfS21
-	oyouFMZ2PRt+5r1rIpnYgYXImMz+oCUE/mL5ISJOBc4OviD1VXVJMgD6L9+gOsREQwXzzL
-	6GZQt9En3Uy2JM5ql/VSqzYjtcvYRxU=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-501-QP3P3-_rPdKEt8q3toQu1w-1; Tue, 10 Feb 2026 12:45:44 -0500
-X-MC-Unique: QP3P3-_rPdKEt8q3toQu1w-1
-X-Mimecast-MFC-AGG-ID: QP3P3-_rPdKEt8q3toQu1w_1770745543
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-435af2d3144so2763586f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Feb 2026 09:45:43 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244BD318ECD
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Feb 2026 17:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770746242; cv=pass; b=E45eHT/rZnsXkQHhptm7acEVW6q7FpMZ3OmTVy+dvIMzHJET1/DefAz27/g/LFOzjUTyx9HqalaHqpHocSH30fKazQXDLbx4Xbk3L4+HcYoQXdH2JOxMFXDdm1wxmTFO9bkULM10UimNszN3EUzaPMIvKQrynNPQsYhK0NVh9Ro=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770746242; c=relaxed/simple;
+	bh=GWrFpYjIUc/xj7N0wd3tBFD8akKoS2HrmAT5yE7jq5o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P2NFVxO16qfFwaXxqy3taMvzd2ZVh75r6PHE7lHvcuYLDvLbhUeSrobKFRuaVT5iR/LuTi0CBWkE9uCV5KLfDjcYYyqtwWCjpfDaZXXsbZRGa/eBInV5V1seBquMlfSGFomziklX5vnZm/7I1EAMNynG/JpsPG07le/ecSl2Ef0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=aSsdi1p0; arc=pass smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-658cb91a6c4so981796a12.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Feb 2026 09:57:20 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770746239; cv=none;
+        d=google.com; s=arc-20240605;
+        b=WLDKwdi4cb2qPRxTe+yA41XY1ahA15Vqh81GIqrwmMtBQRVeRTPjMQcXbtNGxn8LC7
+         l5KyntgKg/Uql/LSUWDPUelqetDAgI7NuFFIzGgxhzE4B5wsic+SE1lYRr5ZkGqRTKAX
+         79xA7fSu3omhkW12CCdDnBfwv6AAI1zkfBcOeC5CJkpLwxZo4VQV3ICcFT+lqKtahW5l
+         b1EKsC6YeDWHq9dOdBDl3DqBbcK45U/UXrkqSBd4HwNkMiV7dhQ5ocPEjdHb6qK4izy3
+         a6maEjCMX9xN4ySPUxdQwTjN/7Mh3rbiuen/ukJZpNpavEF86IIGMfO8ojnC/om9uN2Z
+         TQ8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=+nXNw/knapKCOCvKXk/sxttCrc1XoB9SJeujCBS22Zg=;
+        fh=nqzW2sbZiBmS0Rh/lUIWmVnXGSzgHa3dKkQOxQJfYSA=;
+        b=Twu/4B1QN7oKQphjyYBFK5hQgUaZ6Ei7P8KCIPJVOdSkSRwFFvh7ucR0Z9IXOrzLPv
+         eK3i0KzPwpJZ2lWqHfMkMpBspXZCEdJ7uzDy8cxhTtNZC3AbugXwvdGF5OuPZdyMBZMe
+         xDOrA9Kl252pS9bh5RSmnmzJ9tOpcaQDwO/M3ez1C+7YsctvVLgTmMPtKy0/sjmc3Blz
+         1IQuA5GUV2lT/zhirx0dvQUUcdeFzu92HEXyl1cEducnDmcbqpayfRxiIGVXoz2TWc25
+         1b0m65JXGfhGlMwMP5TzOZD9+lq+KaBklQ7VIXOx/NlruLCXdqw/fsDgMzLRQcAzsXPS
+         KJDQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1770745543; x=1771350343; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v97i6pXJR3OS2M9QPJY31R/eAhpPw43HPcZzC/bD1aM=;
-        b=uHm3KmVX6WwNf0mll+cqSiNej64+aaQoC+ht46IFRxbO+jdxRisHW7hMyZPZOBBfmD
-         beTu2/NF5VMhSWcZQFk/LEt6VfYb/0psKf5/8H26IwZQXY57Q/hmG6h3Aq9spWGf1lZs
-         5u7O1skcUJCarvdJlOsqoXP6WlGb9yD4pT2h+dXJjjsfHbXm8nJ/O7wu5j7QaIda0Rve
-         W8+wqWdl3kVFNmazswiR4EIgnF2LlESRisPBiu8pJkeucVTgsZemRELHT1uPzrEFy2ed
-         803bAzKZEh2Dibf1EWPh1ZE2DFfageB3FNvONY8R6+ZuwgEN4B3Nl+Kqg/2M3wNf/pFc
-         N/AA==
+        d=purestorage.com; s=google2022; t=1770746239; x=1771351039; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+nXNw/knapKCOCvKXk/sxttCrc1XoB9SJeujCBS22Zg=;
+        b=aSsdi1p0Ha2F5eENwkNpXC1eH41Ep3s0s30PUKiUr6QXPHWz8au9yrYCcVMWrt62Mj
+         xc28knHOt9wvQY8YVEerWln4eqJTp0/YN5ATaEQvUKlKTBY+fEcue+HAqbWWO3Xh9iVI
+         mIEjXGMGcSe/F8Q/YuWY+rr28Fx4OKYmk/1zTtbqtPYDeO+twl/nge5eAqxEAezPXx7Q
+         +N7v0H3cESmIQ/RDiWeSuUls2uvklQIpUZHBPtmlPir1Z2KLB6PNT7vFHMSZWZz5OoT2
+         6YR9fO0+gVfvtXpuJuQC/4URLZ61eDH1bSctV2c9QiK9pN+PQAVI9N3z4ggCkKFesDas
+         vyTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770745543; x=1771350343;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v97i6pXJR3OS2M9QPJY31R/eAhpPw43HPcZzC/bD1aM=;
-        b=rFLi3F/bfstH3Tm3qpEXyTj8sTh8sscIjPMyZmSdl9B92dYhO3bGfiASdrP5BGIAhu
-         KPq7OC+hDK74tHHUd55p2ZzuQk07aezPn1gZ1AVDhc8ygU6/c033ZOER05jqT4cEqAMm
-         pP+mQRMLWyDcWgcVjFw4MhyxsAY6dvJ0Wkz6Uhrp1bHlflGIILZFzDkEfiNLf2ZbrPrN
-         +UE/5o4aeruWtIDrV9fynnKwwPNogKLBgcxDZpNuDltIWkWbW/a6SNZeKe8FjtJ8ts4x
-         bV2fBZUlwFtLiDIWE5pueeqz6Mow81jFn23Gntfv5Adij7OlpeOXqLl0bxZT54aTLhUi
-         k5vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKKBGA6wi3w3UxQ1OYJoNDI8yOG8RZ/CWTcvBo8+elJqqGjIJrR8azL0/xSVPk+5feINo0DJMuO3QmJIou@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3DhpTfFkR7BLiISWrhWMy0veEeMwio17CCtGsoTdJpos/zdDb
-	LYR/LuSF5Atr3Wnk13n1EWVD+ewl79WfZoZCv4TM+7n9mC7EbzT3vywYBdcyLLdO3mwrMV6eJeZ
-	Q5IjDKzDGoGIXsLSgWHGCbgDFw2FXBJXYibBcQ+hhQTf7JovGdTXQG37+cKqln0eJUw==
-X-Gm-Gg: AZuq6aLp/IIrNuZhtmO8B+zZRS+0NmzfueFXHxsbKf011++GuE7UEKuKcidtEfnADG7
-	osL8CMJuC+wgJYFmf6vCEQfMIlZtSIMRlcjsMFnHmb+m0YIVNLhtQ1boz18IPMBukGuf+yGy1/7
-	m1KgKsARMLyCAMuLMzklerW6bxWHj5zOc5eCPXQFTjMu6fGe3AORogUAz/kLO8F/GmcjywSxUVU
-	hjHhkn5dzAOMhz9Z4tOBCO/2mDFepQQ9S28/gG/zuntKjneshCq8GgywFcScj7Ve0JaqFDCm5u/
-	tZ6r+OP8hf3VVOSaYA2KPvfH/ks0WsM44idO3nidQUQpnteKRLGynUlU7EFqIAKDabz82qbVxEQ
-	ECqXy0K+Qc8o=
-X-Received: by 2002:a05:6000:1a42:b0:436:38a4:2423 with SMTP id ffacd0b85a97d-43638a42694mr13750881f8f.22.1770745542809;
-        Tue, 10 Feb 2026 09:45:42 -0800 (PST)
-X-Received: by 2002:a05:6000:1a42:b0:436:38a4:2423 with SMTP id ffacd0b85a97d-43638a42694mr13750844f8f.22.1770745542317;
-        Tue, 10 Feb 2026 09:45:42 -0800 (PST)
-Received: from thinky ([217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4376806626fsm22681690f8f.37.2026.02.10.09.45.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Feb 2026 09:45:41 -0800 (PST)
-Date: Tue, 10 Feb 2026 18:45:40 +0100
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>, "Darrick J . Wong" <djwong@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, syzbot+fa79520cb6cf363d660d@syzkaller.appspotmail.com, 
-	Andrey Albershteyn <aalbersh@kernel.org>, stable@vger.kernel.org
-Subject: Re: [PATCH] fs: set fsx_valid hint in file_getattr() syscall
-Message-ID: <bc7dga4oxvoqevokdzffl25mh7uawx3rfvz5q2goyz4z76l65r@bp4vpjmzmbhk>
-References: <20260210095042.506707-1-amir73il@gmail.com>
+        d=1e100.net; s=20230601; t=1770746239; x=1771351039;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=+nXNw/knapKCOCvKXk/sxttCrc1XoB9SJeujCBS22Zg=;
+        b=Br23/e7ma9hAqIzVfHN9ID5T+6izfDUctqO2XGG30gQtL2i3zqG5LsCctAg/BSeLLm
+         U3qE/kkpXohlXsHDujPES0bYqNr6SguN/QxScXZkOEG6rgpl+SqxSTtdQBzPNO8+urXL
+         NEIucCXKyvUm/cCN0K8h5XbP+BtzrBkT4SsTY2LwPvcuMdBW8yLOBo7EEve+5vSikNCq
+         OwM6BSEn6XjhN+cbqdkYaGpSfgPvQ1uxtssIGjB1WjIKCvF9oSoZRpFzASAHKz1W4q3h
+         nkaGmQ2vy3n4VirPgDMhi7SPrlti6XCfN2E3Oyv1xGZIlDFCAmKvldaggNzsdXwPVAHl
+         D/gw==
+X-Forwarded-Encrypted: i=1; AJvYcCV80+h7hiXHu6AsT/42M9DULIN6kkh+Z6OOw4q76Y/5Z1hdxltZP4A6USpv8vME2aGg9BVl/GauSAIpj0va@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhbKmNqmLddPJxZwhr2bdsVowIrnt91+a567liZp2oBsLIJl7S
+	DkG3C6EungJgCJ1u84NRNRPForDzxZIgYnHB3xF6Ce39v9BjWIOe6PqYeCK0OyZKc35r6nAp3xk
+	qhZ6XF2tEdOfbXv/tLC2MKB5phNdWZAoT2brw7VZNzg==
+X-Gm-Gg: AZuq6aIF4KhGrAFSFyvXMgSHu/GQt773YKjaxipb5g2GHC7yMaTB2w1WtoBJSgdYBOS
+	uzgqh5fu2rO/cUJfrk+TUrGre7MY2Oca4EfM67B3Ato7ymaL3QOWDype3o78EU+isJ6CfFdR4K6
+	Ed7R3lnp1iRWcDhrDikRnQfR5Cqf0sDwsIHfCWzzGVu7Mq5N9NoAYZ9Jx6BO/7gQC2uFb5CLwLx
+	BLBRnXwwvHr6Ojjb5sWsclhxj17jZ5ZwQWrGvj7lYYRT5Yl5/iV28kTkGLpJ76b2KbVRTE1lUwQ
+	J9SteH0j
+X-Received: by 2002:a05:6402:1465:b0:658:1392:84a9 with SMTP id
+ 4fb4d7f45d1cf-65a0f3987c8mr885820a12.5.1770746239535; Tue, 10 Feb 2026
+ 09:57:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260210095042.506707-1-amir73il@gmail.com>
+References: <20260210002852.1394504-1-joannelkoong@gmail.com>
+ <20260210002852.1394504-7-joannelkoong@gmail.com> <8826110e-cb5c-4923-99cd-b9f21f536d32@kernel.dk>
+In-Reply-To: <8826110e-cb5c-4923-99cd-b9f21f536d32@kernel.dk>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Tue, 10 Feb 2026 09:57:08 -0800
+X-Gm-Features: AZwV_QgslXwEFKldAeimaqaA_t6syzgt7pXhnv3lDqCXqFqd0HdgXnYkW1EMbvI
+Message-ID: <CADUfDZoiHYKrfb=NxLH=K99ALuDoABCnrOFC4_mZgqvT6qQPXw@mail.gmail.com>
+Subject: Re: [PATCH v1 06/11] io_uring/kbuf: add buffer ring pinning/unpinning
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Joanne Koong <joannelkoong@gmail.com>, io-uring@vger.kernel.org, krisman@suse.de, 
+	bernd@bsbernd.com, hch@infradead.org, asml.silence@gmail.com, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719,redhat.com:s=google];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[purestorage.com,reject];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[purestorage.com:s=google2022];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-76863-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
+	TAGGED_FROM(0.00)[bounces-76865-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[redhat.com:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[aalbersh@redhat.com,linux-fsdevel@vger.kernel.org];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,suse.de,bsbernd.com,infradead.org];
+	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel,fa79520cb6cf363d660d];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,appspotmail.com:email]
-X-Rspamd-Queue-Id: 7FE3B11E10A
+	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[csander@purestorage.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[purestorage.com:+];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel.dk:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: C321B11E2C6
 X-Rspamd-Action: no action
 
-On 2026-02-10 10:50:42, Amir Goldstein wrote:
-> The vfs_fileattr_get() API is a unification of the two legacy ioctls
-> FS_IOC_GETFLAGS and FS_IOC_FSGETXATTR.
-> 
-> The legacy ioctls set a hint flag, either flags_valid or fsx_valid,
-> which overlayfs and fuse may use to convert back to one of the two
-> legacy ioctls.
-> 
-> The new file_getattr() syscall is a modern version of the ioctl
-> FS_IOC_FSGETXATTR, but it does not set the fsx_valid hint leading to
-> uninit-value KMSAN warning in ovl_fileattr_get() as is also expected
-> to happen in fuse_fileattr_get().
-> 
-> Reported-by: syzbot+fa79520cb6cf363d660d@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/r/698ad8b7.050a0220.3b3015.008b.GAE@google.com/
-> Fixes: be7efb2d20d67 ("fs: introduce file_getattr and file_setattr syscalls")
-> Cc: Andrey Albershteyn <aalbersh@kernel.org>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->  fs/file_attr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/file_attr.c b/fs/file_attr.c
-> index 53b356dd8c33a..910c346d81bcd 100644
-> --- a/fs/file_attr.c
-> +++ b/fs/file_attr.c
-> @@ -379,7 +379,7 @@ SYSCALL_DEFINE5(file_getattr, int, dfd, const char __user *, filename,
->  	struct filename *name __free(putname) = NULL;
->  	unsigned int lookup_flags = 0;
->  	struct file_attr fattr;
-> -	struct file_kattr fa;
-> +	struct file_kattr fa = { .fsx_valid = true }; /* hint only */
->  	int error;
->  
->  	BUILD_BUG_ON(sizeof(struct file_attr) < FILE_ATTR_SIZE_VER0);
-> -- 
-> 2.52.0
-> 
+On Mon, Feb 9, 2026 at 5:07=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 2/9/26 5:28 PM, Joanne Koong wrote:
+> > +int io_uring_buf_ring_pin(struct io_uring_cmd *cmd, unsigned buf_group=
+,
+> > +                       unsigned issue_flags, struct io_buffer_list **b=
+l)
+> > +{
+> > +     struct io_ring_ctx *ctx =3D cmd_to_io_kiocb(cmd)->ctx;
+> > +     struct io_buffer_list *buffer_list;
+> > +     int ret =3D -EINVAL;
+>
+> Probably use the usual struct io_buffer_list *bl here and either use an
+> ERR_PTR return, or rename the passed on **bl to **blret or something.
+>
+> > +int io_uring_buf_ring_unpin(struct io_uring_cmd *cmd, unsigned buf_gro=
+up,
+> > +                    unsigned issue_flags)
+> > +{
+> > +     struct io_ring_ctx *ctx =3D cmd_to_io_kiocb(cmd)->ctx;
+> > +     struct io_buffer_list *bl;
+> > +     int ret =3D -EINVAL;
+> > +
+> > +     io_ring_submit_lock(ctx, issue_flags);
+> > +
+> > +     bl =3D io_buffer_get_list(ctx, buf_group);
+> > +     if (bl && (bl->flags & IOBL_BUF_RING) && (bl->flags & IOBL_PINNED=
+)) {
+>
+> Usually done as:
+>
+>         if ((bl->flags & (IOBL_BUF_RING|IOBL_PINNED)) =3D=3D (IOBL_BUF_RI=
+NG|IOBL_PINNED))
 
-There's same patch a bit earlier from Edward
-https://lore.kernel.org/linux-fsdevel/tencent_B6C4583771D76766D71362A368696EC3B605@qq.com/
+FWIW, modern compilers will perform this optimization automatically.
+They'll even optimize it further to !(~bl->flags &
+(IOBL_BUF_RING|IOBL_PINNED)): https://godbolt.org/z/xGoP4TfhP
 
-Looks good to me
-Reviewed-by: Andrey Albershteyn <aalbersh@kernel.org>
+Best,
+Caleb
 
--- 
-- Andrey
-
+>
+> and maybe then just have an earlier
+>
+>         if (!bl)
+>                 goto err;
+>
+> > +             bl->flags &=3D ~IOBL_PINNED;
+> > +             ret =3D 0;
+> > +     }
+> err:
+> > +     io_ring_submit_unlock(ctx, issue_flags);
+> > +     return ret;
+> > +}
+>
+> to avoid making it way too long. For io_uring, it's fine to exceed 80
+> chars where it makes sense.
+>
+> --
+> Jens Axboe
 
