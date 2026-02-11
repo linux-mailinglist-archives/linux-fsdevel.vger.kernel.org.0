@@ -1,183 +1,222 @@
-Return-Path: <linux-fsdevel+bounces-76914-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76915-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aCyGDeHRi2mgbgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76914-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 01:48:33 +0100
+	id qA9mFFHUi2njbgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76915-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 01:58:57 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FA231205E3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 01:48:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC855120664
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 01:58:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3755130557E1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 00:48:23 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 59691306C442
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 00:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2631F5821;
-	Wed, 11 Feb 2026 00:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A236723E33D;
+	Wed, 11 Feb 2026 00:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HG/ChHGK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Akfn2is4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2401FB1;
-	Wed, 11 Feb 2026 00:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C252238150
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 00:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770770901; cv=none; b=p5cBPsGv2AgqxVNsPMkX0+NL/mY2y5HtULqRKtnKyjAwoKaOLtd+dWsh9ZOiGnFe8cp1FwIMe3NRc4+q3Cw+fdQFJlpwJcux4FKhXocJTNUNdIvungfA0GJkOd3iEzaViIuKyhnVJFqKB/PCIZDdMMv2mpnjMcWAUfCM828fU2I=
+	t=1770771518; cv=none; b=gN+vF43Qhyg2uoCJZ4ZpI+Ne8iWVKfl5ZVw9am6OduAi62+8qHt7OoN/MhEKxOzl/JAVQwr3sm5w+tg+yVhwHtQXqyVLkIqjJu9pHRDld0PsqQEgDAu1Sfu1MXMmyX9INAa3EOIGzNMNHoBOsfsNj5gviohGmKzKsSgfRs4v2Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770770901; c=relaxed/simple;
-	bh=iCffL0xzUPUG3BJfbMxK8tI4lDRi9xgWQfS/pTIlq1g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SYR6UV3jLB3fHMYrWH4IlhpeGyk6fP0lH0gntmCj3MhbsqJ1203ugGf+V/QKlG+Gvp1Fu0N0RBEtu41lOiX4lAjioI78tlYLyh3zBWnRSDS5wAff6CY5OU9ep6ndHRN3AafYiHlAl5YUFN4dcQvOxOsz5foEdu1OIvzzAON/sFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HG/ChHGK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C86EDC19423;
-	Wed, 11 Feb 2026 00:48:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770770900;
-	bh=iCffL0xzUPUG3BJfbMxK8tI4lDRi9xgWQfS/pTIlq1g=;
-	h=From:To:Cc:Subject:Date:From;
-	b=HG/ChHGKKmMIKjJM7JRwB/IQoS0qJwmGjRtfoBuBf7cI5azTlKq4Fg5V61GAB9AQJ
-	 rOllaK0kLA9e8UXHBLjmvpE31q3p4SAmeHC/rz6ZqHmpxxAOVHoSN1F/HtBvzQcEuC
-	 FjVPlUITGO0EU8IRgrNPYrLI8YHxf3Nn2ut6G7bxthCAnuLFXWCrRrSu0tu7aWNN7r
-	 MYM0k7ZXSa75MaS+3tx2zKLIG9NZJ2euvYRt5D92RZG8JDUaU1ph4Hls/eW6qNFNu8
-	 gUnDTUfegSW/BLXmVBLyxAb0n5JtE+8K1qIzkQWJ4zE1m2O5b8RChf1/ooPM5tuOva
-	 D7j34eIuCDm0A==
-From: Kees Cook <kees@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Kees Cook <kees@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1770771518; c=relaxed/simple;
+	bh=LPkENCCP9Iv6HhXNQjJR1VmZFQn/KyEBDTPnLHglPbw=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V1VQDnCcvqvK2cMQKMNK38jTVpnSuirLzyuWwPx6pESR+3dVpvjKc1H2H4Ut5JySPMNHeNECq7Q2C7OHkzd0KRsFxXUdI6e/KwdogpmrC3cgNLL5p4oWPcD+QDWq4MY1CJNDlcd3soDWFHjvB8rkYQCL6J8OULzExT3ZTTN8HqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Akfn2is4; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-47ee76e8656so21122485e9.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Feb 2026 16:58:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770771514; x=1771376314; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=saJTqKZgiPh9XrzB25Qr60CmTdAWHKEeFeS9gn6orw4=;
+        b=Akfn2is4k+a/B6dkDnutvK/7shZRpZiimwru1J5NtkoXoUZqyNNMyxszt2JcHZa3A+
+         zdy7NLwXJhp1qXH4OraSD4rylrVpF+kfb+jgTX96R9pmm86zPVPHGiien/mv9MSxjnO4
+         aPPJ+9OpT76BlNm0zskwzbux5l3QVXXXWH3QC0qs6QXw0TpvHOfWpKd2UQGGlXgN6f1S
+         I0NBKwe9lKLSwmOrbLeP8+X0IFZ7pniULMtHOXPoL13tMWnVCEES5109mAQ8+6Upbag+
+         q95HWgmyY5OjKEv4udE8uaYuVpx7toxT/NqgYUEp9PutuGGewaBy+bi8auYzMWNNPG7+
+         gowg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770771514; x=1771376314;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=saJTqKZgiPh9XrzB25Qr60CmTdAWHKEeFeS9gn6orw4=;
+        b=SqFLf4+2LDPzPlqxxoPMs5B4bbJhBBXHxssxaV6OFURSXrlcmFlXGUMZVuP5K0k3WM
+         d+NiOK9J2XUlbhAT2dRu6SQyeE6dTksIb+6jEQwiiqKZhnf3DKc8bDtRFdM30M5JAgOC
+         tOHDBYxZMHePrdM5ya6iIjCs4jaX7XsJlcQchonqZNtXa/tXq+jCb1BY7CVkcjEbuUQ6
+         1ga+AmeHSuNTS830Qhv1z1d40Em5iMxzQbJytgkzs9p2CkGfFELiEnCK6yzu6YKJX4DW
+         dYCIks1njoiaHEBOAYQa5Nw1Tge3EOBwiAXf645XoD4ibippPyYoBWJPrDzJkNSd6BRJ
+         SNPA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSEqGLdOA0QlTCIZGA6Xe7CkXMeyhAYVT1Uuu3VuoE01wf3WkXa8Lk2msaQqNIsGeABe7SeNgfcSI4WhIa@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIxF5whHfMwYebq4oXx0yUpwQxs5r3Hyo5IzPRcTdUW67eEsMA
+	YrylWHqNTPkcSDNpfDXershHGskcOIv+Wc3aiwnsKBUZafheThKK5ahV
+X-Gm-Gg: AZuq6aIwyFR0yR7779Wstk3kyJrBdL2FSt6HNrq8XzUk4+xUaYCmAxETt7gGnMxYE8u
+	KLW0pFE3XMjR6ZNZ5F1MbFhZvJ6+gvWA4YuxYfrKoAMzRY0jMSngRHKEbdpm7aKror5Y5+4Tu5/
+	+QchZn29ooQmaZQnGWmAEP4MrclVOzr3hossKPjuTbxwzEtg90NlTPVqVSPcsenJDRWtFFfVSvp
+	YNQGC2tO3WuOL6VGLpz5wabWWP+czxyB4IMv4BANJywGzm1WzcaPVq/C7otQjHfs4e0vKxZeeFh
+	BnxUPWfVU/gOiWNlHB7O22NtaQ22XhVkrjwXt5s0sKugoF5Euz4Y33MRrq+/uq/x/jisJPEM6t+
+	GnEhjWmL87qHY8oC4TCU5sZ7OQS+Gglhhf39Okaaf9RA+9jx7I1HfnpBLnK38o38j8jJZ5yVwrV
+	TFy7t1q98jpuj35Ks8+dq3aOwCLpRjR5qCzP+CrF+K5tNBbrD/HRgcoA==
+X-Received: by 2002:a05:600c:c4a7:b0:47f:b737:5ce0 with SMTP id 5b1f17b1804b1-48320231161mr210550075e9.23.1770771513861;
+        Tue, 10 Feb 2026 16:58:33 -0800 (PST)
+Received: from Ansuel-XPS. (93-34-90-125.ip49.fastwebnet.it. [93.34.90.125])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4835bc7bd3fsm4806675e9.18.2026.02.10.16.58.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Feb 2026 16:58:33 -0800 (PST)
+Message-ID: <698bd439.050a0220.38f6b4.a251@mx.google.com>
+X-Google-Original-Message-ID: <aYvUM4J9anl2Bpkc@Ansuel-XPS.>
+Date: Wed, 11 Feb 2026 01:58:27 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: David Disseldorp <ddiss@suse.de>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>,
+	Dmitry Safonov <0x7f454c46@gmail.com>, linux-kbuild@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] fs: Keep long filenames in isolated slab buckets
-Date: Tue, 10 Feb 2026 16:48:15 -0800
-Message-Id: <20260211004811.work.981-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH] initramfs: correctly handle space in path on cpio
+ list generation
+References: <20260209153800.28228-1-ansuelsmth@gmail.com>
+ <20260210223431.6bf63673.ddiss@suse.de>
+ <698b6ced.050a0220.9e34a.3e08@mx.google.com>
+ <20260211113308.4c5b0b82.ddiss@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3518; i=kees@kernel.org; h=from:subject:message-id; bh=iCffL0xzUPUG3BJfbMxK8tI4lDRi9xgWQfS/pTIlq1g=; b=owGbwMvMwCVmps19z/KJym7G02pJDJndF88zuvi51p0ynLXriX6b6MVK4aBt7zg0K1/8nBG46 M427zrujlIWBjEuBlkxRZYgO/c4F4+37eHucxVh5rAygQxh4OIUgIlsKmL4Xy79K37vIfH3+j+f ZJ03lj8v3TXT6eXNJdf8tGbfyX7VuY+RYVfYck43zg9Grz8vSjLPs7m4c4/r0eqdr/e+s+cxmT9 RihsA
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260211113308.4c5b0b82.ddiss@suse.de>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-76914-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	TO_DN_SOME(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[kees@kernel.org,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-76915-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	MISSING_XM_UA(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FROM_NEQ_ENVFROM(0.00)[ansuelsmth@gmail.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCPT_COUNT_SEVEN(0.00)[7];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.org.uk:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 8FA231205E3
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mx.google.com:mid]
+X-Rspamd-Queue-Id: AC855120664
 X-Rspamd-Action: no action
 
-A building block of Use-After-Free heap memory corruption attacks is
-using userspace controllable kernel allocations to fill specifically sized
-kmalloc regions with specific contents. The most powerful of these kinds
-of primitives is arbitrarily controllable contents with arbitrary size.
-Keeping these kinds of allocations out of the general kmalloc buckets is
-needed to harden the kernel against such manipulations, so this is why
-these sorts of "copy data from userspace into kernel heap" situations are
-expected to use things like memdup_user(), which keeps the allocations
-in their own set of slab buckets. However, using memdup_user() is not
-always appropriate, so in those cases, kmem_buckets can used directly.
+On Wed, Feb 11, 2026 at 11:43:10AM +1100, David Disseldorp wrote:
+> On Tue, 10 Feb 2026 18:37:44 +0100, Christian Marangi wrote:
+> ...
+> > > > diff --git a/usr/gen_init_cpio.c b/usr/gen_init_cpio.c
+> > > > index b7296edc6626..ca5950998841 100644
+> > > > --- a/usr/gen_init_cpio.c
+> > > > +++ b/usr/gen_init_cpio.c
+> > > > @@ -166,7 +166,7 @@ static int cpio_mkslink_line(const char *line)
+> > > >  	int gid;
+> > > >  	int rc = -1;
+> > > >  
+> > > > -	if (5 != sscanf(line, "%" str(PATH_MAX) "s %" str(PATH_MAX) "s %o %d %d", name, target, &mode, &uid, &gid)) {
+> > > > +	if (5 != sscanf(line, "\"%" str(PATH_MAX) "[^\"]\" \"%" str(PATH_MAX) "[^\"]\" %o %d %d", name, target, &mode, &uid, &gid)) {  
+> > > 
+> > > This breaks parsing of existing manifest files, so is unacceptable
+> > > IMO. If we really want to go down the route of having gen_init_cpio
+> > > support space-separated paths, then perhaps a new --field-separator
+> > > parameter might make sense. For your specific workload it seems that
+> > > simply using an external cpio archiver with space support (e.g. GNU
+> > > cpio --null) would make sense. Did you consider going down that
+> > > path?
+> > >   
+> > 
+> > This is mostly why this is posted as RFC. I honestly wants to fix this in the
+> > linux tool instead of using external tools.
+> > 
+> > So is there an actual use of manually passing the cpio list instead of
+> > generating one with the script? (just asking not saying that there isn't one)
+> 
+> Absolutely. As a simple example, consider an unprivileged user wishing
+> to add a device node to their initramfs image. A manifest entry (as
+> opposed to staging area mknod=EPERM) is ideal for this.
+> 
+> > One case I have (the scenario here is OpenWrt) is when a base cpio_list is
+> > provided and then stuff is appended to it.
+> > 
+> > In such case yes there is a problem since the format changed.
+> > 
+> > My solution to this would be introduce new type that will have the new pattern.
+> > This way we can keep support for the old list and still handle whitespace files.
+> > 
+> > An idea might be to have the file type with capital letter to differenciate with
+> > the old one.
+> > 
+> > Something like 
+> > 
+> > FILE "path" "location" ...
+> > SLINK "name" "target" ...
+> > NODE ...
+> > 
+> > What do you think?
+> 
+> Introducing a new type to handle space-containing filenames isn't a bad
+> idea, but using capital letters to signify the API change is confusing.
+>
 
-Filenames used to be isolated in their own (fixed size) slab cache so
-they would not end up in the general kmalloc buckets (which made them
-unusable for the heap grooming method described above). After commit
-8c888b31903c ("struct filename: saner handling of long names"), filenames
-were being copied into arbitrarily sized kmalloc regions in the general
-kmalloc buckets. Instead, like memdup_user(), use a dedicated set of
-kmem buckets for long filenames so we do not introduce a new way for
-attackers to place arbitrary contents into the general kmalloc buckets.
+The problem of a new type is that other tool might not support that but no idea
+if it would be really that relevant. After all it's all intermediate file to
+generate the final cpio.
+ 
+> > The option of --field-separator might also work but it might complicate stuff in
+> > the .c tool as a more ""manual"" tokenizer will be needed than the simple
+> > implementation currently present.
+> 
+> What happens when someone wants support for filenames containing spaces
+> and quotes?
+> 
 
-Fixes: 8c888b31903c ("struct filename: saner handling of long names")
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Also, from the same commit, is the loss of SLAB_HWCACHE_ALIGN|SLAB_PANIC
-for filename allocations relavant at all? It could be added back for
-these buckets if desired, but I left it default in this patch.
+I mean... it's a less common case where filename start to have almost invalid
+char but yes it's a valid point.
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: <linux-fsdevel@vger.kernel.org>
----
- fs/namei.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+> > I'm open to both solution. Lets just agree on one of the 2.
+> 
+> I don't think any of the options will be particularly simple, but
+> nul-byte delimited field support might be the most straightforward.
+> 
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 8e7792de0000..a901733380cd 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -128,6 +128,8 @@
- /* SLAB cache for struct filename instances */
- static struct kmem_cache *__names_cache __ro_after_init;
- #define names_cache	runtime_const_ptr(__names_cache)
-+/* SLAB buckets for long names */
-+static kmem_buckets *names_buckets __ro_after_init;
- 
- void __init filename_init(void)
- {
-@@ -135,6 +137,8 @@ void __init filename_init(void)
- 			 SLAB_HWCACHE_ALIGN|SLAB_PANIC, offsetof(struct filename, iname),
- 			 EMBEDDED_NAME_MAX, NULL);
- 	runtime_const_init(ptr, __names_cache);
-+
-+	names_buckets = kmem_buckets_create("names_bucket", 0, 0, PATH_MAX, NULL);
- }
- 
- static inline struct filename *alloc_filename(void)
-@@ -156,7 +160,7 @@ static inline void initname(struct filename *name)
- static int getname_long(struct filename *name, const char __user *filename)
- {
- 	int len;
--	char *p __free(kfree) = kmalloc(PATH_MAX, GFP_KERNEL);
-+	char *p __free(kfree) = kmem_buckets_alloc(names_buckets, PATH_MAX, GFP_KERNEL);
- 	if (unlikely(!p))
- 		return -ENOMEM;
- 
-@@ -264,14 +268,14 @@ static struct filename *do_getname_kernel(const char *filename, bool incomplete)
- 
- 	if (len <= EMBEDDED_NAME_MAX) {
- 		p = (char *)result->iname;
--		memcpy(p, filename, len);
- 	} else {
--		p = kmemdup(filename, len, GFP_KERNEL);
-+		p = kmem_buckets_alloc(names_buckets, len, GFP_KERNEL);
- 		if (unlikely(!p)) {
- 			free_filename(result);
- 			return ERR_PTR(-ENOMEM);
- 		}
- 	}
-+	memcpy(p, filename, len);
- 	result->name = p;
- 	initname(result);
- 	if (likely(!incomplete))
+Yes that was the initial idea but was quickly scrapped as major work is needed
+in the .c tool to handle NULL separated entry.
+
+Can you by chance point to me how the GNU tool work with --null ?
+
+
+They also create a cpio_list file with entry NULL separated?
+
+
 -- 
-2.34.1
-
+	Ansuel
 
