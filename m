@@ -1,90 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-76934-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76935-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aMCtM8RgjGmWlwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76934-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 11:58:12 +0100
+	id 2EhrACxrjGm+nQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76935-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 12:42:36 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06007123ADB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 11:58:11 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50D72123EDD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 12:42:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id E2742300721E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 10:57:55 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 267463020A45
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 11:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2F236B06C;
-	Wed, 11 Feb 2026 10:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD0436921B;
+	Wed, 11 Feb 2026 11:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WOOy8Cgw"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ro0OcSrB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5Rdam4TP";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ro0OcSrB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5Rdam4TP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9AE36BCC0
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 10:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222F12F2910
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 11:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770807468; cv=none; b=CDFH7/IGwnRaWOc0Q8VoU0jBJKqo0agBCJ/d8fVLDaoUQtab7JRK54MCsy6he6uivMzUfpBAjYZsd5plmqtCbGUF3p0ymq6dXIWg0WIltHab6UrXN2GA17aefQxBpvW2cc4fk40lSYIB0PSBRCamvLI6iXs+KuBfZwav+ETWcqw=
+	t=1770810145; cv=none; b=aLtiNM0rF5HVIIjFfZJ50Gkqb30Gi324H5QLCNSxsBxKoSwoup3AHmB0Ows9JJ06iRXGYomW+gyI81swxGOTBXfuyHLxmsb2ioi2edIu5UgSvtVtjXLBCNQVE/79tq9gN76SluC0Nyl6nY86OeneN7qN5Hq7unXD3jR7DgdfrFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770807468; c=relaxed/simple;
-	bh=YkNcQ3NtAJBYnY/PDYgBtDin1rYL1T6RPzvptBiXatI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=qco5begnP+QzCFcB2ZowCnaCbxL5C0xHN0wW73LM8Xenq3PIucOAZM3MKOZeuuImF1qtUMb3wiWCbmwocGLeRwpGmYQwUcRtFatbzjMYLwDWb2b/oJf/eus8965741IwpP3uQ+b1kEDI26/UUyGWEmnUOay12cT+MAW3JRROufA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WOOy8Cgw; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4801c2fae63so54700985e9.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 02:57:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1770807464; x=1771412264; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1f6efIeKsPBmBdsMP945v7o1I22Mg2iVh32MUI/KTBg=;
-        b=WOOy8CgwGsomPEx6PD8pZCYoK2xEk9UoLCr4uJFRIpLIKV40RHOpRnZEeuw+SLJHv4
-         E2/DVdcr8c0LkOOaAxWM1se12eZgrKQd8X9+uBeMyv/Pe1pOHWeuqlZHZVkiOnCie0eJ
-         tQY/lEX5Bmk+UdiT8UZASPflLEUnncG/V0EGhc+y7OcfjiL+VV7qkQDIZMEl8Dtj6fzX
-         LVUdj6UsH+EpXhQXp+U7OrIxuNVSBhlUgtnDAzziHmyQIiXVr2cEsYDPPFCTCQl9HCyk
-         Bhkxv2hKwpO6uq40BTInyrTXL76gRmexnmNfGQ1zwyXQc/fz2KQeglEwGrW+Acn0veOU
-         Poqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770807464; x=1771412264;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1f6efIeKsPBmBdsMP945v7o1I22Mg2iVh32MUI/KTBg=;
-        b=gN/UAqHtZkb7YsOqYLx6Y3chWpQltBNIxQ8bTBPdhaLN9lPhgHnaoKZjOHWdNdhBmn
-         fE0SO3b3SIHKJZYQ7aQg4TbHZQEcU7p08CzLGErrrMLM7+BaHkhe9OpTSObtnI03uU1N
-         /0blMCJP7WswHU8DBITf5jUrETRiYSCA6laKlTTDI99t9L6iQGSrEC/J18u/Rmo9V2ML
-         AXnfy4jnYEmG2CZaDpoMPaADVIMlLks3adAYZwqN0Awp5jIQnXykFE/LnZ3MTJwCx+Qw
-         Ns58k/6DqkjzlPYS/eX4Ww7mvf6VQmh3lOPDluuKbBLhhAlF72Yd64wkSixCJjkxVP57
-         vlPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVAVoNifNTRThUry3+2PWAQsgJTwOuV0TYyu0hBvU8eS9PBwVWj16IoxOWtFnD2eq8YmkVQT3NaRsxYaFSq@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ+6Z4sxREarXc/YY32Q+N+zkWY4p57+Mb9oGWwMsv8ATBUR3J
-	bgh5thBzjpsCNyL4Jzf+TZ8G17OsQkMVrdeNNUt5dsN93XfLB27+HILZVyerY+WBzokQ6MelQvK
-	/HUKC
-X-Gm-Gg: AZuq6aLkYC7+ooyFuLz6PRWM7Vo5GsAm+cNBl69A6XiBdwJacoIYQBydkgrtfBWlYR4
-	g4ATevo7p+t2DCxZwRWqPUVJ7N1bQ0ZpIGR89Sa5/nKzx49jDBUkNvxv2jnNC4CXMt6oyHxQgv/
-	+iZf9rOu381tnzeDyt6gfj+7sLNoMlVUi+Hi5UX+kCNHnFH4JbIW51+Y46Dbn7JRHMnmcGKqJFw
-	XDjGh/dllCAEvYihN9LvgwTv+xCS/g6cuih/A7lLnhfFFs+lhI0ePO1Hm3KRoJTMQtA+zKQt0Go
-	meadmak9YcSX484Nk1CGfzGjuPw2009339cJOczsYG629lBrNxIrAWayCw2gnAFFhYQ7urKXQdZ
-	wi3TlfWjOPZqIL8YnVQKM/lMULT0tIFu4fWtaRDgULoTLyfk3KgEDoGBop/iVbUNv3wKhdbg2YT
-	q1Jb7pWHC7Lq9os3gGC2YNJRHjSXMUqcnqV/izlx4=
-X-Received: by 2002:a05:600d:17:b0:47e:e20e:bb9c with SMTP id 5b1f17b1804b1-4835dd89039mr20323065e9.8.1770807463537;
-        Wed, 11 Feb 2026 02:57:43 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4836131d4d9sm5222705e9.25.2026.02.11.02.57.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Feb 2026 02:57:43 -0800 (PST)
-Date: Wed, 11 Feb 2026 13:57:39 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Ethan Ferguson <ethan.ferguson@zetier.com>,
-	hirofumi@mail.parknet.co.jp
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ethan Ferguson <ethan.ferguson@zetier.com>
-Subject: Re: [PATCH 1/2] fat: Add FS_IOC_GETFSLABEL ioctl
-Message-ID: <202602111747.QIBXIwpw-lkp@intel.com>
+	s=arc-20240116; t=1770810145; c=relaxed/simple;
+	bh=L0so1uOFDNGD482yWenadqerI6IZHkqDJewtDrl/2DQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O0vh3uqgh91PNtQn/8Bwe3fphaWhs03AycmTTKAEqXGcSE9Q/ts4KhcdT1GnezWgRsLvloZdkzctAekUvRFwfgMfuUl827x5ryHM2IbOr9/bwMoOn6K+LStMFyn0kJBhmumLbRZ5UKUkFXo5AF/HDOGjFNGa5Gg/n5jSz56t9UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ro0OcSrB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5Rdam4TP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ro0OcSrB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5Rdam4TP; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 54AC35BCC6;
+	Wed, 11 Feb 2026 11:42:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1770810142; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=whGHsLyR1V0bnctfpBa4WypfCURKChRUFhxhMzqVUL4=;
+	b=ro0OcSrB1QmcolsQwdRa3vJobNvQuS7uB4N/u/CetpU0KvytYH1Ih2RQDAaujpGpl6vgXr
+	Ow8vJ+YUUJ4+ceRFH5nJyEhS9zuEDuDrzia3zv9/6wLmFmNZbGE+BGB63kYBDPte2aPd5g
+	x7xpcNTH99g3PY0my2dE8XtjJp5+2xc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1770810142;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=whGHsLyR1V0bnctfpBa4WypfCURKChRUFhxhMzqVUL4=;
+	b=5Rdam4TPtcwZkyJwWOgHepLwYcKPybF9uqiyR6iH1kN/Uq1v6XkSIOX8GnGJV9+n86ckEA
+	dtypcxmvhmusxjDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1770810142; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=whGHsLyR1V0bnctfpBa4WypfCURKChRUFhxhMzqVUL4=;
+	b=ro0OcSrB1QmcolsQwdRa3vJobNvQuS7uB4N/u/CetpU0KvytYH1Ih2RQDAaujpGpl6vgXr
+	Ow8vJ+YUUJ4+ceRFH5nJyEhS9zuEDuDrzia3zv9/6wLmFmNZbGE+BGB63kYBDPte2aPd5g
+	x7xpcNTH99g3PY0my2dE8XtjJp5+2xc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1770810142;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=whGHsLyR1V0bnctfpBa4WypfCURKChRUFhxhMzqVUL4=;
+	b=5Rdam4TPtcwZkyJwWOgHepLwYcKPybF9uqiyR6iH1kN/Uq1v6XkSIOX8GnGJV9+n86ckEA
+	dtypcxmvhmusxjDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3E7073EA62;
+	Wed, 11 Feb 2026 11:42:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Hpk3Dx5rjGmzGgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 11 Feb 2026 11:42:22 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id EC852A0A4C; Wed, 11 Feb 2026 12:42:06 +0100 (CET)
+Date: Wed, 11 Feb 2026 12:42:06 +0100
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yizhang089@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu, 
+	adilger.kernel@dilger.ca, ojaswin@linux.ibm.com, ritesh.list@gmail.com, hch@infradead.org, 
+	djwong@kernel.org, libaokun1@huawei.com, yangerkun@huawei.com, yukuai@fnnas.com, 
+	Zhang Yi <yi.zhang@huaweicloud.com>
+Subject: Re: [PATCH -next v2 03/22] ext4: only order data when partially
+ block truncating down
+Message-ID: <3dv6rb4223ngpj2duqm5smvmlpwhbvgyiksfkzmyfxhchejgon@eoo2kitdbdpq>
+References: <b889332b-9c0c-46d1-af61-1f2426c8c305@huaweicloud.com>
+ <ocwepmhnw45k5nwwrooe2li2mzavw5ps2ncmowrc32u4zeitgp@gqsz3iee3axr>
+ <1dad3113-7b84-40a0-8c7e-da30ae5cba8e@huaweicloud.com>
+ <7hy5g3bp5whis4was5mqg3u6t37lwayi6j7scvpbuoqsbe5adc@mh5zxvml3oe7>
+ <3ea033c1-8d32-4c82-baea-c383fa1d9e2a@huaweicloud.com>
+ <yhy4cgc4fnk7tzfejuhy6m6ljo425ebpg6khss6vtvpidg6lyp@5xcyabxrl6zm>
+ <665b8293-60a2-4d4d-aef5-cb1f9c3c0c13@huaweicloud.com>
+ <ac1f8bd8-926e-4182-a5a3-a111b49ecafc@huaweicloud.com>
+ <yrnt4wyocyik4nwcamwk5noc7ilninlt7cmyggzwhwzjjsjzfc@uxdht432fgzm>
+ <d8b84bb5-8fb4-48fe-9ccb-7a0b724eb4b9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,77 +118,93 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260210222310.357755-2-ethan.ferguson@zetier.com>
+In-Reply-To: <d8b84bb5-8fb4-48fe-9ccb-7a0b724eb4b9@gmail.com>
+X-Spam-Score: -2.30
+X-Spam-Level: 
+X-Spam-Flag: NO
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [0.34 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[linaro.org,none];
-	R_DKIM_ALLOW(-0.20)[linaro.org:s=google];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-76934-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	DKIM_TRACE(0.00)[linaro.org:+];
+	RCPT_COUNT_TWELVE(0.00)[15];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76935-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	URIBL_MULTI_FAIL(0.00)[suse.cz:server fail,sea.lore.kernel.org:server fail,suse.com:server fail];
+	DMARC_NA(0.00)[suse.cz];
+	FREEMAIL_TO(0.00)[gmail.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
+	DKIM_TRACE(0.00)[suse.cz:+];
 	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[dan.carpenter@linaro.org,linux-fsdevel@vger.kernel.org];
-	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
+	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,mit.edu,dilger.ca,linux.ibm.com,gmail.com,infradead.org,kernel.org,huawei.com,fnnas.com,huaweicloud.com];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linaro.org:email,linaro.org:dkim,intel.com:mid,intel.com:email,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 06007123ADB
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: 50D72123EDD
 X-Rspamd-Action: no action
 
-Hi Ethan,
+On Wed 11-02-26 00:11:51, Zhang Yi wrote:
+> On 2/10/2026 10:07 PM, Jan Kara wrote:
+> > On Tue 10-02-26 20:02:51, Zhang Yi wrote:
+> > > On 2/9/2026 4:28 PM, Zhang Yi wrote:
+> > > > On 2/6/2026 11:35 PM, Jan Kara wrote:
+> > > > > On Fri 06-02-26 19:09:53, Zhang Yi wrote:
+> > > > > > On 2/5/2026 11:05 PM, Jan Kara wrote:
+> > > > > > > So how about the following:
+> > > > > > 
+> > > > > > Let me see, please correct me if my understanding is wrong, ana there are
+> > > > > > also some points I don't get.
+> > > > > > 
+> > > > > > > We expand our io_end processing with the
+> > > > > > > ability to journal i_disksize updates after page writeback completes. Then
+> > > 
+> > > While I was extending the end_io path of buffered_head to support updating
+> > > i_disksize, I found another problem that requires discussion.
+> > > 
+> > > Supporting updates to i_disksize in end_io requires starting a handle, which
+> > > conflicts with the data=ordered mode because folios written back through the
+> > > journal process cannot initiate any handles; otherwise, this may lead to a
+> > > deadlock. This limitation does not affect the iomap path, as it does not use
+> > > the data=ordered mode at all.  However, in the buffered_head path, online
+> > > defragmentation (if this change works, it should be the last user) still uses
+> > > the data=ordered mode.
+> > 
+> > Right and my intention was to use reserved handle for the i_disksize update
+> > similarly as we currently use reserved handle for unwritten extent
+> > conversion after page writeback is done.
+> 
+> IIUC, reserved handle only works for ext4_jbd2_inode_add_wait(). It doesn't
+> work for ext4_jbd2_inode_add_write() because writebacks triggered by the
+> journaling process cannot initiate any handles, including reserved handles.
 
-kernel test robot noticed the following build warnings:
+Yes, we cannot start any new handles (reserved or not) from writeback
+happening from jbd2 thread. I didn't think about that case so good catch.
+So we can either do this once we have delay map and get rid of data=ordered
+mode altogether or, as you write below, we have to submit the tail folios
+proactively during truncate up / append write - but I don't like this
+option too much because workloads appending to file by small chunks (say a
+few bytes) will get a large performance hit from this.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ethan-Ferguson/fat-Add-FS_IOC_GETFSLABEL-ioctl/20260211-062606
-base:   9f2693489ef8558240d9e80bfad103650daed0af
-patch link:    https://lore.kernel.org/r/20260210222310.357755-2-ethan.ferguson%40zetier.com
-patch subject: [PATCH 1/2] fat: Add FS_IOC_GETFSLABEL ioctl
-config: riscv-randconfig-r071-20260211 (https://download.01.org/0day-ci/archive/20260211/202602111747.QIBXIwpw-lkp@intel.com/config)
-compiler: riscv64-linux-gcc (GCC) 9.5.0
-smatch version: v0.5.0-8994-gd50c5a4c
+> So, I guess you're suggesting that within mext_move_extent(), we should
+> proactively submit the blocks after swapping, and then call
+> ext4_jbd2_inode_add_wait() to replace the existing
+> ext4_jbd2_inode_add_write(). Is that correct?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202602111747.QIBXIwpw-lkp@intel.com/
-
-smatch warnings:
-fs/fat/file.c:160 fat_ioctl_get_volume_label() warn: maybe return -EFAULT instead of the bytes remaining?
-
-vim +160 fs/fat/file.c
-
-5fc1746d68b8fb Ethan Ferguson 2026-02-10  156  static int fat_ioctl_get_volume_label(struct inode *inode, char __user *arg)
-5fc1746d68b8fb Ethan Ferguson 2026-02-10  157  {
-5fc1746d68b8fb Ethan Ferguson 2026-02-10  158  	struct msdos_sb_info *sbi = MSDOS_SB(inode->i_sb);
-5fc1746d68b8fb Ethan Ferguson 2026-02-10  159  
-5fc1746d68b8fb Ethan Ferguson 2026-02-10 @160  	return copy_to_user(arg, sbi->vol_label, MSDOS_NAME);
-
-This should be:
-
-	if (copy_to_user(arg, sbi->vol_label, MSDOS_NAME))
-		return -EFAULT;
-
-	return 0;
-
-5fc1746d68b8fb Ethan Ferguson 2026-02-10  161  }
-
+								Honza
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
