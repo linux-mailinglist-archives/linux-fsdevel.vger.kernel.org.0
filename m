@@ -1,468 +1,328 @@
-Return-Path: <linux-fsdevel+bounces-76978-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id qIWqNmz9jGn4wgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76978-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 23:06:36 +0100
+	id gP5RAocEjWlVxAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 23:36:55 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56A63127F52
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 23:06:36 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71A82128261
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 23:36:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 16F76301C6F6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 22:06:35 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 3EFDF301D307
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 22:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC1E318BB6;
-	Wed, 11 Feb 2026 22:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5C43563E5;
+	Wed, 11 Feb 2026 22:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dwj1kfAR"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="NjY7Xf4P"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128E630CDB6
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 22:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330B410FD
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 22:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.156.1
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770847591; cv=pass; b=c0A+94K9ekNXjDCszDuO95RGIpW9gSbKAmfL0ThRyl3DMXLpJ4em0rfKK3L9qAj2cASeWbxA3SeGhLFcdlA7peOuKvZtzRNahvKrZ0Juj65/onMbC2sBUf75nOx4ioTEEB63NHxQdK/8CwPhdu7dIICrZ3ckkpe5Z0sn455hXWw=
+	t=1770849409; cv=fail; b=K3vBiRsZc9cJRSc4x8KzqTkq2kB+RFSvkQZQbq1XYMvn+9mwTozHqMmQrVveeu5QKBFus8qXTIEJe4IkwPiHH/3gBbLrsSj5dA2B27zM4edqg+A5stmr7JHNzqYEkLNl3RCW1quM2Hrh8th6BASDnq5cWOKbIWbKnQl3B+IaPBY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770847591; c=relaxed/simple;
-	bh=eFhbGXrgDS8QDy8Db4uVM4iMnLUYFWYh8SlI9xEdKjU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DRJtZhfVpjdYo6akfgByQk+4rMCUCytcnEzfkicVZ7UeGAJ2ENjKzPXkpEXE/HK4p4P2WUvAf3fhtiOVndUW3m1aanFXOJTWZH0/xNrMnAyq5UwNGF3hpEfKvI4SOhAaUfPja3vK+6PNzoAsyMvZifo+HNBKC9jNc/25lvmPBTQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dwj1kfAR; arc=pass smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-5036d7d14easo68652871cf.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 14:06:29 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770847589; cv=none;
-        d=google.com; s=arc-20240605;
-        b=DWW+JdDBPUi93TPw3oEttyjtXgPH+cW21l43wpnnEgPd4fE705eNxfPQpGbHiDIgEp
-         6Xu9eSjfsQEtQTjDIsrmOIBFnL3PAT1/U2rygLyHlwJC0f4sFt2AUZlPJNm7IiTPPRTj
-         PM9Z/Jk+KWYI6oItufTdqRY+UdwQaPjk6+4n/bbSU50BP6+uPMF5Dhy+pilLE/zC8jV8
-         slGhTx64gLrf19lWv+zMCrJw/lJelWQv8gSrzBtsiTQlo4Ubq6gu2BkhmobA3oi5npp7
-         rXIJ77u+ZOY15KB0HWTCJE6eJcB6yHs7AaNyIzxEDd4STfXd2mfXKFd/R7Mauqiecs5T
-         Wy5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=v8zVS0j+ERe9ANo4F2P9rgRZMdkPw9iiMqRduQXdCYg=;
-        fh=pCkir1kTfE8saABwfaY4oFqd5vkHA7OTMUn2Mge8hAc=;
-        b=e6p2NmMR44wFxxBqQDjwBpDD+khWlIcsKj51KQ+SxvDA4eJMjCHErCBKUqvzCVJRuz
-         Yrg+ffbS5uOKbFZIM+TEpG5/IW42qrGvgUD3CXMiNbYDVbgqSfCSQoXGcmanVqDbxQuG
-         sbO33Rv3An+mcQUnYozmxJ4j7+hgm5wO5Lem/+eahrQSIC13R9KpH3b4r1Aj9wPrWO4i
-         n75bUrHG1PueaDEtknncSeP0naAH+Oi3CBegCeRdQpelXUrLv4okntb2IP4BN7cqu8iD
-         tjFYi0xc2fxpENYJHJWg8x0gvuLLhsfehzWAm6g1MfBFSQE9glEpkrNYi+oKy1JYgFpp
-         CWfg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770847589; x=1771452389; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v8zVS0j+ERe9ANo4F2P9rgRZMdkPw9iiMqRduQXdCYg=;
-        b=Dwj1kfAROEbIsSYJTc0UapNzYvkqnXpTVCPBfxXrt3cRER6zV0MUKowKq2oJmQkqyX
-         lCQUuS2KaCgz5I28xjGHEiCA3ey6B/nGg9rJNHIzJ7k6JRZDp0EFAM+pjUDDTbanofTv
-         Zb74EN1Dk3PoDsOtJFaz8Bdr4FRwjtfSe1++lTWynImiqa2koR7AeFSgwVNvs/8s9yVL
-         VeRGGmlQCgP3DsR1N266/63XT7G2wIx0MwwXF1TvzK0K2YU0De8xmM9Aagc1Y5hjVcJy
-         M4uaUOQQ9PPbK0C8MSbBX7lNAINPGO3ERbJ93vf6xe3StJvUFOthA3NGyENc7003Gxzs
-         kWHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770847589; x=1771452389;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=v8zVS0j+ERe9ANo4F2P9rgRZMdkPw9iiMqRduQXdCYg=;
-        b=oB1ciBL7MMB7XyREQn8g/E5bcYpPfrrnpXJnRyUckdejzfMTuxXlO9Tq/QJPzBVD6T
-         cD/wne66IaXeZTOabKxnNKAHpb3Ete+Nd9zzF+//xEej7ak7Ir2kszOcUn4eoUZuVTR1
-         31sSG0BCLGx7178eRGzP6DJQ2Z4BMSVE/OQKPR363ZAaMwqJLUI8bqRpATh5Bv+BaOCX
-         bLj168mLIaFWOt9NFKEpWJEmpDnbKmEA2Grr8yjOJ6nedXR20ZMPo1omAv/g6k2gjcnC
-         AJFZEORPFYRs5yCARy64N26ZyXCdkWHu3xgkHAegyIZ68/ZzcQ0lr5qn6npxCwiqo4E6
-         4SNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnSxN95O2LdzXiv3N1dRNGnH49fgfnHLlRli/qL4qe8ImRVrloy29J3MannX12rqCOTvDO6NOhw5VXY1he@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8R1HQIr8DfydcD25OfQyXNAi+nvjErXLj7xE3zROYmbH7oT46
-	nixAeNhqkmgIZLGa+UaAzujeSn9p7GkxOyU9ERpsHmZ3vowjToe58RJWgrUaymbQa0I06Q+kXMA
-	+PF1GPiIja9zPI/5R3WWI/ewOlnQdhSI=
-X-Gm-Gg: AZuq6aJX+6xORt6+wGVXfls84NrvSnT2HzfABCWObsfuSOiq0iIX2oIgLnH6ki8LLqE
-	8VkudbFe/KMWhdnJ6xCNIqKv5yZ4bSWerSwakJQbNb6s5sDgIEXlzv6UbYX4fFz4iRjNBgKgosQ
-	6UKrZ78jJpF7foUiU+wkMxywnZF5FoISKvP5oCj9fhDVXpRifayeGynWWaZ+OgGfODzht9mk5nR
-	PnT8kFSw0DWfu3tATDjD+O3we/4M4HxgdVw64GCcuN7VdHzBj/v8/9eiuKqt7LamMo7vn2qLayf
-	6RpX+SHj/YKynBQ4
-X-Received: by 2002:a05:622a:1a89:b0:502:9f97:72c3 with SMTP id
- d75a77b69052e-50691ef8ce4mr14375291cf.43.1770847588832; Wed, 11 Feb 2026
- 14:06:28 -0800 (PST)
+	s=arc-20240116; t=1770849409; c=relaxed/simple;
+	bh=x9f7tp29FhLOqv9MsSLm1/dM31cqi96kVjQMQCALnuo=;
+	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
+	 MIME-Version:Subject; b=KxgDyckaLoU5SRXiTZDkHYD1PkKmaF8pxiyoYdf9OblVzJkI17wpU0Z3Q4G4cSm5b6sZbCkFCN4FTFSfUBNjOfUKkP5MVQriQy7zEoQEea27tOWuRj7VEHtoUHq7sVnqJtpmFKHs4mKEPvvSuTnTj+OapcrK0+iEk/WYSkSUjcg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=NjY7Xf4P; arc=fail smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61BGUP3B451836;
+	Wed, 11 Feb 2026 22:36:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-id:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	pp1; bh=x9f7tp29FhLOqv9MsSLm1/dM31cqi96kVjQMQCALnuo=; b=NjY7Xf4P
+	RCDjyy9i8gLRG+B4It5d6RXWT1GPtaQRvd6+Rm2A3XzYi+akq6FtkwVyoH53ZBwg
+	3nMaqplh2vazGCgPf1aonklkuiO6kvGIt0IVO9FazmfoQpkAhWkU96QFYdZtdiqv
+	km+s67rlClTmlluAUm99RG5ysZbi85TjEF/1jQm49T2pBg8F3ais/ppcMT2Vvrak
+	1QZJVby0SUvL1JYT2wKEBvmEx4tTw+ZmM3LZHajW82FNcg9T/HD5KMwRyaQbe51M
+	c/pJ/W70zSoO/aNbpEUZelGyFOQt82ffwuHYEJFbhu41045OUdQGR5fh+nCh+igL
+	5qwEDLs9J62pKw==
+Received: from ph7pr06cu001.outbound.protection.outlook.com (mail-westus3azon11010063.outbound.protection.outlook.com [52.101.201.63])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4c696ukgut-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 11 Feb 2026 22:36:40 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aXcpt+RktBcBFfxvO6eCJV928zsPvlr3LGxbJhwepWxPpUGUCjgVqD3ADpM1eXOzOZznSYP565HRHUiqKHGR9SQS3XmVW/nhHUAHVRN+MZOeyTYGIzvSr2PBkVq3RhTCVB4x3dDo1BZcAGtb4XjDBNuqIBpXBjLwXDNHF/9Zl/EkTLKovYgWp+YQ1uqi11xoA7OpkQhD7SA/d3qjxQ4D1nslAIkYc3HjE3mQDg9u+6eAqB66dM2gO+eFqiwgc8iXwYnN2i5VJ2QsJDwYZarVudil5xT+JSAZRYDLkQufPqIxHuMcqCPL7mmFNwa2qDKUJHLvFVlSKhjAJx6FKN4kQw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=x9f7tp29FhLOqv9MsSLm1/dM31cqi96kVjQMQCALnuo=;
+ b=wYJTMZeLutHqPtbfoVF9+eLbChllGZ35eXL/0I6r/wJ+UmIfg+XCwh9DTahr+60R5rXlbtwyWdugbAR2GSSEuwBzPoIkvRR7rx0z2I7j71wpSYeZN/nQlezmZdnMGbOwfeKEmClL1TF/GtCEvOySw1SejuLqzXIfLHBPMpcTYYpvzUL7D89MgPtGwcckth2vAnjXIM9KgQTEbKNtMgcOqgrYAt1Kimk7eI13H7eaEXIx00u/H69klRgk8q47mUZQWZ/kGtuabDQQ8rotwAjU0K0i2cNiNSJXN2yEE/8ZaCqZ7P7P8NDYmPJNqj+oQ7xPpqsdwkXcN/kFqvF0ouQGiw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
+ header.d=ibm.com; arc=none
+Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
+ by DM4PR15MB6201.namprd15.prod.outlook.com (2603:10b6:8:17e::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.10; Wed, 11 Feb
+ 2026 22:36:38 +0000
+Received: from SA1PR15MB5819.namprd15.prod.outlook.com
+ ([fe80::920c:d2ba:5432:b539]) by SA1PR15MB5819.namprd15.prod.outlook.com
+ ([fe80::920c:d2ba:5432:b539%7]) with mapi id 15.20.9587.017; Wed, 11 Feb 2026
+ 22:36:37 +0000
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+To: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+        "frank.li@vivo.com" <frank.li@vivo.com>,
+        "penguin-kernel@I-love.SAKURA.ne.jp"
+	<penguin-kernel@I-love.SAKURA.ne.jp>,
+        "slava@dubeyko.com"
+	<slava@dubeyko.com>,
+        "jkoolstra@xs4all.nl" <jkoolstra@xs4all.nl>
+CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Thread-Topic: [EXTERNAL] [PATCH] hfs: evaluate the upper 32bits for detecting
+ overflow
+Thread-Index: AQHcm0Hz5/ek17AYnEqBY5v2XikX8rV+Fz4A
+Date: Wed, 11 Feb 2026 22:36:37 +0000
+Message-ID: <68811931931db09c0ea84f1be8e1bdc0fd453776.camel@ibm.com>
+References: <6e5fd94e-9073-4307-beb7-ee87f3f0665c@I-love.SAKURA.ne.jp>
+In-Reply-To: <6e5fd94e-9073-4307-beb7-ee87f3f0665c@I-love.SAKURA.ne.jp>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|DM4PR15MB6201:EE_
+x-ms-office365-filtering-correlation-id: cdb8ba1e-44cf-423c-e9a4-08de69be0485
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|366016|1800799024|10070799003|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?cmQ1eS95VEhGQjNIdmFtaEdxVXhFQTQyRjJ3NEluSTF0MFdkdUNIT1EzaFYx?=
+ =?utf-8?B?clRCZ0t5M3V6M0pNbnl5bWpTcDFVQTMwY2h3a0pjcTJXN1VDZTNJeCtEVlJB?=
+ =?utf-8?B?eWREVzNkUWxMWElzWUN1NGdRV2s5YU1naHJqRkJPcndJMmJucGFqS3FnYXIr?=
+ =?utf-8?B?Y2Q3alpoT3hma3RWWXVWQ1duRWRyREl2K1B0VW5LblJjSnJmeHVSaC9iUG8z?=
+ =?utf-8?B?SUdLRTFTWFZpUVFzVVNsV0xmd29TQWQ1aXhPL1drMEZkQjlmYnpoNlY3NzJV?=
+ =?utf-8?B?MEIvWE1TcUphUmNYTDl1Q1FodXZRYmFHclFXVDR5WlJJZGNPeXZUSmFzbmp1?=
+ =?utf-8?B?eVRpcGo5NkZ5Ym9ucVhUa0JDVWxJOWpxUXVBODhFbE1BelpYdlN4dzg5Vm4z?=
+ =?utf-8?B?Nlp5TkJldlBFejMyRTE3QU0xTlNKZEFVVkVjS1lza1FaaTgvSDZSdzNiNDlp?=
+ =?utf-8?B?eHlmRXBteGFLcm1wQ2tKbEV4bmh5TE5NS2JJS09OMVZpL1ZiT05GWm1kNCtp?=
+ =?utf-8?B?bi85dnJYU2ZDTTd6S3luc2tEOTRwQWNuZUxRSnBOb0pNTTBKTWxQckxZdmZY?=
+ =?utf-8?B?a2NFaWR4azJ2cUVWK1o1T1c1TGpTNDJDd2RFNGZlSUhNQjRaVEZENUpJY0VP?=
+ =?utf-8?B?RTcvNDluQ1FQeGlmYzcrT2tDMDhGT0xjTnp4bER6NTNJRVoyeVJMZ1BhTWhp?=
+ =?utf-8?B?UG1BQ0VDc05zWVpCV2RxZTQ3aG5paVEyUzhTbWM0bzQ3VFBQcFRkN2xCZ292?=
+ =?utf-8?B?aFdUbWIrU3l1c1ZVNHY5Z1hhTGN1cHVrQXRRUStQWCtxbG1maGlDVmNza3Rl?=
+ =?utf-8?B?VHJBMTRWeklZUlMweTI2emkvYjcrZzFyVXN6RXJlbzNUaWFFZjNCWG9EekUr?=
+ =?utf-8?B?NkpVQlk0NFA1aVRUWWJVNE90SnRYbFlFYlNkM0kyeVRrZmhvS3h1MjZvKzlo?=
+ =?utf-8?B?THRwNDRGd095YlU3WjEyay9vank4QWlmTjE5aHRZY0FnRFNHUTFOQzdwU1Q0?=
+ =?utf-8?B?NWc3cGRzdmJVek51K1Fic2hBb3ljUFZzTERWOHEvSFVlYlZUZUlrRE1Sa1Uv?=
+ =?utf-8?B?K3lCVDhQemlOS0VXOFQrUEJEcG1lUHVMdlBsQkovVU5nanRPNU8wVUQrNTM1?=
+ =?utf-8?B?eHFiZmxlZCsrM3lpYUs3M044UHBMZll1dmZOUGsyWHhkWThTTEw1bm1zaDdP?=
+ =?utf-8?B?UXJOcVZOM1Z2MUJjUGhpYmJwL2VjRmlmT2k1c0hTOWl2cTk2dmtPUjNkaG9E?=
+ =?utf-8?B?TkgwSzl5aXZBcVBxbHhKWEgxWjVmcVRXMUZMbU1Sekd3dkhEYVZyMEdRNlN4?=
+ =?utf-8?B?V29WbStKbTRqSTdTYVpNWlcrUk9DK0thWlZDL2lCVkR1SWRkM0tnN3lZMFRi?=
+ =?utf-8?B?MXpOLytTNVRyMml1eDZzOGluOUUvWU9VZEw0UkRKMHVPQ3dCQ2oxQWJ6Q3Fl?=
+ =?utf-8?B?TE5mYUR5RmFaQlhoTEJxamFZdnJiSFFpK2hLeWx4djJCZnNMMW5NYS9tZzFY?=
+ =?utf-8?B?cVQxRSs3RHFGK0x0ZFQxa0pPem1uR2Z1SlUwMTU1ZU9pODYzd1lyRmJ1Rjh1?=
+ =?utf-8?B?NFZzSGR3WGlZZFhieG5ZaFFwR2lheCt3QXVlaC93SFBCSlNNajZGbjB4dVdR?=
+ =?utf-8?B?eFVCRVBpYkpJT0hBek5nbmt1RjcyQVBPS0tRQStMZUpKaFB0UCtzcTZ4a2E4?=
+ =?utf-8?B?Q3pqUGhsRVloM1FsS3ZtdFY4c3MyT3dSNEw3VzJCMmNiM2dBeFI1cG9RUlgz?=
+ =?utf-8?B?aTU3UHZTK3k3ZisrTHdyemZJOWNaeG1hSjJSaWhMYkhIUHhXdHcveDd1OVg5?=
+ =?utf-8?B?N3Nab0t6aVI0TTJ4Rko5aWJEcGV2ZHJETjkxV0dRS0tvblg4UndUUEsrYWV0?=
+ =?utf-8?B?RkxMbjFZOEpVVzJ6M1dFcWpodWFLb0s0cTVSQlhUTmZibG50SnRJbE9IclUw?=
+ =?utf-8?B?amFGZ01tMm05WjZDbFhLYVJNMUIvNWtzT28vWGVOSVQ4R3dOOHU3eGM4d205?=
+ =?utf-8?B?TjE3K3lORkRTVDRIN3NsOXFONWhscUJyVXBTZHl4Ukl4SWJsVUFJdDRtOCtq?=
+ =?utf-8?B?ZTc5VFNNcEdSZVJLejdPUnE0Q2lhMUZlOUpUZytKMW8zSTh1em9wd1RJd3dn?=
+ =?utf-8?B?bzJmOVVNT0E2TUp1dFdOQlF5dkNwUmFFdjk4bm1wNk1HblkwamkyOVN0ampG?=
+ =?utf-8?Q?l6IcjnLsLBuG3NQkxciadcI=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(10070799003)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?bmtCdk5nbm11ZzQ1Z2h2S2U4T3hjaS9KS0JwRGZLSlN4dlphSC80dkZMZXNp?=
+ =?utf-8?B?djNIQnBLRUREOFBxaFpycWNRWWlBQVRCblJLd3JXVVJ4bWNQWWVrcGlPbHdO?=
+ =?utf-8?B?TjE5RTNHZmhlczJwSVpBNUVPMzl5UTk0dm5CUmk2U2x6ZXI4bTdLWUp1V3lH?=
+ =?utf-8?B?U0srNlNIVnhpb21PajVQR1lkbHBuN2c2bFNTTzVTVTFISXQydmFYUUtpUHQw?=
+ =?utf-8?B?WFp5S016cUlLMmJIZVdwcmc0aStUdkpsTDBoN3EvUmRtWllHTS9iVmgwZHYx?=
+ =?utf-8?B?dHlvVmRQSGpSM2hEWnVRYmZlMEhpd1JTN0FiZVRYQzFMSjBHcTFlRzBmTXZT?=
+ =?utf-8?B?ZDFoU2JBcGpxb2dTVncvU3M4MWxWK3RHTWwyejZEZ282NzdWc3NCdHB6ZjVa?=
+ =?utf-8?B?a3NlYXd5WTZnL0lSTlJjLzN6a0FUbEFmbSsraEtMeGZOMmY5bnltamJGcmJM?=
+ =?utf-8?B?U0xTUVFVUEY2aWNHWXBFK2tMU1RYWG9OdWU0Y1lwOGl5ZndIOXZuWXpVNHkr?=
+ =?utf-8?B?WWNqbkFpSVhZUHVZZ2lxbU85bnBiV2d0MzRjbk5Xd2VBYm84a3FZRDlQQ3or?=
+ =?utf-8?B?K1MxNHl3VjNna1FJQVh4TXMrQjlDNUxNdEZsWkR0Q1hJelcycTRrL2paYmIz?=
+ =?utf-8?B?dGxGbTlINWRJMi9aOWFuQ3AyaXJwRExiMFRWSnExODFiRWJwbm04WGlxT3N3?=
+ =?utf-8?B?aW9HYnBjaXM0aUw3S3pPRnBhbjJyMlQrd1krZ0pvdEtLYmRBeGFobFJITGFD?=
+ =?utf-8?B?K1lERmU5MDF0RzI4eG5sQzZnQ2xkYnUrZjV3bG94UG5MSVZmcXhRbEprSWlU?=
+ =?utf-8?B?bTVoMFZMZjZMcGNTRXNpcXZHMGhFenR4d0s2MG94N0pHL1hGMVVGcEQzdXd2?=
+ =?utf-8?B?Z3lybHo3dGdpbWdLak1zcFJ5VUtiNDArcTE2NUtPaEdvaW5NUU1tZ0dTRXdR?=
+ =?utf-8?B?bmJvc2c3Z2NPWkcwZysrcGlsZTNPd2xnT21pR3RheWVVT0I2K3FjcnRhM1Nt?=
+ =?utf-8?B?TTVVcDJlQ0VmSTBnQVJsUW5tcTE5ekN0QVhHTFd1SC9RMEVIN2JST3lnQkZr?=
+ =?utf-8?B?bkkwd0RSdXpxQytJZVRyK0x4RXgvTlZwYUJ3RjI4anc1OVI0VUFXRGVobG04?=
+ =?utf-8?B?azdzZFczZlVobW01RGpXa0VMQkc0VWRZcnN2TTcvTS9ObUtoajF1Z3hFb3hO?=
+ =?utf-8?B?WnBGSXRwbmRGZ29TdVJZbmpvSUFuRDdNQkZPWEc4Umk0NHVwQkZrR1lOMTh6?=
+ =?utf-8?B?aHRGR01WTGxHRTgzTktsV3owSWo3d3JQcEl4KzVsMDFvc2xGQ1FNNHFXTUx6?=
+ =?utf-8?B?cGJHaVFYa3hkWG1PNVNDOWphZ05TUGs0ZTh1VXYvMEZBMDhKTW8zVGxodnQ1?=
+ =?utf-8?B?cEY1NkFuVTkrNE1zUXRpSUFrYXVheUtxQjNqQy9wR1NvU01BdjJQd0JxL1No?=
+ =?utf-8?B?Uy9RbWlrRDU3aEJzeXdwSzZkQ0xrMHlPOTU4eGNZbHhDcWFCVzFzRTErUEJL?=
+ =?utf-8?B?ZGtiYUdJUW9zaHBnOHJKNitLVjJRZGIxSjFCKzlHZVJneXBJRUVsdlpQWVQ3?=
+ =?utf-8?B?SVZmRHlGbXZnQ0lEVkFtTG1VNGJJaHhwSnduZkd2UGJqRDNTSGpwVmlZb3Bu?=
+ =?utf-8?B?MWNVSTA3eFd6K0VPTFdUZVBsZEtSUC83YkFMeWE2czdzYUdNVFJCVm1HbHNZ?=
+ =?utf-8?B?dFBwVUEva2lsZjdwUk9XN0VHNEdBU3IvT25NQUxNd2NheThvd3dQeENhSm9w?=
+ =?utf-8?B?dXl2TThEMnQvbzVrc2loMjB4Q1Nhb013RkdCSnkvV0ZqQ1JtR3NDSFA5eWFP?=
+ =?utf-8?B?SWRRMnlHWXJSTHNwSlljbnBCOURFL1BvSXlKbDlXZU9FaGdYWm1HVld6TXVH?=
+ =?utf-8?B?dC9pbXVUUkVqbWZKTjNuUnNUSnZlUC9WTVkxclRiZDJvano2NWRSQ011QXJ4?=
+ =?utf-8?B?cUg1aWJJSDZObklaS2g1YVlzdFBUTFlYZkdIL3o3akRjQWhWYjhxa0UrdUpU?=
+ =?utf-8?B?TXY0M09CMVBKNGZLaW9NY2lkRjBULy9vaHoxeDRyNlp1Y3JrTERMMTEycFBI?=
+ =?utf-8?B?WHZGR1haaU10dlJKRXpRMjVvbkdoYkgvNjdjaG5CZERNMmU4b2loT3FGdUVt?=
+ =?utf-8?B?bzJweGVmR2NyZnF5a2R1c1VsNTZXL1lMeEFmZVBZMmtJbUdxVXM1R2U5N3l5?=
+ =?utf-8?B?blVHTDVGZ3hzUTkycXAwczd5SFd5MmVoNW84Zkp2UlkyaTNxWnZqbzVOYnZt?=
+ =?utf-8?B?MEgvNkpkSURvYkRndW1sTlBjZitpT2FKaWtTVmlzZ1p1a21vVXZoL3pvd1ZX?=
+ =?utf-8?B?Zy8xQ2NYQk8zN05QSWlhdEZLRGhsQ1RLQWJoSGVtMGt2YWo0bEpNc0Zmd3lN?=
+ =?utf-8?Q?Zsp/iYqgFkC/nC5mdhuGkSS2g8M8JeDNLL4NE?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <5B4A14B1ACCE6343B143FF5B56CC6172@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260210002852.1394504-1-joannelkoong@gmail.com>
- <20260210002852.1394504-4-joannelkoong@gmail.com> <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
- <CAJnrk1ZZyYmwtzcHAnv2x8rt=ZVsz7CXCVV6jtgMMDZytyxp3A@mail.gmail.com> <1c657f67-0862-4e13-9c71-7217aeecef61@gmail.com>
-In-Reply-To: <1c657f67-0862-4e13-9c71-7217aeecef61@gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 11 Feb 2026 14:06:18 -0800
-X-Gm-Features: AZwV_QjPgyCm0eAFeh7uwGSOqZkDBjFgaq7olGwzQXizo2TroZDfCBo5zqXJ1z4
-Message-ID: <CAJnrk1YXmxqUnT561-J7seaicxFRJTyJ=F3_MX1rmtAROC6Ybg@mail.gmail.com>
-Subject: Re: [PATCH v1 03/11] io_uring/kbuf: add support for kernel-managed
- buffer rings
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: axboe@kernel.dk, io-uring@vger.kernel.org, csander@purestorage.com, 
-	krisman@suse.de, bernd@bsbernd.com, hch@infradead.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: ibm.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cdb8ba1e-44cf-423c-e9a4-08de69be0485
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2026 22:36:37.3405
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /Xp1dCDldv2ctf9/L+Oj3zBnxXiR1MoPynI9hA274yXFbIubnLWqLda1yjWg9Z2LvIPlxhh2y5MyoC4+WFk77Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR15MB6201
+X-Authority-Analysis: v=2.4 cv=YZiwJgRf c=1 sm=1 tr=0 ts=698d0478 cx=c_pps
+ a=f333RhXzhOQaWIE8hCCRDA==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=Kk4oP9S42mGQ84ZI:21 a=xqWC_Br6kY4A:10
+ a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22 a=hiResAf5AbySHtBVl-MA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: Ny1_m_V5v22GZcWYBKh3laNf1Mzg7hHN
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjExMDE3MiBTYWx0ZWRfXyeTk2Kx1gs3E
+ vJplsj0n2MVpxUdMB18xjdApnMxIR/ckI85R06VjXb9JA430zkgtBPHTPTWxc6/xCgrvqD1s89G
+ 4KV91EHBQ8SvM1lmyztgjKakhC55o4Rtvmak5QGNfDp/ZcvYa6ljv+qVxS9Wv9M2mtVECpRcI8H
+ M5ARzNnaUg3RpinxGnCPS3r0117dXoB2KG/9RZWRAN5RNbp7SJy/AOys2ZKWaekEMNsrNUOeCdP
+ HD06menwCOUv0D+5pd9tv9BTcYCeW2+VGFh17JMqLEFIACeQMFKU612vzcW5Fx4PAmYxunyeAX6
+ nO5vIYKWR14npsiz9qASfibaiGmgpfAWNCt9uzh3KTI0hq5D5ill6ytl4A6tS5oj2q/tf6PuOqD
+ DTjQw47Pp+x0BUGYiWxoE2oAbJRtsX6ttAmPBuNrkgzz6ms9fqVOkUI4urYjYCwpcxtza8Usluh
+ KUIF51Y5uo09E7kPb3g==
+X-Proofpoint-GUID: Ny1_m_V5v22GZcWYBKh3laNf1Mzg7hHN
+Subject: Re:  [PATCH] hfs: evaluate the upper 32bits for detecting overflow
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-11_03,2026-02-11_04,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 spamscore=0 impostorscore=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 adultscore=0 clxscore=1015 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2602110172
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+X-Spamd-Result: default: False [0.94 / 15.00];
+	MIME_BASE64_TEXT_BOGUS(1.00)[];
+	ARC_REJECT(1.00)[cv is fail on i=2];
+	DMARC_POLICY_ALLOW(-0.50)[ibm.com,reject];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[ibm.com:s=pp1];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
+	MIME_BASE64_TEXT(0.10)[];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-76979-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76978-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_TO(0.00)[gmail.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,i-love.sakura.ne.jp:email];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[physik.fu-berlin.de,vivo.com,I-love.SAKURA.ne.jp,dubeyko.com,xs4all.nl];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
+	TO_DN_EQ_ADDR_ALL(0.00)[];
+	DKIM_TRACE(0.00)[ibm.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[Slava.Dubeyko@ibm.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: 56A63127F52
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: 71A82128261
 X-Rspamd-Action: no action
 
-On Wed, Feb 11, 2026 at 4:01=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
->
-> On 2/10/26 19:39, Joanne Koong wrote:
-> > On Tue, Feb 10, 2026 at 8:34=E2=80=AFAM Pavel Begunkov <asml.silence@gm=
-ail.com> wrote:
-> ...
-> >>> -/* argument for IORING_(UN)REGISTER_PBUF_RING */
-> >>> +/* argument for IORING_(UN)REGISTER_PBUF_RING and
-> >>> + * IORING_(UN)REGISTER_KMBUF_RING
-> >>> + */
-> >>>    struct io_uring_buf_reg {
-> >>> -     __u64   ring_addr;
-> >>> +     union {
-> >>> +             /* used for pbuf rings */
-> >>> +             __u64   ring_addr;
-> >>> +             /* used for kmbuf rings */
-> >>> +             __u32   buf_size;
-> >>
-> >> If you're creating a region, there should be no reason why it
-> >> can't work with user passed memory. You're fencing yourself off
-> >> optimisations that are already there like huge pages.
-> >
-> > Are there any optimizations with user-allocated buffers that wouldn't
-> > be possible with kernel-allocated buffers? For huge pages, can't the
-> > kernel do this as well (eg I see in io_mem_alloc_compound(), it calls
-> > into alloc_pages() with order > 0)?
->
-> Yes, there is handful of differences. To name one, 1MB allocation won't
-> get you a PMD mappable huge page, while user space can allocate 2MB,
-> register the first 1MB and reuse the rest for other purposes.
->
-> >>> +     };
-> >>>        __u32   ring_entries;
-> >>>        __u16   bgid;
-> >>>        __u16   flags;
-> >>> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-> >>> index aa9b70b72db4..9bc36451d083 100644
-> >>> --- a/io_uring/kbuf.c
-> >>> +++ b/io_uring/kbuf.c
-> >> ...
-> >>> +static int io_setup_kmbuf_ring(struct io_ring_ctx *ctx,
-> >>> +                            struct io_buffer_list *bl,
-> >>> +                            struct io_uring_buf_reg *reg)
-> >>> +{
-> >>> +     struct io_uring_buf_ring *ring;
-> >>> +     unsigned long ring_size;
-> >>> +     void *buf_region;
-> >>> +     unsigned int i;
-> >>> +     int ret;
-> >>> +
-> >>> +     /* allocate pages for the ring structure */
-> >>> +     ring_size =3D flex_array_size(ring, bufs, bl->nr_entries);
-> >>> +     ring =3D kzalloc(ring_size, GFP_KERNEL_ACCOUNT);
-> >>> +     if (!ring)
-> >>> +             return -ENOMEM;
-> >>> +
-> >>> +     ret =3D io_create_region_multi_buf(ctx, &bl->region, bl->nr_ent=
-ries,
-> >>> +                                      reg->buf_size);
-> >>
-> >> Please use io_create_region(), the new function does nothing new
-> >> and only violates abstractions.
-> >
-> > There's separate checks needed between io_create_region() and
-> > io_create_region_multi_buf() (eg IORING_MEM_REGION_TYPE_USER flag
->
-> If io_create_region() is too strict, let's discuss that in
-> examples if there are any, but it's likely not a good idea changing
-> that. If it's too lax, filter arguments in the caller. IOW, don't
-> pass IORING_MEM_REGION_TYPE_USER if it's not used.
->
-> > checking) and different allocation calls (eg
-> > io_region_allocate_pages() vs io_region_allocate_pages_multi_buf()).
->
-> I saw that and saying that all memmap.c changes can get dropped.
-> You're using it as one big virtually contig kernel memory range then
-> chunked into buffers, and that's pretty much what you're getting with
-> normal io_create_region(). I get that you only need it to be
-> contiguous within a single buffer, but that's not what you're doing,
-> and it'll be only worse than default io_create_region() e.g.
-> effectively disabling any usefulness of io_mem_alloc_compound(),
-> and ultimately you don't need to care.
-
-When I originally implemented it, I had it use
-io_region_allocate_pages() but this fails because it's allocating way
-too much memory at once. For fuse's use case, each buffer is usually
-at least 1 MB if not more. Allocating the memory one buffer a time in
-io_region_allocate_pages_multi_buf() bypasses the allocation errors I
-was seeing. That's the main reason I don't think this can just use
-io_create_region().
-
->
-> Regions shouldn't know anything about your buffers, how it's
-> subdivided after, etc.
->
-> > Maybe I'm misinterpreting your comment (or the code), but I'm not
-> > seeing how this can just use io_create_region().
->
-> struct io_uring_region_desc rd =3D {};
-> total_size =3D nr_bufs * buf_size;
-> rd.size =3D PAGE_ALIGN(total_size);
-> io_create_region(&region, &rd);
->
-> Add something like this for user provided memory:
->
-> if (use_user_memory) {
->         rd.user_addr =3D uaddr;
->         rd.flags |=3D IORING_MEM_REGION_TYPE_USER;
-> }
->
->
-> >> Provided buffer rings with kernel addresses could be an interesting
-> >> abstraction, but why is it also responsible for allocating buffers?
-> >
-> > Conceptually, I think it makes the interface and lifecycle management
-> > simpler/cleaner. With registering it from userspace, imo there's
-> > additional complications with no tangible benefits, eg it's not
-> > guaranteed that the memory regions registered for the buffers are the
-> > same size, with allocating it from the kernel-side we can guarantee
-> > that the pages are allocated physically contiguously, userspace setup
-> > with user-allocated buffers is less straightforward, etc. In general,
-> > I'm just not really seeing what advantages there are in allocating the
-> > buffers from userspace. Could you elaborate on that part more?
->
-> I don't think I follow. I'm saying that it might be interesting
-> to separate rings from how and with what they're populated on the
-> kernel API level, but the fuse kernel module can do the population
-
-Oh okay, from your first message I (and I think christoph too) thought
-what you were saying is that the user should be responsible for
-allocating the buffers with complete ownership over them, and then
-just pass those allocated to the kernel to use. But what you're saying
-is that just use a different way for getting the kernel to allocate
-the buffers (eg through the IORING_REGISTER_MEM_REGION interface). Am
-I reading this correctly?
-
-> and get exactly same layout as you currently have:
->
-> int fuse_create_ring(size_t region_offset /* user space argument */) {
->         struct io_mapped_region *mr =3D get_mem_region(ctx);
->         // that can take full control of the ring
->         ring =3D grab_empty_ring(io_uring_ctx);
->
->         size =3D nr_bufs * buf_size;
->         if (region_offset + size > get_size(mr)) // + other validation
->                 return error;
->
->         buf =3D mr_get_ptr(mr) + offset;
->         for (i =3D 0; i < nr_bufs; i++) {
->                 ring_push_buffer(ring, buf, buf_size);
->                 buf +=3D buf_size;
->         }
-> }
->
-> fuse might not care, but with empty rings other users will get a
-> channel they can use to do IO (e.g. read requests) using their
-> kernel addresses in the future.
->
-> >> What I'd do:
-> >>
-> >> 1. Strip buffer allocation from IORING_REGISTER_KMBUF_RING.
-> >> 2. Replace *_REGISTER_KMBUF_RING with *_REGISTER_PBUF_RING + a new fla=
-g.
-> >>      Or maybe don't expose it to the user at all and create it from
-> >>      fuse via internal API.
-> >
-> > If kmbuf rings are squashed into pbuf rings, then pbuf rings will need
-> > to support pinning. In fuse, there are some contexts where you can't
->
-> It'd change uapi but not internals, you already piggy back it
-> on pbuf implementation and differentiate with a flag.
->
-> It could basically be:
->
-> if (flags & IOU_PBUF_RING_KM)
->         bl->flags |=3D IOBL_KERNEL_MANAGED;
->
-> Pinning can be gated on that flag as well. Pretty likely uapi
-> and internals will be a bit cleaner, but that's not a huge deal,
-> just don't see why would you roll out a separate set of uapi
-> ([un]register, offsets, etc.) when essentially it can be treated
-> as the same thing.
-
-imo, it looked cleaner as a separate api because it has different
-expectations and behaviors and squashing kmbuf into the pbuf api makes
-the pbuf api needlessly more complex. Though I guess from the
-userspace pov, liburing could have a wrapper that takes care of
-setting up the pbuf details for kernel-managed pbufs. But in my head,
-having pbufs vs. kmbufs makes it clearer what each one does vs regular
-pbufs vs. pbufs that are kernel-managed.
-
-Especially with now having kmbufs go through the ioring mem region
-interface, it makes things more confusing imo if they're combined, eg
-pbufs that are kernel-managed are created empty and then populated
-from the kernel side by whatever subsystem is using them. Right now
-there's only one mem region supported per ring, but in the future if
-there's the possibility that multiple mem regions can be registered
-(eg if userspace doesn't know upfront what mem region length they'll
-need), then we should also probably add in a region id param for the
-registration arg, which if kmbuf rings go through the pbuf ring
-registration api, is not possible to do.
-
-But I'm happy to combine the interfaces and go with your suggestion.
-I'll make this change for v2 unless someone else objects.
-
->
-> > grab the uring mutex because you're running in atomic context and this
-> > can be encountered while recycling the buffer. I originally had a
-> > patch adding pinning to pbuf rings (to mitigate the overhead of
-> > registered buffers lookups)
->
-> IIRC, you was pinning the registered buffer table and not provided
-
-Yeah, you're right I misremembered and the objections / patch I
-dropped was pinning the registered buffer table, not the pbuf ring
-
-> buffer rings? Which would indeed be a bad idea. Thinking about it,
-> fwiw, instead of creating multiple registered buffers and trying to
-> lock the entire table, you could've kept all memory in one larger
-> registered buffer and pinned only it. It's already refcounted, so
-> shouldn't have been much of a problem.
-
-Hmm, I'm not sure this idea would work for sparse buffers populated by
-the kernel, unless those are automatically pinned too but then from
-the user POV for unregistration they'd need to unregister buffers
-individually instead of just calling IORING_UNREGISTER_BUFFERS but it
-might be annoying for them to now need to know which buffers are
-pinned vs not. When i benchmarked the fuse code with vs without pinned
-registered buffers, it didn't seem to make much of a difference
-performance-wise thankfully, so I just dropped it.
-
->
-> > but dropped it when Jens and Caleb didn't
-> > like the idea. But for kmbuf rings, pinning will be necessary for
-> > fuse.
-> >
-> >> 3. Require the user to register a memory region of appropriate size,
-> >>      see IORING_REGISTER_MEM_REGION, ctx->param_region. Make fuse
-> >>      populating the buffer ring using the memory region.
->
-> To explain why, I don't think that creating many small regions
-> is a good direction going forward. In case of kernel allocation,
-> it's extra mmap()s, extra user space management, and wasted space.
-
-To clarify, is this in reply to why the individual buffers shouldn't
-be allocated separately by the kernel?
-I added a comment about this above in the discussion about
-io_region_allocate_pages_multi_buf(), and if the memory allocation
-issue I was seeing is bypassable and the region can be allocated all
-at once, I'm happy to make that change. With having the allocation be
-separate buffers though, I'm not sure I agree that there are extra
-mmaps / userspace management. All the pages across the buffers are
-vmapped together and the userspace just needs to do 1 mmap call for
-them. On the userspace side, I don't think there's more management
-since the mmapped address represents the range across all the buffers.
-I'm not seeing how there's wasted space either since the only
-requirement is that the buffer size is page aligned. I think also
-there's a higher chance of the entire buffer region being physically
-contiguous if each buffer is allocated separately vs. all the buffers
-are allocated as 1 region. I don't feel strongly about this either way
-and I'm happy to allocate the entire region at once if that's
-possible.
-
-> For user provided memory it's over-accounting and extra memory
-> footprint. It'll also give you better lifecycle guarantees, i.e.
-
-Just out of curiosity, could you elaborate on the over-accounting and
-extra memory footprint? I was under the impression it would be the
-same since the accounting gets adjusted by the total bytes allocated?
-For the extra memory footprint, is the extra footprint from the
-metadata to describe each buffer region, or are you referring to
-something else?
-
-> you won't be able to free buffers while there are requests for the
-> context. I'm not so sure about ring bound memory, let's say I have
-> my suspicions, and you'd need to be extra careful about buffer
-> lifetimes even after a fuse instance dies.
->
-> >> I wanted to make regions shareable anyway (need it for other purposes)=
-,
-> >> I can toss patches for that tomorrow.
-> >>
-> >> A separate question is whether extending buffer rings is the right
-> >> approach as it seems like you're only using it for fuse requests and
-> >> not for passing buffers to normal requests, but I don't see the
-> >
-> > What are 'normal requests'? For fuse's use case, there are only fuse re=
-quests.
->
-> Any kind of read/recv/etc. that can use provided buffers. It's
-> where kernel memory filled rings would shine, as you'd be able
-> to use them together without changing any opcode specific code.
-> I.e. not changes in read request implementation, only kbuf.c
->
-
-Thanks for your input on the series. To iterate / sum up, these are
-changes for v2 I'll be making:
-- api-wise from userspace/liburing: get rid of KMBUF_RING api
-interface and have users go through PBUF_RING api instead with a flag
-indicating the ring is kernel-managed
-- have kernel buffer allocation go through IORING_REGISTER_MEM_REGION
-instead, which means when the pbuf ring is created and the
-kernel-managed flag is set, the ring will be empty. The memory region
-will need to be registered before the mmap call to the ring fd.
-- add apis for subsystems to populate a kernel-managed buffer ring
-with addresses from the registered mem region
-
-Does this align with your understanding of the conversation as well or
-is there anything I'm missing?
-
-And Christoph, do these changes for v2 work for your use case as well?
-
-Thanks,
-Joanne
-> --
-> Pavel Begunkov
->
+T24gV2VkLCAyMDI2LTAyLTExIGF0IDE5OjI5ICswOTAwLCBUZXRzdW8gSGFuZGEgd3JvdGU6DQo+
+IENvbW1pdCBiMjI2ODA0NTMyYTggKCJoZnM6IFJlcGxhY2UgQlVHX09OIHdpdGggZXJyb3IgaGFu
+ZGxpbmcgZm9yIENOSUQNCj4gY291bnQgY2hlY2tzIikgcmVwbGFjZWQgQlVHX09OKCkgd2l0aCAi
+YXRvbWljNjRfaW5jX3JldHVybigpID0+IGNoZWNrIGZvcg0KPiBvdmVyZmxvdyA9PiBhdG9taWM2
+NF9kZWMoKSBpZiBvdmVyZmxvd2VkIiBwYXR0ZXJuLiBUaGF0IGFwcHJvYWNoIHdvcmtzDQo+IGJl
+Y2F1c2UgdGhlIDY0Yml0cyBzaWduZWQgdmFyaWFibGUgaXMgaW5pdGlhbGl6ZWQgdXNpbmcgYSAz
+MmJpdHMgdW5zaWduZWQNCj4gdmFyaWFibGUsIG1ha2luZyBzdXJlIHRoYXQgdGhlIGluaXRpYWwg
+dmFsdWUgaXMgaW4gWzAsIFUzMl9NQVhdIHJhbmdlLg0KPiANCj4gSG93ZXZlciwgaWYgSEZTX1NC
+KHNiKS0+ZmlsZV9jb3VudCBpcyBzbWFsbGVyIHRoYW4gbnVtYmVyIG9mIGZpbGUgaW5vZGVzDQo+
+IHRoYXQgYWN0dWFsbHkgZXhpc3RzIGR1ZSB0byBmaWxlc3lzdGVtIGNvcnJ1cHRpb24sIGNhbGxp
+bmcNCj4gYXRvbWljNjRfZGVjKCZIRlNfU0Ioc2IpLT5maWxlX2NvdW50KSBmcm9tIGhmc19kZWxl
+dGVfaW5vZGUoKSBjYW4gbWFrZQ0KPiBIRlNfU0Ioc2IpLT5maWxlX2NvdW50IDwgMC4NCj4gDQo+
+IEFzIGEgcmVzdWx0LCAiYXRvbWljNjRfcmVhZCgmc2JpLT5maWxlX2NvdW50KSA+IFUzMl9NQVgi
+IGNvbXBhcmlzb24gaW4NCj4gaXNfaGZzX2NuaWRfY291bnRzX3ZhbGlkKCkgZmFpbHMgdG8gZGV0
+ZWN0IG92ZXJmbG93IHdoZW4NCj4gSEZTX1NCKHNiKS0+ZmlsZV9jb3VudCA8IDAsIGZvciB0aGlz
+IGlzIGEgY29tcGFyaXNvbiBiZXR3ZWVuIHNpZ25lZA0KPiA2NGJpdHMgYW5kIHVuc2lnbmVkIDMy
+Yml0cy4gRXZhbHVhdGUgdGhlIHVwcGVyIDMyYml0cyBvZiB0aGUgNjRiaXRzDQo+IHZhcmlhYmxl
+IGZvciBkZXRlY3Rpbmcgb3ZlcmZsb3cuDQo+IA0KPiBGaXhlczogYjIyNjgwNDUzMmE4ICgiaGZz
+OiBSZXBsYWNlIEJVR19PTiB3aXRoIGVycm9yIGhhbmRsaW5nIGZvciBDTklEIGNvdW50IGNoZWNr
+cyIpDQo+IFNpZ25lZC1vZmYtYnk6IFRldHN1byBIYW5kYSA8cGVuZ3Vpbi1rZXJuZWxASS1sb3Zl
+LlNBS1VSQS5uZS5qcD4NCj4gLS0tDQo+IE9ubHkgY29tcGlsZSB0ZXN0ZWQuDQoNCk1heWJlLCBp
+dCBtYWtlcyBzZW5zZSB0byBydW4gc29tZSB0ZXN0cz8gOikNCg0KPiANCj4gIGZzL2hmcy9pbm9k
+ZS5jIHwgNiArKystLS0NCj4gIGZzL2hmcy9tZGIuYyAgIHwgNiArKystLS0NCj4gIDIgZmlsZXMg
+Y2hhbmdlZCwgNiBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdp
+dCBhL2ZzL2hmcy9pbm9kZS5jIGIvZnMvaGZzL2lub2RlLmMNCj4gaW5kZXggODc4NTM1ZGI2NGQ2
+Li43YjVhNDY4NmFhNzkgMTAwNjQ0DQo+IC0tLSBhL2ZzL2hmcy9pbm9kZS5jDQo+ICsrKyBiL2Zz
+L2hmcy9pbm9kZS5jDQo+IEBAIC0xOTksNyArMTk5LDcgQEAgc3RydWN0IGlub2RlICpoZnNfbmV3
+X2lub2RlKHN0cnVjdCBpbm9kZSAqZGlyLCBjb25zdCBzdHJ1Y3QgcXN0ciAqbmFtZSwgdW1vZGVf
+dA0KPiAgCXNwaW5fbG9ja19pbml0KCZIRlNfSShpbm9kZSktPm9wZW5fZGlyX2xvY2spOw0KPiAg
+CWhmc19jYXRfYnVpbGRfa2V5KHNiLCAoYnRyZWVfa2V5ICopJkhGU19JKGlub2RlKS0+Y2F0X2tl
+eSwgZGlyLT5pX2lubywgbmFtZSk7DQo+ICAJbmV4dF9pZCA9IGF0b21pYzY0X2luY19yZXR1cm4o
+JkhGU19TQihzYiktPm5leHRfaWQpOw0KPiAtCWlmIChuZXh0X2lkID4gVTMyX01BWCkgew0KPiAr
+CWlmIChuZXh0X2lkID4+IDMyKSB7DQoNCldoYXQncyBhYm91dCB1cHBlcl8zMl9iaXRzKCk/DQoN
+Cj4gIAkJYXRvbWljNjRfZGVjKCZIRlNfU0Ioc2IpLT5uZXh0X2lkKTsNCj4gIAkJcHJfZXJyKCJj
+YW5ub3QgY3JlYXRlIG5ldyBpbm9kZTogbmV4dCBDTklEIGV4Y2VlZHMgbGltaXRcbiIpOw0KPiAg
+CQlnb3RvIG91dF9kaXNjYXJkOw0KPiBAQCAtMjE3LDcgKzIxNyw3IEBAIHN0cnVjdCBpbm9kZSAq
+aGZzX25ld19pbm9kZShzdHJ1Y3QgaW5vZGUgKmRpciwgY29uc3Qgc3RydWN0IHFzdHIgKm5hbWUs
+IHVtb2RlX3QNCj4gIAlpZiAoU19JU0RJUihtb2RlKSkgew0KPiAgCQlpbm9kZS0+aV9zaXplID0g
+MjsNCj4gIAkJZm9sZGVyX2NvdW50ID0gYXRvbWljNjRfaW5jX3JldHVybigmSEZTX1NCKHNiKS0+
+Zm9sZGVyX2NvdW50KTsNCj4gLQkJaWYgKGZvbGRlcl9jb3VudD4gVTMyX01BWCkgew0KPiArCQlp
+ZiAoZm9sZGVyX2NvdW50ID4+IDMyKSB7DQoNCkRpdHRvLg0KDQo+ICAJCQlhdG9taWM2NF9kZWMo
+JkhGU19TQihzYiktPmZvbGRlcl9jb3VudCk7DQo+ICAJCQlwcl9lcnIoImNhbm5vdCBjcmVhdGUg
+bmV3IGlub2RlOiBmb2xkZXIgY291bnQgZXhjZWVkcyBsaW1pdFxuIik7DQo+ICAJCQlnb3RvIG91
+dF9kaXNjYXJkOw0KPiBAQCAtMjMxLDcgKzIzMSw3IEBAIHN0cnVjdCBpbm9kZSAqaGZzX25ld19p
+bm9kZShzdHJ1Y3QgaW5vZGUgKmRpciwgY29uc3Qgc3RydWN0IHFzdHIgKm5hbWUsIHVtb2RlX3QN
+Cj4gIAl9IGVsc2UgaWYgKFNfSVNSRUcobW9kZSkpIHsNCj4gIAkJSEZTX0koaW5vZGUpLT5jbHVt
+cF9ibG9ja3MgPSBIRlNfU0Ioc2IpLT5jbHVtcGFibGtzOw0KPiAgCQlmaWxlX2NvdW50ID0gYXRv
+bWljNjRfaW5jX3JldHVybigmSEZTX1NCKHNiKS0+ZmlsZV9jb3VudCk7DQo+IC0JCWlmIChmaWxl
+X2NvdW50ID4gVTMyX01BWCkgew0KPiArCQlpZiAoZmlsZV9jb3VudCA+PiAzMikgew0KDQpEaXR0
+by4NCg0KPiAgCQkJYXRvbWljNjRfZGVjKCZIRlNfU0Ioc2IpLT5maWxlX2NvdW50KTsNCj4gIAkJ
+CXByX2VycigiY2Fubm90IGNyZWF0ZSBuZXcgaW5vZGU6IGZpbGUgY291bnQgZXhjZWVkcyBsaW1p
+dFxuIik7DQo+ICAJCQlnb3RvIG91dF9kaXNjYXJkOw0KPiBkaWZmIC0tZ2l0IGEvZnMvaGZzL21k
+Yi5jIGIvZnMvaGZzL21kYi5jDQo+IGluZGV4IGE5N2NlYTM1Y2EyZS4uNjhkM2MwNzE0MDU3IDEw
+MDY0NA0KPiAtLS0gYS9mcy9oZnMvbWRiLmMNCj4gKysrIGIvZnMvaGZzL21kYi5jDQo+IEBAIC02
+OSwxNSArNjksMTUgQEAgYm9vbCBpc19oZnNfY25pZF9jb3VudHNfdmFsaWQoc3RydWN0IHN1cGVy
+X2Jsb2NrICpzYikNCj4gIAlzdHJ1Y3QgaGZzX3NiX2luZm8gKnNiaSA9IEhGU19TQihzYik7DQo+
+ICAJYm9vbCBjb3JydXB0ZWQgPSBmYWxzZTsNCj4gIA0KPiAtCWlmICh1bmxpa2VseShhdG9taWM2
+NF9yZWFkKCZzYmktPm5leHRfaWQpID4gVTMyX01BWCkpIHsNCj4gKwlpZiAodW5saWtlbHkoYXRv
+bWljNjRfcmVhZCgmc2JpLT5uZXh0X2lkKSA+PiAzMikpIHsNCg0KRGl0dG8uDQoNCj4gIAkJcHJf
+d2FybigibmV4dCBDTklEIGV4Y2VlZHMgbGltaXRcbiIpOw0KPiAgCQljb3JydXB0ZWQgPSB0cnVl
+Ow0KPiAgCX0NCj4gLQlpZiAodW5saWtlbHkoYXRvbWljNjRfcmVhZCgmc2JpLT5maWxlX2NvdW50
+KSA+IFUzMl9NQVgpKSB7DQo+ICsJaWYgKHVubGlrZWx5KGF0b21pYzY0X3JlYWQoJnNiaS0+Zmls
+ZV9jb3VudCkgPj4gMzIpKSB7DQoNCkRpdHRvLg0KDQo+ICAJCXByX3dhcm4oImZpbGUgY291bnQg
+ZXhjZWVkcyBsaW1pdFxuIik7DQo+ICAJCWNvcnJ1cHRlZCA9IHRydWU7DQo+ICAJfQ0KPiAtCWlm
+ICh1bmxpa2VseShhdG9taWM2NF9yZWFkKCZzYmktPmZvbGRlcl9jb3VudCkgPiBVMzJfTUFYKSkg
+ew0KPiArCWlmICh1bmxpa2VseShhdG9taWM2NF9yZWFkKCZzYmktPmZvbGRlcl9jb3VudCkgPj4g
+MzIpKSB7DQoNCkRpdHRvLg0KDQpUaGFua3MsDQpTbGF2YS4NCg0KPiAgCQlwcl93YXJuKCJmb2xk
+ZXIgY291bnQgZXhjZWVkcyBsaW1pdFxuIik7DQo+ICAJCWNvcnJ1cHRlZCA9IHRydWU7DQo+ICAJ
+fQ0K
 
