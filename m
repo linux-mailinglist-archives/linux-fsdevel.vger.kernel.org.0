@@ -1,210 +1,230 @@
-Return-Path: <linux-fsdevel+bounces-76935-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76936-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 2EhrACxrjGm+nQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76935-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 12:42:36 +0100
+	id SNVAOGVsjGlmngAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76936-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 12:47:49 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D72123EDD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 12:42:35 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56778123F2D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 12:47:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 267463020A45
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 11:42:27 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id BA7BC300EC84
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 11:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD0436921B;
-	Wed, 11 Feb 2026 11:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF88B281525;
+	Wed, 11 Feb 2026 11:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ro0OcSrB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5Rdam4TP";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ro0OcSrB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5Rdam4TP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lg23IamE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222F12F2910
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 11:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9638460
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 11:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770810145; cv=none; b=aLtiNM0rF5HVIIjFfZJ50Gkqb30Gi324H5QLCNSxsBxKoSwoup3AHmB0Ows9JJ06iRXGYomW+gyI81swxGOTBXfuyHLxmsb2ioi2edIu5UgSvtVtjXLBCNQVE/79tq9gN76SluC0Nyl6nY86OeneN7qN5Hq7unXD3jR7DgdfrFU=
+	t=1770810464; cv=none; b=AcFm7qqLAC2LYZxyzfmbfk/5Dp3KzSzhoGT1tNAvQVSvMi7xKiM+DK+X3OQdWmlwBk8df4ovrjJSPAxmzxB3M54D4b81dHxvxe84aw3p+3yIoasSj2clBj0SKq/x7ZOzA6izX1MXhjbzil3x4Ijx5VnEkGii4wbjMLxxIxjkCQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770810145; c=relaxed/simple;
-	bh=L0so1uOFDNGD482yWenadqerI6IZHkqDJewtDrl/2DQ=;
+	s=arc-20240116; t=1770810464; c=relaxed/simple;
+	bh=8dZBJVIVhEK4f7afDdSFCFLP5iPBdSzN9QzjkVtv6fw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O0vh3uqgh91PNtQn/8Bwe3fphaWhs03AycmTTKAEqXGcSE9Q/ts4KhcdT1GnezWgRsLvloZdkzctAekUvRFwfgMfuUl827x5ryHM2IbOr9/bwMoOn6K+LStMFyn0kJBhmumLbRZ5UKUkFXo5AF/HDOGjFNGa5Gg/n5jSz56t9UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ro0OcSrB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5Rdam4TP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ro0OcSrB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5Rdam4TP; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 54AC35BCC6;
-	Wed, 11 Feb 2026 11:42:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1770810142; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=whGHsLyR1V0bnctfpBa4WypfCURKChRUFhxhMzqVUL4=;
-	b=ro0OcSrB1QmcolsQwdRa3vJobNvQuS7uB4N/u/CetpU0KvytYH1Ih2RQDAaujpGpl6vgXr
-	Ow8vJ+YUUJ4+ceRFH5nJyEhS9zuEDuDrzia3zv9/6wLmFmNZbGE+BGB63kYBDPte2aPd5g
-	x7xpcNTH99g3PY0my2dE8XtjJp5+2xc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1770810142;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=whGHsLyR1V0bnctfpBa4WypfCURKChRUFhxhMzqVUL4=;
-	b=5Rdam4TPtcwZkyJwWOgHepLwYcKPybF9uqiyR6iH1kN/Uq1v6XkSIOX8GnGJV9+n86ckEA
-	dtypcxmvhmusxjDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1770810142; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=whGHsLyR1V0bnctfpBa4WypfCURKChRUFhxhMzqVUL4=;
-	b=ro0OcSrB1QmcolsQwdRa3vJobNvQuS7uB4N/u/CetpU0KvytYH1Ih2RQDAaujpGpl6vgXr
-	Ow8vJ+YUUJ4+ceRFH5nJyEhS9zuEDuDrzia3zv9/6wLmFmNZbGE+BGB63kYBDPte2aPd5g
-	x7xpcNTH99g3PY0my2dE8XtjJp5+2xc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1770810142;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=whGHsLyR1V0bnctfpBa4WypfCURKChRUFhxhMzqVUL4=;
-	b=5Rdam4TPtcwZkyJwWOgHepLwYcKPybF9uqiyR6iH1kN/Uq1v6XkSIOX8GnGJV9+n86ckEA
-	dtypcxmvhmusxjDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3E7073EA62;
-	Wed, 11 Feb 2026 11:42:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Hpk3Dx5rjGmzGgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 11 Feb 2026 11:42:22 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id EC852A0A4C; Wed, 11 Feb 2026 12:42:06 +0100 (CET)
-Date: Wed, 11 Feb 2026 12:42:06 +0100
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yizhang089@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu, 
-	adilger.kernel@dilger.ca, ojaswin@linux.ibm.com, ritesh.list@gmail.com, hch@infradead.org, 
-	djwong@kernel.org, libaokun1@huawei.com, yangerkun@huawei.com, yukuai@fnnas.com, 
-	Zhang Yi <yi.zhang@huaweicloud.com>
-Subject: Re: [PATCH -next v2 03/22] ext4: only order data when partially
- block truncating down
-Message-ID: <3dv6rb4223ngpj2duqm5smvmlpwhbvgyiksfkzmyfxhchejgon@eoo2kitdbdpq>
-References: <b889332b-9c0c-46d1-af61-1f2426c8c305@huaweicloud.com>
- <ocwepmhnw45k5nwwrooe2li2mzavw5ps2ncmowrc32u4zeitgp@gqsz3iee3axr>
- <1dad3113-7b84-40a0-8c7e-da30ae5cba8e@huaweicloud.com>
- <7hy5g3bp5whis4was5mqg3u6t37lwayi6j7scvpbuoqsbe5adc@mh5zxvml3oe7>
- <3ea033c1-8d32-4c82-baea-c383fa1d9e2a@huaweicloud.com>
- <yhy4cgc4fnk7tzfejuhy6m6ljo425ebpg6khss6vtvpidg6lyp@5xcyabxrl6zm>
- <665b8293-60a2-4d4d-aef5-cb1f9c3c0c13@huaweicloud.com>
- <ac1f8bd8-926e-4182-a5a3-a111b49ecafc@huaweicloud.com>
- <yrnt4wyocyik4nwcamwk5noc7ilninlt7cmyggzwhwzjjsjzfc@uxdht432fgzm>
- <d8b84bb5-8fb4-48fe-9ccb-7a0b724eb4b9@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lM9SXT6ZCglM6TQh06y33y43uJntOb+YrQRK0DS5JleEG8/YySah7kN9m8Upnw/OOpqqQyIGZc86eJlfY6Atm4vro3954DEW830FInPIjWV7TkQlo62ys5YUDA9lOtIZwaD8ynnXTzVPUUZI7RLhhZOoRiWrho13c81W038bUDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lg23IamE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BCD5C4CEF7;
+	Wed, 11 Feb 2026 11:47:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770810463;
+	bh=8dZBJVIVhEK4f7afDdSFCFLP5iPBdSzN9QzjkVtv6fw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Lg23IamEOyJf45oHiSuWAzlbSQvIkYQ043UQOoelfGuKKq6tDRqeLzrh1mQU4EjAL
+	 as4WPP/FqCed2C3q4HhMZA4GTdIv+TUZ81rFi45ZCYJsZgxsmBtY+eo3EtoCgltzjD
+	 +DxhKnE+U6Xch/Z1h/T/Znj0gdAVcw/gWgyJotfyl9NjG9v2lPGoDSYg4fsR0oNdz1
+	 c9uOqowwjVe8SHfCqld4uPmL6y7IsdruHnuvkvCZ+x/j5JKfW3Fg0dhlCE5ST4qXg/
+	 c8yd54dwVEJiQeR6XjW2xU0NQMyb+1e26oepDpD92Gbh7xylG0+x0o3vEfohnsKryM
+	 b61m7HH8fn8xg==
+Date: Wed, 11 Feb 2026 11:47:39 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Aleksa Sarai <cyphar@cyphar.com>
+Subject: Re: [PATCH 3/7] mount: add FSMOUNT_NAMESPACE
+Message-ID: <ad810bc9-5755-416b-a810-5c1019b85b76@sirena.org.uk>
+References: <20260122-work-fsmount-namespace-v1-0-5ef0a886e646@kernel.org>
+ <20260122-work-fsmount-namespace-v1-3-5ef0a886e646@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7NOatrK2jkqGg8GL"
 Content-Disposition: inline
-In-Reply-To: <d8b84bb5-8fb4-48fe-9ccb-7a0b724eb4b9@gmail.com>
-X-Spam-Score: -2.30
-X-Spam-Level: 
-X-Spam-Flag: NO
+In-Reply-To: <20260122-work-fsmount-namespace-v1-3-5ef0a886e646@kernel.org>
+X-Cookie: Often things ARE as bad as they seem!
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.34 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-4.26 / 15.00];
+	SIGNED_PGP(-2.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114];
+	MIME_GOOD(-0.20)[multipart/signed,text/plain];
 	MAILLIST(-0.15)[generic];
-	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76935-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	URIBL_MULTI_FAIL(0.00)[suse.cz:server fail,sea.lore.kernel.org:server fail,suse.com:server fail];
-	DMARC_NA(0.00)[suse.cz];
-	FREEMAIL_TO(0.00)[gmail.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	FREEMAIL_CC(0.00)[vger.kernel.org,zeniv.linux.org.uk,suse.cz,kernel.org,gmail.com,toxicpanda.com,cyphar.com];
+	TAGGED_FROM(0.00)[bounces-76936-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,mit.edu,dilger.ca,linux.ibm.com,gmail.com,infradead.org,kernel.org,huawei.com,fnnas.com,huaweicloud.com];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+,1:+,2:~];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: 50D72123EDD
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[broonie@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,sirena.org.uk:url,sirena.org.uk:mid,gitlab.freedesktop.org:url]
+X-Rspamd-Queue-Id: 56778123F2D
 X-Rspamd-Action: no action
 
-On Wed 11-02-26 00:11:51, Zhang Yi wrote:
-> On 2/10/2026 10:07 PM, Jan Kara wrote:
-> > On Tue 10-02-26 20:02:51, Zhang Yi wrote:
-> > > On 2/9/2026 4:28 PM, Zhang Yi wrote:
-> > > > On 2/6/2026 11:35 PM, Jan Kara wrote:
-> > > > > On Fri 06-02-26 19:09:53, Zhang Yi wrote:
-> > > > > > On 2/5/2026 11:05 PM, Jan Kara wrote:
-> > > > > > > So how about the following:
-> > > > > > 
-> > > > > > Let me see, please correct me if my understanding is wrong, ana there are
-> > > > > > also some points I don't get.
-> > > > > > 
-> > > > > > > We expand our io_end processing with the
-> > > > > > > ability to journal i_disksize updates after page writeback completes. Then
-> > > 
-> > > While I was extending the end_io path of buffered_head to support updating
-> > > i_disksize, I found another problem that requires discussion.
-> > > 
-> > > Supporting updates to i_disksize in end_io requires starting a handle, which
-> > > conflicts with the data=ordered mode because folios written back through the
-> > > journal process cannot initiate any handles; otherwise, this may lead to a
-> > > deadlock. This limitation does not affect the iomap path, as it does not use
-> > > the data=ordered mode at all.  However, in the buffered_head path, online
-> > > defragmentation (if this change works, it should be the last user) still uses
-> > > the data=ordered mode.
-> > 
-> > Right and my intention was to use reserved handle for the i_disksize update
-> > similarly as we currently use reserved handle for unwritten extent
-> > conversion after page writeback is done.
-> 
-> IIUC, reserved handle only works for ext4_jbd2_inode_add_wait(). It doesn't
-> work for ext4_jbd2_inode_add_write() because writebacks triggered by the
-> journaling process cannot initiate any handles, including reserved handles.
 
-Yes, we cannot start any new handles (reserved or not) from writeback
-happening from jbd2 thread. I didn't think about that case so good catch.
-So we can either do this once we have delay map and get rid of data=ordered
-mode altogether or, as you write below, we have to submit the tail folios
-proactively during truncate up / append write - but I don't like this
-option too much because workloads appending to file by small chunks (say a
-few bytes) will get a large performance hit from this.
+--7NOatrK2jkqGg8GL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> So, I guess you're suggesting that within mext_move_extent(), we should
-> proactively submit the blocks after swapping, and then call
-> ext4_jbd2_inode_add_wait() to replace the existing
-> ext4_jbd2_inode_add_write(). Is that correct?
+On Thu, Jan 22, 2026 at 11:48:48AM +0100, Christian Brauner wrote:
+> Add FSMOUNT_NAMESPACE flag to fsmount() that creates a new mount
+> namespace with the newly created filesystem attached to a copy of the
+> real rootfs. This returns a namespace file descriptor instead of an
+> O_PATH mount fd, similar to how OPEN_TREE_NAMESPACE works for open_tree().
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I'm seeing a regression in the LTP fsmount02 test in yesterday's -next
+on arm64 which bisect to this patch, the test reports some unexpected
+successes with logs like this:
+
+  tst_test.c:1956: TINFO: === Testing on ext2 ===
+  tst_test.c:1280: TINFO: Formatting /dev/loop0 with ext2 opts='' extra opts=''
+  mke2fs 1.47.2 (1-Jan-2025)
+  fsmount02.c:67: TPASS: invalid-fd: fsmount() failed as expected: EBADF (9)
+  fsmount02.c:56: TFAIL: invalid-flags: fsmount() succeeded unexpectedly (index: 1)
+  fsmount02.c:67: TPASS: invalid-attrs: fsmount() failed as expected: EINVAL (22)
+
+for each filesystem it tests.
+
+Full log:
+
+   https://lava.sirena.org.uk/scheduler/job/2445995#L5878
+
+Bisect log:
+
+# bad: [fd9678829d6dd0c10fde080b536abf4b1121c346] Add linux-next specific files for 20260210
+# good: [0b6f6fa3363fdb9234e4b91e4cf22b5d50bff4f7] Merge branch 'for-linux-next-fixes' of https://gitlab.freedesktop.org/drm/misc/kernel.git
+# good: [a9aabb3b839aba094ed80861054993785c61462c] Merge tag 'rust-6.20-7.0' of git://git.kernel.org/pub/scm/linux/kernel/git/ojeda/linux
+# good: [1a4b0c999101b2532723f9bd9818b70ffa7580f4] regulator: mt6363: Fix interrmittent timeout
+# good: [5578da7d957fbaf91f6c39ba2363c2d2e4273183] ASoC: rt721-sdca: Fix issue of fail to detect OMTP jack type
+# good: [3a17ba6557e28d5d99b7e3cad31f22ad28a36cc2] mfd: sec: Add support for S2MPG11 PMIC via ACPM
+# good: [fe8429a2717fc01082502b0adf680a50b230eff7] regulator: s2mps11: more descriptive gpio consumer name
+# good: [6ffdc7eb48bd2268c37c2accad454c043b9cc987] regcache: Demote defaults readback from HW to debug print
+# good: [20c4701b75a3d6ce09d61e17125aefe77e7eb333] dt-bindings: regulator: mark regulator-suspend-microvolt as deprecated
+# good: [dccc66b0e92d48d9a1908a3ccb8142e0ee3381f5] regmap: Enable REGMAP when REGMAP_SLIMBUS is enabled
+# good: [62b04225e99a5d1c71c5c73d2aa6618bc2c0738f] regulator: dt-bindings: rpi-panel: Mark 7" Raspberry Pi as GPIO controller
+# good: [de9f1b1583aecb246b659effb03f2456604fab64] regulator: dt-bindings: mediatek,mt6331: Add missing ldo-vio28 vreg
+# good: [b0fc1e7701940d12ea2c41f386aa552bc4cc3629] regulator: Add TPS65185 driver
+# good: [09dc08b396c954820f119e1ab0c7d72333c18323] regulator: dummy, make dummy_regulator_driver static
+# good: [8d38423d9dea7353a8a54a3ab2e0d0aa04ed34d0] regulator: core: don't fail regulator_register() with missing required supply
+# good: [b0655377aa5a410df02d89170c20141a1a5bbc28] rust: regulator: replace `kernel::c_str!` with C-Strings
+# good: [32a708ba5db50cf928a1f1b2039ceef33de2c286] regulator: Add rt8092 support
+# good: [9e92c559d49d6fb903af17a31a469aac51b1766d] regulator: max77675: Add MAX77675 regulator driver
+# good: [03d281f384768610bf90697bce9e35d3d596de77] rust: regulator: add __rust_helper to helpers
+# good: [6c177775dcc5e70a64ddf4ee842c66af498f2c7c] Merge branch 'next/drivers' into for-next
+git bisect start 'fd9678829d6dd0c10fde080b536abf4b1121c346' '0b6f6fa3363fdb9234e4b91e4cf22b5d50bff4f7' 'a9aabb3b839aba094ed80861054993785c61462c' '1a4b0c999101b2532723f9bd9818b70ffa7580f4' '5578da7d957fbaf91f6c39ba2363c2d2e4273183' '3a17ba6557e28d5d99b7e3cad31f22ad28a36cc2' 'fe8429a2717fc01082502b0adf680a50b230eff7' '6ffdc7eb48bd2268c37c2accad454c043b9cc987' '20c4701b75a3d6ce09d61e17125aefe77e7eb333' 'dccc66b0e92d48d9a1908a3ccb8142e0ee3381f5' '62b04225e99a5d1c71c5c73d2aa6618bc2c0738f' 'de9f1b1583aecb246b659effb03f2456604fab64' 'b0fc1e7701940d12ea2c41f386aa552bc4cc3629' '09dc08b396c954820f119e1ab0c7d72333c18323' '8d38423d9dea7353a8a54a3ab2e0d0aa04ed34d0' 'b0655377aa5a410df02d89170c20141a1a5bbc28' '32a708ba5db50cf928a1f1b2039ceef33de2c286' '9e92c559d49d6fb903af17a31a469aac51b1766d' '03d281f384768610bf90697bce9e35d3d596de77' '6c177775dcc5e70a64ddf4ee842c66af498f2c7c'
+# test job: [a9aabb3b839aba094ed80861054993785c61462c] https://lava.sirena.org.uk/scheduler/job/2445657
+# test job: [1a4b0c999101b2532723f9bd9818b70ffa7580f4] https://lava.sirena.org.uk/scheduler/job/2444892
+# test job: [5578da7d957fbaf91f6c39ba2363c2d2e4273183] https://lava.sirena.org.uk/scheduler/job/2445060
+# test job: [3a17ba6557e28d5d99b7e3cad31f22ad28a36cc2] https://lava.sirena.org.uk/scheduler/job/2430473
+# test job: [fe8429a2717fc01082502b0adf680a50b230eff7] https://lava.sirena.org.uk/scheduler/job/2429403
+# test job: [6ffdc7eb48bd2268c37c2accad454c043b9cc987] https://lava.sirena.org.uk/scheduler/job/2409190
+# test job: [20c4701b75a3d6ce09d61e17125aefe77e7eb333] https://lava.sirena.org.uk/scheduler/job/2386850
+# test job: [dccc66b0e92d48d9a1908a3ccb8142e0ee3381f5] https://lava.sirena.org.uk/scheduler/job/2377205
+# test job: [62b04225e99a5d1c71c5c73d2aa6618bc2c0738f] https://lava.sirena.org.uk/scheduler/job/2369398
+# test job: [de9f1b1583aecb246b659effb03f2456604fab64] https://lava.sirena.org.uk/scheduler/job/2368840
+# test job: [b0fc1e7701940d12ea2c41f386aa552bc4cc3629] https://lava.sirena.org.uk/scheduler/job/2364654
+# test job: [09dc08b396c954820f119e1ab0c7d72333c18323] https://lava.sirena.org.uk/scheduler/job/2365445
+# test job: [8d38423d9dea7353a8a54a3ab2e0d0aa04ed34d0] https://lava.sirena.org.uk/scheduler/job/2354317
+# test job: [b0655377aa5a410df02d89170c20141a1a5bbc28] https://lava.sirena.org.uk/scheduler/job/2291672
+# test job: [32a708ba5db50cf928a1f1b2039ceef33de2c286] https://lava.sirena.org.uk/scheduler/job/2279437
+# test job: [9e92c559d49d6fb903af17a31a469aac51b1766d] https://lava.sirena.org.uk/scheduler/job/2232506
+# test job: [03d281f384768610bf90697bce9e35d3d596de77] https://lava.sirena.org.uk/scheduler/job/2231124
+# test job: [6c177775dcc5e70a64ddf4ee842c66af498f2c7c] https://lava.sirena.org.uk/scheduler/job/1780443
+# test job: [fd9678829d6dd0c10fde080b536abf4b1121c346] https://lava.sirena.org.uk/scheduler/job/2445995
+# bad: [fd9678829d6dd0c10fde080b536abf4b1121c346] Add linux-next specific files for 20260210
+git bisect bad fd9678829d6dd0c10fde080b536abf4b1121c346
+# test job: [1256bc7912123bf6f6c0b97809af184a55b0d9df] https://lava.sirena.org.uk/scheduler/job/2446075
+# bad: [1256bc7912123bf6f6c0b97809af184a55b0d9df] Merge branch 'main' of https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+git bisect bad 1256bc7912123bf6f6c0b97809af184a55b0d9df
+# test job: [8fb729d87a37ced2889940c150622cd44f2d029d] https://lava.sirena.org.uk/scheduler/job/2446199
+# good: [8fb729d87a37ced2889940c150622cd44f2d029d] Merge branch 'xtensa-for-next' of https://github.com/jcmvbkbc/linux-xtensa.git
+git bisect good 8fb729d87a37ced2889940c150622cd44f2d029d
+# test job: [275da93ce2b8fa2f82da1e8785d6f1930670ef88] https://lava.sirena.org.uk/scheduler/job/2446280
+# good: [275da93ce2b8fa2f82da1e8785d6f1930670ef88] gve: Remove jumbo_remove step from TX path
+git bisect good 275da93ce2b8fa2f82da1e8785d6f1930670ef88
+# test job: [9329068ac66b4a8cc64faea43691f95f29cd32ab] https://lava.sirena.org.uk/scheduler/job/2446342
+# bad: [9329068ac66b4a8cc64faea43691f95f29cd32ab] Merge branch 'for-next/pstore' of https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git
+git bisect bad 9329068ac66b4a8cc64faea43691f95f29cd32ab
+# test job: [dbfcce773f91a093d32cfd02821257765bf5ae78] https://lava.sirena.org.uk/scheduler/job/2446442
+# good: [dbfcce773f91a093d32cfd02821257765bf5ae78] Merge branch 'nfsd-next' of https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux
+git bisect good dbfcce773f91a093d32cfd02821257765bf5ae78
+# test job: [cb3ca564682a0a02a9f95b7b22ad434a7389daaf] https://lava.sirena.org.uk/scheduler/job/2446484
+# good: [cb3ca564682a0a02a9f95b7b22ad434a7389daaf] Merge branch 'pci/controller/cadence-j721e'
+git bisect good cb3ca564682a0a02a9f95b7b22ad434a7389daaf
+# test job: [522a46affdceda863df9bf652119f463f480479d] https://lava.sirena.org.uk/scheduler/job/2446519
+# good: [522a46affdceda863df9bf652119f463f480479d] Merge branch 'pci/controller/misc'
+git bisect good 522a46affdceda863df9bf652119f463f480479d
+# test job: [ee80126d7dee1f0e0a72683b6f38388e90ffaaf1] https://lava.sirena.org.uk/scheduler/job/2446657
+# good: [ee80126d7dee1f0e0a72683b6f38388e90ffaaf1] Merge branch '9p-next' of https://github.com/martinetd/linux
+git bisect good ee80126d7dee1f0e0a72683b6f38388e90ffaaf1
+# test job: [19d1ad6cc1e8e435bbbeb9310388f1d3ba089c4e] https://lava.sirena.org.uk/scheduler/job/2446772
+# bad: [19d1ad6cc1e8e435bbbeb9310388f1d3ba089c4e] Merge branch 'deferred.namespace-7.0' into vfs.all
+git bisect bad 19d1ad6cc1e8e435bbbeb9310388f1d3ba089c4e
+# test job: [a39162f77f49b618df5a721a1e48d8b903280fbd] https://lava.sirena.org.uk/scheduler/job/2446808
+# good: [a39162f77f49b618df5a721a1e48d8b903280fbd] exportfs: clarify the documentation of open()/permission() expotrfs ops
+git bisect good a39162f77f49b618df5a721a1e48d8b903280fbd
+# test job: [30d2122405f27f19de5e8c38762c78088a6abe8d] https://lava.sirena.org.uk/scheduler/job/2446835
+# bad: [30d2122405f27f19de5e8c38762c78088a6abe8d] selftests: add FSMOUNT_NAMESPACE tests
+git bisect bad 30d2122405f27f19de5e8c38762c78088a6abe8d
+# test job: [4f5ba37ddcdf5eaac2408178050183345d56b2d3] https://lava.sirena.org.uk/scheduler/job/2446918
+# bad: [4f5ba37ddcdf5eaac2408178050183345d56b2d3] mount: add FSMOUNT_NAMESPACE
+git bisect bad 4f5ba37ddcdf5eaac2408178050183345d56b2d3
+# test job: [1d497d97fb22dfd3cd215a38f8dd56fc974c76a7] https://lava.sirena.org.uk/scheduler/job/2446991
+# good: [1d497d97fb22dfd3cd215a38f8dd56fc974c76a7] mount: simplify __do_loopback()
+git bisect good 1d497d97fb22dfd3cd215a38f8dd56fc974c76a7
+# first bad commit: [4f5ba37ddcdf5eaac2408178050183345d56b2d3] mount: add FSMOUNT_NAMESPACE
+
+--7NOatrK2jkqGg8GL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmMbFoACgkQJNaLcl1U
+h9Bmqgf/fSHrmjAAXTf/pD2WcmwTzhdaHvLjZtunNbp4hHmxvne2r3Si2aG5tHDG
+Q6YLX0VglMtNDOAgBKQjQP6iA7j1norhWaqx0yQL9GWvcdo5O9PkC7rl6FpCWs9Y
+JbGhpwVwse3AzHqPWtZPMr38pGcCSH3958auqV/zFIC5ZF85BFefke9G4BO2y6ur
+FvHq6mROim8uuVYr4rluaoraP8Nu6XEfxg84Nf9egfkAggyzSy3cQvg63F5HkAzZ
+2Nq9ki4LkTZ042PDfVnUh0Gd4CvJKO4KLMtJeD0bhVtI85C4EOM07rCqpb/I/Gh0
+Cxc1Rey6bVMT+/I5ykemHcO0b0ZRlQ==
+=KZ3j
+-----END PGP SIGNATURE-----
+
+--7NOatrK2jkqGg8GL--
 
