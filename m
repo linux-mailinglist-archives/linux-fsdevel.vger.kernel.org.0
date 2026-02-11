@@ -1,177 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-76933-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76934-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 8DY2JRtbjGkmlwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76933-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 11:34:03 +0100
+	id aMCtM8RgjGmWlwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76934-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 11:58:12 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834461236AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 11:34:02 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06007123ADB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 11:58:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 27BAD302A6B8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 10:30:17 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id E2742300721E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 10:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B163502A9;
-	Wed, 11 Feb 2026 10:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2F236B06C;
+	Wed, 11 Feb 2026 10:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WOOy8Cgw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40011367F4E
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 10:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9AE36BCC0
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 10:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770805816; cv=none; b=K/qlPmSr0tLqCFXggZar9SSCG0nS8Z1vrQwWeVpO5mJpi1f0gHZFB8SJoTEe/s/khtPyQs615EFgnuneNWm6jKMFHwNHr1Isujp2MEmINZNxpCCI/cEZ/T4hb6tDBHcxqzoReBOii8ywziCbRponLpYKqlffNJpRL/h/VCq23vw=
+	t=1770807468; cv=none; b=CDFH7/IGwnRaWOc0Q8VoU0jBJKqo0agBCJ/d8fVLDaoUQtab7JRK54MCsy6he6uivMzUfpBAjYZsd5plmqtCbGUF3p0ymq6dXIWg0WIltHab6UrXN2GA17aefQxBpvW2cc4fk40lSYIB0PSBRCamvLI6iXs+KuBfZwav+ETWcqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770805816; c=relaxed/simple;
-	bh=6Svp2yakS4ISlSmYeVfCWOnhOVOb5kEc4Wzio/ROhBw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=YVYqdfWrsNkcBRuM6rC7AegdvM8WBW62fyiUSgXTSi1QcHl+JZVdpccHSAkuFD2wpAFI8nAaoigHSIWWRNWs6OkcgAO/8k708DfIkRNpu0UD0AzTZMqcf49eG4gzYncWW2e6s5h/kubnb9Hzaf9/ui6yUN/d06OwThen4zzAR3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 61BATwZT065526;
-	Wed, 11 Feb 2026 19:29:58 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 61BATwoH065523
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 11 Feb 2026 19:29:58 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <6e5fd94e-9073-4307-beb7-ee87f3f0665c@I-love.SAKURA.ne.jp>
-Date: Wed, 11 Feb 2026 19:29:59 +0900
+	s=arc-20240116; t=1770807468; c=relaxed/simple;
+	bh=YkNcQ3NtAJBYnY/PDYgBtDin1rYL1T6RPzvptBiXatI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=qco5begnP+QzCFcB2ZowCnaCbxL5C0xHN0wW73LM8Xenq3PIucOAZM3MKOZeuuImF1qtUMb3wiWCbmwocGLeRwpGmYQwUcRtFatbzjMYLwDWb2b/oJf/eus8965741IwpP3uQ+b1kEDI26/UUyGWEmnUOay12cT+MAW3JRROufA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WOOy8Cgw; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4801c2fae63so54700985e9.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 02:57:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1770807464; x=1771412264; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1f6efIeKsPBmBdsMP945v7o1I22Mg2iVh32MUI/KTBg=;
+        b=WOOy8CgwGsomPEx6PD8pZCYoK2xEk9UoLCr4uJFRIpLIKV40RHOpRnZEeuw+SLJHv4
+         E2/DVdcr8c0LkOOaAxWM1se12eZgrKQd8X9+uBeMyv/Pe1pOHWeuqlZHZVkiOnCie0eJ
+         tQY/lEX5Bmk+UdiT8UZASPflLEUnncG/V0EGhc+y7OcfjiL+VV7qkQDIZMEl8Dtj6fzX
+         LVUdj6UsH+EpXhQXp+U7OrIxuNVSBhlUgtnDAzziHmyQIiXVr2cEsYDPPFCTCQl9HCyk
+         Bhkxv2hKwpO6uq40BTInyrTXL76gRmexnmNfGQ1zwyXQc/fz2KQeglEwGrW+Acn0veOU
+         Poqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770807464; x=1771412264;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1f6efIeKsPBmBdsMP945v7o1I22Mg2iVh32MUI/KTBg=;
+        b=gN/UAqHtZkb7YsOqYLx6Y3chWpQltBNIxQ8bTBPdhaLN9lPhgHnaoKZjOHWdNdhBmn
+         fE0SO3b3SIHKJZYQ7aQg4TbHZQEcU7p08CzLGErrrMLM7+BaHkhe9OpTSObtnI03uU1N
+         /0blMCJP7WswHU8DBITf5jUrETRiYSCA6laKlTTDI99t9L6iQGSrEC/J18u/Rmo9V2ML
+         AXnfy4jnYEmG2CZaDpoMPaADVIMlLks3adAYZwqN0Awp5jIQnXykFE/LnZ3MTJwCx+Qw
+         Ns58k/6DqkjzlPYS/eX4Ww7mvf6VQmh3lOPDluuKbBLhhAlF72Yd64wkSixCJjkxVP57
+         vlPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAVoNifNTRThUry3+2PWAQsgJTwOuV0TYyu0hBvU8eS9PBwVWj16IoxOWtFnD2eq8YmkVQT3NaRsxYaFSq@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJ+6Z4sxREarXc/YY32Q+N+zkWY4p57+Mb9oGWwMsv8ATBUR3J
+	bgh5thBzjpsCNyL4Jzf+TZ8G17OsQkMVrdeNNUt5dsN93XfLB27+HILZVyerY+WBzokQ6MelQvK
+	/HUKC
+X-Gm-Gg: AZuq6aLkYC7+ooyFuLz6PRWM7Vo5GsAm+cNBl69A6XiBdwJacoIYQBydkgrtfBWlYR4
+	g4ATevo7p+t2DCxZwRWqPUVJ7N1bQ0ZpIGR89Sa5/nKzx49jDBUkNvxv2jnNC4CXMt6oyHxQgv/
+	+iZf9rOu381tnzeDyt6gfj+7sLNoMlVUi+Hi5UX+kCNHnFH4JbIW51+Y46Dbn7JRHMnmcGKqJFw
+	XDjGh/dllCAEvYihN9LvgwTv+xCS/g6cuih/A7lLnhfFFs+lhI0ePO1Hm3KRoJTMQtA+zKQt0Go
+	meadmak9YcSX484Nk1CGfzGjuPw2009339cJOczsYG629lBrNxIrAWayCw2gnAFFhYQ7urKXQdZ
+	wi3TlfWjOPZqIL8YnVQKM/lMULT0tIFu4fWtaRDgULoTLyfk3KgEDoGBop/iVbUNv3wKhdbg2YT
+	q1Jb7pWHC7Lq9os3gGC2YNJRHjSXMUqcnqV/izlx4=
+X-Received: by 2002:a05:600d:17:b0:47e:e20e:bb9c with SMTP id 5b1f17b1804b1-4835dd89039mr20323065e9.8.1770807463537;
+        Wed, 11 Feb 2026 02:57:43 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4836131d4d9sm5222705e9.25.2026.02.11.02.57.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Feb 2026 02:57:43 -0800 (PST)
+Date: Wed, 11 Feb 2026 13:57:39 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Ethan Ferguson <ethan.ferguson@zetier.com>,
+	hirofumi@mail.parknet.co.jp
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ethan Ferguson <ethan.ferguson@zetier.com>
+Subject: Re: [PATCH 1/2] fat: Add FS_IOC_GETFSLABEL ioctl
+Message-ID: <202602111747.QIBXIwpw-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Jori Koolstra <jkoolstra@xs4all.nl>,
-        Viacheslav Dubeyko <slava@dubeyko.com>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        Yangtao Li <frank.li@vivo.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [PATCH] hfs: evaluate the upper 32bits for detecting overflow
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav301.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260210222310.357755-2-ethan.ferguson@zetier.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.46 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	DMARC_POLICY_ALLOW(-0.50)[linaro.org,none];
+	R_DKIM_ALLOW(-0.20)[linaro.org:s=google];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TO_DN_ALL(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76933-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76934-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	FREEMAIL_TO(0.00)[xs4all.nl,dubeyko.com,physik.fu-berlin.de,vivo.com];
-	DMARC_NA(0.00)[i-love.sakura.ne.jp];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	DKIM_TRACE(0.00)[linaro.org:+];
+	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[penguin-kernel@I-love.SAKURA.ne.jp,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[dan.carpenter@linaro.org,linux-fsdevel@vger.kernel.org];
+	MISSING_XM_UA(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
-	MID_RHS_MATCH_FROM(0.00)[];
-	R_DKIM_NA(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 834461236AC
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linaro.org:email,linaro.org:dkim,intel.com:mid,intel.com:email,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 06007123ADB
 X-Rspamd-Action: no action
 
-Commit b226804532a8 ("hfs: Replace BUG_ON with error handling for CNID
-count checks") replaced BUG_ON() with "atomic64_inc_return() => check for
-overflow => atomic64_dec() if overflowed" pattern. That approach works
-because the 64bits signed variable is initialized using a 32bits unsigned
-variable, making sure that the initial value is in [0, U32_MAX] range.
+Hi Ethan,
 
-However, if HFS_SB(sb)->file_count is smaller than number of file inodes
-that actually exists due to filesystem corruption, calling
-atomic64_dec(&HFS_SB(sb)->file_count) from hfs_delete_inode() can make
-HFS_SB(sb)->file_count < 0.
+kernel test robot noticed the following build warnings:
 
-As a result, "atomic64_read(&sbi->file_count) > U32_MAX" comparison in
-is_hfs_cnid_counts_valid() fails to detect overflow when
-HFS_SB(sb)->file_count < 0, for this is a comparison between signed
-64bits and unsigned 32bits. Evaluate the upper 32bits of the 64bits
-variable for detecting overflow.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ethan-Ferguson/fat-Add-FS_IOC_GETFSLABEL-ioctl/20260211-062606
+base:   9f2693489ef8558240d9e80bfad103650daed0af
+patch link:    https://lore.kernel.org/r/20260210222310.357755-2-ethan.ferguson%40zetier.com
+patch subject: [PATCH 1/2] fat: Add FS_IOC_GETFSLABEL ioctl
+config: riscv-randconfig-r071-20260211 (https://download.01.org/0day-ci/archive/20260211/202602111747.QIBXIwpw-lkp@intel.com/config)
+compiler: riscv64-linux-gcc (GCC) 9.5.0
+smatch version: v0.5.0-8994-gd50c5a4c
 
-Fixes: b226804532a8 ("hfs: Replace BUG_ON with error handling for CNID count checks")
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
-Only compile tested.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202602111747.QIBXIwpw-lkp@intel.com/
 
- fs/hfs/inode.c | 6 +++---
- fs/hfs/mdb.c   | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+smatch warnings:
+fs/fat/file.c:160 fat_ioctl_get_volume_label() warn: maybe return -EFAULT instead of the bytes remaining?
 
-diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
-index 878535db64d6..7b5a4686aa79 100644
---- a/fs/hfs/inode.c
-+++ b/fs/hfs/inode.c
-@@ -199,7 +199,7 @@ struct inode *hfs_new_inode(struct inode *dir, const struct qstr *name, umode_t
- 	spin_lock_init(&HFS_I(inode)->open_dir_lock);
- 	hfs_cat_build_key(sb, (btree_key *)&HFS_I(inode)->cat_key, dir->i_ino, name);
- 	next_id = atomic64_inc_return(&HFS_SB(sb)->next_id);
--	if (next_id > U32_MAX) {
-+	if (next_id >> 32) {
- 		atomic64_dec(&HFS_SB(sb)->next_id);
- 		pr_err("cannot create new inode: next CNID exceeds limit\n");
- 		goto out_discard;
-@@ -217,7 +217,7 @@ struct inode *hfs_new_inode(struct inode *dir, const struct qstr *name, umode_t
- 	if (S_ISDIR(mode)) {
- 		inode->i_size = 2;
- 		folder_count = atomic64_inc_return(&HFS_SB(sb)->folder_count);
--		if (folder_count> U32_MAX) {
-+		if (folder_count >> 32) {
- 			atomic64_dec(&HFS_SB(sb)->folder_count);
- 			pr_err("cannot create new inode: folder count exceeds limit\n");
- 			goto out_discard;
-@@ -231,7 +231,7 @@ struct inode *hfs_new_inode(struct inode *dir, const struct qstr *name, umode_t
- 	} else if (S_ISREG(mode)) {
- 		HFS_I(inode)->clump_blocks = HFS_SB(sb)->clumpablks;
- 		file_count = atomic64_inc_return(&HFS_SB(sb)->file_count);
--		if (file_count > U32_MAX) {
-+		if (file_count >> 32) {
- 			atomic64_dec(&HFS_SB(sb)->file_count);
- 			pr_err("cannot create new inode: file count exceeds limit\n");
- 			goto out_discard;
-diff --git a/fs/hfs/mdb.c b/fs/hfs/mdb.c
-index a97cea35ca2e..68d3c0714057 100644
---- a/fs/hfs/mdb.c
-+++ b/fs/hfs/mdb.c
-@@ -69,15 +69,15 @@ bool is_hfs_cnid_counts_valid(struct super_block *sb)
- 	struct hfs_sb_info *sbi = HFS_SB(sb);
- 	bool corrupted = false;
- 
--	if (unlikely(atomic64_read(&sbi->next_id) > U32_MAX)) {
-+	if (unlikely(atomic64_read(&sbi->next_id) >> 32)) {
- 		pr_warn("next CNID exceeds limit\n");
- 		corrupted = true;
- 	}
--	if (unlikely(atomic64_read(&sbi->file_count) > U32_MAX)) {
-+	if (unlikely(atomic64_read(&sbi->file_count) >> 32)) {
- 		pr_warn("file count exceeds limit\n");
- 		corrupted = true;
- 	}
--	if (unlikely(atomic64_read(&sbi->folder_count) > U32_MAX)) {
-+	if (unlikely(atomic64_read(&sbi->folder_count) >> 32)) {
- 		pr_warn("folder count exceeds limit\n");
- 		corrupted = true;
- 	}
+vim +160 fs/fat/file.c
+
+5fc1746d68b8fb Ethan Ferguson 2026-02-10  156  static int fat_ioctl_get_volume_label(struct inode *inode, char __user *arg)
+5fc1746d68b8fb Ethan Ferguson 2026-02-10  157  {
+5fc1746d68b8fb Ethan Ferguson 2026-02-10  158  	struct msdos_sb_info *sbi = MSDOS_SB(inode->i_sb);
+5fc1746d68b8fb Ethan Ferguson 2026-02-10  159  
+5fc1746d68b8fb Ethan Ferguson 2026-02-10 @160  	return copy_to_user(arg, sbi->vol_label, MSDOS_NAME);
+
+This should be:
+
+	if (copy_to_user(arg, sbi->vol_label, MSDOS_NAME))
+		return -EFAULT;
+
+	return 0;
+
+5fc1746d68b8fb Ethan Ferguson 2026-02-10  161  }
+
 -- 
-2.53.0
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
