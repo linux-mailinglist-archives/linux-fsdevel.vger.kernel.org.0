@@ -1,236 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-76932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76933-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yICvNC1SjGmukgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 10:55:57 +0100
+	id 8DY2JRtbjGkmlwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76933-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 11:34:03 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E6D1230BA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 10:55:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 834461236AC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 11:34:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 6E075302614F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 09:55:43 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 27BAD302A6B8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 10:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4CD36681E;
-	Wed, 11 Feb 2026 09:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WlVAYeH2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1u7Y5xHk";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WlVAYeH2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1u7Y5xHk"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B163502A9;
+	Wed, 11 Feb 2026 10:30:16 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDE5352958
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 09:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40011367F4E
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 10:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770803741; cv=none; b=XqRT3Rds48CIAXl2woimSfPS7Sk4PzWf5SR7AyJ+GHcq5zbDfO/77JLASABlEQjsOyNLpPhF1wiMXkgCnxCl2E87oas7whG0LFsGct1Ya2R5X+4EvQW9vvRJt8hvvA1FYoFjI9c7WrlHCmRbBolnTGdtrzHjt02m0Qymonr/b+o=
+	t=1770805816; cv=none; b=K/qlPmSr0tLqCFXggZar9SSCG0nS8Z1vrQwWeVpO5mJpi1f0gHZFB8SJoTEe/s/khtPyQs615EFgnuneNWm6jKMFHwNHr1Isujp2MEmINZNxpCCI/cEZ/T4hb6tDBHcxqzoReBOii8ywziCbRponLpYKqlffNJpRL/h/VCq23vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770803741; c=relaxed/simple;
-	bh=M+3eS+0CQ57uJJp31goIB867jpOJ3JZSrh6Hq6ODEDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E3B8GKL6YTD+TygptueVAZGMDcQpYzcfkivFglW+5WqcTfwdm9Mb7YcYHqpw65QpbblTveRXqWPjMOFEG3JUq88KIQLc+ujJc7VrU1nftTlrOlVAHpNLCYhWb2NL2E91KRSI/PdIdBMvqUdozPboU7G6EOyLdsarAajOtVgX7Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WlVAYeH2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1u7Y5xHk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WlVAYeH2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1u7Y5xHk; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D368C5BD8B;
-	Wed, 11 Feb 2026 09:55:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1770803738; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=898l2kNBLwLT/cEDuaztbrg3Plv0whiKcCcpSo3dc/w=;
-	b=WlVAYeH2n9GNpytFw++ml+lbeok4zNXE8LFwu3OZl7GVYpNeh1Q4aRlcsywCnQ+t4/5o9Z
-	IUuGM0Pe8ZSYqleqs6Qo6qBKrP56HF2RU9QodbBleLbte0oKAbJ43+nv6e+e1tajGJEd6L
-	N4Iwp/B4I8RYOV6LO5lFsg7LK4o6CFo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1770803738;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=898l2kNBLwLT/cEDuaztbrg3Plv0whiKcCcpSo3dc/w=;
-	b=1u7Y5xHkk9EDIq/NEaJ4p17IB/GM2Jnh2PLYPPfWqoGoSw/FnUDiyem+MjccT9n81AKp2p
-	CARDiOHPaEGfm1Bw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1770803738; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=898l2kNBLwLT/cEDuaztbrg3Plv0whiKcCcpSo3dc/w=;
-	b=WlVAYeH2n9GNpytFw++ml+lbeok4zNXE8LFwu3OZl7GVYpNeh1Q4aRlcsywCnQ+t4/5o9Z
-	IUuGM0Pe8ZSYqleqs6Qo6qBKrP56HF2RU9QodbBleLbte0oKAbJ43+nv6e+e1tajGJEd6L
-	N4Iwp/B4I8RYOV6LO5lFsg7LK4o6CFo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1770803738;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=898l2kNBLwLT/cEDuaztbrg3Plv0whiKcCcpSo3dc/w=;
-	b=1u7Y5xHkk9EDIq/NEaJ4p17IB/GM2Jnh2PLYPPfWqoGoSw/FnUDiyem+MjccT9n81AKp2p
-	CARDiOHPaEGfm1Bw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BBA223EA64;
-	Wed, 11 Feb 2026 09:55:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id S3/KLRpSjGmdbQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 11 Feb 2026 09:55:38 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 755E0A0A4E; Wed, 11 Feb 2026 10:55:34 +0100 (CET)
-Date: Wed, 11 Feb 2026 10:55:34 +0100
-From: Jan Kara <jack@suse.cz>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "jack@suse.cz" <jack@suse.cz>, 
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>, "chrisl@kernel.org" <chrisl@kernel.org>, 
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, Pavan Rallabhandi <Pavan.Rallabhandi@ibm.com>, 
-	"clm@meta.com" <clm@meta.com>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Machine Learning (ML) library in
- Linux kernel
-Message-ID: <kw4qco6aq4bq55nmb4c5ibicmj7ga77vtgzlj65jtdhzowks5m@buhefb6m4eqx>
-References: <47d21a6821c4b2d085f7b97bcdaa205bfcb0e0ad.camel@ibm.com>
- <CACePvbVH0ovOcBqCN7kJ3n0QFmvuf+_5tMeRXs-JAQ+m5fdoCg@mail.gmail.com>
- <a994bdedca7d966168076044249a58e52754c6ac.camel@ibm.com>
- <6ek3nhulz72niscw2iz2n5xhczz4ta6a6hvyrlneuyk2d36ngx@4ymlemzifugr>
- <11f659fd88f887b9fe4c88a386f1a5c2157968a6.camel@ibm.com>
+	s=arc-20240116; t=1770805816; c=relaxed/simple;
+	bh=6Svp2yakS4ISlSmYeVfCWOnhOVOb5kEc4Wzio/ROhBw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=YVYqdfWrsNkcBRuM6rC7AegdvM8WBW62fyiUSgXTSi1QcHl+JZVdpccHSAkuFD2wpAFI8nAaoigHSIWWRNWs6OkcgAO/8k708DfIkRNpu0UD0AzTZMqcf49eG4gzYncWW2e6s5h/kubnb9Hzaf9/ui6yUN/d06OwThen4zzAR3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 61BATwZT065526;
+	Wed, 11 Feb 2026 19:29:58 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 61BATwoH065523
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 11 Feb 2026 19:29:58 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <6e5fd94e-9073-4307-beb7-ee87f3f0665c@I-love.SAKURA.ne.jp>
+Date: Wed, 11 Feb 2026 19:29:59 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <11f659fd88f887b9fe4c88a386f1a5c2157968a6.camel@ibm.com>
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Jori Koolstra <jkoolstra@xs4all.nl>,
+        Viacheslav Dubeyko <slava@dubeyko.com>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Yangtao Li <frank.li@vivo.com>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH] hfs: evaluate the upper 32bits for detecting overflow
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav301.rs.sakura.ne.jp
+X-Virus-Status: clean
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
+X-Spamd-Result: default: False [-1.46 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TO_DN_ALL(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76933-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,suse.com:email];
-	DMARC_NA(0.00)[suse.cz];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76932-lists,linux-fsdevel=lfdr.de];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FREEMAIL_TO(0.00)[xs4all.nl,dubeyko.com,physik.fu-berlin.de,vivo.com];
+	DMARC_NA(0.00)[i-love.sakura.ne.jp];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: 77E6D1230BA
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[penguin-kernel@I-love.SAKURA.ne.jp,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCVD_COUNT_FIVE(0.00)[5];
+	MID_RHS_MATCH_FROM(0.00)[];
+	R_DKIM_NA(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 834461236AC
 X-Rspamd-Action: no action
 
-On Tue 10-02-26 21:02:12, Viacheslav Dubeyko wrote:
-> On Tue, 2026-02-10 at 14:47 +0100, Jan Kara wrote:
-> > On Mon 09-02-26 22:28:59, Viacheslav Dubeyko via Lsf-pc wrote:
-> > > The idea is to have ML model running in user-space and kernel subsystem can
-> > > interact with ML model in user-space. As the next step, I am considering two
-> > > real-life use-cases: (1) GC subsystem of LFS file system, (2) ML-based DAMON
-> > > approach. So, for example, GC can be represented by ML model in user-space. GC
-> > > can request data (segments state) from kernel-space and ML model in user-space
-> > > can do training or/and inference. As a result, ML model in user-space can select
-> > > victim segments and instruct kernel-space logic of moving valid data from victim
-> > > segment(s) into clean/current one(s). 
-> > 
-> > To be honest I'm skeptical about how generic this can be. Essentially
-> > you're describing a generic interface to offload arbitrary kernel decision
-> > to userspace. ML is a userspace bussiness here and not really relevant for
-> > the concept AFAICT. And we already have several ways of kernel asking
-> > userspace to do something for it and unless it is very restricted and well
-> > defined it is rather painful, prone to deadlocks, security issues etc.
-> 
-> Scepticism is normal reaction. :) So, nothing wrong is to be sceptical.
-> 
-> I believe it can be pretty generic from the data flow point of view. Probably,
-> different kernel subsystems could require different ways of interaction with
-> user-space. However, if we are talking about data flow but NOT execution flow,
-> then it could be generic enough. And if it can be generic, then we can suggest
-> generic way of extending any kernel subsystem by ML support.
-> 
-> I don't think that we need to consider the ML library appraoch like "kernel
-> asking userspace to do something". Rather it needs to consider the model like
-> "kernel share data with user-space and user-space recommends something to
-> kernel". So, user-space agent (ML model) can request data from kernel space or
-> kernel subsystem can notify the user-space agent that data is available. And
-> it's up to kernel subsystem implementation which data could be shared with user-
-> space. So, ML model can be trained in user-space and, then, share
-> recommendations (or eBPF code, for example) with kernel space. Finally, it's up
-> to kernel subsystem how and when to apply these recommendations on kernel side.
+Commit b226804532a8 ("hfs: Replace BUG_ON with error handling for CNID
+count checks") replaced BUG_ON() with "atomic64_inc_return() => check for
+overflow => atomic64_dec() if overflowed" pattern. That approach works
+because the 64bits signed variable is initialized using a 32bits unsigned
+variable, making sure that the initial value is in [0, U32_MAX] range.
 
-I guess I have to see some examples. Because so far it sounds so generic
-that I'm failing to see a value in this :)
+However, if HFS_SB(sb)->file_count is smaller than number of file inodes
+that actually exists due to filesystem corruption, calling
+atomic64_dec(&HFS_SB(sb)->file_count) from hfs_delete_inode() can make
+HFS_SB(sb)->file_count < 0.
 
-> > So by all means if you want to do GC decisions for your filesystem in
-> > userspace by ML, be my guest, it does make some sense although I'd be wary
-> > of issues where we need to writeback dirty pages to free memory which may
-> > now depend on your userspace helper to make a decision which may need the
-> > memory to do the decision... But I don't see why you need all the ML fluff
-> > around it when it seems like just another way to call userspace helper and
-> > why some of the existing methods would not suffice.
-> > 
-> 
-> OK. I see. :) You understood GC like a subsystem that helps to kernel
-> memory subsystem to manage the writeback dirty memory pages. :) It's
-> potential direction and I like your suggestion. :) But I meant something
-> different because I consider of LFS file system's GC subsystem. So, if we
-> are using Copy-On-Write (COW) policy, then we have segments or erase
-> blocks with a mixture of valid and invalid logical blocks after update
-> operations. And we need GC subsystem to clean old segments by means of
-> moving valid logical blocks from exhausted segments into clean/current
-> ones. The problem here is to find an efficient algorithm of selecting
-> victim segments with smallest amount of valid blocks with the goal of
-> decreasing write amplification. So, file system needs to share the
-> metadata details (segments state, for example), ML model can share the
-> recommendations, and kernel code of file system can finally move valid
-> blocks in the background.
+As a result, "atomic64_read(&sbi->file_count) > U32_MAX" comparison in
+is_hfs_cnid_counts_valid() fails to detect overflow when
+HFS_SB(sb)->file_count < 0, for this is a comparison between signed
+64bits and unsigned 32bits. Evaluate the upper 32bits of the 64bits
+variable for detecting overflow.
 
-No, I actually meant the LFS file system GC as you talk about it. But I was
-just too terse about my concerns: As you said an LFS with COW needs to
-select a new position to write each block. When there is no free block
-available, it has to select partially used erase block (some logical blocks
-in it became invalid) to reuse. And for this selection you want to use ML
-AFAIU. Hence we have a dependency folio writeback -> COW block allocation ->
-GC to make some block free -> ML decision. And now you have to be really
-careful so that "ML decision" doesn't even indirectly depend on folio
-writeback to complete. And bear in mind that e.g. if the code doing "ML
-decision" dirties some mmaped file pages it *will* block waiting for page
-writeback to complete to get the system below the limit of dirty pages.
-This is the kind of deadlock I'm talking about that is hard to avoid when
-offloading kernel decisions to userspace (and yes, I've seen these kind of
-deadlocks in practice in various shapes and forms with various methods when
-kernel depended on userspace to make forward progress).
+Fixes: b226804532a8 ("hfs: Replace BUG_ON with error handling for CNID count checks")
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+Only compile tested.
 
-								Honza
+ fs/hfs/inode.c | 6 +++---
+ fs/hfs/mdb.c   | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
+index 878535db64d6..7b5a4686aa79 100644
+--- a/fs/hfs/inode.c
++++ b/fs/hfs/inode.c
+@@ -199,7 +199,7 @@ struct inode *hfs_new_inode(struct inode *dir, const struct qstr *name, umode_t
+ 	spin_lock_init(&HFS_I(inode)->open_dir_lock);
+ 	hfs_cat_build_key(sb, (btree_key *)&HFS_I(inode)->cat_key, dir->i_ino, name);
+ 	next_id = atomic64_inc_return(&HFS_SB(sb)->next_id);
+-	if (next_id > U32_MAX) {
++	if (next_id >> 32) {
+ 		atomic64_dec(&HFS_SB(sb)->next_id);
+ 		pr_err("cannot create new inode: next CNID exceeds limit\n");
+ 		goto out_discard;
+@@ -217,7 +217,7 @@ struct inode *hfs_new_inode(struct inode *dir, const struct qstr *name, umode_t
+ 	if (S_ISDIR(mode)) {
+ 		inode->i_size = 2;
+ 		folder_count = atomic64_inc_return(&HFS_SB(sb)->folder_count);
+-		if (folder_count> U32_MAX) {
++		if (folder_count >> 32) {
+ 			atomic64_dec(&HFS_SB(sb)->folder_count);
+ 			pr_err("cannot create new inode: folder count exceeds limit\n");
+ 			goto out_discard;
+@@ -231,7 +231,7 @@ struct inode *hfs_new_inode(struct inode *dir, const struct qstr *name, umode_t
+ 	} else if (S_ISREG(mode)) {
+ 		HFS_I(inode)->clump_blocks = HFS_SB(sb)->clumpablks;
+ 		file_count = atomic64_inc_return(&HFS_SB(sb)->file_count);
+-		if (file_count > U32_MAX) {
++		if (file_count >> 32) {
+ 			atomic64_dec(&HFS_SB(sb)->file_count);
+ 			pr_err("cannot create new inode: file count exceeds limit\n");
+ 			goto out_discard;
+diff --git a/fs/hfs/mdb.c b/fs/hfs/mdb.c
+index a97cea35ca2e..68d3c0714057 100644
+--- a/fs/hfs/mdb.c
++++ b/fs/hfs/mdb.c
+@@ -69,15 +69,15 @@ bool is_hfs_cnid_counts_valid(struct super_block *sb)
+ 	struct hfs_sb_info *sbi = HFS_SB(sb);
+ 	bool corrupted = false;
+ 
+-	if (unlikely(atomic64_read(&sbi->next_id) > U32_MAX)) {
++	if (unlikely(atomic64_read(&sbi->next_id) >> 32)) {
+ 		pr_warn("next CNID exceeds limit\n");
+ 		corrupted = true;
+ 	}
+-	if (unlikely(atomic64_read(&sbi->file_count) > U32_MAX)) {
++	if (unlikely(atomic64_read(&sbi->file_count) >> 32)) {
+ 		pr_warn("file count exceeds limit\n");
+ 		corrupted = true;
+ 	}
+-	if (unlikely(atomic64_read(&sbi->folder_count) > U32_MAX)) {
++	if (unlikely(atomic64_read(&sbi->folder_count) >> 32)) {
+ 		pr_warn("folder count exceeds limit\n");
+ 		corrupted = true;
+ 	}
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.53.0
+
 
