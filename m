@@ -1,151 +1,215 @@
-Return-Path: <linux-fsdevel+bounces-76976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76977-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aN+3LaLujGmSvgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 22:03:30 +0100
+	id KF/6KDv9jGn4wgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76977-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 23:05:47 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 771041279A1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 22:03:29 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 115F7127F3B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 23:05:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id A6CE33003BD3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 21:03:26 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7108830C9D7D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 22:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3F4343D75;
-	Wed, 11 Feb 2026 21:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA9031A576;
+	Wed, 11 Feb 2026 22:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MP81Tk6n"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABf9170z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7E132D7F8;
-	Wed, 11 Feb 2026 21:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDA930CDB6
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 22:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770843804; cv=none; b=EGQEwZuzde95jc9lqkcbLIkPvFlx+z7jZ9sb6Pi4jfItkMv2Y/foyaeczpPdMUyCkzVdf9vblMFwTf0n0Gcpg7tqzt+ymn5UjHD3DcS4KinznAkZlGOQMZq680DyANqjsOmK6z7VXp3Y1rXQGg25+dc9nlKktb4NvWaRviMK5tY=
+	t=1770847533; cv=none; b=qojQ56CdFqEqmR2joR80iWLBV4JYrbh7iIhPBOnVS+I9JHhcv8bFIRLq6/VL4bXEpQWeyZt0uYXqYepgu1frNc+feAhS458TiPjZ4psY3AOOKcSDf+YQR3elUGrkAEyes84bNhy2cv6cbKj6TrMq5mmFZgXuWQzy4VxdgtB51KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770843804; c=relaxed/simple;
-	bh=8wTqYUbqq65clNAqOC8TCnp7nSilVvXzG/uVMqRZgeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZIkYDXJtNJyQoDr6IJy0dUocbBp5AdoBv+qRtZ1wHEw9TOBqs0jfrhDevJjj/ZOPdcJVvKNvD8fe8bF7ZLS5QlaMxdpxDUBwIJkLDQ62iZE0IDoY3GmHsehqfdc9LLcmxhn5q61xgs2vHi6V1mVUIm/Bkrazd4kbpp5OFQvQm4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MP81Tk6n; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=T2N0+XYRSii8pK0bIYHt3wlyngbPoiRThz8/7AKipd4=; b=MP81Tk6nlBqmcABGd+IeIbmUP1
-	2h2FBVws6Dy7TR42hQSQVSQl/FYQV2OjXrpRcrs9VQ1PVKhEmLDU8e99wVBXm7EgFXJnLdfzNgRgP
-	zDP0w4o27ngfZTjH9a1k1O+NpAvXILU3bazP2sb7qdESTWT71Q0cFjvxvuVKB9qDfcvA0Ge+Vfb/+
-	A28NtQBvFkXWpcdYgUUfU4QKsIxzTAWrUCdQtJF1+PeGgMoiocwZcZpqERegO1DModGylkVsqCPHP
-	8mX/BGAx0DSw7aU/qzYF7ujJq3NxMCL0kQUiTMChxlf4sVBZXjAWz3DeOe5IZCG1se935tX5TDwb1
-	nihzKHjg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vqHMk-0000000DBxS-3CrK;
-	Wed, 11 Feb 2026 21:03:18 +0000
-Date: Wed, 11 Feb 2026 21:03:18 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Wei Gao <wegao@suse.com>, Sasha Levin <sashal@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/1] iomap: fix race between iomap_set_range_uptodate
- and folio_end_read
-Message-ID: <aYzulh4XWO-TBof8@casper.infradead.org>
-References: <CAJnrk1ZiJVNg-k+CSY_VqJ3sQOW1mo6C-9QT0bzgLT4sKGGCyg@mail.gmail.com>
- <aUtCjXbraDrq-Sxe@laps>
- <aYbmy8JdgXwsGaPP@autotest-wegao.qe.prg2.suse.org>
- <CAJnrk1anodUxD5GR18N8w8239S_kbgijQyZC48Nsa4isb-e5JA@mail.gmail.com>
- <aYp33Ddm7wYFrr_Q@autotest-wegao.qe.prg2.suse.org>
- <CAJnrk1YARhOOKb=OuDLR-X8_que34Q93WagNMOiTjYVohHLdWA@mail.gmail.com>
- <aYp-aTJPzSnwRd6O@autotest-wegao.qe.prg2.suse.org>
- <CAJnrk1aPs2J_EerLROxtiHAKTyU2NHBkRXpS=-yunEsC9epAWw@mail.gmail.com>
- <aYvzUihKhMfM6agz@casper.infradead.org>
- <CAJnrk1Z9za5w4FoJqTGx50zR2haHHaoot1KJViQyEHJQq4=34w@mail.gmail.com>
+	s=arc-20240116; t=1770847533; c=relaxed/simple;
+	bh=TwwUO04dGqFYl7FBMT/0KdV3iyGcEzy/h2J4D+lHVW0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=eg9fXBbeLbhAhMcv8n9GQo6st/rCuKlq8UFRe/+FlDDgNlwgBJPko9OoX1VqberFN84z2KVpG6m9VN3NtIMqSCfmvwYkvF63xGnn5tUrqzvxbYoKovvjel/22Iv3jX962jw/YFkO7jVv3NqsepHlZIIad9G8WrLJyg4MKbU2Slw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ABf9170z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7F1FC4CEF7;
+	Wed, 11 Feb 2026 22:05:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770847533;
+	bh=TwwUO04dGqFYl7FBMT/0KdV3iyGcEzy/h2J4D+lHVW0=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=ABf9170zn76atTbBiwaYM114Ip3pn23kaBZufP4D3t7vmBu0S8RJ8o7BEaShsrAv2
+	 Ku1qUbwYbnXh2nbGvP2t0S/nH4QqXgkfrWoWPHNDvebt0zA/uE6++SVqHe3yc+c2RX
+	 EbbEfVXjvQ3Vcq/sMIs/bKnLT+i2y5W24iMMjrZf79F+dfbJJhoxxargkKwKD902vq
+	 fPq1YGV9Or2J5AQTPSkVgPRsKvms+sQyQaQEjI6IWX0d8LNt/kznd0cBjTin5L56+a
+	 eyIbV6CCMt2XNLiuIXD0xEW3Wq57JFlbvkeGIntU37fnXIDL9/HlAw0FWSdqBdlWpB
+	 dGR05QqInP+FQ==
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 9DF4CF40068;
+	Wed, 11 Feb 2026 17:05:31 -0500 (EST)
+Received: from phl-imap-15 ([10.202.2.104])
+  by phl-compute-10.internal (MEProxy); Wed, 11 Feb 2026 17:05:31 -0500
+X-ME-Sender: <xms:K_2MaeN1831T_ilEmsELlhi2D3K55ootnOaRgJSSQoeqw7Y_OXCF5A>
+    <xme:K_2MaXz3Zb-9Tmiq5_nm-Ei7ybtMr2WghtCCVbK-4MP6UlyltCwNy2VG6GSx19JAP
+    ur1JHLfM0p_it0RpRR_RCQg3f88W0eQp89xDz-Wnrt5h9qcL8zKE30>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvtdefjedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfvehhuhgt
+    khcunfgvvhgvrhdfuceotggvlheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
+    hnpeejvefhudehleetvdejhfejvefghfelgeejvedvgfduuefffeegtdejuefhiedukeen
+    ucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomheptghhuhgtkhhlvghvvghrodhmvghsmhhtphgruhht
+    hhhpvghrshhonhgrlhhithihqdduieefgeelleelheelqdefvdelkeeggedvfedqtggvlh
+    eppehkvghrnhgvlhdrohhrghesfhgrshhtmhgrihhlrdgtohhmpdhnsggprhgtphhtthho
+    peduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepnhgvihhlsegsrhhofihnrd
+    hnrghmvgdprhgtphhtthhopehrihgtkhdrmhgrtghklhgvmhesghhmrghilhdrtghomhdp
+    rhgtphhtthhopegstghougguihhngheshhgrmhhmvghrshhprggtvgdrtghomhdprhgtph
+    htthhopegrnhhnrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvggsihhgghgvrhhs
+    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjlhgrhihtohhnsehkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehtrhhonhgumhihsehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgtphhtthhopehlihhnuh
+    igqdgtrhihphhtohesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:K_2MaYXtP9S9VSIJVQx3gCtdO9vnF0Bma-50LanoFzuUlevBK1b1nA>
+    <xmx:K_2MaYYKa9hpvzl7qjF_4EozP929zgUCFxDOtf-qZ0A_gT0IX5nN8Q>
+    <xmx:K_2MaXwY4QDG8hkWuCLqXqchw5AS9tXTpgzvDL_dIrl4H8NLnaIQUg>
+    <xmx:K_2MaQ0S1ehCjpAcBneUoiNQCk_U1JSv7ZmLmDHZANd39NT018ce1Q>
+    <xmx:K_2MaQn0dsGXilqStsFgmzqua6ddjaKwISWfNcErcbr6Lmmf9apbS8Me>
+Feedback-ID: ifa6e4810:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 74A7E780070; Wed, 11 Feb 2026 17:05:31 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJnrk1Z9za5w4FoJqTGx50zR2haHHaoot1KJViQyEHJQq4=34w@mail.gmail.com>
+X-ThreadId: ASi17ho3PCMk
+Date: Wed, 11 Feb 2026 17:05:04 -0500
+From: "Chuck Lever" <cel@kernel.org>
+To: "Benjamin Coddington" <bcodding@hammerspace.com>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ NeilBrown <neil@brown.name>, "Trond Myklebust" <trondmy@kernel.org>,
+ "Anna Schumaker" <anna@kernel.org>, "Eric Biggers" <ebiggers@kernel.org>,
+ "Rick Macklem" <rick.macklem@gmail.com>
+Cc: linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-crypto@vger.kernel.org
+Message-Id: <f75f0d1b-9feb-4a0e-8c4e-4825f59f8053@app.fastmail.com>
+In-Reply-To: 
+ <cb46e1aee9656be5f3692e239300148813b5c05d.1770828956.git.bcodding@hammerspace.com>
+References: <cover.1770828956.git.bcodding@hammerspace.com>
+ <cb46e1aee9656be5f3692e239300148813b5c05d.1770828956.git.bcodding@hammerspace.com>
+Subject: Re: [PATCH v6 3/3] NFSD: Sign filehandles
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-0.65 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=casper.20170209];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76976-lists,linux-fsdevel=lfdr.de];
-	TO_DN_SOME(0.00)[];
+	XM_UA_NO_VERSION(0.01)[];
+	TAGGED_FROM(0.00)[bounces-76977-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_TO(0.00)[hammerspace.com,oracle.com,kernel.org,brown.name,gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,app.fastmail.com:mid];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[willy@infradead.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[infradead.org:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[cel@kernel.org,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,infradead.org:dkim]
-X-Rspamd-Queue-Id: 771041279A1
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: 115F7127F3B
 X-Rspamd-Action: no action
 
-On Wed, Feb 11, 2026 at 11:33:05AM -0800, Joanne Koong wrote:
-> ifs->read_bytes_pending gets initialized to the folio size, but if the
-> file being read in is smaller than the size of the folio, then we
-> reach this scenario because the file has been read in but
-> ifs->read_bytes_pending is still a positive value because it
-> represents the bytes between the end of the file and the end of the
-> folio. If the folio size is 16k and the file size is 4k:
->   a) ifs->read_bytes_pending gets initialized to 16k
->   b) ->read_folio_range() is called for the 4k read
->   c) the 4k read succeeds, ifs->read_bytes_pending is now 12k and the
-> 0 to 4k range is marked uptodate
->   d) the post-eof blocks are zeroed and marked uptodate in the call to
-> iomap_set_range_uptodate()
+On Wed, Feb 11, 2026, at 12:09 PM, Benjamin Coddington wrote:
+> NFS clients may bypass restrictive directory permissions by using
+> open_by_handle() (or other available OS system call) to guess the
+> filehandles for files below that directory.
 
-This is the bug then.  If they're marked uptodate, read_bytes_pending
-should be decremented at the same time.  Now, I appreciate that
-iomap_set_range_uptodate() is called both from iomap_read_folio_iter()
-and __iomap_write_begin(), and it can't decrement read_bytes_pending
-in the latter case.  Perhaps a flag or a second length parameter is
-the solution?
+> diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
+> index 68b629fbaaeb..3bab2ad0b21f 100644
+> --- a/fs/nfsd/nfsfh.c
+> +++ b/fs/nfsd/nfsfh.c
 
->   e) iomap_set_range_uptodate() sees all the ranges are marked
-> uptodate and it marks the folio uptodate
->   f) iomap_read_end() gets called to subtract the 12k from
-> ifs->read_bytes_pending. it too sees all the ranges are marked
-> uptodate and marks the folio uptodate
+> @@ -236,13 +288,18 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst 
+> *rqstp, struct net *net,
+>  	/*
+>  	 * Look up the dentry using the NFS file handle.
+>  	 */
+> -	error = nfserr_badhandle;
+> -
+>  	fileid_type = fh->fh_fileid_type;
 > 
-> The same scenario could happen for IOMAP_INLINE mappings if part of
-> the folio is read in through ->read_folio_range() and then the rest is
-> read in as inline data.
+> -	if (fileid_type == FILEID_ROOT)
+> +	if (fileid_type == FILEID_ROOT) {
 
-This is basically the same case as post-eof.
+Still need a comment here explaining why ROOT is exempt from
+file handle signing checks.
 
-> An alternative solution is to not have zeroed-out / inlined mappings
-> call iomap_read_end(), eg something like this [1], but this adds
-> additional complexity and doesn't work if there's additional mappings
-> for the folio after a non-IOMAP_MAPPED mapping.
-> 
-> Is there a better approach that I'm missing?
-> 
-> Thanks,
-> Joanne
-> 
-> [1] https://github.com/joannekoong/linux/commit/de48d3c29db8ae654300341e3eec12497df54673
+
+>  		dentry = dget(exp->ex_path.dentry);
+> -	else {
+> +	} else {
+> +		if (exp->ex_flags & NFSEXP_SIGN_FH && fh_verify_mac(fhp, net)) {
+> +			trace_nfsd_set_fh_dentry_badmac(rqstp, fhp, -EKEYREJECTED);
+> +			goto out;
+> +		} else {
+> +			data_left -= sizeof(u64)/4;
+> +		}
+
+The data_left bug identified during v5 review:
+https://lore.kernel.org/linux-nfs/8574c412-31fb-4810-a675-edf72240ae29@oracle.com/
+
+does not appear to be addressed in v6 3/3. Likewise, the
+"sizeof(u64)/4" has not been replaced by a symbolic constant.
+
+Additionally, the goto out path when MAC verification fails has an
+error value problem in the !NOSUBTREECHECK case:
+
+    error = nfsd_setuser_and_check_port(rqstp, cred, exp);
+    if (error)
+        goto out;
+    /* error is now nfs_ok (0) */
+    ...
+    if (exp->ex_flags & NFSEXP_SIGN_FH && fh_verify_mac(fhp, net)) {
+        trace_nfsd_set_fh_dentry_badmac(...);
+        goto out;   /* returns nfs_ok */
+    }
+
+nfsd_set_fh_dentry() returns 0 without setting fhp->fh_dentry or
+fhp->fh_export. The caller __fh_verify() then proceeds with:
+
+    dentry = fhp->fh_dentry;   /* NULL */
+    exp = fhp->fh_export;      /* NULL */
+    check_pseudo_root(dentry, exp);
+
+check_pseudo_root() dereferences exp on its first line:
+
+    if (!(exp->ex_flags & NFSEXP_V4ROOT))
+
+Can this NULL dereference occur for signed exports that also have
+subtree checking enabled?
+
+
+> +
+>  		dentry = exportfs_decode_fh_raw(exp->ex_path.mnt, fid,
+>  						data_left, fileid_type, 0,
+>  						nfsd_acceptable, exp);
+
+
+-- 
+Chuck Lever
 
