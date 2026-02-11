@@ -1,287 +1,232 @@
-Return-Path: <linux-fsdevel+bounces-76969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id ILdcDRbajGlIuAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 20:35:50 +0100
+	id aO3mCRDcjGm3uAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 20:44:16 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B319D127312
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 20:35:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B187A1273EC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 20:44:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 9AB0D302DA3F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 19:35:21 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 48A3B3032743
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 19:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B688353EE8;
-	Wed, 11 Feb 2026 19:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC943542E3;
+	Wed, 11 Feb 2026 19:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bqCCdv59"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PowYvJbT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f65.google.com (mail-ua1-f65.google.com [209.85.222.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5BC2EA151;
-	Wed, 11 Feb 2026 19:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770838518; cv=none; b=V/MDHAxGZpICbafu4yOouEV4l+d0URaAC1Yw+YAjKXw6Mp/yR02R8zkN+9R8bpgDOj8Zuq+aOj76+cwQzrjOaSWOMXIUFGoK3K9MrRIj9xJvT9wz7HSXDxNZ5jTEHgaYxUzF5M1oBHJJ8B9s9exgYKyXMX/OC5UpSW/LmQedA1o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770838518; c=relaxed/simple;
-	bh=GJMKJk6tNO9S0i/TxbGgoYQmEPPQ3hetsy1cZ4ScCC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KiGwjqvEV9urFbxzEXc/K+IpgEg0A4gNKe4RQJlREoLFStxQvb2RwRja3UVtAAF/K/AHkvYJQ+AmO9QZ1EJNkTVvOzur1NO7rw1cecQbgpOJHU8an+NIGoisOXY3ovWdiUolZaMbZ65I23vF/9eIpcSmNqWncWnyJY394pD/Yrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bqCCdv59; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83C01C4CEF7;
-	Wed, 11 Feb 2026 19:35:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770838518;
-	bh=GJMKJk6tNO9S0i/TxbGgoYQmEPPQ3hetsy1cZ4ScCC8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bqCCdv59hcRrGri7mFAPt+bg0qMTj5puuMYsN1BfBfuliLpa8WRP0WNT+jOfWTnGy
-	 XYhqC0AMgWv7FtBiZzE/p/OKYHYEnZpXvbHqJldvhYiUHlmdJQ9Nk5b3qynujUbwb+
-	 mqfA9Gp1lC5NseLhmR5R6GP/wsymTRREf9/0KPSCGaBR6p6Bwvba8BgmzVUG7Oy8qm
-	 e+nMF4hmWPDqLmfmnlLOyOG1798n8TZUiQc2WQy4s2w5umbO3P3BB5IgYKvJg8yCZp
-	 KyVeOGe/m8uLnujt/zWzNGz1jZ9TlrsGrFIvl/GMKV3ESv+RnyW5Bk+Qxa2kf0BLbQ
-	 ddq39cNUkWz2g==
-Date: Wed, 11 Feb 2026 20:35:12 +0100
-From: Alexey Gladkov <legion@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Dan Klishch <danilklishch@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
-	"Eric W . Biederman" <ebiederm@xmission.com>,
-	Kees Cook <keescook@chromium.org>,
-	containers@lists.linux-foundation.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 2/5] proc: subset=pid: Show /proc/self/net only for
- CAP_NET_ADMIN
-Message-ID: <aYzZ8I7-dzjKCcy7@example.org>
-References: <20251213050639.735940-1-danilklishch@gmail.com>
- <cover.1768295900.git.legion@kernel.org>
- <e14856f2c5f4635ddf72de61ecc59851c131489c.1768295900.git.legion@kernel.org>
- <20260204-bergung-abhilfe-073d732bc51f@brauner>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCFF3542D8
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 19:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.222.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770839014; cv=pass; b=t36WyIbixA2gwR5MSoaUip7+7w261s7qhOizH39w5sUYX4el+nUDAScsMsnzXPa9U14/KxXuGLYrY6OPMtkLr/kJUbFV647qYSNBO0BwIRSxj8hhWvFICtMdc9cVYVDBOKRiBqkVWqz4T4kCP5Ft5rF17fqdHia6AN+lviduhnc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770839014; c=relaxed/simple;
+	bh=oXQ1XB8B3wClH1fLqpgOnCS78LK40SPPGujDt6bxq94=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G6iNYv1OFwBuSYaifGrQzTf8El999KgtGnmHugX5n64aXCbOb5b/gyteqnY8navME69+F9T5jykfIbr0vo8RTqy2CEaQdH4CSnGAZyNxfhs9fifD6KeNdGZh96QVVEH4CfpPx7rKPGEKI8lUSsW1SQLvPSLWJOYV6jU7UalAF90=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PowYvJbT; arc=pass smtp.client-ip=209.85.222.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f65.google.com with SMTP id a1e0cc1a2514c-948d0d5d4d0so1427584241.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 11:43:33 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770839013; cv=none;
+        d=google.com; s=arc-20240605;
+        b=XmxA2flN6EWTdcSF6iIZ+wcQ+fDWpBgFsczFDId2Xd77saMNEhws354abl4gfKTeGC
+         aQf+pVDGTlpqbkIwAYtjFdnCEyUfuhuvjfzpYdRTsoK2NuLBkjosxd8nP+JFcHZh0DGt
+         NinF9rR2dlEb8cj/eIrKRnm9iV7gJzHJEgA/BmY3mfJ6lYNiSbXcdSkfOfW3SUSxeLjN
+         lOJMrv9q93bFQKSUIqd9mwucCuzTfbnjJWpcddMzOCXUFpDgVDQK5lXj2ljurTOgidhE
+         nNocX4KirFlZOxmzfrQjUhs5mAJazPC5dNfLGRhXTPSCoH3m0XhaN8Kisv7z+VHgN2It
+         Apbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=gHntEFiFJWWh+7XoaBNqKXQpADrwgSFaOdTDNIvp++o=;
+        fh=3k7Y9w9q7yiRyLQH7afyu6swg9YdtXwWqUOQurlN2IY=;
+        b=CxJsXc/J/qbxY+mMyoztndMj9kteiHu5UCF3wSPAjJpb/x5vjyymQbLtVtK6iIiSeq
+         jqw/7MVCaXW6NtO/J9bqGLBt/Z/MBp5SUeu+yvjCbxn1tItVFLlI/HOyUzSUXDsRC4Qh
+         ABPhICMRTpPrIeTFVUlDVi2mb++S3zqIepoY1Tvpl3Y+kb09bhJUOJye0XUOwQP+Kwmn
+         q3LR2ESL60hArFezPLWJ46UMmfdy0IO+wPLx7rMFs5U0B0RTdzRgZWr1T1kBvkXgIu+G
+         TpgX2Ox0kEBB93f0h4t3dDRmCxv1D6iWu5vw/kRP4/rmoubu173jLVsAsIbOfKRej4Fs
+         y7mg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770839013; x=1771443813; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gHntEFiFJWWh+7XoaBNqKXQpADrwgSFaOdTDNIvp++o=;
+        b=PowYvJbTJPD5aOP9KtNXgpElGAHlayOJtccZi17gLCiV7NklgomQwPWvFL+tS/F06+
+         a4IHJWMKWcQOCMuG0V5Y1S7C3NMpWRRazWJSMGJ/+lW0n8XplZ7g7PHPZvoIPWr7ddC6
+         kBURI9c6WeteHacV61ibMk9mDDzli28UvAOwlslzqHBLPbUBqJzca/m0c5JolC7p1VcV
+         qs5+NNIx3MrvmcDaY/OsicJhdP7sZwy9m5emE/013J9SvcxjRvFzxDsyfLjLcjyYInMY
+         HBHhumq6HhVkgF0CZKb1GWABndE+59YlInwq0nEKWZ3tZaa6o+GwTjhAB8RDB0zcOK4h
+         ee1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770839013; x=1771443813;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=gHntEFiFJWWh+7XoaBNqKXQpADrwgSFaOdTDNIvp++o=;
+        b=ACtUA5aT+X4m2WaHiGV6SylTDFF6sThqY+7wTyXCiR2RQ9/FLhUqF01nqAFcfLZaMV
+         0IlgfEDbH+etQTAZl3K3DzPrmeqFeZpIT6nnGUMXSeUZMEjxfBPKqc+Vyb9B4VotFlnf
+         RdN3+nV/aMdBGQbewlUSf54jo0CDY0TxaglftADTvpTlybmwNoBu/wkwD1ijmy1xl7/8
+         69dg6A3Q1E20g2rC1m8sZCutaFaQ2g0FJynXM3AkYBVXdjdMLEWHq4UliAqkT7Y7+zct
+         3GGadEDEq8QT16uWXKZY0t1iaIXyv+B7A1pSNoNNLl1kC7MjEWD0EsoJlwRUycx/L3Bt
+         rSbw==
+X-Gm-Message-State: AOJu0Yxw/GnG0HlHHPxpH15pCqV9FHyPjTo7dBi41YVu1rsD6e9mV/dr
+	9wxvRm8Lus+IOGbhfCpK4BSNihEFTZdFk2fxRod4hQq/P6lJ1zhQv95YiARDBUa1X13XaqtAbR7
+	Vyf9Zecv01L8+a+puLrhWFFXfEp1wxhA=
+X-Gm-Gg: AZuq6aKP0Am+Mg3ksmCeWoqkftH3eCQbcHf+OSPObGyUXRSaKOM/pZjMlYFlMANWGif
+	VImV1cIrDufQLaFFT3m1LufU4WNVnLcCHsQ4OWFx0cWVIQ3it/vqRjCZMTdw+8XlaAHDHxmAkx5
+	YHyLcweKpbk9ZEveDMH9Lf1a3N1E5/IvoFBaFIyLleE6kW+ivBRdlBX4ot1EP2WN827Mmf9Dlcu
+	5SsAXA9LqTEBDj8x9NwZJRMEEqwKS+z3m76lihGZ8QaVl+O8+2VeeXC3vLplzQXW4idRPBo3LBb
+	e5JtIyU=
+X-Received: by 2002:a05:6102:b03:b0:5fd:faf5:bc7a with SMTP id
+ ada2fe7eead31-5fdfbe41f38mr144483137.41.1770839012601; Wed, 11 Feb 2026
+ 11:43:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260204-bergung-abhilfe-073d732bc51f@brauner>
+References: <20260206180248.12418-1-danieldurning.work@gmail.com> <20260209-spanplatten-zerrt-73851db30f18@brauner>
+In-Reply-To: <20260209-spanplatten-zerrt-73851db30f18@brauner>
+From: Daniel Durning <danieldurning.work@gmail.com>
+Date: Wed, 11 Feb 2026 14:43:21 -0500
+X-Gm-Features: AZwV_Qhs3SxVp8P05lu1S3k0H4-gjDRINJd9WaPk3va07O3EBGHdjmRA3KZwHck
+Message-ID: <CAKrb_fEXR0uQnX5iK-ACH=amKMQ8qBSPGXmJb=1PgvEq8qsDEQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] fs/pidfs: Add permission check to pidfd_info()
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	paul@paul-moore.com, stephen.smalley.work@gmail.com, omosnace@redhat.com, 
+	Oleg Nesterov <oleg@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-76969-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[gmail.com,zeniv.linux.org.uk,xmission.com,chromium.org,lists.linux-foundation.org,vger.kernel.org];
 	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76970-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	MISSING_XM_UA(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,zeniv.linux.org.uk,suse.cz,paul-moore.com,gmail.com,redhat.com];
 	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[legion@kernel.org,linux-fsdevel@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[danieldurningwork@gmail.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
 	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: B319D127312
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: B187A1273EC
 X-Rspamd-Action: no action
 
-On Wed, Feb 04, 2026 at 03:39:53PM +0100, Christian Brauner wrote:
-> On Tue, Jan 13, 2026 at 10:20:34AM +0100, Alexey Gladkov wrote:
-> > Cache the mounters credentials and allow access to the net directories
-> > contingent of the permissions of the mounter of proc.
-> > 
-> > Do not show /proc/self/net when proc is mounted with subset=pid option
-> > and the mounter does not have CAP_NET_ADMIN.
-> > 
-> > Signed-off-by: Alexey Gladkov <legion@kernel.org>
+On Mon, Feb 9, 2026 at 9:01=E2=80=AFAM Christian Brauner <brauner@kernel.or=
+g> wrote:
+>
+> On Fri, Feb 06, 2026 at 06:02:48PM +0000, danieldurning.work@gmail.com wr=
+ote:
+> > From: Daniel Durning <danieldurning.work@gmail.com>
+> >
+> > Added a permission check to pidfd_info(). Originally, process info
+> > could be retrieved with a pidfd even if proc was mounted with hidepid
+> > enabled, allowing pidfds to be used to bypass those protections. We
+> > now call ptrace_may_access() to perform some DAC checking as well
+> > as call the appropriate LSM hook.
+> >
+> > The downside to this approach is that there are now more restrictions
+> > on accessing this info from a pidfd than when just using proc (without
+> > hidepid). I am open to suggestions if anyone can think of a better way
+> > to handle this.
+>
+> This isn't really workable since this would regress userspace quite a
+> bit. I think we need a different approach. I've given it some thought
+> and everything's kinda ugly but this might work.
+>
+> In struct pid_namespace record whether anyone ever mounted a procfs
+> with hidepid turned on for this pidns. In pidfd_info() we check whether
+> hidepid was ever turned on. If it wasn't we're done and can just return
+> the info. This will be the common case. If hidepid was ever turned on
+> use kern_path("/proc") to lookup procfs. If not found check
+> ptrace_may_access() to decide whether to return the info or not. If
+> /proc is found check it's hidepid settings and make a decision based on
+> that.
+>
+> You can probably reorder this to call ptrace_may_access() first and then
+> do the procfs lookup dance. Thoughts?
+
+Thanks for the feedback. I think your solution makes sense.
+
+Unfortunately, it seems like systemd mounts procfs with hidepid enabled on
+boot for services with the ProtectProc option enabled. This means that
+procfs will always have been mounted with hidepid in the init pid namespace=
+.
+Do you think it would be viable to record whether or not procfs was mounted
+with hidepid enabled in the mount namespace instead?
+
+> > I have also noticed that it is possible to use pidfds to poll on any
+> > process regardless of whether the process is a child of the caller,
+> > has a different UID, or has a different security context. Is this
+> > also worth addressing? If so, what exactly should the DAC checks be?
+>
+> Oleg and I had discusses this and decided that such polling isn't
+> sensitive information so by default this should just work and it's
+> relied upon in Android and in a bunch of other workloads. An LSM can of
+> course restrict access via security_file_ioctl().
+>
+> Fwiw, pidfds now support persistent trusted extended attributes so if
+> the LSM folks wanted we can add security.* extended attribute support
+> and they can mark pidfds with persistent security labels - persistent as
+> in for the lifetime of the task.
+>
+> > Signed-off-by: Daniel Durning <danieldurning.work@gmail.com>
 > > ---
-> >  fs/proc/proc_net.c      | 8 ++++++++
-> >  fs/proc/root.c          | 5 +++++
-> >  include/linux/proc_fs.h | 1 +
-> >  3 files changed, 14 insertions(+)
-> > 
-> > diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
-> > index 52f0b75cbce2..6e0ccef0169f 100644
-> > --- a/fs/proc/proc_net.c
-> > +++ b/fs/proc/proc_net.c
-> > @@ -23,6 +23,7 @@
-> >  #include <linux/uidgid.h>
-> >  #include <net/net_namespace.h>
-> >  #include <linux/seq_file.h>
-> > +#include <linux/security.h>
-> >  
-> >  #include "internal.h"
-> >  
-> > @@ -270,6 +271,7 @@ static struct net *get_proc_task_net(struct inode *dir)
-> >  	struct task_struct *task;
-> >  	struct nsproxy *ns;
-> >  	struct net *net = NULL;
-> > +	struct proc_fs_info *fs_info = proc_sb_info(dir->i_sb);
-> >  
-> >  	rcu_read_lock();
-> >  	task = pid_task(proc_pid(dir), PIDTYPE_PID);
-> > @@ -282,6 +284,12 @@ static struct net *get_proc_task_net(struct inode *dir)
-> >  	}
-> >  	rcu_read_unlock();
-> >  
-> > +	if (net && (fs_info->pidonly == PROC_PIDONLY_ON) &&
-> > +	    security_capable(fs_info->mounter_cred, net->user_ns, CAP_NET_ADMIN, CAP_OPT_NONE) < 0) {
-> > +		put_net(net);
-> > +		net = NULL;
-> > +	}
+> >  fs/pidfs.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/fs/pidfs.c b/fs/pidfs.c
+> > index dba703d4ce4a..058a7d798bca 100644
+> > --- a/fs/pidfs.c
+> > +++ b/fs/pidfs.c
+> > @@ -365,6 +365,13 @@ static long pidfd_info(struct file *file, unsigned=
+ int cmd, unsigned long arg)
+> >               goto copy_out;
+> >       }
+> >
+> > +     /*
+> > +      * Do a filesystem cred ptrace check to verify access
+> > +      * to the task's info.
+> > +      */
+> > +     if (!ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS))
+> > +             return -EACCES;
 > > +
-> >  	return net;
-> >  }
-> >  
-> > diff --git a/fs/proc/root.c b/fs/proc/root.c
-> > index d8ca41d823e4..ed8a101d09d3 100644
-> > --- a/fs/proc/root.c
-> > +++ b/fs/proc/root.c
-> > @@ -254,6 +254,7 @@ static int proc_fill_super(struct super_block *s, struct fs_context *fc)
-> >  		return -ENOMEM;
-> >  
-> >  	fs_info->pid_ns = get_pid_ns(ctx->pid_ns);
-> > +	fs_info->mounter_cred = get_cred(fc->cred);
-> >  	proc_apply_options(fs_info, fc, current_user_ns());
-> >  
-> >  	/* User space would break if executables or devices appear on proc */
-> > @@ -303,6 +304,9 @@ static int proc_reconfigure(struct fs_context *fc)
-> >  
-> >  	sync_filesystem(sb);
-> >  
-> > +	put_cred(fs_info->mounter_cred);
-> > +	fs_info->mounter_cred = get_cred(fc->cred);
-> 
-> Afaict, this races with get_proc_task_net(). You need a synchronization
-> mechanism here so that get_proc_task_net() doesn't risk accessing
-> invalid mounter creds while someone concurrently updates the creds.
-> Proposal how to fix that below.
-> 
-> But I'm kinda torn here anyway whether we want that credential change on
-> remount. The problem is that someone might inadvertently allow access to
-> /proc/<pid>/net as a side-effect simply because they remounted procfs.
-> But they never had a chance to prevent this.
-
-I think you're right, and there's no need to change credentials on
-remount. At least not now.
-
-> I think it's best if mounter_creds stays fixed just as they do for
-> overlayfs. So we don't allow them to change on reconfigure. That also
-> makes all of the code I hinted at below pointless.
-
-I'll just remove the mounter_cred update from proc_reconfigure.
-
-> If we ever want to change the credentials it's easier to add a mount
-> option to procfs like I did for overlayfs.
-> 
-> _Untested_ patches:
-> 
-> First, the preparatory patch diff (no functional changes intended):
-> 
-> diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
-> index 52f0b75cbce2..81825e5819b8 100644
-> --- a/fs/proc/proc_net.c
-> +++ b/fs/proc/proc_net.c
-> @@ -268,19 +268,19 @@ EXPORT_SYMBOL_GPL(proc_create_net_single_write);
->  static struct net *get_proc_task_net(struct inode *dir)
->  {
->         struct task_struct *task;
-> -       struct nsproxy *ns;
-> -       struct net *net = NULL;
-> +       struct net *net;
-> 
-> -       rcu_read_lock();
-> +       guard(rcu)();
->         task = pid_task(proc_pid(dir), PIDTYPE_PID);
-> -       if (task != NULL) {
-> -               task_lock(task);
-> -               ns = task->nsproxy;
-> -               if (ns != NULL)
-> -                       net = get_net(ns->net_ns);
-> -               task_unlock(task);
-> +       if (!task)
-> +               return NULL;
-> +
-> +       scoped_guard(task_lock, task) {
-> +               struct nsproxy *ns = task->nsproxy;
-> +               if (!ns)
-> +                       return NULL;
-> +               net = get_net(ns->net_ns);
->         }
-> -       rcu_read_unlock();
-> 
->         return net;
->  }
-> 
-> And then on top of it something like:
-> 
-> diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
-> index 81825e5819b8..47dc9806395c 100644
-> --- a/fs/proc/proc_net.c
-> +++ b/fs/proc/proc_net.c
-> @@ -269,6 +269,8 @@ static struct net *get_proc_task_net(struct inode *dir)
->  {
->         struct task_struct *task;
->         struct net *net;
-> +       struct proc_fs_info *fs_info;
-> +       const struct cred *cred;
-> 
->         guard(rcu)();
->         task = pid_task(proc_pid(dir), PIDTYPE_PID);
-> @@ -282,6 +284,15 @@ static struct net *get_proc_task_net(struct inode *dir)
->                 net = get_net(ns->net_ns);
->         }
-> 
-> +       fs_info = proc_sb_info(dir->i_sb);
-> +       if (fs_info->pidonly != PROC_PIDONLY_ON)
-> +               return net;
-> +
-> +       cred = rcu_dereference(fs_info->mounter_cred);
-> +       if (security_capable(cred, net->user_ns, CAP_NET_ADMIN, CAP_OPT_NONE) != 0) {
-> +               put_net(net);
-> +               return NULL;
-> +       }
->         return net;
->  }
-> 
-> diff --git a/fs/proc/root.c b/fs/proc/root.c
-> index d8ca41d823e4..68397900dab7 100644
-> --- a/fs/proc/root.c
-> +++ b/fs/proc/root.c
-> @@ -300,11 +300,15 @@ static int proc_reconfigure(struct fs_context *fc)
->  {
->         struct super_block *sb = fc->root->d_sb;
->         struct proc_fs_info *fs_info = proc_sb_info(sb);
-> +       const struct cred *cred;
-> 
->         sync_filesystem(sb);
-> 
-> -       proc_apply_options(fs_info, fc, current_user_ns());
-> -       return 0;
-> +       cred = rcu_replace_pointer(fs_info->mounter_cred, get_cred(fc->cred),
-> +                                  lockdep_is_held(&sb->s_umount));
-> +       put_cred(cred);
-> +
-> +       return proc_apply_options(sb, fc, current_user_ns());
->  }
-> 
->  static int proc_get_tree(struct fs_context *fc)
-> 
-
--- 
-Rgrds, legion
-
+> >       c =3D get_task_cred(task);
+> >       if (!c)
+> >               return -ESRCH;
+> > --
+> > 2.52.0
+> >
 
