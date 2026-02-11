@@ -1,214 +1,287 @@
-Return-Path: <linux-fsdevel+bounces-76968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id hnP8OIPZjGlIuAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 20:33:23 +0100
+	id ILdcDRbajGlIuAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 20:35:50 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B3B1272CC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 20:33:23 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B319D127312
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 20:35:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 5300F3014C19
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 19:33:20 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9AB0D302DA3F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 19:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843C8350A21;
-	Wed, 11 Feb 2026 19:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B688353EE8;
+	Wed, 11 Feb 2026 19:35:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OcFcUBio"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bqCCdv59"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0EA1FE47C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 19:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.219.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770838399; cv=pass; b=uQN46eR6go0lgHpCvksflAsDuG9xfTNT18Bqpw4w0MGaNASTnI+9r1V89e4WUnaksx52w5nwdRE1Rj3jPsyM+qR/zU79XpiiSE1FVmxbJV32lFYVXvbz5J0JLv+9w9oWX/QGua7QO3Cu1DpBCC1qG1Lwd1ID5o3L0BOVeOoijOY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770838399; c=relaxed/simple;
-	bh=o1oArdx/HIluGTQrcrwhYuhnX+fF9TkiKy2MQhq5sx0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=se0DS2cSi1WITMVbsRx/fOGyX3x9shYDaQArHuZu1Df9pWjlo+Hj++LebKcnT0Q7Y/iOW4mVSkM8+72wJQ52NGRouPgeZwEyuKypmJHDlR0WJVlcW3zP7B9LygVKxQgrUd2Iiwb3fXeFMwPfAi0cmZp+QS15ojajrldN90bSJj4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OcFcUBio; arc=pass smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-89473f15ed8so20998646d6.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 11:33:17 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770838397; cv=none;
-        d=google.com; s=arc-20240605;
-        b=DhkpOKNzPAuYFQ8LuLy50+ul0UxaLiBlVVHcMq9eRj4ASq0T28dYQG83ULANTzTZIe
-         DINYV5gsLcPYI23P/BgaDFiq9XxsItDjzST5nQIITKYmbcfDEfhfj0eEBf0xIpgmsahD
-         bVYBLE0ur/jRhig2Y6iIDP/G3wFkR1WQtvNoQZfc5qKjSVj8xh3hLVbQ324mvxZMfkey
-         4m9c6Ye6CZ7BdKan8VGWdoYRYKjPHMQceldRZ3FL+EBeEY9TBQfzeag6G4Qe0L7hzK94
-         PgBWqFcy826fEPkvm4FcVsHxhoBjFCj+uBdqScGpFxeEfPz+2nkWbQ71V19QkC4C8bwC
-         7PVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Y33bx3hdCnJJ1e938j2kVmQAaaJitmCpkVbJT3zGocw=;
-        fh=iGdZARzEWYYElGBsjCGOTdI0EsrVusiFA6nBcL4yutA=;
-        b=FnGzvW+NYJMmyEh5AiK1YPyveLLkYt76iV3nbzbp88Mzo0FLN+LdmrbZdXmmplPFFU
-         ndhetCRriwB30icTCg8snrlc3WNqFQKEbrZzvEnoZA72OzwZDFQ7WYbHWw1WggCdk2sD
-         C/jHz/X7MUoxtlUmmvX9r8E0YVPs3FEV2qkJQfnIxQoCnptS7AiJ0LphLlYYH60PS0uP
-         RlPrhP+mUVjRhdUtZTgu7QBHcWstGMihaar4C+6l5RGHdi9vbWW4RRj2Hq0ezO8fASoO
-         V0f8CH2sqyiayNlr8YvtLTrzJhit4wY4KB1p/xVbnnoIFzh7eGUq5W20g5wyFyPPtnhf
-         htKg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770838397; x=1771443197; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y33bx3hdCnJJ1e938j2kVmQAaaJitmCpkVbJT3zGocw=;
-        b=OcFcUBioAcFgU2RmMwh75I0EpBrB/y6uRGbhAwp8feneSLb9Mw2Bn0v2E2UkdkQHrO
-         5CZwYEOxeTxn1dNYR/GfOQ4o7gV8uLysH6/u92TtuQjphO3epFaiGdKuNIr5lHHbcGsr
-         hN3kSaAeFnOyfdr5s3RGFiYd1qi2VS7EPE+ChqF3S8YrmB8IPIceCpC8VWPjob9P+9w4
-         dLdjeUHZ7+0w5EF8EZLkyS6tkDyM/Ed2MmvVPOeidDSxNBFYuaHmKKj+JHnpYciSHagU
-         Y3Ql45PZBfJa57NwrPq9WhK33lZ+M8PEuI35Svuo8DlgjISo7hT9niMrd9sXJYCHHhZa
-         i3eQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770838397; x=1771443197;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Y33bx3hdCnJJ1e938j2kVmQAaaJitmCpkVbJT3zGocw=;
-        b=O56RgeG7iLqHcGps2LYX1hmzPX2LFOz+LmperMl2BPmanXBcqXoy6ZiY0NgnyjZ7kg
-         h+50WzgXFUf8ui+zrN91WiDs1jhTQO6l2mj7wtF96lrpq6v2mEjursG2BceurAAGBD2F
-         lDhRqjTKSNPoMEOC+UjjKD6yfb1AbsAH7AzkqBMlh6jomN2xRm8/tqsXzFj3MYftOdPn
-         GSNB+Hfef2KBS26zHHvySUL4gXODkd1Nx7r1fwomDJdceWrok4c1LW5DQTl5hjM26pW2
-         19eAWYi9FXForPQyf2YorxLe40r31UJ5i+UfGYUZ7E8iuXK+VkYclc8+9Wwnimse5BXK
-         /waQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWGVG3/Soh66CRF/oop6v9p0Y8MIEgB1wT+Rgnlq+mkEQHQRFgPKno72hG7x3e83H5jUd/GHLQqV/itDq5/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/mEGCSuGzP5PZrRpkxTqkNBwpCnB5DKgkTQzT+jM/tVMHWtlQ
-	9kiTBU2RIs5pZ/37AF2S46NwJF1PG50xRQhaAI9BIwudXo5SiLiD3oBYCafhnewt/n1RPa1tAif
-	mWijCLZ/p2tAVZK29bxp/0d24quMMRAQ=
-X-Gm-Gg: AZuq6aL7KbxtL76SVsGk57AINJFlcDdZ5+yc5TQUbkDfeHbVi6M4RXkQhv+dVFVVw7P
-	hWaX/Z7I7Z2UcPMBYLAJuKJ5RlOAfKAhQ85DmHfD+dIG9230QwRPnLstiM/f5SMKRgLYe5NKYXO
-	ICxJ3OBh1+E2Y1zGI7ABtAXi1i2pcQrmVWZKCsKl7JppcIOmFdR3EDwwCUYI0wmSmgSm0q1Ttmp
-	YOc5TvxCJiFWPI2Xy1x1w8B8LKL7Bg1+yHwU7vK1RrD2CQLontvzqfg7/HwIMLrogwZrfALcao7
-	OSzrX9OsMmOP1j6a
-X-Received: by 2002:a05:6214:ca7:b0:897:277:d03e with SMTP id
- 6a1803df08f44-8972797884dmr9709136d6.58.1770838396649; Wed, 11 Feb 2026
- 11:33:16 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5BC2EA151;
+	Wed, 11 Feb 2026 19:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770838518; cv=none; b=V/MDHAxGZpICbafu4yOouEV4l+d0URaAC1Yw+YAjKXw6Mp/yR02R8zkN+9R8bpgDOj8Zuq+aOj76+cwQzrjOaSWOMXIUFGoK3K9MrRIj9xJvT9wz7HSXDxNZ5jTEHgaYxUzF5M1oBHJJ8B9s9exgYKyXMX/OC5UpSW/LmQedA1o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770838518; c=relaxed/simple;
+	bh=GJMKJk6tNO9S0i/TxbGgoYQmEPPQ3hetsy1cZ4ScCC8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KiGwjqvEV9urFbxzEXc/K+IpgEg0A4gNKe4RQJlREoLFStxQvb2RwRja3UVtAAF/K/AHkvYJQ+AmO9QZ1EJNkTVvOzur1NO7rw1cecQbgpOJHU8an+NIGoisOXY3ovWdiUolZaMbZ65I23vF/9eIpcSmNqWncWnyJY394pD/Yrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bqCCdv59; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83C01C4CEF7;
+	Wed, 11 Feb 2026 19:35:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770838518;
+	bh=GJMKJk6tNO9S0i/TxbGgoYQmEPPQ3hetsy1cZ4ScCC8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bqCCdv59hcRrGri7mFAPt+bg0qMTj5puuMYsN1BfBfuliLpa8WRP0WNT+jOfWTnGy
+	 XYhqC0AMgWv7FtBiZzE/p/OKYHYEnZpXvbHqJldvhYiUHlmdJQ9Nk5b3qynujUbwb+
+	 mqfA9Gp1lC5NseLhmR5R6GP/wsymTRREf9/0KPSCGaBR6p6Bwvba8BgmzVUG7Oy8qm
+	 e+nMF4hmWPDqLmfmnlLOyOG1798n8TZUiQc2WQy4s2w5umbO3P3BB5IgYKvJg8yCZp
+	 KyVeOGe/m8uLnujt/zWzNGz1jZ9TlrsGrFIvl/GMKV3ESv+RnyW5Bk+Qxa2kf0BLbQ
+	 ddq39cNUkWz2g==
+Date: Wed, 11 Feb 2026 20:35:12 +0100
+From: Alexey Gladkov <legion@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Dan Klishch <danilklishch@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
+	"Eric W . Biederman" <ebiederm@xmission.com>,
+	Kees Cook <keescook@chromium.org>,
+	containers@lists.linux-foundation.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 2/5] proc: subset=pid: Show /proc/self/net only for
+ CAP_NET_ADMIN
+Message-ID: <aYzZ8I7-dzjKCcy7@example.org>
+References: <20251213050639.735940-1-danilklishch@gmail.com>
+ <cover.1768295900.git.legion@kernel.org>
+ <e14856f2c5f4635ddf72de61ecc59851c131489c.1768295900.git.legion@kernel.org>
+ <20260204-bergung-abhilfe-073d732bc51f@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251223223018.3295372-1-sashal@kernel.org> <20251223223018.3295372-2-sashal@kernel.org>
- <CAJnrk1ZiJVNg-k+CSY_VqJ3sQOW1mo6C-9QT0bzgLT4sKGGCyg@mail.gmail.com>
- <aUtCjXbraDrq-Sxe@laps> <aYbmy8JdgXwsGaPP@autotest-wegao.qe.prg2.suse.org>
- <CAJnrk1anodUxD5GR18N8w8239S_kbgijQyZC48Nsa4isb-e5JA@mail.gmail.com>
- <aYp33Ddm7wYFrr_Q@autotest-wegao.qe.prg2.suse.org> <CAJnrk1YARhOOKb=OuDLR-X8_que34Q93WagNMOiTjYVohHLdWA@mail.gmail.com>
- <aYp-aTJPzSnwRd6O@autotest-wegao.qe.prg2.suse.org> <CAJnrk1aPs2J_EerLROxtiHAKTyU2NHBkRXpS=-yunEsC9epAWw@mail.gmail.com>
- <aYvzUihKhMfM6agz@casper.infradead.org>
-In-Reply-To: <aYvzUihKhMfM6agz@casper.infradead.org>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 11 Feb 2026 11:33:05 -0800
-X-Gm-Features: AZwV_QhC1DYMtCZhEAoc9M6agKyga6UVSYSGFeleEjyqcjOsLktxvssi0NPYdgQ
-Message-ID: <CAJnrk1Z9za5w4FoJqTGx50zR2haHHaoot1KJViQyEHJQq4=34w@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/1] iomap: fix race between iomap_set_range_uptodate
- and folio_end_read
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Wei Gao <wegao@suse.com>, Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260204-bergung-abhilfe-073d732bc51f@brauner>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-76969-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[gmail.com,zeniv.linux.org.uk,xmission.com,chromium.org,lists.linux-foundation.org,vger.kernel.org];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-76968-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,infradead.org:email]
-X-Rspamd-Queue-Id: 43B3B1272CC
+	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[legion@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: B319D127312
 X-Rspamd-Action: no action
 
-On Tue, Feb 10, 2026 at 7:11=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Tue, Feb 10, 2026 at 02:18:06PM -0800, Joanne Koong wrote:
-> >                 spin_lock_irqsave(&ifs->state_lock, flags);
-> > -               uptodate =3D ifs_set_range_uptodate(folio, ifs, off, le=
-n);
-> > +               /*
-> > +                * If a read is in progress, we must NOT call
-> > folio_mark_uptodate.
-> > +                * The read completion path (iomap_finish_folio_read or
-> > +                * iomap_read_end) will call folio_end_read() which use=
-s XOR
-> > +                * semantics to set the uptodate bit. If we set it here=
-, the XOR
-> > +                * in folio_end_read() will clear it, leaving the folio=
- not
-> > +                * uptodate.
-> > +                */
-> > +               uptodate =3D ifs_set_range_uptodate(folio, ifs, off, le=
-n) &&
-> > +                       !ifs->read_bytes_pending;
-> >                 spin_unlock_irqrestore(&ifs->state_lock, flags);
->
-> This can't possibly be the right fix.  There's some horrible confusion
-> here.  It should not be possible to have read bytes pending _and_ the
-> entire folio be uptodate.  That's an invariant that should always be
-> maintained.
+On Wed, Feb 04, 2026 at 03:39:53PM +0100, Christian Brauner wrote:
+> On Tue, Jan 13, 2026 at 10:20:34AM +0100, Alexey Gladkov wrote:
+> > Cache the mounters credentials and allow access to the net directories
+> > contingent of the permissions of the mounter of proc.
+> > 
+> > Do not show /proc/self/net when proc is mounted with subset=pid option
+> > and the mounter does not have CAP_NET_ADMIN.
+> > 
+> > Signed-off-by: Alexey Gladkov <legion@kernel.org>
+> > ---
+> >  fs/proc/proc_net.c      | 8 ++++++++
+> >  fs/proc/root.c          | 5 +++++
+> >  include/linux/proc_fs.h | 1 +
+> >  3 files changed, 14 insertions(+)
+> > 
+> > diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
+> > index 52f0b75cbce2..6e0ccef0169f 100644
+> > --- a/fs/proc/proc_net.c
+> > +++ b/fs/proc/proc_net.c
+> > @@ -23,6 +23,7 @@
+> >  #include <linux/uidgid.h>
+> >  #include <net/net_namespace.h>
+> >  #include <linux/seq_file.h>
+> > +#include <linux/security.h>
+> >  
+> >  #include "internal.h"
+> >  
+> > @@ -270,6 +271,7 @@ static struct net *get_proc_task_net(struct inode *dir)
+> >  	struct task_struct *task;
+> >  	struct nsproxy *ns;
+> >  	struct net *net = NULL;
+> > +	struct proc_fs_info *fs_info = proc_sb_info(dir->i_sb);
+> >  
+> >  	rcu_read_lock();
+> >  	task = pid_task(proc_pid(dir), PIDTYPE_PID);
+> > @@ -282,6 +284,12 @@ static struct net *get_proc_task_net(struct inode *dir)
+> >  	}
+> >  	rcu_read_unlock();
+> >  
+> > +	if (net && (fs_info->pidonly == PROC_PIDONLY_ON) &&
+> > +	    security_capable(fs_info->mounter_cred, net->user_ns, CAP_NET_ADMIN, CAP_OPT_NONE) < 0) {
+> > +		put_net(net);
+> > +		net = NULL;
+> > +	}
+> > +
+> >  	return net;
+> >  }
+> >  
+> > diff --git a/fs/proc/root.c b/fs/proc/root.c
+> > index d8ca41d823e4..ed8a101d09d3 100644
+> > --- a/fs/proc/root.c
+> > +++ b/fs/proc/root.c
+> > @@ -254,6 +254,7 @@ static int proc_fill_super(struct super_block *s, struct fs_context *fc)
+> >  		return -ENOMEM;
+> >  
+> >  	fs_info->pid_ns = get_pid_ns(ctx->pid_ns);
+> > +	fs_info->mounter_cred = get_cred(fc->cred);
+> >  	proc_apply_options(fs_info, fc, current_user_ns());
+> >  
+> >  	/* User space would break if executables or devices appear on proc */
+> > @@ -303,6 +304,9 @@ static int proc_reconfigure(struct fs_context *fc)
+> >  
+> >  	sync_filesystem(sb);
+> >  
+> > +	put_cred(fs_info->mounter_cred);
+> > +	fs_info->mounter_cred = get_cred(fc->cred);
+> 
+> Afaict, this races with get_proc_task_net(). You need a synchronization
+> mechanism here so that get_proc_task_net() doesn't risk accessing
+> invalid mounter creds while someone concurrently updates the creds.
+> Proposal how to fix that below.
+> 
+> But I'm kinda torn here anyway whether we want that credential change on
+> remount. The problem is that someone might inadvertently allow access to
+> /proc/<pid>/net as a side-effect simply because they remounted procfs.
+> But they never had a chance to prevent this.
 
-ifs->read_bytes_pending gets initialized to the folio size, but if the
-file being read in is smaller than the size of the folio, then we
-reach this scenario because the file has been read in but
-ifs->read_bytes_pending is still a positive value because it
-represents the bytes between the end of the file and the end of the
-folio. If the folio size is 16k and the file size is 4k:
-  a) ifs->read_bytes_pending gets initialized to 16k
-  b) ->read_folio_range() is called for the 4k read
-  c) the 4k read succeeds, ifs->read_bytes_pending is now 12k and the
-0 to 4k range is marked uptodate
-  d) the post-eof blocks are zeroed and marked uptodate in the call to
-iomap_set_range_uptodate()
-  e) iomap_set_range_uptodate() sees all the ranges are marked
-uptodate and it marks the folio uptodate
-  f) iomap_read_end() gets called to subtract the 12k from
-ifs->read_bytes_pending. it too sees all the ranges are marked
-uptodate and marks the folio uptodate
+I think you're right, and there's no need to change credentials on
+remount. At least not now.
 
-The same scenario could happen for IOMAP_INLINE mappings if part of
-the folio is read in through ->read_folio_range() and then the rest is
-read in as inline data.
+> I think it's best if mounter_creds stays fixed just as they do for
+> overlayfs. So we don't allow them to change on reconfigure. That also
+> makes all of the code I hinted at below pointless.
 
-An alternative solution is to not have zeroed-out / inlined mappings
-call iomap_read_end(), eg something like this [1], but this adds
-additional complexity and doesn't work if there's additional mappings
-for the folio after a non-IOMAP_MAPPED mapping.
+I'll just remove the mounter_cred update from proc_reconfigure.
 
-Is there a better approach that I'm missing?
+> If we ever want to change the credentials it's easier to add a mount
+> option to procfs like I did for overlayfs.
+> 
+> _Untested_ patches:
+> 
+> First, the preparatory patch diff (no functional changes intended):
+> 
+> diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
+> index 52f0b75cbce2..81825e5819b8 100644
+> --- a/fs/proc/proc_net.c
+> +++ b/fs/proc/proc_net.c
+> @@ -268,19 +268,19 @@ EXPORT_SYMBOL_GPL(proc_create_net_single_write);
+>  static struct net *get_proc_task_net(struct inode *dir)
+>  {
+>         struct task_struct *task;
+> -       struct nsproxy *ns;
+> -       struct net *net = NULL;
+> +       struct net *net;
+> 
+> -       rcu_read_lock();
+> +       guard(rcu)();
+>         task = pid_task(proc_pid(dir), PIDTYPE_PID);
+> -       if (task != NULL) {
+> -               task_lock(task);
+> -               ns = task->nsproxy;
+> -               if (ns != NULL)
+> -                       net = get_net(ns->net_ns);
+> -               task_unlock(task);
+> +       if (!task)
+> +               return NULL;
+> +
+> +       scoped_guard(task_lock, task) {
+> +               struct nsproxy *ns = task->nsproxy;
+> +               if (!ns)
+> +                       return NULL;
+> +               net = get_net(ns->net_ns);
+>         }
+> -       rcu_read_unlock();
+> 
+>         return net;
+>  }
+> 
+> And then on top of it something like:
+> 
+> diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
+> index 81825e5819b8..47dc9806395c 100644
+> --- a/fs/proc/proc_net.c
+> +++ b/fs/proc/proc_net.c
+> @@ -269,6 +269,8 @@ static struct net *get_proc_task_net(struct inode *dir)
+>  {
+>         struct task_struct *task;
+>         struct net *net;
+> +       struct proc_fs_info *fs_info;
+> +       const struct cred *cred;
+> 
+>         guard(rcu)();
+>         task = pid_task(proc_pid(dir), PIDTYPE_PID);
+> @@ -282,6 +284,15 @@ static struct net *get_proc_task_net(struct inode *dir)
+>                 net = get_net(ns->net_ns);
+>         }
+> 
+> +       fs_info = proc_sb_info(dir->i_sb);
+> +       if (fs_info->pidonly != PROC_PIDONLY_ON)
+> +               return net;
+> +
+> +       cred = rcu_dereference(fs_info->mounter_cred);
+> +       if (security_capable(cred, net->user_ns, CAP_NET_ADMIN, CAP_OPT_NONE) != 0) {
+> +               put_net(net);
+> +               return NULL;
+> +       }
+>         return net;
+>  }
+> 
+> diff --git a/fs/proc/root.c b/fs/proc/root.c
+> index d8ca41d823e4..68397900dab7 100644
+> --- a/fs/proc/root.c
+> +++ b/fs/proc/root.c
+> @@ -300,11 +300,15 @@ static int proc_reconfigure(struct fs_context *fc)
+>  {
+>         struct super_block *sb = fc->root->d_sb;
+>         struct proc_fs_info *fs_info = proc_sb_info(sb);
+> +       const struct cred *cred;
+> 
+>         sync_filesystem(sb);
+> 
+> -       proc_apply_options(fs_info, fc, current_user_ns());
+> -       return 0;
+> +       cred = rcu_replace_pointer(fs_info->mounter_cred, get_cred(fc->cred),
+> +                                  lockdep_is_held(&sb->s_umount));
+> +       put_cred(cred);
+> +
+> +       return proc_apply_options(sb, fc, current_user_ns());
+>  }
+> 
+>  static int proc_get_tree(struct fs_context *fc)
+> 
 
-Thanks,
-Joanne
+-- 
+Rgrds, legion
 
-[1] https://github.com/joannekoong/linux/commit/de48d3c29db8ae654300341e3ee=
-c12497df54673
 
