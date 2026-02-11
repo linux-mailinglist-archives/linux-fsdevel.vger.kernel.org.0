@@ -1,203 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-76928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UHF2O5hEjGlxkQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 09:58:00 +0100
+	id eKlaCz1KjGmukgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 10:22:05 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5808E122760
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 09:58:00 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D344122AC2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 10:22:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D5474301E3C4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 08:57:40 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 75B083013725
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 09:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16351BBBE5;
-	Wed, 11 Feb 2026 08:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gUVcwaIG"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1016535504F;
+	Wed, 11 Feb 2026 09:22:02 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com [209.85.161.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13521309F1D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 08:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770800259; cv=pass; b=Wi3lj3CEOaQdLfyXC4mddWy1A1e+SeqBP4C2fas8KVx+vdFHVUug3Cvfu06r3vuhVapQGDbdgL3EDiZklmM99IFDKWryJWqMC2l4YN3es1+sWR4W0CKMLjFs7Qi2tz6kG3QgxEHEhYKi4RR03ptnBQbuMj+C6hTRP+tSGYtzrhQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770800259; c=relaxed/simple;
-	bh=CnJdoUqw+NNkumwonbn2O7O4fLspWMM1fKB6A3EqAJk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pvNTW6DOu3GDBEFz/Slo1ZA3BjPorrUE5sY4FJOQdPnQ8n6pri0KPqsmDAwSMDWTb3MflehhyGeEbWpcFCSSdMk2Af1GbhzkG4tgmAzWaE+tJiuUX4ptDEBy/ILQZKEWnijHwRtMwdRyxFgDVfuvpawXjKblzklNg0LdbQHgfq0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gUVcwaIG; arc=pass smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6597a7bd7d6so7941538a12.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 00:57:37 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770800256; cv=none;
-        d=google.com; s=arc-20240605;
-        b=D210E4LlLcEIq667YVl3LjoQC5SlgKpOLRoqK0ZmSsTjUUJHCA63IvU+Z1P7ZfZTwS
-         VUtv+zS7GQdBx2pRP2BwE9od1LqyTfMTlzLoD60CIo4WU3xn6+lI6ghqF8/MOvDQXZN+
-         ESmShbdMvktJMKItvi0WeiCIhl5dAeDR3AD8tmfaKW5Df+g2y0o86dNj1IDc3UhPQEr2
-         GC/SUg019jOkipK3WW+z/KcD2+P4HUNboFwn5zexUsPE/pSU29iNcHp70X3yzn29ggju
-         ZgW142aV/RYsvV6PuYWzGyYRv4cGdZNmTKH5k5Amg+SD5fJ9lp09goB3Fbsql7Qm+hh8
-         a4Rw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=o4A7oKwEiC9tREor63KRS1zCNiVlkxcuV2TlnBTX3Wg=;
-        fh=IB2+ukEleh0u7AD+NmTF3BZAMJqRjO3lIOrCyUmEmkc=;
-        b=j6Jseoksk55D/jXgWECSHLqEXSzJRvcjU5uGHwsHHtoOgVyHB6so/NPXdPLfNhLXk+
-         lTvvSI3xofyP6UypC+QqSShXTylG0vaxdHglnYaaWY0nPa4sUJe+tpD131ZO44SjVsJR
-         HLV0qMU1LAgsZSG1Ku/v2e5Isti63CZT3FhCE7Owe7Pys2umkqAsF72LjSVyfPjucpP1
-         eKkfxxuvFuTCq0DRZTMChxMpB1MZ76U9bX/t+pCW91fCNpXFO/iOuRBflZP+mqri76Oa
-         Hd/6vFBBt0yH6whbhfXYHtUwozqvsCcUVnUuwkMVHEiBGY5gIGW1fWhkqgrxWVqEqatu
-         s0jg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770800256; x=1771405056; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o4A7oKwEiC9tREor63KRS1zCNiVlkxcuV2TlnBTX3Wg=;
-        b=gUVcwaIGn0aDWUmLHalWJqvJvPwlosY1Biw/m+75rP7ViPxIrS18gQzhM4jFWIMPnh
-         lE8xl8CT0wXiVbCWXAPe4OnqdvhWmgOcySvP4ML0Sr7L5y6u+UcDfxCbbhfgXmtYx+yY
-         pCfVXjmAE6WNh7u/bmr+sKz18v7AYrfeP5EmV5rKST17lj3VTunAm0dBJuJNzapnAOU2
-         Zm/MyqRWA8qUAmqRuguFXHEQqVmYnYmX81huBayme1rG//ktn6WpbHuX0x/XetmzXuVN
-         bp0c6IoOkQxzNHdvc1mQl6Qdvs1uv/bhuqPfaHbbMRMLKR8lfrS8JUTFZeZIZpOR5Xfc
-         5+3g==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73886338581
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 09:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.70
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770801721; cv=none; b=AYJKlm2mHMSVCNWA5l4NJzAbqjkRblNP7HSJxoYvedpYNNiIQMfaAiQbX3+wAP7L+nyA20ygijkQ+8GkxsktEdPPRwKGw8XTJt9h0KNjAaxzvgOU4NtFFtp8r+P/Csqi6sZlIZyQPL1n5U6kcqt/LhhwQWtHNZ/VJ27nb1W+tWY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770801721; c=relaxed/simple;
+	bh=MSqL1ZyaIykl9zpKptOa2oOvMZPan/dlvNlJqzDlQ5o=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=rD18TkntIb/+AZ47OqMSA2nblD0YEZZI2QVsF4wGxZ+mZvE09VQCr3/xvYnhT8LMWGKgLoIjnUVTYU/qqmcy04kkfxVYPy/tWJrMnj8gPAQzGZwxapvQKBOsuAPN2mX8HpEkBJZP9ONZDoemHHZ17vrIJEtYVadfzrsvQxsWGwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-6640dc1ca05so28952648eaf.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 01:22:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770800256; x=1771405056;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=o4A7oKwEiC9tREor63KRS1zCNiVlkxcuV2TlnBTX3Wg=;
-        b=jSFiKl7g5wANOjF7RyS+AMxnnXi2nyLl/6NPBxSuYvvIRMNgd1lbGpcgDxJ6tEcYig
-         PVBMsBhY9QRYe3pNG+Pkt/jdm8+bqM1AwQVk2sdNqAuL62LnTHE69X3AQlZw0gDHejWx
-         6OM6YXtM8yJrLibrywKS7FNEYkiwJ5B0VtmZUAU8cN9EuOmzeqIDGLqR3aAvTgiOUxr8
-         0t54XI1SVcaY2HGTtj9gzr2sj7thqlyyHZbCYD2FkCfHiu8LVYKPDheukYhghqb+29/p
-         eni6Fh+HsC27KnCmZkxZZTWcs9eFdEq7c1GmTXe6EOpbFNUpGVxWLjZyiKH0/dw4gg88
-         aYQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWrbkSARWgcK1gocffuIHbACeJUbrVj7ku65qL2Of7pjw96uAVSO//lpUAHKM/Ew/cKLRpXsmF3Za/9K4ku@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb5G5aqMVtUSKmf2/6HAvrDG4cmR1FCtXyIPzpE7FH5sW3KWT6
-	GfTVSeElS4L781ncI4Y/KKcsibp4BF9ZmQprxcFSxVAJWDJQhX8N/PIU4BtCVtOnItK2hXB21h6
-	u/3/KNTeVxXH9XURUE19hPrcLbcV6cM/p8igo
-X-Gm-Gg: AZuq6aInvH6ZJoFvDfIK3DooDJH5/mpCb2s18WBNlceQ5cdzGd3wi4g6revV/0cYIX7
-	LhqBVF133vddkMVHMpVAPkwFgfJanYkcqspv7mkrXiwC81NKDbF5Zux6E5IFp1pa5oXTb4xPE/a
-	rlQ28sfGQpqRfiGXwdKH3fXNe/aYbzBcaOU1HA97IG0LI73+23IeklpYYRji6hQFBlc8oiYwEKK
-	ZoYA0QdBHhlBrY7Cstu6fyKdI5EgXueSqRLhPMfBQTAYcX8B0Sx/O20cRY89uJQS8jy0WYF91ko
-	n8SvoydaQzVYGEeD8mbeiO8LS+m/N0szBX1wkG3Arg==
-X-Received: by 2002:a05:6402:440b:b0:65a:390a:2070 with SMTP id
- 4fb4d7f45d1cf-65a39d77b56mr877040a12.32.1770800256118; Wed, 11 Feb 2026
- 00:57:36 -0800 (PST)
+        d=1e100.net; s=20230601; t=1770801719; x=1771406519;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6AJjhKGhhW4FdBTgRWWtAXXQ/PC3aGbikg+UWIUmUtA=;
+        b=V5lJRHrMtDHtiARonI3g5Rv2uZch/2RlPAwaM9E8/RTW0wNRpoCXLPFJ9O9XPl3mVO
+         71Gs4LxqoGGbKSrOrOfOGqr9SIFzMOQQ6F4o3cQRXveS/AoR78xKTdXSqLWYu9V+CyjR
+         hRqt25ymQsCeb0Mt8YkTVp6RFEtgkIvB6QVHr6azagGLWLaY2n0F4BEUBN7462cwUdiQ
+         nVcKIs76wj8yOa38dpDz4P3uGQXOuTGEsU3K0OHdP6bdIS9HLatdcb8p2HRes7QrbkiC
+         CMTmTQtjmWBdMC9Mn0E3QKXqDpqvT3RL8K/ngfe1Dt2ssKRA34ZGtmDr1be3rAsVxuoX
+         i+9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUg6/LiXYXwbcaSn716xrWY/T31ToKJ5nvrSUGLf0WVIkYmD/Y25SWzCxMbUOClgpfSEBikU8w9Yw8tsyX3@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBzt8SwtoiQzlcgJmm+iP7VDMW7/g26xcso+4GWcQm7hNY166Q
+	U3igZBc+f7WtxzGaXiX6trt8hPvtTKEHgEisbiDxemLVjtyqUFkN0BcYEcJN5D9Ai8rxpsX0GH5
+	TVcqak1ZlQ0DXZBrLvKV9Q9VUk14nKXIKAB4JnK8Bkf5/KqOtilxxcWICSrc=
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260210095042.506707-1-amir73il@gmail.com> <bc7dga4oxvoqevokdzffl25mh7uawx3rfvz5q2goyz4z76l65r@bp4vpjmzmbhk>
-In-Reply-To: <bc7dga4oxvoqevokdzffl25mh7uawx3rfvz5q2goyz4z76l65r@bp4vpjmzmbhk>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 11 Feb 2026 09:57:24 +0100
-X-Gm-Features: AZwV_QitR5W3f8iFDVsYJmYjvRxXqh09fxnrYIv9SScVINHDL8Ucz3R_YFw9jvI
-Message-ID: <CAOQ4uxgVhPCxc2369purMTSU9sQuPuR+xBXBYoAbZ7ugVufSmA@mail.gmail.com>
-Subject: Re: [PATCH] fs: set fsx_valid hint in file_getattr() syscall
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>, 
-	"Darrick J . Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	syzbot+fa79520cb6cf363d660d@syzkaller.appspotmail.com, 
-	Andrey Albershteyn <aalbersh@kernel.org>, stable@vger.kernel.org
+X-Received: by 2002:a05:6820:99b:b0:663:5b9:a586 with SMTP id
+ 006d021491bc7-674852c3877mr546315eaf.72.1770801719382; Wed, 11 Feb 2026
+ 01:21:59 -0800 (PST)
+Date: Wed, 11 Feb 2026 01:21:59 -0800
+In-Reply-To: <20260210222310.357755-1-ethan.ferguson@zetier.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <698c4a37.050a0220.2eeac1.0097.GAE@google.com>
+Subject: [syzbot ci] Re: fat: Add FS_IOC_GETFSLABEL / FS_IOC_SETFSLABEL ioctls
+From: syzbot ci <syzbot+cie82dc2645e529670@syzkaller.appspotmail.com>
+To: ethan.ferguson@zetier.com, hirofumi@mail.parknet.co.jp, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+X-Spamd-Result: default: False [-1.36 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
+	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76928-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
 	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	R_DKIM_NA(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[amir73il@gmail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	TAGGED_RCPT(0.00)[linux-fsdevel,fa79520cb6cf363d660d];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[appspotmail.com:email,mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 5808E122760
+	TO_DN_NONE(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-76929-lists,linux-fsdevel=lfdr.de,cie82dc2645e529670];
+	RCPT_COUNT_FIVE(0.00)[6]
+X-Rspamd-Queue-Id: 7D344122AC2
 X-Rspamd-Action: no action
 
-On Tue, Feb 10, 2026 at 6:45=E2=80=AFPM Andrey Albershteyn <aalbersh@redhat=
-.com> wrote:
->
-> On 2026-02-10 10:50:42, Amir Goldstein wrote:
-> > The vfs_fileattr_get() API is a unification of the two legacy ioctls
-> > FS_IOC_GETFLAGS and FS_IOC_FSGETXATTR.
-> >
-> > The legacy ioctls set a hint flag, either flags_valid or fsx_valid,
-> > which overlayfs and fuse may use to convert back to one of the two
-> > legacy ioctls.
-> >
-> > The new file_getattr() syscall is a modern version of the ioctl
-> > FS_IOC_FSGETXATTR, but it does not set the fsx_valid hint leading to
-> > uninit-value KMSAN warning in ovl_fileattr_get() as is also expected
-> > to happen in fuse_fileattr_get().
-> >
-> > Reported-by: syzbot+fa79520cb6cf363d660d@syzkaller.appspotmail.com
-> > Closes: https://lore.kernel.org/r/698ad8b7.050a0220.3b3015.008b.GAE@goo=
-gle.com/
-> > Fixes: be7efb2d20d67 ("fs: introduce file_getattr and file_setattr sysc=
-alls")
-> > Cc: Andrey Albershteyn <aalbersh@kernel.org>
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ---
-> >  fs/file_attr.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/fs/file_attr.c b/fs/file_attr.c
-> > index 53b356dd8c33a..910c346d81bcd 100644
-> > --- a/fs/file_attr.c
-> > +++ b/fs/file_attr.c
-> > @@ -379,7 +379,7 @@ SYSCALL_DEFINE5(file_getattr, int, dfd, const char =
-__user *, filename,
-> >       struct filename *name __free(putname) =3D NULL;
-> >       unsigned int lookup_flags =3D 0;
-> >       struct file_attr fattr;
-> > -     struct file_kattr fa;
-> > +     struct file_kattr fa =3D { .fsx_valid =3D true }; /* hint only */
-> >       int error;
-> >
-> >       BUILD_BUG_ON(sizeof(struct file_attr) < FILE_ATTR_SIZE_VER0);
-> > --
-> > 2.52.0
-> >
->
-> There's same patch a bit earlier from Edward
-> https://lore.kernel.org/linux-fsdevel/tencent_B6C4583771D76766D71362A3686=
-96EC3B605@qq.com/
->
+syzbot ci has tested the following series
 
-Nice. I'm fine with taking Edward's patch.
-With addition of the Fixes: and cc: stable tags.
+[v1] fat: Add FS_IOC_GETFSLABEL / FS_IOC_SETFSLABEL ioctls
+https://lore.kernel.org/all/20260210222310.357755-1-ethan.ferguson@zetier.com
+* [PATCH 1/2] fat: Add FS_IOC_GETFSLABEL ioctl
+* [PATCH 2/2] fat: Add FS_IOC_SETFSLABEL ioctl
 
-Thanks,
-Amir.
+and found the following issue:
+WARNING in __brelse
+
+Full report is available here:
+https://ci.syzbot.org/series/2497ea10-8eee-4346-a692-2f79990b4572
+
+***
+
+WARNING in __brelse
+
+tree:      bpf
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/bpf/bpf.git
+base:      9f2693489ef8558240d9e80bfad103650daed0af
+arch:      amd64
+compiler:  Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
+config:    https://ci.syzbot.org/builds/1d8ee174-a672-4f80-98f2-369e5475eb4f/config
+C repro:   https://ci.syzbot.org/findings/4c8d33e8-6c68-4ab8-ab0c-7be7952f7dcf/c_repro
+syz repro: https://ci.syzbot.org/findings/4c8d33e8-6c68-4ab8-ab0c-7be7952f7dcf/syz_repro
+
+loop0: detected capacity change from 0 to 8192
+------------[ cut here ]------------
+VFS: brelse: Trying to free free buffer
+WARNING: fs/buffer.c:1237 at __brelse+0x6a/0x90 fs/buffer.c:1237, CPU#1: syz.0.17/5957
+Modules linked in:
+CPU: 1 UID: 0 PID: 5957 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:__brelse+0x6a/0x90 fs/buffer.c:1237
+Code: 75 72 ff 85 ed 74 17 e8 c4 70 72 ff 48 89 df be 04 00 00 00 e8 27 c3 da ff f0 ff 0b eb 11 e8 ad 70 72 ff 48 8d 3d d6 ff a2 0d <67> 48 0f b9 3a 5b 5d c3 cc cc cc cc cc 89 d9 80 e1 07 80 c1 03 38
+RSP: 0018:ffffc90003f07b48 EFLAGS: 00010293
+RAX: ffffffff825206a3 RBX: ffff8881b6fd5d10 RCX: ffff888177b557c0
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffff8ff50680
+RBP: 0000000000000000 R08: ffff8881b6fd5d13 R09: 1ffff11036dfaba2
+R10: dffffc0000000000 R11: ffffed1036dfaba3 R12: ffffc90003f07b78
+R13: ffffc90003f07b70 R14: ffff8881bba28db0 R15: ffffc90003f07b68
+FS:  0000555560eae500(0000) GS:ffff8882a96f5000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000000080 CR3: 000000010b660000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ brelse include/linux/buffer_head.h:324 [inline]
+ fat_rename_volume_label_dentry+0x11f/0x1c0 fs/fat/dir.c:1444
+ fat_ioctl_set_volume_label fs/fat/file.c:174 [inline]
+ fat_generic_ioctl+0x751/0xfe0 fs/fat/file.c:195
+ fat_dir_ioctl+0x166/0x320 fs/fat/dir.c:816
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:597 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:583
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xe2/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fce15b9bf79
+Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe48117898 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fce15e15fa0 RCX: 00007fce15b9bf79
+RDX: 00002000000004c0 RSI: 0000000041009432 RDI: 0000000000000004
+RBP: 00007fce15c327e0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fce15e15fac R14: 00007fce15e15fa0 R15: 00007fce15e15fa0
+ </TASK>
+----------------
+Code disassembly (best guess), 1 bytes skipped:
+   0:	72 ff                	jb     0x1
+   2:	85 ed                	test   %ebp,%ebp
+   4:	74 17                	je     0x1d
+   6:	e8 c4 70 72 ff       	call   0xff7270cf
+   b:	48 89 df             	mov    %rbx,%rdi
+   e:	be 04 00 00 00       	mov    $0x4,%esi
+  13:	e8 27 c3 da ff       	call   0xffdac33f
+  18:	f0 ff 0b             	lock decl (%rbx)
+  1b:	eb 11                	jmp    0x2e
+  1d:	e8 ad 70 72 ff       	call   0xff7270cf
+  22:	48 8d 3d d6 ff a2 0d 	lea    0xda2ffd6(%rip),%rdi        # 0xda2ffff
+* 29:	67 48 0f b9 3a       	ud1    (%edx),%rdi <-- trapping instruction
+  2e:	5b                   	pop    %rbx
+  2f:	5d                   	pop    %rbp
+  30:	c3                   	ret
+  31:	cc                   	int3
+  32:	cc                   	int3
+  33:	cc                   	int3
+  34:	cc                   	int3
+  35:	cc                   	int3
+  36:	89 d9                	mov    %ebx,%ecx
+  38:	80 e1 07             	and    $0x7,%cl
+  3b:	80 c1 03             	add    $0x3,%cl
+  3e:	38                   	.byte 0x38
+
+
+***
+
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+  Tested-by: syzbot@syzkaller.appspotmail.com
+
+---
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
