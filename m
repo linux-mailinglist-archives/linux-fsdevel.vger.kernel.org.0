@@ -1,282 +1,226 @@
-Return-Path: <linux-fsdevel+bounces-76954-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 2NaYOt+ojGkusAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76954-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 17:05:51 +0100
+	id WG4uOLqqjGlasAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 17:13:46 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64FB8125F06
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 17:05:50 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B16B126042
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 17:13:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 0B1543002F5A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 16:05:47 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 05C3230226A1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Feb 2026 16:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813A4335BA8;
-	Wed, 11 Feb 2026 16:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCABC33B6EA;
+	Wed, 11 Feb 2026 16:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U1UlKpmD"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="mOxp+HXH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24D832B9BE
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 16:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.217.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9667E3195EA
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 16:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.222.173
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770825943; cv=pass; b=EcknDwKsLQpJiZP1D3FrcKOnGZ85L8ZtCSzNLaeY7kQI4mJdaSrQxRV6rlYqQ2WZd1+adQc3vdECaVkzvcP83fFFJe1638tEZUuCA6UPgg2/VQe0fndUK9KsYidxtf1ZlKvP2faz2wPhZyluCymG7jzClfsYgYDKPVLzz+0OD+0=
+	t=1770826416; cv=pass; b=KkvBxH39k11Y9C82Rydj2b/piWn3NU0IakCguoVjpMPQfQUq5/LTAWLOL7N7qvV7vx4vVRHMTuJw3x/YoWo1vefEf8IuuorpmqsNLxYe4J+prcj8cEbzdCyP4oCyMKE6DeMpdtqoXKawCAqm0HJkCiomNY+ObtV9fLE/4WTf3Sw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770825943; c=relaxed/simple;
-	bh=CY+m/yWCdF9oclHUNZ+SL3VVALA7Vdjl2gqw7+VBr/w=;
+	s=arc-20240116; t=1770826416; c=relaxed/simple;
+	bh=4YRJEpkYk10MrpePs+EsJU6z2LMbaXxicS0ens+e2vk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WIVTly4Sq3eR++Ofx0zWmbSBbVO9yWKqjdZIJOyMyfxHPp227LoNkCLH/fl+P3hSircvPfVzN2xSGFV5Pm+TPr7niwtvjG5CiYbImDUc2oeuLhN26pyUzjJnUlGeyPCRuejr4t3a9f8M+czqDgxqKCkFt3giWzJ/fC7bcnnypYM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U1UlKpmD; arc=pass smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-5f9ed174ebcso4397125137.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 08:05:41 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770825941; cv=none;
+	 To:Cc:Content-Type; b=lw0zW5KuStc+mViivWHHooRahaEjiPqlpqHq9ZQQoOzYnp0KtVKKKtNdRU2RlDBSh9sJuUEMni1DwHFvyuu9CKj9LrefNJWlIldlP9u4S1cRUjUtdCORWdNJIy7yTgtDfIN8XJUryTIFR5xYAcDzb7rcS5Zb6vn++lOLDWQq79Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=mOxp+HXH; arc=pass smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-8c6a7638f42so732345785a.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 08:13:34 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770826413; cv=none;
         d=google.com; s=arc-20240605;
-        b=a0iiqzOEb/vq3xjfkmFRI+mJhjZoxNZe2iyjv+b5uOhyWaNg4mG+U2v6OGiLjCOvf8
-         CgHfrZE/lcZEFDOQenDfmD/KFaMxSPtlaPJCNeLILx6kPY50LPLMjV90E7K3oFtB/LAr
-         HZORSZjCqBRMoRL7sCirDwWnSYnR1l8RezkdkW+SsK7tT3bEhzCOq9HOhHBmwQJjaXaT
-         vJXtzj/24UPtX2AKS+JEg2bKcMvPrK5tJhnqprW3sTV5l3k4mqBEvLhrZyP+2auG176/
-         Xeoz+aLKitgMsceqT30tjSTU0AF8Z4CNYQm9Wr7L7ZV+I0MiJRNALyoxP4ITWmj6aaxs
-         a5rA==
+        b=ke8R/6PAgY+sKpYG9XgfQMNwKN+fL2PCSSctEhnkaVzEWBcXMe0dcz0X8el6Z8zmnv
+         9Bc2EA1r/rwM6RMWFXWRgJ11Wr7v+hAvyAGnTfKySuxqk+q0ymXX6Bw4uR7VBACy/UBd
+         sVABZpwm22peszChvFQuOec7jDUCiTzqVHua2AN5iuD68qOXGOxivqc9+2OIhbALPn6r
+         R+QL/Je4LvlnQUeUFrgEHyKKFdBNSLGxsImnJCRuu+LwsPpdb2qpIxE4yf07hGbUfRq1
+         PUhHqQ3iqq9BwnKCBmLUP7zArIzC+u3SfWI6yLSuZlVNDhj6MXSS0TrXV9RdQTptavCb
+         SEfQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=PQ3J36Qefr0ORl6pDRhDRFyaV8fkIkX7qTVm1qK0zx4=;
-        fh=ycnk+DzZGjHB/nOiT9vhJr1YYXt7FXpBcfzKzRRZQfQ=;
-        b=j/HXHERDcxmhpDRK74CeDsHuSsbJHIOG7/7HeeuCEEsGuEAwrA+OyFWYCzMc4qZ2wZ
-         Bn162BOF7fZcCEr5Sfsk+nqGEi/ULpl7m+b+p0zUa3KZhQeU4JfvCweeRmRUwbN+RKmj
-         wT4Jni10Idl1Yy3nHepDxRpCr+aXov+Me76a/SaTfDBkanpfvak/FEHqw//g2xEYQpP9
-         8Pcw2Vg8y5nyDXBv6KCkEPlm7tLftzi4Ct8M8gMUNza2lGB/pEHnt/jMY96U8lO+vfcO
-         Nk4shxZ97B1ifAs+DS6o+zbsQV1Gf2WeWNgsAUb3jzqg9NnEVeNzWU8tJXTI0tifx/n9
-         ivfA==;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=Ru1rfjW6DkSjDzXjD/NUFvCPvSD431Ss6XEZlOD/etc=;
+        fh=Lfsp8zxslQqV3ERgAXRKRXbz/wI5BqE0dNwwjO03eGw=;
+        b=BpErvEDz6PQgiIKOWl2GO1YCo+cZvvhLIA2yevAhBlNUK4UT2rf/wqMfx98u3i2PRS
+         RgqNMPVSEHyCMV/x3GKcSgRH9WrDedm8qUrUFTQQmjhc/q5PhvxKX8Pur4+RGGM5YLgn
+         OnsvO+5h6Vrqe2Waqx2fQKgpRaGMEcZyxCWXjQYrSh/AmSUeufnziFcTsA7r41cikRYz
+         uPYqj0U7z3DlWPDNhxj/ia7OrPDF1DqvRosM2QHYlnVsTd5yY+O6s7gIsM2+w3W1k5n0
+         jnP6yBmJ2O53sZvuHRIYkbVkpNB3pHWd3h7zHPc4+nTIGnZjpc9eakrzEQ0lePkNQX/W
+         qYfg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770825941; x=1771430741; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PQ3J36Qefr0ORl6pDRhDRFyaV8fkIkX7qTVm1qK0zx4=;
-        b=U1UlKpmDETCcvk4bEj0aY22c/ugLuHmkBf0+a2seyUgnV5PkW0K9q3+osoqSqsSyBr
-         pWllUrgVG2jT48CYmqxRu23AF89Jif5o0Hv7LrTKnkvSl69Zr0eV4v4v/BcF9V63tuT1
-         IxQbdslkPrdmlSFwTf6s7dIyKNl61w99XFKa5P8dmPTAaJuh7MxwS+tulgpk7wmIifgs
-         Pou7ZhngwZYYfG1mYfZkruEDZpGNrb6qoho3UfyQvByG4VVZ1s08KOEJmVg3u+7WvEWp
-         X9/JL19fue8+uJIU+0mpVy2I6baxxkF+lrDUhFwFzO37Y82CFJ7X4ifsNx3B5l6c+RvR
-         Y3Jg==
+        d=szeredi.hu; s=google; t=1770826413; x=1771431213; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ru1rfjW6DkSjDzXjD/NUFvCPvSD431Ss6XEZlOD/etc=;
+        b=mOxp+HXHr42kJUbhELLBwmseBeNfPnh15LvOcQygHYVAbRlCqhO8I+cqc29MPZMnh3
+         oNLoGUi7vwvCgw2G0W9a86vSzl2YulItR11bJv8zkJhHrr9KP1EPfsXueUzTCBHj69YO
+         pfv2fx1dUmZLJo8HRX+9Ah5iKUZGvcyMVb1fU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770825941; x=1771430741;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=PQ3J36Qefr0ORl6pDRhDRFyaV8fkIkX7qTVm1qK0zx4=;
-        b=MGqq6LB+fa4Vw+YVKyWu72sQChI4QwyBSpAUBkAx1vZvewcVZ9AB6IncxHrAnLE7fz
-         xPAQci7etuWpOOPxfiE4dWWFP4XyWJKv9ARMTxa81Se7V2rTsQUSWbbk2buJyRaFMpCY
-         wom9LJGKGuzV8+Br5z3jPKXNMvwg1qnSeZyqWf3Othfzm4j6KN1hP1zW6ffuBqD5JMeB
-         bKF85cCVQo0Y0gjWlXbCHx1mfhVL6R4635lIQGQvdMEl4jOyLCDqtT6NP7YHtDajGOJ0
-         hUaK+XhpyyILdwJHT+IwCyJDPyxt5nFnppIXYWuteLxbfLvwjD2CmdEHDcuU1v31WJW5
-         yYtA==
-X-Gm-Message-State: AOJu0YyhF0dpWpTXgh6F9hjh0mxJtBH7mX5UXi6h/6wkK61iTax5sw8j
-	vp8pZQ6LFRCa8UabQ2zPtkZDr2FFQO06QNJbFTRhS0Cn6nCaOjGVdaHHtfYlZQ4pE1v0MKNDG5T
-	H4HC1wa60xJRF3KYTnX09Wm1PC9h691TXbQ==
-X-Gm-Gg: AZuq6aLAVpGaBBIpKJ5FKHFcFff8/aEuMySOnVuOQdczU3+bG8jREkjt3De6RN6wga1
-	5AYq52yS/AHoQxFE/raxgmud8R2lIg8rht23m40oWOIlHCaK2ru1SjCCTDvF64Zf2Pc0wKmlewK
-	YMFB3f5ObZVdDpEmnZaUlWfEJnA3x5kMzQjJ05wejR0PN6fpk+uf0ijao03FcU4il7/en+Se3QE
-	nrFDvyPkmlsk1Ruarm5Zqxes+UMlRF1+ETO+7mP0RnKeG7tS+s6o72xfVI0V0det7beYNoxCMWf
-	JHULPjvRCk0/HuazxWFHIUU4jFsdiQ+/wtE7YcZKMU++Z5YGsbMFfQ==
-X-Received: by 2002:a05:6102:3a13:b0:5fd:eb74:ca41 with SMTP id
- ada2fe7eead31-5fdeb74cc77mr624474137.24.1770825940455; Wed, 11 Feb 2026
- 08:05:40 -0800 (PST)
+        d=1e100.net; s=20230601; t=1770826413; x=1771431213;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ru1rfjW6DkSjDzXjD/NUFvCPvSD431Ss6XEZlOD/etc=;
+        b=IOPwJYhK6popkJ0g+Z6INKG0lG7MKx8fqiV2QkfhNbTMyCLzO2MId6IFOMGgnIWwrN
+         EqrDLVtRJ16o3EQivINkiSkcjMiKUH261x/mNpLPnlVz9BDkEGf9jA9amsr/m9mmy/AU
+         Cvz4POpyOqViGmuvDb9pC0jZ5xvlInGOjLJf9++5+UtqEIIkaw8UQZuqUAj4MKVLfXOH
+         fnDhJqJmk7TFcNZQV1/2igtiqJOveINehYjLht7PZx+a3Eh55uTjKXAzfLUymQ54Jh/l
+         dyOysytGkurFUm2Ure+VGfXJkr+AMMMLFm6R1b6TYpQueuRhkaOgsaf0QhMZAjrEWVaj
+         MeHA==
+X-Forwarded-Encrypted: i=1; AJvYcCWME06E5KwxeSHDf7EakDUcLeprH/uFSB2V8sG1iGNaX1LxEHOaqSyRakiV3WPZkV6G/Bsl5ZBHFC5yo4Hp@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT5yoZnWfJwccRa+LzWbdCsFQehIJag9aDMgsFMOu12HEEz9iR
+	FMT51w55c2JXJW9cNZZ8LzIVLYUvfy4RPWYD97iIu44nh/7R+Pf6JdOxAc/qeY6nicwsMRKEeax
+	MZUwdn3iphfsRea5oC8nuL+VRDVSrd7D5MiEGdcyW1A==
+X-Gm-Gg: AZuq6aJ/eF9FMk7lkvi3vEMcF1YZGy13KjVQpagUcLUUmzawN58DrPbjmLQAvFPp0Hh
+	cczcz3Oj3TacPDVW+bG+UyNrSoOJQrluRnogGEZg9P/solrmVQxEPYpOrpKI8XS71mn5TU1WtAp
+	Y8W485KIID3T33JFG2SZV6KW/zEdRztZvlPuA7oo0DWBLnvhFDjFWgadpFwfG1ASZCSexPa2N36
+	u3shhGeGqBE8QwrMKUzwiDjKtmJwUZyowIxnQxRMvpQe+7AwAe7QG6KNNTOWwJfn19MN0w3Qfsg
+	N2iVjw==
+X-Received: by 2002:a05:622a:1981:b0:4ed:2164:5018 with SMTP id
+ d75a77b69052e-5068128d805mr46297981cf.80.1770826413319; Wed, 11 Feb 2026
+ 08:13:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260206190536.57289-1-dorjoychy111@gmail.com>
-In-Reply-To: <20260206190536.57289-1-dorjoychy111@gmail.com>
-From: Dorjoy Chowdhury <dorjoychy111@gmail.com>
-Date: Wed, 11 Feb 2026 22:05:28 +0600
-X-Gm-Features: AZwV_Qhcln6Pgpzp3lnEnJJGjX5ugGj4d6tIgXqRWH9Bd7UvTjOjdD-nH3gtwzs
-Message-ID: <CAFfO_h4Hw5Lu-PQn4C31Cdzcz2AH5zmWa-TB8ocdci5K=F8m7Q@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] openat2: new OPENAT2_REGULAR flag support
-To: linux-fsdevel@vger.kernel.org, brauner@kernel.org, jlayton@kernel.org
-Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	chuck.lever@oracle.com, alex.aring@gmail.com, arnd@arndb.de, 
-	adilger@dilger.ca, mjguzik@gmail.com, smfrench@gmail.com
+References: <20260210-fuse-compounds-upstream-v5-0-ea0585f62daa@ddn.com> <20260210-fuse-compounds-upstream-v5-1-ea0585f62daa@ddn.com>
+In-Reply-To: <20260210-fuse-compounds-upstream-v5-1-ea0585f62daa@ddn.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 11 Feb 2026 17:13:21 +0100
+X-Gm-Features: AZwV_QgESJTX87Auw0wEyRmYr42QEETuuwDnaEo1bn-7_xIPu66b7HBVBONSakM
+Message-ID: <CAJfpegvt0HwHOmOTzkCoOqdmvU6pf-wM228QQSauDsbcL+mmUA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/3] fuse: add compound command to combine multiple requests
+To: Horst Birthelmer <horst@birthelmer.com>
+Cc: Bernd Schubert <bschubert@ddn.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	Luis Henriques <luis@igalia.com>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Horst Birthelmer <hbirthelmer@ddn.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
+	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-76955-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76954-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,zeniv.linux.org.uk,suse.cz,oracle.com,gmail.com,arndb.de,dilger.ca];
-	RCPT_COUNT_TWELVE(0.00)[12];
+	FREEMAIL_CC(0.00)[ddn.com,gmail.com,igalia.com,vger.kernel.org];
 	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	TO_DN_NONE(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[dorjoychy111@gmail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[file_operations.open:url,uapi-group.org:url,mail.gmail.com:mid,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 64FB8125F06
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[szeredi.hu:+];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,birthelmer.com:email]
+X-Rspamd-Queue-Id: 4B16B126042
 X-Rspamd-Action: no action
 
-On Sat, Feb 7, 2026 at 1:05=E2=80=AFAM Dorjoy Chowdhury <dorjoychy111@gmail=
-.com> wrote:
->
-> Note that in v4, for now, I have returned -EINVAL from the atomic_open co=
-depaths.
-> I do want to make this new flag properly supported and proper api behavio=
-r, but
-> last time I could not quite understand what should be done for the atomic=
-_open
-> codepaths. So to have a more concrete discussion, I have included the -EI=
-NVAL
-> changes.
->
-> Changes in v4:
-> - changed O_REGULAR to OPENAT2_REGULAR
-> - OPENAT2_REGULAR does not affect O_PATH
-> - OPENAT2_REGULAR with O_DIRECTORY will open path for both directory or r=
-egular file
-> - atomic_open codepaths updated to return -EINVAL when OPENAT2_REGULAR is=
- set
-> - commit message includes the uapi-group URL
-> - v3 is at: https://lore.kernel.org/linux-fsdevel/20260127180109.66691-1-=
-dorjoychy111@gmail.com/T/
->
-> Changes in v3:
-> - included motivation about O_REGULAR flag in commit message e.g., progra=
-ms not wanting to be tricked into opening device nodes
-> - fixed commit message wrongly referencing ENOTREGULAR instead of ENOTREG
-> - fixed the O_REGULAR flag in arch/parisc/include/uapi/asm/fcntl.h from 0=
-60000000 to 0100000000
-> - added 2 commits converting arch/{mips,sparc}/include/uapi/asm/fcntl.h O=
-_* macros from hex to octal
-> - v2 is at: https://lore.kernel.org/linux-fsdevel/20260126154156.55723-1-=
-dorjoychy111@gmail.com/T/
->
-> Changes in v2:
-> - rename ENOTREGULAR to ENOTREG
-> - define ENOTREG in uapi/asm-generic/errno.h (instead of errno-base.h) an=
-d in arch/*/include/uapi/asm/errno.h files
-> - override O_REGULAR in arch/{alpha,sparc,parisc}/include/uapi/asm/fcntl.=
-h due to clash with include/uapi/asm-generic/fcntl.h
-> - I have kept the kselftest but now that O_REGULAR and ENOTREG can have d=
-ifferent value on different architectures I am not sure if it's right
-> - v1 is at: https://lore.kernel.org/linux-fsdevel/20260125141518.59493-1-=
-dorjoychy111@gmail.com/T/
->
-> Hi,
->
-> I came upon this "Ability to only open regular files" uapi feature sugges=
-tion
-> from https://uapi-group.org/kernel-features/#ability-to-only-open-regular=
--files
-> and thought it would be something I could do as a first patch and get to
-> know the kernel code a bit better.
->
-> I am not quite sure if the semantics that I baked into the code for this
-> O_REGULAR flag's behavior when combined with other flags like O_CREAT loo=
-k
-> good and if there are other places that need the checks. I can fixup my
-> patch according to suggestions for improvement. I did some happy path tes=
-ting
-> and the O_REGULAR flag seems to work as intended.
->
-> Thanks.
->
-> Regards,
-> Dorjoy
->
-> Dorjoy Chowdhury (4):
->   openat2: new OPENAT2_REGULAR flag support
->   kselftest/openat2: test for OPENAT2_REGULAR flag
->   sparc/fcntl.h: convert O_* flag macros from hex to octal
->   mips/fcntl.h: convert O_* flag macros from hex to octal
->
->  arch/alpha/include/uapi/asm/errno.h           |  2 +
->  arch/alpha/include/uapi/asm/fcntl.h           |  1 +
->  arch/mips/include/uapi/asm/errno.h            |  2 +
->  arch/mips/include/uapi/asm/fcntl.h            | 22 ++++-----
->  arch/parisc/include/uapi/asm/errno.h          |  2 +
->  arch/parisc/include/uapi/asm/fcntl.h          |  1 +
->  arch/sparc/include/uapi/asm/errno.h           |  2 +
->  arch/sparc/include/uapi/asm/fcntl.h           | 35 +++++++-------
->  fs/9p/vfs_inode.c                             |  3 ++
->  fs/9p/vfs_inode_dotl.c                        |  3 ++
->  fs/ceph/file.c                                |  3 ++
->  fs/fuse/dir.c                                 |  3 ++
->  fs/gfs2/inode.c                               |  3 ++
->  fs/namei.c                                    |  9 +++-
->  fs/nfs/dir.c                                  |  3 ++
->  fs/nfs/file.c                                 |  3 ++
->  fs/open.c                                     |  2 +-
->  fs/smb/client/dir.c                           |  3 ++
->  fs/vboxsf/dir.c                               |  3 ++
->  include/linux/fcntl.h                         |  2 +
->  include/uapi/asm-generic/errno.h              |  2 +
->  include/uapi/asm-generic/fcntl.h              |  4 ++
->  tools/arch/alpha/include/uapi/asm/errno.h     |  2 +
->  tools/arch/mips/include/uapi/asm/errno.h      |  2 +
->  tools/arch/parisc/include/uapi/asm/errno.h    |  2 +
->  tools/arch/sparc/include/uapi/asm/errno.h     |  2 +
->  tools/include/uapi/asm-generic/errno.h        |  2 +
->  .../testing/selftests/openat2/openat2_test.c  | 46 ++++++++++++++++++-
->  28 files changed, 138 insertions(+), 31 deletions(-)
->
-> --
-> 2.53.0
->
+On Tue, 10 Feb 2026 at 09:46, Horst Birthelmer <horst@birthelmer.com> wrote:
 
-Hi,
-I would appreciate some feedback on this patch series. I think there
-are 2 things that need definite feedback.
+> +static char *fuse_compound_build_one_op(struct fuse_conn *fc,
+> +                                        struct fuse_args *op_args,
+> +                                        char *buffer_pos)
+> +{
+> +       struct fuse_in_header *hdr;
+> +       size_t needed_size = sizeof(struct fuse_in_header);
+> +       int j;
+> +
+> +       for (j = 0; j < op_args->in_numargs; j++)
+> +               needed_size += op_args->in_args[j].size;
+> +
+> +       hdr = (struct fuse_in_header *)buffer_pos;
+> +       memset(hdr, 0, sizeof(*hdr));
+> +       hdr->len = needed_size;
+> +       hdr->opcode = op_args->opcode;
+> +       hdr->nodeid = op_args->nodeid;
 
-1) I have defined OPENAT2_REGULAR to be in the 32-bit space. At first,
-I tried to make it the 33rd bit but then realized, there are existing
-structs like (struct open_flag and others) where the flag (or similar)
-members are of type int or unsigned int which get passed over to lots
-of places. So I ended up making it a flag in the 32-bit space. I guess
-it's okay as it's not easy to add new flags to existing open syscalls
-due to backward compatibility anyway.
+hdr->unique is notably missing.
 
-2) For now, I am returning -EINVAL from the atomic_open codepaths.
-What would be the proper way to handle this? And is there anything
-needed for the file_operations.open codepaths (right now, do_open
-already checks and returns errors for the new flag before we reach
-file_operations.open)? I am a bit confused about the new flag and
-network filesystems where obviously the new flag won't be recognized
-by the server. So, if we want to handle the new flag properly in those
-filesystems, does the flag need to be masked out? It's a bit hard for
-me to understand the right thing that should be done as I am not
-familiar with all the code so I appreciate any help and suggestions on
-this.
+I don't know.  Maybe just fill it with the index?
 
-Thanks.
+> +       hdr->uid = from_kuid(fc->user_ns, current_fsuid());
+> +       hdr->gid = from_kgid(fc->user_ns, current_fsgid());
 
-Regards,
-Dorjoy
+uid/gid are not needed except for creation ops, and those need idmap
+to calculate the correct values.  I don't think we want to keep legacy
+behavior of always setting these.
+
+> +       hdr->pid = pid_nr_ns(task_pid(current), fc->pid_ns);
+
+This will be the same as the value in the compound header, so it's
+redundant.  That might not be bad, but I feel that we're better off
+setting this to zero and letting the userspace server fetch the pid
+value from the compound header if that's needed.
+
+> +#define FUSE_MAX_COMPOUND_OPS   16        /* Maximum operations per compound */
+
+Don't see a good reason to declare this in the API.   More sensible
+would be to negotiate a max_request_size during INIT.
+
+> +
+> +#define FUSE_COMPOUND_SEPARABLE (1<<0)
+> +#define FUSE_COMPOUND_ATOMIC (1<<1)
+
+What is the meaning of these flags?
+
+> +
+> +/*
+> + * Compound request header
+> + *
+> + * This header is followed by the fuse requests
+> + */
+> +struct fuse_compound_in {
+> +       uint32_t        count;                  /* Number of operations */
+
+This is redundant, as the sum of the sub-request lengths is equal to
+the compound request length, hence calculating the number of ops is
+trivial.
+
+> +       uint32_t        flags;                  /* Compound flags */
+> +
+> +       /* Total size of all results.
+> +        * This is needed for preallocating the whole result for all
+> +        * commands in this compound.
+> +        */
+> +       uint32_t        result_size;
+
+I don't understand why this is needed.  Preallocation by the userspace
+server?  Why is this different from a simple request?
+
+> +       uint64_t        reserved;
+> +};
+> +
+> +/*
+> + * Compound response header
+> + *
+> + * This header is followed by complete fuse responses
+> + */
+> +struct fuse_compound_out {
+> +       uint32_t        count;     /* Number of results */
+
+Again, redundant.
+
+Thanks,
+Miklos
 
