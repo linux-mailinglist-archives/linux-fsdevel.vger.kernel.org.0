@@ -1,103 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-77003-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id gBbDLSOljWlh5gAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77003-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 11:02:11 +0100
+	id kGRnHIOmjWkK5wAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 11:08:03 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0C412C290
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 11:02:09 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 093D812C430
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 11:08:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 5D7EA301C146
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 09:59:44 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8E3413038F5C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 10:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3EE2E7635;
-	Thu, 12 Feb 2026 09:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C2A2DAFA8;
+	Thu, 12 Feb 2026 10:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="D12vpx5E";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zUAUc2Id";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T6jbtf0Z";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LFMzTLCx"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YWH/5Izb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA43A2E06EF
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 09:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F339E246BA7;
+	Thu, 12 Feb 2026 10:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770890383; cv=none; b=PfA8ZUrXgIvy3uvxwxY9VibJ/qxqzM6caAHUBXgywbfJxe6VT91LopckvqVzfbOdJSW0KwR2CeeQZ2DShvX6g7XQq7iizQYHCzbTxuHwl2bMtaP09ZLrdYBqZBA85mRtUBhHeCffnwgqo5DJYn8oGWaevjmfUPKQqp0OMAexTDM=
+	t=1770890874; cv=none; b=leDY7TAtojcmdOoNrOnI2lT8aFcLEcNSJzle3QsynJDduWuK/2hVoNC0iH3KLs1JF8IRfMwEA7zI91xJJ2y7EjJw39Kb17HpnDb50zOCiHSRTFd3iNpx0oUtHWZHURebbuTnAU0H3J3GAgzU0G6JUp4ThTbb/pbkzQGwFv9eMjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770890383; c=relaxed/simple;
-	bh=cGTIIVBSYYIEP/aYkmS4ZcVw6+l1AQU1xSHvYaXt8yw=;
+	s=arc-20240116; t=1770890874; c=relaxed/simple;
+	bh=uTyItwhkWyUdGHdWTNVgB/OwNLaAluY2qSDBafx/3dU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iuYSGW2NUwqVx0Zp4oi1A7SOYUhOeRkkbEUYZjrzG4FhX7p4vS75/7qYfadP+QIDrE+9iLfd6qEzR7lw/vDpLKN6MXNJoKNjAf8aefsziNuXR6vq9u9dkv5oli/03Prk0bn0TLb0UbDyADOo4Fqpt3m1gNVa5YAclot5bkTsNwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=D12vpx5E; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zUAUc2Id; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T6jbtf0Z; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LFMzTLCx; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 23D693E715;
-	Thu, 12 Feb 2026 09:59:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1770890380; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OFWkfuduU3wERXWexUXMS8/sH4JTVUHJb6JIi8LK3sM=;
-	b=D12vpx5ESAz4JMoGgu8WFgJqyBq5b9TIWvP2J8qAGnB9mrus+HTDNJ48sVVET9jgM/poWR
-	qxIi4TUggbIyMibBZeoDGUDg5Qqf3RXCaO94bRT3bDIvbD+nhFrDFGhuoIRQxs0hgvpJMU
-	2kmEdlS7W2nhBZMSC48O6gWdfbiXT94=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1770890380;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OFWkfuduU3wERXWexUXMS8/sH4JTVUHJb6JIi8LK3sM=;
-	b=zUAUc2Id4qDcgiVryc5AYp2K8iBlugLGj6cTpNsE3DVEIxf5AQhyEUqAZlFdf62nH2sgdB
-	XzqEF+f6DOUcbdBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=T6jbtf0Z;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=LFMzTLCx
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1770890379; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OFWkfuduU3wERXWexUXMS8/sH4JTVUHJb6JIi8LK3sM=;
-	b=T6jbtf0ZaCeGe7Y8yRiqH4szTrqx5CEFzzVuxQXZLX3o6n1DBuALHhVqLXk+MB5TmQ1XMB
-	j07kLolBXWYJ48eZ5br3KdQ4gR1BWrBhcMmmE2nM28AaDJnU82O7pT3ea2prZlHRKHh8gI
-	xCIf0ETrw6YQIWfna02EfDwy0U0Ny0U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1770890379;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OFWkfuduU3wERXWexUXMS8/sH4JTVUHJb6JIi8LK3sM=;
-	b=LFMzTLCx7p34FHRF+rI0HhQJ7uARWtOCieOXDR7d1tVvaJjf/O3DIzcRVoRPyb1uovboC5
-	cpwEd6p0wgI6iSCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 101D83EA62;
-	Thu, 12 Feb 2026 09:59:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mFbwA4ukjWkMUwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 12 Feb 2026 09:59:39 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id BE921A0A4C; Thu, 12 Feb 2026 10:59:34 +0100 (CET)
-Date: Thu, 12 Feb 2026 10:59:34 +0100
-From: Jan Kara <jack@suse.cz>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jan Kara <jack@suse.com>, linux-fsdevel@vger.kernel.org, 
-	Eric Sandeen <sandeen@redhat.com>
-Subject: Re: [PATCH] udf: fix nls leak on udf_fill_super() failure
-Message-ID: <n7blo2z6tk25p2pkjk53ifm2p2nejodngojrnmgdcr2bqpv3m4@up4qbcufnfii>
-References: <20260211201845.GN3183987@ZenIV>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sx++4e1/RCB+Hxn3e7z0kH5NhFtB3D8En37dPrZC2StUTAyOSwXeshDdN+Oho1WYZ+40UhfMdRwGLAMJC0d44bEBSEyI0lD90r1ZMl9ws9DqNxU7B4NMFgrGOW9V3qgGvGkbu/3OQ/pE1/C4vT453OzxnqhsHLu4JX7HraWJB/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YWH/5Izb; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jSlX9h8f/KU7AnNLwZBHlCdwR/NrX+FSMXQajoFNUxM=; b=YWH/5IzbWtN6t6m9InMkRDgPEa
+	dc6Fov4F7pnYfAY6Foqeaqu3e/ph7K4ikhMfu2iwY75Hxui4x6QOdCzsosdpdukZD81HIwk74H4UE
+	gVLWa4AMOovmCpmM6+DbcJp3xgPnYY2KeA/FAHFKS1OE77FFUJLii+sdJFkDeFWfEvHBbJ2nvSlAr
+	Ga0wyfoqOjrDWzyU6FNDLaYIXp34DoRWhUh386XdxLzwiuv2e5cRHe3mvDPR0iUfNfG64et1Ugzc6
+	KXOtHkASTjm7qtPDsL5TV1rHBltpX8mOBydYleC9WHZSH8heK3BhAzpEf/sxbWO6JhZVP0uEXim47
+	KUXG4oIQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vqTbw-00000001tyA-08vU;
+	Thu, 12 Feb 2026 10:07:48 +0000
+Date: Thu, 12 Feb 2026 02:07:48 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, axboe@kernel.dk,
+	io-uring@vger.kernel.org, csander@purestorage.com, krisman@suse.de,
+	bernd@bsbernd.com, hch@infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v1 03/11] io_uring/kbuf: add support for kernel-managed
+ buffer rings
+Message-ID: <aY2mdLkqPM0KfPMC@infradead.org>
+References: <20260210002852.1394504-1-joannelkoong@gmail.com>
+ <20260210002852.1394504-4-joannelkoong@gmail.com>
+ <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
+ <CAJnrk1ZZyYmwtzcHAnv2x8rt=ZVsz7CXCVV6jtgMMDZytyxp3A@mail.gmail.com>
+ <1c657f67-0862-4e13-9c71-7217aeecef61@gmail.com>
+ <CAJnrk1YXmxqUnT561-J7seaicxFRJTyJ=F3_MX1rmtAROC6Ybg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -106,71 +70,56 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260211201845.GN3183987@ZenIV>
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Spam-Level: 
+In-Reply-To: <CAJnrk1YXmxqUnT561-J7seaicxFRJTyJ=F3_MX1rmtAROC6Ybg@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
+	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77003-lists,linux-fsdevel=lfdr.de];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,linux.org.uk:email];
-	DMARC_NA(0.00)[suse.cz];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77005-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[gmail.com,kernel.dk,vger.kernel.org,purestorage.com,suse.de,bsbernd.com,infradead.org];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[hch@infradead.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[infradead.org:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: DB0C412C290
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 093D812C430
 X-Rspamd-Action: no action
 
-On Wed 11-02-26 20:18:45, Al Viro wrote:
-> [in viro/vfs.git #fixes at the moment; if you want to put it through your
-> tree, just say so]
+On Wed, Feb 11, 2026 at 02:06:18PM -0800, Joanne Koong wrote:
+> > I don't think I follow. I'm saying that it might be interesting
+> > to separate rings from how and with what they're populated on the
+> > kernel API level, but the fuse kernel module can do the population
 > 
-> On all failure exits that go to error_out there we have already moved the
-> nls reference from uopt->nls_map to sbi->s_nls_map, leaving NULL behind.
->     
-> Fixes: c4e89cc674ac ("udf: convert to new mount API")
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> Oh okay, from your first message I (and I think christoph too) thought
+> what you were saying is that the user should be responsible for
+> allocating the buffers with complete ownership over them, and then
+> just pass those allocated to the kernel to use. But what you're saying
+> is that just use a different way for getting the kernel to allocate
+> the buffers (eg through the IORING_REGISTER_MEM_REGION interface). Am
+> I reading this correctly?
 
-Thanks for catching this! It's fine if you merge it so feel free to add:
+I'm arguing exactly against this.  For my use case I need a setup
+where the kernel controls the allocation fully and guarantees user
+processes can only read the memory but never write to it.  I'd love
+to be able to piggy back than onto your work.
 
-Acked-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
-> diff --git a/fs/udf/super.c b/fs/udf/super.c
-> index b2f168b0a0d1..97a51c64ad48 100644
-> --- a/fs/udf/super.c
-> +++ b/fs/udf/super.c
-> @@ -2320,7 +2320,7 @@ static int udf_fill_super(struct super_block *sb, struct fs_context *fc)
->  
->  error_out:
->  	iput(sbi->s_vat_inode);
-> -	unload_nls(uopt->nls_map);
-> +	unload_nls(sbi->s_nls_map);
->  	if (lvid_open)
->  		udf_close_lvid(sb);
->  	brelse(sbi->s_lvid_bh);
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
