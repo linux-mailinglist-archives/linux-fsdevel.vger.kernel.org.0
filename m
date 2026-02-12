@@ -1,135 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-77055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77054-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WHZFLQMrjmn5AQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 20:33:23 +0100
+	id MGZSEqwqjmlsAQEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77054-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 20:31:56 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC52130BB3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 20:33:22 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6A89130B95
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 20:31:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0188E31298F3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 19:31:53 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 6844230417A6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 19:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EFAA2D5C7A;
-	Thu, 12 Feb 2026 19:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1DB2DEA95;
+	Thu, 12 Feb 2026 19:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="fo1MUWkn"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NOcLSB7c"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE12274B44
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 19:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3A9274B44;
+	Thu, 12 Feb 2026 19:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770924712; cv=none; b=hKtryr1LcKjLyPEfdu37Zd7lljf+bgwULHKnpkuf/8NJCnibVQB2pV3IBFyq3TZEdGeXTsC6ABKkT278SR5uSgQuPjoX9rD3FLuqPw4FS1GB5kCllxyLxVazy+Vuzv/SrJw/ZiJAr56wG92XNvzLwvszzVHlf+myEk6cjH4W++g=
+	t=1770924703; cv=none; b=Q1mc0avaQXgVN6Xtvmj3KFL+ikBbhU9pwii3roCjsD2MTl27vvNzZu181HuGhU59rRE0CDIs9XaV/4+4n28QzEWtmfDW32mhyUgt49MDHHwVumTAUEc5DLhf5EEeFqRE/i8Ihn3PbSdRhkuSKmCha1eI7TonBEvMWmBTYwE9Pog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770924712; c=relaxed/simple;
-	bh=2kkjPPH2QPwRg2MCEe/sJUhcaECBkTZK+aA2EVet3Vw=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=eJ60v4IUthTkH28B0BES8S2XPlxKmnFeii1e8SuL4LXRiVqTnhNwBo64j3AmYftRoJ+bZ/p3yAFh1TtIl7L8a4lcQMdOU/Ljtgm7b6nJVh31dub+0SVxeVAnMKXku8EknSh4qRcbHGeI1USw03stzovH0/ETK2a5OyvBry/OKPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=fo1MUWkn; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 61CJVRh7401104
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Thu, 12 Feb 2026 11:31:27 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 61CJVRh7401104
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2026012301; t=1770924688;
-	bh=AyXa9GZtBEnIiXEIZ0mPCnHS4e91MoQMFwxi7DtMyYc=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=fo1MUWknBPcoj93so/4/zetL3Er+sk24L3PTOKyZAFTpccZz8829kQ8i5bEc2807h
-	 qLF1Ti3tSU/1OerOieIU3Ts3UqagNiPjxHNipOPUr4vQmWuGfPl6sZ0ru4PtxEknDn
-	 G+x3yHxl2dctYf08eYBeunBxPfu6QFrYQfhmDf3g13f53gjaTaIpyFiaL3zALYJw6Z
-	 h+cbt/vsL+GDK9b4Ti/B+jBvqwdkILJpz7opw777wFpQCbtWqALATdNGupNZNyAkrQ
-	 CSeKZ4jEgVio3TJvU4JT1Bd8oIoB3+AKXfvJ2uCgx0NT2g8tBsHdLiOXjq1W/NBKG7
-	 IpWZE5sksUc+Q==
-Date: Thu, 12 Feb 2026 11:31:19 -0800
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        Askar Safin <safinaskar@gmail.com>
-CC: christian@brauner.io, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, werner@almesberger.net,
-        Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: [RFC] pivot_root(2) races
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CAHk-=wgS5T7sCbjweEKTqbT94XxmcPzppz6Mi6b8nKve-TFarg@mail.gmail.com>
-References: <CAHk-=wikNJ82dh097VZbqNf_jAiwwZ_opzfvMr-8Ub3_1cx3jQ@mail.gmail.com> <20260212171717.2927887-1-safinaskar@gmail.com> <CAHk-=wgS5T7sCbjweEKTqbT94XxmcPzppz6Mi6b8nKve-TFarg@mail.gmail.com>
-Message-ID: <1FC2FB1F-BDA5-472D-A7DB-D146F6F75B16@zytor.com>
+	s=arc-20240116; t=1770924703; c=relaxed/simple;
+	bh=haZ8oSpcvOdAc/4/xkwB5xWSodTnx7Kn5CXGs0AxRBA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ev6g406EsCjOn30Bkya1jNdX2ts62ZskyC9VkxHyMZNT+VxvunhFYSs7tTLGL5QBBePiw83M1J0vPsmXyyEaeHsBfW3C+iU3K2z5rQ5epGXrqlPVkLp6pIhME4F9MPdMuM5ZRRSYxfQMKV/Gd1YdpMby+27+RVNfGYd75F5vOo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NOcLSB7c; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=U8bd8FIyNs2OJZnQ9wdSrRYGwMYUnhq9GMT3wy9wYVI=; b=NOcLSB7cp9ar6xuccEPJ1jd9WW
+	qMApDHtGJ6oCgJiVY9Ira53meVVA/JaRcaVstxDScWDacz49WHavaO2K/f7ordv2gdYtHEW91xj7/
+	2lwSc6JzcdgIuFw5VxoiVzRuX0DeHQxS08bFjF4Fba/1uiHkKC4tHHoO0Io5nJWTxPFhDV15pKpxE
+	39P2BQPUokK+KybUH5vcb0eriobKx5cl0W7N0INKZ6kdTFNanFk+FTlEdPovHc7nqGOB0gDFOSvrs
+	JWYeaHL4x5uRRGo9qjLGLCr6GmWdQ8pPtL/DiBthte1/I8TE22PHQgGN8xJHzCaa08opo9/oR60lW
+	XyXX9gNA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vqcPa-0000000Ed2S-3GLR;
+	Thu, 12 Feb 2026 19:31:38 +0000
+Date: Thu, 12 Feb 2026 19:31:38 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Wei Gao <wegao@suse.com>, Sasha Levin <sashal@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/1] iomap: fix race between iomap_set_range_uptodate
+ and folio_end_read
+Message-ID: <aY4qmjRMganhoqxk@casper.infradead.org>
+References: <aYbmy8JdgXwsGaPP@autotest-wegao.qe.prg2.suse.org>
+ <CAJnrk1anodUxD5GR18N8w8239S_kbgijQyZC48Nsa4isb-e5JA@mail.gmail.com>
+ <aYp33Ddm7wYFrr_Q@autotest-wegao.qe.prg2.suse.org>
+ <CAJnrk1YARhOOKb=OuDLR-X8_que34Q93WagNMOiTjYVohHLdWA@mail.gmail.com>
+ <aYp-aTJPzSnwRd6O@autotest-wegao.qe.prg2.suse.org>
+ <CAJnrk1aPs2J_EerLROxtiHAKTyU2NHBkRXpS=-yunEsC9epAWw@mail.gmail.com>
+ <aYvzUihKhMfM6agz@casper.infradead.org>
+ <CAJnrk1Z9za5w4FoJqTGx50zR2haHHaoot1KJViQyEHJQq4=34w@mail.gmail.com>
+ <aYzulh4XWO-TBof8@casper.infradead.org>
+ <CAJnrk1YcuhKwbZLo-11=umcTzH_OJ+bdwZq5=XjeJo8gb9e5ig@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1YcuhKwbZLo-11=umcTzH_OJ+bdwZq5=XjeJo8gb9e5ig@mail.gmail.com>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[zytor.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[zytor.com:s=2026012301];
+	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
+	R_DKIM_ALLOW(-0.20)[infradead.org:s=casper.20170209];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77055-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[linux-foundation.org,gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[zytor.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	TAGGED_FROM(0.00)[bounces-77054-lists,linux-fsdevel=lfdr.de];
 	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hpa@zytor.com,linux-fsdevel@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[willy@infradead.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[infradead.org:+];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,linux-foundation.org:email,zytor.com:mid,zytor.com:dkim]
-X-Rspamd-Queue-Id: 1BC52130BB3
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,casper.infradead.org:mid]
+X-Rspamd-Queue-Id: B6A89130B95
 X-Rspamd-Action: no action
 
-On February 12, 2026 11:11:55 AM PST, Linus Torvalds <torvalds@linux-founda=
-tion=2Eorg> wrote:
->On Thu, 12 Feb 2026 at 09:17, Askar Safin <safinaskar@gmail=2Ecom> wrote:
->>
->> In my opinion this is a bug=2E We should make pivot_root change cwd and=
- root
->> for processes in the same mount and user namespace only, not all proces=
-ses
->> on the system=2E (And possibly also require "can ptrace" etc=2E)
->
->Yeah, I think adding a few more tests to that
->
->                fs =3D p->fs;
->                if (fs) {
->
->check in chroot_fs_refs() is called for=2E
->
->Maybe just make it a helper function that returns 'struct fs_struct'
->if replacing things is appropriate=2E  But yes, I think "can ptrace" is
->the thing to check=2E
->
->Of course, somebody who actually sets up containers and knows how
->those things use pivot_root() today should check the rules=2E
->
->               Linus
+On Wed, Feb 11, 2026 at 03:13:48PM -0800, Joanne Koong wrote:
+> On Wed, Feb 11, 2026 at 1:03 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Wed, Feb 11, 2026 at 11:33:05AM -0800, Joanne Koong wrote:
+> > > ifs->read_bytes_pending gets initialized to the folio size, but if the
+> > > file being read in is smaller than the size of the folio, then we
+> > > reach this scenario because the file has been read in but
+> > > ifs->read_bytes_pending is still a positive value because it
+> > > represents the bytes between the end of the file and the end of the
+> > > folio. If the folio size is 16k and the file size is 4k:
+> > >   a) ifs->read_bytes_pending gets initialized to 16k
+> > >   b) ->read_folio_range() is called for the 4k read
+> > >   c) the 4k read succeeds, ifs->read_bytes_pending is now 12k and the
+> > > 0 to 4k range is marked uptodate
+> > >   d) the post-eof blocks are zeroed and marked uptodate in the call to
+> > > iomap_set_range_uptodate()
+> >
+> > This is the bug then.  If they're marked uptodate, read_bytes_pending
+> > should be decremented at the same time.  Now, I appreciate that
+> > iomap_set_range_uptodate() is called both from iomap_read_folio_iter()
+> > and __iomap_write_begin(), and it can't decrement read_bytes_pending
+> > in the latter case.  Perhaps a flag or a second length parameter is
+> > the solution?
+> 
+> I don't think it's enough to decrement read_bytes_pending by the
+> zeroed/read-inline length because there's these two edge cases:
+> a) some blocks in the folio were already uptodate from the very
+> beginning and skipped for IO but not decremented yet from
+> ifs->read_bytes_pending, which means in iomap_read_end(),
+> ifs->read_bytes_pending would be > 0 and the uptodate flag could get
+> XORed again. This means we need to also decrement read_bytes_pending
+> by bytes_submitted as well for this case
 
-It would be interesting to see how much would break if pivot_root() was re=
-stricted (with kernel threads parked in nullfs safely out of the way=2E)
+Hm, that's a good one.  It can't happen for readahead, but it can happen
+if we start out by writing to some blocks of a folio, then call
+read_folio to get the remaining blocks uptodate.  We could avoid it
+happening by initialising read_bytes_pending to folio_size() -
+bitmap_weight(ifs->uptodate) * block_size.
 
-I have gotten a feeling that pivot_root() is used today mostly due to conv=
-enience rather than need=2E
+> b) the async ->read_folio_range() callback finishes after the
+> zeroing's read_bytes_pending decrement and calls folio_end_read(), so
+> we need to assign ctx->cur_folio to NULL
+
+If we return 'finished' from iomap_finish_folio_read(), we can handle
+this?
+
+> I think the code would have to look something like [1] (this is
+> similar to the alternative approach I mentioned in my previous reply
+> but fixed up to cover some more edge cases).
+> 
+> Thanks,
+> Joanne
+> 
+> [1] https://github.com/joannekoong/linux/commit/b42f47726433a8130e8c27d1b43b16e27dfd6960
+
+I think we can do everything we need with a suitably modified
+iomap_finish_folio_read() rather than the new iomap_finish_read_range().
 
