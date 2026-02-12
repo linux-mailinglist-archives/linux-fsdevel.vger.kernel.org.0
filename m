@@ -1,192 +1,311 @@
-Return-Path: <linux-fsdevel+bounces-76988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-76989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 4FTsJEJGjWlj0gAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-76988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 04:17:22 +0100
+	id qEd6BTlbjWmw1QAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-76989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 05:46:49 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CFB3129FE3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 04:17:22 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E64A12A52D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 05:46:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 512FC302AF24
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 03:17:20 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 01D0330EB79B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 04:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471F323EA97;
-	Thu, 12 Feb 2026 03:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71961A38F9;
+	Thu, 12 Feb 2026 04:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0+EMFEop"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iIUpt2/R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1B921765B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 03:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBB1134AB
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 04:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.171
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770866238; cv=pass; b=n4mud/YO32lUo8Pwo67+Q0IXW23xYCMVtAMoVf+4hl6UOWUShdIRBQs14RUXGZbhFGyWf5ezbbVBARgIyer9x+yvySi3+FkSPeoojAbI1pboD/PrHDv7d/zLw5sljmjiQDCceXmvvP6kkNexvFIS2uUxNHBu+4I2/2gCFftUolo=
+	t=1770871600; cv=pass; b=JADIW44hKDNAHEpRplhZDcCbLioo3Z1wj5WnFB6Wkm6+kNfrNjd8czna93u3PNN/PRY8kTH5v1mhM5/yy9TcA8t6VhlsonxO9lM7S3E2bhgfjt5DB59FraJ2BJIGB776/eLdC/3RnDGP7jGU8V0MH/fo90mv7YQJ3kVvVNMWdLU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770866238; c=relaxed/simple;
-	bh=myejyAY6+trMq2217gubmIhKoo+IyTluOWjrjF1r/Gk=;
+	s=arc-20240116; t=1770871600; c=relaxed/simple;
+	bh=YFieCLwnmzLgnJ+JpH91cZmczewVJfTZqSUI64SS6Ns=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kcbf168JxpekswtkiZ3VtlKu+KaOBfJG4KPG651R2hU/lUPEx3P+GqJi6yyKZRMgvJLtRK1jn++4yStkbmUHxANZjmSSY/DOm/4KbGso+F3SJbcbznIaPGxI3hLrCvMdhgd7RTaF3v8uBYnHe+R4D+CSo0gxOpPXftpLZs6sl1I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0+EMFEop; arc=pass smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-48324da63b9so24525e9.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 19:17:16 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770866235; cv=none;
+	 To:Cc:Content-Type; b=qolghBtrZgv7TLk1b8W3Zwa+S8ozaB3pU0F9MO5s2HrHeQg8FU7KFWi+Qk/zcBgYitRlvXEW8aZwe3vUVYwH+JtC+Z3YBASY43Hyp8eWT3ZH2+KcWDNKLyaHRmP+T8toWMwwHb3X2ANH+9CwL/5fuzKCuPf+Z0eNf66GjtDx0bs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iIUpt2/R; arc=pass smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-502acd495feso67000131cf.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Feb 2026 20:46:38 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770871598; cv=none;
         d=google.com; s=arc-20240605;
-        b=HarC638YDzQI3Kwd/4rHqkyu/bUsXxfDDbNRfE3OnT/R6mbK4XcqbAupEyLOWHKPAb
-         LCvMwugTW+wMQGlXK4nw0i2wl7G5ZWgyB/Dq7Jz4N4oY+oAHpABNb3806j/tpFeL8cFq
-         Zqz3miGkXSBDXfDmY8BqqSpUa11kquhvh0ckdFFrpp6ptPnW/rW3tg6uVLMBqAj2Ug7Y
-         2Yq76pCGfwrR3oUO6BtG5+IHN5onSrFiYNJsUqaFRLJ25w/RENBUhon24qUHZoCJzk/p
-         /YZ4Q11vVbvKbUP+877OKMUPVZhUyJLSxl32bIJESZm8DivcowcqBytsvKtVEd/NwfzW
-         sdlw==
+        b=JLj1qTh6twomcOX5z2ODjuzJlCQSocNsaJ0r+xe9Q1N38/Kjg3VDT9+AIeVq6Gk+zX
+         ZcbJv2feia1GMxjHqvxr1ojrKPPJq8u3PV5h+sLuMSz6qVrA8G2QfCu+mnVw+pcwrBix
+         /mJe/F07yNPnnzQLVG64VxzV0Ols9HsekJw1mIl35NkUVTxrpl5gZXYKBhObOduOf0l6
+         mQkdRjEH9rTdA3PzN6FGNpXGSjSstoCQHAyc1ogU6RJkbraCEQBnjnhD2y2QCW7dpudJ
+         PxZt3WSv2EpGeLs9E2VDu9YuBzUNSiyyUM5hSIK2XP9MfeSFTBP5H3XUHnJ/AmMEdgnU
+         9HCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=myejyAY6+trMq2217gubmIhKoo+IyTluOWjrjF1r/Gk=;
-        fh=P+6ULJ4eY03yJfhB5/U63ZFcQq7cwVjZatrCbERiiHo=;
-        b=R42jLqPxDxHKLy35OvUp3d8tRgW5yRniH8Ldv8NLab9bWaPbhh+76WJozoHV0sF4XU
-         ugs1oLjpJvmfmOZXaHJFNzsLai73sQzPTKoYE20OWXtAoLIQmnp9DPv5VsayqnUgmyl9
-         iZoM25EfkvySLUVRHEa0vTVWwq6vhFGVkqfYQ4r5tkFKY2GysOM4Jg6hjoOAhdMHm8nk
-         fdormt/c/Cbt5kERPAQk3YsNMCtXeNA0vO5+i0kTH3M24qeyV2/ytCKobWolIqbG+1mQ
-         FnHp+wnCSD4rlmXziTsBhOG+AjvjjOy2NJHFeDBV7Nh6FMLnUgZN7MUH554GBjK363gC
-         NSnQ==;
+        bh=ZHOoSCUCTlS+rDb4HQIaNpIxuyIjSeoJM+Mim8mRjyk=;
+        fh=q83CbfvMG1w98XLkPs9lXOK6LFzbOkm7Kpt2+g0vn20=;
+        b=k8G9sdTDd/xCFTlPnrnUvfz3zsyP90TTBRWZRnw7jlfu8gVnYPzJF/ZR6QQYBQVBsL
+         F9F6PBcz6Tojo6XzEHlMgh+q5pExat6QM1dtwuGZF05qcIVTLOf+Q0CJPVekc3YAVN9L
+         VheZTafagvQAEvh2sxX+zU75b060OPibDjBZKXhBdA9IboxzyhluyVTbXzUV/zIhtJWO
+         yLcCcxXKPaQBtP+07tWsMZGBmukbdDGhf2AU/etTBHev39pnYrbAJ3UrqY0RzLF8I5Rs
+         jAJdOkdibZ1/UU6fWeaUYLaHNPnza+MB8htqrKo3aZNy/plStZT2kViVctxldPA4Rb4a
+         tn+A==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1770866235; x=1771471035; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1770871598; x=1771476398; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=myejyAY6+trMq2217gubmIhKoo+IyTluOWjrjF1r/Gk=;
-        b=0+EMFEopQqbjbTeyTdzmcIwRMiqkkZSwbf3v58HFXfdKpld3f83VVWyvH3Zxd5GH6j
-         w1Nsgxpw3q56j9Clz2RC18ZWY38sZXyVNWl/GolW5AKVSPbncolaVv550Qw4boNVHwkO
-         4RHu5bSWzio/G2dSw+FfPP6FwEvF90s9i+QG5uI5mritdqvXkmPcgRen3EOT92V4vmof
-         F/MIRbxKhMUhh5uOuzUq75dIFBY7zkl+i1mzCa2g+l8ykbQrfvOcqn+v5CvQdAFfw8ot
-         NYUMYlj3rqu/GFrYLj0Nqoki+r+aFxGHI8fk9S7DTP5pSfgOV9B5XP2Am0nr3wnN0H+k
-         fAEA==
+        bh=ZHOoSCUCTlS+rDb4HQIaNpIxuyIjSeoJM+Mim8mRjyk=;
+        b=iIUpt2/RZJVECoOSRon41iTLwKeoIKHLTjKZB0aQ+U/XvKrCo3X/24z9555jfABM4c
+         h9d1tufAV6WvpIrYX4YhQphuwof+93fTunVsBj4AD59K98zbwm4hdC7UPlpo5z+N9e86
+         oF5Xva0oe4FCqHWyQk5/uS83bL7/WBQNBOHmzf498FhxuCGt4M0gqPPfCwSNKWeEpV/m
+         bgxeTTMZnYIo2pj11jVqQc54hILkqpv2jrBOHYbK/auFWfoUw0I3EgM7EWQyiJcanIRE
+         LUENRo1TmKJBp608FVoR2rYMfYAArlE55fqG33qMRW/beAYMQzrBDXPenEqsshDGco4e
+         49ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770866235; x=1771471035;
+        d=1e100.net; s=20230601; t=1770871598; x=1771476398;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=myejyAY6+trMq2217gubmIhKoo+IyTluOWjrjF1r/Gk=;
-        b=hIkPk4eiICvcQ+AtopCcEPzCescLrF0eD9htz3ao0D2cSoGioqClO0v7Q0Ml1p/zk4
-         RBaO20Om0Y+0BrAxczfIo8CB5FRCN6+r9c6cyv02N4inzoOD1nc941WFoV0GwwaUc+pg
-         czAuWs4qbv7pZoEjoIY1XVo0aKVv1o2lVOQvZvat685axqP1gVtf7MD+SSfqmdwgd5a8
-         zeCwrIvEdbupzMYx8YRFmUCo4O1y6ctta0NMU0nP4QB6shUDoQfr7TZDhckGzpLAOcfi
-         WwaWwEiZfAlfjMUrWzabIcNx2CqPjz0N1N3tSAvwc3OjTPWkGlFFJEOt2l5y9xvZATxC
-         Oy3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWR5Q7Xqd3avBSudzX18EOqjTE5NJN2IjzYNEBneMSuRSJ7HDWOm7JqciXdFIQy6IFGMi6FBgM2irdt6y4/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz76t/jIws5Pc8Irf98FDnd8SjKn7muOMsX+wkQjEBd0EsHc/jV
-	IQsD+xz1MzbniS6pA6mWjoz0s3ih/VATFL3epz8VHArnfn2gfhLEhnaNvQMRQLuF4vG0X/gF05z
-	b6PzOF4eutm19nphiOS4Mmz35PIVZRQZdHDlRhDHR
-X-Gm-Gg: AZuq6aKNGln3SN9p3v+Gdzgq4yhJdmEgKFT6nXiHFRPIkO5jNEO6ThI8CWldpWp/6eG
-	JpZ2EgohRJVLYoMTnpdL1ehzvYyibLR43qc8hc0c21rvt0IMiY3n8rWeuTL/6zzwNktL/QhE6Vw
-	OR0mmTBepadUJRvR4BZXDdSN0M+pIuGC4NKpZBsRo7nNkjrXnzYQ1je+3bKPkY4CylBMdBVJLSM
-	18VzDFBChRn23oqiP1xb+nPIkw322tx1IdhG/a48YNFR3qAu/QZnWb0vxczNj7fKpvwQPQDO69d
-	mpVUDT2hWmi/Jop75HWCYAsX3LjHMJfPeg6mcXBP
-X-Received: by 2002:a05:600c:8288:b0:477:86fd:fb47 with SMTP id
- 5b1f17b1804b1-4836593a321mr490675e9.8.1770866234921; Wed, 11 Feb 2026
- 19:17:14 -0800 (PST)
+        bh=ZHOoSCUCTlS+rDb4HQIaNpIxuyIjSeoJM+Mim8mRjyk=;
+        b=gBHV008uotKrkoL7TMT7jX8UN1EdAML0GzsSCA0if1DtusYQIcKI8EXJx2byWzWNui
+         1GTnXIbr4yt0pFDhkh1ptFMCHDGFJDZrxhkN5SdGiVTJ25z48YPJYjp7FL9HBGZIQDU9
+         JvXzBUFGu4+j8s//1jaK1yK23WFMcarsXlW/DbZNak5a3CVtMU5JHTrshm4XTin2a7gl
+         0t/5CWD3v2k/bL+/sVzJpHxp6xnNvyQ/ol8NrIsznYjGCsT0khkqI8HX9HL7qNHV+Chb
+         Sh2/vM8b21datUjDOC56Yb2o+PRhKMOIS0nnWuY7dFRuckycwb47vhD+BYaq56dCBQiw
+         vyhg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDA+Zxu8hVpUFLGnyl3gcyailYWz6ELJePLEmQnKDMuX7bY6oOU66jn6SyEniFjTl5tBUWkHEBpUNvHxlm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy4DIpRW8mwAoDz1c851dNUmz8TQorJjnAyVDjSWBH4feRUqe5
+	T5c2YscArdfkpRFUr/wgPX/klJyNJjPhq4lR3JDFUDURlAvBD00c1KGa0Qwe7E8BI+pOn26M2Dh
+	oUBASYZF3UveznopSOk0i5Uzg9ilMHbY=
+X-Gm-Gg: AZuq6aLGHgplRZkxHquO3TLvMGfhTo8gNdnqIut+c96X43p2rVp03J2YFsqPNXZ6FB8
+	lf3dtqd5gX2DuwErR8nciud5hakweYR/4VJeBhHZq+9yvYF+GTVS0zwkvTLJ8jKRSxMpZopYLB3
+	cztLrK+Rb7CgqS3ldDQpYqlViD8VewKg2CUaZ2VsS/mm6RIoFt4LAm331IK0YSVhp5rRj3ZMHL9
+	wf4+ZKyIhO5pMi4UhO6mKXn7Y3X6/hqzZ5+vsf/Pk9fMr0AVq1A5y1T0aoRb03zHMRaLDnn6Tt/
+	XznN8Q==
+X-Received: by 2002:a05:622a:8e:b0:501:5284:c49b with SMTP id
+ d75a77b69052e-50691efd73dmr24440781cf.39.1770871597749; Wed, 11 Feb 2026
+ 20:46:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260203192352.2674184-1-jiaqiyan@google.com> <20260203192352.2674184-3-jiaqiyan@google.com>
- <26a7803a-bf20-c60b-459d-2c8f82f2f4f6@huawei.com>
-In-Reply-To: <26a7803a-bf20-c60b-459d-2c8f82f2f4f6@huawei.com>
-From: Jiaqi Yan <jiaqiyan@google.com>
-Date: Wed, 11 Feb 2026 19:17:03 -0800
-X-Gm-Features: AZwV_QjvMCktCSOSG3Cg-wYQo1ai5b8Q1OUS6kQKYvkGyQjOIsUwWhbDhSlmNcM
-Message-ID: <CACw3F52kCHc5HF2wSg6W0_ApuMcW3VUk=vde1kiwRxQ+tkW9jQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] selftests/mm: test userspace MFR for HugeTLB hugepage
-To: Miaohe Lin <linmiaohe@huawei.com>
-Cc: nao.horiguchi@gmail.com, tony.luck@intel.com, wangkefeng.wang@huawei.com, 
-	willy@infradead.org, akpm@linux-foundation.org, osalvador@suse.de, 
-	rientjes@google.com, duenwen@google.com, jthoughton@google.com, 
-	jgg@nvidia.com, ankita@nvidia.com, peterx@redhat.com, 
-	sidhartha.kumar@oracle.com, ziy@nvidia.com, david@redhat.com, 
-	dave.hansen@linux.intel.com, muchun.song@linux.dev, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	william.roche@oracle.com, harry.yoo@oracle.com, jane.chu@oracle.com
+References: <CAJfpegtzYdy3fGGO5E1MU8n+u1j8WVc2eCoOQD_1qq0UV92wRw@mail.gmail.com>
+ <aYQNcagFg6-Yz1Fw@groves.net> <20260204190649.GB7693@frogsfrogsfrogs>
+ <0100019c2bdca8b7-b1760667-a4e6-4a52-b976-9f039e65b976-000000@email.amazonses.com>
+ <CAOQ4uxhzaTAw_sHVfY05HdLiB7f6Qu3GMZSBuPkmmsua0kqJBQ@mail.gmail.com>
+ <20260206055247.GF7693@frogsfrogsfrogs> <aYZOVWXGxagpCYw5@groves.net> <CAJnrk1Za2SdCkpJ=sZR8LJ1qvBn8dd3CCsH=PvMrg=_0Jv+40Q@mail.gmail.com>
+In-Reply-To: <CAJnrk1Za2SdCkpJ=sZR8LJ1qvBn8dd3CCsH=PvMrg=_0Jv+40Q@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 11 Feb 2026 20:46:26 -0800
+X-Gm-Features: AZwV_Qj-hwUIYbdnsdsPYMstasOEjSJhdIj14Uq7ZVwNrrDwTsZ2XO25C0pd2nw
+Message-ID: <CAJnrk1YMqDKA5gDZasrxGjJtfdbhmjxX5uhUv=OSPyA=G5EE+Q@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Where is fuse going? API cleanup,
+ restructuring and more
+To: John Groves <john@groves.net>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, 
+	"f-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Bernd Schubert <bernd@bsbernd.com>, 
+	Luis Henriques <luis@igalia.com>, Horst Birthelmer <horst@birthelmer.de>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
-	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-76988-lists,linux-fsdevel=lfdr.de];
-	RCPT_COUNT_TWELVE(0.00)[24];
+	TAGGED_FROM(0.00)[bounces-76989-lists,linux-fsdevel=lfdr.de];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,gmail.com,szeredi.hu,lists.linux-foundation.org,vger.kernel.org,bsbernd.com,igalia.com,birthelmer.de];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[google.com:+];
 	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jiaqiyan@google.com,linux-fsdevel@vger.kernel.org];
-	FREEMAIL_CC(0.00)[gmail.com,intel.com,huawei.com,infradead.org,linux-foundation.org,suse.de,google.com,nvidia.com,redhat.com,oracle.com,linux.intel.com,linux.dev,kvack.org,vger.kernel.org];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MIME_TRACE(0.00)[0:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,groves.net:email,jagalactic.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
 	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,huawei.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: 0CFB3129FE3
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Rspamd-Queue-Id: 4E64A12A52D
 X-Rspamd-Action: no action
 
-On Mon, Feb 9, 2026 at 4:01=E2=80=AFAM Miaohe Lin <linmiaohe@huawei.com> wr=
-ote:
+On Fri, Feb 6, 2026 at 4:22=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
+> wrote:
 >
-> On 2026/2/4 3:23, Jiaqi Yan wrote:
-> > Test the userspace memory failure recovery (MFR) policy for HugeTLB:
+> On Fri, Feb 6, 2026 at 12:48=E2=80=AFPM John Groves <john@groves.net> wro=
+te:
 > >
-> > 1. Create a memfd backed by HugeTLB and had MFD_MF_KEEP_UE_MAPPED set.
+> > On 26/02/05 09:52PM, Darrick J. Wong wrote:
+> > > On Thu, Feb 05, 2026 at 10:27:52AM +0100, Amir Goldstein wrote:
+> > > > On Thu, Feb 5, 2026 at 4:33=E2=80=AFAM John Groves <john@jagalactic=
+.com> wrote:
+> > > > >
+> > > > > On 26/02/04 11:06AM, Darrick J. Wong wrote:
+> > > > >
+> > > > > [ ... ]
+> > > > >
+> > > > > > >  - famfs: export distributed memory
+> > > > > >
+> > > > > > This has been, uh, hanging out for an extraordinarily long time=
+.
+> > > > >
+> > > > > Um, *yeah*. Although a significant part of that time was on me, b=
+ecause
+> > > > > getting it ported into fuse was kinda hard, my users and I are ho=
+ping we
+> > > > > can get this upstreamed fairly soon now. I'm hoping that after th=
+e 6.19
+> > > > > merge window dust settles we can negotiate any needed changes etc=
+. and
+> > > > > shoot for the 7.0 merge window.
+> > >
+> > > I think we've all missed getting merged for 7.0 since 6.19 will be
+> > > released in 3 days. :/
+> > >
+> > > (Granted most of the maintainers I know are /much/ less conservative
+> > > than I was about the schedule)
 > >
-> > 2. Allocate and map 4 hugepages to the process.
+> > Doh - right you are...
 > >
-> > 3. Create sub-threads to MADV_HWPOISON inner addresses of the 1st hugep=
-age.
+> > >
+> > > > I think that the work on famfs is setting an example, and I very mu=
+ch
+> > > > hope it will be a good example, of how improving existing infrastru=
+cture
+> > > > (FUSE) is a better contribution than adding another fs to the pile.
+> > >
+> > > Yeah.  Joanne and I spent a couple of days this week coprogramming a
+> > > prototype of a way for famfs to create BPF programs to handle
+> > > INTERLEAVED_EXTENT files.  We might be ready to show that off in a
+> > > couple of weeks, and that might be a way to clear up the
+> > > GET_FMAP/IOMAP_BEGIN logjam at last.
 > >
-> > 4. Check if the process gets correct SIGBUS for each poisoned raw page.
+> > I'd love to learn more about this; happy to do a call if that's a
+> > good way to get me briefed.
 > >
-> > 5. Check if all memory are still accessible and content valid.
+> > I [generally but not specifically] understand how this could avoid
+> > GET_FMAP, but not GET_DAXDEV.
 > >
-> > 6. Check if the poisoned hugepage is dealt with after memfd released.
+> > But I'm not sure it could (or should) avoid dax_iomap_rw() and
+> > dax_iomap_fault(). The thing is that those call my begin() function
+> > to resolve an offset in a file to an offset on a daxdev, and then
+> > dax completes the fault or memcpy. In that dance, famfs never knows
+> > the kernel address of the memory at all (also true of xfs in fs-dax
+> > mode, unless that's changed fairly recently). I think that's a pretty
+> > decent interface all in all.
 > >
-> > Two configurables in the test:
+> > Also: dunno whether y'all have looked at the dax patches in the famfs
+> > series, but the solution to working with Alistair's folio-ification
+> > and cleanup of the dax layer (which set me back months) was to create
+> > drivers/dax/fsdev.c, which, when bound to a daxdev in place of
+> > drivers/dax/device.c, configures folios & pages compatibly with
+> > fs-dax. So I kinda think I need the dax_iomap* interface.
 > >
-> > - hugepage_size: size of the hugepage, 1G or 2M.
-> >
-> > - nr_hwp_pages: number of pages within the 1st hugepage to MADV_HWPOISO=
-N.
-> >
-> > Reviewed-by: Jane Chu <jane.chu@oracle.com>
-> > Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
+> > As usual, if I'm overlooking something let me know...
 >
-> It's not required but could this testcase be written into the tools/testi=
-ng/selftests/mm/memory-failure.c [1]?
+> Hi John,
+>
+> The conversation started [1] on Darrick's containerization patchset
+> about using bpf to a) avoid extra requests / context switching for
+> ->iomap_begin and ->iomap_end calls and b) offload what would
+> otherwise have to be hard-coded kernel logic into userspace, which
+> gives userspace more flexibility / control with updating the logic and
+> is less of a maintenance burden for fuse. There was some musing [2]
+> about whether with bpf infrastructure added, it would allow famfs to
+> move all famfs-specific logic to userspace/bpf.
+>
+> I agree that it makes sense for famfs to go through dax iomap
+> interfaces. imo it seems cleanest if fuse has a generic iomap
+> interface with iomap dax going through that plumbing, and any
+> famfs-specific logic that would be needed beyond that (eg computing
+> the interleaved mappings) being moved to custom famfs bpf programs. I
+> started trying to implement this yesterday afternoon because I wanted
+> to make sure it would actually be doable for the famfs logic before
+> bringing it up and I didn't want to derail your project. So far I only
+> have the general iomap interface for fuse added with dax operations
+> going through dax_iomap* and haven't tried out integrating the famfs
+> GET_FMAP/GET_DAXDEV bpf program part yet but I'm planning/hoping to
+> get to that early next week. The work I did with Darrick this week was
+> on getting a server's bpf programs hooked up to fuse through bpf links
+> and Darrick has fleshed that out and gotten that working now. If it
+> turns out famfs can go through a generic iomap fuse plumbing layer,
+> I'd be curious to hear your thoughts on which approach you'd prefer.
 
-Good point, let me catch up with your new test fixtures and see what I
-can do with this new test.
+I put together a quick prototype to test this out - this is what it
+looks like with fuse having a generic iomap interface that supports
+dax [1], and the famfs custom logic moved to a bpf program [2]. I
+didn't change much, I just moved around your famfs code to the bpf
+side. The kernel side changes are in [3] and the libfuse changes are
+in [4].
+
+For testing out the prototype, I hooked it up to passthrough_hp to
+test running the bpf program and verify that it is able to find the
+extent from the bpf map. In my opinion, this makes the fuse side
+infrastructure cleaner and more extendable for other servers that will
+want to go through dax iomap in the future, but I think this also has
+a few benefits for famfs. Instead of needing to issue a FUSE_GET_FMAP
+request after a file is opened, the server can directly populate the
+metadata map from userspace with the mapping info when it processes
+the FUSE_OPEN request, which gets rid of the roundtrip cost. The
+server can dynamically update the metadata at any time from userspace
+if the mapping info needs to change in the future. For setting up the
+daxdevs, I moved your logic to the init side, where the server passes
+the daxdev info upfront through an IOMAP_CONFIG exchange with the
+kernel initializing the daxdevs based off that info. I think this will
+also make deploying future updates for famfs easier, as updating the
+logic won't need to go through the upstream kernel mailing list
+process and deploying updates won't require a new kernel release.
+
+These are just my two cents based on my (cursory) understanding of
+famfs. Just wanted to float this alternative approach in case it's
+useful.
+
+Thanks,
+Joanne
+
+[1] https://github.com/joannekoong/linux/commit/b8f9d284a6955391f00f576d890=
+e1c1ccc943cfd
+[2] https://github.com/joannekoong/libfuse/commit/444fa27fa9fd2118a0dc33293=
+3197faf9bbf25aa
+[3] https://github.com/joannekoong/linux/commits/prototype_generic_iomap_da=
+x/
+[4] https://github.com/joannekoong/libfuse/commits/famfs_bpf/
 
 >
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/commit/?h=
-=3Dmm-unstable&id=3Dcf2929c618fec0a22702b3abd0778bbdde6e458e
+> Thanks,
+> Joanne
 >
-> Thanks.
-> .
+> [1] https://lore.kernel.org/linux-fsdevel/CAJnrk1bxhw2u0qwjw0dJPGdmxEXbcE=
+yKn-=3DiFrszqof2c8wGCA@mail.gmail.com/t/#md1b8003a109760d8ee1d5397e053673c1=
+978ed4d
+> [2] https://lore.kernel.org/linux-fsdevel/CAJnrk1bxhw2u0qwjw0dJPGdmxEXbcE=
+yKn-=3DiFrszqof2c8wGCA@mail.gmail.com/t/#u
+>
+> >
+> > Regards,
+> > John
+> >
 
