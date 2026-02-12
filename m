@@ -1,177 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-77015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id wLwKFO6+jWkZ6gAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 12:52:14 +0100
+	id 2KPUJ+6/jWkZ6gAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 12:56:30 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EBDD12D2FB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 12:52:08 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0261012D345
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 12:56:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 0B2AD303D640
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 11:51:59 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0300C30CD729
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 11:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C65350A03;
-	Thu, 12 Feb 2026 11:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9D634FF59;
+	Thu, 12 Feb 2026 11:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FhQMjqt9"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="MYVCmMM7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F82348440
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 11:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770897113; cv=none; b=PB6q0DAMJKROigSZ2HXub7lJVkoVSnLxT/GuJDIbCgOA5MnqniONJx4hVlEEDmDfDGo3WnwWmhwheaPkJas+MhsaexqU/5TrsLY2Y5Un0+ovNoJ5n09XC+IGjCTx13W7IWThZuuJwzNo+y5e7d93I0OtV3I68Jfjp7j/GAFB46M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770897113; c=relaxed/simple;
-	bh=XjSWJvCqXNs6KFHlJCEjDBXFilEFAsp8RQ/y0dAQPl8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=fuPAF4BwAbPU531X/BDoHCxe2h7BLvypbSmkkavFipDeVdnwgPndx86DXm1TQLI+UEQhmPS2/8FdWB7neKKi0TLy5AkovyPhcaS1AXzgqR1S2tZf4agprnO/9EN1AZjBHZuSAESzT3SYWn4RDe1PmfB72B8P5jGiyp8EYEuobeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FhQMjqt9; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-385bc6910eeso26710931fa.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 03:51:51 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FADB34F473
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 11:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.182
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770897364; cv=pass; b=mEpqkM+o/MmhXgp3xP7iiZxm/xKDjW5vuKkz2ePV+5NoHm0baTigy//cXUOrc/2if/zr28GfwHqwW2g/CFgoHjAnToaByuAgWC+MyrF4h9AFFbDyLmHq3wrwcTcD1hzQLYmAl6q0kk/QgPv+J2J7+spI8QRocBe1EAtfwdozhK4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770897364; c=relaxed/simple;
+	bh=U2iifO9hYhyqiaMPmNzT3jmZNDUohFVgz61Ju6wg1T0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oO+rcJij2Wb4xP1DnO68EVAnHBdCfFYGLsqjVx3IISnqYjlxOQ8+nJX5QlQEI1VKqFU5GGLlmrao3xvWLIZ4yv9nITGKlQpOjJ+iXqbJOyvboMH75P9Tqk8LDaFOZky+N4t6MAUyfloskeMql9md1Vrj+eU2UnXNhRevN8C6wGI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=MYVCmMM7; arc=pass smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-505d872f90fso69671261cf.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 03:56:02 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770897362; cv=none;
+        d=google.com; s=arc-20240605;
+        b=HKUwqYvo8TTHoRw6MWnG0Y5z0rG4aIavYIVAqsYIcOom0NTNXA3Ur0CkF+sFN0NzlF
+         FM4LS5M8o+65xXLTGUen3WQXkUukAabJGt/7JM86jQDHV53v/LKbewZXBTUH81H6u4hb
+         nzYgl1opRA6E4aDf0pwe+bux92dJWfebYLPQRXVd5VW1VVeHDxqqfZ8sNr0Tel/a7nEq
+         DuqI625lPNfokKYL/PsKybzWTrJNK/dRHSN4hxTqViB2/tF2kigz1JbTzBB8C9gBd9tg
+         g2Gg6cTuk58L0TalApi19LyAT3+vH9ol3UHasqTkE/BeVgOxQaHTMYJo5xsn6DY7g3GD
+         PEqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=OA+r4VOg9Q7Fo+2osF0pJxpximeudUDTjZAGhZ1/GT4=;
+        fh=rWi1Wov8Ko+gp7akNdkas/6A0Nka4KfwYMTb3EJo7to=;
+        b=O1Xn4bh2kXTCbVFnFFvDFI4XTj8Wqi0d4umdeBeyU+vUfHZgfpw2l1ILkn9+JMQlGK
+         Q6MrBNUkzGgki6Z5Muc2eTSttm9vVbSCB6w/otzYcHiE3NwdZ0nwiMqUs04RSRNPsWmk
+         NqUX/3xh+8QRcjrGhTJVCwXlxX9hvgrTi/dA2Zto/qTx6LDNVw/iVAY7G/kcXpDhg9md
+         L6k9wBqH6qRP9KVlePe6kjWYYMHMe4AMCp2DHLehGU5q3TnI8X6FL6PL1v4FlpqoDjXY
+         OmxtQUV+X3DdI1SeMxAKXXR9yCPZi1ijsw2z0xmcG3f+rKznlzKwJT2GDntccF9Vhk4M
+         Wmwg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770897110; x=1771501910; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=icNB5xuvo+j+qezx7gqf5Y6Yw5qJ0+ofGzzhpNwJwdA=;
-        b=FhQMjqt90S68QJBXL9jHocY7B1/g5ZRIw4R14Jz+q8ubrflb3FFjMjVVlBxz2Hi0VC
-         0dnIBz/gzOseJszrl/f6To9dnq3zIQmBrE2uq6bq0Ovnr3t6Ia26bEm/EL3ZVhgKGiZZ
-         wQ//I9DlDaDkl9wDQF/XYTMzSS6V1ph0rqylYdQcs3t19ho+cjMCq+OqV9gLICvEpsZr
-         Y06Sm3TKWgqdUHJhAHoRcyfWmegywK32x990iLePGZFvgtE1Fpv0CJZ08tt3/hZBJNDx
-         yMjYZXUOv1u0ya1pDSipjc908Q1650HRawkTSMMf6GcDdJb2iLZfYEMQYvDiMb9kVIex
-         /d8Q==
+        d=szeredi.hu; s=google; t=1770897362; x=1771502162; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OA+r4VOg9Q7Fo+2osF0pJxpximeudUDTjZAGhZ1/GT4=;
+        b=MYVCmMM7Qgl3/GLbyHM8O6vyWNq6AIFXTwLQ7ow0vpuoCKJ63d9OHro+zo1n/3vdmi
+         6DGPIusf7FQI8Ol7smywd78qREI+LUFfYV22kiza8RPgZxMxR1yUZRITCOHqLTO4c8e2
+         hlKaIWjUSdQJh2bLK1TW0J1RidWsDPmAAa2TE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770897110; x=1771501910;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=icNB5xuvo+j+qezx7gqf5Y6Yw5qJ0+ofGzzhpNwJwdA=;
-        b=jnnAsCFBScdWdaKeL8XQTJU7PM5q62FB3Z3dBLvb/cOWZ1FSHaXKbdrwngwwuolFdX
-         79N5hKkgp/I24YZ9wnHMOnrHJrf0GEuMIMMoiMSJyAuPix+1xtS5YcpQXDfOHhsalVdS
-         B2Lcd46R32kgxO241EzEIXmSnM2ZOaGq2kSKqew3cyuicFbdSArr5cdEElnIqCVRcum5
-         EiE1XUB2oiNu2iz3RFmSYhCv48pYLv2YAKvMd5rBQNfubtN22HfASV+gwiIvJ6h96ajN
-         6EPLFxyKJ6UtMQfyYCuycagXyioEKHBy2nCGM6/xVl6UJ86UR3BnkZ25C17kC5116X22
-         wAYg==
-X-Gm-Message-State: AOJu0YwYeyqQS7z22QAlftSraHFxk/zbx/JN/dQuHbCVNOSq1aK6yDb/
-	C9zCiGJEclb1z99Au2u2wuunk+nB0aCowAlbMtqCVuqgaRHZiStJY9kSMjAp2Q==
-X-Gm-Gg: AZuq6aJnQSguBIhCmRF3swOSrr50lDGnnpvNtsTbOHyuFllCO3X6XXDNX2udXZTpZHW
-	fqeXyY+yZSUrRUZR6qcQ7+qQb5nNutOQQy9nY7UTwh8Isv7gilc3ys5JsUd5EtzZUfun5Cgg/pw
-	PkGLXip9AUe3q2gHoD8ObARyt2DZDf6mpwi5jvfzukOOm6/RRwM7leaO3K0Iu+c2IkgksyglHio
-	7EwW0WBQX0cilOFhD5+AU96nrHH4B/RudFKFxcW6Pv9QIyh/GXDrxeBZeEGsV2LsM8MFTNiEgJv
-	xCIGsKTfyW3pnifnzXfBOxZ5ln10PbGOdDXPdm1DiPDyD7DB6HThAVE1oB5zWcI6C3bmXituszo
-	/lCwMYzEM84mwHu537PfMJSaye6gmoxLurOdS9+5ISzwy2M/b2RTSgAKy+q8pmriLQ54mmmhAmg
-	6sL76jrVEMCxZ09ceMQvgaLyZhfs42Aa9pCaEk21y7fTby
-X-Received: by 2002:a05:651c:4193:b0:382:624d:a703 with SMTP id 38308e7fff4ca-38712c1064amr7134971fa.45.1770897109932;
-        Thu, 12 Feb 2026 03:51:49 -0800 (PST)
-Received: from [10.128.170.182] ([77.234.210.12])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3870689e107sm7206681fa.14.2026.02.12.03.51.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Feb 2026 03:51:48 -0800 (PST)
-Message-ID: <4b207a36-5789-41d2-ac17-df86d4cde6da@gmail.com>
-Date: Thu, 12 Feb 2026 14:51:47 +0300
+        d=1e100.net; s=20230601; t=1770897362; x=1771502162;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OA+r4VOg9Q7Fo+2osF0pJxpximeudUDTjZAGhZ1/GT4=;
+        b=SbM1fyxTrNgpdimAhep7kj9aTauXt9YiQ6BPNbdkqXHfMo2Kv5HcAhyfubdmSkv6u2
+         T92GiSZm79nxY/77xGRCU/89l17K1nmRXYGOxao9viCKkX8jMC1ZS9TYwEqZFGFh6MQy
+         s4iwxw6q821x8dWmt7BMjI0GQd+7JO40vvHr+OBaKz5DGBPIxS0QwkafySR/NDu9WZ8K
+         WCP/8tKT4cJjaZtdj3d9euHVDSZ7qE9x5vVYfio8Zu/fS7ccd1S5AnntUH6dEVk+6Y5N
+         WX1hLrbCq0b5IJFhruC4eECLTtSXjJbvtcDENnCFMFF7+ucSwbRSwBFbthJTVHUw7+FL
+         02hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVpyLGch0ixcbmzuw7aVi+bkAI9l1ojaMqN6g5TF1yh1gxQjZUcO/RMECzqBoc/paluJf5XryuAXC875uPh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHj/sRj2ETYYSk1TlIAZXm9GSeQAMoK90x3q4Y64Uuk2N2x5EF
+	+QhoyOT0kdsBgn1gX/LMeUEOXd8t0v3stVrRROGY0OsJjccG4Xs07idt9Q7poZ1W5p5239bDz5h
+	fknfyZzONTbgLa3I5KzddZDdWMvCXkiX2zGDMzcYp2Q==
+X-Gm-Gg: AZuq6aLAXrvg52qjKUHNWSt//PpktMV5AE8pR3ElpVoaPLD6qRuqtecY7xBAZTY/Etv
+	AyhqjpyOhVLkQXZgUqDjben57WDFDUHsdnCe7TuOLUFfNyup6oWXGp+ka4qQASD0uSeAqbqCVrE
+	LCG6QuUFQYSBhvfxDk2Hofrh77c453bYbtJOEV4GpWpNMk7tC3HsdPhEzirDxJNgM/3YvkJENd9
+	UxZ0vRTHH8+9rznUEhCbpV+E1UVSNlxXXH8QdGQcmDDg4OIsiTcpCcCElNuyE9ezeHL1e6Oq8XG
+	7nbDBA==
+X-Received: by 2002:a05:622a:1496:b0:4f1:dfc8:50b with SMTP id
+ d75a77b69052e-50691f558a1mr37633891cf.76.1770897362087; Thu, 12 Feb 2026
+ 03:56:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: viro@zeniv.linux.org.uk, brauner@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org
-From: Vyacheslav Kovalevsky <slava.kovalevskiy.2014@gmail.com>
-Subject: File name is not persisted if opened with O_SYNC and O_TRUNC flags
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20260210-fuse-compounds-upstream-v5-0-ea0585f62daa@ddn.com>
+ <20260210-fuse-compounds-upstream-v5-1-ea0585f62daa@ddn.com>
+ <CAJfpegvt0HwHOmOTzkCoOqdmvU6pf-wM228QQSauDsbcL+mmUA@mail.gmail.com>
+ <f38cf69e-57b9-494b-a90a-ede72aa12a54@bsbernd.com> <CAJfpegscqhGikqZsaAKiujWyAy6wusdVCCQ1jirnKiGX9bE5oQ@mail.gmail.com>
+ <bb5bf6c8-22b2-4ca8-808b-4a3c00ec72fd@bsbernd.com> <CAJfpegv4OvANQ-ZemENASyy=m-eWedx=yz85TL+1EFwCx+C9CQ@mail.gmail.com>
+ <d37cca3f-217d-4303-becd-c82a3300b199@bsbernd.com>
+In-Reply-To: <d37cca3f-217d-4303-becd-c82a3300b199@bsbernd.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 12 Feb 2026 12:55:51 +0100
+X-Gm-Features: AZwV_QhgAwcbKLATVwWVzlW7px6ukms7WfQ9UnnY-_XjWRUHjtz2qLqmXSjoLv4
+Message-ID: <CAJfpegs4LPx5priJCagpP1hS6q9=+YxG_2HGiMrv9m03G1jNpQ@mail.gmail.com>
+Subject: Re: [PATCH v5 1/3] fuse: add compound command to combine multiple requests
+To: Bernd Schubert <bernd@bsbernd.com>
+Cc: Horst Birthelmer <horst@birthelmer.com>, Bernd Schubert <bschubert@ddn.com>, 
+	Joanne Koong <joannelkoong@gmail.com>, Luis Henriques <luis@igalia.com>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Horst Birthelmer <hbirthelmer@ddn.com>
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
+	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	TAGGED_FROM(0.00)[bounces-77015-lists,linux-fsdevel=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77016-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[birthelmer.com,ddn.com,gmail.com,igalia.com,vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_FIVE(0.00)[5];
+	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[slavakovalevskiy2014@gmail.com,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	TO_DN_NONE(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[szeredi.hu:+];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 6EBDD12D2FB
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid,szeredi.hu:dkim]
+X-Rspamd-Queue-Id: 0261012D345
 X-Rspamd-Action: no action
 
-Detailed description
-====================
+On Thu, 12 Feb 2026 at 11:43, Bernd Schubert <bernd@bsbernd.com> wrote:
 
-Hello, there seems to be an issue with O_SYNC flag when used together 
-with O_TRUNC on various file systems.
-Opening a file with O_SYNC (or using fsync(fd)) should persist directory 
-entry.
-However, if O_SYNC is used together with O_TRUNC the file will be 
-missing if system crashes.
-According to POSIX this is OK, but most file systems provide stronger 
-guarantees (would be actually nice to have a more recent documentation 
-on this behavior).
-This happens on Btrfs, ext4, XFS, F2FS and likely other file systems.
+> I think you mean FUSE_CREATE?
 
+Yes.
 
-System info
-===========
+> Which is create+getattr, but always
+> preceded by FUSE_LOOKUP is always sent first?
 
-Linux version 6.19-rc7, also tested on 6.17
+Maybe LOOKUP is always sent because otherwise FMODE_CREATED may not be
+(even approximately) correct.  Even if LOOKUP is sent, the file might
+have been created remotely and hence FMODE_CREATED be incorrect.  The
+only way to fix this is to return this flag from CREATE.
 
+>  Horst is currently working
+> on full atomic open based on compounds, i.e. a totally new patch set to
+> the earlier versions. With that LOOKUP
 
-How to reproduce
-================
+I'm saying that LOOKUP is just unnecessary.  Maybe I'm missing
+something, though.
 
-```
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-
-int main() {
-   int status;
-
-   status = creat("file", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-   printf("CREAT: %d\n", status);
-   close(status);
-
-   status = open("file", O_RDWR | O_TRUNC | O_SYNC);
-   printf("OPEN: %d\n", status);
-}
-// after the crash `file` is missing
-```
-
-Steps:
-1. Create and mount new file system in default configuration.
-2. Change directory to root of the file system and run the compiled test.
-3. Cause hard system crash (e.g. QEMU `system_reset` command).
-4. Remount file system after crash.
-5. Observe that file is missing.
-
+Thanks,
+Miklos
 
