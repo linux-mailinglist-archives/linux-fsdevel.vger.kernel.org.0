@@ -1,344 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-77027-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yEUEJdfzjWlw8wAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77027-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 16:37:59 +0100
+	id YHHmH2v9jWm0+AAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 17:18:51 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7FB912F07B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 16:37:58 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD2DF12F459
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 17:18:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D2065316D2D0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 15:35:31 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id AAD433045E25
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 16:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D358E2EBB8C;
-	Thu, 12 Feb 2026 15:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="V+S3ga8D"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3566123D7DD;
+	Thu, 12 Feb 2026 16:18:49 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AACF2E7635;
-	Thu, 12 Feb 2026 15:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37C054774;
+	Thu, 12 Feb 2026 16:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770910530; cv=none; b=qBMbECwJ7rHY9qtPbfn9Hv3gyxRKeXSQsnYbU/F/fDPVCHNKH0hRfkgLKj8zGRgn70V0ycpjkO7fLgAWfiTTla5VbsZjFiZdwr/bQsGNMgM5DFYfXe4hiHivevKhoei1pI1H/Dr4rdNK6kMJyUQHFPm6TXz9qMGki2OWK3LBKmo=
+	t=1770913128; cv=none; b=Xm5R8YPmNVqaBNzlFTP9toV41kgG2xB0Awfkife3SDayQCCWnYAH1vTM5DII1vKfNZk/6cmsIp6f4w89Yg8Fr6QBnfMmq4MMWnl2aUs8euhbuBMT6jenplLzao1hnGJUbvUmX8TwrGNs2bnKcYosWFhWfms7HEynGLaFFeqYYSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770910530; c=relaxed/simple;
-	bh=RvgG1Hojz0gxTMiFY2oYgpXYa17ImuThyavhDz+eI+A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Tp0XGX89kLO83fArFiomvfC/FknTmOK1c1Odb4gtOqFQdeU+bQ9U4gGFD+bxUcZ1iO2jDUmvkx8hILjqAHk52n/dsHCBV/1eh1xTFf5NVJ0diNGZTOi1qch53PnIa7WOAnlMmEQEM+El20cllctDF9L4blML3qA3mziqlf2YnJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=V+S3ga8D; arc=none smtp.client-ip=5.189.157.229
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Content-ID:Content-Description;
-	bh=EcLpryrTcW8sMjqjlNCr1rs/sbV0wZ/th1uenQrCi/M=; b=V+S3ga8DSrsMlLoh+KW5pgyOqJ
-	FCR4XGnf1p0pGBx7Ymz+r0uZxTNvzCmQm3iW5s/dYe2Vivkhbq7oV5muF5NzJW8OKTj9dkk/o97xu
-	1wnQ2derSKRJd53DCf4HG8CSauUgefXEGr0snADGoS7lISuqsqq7cxIMxmEoOOJqPKqgR27sHevW0
-	M45ujXEaegriqDHxImGLSBV9sO2G/RHMALGEYbZGNUKyrAnDohzWfXxP09VBlizkEHORuLpBiHEXk
-	oIftplw0O/VH45g556rip4BL6GpE3eCEq7OF/VZeTNumSSlRRMnb+rD+CzY2sEGnKGaUi6Ug7M6D6
-	lGEh+X+B3WPukA6XLHauN4ylilORBXi3MaoqD+3nxnna8DmVdMBiKykiHadTMR0xRm7UIQIIETf9T
-	Kbn7/TRcDE5fhFeCVNRLM3DiBmJT/tYjFPZZnb71DvI5N58NSJBsFcvjwYvylfnYon/RoZrY00jEZ
-	T1GDUgNbZ5z4/Cobi2X0f9oPWBRsEkbwD44UnDpm5YoYyaWMxWW8Sx0Uw7L4mVQNB4wNtbkWuXveJ
-	V99T1t11jz0LQ/n2isSmPlxGXCtpdM5ntxV80sAEwU9Q3/b6ZDFuKSkzxloNn/jjqLGF2kS2zgas6
-	ke+6TmQ5pRKJI2BKZy4n51cMhsW4+/I8j8sEACJQM=;
-From: Christian Schoenebeck <linux_oss@crudebyte.com>
-To: v9fs@lists.linux.dev, Remi Pommarel <repk@triplefau.lt>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>,
- Dominique Martinet <asmadeus@codewreck.org>,
- Remi Pommarel <repk@triplefau.lt>
-Subject: Re: [PATCH v2 3/3] 9p: Enable symlink caching in page cache
-Date: Thu, 12 Feb 2026 16:35:24 +0100
-Message-ID: <2050624.usQuhbGJ8B@weasel>
-In-Reply-To:
- <dfc736a3b22d1a799ec0eb30c038d75120745610.1769013622.git.repk@triplefau.lt>
-References:
- <cover.1769013622.git.repk@triplefau.lt>
- <dfc736a3b22d1a799ec0eb30c038d75120745610.1769013622.git.repk@triplefau.lt>
+	s=arc-20240116; t=1770913128; c=relaxed/simple;
+	bh=m3MppjwD0lziKrRCb4QXyYxGwpqTA2YX+2nAh2ew2LI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IKfLabrj0pNSLZVu73yMML2MwS1Rwv+YcnhK32qucCEDpzNjwpiO1KK1AVz6ab8JOX5zZaAVAWaHEqoBBHAM455HfY6mXkJhaCKT7e68bDJ5bANJ11oEolOV9e4ixb+A0Ac31sqPX1B2MCa/iOu0/jUT2dAs8RBu5gnlRv5E8p0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 73033339;
+	Thu, 12 Feb 2026 08:18:38 -0800 (PST)
+Received: from GX9GF4H4XN (unknown [10.1.30.53])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3F2B03F63F;
+	Thu, 12 Feb 2026 08:18:43 -0800 (PST)
+From: Seunguk Shin <seunguk.shin@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev, jack@suse.cz,
+ willy@infradead.org, dan.j.williams@intel.com, Nick.Connolly@arm.com,
+ ffidencio@nvidia.com, seunguk.shin@arm.com
+Subject: [PATCH v2] fs/dax: check zero or empty entry before converting
+ xarray entry
+Date: Thu, 12 Feb 2026 16:18:33 +0000
+Message-ID: <m2tsvmue92.fsf@arm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [2.44 / 15.00];
-	SUSPICIOUS_URL_IN_SUSPICIOUS_MESSAGE(1.00)[];
-	MID_RHS_NOT_FQDN(0.50)[];
-	URIBL_RED(0.50)[triplefau.lt:email];
-	CTE_CASE(0.50)[];
+X-Spamd-Result: default: False [-0.86 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_MISSING_CHARSET(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
-	BAD_REP_POLICIES(0.10)[];
-	HAS_ANON_DOMAIN(0.10)[];
 	MIME_GOOD(-0.10)[text/plain];
+	DMARC_POLICY_SOFTFAIL(0.10)[arm.com : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77027-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	DMARC_POLICY_ALLOW(0.00)[crudebyte.com,quarantine];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	R_DKIM_ALLOW(0.00)[crudebyte.com:s=kylie];
-	DKIM_TRACE(0.00)[crudebyte.com:+];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[linux_oss@crudebyte.com,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	TAGGED_FROM(0.00)[bounces-77028-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[seunguk.shin@arm.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ARC_ALLOW(0.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(0.00)[+ip6:2600:3c0a:e001:db::/64:c];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	TO_DN_SOME(0.00)[]
-X-Rspamd-Queue-Id: E7FB912F07B
+	RCVD_COUNT_FIVE(0.00)[5];
+	R_DKIM_NA(0.00)[];
+	TO_DN_NONE(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,nvidia.com:email,suse.cz:email]
+X-Rspamd-Queue-Id: DD2DF12F459
 X-Rspamd-Action: no action
 
-On Wednesday, 21 January 2026 20:56:10 CET Remi Pommarel wrote:
-> Currently, when cache=loose is enabled, file reads are cached in the
-> page cache, but symlink reads are not. This patch allows the results
-> of p9_client_readlink() to be stored in the page cache, eliminating
-> the need for repeated 9P transactions on subsequent symlink accesses.
-> 
-> This change improves performance for workloads that involve frequent
-> symlink resolution.
-> 
-> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-> ---
->  fs/9p/vfs_addr.c       | 24 ++++++++++++--
->  fs/9p/vfs_inode.c      |  6 ++--
->  fs/9p/vfs_inode_dotl.c | 73 +++++++++++++++++++++++++++++++++++++-----
->  3 files changed, 90 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
-> index 862164181bac..ee672abbb02c 100644
-> --- a/fs/9p/vfs_addr.c
-> +++ b/fs/9p/vfs_addr.c
-> @@ -70,10 +70,19 @@ static void v9fs_issue_read(struct netfs_io_subrequest
-> *subreq) {
->  	struct netfs_io_request *rreq = subreq->rreq;
->  	struct p9_fid *fid = rreq->netfs_priv;
-> +	char *target;
->  	unsigned long long pos = subreq->start + subreq->transferred;
-> -	int total, err;
-> -
-> -	total = p9_client_read(fid, pos, &subreq->io_iter, &err);
-> +	int total, err, len, n;
-> +
-> +	if (S_ISLNK(rreq->inode->i_mode)) {
-> +		err = p9_client_readlink(fid, &target);
+Trying to convert zero or empty xarray entry causes kernel panic.
 
-Treadlink request requires 9p2000.L. So this would break with legacy protocol
-versions 9p2000 and 9p2000.u I guess:
+[    0.737679] EXT4-fs (pmem0p1): mounted filesystem 79676804-7c8b-491a-b2a6-9bae3c72af70 ro with ordered data mode. Quota mode: disabled.
+[    0.737891] VFS: Mounted root (ext4 filesystem) readonly on device 259:1.
+[    0.739119] devtmpfs: mounted
+[    0.739476] Freeing unused kernel memory: 1920K
+[    0.740156] Run /sbin/init as init process
+[    0.740229]   with arguments:
+[    0.740286]     /sbin/init
+[    0.740321]   with environment:
+[    0.740369]     HOME=/
+[    0.740400]     TERM=linux
+[    0.743162] Unable to handle kernel paging request at virtual address fffffdffbf000008
+[    0.743285] Mem abort info:
+[    0.743316]   ESR = 0x0000000096000006
+[    0.743371]   EC = 0x25: DABT (current EL), IL = 32 bits
+[    0.743444]   SET = 0, FnV = 0
+[    0.743489]   EA = 0, S1PTW = 0
+[    0.743545]   FSC = 0x06: level 2 translation fault
+[    0.743610] Data abort info:
+[    0.743656]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+[    0.743720]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[    0.743785]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[    0.743848] swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000000b9d17000
+[    0.743931] [fffffdffbf000008] pgd=10000000bfa3d403, p4d=10000000bfa3d403, pud=1000000040bfe403, pmd=0000000000000000
+[    0.744070] Internal error: Oops: 0000000096000006 [#1]  SMP
+[    0.748888] CPU: 0 UID: 0 PID: 1 Comm: init Not tainted 6.18.4 #1 NONE
+[    0.749421] pstate: 004000c5 (nzcv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    0.749969] pc : dax_disassociate_entry.constprop.0+0x20/0x50
+[    0.750444] lr : dax_insert_entry+0xcc/0x408
+[    0.750802] sp : ffff80008000b9e0
+[    0.751083] x29: ffff80008000b9e0 x28: 0000000000000000 x27: 0000000000000000
+[    0.751682] x26: 0000000001963d01 x25: ffff0000004f7d90 x24: 0000000000000000
+[    0.752264] x23: 0000000000000000 x22: ffff80008000bcc8 x21: 0000000000000011
+[    0.752836] x20: ffff80008000ba90 x19: 0000000001963d01 x18: 0000000000000000
+[    0.753407] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+[    0.753970] x14: ffffbf3154b9ae70 x13: 0000000000000000 x12: ffffbf3154b9ae70
+[    0.754548] x11: ffffffffffffffff x10: 0000000000000000 x9 : 0000000000000000
+[    0.755122] x8 : 000000000000000d x7 : 000000000000001f x6 : 0000000000000000
+[    0.755707] x5 : 0000000000000000 x4 : 0000000000000000 x3 : fffffdffc0000000
+[    0.756287] x2 : 0000000000000008 x1 : 0000000040000000 x0 : fffffdffbf000000
+[    0.756871] Call trace:
+[    0.757107]  dax_disassociate_entry.constprop.0+0x20/0x50 (P)
+[    0.757592]  dax_iomap_pte_fault+0x4fc/0x808
+[    0.757951]  dax_iomap_fault+0x28/0x30
+[    0.758258]  ext4_dax_huge_fault+0x80/0x2dc
+[    0.758594]  ext4_dax_fault+0x10/0x3c
+[    0.758892]  __do_fault+0x38/0x12c
+[    0.759175]  __handle_mm_fault+0x530/0xcf0
+[    0.759518]  handle_mm_fault+0xe4/0x230
+[    0.759833]  do_page_fault+0x17c/0x4dc
+[    0.760144]  do_translation_fault+0x30/0x38
+[    0.760483]  do_mem_abort+0x40/0x8c
+[    0.760771]  el0_ia+0x4c/0x170
+[    0.761032]  el0t_64_sync_handler+0xd8/0xdc
+[    0.761371]  el0t_64_sync+0x168/0x16c
+[    0.761677] Code: f9453021 f2dfbfe3 cb813080 8b001860 (f9400401)
+[    0.762168] ---[ end trace 0000000000000000 ]---
+[    0.762550] note: init[1] exited with irqs disabled
+[    0.762631] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
 
-https://wiki.qemu.org/Documentation/9p#9p_Protocol
+This patch just reorders checking and converting.
 
-> +		len = strnlen(target, PAGE_SIZE - 1);
+Fixes: 38607c62b34b ("fs/dax: properly refcount fs dax pages")
+Signed-off-by: Seunguk Shin <seunguk.shin@arm.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Alistair Popple <apopple@nvidia.com>
+---
+Changes in v2:
+- Add Fixes and Reviewed-by tags.
+- Rebase on the latest.
+- Link to v1: https://lore.kernel.org/lkml/18af3213-6c46-4611-ba75-da5be5a1c9b0@arm.com/T/#r7160ab8ce8b04db157ea73a7c203b2c69626bfc6
+---
+ fs/dax.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Usually we are bound to PATH_MAX.
+diff --git a/fs/dax.c b/fs/dax.c
+index 289e6254aa30..de316be2cc4e 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -443,11 +443,12 @@ static void dax_associate_entry(void *entry, struct address_space *mapping,
+                                unsigned long address, bool shared)
+ {
+        unsigned long size = dax_entry_size(entry), index;
+-       struct folio *folio = dax_to_folio(entry);
++       struct folio *folio;
 
-Target link path is coming from 9p server, which may run another OS and
-therefore target might be longer than PATH_MAX, in which case it would always
-yield in -ENAMETOOLONG when client requests that link target from cache.
+        if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry))
+                return;
 
-But OTOH there is no real alternative for storing a link target in cache that
-can never be delivered to user. So I guess it is OK as-is.
++       folio = dax_to_folio(entry);
+        index = linear_page_index(vma, address & ~(size - 1));
+        if (shared && (folio->mapping || dax_folio_is_shared(folio))) {
+                if (folio->mapping)
+@@ -468,21 +469,23 @@ static void dax_associate_entry(void *entry, struct address_space *mapping,
+ static void dax_disassociate_entry(void *entry, struct address_space *mapping,
+                                bool trunc)
+ {
+-       struct folio *folio = dax_to_folio(entry);
++       struct folio *folio;
 
-Simply using PATH_MAX would make it worse, as it would potentially silently
-shorten the link from host.
+        if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry))
+                return;
 
-> +		n = copy_to_iter(target, len, &subreq->io_iter);
-> +		if (n != len)
-> +			err = -EFAULT;
-> +		total = i_size_read(rreq->inode);
-> +	} else
-> +		total = p9_client_read(fid, pos, &subreq->io_iter, &err);
-> 
->  	/* if we just extended the file size, any portion not in
->  	 * cache won't be on server and is zeroes */
-> @@ -99,6 +108,7 @@ static void v9fs_issue_read(struct netfs_io_subrequest
-> *subreq) static int v9fs_init_request(struct netfs_io_request *rreq, struct
-> file *file) {
->  	struct p9_fid *fid;
-> +	struct dentry *dentry;
->  	bool writing = (rreq->origin == NETFS_READ_FOR_WRITE ||
->  			rreq->origin == NETFS_WRITETHROUGH ||
->  			rreq->origin == NETFS_UNBUFFERED_WRITE ||
-> @@ -115,6 +125,14 @@ static int v9fs_init_request(struct netfs_io_request
-> *rreq, struct file *file) if (!fid)
->  			goto no_fid;
->  		p9_fid_get(fid);
-> +	} else if (S_ISLNK(rreq->inode->i_mode)) {
-> +		dentry = d_find_alias(rreq->inode);
-> +		if (!dentry)
-> +			goto no_fid;
-> +		fid = v9fs_fid_lookup(dentry);
-> +		dput(dentry);
-> +		if (IS_ERR(fid))
-> +			goto no_fid;
->  	} else {
->  		fid = v9fs_fid_find_inode(rreq->inode, writing, INVALID_UID, true);
->  		if (!fid)
-> diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-> index a82a71be309b..e1b762f3e081 100644
-> --- a/fs/9p/vfs_inode.c
-> +++ b/fs/9p/vfs_inode.c
-> @@ -302,10 +302,12 @@ int v9fs_init_inode(struct v9fs_session_info *v9ses,
->  			goto error;
->  		}
-> 
-> -		if (v9fs_proto_dotl(v9ses))
-> +		if (v9fs_proto_dotl(v9ses)) {
->  			inode->i_op = &v9fs_symlink_inode_operations_dotl;
-> -		else
-> +			inode_nohighmem(inode);
++       folio = dax_to_folio(entry);
+        dax_folio_put(folio);
+ }
 
-What is that for?
+ static struct page *dax_busy_page(void *entry)
+ {
+-       struct folio *folio = dax_to_folio(entry);
++       struct folio *folio;
 
-> +		} else {
->  			inode->i_op = &v9fs_symlink_inode_operations;
-> +		}
-> 
->  		break;
->  	case S_IFDIR:
-> diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
-> index 6312b3590f74..486b11dbada3 100644
-> --- a/fs/9p/vfs_inode_dotl.c
-> +++ b/fs/9p/vfs_inode_dotl.c
-> @@ -686,9 +686,13 @@ v9fs_vfs_symlink_dotl(struct mnt_idmap *idmap, struct
-> inode *dir, int err;
->  	kgid_t gid;
->  	const unsigned char *name;
-> +	umode_t mode;
-> +	struct v9fs_session_info *v9ses;
->  	struct p9_qid qid;
->  	struct p9_fid *dfid;
->  	struct p9_fid *fid = NULL;
-> +	struct inode *inode;
-> +	struct posix_acl *dacl = NULL, *pacl = NULL;
-> 
->  	name = dentry->d_name.name;
->  	p9_debug(P9_DEBUG_VFS, "%lu,%s,%s\n", dir->i_ino, name, symname);
-> @@ -702,6 +706,15 @@ v9fs_vfs_symlink_dotl(struct mnt_idmap *idmap, struct
-> inode *dir,
-> 
->  	gid = v9fs_get_fsgid_for_create(dir);
-> 
-> +	/* Update mode based on ACL value */
-> +	err = v9fs_acl_mode(dir, &mode, &dacl, &pacl);
-> +	if (err) {
-> +		p9_debug(P9_DEBUG_VFS,
-> +			 "Failed to get acl values in symlink %d\n",
-> +			 err);
-> +		goto error;
-> +	}
-> +
->  	/* Server doesn't alter fid on TSYMLINK. Hence no need to clone it. */
->  	err = p9_client_symlink(dfid, name, symname, gid, &qid);
-> 
-> @@ -712,8 +725,30 @@ v9fs_vfs_symlink_dotl(struct mnt_idmap *idmap, struct
-> inode *dir,
-> 
->  	v9fs_invalidate_inode_attr(dir);
-> 
-> +	/* instantiate inode and assign the unopened fid to the dentry */
-> +	fid = p9_client_walk(dfid, 1, &name, 1);
-> +	if (IS_ERR(fid)) {
-> +		err = PTR_ERR(fid);
-> +		p9_debug(P9_DEBUG_VFS, "p9_client_walk failed %d\n",
-> +			 err);
-> +		goto error;
-> +	}
-> +
-> +	v9ses = v9fs_inode2v9ses(dir);
-> +	inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
-> +	if (IS_ERR(inode)) {
-> +		err = PTR_ERR(inode);
-> +		p9_debug(P9_DEBUG_VFS, "inode creation failed %d\n",
-> +			 err);
-> +		goto error;
-> +	}
-> +	v9fs_set_create_acl(inode, fid, dacl, pacl);
-> +	v9fs_fid_add(dentry, &fid);
-> +	d_instantiate(dentry, inode);
-> +	err = 0;
->  error:
->  	p9_fid_put(fid);
-> +	v9fs_put_acl(dacl, pacl);
->  	p9_fid_put(dfid);
->  	return err;
->  }
-> @@ -853,24 +888,23 @@ v9fs_vfs_mknod_dotl(struct mnt_idmap *idmap, struct
-> inode *dir, }
-> 
->  /**
-> - * v9fs_vfs_get_link_dotl - follow a symlink path
-> + * v9fs_vfs_get_link_nocache_dotl - Resolve a symlink directly.
-> + *
-> + * To be used when symlink caching is not enabled.
-> + *
->   * @dentry: dentry for symlink
->   * @inode: inode for symlink
->   * @done: destructor for return value
->   */
-> -
->  static const char *
-> -v9fs_vfs_get_link_dotl(struct dentry *dentry,
-> -		       struct inode *inode,
-> -		       struct delayed_call *done)
-> +v9fs_vfs_get_link_nocache_dotl(struct dentry *dentry,
-> +			       struct inode *inode,
-> +			       struct delayed_call *done)
->  {
->  	struct p9_fid *fid;
->  	char *target;
->  	int retval;
-> 
-> -	if (!dentry)
-> -		return ERR_PTR(-ECHILD);
-> -
->  	p9_debug(P9_DEBUG_VFS, "%pd\n", dentry);
-> 
->  	fid = v9fs_fid_lookup(dentry);
-> @@ -884,6 +918,29 @@ v9fs_vfs_get_link_dotl(struct dentry *dentry,
->  	return target;
->  }
-> 
-> +/**
-> + * v9fs_vfs_get_link_dotl - follow a symlink path
-> + * @dentry: dentry for symlink
-> + * @inode: inode for symlink
-> + * @done: destructor for return value
-> + */
-> +static const char *
-> +v9fs_vfs_get_link_dotl(struct dentry *dentry,
-> +		       struct inode *inode,
-> +		       struct delayed_call *done)
-> +{
-> +	struct v9fs_session_info *v9ses;
-> +
-> +	if (!dentry)
-> +		return ERR_PTR(-ECHILD);
-> +
-> +	v9ses = v9fs_inode2v9ses(inode);
-> +	if (v9ses->cache & (CACHE_META|CACHE_LOOSE))
-> +		return page_get_link(dentry, inode, done);
-> +
-> +	return v9fs_vfs_get_link_nocache_dotl(dentry, inode, done);
-> +}
-> +
->  int v9fs_refresh_inode_dotl(struct p9_fid *fid, struct inode *inode)
->  {
->  	struct p9_stat_dotl *st;
+        if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry))
+                return NULL;
 
-
++       folio = dax_to_folio(entry);
+        if (folio_ref_count(folio) - folio_mapcount(folio))
+                return &folio->page;
+        else
+--
+2.34.1
 
