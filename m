@@ -1,306 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-77034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +LlUMHkLjmmS+wAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 18:18:49 +0100
+	id QHEPFzIOjmmS+wAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 18:30:26 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2697012FD7A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 18:18:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7EF712FEDF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 18:30:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A843D303F7D0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 17:17:58 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 1CAD1304DF3F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 17:28:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F27B201113;
-	Thu, 12 Feb 2026 17:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA7F254849;
+	Thu, 12 Feb 2026 17:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kUEZ0jbI"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XIy3TT71"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CB21C68F
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 17:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73BB710785
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 17:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770916676; cv=none; b=TDivqvahhmcjNn31QL9EetvtXLGuX0XtfjtDk84bLkZG0VOVTyHa3ALA6wr++a/BrghiQJ1Q+hRuqeA89fvJm1bKmD2TVkUjid9HjK/xKc7b0O9AulJpz6zWE4lWYUZNIMEpR6hypVp3vVaHyuL8Ja3cbIY+XBHa0eojH3PSSK4=
+	t=1770917292; cv=none; b=S9xIbcgdT38mcU2+zYkTJ1DG2jwRvk5rz7VSGBTBhXAR8bYMMFmtjlbdi9b5X4UiLFCKdTUmXdL/ItZKp7SFmc+kf2eTLLaQ2NNKXhMtJwxJBNCVJ1x9LQ3Gnthr3DBODYTX2JxT9pzNKU8cX79MNy5CNY1Xdd4aq6rj3+kLYRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770916676; c=relaxed/simple;
-	bh=afg2NR2w1P/RT1c6C3CFDBOb7QacoEa/taowW/ZYNEI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DZNpjZ0eT1VTUm15l7CZRgdWRa18eSNzMTnntYcYaiz1uZaV8a6MbwVn3IGlMMCQPWpNgqfn3Ikj0jipUvAnvlV3dyU1ciie0AgM7jTr79jysHg/rauFsKf+5d26z1chlBsbHN/+0yHj78Hm/OCm1+geATdmtsx6IHrtg5eA6C8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kUEZ0jbI; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-43770c94dfaso106508f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 09:17:55 -0800 (PST)
+	s=arc-20240116; t=1770917292; c=relaxed/simple;
+	bh=9dFXQISDxL93Ll0tQt1xHxOXQRq59lDegTnGV4eIz+E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IG+ApBb2oBPHu13FSMHJxCVqOmCgC3DuUFyDEs5zTZpbd0P/+16U7vrRsopBWMvz/m+8LPL9JUwNjTSIQNCpAO1enen2lMNQU1dbucPrSQFxVYC6iFHTzd3J/7VRAie2PcsWFourUTDdNKi9vUP3/8UoY9XHZ1VU8BAKzj4+o/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XIy3TT71; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-65815ec51d3so8130a12.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 09:28:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770916674; x=1771521474; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RZFiyy84JqXJnR6+ogt/LyFANHx9ok1PPIcxri4URUI=;
-        b=kUEZ0jbIsLLCZUAe7xUE1J97A4aFxWCm0X3Njz+qfqzf9WaeBqAyRC9BgL6DOz2SYR
-         k9PhRcsNpnbsKjsjRAENcD81EXJxtNKrbMCHJr00U0dWYiriGiAsgS3vSxgqW/w0yC58
-         d3yFC2M8Vvuxj8b/F4lWpyknffF+SWXaaX//pw1nkmOMQyetTlEjTiXUkzzGIUORsq4f
-         NRk2jDrLHD3u2EOkYVxZB4Psrti5IfB+rsR0mh4ZIwsi+/iBtxJbs6euKIzPGWNh/ZDo
-         kf22gVruwB0pdC6/6Pt82GDvM9Mscpm5FH3J0djQRsIM2CKfLQRqOwtFM/3Z1JN3XnFk
-         6mTA==
+        d=linux-foundation.org; s=google; t=1770917288; x=1771522088; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=mVJ/CuM1fMI5SkVoKZQh228Ino+XF61yJs8+K8VHNN8=;
+        b=XIy3TT71RO1yugM6DnyUsFJV8XTwJ3N2GwAjVJ0RtqMfwxLkdPC7Xot/aauQtuDY3J
+         AuuRs0OZsolA5C38PQWvPxCuE20Z8tPtsgoiKrgO5QdfuzM80tToZ4VZaqUGZhpNGgrs
+         5OuMh9FaEMqhpEWpOfC65OTln2EJ1MQtBzSLQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770916674; x=1771521474;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=RZFiyy84JqXJnR6+ogt/LyFANHx9ok1PPIcxri4URUI=;
-        b=RYoC8J9auO+Ibr2iTveG6FbJwlNm3BBqGKGQ1uRlDet5LV2v2kChyufqWdMNtBPLkr
-         IGguFZYiBdSE2T/xaGGTiOpA4TA574P0Vy2BIOL9mXllr1Vu8QibFT7v0Bn7yAkAZ8pC
-         ArbRrbDVt7UT4lJxuCo79Ci5u7hOVBQZNI4OmU1N4WfWMlC5PzEJoSvF/Csu7Ckqhc8h
-         IGtmHIZL2YNMq55g+v3DXH3cGYxrW5vrQchE7wJ0eoeCcD3jNXP0TvN+MFWq7BmifVaq
-         nAs3qzE8GA0QuHrrtjxdaNTyw7Fl0se08UHwCo/sMIjCoKRCHmdESUz4D8pw7MRR1byl
-         aiNw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSCNNIoz3fowUP/yVj7NXSHBXRNPEyf3qV78E3NiAPQovzNLDGwRp8CF3/hriJYtpk03aH9+ZBx5IGyscl@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQSdaG1vuaz94BUiyd9QWPdq8tIqGu7Dj+oZMizOguXR6jmHoN
-	PW1pi/HbKAVdsbug6tABySeg9+LhyK2v/N7lTC2xRmf7Ouv3365Bt950
-X-Gm-Gg: AZuq6aJ0kHH70jsNqgKz6oSx5rGCQVZLRhVJFipj7PEe9UbJTBsqH7JiVfsphgARJBs
-	Bu39a0whPkv6IUGBXyiiKXr19iwqK5+KC8Az9SbYioOGiNsTzDFF4/kRgJMqNbjoEDJTYuNwPnm
-	BAVvjNADUD7E0YehG29gmF3XFqm9JwgXQYrc8WUkLrcKOVaJuxBMHa0wZuIpt96ZiD7cz/SeZgH
-	Frh6rRhdaXWgvOdAOR7wydaxKYIWP58bGkc8IQ0/s7n5A6o/1lUTvhOUMsZI5PwAHywPC1/7kQ8
-	zjExJcwqMm1u8jZzReCvQeI+VbHh6BgVawl3e0K4s2T0XoggB9dtULzPmJv54mDQKElq2VdRwPI
-	AqV+JXGjVIxbNtyxIaENqUzTa+aQfz8+Xd5+M3vIfXuC9Oh0hK9GrR1OFNr1NYiO7cW/dpkJE5w
-	nJ8m/DbOpFOZXmPLs7kkc=
-X-Received: by 2002:a05:6000:1acb:b0:430:fa58:a03d with SMTP id ffacd0b85a97d-4378f171792mr5892319f8f.63.1770916673453;
-        Thu, 12 Feb 2026 09:17:53 -0800 (PST)
-Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-43783d34657sm15602574f8f.6.2026.02.12.09.17.52
+        d=1e100.net; s=20230601; t=1770917288; x=1771522088;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mVJ/CuM1fMI5SkVoKZQh228Ino+XF61yJs8+K8VHNN8=;
+        b=hLincv/wsYn/u5UYqAwQ/jZf/B4Jnf7gvKya1oEqTDDFDq1OeiLB9pvhi8aT4YPij7
+         n6eCaKl0rAqzcixnAob1EQ7gI2N+SkqB3d5Hzu8jINTb/N12N0CJ6j3u4DyTgPea/WQE
+         P9P70OPkFlyAUA505dQXFM82GP+GcvaWX7aH0n2QUZce1Q1Z0IuCy2cODGy4KrJJmn4O
+         z3BbSUVo6cr4IUkcLXPxRwdYkAeDhNce0Uu8l4Ra530YLpVbgATgnfIRkq6ejbtbcIGn
+         hyKu2UupgcOxAjzl0PMUv2vkWnp1ng80mg/uTDse86ALi86AO9iSBRaP0mVuMbEmXhCV
+         Rq4A==
+X-Gm-Message-State: AOJu0Yw+HRunjXs/XrgRBMgabUYjBmGSClFuAIZmZ7uhxz0xCqPPMQnl
+	JRK4o/vNSNj4jn4rZJJMjXklF+ie9MSUW1FZY9ffgFJwiRTpq7XWeiLK9ljXVY9XA/sYfEPd6k/
+	/jEQgoi8=
+X-Gm-Gg: AZuq6aLJJsqC5tbQC9hxYejhF4C6tFp5+4qft5k7tUXZ4Lrt04SQvV6vdea529o+489
+	TMg4YSf9M8SjwEgOopl64JTKgCfZE7ceJRnAOe58Npib/TNt6ee5yE1NqmmueaFAPebjjBPoawg
+	5zdBP2RlsNKfPUBUgPcbvtmGPTgJid1+eSsVgG2rrkehysCmClIJjCnOzc8QVSP8OR1NZbXE1ev
+	+XxdwfUNI6wHPPVKfWD4ZL8LsfUmGQ9x8rz7j809KV+EmIu7a7ayVjO2Z/ooZIDPaejY2JGskIZ
+	WZorntzzZ364s9b+TPhUpDHwvxvSjbrle6zIk1oaQv+OKXzixuyV/oYRfcnKgUTTZ+xozlTWebV
+	YURgdqVE2DOm/NgkkQE3zLmXR2p3HEvUcDQIe0c13kczDH01KQ8zs0vfyV/PyEh8BBNK/k/pnz+
+	8bCkH4vMfdXBIs3X2HNQLUJvgZhvj28lCXjg++C4OA1H8V1V5WvyiNECxFLmEnOwAv/BvKlQin
+X-Received: by 2002:a05:6402:354b:b0:659:40a9:713a with SMTP id 4fb4d7f45d1cf-65b96d74ce1mr2041866a12.12.1770917288410;
+        Thu, 12 Feb 2026 09:28:08 -0800 (PST)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-65a3cebd31asm1922890a12.8.2026.02.12.09.28.07
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Feb 2026 09:17:52 -0800 (PST)
-From: Askar Safin <safinaskar@gmail.com>
-To: torvalds@linux-foundation.org
-Cc: christian@brauner.io,
-	hpa@zytor.com,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	werner@almesberger.net,
-	Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: [RFC] pivot_root(2) races
-Date: Thu, 12 Feb 2026 20:17:17 +0300
-Message-ID: <20260212171717.2927887-1-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <CAHk-=wikNJ82dh097VZbqNf_jAiwwZ_opzfvMr-8Ub3_1cx3jQ@mail.gmail.com>
-References: <CAHk-=wikNJ82dh097VZbqNf_jAiwwZ_opzfvMr-8Ub3_1cx3jQ@mail.gmail.com>
+        Thu, 12 Feb 2026 09:28:08 -0800 (PST)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6594382a264so26308a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 09:28:07 -0800 (PST)
+X-Received: by 2002:a05:6402:4489:b0:658:b9e9:5769 with SMTP id
+ 4fb4d7f45d1cf-65b96dd0d4emr1981946a12.20.1770917287580; Thu, 12 Feb 2026
+ 09:28:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAOg9mSS9BFayavpGQ=MWYR1HoUX=SSQ01JPYTRcJDVXbzsGAUw@mail.gmail.com>
+In-Reply-To: <CAOg9mSS9BFayavpGQ=MWYR1HoUX=SSQ01JPYTRcJDVXbzsGAUw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 12 Feb 2026 09:27:51 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wj5Frk61ez=5buGrdG0UqWp7ixR9QiCttzGwruczqKqsQ@mail.gmail.com>
+X-Gm-Features: AZwV_Qhn01HIl-FAckypkEGFRlL5YvqyL0zj9T7pC5zWio5lKAsyRD-sKzd06-g
+Message-ID: <CAHk-=wj5Frk61ez=5buGrdG0UqWp7ixR9QiCttzGwruczqKqsQ@mail.gmail.com>
+Subject: Re: [GIT PULL] orangefs changes for 7.0
+To: Mike Marshall <hubcap@omnibond.com>, Thorsten Blum <thorsten.blum@linux.dev>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[linux-foundation.org:s=google];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77034-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[safinaskar@gmail.com,linux-fsdevel@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-77035-lists,linux-fsdevel=lfdr.de];
+	TO_DN_ALL(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	RCVD_COUNT_FIVE(0.00)[5];
+	DKIM_TRACE(0.00)[linux-foundation.org:+];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DMARC_NA(0.00)[linux-foundation.org];
+	RCPT_COUNT_THREE(0.00)[3];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	MISSING_XM_UA(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[torvalds@linux-foundation.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,linux-foundation.org:email]
-X-Rspamd-Queue-Id: 2697012FD7A
+	MIME_TRACE(0.00)[0:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid,linux-foundation.org:dkim,omnibond.com:email]
+X-Rspamd-Queue-Id: A7EF712FEDF
 X-Rspamd-Action: no action
 
-Linus Torvalds <torvalds@linux-foundation.org>:
-> IOW, imagine that I'm system root, and I've naively done a "cd
-> /proc/<pid>/cwd" to look at the state of some sucker, and now...
-> 
-> Am I mis-reading things entirely, or can a random process in that
-> container (that has mount permissions in that thing) basically do
-> pivot_root(), and in the process change the CWD of that root process
-> that just happens to be looking at that container state?
+On Tue, 10 Feb 2026 at 14:41, Mike Marshall <hubcap@omnibond.com> wrote:
+>
+> orangefs: fixes for string handling in orangefs-debugfs.c and xattr.c,
+>           both sent in by Thorsten Blum.
 
-Yes, exactly. I just tested it. In the end of this letter you will find
-the code.
+So I've taken this, but I actually think it's done in a particularly ugly way.
 
-I tested on 6.12.48, but I'm nearly sure this applies to later versions, too.
+The thing is, strscpy() is the only *properly* designed string copying
+interface I am aware of, if I say so myself. And dammit, part of that
+"properly designed" is that it's actually much easier to use than what
+this code does.
 
-In my opinion this is a bug. We should make pivot_root change cwd and root
-for processes in the same mount and user namespace only, not all processes
-on the system. (And possibly also require "can ptrace" etc.)
+The code does "strlen + memcpy + special end handling + different
+string strscpy if overflow".
 
-This bug is yet another way for a container to mess with container runtime
-(so I CC Sarai).
+But strscpy() returns the resulting length (or error if overflow), so
+it's all kind of pointless. And you don't even have to pass in the
+size to strscpy() these days if the destination is an array that the
+strscpy() can figure out the size of itself.
 
-Here is how my code works. I assume we start as UID 0 (in any user namespace).
-Then I create child and in that child I change UID to 1, then in child I do
-unshare (CLONE_NEWUSER | CLONE_NEWNS).
+In this case, you can't do that size simplification, because you need
+one extra byte for the added termination, but you could still just use
+the nice sane error handling and the code could have just done
 
-Then in parent (which still runs as root) I do cd to /proc/$CHILD/cwd.
-
-Then in child I do pivot_root.
-
-And then parent sees that its cwd changed.
-
-The most important part is here:
-
-    ASSERT (access ("tmp/pivot_root", F_OK) == 0);
-    ASSERT (sleep (2) == 0); // Wait for "pivot_root" in child
-    ASSERT (access ("tmp/pivot_root", F_OK) != 0);
-
-We wait for pivot_root to happen, and then (using "access") we see that
-our cwd in fact changed.
-
-The program should print "OK" and nothing else. If it printed "OK", this
-will mean that we indeed can mess with outer processes.
-
-So we see that pivot_root can change cwd/root across users, user namespaces
-and mount namespaces.
-
--- 
-Askar Safin
-
-// Run this program as root (uid 0) in any user namespace
-// CLONE_NEWUSER should be enabled on the system (it is disabled in some distros)
-
-// You have two options to run this program. First as real root:
-// $ sudo ./prog
-// Second: as root inside a user namespace:
-// $ unshare --map-users auto --map-groups auto -r ./prog
-// (make sure you have "newuidmap" installed)
-
-// Written by me without LLMs...
-// Public domain
-
-// The program should print "OK" and nothing else. This will mean that processes
-// inside container indeed can change cwd of outer processes using pivot_root
-
-#define _GNU_SOURCE
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <sched.h>
-#include <unistd.h>
-#include <string.h>
-#include <errno.h>
-#include <sys/mman.h>
-#include <sys/wait.h>
-#include <sys/mount.h>
-#include <sys/stat.h>
-#include <sys/syscall.h>
-
-#define ASSERT(cond)       do { if (!(cond)) { fprintf (stderr, "%d: %s: failed\n", __LINE__, #cond); exit (EXIT_FAILURE); } } while (0)
-#define ASSERT_ERRNO(cond) do { if (!(cond)) { fprintf (stderr, "%d: %s: %m\n",     __LINE__, #cond); exit (EXIT_FAILURE); } } while (0)
-
-int
-main (void)
-{
-    ASSERT_ERRNO (chdir ("/") == 0);
-
-    // From previous runs
-    if (rmdir ("/tmp/pivot_root/new-root") == -1 && errno != ENOENT)
-        {
-            fprintf (stderr, "Cannot remove tmp dirs from previous run");
-            exit (EXIT_FAILURE);
-        }
-    if (rmdir ("/tmp/pivot_root") == -1 && errno != ENOENT)
-        {
-            fprintf (stderr, "Cannot remove tmp dirs from previous run");
-            exit (EXIT_FAILURE);
-        }
-
-    ASSERT (getuid () == 0);
-    ASSERT (getgid () == 0);
-
-    pid_t child = fork ();
-
-    ASSERT_ERRNO (child != -1);
-
-    if (child == 0)
-        {
-            ASSERT_ERRNO (setgid (1) == 0);
-            ASSERT_ERRNO (setuid (1) == 0);
-
-            ASSERT_ERRNO (mkdir ("/tmp/pivot_root", 0700) == 0);
-
-            ASSERT_ERRNO (unshare (CLONE_NEWUSER | CLONE_NEWNS) == 0);
-
-            ASSERT (sleep (2) == 0); // Wait for parent to setup uid_map, etc
-
-            ASSERT_ERRNO (mkdir ("/tmp/pivot_root/new-root", 0700) == 0);
-            ASSERT_ERRNO (mount ("tmpfs", "/tmp/pivot_root/new-root", "tmpfs", 0, NULL) == 0);
-            ASSERT_ERRNO (mkdir ("/tmp/pivot_root/new-root/put-old", 0700) == 0);
-            ASSERT_ERRNO (syscall (SYS_pivot_root, "/tmp/pivot_root/new-root", "/tmp/pivot_root/new-root/put-old") == 0);
-            exit (0);
-        }
-
-    ASSERT (sleep (1) == 0); // Wait for child to do unshare
-
-    // See "man 7 user_namespaces" about these /proc/self/uid_map, etc
-    {
-        char ss[1000];
-        ASSERT (snprintf (ss, sizeof ss, "/proc/%lld/uid_map", (long long)child) > 0);
-        int fd = open (ss, O_WRONLY);
-        ASSERT_ERRNO (fd != -1);
-        char s[] = "0 1 1";
-        ASSERT (write (fd, s, strlen (s)) == (ssize_t)strlen (s));
-        ASSERT_ERRNO (close (fd) == 0);
-    }
-    {
-        char ss[1000];
-        ASSERT (snprintf (ss, sizeof ss, "/proc/%lld/setgroups", (long long)child) > 0);
-        int fd = open (ss, O_WRONLY);
-        ASSERT_ERRNO (fd != -1);
-        ASSERT (write (fd, "deny", strlen ("deny")) == (ssize_t)strlen ("deny"));
-        ASSERT_ERRNO (close (fd) == 0);
-    }
-    {
-        char ss[1000];
-        ASSERT (snprintf (ss, sizeof ss, "/proc/%lld/gid_map", (long long)child) > 0);
-        int fd = open (ss, O_WRONLY);
-        ASSERT_ERRNO (fd != -1);
-        char s[] = "0 1 1";
-        ASSERT (write (fd, s, strlen (s)) == (ssize_t)strlen (s));
-        ASSERT_ERRNO (close (fd) == 0);
-    }
-    {
-        char s[1000];
-        ASSERT (snprintf (s, sizeof s, "/proc/%lld/cwd", (long long)child) > 0);
-        ASSERT_ERRNO (chdir (s) == 0);
+    len = strscpy(k_buffer, kernel_debug_string, sizeof(k_buffer)-1);
+    if (len  >= 0) {
+        // Add annoying termination
+        k_buffer[len] = '\n';
+        k_buffer[len+1] = 0;
+    } else {
+        strscpy(k_buffer, "none\n");
+        pr_info("%s: overflow 1!\n", __func__);
     }
 
-    // These 3 lines are the most important part
-    ASSERT (access ("tmp/pivot_root", F_OK) == 0);
-    ASSERT (sleep (2) == 0); // Wait for "pivot_root" in child
-    ASSERT (access ("tmp/pivot_root", F_OK) != 0);
+and look, you're all done.
 
-    {
-        int status;
-        ASSERT_ERRNO (waitpid (child, &status, 0) != -1);
-        ASSERT (WIFEXITED (status));
-        ASSERT (WEXITSTATUS (status) == 0);
-    }
+It's still not *pretty*, because that extra termination logic makes it
+all have that "sizeof(k_buffer)-1" thing, but for saner interfaces you
+can literally just do
 
-    printf ("OK\n");
+        if (unlikely(strscpy(dst, src) < 0))
+                strscpy(dst, "overflow");
 
-    return 0;
-}
+and it's all safe and really easy to read because strscpy() returns an
+*error* for overflow (in fact, it doesn't even know the full length,
+because it will also stop reading the source string and not overflow
+that either!)
+
+And so no 'strlen()' or 'memcpy()' games are necessary, and the above
+is actually safe even if the source is modified concurrently (well,
+you'll get possibly broken data, but you'll always get a proper
+terminated newline because the 'len' is always consistent with what
+was copied by strscpy).
+
+So I just want to encourage people to use 'strscpy()' and take
+advantage of the very useful return value it has, unlike pretty much
+every standard C string function.
+
+                 Linus
 
