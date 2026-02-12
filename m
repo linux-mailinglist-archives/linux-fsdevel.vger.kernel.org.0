@@ -1,98 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-77009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id sGMMHM2ujWmz5wAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 11:43:25 +0100
+	id 2GFGAiqvjWmz5wAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 11:44:58 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCB4A12CA0A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 11:43:24 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B3E112CA4F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 11:44:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 570D03005AFA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 10:43:22 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 7306530148B3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 10:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B982ED848;
-	Thu, 12 Feb 2026 10:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6402F0C48;
+	Thu, 12 Feb 2026 10:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="PDehIW8N";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZhUjiY+V"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XhYj/0IT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D11D2264CA;
-	Thu, 12 Feb 2026 10:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255472264CA
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 10:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770892997; cv=none; b=nir687wYZIw0VhtIRenHLK9hadJHd9/KP8Wgi73JOtJXWwLed84Y423A68LAiNkbVlkMH8CIOcXpYFbZqiAkAInCmi21BE3mDyXyj191m2PhcxvMo3n4JY98O58grTvWbmKnPIbcr8V48eykCU/l8HAljJ7DB8MVYvYLEiU3bTM=
+	t=1770893087; cv=none; b=ligeLkaLgNhghU/4du5Vdf7mzYqVB+dUUzwV52KhOjMhMEpPy0mn7LDQgTK8uAkXuwLjJkSAnk9Na1Rg/SCwg6S5gf/BTrRlLBP4+kwJKDQ1NCpSQDNEHdbNgaO0BO+w1TF25kPBa5OHG0ggRIo89nxzeFqj2ZdQ4Ua1JEjCQkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770892997; c=relaxed/simple;
-	bh=SLgJE01bWWa0FPWHi9V4oSI4esf3y+mypKNgWTe8FvM=;
+	s=arc-20240116; t=1770893087; c=relaxed/simple;
+	bh=17MwG0yNTIWpU9UvgmGZnQhE/JU3V+aOKX7otvBm+KE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VGzskR57ke1JzeuXn8u/7g++fw/CCCpeRsMJZIx9cQw7WUBwID01eWA0UQh/+q/2JsiOEBcOmCaNDLr5qG+hM4ZmgRxRyZyQRRXpVVqZ1MvFGiYZrzCExKLy1h6l6az9doqmuMA9Q5efdPa7aany54Gr/aPfO6bQSNxW00s270c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=PDehIW8N; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZhUjiY+V; arc=none smtp.client-ip=202.12.124.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfout.stl.internal (Postfix) with ESMTP id 23EAD1D000D7;
-	Thu, 12 Feb 2026 05:43:15 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Thu, 12 Feb 2026 05:43:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1770892994;
-	 x=1770979394; bh=wrd12z2EhMQ5s/OYJOHKXYKBIX1C3bjuFL/tldxF+xI=; b=
-	PDehIW8Nf1t5Wxjnmix4T9+4zHxvmmjwYTwosGez9gVHfGwUAdDX/3jw9m9mv9iA
-	iQ9LBpGOs57iingnwktQ5jWOovRnQNxC3hYtRiWjdFbacmAzj/v0gu0gjCdFO17U
-	tUE+bFg33Brw0lXIjw8qbJ3kXQn6D/MnUyZNUsM1XyyUd0sLDExcwTH+WAPmD7am
-	bkB1N+jso/lEqTiy0PYZw7y2RISt/q1kkVH5tfOHSKfyOGzz6mVJRhHPazfLbGjC
-	Fp+fKrfzxF6xcLzQtJfbpau1Zul2GckweZ+b3/21VlOTBfhgwCyZxCIklYZPdkog
-	t1IpUzZS65re3LocTPUnqQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1770892994; x=
-	1770979394; bh=wrd12z2EhMQ5s/OYJOHKXYKBIX1C3bjuFL/tldxF+xI=; b=Z
-	hUjiY+VoZ5SfWwcoLzTHi4W7FYQ2gK7I1b6zaG1eIruTWwHCp24VK+zazDuH79an
-	WvyeJv/M2roMvyscG+DOvzRccqrud6WNSV4dcc7l4v3EaxFHBCNDnRKRjPCfFhsX
-	fHvSKIvp69cXXJFavgAADKJ3zV5bx6j5bFOUUZhnfEPu55dQdPO62iObZb45flvX
-	hbm/9YI+wJkCOo58lGZDYAnJNV4UX+EyHcXcU/ZYQn0CSXjcWmAzzGxOqXgY7Ypu
-	7RYN3g0XgJ+/rAzToBoBgO7GP4uupTLPbXLzLcsjqHulowMlDc2G+HFiJwE6BJXv
-	5gRdR076CMV3/1i9C2yow==
-X-ME-Sender: <xms:wq6NaRLuMW46DCvtr7m6r3oP3Cx2BNueoVIrkK7w6xdFUmy9AsUUiA>
-    <xme:wq6NaXKnp1Bhgt7Lcjfzk6_UvDDW0eegqU-Hi0-WyU-jVpUwncNA8_nhb-xcUwpJi
-    rnCav_2QiEp4x1xSolRcEfZ8F1BCMEficcec5Nf7ZvTWuXrXAA>
-X-ME-Received: <xmr:wq6NaQVGKVm04uhHJv_gkqzNGtUqINsz3a86RM1P-gIJYTIIsdK57o950mSJ-cnavyei8_a5ONZNzLhgDdbrQQkIM91Mi7FdsyccP0fQ_O3Uwih8pw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvtdehudejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghrnhgu
-    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
-    htthgvrhhnpeehhfejueejleehtdehteefvdfgtdelffeuudejhfehgedufedvhfehueev
-    udeugeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    gsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgtphhtthhopeekpdhmohguvgep
-    shhmthhpohhuthdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtg
-    hpthhtohephhhorhhsthessghirhhthhgvlhhmvghrrdgtohhmpdhrtghpthhtohepsghs
-    tghhuhgsvghrthesuggunhdrtghomhdprhgtphhtthhopehjohgrnhhnvghlkhhoohhngh
-    esghhmrghilhdrtghomhdprhgtphhtthhopehluhhishesihhgrghlihgrrdgtohhmpdhr
-    tghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehhsghirhhthhgvlhhmvghrseguughnrdgtohhm
-X-ME-Proxy: <xmx:wq6NaQlMz84FpyiT8lssXM5x2DBb8zvjNK-8rq6206ImXt5Hr3Geag>
-    <xmx:wq6NaWnGorVVLYV83fxZX6LczpgY3saRG6RTkfLPJvVb97fhc78rzA>
-    <xmx:wq6NaQaxEL7bVp11g4h4fa3RT09pnpXLGBj4fYjMQxa7VAxo5RC80Q>
-    <xmx:wq6NaYSYzNgdgO1MPeh85NIMSNjLMuDKQRES2uVeNYXmfpzlcxHFLw>
-    <xmx:wq6NaWAoDB7anB6JUIAxhhMqqVzoY01EGXGe88ksAR1E4Xq_IJ3JXkyZ>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 12 Feb 2026 05:43:13 -0500 (EST)
-Message-ID: <d37cca3f-217d-4303-becd-c82a3300b199@bsbernd.com>
-Date: Thu, 12 Feb 2026 11:43:12 +0100
+	 In-Reply-To:Content-Type; b=mxJaRa44CnN6GHybWtTjcTZtbIdf6iLdPr1xZ3B7UM5iRBZzU5AoH6giXxiR5bcI61iCseEKtczJ0b52leij3rqFM+p+MutU+EeECmYkbSkkL8sUkWABfL2n8HAhGp4FxBq45P0GR9r77dLTo+SSn/BhbrXbgOJFK9yHumjJlHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XhYj/0IT; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-47ee07570deso58321005e9.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 02:44:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770893084; x=1771497884; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QHBRvvNw0TKsfp498JIu6yBHF4UlvOdwxk8GoEvvLQI=;
+        b=XhYj/0ITf64ffJUY1leh9M/7e/izPPGUg3xcvOokJI5CxJTB4Q1aPtyAsti3SFJPMs
+         N9vvD9BGrp0PyIS+/QfgGLgdn9CNzHXKcEXURGb747eoUwVQi9ddurT0W9/8QMMABs1W
+         hkqO/bUZmpevnGmY376Rujp5iDtpycbfKszS6zCjOFXyM9/mxX5/tx57V5HQm83euq0P
+         stJoXnFQu8Z2CnMCdGWKV5lNqnahfgdclWcjmZY2iDiwiz0jNFhPdqUo3xS32SBSLJEC
+         n3qU/oETLG6aVKC74Bsu3C2yoNJ1corL25qvUPoDQKmJAz5P9kWrYOHtcOvw/abj9hRV
+         YMig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770893084; x=1771497884;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QHBRvvNw0TKsfp498JIu6yBHF4UlvOdwxk8GoEvvLQI=;
+        b=UaoUZyXWUk7ZSCBSrTTjPGyYKfeN/8gSwgSKdOG0RdP69Vyj97ShqYjgP80qPhPt5g
+         pky0H/W/yPQuAnMmyBmDttf2i2NYn2B2FLaG45RsEDmmVi8Gl04ku5dD3GPTfcrywlWR
+         1Gs8N5KAAmiruqx91yj8uQlKm41PZTSyOIe4u0os+2+JIJEra1ZpRGr8d/i6QmldYTgv
+         x9ngMaLwFqrfki37O7YipGpbzpaBguCc9Oae6T+48ohSM8WyT5TBUfKLh585AWJ1ST/e
+         QcQFqVyyHFFKmIZRV2QGohfyLDFx6nIzF5Adr41mgza15fygR/lgOhExBt9gX8S9iIWI
+         zJFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWusZNCILPLRXerAy/vylPbbO4700bP1UzuNVaZ2rz/s3Od1PAHzjf87IO9iGAZzkID1QST+zP9lBQA1uMO@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIWJP8HtrJAJDEu7OBI2VpF+klX/CuYMQaHp86f84N3mUSuDLY
+	2JVzBNYAGvwvF3BrRYL/Qm+yhyS9cYwyEuMtH3jSfwzhIF8YEX0+t4G7
+X-Gm-Gg: AZuq6aKVrbnUSVy2ynG/V4ro7WXDUTmBDfWREkgzFrjTBUuB84ykay9hzMcbXsWrjK8
+	2SMIAiJVJT/omJuMAzpWC3dMAuBdTrJhsjyQACOE2ERuoL24ZzFI27RbcEzJQFV3yiRJSZGTmXM
+	TsmBqvr11HnKhkQ2GffwI+BdEUc5uoHbbvkiYuGRpRD70Zv+8Kbtwv0kCohSeTke61Uqz2WL3Pd
+	lWKMFGQ0ELqs8yKXofU7fIgXadrTCKLS/O+tAkdWeAU7MF7PqMIywYLf1VX6zS/m0wmcm/qK/Vc
+	d9EcPA8OF1HPT1sp8D69FdO3RMDAVrR0tMkOxz3SVr7/2ZKsVJ5Sg1KvXyJlV4Kr8OcYkvcuyW9
+	9p75AOsU4l7WKO+t+CSBfVH8cGu/zt22jKiZdffJyKhaq0T5HpCmDJsZaLTGXGaC6t4Yp5w269g
+	NfGhFuIImC1Uzo05O88FJRGmM/WmlnIKwO5ljjttnA2kRRCVdPmb8xrkD0JzM52QZCWm4v6wW13
+	XsawZmyMVOu17wFNTQ+lGnlPeX5WC2vZgM4NHu7jHgPiOr5HMyrk23+NQU6ut+p8X3hlowT0ipb
+	wg==
+X-Received: by 2002:a05:600c:4e14:b0:477:561f:6fc8 with SMTP id 5b1f17b1804b1-483656ae486mr29560285e9.5.1770893084331;
+        Thu, 12 Feb 2026 02:44:44 -0800 (PST)
+Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4835bc7bd3fsm40732625e9.18.2026.02.12.02.44.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Feb 2026 02:44:43 -0800 (PST)
+Message-ID: <bd488a4e-a856-4fa5-b2bb-427280e6a053@gmail.com>
+Date: Thu, 12 Feb 2026 10:44:44 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -100,126 +88,84 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] fuse: add compound command to combine multiple
- requests
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Horst Birthelmer <horst@birthelmer.com>,
- Bernd Schubert <bschubert@ddn.com>, Joanne Koong <joannelkoong@gmail.com>,
- Luis Henriques <luis@igalia.com>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Horst Birthelmer <hbirthelmer@ddn.com>
-References: <20260210-fuse-compounds-upstream-v5-0-ea0585f62daa@ddn.com>
- <20260210-fuse-compounds-upstream-v5-1-ea0585f62daa@ddn.com>
- <CAJfpegvt0HwHOmOTzkCoOqdmvU6pf-wM228QQSauDsbcL+mmUA@mail.gmail.com>
- <f38cf69e-57b9-494b-a90a-ede72aa12a54@bsbernd.com>
- <CAJfpegscqhGikqZsaAKiujWyAy6wusdVCCQ1jirnKiGX9bE5oQ@mail.gmail.com>
- <bb5bf6c8-22b2-4ca8-808b-4a3c00ec72fd@bsbernd.com>
- <CAJfpegv4OvANQ-ZemENASyy=m-eWedx=yz85TL+1EFwCx+C9CQ@mail.gmail.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJfpegv4OvANQ-ZemENASyy=m-eWedx=yz85TL+1EFwCx+C9CQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v1 03/11] io_uring/kbuf: add support for kernel-managed
+ buffer rings
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Joanne Koong <joannelkoong@gmail.com>, axboe@kernel.dk,
+ io-uring@vger.kernel.org, csander@purestorage.com, krisman@suse.de,
+ bernd@bsbernd.com, linux-fsdevel@vger.kernel.org
+References: <20260210002852.1394504-1-joannelkoong@gmail.com>
+ <20260210002852.1394504-4-joannelkoong@gmail.com>
+ <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
+ <aYykILfX_u9-feH-@infradead.org>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <aYykILfX_u9-feH-@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[bsbernd.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[bsbernd.com:s=fm2,messagingengine.com:s=fm3];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,kernel.dk,vger.kernel.org,purestorage.com,suse.de,bsbernd.com];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[birthelmer.com,ddn.com,gmail.com,igalia.com,vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-77010-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77009-lists,linux-fsdevel=lfdr.de];
-	DKIM_TRACE(0.00)[bsbernd.com:+,messagingengine.com:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[bernd@bsbernd.com,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,messagingengine.com:dkim]
-X-Rspamd-Queue-Id: DCB4A12CA0A
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 2B3E112CA4F
 X-Rspamd-Action: no action
 
-
-
-On 2/12/26 11:16, Miklos Szeredi wrote:
-> On Thu, 12 Feb 2026 at 10:48, Bernd Schubert <bernd@bsbernd.com> wrote:
+On 2/11/26 15:45, Christoph Hellwig wrote:
+> On Tue, Feb 10, 2026 at 04:34:47PM +0000, Pavel Begunkov wrote:
+>>> +	union {
+>>> +		/* used for pbuf rings */
+>>> +		__u64	ring_addr;
+>>> +		/* used for kmbuf rings */
+>>> +		__u32   buf_size;
 >>
->>
->>
->> On 2/12/26 10:07, Miklos Szeredi wrote:
->>> On Wed, 11 Feb 2026 at 21:36, Bernd Schubert <bernd@bsbernd.com> wrote:
->>>
->>>> With simple request and a single request per buffer, one can re-use the
->>>> existing buffer for the reply in fuse-server
->>>>
->>>> - write: Do the write operation, then store the result into the io-buffer
->>>> - read: Copy the relatively small header, store the result into the
->>>> io-buffer
->>>>
->>>> - Meta-operations: Same as read
->>>
->>> Reminds me of the header/payload separation in io-uring.
->>>
->>> We could actually do that on the /dev/fuse interface as well, just
->>> never got around to implementing it:  first page reserved for
->>> header(s), payload is stored at PAGE_SIZE offset in the supplied
->>> buffer.
->>
->> Yeah, same here, I never came around to that during the past year.
->>
->>>
->>> That doesn't solve the overwriting problem, since in theory we could
->>> have a compound with a READ and a WRITE but in practice we can just
->>> disallow such combinations.
->>>
->>> In fact I'd argue that most/all practical compounds will not even have
->>> a payload and can fit into a page sized buffer.
->>
->> That is what Horst had said as well, until I came up with a use case -
->> write and immediately fetch updated attributes.
+>> If you're creating a region, there should be no reason why it
+>> can't work with user passed memory. You're fencing yourself off
+>> optimisations that are already there like huge pages.
 > 
-> Attributes definitely should fit in the reply header buffer.
+> Any pages mapped to userspace can be allocated in the kernel as well.
 
-And now let's include something more complex, let's say a write
-including a partial page write of an unknown page. With compounds
-fetching the entire page or just the missing part + file attributes
-becomes possible.
+pow2 round ups will waste memory. 1MB allocations will never
+become 2MB huge pages. And there is a separate question of
+1GB huge pages. The user can be smarter about all placement
+decisions.
 
-> 
->>> So as a first iteration can we just limit compounds to small in/out sizes?
->>
->> Even without write payload, there is still FUSE_NAME_MAX, that can be up
->> to PATH_MAX -1. Let's say there is LOOKUP, CREATE/OPEN, GETATTR. Lookup
->> could take >4K, CREATE/OPEN another 4K. Copying that pro-actively out of
->> the buffer seems a bit overhead? Especially as libfuse needs to iterate
->> over each compound first and figure out the exact size.
-> 
-> Ah, huge filenames are a thing.  Probably not worth doing
-> LOOKUP+CREATE as a compound since it duplicates the filename.  We
-> already have LOOKUP_CREATE, which does both.  Am I missing something?
+> And I really do like this design, because it means we can have a
+> buffer ring that is only mapped read-only into userspace.  That way
+> we can still do zero-copy raids if the device requires stable pages
+> for checksumming or raid.  I was going to implement this as soon
+> as this series lands upstream.
 
-I think you mean FUSE_CREATE? Which is create+getattr, but always
-preceded by FUSE_LOOKUP is always sent first? Horst is currently working
-on full atomic open based on compounds, i.e. a totally new patch set to
-the earlier versions. With that LOOKUP
+That's an interesting case. To be clear, user provided memory is
+an optional feature for pbuf rings / regions / etc., and I think
+the io_uring uapi should leave fields for the feature. However, I
+have nothing against fuse refusing to bind to buffer rings it
+doesn't like.
 
-Yes, we could use the same file name for the entire compound, but then
-individual requests of the compound rely on an uber info. This info
-needs to be created, it needs to be handled on the other side as part of
-the individual parts. Please correct me if I'm wrong, but this sounds
-much more difficult than just adding an info how much space is needed to
-hold the result?
+-- 
+Pavel Begunkov
 
-Thanks,
-Bernd
 
