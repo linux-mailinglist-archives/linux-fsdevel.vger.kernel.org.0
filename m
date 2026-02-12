@@ -1,159 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-77014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yDa9ESC9jWnL6QAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 12:44:32 +0100
+	id wLwKFO6+jWkZ6gAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 12:52:14 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 656AA12D1B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 12:44:31 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EBDD12D2FB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 12:52:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id B794930CA028
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 11:44:10 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 0B2AD303D640
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 11:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D934A345738;
-	Thu, 12 Feb 2026 11:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C65350A03;
+	Thu, 12 Feb 2026 11:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FhQMjqt9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp04-ext3.udag.de (smtp04-ext3.udag.de [62.146.106.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1222B2D8387;
-	Thu, 12 Feb 2026 11:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.146.106.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F82348440
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 11:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770896649; cv=none; b=UZGBnFxCAxTzarjVqAQy5VYq410GrTh0BwiR/iyKGKqor5+7w6sspmg8blNCGaf3YC/6nQtZddmYRf8gvZONAWDcaW16M8VTDqkYN4EWseanjrdaWHeuMFjLPTq+n3KmGbE0yaduAdcmzBRSMPm0TpxH/ZRbmI1Zjj21UdzZr6o=
+	t=1770897113; cv=none; b=PB6q0DAMJKROigSZ2HXub7lJVkoVSnLxT/GuJDIbCgOA5MnqniONJx4hVlEEDmDfDGo3WnwWmhwheaPkJas+MhsaexqU/5TrsLY2Y5Un0+ovNoJ5n09XC+IGjCTx13W7IWThZuuJwzNo+y5e7d93I0OtV3I68Jfjp7j/GAFB46M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770896649; c=relaxed/simple;
-	bh=1iOpcD8cAW9p3j1KP3XLR5LSGQN5xBh/93k9ztmSUkc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QiPp2TXHEPvB7V/V620ASwkuDbpeSMMiugXURwSH42JuwdBLMuTWjHEQJurv0qaJNwn1UayeFtmVF7PqPF3tJ6DPsMeD4kbCrF3WLfvO3c/h+dn6/RaUhreb16/JN6RUq+o5sSzJKBaNGC1KbOMoZAMbsvvMbAymFDQwAeuJYII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de; spf=pass smtp.mailfrom=birthelmer.de; arc=none smtp.client-ip=62.146.106.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birthelmer.de
-Received: from localhost (200-143-067-156.ip-addr.inexio.net [156.67.143.200])
-	by smtp04-ext3.udag.de (Postfix) with ESMTPA id 74050E05AB;
-	Thu, 12 Feb 2026 12:44:04 +0100 (CET)
-Authentication-Results: smtp04-ext3.udag.de;
-	auth=pass smtp.auth=birthelmercom-0001 smtp.mailfrom=horst@birthelmer.de
-Date: Thu, 12 Feb 2026 12:44:03 +0100
-From: Horst Birthelmer <horst@birthelmer.de>
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, 
-	Horst Birthelmer <horst@birthelmer.com>, Bernd Schubert <bschubert@ddn.com>, 
-	Joanne Koong <joannelkoong@gmail.com>, Luis Henriques <luis@igalia.com>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Horst Birthelmer <hbirthelmer@ddn.com>
-Subject: Re: Re: [PATCH v5 1/3] fuse: add compound command to combine
- multiple requests
-Message-ID: <aY25uu56irqfFVxG@fedora-2.fritz.box>
-References: <20260210-fuse-compounds-upstream-v5-0-ea0585f62daa@ddn.com>
- <20260210-fuse-compounds-upstream-v5-1-ea0585f62daa@ddn.com>
- <CAJfpegvt0HwHOmOTzkCoOqdmvU6pf-wM228QQSauDsbcL+mmUA@mail.gmail.com>
- <f38cf69e-57b9-494b-a90a-ede72aa12a54@bsbernd.com>
- <CAJfpegscqhGikqZsaAKiujWyAy6wusdVCCQ1jirnKiGX9bE5oQ@mail.gmail.com>
- <bb5bf6c8-22b2-4ca8-808b-4a3c00ec72fd@bsbernd.com>
- <CAJfpegv4OvANQ-ZemENASyy=m-eWedx=yz85TL+1EFwCx+C9CQ@mail.gmail.com>
- <d37cca3f-217d-4303-becd-c82a3300b199@bsbernd.com>
+	s=arc-20240116; t=1770897113; c=relaxed/simple;
+	bh=XjSWJvCqXNs6KFHlJCEjDBXFilEFAsp8RQ/y0dAQPl8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=fuPAF4BwAbPU531X/BDoHCxe2h7BLvypbSmkkavFipDeVdnwgPndx86DXm1TQLI+UEQhmPS2/8FdWB7neKKi0TLy5AkovyPhcaS1AXzgqR1S2tZf4agprnO/9EN1AZjBHZuSAESzT3SYWn4RDe1PmfB72B8P5jGiyp8EYEuobeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FhQMjqt9; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-385bc6910eeso26710931fa.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 03:51:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770897110; x=1771501910; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=icNB5xuvo+j+qezx7gqf5Y6Yw5qJ0+ofGzzhpNwJwdA=;
+        b=FhQMjqt90S68QJBXL9jHocY7B1/g5ZRIw4R14Jz+q8ubrflb3FFjMjVVlBxz2Hi0VC
+         0dnIBz/gzOseJszrl/f6To9dnq3zIQmBrE2uq6bq0Ovnr3t6Ia26bEm/EL3ZVhgKGiZZ
+         wQ//I9DlDaDkl9wDQF/XYTMzSS6V1ph0rqylYdQcs3t19ho+cjMCq+OqV9gLICvEpsZr
+         Y06Sm3TKWgqdUHJhAHoRcyfWmegywK32x990iLePGZFvgtE1Fpv0CJZ08tt3/hZBJNDx
+         yMjYZXUOv1u0ya1pDSipjc908Q1650HRawkTSMMf6GcDdJb2iLZfYEMQYvDiMb9kVIex
+         /d8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770897110; x=1771501910;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=icNB5xuvo+j+qezx7gqf5Y6Yw5qJ0+ofGzzhpNwJwdA=;
+        b=jnnAsCFBScdWdaKeL8XQTJU7PM5q62FB3Z3dBLvb/cOWZ1FSHaXKbdrwngwwuolFdX
+         79N5hKkgp/I24YZ9wnHMOnrHJrf0GEuMIMMoiMSJyAuPix+1xtS5YcpQXDfOHhsalVdS
+         B2Lcd46R32kgxO241EzEIXmSnM2ZOaGq2kSKqew3cyuicFbdSArr5cdEElnIqCVRcum5
+         EiE1XUB2oiNu2iz3RFmSYhCv48pYLv2YAKvMd5rBQNfubtN22HfASV+gwiIvJ6h96ajN
+         6EPLFxyKJ6UtMQfyYCuycagXyioEKHBy2nCGM6/xVl6UJ86UR3BnkZ25C17kC5116X22
+         wAYg==
+X-Gm-Message-State: AOJu0YwYeyqQS7z22QAlftSraHFxk/zbx/JN/dQuHbCVNOSq1aK6yDb/
+	C9zCiGJEclb1z99Au2u2wuunk+nB0aCowAlbMtqCVuqgaRHZiStJY9kSMjAp2Q==
+X-Gm-Gg: AZuq6aJnQSguBIhCmRF3swOSrr50lDGnnpvNtsTbOHyuFllCO3X6XXDNX2udXZTpZHW
+	fqeXyY+yZSUrRUZR6qcQ7+qQb5nNutOQQy9nY7UTwh8Isv7gilc3ys5JsUd5EtzZUfun5Cgg/pw
+	PkGLXip9AUe3q2gHoD8ObARyt2DZDf6mpwi5jvfzukOOm6/RRwM7leaO3K0Iu+c2IkgksyglHio
+	7EwW0WBQX0cilOFhD5+AU96nrHH4B/RudFKFxcW6Pv9QIyh/GXDrxeBZeEGsV2LsM8MFTNiEgJv
+	xCIGsKTfyW3pnifnzXfBOxZ5ln10PbGOdDXPdm1DiPDyD7DB6HThAVE1oB5zWcI6C3bmXituszo
+	/lCwMYzEM84mwHu537PfMJSaye6gmoxLurOdS9+5ISzwy2M/b2RTSgAKy+q8pmriLQ54mmmhAmg
+	6sL76jrVEMCxZ09ceMQvgaLyZhfs42Aa9pCaEk21y7fTby
+X-Received: by 2002:a05:651c:4193:b0:382:624d:a703 with SMTP id 38308e7fff4ca-38712c1064amr7134971fa.45.1770897109932;
+        Thu, 12 Feb 2026 03:51:49 -0800 (PST)
+Received: from [10.128.170.182] ([77.234.210.12])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3870689e107sm7206681fa.14.2026.02.12.03.51.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Feb 2026 03:51:48 -0800 (PST)
+Message-ID: <4b207a36-5789-41d2-ac17-df86d4cde6da@gmail.com>
+Date: Thu, 12 Feb 2026 14:51:47 +0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d37cca3f-217d-4303-becd-c82a3300b199@bsbernd.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: viro@zeniv.linux.org.uk, brauner@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org
+From: Vyacheslav Kovalevsky <slava.kovalevskiy.2014@gmail.com>
+Subject: File name is not persisted if opened with O_SYNC and O_TRUNC flags
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.36 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
-	DMARC_POLICY_SOFTFAIL(0.10)[birthelmer.de : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77014-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_CC(0.00)[szeredi.hu,birthelmer.com,ddn.com,gmail.com,igalia.com,vger.kernel.org];
 	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	TAGGED_FROM(0.00)[bounces-77015-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[horst@birthelmer.de,linux-fsdevel@vger.kernel.org];
-	MISSING_XM_UA(0.00)[];
-	R_DKIM_NA(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[slavakovalevskiy2014@gmail.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	TO_DN_NONE(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[9];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 656AA12D1B5
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 6EBDD12D2FB
 X-Rspamd-Action: no action
 
-On Thu, Feb 12, 2026 at 11:43:12AM +0100, Bernd Schubert wrote:
-> 
-> 
-> On 2/12/26 11:16, Miklos Szeredi wrote:
-> > On Thu, 12 Feb 2026 at 10:48, Bernd Schubert <bernd@bsbernd.com> wrote:
-> >> On 2/12/26 10:07, Miklos Szeredi wrote:
-> >>> On Wed, 11 Feb 2026 at 21:36, Bernd Schubert <bernd@bsbernd.com> wrote:
-> >>>
-> > 
-> >>> So as a first iteration can we just limit compounds to small in/out sizes?
-> >>
-> >> Even without write payload, there is still FUSE_NAME_MAX, that can be up
-> >> to PATH_MAX -1. Let's say there is LOOKUP, CREATE/OPEN, GETATTR. Lookup
-> >> could take >4K, CREATE/OPEN another 4K. Copying that pro-actively out of
-> >> the buffer seems a bit overhead? Especially as libfuse needs to iterate
-> >> over each compound first and figure out the exact size.
-> > 
-> > Ah, huge filenames are a thing.  Probably not worth doing
-> > LOOKUP+CREATE as a compound since it duplicates the filename.  We
-> > already have LOOKUP_CREATE, which does both.  Am I missing something?
-> 
-> I think you mean FUSE_CREATE? Which is create+getattr, but always
-> preceded by FUSE_LOOKUP is always sent first? Horst is currently working
-> on full atomic open based on compounds, i.e. a totally new patch set to
-> the earlier versions. With that LOOKUP
-> 
-> Yes, we could use the same file name for the entire compound, but then
-> individual requests of the compound rely on an uber info. This info
-> needs to be created, it needs to be handled on the other side as part of
-> the individual parts. Please correct me if I'm wrong, but this sounds
-> much more difficult than just adding an info how much space is needed to
-> hold the result?
+Detailed description
+====================
 
-I have a feeling we have different use cases in mind and misunderstand each other.
+Hello, there seems to be an issue with O_SYNC flag when used together 
+with O_TRUNC on various file systems.
+Opening a file with O_SYNC (or using fsync(fd)) should persist directory 
+entry.
+However, if O_SYNC is used together with O_TRUNC the file will be 
+missing if system crashes.
+According to POSIX this is OK, but most file systems provide stronger 
+guarantees (would be actually nice to have a more recent documentation 
+on this behavior).
+This happens on Btrfs, ext4, XFS, F2FS and likely other file systems.
 
-As I see it:
-From the discussion a while ago that actually started the whole thing I understand
-that we have combinations of requests that we want to bunch together for a 
-specific semantic effect. (see OPEN+GETATTR that started it all)
 
-If that is true, then bunching together more commands to create 'compounds' that
-semantically linked should not be a problem and we don't need any algorithm for 
-recosntructing the args. We know the semantics on both ends and craft the compounds
-according to what is to be accomplished (the fuse server just provides the 'how')
+System info
+===========
 
-From the newer discussion I have a feeling that there is the idea floating around
-that we should bunch together arbitrary requests to have some performance advantage.
-This was not my initial intention.
-We could do that however if we can fill the args and the requests are not 
-interdependent.
+Linux version 6.19-rc7, also tested on 6.17
 
-If we can signal to the fuse server what we expect as result 
-(at least the allocated memory) I think we can do both, but I would like to have the
-emphasis more on the semantic grouping for the moment.
 
-Do you guys think that there will ever be a fuse server that doesn't support compounds
-and all of them are handled by something like libfuse and the request handlers are just 
-called without having to handle not even one unseparatebale semantic 'group'?
+How to reproduce
+================
 
-> 
-> Thanks,
-> Bernd
+```
+#include <errno.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main() {
+   int status;
+
+   status = creat("file", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+   printf("CREAT: %d\n", status);
+   close(status);
+
+   status = open("file", O_RDWR | O_TRUNC | O_SYNC);
+   printf("OPEN: %d\n", status);
+}
+// after the crash `file` is missing
+```
+
+Steps:
+1. Create and mount new file system in default configuration.
+2. Change directory to root of the file system and run the compiled test.
+3. Cause hard system crash (e.g. QEMU `system_reset` command).
+4. Remount file system after crash.
+5. Observe that file is missing.
+
 
