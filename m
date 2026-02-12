@@ -1,250 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-77063-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77064-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0CLgDiBfjmm1BwEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77063-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 00:15:44 +0100
+	id eGZaOkZfjmm1BwEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77064-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 00:16:22 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 912E5131B04
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 00:15:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65ED2131B1A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 00:16:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 010653112878
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 23:14:43 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 25CA4306B4C3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 23:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D902F12C5;
-	Thu, 12 Feb 2026 23:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="VJjlENBy"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254ED1D5147;
+	Thu, 12 Feb 2026 23:15:47 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com [209.85.161.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3EA23370FA
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 23:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DE2219FF
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 23:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770938081; cv=none; b=Rw+G3/EdVwaa/d73U60diEePQwM9H5t91IhOFBH8DtlwXE0TehqGEpjCxVb4BLsqQ7hXzu19N6j8E2GYTe7JKZhnbqjHnqkWecC/hh34aAyQs8aHMvKtMAq0Mq/4Vl4J4N8G+dTNHeqJeO/vdTXfLGp3554ojA/R+OPsaYkswNQ=
+	t=1770938146; cv=none; b=bB2c7LLf7XY4LlHgbkijYGQC6u4AgmugDXt85Z2jsMPhWlGKDK8Fjxmb/IGS5mxmZfBfH08h6XNdrsgDVFXatp0Mo9ucc3Fem3R5Qw8dsiDcsEHjgOTzU+2gn9YV4Bm78ETYCC1tOAxRdw4G6Y32szxEV4uHxrjG01qS3RpLzf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770938081; c=relaxed/simple;
-	bh=8PzBjb1BC5IXRuE5/L3hohJrpfpYHnZMV57JAQRQuYc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IXYlwyEtaZshBzfnYZr4nqdIhE0W/w8d7hL8xFln4zzF+cb0oJ9Q9fzFt1z3TcRImH13YGnVVAoSwFZgP5/v88EZGzzJwFKR4dFR9K5NA2l6BADv3kd3Rhe2YpvOV8FKE4+heJVE/AL+tmpd7OK9nnosiw05/zwPiqaC+rQvnto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=VJjlENBy; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=zetier.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zetier.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-8ca01dc7d40so41802285a.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 15:14:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=zetier.com; s=gm; t=1770938079; x=1771542879; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=25FG61RMxEgfldkZ2mHU1yb2uvHGCvudsNE5iAmhPxI=;
-        b=VJjlENByO95814WM0MIiXALYOGMla1uaAap0cb6ewbpuj3EhDK6C/SAim7vzBb7s8S
-         x7AvOx0ohz660XtPBT4JrLMBKkLyc8Njk3qr+Nmp5F8Q3jy7u4YP6yb2c7YUA6CVCq72
-         9XkNmXoqBLxUfKrROwMfGuqZFHC/Kdo4qk6mMFFf56c/ZWvKXRarT0KGQ/2OxDFH4GBa
-         layX9Gh2yz3gtp8fDgw5nnhdKTe0YF/x+d6WiEfHU5kEg4FwgSRtotwCrqbRxWnz11gh
-         IqWu+swSpc1kWhWulYH5aiu3i1qXBgLvj74VBLgcTJyqzgvs+Tp0sQHDqBkrzzG/6DcI
-         spAg==
+	s=arc-20240116; t=1770938146; c=relaxed/simple;
+	bh=xBzQzJmq14YXIxHtefoP8HVoVs+qDCcNJL8CgWa2Vlk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=arCeP8HidmOiZAgmAAGHkTeuQKcgXrzLzL9U4V5xiKJ9zEcb7cv3DxqH0Dormi7N/Wp/krwCnyQP3bNSHh/lAmnURnwmT6wrYZSi8BdpXpeOxqlvwjUwMijXcRhz6+pcI7C/ISZn2E4tuEQ7ffGoeqKdms5VKU6bQMwHF+jCoKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-6744760f6daso1836845eaf.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 15:15:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770938079; x=1771542879;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=25FG61RMxEgfldkZ2mHU1yb2uvHGCvudsNE5iAmhPxI=;
-        b=v/FciCRRR90EcYVNdR3FnaUEdb+n0WCFgdFPrdunZmxmM04FaQv+wWtVcZP75XN1RJ
-         LKcHwMuzjboEpxJi56ujDhTZYPS//Wd5SYFGEOKXxoSWiyFQMQnfz5FrdnzCrec5rkob
-         0AOI4nWjKMmu2AMNBg3cOSXKmzGjh7oUYu1KtbDqJDDQwqp3vI3SI7juKODaiuwX9h2I
-         Khml9Q/OJAw4C1N/fbW1Y7MBeqinC5xm0oCITLOTU2Tw093b4obk7nNcR1eR6D16CVIZ
-         6WSKMlIyCNSyRd90yngrjx02OSlfJyArrjpEvJ5tjVYKLLaQ4peCRjyUQX5qx3gzS3vE
-         5q3A==
-X-Gm-Message-State: AOJu0YzwAGEBwBFm4N/8yh204CMv+EX7hwbTYBwmIbUwsPKz/VhGkAM2
-	nZ4l1WgqRA41VnWUSudl4NkZ3YgdDfLgHXixy0S7+iGlqxhVbzp88jKGRVYQLaE/QPI=
-X-Gm-Gg: AZuq6aIgVtuevOJHregF1DuMC/lJAVT/lrDjbVziEuez3enk8kPKpO5bQMCOTOkxeDD
-	wS2EAbgolyNNWM5thRqAKOzYXjnaUkM5nZMzXDp+X4THNn72u9PntQFJ10bEc3YV6Q9xMivaMEw
-	sBpcwi3Ay5CxQTfwaNsZQ7HRtjEsMCE748WQmGqTx4XNWRLgcykqDwb4FQtcio1i1SW5AdKcYAe
-	Ao2YV0gkogN23P1jSn6PhWIiQ/INONoC3HP0Tfr9SjRFTt6PufNQh1jN3zPEnCypsSBaH8yuE+U
-	CVuy0Cq5nOFfMFdMF6idTwp6Z865PRwR0uTTz2ruw06cv4mQbJTGJN8Lp68nput1SxWJy9mEema
-	z0XSF5QKfbB4Bva3XFb+FrDGlblpjIeGiicjFMNNkFMwNcMx10sal+TMpAYpPkJKzXV5cIfIHQ8
-	Q8LA6WZwJu2BbLRZBIOyM/RkFSEPXtPMBW76mqlbFBECn6cGHgB42hIyxr+T4OVOx7T/wSX4a8o
-	P8=
-X-Received: by 2002:a05:620a:1aa1:b0:8b2:2066:ffd3 with SMTP id af79cd13be357-8cb4091c0cbmr78529485a.81.1770938078773;
-        Thu, 12 Feb 2026 15:14:38 -0800 (PST)
-Received: from warpstation.incus (243.69.21.34.bc.googleusercontent.com. [34.21.69.243])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cb2b1c8505sm441165385a.25.2026.02.12.15.14.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Feb 2026 15:14:38 -0800 (PST)
-From: Ethan Ferguson <ethan.ferguson@zetier.com>
-To: luisbg@kernel.org,
-	salah.triki@gmail.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ethan Ferguson <ethan.ferguson@zetier.com>
-Subject: [PATCH 2/2] befs: Add FS_IOC_SETFSLABEL ioctl
-Date: Thu, 12 Feb 2026 18:13:39 -0500
-Message-ID: <20260212231339.644714-3-ethan.ferguson@zetier.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260212231339.644714-1-ethan.ferguson@zetier.com>
-References: <20260212231339.644714-1-ethan.ferguson@zetier.com>
+        d=1e100.net; s=20230601; t=1770938144; x=1771542944;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O0lu37aLRPPLTFeHLhq/Qr8lpi3+g+Cq8dO+U82KwgA=;
+        b=MwMTegFkCTGGbuKdyTO/SgPZt7UqwQ/LqehT3PR6h/7iGyWYe1tTvCJp5mQR/42yBU
+         sX6GN1AGdcK7TB9tk5gaPxWpyRxGuP30hK+h0L+MpuVCnKNpIaWPMe0klXdPVYitCrRs
+         yvMn4e7My90ve95gzCIruoPblSG6vtM1k87Q02LwK27uqSGpcKB+BvKq4HSxn8Lk/1k5
+         myVdv7NcdEMmNBhKrLhNzUhEj83Uv6GexUR0SVBsVeP1V/ZjZo6Us33CFNMhN8onszME
+         ZIItxJxi1ltaG7SizXZO0gvFZjV4HxmKio/MbeuQCtiV4rsr4/M8YOExSyYMPRjLrVM5
+         CFyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQmC8eUrLfRd98QxjuLuKBcbWNwewqh7ATG+KUYkIb12vm9VFXySGebclj1fr0wRf8whvp0c4IdaEDKttK@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVIIheMXkJJ1nSh41dUAZ1Zi1FedwnJgKy/6TwPeW3VKwP2m+1
+	Ew4EozGduVMWilD7rqnzGfzZPsCoctARuiDyMsnwqXErqo58dFH5OeG8dKCezWXzWifbUokms3Q
+	qj9qXcInIWFyN+9Ht4nXbBht8wE4koUWLbj5aNl7zItaqojamUt3Az1nsnhw=
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6820:160c:b0:674:a4e1:18e6 with SMTP id
+ 006d021491bc7-677216fc46bmr262479eaf.24.1770938144573; Thu, 12 Feb 2026
+ 15:15:44 -0800 (PST)
+Date: Thu, 12 Feb 2026 15:15:44 -0800
+In-Reply-To: <20260212170849.12455-1-almaz.alexandrovich@paragon-software.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <698e5f20.a70a0220.2c38d7.00a5.GAE@google.com>
+Subject: [syzbot ci] Re: fs/ntfs3: add delayed-allocation (delalloc) support
+From: syzbot ci <syzbot+cife27aa3114ea3df8@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.84 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.36 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[zetier.com,quarantine];
-	R_DKIM_ALLOW(-0.20)[zetier.com:s=gm];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
+	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_TO(0.00)[kernel.org,gmail.com];
-	TO_DN_SOME(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77063-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[ethan.ferguson@zetier.com,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[zetier.com:+];
-	RCVD_COUNT_FIVE(0.00)[5];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MISSING_XM_UA(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[zetier.com:mid,zetier.com:dkim,zetier.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 912E5131B04
+	R_DKIM_NA(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[appspotmail.com:email,googlegroups.com:email,syzbot.org:url,googlesource.com:url,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
+	RCVD_TLS_LAST(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	PRECEDENCE_BULK(0.00)[];
+	TO_DN_NONE(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77064-lists,linux-fsdevel=lfdr.de,cife27aa3114ea3df8];
+	RCPT_COUNT_FIVE(0.00)[6]
+X-Rspamd-Queue-Id: 65ED2131B1A
 X-Rspamd-Action: no action
 
-Add the FS_IOC_SETFSLABEL ioctl to the befs filesystem.
+syzbot ci has tested the following series
 
-Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
+[v1] fs/ntfs3: add delayed-allocation (delalloc) support
+https://lore.kernel.org/all/20260212170849.12455-1-almaz.alexandrovich@paragon-software.com
+* [PATCH] fs/ntfs3: add delayed-allocation (delalloc) support
+
+and found the following issue:
+WARNING in ntfs_extend_initialized_size
+
+Full report is available here:
+https://ci.syzbot.org/series/13e78e99-d298-48f9-b81b-be0931799244
+
+***
+
+WARNING in ntfs_extend_initialized_size
+
+tree:      linux-next
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next
+base:      9152bc8cebcb14dc16b03ec81f2377ee8ce12268
+arch:      amd64
+compiler:  Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
+config:    https://ci.syzbot.org/builds/b551b487-d04a-4a8a-89aa-575a75c69c23/config
+C repro:   https://ci.syzbot.org/findings/c8966f1e-fd77-42d2-8f24-1e7b54ac54dd/c_repro
+syz repro: https://ci.syzbot.org/findings/c8966f1e-fd77-42d2-8f24-1e7b54ac54dd/syz_repro
+
+loop0: detected capacity change from 0 to 4096
+------------[ cut here ]------------
+is_compressed(ni)
+WARNING: fs/ntfs3/file.c:236 at ntfs_extend_initialized_size+0x1dc/0x210 fs/ntfs3/file.c:236, CPU#1: syz.0.17/5975
+Modules linked in:
+CPU: 1 UID: 0 PID: 5975 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:ntfs_extend_initialized_size+0x1dc/0x210 fs/ntfs3/file.c:236
+Code: 0d ff 4c 89 33 31 ed eb 05 e8 70 8b a3 fe 89 e8 48 83 c4 18 5b 41 5c 41 5d 41 5e 41 5f 5d e9 9b a6 8e 08 cc e8 55 8b a3 fe 90 <0f> 0b 90 e9 31 ff ff ff 89 d1 80 e1 07 80 c1 03 38 c1 0f 8c e1 fe
+RSP: 0018:ffffc90004547c30 EFLAGS: 00010293
+RAX: ffffffff8322128b RBX: ffff8881a8229670 RCX: ffff88810ba49d00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000800 R08: ffff8881a8229737 R09: 1ffff110350452e6
+R10: dffffc0000000000 R11: ffffed10350452e7 R12: 0000000000000110
+R13: 0000000000000ef0 R14: 1ffff110350452ce R15: 0000000000000000
+FS:  000055555ee59500(0000) GS:ffff8882a9460000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f811e871980 CR3: 000000010f87c000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ ntfs_fallocate+0xf21/0x1220 fs/ntfs3/file.c:670
+ vfs_fallocate+0x669/0x7e0 fs/open.c:340
+ ksys_fallocate fs/open.c:364 [inline]
+ __do_sys_fallocate fs/open.c:369 [inline]
+ __se_sys_fallocate fs/open.c:367 [inline]
+ __x64_sys_fallocate+0xc0/0x110 fs/open.c:367
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f811e99bf79
+Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffecc78b558 EFLAGS: 00000246 ORIG_RAX: 000000000000011d
+RAX: ffffffffffffffda RBX: 00007f811ec15fa0 RCX: 00007f811e99bf79
+RDX: 0000000000000003 RSI: 0000000000000000 RDI: 0000000000000005
+RBP: 00007f811ea327e0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000006 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f811ec15fac R14: 00007f811ec15fa0 R15: 00007f811ec15fa0
+ </TASK>
+
+
+***
+
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+  Tested-by: syzbot@syzkaller.appspotmail.com
+
 ---
- fs/befs/linuxvfs.c | 64 ++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 51 insertions(+), 13 deletions(-)
-
-diff --git a/fs/befs/linuxvfs.c b/fs/befs/linuxvfs.c
-index 4850295e5fe0..4425ae5b6ed0 100644
---- a/fs/befs/linuxvfs.c
-+++ b/fs/befs/linuxvfs.c
-@@ -753,6 +753,23 @@ static int befs_show_options(struct seq_file *m, struct dentry *root)
- 	return 0;
- }
- 
-+static befs_super_block *befs_get_disk_sb(struct super_block *sb,
-+					   struct buffer_head *bh)
-+{
-+	const off_t x86_sb_off = 512;
-+	befs_super_block *ret = (befs_super_block *) bh->b_data;
-+
-+	if ((ret->magic1 == BEFS_SUPER_MAGIC1_LE) ||
-+	    (ret->magic1 == BEFS_SUPER_MAGIC1_BE)) {
-+		befs_debug(sb, "Using PPC superblock location");
-+	} else {
-+		befs_debug(sb, "Using x86 superblock location");
-+		ret = (befs_super_block *) ((void *) bh->b_data + x86_sb_off);
-+	}
-+
-+	return ret;
-+}
-+
- /* This function has the responsibiltiy of getting the
-  * filesystem ready for unmounting.
-  * Basically, we free everything that we allocated in
-@@ -761,9 +778,21 @@ static int befs_show_options(struct seq_file *m, struct dentry *root)
- static void
- befs_put_super(struct super_block *sb)
- {
--	kfree(BEFS_SB(sb)->mount_opts.iocharset);
--	BEFS_SB(sb)->mount_opts.iocharset = NULL;
--	unload_nls(BEFS_SB(sb)->nls);
-+	struct befs_sb_info *befs_sb = BEFS_SB(sb);
-+	struct buffer_head *bh = NULL;
-+	befs_super_block *disk_sb;
-+
-+	bh = sb_bread(sb, 0);
-+	if (bh) {
-+		disk_sb = befs_get_disk_sb(sb, bh);
-+		memcpy(disk_sb->name, befs_sb->name, B_OS_NAME_LENGTH);
-+		mark_buffer_dirty(bh);
-+		brelse(bh);
-+	}
-+
-+	kfree(befs_sb->mount_opts.iocharset);
-+	befs_sb->mount_opts.iocharset = NULL;
-+	unload_nls(befs_sb->nls);
- 	kfree(sb->s_fs_info);
- 	sb->s_fs_info = NULL;
- }
-@@ -798,7 +827,6 @@ befs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	struct inode *root;
- 	long ret = -EINVAL;
- 	const unsigned long sb_block = 0;
--	const off_t x86_sb_off = 512;
- 	int blocksize;
- 	struct befs_mount_options *parsed_opts = fc->fs_private;
- 	int silent = fc->sb_flags & SB_SILENT;
-@@ -842,15 +870,7 @@ befs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	}
- 
- 	/* account for offset of super block on x86 */
--	disk_sb = (befs_super_block *) bh->b_data;
--	if ((disk_sb->magic1 == BEFS_SUPER_MAGIC1_LE) ||
--	    (disk_sb->magic1 == BEFS_SUPER_MAGIC1_BE)) {
--		befs_debug(sb, "Using PPC superblock location");
--	} else {
--		befs_debug(sb, "Using x86 superblock location");
--		disk_sb =
--		    (befs_super_block *) ((void *) bh->b_data + x86_sb_off);
--	}
-+	disk_sb = befs_get_disk_sb(sb, bh);
- 
- 	if ((befs_load_sb(sb, disk_sb) != BEFS_OK) ||
- 	    (befs_check_sb(sb) != BEFS_OK))
-@@ -963,6 +983,22 @@ static int befs_ioctl_get_volume_label(struct super_block *sb, char __user *arg)
- 	return 0;
- }
- 
-+static int befs_ioctl_set_volume_label(struct super_block *sb, char __user *arg)
-+{
-+	struct befs_sb_info *sbi = BEFS_SB(sb);
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (sb_rdonly(sb))
-+		return -EROFS;
-+
-+	if (copy_from_user(sbi->name, arg, B_OS_NAME_LENGTH))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
- static long befs_generic_ioctl(struct file *filp, unsigned int cmd,
- 			       unsigned long arg)
- {
-@@ -972,6 +1008,8 @@ static long befs_generic_ioctl(struct file *filp, unsigned int cmd,
- 	switch (cmd) {
- 	case FS_IOC_GETFSLABEL:
- 		return befs_ioctl_get_volume_label(inode->i_sb, user);
-+	case FS_IOC_SETFSLABEL:
-+		return befs_ioctl_set_volume_label(inode->i_sb, user);
- 	default:
- 		return -ENOTTY;
- 	}
--- 
-2.43.0
-
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
