@@ -1,232 +1,220 @@
-Return-Path: <linux-fsdevel+bounces-77036-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77037-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id sJ+kAQ8OjmmS+wAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77036-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 18:29:51 +0100
+	id GDxTIdQOjmmS+wAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77037-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 18:33:08 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A579912FEAB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 18:29:50 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1963C12FF60
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 18:33:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 17E263011144
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 17:29:50 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 9DF1D303EFE7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 17:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF9B134AB;
-	Thu, 12 Feb 2026 17:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422A521D3F2;
+	Thu, 12 Feb 2026 17:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bQaPPedn"
+	dkim=pass (2048-bit key) header.d=toxicpanda.com header.i=@toxicpanda.com header.b="UZTVNTcp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com [74.125.82.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97E524503C
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 17:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6403820299B
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 17:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.169
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770917385; cv=pass; b=jC1nIj/S/cJJEcB1qEya1O5B22diZ6LC1rhPnZkgv1qq/q9leCcubr/VV9c0F0/p66Q1JyVV4Gp5Tga05ADjAL/ZXAc8ZzlMT48EcOPr3kW091JdkdLCqeL4uRLrZOY+cqDMWpPYR3FSu1JJh8pCDjUisd9MEbIYoEhYkzw3EnE=
+	t=1770917556; cv=pass; b=rusAYxJOYUII8Uk2ZUGd3JkKoP+bi3gE5WhiK1m62p0XfYGVzRSF7JHezLu+yQd2Zgtm2o3k+pr5iJrxua32GY9syFwYRG/h7V4EQSNM+RHrvw0qx2VGJ7Zd6tOIKFCcJrdyV4Nswt0GnDC3o/KlqndCw1lEMz9IxCkJxV0yEzg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770917385; c=relaxed/simple;
-	bh=1EByc7pPcUDpjYuGji62SyQGdnhfUhO6Z5xF3S7UI6s=;
+	s=arc-20240116; t=1770917556; c=relaxed/simple;
+	bh=jA3vKtvIe29yuhDoNQ+3kLGUSzJYS7igXV3C81VNVcI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sdVQc/FUI9yY/bIFe7+DNCaWjEzfR2ERWg07Qca31cWQG9SghPgqihb5CvIWL9mTkaUsvlBF7C1jSezPnE9fyzdC7RyW0JkGwKJhyZzmOkWqLMHEn3EWsCXpJZL7d8J/lthvfuFuSCVGWmg9qGkfEeyC1NJcLE+okjV5UROLckQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bQaPPedn; arc=pass smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-506362ac5f7so819211cf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 09:29:43 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770917383; cv=none;
+	 To:Cc:Content-Type; b=oq1sH+4HN1H0oBs/UweyTqJw5fMT7j5ruD1PrRjtA0UTbAMM6sJ0gKzp07V9FziE99Ewn4bjlPmKowVjfyd1N1djOYAOSYHaDwBP86u4obeWMPlPE4z9eQMIgWL5SZJf3i8oHEl6x7kg3mrB6OfOWANivQKAhimDj2FxXwzvSUA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=pass smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda.com header.i=@toxicpanda.com header.b=UZTVNTcp; arc=pass smtp.client-ip=74.125.82.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toxicpanda.com
+Received: by mail-dy1-f169.google.com with SMTP id 5a478bee46e88-2b4520f6b32so111282eec.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 09:32:35 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770917554; cv=none;
         d=google.com; s=arc-20240605;
-        b=WRT4Wg8MTdCVMRKKsKvQFeC5Ffgjxi1o8mtTY/GL5yLL9lDLki2dNbREobQsathP12
-         dReyW5b442e021LFSqbfukrovXFu+BrHup8EO6lJw59+9UkDv7ew1rlpS556807xHXsq
-         BGBmc0FmKrC9vSpp1e0ShBK2jm5wGgOYEspPT+Fc821ubL9yTFUSpIVsV1dGpTQCE3iF
-         GABRM5csXrzuf68kyY9vO7obhKxpVhSXnOOYDFJrsGDDqpt2/Dsmmfj8yMQcR/ze0UWw
-         JLDDsk+mdrdl2SOTn/KKx1zCLeEuxXpstb+9V56wy119cFRmaG6MVQTUbw1gRSxrlsKN
-         ZPHg==
+        b=dyZbZo9TCMKjz3VSnmDFCd9nloyEjSLtpzYWBR3QmQuuRy3XwLa7UJpmkriQDSqgyK
+         l7n7Qcf+lrz62t+yQDU3KyH4uPg5CjeePgwRearYBCzIjupD2SUJhq76FeyDcparigfX
+         BG4bgSR9j4ms50E8H0Tqs/Hf041nQx2hRy9a68hIbWcKguNjyxolkUD/H12YllCac2j1
+         sM2JuaPVExB5HxdNmYiTEox7EeJ/YWmuBC2po1XJ6ze/qS0gHZbKmyDL2RYTmsue1rcD
+         z8zNDzABUIUKo313c6FLcHRBpD5rX55JQuX7ZOnQAcyn6Brgbq+pfFyuQXnaNMJvj9sN
+         auSA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=gGRtar0eNrSBMa5mAb00tI7qTYYP3hc8LonPzVdLY28=;
-        fh=XwgNKj8nxDgd3hq6Qn9C74v12vaZ8b1KE9FfcW+Fy5w=;
-        b=C6Qk5s8IrVADHSgTDFlkXfjRYi6/P8BTGWWeHhZOqTWA6XSu10Z/+1h36ddVIeu04a
-         8w/HWHYZNf7JlmkI0RSyB1hpVe6cDjwS9+cGgvNbVhe8EHh+TmVJTRJr9N2D2Cm4ssiH
-         sWnG7NLWlgbLe84WDhuRnHchZoSqFeWpcwl9UfeHj/+mrkzMiMhInDCdMBMIYpEmwxGZ
-         H82Mah6s67raDUuu9OE+mBq8E2re79ScIlo1zbgkU+9ECctgQKX3GuqrdwaATbXtNA0k
-         xoPOnV1/oP1tuJHF3jriCj5f9XiRMc56XvUpzd90kKWzLjQ8B6dlrOCqej6zx/gxlCbZ
-         1p/w==;
+        bh=g4+TDkRhQp/+yy4ZBpH7qG5m9hlxN2cdFm2kx5yzMr0=;
+        fh=blKc9ajCF9wpgHB+PzKcKzM4bt+j2xFU2XGGXxDCrf8=;
+        b=fgA9QG1H3TVejlnPZlhgnRKYZ3nYpQNV8eb8HgvKdw41OPo0KMrUmE00Dz+GYK5/f6
+         97MNMF0+cNjRgJrx0v1a21qOLb69cI8r7s+NCldR9ni6SZX8QbSWtjiEuyP9qrwJAbDZ
+         zpxIzIxjJigF6vojJwWrZco1XU0qy/b8owKyIm59XWOeWU41CFIRxkzPogelHHVtQJ/2
+         IDxMMZAWljNKvY4vtdn1921SjqVp8RxSdaA9lSrqerLI+Sjcq7w9ZBAFg2WcWR/IMMiF
+         B7RFRVy40Zl4VSGH+vkz8owTzF7G6Ih1b7/JqtbxXQg3TUd3tSoF47P7Bc8jc72xlyho
+         Svvg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770917383; x=1771522183; darn=vger.kernel.org;
+        d=toxicpanda.com; s=google; t=1770917554; x=1771522354; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gGRtar0eNrSBMa5mAb00tI7qTYYP3hc8LonPzVdLY28=;
-        b=bQaPPednqGBAwKKDeymcmjSrv0os+UZgWjRwbXKDTFxhx/UUtNHm+6nkHWSAl9XjB7
-         wCQRVJEKTE2kL2LQaMK7b4QjSXJdDKA3xjlFjqio3S59xKTi8/PWTFMQQxJapcTyGRt4
-         pnCChn/FwM/8ZUF26owR/paWr0XpW6WKbtV+qtj5zmiQBzZ5WrzQsVz908pw/vdUk7Cd
-         hqE33zUsRhXGUh6o3ULYl+7XHwgC0SItoWLhH4xDekq2dMzVwCQCUvZhaRTddQ72b1EW
-         iB/nkwymvcQ1AMKUwgnk83ckgQUrtOq8hZW8CnPI5HCfBmBX7FDoU/3/tJxM9z4QJ9QD
-         Zd/w==
+        bh=g4+TDkRhQp/+yy4ZBpH7qG5m9hlxN2cdFm2kx5yzMr0=;
+        b=UZTVNTcpRUbmaROh8WT1+tvdTMq1UDX8sZNRsen2hcgRxffzrewEpwu8TPXiM8etqr
+         ju4MsJwpEfm5U/rslVYX97pDlN9NiXt81qIMjJtW5ldQlMIiEd+eKYYfQln1tYwoCqf2
+         OGFSlZlFTHP6HNH1G4y3jQvrHW2ZiNzGvGTSqXvVzNejUxruiwDuu8hpw+3DUasMNFrZ
+         o8YwmhxEONFTEcnq45ZOhFp2PYD+So9UjTZvZxwn/x4pXYooTUOfcSaslSh/X5IIaLkK
+         QYQpZiUbDiBuf1ya3cPIMcTJAJjMfmZ0S3xisgrP0lFW5UW6zmfoiY9lkBOafXUn94Yw
+         0Xng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770917383; x=1771522183;
+        d=1e100.net; s=20230601; t=1770917554; x=1771522354;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=gGRtar0eNrSBMa5mAb00tI7qTYYP3hc8LonPzVdLY28=;
-        b=oYYV5HdZVUxuYhb5sswk49jqDY9Y7vmUlpzMj63AbaENss0V0jjU38TTQiGxY3nZeW
-         XbXCKB6DNZ5Ko70HdmhLelwt6mX+o6jYX7YFm8WL8aMAz+hNa9mqj4XH3qhc6tqVC4+S
-         pHl9xy6XjWNNihQQkRIFIc7+S+mn++PlcyOPJ7J36HvSd7V1HsWIaggEhxCXOJoUCtpG
-         pykrXJutViATEGfRIKY6ZtIkrz8Wn8pIOw6fMf5FRXFsRagB7YiMflAEf2EBY4nleSXW
-         r8LvKk12fAigUKkGxuLCncFZOBna7velOI/w3Xcs1r4MIEvp9S7bApTP+39an3FJFRrj
-         oZ8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWtQUJ22DkWki4zt7n9kRztEBXVtW7fhDhYuW9kjKEA5MDwDdu+HoUig2u71hFVDxNPSIIbHEtt46Lp4MCx@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvPTz6RdDVvdBylKvlUGqiNgxpEJGVS6fvw/N0o07CnNesYPcs
-	vqZ0RBcTxFullyxsLNc+sdJD+rIa6ensMGuZafwVxXkmB3YA+rh4f2kpDkuY1AqM0h2zxb0rYKn
-	N81YpxiLigZRCiS7uJcotwRFrdAXNqZM=
-X-Gm-Gg: AZuq6aKIfqN5laNuLva7ndlfQJEUZQq3ZGi33Pq4inzLgd4lEHQpnei0Q8EpjOLdrRR
-	HBx19aNybaN81q5tSOKfQM6bnZoJMl4eP56WPE5rguTJCsp8HLOe7wPW3fD/+R+wPNvF64bGwN1
-	uCV0NfLE5AtmRipc5rUQpxZUKstIzcS2hwPRLr+N59G3lrB6K2ueDHxY61SuoLqqCAPzIuxgwTq
-	LJmsMGSZdggBUBXQgEgCF7aiqRVsi2uUBHiO5naB482OO2jrZCvyX0X0L5klCqMd5eJKCLC/reN
-	aeRyctTQlu0UKg4n
-X-Received: by 2002:ac8:7f81:0:b0:503:2f21:6355 with SMTP id
- d75a77b69052e-50691ceb8cdmr47743991cf.34.1770917382679; Thu, 12 Feb 2026
- 09:29:42 -0800 (PST)
+        bh=g4+TDkRhQp/+yy4ZBpH7qG5m9hlxN2cdFm2kx5yzMr0=;
+        b=E8N0HOP7zfLTVIW5EW0TLqVhWKh39C0zGCwHJ+N6z08TsQG+9qUGF26Pn22Ur+uHvN
+         /HMiExZdSBpwAwHUqASMcG6bYpep3AxSxHbgfHwWBpCq7sXnaa3SjSheA2lO0uooFUXd
+         QcVuBXRpYAQXxSAjQafv3RLV1z2AkcrQtHUq7v8Nmo8O1LJKhWTns3t5p9Fs9ysHY1iX
+         hkVnmSuoMmkNjVj0Npvk0QMOb0dVeTRP0r/2vau6vnnmC4SW9L46QrahaBwivzaJHLmp
+         D7FsHTbnYIQiaUZ8CT0y/o+sXmiKhc6IyMi8P5i/e+/H65FJpAGlBshG3+G+LdTJGLCJ
+         ASBw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0Qt5thfZ4VXRyqHpygJMAjg8nIHcexIUSc2/aBiBsMJcVA3Wu0qSIxFE8IQt+LHrTDXxxCrt+/Xj3NI8Y@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgxERTwBLwRGwYT1AHOio8gwXj8dEerEaPJ6IbrtBNz/Gbh+vv
+	IalB672t2gO69en/VTGe22t9leD43Qa/awIarKrvjRw1IgrgQvTK5rlDANteB8AwFplxcBrXM2o
+	7GnIPiQAIFDwR1XnyudfGIceHW1Z/aMwCMsm8BUM/cw==
+X-Gm-Gg: AZuq6aJiAhcredOZernwlzvfVRwh3645mRCGyFamLQfUkPPIj61a/RXSs4fZF+bb1h5
+	z2j4oDGPH6lSGm38gpEQV9HUDnPV6cI1rPVLhefQMBbi3UNSvlRuuUCl6EtOEZoaAF04fkyCxG9
+	Rkb4QpS+IBXVZxW6nJVeXuZ662OQu/r1mC7ZjJZ/X7P8uv/tD3/aiE2NOII1lGdHToHJNICINFK
+	DUzzZI4by6FhDvnLXTQYR/Ofre8yyuUKONvXSqUidgBY8u69D2KEghIEx+dzl9ADLP98kB2wEIV
+	miA4cro09BVF/gFrfIwabAq1o43CAtqRLCSSnhht
+X-Received: by 2002:a05:7300:1907:b0:2ba:a3f2:958c with SMTP id
+ 5a478bee46e88-2baac4769bfmr959743eec.0.1770917554125; Thu, 12 Feb 2026
+ 09:32:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260210002852.1394504-1-joannelkoong@gmail.com>
- <20260210002852.1394504-4-joannelkoong@gmail.com> <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
- <CAJnrk1ZZyYmwtzcHAnv2x8rt=ZVsz7CXCVV6jtgMMDZytyxp3A@mail.gmail.com>
- <1c657f67-0862-4e13-9c71-7217aeecef61@gmail.com> <CAJnrk1YXmxqUnT561-J7seaicxFRJTyJ=F3_MX1rmtAROC6Ybg@mail.gmail.com>
- <aY2mdLkqPM0KfPMC@infradead.org> <809cd04b-007b-46c6-9418-161e757e0e80@gmail.com>
-In-Reply-To: <809cd04b-007b-46c6-9418-161e757e0e80@gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 12 Feb 2026 09:29:31 -0800
-X-Gm-Features: AZwV_Qhwfszf8ijKJetXoa5_RTHnDqlX39tu-a_UpQ9gTpK2zQI2VVCnpbohqyM
-Message-ID: <CAJnrk1Y6YSw6Rkdh==RfL==n4qEYrrTcdbbS32sBn12jaCoeXg@mail.gmail.com>
-Subject: Re: [PATCH v1 03/11] io_uring/kbuf: add support for kernel-managed
- buffer rings
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	csander@purestorage.com, krisman@suse.de, bernd@bsbernd.com, 
-	linux-fsdevel@vger.kernel.org
+References: <b9f6cd20-8f0f-48d6-9819-e0c915206a3f@wdc.com> <bcedbc03-c307-4de5-9973-94237f05cd85@wdc.com>
+In-Reply-To: <bcedbc03-c307-4de5-9973-94237f05cd85@wdc.com>
+From: Josef Bacik <josef@toxicpanda.com>
+Date: Thu, 12 Feb 2026 12:32:23 -0500
+X-Gm-Features: AZwV_QhtervBLrhaMDFvDL7B82oTUlgUvlheHmYhHPJvAZHpalsxUWo4I8SLua4
+Message-ID: <CAEzrpqd_-V691dQzVF1WmrvLNXnDR0THuxGCieDMZcWdRN5WEQ@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] A common project for file system performance testing
+To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+Cc: Hans Holmberg <Hans.Holmberg@wdc.com>, 
+	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Damien Le Moal <Damien.LeMoal@wdc.com>, hch <hch@lst.de>, 
+	Naohiro Aota <Naohiro.Aota@wdc.com>, "jack@suse.com" <jack@suse.com>, 
+	Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_DKIM_ALLOW(-0.20)[toxicpanda.com:s=google];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77036-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	DMARC_NA(0.00)[toxicpanda.com];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TAGGED_FROM(0.00)[bounces-77037-lists,linux-fsdevel=lfdr.de];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: A579912FEAB
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[josef@toxicpanda.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[toxicpanda.com:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,toxicpanda.com:dkim]
+X-Rspamd-Queue-Id: 1963C12FF60
 X-Rspamd-Action: no action
 
-On Thu, Feb 12, 2026 at 2:52=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
+On Thu, Feb 12, 2026 at 11:42=E2=80=AFAM Johannes Thumshirn
+<Johannes.Thumshirn@wdc.com> wrote:
 >
-> On 2/12/26 10:07, Christoph Hellwig wrote:
-> > On Wed, Feb 11, 2026 at 02:06:18PM -0800, Joanne Koong wrote:
-> >>> I don't think I follow. I'm saying that it might be interesting
-> >>> to separate rings from how and with what they're populated on the
-> >>> kernel API level, but the fuse kernel module can do the population
-> >>
-> >> Oh okay, from your first message I (and I think christoph too) thought
-> >> what you were saying is that the user should be responsible for
-> >> allocating the buffers with complete ownership over them, and then
-> >> just pass those allocated to the kernel to use. But what you're saying
-> >> is that just use a different way for getting the kernel to allocate
-> >> the buffers (eg through the IORING_REGISTER_MEM_REGION interface). Am
-> >> I reading this correctly?
+> On 2/12/26 2:42 PM, Hans Holmberg wrote:
+> > Hi all,
 > >
-> > I'm arguing exactly against this.  For my use case I need a setup
-> > where the kernel controls the allocation fully and guarantees user
-> > processes can only read the memory but never write to it.  I'd love
-
-By "control the allocation fully" do you mean for your use case, the
-allocation/setup isn't triggered by userspace but is initiated by the
-kernel (eg user never explicitly registers any kbuf ring, the kernel
-just uses the kbuf ring data structure internally and users can read
-the buffer contents)? If userspace initiates the setup of the kbuf
-ring, going through IORING_REGISTER_MEM_REGION would be semantically
-the same, except the buffer allocation by the kernel now happens
-before the ring is created and then later populated into the ring.
-userspace would still need to make an mmap call to the region and the
-kernel could enforce that as read-only. But if userspace doesn't
-initiate the setup, then going through IORING_REGISTER_MEM_REGION gets
-uglier.
-
-> > to be able to piggy back than onto your work.
+> > I'd like to propose a topic on file system benchmarking:
+> >
+> > Can we establish a common project(like xfstests, blktests) for
+> > measuring file system performance? The idea is to share a common base
+> > containing peer-reviewed workloads and scripts to run these, collect an=
+d
+> > store results.
+> >
+> > Benchmarking is hard hard hard, let's share the burden!
 >
-> IORING_REGISTER_MEM_REGION supports both types of allocations. It can
-> have a new registration flag for read-only, and then you either make
-> the bounce avoidance optional or reject binding fuse to unsupported
-> setups during init. Any arguments against that? I need to go over
-> Joanne's reply, but I don't see any contradiction in principal with
-> your use case.
-
-So i guess the flow would have to be:
-a) user calls io_uring_register_region(&ring, &mem_region_reg) with
-mem_region_reg.region_uptr's size field set to the total buffer size
-(and mem_region_reg.flags read-only bit set if needed)
-     kernel allocates region
-b) user calls mmap() to get the address of the region. If read-only
-bit was set, it gets a read-only address
-c) user calls io_uring_register_buf_ring(&ring, &buf_reg, flags) with
-buf_reg.flags |=3D IOU_PBUF_RING_KERNEL_MANAGED
-     kernel creates an empty kernel-managed ring. None of the buffers
-are populated
-d) user tells X subsystem to populate the ring starting from offset Z
-in the registered mem region
-e) on the kernel side, the subsystem populates the ring starting from
-offset Z, filling it up using the buf_size and ring_entries values
-that the user registered the ring with in c)
-
-To be completely honest, the more I look at this the more this feels
-like overkill / over-engineered to me. I get that now the user can do
-the PMD optimization, but does that actually lead to noticeable
-performance benefits? It seems especially confusing with them going
-through the same pbuf ring interface but having totally different
-expectations.
-
-What about adding a straightforward kmbuf ring that goes through the
-pbuf interface (eg the design in this patchset) and then in the future
-adding an interface for pbuf rings (both kernel-managed and
-non-kernel-managed) to go through IORING_REGISTERED_MEM_REGIONS if
-users end up needing/wanting to have their rings populated that way?
-
-Thanks,
-Joanne
-
+> Definitely I'm all in!
 >
-> --
-> Pavel Begunkov
+> > A shared project would remove the need for everyone to cook up their
+> > own frameworks and help define a set of workloads that the community
+> > cares about.
+> >
+> > Myself, I want to ensure that any optimizations I work on:
+> >
+> > 1) Do not introduce regressions in performance elsewhere before I
+> >     submit patches
+> > 2) Can be reliably reproduced, verified, and regression=E2=80=91tested =
+by the
+> >     community
+> >
+> > The focus, I think, would first be on synthetic workloads (e.g. fio)
+> > but it could expanded to running application and database workloads
+> > (e.g. RocksDB).
+> >
+> > The fsperf[1] project is a python-based implementation for file system
+> > benchmarking that we can use as a base for the discussion.
+> > There are probably others out there as well.
+> >
+> > [1] https://github.com/josefbacik/fsperf
 >
+> I was about to mention Josef's fsperf project. We also used to have some
+> sort of a dashboard for fsperf results for BTRFS, but that vanished
+> together with Josef.
+>
+> A common dashboard with per workload statistics for different
+> filesystems would be a great thing to have, but for that to work, we'd
+> need different hardware and probably the vendors of said hardware to buy
+> in into it.
+>
+> For developers it would be a benefit to see eventual regressions and
+> overall weak points, for users it would be a nice tool to see what FS to
+> pick for what workload.
+>
+> BUT someone has to do the job setting everything up and maintaining it.
+>
+
+I'm still here, the dashboard disappeared because the drives died, and
+although the history is interesting it didn't seem like we were using
+it much. The A/B testing part of fsperf still is being used regularly
+as far as I can tell.
+
+But yeah maintaining a dashboard is always the hardest part, because
+it means setting up a website somewhere and a way to sync the pages.
+What I had for fsperf was quite janky, basically I'd run it every
+night, generate the new report pages, and scp them to the VPS I had.
+With Claude we could probably come up with a better way to do this
+quickly, since I'm clearly not a web developer. That being said we
+still have to have someplace to put it, and have some sort of hardware
+that runs stuff consistently.
+
+I think A/B testing just makes more sense in the general use case.
+Trends are interesting, but nobody pays attention to them. Thanks,
+
+Josef
 
