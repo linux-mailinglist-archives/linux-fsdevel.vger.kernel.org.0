@@ -1,169 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-77041-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77042-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cMHREH8WjmmZ/AAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77041-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 19:05:51 +0100
+	id CLojGnEXjmlF/QAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77042-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 19:09:53 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F81130262
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 19:05:50 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B43491302AF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 19:09:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id E6EBC305FBE8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 18:05:16 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7B01230D612C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 18:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78857261393;
-	Thu, 12 Feb 2026 18:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7313B271464;
+	Thu, 12 Feb 2026 18:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n+vkMhPy"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IAM9bdlF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C4F211A28
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 18:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC8F26E71E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 18:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770919513; cv=none; b=HDYusksBl803+hnchaGPOKiiE5u7Nm3Bp2znqhdLfNrsOJATNL2m4mclE3v0q06xk58EaUOMiy5Jw68FubcmDN3AH2r2oiD0rzU/gzvIjthmQcNjl91ZJRNVpsichS5CwFmDo0zAtscKysPdjsDeLaWBJfWDLAG8yo+J0kqVwqQ=
+	t=1770919750; cv=none; b=te5Rzp2E0YfJ7/WdRTe7F3FYma4D6ecASgici+xjUn7IfnrBbJuo1T5pq7tERuKLS2jMt/oBz4eDikpUyY3yeY5umy/2ZOtlLWZ09Wv2i5fCzKi6c15FfRF66zEKCKOmG/cetTMb4OH+LdkTm331DF7lxWRzYA/XAUjgydX+Ib4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770919513; c=relaxed/simple;
-	bh=UKfZRICIwwRzfqfHezzRxNS8OKZSZrZb8EBmzYu9ksU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NZrH3h5wRhZknLnSY7hhZuk2WbOmiv/h0kz3LK9TwsRVKQ5T8KUTJOAPby/sLuIm3XpR8WpEEGRclvJZLkBEqrdaFXDN/xEuYfiP8yXUaK2oL1Eoaudhc00jWF8/sB8NZsmliVWWHSoqA/fUEhpYDF1Y3OZwookpJM208iaWs1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n+vkMhPy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96593C4CEF7;
-	Thu, 12 Feb 2026 18:05:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770919512;
-	bh=UKfZRICIwwRzfqfHezzRxNS8OKZSZrZb8EBmzYu9ksU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=n+vkMhPyIyuFnGduuFUtqLeRCeKmAEwYuzvOos0KdULgl4JlzF4Pk0PvP9tCUiP2H
-	 6itvULtvqRc04eUgGoSDVBfb7GA/GXUmtRUsL4iMPSOym80x2gluNa03GQQ08dqrGE
-	 zBBqRWAUf1eAbclt9Lkx699Dq7Pnbl3YF8Iv1QlxotN++HBFx6j9aAOyv1LabdS5N+
-	 BFChBRXw5cPkJB/Eg6b2wkOFc+wo5V+747z4WKiKu6kYRH41ZFH6lpvvlQ3X3j7usf
-	 d1wCn3YtLNQwGAz06j/rFQYhpYn1+Gj5y2of9c5vC0IbCWDJD5y55O3YaXOxdZhdmT
-	 /pclZ4ckYIi8w==
-Message-ID: <5c5dfe82-0b51-41dd-bfce-2ad80fbf2ff6@kernel.org>
-Date: Thu, 12 Feb 2026 19:05:09 +0100
+	s=arc-20240116; t=1770919750; c=relaxed/simple;
+	bh=mzuI1FMO7QtuIRQ5U3mqDpk3IW3+dfzY829HS5JEBec=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fidr7bTgYX6SGAdP1Jj89LJRVGXfp/LI8cBMKvMrs98RZALxNl+Fu+wq1XUK3d4mAoWmOiTnSKa33vNSkdtypPhT3UF65njGVd5a4sMfriNC6BUdp2Kvv14E/BdJL0JDN2h9QWKo8Mhtn0X8vDcTohPC1FFSQgf0YH5EerhsP/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IAM9bdlF; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1770919747;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ly2nA8ZJ0dJIvsrFKrjSkM+A6/05aZpz+ZyV0YXxmwQ=;
+	b=IAM9bdlFyut1Y/kqekZudNt2Fx7Jj2fG5KpHJIojt6FStqtFjknf3oLIUouAxbQx+w0f7C
+	5OwDSDUOWNA1QOC+WeYPwrkeawhMC6QehS24+cvIvgDZYx7K0P9NaF7W0QHybZ+iVg2ylT
+	FiVbbDoqsO/YFCncKI29+8NhMTIHFt4=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-286-sXX38uMZMKqCrfOjNrJs-w-1; Thu,
+ 12 Feb 2026 13:09:04 -0500
+X-MC-Unique: sXX38uMZMKqCrfOjNrJs-w-1
+X-Mimecast-MFC-AGG-ID: sXX38uMZMKqCrfOjNrJs-w_1770919743
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F35B71800352;
+	Thu, 12 Feb 2026 18:09:02 +0000 (UTC)
+Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.80.194])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9433F19560B9;
+	Thu, 12 Feb 2026 18:09:00 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Paul Moore <paul@paul-moore.com>,
+	Eric Paris <eparis@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Cc: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	audit@vger.kernel.org,
+	Richard Guy Briggs <rgb@redhat.com>,
+	Ricardo Robaina <rrobaina@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: [RESEND PATCH v3 0/2] fs, audit: Avoid excessive dput/dget in audit_context setup and reset paths
+Date: Thu, 12 Feb 2026 13:08:18 -0500
+Message-ID: <20260212180820.2418869-1-longman@redhat.com>
+In-Reply-To: <20260206201918.1988344-1-longman@redhat.com>
+References: <20260206201918.1988344-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] smaps: Report correct page sizes with THP
-To: Andi Kleen <ak@linux.intel.com>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- akpm@linux-foundation.org, willy@infradead.org
-References: <20260209201731.231667-1-ak@linux.intel.com>
- <94a21bda-5677-4949-a1df-3f0d90348021@kernel.org> <aY4UzC-X4a39wbG3@tassilo>
-From: "David Hildenbrand (Arm)" <david@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=david@kernel.org; keydata=
- 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
- qIws/H2t
-In-Reply-To: <aY4UzC-X4a39wbG3@tassilo>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77041-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
-	TO_DN_SOME(0.00)[];
+	DKIM_TRACE(0.00)[redhat.com:+];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77042-lists,linux-fsdevel=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	TO_DN_SOME(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[longman@redhat.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[david@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_COUNT_FIVE(0.00)[6];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: A0F81130262
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: B43491302AF
 X-Rspamd-Action: no action
 
-On 2/12/26 18:58, Andi Kleen wrote:
->> We have AnonHugePages:, ShmemPmdMapped: and FilePmdMapped: that tell you
->> exactly what you want to know.
-> 
-> .... if you know about it. I personally wasted a lot of time on it
-> because we trusted a lie.
+ v3:
+  - Add a new counter in fs_struct to track # of additional references
+    to pwd and add a new get_fs_pwd_pool() and put_fs_pwd_pool helpers
+    to use the new counter.
+  - Make audit use the new helpers instead of storing pwd reference
+    internally.
 
-It is confusing, I agree. I don't know why we added it in the first place.
+ v2: https://lore.kernel.org/lkml/20260203194433.1738162-1-longman@redhat.com/
 
-> 
->>
->> Especially the mixed thing is just nasty.
->>
->> Once we go into cont-pte territory (or automatic pte coalescing by hardware)
->> it all gets confusing.
-> 
-> In this case it can be extended to more.
-> 
->>
->> Sorry, NAK.
-> 
-> Okay then just remove the page size if it's fictional outside hugetlb anyways?
+When the audit subsystem is enabled, it can do a lot of get_fs_pwd()
+calls to get references to fs->pwd and then releasing those references
+back with path_put() later. That may cause a lot of spinlock contention
+on a single pwd's dentry lock because of the constant changes to the
+reference count when there are many processes on the same working
+directory actively doing open/close system calls. This can cause
+noticeable performance regresssion when compared with the case where
+the audit subsystem is turned off especially on systems with a lot of
+CPUs which is becoming more common these days.
 
-I'm sure that would break some tooling.
+This patch series aim to avoid this type of performance regression caused
+by audit by adding a new set of fs_struct helpers to reduce unncessary
+path_get() and path_put() calls and the audit code is modified to use
+these new helpers.
+
+Waiman Long (2):
+  fs: Add a pool of extra fs->pwd references to fs_struct
+  audit: Use the new {get,put}_fs_pwd_pool() APIs to get/put pwd
+    references
+
+ fs/fs_struct.c            | 26 +++++++++++++++++++++-----
+ fs/namespace.c            |  8 ++++++++
+ include/linux/fs_struct.h | 30 +++++++++++++++++++++++++++++-
+ kernel/auditsc.c          |  7 +++++--
+ 4 files changed, 63 insertions(+), 8 deletions(-)
 
 -- 
-Cheers,
+2.52.0
 
-David
 
