@@ -1,169 +1,284 @@
-Return-Path: <linux-fsdevel+bounces-77012-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id EAktI3mxjWmz5wAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77012-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 11:54:49 +0100
+	id 2IhBIaCzjWlz6AAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 12:04:00 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0774E12CBBB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 11:54:48 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D80B412CCFE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 12:03:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 6584430E9E94
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 10:53:10 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B460C30B679B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Feb 2026 11:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0AF63218DD;
-	Thu, 12 Feb 2026 10:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3620B344D8D;
+	Thu, 12 Feb 2026 11:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fhfGAhM4"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CKZBWm8g";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QPqh6P6Z";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tl2aKaf0";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fM9MzJ96"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1807731E106
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 10:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8C5319614
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 11:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770893553; cv=none; b=i8sb4leVJy74DTIlqXJMRa/1/CJgabJkHEHM1R7WWIgVwWufxxu3dir6UZKs5Z5siqrA9ci+GPPLqBx5SZjV6Lk8msWUBlfz5QQYQcdDXLFcDl7zG2JLXi4bxKifx50/7fJ1MhTwv/3H0h6GOiolbIhj4eKnrjEd4WQJxEt+bu0=
+	t=1770894165; cv=none; b=cFAdwtGgFxuC/pcz4e4MDXP2aQikJk/Ds1TMNmqm19vddD0nvU8J/usGfPIUAoDLe7PgZ1ZJ472bINf8HxGemy4Et8EsTrz9KZ+hssYdv6QqMgPi+Y6K8hpd2SbtT0+MvHcOELbO+ITNqAyiQI6mLrDklTPYEoWjs45T+M8U8M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770893553; c=relaxed/simple;
-	bh=vDmlrrh4BLYaRR2l3ElM2gSOc+TGgSPsvhONw2b2DjM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HObdl5EXDWafm7Y3B+Nwzp1gg0GomsCKceF0oKffEojyb2SMvoqsHQBX1t+4pBxWK2DslD1nL7YXTXCLOhsf+sUEuNxQswfKe44JRCNqwzCHitlMxFcynim6JNX1MCMuUU+lxRfP3Y6ANXv+UXBxUxt3Z56dKg5kAWAGTJKrf58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fhfGAhM4; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4806ce0f97bso26211795e9.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Feb 2026 02:52:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770893549; x=1771498349; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i7QK3EogTA2awwuFyYLWPGKb9u4Hhfpc0q+gDE6cl74=;
-        b=fhfGAhM4OqwHWwaKNJtPn6hovTbFJlEicirI7hVY70vcZX6IAbyu9SOVTNKGxsW02g
-         b9ZEO8fT6ljEDJ7+bb/vu1EGOGjIZWI3vJc0wTABTZ/wDp7tLtxVl1Ro9UU8MkLlNYfT
-         r6FSzw032GNVVsS+J94iNH8iL5R9nvl2v8qVtRxvs3TlUyiwUapST6F6RYXIM5/7iFux
-         MkNr8bhthdICvViw0fdunLrqu/FkVpAF+QVXRr8gGCynVqyrVJIJAkmnm3ifWYmKZ3jg
-         dCerdnrM/7BOetdaRDh2Ur3Rmx7QsskMV0iwj1ZQsuKIQKKvBMaM8cpzZ3XKzp00U4Dx
-         Q/9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770893549; x=1771498349;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i7QK3EogTA2awwuFyYLWPGKb9u4Hhfpc0q+gDE6cl74=;
-        b=j/iBedCLL9NeZNVLeq/7rLq0ypONGF2D01gvYS4h+aXr3371hz7CSeujXCvouBl9Yo
-         M900DjgV5Y6kD1Wk7bKrxQXAB9nz8M+E6/Pvl/bDT7CKz1jLa/aAj7jKjGjtOYNyQ0Cw
-         pnDRoEy5zUXMllYrDBLodPXQPo1pw9XcnLZ6WbiTKYGwqrB7W3YitutFmC2AHoNBcmUU
-         vQ/ULPAvDKdB6jgj7QMDtVE+R5qpiIk7kxAvkvPrZeBDVa5zRtZdzVhym31ZShnl02rB
-         gMIAdQcOw1ZH6RIT5ZbpiqIBv7Wm0oNIjiyOBfjdI6o/bkReVpraEhHSNE689/Mc0n1m
-         VjNw==
-X-Forwarded-Encrypted: i=1; AJvYcCVY6vaTZBQmNzdbEQmEeI5xtLXmcpvgEgJnWtROrfvxM2VjXMlCnvh9WGSa2nJaur4EZKWvf32AI/+x3+o/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0SPH19w0bIXIoGZKSJpqrWb9lJa7BRrpSSB8YoK/74Lmkbvys
-	tn8vZP/BPsCBB6etE2IP6eQmPgu3g/GqrWzv5VyRf7pMPJ6SDXpPBE+wBOXEFuGY
-X-Gm-Gg: AZuq6aIwJsdniKvRCSWE7CZzGLrSargR1eDlfioMMpDnWMzAr0uxFij3UlzFxi+no+R
-	0T9xNNGXu047bBZ1GOQw3whVNt2WygwWt/2ArZBSCEc5h6kXMDs0GS2QibQ0en+7sTm3ms/EiX7
-	H2x8pMRCWlOz8oeaFs4LzxY5UK+KKLkF8IR2QpIu6OPCexQt/knb+4BhPryOmcPiPhnTWStUbSk
-	9sQpVc/Uvj+y5bIa6UbEse1xlGnA9yqXQ2E4IBp7UD9dhYpOgF3V5IO+Vs85Pb3LGULv4j9lmgE
-	V6/ACauRQof9D4mpz+WYJdKypE9wjDtzWORcgxBY48Aq6uebhMD3UyW03yVZcl/7RAvNAg/6lld
-	+LjcT/fKOrRSRBNJx6mC9ZLctpDIaKSsbHpwSTy67tZb7VSdON1CMBsB3DtJLnjxHrRTxUzZFtQ
-	KnOCSDIi4fg0+RRpo8FmPya9y70Q74jIwfuzAUNICo3nhE2hujbuZ5sqXojr9Me3DK2/zSZOQtv
-	RJf4jjJ4dO53nM9Nc8i+tUS97K1XmpmipvGOZW2G7SHtLmXFyx6laRrYGc3lbnWvHh7tIjiSDhr
-	Ag==
-X-Received: by 2002:a05:600d:486:10b0:483:6a8d:b2f9 with SMTP id 5b1f17b1804b1-4836a8db4f0mr14923255e9.5.1770893549133;
-        Thu, 12 Feb 2026 02:52:29 -0800 (PST)
-Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4836131d52bsm36821225e9.28.2026.02.12.02.52.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Feb 2026 02:52:28 -0800 (PST)
-Message-ID: <809cd04b-007b-46c6-9418-161e757e0e80@gmail.com>
-Date: Thu, 12 Feb 2026 10:52:29 +0000
+	s=arc-20240116; t=1770894165; c=relaxed/simple;
+	bh=i77wWooCujq5tieK+1tRLqSV0Wr3OTPz2Eji3J5gXpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r4oQ98vW0hjRynuPgl/xo5C+ovRdv/vCnazFkWyd56fuF145z60y1DqkDi2pAILfN3axKTw7STwNAzrcq66hmNKFzfmyYT/YAkkakaFlzsWh+9HAiyQQwRhIZ8RT8aI4YrzGcGdMJjZ4gDh0eu8g41tNyc7eg08DsUl3dXH/HtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CKZBWm8g; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QPqh6P6Z; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tl2aKaf0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fM9MzJ96; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 392305BCDB;
+	Thu, 12 Feb 2026 11:02:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1770894162; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V5ki3VpM/PV+cZ6RG3yRe/SDubTdcojLAG3quUdyYrU=;
+	b=CKZBWm8grgTT8N58oF5u5o6t7OaHAJU6cvkFDNluJVI87Kw38qMZSR5iojR9OCznm5vkCY
+	QoLyiFAdTcaTHdpmZ7k76kLiVlNr9+by7gnUeuu2o6paFuBo6K+e2yX/Bj1UAN9dR78caL
+	3lF2/q7LA4tD3BIjBJhbilqTHbdRGQo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1770894162;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V5ki3VpM/PV+cZ6RG3yRe/SDubTdcojLAG3quUdyYrU=;
+	b=QPqh6P6ZxdHTfecuo1UIEEy5hHgfwES1TQli6CFXE0l0gbIaT7DRWhkG4BLp59NvlsDUtR
+	0+A9104rGBvOoUDA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1770894158; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V5ki3VpM/PV+cZ6RG3yRe/SDubTdcojLAG3quUdyYrU=;
+	b=tl2aKaf0IveSXSACjraG8IuYD8S2kEGmSxP10LmVvmFp8YdZNkmQ/+6hwu3ZH3If5jb8qq
+	MoMnYHNcX7ONlxVlX202K6tCkp1LefxBioBX4zrth+mSKOJ7g65ZMEQMJp72vAs4nGoMLD
+	2WkmVnww9efxJKR0fZe73hx/UnzYRLo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1770894158;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V5ki3VpM/PV+cZ6RG3yRe/SDubTdcojLAG3quUdyYrU=;
+	b=fM9MzJ96QdAhm/OqdPhaI8ciMiKpj2qbp/94Do/qu+q3u/iMBuzYh5m4iR6gDnn0L/u43Z
+	9fEonAWatfTm2uDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 20BB13EA62;
+	Thu, 12 Feb 2026 11:02:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ms34B06zjWmRRwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 12 Feb 2026 11:02:38 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D8AD7A0A4C; Thu, 12 Feb 2026 12:02:29 +0100 (CET)
+Date: Thu, 12 Feb 2026 12:02:29 +0100
+From: Jan Kara <jack@suse.cz>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "jack@suse.cz" <jack@suse.cz>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>, "chrisl@kernel.org" <chrisl@kernel.org>, 
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, "clm@meta.com" <clm@meta.com>, 
+	Pavan Rallabhandi <Pavan.Rallabhandi@ibm.com>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Machine Learning (ML) library in
+ Linux kernel
+Message-ID: <ie7tiefeq4x4u445vois6bgkhfmynuf3z5no24h4o4b3lirrmf@s5yxc6z4jvpy>
+References: <47d21a6821c4b2d085f7b97bcdaa205bfcb0e0ad.camel@ibm.com>
+ <CACePvbVH0ovOcBqCN7kJ3n0QFmvuf+_5tMeRXs-JAQ+m5fdoCg@mail.gmail.com>
+ <a994bdedca7d966168076044249a58e52754c6ac.camel@ibm.com>
+ <6ek3nhulz72niscw2iz2n5xhczz4ta6a6hvyrlneuyk2d36ngx@4ymlemzifugr>
+ <11f659fd88f887b9fe4c88a386f1a5c2157968a6.camel@ibm.com>
+ <kw4qco6aq4bq55nmb4c5ibicmj7ga77vtgzlj65jtdhzowks5m@buhefb6m4eqx>
+ <224ceff96f02288f9cd660348b722335b0e9eaf3.camel@ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 03/11] io_uring/kbuf: add support for kernel-managed
- buffer rings
-To: Christoph Hellwig <hch@infradead.org>,
- Joanne Koong <joannelkoong@gmail.com>
-Cc: axboe@kernel.dk, io-uring@vger.kernel.org, csander@purestorage.com,
- krisman@suse.de, bernd@bsbernd.com, linux-fsdevel@vger.kernel.org
-References: <20260210002852.1394504-1-joannelkoong@gmail.com>
- <20260210002852.1394504-4-joannelkoong@gmail.com>
- <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
- <CAJnrk1ZZyYmwtzcHAnv2x8rt=ZVsz7CXCVV6jtgMMDZytyxp3A@mail.gmail.com>
- <1c657f67-0862-4e13-9c71-7217aeecef61@gmail.com>
- <CAJnrk1YXmxqUnT561-J7seaicxFRJTyJ=F3_MX1rmtAROC6Ybg@mail.gmail.com>
- <aY2mdLkqPM0KfPMC@infradead.org>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <aY2mdLkqPM0KfPMC@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <224ceff96f02288f9cd660348b722335b0e9eaf3.camel@ibm.com>
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-1.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77012-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_TO(0.00)[infradead.org,gmail.com];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,suse.com:email,suse.cz:dkim];
+	DMARC_NA(0.00)[suse.cz];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77013-lists,linux-fsdevel=lfdr.de];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	RCVD_COUNT_FIVE(0.00)[5];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	MISSING_XM_UA(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
+	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 0774E12CBBB
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: D80B412CCFE
 X-Rspamd-Action: no action
 
-On 2/12/26 10:07, Christoph Hellwig wrote:
-> On Wed, Feb 11, 2026 at 02:06:18PM -0800, Joanne Koong wrote:
->>> I don't think I follow. I'm saying that it might be interesting
->>> to separate rings from how and with what they're populated on the
->>> kernel API level, but the fuse kernel module can do the population
->>
->> Oh okay, from your first message I (and I think christoph too) thought
->> what you were saying is that the user should be responsible for
->> allocating the buffers with complete ownership over them, and then
->> just pass those allocated to the kernel to use. But what you're saying
->> is that just use a different way for getting the kernel to allocate
->> the buffers (eg through the IORING_REGISTER_MEM_REGION interface). Am
->> I reading this correctly?
+On Thu 12-02-26 00:53:37, Viacheslav Dubeyko wrote:
+> On Wed, 2026-02-11 at 10:55 +0100, Jan Kara wrote:
+> > On Tue 10-02-26 21:02:12, Viacheslav Dubeyko wrote:
+> > > On Tue, 2026-02-10 at 14:47 +0100, Jan Kara wrote:
+> > > > On Mon 09-02-26 22:28:59, Viacheslav Dubeyko via Lsf-pc wrote:
+> > > > > The idea is to have ML model running in user-space and kernel subsystem can
+> > > > > interact with ML model in user-space. As the next step, I am considering two
+> > > > > real-life use-cases: (1) GC subsystem of LFS file system, (2) ML-based DAMON
+> > > > > approach. So, for example, GC can be represented by ML model in user-space. GC
+> > > > > can request data (segments state) from kernel-space and ML model in user-space
+> > > > > can do training or/and inference. As a result, ML model in user-space can select
+> > > > > victim segments and instruct kernel-space logic of moving valid data from victim
+> > > > > segment(s) into clean/current one(s). 
+> > > > 
+> > > > To be honest I'm skeptical about how generic this can be. Essentially
+> > > > you're describing a generic interface to offload arbitrary kernel decision
+> > > > to userspace. ML is a userspace bussiness here and not really relevant for
+> > > > the concept AFAICT. And we already have several ways of kernel asking
+> > > > userspace to do something for it and unless it is very restricted and well
+> > > > defined it is rather painful, prone to deadlocks, security issues etc.
+> > > 
+> > > Scepticism is normal reaction. :) So, nothing wrong is to be sceptical.
+> > > 
+> > > I believe it can be pretty generic from the data flow point of view. Probably,
+> > > different kernel subsystems could require different ways of interaction with
+> > > user-space. However, if we are talking about data flow but NOT execution flow,
+> > > then it could be generic enough. And if it can be generic, then we can suggest
+> > > generic way of extending any kernel subsystem by ML support.
+> > > 
+> > > I don't think that we need to consider the ML library appraoch like "kernel
+> > > asking userspace to do something". Rather it needs to consider the model like
+> > > "kernel share data with user-space and user-space recommends something to
+> > > kernel". So, user-space agent (ML model) can request data from kernel space or
+> > > kernel subsystem can notify the user-space agent that data is available. And
+> > > it's up to kernel subsystem implementation which data could be shared with user-
+> > > space. So, ML model can be trained in user-space and, then, share
+> > > recommendations (or eBPF code, for example) with kernel space. Finally, it's up
+> > > to kernel subsystem how and when to apply these recommendations on kernel side.
+> > 
+> > I guess I have to see some examples. Because so far it sounds so generic
+> > that I'm failing to see a value in this :)
 > 
-> I'm arguing exactly against this.  For my use case I need a setup
-> where the kernel controls the allocation fully and guarantees user
-> processes can only read the memory but never write to it.  I'd love
-> to be able to piggy back than onto your work.
+> I completely see your point. And I am not going to push anything abstract
+> one. I am going to implement ML-based approach for several real-life
+> use-cases. So, I will have something real or I will fail. :)
 
-IORING_REGISTER_MEM_REGION supports both types of allocations. It can
-have a new registration flag for read-only, and then you either make
-the bounce avoidance optional or reject binding fuse to unsupported
-setups during init. Any arguments against that? I need to go over
-Joanne's reply, but I don't see any contradiction in principal with
-your use case.
+OK, good then :)
 
+> > > > So by all means if you want to do GC decisions for your filesystem in
+> > > > userspace by ML, be my guest, it does make some sense although I'd be wary
+> > > > of issues where we need to writeback dirty pages to free memory which may
+> > > > now depend on your userspace helper to make a decision which may need the
+> > > > memory to do the decision... But I don't see why you need all the ML fluff
+> > > > around it when it seems like just another way to call userspace helper and
+> > > > why some of the existing methods would not suffice.
+> > > > 
+> > > 
+> > > OK. I see. :) You understood GC like a subsystem that helps to kernel
+> > > memory subsystem to manage the writeback dirty memory pages. :) It's
+> > > potential direction and I like your suggestion. :) But I meant something
+> > > different because I consider of LFS file system's GC subsystem. So, if we
+> > > are using Copy-On-Write (COW) policy, then we have segments or erase
+> > > blocks with a mixture of valid and invalid logical blocks after update
+> > > operations. And we need GC subsystem to clean old segments by means of
+> > > moving valid logical blocks from exhausted segments into clean/current
+> > > ones. The problem here is to find an efficient algorithm of selecting
+> > > victim segments with smallest amount of valid blocks with the goal of
+> > > decreasing write amplification. So, file system needs to share the
+> > > metadata details (segments state, for example), ML model can share the
+> > > recommendations, and kernel code of file system can finally move valid
+> > > blocks in the background.
+> > 
+> > No, I actually meant the LFS file system GC as you talk about it. But I was
+> > just too terse about my concerns: As you said an LFS with COW needs to
+> > select a new position to write each block. When there is no free block
+> > available, it has to select partially used erase block (some logical blocks
+> > in it became invalid) to reuse.
+> > 
+> 
+> I assume that you imply F2FS here. Because, I cannot imagine how LFS file system
+> (like NILFS2) can do something like this. If it's LFS file system, then you add
+> logs into the current segment(s). Even if some logical blocks have been
+> invalidated into this segment, then you add another log into the head/tail of
+> current segment until complete exhaustion of it. And it needs to allocate the
+> completely clean/free segment to be current and receive the logs. So, you need
+> to take completely exhausted segment for cleaning by GC. If you have pure COW
+> file system, then you cannot write anything in likewise segment until complete
+> invalidation + "erase"/clean. So, GC moves valid blocks from completely
+> exhausted segment into the current one(s). It's responsibility of GC to
+> guarantee that file system is not running out of free physical space if file
+> system still has free logical blocks. And if we are running out free physical
+> space, then operation stops because of GC failure to keep enough clean segments.
+
+Well, details of different filesystem designs are different but they all
+have the common feature that on an aged filesystem you need GC to do work
+to be able to write as much as you are supposed to be able to write.
+
+> >  And for this selection you want to use ML
+> > AFAIU. Hence we have a dependency folio writeback -> COW block allocation ->
+> > GC to make some block free -> ML decision.
+> 
+> Usually, GC works in the background. So, ML model in user-space get
+> segments state metadata from file system. Then, it selects one or several
+> segments and recommends to file system of moving valid blocks for the
+> selected segment(s) ID + maximal amount of valid blocks for single
+> operation. Background process of file system checks that these logical
+> blocks of exhausted segment are still valid and initiates operation of
+> moving into the current segment by adding another log.
+
+Sure, background operation is the easy case. I'm speaking about the
+situation where the filesystem is under such write pressure that GC cannot
+keep up and all the write activity is basically blocked waiting for GC to
+make forward progress. And again details for different filesystems differ
+but all have this property that the speed of GC is one of the limiting
+factors for writes when the filesystem is aged enough and the write
+pressure is large enough. And the point I'm trying to get across is that
+under such pressure consulting userspace for GC decisions is likely to
+cause deadlocks. So you will have to have some in-kernel fallbacks to avoid
+such deadlocks and logic for triggering these fallbacks to guarantee
+forward progress of GC which all gets kind of hairy.
+
+								Honza
 -- 
-Pavel Begunkov
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
