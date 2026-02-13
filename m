@@ -1,1229 +1,479 @@
-Return-Path: <linux-fsdevel+bounces-77160-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aLUxBspmj2k+QwEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77160-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 19:00:42 +0100
+	id GOT3AW9rj2mCQwEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 19:20:31 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F2DE138C94
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 19:00:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7BB8138E52
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 19:20:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 41CE3303AF12
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 18:00:36 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 7AB3F3034A2C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 18:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418D0366052;
-	Fri, 13 Feb 2026 18:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE0B27466A;
+	Fri, 13 Feb 2026 18:20:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JqPF5gM7"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JaEVMvLp";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="pg9gg7HX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104333659FD
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Feb 2026 18:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771005631; cv=none; b=pE8TtyZq0vcE29V5cGu0kOJLi3oeI+FbqeiM6hcn5hAP/GHLGFS1wbApGV8LsopckW9GXMy7UtwWxzhKjbfrPRLhU3wAU4rK8hiQwZbuXW/pfViLehdhTEkzS+oteb8fIVMFQ+R/5fqR8o9+m7ZG9+a2KHGIzXfSU5x/tSzJCmk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771005631; c=relaxed/simple;
-	bh=+WV1YBiwq1cn5Ri97h3khgnUrYsgPgYvdL7ymu0xKhU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ouJOU0NxEWx6guriFFaAHPO/yiBxbNoPpFSpiOx6VHgIpJFldDZXy3Tt/CsfxJ5rJxAL37N5u1H6r7npJUGpJxiMoS+7OQqwmwNh7A/A0UvKVS7Ic+BbmYg92unhbtCUvhXCmFRUwQufUjHvY+zG5hn8YlG9xwQdSkVEwSJdvYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JqPF5gM7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1771005628;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=rd411M5TW7Fun2lJJ6DOZ0iLzrgobY/ywXFhkQ7bdYQ=;
-	b=JqPF5gM72T/ZkqbD9NDxh3ppqmRQimNB1bLkdyE1QTrRJS3w8vQhW+ux05F+wyHYYX+PTg
-	IWbdhHFsQPAN45lCuaZMCueSYcjkJ2ODctGKQCjSwHl/MpY2SPZfSK8+irhYqCqE8L5Ckm
-	2fFGg6JF2G8WhVKONLKIsUZsox7wYRQ=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-325-_kyUrgK7M1S-Gr0-plMeXw-1; Fri,
- 13 Feb 2026 13:00:23 -0500
-X-MC-Unique: _kyUrgK7M1S-Gr0-plMeXw-1
-X-Mimecast-MFC-AGG-ID: _kyUrgK7M1S-Gr0-plMeXw_1771005621
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9C11B1956046;
-	Fri, 13 Feb 2026 18:00:20 +0000 (UTC)
-Received: from fs-i40c-03.mgmt.fast.eng.rdu2.dc.redhat.com (fs-i40c-03.mgmt.fast.eng.rdu2.dc.redhat.com [10.6.24.150])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7427930001B9;
-	Fri, 13 Feb 2026 18:00:18 +0000 (UTC)
-From: Alexander Aring <aahringo@redhat.com>
-To: teigland@redhat.com
-Cc: aahringo@redhat.com,
-	gfs2@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mark@fasheh.com,
-	jlbec@evilplan.org,
-	joseph.qi@linux.alibaba.com,
-	jlayton@kernel.org,
-	chuck.lever@oracle.com,
-	gtully@redhat.com,
-	djansa@redhat.com
-Subject: [RFC v6.19] dlm: introduce dlmpfs
-Date: Fri, 13 Feb 2026 13:00:14 -0500
-Message-ID: <20260213180014.614646-1-aahringo@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1685A231842;
+	Fri, 13 Feb 2026 18:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771006821; cv=fail; b=ZXslQQ8miCxtCOqWxnAmasaCkT/l66Z+K9rsYjB0qBRuw5Z7Pg09TygCcTdcT1qmyx2z0N6aHDwPgY+i/y4LJgBRIwVImZQIXXmWFysMTOVKOhioMsCBqZFN70hTQnBsoU7t9Am4O8SVXlsqdHt/L1JrNEDgnVz07she+yamHA4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771006821; c=relaxed/simple;
+	bh=Aw32f122z8/jA0ROcSms9NcHtUKFc1tkS4u8vg0pe68=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FzpWUZX418xy+MykHRPYHpi09ai/fxHuO4P7pDwhL9eKEBxEOMc3CY9BAYbDezauPR2S8OqfkmwdO2jzzh07P9CTREIk7ZAtGG57aBRmS1U4ffFHpN6/kouTLOai3GhPymzFX2uzjha/+SuCtcdSudjMSZUKADAP2zVckvSfQHM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=JaEVMvLp; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=pg9gg7HX; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61DDbO0m3491021;
+	Fri, 13 Feb 2026 18:20:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=A5GGIcpxE0LufpUzFcxETciXjKBrVOUaHQ1wb21XPJQ=; b=
+	JaEVMvLpoD5+y9v9lLx4zoRhqYa9X+ChnaNAsoiC6RWjMLlBzNrsdCk5EJTwwy2o
+	66G6pPm9zkJHiZUsT8NUlEL8szho+YNG5X226DVxYXo4Pwk4pl6vbVYR8/KEgulT
+	JmYuFQp949vuO+KAzdP9/oWV43Elb3C6dTV//Vyv0mhV07QJNke3aMzwxu4e+USN
+	f5vmboGiPM8OpQyE6oKY6ndZj9Adbtz0VccU6q7USZYs9Xyh5AB92B8bhWkLG139
+	k+5FXmP20lH4PrWDQ1uhEjMackbS6nEzolhG1g8D0XKep+PkHXFttjhrvQOMJOwj
+	7BtYRQsGCVseOP5w0Ded/A==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4c7rxu724u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Feb 2026 18:20:05 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 61DHkU9l008564;
+	Fri, 13 Feb 2026 18:20:04 GMT
+Received: from sn4pr0501cu005.outbound.protection.outlook.com (mail-southcentralusazon11011032.outbound.protection.outlook.com [40.93.194.32])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4c8238vx91-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Feb 2026 18:20:04 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=R0bvm1ld1sLOukGY8RnNbUY52J1EjLO+Efgdj7Y0SgtJH06uKQCYUP/seGqCUzHEzVrIigVxzQsJ7MB35AWKrIpjnVTJvEsH+b2r9xpBHJbHCNVRiRy2IMA21DIQCZbXPz7rKU5kAxI+cdn2wpcsbwCKAk6DHuaT4wmVW/o21ZqMuVZzNM2d2NelqA7wuZbNDSyhyx++PCK3vy9VhF8OdY2FvIBxCbI8jp04RYaS2S1t3b9FjowiHV9+RcxGbjPGZVyO3NxQu8XgYzPFOIDXwEFGXvxEIoUjJRVe0NaIv/Et5wgC8zWui3ZxC4EbV5oJEPG9lo2PC+gLJz3DxJjzxA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=A5GGIcpxE0LufpUzFcxETciXjKBrVOUaHQ1wb21XPJQ=;
+ b=kAoctncnAbeTVS8nELAhs+yQ5GV7TCbK31OEW44bp0ffsSdmSnfP0RHkKqRqhoHn4xWkdxqGDo3aDLsFt9DzyMAjyuuyQzuFsACdA5lbwdUduIEA4St2M9ymDIEPxQT0Acge+8vGD8o4RIACPZ47ST+jsu9Zrr8w81+LwsVh7cUXYKn7nIXoBX6hnr3Py7dWJ3O5fa4NGq9LXBMnjPNTUTmHHW7OSACXqswuDLSo0jBE2ecapFNiHlAU9EpzJ7fiYVw41bdlJUFJ6ri/H1zLu+fe6DZkuLp6MLGVcwVqqIFnv19NuRzf83I6hRYscxxGkHT54XBWu3CV5yManCjIDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A5GGIcpxE0LufpUzFcxETciXjKBrVOUaHQ1wb21XPJQ=;
+ b=pg9gg7HXZd3qQMG9HN4Bjtm5RYL135GuxY9ug1plL6I6QRifJBFneFIzVZP9r4AUxoxrqrhrXfhheIV5pTE54HngNbHpJwSbY1BSq1khCNHkVy2otNgR9PD/x8UWjMWNyMosqXF5X8+lpau9+OVjw+OarLW86h4LOzUyrlFhN10=
+Received: from MW6PR10MB7639.namprd10.prod.outlook.com (2603:10b6:303:244::14)
+ by CYYPR10MB7569.namprd10.prod.outlook.com (2603:10b6:930:bb::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.10; Fri, 13 Feb
+ 2026 18:19:59 +0000
+Received: from MW6PR10MB7639.namprd10.prod.outlook.com
+ ([fe80::8386:1d11:46b2:b163]) by MW6PR10MB7639.namprd10.prod.outlook.com
+ ([fe80::8386:1d11:46b2:b163%6]) with mapi id 15.20.9611.008; Fri, 13 Feb 2026
+ 18:19:59 +0000
+Message-ID: <67ffb195-aab2-4069-8eec-4aefbe03336b@oracle.com>
+Date: Fri, 13 Feb 2026 10:19:54 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 1/1] NFSD: Enforce timeout on layout recall and
+ integrate lease manager fencing
+To: Chuck Lever <cel@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+        Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
+        Olga Kornievskaia <okorniev@redhat.com>, Tom Talpey <tom@talpey.com>,
+        Christoph Hellwig <hch@lst.de>, Alexander Aring <alex.aring@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
+References: <20260213083101.3692692-1-dai.ngo@oracle.com>
+ <95aba237-f068-4d0b-ae45-3a6db1176226@app.fastmail.com>
+Content-Language: en-US
+From: Dai Ngo <dai.ngo@oracle.com>
+In-Reply-To: <95aba237-f068-4d0b-ae45-3a6db1176226@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MN0P222CA0020.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:208:531::23) To MW6PR10MB7639.namprd10.prod.outlook.com
+ (2603:10b6:303:244::14)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW6PR10MB7639:EE_|CYYPR10MB7569:EE_
+X-MS-Office365-Filtering-Correlation-Id: 90c549cb-67a3-417a-ffe2-08de6b2c7f29
+X-LD-Processed: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|376014|7416014|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?UE9DcERXNzltc1Qwa2JyMEEyUWZ4N2IrZFBWUnNRd1ovRTNCak5MYTlEYkp6?=
+ =?utf-8?B?RUVycWVLTkZJRG85ejVKSmFOL0R6RUpLeG5MeXNpcU1vNi8wVjZQZ3N4WUVM?=
+ =?utf-8?B?eU5PS3Noc25udk1XdU1DMFFURmtyOEZHUGhkVU45UDVYSTlJdUFrcU5pY2x3?=
+ =?utf-8?B?QVY0SWowUy9QZmNlNHhTblJqVG0vZ2h3eEd6OXJhZXorcnZ2TEtWZkROUmx2?=
+ =?utf-8?B?c2pGOXJ4M0VuWFVzbjVhTjczOWtpV1NkQ0hld0I1b2U4bk1BOXZ2YzhmMFJn?=
+ =?utf-8?B?M3R3Zk9temFOM0c4YWVrU0hUQzhNVHpiN2Y1TmdjNDNWUTNSQTVSeXcyVk1R?=
+ =?utf-8?B?MFpsZ2wrM052ZDBHNTV1bVJYL3NPNEU5ME92TlJ6b3puMTNIWmh1VFdMcW94?=
+ =?utf-8?B?UzBqYWZEVjdRNWF1RU9SMUI3YzltZUhENURSWmt2NVo2WkNsSHVXRnhsYWVl?=
+ =?utf-8?B?R2lPZ1Frd09vYlFML0EzVDcvUzFQZThxbjM4SUJscExYQ05TcWt5Nktqa3h4?=
+ =?utf-8?B?a28vSzN2MWU0TUo1VStJaFdGc1Q0enR3ZEZQblordEJQL2NVeGY3RWVSNkMr?=
+ =?utf-8?B?RzU1L1NvaDlVRk42RjNQbVlPSUFmajlTVjI2N2dvZTZqS0xySFQrRkUvejNS?=
+ =?utf-8?B?cVIzVXVNWFJBSnZkd0dQdy9Da3kxVEZqbFNlVU8vblVwTklqRHBtUy9ndUxS?=
+ =?utf-8?B?eUZzUTc3TGsvajIrNXBBWVVRQ1BGeEcreG9CaHNFTzh3YWlDTmM2Q1R1TzI0?=
+ =?utf-8?B?bUNBM0FReXdBYVNqcTRtVENJblplb0xUdGIzbUVlUEVUUXhXRUNHSlpNbEFp?=
+ =?utf-8?B?N21aNVE3RGFMaWNPNCtlbEU4RTdBL2h3SVpOMEdIbGtWL0Ntbyt0b1gwVlFL?=
+ =?utf-8?B?OGluYzVhdHEwTTBRZUxMckF5aS93UUkxcmtYVTdiY2FMTndZZ250WEJOMG5j?=
+ =?utf-8?B?eFY2bm1Pd3hYRThqMFRha0I3Wjd3bGVQOTBCR0JqVEMyM3gxS2VRT09uMkRT?=
+ =?utf-8?B?aUFURzkxYmVYN1RWY2FjQWNua1NhZFdOc2ZiQUxvMCs3MVArZXE5OWs4V0RG?=
+ =?utf-8?B?cTFqemNOcnlrTC9tOXA2L3RCYUg5b3N5ZHZFZDgra1dFU3lXRHpMRkFENzBF?=
+ =?utf-8?B?RmI2cEE4OG1rc1ZOTU5MK1RKcDdjbUJnelh6NzYwRGZERkRWdGVjQ0dEMlZu?=
+ =?utf-8?B?NWliRzhXeWVYMUpZNUNKM2lqNDhpUFliV2F0eHhnS2hROWJOTXZKUWpXWUVO?=
+ =?utf-8?B?ZFlpK2x2eC80V1ovSFRReVduMHF2RGJ2WFVYZ1hhRGFuTGdnUE1nbkVSbFdT?=
+ =?utf-8?B?M1A3bDY3aVBlWkZaOUZQYkN1WWVCK2RUWFRMS2tsY25KS2hsRnZ2S2hyOExy?=
+ =?utf-8?B?aU1talFKYW56NVJGK1VNc0pwbFBPUi9ZaDhIc0wvMXBJcWJ4VjY0eUY0ZEpq?=
+ =?utf-8?B?UjRDQjRwVEY2anRySjB4SjRtd3RNdDY4c3ZkMkxTNVEydi9TYzJ2amRHSjZG?=
+ =?utf-8?B?a0JMTGVhZVJoVmtOQjk0SmI2Z0lIOWtwcHYzVlpYWEd2aGFKMldxcjhPSTY3?=
+ =?utf-8?B?TUJhbGM1TGdEWElPS2x4Nm5aTzI2QjE5RTRtZXVSVFg4Z2pnZ2VBMUVWLzd2?=
+ =?utf-8?B?dkNKT2dmOUZXdmFDNE1aSGRCZmxNV0Z6YzFEcm9OR1RvNlYyQUkzMVFXYlE0?=
+ =?utf-8?B?QlRCRGsrNzA4N3U5NVhRMEF6M1VGa3ZsVHRWSXVVem4xbnBic1RMK1ZNTVhE?=
+ =?utf-8?B?UmozR2F1UVRtK2FkTlEyN2lzUElIUHhOMjRUeFBPTU9MQzJNbE1kVFAvK3Ry?=
+ =?utf-8?B?bUsvR0dIL2NsbCszZmVlczJmSEFHcGtWaTRuRjc1eGtvMUgxM25uZjRJNjNH?=
+ =?utf-8?B?ZEMyOVdLM3hNb1FpNTJsSFBKcnQ4bTVyR2NFQ2E2UVdwQU9NdTZwYk45UXQz?=
+ =?utf-8?B?ejBoMGplK0tOb01YZ1JsUVB6K2xpb3VLY2Rpc1V0c3RmbllPcncvUGZWd2hm?=
+ =?utf-8?B?aTZ1ZnljTTRaeGliVmVaRVI5OWVqR0VrNGUzTzRjYnIyMzIwcURuSTRxSWNp?=
+ =?utf-8?B?dzdyUlBad3ZKeUZjZDFJSyt4YzNWbytEZVlLTS9QTURsVmoxZzRPbUJSNG9X?=
+ =?utf-8?B?dzRDRjQxNGtGQ0x1ZkFySUJRRmtPZ3k1d3BEWjJsaExIT0NzZk1QUjVrMzJs?=
+ =?utf-8?B?dlE9PQ==?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR10MB7639.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?VHRzTXE2VzdoMHV5dEp5emVwNHkrMGg4cU5pbnBOaGlIb2NUNHVuWitvczVT?=
+ =?utf-8?B?WitLVFVQMjhpMkI1R3VLemQxVmtoRGMrbzdmMFExZmRyMmdwenVuRlMwUjBT?=
+ =?utf-8?B?Y2Z1dEVGMGllZ3FaTHJSS2U3eXNvdnFiUk1FYndJb25JWVNxNURrNFdaTUxh?=
+ =?utf-8?B?dkV5TGx6S1Vlb3pLL1QzTWt4TlMrczdvaktuaEJMTFAzR29STGxKTTJLYmVh?=
+ =?utf-8?B?NHc3TTBkalVML1BJZTRkdU9GVVNzTGM2SU5pVmdMeExvZ3UvckRYL1VJa3Z2?=
+ =?utf-8?B?TnRaamc2bUtVMi85VmxweElHL1JOaTZJd29WV1plNTZnZDlRL1p4cmZlOHA1?=
+ =?utf-8?B?YkpVRG9Ja3FDTVhHdHdtbXpQcE1UMDJ5MFRJcVE0SlRKZTQ3V3RacG9BRm54?=
+ =?utf-8?B?anBGYWtCVjlycjh0NlNwaTBydXVhYTNVeHRBc1lab0xkNGI4YWZBakhXcTBi?=
+ =?utf-8?B?RDZHTmEwSjk0ZjVmRUtVZHpISmdtTGJYcXUzUDZXa2JHdDlhSGZiS3lsd0dK?=
+ =?utf-8?B?bzM1R0I2TnJkTzl5YWR4OVp4WTlQRytWc2hPYU9ybU1lSDhhZEdiQkdIeFVl?=
+ =?utf-8?B?SWJPUXpsOU1VNHVCam1MV0lWQUN5V0ZFMU5mci9XQlRvK1ltUlRJcE1WOE5C?=
+ =?utf-8?B?cHR1ZjVpUGd4SU9oT1ZaN3g1cjhweU5PQlQvZkFsSFpMelFmbS9BM1JKcml0?=
+ =?utf-8?B?RVR2eXZZTE45N3VpRkl6RXRzbUVMWjRqbTEzcWlvMWFNYlJuSGdSa1hLYTQ4?=
+ =?utf-8?B?MDVSL0RYN005UDlqT0NtMXJiaVdRYUtyTi8rcWhzbjdlVEFGRGxiZzVCTmpB?=
+ =?utf-8?B?WHJPcGU3RjJpSjR3Z1dHZXd6K3laNVlSSW1nelp3TWFFY1NpN0gzdzViSkJN?=
+ =?utf-8?B?MnUva2tnWUFyNHVYemlHTFBCUWZtWmxVVTEzREhFNzg4d083VUNaa1RybkJY?=
+ =?utf-8?B?NzlJejViSlB0ZUcxcSsycDVhR0JxaEdsSFB6UnNXQlUxeVF4R2YxYnBqd25y?=
+ =?utf-8?B?b09idXdWSTk2My9nVVh2TFM4NTY5N3IxSW1KM2Z5Yzd1dlNUUDdlTVFjcExa?=
+ =?utf-8?B?UnhWQ0U3dmRMcEoyVUJVaDdxeWsxQWM4VngwWVVJbWprTVJ1M00wRzZZeVRt?=
+ =?utf-8?B?R3pLbTJuNXhlamV4U3JYSXFrNkJEYUVOK3VRVC9mSDIzSG03K0tHckhiaVFr?=
+ =?utf-8?B?Mk5qc2NadnBTeGdEYVdwWUcwWERwcTJGdTM1ZnU4OGJxV0Ezd2h4NFBtQVNJ?=
+ =?utf-8?B?aE9JRW8wUGY0SXZCRHRVWi9LZytJM204c0x2bGxQZXRsdFIwNWNtQkwxZVlu?=
+ =?utf-8?B?eklXNGpTOUZCTjEyTEtWcXRUbGppMjcrTUpKeVhjbGQ3ak9TbTUyeWVFdC9D?=
+ =?utf-8?B?eW1UdXdJRDhzUk0vUDA5UVBscTdLR0JCWS9lVHpFMVdLQUVvOE16TzdRVHE0?=
+ =?utf-8?B?TkE0d2E2a0Y2RnhRc0R0Y1RQNytqd3F4MW94SysrWVBxcmhPajRqbko0d1Ez?=
+ =?utf-8?B?WUh3U0gzRVpscGZEOXdSNzA1Tk9oeEVoUWVIYjN6cUFEMWF5L1dmM1dDdDRU?=
+ =?utf-8?B?NDRSZG5HK01PdFVMQTVEZ2EzanlHOU8yem9vOEwrUURvMW1ORDNSRnN2UGxI?=
+ =?utf-8?B?RUt0MEFPakJaZGhGbnVoVkxKN0ZVQW9mYllTL0w2VXg1VGZLK08zTGNYNkxX?=
+ =?utf-8?B?UmJsQ0RCaUR4WXRPZ0huQXdRK0hDZVZqQm94bGg4a0w4ZUNRbmFuOEcra0Zx?=
+ =?utf-8?B?OFpHTDFHWUN0WHlnR0JWTWN5T1pSeDJSdWx1elQ5KzVzTnNZOXdBVnFlQXBr?=
+ =?utf-8?B?L1laVGxsdlpCRnI1WHl5QmxIOHp1anhwMHhtdnhZLzFNcTFmdXhjRC9KLyt2?=
+ =?utf-8?B?SC9ZeUFMMSt6SG9Hc001UVIrcVZFYzFqSWFTNU8yVVVVN2VlczNOdVZPbWsr?=
+ =?utf-8?B?bG10b3JLTUs2RlhVSDFlZXl5U1c4N3ZRVFVJZ3U1MUprbytyV29iRUtTNmNE?=
+ =?utf-8?B?bEhXSFB5alRLU2V3TnFlaFNsWURGZTRxUWNIVGNOdGFzaG9KZzBZOTlSai9s?=
+ =?utf-8?B?MWRGMk1TUUwrQ3d0Smk4dC9lekl2N3oxTDRmMTFSZFRNeXNyU2pFUFkzNUNU?=
+ =?utf-8?B?QmdOS1dMZW9SSGd6TGxoYjZoekRrRUdCSnVDNDBudkhFMGJMcFVvM1pYRmR6?=
+ =?utf-8?B?eGxuYjVXRjhVanFhK0hjYkhsVGMwN3N3bVJ4SDFDd1hicGp0REpXSUxIWkJY?=
+ =?utf-8?B?S2gyOXRxRVdNeDg3bDVYOUgwT3pLMmZEZzNCZlVPYm5NWTN6M3AvSHFOR2dt?=
+ =?utf-8?B?Y25uQUJqTnRtQlF4cDFUQmJOVTRlOHFTY2hJZUNlUmorZUxvZGlEQT09?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	s2SkrZJRcfSUp3J9nlr/AXwSQAV2gyC9o6atxNxdY9ps8KwM9uL2XouMZSDX2ACPquZlAcfqOOlbSlbEgGkm7EaNcFqjxOHH8fMjZiwm/8djnHVP639Qym32GelT8MBHmHUuoTKuyM4O/mesCkTnVNnqbPxK0wUi1hfytiTuC8jSrZljhpb8IqGYKTNkMK1vnKr7BmxK0JDn3sEpTrzOSE6++odjSblNRORnMlzMRg1IEAfTSGT08m99ifblFHLRrh8/VZqDfRvUcBQdg2JGPEoZjYE3HJfwNqGvBFT8z3vOcdtR2uXHhEWZGn3waes+DBUKHFmNi+2V1xcAZbJ4nYaabIQVWX0wcX694gWpiXsktV2l09qJwEpQv7c0aUXcDP2eCaEla2Yja3Sj4LAW9UGyLk6qO5paU7IDFCIEiOSbXsip82AD0HbvgDyT8vpvw6RV67ph9Ctjq1SaANpx3AxGVZoxcTgyo79lmCsS3i698cdYBxTU0wujOTfhhBpgT66Hz35omNszBdzEX3BD7DWfumMT5lPy+x9VvvpFrgh0o1R3eaJk4HU3h5xliRieF3hiwULgOukTH8iYP5MG1S1G4TT9aPcq3lK55Dd76So=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 90c549cb-67a3-417a-ffe2-08de6b2c7f29
+X-MS-Exchange-CrossTenant-AuthSource: MW6PR10MB7639.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2026 18:19:59.1070
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: k70S2Te/ow3vbH8OwgCxsybhTeSjsOdFErlkCH0cE6001DLBGanRc6dXf691DXJIURJIvQ5RkMXvCv8UoU9MAg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR10MB7569
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-13_03,2026-02-13_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
+ adultscore=0 bulkscore=0 suspectscore=0 malwarescore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2601150000 definitions=main-2602130141
+X-Proofpoint-GUID: pA-Ujta2IlRtYmM50zSfJpZXZNfuIgdd
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjEzMDE0MSBTYWx0ZWRfXz8PeCPG6tOnF
+ /6yMWlbrcVueoOr+VhUd4fkNd9nDSJPDc/DU+kKh/zfuZ4wxyhS0Jon9ap6mK5PxMhrgru1okrL
+ zK9wwEbBG2xbyLDJmvwFMU3qZtAcd/LPOgJy14SI1IeopWXIB+cNi66ssmT8ku9Nut6C4at3yOR
+ +lYyvBMU6/mSjRnAepmYfFqdEB2d8VkmW5A26AasP1GlPQPGo/q9r+UqCkIjoLyp3e90Mwp6aFx
+ CwTEevpzSccDYwN1m17qjh9ZGzMHcqO7cbQJirCtCxquu0Lk7IMPfNtMu87dyduYpkd/BpSyLGd
+ xo5tFO3CTT8/COiH3eUIyxwzGMyYOudwIz++nF+MIhwFD4vO9VRYaDexUGe8rTz2FSWJCJ257M/
+ Bug/Cu+jGJfYb43bMNuigPBnsGnKRkLrRm94TdhYLDPBJoOw8LKoojxH+8E81YbtnM//K5QaoGl
+ s3lWHzUinSivq6wUSbA==
+X-Proofpoint-ORIG-GUID: pA-Ujta2IlRtYmM50zSfJpZXZNfuIgdd
+X-Authority-Analysis: v=2.4 cv=Y6f1cxeN c=1 sm=1 tr=0 ts=698f6b55 cx=c_pps
+ a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=HzLeVaNsDn8A:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22 a=6IcKfa4xIT5FJe8K7dsA:9
+ a=QEXdDO2ut3YA:10
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
+X-Spamd-Result: default: False [1.34 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_REJECT(1.00)[cv is fail on i=2];
+	DMARC_POLICY_ALLOW(-0.50)[oracle.com,reject];
+	R_DKIM_ALLOW(-0.20)[oracle.com:s=corp-2025-04-25,oracle.onmicrosoft.com:s=selector2-oracle-onmicrosoft-com];
 	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-77160-lists,linux-fsdevel=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[redhat.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[aahringo@redhat.com,linux-fsdevel@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-77161-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_TO(0.00)[kernel.org,oracle.com,brown.name,redhat.com,talpey.com,lst.de,gmail.com,zeniv.linux.org.uk,suse.cz];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:mid,oracle.com:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,oracle.onmicrosoft.com:dkim];
+	DKIM_TRACE(0.00)[oracle.com:+,oracle.onmicrosoft.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
+	FROM_NEQ_ENVFROM(0.00)[dai.ngo@oracle.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	TO_DN_NONE(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FROM_HAS_DN(0.00)[]
-X-Rspamd-Queue-Id: 7F2DE138C94
+	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	RCVD_COUNT_SEVEN(0.00)[9]
+X-Rspamd-Queue-Id: A7BB8138E52
 X-Rspamd-Action: no action
 
-DLMPFS is a new filesystem to offer distributed locking API (in this
-case DLM) over the already known and easy portable file locking API.
 
-Why?
+On 2/13/26 7:43 AM, Chuck Lever wrote:
+> On Fri, Feb 13, 2026, at 3:30 AM, Dai Ngo wrote:
+>
+>> diff --git a/fs/locks.c b/fs/locks.c
+>> index 46f229f740c8..42ae59eda068 100644
+>> --- a/fs/locks.c
+>> +++ b/fs/locks.c
+>> @@ -1660,8 +1672,12 @@ int __break_lease(struct inode *inode, unsigned
+>> int flags)
+>>   restart:
+>>   	fl = list_first_entry(&ctx->flc_lease, struct file_lease, c.flc_list);
+>>   	break_time = fl->fl_break_time;
+>> -	if (break_time != 0)
+>> -		break_time -= jiffies;
+>> +	if (break_time != 0) {
+>> +		if (time_after(jiffies, break_time))
+>> +			break_time = jiffies + lease_break_time * HZ;
+> break_time is set to an absolute jiffies value.
 
-Because there are user outside that just use a distributed filesystem
-for locking. They don't have a use case to actually using a distributed
-filesystem to store data. Offering a DLM distributed API over a
-filesystem makes it easy for users to such switch to it as thats their
-only need as flock()/fcntl() is already being used in their application.
+This should be:
+       break_time = lease_break_time * HZ;
+Fix in v12.
 
-How to use, 2 node cluster:
+>
+>
+>> +		else
+>> +			break_time -= jiffies;
+> break_time is set to a relative offset.
+>
+>
+>> +	}
+>>   	if (break_time == 0)
+>>   		break_time++;
+>>   	locks_insert_block(&fl->c, &new_fl->c, leases_conflict);
+> Now, further down in __break_lease(), break_time is passed to
+> wait_event_interruptible_timeout(), whose third argument expects
+> a relative timeout in jiffies.
+>
+> Passing an absolute value produces a wait on the order of
+> billions of jiffies rather than lease_break_time seconds.
+>
+>
+>> diff --git a/fs/nfsd/nfs4layouts.c b/fs/nfsd/nfs4layouts.c
+>> index ad7af8cfcf1f..b35ae83da0b1 100644
+>> --- a/fs/nfsd/nfs4layouts.c
+>> +++ b/fs/nfsd/nfs4layouts.c
+>> @@ -782,10 +793,133 @@ nfsd4_layout_lm_open_conflict(struct file *filp, int arg)
+>>   	return 0;
+>>   }
+>>
+>> +static void
+>> +nfsd4_layout_fence_worker(struct work_struct *work)
+>> +{
+>> +	struct delayed_work *dwork = to_delayed_work(work);
+>> +	struct nfs4_layout_stateid *ls = container_of(dwork,
+>> +			struct nfs4_layout_stateid, ls_fence_work);
+>> +	struct nfsd_file *nf;
+>> +	struct block_device *bdev;
+>> +	struct nfs4_client *clp;
+>> +	struct nfsd_net *nn;
+>> +	LIST_HEAD(dispose);
+> Nit: "dispose" is unused.
 
-1. node1:
+Ah, I missed this. Fix in v12.
 
-$ mount -t dlmpfs -o clname=$CLUSTERNAME none /mnt
-$ touch /mnt/lock
-$ flock /mnt/lock -c "echo 'acquired'; sleep 20; echo 'released'"
+>
+>
+>> +
+>> +	spin_lock(&ls->ls_lock);
+>> +	if (list_empty(&ls->ls_layouts)) {
+>> +		spin_unlock(&ls->ls_lock);
+>> +dispose:
+>> +		/* unlock the lease so that tasks waiting on it can proceed */
+>> +		nfsd4_close_layout(ls);
+>> +
+>> +		ls->ls_fenced = true;
+>> +		nfs4_put_stid(&ls->ls_stid);
+>> +		return;
+>> +	}
+>> +	spin_unlock(&ls->ls_lock);
+>> +
+>> +	rcu_read_lock();
+>> +	nf = nfsd_file_get(ls->ls_file);
+>> +	rcu_read_unlock();
+>> +	if (!nf)
+>> +		goto dispose;
+>> +
+>> +	clp = ls->ls_stid.sc_client;
+>> +	nn = net_generic(clp->net, nfsd_net_id);
+>> +	bdev = nf->nf_file->f_path.mnt->mnt_sb->s_bdev;
+>> +	if (nfsd4_layout_ops[ls->ls_layout_type]->fence_client(ls, nf)) {
+>> +		/* fenced ok */
+>> +		nfsd_file_put(nf);
+>> +		pr_warn("%s: FENCED client[%pISpc] clid[%d] to device[%s]\n",
+>> +			__func__, (struct sockaddr *)&clp->cl_addr,
+>> +			clp->cl_clientid.cl_id - nn->clientid_base,
+>> +			bdev->bd_disk->disk_name);
+>> +		goto dispose;
+>> +	}
+>> +	/* fence failed */
+>> +	nfsd_file_put(nf);
+>> +
+>> +	if (!clp->cl_fence_retry_warn) {
+>> +		pr_warn("%s: FENCE failed client[%pISpc] clid[%d] device[%s]\n",
+>> +			__func__, (struct sockaddr *)&clp->cl_addr,
+>> +			clp->cl_clientid.cl_id - nn->clientid_base,
+>> +			bdev->bd_disk->disk_name);
+>> +		clp->cl_fence_retry_warn = true;
+>> +	}
+>> +	/*
+>> +	 * The fence worker retries the fencing operation indefinitely to
+>> +	 * prevent data corruption. The admin needs to take the following
+>> +	 * actions to restore access to the file for other clients:
+>> +	 *
+>> +	 *  . shutdown or power off the client being fenced.
+>> +	 *  . manually expire the client to release all its state on the server;
+>> +	 *    echo 'expire' > /proc/fs/nfsd/clients/clid/ctl'.
+>> +	 *
+>> +	 *    Where:
+>> +	 *
+>> +	 *    clid: is the unique client identifier displayed in
+>> +	 *          the warning message above.
+>> +	 */
+>> +	if (!ls->ls_fence_delay)
+>> +		ls->ls_fence_delay = HZ;
+>> +	else if (ls->ls_fence_delay < MAX_FENCE_DELAY)
+>> +		ls->ls_fence_delay <<= 1;
+>> +	mod_delayed_work(system_dfl_wq, &ls->ls_fence_work, ls->ls_fence_delay);
+>> +}
+>> +
+>> +/**
+>> + * nfsd4_layout_lm_breaker_timedout - The layout recall has timed out.
+>> + * @fl: file to check
+>> + *
+>> + * If the layout type supports a fence operation, schedule a worker to
+>> + * fence the client from accessing the block device.
+>> + *
+>> + * This function runs under the protection of the spin_lock flc_lock.
+>> + * At this time, the file_lease associated with the layout stateid is
+>> + * on the flc_list. A reference count is incremented on the layout
+>> + * stateid to prevent it from being freed while the fence worker is
+>> + * executing. Once the fence worker finishes its operation, it releases
+>> + * this reference.
+>> + *
+>> + * The fence worker continues to run until either the client has been
+>> + * fenced or the layout becomes invalid. The layout can become invalid
+>> + * as a result of a LAYOUTRETURN or when the CB_LAYOUT recall callback
+>> + * has completed.
+>> + *
+>> + * Return true if the file_lease should be disposed of by the caller;
+>> + * otherwise, return false.
+>> + */
+>> +static bool
+>> +nfsd4_layout_lm_breaker_timedout(struct file_lease *fl)
+>> +{
+>> +	struct nfs4_layout_stateid *ls = fl->c.flc_owner;
+>> +
+>> +	if ((!nfsd4_layout_ops[ls->ls_layout_type]->fence_client) ||
+>> +			ls->ls_fenced)
+>> +		return true;
+>> +	if (delayed_work_pending(&ls->ls_fence_work))
+>> +		return false;
+>> +	/*
+>> +	 * Make sure layout has not been returned yet before
+>> +	 * taking a reference count on the layout stateid.
+>> +	 */
+>> +	spin_lock(&ls->ls_lock);
+>> +	if (list_empty(&ls->ls_layouts)) {
+>> +		spin_unlock(&ls->ls_lock);
+>> +		return true;
+>> +	}
+>> +	refcount_inc(&ls->ls_stid.sc_count);
+> Wondering if ^^^^ should be refcount_inc_not_zero()?
 
-2. node2:
+I think the ls_layouts list can not be not empty and the
+layout stateid is 0 at the same time. But I will make this
+change anyway just to be on the safe side.
 
-$ mount -t dlmpfs -o clname=$CLUSTERNAME none /mnt
-$ touch /mnt/lock
-$ flock /mnt/lock -c "echo 'acquired'; sleep 20; echo 'released'"
+Thanks,
+-Dai
 
-do 2. at the 20 seconds range and you will victim the locking.
-
-Limitations:
-
-One limitation is that the filepath need to be known before as DLM
-cannot discover locks, but this is DLM nature as the resource name
-need to be based on a rule that every node has the same locking
-context for a specific resource. Usually this can be just hardcoded
-in an implementation.
-
-Future work:
-
-1. POSIX distributed locking specification:
-
-The file locking API isn't made for distributed locking and has its
-problems because every distributed filesystem does their own stuff to
-somehow "map" distributed locking to the flock()/fcntl() behaviour. The
-goal is to use this filesystem to also allow "experiments" to introduce
-in a community effort new file locking callbacks/systemcalls that are
-more distributed locking friendly.
-
-2. Support different lock manager backends
-
-This filesystem is for DLM only, but I can also think of to support nfs
-"lockd" lock manager to it. Then this filesystem should be named more as
-"lockfs".
-
-DLM stuff:
-
-dlmpfs vs dlmfs:
-
-There is a dlmfs already in the kernel but this offers ocfs2 DLM
-specific API to the user as user space interface. dlmpfs is offering
-file locking API to the user that uses DLM as backend.
-
-Distributed inode problem (very DLM specific):
-
-We need to use the same inode on all nodes that belongs to the same
-"context". We do that over the LVB area and using e.g. the filepath
-as identifier to request/allocate a clutser wide inode number.
-
-E.g. if "/lock" regular file is created a lock request is being done
-with the filepath as resource name. This resource name will be asked if
-its already exists as this information is part of the LVB area. If
-such filepath/resource does not exists this node will write LVB data and
-allocate a unused inode number, also done over LVB and resource name. If
-the filepath/resource would exists then the node will held the lock only
-to keep this information alive. The LVB area will only be written by the
-first node trying creating the first file, this should make it safe that
-the LVB area keeps alive due recovery.
-
-Other stuff:
-
-This filesystem is based on ramfs, many thanks to provide such a filesystem
-and I was able to simple change it for my needs.
-
-And yes, you cannot write/read any data, this filesystem is only for
-creating files/dirs and call flock()/fcntl() locking api on it.
-
-Signed-off-by: Alexander Aring <aahringo@redhat.com>
----
- fs/dlm/Kconfig             |  10 +
- fs/dlm/Makefile            |   2 +-
- fs/dlm/dlmpfs/Makefile     |   8 +
- fs/dlm/dlmpfs/file.c       | 134 +++++++++++
- fs/dlm/dlmpfs/inode.c      | 476 +++++++++++++++++++++++++++++++++++++
- fs/dlm/dlmpfs/internal.h   |  65 +++++
- fs/dlm/dlmpfs/newdlm.c     | 258 ++++++++++++++++++++
- include/uapi/linux/magic.h |   1 +
- 8 files changed, 953 insertions(+), 1 deletion(-)
- create mode 100644 fs/dlm/dlmpfs/Makefile
- create mode 100644 fs/dlm/dlmpfs/file.c
- create mode 100644 fs/dlm/dlmpfs/inode.c
- create mode 100644 fs/dlm/dlmpfs/internal.h
- create mode 100644 fs/dlm/dlmpfs/newdlm.c
-
-diff --git a/fs/dlm/Kconfig b/fs/dlm/Kconfig
-index b46165df5a918..3d75a6ab113b8 100644
---- a/fs/dlm/Kconfig
-+++ b/fs/dlm/Kconfig
-@@ -14,3 +14,13 @@ config DLM_DEBUG
- 	Under the debugfs mount point, the name of each lockspace will
- 	appear as a file in the "dlm" directory.  The output is the
- 	list of resource and locks the local node knows about.
-+
-+config DLM_DLMPFS
-+	tristate "DLM locking filesystem"
-+	depends on DLM
-+	help
-+	Offers DLM locking API over filesystem operations locking callbacks
-+	each node needs to create the same named file under this filesystem
-+	and do locking API as flock or fcntl on it. It can be used if
-+	using an applications that already use file locking for distributed
-+	locking operations.
-diff --git a/fs/dlm/Makefile b/fs/dlm/Makefile
-index 5a471af1d1fe5..157acd6305003 100644
---- a/fs/dlm/Makefile
-+++ b/fs/dlm/Makefile
-@@ -18,4 +18,4 @@ dlm-y :=			ast.o \
- 				user.o \
- 				util.o 
- dlm-$(CONFIG_DLM_DEBUG) +=	debug_fs.o
--
-+obj-$(CONFIG_DLM_DLMPFS) +=	dlmpfs/
-diff --git a/fs/dlm/dlmpfs/Makefile b/fs/dlm/dlmpfs/Makefile
-new file mode 100644
-index 0000000000000..ccf9d23cc3e0a
---- /dev/null
-+++ b/fs/dlm/dlmpfs/Makefile
-@@ -0,0 +1,8 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+# Makefile for the linux dlmpfs routines.
-+#
-+
-+obj-y += dlmpfs.o
-+
-+dlmpfs-objs += inode.o newdlm.o file.o
-diff --git a/fs/dlm/dlmpfs/file.c b/fs/dlm/dlmpfs/file.c
-new file mode 100644
-index 0000000000000..d1a030d57ce8c
---- /dev/null
-+++ b/fs/dlm/dlmpfs/file.c
-@@ -0,0 +1,134 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* dlmpfs file implementation mostly flock/fcntl
-+ */
-+
-+#include <linux/fs.h>
-+#include <linux/dlm.h>
-+#include <linux/slab.h>
-+#include <linux/dcache.h>
-+#include <linux/filelock.h>
-+
-+#include "internal.h"
-+
-+struct dlmpfs_file {
-+	struct dlmlk *flk;
-+};
-+
-+static int dlmpfs_open(struct inode *inode, struct file *file)
-+{
-+	struct dlmpfs_fs_info *fsi = DLMPFS_FSI(file->f_inode);
-+	char strname[DLMPFS_NUM_RESNAME_LEN];
-+	struct dlmpfs_file *fp;
-+
-+	fp = kzalloc_obj(*fp, GFP_NOFS);
-+	if (!fp)
-+		return -ENOMEM;
-+
-+	dlmpfs_fill_resname_num("flock", strname, file->f_inode->i_ino);
-+	fp->flk = dlmlk_alloc(fsi->ls, strname, strlen(strname));
-+	file->private_data = fp;
-+	return simple_open(inode, file);
-+}
-+
-+static int dlmpfs_do_flock(struct file *file, int cmd, struct file_lock *fl)
-+{
-+	struct dlmpfs_file *fp = file->private_data;
-+	unsigned long flags = 0;
-+	int mode;
-+	int rv;
-+
-+	mode = lock_is_write(fl) ? DLM_LOCK_EX : DLM_LOCK_PR;
-+	/* user should not do that but we catch this case here */
-+	if (dlmlk_grmode(fp->flk) == mode)
-+		return 0;
-+
-+	if (!IS_SETLKW(cmd))
-+		flags |= DLM_LKF_NOQUEUE;
-+
-+	/* avoid SH->EX, do SH->NL->EX to avoid deadlocks */
-+	if (IS_SETLKW(cmd) &&
-+	    dlmlk_grmode(fp->flk) == DLM_LOCK_PR &&
-+	    mode == DLM_LOCK_EX)
-+		dlmlk_convert(fp->flk, DLM_LOCK_NL, flags);
-+
-+	rv = dlmlk_convert_interuptible(fp->flk, mode, flags);
-+	if (rv == -EINTR)
-+		return rv;
-+
-+	if (dlmlk_sb(fp->flk)->sb_status == -EAGAIN) {
-+		rv = -EAGAIN;
-+	} else {
-+		rv = locks_lock_file_wait(file, fl);
-+		/* should never be the case */
-+		WARN_ON(rv == -EINTR);
-+	}
-+
-+	return rv;
-+}
-+
-+static void dlmpfs_do_unflock(struct file *file, struct file_lock *fl)
-+{
-+	struct dlmpfs_file *fp = file->private_data;
-+
-+	if (dlmlk_grmode(fp->flk) == DLM_LOCK_NL)
-+		return;
-+
-+	dlmlk_convert(fp->flk, DLM_LOCK_NL, 0);
-+	locks_lock_file_wait(file, fl);
-+}
-+
-+static int dlmpfs_flock(struct file *file, int cmd, struct file_lock *fl)
-+{
-+	if (!(fl->c.flc_flags & FL_FLOCK))
-+		return -ENOLCK;
-+
-+	if (lock_is_unlock(fl)) {
-+		dlmpfs_do_unflock(file, fl);
-+		return 0;
-+	} else {
-+		return dlmpfs_do_flock(file, cmd, fl);
-+	}
-+}
-+
-+static int dlmpfs_lock(struct file *file, int cmd, struct file_lock *fl)
-+{
-+	struct dlmpfs_fs_info *fsi = DLMPFS_FSI(file->f_inode);
-+	struct inode *i = file->f_inode;
-+
-+	if (!(fl->c.flc_flags & FL_POSIX))
-+		return -ENOLCK;
-+
-+	if (cmd == F_CANCELLK)
-+		return dlmplk_cancel(fsi->ls, i->i_ino, file, fl);
-+	else if (IS_GETLK(cmd))
-+		return dlmplk_get(fsi->ls, i->i_ino, file, fl);
-+	else if (lock_is_unlock(fl))
-+		return dlmplk_unlock(fsi->ls, i->i_ino, file, fl);
-+
-+	return dlmplk_lock(fsi->ls, i->i_ino, file, cmd, fl);
-+}
-+
-+static int dlmpfs_release(struct inode *inode, struct file *file)
-+{
-+	struct dlmpfs_file *fp = file->private_data;
-+
-+	if (fp->flk)
-+		dlmlk_free_nowait(fp->flk);
-+
-+	kfree(fp);
-+	file->private_data = NULL;
-+	return 0;
-+}
-+
-+const struct file_operations dlmpfs_file_operations = {
-+	.open		= dlmpfs_open,
-+	.flock		= dlmpfs_flock,
-+	.lock		= dlmpfs_lock,
-+	.fsync		= noop_fsync,
-+	.release	= dlmpfs_release,
-+};
-+
-+const struct inode_operations dlmpfs_file_inode_operations = {
-+	.setattr	= simple_setattr,
-+	.getattr	= simple_getattr,
-+};
-diff --git a/fs/dlm/dlmpfs/inode.c b/fs/dlm/dlmpfs/inode.c
-new file mode 100644
-index 0000000000000..f79cc545404a9
---- /dev/null
-+++ b/fs/dlm/dlmpfs/inode.c
-@@ -0,0 +1,476 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <linux/pagemap.h>
-+#include <linux/highmem.h>
-+#include <linux/time.h>
-+#include <linux/hex.h>
-+#include <linux/init.h>
-+#include <linux/string.h>
-+#include <linux/backing-dev.h>
-+#include <linux/sched.h>
-+#include <linux/parser.h>
-+#include <linux/magic.h>
-+#include <linux/slab.h>
-+#include <linux/uaccess.h>
-+#include <linux/fs_context.h>
-+#include <linux/fs_parser.h>
-+#include <linux/seq_file.h>
-+
-+#include "internal.h"
-+
-+#define DLMPFS_DEFAULT_MODE	0755
-+
-+static const struct super_operations dlmpfs_ops;
-+static const struct inode_operations dlmpfs_dir_inode_operations;
-+
-+struct dlm_pdata_lvb {
-+	__le32 inum;
-+#define DLMPFS_LVB_USED	BIT(0)
-+	__le32 flags;
-+};
-+
-+struct dlmpfs_inode {
-+	struct inode inode;
-+	struct dlmlk *lkinum;
-+	struct dlmlk *lkfpath;
-+};
-+
-+static inline struct dlmpfs_inode *DLMPFS_I(struct inode *inode)
-+{
-+	return container_of(inode, struct dlmpfs_inode, inode);
-+}
-+
-+static struct inode *dlmpfs_alloc_inode(struct super_block *sb)
-+{
-+	struct dlmpfs_inode *di;
-+
-+	di = kzalloc_obj(*di, GFP_NOFS);
-+	if (!di)
-+		return NULL;
-+
-+	inode_init_once(&di->inode);
-+	return &di->inode;
-+}
-+
-+static void dlmpfs_free_inode(struct inode *inode)
-+{
-+	struct dlmpfs_inode *ip = DLMPFS_I(inode);
-+
-+	if (ip->lkfpath) {
-+		dlmlk_free_nowait(ip->lkfpath);
-+		ip->lkfpath = NULL;
-+	}
-+
-+	if (ip->lkinum) {
-+		dlmlk_free_nowait(ip->lkinum);
-+		ip->lkinum = NULL;
-+	}
-+
-+	kfree(ip);
-+}
-+
-+static void dlmpfs_reverse_hex(char *c, u64 value)
-+{
-+	*c = '0';
-+	while (value) {
-+		*c-- = hex_asc[value & 0x0f];
-+		value >>= 4;
-+	}
-+}
-+
-+void dlmpfs_fill_resname_num(const char *prefix, char *resname,
-+			     unsigned int num)
-+{
-+	size_t len;
-+
-+	memset(resname, 0, DLMPFS_NUM_RESNAME_LEN);
-+	len = strlen(prefix);
-+	memcpy(resname, prefix, len);
-+	resname[len] = ' ';
-+	dlmpfs_reverse_hex(resname + len + 1, num);
-+}
-+
-+static unsigned int dlmpfs_reserve_inum(struct dlmpfs_fs_info *fsi,
-+					struct dlmpfs_inode *di)
-+{
-+	char strname[DLMPFS_NUM_RESNAME_LEN];
-+	unsigned int num = fsi->last_inum;
-+	struct dlm_pdata_lvb *lvb;
-+
-+retry_inum:
-+	num++;
-+	if (!num)
-+		num++;
-+
-+	if (!di->lkinum) {
-+		dlmpfs_fill_resname_num("inode", strname, num);
-+		di->lkinum = dlmlk_alloc(fsi->ls, strname, strlen(strname));
-+	}
-+
-+	dlmlk_convert(di->lkinum, DLM_LOCK_EX, DLM_LKF_VALBLK);
-+
-+	lvb = dlmlk_lvb(di->lkinum);
-+	if (lvb->flags & cpu_to_le32(DLMPFS_LVB_USED)) {
-+		dlmlk_free(di->lkinum);
-+		di->lkinum = NULL;
-+		goto retry_inum;
-+	}
-+
-+	lvb->flags |= cpu_to_le32(DLMPFS_LVB_USED);
-+	dlmlk_convert(di->lkinum, DLM_LOCK_NL, DLM_LKF_VALBLK);
-+	fsi->last_inum = num;
-+	return num;
-+}
-+
-+static int dlmpfs_add_inum_usage(struct dlmpfs_fs_info *fsi,
-+				 struct dlmpfs_inode *di,
-+				 __le32 num)
-+{
-+	char strname[DLMPFS_NUM_RESNAME_LEN];
-+	struct dlm_pdata_lvb *lvb;
-+
-+	if (!di->lkinum) {
-+		dlmpfs_fill_resname_num("inode", strname, le32_to_cpu(num));
-+		di->lkinum = dlmlk_alloc(fsi->ls, strname, strlen(strname));
-+	}
-+
-+	dlmlk_convert(di->lkinum, DLM_LOCK_NL, DLM_LKF_VALBLK);
-+
-+	lvb = dlmlk_lvb(di->lkinum);
-+	if (!(lvb->flags & cpu_to_le32(DLMPFS_LVB_USED))) {
-+		dlmlk_free(di->lkinum);
-+		di->lkinum = NULL;
-+		/* failed to add usage */
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-+
-+static unsigned int dlmpfs_alloc_inode_num(struct dlmpfs_fs_info *fsi,
-+					   struct dlmpfs_inode *di,
-+					   const void *res, size_t reslen)
-+{
-+	struct dlm_pdata_lvb *lvb;
-+	unsigned int num;
-+	int rv;
-+
-+	if (!di->lkfpath)
-+		di->lkfpath = dlmlk_alloc(fsi->ls, res, reslen);
-+
-+retry:
-+	dlmlk_convert(di->lkfpath, DLM_LOCK_NL, DLM_LKF_VALBLK);
-+
-+	lvb = dlmlk_lvb(di->lkfpath);
-+	/* cluster wide inum being set */
-+	if (lvb->flags & cpu_to_le32(DLMPFS_LVB_USED)) {
-+		/* increment inode user */
-+		rv = dlmpfs_add_inum_usage(fsi, di, lvb->inum);
-+		if (rv)
-+			goto retry;
-+
-+		return le32_to_cpu(lvb->inum);
-+	}
-+
-+	dlmlk_convert(di->lkfpath, DLM_LOCK_EX, DLM_LKF_VALBLK);
-+	if (lvb->flags & cpu_to_le32(DLMPFS_LVB_USED)) {
-+		/* increment inode user */
-+		rv = dlmpfs_add_inum_usage(fsi, di, lvb->inum);
-+		if (rv)
-+			goto retry;
-+
-+		dlmlk_convert(di->lkfpath, DLM_LOCK_NL, 0);
-+		return le32_to_cpu(lvb->inum);
-+	}
-+
-+	num = dlmpfs_reserve_inum(fsi, di);
-+	lvb->flags |= cpu_to_le32(DLMPFS_LVB_USED);
-+	lvb->inum = cpu_to_le32(num);
-+
-+	dlmlk_convert(di->lkfpath, DLM_LOCK_NL, DLM_LKF_VALBLK);
-+	return num;
-+}
-+
-+static struct dlmpfs_inode *dlmpfs_new_inode(struct super_block *sb)
-+{
-+	return DLMPFS_I(new_inode(sb));
-+}
-+
-+static struct inode *dlmpfs_get_inode(struct super_block *sb, const void *res,
-+				      size_t reslen, const struct inode *dir,
-+				      umode_t mode, dev_t dev)
-+{
-+	struct dlmpfs_inode *dinode = dlmpfs_new_inode(sb);
-+	struct dlmpfs_fs_info *fsi = sb->s_fs_info;
-+	struct inode *inode;
-+
-+	if (dinode) {
-+		inode = &dinode->inode;
-+		inode->i_ino = dlmpfs_alloc_inode_num(fsi, dinode, res, reslen);
-+		inode_init_owner(&nop_mnt_idmap, inode, dir, mode);
-+		simple_inode_init_ts(inode);
-+		switch (mode & S_IFMT) {
-+		case S_IFREG:
-+			inode->i_op = &dlmpfs_file_inode_operations;
-+			inode->i_fop = &dlmpfs_file_operations;
-+			break;
-+		case S_IFDIR:
-+			inode->i_op = &dlmpfs_dir_inode_operations;
-+			inode->i_fop = &simple_dir_operations;
-+
-+			/* directory inodes start off with i_nlink == 2 (for "." entry) */
-+			inc_nlink(inode);
-+			break;
-+		default:
-+			WARN_ON(1);
-+			break;
-+		}
-+	}
-+	return inode;
-+}
-+
-+/*
-+ * File creation. Allocate an inode, and we're done..
-+ */
-+/* SMP-safe */
-+static int
-+dlmpfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
-+	     struct dentry *dentry, umode_t mode, dev_t dev)
-+{
-+	unsigned char *resname[DLM_RESNAME_MAXLEN] = {};
-+	struct inode *inode;
-+	char *path, *pbuf;
-+	size_t pathlen;
-+	int error;
-+
-+	switch (mode & S_IFMT) {
-+	case S_IFREG:
-+		break;
-+	case S_IFDIR:
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+
-+	pbuf = (char *)__get_free_page(GFP_KERNEL);
-+	if (!pbuf)
-+		return -ENOSPC;
-+
-+	path = dentry_path_raw(dentry, pbuf, PAGE_SIZE);
-+	if (IS_ERR(path)) {
-+		free_page((unsigned long)pbuf);
-+		return -ENOSPC;
-+	}
-+
-+	pathlen = strlen(path);
-+	if (pathlen > DLM_RESNAME_MAXLEN) {
-+		error = -ENAMETOOLONG;
-+		goto out;
-+	}
-+
-+	memcpy(resname, path, pathlen);
-+	/* use next power of 2 as pathlen */
-+	pathlen = ALIGN(pathlen, 8);
-+	error = -ENOSPC;
-+	inode = dlmpfs_get_inode(dir->i_sb, resname, pathlen, dir, mode, dev);
-+	if (inode) {
-+		error = security_inode_init_security(inode, dir,
-+						     &dentry->d_name, NULL,
-+						     NULL);
-+		if (error) {
-+			iput(inode);
-+			goto out;
-+		}
-+
-+		d_make_persistent(dentry, inode);
-+		error = 0;
-+		inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
-+	}
-+
-+out:
-+	free_page((unsigned long)pbuf);
-+	return error;
-+}
-+
-+static struct dentry *dlmpfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
-+				   struct dentry *dentry, umode_t mode)
-+{
-+	int retval = dlmpfs_mknod(&nop_mnt_idmap, dir, dentry, mode | S_IFDIR, 0);
-+
-+	if (!retval)
-+		inc_nlink(dir);
-+	return ERR_PTR(retval);
-+}
-+
-+static int dlmpfs_create(struct mnt_idmap *idmap, struct inode *dir,
-+			 struct dentry *dentry, umode_t mode, bool excl)
-+{
-+	return dlmpfs_mknod(&nop_mnt_idmap, dir, dentry, mode | S_IFREG, 0);
-+}
-+
-+static const struct inode_operations dlmpfs_dir_inode_operations = {
-+	.create		= dlmpfs_create,
-+	.lookup		= simple_lookup,
-+	.mkdir		= dlmpfs_mkdir,
-+	.rmdir		= simple_rmdir,
-+	.unlink         = simple_unlink,
-+	.mknod          = dlmpfs_mknod,
-+};
-+
-+/*
-+ * Display the mount options in /proc/mounts.
-+ */
-+static int dlmpfs_show_options(struct seq_file *m, struct dentry *root)
-+{
-+	struct dlmpfs_fs_info *fsi = root->d_sb->s_fs_info;
-+
-+	if (fsi->mount_opts.mode != DLMPFS_DEFAULT_MODE)
-+		seq_printf(m, ",mode=%o", fsi->mount_opts.mode);
-+	return 0;
-+}
-+
-+static const struct super_operations dlmpfs_ops = {
-+	.alloc_inode	= dlmpfs_alloc_inode,
-+	.free_inode	= dlmpfs_free_inode,
-+	.statfs		= simple_statfs,
-+	.drop_inode	= inode_just_drop,
-+	.show_options	= dlmpfs_show_options,
-+};
-+
-+enum dlmpfs_param {
-+	Opt_mode,
-+	Opt_clname,
-+	Opt_lsname,
-+};
-+
-+static const struct fs_parameter_spec dlmpfs_fs_parameters[] = {
-+	fsparam_u32oct("mode",	Opt_mode),
-+	fsparam_string("clname",	Opt_clname),
-+	fsparam_string("lsname",	Opt_lsname),
-+	{}
-+};
-+
-+static int dlmpfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
-+{
-+	struct dlmpfs_fs_info *fsi = fc->s_fs_info;
-+	struct fs_parse_result result;
-+	int opt;
-+
-+	opt = fs_parse(fc, dlmpfs_fs_parameters, param, &result);
-+	if (opt == -ENOPARAM) {
-+		opt = vfs_parse_fs_param_source(fc, param);
-+		if (opt != -ENOPARAM)
-+			return opt;
-+		/*
-+		 * We might like to report bad mount options here;
-+		 * but traditionally dlmpfs has ignored all mount options,
-+		 * and as it is used as a !CONFIG_SHMEM simple substitute
-+		 * for tmpfs, better continue to ignore other mount options.
-+		 */
-+		return 0;
-+	}
-+	if (opt < 0)
-+		return opt;
-+
-+	switch (opt) {
-+	case Opt_mode:
-+		fsi->mount_opts.mode = result.uint_32 & S_IALLUGO;
-+		break;
-+	case Opt_clname:
-+		strscpy(fsi->clname, param->string, DLM_RESNAME_MAXLEN);
-+		break;
-+	case Opt_lsname:
-+		strscpy(fsi->lsname, param->string, DLM_RESNAME_MAXLEN);
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+static int dlmpfs_fill_super(struct super_block *sb, struct fs_context *fc)
-+{
-+	struct dlmpfs_fs_info *fsi = sb->s_fs_info;
-+	unsigned char res[8] = {};
-+	struct inode *inode;
-+	int rv;
-+
-+	rv = dlmls_new(fsi->lsname, fsi->clname, 0, 8, NULL, NULL,
-+		       NULL, &fsi->ls);
-+	if (rv) {
-+		fsi->ls = NULL;
-+		return rv;
-+	}
-+
-+	sb->s_maxbytes		= MAX_LFS_FILESIZE;
-+	sb->s_blocksize		= PAGE_SIZE;
-+	sb->s_blocksize_bits	= PAGE_SHIFT;
-+	sb->s_magic		= DLMPFS_MAGIC;
-+	sb->s_op		= &dlmpfs_ops;
-+	sb->s_d_flags		= DCACHE_DONTCACHE;
-+	sb->s_time_gran		= 1;
-+
-+	res[0] = '/';
-+	inode = dlmpfs_get_inode(sb, res, sizeof(res), NULL, S_IFDIR | fsi->mount_opts.mode, 0);
-+	sb->s_root = d_make_root(inode);
-+	if (!sb->s_root)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
-+static int dlmpfs_get_tree(struct fs_context *fc)
-+{
-+	return get_tree_nodev(fc, dlmpfs_fill_super);
-+}
-+
-+static void dlmpfs_free_fc(struct fs_context *fc)
-+{
-+	kfree(fc->s_fs_info);
-+}
-+
-+static const struct fs_context_operations dlmpfs_context_ops = {
-+	.free		= dlmpfs_free_fc,
-+	.parse_param	= dlmpfs_parse_param,
-+	.get_tree	= dlmpfs_get_tree,
-+};
-+
-+static int dlmpfs_init_fs_context(struct fs_context *fc)
-+{
-+	struct dlmpfs_fs_info *fsi;
-+
-+	fsi = kzalloc_obj(*fsi, GFP_KERNEL);
-+	if (!fsi)
-+		return -ENOMEM;
-+
-+	strscpy(fsi->clname, "cluster");
-+	strscpy(fsi->lsname, "dlmpfs");
-+	fsi->mount_opts.mode = DLMPFS_DEFAULT_MODE;
-+	fc->s_fs_info = fsi;
-+	fc->ops = &dlmpfs_context_ops;
-+	return 0;
-+}
-+
-+static void dlmpfs_kill_sb(struct super_block *sb)
-+{
-+	struct dlmpfs_fs_info *fsi = sb->s_fs_info;
-+	struct dlmls *ls = fsi->ls;
-+
-+	kfree(sb->s_fs_info);
-+	kill_anon_super(sb);
-+
-+	if (ls)
-+		dlmls_release(ls, 2);
-+}
-+
-+static struct file_system_type dlmpfs_fs_type = {
-+	.name		= "dlmpfs",
-+	.init_fs_context = dlmpfs_init_fs_context,
-+	.parameters	= dlmpfs_fs_parameters,
-+	.kill_sb	= dlmpfs_kill_sb,
-+};
-+
-+static int __init init_dlmpfs_fs(void)
-+{
-+	return register_filesystem(&dlmpfs_fs_type);
-+}
-+fs_initcall(init_dlmpfs_fs);
-diff --git a/fs/dlm/dlmpfs/internal.h b/fs/dlm/dlmpfs/internal.h
-new file mode 100644
-index 0000000000000..7119a005fca61
---- /dev/null
-+++ b/fs/dlm/dlmpfs/internal.h
-@@ -0,0 +1,65 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+
-+#ifndef __DLMPFS_H__
-+#define __DLMPFS_H__
-+
-+#include <linux/fs.h>
-+#include <linux/dlm.h>
-+
-+struct dlmls;
-+struct dlmlk;
-+
-+#define DLMPFS_NUM_RESNAME_LEN 32
-+
-+struct dlmpfs_mount_opts {
-+	umode_t mode;
-+};
-+
-+struct dlmpfs_fs_info {
-+	struct dlmpfs_mount_opts mount_opts;
-+	unsigned int last_inum;
-+	char clname[DLM_RESNAME_MAXLEN];
-+	char lsname[DLM_RESNAME_MAXLEN];
-+	struct dlmls *ls;
-+};
-+
-+extern const struct file_operations dlmpfs_file_operations;
-+extern const struct inode_operations dlmpfs_file_inode_operations;
-+
-+void dlmpfs_fill_resname_num(const char *prefix, char *resname,
-+			     unsigned int num);
-+struct dlmlk *dlmlk_alloc(struct dlmls *ls, const void *name, size_t namelen);
-+void dlmlk_free(struct dlmlk *lk);
-+void dlmlk_free_nowait(struct dlmlk *lk);
-+void dlmlk_convert(struct dlmlk *lk, int mode, unsigned long flags);
-+int dlmlk_convert_interuptible(struct dlmlk *lk, int mode, unsigned long flags);
-+const struct dlm_lksb *dlmlk_sb(struct dlmlk *lk);
-+int dlmlk_grmode(struct dlmlk *lk);
-+int dlmls_new(const char *lsname, const char *clname,
-+	      uint32_t flags, int lvblen,
-+	      const struct dlm_lockspace_ops *ops,
-+	      void *ops_arg, int *ops_result,
-+	      struct dlmls **ls_ret);
-+void dlmls_release(struct dlmls *ls, uint32_t flags);
-+int dlmpfs_get_path(struct dentry *dentry, char **path,
-+		    size_t *pathlen, char **page_buf);
-+
-+int dlmplk_lock(struct dlmls *ls, u64 number, struct file *file,
-+		int cmd, struct file_lock *fl);
-+int dlmplk_unlock(struct dlmls *ls, u64 number, struct file *file,
-+		  struct file_lock *fl);
-+int dlmplk_cancel(struct dlmls *ls, u64 number, struct file *file,
-+		  struct file_lock *fl);
-+int dlmplk_get(struct dlmls *ls, u64 number, struct file *file,
-+	       struct file_lock *fl);
-+static inline void *dlmlk_lvb(struct dlmlk *lk)
-+{
-+	return (void *)dlmlk_sb(lk)->sb_lvbptr;
-+}
-+
-+static inline struct dlmpfs_fs_info *DLMPFS_FSI(const struct inode *inode)
-+{
-+	return inode->i_sb->s_fs_info;
-+}
-+
-+#endif /* __DLMPFS_H__ */
-diff --git a/fs/dlm/dlmpfs/newdlm.c b/fs/dlm/dlmpfs/newdlm.c
-new file mode 100644
-index 0000000000000..0f565ada0268d
---- /dev/null
-+++ b/fs/dlm/dlmpfs/newdlm.c
-@@ -0,0 +1,258 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* creating a better to use DLM API above the current API
-+ */
-+
-+#include <linux/dlm.h>
-+#include <linux/delay.h>
-+#include <linux/filelock.h>
-+#include <linux/dlm_plock.h>
-+
-+#include "internal.h"
-+
-+struct dlmlk {
-+	/* need to aligned */
-+	unsigned char lvb[8];
-+	struct dlm_lksb sb;
-+	struct completion compl;
-+	struct dlmls *ls;
-+	bool nowait;
-+	unsigned char name[DLM_RESNAME_MAXLEN];
-+	size_t namelen;
-+	int grmode;
-+};
-+
-+struct dlmls {
-+	dlm_lockspace_t *ls;
-+	struct kref kref;
-+	bool released;
-+};
-+
-+static void release_ls(struct kref *kref)
-+{
-+	struct dlmls *ls = container_of(kref, struct dlmls, kref);
-+
-+	kfree(ls);
-+}
-+
-+static void ast(void *astarg)
-+{
-+	struct dlmlk *lk = astarg;
-+
-+	if (lk->nowait) {
-+		WARN_ON(lk->sb.sb_status != -DLM_EUNLOCK);
-+		kref_put(&lk->ls->kref, release_ls);
-+		kfree(lk);
-+	} else {
-+		complete(&lk->compl);
-+	}
-+}
-+
-+static int dlm_lock_sync(struct dlmlk *lk,
-+			 int mode, uint32_t _flags,
-+			 bool interruptible)
-+{
-+	unsigned long flags = _flags;
-+	int rv;
-+
-+	/* invalid sb_status because racing API with prev status */
-+	lk->sb.sb_status = -1;
-+
-+	/* stupid DLM_LKF_CONVERT setting */
-+	if (lk->grmode != DLM_LOCK_IV)
-+		flags |= DLM_LKF_CONVERT;
-+
-+retry:
-+	rv = dlm_lock(lk->ls->ls, mode, &lk->sb, flags, lk->name, lk->namelen,
-+		      0, ast, lk, NULL);
-+	switch (rv) {
-+	case 0:
-+		break;
-+	case -EBUSY:
-+		/* stupid DLM API behaviour */
-+		mdelay(50);
-+		goto retry;
-+	default:
-+		goto out;
-+	}
-+
-+	if (interruptible) {
-+		rv = wait_for_completion_interruptible(&lk->compl);
-+		if (rv == -ERESTARTSYS) {
-+			dlm_unlock(lk->ls->ls, lk->sb.sb_lkid,
-+				   DLM_LKF_CANCEL, NULL, lk);
-+
-+			wait_for_completion(&lk->compl);
-+			switch (lk->sb.sb_status) {
-+			case -DLM_ECANCEL:
-+				rv = -EINTR;
-+				break;
-+			case 0:
-+				rv = 0;
-+				break;
-+			default:
-+				rv = -1;
-+				WARN_ON(1);
-+				break;
-+			}
-+		}
-+	} else {
-+		/* TODO waiting on demote makes only sense if DLM_LKF_VALBLK */
-+		wait_for_completion(&lk->compl);
-+	}
-+
-+	/* user might can request that because the user space user
-+	 * makes stupid things like NL -> NL conversions.
-+	 */
-+	if (!rv)
-+		lk->grmode = mode;
-+
-+out:
-+	return rv;
-+}
-+
-+static int dlm_unlock_sync(struct dlmlk *lk, bool nowait)
-+{
-+	int rv;
-+
-+	/* never did a lock change */
-+	if (lk->grmode == DLM_LOCK_IV)
-+		return 0;
-+
-+	rv = dlm_unlock(lk->ls->ls, lk->sb.sb_lkid, 0,
-+			NULL, lk);
-+	if (rv)
-+		goto out;
-+
-+	if (!nowait)
-+		wait_for_completion(&lk->compl);
-+
-+out:
-+	return rv;
-+}
-+
-+struct dlmlk *dlmlk_alloc(struct dlmls *ls, const void *name, size_t namelen)
-+{
-+	struct dlmlk *lk;
-+
-+	lk = kzalloc_obj(*lk, GFP_NOFS);
-+	if (!lk)
-+		return NULL;
-+
-+	lk->ls = ls;
-+	kref_get(&ls->kref);
-+	lk->sb.sb_lvbptr = lk->lvb;
-+	init_completion(&lk->compl);
-+	memcpy(lk->name, name, namelen);
-+	lk->namelen = namelen;
-+	lk->grmode = DLM_LOCK_IV;
-+
-+	/* TODO tell DLM to perform master lookup, even before alloc */
-+	return lk;
-+}
-+
-+void dlmlk_convert(struct dlmlk *lk, int mode, unsigned long flags)
-+{
-+	int rv;
-+
-+	rv = dlm_lock_sync(lk, mode, flags, false);
-+	WARN_ON(rv);
-+}
-+
-+int dlmlk_convert_interuptible(struct dlmlk *lk, int mode, unsigned long flags)
-+{
-+	/* demotes never run into contention, TODO more states */
-+	WARN_ON(mode == DLM_LOCK_NL);
-+	/* can return -EINTR */
-+	return dlm_lock_sync(lk, mode, flags, true);
-+}
-+
-+void dlmlk_free(struct dlmlk *lk)
-+{
-+	int rv;
-+
-+	/* if we already released we don't perform unlocks */
-+	if (!lk->ls->released) {
-+		rv = dlm_unlock_sync(lk, false);
-+		WARN_ON(rv);
-+	}
-+
-+	kref_put(&lk->ls->kref, release_ls);
-+	kfree(lk);
-+}
-+
-+void dlmlk_free_nowait(struct dlmlk *lk)
-+{
-+	int rv;
-+
-+	/* if we already released we don't perform unlocks */
-+	if (!lk->ls->released) {
-+		rv = dlm_unlock_sync(lk, true);
-+		WARN_ON(rv);
-+	} else {
-+		kref_put(&lk->ls->kref, release_ls);
-+		kfree(lk);
-+	}
-+}
-+
-+const struct dlm_lksb *dlmlk_sb(struct dlmlk *lk)
-+{
-+	return &lk->sb;
-+}
-+
-+int dlmlk_grmode(struct dlmlk *lk)
-+{
-+	return lk->grmode;
-+}
-+
-+int dlmls_new(const char *lsname, const char *clname,
-+	      uint32_t flags, int lvblen,
-+	      const struct dlm_lockspace_ops *ops,
-+	      void *ops_arg, int *ops_result,
-+	      struct dlmls **ls_ret)
-+{
-+	struct dlmls *ls;
-+	int rv;
-+
-+	ls = kzalloc_obj(*ls, GFP_NOFS);
-+	if (!ls)
-+		return -ENOMEM;
-+
-+	rv = dlm_new_lockspace(lsname, clname, flags, lvblen,
-+			       ops, ops_arg, ops_result, &ls->ls);
-+	if (!rv) {
-+		kref_init(&ls->kref);
-+		*ls_ret = ls;
-+	}
-+
-+	return rv;
-+}
-+
-+void dlmls_release(struct dlmls *ls, uint32_t flags)
-+{
-+	ls->released = true;
-+	dlm_release_lockspace(ls->ls, flags);
-+}
-+
-+int dlmplk_lock(struct dlmls *ls, u64 number, struct file *file,
-+		int cmd, struct file_lock *fl)
-+{
-+	return dlm_posix_lock(ls->ls, number, file, cmd, fl);
-+}
-+
-+int dlmplk_unlock(struct dlmls *ls, u64 number, struct file *file,
-+		  struct file_lock *fl)
-+{
-+	return dlm_posix_unlock(ls->ls, number, file, fl);
-+}
-+
-+int dlmplk_cancel(struct dlmls *ls, u64 number, struct file *file,
-+		  struct file_lock *fl)
-+{
-+	return dlm_posix_cancel(ls->ls, number, file, fl);
-+}
-+
-+int dlmplk_get(struct dlmls *ls, u64 number, struct file *file,
-+	       struct file_lock *fl)
-+{
-+	return dlm_posix_get(ls->ls, number, file, fl);
-+}
-diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
-index 4f2da935a76cc..2cd5eeaac51ce 100644
---- a/include/uapi/linux/magic.h
-+++ b/include/uapi/linux/magic.h
-@@ -38,6 +38,7 @@
- #define OVERLAYFS_SUPER_MAGIC	0x794c7630
- #define FUSE_SUPER_MAGIC	0x65735546
- #define BCACHEFS_SUPER_MAGIC	0xca451a4e
-+#define DLMPFS_MAGIC		0x858458f7	/* some random number */
- 
- #define MINIX_SUPER_MAGIC	0x137F		/* minix v1 fs, 14 char names */
- #define MINIX_SUPER_MAGIC2	0x138F		/* minix v1 fs, 30 char names */
--- 
-2.43.0
-
+>
+> refcount_inc() on a zero refcount triggers a WARN and still
+> increments, then mod_delayed_work() re-queues the fence
+> worker. Once the destructor completes and frees the layout
+> stateid via kmem_cache_free(), the re-queued fence worker
+> operates on freed memory.
+>
+> Using refcount_inc_not_zero() and returning true on failure
+> would handle this race.
+>
+>
+>> +	spin_unlock(&ls->ls_lock);
+>> +
+>> +	mod_delayed_work(system_dfl_wq, &ls->ls_fence_work, 0);
+>> +	return false;
+>> +}
+>> +
+>>   static const struct lease_manager_operations nfsd4_layouts_lm_ops = {
+>>   	.lm_break		= nfsd4_layout_lm_break,
+>>   	.lm_change		= nfsd4_layout_lm_change,
+>>   	.lm_open_conflict	= nfsd4_layout_lm_open_conflict,
+>> +	.lm_breaker_timedout	= nfsd4_layout_lm_breaker_timedout,
+>>   };
+>>
+>>   int
+>
 
