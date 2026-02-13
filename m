@@ -1,270 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-77170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iAOtMJp2j2lERAEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 20:08:10 +0100
+	id WLiTM+x2j2lERAEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 20:09:32 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2441E13919D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 20:08:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 382B51391AD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 20:09:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 58C60306028C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 19:08:00 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 816DC30601B7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 19:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF49274B4D;
-	Fri, 13 Feb 2026 19:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B655E261393;
+	Fri, 13 Feb 2026 19:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bC8uvM0K"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lilsQ2My"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928F9261393;
-	Fri, 13 Feb 2026 19:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771009678; cv=none; b=mNuPHCF3PlauUeQyeiF6sf2NnzFTlMp6glSEjWHF7YIH/KCNPR9/AmUkaF44uSIYZjz1dmSP8fT8C1rTUkrF8vZm/i9qRAdgYd7m4HnEkTdS0RGBhsqyu+C4XzFOkXircDrUpHvRXCpFj2TB8vvsYP7t1c/TMdKzz3KRVA2voYU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771009678; c=relaxed/simple;
-	bh=gL0jlOkR5XShu7QlIaRfvZvyzQCvZJ0ZxvXNGAs15EU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c5n6rKP1FEzyOKnco5HrOIwfuk6EbZCGoffKf9GXE2AnWwU4qeLrT4ck1JmgqQr+CTxYk1hIKmev8wgGJ3E9XConps8/9tJdVI+s+/yFr35yVyt846ROs3SGw0l4ESmDPvkvLrPIoyzaeysTFGKt/fZp6KXfBY+hRmjdsCzY61I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bC8uvM0K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 178B1C116C6;
-	Fri, 13 Feb 2026 19:07:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771009678;
-	bh=gL0jlOkR5XShu7QlIaRfvZvyzQCvZJ0ZxvXNGAs15EU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bC8uvM0KztFNefOPSM+a4Q2NFvrYRUOJZ7DiJW+WoV7pHRQLvz1VjhLfnslgmVHKE
-	 dn/F7A21A6ybM7b0MY3e7xH4E74bIIYmM1snGq5kHe1HurfFZM0KN7rs6I2XfPO/AP
-	 iqlQp8NROA5Cvs+ERXCcZF5qlsiWQH3LRzEqljwNw6FY2YeW+IZ4l+FycAwKb7u4xT
-	 hxgDzN+klUDBcp88I60cXaNJzlcaOX0w4kcXgb/7VbJsFf/o8jFXUin399CkHgjCpO
-	 JhGKDdDiTsJomWeVSuiKd+C+nwMVW1Pr9TBUHAhMnLDL6SnhdEiGGTdajTRrRWMd45
-	 fzYREHZiucbpA==
-Date: Fri, 13 Feb 2026 11:07:57 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz
-Subject: Re: inconsistent lock state in the new fserror code
-Message-ID: <20260213190757.GJ7693@frogsfrogsfrogs>
-References: <aY7BndIgQg3ci_6s@infradead.org>
- <20260213160041.GT1535390@frogsfrogsfrogs>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17AAE26FA77
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Feb 2026 19:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.180
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771009766; cv=pass; b=ixpJeqxKyXXVRnVqIRMK4o0VtSWLXBq3NRQULdaqbopa9lq2GpBJ+Xz0qRoDKL7DoEcVoAMN26tRwDNqWex48EnDHayWe4EwXA5i3yM46i0buFsjIEnfzqbcoKTxHG5WQTrtka9zpQnseEdOtzQ1W+89EBgAj/nPgzAaGEo8MCI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771009766; c=relaxed/simple;
+	bh=zVUNVZEhtz1zAKIlPkoMOnIshcjJh+u7Cbs5oPUruaY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E6ntcB2VOgeSAXSJ9NgV5vx+e9brconn2FGw3DavWZ1/fWdOdmLul0shan5KhxyCsQVhlGTI7TJGbRGkXJcGHwGWyYwpIdRlpfLi+OUx49VkliOAC+hvy/9bEC1vgt5Zxd+WBPQzwtAml+ZKxIlIDeTcDABI65AqjG01YusIZlc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lilsQ2My; arc=pass smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-506a297c14bso12359471cf.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Feb 2026 11:09:24 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771009764; cv=none;
+        d=google.com; s=arc-20240605;
+        b=bl5Wc71KocEj3QHnrFPwMgLBGrlEGJpPQ1gZaw2Gk6nJXBwMIg0elwS5JzH3U+kRf1
+         ss2QAemeyxIIWF1Xvoe/BUrXu6GM3g3obJoPbEml5TEKN7b5HX7fn5TLGI7baj8KkqJM
+         sLvhdSdQFNPk1IHqJgMN9rTdP3ErrIwO0tatVTRsEZ3B0F02shOkwsy0XdN85b6XDLCS
+         fFZ6n9IwwfiHlKBZqvHQM7GEOCSIEKWbQEahNhpnsPF1UMH6Oy1twohNPo2wnzsxRZJa
+         lwa2B8JgxygcwtxthA79nGY8FYWc6979Hlqu9lbvqeSKiO8uCUtXd9PHYd2DpC2A/QSA
+         FuPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=QS2M3KAztoqucCJzQWm9xa6Cgpv3hSDX6ecO7H+gY2A=;
+        fh=X+VQUIH/2fasBTHQa5F8DW7/kZXcoXxnWPZso8sog7s=;
+        b=AU1D58d2K4DotEmnL28UYhLgHKoLA8vC4ej+jKJXS/eijoBHvIiA+//UYThToSvbCQ
+         oAdg2FUH7hurIfEwaAQENCvWELgnlSkry6KgWf3bV59MwHG1uQ2qtMYKFuxwGnAdUvtw
+         CIQBpsXZs2PSliD9Rq7hVDhrieyjMBtMtSXaUaXTEjGTMjqqZyaMsfCYNJc2iEUP+3VZ
+         7qfrZRjiTYd140/ZgQiRBlgp5Tsmf97/W7qCeiQAgikQuGPvqpwGTkeC07wwpeoaIOfN
+         lVTJtRgFjMdaHJeorwUiz48E7ktqcD6hWj199g2bNZbZN+2g8/PtUVW15i9V7ztBfT35
+         7U/A==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1771009764; x=1771614564; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QS2M3KAztoqucCJzQWm9xa6Cgpv3hSDX6ecO7H+gY2A=;
+        b=lilsQ2MyM9/7oY0+o5sVAmZBe2ElcafoByPB8a3StlTPlNUhSYb7HhBTqTS9WqxUZO
+         ku1rHLbZ4+waL2MCz4Ytxnba1AuaVPbkeT9djWK529eZU5d07s62PWY8SQTHZ5qbUTZr
+         s1RBOpOspzMO79YD1tFHiKZkYRv1hec1zsYlLaP4MBxIdiMS5RShnpkYpzkgvwe3tER+
+         t9/XNqNdcJVoLUUBS6e82XZLklLPJkAQFDF2sGrd77O74B7FuJqXKHqE/EKlUiLu1W8O
+         NKe6YZmMyohdpQ8SiI4WU0SbKinKJO7Dlda7JvZTTqz17MvbhL3cpcSn26zrN1ePkYpc
+         hJOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771009764; x=1771614564;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=QS2M3KAztoqucCJzQWm9xa6Cgpv3hSDX6ecO7H+gY2A=;
+        b=p9Tzb6vLFXyEG/HH7UmnLkM69ywa6t2g/3rmd8Px83icyaQgJWbtFZwkbCzw831xgG
+         spCZfQVj0zVbHp6YrOpo8zZJwpogYjcOq2QDZFUxc4WqrEJBAE2r8svlBCek584MfWS3
+         faiOkp6EJjvPaaKIsaXrqnpzzJ31OO328l79VWN9PyoeDfttpp9NtaVsSX7hD60RbTbu
+         UiLUO2MJOaIxITuqylc14rmk0EdAjlUjNyVB/GxtHatgr64OnbPFe5ygkH6YMVHSl6F6
+         3z658lx9f0+ocrXmSAqw6CfN0jjEBTUeJOt7EgFhQv+67AAt4PBgprDBbAz9Wp7c8awM
+         3W/g==
+X-Forwarded-Encrypted: i=1; AJvYcCX5PpPajqNaMY7+eYyt8fUVf+f0L8eYFsfEnMug1OhtYhcbaZenKSqfHNPP688BTEMyO3jB70Xmo0DJwqqp@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvH2zDVFP7mZONrJ+QJCWcuzOky54kgFhlTDnxH09V6hXgGaHD
+	OIqQgKsUeNN+6iyNTXNEigSB+s3Y2uMZfFsyBkebq3nZQLCfbGeG30+I0+kwcbMu7utqhgqBB7e
+	Bs+EFMOwThSUlImGMzcbBqunMgosIt3w=
+X-Gm-Gg: AZuq6aJbv23UQZYeSNj+KT4wG0WGFePJxPJvo0gf8XMf7RAjvXQDtY+V9AWHteCOd80
+	o3AG5T+y9h4EN/mPDpV7Hgq3HXVTaGXw55zAbNKxT6rWSjs36g4x3DscKJ5u+GrJ2DZ6ejRfNa8
+	nEIUyrD2CVBQwpD3OrcWsa/0C8rsiNEXsCssxBg4oW1u0tIR1xB4pGA3tt9Vu16FBKIGhZKiKN5
+	f7Mbc0LZxfKtFRWUuzklF69puJC+0BgXazmhcq9GU0N2H7uIZTMM1B2FNcpUJLCgC08zt8jgFzj
+	Qag/mQ==
+X-Received: by 2002:ac8:5ac9:0:b0:4ed:a6b0:5c39 with SMTP id
+ d75a77b69052e-506a836443fmr38528111cf.63.1771009763940; Fri, 13 Feb 2026
+ 11:09:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260213160041.GT1535390@frogsfrogsfrogs>
+References: <20260210002852.1394504-1-joannelkoong@gmail.com>
+ <20260210002852.1394504-4-joannelkoong@gmail.com> <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
+ <CAJnrk1ZZyYmwtzcHAnv2x8rt=ZVsz7CXCVV6jtgMMDZytyxp3A@mail.gmail.com>
+ <1c657f67-0862-4e13-9c71-7217aeecef61@gmail.com> <CAJnrk1YXmxqUnT561-J7seaicxFRJTyJ=F3_MX1rmtAROC6Ybg@mail.gmail.com>
+ <aY2mdLkqPM0KfPMC@infradead.org> <809cd04b-007b-46c6-9418-161e757e0e80@gmail.com>
+ <CAJnrk1Y6YSw6Rkdh==RfL==n4qEYrrTcdbbS32sBn12jaCoeXg@mail.gmail.com>
+ <aY7ScyJOp4zqKJO7@infradead.org> <7c241b57-95d4-4d58-8cd3-369751f17df1@gmail.com>
+In-Reply-To: <7c241b57-95d4-4d58-8cd3-369751f17df1@gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Fri, 13 Feb 2026 11:09:13 -0800
+X-Gm-Features: AZwV_Qh3vzmcZHHFrk5tmRY-L42DG_4kEaGwxKU2xKfVbjOIkj69uMfOnC1kUFU
+Message-ID: <CAJnrk1b2BHwBzz+AS7x0WuJSpf98x1xGhf1ys2rm4Ffb0_5TOA@mail.gmail.com>
+Subject: Re: [PATCH v1 03/11] io_uring/kbuf: add support for kernel-managed
+ buffer rings
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	csander@purestorage.com, krisman@suse.de, bernd@bsbernd.com, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[4];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77170-lists,linux-fsdevel=lfdr.de];
-	TO_DN_SOME(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77171-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_TO(0.00)[gmail.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 2441E13919D
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 382B51391AD
 X-Rspamd-Action: no action
 
-On Fri, Feb 13, 2026 at 08:00:41AM -0800, Darrick J. Wong wrote:
-> On Thu, Feb 12, 2026 at 10:15:57PM -0800, Christoph Hellwig wrote:
-> > xfstests generic/108 makes lockdep unhappy with the new fserror code
-> > in Linus' tree, see the trace below.  The problem seems to be that
-> > igrab takes i_lock to protect against a inode that is beeing freed.
-> > Error reporting doesn't care about that, but we don't really have
-> > a good interface to just grab a reference.
-> > 
-> > [  149.494670] ================================
-> > [  149.494871] WARNING: inconsistent lock state
-> > [  149.495073] 6.19.0+ #4827 Tainted: G                 N 
-> > [  149.495336] --------------------------------
-> > [  149.495560] inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-W} usage.
-> > [  149.495857] swapper/1/0 [HC1[1]:SC0[0]:HE0:SE1] takes:
-> > [  149.496111] ffff88811ed1b140 (&sb->s_type->i_lock_key#33){?.+.}-{3:3}, at: igrab+0x1a/0xb0
-> > [  149.496543] {HARDIRQ-ON-W} state was registered at:
-> > [  149.496853]   lock_acquire+0xca/0x2c0
-> > [  149.497057]   _raw_spin_lock+0x2e/0x40
-> > [  149.497257]   unlock_new_inode+0x2c/0xc0
-> > [  149.497460]   xfs_iget+0xcf4/0x1080
-> > [  149.497643]   xfs_trans_metafile_iget+0x3d/0x100
-> > [  149.497882]   xfs_metafile_iget+0x2b/0x50
-> > [  149.498144]   xfs_mount_setup_metadir+0x20/0x60
-> > [  149.498163]   xfs_mountfs+0x457/0xa60
-> > [  149.498163]   xfs_fs_fill_super+0x6b3/0xa90
-> > [  149.498163]   get_tree_bdev_flags+0x13c/0x1e0
-> > [  149.498163]   vfs_get_tree+0x27/0xe0
-> > [  149.498163]   vfs_cmd_create+0x54/0xe0
-> > [  149.498163]   __do_sys_fsconfig+0x309/0x620
-> > [  149.498163]   do_syscall_64+0x8b/0xf80
-> > [  149.498163]   entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > [  149.498163] irq event stamp: 139080
-> > [  149.498163] hardirqs last  enabled at (139079): [<ffffffff813a923c>] do_idle+0x1ec/0x270
-> > [  149.498163] hardirqs last disabled at (139080): [<ffffffff828a8d09>] common_interrupt+0x19/0xe0
-> > [  149.498163] softirqs last  enabled at (139032): [<ffffffff8134a853>] __irq_exit_rcu+0xc3/0x120
-> > [  149.498163] softirqs last disabled at (139025): [<ffffffff8134a853>] __irq_exit_rcu+0xc3/0x120
-> > [  149.498163] 
-> > [  149.498163] other info that might help us debug this:
-> > [  149.498163]  Possible unsafe locking scenario:
-> > [  149.498163] 
-> > [  149.498163]        CPU0
-> > [  149.498163]        ----
-> > [  149.498163]   lock(&sb->s_type->i_lock_key#33);
-> > [  149.498163]   <Interrupt>
-> > [  149.498163]     lock(&sb->s_type->i_lock_key#33);
-> 
-> Er... is lockdep telling us here that we could take i_lock in
-> unlock_new_inode, get interrupted, and then take another i_lock?
-> 
-> > [  149.498163] 
-> > [  149.498163]  *** DEADLOCK ***
-> > [  149.498163] 
-> > [  149.498163] 1 lock held by swapper/1/0:
-> > [  149.498163]  #0: ffff8881052c81a0 (&vblk->vqs[i].lock){-.-.}-{3:3}, at: virtblk_done+0x4b/0x110
-> > [  149.498163] 
-> > [  149.498163] stack backtrace:
-> > [  149.498163] CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Tainted: G                 N  6.19.0+ #4827 PREEMPT(full) 
-> > [  149.498163] Tainted: [N]=TEST
-> > [  149.498163] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.17.0-0-gb52ca86e094d-prebuilt.qemu.org 04/01/2014
-> > [  149.498163] Call Trace:
-> > [  149.498163]  <IRQ>
-> > [  149.498163]  dump_stack_lvl+0x5b/0x80
-> > [  149.498163]  print_usage_bug.part.0+0x22c/0x2c0
-> > [  149.498163]  mark_lock+0xa6f/0xe90
-> > [  149.498163]  ? mempool_alloc_noprof+0x91/0x130
-> > [  149.498163]  ? set_track_prepare+0x39/0x60
-> > [  149.498163]  ? mempool_alloc_noprof+0x91/0x130
-> > [  149.498163]  ? fserror_report+0x8a/0x260
-> > [  149.498163]  ? iomap_finish_ioend_buffered+0x170/0x210
-> > [  149.498163]  ? clone_endio+0x8f/0x1c0
-> > [  149.498163]  ? blk_update_request+0x1e4/0x4d0
-> > [  149.498163]  ? blk_mq_end_request+0x1b/0x100
-> > [  149.498163]  ? virtblk_done+0x6f/0x110
-> > [  149.498163]  ? vring_interrupt+0x59/0x80
-> > [  149.498163]  ? __handle_irq_event_percpu+0x8a/0x2e0
-> > [  149.498163]  ? handle_irq_event+0x33/0x70
-> > [  149.498163]  ? handle_edge_irq+0xdd/0x1e0
-> > [  149.498163]  __lock_acquire+0x10b6/0x25e0
-> > [  149.498163]  ? __pcs_replace_empty_main+0x369/0x510
-> > [  149.498163]  ? __pcs_replace_empty_main+0x369/0x510
-> > [  149.498163]  lock_acquire+0xca/0x2c0
-> > [  149.498163]  ? igrab+0x1a/0xb0
-> > [  149.498163]  ? rcu_is_watching+0x11/0x50
-> > [  149.498163]  ? __kmalloc_noprof+0x3ab/0x5a0
-> > [  149.498163]  _raw_spin_lock+0x2e/0x40
-> > [  149.498163]  ? igrab+0x1a/0xb0
-> > [  149.498163]  igrab+0x1a/0xb0
-> > [  149.498163]  fserror_report+0x135/0x260
-> > [  149.498163]  iomap_finish_ioend_buffered+0x170/0x210
-> > [  149.498163]  ? __pfx_stripe_end_io+0x10/0x10
-> > [  149.498163]  clone_endio+0x8f/0x1c0
-> > [  149.498163]  blk_update_request+0x1e4/0x4d0
-> > [  149.498163]  ? __pfx_sg_pool_free+0x10/0x10
-> > [  149.498163]  ? mempool_free+0x3d/0x50
-> > [  149.498163]  blk_mq_end_request+0x1b/0x100
-> > [  149.498163]  virtblk_done+0x6f/0x110
-> > [  149.498163]  vring_interrupt+0x59/0x80
-> > [  149.498163]  __handle_irq_event_percpu+0x8a/0x2e0
-> > [  149.498163]  handle_irq_event+0x33/0x70
-> > [  149.498163]  handle_edge_irq+0xdd/0x1e0
-> > [  149.498163]  __common_interrupt+0x6f/0x180
-> > [  149.498163]  common_interrupt+0xb7/0xe0
-> 
-> Hrmm, so we're calling fserror_report/igrab from an interrupt handler.
-> The bio endio function is for writeback ioend completion.
-> 
-> igrab takes i_lock to check if the inode is in FREEING or WILL_FREE
-> state.  However, the fact that it's in writeback presumably means that
-> the vfs still holds an i_count on this inode, so the inode cannot be
-> freed until iomap_finish_ioend_buffered completes.  So perhaps instead
-> of calling igrab directly, could we perhaps get away with:
-> 
-> 	/*
-> 	 * Only referenced inodes may be passed into this function!
-> 	 * This means they cannot be INEW, FREEING, or WILL_FREE.
-> 	 *
-> 	 * Can't iput from non-sleeping context, so grabbing another
-> 	 * reference must be the last thing before submitting the event
-> 	 */
-> 	if (inode && !atomic_inc_not_zero(&inode->i_count)) {
-> 		/* warn about precondition violation and lost error */
-> 		goto lost_event;
-> 	}
-> 
-> 	schedule_work(&event->work);
-> 
-> Hm?
+On Fri, Feb 13, 2026 at 7:31=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
+com> wrote:
+>
+> On 2/13/26 07:27, Christoph Hellwig wrote:
+> > On Thu, Feb 12, 2026 at 09:29:31AM -0800, Joanne Koong wrote:
+> >>>> I'm arguing exactly against this.  For my use case I need a setup
+> >>>> where the kernel controls the allocation fully and guarantees user
+> >>>> processes can only read the memory but never write to it.  I'd love
+> >>
+> >> By "control the allocation fully" do you mean for your use case, the
+> >> allocation/setup isn't triggered by userspace but is initiated by the
+> >> kernel (eg user never explicitly registers any kbuf ring, the kernel
+> >> just uses the kbuf ring data structure internally and users can read
+> >> the buffer contents)? If userspace initiates the setup of the kbuf
+> >> ring, going through IORING_REGISTER_MEM_REGION would be semantically
+> >> the same, except the buffer allocation by the kernel now happens
+> >> before the ring is created and then later populated into the ring.
+> >> userspace would still need to make an mmap call to the region and the
+> >> kernel could enforce that as read-only. But if userspace doesn't
+> >> initiate the setup, then going through IORING_REGISTER_MEM_REGION gets
+> >> uglier.
+> >
+> > The idea is that the application tells the kernel that it wants to use
+> > a fixed buffer pool for reads.  Right now the application does this
+> > using io_uring_register_buffers().  The problem with that is that
+> > io_uring_register_buffers ends up just doing a pin of the memory,
+> > but the application or, in case of shared memory, someone else could
+> > still modify the memory.  If the underlying file system or storage
+> > device needs verify checksums, or worse rebuild data from parity
+> > (or uncompress), it needs to ensure that the memory it is operating
+> > on can't be modified by someone else.
+> >
+> > So I've been thinking of a version of io_uring_register_buffers where
+> > the buffers are not provided by the application, but instead by the
+> > kernel and mapped into the application address space read-only for
+> > a while, and I thought I could implement this on top of your series,
+> > but I have to admit I haven't really looked into the details all
+> > that much.
+>
+> There is nothing about registered buffers in this series. And even
+> if you try to reuse buffer allocation out of it, it'll come with
+> a circular buffer you'll have no need for. And I'm pretty much
 
-/me hands himself another cup of coffee, changes that to:
+I think the circular buffer will be useful for Christoph's use case in
+the same way it'll be useful for fuse's. The read payload could be
+differently sized across requests, so it's a lot of wasted space to
+have to allocate a buffer large enough to support the max-size request
+per entry in the io_ring. With using a circular buffer, buffers have a
+way to be shared across entries, which means we can significantly
+reduce how much memory needs to be allocated.
 
-	/*
-	 * Can't iput from non-sleeping context, so grabbing another
-	 * reference to the inode must be the last thing before
-	 * submitting the event.  Open-code the igrab here to avoid
-	 * taking i_lock in interrupt context.
-	 */
-	if (inode) {
-		WARN_ON_ONCE(inode_unhashed(inode));
-		WARN_ON_ONCE(inode_state_read_once(inode) &
-					(I_NEW | I_FREEING | I_WILL_FREE));
+Thanks,
+Joanne
 
-		if (!atomic_inc_not_zero(&inode->i_count))
-			goto lost_event;
-		event->inode = inode;
-	}
-
-This seems to fix the lockdep report, will send that out for full
-testing this evening.
-
---D
-
-> It also occurred to me that we shouldn't be calling fserror_report on
-> any of the metadata inodes, which means another fixpatch is needed for
-> the callsites in xfs_health.c.
-> 
-> --D
-> 
-> > [  149.498163]  </IRQ>
-> > [  149.498163]  <TASK>
-> > [  149.498163]  asm_common_interrupt+0x26/0x40
-> > [  149.498163] RIP: 0010:default_idle+0xf/0x20
-> > [  149.498163] Code: 4c 01 c7 4c 29 c2 e9 6e ff ff ff 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa eb 07 0f 00 2d a9 88 15 00 fb f4 <fa> c3 cc cc cc cc 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90
-> > [  149.498163] RSP: 0018:ffffc9000009fed8 EFLAGS: 00000206
-> > [  149.498163] RAX: 0000000000021f47 RBX: ffff888100ad53c0 RCX: 0000000000000000
-> > [  149.498163] RDX: 0000000000000000 RSI: ffffffff83278fb9 RDI: ffffffff8329090b
-> > [  149.498163] RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
-> > [  149.498163] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000000
-> > [  149.498163] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-> > [  149.498163]  default_idle_call+0x7e/0x1a0
-> > [  149.498163]  do_idle+0x1ec/0x270
-> > [  149.498163]  cpu_startup_entry+0x24/0x30
-> > [  149.498163]  start_secondary+0xf7/0x100
-> > [  149.498163]  common_startup_64+0x13e/0x148
-> > [  149.498163]  </TASK>
-> 
+> arguing about separating those for io_uring.
+>
+> --
+> Pavel Begunkov
+>
 
