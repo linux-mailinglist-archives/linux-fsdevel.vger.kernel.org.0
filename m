@@ -1,116 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-77190-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77192-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uGRYHD62j2mpSwEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77190-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 00:39:42 +0100
+	id 8HSFJLO3j2n4SwEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77192-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 00:45:55 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D09F413A062
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 00:39:41 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30CB813A0A6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 00:45:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id E72A930166C8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 23:39:39 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id D2192301C13E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 23:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0204733B6F0;
-	Fri, 13 Feb 2026 23:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4223294A10;
+	Fri, 13 Feb 2026 23:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="wDbRsW0b"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GZ6LJlyZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536F12E7635
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Feb 2026 23:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CFB3EBF2A;
+	Fri, 13 Feb 2026 23:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771025976; cv=none; b=FawxvaFkOVLaxWh0phYi1gar4lknXUZg/h86yykM90w/XGko079i279/byxppo2JlCWSo5UoheJL5O6o2BtjbQ8RyCQ38s5zHShdToOHA9iRAzJu65bopzdZ9lhrE3NTh6bPuqERNNFrMFa6T1KumtbwtkB/g9MCoN17RNsaIfc=
+	t=1771026348; cv=none; b=Dp8BtGEiCvl6je9vC7w68c1b/oc4U9vpnF4eqU6AdQWVrmlWXfmmgn2BLzVtbDO30YKiHxlnAK7cWYte1jbSOfzKsveJ8DdXCXVFvg8yrqrG2jCnz5D29Z4PYAWwsaxBX67KoI95iGxCGP10BWHda4q91hhsJlrWzLXneQ7JLzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771025976; c=relaxed/simple;
-	bh=cIijZJ7vBB9byXFCBB/N91Qv30Mpm7r/mBqhonjG1lg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B0cGXXfnrcIoWl60Xpwt+XMT93XFhtm0+ZYoNKVlHsoomNKAuxHNEsXx6pgigdd23UAEBO4aGIRaJB7Bms8PG7tWQkgfWXoOk2qxWB7t41sK540PjEYJqawBdBTItkR6CDmO36rhAw93dx4zJvx5ntuuuvQUqxfS9MNsMp+jzJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=wDbRsW0b; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ym+U9nm3ZHh38Q00bEcPAPKb8iVXeN+0zX8s6Dsh1n4=; b=wDbRsW0bRFA1rQI7pMqWfzwviS
-	Lequ1cQuC2Z6bXSWEn+EkekVvc48yFyzhuPm7exjMkpvQ+IpJEY17ulKp5Rm+CXs06KdT5CiUr7Qp
-	Ml0ma8Tc99bUKdDMRZvVpLJuY/tuk9t/fyvUzmmZ+SBTcV4kFnOgS6kBzcGi0wOZp+TZggWGm50C/
-	t2/4B/GdFSQpSh1krrjv0mdtrUtE37UIqa///E235s/+a+xwQir1tCMqm2cOaPDeM3CpapPicOJWg
-	arrDzfxd9ZfMQJ18MNHBo9+LG6XmlL6EWnRXA/uH1CUnz9h2Jh6+4+d/XLDBht0FGG3zZV2UXA4n+
-	v6/TI5OA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1vr2nD-00000003OHd-1SIV;
-	Fri, 13 Feb 2026 23:41:47 +0000
-Date: Fri, 13 Feb 2026 23:41:47 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Askar Safin <safinaskar@gmail.com>, christian@brauner.io,
-	cyphar@cyphar.com, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	torvalds@linux-foundation.org, werner@almesberger.net
-Subject: Re: [RFC] pivot_root(2) races
-Message-ID: <20260213234147.GS3183987@ZenIV>
-References: <1FC2FB1F-BDA5-472D-A7DB-D146F6F75B16@zytor.com>
- <20260213174721.132662-1-safinaskar@gmail.com>
- <1caf6a70-e49b-42c7-81d0-bd0d6f5027bf@zytor.com>
- <20260213222521.GQ3183987@ZenIV>
- <92837188-C667-4A2A-9D34-85E5F1A5D597@zytor.com>
+	s=arc-20240116; t=1771026348; c=relaxed/simple;
+	bh=EWfaKJCaJC2GErydog5q9S65WnGr3OmrX5J6uwCpiPk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=JMCR7mpFeV9giA2eyIEgYs0kvALAUyNtrkdzAyGApdq80NGEb3+XA3/Zyw1V6twUK3ebBWtkCUgyd6/v4qWpV+gIJX+DnswhHBYyIImm3DtFBHiut981Vbh9BregkCrYKaK+oeoUYFIh8JvSdvGp4XfTyAoRJDd8ZxqSYZC8uho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GZ6LJlyZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9850FC116C6;
+	Fri, 13 Feb 2026 23:45:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771026347;
+	bh=EWfaKJCaJC2GErydog5q9S65WnGr3OmrX5J6uwCpiPk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=GZ6LJlyZWLf4CDD5S/zkdrpwC2BXwCpeTxgo1tIB1sIcZco7UXK8Hdj4gaVXMxXwz
+	 IyqXcv7lo9oeR//v00ELuNg66qlpw9bzGf7XqxUsNZMUy2EUCuPJfnzRQ1UU8fcLlH
+	 XG3ptvUaXIezNwP1k8g2s9vlYWAy5TLqIVLvJpQllknBDZYAWaxwdcpzqzL9a8DSFM
+	 vnZGWriKQS6uWTi8U36rK9OmdRe3GVAcGatiya2g+PIQbWFkJZLl68iGfdtr/ckr+d
+	 tNCTSaRznDdLmk0AHz72k2L6ZggIyYEgpgkRpO+AMCQt8ZOgVU9i01qo8tS+bjd69S
+	 YnCUoqkY9aHvg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 852673811A44;
+	Fri, 13 Feb 2026 23:45:42 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <92837188-C667-4A2A-9D34-85E5F1A5D597@zytor.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH mm-hotfixes-stable] procfs: fix possible double mmput() in
+ do_procmap_query()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <177102634133.2575868.4556838261873713161.git-patchwork-notify@kernel.org>
+Date: Fri, 13 Feb 2026 23:45:41 +0000
+References: <20260210192738.3041609-1-andrii@kernel.org>
+In-Reply-To: <20260210192738.3041609-1-andrii@kernel.org>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org, surenb@google.com,
+ shakeel.butt@linux.dev, ruikai@pwno.io, tglx@kernel.org,
+ syzbot+237b5b985b78c1da9600@syzkaller.appspotmail.com
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[zeniv.linux.org.uk,none];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[linux.org.uk:s=zeniv-20220401];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	FROM_NEQ_ENVFROM(0.00)[patchwork-bot@kernel.org,linux-fsdevel@vger.kernel.org];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77190-lists,linux-fsdevel=lfdr.de];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	TAGGED_FROM(0.00)[bounces-77192-lists,linux-fsdevel=lfdr.de,netdevbpf];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_CC(0.00)[gmail.com,brauner.io,cyphar.com,suse.cz,vger.kernel.org,linux-foundation.org,almesberger.net];
-	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	FROM_NO_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[viro@zeniv.linux.org.uk,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[linux.org.uk:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: D09F413A062
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel,237b5b985b78c1da9600];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[appspotmail.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,linux-foundation.org:email,pwno.io:email]
+X-Rspamd-Queue-Id: 30CB813A0A6
 X-Rspamd-Action: no action
 
-On Fri, Feb 13, 2026 at 03:00:49PM -0800, H. Peter Anvin wrote:
+Hello:
 
-> Incidentally, how is . treated?
+This patch was applied to bpf/bpf.git (master)
+by Andrew Morton <akpm@linux-foundation.org>:
 
-Explicit no-op at any point of pathname.  ".." is
-	while dentry == root(mount) && (mount,dentry) != nd->root
-		(mount,dentry) = under(mount, dentry)
-	if (mount,dentry) != nd->root
-		dentry = parent(dentry)
-	step_into(dentry)
-and crossing into overmounts (if any) happens in step_into().
+On Tue, 10 Feb 2026 11:27:38 -0800 you wrote:
+> When user provides incorrectly sized buffer for build ID for PROCMAP_QUERY we
+> return with -ENAMETOOLONG error. After recent changes this condition happens
+> later, after we unlocked mmap_lock/per-VMA lock and did mmput(), so original
+> goto out is now wrong and will double-mmput() mm_struct. Fix by jumping
+> further to clean up only vm_file and name_buf.
+> 
+> Fixes: b5cbacd7f86f ("procfs: avoid fetching build ID while holding VMA lock")
+> Reported-by: Ruikai Peng <ruikai@pwno.io>
+> Reported-by: Thomas Gleixner <tglx@kernel.org>
+> Reported-by: syzbot+237b5b985b78c1da9600@syzkaller.appspotmail.com
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> 
+> [...]
 
-See handle_dots() and its callers...
+Here is the summary with links:
+  - [mm-hotfixes-stable] procfs: fix possible double mmput() in do_procmap_query()
+    https://git.kernel.org/bpf/bpf/c/61dc9f776705
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
