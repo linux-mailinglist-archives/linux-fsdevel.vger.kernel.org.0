@@ -1,175 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-77116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 4JdoCyr0jmnDGAEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 10:51:38 +0100
+	id 8PLWE6D5jmnbGAEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 11:14:56 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D9FD134B0B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 10:51:37 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8ED3134F53
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 11:14:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 989EA3014079
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 09:51:32 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 62A263019447
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 10:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050F234F469;
-	Fri, 13 Feb 2026 09:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E03350D7D;
+	Fri, 13 Feb 2026 10:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="NbLwgaIO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GkMJSyfg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE7F2DF146
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Feb 2026 09:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6159A350D55
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Feb 2026 10:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770976289; cv=none; b=MW69YD0dhcPAISLsz/fOsP/5gYbnppNqOqkdDg+bu4y3DscTGs+EHlR572FswiUYecKu8+nSCR5xQkEvYQN1k8CvQQP4MCgqwHYOAhKFOyfkkBVXQPfGvz7hMTtcBO208dt19YQxXj0ZQdj7iGoJeLgfgy9kp3+iayZKl0iX5vs=
+	t=1770977688; cv=none; b=CcRV2Xg7wmUipwnsFe5FI47PogRDvHfagqD3xA/5hNSGDl243k/z9sgY+V1hQzu9sETCXRdYJ/zMft72j42czXCb3hvSsaoRYCd+uMOxacQ0SrdBUEqvvawO6tS7EetYR33QuHBGmfk/Lh+wlGlrPlbbdU9zvVR2dPZ5eBGcMW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770976289; c=relaxed/simple;
-	bh=1CyGSMyvWqDImBSIjoU/O05J+ttS6fr+dJAdzNpNxmY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mnTD2wp1eur+RpSqhs4gwXzdcBIhpHVFyv+c5Ckt5B5Q9RiJR3KcEbhgroYWZPmCiZ3rST0bBgfIwR2x0fHciQRuFKAuhhIgmHYClRxRGc9cRLpfxoMR7hpWLMGCRDVpcSdwiqBpGJrzlNaSZs5WMiRWls9KRQOd2Pdqp/NYoYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=NbLwgaIO; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4fC6r43smQz9srB;
-	Fri, 13 Feb 2026 10:51:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1770976276;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0XJeAuMRxEOi8SYgKVEsfc7ExRb8YS8n3qZ/MeJidqE=;
-	b=NbLwgaIOTpgFp+YPcqGtgtlt6Zwg/7Txw7tCONkx/QnO0gX1zE5xYzd34WCpiA6pmm9Bag
-	ilvSk7pDH//aFV0t+h0iW4M1edqS6lfMrYoQ31xmAnKstVtTufoA66eHOc35tloN1bB172
-	FIGza77jb0wickU3XhKB60eV1SAzzSBStDCj7pzGxRccQVEu1XseMrmI6bfgs/nFMWIKVi
-	veaDjDXHaD/A96qxi+BtM7ktCzpXh8jRyqHfOR50BAF5iAgTQVL7NdOc24IWTazficBuGB
-	6QOWVwB1jz8trajipe1M3Nd6oUnG+2KkPe2K/hGu2Fs4nh0i19U09MKyWgHNlg==
-Date: Fri, 13 Feb 2026 20:51:07 +1100
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Askar Safin <safinaskar@gmail.com>, christian@brauner.io, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, werner@almesberger.net
-Subject: Re: [RFC] pivot_root(2) races
-Message-ID: <2026-02-13-crispy-unlucky-servers-sequels-4N1yCT@cyphar.com>
-References: <CAHk-=wikNJ82dh097VZbqNf_jAiwwZ_opzfvMr-8Ub3_1cx3jQ@mail.gmail.com>
- <20260212171717.2927887-1-safinaskar@gmail.com>
- <CAHk-=wgS5T7sCbjweEKTqbT94XxmcPzppz6Mi6b8nKve-TFarg@mail.gmail.com>
- <1FC2FB1F-BDA5-472D-A7DB-D146F6F75B16@zytor.com>
+	s=arc-20240116; t=1770977688; c=relaxed/simple;
+	bh=/M98330tGPOt+Za6gFovoLt2EsfedQMkDZQubmEbXQM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rrybPnm2PR7DfDJGnsdBSgby8lgHdOBUibrA06OtynV5CZDF25gYN3HTQGsEj2wSbIfM9rrQD7WVtJjYuLk0Vb4in421oFiLTAmzn5JoiYWD60nUrdS+JO1CrpUfFAmsxW7aZ6DO72ZWzQk5nlYqe0U6gO54Hbmvj04v9CmQNEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GkMJSyfg; arc=none smtp.client-ip=209.85.210.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-82311f4070cso463806b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Feb 2026 02:14:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770977687; x=1771582487; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LTXyYT/ElXmFJ1iam/3e+mf315SeVPe3Y1VsH7pqfO8=;
+        b=GkMJSyfgL1VaCtdZBJBFzNlbgjtPxJHgyDtE3AkZazCpu8VqnZI5FwSvEDMdl96zX3
+         C3tC54OmV8/EikeNM+8TW7yUGkYIe7HXajN93qv2rpB+InFG7x7a5VsT3eoR7yxf635J
+         d6CtWARIKXaaSQ8gQjCRmYTSqp7r17Q9w9zHpl7RfSPmgpC5wxG2vEgG/ZbKuO8fDufu
+         Thr7SBSZHDSTZHcq+dNkRFJnpCf+26w4KEGjbY52et9vRZaFIV4fBCWyyw4tkbnEcJfd
+         Vm2nFEg0QshwKa/ANxfKPD/mxVcfidCNlCq7H99BIgbrUbfHbM6/ATnCDJQtlw06VQ+y
+         AvWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770977687; x=1771582487;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LTXyYT/ElXmFJ1iam/3e+mf315SeVPe3Y1VsH7pqfO8=;
+        b=SxtXhvfy8apmXxJ/jLfFtLs/A/dLBrS+/9cyiN1o9cox2tFAYd0/hwy9YaKkxAro0Q
+         nP0liF4RuI26m5RRES90aFHfy/1t2odWQvosKcp0gVtbHMUfiJiVEDnPy3Tf6w1QwNUR
+         5dGP39TaNrBfcsDbmfCwHdB5hEWxLGxDkDQfwZ8XAIsvn4z/rWg9WVlyE+uxLY2Ua77x
+         /Ak4Khv2Ej4MkN+roatZweTTplYew4K4LSKAGBpC2UZS/WSlJlUEOs4GDW30bSTYkpWO
+         cSdhEuEnjX7psR0MHKF+HUJipC6M+NiYtc+o0yhKuuzjJrQM0epV/4WzqJ4+OBh7VjOf
+         dPVw==
+X-Gm-Message-State: AOJu0Yz3LROYcdAmJTsBzCpI5KlrJy/RvJIOV9NSLttCtraCWr2+fIUD
+	AxgDfkZR6etnsJJRA4alJ8GRWGeEky1tyL28ihvxiHW4SG8cDALbFS1s
+X-Gm-Gg: AZuq6aKHmyjgi/AXuTdIgU2yn+L3HoH/Dh7tsj2ejt+8Qdj/SHtAHVYlHelyWnB3WgD
+	/zwo7jkVCoext45rLOkAZVx8Kp7QmxgtNhi0SSHWXMTVREWEBS5rfv9JuVCLKoMs8wsxtWoNj70
+	gQ5eW5gxfhVQQrZcRHIIJm1TWQF3pt+7AAoTDpnwgAH6nDC1NsWsqKU0q0oHm6Uj1fgGrZdBgO+
+	Fa6qEbTTumLt4hHBXk5rtEjGaMFPSPpb4n6ogJcPyYawBTfBu9Pl0CL+EBZzracDBGwv3HEwHSj
+	kivMBMhBbMWfkAQz1Gv/P5vBiZW4AIhXB9imZvNMYjAVBBNRBmljxQrjQ7jyBxNu3rVJe6o55lY
+	3FEVc+MCJmu877TzSv5yw1YGnpoHwfhuefjR0u7kNIK//6/3YYbgLSfEhGn4D+WKZuvtF1m7WQf
+	h7Qeg11MR+AupJsCklEc3yjudiEOzhpLO6sbvstxeB1vp/Q5Vr/w==
+X-Received: by 2002:a05:6a00:2e87:b0:81f:544b:3998 with SMTP id d2e1a72fcca58-824c9d5f175mr1363882b3a.26.1770977686630;
+        Fri, 13 Feb 2026 02:14:46 -0800 (PST)
+Received: from lima-ubuntu.hz.ali.com ([47.246.98.214])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-824c6a2e936sm2128284b3a.6.2026.02.13.02.14.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Feb 2026 02:14:46 -0800 (PST)
+From: Qing Wang <wangqing7171@gmail.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	Bhavik Sachdev <b.sachdev1904@gmail.com>,
+	Andrei Vagin <avagin@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Qing Wang <wangqing7171@gmail.com>,
+	syzbot+9e03a9535ea65f687a44@syzkaller.appspotmail.com
+Subject: [PATCH v2] statmount: Fix the null-ptr-deref in do_statmount()
+Date: Fri, 13 Feb 2026 18:14:38 +0800
+Message-Id: <20260213101438.2465246-1-wangqing7171@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qye2mpmasnupusmr"
-Content-Disposition: inline
-In-Reply-To: <1FC2FB1F-BDA5-472D-A7DB-D146F6F75B16@zytor.com>
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-4.26 / 15.00];
-	SIGNED_PGP(-2.00)[];
+X-Spamd-Result: default: False [0.84 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[cyphar.com,reject];
-	MIME_GOOD(-0.20)[multipart/signed,text/plain];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
-	R_DKIM_ALLOW(-0.20)[cyphar.com:s=MBO0001];
+	MID_CONTAINS_FROM(1.00)[];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
+	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,gmail.com,brauner.io,suse.cz,vger.kernel.org,zeniv.linux.org.uk,almesberger.net];
-	TAGGED_FROM(0.00)[bounces-77116-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com,syzkaller.appspotmail.com];
+	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,virtuozzo.com,gmail.com];
+	TO_DN_SOME(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77117-lists,linux-fsdevel=lfdr.de];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[cyphar.com:+];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[cyphar@cyphar.com,linux-fsdevel@vger.kernel.org];
+	RCVD_TLS_LAST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MIME_TRACE(0.00)[0:+,1:+,2:~];
-	TO_DN_SOME(0.00)[]
-X-Rspamd-Queue-Id: 4D9FD134B0B
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[wangqing7171@gmail.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel,9e03a9535ea65f687a44];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	FROM_HAS_DN(0.00)[]
+X-Rspamd-Queue-Id: B8ED3134F53
 X-Rspamd-Action: no action
 
+If the mount is internal, it's mnt_ns will be MNT_NS_INTERNAL, which is
+defined as ERR_PTR(-EINVAL). So, in the do_statmount(), need to check ns
+of mount by IS_ERR() and return.
 
---qye2mpmasnupusmr
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC] pivot_root(2) races
-MIME-Version: 1.0
+Fixes: 0e5032237ee5 ("statmount: accept fd as a parameter")
+Reported-by: syzbot+9e03a9535ea65f687a44@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/698e287a.a70a0220.2c38d7.009e.GAE@google.com/
+Signed-off-by: Qing Wang <wangqing7171@gmail.com>
+---
+ fs/namespace.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-On 2026-02-12, H. Peter Anvin <hpa@zytor.com> wrote:
-> On February 12, 2026 11:11:55 AM PST, Linus Torvalds <torvalds@linux-foun=
-dation.org> wrote:
-> >On Thu, 12 Feb 2026 at 09:17, Askar Safin <safinaskar@gmail.com> wrote:
-> >>
-> >> In my opinion this is a bug. We should make pivot_root change cwd and =
-root
-> >> for processes in the same mount and user namespace only, not all proce=
-sses
-> >> on the system. (And possibly also require "can ptrace" etc.)
-> >
-> >Yeah, I think adding a few more tests to that
-> >
-> >                fs =3D p->fs;
-> >                if (fs) {
-> >
-> >check in chroot_fs_refs() is called for.
-> >
-> >Maybe just make it a helper function that returns 'struct fs_struct'
-> >if replacing things is appropriate.  But yes, I think "can ptrace" is
-> >the thing to check.
-> >
-> >Of course, somebody who actually sets up containers and knows how
-> >those things use pivot_root() today should check the rules.
-> >
-> >               Linus
->=20
-> It would be interesting to see how much would break if pivot_root()
-> was restricted (with kernel threads parked in nullfs safely out of the
-> way.)
->=20
-> I have gotten a feeling that pivot_root() is used today mostly due to
-> convenience rather than need.
+diff --git a/fs/namespace.c b/fs/namespace.c
+index a67cbe42746d..eb7d2774ee1c 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -5678,13 +5678,16 @@ static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
+ 
+ 		s->mnt = mnt_file->f_path.mnt;
+ 		ns = real_mount(s->mnt)->mnt_ns;
+-		if (!ns)
++		if (IS_ERR(ns))
++			return PTR_ERR(ns);
++		if (!ns) {
+ 			/*
+ 			 * We can't set mount point and mnt_ns_id since we don't have a
+ 			 * ns for the mount. This can happen if the mount is unmounted
+ 			 * with MNT_DETACH.
+ 			 */
+ 			s->mask &= ~(STATMOUNT_MNT_POINT | STATMOUNT_MNT_NS_ID);
++		}
+ 	} else {
+ 		/* Has the namespace already been emptied? */
+ 		if (mnt_ns_id && mnt_ns_empty(ns))
+-- 
+2.34.1
 
-Speaking as probably the heaviest user of pivot_root(2) on modern
-systems (container runtimes), we still need to use it today to configure
-mount namespaces for containers in a sane way.
-
-But (as Christian mentioned elsewhere), the new OPEN_TREE_NAMESPACE
-stuff opens the door to eliminating this requirement for container
-runtimes by sidestepping the whole "clone a mntns and its mounts that
-you need to blow away later" dance that we currently do with
-unshare(CLONE_NEWNS) + pivot_root().
-
---=20
-Aleksa Sarai
-https://www.cyphar.com/
-
---qye2mpmasnupusmr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaY70CxsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG/eDgEA7h5vqvpdc3Rm6ZnT4rTq
-97J/gqlQrK9Eg5tRKvG+q/wBAJAkC7WD1GW3wNVm2J6Mzx5wtEZU4wRrWVT8INBv
-5aUC
-=1FUS
------END PGP SIGNATURE-----
-
---qye2mpmasnupusmr--
 
