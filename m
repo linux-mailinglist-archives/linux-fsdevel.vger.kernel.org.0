@@ -1,272 +1,315 @@
-Return-Path: <linux-fsdevel+bounces-77183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77184-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 6FbLCdCVj2nqRgEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 22:21:20 +0100
+	id aOt1Duyfj2kuSAEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77184-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 23:04:28 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46F831399B4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 22:21:19 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95FBF139B52
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 23:04:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 8C7FE3001CDC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 21:21:15 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4E1EB3038A4A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 22:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EEFE28853A;
-	Fri, 13 Feb 2026 21:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EDD4218AC4;
+	Fri, 13 Feb 2026 22:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X/QIx3gq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e4ZTdcu6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D3A2673AA;
-	Fri, 13 Feb 2026 21:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48ED825C704
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Feb 2026 22:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.219.48
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771017670; cv=fail; b=r+/IaZQSbqnpFkR/NxjmdLFpvKhDKiSmx9ql1mieKk8TkmFMA8y6rePOQO4nPi/VV993Dvj8IHD5oN5Nv4RzV/CUG19PQOpvyrbXo9Q6cdbgzPHEI5WxKPgyNcN0i2uiiDemQ8qemHO42OY0hECdcMqvOE787Qnb2C2m7hGLtrE=
+	t=1771020260; cv=pass; b=g/Vd+aT9XjBqM0D77bJ4mtZPYPDBSXUs5w1AIBqpvioLzLx44v8JINz0KGvbZeli0kjwRRnlY7bBYL0GJNySijN0G/OsvfbGLr0aIa+uZvdpw7kqIIqW1UOFiv4RLdyJZ6ZUmPRh7f9/n6TpmPnqA4lposvCeJV0ypDfGtuW5NQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771017670; c=relaxed/simple;
-	bh=YyTSXbuVMTuM4p1S00y/ZTw4L+fUZGEwgPnBt56LfTQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=rP39Z1bWsP7vUsVOAAHIFM5Qxc82O7Gw0d50EEQgmpJHqCpMIlJwVFzPQ7l90ZGqM+Xkuho5G8tDzf/YpMdmxb1f651/qnhoH8PBUyqZbFfXb0hJWGj4pgPohGSp2YFb9nVcz5XiiEu/v8LngNaTg4I0KG2+rVnLQrd6AhsmSJ0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X/QIx3gq; arc=fail smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1771017669; x=1802553669;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=YyTSXbuVMTuM4p1S00y/ZTw4L+fUZGEwgPnBt56LfTQ=;
-  b=X/QIx3gqHZ2CLRw2PDl1dqP54O8qMcWC1qhI/kMvAqs8oDfL/FTDknxR
-   y8fOPWC5MIZHlao4322EbHcakIWA8VO6K0YDJ74wId6xi/F7u4gGfEFWD
-   7hWZy1u5gWuxZEHBJGMkD+Zn3I4P/WPB7bXAsm1/qWcSO9NpeoVtFC10s
-   X+sfgv70i7yArU4b5Q14QAdWNBNiPpytS3tSV/MQ7t5Bspjh9GP1O1DwC
-   ui4/zv2yxjYL4taRdFLkvl9NKpqP0Usm8E5akM9LboIY33v5T23H4Zhj/
-   wW3OQqF3EDhEbOJ0YGZ0Yi6uKEwR/qY891+9/6skMyfXz9fwf4ovHiflz
-   Q==;
-X-CSE-ConnectionGUID: CIoYZHOlR3S3kuNXD4qruw==
-X-CSE-MsgGUID: S7GQ4mylQOyu6KehBynzpQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11700"; a="76052771"
-X-IronPort-AV: E=Sophos;i="6.21,289,1763452800"; 
-   d="scan'208";a="76052771"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2026 13:21:09 -0800
-X-CSE-ConnectionGUID: OyHLUB6tQXy2XxJdWgkrRg==
-X-CSE-MsgGUID: LD7jSbTDQk+JchYrcY7H5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,289,1763452800"; 
-   d="scan'208";a="212124177"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2026 13:21:08 -0800
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35; Fri, 13 Feb 2026 13:21:07 -0800
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35 via Frontend Transport; Fri, 13 Feb 2026 13:21:07 -0800
-Received: from PH7PR06CU001.outbound.protection.outlook.com (52.101.201.18) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35; Fri, 13 Feb 2026 13:21:01 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=s59x3NP/0E+rQmu5wDfqP1W47iqo/V7amGEZXZwCDCRHMXvYn0SJW/PDpibK3yB0BLTY02Ygz1MHGdbNM9EX8157nMb2+IhpRSdfhUCWf3NK7j5CaBG8JVs0zOINdyf9bc0esM5V+Cyte2ekYvxLKhuXhVMZ+AT1taTkgN8lprgBuCjKBKMqndD4hJjTbEkQzA2nC7bMr6NuwtU8Vj6HPfzRFzh4mrWUt4M/3tZX60BPQ4cl/tVZT8VRpVYkR1cLuF7wguyavTMxl9OIMaxyTcyF+vnSwLdTfUXSLenzSoKIUufKi99XpYtM6PHn1nSD27dxs1ig2gymzKeLpNYXgw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WTNdWHlc7nD/ZYQg1RcugC5GCOdWmGy/MOvLfXXFPAw=;
- b=KYxSfNbf4baLaT7TuLyCqX+s7MRK285ARJ1wn9ovDjlaSTQINF5yh2u4uIfh6R/3G32i+tALeLPXaISeU7boUghieElpWsum79ZJcnT+rt2O4cCJoUXLQY7HP+EqpyHb+qiX6Ssge3ElxzkNpHmZE4qUOFbMThZfoz+dz6vHgFpBdSr7yoEydDnW6K32eoRiVepeNKk8PBo0FNG18QMrqjy6DMYA0a5g/j/AjU4swjxJ9XVzMf24aICxF2fhtj2NdYaHwjojV85CTdgkD5WYPRX/bw2GJPMQK/Qj3nFkh3KKOp4nJ+D8Nedz9iClDRCvls55s5saWmm5e6S6MFSORQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
- (2603:10b6:518:1::d3c) by IA0PR11MB7377.namprd11.prod.outlook.com
- (2603:10b6:208:433::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.14; Fri, 13 Feb
- 2026 21:20:50 +0000
-Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
- ([fe80::1340:c8fe:cf51:9aa2]) by PH3PPF9E162731D.namprd11.prod.outlook.com
- ([fe80::1340:c8fe:cf51:9aa2%2]) with mapi id 15.20.9611.012; Fri, 13 Feb 2026
- 21:20:50 +0000
-Date: Fri, 13 Feb 2026 15:24:14 -0600
-From: Ira Weiny <ira.weiny@intel.com>
-To: John Groves <john@jagalactic.com>, John Groves <John@groves.net>, "Miklos
- Szeredi" <miklos@szeredi.hu>, Dan Williams <dan.j.williams@intel.com>, "Bernd
- Schubert" <bschubert@ddn.com>, Alison Schofield <alison.schofield@intel.com>
-CC: John Groves <jgroves@micron.com>, John Groves <jgroves@fastmail.com>,
-	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, "Jan
- Kara" <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, "David
- Hildenbrand" <david@kernel.org>, Christian Brauner <brauner@kernel.org>,
-	"Darrick J . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Stefan Hajnoczi
-	<shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, Josef Bacik
-	<josef@toxicpanda.com>, Bagas Sanjaya <bagasdotme@gmail.com>, James Morse
-	<james.morse@arm.com>, Fuad Tabba <tabba@google.com>, Sean Christopherson
-	<seanjc@google.com>, Shivank Garg <shivankg@amd.com>, Ackerley Tng
-	<ackerleytng@google.com>, Gregory Price <gourry@gourry.net>, Aravind Ramesh
-	<arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>,
-	"venkataravis@micron.com" <venkataravis@micron.com>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
-	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, John Groves
-	<john@groves.net>
-Subject: Re: [PATCH V7 02/19] dax: Factor out dax_folio_reset_order() helper
-Message-ID: <698f967e877c3_bcb89100f6@iweiny-mobl.notmuch>
-References: <0100019bd33b1f66-b835e86a-e8ae-443f-a474-02db88f7e6db-000000@email.amazonses.com>
- <20260118223110.92320-1-john@jagalactic.com>
- <0100019bd33bf5cc-3ab17b9e-cd67-4f0b-885e-55658a1207f0-000000@email.amazonses.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <0100019bd33bf5cc-3ab17b9e-cd67-4f0b-885e-55658a1207f0-000000@email.amazonses.com>
-X-ClientProxiedBy: BYAPR05CA0084.namprd05.prod.outlook.com
- (2603:10b6:a03:e0::25) To PH3PPF9E162731D.namprd11.prod.outlook.com
- (2603:10b6:518:1::d3c)
+	s=arc-20240116; t=1771020260; c=relaxed/simple;
+	bh=T/yajJUkS71yB85E10CugrMOpuhcfqZphF8pIW9PcgU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pe59XRkoGvS6Qk0MsNSTnVgx77JCbvnJVn/9QbsyQVtDgugQfzRkmiUi0Qx5HszgqzPX+SKqxXdhRtZcbQp//qv2He4UiKq3LsoExt63+Ru66djukk/AVv7qGTB1iQSvpJ51ypNb3jKmRs+76d38ATjom/GX02Dc/Q1EzlOuK94=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e4ZTdcu6; arc=pass smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-89549b2f538so33646116d6.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Feb 2026 14:04:19 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771020258; cv=none;
+        d=google.com; s=arc-20240605;
+        b=a/acnPtyRFdo6sHl2FRdzXCkjQs3EZn5xuV055sByNAEUqITy6cIgoJkABicbs9Tvb
+         XpfJCPZxkJk6nvGMDxJyQDqaxb5Or+5s8deXKUrhQT4NJzRB1yOkJNuZ+FSMZ867ws6u
+         rs4hdRvmPH4UWMibOB1tKjEtv3Oj9Ny5jvBG5WMsEM/FE156QxDjfqUvISzHoSIIriDp
+         Jk9Uf/JcG5w6u7zLSM8bAYuFXDhqPJ7rpTG+jOjZuuwmyRSeyjAnr918rPmj+uFVFmUh
+         mnZfR6BbbWaHXxrS9XzBPi78dLPcb3m5DA4Y6aCF3HeSb54TIls5aqFOjFaQ2SN7hlbJ
+         q+Ww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=4ytRz6Niq4RXHZO+jocyqZC/3Kvjco2xLpMvmT8UTXg=;
+        fh=pWiHuK93eltPqlQZt5VrbKWZnfjd1ZEcvmPzLjPYt9g=;
+        b=NG4xShwQX09Sot+uhdclF0G6k5bIjz89DFuN/isAK8mhZLHHs6CJn1gWYIlpJ6CrHS
+         i8b8AcFehkUbephtFXnZfN0SGiBCV82rFrVjrkgx0cHMwZoxzMH21ulbRgsAwCLOWp9Z
+         rn07pgG3Pmoq5uWpx3SppBdUbhDtjq+d3v6+wo1lxOZ/EU77xw84MXhzeZgBNOtBU6wX
+         2AAOG+pXjTxEfQgBs8wrvLeT6mzzKZsxyMCBHty7ElquMj+tbPQLi6o5iWBY2DMemAfY
+         JhufXhuy7HhH9JVRq/8rUVROB1yd17wGzuY7eocGHDLPZWmmq7ZPlmGvlzqDWpapIdbW
+         pNeQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1771020258; x=1771625058; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4ytRz6Niq4RXHZO+jocyqZC/3Kvjco2xLpMvmT8UTXg=;
+        b=e4ZTdcu6NOsNJaCAAS/eFyb5oL5mEM19rskHXS1F4Y967jJb67Yxb0WjdC2MYAeNug
+         WFM1NjarRAK8Ar9bRjxAuSMbtC+bbGXJ6HwaZV67OMOh3ebbK89f1uY96mkRLivzXkif
+         t/IrIo4q3EUaM9URInQW3/gHOIcZ+IBI7UWAOtd8MdODlQF5uEOtS5sMH0HZd7FAe1f5
+         TL5RxoZMgrmtiK0TIoPY50+JvFBUXtN2CpxEe6beVVW6MB9o7fvGZwNLEfA4TLIp/emT
+         3mT/pIeBPIyv6Uhf5fyjbAnFLYFR4BxGUpRXCqQ76aALUghqwvv+w8AR9rIn7OLNWYFd
+         5BIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771020258; x=1771625058;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=4ytRz6Niq4RXHZO+jocyqZC/3Kvjco2xLpMvmT8UTXg=;
+        b=GCFNWYwl9jx8Yd36lezyw1rP+V6dJrVniOBzVaB5uzjt31bgp99fj3QChkI4kj+xj6
+         s7bR1CTABlL3+iB3xuBR9W/GlfgYFk0I9xWHf4rO1pM/+Kg2jKNlazqkAWeRm3Ygo16E
+         dShuPGPSsW3ta2hQL1J5LwHoF/0gr04hFdKixbqn5nUYs0zz6Op7bhG53VF4kWPXQ3OC
+         DMn2N6q6s+ZUQ7lgi/ZMXbAEBn/2ioC7coiyXJqvhN0Z978F5+k59Q5NjCM+hkv3Mfb4
+         n77ULrjS9Xw4f1xPW1OYl/OUyJ3ELH1qEVt7z8gTodr3oTQc5Gf+qEdq+lkwFqOS6ldq
+         /qkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUB3W6n05TwQt9D35xbm+DXwkMzDrSpc+Nsh/R5Atw5fPCw2GvNDiVNN6W+aNAglVwSbGpf/xVLmH93qkQ6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiSJnaZgpgWaici0Xz95o0SnQylXeAmluFWKNzO3ygzwx0kTVG
+	fbnJer8uRwqZk7rVky9QM13Ylauo4h0bIE/Qdpu4UaRmjwlHFygknBmHtq0jV3+PHw2q0awcOd1
+	74YDzPllfB6gFJ5p1YMwOpJ2MDLRNrEo=
+X-Gm-Gg: AZuq6aIPJZYiSBNKvypA6nAQdiDQVhcrzcZh6vK9vXPtt+krK9V0YtBg+XhnRtU7nqT
+	U1UPyP6bol0I7U6m023cOCse5M2CyDKXuj4Up3BoZa6fU9Kfy4kqRjVVffhatRnah6zn8FUQXVl
+	pcWjspCVaMKXXjW4srexZFmTcyP08LcFJ9tB/vDTtca/stXkm4S7Ho83DDP1Sj00rD0O+yvwvSm
+	IdbMEB/lIMu5YE9i1Lx2sg4PeEY0rAtueb8BI8wx0DrnPp8uMLBwAPNM4BA1LAdoedjUF2aF+Qz
+	1SDcRg==
+X-Received: by 2002:ac8:5fc3:0:b0:501:4a4a:c24a with SMTP id
+ d75a77b69052e-506b3f7db1fmr13486811cf.13.1771020257987; Fri, 13 Feb 2026
+ 14:04:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH3PPF9E162731D:EE_|IA0PR11MB7377:EE_
-X-MS-Office365-Filtering-Correlation-Id: c3aa8902-c016-411d-30b3-08de6b45c345
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?R4yXhXuJbSzIfWDe/DoPeL+rjru/Dl/X76CSM4d/uzbzmz4uOcqOvVNmORIq?=
- =?us-ascii?Q?EKcg6xU59CnlX14t7p6eAZYg6ZdYMNxZiPipIFYEPmc3dxLzMdrQh8UURHwN?=
- =?us-ascii?Q?udtxIZOYiNo3d8K9d+ERkXSk0HxEM+rRKQaFjlLXgbgQd+lpQLlEyFfJRswg?=
- =?us-ascii?Q?isP8tr2jRXY69Bjg/lWZ9TERpR8NU9YuflTCl5goFCcbQalAQnAc3cpE8Qi7?=
- =?us-ascii?Q?X81U/fL+QTXBU3F8auoTJPwkoeGY/EwGA72kkSusprx3i826BASiFonRzVEN?=
- =?us-ascii?Q?mBBqjakaoPCvWlA8/k6sxK6bTuPoWQ+GXw7hIXctRrbvCdzq8RN2KiHoRRzr?=
- =?us-ascii?Q?9tS3oHLzuuNSypMI1L+6gbqwxP7IymnvZtnEVvNSuL/1xvtCkCweGfRHD1p0?=
- =?us-ascii?Q?lCbkAEPKRAg3sttr6vQLUg/To+C1337Ar1mwPbE1pepqY4akP4e9vg7FXWIT?=
- =?us-ascii?Q?iQXWZao2esogumh+wTiELCZq0NPAGTyZMONV68nzbfTKIiYp309RbX/a/hsR?=
- =?us-ascii?Q?tSie79qGLje+I/9fcz9bsWkC/1DyKzzV/NF9Zu3DZ0wSI7Gd1MsVkkvYeCp+?=
- =?us-ascii?Q?FfSD8SI02XKH88Tljyu354dErVAqrUBYWBNapNi8sjNaKU24nn55FRZvvR5m?=
- =?us-ascii?Q?dY19mCxzr5DXoapUw+v+PhlA3KOfe6/dEnsF2akhfe6mrlRy3ZuFto0TPioY?=
- =?us-ascii?Q?zSDsNwemgutkKun+M/yhZrQGVm47DaUN+lWKWv0pKp8I2z7SXsJYW8yW7M6m?=
- =?us-ascii?Q?xoeJ08GmYT6I36Mkg9REH5sLLKVkDJ8/4pTT0yCSN7Zg5wQz8bQ12/9RVWk+?=
- =?us-ascii?Q?Xgo4aS5nS27Ce7NJx9zy4HhKA30cklVI7HQ86NRZj2UcIFk3JmQMfvG+m9WC?=
- =?us-ascii?Q?mPsdzkrBvwevHy23SBxOLiQxHn6mR01a/D5MVF/E7q+qXI6kYbM7dKqqNAJM?=
- =?us-ascii?Q?UpuVwvDdBEYXygdrNdGQamvplVyyez5HPEZ2bSKmlmLmtidVFW34Rca6zzfS?=
- =?us-ascii?Q?9BiKblnXlr0AuXbz/gi88QqsHdMWCJtUee7Q8baaJyKIxxADCF2tGACDksSV?=
- =?us-ascii?Q?3jYRCpTK82U05aVd7DNI1JWbKDx9hFQ6XDKrKaIAotm0FR2ms5Z6RSzkQKlh?=
- =?us-ascii?Q?kZtS8HQ7t5EPlkP3z6Wo71CTQ1ffyi8C405uInRvphijb2qFeq8h2/h30N/S?=
- =?us-ascii?Q?DPL8FvzBytHwyVHIIX1ikuZiVupVkoY2iEt0imffJLpPgOJYJXk91tZKTdC1?=
- =?us-ascii?Q?Tjpd2uK2kt9hJ05exUyECnHUBRlGHIY9WGjz5ZDT6qI5XYmi1c033TsW81Ew?=
- =?us-ascii?Q?uACehTjxlB+5E3Q6zXqExHHi5mT3lL3WYZj2E6DrgX3NzLazyR7c9EWl4opG?=
- =?us-ascii?Q?hQD88r5FFSyuqbafJlgngVtN7Gw3Eqz2VaVcN/nXYwXbXNuqdhBkpYzdUZrm?=
- =?us-ascii?Q?tjjK07XaF5WGBnPTeyAevlpRTaKJk0qsr0vPhUOyk4pxeJtf6w3wWFQqbCmE?=
- =?us-ascii?Q?UiYM03+zTo5vYCgc2gpWLk2SXgRSX+De+xrEPqoDkayZ/XC7A7Pu2Z+DtUV/?=
- =?us-ascii?Q?aZyAhSkB0B/ZJrrK5OI=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH3PPF9E162731D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?j3tAzkJne3MnAPdAtRsRFW5vBHb3Aeyc1ex2hq//ZX1bSQ7siz/5q54EBZFQ?=
- =?us-ascii?Q?lILxSNqbY65g2I6hgj/yAAECvUlYb6pcRhx3p0eE/Phkyk3hidjvm0eTLHEX?=
- =?us-ascii?Q?5RrsFoIAH9W6nbuJuGdYuPVuTMhVLeQNNZ+/ZOHNSQrzqc1VL/3OZFa8vm4q?=
- =?us-ascii?Q?ERS4kqj5IkCxRi4kjC6lg+hmafxfk04nMVdVf5BlOrAfPgoNdYxdoe6js35H?=
- =?us-ascii?Q?Q0UIYUCC2E1gKUZIqrMd6sMWyJjQ+YrZJzQfT7EozfBaXd5idV6Ohu9Z2Nmt?=
- =?us-ascii?Q?64SzQT5JBs0QcdTE/bqJfSxF7u4PURPK44Bw4u9/2YII+M5/yjhMU0+pP4O9?=
- =?us-ascii?Q?3m9bBsVVfsVzBnYQbg5bdGm9GzmPRnaD99OqZIq+lB2k2oXkPoRD/HovlbEW?=
- =?us-ascii?Q?IgdLMwyU6RqGFiZ0+7HCsU56SV3KUCGwwkPvL0348zezVmvlAKeGNP2oBNYG?=
- =?us-ascii?Q?PhzVy/Pwy9C1OaWHtMCk4GPrQCEkROaJFNOqOl7fF8cjTo/uvS6z448eKXJk?=
- =?us-ascii?Q?+U6pIDL9sQmyMqKkgQ4necQ6KcwdwS2hdmSQeLSIbwZtH9fnsSfZ8rBsF4pT?=
- =?us-ascii?Q?b/kWavERj5dzzGtrdj+ydB9qUVicxeRv/slniCpOCjXlkfXlErAKCwHJ6tXG?=
- =?us-ascii?Q?JotFZA3orOXTf+sVURQg1aqKCVexjRmW1qwRzBp3XRTF5eL0FKEZpNpz6KIk?=
- =?us-ascii?Q?LWPem2Fb2ms9Y2MaUVJz+bCHB/8tLk4D1XtwUhpjFClDBk7s4LiQ/6sXUgKz?=
- =?us-ascii?Q?zGsVw4hC1y9mWM1+co1++m1KByIS5iS56Z8sLVrgM7msDzqzKJwsAYZNyrdy?=
- =?us-ascii?Q?cK4bgPa4RALBCZrFfT4xJNFs5d6EcB2AXXRF4lXETY4zi+KrmqjVnKS2+x8t?=
- =?us-ascii?Q?cCYyqHzc21z51iSJkZ6Ru010yZge++osq9a27CfTtz5goDsJ8wLrisEBTHiR?=
- =?us-ascii?Q?CvhVfZIscH3rqJYjVnAsCoS8YrM8KOEZSxLXpOCevFoQbg8NcUNWVxhLAfD+?=
- =?us-ascii?Q?GLbGhi99CKMclEflZTe2jBBksPvEoXVLOSzIV5YBKxEhG5hREHwe6eT9penN?=
- =?us-ascii?Q?cnSfsj6VHB+yF5BVLQ++pHT6XEff/uz1gUKNoNk46odbejyehyqUfozS6Dc2?=
- =?us-ascii?Q?24HHq+zDqw1hOTSK25R8WWg+DsbCj3JLkplxlNiIUjSHhdIdTRZx9lZ74ene?=
- =?us-ascii?Q?YNku/9DRSXtiHPX7v1ig/l6+tt8wceoMhGeNSvWgcAzuW5QoAuQdU0KVSl3N?=
- =?us-ascii?Q?G33EaQYRUBj+byiyjJdamz+A6KQX45OkYgzybqsrTXNvLY7aCEvsx80DbmvF?=
- =?us-ascii?Q?8F8q7wr1Da04WQhPzYR2cYnvCNae7IqlnBxSz7rUhRdu46uAmYZ3ugp37CtP?=
- =?us-ascii?Q?rz9lmYNb50fwgR3+coEqlw/HQXvFT53ri68phR4LrlQeEN+3+i6mhm81bhtw?=
- =?us-ascii?Q?PmiEODPWsSe/bImyWOML8X9cuSadLh3gba9XG97p0RKb6nDNT/pMNLqWmUT4?=
- =?us-ascii?Q?koXEcDa0M7V60vOIBlNx5zSQVWLPk9ygI0qmv4flOF7St1aud2Lvo/wlOUf3?=
- =?us-ascii?Q?1KcB2F0j/K6KSaHi6d/3srPjg2vwFs1n0ld9uFWUsM1/Hmr4r48Eg2cTnEbz?=
- =?us-ascii?Q?HT0SsnJcHdYioxYePaY7Hp75rlnvFLxkLYnyW69XMeM7BlfPjeB7vzSH2Y1S?=
- =?us-ascii?Q?HoT8gdkHVt2uKx59QlYgORlaEHjZftx0z6uV60cNL7+ZBb5YLaIt79wJ4Cbu?=
- =?us-ascii?Q?2h5jNYOAnQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: c3aa8902-c016-411d-30b3-08de6b45c345
-X-MS-Exchange-CrossTenant-AuthSource: PH3PPF9E162731D.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2026 21:20:50.8597
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HYIgH0SWt1Ft+zpLsWZ3oY7Ra11PL3ucLn78+pHOAN5t3fHOa24C68kXyE+WWx/pEPSsVDM3eKIiWzHMQYlPBg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7377
-X-OriginatorOrg: intel.com
+References: <20260210002852.1394504-1-joannelkoong@gmail.com>
+ <20260210002852.1394504-4-joannelkoong@gmail.com> <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
+ <aYykILfX_u9-feH-@infradead.org> <bd488a4e-a856-4fa5-b2bb-427280e6a053@gmail.com>
+ <aY7QX-BIW-SMJ3h_@infradead.org> <34cf24a3-f7f3-46ed-96be-bf716b2db060@gmail.com>
+In-Reply-To: <34cf24a3-f7f3-46ed-96be-bf716b2db060@gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Fri, 13 Feb 2026 14:04:06 -0800
+X-Gm-Features: AZwV_QjThxaD8sVCwmbCVOqtIgzU0nkxJVAh4dZ7_BVtSiwr6yitbg8e-HZnYJw
+Message-ID: <CAJnrk1a+YuPpoLghA01uJhEKrhmrLhQ+5bw2OeeuLG3tG8p6Ew@mail.gmail.com>
+Subject: Re: [PATCH v1 03/11] io_uring/kbuf: add support for kernel-managed
+ buffer rings
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	csander@purestorage.com, krisman@suse.de, bernd@bsbernd.com, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	ARC_REJECT(1.00)[cv is fail on i=2];
-	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
-	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77183-lists,linux-fsdevel=lfdr.de];
-	RCPT_COUNT_TWELVE(0.00)[40];
-	FREEMAIL_CC(0.00)[micron.com,fastmail.com,lwn.net,intel.com,infradead.org,suse.cz,zeniv.linux.org.uk,kernel.org,gmail.com,huawei.com,redhat.com,toxicpanda.com,arm.com,google.com,amd.com,gourry.net,vger.kernel.org,lists.linux.dev,groves.net];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,iweiny-mobl.notmuch:mid,intel.com:email,intel.com:dkim,huawei.com:email,groves.net:email];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[ira.weiny@intel.com,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[intel.com:+];
+	TAGGED_FROM(0.00)[bounces-77184-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_TO(0.00)[gmail.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	RCVD_COUNT_THREE(0.00)[4];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[10]
-X-Rspamd-Queue-Id: 46F831399B4
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 95FBF139B52
 X-Rspamd-Action: no action
 
-John Groves wrote:
-> From: John Groves <John@Groves.net>
-> 
-> Both fs/dax.c:dax_folio_put() and drivers/dax/fsdev.c:
-> fsdev_clear_folio_state() (the latter coming in the next commit after this
-> one) contain nearly identical code to reset a compound DAX folio back to
-> order-0 pages. Factor this out into a shared helper function.
-> 
-> The new dax_folio_reset_order() function:
-> - Clears the folio's mapping and share count
-> - Resets compound folio state via folio_reset_order()
-> - Clears PageHead and compound_head for each sub-page
-> - Restores the pgmap pointer for each resulting order-0 folio
-> - Returns the original folio order (for callers that need to advance by
->   that many pages)
-> 
-> This simplifies fsdev_clear_folio_state() from ~50 lines to ~15 lines while
-> maintaining the same functionality in both call sites.
-> 
-> Suggested-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Signed-off-by: John Groves <john@groves.net>
+On Fri, Feb 13, 2026 at 4:41=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
+com> wrote:
+>
+> On 2/13/26 07:18, Christoph Hellwig wrote:
+> > On Thu, Feb 12, 2026 at 10:44:44AM +0000, Pavel Begunkov wrote:
+> >>>
+> > Can you clarify what you mean with 'pbuf'?  The only fixed buffer API I
+> > know is io_uring_register_buffers* which always takes user provided
+> > buffers, so I have a hard time parsing what you're saying there.  But
+> > that might just be sign that I'm no expert in io_uring APIs, and that
+> > web searches have degraded to the point of not being very useful
+> > anymore.
+>
+> Registered, aka fixed, buffers are the ones you pass to
+> IORING_OP_[READ,WRITE]_FIXED and some other requests. It's normally
+> created by io_uring_register_buffers*() / IORING_REGISTER_BUFFERS*
+> with user memory, but there are special cases when it's installed
+> internally by other kernel components, e.g. ublk.
+> This series has nothing to do with them, and relevant parts of
+> the discussion here don't mention them either.
+>
+> Provided buffer rings, a.k.a pbuf rings, IORING_REGISTER_PBUF_RING
+> is a kernel-user shared ring. The entries are user buffers
+> {uaddr, size}. The user space adds entries, the kernel (io_uring
+> requests) consumes them and issues I/O using the user addresses.
+> E.g. you can issue a IORING_OP_RECV request (+IOSQE_BUFFER_SELECT)
+> and it'll grab a buffer from the ring instead of using sqe->addr.
+>
+> pbuf rings, IORING_REGISTER_MEM_REGION, completion/submission
+> queues and all other kernel-user rings/etc. are internally based
+> on so called regions. All of them support both user allocated
+> memory and kernel allocations + mmap.
+>
+> This series essentially creates provided buffer rings, where
+> 1. the ring now contains kernel addresses
+> 2. the ring itself is in-kernel only and not shared with user space
+> 3. it also allocates kernel buffers (as a region), populates the ring
+>     with them, and allows mapping the buffers into the user space.
 
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+The most important part and the whole reason fuse needs the buffer
+ring to be kernel-managed is because the kernel needs to control when
+buffers get recycled back into the ring. For fuse's use case, the
+buffer is used for passing data between the kernel and the server. We
+can't have the server recycle the buffer because the server writes
+back data to the kernel in that buffer when it submits the sqe. After
+fuse receives the sqe and reads the reply from the server, it then
+needs to recycle that buffer back into the ring so it can be reused
+for a future cqe (eg sending a future request).
 
-[snip]
+>
+> Fuse is doing both adding (kernel) buffers to the ring and consuming
+> them. At which point it's not clear:
+>
+> 1. Why it even needs io_uring provided buffer rings, it can be all
+>     contained in fuse. Maybe it's trying to reuse pbuf ring code as
+>     basically an internal memory allocator, but then why expose buffer
+>     rings as an io_uring uapi instead of keeping it internally.
+>
+>     That's also why I mentioned whether those buffers are supposed to
+>     be used with other types of io_uring requests like recv, etc.
+
+On the userspace/server side, it uses the buffers for other io-uring
+operations (eg reading or writing the contents from/to a
+locally-backed file).
+
+>
+> 2. Why making io_uring to allocate payload memory. The answer to which
+>     is probably to reuse the region api with mmap and so on. And why
+>     payload buffers are inseparably created together with the ring
+
+My main motivation for this is simplicity. I see (and thanks for
+explaining) that using a registered mem region allows the use of some
+optimizations (the only one I know of right now is the PMD one you
+mentioned but maybe there's more I'm missing) that could be useful for
+some workloads, but I don't think (and this could just be my lack of
+understanding of what more optimizations there are) most use cases of
+kmbufs benefit from those optimizations, so to me it feels like we're
+adding non-trivial complexity for no noticeable benefit.
+
+I feel like we get the best of both worlds by letting users have both:
+the simple kernel-managed pbuf where the kernel allocates the buffers
+and the buffers are tied to the lifecycle of the ring, and the more
+advanced kernel-managed pbuf where buffers are tied to a registered
+memory region that the subsystem is responsible for later populating
+the ring with.
+
+>     and via a new io_uring uapi.
+
+imo it felt cleaner to have a new uapi for it because kmbufs and pbufs
+have different expectations and behaviors (eg pbufs only work with
+user-provided buffers and requires userspace to populate the ring
+before using it, whereas for kmbufs the kernel allocates the buffers
+and populates it for you; pbufs require userspace to recycle back the
+buffer, whereas for kmbufs the kernel is the one in control of
+recycling) and from the user pov it seemed confusing to have kmbufs as
+part of the pbuf ring uapi, instead of separating it out as a
+different type of ringbuffer with a different expectation and
+behavior. I was trying to make the point that combining the interface
+if we go with IORING_MEM_REGION gets even more confusing because now
+pbufs that are kernel-managed are also empty at initialization and
+only can point to areas inside a registered mem region and the
+responsibility of populating it is now on whatever subsystem is using
+it.
+
+I still have this opinion but I also think in general, you likely know
+better than I do what kind of io-uring uapi is best for io-uring's
+users. For v2 I'll have kmbufs go through the pbuf uapi.
+
+>
+>     And yes, I believe in the current form it's inflexible, it requires
+>     a new io_uring uapi. It requires the number of buffers to match
+>     the number of ring entries, which are related but not the same
+
+I'm not really seeing what the purpose of having a ring entry with no
+buffer associated with it is. In the existing code for non-kernel
+managed pbuf rings, there's the same tie between reg->ring_entries
+being used as the marker for how many buffers the ring supports. But
+if the number of buffers should be different than the number of ring
+entries, this can be easily fixed by passing in the number of buffers
+from the uapi for kernel-managed pbuf rings.
+
+>     thing. You can't easily add more memory as it's bound to the ring
+>     object. The buffer memory won't even have same lifetime as the
+
+To play devil's advocate, we also can't easily add more memory to the
+mem region once it's been registered. I think there's also a worse
+penalty where the user needs to know upfront how much memory to
+allocate for the mem region for the lifetime of the ring, which imo
+may be hard to do (eg if a kernel-managed buf ring only needs to be
+registered for some code paths and not others, the mem region
+registration would still have to allocate the memory a potential kbuf
+ring would use).
+
+>     ring object -- allow using that km buffer ring with recv requests
+>     and highly likely I'll most likely give you a way to crash the
+>     kernel.
+
+I'm a bit confused by this part. The buffer memory does have the same
+lifetime as the ring object, no? The buffers only get freed when the
+ring itself is freed.
+
+>
+> But hey, I'm tired. I don't have any beef here and am only trying
+> to make it a bit cleaner and flexible for fuse in the first place
+> without even questioning the I/O path. If everyone believes
+
+I appreciate you looking at this and giving your feedback and insight.
+Thank you for doing so. I don't want to merge in something you're
+unhappy with.
+
+Are you open to having support for both a simple kernel-managed pbuf
+interface and later on if/when the need arises, a kernel-managed pbuf
+interface that goes through a registered memory region? If the answer
+is no, then I'll make the change to have kmbufs go through the
+registered memory region.
+
+Thanks,
+Joanne
+
+> everything is right, just ask Jens to merge it.
+>
+> --
+> Pavel Begunkov
+>
 
