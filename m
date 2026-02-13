@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-77175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WEAUDfiCj2lTRQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 21:00:56 +0100
+	id wOl1NQyFj2mRRQEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 21:09:48 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 839B51394CE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 21:00:55 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC3E113953E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 21:09:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D9D6E30305C1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 20:00:51 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id A3DCE3018B9A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 20:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D79F339A8;
-	Fri, 13 Feb 2026 20:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE3326E6F2;
+	Fri, 13 Feb 2026 20:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="QSUiSSb3"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="tb4RRWb9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2D69443
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Feb 2026 20:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92AC51F9ECB
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Feb 2026 20:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771012850; cv=none; b=ozDsXGgxcrcyJ7QtaQd/Il4q7+zkUSBWZLFmeUCu8k7MC2USkyAgp9cqN3NAko+c/hZIyiSZN8QUQK3Gh8WkDVqETq5T4PT03wZivgExGjZyMPCvvbuTCGT6TZCyVjrWCRa1F0l+wBfBqYUAKwyJByErpRfTGn3bNql7I04RZL0=
+	t=1771013364; cv=none; b=SvNSLUkdgyL9slY2mR7bs/G5rr4aEUMd7nzj4113GH59Ka9e1u9CMdmJ7mbBIRc1eqNH7wbMehCK2YEqayY9W7GEAnMVr65tqipM2A7fWM+8Sv3Brm5eWkUvoO8IMgV2YWqc8CCTH55xqpe6p4EFWhr2nmDMPm/q93Sc0nn3Iq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771012850; c=relaxed/simple;
-	bh=43V9QkwULXbMLfDHcawson2l5RZ7e+3T4tZdezLYJvo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=FAtvjVTOZixUnHaJxhJAi+moQbK3Mccg7t6aaa7DdeyR+MsLMq2KMw+BmC5zc6O3GiKA+SI3Y7uCt5sg7vgiHuovoTjBcXNRtfn5h7YVJ553lV1ewIGxWO29u4BL612gwjrT6GmarTdIMNKyzbfl8g5G19aOm1NwfYxQtlmC5Ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=QSUiSSb3; arc=none smtp.client-ip=198.137.202.136
+	s=arc-20240116; t=1771013364; c=relaxed/simple;
+	bh=3i16EHAQpw9uMZ2ioNTzC4k8VVjEmAHkCv/k/8oZngY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kJEUSpuzoSkhhMfakqrRmfMJ4iFyfGnjTfhAUgbMpgg85cadKGfMZaN8lFGCHVI4x9dwnxo1PChxJ3gLPCtH0sIVxvs5LfbV4UQzegqTZMrQmtg7vDxpUKvnzpyyIPErEkNTXdeO56eB3tE2pra+UjRZjLMLhvi0HnqeKk2xB1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=tb4RRWb9; arc=none smtp.client-ip=198.137.202.136
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
 Received: from [IPV6:2607:fb90:3709:ce04:bf4c:86df:148a:f3f5] ([IPv6:2607:fb90:3709:ce04:bf4c:86df:148a:f3f5])
 	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 61DK0AOm944664
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 61DK8C9O947670
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 13 Feb 2026 12:00:13 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 61DK0AOm944664
+	Fri, 13 Feb 2026 12:09:01 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 61DK8C9O947670
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2026012301; t=1771012816;
-	bh=Ng+OGrcrDBDhNDdtESWgKziI/7dJR1RhSjRq8VeioWI=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=QSUiSSb3Rw49rHJhS7nL9EfFLAEYbQE066TScBpKjv8eW3ZuHugx3UEgcCp2YGc+4
-	 J+RFKrcZ+5ga86ce1XYVrptwfHVTSpVG/XYLgCpl+oCjkX9iB0gkhmq4F9GtTKTear
-	 +MVsb5Cr9rd+VJERF879h7IgdBFYMyYaUsR2boRZDos/Td+yvME+glf1c6GbqbRRUP
-	 JKvPn5vqOIeWGy3rgs2gm3ia1vC6lx5NUlnv1sFwmRcYT2mqRYnXnoWGCauOr0X6yh
-	 +9FDXc0rvKCFzMIofXilQaa0UhTocw7dq8wn1bxuWQ/eT5LHOeyx74wS+BE3by21lK
-	 Dn/S5Ler37K8w==
-Message-ID: <f5050b26-e5bd-41b9-8b3e-1b87888095a8@zytor.com>
-Date: Fri, 13 Feb 2026 12:00:10 -0800
+	s=2026012301; t=1771013344;
+	bh=BBGVmzPwic8t1TTmFkvnrAF/eqD9Q/6qbYj0G+64LxM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tb4RRWb9BbBHC529h6nxLpnUmEkSVaaNs+Orcg52dtu13xo+wDyRp9hr/WIFviRVV
+	 4XkHwZaPjgd92V3v/rN4GgfbO8bRMd4Bbzho6sJx5NAaMx0F47CJ/bD+Ps4M17lyZV
+	 fjvsEageuPsjpRPz3tinrtV5lDe1Ezc/lElGxfN+zOFUt4suOcneqvj5hQY3bUX4PE
+	 4Ba2pZnhl+SdhizqO+pkxGE0p/AffI1Lnn42z0kAmfeUqa1FFStgKL6ilUJjYSnZxF
+	 U4sGKBjHDIvhUIFh3/bHmrEJCsHywji9x9cj0WoLVrDrpoke3KaxO3w2vH6FI/IsOx
+	 Wqfoas2DlO/aQ==
+Message-ID: <e4f5c818-205b-4450-9ffa-0dba8757b6f8@zytor.com>
+Date: Fri, 13 Feb 2026 12:08:10 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,119 +59,106 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: "H. Peter Anvin" <hpa@zytor.com>
 Subject: Re: [RFC] pivot_root(2) races
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        Askar Safin <safinaskar@gmail.com>
-Cc: christian@brauner.io, cyphar@cyphar.com, jack@suse.cz,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        werner@almesberger.net
-References: <CAHk-=wgQDOUff_F28xaTB-BvSHs9YC3bxXJa0HjpSTAUyPF-Ew@mail.gmail.com>
- <20260213182732.196792-1-safinaskar@gmail.com>
- <CAHk-=wiB7BN2BnBjk5y2Zim_vveYg7GAZA_N+XjrptY59Qnzzw@mail.gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Aleksa Sarai <cyphar@cyphar.com>, Askar Safin <safinaskar@gmail.com>,
+        christian@brauner.io, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, werner@almesberger.net
+References: <CAHk-=wikNJ82dh097VZbqNf_jAiwwZ_opzfvMr-8Ub3_1cx3jQ@mail.gmail.com>
+ <20260212171717.2927887-1-safinaskar@gmail.com>
+ <CAHk-=wgS5T7sCbjweEKTqbT94XxmcPzppz6Mi6b8nKve-TFarg@mail.gmail.com>
+ <2026-02-13-bronze-curly-digs-hopes-6qdLKp@cyphar.com>
+ <4007566C-458F-45C3-BA9A-D99BCF8F16B4@zytor.com>
+ <CAHk-=wgQDOUff_F28xaTB-BvSHs9YC3bxXJa0HjpSTAUyPF-Ew@mail.gmail.com>
 Content-Language: en-US, sv-SE
-In-Reply-To: <CAHk-=wiB7BN2BnBjk5y2Zim_vveYg7GAZA_N+XjrptY59Qnzzw@mail.gmail.com>
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <CAHk-=wgQDOUff_F28xaTB-BvSHs9YC3bxXJa0HjpSTAUyPF-Ew@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[zytor.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	R_DKIM_ALLOW(-0.20)[zytor.com:s=2026012301];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77175-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_CC(0.00)[cyphar.com,gmail.com,brauner.io,suse.cz,vger.kernel.org,zeniv.linux.org.uk,almesberger.net];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[linux-foundation.org,gmail.com];
-	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-77176-lists,linux-fsdevel=lfdr.de];
 	DKIM_TRACE(0.00)[zytor.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	TO_DN_SOME(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[hpa@zytor.com,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 839B51394CE
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Queue-Id: DC3E113953E
 X-Rspamd-Action: no action
 
-On February 13, 2026 10:39:58 AM PST, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->On Fri, 13 Feb 2026 at 10:27, Askar Safin <safinaskar@gmail.com> wrote:
+On 2026-02-13 09:47, Linus Torvalds wrote:
+> On Fri, 13 Feb 2026 at 07:04, H. Peter Anvin <hpa@zytor.com> wrote:
 >>
->> pivot_root was actively used by inits in classic initrd epoch, but
->> initrd is not used anymore.
->
->Well, debian code search does find it being used in systemd, although
->I didn't then chase down how it is used.
->
->Of course, Dbian code search also pointed out to me that we have a
->"pivot_root" thing in util-linux, so apparently some older things used
->an external program and that "&init_task" check wouldn't work anyway.
->
->             Linus
-
-Yeah, no doubt. The real question is how much it actually matters as long as
-there aren't kernel threads in the way.
-
-I think I wrote a pivot_root(8) for klibc too (* which I now note has a harder
-to use equivalent in the girl of nolibc in the kennel tree ;) *)
-
-Either way, the documented way to use pivot_root(8) is not to rely on it to
-change the actual process root at all [the same caveats are supposed to apply
-to pivot_root(2), but was not written down in that man page:
-
->        Note that, depending on the implementation of pivot_root, root and
->        current working directory of the caller may or may not change. The
->        following is a sequence for invoking pivot_root that works in either
->        case, assuming that pivot_root and chroot are in the current PATH:
+>> On February 13, 2026 5:46:34 AM PST, Aleksa Sarai <cyphar@cyphar.com> wrote:
+>>>
+>>> I think the init(rd) people will care more -- my impression this was
+>>> only really needed because of the initrd switch (to change the root of
+>>> kthreads to the new root)?
+>>
+>> That was the original motivation, yes. The real question is if they are anytime out there abusing it in other ways...
 > 
->            cd new_root
->            pivot_root . put_old
->            exec chroot . command
+> I guess we could just try it.
 > 
->        Note that chroot must be available under the old root and under the
->        new root, because pivot_root may or may not have implicitly changed
->        the root directory of the shell.
+> How does something like this feel to people?
 > 
->        Note that exec chroot changes the running executable, which is
->        necessary if the old root directory should be unmounted afterwards.
->        Also note that standard input, output, and error may still point to a
->        device on the old root file system, keeping it busy. They can easily
->        be changed when invoking chroot (see below; note the absence of
->        leading slashes to make it work whether pivot_root has changed the
->        shell’s root or not).
+> I also changed the name from 'chroot' to 'pivot'. Comments?
+> 
+> Entirely untested in every way possible.
+> 
 
+Before doing anything else I would like to see if we can simply get rid of
+that behavior completely, regardless of which process is running it. As I
+posted in another email, it was always recommended to not rely on this
+behavior since the beginning -- whether or not everyone listened is a whole
+other ball of wax.
 
-This was the originally intended operation, and the "chrooting all processes"
-(for some definition of "all") was specifically to deal with the problem of
-kernel threads holding the old root busy.
+So to be correct: it was Werner who wrote pivot_root(8) for klibc as well,
+this is literally the entire file:
 
-The description for how to deal with an NFS mount makes it even more clear
-that the chrooting of other processes is NOT an architectural promise:
+> /* Change the root file system */
+> 
+> /* Written 2000 by Werner Almesberger */
+> 
+> #include <stdio.h>
+> #include <sys/mount.h>
+> 
+> int main(int argc, const char **argv)
+> {
+>         if (argc != 3) {
+>                 fprintf(stderr, "Usage: %s new_root put_old\n", argv[0]);
+>                 return 1;
+>         }
+>         if (pivot_root(argv[1], argv[2]) < 0) {
+>                 perror("pivot_root");
+>                 return 1;
+>         }
+>         return 0;
+> }
 
->            ifconfig lo 127.0.0.1 up   # for portmap
->            # configure Ethernet or such
->            portmap   # for lockd (implicitly started by mount)
->            mount -o ro 10.0.0.1:/my_root /mnt
->            killall portmap   # portmap keeps old root busy
->            cd /mnt
->            pivot_root . old_root
->            exec chroot . sh -c 'umount /old_root; exec /sbin/init' \
->              <dev/console >dev/console 2>&1
+kinit from klibc never used pivot_root(), as it was specifically intended to
+exist in the world of initramfs in rootfs and replace any further in-kernel
+mounting code.
 
-So if any real-life user of pivot_root(2|8) actually followed these
-guidelines, things should Just Work[TM].
-
-That, of course, is a big open question.
+It was definitely a mistake to make initramfs == rootfs. rootfs should have
+been nullfs, which is being fixed now, finally.
 
 	-hpa
 
