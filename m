@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-77136-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77137-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QFN0B0cLj2n4HQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77136-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 12:30:15 +0100
+	id 8AEHFn4Lj2n4HQEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77137-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 12:31:10 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74ADC135BA6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 12:30:14 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id B61EC135BCC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 12:31:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3EDB330BB501
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 11:29:58 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 99B9A30624B0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 11:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADC235B13D;
-	Fri, 13 Feb 2026 11:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3312235CB84;
+	Fri, 13 Feb 2026 11:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HZsFDt7w"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ukP/IVYD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9755D359FB8
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Feb 2026 11:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2244B35A94C
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Feb 2026 11:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770982195; cv=none; b=ht3Sn9fYwa0QhA6ZKG5zq4bis3+4a4u5DsCKvyrap0wo2SFRtCUZs8eEf+B/7ypRpmiuoypESUthavgNXGM2JbNtz2K4v9A3pYu0aTMMXnhtg1/X1UBv4Qu+I79iB90/1zgP1SWb2FWky96Ni+YtuCBoQ3e/Iy+Vs2f4g3WCTZY=
+	t=1770982196; cv=none; b=QJkm9xY5CusZl714twmZcw74jgncBOviEe/v4evY5dhpeSoXKyuR98TZ2TLb/tJ1dMVi2HIogebbLzFv3Q01ksLm54vPmO1ZByFSncOLE4axPcALPoWMeyuWxDaDNOVrECeVqHaVBtLXzVNxw1jmB4+azxyriUgjLIs5Zuwen8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770982195; c=relaxed/simple;
-	bh=HO/1J9NdWZEkNK+j5cNCWzi6KQEAouAxirfSac0nl10=;
+	s=arc-20240116; t=1770982196; c=relaxed/simple;
+	bh=yCEi51iwihIQ6/KNEUjlLXlerIrErSDL4RHDSmEJwqY=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Lt8LV39JbJsGMVvzmYxej/73IwMPog6TXVFiBXlA4PfaN5rYy/DMpj5LYo8NyfO5soQMQtwsaySPzIXt5xi3hSHfAt2Im05QBgAE5tgl7jI3yuCbnLMuuYcyXX9YsAxwR+o+VyIPxSNQJrnwk7QkNYEOOB+nYDEXn193zp0IOfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HZsFDt7w; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=pCVULpTiiCFI46eZRk8inWT0tj6ckSdSjMtZjdCO+7RbHA8mJoAxykPoSeoA4bv+Y8q3jz4Vj0ph/lH59LdSTgyQ0RL4J2NBgD2cHgZPbrbzw4T6xPL01TgkvPXgouuvlmb2ZQAsmYfMz/jFZx97qEpJxvbk96Yq3Pcd/QFjm/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ukP/IVYD; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4801bceb317so11733235e9.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Feb 2026 03:29:53 -0800 (PST)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-483129eb5ccso7863715e9.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Feb 2026 03:29:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1770982192; x=1771586992; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1770982193; x=1771586993; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=i7ywPMMgxkMbeWreD7LT3U/PKciFN4t2oTW8eSEPdTI=;
-        b=HZsFDt7wCZHJH+A45qGzS64bx54fJSjfXTlLDJA1V26ilpjFO/v3XbbwWUFrT6tOVL
-         EtvF3bPkw5eYOB6dJxySLCpiXDJDqAAIFAwKW49D6plFeqkPxwJtG/wPPAEc1G911aHy
-         SRBAIv28Z1muVK4F58Xx0DIkjI3mZAgN0+P7n20QjwnkJLS39ocBOAZHmIgJrDzcOBak
-         1L5W12rpDDeVhQoLVkk+tcIW7IykOiQPNLktzJ+nAPirsqAF98w3MSHy/AebE90qa2rD
-         0YX3hE+Qujvh9Ant2N0YL5QRmWqIJxdaN6myBPK++ku/IUPfF2R+zsv6Ez4zm+xMyjAR
-         pMvA==
+        bh=GpA4zks8oXTqCWt4/gqpScCP5DONS2AqVxE0dwGJ/8s=;
+        b=ukP/IVYDjEITiquF5XW2u5uOtQ/JHfjK4EGisJDRFPgAer9GX0mnmEBlDMJr99NQaM
+         co1jyHMtspo+ZrPSX3wVpwMM0AZMngVmTLyVpS14T2yCQetLwWYwRt1HoNDRODshZ5Tg
+         ww48pUXjESPCroaZw2BQuYEvCEI1VfUnQn8j3HE4oOkfzgZ44/TX/16FR9qG6Nud8SXo
+         eAEH36UEmhP4KlEzEK7n1BTsjQG+l/kVMcI3mLqu4IyXucVCmziu0YZPgHQM+mqyLElj
+         1lUnDrlFavfSRtyDfk3vxWI0tWvx2rIPbkfJvIQ82A5JtYGw3sFGmCzFNy1xioexj+L8
+         2MAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770982192; x=1771586992;
+        d=1e100.net; s=20230601; t=1770982193; x=1771586993;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i7ywPMMgxkMbeWreD7LT3U/PKciFN4t2oTW8eSEPdTI=;
-        b=CYFANnfbLXcLbigHrPm9gLn8G5XVEA5jT5/DXoFfyYW5VrZJLdKKZjQ/SM2uy+59NY
-         T1K/APALFh5Sk4A9kqY/g6GKlCvpNRcemGITdVdtvbjSUdOYY7e/HDwvcA3jjEJoznzv
-         lkEllzfsFxRyLO5whNMRKdi7P5WE0MPPntdlCHuv99LnBTrw1YrQ7sU2LUMjgq79rvSI
-         g6M18xlkvejMwVAuAJCuWzkqmHbws4hlyY5IbNjyqxZmjnpPFYKMscjteC3YkKYS55ST
-         7eU9oimxsm1aeJludNpCOV0PgacFLP/A7ZQCICClF1jeRATXYZF+6VqQTtxdh+IVandP
-         4Saw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3tDNO7GyH7EogIeDvzzFp/no79ERl8nd92hnRHR5PB5IJbW/QfWAabLGL2VDxOnqrpnuxS/FxBChoL6wg@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGNgHnGxel7P61lEFTyXSKCfBs6HWYFdCQtJseGTR7s8N49MiF
-	8ktLlE0Aa8X/JyBgCnWLiuL/7F/U8X+/NQ6lZ1NV77xR+jZE5Oj/oQEuBQRYf8cxPOXwhpn/mkq
-	jWT8gkcCiz/S24SZc4A==
-X-Received: from wmxa17-n2.prod.google.com ([2002:a05:600d:6451:20b0:480:4a2f:4187])
+        bh=GpA4zks8oXTqCWt4/gqpScCP5DONS2AqVxE0dwGJ/8s=;
+        b=DetO2CdE5QErdwEFeMHpPEEAY9xEOVj4fl4XdgTkbF+M9AXwe8/K9oc4hHKQjbEEha
+         XKhAY/qPXnAlSiJ1b1hQ8lj1E3Y1ndbl6+VBxrejHTy/TJoQFpkDC0t+TVIrdgNCt0eG
+         2F0wrXo7SSu4y4htONOcLLjjS1vqT9Tfdqz2rAqP3QoOR2GST10l5xIndVsE5FoIaOmN
+         fXC9OkhfC58fJTh8iFDCYCBvcVyHEv/47+FfAj3KrxqjAOZHXYZllTdRTJvGaJOWpCHU
+         17c5y8dcVlTS7iYbbh5mLqlP6sDiYxwrYF2bqBesoPrWtW1LJKcXmWQqWGe97wms7PK/
+         YAUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGcCKqsg1gZxioRW8P1svf8CM4qIFk4HrF78eG4ySKSpqG4Km6N07uM2pQWeL9Xj0Ca8p2e2HpsCekCX2R@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZTml1+BWcPdjSw3+fpkF2BzkNauSNcY4ru4rOuytPClltiUIO
+	bGcMZUKlyHk59I7ae9BfYNV/+XZe8JGaqgYOo2hWp51EcjDSBjqIJlArYTep7WaOQFjN81MyO6J
+	F2yCNkNGN6Hb98Fi1VA==
+X-Received: from wmoo19.prod.google.com ([2002:a05:600d:113:b0:483:6a60:3501])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4fc8:b0:471:14b1:da13 with SMTP id 5b1f17b1804b1-48373a1b6aamr23740235e9.14.1770982191934;
- Fri, 13 Feb 2026 03:29:51 -0800 (PST)
-Date: Fri, 13 Feb 2026 11:29:41 +0000
+ 2002:a05:600c:1381:b0:483:54cc:cd89 with SMTP id 5b1f17b1804b1-48373a1bbc4mr23639015e9.9.1770982193471;
+ Fri, 13 Feb 2026 03:29:53 -0800 (PST)
+Date: Fri, 13 Feb 2026 11:29:42 +0000
 In-Reply-To: <20260213-upgrade-poll-v2-0-984a0fb184fb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -76,22 +76,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20260213-upgrade-poll-v2-0-984a0fb184fb@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7706; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=HO/1J9NdWZEkNK+j5cNCWzi6KQEAouAxirfSac0nl10=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpjwstAOvzZQ1PPOEYdMoKFFrdbXgW+DevThwr3
- RdjLkjtylOJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaY8LLQAKCRAEWL7uWMY5
- RjMfD/9Gb/9bgDL1D3oukT6+bHxyfbWTsYWUhwhpNQEfKWIvlcUyvFJdi1xd0frCak09uLElRyd
- OyNoxXGUcrzw11tCBI9Ut6lzEOvok+q9W+HEkeL1oNHCqBPJvbl7gVtxIBzcpyukd5xGswSu1u8
- 1qGn99tHWpPov49QARSVDsGyzljqqlbqpOCcY/hoRdJ1MZL+wbecQLT7KLgGU1e9/urXgzogqSI
- HqWcktnsVmA2DkU5AESyyOfai8U6iEN2vFveAmk0B0t2fqZWdb+QU1l338sQ8gNPAXctfEsLtxg
- DSgOXFGeG3aBDVsMZHrzQ5/A2xmsNvrmQypk91fuLL231IkOno7BjLBZI+kXuR3eSYhRNhUXhrt
- ireUbpieeexsxXNL2qnmRiY8yfc3sMHcdtW2XaBmjH7VI5GOiywNGXYa614WJvmsawBlOI1+2gS
- +s4EEesFTB3SQiR2ypJBJ5J0u30HtRlS0Oo+2oHHf7qND3R5CdzR4c0m3isnQJ5RqZLc3AlTW0b
- ryaQYbAHeckdS5Y+pf+y0MzWrYtFqkvuxUa/taHpKkbf3jbSouTXWVBmUrBHLJXY6+6e9pywr36
- GQJ0UzZT6i2C6p+pBwKRjZrUJXchjX7cg147M5TRiNAX+X2JTF92gVvgpY6EWvMlhPdGA7BF0J3 ajVq1Dq+47NFndA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4828; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=yCEi51iwihIQ6/KNEUjlLXlerIrErSDL4RHDSmEJwqY=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpjwstSJRuzC5n7YzFvHhJ9w7Yghk3PUZ46YUSO
+ jBiftZbxtqJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaY8LLQAKCRAEWL7uWMY5
+ Ri0MD/kBPdV56NkzCHG6F680bzzWalPBUKLu5sCgMqs54jul9o2awp86Fd+feimnaM1BB4XmJhD
+ AAi0eexNVneqfUKDXDt/jp9nUB33eVaVefI7amxfI9MmsNjGLOd0qCKBkXnBpYYviOzazrlWwX7
+ YpavT1iwhsiFXdkHDbE425VCAk9vJVN42nZdAXgmZ75+c2KRaLXD5lPdszMvPPMOYj90e0YFYRB
+ 3TdXEEJUvl2b1V872XGL/H+ETf+ISXWDgsUFNwa1+zcFCG2uQNw6PsiN2E/r/sQFY7XArtT1bZh
+ 8201kq5ltjaju/qwxebGdXA9SKsWfiLhPZCVrhydKAvxZ3ydPke3EqQGdOUGVn7AvddloGfzQQz
+ gc6my5wiyNV2Nrq6rSAl/czULWbzpXgXg14jcwF0xDlFC1xtd5gv5K8iLY+bLbFabofMa+Q7jqa
+ GskdLLyVphPt3lUXSRU2GUDE4P55Ztm9jbgx0u1MxKmYNpihI1ExSYDeJKBpwSRBk70gxWfbO33
+ f23Idk3w+o9Tfi8TCTuBxD0RERl9ZRiWpabNMZDys6pdxHYYC9GqQJFERRaJWoT6PokEht4KkdV
+ tH+oiMW1/Zs6JtQiobUVBHvtIv61hBJk45ewd0iVodLY7UompJRt3p1kko7/YpkvznVHVrhG3E5 86r/2UFDjo06v7g==
 X-Mailer: b4 0.14.2
-Message-ID: <20260213-upgrade-poll-v2-1-984a0fb184fb@google.com>
-Subject: [PATCH v2 1/2] rust: poll: make PollCondVar upgradable
+Message-ID: <20260213-upgrade-poll-v2-2-984a0fb184fb@google.com>
+Subject: [PATCH v2 2/2] rust_binder: use UpgradePollCondVar
 From: Alice Ryhl <aliceryhl@google.com>
 To: Christian Brauner <brauner@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
 	"Paul E. McKenney" <paulmck@kernel.org>
@@ -107,18 +107,18 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	MV_CASE(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
 	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77136-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77137-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_TO(0.00)[kernel.org,gmail.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[aliceryhl@google.com,linux-fsdevel@vger.kernel.org];
@@ -128,212 +128,118 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	RCPT_COUNT_SEVEN(0.00)[10];
 	TO_DN_SOME(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 74ADC135BA6
+X-Rspamd-Queue-Id: B61EC135BCC
 X-Rspamd-Action: no action
 
-Rust Binder currently uses PollCondVar, but it calls synchronize_rcu()
-in the destructor, which we would like to avoid. Add a variation of
-PollCondVar, which uses kfree_rcu() instead.
+Most processes do not use Rust Binder with epoll, so avoid paying the
+synchronize_rcu() cost in drop for those that don't need it. For those
+that do, we also manage to replace synchronize_rcu() with kfree_rcu(),
+though we introduce an extra allocation.
+
+In case the last ref to an Arc<Thread> is dropped outside of
+deferred_release(), this also ensures that synchronize_rcu() is not
+called in destructor of Arc<Thread> in other places. Theoretically that
+could lead to jank by making other syscalls slow, though I have not seen
+it happen in practice.
 
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- rust/kernel/sync/poll.rs | 160 ++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 159 insertions(+), 1 deletion(-)
+ drivers/android/binder/process.rs |  2 +-
+ drivers/android/binder/thread.rs  | 25 ++++++++++++++++---------
+ 2 files changed, 17 insertions(+), 10 deletions(-)
 
-diff --git a/rust/kernel/sync/poll.rs b/rust/kernel/sync/poll.rs
-index 0ec985d560c8d3405c08dbd86e48b14c7c34484d..9555f818a24d777dd908fca849015c3490ce38d3 100644
---- a/rust/kernel/sync/poll.rs
-+++ b/rust/kernel/sync/poll.rs
-@@ -5,12 +5,21 @@
- //! Utilities for working with `struct poll_table`.
- 
- use crate::{
-+    alloc::AllocError,
-     bindings,
-+    container_of,
-     fs::File,
-     prelude::*,
-+    sync::atomic::{Acquire, Atomic, Relaxed, Release},
-+    sync::lock::{Backend, Lock},
-     sync::{CondVar, LockClassKey},
-+    types::Opaque, //
-+};
-+use core::{
-+    marker::{PhantomData, PhantomPinned},
-+    ops::Deref,
-+    ptr,
+diff --git a/drivers/android/binder/process.rs b/drivers/android/binder/process.rs
+index 132055b4790f0ec69a87635b498909df2bf475e2..9374f1a86766c09321b57e565b6317cc290ea32b 100644
+--- a/drivers/android/binder/process.rs
++++ b/drivers/android/binder/process.rs
+@@ -1684,7 +1684,7 @@ pub(crate) fn poll(
+         table: PollTable<'_>,
+     ) -> Result<u32> {
+         let thread = this.get_current_thread()?;
+-        let (from_proc, mut mask) = thread.poll(file, table);
++        let (from_proc, mut mask) = thread.poll(file, table)?;
+         if mask == 0 && from_proc && !this.inner.lock().work.is_empty() {
+             mask |= bindings::POLLIN;
+         }
+diff --git a/drivers/android/binder/thread.rs b/drivers/android/binder/thread.rs
+index 82264db06507d4641b60cbed96af482a9d36e7b2..a07210405c64e19984f49777a9d2c7b218944755 100644
+--- a/drivers/android/binder/thread.rs
++++ b/drivers/android/binder/thread.rs
+@@ -16,8 +16,8 @@
+     seq_file::SeqFile,
+     seq_print,
+     sync::atomic::{ordering::Relaxed, Atomic},
+-    sync::poll::{PollCondVar, PollTable},
+-    sync::{Arc, SpinLock},
++    sync::poll::{PollTable, UpgradePollCondVar},
++    sync::{Arc, LockClassKey, SpinLock},
+     task::Task,
+     types::ARef,
+     uaccess::UserSlice,
+@@ -35,7 +35,7 @@
+     BinderReturnWriter, DArc, DLArc, DTRWrap, DeliverCode, DeliverToRead,
  };
--use core::{marker::PhantomData, ops::Deref};
  
- /// Creates a [`PollCondVar`] initialiser with the given name and a newly-created lock class.
- #[macro_export]
-@@ -66,6 +75,7 @@ pub fn register_wait(&self, file: &File, cv: &PollCondVar) {
- ///
- /// [`CondVar`]: crate::sync::CondVar
- #[pin_data(PinnedDrop)]
-+#[repr(transparent)]
- pub struct PollCondVar {
+-use core::mem::size_of;
++use core::{mem::size_of, pin::Pin};
+ 
+ /// Stores the layout of the scatter-gather entries. This is used during the `translate_objects`
+ /// call and is discarded when it returns.
+@@ -412,7 +412,7 @@ pub(crate) struct Thread {
      #[pin]
-     inner: CondVar,
-@@ -78,6 +88,17 @@ pub fn new(name: &'static CStr, key: Pin<&'static LockClassKey>) -> impl PinInit
-             inner <- CondVar::new(name, key),
-         })
+     inner: SpinLock<InnerThread>,
+     #[pin]
+-    work_condvar: PollCondVar,
++    work_condvar: UpgradePollCondVar,
+     /// Used to insert this thread into the process' `ready_threads` list.
+     ///
+     /// INVARIANT: May never be used for any other list than the `self.process.ready_threads`.
+@@ -433,6 +433,11 @@ impl ListItem<0> for Thread {
      }
-+
-+    /// Use this `CondVar` as a `PollCondVar`.
-+    ///
-+    /// # Safety
-+    ///
-+    /// After the last use of the returned `&PollCondVar`, `__wake_up_pollfree` must be called on
-+    /// the `wait_queue_head` at least one grace period before the `CondVar` is destroyed.
-+    unsafe fn from_non_poll(c: &CondVar) -> &PollCondVar {
-+        // SAFETY: Layout is the same. Caller ensures that PollTables are cleared in time.
-+        unsafe { &*ptr::from_ref(c).cast() }
-+    }
  }
  
- // Make the `CondVar` methods callable on `PollCondVar`.
-@@ -104,3 +125,140 @@ fn drop(self: Pin<&mut Self>) {
-         unsafe { bindings::synchronize_rcu() };
++const THREAD_CONDVAR_NAME: &CStr = c"Thread::work_condvar";
++fn thread_condvar_class() -> Pin<&'static LockClassKey> {
++    kernel::static_lock_class!()
++}
++
+ impl Thread {
+     pub(crate) fn new(id: i32, process: Arc<Process>) -> Result<Arc<Self>> {
+         let inner = InnerThread::new()?;
+@@ -443,7 +448,7 @@ pub(crate) fn new(id: i32, process: Arc<Process>) -> Result<Arc<Self>> {
+                 process,
+                 task: ARef::from(&**kernel::current!()),
+                 inner <- kernel::new_spinlock!(inner, "Thread::inner"),
+-                work_condvar <- kernel::new_poll_condvar!("Thread::work_condvar"),
++                work_condvar <- UpgradePollCondVar::new(THREAD_CONDVAR_NAME, thread_condvar_class()),
+                 links <- ListLinks::new(),
+                 links_track <- AtomicTracker::new(),
+             }),
+@@ -1484,10 +1489,13 @@ pub(crate) fn write_read(self: &Arc<Self>, data: UserSlice, wait: bool) -> Resul
+         ret
      }
- }
-+
-+/// Wrapper around [`CondVar`] that can be upgraded to [`PollCondVar`].
-+///
-+/// By using this wrapper, you can avoid rcu for cases that don't use [`PollTable`], and in all
-+/// cases you can avoid `synchronize_rcu()`.
-+///
-+/// # Invariants
-+///
-+/// `active` either references `simple`, or a `kmalloc` allocation holding an
-+/// `UpgradePollCondVarInner`. In the latter case, the allocation remains valid until
-+/// `Self::drop()` plus one grace period.
-+#[pin_data(PinnedDrop)]
-+pub struct UpgradePollCondVar {
-+    #[pin]
-+    simple: CondVar,
-+    active: Atomic<*const CondVar>,
-+    #[pin]
-+    _pin: PhantomPinned,
-+}
-+
-+#[pin_data]
-+#[repr(C)]
-+struct UpgradePollCondVarInner {
-+    #[pin]
-+    upgraded: CondVar,
-+    #[pin]
-+    rcu: Opaque<bindings::callback_head>,
-+}
-+
-+impl UpgradePollCondVar {
-+    /// Constructs a new upgradable condvar initialiser.
-+    pub fn new(name: &'static CStr, key: Pin<&'static LockClassKey>) -> impl PinInit<Self> {
-+        pin_init!(&this in Self {
-+            simple <- CondVar::new(name, key),
-+            // SAFETY: `this->simple` is in-bounds. Pointer remains valid since this type is
-+            // pinned.
-+            active: Atomic::new(unsafe { &raw const (*this.as_ptr()).simple }),
-+            _pin: PhantomPinned,
-+        })
-+    }
-+
-+    /// Obtain a [`PollCondVar`], upgrading if necessary.
-+    ///
-+    /// You should use the same lock as what is passed to the `wait_*` methods. Otherwise wakeups
-+    /// may be missed.
-+    pub fn poll<T: ?Sized, B: Backend>(
-+        &self,
-+        lock: &Lock<T, B>,
-+        name: &'static CStr,
-+        key: Pin<&'static LockClassKey>,
-+    ) -> Result<&PollCondVar, AllocError> {
-+        let mut ptr = self.active.load(Acquire);
-+        if ptr::eq(ptr, &self.simple) {
-+            self.upgrade(lock, name, key)?;
-+            ptr = self.active.load(Acquire);
-+            debug_assert_ne!(ptr, ptr::from_ref(&self.simple));
-+        }
-+        // SAFETY: Signature ensures that last use of returned `&PollCondVar` is before drop(), and
-+        // drop() calls `__wake_up_pollfree` followed by waiting a grace period before the
-+        // `CondVar` is destroyed.
-+        Ok(unsafe { PollCondVar::from_non_poll(&*ptr) })
-+    }
-+
-+    fn upgrade<T: ?Sized, B: Backend>(
-+        &self,
-+        lock: &Lock<T, B>,
-+        name: &'static CStr,
-+        key: Pin<&'static LockClassKey>,
-+    ) -> Result<(), AllocError> {
-+        let upgraded = KBox::pin_init(
-+            pin_init!(UpgradePollCondVarInner {
-+                upgraded <- CondVar::new(name, key),
-+                rcu: Opaque::uninit(),
-+            }),
-+            GFP_KERNEL,
-+        )
-+        .map_err(|_| AllocError)?;
-+
-+        // SAFETY: The value is treated as pinned.
-+        let upgraded = KBox::into_raw(unsafe { Pin::into_inner_unchecked(upgraded) });
-+
-+        let res = self.active.cmpxchg(
-+            ptr::from_ref(&self.simple),
-+            // SAFETY: This operation stays in-bounds of the above allocation.
-+            unsafe { &raw mut (*upgraded).upgraded },
-+            Release,
-+        );
-+
-+        if res.is_err() {
-+            // Already upgraded, so still succeess.
-+            // SAFETY: The cmpxchg failed, so take back ownership of the box.
-+            drop(unsafe { KBox::from_raw(upgraded) });
-+            return Ok(());
-+        }
-+
-+        // If a normal waiter registers in parallel with us, then either:
-+        // * We took the lock first. In that case, the waiter sees the above cmpxchg.
-+        // * They took the lock first. In that case, we wake them up below.
-+        drop(lock.lock());
-+        self.simple.notify_all();
-+
-+        Ok(())
-+    }
-+}
-+
-+// Make the `CondVar` methods callable on `UpgradePollCondVar`.
-+impl Deref for UpgradePollCondVar {
-+    type Target = CondVar;
-+
-+    fn deref(&self) -> &CondVar {
-+        // SAFETY: By the type invariants, this is either `&self.simple` or references an
-+        // allocation that lives until `UpgradePollCondVar::drop`.
-+        unsafe { &*self.active.load(Acquire) }
-+    }
-+}
-+
-+#[pinned_drop]
-+impl PinnedDrop for UpgradePollCondVar {
-+    #[inline]
-+    fn drop(self: Pin<&mut Self>) {
-+        // ORDERING: All calls to upgrade happens-before Drop, so no synchronization is required.
-+        let ptr = self.active.load(Relaxed);
-+        if ptr::eq(ptr, &self.simple) {
-+            return;
-+        }
-+        // SAFETY: When the pointer is not &self.active, it is an `UpgradePollCondVarInner`.
-+        let ptr = unsafe { container_of!(ptr.cast_mut(), UpgradePollCondVarInner, upgraded) };
-+        // SAFETY: The pointer points at a valid `wait_queue_head`.
-+        unsafe { bindings::__wake_up_pollfree((*ptr).upgraded.wait_queue_head.get()) };
-+        // This skips drop of `CondVar`, but that's ok because we reimplemented its drop here.
-+        //
-+        // SAFETY: `__wake_up_pollfree` ensures that all registered PollTable instances are gone in
-+        // one grace period, and this is the destructor so no new PollTable instances can be
-+        // registered. Thus, it's safety to rcu free the `UpgradePollCondVarInner`.
-+        unsafe { bindings::kvfree_call_rcu((*ptr).rcu.get(), ptr.cast::<c_void>()) };
-+    }
-+}
+ 
+-    pub(crate) fn poll(&self, file: &File, table: PollTable<'_>) -> (bool, u32) {
+-        table.register_wait(file, &self.work_condvar);
++    pub(crate) fn poll(&self, file: &File, table: PollTable<'_>) -> Result<(bool, u32)> {
++        let condvar =
++            self.work_condvar
++                .poll(&self.inner, THREAD_CONDVAR_NAME, thread_condvar_class())?;
++        table.register_wait(file, condvar);
+         let mut inner = self.inner.lock();
+-        (inner.should_use_process_work_queue(), inner.poll())
++        Ok((inner.should_use_process_work_queue(), inner.poll()))
+     }
+ 
+     /// Make the call to `get_work` or `get_work_local` return immediately, if any.
+@@ -1523,7 +1531,6 @@ pub(crate) fn notify_if_poll_ready(&self, sync: bool) {
+     pub(crate) fn release(self: &Arc<Self>) {
+         self.inner.lock().is_dead = true;
+ 
+-        //self.work_condvar.clear();
+         self.unwind_transaction_stack();
+ 
+         // Cancel all pending work items.
 
 -- 
 2.53.0.273.g2a3d683680-goog
