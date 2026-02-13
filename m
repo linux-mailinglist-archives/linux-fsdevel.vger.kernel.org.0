@@ -1,130 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-77178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KIEvOzqLj2nURQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 21:36:10 +0100
+	id EJO2Mq+Rj2lwRgEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 22:03:43 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A18313977D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 21:36:10 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31F481398B6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 22:03:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id DAF9A3010B62
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 20:36:09 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D1688304046F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 21:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC22275AF0;
-	Fri, 13 Feb 2026 20:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1790F24677B;
+	Fri, 13 Feb 2026 21:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="DxMJqL7I"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HuSvRB60";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="mj9PSPmV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C621A3160
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Feb 2026 20:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771014968; cv=none; b=qjMlsVL5twilsEQ+tlK5F+SeYgsOFt/TvGnzrpS0j4WdsHfbRsXdfRqOzqS7RFUstYPU+8JjTn7Sd1tz4N5CR09JqD8Lo9KiMEJ7NmRwQIml+50tjDTlg6T1guWm1+A8MYTkemdSsdQ8CxJMQPJ3uW5iHZhpIFQ0XFbcSpV7PPw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771014968; c=relaxed/simple;
-	bh=AKb026XjL6fD4D/JKcwKPy7Fx7+waIesVBqhJT8bxd0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=E86Z2qnNxKDdiLvv3ZGk2o0Ye5/tj/G6xHGKRMpfatQjb/MuIrzhKBoMK+3fQGs2mlteb3/QAWu/NooiXvznmQJYJehXAy0qc56YzMfsm6x+bu6sHdD5WN6vaUe0rU0ylFALgSQ3QAYUu3mAnFYkCvkDDK7UssEf0JE0Z+8EtPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=DxMJqL7I; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [IPV6:2607:fb90:3709:ce04:bf4c:86df:148a:f3f5] ([IPv6:2607:fb90:3709:ce04:bf4c:86df:148a:f3f5])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 61DKZhVI959920
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 13 Feb 2026 12:35:47 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 61DKZhVI959920
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2026012301; t=1771014949;
-	bh=C1aXGLi1vyf0hLGjNBKsOALCyfSI0qR3BVc7+cDQmpE=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=DxMJqL7INTZbvFZ+NPm2LF7yWA2ujFilJD8goh0O6ywevNUNj79aIMwdNF4CNfqtp
-	 tNVjU/OQ2GEpJ12BzXQD4xCUGtTcnKG+v1NGHnHOWf09toRuwBhh9j/fWoHGNy6jHI
-	 0M4cTLjrGZB+67+u6Z6w9xl8bIVahwGAfh2B1uVLsP5JPzz94vj1R8LFjCb+ygPmKx
-	 ox6/N6egKbw6lRFy68dQwofC6kFMIg/FrNCpdZkOINOLwZLU5W5HXtzOY87WsxK+Z9
-	 DPgc+LIgkPW44Lh1uLqV39PWRTrFbFxWNhv8fOk0cPcJkxQTkdmKyNUgwK9HsCYv/s
-	 sXj/cyezfU3iQ==
-Message-ID: <302fd715-bc6e-4d57-a8f3-b24a4eb54f1d@zytor.com>
-Date: Fri, 13 Feb 2026 12:35:43 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DFE26ADC
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Feb 2026 21:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.129.124
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771016605; cv=pass; b=DDr4Qnpmvm+N9HS0aPK28wMevphQjMX2uAfuZz5cfPFSnaqGvmr42WUr7QjdP2FmxZFUNRoxwprDWYi1VYsmqPqBgIu4IIEnQspb0LhKF0UMpeUkHCjbI58gEXrFBXVCv+EL2d11ZC1QfBmnSSE6M+bv5YxAU4XySX4blqXXmIA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771016605; c=relaxed/simple;
+	bh=r38H8eLl4lKmz96ayMJg0B2RxOcVqxUeAat+Bqym31U=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=iAxaJIJEgBduHdKNrNoUs6f7/NxFnk3n19AMfKa4fPtYmqE+QHabzbyUAOE9UMA3pSMW1lS+48t+WWHHGxPnFbhDav8k5cjYg2rVgbf+VhNWnI4wRoQJlZbEtBKixKu7d2AVDSB2BIrcwfmStLoc39XOQAjECkQ24oaj2+gSEDY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HuSvRB60; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=mj9PSPmV; arc=pass smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1771016603;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=r38H8eLl4lKmz96ayMJg0B2RxOcVqxUeAat+Bqym31U=;
+	b=HuSvRB60DddThvCOJQnB9DA2U6hpx3kTWtT/D1VVwoFobJ67scD5VzHYgZbxtZfmC0UIuK
+	L+ba28dj+0WjDDyH+yxlzMChzHIdcJn9YY/IEffCYYfrxzyHQ9RtDKYz7FzC2cPG/6tUcy
+	G31AJ9LE//OeMedRrDeWc6G7LA4LqJc=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-57-8zFUOHDyPcWFyqU8boe42w-1; Fri, 13 Feb 2026 16:03:22 -0500
+X-MC-Unique: 8zFUOHDyPcWFyqU8boe42w-1
+X-Mimecast-MFC-AGG-ID: 8zFUOHDyPcWFyqU8boe42w_1771016601
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-59f6db39e3dso128117e87.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Feb 2026 13:03:22 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771016600; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Yiv+4dyOknvaNLWyqTLNaqfmoWfIqfUdoLNyK4PufSA8gAsDP/vDJ1pIiJNe1BWho/
+         lPPGW2bFpnadsT2YNcYGSfSK8vHpFmHizOno4SNkuCC7fcyH0PKcz+/6kEJ4MTdHulXm
+         o09KkDgSvmGTNWx1ly8NRxrf3ZMGhBzanrv9ARkn+2RMe9HINMdbxNJ7eMsuwGfOHT+F
+         S1vJqRBgIgeZbGNvKBK83Tzu7P0Fgg3Zwjv6QBnlt4t8bMPtbdWC+JspPTbdnK/gQjLd
+         F1vdt62HeDrZ41pV9EP1ffGXulwCq49rsJY5XVvk+QERhkY6JZ1bcPlnTlggl20TKKMh
+         oCrQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:mime-version:dkim-signature;
+        bh=r38H8eLl4lKmz96ayMJg0B2RxOcVqxUeAat+Bqym31U=;
+        fh=XTuJdODFTtIjKW6psHko7DLHl3zrELITgQ0Chz1WZIc=;
+        b=aPm2QPJa8abHgRIqZfCuncokkeBEWHX6Uu1PcEGd11cbNs7HvJzr2Vf4/4W6m33hLG
+         pTUoaa5LxpCrmkSoFtDpsCoU0IWHKYBc5+o52rbPx1g0Hw5BZVGkPiNiyYkQFX0zbaRc
+         RBZAU20t4kZxUp4aHgR/NY2yrYTeKrlWC3h3Szzf6p2zRQ9ENnUbqDPJth+QH27/LWCP
+         mH5aZPHvO8moznpnDa5OYsocuJxWdRKQjJ5I21IH1+OW1H3m9cW75Hc6pB55IIYQjx9E
+         OYv2DSlDahDq7zRJpixeKge48zw8jSm76/2jAvJ6hDcN9Mvb/mgGe4JDi+mY2h2ePxcU
+         ksAQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1771016600; x=1771621400; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=r38H8eLl4lKmz96ayMJg0B2RxOcVqxUeAat+Bqym31U=;
+        b=mj9PSPmVvfhBhcWFsfykyZS6l3q2qWR+VR41Ta4u7QmZm78HGK3kloCAiXiP9S5NZj
+         Sp7p2D3fei7M3Io6FVcG5XvjmkxuFfwQB4x4Isse2npz3rx1F5TUPdH4CaDNJCrI7DWe
+         axMUobq9vjU58PYyaBiLnec8TY2FfYRIHOCourKSnjn+Bbbb50oYNuRzYCiHnIfbFWuY
+         F9fBXf9ptck4o77LK692SD9+egDCAmn2FJlYEZhiH9OqCNtfQDyha5jYncEFRaEKUdPO
+         gBthe657wiM3WvxOSCC+RHN+xJIc5MRNwORO2lgjMSi5F9dulsVj4U6hp+P5wBYlTqHo
+         jsVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771016600; x=1771621400;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r38H8eLl4lKmz96ayMJg0B2RxOcVqxUeAat+Bqym31U=;
+        b=EmiGTcqRGuCjGUNToFVD8q1R6R44RFRFil5UkkHvkFLadKFx+GCtfePuDjgWAcANBl
+         ZfKRk77XqZVclwyCTQ5JMXDnqZ88dC2e5vVdHpjsetp7+XSXQwy7wKz66PkG0CbLlzyM
+         Uq8U1bu0kDkR+LTq2Gcz3F36nvAqjVX+Bd9csagrsbdZ9pUR4Rcq3fTXxeFXvZt43XE7
+         R3o/0HHx8pmqqDonkCY57jFD4ofh/fIa8sfhotvW+DkHPvYtV4crkDYY4mHTRyDU+Z3Q
+         8t5XU58vzecLSMDW0C1GRAyex5Shlldlr/vaMWOy3dEnEOX9WU14V8VFQdYYHvDFQ1l9
+         tqFw==
+X-Gm-Message-State: AOJu0YxdtNthk2KwHHaP8MXmSbn5cZ69eS9mAx09vKWhHt3HWAU4xPx+
+	E+PaYv5NoZ1zGEH1AHVhdAFale3fZ8p9d4VY9q0so8/XV9LUX4OdSyNYgiAxdynJFznw3IvHdIH
+	Trk5xKWcicI27hPXpaLgNLrRSU4lgr7GDhApJN/kZtEbmSRsuGfikAyw0KUKZ2adAy6Wzqk8JW1
+	Rsrvx71g9X685D9/tBNwf8EZOay4Tq3sg7naKdT/KOQ961pxJRKHHi
+X-Gm-Gg: AZuq6aLhzN0/nRmk+chD4hc/Ex34Cf4KVCXNBeHtW0ABgnkwgcuFt2L/Q8fbJlEry2D
+	9rE4+WyE4wxzf1SRSWR7FgPX50bKlHlrLquErMib9HGeDxgFkT/oUglyLqkBP2CkDEOq6d2xAyn
+	FdvzpnEZ8awyE4mK+mucMnpt1UiFefwYaqmfN5dPIEZ+wbQLLlRm+bvQ/dIRgGENNoUEW3l+7Oz
+	N0Nh7alf18F+5/zH30OIo8cGIPsAF1Y4bRS0oQq
+X-Received: by 2002:a05:6512:32c3:b0:59e:46c6:9081 with SMTP id 2adb3069b0e04-59f6d34c80dmr210938e87.2.1771016600011;
+        Fri, 13 Feb 2026 13:03:20 -0800 (PST)
+X-Received: by 2002:a05:6512:32c3:b0:59e:46c6:9081 with SMTP id
+ 2adb3069b0e04-59f6d34c80dmr210929e87.2.1771016599486; Fri, 13 Feb 2026
+ 13:03:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] pivot_root(2) races
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Askar Safin <safinaskar@gmail.com>
-Cc: christian@brauner.io, cyphar@cyphar.com, jack@suse.cz,
-        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-        viro@zeniv.linux.org.uk, werner@almesberger.net
-References: <1FC2FB1F-BDA5-472D-A7DB-D146F6F75B16@zytor.com>
- <20260213174721.132662-1-safinaskar@gmail.com>
- <1caf6a70-e49b-42c7-81d0-bd0d6f5027bf@zytor.com>
-Content-Language: en-US, sv-SE
-In-Reply-To: <1caf6a70-e49b-42c7-81d0-bd0d6f5027bf@zytor.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Alexander Aring <aahringo@redhat.com>
+Date: Fri, 13 Feb 2026 16:03:08 -0500
+X-Gm-Features: AZwV_QgZDC4BMfr_62OBKQIGw1rPOpj8cinGnFyTwRxTcGMVGoVWq9ZzvvqAjuA
+Message-ID: <CAK-6q+gVhsKKPPax52nju8HXPApPyO9zE_jUygDxvhF8BT8P9Q@mail.gmail.com>
+Subject: [LSF/MM ATTEND] distributed file locking
+To: lsf-pc@lists.linux-foundation.org
+Cc: linux-fsdevel@vger.kernel.org, linux-nfs <linux-nfs@vger.kernel.org>, 
+	gfs2 <gfs2@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[zytor.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
-	R_DKIM_ALLOW(-0.20)[zytor.com:s=2026012301];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719,redhat.com:s=google];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77178-lists,linux-fsdevel=lfdr.de];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[zytor.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[aahringo@redhat.com,linux-fsdevel@vger.kernel.org];
+	MISSING_XM_UA(0.00)[];
 	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hpa@zytor.com,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-77180-lists,linux-fsdevel=lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid];
+	RCVD_COUNT_FIVE(0.00)[5];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[zytor.com:mid,zytor.com:dkim,zytor.com:email]
-X-Rspamd-Queue-Id: 9A18313977D
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	PRECEDENCE_BULK(0.00)[];
+	DKIM_TRACE(0.00)[redhat.com:+]
+X-Rspamd-Queue-Id: 31F481398B6
 X-Rspamd-Action: no action
 
-On 2026-02-13 12:27, H. Peter Anvin wrote:
-> On 2026-02-13 09:47, Askar Safin wrote:
->> "H. Peter Anvin" <hpa@zytor.com>:
->>> It would be interesting to see how much would break if pivot_root() was restricted (with kernel threads parked in nullfs safely out of the way.)
->>
->> As well as I understand, kernel threads need to follow real root directory,
->> because they sometimes load firmware from /lib/firmware and call
->> user mode helpers, such as modprobe.
->>
-> 
-> If they are parked in nullfs, which is always overmounted by the global root,
-> that should Just Work[TM]. Path resolution based on that directory should
-> follow the mount point unless I am mistaken (which is possible, the Linux vfs
-> has changed a lot since the last time I did a deep dive.)
-> 
+Hi,
 
-If that doesn't work, then it can be dealt with by resolving the pathname in
-the namespace of the init process *at the time it needs to resolve the path*,
-as opposed to having to cache a pointer to the root.
+this proposal for LSF/MM aims to start an initial process to discuss
+improving the distributed file locking API in file_operations.
+Initially the file locking API, used from the user space via flock()
+or fcntl(), was not designed for distributed locking. There are known
+issues e.g. specifying a process id but missing additional information
+about the distributed entity where the process is running.
 
-The init process is inherently special anyway, and it isn't like the
-additional overhead will be significant for these kinds of heavyweight events.
+There should be a way for users to opt into additional distributed
+locking extensions that provide specific distributed locking info or
+even introduce a new file ops distributed locking API. Designing such
+new behaviour requires community effort to become aware of all
+distributed locking use cases in the Linux kernel. Examples of those
+users include DLM, NFS or CIFS.
 
-	-hpa
+A recent proposal [0] suggested offering the file locking API only to
+the user through a virtual filesystem, using DLM as the distributed
+lock manager backend for now. The filesystem's concept can be extended
+to offer other backends and allow experiments with new "distributed"
+file locking API extensions until the community agrees on and proposes
+a stable API.
+
+This proposal discusses an exotic and very specific topic: distributed
+file locking, which tries to map to the existing file locking API.
+Users working on distributed file systems are aware of the challenges
+involved. Solving those long-standing challenges will be a lengthy
+process. It might be time to start improving this situation.
+
+Please feel free to share your thoughts on this topic.
+
+- Alex
+
+[0] https://lore.kernel.org/linux-fsdevel/20260213180014.614646-1-aahringo@redhat.com
 
 
