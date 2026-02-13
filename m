@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-77126-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id EIDmLqUAj2kAHQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77126-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 11:44:53 +0100
+	id 0AVAJsUAj2kAHQEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 11:45:25 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25260135379
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 11:44:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB03135396
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 11:45:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id DBA333055808
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 10:44:47 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A962030C6C6F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Feb 2026 10:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72A13542C3;
-	Fri, 13 Feb 2026 10:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318163542E2;
+	Fri, 13 Feb 2026 10:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LZ9kVlEu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eEhY8TjU"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FFC352C3D;
-	Fri, 13 Feb 2026 10:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB63353EDB;
+	Fri, 13 Feb 2026 10:44:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770979486; cv=none; b=F2lco/aaM/mHhPGm96kZ6Dg30E0Q6BbuHsSYr2HdhiAmkHNva2WPEeXu6brKvWkKSO+HaSlK9il+1G066rjAoqc1Mly3ewfNytaCEypcUtseVSZIuc+6cwjnzmFtttq+htsanK3bTTf77XbnxpmqTEQ35vVNSySmUD9UQUHfCeE=
+	t=1770979488; cv=none; b=rX5fd2aRS0ZhLNhH+9P7kRt+VCSBsBnSrPG8mtLNBbgWnbom0VsscmkHG8V4Krjkzk7hEZ2jTQzoMeIjEuSseyYCIkTq34P0nz56ajA/L1mROneyYBtsmo/u6hYCnVBae8wVocJKuoCnABBMtSW4HBhMdtb+xPcssUD+GCfY9iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770979486; c=relaxed/simple;
-	bh=4r5sYOsuHx9pVkMSBV3kNbZLBG/Rokt5knXJtofhoVY=;
+	s=arc-20240116; t=1770979488; c=relaxed/simple;
+	bh=LpgbViYueVfs8znDGiGm/oh4caXky7ehWf+alC0Sk7c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WAA84LxzR3MHy4xDVebCO2YQwudrYsWtjGwErO3RpfkDH372sNrpxNKnP3DVT6uFYgs7mWvQy0eO4kc4UrPlPBcpowH5/Y+AbsluaK32mWcF1Dzp2VlKtP4R2meUMdZ5UPuN85NtVCl+IlwWhbIOUAcfFnIEX3mHJEwxGRLf0oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LZ9kVlEu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91DB1C116C6;
-	Fri, 13 Feb 2026 10:44:44 +0000 (UTC)
+	 MIME-Version; b=Toz1rhiE/ZqMM3raZVxs1seHdl1Am0ui9W+WANPFCMAuOObBAjr4mzY7+ocYZPaHxVuM+x4CkLndW7O6K5w64BqKMjMLfXhdWU8tKdrySg3746fN+OJDD2EkIF2xKJejhLUHT2KAVhTAW9xLP+zFc282pceVA8YuN77s7r0Uv3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eEhY8TjU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7353C4AF09;
+	Fri, 13 Feb 2026 10:44:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770979486;
-	bh=4r5sYOsuHx9pVkMSBV3kNbZLBG/Rokt5knXJtofhoVY=;
+	s=k20201202; t=1770979488;
+	bh=LpgbViYueVfs8znDGiGm/oh4caXky7ehWf+alC0Sk7c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LZ9kVlEuY/cZJZ2OI6PD0MVIdR5QAqj1+4YlAQZkhZ1nUmbAY8QAAccQLSEaV9zQ4
-	 wTHWp891GzX1I53lmJWPkTBv82+t3IDgfiOfU/d80kPyYrBAo1kAmzzsQThIEvqb9+
-	 QX9miuiJQ8kF9uYXAwxs8WhOXu4TaOHbu8MFvL96Yol0fO+7zRGz51XG1J98bFqq9X
-	 EyxFRAL4KYoByhZfDoiXlIMZBYFPgRgczMoG+RmikJSqaRsQJ3zqld2xG2Bw9eXLeu
-	 eBwfTFxhSIA2EfJLqODzgkWh1bkXR7oWEG+tbvjn3tIWntuH7MxT90ev6lDqp877Qw
-	 dAzO3+IjDGjbg==
+	b=eEhY8TjUTmLFtA8f763ww2my/jgDgDJfIzvXY/7RMR8CEjtGqAtm6rnRqDjCZB/jE
+	 PlxfiZrxwoBRux5oASg5MBzvuWuFuzTTWcKLvKbZNg2z+g72Cezz/KnGdf1ACZhC/T
+	 acl0rjpnm0JOTP5iXaYdlPxATCNvGbmyCt0XN2ZU/VrGnYAWrF//Uo6FXb+o9Lzoy3
+	 yLxyc134uWJKgYn3+d3ecrGbC9KgD4oOKqa6pu/MFAa4K/80xip+dDF4dT9Gl69jdF
+	 UADi2mb2JaCaqmpKdQa09CaIoCcQnHN0pdJDs9YYdyE00RZNugs0YhY6h61oWLHe9s
+	 YLekbm9Dr0R6A==
 From: Alexey Gladkov <legion@kernel.org>
 To: Christian Brauner <brauner@kernel.org>,
 	Dan Klishch <danilklishch@gmail.com>
@@ -52,12 +52,12 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>,
 	Kees Cook <keescook@chromium.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v8 0/5] proc: subset=pid: Relax check of mount visibility
-Date: Fri, 13 Feb 2026 11:44:25 +0100
-Message-ID: <cover.1770979341.git.legion@kernel.org>
+Subject: [PATCH v8 1/5] docs: proc: add documentation about mount restrictions
+Date: Fri, 13 Feb 2026 11:44:26 +0100
+Message-ID: <654e021422520a7b25df0cc8591b7643519585fa.1770979341.git.legion@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <cover.1768295900.git.legion@kernel.org>
-References: <cover.1768295900.git.legion@kernel.org>
+In-Reply-To: <cover.1770979341.git.legion@kernel.org>
+References: <cover.1768295900.git.legion@kernel.org> <cover.1770979341.git.legion@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -77,7 +77,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_TO(0.00)[kernel.org,gmail.com];
-	TAGGED_FROM(0.00)[bounces-77126-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77127-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	RCVD_TLS_LAST(0.00)[];
@@ -93,61 +93,49 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 25260135379
+X-Rspamd-Queue-Id: EDB03135396
 X-Rspamd-Action: no action
 
-When mounting procfs with the subset=pids option, all static files become
-unavailable and only the dynamic part with information about pids is accessible.
+procfs has a number of mounting restrictions that are not documented
+anywhere.
 
-In this case, there is no point in imposing additional restrictions on the
-visibility of the entire filesystem for the mounter. Everything that can be
-hidden in procfs is already inaccessible.
-
-Currently, these restrictions prevent pidfs from being mounted inside rootless
-containers, as almost all container implementations override part of procfs to
-hide certain directories. Relaxing these restrictions will allow pidfs to be
-used in nested containerization.
-
+Signed-off-by: Alexey Gladkov <legion@kernel.org>
 ---
-Changelog
----------
-v8:
-* Remove mounter credential change on remount as suggested by Christian Brauner.
+ Documentation/filesystems/proc.rst | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-v7:
-* Rebase on v6.19-rc5.
-* Rename SB_I_DYNAMIC to SB_I_USERNS_ALLOW_REVEALING.
-
-v6:
-* Add documentation about procfs mount restrictions.
-* Reorder commits for better review.
-
-v4:
-* Set SB_I_DYNAMIC only if pidonly is set.
-* Add an error message if subset=pid is canceled during remount.
-
-v3:
-* Add 'const' to struct cred *mounter_cred (fix kernel test robot warning).
-
-v2:
-* cache the mounters credentials and make access to the net directories
-  contingent of the permissions of the mounter of procfs.
-
-Alexey Gladkov (5):
-  docs: proc: add documentation about mount restrictions
-  proc: subset=pid: Show /proc/self/net only for CAP_NET_ADMIN
-  proc: Disable cancellation of subset=pid option
-  proc: Relax check of mount visibility
-  docs: proc: add documentation about relaxing visibility restrictions
-
- Documentation/filesystems/proc.rst | 15 +++++++++++++++
- fs/namespace.c                     | 29 ++++++++++++++++-------------
- fs/proc/proc_net.c                 |  8 ++++++++
- fs/proc/root.c                     | 22 ++++++++++++++++------
- include/linux/fs/super_types.h     |  2 ++
- include/linux/proc_fs.h            |  1 +
- 6 files changed, 58 insertions(+), 19 deletions(-)
-
+diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+index 8256e857e2d7..c8864fcbdec7 100644
+--- a/Documentation/filesystems/proc.rst
++++ b/Documentation/filesystems/proc.rst
+@@ -52,6 +52,7 @@ fixes/update part 1.1  Stefani Seibold <stefani@seibold.net>    June 9 2009
+ 
+   4	Configuring procfs
+   4.1	Mount options
++  4.2	Mount restrictions
+ 
+   5	Filesystem behavior
+ 
+@@ -2410,6 +2411,19 @@ will use the calling process's active pid namespace. Note that the pid
+ namespace of an existing procfs instance cannot be modified (attempting to do
+ so will give an `-EBUSY` error).
+ 
++4.2	Mount restrictions
++--------------------------
++
++If user namespaces are in use, the kernel additionally checks the instances of
++procfs available to the mounter and will not allow procfs to be mounted if:
++
++  1. This mount is not fully visible.
++
++     a. It's root directory is not the root directory of the filesystem.
++     b. If any file or non-empty procfs directory is hidden by another mount.
++
++  2. A new mount overrides the readonly option or any option from atime familty.
++
+ Chapter 5: Filesystem behavior
+ ==============================
+ 
 -- 
 2.53.0
 
