@@ -1,203 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-77220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CFgzISW2kGn5cQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 18:51:33 +0100
+	id WLnHEoW2kGn5cQEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 18:53:09 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE78F13CA50
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 18:51:32 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2DF713CA75
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 18:53:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4FF4F3029241
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 17:51:11 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id B3E2E3018755
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 17:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD312D8DB8;
-	Sat, 14 Feb 2026 17:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37982D2488;
+	Sat, 14 Feb 2026 17:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GbwXL5tE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp02-ext3.udag.de (smtp02-ext3.udag.de [62.146.106.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731A7155C82;
-	Sat, 14 Feb 2026 17:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.146.106.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4007D16EB42;
+	Sat, 14 Feb 2026 17:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771091470; cv=none; b=Crvzgt9EgjbQHABDlEQ4KVPtAb7+cISsV15Gmn/Xcz2XqkLMNfOoYqCrNsPAT6siK2pXUcAO6Cy1uIYSBqQLGb3ihPiQsagUpBlzcSf52OOO9zzFPGlUK1wtVximVZaZYC4zJbfNIbhxlTg46QztYdJI39D3uWmFLleOKuX2f/M=
+	t=1771091586; cv=none; b=Tn/0Go1upraz6F3VWHjT/SZWf9ZdlcAlEnztbsOokICLkbrYpna8EGjGgf+tDzEfZZgog09TT7jf6CQlabWf6yqX6R4bj5E4MxZ02NAQm2cY9t7UIyX04wWfdqfWT7R8QoFZLomBigRwf87Msgc0iWwQex8Ye71Ud/nBKvucR3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771091470; c=relaxed/simple;
-	bh=y6EbmyGspHh4LzwRLlILnklBh1yh6Hp0wePXfgzXvx0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uVBGRkcVMedJk9ZeHJnAXB+v6A/ot7sZqBAW6oo6czWzUf/RnE+O4jpXDc7svEx2Ggip4Fqjl1Cgmggt//JIA9rNcMnywS5nzyuNPd7FOh284Hx5tSUPmttRjdtiU8o5shidLO8Ypydy0npNt9rzo8OsgRacR/UTbKm3GyeCItI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de; spf=pass smtp.mailfrom=birthelmer.de; arc=none smtp.client-ip=62.146.106.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birthelmer.de
-Received: from localhost (ip-176-198-081-007.um43.pools.vodafone-ip.de [176.198.81.7])
-	by smtp02-ext3.udag.de (Postfix) with ESMTPA id 3D33FE0323;
-	Sat, 14 Feb 2026 18:50:56 +0100 (CET)
-Authentication-Results: smtp02-ext3.udag.de;
-	auth=pass smtp.auth=birthelmercom-0001 smtp.mailfrom=horst@birthelmer.de
-Date: Sat, 14 Feb 2026 18:50:53 +0100
-From: Horst Birthelmer <horst@birthelmer.de>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Bernd Schubert <bernd@bsbernd.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Horst Birthelmer <horst@birthelmer.com>, Bernd Schubert <bschubert@ddn.com>, 
-	Luis Henriques <luis@igalia.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Horst Birthelmer <hbirthelmer@ddn.com>
-Subject: Re: Re: Re: [PATCH v5 1/3] fuse: add compound command to combine
- multiple requests
-Message-ID: <aZC0WdZKA7ohRuHN@fedora>
-References: <20260210-fuse-compounds-upstream-v5-0-ea0585f62daa@ddn.com>
- <20260210-fuse-compounds-upstream-v5-1-ea0585f62daa@ddn.com>
- <CAJfpegvt0HwHOmOTzkCoOqdmvU6pf-wM228QQSauDsbcL+mmUA@mail.gmail.com>
- <f38cf69e-57b9-494b-a90a-ede72aa12a54@bsbernd.com>
- <CAJfpegscqhGikqZsaAKiujWyAy6wusdVCCQ1jirnKiGX9bE5oQ@mail.gmail.com>
- <bb5bf6c8-22b2-4ca8-808b-4a3c00ec72fd@bsbernd.com>
- <CAJfpegv4OvANQ-ZemENASyy=m-eWedx=yz85TL+1EFwCx+C9CQ@mail.gmail.com>
- <d37cca3f-217d-4303-becd-c82a3300b199@bsbernd.com>
- <aY25uu56irqfFVxG@fedora-2.fritz.box>
- <CAJnrk1bg+GG8RkDtrunHW-P-7o=wtVUvjbiwQa_5Te4aPkbw1g@mail.gmail.com>
+	s=arc-20240116; t=1771091586; c=relaxed/simple;
+	bh=2h6+kikS07dDpolK+hkv/uXzydA8DWQiG8leXAtnIWg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H4Lpn04DuIh4sNzYm56mQdUtzh3y26rBhLn1re3qnC2ECKafCsaOslgW51Cz0HPQcGxDmF9bSkw8N/CvP/LoZKOEbQUJXhmySa5/DgGQWMBo1n0C8LJ3q5gIR5/oRZnW/KEC5V+MAcRvuNsA6+yE3XRcu/bEZfXIleHw2YUTiBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GbwXL5tE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C63C4C16AAE;
+	Sat, 14 Feb 2026 17:53:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771091585;
+	bh=2h6+kikS07dDpolK+hkv/uXzydA8DWQiG8leXAtnIWg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=GbwXL5tEof8jhFP6aX/swtdEBicYvd+pwBg0LOc2ZEZHJMEB2Edt/VKdgH6KgD7JJ
+	 xo4nI/h43n2duIbwvMaUgPdCGXKcPgkdtLYN7FA3H1pvJ1lqjfNTz1G1JOHSx4XNq9
+	 m5C2mgexG6bxfSzHEXpqFm4nALO0wp0xIn0ASbe/iBkH3oOpsUY5EuA9sEU3m4WDgN
+	 o+T1iXJTOGgNgSvH8jeGe7IPHLhxFeYH7wVvBpjaeKkCtO6mKJdk5RQOr/a2n7dty2
+	 Mz5w6oyvctvo7slRgF7GJkblOlsPa1yIARAu4S6I5w2H1YHpKBXBye1CdFQEIVT8Jm
+	 3D7njq64SYbQg==
+From: Chuck Lever <cel@kernel.org>
+To: jlayton@kernel.org,
+	neil@brown.name,
+	okorniev@redhat.com,
+	tom@talpey.com,
+	hch@lst.de,
+	alex.aring@gmail.com,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	Dai Ngo <dai.ngo@oracle.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org
+Subject: Re: [PATCH v12 1/1] NFSD: Enforce timeout on layout recall and integrate lease manager fencing
+Date: Sat, 14 Feb 2026 12:53:01 -0500
+Message-ID: <177109154296.57968.985044750836996107.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260213183647.4045478-1-dai.ngo@oracle.com>
+References: <20260213183647.4045478-1-dai.ngo@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1bg+GG8RkDtrunHW-P-7o=wtVUvjbiwQa_5Te4aPkbw1g@mail.gmail.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.86 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
-	DMARC_POLICY_SOFTFAIL(0.10)[birthelmer.de : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77220-lists,linux-fsdevel=lfdr.de];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	MISSING_XM_UA(0.00)[];
-	R_DKIM_NA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[horst@birthelmer.de,linux-fsdevel@vger.kernel.org];
+	FREEMAIL_TO(0.00)[kernel.org,brown.name,redhat.com,talpey.com,lst.de,gmail.com,zeniv.linux.org.uk,suse.cz,oracle.com];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-77221-lists,linux-fsdevel=lfdr.de];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[cel@kernel.org,linux-fsdevel@vger.kernel.org];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,birthelmer.de:email]
-X-Rspamd-Queue-Id: DE78F13CA50
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,oracle.com:mid,oracle.com:email]
+X-Rspamd-Queue-Id: B2DF713CA75
 X-Rspamd-Action: no action
 
-On Fri, Feb 13, 2026 at 05:35:30PM -0800, Joanne Koong wrote:
-> On Thu, Feb 12, 2026 at 3:44 AM Horst Birthelmer <horst@birthelmer.de> wrote:
-> > On Thu, Feb 12, 2026 at 11:43:12AM +0100, Bernd Schubert wrote:
-> > > On 2/12/26 11:16, Miklos Szeredi wrote:
-> > > > On Thu, 12 Feb 2026 at 10:48, Bernd Schubert <bernd@bsbernd.com> wrote:
-> > > >> On 2/12/26 10:07, Miklos Szeredi wrote:
-> > > >>> On Wed, 11 Feb 2026 at 21:36, Bernd Schubert <bernd@bsbernd.com> wrote:
-> > > >>>
-> > > >
-> > > >>> So as a first iteration can we just limit compounds to small in/out sizes?
-> > > >>
-> > > >> Even without write payload, there is still FUSE_NAME_MAX, that can be up
-> > > >> to PATH_MAX -1. Let's say there is LOOKUP, CREATE/OPEN, GETATTR. Lookup
-> > > >> could take >4K, CREATE/OPEN another 4K. Copying that pro-actively out of
-> > > >> the buffer seems a bit overhead? Especially as libfuse needs to iterate
-> > > >> over each compound first and figure out the exact size.
-> > > >
-> > > > Ah, huge filenames are a thing.  Probably not worth doing
-> > > > LOOKUP+CREATE as a compound since it duplicates the filename.  We
-> > > > already have LOOKUP_CREATE, which does both.  Am I missing something?
-> > >
-> > > I think you mean FUSE_CREATE? Which is create+getattr, but always
-> > > preceded by FUSE_LOOKUP is always sent first? Horst is currently working
-> > > on full atomic open based on compounds, i.e. a totally new patch set to
-> > > the earlier versions. With that LOOKUP
-> > >
-> > > Yes, we could use the same file name for the entire compound, but then
-> > > individual requests of the compound rely on an uber info. This info
-> > > needs to be created, it needs to be handled on the other side as part of
-> > > the individual parts. Please correct me if I'm wrong, but this sounds
-> > > much more difficult than just adding an info how much space is needed to
-> > > hold the result?
-> >
-> > I have a feeling we have different use cases in mind and misunderstand each other.
-> >
-> > As I see it:
-> > From the discussion a while ago that actually started the whole thing I understand
-> > that we have combinations of requests that we want to bunch together for a
-> > specific semantic effect. (see OPEN+GETATTR that started it all)
-> >
-> > If that is true, then bunching together more commands to create 'compounds' that
-> > semantically linked should not be a problem and we don't need any algorithm for
-> > recosntructing the args. We know the semantics on both ends and craft the compounds
-> > according to what is to be accomplished (the fuse server just provides the 'how')
-> >
-> > From the newer discussion I have a feeling that there is the idea floating around
-> > that we should bunch together arbitrary requests to have some performance advantage.
-> > This was not my initial intention.
-> > We could do that however if we can fill the args and the requests are not
-> > interdependent.
+From: Chuck Lever <chuck.lever@oracle.com>
+
+On Fri, 13 Feb 2026 10:36:30 -0800, Dai Ngo wrote:
+> When a layout conflict triggers a recall, enforcing a timeout is
+> necessary to prevent excessive nfsd threads from being blocked in
+> __break_lease ensuring the server continues servicing incoming
+> requests efficiently.
 > 
-> I have a series of (very unpolished) patches from last year that does
-> basically this. When libfuse does a read on /dev/fuse, the kernel
-> crams in as many requests off the fiq list as it can fit into the
-> buffer. On the libfuse side, when it iterates through that buffer it
-> offloads each request to a worker thread to process/execute that
-> request. It worked the same way on the dev uring side. I put those
-> changes aside to work on the zero copy stuff, but if there's interest
-> I can go back to those patches and clean them up and put them through
-> some testing. I don't think the work overlaps with your compound
-> requests stuff though. The compound requests would be a request inside
-> the larger batch.
-
-I would like to have your patch for the processing of multiple requests
-and the compound for handling semantically related requests.
-
-> >
-> > If we can signal to the fuse server what we expect as result
-> > (at least the allocated memory) I think we can do both, but I would like to have the
-> > emphasis more on the semantic grouping for the moment.
-> >
-> > Do you guys think that there will ever be a fuse server that doesn't support compounds
-> > and all of them are handled by something like libfuse and the request handlers are just
-> > called without having to handle not even one unseparatebale semantic 'group'?
+> This patch introduces a new function to lease_manager_operations:
 > 
-> If I'm understanding the question correctly, yes imo this is likely.
-> But I think that's fine. In my opinion, the main benefit from this is
-> saving on the context switching cost. I don't really see the problem
-> if libfuse has to issue the requests separately and sequentially if
-> the requests have dependency chains and  the server doesn't have a
-> special handler for that specific compound request combo (which imo I
-> don't think libfuse should even add, as I dont see what the purpose of
-> it is that can't be done by sending each request to each separate
-> handler sequentially).
+> [...]
 
-Which part would process those interdependencies?
-We have multiple options and I'm not entirely sure, 
-the kernel, libfuse, fuse server?
+Applied to nfsd-testing, thanks!
 
-In the current version none would do any special interpretation and the
-fuse server will have a specialized handler for a compound type, which
-automatically 'knows' how to get the right args.
+I made a couple of small adjustments, please review the result.
 
-> Thanks,
-> Joanne
-> 
-> > >
-> > > Thanks,
-> > > Bernd
+[1/1] NFSD: Enforce timeout on layout recall and integrate lease manager fencing
+      commit: ce1368c9edf719a4fada76bf537f0614ab611835
 
-Thanks,
-Horst
+--
+Chuck Lever
+
 
