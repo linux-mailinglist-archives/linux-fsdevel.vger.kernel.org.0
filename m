@@ -1,243 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-77197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WPqKCWUOkGkPVwEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 06:55:49 +0100
+	id XiuvGLMfkGmjWQEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 08:09:39 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF3913B2BB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 06:55:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78EDF13B48F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 08:09:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7FB06302E43F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 05:55:40 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B728E3027951
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 07:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F9D2DEA8C;
-	Sat, 14 Feb 2026 05:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pwwaQhzR"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581B02BE048;
+	Sat, 14 Feb 2026 07:09:34 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DFCF513;
-	Sat, 14 Feb 2026 05:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02870267AF2
+	for <linux-fsdevel@vger.kernel.org>; Sat, 14 Feb 2026 07:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771048537; cv=none; b=khceuhHDjPulewV9NdRzFnUDMCEixWzgRiEB+6ma8arxjZJMBJCFAQfubJpEM+Yoa0RXENuZvnuqbOR3I9xsNgSAGAPjvC2CsbVk0ODJKcxu7lFSdslW8p3Jgx5bDXZ8ZNKmRNlLNedgRZaKjIrtJGnl1LFxiEDso/37SgfmYxA=
+	t=1771052974; cv=none; b=g5pznTSbO+euKQKXbCHmq4ubPEoMt46pf2RB9dswoz7aJfdsT03+80y/3Y+vYj9EmJPE+aVEEpmAfg6WEMtBvJkixtBcOY0EsXciFRrf4LiEWzSbu0h/7d3r/e1QvM1U157PVrd5AD5GtkMIqDIhsggOdoPOJq4L14bWxOG2/Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771048537; c=relaxed/simple;
-	bh=blRqj19K7y2CHRmqGJrwLRU9MgNEaUSBD6Ezz1anZrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IjQJxCHufEPIn2WoTd9KKQpB3XyzdjNwswkjxUzICH0TMkcbPSdaT7+7VRXdgjFNCYBDMd+Vkh6MPaW1aKO1Cucs3/OADeQESf0pT/m28Ox5WLAixBzHBPFNfEeV9P/AvtV4kiqO7S0ntdm2Kk1DVcPZWhD++8H6StOoCneX9pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pwwaQhzR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 678E2C19421;
-	Sat, 14 Feb 2026 05:55:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771048537;
-	bh=blRqj19K7y2CHRmqGJrwLRU9MgNEaUSBD6Ezz1anZrE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pwwaQhzR4IL90e6SDZ30WsEtFB8njlCpy3Zfq+S1uPf51SDLUkCu1Lz0GNsNSrQ2v
-	 rCxlY9fBj5bCg+BhwRnTrMOdM0f0awNIqoqvIZkvRj/IbbmBc004YDbybr7J9t/qv1
-	 6J2WPglfUOBwPx7h0li8u0zhUqsbOtSXhrdXwSfchew7PJT0ne8HecWj8TxpOxzxug
-	 9TRTyLloW6ztpca84o+ew5SVnSmO9MYKlZyWPEESV6w7fieUKYJnVfs2BnVTijimJD
-	 2bqirQnXRP9Q4mg/JyxHoWhwZfAMAjBgb79vK01IS9Wx3xSy8z+rfdLe2tMSd7wWuP
-	 tUvg3tQbWytFw==
-Date: Fri, 13 Feb 2026 21:55:36 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Dave Chinner <dgc@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz
-Subject: Re: inconsistent lock state in the new fserror code
-Message-ID: <20260214055536.GW1535390@frogsfrogsfrogs>
-References: <aY7BndIgQg3ci_6s@infradead.org>
- <20260213160041.GT1535390@frogsfrogsfrogs>
- <20260213190757.GJ7693@frogsfrogsfrogs>
- <aY-n4leNi4NCzri1@dread>
+	s=arc-20240116; t=1771052974; c=relaxed/simple;
+	bh=DdXo9fpm4x3ctny2rjdCF+2L6u9rB/jLNpFlWxufnxs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ttyxfueP83o0d1XIa2mGWvJ0lrUcW9+q2LikuGzt+bQbSdquiIhtss3Nro42XKMqi9wqJmMRI/pOiY6RUbMewZpMOLnVeNCQSlmXF9nHibVBUc34ku7dYurYYp6CQ8ixoPFEiBGhVelbn9Ic+N9ugtOE+C12UTEcDkMH38+T8/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 61E79IfA066345;
+	Sat, 14 Feb 2026 16:09:18 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 61E79Isc066342
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 14 Feb 2026 16:09:18 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <f8700c59-3763-4ea9-b5c2-f4510c2106ed@I-love.SAKURA.ne.jp>
+Date: Sat, 14 Feb 2026 16:09:18 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aY-n4leNi4NCzri1@dread>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] hfs: evaluate the upper 32bits for detecting overflow
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+        "frank.li@vivo.com" <frank.li@vivo.com>,
+        "slava@dubeyko.com" <slava@dubeyko.com>,
+        "jkoolstra@xs4all.nl" <jkoolstra@xs4all.nl>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <6e5fd94e-9073-4307-beb7-ee87f3f0665c@I-love.SAKURA.ne.jp>
+ <68811931931db09c0ea84f1be8e1bdc0fd453776.camel@ibm.com>
+ <4a026754-1c58-40a6-96f9-ecaafa67a2ae@I-love.SAKURA.ne.jp>
+ <62e01a3505bca9d1e8779f85e0223ec02c24a6de.camel@ibm.com>
+ <ef597d09-0fe0-44bc-93ff-b0223eb97ce8@I-love.SAKURA.ne.jp>
+ <37b976e33847b4e3370d423825aaa23bdc081606.camel@ibm.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <37b976e33847b4e3370d423825aaa23bdc081606.camel@ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav102.rs.sakura.ne.jp
+X-Virus-Status: clean
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-1.46 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77197-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	MISSING_XM_UA(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DMARC_NA(0.00)[i-love.sakura.ne.jp];
+	FREEMAIL_TO(0.00)[ibm.com,physik.fu-berlin.de,vivo.com,dubeyko.com,xs4all.nl];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
 	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-77198-lists,linux-fsdevel=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[penguin-kernel@I-love.SAKURA.ne.jp,linux-fsdevel@vger.kernel.org];
 	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[qemu.org:url,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 7AF3913B2BB
+	R_DKIM_NA(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,I-love.SAKURA.ne.jp:mid]
+X-Rspamd-Queue-Id: 78EDF13B48F
 X-Rspamd-Action: no action
 
-On Sat, Feb 14, 2026 at 09:38:26AM +1100, Dave Chinner wrote:
-> On Fri, Feb 13, 2026 at 11:07:57AM -0800, Darrick J. Wong wrote:
-> > On Fri, Feb 13, 2026 at 08:00:41AM -0800, Darrick J. Wong wrote:
-> > > On Thu, Feb 12, 2026 at 10:15:57PM -0800, Christoph Hellwig wrote:
-> > > > [  149.498163] other info that might help us debug this:
-> > > > [  149.498163]  Possible unsafe locking scenario:
-> > > > [  149.498163] 
-> > > > [  149.498163]        CPU0
-> > > > [  149.498163]        ----
-> > > > [  149.498163]   lock(&sb->s_type->i_lock_key#33);
-> > > > [  149.498163]   <Interrupt>
-> > > > [  149.498163]     lock(&sb->s_type->i_lock_key#33);
-> > > 
-> > > Er... is lockdep telling us here that we could take i_lock in
-> > > unlock_new_inode, get interrupted, and then take another i_lock?
+On 2026/02/14 7:45, Viacheslav Dubeyko wrote:
+> typedef struct {
+> 	int counter;
+> } atomic_t;
 > 
-> Yes.
+> UINT_MAX is 4,294,967,295 (or 0xffffffff in hexadecimal).
+> INT_MAX: 32-bit Signed Integer: Ranges from -2,147,483,648 to +2,147,483,647.
 > 
-> > > > [  149.498163] 
-> > > > [  149.498163]  *** DEADLOCK ***
-> > > > [  149.498163] 
-> > > > [  149.498163] 1 lock held by swapper/1/0:
-> > > > [  149.498163]  #0: ffff8881052c81a0 (&vblk->vqs[i].lock){-.-.}-{3:3}, at: virtblk_done+0x4b/0x110
-> > > > [  149.498163] 
-> > > > [  149.498163] stack backtrace:
-> > > > [  149.498163] CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Tainted: G                 N  6.19.0+ #4827 PREEMPT(full) 
-> > > > [  149.498163] Tainted: [N]=TEST
-> > > > [  149.498163] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.17.0-0-gb52ca86e094d-prebuilt.qemu.org 04/01/2014
-> > > > [  149.498163] Call Trace:
-> > > > [  149.498163]  <IRQ>
-> > > > [  149.498163]  dump_stack_lvl+0x5b/0x80
-> > > > [  149.498163]  print_usage_bug.part.0+0x22c/0x2c0
-> > > > [  149.498163]  mark_lock+0xa6f/0xe90
-> > > > [  149.498163]  __lock_acquire+0x10b6/0x25e0
-> > > > [  149.498163]  lock_acquire+0xca/0x2c0
-> > > > [  149.498163]  _raw_spin_lock+0x2e/0x40
-> > > > [  149.498163]  igrab+0x1a/0xb0
-> > > > [  149.498163]  fserror_report+0x135/0x260
-> > > > [  149.498163]  iomap_finish_ioend_buffered+0x170/0x210
-> > > > [  149.498163]  clone_endio+0x8f/0x1c0
-> > > > [  149.498163]  blk_update_request+0x1e4/0x4d0
-> > > > [  149.498163]  blk_mq_end_request+0x1b/0x100
-> > > > [  149.498163]  virtblk_done+0x6f/0x110
-> > > > [  149.498163]  vring_interrupt+0x59/0x80
-> 
-> Ok, so why are we calling iomap_finish_ioend_buffered() from IRQ
-> context? That looks like a bug because the only IO completion call
-> chain that can get into iomap_finish_ioend_buffered() is supposedly:
-> 
-> iomap_finish_ioends
->   iomap_finish_ioend
->     iomap_finish_ioend_buffered
-> 
-> And the comment above iomap_finish_ioends() says:
-> 
-> /*
->  * Ioend completion routine for merged bios. This can only be called from task
->  * contexts as merged ioends can be of unbound length. Hence we have to break up
->  * the writeback completions into manageable chunks to avoid long scheduler
->  * holdoffs. We aim to keep scheduler holdoffs down below 10ms so that we get
->  * good batch processing throughput without creating adverse scheduler latency
->  * conditions.
->  */
-> 
-> Ah, there's the problem - pure buffered overwrites from XFS use
-> ioend_writeback_end_bio(), not xfs_end_bio(). Hence the buffered
-> write completion is not punted to a workqueue, and it calls
-> iomap_finish_ioend_buffered() direct from the bio completion
-> context.
-> 
-> Yeah, that seems like a bug that needs fixing in the
-> ioend_writeback_end_bio() function - if there's an IO error, it
-> needs to punt the processing of the ioend to a workqueue...
+> So, you cannot represent __be32 in signed integer.
 
-<nod> That's a much simpler approach, particularly if we're only bumping
-to a workqueue to handle IO errors (which means there's no need for
-merging).
+I can't catch what you are talking about.
 
-> > > > [  149.498163]  __handle_irq_event_percpu+0x8a/0x2e0
-> > > > [  149.498163]  handle_irq_event+0x33/0x70
-> > > > [  149.498163]  handle_edge_irq+0xdd/0x1e0
-> > > > [  149.498163]  __common_interrupt+0x6f/0x180
-> > > > [  149.498163]  common_interrupt+0xb7/0xe0
-> > > 
-> > > Hrmm, so we're calling fserror_report/igrab from an interrupt handler.
-> > > The bio endio function is for writeback ioend completion.
-> 
-> Yup, this is one of the reasons writeback doesn't hold an inode
-> reference over IO - we can't call iput() from an interrupt context.
-> 
-> > > igrab takes i_lock to check if the inode is in FREEING or WILL_FREE
-> > > state.  However, the fact that it's in writeback presumably means that
-> > > the vfs still holds an i_count on this inode,
-> 
-> Writeback holds an inode reference over submission only.
-> 
-> > > so the inode cannot be
-> > > freed until iomap_finish_ioend_buffered completes.
-> 
-> iput()->iput_final()->evict will block in inode_wait_for_writeback()
-> waiting for outstanding writeback to complete before it starts
-> tearing down the inode. This isn't controlled by reference counts.
-> 
-> > /me hands himself another cup of coffee, changes that to:
-> > 
-> > 	/*
-> > 	 * Can't iput from non-sleeping context, so grabbing another
-> > 	 * reference to the inode must be the last thing before
-> > 	 * submitting the event.  Open-code the igrab here to avoid
-> > 	 * taking i_lock in interrupt context.
-> > 	 */
-> > 	if (inode) {
-> > 		WARN_ON_ONCE(inode_unhashed(inode));
-> > 		WARN_ON_ONCE(inode_state_read_once(inode) &
-> > 					(I_NEW | I_FREEING | I_WILL_FREE));
-> 
-> It is valid for the inode have a zero reference count and have either
-> I_FREEING or I_WILL_FREE set here if another task has dropped the
-> final inode reference while writeback IO is still in flight.
-> 
-> > 		if (!atomic_inc_not_zero(&inode->i_count))
-> > 			goto lost_event;
-> 
-> Overall, I'm not sure using atomic_inc_not_zero() is safe here. It
-> may be, but I don't think this is how the problem should be solved.
+There is no difference among e.g. s32, u32, int, unsigned int, __le32, __be32
+in that these types can represent 4294967296 integer values. The difference
+among these types is how the pattern represented using 32 bits is interpreted.
+The -1 in int or s32 is the same with 4294967295 in unsigned int or u32.
 
-I /think/ it works because evict waits for writeback to end (so the
-inode can't go away) and we never attach the inode to the error event if
-the i_count already hit zero buuut this is a code smell anyway so I've
-little interest in pursuing this part further.
+----------
+#include <stdio.h>
 
-> Punt ioend w/ IO errors to a work queue, and then nothing needs to
-> change w.r.t. the fserror handling of the inodes. i.e. it will be
-> save to use inode->i_lock and hence igrab()...
+int main(int argc, char *argv[])
+{
+        int i = -1;
+        printf("%d\n", (int) i); // prints -1
+        printf("%u\n", (unsigned int) i); // prints 4294967295
+        return 0;
+}
+----------
 
-<nod> Will test that out.  Thanks for the suggestion.
+We can represent __be32 using signed 32bits integer when counting number of
+files/directories (which by definition cannot take a negative value), for
+we can interpret [-2147483648,-1] range as [2147483648,4294967295] range
+because we don't need to handle [-2147483648,-1] range.
 
---D
-
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> dgc@kernel.org
 
