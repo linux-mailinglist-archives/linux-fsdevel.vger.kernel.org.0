@@ -1,127 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-77221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77222-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WLnHEoW2kGn5cQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 18:53:09 +0100
+	id cBO6DfW+kGkVcwEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77222-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 19:29:09 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2DF713CA75
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 18:53:08 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 900E713CE20
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 19:29:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id B3E2E3018755
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 17:53:07 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 74DFD30157F5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 18:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37982D2488;
-	Sat, 14 Feb 2026 17:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341652D8DB5;
+	Sat, 14 Feb 2026 18:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GbwXL5tE"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O3FJ5VEx";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="DOrKPF7F"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4007D16EB42;
-	Sat, 14 Feb 2026 17:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC4E1A0BD0
+	for <linux-fsdevel@vger.kernel.org>; Sat, 14 Feb 2026 18:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771091586; cv=none; b=Tn/0Go1upraz6F3VWHjT/SZWf9ZdlcAlEnztbsOokICLkbrYpna8EGjGgf+tDzEfZZgog09TT7jf6CQlabWf6yqX6R4bj5E4MxZ02NAQm2cY9t7UIyX04wWfdqfWT7R8QoFZLomBigRwf87Msgc0iWwQex8Ye71Ud/nBKvucR3c=
+	t=1771093744; cv=none; b=La0DnH2Rfmv7npmI1O0rU3OHtZmNDtcTnObW6MG0OzPOny54DFKaullteRLE1fM8QJO1k2FEskw2SZq9Sfwdg1KD3E5o5tXxyV9qZxheSK01I1xLyRZ9a7Gpp5z3lUloLCiEMff9yN5ajFq9I+2GUwqK8wnF0cKUrAmYj1o7bB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771091586; c=relaxed/simple;
-	bh=2h6+kikS07dDpolK+hkv/uXzydA8DWQiG8leXAtnIWg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H4Lpn04DuIh4sNzYm56mQdUtzh3y26rBhLn1re3qnC2ECKafCsaOslgW51Cz0HPQcGxDmF9bSkw8N/CvP/LoZKOEbQUJXhmySa5/DgGQWMBo1n0C8LJ3q5gIR5/oRZnW/KEC5V+MAcRvuNsA6+yE3XRcu/bEZfXIleHw2YUTiBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GbwXL5tE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C63C4C16AAE;
-	Sat, 14 Feb 2026 17:53:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771091585;
-	bh=2h6+kikS07dDpolK+hkv/uXzydA8DWQiG8leXAtnIWg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GbwXL5tEof8jhFP6aX/swtdEBicYvd+pwBg0LOc2ZEZHJMEB2Edt/VKdgH6KgD7JJ
-	 xo4nI/h43n2duIbwvMaUgPdCGXKcPgkdtLYN7FA3H1pvJ1lqjfNTz1G1JOHSx4XNq9
-	 m5C2mgexG6bxfSzHEXpqFm4nALO0wp0xIn0ASbe/iBkH3oOpsUY5EuA9sEU3m4WDgN
-	 o+T1iXJTOGgNgSvH8jeGe7IPHLhxFeYH7wVvBpjaeKkCtO6mKJdk5RQOr/a2n7dty2
-	 Mz5w6oyvctvo7slRgF7GJkblOlsPa1yIARAu4S6I5w2H1YHpKBXBye1CdFQEIVT8Jm
-	 3D7njq64SYbQg==
-From: Chuck Lever <cel@kernel.org>
-To: jlayton@kernel.org,
-	neil@brown.name,
-	okorniev@redhat.com,
-	tom@talpey.com,
-	hch@lst.de,
-	alex.aring@gmail.com,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	Dai Ngo <dai.ngo@oracle.com>
-Cc: Chuck Lever <chuck.lever@oracle.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: Re: [PATCH v12 1/1] NFSD: Enforce timeout on layout recall and integrate lease manager fencing
-Date: Sat, 14 Feb 2026 12:53:01 -0500
-Message-ID: <177109154296.57968.985044750836996107.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260213183647.4045478-1-dai.ngo@oracle.com>
-References: <20260213183647.4045478-1-dai.ngo@oracle.com>
+	s=arc-20240116; t=1771093744; c=relaxed/simple;
+	bh=xgketm8c2mX6Go7ZUAVxbeJVFbH/hWwVLL5KIsUCjIs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VpLcr2IadZwWce5i/e48mzpe8d8gCte6wQ/yprEXndR18WliZFNO6S13rnNwNCBBQTEYhfnATlyfWvpuBfW7GcUtiRiclTaTKHAAWm6M5Nn1t84jP9k/7V3bRsHkCFZSSojSL0U1P/1cb797/jpnoRVbPv3YvmVNV2rqSnaTZDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O3FJ5VEx; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=DOrKPF7F; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1771093742;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4jRjucBZL6aCy/7jifuRxZxDNR6NSPskwAmOoovqDVY=;
+	b=O3FJ5VEx5aPPgm3sI6o+y89AR73KPy+bUjazpUs/ehlZ03tOGiomnsTLG/d7R+4Y1Ugg7Z
+	tNkpx8BC9dD3QSqUBIy1Ifbb42lJPfo/1EGE5jNfX2ekV6mYpFW4JvWsbD4OxX6x4UvlWC
+	WKVsbh6xCfxXjMt+xqaQOK26kcrGO3o=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-695-_B_KRjF9PVGPZW_pUQ6yPg-1; Sat, 14 Feb 2026 13:29:00 -0500
+X-MC-Unique: _B_KRjF9PVGPZW_pUQ6yPg-1
+X-Mimecast-MFC-AGG-ID: _B_KRjF9PVGPZW_pUQ6yPg_1771093740
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8c71304beb4so589393385a.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 14 Feb 2026 10:29:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1771093740; x=1771698540; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4jRjucBZL6aCy/7jifuRxZxDNR6NSPskwAmOoovqDVY=;
+        b=DOrKPF7FRj6kJQRhU8Z5BbXc2TLaxeb210Y/B6Q+pPrl1OyYRadygDSNnZH1Ls83Y1
+         ngR53jKAcOclbG6I3OuGuWFqqLWBwq4fWizSXhHfHP/ZGIficvyG6od4kphvgOCxG/rN
+         f9MV7ELJywhmcVnjQuJ1FQw6jAWRexV7qxDQ4u+5ZxgNdasNjmxgoqWamKPs7uA4jtsL
+         JjslHuAKLqTulJ5PtgS/W6fsJ2DlGtEoF6dlG79hLNBJVZuU4IYh77+gE94MAGt9ZczD
+         fErqgjq8QTzrA+DTgKBEWcbj1b4GbU00H/q0o31i+jCzbrvfEPr9s79OexfxnDstf36m
+         RADw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771093740; x=1771698540;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4jRjucBZL6aCy/7jifuRxZxDNR6NSPskwAmOoovqDVY=;
+        b=r65QAhhYFd1kojFkXYp+cmyJPMcIwrpcWd98VDxtBkJDc7vT6S7asa/VeOxYO8VaDH
+         BTa9aMs6xJmcWup+S7s/NLBLVQ+ZxoavPF8LhNAczWfEuJ0Eng/0MjmEgfruCEvtePrJ
+         KBE7X1cNp8HjyUYu0a4cQd4u8Evp1pYXw1tmEKa0ChaieXhMdo91BEkZfggOgcLGur4h
+         nosuDGDpjghd40OKGXoLynhLvrbZys3+gKBIGhQwpDkZEmK3na5pMOjjG9+qHgAUZfhb
+         myLEe3r7c5BKLo+DpIL35ze1Zho0wx0C8iZmIOO9quHwSewyaekVHWn1JrSgbBBwFiu8
+         pVqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVpxbK6oMXpDi1MTJbkAGe81PGy4g8n7j+mQt+qWqrud0q/t5zx6g9JFXwUEwsklCGF8tEbarxr0vFTsdMm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2vzs8HrYGlC99Ip1JR+2IQHxD/suSIjV1WN0TNEuXJPwTN6/l
+	5um3ZRFTv7zYLwqYGaGRjxhZoufwh1V5UawaLk6wuHNlik2yR8WgURSDmJrXBDB/S8ZeMYcLsuM
+	7QU/XFxEOqvyu41tILSoKZrV3AUSLbWXF4Qi/ocPrZ6rRd5pOB1riT8Q964dE2UUNm5g=
+X-Gm-Gg: AZuq6aJmikKvj0mlbl/3pbG89Wrqu3zg6890sS7vUCpzd3poY03PkDP7KetFMv/dyfc
+	ydvYraH0R+HDc8xOjw1w9GXNjC/sVX9L6DmIZB6SW5CVY9waVhOKUyH/TbrzZCKjdsjFslyrll4
+	N+YjAV+f+gI0PM4aFwZ9BgBfKoM5Nrx0RqT4r4LtbmhqBS9Zvw1wF1m7uecUshvfag1cuI4hSJn
+	AfrYcNU9D84JbY5jzxpIvNBfDjZqrSlG+Z75hAugqtqkNMYgIofQc6YFpec+xWk3CGhDwwJX/Tv
+	Na0BKHmHWrujCtTXrTSlnCXmATf9ZROqoLtgnqfnSL/bkBjTtDNrC1lVuNKfogs0U4QPKFK3Tc2
+	ovWLtwPCjjCWdVZbOPfFI
+X-Received: by 2002:a05:620a:3710:b0:8c7:fdc:e853 with SMTP id af79cd13be357-8cb4225fbe0mr756916085a.1.1771093740216;
+        Sat, 14 Feb 2026 10:29:00 -0800 (PST)
+X-Received: by 2002:a05:620a:3710:b0:8c7:fdc:e853 with SMTP id af79cd13be357-8cb4225fbe0mr756914585a.1.1771093739817;
+        Sat, 14 Feb 2026 10:28:59 -0800 (PST)
+Received: from [172.31.1.12] ([70.105.242.59])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cb2b20f5desm878549385a.41.2026.02.14.10.28.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 Feb 2026 10:28:58 -0800 (PST)
+Message-ID: <dfd0d59a-a0ca-484d-981a-55cac8d89717@redhat.com>
+Date: Sat, 14 Feb 2026 13:28:56 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: ANNOUNCE: nfs-utils-2.8.5 released.
+To: Salvatore Bonaccorso <carnil@debian.org>
+Cc: Linux NFS Mailing list <linux-nfs@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <fdf3631f-e924-4e4c-bd9f-db5b40a90bfe@redhat.com>
+ <aYlpcPkq_glykQvJ@eldamar.lan>
+Content-Language: en-US
+From: Steve Dickson <steved@redhat.com>
+In-Reply-To: <aYlpcPkq_glykQvJ@eldamar.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719,redhat.com:s=google];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[kernel.org,brown.name,redhat.com,talpey.com,lst.de,gmail.com,zeniv.linux.org.uk,suse.cz,oracle.com];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-77221-lists,linux-fsdevel=lfdr.de];
-	DKIM_TRACE(0.00)[kernel.org:+];
+	TAGGED_FROM(0.00)[bounces-77222-lists,linux-fsdevel=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[cel@kernel.org,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
 	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[redhat.com:+];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[steved@redhat.com,linux-fsdevel@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[3];
+	RCVD_COUNT_FIVE(0.00)[6];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,oracle.com:mid,oracle.com:email]
-X-Rspamd-Queue-Id: B2DF713CA75
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 900E713CE20
 X-Rspamd-Action: no action
 
-From: Chuck Lever <chuck.lever@oracle.com>
 
-On Fri, 13 Feb 2026 10:36:30 -0800, Dai Ngo wrote:
-> When a layout conflict triggers a recall, enforcing a timeout is
-> necessary to prevent excessive nfsd threads from being blocked in
-> __break_lease ensuring the server continues servicing incoming
-> requests efficiently.
+
+On 2/8/26 11:58 PM, Salvatore Bonaccorso wrote:
+> Hi Steve,
 > 
-> This patch introduces a new function to lease_manager_operations:
+> On Mon, Feb 02, 2026 at 06:45:30AM -0500, Steve Dickson wrote:
+>> Hello,
+>>
+>> This release contains the following:
+>>
+>>      * Man page corrections
+>>      * min-threads parameter added to nfsdctl.
+>>      * systemd updates to rpc-statd-notify.
+>>      * blkmapd not built by default (--enable-blkmapd to re-enable)
+>>      * A number of other bug fixes.
+>>
+>> The tarballs can be found in
+>>    https://www.kernel.org/pub/linux/utils/nfs-utils/2.8.5/
+>> or
+>>    http://sourceforge.net/projects/nfs/files/nfs-utils/2.8.5
+>>
+>> The change log is in
+>>     https://www.kernel.org/pub/linux/utils/nfs-utils/2.8.5/2.8.5-Changelog
+>> or
+>>   http://sourceforge.net/projects/nfs/files/nfs-utils/2.8.4/2.8.5-Changelog
+>>
+>>
+>> The git tree is at:
+>>     git://linux-nfs.org/~steved/nfs-utils
 > 
-> [...]
+> While 2.8.5 was released, I do not see yet a release commit and tag in
+> the git repository, is this correct?
+Sorry I was traveling and forgot do the push... It is there now.
 
-Applied to nfsd-testing, thanks!
+steved.
 
-I made a couple of small adjustments, please review the result.
-
-[1/1] NFSD: Enforce timeout on layout recall and integrate lease manager fencing
-      commit: ce1368c9edf719a4fada76bf537f0614ab611835
-
---
-Chuck Lever
+> 
+> Regards,
+> Salvatore
+> 
 
 
