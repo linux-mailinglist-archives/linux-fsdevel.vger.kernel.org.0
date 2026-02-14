@@ -1,144 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-77233-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KKEBJhfukGltdwEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77233-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 22:50:15 +0100
+	id oHT4AWD1kGkCeAEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 23:21:20 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id F118213DAB5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 22:50:14 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72ECC13DB45
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 23:21:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0292A3011F3C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 21:50:12 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D3DB53016EC7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 22:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BC531064A;
-	Sat, 14 Feb 2026 21:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FCE314D08;
+	Sat, 14 Feb 2026 22:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aIxIqnhK"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Wri4QK1T"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A6430F931;
-	Sat, 14 Feb 2026 21:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725F826E6F8
+	for <linux-fsdevel@vger.kernel.org>; Sat, 14 Feb 2026 22:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771105811; cv=none; b=I0eG5Q8zCuEfY9nJbSW2yEBj3qWa025BE87KnX7IDr470DtW+SZVciEW50pr44Sgn4ai4bwmu4KdVViGydf3N2lXXVREjBIMRWmJ+pDCCj+76x+23HzGFePEGdRPJal3h8TY/5j/93LQuJAc0cOqBJXj21MqWOkWndcUL6P/8wE=
+	t=1771107664; cv=none; b=Z5NSAQA1osOaF0zT/qGJSSqw8Cs0sQY/EBznMXcQuY29PIqGLANnbmRBkM0q4qdGxcv9owof2EWfPhjGpe3S/oZTpJDrhUqSvtDIOYHkdab8uosZMXtN0hTbjlhb1u24B45P9nt9KzOzXmSy9QybkwT12wjdqTw++ACYM+k4K/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771105811; c=relaxed/simple;
-	bh=ByCxnIXhkyF8adSYpVRD9YFch315vVu5Im4dAbrrJq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jTeDkURMTE4c+rCEQnXmXn/K1T31kCqn+cppOFljZcK7eU+lTB7jSLR0K3YuUHDNOhlkVgc/TC9BupipMuTSyv6BW1af3SwDOcYpJ0HuiDfJMSols5n2wfDcDWdtQimZZSz+i+1UdlsabL1uPw1K52NcChpYc3gVf2ld4fcwQJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aIxIqnhK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AE25C16AAE;
-	Sat, 14 Feb 2026 21:50:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771105810;
-	bh=ByCxnIXhkyF8adSYpVRD9YFch315vVu5Im4dAbrrJq8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aIxIqnhKAaO+g3BCIpmUeJYgBci67fffn8afyPqxaFJcFDVB+H/Igiut73MylpdPa
-	 OdF5P9lvsZEEqUV54RLP+4xaSRrm4Qqf2B/HDAAcIKnDgEdC6HT7zLy7xMQLnHwqiR
-	 Y4Yk0jU+oF8LV6BLWOjtZfIOd4b6nLvYvuJiLOViHYgxWP3NvUFYHl6N7Dt7Ilpcfc
-	 ORAFgQwAB85553FBC0r2SQ40d3nWnW83pxKt09dx8FMbYYWUhKALJqFLGne8lTEEC5
-	 O/stAdrOWq2DVDmq4gNbxNITFDStIlQcFbz89v601w0jjpxidKR2aexfiHooD7ifXu
-	 Pyeb7rj8Lk4UQ==
-Date: Sat, 14 Feb 2026 13:50:08 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: fsverity@lists.linux.dev
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH v2 1/2] f2fs: use fsverity_verify_blocks() instead of
- fsverity_verify_page()
-Message-ID: <20260214215008.GA15997@quark>
-References: <20260214211830.15437-1-ebiggers@kernel.org>
- <20260214211830.15437-2-ebiggers@kernel.org>
+	s=arc-20240116; t=1771107664; c=relaxed/simple;
+	bh=//zRrWhjq2Bwrga6F6V/tszomUIh5gEKf8efc4PgfJw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SkgEzt3yCis7dhZwZzFL/C8LCYVE6o5z3LRbIu4xSjM02TJiDXM602LOh3Qs2DhtJJ3SofdCSnP9zZ4jxRDzF/qIAB6zsByoeGqDr1GbAnsTmMkR4vUVrQjLmELnBjOjP4pLqitw6+Da17T9PrOsPPC9uD2O3FUuX0d+1YsOjMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Wri4QK1T; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-65a1b17a99aso3700586a12.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 14 Feb 2026 14:21:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1771107661; x=1771712461; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JWQi7XRtc1k2Wo3ssUlb/bYjje86J5o7oD3gW7VZANc=;
+        b=Wri4QK1TR1kfqRaGMX8wvFSda96meePidAr+FsCVHt39IWn5OcmphpO4wPyRbv5umV
+         bjauAbUEhZFV0LGkfM7AWpn9zDz2enY/O8BkBPVVvnQelvM+vtMCkMv1i8C+bRKs0RZl
+         ZkdxzSdu3SJzXUOTkam2Hf7f1ZMm9RPws2HRM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771107661; x=1771712461;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JWQi7XRtc1k2Wo3ssUlb/bYjje86J5o7oD3gW7VZANc=;
+        b=tTyeantlNgDwh9pKnvWMHYrPLpKC7pZpEOc/B2Sktnw1xmAZCU5s54qThJVkTSoOK8
+         lAcGXlbVa4pVy+pX1KXkrs9HzeqZqMwI5gQ9+b2LevbOX2xVdpDd0zEmQRuEyF97AXUq
+         +uqQ0Ci4Xt0W7Ixpu+MslUk+SgJbXXPSARKqtl++9Vwatd2CFjEZ0pA+45c73N6NR7Pq
+         vMDKG3iMQJWs9rN7JSUYak38IZb1NVv02IVw/mhvg3HFCXwsi+46RZxkyLWKqyE6ZxJF
+         B07C3tXe3qGzJZqOO81vqUXlEH1YVFVF4Q5UM1HGAdPGz7xev/sEPWujTlk32pOVWGJa
+         0Sdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXBiEc5JV4uhjUpfL6PhJI27XCezrF3BhjmdElxD8g7uKCAahfSITg38ER9rp6APIs/2cogXp0WJsSdERjI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6kKNprdw0MzfhQ/anZ7ws5snvUYC7AJqsHlgHav9WEEPiScAR
+	zWRe+EFN9FpEx9QMgbvbkj6XW1uEsq5+W2qNm0RE5nt/A82iMeu0pulnoWKWqVxkQz2zvpNG4Nh
+	bhIQZq5g=
+X-Gm-Gg: AZuq6aLtLlcZ4YDdE5h9tav1MSHRi54VWbxqM93CLI2Ml8wTwwpy14PTL9EbQzfIdCL
+	6RmIFpljsjZ4UV/Uz/bN2gIEtAVM7T8lmXH9a3CRJNFJD59Utw3tzaV7OL/YgcwvwHRRrZY35K+
+	/0xVaR0qJBybJ4eyVr3H/AWH7qg/3vJmjrQXZ6WT74cwN56fk7Mgdrd7xDZx2o9HwvNuRldQwDB
+	CeDobO4vpICR5GkKPXAHBt/9Hxw8UJLRo5QDGD68QsgN0QRJUSr4rxXqphchbI5BHv++4RdP9CE
+	kMNvsobaGQZIwLI8NUzY3Zpf+taLL42/feMN4uzzF0HNM15BmWnvJ+y7CJdDIHeBVC5W+TgZraR
+	rbKxFC4EJTTqSMUyC+qIf03BAXBjwm2ezbf2mpW5c2UAwvN7VLDhAhLvnn8JLZxPsmB6MYKAPuL
+	yPHrHfSSXXMpb/1X1EileoBkL461tgrMiSxRy5xOhhX1rrUqPCUKN/hz0LWQezxu5vilGyx4/8
+X-Received: by 2002:a17:907:8693:b0:b8f:a724:8710 with SMTP id a640c23a62f3a-b8fb4501342mr362235766b.50.1771107661558;
+        Sat, 14 Feb 2026 14:21:01 -0800 (PST)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8fc763bacfsm106686666b.36.2026.02.14.14.21.01
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 Feb 2026 14:21:01 -0800 (PST)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b8845cb5862so267183166b.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 14 Feb 2026 14:21:01 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVMWtOY7vte7kE8XsK7V/ArlQevjqNs/BmpF176qE7EJ3QYknjzQVBmpXt36YaqwzBnXnOKHB6ihlzXlTsv@vger.kernel.org
+X-Received: by 2002:a17:906:f593:b0:b88:68b6:e578 with SMTP id
+ a640c23a62f3a-b8fb4214745mr337427966b.25.1771107661112; Sat, 14 Feb 2026
+ 14:21:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260214211830.15437-2-ebiggers@kernel.org>
+References: <20260214211830.15437-1-ebiggers@kernel.org> <20260214211830.15437-2-ebiggers@kernel.org>
+ <20260214215008.GA15997@quark>
+In-Reply-To: <20260214215008.GA15997@quark>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 14 Feb 2026 14:20:45 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgFNdEJXtoJzkektG3=Tqmk=vNp-J2nWnFicxnHNG2Ndg@mail.gmail.com>
+X-Gm-Features: AaiRm528B7N9YxtufVXSjYAah-YQlAO1sSDZ7nzbSQ5JrbU2aWa4vm7YMBox5W0
+Message-ID: <CAHk-=wgFNdEJXtoJzkektG3=Tqmk=vNp-J2nWnFicxnHNG2Ndg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] f2fs: use fsverity_verify_blocks() instead of fsverity_verify_page()
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: fsverity@lists.linux.dev, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, 
+	Chao Yu <chao@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[linux-foundation.org:s=google];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[4];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77233-lists,linux-fsdevel=lfdr.de];
-	TO_DN_SOME(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	DMARC_NA(0.00)[linux-foundation.org];
 	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[ebiggers@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77234-lists,linux-fsdevel=lfdr.de];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[linux-foundation.org:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,linux-foundation.org:email]
-X-Rspamd-Queue-Id: F118213DAB5
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[torvalds@linux-foundation.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_FIVE(0.00)[6];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid,linux-foundation.org:dkim]
+X-Rspamd-Queue-Id: 72ECC13DB45
 X-Rspamd-Action: no action
 
-On Sat, Feb 14, 2026 at 01:18:29PM -0800, Eric Biggers wrote:
-> Replace the only remaining caller of fsverity_verify_page() with a
-> direct call to fsverity_verify_blocks().  This will allow
-> fsverity_verify_page() to be removed.
-> 
-> Make it large-folio-aware by using the page's offset in the folio
-> instead of 0, though the rest of f2fs_verify_cluster() and f2fs
-> decompression as a whole still assumes small folios.
-> 
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> ---
->  fs/f2fs/compress.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> index 006a80acd1de..11c4de515f98 100644
-> --- a/fs/f2fs/compress.c
-> +++ b/fs/f2fs/compress.c
-> @@ -1811,15 +1811,19 @@ static void f2fs_verify_cluster(struct work_struct *work)
->  	int i;
->  
->  	/* Verify, update, and unlock the decompressed pages. */
->  	for (i = 0; i < dic->cluster_size; i++) {
->  		struct page *rpage = dic->rpages[i];
-> +		struct folio *rfolio;
-> +		size_t offset;
->  
->  		if (!rpage)
->  			continue;
-> +		rfolio = page_folio(rpage);
-> +		offset = folio_page_idx(rfolio, rpage) * PAGE_SIZE;
->  
-> -		if (fsverity_verify_page(dic->vi, rpage))
-> +		if (fsverity_verify_blocks(dic->vi, rfolio, PAGE_SIZE, offset))
->  			SetPageUptodate(rpage);
->  		else
->  			ClearPageUptodate(rpage);
->  		unlock_page(rpage);
+On Sat, 14 Feb 2026 at 13:50, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> Let me know if you'd prefer that we verified the whole folio here
+> instead.
 
-Let me know if you'd prefer that we verified the whole folio here
-instead.  Either way, the behavior will be still incorrect if this
-function is passed a large folio (which it's not).  Either we'd mark the
-whole folio up-to-date after verifying only one page in it, or we'd
-access pages that were not in the array of pages passed to the function.
+This looks good to me.
 
-- Eric
+And hopefully some day that "rpages" becomes "rfolio" (and this can
+all go away and it becomes fsverity_verify_folio() and simpler).
+
+It does look like the "cluster size" thing could maybe be made to
+simply be the size of one folio for those things, and then being a
+single folio of size "PAGE_SIZE << i_log_cluster_size" might simplify
+other code too.
+
+Then instead of walking multiple pages, you'd always have exactly one
+folio (just different sizes depending on cluster size).
+
+But that's just from a very quick look, and I might mis-understand the
+code I saw...
+
+                      Linus
 
