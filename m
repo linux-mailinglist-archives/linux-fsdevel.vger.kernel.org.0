@@ -1,184 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-77232-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77233-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aCzwJfrpkGkOdwEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77232-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 22:32:42 +0100
+	id KKEBJhfukGltdwEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77233-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 22:50:15 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E28E413D971
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 22:32:41 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id F118213DAB5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 22:50:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 07451304A54D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 21:27:39 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0292A3011F3C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Feb 2026 21:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EEF9312831;
-	Sat, 14 Feb 2026 21:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BC531064A;
+	Sat, 14 Feb 2026 21:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YlsVYqow"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aIxIqnhK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2283090C1;
-	Sat, 14 Feb 2026 21:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A6430F931;
+	Sat, 14 Feb 2026 21:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771104440; cv=none; b=XoIQs1GM9UbZRnBOpJRk9AZI+nKxIO4Kx0wQWPXAP+upiuaqNsNwTcbla2zjxrQNheRgSmNcpcdcAcxdxjuGJnMlbgLMZYcMimk4wk4ixee18g55VLsFU6NuHvV0sPiDLhIvQiH7/BvD0zarPlxRAGEWNuwTNOI/ZoFt9eEsU78=
+	t=1771105811; cv=none; b=I0eG5Q8zCuEfY9nJbSW2yEBj3qWa025BE87KnX7IDr470DtW+SZVciEW50pr44Sgn4ai4bwmu4KdVViGydf3N2lXXVREjBIMRWmJ+pDCCj+76x+23HzGFePEGdRPJal3h8TY/5j/93LQuJAc0cOqBJXj21MqWOkWndcUL6P/8wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771104440; c=relaxed/simple;
-	bh=/m8zK3PiW8NNzPqGAahIzF4NobcHVhxidLRTgi9eIxk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FukOh3Cd2hdtS7cQ2gxRawbo9+dGokoe5HX7Gy2Krv9mdVdGxzficBVxnaXUTTo2m6bQWgpAEwc9XhmSDvYGYzg3cpnYiU2AHXNl3OqjC73AcumYwR1RMuxD+QkCNQMgVRoCPniAEVxaLXVRiRqlEld7PCJok35ssMOwo7DQaGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YlsVYqow; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83146C2BC86;
-	Sat, 14 Feb 2026 21:27:19 +0000 (UTC)
+	s=arc-20240116; t=1771105811; c=relaxed/simple;
+	bh=ByCxnIXhkyF8adSYpVRD9YFch315vVu5Im4dAbrrJq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jTeDkURMTE4c+rCEQnXmXn/K1T31kCqn+cppOFljZcK7eU+lTB7jSLR0K3YuUHDNOhlkVgc/TC9BupipMuTSyv6BW1af3SwDOcYpJ0HuiDfJMSols5n2wfDcDWdtQimZZSz+i+1UdlsabL1uPw1K52NcChpYc3gVf2ld4fcwQJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aIxIqnhK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AE25C16AAE;
+	Sat, 14 Feb 2026 21:50:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771104440;
-	bh=/m8zK3PiW8NNzPqGAahIzF4NobcHVhxidLRTgi9eIxk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YlsVYqow2D/KhO85CeQNLc4oRwVmG/WMgbYR33d9Gjjc4ZbVlVHhXILVwta3pfYBx
-	 tUzK3US3AUIDiGN2F67ioQKJLLgcA/P4mG8h8BvrIuikb7iTauUCzKuCq4pkp/7c/h
-	 JbIfuAdJzT2IcJoFZAt9QlDresqcl1T85Oaoe31NuTpmY0ZcxzfpmlvpBKF6V4VYO0
-	 QBjvRjmzYy/LtsGDttZLEtlWnPQH8/tpRmIESSJ617KAmNVUiEECUdtq7/B9X+/bbx
-	 VHOpNWqiTMBh842JhT6RCbThJYyyx5ZSdkogZeqwiyLrccfXEIhSLeWEaDP1lSz180
-	 B6WGxwYW2pV6Q==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Jan Kara <jack@suse.cz>,
-	Jakub Acs <acsjakub@amazon.de>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.19-5.15] fsnotify: Shutdown fsnotify before destroying sb's dcache
-Date: Sat, 14 Feb 2026 16:23:50 -0500
-Message-ID: <20260214212452.782265-85-sashal@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260214212452.782265-1-sashal@kernel.org>
-References: <20260214212452.782265-1-sashal@kernel.org>
+	s=k20201202; t=1771105810;
+	bh=ByCxnIXhkyF8adSYpVRD9YFch315vVu5Im4dAbrrJq8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aIxIqnhKAaO+g3BCIpmUeJYgBci67fffn8afyPqxaFJcFDVB+H/Igiut73MylpdPa
+	 OdF5P9lvsZEEqUV54RLP+4xaSRrm4Qqf2B/HDAAcIKnDgEdC6HT7zLy7xMQLnHwqiR
+	 Y4Yk0jU+oF8LV6BLWOjtZfIOd4b6nLvYvuJiLOViHYgxWP3NvUFYHl6N7Dt7Ilpcfc
+	 ORAFgQwAB85553FBC0r2SQ40d3nWnW83pxKt09dx8FMbYYWUhKALJqFLGne8lTEEC5
+	 O/stAdrOWq2DVDmq4gNbxNITFDStIlQcFbz89v601w0jjpxidKR2aexfiHooD7ifXu
+	 Pyeb7rj8Lk4UQ==
+Date: Sat, 14 Feb 2026 13:50:08 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: fsverity@lists.linux.dev
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH v2 1/2] f2fs: use fsverity_verify_blocks() instead of
+ fsverity_verify_page()
+Message-ID: <20260214215008.GA15997@quark>
+References: <20260214211830.15437-1-ebiggers@kernel.org>
+ <20260214211830.15437-2-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.19
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260214211830.15437-2-ebiggers@kernel.org>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77232-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[suse.cz,amazon.de,gmail.com,kernel.org,zeniv.linux.org.uk,vger.kernel.org];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77233-lists,linux-fsdevel=lfdr.de];
+	TO_DN_SOME(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[sashal@kernel.org,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[ebiggers@kernel.org,linux-fsdevel@vger.kernel.org];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,suse.cz:email,amazon.de:email]
-X-Rspamd-Queue-Id: E28E413D971
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,linux-foundation.org:email]
+X-Rspamd-Queue-Id: F118213DAB5
 X-Rspamd-Action: no action
 
-From: Jan Kara <jack@suse.cz>
+On Sat, Feb 14, 2026 at 01:18:29PM -0800, Eric Biggers wrote:
+> Replace the only remaining caller of fsverity_verify_page() with a
+> direct call to fsverity_verify_blocks().  This will allow
+> fsverity_verify_page() to be removed.
+> 
+> Make it large-folio-aware by using the page's offset in the folio
+> instead of 0, though the rest of f2fs_verify_cluster() and f2fs
+> decompression as a whole still assumes small folios.
+> 
+> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> ---
+>  fs/f2fs/compress.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+> index 006a80acd1de..11c4de515f98 100644
+> --- a/fs/f2fs/compress.c
+> +++ b/fs/f2fs/compress.c
+> @@ -1811,15 +1811,19 @@ static void f2fs_verify_cluster(struct work_struct *work)
+>  	int i;
+>  
+>  	/* Verify, update, and unlock the decompressed pages. */
+>  	for (i = 0; i < dic->cluster_size; i++) {
+>  		struct page *rpage = dic->rpages[i];
+> +		struct folio *rfolio;
+> +		size_t offset;
+>  
+>  		if (!rpage)
+>  			continue;
+> +		rfolio = page_folio(rpage);
+> +		offset = folio_page_idx(rfolio, rpage) * PAGE_SIZE;
+>  
+> -		if (fsverity_verify_page(dic->vi, rpage))
+> +		if (fsverity_verify_blocks(dic->vi, rfolio, PAGE_SIZE, offset))
+>  			SetPageUptodate(rpage);
+>  		else
+>  			ClearPageUptodate(rpage);
+>  		unlock_page(rpage);
 
-[ Upstream commit 74bd284537b3447c651588101c32a203e4fe1a32 ]
+Let me know if you'd prefer that we verified the whole folio here
+instead.  Either way, the behavior will be still incorrect if this
+function is passed a large folio (which it's not).  Either we'd mark the
+whole folio up-to-date after verifying only one page in it, or we'd
+access pages that were not in the array of pages passed to the function.
 
-Currently fsnotify_sb_delete() was called after we have evicted
-superblock's dcache and inode cache. This was done mainly so that we
-iterate as few inodes as possible when removing inode marks. However, as
-Jakub reported, this is problematic because for some filesystems
-encoding of file handles uses sb->s_root which gets cleared as part of
-dcache eviction. And either delayed fsnotify events or reading fdinfo
-for fsnotify group with marks on fs being unmounted may trigger encoding
-of file handles during unmount. So move shutdown of fsnotify subsystem
-before shrinking of dcache.
-
-Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxgXvwumYvJm3cLDFfx-TsU3g5-yVsTiG=6i8KS48dn0mQ@mail.gmail.com/
-Reported-by: Jakub Acs <acsjakub@amazon.de>
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Reviewed-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-
-LLM Generated explanations, may be completely bogus:
-
-The function is present and the code structure in the current tree
-matches what we see in the diff. This function has been in
-`generic_shutdown_super()` for a long time and would exist in all active
-stable trees.
-
-### 8. SUMMARY
-
-| Criteria | Assessment |
-|----------|-----------|
-| Fixes real bug | YES — NULL deref / crash during unmount |
-| Obviously correct | YES — simple reorder, reviewed by 2 top
-maintainers |
-| Small and contained | YES — 1 file, ~6 lines, moving 1 function call |
-| No new features | Correct — pure bug fix |
-| Risk of regression | Very low — only slight performance impact |
-| User impact | HIGH — affects any system with fsnotify watches during
-unmount |
-| Reported by real user | YES (Jakub Acs) |
-
-This is an excellent stable candidate: a small, well-reviewed fix for a
-real crash that affects common operations (filesystem unmount with
-inotify/fanotify watches). The fix is trivial to understand (reorder one
-function call), reviewed by the subsystem and VFS maintainers, and
-carries essentially no risk of regression.
-
-**YES**
-
- fs/super.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/super.c b/fs/super.c
-index 3d85265d14001..9c13e68277dd6 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -618,6 +618,7 @@ void generic_shutdown_super(struct super_block *sb)
- 	const struct super_operations *sop = sb->s_op;
- 
- 	if (sb->s_root) {
-+		fsnotify_sb_delete(sb);
- 		shrink_dcache_for_umount(sb);
- 		sync_filesystem(sb);
- 		sb->s_flags &= ~SB_ACTIVE;
-@@ -629,9 +630,8 @@ void generic_shutdown_super(struct super_block *sb)
- 
- 		/*
- 		 * Clean up and evict any inodes that still have references due
--		 * to fsnotify or the security policy.
-+		 * to the security policy.
- 		 */
--		fsnotify_sb_delete(sb);
- 		security_sb_delete(sb);
- 
- 		if (sb->s_dio_done_wq) {
--- 
-2.51.0
-
+- Eric
 
