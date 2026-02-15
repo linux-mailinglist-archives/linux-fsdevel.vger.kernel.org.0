@@ -1,253 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-77248-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77249-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id wEiTMcl/kWl9jQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77248-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Feb 2026 09:11:53 +0100
+	id CIQOH5SLkWkrjwEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77249-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Feb 2026 10:02:12 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE66C13E468
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Feb 2026 09:11:52 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D24FB13E5FF
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Feb 2026 10:02:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 575F63003BCF
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Feb 2026 08:11:50 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 323ED3014570
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Feb 2026 09:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10B62BDC2F;
-	Sun, 15 Feb 2026 08:11:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296E8287257;
+	Sun, 15 Feb 2026 09:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xt2M0ZoW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S6yphLgs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC195231A41
-	for <linux-fsdevel@vger.kernel.org>; Sun, 15 Feb 2026 08:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771143105; cv=pass; b=eRcend4fI90VKJ1gMtaOud6yEReRmequ3OnRk5DNfjABUeCRP6sYRvG6UjyhmB9I3sGYq4xe654xW4lh2OkTE8n3FISrjkx/rD9Z1jU7ZFYvtrKJ+SgOqcVKHbPbvcvCdN9gNm5dJLBcnT9sYN/FQXAkSJRQX2Yy/U2PQlqZ9Qw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771143105; c=relaxed/simple;
-	bh=DTDk7K5Zkqtnt5fprRdhYF0zEccC1vT/ncnySQAaQkE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mKa2CwXdGJJug/SvJBYuUhpviiUSPMuotIqymvXOHieTElPzVteRhncz4NnsDgxyxdzALMmIb9IYa2XdrQUfS+SeahSAX4BvK0kWgbh0XRniVfr5pvnW3Y2XiPGZlqIt88GntJi0eW40zWxkOSgQ0AL2oo5s3nwqFzkPVrm2ekQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xt2M0ZoW; arc=pass smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625A527BF7D
+	for <linux-fsdevel@vger.kernel.org>; Sun, 15 Feb 2026 09:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771146122; cv=none; b=DEXlVf7ilzLVPXyGCuk7Qgo8p+M6nInKTubvwT3qTuE5s9jNEGJnu3ZLtERunmUR31DqKohDSzlZQ92gt74tD0tpYDbYHo4IzTBT1s8Ge2sc4QomBvJW3z/8QEO+5KKdEQrHYMgbnoMS6kdo/BCtFLgOabyjaj6oZe2lV8jLfEc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771146122; c=relaxed/simple;
+	bh=W6T4NKMFGU2utFNEhPpN8fZf0hDKTQ6a+z8Ar/UV6dQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MLRL4MukE5MVuhjfeGDZ/FA+D4ET5YqxyZJAiieMcxp5B75nfCav7Ad1+XGfr15GfilquR71PcATYjR4fuonO/9ahFjUCnwKAJ2kTwhDQgOKbT9lx+PWFC0NIzRUmybA4Utzbv6FB5vkMo8SFPr6xvrsqetEUQdMP/GUvF9w3gE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S6yphLgs; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b8845cb580bso367100766b.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Feb 2026 00:11:43 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771143102; cv=none;
-        d=google.com; s=arc-20240605;
-        b=cK6XHoLQ1lEwjPLdnp/bqciArmXCSZA4+AxPTUF6k+1ocIzMg7H8RukfpX7NveUWMc
-         v4nQ5/GKNJ6uTPMzRlfyiUZ3cfDfu6AX+TXU37O2FC+rT7OQZlZiW2EJYBOPDCNZCz3J
-         /bFpLgMVZ7/edN8iT+vR+UhVTKgn2JjtG/UDd6iH2/4GB/MHupRgRMBkGIncqgffl3tg
-         cpQC47ZLQG05AR22+Ago7g7Gke8H/lB1+UE/3RaVNDaMgnF6cs2YBMe8dnWGnmYAhHjZ
-         EHfOtJswFutRiQDhEQ11kEO1zCDsPe6AuVhLj+eXJf2CP0Rlo8GdGej8pXprQQ6ecg3L
-         FuUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=BrfHxdFp7u7ABi54dc0wXHkIQMX2y/VUZ8anXPNSims=;
-        fh=ZZ3fqYqEur8MK8+oEh8/4mL1MF5dEsKDsp3EdJ+LxGc=;
-        b=I5KOhXuMhrQB/tCgEMYtXic2h1OssGFATv1HapZI++Q+kS1TJ2j+Ot5px/2ehHS5gM
-         cPBWXE/pB1Ui3ekABqj8K8BqhAiCexZr/JdM4LoF6VBK68GUumQA/xfLhDsI7jFvQepC
-         VZ6JKexMOeER4i/qvoWRawljhNSBOUx+EkUR1ZgPWluj2aSO9hJO1Na8SqEsf+Tyb06B
-         uGFcitN3rFz5NLOpD6MZf9b9NvNcbKTyziIoIudaG8dKjtjIKN74v4Fk5BCqX6UIBE1w
-         QMT4uewq04mCpxDmhxrj4VNijFKUFOiphph/uwj8Vlm6IPUDe+LOaEUv1G28LCktCDkI
-         7wYA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-4375d4fb4d4so1772762f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Feb 2026 01:02:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771143102; x=1771747902; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BrfHxdFp7u7ABi54dc0wXHkIQMX2y/VUZ8anXPNSims=;
-        b=Xt2M0ZoWWQIkYKU675MIq2NiyvF5zm3oAhVTSRcJjVJI9xJAQmwinHKYmDEutmJ80l
-         oLiEw6Fggx4auTa2P6eKfL+noaG9VlJXveG+s+OPeqDBjrOeBLxUSqme8VqG5+kct522
-         Fw96lz2KMVs5zTtOazVyqZ+natmsNtlRHBJba2t8Ok5MugBik+VWwSKlp5EN+VDZri73
-         77lSqXGpq6KUR/0ptO84KHwMvYhl7K8fnFdiTSz8G/nrYfUMhjJZoWr/hJJbS40YP1l/
-         sV18Ua556gCbQ1NagFWAa1JVHivl/7Z9ZpvTZFoAhS3wncX0ZnykqQrkBixiMrDoO9ty
-         YznA==
+        d=gmail.com; s=20230601; t=1771146120; x=1771750920; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+D0ODJnkgxsrPA3UYy81wUrrkW2kcfyG+MPWkVZLGUk=;
+        b=S6yphLgs/m+PstcT6JoZP/nYSovXkFDplNeEQVtl6jyOyUeYp2mAe1BJ0f+zDzzWaR
+         CeWutWf0eNMJC0Uww7j3uwfYIQnxzXrPrSh5mJNAtbsb89c4EWaGC0hFJmFbfIo+v4iM
+         Va2938r2H/zquw6VuE/pDcXU3C37IznRCGVfuSHorOHR3qw1gExiler0I+5fQH3Ybocq
+         B/D3VZJsvRIy/4iqYNA0LKbA9/nojoeghHskOACUv7l5QA5pBycNCyZoVs8oD0sSJ8p/
+         aJxceRQ/BJPNieoWgi40YqCy1GMF2LY4UbsTKaS8nPAKW1xiosXx6CirjHhvGc8DkAmE
+         lSzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771143102; x=1771747902;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=BrfHxdFp7u7ABi54dc0wXHkIQMX2y/VUZ8anXPNSims=;
-        b=BqzhALWfIWW3qZZcKPnuZazd7bfFiQzrpZV8JiNBEF9XfVsM/zYPv+YUpEL9Q79GUk
-         a39uJmcwp1ZUEZnR6a7rUQHYrpGcGdvoDHHLXzBHyHg1J7Pdz/09ewYVRTleuw3MKKrw
-         0LONmI5xAYQdrS+D3vMYunkimjIYrhQWixaLGlJD9sDfXltRfBzr8K0npNyfp6uQlo2X
-         EUf6mpMEEjm1OUDNu25BvciYdwZBhkRnV/g9fJ4crGNI9eOOK/baZ1HILB2Om1WO9e8l
-         2+efe8MTAB71BqtVXXORootqoPGz61TiO+9R7L56xF149T3XjmRq66jVRrk6gJ6fCR/c
-         CpMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSiZFvTf8WdIbd8Fvb5sRdHMgEIskRdnCpn+Lm0d+jWeSg/j4lGNRzHtsuDHO25Y1qNGtMyiAp27k7+RWF@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiwDdfptnhUjM6rbyN2dLwL5uHj0IMhyu8d8HPBPYJ6EnJIzci
-	Yqag1XfPjNjX3HUHFTw26bmIlX2iFhzPsyjZNnbO6l4UsjyH0muG7/mt91AfscF/GHAS3/lsrx4
-	6KlyYeZIKZdPOcsybIe7BMIznxUed6DY9+Q14n2g=
-X-Gm-Gg: AZuq6aK7qsHkWkGcwfIfY5pdR8RJxSZC4kfnVyBCVLDx9jKu7Tv5p1aQwGK04Y/mMlA
-	eAjdJfzIKRwLXaFKMQNQrICbQWJwD8qaRFddyXlhdiSP5FnVc21SHpjHaov4UbH0a6KMeqwL0RV
-	m9M9jYfCKQzNN+fwx2xSY9dhv7bAkyF4CdZd/Zr3FL+eImdCqWdZaZyfq3UAmFOsfYVsQmuuZRU
-	wClrwF4N+yntbZmYXwYz61gSREpXZ1Zmok75G9G7W1Dp0Bq48TYv0ADerek54naJnrKCY6B8ZHJ
-	H6U6hzCA83qHGyKW5xd9/1MdkHNQMChmK1wE0eU+zg==
-X-Received: by 2002:a17:907:3d9e:b0:b8f:a724:8704 with SMTP id
- a640c23a62f3a-b8fc3c7d456mr241918966b.42.1771143101677; Sun, 15 Feb 2026
- 00:11:41 -0800 (PST)
+        d=1e100.net; s=20230601; t=1771146120; x=1771750920;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+D0ODJnkgxsrPA3UYy81wUrrkW2kcfyG+MPWkVZLGUk=;
+        b=UNU4VMtkDoneW6YNNR0MP53gQxzI2LxTx9ipEcz6ozJ9EnYlFi7RyX1JqqvzfU65Rh
+         3lw4SIrrk3VZBZabV7FSI3ILbr1PbfMU/5GlN6VrD/bSl0YTkSeJNxrMBAF3q6ZWQzaQ
+         WVEyV+7u2FSeq3XCjT5eujY4PBQCkc+j+3duzW642tkvkqkvL/45TMXR0WSRlxD2PY/X
+         jkLqfABG+F56/pTM+2wZ5Z9EMHQV3rfRiSZa7o/8MT/XyYvuOkaGrb3N4tj81DwUvk5o
+         vi6M8rYfH45rSYxLbOvVFvks7VAgEdCktjS5woLpHVk6VN9YT7FANKJtudh6pgZ7cCgy
+         smRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKA59DrLwRyo1iVqjjDU7w92A1/MSgTcxhHlreWdc6BYw9PaoENoiHPKPBwRWwCrFnV39arCjgp00+xqND@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7t1HaBRI3LAfVHt6Wm3wMXK4k+h/rzDq4Wf4aHS+srpNTCWDA
+	aoP2dFOdL7VvHC0lsXrH+4bUBnwW+zCV97cCOcwhObGiG9AicXqlyoTq
+X-Gm-Gg: AZuq6aLV3nXZD1ucyKUKffrcVH3CZFq9UEJ1Pyy3Rps/MIc9D/rLjDIdbFBxfedpAF2
+	C+Ch9og1U3/sR9ooAOk2pMyLcTPu67RYeRUbknv8L96Ht+Q2aZhm3Kqhox9bB/J8jf5Ku+cqS9o
+	8PpRjP4urMOcVw7GvfgQv07V68maORvIS0fP1l91c+1Rkqr+UXlcNojpbAr9tQAljIhyqrD0aU/
+	o5qNoqHnQRpgYKArJUcxd52sK0Q2MqAyyvJzXvvzO+qOiHKN4QjIIPxNcRmYR4/bywcTLqk54ZV
+	hocPC6SFCghgQVhdluni17KBs/RhISEdwby6OPFAfQul55nayTUz3CUb/sQdlcmmodIigBo0NeJ
+	12acPdJQLhTg9BVhSeVo5/u66DxX6pyN3MB+ZN+cdHqkQdDnk8v+1WY8QSrWe3aNREiahfXrLbj
+	EBSPkF3PK/cqKtP+nQcrYm
+X-Received: by 2002:a05:6000:2311:b0:435:a258:76e with SMTP id ffacd0b85a97d-4379793dd5emr12414131f8f.60.1771146118907;
+        Sun, 15 Feb 2026 01:01:58 -0800 (PST)
+Received: from localhost ([2a0d:6fc2:4b0a:db00:eb98:5335:fc91:c4bc])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43796abd793sm18612064f8f.25.2026.02.15.01.01.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Feb 2026 01:01:58 -0800 (PST)
+Date: Sun, 15 Feb 2026 11:01:57 +0200
+From: Amir Goldstein <amir73il@gmail.com>
+To: Pankaj Raghav <pankaj.raghav@linux.dev>,
+	Andres Freund <andres@anarazel.de>
+Cc: linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org,
+	djwong@kernel.org, john.g.garry@oracle.com, willy@infradead.org,
+	hch@lst.de, ritesh.list@gmail.com, jack@suse.cz,
+	ojaswin@linux.ibm.com, Luis Chamberlain <mcgrof@kernel.org>,
+	dchinner@redhat.com, Javier Gonzalez <javier.gonz@samsung.com>,
+	gost.dev@samsung.com, tytso@mit.edu, p.raghav@samsung.com,
+	vi.shah@samsung.com
+Subject: Re: [LSF/MM/BPF TOPIC] Buffered atomic writes
+Message-ID: <aZGLhTvjmRVZNA8m@amir-ThinkPad-T480>
+References: <d0c4d95b-8064-4a7e-996d-7ad40eb4976b@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260214212452.782265-1-sashal@kernel.org> <20260214212452.782265-85-sashal@kernel.org>
-In-Reply-To: <20260214212452.782265-85-sashal@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sun, 15 Feb 2026 09:11:30 +0100
-X-Gm-Features: AaiRm50iIi5RwEAw9dxYIy_zWbg5mNMrBSmlP3CQ0mExJK-TzLN3fgMTeFhoPa4
-Message-ID: <CAOQ4uxgKwp2FSAUwqhHN-kTBcy0DsFmLstGUY+zJWppOzTAmHA@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 6.19-5.15] fsnotify: Shutdown fsnotify before
- destroying sb's dcache
-To: Sasha Levin <sashal@kernel.org>
-Cc: patches@lists.linux.dev, stable@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Jakub Acs <acsjakub@amazon.de>, Christian Brauner <brauner@kernel.org>, viro@zeniv.linux.org.uk, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d0c4d95b-8064-4a7e-996d-7ad40eb4976b@linux.dev>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4];
+	MID_RHS_NOT_FQDN(0.50)[];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-77249-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77248-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[gmail.com:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[amir73il@gmail.com,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kvack.org,lists.linux-foundation.org,kernel.org,oracle.com,infradead.org,lst.de,gmail.com,suse.cz,linux.ibm.com,redhat.com,samsung.com,mit.edu];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,amazon.de:email,suse.cz:email,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: EE66C13E468
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[forms.gle:url,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: D24FB13E5FF
 X-Rspamd-Action: no action
 
-On Sat, Feb 14, 2026 at 11:27=E2=80=AFPM Sasha Levin <sashal@kernel.org> wr=
-ote:
->
-> From: Jan Kara <jack@suse.cz>
->
-> [ Upstream commit 74bd284537b3447c651588101c32a203e4fe1a32 ]
->
-> Currently fsnotify_sb_delete() was called after we have evicted
-> superblock's dcache and inode cache. This was done mainly so that we
-> iterate as few inodes as possible when removing inode marks. However, as
-> Jakub reported, this is problematic because for some filesystems
-> encoding of file handles uses sb->s_root which gets cleared as part of
-> dcache eviction. And either delayed fsnotify events or reading fdinfo
-> for fsnotify group with marks on fs being unmounted may trigger encoding
-> of file handles during unmount.
+On Fri, Feb 13, 2026 at 11:20:36AM +0100, Pankaj Raghav wrote:
+> Hi all,
+> 
+> Atomic (untorn) writes for Direct I/O have successfully landed in kernel
+> for ext4 and XFS[1][2]. However, extending this support to Buffered I/O
+> remains a contentious topic, with previous discussions often stalling due to
+> concerns about complexity versus utility.
+> 
+> I would like to propose a session to discuss the concrete use cases for
+> buffered atomic writes and if possible, talk about the outstanding
+> architectural blockers blocking the current RFCs[3][4].
+> 
+> ## Use Case:
+> 
+> A recurring objection to buffered atomics is the lack of a convincing use
+> case, with the argument that databases should simply migrate to direct I/O.
+> We have been working with PostgreSQL developer Andres Freund, who has
+> highlighted a specific architectural requirement where buffered I/O remains
+> preferable in certain scenarios.
+> 
+> While Postgres recently started to support direct I/O, optimal performance
+> requires a large, statically configured user-space buffer pool. This becomes
+> problematic when running many Postgres instances on the same hardware, a
+> common deployment scenario. Statically partitioning RAM for direct I/O
+> caches across many instances is inefficient compared to allowing the kernel
+> page cache to dynamically balance memory pressure between instances.
+> 
+> The other use case is using postgres as part of a larger workload on one
+> instance. Using up enough memory for postgres' buffer pool to make DIO use
+> viable is often not realistic, because some deployments require a lot of
+> memory to cache database IO, while others need a lot of memory for
+> non-database caching.
+> 
+> Enabling atomic writes for this buffered workload would allow Postgres to
+> disable full-page writes [5]. For direct I/O, this has shown to reduce
+> transaction variability; for buffered I/O, we expect similar gains,
+> alongside decreased WAL bandwidth and storage costs for WAL archival. As a
+> side note, for most workloads full page writes occupy  a significant portion
+> of WAL volume.
+> 
+> Andres has agreed to attend LSFMM this year to discuss these requirements.
+> 
 
-In retrospect, the text "Now that we iterate inode connectors..."
-would have helped LLM (as well as human) patch backports understand
-that this is NOT a standalone patch.
+Andres,
 
-Sasha,
+If you wish to attend LSFMM, please request an invite via the Google
+form:
 
-I am very for backporting this fix, but need to backport the series
-https://lore.kernel.org/linux-fsdevel/20260121135513.12008-1-jack@suse.cz/
-
-I don't expect major backport issues to kernel >=3D 6.10 with commit
-07a3b8d0bf726 ("fsnotify: lazy attach fsnotify_sb_info state to sb")
-
-Backporting below 6.10 will require more dependencies.
+  https://forms.gle/hUgiEksr8CA1migCA
 
 Thanks,
 Amir.
-
-> So move shutdown of fsnotify subsystem
-> before shrinking of dcache.
->
-> Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxgXvwumYvJm3cLDFfx-TsU3=
-g5-yVsTiG=3D6i8KS48dn0mQ@mail.gmail.com/
-> Reported-by: Jakub Acs <acsjakub@amazon.de>
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Reviewed-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->
-> LLM Generated explanations, may be completely bogus:
->
-> The function is present and the code structure in the current tree
-> matches what we see in the diff. This function has been in
-> `generic_shutdown_super()` for a long time and would exist in all active
-> stable trees.
->
-> ### 8. SUMMARY
->
-> | Criteria | Assessment |
-> |----------|-----------|
-> | Fixes real bug | YES =E2=80=94 NULL deref / crash during unmount |
-> | Obviously correct | YES =E2=80=94 simple reorder, reviewed by 2 top
-> maintainers |
-> | Small and contained | YES =E2=80=94 1 file, ~6 lines, moving 1 function=
- call |
-> | No new features | Correct =E2=80=94 pure bug fix |
-> | Risk of regression | Very low =E2=80=94 only slight performance impact =
-|
-> | User impact | HIGH =E2=80=94 affects any system with fsnotify watches d=
-uring
-> unmount |
-> | Reported by real user | YES (Jakub Acs) |
->
-> This is an excellent stable candidate: a small, well-reviewed fix for a
-> real crash that affects common operations (filesystem unmount with
-> inotify/fanotify watches). The fix is trivial to understand (reorder one
-> function call), reviewed by the subsystem and VFS maintainers, and
-> carries essentially no risk of regression.
->
-> **YES**
->
->  fs/super.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/super.c b/fs/super.c
-> index 3d85265d14001..9c13e68277dd6 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -618,6 +618,7 @@ void generic_shutdown_super(struct super_block *sb)
->         const struct super_operations *sop =3D sb->s_op;
->
->         if (sb->s_root) {
-> +               fsnotify_sb_delete(sb);
->                 shrink_dcache_for_umount(sb);
->                 sync_filesystem(sb);
->                 sb->s_flags &=3D ~SB_ACTIVE;
-> @@ -629,9 +630,8 @@ void generic_shutdown_super(struct super_block *sb)
->
->                 /*
->                  * Clean up and evict any inodes that still have referenc=
-es due
-> -                * to fsnotify or the security policy.
-> +                * to the security policy.
->                  */
-> -               fsnotify_sb_delete(sb);
->                 security_sb_delete(sb);
->
->                 if (sb->s_dio_done_wq) {
-> --
-> 2.51.0
->
 
