@@ -1,261 +1,309 @@
-Return-Path: <linux-fsdevel+bounces-77322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CMVOFmijk2kn7QEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 00:08:24 +0100
+	id qaCiGAaqk2lE7gEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 00:36:38 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id B61D9148057
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 00:08:23 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C91148184
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 00:36:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0A229301C174
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 23:08:14 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B67253014640
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 23:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626F52C11FE;
-	Mon, 16 Feb 2026 23:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656BC27A92D;
+	Mon, 16 Feb 2026 23:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="h2oMTVMl"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="1OJVMxx0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010013.outbound.protection.outlook.com [52.101.193.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911E017993;
-	Mon, 16 Feb 2026 23:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771283291; cv=fail; b=hJayB3h3EoDi6bVjFeOSxz8C9dj6ZcYpBVxhkDLX0LjVwh+ctagbx6CyyynJmG1zt+fmknwI7TkXbf/AcdMtlTUojfN6Z5Np/FfZ9giw+I6WN1lLuRlWpwiwn7+PkI70I0m8JrDISzyKreXrZ8k2WG6T/SJzuzpmHtxNQwiR484=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771283291; c=relaxed/simple;
-	bh=97uROQ8Y6qj0oq+BwZhWvpTEvLgREDkwuRIOWnU3LXE=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=c43+o6J85hQSowetUWmkn3cVGWcmmJqs7SJgbdgn+dQBqHD1XEZyE+OR0xTawDhfWLylVrYmByJH3YY/J8VutXZ62wftlA+lEDmyjKvHN6M/i9Lfq6qg+ABwWAA9skbtUZdhCtFMbvSVDhodlM/Ju7y8i8w5I4ipZtaLfVGDepo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=h2oMTVMl; arc=fail smtp.client-ip=52.101.193.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ak6/A+cfRCwXoMSbQa/8XGvmk3uWbMMLCTrCQkKwQXNUkge1xOPolMJIKSI3n9bKmV++zxQbHav3LLd2taXCR8a2nS3MNiChKtllSUJn/1/qIBYr1aryCw48x69l3U+ZIao/1x/fDBdEpVLfa22r4ZnhseFGxA9gllRJ5wxM5Ljw0Vf7CFsDv6rqmFys+sEHaYt+Qv2M5H3FSxPNV5pTRJZ0ySrbtMVKMb7n0tDwKGYOqvLsGi896FlD2P4jkppSn+u/IaUNdk65I3f/EQJhTEv2Oy/75ioLCNNpdcbJvr0Lv/T7nIBZiEzWymscWHhQZd7rkGP3I6lTwYV5efQyRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4G9gz7Ljfmc1VNZla3l7zPoahrJD3eH99MSZjoT3Ags=;
- b=OUfCiFT+hXGP4PCBvovBLAVgYVZvl4f4QvAiIXy55pPtRrmlV6br7r3j3vu+fDrfyNrOotuVkwiBHU9+sjT3i3r4SxCQXRv3rv3OApvYqGK1WllttJzWEAcF3HiEWJdkLPg2YFSPurINax2aMw8iUtsCs6S2woATZbOUK4ja9jZs2Zb/h1ZzbdlqzUSxjmoMOGkInt6uWH2IygRp3920+1KJ+2+mXJ3SzcFA5fsG3R4WqsMwNpYWt5nK6Q6NQyeKTlKtWVdVj93rjgCNID6UfDEd+liaDfYHgHBZCoYgg1FLrm9W/YikApN2fd3iH1dN0HW5A61dpLxB3X55epoQ1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4G9gz7Ljfmc1VNZla3l7zPoahrJD3eH99MSZjoT3Ags=;
- b=h2oMTVMlixVLhr1T4+XIk+AXvMWWTDQngh8q0aM8wv2BVtr8Y9Dxj4cWTuUn9UZ5ClImJZ4zct2O2DB676t6HXLFlW0ULWAw288f8QZ0Kcf3h6EsdGvfV1I9oLEbPdC/iPUpoI4hsKKzYaqD9Qxv/4LhDJUrbLt6EhBTkwr5zmc=
-Received: from MN2PR16CA0066.namprd16.prod.outlook.com (2603:10b6:208:234::35)
- by DS4PR12MB9817.namprd12.prod.outlook.com (2603:10b6:8:2ab::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.16; Mon, 16 Feb
- 2026 23:08:07 +0000
-Received: from BN3PEPF0000B071.namprd04.prod.outlook.com
- (2603:10b6:208:234:cafe::26) by MN2PR16CA0066.outlook.office365.com
- (2603:10b6:208:234::35) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9611.16 via Frontend Transport; Mon,
- 16 Feb 2026 23:07:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- BN3PEPF0000B071.mail.protection.outlook.com (10.167.243.116) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9632.12 via Frontend Transport; Mon, 16 Feb 2026 23:08:06 +0000
-Received: from localhost (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 16 Feb
- 2026 17:07:48 -0600
-Date: Mon, 16 Feb 2026 17:07:33 -0600
-From: Michael Roth <michael.roth@amd.com>
-To: <kvm@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-	<linux-fsdevel@vger.kernel.org>
-CC: <david@kernel.org>, <fvdl@google.com>, <ira.weiny@intel.com>,
-	<jthoughton@google.com>, <pankaj.gupta@amd.com>,
-	<rick.p.edgecombe@intel.com>, <seanjc@google.com>, <vannapurve@google.com>,
-	<yan.y.zhao@intel.com>, <kalyazin@amazon.co.uk>
-Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
-Message-ID: <20260216230733.ejxtppfrbjaarftb@amd.com>
-Reply-To: <CAEvNRgFmq8DP_=V7mrY8qza3i9h4-Bn0OWt72iDj6mELu+BiZg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446CC1EB5B
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Feb 2026 23:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771284990; cv=none; b=pqfP/NcDs3qFXWBBhTtI5r5Jhy1zA3FdmPJJ8K2E7/qSULuJWDBa6wCqN0tFDXWkXp/ksML44OAiSuFDAd8ANTcWr4+YEw9qwpl3PaOx/qiIeBvQQ9cUmEkyZP4eVm8Q2G+lYCosK41grhnvku9IuiE6A1aKLpWeKS4dwvZ+uJk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771284990; c=relaxed/simple;
+	bh=esLF+A0YukoamlXsOOHiBkurDo4uiQ0esRy5nEZf+DA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=njWQnsfFkRpEJtrHioeRoGGw9ZgNNMH38qiJqqpfNBg7VB2NXBj1gKDK8EBX26OpfDhsraezrSzJn91RI+FIwS7F0ehrDbzhL7S1kqNGWSjHUU4uszn8RZQ4Iu4E9M2E0O+1aSWO1aqWjyl2UfrgP0irpq1J6Zy9DNRdcxRaATU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=1OJVMxx0; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-797d36fdb96so12911697b3.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Feb 2026 15:36:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1771284988; x=1771889788; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K0wuf53ccE9AgrxzbRCa+8Dv2jf/73k7y6/hF9TjBaA=;
+        b=1OJVMxx0P52m8TMop3ztGxxwKgnO/v5n41g/B20xLh74lGq4e/2ZJzEryv22FigHeC
+         rRVc9KTDtzG+S/EmCEjJoaNjzwK/W72eQqUjF+4W1aXMSUO387oHJsSRfwWyqKxf2RCH
+         q0ZMuZ3KRG7V5c7bxkX0oXZmPpNR+o1sexzQ4LZmVD3c/vnTGFtFXJcxwLTuLMPesTM2
+         yHNGSp429iCJc/fCTZFaC9OWVyMkU0fv7B4wyoGMjnm/Bh8Zfy0tIU9K8WuuO9BrAh9b
+         rTYtbxQu4X7G6ld4msLqr1rwbX44NzDieGINL1yJbgiLMCcGv9yutbFge9h+m2nOeqQ6
+         mP1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771284988; x=1771889788;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K0wuf53ccE9AgrxzbRCa+8Dv2jf/73k7y6/hF9TjBaA=;
+        b=NnhOvPr0JV5BtV5JwHaNv/oJm+tC/HwxtZz/wh6+NAvM18HHEyafnjyZkrljHz/0nv
+         Vd1jaLvKNlgmKDSG5vLq1vn+YN3eKk9MpSIh3LIr/G9+nSDm3OQqNR/YfcCyfypqAVTS
+         p9TKPM9Zh9GOz+ucdNahaAeWGbKndHoeqr4sMaLYRDDib+DE5uC1IKIZDiUtbdZJ/yYp
+         SKovbVzM0tp8rhu2yvldZq2vNKnPxEwAcJOtHVKsp6FvxP6flXsUihrSCqHJLsFxd6A8
+         LoXIjYnI+F74fBeA3nJ/Qv7X0soK2mg2pj1FQHwuEYLlMRI6/VwPl7rxF7vKSni2dTAQ
+         ZJfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXMgLRSD2Ln0XiG2MBp0eX3eOQV3aOSxgwb8UHN7U8es9qMZMCgxH2fUUdenb9vtadv9HHl8N5EbEk3bdJE@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVSj+sU2rUO+5lUl8BZhiZ0Vd0z1mgdM03rhiYEZy7sUzOmm6i
+	5zBf/lxgQ5Jl/vuiovtKyZVe6KY661sw01a+jsg9RN5gIkzG7PmrKNGPEaP7TMUG7IPiMl7/II8
+	HXLFEktc=
+X-Gm-Gg: AZuq6aLaZiAYkP4J0CJqPgE3kJhpIPPA/Dh4Nac5dYQbvU4BVKqNdz357CCgJRXQhtj
+	1WVKz9r/kq6/zfMFC7o7Qmm1d+WxdL4ry/QxCEuS0fQFLw9Gh+lJGwyFvajAnV6rWt0xVNeGXrr
+	WAVjWYFG/rWzZ7uq7rGlNSgi5J9C6BEBYWcm92umFhX91/cmEU7Z9y93OG1i3jqoXuvNbIJiKv3
+	zcNaJKgDqx3Y/moUEj1JuxxwYtoL+AUw8ot/746OP71iuIjcbE+KbtBr9B6MNF7TXkf0SiVAM7v
+	OhtOwv4Ys41tOh0LxtqeuitZX0IlTGw4wowG7PJHHEC2u6p5QzeK4qvBuDH4PM7wX24hV/jPdFJ
+	S0yYd1VSVC9+nVNJpnQptLXlVqAZ+EMoUi0jvIRts84Be+O8OpfZQwiil+OsQFYoEu77BjEDW3e
+	1eLGVhUn+2VBzTYN/RdHcPeDPMJX9EbdrbKtcRw4hh0tDz3vHcNYxR1BF2dEafFSCxJ3NMq8zOo
+	usSStvavtnLdO6reO4ReZlAHHpBL6qykuI=
+X-Received: by 2002:a05:690c:c513:b0:796:4154:9f7f with SMTP id 00721157ae682-797aa80856fmr86372427b3.6.1771284988181;
+        Mon, 16 Feb 2026 15:36:28 -0800 (PST)
+Received: from pop-os.attlocal.net ([2600:1700:6476:1430:3027:3f43:225f:bc5c])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7966c16f201sm104642127b3.10.2026.02.16.15.36.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Feb 2026 15:36:27 -0800 (PST)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: glaubitz@physik.fu-berlin.de,
+	linux-fsdevel@vger.kernel.org,
+	frank.li@vivo.com
+Cc: Slava.Dubeyko@ibm.com,
+	Viacheslav Dubeyko <slava@dubeyko.com>
+Subject: [PATCH] hfs/hfsplus: fix timestamp wrapped issue
+Date: Mon, 16 Feb 2026 15:35:57 -0800
+Message-Id: <20260216233556.4005400-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B071:EE_|DS4PR12MB9817:EE_
-X-MS-Office365-Filtering-Correlation-Id: 84c8907e-7de4-494e-36d6-08de6db03eda
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|30052699003|7416014|376014|36860700013|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?a212MUhFaHp2VWtDWUtobytTaDFyWDcyOTluaFpMaEl2cDA2czJIY05CWVND?=
- =?utf-8?B?ODN6TUZ1TzNjMGRaT0tFV3ZMZDRDWnZwY1ZRTUZORkxBZDdzQm5VMGlKeklW?=
- =?utf-8?B?SVFBTWFIakljMEZ2VS90bDgyT1hxZGJmNGdxL2FIeXlTamdlZG5ST1Y2Zmtr?=
- =?utf-8?B?YjJ2VVFhNmhlb2JzMnJCSjgwVjdtY3gwbk4xTmE5ak15RERKRWRzQURHTEdR?=
- =?utf-8?B?S09PL051d2pmVTZSdXNjTFNhcEZlalM1RFZSZUZDM1NRemltRW9NSEVZY0JQ?=
- =?utf-8?B?SzNDK3kzbStLcTJyZlArTytXNjdMdSsrOGV1TE1PNXJLVFJOYTdueEVLQTJY?=
- =?utf-8?B?bHQ4aFhaS1VuK1Fod3duSXR0eWRwZUhKNWQyTnBWSktjNXhaUVdtTUdDQldB?=
- =?utf-8?B?RkJoNmQrMEE1ZVIybXVTU2FkRmMyeWJMaEc1T1UrWlA1SEhmTTJQNkZJdldz?=
- =?utf-8?B?ckZMRkVNRHRETmU3UE5sUGs0b2dmbktERE10a3RQR2hWSWR2NHRNSUdRUnk1?=
- =?utf-8?B?NTFUOXFtRDltd2twcGpHMUpIRTFGU1ZiRm5XOCtSMWhRdGorbG1DUUdsODRM?=
- =?utf-8?B?VEp6ZDZBQXoyd29HVXNzcU56aFJWVzk0enIrazVMU3RZYTd1ZmkrVnJ1bVp1?=
- =?utf-8?B?OGdCVGRIUWV3OCtCZDdDOVozenliT0ZFM0E3OFdlRDFrbkFEb1ZlM2lhZ0NI?=
- =?utf-8?B?bmVvRWtFZWZPdWlmbmxmR3JBVUxhcE1HSkpVZWN3NTV6eWdWdmw5bGE3eUNz?=
- =?utf-8?B?RDJoUENiZmIwOGVFVHlHdkh6NUVUOU93cThWTmNkRGYzck0yekRGcVFVZ21m?=
- =?utf-8?B?aktzNWU5NkVLM3U2djEzbHBqOHJBd0pjakl4cTUrNE10Yk9uS0YzZkNhNk1w?=
- =?utf-8?B?Ung3WGRwbjhLVzRRcWNUYXhXcEZoNWZIM21ZQ1kvbkFheWM3NzNCWFNrMlFq?=
- =?utf-8?B?eWFMMEdneFQ0ajBRK0h5cWN5a0poSlk2ZS81QThYUy96TnRyRFhZYkdDQ3hB?=
- =?utf-8?B?T0x1NXlDa0NQOUVhM0czZ2hDK2dxd2RKK25aTFVhVmFld1BOVGlKMzltV0hH?=
- =?utf-8?B?Z2lKcGZhcC9Wa1QwZ05iRml5S3lqNS9TeEtLZVc5ai9UWmQrdVpjN1licVhl?=
- =?utf-8?B?RlFrS1NTVEsvSUs5ZE5Zc3lYZ3duOVNwVkpDYzdXSGNxb0V0Ulh3d2lrY25G?=
- =?utf-8?B?VU5Ra0pMZklGOTh5bmh6UTNVWUwwbm1WdEFGNnJuL0F5MXZQSXVXeFljNVB1?=
- =?utf-8?B?cmF4eitYN1RlNFlPKzMvU0FVaUE0NnpMVjVkMEJVblhlVWtpNENycGxoK3lx?=
- =?utf-8?B?b0ZEM1Y1WHFIMm9ENUg0MUZDWGcwQmpYUXhkR09KZTQzMUszb1FGWE9malFs?=
- =?utf-8?B?NjdnNzdkUlFCVDB1Z2NhTlovMldHMWMrQjdHT2RDZ0hOYk41eHdCTytvcERI?=
- =?utf-8?B?U3I0VTNFbXNGdGVjVDI0a1JQSWw4SERYRG5FWnB2YlNRQ05YVnBpbWtKYU93?=
- =?utf-8?B?clFzWW01Y0xzSjNBR2VqbVZuekd3U3pQVUJXNWN6eEZzeGJWT1M4OE1MOVp4?=
- =?utf-8?B?ZFRrMTYvVE80bWdUalNtODlRcTY5RnVLTHhIT1dYUHVmWEJvaEovSGQ5b1RR?=
- =?utf-8?B?c1p6cmhtUEQvZ3pKQTFwaWdiMjBxWjRoZmhIdnRIY0E1b0FNdkFuR0g1cTIw?=
- =?utf-8?B?ZzJkQm90ODczSVIwckMzQXhEa2JGSnNMZUc0bHRKSXBDR1cwT2tJcGxYNUx3?=
- =?utf-8?B?SlIwTXpNU0J2TDNNQk0yMkN5YjJPZzFCZ1ZocUFJNmZkYWd5UWZmWFk0NWIr?=
- =?utf-8?B?bmsxSTltbERuaG90bkdRdmV6bU9PY3VlSTRNR3pZamV6U2QzWFkrVDg3QXdU?=
- =?utf-8?B?M0NFSWhRaUorMHI2U0lINGRyTW8yU0h6dEczTWxHNTNrK0JhdG5hdmNTeG9u?=
- =?utf-8?B?Vk9QQmx0RFNuWXVpY0hWVFlscnhtU1RDVHhmcHJKeWJtM3ltVnJsRXZjTXlu?=
- =?utf-8?B?THViVU84NTEwVVRzTXhqakRZMTFYUCsyeFY1bEtqTHlYQXVTclVLYjArZ0Rq?=
- =?utf-8?B?WFh6ZEtmVm1FNVc5Wmp4a2hacUYrQ0tqN3lScmdFQVRYRXNLQkFjMjc0Z3lq?=
- =?utf-8?B?NVZzYmdoMStETWdvNkE3VkZsemR2VFdlUVBMamVQY0ZaUkdjRUxvUTF6bVRH?=
- =?utf-8?B?YVNEazA0WVI1clpkeDdWc2JpT3lVbUVVdUVPZUxSc3ZUK1RLWTRKd0dxdXVY?=
- =?utf-8?B?RnRPRms4UlphcmR3bUR0RS9QcGhBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(30052699003)(7416014)(376014)(36860700013)(13003099007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	ADu8qfkSJkjT+82bA94PIR3m5qKrLYeTrY2WGZwV8qvojldupWDSWgzdLhAFScBKdViE7djms5qu3ro4QUMe9BLog/97RMOuxQ1DDWhsR5pwzHabUFuT8MwAD3dvIDdyEg9m8GPUnBoKj5AIFeFWe/8f9TlQpr2KG4o1DG2rrKIxs0ojqeGUjMPcPg2jEw/Zsnuxy7ItG7W7mvepET4raFqQeUsWmJuz56ZJ74qX9lVVpWGvWeT8be59wlr9hgbfzksZJtOMGwutL7NK84W7EeypUG1rIbH4qyQYxFYKnIcQYbg0x104u04Mus6FB4LLZK7x05Sb630fiTGfUFI0t8s961AcIIEOxSk5SVg+GTM+R7hXc+KFrQWE5pS11Kg92x84kQ6OTC8Lmw2dmcR2zGUhAiD63r/R2hpiCnkViWdBp/iKQRpqnc1GrJgRc6tH
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Feb 2026 23:08:06.8885
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 84c8907e-7de4-494e-36d6-08de6db03eda
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B071.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR12MB9817
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.84 / 15.00];
-	FAKE_REPLY(1.00)[];
-	ARC_REJECT(1.00)[cv is fail on i=2];
-	DMARC_POLICY_ALLOW(-0.50)[amd.com,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[amd.com:s=selector1];
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[dubeyko-com.20230601.gappssmtp.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77324-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77322-lists,linux-fsdevel=lfdr.de];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[amd.com:mid,amd.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
 	MIME_TRACE(0.00)[0:+];
-	REPLYTO_DOM_NEQ_FROM_DOM(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	HAS_REPLYTO(0.00)[CAEvNRgFmq8DP_=V7mrY8qza3i9h4-Bn0OWt72iDj6mELu+BiZg@mail.gmail.com];
-	PRECEDENCE_BULK(0.00)[];
-	TO_DN_NONE(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[michael.roth@amd.com,linux-fsdevel@vger.kernel.org];
+	DMARC_NA(0.00)[dubeyko.com];
+	DKIM_TRACE(0.00)[dubeyko-com.20230601.gappssmtp.com:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_NEQ_ENVFROM(0.00)[slava@dubeyko.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[amd.com:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: B61D9148057
+	PRECEDENCE_BULK(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCVD_COUNT_FIVE(0.00)[5];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,vivo.com:email,dubeyko.com:mid,dubeyko.com:email,dubeyko-com.20230601.gappssmtp.com:dkim]
+X-Rspamd-Queue-Id: A4C91148184
 X-Rspamd-Action: no action
 
-I'm not sure I'm hitting the same issue you were, but in order to fix
-the race I was hitting I needed to grab the range look outside of the
-kvm_gmem_get_folio() path so that it could provide mutual exclusion on
-the allocation as well as the subsequent splitting of newly-allocation
-hugepages.
+The xfstests' test-case generic/258 fails to execute
+correctly:
 
-Here's the patch I needed on top:
+FSTYP -- hfsplus
+PLATFORM -- Linux/x86_64 hfsplus-testing-0001 6.15.0-rc4+ #8 SMP PREEMPT_DYNAMIC Thu May 1 16:43:22 PDT 2025
+MKFS_OPTIONS -- /dev/loop51
+MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
 
-  https://github.com/mdroth/linux/commit/240e09e68fe61bb0dfad6a8e054a6aa9316a3660
+generic/258 [failed, exit status 1]- output mismatch (see xfstests-dev/results//generic/258.out.bad)
 
-I think this same issue exists for the THP implementation[1], where a
-range lock built around filemap indicies instead of physical addresses
-could maybe address both, but not sure it's worthwhile since THP has been
-deemed non-upstreamable until general memory migration support is added
-to gmem.
+The main reason of the issue is the logic:
 
-I'll dump the code below though for reference since I know some folks on
-Cc have been asking about it, but it isn't yet in a state where it's
-worth posting separately, but is at least relevant to this particular
-discussion. For now, I've just piggy-backed off the filemap invalidate
-write lock to serialize all allocations, but I've only hit the race
-condition once for 2MB, it's a lot easier with 1GB using hugetlb.
+cpu_to_be32(lower_32_bits(ut) + HFSPLUS_UTC_OFFSET)
 
-[1]
+At first, we take the lower 32 bits of the value and, then
+we add the time offset. However, if we have negative value
+then we make completely wrong calculation.
 
-The THP patches are currently on top of a snapshot of Ackerley’s hugetlb dev
-tree. I’d originally planned to rebase on top of just the common
-dependencies and posting upstream, but based on the latest guest_memfd/PUCK
-calls, there is no chance of THP going upstream without first implementing
-memory migration support for guest_memfd to deal with system-wide/cumulative
-fragmentation. So I’m tabling that work, it’s just these 3 patches on top for
-now:
+This patch corrects the logic of __hfsp_mt2ut() and
+__hfsp_ut2mt (HFS+ case), __hfs_m_to_utime() and
+__hfs_u_to_mtime (HFS case). The HFS_MIN_TIMESTAMP_SECS and
+HFS_MAX_TIMESTAMP_SECS have been introduced in
+include/linux/hfs_common.h. Also, HFS_UTC_OFFSET constant
+has been moved to include/linux/hfs_common.h. The hfs_fill_super()
+and hfsplus_fill_super() logic defines sb->s_time_min,
+sb->s_time_max, and sb->s_time_gran.
 
-  2ae099ef6977 KVM: guest_memfd: Serialize allocations when THP is enabled
-  733f7a111699 [WIP] KVM: guest_memfd: Enable/fix hugepages for in-place conversion
-  349aa261ac65 KVM: Add hugepage support for dedicated guest memory
+sudo ./check generic/258
+FSTYP         -- hfsplus
+PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.19.0-rc1+ #87 SMP PREEMPT_DYNAMIC Mon Feb 16 14:48:57 PST 2026
+MKFS_OPTIONS  -- /dev/loop51
+MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
 
-The initial patch adds THP support for legacy/non-inplace, the remaining 2
-enable it for inplace. There are various warnings/TODOs/debugs, I'm only
-posting it for reference since I don't know when I'll get to a cleaned up
-version since it's not clear it'll be useful in the near-term.
+generic/258 29s ...  39s
+Ran: generic/258
+Passed all 1 tests
 
-  Kernel:
-    https://github.com/mdroth/linux/commits/snp-thp-rfc2-wip0
+[1] https://github.com/hfs-linux-kernel/hfs-linux-kernel/issues/133
 
-  QEMU:
-    https://github.com/mdroth/qemu/commits/snp-hugetlb-v3wip0b
+Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
+cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+cc: Yangtao Li <frank.li@vivo.com>
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/hfs/hfs_fs.h            | 17 ++++-------------
+ fs/hfs/super.c             |  4 ++++
+ fs/hfsplus/hfsplus_fs.h    | 13 ++++---------
+ fs/hfsplus/super.c         |  4 ++++
+ include/linux/hfs_common.h | 18 ++++++++++++++++++
+ 5 files changed, 34 insertions(+), 22 deletions(-)
 
-  To run QEMU with in-place conversion enabled you need the following option (SNP will default to legacy/non-inplace conversion otherwise):
-    qemu ... -object sev-snp-guest,...,convert-in-place=true
-
-  To enable hugepages when using either convert-in-place=false/true, a kvm module turns it on for now (flipping it on/off rapidly may help with simulating/testing low memory situations):
-
-    echo 1 >/sys/module/kvm/gmem_2m_enabled
-
-  This tree also supports SNP+hugetlbfs with the following in case you need it for comparison:
-
-  For 2MB hugetlb:
-    qemu ... \
-      -object sev-snp-guest,...,convert-in-place=true,gmem-allocator=hugetlb,gmem-page-size=2097152
-
-  For 1GB hugetlb:
-    qemu ... \
-      -object sev-snp-guest,...,convert-in-place=true,gmem-allocator=hugetlb,gmem-page-size=1073741824
+diff --git a/fs/hfs/hfs_fs.h b/fs/hfs/hfs_fs.h
+index ac0e83f77a0f..7d529e6789b8 100644
+--- a/fs/hfs/hfs_fs.h
++++ b/fs/hfs/hfs_fs.h
+@@ -229,21 +229,11 @@ extern int hfs_mac2asc(struct super_block *sb,
+ extern void hfs_mark_mdb_dirty(struct super_block *sb);
+ 
+ /*
+- * There are two time systems.  Both are based on seconds since
+- * a particular time/date.
+- *	Unix:	signed little-endian since 00:00 GMT, Jan. 1, 1970
+- *	mac:	unsigned big-endian since 00:00 GMT, Jan. 1, 1904
+- *
+- * HFS implementations are highly inconsistent, this one matches the
+- * traditional behavior of 64-bit Linux, giving the most useful
+- * time range between 1970 and 2106, by treating any on-disk timestamp
+- * under HFS_UTC_OFFSET (Jan 1 1970) as a time between 2040 and 2106.
++ * time helpers: convert between 1904-base and 1970-base timestamps
+  */
+-#define HFS_UTC_OFFSET 2082844800U
+-
+ static inline time64_t __hfs_m_to_utime(__be32 mt)
+ {
+-	time64_t ut = (u32)(be32_to_cpu(mt) - HFS_UTC_OFFSET);
++	time64_t ut = (time64_t)be32_to_cpu(mt) - HFS_UTC_OFFSET;
+ 
+ 	return ut + sys_tz.tz_minuteswest * 60;
+ }
+@@ -251,8 +241,9 @@ static inline time64_t __hfs_m_to_utime(__be32 mt)
+ static inline __be32 __hfs_u_to_mtime(time64_t ut)
+ {
+ 	ut -= sys_tz.tz_minuteswest * 60;
++	ut += HFS_UTC_OFFSET;
+ 
+-	return cpu_to_be32(lower_32_bits(ut) + HFS_UTC_OFFSET);
++	return cpu_to_be32(lower_32_bits(ut));
+ }
+ #define HFS_I(inode)	(container_of(inode, struct hfs_inode_info, vfs_inode))
+ #define HFS_SB(sb)	((struct hfs_sb_info *)(sb)->s_fs_info)
+diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+index 97546d6b41f4..6b6c138812b7 100644
+--- a/fs/hfs/super.c
++++ b/fs/hfs/super.c
+@@ -341,6 +341,10 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	sb->s_flags |= SB_NODIRATIME;
+ 	mutex_init(&sbi->bitmap_lock);
+ 
++	sb->s_time_gran = NSEC_PER_SEC;
++	sb->s_time_min = HFS_MIN_TIMESTAMP_SECS;
++	sb->s_time_max = HFS_MAX_TIMESTAMP_SECS;
++
+ 	res = hfs_mdb_get(sb);
+ 	if (res) {
+ 		if (!silent)
+diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
+index 5f891b73a646..3554faf84c15 100644
+--- a/fs/hfsplus/hfsplus_fs.h
++++ b/fs/hfsplus/hfsplus_fs.h
+@@ -511,24 +511,19 @@ int hfsplus_read_wrapper(struct super_block *sb);
+ 
+ /*
+  * time helpers: convert between 1904-base and 1970-base timestamps
+- *
+- * HFS+ implementations are highly inconsistent, this one matches the
+- * traditional behavior of 64-bit Linux, giving the most useful
+- * time range between 1970 and 2106, by treating any on-disk timestamp
+- * under HFSPLUS_UTC_OFFSET (Jan 1 1970) as a time between 2040 and 2106.
+  */
+-#define HFSPLUS_UTC_OFFSET 2082844800U
+-
+ static inline time64_t __hfsp_mt2ut(__be32 mt)
+ {
+-	time64_t ut = (u32)(be32_to_cpu(mt) - HFSPLUS_UTC_OFFSET);
++	time64_t ut = (time64_t)be32_to_cpu(mt) - HFS_UTC_OFFSET;
+ 
+ 	return ut;
+ }
+ 
+ static inline __be32 __hfsp_ut2mt(time64_t ut)
+ {
+-	return cpu_to_be32(lower_32_bits(ut) + HFSPLUS_UTC_OFFSET);
++	ut += HFS_UTC_OFFSET;
++
++	return cpu_to_be32(lower_32_bits(ut));
+ }
+ 
+ static inline enum hfsplus_btree_mutex_classes
+diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
+index 592d8fbb748c..dcd61868d199 100644
+--- a/fs/hfsplus/super.c
++++ b/fs/hfsplus/super.c
+@@ -487,6 +487,10 @@ static int hfsplus_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	if (!sbi->rsrc_clump_blocks)
+ 		sbi->rsrc_clump_blocks = 1;
+ 
++	sb->s_time_gran = NSEC_PER_SEC;
++	sb->s_time_min = HFS_MIN_TIMESTAMP_SECS;
++	sb->s_time_max = HFS_MAX_TIMESTAMP_SECS;
++
+ 	err = -EFBIG;
+ 	last_fs_block = sbi->total_blocks - 1;
+ 	last_fs_page = (last_fs_block << sbi->alloc_blksz_shift) >>
+diff --git a/include/linux/hfs_common.h b/include/linux/hfs_common.h
+index dadb5e0aa8a3..816ac2f0996d 100644
+--- a/include/linux/hfs_common.h
++++ b/include/linux/hfs_common.h
+@@ -650,4 +650,22 @@ typedef union {
+ 	struct hfsplus_attr_key attr;
+ } __packed hfsplus_btree_key;
+ 
++/*
++ * There are two time systems.  Both are based on seconds since
++ * a particular time/date.
++ *	Unix:	signed little-endian since 00:00 GMT, Jan. 1, 1970
++ *	mac:	unsigned big-endian since 00:00 GMT, Jan. 1, 1904
++ *
++ * HFS/HFS+ implementations are highly inconsistent, this one matches the
++ * traditional behavior of 64-bit Linux, giving the most useful
++ * time range between 1970 and 2106, by treating any on-disk timestamp
++ * under HFS_UTC_OFFSET (Jan 1 1970) as a time between 2040 and 2106.
++ */
++#define HFS_UTC_OFFSET 2082844800U
++
++/* January 1, 1904, 00:00:00 UTC */
++#define HFS_MIN_TIMESTAMP_SECS		-2082844800LL
++/* February 6, 2040, 06:28:15 UTC */
++#define HFS_MAX_TIMESTAMP_SECS		2212122495LL
++
+ #endif /* _HFS_COMMON_H_ */
+-- 
+2.43.0
 
 
