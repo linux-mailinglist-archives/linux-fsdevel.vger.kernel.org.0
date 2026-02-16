@@ -1,157 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-77274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77275-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oKtFBU0Zk2nD1QEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 14:19:09 +0100
+	id UJWEDq8ck2mM1gEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77275-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 14:33:35 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A95143C28
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 14:19:08 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75300143D73
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 14:33:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0ED793014646
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 13:18:29 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 5D1B6300B9F4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 13:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FF82FFDEA;
-	Mon, 16 Feb 2026 13:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A41C2DA762;
+	Mon, 16 Feb 2026 13:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="p48jLXCy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qnzGrS+E"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A39424BBFD
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Feb 2026 13:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7519202F70;
+	Mon, 16 Feb 2026 13:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771247908; cv=none; b=CD161dPyWMgrONJdcsH/tXgsZFxy3RLPRhOukw+dNuCAjs5dXd0pkgH/rX8WkDgPmMpDKesiAr1TVCb+nzfP2vmBGmRC6wqChK+zkD2ehXr5reZsNX0GdMwrICZoYe9rHJbtfisS6FWU9HbA8W3LmMoUPjp1ZaoadCqxHzkcF+Q=
+	t=1771248738; cv=none; b=uQI1WVL5c2HKDaQHJcnbfCajORzW5Om1KFC3VKNpDIAYX/TvJsON9oXnGZVuSmzw9yp69SStqmQPm80F+N11r/f9Xf+bzyFdltv1/8YVM+9rIceIvQHgiRg7l9cTZJ9+nFSXth8Rmo048qyjv1hi9JRF+O4na6GOh+UCpBudlRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771247908; c=relaxed/simple;
-	bh=vZEGwyLXtwS50t+qseTk7VEoyijqYlIwNiT1NUT/MaQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T4cpfPs/rkzZPhCyZQDBx1W27EaK867DyVDFsXi0RguUWWi27qKdfdgpLQq1nB38XxhZcRCjcOph6qKp400ZUYp9/L5vPNn+ijWpN7MBN+upg9ASgsNp8+0vjxCAAGLxXT5yRaMbj0//amjvVsdE1VXLndm0BPisiCmA6QSHNU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=p48jLXCy; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c29d36eb-0706-4f3c-aaed-de7d9ef74bed@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1771247894;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V05ejPvopLo9DRbeUi1eZlG4ZZP00I4HL4AVm44w2ig=;
-	b=p48jLXCyB4VQIxa8U3Gdq7k8wKO8XyymBq6W8BKSRkDN7UxEod2Qo9XWM6In41SsmVr+1X
-	6bxBpYh3sSb2Zy2qbVUyeFagIxBxAeBh7JjAaEUhiDSJL47UcvZlEFoNMF1POC5KagDyAC
-	gKbYB0/kLVuZKWkLCLWUh1bnjRK+ODA=
-Date: Mon, 16 Feb 2026 14:18:10 +0100
+	s=arc-20240116; t=1771248738; c=relaxed/simple;
+	bh=IBfriahGCrZbgG2xPZaipNIY6Lm5nqv5xPLiQPNO0VU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XlAbD0JdKHXfyHTLXd6/bgoTTtrbJrvYbB5LmNtAPQUDhysTCbpej5dQ9PTNvSdjvaCCq1UMP4Ac8bm3jRp9rh6ldBVMTKDG7K3RXYFU76if8xJzI7iUisShurGkxoEDNOaP1MfPZ+B0H+0jYvWpANfuiF7SlerkCfcTV+NYtDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qnzGrS+E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44616C116C6;
+	Mon, 16 Feb 2026 13:32:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771248738;
+	bh=IBfriahGCrZbgG2xPZaipNIY6Lm5nqv5xPLiQPNO0VU=;
+	h=From:Subject:Date:To:Cc:From;
+	b=qnzGrS+EGxMXTIwtFfpkP2HXkzwc0TfKfB9GHqoclOOIDAme6AsyKLaqS9E7Jtqka
+	 f6gnJXGflC/unzfnHNAHt2Vulcy4z61/ZFYwFdYdczlZvsSOBRrCEqVSmspPphRoy9
+	 yF/sMzGeB6kWmJQXp7H8Vfa6w3Ei0rX3UQoNp5nEhXqWE8kqSsdG9CGlh/rf44hjpQ
+	 qP8XHTBhvyl+B9EyyHTPIEJK1w1vFuPw2o+gJTKkgLGJxb2LXI925d1+SS5jjjloEx
+	 h3NPtd108rWtrY+y0O1A62vdnRHBtjd1Uq8x+m72u2vhcRoOSyKbRyAclc0UGzxxQR
+	 2G1SZh+oI4yYA==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 00/14] xattr: rework simple xattrs and support user.*
+ xattrs on sockets
+Date: Mon, 16 Feb 2026 14:31:56 +0100
+Message-Id: <20260216-work-xattr-socket-v1-0-c2efa4f74cb7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Buffered atomic writes
-To: Jan Kara <jack@suse.cz>, Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: linux-xfs@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org,
- Andres Freund <andres@anarazel.de>, djwong@kernel.org,
- john.g.garry@oracle.com, willy@infradead.org, hch@lst.de,
- ritesh.list@gmail.com, Luis Chamberlain <mcgrof@kernel.org>,
- dchinner@redhat.com, Javier Gonzalez <javier.gonz@samsung.com>,
- gost.dev@samsung.com, tytso@mit.edu, p.raghav@samsung.com,
- vi.shah@samsung.com
-References: <d0c4d95b-8064-4a7e-996d-7ad40eb4976b@linux.dev>
- <aY8n97G_hXzA5MMn@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <w3vwdaygcz3prsxwv43blo4co666mragpdwaxihbirt5stl4vr@agyz4mnaxghj>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Pankaj Raghav <pankaj.raghav@linux.dev>
-In-Reply-To: <w3vwdaygcz3prsxwv43blo4co666mragpdwaxihbirt5stl4vr@agyz4mnaxghj>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-B4-Tracking: v=1; b=H4sIAEwck2kC/x3MTQ6CMBBA4auYWVvTvyngVYyLdphKQwTTNkpCu
+ LvV5bd4b4fCOXGB62mHzO9U0ro0qPMJaPLLg0Uam0FL7aRWSnzWPIvN15pFWWnmKqjHaEcT+t5
+ 20LpX5pi2//N2bw6+sAjZLzT9Tk9fKudLp8kMKLUdPSFrhco4CjF2g7GIUTp00gTp4Di+DYKIv
+ aUAAAA=
+X-Change-ID: 20260211-work-xattr-socket-c85f4d3b8847
+To: linux-fsdevel@vger.kernel.org
+Cc: Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>, 
+ linux-mm@kvack.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Tejun Heo <tj@kernel.org>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Jann Horn <jannh@google.com>, 
+ netdev@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-47773
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4849; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=IBfriahGCrZbgG2xPZaipNIY6Lm5nqv5xPLiQPNO0VU=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWROlolVf2J3f36a8ze/m4FeS2S03091//pKONFFL3V/7
+ o5raQlvO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTAC4SwcjQ9CDunvilFdtFXp3J
+ 3LXpydXa0ve8ct39mhkmOxclbDypyfDfS1fQoKkiscXO6LCGhUnA9Rs1i74dSH5eat2qI1/z/yk
+ nAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[linux.dev,none];
-	R_DKIM_ALLOW(-0.20)[linux.dev:s=key1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77274-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[3];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kvack.org,lists.linux-foundation.org,anarazel.de,kernel.org,oracle.com,infradead.org,lst.de,gmail.com,redhat.com,samsung.com,mit.edu];
-	RCPT_COUNT_TWELVE(0.00)[19];
+	TAGGED_FROM(0.00)[bounces-77275-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
+	RCPT_COUNT_TWELVE(0.00)[15];
 	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[pankaj.raghav@linux.dev,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[linux.dev:+];
-	HAS_WP_URI(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 68A95143C28
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 75300143D73
 X-Rspamd-Action: no action
 
+Hey,
 
+This reworks the simple_xattr infrastructure and adds support for
+user.* extended attributes on sockets.
 
-On 2/16/2026 12:38 PM, Jan Kara wrote:
-> Hi!
-> 
-> On Fri 13-02-26 19:02:39, Ojaswin Mujoo wrote:
->> Another thing that came up is to consider using write through semantics
->> for buffered atomic writes, where we are able to transition page to
->> writeback state immediately after the write and avoid any other users to
->> modify the data till writeback completes. This might affect performance
->> since we won't be able to batch similar atomic IOs but maybe
->> applications like postgres would not mind this too much. If we go with
->> this approach, we will be able to avoid worrying too much about other
->> users changing atomic data underneath us.
->>
->> An argument against this however is that it is user's responsibility to
->> not do non atomic IO over an atomic range and this shall be considered a
->> userspace usage error. This is similar to how there are ways users can
->> tear a dio if they perform overlapping writes. [1].
-> 
-> Yes, I was wondering whether the write-through semantics would make sense
-> as well. Intuitively it should make things simpler because you could
-> practially reuse the atomic DIO write path. Only that you'd first copy
-> data into the page cache and issue dio write from those folios. No need for
-> special tracking of which folios actually belong together in atomic write,
-> no need for cluttering standard folio writeback path, in case atomic write
-> cannot happen (e.g. because you cannot allocate appropriately aligned
-> blocks) you get the error back rightaway, ...
-> 
-> Of course this all depends on whether such semantics would be actually
-> useful for users such as PostgreSQL.
+The simple_xattr subsystem currently uses an rbtree protected by a
+reader-writer spinlock. This series replaces the rbtree with an
+rhashtable giving O(1) average-case lookup with RCU-based lockless
+reads. This sped up concurrent access patterns on tmpfs quite a bit and
+it's an overall easy enough conversion to do and gets rid or rwlock_t.
 
-One issue might be the performance, especially if the atomic max unit is in the 
-smaller end such as 16k or 32k (which is fairly common). But it will avoid the 
-overlapping writes issue and can easily leverage the direct IO path.
+The conversion is done incrementally: a new rhashtable path is added
+alongside the existing rbtree, consumers are migrated one at a time
+(shmem, kernfs, pidfs), and then the rbtree code is removed. All three
+consumers switch from embedded structs to pointer-based lazy allocation
+so the rhashtable overhead is only paid for inodes that actually use
+xattrs.
 
-But one thing that postgres really cares about is the integrity of a database 
-block. So if there is an IO that is a multiple of an atomic write unit (one 
-atomic unit encapsulates the whole DB page), it is not a problem if tearing 
-happens on the atomic boundaries. This fits very well with what NVMe calls 
-Multiple Atomicity Mode (MAM) [1].
+With this infrastructure in place the series adds support for user.*
+xattrs on sockets. Path-based AF_UNIX sockets inherit xattr support
+from the underlying filesystem (e.g. tmpfs) but sockets in sockfs -
+that is everything created via socket() including abstract namespace
+AF_UNIX sockets - had no xattr support at all.
 
-We don't have any semantics for MaM at the moment but that could increase the 
-performance as we can do larger IOs but still get the atomic guarantees certain 
-applications care about.
+The xattr_permission() checks are reworked to allow user.* xattrs on
+S_IFSOCK inodes. Sockfs sockets get per-inode limits of 128 xattrs and
+128KB total value size matching the limits already in use for kernfs.
 
+The practical motivation comes from several directions. systemd and
+GNOME are expanding their use of Varlink as an IPC mechanism. For D-Bus
+there are tools like dbus-monitor that can observe IPC traffic across
+the system but this only works because D-Bus has a central broker. For
+Varlink there is no broker and there is currently no way to identify
+which sockets speak Varlink. With user.* xattrs on sockets a service
+can label its socket with the IPC protocol it speaks (e.g.,
+user.varlink=1) and an eBPF program can then selectively capture
+traffic on those sockets. Enumerating bound sockets via netlink combined
+with these xattr labels gives a way to discover all Varlink IPC
+entrypoints for debugging and introspection.
 
-[1] 
-https://nvmexpress.org/wp-content/uploads/NVM-Express-NVM-Command-Set-Specification-Revision-1.1-2024.08.05-Ratified.pdf 
+Similarly, systemd-journald wants to use xattrs on the /dev/log socket
+for protocol negotiation to indicate whether RFC 5424 structured syslog
+is supported or whether only the legacy RFC 3164 format should be used.
+
+In containers these labels are particularly useful as high-privilege or
+more complicated solutions for socket identification aren't available.
+
+The series comes with comprehensive selftests covering path-based
+AF_UNIX sockets, sockfs socket operations, per-inode limit enforcement,
+and xattr operations across multiple address families (AF_INET,
+AF_INET6, AF_NETLINK, AF_PACKET).
+
+Christian
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Christian Brauner (14):
+      xattr: add rcu_head and rhash_head to struct simple_xattr
+      xattr: add rhashtable-based simple_xattr infrastructure
+      shmem: adapt to rhashtable-based simple_xattrs with lazy allocation
+      kernfs: adapt to rhashtable-based simple_xattrs with lazy allocation
+      pidfs: adapt to rhashtable-based simple_xattrs
+      xattr: remove rbtree-based simple_xattr infrastructure
+      xattr: add xattr_permission_error()
+      xattr: switch xattr_permission() to switch statement
+      xattr: move user limits for xattrs to generic infra
+      xattr,net: support limited amount of extended attributes on sockfs sockets
+      xattr: support extended attributes on sockets
+      selftests/xattr: path-based AF_UNIX socket xattr tests
+      selftests/xattr: sockfs socket xattr tests
+      selftests/xattr: test xattrs on various socket families
+
+ fs/kernfs/dir.c                                    |  15 +-
+ fs/kernfs/inode.c                                  |  99 +----
+ fs/kernfs/kernfs-internal.h                        |   5 +-
+ fs/pidfs.c                                         |  65 +--
+ fs/xattr.c                                         | 423 +++++++++++++------
+ include/linux/kernfs.h                             |   2 -
+ include/linux/shmem_fs.h                           |   2 +-
+ include/linux/xattr.h                              |  47 ++-
+ mm/shmem.c                                         |  46 +-
+ net/socket.c                                       | 119 ++++--
+ .../testing/selftests/filesystems/xattr/.gitignore |   3 +
+ tools/testing/selftests/filesystems/xattr/Makefile |   6 +
+ .../filesystems/xattr/xattr_socket_test.c          | 470 +++++++++++++++++++++
+ .../filesystems/xattr/xattr_socket_types_test.c    | 177 ++++++++
+ .../filesystems/xattr/xattr_sockfs_test.c          | 363 ++++++++++++++++
+ 15 files changed, 1547 insertions(+), 295 deletions(-)
+---
+base-commit: 72c395024dac5e215136cbff793455f065603b06
+change-id: 20260211-work-xattr-socket-c85f4d3b8847
 
 
