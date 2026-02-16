@@ -1,241 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-77269-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yLr7A3jvkmkQ0QEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77269-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 11:20:40 +0100
+	id CGI3J+YBk2lr0wEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 12:39:18 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67BAE14248F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 11:20:39 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C5631430FD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 12:39:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0E5653011BD1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 10:20:34 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B27953015721
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 11:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000672FF67F;
-	Mon, 16 Feb 2026 10:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2A127055D;
+	Mon, 16 Feb 2026 11:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Sxh5+6EB"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="p3JyA8bh";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Kkqgt47f";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="p3JyA8bh";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Kkqgt47f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA63B1E5B63;
-	Mon, 16 Feb 2026 10:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CCE1199920
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Feb 2026 11:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771237232; cv=none; b=mnqwxdwe3KliQonQnDqorl/HDtRENr9+8Qj23O+Xkt7ed+BhUeWYL3qPGHIU8+AZI7k2qRBuLUobH2u50kAyHPruUqrlTbXgaKzYeL2/gQFUp2+BW+lvwjBd65suSgE/CXFOp4eCwSGYQo+138PWaeIJO9h0FbmzQbmw6UMKyUw=
+	t=1771241949; cv=none; b=DCWPQWs3W+TngPVVHbdFvQ8OI4sClmuR8k/VMlczjn+fFmwbU+WRiZkm1olkXn9rP/mPuDokz72YAHs61ek6j77Xe7f0aSMljMxpUWdgXr2rAJDxZDxUOoXB0krwO6gCknif5+NRrxbQjCDNBWRPsCore6CccpAGKsn+6nlLTII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771237232; c=relaxed/simple;
-	bh=2wJYqdrku91INi+RENeja+Ho6307U8SKV7Yg6uybzZc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=eT0S+JQSUM3U0TXlobH0C1aS72znpzlfVz05fgmaB+Jvj2WBmZUgodg9H8g8Qm8a1QZsn3uIc5+S+qONQISB/XuDxHapbwC2CiDrK0Sw37GiAWJdnrg4khwZcelPse/raMWfBExDP6ChC5Nz8OQ43ue4yo4ATqLF5eAnrdPnC8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Sxh5+6EB; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=uqxbITcBJRg/pYyUN4ghazHmNmpgFjID40ichB9M96g=; b=Sxh5+6EBBPh4VwaHWDl3AMIWKR
-	NEjFc9mrzowi+TWrxeIA93Zu9N1M39mom4BUvrK+0eLCs7gykwJsUK823s2USDNWX7ZEf7VXdIAVf
-	js1cJTt2cdqfDLIfDUJmn1vNni5x39sED6QiGW/YtGApejiynWCJ2yQYbt8gvKFddjsEUBSoIYSaK
-	t6TK+eQSlf+C1fnBGqoYy0ML9OepyuL+VXOz9XmPG1MX33qBFLdAVjkFTd5MQcudwcX0UFthLOMgC
-	rfM8n21JhiUegBPCfkgD+hArfg7ZecCDrDuhnGN7ljAuRHOo2B5UqrYvo3vecHGPR0bV3tHTo3V0E
-	+2HWaHVA==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vrviE-001FeY-41; Mon, 16 Feb 2026 11:20:18 +0100
-From: Luis Henriques <luis@igalia.com>
-To: syzbot <syzbot+fdebb2dc960aa56c600a@syzkaller.appspotmail.com>
-Cc: linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  miklos@szeredi.hu,  syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [fuse?] KMSAN: uninit-value in fuse_dentry_revalidate (2)
-In-Reply-To: <69917e0d.050a0220.340abe.02e2.GAE@google.com> (syzbot's message
-	of "Sun, 15 Feb 2026 00:04:29 -0800")
-References: <69917e0d.050a0220.340abe.02e2.GAE@google.com>
-Date: Mon, 16 Feb 2026 10:20:12 +0000
-Message-ID: <87a4x99ehv.fsf@wotan.olymp>
+	s=arc-20240116; t=1771241949; c=relaxed/simple;
+	bh=DFaxVuRr1B79U0qpSHXpHCJ0FoZyaFK+FSI+fGDLEPQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dsuVek9Q/xrmdGM3mt5jo0HdxPFFy4FSDntEOLRX0bvk0hcDABMqqEVsM/vPmNg/Qy4j9QXiCX71SWbf4AoMJN8xYXHzKnZoKfBEb4+gG+HQTaAvvXLz0/jRzrY9rxRqiEIqze2+Jq69UG3nZX6qQEr1A5RCxdtRqI76sCgCy/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=p3JyA8bh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Kkqgt47f; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=p3JyA8bh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Kkqgt47f; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5335A5BCFF;
+	Mon, 16 Feb 2026 11:39:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1771241946; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QbjZPXjREGbAx7ntC8vD9Ig1U2Ql4S/pSKRXVeCyDvA=;
+	b=p3JyA8bhdFyL0ld1P4fNn1Yxp5LdNpmiePmfuryjOTXjs4oG5Fea2Hh/W3IQd4aAqE9ayu
+	ZST1PeI61pQYkbuqAVRLluJwsDwVtJA/+LhPU96uQ/YW0t+siQ8WuD1J+u8GNjwx9lUJ8t
+	+Mg1n/h+US/VYCIJJtenyOXn7suQsRQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1771241946;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QbjZPXjREGbAx7ntC8vD9Ig1U2Ql4S/pSKRXVeCyDvA=;
+	b=Kkqgt47f3D2hLb+DbYsty7+TKZ782vebLzWVOZFX+iakm22PNqoIcQ1lHzRH1rpoInDryC
+	9LJSVBf/Oj5WH1Aw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1771241946; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QbjZPXjREGbAx7ntC8vD9Ig1U2Ql4S/pSKRXVeCyDvA=;
+	b=p3JyA8bhdFyL0ld1P4fNn1Yxp5LdNpmiePmfuryjOTXjs4oG5Fea2Hh/W3IQd4aAqE9ayu
+	ZST1PeI61pQYkbuqAVRLluJwsDwVtJA/+LhPU96uQ/YW0t+siQ8WuD1J+u8GNjwx9lUJ8t
+	+Mg1n/h+US/VYCIJJtenyOXn7suQsRQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1771241946;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QbjZPXjREGbAx7ntC8vD9Ig1U2Ql4S/pSKRXVeCyDvA=;
+	b=Kkqgt47f3D2hLb+DbYsty7+TKZ782vebLzWVOZFX+iakm22PNqoIcQ1lHzRH1rpoInDryC
+	9LJSVBf/Oj5WH1Aw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0B98A3EA62;
+	Mon, 16 Feb 2026 11:39:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id hj/sAtoBk2nxfgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 16 Feb 2026 11:39:06 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D646FA0AA5; Mon, 16 Feb 2026 12:38:59 +0100 (CET)
+Date: Mon, 16 Feb 2026 12:38:59 +0100
+From: Jan Kara <jack@suse.cz>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: Pankaj Raghav <pankaj.raghav@linux.dev>, linux-xfs@vger.kernel.org, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org, 
+	Andres Freund <andres@anarazel.de>, djwong@kernel.org, john.g.garry@oracle.com, willy@infradead.org, 
+	hch@lst.de, ritesh.list@gmail.com, jack@suse.cz, 
+	Luis Chamberlain <mcgrof@kernel.org>, dchinner@redhat.com, Javier Gonzalez <javier.gonz@samsung.com>, 
+	gost.dev@samsung.com, tytso@mit.edu, p.raghav@samsung.com, vi.shah@samsung.com
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Buffered atomic writes
+Message-ID: <w3vwdaygcz3prsxwv43blo4co666mragpdwaxihbirt5stl4vr@agyz4mnaxghj>
+References: <d0c4d95b-8064-4a7e-996d-7ad40eb4976b@linux.dev>
+ <aY8n97G_hXzA5MMn@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aY8n97G_hXzA5MMn@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+X-Spam-Score: -2.30
+X-Spam-Level: 
+X-Spam-Flag: NO
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [2.14 / 15.00];
+X-Spamd-Result: default: False [0.34 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	R_DKIM_REJECT(1.00)[igalia.com:s=20170329];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=50148b563a4d5941];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	MAILLIST(-0.15)[generic];
-	DMARC_POLICY_SOFTFAIL(0.10)[igalia.com : SPF not aligned (relaxed),none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77269-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-77270-lists,linux-fsdevel=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
+	DMARC_NA(0.00)[suse.cz];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,googlegroups.com:email,goo.gl:url,storage.googleapis.com:url,syzkaller.appspot.com:url,wotan.olymp:mid];
-	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	FREEMAIL_CC(0.00)[linux.dev,vger.kernel.org,kvack.org,lists.linux-foundation.org,anarazel.de,kernel.org,oracle.com,infradead.org,lst.de,gmail.com,suse.cz,redhat.com,samsung.com,mit.edu];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[luis@igalia.com,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[igalia.com:-];
-	TAGGED_RCPT(0.00)[linux-fsdevel,fdebb2dc960aa56c600a];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	REDIRECTOR_URL(0.00)[goo.gl];
-	RCPT_COUNT_FIVE(0.00)[5];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Rspamd-Queue-Id: 67BAE14248F
+	MISSING_XM_UA(0.00)[];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: 3C5631430FD
 X-Rspamd-Action: no action
 
-On Sun, Feb 15 2026, syzbot wrote:
+Hi!
 
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    770aaedb461a Merge tag 'bootconfig-v7.0' of git://git.ker=
-n..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D158f7e5a580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D50148b563a4d5=
-941
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dfdebb2dc960aa56=
-c600a
-> compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25=
-a-1~exp1~20251221153213.50), Debian LLD 21.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D138f7e5a580=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D13a5c15a580000
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/24ba89b61208/dis=
-k-770aaedb.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/b38352aa3489/vmlinu=
-x-770aaedb.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/c388a7a46371/b=
-zImage-770aaedb.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+fdebb2dc960aa56c600a@syzkaller.appspotmail.com
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> BUG: KMSAN: uninit-value in fuse_dentry_revalidate+0x150/0x13d0 fs/fuse/d=
-ir.c:394
+On Fri 13-02-26 19:02:39, Ojaswin Mujoo wrote:
+> Another thing that came up is to consider using write through semantics 
+> for buffered atomic writes, where we are able to transition page to
+> writeback state immediately after the write and avoid any other users to
+> modify the data till writeback completes. This might affect performance
+> since we won't be able to batch similar atomic IOs but maybe
+> applications like postgres would not mind this too much. If we go with
+> this approach, we will be able to avoid worrying too much about other
+> users changing atomic data underneath us. 
+> 
+> An argument against this however is that it is user's responsibility to
+> not do non atomic IO over an atomic range and this shall be considered a
+> userspace usage error. This is similar to how there are ways users can
+> tear a dio if they perform overlapping writes. [1]. 
 
-This seems to point here:
+Yes, I was wondering whether the write-through semantics would make sense
+as well. Intuitively it should make things simpler because you could
+practially reuse the atomic DIO write path. Only that you'd first copy
+data into the page cache and issue dio write from those folios. No need for
+special tracking of which folios actually belong together in atomic write,
+no need for cluttering standard folio writeback path, in case atomic write
+cannot happen (e.g. because you cannot allocate appropriately aligned
+blocks) you get the error back rightaway, ...
 
-	if (entry->d_time < atomic_read(&fc->epoch))
-		goto invalid;
+Of course this all depends on whether such semantics would be actually
+useful for users such as PostgreSQL.
 
-which means that the following initialisation is missing:
-
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index f25ee47822ad..2ce306e35be3 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -481,6 +481,7 @@ static int fuse_dentry_init(struct dentry *dentry)
- 	fd->dentry =3D dentry;
- 	RB_CLEAR_NODE(&fd->node);
- 	dentry->d_fsdata =3D fd;
-+	dentry->d_time =3D 0;
-=20
- 	return 0;
- }
-
-Or maybe should that be done in __d_alloc() instead?
-
-Cheers,
---=20
-Lu=C3=ADs
-
->  fuse_dentry_revalidate+0x150/0x13d0 fs/fuse/dir.c:394
->  d_revalidate fs/namei.c:1030 [inline]
->  lookup_open fs/namei.c:4405 [inline]
->  open_last_lookups fs/namei.c:4583 [inline]
->  path_openat+0x1614/0x64c0 fs/namei.c:4827
->  do_file_open+0x2aa/0x680 fs/namei.c:4859
->  do_sys_openat2+0x163/0x380 fs/open.c:1366
->  do_sys_open fs/open.c:1372 [inline]
->  __do_sys_openat fs/open.c:1388 [inline]
->  __se_sys_openat fs/open.c:1383 [inline]
->  __x64_sys_openat+0x240/0x300 fs/open.c:1383
->  x64_sys_call+0x2445/0x3ea0 arch/x86/include/generated/asm/syscalls_64.h:=
-258
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0x134/0xf80 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> Uninit was created at:
->  slab_post_alloc_hook mm/slub.c:4466 [inline]
->  slab_alloc_node mm/slub.c:4788 [inline]
->  kmem_cache_alloc_lru_noprof+0x382/0x1280 mm/slub.c:4807
->  __d_alloc+0x55/0xa00 fs/dcache.c:1740
->  d_alloc_parallel+0x99/0x2740 fs/dcache.c:2604
->  lookup_open fs/namei.c:4398 [inline]
->  open_last_lookups fs/namei.c:4583 [inline]
->  path_openat+0x135f/0x64c0 fs/namei.c:4827
->  do_file_open+0x2aa/0x680 fs/namei.c:4859
->  do_sys_openat2+0x163/0x380 fs/open.c:1366
->  do_sys_open fs/open.c:1372 [inline]
->  __do_sys_openat fs/open.c:1388 [inline]
->  __se_sys_openat fs/open.c:1383 [inline]
->  __x64_sys_openat+0x240/0x300 fs/open.c:1383
->  x64_sys_call+0x2445/0x3ea0 arch/x86/include/generated/asm/syscalls_64.h:=
-258
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0x134/0xf80 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> CPU: 1 UID: 0 PID: 6074 Comm: syz.0.20 Not tainted syzkaller #0 PREEMPT(f=
-ull)=20
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 02/12/2026
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
->
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
