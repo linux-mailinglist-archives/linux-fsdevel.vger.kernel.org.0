@@ -1,155 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-77297-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id gCD+FXkuk2mZ2AEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77297-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 15:49:29 +0100
+	id iIIBHAsxk2mI2QEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 16:00:27 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B052E144CF3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 15:49:28 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B4BA144F1C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 16:00:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 50BFA303D701
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 14:48:40 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 1E1CC30205D9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 14:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4E230E857;
-	Mon, 16 Feb 2026 14:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3C7313E2F;
+	Mon, 16 Feb 2026 14:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="LeBUanw4"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="b9mkgaCF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A80B29D26D;
-	Mon, 16 Feb 2026 14:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46EA62EC0AA;
+	Mon, 16 Feb 2026 14:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771253319; cv=none; b=EXWaWaj2yFPPGvGDRmLCAkRqB26NE/pgvXq0j66sxgUWaxNmdqrmlIZJlAwy+veJqTiLAzAlih7DVXsTAfFxGktcDBs7uCj6dTZLjAZdSOUFL1p4tnTvo/FbeIDDCxwaVbG7PKK4deMOSwfYVB5QnUlhAPiJUVGkM51VHaVLb4s=
+	t=1771253985; cv=none; b=Fn0flUGTitQ+/pNmFAQOXBZL1jLu883s1qPYpaieFQcACP6uluP0hIqwh4t/gifwBwB3u3JwUm8vSd5JIpYjj5vlQmAHLvk5K36ez/Y/avpmClkX91dr4z3O5CNEMx6iJmYz/TfVma+OvsaKyO93w3JfM05A8gBPO7wiOo2GDJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771253319; c=relaxed/simple;
-	bh=3CB0xHGNkH+YsTFlC8f1CrMJKb+o7PHaRENKWCS4kFg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Tbmk0LIOqy81uWw74VxLKrLuSsdaKAk+dq53Nz3jCNxeG8fAiIPznYbZx4GhsnYTG/RPKzN73G1ZnhvPYE826G4LL9m32GmOz1b8XTkF4HzasMNwJaKSH3+7QNC5CSZfNewlWXt/d7I1ZHND6R/JpxkjuVvJ9NTP58UtQ22PKmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=LeBUanw4; arc=none smtp.client-ip=213.97.179.56
+	s=arc-20240116; t=1771253985; c=relaxed/simple;
+	bh=oc55y3wjpZlo833gGfIcwf9bnB6EdTCJlBIxD29V68E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pOBfUWd+7Sc33IA8jiZEM+eLNJChSUs1YHI9NgD59Zw5N0K69txMMbjYUDUcqUOd9iqgS+FqkZMyMhkWVgIVp/oXioRONXw4X3QwoAwexAAWEi0sxt6Z/kf0s1Sf6WGIhhYa3klLSrFhjw+fCsbhWj3zK/zPvc/RgbugQ8bX5GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=b9mkgaCF; arc=none smtp.client-ip=213.97.179.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=RnllYfzOls3PqrsuLzda2MhZBE57obQilCCnQxMfsmw=; b=LeBUanw4On3fVjFFdRZQzHNmWi
-	UAeH3Q9e49uWXqOaJXEOyD14JcqQi5LHtkLRa08ENbeFkUSnOPYFmlesGy1mkcXiLQH35b4EUOv74
-	vuom4f+SJmo619UC/uxH453LPs1M+5lhlI08Hv10KRC07cx1ea3EQ6tSjXI9UNLklUsaUZqn63In9
-	5pJJOGGKezsWjFEN/tgK1EkANikh4i45YsmigrZvlHjV7asb8Vcaeh00ixg1viHRQXZc1huyNxrBs
-	u/+0S9wngMM7cEuUhhrPPqpgK+8x6u8jDt7ML5r8MG/DkdyrMuEe92aCiE99OPi5B30BbtoFy2VLS
-	EULA7IsQ==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vrztn-001KRs-Vv; Mon, 16 Feb 2026 15:48:32 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: mszeredi@redhat.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Luis Henriques <luis@igalia.com>,
-	syzbot+fdebb2dc960aa56c600a@syzkaller.appspotmail.com
-Subject: [PATCH] fuse: fix uninit-value in fuse_dentry_revalidate()
-Date: Mon, 16 Feb 2026 14:48:30 +0000
-Message-ID: <20260216144830.48804-1-luis@igalia.com>
-In-Reply-To: <69917e0d.050a0220.340abe.02e2.GAE@google.com>
-References: <69917e0d.050a0220.340abe.02e2.GAE@google.com>
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=QxvgiaqVGCdeAbIPSiymes9zs7t9hJVWrxFxQjBQv9A=; b=b9mkgaCFKmDR3uUeKv38fBPlRg
+	oNKjrKR415peZXAlfQOXGvzNGm4OZdQ3Qvhm250ewB6UzAT7qLMlYw2siUKErOyOKWzYI5IUxHiJR
+	OIZlmXY8WJ8/hJMlU5ScacR+Rx1MLJYIzg0M+gOLhKPyXhZ3j2B3LxXUth8cwUdfslCjCFM+1I3eM
+	mj9Jp/pI8g3BB+CMww1S3jI+hFu4/zRUSgnd2dTb6OBQPaEn042GgRzjQfbEMeAfmPKxIHb/7rh0L
+	16bGQOltX759CtlZcMszJxAC4L5pRncMOTza9zZPBzIr2NM1xunCaLZ0CxGvQv0WTJX6o8mhZmcZt
+	Jku+Qbgw==;
+Received: from [191.204.193.173] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1vs04J-001Kau-SZ; Mon, 16 Feb 2026 15:59:24 +0100
+Message-ID: <8bec19de-6e6e-418a-a256-5918bd835d98@igalia.com>
+Date: Mon, 16 Feb 2026 11:59:14 -0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] ovl: Use real disk UUID for origin file handles
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>, Chuck Lever <chuck.lever@oracle.com>,
+ Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+ Tom Talpey <tom@talpey.com>, Carlos Maiolino <cem@kernel.org>,
+ Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+ Miklos Szeredi <miklos@szeredi.hu>, Christian Brauner <brauner@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, kernel-dev@igalia.com, vivek@collabora.com,
+ Ludovico de Nittis <ludovico.denittis@collabora.com>
+References: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com>
+ <22b16e24-d10e-43f6-bc2b-eeaa94310e3a@igalia.com>
+ <CAOQ4uxhbz7=XT=C3R8XqL0K_o7KwLKsoNwgk=qJGuw2375MTJw@mail.gmail.com>
+ <0241e2c4-bf11-4372-9eda-cccaba4a6d7d@igalia.com>
+ <CAOQ4uxi988PutUi=Owm5zf6NaCm90PUCJLu7dw8firH8305w-A@mail.gmail.com>
+ <33c1ccbd-abbe-4278-8ab1-d7d645c8b6e8@igalia.com>
+ <CAOQ4uxgCM=q29Vs+35y-2K9k7GP2A2NfPkuqCrUiMUHW+KhbWw@mail.gmail.com>
+ <75a9247a-12f4-4066-9712-c70ab41c274f@igalia.com>
+ <CAOQ4uxig==FAd=2hO0B_CVBDSuBwdqL-zaXkpf-QXn5iEL364g@mail.gmail.com>
+ <CAOQ4uxg6dKr4XB3yAkfGd_ehZkBMcoNHiF5CeB9=3aca44yHRg@mail.gmail.com>
+ <ee38734b-c4c3-4b96-8ff2-b4ce5730b57c@igalia.com>
+ <8ab387b1-c4aa-40a5-946f-f4510d8afd02@igalia.com>
+ <CAOQ4uxiRpwuyfj_Wy3Zj+HAi+jgQOq8nPQK8wmn6Hgsz-9i1fw@mail.gmail.com>
+ <CAOQ4uxhHFvYNAgES9wpM_C-7GvfwXC2xet1ensfeQOyPJRAuNQ@mail.gmail.com>
+ <05c37282-715e-4334-82e6-aea3241f15eb@igalia.com>
+ <CAOQ4uxgzK7qYDFWYT62jH_zq8JkLGussD5ro4cKDqSNQqBiVUA@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <CAOQ4uxgzK7qYDFWYT62jH_zq8JkLGussD5ro4cKDqSNQqBiVUA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [2.64 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [-0.36 / 15.00];
 	R_DKIM_REJECT(1.00)[igalia.com:s=20170329];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	DMARC_POLICY_SOFTFAIL(0.10)[igalia.com : SPF not aligned (relaxed),none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77297-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[luis@igalia.com,linux-fsdevel@vger.kernel.org];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77298-lists,linux-fsdevel=lfdr.de];
+	RCPT_COUNT_TWELVE(0.00)[25];
+	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[andrealmeid@igalia.com,linux-fsdevel@vger.kernel.org];
+	PRECEDENCE_BULK(0.00)[];
 	DKIM_TRACE(0.00)[igalia.com:-];
-	TAGGED_RCPT(0.00)[linux-fsdevel,fdebb2dc960aa56c600a];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,appspotmail.com:email,igalia.com:mid,igalia.com:email]
-X-Rspamd-Queue-Id: B052E144CF3
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[igalia.com:mid,igalia.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 1B4BA144F1C
 X-Rspamd-Action: no action
 
-fuse_dentry_revalidate() may be called with a dentry that didn't had
-->d_time initialised.  The issue was found with KMSAN, where lookup_open()
-calls __d_alloc(), followed by d_revalidate(), as shown below:
+Em 06/02/2026 10:12, Amir Goldstein escreveu:
+> On Thu, Feb 5, 2026 at 9:34 PM André Almeida <andrealmeid@igalia.com> wrote:
+>>
+>> Anyhow, I see that we are now too close to the merge window, and from my
+>> side we can delay this for 7.1 and merge it when it gets 100% clear that
+>> this is the solution that we are looking for.
+>>
+> 
+> I pushed this patch to overlayfs-next branch.
+> It is an internal logic change in overlayfs that does not conflict with
+> other code, so there should not be a problem to send a PR on the
+> second half of the 7.0 merge window if this is useful.
+> 
+> I think that the change itself makes sense because there was never
+> a justification for the strict rule of both upper/lower on the same fs
+> for uuid=off, but I am still not going to send it without knowing that
+> someone finds this useful for their workload.
+> 
 
-=====================================================
-BUG: KMSAN: uninit-value in fuse_dentry_revalidate+0x150/0x13d0 fs/fuse/dir.c:394
- fuse_dentry_revalidate+0x150/0x13d0 fs/fuse/dir.c:394
- d_revalidate fs/namei.c:1030 [inline]
- lookup_open fs/namei.c:4405 [inline]
- open_last_lookups fs/namei.c:4583 [inline]
- path_openat+0x1614/0x64c0 fs/namei.c:4827
- do_file_open+0x2aa/0x680 fs/namei.c:4859
-[...]
+Hi Amir,
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4466 [inline]
- slab_alloc_node mm/slub.c:4788 [inline]
- kmem_cache_alloc_lru_noprof+0x382/0x1280 mm/slub.c:4807
- __d_alloc+0x55/0xa00 fs/dcache.c:1740
- d_alloc_parallel+0x99/0x2740 fs/dcache.c:2604
- lookup_open fs/namei.c:4398 [inline]
- open_last_lookups fs/namei.c:4583 [inline]
- path_openat+0x135f/0x64c0 fs/namei.c:4827
- do_file_open+0x2aa/0x680 fs/namei.c:4859
-[...]
-=====================================================
-
-Reported-by: syzbot+fdebb2dc960aa56c600a@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/69917e0d.050a0220.340abe.02e2.GAE@google.com
-Fixes: 2396356a945b ("fuse: add more control over cache invalidation behaviour")
-Signed-off-by: Luis Henriques <luis@igalia.com>
----
- fs/fuse/dir.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index f25ee47822ad..66f0113ddfaf 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -481,6 +481,11 @@ static int fuse_dentry_init(struct dentry *dentry)
- 	fd->dentry = dentry;
- 	RB_CLEAR_NODE(&fd->node);
- 	dentry->d_fsdata = fd;
-+	/*
-+	 * Initialising d_time (epoch) to '0' ensures the dentry is invalid
-+	 * if compared to fc->epoch, which is initialized to '1'.
-+	 */
-+	dentry->d_time = 0;
- 
- 	return 0;
- }
+I can confirm that this is useful for my workload. After correctly 
+setting this flag for every mount, everything is working good and we can 
+bypass the random UUID issues. Thank you for your help!
 
