@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-77272-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 6Gt7NewNk2nw1AEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77272-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 13:30:36 +0100
+	id 2BeMKY0Uk2nD1QEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 13:58:53 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A27F14358F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 13:30:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0928D14380A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 13:58:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D3615301D32C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 12:30:20 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id BB37A30131C2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 12:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94D221A457;
-	Mon, 16 Feb 2026 12:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03912609C5;
+	Mon, 16 Feb 2026 12:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tSLdwbr7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TONBF18c"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F8B19C566;
-	Mon, 16 Feb 2026 12:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFC321FF47;
+	Mon, 16 Feb 2026 12:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771245018; cv=none; b=WnThfsGiFMa7DTo6/BDM6oHW1gHvMJEEI8NOa4BD/NzSMArTOVr0ALYPeSYeCRVaIA1tludsr7Vghz1i8k1wfi6AIUq2aQ/Ct/OFcKDRyHWHvN/UTZGLfnn+TRdBVLTZPRUXGZhqOZzOOLybT8bFiICRAkojphuF+7i8bZyBBmE=
+	t=1771246667; cv=none; b=PeCs6tBIH1ekT1wRwV5I6RKDzpkMU/V226oOcRzukMHigqWCq6ROHsJVXUao97wmCvOYSp6QwDXvTz5U7U4L4EqS8fIX2H9DyQHrk/FlWF4db0RG6FAQXUZ8/c30GcHOb0xrXeP3VPSjFSPIRNFMBjgJliKXIXWaBmGH0DWI5fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771245018; c=relaxed/simple;
-	bh=AuWXSaDFZkr1cNAvZ2UPwfsOM4JyElxUeF7oO+a1km8=;
+	s=arc-20240116; t=1771246667; c=relaxed/simple;
+	bh=4tME8pMMFwdaFbFs8qZCCfFs7cr3FbZ7R7CaVWX5GlI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KAiugcCwOHT35PLIL7ygQk2MuCcpKYhhCg+UwmN0Qtp2bS/GTBcCkZ571jWgSj0Jf0hSWXqPeke+i0pFk6H3v07ndMocMhkJdiHarrWIoFY8WA62kbun+83d+4WZWWIpCSy2vQTYkmuFSFcruxafU3/GKI15la+ktw3g8w9d8Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tSLdwbr7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD65AC116C6;
-	Mon, 16 Feb 2026 12:30:16 +0000 (UTC)
+	 MIME-Version; b=iG/Cpf9P+fXYUeRscTI2S0hRxmvEdDSBJ2cOl9MycfZ45d+NT/aekZgxMzJuxnGJjxEF1qzlR2sfQSm2GVC/gom7AGb3iKsL1Tui3rrwg+UWqjEl0GM1938lW9K8qaUHFL0WTKjkQEveSfAzxd4r6qrxgQVbsKaVqBflbtp1C5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TONBF18c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAB42C116C6;
+	Mon, 16 Feb 2026 12:57:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771245017;
-	bh=AuWXSaDFZkr1cNAvZ2UPwfsOM4JyElxUeF7oO+a1km8=;
+	s=k20201202; t=1771246666;
+	bh=4tME8pMMFwdaFbFs8qZCCfFs7cr3FbZ7R7CaVWX5GlI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tSLdwbr7aPHNJtLqr4vSJfr1xnnQi5asOsewDaZmwZm2YWDFrj2EJYdz0gqyfL5BB
-	 FbLEXN8slwxkOwGxl8JXHkLMnkLhr6hn1YDelM5RoRLJWs6Cazt3l/069wj9N6jxWY
-	 He+1EMnjPw0vd3cNEwV6UA7N2Ffl/VnLxYBCQuB2SzVPU5fwssbpGNyWe45EOTbL/7
-	 c3eqZrKsJXLohzii3d5HiyjNRnJNcUzHocLSbzVMCfYyGzPhvN+brRJSCYTnNfSvkQ
-	 vWFDxDwrouha2TIqajLGoT0NtRYA+jxby4/Q9THSeFl314knnwjYpFa1SKDZzShrMw
-	 wo8pThRD8e6uA==
+	b=TONBF18cAe66bpyzYUAzlpu6dusJnb8CIVdQ14JSwFEFW0IlilyhN1m+Lts/L2ON6
+	 dPeprmP8lqTFFzI9/FRYN8396BqBKxcOxniF3uYRNr7ufyLJbLw6ixISKSF1yqmVL5
+	 f1r/4uUwWq0fk/K/J4buEb2kqKmxuyZCg+ci80IVnwSvvar/U+d8AjuO8qrL6ySyNR
+	 wRXc/yOOZOjQ9g9dW0hHVEluKv1Q5KVZIDmv298LBgprCbQfmYlIpcfgiJKtvjaT5r
+	 jhsiMpAFFwA0ogUzhD6r5aqPZvT/HErdZND4CO+GpbUylZvFOcAhhZ4ZwCpkF4i5rr
+	 sHBpvvGujM7lw==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL 13/12 for v7.0] kernel misc
-Date: Mon, 16 Feb 2026 13:29:20 +0100
-Message-ID: <20260216-kernel-misc-v70-899e4272dc4d@brauner>
+Subject: [GIT PULL 14/12 for v7.0] vfs misc 2
+Date: Mon, 16 Feb 2026 13:55:40 +0100
+Message-ID: <20260216-vfs-misc-2-v70-fd637c6f249a@brauner>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260206-vfs-v70-7df0b750d594@brauner>
 References: <20260206-vfs-v70-7df0b750d594@brauner>
@@ -61,7 +61,7 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2790; i=brauner@kernel.org; h=from:subject:message-id; bh=AuWXSaDFZkr1cNAvZ2UPwfsOM4JyElxUeF7oO+a1km8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRO5l1Usp3D2Wzh/eUX1IVPfE7ck2ZntNglXtb+L/O86 irBGUz7O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYSf5zhn9qy+zP1fr1c+VH7 9HE3nnjJur2P1KN9/CJWN2ofEbC7fJGRYZ7r1i3MP+d/7w9928Gz6EH83dQL3u8VTvmwCN5hcmf 6wwsA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7158; i=brauner@kernel.org; h=from:subject:message-id; bh=4tME8pMMFwdaFbFs8qZCCfFs7cr3FbZ7R7CaVWX5GlI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWROFpE84vxzO/ujvJcVIraGDZMrCp/Z5xb+5eo1u9ukx ftaPLGko5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCId4YwM7Vs6Nt9TXGR8q8G/ T6t1+dPSBbklk+NSpp/8oVb4OvPyYYa/UiwGiz5+Zd+if+HfG8GEk5v/TY7f9XXzxn/VZXv9pm5 hYwMA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
@@ -77,7 +77,7 @@ X-Spamd-Result: default: False [2.84 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	TAGGED_FROM(0.00)[bounces-77272-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77273-lists,linux-fsdevel=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
@@ -92,7 +92,7 @@ X-Spamd-Result: default: False [2.84 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 3A27F14358F
+X-Rspamd-Queue-Id: 0928D14380A
 X-Rspamd-Action: no action
 
 Hey Linus,
@@ -101,23 +101,51 @@ as announced in [1] this is one of pull requests that was delayed.
 
 /* Summary */
 
-- pid: introduce task_ppid_vnr() helper
+This contains the second and last batch of misc vfs changes.
 
-- Revert "pid: make __task_pid_nr_ns(ns => NULL) safe for zombie callers"
+Features:
 
-- ipc: Add SPDX license id to mqueue.c
+- Optimize close_range() from O(range size) to O(active FDs) by using
+  find_next_bit() on the open_fds bitmap instead of linearly scanning
+  the entire requested range. This is a significant improvement for
+  large-range close operations on sparse file descriptor tables.
 
-- pidfs: convert rb-tree to rhashtable
+- Add FS_XFLAG_VERITY file attribute for fs-verity files, retrievable
+  via FS_IOC_FSGETXATTR and file_getattr(). The flag is read-only. Add
+  tracepoints for fs-verity enable and verify operations, replacing the
+  previously removed debug printk's.
 
-  Mateusz reported performance penalties during task creation because
-  pidfs uses pidmap_lock to add elements into the rbtree. Switch to an
-  rhashtable to have separate fine-grained locking and to decouple from
-  pidmap_lock moving all heavy manipulations outside of it.
+- Prevent nfsd from exporting special kernel filesystems like pidfs and
+  nsfs. These filesystems have custom ->open() and ->permission() export
+  methods that are designed for open_by_handle_at(2) only and are
+  incompatible with nfsd. Update the exportfs documentation accordingly.
 
-  Also move inode allocation outside of pidmap_lock. With this there's
-  nothing happening for pidfs under pidmap_lock.
+Fixes:
 
-- pid: reorder fields in pid_namespace to reduce false sharing
+- Fix KMSAN uninit-value in ovl_fill_real() where strcmp() was used on a
+  non-null-terminated decrypted directory entry name from fscrypt. This
+  triggered on encrypted lower layers when the decrypted name buffer
+  contained uninitialized tail data. The fix also adds VFS-level
+  name_is_dot(), name_is_dotdot(), and name_is_dot_dotdot() helpers,
+  replacing various open-coded "." and ".." checks across the tree.
+
+- Fix read-only fsflags not being reset together with xflags in
+  vfs_fileattr_set(). Currently harmless since no read-only xflags
+  overlap with flags, but this would cause inconsistencies for any future
+  shared read-only flag.
+
+- Return -EREMOTE instead of -ESRCH from PIDFD_GET_INFO when the target
+  process is in a different pid namespace. This lets userspace
+  distinguish "process exited" from "process in another namespace",
+  matching glibc's pidfd_getpid() behavior.
+
+Cleanups:
+
+- Use C-string literals in the Rust seq_file bindings, replacing the
+  kernel::c_str!() macro (available since Rust 1.77).
+
+- Fix typo in d_walk_ret enum comment, add porting notes for the
+  readlink_copy() calling convention change.
 
 Link: https://lore.kernel.org/20260206-vfs-v70-7df0b750d594@brauner [1]
 /* Testing */
@@ -137,47 +165,122 @@ No known conflicts.
 Merge conflicts with other trees
 ================================
 
+This has a merge conflict with my kernel-7.0-rc1.misc pull request:
+
+diff --cc Documentation/filesystems/porting.rst
+index 79e2c3008289,bd4128ccbb67..000000000000
+--- a/Documentation/filesystems/porting.rst
++++ b/Documentation/filesystems/porting.rst
+@@@ -1336,18 -1339,8 +1336,28 @@@ in-tree filesystems have done)
+
+  **mandatory**
+
+ +The ->setlease() file_operation must now be explicitly set in order to provide
+ +support for leases. When set to NULL, the kernel will now return -EINVAL to
+ +attempts to set a lease. Filesystems that wish to use the kernel-internal lease
+ +implementation should set it to generic_setlease().
+ +
+ +---
+ +
+ +**mandatory**
+ +
+ +fs/namei.c primitives that consume filesystem references (do_renameat2(),
+ +do_linkat(), do_symlinkat(), do_mkdirat(), do_mknodat(), do_unlinkat()
+ +and do_rmdir()) are gone; they are replaced with non-consuming analogues
+ +(filename_renameat2(), etc.)
+ +Callers are adjusted - responsibility for dropping the filenames belongs
+ +to them now.
+++
+++---
+++
+++**mandatory**
+++
++ readlink_copy() now requires link length as the 4th argument. Said length needs
++ to match what strlen() would return if it was ran on the string.
++
++ However, if the string is freely accessible for the duration of inode's
++ lifetime, consider using inode_set_cached_link() instead.
+
 The following changes since commit 6cbfdf89470ef3c2110f376a507d135e7a7a7378:
 
   posix_acl: make posix_acl_to_xattr() alloc the buffer (2026-01-16 10:51:12 +0100)
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/kernel-7.0-rc1.misc
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-7.0-rc1.misc.2
 
-for you to fetch changes up to 3673dd3c7dc1f37baf0448164d323d7c7a44d1da:
+for you to fetch changes up to dedfae78f00960d703badc500422d10e1f12b2bc:
 
-  Merge patch series "Revert "pid: make __task_pid_nr_ns(ns => NULL) safe for zombie callers"" (2026-02-10 11:39:31 +0100)
+  fs: add porting notes about readlink_copy() (2026-02-03 15:17:34 +0100)
 
 ----------------------------------------------------------------
-kernel-7.0-rc1.misc
+vfs-7.0-rc1.misc.2
 
-Please consider pulling these changes from the signed kernel-7.0-rc1.misc tag.
+Please consider pulling these changes from the signed vfs-7.0-rc1.misc.2 tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
+Amir Goldstein (4):
+      fs: add helpers name_is_dot{,dot,_dotdot}
+      ovl: use name_is_dot* helpers in readdir code
+      exportfs: clarify the documentation of open()/permission() expotrfs ops
+      nfsd: do not allow exporting of special kernel filesystems
+
+Andrey Albershteyn (3):
+      fs: reset read-only fsflags together with xflags
+      fs: add FS_XFLAG_VERITY for fs-verity files
+      fsverity: add tracepoints
+
+Chelsy Ratnawat (1):
+      fs: dcache: fix typo in enum d_walk_ret comment
+
 Christian Brauner (2):
-      pidfs: convert rb-tree to rhashtable
-      Merge patch series "Revert "pid: make __task_pid_nr_ns(ns => NULL) safe for zombie callers""
+      Merge patch series "name_is_dot* cleanup"
+      Merge patch series "Add traces and file attributes for fs-verity"
 
-Mateusz Guzik (2):
-      pid: reorder fields in pid_namespace to reduce false sharing
-      pidfs: implement ino allocation without the pidmap lock
+Luca Boccassi (1):
+      pidfs: return -EREMOTE when PIDFD_GET_INFO is called on another ns
 
-Oleg Nesterov (2):
-      Revert "pid: make __task_pid_nr_ns(ns => NULL) safe for zombie callers"
-      pid: introduce task_ppid_vnr() helper
+Mateusz Guzik (1):
+      fs: add porting notes about readlink_copy()
 
-Tim Bird (1):
-      ipc: Add SPDX license id to mqueue.c
+Qiliang Yuan (1):
+      fs/file: optimize close_range() complexity from O(N) to O(Sparse)
 
- fs/pidfs.c                    | 174 +++++++++++++++++++++++-------------------
- include/linux/pid.h           |   9 ++-
- include/linux/pid_namespace.h |  14 ++--
- include/linux/pidfs.h         |   3 +-
- ipc/mqueue.c                  |   3 +-
- kernel/pid.c                  |  15 ++--
- 6 files changed, 121 insertions(+), 97 deletions(-)
+Qing Wang (1):
+      ovl: Fix uninit-value in ovl_fill_real
+
+Tamir Duberstein (1):
+      rust: seq_file: replace `kernel::c_str!` with C-Strings
+
+ Documentation/filesystems/fsverity.rst |  16 ++++
+ Documentation/filesystems/porting.rst  |  10 +++
+ MAINTAINERS                            |   1 +
+ fs/crypto/fname.c                      |   2 +-
+ fs/dcache.c                            |  10 +--
+ fs/ecryptfs/crypto.c                   |   2 +-
+ fs/exportfs/expfs.c                    |   3 +-
+ fs/f2fs/dir.c                          |   2 +-
+ fs/f2fs/hash.c                         |   2 +-
+ fs/file.c                              |  10 ++-
+ fs/file_attr.c                         |  10 ++-
+ fs/namei.c                             |   2 +-
+ fs/nfsd/export.c                       |   8 +-
+ fs/overlayfs/readdir.c                 |  41 ++++-----
+ fs/pidfs.c                             |   2 +-
+ fs/smb/server/vfs.c                    |   2 +-
+ fs/verity/enable.c                     |   4 +
+ fs/verity/fsverity_private.h           |   2 +
+ fs/verity/init.c                       |   1 +
+ fs/verity/verify.c                     |   9 ++
+ include/linux/exportfs.h               |  21 ++++-
+ include/linux/fileattr.h               |   6 +-
+ include/linux/fs.h                     |  14 +++-
+ include/trace/events/fsverity.h        | 146 +++++++++++++++++++++++++++++++++
+ include/uapi/linux/fs.h                |   1 +
+ rust/kernel/seq_file.rs                |   4 +-
+ 26 files changed, 274 insertions(+), 57 deletions(-)
+ create mode 100644 include/trace/events/fsverity.h
 
