@@ -1,52 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-77288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77289-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GHfWDRYek2mM1gEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 14:39:34 +0100
+	id aDvrG0Yek2mM1gEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77289-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 14:40:22 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAF73143EBB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 14:39:33 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1526143EEF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 14:40:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 6E61A302A181
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 13:34:36 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id B05F0302B22A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 13:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50458313E34;
-	Mon, 16 Feb 2026 13:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25E0314A73;
+	Mon, 16 Feb 2026 13:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fV3IfwRb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ksVRT/TC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB6F3101A3;
-	Mon, 16 Feb 2026 13:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA2A3101D2;
+	Mon, 16 Feb 2026 13:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771248786; cv=none; b=V53ontN1YPcWcQX+laz5S/k/DNntD8zcl7mmxeH6NUO2yWkIeuVbiEoHb8/tWXW5UFtgJrJybTpz89ip+jxxO6WOdqsPCE9YYx7kAe7p0srOWlpq8SW5sA/taAMBGitxW1p5FRqqekWZ2Few2QlqquEV1sTFLpTKuNjVIAJ8g34=
+	t=1771248790; cv=none; b=QAPlG5lIME0QL/SIte0hlXVU5JrE6jVMI2XD9NFgCAc86Y+EBpyZII6F4wQeA0zi6LjhVwOmqUbaLNSnfg5i+N8a8HeaAg3QdLTIHfVMLDo7Cz5xg+kJ9Wpps5MtJK0uoOMYJnV2kATJZEi3k/fvjWqJCvm8HKE0neC9sUnl/Fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771248786; c=relaxed/simple;
-	bh=nPMJv52b+iIBwowiKMG1azbuD44a7hHTFx5KxGAnUcM=;
+	s=arc-20240116; t=1771248790; c=relaxed/simple;
+	bh=hvRp6kqMtP01OL7JzalGLx5e4r/2rC/9MUn7FHvN4XY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=i4fKXzFISC6N0Uz/i/9vSe2UQG/LDogXHtYQHy1UOpEkibLADYnX+N6Xpx06Qq0VmOOxrGq33y3BCca+VsryMM4uIJERLA83A0M98m4t4+oO8lc5/9wZsusrPMA+zwOugMm04qS7FsqApTSYUCxC7Tb9J7c6v6kDkqdf1iANRQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fV3IfwRb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B3F0C19424;
-	Mon, 16 Feb 2026 13:33:03 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=idvFit61RYP1Xyktd7M/h8y5Yj9laNqOtuWK5Ol4s7mtC3fe/qLR+QShb8ezetHdCEiWT1ERIeUK6gdolYgaMcoR0U/JuzvuPjOd/+BCUSYIIdlrRJwc/2FEwcwJrAsBsyUy1SxfGnC0klgz0v7QdTUcpjFU5PwqPaF9IUvJBeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ksVRT/TC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07EADC19423;
+	Mon, 16 Feb 2026 13:33:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771248786;
-	bh=nPMJv52b+iIBwowiKMG1azbuD44a7hHTFx5KxGAnUcM=;
+	s=k20201202; t=1771248790;
+	bh=hvRp6kqMtP01OL7JzalGLx5e4r/2rC/9MUn7FHvN4XY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=fV3IfwRb6d1jbCeVxB6PkY4ivmmysujLKj5ZaqrrLALmNYk69zYkUmiEfRnRa/mId
-	 3j7LS24QsNw/0iJw00yIbgRDay6BnIDtm1hDog0u59LIepmOpHXIOHgd0hwgJdmuBI
-	 Gwv3jGYuusBrG09DxkEP5aGHuPIPubuExRnHGNBJmMmMSAOOBoqwPwguqTuDyCyOEP
-	 JA6Uwh2JGG+M1W0htA8dJuD14svtgiVc3eisNOWTOlzMzO2DY5EXyC+E8aqi3APCdh
-	 MoBRaQKtGlVLJe89KgL6zvGkdqu1ATNCTkjNN4/Hnq1sO5m+xjOE26iyIRRMeL27hQ
-	 uGqoXobd83WiA==
+	b=ksVRT/TC3Qs/BDIBZ4Xwz+odoJUU6U4EIeZ15q9gpGsQphl0RvHMnhrcx00O/o44L
+	 u8TStq3seKruuRWTCAfpzOHfvucMwPSX/C97ZOFdF4/BgJ2k5CasvzjAlBlIz8PnGE
+	 xM/FeirGoDXBN6jq/9WeT3f3VLf/NQ0Pd1cSjE8XARMfC5mF+5PbhiRTClUXTLwL+M
+	 Y0hFvkeZF34qG+L0Xjh4pF4S+FZRbyYI0oSk4PwJRBtMWT/ASvV16Mf/NyHc0GNp0V
+	 3GVIfwPUoEmJwb3gr4GnWFSDE/pu+9wKia7m2g/O1iqCXPDbyd8Qe0i+qw3gapxDEA
+	 xbK4hkdbLLewQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 16 Feb 2026 14:32:09 +0100
-Subject: [PATCH 13/14] selftests/xattr: sockfs socket xattr tests
+Date: Mon, 16 Feb 2026 14:32:10 +0100
+Subject: [PATCH 14/14] selftests/xattr: test xattrs on various socket
+ families
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +56,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260216-work-xattr-socket-v1-13-c2efa4f74cb7@kernel.org>
+Message-Id: <20260216-work-xattr-socket-v1-14-c2efa4f74cb7@kernel.org>
 References: <20260216-work-xattr-socket-v1-0-c2efa4f74cb7@kernel.org>
 In-Reply-To: <20260216-work-xattr-socket-v1-0-c2efa4f74cb7@kernel.org>
 To: linux-fsdevel@vger.kernel.org
@@ -67,12 +68,12 @@ Cc: Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
  Jakub Kicinski <kuba@kernel.org>, Jann Horn <jannh@google.com>, 
  netdev@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-47773
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11906; i=brauner@kernel.org;
- h=from:subject:message-id; bh=nPMJv52b+iIBwowiKMG1azbuD44a7hHTFx5KxGAnUcM=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWROlom79bXAWlx6913rXc5Xu2ODZtUmyDdtfFe12Nyea
- fLD3tl7O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACby/hYjwxf7EEm9LVJ/X35n
- +L9P7uvcI5Hr5L4l5erenHumOF7/Wy7D/6CpC/VyEy2+NSqndjE+2zFVbP+pSWsMF1joT48oKyi
- L4QEA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6636; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=hvRp6kqMtP01OL7JzalGLx5e4r/2rC/9MUn7FHvN4XY=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWROlokr042WWq769uIti0fds8S7VFz8zzcGv+fTK5kk1
+ xG/XdC1o5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCJCHIwML3UXZu86bHnFwruo
+ 6I2KarM716f/Dv4mfcYbKyuezPq8h+GvdEPpDo5JyQ9slPgXCLvfeSyufcV+SvqkGXd2ZKy1YH/
+ LCAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 X-Rspamd-Server: lfdr
@@ -80,18 +81,18 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77288-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77289-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
 	RCPT_COUNT_TWELVE(0.00)[15];
 	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
@@ -101,116 +102,145 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: AAF73143EBB
+X-Rspamd-Queue-Id: E1526143EEF
 X-Rspamd-Action: no action
 
-Test user.* extended attribute operations on sockfs sockets. Sockets
-created via socket() have their inodes in sockfs, which now supports
-user.* xattrs with per-inode limits.
+Test user.* xattr operations on sockets from different address families:
+AF_INET, AF_INET6, AF_NETLINK, and AF_PACKET. All socket types use
+sockfs for their inodes, so user.* xattrs should work regardless of
+address family.
 
-Tests fsetxattr/fgetxattr/flistxattr/fremovexattr operations including
-set/get, listing (verifies system.sockprotoname presence), remove,
-update, XATTR_CREATE/XATTR_REPLACE flags, empty values, size queries,
-and buffer-too-small errors.
+Each fixture creates a socket (no bind needed) and verifies the full
+fsetxattr/fgetxattr/flistxattr/fremovexattr cycle. AF_INET6 skips if
+not supported; AF_PACKET skips if CAP_NET_RAW is unavailable.
 
-Also tests per-inode limit enforcement: maximum 128 xattrs, maximum
-128KB total value size, limit recovery after removal, and independent
-limits across different sockets.
+Also tests abstract namespace AF_UNIX sockets, which live in sockfs
+(not on a filesystem) and should support user.* xattrs.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
  .../testing/selftests/filesystems/xattr/.gitignore |   1 +
  tools/testing/selftests/filesystems/xattr/Makefile |   2 +-
- .../filesystems/xattr/xattr_sockfs_test.c          | 363 +++++++++++++++++++++
- 3 files changed, 365 insertions(+), 1 deletion(-)
+ .../filesystems/xattr/xattr_socket_types_test.c    | 177 +++++++++++++++++++++
+ 3 files changed, 179 insertions(+), 1 deletion(-)
 
 diff --git a/tools/testing/selftests/filesystems/xattr/.gitignore b/tools/testing/selftests/filesystems/xattr/.gitignore
-index 5fd015d2257a..00a59c89efab 100644
+index 00a59c89efab..092d14094c0f 100644
 --- a/tools/testing/selftests/filesystems/xattr/.gitignore
 +++ b/tools/testing/selftests/filesystems/xattr/.gitignore
-@@ -1 +1,2 @@
+@@ -1,2 +1,3 @@
  xattr_socket_test
-+xattr_sockfs_test
+ xattr_sockfs_test
++xattr_socket_types_test
 diff --git a/tools/testing/selftests/filesystems/xattr/Makefile b/tools/testing/selftests/filesystems/xattr/Makefile
-index e3d8dca80faa..2cd722dba47b 100644
+index 2cd722dba47b..95364ffb10e9 100644
 --- a/tools/testing/selftests/filesystems/xattr/Makefile
 +++ b/tools/testing/selftests/filesystems/xattr/Makefile
 @@ -1,6 +1,6 @@
  # SPDX-License-Identifier: GPL-2.0
  
  CFLAGS += $(KHDR_INCLUDES)
--TEST_GEN_PROGS := xattr_socket_test
-+TEST_GEN_PROGS := xattr_socket_test xattr_sockfs_test
+-TEST_GEN_PROGS := xattr_socket_test xattr_sockfs_test
++TEST_GEN_PROGS := xattr_socket_test xattr_sockfs_test xattr_socket_types_test
  
  include ../../lib.mk
-diff --git a/tools/testing/selftests/filesystems/xattr/xattr_sockfs_test.c b/tools/testing/selftests/filesystems/xattr/xattr_sockfs_test.c
+diff --git a/tools/testing/selftests/filesystems/xattr/xattr_socket_types_test.c b/tools/testing/selftests/filesystems/xattr/xattr_socket_types_test.c
 new file mode 100644
-index 000000000000..b4824b01a86d
+index 000000000000..bfabe91b2ed1
 --- /dev/null
-+++ b/tools/testing/selftests/filesystems/xattr/xattr_sockfs_test.c
-@@ -0,0 +1,363 @@
++++ b/tools/testing/selftests/filesystems/xattr/xattr_socket_types_test.c
+@@ -0,0 +1,177 @@
 +// SPDX-License-Identifier: GPL-2.0
 +// Copyright (c) 2026 Christian Brauner <brauner@kernel.org>
 +/*
-+ * Test extended attributes on sockfs sockets.
++ * Test user.* xattrs on various socket families.
 + *
-+ * Sockets created via socket() have their inodes in sockfs, which supports
-+ * user.* xattrs with per-inode limits: up to 128 xattrs and 128KB total
-+ * value size. These tests verify xattr operations via fsetxattr/fgetxattr/
-+ * flistxattr/fremovexattr on the socket fd, as well as limit enforcement.
++ * All socket types use sockfs for their inodes, so user.* xattrs should
++ * work on any socket regardless of address family. This tests AF_INET,
++ * AF_INET6, AF_NETLINK, AF_PACKET, and abstract namespace AF_UNIX sockets.
 + */
 +
 +#define _GNU_SOURCE
 +#include <errno.h>
++#include <stddef.h>
 +#include <stdio.h>
 +#include <stdlib.h>
 +#include <string.h>
 +#include <sys/socket.h>
 +#include <sys/types.h>
++#include <sys/un.h>
 +#include <sys/xattr.h>
++#include <linux/netlink.h>
 +#include <unistd.h>
 +
 +#include "../../kselftest_harness.h"
 +
 +#define TEST_XATTR_NAME		"user.testattr"
 +#define TEST_XATTR_VALUE	"testvalue"
-+#define TEST_XATTR_VALUE2	"newvalue"
 +
-+/* Per-inode limits for user.* xattrs on sockfs (from include/linux/xattr.h) */
-+#define SIMPLE_XATTR_MAX_NR	128
-+#define SIMPLE_XATTR_MAX_SIZE	(128 << 10)	/* 128 KB */
-+
-+#ifndef XATTR_SIZE_MAX
-+#define XATTR_SIZE_MAX 65536
-+#endif
-+
-+/*
-+ * Fixture for sockfs socket xattr tests.
-+ * Creates an AF_UNIX socket (lives in sockfs, not bound to any path).
-+ */
-+FIXTURE(xattr_sockfs)
++FIXTURE(xattr_socket_types)
 +{
 +	int sockfd;
 +};
 +
-+FIXTURE_SETUP(xattr_sockfs)
++FIXTURE_VARIANT(xattr_socket_types)
 +{
-+	self->sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
++	int family;
++	int type;
++	int protocol;
++};
++
++FIXTURE_VARIANT_ADD(xattr_socket_types, inet) {
++	.family = AF_INET,
++	.type = SOCK_STREAM,
++	.protocol = 0,
++};
++
++FIXTURE_VARIANT_ADD(xattr_socket_types, inet6) {
++	.family = AF_INET6,
++	.type = SOCK_STREAM,
++	.protocol = 0,
++};
++
++FIXTURE_VARIANT_ADD(xattr_socket_types, netlink) {
++	.family = AF_NETLINK,
++	.type = SOCK_RAW,
++	.protocol = NETLINK_USERSOCK,
++};
++
++FIXTURE_VARIANT_ADD(xattr_socket_types, packet) {
++	.family = AF_PACKET,
++	.type = SOCK_DGRAM,
++	.protocol = 0,
++};
++
++FIXTURE_SETUP(xattr_socket_types)
++{
++	self->sockfd = socket(variant->family, variant->type,
++			      variant->protocol);
++	if (self->sockfd < 0 &&
++	    (errno == EAFNOSUPPORT || errno == EPERM || errno == EACCES))
++		SKIP(return, "socket(%d, %d, %d) not available: %s",
++		     variant->family, variant->type, variant->protocol,
++		     strerror(errno));
 +	ASSERT_GE(self->sockfd, 0) {
-+		TH_LOG("Failed to create socket: %s", strerror(errno));
++		TH_LOG("Failed to create socket(%d, %d, %d): %s",
++		       variant->family, variant->type, variant->protocol,
++		       strerror(errno));
 +	}
 +}
 +
-+FIXTURE_TEARDOWN(xattr_sockfs)
++FIXTURE_TEARDOWN(xattr_socket_types)
 +{
 +	if (self->sockfd >= 0)
 +		close(self->sockfd);
 +}
 +
-+TEST_F(xattr_sockfs, set_get_user_xattr)
++TEST_F(xattr_socket_types, set_get_list_remove)
 +{
-+	char buf[256];
++	char buf[256], list[4096], *ptr;
 +	ssize_t ret;
++	bool found;
 +
 +	ret = fsetxattr(self->sockfd, TEST_XATTR_NAME,
 +			TEST_XATTR_VALUE, strlen(TEST_XATTR_VALUE), 0);
@@ -220,295 +250,80 @@ index 000000000000..b4824b01a86d
 +
 +	memset(buf, 0, sizeof(buf));
 +	ret = fgetxattr(self->sockfd, TEST_XATTR_NAME, buf, sizeof(buf));
-+	ASSERT_EQ(ret, (ssize_t)strlen(TEST_XATTR_VALUE)) {
-+		TH_LOG("fgetxattr returned %zd: %s", ret, strerror(errno));
-+	}
++	ASSERT_EQ(ret, (ssize_t)strlen(TEST_XATTR_VALUE));
 +	ASSERT_STREQ(buf, TEST_XATTR_VALUE);
-+}
-+
-+/*
-+ * Test listing xattrs on a sockfs socket.
-+ * Should include user.* xattrs and system.sockprotoname.
-+ */
-+TEST_F(xattr_sockfs, list_user_xattr)
-+{
-+	char list[4096];
-+	ssize_t ret;
-+	char *ptr;
-+	bool found_user = false;
-+	bool found_proto = false;
-+
-+	ret = fsetxattr(self->sockfd, TEST_XATTR_NAME,
-+			TEST_XATTR_VALUE, strlen(TEST_XATTR_VALUE), 0);
-+	ASSERT_EQ(ret, 0) {
-+		TH_LOG("fsetxattr failed: %s", strerror(errno));
-+	}
 +
 +	memset(list, 0, sizeof(list));
 +	ret = flistxattr(self->sockfd, list, sizeof(list));
-+	ASSERT_GT(ret, 0) {
-+		TH_LOG("flistxattr failed: %s", strerror(errno));
-+	}
-+
++	ASSERT_GT(ret, 0);
++	found = false;
 +	for (ptr = list; ptr < list + ret; ptr += strlen(ptr) + 1) {
 +		if (strcmp(ptr, TEST_XATTR_NAME) == 0)
-+			found_user = true;
-+		if (strcmp(ptr, "system.sockprotoname") == 0)
-+			found_proto = true;
++			found = true;
 +	}
-+	ASSERT_TRUE(found_user) {
-+		TH_LOG("user xattr not found in list");
-+	}
-+	ASSERT_TRUE(found_proto) {
-+		TH_LOG("system.sockprotoname not found in list");
-+	}
-+}
-+
-+TEST_F(xattr_sockfs, remove_user_xattr)
-+{
-+	char buf[256];
-+	ssize_t ret;
-+
-+	ret = fsetxattr(self->sockfd, TEST_XATTR_NAME,
-+			TEST_XATTR_VALUE, strlen(TEST_XATTR_VALUE), 0);
-+	ASSERT_EQ(ret, 0);
++	ASSERT_TRUE(found);
 +
 +	ret = fremovexattr(self->sockfd, TEST_XATTR_NAME);
-+	ASSERT_EQ(ret, 0) {
-+		TH_LOG("fremovexattr failed: %s", strerror(errno));
-+	}
++	ASSERT_EQ(ret, 0);
 +
 +	ret = fgetxattr(self->sockfd, TEST_XATTR_NAME, buf, sizeof(buf));
 +	ASSERT_EQ(ret, -1);
 +	ASSERT_EQ(errno, ENODATA);
 +}
 +
-+TEST_F(xattr_sockfs, update_user_xattr)
++/*
++ * Test abstract namespace AF_UNIX socket.
++ * Abstract sockets don't have a filesystem path; their inodes live in
++ * sockfs so user.* xattrs should work via fsetxattr/fgetxattr.
++ */
++FIXTURE(xattr_abstract)
++{
++	int sockfd;
++};
++
++FIXTURE_SETUP(xattr_abstract)
++{
++	struct sockaddr_un addr;
++	char name[64];
++	int ret, len;
++
++	self->sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
++	ASSERT_GE(self->sockfd, 0);
++
++	len = snprintf(name, sizeof(name), "xattr_test_abstract_%d", getpid());
++
++	memset(&addr, 0, sizeof(addr));
++	addr.sun_family = AF_UNIX;
++	addr.sun_path[0] = '\0';
++	memcpy(&addr.sun_path[1], name, len);
++
++	ret = bind(self->sockfd, (struct sockaddr *)&addr,
++		   offsetof(struct sockaddr_un, sun_path) + 1 + len);
++	ASSERT_EQ(ret, 0);
++}
++
++FIXTURE_TEARDOWN(xattr_abstract)
++{
++	if (self->sockfd >= 0)
++		close(self->sockfd);
++}
++
++TEST_F(xattr_abstract, set_get)
 +{
 +	char buf[256];
 +	ssize_t ret;
 +
 +	ret = fsetxattr(self->sockfd, TEST_XATTR_NAME,
 +			TEST_XATTR_VALUE, strlen(TEST_XATTR_VALUE), 0);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = fsetxattr(self->sockfd, TEST_XATTR_NAME,
-+			TEST_XATTR_VALUE2, strlen(TEST_XATTR_VALUE2), 0);
-+	ASSERT_EQ(ret, 0);
-+
-+	memset(buf, 0, sizeof(buf));
-+	ret = fgetxattr(self->sockfd, TEST_XATTR_NAME, buf, sizeof(buf));
-+	ASSERT_EQ(ret, (ssize_t)strlen(TEST_XATTR_VALUE2));
-+	ASSERT_STREQ(buf, TEST_XATTR_VALUE2);
-+}
-+
-+TEST_F(xattr_sockfs, xattr_create_flag)
-+{
-+	int ret;
-+
-+	ret = fsetxattr(self->sockfd, TEST_XATTR_NAME,
-+			TEST_XATTR_VALUE, strlen(TEST_XATTR_VALUE), 0);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = fsetxattr(self->sockfd, TEST_XATTR_NAME,
-+			TEST_XATTR_VALUE2, strlen(TEST_XATTR_VALUE2),
-+			XATTR_CREATE);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, EEXIST);
-+}
-+
-+TEST_F(xattr_sockfs, xattr_replace_flag)
-+{
-+	int ret;
-+
-+	ret = fsetxattr(self->sockfd, TEST_XATTR_NAME,
-+			TEST_XATTR_VALUE, strlen(TEST_XATTR_VALUE),
-+			XATTR_REPLACE);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, ENODATA);
-+}
-+
-+TEST_F(xattr_sockfs, get_nonexistent)
-+{
-+	char buf[256];
-+	ssize_t ret;
-+
-+	ret = fgetxattr(self->sockfd, "user.nonexistent", buf, sizeof(buf));
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, ENODATA);
-+}
-+
-+TEST_F(xattr_sockfs, empty_value)
-+{
-+	ssize_t ret;
-+
-+	ret = fsetxattr(self->sockfd, TEST_XATTR_NAME, "", 0, 0);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = fgetxattr(self->sockfd, TEST_XATTR_NAME, NULL, 0);
-+	ASSERT_EQ(ret, 0);
-+}
-+
-+TEST_F(xattr_sockfs, get_size)
-+{
-+	ssize_t ret;
-+
-+	ret = fsetxattr(self->sockfd, TEST_XATTR_NAME,
-+			TEST_XATTR_VALUE, strlen(TEST_XATTR_VALUE), 0);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = fgetxattr(self->sockfd, TEST_XATTR_NAME, NULL, 0);
-+	ASSERT_EQ(ret, (ssize_t)strlen(TEST_XATTR_VALUE));
-+}
-+
-+TEST_F(xattr_sockfs, buffer_too_small)
-+{
-+	char buf[2];
-+	ssize_t ret;
-+
-+	ret = fsetxattr(self->sockfd, TEST_XATTR_NAME,
-+			TEST_XATTR_VALUE, strlen(TEST_XATTR_VALUE), 0);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = fgetxattr(self->sockfd, TEST_XATTR_NAME, buf, sizeof(buf));
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, ERANGE);
-+}
-+
-+/*
-+ * Test maximum number of user.* xattrs per socket.
-+ * The kernel enforces SIMPLE_XATTR_MAX_NR (128), so the 129th should
-+ * fail with ENOSPC.
-+ */
-+TEST_F(xattr_sockfs, max_nr_xattrs)
-+{
-+	char name[32];
-+	int i, ret;
-+
-+	for (i = 0; i < SIMPLE_XATTR_MAX_NR; i++) {
-+		snprintf(name, sizeof(name), "user.test%03d", i);
-+		ret = fsetxattr(self->sockfd, name, "v", 1, 0);
-+		ASSERT_EQ(ret, 0) {
-+			TH_LOG("fsetxattr %s failed at i=%d: %s",
-+			       name, i, strerror(errno));
-+		}
-+	}
-+
-+	ret = fsetxattr(self->sockfd, "user.overflow", "v", 1, 0);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, ENOSPC) {
-+		TH_LOG("Expected ENOSPC for xattr %d, got %s",
-+		       SIMPLE_XATTR_MAX_NR + 1, strerror(errno));
-+	}
-+}
-+
-+/*
-+ * Test maximum total value size for user.* xattrs.
-+ * The kernel enforces SIMPLE_XATTR_MAX_SIZE (128KB). Individual xattr
-+ * values are limited to XATTR_SIZE_MAX (64KB) by the VFS, so we need
-+ * at least two xattrs to hit the total limit.
-+ */
-+TEST_F(xattr_sockfs, max_xattr_size)
-+{
-+	char *value;
-+	int ret;
-+
-+	value = malloc(XATTR_SIZE_MAX);
-+	ASSERT_NE(value, NULL);
-+	memset(value, 'A', XATTR_SIZE_MAX);
-+
-+	/* First 64KB xattr - total = 64KB */
-+	ret = fsetxattr(self->sockfd, "user.big1", value, XATTR_SIZE_MAX, 0);
 +	ASSERT_EQ(ret, 0) {
-+		TH_LOG("first large xattr failed: %s", strerror(errno));
-+	}
-+
-+	/* Second 64KB xattr - total = 128KB (exactly at limit) */
-+	ret = fsetxattr(self->sockfd, "user.big2", value, XATTR_SIZE_MAX, 0);
-+	free(value);
-+	ASSERT_EQ(ret, 0) {
-+		TH_LOG("second large xattr failed: %s", strerror(errno));
-+	}
-+
-+	/* Third xattr with 1 byte - total > 128KB, should fail */
-+	ret = fsetxattr(self->sockfd, "user.big3", "v", 1, 0);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, ENOSPC) {
-+		TH_LOG("Expected ENOSPC when exceeding size limit, got %s",
++		TH_LOG("fsetxattr on abstract socket failed: %s",
 +		       strerror(errno));
 +	}
-+}
 +
-+/*
-+ * Test that removing an xattr frees limit space, allowing re-addition.
-+ */
-+TEST_F(xattr_sockfs, limit_remove_readd)
-+{
-+	char name[32];
-+	int i, ret;
-+
-+	/* Fill up to the maximum count */
-+	for (i = 0; i < SIMPLE_XATTR_MAX_NR; i++) {
-+		snprintf(name, sizeof(name), "user.test%03d", i);
-+		ret = fsetxattr(self->sockfd, name, "v", 1, 0);
-+		ASSERT_EQ(ret, 0);
-+	}
-+
-+	/* Verify we're at the limit */
-+	ret = fsetxattr(self->sockfd, "user.overflow", "v", 1, 0);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, ENOSPC);
-+
-+	/* Remove one xattr */
-+	ret = fremovexattr(self->sockfd, "user.test000");
-+	ASSERT_EQ(ret, 0);
-+
-+	/* Now we should be able to add one more */
-+	ret = fsetxattr(self->sockfd, "user.newattr", "v", 1, 0);
-+	ASSERT_EQ(ret, 0) {
-+		TH_LOG("re-add after remove failed: %s", strerror(errno));
-+	}
-+}
-+
-+/*
-+ * Test that two different sockets have independent xattr limits.
-+ */
-+TEST_F(xattr_sockfs, limits_per_inode)
-+{
-+	char buf[256];
-+	int sock2;
-+	ssize_t ret;
-+
-+	sock2 = socket(AF_UNIX, SOCK_STREAM, 0);
-+	ASSERT_GE(sock2, 0);
-+
-+	/* Set xattr on first socket */
-+	ret = fsetxattr(self->sockfd, TEST_XATTR_NAME,
-+			TEST_XATTR_VALUE, strlen(TEST_XATTR_VALUE), 0);
-+	ASSERT_EQ(ret, 0);
-+
-+	/* First socket's xattr should not be visible on second socket */
-+	ret = fgetxattr(sock2, TEST_XATTR_NAME, NULL, 0);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, ENODATA);
-+
-+	/* Second socket should independently accept xattrs */
-+	ret = fsetxattr(sock2, TEST_XATTR_NAME,
-+			TEST_XATTR_VALUE2, strlen(TEST_XATTR_VALUE2), 0);
-+	ASSERT_EQ(ret, 0);
-+
-+	/* Verify each socket has its own value */
 +	memset(buf, 0, sizeof(buf));
 +	ret = fgetxattr(self->sockfd, TEST_XATTR_NAME, buf, sizeof(buf));
 +	ASSERT_EQ(ret, (ssize_t)strlen(TEST_XATTR_VALUE));
 +	ASSERT_STREQ(buf, TEST_XATTR_VALUE);
-+
-+	memset(buf, 0, sizeof(buf));
-+	ret = fgetxattr(sock2, TEST_XATTR_NAME, buf, sizeof(buf));
-+	ASSERT_EQ(ret, (ssize_t)strlen(TEST_XATTR_VALUE2));
-+	ASSERT_STREQ(buf, TEST_XATTR_VALUE2);
-+
-+	close(sock2);
 +}
 +
 +TEST_HARNESS_MAIN
