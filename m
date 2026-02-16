@@ -1,286 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-77273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 2BeMKY0Uk2nD1QEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 13:58:53 +0100
+	id oKtFBU0Zk2nD1QEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 14:19:09 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0928D14380A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 13:58:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68A95143C28
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 14:19:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id BB37A30131C2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 12:57:49 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0ED793014646
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 13:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03912609C5;
-	Mon, 16 Feb 2026 12:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FF82FFDEA;
+	Mon, 16 Feb 2026 13:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TONBF18c"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="p48jLXCy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFC321FF47;
-	Mon, 16 Feb 2026 12:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A39424BBFD
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Feb 2026 13:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771246667; cv=none; b=PeCs6tBIH1ekT1wRwV5I6RKDzpkMU/V226oOcRzukMHigqWCq6ROHsJVXUao97wmCvOYSp6QwDXvTz5U7U4L4EqS8fIX2H9DyQHrk/FlWF4db0RG6FAQXUZ8/c30GcHOb0xrXeP3VPSjFSPIRNFMBjgJliKXIXWaBmGH0DWI5fY=
+	t=1771247908; cv=none; b=CD161dPyWMgrONJdcsH/tXgsZFxy3RLPRhOukw+dNuCAjs5dXd0pkgH/rX8WkDgPmMpDKesiAr1TVCb+nzfP2vmBGmRC6wqChK+zkD2ehXr5reZsNX0GdMwrICZoYe9rHJbtfisS6FWU9HbA8W3LmMoUPjp1ZaoadCqxHzkcF+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771246667; c=relaxed/simple;
-	bh=4tME8pMMFwdaFbFs8qZCCfFs7cr3FbZ7R7CaVWX5GlI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iG/Cpf9P+fXYUeRscTI2S0hRxmvEdDSBJ2cOl9MycfZ45d+NT/aekZgxMzJuxnGJjxEF1qzlR2sfQSm2GVC/gom7AGb3iKsL1Tui3rrwg+UWqjEl0GM1938lW9K8qaUHFL0WTKjkQEveSfAzxd4r6qrxgQVbsKaVqBflbtp1C5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TONBF18c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAB42C116C6;
-	Mon, 16 Feb 2026 12:57:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771246666;
-	bh=4tME8pMMFwdaFbFs8qZCCfFs7cr3FbZ7R7CaVWX5GlI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TONBF18cAe66bpyzYUAzlpu6dusJnb8CIVdQ14JSwFEFW0IlilyhN1m+Lts/L2ON6
-	 dPeprmP8lqTFFzI9/FRYN8396BqBKxcOxniF3uYRNr7ufyLJbLw6ixISKSF1yqmVL5
-	 f1r/4uUwWq0fk/K/J4buEb2kqKmxuyZCg+ci80IVnwSvvar/U+d8AjuO8qrL6ySyNR
-	 wRXc/yOOZOjQ9g9dW0hHVEluKv1Q5KVZIDmv298LBgprCbQfmYlIpcfgiJKtvjaT5r
-	 jhsiMpAFFwA0ogUzhD6r5aqPZvT/HErdZND4CO+GpbUylZvFOcAhhZ4ZwCpkF4i5rr
-	 sHBpvvGujM7lw==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL 14/12 for v7.0] vfs misc 2
-Date: Mon, 16 Feb 2026 13:55:40 +0100
-Message-ID: <20260216-vfs-misc-2-v70-fd637c6f249a@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260206-vfs-v70-7df0b750d594@brauner>
-References: <20260206-vfs-v70-7df0b750d594@brauner>
+	s=arc-20240116; t=1771247908; c=relaxed/simple;
+	bh=vZEGwyLXtwS50t+qseTk7VEoyijqYlIwNiT1NUT/MaQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T4cpfPs/rkzZPhCyZQDBx1W27EaK867DyVDFsXi0RguUWWi27qKdfdgpLQq1nB38XxhZcRCjcOph6qKp400ZUYp9/L5vPNn+ijWpN7MBN+upg9ASgsNp8+0vjxCAAGLxXT5yRaMbj0//amjvVsdE1VXLndm0BPisiCmA6QSHNU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=p48jLXCy; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c29d36eb-0706-4f3c-aaed-de7d9ef74bed@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1771247894;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V05ejPvopLo9DRbeUi1eZlG4ZZP00I4HL4AVm44w2ig=;
+	b=p48jLXCyB4VQIxa8U3Gdq7k8wKO8XyymBq6W8BKSRkDN7UxEod2Qo9XWM6In41SsmVr+1X
+	6bxBpYh3sSb2Zy2qbVUyeFagIxBxAeBh7JjAaEUhiDSJL47UcvZlEFoNMF1POC5KagDyAC
+	gKbYB0/kLVuZKWkLCLWUh1bnjRK+ODA=
+Date: Mon, 16 Feb 2026 14:18:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7158; i=brauner@kernel.org; h=from:subject:message-id; bh=4tME8pMMFwdaFbFs8qZCCfFs7cr3FbZ7R7CaVWX5GlI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWROFpE84vxzO/ujvJcVIraGDZMrCp/Z5xb+5eo1u9ukx ftaPLGko5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCId4YwM7Vs6Nt9TXGR8q8G/ T6t1+dPSBbklk+NSpp/8oVb4OvPyYYa/UiwGiz5+Zd+if+HfG8GEk5v/TY7f9XXzxn/VZXv9pm5 hYwMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Buffered atomic writes
+To: Jan Kara <jack@suse.cz>, Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org,
+ Andres Freund <andres@anarazel.de>, djwong@kernel.org,
+ john.g.garry@oracle.com, willy@infradead.org, hch@lst.de,
+ ritesh.list@gmail.com, Luis Chamberlain <mcgrof@kernel.org>,
+ dchinner@redhat.com, Javier Gonzalez <javier.gonz@samsung.com>,
+ gost.dev@samsung.com, tytso@mit.edu, p.raghav@samsung.com,
+ vi.shah@samsung.com
+References: <d0c4d95b-8064-4a7e-996d-7ad40eb4976b@linux.dev>
+ <aY8n97G_hXzA5MMn@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <w3vwdaygcz3prsxwv43blo4co666mragpdwaxihbirt5stl4vr@agyz4mnaxghj>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Pankaj Raghav <pankaj.raghav@linux.dev>
+In-Reply-To: <w3vwdaygcz3prsxwv43blo4co666mragpdwaxihbirt5stl4vr@agyz4mnaxghj>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [2.84 / 15.00];
-	MID_END_EQ_FROM_USER_PART(4.00)[];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	DMARC_POLICY_ALLOW(-0.50)[linux.dev,none];
+	R_DKIM_ALLOW(-0.20)[linux.dev:s=key1];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	TAGGED_FROM(0.00)[bounces-77273-lists,linux-fsdevel=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-77274-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[3];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kvack.org,lists.linux-foundation.org,anarazel.de,kernel.org,oracle.com,infradead.org,lst.de,gmail.com,redhat.com,samsung.com,mit.edu];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	PRECEDENCE_BULK(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[pankaj.raghav@linux.dev,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[linux.dev:+];
+	HAS_WP_URI(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MISSING_XM_UA(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 0928D14380A
+X-Rspamd-Queue-Id: 68A95143C28
 X-Rspamd-Action: no action
 
-Hey Linus,
 
-as announced in [1] this is one of pull requests that was delayed.
 
-/* Summary */
+On 2/16/2026 12:38 PM, Jan Kara wrote:
+> Hi!
+> 
+> On Fri 13-02-26 19:02:39, Ojaswin Mujoo wrote:
+>> Another thing that came up is to consider using write through semantics
+>> for buffered atomic writes, where we are able to transition page to
+>> writeback state immediately after the write and avoid any other users to
+>> modify the data till writeback completes. This might affect performance
+>> since we won't be able to batch similar atomic IOs but maybe
+>> applications like postgres would not mind this too much. If we go with
+>> this approach, we will be able to avoid worrying too much about other
+>> users changing atomic data underneath us.
+>>
+>> An argument against this however is that it is user's responsibility to
+>> not do non atomic IO over an atomic range and this shall be considered a
+>> userspace usage error. This is similar to how there are ways users can
+>> tear a dio if they perform overlapping writes. [1].
+> 
+> Yes, I was wondering whether the write-through semantics would make sense
+> as well. Intuitively it should make things simpler because you could
+> practially reuse the atomic DIO write path. Only that you'd first copy
+> data into the page cache and issue dio write from those folios. No need for
+> special tracking of which folios actually belong together in atomic write,
+> no need for cluttering standard folio writeback path, in case atomic write
+> cannot happen (e.g. because you cannot allocate appropriately aligned
+> blocks) you get the error back rightaway, ...
+> 
+> Of course this all depends on whether such semantics would be actually
+> useful for users such as PostgreSQL.
 
-This contains the second and last batch of misc vfs changes.
+One issue might be the performance, especially if the atomic max unit is in the 
+smaller end such as 16k or 32k (which is fairly common). But it will avoid the 
+overlapping writes issue and can easily leverage the direct IO path.
 
-Features:
+But one thing that postgres really cares about is the integrity of a database 
+block. So if there is an IO that is a multiple of an atomic write unit (one 
+atomic unit encapsulates the whole DB page), it is not a problem if tearing 
+happens on the atomic boundaries. This fits very well with what NVMe calls 
+Multiple Atomicity Mode (MAM) [1].
 
-- Optimize close_range() from O(range size) to O(active FDs) by using
-  find_next_bit() on the open_fds bitmap instead of linearly scanning
-  the entire requested range. This is a significant improvement for
-  large-range close operations on sparse file descriptor tables.
+We don't have any semantics for MaM at the moment but that could increase the 
+performance as we can do larger IOs but still get the atomic guarantees certain 
+applications care about.
 
-- Add FS_XFLAG_VERITY file attribute for fs-verity files, retrievable
-  via FS_IOC_FSGETXATTR and file_getattr(). The flag is read-only. Add
-  tracepoints for fs-verity enable and verify operations, replacing the
-  previously removed debug printk's.
 
-- Prevent nfsd from exporting special kernel filesystems like pidfs and
-  nsfs. These filesystems have custom ->open() and ->permission() export
-  methods that are designed for open_by_handle_at(2) only and are
-  incompatible with nfsd. Update the exportfs documentation accordingly.
+[1] 
+https://nvmexpress.org/wp-content/uploads/NVM-Express-NVM-Command-Set-Specification-Revision-1.1-2024.08.05-Ratified.pdf 
 
-Fixes:
-
-- Fix KMSAN uninit-value in ovl_fill_real() where strcmp() was used on a
-  non-null-terminated decrypted directory entry name from fscrypt. This
-  triggered on encrypted lower layers when the decrypted name buffer
-  contained uninitialized tail data. The fix also adds VFS-level
-  name_is_dot(), name_is_dotdot(), and name_is_dot_dotdot() helpers,
-  replacing various open-coded "." and ".." checks across the tree.
-
-- Fix read-only fsflags not being reset together with xflags in
-  vfs_fileattr_set(). Currently harmless since no read-only xflags
-  overlap with flags, but this would cause inconsistencies for any future
-  shared read-only flag.
-
-- Return -EREMOTE instead of -ESRCH from PIDFD_GET_INFO when the target
-  process is in a different pid namespace. This lets userspace
-  distinguish "process exited" from "process in another namespace",
-  matching glibc's pidfd_getpid() behavior.
-
-Cleanups:
-
-- Use C-string literals in the Rust seq_file bindings, replacing the
-  kernel::c_str!() macro (available since Rust 1.77).
-
-- Fix typo in d_walk_ret enum comment, add porting notes for the
-  readlink_copy() calling convention change.
-
-Link: https://lore.kernel.org/20260206-vfs-v70-7df0b750d594@brauner [1]
-/* Testing */
-
-gcc (Debian 14.2.0-19) 14.2.0
-Debian clang version 19.1.7 (3+b1)
-
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-This has a merge conflict with my kernel-7.0-rc1.misc pull request:
-
-diff --cc Documentation/filesystems/porting.rst
-index 79e2c3008289,bd4128ccbb67..000000000000
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@@ -1336,18 -1339,8 +1336,28 @@@ in-tree filesystems have done)
-
-  **mandatory**
-
- +The ->setlease() file_operation must now be explicitly set in order to provide
- +support for leases. When set to NULL, the kernel will now return -EINVAL to
- +attempts to set a lease. Filesystems that wish to use the kernel-internal lease
- +implementation should set it to generic_setlease().
- +
- +---
- +
- +**mandatory**
- +
- +fs/namei.c primitives that consume filesystem references (do_renameat2(),
- +do_linkat(), do_symlinkat(), do_mkdirat(), do_mknodat(), do_unlinkat()
- +and do_rmdir()) are gone; they are replaced with non-consuming analogues
- +(filename_renameat2(), etc.)
- +Callers are adjusted - responsibility for dropping the filenames belongs
- +to them now.
-++
-++---
-++
-++**mandatory**
-++
-+ readlink_copy() now requires link length as the 4th argument. Said length needs
-+ to match what strlen() would return if it was ran on the string.
-+
-+ However, if the string is freely accessible for the duration of inode's
-+ lifetime, consider using inode_set_cached_link() instead.
-
-The following changes since commit 6cbfdf89470ef3c2110f376a507d135e7a7a7378:
-
-  posix_acl: make posix_acl_to_xattr() alloc the buffer (2026-01-16 10:51:12 +0100)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-7.0-rc1.misc.2
-
-for you to fetch changes up to dedfae78f00960d703badc500422d10e1f12b2bc:
-
-  fs: add porting notes about readlink_copy() (2026-02-03 15:17:34 +0100)
-
-----------------------------------------------------------------
-vfs-7.0-rc1.misc.2
-
-Please consider pulling these changes from the signed vfs-7.0-rc1.misc.2 tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-Amir Goldstein (4):
-      fs: add helpers name_is_dot{,dot,_dotdot}
-      ovl: use name_is_dot* helpers in readdir code
-      exportfs: clarify the documentation of open()/permission() expotrfs ops
-      nfsd: do not allow exporting of special kernel filesystems
-
-Andrey Albershteyn (3):
-      fs: reset read-only fsflags together with xflags
-      fs: add FS_XFLAG_VERITY for fs-verity files
-      fsverity: add tracepoints
-
-Chelsy Ratnawat (1):
-      fs: dcache: fix typo in enum d_walk_ret comment
-
-Christian Brauner (2):
-      Merge patch series "name_is_dot* cleanup"
-      Merge patch series "Add traces and file attributes for fs-verity"
-
-Luca Boccassi (1):
-      pidfs: return -EREMOTE when PIDFD_GET_INFO is called on another ns
-
-Mateusz Guzik (1):
-      fs: add porting notes about readlink_copy()
-
-Qiliang Yuan (1):
-      fs/file: optimize close_range() complexity from O(N) to O(Sparse)
-
-Qing Wang (1):
-      ovl: Fix uninit-value in ovl_fill_real
-
-Tamir Duberstein (1):
-      rust: seq_file: replace `kernel::c_str!` with C-Strings
-
- Documentation/filesystems/fsverity.rst |  16 ++++
- Documentation/filesystems/porting.rst  |  10 +++
- MAINTAINERS                            |   1 +
- fs/crypto/fname.c                      |   2 +-
- fs/dcache.c                            |  10 +--
- fs/ecryptfs/crypto.c                   |   2 +-
- fs/exportfs/expfs.c                    |   3 +-
- fs/f2fs/dir.c                          |   2 +-
- fs/f2fs/hash.c                         |   2 +-
- fs/file.c                              |  10 ++-
- fs/file_attr.c                         |  10 ++-
- fs/namei.c                             |   2 +-
- fs/nfsd/export.c                       |   8 +-
- fs/overlayfs/readdir.c                 |  41 ++++-----
- fs/pidfs.c                             |   2 +-
- fs/smb/server/vfs.c                    |   2 +-
- fs/verity/enable.c                     |   4 +
- fs/verity/fsverity_private.h           |   2 +
- fs/verity/init.c                       |   1 +
- fs/verity/verify.c                     |   9 ++
- include/linux/exportfs.h               |  21 ++++-
- include/linux/fileattr.h               |   6 +-
- include/linux/fs.h                     |  14 +++-
- include/trace/events/fsverity.h        | 146 +++++++++++++++++++++++++++++++++
- include/uapi/linux/fs.h                |   1 +
- rust/kernel/seq_file.rs                |   4 +-
- 26 files changed, 274 insertions(+), 57 deletions(-)
- create mode 100644 include/trace/events/fsverity.h
 
