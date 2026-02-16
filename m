@@ -1,214 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-77301-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oApjAS01k2mV2gEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77301-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 16:18:05 +0100
+	id kO6WOgA3k2mV2gEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 16:25:52 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CD691455A7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 16:18:04 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 652FA145831
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 16:25:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 566EB302E15F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 15:07:09 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id A3AC03065ACC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 15:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17892318ED7;
-	Mon, 16 Feb 2026 15:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A0F32549E;
+	Mon, 16 Feb 2026 15:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cuFzr/K3";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="rJo1z+9+"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="j2WGFLG3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1F93161A2
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Feb 2026 15:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771254396; cv=none; b=JtFHx+LG4gONM2mEZGMiAkFBlN34bHxnUk3G9o6Wk/xxnKC01BunHG2YoPXjLcscpzURYtg1d/lPwXlhd5vz3uJlj4Bo4hLikaScr5IU6mAQ14ozzxhQIGB6imNKO6KYLXLwkqS1rfMjf9zvUHpybhgTzx2401LsdOoXOUkoonM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771254396; c=relaxed/simple;
-	bh=zx3WubZPys3qQZ9hjzoig3BrUfn76syHM4LUOku80x4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=L7u0Q4Ka9A4EelABPxCr2XZVRmsd+SUSJrYdaWrlhuyrEWRojUv5zmKdA/qiEa3qYP7NsQF18/WDj1uC5auvF/VgWFyvGjmj1wXIkAt8JLKNDzplItmPXtMBofddqjpkAVYDiktHWpVSwAJ036BmxsVzmFOwrKNjCuXAe9TbbME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cuFzr/K3; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=rJo1z+9+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1771254394;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aIxEocxEapJW7yU9OtfyLhPCnRBq6fT8ce1CcmY6sug=;
-	b=cuFzr/K3/lCCNtXG9TWhKNqpWtuEBrQD8jPV3o6pv52qBZxjwahEFo/uOAaIsAFQhaqjIo
-	NjyFGCLpVymV/0325dM3aEhd3YLHHSW7S57yKdqlLkjAPJWkfjZ2kr8NOqyh+vktnKL016
-	ihNfMfd7M+PkFRqeu/fgEDMPV1XYaKI=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-473--WueFJ55Opq-52ua-prEWg-1; Mon, 16 Feb 2026 10:06:33 -0500
-X-MC-Unique: -WueFJ55Opq-52ua-prEWg-1
-X-Mimecast-MFC-AGG-ID: -WueFJ55Opq-52ua-prEWg_1771254392
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-4376e25bb4dso3780353f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Feb 2026 07:06:33 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D42325730
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Feb 2026 15:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.219.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771255347; cv=pass; b=ouxVG909tkwD+Xk5Kubalm7BBO3D8Gmh4BTiM05dSK7esZSLHkYINOapNHZZbOxOO1cmcA6qunXU/l8tDXhCI/95JO5V8LCFPwF9HMkdzMtf+sd9MAwy/xb8e3gbgYey69j5C47jkmy70h3ojIccpn0QiohfAjJbQuJia3XoQg8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771255347; c=relaxed/simple;
+	bh=o2smEr5y02wSvFNEy64K9o/gkobu097EYUb5ArGQcZM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fTGUy8I8S1c08I466jeN/MWX3ijrrSawFlwr7ePGSatStx9HPE/Y0/qy8jNfbkqlmNJNbmDx6XCaMKYstrro1jDCW19x/zuQpKXLoT5e8gvyu1AOSmswiEDm21Pu3GasF8KRFoo0BwC6zJfSf1OpARbY77Q9d/NRp1Yd0KTXYuk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=j2WGFLG3; arc=pass smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-896fcfc591eso33020466d6.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Feb 2026 07:22:25 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771255345; cv=none;
+        d=google.com; s=arc-20240605;
+        b=hrM3RLYFrzbgA/bJq1z0qium5kx6GCOtno6CejQKZ+Tt0DqvIAGbmLHCiGY7FikWh5
+         cS+dYgNiLb0XQL8y67zNXGrfmSmHm56FOwcVrLy25zYHz9vAipjtIspg4b4uL0XMhmVM
+         BjPhoM41/dHonRgQ1rnZ/JV/XzUHr5NQnrf3LYg4RU8Sj/8RMfZ7eyDXNymY68tHCESV
+         sSztb9TyBTENgFeheX/67uI87OacxZWTWFLS5mepr4cODzQIOzFm20jvYk7UfiXnRoK4
+         HAa/7H5KUFG0TqoX7pJaTqvod5yCqnIUUliBtr1IKEhltsJeb1uTszJrZEmV2DaxzUu5
+         p/kA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=FMTaKREqipi/bI/EMydiCxxRR8YjeKY19XLIBcEIO/Y=;
+        fh=xmFsogd0OOoNeDPiM+ut+g+wv5mG42hSpRyoFxf7p/E=;
+        b=HeVYEczO+5PvLkcG2VvbI35KecBE7ZEp01dfGY38UzyTj5L1Hf4LQd3wiVtl/eBr0C
+         G80p2UqLjHYdOBgGt0rWjVofzv3XzQ5Nud5L7OrPpa9bj+BMq5OLDRgpa6uPGX/hzc+q
+         TEn6wf1rwBCylGP5zkBjX625qJ4GGuNpARs8HKjFhKoVkZN60CQm/QaAZv87g5lWYUNs
+         6U85hFc85w7NELaGpOg3upTpFs1mrvfIJNkE5dX63e6FLpvkZHoSTzgl4Gh4JWmIjkg4
+         cfS+kJ2pmxbBsfkoAOpFy1NVkaIrHIgIMPXp08rXX79WcfjidFPQ69B/xLqAAohTNuNS
+         7ayw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1771254392; x=1771859192; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aIxEocxEapJW7yU9OtfyLhPCnRBq6fT8ce1CcmY6sug=;
-        b=rJo1z+9+eVKxNpXT8hTbok3DlMsug39L9ZmZyXs8HXxMd5/qwbco2B5rsHfcj0DZK9
-         l4dTUsA+rf1eHjjv9PBumTPUlfehW2Iyx6NjDvxxUQub90GfycXtkcrdkuzzp0Zprglc
-         eOl8DHs8/ZZiamLGufa7JU8q6lxi/Nyu1t5yitPT5QJFs9Yh8hHckRxTwVP2Z5b8DQY0
-         LkDJM5sjXzbsNSO2RaYHLtetNaXYr3TrjL/vPnXKQZUjcPx0ezMq2ybtGQ3N/7PIMy8u
-         hREpb4n9EBeXeeH7pZF9kIE88FhagCxpQzaJWrY+bITz8g9JrMs7ipDRF+e3pvgXfT0d
-         HrOw==
+        d=szeredi.hu; s=google; t=1771255345; x=1771860145; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=FMTaKREqipi/bI/EMydiCxxRR8YjeKY19XLIBcEIO/Y=;
+        b=j2WGFLG3Gus8/ahnk/bkSiLCLBga0aC/3KVwiFL8yEkqp9yYecCKrDOTkM+NvQmI2B
+         AGAksXXMX3ua4iz5ACIxfAU93yRaxUYhgeEB6pKtHgZqM+ASl4f6EU18pmlv3nuFPtB8
+         ck/3fBvFMJIWJ0lLyMOyJDYHkRsfEMRcCONy4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771254392; x=1771859192;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=aIxEocxEapJW7yU9OtfyLhPCnRBq6fT8ce1CcmY6sug=;
-        b=vgjM7yQxpHDWgXEfliFalYlSnOp37ikUMlHfXkWJtnbSxYsjTL3xP44E3VBXncmhLo
-         2Gj7Id/sa3HjUadWWQuvglD/skXIQznf4Rnt302A8L4EYDxCsXLjA39qA1zWxi1InCTL
-         9kJSEoLnm3uRJCFza2PvudDsL7jms3Pp0d0UqW2ieJOyl24Bn+E8DZwpAOdpxcL+8p1B
-         yrK/sdnJrgymtfIoYluJY/oB4kHTamlDrjYa/uU2uKL+HPO+KuzuKeGVnDyE8nt+2b7j
-         WR6c9yUj7OBZenL5vtzjoR/OUkHeDeAjTqIKsnVoh9r9s9S8XG5tGedESjtdd8ealD8d
-         j6QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+GXT2dVSG9zGj/3iS6QRm8AZ4LlUwKxMo7TLKajZjQTZIXnvzQgeZcxjUIM2jT0G4L9YKg56WWCvIs0bt@vger.kernel.org
-X-Gm-Message-State: AOJu0YwypxFoOiYpmBx5KdgDU7Q4C19QScfssGXHsPZY61bUSejZOeGZ
-	5RpVmMiDKbev0kUs4sc/T55MV+RK7fRyYhEXFiIqBMh8sWSs62qSbsFdshhZuZRL4LR8LOk7/zd
-	Q6GpSk1ksfMREgyL99z+epDfctjjkEVunXdt0f/4ZSzl+b/VGFyVXe9rKXaSdHJ/+JvM=
-X-Gm-Gg: AZuq6aKd9xUoI2evGupm3C0wG/nXIjKqoXiZmVAiURCN7/ZGi+7uZUlCskVx3b6Y5Vp
-	FL0NaLUs9dXzzScLtUeLO7kIyzs1AgW7tUCwpQptmZwr1ATeminoDbkxzB7sEOllFiy4st3P6Ha
-	2iSnWaha6gpHQyTCPTYxs/evnVRi+mZeng7amiMH5KuiWtMdMFsxkQNIuHUWenz7wNALY8auqP+
-	70m6fF1HltKJsTl5Rg71GrehXM67QGHxnSPa6M6+JdJkQA522dmi3haWBa4WPO/ES2Az26Qaniz
-	b2S/X0g50a6j0A6EqO+qZmMP99Ytcex8S0tEyJY+vDhiJATD0nnyjMyS+q5ZA7wajvmI1jPMx+F
-	KVMDiNiQqx0/TJyRQCpmX1Y25tKZ386z8RSij9jZ/mQB2aKbe
-X-Received: by 2002:a05:6000:420a:b0:437:6758:ce75 with SMTP id ffacd0b85a97d-43796ac216amr22698931f8f.23.1771254392005;
-        Mon, 16 Feb 2026 07:06:32 -0800 (PST)
-X-Received: by 2002:a05:6000:420a:b0:437:6758:ce75 with SMTP id ffacd0b85a97d-43796ac216amr22698863f8f.23.1771254391533;
-        Mon, 16 Feb 2026 07:06:31 -0800 (PST)
-Received: from fedora.redhat.com (109-81-17-58.rct.o2.cz. [109.81.17.58])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43796abc9b2sm25631899f8f.21.2026.02.16.07.06.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Feb 2026 07:06:30 -0800 (PST)
-From: Ondrej Mosnacek <omosnace@redhat.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Amir Goldstein <amir73il@gmail.com>,
-	Matthew Bobrowski <repnop@google.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] fanotify: call fanotify_events_supported() before path_permission() and security_path_notify()
-Date: Mon, 16 Feb 2026 16:06:25 +0100
-Message-ID: <20260216150625.793013-3-omosnace@redhat.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260216150625.793013-1-omosnace@redhat.com>
-References: <20260216150625.793013-1-omosnace@redhat.com>
+        d=1e100.net; s=20230601; t=1771255345; x=1771860145;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FMTaKREqipi/bI/EMydiCxxRR8YjeKY19XLIBcEIO/Y=;
+        b=QNqhDOrloID3iyi92OHvc/kwAlg09pY67fhB6CvD9EEXhFCDcNTgW2D8XMdhjDpoSS
+         vH3Ajx4bjgZaTQlFWgkInyWOi1iPBmIG5uzxNRn0EVQSpF2TlHlq7xXAnwPddvaybFDD
+         fUnC6r1lli/HwKyW2yRmccI3TukAzCcyhsf8pX9vymapIELMzNsyaQPU9WFnzSXsMd05
+         ziULpgvQwuKrT2JrB0AvpiCzz02wxQxD/wM++8GCm8cWzFsCO5iWz7AhGEA4RJvaKT2S
+         FPDJKaRzgLjqtVoMToGEraW5qxPh0IPbw/Vl5n+IynUNHF3KA6+7fqKnDY26GJ6LP38b
+         nriw==
+X-Forwarded-Encrypted: i=1; AJvYcCXxbmdf1822GWvp6rGIOAEJhei20MYCIDpfM6BA7tk7zMlx35CoaY6EmifLWvffbvzKKEGzPoU6wo4N3Zie@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuZoG9kaM2Y1ynX3kl4tHfWyTsQ5vrdf+9KWOqDNv0d9AgjNPg
+	BC6Zyx2vlr2ZZ28KDPIMqgBilv7eOMyG2m2d1Xc0EktvCx0llviWeUc+9n75lYUFZClolZCZSpX
+	K0VWCI1xv56u5MRd5NcLfp5KRQ6dF3RCSafIuTmDIMAzbQc2rHuCl
+X-Gm-Gg: AZuq6aKhWZHlMc7qFwNmhSyyGnjnUcmucgkikIU4EGKkbmSg/eHhEFs/FqOdSZ4P4rN
+	vWEmIQL3KuZTra3K4ptzZ9tEz1//bBPx5ozNzN4ARJCEXltQ/rkS6nPsGseDLF/8M0zfQ00f359
+	rBFp5acbFPDw3xoCUZg5xfCs4ZSse0u6iUy2qrbG6Tr+y6JCrUooiInBioF6HCAoplx+8HOfXYP
+	mD6NVGF1TPCHwHeud5lVVTzZhFft8rSPiHxhPvjiTYkOk446ZnHFoWfy/WWvC0oEbGCvPSvHcUr
+	SM8QTKc=
+X-Received: by 2002:a05:6214:212d:b0:894:7144:7572 with SMTP id
+ 6a1803df08f44-897349856f6mr180083886d6.64.1771255344704; Mon, 16 Feb 2026
+ 07:22:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260210-fuse-compounds-upstream-v5-0-ea0585f62daa@ddn.com>
+ <20260210-fuse-compounds-upstream-v5-1-ea0585f62daa@ddn.com>
+ <CAJfpegvt0HwHOmOTzkCoOqdmvU6pf-wM228QQSauDsbcL+mmUA@mail.gmail.com>
+ <f38cf69e-57b9-494b-a90a-ede72aa12a54@bsbernd.com> <CAJfpegscqhGikqZsaAKiujWyAy6wusdVCCQ1jirnKiGX9bE5oQ@mail.gmail.com>
+ <bb5bf6c8-22b2-4ca8-808b-4a3c00ec72fd@bsbernd.com> <CAJfpegv4OvANQ-ZemENASyy=m-eWedx=yz85TL+1EFwCx+C9CQ@mail.gmail.com>
+ <d37cca3f-217d-4303-becd-c82a3300b199@bsbernd.com> <aY25uu56irqfFVxG@fedora-2.fritz.box>
+ <CAJnrk1bg+GG8RkDtrunHW-P-7o=wtVUvjbiwQa_5Te4aPkbw1g@mail.gmail.com>
+ <aZC0WdZKA7ohRuHN@fedora> <CAJfpegtWNjkxchD0A+k1YQt=1_B4akrU3pNeONRHunEY=LffZg@mail.gmail.com>
+In-Reply-To: <CAJfpegtWNjkxchD0A+k1YQt=1_B4akrU3pNeONRHunEY=LffZg@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 16 Feb 2026 16:22:13 +0100
+X-Gm-Features: AaiRm51H2UO3ROxeWnKiTtKGXn1eMQNMSKWDfENsfNxDQ4pC4IpdP9rzSi6wOuU
+Message-ID: <CAJfpeguOWLd-WvYMU3oTYPTq_3ZXfdUEX6eD0+M6FNZYc-qw1Q@mail.gmail.com>
+Subject: Re: Re: Re: [PATCH v5 1/3] fuse: add compound command to combine
+ multiple requests
+To: Horst Birthelmer <horst@birthelmer.de>
+Cc: Joanne Koong <joannelkoong@gmail.com>, Bernd Schubert <bernd@bsbernd.com>, 
+	Horst Birthelmer <horst@birthelmer.com>, Bernd Schubert <bschubert@ddn.com>, 
+	Luis Henriques <luis@igalia.com>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Horst Birthelmer <hbirthelmer@ddn.com>
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719,redhat.com:s=google];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
+	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-77302-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77301-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[gmail.com,google.com,vger.kernel.org];
-	RCVD_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,bsbernd.com,birthelmer.com,ddn.com,igalia.com,vger.kernel.org];
 	MIME_TRACE(0.00)[0:+];
-	FROM_NEQ_ENVFROM(0.00)[omosnace@redhat.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[szeredi.hu:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DKIM_TRACE(0.00)[redhat.com:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 6CD691455A7
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,mail.gmail.com:mid,birthelmer.de:email]
+X-Rspamd-Queue-Id: 652FA145831
 X-Rspamd-Action: no action
 
-The latter trigger LSM (e.g. SELinux) checks, which will log a denial
-when permission is denied, so it's better to do them after validity
-checks to avoid logging a denial when the operation would fail anyway.
+On Mon, 16 Feb 2026 at 12:43, Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> On Sat, 14 Feb 2026 at 18:51, Horst Birthelmer <horst@birthelmer.de> wrote:
+>
+> > Which part would process those interdependencies?
 
-Fixes: 0b3b094ac9a7 ("fanotify: Disallow permission events for proc filesystem")
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
----
- fs/notify/fanotify/fanotify_user.c | 25 ++++++++++---------------
- 1 file changed, 10 insertions(+), 15 deletions(-)
+Another interesting question is which entity is responsible for
+undoing a partial success?
 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 9c9fca2976d2b..bfc4d09e6964a 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1210,6 +1210,7 @@ static int fanotify_find_path(int dfd, const char __user *filename,
- 
- 		*path = fd_file(f)->f_path;
- 		path_get(path);
-+		ret = 0;
- 	} else {
- 		unsigned int lookup_flags = 0;
- 
-@@ -1219,22 +1220,7 @@ static int fanotify_find_path(int dfd, const char __user *filename,
- 			lookup_flags |= LOOKUP_DIRECTORY;
- 
- 		ret = user_path_at(dfd, filename, lookup_flags, path);
--		if (ret)
--			goto out;
- 	}
--
--	/* you can only watch an inode if you have read permissions on it */
--	ret = path_permission(path, MAY_READ);
--	if (ret) {
--		path_put(path);
--		goto out;
--	}
--
--	ret = security_path_notify(path, mask, obj_type);
--	if (ret)
--		path_put(path);
--
--out:
- 	return ret;
- }
- 
-@@ -2058,6 +2044,15 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 			goto path_put_and_out;
- 	}
- 
-+	/* you can only watch an inode if you have read permissions on it */
-+	ret = path_permission(&path, MAY_READ);
-+	if (ret)
-+		goto path_put_and_out;
-+
-+	ret = security_path_notify(&path, mask, obj_type);
-+	if (ret)
-+		goto path_put_and_out;
-+
- 	if (fid_mode) {
- 		ret = fanotify_test_fsid(path.dentry, flags, &__fsid);
- 		if (ret)
--- 
-2.53.0
+E.g. if in a compound mknod succeeds while statx fails, then the
+creation needs to be undone.   Since this sort of partial failure
+should be rare, my feeling is that this should be done by the kernel
+to avoid adding complexity to all layers.
 
+This could be a problem in a distributed fs, where the ephemeral
+object might cause side effects.  So in these cases the server needs
+to deal with partial failures for maximum correctness.
+
+Thanks,
+Miklos
 
