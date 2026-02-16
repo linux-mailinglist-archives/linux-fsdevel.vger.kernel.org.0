@@ -1,93 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-77314-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77315-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id sBjBNPtkk2k44QEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77314-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 19:42:03 +0100
+	id YYdUOHBmk2mE4QEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77315-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 19:48:16 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 102C4147093
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 19:42:02 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE92147124
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 19:48:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 8032130074E4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 18:41:26 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 4FA2A301F17F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 18:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528132EAD09;
-	Mon, 16 Feb 2026 18:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD22A2DAFD7;
+	Mon, 16 Feb 2026 18:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="in73cRoo"
+	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="YBNXluAt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB792E8B98
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Feb 2026 18:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC8118A6CF
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Feb 2026 18:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771267269; cv=none; b=XgaqzR0dsf0jrWI940nKBjSq3HiaF8TgsDaxELeWQ5WbtIz9gsqtPSA0wPvij1YrraiqvPP8YbmBi2N+0zgv8lYVIu35g4ZgSbOVwINWZ1I2D1i5tz2p3O1IToXOXz+oJ2oi8wrLa6mgPhsnHTZZ6k/RxyUcUaXIXrtDiC9yAQY=
+	t=1771267694; cv=none; b=oYojCPS0lrWO7wdRuHd3NQq0C3z6HaTgL1i426czwSwryBao+mdg1vlP3H7u9Sqxr6ZWPt8vb74p5PIPyGycY5RrVeQvnno+gyOrR0L+FhoQJL3Mw+0RCuNTSeKiBu0CUoyQUcmlv5ZpKuSBTn3itW8SQX1E2lVVZZ8B4usOiFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771267269; c=relaxed/simple;
-	bh=sG+WbVQlxuQia5HjUs8kRut/EDDZgsAt64p2h2iilk8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LBGue5N1su1P8gV7u8sw+VTHxbP5lDZlHL5KE0qUBEcUYRLveFasjVMN9ZpNualCaVw0tk3DZ3BmFCCUe28sJj552YwBf8X2PGRxmOqcENVqXbaVtN7muACig2WiUZIgZrQhSdvDzF9E6BE+ui+I5AanKuW7304FBM+3mo8kJ48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=in73cRoo; arc=none smtp.client-ip=209.85.222.173
+	s=arc-20240116; t=1771267694; c=relaxed/simple;
+	bh=R9XIUq+16s3/HVcu+HRUUpSONjGH4Rt0wYtbsZSX3VQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MovQK6L/grgPHbuvt4JBs0yyAFSv7paOuW5yKIgJ1638RRkJ2/amh1EgmvAvuhKys8op4CZ1rsmQ8kBfzHrhZ6Yt1OlBsA1GAQ5ED4PM03eiQJ0XHAsJsSsNRZo1FM351iSBoawAenf4T7HfQJ1KvMLZRjTg6NIzkKaZEiki4N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=YBNXluAt; arc=none smtp.client-ip=209.85.222.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=zetier.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zetier.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-8cb3fd71badso327633085a.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Feb 2026 10:41:07 -0800 (PST)
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-8cb420f7500so346089885a.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Feb 2026 10:48:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=zetier.com; s=gm; t=1771267267; x=1771872067; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LTgueUMUNqPPeLpij1IzKLOOR2xA2a9HugYD4yHosO0=;
-        b=in73cRoo5Dp56jscGwTCfM2SFEudZvKKGoEFyITKZ8BXn9rIdRZDjZspygVsF4rGZ3
-         Xtwks25hTye4W42gEbQlU/VOvGcHa4P+Kb3NzswRwCehe65yQAmkiTYpGHEVeZWah9gR
-         i9foY9jphRbeWoSo6Afd9AA0ZIknPVq75xJhrkz4VaJhWg07GbvrHJ54b66ewEBrOydv
-         ycLeQclA3YD1w9beCp3tKJH1yI5ZXRDrnzhgjOSF9yicM4kS3gSr5PxpSYtxBYc1Sxnq
-         GzJBYXoy+B+iaUNoLqmY5kkPzQMfl0SiMwF4ds9GU+n39dUKipfjllgTRqiNNEo9YNHo
-         jujQ==
+        d=zetier.com; s=gm; t=1771267692; x=1771872492; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uOZahYaMxzCkxJXKQxovGMQB/KdJvq85hhaguWuE60s=;
+        b=YBNXluAtA2p9mfYx4lEcFrhiJkF00+M5ROZP1UaZY71dsf68uuOQ6MVYfU8j0hq/np
+         FI2udMCHVYGcLlI2PpfDbdartSQwUXacL7C0GqhNjVfPzXcoTIUlQWIQ0f/7Jug/aQTc
+         5jj22ThlZ92NWzggejEvdg/1PRs1k675xoQFtP/yAtZDHa8WzxT4NzaY87XDbJ2FCiEP
+         hXfoIQgK6EHK0Pb+mpsa7GyzC1vHFNXTLP4biJf6kTo9umio5oTlTR26Btb+aYb+Ozu5
+         fD805PLCxYZlKqxUCaEJPaDWhc99HMvcBcbS54DjkGs3LUSl6zs3aQjUMNIHXjRefbIF
+         wC/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771267267; x=1771872067;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=LTgueUMUNqPPeLpij1IzKLOOR2xA2a9HugYD4yHosO0=;
-        b=oxBgyjl0Tu6N86IkB6EO9hs6oXikmHZdIYm3baCuG9p8EPhuynDIAWi5QrVMEgiXpT
-         71lOgcPy1Tc/waVX+yM4YYvqLDBboMlwAUaEDGAUyh3tOTGaefJPFY90wcmICL49/0vK
-         NcpywaI4TwCe+2i5MPg7BMttWU9h5W2wvA6PALd/OZQpPAIsE7SdZRv3X3/2jkFfgcJm
-         /pnv4hyBhzKKS7h1s6q4uYSF0r8HNUE2RDqsc/ZRWkTg55j4IpFYMdKMKVS9/bWG/BAm
-         2nD9XtdkNRTGT71PThlYv0PTdA/ePQ8bQjEI/xf0cUZo08i5EsAaaVdES2xo6c1m8B1D
-         BfYg==
-X-Gm-Message-State: AOJu0YwqlF7yZu3YNY2yhjGeQE6q0Bn84vjO9ij1bEecgm4HIw+YNery
-	eQSycyi42cjGIiIhpVAtjYFnK5ODaeUt5oX845Q9flxkW3PVNaOn+e2t8JIl9+J4OEA=
-X-Gm-Gg: AZuq6aJwvKPBaDUxhH1xY1LGBaCngqTDghVYAMsPZv628AmxluWpHJJyyHYh1WIx5QE
-	9wZ79vTj1DdEoScjeVaa8CWBleZMf7R9QB/mV7DGoXUduMUZCF4MrOlZWzeSUqtTGtszbyESw2/
-	3pc87FqnwAbADFIb4j1N+AhiNYe9S9y17LKElr27f9BRAzarHkbnbVMRJ/ieZYcOjQfTnVAbnVg
-	bbZSjqUUYyNKjlSXkIZdJ7mpzXzTC9z5pnZf1kUO/NLjdI2F5ved7ZWnRLkafaVbnK/qyCm4CZ5
-	03i0Zg3YPFRoa1R4cyDyS0BvLehKMLpvjKtr92JLnjr6er25HGplNA/JqVasuAV/mjc5AGA42Mk
-	zM9xlxENki8m+OTPdnDpn8MhROVA+hr6J/Irg5yCx78B8Iu7aKdj1yNbRWHapzlypP9j2NURXnR
-	zCfdzbBnXpRGUq59Mh6tSKpF7YVdox1n+n/J9kWaE0VCbPcwtaCKyw0UFekGS9D82ph2DuL9lR4
-	hW1i6O42+EIiqk=
-X-Received: by 2002:a05:620a:d8c:b0:8c9:f9c2:118e with SMTP id af79cd13be357-8cb4226ca53mr1370063585a.32.1771267266960;
-        Mon, 16 Feb 2026 10:41:06 -0800 (PST)
+        d=1e100.net; s=20230601; t=1771267692; x=1771872492;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uOZahYaMxzCkxJXKQxovGMQB/KdJvq85hhaguWuE60s=;
+        b=qOla+xkl5P39Dz/rBPyCWqv2xvZgPOCYJM+H/G8DzRaEW8N8w1P5ltZrY9sUO/04wf
+         D+6pMHAoa+YwvAM7Jlvn/4cnVXdR9gmcat+l9SRCufzGCBhJI3MIGKsFdx6eD1ixgts1
+         zl5VqoCYJ5PK9xTgo54I23xQGPfLqgbkzgc/S46LbcxJhmpenYSAFmOXEBDsi2k9dN83
+         UNkmbYppKvJeuqpWBndHywCuC3iMAV+XcHm/CPs8QWCnGIv2KB/9J/CMDNtJypCJcl2Y
+         HKupxd/WMI9DerXMVD1SxfElaGCALHO5rn84LcnhMzO0cvIZPdXpUFwxsNyg0UG1TfPR
+         FyLw==
+X-Gm-Message-State: AOJu0YwOHmj6g61fSMxpdJZTFhXh/P/wuDtz9RwBTI4ZEAoyt7nSJZIG
+	cgRBoA283di2grYFmM+xCf9juqO2HzABKIjT0AuNnejf/VhBWDHvKT0QyTAl5fuyIVk=
+X-Gm-Gg: AZuq6aLMC1CWNRoHDd7tMHyusjYHTF1d8MmLu1IZWhMWxBxjdiAPXU6BV3j9hxkw/sH
+	Lxx/6NEGEa87jQ/Q6Ft9wYqZm4t7ymQfPyETeITqqPUbni8xuwcmdCLyTj+nNIo2YuMwcRhxlEd
+	N/YZCpCsC2dwUqB6jdPAoQo0nK8UiMPETrlBgktTe/euROX/DDoNcYHKlFv87DGoEnNLrvlvcIQ
+	cv39P/+olF+7IUx1TJ6kS1QRzaIap4G3lD4wO69DrXMAclMumkxtBv9nOoulSki0TYq2LDp9BUQ
+	6IMa4ohXiwuEFBs6ZLNccCxt3B8Gq0cwpx4hpw/tbW2pjh+tgpsL4lf8jx0i2h8cqkEBpSH+lR+
+	miHyG+8x7kFLLV1fp4DZdNvlifGLfCJUkSddkyXRXTbhV7iz0BppipGeUTcw3nY4I0/H5D3FEUj
+	5HLH2eFlyxzqIYHcgFdrrI8GxA9Fn3NmfgQ5yYiB0Akdy34Eb6QQP8gogHIJcBvny+u36OyO3bz
+	hFD
+X-Received: by 2002:a05:620a:7016:b0:8c7:d2b:b5ab with SMTP id af79cd13be357-8cb4bfb6b33mr1154937185a.37.1771267692155;
+        Mon, 16 Feb 2026 10:48:12 -0800 (PST)
 Received: from warpstation.incus (243.69.21.34.bc.googleusercontent.com. [34.21.69.243])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8971cca7299sm157766676d6.22.2026.02.16.10.41.06
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cb3e89dc23sm1027650185a.20.2026.02.16.10.48.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Feb 2026 10:41:06 -0800 (PST)
+        Mon, 16 Feb 2026 10:48:11 -0800 (PST)
 From: Ethan Ferguson <ethan.ferguson@zetier.com>
 To: luisbg@kernel.org,
 	salah.triki@gmail.com
 Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Ethan Ferguson <ethan.ferguson@zetier.com>
-Subject: [PATCH 2/2] befs: Add FS_IOC_SETFSLABEL ioctl
-Date: Mon, 16 Feb 2026 13:38:59 -0500
-Message-ID: <20260216183859.38269-3-ethan.ferguson@zetier.com>
+Subject: [PATCH v2 0/2] befs: Add FS_IOC_GETFSLABEL / FS_IOC_SETFSLABEL ioctls
+Date: Mon, 16 Feb 2026 13:47:53 -0500
+Message-ID: <20260216184755.48549-1-ethan.ferguson@zetier.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260216183859.38269-1-ethan.ferguson@zetier.com>
-References: <20260216183859.38269-1-ethan.ferguson@zetier.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -103,14 +99,14 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[zetier.com,quarantine];
 	R_DKIM_ALLOW(-0.20)[zetier.com:s=gm];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_TO(0.00)[kernel.org,gmail.com];
 	TO_DN_SOME(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77314-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77315-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
@@ -122,128 +118,30 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	RCVD_COUNT_FIVE(0.00)[5];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,zetier.com:mid,zetier.com:dkim,zetier.com:email]
-X-Rspamd-Queue-Id: 102C4147093
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,zetier.com:mid,zetier.com:dkim]
+X-Rspamd-Queue-Id: 7DE92147124
 X-Rspamd-Action: no action
 
-Add the FS_IOC_SETFSLABEL ioctl to the befs filesystem.
+Hi all, apologies for the email misfire previously. I forgot to add a "v2"
+to all of the patch subject lines. This is the corrected email.
 
-Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
----
- fs/befs/linuxvfs.c | 64 ++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 51 insertions(+), 13 deletions(-)
+Add the ability to read / write to the befs filesystem label through the
+FS_IOC_GETFSLABEL and FS_IOC_SETFSLABEL ioctls.
 
-diff --git a/fs/befs/linuxvfs.c b/fs/befs/linuxvfs.c
-index 942d247a6cae..f017ae4577cc 100644
---- a/fs/befs/linuxvfs.c
-+++ b/fs/befs/linuxvfs.c
-@@ -754,6 +754,23 @@ static int befs_show_options(struct seq_file *m, struct dentry *root)
- 	return 0;
- }
- 
-+static befs_super_block *befs_get_disk_sb(struct super_block *sb,
-+					   struct buffer_head *bh)
-+{
-+	const off_t x86_sb_off = 512;
-+	befs_super_block *ret = (befs_super_block *) bh->b_data;
-+
-+	if ((ret->magic1 == BEFS_SUPER_MAGIC1_LE) ||
-+	    (ret->magic1 == BEFS_SUPER_MAGIC1_BE)) {
-+		befs_debug(sb, "Using PPC superblock location");
-+	} else {
-+		befs_debug(sb, "Using x86 superblock location");
-+		ret = (befs_super_block *) ((void *) bh->b_data + x86_sb_off);
-+	}
-+
-+	return ret;
-+}
-+
- /* This function has the responsibiltiy of getting the
-  * filesystem ready for unmounting.
-  * Basically, we free everything that we allocated in
-@@ -762,9 +779,21 @@ static int befs_show_options(struct seq_file *m, struct dentry *root)
- static void
- befs_put_super(struct super_block *sb)
- {
--	kfree(BEFS_SB(sb)->mount_opts.iocharset);
--	BEFS_SB(sb)->mount_opts.iocharset = NULL;
--	unload_nls(BEFS_SB(sb)->nls);
-+	struct befs_sb_info *befs_sb = BEFS_SB(sb);
-+	struct buffer_head *bh = NULL;
-+	befs_super_block *disk_sb;
-+
-+	bh = sb_bread(sb, 0);
-+	if (bh) {
-+		disk_sb = befs_get_disk_sb(sb, bh);
-+		memcpy(disk_sb->name, befs_sb->name, B_OS_NAME_LENGTH);
-+		mark_buffer_dirty(bh);
-+		brelse(bh);
-+	}
-+
-+	kfree(befs_sb->mount_opts.iocharset);
-+	befs_sb->mount_opts.iocharset = NULL;
-+	unload_nls(befs_sb->nls);
- 	kfree(sb->s_fs_info);
- 	sb->s_fs_info = NULL;
- }
-@@ -799,7 +828,6 @@ befs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	struct inode *root;
- 	long ret = -EINVAL;
- 	const unsigned long sb_block = 0;
--	const off_t x86_sb_off = 512;
- 	int blocksize;
- 	struct befs_mount_options *parsed_opts = fc->fs_private;
- 	int silent = fc->sb_flags & SB_SILENT;
-@@ -843,15 +871,7 @@ befs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	}
- 
- 	/* account for offset of super block on x86 */
--	disk_sb = (befs_super_block *) bh->b_data;
--	if ((disk_sb->magic1 == BEFS_SUPER_MAGIC1_LE) ||
--	    (disk_sb->magic1 == BEFS_SUPER_MAGIC1_BE)) {
--		befs_debug(sb, "Using PPC superblock location");
--	} else {
--		befs_debug(sb, "Using x86 superblock location");
--		disk_sb =
--		    (befs_super_block *) ((void *) bh->b_data + x86_sb_off);
--	}
-+	disk_sb = befs_get_disk_sb(sb, bh);
- 
- 	if ((befs_load_sb(sb, disk_sb) != BEFS_OK) ||
- 	    (befs_check_sb(sb) != BEFS_OK))
-@@ -964,6 +984,22 @@ static int befs_ioctl_get_volume_label(struct super_block *sb, char __user *arg)
- 	return 0;
- }
- 
-+static int befs_ioctl_set_volume_label(struct super_block *sb, char __user *arg)
-+{
-+	struct befs_sb_info *sbi = BEFS_SB(sb);
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (sb_rdonly(sb))
-+		return -EROFS;
-+
-+	if (copy_from_user(sbi->name, arg, B_OS_NAME_LENGTH))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
- static long befs_generic_ioctl(struct file *filp, unsigned int cmd,
- 			       unsigned long arg)
- {
-@@ -973,6 +1009,8 @@ static long befs_generic_ioctl(struct file *filp, unsigned int cmd,
- 	switch (cmd) {
- 	case FS_IOC_GETFSLABEL:
- 		return befs_ioctl_get_volume_label(inode->i_sb, user);
-+	case FS_IOC_SETFSLABEL:
-+		return befs_ioctl_set_volume_label(inode->i_sb, user);
- 	default:
- 		return -ENOTTY;
- 	}
+v2:
+Added an include for <linux/compat.h> for x86-32 compat ioctls
+
+Ethan Ferguson (2):
+  befs: Add FS_IOC_GETFSLABEL ioctl
+  befs: Add FS_IOC_SETFSLABEL ioctl
+
+ fs/befs/befs.h     |   1 +
+ fs/befs/linuxvfs.c | 111 +++++++++++++++++++++++++++++++++++++++------
+ fs/befs/super.c    |   1 +
+ 3 files changed, 100 insertions(+), 13 deletions(-)
+
+base-commit: 541c43310e85dbf35368b43b720c6724bc8ad8ec
 -- 
 2.43.0
 
