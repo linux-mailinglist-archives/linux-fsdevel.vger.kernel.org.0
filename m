@@ -1,245 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-77264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YHV6I66rkmlPwQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 06:31:26 +0100
+	id IOcZAgjIkmm6xgEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 08:32:24 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6947141013
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 06:31:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BE7E14143E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 08:32:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 12E10300F137
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 05:30:44 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id CA8CF300EA8D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Feb 2026 07:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269FF28750A;
-	Mon, 16 Feb 2026 05:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7825B2E54BD;
+	Mon, 16 Feb 2026 07:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="amlL+Rlj"
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="jHcD9C5A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from pdx-out-012.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-012.esa.us-west-2.outbound.mail-perimeter.amazon.com [35.162.73.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F75350276
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Feb 2026 05:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06151213254;
+	Mon, 16 Feb 2026 07:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.162.73.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771219842; cv=none; b=t2vjsh2/NXkSSFIMoNwP91V2VJncJpe9Gl1lVoIAaZ653bMdsxVpSjTDtQF1u9/ITKhED+xBD8oP3Dad000R7B+6tm6urg2rb4m6mLIUYKNHJY918mteeZOU93YR3rpc/PGC8bfghrrHyDFpO8dN3xlp8/nRzxQcL7aEsyeItN4=
+	t=1771227135; cv=none; b=l4mUdTdUGGtFGy5FF6cOpdaSFiUye3yxg0FBsavxU//sL5806InOFniBS7DeJYmIMaYt0Pws5NtWbcb+Co92qTSv19Tjhw1EmiaOI+z9LNopPgdXfFyMRY3DsAxE5fsMPscgZxMSZeZVpzpeonzZmrBtVl+xVdjpfY9BMr9Zo1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771219842; c=relaxed/simple;
-	bh=SJiKwxymJGjCI9qDNvCQ4ZR3L5NeVvhadFp/18rjHIs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=NoB2L14mOJlQNh98PZtmsYT4eF0ubcdBlbPL5g/N/YL7hJ3pARM4+E9IobmBHhvkUFqBGfXkP9U27R0iUYgfU+B5jKczj57hc7VXcroT8e4eeNWM/3cVOa3tk19x3aXkDnEscnM58SIFe+hrL1OtO8EXoetQJS73lxG28WUuSZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=amlL+Rlj; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20260216053039epoutp0419cb8df4e1bab16e840abff70292af06~Uow9AyXsP0294102941epoutp04U
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Feb 2026 05:30:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20260216053039epoutp0419cb8df4e1bab16e840abff70292af06~Uow9AyXsP0294102941epoutp04U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1771219839;
-	bh=Pb+P0rLgEdovCO13BIPXUJybqmHX3PaFxXKcvG+y1qI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=amlL+RljZAs6yrHVXKl3AO7tce2WSIzckubi8ABEDEt1d+KpxEhoPNF0H+OE/8JF8
-	 wWh3Wanls6zGTpMLOEw6AkDP3o4Wn0mqcBre8LxFNHeq+E/IAd1Uyfo+iaNwNmcqJx
-	 I5c5yoaCOlmoM89t6bNLeCwbm3e+gVV0C/tvCMNo=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20260216053038epcas5p34fca45a91ff20e0ecb6d0b403d2b42a6~Uow8i1w0n1545915459epcas5p3J;
-	Mon, 16 Feb 2026 05:30:38 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.90]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4fDrvy1KCWz2SSKX; Mon, 16 Feb
-	2026 05:30:38 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20260216053037epcas5p4db5c80cedd64a70a275c3371e4084122~Uow7iSDtq2439324393epcas5p4s;
-	Mon, 16 Feb 2026 05:30:37 +0000 (GMT)
-Received: from localhost.localdomain (unknown [107.99.41.245]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260216053036epsmtip18aedcc0c50ab49207aad44b39d755f5b~Uow6Fc6iA1594915949epsmtip1T;
-	Mon, 16 Feb 2026 05:30:36 +0000 (GMT)
-From: Kanchan Joshi <joshi.k@samsung.com>
-To: hch@lst.de, brauner@kernel.org, jack@suse.cz, djwong@kernel.org,
-	axboe@kernel.dk, kbusch@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-block@vger.kernel.org, gost.dev@samsung.com, Kanchan Joshi
-	<joshi.k@samsung.com>
-Subject: [PATCH 4/4] xfs: enable userspace write stream support
-Date: Mon, 16 Feb 2026 10:55:40 +0530
-Message-Id: <20260216052540.217920-5-joshi.k@samsung.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260216052540.217920-1-joshi.k@samsung.com>
+	s=arc-20240116; t=1771227135; c=relaxed/simple;
+	bh=EAjHU58MXJuzrKhOZslbQIagDeUiwYTe2iDUwTSOAUg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CMXWfmKiTGG+K7qCQFiF5viQR+gMsZGkjMf8EW8zgzUDKzkTz2kI8Gquax0gJ/GW80TArVzGlZECojewk4103+OOTsnPuqSY2kj1SxsPiTLQYvbZ9H+pFIogThGXeihAYjTWTKpczshQGQTK12QP2tiwhT+kFJO7U/7aM0f2ZsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=jHcD9C5A; arc=none smtp.client-ip=35.162.73.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1771227134; x=1802763134;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=oOGk+bLnbrzwrcMZo9H3IiF/hDqikNWw7hoqgVeYD2A=;
+  b=jHcD9C5ApGh4IjJ+STmuz/EpPCAUSFg99XiiDtizKHu/sRJSHge/KRiv
+   phNNiroB6/fWX45UwiHZA63NZQQj0EsVt7OUhppEkKy7M4bT1ChF4Oi0W
+   os3GstAoD46xkdGzIXtD6rKYSKNnI7I7+hCzqIF3nfr9RaOqBBe7hQbB/
+   Wss/2JUdoq3Mk//EbyhCNNEoOjjXE6p6A9mGmNkJTsAkrB1mmLFABs5jG
+   mPwqNa1qYSfpfXxR2odc7x0w9+0hPiIYk0T9wFKRg6KTOs16QQeyrLlWa
+   HS24Kt8Ky0OEGZIqv/jymPNb1LuPWE7IIfEKGywyzfjXS42VLqxf6PFv6
+   Q==;
+X-CSE-ConnectionGUID: GgGy+jAVSSm1ijfmcV5TNQ==
+X-CSE-MsgGUID: /c86fSIXQrmFhziPLK9qSw==
+X-IronPort-AV: E=Sophos;i="6.21,293,1763424000"; 
+   d="scan'208";a="12939639"
+Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
+  by internal-pdx-out-012.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2026 07:32:11 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [205.251.233.105:13197]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.54.217:2525] with esmtp (Farcaster)
+ id e522bb7e-e91c-4abc-bd1d-3a573fb7f48c; Mon, 16 Feb 2026 07:32:10 +0000 (UTC)
+X-Farcaster-Flow-ID: e522bb7e-e91c-4abc-bd1d-3a573fb7f48c
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.35;
+ Mon, 16 Feb 2026 07:32:10 +0000
+Received: from c889f3b07a0a.amazon.com (10.106.83.9) by
+ EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.35;
+ Mon, 16 Feb 2026 07:32:08 +0000
+From: Yuto Ohnuki <ytohnuki@amazon.com>
+To: German Maglione <gmaglione@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
+CC: <virtualization@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Yuto Ohnuki <ytohnuki@amazon.com>
+Subject: [PATCH] virtiofs: add FUSE protocol validation
+Date: Mon, 16 Feb 2026 07:31:58 +0000
+Message-ID: <20260216073158.75151-1-ytohnuki@amazon.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20260216053037epcas5p4db5c80cedd64a70a275c3371e4084122
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20260216053037epcas5p4db5c80cedd64a70a275c3371e4084122
-References: <20260216052540.217920-1-joshi.k@samsung.com>
-	<CGME20260216053037epcas5p4db5c80cedd64a70a275c3371e4084122@epcas5p4.samsung.com>
+X-ClientProxiedBy: EX19D033UWC001.ant.amazon.com (10.13.139.218) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+X-Spamd-Result: default: False [-8.16 / 15.00];
+	WHITELIST_DMARC(-7.00)[amazon.com:D:+];
 	MID_CONTAINS_FROM(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[samsung.com,none];
-	R_DKIM_ALLOW(-0.20)[samsung.com:s=mail20170921];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[amazon.com,quarantine];
+	R_DKIM_ALLOW(-0.20)[amazon.com:s=amazoncorp2];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[samsung.com:+];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77264-lists,linux-fsdevel=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[samsung.com:mid,samsung.com:dkim,samsung.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
-	TO_DN_SOME(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[joshi.k@samsung.com,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77265-lists,linux-fsdevel=lfdr.de];
+	DKIM_TRACE(0.00)[amazon.com:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
 	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[ytohnuki@amazon.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[8]
-X-Rspamd-Queue-Id: E6947141013
+	RCPT_COUNT_SEVEN(0.00)[9];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: 5BE7E14143E
 X-Rspamd-Action: no action
 
-Implement support for userspace controlled write-streams.
+Add virtio_fs_verify_response() to validate that the server properly
+follows the FUSE protocol by checking:
 
-Add a new i_write_stream field in xfs inode (note: existing hole is
-used), and use that to implement write stream management file operations.
+- Response length is at least sizeof(struct fuse_out_header).
+- oh.len matches the actual response length.
+- oh.unique matches the request's unique identifier.
 
-Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
+On validation failure, set error to -EIO and normalize oh.len to prevent
+underflow in copy_args_from_argbuf().
+
+Addresses the TODO comment in virtio_fs_request_complete().
+
+Signed-off-by: Yuto Ohnuki <ytohnuki@amazon.com>
 ---
- fs/xfs/xfs_file.c   | 54 +++++++++++++++++++++++++++++++++++++++++++++
- fs/xfs/xfs_icache.c |  1 +
- fs/xfs/xfs_inode.h  |  3 +++
- fs/xfs/xfs_iomap.c  |  1 +
- 4 files changed, 59 insertions(+)
+ fs/fuse/virtio_fs.c | 29 +++++++++++++++++++++++++----
+ 1 file changed, 25 insertions(+), 4 deletions(-)
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 43d088a3bceb..f3b137407a60 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -2021,6 +2021,57 @@ xfs_file_mmap_prepare(
- 	return 0;
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index b2f6486fe1d5..8847d083ce57 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -758,6 +758,27 @@ static void copy_args_from_argbuf(struct fuse_args *args, struct fuse_req *req)
+ 	req->argbuf = NULL;
  }
  
-+static struct block_device *
-+xfs_file_get_bdev(
-+	struct inode		*inode)
++/* Verify that the server properly follows the FUSE protocol */
++static bool virtio_fs_verify_response(struct fuse_req *req, unsigned int len)
 +{
-+	struct xfs_inode *ip = XFS_I(inode);
-+	struct xfs_mount *mp = ip->i_mount;
++	struct fuse_out_header *oh = &req->out.h;
 +
-+	if (XFS_IS_REALTIME_INODE(ip))
-+		return mp->m_rtdev_targp->bt_bdev;
-+
-+	return mp->m_ddev_targp->bt_bdev;
++	if (len < sizeof(*oh)) {
++		pr_warn("virtio-fs: response too short (%u)\n", len);
++		return false;
++	}
++	if (oh->len != len) {
++		pr_warn("virtio-fs: oh.len mismatch (%u != %u)\n", oh->len, len);
++		return false;
++	}
++	if (oh->unique != req->in.h.unique) {
++		pr_warn("virtio-fs: oh.unique mismatch (%llu != %llu)\n",
++			oh->unique, req->in.h.unique);
++		return false;
++	}
++	return true;
 +}
 +
-+static int
-+xfs_file_get_max_write_streams(
-+	struct file		*file)
-+{
-+	struct block_device *bdev = xfs_file_get_bdev(file_inode(file));
-+
-+	if (bdev)
-+		return bdev_max_write_streams(bdev);
-+
-+	return 0;
-+}
-+
-+static int
-+xfs_file_get_write_stream(
-+	struct file		*file)
-+{
-+	struct xfs_inode *ip = XFS_I(file_inode(file));
-+
-+	return READ_ONCE(ip->i_write_stream);
-+}
-+
-+static int
-+xfs_file_set_write_stream(
-+	struct file		*file,
-+	unsigned long		stream)
-+{
-+	struct xfs_inode *ip = XFS_I(file_inode(file));
-+	int max_streams = xfs_file_get_max_write_streams(file);
-+
-+	if (stream > max_streams)
-+		return -EINVAL;
-+	xfs_ilock(ip, XFS_ILOCK_EXCL);
-+	WRITE_ONCE(ip->i_write_stream, stream);
-+	xfs_iunlock(ip, XFS_ILOCK_EXCL);
-+
-+	return 0;
-+}
-+
- const struct file_operations xfs_file_operations = {
- 	.llseek		= xfs_file_llseek,
- 	.read_iter	= xfs_file_read_iter,
-@@ -2040,6 +2091,9 @@ const struct file_operations xfs_file_operations = {
- 	.fallocate	= xfs_file_fallocate,
- 	.fadvise	= xfs_file_fadvise,
- 	.remap_file_range = xfs_file_remap_range,
-+	.get_max_write_streams	= xfs_file_get_max_write_streams,
-+	.get_write_stream = xfs_file_get_write_stream,
-+	.set_write_stream = xfs_file_set_write_stream,
- 	.fop_flags	= FOP_MMAP_SYNC | FOP_BUFFER_RASYNC |
- 			  FOP_BUFFER_WASYNC | FOP_DIO_PARALLEL_WRITE |
- 			  FOP_DONTCACHE,
-diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-index dbaab4ae709f..fc9c6794b7db 100644
---- a/fs/xfs/xfs_icache.c
-+++ b/fs/xfs/xfs_icache.c
-@@ -130,6 +130,7 @@ xfs_inode_alloc(
- 	spin_lock_init(&ip->i_ioend_lock);
- 	ip->i_next_unlinked = NULLAGINO;
- 	ip->i_prev_unlinked = 0;
-+	ip->i_write_stream = 0;
+ /* Work function for request completion */
+ static void virtio_fs_request_complete(struct fuse_req *req,
+ 				       struct virtio_fs_vq *fsvq)
+@@ -767,10 +788,6 @@ static void virtio_fs_request_complete(struct fuse_req *req,
+ 	unsigned int len, i, thislen;
+ 	struct folio *folio;
  
- 	return ip;
- }
-diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-index bd6d33557194..be3580fec318 100644
---- a/fs/xfs/xfs_inode.h
-+++ b/fs/xfs/xfs_inode.h
-@@ -38,6 +38,9 @@ typedef struct xfs_inode {
- 	struct xfs_ifork	i_df;		/* data fork */
- 	struct xfs_ifork	i_af;		/* attribute fork */
+-	/*
+-	 * TODO verify that server properly follows FUSE protocol
+-	 * (oh.uniq, oh.len)
+-	 */
+ 	args = req->args;
+ 	copy_args_from_argbuf(args, req);
  
-+	/* Write stream information */
-+	uint8_t			i_write_stream;	/* for placement, 0 = none */
-+
- 	/* Transaction and locking information. */
- 	struct xfs_inode_log_item *i_itemp;	/* logging information */
- 	struct rw_semaphore	i_lock;		/* inode lock */
-diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index be86d43044df..7988c9e16635 100644
---- a/fs/xfs/xfs_iomap.c
-+++ b/fs/xfs/xfs_iomap.c
-@@ -148,6 +148,7 @@ xfs_bmbt_to_iomap(
- 	else
- 		iomap->bdev = target->bt_bdev;
- 	iomap->flags = iomap_flags;
-+	iomap->write_stream = ip->i_write_stream;
+@@ -824,6 +841,10 @@ static void virtio_fs_requests_done_work(struct work_struct *work)
+ 		virtqueue_disable_cb(vq);
  
- 	/*
- 	 * If the inode is dirty for datasync purposes, let iomap know so it
+ 		while ((req = virtqueue_get_buf(vq, &len)) != NULL) {
++			if (!virtio_fs_verify_response(req, len)) {
++				req->out.h.error = -EIO;
++				req->out.h.len = sizeof(struct fuse_out_header);
++			}
+ 			spin_lock(&fpq->lock);
+ 			list_move_tail(&req->list, &reqs);
+ 			spin_unlock(&fpq->lock);
 -- 
-2.25.1
+2.50.1
+
+
+
+
+Amazon Web Services EMEA SARL, 38 avenue John F. Kennedy, L-1855 Luxembourg, R.C.S. Luxembourg B186284
+
+Amazon Web Services EMEA SARL, Irish Branch, One Burlington Plaza, Burlington Road, Dublin 4, Ireland, branch registration number 908705
+
+
 
 
