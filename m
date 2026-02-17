@@ -1,72 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-77381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id IBHVNSCtlGl7GQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 19:02:08 +0100
+	id IMghBTOtlGl7GQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 19:02:27 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5372C14ED82
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 19:02:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8522414ED9E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 19:02:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 2B9523053BC3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 18:01:29 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 116D7305C323
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 18:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4E4372B24;
-	Tue, 17 Feb 2026 18:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77DD5372B4D;
+	Tue, 17 Feb 2026 18:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cBScIjuJ"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G/RRn3WG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f73.google.com (mail-oa1-f73.google.com [209.85.160.73])
+Received: from mail-oo1-f74.google.com (mail-oo1-f74.google.com [209.85.161.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F5729BDB0
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 18:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EE736F43E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 18:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771351276; cv=none; b=PwnpN9zYHk9TH0heHdjXZtaQPPktolmSIp19MLLoH4BN4U0TQB1ngMVhbk7gxQRsHXtB53Ma6+bSVgpnMNymg1b4phR9osVLZdl2v+fj5yrPXMpYm6WOIr8/+76EXI9xJqmlutaU0pgc+6VxHKw0MwIdLZI6DCIig1To12Ayc80=
+	t=1771351278; cv=none; b=bIn+zbvR90nkcuE4zNsLdpMKEaA+uuqQB/nG2QK0tyeFmKDlMNvy26caXuYNm4T9XCrU0mbGPjGN7KjBkxu9p7z8Du35Yiacgm7hSZCdhAabKIuSdL8itjQoAE8p3YRQ5jBjVBaP6p85ATL8Q3AyGCWEiT0fMRSQvvVzKReJ+n8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771351276; c=relaxed/simple;
-	bh=IMo7fTZiH5AjbqIlP1FpJeao4rQ8mb0ZRSl0gCTzrco=;
+	s=arc-20240116; t=1771351278; c=relaxed/simple;
+	bh=3Hi4Yw1wa5t6RwBOUReTRUch3U2jt68qYKe1b8CJ15E=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Li0W1dr5MW642BEOEYYnWrILodR7MqAm7CTpXDNqkksaXiAqlMhA9XtBPKTcWjkK1PBRGPVawLlpJX54AmyLhUUS1zrqs3YyOgTJuSvLZS+DDd9SovJTBOZNUGtPkeKSL8dTIVOuHFEw9vQKWvpdYD3RPp0cbP3umxPt+Evrmvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cBScIjuJ; arc=none smtp.client-ip=209.85.160.73
+	 To:Cc:Content-Type; b=EXR0yqgtKC+Max5T/gXOvoAql7FLqT4D0qgYJe5S1BBlCC1JfuhieFv69pIrusxYyv34I7XbszU7x2eCqrTS0qNiSZnlG7dqYrNJ6sVRqo9RAq8LV/f3vfwpS2bwOBVnoyJancd/GU9xzpYchs5CO92V5kByHwPex7cZ8TkvEMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G/RRn3WG; arc=none smtp.client-ip=209.85.161.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com
-Received: by mail-oa1-f73.google.com with SMTP id 586e51a60fabf-40ee65ba6f9so39200910fac.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 10:01:15 -0800 (PST)
+Received: by mail-oo1-f74.google.com with SMTP id 006d021491bc7-6795b040001so37970121eaf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 10:01:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1771351274; x=1771956074; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zNf1st2FT2PYXwVv7YSArpm+3hAEziPMQnbmcsUNwA8=;
-        b=cBScIjuJbSK0MAIIJ0IkAAfG4mzSLTMKibqW8EV8CDg2m4WqplDlgQMpIenXC2u5PK
-         8TsQgBGHMjfXZKjPxTWsfAgU9gxpRefyMbU3uoN7PENBINz9RZsuoSLJMa9I8IgfvFrR
-         1lE6h/i4Is4BVMNbL5R3vkQGNo5uYeMQTzY6pwtIUubtYQLBTBnSHI4QNUdaBQqEKf19
-         rieZJqV+tdH+j6u1tGedpSIu6w0KgbbZWfIOMDuYbyEK9WX/J+9aqJ5NuoF3hKQxVEgw
-         IR6Ingz6krSB54x2F+FoxTe85Df9Bjs162g8KpnIEoHCl7MK1RyL+pPbrM7lCfOoRGBB
-         QtoA==
+        d=google.com; s=20230601; t=1771351276; x=1771956076; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sNWH6w2foYf8QmhTrAmxhB/CQUCC0ZNVw0ETpO4TRL8=;
+        b=G/RRn3WGXChfjYl416ZnkaHqChV1tM+Q/kJknc/q27uWFs+Oc1lYwp9i3wpYU6PChl
+         vDTLO+2TijMCnpoCXI6t8rufTpfhamTeHdIxDvJAAeeo84d1mbgGe4N4UsagYHbuTMN8
+         tzkNc8nkNAZV+0auIr8CvNF2JtC7xdw3X05PjGPflu6huYKXCb1mmFkEPTIdXePFkjUJ
+         eOD/62ZRuL2FGttlqodSjtGvEMGvXPl5yfA6L+HTZwmioqLNtbva11Ice/gehxwpHrD4
+         wFayBbS3GUC/VS6klopHSvX9dHEjwXC7JZxTXh8IV8xbhyW5OgEqnxNL0xQXeIq4xw19
+         5w2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771351274; x=1771956074;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zNf1st2FT2PYXwVv7YSArpm+3hAEziPMQnbmcsUNwA8=;
-        b=FveuzMUc+MAfPOcucvglAPr+kpQo1vdxBnWtCVvtWspODT+YOdwG6PatbIGWEpmMkT
-         vr3aM3Zzkc/BUhi+t2NNy48GAQ2ymv/qWSQX92ppM4Yn7BFDC8BvEClp2n8QSH/gRtlS
-         tFpkBn6LWy/RLkiHNmAFMFxKx/83UsRa5BGeiCZNKll301Whjw3w1mU5uUzjdqjXQWC7
-         I+qNrHOqiZN+3/2fJUUvuKHWcr07t3yFBv1XMCC3JkbE1vSg3h6yAFg20jCJXknqwtyP
-         uG28LrMz2BpK8vlkPdvLoFvGiYtlibM8vuMuRYz3yFL1ygWhEx4CUM2j/b7U0JQ1UOeH
-         45SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWp/RYVKP0DAWcNgIylTtjHawDLWgLAL5/u42iLzDJ1xNHAq7HLF2Rz2tnSGt+a91LZdDDYzqNWfEFxklh/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT3KjBwrJIZbpjQNXT5QnT+UohJvSPGuoG4ZBIahypdy3P56Fg
-	1UUvH4xhU/TlKciduab48HsZwdb0rwiW4PDqsovdzqgUJ7KmTqIFn05azR3/Uw9jCQpDsrKSDXu
-	19g09lg==
-X-Received: from jabx17.prod.google.com ([2002:a02:6f11:0:b0:5cf:13a7:b8e8])
- (user=avagin job=prod-delivery.src-stubby-dispatcher) by 2002:a4a:e719:0:b0:678:cf78:1e9a
- with SMTP id 006d021491bc7-678cf7820e5mr4561614eaf.35.1771351274078; Tue, 17
- Feb 2026 10:01:14 -0800 (PST)
-Date: Tue, 17 Feb 2026 18:01:06 +0000
+        d=1e100.net; s=20230601; t=1771351276; x=1771956076;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=sNWH6w2foYf8QmhTrAmxhB/CQUCC0ZNVw0ETpO4TRL8=;
+        b=Nx4BRpCwl428kgnIOWj2PZWzd6tv46eoNri0Y/7DsGjBgEu4s/iAjToLRjageNIOW/
+         DSWBDCufgpLj6xyBFOGFpSYpUFCO7r51F8/UbF4V1GSyeSQ+uMsdwRnROuNfDrYnsh2f
+         viSea02Xwh62aRSUv5DBPYv40oFblHzgHY6vaB44AKv3L/UtxgHdIce6o/l1JVCnDzZt
+         kLKhJQsOXIM6RY362PlWcoVLym5ysHgBOAqjZa/fl7wvxAJR2D7VxXyKoemVGV56I6XW
+         jUOrm5+SDN2XyYgkuKhv/AwfavPk/MuwxU7X9Cv1FuxveeVr3ebV/248xSLVbp5M4mBV
+         vvtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXcKZUu5ybruXdJCa3fNmY6H9pVXg+LPFANnv3i8rgp5E9FPjqFQb0KnH7ZCR/FRF02TjqkKYleBFtIrJXj@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiubvW/an7GdjRQDLKCWb0MfXPbKf+l+bCWt8/wV8fpj7tGhwS
+	zldtnvZuseTYmAGyF4L+hdHDmYnKVlKLU2gd8L8ZOtBAHEe/aXVYudNEk5sZa0Lg5oC4FzDNpv4
+	UjL1D2w==
+X-Received: from jabko13.prod.google.com ([2002:a05:6638:8f0d:b0:5ce:aa0c:6674])
+ (user=avagin job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6820:1622:b0:66e:e7e:6524
+ with SMTP id 006d021491bc7-677690aef69mr8034820eaf.58.1771351275445; Tue, 17
+ Feb 2026 10:01:15 -0800 (PST)
+Date: Tue, 17 Feb 2026 18:01:07 +0000
 In-Reply-To: <20260217180108.1420024-1-avagin@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -76,8 +78,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20260217180108.1420024-1-avagin@google.com>
 X-Mailer: git-send-email 2.53.0.310.g728cabbaf7-goog
-Message-ID: <20260217180108.1420024-3-avagin@google.com>
-Subject: [PATCH 2/4] exec: inherit HWCAPs from the parent process
+Message-ID: <20260217180108.1420024-4-avagin@google.com>
+Subject: [PATCH 3/4] mm: synchronize saved_auxv access with arg_lock
 From: Andrei Vagin <avagin@google.com>
 To: Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 Cc: Cyrill Gorcunov <gorcunov@gmail.com>, Mike Rapoport <rppt@kernel.org>, 
@@ -89,6 +91,7 @@ Cc: Cyrill Gorcunov <gorcunov@gmail.com>, Mike Rapoport <rppt@kernel.org>,
 	Andrei Vagin <avagin@google.com>, 
 	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@futurfusion.io>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
@@ -106,7 +109,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MIME_TRACE(0.00)[0:+];
 	RCVD_COUNT_THREE(0.00)[4];
 	RCPT_COUNT_TWELVE(0.00)[17];
-	TAGGED_FROM(0.00)[bounces-77381-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77382-lists,linux-fsdevel=lfdr.de];
 	DKIM_TRACE(0.00)[google.com:+];
 	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
@@ -115,268 +118,185 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[futurfusion.io:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 5372C14ED82
+	DBL_BLOCKED_OPENRESOLVER(0.00)[futurfusion.io:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,suse.com:email]
+X-Rspamd-Queue-Id: 8522414ED9E
 X-Rspamd-Action: no action
 
-Introduces a mechanism to inherit hardware capabilities (AT_HWCAP,
-AT_HWCAP2, etc.) from a parent process when they have been modified via
-prctl.
+The mm->saved_auxv array stores the auxiliary vector, which can be
+modified via prctl(PR_SET_MM_AUXV) or prctl(PR_SET_MM_MAP). Previously,
+accesses to saved_auxv were not synchronized. This was a intentional
+trade-off, as the vector was only used to provide information to
+userspace via /proc/PID/auxv or prctl(PR_GET_AUXV), and consistency
+between the auxv values left to userspace.
 
-To support C/R operations (snapshots, live migration) in heterogeneous
-clusters, we must ensure that processes utilize CPU features available
-on all potential target nodes. To solve this, we need to advertise a
-common feature set across the cluster.
+With the introduction of hardware capability (HWCAP) inheritance during
+execve, the kernel now relies on the contents of saved_auxv to configure
+the execution environment of new processes.  An unsynchronized read
+during execve could result in a new process inheriting an inconsistent
+set of capabilities if the parent process updates its auxiliary vector
+concurrently.
 
-This patch adds a new mm flag MMF_USER_HWCAP, which is set when the
-auxiliary vector is modified via prctl(PR_SET_MM, PR_SET_MM_AUXV).  When
-execve() is called, if the current process has MMF_USER_HWCAP set, the
-HWCAP values are extracted from the current auxiliary vector and stored
-in the linux_binprm structure. These values are then used to populate
-the auxiliary vector of the new process, effectively inheriting the
-hardware capabilities.
+While it is still not strictly required to guarantee the consistency of
+auxv values on the kernel side, doing so is relatively straightforward.
+This change implements synchronization using arg_lock.
 
-The inherited HWCAPs are masked with the hardware capabilities supported
-by the current kernel to ensure that we don't report more features than
-actually supported. This is important to avoid unexpected behavior,
-especially for processes with additional privileges.
-
-Reviewed-by: Cyrill Gorcunov <gorcunov@gmail.com>
 Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@futurfusion.io>
+Reviewed-by: Cyrill Gorcunov <gorcunov@gmail.com>
+Reviewed-by: Michal Koutn=C3=BD <mkoutny@suse.com>
 Signed-off-by: Andrei Vagin <avagin@google.com>
 ---
- fs/binfmt_elf.c          |  8 ++---
- fs/binfmt_elf_fdpic.c    |  8 ++---
- fs/exec.c                | 63 ++++++++++++++++++++++++++++++++++++++++
- include/linux/binfmts.h  | 11 +++++++
- include/linux/mm_types.h |  2 ++
- kernel/fork.c            |  3 ++
- kernel/sys.c             |  5 +++-
- 7 files changed, 91 insertions(+), 9 deletions(-)
+ fs/exec.c                |  2 ++
+ fs/proc/base.c           | 12 +++++++++---
+ include/linux/mm_types.h |  1 -
+ kernel/fork.c            |  7 ++++++-
+ kernel/sys.c             | 29 ++++++++++++++---------------
+ 5 files changed, 31 insertions(+), 20 deletions(-)
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 3eb734c192e9..aec129e33f0b 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -246,7 +246,7 @@ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
- 	 */
- 	ARCH_DLINFO;
- #endif
--	NEW_AUX_ENT(AT_HWCAP, ELF_HWCAP);
-+	NEW_AUX_ENT(AT_HWCAP, bprm->hwcap);
- 	NEW_AUX_ENT(AT_PAGESZ, ELF_EXEC_PAGESIZE);
- 	NEW_AUX_ENT(AT_CLKTCK, CLOCKS_PER_SEC);
- 	NEW_AUX_ENT(AT_PHDR, phdr_addr);
-@@ -264,13 +264,13 @@ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
- 	NEW_AUX_ENT(AT_SECURE, bprm->secureexec);
- 	NEW_AUX_ENT(AT_RANDOM, (elf_addr_t)(unsigned long)u_rand_bytes);
- #ifdef ELF_HWCAP2
--	NEW_AUX_ENT(AT_HWCAP2, ELF_HWCAP2);
-+	NEW_AUX_ENT(AT_HWCAP2, bprm->hwcap2);
- #endif
- #ifdef ELF_HWCAP3
--	NEW_AUX_ENT(AT_HWCAP3, ELF_HWCAP3);
-+	NEW_AUX_ENT(AT_HWCAP3, bprm->hwcap3);
- #endif
- #ifdef ELF_HWCAP4
--	NEW_AUX_ENT(AT_HWCAP4, ELF_HWCAP4);
-+	NEW_AUX_ENT(AT_HWCAP4, bprm->hwcap4);
- #endif
- 	NEW_AUX_ENT(AT_EXECFN, bprm->exec);
- 	if (k_platform) {
-diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-index a3d4e6973b29..55b482f03c82 100644
---- a/fs/binfmt_elf_fdpic.c
-+++ b/fs/binfmt_elf_fdpic.c
-@@ -629,15 +629,15 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
- 	 */
- 	ARCH_DLINFO;
- #endif
--	NEW_AUX_ENT(AT_HWCAP,	ELF_HWCAP);
-+	NEW_AUX_ENT(AT_HWCAP,	bprm->hwcap);
- #ifdef ELF_HWCAP2
--	NEW_AUX_ENT(AT_HWCAP2,	ELF_HWCAP2);
-+	NEW_AUX_ENT(AT_HWCAP2,	bprm->hwcap2);
- #endif
- #ifdef ELF_HWCAP3
--	NEW_AUX_ENT(AT_HWCAP3,	ELF_HWCAP3);
-+	NEW_AUX_ENT(AT_HWCAP3,	bprm->hwcap3);
- #endif
- #ifdef ELF_HWCAP4
--	NEW_AUX_ENT(AT_HWCAP4,	ELF_HWCAP4);
-+	NEW_AUX_ENT(AT_HWCAP4,	bprm->hwcap4);
- #endif
- 	NEW_AUX_ENT(AT_PAGESZ,	PAGE_SIZE);
- 	NEW_AUX_ENT(AT_CLKTCK,	CLOCKS_PER_SEC);
 diff --git a/fs/exec.c b/fs/exec.c
-index 2e3a6593c6fd..9c70776fca9e 100644
+index 9c70776fca9e..8f5fba06aff8 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1454,6 +1454,17 @@ static struct linux_binprm *alloc_bprm(int fd, struct filename *filename, int fl
- 	 */
- 	bprm->is_check = !!(flags & AT_EXECVE_CHECK);
- 
-+	bprm->hwcap = ELF_HWCAP;
-+#ifdef ELF_HWCAP2
-+	bprm->hwcap2 = ELF_HWCAP2;
-+#endif
-+#ifdef ELF_HWCAP3
-+	bprm->hwcap3 = ELF_HWCAP3;
-+#endif
-+#ifdef ELF_HWCAP4
-+	bprm->hwcap4 = ELF_HWCAP4;
-+#endif
-+
- 	retval = bprm_mm_init(bprm);
- 	if (!retval)
- 		return bprm;
-@@ -1775,6 +1786,55 @@ static int bprm_execve(struct linux_binprm *bprm)
- 	return retval;
- }
- 
-+static void inherit_hwcap(struct linux_binprm *bprm)
-+{
-+	struct mm_struct *mm = current->mm;
-+	int i, n;
-+
-+#ifdef ELF_HWCAP4
-+	n = 4;
-+#elif defined(ELF_HWCAP3)
-+	n = 3;
-+#elif defined(ELF_HWCAP2)
-+	n = 2;
-+#else
-+	n = 1;
-+#endif
-+
-+	for (i = 0; n && i < AT_VECTOR_SIZE; i += 2) {
-+		unsigned long type = mm->saved_auxv[i];
-+		unsigned long val = mm->saved_auxv[i + 1];
-+
-+		switch (type) {
-+		case AT_NULL:
-+			goto done;
-+		case AT_HWCAP:
-+			bprm->hwcap = val & ELF_HWCAP;
-+			break;
-+#ifdef ELF_HWCAP2
-+		case AT_HWCAP2:
-+			bprm->hwcap2 = val & ELF_HWCAP2;
-+			break;
-+#endif
-+#ifdef ELF_HWCAP3
-+		case AT_HWCAP3:
-+			bprm->hwcap3 = val & ELF_HWCAP3;
-+			break;
-+#endif
-+#ifdef ELF_HWCAP4
-+		case AT_HWCAP4:
-+			bprm->hwcap4 = val & ELF_HWCAP4;
-+			break;
-+#endif
-+		default:
-+			continue;
-+		}
-+		n--;
-+	}
-+done:
-+	mm_flags_set(MMF_USER_HWCAP, bprm->mm);
-+}
-+
- static int do_execveat_common(int fd, struct filename *filename,
- 			      struct user_arg_ptr argv,
- 			      struct user_arg_ptr envp,
-@@ -1843,6 +1903,9 @@ static int do_execveat_common(int fd, struct filename *filename,
- 			     current->comm, bprm->filename);
+@@ -1801,6 +1801,7 @@ static void inherit_hwcap(struct linux_binprm *bprm)
+ 	n =3D 1;
+ #endif
+=20
++	spin_lock(&mm->arg_lock);
+ 	for (i =3D 0; n && i < AT_VECTOR_SIZE; i +=3D 2) {
+ 		unsigned long type =3D mm->saved_auxv[i];
+ 		unsigned long val =3D mm->saved_auxv[i + 1];
+@@ -1832,6 +1833,7 @@ static void inherit_hwcap(struct linux_binprm *bprm)
+ 		n--;
  	}
- 
-+	if (mm_flags_test(MMF_USER_HWCAP, current->mm))
-+		inherit_hwcap(bprm);
-+
- 	return bprm_execve(bprm);
+ done:
++	spin_unlock(&mm->arg_lock);
+ 	mm_flags_set(MMF_USER_HWCAP, bprm->mm);
  }
- 
-diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-index 65abd5ab8836..94a3dcf9b1d2 100644
---- a/include/linux/binfmts.h
-+++ b/include/linux/binfmts.h
-@@ -2,6 +2,7 @@
- #ifndef _LINUX_BINFMTS_H
- #define _LINUX_BINFMTS_H
- 
-+#include <linux/elf.h>
- #include <linux/sched.h>
- #include <linux/unistd.h>
- #include <asm/exec.h>
-@@ -67,6 +68,16 @@ struct linux_binprm {
- 	unsigned long exec;
- 
- 	struct rlimit rlim_stack; /* Saved RLIMIT_STACK used during exec. */
-+	unsigned long hwcap;
-+#ifdef ELF_HWCAP2
-+	unsigned long hwcap2;
-+#endif
-+#ifdef ELF_HWCAP3
-+	unsigned long hwcap3;
-+#endif
-+#ifdef ELF_HWCAP4
-+	unsigned long hwcap4;
-+#endif
- 
- 	char buf[BINPRM_BUF_SIZE];
- } __randomize_layout;
+=20
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 4eec684baca9..09d887741268 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -1083,14 +1083,20 @@ static ssize_t auxv_read(struct file *file, char __=
+user *buf,
+ {
+ 	struct mm_struct *mm =3D file->private_data;
+ 	unsigned int nwords =3D 0;
++	unsigned long saved_auxv[AT_VECTOR_SIZE];
+=20
+ 	if (!mm)
+ 		return 0;
++
++	spin_lock(&mm->arg_lock);
++	memcpy(saved_auxv, mm->saved_auxv, sizeof(saved_auxv));
++	spin_unlock(&mm->arg_lock);
++
+ 	do {
+ 		nwords +=3D 2;
+-	} while (mm->saved_auxv[nwords - 2] !=3D 0); /* AT_NULL */
+-	return simple_read_from_buffer(buf, count, ppos, mm->saved_auxv,
+-				       nwords * sizeof(mm->saved_auxv[0]));
++	} while (saved_auxv[nwords - 2] !=3D 0); /* AT_NULL */
++	return simple_read_from_buffer(buf, count, ppos, saved_auxv,
++				       nwords * sizeof(saved_auxv[0]));
+ }
+=20
+ static const struct file_operations proc_auxv_operations =3D {
 diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 8731606d8d36..2f3c6ad48c0a 100644
+index 2f3c6ad48c0a..d1a95b90e448 100644
 --- a/include/linux/mm_types.h
 +++ b/include/linux/mm_types.h
-@@ -1918,6 +1918,8 @@ enum {
- #define MMF_TOPDOWN		31	/* mm searches top down by default */
- #define MMF_TOPDOWN_MASK	BIT(MMF_TOPDOWN)
- 
-+#define MMF_USER_HWCAP		32	/* user-defined HWCAPs */
-+
- #define MMF_INIT_LEGACY_MASK	(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
- 				 MMF_DISABLE_THP_MASK | MMF_HAS_MDWE_MASK |\
- 				 MMF_VM_MERGE_ANY_MASK | MMF_TOPDOWN_MASK)
+@@ -1254,7 +1254,6 @@ struct mm_struct {
+ 		unsigned long start_code, end_code, start_data, end_data;
+ 		unsigned long start_brk, brk, start_stack;
+ 		unsigned long arg_start, arg_end, env_start, env_end;
+-
+ 		unsigned long saved_auxv[AT_VECTOR_SIZE]; /* for /proc/PID/auxv */
+=20
+ #ifdef CONFIG_ARCH_HAS_ELF_CORE_EFLAGS
 diff --git a/kernel/fork.c b/kernel/fork.c
-index e832da9d15a4..4c92a2bc3cbb 100644
+index 4c92a2bc3cbb..e17e57e29b6a 100644
 --- a/kernel/fork.c
 +++ b/kernel/fork.c
-@@ -1104,6 +1104,9 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
- 
+@@ -1105,8 +1105,13 @@ static struct mm_struct *mm_init(struct mm_struct *m=
+m, struct task_struct *p,
  		__mm_flags_overwrite_word(mm, mmf_init_legacy_flags(flags));
- 		mm->def_flags = current->mm->def_flags & VM_INIT_DEF_MASK;
-+
-+		if (mm_flags_test(MMF_USER_HWCAP, current->mm))
-+			mm_flags_set(MMF_USER_HWCAP, mm);
+ 		mm->def_flags =3D current->mm->def_flags & VM_INIT_DEF_MASK;
+=20
+-		if (mm_flags_test(MMF_USER_HWCAP, current->mm))
++		if (mm_flags_test(MMF_USER_HWCAP, current->mm)) {
++			spin_lock(&current->mm->arg_lock);
+ 			mm_flags_set(MMF_USER_HWCAP, mm);
++			memcpy(mm->saved_auxv, current->mm->saved_auxv,
++			       sizeof(mm->saved_auxv));
++			spin_unlock(&current->mm->arg_lock);
++		}
  	} else {
  		__mm_flags_overwrite_word(mm, default_dump_filter);
- 		mm->def_flags = 0;
+ 		mm->def_flags =3D 0;
 diff --git a/kernel/sys.c b/kernel/sys.c
-index cdbf8513caf6..e4b0fa2f6845 100644
+index e4b0fa2f6845..c679b5797e73 100644
 --- a/kernel/sys.c
 +++ b/kernel/sys.c
-@@ -2157,8 +2157,10 @@ static int prctl_set_mm_map(int opt, const void __user *addr, unsigned long data
- 	 * not introduce additional locks here making the kernel
- 	 * more complex.
- 	 */
--	if (prctl_map.auxv_size)
-+	if (prctl_map.auxv_size) {
- 		memcpy(mm->saved_auxv, user_auxv, sizeof(user_auxv));
-+		mm_flags_set(MMF_USER_HWCAP, mm);
-+	}
- 
+@@ -2147,20 +2147,11 @@ static int prctl_set_mm_map(int opt, const void __u=
+ser *addr, unsigned long data
+ 	mm->arg_end	=3D prctl_map.arg_end;
+ 	mm->env_start	=3D prctl_map.env_start;
+ 	mm->env_end	=3D prctl_map.env_end;
+-	spin_unlock(&mm->arg_lock);
+-
+-	/*
+-	 * Note this update of @saved_auxv is lockless thus
+-	 * if someone reads this member in procfs while we're
+-	 * updating -- it may get partly updated results. It's
+-	 * known and acceptable trade off: we leave it as is to
+-	 * not introduce additional locks here making the kernel
+-	 * more complex.
+-	 */
+ 	if (prctl_map.auxv_size) {
+-		memcpy(mm->saved_auxv, user_auxv, sizeof(user_auxv));
+ 		mm_flags_set(MMF_USER_HWCAP, mm);
++		memcpy(mm->saved_auxv, user_auxv, sizeof(user_auxv));
+ 	}
++	spin_unlock(&mm->arg_lock);
+=20
  	mmap_read_unlock(mm);
  	return 0;
-@@ -2190,6 +2192,7 @@ static int prctl_set_auxv(struct mm_struct *mm, unsigned long addr,
- 
- 	task_lock(current);
- 	memcpy(mm->saved_auxv, user_auxv, len);
-+	mm_flags_set(MMF_USER_HWCAP, mm);
- 	task_unlock(current);
- 
+@@ -2190,10 +2181,10 @@ static int prctl_set_auxv(struct mm_struct *mm, uns=
+igned long addr,
+=20
+ 	BUILD_BUG_ON(sizeof(user_auxv) !=3D sizeof(mm->saved_auxv));
+=20
+-	task_lock(current);
+-	memcpy(mm->saved_auxv, user_auxv, len);
++	spin_lock(&mm->arg_lock);
+ 	mm_flags_set(MMF_USER_HWCAP, mm);
+-	task_unlock(current);
++	memcpy(mm->saved_auxv, user_auxv, len);
++	spin_unlock(&mm->arg_lock);
+=20
  	return 0;
--- 
+ }
+@@ -2481,9 +2472,17 @@ static inline int prctl_get_mdwe(unsigned long arg2,=
+ unsigned long arg3,
+ static int prctl_get_auxv(void __user *addr, unsigned long len)
+ {
+ 	struct mm_struct *mm =3D current->mm;
++	unsigned long auxv[AT_VECTOR_SIZE];
+ 	unsigned long size =3D min_t(unsigned long, sizeof(mm->saved_auxv), len);
+=20
+-	if (size && copy_to_user(addr, mm->saved_auxv, size))
++	if (!size)
++		return sizeof(mm->saved_auxv);
++
++	spin_lock(&mm->arg_lock);
++	memcpy(auxv, mm->saved_auxv, size);
++	spin_unlock(&mm->arg_lock);
++
++	if (copy_to_user(addr, auxv, size))
+ 		return -EFAULT;
+ 	return sizeof(mm->saved_auxv);
+ }
+--=20
 2.53.0.310.g728cabbaf7-goog
 
 
