@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-77470-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aPDXAUX4lGk8JgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77470-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:22:45 +0100
+	id XD/6ABT4lGk8JgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:21:56 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3F32151DD0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:22:44 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3E09151D5F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:21:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id BF015306BE26
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 23:21:46 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id C94AD3021B97
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 23:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D302F5A06;
-	Tue, 17 Feb 2026 23:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C091829E114;
+	Tue, 17 Feb 2026 23:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MkBBdxfa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V9aDGsWo"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8F529E114;
-	Tue, 17 Feb 2026 23:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E623221FCF;
+	Tue, 17 Feb 2026 23:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771370503; cv=none; b=Efocnv3JIeuc/cLJDiRJtyWLhMEUd2Waf/u1kOPVvUuSIEriB5R0MqsXpMLhpahILIPasRJm12b4cDz05bPnQigRGCxVHXY5379b52iQ8+s5yXnSaKyLevNiO7l6vgDwzAu8p1PLk35atBrjq2etR9WglIw4SSrLGItxGdlvwMc=
+	t=1771370506; cv=none; b=kpecXLY+G5kD3f26yJ0uM88RXqQxzX9Utzcz86dXqbYgMItgGg5W8PLq+CZIYrUXV0Hbc1dZGhGl6GhU8/Yqf7rU3yDTtGSx0mHVmpVpC9wuUyk0fmyOWaYXgWZRedTVr5m3xo+UaPib42wdZhSClIrhiE2vNR3/ICtbVdLknGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771370503; c=relaxed/simple;
-	bh=oHvPYoitnKtGSiL95UFeks/M80dV23uzLYcY9LernTg=;
+	s=arc-20240116; t=1771370506; c=relaxed/simple;
+	bh=2emlILPUK/dIQY4B20iMIktYioSZNX8RV248OyQ9YPo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cnU8PsGsq0dopQsA4KrnyWTVe1ey7oBAA7FyVLPUhQBBGQkqnPZhSwekXXIZf2ZwZ1GOB/vKtb3QpuHDEBtLYbgFCMiE/8tEyeoHintnWFY0E0ekWPOrDxPxF+GB1sU2ZOTDToC//Z62jEVC+4dtcEcvq2URdWkvF1Cd4WAWbyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MkBBdxfa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26CD0C4CEF7;
-	Tue, 17 Feb 2026 23:21:41 +0000 (UTC)
+	 MIME-Version; b=T9sH6jF234A23KmHc2ZmRg1kK6tPuLfh1lkBRupKXHn2FYHPynFflItzGW8PoNKQFcDKVGuMGtNvzvUgStNR9mtEJ4EggQgat+4GOeVUrWC6dlzNlgs6HfBBXf5wHjGr3DtIU8NPjgM17uBqYile6X0Jv4X+rl1IMAv+t8opnFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V9aDGsWo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4218AC4CEF7;
+	Tue, 17 Feb 2026 23:21:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771370503;
-	bh=oHvPYoitnKtGSiL95UFeks/M80dV23uzLYcY9LernTg=;
+	s=k20201202; t=1771370505;
+	bh=2emlILPUK/dIQY4B20iMIktYioSZNX8RV248OyQ9YPo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MkBBdxfah6BbxXSUegslOS7pK4nDePz8FzClAMo496DBS/UIOqIrSdMZjxMhyQEu2
-	 AUngl+aBQS9VBk3YsExLAUjMklX74uJv6PqcBxifw/w2aHHN9Hzs6EnE9h5aZdYxlY
-	 uGlZh8cvAGQzLKvgQqpPi6t8fMqH9V4BZwav5xgJR6n139AQkNGCC3IdzTECVQNt2W
-	 OM0w2R4Ejgsiszz7PAe2JB/fh55l8LQ+yBP9Q4lQCrbpnye1U84xYe4JsqbeCJv4Yi
-	 bmGaHNTCblEp8VM3BKEnCIiuwAmtVm+byIviMCr8lFe5aw7RPPPfkU/hNiij3waH+2
-	 CMmzR4f71q8xw==
+	b=V9aDGsWoCeQRcSrTUs23kxu2Q8IzpHN+gAakTC9zO0xzXXWU1L+uKjDkYs6DYiz1b
+	 zLYiqk1RDDrTPTe9HRqQrgJg2wA8JxWBvs1KAoQwU4kZoKx2fszO/dpHt/JOtIPauN
+	 ZMeUZ5ncY/wqVM3ftLML17WXD6YNs1ZtNwJ0D2GvMzje/53ApE+oQNLkw0LZM1VrTS
+	 iKn2Vt03xVTNcAjafxIFWDyHds/S17qnSNFE/P9MAVZfhjXwBzTS7tgWvtz1EjjgHd
+	 5yQl4V+MQdPDNTlfirXtOS4CVY6W+W0X4oatLHp+a2w6gzNjn4gXvrJmzuwEVBE6Vs
+	 GsgKSc8VhAXbA==
 From: Andrey Albershteyn <aalbersh@kernel.org>
 To: linux-xfs@vger.kernel.org,
 	fsverity@lists.linux.dev,
@@ -52,9 +52,9 @@ To: linux-xfs@vger.kernel.org,
 Cc: Andrey Albershteyn <aalbersh@kernel.org>,
 	hch@lst.de,
 	djwong@kernel.org
-Subject: [PATCH v3 33/35] xfs: introduce health state for corrupted fsverity metadata
-Date: Wed, 18 Feb 2026 00:19:33 +0100
-Message-ID: <20260217231937.1183679-34-aalbersh@kernel.org>
+Subject: [PATCH v3 34/35] xfs: add fsverity traces
+Date: Wed, 18 Feb 2026 00:19:34 +0100
+Message-ID: <20260217231937.1183679-35-aalbersh@kernel.org>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <20260217231937.1183679-1-aalbersh@kernel.org>
 References: <20260217231937.1183679-1-aalbersh@kernel.org>
@@ -71,18 +71,18 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-77470-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77471-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
 	TO_DN_SOME(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[aalbersh@kernel.org,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
@@ -91,97 +91,125 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[7];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: A3F32151DD0
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: C3E09151D5F
 X-Rspamd-Action: no action
 
-Report corrupted fsverity descriptor through health system.
+Even though fsverity has traces, debugging issues with varying block
+sizes could be a bit less transparent without read/write traces.
 
 Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 ---
- fs/xfs/libxfs/xfs_fs.h     |  1 +
- fs/xfs/libxfs/xfs_health.h |  4 +++-
- fs/xfs/xfs_fsverity.c      | 13 ++++++++++---
- fs/xfs/xfs_health.c        |  1 +
- 4 files changed, 15 insertions(+), 4 deletions(-)
+ fs/xfs/xfs_fsverity.c | 10 ++++++++++
+ fs/xfs/xfs_trace.h    | 46 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 56 insertions(+)
 
-diff --git a/fs/xfs/libxfs/xfs_fs.h b/fs/xfs/libxfs/xfs_fs.h
-index 36a87276f0b7..d8be7fe93382 100644
---- a/fs/xfs/libxfs/xfs_fs.h
-+++ b/fs/xfs/libxfs/xfs_fs.h
-@@ -423,6 +423,7 @@ struct xfs_bulkstat {
- #define XFS_BS_SICK_PARENT	(1 << 7)  /* parent pointers */
- #define XFS_BS_SICK_DIRTREE	(1 << 8)  /* directory tree structure */
- #define XFS_BS_SICK_DATA	(1 << 9)  /* file data */
-+#define XFS_BS_SICK_FSVERITY	(1 << 10) /* fsverity metadata */
- 
- /*
-  * Project quota id helpers (previously projid was 16bit only
-diff --git a/fs/xfs/libxfs/xfs_health.h b/fs/xfs/libxfs/xfs_health.h
-index fa91916ad072..c534aacf3199 100644
---- a/fs/xfs/libxfs/xfs_health.h
-+++ b/fs/xfs/libxfs/xfs_health.h
-@@ -105,6 +105,7 @@ struct xfs_rtgroup;
- #define XFS_SICK_INO_FORGET	(1 << 12)
- #define XFS_SICK_INO_DIRTREE	(1 << 13)  /* directory tree structure */
- #define XFS_SICK_INO_DATA	(1 << 14)  /* file data */
-+#define XFS_SICK_INO_FSVERITY	(1 << 15)  /* fsverity metadata */
- 
- /* Primary evidence of health problems in a given group. */
- #define XFS_SICK_FS_PRIMARY	(XFS_SICK_FS_COUNTERS | \
-@@ -142,7 +143,8 @@ struct xfs_rtgroup;
- 				 XFS_SICK_INO_SYMLINK | \
- 				 XFS_SICK_INO_PARENT | \
- 				 XFS_SICK_INO_DIRTREE | \
--				 XFS_SICK_INO_DATA)
-+				 XFS_SICK_INO_DATA | \
-+				 XFS_SICK_INO_FSVERITY)
- 
- #define XFS_SICK_INO_ZAPPED	(XFS_SICK_INO_BMBTD_ZAPPED | \
- 				 XFS_SICK_INO_BMBTA_ZAPPED | \
 diff --git a/fs/xfs/xfs_fsverity.c b/fs/xfs/xfs_fsverity.c
-index 5a2874236c3c..d89512d59328 100644
+index d89512d59328..69f1c22e1ba8 100644
 --- a/fs/xfs/xfs_fsverity.c
 +++ b/fs/xfs/xfs_fsverity.c
-@@ -197,16 +197,23 @@ xfs_fsverity_get_descriptor(
- 		return error;
+@@ -176,6 +176,8 @@ xfs_fsverity_get_descriptor(
+ 	uint32_t		blocksize = i_blocksize(VFS_I(ip));
+ 	xfs_fileoff_t		last_block_offset;
  
- 	desc_size = be32_to_cpu(d_desc_size);
--	if (XFS_IS_CORRUPT(mp, desc_size > FS_VERITY_MAX_DESCRIPTOR_SIZE))
-+	if (XFS_IS_CORRUPT(mp, desc_size > FS_VERITY_MAX_DESCRIPTOR_SIZE)) {
-+		xfs_inode_mark_sick(XFS_I(inode), XFS_SICK_INO_FSVERITY);
- 		return -ERANGE;
--	if (XFS_IS_CORRUPT(mp, desc_size > desc_size_pos))
-+	}
++	trace_xfs_fsverity_get_descriptor(ip);
 +
-+	if (XFS_IS_CORRUPT(mp, desc_size > desc_size_pos)) {
-+		xfs_inode_mark_sick(XFS_I(inode), XFS_SICK_INO_FSVERITY);
- 		return -ERANGE;
-+	}
+ 	ASSERT(inode->i_flags & S_VERITY);
+ 	error = xfs_bmap_last_extent(NULL, ip, XFS_DATA_FORK, &rec, &is_empty);
+ 	if (error)
+@@ -419,6 +421,8 @@ xfs_fsverity_read_merkle(
+ 		(fsverity_metadata_offset(inode) >> PAGE_SHIFT);
+ 	pgoff_t			idx = index + metadata_idx;
  
- 	if (!buf_size)
- 		return desc_size;
++	trace_xfs_fsverity_read_merkle(XFS_I(inode), idx, PAGE_SIZE);
++
+ 	return generic_read_merkle_tree_page(inode, idx);
+ }
  
--	if (XFS_IS_CORRUPT(mp, desc_size > buf_size))
-+	if (XFS_IS_CORRUPT(mp, desc_size > buf_size)) {
-+		xfs_inode_mark_sick(XFS_I(inode), XFS_SICK_INO_FSVERITY);
- 		return -ERANGE;
-+	}
+@@ -435,6 +439,8 @@ xfs_fsverity_readahead_merkle_tree(
+ 		(fsverity_metadata_offset(inode) >> PAGE_SHIFT);
+ 	pgoff_t			idx = index + metadata_idx;
  
- 	desc_pos = round_down(desc_size_pos - desc_size, blocksize);
- 	error = xfs_fsverity_read(inode, buf, desc_size, desc_pos);
-diff --git a/fs/xfs/xfs_health.c b/fs/xfs/xfs_health.c
-index b851651c02b2..e52ee02f7d7c 100644
---- a/fs/xfs/xfs_health.c
-+++ b/fs/xfs/xfs_health.c
-@@ -488,6 +488,7 @@ static const struct ioctl_sick_map ino_map[] = {
- 	{ XFS_SICK_INO_SYMLINK_ZAPPED,	XFS_BS_SICK_SYMLINK },
- 	{ XFS_SICK_INO_DIRTREE,	XFS_BS_SICK_DIRTREE },
- 	{ XFS_SICK_INO_DATA,	XFS_BS_SICK_DATA },
-+	{ XFS_SICK_INO_FSVERITY,	XFS_BS_SICK_FSVERITY },
- };
++	trace_xfs_fsverity_read_merkle(XFS_I(inode), idx, PAGE_SIZE);
++
+ 	generic_readahead_merkle_tree(inode, idx, nr_pages);
+ }
  
- /* Fill out bulkstat health info. */
+@@ -456,6 +462,8 @@ xfs_fsverity_write_merkle(
+ 	const char		*p;
+ 	unsigned int		i;
+ 
++	trace_xfs_fsverity_write_merkle(XFS_I(inode), position, size);
++
+ 	if (position + size > inode->i_sb->s_maxbytes)
+ 		return -EFBIG;
+ 
+@@ -487,6 +495,8 @@ xfs_fsverity_file_corrupt(
+ 	loff_t			pos,
+ 	size_t			len)
+ {
++	trace_xfs_fsverity_file_corrupt(XFS_I(inode), pos, len);
++
+ 	xfs_inode_mark_sick(XFS_I(inode), XFS_SICK_INO_DATA);
+ }
+ 
+diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
+index f70afbf3cb19..a5562921611a 100644
+--- a/fs/xfs/xfs_trace.h
++++ b/fs/xfs/xfs_trace.h
+@@ -5906,6 +5906,52 @@ DEFINE_EVENT(xfs_freeblocks_resv_class, name, \
+ DEFINE_FREEBLOCKS_RESV_EVENT(xfs_freecounter_reserved);
+ DEFINE_FREEBLOCKS_RESV_EVENT(xfs_freecounter_enospc);
+ 
++TRACE_EVENT(xfs_fsverity_get_descriptor,
++	TP_PROTO(struct xfs_inode *ip),
++	TP_ARGS(ip),
++	TP_STRUCT__entry(
++		__field(dev_t, dev)
++		__field(xfs_ino_t, ino)
++	),
++	TP_fast_assign(
++		__entry->dev = VFS_I(ip)->i_sb->s_dev;
++		__entry->ino = ip->i_ino;
++	),
++	TP_printk("dev %d:%d ino 0x%llx",
++		  MAJOR(__entry->dev), MINOR(__entry->dev),
++		  __entry->ino)
++);
++
++DECLARE_EVENT_CLASS(xfs_fsverity_class,
++	TP_PROTO(struct xfs_inode *ip, u64 pos, unsigned int length),
++	TP_ARGS(ip, pos, length),
++	TP_STRUCT__entry(
++		__field(dev_t, dev)
++		__field(xfs_ino_t, ino)
++		__field(u64, pos)
++		__field(unsigned int, length)
++	),
++	TP_fast_assign(
++		__entry->dev = VFS_I(ip)->i_sb->s_dev;
++		__entry->ino = ip->i_ino;
++		__entry->pos = pos;
++		__entry->length = length;
++	),
++	TP_printk("dev %d:%d ino 0x%llx pos 0x%llx length 0x%x",
++		  MAJOR(__entry->dev), MINOR(__entry->dev),
++		  __entry->ino,
++		  __entry->pos,
++		  __entry->length)
++)
++
++#define DEFINE_FSVERITY_EVENT(name) \
++DEFINE_EVENT(xfs_fsverity_class, name, \
++	TP_PROTO(struct xfs_inode *ip, u64 pos, unsigned int length), \
++	TP_ARGS(ip, pos, length))
++DEFINE_FSVERITY_EVENT(xfs_fsverity_read_merkle);
++DEFINE_FSVERITY_EVENT(xfs_fsverity_write_merkle);
++DEFINE_FSVERITY_EVENT(xfs_fsverity_file_corrupt);
++
+ #endif /* _TRACE_XFS_H */
+ 
+ #undef TRACE_INCLUDE_PATH
 -- 
 2.51.2
 
