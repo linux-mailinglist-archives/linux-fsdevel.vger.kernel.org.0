@@ -1,168 +1,315 @@
-Return-Path: <linux-fsdevel+bounces-77347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aMIwLOAolGlGAQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 09:37:52 +0100
+	id QDeWEOQxlGkNAgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 10:16:20 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E07A14A09E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 09:37:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B158A14A458
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 10:16:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 30EE3302E85F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 08:37:33 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 2882F30234CA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 09:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF02E223DD6;
-	Tue, 17 Feb 2026 08:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C13D30171C;
+	Tue, 17 Feb 2026 09:16:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I8vdGNjG"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="MEVJLmrx";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LpYq6GbV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3331B7F4
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 08:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5CD29E110;
+	Tue, 17 Feb 2026 09:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771317447; cv=none; b=UG/g0hbE7WkxFLTLClpJLX1e4a1b9LhGEndPc4lhzTBdLCQ5QcAKk/VrZl4K3SIBYfT0moZaN7/urbzuLf4mL57PskjFNlkpNj28uMrBGfomNWkbZJ1vnyOwxu3kVWwn3RwmW2AUYuIfab6gp0AHNSbbVhUUVmBYgfuCU7dAspo=
+	t=1771319776; cv=none; b=fS9gu/WmiUukFD5rw6vtN5ZR/1+NitD5u5k3FV8nl/3TEmXx3Hfwsv+ufKRJ8GEIpU3UTk4ExEiR4dzQhanHJLElTD1TVq6uwQfY/ViJWyaj8Spp9BM7FFUATNgxPvh57UFFqCnCK/kBTnEbL/mi7jWg4fwn4wYFN+QqcdJ3fhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771317447; c=relaxed/simple;
-	bh=dFFga2/IiRtc2VK8/n76dynZZMTujzywBoxu+Xp1MbI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aPlnIU5PJgSuyh5tHR1XhdlBqsEKkiTGLvUqwHvI1UpHegNEAvItOdO64BJac9S1qu3+iyV8IvPLvkHT0XwRME210dAWR7rs70PVjeVxQv6FhvJl+jt0lFOPlq90gFnUljllthfMKtdCemD6mLXBrxoQ+Y/jB6Zvq6LbjcT3FVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I8vdGNjG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAA9AC19421;
-	Tue, 17 Feb 2026 08:37:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771317447;
-	bh=dFFga2/IiRtc2VK8/n76dynZZMTujzywBoxu+Xp1MbI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I8vdGNjGBkH6zov5oC62JrBeAfRurmJbjTAhX1Mc/3RCN69RwMt9n+jGo48ZBDmk4
-	 h2B+O4kJjiYCmf6Uf7ls44zSufIbujXH4PS5nyKvn5ESthyStXCXIeVOPsZmbNivdB
-	 W/mUgYZjgmlXgXURD+BBeJ2FMweCr60YlyKGUbbsAeUwAocXPXLM4zDh5nDCxm27oD
-	 /EIQvObQ90FO4aXj8wrOAQSYq1axGXePpvcJ5s50uNtQjuLNqyH7g4DRAYFWggV/L7
-	 GmiLMbQqjUZxhJqEaHgaPYgWGlKciH8LTl0iYrqnt0/Av53CMgSkuCbHgb9eDvEAHF
-	 26i9+URP51GJw==
-Date: Tue, 17 Feb 2026 09:37:22 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Askar Safin <safinaskar@gmail.com>, 
-	christian@brauner.io, cyphar@cyphar.com, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	torvalds@linux-foundation.org, werner@almesberger.net
-Subject: Re: [RFC] pivot_root(2) races
-Message-ID: <20260217-gepflanzt-preis-a5ac618e3c8c@brauner>
-References: <1FC2FB1F-BDA5-472D-A7DB-D146F6F75B16@zytor.com>
- <20260213174721.132662-1-safinaskar@gmail.com>
- <1caf6a70-e49b-42c7-81d0-bd0d6f5027bf@zytor.com>
- <20260213222521.GQ3183987@ZenIV>
- <92837188-C667-4A2A-9D34-85E5F1A5D597@zytor.com>
- <20260214-unbekannt-ratifizieren-58de8ce30c18@brauner>
- <2B0076BB-56E3-4477-900A-E9A34F45264B@zytor.com>
+	s=arc-20240116; t=1771319776; c=relaxed/simple;
+	bh=dWH4ByV+lmGKjtEtsFvxEN5atKL3uwiQbt4YKFq0/OA=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=agx1QOAB6+zmSJM1Wvl8rKw68NF0l7XVZQLyVOqu17s57w/KwqAjddd4WR55HJJF7IvHGvQwZ1kPyHywJtC3n46makSV5RLQQaulgSLQ4bDoJsH3u5IqRn2ptScWrbCwDldlW4uK1rs4nNVeiLjnF7psH5XjuK+XDt90iaWR9xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=MEVJLmrx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LpYq6GbV; arc=none smtp.client-ip=202.12.124.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id AA4507A0050;
+	Tue, 17 Feb 2026 04:12:53 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Tue, 17 Feb 2026 04:12:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
+	1771319573; x=1771405973; bh=SN6PPtxT5bKlWoOxjGYR/7GIyFgG1DzqiFD
+	SjPXDV+4=; b=MEVJLmrxakegr/Dx4kencZ/ab+dhFkVEnefDGD7o8QFVgSWx5gC
+	VgXeCFj2Ug+9NlQPT5PXrnf+hWkFherPpp6LjJIFbGaJq76PdbGpfhm59bv2pqaU
+	8zvXhcG4Wm9jePjMGtwR86sxConeg9FckmzaS6Sq35cTiTiB0YwfYtTfBv974VnJ
+	COUymubg6+FaZ+P3VETiLCF5uLUbomp8Ho8RCslOnOsUnucKGGph5wp2y5wmaDhS
+	DTIju69CEtjDxktXWgyvNlG2BKD9NBvM/xURWSoSokyiSqD2fHWXJmHfrPqbMoTM
+	p8wWii18nt/CNPyIc9dALHoiGnBOcgzqRZQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1771319573; x=
+	1771405973; bh=SN6PPtxT5bKlWoOxjGYR/7GIyFgG1DzqiFDSjPXDV+4=; b=L
+	pYq6GbV0in3Zx5AcPs68cXEfItnAGQX9k0pSJwY2qat+8OmFFEU+BjcsuDfgsAPD
+	De4EMeBX4UC/vVMTGneoHX7/IlGN2shiyVMfRGfQ1A96TB95lbNmmAXuTdUszXSu
+	HccDV+K2n0FBMEt5l8W/+vfNSvFGdsuLa5l9X2lIImwiITNi4KKLFpsLOTuHqlYc
+	9wQKCmuunycfSYXyNtGkG/UCHq6yQ0BQObY0XnlNk2ERH8fBvGcxlQN6aAFjp9Bc
+	kjHivllaQfRcv66o01MvDmeuEYBqOxoaSRCVlTnsLQgAUGS9QrA2XdLz1h0Y7Ceh
+	dAY3PNTHhuz3HwD7PYY4g==
+X-ME-Sender: <xms:FDGUaWLlqFIjETHowbqO6brhtbDnpdjcjjHEkaDKAWKKue3_W9ZOiw>
+    <xme:FDGUaels-XNaeB9B-K4aEfhCM6mhhplhxImb-UQUXNvDOq3eW_jDMGxFaVzz-DASD
+    u3VXqkNk9D33i6qljw8xXgAUaCrEf7m9WKHgT9skLdgqPK-gw>
+X-ME-Received: <xmr:FDGUaXax37aM3iQet1gwTfBvGB_XjcGDu_5wPlBinbZPGzF_XmcNFgdIlMoIwVRkEsYcr5PVtQCr_MiiYC7JuVCfoTx8yGseq8pCWZy3qoMO>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvudelfeejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegouf
+    hushhpvggtthffohhmrghinhculdegledmnecujfgurheptgfgggfhvfevufgjfhffkfhr
+    sehtqhertddttdejnecuhfhrohhmpefpvghilheurhhofihnuceonhgvihhlsgesohifnh
+    hmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnheplefhuddtfffhleegvdeitdetgeeu
+    udetkeegkeeutdevhfegkeffveeuieetgeejnecuffhomhgrihhnpehshiiikhgrlhhlvg
+    hrrdgrphhpshhpohhtrdgtohhmpdhgohhoghhlvggrphhishdrtghomhdpghhoohdrghhl
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvih
+    hlsgesohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhht
+    phhouhhtpdhrtghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukh
+    dprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrd
+    horhhgpdhrtghpthhtohepshihiigsohhtoddtvggrhedutdekrgdufhehfhgsgehftggt
+    vdgukeesshihiihkrghllhgvrhdrrghpphhsphhothhmrghilhdrtghomhdprhgtphhtth
+    hopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopehgfhhsvdeslhhishhtshdrlhhi
+    nhhugidruggvvhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehshiiikhgrlhhlvghrqdgsuhhgshesghhoohhglhgvghhrohhuphhsrdgt
+    ohhm
+X-ME-Proxy: <xmx:FDGUaS96Qjtq5ZmCyLG2XcmxtGfxmF6bQlgyX0rNEyzKeAnpB66vEg>
+    <xmx:FDGUaeZ4Ds6-Z1ItnIf6Mv2j6bzvtBZd6twknyBiY9LJLl4ub7J2PQ>
+    <xmx:FDGUaUcfRdVkV_rRHOpczvKIg-7qvts0zA5B5VyJ7A0HN4KXpdfG3w>
+    <xmx:FDGUaTnzGaxGh-CPhPq2xWEr3DebL0VIMMWL0-IZ6MSE3mI46XjRwg>
+    <xmx:FTGUaQ5eBfEwuBK1ErOtbx0PiAEFumjWaFAGZcGZWVEUmgRhaGbj-lxp>
+Feedback-ID: i9d664b8f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 17 Feb 2026 04:12:50 -0500 (EST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2B0076BB-56E3-4477-900A-E9A34F45264B@zytor.com>
+From: NeilBrown <neilb@ownmail.net>
+To: "Christian Brauner" <brauner@kernel.org>
+Cc: "syzbot" <syzbot+0ea5108a1f5fb4fcc2d8@syzkaller.appspotmail.com>,
+ gfs2@lists.linux.dev, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+ viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [gfs2?] WARNING in filename_mkdirat
+In-reply-to: <20260217-fanshop-akteur-af571819f78b@brauner>
+References: <6993b6a3.050a0220.340abe.0775.GAE@google.com>,
+ <20260217-fanshop-akteur-af571819f78b@brauner>
+Date: Tue, 17 Feb 2026 20:12:46 +1100
+Message-id: <177131956603.8396.12634282713089317@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [2.34 / 15.00];
-	MID_END_EQ_FROM_USER_PART(4.00)[];
+X-Spamd-Result: default: False [0.34 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=ac00553de86d6bf0];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[ownmail.net,none];
+	R_DKIM_ALLOW(-0.20)[ownmail.net:s=fm3,messagingengine.com:s=fm3];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-77348-lists,linux-fsdevel=lfdr.de];
+	REPLYTO_DN_EQ_FROM_DN(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns];
+	REPLYTO_DOM_NEQ_FROM_DOM(0.00)[];
+	FREEMAIL_FROM(0.00)[ownmail.net];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77347-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
+	TO_DN_SOME(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,gmail.com,brauner.io,cyphar.com,suse.cz,vger.kernel.org,linux-foundation.org,almesberger.net];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
+	DKIM_TRACE(0.00)[ownmail.net:+,messagingengine.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
+	HAS_REPLYTO(0.00)[neil@brown.name];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCVD_COUNT_FIVE(0.00)[6];
+	FROM_NEQ_ENVFROM(0.00)[neilb@ownmail.net,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	REDIRECTOR_URL(0.00)[goo.gl];
+	MISSING_XM_UA(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel,0ea5108a1f5fb4fcc2d8];
 	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,zytor.com:email,linux.org.uk:email]
-X-Rspamd-Queue-Id: 0E07A14A09E
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Rspamd-Queue-Id: B158A14A458
 X-Rspamd-Action: no action
 
-On Sat, Feb 14, 2026 at 04:48:17PM -0800, H. Peter Anvin wrote:
-> On February 14, 2026 4:42:32 AM PST, Christian Brauner <brauner@kernel.org> wrote:
-> >On Fri, Feb 13, 2026 at 03:00:49PM -0800, H. Peter Anvin wrote:
-> >> On February 13, 2026 2:25:21 PM PST, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >> >On Fri, Feb 13, 2026 at 12:27:46PM -0800, H. Peter Anvin wrote:
-> >> >> On 2026-02-13 09:47, Askar Safin wrote:
-> >> >> > "H. Peter Anvin" <hpa@zytor.com>:
-> >> >> >> It would be interesting to see how much would break if pivot_root() was restricted (with kernel threads parked in nullfs safely out of the way.)
-> >> >> > 
-> >> >> > As well as I understand, kernel threads need to follow real root directory,
-> >> >> > because they sometimes load firmware from /lib/firmware and call
-> >> >> > user mode helpers, such as modprobe.
-> >> >> > 
-> >> >> 
-> >> >> If they are parked in nullfs, which is always overmounted by the global root,
-> >> >> that should Just Work[TM]. Path resolution based on that directory should
-> >> >> follow the mount point unless I am mistaken (which is possible, the Linux vfs
-> >> >> has changed a lot since the last time I did a deep dive.)
-> >> >
-> >> >You are, and it had always been that way.  We do *not* follow mounts at
-> >> >the starting point.  /../lib would work, /lib won't.  I'd love to deal with
-> >> >that wart, but that would break early boot on unknown number of boxen and
-> >> >breakage that early is really unpleasant to debug.
-> >> 
-> >> Well, it ought to be easy to make the kernel implicitly prefix /../ for kernel-upcall pathnames, which is more or less the same concept as, but should be a lot simpler than, looking up the init process root.
-> >
-> >I don't think parking kernel threads unconditionally in nullfs is going
-> >to work. This will not just break firmware loading it will also break
-> >coredump handling and a bunch of other stuff that relies on root based
-> >lookup.
-> >
-> >I think introducing all this new machinery just to improve
-> >pivot_root()'s broken semantics is pointless. Let's just let it die. We
-> >have all the tools to avoid it ready. OPEN_TREE_NAMESPACE for containers
-> >so pivot_root() isn't needed at all anymore for that case and
-> >MOVE_MOUNT_BENEATH for the rootfs for v7.1 and then even if someone
-> >wanted to replace the rootfs that whole chroot_fs_refs() dance is not
-> >needed at all anymore.
-> >
-> >The only reason to do it would be to make sure that no one accidently
-> >pins the old rootfs anymore but that's not a strong argument anyway:
-> >
-> >- If done during boot it's pointless because most of the times there's
-> >  exactly one process running and CLONE_FS will guaratee that kernel
-> >  threads pick up the rootfs change as well.
-> >
-> >- If done during container setup it's especially useless because again
-> >  only the process setting up the container will be around.
-> >
-> >- It doesn't at all deal with file descriptors that pin the old rootfs
-> >  which is the much more likely case.
-> >
-> >If anyone actually does pivot_root() on a live system in the initial
-> >user namespace with a full userspace running work without introducing
-> >all kinds of breakage they should probably reexamine some design
-> >decisions.
-> >
-> >I don't think we need to fix it I think we need to make it unused and I
-> >think that's possible as I tried to argue.
-> 
-> You missed the bit that the kernel tasks would use /.. to get to the "real" root.
+On Tue, 17 Feb 2026, Christian Brauner wrote:
+> On Mon, Feb 16, 2026 at 04:30:27PM -0800, syzbot wrote:
+> > Hello,
+> >=20
+> > syzbot found the following issue on:
+> >=20
+> > HEAD commit:    0f2acd3148e0 Merge tag 'm68knommu-for-v7.0' of git://git.=
+k..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D15331c02580000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dac00553de86d6=
+bf0
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D0ea5108a1f5fb4f=
+cc2d8
+> > compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25=
+a-1~exp1~20251221153213.50), Debian LLD 21.1.8
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D146b295a580=
+000
+> >=20
+> > Downloadable assets:
+> > disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d=
+900f083ada3/non_bootable_disk-0f2acd31.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/b7d134e71e9c/vmlinu=
+x-0f2acd31.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/b18643058ceb/b=
+zImage-0f2acd31.xz
+> > mounted in repro: https://storage.googleapis.com/syzbot-assets/bbfed09077=
+d3/mount_1.gz
+> >   fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=3D106b=
+295a580000)
+> >=20
+> > IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> > Reported-by: syzbot+0ea5108a1f5fb4fcc2d8@syzkaller.appspotmail.com
+>=20
+> Neil, is this something you have time to look into?
 
-My point was rather just that I don't know if we want to have yet
-another set of helpers just for this. Sure, we can do it but is
-this something that's really urgent right now. I'm not so sure.
+The reproducer appears to mount a gfs2 filesystem and mkdir 3
+directories:
+  ./file1
+  ./file1/file4
+  ./file1/file4/file7
+
+and somewhere in there it crashes because vfs_mkdir() returns a
+non-error dentry for which ->d_parent->d_inode is not locked and
+end_creating_path() tries to up_write().
+
+Presumably either ->d_parent has changed or the inode was unlocked?
+
+gfs2_mkdir() never returns a dentry, so it must be returning NULL.
+
+It's weird - but that is no surprise.
+
+I'll try building a kernel myself and see if the reproducer still fires.
+if so some printk tracing my reveal something.
+
+NeilBrown
+
+
+>=20
+> >=20
+> > ------------[ cut here ]------------
+> > DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) !=3D current) && !rwsem_test_oflag=
+s(sem, RWSEM_NONSPINNABLE)): count =3D 0x0, magic =3D 0xffff88804a18c9b8, own=
+er =3D 0x0, curr 0xffff888000ec2480, list empty
+> > WARNING: kernel/locking/rwsem.c:1381 at __up_write kernel/locking/rwsem.c=
+:1380 [inline], CPU#0: syz.0.53/5774
+> > WARNING: kernel/locking/rwsem.c:1381 at up_write+0x2d6/0x410 kernel/locki=
+ng/rwsem.c:1643, CPU#0: syz.0.53/5774
+> > Modules linked in:
+> > CPU: 0 UID: 0 PID: 5774 Comm: syz.0.53 Not tainted syzkaller #0 PREEMPT(f=
+ull)=20
+> > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.=
+16.3-2 04/01/2014
+> > RIP: 0010:__up_write kernel/locking/rwsem.c:1380 [inline]
+> > RIP: 0010:up_write+0x388/0x410 kernel/locking/rwsem.c:1643
+> > Code: cc 8b 49 c7 c2 c0 eb cc 8b 4c 0f 44 d0 48 8b 7c 24 08 48 c7 c6 20 e=
+e cc 8b 48 8b 14 24 4c 89 f1 4d 89 e0 4c 8b 4c 24 10 41 52 <67> 48 0f b9 3a 4=
+8 83 c4 08 e8 ea 60 0a 03 e9 67 fd ff ff 48 c7 c1
+> > RSP: 0000:ffffc90006407d80 EFLAGS: 00010246
+> > RAX: ffffffff8bcceba0 RBX: ffff88804a18c9b8 RCX: ffff88804a18c9b8
+> > RDX: 0000000000000000 RSI: ffffffff8bccee20 RDI: ffffffff9014bf50
+> > RBP: ffff88804a18ca10 R08: 0000000000000000 R09: ffff888000ec2480
+> > R10: ffffffff8bcceba0 R11: ffffed1009431939 R12: 0000000000000000
+> > R13: dffffc0000000000 R14: ffff88804a18c9b8 R15: 1ffff11009431938
+> > FS:  00007f9e11bfe6c0(0000) GS:ffff88808ca62000(0000) knlGS:0000000000000=
+000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 000000c000d54e20 CR3: 0000000041f2c000 CR4: 0000000000352ef0
+> > Call Trace:
+> >  <TASK>
+> >  inode_unlock include/linux/fs.h:1038 [inline]
+> >  end_dirop fs/namei.c:2947 [inline]
+> >  end_creating include/linux/namei.h:126 [inline]
+> >  end_creating_path fs/namei.c:4962 [inline]
+> >  filename_mkdirat+0x305/0x510 fs/namei.c:5271
+> >  __do_sys_mkdirat fs/namei.c:5287 [inline]
+> >  __se_sys_mkdirat+0x35/0x150 fs/namei.c:5284
+> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+> >  do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > RIP: 0033:0x7f9e10d9bf79
+> > Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f=
+7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff f=
+f 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
+> > RSP: 002b:00007f9e11bfe028 EFLAGS: 00000246 ORIG_RAX: 0000000000000102
+> > RAX: ffffffffffffffda RBX: 00007f9e11016090 RCX: 00007f9e10d9bf79
+> > RDX: 00000000000001c0 RSI: 0000200000000140 RDI: ffffffffffffff9c
+> > RBP: 00007f9e10e327e0 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> > R13: 00007f9e11016128 R14: 00007f9e11016090 R15: 00007ffffd54f8b8
+> >  </TASK>
+> > ----------------
+> > Code disassembly (best guess), 2 bytes skipped:
+> >    0:	49 c7 c2 c0 eb cc 8b 	mov    $0xffffffff8bccebc0,%r10
+> >    7:	4c 0f 44 d0          	cmove  %rax,%r10
+> >    b:	48 8b 7c 24 08       	mov    0x8(%rsp),%rdi
+> >   10:	48 c7 c6 20 ee cc 8b 	mov    $0xffffffff8bccee20,%rsi
+> >   17:	48 8b 14 24          	mov    (%rsp),%rdx
+> >   1b:	4c 89 f1             	mov    %r14,%rcx
+> >   1e:	4d 89 e0             	mov    %r12,%r8
+> >   21:	4c 8b 4c 24 10       	mov    0x10(%rsp),%r9
+> >   26:	41 52                	push   %r10
+> > * 28:	67 48 0f b9 3a       	ud1    (%edx),%rdi <-- trapping instruction
+> >   2d:	48 83 c4 08          	add    $0x8,%rsp
+> >   31:	e8 ea 60 0a 03       	call   0x30a6120
+> >   36:	e9 67 fd ff ff       	jmp    0xfffffda2
+> >   3b:	48                   	rex.W
+> >   3c:	c7                   	.byte 0xc7
+> >   3d:	c1                   	.byte 0xc1
+> >=20
+> >=20
+> > ---
+> > This report is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >=20
+> > syzbot will keep track of this issue. See:
+> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> >=20
+> > If the report is already addressed, let syzbot know by replying with:
+> > #syz fix: exact-commit-title
+> >=20
+> > If you want syzbot to run the reproducer, reply with:
+> > #syz test: git://repo/address.git branch-or-commit-hash
+> > If you attach or paste a git patch, syzbot will apply it before testing.
+> >=20
+> > If you want to overwrite report's subsystems, reply with:
+> > #syz set subsystems: new-subsystem
+> > (See the list of subsystem names on the web dashboard)
+> >=20
+> > If the report is a duplicate of another one, reply with:
+> > #syz dup: exact-subject-of-another-report
+> >=20
+> > If you want to undo deduplication, reply with:
+> > #syz undup
+>=20
+
 
