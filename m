@@ -1,53 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-77337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77338-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id kLwvFdwBlGnH+QEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 06:51:24 +0100
+	id uhoyBakKlGkb/QEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77338-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 07:28:57 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DCA3148E3D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 06:51:24 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FD9F148F7A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 07:28:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 01EBB301AD22
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 05:51:18 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 047683019821
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 06:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02152882AA;
-	Tue, 17 Feb 2026 05:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2982765C5;
+	Tue, 17 Feb 2026 06:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0+F3pw4M"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC9121ABD7;
-	Tue, 17 Feb 2026 05:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775B91F0E34;
+	Tue, 17 Feb 2026 06:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771307476; cv=none; b=B817Kgp8ffcS8iGy88uazw2+/nSAGwM44sU23SfjcSlkf+W90cSjUEN6GGEkTxaV7jYbs+JyFG5LgYrM7HkI25HB9sPsHkFTmOG/kZ8Ue+uCH/c4eb2dCL83j3FHiGuGVo+UOSODojEAxXxQ6+ng1qGar6cyw0Da71IjFjF8LAo=
+	t=1771309730; cv=none; b=sOcKWyKCo/URwVu0vTxuAYQwyMkpjNQfJHEefvCaDVaMKcjagBGIheHEnHAxTGdOQIQ8E4ZvASAMxpZg0njk6nWrG1U98aTwDcNEJw+6aVr3aqfh+m6wtZWQt/AborBWFzuripElIQO5zOnSThMRJCqDSuldAcbLKG/Rjk+6svo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771307476; c=relaxed/simple;
-	bh=IvdmmAkiQbI8GM6eL5zuHPV2rPVW8fLBTRizzQSBji0=;
+	s=arc-20240116; t=1771309730; c=relaxed/simple;
+	bh=r0yGeDQV7l+yDkOyUI3jXK/Hrs6RmGr9LwFczLdSKUg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gIzCp2i5u1sscIu1+1jXSgqV51f6ay8/ufuBE1mE7KD4iMNkPEQPy5Cj9kRQp3eEC12ddrvSEPfA33YYdLPjRkkmq4uA9Yts8C9/9q1Cm/W5sRDei/dKx1gQMhxlgMmuefTPzlb2tbTrzFloDsu2PDg1ijdzr+YqxRN4OJTnO/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 3B5B868C4E; Tue, 17 Feb 2026 06:51:03 +0100 (CET)
-Date: Tue, 17 Feb 2026 06:51:03 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Pankaj Raghav <pankaj.raghav@linux.dev>
-Cc: linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org,
-	Andres Freund <andres@anarazel.de>, djwong@kernel.org,
-	john.g.garry@oracle.com, willy@infradead.org, hch@lst.de,
-	ritesh.list@gmail.com, jack@suse.cz, ojaswin@linux.ibm.com,
-	Luis Chamberlain <mcgrof@kernel.org>, dchinner@redhat.com,
-	Javier Gonzalez <javier.gonz@samsung.com>, gost.dev@samsung.com,
-	tytso@mit.edu, p.raghav@samsung.com, vi.shah@samsung.com
-Subject: Re: [LSF/MM/BPF TOPIC] Buffered atomic writes
-Message-ID: <20260217055103.GA6174@lst.de>
-References: <d0c4d95b-8064-4a7e-996d-7ad40eb4976b@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ieNkTrld0SeNZy1Tlz0s6bCePonSgh0aXqwtgJQbVr7S2Fr8H98mH3bBm5QSscwtHTQbHP2w7VSDUo1RnMs0cNJOkpk5mT5OIVaeS3pICNqYnkpPrHHObShamne1M9RRKLbvApMD7rEk6TuGoJfI/77wJ17VhiIajXPr8WWfpqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=0+F3pw4M; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=LQEB5qH6sGqn4N5t877calL/A3UF9/CGACxt3V+Y1E8=; b=0+F3pw4MxvXt2rCIDBraA++VZd
+	ORMPnoIPZWkL+haiLnvZw7FGjGsFKm4CnAJ3gQlRPNpp6ht7zV7qxTzPlGrMayTPi/sW8bsk13X+Y
+	n0dREQP1oEevOCNFRjKONBFZUtrgAupOei6wwSsulBKQ36AxTBQNmOWGiKjpI6sCd3OJCNzDEdtme
+	9RlCWxby5PZzzGMrtfl9zGRRZqg7OPIyH0hwah2AuGzI7g3dxKRiRtIcKmNepmrkxc7rbfvtev+HK
+	Pq0NbrcVJJGVKyhD2kCjd1TbD0CV/+fggmtPxMur45DtK1BGQ37UZhFh14FW5S8/C3js6JeVV94B3
+	Je3ankVg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vsEZj-00000007hu1-43Mb;
+	Tue, 17 Feb 2026 06:28:47 +0000
+Date: Mon, 16 Feb 2026 22:28:47 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: fsverity@lists.linux.dev, linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v3 1/2] f2fs: make f2fs_verify_cluster() partially
+ large-folio-aware
+Message-ID: <aZQKn2-L2Tro4OUT@infradead.org>
+References: <20260215042806.13348-1-ebiggers@kernel.org>
+ <20260215042806.13348-2-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,37 +68,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d0c4d95b-8064-4a7e-996d-7ad40eb4976b@linux.dev>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20260215042806.13348-2-ebiggers@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.14 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64];
+	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77337-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-77338-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[infradead.org:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	MISSING_XM_UA(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kvack.org,lists.linux-foundation.org,anarazel.de,kernel.org,oracle.com,infradead.org,lst.de,gmail.com,suse.cz,linux.ibm.com,redhat.com,samsung.com,mit.edu];
-	R_DKIM_NA(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FROM_NEQ_ENVFROM(0.00)[hch@infradead.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,lst.de:mid]
-X-Rspamd-Queue-Id: 1DCA3148E3D
+	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:mid,infradead.org:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 0FD9F148F7A
 X-Rspamd-Action: no action
 
-I think a better session would be how we can help postgres to move
-off buffered I/O instead of adding more special cases for them.
+On Sat, Feb 14, 2026 at 08:28:05PM -0800, Eric Biggers wrote:
+> In addition, remove the unnecessary clearing of the up-to-date flag.
+
+I'd split that into a prep patch, as it is not really related to
+the folio conversion.
+
+Otherwise this looks good.  I actually had patchs to kill
+fsverity_verify_page in my local queue, but decied to postpone
+it.  Guess I should have included them..
+
 
