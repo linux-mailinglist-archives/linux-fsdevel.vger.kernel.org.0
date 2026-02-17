@@ -1,240 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-77395-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id SG3KFj/BlGkwHgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77395-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 20:27:59 +0100
+	id CKNwNBTGlGnCHgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 20:48:36 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C20F14FA48
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 20:27:59 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ADC614FBA2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 20:48:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 8F08A3015B44
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 19:27:58 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 0DAE73023DAC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 19:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55E8377565;
-	Tue, 17 Feb 2026 19:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HvnoZR8z"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6D1376BCC;
+	Tue, 17 Feb 2026 19:48:33 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com [209.85.167.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42FB372B3E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 19:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771356474; cv=pass; b=s1dpbbXr291olcTAUURjmaANzc3kMXT3HCvOzI14PnwZNseLPYr/6qwF92fLIDkewKXf1ZNK4hWB/IxHliPdUqo+PeVvIslUeoV5zXt5PzdiPs/TT2Hjs9Ho6IUjnrr22+QsKcLJhj4Z80uGZUbLcvylrAVkQzq6bC84wqzZgtc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771356474; c=relaxed/simple;
-	bh=2AkZD/xZt0VUvR9sJ0sGJHU4a65qrHn4YVu35A++2Jc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CHWcpbKTIRwcp/UMQBBFIbpK5E+ffFwZzbBOAGvnv5+nXdPxl+LVS6vyyoyD8eOaKnoMiD2QvCe24LIoFI1Ima0eT+gqB93tQqcpdcJgCVY+mWj5e2AQYlVXXV9J+pioWzvJiJKsUu7dITTAq3v3nPeZrjk/tPSuonDwyuZMWjo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HvnoZR8z; arc=pass smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-48318d08ec2so7725e9.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 11:27:52 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771356471; cv=none;
-        d=google.com; s=arc-20240605;
-        b=ArIEaoo4Uqpkqi0qgVtPsfkltgJGA128zyeqH+BREjjNdVQaEtHqrSXZ2hhUzIQMFZ
-         8+UIuk0hIzmWYY2ASZgGEkQ/r2q2FKxwaGaocWAdbXfQiCLcIYaxJgVO7m4Oas1w45YM
-         ciOS+T/aQnZNu36Qo2rvpNUWpf9A+iX7XkGZgkwL7Inci7JP4aUnJ+C4neIHo6j/rJMz
-         TXWJPhU/zXVSwPtBwLICTnxLpqmCaYI05aH8KiHNoByT5GQbIqR3TfNz5qu7aPAe76dC
-         hNOSBl7BcWbs0vQ/Gy+zPrnLhpAoFBUjv6gKLvGl/Fffkf2p9pAxDXIs3oRsxrtgKwI9
-         L2ag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=SbtQMFsGPA/6ldfqUOLBsftSiaWAN1XegIGnQQjLLP8=;
-        fh=5Tda6Ca8Kww1YrEOgzPfAf3Vn5qOb4nApjNtmjaW/0I=;
-        b=ZPvWwIFHqj/LMXdxdmiuL5gZjom5HRShNlcyKwNkgV2UBqt1GgYcEfQmQtZcsarAvy
-         vRKAeaLI6Uh8cC60+BbRcwdrLGJFVJPHRlxb7rJRUSIG9NFIiUhfOhkzlRNnbrE0wWo2
-         POEhCOnGinhGb8ZODlveSXtsXBzoJ1IMUi7t8Ae+D/b+rAXkuhwENbZNMCI7zYEcHjJh
-         TjHRANxRLcBPnCcTPlq4oyjq74wtB52R3xqFoPBBFQnZ2Rty1zol5vjdsJd0orxvlFLb
-         dHZi8iO+8wKZ2FKVWS6+IS1Q26QfJT9X06FD7w+VrSUuePA3tEISCOHkSXXxWVK9EtYW
-         mrKQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1771356471; x=1771961271; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SbtQMFsGPA/6ldfqUOLBsftSiaWAN1XegIGnQQjLLP8=;
-        b=HvnoZR8zfyEtT1CmYYfXEd0xZVj6smvvAGDvaTQENlihM6gnmvZajkehm3vadtH7Hp
-         qg0dQLuTPri+dn9JwfsYHYW9Rmbpdxia0Sgny3asuglp0d8zRuMVLdChgN/1W2WPA9Dp
-         Ty/akPoO/mprHf0Vl4gr9gxLNSIqCJT+DzOEXRDeKFET1VJ3vJ69iUKfFSCWqIISsK6r
-         91m29W4YLDaBcOLbgI3SidxtX2pgsQmtjBuDauuRnNkFSWfTm0VE/KqYWHv3VvWrTt8S
-         sUSTRr7pxadlKu/F/e1ud05UJ/o72NKYHWknk9YA53Dm0hhIfwHQPVD1LPS/1AHrY67c
-         jJhg==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A91D285CAD
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 19:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.199
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771357713; cv=none; b=q51e/LlOpFvAgbxyxCetPelOOGNSTKwzpBTGIaCluMubzkEk3zxoDSR2fliTtW5e0NGQJ8eXNukcNno47T44ZoYpZ0RwqJ5sc1H/cr11u6V8n47BCwJECS506OJV3Q3DBRqs8FM+ZO5FnxJ3anuA9BVKb5CQPVU6N06ca9Y8F9U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771357713; c=relaxed/simple;
+	bh=tIvuwwW/1mrfxLptV9/j1f45nxLmnN4c6mEo9abhh50=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Jt7xVbHk6Ah7/vD5yDwwQCwRV+IcvYB1cuw/8JE+1SHpe8dZcs8p5xECUSRw22yjHd+JNazRPAdIDft98sDoqI0M5MHYLHAssj0BwGVuFD5IqICsGK/nQDKde09yD8hgKdoFmn1ETsyM1Pv5agHs1/yi0seF2NfZtlIn5VQhBB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-4639eb7bd4cso14126675b6e.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 11:48:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771356471; x=1771961271;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=SbtQMFsGPA/6ldfqUOLBsftSiaWAN1XegIGnQQjLLP8=;
-        b=uVgL0bCCR4AaJeqZnG4NCWbAT802DB4QrO8F5qFks3Sq/VjbYxMcGPuHq3BhSdevKp
-         n8wtOOhr5X4DsVDM7zSqPhEWzCTKJTYs/9NItqEqnZcumjfRvmpNl1jgTF3raXJHgKrL
-         Rf/WVJj2jgQF6ANmNcUFwgm/HDTBJWePnVIWke++WCi5fcbknyCBlhYX2zq8CbC5UE6l
-         8yTL6MZfC2WaMIR9dMabrQCa5vaFDW/AtIv/gFJ+b8MYjcU6uDT3AMMyb3qjs3gTX7iI
-         St1uxAZdbCMv2S6XKXS09JMJE1XxyNFU/XbGtEPbFzVHoqieu0UgvfWl7oXnNGly5sDt
-         5Upw==
-X-Forwarded-Encrypted: i=1; AJvYcCUt5ZBmBbon8DmTuVa4DpFSkY3Yu9eMZW8Lu/R6sjfq7RLCBE1owhNzlQUjyizZdrmjUP2a2rewMovz6So7@vger.kernel.org
-X-Gm-Message-State: AOJu0YweB+e1gT8CucUPMVpUUvZ/ig8Y4AhNCQYZw4K9NuU78ezejdn6
-	M1gDKm23jmLtgUm9NnXQL+l+7MiMRIjQUYWi3F+BKp9k9SFCZy4wWgafH7nV1Wf7WqWIoUODfxi
-	g/1Ja/4bIxoc/QOiWEZTelhLYbyQxeo0+I03w5F8J
-X-Gm-Gg: AZuq6aIXcsOudsYy52C4+/ZAsQP4WdSLgn0VuRL1oEPnt5DjN7dSP4jpQb6C2uRVxP8
-	KLvuWEOv/Jf7uOBbzmZnzVaNBy4pvB4ZDceOtygM+7l81koMLGahxb+qkHfNaU2AxUvW7QKFZ14
-	NxadEsggiJ4o8wedDHQjmroy09/fDKlzG4TGrdsWwcI/kJ1P6ksbr7PO4oy6rp1F3VY+3fmI7VF
-	g9JVSDQJ5yJnFCrGD2J/bxQvr4n5+oBEKqd5nDoL9mPzubkFfdJ/YhBByilrthF+B2w179M4oCT
-	EMvnaWa5oPbOykELaV7fL4P53F1S0v//mxEisxo0loYSVRtqByXPGN2oAbIxge/fmOeddQ==
-X-Received: by 2002:a05:600c:6a0f:b0:477:86fd:fb49 with SMTP id
- 5b1f17b1804b1-48388809dd1mr1315515e9.10.1771356470995; Tue, 17 Feb 2026
- 11:27:50 -0800 (PST)
+        d=1e100.net; s=20230601; t=1771357711; x=1771962511;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wqBynDemvxGGJGDs/yW5uaIraXzuuwQbmc0L/+wETCo=;
+        b=LrKOERZUY6OxnqQzKHaeSw/AgY7mNZKiJKABaI+DhogZ1Rcrfq1NDH6CDbrSqMnab2
+         mwdQJCpY8HqMIDRn+qD4AFKL4q/+4Nvq+LMynb2v4pEVpdacA8eXJ3IiUpPWuYqSFIGC
+         u7iypP7RoBplBiGHo/+5oS3Zm89Hz3wVFzXb4nBlxomQ/7YWBTEAg0Ou86bCt6tLyBWh
+         /HyoV+s712ZH2gtpIkFp3MYavj4i2zsd/d4W+95ozyB0fCcgYCR7NLXEbEVJmI1WZknr
+         lrwLTbYEZyvQ3gQbDwEaKxyq90iHZf8VRGgK4DI3YywC/sWOqm4FgNgm4FYo/U6xoiJZ
+         ZXjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVaGL8LqM6XmeeWNdC+gNG5I50oxt01XR7kVtuLWaBUVKz5AL/a3xLMTvoLK06WgT+Lg7zwRiSzCSUEFZ7m@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi1OGrwMdm8KPP3OOct+jkImgWs3PUy8oiCwHcAP2rjFRFtlx3
+	JRCLCSbY+Bo4kKh/G/mwA6Eu6KcM2EJKOcznxFhElo1C/M8KhiLohYXbKq00sZQnnp9ctokJFde
+	qdD4UnOs+KDBuDB7KdrPMZ4eRxHeEIVpZGykmijiQyhjSJcWUQTJRorNoYQg=
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260212215814.629709-1-tjmercier@google.com> <20260212215814.629709-2-tjmercier@google.com>
- <aZNFTR_gc6j116rw@amir-ThinkPad-T480>
-In-Reply-To: <aZNFTR_gc6j116rw@amir-ThinkPad-T480>
-From: "T.J. Mercier" <tjmercier@google.com>
-Date: Tue, 17 Feb 2026 11:27:38 -0800
-X-Gm-Features: AaiRm50lkIkI0vTw0pKWrhRFJ18Z83k0MjgydYcYSeBtbsOtDjpOH99UjI76ZFk
-Message-ID: <CABdmKX2DD4iapAGtdjJyb7CAHiS9RaD3pbuAnd=1tvudxfJkKw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] kernfs: allow passing fsnotify event types
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: gregkh@linuxfoundation.org, tj@kernel.org, driver-core@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, shuah@kernel.org, 
-	linux-kselftest@vger.kernel.org, jack@suse.cz
+X-Received: by 2002:a05:6808:f93:b0:45e:8495:21f3 with SMTP id
+ 5614622812f47-4639f1be199mr6675806b6e.40.1771357711109; Tue, 17 Feb 2026
+ 11:48:31 -0800 (PST)
+Date: Tue, 17 Feb 2026 11:48:31 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6994c60f.a70a0220.2c38d7.0107.GAE@google.com>
+Subject: [syzbot] [fs?] WARNING in vfs_open_tree
+From: syzbot <syzbot+d09c0eed6e4176ba5c86@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
-	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+X-Spamd-Result: default: False [-0.36 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=3696efcd0f17d527];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
+	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TAGGED_FROM(0.00)[bounces-77395-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77396-lists,linux-fsdevel=lfdr.de,d09c0eed6e4176ba5c86];
+	RCVD_COUNT_THREE(0.00)[4];
+	RCVD_TLS_LAST(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[tjmercier@google.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[google.com:+];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	TO_DN_NONE(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: 2C20F14FA48
+	R_DKIM_NA(0.00)[];
+	REDIRECTOR_URL(0.00)[goo.gl];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,googlegroups.com:email,goo.gl:url,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,storage.googleapis.com:url]
+X-Rspamd-Queue-Id: 4ADC614FBA2
 X-Rspamd-Action: no action
 
-On Mon, Feb 16, 2026 at 8:27=E2=80=AFAM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> On Thu, Feb 12, 2026 at 01:58:12PM -0800, T.J. Mercier wrote:
-> > The kernfs_notify function is hardcoded to only issue FS_MODIFY events
-> > since that is the only current use case. Allow for supporting other
-> > events by adding a notify_event field to kernfs_elem_attr. The
-> > limitation of only one queued event per kernfs_node continues to exist
-> > as a consequence of the design of the kernfs_notify_list. The new
-> > notify_event field is protected by the same kernfs_notify_lock as the
-> > existing notify_next field.
-> >
-> > Signed-off-by: T.J. Mercier <tjmercier@google.com>
->
-> Looks fine
-> Feel free to add
-> Acked-by: Amir Goldstein <amir73il@gmail.com>
+Hello,
 
-Thanks Amir.
+syzbot found the following issue on:
 
->
-> > ---
-> >  fs/kernfs/file.c       | 8 ++++++--
-> >  include/linux/kernfs.h | 1 +
-> >  2 files changed, 7 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
-> > index 9adf36e6364b..e978284ff983 100644
-> > --- a/fs/kernfs/file.c
-> > +++ b/fs/kernfs/file.c
-> > @@ -914,6 +914,7 @@ static void kernfs_notify_workfn(struct work_struct=
- *work)
-> >       struct kernfs_node *kn;
-> >       struct kernfs_super_info *info;
-> >       struct kernfs_root *root;
-> > +     u32 notify_event;
-> >  repeat:
-> >       /* pop one off the notify_list */
-> >       spin_lock_irq(&kernfs_notify_lock);
-> > @@ -924,6 +925,8 @@ static void kernfs_notify_workfn(struct work_struct=
- *work)
-> >       }
-> >       kernfs_notify_list =3D kn->attr.notify_next;
-> >       kn->attr.notify_next =3D NULL;
-> > +     notify_event =3D kn->attr.notify_event;
-> > +     kn->attr.notify_event =3D 0;
-> >       spin_unlock_irq(&kernfs_notify_lock);
-> >
-> >       root =3D kernfs_root(kn);
-> > @@ -954,7 +957,7 @@ static void kernfs_notify_workfn(struct work_struct=
- *work)
-> >               if (parent) {
-> >                       p_inode =3D ilookup(info->sb, kernfs_ino(parent))=
-;
-> >                       if (p_inode) {
-> > -                             fsnotify(FS_MODIFY | FS_EVENT_ON_CHILD,
-> > +                             fsnotify(notify_event | FS_EVENT_ON_CHILD=
-,
-> >                                        inode, FSNOTIFY_EVENT_INODE,
-> >                                        p_inode, &name, inode, 0);
-> >                               iput(p_inode);
-> > @@ -964,7 +967,7 @@ static void kernfs_notify_workfn(struct work_struct=
- *work)
-> >               }
-> >
-> >               if (!p_inode)
-> > -                     fsnotify_inode(inode, FS_MODIFY);
-> > +                     fsnotify_inode(inode, notify_event);
-> >
-> >               iput(inode);
-> >       }
-> > @@ -1005,6 +1008,7 @@ void kernfs_notify(struct kernfs_node *kn)
-> >       if (!kn->attr.notify_next) {
-> >               kernfs_get(kn);
-> >               kn->attr.notify_next =3D kernfs_notify_list;
-> > +             kn->attr.notify_event =3D FS_MODIFY;
-> >               kernfs_notify_list =3D kn;
-> >               schedule_work(&kernfs_notify_work);
-> >       }
-> > diff --git a/include/linux/kernfs.h b/include/linux/kernfs.h
-> > index b5a5f32fdfd1..1762b32c1a8e 100644
-> > --- a/include/linux/kernfs.h
-> > +++ b/include/linux/kernfs.h
-> > @@ -181,6 +181,7 @@ struct kernfs_elem_attr {
-> >       struct kernfs_open_node __rcu   *open;
-> >       loff_t                  size;
-> >       struct kernfs_node      *notify_next;   /* for kernfs_notify() */
-> > +     u32                     notify_event;   /* for kernfs_notify() */
-> >  };
-> >
-> >  /*
-> > --
-> > 2.53.0.273.g2a3d683680-goog
-> >
+HEAD commit:    fe9e3edb6a21 Add linux-next specific files for 20260217
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=153fb652580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3696efcd0f17d527
+dashboard link: https://syzkaller.appspot.com/bug?extid=d09c0eed6e4176ba5c86
+compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1267095a580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17036ffa580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3a3b845d3361/disk-fe9e3edb.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/efa525980a65/vmlinux-fe9e3edb.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5bf9ea774626/bzImage-fe9e3edb.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d09c0eed6e4176ba5c86@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+old_ns_root->mnt_id_unique != 1
+WARNING: fs/namespace.c:3112 at create_new_namespace fs/namespace.c:3112 [inline], CPU#0: syz.0.17/6017
+WARNING: fs/namespace.c:3112 at open_new_namespace fs/namespace.c:3172 [inline], CPU#0: syz.0.17/6017
+WARNING: fs/namespace.c:3112 at vfs_open_tree+0xf35/0xfb0 fs/namespace.c:3221, CPU#0: syz.0.17/6017
+Modules linked in:
+CPU: 0 UID: 0 PID: 6017 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2026
+RIP: 0010:create_new_namespace fs/namespace.c:3112 [inline]
+RIP: 0010:open_new_namespace fs/namespace.c:3172 [inline]
+RIP: 0010:vfs_open_tree+0xf35/0xfb0 fs/namespace.c:3221
+Code: 39 78 ff 49 bf 00 00 00 00 00 fc ff df e9 1e fb ff ff e8 9e 39 78 ff 4d 63 ee 4c 8b 64 24 08 e9 64 ff ff ff e8 8c 39 78 ff 90 <0f> 0b 90 e9 d1 f5 ff ff e8 7e 39 78 ff 90 0f 0b 90 e9 18 f6 ff ff
+RSP: 0018:ffffc90004237d80 EFLAGS: 00010293
+RAX: ffffffff824db904 RBX: 00000000800002b1 RCX: ffff888031f41e40
+RDX: 0000000000000000 RSI: 00000000800002b1 RDI: 0000000000000001
+RBP: ffffc90004237eb0 R08: ffffffff8e7fa2eb R09: 1ffffffff1cff45d
+R10: dffffc0000000000 R11: fffffbfff1cff45e R12: ffff88807cae1340
+R13: 0000000000009902 R14: ffff888033097100 R15: dffffc0000000000
+FS:  000055559209d500(0000) GS:ffff888124fff000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f7055417dac CR3: 000000002e056000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ __do_sys_open_tree fs/namespace.c:3231 [inline]
+ __se_sys_open_tree fs/namespace.c:3229 [inline]
+ __x64_sys_open_tree+0x96/0x110 fs/namespace.c:3229
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f705519c629
+Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff9b19c798 EFLAGS: 00000246 ORIG_RAX: 00000000000001ac
+RAX: ffffffffffffffda RBX: 00007f7055415fa0 RCX: 00007f705519c629
+RDX: 0000000000009902 RSI: 0000200000000640 RDI: ffffffffffffff9c
+RBP: 00007f7055232b39 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f7055415fac R14: 00007f7055415fa0 R15: 00007f7055415fa0
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
