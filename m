@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-77459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77460-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id sHjpART4lGktJgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:21:56 +0100
+	id ED30MRn4lGk8JgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77460-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:22:01 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA674151D5E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:21:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DF63151D79
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:22:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 3D20030514BA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 23:21:21 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 6A47E3052ADF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 23:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC3042F363C;
-	Tue, 17 Feb 2026 23:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB68296BA9;
+	Tue, 17 Feb 2026 23:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q+7BqAgy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kXtmq84e"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644AF296BA9;
-	Tue, 17 Feb 2026 23:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EF629D297;
+	Tue, 17 Feb 2026 23:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771370480; cv=none; b=avtQDXfuXbGJjF2MapIjY8r3ZwE6rh1+seXNqriWmlvNJAwaDzjET0FAdTgcLm4qs99kztlP23qFl0S2/xhRmjkPStLBaujQI5SU+nfWX8vYIp3ck0CJ0uF2WysmmZ8cPUDnv9fMFrJHn0VtVdKbyVGPm/N+CJDoxocAP6uCSoA=
+	t=1771370482; cv=none; b=Pq5aprWs1sUAa9E7V/o5daxCrZwCQgKaOvlpDbN03aUeXBhS031jY0puVCNePfx9b+6Vmm/y1suenlc5YEYt3PVR5zE0vpunA41IBqf5CLX96f1bNUPa+GQ5S1UYTHq3Vn2EsgOVL63vvy3JdZs1nqTefLZNUOXWuIRW08LMloA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771370480; c=relaxed/simple;
-	bh=Vhpiti+wKp5SpePoDlZXCp3F5qm5y9/2wYNtrCsEHCY=;
+	s=arc-20240116; t=1771370482; c=relaxed/simple;
+	bh=EbkNlukZCXKfjXWHRl44jLAnaH6c/LmSXUUxkgb/vK4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TZxGVpGdnBJrWZxbIC4QZcrY6+ax/863GPjahfw87Pb8hzy71i7kLCzc7zuFbcXYoNXIpxt+sgZjyjMJX2YkFbU80VuF0XB8f5rUSHd9T4z7qJSNfJR+8GiimI7K3j1J6aSK8FfI6YU/IpYMtgiQW0VCQGeQCOshmBtek24TqlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q+7BqAgy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4A72C19423;
-	Tue, 17 Feb 2026 23:21:18 +0000 (UTC)
+	 MIME-Version; b=eYRXwRhx+EVBC7PyKpLEWF97JW7CkAbuqqxO/bxIHPFK+6tK2cLNFk/mqgf4ADtrLIDQV7nEhNlLDq/SEsvGRKPvGWWmSsmbdlxrOTyz5chTO6f9BCFSdUmQRoPI2LBJhmgIXb5mZsiFJgzaBIe1yBwpFzQtuYHJtyh5FZVOQQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kXtmq84e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA6DAC19423;
+	Tue, 17 Feb 2026 23:21:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771370480;
-	bh=Vhpiti+wKp5SpePoDlZXCp3F5qm5y9/2wYNtrCsEHCY=;
+	s=k20201202; t=1771370482;
+	bh=EbkNlukZCXKfjXWHRl44jLAnaH6c/LmSXUUxkgb/vK4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=q+7BqAgyO9nnMEjv2a54F0PdQxZ2CMsLJ6NbB0/Le4Yplex4e4W1pCCnr8pOvySGW
-	 UQKH6ahjlyLtpgN8pEtZ8vkPcfaGcNA2fIyETMct77rKLi4Fegj57sIE+90L8iZ8kj
-	 qWVc6AdfUfW5MOYztzivxPuJouWkFyYs8RfJEK+XzMA3AuL5bNe/IBbPet3UY36xFx
-	 IEpYf5SkmSfyzs1RV3mdUme9RfL+od5vUlwTvxSp6y+zsdUmy6sDf85ZykbxN6KTQw
-	 Xodg9q0FUlq4gkdrE3trpTq/80mgbb7w4Cur2J1K2N9Moql7Fb7dw5tuynUA7tOj6D
-	 b2G4CaxkthDHA==
+	b=kXtmq84eXXIpCxGba0nnsG2G6hnIqVWiHqjlGaWCXgHf9TCxWH3Zicigrz46lVzZ5
+	 qnaqLKpJEquaEnp/kX0bai9GjJ4s9Ipx6zevKYXANioLaiKKxybpGDD9mKsMDjUHuB
+	 t+6rhCMK5P9VH/Ms2C+zWsHlKhKFCf6SxolTqbeokdqcL17hxNkx1EpWKFB+Zj4gc4
+	 feYtbFndfwE20THPznUzyWVWQV5zGIXx2fqJQM7y4QWf6PE8B4UjmgsUcuWKsVzrWf
+	 ipmIvowUUE0DXuyHKkMItW8KyE09cX577t7eXaVKH21/8dhxb2kSIr4NnAy4trqZKS
+	 woyOXlk1psBPg==
 From: Andrey Albershteyn <aalbersh@kernel.org>
 To: linux-xfs@vger.kernel.org,
 	fsverity@lists.linux.dev,
@@ -52,9 +52,9 @@ To: linux-xfs@vger.kernel.org,
 Cc: Andrey Albershteyn <aalbersh@kernel.org>,
 	hch@lst.de,
 	djwong@kernel.org
-Subject: [PATCH v3 22/35] xfs: add iomap write/writeback and reading of Merkle tree pages
-Date: Wed, 18 Feb 2026 00:19:22 +0100
-Message-ID: <20260217231937.1183679-23-aalbersh@kernel.org>
+Subject: [PATCH v3 23/35] xfs: add helper to check that inode data need fsverity verification
+Date: Wed, 18 Feb 2026 00:19:23 +0100
+Message-ID: <20260217231937.1183679-24-aalbersh@kernel.org>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <20260217231937.1183679-1-aalbersh@kernel.org>
 References: <20260217231937.1183679-1-aalbersh@kernel.org>
@@ -78,7 +78,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	HAS_LIST_UNSUB(-0.01)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-77459-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77460-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	DKIM_TRACE(0.00)[kernel.org:+];
@@ -92,144 +92,76 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	RCPT_COUNT_SEVEN(0.00)[7];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: BA674151D5E
+X-Rspamd-Queue-Id: 8DF63151D79
 X-Rspamd-Action: no action
 
-For write/writeback set IOMAP_F_FSVERITY flag telling iomap to not
-update inode size as this is not file data and not skip folio beyond
-EOF.
-
-In read path let iomap know that we are reading fsverity metadata. So,
-treat holes in the tree as request to synthesize tree blocks and hole
-after descriptor as end of the fsverity region.
+Simple helper to check that this is not fsverity metadata but file data
+that needs verification. XFS will use this in iomap callbacks to check
+what is being read.
 
 Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 ---
- fs/xfs/libxfs/xfs_bmap.c |  3 +++
- fs/xfs/xfs_aops.c        | 18 +++++++++++++++++-
- fs/xfs/xfs_iomap.c       | 12 ++++++++++--
- 3 files changed, 30 insertions(+), 3 deletions(-)
+ fs/xfs/xfs_fsverity.c | 21 +++++++++++++++++++++
+ fs/xfs/xfs_fsverity.h | 22 ++++++++++++++++++++++
+ 2 files changed, 43 insertions(+)
+ create mode 100644 fs/xfs/xfs_fsverity.c
+ create mode 100644 fs/xfs/xfs_fsverity.h
 
-diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
-index 53ef4b7e504d..99a3ff2ee928 100644
---- a/fs/xfs/libxfs/xfs_bmap.c
-+++ b/fs/xfs/libxfs/xfs_bmap.c
-@@ -4451,6 +4451,9 @@ xfs_bmapi_convert_one_delalloc(
- 	XFS_STATS_ADD(mp, xs_xstrat_bytes, XFS_FSB_TO_B(mp, bma.length));
- 	XFS_STATS_INC(mp, xs_xstrat_quick);
- 
-+	if (xfs_iflags_test(ip, XFS_VERITY_CONSTRUCTION))
-+		flags |= IOMAP_F_FSVERITY;
-+
- 	ASSERT(!isnullstartblock(bma.got.br_startblock));
- 	xfs_bmbt_to_iomap(ip, iomap, &bma.got, 0, flags,
- 				xfs_iomap_inode_sequence(ip, flags));
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 36c4b2b4b07a..f95dc51eb044 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -22,6 +22,7 @@
- #include "xfs_icache.h"
- #include "xfs_zone_alloc.h"
- #include "xfs_rtgroup.h"
+diff --git a/fs/xfs/xfs_fsverity.c b/fs/xfs/xfs_fsverity.c
+new file mode 100644
+index 000000000000..47add19a241e
+--- /dev/null
++++ b/fs/xfs/xfs_fsverity.c
+@@ -0,0 +1,21 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2026 Red Hat, Inc.
++ */
++#include "xfs.h"
++#include "xfs_format.h"
++#include "xfs_inode.h"
 +#include "xfs_fsverity.h"
- #include <linux/bio-integrity.h>
- 
- struct xfs_writepage_ctx {
-@@ -339,12 +340,16 @@ xfs_map_blocks(
- 	int			retries = 0;
- 	int			error = 0;
- 	unsigned int		*seq;
-+	unsigned int		iomap_flags = 0;
- 
- 	if (xfs_is_shutdown(mp))
- 		return -EIO;
- 
- 	XFS_ERRORTAG_DELAY(mp, XFS_ERRTAG_WB_DELAY_MS);
- 
-+	if (xfs_iflags_test(ip, XFS_VERITY_CONSTRUCTION))
-+		iomap_flags |= IOMAP_F_FSVERITY;
-+
- 	/*
- 	 * COW fork blocks can overlap data fork blocks even if the blocks
- 	 * aren't shared.  COW I/O always takes precedent, so we must always
-@@ -432,7 +437,7 @@ xfs_map_blocks(
- 	    isnullstartblock(imap.br_startblock))
- 		goto allocate_blocks;
- 
--	xfs_bmbt_to_iomap(ip, &wpc->iomap, &imap, 0, 0, XFS_WPC(wpc)->data_seq);
-+	xfs_bmbt_to_iomap(ip, &wpc->iomap, &imap, 0, iomap_flags, XFS_WPC(wpc)->data_seq);
- 	trace_xfs_map_blocks_found(ip, offset, count, whichfork, &imap);
- 	return 0;
- allocate_blocks:
-@@ -705,6 +710,17 @@ xfs_vm_writepages(
- 			},
- 		};
- 
-+		if (xfs_iflags_test(ip, XFS_VERITY_CONSTRUCTION)) {
-+			wbc->range_start = fsverity_metadata_offset(VFS_I(ip));
-+			wbc->range_end = LLONG_MAX;
-+			wbc->nr_to_write = LONG_MAX;
-+			/*
-+			 * Set IOMAP_F_FSVERITY to skip initial EOF check
-+			 * The following iomap->flags would be set in
-+			 * xfs_map_blocks()
-+			 */
-+			wpc.ctx.iomap.flags |= IOMAP_F_FSVERITY;
-+		}
- 		return iomap_writepages(&wpc.ctx);
- 	}
- }
-diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index 52c41ef36d6d..6b14221ecee2 100644
---- a/fs/xfs/xfs_iomap.c
-+++ b/fs/xfs/xfs_iomap.c
-@@ -32,6 +32,7 @@
- #include "xfs_rtbitmap.h"
- #include "xfs_icache.h"
- #include "xfs_zone_alloc.h"
 +#include <linux/fsverity.h>
- 
- #define XFS_ALLOC_ALIGN(mp, off) \
- 	(((off) >> mp->m_allocsize_log) << mp->m_allocsize_log)
-@@ -1789,6 +1790,9 @@ xfs_buffered_write_iomap_begin(
- 		return xfs_direct_write_iomap_begin(inode, offset, count,
- 				flags, iomap, srcmap);
- 
-+	if (xfs_iflags_test(ip, XFS_VERITY_CONSTRUCTION))
-+		iomap_flags |= IOMAP_F_FSVERITY;
 +
- 	error = xfs_qm_dqattach(ip);
- 	if (error)
- 		return error;
-@@ -2114,12 +2118,16 @@ xfs_read_iomap_begin(
- 	bool			shared = false;
- 	unsigned int		lockmode = XFS_ILOCK_SHARED;
- 	u64			seq;
-+	unsigned int		iomap_flags = 0;
- 
- 	ASSERT(!(flags & (IOMAP_WRITE | IOMAP_ZERO)));
- 
- 	if (xfs_is_shutdown(mp))
- 		return -EIO;
- 
-+	if (fsverity_active(inode) && offset >= XFS_FSVERITY_REGION_START)
-+		iomap_flags |= IOMAP_F_FSVERITY;
++bool
++xfs_fsverity_sealed_data(
++	const struct xfs_inode	*ip,
++	loff_t			offset)
++{
++	const struct inode	*inode = VFS_IC(ip);
 +
- 	error = xfs_ilock_for_iomap(ip, flags, &lockmode);
- 	if (error)
- 		return error;
-@@ -2133,8 +2141,8 @@ xfs_read_iomap_begin(
- 	if (error)
- 		return error;
- 	trace_xfs_iomap_found(ip, offset, length, XFS_DATA_FORK, &imap);
--	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags,
--				 shared ? IOMAP_F_SHARED : 0, seq);
-+	iomap_flags |= shared ? IOMAP_F_SHARED : 0;
-+	return xfs_bmbt_to_iomap(ip, iomap, &imap, flags, iomap_flags, seq);
- }
- 
- const struct iomap_ops xfs_read_iomap_ops = {
++	return fsverity_active(inode) &&
++	       (offset < fsverity_metadata_offset(inode));
++}
++
+diff --git a/fs/xfs/xfs_fsverity.h b/fs/xfs/xfs_fsverity.h
+new file mode 100644
+index 000000000000..5fc55f42b317
+--- /dev/null
++++ b/fs/xfs/xfs_fsverity.h
+@@ -0,0 +1,22 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2026 Red Hat, Inc.
++ */
++#ifndef __XFS_FSVERITY_H__
++#define __XFS_FSVERITY_H__
++
++#include "xfs.h"
++
++#ifdef CONFIG_FS_VERITY
++bool xfs_fsverity_sealed_data(const struct xfs_inode *ip,
++		loff_t offset);
++#else
++static inline loff_t xfs_fsverity_offset_to_disk(struct xfs_inode *ip,
++						 loff_t pos)
++{
++	WARN_ON_ONCE(1);
++	return ULLONG_MAX;
++}
++#endif	/* CONFIG_FS_VERITY */
++
++#endif	/* __XFS_FSVERITY_H__ */
 -- 
 2.51.2
 
