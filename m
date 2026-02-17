@@ -1,98 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-77331-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id kJRTHjbrk2lX9wEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77331-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 05:14:46 +0100
+	id AEzVC8Drk2ls9wEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 05:17:04 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18107148AF7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 05:14:46 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8CB6148B18
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 05:17:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 705B3301C885
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 04:14:37 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id ECAAF3008D68
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 04:17:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9507C2620DE;
-	Tue, 17 Feb 2026 04:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A8B18D636;
+	Tue, 17 Feb 2026 04:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="frU9r1aQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B+HXpIHG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78577A13A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 04:14:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7AF14F112
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 04:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.51
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771301674; cv=pass; b=fypV+vtRBXpkNOn4n4IM+ixgmQsBS1dLO4B7E9FJ/8xN+/+wMCCJlaMULi5oeLWQDnC/TXmt87uJs5FxDKwkZ2HkdYJvypZjjdJmcxfkuf4DX17112SbgxcrCONmspC56hXAXGArZHG4INs8/OnP0PGCw6dpOy8xT1ncxtUVEUc=
+	t=1771301816; cv=pass; b=BH8ZB2q3ddPh7CqnTrMqnNgo9KcsqtPWaRKLQLqsQgOJP2tQyysD/GHh/f4Wy7d7D8P552UvRWIzgqBq9Hc0gBraML9z+4qlurCuKet3B4JyugTvPWzlPBJiNWlCOMEWrZOCkA5qcUswv5dZ6X8LsXRW8xmZDYwWGQ6M7fuArd0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771301674; c=relaxed/simple;
-	bh=vl73Wg7pS+Ahm5P0YPj+Pe00Z8nc8FXlY1ga54JpjGA=;
+	s=arc-20240116; t=1771301816; c=relaxed/simple;
+	bh=qe+7XX/L5syn+cLvVHmf9Bl620oz//ebyw08Uel5J18=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RloOgjXu5n9xMYsalaM0y4q8ap373OgXz69BD1T8y+2IFoQoV+XA9TMAjm0Cf/6/iVYpcfYjSLJ2GI8YRAPgDFyuQHDkbVieMn7ivgkQ2zSnYKk+AzIIHV4imXK9+Cnf5iFMa0KVX3eblYbzeOWMeLN1lA06/5pxC97hAoxaTtE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=frU9r1aQ; arc=pass smtp.client-ip=209.85.208.51
+	 To:Cc:Content-Type; b=KG39l69hfxcbMI/OQ/jnbnW3YIF9RoLTI+vLcrB8qcshOP2jTTrKx1p7UhvlMIotg2AE242dUU7ZFAHvJLEmBhXt6fKJCCLsRvfNO2irbjY4vr0kfktTIbvl4ZTiPgAd+aZyCbS/MlwDkJS9t2XYbbMMKMoqGf5Q+c9EQp9UkKE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B+HXpIHG; arc=pass smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-65a26c220b6so5013245a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Feb 2026 20:14:32 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771301671; cv=none;
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-65bebcbffe8so3142492a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Feb 2026 20:16:54 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771301813; cv=none;
         d=google.com; s=arc-20240605;
-        b=MZEvTF9M1wlpCqIvlOO4nR9O04DIslSrrFJ1gptv5zca1aprONSo611p+bEsx0jQY/
-         nvJQ9TsQ036NZV1QMPOVMybfwCRmew3uM9mwxxaypKzPU/n153x8gxA9jWI3cqUJ30Yb
-         KctHaNYSPUfQGJqr9lQIQDb0PAlLY3EomiiTTBhf9l/LZcz70cIKQg1xtgWlmTlT88Uf
-         SxNPErQmuBAXvmPjHpPrKXJmE20T0Uc0ubqZMH0BK3OME5Lsy8mojSE+o14UPK6+7MPi
-         MigyS3W63TNqJc/FXFRSrrUOCkOahYYBAdKbKetbA3a5dONWQEeUky4wfdpMM9GJ1cxF
-         Xkow==
+        b=M5JPyoognUt/bGUca+54LKPFuPMtGmtEVLhZ/1M3u+T3MRtLtjgj6eVsnnbwQTR/OE
+         RqzfPftb90/HBExrfFaZnlRpduLgwNAI6VQAv3N8Gf1yMN1cSsT7dEzfZO7E5rQBEyQ9
+         pAC246tAb4KjDVS2E6EaK/pREocjKNYiLnY7ifzktjf/jTmuq1GOo+OhCWn09dP+SnjX
+         4mdKV3TaQrEdxd7HgvvIDdH3elOd44jM35hifQFNr8/Ffru1JqnAHL2jbasZLBmu8lIt
+         xtPbpZ+l0fPnLIRTfaReoP8C6QXyvacd9TONaTz/o/eaTcaY+brsCLH3F0BCclbkOcU1
+         VySA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=vl73Wg7pS+Ahm5P0YPj+Pe00Z8nc8FXlY1ga54JpjGA=;
-        fh=zQz/6fhs1gaZ7d537myU7qomZKjsVzkHybNh8i8wKNs=;
-        b=CmM6d3JuQsEU+y+k6R8WYQw2AVoqQzpwHnJxoQgbGglTOTCo4IgD0z3egscztwtAC7
-         xOP45imCBHj6A1hAW523H/YEyFvJ/0gCHzlCROitGaru5eso1Lj3Zh+4kuuyti1IUYOB
-         OxE5h6xHPgErWNd+WOzhN/L3HxxUULseJuYKfOjagR+bP+NUeofsGsqPZ5b9ELVIvzdj
-         d3f7xgnVORE8khajDWqbV6PqwWORLJGNGDGjwO/4tThw241mMri9gNM6B990VP2BDcHi
-         h4KJvOcOaAsg7Rj5UU/ThjrcPuftEAosHAMmXbRCYEfoyacaOLIOxxFCLhSms+Ls+yJq
-         q3mQ==;
+        bh=qe+7XX/L5syn+cLvVHmf9Bl620oz//ebyw08Uel5J18=;
+        fh=B0Mn0P4Vuf34XpDbuOIrdZQDBys8XfHZbYvsAFJY+Qo=;
+        b=gWcDt5y3mxiBZ7GYr6YcZS1reipGgamPQ4G7UJRHCRLTMgghNsWFDBEYkoOcDTx4qA
+         /hncJUsiwWQUtF4Lp0fYCBIJyor0MD/btHrfCMKKFpm3auDUzGp/Lqep6eYSeDDWmONg
+         Jjw8SXAZfFLY7mg4unIRXzoreJGsZOfWbKuAkuJ27zE9qnDzhg04FrvFAZGKHEeMEpSd
+         UHZyObzalS10dcn78HD4BaXYhiur2JY5DliWFP+IXB72Qj2/3ktfebe9Kjj8RMe6rci8
+         R3xNtYJFhJfCaQrvHcXYbg6wg4NUhQD9jHjkEIoUT9zkVB3m6YomyWIFpuzkos0MNBX2
+         ZW3g==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771301671; x=1771906471; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1771301813; x=1771906613; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vl73Wg7pS+Ahm5P0YPj+Pe00Z8nc8FXlY1ga54JpjGA=;
-        b=frU9r1aQzw4+qVjkdlz0wFF4WcsZnuG+7GoE6RmXGgXbKH5XyIT7YRYi9o9kywK680
-         MpfuggRA0eNfMF06O8JKzkVMLPJOTPX6TOrjP7n2dos/DC3PfBCyWuuy+Wz+3nSf/KSC
-         SXY17n5EqmA1q77NyOBul2ZYU3Sl3jz0wmtro3G+8KT0cXL/bWB1pdvfahwXdLmil/F8
-         TsrENVvZnaQdWGghHJebwx1gx1uaRS/fNqOycVBM7LuMPAKcyj66FZHuHiebHgmLkojB
-         6KO/FCE/O/yFVjILTpjMcHbEHNVPPgTJLXEtNn9k/KAy9y1mAOwQDjCkmTv7kx4vLLZt
-         qBJQ==
+        bh=qe+7XX/L5syn+cLvVHmf9Bl620oz//ebyw08Uel5J18=;
+        b=B+HXpIHG0tSTxiI9EhZ0HTLNVrd3JB4Xvv9hlsXrPnUq9zZhsBfOYL7wVgqO8iCBF5
+         SWKUfVzoc4N1pQmQ1IQKOUlIsVnZj+lfAjxA7H4GHZyI3kpkMzeRiX3YobR2jN2wqRz8
+         WQTQcHTJBcgBnEvVz5XSNNPrZqz1f6/m2R5rlNI/0PZiYY+MGywlsDPuYgzXF3FLKGgJ
+         kzo1KOc5b7GMMQTnuV75QA6P9bj8PLhz2JzuIeMuak0GyoHUiteY8AlgXuYF7Vqrc1wl
+         cjTs4XuGF3YfbzY6i4QuSuaGGVPokJYkg9lnYv84pHCSpu8bT7DRa0zHVScqPqV4E9wm
+         NGfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771301671; x=1771906471;
+        d=1e100.net; s=20230601; t=1771301813; x=1771906613;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=vl73Wg7pS+Ahm5P0YPj+Pe00Z8nc8FXlY1ga54JpjGA=;
-        b=XRvIxmPaAXnozoiTYKwlvwtZ9itc0V4RbQCLut6+VOkZTAs3PjmDDPFysZgIHHZoZh
-         VmMIIiG4xGfvvgGPt2Fu/a1Uhi0OfxLpKOtiZhhtZihziQ2Ng8Nd3krmo54T2uLuKnl4
-         ZtxqxgK9RjIF0GF+lJAEE+4k4wMx+9oQL43kzWbFu5POtB4PP7Joiod4kKZyfhjqA/O9
-         oZTaKkRgwgL80/Kex0x5M1FfDupeddpHF1iTEmecLmLUY+Zj5//RjHUciEq9sBE/u93E
-         Oz78A4m3qajk98Q2raaFEnCOox7hQNCEat8AW71Rtyo/tR1AaIx+WJx57OpuYuGeRY0G
-         WgQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6p1Q1ntZRr3ZCvHrPPbcFvpNaZvcbBcCr6eIW18f9GuR5pIvG7GbBor4vQx1SHFXEjZgUL5jGtyNRZkwP@vger.kernel.org
-X-Gm-Message-State: AOJu0YynWYzOrjNcGcV6lYizZw8N1GhAa/5AEdsIv4zZVvG2FRC5cc/r
-	Mik7KQpnMbRfT78d+Cof2zcZIjAkFyyF/8SNLpypvxoUk3YiAOl+7NJdc2rBxRXfvaCcZoSyhr9
-	h4Z1LlFhdHiFaN96e6Lxqn0kyeM4nEOw=
-X-Gm-Gg: AZuq6aLiCwidrh5q7bYrbRm7GKUTemM0ScGaLqio35wBKOqE83wStTSnAsf/yNZJJl2
-	3YRoKXj4gxfOx/KaJj/4Ayunrlx73gwvEaB107vOzyyVbX2Cd3cmGg/2Qa8dpeCDE2TBwxd/dAz
-	i2SPy1GPMY3n1kOA2J3mkDozlwRzOzCqz90WcwRJ5U7DSMhL/sArsuieu6CfQwKJnA1j4AG4bhK
-	XBE5IRHjdnNcIKw5BhAH9xrGiEZDRYr5dtGwivpIRtCz3Rv/OzxOHzPoC8e9z409O60eoP1Cn2i
-	vRKhfQ==
-X-Received: by 2002:a05:6402:278b:b0:65a:409c:6fe6 with SMTP id
- 4fb4d7f45d1cf-65bb1161199mr6549992a12.15.1771301671063; Mon, 16 Feb 2026
- 20:14:31 -0800 (PST)
+        bh=qe+7XX/L5syn+cLvVHmf9Bl620oz//ebyw08Uel5J18=;
+        b=HrpJT38kAKfOBbqoLzXmyg7onwGV4EiK+Hg+VTChiiGKs8Ok29itdS2btmU6rNW6HW
+         tQ/olnt9z0OqVnhh2DeQWhAymLfRq8ToKC4o2T1snRPwvQxlhBnEFYUY5MbgyxRU8cK/
+         cUsInrh024L7I/+Al/ujbiyYVKBZxtOVNCeAO1wSHt7YQGKcWa65j9f2xcqm5B2kj3n/
+         9R9utJHTFiYaJArcftC0pyuD1CiDhQ3PeQreugrTD1VU80VOFmub8CDT+bjmOSMXEGpN
+         06HzOSn1taNE9GSpqswCoyDEnl3ejmUxtpR48OoYk/vLmHQMiNjRfyWdVKvQFOPRB7u6
+         YReA==
+X-Forwarded-Encrypted: i=1; AJvYcCXzhduoVAZCh+eoFfmj8qlAjJWI2ZwTbX5SZN0f6qXBmH/5Qj1pZLJMJz4epxsSWSRed+akBZvAPZkOBntB@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPjD5FNYSsOul60pwyP36vKJa285+gWIFecqGW1B5dgUSPKTQX
+	5pDKv7fL63eJ92AHk2UrDULg4M/IkRtb+Xvx+Z7Cj0jjfgV9ZmruTRe40MKLTa5/heXffpeJegt
+	LJqnlqroAeSdH085uPxGb6Yk8oiBWS3o=
+X-Gm-Gg: AZuq6aJsWJY2ked/Av0yiCuzsid4Qbr+uDewwVllMY/qRq09bqiX+ZlchJwMXdM47Rf
+	aZnH2oVqZAdxHoIkNrgFm8jLldbRitdHdYyD0wI6a5atSo0LWrXlDdFvl54YZX2fOOYEtsHjnpA
+	N8rB3CV5dckNjMqhZXR7ywTpyitd4+JfgD8yFm2OrMjPDuJ8LCpDtNnDQXR1oTh0tucwpWp7IXf
+	8lxIAsSGqgFs1ZbADYRFWCr/nhH9Y7XAH5M0k0iTh9PTtBqU8sNA0GJ0CFvgMZgXoDpEaSWDFcn
+	pyj8UA==
+X-Received: by 2002:a17:907:3da2:b0:b87:d186:19e3 with SMTP id
+ a640c23a62f3a-b8fb44a3778mr761877266b.43.1771301812795; Mon, 16 Feb 2026
+ 20:16:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -100,31 +100,31 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <CANT5p=rDxeYKXoCJoWRwGGXv4tPCM2OuX+US_G3hm_tL3UyqtA@mail.gmail.com>
- <7570f43c-8f6c-4419-a8b8-141efdb1363a@app.fastmail.com>
-In-Reply-To: <7570f43c-8f6c-4419-a8b8-141efdb1363a@app.fastmail.com>
+ <aZJmthYtk33KYDud@melos.hm.i.d.cx>
+In-Reply-To: <aZJmthYtk33KYDud@melos.hm.i.d.cx>
 From: Shyam Prasad N <nspmangalore@gmail.com>
-Date: Tue, 17 Feb 2026 09:44:19 +0530
-X-Gm-Features: AaiRm52qcDduH0WOoiy86XQ-uP4UAzjzDBGWAMpuxDVbnPDCNM8VzO-fhxMilbY
-Message-ID: <CANT5p=rpJDx0xXfeS3G01VEWGS4SzTeFqm2vO6tEnq9kS=+iOw@mail.gmail.com>
+Date: Tue, 17 Feb 2026 09:46:41 +0530
+X-Gm-Features: AaiRm51QHtefjwH_4aVN8UbkRPTl2or_N2X9XdmE9IAJs0YnwmTtQVL_DTyVRpY
+Message-ID: <CANT5p=p6yw3eYJVXZc2CA2fBgBYpZ4W0uKivt2tCmtgos3GVdw@mail.gmail.com>
 Subject: Re: [LSF/MM/BPF TOPIC] Namespace-aware upcalls from kernel filesystems
-To: Chuck Lever <cel@kernel.org>
+To: David Leadbeater <dgl@dgl.cx>
 Cc: lsf-pc@lists.linux-foundation.org, 
 	linux-fsdevel <linux-fsdevel@vger.kernel.org>, keyrings@vger.kernel.org, 
-	CIFS <linux-cifs@vger.kernel.org>, linux-nfs@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>
+	CIFS <linux-cifs@vger.kernel.org>, linux-nfs@vger.kernel.org, brauner@kernel.org, 
+	David Howells <dhowells@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77331-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77332-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
@@ -139,39 +139,43 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	MID_RHS_MATCH_FROMTLD(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[8];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 18107148AF7
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: B8CB6148B18
 X-Rspamd-Action: no action
 
-On Sat, Feb 14, 2026 at 9:10=E2=80=AFPM Chuck Lever <cel@kernel.org> wrote:
+On Mon, Feb 16, 2026 at 6:25=E2=80=AFAM David Leadbeater <dgl@dgl.cx> wrote=
+:
 >
+> On Sat, Feb 14, 2026 at 03:36:22PM +0530, Shyam Prasad N wrote:
+> > I tried to prototype a namespace aware upcall mechanism for kernel keys=
+ here:
+> > https://www.spinics.net/lists/keyrings/msg17581.html
+> > But it has not been successful so far. I'm seeking reviews on this
+> > approach from security point of view.
 >
-> On Sat, Feb 14, 2026, at 5:06 AM, Shyam Prasad N wrote:
-> > Kernel filesystems sometimes need to upcall to userspace to get some
-> > work done, which cannot be achieved in kernel code (or rather it is
-> > better to be done in userspace). Some examples are DNS resolutions,
-> > user authentication, ID mapping etc.
-> >
-> > Filesystems like SMB and NFS clients use the kernel keys subsystem for
-> > some of these, which has an upcall facility that can exec a binary in
-> > userspace. However, this upcall mechanism is not namespace aware and
-> > upcalls to the host namespaces (namespaces of the init process).
->
-> Hello Shyam, we've been introducing netlink control interfaces, which
-> are namespace-aware. The kernel TLS handshake mechanism now uses
-> this approach, as does the new NFSD netlink protocol.
->
->
-> --
-> Chuck Lever
+> I have more context from the containers side, but to me this doesn't
+> appear safe. Entering the right namespaces isn't enough to safely run
+> code within a container. The container runtime may have set up seccomp
+> or other limits which this upcall won't respect.
 
-Hi Chuck,
+Hi David,
+Thanks for these comments.
+Let me look into seccomp to see if kernel will have any visibility into it.
 
-Interesting. Let me explore this a bit more.
-I'm assuming that this is the file that I should be looking into:
-fs/nfsd/nfsctl.c
-And that there would be a corresponding handler in nfs-utils?
+>
+> I would like to see a solution to this though, we currently have custom
+> callback code to make this work. I'm not familiar enough with the
+> interfaces but an approach where something registers also seems
+> desirable because it is able to preserve backwards compatibility, which
+> changing the namespace the upcall runs in doesn't.
+
+Ack. Will explore the options and get back to this thread.
+
+>
+> David
+>
+
 
 --=20
 Regards,
