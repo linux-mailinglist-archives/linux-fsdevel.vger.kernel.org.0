@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-77455-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77456-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uKASJgD4lGktJgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77455-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:21:36 +0100
+	id 2GKVGwX4lGktJgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77456-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:21:41 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45D87151CF7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:21:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AECA151D14
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:21:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 34E7B305A495
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 23:21:13 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 2DB02305BBB0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 23:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3BB2F39A3;
-	Tue, 17 Feb 2026 23:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB0B29D297;
+	Tue, 17 Feb 2026 23:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sl48IwCE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LuTR+z3t"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56225221FCF;
-	Tue, 17 Feb 2026 23:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644CB221FCF;
+	Tue, 17 Feb 2026 23:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771370472; cv=none; b=KRmVxCGSv4kgFVuI0XLUd1MbolsD9cyI/So32TMiW63OPnbK43qFax+I6HGG/jFiMmf6NUNb+WC7SfLQiLS1nCQS/fqV6goOz2fDhzmiLPnIxFtw7yZb95paqGy3yXMsdPZl97V16I8HcDINSIwR4IDjaMd23gHMPXzLHeE0Tao=
+	t=1771370474; cv=none; b=UMr4TXWg4MCixhUSjP661lXzlVCg/UP0EMqlue2ZDPoZzuv9DPywTaPuBXhMZesA56WdnPgQ2/ToLPgVGyNGOOjuojhkVmQJCYR0zI+dd7NuujkE1PiT3SzIm2qehrJua5+nS7XvodRgd4pbqRBSDsjCgt1a2+e+OoNOXioP1Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771370472; c=relaxed/simple;
-	bh=qEvbcygzps7ISLi+6GenSLwSvV3vuE20wcyB15UW0yw=;
+	s=arc-20240116; t=1771370474; c=relaxed/simple;
+	bh=6I8gvUxuvD5MPz5tuGeJL3nBgsfVh7JOTSYnZJgR6+E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZXR+a0rE6/aLBEqb5Pd2kBb2DDIDyvqt/gfrvJpF1zh58y9UhIcdeokfqYUjhz6wrDZLgFzZ5MPKNUkrfYvhc+M1KzP5tStXXrDBMKktTJDUnNAjEDdhf7Ei2LgpY26kMC0y5r6WI8Qcs95dj1SMFF9zVx+UgR6q+dBy3220T18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sl48IwCE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C62EC4CEF7;
-	Tue, 17 Feb 2026 23:21:10 +0000 (UTC)
+	 MIME-Version; b=BWvW9NSyD/N903HQ6/Lx5D/vpWvctD6XQjFxiMeeagli/t4nmmqzj6lF9GjV0Js26FgOO9Z4d2B1HiB9wMGCSRuttRffLknm5B9sHWgzLs/jnRInm5+Hui5VpU2bkQtVIG4V4ESY8uxWuvo/LCa5zMutivMAxftoiX41LwTDpTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LuTR+z3t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57FA7C19421;
+	Tue, 17 Feb 2026 23:21:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771370471;
-	bh=qEvbcygzps7ISLi+6GenSLwSvV3vuE20wcyB15UW0yw=;
+	s=k20201202; t=1771370474;
+	bh=6I8gvUxuvD5MPz5tuGeJL3nBgsfVh7JOTSYnZJgR6+E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Sl48IwCEYr98K6ErydTxlFlrZU2ElcTqdtoFdRtnMzcbh9xMnQeSfWGt3CjSd0yUQ
-	 rzFzy6pRTv71h/YwJ9r+LmA56+Mw+3Jt1LZEiyba5EFrPD+jn986wc8gN7Gntkztxr
-	 2ZIt5ASEri0TXum+7S7z8EUCfP5E6u11motdsdcegqAttYswULT10alyaryoMXLDpR
-	 KKnauv7Wg8odZdDn8aH+Z/9oncEyUmIJ2+J/Qn6/RSXr7XoBNvPmaIuuXP0+jgjwzM
-	 pYAXMZ2PIUwcFaR5MOVvt84qflcOJMaD9NMDDBIyOZJwa9e+xSp1po8Jvh7N5+4/Vd
-	 29k9oBhMQXeBg==
+	b=LuTR+z3tSNs9JdFkCnwoHJpJq/AfoPpZkDlABZcGtVpuUDDWFY0CxOHeUUIOoUPgr
+	 23wkDZYEhCdHI8AZPtTFMDkLK6GzRGajh4v8B5uPRUiP1140CRUmGsHY4gGn5/23kX
+	 VlpIyecaFzvlVsUcetz3pNZ/WJpVx9w404TZ3urtqvq3pWDw6dgVlqIk2e49QVIT2n
+	 Eyc9ECFr0M06xvuXsqcKAP043lJGwmuHLP+bPywvYyK5kxc6dVyDWoKOS5TK+1zDHf
+	 mFCR6Auhhys8mxst1uOd+wBbLwJN55ZpHwXitVRC9D4l6sorjwVpyUUAARiZ3LwvBQ
+	 mdMUwmezSQqdg==
 From: Andrey Albershteyn <aalbersh@kernel.org>
 To: linux-xfs@vger.kernel.org,
 	fsverity@lists.linux.dev,
@@ -52,9 +52,9 @@ To: linux-xfs@vger.kernel.org,
 Cc: Andrey Albershteyn <aalbersh@kernel.org>,
 	hch@lst.de,
 	djwong@kernel.org
-Subject: [PATCH v3 18/35] xfs: disable direct read path for fs-verity files
-Date: Wed, 18 Feb 2026 00:19:18 +0100
-Message-ID: <20260217231937.1183679-19-aalbersh@kernel.org>
+Subject: [PATCH v3 19/35] xfs: introduce XFS_FSVERITY_CONSTRUCTION inode flag
+Date: Wed, 18 Feb 2026 00:19:19 +0100
+Message-ID: <20260217231937.1183679-20-aalbersh@kernel.org>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <20260217231937.1183679-1-aalbersh@kernel.org>
 References: <20260217231937.1183679-1-aalbersh@kernel.org>
@@ -78,7 +78,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	HAS_LIST_UNSUB(-0.01)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-77455-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77456-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	DKIM_TRACE(0.00)[kernel.org:+];
@@ -92,49 +92,33 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	RCPT_COUNT_SEVEN(0.00)[7];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 45D87151CF7
+X-Rspamd-Queue-Id: 0AECA151D14
 X-Rspamd-Action: no action
 
-The direct path is not supported on verity files. Attempts to use direct
-I/O path on such files should fall back to buffered I/O path.
+Add new flag meaning that merkle tree is being build on the inode.
 
 Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-[djwong: fix braces]
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/xfs/xfs_file.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ fs/xfs/xfs_inode.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 693d298ac388..78a65926de43 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -281,7 +281,8 @@ xfs_file_dax_read(
- 	struct kiocb		*iocb,
- 	struct iov_iter		*to)
- {
--	struct xfs_inode	*ip = XFS_I(iocb->ki_filp->f_mapping->host);
-+	struct inode		*inode = iocb->ki_filp->f_mapping->host;
-+	struct xfs_inode	*ip = XFS_I(inode);
- 	ssize_t			ret = 0;
+diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+index bd6d33557194..6df48d68a919 100644
+--- a/fs/xfs/xfs_inode.h
++++ b/fs/xfs/xfs_inode.h
+@@ -415,6 +415,12 @@ static inline bool xfs_inode_can_sw_atomic_write(const struct xfs_inode *ip)
+  */
+ #define XFS_IREMAPPING		(1U << 15)
  
- 	trace_xfs_file_dax_read(iocb, to);
-@@ -332,6 +333,14 @@ xfs_file_read_iter(
- 	if (xfs_is_shutdown(mp))
- 		return -EIO;
- 
-+	/*
-+	 * In case fs-verity is enabled, we also fallback to the buffered read
-+	 * from the direct read path. Therefore, IOCB_DIRECT is set and need to
-+	 * be cleared (see generic_file_read_iter())
-+	 */
-+	if (fsverity_active(inode))
-+		iocb->ki_flags &= ~IOCB_DIRECT;
++/*
++ * fs-verity's Merkle tree is under construction. The file is read-only, the
++ * only writes happening are for the fsverity metadata.
++ */
++#define XFS_VERITY_CONSTRUCTION	(1U << 16)
 +
- 	if (IS_DAX(inode))
- 		ret = xfs_file_dax_read(iocb, to);
- 	else if (iocb->ki_flags & IOCB_DIRECT)
+ /* All inode state flags related to inode reclaim. */
+ #define XFS_ALL_IRECLAIM_FLAGS	(XFS_IRECLAIMABLE | \
+ 				 XFS_IRECLAIM | \
 -- 
 2.51.2
 
