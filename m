@@ -1,89 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-77432-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id gJN3ECD1lGlzJQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77432-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:09:20 +0100
+	id EOLvDkn1lGlzJQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:10:01 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A2C6151B75
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:09:19 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9754151B8C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:10:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 9084D300C7E2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 23:09:05 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 811CA3065F29
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 23:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA63E31B111;
-	Tue, 17 Feb 2026 23:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57A331D371;
+	Tue, 17 Feb 2026 23:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="UQvxiKrI"
+	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="BaZYIcI8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6900D306D40
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 23:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62FD313E0F
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 23:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771369737; cv=none; b=qfTbKf0SKjCgcZ0wZHGy43qlLsZ6tENe6Ruon+yy9mcYMXsMWB2i1/gZOp+tzESYZcNBhBDyE+cua/U7IW3BuYT9yzaVMctfCyYRtrLa9eGOAnMYeo5zDQYoMTuFh5ZN94FXTfNXfncwp58bOCkIaaRm3rc9F/m4dIzhlalxU/s=
+	t=1771369739; cv=none; b=RqipA8Zllxr8m8ym1vcb0rJZ9ygetXX0CtdOi2kpRa47rB1kDTFOV1IQoBr9lLZiKMM5AJxf8HslnuWD1x5YxVXdi8sQNbHz4b9MgrFCpjbDjbVYebHUzNPPq4C3ACtAJTY9HU6z7JQFNNocXqTES6vSdsVg9MmQy85NpxpH0f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771369737; c=relaxed/simple;
-	bh=bpyKdwxEgiGS0ibektv1g5DWi5ZbckLP8xYHNlvIEmE=;
+	s=arc-20240116; t=1771369739; c=relaxed/simple;
+	bh=/dDrVfDKsUcytHVbJjVpT632+/VzkrBDFcDuhbzCGrw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ul09AtyLO9qOrJwsEXE5H29ZEsZbtbdSrtJM22fZMLdO7sUmcCCGdNS6ppHcFE4ym0UJXgpXExpm+2doaxQ2Hv8Njq15TVx+0PGZFjOHkpT2fXIM1vMkrETtr5OJanRP+m2CGSerXrleyJxalqcfpnx21lwSzK5OWMfaUu3jIS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=UQvxiKrI; arc=none smtp.client-ip=209.85.219.50
+	 MIME-Version; b=DhJOBw/9owwsAbChbji9oqfCl5YvpFt5akhXd5lLeL90Mb6H+AbYZ65TyVSseOvLx/qZfV/2uK8HToa1l0ohIm3wJPszvAhr9Gi5Q6VNu/EnQb3ApIgGD4WpvJh+FOKS/8LZjflMRIWtpMm7xmpHZYv2cznPhL1RLsiC8H0vsAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=BaZYIcI8; arc=none smtp.client-ip=209.85.222.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=zetier.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zetier.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-896f82e5961so3148076d6.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 15:08:55 -0800 (PST)
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-8cb3e22435fso24984685a.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 15:08:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=zetier.com; s=gm; t=1771369734; x=1771974534; darn=vger.kernel.org;
+        d=zetier.com; s=gm; t=1771369736; x=1771974536; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=67x0rmIMjc1SgKva+b4U06wk0ssnpT3jAfZBeoUNrj0=;
-        b=UQvxiKrIyfeXPaHjdc4EPAg1rhTdynhZRhj2AeuMaf6fzevtiTPm8LL28BuJGJVIYd
-         NcsS6aSfCBG3Sdqmr92xNgLOgFn8LIgviATv74z3jCGJNe9nA8hkoy2qjx5vLzPl2U3L
-         UZfa9hTsJdbDUmjwAspuZONqYyPryZ+V3212+wklyMEDQikkrlXPGqYzKpD78dVTMAFq
-         vT1QNZiJjwXW91fHIi4OMqNcIjcKVprSK9ZTiYpN/O3+fJg9y+8i+m+MlASDMlwPUbe6
-         TSZ9nHU+tv9wAzS6BKNdNiv7gDGko4NQIl9H0C+CXt4RMVq0rXXjk9plAQnysj0DW+xn
-         DeWA==
+        bh=yrA5zBI886Ak4PDcuZ2foshmoLSrHCLowKH+/koqLNU=;
+        b=BaZYIcI8iCLAVN+Er7e6PAhfNT5B3ZoWsif7+4qPEs9zUVYbtzwuLV9w0K7i+Zyl5b
+         zO65fRZkMVwSEO6h3/0MxTnvL6H75MgNVFgY0+N4p0T5jyGIQzXK05RC5ySDRgPlt/jq
+         yXoD3g93jewOMWApU1HgJqiQFx3Prf1azDVJ3yDxzeKSP1l1Vn6OMzA9/W3cBn7rEK6X
+         WyHlF+tzLWlbXpZ7kz/nTrc/lXgDbrJN1doRcjtoPBB8Bk0CjP4pgQiDuLMefYIXTAUU
+         XI6QUTw5C6am8X4Fj/41KR6nXF4uBauPmKqfoms92fIkE8LFb/OJt6VBiizFL8/vrAS6
+         XjZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771369734; x=1771974534;
+        d=1e100.net; s=20230601; t=1771369736; x=1771974536;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=67x0rmIMjc1SgKva+b4U06wk0ssnpT3jAfZBeoUNrj0=;
-        b=Fdp/MuYt1ODbq3G3zQGXtRfSmz7dYnbbAXB8Jpz4jVx7fVaMHRHeeg2rLf2xmMyVKy
-         uBUCWe2+PQZeh81DRGDbGmp4deMX4eFZXw9Lir0Z89d8yJDcwj9x8f6sp4y30jnXlVFC
-         yVpxhLpwCW0FpLHRryxjeEpYY9+u8MRfftQWf0ioTp/wcTY8qm3U02O/gk1M+llSzvv6
-         fZYH5qIIrUW7qWa5bUtXwQqv1VHkngct9F966wzlm1jfASGZCBcTDaDwNd9Oiy/7kFUv
-         e/qPgbQ8yJdAHvI8/2CKmrQLYtYx69v7mbvt27J9I+2l8kHWGmeXtxAT8mHtjf3rXmBh
-         RbDg==
-X-Gm-Message-State: AOJu0YwOSCjk+u6b+pNqJov3kVMMNnHiKmnb3rwZnrlEBjagWz6XeP8C
-	uTAjCAG5Q7a8FHjn3vHqIIvp0p+5cITRlwi5H+eIUtUAnRCQ1lfyGDxCfhWnMu5PaxM=
-X-Gm-Gg: AZuq6aJKOhFO8Gv2Rz/A4CB7BrtK8bpqNh532QHzAx+LAs4yXOsQI+b0xr2ZllZD4AJ
-	JDd4fhOiYKaN3m23CTGUvZZcOcjRqzjGnCOFz9Pwp+fi+pMv9WlN8SaEEcZgJbE50GAK2Gce2Hy
-	qMl1EF934TNwFGIVyNAgNu0G4hXszIBV2WK68mBnpPlAZaWp25LW1YjIVVJLGjel+5nL04IUCtY
-	83EgTGceu5UqB8aoGwpewnAX+0RDnbtOMA/KKGbQ3peXFDw9AmwEy8dXNoma8uRQRqkmzjidiqe
-	tlAMEUeN6lq5gqfGY33AhtPoG+gz+K06SXFVAVB7BwKNAq1eceYBJ/uaKWbb0IkdHktyUkD7Emd
-	w1DtTGVtdLkW/LQvSyuPMGZHWHsJSoL3KFHZmZmeJm7RVSiJumGcTAvXvJyVn+8biQSTlTIpT66
-	BWK+jEvAJzsLDo/KvFYJeKDY9tASlv9GUG5hiVaKjHY9pEZ1P3pmRhKQ2bFJ0h3RGlDLicHawmV
-	Fv7
-X-Received: by 2002:ad4:5d6b:0:b0:895:4cc2:8bfe with SMTP id 6a1803df08f44-8974049b5ffmr182540386d6.48.1771369734196;
-        Tue, 17 Feb 2026 15:08:54 -0800 (PST)
+        bh=yrA5zBI886Ak4PDcuZ2foshmoLSrHCLowKH+/koqLNU=;
+        b=evRRr4UtY8rDSLKtP0GWdh4nTowklUcq39YMBzeeQ8PVX5LP8ojLVsMW7zovetp7d3
+         gxdoYqmvnsPdVNDvgI2RYUlX9MSlsxkmRie9QezZDspBqbz2Abns3JGep4IyZbckBN0G
+         c7LBoSuYw5oWs1rdDVq30hEKHLkHPP3BbSalovOQaqyPCnlpO6ZL97lne92RMVaHARZl
+         5OXpmNZzZo/HmEpl8xsekZ764d4MOtgNH6QX+p5BDJZIxwKRC5mqfb/NSwRiSJ2MnUmU
+         6tW7PBZHckmBoNPP7uVwG/HIQMt+E+v11RmhFZ97A/RgZnzMjQCvKv8Mt6N5UnQ8d3eq
+         1faA==
+X-Gm-Message-State: AOJu0Yy8dX7YU6XWIbXVd0WTdyQ2rwvjFKP/Iraw+8WvLTqDj5R2uiIz
+	3iy1oxIHKGZJZ7n0AOd7hUuXbMtuPCrrJnDY1FtlxE94YbhK9+H1qUogpCDGlF+CFgE=
+X-Gm-Gg: AZuq6aJj8rgOsVC95UMhnj8c48Mt5Qj+a+ekLEaUgNaqHTS18EByzK9AG/hjVqWIu5Z
+	beQPRC67uxD3JrRhhusm2BcvVxNHgKxDqkz6QCs+Wia9uWMcEldAwg7fh/Rfwym5CA+iC/ir7Ax
+	lfKVSrWCfLlmJzwq/sbew7dPErYJcl61Sk5co2WS6wb5v38smd/0TCZkf2PBCSdstEIekaa0Whv
+	O8m5T+SFPUcobe4HmQxos9J7aYWUpGB+qQV0o6KRdvEcaLRLCy1oH8Bz49hij3O4Gh6sRRIFdAa
+	k/L+2uuBSvYmd3A4n7W3tLijzfLGR2f+bkD4+dL2rhmMPJopWeRza6StImmCHN4FJ9rP2LKK2Ju
+	FBH3Cvsr/8Xmwm3FuA1h/ffKh0ybzd3LBnhka/PvkJukYRAunxSt16l+Txpj/ZJGTIJTzaVkI4I
+	I9JqpjgKUzRsDF/fJn21HZ9ctNPjTmLUutmPbuWLThuVTMu/957FdyTrYUSppKC+ZQzKYa3rXvc
+	5BfUnJ0TjmzPxc=
+X-Received: by 2002:a05:620a:254d:b0:8c7:110e:9cd5 with SMTP id af79cd13be357-8cb741dd2d0mr5743685a.45.1771369735368;
+        Tue, 17 Feb 2026 15:08:55 -0800 (PST)
 Received: from warpstation.incus (243.69.21.34.bc.googleusercontent.com. [34.21.69.243])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8971cc7f82csm175513186d6.4.2026.02.17.15.08.53
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8971cc7f82csm175513186d6.4.2026.02.17.15.08.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Feb 2026 15:08:53 -0800 (PST)
+        Tue, 17 Feb 2026 15:08:54 -0800 (PST)
 From: Ethan Ferguson <ethan.ferguson@zetier.com>
 To: hirofumi@mail.parknet.co.jp
 Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Ethan Ferguson <ethan.ferguson@zetier.com>
-Subject: [PATCH v2 1/2] fat: Add FS_IOC_GETFSLABEL ioctl
-Date: Tue, 17 Feb 2026 18:06:27 -0500
-Message-ID: <20260217230628.719475-2-ethan.ferguson@zetier.com>
+Subject: [PATCH v2 2/2] fat: Add FS_IOC_SETFSLABEL ioctl
+Date: Tue, 17 Feb 2026 18:06:28 -0500
+Message-ID: <20260217230628.719475-3-ethan.ferguson@zetier.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260217230628.719475-1-ethan.ferguson@zetier.com>
 References: <20260217230628.719475-1-ethan.ferguson@zetier.com>
@@ -100,7 +100,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[zetier.com,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	R_DKIM_ALLOW(-0.20)[zetier.com:s=gm];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
@@ -108,10 +108,10 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77432-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77433-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	DKIM_TRACE(0.00)[zetier.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	TO_DN_SOME(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[ethan.ferguson@zetier.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
@@ -120,116 +120,227 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCVD_COUNT_FIVE(0.00)[5];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 6A2C6151B75
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,de.date:url,zetier.com:mid,zetier.com:dkim,zetier.com:email]
+X-Rspamd-Queue-Id: A9754151B8C
 X-Rspamd-Action: no action
 
-Add support for reading the volume label of a FAT filesystem via the
-FS_IOC_GETFSLABEL ioctl.
+Add support for writing to the volume label of a FAT filesystem via the
+FS_IOC_SETFSLABEL ioctl.
 
 Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
 ---
- fs/fat/fat.h   |  1 +
- fs/fat/file.c  | 16 ++++++++++++++++
- fs/fat/inode.c | 11 +++++++++--
- 3 files changed, 26 insertions(+), 2 deletions(-)
+ fs/fat/dir.c         | 51 +++++++++++++++++++++++++++++++++++
+ fs/fat/fat.h         |  6 +++++
+ fs/fat/file.c        | 63 ++++++++++++++++++++++++++++++++++++++++++++
+ fs/fat/inode.c       | 15 +++++++++++
+ fs/fat/namei_msdos.c |  4 +--
+ 5 files changed, 137 insertions(+), 2 deletions(-)
 
+diff --git a/fs/fat/dir.c b/fs/fat/dir.c
+index 07d95f1442c8..1b11713309ae 100644
+--- a/fs/fat/dir.c
++++ b/fs/fat/dir.c
+@@ -1425,3 +1425,54 @@ int fat_add_entries(struct inode *dir, void *slots, int nr_slots,
+ 	return err;
+ }
+ EXPORT_SYMBOL_GPL(fat_add_entries);
++
++static int fat_create_volume_label_dentry(struct super_block *sb, char *vol_label)
++{
++	struct msdos_sb_info *sbi = MSDOS_SB(sb);
++	struct inode *root_inode = sb->s_root->d_inode;
++	struct msdos_dir_entry de;
++	struct fat_slot_info sinfo;
++	struct timespec64 ts = current_time(root_inode);
++	__le16 date, time;
++	u8 time_cs;
++
++	memcpy(de.name, vol_label, MSDOS_NAME);
++	de.attr = ATTR_VOLUME;
++	de.starthi = de.start = de.size = de.lcase = 0;
++
++	fat_time_unix2fat(sbi, &ts, &time, &date, &time_cs);
++	de.time = time;
++	de.date = date;
++	if (sbi->options.isvfat) {
++		de.cdate = de.adate = date;
++		de.ctime = time;
++		de.ctime_cs = time_cs;
++	} else
++		de.cdate = de.adate = de.ctime = de.ctime_cs = 0;
++
++	return fat_add_entries(root_inode, &de, 1, &sinfo);
++}
++
++int fat_rename_volume_label_dentry(struct super_block *sb, char *vol_label)
++{
++	struct inode *root_inode = sb->s_root->d_inode;
++	struct buffer_head *bh = NULL;
++	struct msdos_dir_entry *de;
++	loff_t cpos = 0;
++	int err = 0;
++
++	while (1) {
++		if (fat_get_entry(root_inode, &cpos, &bh, &de) == -1)
++			return fat_create_volume_label_dentry(sb, vol_label);
++
++		if (de->attr == ATTR_VOLUME) {
++			memcpy(de->name, vol_label, MSDOS_NAME);
++			mark_buffer_dirty_inode(bh, root_inode);
++			if (IS_DIRSYNC(root_inode))
++				err = sync_dirty_buffer(bh);
++			brelse(bh);
++			return err;
++		}
++	}
++}
++EXPORT_SYMBOL_GPL(fat_rename_volume_label_dentry);
 diff --git a/fs/fat/fat.h b/fs/fat/fat.h
-index 0d269dba897b..4350c00dba34 100644
+index 4350c00dba34..3b75223fbe76 100644
 --- a/fs/fat/fat.h
 +++ b/fs/fat/fat.h
-@@ -89,6 +89,7 @@ struct msdos_sb_info {
- 	int dir_per_block;	      /* dir entries per block */
- 	int dir_per_block_bits;	      /* log2(dir_per_block) */
- 	unsigned int vol_id;		/*volume ID*/
-+	char vol_label[MSDOS_NAME];           /* volume label */
+@@ -341,6 +341,8 @@ extern int fat_alloc_new_dir(struct inode *dir, struct timespec64 *ts);
+ extern int fat_add_entries(struct inode *dir, void *slots, int nr_slots,
+ 			   struct fat_slot_info *sinfo);
+ extern int fat_remove_entries(struct inode *dir, struct fat_slot_info *sinfo);
++extern int fat_rename_volume_label_dentry(struct super_block *sb,
++					  char *vol_label);
  
- 	int fatent_shift;
- 	const struct fatent_operations *fatent_ops;
+ /* fat/fatent.c */
+ struct fat_entry {
+@@ -480,6 +482,10 @@ extern int fat_sync_bhs(struct buffer_head **bhs, int nr_bhs);
+ int fat_cache_init(void);
+ void fat_cache_destroy(void);
+ 
++/* fat/namei/msdos.c */
++int msdos_format_name(const unsigned char *name, int len,
++		      unsigned char *res, struct fat_mount_options *opts);
++
+ /* fat/nfs.c */
+ extern const struct export_operations fat_export_ops;
+ extern const struct export_operations fat_export_ops_nostale;
 diff --git a/fs/fat/file.c b/fs/fat/file.c
-index 124d9c5431c8..029b1750d1ec 100644
+index 029b1750d1ec..5d445c2d8657 100644
 --- a/fs/fat/file.c
 +++ b/fs/fat/file.c
-@@ -153,6 +153,20 @@ static int fat_ioctl_fitrim(struct inode *inode, unsigned long arg)
+@@ -167,6 +167,67 @@ static int fat_ioctl_get_volume_label(struct super_block *sb, char __user *arg)
  	return 0;
  }
  
-+static int fat_ioctl_get_volume_label(struct super_block *sb, char __user *arg)
++static int fat_convert_volume_label_str(struct msdos_sb_info *sbi, char *in,
++					char *out)
++{
++	int ret, in_len = max(strnlen(in, FSLABEL_MAX), 11);
++	char *needle;
++
++	/*
++	 * '.' is not included in any bad_chars list in this driver,
++	 * but it is specifically not allowed for volume labels
++	 */
++	for (needle = in; needle - in < in_len; needle++)
++		if (*needle == '.')
++			return -EINVAL;
++
++	ret = msdos_format_name(in, in_len, out, &sbi->options);
++	if (ret)
++		return ret;
++
++	/*
++	 * msdos_format_name assumes we're translating an 8.3 name, but
++	 * we can handle 11 chars
++	 */
++	if (in_len > 8)
++		ret = msdos_format_name(in + 8, in_len - 8, out + 8,
++					&sbi->options);
++	return ret;
++}
++
++static int fat_ioctl_set_volume_label(struct super_block *sb, char __user *arg)
 +{
 +	struct msdos_sb_info *sbi = MSDOS_SB(sb);
++	struct inode *root_inode = sb->s_root->d_inode;
++	char from_user[FSLABEL_MAX];
++	char new_vol_label[MSDOS_NAME];
 +	int ret;
 +
-+	mutex_lock(&sbi->s_lock);
-+	ret = copy_to_user(arg, sbi->vol_label, MSDOS_NAME);
-+	mutex_unlock(&sbi->s_lock);
-+	if (ret)
++	if (!capable(CAP_SYS_ADMIN))
++		return -EPERM;
++
++	if (sb_rdonly(sb))
++		return -EROFS;
++
++	if (copy_from_user(from_user, arg, FSLABEL_MAX))
 +		return -EFAULT;
 +
++	ret = fat_convert_volume_label_str(sbi, from_user, new_vol_label);
++	if (ret)
++		return ret;
++
++	inode_lock(root_inode);
++	ret = fat_rename_volume_label_dentry(sb, new_vol_label);
++	inode_unlock(root_inode);
++	if (ret)
++		return ret;
++
++	mutex_lock(&sbi->s_lock);
++	memcpy(sbi->vol_label, new_vol_label, MSDOS_NAME);
++	mutex_unlock(&sbi->s_lock);
 +	return 0;
 +}
 +
  long fat_generic_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
  {
  	struct inode *inode = file_inode(filp);
-@@ -165,6 +179,8 @@ long fat_generic_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return fat_ioctl_set_attributes(filp, user_attr);
- 	case FAT_IOCTL_GET_VOLUME_ID:
+@@ -181,6 +242,8 @@ long fat_generic_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
  		return fat_ioctl_get_volume_id(inode, user_attr);
-+	case FS_IOC_GETFSLABEL:
-+		return fat_ioctl_get_volume_label(inode->i_sb, (char __user *) arg);
+ 	case FS_IOC_GETFSLABEL:
+ 		return fat_ioctl_get_volume_label(inode->i_sb, (char __user *) arg);
++	case FS_IOC_SETFSLABEL:
++		return fat_ioctl_set_volume_label(inode->i_sb, (char __user *) arg);
  	case FITRIM:
  		return fat_ioctl_fitrim(inode, arg);
  	default:
 diff --git a/fs/fat/inode.c b/fs/fat/inode.c
-index 59fa90617b5b..6f9a8cc1ad2a 100644
+index 6f9a8cc1ad2a..a7528937383b 100644
 --- a/fs/fat/inode.c
 +++ b/fs/fat/inode.c
-@@ -53,12 +53,14 @@ struct fat_bios_param_block {
- 
- 	u8	fat16_state;
- 	u32	fat16_vol_id;
-+	u8	fat16_vol_label[MSDOS_NAME];
- 
- 	u32	fat32_length;
- 	u32	fat32_root_cluster;
- 	u16	fat32_info_sector;
- 	u8	fat32_state;
- 	u32	fat32_vol_id;
-+	u8	fat32_vol_label[MSDOS_NAME];
- };
- 
- static int fat_default_codepage = CONFIG_FAT_DEFAULT_CODEPAGE;
-@@ -1406,12 +1408,14 @@ static int fat_read_bpb(struct super_block *sb, struct fat_boot_sector *b,
- 
- 	bpb->fat16_state = b->fat16.state;
- 	bpb->fat16_vol_id = get_unaligned_le32(b->fat16.vol_id);
-+	memcpy(bpb->fat16_vol_label, b->fat16.vol_label, MSDOS_NAME);
- 
- 	bpb->fat32_length = le32_to_cpu(b->fat32.length);
- 	bpb->fat32_root_cluster = le32_to_cpu(b->fat32.root_cluster);
- 	bpb->fat32_info_sector = le16_to_cpu(b->fat32.info_sector);
- 	bpb->fat32_state = b->fat32.state;
- 	bpb->fat32_vol_id = get_unaligned_le32(b->fat32.vol_id);
-+	memcpy(bpb->fat32_vol_label, b->fat32.vol_label, MSDOS_NAME);
- 
- 	/* Validate this looks like a FAT filesystem BPB */
- 	if (!bpb->fat_reserved) {
-@@ -1708,10 +1712,13 @@ int fat_fill_super(struct super_block *sb, struct fs_context *fc,
- 	}
- 
- 	/* interpret volume ID as a little endian 32 bit integer */
--	if (is_fat32(sbi))
-+	if (is_fat32(sbi)) {
- 		sbi->vol_id = bpb.fat32_vol_id;
--	else /* fat 16 or 12 */
-+		memcpy(sbi->vol_label, bpb.fat32_vol_label, MSDOS_NAME);
-+	} else { /* fat 16 or 12 */
- 		sbi->vol_id = bpb.fat16_vol_id;
-+		memcpy(sbi->vol_label, bpb.fat16_vol_label, MSDOS_NAME);
+@@ -736,6 +736,21 @@ static void delayed_free(struct rcu_head *p)
+ static void fat_put_super(struct super_block *sb)
+ {
+ 	struct msdos_sb_info *sbi = MSDOS_SB(sb);
++	struct buffer_head *bh = NULL;
++	struct fat_boot_sector *bs;
++
++	bh = sb_bread(sb, 0);
++	if (bh == NULL)
++		fat_msg(sb, KERN_ERR, "unable to read boot sector");
++	else if (!sb_rdonly(sb)) {
++		bs = (struct fat_boot_sector *)bh->b_data;
++		if (is_fat32(sbi))
++			memcpy(bs->fat32.vol_label, sbi->vol_label, MSDOS_NAME);
++		else
++			memcpy(bs->fat16.vol_label, sbi->vol_label, MSDOS_NAME);
++		mark_buffer_dirty(bh);
 +	}
++	brelse(bh);
  
- 	__le32 vol_id_le = cpu_to_le32(sbi->vol_id);
- 	super_set_uuid(sb, (void *) &vol_id_le, sizeof(vol_id_le));
+ 	fat_set_state(sb, 0, 0);
+ 
+diff --git a/fs/fat/namei_msdos.c b/fs/fat/namei_msdos.c
+index ba0152ed0810..92b5d387f88e 100644
+--- a/fs/fat/namei_msdos.c
++++ b/fs/fat/namei_msdos.c
+@@ -16,8 +16,8 @@ static unsigned char bad_chars[] = "*?<>|\"";
+ static unsigned char bad_if_strict[] = "+=,; ";
+ 
+ /***** Formats an MS-DOS file name. Rejects invalid names. */
+-static int msdos_format_name(const unsigned char *name, int len,
+-			     unsigned char *res, struct fat_mount_options *opts)
++int msdos_format_name(const unsigned char *name, int len, unsigned char *res,
++		      struct fat_mount_options *opts)
+ 	/*
+ 	 * name is the proposed name, len is its length, res is
+ 	 * the resulting name, opts->name_check is either (r)elaxed,
 -- 
 2.43.0
 
