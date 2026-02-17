@@ -1,97 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-77473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id SCHcIxL8lGm8JgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:38:58 +0100
+	id wCSnBXH9lGkUJwIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:44:49 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110F7151F7A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:38:57 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7636A151FF7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:44:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id BF902304812A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 23:38:56 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 197A5302414E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 23:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DC4328627;
-	Tue, 17 Feb 2026 23:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6DDD32A3F0;
+	Tue, 17 Feb 2026 23:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xx8dlhIV"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UORtinSr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B5C3033E8
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 23:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AF9301000
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 23:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.46
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771371529; cv=pass; b=t4NzuKFZZErvzOOZ73o0hwK3FW0QMzeEozJhJiDw2phikWpC5Ms4Am6QpeNLwK+NB58xgPB10lZyJ+L2pIq/+4F6ZfeKPkIzCdJ40BmN0KYGEv3xFcDqk/eWUU1G9TjApn/5pJwK9uueQ7kEmaIfxLghtKZIs0hr/ojgwVLiciM=
+	t=1771371878; cv=pass; b=mFTojzm7mnW4GQ4NMQRHy/6nNQQNjSzL0wDc91d/zaS4w+zT+bSEGpldS65P95sNQ9nJ4uqe/6V6J0IvSNJXjUlf37znkufdJmS//V4uK4NDXKbE+vFCLo3lf7lBa+aTmASQSadNoU9jNucduVJIM+OVRhFuNYgUZW1epI/h1tQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771371529; c=relaxed/simple;
-	bh=XsvTP6yiZvi4ytL1iQz+6Vp9+MFJkDvicMxuANenwRc=;
+	s=arc-20240116; t=1771371878; c=relaxed/simple;
+	bh=yu44H6f4Wg8nTmqw8HkaH9X9sjJ3UAnPx9nIhLqwckE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l1rImPwEeG0aaYOzt5MY8wGsp4MM5DI5SggPYlygjFnVjJb6bUxa7tGPNL6lDDVwT8qq1qDSGJ2ybqRxvv4ycPXC6O/jhnZTtRvztkAcJaEWAs7ZWcvAVH2EXRaPp73aWf3Ei0XFs9abTnenrG513dBhzuH21ob4DKSLB+CbRaE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xx8dlhIV; arc=pass smtp.client-ip=209.85.208.45
+	 To:Cc:Content-Type; b=EetAJJZROn0KqRmt9k5o1Ym6hM70ruL6vO3Byqv1yT2ieB6MBf7ZQPqHnJOhyupCMnFY9azfVdpoRNFaPf728RbitL51sPCvcrgEMrlsBf7gg/ZwseMVNWwDea10zt4Cy+MUzhogkoXI1LyT0MKdb73wBGEeJBXiTy0Nwy+pTEQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UORtinSr; arc=pass smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-65821afe680so2478a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 15:38:41 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771371520; cv=none;
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-65821afe680so2507a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 15:44:36 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771371875; cv=none;
         d=google.com; s=arc-20240605;
-        b=Zgfpuk56Ral9LzkSlMmna9ugsNoy1TB2ZO1JJPsB37t3EPIPqgch8Maesby04llMfa
-         1WtbLwD4Urgju7A/kWkRg0wVFpqHoEmtEDXWSGLA6OzkhwW7VJ2pnUhcwI/ZoOlOz43Z
-         l4zKtke/DPWo4YTowi4iHVCQ0diONWWfYO9yYAT6vifWKbCTagPQpmuSIQRaEX5MRW7w
-         JSsq03Aang11Siur6/pydk3XNUAGmBWHRLf2vOZx+Rah2uUsItvTC6sqewpqopUDFLG+
-         ySusZlLwYhl1OUaA4W113klnbD316Ih+88lmB3xrGXivItZqK1X/xcytKAW5AHLDK8UB
-         MEsg==
+        b=OYlph5RBXW5eN6dYN4J42zIJ+NEWltwz0ez1oI4CqnMctGkC/Ce2uqfHegZAXLEXxi
+         +ghxhYJI21HnI5jtAJ2kZ3nO1HmeDCHFQKIv+FCETuA+HSH1LCyI5di39narmeN5l1x/
+         2EHV7KGRz+C+8WEz1RnHZq7w9Yb5UutDRLbYIqV7H4RxKiZ7LvsqTXInkvLBOjamKn1X
+         vllA9V26GZgBNcsBnZeGQeWO2los6lhwFboVSIj34weR0UYwrXAg3Zt7hA6xje7cF5Ys
+         lXrMFxGYaRVfs1XPeabt2bKGp2Iwm8sHa9Y7FRc2p9JQXipw2VNCRvG/fYwameaJCujj
+         uKpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=XsvTP6yiZvi4ytL1iQz+6Vp9+MFJkDvicMxuANenwRc=;
-        fh=v1KB5+ABlgyAKJT5nE8qcK20Qex3it2XzDL2Z9xSDAg=;
-        b=Mby6Hij4cdjQYBrKi3UyHFBPhCtNogxZnBjLrCsmJ85jCTHC1YEEq3qFLT363ajJrs
-         ruoxl+O0F00WOG3yPrdewRdLEql+kt6W0R51NsUBwPkmn2V85cGFSevd5bUzgvlaRA8w
-         cm5QcVMdvXM46uQdntA6piJjNKc5/Qrpp8rQfer3IO7oNDiynFWmvmknjZfM8mah6PMW
-         2jfTa6jcCymXdkpQcW2UPPYtkWRsxVtyS4fmSkwtIuPIZOxIME10pMhOaKwC9LX5YRmr
-         hzdCTB7pAliWGLrvM4yR9hGBrzZS4fupW1kf+FgO8Z7SxxW/Nv7NjXgi4k6NLZFjVdOq
-         iX1A==;
+        bh=Keyrv1+8+Oviw0HNdiJHvIaxLUb4tUL/CR13rrYMGfU=;
+        fh=ZvBfSoDtGvj+L4BI+VbT0MRusaY2LlU2A+uOgkZig2s=;
+        b=WMebouIOctUXkbuYKS/BXZ9tdrQjarxmMH7evfo5ezyXTKC/rzasVwdGvsiQCBCSnP
+         enP3XQ1r8auBOPc6r5BgywgI/WLSXfLSA7kKpXLvKfxnYovwD+dZBcmWN5ghZt1a0Sjf
+         hoff6cfq+TakAU4y3mhvCUnMMFSpOj/I2y3gR7ldwom7fOmD1i9It8OVGVWxWLFap6ai
+         0pake4eQ3DKN3K205EMI8PXxLDr+xgXxNACFuaTgu0V9C1oaurvVTasPH/nTUFHboeUP
+         kaRQbAU2SQra00I8bPTzRdiXestbNFc5cKAMjot+HL3bevu2FdN+JThD9RiWhKHnwPQM
+         3l9w==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1771371520; x=1771976320; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1771371875; x=1771976675; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XsvTP6yiZvi4ytL1iQz+6Vp9+MFJkDvicMxuANenwRc=;
-        b=xx8dlhIVXm67kca9EMub8ZDeGyIRAbZZDyQKh4Oz8NMzZ3QbZdBivkbFDB0RVlKgeb
-         siwQopVaIbGo+R34YEf0jYURkPxaOmIQGkdWdxrV/zNhqQSy1EHhPmZUwQKw4zycI5Ty
-         45NE7UP87aQgfR8b+z7uHDKQKhI1zVKex18kVi6xV3nHuWVDpDjiFrqXsTYt6LtRp2ri
-         gZDTgtQ0whqlEP1Shiid25efZE9bv0TCVG4wnnsTD/eujltylo1mu496crHK/FYbnnv7
-         Dnz67ZdGQqcGXyAjHsqf+DOaLF66IRVMrZ9JLl1I9YPv/mi6szpXhKt6gjkAm55XUW/j
-         sBpg==
+        bh=Keyrv1+8+Oviw0HNdiJHvIaxLUb4tUL/CR13rrYMGfU=;
+        b=UORtinSrOL95Und90vwnlfEM3gNlbqygRovi/HuGSeuaVfHWbmfK+mwNhyz5XBO9D+
+         fJV/N74GC//M0fVnalIiBz+M80xIwFZb2rwrIhvzXsBj+mnCB7iCJJL/9B62TuF9IMr6
+         82Ehn9NL4JZdMBZF8H16i/UUSHaw5Ar2RZWOkUVnQxPPw+tKLovsXCh+YsDMV8SfsU4l
+         SIrf8cv5KRl40c8MK00F1k/VuJ/jq03Vcnre8KWLO3QMvz8k7SdpFriFPBUwcRep/bl8
+         MymLnTTU1Vm1+NOSvsvnXzTlbIGEpNyLld/5Ha6Yi8Owh/wo1Gz//Vevb/G9LWICp+V9
+         IY8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771371520; x=1771976320;
+        d=1e100.net; s=20230601; t=1771371875; x=1771976675;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=XsvTP6yiZvi4ytL1iQz+6Vp9+MFJkDvicMxuANenwRc=;
-        b=vP1JpQOTrPvE1r//JrfxUOXGXNPW90gDOnqC9Fc0rhryLa3RXTn5Ad2DyyfxoD5QUC
-         dFCh1uuPbqBt+ooOSCZSjKF4LxQKOEF05mwdchjxLQnG7uN7Q0ajX0utJu4BJKCAWG4L
-         pHkHBF/264IWXiO97Hz6KKATuiJFz7eki/ib6Ob+HAPmC55MnMblUoHSh8UM4RkqB7sa
-         vISfPaM3xGwYOwo5RJqAZ47KsXFdg0b/FvDYFjRiVYl7838O81f9jWskF6hjr6EVEebB
-         52+a0WsnY2fEf8wN5CeUIaRosxquPK3Z1wB/uALXnpJ+tMXMQYxiOr/m5VIX/zNvuaTD
-         7+yg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQFVqY6UBiWQY4SBWeO2k4fE8MJo9wxYs+W4QkaZ7oM7NcpmeBnUoYmSljfVd5jJDoA3OUZNmD5+/FucCJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnGmCmc78fuNfZdRu9L2x8m4wFq7D/O9UZNX/bce3kCpdwMD/D
-	ZOfUEuGEOoaYec2nsJgbFxxacH3gO86N1vBw9ozj4+yEewSpm9siQKezr8iOqTrSF46BUjp5eVt
-	MxsAIoo4GViPD41HUmW8s5W4iqGxFWc952Z/U7ZuxMmCc9oHGjIEIyUmfn3k=
-X-Gm-Gg: AZuq6aKvV7kf+2z6IYLmZxPaPL9YiAptwRqio+tuIYf3KxfMsrwylUmh2NhBUpLahUD
-	FwXJwBnEowRVpbg8Y82QzupXdDcBp3AeXtwqGteVRTRB0GBB3ppSQff3d4JSKByvLgjITrstNEe
-	WIH+HAqq6cyDBc7BVNGu+GvTpCsN0Abj7AUscAieZUSVryg9RyscjZbyaiLng8e4GLb5aiGTK4U
-	DKrRSE2tbUC4dAsphNTukkTn+xn6PR1y7QH9NkerT/BLkghvGdac59mJN9Xk9j3CwAdNWVoNhrW
-	YGIiGZSxjUtaNpwwvt4+3NADczu5ucBgeLBXCsZcQdq4wu4=
-X-Received: by 2002:a05:6402:13ce:b0:65a:14a1:b1b9 with SMTP id
- 4fb4d7f45d1cf-65c77188b06mr1455a12.7.1771371519317; Tue, 17 Feb 2026 15:38:39
+        bh=Keyrv1+8+Oviw0HNdiJHvIaxLUb4tUL/CR13rrYMGfU=;
+        b=j7DY9DIQ/GRb+GC2MxdxhbSIDXB06QhpOoZcbxFJdYA2dE2qH+qaymetc4lVV88KXj
+         4wm+bDV2OtovGtE9uwrjwtHsLaSJ2iOI3kmBxZ0pBIFVOkaYYIfanXTcDkg2s5TofZDa
+         eLpzbGBlDp+UYMmmdUyOYuT8PhegmP5BI2RsGYqCnNPj1/2IJyY6dZTJ3WS5LZEtNMA/
+         77AgnVNGZOQW6GrMn3NmXRn6AXyw2LKA12cqEdh0MDltZbzZqj1lEspucj03XSEnNA3f
+         x1nMCEhJQLzlZbp9n3z4v0RjcfUrapN8V0DzXx+NpF61jmLuSoq9hhQpaqJdFEU7JCMH
+         M+GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVp5hdGISI94MgzDBJC7/ncL3UyFPSNxoKcSnM5/vthiYJNe2PPhiS5XP2Cktgo0q2qQQogF+hyEjuSGF4v@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRrnciQ+CEMUJ6ih92zOlgNycMe6fpBDzlxmtKBNV9Le2F+tbt
+	BckwOqW+XSEgaCRsWHqzRl79mNH7kph+5M9A73mNwCL6qWVTp3LtiGyO0HkLdaB9ZrMtVDnNlar
+	GsmDDzjNHQntgWg0YhhunCtsB6KTXTT6P/axxMA5i
+X-Gm-Gg: AZuq6aK+zbb/KnMwCz5n9SGdM3sDnoSXFCtfYpL+i+rDGpaw7s0fg3wj6a53nVczFcK
+	J+uCeLiKJVJIjwXcXge8KRADBnuyb9GOzM5fTt8UZ9KFeEkBgP3Fb6xOVZDKnVMQJFF0D5Lz+EC
+	cmduRQcN45OX6yNlrY4G+EpeKLf2M3LFzga3KRYNgxsPZfuwwA4N79NSq04O3Hk4M3nSKweBZiy
+	laWT2MNsupLlz19NqKdmk4dlD8r06ooGvLo6Z4HTFS/1jti5JVLOpGm5BoIERT0oagkTGCcUtHc
+	f2CHGnEdSXBt2piAvqZjTBLPnUtWWr2UcF+N
+X-Received: by 2002:aa7:dc08:0:b0:65c:63db:cefc with SMTP id
+ 4fb4d7f45d1cf-65c771922b3mr670a12.9.1771371875016; Tue, 17 Feb 2026 15:44:35
  -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -99,17 +99,16 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260217-work-pidfs-autoreap-v3-0-33a403c20111@kernel.org>
- <20260217-work-pidfs-autoreap-v3-2-33a403c20111@kernel.org> <CAHk-=wj80zwxy=5jp5SAi64cqCZgRjY1cRokVuDPd9_t3XMvUw@mail.gmail.com>
-In-Reply-To: <CAHk-=wj80zwxy=5jp5SAi64cqCZgRjY1cRokVuDPd9_t3XMvUw@mail.gmail.com>
+References: <20260217-work-pidfs-autoreap-v3-0-33a403c20111@kernel.org> <20260217-work-pidfs-autoreap-v3-2-33a403c20111@kernel.org>
+In-Reply-To: <20260217-work-pidfs-autoreap-v3-2-33a403c20111@kernel.org>
 From: Jann Horn <jannh@google.com>
-Date: Wed, 18 Feb 2026 00:38:02 +0100
-X-Gm-Features: AaiRm50Ps_CeitSDHmzqYzFTXxSFjPFfTk80dkiB2eb-HFajAy_nyS26-bInmXc
-Message-ID: <CAG48ez2YiL7RZ1fm9vwOCDGr9OsDrCHrCmkyRRoGRMWUZjyyBg@mail.gmail.com>
+Date: Wed, 18 Feb 2026 00:43:59 +0100
+X-Gm-Features: AaiRm52vIirx07zOcYwtfGrEiCWvmmtVyx9IQItPwkZ3kGy-LCPQic0DCUR3tc4
+Message-ID: <CAG48ez0RcW2uChBsQOxrQ7ngvJbE_8mDfcXRb5=FCdkQJwKd+Q@mail.gmail.com>
 Subject: Re: [PATCH RFC v3 2/4] pidfd: add CLONE_PIDFD_AUTOKILL
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>, Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, 
+To: Christian Brauner <brauner@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -118,12 +117,12 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
 	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
 	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
@@ -134,53 +133,71 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	FROM_HAS_DN(0.00)[];
 	RCPT_COUNT_SEVEN(0.00)[7];
 	PRECEDENCE_BULK(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77473-lists,linux-fsdevel=lfdr.de];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,linux-foundation.org:email,mail.gmail.com:mid];
+	TAGGED_FROM(0.00)[bounces-77474-lists,linux-fsdevel=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
 	RCVD_TLS_LAST(0.00)[];
 	DKIM_TRACE(0.00)[google.com:+]
-X-Rspamd-Queue-Id: 110F7151F7A
+X-Rspamd-Queue-Id: 7636A151FF7
 X-Rspamd-Action: no action
 
-On Wed, Feb 18, 2026 at 12:18=E2=80=AFAM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Tue, 17 Feb 2026 at 14:36, Christian Brauner <brauner@kernel.org> wrot=
-e:
-> >
-> > Add a new clone3() flag CLONE_PIDFD_AUTOKILL that ties a child's
-> > lifetime to the pidfd returned from clone3(). When the last reference t=
-o
-> > the struct file created by clone3() is closed the kernel sends SIGKILL
-> > to the child.
+On Tue, Feb 17, 2026 at 11:36=E2=80=AFPM Christian Brauner <brauner@kernel.=
+org> wrote:
+> Add a new clone3() flag CLONE_PIDFD_AUTOKILL that ties a child's
+> lifetime to the pidfd returned from clone3(). When the last reference to
+> the struct file created by clone3() is closed the kernel sends SIGKILL
+> to the child. A pidfd obtained via pidfd_open() for the same process
+> does not keep the child alive and does not trigger autokill - only the
+> specific struct file from clone3() has this property.
 >
-> Did I read this right? You can now basically kill suid binaries that
-> you started but don't have rights to kill any other way.
+> This is useful for container runtimes, service managers, and sandboxed
+> subprocess execution - any scenario where the child must die if the
+> parent crashes or abandons the pidfd.
+
+Idle thought, feel free to ignore:
+In those scenarios, I guess what you'd ideally want would be a way to
+kill the entire process hierarchy, not just the one process that was
+spawned? Unless the process is anyway PID 1 of its own pid namespace.
+But that would probably be more invasive and kind of an orthogonal
+feature...
+
+[...]
+> +static int pidfs_file_release(struct inode *inode, struct file *file)
+> +{
+> +       struct pid *pid =3D inode->i_private;
+> +       struct task_struct *task;
+> +
+> +       guard(rcu)();
+> +       task =3D pid_task(pid, PIDTYPE_TGID);
+> +       if (task && READ_ONCE(task->signal->autokill_pidfd) =3D=3D file)
+
+Can you maybe also clear out the task->signal->autokill_pidfd pointer
+here? It should be fine in practice either way, but theoretically,
+with the current code, this equality check could wrongly match if the
+actual autokill file has been released and a new pidfd file has been
+reallocated at the same address... Of course, at worst that would kill
+a task that has already been killed, so it wouldn't be particularly
+bad, but still it's ugly.
+
+> +               do_send_sig_info(SIGKILL, SEND_SIG_PRIV, task, PIDTYPE_TG=
+ID);
+> +
+> +       return 0;
+> +}
+[...]
+> @@ -2470,8 +2479,11 @@ __latent_entropy struct task_struct *copy_process(
+>         syscall_tracepoint_update(p);
+>         write_unlock_irq(&tasklist_lock);
 >
-> If I'm right, this is completely broken. Please explain.
+> -       if (pidfile)
+> +       if (pidfile) {
+> +               if (clone_flags & CLONE_PIDFD_AUTOKILL)
+> +                       p->signal->autokill_pidfd =3D pidfile;
 
-You can already send SIGHUP to such binaries through things like job
-control, right?
-Do we know if there are setuid binaries out there that change their
-ruid and suid to prevent being killable via kill_ok_by_cred(), then
-set SIGHUP to SIG_IGN to not be killable via job control, and then do
-some work that shouldn't be interrupted?
+WRITE_ONCE() to match the READ_ONCE() in pidfs_file_release()?
 
-Also, on a Linux system with systemd, I believe a normal user, when
-running in the context of a user session (but not when running in the
-context of a system service), can already SIGKILL anything they launch
-by launching it in a systemd user service, then doing something like
-"echo 1 > /sys/fs/cgroup/user.slice/user-$UID.slice/user@$UID.service/app.s=
-lice/<servicename>.scope/cgroup.kill"
-because systemd delegates cgroups for anything a user runs to that
-user; and cgroup.kill goes through the codepath
-cgroup_kill_write -> cgroup_kill -> __cgroup_kill -> send_sig(SIGKILL,
-task, 0) -> send_sig_info -> do_send_sig_info
-which, as far as I know, bypasses the normal signal sending permission
-checks. (For comparison, group_send_sig_info() first calls
-check_kill_permission(), then do_send_sig_info().)
-
-I agree that this would be a change to the security model, but I'm not
-sure if it would be that big a change. I guess an alternative might be
-to instead gate the clone() flag on a `task_no_new_privs(current) ||
-ns_capable()` check like in seccomp, but that might be too restrictive
-for the usecases Christian has in mind...
+>                 fd_install(pidfd, pidfile);
+> +       }
+>
+>         proc_fork_connector(p);
+>         sched_post_fork(p);
 
