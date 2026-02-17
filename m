@@ -1,347 +1,302 @@
-Return-Path: <linux-fsdevel+bounces-77433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77434-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id EOLvDkn1lGlzJQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:10:01 +0100
+	id YOfvNjP2lGlzJQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77434-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:13:55 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9754151B8C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:10:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B0A4151BF3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:13:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 811CA3065F29
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 23:09:13 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 9F5E83052AFE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 23:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57A331D371;
-	Tue, 17 Feb 2026 23:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52CF316189;
+	Tue, 17 Feb 2026 23:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="BaZYIcI8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GYwo2P37"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62FD313E0F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 23:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771369739; cv=none; b=RqipA8Zllxr8m8ym1vcb0rJZ9ygetXX0CtdOi2kpRa47rB1kDTFOV1IQoBr9lLZiKMM5AJxf8HslnuWD1x5YxVXdi8sQNbHz4b9MgrFCpjbDjbVYebHUzNPPq4C3ACtAJTY9HU6z7JQFNNocXqTES6vSdsVg9MmQy85NpxpH0f8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771369739; c=relaxed/simple;
-	bh=/dDrVfDKsUcytHVbJjVpT632+/VzkrBDFcDuhbzCGrw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DhJOBw/9owwsAbChbji9oqfCl5YvpFt5akhXd5lLeL90Mb6H+AbYZ65TyVSseOvLx/qZfV/2uK8HToa1l0ohIm3wJPszvAhr9Gi5Q6VNu/EnQb3ApIgGD4WpvJh+FOKS/8LZjflMRIWtpMm7xmpHZYv2cznPhL1RLsiC8H0vsAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=BaZYIcI8; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=zetier.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zetier.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-8cb3e22435fso24984685a.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 15:08:56 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70C7306D40
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 23:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771370022; cv=pass; b=NT/AfVxz/oir/IdJoK/h+Ttqi5qwhy221JTAB+hWLtbKbp2a/6kiUbC6jjl5HVX3j1N8tlAyK4My92h9htU70jykQEUPdnnIT8+Vk6uquTusPYs5J6lpPYnfxugnuVN3b8rNTKUXHyroIGZ4Ps20s8rB+yAUh868oxAmHziahrY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771370022; c=relaxed/simple;
+	bh=r79iQhNrRyLXah4G9YOSWVaBuc5LQcACm1x/uvKMWos=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CSJ70ExWsGDrNh1QO+VrZvGCTpo8sqf03SjUQD8gcj17H+bTE6Iu/iLewotLJrrxE2glmgpa9hao9sWvyrNVBATkuYLN/KdJCgWTNrHlqzgJsi1Oo4fJq8QdgEtJGfmz54Ye/pT9WwFMWgGe3mf1rsb/3OpxLGpaKKHzlqWNIw4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GYwo2P37; arc=pass smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-65c20dc9577so2312686a12.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 15:13:40 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771370019; cv=none;
+        d=google.com; s=arc-20240605;
+        b=bsEDjLLc7NlBd/DNY+4qYIIqch1avGzn6gVI6wRRHTtE5dlCojdf3OdgMJ3JNh9BU0
+         XvBwBxihCHP+zaEUG56BJmfxR4nSM3MJKyrFbH5In6vTuOLbxQy5oWBKuCOfE/og5elQ
+         z0WhOIAXIAez0yZiR604BfFORufV/A0WE0U7uv+lFESXExRy0XqT45XbSdjFFuxAq/+W
+         LMbitG0cUsxohzE85uV4ylcV2IfnNbABD3r3/BrYc36+6U74v/D5OtRbrguGLN3SALEy
+         VOenNbc9uI/ijQ2yxo7ZBSo8+ui5bcpWEvLLY91J12/nBvOBOheVu9VC+36JPnLwkKcv
+         4/VA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=lBoiDccagGFr7t/Rdt9JIQl1MV82SoTCGhUB9Q/6K18=;
+        fh=lUrg2ouDhdjPbSKL6TjB0Xs3/VkAiI0b/u7xYP49xDA=;
+        b=BJPY85xOR2S2M8btocOlo0MuUSBTwU3pu2zqR7jZbAY7BlILs7+J3tQdwgUCDsXYQk
+         3led8YecVo+TwH2n/FKfYPl66LI4barj3SB1pOcB/2sRS6MC++EGEl8xADuhDwwnTlbu
+         ea6Zt7B3WFe7tzEhNSTqdkbgdtwORs6c041T2N3pgREXbJJDzBBpogMpAMZn60JjYiAh
+         fMMaxXQm1SSbrBY4Kdw0PH60HGfBxeMyPP0oBqbkFFBITJE9sP3JhTWZzCLUkd023yxC
+         vRz4bUd8smz5XVquO3e6aYCmrklNVgWkjp0VZaiHdgv4fOG4pJNUjYYbQdAkpLzt2XzB
+         v+oQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=zetier.com; s=gm; t=1771369736; x=1771974536; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1771370019; x=1771974819; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yrA5zBI886Ak4PDcuZ2foshmoLSrHCLowKH+/koqLNU=;
-        b=BaZYIcI8iCLAVN+Er7e6PAhfNT5B3ZoWsif7+4qPEs9zUVYbtzwuLV9w0K7i+Zyl5b
-         zO65fRZkMVwSEO6h3/0MxTnvL6H75MgNVFgY0+N4p0T5jyGIQzXK05RC5ySDRgPlt/jq
-         yXoD3g93jewOMWApU1HgJqiQFx3Prf1azDVJ3yDxzeKSP1l1Vn6OMzA9/W3cBn7rEK6X
-         WyHlF+tzLWlbXpZ7kz/nTrc/lXgDbrJN1doRcjtoPBB8Bk0CjP4pgQiDuLMefYIXTAUU
-         XI6QUTw5C6am8X4Fj/41KR6nXF4uBauPmKqfoms92fIkE8LFb/OJt6VBiizFL8/vrAS6
-         XjZw==
+        bh=lBoiDccagGFr7t/Rdt9JIQl1MV82SoTCGhUB9Q/6K18=;
+        b=GYwo2P374OGPIRSL8ahSMr3tYI+GVcmhyuhgf0u92+f4xLJors3KeHbwqFQ1r9DuFt
+         YTqvPWIMAqJUGcOw9TR5h3DDoeV+cMLZJ1NL+I2W9W6XHYGhLRcAgTfUrRqDrXr2v1un
+         S846PICCuLLaZ+SVK6mYuaLt6HFwHrqzc4zlkIoqX/xiuVw24tOu5sJekFQ1N+P247+O
+         KiER96h2knhGogDqNYvdGGSZzUmu0C0AXP5/pml19YKnfejc0kLVHx6YqhvD9cwq3Pa6
+         5YVwB+bGEmmXWS8sJKlRTnCjsT9+71DMGHfqwuzyi+8JPJZ7AgHIkZrNEF6iA7kg0yEx
+         Eq2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771369736; x=1771974536;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1771370019; x=1771974819;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=yrA5zBI886Ak4PDcuZ2foshmoLSrHCLowKH+/koqLNU=;
-        b=evRRr4UtY8rDSLKtP0GWdh4nTowklUcq39YMBzeeQ8PVX5LP8ojLVsMW7zovetp7d3
-         gxdoYqmvnsPdVNDvgI2RYUlX9MSlsxkmRie9QezZDspBqbz2Abns3JGep4IyZbckBN0G
-         c7LBoSuYw5oWs1rdDVq30hEKHLkHPP3BbSalovOQaqyPCnlpO6ZL97lne92RMVaHARZl
-         5OXpmNZzZo/HmEpl8xsekZ764d4MOtgNH6QX+p5BDJZIxwKRC5mqfb/NSwRiSJ2MnUmU
-         6tW7PBZHckmBoNPP7uVwG/HIQMt+E+v11RmhFZ97A/RgZnzMjQCvKv8Mt6N5UnQ8d3eq
-         1faA==
-X-Gm-Message-State: AOJu0Yy8dX7YU6XWIbXVd0WTdyQ2rwvjFKP/Iraw+8WvLTqDj5R2uiIz
-	3iy1oxIHKGZJZ7n0AOd7hUuXbMtuPCrrJnDY1FtlxE94YbhK9+H1qUogpCDGlF+CFgE=
-X-Gm-Gg: AZuq6aJj8rgOsVC95UMhnj8c48Mt5Qj+a+ekLEaUgNaqHTS18EByzK9AG/hjVqWIu5Z
-	beQPRC67uxD3JrRhhusm2BcvVxNHgKxDqkz6QCs+Wia9uWMcEldAwg7fh/Rfwym5CA+iC/ir7Ax
-	lfKVSrWCfLlmJzwq/sbew7dPErYJcl61Sk5co2WS6wb5v38smd/0TCZkf2PBCSdstEIekaa0Whv
-	O8m5T+SFPUcobe4HmQxos9J7aYWUpGB+qQV0o6KRdvEcaLRLCy1oH8Bz49hij3O4Gh6sRRIFdAa
-	k/L+2uuBSvYmd3A4n7W3tLijzfLGR2f+bkD4+dL2rhmMPJopWeRza6StImmCHN4FJ9rP2LKK2Ju
-	FBH3Cvsr/8Xmwm3FuA1h/ffKh0ybzd3LBnhka/PvkJukYRAunxSt16l+Txpj/ZJGTIJTzaVkI4I
-	I9JqpjgKUzRsDF/fJn21HZ9ctNPjTmLUutmPbuWLThuVTMu/957FdyTrYUSppKC+ZQzKYa3rXvc
-	5BfUnJ0TjmzPxc=
-X-Received: by 2002:a05:620a:254d:b0:8c7:110e:9cd5 with SMTP id af79cd13be357-8cb741dd2d0mr5743685a.45.1771369735368;
-        Tue, 17 Feb 2026 15:08:55 -0800 (PST)
-Received: from warpstation.incus (243.69.21.34.bc.googleusercontent.com. [34.21.69.243])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8971cc7f82csm175513186d6.4.2026.02.17.15.08.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Feb 2026 15:08:54 -0800 (PST)
-From: Ethan Ferguson <ethan.ferguson@zetier.com>
-To: hirofumi@mail.parknet.co.jp
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ethan Ferguson <ethan.ferguson@zetier.com>
-Subject: [PATCH v2 2/2] fat: Add FS_IOC_SETFSLABEL ioctl
-Date: Tue, 17 Feb 2026 18:06:28 -0500
-Message-ID: <20260217230628.719475-3-ethan.ferguson@zetier.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260217230628.719475-1-ethan.ferguson@zetier.com>
-References: <20260217230628.719475-1-ethan.ferguson@zetier.com>
+        bh=lBoiDccagGFr7t/Rdt9JIQl1MV82SoTCGhUB9Q/6K18=;
+        b=afFKUiokIMNehNiGX5fvbpzemfI8thK/MADmfPkmia1qZXWa0H06kdgePtACpR8k5u
+         U4Ifotpts4OQVGvgPScBPKYbfwcGO0l5XpOKm7nWCAcWbDYlyfGcLRKJGUt1ymM3bdXn
+         KSi/fDkkTNvmjcL0DTCobcyetdVxGYDKQAqMHODQv1F6o/5lX20KNcGQ23ucKk07wL7Z
+         4eyysoBXjJSdzYVDMCiWPTccedyHpOja1aWBCSgU/Nv3w0sJz2PuGyf4eYZyp/qq7JGn
+         CvLWL5IljDmyxEIhJsLOYuA8FvD3lo4nWEEIWjGRp4aZltbcgCgQofCiyz24P/Bck5V1
+         ntJg==
+X-Forwarded-Encrypted: i=1; AJvYcCU97VHZQKt3IcfAkOCQBv6QCtVgSMpxZSLBSyW4ASy2DhJpiXNPPi7k5SYyYW3V3D3MtdA1M/qn2WzKKNXF@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXj36ZzYZr+q7jluGE0/kedJUw/qOs37K5AENxde9OrrUeRUOv
+	sY9kpCOePKpsVE+KbYd8q9B+S1TgnSOx3zFmjwSMAu14rf1hTx65mFTUrozcBpW91ybIHLqU7rz
+	fPMwDeLxLrWCOq1BORW8iFZfP3X0Tmi8=
+X-Gm-Gg: AZuq6aI6tTtuoJ8FhYyYDZNgKck4KAXCXFkvi5FWZ3PutRnaI9+5ZPbsFxrnR9g0n9d
+	G/1ty08nV5rD2n6m2SorR48MMF+GEGsqkQHYGpXx9lpjbBPyOFX8iAmQWNmDNj/7Ra/Vbb3OW32
+	NdSgqvymbVDCL4QT+J3VJ7DMVuBCXwJfqPJkNrik1vIQsWSOk9whoKjLSQZoqU9QOgdRfOaKpnn
+	sFUhconCBRNsaL0OA8cPCIzLlOBNYAJGX7vZN9FvJE1QJ2phmgTvx9S/pnW9XBDhvmccvZOB/2p
+	p19gT4DU
+X-Received: by 2002:a17:907:9808:b0:b90:48b:b53c with SMTP id
+ a640c23a62f3a-b90048bb667mr408965466b.32.1771370018919; Tue, 17 Feb 2026
+ 15:13:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260212215814.629709-1-tjmercier@google.com> <20260212215814.629709-3-tjmercier@google.com>
+ <aZRAkalnJCxSp7ne@amir-ThinkPad-T480> <CABdmKX3wsWphRTDanKwGGiUWoO0xTaC8L_QxjHzhpxfZn256MQ@mail.gmail.com>
+ <CAOQ4uxgrP=VdTKZXKcRE8BeWv6wZy7aFkUF-VoEpRSxVnHZi2w@mail.gmail.com> <CABdmKX1ztzJ6B13uzdDtN-uVWbdWuYJ6PMvjGoAfu40MMHCpaA@mail.gmail.com>
+In-Reply-To: <CABdmKX1ztzJ6B13uzdDtN-uVWbdWuYJ6PMvjGoAfu40MMHCpaA@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 18 Feb 2026 00:13:26 +0100
+X-Gm-Features: AaiRm52hU7QfH-Wv9-Iuqet313dBf2qvcHaBiSfPSpB5qXd2EOgSyRj8MoDjcQo
+Message-ID: <CAOQ4uxijd+viTGvQ8Mn1sLMH7dk1cGUmyU_n4HfW5Pg4FLLRPg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] kernfs: send IN_DELETE_SELF and IN_IGNORED on file deletion
+To: "T.J. Mercier" <tjmercier@google.com>
+Cc: gregkh@linuxfoundation.org, tj@kernel.org, driver-core@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, jack@suse.cz, shuah@kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[zetier.com,quarantine];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[zetier.com:s=gm];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77433-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[zetier.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	TO_DN_SOME(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[ethan.ferguson@zetier.com,linux-fsdevel@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-77434-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[amir73il@gmail.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCVD_COUNT_FIVE(0.00)[5];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,de.date:url,zetier.com:mid,zetier.com:dkim,zetier.com:email]
-X-Rspamd-Queue-Id: A9754151B8C
+	RCPT_COUNT_SEVEN(0.00)[10];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: 4B0A4151BF3
 X-Rspamd-Action: no action
 
-Add support for writing to the volume label of a FAT filesystem via the
-FS_IOC_SETFSLABEL ioctl.
+On Wed, Feb 18, 2026 at 12:32=E2=80=AFAM T.J. Mercier <tjmercier@google.com=
+> wrote:
+>
+> On Tue, Feb 17, 2026 at 1:25=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
+m> wrote:
+> >
+> > On Tue, Feb 17, 2026 at 9:26=E2=80=AFPM T.J. Mercier <tjmercier@google.=
+com> wrote:
+> > >
+> > > On Tue, Feb 17, 2026 at 2:19=E2=80=AFAM Amir Goldstein <amir73il@gmai=
+l.com> wrote:
+> > > >
+> > > > On Thu, Feb 12, 2026 at 01:58:13PM -0800, T.J. Mercier wrote:
+> > > > > Currently some kernfs files (e.g. cgroup.events, memory.events) s=
+upport
+> > > > > inotify watches for IN_MODIFY, but unlike with regular filesystem=
+s, they
+> > > > > do not receive IN_DELETE_SELF or IN_IGNORED events when they are
+> > > > > removed.
+> > > > >
+> > > > > This creates a problem for processes monitoring cgroups. For exam=
+ple, a
+> > > > > service monitoring memory.events for memory.high breaches needs t=
+o know
+> > > > > when a cgroup is removed to clean up its state. Where it's known =
+that a
+> > > > > cgroup is removed when all processes die, without IN_DELETE_SELF =
+the
+> > > > > service must resort to inefficient workarounds such as:
+> > > > > 1.  Periodically scanning procfs to detect process death (wastes =
+CPU and
+> > > > >     is susceptible to PID reuse).
+> > > > > 2.  Placing an additional IN_DELETE watch on the parent directory
+> > > > >     (wastes resources managing double the watches).
+> > > > > 3.  Holding a pidfd for every monitored cgroup (can exhaust file
+> > > > >     descriptors).
+> > > > >
+> > > > > This patch enables kernfs to send IN_DELETE_SELF and IN_IGNORED e=
+vents.
+> > > > > This allows applications to rely on a single existing watch on th=
+e file
+> > > > > of interest (e.g. memory.events) to receive notifications for bot=
+h
+> > > > > modifications and the eventual removal of the file, as well as au=
+tomatic
+> > > > > watch descriptor cleanup, simplifying userspace logic and improvi=
+ng
+> > > > > resource efficiency.
+> > > >
+> > > > This looks very useful,
+> > > > But,
+> > > > How will the application know that ti can rely on IN_DELETE_SELF
+> > > > from cgroups if this is not an opt-in feature?
+> > > >
+> > > > Essentially, this is similar to the discussions on adding "remote"
+> > > > fs notification support (e.g. for smb) and in those discussions
+> > > > I insist that "remote" notification should be opt-in (which is
+> > > > easy to do with an fanotify init flag) and I claim that mixing
+> > > > "remote" events with "local" events on the same group is undesired.
+> > >
+> > > I think this situation is a bit different because this isn't adding
+> > > new features to fsnotify. This is filling a gap that you'd expect to
+> > > work if you only read the cgroups or inotify documentation without
+> > > realizing that kernfs is simply wired up differently for notification
+> > > support than most other filesystems, and only partially supports the
+> > > existing notification events. It's opt-in in the sense that an
+> > > application registers for IN_DELETE_SELF, but other than a runtime
+> > > test like what I added in the selftests I'm not sure if there's a goo=
+d
+> > > way to detect the kernel will actually send the event. Practically
+> > > speaking though, if merged upstream I will backport these patches to
+> > > all the kernels we use so a runtime check shouldn't be necessary for
+> > > our applications.
+> > >
+> >
+> > That's besides the point.
+> > An application does not know if it running on a kernel with the backpor=
+ted
+> > patch or not, so an application needs to either rely on getting the eve=
+nt
+> > or it has to poll. How will the application know if it needs to poll or=
+ not?
+>
+> Either by testing for the behavior at runtime like I mentioned, or by
+> depending on certification testing for the platform the application is
+> running on which would verify that the selftests I added pass. We do
+> the former to check for the presence of other features like swappiness
+> support with memory.reclaim, and also the latter for all devices.
+>
+> > > > However, IN_IGNORED is created when an inotify watch is removed
+> > > > and IN_DELETE_SELF is called when a vfs inode is destroyed.
+> > > > When setting an inotify watch for IN_IGNORED|IN_DELETE_SELF there
+> > > > has to be a vfs inode with inotify mark attached, so why are those
+> > > > events not created already? What am I missing?
+> > >
+> > > The difference is vfs isn't involved when kernfs files are unlinked.
+> >
+> > No, but the vfs is involved when the last reference on the kernfs inode
+> > is dropped.
+> >
+> > > When a cgroup removal occurs, we get to kernfs_remove via kernfs'
+> > > inode_operations without calling vfs_unlink. (You can't rm cgroup
+> > > files directly.)
+> > >
+> >
+> > Yes and if there was a vfs inode for this kernfs object, the vfs inode =
+needs to
+> > be dropped.
+>
+> It should be, but it isn't right now.
+>
+> > > > Are you expecting to get IN_IGNORED|IN_DELETE_SELF on an entry
+> > > > while watching the parent? Because this is not how the API works.
+> > >
+> > > No, only on the file being watched. The parent should only get
+> > > IN_DELETE, but I read your feedback below and I'm fine with removing
+> > > that part and just sending the DELETE_SELF and IN_IGNORED events.
+> > >
+> >
+> > So if the file was being watched, some application needed to call
+> > inotify_add_watch() with the user path to the cgroupfs inode
+> > and inotify watch keeps a live reference to this vfs inode.
+> >
+> > When the cgroup is being destroyed something needs to drop
+> > this vfs inode and call __destroy_inode() -> fsnotify_inode_delete()
+> > which should remove the inotify watch and result in IN_IGNORED.
+>
+> Nothing like this exists before this patch.
+>
+> > IN_DELETE_SELF is a different story, because the inode does not
+> > have zero i_nlink.
+> >
+> > I did not try to follow the code path of cgroupfs destroy when an
+> > inotify watch on a cgroup file exists, but this is what I expect.
+> > Please explain - what am I missing?
+>
+> Yes that's the problem here. The inode isn't dropped unless the watch
+> is removed, and the watch isn't removed because kernfs doesn't go
+> through vfs to notify about file removal. There is nothing to trigger
+> dropping the watch and the associated inode reference except this
+> patch calling into fsnotify_inoderemove which both sends
+> IN_DELETE_SELF and calls __fsnotify_inode_delete for the IN_IGNORED
+> and inode cleanup.
+>
+> Without this, the watch and inode persist after file deletion until
+> the process exits and file descriptors are cleaned up, or until
+> inotify_rm_watch gets called manually.
+>
 
-Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
----
- fs/fat/dir.c         | 51 +++++++++++++++++++++++++++++++++++
- fs/fat/fat.h         |  6 +++++
- fs/fat/file.c        | 63 ++++++++++++++++++++++++++++++++++++++++++++
- fs/fat/inode.c       | 15 +++++++++++
- fs/fat/namei_msdos.c |  4 +--
- 5 files changed, 137 insertions(+), 2 deletions(-)
+Yeh, that's not good.
+Will be happy to see that fixed.
 
-diff --git a/fs/fat/dir.c b/fs/fat/dir.c
-index 07d95f1442c8..1b11713309ae 100644
---- a/fs/fat/dir.c
-+++ b/fs/fat/dir.c
-@@ -1425,3 +1425,54 @@ int fat_add_entries(struct inode *dir, void *slots, int nr_slots,
- 	return err;
- }
- EXPORT_SYMBOL_GPL(fat_add_entries);
-+
-+static int fat_create_volume_label_dentry(struct super_block *sb, char *vol_label)
-+{
-+	struct msdos_sb_info *sbi = MSDOS_SB(sb);
-+	struct inode *root_inode = sb->s_root->d_inode;
-+	struct msdos_dir_entry de;
-+	struct fat_slot_info sinfo;
-+	struct timespec64 ts = current_time(root_inode);
-+	__le16 date, time;
-+	u8 time_cs;
-+
-+	memcpy(de.name, vol_label, MSDOS_NAME);
-+	de.attr = ATTR_VOLUME;
-+	de.starthi = de.start = de.size = de.lcase = 0;
-+
-+	fat_time_unix2fat(sbi, &ts, &time, &date, &time_cs);
-+	de.time = time;
-+	de.date = date;
-+	if (sbi->options.isvfat) {
-+		de.cdate = de.adate = date;
-+		de.ctime = time;
-+		de.ctime_cs = time_cs;
-+	} else
-+		de.cdate = de.adate = de.ctime = de.ctime_cs = 0;
-+
-+	return fat_add_entries(root_inode, &de, 1, &sinfo);
-+}
-+
-+int fat_rename_volume_label_dentry(struct super_block *sb, char *vol_label)
-+{
-+	struct inode *root_inode = sb->s_root->d_inode;
-+	struct buffer_head *bh = NULL;
-+	struct msdos_dir_entry *de;
-+	loff_t cpos = 0;
-+	int err = 0;
-+
-+	while (1) {
-+		if (fat_get_entry(root_inode, &cpos, &bh, &de) == -1)
-+			return fat_create_volume_label_dentry(sb, vol_label);
-+
-+		if (de->attr == ATTR_VOLUME) {
-+			memcpy(de->name, vol_label, MSDOS_NAME);
-+			mark_buffer_dirty_inode(bh, root_inode);
-+			if (IS_DIRSYNC(root_inode))
-+				err = sync_dirty_buffer(bh);
-+			brelse(bh);
-+			return err;
-+		}
-+	}
-+}
-+EXPORT_SYMBOL_GPL(fat_rename_volume_label_dentry);
-diff --git a/fs/fat/fat.h b/fs/fat/fat.h
-index 4350c00dba34..3b75223fbe76 100644
---- a/fs/fat/fat.h
-+++ b/fs/fat/fat.h
-@@ -341,6 +341,8 @@ extern int fat_alloc_new_dir(struct inode *dir, struct timespec64 *ts);
- extern int fat_add_entries(struct inode *dir, void *slots, int nr_slots,
- 			   struct fat_slot_info *sinfo);
- extern int fat_remove_entries(struct inode *dir, struct fat_slot_info *sinfo);
-+extern int fat_rename_volume_label_dentry(struct super_block *sb,
-+					  char *vol_label);
- 
- /* fat/fatent.c */
- struct fat_entry {
-@@ -480,6 +482,10 @@ extern int fat_sync_bhs(struct buffer_head **bhs, int nr_bhs);
- int fat_cache_init(void);
- void fat_cache_destroy(void);
- 
-+/* fat/namei/msdos.c */
-+int msdos_format_name(const unsigned char *name, int len,
-+		      unsigned char *res, struct fat_mount_options *opts);
-+
- /* fat/nfs.c */
- extern const struct export_operations fat_export_ops;
- extern const struct export_operations fat_export_ops_nostale;
-diff --git a/fs/fat/file.c b/fs/fat/file.c
-index 029b1750d1ec..5d445c2d8657 100644
---- a/fs/fat/file.c
-+++ b/fs/fat/file.c
-@@ -167,6 +167,67 @@ static int fat_ioctl_get_volume_label(struct super_block *sb, char __user *arg)
- 	return 0;
- }
- 
-+static int fat_convert_volume_label_str(struct msdos_sb_info *sbi, char *in,
-+					char *out)
-+{
-+	int ret, in_len = max(strnlen(in, FSLABEL_MAX), 11);
-+	char *needle;
-+
-+	/*
-+	 * '.' is not included in any bad_chars list in this driver,
-+	 * but it is specifically not allowed for volume labels
-+	 */
-+	for (needle = in; needle - in < in_len; needle++)
-+		if (*needle == '.')
-+			return -EINVAL;
-+
-+	ret = msdos_format_name(in, in_len, out, &sbi->options);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * msdos_format_name assumes we're translating an 8.3 name, but
-+	 * we can handle 11 chars
-+	 */
-+	if (in_len > 8)
-+		ret = msdos_format_name(in + 8, in_len - 8, out + 8,
-+					&sbi->options);
-+	return ret;
-+}
-+
-+static int fat_ioctl_set_volume_label(struct super_block *sb, char __user *arg)
-+{
-+	struct msdos_sb_info *sbi = MSDOS_SB(sb);
-+	struct inode *root_inode = sb->s_root->d_inode;
-+	char from_user[FSLABEL_MAX];
-+	char new_vol_label[MSDOS_NAME];
-+	int ret;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (sb_rdonly(sb))
-+		return -EROFS;
-+
-+	if (copy_from_user(from_user, arg, FSLABEL_MAX))
-+		return -EFAULT;
-+
-+	ret = fat_convert_volume_label_str(sbi, from_user, new_vol_label);
-+	if (ret)
-+		return ret;
-+
-+	inode_lock(root_inode);
-+	ret = fat_rename_volume_label_dentry(sb, new_vol_label);
-+	inode_unlock(root_inode);
-+	if (ret)
-+		return ret;
-+
-+	mutex_lock(&sbi->s_lock);
-+	memcpy(sbi->vol_label, new_vol_label, MSDOS_NAME);
-+	mutex_unlock(&sbi->s_lock);
-+	return 0;
-+}
-+
- long fat_generic_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
-@@ -181,6 +242,8 @@ long fat_generic_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return fat_ioctl_get_volume_id(inode, user_attr);
- 	case FS_IOC_GETFSLABEL:
- 		return fat_ioctl_get_volume_label(inode->i_sb, (char __user *) arg);
-+	case FS_IOC_SETFSLABEL:
-+		return fat_ioctl_set_volume_label(inode->i_sb, (char __user *) arg);
- 	case FITRIM:
- 		return fat_ioctl_fitrim(inode, arg);
- 	default:
-diff --git a/fs/fat/inode.c b/fs/fat/inode.c
-index 6f9a8cc1ad2a..a7528937383b 100644
---- a/fs/fat/inode.c
-+++ b/fs/fat/inode.c
-@@ -736,6 +736,21 @@ static void delayed_free(struct rcu_head *p)
- static void fat_put_super(struct super_block *sb)
- {
- 	struct msdos_sb_info *sbi = MSDOS_SB(sb);
-+	struct buffer_head *bh = NULL;
-+	struct fat_boot_sector *bs;
-+
-+	bh = sb_bread(sb, 0);
-+	if (bh == NULL)
-+		fat_msg(sb, KERN_ERR, "unable to read boot sector");
-+	else if (!sb_rdonly(sb)) {
-+		bs = (struct fat_boot_sector *)bh->b_data;
-+		if (is_fat32(sbi))
-+			memcpy(bs->fat32.vol_label, sbi->vol_label, MSDOS_NAME);
-+		else
-+			memcpy(bs->fat16.vol_label, sbi->vol_label, MSDOS_NAME);
-+		mark_buffer_dirty(bh);
-+	}
-+	brelse(bh);
- 
- 	fat_set_state(sb, 0, 0);
- 
-diff --git a/fs/fat/namei_msdos.c b/fs/fat/namei_msdos.c
-index ba0152ed0810..92b5d387f88e 100644
---- a/fs/fat/namei_msdos.c
-+++ b/fs/fat/namei_msdos.c
-@@ -16,8 +16,8 @@ static unsigned char bad_chars[] = "*?<>|\"";
- static unsigned char bad_if_strict[] = "+=,; ";
- 
- /***** Formats an MS-DOS file name. Rejects invalid names. */
--static int msdos_format_name(const unsigned char *name, int len,
--			     unsigned char *res, struct fat_mount_options *opts)
-+int msdos_format_name(const unsigned char *name, int len, unsigned char *res,
-+		      struct fat_mount_options *opts)
- 	/*
- 	 * name is the proposed name, len is its length, res is
- 	 * the resulting name, opts->name_check is either (r)elaxed,
--- 
-2.43.0
-
+Thanks,
+Amir.
 
