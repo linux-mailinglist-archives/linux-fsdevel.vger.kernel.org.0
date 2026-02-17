@@ -1,155 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-77333-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77334-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oB3xD6Hyk2n/9wEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77333-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 05:46:25 +0100
+	id AJ7qIXD+k2lN+QEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77334-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 06:36:48 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 867A0148BA6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 05:46:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EAAEA148D5F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 06:36:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 420D7301BCF3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 04:46:15 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 63D1C3011BF6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 05:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8181B7F4;
-	Tue, 17 Feb 2026 04:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939BE2737EE;
+	Tue, 17 Feb 2026 05:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HmL61kHQ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3OXEl1VB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8B21E5718
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 04:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771303572; cv=pass; b=b/M+PGPQ60LgmJFLMhv1tRUU2f3j1UVK0FOiUPqOgih23Gbu2RXQqgHVl29Hu00HVGuSCUSEXanvefA/C/GjtgdT5nSiGx+llRdNoHLyMMPOOrH8mENX1ymx+PcWgh678mwwD5vMEGWH+zU435ukidnTsrcItvNKsupGp7Ks1ho=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771303572; c=relaxed/simple;
-	bh=nKGvllvCG75fwMdLnJD7PMiU4Ur/hq+HZsbw0YKAafk=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=nnJLEKs5FaMU0RWPhH7URJuD00iXH5vmmLaLE33YFfzh0F5YIGmpmRAmXIjDSk5FY8B/5RikAhX5NDbkacLn/BH+Vmt8vikTTxgCNPV34RDOZwCHZqzfhs2pWLLAPDfAhWJscaPtl5JYTO81P0d/1GMZWY+biqnie1he0Xt1Xvw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HmL61kHQ; arc=pass smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-658b6757f7fso7282937a12.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Feb 2026 20:46:11 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771303570; cv=none;
-        d=google.com; s=arc-20240605;
-        b=HaQYcvbarMq0D1xjRSX7X4e/BSB8eqkb8urjy1pVZo8786FmXxbuKkmixcfyaDAmCi
-         z+CAJQbxbi9nhtcnmSy4SLfUiF0MXuMX7IWL8iSgDpuJDaXOlXjKGmxV10zDpEaJvOuk
-         DG6WoMhRUcPrj15fgLH9RkC9nG5jBUkjZ+BDNljXeQDzqObrqasToEQzXO+qXHYr1sQw
-         VXz/kYAXh+1fFcSNjwDhFIxJMA/y0J6VFkF1soysU6wsQmNwZTdwiANSfckzIqVY6buh
-         g0Hm0YbQT2BXHnr/zFK+v7C0Lf2GenaJjI11epZd9irRlP4yvA2hLH2ySJcNFHwtwvl0
-         MXUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=to:subject:message-id:date:from:mime-version:dkim-signature;
-        bh=xmAbP1npaRP/EktzRfWlFJfADINwj1eoIm5/zjg+zdA=;
-        fh=Bt8L/0DAKQFYtHMfmRrQrwz+cMLOOb9Zp7SWam2eTJ0=;
-        b=KcPYZ3XSUmFB8hzp0MWAhIv8VZJ34uO2jGjCeLR5MxlpnX0XZGHIpgA3LGARNgJa7O
-         WRv3SxyIy4PppsAJOJhZvxehzUBZAvowwUtPNUfXPyE9EdvIDggG9PE0+9P9oalKpSc0
-         UwNmucaQ7vtLJR/F14l5SYLXj5ymMtKlzVLp5PSV5HlC7dT1ur+aWsc5F6DwPfLFT4Za
-         uUx8MTz2+EGFT3G9SB7+p2zw6wNY6m66rCbfK6axV1lVIATJmEbrS7WfSlrHzT5kg5NU
-         6wQo7aX+I6tCZa0mtBhOJ4SuW2C0ZEcXe9ShGCf+KFUk8Y/sCQts/BSunK6Ch0S5llRT
-         ipHw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771303570; x=1771908370; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xmAbP1npaRP/EktzRfWlFJfADINwj1eoIm5/zjg+zdA=;
-        b=HmL61kHQ48KFTO1gsVXarVuiJNXp50WTfuB63Okct4sieIhJfriayZIVlmYOu1xVwW
-         MDKhesC6dJ09fcmTla5KrSOj+RwWWP9TMVjSaqx6suXMPohnE6SUR1QLbJV61uzvj80O
-         It0mp8L5Wpdn3tFodQZX+1URJcOCtgJxx8Ig3cv5E8P2gUJ1dZ7shE0VsyH8ZyyXnQi8
-         qpreqeBufuzZbVdbP6DFXvdY6fzphWloXRDgngtJr7MdGeALb8IsJr6611/PwlcFbmI3
-         atBCDWPqoxR0ktyP32f4SRjGT3voDrqyghUijtWySbjsivmu6u9RcPZctpZS345FEoFh
-         Ffsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771303570; x=1771908370;
-        h=to:subject:message-id:date:from:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xmAbP1npaRP/EktzRfWlFJfADINwj1eoIm5/zjg+zdA=;
-        b=OKkmlA54EOBaMPouWwZ9xcwc+lzYmkCmgRlEiWTKSiHCPCJTYpjxcWqxRVKNEJCsMW
-         IVCXYfMPyIDoMe1wHgqy3osy3FU8lNM2VF3/pOZ60W0HZXhY9Sd6iF32Gq8LD87IEim7
-         tr3mVYYE3DJ9MQiWAzs4EmyxalQRT2eiTRUr7bhg+IfBUJ8EJw8VxokM6+3sWlPCnstn
-         i8wIPf88UhLDSNT9jzwASL+se0IxqaH/ZK7Vd6X/nqVxR2xjHLwivoVe/DZGz/uPanT1
-         Q7veS7OD8cxF16nhIWT78+ikyByn/IBO/FAYsFRtWCIUAL8zX6F3koQqqT3XDL+1In5M
-         woug==
-X-Gm-Message-State: AOJu0Yyg2iT/MQur2QlSdiEcRwjREPKfLtfWlK9kZFE6kCDhMQNPBjYl
-	xXbcR7gu9YqxhPnrzLPh0lpdFmQmuR0jm9EWUt0OImpjL5t5uk0/kU8AOEvTMbUqReujA1exgoT
-	jREDV+T4SDwTWTt4ZfwksrIuYDHeQCXBgq0IV
-X-Gm-Gg: AZuq6aITW0c0XBs7cW6WnDRTe9PpdUrWt+etJPysMjfE/U3R7IcbXZXCMpNhpyBX4My
-	rVDnLJ6d+50sA6ePMRFKx3nJnvVOUN1GzSA6qf+NazB/IDqwm47fUVoTbwaStnPInOkluezapj0
-	E6a1nvU8WPI0jg1apacVDDXMuDVvnQGEvfehaRxA0I8SEd7P43XWNv0Tc52YLp1nfQCbRNBYzqB
-	VR9YPimgJrbkpMt01y8aghVvx4twiQeR3f4Lh28bsC04mxjDh9Sa+CA5+gzFgtX0kVPFf+Lsx0D
-	3ojWTg==
-X-Received: by 2002:a05:6402:3554:b0:659:31af:b9af with SMTP id
- 4fb4d7f45d1cf-65bc41dc297mr5553172a12.0.1771303569746; Mon, 16 Feb 2026
- 20:46:09 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6981A9F91;
+	Tue, 17 Feb 2026 05:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771306587; cv=none; b=BqznZvBYBzrGpZeZlm/f2BKwIEqijSJ5ScMh9SlTzdNU28tVD992tkSfHkw9zJZCSFUeUgYaSIeYGi4Ge2lIFmwWsgclhBG9Hzjzo46KD5hLSha6C5mhY9OIPzOVg59QX69rV7tdNU97jig5UeVc+cVZEKBDwRjGLXsrsx6Q76s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771306587; c=relaxed/simple;
+	bh=Vw1yWF0Y4bPZu/NH62MxUlVYzxnY8/zuN6APZzd3cr4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ghq3iByGR5x1V6BD6Uu1kl3UEJtYObQdf6iYngTrb6/DlDTps25p/1ZjnCIFvw82lsju3ObNFE7kPjVl+zOMAYRCzPvHeIFPAL3kL/ja2ANWSq0pxpCcKlKjy6omxVk4nw7BuobBTeEWeyJmEiL7ydqddj0jWdz33JiA903Bvco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3OXEl1VB; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=oUQd9aN1YNBwK0GRI+zqCnDPDmHN4dFR3i34SLyEQnM=; b=3OXEl1VBLrOHijeRAD7VI3lMfQ
+	Cpgb3Mg3Gc2RQLyXOxxwIobsVsAAYJfMIJG9W/ketJBmeyfCBOeNv2XvoA8X/p5CNadtxEfaFei3q
+	37xEDroiFdq4W1Dd8+fOqZ+g4ZIzEfjSZJnLdCcun4RQt0W08KidCpQkXz/dKCBB7ZXd67Cd4vRfI
+	iWRoCo3qnuhevqmU4+NKVthLbRMe4GO9FWLr0fycnwy4l/+7fuY7yeLo/uNrPGAUUbWpbbutWgQ9N
+	HCCuEbqQ0fWKstEdO9Lnqwjbnw7h6mbIO0sd8tr2Ujb7mtWaL+wjX9p5pe7wWTfhUQyCS35i1/v/Y
+	Ii1SsKDw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vsDky-00000007eLL-2Ka6;
+	Tue, 17 Feb 2026 05:36:20 +0000
+Date: Mon, 16 Feb 2026 21:36:20 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Pavel Begunkov <asml.silence@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk,
+	io-uring@vger.kernel.org, csander@purestorage.com, krisman@suse.de,
+	bernd@bsbernd.com, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v1 03/11] io_uring/kbuf: add support for kernel-managed
+ buffer rings
+Message-ID: <aZP-VOoX1OyuVQ3B@infradead.org>
+References: <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
+ <CAJnrk1ZZyYmwtzcHAnv2x8rt=ZVsz7CXCVV6jtgMMDZytyxp3A@mail.gmail.com>
+ <1c657f67-0862-4e13-9c71-7217aeecef61@gmail.com>
+ <CAJnrk1YXmxqUnT561-J7seaicxFRJTyJ=F3_MX1rmtAROC6Ybg@mail.gmail.com>
+ <aY2mdLkqPM0KfPMC@infradead.org>
+ <809cd04b-007b-46c6-9418-161e757e0e80@gmail.com>
+ <CAJnrk1Y6YSw6Rkdh==RfL==n4qEYrrTcdbbS32sBn12jaCoeXg@mail.gmail.com>
+ <aY7ScyJOp4zqKJO7@infradead.org>
+ <7c241b57-95d4-4d58-8cd3-369751f17df1@gmail.com>
+ <CAJnrk1b2BHwBzz+AS7x0WuJSpf98x1xGhf1ys2rm4Ffb0_5TOA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Shyam Prasad N <nspmangalore@gmail.com>
-Date: Tue, 17 Feb 2026 10:15:58 +0530
-X-Gm-Features: AaiRm50t13k44Sen9NRCY3Mfw1UqRelWB9C2dA3RFTYoLt5Y4mPqd0YjIZDY934
-Message-ID: <CANT5p=orpQdzqxjNronnnKUo5HFGjuVwkwpjiGHQRmwh8es0Pw@mail.gmail.com>
-Subject: [LSF/MM/BPF TOPIC] Support to split superblocks during remount
-To: linux-fsdevel <linux-fsdevel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
-	linux-nfs@vger.kernel.org, David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJnrk1b2BHwBzz+AS7x0WuJSpf98x1xGhf1ys2rm4Ffb0_5TOA@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
+	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77333-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77334-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[gmail.com,infradead.org,kernel.dk,vger.kernel.org,purestorage.com,suse.de,bsbernd.com];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FREEMAIL_FROM(0.00)[gmail.com];
+	MID_RHS_MATCH_FROM(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[nspmangalore@gmail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[hch@infradead.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[infradead.org:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
 	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 867A0148BA6
+	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:mid,infradead.org:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: EAAEA148D5F
 X-Rspamd-Action: no action
 
-Filesystems today use sget/sget_fc at the time of mount to share
-superblocks when possible to reuse resources. Often the reuse of
-superblocks is a function of the mount options supplied. At the time
-of umount, VFS handles the cleaning up of the superblock and only
-notifies the filesystem when the last of those references is dropped.
+On Fri, Feb 13, 2026 at 11:09:13AM -0800, Joanne Koong wrote:
+> 
+> I think the circular buffer will be useful for Christoph's use case in
+> the same way it'll be useful for fuse's. The read payload could be
+> differently sized across requests, so it's a lot of wasted space to
+> have to allocate a buffer large enough to support the max-size request
+> per entry in the io_ring.
 
-Some mount options could change during remount, and remount is
-associated with a mount point and not the superblock it uses. Ideally,
-during remount, the mount API needs to provide the filesystem an
-option to call sget to get a new superblock (that can also be shared)
-and do a put_super on the old superblock.
+Yes.
 
-I do realize that there are challenges here about how to transparently
-failover resources (files, inodes, dentries etc) to the new
-superblock. I would still like to understand if this is an idea worth
-pursuing?
+> With using a circular buffer, buffers have a
+> way to be shared across entries, which means we can significantly
+> reduce how much memory needs to be allocated.
 
--- 
-Regards,
-Shyam
+Or enable such flexible use cases at all.
+
 
