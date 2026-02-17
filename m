@@ -1,332 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-77378-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id EHB/D+KrlGl7GQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77378-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 18:56:50 +0100
+	id SKbzGPmslGl7GQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 19:01:29 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D55D014ECA3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 18:56:49 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BE4414ED5B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 19:01:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 1DD67300F119
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 17:56:48 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 745893042771
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 18:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15651372B36;
-	Tue, 17 Feb 2026 17:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF381E5718;
+	Tue, 17 Feb 2026 18:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i78fBFrm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f73.google.com (mail-oa1-f73.google.com [209.85.160.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D211336E46B;
-	Tue, 17 Feb 2026 17:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920881A9F91
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 18:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771351006; cv=none; b=aqr8XNUVmWpqURQmmXkNRqTSPLk9f/YIHtGBOmASEibkps70m00mKr9iTzvskW8J8Rl7fVV4EvrR4BnddLm0jWHTCZ5jQezmGCTCXaakxJXDIQJDk8+9Q98ZgONq/52usEF0sIXJd7DCg80F6OSloiyNwR2eGCqyxcs/s5C7iuk=
+	t=1771351273; cv=none; b=uYhCrr67wjXAxSn/tIIQ+1p1Sxj6Say1IMy28v7ZbBsvoyfbzJM2LlzajIHjBcdkZguAYUwyVhymmf6Wyv0LHvIG72VUyUBO6AY9hQ2TPsrRuJWGXeGtnyYpMFrr+zFz6Jv43puxIaBka3yts7Z8wkcxmU9fCYe/NAWnJRXFaeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771351006; c=relaxed/simple;
-	bh=oj2/4OTzqpu0dYyA//lam3A5PTpYqozj74Gq+2HyEdk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CqKtvOA/T5Z2Hqa0PEgMI/4+2SvjluGt8TTsKKK20UOXLeFcqAZ6yJPqiFwmai55N9pnFtKZFe4780mt3I8GtAA9nO2zuDu0paWS5EdJgGzSqTf31BpO8yD5nx3V2B4NI5xtIKHzdY13HhbVojp1YlqkNEIglMeuShnan3ICNVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=groves.net; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=groves.net
-Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id B15B6B7426;
-	Tue, 17 Feb 2026 17:56:31 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: john@groves.net) by omf09.hostedemail.com (Postfix) with ESMTPA id 8AE9E20024;
-	Tue, 17 Feb 2026 17:56:21 +0000 (UTC)
-Date: Tue, 17 Feb 2026 11:56:20 -0600
-From: John Groves <John@groves.net>
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: John Groves <john@jagalactic.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Dan Williams <dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, 
-	Alison Schofield <alison.schofield@intel.com>, John Groves <jgroves@micron.com>, 
-	John Groves <jgroves@fastmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, David Hildenbrand <david@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, "Darrick J . Wong" <djwong@kernel.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
-	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Bagas Sanjaya <bagasdotme@gmail.com>, 
-	James Morse <james.morse@arm.com>, Fuad Tabba <tabba@google.com>, 
-	Sean Christopherson <seanjc@google.com>, Shivank Garg <shivankg@amd.com>, 
-	Ackerley Tng <ackerleytng@google.com>, Gregory Price <gourry@gourry.net>, 
-	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>, 
-	"venkataravis@micron.com" <venkataravis@micron.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>, 
-	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH V7 03/19] dax: add fsdev.c driver for fs-dax on character
- dax
-Message-ID: <aZSoCIjbxKIqRZF4@groves.net>
-References: <0100019bd33b1f66-b835e86a-e8ae-443f-a474-02db88f7e6db-000000@email.amazonses.com>
- <20260118223123.92341-1-john@jagalactic.com>
- <0100019bd33c310f-1b4a8555-bc81-4ec3-b45f-27abc01dff05-000000@email.amazonses.com>
- <698f922296bd0_bcb8910059@iweiny-mobl.notmuch>
+	s=arc-20240116; t=1771351273; c=relaxed/simple;
+	bh=TcYoluka6Sotp+G8vXS56Hmvkko0fKSIU6lURxuEfEw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=c44EFGJNbmisLq577QuJaWSPe/U1JQ1gtEqw5/xK8u9uyZ+aKgK0KTDypszJh4x0sBN9/3jsRLa1KtO2D7w6polFSyM9ePEfAU2N1iLIGxlQbpf+LoDHW+vBs1nPT7rKtkc6pxHh3MCxh/Y4AKkJRQtOLvRBFMVNFN8i2nGtRV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i78fBFrm; arc=none smtp.client-ip=209.85.160.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com
+Received: by mail-oa1-f73.google.com with SMTP id 586e51a60fabf-40a57a34dc2so40879713fac.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 10:01:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1771351271; x=1771956071; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gd7itJdvcuV3R3SwarzHanDdlNFzzeUJJAZS/H40Dc8=;
+        b=i78fBFrmR7SHG86z7EtozFkgsLiXECJVopoOZDoixGgrFUhXkE4IGIieUu55C/AIfx
+         7D3MY93W4VRIm5jkDjDujZVVUJ3c18ECTZCdWxvm+i94CoqzA9sGqfiHz/iIAb7Uj58C
+         tizBgiIRx7hF9kEtdPOeeVGQ0Ap+6/OxaT0HbOZW92TmrPJOMNeBPgJbr5PcUFtpPnf8
+         hpdfyVtLVInuMgWxOJkdkBRRpLwNA1g5IbMHeeG1bm1cWfxt0TxC06UIirbltFWMe0kz
+         1HojP6pY65VzXWkgtr2m1mXFYnY4mLfPXXtZ26Y4Wc6h1RdWoWhiiHWCmyzdS8uuLlWP
+         3h5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771351271; x=1771956071;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gd7itJdvcuV3R3SwarzHanDdlNFzzeUJJAZS/H40Dc8=;
+        b=GSZztWwvfF7U8p0o3yNuWnZpASFg4z253KzU2Gll1zeLzCQS0wHLckBKzj2oaRM3Un
+         Umub0TT13IL0z/fIj0GyESW8YLe7on3vgVji7q6c1+G1SMxS45dxySLTpfY484l12Tqg
+         UskUW3wGNdYwz+Z2QyD3Lcrgw9Rrq947aW07vQMdyhRwqlwYcIHcZKbDS9Sg7v0RkRQK
+         Q7F0D6bcttmr+aOkuz0pcw9cbrEZyeYK6SXHFOORnVR4/5EsTldukCqxnNs+X5icbgGD
+         iME4E9bdzTELZ6TeMJPJXVCDU2lU7PuM5VNXeM5xNCJBXumaZ27Wj+1sdjAJTaBLP/bA
+         9rPg==
+X-Forwarded-Encrypted: i=1; AJvYcCXr2XTgdM9L+krZ2Sfyiqe8rKIsraNowV2/+iy6JG92xlrWlrzEnV+qa/dSeTLpr/Y4eCxUcLFnG3ET+Q83@vger.kernel.org
+X-Gm-Message-State: AOJu0YxowmwOgqz8b3sCMrhUab3yvyG4JJkhs6m5uwbv8BWYVjpwZDn+
+	0mPGz0XzP2uPghbfX3fav3/QfDJY4ozoega8V4IW3La9MW0ex8UwFmYfNQD74lqb7gHBH/WvtMY
+	Ks1GPXg==
+X-Received: from jabki4.prod.google.com ([2002:a05:6638:a804:b0:5ca:ff1f:79f])
+ (user=avagin job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6820:4b01:b0:679:a4bc:9f8f
+ with SMTP id 006d021491bc7-679a4bca251mr287501eaf.61.1771351271099; Tue, 17
+ Feb 2026 10:01:11 -0800 (PST)
+Date: Tue, 17 Feb 2026 18:01:04 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <698f922296bd0_bcb8910059@iweiny-mobl.notmuch>
-X-Stat-Signature: y6j1pqxhf17j6byg7y66gfxz3ig3zwgp
-X-Session-Marker: 6A6F686E4067726F7665732E6E6574
-X-Session-ID: U2FsdGVkX1/KkrEKzlLziUMYd4+VFywKH6Bzhu5nkwM=
-X-HE-Tag: 1771350981-821509
-X-HE-Meta: U2FsdGVkX1+iyhLS3pUUNxA1XVBPX3+vwzhA7OjHfQD0G3oVZg2OugZtFlF9F5Ynwqfza3MI3vz/3yGnR1mjsIZfPuTUrOcYa0N5OU8m4UrZpR/OF3w1e4bjsvIUIJ3gGXNtYvM14Uc+ue4DKvwGtH51uE60CUe7kPlMMT95rV+a3EuwmtcK4mHTrDrONhWduNAsPhbKqTEmjSmJwyIjc9fX/AOUEp7o0TfFllgvRrkGtMvqUV2mDV0evbHFxz/qRxleBIrWcXcw/2qAhAGykC/4Oh4Y6uCFVjfs1cZU8YagQXQQm8x7KLDosNZxM62wf+rbT19o5pM44Hkyi7lN/GeaJI5zBGFljmRQDlRTYQLc11Eg2tBv8DzOGl7gnAiTm97L5sebthT+fNo8ajA2y8D23J4/YUJBLIiJ/biie7IDjL8eBIPz9Srd9bxRrjiNZzN6E0Yl+XDycYtSr9iHGw==
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.53.0.310.g728cabbaf7-goog
+Message-ID: <20260217180108.1420024-1-avagin@google.com>
+Subject: [PATCH 0/4 v4] exec: inherit HWCAPs from the parent process
+From: Andrei Vagin <avagin@google.com>
+To: Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Cyrill Gorcunov <gorcunov@gmail.com>, Mike Rapoport <rppt@kernel.org>, 
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, criu@lists.linux.dev, 
+	Chen Ridong <chenridong@huawei.com>, Christian Brauner <brauner@kernel.org>, 
+	David Hildenbrand <david@kernel.org>, Eric Biederman <ebiederm@xmission.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Michal Koutny <mkoutny@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.46 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	MID_CONTAINS_FROM(1.00)[];
+	MV_CASE(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
+	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77378-lists,linux-fsdevel=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[jagalactic.com,szeredi.hu,intel.com,ddn.com,micron.com,fastmail.com,lwn.net,infradead.org,suse.cz,zeniv.linux.org.uk,kernel.org,gmail.com,huawei.com,redhat.com,toxicpanda.com,arm.com,google.com,amd.com,gourry.net,vger.kernel.org,lists.linux.dev];
 	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FROM_HAS_DN(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	DMARC_NA(0.00)[groves.net];
-	RCPT_COUNT_TWELVE(0.00)[39];
+	RSPAMD_URIBL_FAIL(0.00)[huawei.com:query timed out,oracle.com:query timed out];
+	RCPT_COUNT_TWELVE(0.00)[15];
 	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77379-lists,linux-fsdevel=lfdr.de];
+	DKIM_TRACE(0.00)[google.com:+];
 	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[John@groves.net,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	RCVD_COUNT_FIVE(0.00)[5];
-	MID_RHS_MATCH_FROM(0.00)[];
-	R_DKIM_NA(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[avagin@google.com,linux-fsdevel@vger.kernel.org];
+	FREEMAIL_CC(0.00)[gmail.com,kernel.org,mihalicyn.com,vger.kernel.org,kvack.org,lists.linux.dev,huawei.com,xmission.com,oracle.com,suse.com];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: D55D014ECA3
+	RSPAMD_EMAILBL_FAIL(0.00)[kees.kernel.org:server fail,ebiederm.xmission.com:server fail];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,huawei.com:email,xmission.com:email,linux-foundation.org:email,suse.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,lkml.org:url]
+X-Rspamd-Queue-Id: 1BE4414ED5B
 X-Rspamd-Action: no action
 
-On 26/02/13 03:05PM, Ira Weiny wrote:
-> John Groves wrote:
-> > From: John Groves <john@groves.net>
-> > 
-> > The new fsdev driver provides pages/folios initialized compatibly with
-> > fsdax - normal rather than devdax-style refcounting, and starting out
-> > with order-0 folios.
-> > 
-> > When fsdev binds to a daxdev, it is usually (always?) switching from the
-> > devdax mode (device.c), which pre-initializes compound folios according
-> > to its alignment. Fsdev uses fsdev_clear_folio_state() to switch the
-> > folios into a fsdax-compatible state.
-> > 
-> > A side effect of this is that raw mmap doesn't (can't?) work on an fsdev
-> > dax instance. Accordingly, The fsdev driver does not provide raw mmap -
-> > devices must be put in 'devdax' mode (drivers/dax/device.c) to get raw
-> > mmap capability.
-> > 
-> > In this commit is just the framework, which remaps pages/folios compatibly
-> > with fsdax.
-> > 
-> > Enabling dax changes:
-> > 
-> > - bus.h: add DAXDRV_FSDEV_TYPE driver type
-> > - bus.c: allow DAXDRV_FSDEV_TYPE drivers to bind to daxdevs
-> > - dax.h: prototype inode_dax(), which fsdev needs
-> > 
-> > Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> > Suggested-by: Gregory Price <gourry@gourry.net>
-> > Signed-off-by: John Groves <john@groves.net>
-> > ---
-> >  MAINTAINERS          |   8 ++
-> >  drivers/dax/Makefile |   6 ++
-> >  drivers/dax/bus.c    |   4 +
-> >  drivers/dax/bus.h    |   1 +
-> >  drivers/dax/fsdev.c  | 242 +++++++++++++++++++++++++++++++++++++++++++
-> >  fs/dax.c             |   1 +
-> >  include/linux/dax.h  |   5 +
-> >  7 files changed, 267 insertions(+)
-> >  create mode 100644 drivers/dax/fsdev.c
-> > 
-> 
-> [snip]
-> 
-> > +
-> > +static int fsdev_dax_probe(struct dev_dax *dev_dax)
-> > +{
-> > +	struct dax_device *dax_dev = dev_dax->dax_dev;
-> > +	struct device *dev = &dev_dax->dev;
-> > +	struct dev_pagemap *pgmap;
-> > +	u64 data_offset = 0;
-> > +	struct inode *inode;
-> > +	struct cdev *cdev;
-> > +	void *addr;
-> > +	int rc, i;
-> > +
-> > +	if (static_dev_dax(dev_dax))  {
-> > +		if (dev_dax->nr_range > 1) {
-> > +			dev_warn(dev, "static pgmap / multi-range device conflict\n");
-> > +			return -EINVAL;
-> > +		}
-> > +
-> > +		pgmap = dev_dax->pgmap;
-> > +	} else {
-> > +		size_t pgmap_size;
-> > +
-> > +		if (dev_dax->pgmap) {
-> > +			dev_warn(dev, "dynamic-dax with pre-populated page map\n");
-> > +			return -EINVAL;
-> > +		}
-> > +
-> > +		pgmap_size = struct_size(pgmap, ranges, dev_dax->nr_range - 1);
-> > +		pgmap = devm_kzalloc(dev, pgmap_size,  GFP_KERNEL);
-> > +		if (!pgmap)
-> > +			return -ENOMEM;
-> > +
-> > +		pgmap->nr_range = dev_dax->nr_range;
-> > +		dev_dax->pgmap = pgmap;
-> > +
-> > +		for (i = 0; i < dev_dax->nr_range; i++) {
-> > +			struct range *range = &dev_dax->ranges[i].range;
-> > +
-> > +			pgmap->ranges[i] = *range;
-> > +		}
-> > +	}
-> > +
-> > +	for (i = 0; i < dev_dax->nr_range; i++) {
-> > +		struct range *range = &dev_dax->ranges[i].range;
-> > +
-> > +		if (!devm_request_mem_region(dev, range->start,
-> > +					range_len(range), dev_name(dev))) {
-> > +			dev_warn(dev, "mapping%d: %#llx-%#llx could not reserve range\n",
-> > +				 i, range->start, range->end);
-> > +			return -EBUSY;
-> > +		}
-> > +	}
-> 
-> All of the above code is AFAICT exactly the same as the dev_dax driver.
-> Isn't there a way to make this common?
-> 
-> The rest of the common code is simple enough.
+This patch series introduces a mechanism to inherit hardware capabilities
+(AT_HWCAP, AT_HWCAP2, etc.) from a parent process when they have been
+modified via prctl.
 
-dev_dax_probe() and fsdev_dax_probe() do indeed have some "same code" - 
-range validity checking and pgmap setup, from the top of probe through 
-the for loop above. After that they're different. Also, I just did a scan 
-and the probe function seems like the only remaining common code between 
-device.c and fsdev.c.
+To support C/R operations (snapshots, live migration) in heterogeneous
+clusters, we must ensure that processes utilize CPU features available
+on all potential target nodes. To solve this, we need to advertise a
+common feature set across the cluster.
 
-These are separate kmods; that code could certainly be factored out and 
-shared, but it would need to go somewhere common (maybe bus.c)?
+Initially, a cgroup-based approach was considered, but it was decided
+that inheriting HWCAPs from a parent process that has set its own
+auxiliary vector via prctl is a simpler and more flexible solution.
 
-So both device.c and fsdev.c would call bus.c:dax_prepare_pgmap() or
-some such.
+This implementation adds a new mm flag MMF_USER_HWCAP, which is set when the
+auxiliary vector is modified via prctl(PR_SET_MM_AUXV). When execve() is
+called, if the current process has MMF_USER_HWCAP set, the HWCAP values are
+extracted from the current auxiliary vector and inherited by the new process.
 
-I feel like this might not be worth factoring out, but I'm happy to do it
-if you and/or the dax team prefer it factored out and shared.
+The first patch fixes AUXV size calculation for ELF_HWCAP3 and ELF_HWCAP4
+in binfmt_elf_fdpic and updates AT_VECTOR_SIZE_BASE.
 
-> 
-> > +
-> > +	/*
-> > +	 * FS-DAX compatible mode: Use MEMORY_DEVICE_FS_DAX type and
-> > +	 * do NOT set vmemmap_shift. This leaves folios at order-0,
-> > +	 * allowing fs-dax to dynamically create compound folios as needed
-> > +	 * (similar to pmem behavior).
-> > +	 */
-> > +	pgmap->type = MEMORY_DEVICE_FS_DAX;
-> > +	pgmap->ops = &fsdev_pagemap_ops;
-> > +	pgmap->owner = dev_dax;
-> > +
-> > +	/*
-> > +	 * CRITICAL DIFFERENCE from device.c:
-> > +	 * We do NOT set vmemmap_shift here, even if align > PAGE_SIZE.
-> > +	 * This ensures folios remain order-0 and are compatible with
-> > +	 * fs-dax's folio management.
-> > +	 */
-> > +
-> > +	addr = devm_memremap_pages(dev, pgmap);
-> > +	if (IS_ERR(addr))
-> > +		return PTR_ERR(addr);
-> > +
-> > +	/*
-> > +	 * Clear any stale compound folio state left over from a previous
-> > +	 * driver (e.g., device_dax with vmemmap_shift).
-> > +	 */
-> > +	fsdev_clear_folio_state(dev_dax);
-> > +
-> > +	/* Detect whether the data is at a non-zero offset into the memory */
-> > +	if (pgmap->range.start != dev_dax->ranges[0].range.start) {
-> > +		u64 phys = dev_dax->ranges[0].range.start;
-> > +		u64 pgmap_phys = dev_dax->pgmap[0].range.start;
-> > +
-> > +		if (!WARN_ON(pgmap_phys > phys))
-> > +			data_offset = phys - pgmap_phys;
-> > +
-> > +		pr_debug("%s: offset detected phys=%llx pgmap_phys=%llx offset=%llx\n",
-> > +		       __func__, phys, pgmap_phys, data_offset);
-> > +	}
-> > +
-> > +	inode = dax_inode(dax_dev);
-> > +	cdev = inode->i_cdev;
-> > +	cdev_init(cdev, &fsdev_fops);
-> > +	cdev->owner = dev->driver->owner;
-> > +	cdev_set_parent(cdev, &dev->kobj);
-> > +	rc = cdev_add(cdev, dev->devt, 1);
-> > +	if (rc)
-> > +		return rc;
-> > +
-> > +	rc = devm_add_action_or_reset(dev, fsdev_cdev_del, cdev);
-> > +	if (rc)
-> > +		return rc;
-> > +
-> > +	run_dax(dax_dev);
-> > +	return devm_add_action_or_reset(dev, fsdev_kill, dev_dax);
-> > +}
-> > +
-> 
-> [snip]
-> 
-> > diff --git a/include/linux/dax.h b/include/linux/dax.h
-> > index 9d624f4d9df6..fe1315135fdd 100644
-> > --- a/include/linux/dax.h
-> > +++ b/include/linux/dax.h
-> > @@ -51,6 +51,10 @@ struct dax_holder_operations {
-> >  
-> >  #if IS_ENABLED(CONFIG_DAX)
-> >  struct dax_device *alloc_dax(void *private, const struct dax_operations *ops);
-> > +
-> > +#if IS_ENABLED(CONFIG_DEV_DAX_FS)
-> > +struct dax_device *inode_dax(struct inode *inode);
-> > +#endif
-> 
-> I don't understand why this hunk is added here but then removed in a later
-> patch?  Why can't this be placed below? ...
-> 
-> >  void *dax_holder(struct dax_device *dax_dev);
-> >  void put_dax(struct dax_device *dax_dev);
-> >  void kill_dax(struct dax_device *dax_dev);
-> > @@ -153,6 +157,7 @@ static inline void fs_put_dax(struct dax_device *dax_dev, void *holder)
-> >  #if IS_ENABLED(CONFIG_FS_DAX)
-> >  int dax_writeback_mapping_range(struct address_space *mapping,
-> >  		struct dax_device *dax_dev, struct writeback_control *wbc);
-> > +int dax_folio_reset_order(struct folio *folio);
-> 
-> ... Here?
+The second patch implements the core inheritance logic in execve().
 
-Done, thanks - good catch. That was just sloppy factoring into a series on
-my part.
+The third patch adds a selftest to verify that HWCAPs are correctly
+inherited across execve().
 
-> 
-> Ira
-> 
-> [snip]
+v4: minor fixes based on feedback from the previous version.
+v3: synchronize saved_auxv access with arg_lock
 
-Thanks for the reviewing Ira!
+v1: https://lkml.org/lkml/2025/12/5/65
+v2: https://lkml.org/lkml/2026/1/8/219
+v3: https://lkml.org/lkml/2026/2/9/1233
 
-Regards,
-John
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Chen Ridong <chenridong@huawei.com>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: David Hildenbrand <david@kernel.org>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Kees Cook <kees@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Michal Koutny <mkoutny@suse.com>
+Cc: Cyrill Gorcunov <gorcunov@gmail.com>
+
+Andrei Vagin (3):
+  binfmt_elf_fdpic: fix AUXV size calculation for ELF_HWCAP3 and ELF_HWCAP4
+  exec: inherit HWCAPs from the parent process
+  mm: synchronize saved_auxv access with arg_lock
+  selftests/exec: add test for HWCAP inheritance
+
+ fs/binfmt_elf.c                              |   8 +-
+ fs/binfmt_elf_fdpic.c                        |  14 ++-
+ fs/exec.c                                    |  64 ++++++++++++
+ fs/proc/base.c                               |  12 ++-
+ include/linux/auxvec.h                       |   2 +-
+ include/linux/binfmts.h                      |  11 ++
+ include/linux/mm_types.h                     |   2 +
+ kernel/fork.c                                |   8 ++
+ kernel/sys.c                                 |  30 +++---
+ tools/testing/selftests/exec/.gitignore      |   1 +
+ tools/testing/selftests/exec/Makefile        |   1 +
+ tools/testing/selftests/exec/hwcap_inherit.c | 104 +++++++++++++++++++
+ 12 files changed, 231 insertions(+), 26 deletions(-)
+ create mode 100644 tools/testing/selftests/exec/hwcap_inherit.c
+
+-- 
+2.52.0.351.gbe84eed79e-goog
 
 
