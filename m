@@ -1,210 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-77371-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77372-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id sMl5B4uNlGn6FQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77371-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 16:47:23 +0100
+	id SAI+GAqOlGn6FQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77372-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 16:49:30 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63BE314DADD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 16:47:22 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADE9E14DB11
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 16:49:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 9288F30305FD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 15:47:15 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id AEF65301AD36
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 15:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C690A35EDBF;
-	Tue, 17 Feb 2026 15:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C853136C5B7;
+	Tue, 17 Feb 2026 15:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=anarazel.de header.i=@anarazel.de header.b="Mn8APs0x";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Eh20fcjU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hpbOOvSx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDB31A08AF;
-	Tue, 17 Feb 2026 15:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771343234; cv=none; b=CIQAOZXy3C5PlQTv/VOBS2K/4n3yiPMAglZ2MdgXcFMQfX5beNRfxZZSMBMlsFGNbdjheleX94qsejfneXtHQU6OyKl8IrTpUaUCz1LQ5DxnumhHZeYYgtkpkKAITbjZ3sbuT8AQbujVaxfJhMQAUZ4Wmb0cWP5UkauuEGT4nHk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771343234; c=relaxed/simple;
-	bh=/F3CF7kJIJlYdTae/ocf5yJrbawHZOMAk0LiuSCTIJc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AgxMOxDL9x6extm6R6duxkSgAfhOZvmwKc2jOfP8CCFwMr+74UqIys7lEsdlh9+bBa2S4y4Vqw7CHpP8IKUrHr8xOXBFrUQ9e/onOC7yYNLyxqxa1LWqr851Zzl2gKtXiNwwf9tznu/vjtbv1yvEbQ1xGtV+BsiFVRfMMNyNriw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=anarazel.de; spf=pass smtp.mailfrom=anarazel.de; dkim=pass (2048-bit key) header.d=anarazel.de header.i=@anarazel.de header.b=Mn8APs0x; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Eh20fcjU; arc=none smtp.client-ip=202.12.124.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=anarazel.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=anarazel.de
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 7E88A7A0108;
-	Tue, 17 Feb 2026 10:47:10 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Tue, 17 Feb 2026 10:47:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1771343230;
-	 x=1771429630; bh=eSOHZKYixCwKfgxL+toMTrJrfTKK7cDvAJRVjTf9RM0=; b=
-	Mn8APs0x7sHctVRPN8/7iUwyhAmujqeUbTrvmNm6j+FOlZQSs+/73bLRa6geXjbz
-	099935qUbifVqUCIxuqwEMwd4cRdQBDF5RJVHCRoL2LYmyra1T04cYK0jGCjB4Ww
-	aiosmjsmjhVh5zi9HXP2X2nH+CWmUQFezSawr47QivjSVR03asypxVydDCSzJEip
-	1l1nb50Qzvj5XRwtUlZeTxJv7Krl+5fts26S77m+ildbnGuxudoXIuYg0DBXcd/N
-	QWQHG3qmhAwZ2rogEfeBYAz1VvqL9we1C+ioIx65wRGnjXK48GeoAufxMfERQmPa
-	e87uHR7i06X8tgJbELLHyA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1771343230; x=
-	1771429630; bh=eSOHZKYixCwKfgxL+toMTrJrfTKK7cDvAJRVjTf9RM0=; b=E
-	h20fcjUeQD5VDaOOummopqzrHBZf0r3+6stdjYoCheS8QRvS9yb/OGU1xwhJRLaB
-	HzuxZsLMWkhcdJuX2AAhxP2m9oGf8VPs4dlhELOxNlwXhxCpEO5IPUxY6Qq5SYCY
-	QRPqP8tJPkDWOu5I+33J+MPRYpccOZElANHNqzGX8IH+h/dmcdsdTu5pBTTK9DNj
-	/Z8ujUYiP35PUcT0J8r6UEQWsvVRMtz7B6lMQR8+Zb7iGA/1KLWCvjGOe1JC/bee
-	rrCQVrghgs4vWEjFQscYYybLZyqGT07MyGI/2rQwh9mgANE8qVn8r7LdDMjrpGwm
-	AnaanyrFKK0z2w4/Yoi/A==
-X-ME-Sender: <xms:fI2UadxdXWxOkJBqkCf3w_2xjNSc95X5l6befkBvbTGYGq9ya6YceA>
-    <xme:fI2UaZLt5zDl_7wWXcGZeRnoWgoze8gE_tmakKEUWp14tpfP5GopDHfId27gpLCzX
-    Xb-7PAwxLS2J8nGPfjZDSbXqGYYVhJ-224WBUiVnYsbpks79NTsTw>
-X-ME-Received: <xmr:fI2UaS063dnAzv8VHGf0UxFZLuYO9TsPYnhFGbMQ31mNL3wUi2pxw_KaQml3ieMaA-nHEw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvvddtudeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggugfgjsehtkefstddttdejnecuhfhrohhmpeetnhgurhgv
-    shcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucggtffrrg
-    htthgvrhhnpedtleelvdfgjedvffeiueekfeeuleffhfegfffhgfffkeevueehieehhfei
-    gffhvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grnhgurhgvshesrghnrghrrgiivghlrdguvgdpnhgspghrtghpthhtohepvddtpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomh
-    dprhgtphhtthhopehrihhtvghshhdrlhhishhtsehgmhgrihhlrdgtohhmpdhrtghpthht
-    ohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegujhifohhngh
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgtghhrohhfsehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhope
-    hprghnkhgrjhdrrhgrghhhrghvsehlihhnuhigrdguvghvpdhrtghpthhtohepohhjrghs
-    fihinheslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopehlshhfqdhptgeslhhish
-    htshdrlhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
-X-ME-Proxy: <xmx:fI2UaTcdZYB-mpJIJd5jldcTdiY-2Twjhj8aAHGKT7qzEf-NoLUuiA>
-    <xmx:fI2UaW6TbJ9w1l0L50LmdJioh38TY-CiCK6iJHnQdsCrnRppAzeIew>
-    <xmx:fI2UaW8wc3tfyzNhknY6_3BJhGTQY-0VBQWWApz6h7_O9W-g0AbiLw>
-    <xmx:fI2UadJ6rf-vJ4UZNx7yLVwQXr04L3BfQ7RjiQ30ZLTfPrBi0OhJFQ>
-    <xmx:fo2UaSfK4T3HvYEQLinaS7lvlUdt-dAbbSUTo1wOW05RdrqEQEj_EDV5>
-Feedback-ID: id4a34324:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 17 Feb 2026 10:47:07 -0500 (EST)
-Date: Tue, 17 Feb 2026 10:47:07 -0500
-From: Andres Freund <andres@anarazel.de>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christoph Hellwig <hch@lst.de>, 
-	Pankaj Raghav <pankaj.raghav@linux.dev>, linux-xfs@vger.kernel.org, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org, djwong@kernel.org, 
-	john.g.garry@oracle.com, willy@infradead.org, ritesh.list@gmail.com, jack@suse.cz, 
-	ojaswin@linux.ibm.com, Luis Chamberlain <mcgrof@kernel.org>, dchinner@redhat.com, 
-	Javier Gonzalez <javier.gonz@samsung.com>, gost.dev@samsung.com, tytso@mit.edu, p.raghav@samsung.com, 
-	vi.shah@samsung.com
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Buffered atomic writes
-Message-ID: <ndwqem2mzymo6j3zw3mmxk2vh4mnun2fb2s5vrh4nthatlze3u@qjemcazy4agv>
-References: <d0c4d95b-8064-4a7e-996d-7ad40eb4976b@linux.dev>
- <20260217055103.GA6174@lst.de>
- <CAOQ4uxgdWvJPAi6QMWQjWJ2TnjO=JP84WCgQ+ShM3GiikF=bSw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4033D3563F1
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 15:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771343363; cv=pass; b=cSW9QaqSMO09LlTLpCjQWaq24EALlLASEcCVzdNtsOEkJxZhhd73uD3r77hVAVgQEC9+/+TIic65WqEftXzXsljMr9Q0xhF6w4/dLZP5/Q8W6/52nVb3YCGSaBnCfVpdXtNmCalIERx30er3eaxNV9idJTk53mnTfoOT3ToWE3E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771343363; c=relaxed/simple;
+	bh=DL6R2tKFdN0Uez29EBRpEPY21UQJIMPKZkH7N6S2saM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M3TRCaHC1MWkTikUjdaeOtfCLvwY/ymcRNPCsLeSgOuMjstGtRS/7uBhnvVq6vQbK54rSMvC0nGxmb5WLYRfpQSQ51Tji0W2VGNY4+8P3/CuthFvtvWlAk+xo/e3XGPiR0zAH2cU4Sz7IZN9m+wMWBBxj/SSZKipOsnLTV8fUfM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hpbOOvSx; arc=pass smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b8f9b5240a2so624371566b.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 07:49:22 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771343361; cv=none;
+        d=google.com; s=arc-20240605;
+        b=fQ81r7TL6M79po1+ZlDpyaj+dYVnla7iNSTCwcxg1uCAohswdWiDXow/P9uHGTHse6
+         jyLP5Vzjy57AJlVWLQpDCYpTjj4tEuH16Y3uBlhHnn/EMtzJNPZVmLE5b8ntdn5PIVhY
+         pcnhffkCFDMwI3xUG1kgpmHgowfxaZRadGvMsnPEAlK7Az0shif22t5RcWmzR+XOqqwW
+         90KWtcvbZTRIXqo0pLxscTxajOPDdT7UO3qcl/PZeWeiYLW2g1k+d48wZS7Aesz4lAyf
+         MtcFvaJivf89+PFEINZ8nH04S+Hs3TjgL/BfNO5rjx65b21t6uztK6gFAV9NqzqNwqHP
+         YGbw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=eoan/39HjVF3qt9+NYCQepGk7by5yTHWKMyqzAPnThk=;
+        fh=AbiP1ZRFvL7ppqhnf3f9nunmlTkUTvU6dpLlN49PA/0=;
+        b=g3WqQVcOw9FYnusVZSguTJ4kaUd8yFNimjc+1tdYaDBvY3CLV+e8qMocnzACthD1eY
+         MtwDZt3DTS8mfLySNV6udo4JLfGRYdReeIlS7a6e5Xotq4B1VJ91U4fLJXy5mLiQafLs
+         Z3O5RK4mQHT071flxfWEm6YYcY73fzimPwSHWV3mHxGCToUQ3mIsE92SAgtUJ9dbqmKH
+         TffvsuC8DgayGOj5T7Gfltp8jYUWtJBKgB9dAfJ08HMhBeQY+VH9jnA5AvAygtIxj0er
+         5AbuXj8oQWCzJomcD2vw75i/MdBOp6eN8a9ArFFDEP51Prm+7wozBsWzmbGP7grH/zta
+         xz3Q==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1771343361; x=1771948161; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eoan/39HjVF3qt9+NYCQepGk7by5yTHWKMyqzAPnThk=;
+        b=hpbOOvSxb0atLYpg0jUR7K+CrWFihILGes0PfvyxhBXysFTUlpUQbxNGC60ExUgE3E
+         1JWhAn24BiuwgXfGrlpEdWqL1gki4pA48tFB9xQGLuQMnWxJUM2YyYbYmn2s6pHtU5D/
+         a+G0xNz9x8qyr8RZmcYARFyx2IUPQQT89NzlAcqgfwZZfD04vqesQ9vGIzTbgqTJkfeH
+         8bnoHJ9lO/v6j77ho7hUi788luK3haYTk8XUzSyIMH8KZh/XyfCsRjJzS36WW9wR+mNC
+         Tk+TXOB8aORPkZq9UP0IdF8VyKOfIUXYmNfr0MQRzZbnhHG39KtS4nntrbdesVt837SV
+         sBXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771343361; x=1771948161;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=eoan/39HjVF3qt9+NYCQepGk7by5yTHWKMyqzAPnThk=;
+        b=P8IBhtKTnFQyyFMqUV4Vffh+jYer3MBu9v+MUwOVMn1XANGrcpJx1V2dYxd5IQgQL0
+         lZ/Pj9+eWm179aWoy7CgwYqbnSlV+f2yHpGT+CkIS0/0WrgY9eNQ3EIvSULJD1SPDstg
+         nBXVn24+hU1JG3W1uSqqWRN7h5slJS94aq4UEuFYU3QEdZez52IIgeENFBNVieIKQIZL
+         /WPkyK3K8gD2VpmkbbHrHkICjFMwuVlobs3CPctRksu7dctIeuPPgQ8/8S1jhuJBY5nO
+         2nNKnYg48fs/NL7Gu8jOUYzqsWiBwZ/OLAXoCigNR4AHv9aH1jf1vM3u3NECBy/Zp4aK
+         fjXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXt/Fhy7ZI2oktYhjcfmD+iUjNsZdW+eGSRWAXg4fKuFY+rPxkbh7DyBtSrWbX88zGL23zdhvTfaZRreQRP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo4Kcxq6gs1bt7viO9/j7YWLHG7n5upXS/0nMui6U6Tyo4jx6u
+	ttixJyIU3wOg0OMaPtB9e4wsmnD5fKY8k8XDM9M5PNVsYbm4WWrqKzZ21ZEVTkMtcLU63eayZVb
+	pZDjTj1QZHkdGyq5tOm19VXIjHJWiQ8I=
+X-Gm-Gg: AZuq6aL2cnWgQQaot8GU+ysPJ04YTdMPptUZG0rBkBcyOJBDdwNb6G7iVUC5IhupdWP
+	/1EC1FGrK/RCFLiYEGicWXDuYuXzu9Jma0uqh3n57i4rAcp4gnm+IfZSxUl2VJMNmOD/AYNnOtR
+	onaswOkr87PKtZbCh99f14c2/TIl+T5QS7wCSeyYndcoD+uxnTvv3kTiVivqRxwmBBeQYsyP1+N
+	OCzjdJnobjpDHaO1U2DXxJJ7zfOuFkQhujWi2LIDOG9zVWnfRpNXP3uHo4JE6YfzyFZqJFhCsl2
+	l3jrzw==
+X-Received: by 2002:a17:907:e158:b0:b87:38e0:4403 with SMTP id
+ a640c23a62f3a-b8fb4476ceamr514132166b.40.1771343360318; Tue, 17 Feb 2026
+ 07:49:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxgdWvJPAi6QMWQjWJ2TnjO=JP84WCgQ+ShM3GiikF=bSw@mail.gmail.com>
+References: <20260216073158.75151-1-ytohnuki@amazon.com>
+In-Reply-To: <20260216073158.75151-1-ytohnuki@amazon.com>
+From: Stefan Hajnoczi <stefanha@gmail.com>
+Date: Tue, 17 Feb 2026 10:49:08 -0500
+X-Gm-Features: AaiRm52u51kxwpNseipcjIXVCf67FJxEQOVcnJ2EWlVmF9xXSFDFWy0iRQcKQZ4
+Message-ID: <CAJSP0QWjbQh2XxNaY4+POf-auBTjW8SG4Fk1TRpP2fpT0_hf8w@mail.gmail.com>
+Subject: Re: [PATCH] virtiofs: add FUSE protocol validation
+To: Yuto Ohnuki <ytohnuki@amazon.com>
+Cc: German Maglione <gmaglione@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[anarazel.de,none];
-	R_DKIM_ALLOW(-0.20)[anarazel.de:s=fm3,messagingengine.com:s=fm3];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77371-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77372-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCPT_COUNT_TWELVE(0.00)[20];
+	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[lst.de,linux.dev,vger.kernel.org,kvack.org,lists.linux-foundation.org,kernel.org,oracle.com,infradead.org,gmail.com,suse.cz,linux.ibm.com,redhat.com,samsung.com,mit.edu];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[andres@anarazel.de,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[anarazel.de:+,messagingengine.com:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[messagingengine.com:dkim,anarazel.de:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 63BE314DADD
+	FREEMAIL_FROM(0.00)[gmail.com];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[stefanha@gmail.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: ADE9E14DB11
 X-Rspamd-Action: no action
 
-Hi,
+On Mon, Feb 16, 2026 at 2:32=E2=80=AFAM Yuto Ohnuki <ytohnuki@amazon.com> w=
+rote:
+>
+> Add virtio_fs_verify_response() to validate that the server properly
+> follows the FUSE protocol by checking:
+>
+> - Response length is at least sizeof(struct fuse_out_header).
+> - oh.len matches the actual response length.
+> - oh.unique matches the request's unique identifier.
+>
+> On validation failure, set error to -EIO and normalize oh.len to prevent
+> underflow in copy_args_from_argbuf().
+>
+> Addresses the TODO comment in virtio_fs_request_complete().
+>
+> Signed-off-by: Yuto Ohnuki <ytohnuki@amazon.com>
+> ---
+>  fs/fuse/virtio_fs.c | 29 +++++++++++++++++++++++++----
+>  1 file changed, 25 insertions(+), 4 deletions(-)
 
-On 2026-02-17 10:23:36 +0100, Amir Goldstein wrote:
-> On Tue, Feb 17, 2026 at 8:00 AM Christoph Hellwig <hch@lst.de> wrote:
-> >
-> > I think a better session would be how we can help postgres to move
-> > off buffered I/O instead of adding more special cases for them.
-
-FWIW, we are adding support for DIO (it's been added, but performance isn't
-competitive for most workloads in the released versions yet, work to address
-those issues is in progress).
-
-But it's only really be viable for larger setups, not for e.g.:
-- smaller, unattended setups
-- uses of postgres as part of a larger application on one server with hard to
-  predict memory usage of different components
-- intentionally overcommitted shared hosting type scenarios
-
-Even once a well configured postgres using DIO beats postgres not using DIO,
-I'll bet that well over 50% of users won't be able to use DIO.
-
-
-There are some kernel issues that make it harder than necessary to use DIO,
-btw:
-
-Most prominently: With DIO concurrently extending multiple files leads to
-quite terrible fragmentation, at least with XFS. Forcing us to
-over-aggressively use fallocate(), truncating later if it turns out we need
-less space. The fallocate in turn triggers slowness in the write paths, as
-writing to uninitialized extents is a metadata operation.  It'd be great if
-the allocation behaviour with concurrent file extension could be improved and
-if we could have a fallocate mode that forces extents to be initialized.
-
-A secondary issue is that with the buffer pool sizes necessary for DIO use on
-bigger systems, creating the anonymous memory mapping becomes painfully slow
-if we use MAP_POPULATE - which we kinda need to do, as otherwise performance
-is very inconsistent initially (often iomap -> gup -> handle_mm_fault ->
-folio_zero_user uses the majority of the CPU). We've been experimenting with
-not using MAP_POPULATE and using multiple threads to populate the mapping in
-parallel, but that feels not like something that userspace ought to have to
-do.  It's easier to work around for us that the uninitialized extent
-conversion issue, but it still is something we IMO shouldn't have to do.
-
-
-> Respectfully, I disagree that DIO is the only possible solution.
-> Direct I/O is a legit solution for databases and so is buffered I/O
-> each with their own caveats.
-
-> Specifically, when two subsystems (kernel vfs and db) each require a huge
-> amount of cache memory for best performance, setting them up to play nicely
-> together to utilize system memory in an optimal way is a huge pain.
-
-Yep.
-
-Greetings,
-
-Andres Freund
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
 
