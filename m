@@ -1,77 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-77355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 2HuCGvBPlGktCQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 12:24:32 +0100
+	id KJweCSVRlGktCQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 12:29:41 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B60B914B502
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 12:24:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E1014B5B3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 12:29:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 43DD33011079
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 11:24:28 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id A00D13010242
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 11:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65E9331A41;
-	Tue, 17 Feb 2026 11:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E855332911;
+	Tue, 17 Feb 2026 11:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kFuZSnLt"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CVHVY3yO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B693314C2;
-	Tue, 17 Feb 2026 11:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C963321CA;
+	Tue, 17 Feb 2026 11:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771327466; cv=none; b=Ng6LMu0o5s7bv6IHvuWMksrwu0ZOdFEQnD7VoIMhfTr1t0G+yVrryqlHXbW00C/CoV49VC7gbWH+K5PdWQIz3OEw7BwZP40W/yOWhP2e80kXwpEFTKmDZFcf6frO75k+E4h+WVeAsYgkcCMTyC5L9XyrK8qVwTZNPCzrLYXCHz4=
+	t=1771327768; cv=none; b=u+NO07HGc77KJPs+Fdz8CI1EaIQFhyKyGs0Za0vLQqRSOsixYHdCu81sGxG5HsF+4lWPctnB7mKPQ+Y8RQ3lpn+Gb+no6D7dlhmZdL1aYxAd1fR4EqppPotmy8f6yAXmaq85XXw5G5AWAaBQ5dk1LGwpGKag7Evt9eqL7GEmt/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771327466; c=relaxed/simple;
-	bh=fag461iXurNAJQc6NTJQM+VavKNSD5PxuS5Naue04dM=;
-	h=Content-Type:Message-ID:Date:MIME-Version:From:To:Subject; b=cLixNkFwL6iMT0QcKEnc0aK6+kzilv6m38+PGEYr/mLQ6pDWuNvOtH9VH+dVGXQAY8tYgNktX4AuycvpewXZu4t0is0d2e0uG8QFKoOMEI39ZsPMQ7BD573PhZFQ6CosFPV9ZhwOGfi3INAJpGHDZfn9nMnxpYCCR59UtxS7z4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kFuZSnLt; arc=none smtp.client-ip=148.163.158.5
+	s=arc-20240116; t=1771327768; c=relaxed/simple;
+	bh=BtWl57DhkzJGTO9ywDSrIuTE4iIxNoBuFCBm7J96kYQ=;
+	h=Content-Type:Message-ID:Date:MIME-Version:To:From:Subject; b=aKeil3P/9FvSeD4e125C/x6dckSj6Wu4jUofTG+AMcfn98LCb1W0IKZekbZmw6b3I854LN7nUQ5odV5y7HldoeyJrC1iejjeuWPMSdtbb9uJ74oWPpomFLxl7aA+WxzrOLDLdiurR1w9X4wcGguDk+UhsE3z8kQB/Sd6tibTGVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CVHVY3yO; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61HARjFn3633726;
-	Tue, 17 Feb 2026 11:24:14 GMT
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61H0TFCN2169858;
+	Tue, 17 Feb 2026 11:29:20 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
 	content-type:date:from:message-id:mime-version:subject:to; s=
-	pp1; bh=sGGyHumSVxRrRhfZEh6txGz4XFuk8hak/1IkGeIvXUw=; b=kFuZSnLt
-	PpSTSueyAvC4K/5RLmbtZ4vfAszPsFefO7pLelW91m1xoZrq+d0pyiDmFGq1SD2T
-	F4WF7MhtqAUQMSrSnEsFN0WyJjbVSfeOHTuZVyWOc0SZ+BAOcdwCoScX8h0ApjR6
-	9VtpB+fl92gnk2oeQDeEwMWu5VzpaM6EtcdAHCaDvbqnI+AHP/7l8ed3M7wnbBc9
-	VADz62VjAZX+m+KNqHjzK4tY++VD3tcfVYBR1w9dwC2r2Jk20Ca6FlsSOa4LfZg/
-	HnUkqHJ9ADCFHUb+Gn/rN7sg0JpHTkPbAk5UWyG685wpHcQfcywiV6wYX8Exmhs+
-	1suaMLLyG42vVA==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4caj642u11-1
+	pp1; bh=9lvSH0WYCy0YbF43e1lUGI6F6Tuj3qSW8n6o0Q+7gyw=; b=CVHVY3yO
+	X0UpHbv2KEkMyMZo35uC6R12cSB59S2MIupPusuvF2pqEM1a53s0QtMaqrqTPL8Z
+	tNBA+pjSAlSmnHGzSfJPqTC16gHSY+2bM1lurnU/Ea7gURMrOejCEabmlpOp8nKX
+	1rRFbzEDeoTCFFu2J+Cw2Erj63nUwDx+JIhwuopfYpsNqt1aUGlN5kPIUCCI5xyt
+	/AQSTC7B4M/oXnEa7huC194Gc7+7FU59urROGp5u1HzFBkDIBRV7Waz9pJAhhfI2
+	pb1efEBVBMdb+WTX9zhW74ofrvGARPjjrBfevXt9PqRbPHYR7amUwFK5wS4U+RMQ
+	Gnso95R3tl16zA==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4caj6rum3a-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Feb 2026 11:24:13 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 61H8t37E024344;
-	Tue, 17 Feb 2026 11:24:13 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4ccb4525wq-1
+	Tue, 17 Feb 2026 11:29:20 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 61H8Tb6L011965;
+	Tue, 17 Feb 2026 11:29:19 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4ccb26t70j-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Feb 2026 11:24:12 +0000
+	Tue, 17 Feb 2026 11:29:18 +0000
 Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 61HBOBLG25297418
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 61HBTHL59962094
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 17 Feb 2026 11:24:11 GMT
+	Tue, 17 Feb 2026 11:29:17 GMT
 Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E157C58058;
-	Tue, 17 Feb 2026 11:24:10 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 09FB85805B;
+	Tue, 17 Feb 2026 11:29:17 +0000 (GMT)
 Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9BA945805D;
-	Tue, 17 Feb 2026 11:24:07 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id C9D7858058;
+	Tue, 17 Feb 2026 11:29:13 +0000 (GMT)
 Received: from [9.61.255.86] (unknown [9.61.255.86])
 	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 17 Feb 2026 11:24:07 +0000 (GMT)
-Content-Type: multipart/mixed; boundary="------------2Pap4VIAWfftG7kvuCMNGeAI"
-Message-ID: <ddff7c7d-c0c3-4780-808f-9a83268bbf0c@linux.ibm.com>
-Date: Tue, 17 Feb 2026 16:54:06 +0530
+	Tue, 17 Feb 2026 11:29:13 +0000 (GMT)
+Content-Type: multipart/mixed; boundary="------------d30xtuHSgg0W6fw7e40XcEqF"
+Message-ID: <ca241daa-e7e7-4604-a48d-de91ec9184a5@linux.ibm.com>
+Date: Tue, 17 Feb 2026 16:59:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,37 +80,37 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Content-Language: en-GB
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
 To: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Vlastimil Babka <vbabka@suse.cz>,
+        LKML <linux-kernel@vger.kernel.org>,
         Madhavan Srinivasan <maddy@linux.ibm.com>,
         Ritesh Harjani <riteshh@linux.ibm.com>, ojaswin@linux.ibm.com
-Subject: [linux-next20260216]Warnings at mm/page_counter.c:60 at
- page_counter_cancel+0x110/0x134, CPU#24: kworker/24:3/1074770
+From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Subject: [next-20260216]NULL pointer dereference in drain_obj_stock() (RCU
+ free path)
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: jA8074JdNTtKNM1NQXCirZjhVFFYLBac
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjE3MDA5MyBTYWx0ZWRfX5w5HmfjayPsy
- o/jLbc/T2B66u6Hs2zIlNvl/7ojOdbnXhYUaC6oBoEOJBeuMiqgCfCVwtDe0EIHd7GrpQX8IyeT
- rdVEZf8nLTr0GKvJCfE+4msK7MYLcMlSW8V0IJTh6n25DoMHnASO8fbD/0zpIPDssb0zI6KOr3s
- dbT4M1CFpTqIIhl4uxGaqBnID6S3xaXyr/v7YnmUz4aR1FaZOQgITQMCSuKXqIXgAvPAKfZt4xg
- NYUHOq29aYc73WL5UJjIpebkt0vUwKCFfcxRVdjodXw8BxNx4FoPWqOMv1GCwdBm/T3GU5hfppt
- tV4kFKx2J1897JX/04xlcm+bqkRSS6usgC6pWyVLCH/RuiGBTobjzA9XZSLAzc5trBAjjoUBf98
- e3eQ2B5OXqIWZc4W4YymUjBGDkrwxKeLyBleEAgkoowxd4bHhdldArs31ofcOYELMPgJMbwuiff
- yBO78/RqpShtU9fumBw==
-X-Proofpoint-GUID: jA8074JdNTtKNM1NQXCirZjhVFFYLBac
-X-Authority-Analysis: v=2.4 cv=U+mfzOru c=1 sm=1 tr=0 ts=69944fde cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+X-Authority-Analysis: v=2.4 cv=dvvWylg4 c=1 sm=1 tr=0 ts=69945110 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
  a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22 a=Mpw57Om8IfrbqaoTuvik:22
- a=GgsMoib0sEa3-_RKJdDe:22 a=r77TgQKjGQsHNAKrUKIA:9 a=fCe4upUrx8aX9urAjJwA:9
+ a=GgsMoib0sEa3-_RKJdDe:22 a=r77TgQKjGQsHNAKrUKIA:9 a=a58lfBJpUwlFlcsVMgsA:9
  a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=go2B5XPuH5msG79deBsA:9
+X-Proofpoint-GUID: xuTP56DhuFwcVGr4AysGGHNNJvW0gxq5
+X-Proofpoint-ORIG-GUID: xuTP56DhuFwcVGr4AysGGHNNJvW0gxq5
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjE3MDA5MyBTYWx0ZWRfX5oZWpQsIGHPl
+ R3JJsVI01XmejUWoyO69rLKUeijY/p16ZfXGVr8i0v0p2UDUEaQ8L984rk4OG99/HFjf4Ff2H62
+ 4BcT/ddJV3/K/Nh8jCRbgNxPwxElzheeHdhLt2gvBx8wnnjtBnbt6gbfnHBeSUMWWiNhGXXAEb4
+ vILd6lMJe2pVMQwXoXgoqa4zDC4reIeuHQmLsKlPQ8LcFkp7u3hSvKKQNhBdmvp9daB7bR5FO+i
+ bIo/3Ok2lSufyCVZDAEQqphMrPw40fMUdTG3NYnid7Mqi2eGTLKtouspqewZe1/VE55UWU7NyRA
+ fSF6epPfsKJN/haYjIvzrErWRuSDnYPlEnbVgfthAnIlP2DUjWhphbXTY3Km6DZ53uYFfagvL+f
+ kM8vPqt7HJHSmafqT8F73H1Ebu4StM+qOLCIwXVW6alFjuH3lIu9eIe5Mt35otvXnts//RaC+XG
+ r31XopZy4M7tdGlL5Pw==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-02-17_01,2026-02-16_04,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 bulkscore=0 impostorscore=0 malwarescore=0 spamscore=0
- adultscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2601150000
+ spamscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0
+ priorityscore=1501 clxscore=1015 malwarescore=0 phishscore=0 suspectscore=0
+ bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2601150000
  definitions=main-2602170093
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.06 / 15.00];
@@ -127,7 +127,7 @@ X-Spamd-Result: default: False [-1.06 / 15.00];
 	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+,1:+,2:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77355-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77356-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	HAS_ATTACHMENT(0.00)[];
 	RCPT_COUNT_FIVE(0.00)[6];
@@ -139,23 +139,23 @@ X-Spamd-Result: default: False [-1.06 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_COUNT_SEVEN(0.00)[11]
-X-Rspamd-Queue-Id: B60B914B502
+X-Rspamd-Queue-Id: E2E1014B5B3
 X-Rspamd-Action: no action
 
 This is a multi-part message in MIME format.
---------------2Pap4VIAWfftG7kvuCMNGeAI
+--------------d30xtuHSgg0W6fw7e40XcEqF
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 Greetings!!!
 
-I am observing below warnings, while running xfstests generic/332 test 
-case. But I am not able to reproduce this consistently.
+I am observing below OOPs, while running xfstests generic/428 test case. 
+But I am not able to reproduce this consistently.
 
 
 Platform: IBM Power11 (pSeries LPAR), Radix MMU, LE, 64K pages
 Kernel: 6.19.0-next-20260216
-Tests: generic/332
+Tests: generic/428
 
 local.config >>>
 [xfs_4k]
@@ -176,77 +176,134 @@ Attached is .config file used.
 Traces:
 
 
-[ 5152.507299] run fstests generic/332 at 2026-02-16 22:10:54
-[ 5152.792552] XFS (loop0): Mounting V5 Filesystem 
-93d6dd00-ca31-47bb-8170-254f04bcaa7f
-[ 5152.795270] XFS (loop0): Ending clean mount
-[ 5152.797551] ------------[ cut here ]------------
-[ 5152.797562] page_counter underflow: -1 nr_pages=58
-[ 5152.797586] WARNING: mm/page_counter.c:60 at 
-page_counter_cancel+0x110/0x134, CPU#24: kworker/24:3/1074770
-[ 5152.797602] Modules linked in: dm_snapshot dm_bufio dm_flakey xfs 
-loop dm_mod nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib 
-nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct 
-nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 bonding 
-ip_set tls nf_tables rfkill sunrpc nfnetlink pseries_rng vmx_crypto 
-dax_pmem fuse ext4 crc16 mbcache jbd2 nd_pmem papr_scm sd_mod libnvdimm 
-sg ibmvscsi ibmveth scsi_transport_srp pseries_wdt [last unloaded: 
-scsi_debug]
-[ 5152.797712] CPU: 24 UID: 0 PID: 1074770 Comm: kworker/24:3 Kdump: 
-loaded Not tainted 6.19.0-next-20260216 #1 PREEMPTLAZY
-[ 5152.797723] Hardware name: IBM,9080-HEX Power11 (architected) 
+[ 6054.957411] run fstests generic/428 at 2026-02-16 22:25:57
+[ 6055.136443] Kernel attempted to read user page (0) - exploit attempt? 
+(uid: 0)
+[ 6055.136474] BUG: Kernel NULL pointer dereference on read at 0x00000000
+[ 6055.136485] Faulting instruction address: 0xc0000000008aff0c
+[ 6055.136495] Oops: Kernel access of bad area, sig: 11 [#1]
+[ 6055.136505] LE PAGE_SIZE=64K MMU=Radix  SMP NR_CPUS=8192 NUMA pSeries
+[ 6055.136517] Modules linked in: dm_thin_pool dm_persistent_data 
+dm_bio_prison dm_snapshot dm_bufio dm_flakey xfs loop dm_mod 
+nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet 
+nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct nft_chain_nat nf_nat 
+nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 bonding ip_set tls nf_tables 
+rfkill sunrpc nfnetlink pseries_rng vmx_crypto dax_pmem fuse ext4 crc16 
+mbcache jbd2 nd_pmem papr_scm sd_mod libnvdimm sg ibmvscsi ibmveth 
+scsi_transport_srp pseries_wdt [last unloaded: scsi_debug]
+[ 6055.136684] CPU: 19 UID: 0 PID: 0 Comm: swapper/19 Kdump: loaded 
+Tainted: G        W           6.19.0-next-20260216 #1 PREEMPTLAZY
+[ 6055.136701] Tainted: [W]=WARN
+[ 6055.136708] Hardware name: IBM,9080-HEX Power11 (architected) 
 0x820200 0xf000007 of:IBM,FW1110.01 (NH1110_069) hv:phyp pSeries
-[ 5152.797731] Workqueue: memcg drain_local_memcg_stock
-[ 5152.797741] NIP:  c00000000089f460 LR: c00000000089f45c CTR: 
-0000000000000000
-[ 5152.797749] REGS: c000000267417960 TRAP: 0700   Not tainted 
-(6.19.0-next-20260216)
-[ 5152.797756] MSR:  800000000282b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  
-CR: 48000200  XER: 00000007
-[ 5152.797786] CFAR: c0000000001bc144 IRQMASK: 0
-[ 5152.797786] GPR00: c00000000089f45c c000000267417c00 c00000000243a500 
-c0000002699d1280
-[ 5152.797786] GPR04: 0000000000000004 0000000000000001 c0000000001bc0f4 
+[ 6055.136719] NIP:  c0000000008aff0c LR: c0000000008aff00 CTR: 
+c00000000036d5e0
+[ 6055.136730] REGS: c000000d0dc877c0 TRAP: 0300   Tainted: G   W        
+     (6.19.0-next-20260216)
+[ 6055.136742] MSR:  8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 
+84042802  XER: 20040037
+[ 6055.136777] CFAR: c000000000862a74 DAR: 0000000000000000 DSISR: 
+40000000 IRQMASK: 0
+[ 6055.136777] GPR00: c0000000008aff00 c000000d0dc87a60 c00000000243a500 
 0000000000000001
-[ 5152.797786] GPR08: a80e000000000000 0000000000000001 0000000000000003 
+[ 6055.136777] GPR04: 0000000000000008 0000000000000001 c0000000008aff00 
+0000000000000001
+[ 6055.136777] GPR08: a80e000000000000 0000000000000001 0000000000000007 
 a80e000000000000
-[ 5152.797786] GPR12: c00e0001a1a3cfb2 c000000d0ddea700 c0000001d9f80240 
-c000000d0d1fefd0
-[ 5152.797786] GPR16: c000000007a5ab08 c0000001d9f80278 0000000000000000 
+[ 6055.136777] GPR12: c00e00000c46e6d5 c000000d0ddf0b00 c000000019069a00 
+0000000000000006
+[ 6055.136777] GPR16: c000000007012fa0 c000000007012fa4 c000000005160980 
+c000000007012f88
+[ 6055.136777] GPR20: c00c0000004d7cec c000000d0d10f008 0000000000000001 
+ffffffffffffff78
+[ 6055.136777] GPR24: 0000000000000005 c000000d0d58f180 c0000001d0795e00 
+c000000d0d10f01c
+[ 6055.136777] GPR28: c000000d0d10f008 c000000d0d10f010 c0000001d0795e08 
+0000000000000000
+[ 6055.136891] NIP [c0000000008aff0c] drain_obj_stock+0x620/0xa48
+[ 6055.136905] LR [c0000000008aff00] drain_obj_stock+0x614/0xa48
+[ 6055.136915] Call Trace:
+[ 6055.136919] [c000000d0dc87a60] [c0000000008aff00] 
+drain_obj_stock+0x614/0xa48 (unreliable)
+[ 6055.136933] [c000000d0dc87b10] [c0000000008b27e4] 
+refill_obj_stock+0x104/0x680
+[ 6055.136945] [c000000d0dc87b90] [c0000000008b9238] 
+__memcg_slab_free_hook+0x238/0x3ec
+[ 6055.136956] [c000000d0dc87c60] [c0000000007f39a0] 
+__rcu_free_sheaf_prepare+0x314/0x3e8
+[ 6055.136968] [c000000d0dc87d10] [c0000000007fbf0c] 
+rcu_free_sheaf+0x38/0x170
+[ 6055.136980] [c000000d0dc87d50] [c0000000003344b0] 
+rcu_do_batch+0x2ec/0xfa8
+[ 6055.136992] [c000000d0dc87e50] [c000000000339948] rcu_core+0x22c/0x48c
+[ 6055.137002] [c000000d0dc87ec0] [c0000000001cfe6c] 
+handle_softirqs+0x1f4/0x74c
+[ 6055.137013] [c000000d0dc87fe0] [c00000000001b0cc] 
+do_softirq_own_stack+0x60/0x7c
+[ 6055.137025] [c000000009717930] [c00000000001b0b8] 
+do_softirq_own_stack+0x4c/0x7c
+[ 6055.137036] [c000000009717960] [c0000000001cf128] 
+__irq_exit_rcu+0x268/0x308
+[ 6055.137046] [c0000000097179a0] [c0000000001d0ba4] irq_exit+0x20/0x38
+[ 6055.137056] [c0000000097179c0] [c0000000000315f4] 
+interrupt_async_exit_prepare.constprop.0+0x18/0x2c
+[ 6055.137069] [c0000000097179e0] [c000000000009ffc] 
+decrementer_common_virt+0x28c/0x290
+[ 6055.137080] ---- interrupt: 900 at plpar_hcall_norets_notrace+0x18/0x2c
+[ 6055.137090] NIP:  c00000000012d8f0 LR: c00000000135c3fc CTR: 
+0000000000000000
+[ 6055.137097] REGS: c000000009717a10 TRAP: 0900   Tainted: G   W        
+     (6.19.0-next-20260216)
+[ 6055.137105] MSR:  800000000280b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  
+CR: 24000804  XER: 00000037
+[ 6055.137134] CFAR: 0000000000000000 IRQMASK: 0
+[ 6055.137134] GPR00: 0000000000000000 c000000009717cb0 c00000000243a500 
+0000000000000000
+[ 6055.137134] GPR04: 0000000000000000 800400002fe6fc10 0000000000000000 
 0000000000000001
-[ 5152.797786] GPR20: c0000002699d1300 0000000000000000 0000000000000000 
-c0000000032cef80
-[ 5152.797786] GPR24: 0000000000000002 c0000002699d1280 c000000d0d1fef83 
-c000000d0d1fef98
-[ 5152.797786] GPR28: c000000d0d1fef80 ffffffffffffffff 000000000000003a 
-c00000007d696000
-[ 5152.797885] NIP [c00000000089f460] page_counter_cancel+0x110/0x134
-[ 5152.797894] LR [c00000000089f45c] page_counter_cancel+0x10c/0x134
-[ 5152.797902] Call Trace:
-[ 5152.797907] [c000000267417c00] [c00000000089f45c] 
-page_counter_cancel+0x10c/0x134 (unreliable)
-[ 5152.797920] [c000000267417c80] [c00000000089f8cc] 
-page_counter_uncharge+0x3c/0x6c
-[ 5152.797930] [c000000267417cb0] [c0000000008ab630] 
-drain_local_memcg_stock+0x198/0x464
-[ 5152.797942] [c000000267417da0] [c000000000204ffc] 
-process_one_work+0x3d4/0x968
-[ 5152.797954] [c000000267417eb0] [c00000000020664c] 
-worker_thread+0x308/0x614
-[ 5152.797964] [c000000267417f80] [c0000000002183f8] kthread+0x244/0x28c
-[ 5152.797974] [c000000267417fe0] [c00000000000ded8] 
-start_kernel_thread+0x14/0x18
-[ 5152.797985] Code: 3d220289 892982ea 2c090000 40820028 3c62ff7a 
-39200001 3d420289 7fc5f378 38631be0 992a82ea 4b91cbed 60000000 
-<0fe00000> 38800008 7fe3fb78 4bfc35e1
-[ 5152.798021] ---[ end trace 0000000000000000 ]---
+[ 6055.137134] GPR08: 0000000000000033 0000000000000000 0000000000000090 
+0000000000000001
+[ 6055.137134] GPR12: 800400002fe6fc00 c000000d0ddf0b00 0000000000000000 
+000000002ef01a60
+[ 6055.137134] GPR16: 0000000000000000 0000000000000000 0000000000000000 
+0000000000000000
+[ 6055.137134] GPR20: 0000000000000000 0000000000000000 0000000000000000 
+0000000000000001
+[ 6055.137134] GPR24: 0000000000000000 c000000004d7a778 00000581d1a507b8 
+0000000000000000
+[ 6055.137134] GPR28: 0000000000000000 0000000000000001 c0000000032b18d8 
+c0000000032b18e0
+[ 6055.137229] NIP [c00000000012d8f0] plpar_hcall_norets_notrace+0x18/0x2c
+[ 6055.137238] LR [c00000000135c3fc] cede_processor.isra.0+0x1c/0x30
+[ 6055.137248] ---- interrupt: 900
+[ 6055.137253] [c000000009717cb0] [c000000009717cf0] 0xc000000009717cf0 
+(unreliable)
+[ 6055.137265] [c000000009717d10] [c0000000019af160] 
+dedicated_cede_loop+0x90/0x170
+[ 6055.137277] [c000000009717d60] [c0000000019aeb10] 
+cpuidle_enter_state+0x394/0x480
+[ 6055.137288] [c000000009717e00] [c0000000013589ec] cpuidle_enter+0x64/0x9c
+[ 6055.137298] [c000000009717e50] [c000000000284a8c] call_cpuidle+0x7c/0xf8
+[ 6055.137310] [c000000009717e90] [c000000000290398] 
+cpuidle_idle_call+0x1c4/0x2b4
+[ 6055.137321] [c000000009717f00] [c0000000002905bc] do_idle+0x134/0x208
+[ 6055.137330] [c000000009717f50] [c000000000290a0c] 
+cpu_startup_entry+0x60/0x64
+[ 6055.137341] [c000000009717f80] [c0000000000744b8] 
+start_secondary+0x3fc/0x400
+[ 6055.137352] [c000000009717fe0] [c00000000000e258] 
+start_secondary_prolog+0x10/0x14
+[ 6055.137363] Code: 60000000 3bda0008 7fc3f378 4bfb148d 60000000 
+ebfa0008 38800008 7fe3fb78 4bfb2b51 60000000 7c0004ac 39200001 
+<7d40f8a8> 7d495050 7d40f9ad 40c2fff4
+[ 6055.137400] ---[ end trace 0000000000000000 ]---
 
 
 Regards,
 
 Venkat.
 
---------------2Pap4VIAWfftG7kvuCMNGeAI
+--------------d30xtuHSgg0W6fw7e40XcEqF
 Content-Type: text/plain; charset=UTF-8; name="xfs_config"
 Content-Disposition: attachment; filename="xfs_config"
 Content-Transfer-Encoding: base64
@@ -3717,6 +3774,6 @@ bmVsIFRlc3RpbmcgYW5kIENvdmVyYWdlCgojCiMgUnVzdCBoYWNraW5nCiMKIyBlbmQgb2Yg
 UnVzdCBoYWNraW5nCiMgZW5kIG9mIEtlcm5lbCBoYWNraW5nCgpDT05GSUdfSU9fVVJJTkdf
 WkNSWD15CkNPTkZJR19JT19VUklOR19CUEY9eQo=
 
---------------2Pap4VIAWfftG7kvuCMNGeAI--
+--------------d30xtuHSgg0W6fw7e40XcEqF--
 
 
