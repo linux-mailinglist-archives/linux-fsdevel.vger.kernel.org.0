@@ -1,238 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-77398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id C19LKpzYlGk6IQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 22:07:40 +0100
+	id kN0+HHnalGl7IQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 22:15:37 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7DBC150938
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 22:07:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B17B150A26
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 22:15:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C53A9301BC01
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 21:07:32 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 52511303FFEE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 21:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824BE37996B;
-	Tue, 17 Feb 2026 21:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B3237AA77;
+	Tue, 17 Feb 2026 21:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="SeIhmMaI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sb1sDYwJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DB13793B1;
-	Tue, 17 Feb 2026 21:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E9837A4BC;
+	Tue, 17 Feb 2026 21:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771362451; cv=none; b=I0LbHzqJZjyRT6TRznoAPe3CWDyDiI3z4qj4/y0TdNQ3l3aeh8GuoTg80KhVx3CZXNSeOWLKg8/qHIUCQ8dLCjpzwvewNDcirHI5exvil57UmHF6dHwe/jjZPb14mBqatBbQeuSn8c+dKxGHpbvT81xKSiKHPFj40LKpN9Fh+vo=
+	t=1771362876; cv=none; b=kfpkWzynNHlvYsSZYKoVjYSfbukXAxKyaDm6WZuEyCOMvCqYcRFdwCzhs989TYWz2TxV2j72+mgLLB9OytpiMqNIIweITqKXAGvxU2xCkRVGqtHb8cqF34QrThFJNxh0LjrCvwhV8R/St+Cmuu3MnXFtvjCMSuzKC1MRfAy49s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771362451; c=relaxed/simple;
-	bh=o96IP32jKboGEJjdyNl8aupkU6gPlTLCcy9U85ulj08=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=mdgL7OgL92jktEMDZHCvDmmhje2j12cwyZUde+BUZ1Vc5iwCfAL4d4nUTtVVde88b+av/rywdhXea0YqGZiZeL3jDIWKQlxIru2hOc/tbQI6azPtt3AQdRwkFGlLXZbJ1dM5pnF8FoxAdDnyVkWaaygRunq5hMLxzBTkPCrQIic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=SeIhmMaI; arc=none smtp.client-ip=35.157.23.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
-Received: from relayfre-01.paragon-software.com (unknown [176.12.100.13])
-	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id F0EA61D29;
-	Tue, 17 Feb 2026 21:05:29 +0000 (UTC)
-Authentication-Results: relayaws-01.paragon-software.com;
-	dkim=pass (1024-bit key; unprotected) header.d=paragon-software.com header.i=@paragon-software.com header.b=SeIhmMaI;
-	dkim-atps=neutral
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id AC23421DA;
-	Tue, 17 Feb 2026 21:07:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1771362446;
-	bh=aV46JmNaVjTrWtGbQrw71SO+thEjZT6SGdF6M4ILplw=;
-	h=Date:Subject:From:To:CC:References:In-Reply-To;
-	b=SeIhmMaI8h/BDnrNhVGJdqdQhVy0+MeBQ4ec62x+6xYr0DDjL46BKnUUfacl8+Wbw
-	 P81zqS09xlWRdU5+JxsmfNoC1LIv4f8OM/O/WUJAIqy2Vc+gplVWsYLcCnmLYEGOpr
-	 lOG/0r6bbxVLbayozorcB4jt42wqtFwRbQrVuRCA=
-Received: from [192.168.95.128] (172.30.20.181) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Wed, 18 Feb 2026 00:07:24 +0300
-Message-ID: <a4d17661-4a75-46e2-a338-cc90d36f0b70@paragon-software.com>
-Date: Tue, 17 Feb 2026 22:07:22 +0100
+	s=arc-20240116; t=1771362876; c=relaxed/simple;
+	bh=IUmsV+ZW94HXGIdU1vo18SjFXSfXhU6JnfKGHOOTBlE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=VtD6OHNAOR/Sya+eoo9JUFSlVoUw77i3mfd0khFQG3PPh27clDyukXn2zkUtrkVObCfUl/Y2L9+PbHb7/b6zwJzKe04vqYEx9pwB7Aoh3snM3bfVlwLTfGo/20GnohzTzVWqaiPGurEWnji6PDClbiXr4h9V+so0OH501wJrtNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sb1sDYwJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76BD9C4CEF7;
+	Tue, 17 Feb 2026 21:14:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771362876;
+	bh=IUmsV+ZW94HXGIdU1vo18SjFXSfXhU6JnfKGHOOTBlE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Sb1sDYwJavRLaCVn88gyrDrXlCl0VDnAf62EpkDuPznZMYdbNVtd73gzpyyfSdJ/a
+	 WqACZhS/EGrPNEG45ARHMKVSGdP4aeQlnn6gf3sjgM1aEN6XQUPh1tFIPxa/SFcDZV
+	 zg+JLJ84QRyz9qMMJ6QRwLumUMlXlT/vueB7bcmbanb6s6FW/imJ3kiNi93Qoh9O4T
+	 yvIJ/cNS+jpX41ID+1Kh3XhScgnFe76gfOndPmsMTOoFu0qovNOVXnWM1GF4epkhvw
+	 mpLacztvHIMGsbHj6XNwKmeJ8uOk0LCt6hh+EbNCXNDb5hYrgzVZHIt+ZOM+kqd7aN
+	 rIRQXaYrAalKw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 851203806667;
+	Tue, 17 Feb 2026 21:14:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] ntfs3: changes for 7.0
-From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To: <torvalds@linux-foundation.org>
-CC: <ntfs3@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20260217190630.19176-1-almaz.alexandrovich@paragon-software.com>
-Content-Language: en-US
-In-Reply-To: <20260217190630.19176-1-almaz.alexandrovich@paragon-software.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+Content-Transfer-Encoding: 8bit
+Subject: Re: [f2fs-dev] [PATCH 01/15] fs,
+ fsverity: reject size changes on fsverity files in setattr_prepare
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: 
+ <177136286807.643511.1738733092656907396.git-patchwork-notify@kernel.org>
+Date: Tue, 17 Feb 2026 21:14:28 +0000
+References: <20260128152630.627409-2-hch@lst.de>
+In-Reply-To: <20260128152630.627409-2-hch@lst.de>
+To: Christoph Hellwig <hch@lst.de>
+Cc: ebiggers@kernel.org, fsverity@lists.linux.dev, brauner@kernel.org,
+ tytso@mit.edu, djwong@kernel.org, aalbersh@redhat.com, willy@infradead.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+ viro@zeniv.linux.org.uk, jaegeuk@kernel.org, dsterba@suse.com, jack@suse.cz,
+ linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[paragon-software.com,quarantine];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[paragon-software.com:s=mail];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FROM_NEQ_ENVFROM(0.00)[almaz.alexandrovich@paragon-software.com,linux-fsdevel@vger.kernel.org];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCVD_COUNT_FIVE(0.00)[6];
-	MIME_TRACE(0.00)[0:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	FROM_HAS_DN(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,paragon-software.com:mid,paragon-software.com:dkim];
-	MID_RHS_MATCH_FROM(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77398-lists,linux-fsdevel=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77399-lists,linux-fsdevel=lfdr.de,f2fs];
 	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	TO_DN_NONE(0.00)[];
-	DKIM_TRACE(0.00)[paragon-software.com:+]
-X-Rspamd-Queue-Id: E7DBC150938
+	FROM_NEQ_ENVFROM(0.00)[patchwork-bot@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_NO_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,lst.de:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 9B17B150A26
 X-Rspamd-Action: no action
 
-On 2/17/26 20:06, Konstantin Komarov wrote:
+Hello:
 
-> Regards,
-> Konstantin
->
-> ----------------------------------------------------------------
-> The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1e8:
->
->    Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
->
-> are available in the Git repository at:
->
->    https://github.com/Paragon-Software-Group/linux-ntfs3.git tags/ntfs3_for_7.0
->
-> for you to fetch changes up to 10d7c95af043b45a85dc738c3271bf760ff3577e:
->
->    fs/ntfs3: add delayed-allocation (delalloc) support (2026-02-16 17:23:51 +0100)
->
-> ----------------------------------------------------------------
-> Changes for 7.0-rc1
->
-> Added:
->          improve readahead for bitmap initialization and large directory scans
-> 	fsync files by syncing parent inodes
-> 	drop of preallocated clusters for sparse and compressed files
-> 	zero-fill folios beyond i_valid in ntfs_read_folio()
-> 	implement llseek SEEK_DATA/SEEK_HOLE by scanning data runs
-> 	implement iomap-based file operations
-> 	allow explicit boolean acl/prealloc mount options
-> 	a fall-through between switch labels
-> 	a delayed-allocation (delalloc) support
->
-> Fixed:
->          check return value of indx_find to avoid infinite loop
-> 	initialize new folios before use
-> 	an infinite loop in attr_load_runs_range on inconsistent metadata
-> 	an infinite loop triggered by zero-sized ATTR_LIST
-> 	ntfs_mount_options leak in ntfs_fill_super()
-> 	a deadlock in ni_read_folio_cmpr
-> 	a circular locking dependency in run_unpack_ex
-> 	prevent infinite loops caused by the next valid being the same
-> 	restore NULL folio initialization in ntfs_writepages()
-> 	a slab-out-of-bounds read in DeleteIndexEntryRoot
->
-> Changed:
->          allow readdir() to finish after directory mutations without rewinddir()
-> 	handle attr_set_size() errors when truncating files
-> 	make ntfs_writeback_ops static
-> 	refactor duplicate kmemdup pattern in do_action()
-> 	avoid calling run_get_entry() when run == NULL in ntfs_read_run_nb_ra()
->
-> Replaced:
-> 	use wait_on_buffer() directly
-> 	rename ni_readpage_cmpr into ni_read_folio_cmpr
->
-> ----------------------------------------------------------------
-> Baokun Li (1):
->        fs/ntfs3: fix ntfs_mount_options leak in ntfs_fill_super()
->
-> Baolin Liu (1):
->        ntfs3: Refactor duplicate kmemdup pattern in do_action()
->
-> Bartlomiej Kubik (1):
->        fs/ntfs3: Initialize new folios before use
->
-> Edward Adam Davis (1):
->        fs/ntfs3: prevent infinite loops caused by the next valid being the same
->
-> Jaehun Gou (3):
->        fs: ntfs3: check return value of indx_find to avoid infinite loop
->        fs: ntfs3: fix infinite loop in attr_load_runs_range on inconsistent metadata
->        fs: ntfs3: fix infinite loop triggered by zero-sized ATTR_LIST
->
-> Jiasheng Jiang (1):
->        fs/ntfs3: Fix slab-out-of-bounds read in DeleteIndexEntryRoot
->
-> Konstantin Komarov (13):
->        fs/ntfs3: rename ni_readpage_cmpr into ni_read_folio_cmpr
->        fs/ntfs3: improve readahead for bitmap initialization and large directory scans
->        fs/ntfs3: allow readdir() to finish after directory mutations without rewinddir()
->        fs/ntfs3: fsync files by syncing parent inodes
->        fs/ntfs3: drop preallocated clusters for sparse and compressed files
->        fs/ntfs3: handle attr_set_size() errors when truncating files
->        fs/ntfs3: zero-fill folios beyond i_valid in ntfs_read_folio()
->        fs/ntfs3: implement llseek SEEK_DATA/SEEK_HOLE by scanning data runs
->        fs/ntfs3: implement iomap-based file operations
->        fs/ntfs3: allow explicit boolean acl/prealloc mount options
->        fs/ntfs3: add fall-through between switch labels
->        fs/ntfs3: avoid calling run_get_entry() when run == NULL in ntfs_read_run_nb_ra()
->        fs/ntfs3: add delayed-allocation (delalloc) support
->
-> Lalit Shankar Chowdhury (1):
->        fs/ntfs3: Use wait_on_buffer() directly
->
-> Nathan Chancellor (1):
->        ntfs3: Restore NULL folio initialization in ntfs_writepages()
->
-> Szymon Wilczek (2):
->        fs/ntfs3: fix deadlock in ni_read_folio_cmpr
->        ntfs3: fix circular locking dependency in run_unpack_ex
->
-> sunliming (1):
->        fs/ntfs3: make ntfs_writeback_ops static
->
->   fs/ntfs3/attrib.c   | 412 ++++++++++++++++++---------
->   fs/ntfs3/attrlist.c |  17 +-
->   fs/ntfs3/bitmap.c   |  17 ++
->   fs/ntfs3/dir.c      | 108 ++++---
->   fs/ntfs3/file.c     | 599 ++++++++++++++++++++++-----------------
->   fs/ntfs3/frecord.c  | 382 +++++++++++++------------
->   fs/ntfs3/fslog.c    |  65 +++--
->   fs/ntfs3/fsntfs.c   | 112 +++++---
->   fs/ntfs3/index.c    |  49 ++--
->   fs/ntfs3/inode.c    | 800 ++++++++++++++++++++++++++++------------------------
->   fs/ntfs3/ntfs.h     |   4 +
->   fs/ntfs3/ntfs_fs.h  | 153 +++++++---
->   fs/ntfs3/run.c      | 163 ++++++++++-
->   fs/ntfs3/super.c    |  73 +++--
->   fs/ntfs3/xattr.c    |   2 +-
->   15 files changed, 1822 insertions(+), 1134 deletions(-)
->
-My apologies - the opening line of my previous message was accidentally
-cut. For clarity:
+This series was applied to jaegeuk/f2fs.git (dev)
+by Eric Biggers <ebiggers@kernel.org>:
 
-Please pull this branch containing ntfs3 code for 7.0.
+On Wed, 28 Jan 2026 16:26:13 +0100 you wrote:
+> Add the check to reject truncates of fsverity files directly to
+> setattr_prepare instead of requiring the file system to handle it.
+> Besides removing boilerplate code, this also fixes the complete lack of
+> such check in btrfs.
+> 
+> Fixes: 146054090b08 ("btrfs: initial fsverity support")
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+> 
+> [...]
 
-Everything else (the patches, commit messages, and Signed-off-by / trailers)
-is unchanged.
+Here is the summary with links:
+  - [f2fs-dev,01/15] fs, fsverity: reject size changes on fsverity files in setattr_prepare
+    https://git.kernel.org/jaegeuk/f2fs/c/e9734653c523
+  - [f2fs-dev,02/15] fs, fsverity: clear out fsverity_info from common code
+    https://git.kernel.org/jaegeuk/f2fs/c/70098d932714
+  - [f2fs-dev,03/15] ext4: don't build the fsverity work handler for !CONFIG_FS_VERITY
+    https://git.kernel.org/jaegeuk/f2fs/c/fb2661645909
+  - [f2fs-dev,04/15] f2fs: don't build the fsverity work handler for !CONFIG_FS_VERITY
+    https://git.kernel.org/jaegeuk/f2fs/c/6f9fae2f738c
+  - [f2fs-dev,05/15] fsverity: pass struct file to ->write_merkle_tree_block
+    (no matching commit)
+  - [f2fs-dev,06/15] fsverity: start consolidating pagecache code
+    (no matching commit)
+  - [f2fs-dev,07/15] fsverity: don't issue readahead for non-ENOENT errors from __filemap_get_folio
+    (no matching commit)
+  - [f2fs-dev,08/15] fsverity: kick off hash readahead at data I/O submission time
+    (no matching commit)
+  - [f2fs-dev,09/15] fsverity: deconstify the inode pointer in struct fsverity_info
+    https://git.kernel.org/jaegeuk/f2fs/c/7e36e044958d
+  - [f2fs-dev,10/15] fsverity: push out fsverity_info lookup
+    (no matching commit)
+  - [f2fs-dev,11/15] fs: consolidate fsverity_info lookup in buffer.c
+    https://git.kernel.org/jaegeuk/f2fs/c/f6ae956dfb34
+  - [f2fs-dev,12/15] ext4: consolidate fsverity_info lookup
+    (no matching commit)
+  - [f2fs-dev,13/15] f2fs: consolidate fsverity_info lookup
+    (no matching commit)
+  - [f2fs-dev,14/15] btrfs: consolidate fsverity_info lookup
+    https://git.kernel.org/jaegeuk/f2fs/c/b0160e4501bb
+  - [f2fs-dev,15/15] fsverity: use a hashtable to find the fsverity_info
+    (no matching commit)
 
-Regards,
-Konstantin
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
