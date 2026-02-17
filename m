@@ -1,239 +1,389 @@
-Return-Path: <linux-fsdevel+bounces-77359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id qFJuN7dZlGkXDAIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 13:06:15 +0100
+	id OKzcJetclGm3DAIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 13:19:55 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 537C814BC72
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 13:06:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A30A14BE0B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 13:19:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id C05EB3027329
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 12:06:11 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 7282C302B80C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 12:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23CEB3358DA;
-	Tue, 17 Feb 2026 12:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD3D3382EE;
+	Tue, 17 Feb 2026 12:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Tj4JYsK0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="etN8cHi2";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Tj4JYsK0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="etN8cHi2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M70MJ1yK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D98E335549
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 12:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7773382DB;
+	Tue, 17 Feb 2026 12:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771329967; cv=none; b=Kr3TkU/TbLq3Pdzmc1/uXGVe1v9JonkS7ODyjOoGYYyhjl68OeJmGyCVD25OGoNz0pkvM7zLwOhi8CV+7S0y6hPChHq/TCKhoz2zKaWLE8i4hZrEs7iZvkP99k6SwG7rQeVo0NRIq30bL0Co2z4OnMNXeZhhjMk0rO1ObJMJPt8=
+	t=1771330328; cv=none; b=JRKGZQC5j8uZz9f+tzyZQPmFbprxXTzn0X5WgVrdCiHOdSBS9Hcn1Qgd7OieBxGtA7FHjbanDM0KFNj3Hy6XYXeUOgkIrvRTboyfw0a9/1cmZB7A7uS53aMQMDCwIIwRnO/QujLn69VZG7SfMOAbAhLil14dfGhYbAJAYqGf+aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771329967; c=relaxed/simple;
-	bh=c46h7rfrJ4CQbGFQLzUmTdfzEYEZ/a4r5Fw/52ZBJjI=;
+	s=arc-20240116; t=1771330328; c=relaxed/simple;
+	bh=Rcydk4mXqdLWbHZmqbD4HEaij5FTeX1Fh1B0jUiENik=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=auCr05vuaXSZSPTJC9k9RyIcxK0qkG2P+SUwY1Gj+bl8zGA9Ibo5NwdU0R70RRbRzrN2XlxxLeSp5dOtG3DuFNEFbMV1jcUXb+LSedsv8RbLFJ3UPZPgQTJL2a2qySbHQ0ITC1h05tMqBfJQAZps9RhTijiA44O0b6W7XV1YFj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Tj4JYsK0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=etN8cHi2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Tj4JYsK0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=etN8cHi2; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 699583E6E3;
-	Tue, 17 Feb 2026 12:06:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1771329964; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RxkqPNgkdCosp0/W0/1gwJfHUSCYabVKYzC0gST4xVs=;
-	b=Tj4JYsK0howQT9SoGnbXDmFratK/bokiECr7iooUakYXlGgRQwNzuv0YraZX61LfeqVKGF
-	Dp+wWZ3u0etC1Fxkl5SuIjWnSH8aE2FGrAbtBjTBPacIMvpkPtdwhu0RwvZC46FToQpUhI
-	ctwdVA3XIN/DkqcKNmznF+i7pkvla5o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1771329964;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RxkqPNgkdCosp0/W0/1gwJfHUSCYabVKYzC0gST4xVs=;
-	b=etN8cHi2zKQJDOMOzLxSV1Q5EuWC25+n+s47IHcmvF0HtHA8i1MbBaQ+DTKCtL+uoDd80f
-	bKJwWS8rN1RtF6Ag==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Tj4JYsK0;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=etN8cHi2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1771329964; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RxkqPNgkdCosp0/W0/1gwJfHUSCYabVKYzC0gST4xVs=;
-	b=Tj4JYsK0howQT9SoGnbXDmFratK/bokiECr7iooUakYXlGgRQwNzuv0YraZX61LfeqVKGF
-	Dp+wWZ3u0etC1Fxkl5SuIjWnSH8aE2FGrAbtBjTBPacIMvpkPtdwhu0RwvZC46FToQpUhI
-	ctwdVA3XIN/DkqcKNmznF+i7pkvla5o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1771329964;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RxkqPNgkdCosp0/W0/1gwJfHUSCYabVKYzC0gST4xVs=;
-	b=etN8cHi2zKQJDOMOzLxSV1Q5EuWC25+n+s47IHcmvF0HtHA8i1MbBaQ+DTKCtL+uoDd80f
-	bKJwWS8rN1RtF6Ag==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 50B283EA65;
-	Tue, 17 Feb 2026 12:06:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gPKoE6xZlGmPTwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 17 Feb 2026 12:06:04 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0F5C3A08CF; Tue, 17 Feb 2026 13:06:04 +0100 (CET)
-Date: Tue, 17 Feb 2026 13:06:04 +0100
-From: Jan Kara <jack@suse.cz>
-To: Andres Freund <andres@anarazel.de>
-Cc: Pankaj Raghav <pankaj.raghav@linux.dev>, 
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-xfs@vger.kernel.org, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org, djwong@kernel.org, 
-	john.g.garry@oracle.com, willy@infradead.org, hch@lst.de, ritesh.list@gmail.com, 
-	jack@suse.cz, Luis Chamberlain <mcgrof@kernel.org>, dchinner@redhat.com, 
-	Javier Gonzalez <javier.gonz@samsung.com>, gost.dev@samsung.com, tytso@mit.edu, p.raghav@samsung.com, 
-	vi.shah@samsung.com
-Subject: Re: [LSF/MM/BPF TOPIC] Buffered atomic writes
-Message-ID: <wkczfczlmstoywbmgfrxzm6ko4frjsu65kvpwquzu7obrjcd3f@6gs5nsfivc6v>
-References: <d0c4d95b-8064-4a7e-996d-7ad40eb4976b@linux.dev>
- <aY8n97G_hXzA5MMn@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <7cf3f249-453d-423a-91d1-dfb45c474b78@linux.dev>
- <zzvybbfy6bcxnkt4cfzruhdyy6jsvnuvtjkebdeqwkm6nfpgij@dlps7ucza22s>
+	 Content-Type:Content-Disposition:In-Reply-To; b=i9YKE3hL+CHBFunJFuYi8LmdqcV3yOloCIuOQ9TzlSfC1a2mMhuYN3mLpkO0coTZqQylA0W8q8b3LhIEyuOlUDZ9bIXLBwlGlz0d43bsxwqrjfOiSaVi8uYk+//hQjacj2NE0KMXVNH0HA0YBpJmuBkA+9Cu2wxnkFuyFHWbWAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M70MJ1yK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47F9FC4CEF7;
+	Tue, 17 Feb 2026 12:12:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771330327;
+	bh=Rcydk4mXqdLWbHZmqbD4HEaij5FTeX1Fh1B0jUiENik=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M70MJ1yKylncJkoHkYHpVHv6r6vckWIN4IdJr12M8fbHiF8y48OdP/Tos5mip4DQ3
+	 3Vunyo1CWpQS/vsqcQ3qbNmQiK81NJ3r7EfoeLszZ5Vgy2sMu5kZ/RECTssIDtUQQ7
+	 e+nrOuvYTE4kmBPJSqln2BZ4b/xQdGQ2Ma4Za0K+W5Kwk0vs8wS4UZTl0Vex6j+r63
+	 5WVU4ZOK1RaUS0da1Q/Xjnhow9Ct96+QlKFH7d+VXut+4hcnVHctjCLLg1jD9cd0lB
+	 M3Ik1De2Ertvh+29Efsp5TQW2EfmUn2YJjhbax23RiCqdvyhvIurargCZ2kLW2ZRR4
+	 gTqdiydgiKf3w==
+Date: Tue, 17 Feb 2026 13:12:03 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: syzbot <syzbot+a89f9434fb5a001ccd58@syzkaller.appspotmail.com>
+Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [fs?] KASAN: slab-use-after-free Read in clone_mnt
+Message-ID: <20260217-reingehen-garant-4ee90d168229@brauner>
+References: <699047f6.050a0220.2757fb.0024.GAE@google.com>
+ <20260214-werft-vorerst-0b3bf9610224@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed; boundary="tzmuvbdsgyutgbdg"
 Content-Disposition: inline
-In-Reply-To: <zzvybbfy6bcxnkt4cfzruhdyy6jsvnuvtjkebdeqwkm6nfpgij@dlps7ucza22s>
-X-Spam-Flag: NO
-X-Spam-Score: -2.51
-X-Spam-Level: 
+In-Reply-To: <20260214-werft-vorerst-0b3bf9610224@brauner>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.34 / 15.00];
+X-Spamd-Result: default: False [4.84 / 15.00];
+	MID_END_EQ_FROM_USER_PART(4.00)[];
 	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=6428d17febdfb14e];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64];
 	MAILLIST(-0.15)[generic];
-	MIME_GOOD(-0.10)[text/plain];
+	MIME_GOOD(-0.10)[multipart/mixed,text/plain,text/x-diff];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77359-lists,linux-fsdevel=lfdr.de];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,suse.cz:dkim];
-	DMARC_NA(0.00)[suse.cz];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	FREEMAIL_CC(0.00)[linux.dev,linux.ibm.com,vger.kernel.org,kvack.org,lists.linux-foundation.org,kernel.org,oracle.com,infradead.org,lst.de,gmail.com,suse.cz,redhat.com,samsung.com,mit.edu];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77360-lists,linux-fsdevel=lfdr.de];
+	GREYLIST(0.00)[pass,body];
 	TO_DN_SOME(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+,1:+,2:+];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,appspotmail.com:email,storage.googleapis.com:url,syzkaller.appspot.com:url];
+	HAS_ATTACHMENT(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	TAGGED_RCPT(0.00)[linux-fsdevel,a89f9434fb5a001ccd58];
 	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: 537C814BC72
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Rspamd-Queue-Id: 0A30A14BE0B
 X-Rspamd-Action: no action
 
-On Mon 16-02-26 10:45:40, Andres Freund wrote:
-> > Hmm, IIUC, postgres will write their dirty buffer cache by combining
-> > multiple DB pages based on `io_combine_limit` (typically 128kb).
-> 
-> We will try to do that, but it's obviously far from always possible, in some
-> workloads [parts of ]the data in the buffer pool rarely will be dirtied in
-> consecutive blocks.
-> 
-> FWIW, postgres already tries to force some just-written pages into
-> writeback. For sources of writes that can be plentiful and are done in the
-> background, we default to issuing sync_file_range(SYNC_FILE_RANGE_WRITE),
-> after 256kB-512kB of writes, as otherwise foreground latency can be
-> significantly impacted by the kernel deciding to suddenly write back (due to
-> dirty_writeback_centisecs, dirty_background_bytes, ...) and because otherwise
-> the fsyncs at the end of a checkpoint can be unpredictably slow.  For
-> foreground writes we do not default to that, as there are users that won't
-> (because they don't know, because they overcommit hardware, ...) size
-> postgres' buffer pool to be big enough and thus will often re-dirty pages that
-> have already recently been written out to the operating systems.  But for many
-> workloads it's recommened that users turn on
-> sync_file_range(SYNC_FILE_RANGE_WRITE) for foreground writes as well (*).
-> 
-> So for many workloads it'd be fine to just always start writeback for atomic
-> writes immediately. It's possible, but I am not at all sure, that for most of
-> the other workloads, the gains from atomic writes will outstrip the cost of
-> more frequently writing data back.
 
-OK, good. Then I think it's worth a try.
+--tzmuvbdsgyutgbdg
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-> (*) As it turns out, it often seems to improves write throughput as well, if
-> writeback is triggered by memory pressure instead of SYNC_FILE_RANGE_WRITE,
-> linux seems to often trigger a lot more small random IO.
+On Sat, Feb 14, 2026 at 04:59:11PM +0100, Christian Brauner wrote:
+> On Sat, Feb 14, 2026 at 02:01:26AM -0800, syzbot wrote:
+> > Hello,
+> > 
+> > syzbot found the following issue on:
+> > 
+> > HEAD commit:    c22e26bd0906 Merge tag 'landlock-7.0-rc1' of git://git.ker..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=12c6a6e6580000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=6428d17febdfb14e
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=a89f9434fb5a001ccd58
+> > compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
+> > 
+> > Unfortunately, I don't have any reproducer for this issue yet.
+> > 
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/b33c549157ca/disk-c22e26bd.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/34c7ded19553/vmlinux-c22e26bd.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/66faec2158ed/bzImage-c22e26bd.xz
+> > 
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+a89f9434fb5a001ccd58@syzkaller.appspotmail.com
 > 
-> > So immediately writing them might be ok as long as we don't remove those
-> > pages from the page cache like we do in RWF_UNCACHED.
-> 
-> Yes, it might.  I actually often have wished for something like a
-> RWF_WRITEBACK flag...
+> Right, this should be fixed by the appended patch. If someone had the
+> bright idea to make the real rootfs a shared or dependent mount and it
+> is later copied the copy will become a peer of the old real rootfs mount
+> or a dependent mount of it. If locking the new rootfs mount for mounting
+> fails or the subsequent do_loopback() fails we rely on the copy of the
+> real root mount to be cleaned up by path_put(). The problem is that this
+> doesn't deal with mount propagation and will leave the mounts linked in
+> the propagation lists. Fix this by actually unmounting the copied tree.
 
-I'd call it RWF_WRITETHROUGH but otherwise it makes sense.
+Actually lets just refactor this to be a bit cleaner as in the appended
+patch. I plan on getting this upstream during this week.
 
-> > > An argument against this however is that it is user's responsibility to
-> > > not do non atomic IO over an atomic range and this shall be considered a
-> > > userspace usage error. This is similar to how there are ways users can
-> > > tear a dio if they perform overlapping writes. [1].
-> 
-> Hm, the scope of the prohibition here is not clear to me. Would it just
-> be forbidden to do:
-> 
-> P1: start pwritev(fd, [blocks 1-10], RWF_ATOMIC)
-> P2: pwrite(fd, [any block in 1-10]), non-atomically
-> P1: complete pwritev(fd, ...)
-> 
-> or is it also forbidden to do:
-> 
-> P1: pwritev(fd, [blocks 1-10], RWF_ATOMIC) start & completes
-> Kernel: starts writeback but doesn't complete it
-> P1: pwrite(fd, [any block in 1-10]), non-atomically
-> Kernel: completes writeback
-> 
-> The former is not at all an issue for postgres' use case, the pages in
-> our buffer pool that are undergoing IO are locked, preventing additional
-> IO (be it reads or writes) to those blocks.
-> 
-> The latter would be a problem, since userspace wouldn't even know that
-> here is still "atomic writeback" going on, afaict the only way we could
-> avoid it would be to issue an f[data]sync(), which likely would be
-> prohibitively expensive.
+--tzmuvbdsgyutgbdg
+Content-Type: text/x-diff; charset=utf-8
+Content-Disposition: attachment;
+	filename="0001-mount-hold-namespace_sem-across-copy-in-create_new_n.patch"
 
-It somewhat depends on what outcome you expect in terms of crash safety :)
-Unless we are careful, the RWF_ATOMIC write in your latter example can end
-up writing some bits of the data from the second write because the second
-write may be copying data to the pages as we issue DMA from them to the
-device. I expect this isn't really acceptable because if you crash before
-the second write fully makes it to the disk, you will have inconsistent
-data. So what we can offer is to enable "stable pages" feature for the
-filesystem (support for buffered atomic writes would be conditioned by
-that) - that will block the second write until the IO is done so torn
-writes cannot happen. If quick overwrites are rare, this should be a fine
-option. If they are frequent, we'd need to come up with some bounce
-buffering but things get ugly quickly there.
+From 186af1baac0e03b0915287d31d8fcf237d9e5410 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Sat, 14 Feb 2026 16:22:13 +0100
+Subject: [PATCH] mount: hold namespace_sem across copy in
+ create_new_namespace()
 
-								Honza
+Fix an oversight when creating a new mount namespace. If someone had the
+bright idea to make the real rootfs a shared or dependent mount and it
+is later copied the copy will become a peer of the old real rootfs mount
+or a dependent mount of it. The namespace semaphore is dropped and we
+use mount lock exact to lock the new real root mount. If that fails or
+the subsequent do_loopback() fails we rely on the copy of the real root
+mount to be cleaned up by path_put(). The problem is that this doesn't
+deal with mount propagation and will leave the mounts linked in the
+propagation lists.
+
+When creating a new mount namespace create_new_namespace() first
+acquires namespace_sem to clone the nullfs root, drops it, then
+reacquires it via LOCK_MOUNT_EXACT which takes inode_lock first to
+respect the inode_lock -> namespace_sem lock ordering. This
+drop-and-reacquire pattern is fragile and was the source of the
+propagation cleanup bug fixed in the preceding commit.
+
+Extend lock_mount_exact() with a copy_mount mode that clones the mount
+under the locks atomically. When copy_mount is true, path_overmounted()
+is skipped since we're copying the mount, not mounting on top of it -
+the nullfs root always has rootfs mounted on top so the check would
+always fail. If clone_mnt() fails after get_mountpoint() has pinned the
+mountpoint, __unlock_mount() is used to properly unpin the mountpoint
+and release both locks.
+
+This allows create_new_namespace() to use LOCK_MOUNT_EXACT_COPY which
+takes inode_lock and namespace_sem once and holds them throughout the
+clone and subsequent mount operations, eliminating the
+drop-and-reacquire pattern entirely.
+
+Reported-by: syzbot+a89f9434fb5a001ccd58@syzkaller.appspotmail.com
+Fixes: 9b8a0ba68246 ("mount: add OPEN_TREE_NAMESPACE") # mainline only
+Link: https://lore.kernel.org/699047f6.050a0220.2757fb.0024.GAE@google.com
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/namespace.c | 112 +++++++++++++++++++++++++------------------------
+ 1 file changed, 58 insertions(+), 54 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 90700df65f0d..188be116f6e6 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2791,7 +2791,8 @@ static inline void unlock_mount(struct pinned_mountpoint *m)
+ }
+ 
+ static void lock_mount_exact(const struct path *path,
+-			     struct pinned_mountpoint *mp);
++			     struct pinned_mountpoint *mp, bool copy_mount,
++			     unsigned int copy_flags);
+ 
+ #define LOCK_MOUNT_MAYBE_BENEATH(mp, path, beneath) \
+ 	struct pinned_mountpoint mp __cleanup(unlock_mount) = {}; \
+@@ -2799,7 +2800,10 @@ static void lock_mount_exact(const struct path *path,
+ #define LOCK_MOUNT(mp, path) LOCK_MOUNT_MAYBE_BENEATH(mp, (path), false)
+ #define LOCK_MOUNT_EXACT(mp, path) \
+ 	struct pinned_mountpoint mp __cleanup(unlock_mount) = {}; \
+-	lock_mount_exact((path), &mp)
++	lock_mount_exact((path), &mp, false, 0)
++#define LOCK_MOUNT_EXACT_COPY(mp, path, copy_flags) \
++	struct pinned_mountpoint mp __cleanup(unlock_mount) = {}; \
++	lock_mount_exact((path), &mp, true, (copy_flags))
+ 
+ static int graft_tree(struct mount *mnt, const struct pinned_mountpoint *mp)
+ {
+@@ -3073,16 +3077,13 @@ static struct file *open_detached_copy(struct path *path, unsigned int flags)
+ 	return file;
+ }
+ 
+-DEFINE_FREE(put_empty_mnt_ns, struct mnt_namespace *,
+-	    if (!IS_ERR_OR_NULL(_T)) free_mnt_ns(_T))
+-
+ static struct mnt_namespace *create_new_namespace(struct path *path, unsigned int flags)
+ {
+-	struct mnt_namespace *new_ns __free(put_empty_mnt_ns) = NULL;
+-	struct path to_path __free(path_put) = {};
+ 	struct mnt_namespace *ns = current->nsproxy->mnt_ns;
+ 	struct user_namespace *user_ns = current_user_ns();
+-	struct mount *new_ns_root;
++	struct mnt_namespace *new_ns;
++	struct mount *new_ns_root, *old_ns_root;
++	struct path to_path;
+ 	struct mount *mnt;
+ 	unsigned int copy_flags = 0;
+ 	bool locked = false;
+@@ -3094,71 +3095,64 @@ static struct mnt_namespace *create_new_namespace(struct path *path, unsigned in
+ 	if (IS_ERR(new_ns))
+ 		return ERR_CAST(new_ns);
+ 
+-	scoped_guard(namespace_excl) {
+-		new_ns_root = clone_mnt(ns->root, ns->root->mnt.mnt_root, copy_flags);
+-		if (IS_ERR(new_ns_root))
+-			return ERR_CAST(new_ns_root);
++	old_ns_root = ns->root;
++	to_path.mnt = &old_ns_root->mnt;
++	to_path.dentry = old_ns_root->mnt.mnt_root;
+ 
+-		/*
+-		 * If the real rootfs had a locked mount on top of it somewhere
+-		 * in the stack, lock the new mount tree as well so it can't be
+-		 * exposed.
+-		 */
+-		mnt = ns->root;
+-		while (mnt->overmount) {
+-			mnt = mnt->overmount;
+-			if (mnt->mnt.mnt_flags & MNT_LOCKED)
+-				locked = true;
+-		}
++	VFS_WARN_ON_ONCE(old_ns_root->mnt_id_unique != 1);
++	VFS_WARN_ON_ONCE(old_ns_root->mnt.mnt_sb->s_type != &nullfs_fs_type);
++
++	LOCK_MOUNT_EXACT_COPY(mp, &to_path, copy_flags);
++	if (IS_ERR(mp.parent)) {
++		free_mnt_ns(new_ns);
++		return ERR_CAST(mp.parent);
+ 	}
++	new_ns_root = mp.parent;
+ 
+ 	/*
+-	 * We dropped the namespace semaphore so we can actually lock
+-	 * the copy for mounting. The copied mount isn't attached to any
+-	 * mount namespace and it is thus excluded from any propagation.
+-	 * So realistically we're isolated and the mount can't be
+-	 * overmounted.
++	 * If the real rootfs had a locked mount on top of it somewhere
++	 * in the stack, lock the new mount tree as well so it can't be
++	 * exposed.
+ 	 */
+-
+-	/* Borrow the reference from clone_mnt(). */
+-	to_path.mnt = &new_ns_root->mnt;
+-	to_path.dentry = dget(new_ns_root->mnt.mnt_root);
+-
+-	/* Now lock for actual mounting. */
+-	LOCK_MOUNT_EXACT(mp, &to_path);
+-	if (unlikely(IS_ERR(mp.parent)))
+-		return ERR_CAST(mp.parent);
++	mnt = old_ns_root;
++	while (mnt->overmount) {
++		mnt = mnt->overmount;
++		if (mnt->mnt.mnt_flags & MNT_LOCKED)
++			locked = true;
++	}
+ 
+ 	/*
+-	 * We don't emulate unshare()ing a mount namespace. We stick to the
+-	 * restrictions of creating detached bind-mounts. It has a lot
+-	 * saner and simpler semantics.
++	 * We don't emulate unshare()ing a mount namespace. We stick
++	 * to the restrictions of creating detached bind-mounts. It
++	 * has a lot saner and simpler semantics.
+ 	 */
+ 	mnt = __do_loopback(path, flags, copy_flags);
+-	if (IS_ERR(mnt))
+-		return ERR_CAST(mnt);
+-
+ 	scoped_guard(mount_writer) {
++		if (IS_ERR(mnt)) {
++			emptied_ns = new_ns;
++			umount_tree(new_ns_root, 0);
++			return ERR_CAST(mnt);
++		}
++
+ 		if (locked)
+ 			mnt->mnt.mnt_flags |= MNT_LOCKED;
+ 		/*
+-		 * Now mount the detached tree on top of the copy of the
+-		 * real rootfs we created.
++		 * now mount the detached tree on top of the copy
++		 * of the real rootfs we created.
+ 		 */
+ 		attach_mnt(mnt, new_ns_root, mp.mp);
+ 		if (user_ns != ns->user_ns)
+ 			lock_mnt_tree(new_ns_root);
+ 	}
+ 
+-	/* Add all mounts to the new namespace. */
+-	for (struct mount *p = new_ns_root; p; p = next_mnt(p, new_ns_root)) {
+-		mnt_add_to_ns(new_ns, p);
++	for (mnt = new_ns_root; mnt; mnt = next_mnt(mnt, new_ns_root)) {
++		mnt_add_to_ns(new_ns, mnt);
+ 		new_ns->nr_mounts++;
+ 	}
+ 
+-	new_ns->root = real_mount(no_free_ptr(to_path.mnt));
++	new_ns->root = new_ns_root;
+ 	ns_tree_add_raw(new_ns);
+-	return no_free_ptr(new_ns);
++	return new_ns;
+ }
+ 
+ static struct file *open_new_namespace(struct path *path, unsigned int flags)
+@@ -3840,16 +3834,20 @@ static int do_new_mount(const struct path *path, const char *fstype,
+ }
+ 
+ static void lock_mount_exact(const struct path *path,
+-			     struct pinned_mountpoint *mp)
++			     struct pinned_mountpoint *mp, bool copy_mount,
++			     unsigned int copy_flags)
+ {
+ 	struct dentry *dentry = path->dentry;
+ 	int err;
+ 
++	/* Assert that inode_lock() locked the correct inode. */
++	VFS_WARN_ON_ONCE(copy_mount && !path_mounted(path));
++
+ 	inode_lock(dentry->d_inode);
+ 	namespace_lock();
+ 	if (unlikely(cant_mount(dentry)))
+ 		err = -ENOENT;
+-	else if (path_overmounted(path))
++	else if (!copy_mount && path_overmounted(path))
+ 		err = -EBUSY;
+ 	else
+ 		err = get_mountpoint(dentry, mp);
+@@ -3857,9 +3855,15 @@ static void lock_mount_exact(const struct path *path,
+ 		namespace_unlock();
+ 		inode_unlock(dentry->d_inode);
+ 		mp->parent = ERR_PTR(err);
+-	} else {
+-		mp->parent = real_mount(path->mnt);
++		return;
+ 	}
++
++	if (copy_mount)
++		mp->parent = clone_mnt(real_mount(path->mnt), dentry, copy_flags);
++	else
++		mp->parent = real_mount(path->mnt);
++	if (unlikely(IS_ERR(mp->parent)))
++		__unlock_mount(mp);
+ }
+ 
+ int finish_automount(struct vfsmount *__m, const struct path *path)
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.47.3
+
+
+--tzmuvbdsgyutgbdg--
 
