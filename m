@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-77448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UGeYBT34lGktJgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:22:37 +0100
+	id cOsMBlP4lGktJgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:22:59 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74C80151DC2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:22:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78FD0151DEE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:22:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1FDA8306EC80
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 23:20:58 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 72DF53076B4F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 23:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C922EDD50;
-	Tue, 17 Feb 2026 23:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C972F39A3;
+	Tue, 17 Feb 2026 23:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U1iRCcKV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JoCA8E6V"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC48254841;
-	Tue, 17 Feb 2026 23:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9433E2C1593;
+	Tue, 17 Feb 2026 23:20:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771370457; cv=none; b=ahm0+dtCj6IAI+XhmjdoG8rqtWgwiZiSIm+ZDpcAbvYRkC0c2lFmQxqqMxtmLMVBIXm5rxwjqiZUXglomUiBsE3bWg2EJUCaUUGd/T4jfdUkzKDXMZC3b1/2qFRu7qz1+4ZXLa+Z0xfwAirHbfF6FIRHhkyFhQ3f5tm3F1df0EY=
+	t=1771370459; cv=none; b=TvV92UeYyQn8ZvqeHx0BEwQWviHVp4D/iJA+cGog6LXcmVbN7vFp492bdqjUESXOidmUCS03r83DSxMMe/1F4jOFEDvRtHt55tfxJ5aj0GaG8YBcGnec/uAHN93f6HT+5LYwx/5DutenwpWQwGW8witx4BTS62wuPxFH+20qN/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771370457; c=relaxed/simple;
-	bh=gGTr2TjQZWlseMbQ/HJ/9ABk8EPWNeSwCgdUumJHH+A=;
+	s=arc-20240116; t=1771370459; c=relaxed/simple;
+	bh=7Sal3g8mhk2sBxwKdGGQV/nUpdQCnPiDPd8UZ8TXBQ8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pXr7h+EcSKPSqdTB3tBrJ59UZQJUIoh9TJTozRl8DlyjNXG5AxxWNp3h0M5Ykl+J5M4QkVgMPjcAaL4Cc2M5H8x0rX9AVHdE2ifvMQMasx0PfcmuhXh7QY5tj7E85k8j/tRAgjnhfb10cK+EOKbblZdblERJrx6kyZOP6AmFRSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U1iRCcKV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DC89C4CEF7;
-	Tue, 17 Feb 2026 23:20:55 +0000 (UTC)
+	 MIME-Version; b=crPc/i7GholXYnGyLKWrfQqSIjYey4RCFbySj4+6KUlZ8K70s1zMIizQlEGxrdXhKe1MVWmZIJIntghzV6S8OC6mzCYvTmV1ehshXHKpAGk8dHCUzaYO17m+schWODDeILi/CGBWaUulmTgUkJwT7afoPEvQc9BczNqQregRepg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JoCA8E6V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 768E8C19421;
+	Tue, 17 Feb 2026 23:20:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771370457;
-	bh=gGTr2TjQZWlseMbQ/HJ/9ABk8EPWNeSwCgdUumJHH+A=;
+	s=k20201202; t=1771370459;
+	bh=7Sal3g8mhk2sBxwKdGGQV/nUpdQCnPiDPd8UZ8TXBQ8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=U1iRCcKVECUcHYL2dreSbyxQfhMOeZXHYMOeXfp7TZ1eQ7sqs9Tup+CGkIf8qNd4S
-	 FWwb0PXP+mUfRIZj57huD/udhmwmJBP2cgO8WeIX8diaYhH++qjnT8YqaRxoRR33Ci
-	 Wt/BECioTxAoixUTjJrFLh4wHL5SJBAK1XK5iA4zu0Q6cQ/XTNcZeKHgkRXhkzipOi
-	 RtsO3yMU+doOcid3qqBTQrFgrJCtPTxW9BZoLemfUdZYlF6B70AFpSKX97tCopwoPT
-	 YKKJOeAEcrSrxshsab/RApG4pwwhXoshZB+2e57+6NxneVMwk6ERw7fFQSdorer7Q9
-	 1rmC4nsPD1uQA==
+	b=JoCA8E6VYd32Gywrag9qTVix26KS/Sscni399QCg8MpK5zAduq6jsa3c8u6AZSVE6
+	 /XDfqL3EqLjePqr+rHCtjxL8sYvulJZMW2J/FGD2Kxk2EWbiR5m8CvkY9j9M2473gL
+	 2xi4BwEgYooCDXpBWq9PSE5GE1n4yk1R77sSJLDaQehqs09QaLC3iRGdhZN/4hO8mX
+	 5p9/9jqW9tSNpJ+BKIwZQAyz5N+b/bN7BhwerfJWb/aaokPJDfd0qswCcQyadbgjGc
+	 tAqwDwcB22gCY0i7T5tDzLZkiwLdOK+FsaBEuj+FsdwmQLD0icEMXSP2G4TCD9lD9m
+	 dD3TXai6Ica1A==
 From: Andrey Albershteyn <aalbersh@kernel.org>
 To: linux-xfs@vger.kernel.org,
 	fsverity@lists.linux.dev,
@@ -52,9 +52,9 @@ To: linux-xfs@vger.kernel.org,
 Cc: Andrey Albershteyn <aalbersh@kernel.org>,
 	hch@lst.de,
 	djwong@kernel.org
-Subject: [PATCH v3 11/35] iomap: allow filesystem to read fsverity metadata beyound EOF
-Date: Wed, 18 Feb 2026 00:19:11 +0100
-Message-ID: <20260217231937.1183679-12-aalbersh@kernel.org>
+Subject: [PATCH v3 12/35] iomap: let fsverity verify holes
+Date: Wed, 18 Feb 2026 00:19:12 +0100
+Message-ID: <20260217231937.1183679-13-aalbersh@kernel.org>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <20260217231937.1183679-1-aalbersh@kernel.org>
 References: <20260217231937.1183679-1-aalbersh@kernel.org>
@@ -78,7 +78,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	HAS_LIST_UNSUB(-0.01)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-77448-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77449-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	DKIM_TRACE(0.00)[kernel.org:+];
@@ -92,76 +92,31 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	RCPT_COUNT_SEVEN(0.00)[7];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 74C80151DC2
+X-Rspamd-Queue-Id: 78FD0151DEE
 X-Rspamd-Action: no action
 
-As fsverity metadata is not limited by EOF we also take the hole after
-fsverity descriptor as metadata region end.
-
-For filesystem which doesn't store merkle tree blocks full of hashes of
-zeroed data blocks synthesize merkle blocks full of these hashes.
+fsverity needs to verify consistency of the files against the root hash,
+the holes are also hashed in the tree.
 
 Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 ---
- fs/iomap/buffered-io.c | 39 +++++++++++++++++++++++++++++++++------
- 1 file changed, 33 insertions(+), 6 deletions(-)
+ fs/iomap/buffered-io.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index bd3ab4e6b2bf..6ebf68fdc386 100644
+index 6ebf68fdc386..9468c5d60b23 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -533,18 +533,45 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
- 		if (plen == 0)
- 			return 0;
- 
-+		/*
-+		 * We hits this for two case:
-+		 * 1. No need to go further, the hole after fsverity descriptor
-+		 * is the end of the fsverity metadata. No ctx->vi means we are
-+		 * reading folio with descriptor.
-+		 * 2. This folio contains merkle tree blocks which need to be
-+		 * synthesized and fsverity descriptor. Skip these blocks as we
-+		 * don't know how to synthesize them yet.
-+		 */
-+		if ((iomap->flags & IOMAP_F_FSVERITY) &&
-+		    (iomap->type == IOMAP_HOLE) &&
-+		    !(ctx->vi)) {
-+			iomap_set_range_uptodate(folio, poff, plen);
-+			return iomap_iter_advance(iter, plen);
-+		}
-+
- 		/* zero post-eof blocks as the page may be mapped */
+@@ -553,6 +553,9 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
  		if (iomap_block_needs_zeroing(iter, pos) &&
  		    !(iomap->flags & IOMAP_F_FSVERITY)) {
  			folio_zero_range(folio, poff, plen);
++			if (fsverity_active(iter->inode) &&
++			    !fsverity_verify_blocks(ctx->vi, folio, plen, poff))
++				return -EIO;
  			iomap_set_range_uptodate(folio, poff, plen);
  		} else {
--			if (!*bytes_submitted)
--				iomap_read_init(folio);
--			ret = ctx->ops->read_folio_range(iter, ctx, plen);
--			if (ret)
--				return ret;
--			*bytes_submitted += plen;
-+			/*
-+			 * Synthesize zero hash folio if we are reading merkle
-+			 * tree blocks
-+			 */
-+			if ((iomap->flags & IOMAP_F_FSVERITY) &&
-+			    (iomap->type == IOMAP_HOLE)) {
-+				fsverity_folio_zero_hash(folio, poff, plen,
-+							 ctx->vi);
-+				iomap_set_range_uptodate(folio, poff, plen);
-+			} else {
-+				if (!*bytes_submitted)
-+					iomap_read_init(folio);
-+				ret = ctx->ops->read_folio_range(iter, ctx, plen);
-+				if (ret)
-+					return ret;
-+				*bytes_submitted += plen;
-+			}
- 		}
- 
- 		ret = iomap_iter_advance(iter, plen);
+ 			/*
 -- 
 2.51.2
 
