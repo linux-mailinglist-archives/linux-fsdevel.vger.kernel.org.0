@@ -1,185 +1,212 @@
-Return-Path: <linux-fsdevel+bounces-77396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77397-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CKNwNBTGlGnCHgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 20:48:36 +0100
+	id kD61F7LPlGlGIAIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77397-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 21:29:38 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ADC614FBA2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 20:48:36 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id C97B514FF7C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 21:29:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 0DAE73023DAC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 19:48:35 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7CFC2305F67D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 20:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6D1376BCC;
-	Tue, 17 Feb 2026 19:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA2E37755A;
+	Tue, 17 Feb 2026 20:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WWELYzXO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com [209.85.167.199])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A91D285CAD
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 19:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970B736D4FD
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 20:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771357713; cv=none; b=q51e/LlOpFvAgbxyxCetPelOOGNSTKwzpBTGIaCluMubzkEk3zxoDSR2fliTtW5e0NGQJ8eXNukcNno47T44ZoYpZ0RwqJ5sc1H/cr11u6V8n47BCwJECS506OJV3Q3DBRqs8FM+ZO5FnxJ3anuA9BVKb5CQPVU6N06ca9Y8F9U=
+	t=1771360070; cv=none; b=ZJd7cBZCEm99K9REKpPZDRw/MbXrODho2wjEkt2xVAp52m6NzzYT/9niEpN4J5hXXH+3/YhxDrFE5hG+9JSN9YGRhk/djNOfae56GoX5bV1/8DDC9tAarxkGY9taUomwUjsXpkKFArk2lG4VljdWxdLnOHjEAJeY4ppW3ah1OsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771357713; c=relaxed/simple;
-	bh=tIvuwwW/1mrfxLptV9/j1f45nxLmnN4c6mEo9abhh50=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Jt7xVbHk6Ah7/vD5yDwwQCwRV+IcvYB1cuw/8JE+1SHpe8dZcs8p5xECUSRw22yjHd+JNazRPAdIDft98sDoqI0M5MHYLHAssj0BwGVuFD5IqICsGK/nQDKde09yD8hgKdoFmn1ETsyM1Pv5agHs1/yi0seF2NfZtlIn5VQhBB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-4639eb7bd4cso14126675b6e.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 11:48:31 -0800 (PST)
+	s=arc-20240116; t=1771360070; c=relaxed/simple;
+	bh=/9zPP2G4JeboX0+cDTSzN7re16L5WGfUqhrSKmHc3R8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=etvTK3R+LcieM74SU//K9LnMGEG6seBk8f0CU17gWWg9r5byUtedsUny9M+qF/6r9Bo+2572iiGfYOFwFSFAuKeEQYguPxfzdklBLMlJZO2q1RYgj5GXawJ2+UATd8EoGFluxlQFayQo5wtRRoH8J0EL4F7WHgezaB6LPI2Wr/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WWELYzXO; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6581234d208so7800692a12.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 12:27:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1771360067; x=1771964867; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=p9FeJRBMRyCrCa/QY6et9khCB1LQpN5iJP8D4ikcUfM=;
+        b=WWELYzXOS7GIVkYj2eN15fj2fASk5ekaymGVPwV+5+4cg+GYVwcqboiF+PtFFJFnX4
+         kYUiIYxz+CC/hfXDFG66oXsd0kDYKP0ILYriQsc7F6Iac9fyou3/WyAZuotzUJL8t2GK
+         u+psmL7y11iZkq6lCowQOQbZbqH4oPhKf/xPs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771357711; x=1771962511;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wqBynDemvxGGJGDs/yW5uaIraXzuuwQbmc0L/+wETCo=;
-        b=LrKOERZUY6OxnqQzKHaeSw/AgY7mNZKiJKABaI+DhogZ1Rcrfq1NDH6CDbrSqMnab2
-         mwdQJCpY8HqMIDRn+qD4AFKL4q/+4Nvq+LMynb2v4pEVpdacA8eXJ3IiUpPWuYqSFIGC
-         u7iypP7RoBplBiGHo/+5oS3Zm89Hz3wVFzXb4nBlxomQ/7YWBTEAg0Ou86bCt6tLyBWh
-         /HyoV+s712ZH2gtpIkFp3MYavj4i2zsd/d4W+95ozyB0fCcgYCR7NLXEbEVJmI1WZknr
-         lrwLTbYEZyvQ3gQbDwEaKxyq90iHZf8VRGgK4DI3YywC/sWOqm4FgNgm4FYo/U6xoiJZ
-         ZXjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaGL8LqM6XmeeWNdC+gNG5I50oxt01XR7kVtuLWaBUVKz5AL/a3xLMTvoLK06WgT+Lg7zwRiSzCSUEFZ7m@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi1OGrwMdm8KPP3OOct+jkImgWs3PUy8oiCwHcAP2rjFRFtlx3
-	JRCLCSbY+Bo4kKh/G/mwA6Eu6KcM2EJKOcznxFhElo1C/M8KhiLohYXbKq00sZQnnp9ctokJFde
-	qdD4UnOs+KDBuDB7KdrPMZ4eRxHeEIVpZGykmijiQyhjSJcWUQTJRorNoYQg=
+        d=1e100.net; s=20230601; t=1771360067; x=1771964867;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p9FeJRBMRyCrCa/QY6et9khCB1LQpN5iJP8D4ikcUfM=;
+        b=qQIh754DGytKQUh5Y4KugL9rXRHw0HUvovPSeHz/8ytYmkKX8LBYXRT1yomeEXRXFF
+         /CzmZ51b2bW3B4k5PJFIG0mQlsosOVIGOnhg/1PH2pDMjaUM/+cY3i/TYEf9Ps/EmCDU
+         kgvnv93Y9MQTKtIZ9BoGODVzie4NkIG+Z4rWnYdUkcIGGurJeDkPwKTe+KFNDjRfzPY3
+         HXRkVNzYtxgEBGveWT5MMf8TvQoxmOjcL1pOeOqjrKOBygupG+AF1atRtdDYJ2FeqeMX
+         lR70BZu0CZffPIJYEBEI83dQPxlkQNVm3DlTrnAefpE6utAproGLEmNkZ58iCGBFswEp
+         DL6g==
+X-Forwarded-Encrypted: i=1; AJvYcCWCp9fhLXSlTxrVigThH/3Zsmc0hz18AtEwr7B6oey1elVko/MLXiCbYO0dofO94eY30LY9TC/aL5YRwEdh@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQ86vclveBMm9oqaNrWenoCy7w5tWCbNObuXEQFNczPhSLgOlZ
+	fEnbjWKzAHe/EVZaKPED2KpAqa8kRTxr+Jy84pHYJHhGol5/MYFi4Zy5RNPL4oM4lLX/hZtw7wh
+	/7sR5z7W2aA==
+X-Gm-Gg: AZuq6aJVL8wCvc9CXsg70BhICnYKGh3yNcQpFyYJPvVSacfxAX/Vz/YahKns/DNkLFd
+	nCA918qWozYj6ZmJmoRyfpg+0ErPX9QfppqpHooHMySZkU7D04vkNIHlCz32W4GFVapUGNvu0pW
+	ybd0Li67+tm3nvsug/CJnRxC+XHZzyy+8uqMfEum8IUM+8An4h22mLB1XjqLCfAOXiA2F6D4dsY
+	ZTt186s2QUVjLsOR7Bgu2URwP/tB3EyFZsm6QN+R+2YDZ8KNSHrLM4v8BKt5PVxNzj6wfAh+g8E
+	lo8Sl3KbOlqKDyzIAh0GDi7M99hNyoR51e+1a5hmTTK37Zd3lBjCMzYsiw+opDZRx81CPfm+5Zf
+	wygBXO8H8bqhQOTE7mSg1LoH2A3Angjm/xqYaFWkSdRU9Wtedn0hmjtrVc/lavloCi1bwi6k6dH
+	aTM14TpfsM8mgQh21HOgAZs1GJdHILFtsBj0kQSE6U11K8huiTjl40xfQvYuVCsWsASGDVi4CD
+X-Received: by 2002:a05:6402:254a:b0:658:115e:34a9 with SMTP id 4fb4d7f45d1cf-65bc785f787mr5789209a12.8.1771360066838;
+        Tue, 17 Feb 2026 12:27:46 -0800 (PST)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-65bad3f1294sm2640520a12.26.2026.02.17.12.27.45
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Feb 2026 12:27:45 -0800 (PST)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-65815ec51d3so7633495a12.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 12:27:45 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXjgKDButgCvE1EdVit7g6jBOMEQA3GOaOLvywqZCNwCeeWEEGs6h3YUE5NSeRCf8t2Vgq/Ho46Qa7LPYkW@vger.kernel.org
+X-Received: by 2002:a17:907:3d9f:b0:b87:6c1e:9ffb with SMTP id
+ a640c23a62f3a-b8fc3ca8e29mr763220966b.48.1771360065464; Tue, 17 Feb 2026
+ 12:27:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:f93:b0:45e:8495:21f3 with SMTP id
- 5614622812f47-4639f1be199mr6675806b6e.40.1771357711109; Tue, 17 Feb 2026
- 11:48:31 -0800 (PST)
-Date: Tue, 17 Feb 2026 11:48:31 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6994c60f.a70a0220.2c38d7.0107.GAE@google.com>
-Subject: [syzbot] [fs?] WARNING in vfs_open_tree
-From: syzbot <syzbot+d09c0eed6e4176ba5c86@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
+References: <20260217190835.1151964-1-willy@infradead.org> <20260217190835.1151964-2-willy@infradead.org>
+In-Reply-To: <20260217190835.1151964-2-willy@infradead.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 17 Feb 2026 12:27:29 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjkyw-sap1dNkW7v8at8MvF3j5wshC1Gw3XEpHBbBw6BQ@mail.gmail.com>
+X-Gm-Features: AaiRm53Jwdj8IhdDu6SvPDHJOVyPK7HyrIdGj3FV4JAh81jBIiCi4hjzrD6typ8
+Message-ID: <CAHk-=wjkyw-sap1dNkW7v8at8MvF3j5wshC1Gw3XEpHBbBw6BQ@mail.gmail.com>
+Subject: Re: [RFC 1/1] rwsem: Shrink rwsem by one pointer
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>, 
+	linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, 
+	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.36 / 15.00];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=3696efcd0f17d527];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[linux-foundation.org:s=google];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
-	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77396-lists,linux-fsdevel=lfdr.de,d09c0eed6e4176ba5c86];
-	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_CC(0.00)[infradead.org,redhat.com,kernel.org,gmail.com,vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-77397-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	TO_DN_NONE(0.00)[];
+	DMARC_NA(0.00)[linux-foundation.org];
+	DKIM_TRACE(0.00)[linux-foundation.org:+];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[torvalds@linux-foundation.org,linux-fsdevel@vger.kernel.org];
+	MISSING_XM_UA(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	R_DKIM_NA(0.00)[];
-	REDIRECTOR_URL(0.00)[goo.gl];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,googlegroups.com:email,goo.gl:url,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,storage.googleapis.com:url]
-X-Rspamd-Queue-Id: 4ADC614FBA2
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,linux-foundation.org:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,infradead.org:email]
+X-Rspamd-Queue-Id: C97B514FF7C
 X-Rspamd-Action: no action
 
-Hello,
+On Tue, 17 Feb 2026 at 11:08, Matthew Wilcox (Oracle)
+<willy@infradead.org> wrote:
+>
+> Instead of embedding a list_head in struct rw_semaphore, store a pointer
+> to the first waiter.  The list of waiters remains a doubly linked list
+> so we can efficiently add to the tail of the list, remove from the front
+> (or middle) of the list.
+>
+> Some of the list manipulation becomes more complicated, but it's a
+> reasonable tradeoff on the slow paths to shrink some core data structures
+> like struct inode.
 
-syzbot found the following issue on:
+I like this, but I have to say that I dislike how rwsem_add_waiter()
+in particular ends up looking.
 
-HEAD commit:    fe9e3edb6a21 Add linux-next specific files for 20260217
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=153fb652580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3696efcd0f17d527
-dashboard link: https://syzkaller.appspot.com/bug?extid=d09c0eed6e4176ba5c86
-compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1267095a580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17036ffa580000
+Not because it's horrible on its own, but when you look at the
+call-sites, that function ends up being entirely pointless.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3a3b845d3361/disk-fe9e3edb.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/efa525980a65/vmlinux-fe9e3edb.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5bf9ea774626/bzImage-fe9e3edb.xz
+It does two things:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d09c0eed6e4176ba5c86@syzkaller.appspotmail.com
+ - it asserts that the wait_lock is held
 
-------------[ cut here ]------------
-old_ns_root->mnt_id_unique != 1
-WARNING: fs/namespace.c:3112 at create_new_namespace fs/namespace.c:3112 [inline], CPU#0: syz.0.17/6017
-WARNING: fs/namespace.c:3112 at open_new_namespace fs/namespace.c:3172 [inline], CPU#0: syz.0.17/6017
-WARNING: fs/namespace.c:3112 at vfs_open_tree+0xf35/0xfb0 fs/namespace.c:3221, CPU#0: syz.0.17/6017
-Modules linked in:
-CPU: 0 UID: 0 PID: 6017 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2026
-RIP: 0010:create_new_namespace fs/namespace.c:3112 [inline]
-RIP: 0010:open_new_namespace fs/namespace.c:3172 [inline]
-RIP: 0010:vfs_open_tree+0xf35/0xfb0 fs/namespace.c:3221
-Code: 39 78 ff 49 bf 00 00 00 00 00 fc ff df e9 1e fb ff ff e8 9e 39 78 ff 4d 63 ee 4c 8b 64 24 08 e9 64 ff ff ff e8 8c 39 78 ff 90 <0f> 0b 90 e9 d1 f5 ff ff e8 7e 39 78 ff 90 0f 0b 90 e9 18 f6 ff ff
-RSP: 0018:ffffc90004237d80 EFLAGS: 00010293
-RAX: ffffffff824db904 RBX: 00000000800002b1 RCX: ffff888031f41e40
-RDX: 0000000000000000 RSI: 00000000800002b1 RDI: 0000000000000001
-RBP: ffffc90004237eb0 R08: ffffffff8e7fa2eb R09: 1ffffffff1cff45d
-R10: dffffc0000000000 R11: fffffbfff1cff45e R12: ffff88807cae1340
-R13: 0000000000009902 R14: ffff888033097100 R15: dffffc0000000000
-FS:  000055559209d500(0000) GS:ffff888124fff000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f7055417dac CR3: 000000002e056000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- __do_sys_open_tree fs/namespace.c:3231 [inline]
- __se_sys_open_tree fs/namespace.c:3229 [inline]
- __x64_sys_open_tree+0x96/0x110 fs/namespace.c:3229
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f705519c629
-Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff9b19c798 EFLAGS: 00000246 ORIG_RAX: 00000000000001ac
-RAX: ffffffffffffffda RBX: 00007f7055415fa0 RCX: 00007f705519c629
-RDX: 0000000000009902 RSI: 0000200000000640 RDI: ffffffffffffff9c
-RBP: 00007f7055232b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f7055415fac R14: 00007f7055415fa0 R15: 00007f7055415fa0
- </TASK>
+ - it now checks whether the new waiter is the first one and does two
+different things depending on that
 
+And lookie here: there are exactly two call sites, and both of them
+are immediately preceded by a
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+        raw_spin_lock_irq(&sem->wait_lock);
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+and one of them then goes on to check whether there are no waiters
+before it calls rwsem_add_waiter().
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+And the other? Immediately *after* the call, it does
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+        /* we're now waiting on the lock */
+        if (rwsem_first_waiter(sem) != &waiter) {
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+so that other call-site *ALSO* basically ends up having special code
+for "am I the first writer"?
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Put another way: this helper function seems all kinds of pointless and
+it got worse in this iteration, because the pointlessness is now in
+some of that added complexity.
 
-If you want to undo deduplication, reply with:
-#syz undup
+So considering that there iareonly two callers. and both of them
+*already* fundamentally know about this whole "first waiter is
+special" situation, that helper is actually the opposite of a helper.
+It's actually hiding what is going on, and just making code generation
+worse.
+
+If we want helper functions, can we please just make them be
+"add_first_waiter()" and "add_to_waiter_list()", and make them
+actually be what the callers need and want?
+
+Somewhat similarly, I also reacted to this part:
+
+    -#define rwsem_first_waiter(sem) \
+    -       list_first_entry(&sem->wait_list, struct rwsem_waiter, list)
+    +#define rwsem_first_waiter(sem)        sem->first_waiter
+
+that rwsem_first_waiter() macro used to make sense as a syntactic
+helper function. But now it really doesn't. It is literally more
+typing and *less* legible than just accessing that new
+"sem->first_waiter" field.
+
+In other words, I like the direction you're taking, and I think the
+code already is set up to have that whole "first waiter" thing that
+your patch just makes much more explicit and obvious. That all argues
+that yes, having a "first waiter" pointer instead of a "struct
+list_head" is a good change.
+
+But I think some of those existing helpers were because we did *not*
+use to do it that better way, and they were designed for the old world
+order, and they no longer make any sense with your changes.
+
+Hmm?
+
+               Linus
 
