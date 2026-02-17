@@ -1,180 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-77375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id qAK+HqeZlGkoFwIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 17:39:03 +0100
+	id sDAqDhmalGkoFwIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 17:40:57 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1867F14E504
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 17:39:03 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A417514E573
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 17:40:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 18A933012521
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 16:39:02 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id F1A773031AD0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Feb 2026 16:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02172361DAE;
-	Tue, 17 Feb 2026 16:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D3836E47F;
+	Tue, 17 Feb 2026 16:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="AotzhMwj"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="FAjf5uQx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2951335BC0
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 16:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8869036F408
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 16:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.177
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771346338; cv=pass; b=spseO5UyCnGl6hCZaIPZx+J16nDJQ0T3xltMvo5DQPMy1WLMqIfaKUBbqgJ/BDvzyrNvAs9TJdrNAJgU8ESMxMebICOV/4lFQEc97daceJfEzj8rgD+VZB1tIu+P4DJnXNKlwZ2qHVhd8ftHrFlp7j/EMWSjpazDhCf68NwbBjw=
+	t=1771346397; cv=pass; b=OvxQiqzxHY7VaGaTiTPVsPqiF0oQO8XWROnhzhlx3HfNF7lZQ3z6mAulcBCCRRN7HEmD5FtncKneBxxtj4TAQHIc3u/54yM/BR2q0t8r1vAaqFChmzxgzz/+X4vAVYCeR13Ob/t4SoPxOhX7UhpTZKA798dxcusToOVsga59g+A=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771346338; c=relaxed/simple;
-	bh=pueFV7HOmTlAMLWa6283FfSZgreS6HqjRbkpeZmf0Yc=;
+	s=arc-20240116; t=1771346397; c=relaxed/simple;
+	bh=mhFlo0RTzhPOUkDZzsQsqt965UTKi2HyH+KdNyyHrvI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TAjxheZKv0wxeO+tk6vcvzFMRZnwuaGNyBM3nRS27NLkshd7AIh//L5vGzNmgvZloOqHP5YuSwNoO9iqtCmXr6PbjMdo7qyW8pC8YO9h8FnimDg1ZF7Q8/mlGLYKxqjbZFS5XRt/rGuriOZurLtSeaGku5VcvLSSYswWNquu+Ps=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=AotzhMwj; arc=pass smtp.client-ip=209.85.160.170
+	 To:Cc:Content-Type; b=kzsz+mcBsuEWdlyEsSs06PQ8W/DcZ6xGqsC4oJCbdREe4frQaWrFxszyRTf3cnTzYYhbn5XLpZG6wRG8DRC42hYivl2LPkzktlDcJ+l8kLAMP/K1YQbePku6/wpYfAWxUqjM70mvb6JNBgR31978LUxwcsmM2nEhudcwTmmOovc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=FAjf5uQx; arc=pass smtp.client-ip=209.85.160.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-506a747448dso34537051cf.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 08:38:55 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771346335; cv=none;
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-506c00df428so25285521cf.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 08:39:54 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771346393; cv=none;
         d=google.com; s=arc-20240605;
-        b=UrwoYKh6myws5OiBestLJyiSCopHvqju7WPglh5n+6eu26m4vLnH7dmusbCjzUhMrn
-         mFv06YrFVyJKpsicrwBfQ9LLRzTfIqflapB4mHA20y2Y/LFNs+0IgO1CBC5GCqDCegfM
-         JSZRwqnT02xU+DLK5dZn7rlhklk+8GFXUbXs06xYoRNreaZ9UVPPFZdpGBw1qxnGvP2N
-         Lv6Y7NGQCjHdvBNMXXYoc0UaJuRj7hthYd0ZmKx+mgjdO42GY1J17IZG9EBqL8QYbAVa
-         CXaD2OqPI8CACZqk2F1MfurjpCmOwMiJ6i9kb61CSLpJL16EdcDwOrilQ42DSui5qhnA
-         hOpA==
+        b=BjSH4N8RUdVX9f7NN/ePxgeQcGE1A7DgW9geEGDFZ7QDKJK8GDZEWyvFwhnq0uh46J
+         bDM8rBh1S9yia+L78fxpuyLb2hYv0MjuNI0sNYxrkHvxiqFeOEdJxMBP7yvayna4jE/S
+         F/M5F0lUOY1dodsodkbhMKC0bmmKBgjsQ8ujWxSvAo7SYwkNZG3gUg9Z/Ow/tQyOq8Uu
+         bbiM7eeoelEFjzRtzFooiNFfscwpF6YkIIiD0JTGNWWYgwyhPU7aAXMlnvntnzbzdXWz
+         /3yJGBqwjPGF7mG53OhhwI95shcMLqsd/x/ERFY18mCJL1msc8CJbi5fb6Athtki1gDq
+         YM2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=qIgSLJPLCnCn47nlm5eRqhg9b97oTgZRqUoe0QTgjvA=;
-        fh=n6n8trHKuZXhaWTfCZuuw77InGw7tC0e7c4fetpr6q0=;
-        b=QAgcv2Weu85GaXNBciv8m12e6GpgFcGYSFF5fiCsTDpTD9kV19cT/vlXk8IF8OUN71
-         /gyuCNSX80v2t3w/8mNcFqM0nJYKS+AKqM3cZ3fI0xGdjehorycFuhLYqlnOtRwpJpKp
-         TJp8Hx5GyBn+vR9blYdqE7YSchixq/ml9QOWeJXb2+fBeVRejQmBZpLsxKojHkXQXJFl
-         TlS5aM1ex4AQv8xhuRVMr2x9zZFsYXI9/HbHloolYrmhlauQGkpyJYEvRUnyucM+pSmO
-         mmdTHEpwBIMpm8S4atnQdarYE66fhaWAEtZhkpejJ94IokYtVe+RKzRac3eCd0UkuZk5
-         4vlA==;
+        bh=mhFlo0RTzhPOUkDZzsQsqt965UTKi2HyH+KdNyyHrvI=;
+        fh=oooYcGAmbKuLFqhGnTOqZuM8aqgAkfyU3N1EDJEr3qg=;
+        b=RlPJiPU93v77bQlVOc7mdlk4E0ypP89B2NofSPkcxo2UeSormwpFfKwHZan3LAqlId
+         g3eYYzcttVyhAZ2O/CEOWR28Verey4zUmCYOl1Tp4fIrV6GawzOmSBc8c18YNjf1Q7ZL
+         dTH2L+BE43iCq804Z14Xq1BMfY8h9ytW3C7rd7I5Qwp5d91085Xy5EiuKmpNFpHsvPy0
+         zggRRPWEKjnFv2+G0rn3v/Xh3Wduc2kk/YZAnn9KleXXIJWyv4msHPfY3KgyfsPatVnZ
+         GLYnBDA/1TVAon/6iMRVqCQRFQzsSbmO6D2ye7EJc5tUCkorlecLBrqQ/Tdu0VfmIOtA
+         hvAQ==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1771346334; x=1771951134; darn=vger.kernel.org;
+        d=szeredi.hu; s=google; t=1771346393; x=1771951193; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qIgSLJPLCnCn47nlm5eRqhg9b97oTgZRqUoe0QTgjvA=;
-        b=AotzhMwjLZ5wEn8/+2EOglDgHflXoLSBKnxsrZ/XIhD4Yt015HXaatf81objC2ljBQ
-         Bs1wBZOovgruDxCCkVIaje3U+43Ww7lkXGJm1At0cnkFFPBbtGc5Ex+aqQeJcsNSCmsT
-         oCR96BfbdF17Yl2AMcYXUzgXStQRcEkyBmBmw=
+        bh=mhFlo0RTzhPOUkDZzsQsqt965UTKi2HyH+KdNyyHrvI=;
+        b=FAjf5uQx9tpS0aaZJjDQ02d8SFGR6z0UnHHT0VQWik2LxgKJr57qeaWuthdla4HsG4
+         HsIYO9tvpKaCPq25UUvy4h+d4ajEnkEL2eQLtmDFJBXXkgWaSHDbJHiTNCrsjpGxZHQ4
+         OkGy1e5Zh3xTZoqrwkQ9RhXbpl9a5G1w6YExE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771346334; x=1771951134;
+        d=1e100.net; s=20230601; t=1771346393; x=1771951193;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qIgSLJPLCnCn47nlm5eRqhg9b97oTgZRqUoe0QTgjvA=;
-        b=Ce+IY9o1Whu+PkDGfFwkEIcLiFOwI2SgRjTAIYpRs3spoXR0rVurt0VgWjjCdE3gAm
-         VEXDIytaN09EBBpPK0TN9PXhMFDd3lWJORs/1VXkb2sCTvLWCgMX3mlKVv9DHZvlcn2w
-         P+BEWLDV4EVLrmZvLbdERSQFRTZGp27POq870n4bwpXcUDkd7gMwUvw4lI6mfpKW3Y23
-         ZLif6WdNiDGRCt+eBzmp+vFKjI2Bo+Fi5l332N31wnGEAB0J1zYTHXFakFiGrs5A2fBj
-         wy4cZq/joyASKyq2aYtwlXDcTM3RCPBwkuLgk2RRZfswQNqGwwbcbHsLeHrB760/yq9M
-         X20w==
-X-Gm-Message-State: AOJu0YyT6zx14OAyip1ZU7lbcrapc2Ong0c7ABfGizYxhbt9QG/G3dFs
-	4sGEWpefFMpiYbeYOpbCD663wayezI2IMqmSJIttSIzJXpMjkvnUM2SFp+b3bhrK5NNYLKc3/gx
-	BLrxBn3OBn10GFAPDV5yJn/nhzeAq8Glf4bb31IhvCtDAJJAU8+R2
-X-Gm-Gg: AZuq6aK4RpRJ+fRAm+t+KkwGJT5FZWbP0STFJIoL83oDy0UOJh5WKRa/LoN2mMb6Jra
-	Sd5DIGkj6mXlty9SGw044/1HgFlCKFTTWY3R3z1uy9OXBsWfv3K3zM6NteHsO9oyQwjO5//3D5a
-	4Y77xMMnZjl6DvDXWCFn1tW9iyRnzmih8/BVDlwjJPhTQIUGwHHp+byArspgIRmlqAItforF85/
-	kYjN8dCSO3fxpQSA8A9Tk6tYU3oY2k2cm8xeDQ11Y5pIwh6aObZKxpnoMjLjLEgqEs7kKdmt4Jd
-	HL+yMI4=
-X-Received: by 2002:ac8:5a8a:0:b0:4f0:2afc:3b80 with SMTP id
- d75a77b69052e-506b4012c27mr164107911cf.56.1771346334529; Tue, 17 Feb 2026
- 08:38:54 -0800 (PST)
+        bh=mhFlo0RTzhPOUkDZzsQsqt965UTKi2HyH+KdNyyHrvI=;
+        b=fvG6J/d9RABTR1H1X7zeJfTbKyPkQWWZ1qnWxiZvu2EqAF9J5dgE8BbZTqS1hImLdb
+         cuHhHt4BAasfZySZcRRHR1fs/I/Do73MfSFmxhxhAwyD7hAFAA6OhPr+SoqQMwMEub4Z
+         i03eoidmcMGuKglGnqvnR2KUDYgXZOM17oIzGFPilYJrDxDGAzKb03Nn9VqI0fZ4+Dmz
+         v5P95THPP11auJcKhRlDn/iIDzzrngb3TTAMFmpVtQOWHXKly20CH9ChKlj13bJ45FzJ
+         MmN1mWN+4F3SWMlYDjkMNRmKXMBr4noUofSgruq4lGXADhIOqZ3oA4R6vzluUaoFOIBL
+         KShA==
+X-Forwarded-Encrypted: i=1; AJvYcCVXbV6AuT2gga2whAjGfxKia/3RLF2dbtFJz5i2AngHfmBJhT+pWOLtQHmNIGMnnjwYkN8tjl7XLq8f+esq@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbbCTyCDcuMWh9GnMDB6GwUimYIDOihFd5tMmyu/I9C689R4YE
+	F8sz5R4Lxh2XDTaDPi+s6VHSfatWSrFNxrDu4+rdf8z/mtVNHYZOcu/b6WDKxDqwIxI57zSh6cO
+	9OhzBQoO8AJtYJOt3cniwwX2Eio1UnrhPGFwATxwPyQ==
+X-Gm-Gg: AZuq6aIPfuKbqlRN1Ht+MG+YKA8a6zsewCUoauiqtIJbt3W0VJSVWPBjtpsrKMNqEdG
+	8IagPdSwRJ0oaflF1YV0o2+vJplKHWtk030u05u1+bFYthcf5Vsbfz8se8rctkPgP599SOxJjW4
+	M4wjd/v0ngGq+virLAMoFqv9YoJfg9swNJNSJhnbiUf5PDG3+8+lNhendZnPnCdF0uhweFDB3Fz
+	th5+7bnZElxguMX2jKChowq6+3I7rjA4I05eztw5bbV1uNbf7frFWn1+ycZJkuxwSdbepbawZ6s
+	qQ2Trao=
+X-Received: by 2002:a05:622a:1483:b0:4ee:146f:2502 with SMTP id
+ d75a77b69052e-506a82a4d8cmr174569751cf.25.1771346393387; Tue, 17 Feb 2026
+ 08:39:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260118232411.536710-1-slp@redhat.com>
-In-Reply-To: <20260118232411.536710-1-slp@redhat.com>
+References: <20260216073158.75151-1-ytohnuki@amazon.com>
+In-Reply-To: <20260216073158.75151-1-ytohnuki@amazon.com>
 From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 17 Feb 2026 17:38:43 +0100
-X-Gm-Features: AaiRm53G7WAljHceOoQSUTIXzMhIcBywyAm51p1qCztu60cbOvA3mnF1eYfkKGQ
-Message-ID: <CAJfpegusbxUN=EydA74Kp-GATYLziFUMmC9aTr80Q5B1AEd4AQ@mail.gmail.com>
-Subject: Re: [PATCH] fuse: mark DAX inode releases as blocking
-To: Sergio Lopez <slp@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>
+Date: Tue, 17 Feb 2026 17:39:41 +0100
+X-Gm-Features: AaiRm50ZJQWukD4STFELd-seNULmcITyjXX8VmFAZxxkRzbE7k8jrX2FOuh4BkQ
+Message-ID: <CAJfpegtN2ufQQcPh1G6zzZzXF-PRcp942pE3Oxmqfo_5GVey5g@mail.gmail.com>
+Subject: Re: [PATCH] virtiofs: add FUSE protocol validation
+To: Yuto Ohnuki <ytohnuki@amazon.com>
+Cc: German Maglione <gmaglione@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
 	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
 	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
 	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
 	RCVD_COUNT_THREE(0.00)[4];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,mail.gmail.com:mid];
-	RCVD_TLS_LAST(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	PRECEDENCE_BULK(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77375-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77376-lists,linux-fsdevel=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,mail.gmail.com:mid];
+	RCVD_TLS_LAST(0.00)[];
 	DKIM_TRACE(0.00)[szeredi.hu:+]
-X-Rspamd-Queue-Id: 1867F14E504
+X-Rspamd-Queue-Id: A417514E573
 X-Rspamd-Action: no action
 
-On Mon, 26 Jan 2026 at 17:29, Sergio Lopez <slp@redhat.com> wrote:
+On Mon, 16 Feb 2026 at 08:32, Yuto Ohnuki <ytohnuki@amazon.com> wrote:
 >
-> Commit 26e5c67deb2e ("fuse: fix livelock in synchronous file put from
-> fuseblk workers") made fputs on closing files always asynchronous.
+> Add virtio_fs_verify_response() to validate that the server properly
+> follows the FUSE protocol by checking:
 >
-> As cleaning up DAX inodes may require issuing a number of synchronous
-> request for releasing the mappings, completing the release request from
-> the worker thread may lead to it hanging like this:
+> - Response length is at least sizeof(struct fuse_out_header).
+> - oh.len matches the actual response length.
+> - oh.unique matches the request's unique identifier.
 >
-> [   21.386751] Workqueue: events virtio_fs_requests_done_work
-> [   21.386769] Call trace:
-> [   21.386770]  __switch_to+0xe4/0x140
-> [   21.386780]  __schedule+0x294/0x72c
-> [   21.386787]  schedule+0x24/0x90
-> [   21.386794]  request_wait_answer+0x184/0x298
-> [   21.386799]  __fuse_simple_request+0x1f4/0x320
-> [   21.386805]  fuse_send_removemapping+0x80/0xa0
-> [   21.386810]  dmap_removemapping_list+0xac/0xfc
-> [   21.386814]  inode_reclaim_dmap_range.constprop.0+0xd0/0x204
-> [   21.386820]  fuse_dax_inode_cleanup+0x28/0x5c
-> [   21.386825]  fuse_evict_inode+0x120/0x190
-> [   21.386834]  evict+0x188/0x320
-> [   21.386847]  iput_final+0xb0/0x20c
-> [   21.386854]  iput+0xa0/0xbc
-> [   21.386862]  fuse_release_end+0x18/0x2c
-> [   21.386868]  fuse_request_end+0x9c/0x2c0
-> [   21.386872]  virtio_fs_request_complete+0x150/0x384
-> [   21.386879]  virtio_fs_requests_done_work+0x18c/0x37c
-> [   21.386885]  process_one_work+0x15c/0x2e8
-> [   21.386891]  worker_thread+0x278/0x480
-> [   21.386898]  kthread+0xd0/0xdc
-> [   21.386902]  ret_from_fork+0x10/0x20
+> On validation failure, set error to -EIO and normalize oh.len to prevent
+> underflow in copy_args_from_argbuf().
 >
-> Here, the virtio-fs worker_thread is waiting on request_wait_answer()
-> for a reply from the virtio-fs server that is already in the virtqueue
-> but will never be processed since it's that same worker thread the one
-> in charge of consuming the elements from the virtqueue.
+> Addresses the TODO comment in virtio_fs_request_complete().
 >
-> To address this issue, when relesing a DAX inode mark the operation as
-> potentially blocking. Doing this will ensure these release requests are
-> processed on a different worker thread.
->
-> Signed-off-by: Sergio Lopez <slp@redhat.com>
+> Signed-off-by: Yuto Ohnuki <ytohnuki@amazon.com>
 
 Applied, thanks.
 
