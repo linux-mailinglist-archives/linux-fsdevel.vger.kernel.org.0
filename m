@@ -1,145 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-77573-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77575-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KOdcB8K+lWkfUgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77573-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 14:29:38 +0100
+	id aGsvOTG/lWkfUgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77575-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 14:31:29 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E9A9156A68
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 14:29:37 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FD2D156AE3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 14:31:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0F164301BF6D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 13:29:29 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id F21AB3014A2E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 13:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8582D73BD;
-	Wed, 18 Feb 2026 13:29:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19070327209;
+	Wed, 18 Feb 2026 13:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="NXAsZZ6d"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6BF2D0600
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 13:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009D03271E0
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 13:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771421367; cv=none; b=FUkA/ul26CKTmwbMvemWuTRD2LhuRCdhYXQ/lKx0JDpMYk2nqvBaFJQeSonSGWAlDTiLclAzJ7q8ugsHCdxGSC79q2Zwxa+a0ZF6AtvmLV72pP/gih9Q0D87UZNGFgGAx13wp318qxoofYF4NfmqIOW8KnpSEDbSGQelXC9X5bU=
+	t=1771421432; cv=none; b=WXLjw+4YD0XHenyW8qTtRkwv3L9jKZc/cuPmyE6N+6jhSbUHPpK4231feb/4SbjBdXfvUyJP25Vxd8Fc+P0UW80SVuLXeLoayKDiTgPeflmCddQA9e84pLLi6vOrtm1d3bTB//kNL84gAteyl5dTAII/jQp1kgXVxqMzwtHsKgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771421367; c=relaxed/simple;
-	bh=s/XMvdTBdPd1f+58sWF7/9G1CtnmywoXRvwCmobe9yY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DWLY5XCVMBxFEj4rwofji/e8da+wyls2kiD0EfJbxEC93XYpAatVe9BNhxpCxum6mBdgzDQeH2OOLqXPuX4Y696rgzsqU4l2InC0/EUFVt6v9jv9IdrJpQKJrfC1XJ7UK04CsaYBWtiZoB+jwqS6zMlt6p84hVggJAAJoJr581g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 61IDSrbU097444;
-	Wed, 18 Feb 2026 22:28:53 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	s=arc-20240116; t=1771421432; c=relaxed/simple;
+	bh=BUcbqGXHuR1KNA7AOVUKexsQGN8FVHG6OgIdvHbwxhA=;
+	h=Date:From:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I5uNenomDnua72JKh+FtFKjphiC+xbvJ/O0kZAf7DflHs4CgaVmGaFYy/xNDcicFKQ+lmi8EPzf4OK7SxNEsLvtv72JP/94EDJy8Re+R5VYhIyeR1z0Ybcc0ZqGVBBtamzLTkgXnCwhFIxMSkZRon/tTPuNyICE5Jh4pFsd+aqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=NXAsZZ6d; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from macsyma.thunk.org (pool-173-48-113-47.bstnma.fios.verizon.net [173.48.113.47])
 	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 61IDSrER097441
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 18 Feb 2026 22:28:53 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <ade617e7-553d-477a-95e7-aa1598b6a8c9@I-love.SAKURA.ne.jp>
-Date: Wed, 18 Feb 2026 22:28:50 +0900
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 61IDTtYH018341
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 18 Feb 2026 08:29:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1771421397; bh=ttRrWrhPrzLzmBLq8cse1fRC/Cd5ZBOuRs3LOAaPw2g=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=NXAsZZ6dfomZQDhQDoXUYVVnsdoELU1CMDZkwfnRjcDsXbYipDX9bUREA/wiAhhMw
+	 UO8G3+ipWoUbqG9v7pz9RwNVOXmUYTIKGlzLxcNnJfjLHKEsnlCIjMxjroY5W+0Ual
+	 jzrDv7Gkqc83fMCglCLkDerIiLxaAir0a+1AQo2cRVMkebTR48nTuUniaqGj6vgXIG
+	 YP88DgunCIw/z3B4nXCwyjOVmsq4byEd/tAEiorBiSQl7AdModYKnnNmN6UcppC8X6
+	 xrVVCqf1y7R/wCs08VKsz6lNE4xhgnJBeoteMrm5t86MDluBjZ9CovO/eDZkPxbN3/
+	 LP+0K9CBPef1g==
+Received: by macsyma.thunk.org (Postfix, from userid 15806)
+	id 1A8CA58FE818; Wed, 18 Feb 2026 08:29:55 -0500 (EST)
+Date: Wed, 18 Feb 2026 08:29:54 -0500
+From: "Theodore Tso" <tytso@mit.edu>
+Cc: Jann Horn <jannh@google.com>, Christian Brauner <brauner@kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC v3 2/4] pidfd: add CLONE_PIDFD_AUTOKILL
+Message-ID: <20260218132954.GA45984@macsyma-wired.lan>
+References: <20260217-work-pidfs-autoreap-v3-0-33a403c20111@kernel.org>
+ <20260217-work-pidfs-autoreap-v3-2-33a403c20111@kernel.org>
+ <CAHk-=wj80zwxy=5jp5SAi64cqCZgRjY1cRokVuDPd9_t3XMvUw@mail.gmail.com>
+ <CAG48ez2YiL7RZ1fm9vwOCDGr9OsDrCHrCmkyRRoGRMWUZjyyBg@mail.gmail.com>
+ <CAHk-=wiPJfnTVq6vUF8K8kF0FfrY2svAqSwsL8xLEV76pVyEkg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v6] hfs: update sanity check of the root record
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: George Anthony Vernon <contact@gvernon.com>,
-        Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "slava@dubeyko.com" <slava@dubeyko.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <d2b28f73-49c8-4e30-9913-01702da4dfe4@I-love.SAKURA.ne.jp>
- <20251104014738.131872-3-contact@gvernon.com>
- <df9ed36b-ec8a-45e6-bff2-33a97ad3162c@I-love.SAKURA.ne.jp>
- <a31336352b94595c3b927d7d0ba40e4273052918.camel@ibm.com>
- <aSTuaUFnXzoQeIpv@Bertha>
- <43eb85b9-4112-488b-8ea0-084a5592d03c@I-love.SAKURA.ne.jp>
- <75fd5e4a-65af-48b1-a739-c9eb04bc72c5@I-love.SAKURA.ne.jp>
- <d1e3e3f6-e0c4-4e70-8759-c8aa273cbe37@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-In-Reply-To: <d1e3e3f6-e0c4-4e70-8759-c8aa273cbe37@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav404.rs.sakura.ne.jp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiPJfnTVq6vUF8K8kF0FfrY2svAqSwsL8xLEV76pVyEkg@mail.gmail.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.46 / 15.00];
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	MISSING_TO(2.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	DMARC_POLICY_ALLOW(-0.50)[mit.edu,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_DKIM_ALLOW(-0.20)[mit.edu:s=outgoing];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77573-lists,linux-fsdevel=lfdr.de];
-	DMARC_NA(0.00)[i-love.sakura.ne.jp];
+	TAGGED_FROM(0.00)[bounces-77575-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[mit.edu:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	MISSING_XM_UA(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[penguin-kernel@I-love.SAKURA.ne.jp,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[tytso@mit.edu,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
-	MID_RHS_MATCH_FROM(0.00)[];
-	R_DKIM_NA(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,appspotmail.com:email,syzkaller.appspot.com:url]
-X-Rspamd-Queue-Id: 6E9A9156A68
+	RCPT_COUNT_SEVEN(0.00)[7];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 0FD2D156AE3
 X-Rspamd-Action: no action
 
-syzbot is reporting that BUG() in hfs_write_inode() fires
-when the inode number of the record retrieved as a result of
-hfs_cat_find_brec(HFS_ROOT_CNID) is not HFS_ROOT_CNID, for
-commit b905bafdea21 ("hfs: Sanity check the root record") checked
-the record size and the record type but did not check the inode number.
+On Tue, Feb 17, 2026 at 03:44:52PM -0800, Linus Torvalds wrote:
+> On Tue, 17 Feb 2026 at 15:38, Jann Horn <jannh@google.com> wrote:
+> >
+> > You can already send SIGHUP to such binaries through things like job
+> > control, right?
+> 
+> But at least those can be blocked, and people can disassociate
+> themselves from a tty if they care etc.
 
-Reported-by: syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
-Viacheslav Dubeyko and George Anthony Vernon are trying to fix this problem
-in hfs_read_inode(), but no new patch is proposed for three months
-( https://lkml.kernel.org/r/20251104014738.131872-3-contact@gvernon.com ) .
-This problem is "one of top crashers which is wasting syzbot resources" and
-"a very low-hanging fruit which can be trivially avoided". I already tested
-this patch using linux-next tree for two weeks, and syzbot did not find
-problems. Therefore, while what they would propose might partially overwrap
-with my proposal, let's make it possible to utilize syzbot resources for
-finding other bugs.
+Does CLONE_PIDFD_AUTOKILL need to send a SIGKILL?  Could it be
+something that could be trapped/blocked, like SIGHUP or SIGTERM?  Or
+maybe we could do the SIGHUP, wait 30 seconds (+/- a random delay), if
+it hasn't exited, send SIGTERM, wait another 30 seconds (+/- a random
+delay) if it hasn't exited send a SIGKILL.  That's still a change in
+the security model, but it's less likely to cause problems if the goal
+is to try to catch a setuid program while it is in the middle of
+editing some critical file such as /etc/sudo.conf or /etc/passwd or
+some such.
 
- fs/hfs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I bet we'll still see some zero days coming out of this, but we can at
+least mitigate likelihood of security breach.
 
-diff --git a/fs/hfs/super.c b/fs/hfs/super.c
-index 97546d6b41f4..c283fc9c5e88 100644
---- a/fs/hfs/super.c
-+++ b/fs/hfs/super.c
-@@ -361,7 +361,7 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 			goto bail_hfs_find;
- 		}
- 		hfs_bnode_read(fd.bnode, &rec, fd.entryoffset, fd.entrylength);
--		if (rec.type != HFS_CDR_DIR)
-+		if (rec.type != HFS_CDR_DIR || rec.dir.DirID != cpu_to_be32(HFS_ROOT_CNID))
- 			res = -EIO;
- 	}
- 	if (res)
--- 
-2.53.0
-
-
+							- Ted
+							
 
