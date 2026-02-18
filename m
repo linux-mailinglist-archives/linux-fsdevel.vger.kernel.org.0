@@ -1,199 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-77550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id kF9sA2mKlWnqSAIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 10:46:17 +0100
+	id 9xyALjWLlWlKSQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 10:49:41 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FEFC154D81
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 10:46:16 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A0CB154E15
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 10:49:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C725B301111D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 09:46:10 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id B140530292D1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 09:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0442F318EC8;
-	Wed, 18 Feb 2026 09:46:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CD433D6D7;
+	Wed, 18 Feb 2026 09:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b8Rz7/99";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="EMjHM2mZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r4aCgn59"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74ACA33A705
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 09:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C534B26B777;
+	Wed, 18 Feb 2026 09:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771407969; cv=none; b=OI42PMzEGpfZIHiClgdxdZB1qQWeEYf9AKGA/RSEF5Rlo8Zlez4Kf/EsRMxX57AgINL3ANPcCLPpbSAjC/PGoGFP34IDaX9Xp4T3lZBXoXbmhtNe5K2Aki74HpajGc3aTEl6tNDBjOY3XC8GnVDp4+zuc1cHVSlBecKjz1sA1vE=
+	t=1771408173; cv=none; b=ZlGRBgfErf2Gn8EQbLmKGI0IDRSjGT7z+w/jtZidgpQ4fGcbEgOU+fq+d7OIkCTKm+NCC+NdVcL05HLHzHdKp+QhJpB3O8ED9yFQPx+pSaXsDVZ0nmYoY/ag2iROqCjG3xs48o4Go+q+QpA2xIJeZ9DYhYzMvxDGoWxh7LnwiJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771407969; c=relaxed/simple;
-	bh=+/zonLHVCNiYpF3F1mGEWfBegPViwa5HxidFiTwykE0=;
+	s=arc-20240116; t=1771408173; c=relaxed/simple;
+	bh=y/LC06NZ7wcIvCV01Lkgdatb5fKdK8DygTTS1T4W/io=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a1Yap991lFMwNyPEtJkzoeMXy0at104QM9SFqTO0Tqi20vwFR1/4rA8LFbpIchOVmHsKnajig+GzapNrgGWuBHKhZZl/ElQc5cBVSgsdTKcSbg4tQd+LV0tYt54V6iVy+wGTklY1INSGY89Lb3H0pVhWBRbMOrM1t7Uj/IN+Lms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b8Rz7/99; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=EMjHM2mZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1771407967;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RyJBX+PISSbPZLtLewMjCIqsH1uiQW06yqBd1F+fu9Q=;
-	b=b8Rz7/99/k8NSLyn6gIhNMqdyo48jGtwFqkNaAAxcAR/cKIeCI8nmnZ5eDcgTlqV1LNFph
-	m48PmmGsgf+o1PK6ZKt5Gv8Ll69hJxQJHcB2Ns2tCAofH1cqqvVfLBAfhsnV2epfvTcnjX
-	KT+vo42ySDM9yqe+dphKMTLTS4NXnwY=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-395-1t74msZENmGto65lvB5L-g-1; Wed, 18 Feb 2026 04:46:06 -0500
-X-MC-Unique: 1t74msZENmGto65lvB5L-g-1
-X-Mimecast-MFC-AGG-ID: 1t74msZENmGto65lvB5L-g_1771407965
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-436267b01c4so4473527f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 01:46:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1771407965; x=1772012765; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RyJBX+PISSbPZLtLewMjCIqsH1uiQW06yqBd1F+fu9Q=;
-        b=EMjHM2mZwQcFbUSpg6ErZ5H5HeecLNZBe+PM24XrTLhuWbO1Jo55TAXC+IRhRTo37r
-         Xiod882IG8vbN4JcWlb5fhC7o2AWiNW6bTrMhWt66wsxMSGw7TDU/4l3VOJJUqVBvfg1
-         bit5d1ler/sFnhu7uin6FTB6N0Oj8RkzRo7vo/2e9CGT/inzi3Ob/97qtb/HdPrIOQUo
-         EpLSW7b4ruueE0eA7KFBrrUY9TVaaCkb97le+oxpJ5ko2qJV2cjKIJ2c1dFIzbYe4Aof
-         VGsTUveRvBSYwBT3hgaqNZIh+qzovf/RvRFYfAH8kXq5wDxw8YEIBWvpmRQS2E9tpGkQ
-         Gkng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771407965; x=1772012765;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RyJBX+PISSbPZLtLewMjCIqsH1uiQW06yqBd1F+fu9Q=;
-        b=wlaQ2qBaX3+yB4Z8eNMr0C/HSbz38cc0XMIdt1eDmkNnzAfxeNuvk0c1wQOtRd26XX
-         oFvDmuQmoa2x3mZfVoLoSK9GT/W+YcF9R2YC3WXeDlf2JSZSmW81oTShAtEPveHgt5eG
-         WBR3yCxRk8c4Y4cbo9Ieq0Gvf7hmCF1HxomIcttgJc9iBFLBEeszyOAqSe3VQ/byR2CV
-         YbkzSBxPy6kihDjK1Z5yOB0Utf5molVRyWwry3BLLg8G0EW2BrMSZXJRFqOuat+/64vc
-         k96tm5o0c3S/vukbnYnUSph9liJPFb57UdmFz4wUMb8ISkm3ueTSTmI/+8XF8UQ4w1iO
-         XU7g==
-X-Forwarded-Encrypted: i=1; AJvYcCXDUWaD172kBfq4pF727+UNEzqUp6jvJMBrKauXW0yI4OdsE5rY6JcimD2JPtFwWFXjWYXw5zbK5QnceEfJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLhqTS0FTDSRCNhvCxEfA0f/ELYkladIOqD0eiZ74yKYZTTBeI
-	eqAAUSmfnI1agANxqDpLjvywaoA7p6oiYgaD43kH+cFWzCb443nJ+d133FXNj/paBKP+5UXH+OA
-	s2xOFXDDix7k9ERk4gza6tB5neKddEf3XwhQ+SCqtBy3G1UZotmdFAkDYB+vjlM7F3XoQFZlcJA
-	==
-X-Gm-Gg: AZuq6aKZd1EVRVMufozXFJXmDLXqK/LUTGSH3kYYabhqkhNnK8bqF3QnfCo96m6MHx8
-	wdDgacuM8ZLOh7paYZRnDwzekOoMMDtLQs+twVChjctzshX5UOMy+MLL68B4OZ7xt7jjMVH2d2J
-	2Ma8Dis+mmnzSyPTNKkKKQegKQ6ylYMe87eegXjzoEqK5Chq6PtLgbdUI8a3KIvrgjfjmbmOaaP
-	Y5JGa2I3EM70NeeaWRRSHf6e6dQP9dgaAZWYjzvIW+GaoBwxPwL0QFDiSuxl4c03L90xOvXxBGe
-	tFK6ClsUPMlUsHh+gD5H4atHlHr+vUSXACbRWRpEEOrQekDtiFGzn/kcsbYNKZLf9qBn0p5ZNo9
-	SJXFOsnIadmQ=
-X-Received: by 2002:a05:600c:4f92:b0:482:eec4:76d with SMTP id 5b1f17b1804b1-48398b5e0d0mr23667655e9.17.1771407964651;
-        Wed, 18 Feb 2026 01:46:04 -0800 (PST)
-X-Received: by 2002:a05:600c:4f92:b0:482:eec4:76d with SMTP id 5b1f17b1804b1-48398b5e0d0mr23667385e9.17.1771407964108;
-        Wed, 18 Feb 2026 01:46:04 -0800 (PST)
-Received: from thinky ([217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48387ab1974sm196913305e9.3.2026.02.18.01.46.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Feb 2026 01:46:03 -0800 (PST)
-Date: Wed, 18 Feb 2026 10:46:02 +0100
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Andrey Albershteyn <aalbersh@kernel.org>, linux-xfs@vger.kernel.org, 
-	fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org, ebiggers@kernel.org, 
-	djwong@kernel.org
-Subject: Re: [PATCH v3 23/35] xfs: add helper to check that inode data need
- fsverity verification
-Message-ID: <7c2kegonzbfrdv3thcrorgadyuejyknb3uipxlbxkpa4gfgu3t@zpowelexa6zu>
-References: <20260217231937.1183679-1-aalbersh@kernel.org>
- <20260217231937.1183679-24-aalbersh@kernel.org>
- <20260218063827.GA8768@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cmrx8eCnuV9qbI4zwUr+Cu9GXELDj7Oh2uTy6A3CHAsV2+WnaVnkhUV/VFe0Mf4omOQxR4nCs1IcccdionZqJ7ufuDv6wuXIeV1LW9suPDf5KC0dts2IhfZ+ULlhvwLogsSYCNgSB6+N0/VHKasJ9nDlwSe7ZAelYQDAfadDAwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r4aCgn59; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA900C19421;
+	Wed, 18 Feb 2026 09:49:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771408173;
+	bh=y/LC06NZ7wcIvCV01Lkgdatb5fKdK8DygTTS1T4W/io=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r4aCgn59YxGBeMO3vU6WlY/UbCNJZhSlsFdnyTnY3ShbsZ9AfpshGtAR3GhDNsTWk
+	 4he/BN/E8RifTYQwHoF/aDykAGaHr1Cvh+HGTNp+Ho46rRDmExk45guNP3VvHXSV8H
+	 zNWkbjfbKVv+Mkc+GBp0zZs9cLuYVht/99UHE7wPiZJ7Dby38vitnM1zTtqbOcK/Jq
+	 7Qa4EHp0ir3fC6yl31JyjPWa9LAaohExZ0HqQBDI6NN5ZKgf2rvfql9THzJiI6viO8
+	 MFQCenrVnQ3Yg2FQdeuvDZA+zqLzc9CY2kGEVe30kSYxKwooz5UjmRuuLOPNJcVPp4
+	 KaRjJq/7RYJTg==
+Date: Wed, 18 Feb 2026 10:49:29 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Tom Spink <tspink@gmail.com>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [RFC PATCH] Introduce filesystem type tracking
+Message-ID: <20260218-goldrausch-hochmoderne-2b96018fbe5b@brauner>
+References: <1211196126-7442-1-git-send-email-tspink@gmail.com>
+ <7b9198260805200606u6ebc2681o8af7a8eebc1cb96@mail.gmail.com>
+ <20080520134306.GA28946@ZenIV.linux.org.uk>
+ <20080520135732.GA30349@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260218063827.GA8768@lst.de>
+In-Reply-To: <20080520135732.GA30349@infradead.org>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [2.34 / 15.00];
+	MID_END_EQ_FROM_USER_PART(4.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719,redhat.com:s=google];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77550-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[redhat.com:+];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-77551-lists,linux-fsdevel=lfdr.de];
+	FROM_HAS_DN(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCVD_COUNT_THREE(0.00)[4];
 	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,gmail.com,vger.kernel.org,linux-foundation.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[aalbersh@redhat.com,linux-fsdevel@vger.kernel.org];
-	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
+	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[7];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 5FEFC154D81
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 2A0CB154E15
 X-Rspamd-Action: no action
 
-On 2026-02-18 07:38:27, Christoph Hellwig wrote:
-> On Wed, Feb 18, 2026 at 12:19:23AM +0100, Andrey Albershteyn wrote:
-> > +	       (offset < fsverity_metadata_offset(inode));
+On Tue, May 20, 2008 at 09:57:32AM -0400, Christoph Hellwig wrote:
+> On Tue, May 20, 2008 at 02:43:06PM +0100, Al Viro wrote:
+> > No, you have not and no, doing that anywhere near that layer is hopeless.
+> > 
+> > 	a) Instances of filesystem can easily outlive all vfsmounts,
+> > let alone their attachment to namespaces.
+> > 	b) What should happen if init is done in the middle of exit?
+> > 	c) Why do we need to bother, anyway?  
 > 
-> No need for the braces.
-> 
-> > +}
-> > +
-> > diff --git a/fs/xfs/xfs_fsverity.h b/fs/xfs/xfs_fsverity.h
-> > new file mode 100644
-> > index 000000000000..5fc55f42b317
-> > --- /dev/null
-> > +++ b/fs/xfs/xfs_fsverity.h
-> > @@ -0,0 +1,22 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * Copyright (C) 2026 Red Hat, Inc.
-> > + */
-> > +#ifndef __XFS_FSVERITY_H__
-> > +#define __XFS_FSVERITY_H__
-> > +
-> > +#include "xfs.h"
-> > +
-> > +#ifdef CONFIG_FS_VERITY
-> > +bool xfs_fsverity_sealed_data(const struct xfs_inode *ip,
-> > +		loff_t offset);
-> > +#else
-> > +static inline loff_t xfs_fsverity_offset_to_disk(struct xfs_inode *ip,
-> > +						 loff_t pos)
-> > +{
-> > +	WARN_ON_ONCE(1);
-> > +	return ULLONG_MAX;
-> > +}
-> > +#endif	/* CONFIG_FS_VERITY */
-> 
-> It looks like this got messed up a bit when splitting the patches and
-> you want an xfs_fsverity_sealed_data stub here?
+> We had a discussion about filesystems starting threads without an
+> active instance.  I suggested tracking instances and add ->init / ->exit
+> methods to struct file_system_type for these kinds of instances.
 
-oh, right, haven't noticed that, will fix this
-
-> 
-> Also I'm not sure introducing the "sealed" terminology just for this
-> function make much sense.  Just say xfs_is_fsverity_data maybe?
-> 
-
-sure, xfs_fsverity_is_data/_is_file_data maybe? to keep consistent
-xfs_fsverity_ prefix
-
--- 
-- Andrey
-
+I'm sorry but the infrastructure patches that are advocated here for
+this are terrible. I'm really not convinced at all that this is
+something we are going to support. We definitely don't need additional
+sleeping locks for this in the code.
 
