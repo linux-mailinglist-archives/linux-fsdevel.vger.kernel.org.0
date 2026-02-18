@@ -1,151 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-77638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YBYtL8tClml5dAIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 23:52:59 +0100
+	id 0Bt9N+xClml5dAIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 23:53:32 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EAB515AB07
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 23:52:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82E9015AB20
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 23:53:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 5E344303C4C0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 22:52:51 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id EC0D9303DAF9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 22:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4DE338939;
-	Wed, 18 Feb 2026 22:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B44338936;
+	Wed, 18 Feb 2026 22:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EJ3j7OKd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VWJIOjMH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1A7338906
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 22:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FE033890A;
+	Wed, 18 Feb 2026 22:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771455170; cv=none; b=KukMgO+Vw7Y2z2TULyJy24cLls/OUvh5q/4jZNicUjWTUA2Q4OXwUgAnAXnnvajK1zkFT486TkmwqXNyTAiCqCfiFuU09OgAPWiF/GzElV71xjbz84n9Rs8R7LC/9s47/P8Fb49UicwqhG6qq/3SppoBgH8Gpnl1WtmU+hzyArU=
+	t=1771455184; cv=none; b=ZisOLCFx37MnCDY7+8nrULYYHMTGb1uuJpz8n80NtDyc3E+9v6f73XYw1SviTVeQyuUSncNQTNAfJkj0XM/bd/IivPiufsFUjUy+omSKhMgKKXBp2azbpFQ3QJh8zG3kHYQL2CUt8YmMu5xzkW4fSKakDCijbDvPWQ5MX3GOVRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771455170; c=relaxed/simple;
-	bh=UjsXzZAFFhPASY2/ZRnpo3HDPaRUB92o1gKNPrtNlKU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eajMTAH975TAai3yZp4gKl8I6/9NZ9wUZsqr2ynZ1cO+zyorUOone3pzg42chhsUuUwDMhHYQvxhTxwY1L4/KxfCS3bqaB5QPBYhK+IrcxIxyFY2VqMxdb390LL3Z1Jot9rpK44QoZSkc3oP8vM3Tnjtf2hTONc7YRBKF9QHpaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EJ3j7OKd; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b8842e5a2a1so53618866b.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 14:52:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1771455167; x=1772059967; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GE2EcMrg554xVhaFDKxiIeKNmyek+c1hhafGucDFOeM=;
-        b=EJ3j7OKdMaueUqEw/Q1gm+L+IfJy9PjUcfD9JXs4YmwzZ4ojLrGHebeU37sW3pyQgz
-         oaWeviNfLlZ/Tg+8jxYoGmw3E8gERZbMb13I8pYhxKkBwf4xR6fFOzqi778dMBx71tC2
-         TfHJwpIcC5EE2VSwxdcb8pB2hbVB8rs4jueZk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771455167; x=1772059967;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GE2EcMrg554xVhaFDKxiIeKNmyek+c1hhafGucDFOeM=;
-        b=hJ2Ucul+inDIsTSo6+/qKsyIobDnIEZXjSW8EPgDviQzLIlWY1digAGGsEqh6aatpc
-         5Y04fF9yn0bSUDObrUh6jPPRQ1p/kY+/uCNvxIZ1a6AnS99muwuD3aYOSWWB4HhMbvPI
-         faOkz0LV6XqXOnDGDq9LOjx5P8f3uyzUFZnYMZMH1PiBFuK+uBsaMzpo3/Nh/k9bOFbw
-         OH+ICZIOxVAHP1ep9a0jv0X9/tLM4NAgKozP/pFi5ugHafsRMvE3e69WxVvLvNX8rn/L
-         aIEfhyJP7iBbkdlLdIwr6EBcFFIrfXiuv+h79faRlciMwcZSWAiIanh/4LmvsdTpztrh
-         4kWg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+ReCXSdn99uttytBcfg0mz0TaPquENJ+qHUjfQT6ZbLyvN8wf9Q6enNoPikVx27hiqgcgfec9VfJptg/O@vger.kernel.org
-X-Gm-Message-State: AOJu0YysJjHFN+cNwa2Z7sOm+9+RthJTfOliUnU/krBpgekiLBnVV5iH
-	x0R0vFQhCLK1iC+m1ec6JhkRUtesys0qJshhtnY2ijyBt8q++SWmsVM0s2uFNtJ28HKqvAPHUkP
-	Uj6y4wMPqhw==
-X-Gm-Gg: AZuq6aLiK3/2nOa3K5h8SExv0xSEuMIIUWJJowSPQmV6wpNpi0APvSMJs0prc5zl44w
-	4pG5nYjofy0wr834J40dxhnLAyzfFVv/aJrJ/t4ACCtXiR6gOePkrLqkftKSsf9B4WyYgl/zYBJ
-	XFjOuAxUQAvgsISUpl2a/7FFkkCsE8jRJVkeiJTet4MinPDGQYmqZg5d/mxznNAGs18p4w071LX
-	pORJrG0Om1Z9Hyo+4QmBuOh+A8oD1wljQ8tiXyNFFjG319iWAAocLYEheBBW0Bi/3AMs/bcFq95
-	CU4EOjRnUwWqgjt1cfPgaMASoTcFzLUqt47vlu5y7ROrXzqYOBX3WwpM+PAQmp3o1NkKEQz0y6D
-	xgOSQYayhWUjLyObBq6hnK7po4KTgURQgVQTtLHhGled6iSnmT5tl/KDO6O4WkMaljp2+D6Mvie
-	tTO4Vi0g3SF/5AxXChTBHtA888zSFrgIjOIHK1bzNd0RkfAf953VWH/b+MAbRoBBZnwzRHXznno
-	RQYiRnUdOw=
-X-Received: by 2002:a17:907:6eab:b0:b8e:796a:fd5c with SMTP id a640c23a62f3a-b8fb438cbf2mr1137934766b.27.1771455166951;
-        Wed, 18 Feb 2026 14:52:46 -0800 (PST)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8fc7386b49sm501657466b.22.2026.02.18.14.52.46
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Feb 2026 14:52:46 -0800 (PST)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b88593aa4dcso50503666b.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 14:52:46 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVyKnTRGjLiK5oPFkMDxNrLQXLObhbf2Gdgztl+Al8ggMXVyG6vZJ/Rygd/2a+2FjBjUlj5xK8czkMNvqR1@vger.kernel.org
-X-Received: by 2002:a17:907:9727:b0:b73:398c:c5a7 with SMTP id
- a640c23a62f3a-b8fb4499f2amr1150499166b.41.1771455165803; Wed, 18 Feb 2026
- 14:52:45 -0800 (PST)
+	s=arc-20240116; t=1771455184; c=relaxed/simple;
+	bh=BCIFTtYPmDVEkizLoDvYugM/ABUgBixXBXMRKxBTpc8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A1ACEHJRQ1YOWbzMdwasmTkxV31mQVkknoWOt+3LxGvYZJtzGxD4TCaual7XvslviRFQPTg0TouPkyLn20JiF2P6meOloQSSG5NJ6uhpCZur+J+SOG1uKC/b/e+VNsgZCM00yypUN2tQW84JiTwE2iVdCrPFOH0t1bx34exAWvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VWJIOjMH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58F5FC116D0;
+	Wed, 18 Feb 2026 22:53:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771455184;
+	bh=BCIFTtYPmDVEkizLoDvYugM/ABUgBixXBXMRKxBTpc8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VWJIOjMH5Cf6Hc/suRf4PD08QMIK3OvBI8gPpu9c4/qmW7bMzACJ3mZDrtko/t5zL
+	 oqmNEf5QVfQASNldIdooROcGd6W8qr5H7Ovk7+93d9+LA1f163+ylaOk5Z9lWPoymw
+	 syjXFeSLqos6twHrUVVv1OV+HQMBd9zSxvs4DQt1rUwOUDulJhjns/Nx9c4aOL5Zsn
+	 MCdm+msIQEZ9YSOzxeDj6NVqZ+dMn2JywIQ/WhRbzRscHVtbhQR6NybH2n0hUe5W4a
+	 /7P0kSxMNo/RhvIT0NlejSgDOWOExzMcvOdgJ8Z5gnoTWcevaAYTru/iGTtZ3QA6Mu
+	 AtV3oWUERM+pg==
+Date: Wed, 18 Feb 2026 14:53:03 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Andrey Albershteyn <aalbersh@kernel.org>
+Cc: linux-xfs@vger.kernel.org, fsverity@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, ebiggers@kernel.org, hch@lst.de
+Subject: Re: [PATCH v3 05/35] fsverity: introduce fsverity_folio_zero_hash()
+Message-ID: <20260218225303.GE6467@frogsfrogsfrogs>
+References: <20260217231937.1183679-1-aalbersh@kernel.org>
+ <20260217231937.1183679-6-aalbersh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260217190835.1151964-1-willy@infradead.org> <20260217190835.1151964-2-willy@infradead.org>
- <CAHk-=wjkyw-sap1dNkW7v8at8MvF3j5wshC1Gw3XEpHBbBw6BQ@mail.gmail.com>
- <aZYoXsUtbzs-nRZH@casper.infradead.org> <CAHk-=wiXCcnp5VuAZO7D7Gs75p+O4k-__ep+-2zapQ4Bqkd=rQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wiXCcnp5VuAZO7D7Gs75p+O4k-__ep+-2zapQ4Bqkd=rQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 18 Feb 2026 14:52:29 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wggNowW32UcNWHQ4Ak5J-0mZT_EO+PAEw2DLe7tr8-Dtg@mail.gmail.com>
-X-Gm-Features: AaiRm52QTAKbKgSZbjtmFVsStzsphbgy2PJask8ezbA7n0nuMuFqfyfcbZxak7I
-Message-ID: <CAHk-=wggNowW32UcNWHQ4Ak5J-0mZT_EO+PAEw2DLe7tr8-Dtg@mail.gmail.com>
-Subject: Re: [RFC 1/1] rwsem: Shrink rwsem by one pointer
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>, 
-	linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260217231937.1183679-6-aalbersh@kernel.org>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[linux-foundation.org:s=google];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[linux-foundation.org:+];
-	FREEMAIL_CC(0.00)[infradead.org,redhat.com,kernel.org,gmail.com,vger.kernel.org];
-	TAGGED_FROM(0.00)[bounces-77638-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[linux-foundation.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MISSING_XM_UA(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77639-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_FIVE(0.00)[6];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[torvalds@linux-foundation.org,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[9];
+	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-0.999];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Rspamd-Queue-Id: 4EAB515AB07
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCPT_COUNT_FIVE(0.00)[6]
+X-Rspamd-Queue-Id: 82E9015AB20
 X-Rspamd-Action: no action
 
-On Wed, 18 Feb 2026 at 14:45, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Anyway, this is all from just looking at the patch, so maybe I missed
-> something, but it does look very wrong.
+On Wed, Feb 18, 2026 at 12:19:05AM +0100, Andrey Albershteyn wrote:
+> Helper to pre-fill folio with hashes of empty blocks. This will be used
+> by XFS to synthesize blocks full of zero hashes on the fly.
+> 
+> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> ---
+>  fs/verity/pagecache.c    | 22 ++++++++++++++++++++++
+>  include/linux/fsverity.h |  9 +++++++++
+>  2 files changed, 31 insertions(+)
+> 
+> diff --git a/fs/verity/pagecache.c b/fs/verity/pagecache.c
+> index 73f03b48d42d..7642a7a09dfb 100644
+> --- a/fs/verity/pagecache.c
+> +++ b/fs/verity/pagecache.c
+> @@ -2,6 +2,7 @@
+>  /*
+>   * Copyright 2019 Google LLC
+>   */
+> +#include "fsverity_private.h"
+>  
+>  #include <linux/export.h>
+>  #include <linux/fsverity.h>
+> @@ -62,3 +63,24 @@ loff_t fsverity_metadata_offset(const struct inode *inode)
+>  	return roundup(i_size_read(inode), mapping_max_folio_size_supported());
+>  }
+>  EXPORT_SYMBOL_GPL(fsverity_metadata_offset);
+> +
+> +/**
+> + * fsverity_folio_zero_hash() - fill folio with hashes of zero data block
+> + * @folio:	folio to fill
+> + * @poff:	offset in the folio to start
+> + * @plen:	length of the range to fill with hashes
+> + * @vi:		fsverity info
+> + */
+> +void fsverity_folio_zero_hash(struct folio *folio, size_t poff, size_t plen,
+> +			      struct fsverity_info *vi)
+> +{
+> +	size_t offset = poff;
+> +
+> +	WARN_ON_ONCE(!IS_ALIGNED(poff, vi->tree_params.digest_size));
+> +	WARN_ON_ONCE(!IS_ALIGNED(plen, vi->tree_params.digest_size));
+> +
+> +	for (; offset < (poff + plen); offset += vi->tree_params.digest_size)
+> +		memcpy_to_folio(folio, offset, vi->tree_params.zero_digest,
+> +				vi->tree_params.digest_size);
+> +}
+> +EXPORT_SYMBOL_GPL(fsverity_folio_zero_hash);
+> diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
+> index 278c6340849f..addee462dcc2 100644
+> --- a/include/linux/fsverity.h
+> +++ b/include/linux/fsverity.h
+> @@ -215,6 +215,8 @@ bool fsverity_verify_blocks(struct fsverity_info *vi, struct folio *folio,
+>  void fsverity_verify_bio(struct fsverity_info *vi, struct bio *bio);
+>  void fsverity_enqueue_verify_work(struct work_struct *work);
+>  loff_t fsverity_metadata_offset(const struct inode *inode);
+> +void fsverity_folio_zero_hash(struct folio *folio, size_t poff, size_t plen,
+> +			      struct fsverity_info *vi);
+>  
+>  #else /* !CONFIG_FS_VERITY */
+>  
+> @@ -302,6 +304,13 @@ static inline loff_t fsverity_metadata_offset(const struct inode *inode)
+>  	return ULLONG_MAX;
+>  }
+>  
+> +static inline void fsverity_folio_zero_hash(struct folio *folio, size_t poff,
+> +					    size_t plen,
+> +					    struct fsverity_info *vi)
+> +{
+> +	WARN_ON_ONCE(1);
+> +}
 
-Bah. And immediately after sending, I went "maybe I should look at the
-code" more closely.
+/me wonders if something this deep in the IO path really needs a stub
+version?  Otherwise this looks ok to me, in the "vaguely familiar from
+long ago" sense. :/
 
-I think my suggestion to just remove the check was right, but the
-return value of rwsem_del_waiter() needs to be fixed to be the "I used
-to be the first waiter, but there are other waiters and I updated the
-first waiter pointer".
+--D
 
-              Linus
+> +
+>  #endif	/* !CONFIG_FS_VERITY */
+>  
+>  static inline bool fsverity_verify_folio(struct fsverity_info *vi,
+> -- 
+> 2.51.2
+> 
+> 
 
