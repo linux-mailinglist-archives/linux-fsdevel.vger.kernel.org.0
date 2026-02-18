@@ -1,254 +1,263 @@
-Return-Path: <linux-fsdevel+bounces-77546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KIC2KEN9lWl8RwIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 09:50:11 +0100
+	id 2K40MGqJlWnqSAIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 10:42:02 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id D27721544B7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 09:50:10 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE398154CBA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 10:42:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 5D1F03027964
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 08:46:39 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 4554730055F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 09:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFC832572C;
-	Wed, 18 Feb 2026 08:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5213133CEBC;
+	Wed, 18 Feb 2026 09:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZRl0TaAA";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="eTGWIeac"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com [209.85.160.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D7332252D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 08:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90AF33D504
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 09:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771404398; cv=none; b=tDF5dpRVq/I+93lDvwwajmxp/7xwWxvwBDxGOT9joWkePeaVgLR6ltIamVNqoC/2pSPrpMYUui4bsGUafx51MVhSlNeblYq/2adumcW4JBpeDS6/stvLF1jh088lnTzrRjXUh9K93Bk1p0MmFNk2vRK8d618QsRzXp2tXOhi+uY=
+	t=1771407713; cv=none; b=B2QsaQfcm3UY9+Ns2LsSzq4srx0gZRFlM/mkKJHFutX50kBMwjaPdVQgwOPR72kdsOU0UN1N+UVcRmigFaNMT3hoge980jeEzLyI/+EN7sMpmlae040qVxiRtD9JxuBj+MssSGiFsxSGkI8aLAEScQaik5Ia00VKMEVWdtLHxwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771404398; c=relaxed/simple;
-	bh=zUg1H/iZ3e0JpqxdakfYne1SOE/LyWGbp/4l+Lst2cM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=p3+myNWVOOkCs+2Xr7RfwBe2qLnJr7b9GYyZXnQGHhhhfFlE6zfM5Fied/xSKOQdbkeIKTHB8qpdKAAljudCjsWRLh/CW/hFJPFjBzibNIDHfugPcUd9HG9e9yKp1DCStEUienr8236Okl3Mbj9FC9t4qAENpofvrYoZhI5+JNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.160.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-409037c3f0bso23503181fac.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 00:46:36 -0800 (PST)
+	s=arc-20240116; t=1771407713; c=relaxed/simple;
+	bh=nLFeYwmb82xcBOA7C5mmfsnrhDKKkSDg8i0xcOYxOOM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZKZGikegqMABSHysdAj1JjsKLcT4UFc2mSTyTp8W3kTa3NkUHSTHd2m5zdonpjG2Aov0DXFovaoFC8upWLkKU3NVaou8kvEju47KfTjnSZKsIKyybiZQcvaVIHjodhIhOv8VQya7onj/DMMUZQd1WLT49nFTKCRlWo5FbS0IOuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZRl0TaAA; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=eTGWIeac; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1771407708;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sdmSmWTTSUpeXTOHRqXOhAP2+YOcdNUbOwJVs26WCus=;
+	b=ZRl0TaAA9g26xKPoungyMiJqyv7xsc+P1HupIbaAx4Z/7QMJfQyuRo0QkZCoG6lX7XY6CD
+	wiZOTyBNVW24zV+wxoqXzPW1ryiI539BLRVmWakS0smT6Okm0x/6055y5DKj4FT2FdVXDe
+	E6c7g8KGbZ4M+QVcsBqtCxkoRCIc0jw=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-687-3kyuuVU_N0-_dg9mGNn05A-1; Wed, 18 Feb 2026 04:41:47 -0500
+X-MC-Unique: 3kyuuVU_N0-_dg9mGNn05A-1
+X-Mimecast-MFC-AGG-ID: 3kyuuVU_N0-_dg9mGNn05A_1771407706
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-435ab907109so3430246f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 01:41:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1771407706; x=1772012506; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sdmSmWTTSUpeXTOHRqXOhAP2+YOcdNUbOwJVs26WCus=;
+        b=eTGWIeacHWcljSRHwS5v/ltDg+R+6236Ugf4CiVPUkM5s2uM7Is42qqV4HhidpkhGy
+         KsrbRgz34RkzLRIURB6ywhZCJR66iyGcNi+6gWfc72DsA353+ORMhpUyAsaT6wNdhGb0
+         X/91pDXYglLhXu095Ebm+s1+zQ/PKqGBmRqz90wxQHCFwjB3noRn0Rp17XjOfz+H+869
+         Nk0PqqUXVTqw2LUAutkNzWVC+iQobn3fFPjp8oLm+wuOEEk/fjLHt4iL0+biRt2rzIa1
+         50JbPXCySRSvx0un8HIEcLFdPU8hNv35Tj269nSFSKOh/kSPiTx7qdOEUtCrZ5T/Bmyt
+         EwVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771404396; x=1772009196;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cioSuj7PLJ4+D+0JheXaXuytRQJuk4aQn4/3VIIYkmc=;
-        b=aJQejTDcGj1SaJHrixBGB6S2ARBUVMbL30v9H0yY47uAet29k5E642dE6uI4Myso/w
-         oDnrsIk9mOIDUhfneRh2FNlv8OC1HnpGWNUQlHmI5sY9s+jlHTiJjyWt1GhIkpUZiHy0
-         RL7UxypljxVUj/epU/0fIpJTAG4xpcbngP803wpVip603NUgiQGIxaQTv926KGqmnden
-         kFFTCZlvReHeLNc3No47RzI/jmlvh5zlrIhA2w9b0DxHWdvU1eTWjYew+js1Nj/ZsmkM
-         quHdgERqdx8Xob22ZvCB5Uj5aSO9LiqWYNQveLXah5NSJ/X+l6mcO3NqhHcUbTBNcE1c
-         TqhA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBQFhOnn0R8IQh1Ow+fxzxBb+6951qk031DnEBEMVc3ESdYOfQwtJOabIwemcGImIfskrQ+ypHDlMr9VV0@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRKxaOKRlUMSU1KGcPfLBEKi+ihJdznELc8k52A2PEfGPExxzU
-	grVwSVjWvsaD/dQ58/VxHpOf40dUc4xFXvW0D7bjUuJQI/Pyd2CvID8Wjw1wPCrqqY3LYWnZw55
-	NQCsObzF8hce5bN91freY1Y4IVTc3uapFaMG07G68Zp+rrbG8PkDCU7XyWYY=
+        d=1e100.net; s=20230601; t=1771407706; x=1772012506;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sdmSmWTTSUpeXTOHRqXOhAP2+YOcdNUbOwJVs26WCus=;
+        b=FkCbPw8eQSntqAcrfuzWCDi0u2TB6v6arewj4ujRVIHG3gp7HEK5hBPxJZk4loT+2F
+         dF7MSKMqRLl/qbc/rbZJ0M308L/yOQtyQ+lf03i4XsBgvjAuM6QxTdS1AJkWttBFJtGv
+         g34VYY+qhiH/7v0ibKJ4HXLtlVutBnD9LVHcEdgra8V60ikAS3T9OP69bHTxx61LH0yL
+         UNkBbXftWDvp8bHfnlmQepN7pvIigd8ktR+WNGWsQEMj/sL3Rj8/THxOOKQgJcdI3q3x
+         nkQPWu/WRXLD9V5Z51xRFtFAdkLjjrKpZisjhhe3+A3Fvxgfr9DbACXwbF3ZWsDwz+18
+         WhNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJYy1X6WYCeQtQm+YHibo/Pwi2X3J6kW8eg507+D/flVdajf/+ZZd4zZd4CTnmVd9hBZ2uDaUDoKG8VxtL@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrrPOWsN/u4YzdRdzXVGllI29nkFdgeOSBmqqsd3z/GmL9T03p
+	dM+UYYtqUAHPUSVQRln9UmnQf2PhnlLOwWZUvUJ0dgKAnaGqmMVFWdvQuqUBjJ7Gd9gk7LrBxe4
+	rfPbTl9BWTK+/QlQpfYZiHZqBZ2F3XL53kFI4JRQljdPgMpaL5fmX9lZLaWlQloqnMw==
+X-Gm-Gg: AZuq6aJ6l2XizeMaUEo0+7+z8/Dr2aSeacMyJkzE+Bi9ChK3y1DBY7PjZveR+gTWSN5
+	8HUg3BG8JaFkuliHnLVPplGAt94rM91tpwO08Tg0gL8n3N80pNDq2rpJdktQYvcHVuV8a1jyBfQ
+	z7BH8+0WAN1f2lYjTun9dKELnoam6HSdSFf2j5ozdNgfS41UB1X1zxPPwnb96tCAKIqU9RRF/SH
+	kWyK3QQ3+0whJXNOoDo300AjnxvLzU+Gn2vE6D601dM6lo9NUOMUYdL/Q2e0JkT5vO9GGbfhkBO
+	UjNneEfKctZ+ZSVSUVmTMTAus8AjleEWckJg8d1+j0G18vV7BsQFB94RXUVSCbzXXJAaGkngGdo
+	NGX6iVpIdNF8=
+X-Received: by 2002:a05:6000:4383:b0:435:e3bd:5838 with SMTP id ffacd0b85a97d-43958e0ef8fmr2196994f8f.25.1771407706089;
+        Wed, 18 Feb 2026 01:41:46 -0800 (PST)
+X-Received: by 2002:a05:6000:4383:b0:435:e3bd:5838 with SMTP id ffacd0b85a97d-43958e0ef8fmr2196913f8f.25.1771407705479;
+        Wed, 18 Feb 2026 01:41:45 -0800 (PST)
+Received: from thinky ([217.30.74.39])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43796abd259sm42708002f8f.24.2026.02.18.01.41.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Feb 2026 01:41:45 -0800 (PST)
+Date: Wed, 18 Feb 2026 10:41:14 +0100
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Andrey Albershteyn <aalbersh@kernel.org>, linux-xfs@vger.kernel.org, 
+	fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org, ebiggers@kernel.org, 
+	djwong@kernel.org
+Subject: Re: [PATCH v3 11/35] iomap: allow filesystem to read fsverity
+ metadata beyound EOF
+Message-ID: <hfteu6bonpv7djecbf3d6ekh56ktgcl4c2lvtjtrjfetzaq5dw@scsrvxx5rgig>
+References: <20260217231937.1183679-1-aalbersh@kernel.org>
+ <20260217231937.1183679-12-aalbersh@kernel.org>
+ <20260218063606.GD8600@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a4a:cb0e:0:b0:677:85ea:b7fc with SMTP id
- 006d021491bc7-67785eab8a8mr6078944eaf.63.1771404395754; Wed, 18 Feb 2026
- 00:46:35 -0800 (PST)
-Date: Wed, 18 Feb 2026 00:46:35 -0800
-In-Reply-To: <20260217230628.719475-1-ethan.ferguson@zetier.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69957c6b.a70a0220.2c38d7.0119.GAE@google.com>
-Subject: [syzbot ci] Re: fat: Add FS_IOC_GETFSLABEL / FS_IOC_SETFSLABEL ioctls
-From: syzbot ci <syzbot+ci4410c0ce3a48048e@syzkaller.appspotmail.com>
-To: ethan.ferguson@zetier.com, hirofumi@mail.parknet.co.jp, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260218063606.GD8600@lst.de>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.36 / 15.00];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719,redhat.com:s=google];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	R_DKIM_NA(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,appspotmail.com:email,syzbot.org:url];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-77547-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[redhat.com:+];
+	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	PRECEDENCE_BULK(0.00)[];
-	TO_DN_NONE(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77546-lists,linux-fsdevel=lfdr.de,ci4410c0ce3a48048e];
-	RCPT_COUNT_FIVE(0.00)[6]
-X-Rspamd-Queue-Id: D27721544B7
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[aalbersh@redhat.com,linux-fsdevel@vger.kernel.org];
+	MISSING_XM_UA(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: EE398154CBA
 X-Rspamd-Action: no action
 
-syzbot ci has tested the following series
+> I've looked at the modifications to iomap_read_folio_iter over the entire
+> series.  First comment is that it probably makes sense to have one patch
+> modifying this logic instead of multiple. 
 
-[v2] fat: Add FS_IOC_GETFSLABEL / FS_IOC_SETFSLABEL ioctls
-https://lore.kernel.org/all/20260217230628.719475-1-ethan.ferguson@zetier.com
-* [PATCH v2 1/2] fat: Add FS_IOC_GETFSLABEL ioctl
-* [PATCH v2 2/2] fat: Add FS_IOC_SETFSLABEL ioctl
+Sure, I will merge them
 
-and found the following issue:
-KASAN: stack-out-of-bounds Write in msdos_format_name
+> I also think the final result
+> can be improved quite a bit by a better code structure, see the patch
+> below against your full series.  I've left three XXX comments with
+> questions that are probably easier to ask there in the code then
+> separately, I hope this works for you.
 
-Full report is available here:
-https://ci.syzbot.org/series/da73a18c-15c6-438b-8ee3-f34978d4930c
+Thanks for the patch! This looks better I will change to this
 
-***
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 9468c5d60b23..48c572d549aa 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -534,47 +534,53 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
+>  			return 0;
+>  
+>  		/*
+> -		 * We hits this for two case:
+> -		 * 1. No need to go further, the hole after fsverity descriptor
+> -		 * is the end of the fsverity metadata. No ctx->vi means we are
+> -		 * reading folio with descriptor.
+> -		 * 2. This folio contains merkle tree blocks which need to be
+> -		 * synthesized and fsverity descriptor. Skip these blocks as we
+> -		 * don't know how to synthesize them yet.
+> +		 * Handling of fsverity "holes". We hits this for two case:
+> +		 *   1. No need to go further, the hole after fsverity
+> +		 *	descriptor is the end of the fsverity metadata.
+> +		 *
+> +		 *	No ctx->vi means we are reading a folio with descriptor.
+> +		 *	XXX: what does descriptor mean here?  Also how do we
+> +		 *	even end up with this case?  I can't see how this can
+> +		 *	happe based on the caller?
 
-KASAN: stack-out-of-bounds Write in msdos_format_name
+fsverity descriptor. This is basically the case as for EOF folio.
+Descriptor is the end of the fsverity metadata region. If we have 1k
+fs blocks (= merkle blocks) we can have [descriptor | hole ] folio.
+As we are not limited by i_size here, iomap_block_needs_zeroing()
+won't fire to zero this hole. So, this case is to mark this tail as
+uptodate.
 
-tree:      bpf-next
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/bpf/bpf-next.git
-base:      9f2693489ef8558240d9e80bfad103650daed0af
-arch:      amd64
-compiler:  Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
-config:    https://ci.syzbot.org/builds/972e08c3-3f0c-4dc8-b311-d7aec3efb56b/config
-C repro:   https://ci.syzbot.org/findings/f100bebc-8929-4992-996b-73c5de2585ba/c_repro
-syz repro: https://ci.syzbot.org/findings/f100bebc-8929-4992-996b-73c5de2585ba/syz_repro
+We have holes in the tree and hole after descriptor. Hole after
+descriptor is just a marker of the end of the metadata region. And
+holes in the tree need to be synthesized. In both cases
+IOMAP_F_FSVERITY is set.
 
-loop0: rw=8912896, sector=1192, nr_sectors = 4 limit=256
-syz.0.17: attempt to access beyond end of device
-loop0: rw=8388608, sector=1192, nr_sectors = 4 limit=256
-==================================================================
-BUG: KASAN: stack-out-of-bounds in msdos_format_name+0x5fe/0xd90 fs/fat/namei_msdos.c:69
-Write of size 1 at addr ffffc90003a27dcb by task syz.0.17/5956
+On the first read we treat them both the same - mark uptodate and
+continue. We can not synthesize tree holes without descriptor and
+aren't interested in post descriptor data.
 
-CPU: 0 UID: 0 PID: 5956 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Call Trace:
- <TASK>
- dump_stack_lvl+0xe8/0x150 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xba/0x230 mm/kasan/report.c:482
- kasan_report+0x117/0x150 mm/kasan/report.c:595
- msdos_format_name+0x5fe/0xd90 fs/fat/namei_msdos.c:69
- fat_convert_volume_label_str fs/fat/file.c:193 [inline]
- fat_ioctl_set_volume_label fs/fat/file.c:215 [inline]
- fat_generic_ioctl+0xebd/0x12a0 fs/fat/file.c:246
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:597 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:583
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xe2/0xf80 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa55ed9bf79
-Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe3b0c1748 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fa55f015fa0 RCX: 00007fa55ed9bf79
-RDX: 0000200000000240 RSI: 0000000041009432 RDI: 0000000000000004
-RBP: 00007fa55ee327e0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fa55f015fac R14: 00007fa55f015fa0 R15: 00007fa55f015fa0
- </TASK>
+On the second read we already have descriptor, so this case is only
+to mark the rest of the descriptor's folio as uptodate.
 
-The buggy address belongs to stack of task syz.0.17/5956
- and is located at offset 427 in frame:
- fat_generic_ioctl+0x0/0x12a0
+I think this could be split into two cases by checking if (poff +
+plen) cover everything to the folio end. This means that we didn't
+get the case with tree holes and descriptor in one folio.
 
-This frame has 4 objects:
- [32, 56) 'range.i'
- [96, 352) 'from_user.i'
- [416, 427) 'new_vol_label.i'
- [448, 528) 'ia.i'
+1k fs blocks, 4k page:
+[merkle block | tree hole | tree hole | descriptor]
 
-The buggy address belongs to a 8-page vmalloc region starting at 0xffffc90003a20000 allocated at copy_process+0x508/0x3980 kernel/fork.c:2052
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1750f7
-memcg:ffff888111b31502
-flags: 0x57ff00000000000(node=1|zone=2|lastcpupid=0x7ff)
-raw: 057ff00000000000 0000000000000000 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000000000000 00000001ffffffff ffff888111b31502
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x29c2(GFP_NOWAIT|__GFP_HIGHMEM|__GFP_IO|__GFP_FS|__GFP_ZERO), pid 41, tgid 41 (kworker/u10:2), ts 69338575178, free_ts 66424269276
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x228/0x280 mm/page_alloc.c:1884
- prep_new_page mm/page_alloc.c:1892 [inline]
- get_page_from_freelist+0x24dc/0x2580 mm/page_alloc.c:3945
- __alloc_frozen_pages_noprof+0x18d/0x380 mm/page_alloc.c:5240
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2486
- alloc_frozen_pages_noprof mm/mempolicy.c:2557 [inline]
- alloc_pages_noprof+0xa8/0x190 mm/mempolicy.c:2577
- vm_area_alloc_pages mm/vmalloc.c:3649 [inline]
- __vmalloc_area_node mm/vmalloc.c:3863 [inline]
- __vmalloc_node_range_noprof+0x79b/0x1730 mm/vmalloc.c:4051
- __vmalloc_node_noprof+0xc2/0x100 mm/vmalloc.c:4111
- alloc_thread_stack_node kernel/fork.c:354 [inline]
- dup_task_struct+0x228/0x9a0 kernel/fork.c:923
- copy_process+0x508/0x3980 kernel/fork.c:2052
- kernel_clone+0x248/0x870 kernel/fork.c:2651
- user_mode_thread+0x110/0x180 kernel/fork.c:2727
- call_usermodehelper_exec_sync kernel/umh.c:132 [inline]
- call_usermodehelper_exec_work+0x9c/0x230 kernel/umh.c:163
- process_one_work kernel/workqueue.c:3257 [inline]
- process_scheduled_works+0xaec/0x17a0 kernel/workqueue.c:3340
- worker_thread+0xda6/0x1360 kernel/workqueue.c:3421
- kthread+0x726/0x8b0 kernel/kthread.c:463
- ret_from_fork+0x51b/0xa40 arch/x86/kernel/process.c:158
-page last free pid 5918 tgid 5918 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1433 [inline]
- __free_frozen_pages+0xbf8/0xd70 mm/page_alloc.c:2973
- discard_slab mm/slub.c:3346 [inline]
- __put_partials+0x146/0x170 mm/slub.c:3886
- __slab_free+0x294/0x320 mm/slub.c:5956
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x97/0x100 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x148/0x160 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x22/0x80 mm/kasan/common.c:350
- kasan_slab_alloc include/linux/kasan.h:253 [inline]
- slab_post_alloc_hook mm/slub.c:4953 [inline]
- slab_alloc_node mm/slub.c:5263 [inline]
- __kmalloc_cache_noprof+0x36f/0x6e0 mm/slub.c:5775
- kmalloc_noprof include/linux/slab.h:957 [inline]
- kzalloc_noprof include/linux/slab.h:1094 [inline]
- ref_tracker_alloc+0x161/0x4d0 lib/ref_tracker.c:271
- __netdev_tracker_alloc include/linux/netdevice.h:4400 [inline]
- netdev_hold include/linux/netdevice.h:4429 [inline]
- netdev_queue_add_kobject net/core/net-sysfs.c:1994 [inline]
- netdev_queue_update_kobjects+0x1d1/0x6c0 net/core/net-sysfs.c:2056
- register_queue_kobjects net/core/net-sysfs.c:2119 [inline]
- netdev_register_kobject+0x258/0x310 net/core/net-sysfs.c:2362
- register_netdevice+0x12a0/0x1cd0 net/core/dev.c:11406
- register_netdev+0x40/0x60 net/core/dev.c:11522
- loopback_net_init+0x75/0x150 drivers/net/loopback.c:218
- ops_init+0x35c/0x5c0 net/core/net_namespace.c:137
- setup_net+0x118/0x340 net/core/net_namespace.c:446
- copy_net_ns+0x50e/0x730 net/core/net_namespace.c:581
+> +		 *
+> +		 *   2. This folio contains merkle tree blocks which need to be
+> +		 *	synthesized and fsverity descriptor.
+>  		 */
+>  		if ((iomap->flags & IOMAP_F_FSVERITY) &&
+> -		    (iomap->type == IOMAP_HOLE) &&
+> -		    !(ctx->vi)) {
+> -			iomap_set_range_uptodate(folio, poff, plen);
+> -			return iomap_iter_advance(iter, plen);
+> -		}
+> +		    iomap->type == IOMAP_HOLE) {
+> +		    	if (!ctx->vi) {
+> +				iomap_set_range_uptodate(folio, poff, plen);
+> +				/*
+> +				 * XXX: why return to the caller early here?
+> +				 */
 
-Memory state around the buggy address:
- ffffc90003a27c80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffffc90003a27d00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffffc90003a27d80: f2 f2 f2 f2 f2 f2 f2 f2 00 03 f2 f2 f8 f8 f8 f8
-                                              ^
- ffffc90003a27e00: f8 f8 f8 f8 f8 f8 f3 f3 f3 f3 f3 f3 00 00 00 00
- ffffc90003a27e80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
+To not hit hole in the tree (which means synthesize the block). The
+fsverity_folio_zero_hash() case.
 
+> +				return iomap_iter_advance(iter, plen);
+> +			}
+>  
+> -		/* zero post-eof blocks as the page may be mapped */
+> -		if (iomap_block_needs_zeroing(iter, pos) &&
+> -		    !(iomap->flags & IOMAP_F_FSVERITY)) {
+> +			/*
+> +			 * Synthesize the hash value for a zeroed folio if we
+> +			 * are reading merkle tree blocks.
+> +			 */
+> +			fsverity_folio_zero_hash(folio, poff, plen, ctx->vi);
+> +			iomap_set_range_uptodate(folio, poff, plen);
+> +		} else if (iomap_block_needs_zeroing(iter, pos) &&
+> +			   /*
+> +			    * XXX: do we still need the IOMAP_F_FSVERITY check
+> +			    * here, or is this all covered by the above one?
+> +			    */
 
-***
+Yes, this seems to be not necessary anymore
 
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-  Tested-by: syzbot@syzkaller.appspotmail.com
+> +			   !(iomap->flags & IOMAP_F_FSVERITY)) {
+> +			/* zero post-eof blocks as the page may be mapped */
+>  			folio_zero_range(folio, poff, plen);
+>  			if (fsverity_active(iter->inode) &&
+>  			    !fsverity_verify_blocks(ctx->vi, folio, plen, poff))
+>  				return -EIO;
+>  			iomap_set_range_uptodate(folio, poff, plen);
 
----
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
+-- 
+- Andrey
+
 
