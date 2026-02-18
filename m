@@ -1,67 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-77478-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77479-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UF5nAzcHlWn1KAIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77478-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 01:26:31 +0100
+	id CN3xD0AKlWmTKQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77479-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 01:39:28 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6F1815243B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 01:26:30 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D50AB1525B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 01:39:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 387623019B89
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:26:23 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B15653024C9B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 00:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6577248F6A;
-	Wed, 18 Feb 2026 00:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bCov9miZ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1EB125A321;
+	Wed, 18 Feb 2026 00:39:16 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74866487BE;
-	Wed, 18 Feb 2026 00:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1F13EBF22;
+	Wed, 18 Feb 2026 00:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771374381; cv=none; b=FZb8Im/egwNrC6zUEmClZ0ne6NF0qwuyULF2nf+tbvNyxP6rj3bCwbKTlI/iTdKzgr4sTVDtn6qT9jydSa8McEbEfIQjsMkkurD6DErSfxZApiR1gTVzY8QXCmU/S45g9SEYgDKOaG8SIQMDY2rFj4eWrf1Egsxg/Q5wNlcsnQk=
+	t=1771375156; cv=none; b=bZf+e5VTAreSE1GC1Pw+Seuj4PLePo5liRATne4lJ2Z6gOwWjhqCSELNnMqxHXZLm9JK/bCz2/Zex/z6QQRc0odtFFPckxQJbsURuqknhSJsccl9PZpXQ8U7efDQshdClTNbeMYKXSMHTu+QKsuU7gWXkckP15PpH8S5R6tR6ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771374381; c=relaxed/simple;
-	bh=JboHkTUEpFKhTIugWR55+L+mSXwfGGmx5RWx7rWQmO0=;
+	s=arc-20240116; t=1771375156; c=relaxed/simple;
+	bh=N7Kt1rlSYfggHAi5kZ/FbucKlFPKkRRUWnHc7hvpR7U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OovlkIFIxAle6dI60lYH6AU8XSD1arSwGtGtY4AAHcHhruDtfL4S1FjvX5R5XGrkjRQHvQzB3+1sFSu3SHP4NGqolzqS6bsPFKoePIha1VTInnA/AGVX9ZaTtWfFV07xWrKzBeIBZ4CWa1D+Wj7+h/vQdKuWrMuzYiHsv4t1oF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bCov9miZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D5C5C4CEF7;
-	Wed, 18 Feb 2026 00:26:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771374381;
-	bh=JboHkTUEpFKhTIugWR55+L+mSXwfGGmx5RWx7rWQmO0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bCov9miZG+BJgHwbaa9A/3mI2mNgqV5H6jiwKBjZMR4s7Uc4HRs/90W0cHyCt0wUC
-	 oJaKTwSbz0hKsm9K2C4/MXkajHdGBSHPNkW8zbFktAyK2CG7PAUj93YVPMYh4v8hd2
-	 utrss9Pqt1DSCEKS/ExNIFOQQoQwPDD0haApo1qj3RSKlR78YxiaJCMoLFYJZG1EdV
-	 JwsxKbSMRUNwEQjuuf6JuUH3H9+WjQ4jcTnwgwaKNWTDjaqaL/Eud2sm5ySWqZLeqz
-	 ibmbwEPJDCD/GCVzzKSCPvkO78Nmt5bT6MxLg7ZFjQ8oIb1TQzd5XB8bCgs7MKcf72
-	 GOexS+YBTVKkw==
-Date: Wed, 18 Feb 2026 11:26:06 +1100
-From: Dave Chinner <dgc@kernel.org>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: Jan Kara <jack@suse.cz>, Pankaj Raghav <pankaj.raghav@linux.dev>,
-	linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org,
-	Andres Freund <andres@anarazel.de>, djwong@kernel.org,
-	john.g.garry@oracle.com, willy@infradead.org, hch@lst.de,
-	ritesh.list@gmail.com, Luis Chamberlain <mcgrof@kernel.org>,
-	dchinner@redhat.com, Javier Gonzalez <javier.gonz@samsung.com>,
-	gost.dev@samsung.com, tytso@mit.edu, p.raghav@samsung.com,
-	vi.shah@samsung.com
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Buffered atomic writes
-Message-ID: <aZUHHvNl6cQr-uwd@dread>
-References: <d0c4d95b-8064-4a7e-996d-7ad40eb4976b@linux.dev>
- <aY8n97G_hXzA5MMn@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <w3vwdaygcz3prsxwv43blo4co666mragpdwaxihbirt5stl4vr@agyz4mnaxghj>
- <aZS18m1eIxjDmyBa@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MVMiCeLEqmmhDWzMpsFVF9bvnSN0ydu1V9Pll9/ZHdbVlckXpcOl7tm52pOsTBc0i16+ZD/YIV8YQuDmTtx0O1crYstvzG+XKz70iWqazm5KKNszxVb0jjBeR8CRkCz+mQyHKS1nT92RnKzYRAfMnpvmMlot0JNHriTTStszwOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=groves.net; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=groves.net
+Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id A315813AB5F;
+	Wed, 18 Feb 2026 00:39:10 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: john@groves.net) by omf16.hostedemail.com (Postfix) with ESMTPA id A77DA2000D;
+	Wed, 18 Feb 2026 00:39:00 +0000 (UTC)
+Date: Tue, 17 Feb 2026 18:38:59 -0600
+From: John Groves <John@groves.net>
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: John Groves <john@jagalactic.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Dan Williams <dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, 
+	Alison Schofield <alison.schofield@intel.com>, John Groves <jgroves@micron.com>, 
+	John Groves <jgroves@fastmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, David Hildenbrand <david@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, "Darrick J . Wong" <djwong@kernel.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Bagas Sanjaya <bagasdotme@gmail.com>, 
+	James Morse <james.morse@arm.com>, Fuad Tabba <tabba@google.com>, 
+	Sean Christopherson <seanjc@google.com>, Shivank Garg <shivankg@amd.com>, 
+	Ackerley Tng <ackerleytng@google.com>, Gregory Price <gourry@gourry.net>, 
+	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>, 
+	"venkataravis@micron.com" <venkataravis@micron.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>, 
+	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH V7 05/19] dax: Add dax_operations for use by fs-dax on
+ fsdev dax
+Message-ID: <aZUJxi5mzEd1Tojw@groves.net>
+References: <0100019bd33b1f66-b835e86a-e8ae-443f-a474-02db88f7e6db-000000@email.amazonses.com>
+ <20260118223147.92389-1-john@jagalactic.com>
+ <0100019bd33c798b-b40d52e8-b393-4a54-9cc2-f30ee62b566f-000000@email.amazonses.com>
+ <698f96436c715_bcb89100ea@iweiny-mobl.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -70,101 +74,105 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aZS18m1eIxjDmyBa@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+In-Reply-To: <698f96436c715_bcb89100ea@iweiny-mobl.notmuch>
+X-Stat-Signature: f4jo787zpakzf3y9zwtrhjdk1ybczeo8
+X-Session-Marker: 6A6F686E4067726F7665732E6E6574
+X-Session-ID: U2FsdGVkX1/8h3J39DJgkhqm4GBq3iPbDEOPKnf5irY=
+X-HE-Tag: 1771375140-854600
+X-HE-Meta: U2FsdGVkX19555SNH4TgDw+0D/5WySkCoz344yjmE1drTBd2BDahmB/atoWRuzxIEAC786D/K4NiAhiqTbKLSAqDxQvxqPxT8Od/9C2v//mKOXN/CHgE3gYP2dxH+37rDlBlriOFxFuYWE3Ixmv7MVw+ts4ERsZLsncB/MTDX+6GmAqyW9+I8vwwpCLRAFWZodzJv5dmnhx6GVCeysC4Rx0cTag39mxqDJgl1GAta2IIMiyqx+EkhhMqh6FHkiWZ5hGK7kh6kl3ykgfnBzG0q69IQsVtBVXUbV43PLJ2shR5M8nh1TYjRpc4YsugtX6/3g4uA71iG6zYeYfY7h/XIxfIX8k5d8j2uKXCIwiZ/nuHIqiavmkj+OlsWj4Vxfjb
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.46 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77478-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[4];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[dgc@kernel.org,linux-fsdevel@vger.kernel.org];
-	FREEMAIL_CC(0.00)[suse.cz,linux.dev,vger.kernel.org,kvack.org,lists.linux-foundation.org,anarazel.de,kernel.org,oracle.com,infradead.org,lst.de,gmail.com,redhat.com,samsung.com,mit.edu];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	TAGGED_FROM(0.00)[bounces-77479-lists,linux-fsdevel=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[jagalactic.com,szeredi.hu,intel.com,ddn.com,micron.com,fastmail.com,lwn.net,infradead.org,suse.cz,zeniv.linux.org.uk,kernel.org,gmail.com,huawei.com,redhat.com,toxicpanda.com,arm.com,google.com,amd.com,gourry.net,vger.kernel.org,lists.linux.dev];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	DMARC_NA(0.00)[groves.net];
+	RCPT_COUNT_TWELVE(0.00)[39];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[John@groves.net,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCVD_COUNT_FIVE(0.00)[5];
+	MID_RHS_MATCH_FROM(0.00)[];
+	R_DKIM_NA(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: A6F1815243B
+X-Rspamd-Queue-Id: D50AB1525B0
 X-Rspamd-Action: no action
 
-On Wed, Feb 18, 2026 at 12:09:46AM +0530, Ojaswin Mujoo wrote:
-> On Mon, Feb 16, 2026 at 12:38:59PM +0100, Jan Kara wrote:
-> > Hi!
+On 26/02/13 03:23PM, Ira Weiny wrote:
+> John Groves wrote:
+> > From: John Groves <John@Groves.net>
 > > 
-> > On Fri 13-02-26 19:02:39, Ojaswin Mujoo wrote:
-> > > Another thing that came up is to consider using write through semantics 
-> > > for buffered atomic writes, where we are able to transition page to
-> > > writeback state immediately after the write and avoid any other users to
-> > > modify the data till writeback completes. This might affect performance
-> > > since we won't be able to batch similar atomic IOs but maybe
-> > > applications like postgres would not mind this too much. If we go with
-> > > this approach, we will be able to avoid worrying too much about other
-> > > users changing atomic data underneath us. 
-> > > 
-> > > An argument against this however is that it is user's responsibility to
-> > > not do non atomic IO over an atomic range and this shall be considered a
-> > > userspace usage error. This is similar to how there are ways users can
-> > > tear a dio if they perform overlapping writes. [1]. 
+> > fsdev: Add dax_operations for use by famfs
 > > 
-> > Yes, I was wondering whether the write-through semantics would make sense
-> > as well. Intuitively it should make things simpler because you could
-> > practially reuse the atomic DIO write path. Only that you'd first copy
-> > data into the page cache and issue dio write from those folios. No need for
-> > special tracking of which folios actually belong together in atomic write,
-> > no need for cluttering standard folio writeback path, in case atomic write
-> > cannot happen (e.g. because you cannot allocate appropriately aligned
-> > blocks) you get the error back rightaway, ...
+> > - These methods are based on pmem_dax_ops from drivers/nvdimm/pmem.c
+> > - fsdev_dax_direct_access() returns the hpa, pfn and kva. The kva was
+> >   newly stored as dev_dax->virt_addr by dev_dax_probe().
+> > - The hpa/pfn are used for mmap (dax_iomap_fault()), and the kva is used
+> >   for read/write (dax_iomap_rw())
+> > - fsdev_dax_recovery_write() and dev_dax_zero_page_range() have not been
+> >   tested yet. I'm looking for suggestions as to how to test those.
+> > - dax-private.h: add dev_dax->cached_size, which fsdev needs to
+> >   remember. The dev_dax size cannot change while a driver is bound
+> >   (dev_dax_resize returns -EBUSY if dev->driver is set). Caching the size
+> >   at probe time allows fsdev's direct_access path can use it without
+> >   acquiring dax_dev_rwsem (which isn't exported anyway).
+> > 
+> > Signed-off-by: John Groves <john@groves.net>
 > 
-> This is an interesting idea Jan and also saves a lot of tracking of
-> atomic extents etc.
+> [snip]
+> 
+> > +
+> > +static long __fsdev_dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
+> > +			long nr_pages, enum dax_access_mode mode, void **kaddr,
+> > +			unsigned long *pfn)
+> > +{
+> > +	struct dev_dax *dev_dax = dax_get_private(dax_dev);
+> > +	size_t size = nr_pages << PAGE_SHIFT;
+> > +	size_t offset = pgoff << PAGE_SHIFT;
+> > +	void *virt_addr = dev_dax->virt_addr + offset;
+> > +	phys_addr_t phys;
+> > +	unsigned long local_pfn;
+> > +
+> > +	WARN_ON(!dev_dax->virt_addr);
+> 
+> WARN_ON_ONCE.  But frankly I'm pretty sure this is impossible to hit given
+> the probe call, so best remove it.  Also yall already used dev_dax->virt_addr
+> above.  And will hand back a bad address to the caller.  So...
 
-ISTR mentioning that we should be doing exactly this (grab page
-cache pages, fill them and submit them through the DIO path) for
-O_DSYNC buffered writethrough IO a long time again. The context was
-optimising buffered O_DSYNC to use the FUA optimisations in the
-iomap DIO write path.
+Good point - dropped it.
 
-I suggested it again when discussing how RWF_DONTCACHE should be
-implemented, because the async DIO write completion path invalidates
-the page cache over the IO range. i.e. it would avoid the need to
-use folio flags to track pages that needed invalidation at IO
-completion...
+> 
+> > +
+> > +	phys = dax_pgoff_to_phys(dev_dax, pgoff, nr_pages << PAGE_SHIFT);
+> > +	if (phys == -1) {
+> > +		dev_dbg(&dev_dax->dev,
+> > +			"pgoff (%#lx) out of range\n", pgoff);
+> > +		return -ERANGE;
+> 
+> EFAULT?
 
-I have a vague recollection of mentioning this early in the buffered
-RWF_ATOMIC discussions, too, though that may have just been the
-voices in my head.
+This feels like a judgment call, but I'm fine with it.
+Changed to -EFAULT
 
-Regardless, we are here again with proposals for RWF_ATOMIC and
-RWF_WRITETHROUGH and a suggestion that maybe we should vector
-buffered writethrough via the DIO path.....
+> 
+> Ira
+> 
+> [snip]
 
-Perhaps it's time to do this?
+Thanks Ira!
+John
 
-FWIW, the other thing that write-through via the DIO path enables is
-true async O_DSYNC buffered IO. Right now O_DSYNC buffered writes
-block waiting on IO completion through generic_sync_write() ->
-vfs_fsync_range(), even when issued through AIO paths.  Vectoring it
-through the DIO path avoids the blocking fsync path in IO submission
-as it runs in the async DIO completion path if it is needed....
-
--Dave.
--- 
-Dave Chinner
-dgc@kernel.org
 
