@@ -1,250 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-77598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77599-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id eANRH9L5lWlMXgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 18:41:38 +0100
+	id iKinIgf6lWlMXgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77599-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 18:42:31 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9920158622
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 18:41:37 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B7D0158640
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 18:42:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 2D30B3014762
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 17:41:34 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id C61D5301487E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 17:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119B5345752;
-	Wed, 18 Feb 2026 17:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25D332ED55;
+	Wed, 18 Feb 2026 17:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wx/lUdpV"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PxaekDEg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ch1fLl53";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PxaekDEg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ch1fLl53"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85DF3340A41
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 17:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BAFD2E62D9
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 17:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771436490; cv=none; b=irIox6rAU1908a3OByKCiMm+VOTYJiFgfQzySs/fv4PUllW161m6TDo/suxBnEUlud4Ahuj4DMt3FwliJAzktsMfzOCnkg/0VFCzOXLmJpRtCX8fRRmA23O8fLu4M7owwD166qIpw2xjJ7jiDC+eousiSv/+iSr9m+8Ni4RRPIs=
+	t=1771436543; cv=none; b=IYP5wWcTloFfHbEAX1NVVRu2eiEhhtEiHM+xmdRt3BmI29KvNO6MLeRQVH4Jwn1F35dEMMx+spnujUHQUB35ZwAuJ3VKfBsjdBCRSF9wXFTK+GyYAPOQG740UX654GlIkPPgAHfcFZhOcn6cm8quYE0yRXSD2a8L3azZ5GkWq9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771436490; c=relaxed/simple;
-	bh=W1C2rZ9ZD7+WtKUhLg4WYgmJYcFHW7ES1DldMTnFN9Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fgnkwSNEUbJEA9anDWC4F2od+2lH1UdZXj6ZK8eNMKjTnv08+QuYYA3AEBSmXTP4flv0QM3B0hdOWbilC7yfUoAz0PqCzMUjRzdBqb62Jx9WC0HurCYrjb9BszHrIvPQEFWVZEQq0nbmZ0HRiQYGpQTawbKTotzwvvP1K+cCiJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wx/lUdpV; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2a8a7269547so336845ad.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 09:41:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771436488; x=1772041288; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ipH6XqeHh3W8Ei0yJdhpX+9znKSpvZOuW7bCYHXq97o=;
-        b=Wx/lUdpVaIIYAa1SuIm6pyOzT88S6KxB5BXVJknnaxtldfNnI7G76ulbU2OmMABEvD
-         JeovOc43M599YF3vG22V4gC13CM06KcOhVMtKLTc48m4G0txb9HcT0n8bVc03ExYeTHw
-         FLMRdlDI2K2wYIwnhvlsX0A6NQKTvFaSDhENlH0WTEYY+f+/dSwrLzoX39c4iVFeWdLE
-         FckKKpVUFITGJivI9a9Aeps2dd4Lo6zkSO+vqYiONvE3Yi9V80PpjuitHqEPdiRg0+Ow
-         F0rXRGDtmsCbqkdnihtJ6hxmOW9BKNWUPlJ9vDUKX2Qo+lXOR+ihlZSRhhYz+K4YwCyh
-         UAbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771436488; x=1772041288;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ipH6XqeHh3W8Ei0yJdhpX+9znKSpvZOuW7bCYHXq97o=;
-        b=D7t+5nhgheEWNs+YGX8W8fgkHvxQXJaU/WIW6NfkxYB+fxERrX8NwKzvTyC4MN/7UV
-         D2rq/PA5ftAL0NAUTFgTL6l2oGKGS/llOejzSDdBnuAlS37W0IdbFKMVc0ee7zkOhu9Q
-         07NuiKSQAdqUeIVPqdbj9C6/5+pvG4bENwGflcaaBH38jj0fNkXYAjvIlHfFdcW9sikM
-         Z6N6WGrLeF6PGwIXQ+jFEM/0ik8S92WIBHD28ZGUya1gaRGO/qMA8u2u1oSkX5cdBcVf
-         dKiKMbpvorEqHN2A7F4ZRSv6RwVStLiYJsC/PbtgWVDcqbr1eS48RZKKFZLE4DAM/qTw
-         l32g==
-X-Forwarded-Encrypted: i=1; AJvYcCUX+4Y4oNky/OPVTPEl6O9lpMaS0zRj9ZERkC8DaNZB9IiA7C9uZFMoLETIDoDU7+0EgSpZFp8Kn0pqp578@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF2RJBScVrvkQS5FLChQaDIzH/CabRYaDr0TNaE/eJNGSvpGtx
-	A3NAojvSHc+8NdbUktGL34Iyg9e33uFlyyT8Xc6LTKRjsHdTkL2+LP8N
-X-Gm-Gg: AZuq6aL7bOhFXDQEGr8Eacp2yp++DnznHw2uNApUR2jSKphCXnOcrzX7zTMQ6H86zZ8
-	k9sb5AajVmUZW5mXawf7HqCua1KlpVTlUMP5qOVrWXYnDRsv9H1TQ3YS1mNqrZOiQQHbCgx4LM2
-	eg30VP+fZpbcf7KAS16UVNzYjnjexjyOfDkO1D3S4Et8jh0UOA/txyW5JKRrwmLabLoxQNGvcgW
-	jOgxWpXY8RTAe8NqGk3gj298akqB8m4J9hGzI7+jmRScDOlgHF0X5FnVHZf26GNGc/iRFyTJ/sA
-	GbaQPMDwD2UR3UOVUrFMuQkWc7RtCYBBDojL3UmwdP2d6MMuHVREamTMfPZCmdhVMdmhKKuN1LI
-	Byfc5XAjCsZP9yu8q57qDaO3mYZL9x0EMcRjsrZ1QW5aKWOEgIUZJrLSWUYxU1s6IosSO3GY88g
-	ChEiQ3XFbNqjdPzEti0xjvdcaQlV8ydouov3Ldug==
-X-Received: by 2002:a17:903:2f85:b0:2ab:333:22e8 with SMTP id d9443c01a7336-2ab4cfbc6b7mr173584125ad.24.1771436487697;
-        Wed, 18 Feb 2026 09:41:27 -0800 (PST)
-Received: from [192.168.0.120] ([49.207.232.214])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ad1aadd47csm135969115ad.65.2026.02.18.09.41.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Feb 2026 09:41:27 -0800 (PST)
-Message-ID: <81721558-d5b7-4120-8881-cf63f3a96fd6@gmail.com>
-Date: Wed, 18 Feb 2026 23:11:23 +0530
+	s=arc-20240116; t=1771436543; c=relaxed/simple;
+	bh=2uiAxrki8yx1TK1mv5h1jTPL6e6WpFnN+88mAqPN3DQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X/vOGY09RrivjowyQzqRudtQ7Yi8GeRStSmjCeY1oPf10aIypiOJQWRU819o5mDFHg1/w4zTqFpD+T9+Zizv46YsWz64KOY1JshxgDkDvvM7fqGLADTs3XborlocUKFaYGkMeMe0uklLDxwi65eAoqJhGz7KIooccOBoTCYAUHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PxaekDEg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ch1fLl53; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PxaekDEg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ch1fLl53; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id BD9683E6D4;
+	Wed, 18 Feb 2026 17:42:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1771436540; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JvwZdWyBuPCaJq5onHfru+6aMaFDG/nTmYkmyAXu5og=;
+	b=PxaekDEgryjgjhp7gu9pnwHOKrO1w+Ild6EkoruNjPFB9xcrTFRJHcpg4wM1iMrrwV9nL9
+	+p0KTwTezVzUVsoU5P3776MvLd2UhU6GppBO19aXfEYGXEI4YmjE98DOMZwqZXE+v29yqa
+	OocbOqqZx2qsYHRjfOgH9QO7hDMuz20=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1771436540;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JvwZdWyBuPCaJq5onHfru+6aMaFDG/nTmYkmyAXu5og=;
+	b=Ch1fLl53jWDItA/wsG5VC6xmr8thrkEqqKnsTtBDCAFDTy5xXH1KMWTVFMiY+uWnyLcXY1
+	EDZBrO7fKy55OdAA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1771436540; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JvwZdWyBuPCaJq5onHfru+6aMaFDG/nTmYkmyAXu5og=;
+	b=PxaekDEgryjgjhp7gu9pnwHOKrO1w+Ild6EkoruNjPFB9xcrTFRJHcpg4wM1iMrrwV9nL9
+	+p0KTwTezVzUVsoU5P3776MvLd2UhU6GppBO19aXfEYGXEI4YmjE98DOMZwqZXE+v29yqa
+	OocbOqqZx2qsYHRjfOgH9QO7hDMuz20=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1771436540;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JvwZdWyBuPCaJq5onHfru+6aMaFDG/nTmYkmyAXu5og=;
+	b=Ch1fLl53jWDItA/wsG5VC6xmr8thrkEqqKnsTtBDCAFDTy5xXH1KMWTVFMiY+uWnyLcXY1
+	EDZBrO7fKy55OdAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A7FA83EA65;
+	Wed, 18 Feb 2026 17:42:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id H2z8KPz5lWnlbAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 18 Feb 2026 17:42:20 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 6949BA08CF; Wed, 18 Feb 2026 18:42:05 +0100 (CET)
+Date: Wed, 18 Feb 2026 18:42:05 +0100
+From: Jan Kara <jack@suse.cz>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: Pankaj Raghav <pankaj.raghav@linux.dev>, linux-xfs@vger.kernel.org, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org, 
+	Andres Freund <andres@anarazel.de>, djwong@kernel.org, john.g.garry@oracle.com, willy@infradead.org, 
+	hch@lst.de, ritesh.list@gmail.com, jack@suse.cz, 
+	Luis Chamberlain <mcgrof@kernel.org>, dchinner@redhat.com, Javier Gonzalez <javier.gonz@samsung.com>, 
+	gost.dev@samsung.com, tytso@mit.edu, p.raghav@samsung.com, vi.shah@samsung.com
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Buffered atomic writes
+Message-ID: <bf6eek2jagskkgu3isixqjjg3ftrkp5juf6lge3rjjutzzhbdd@vkliyqpsmrry>
+References: <d0c4d95b-8064-4a7e-996d-7ad40eb4976b@linux.dev>
+ <aY8n97G_hXzA5MMn@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <7cf3f249-453d-423a-91d1-dfb45c474b78@linux.dev>
+ <aZSjUWBkUFeJNEL6@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] iomap, xfs: lift zero range hole mapping flush
- into xfs
-Content-Language: en-US
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org,
- linux-xfs@vger.kernel.org
-References: <20260129155028.141110-1-bfoster@redhat.com>
- <20260129155028.141110-2-bfoster@redhat.com>
- <af7b989f430a8b464f48a8404b4f60a5fb4a189f.camel@gmail.com>
- <20260213162457.GG7712@frogsfrogsfrogs>
-From: "Nirjhar Roy (IBM)" <nirjhar.roy.lists@gmail.com>
-In-Reply-To: <20260213162457.GG7712@frogsfrogsfrogs>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aZSjUWBkUFeJNEL6@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+X-Spam-Score: -2.30
+X-Spam-Level: 
+X-Spam-Flag: NO
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [0.34 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TO_DN_SOME(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-77598-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77599-lists,linux-fsdevel=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,suse.cz:dkim,suse.com:email];
+	DMARC_NA(0.00)[suse.cz];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	RCVD_COUNT_FIVE(0.00)[5];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	FREEMAIL_CC(0.00)[linux.dev,vger.kernel.org,kvack.org,lists.linux-foundation.org,anarazel.de,kernel.org,oracle.com,infradead.org,lst.de,gmail.com,suse.cz,redhat.com,samsung.com,mit.edu];
+	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[nirjharroylists@gmail.com,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: E9920158622
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TO_DN_SOME(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: 4B7D0158640
 X-Rspamd-Action: no action
 
+On Tue 17-02-26 22:50:17, Ojaswin Mujoo wrote:
+> On Mon, Feb 16, 2026 at 10:52:35AM +0100, Pankaj Raghav wrote:
+> > Hmm, IIUC, postgres will write their dirty buffer cache by combining multiple DB
+> > pages based on `io_combine_limit` (typically 128kb). So immediately writing them
+> > might be ok as long as we don't remove those pages from the page cache like we do in
+> > RWF_UNCACHED.
+> 
+> Yep, and Ive not looked at the code path much but I think if we really
+> care about the user not changing the data b/w write and writeback then
+> we will probably need to start the writeback while holding the folio
+> lock, which is currently not done in RWF_UNCACHED.
 
-On 2/13/26 21:54, Darrick J. Wong wrote:
-> On Fri, Feb 13, 2026 at 03:50:07PM +0530, Nirjhar Roy (IBM) wrote:
->> On Thu, 2026-01-29 at 10:50 -0500, Brian Foster wrote:
->>> iomap zero range has a wart in that it also flushes dirty pagecache
->>> over hole mappings (rather than only unwritten mappings). This was
->>> included to accommodate a quirk in XFS where COW fork preallocation
->>> can exist over a hole in the data fork, and the associated range is
->>> reported as a hole. This is because the range actually is a hole,
->>> but XFS also has an optimization where if COW fork blocks exist for
->>> a range being written to, those blocks are used regardless of
->>> whether the data fork blocks are shared or not. For zeroing, COW
->>> fork blocks over a data fork hole are only relevant if the range is
->>> dirty in pagecache, otherwise the range is already considered
->>> zeroed.
->>>
->>> The easiest way to deal with this corner case is to flush the
->>> pagecache to trigger COW remapping into the data fork, and then
->>> operate on the updated on-disk state. The problem is that ext4
->>> cannot accommodate a flush from this context due to being a
->>> transaction deadlock vector.
->>>
->>> Outside of the hole quirk, ext4 can avoid the flush for zero range
->>> by using the recently introduced folio batch lookup mechanism for
->>> unwritten mappings. Therefore, take the next logical step and lift
->>> the hole handling logic into the XFS iomap_begin handler. iomap will
->>> still flush on unwritten mappings without a folio batch, and XFS
->>> will flush and retry mapping lookups in the case where it would
->>> otherwise report a hole with dirty pagecache during a zero range.
->>>
->>> Note that this is intended to be a fairly straightforward lift and
->>> otherwise not change behavior. Now that the flush exists within XFS,
->>> follow on patches can further optimize it.
->>>
->>> Signed-off-by: Brian Foster <bfoster@redhat.com>
->>> ---
->>>   fs/iomap/buffered-io.c |  2 +-
->>>   fs/xfs/xfs_iomap.c     | 25 ++++++++++++++++++++++---
->>>   2 files changed, 23 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
->>> index 6beb876658c0..807384d72311 100644
->>> --- a/fs/iomap/buffered-io.c
->>> +++ b/fs/iomap/buffered-io.c
->>> @@ -1620,7 +1620,7 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
->>>   		     srcmap->type == IOMAP_UNWRITTEN)) {
->>>   			s64 status;
->>>   
->>> -			if (range_dirty) {
->>> +			if (range_dirty && srcmap->type == IOMAP_UNWRITTEN) {
->>>   				range_dirty = false;
->>>   				status = iomap_zero_iter_flush_and_stale(&iter);
->>>   			} else {
->>> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
->>> index 37a1b33e9045..896d0dd07613 100644
->>> --- a/fs/xfs/xfs_iomap.c
->>> +++ b/fs/xfs/xfs_iomap.c
->>> @@ -1790,6 +1790,7 @@ xfs_buffered_write_iomap_begin(
->>>   	if (error)
->>>   		return error;
->>>   
->>> +restart:
->>>   	error = xfs_ilock_for_iomap(ip, flags, &lockmode);
->>>   	if (error)
->>>   		return error;
->>> @@ -1817,9 +1818,27 @@ xfs_buffered_write_iomap_begin(
->>>   	if (eof)
->>>   		imap.br_startoff = end_fsb; /* fake hole until the end */
->>>   
->>> -	/* We never need to allocate blocks for zeroing or unsharing a hole. */
->>> -	if ((flags & (IOMAP_UNSHARE | IOMAP_ZERO)) &&
->>> -	    imap.br_startoff > offset_fsb) {
->>> +	/* We never need to allocate blocks for unsharing a hole. */
->>> +	if ((flags & IOMAP_UNSHARE) && imap.br_startoff > offset_fsb) {
->>> +		xfs_hole_to_iomap(ip, iomap, offset_fsb, imap.br_startoff);
->>> +		goto out_unlock;
->>> +	}
->>> +
->>> +	/*
->>> +	 * We may need to zero over a hole in the data fork if it's fronted by
->>> +	 * COW blocks and dirty pagecache. To make sure zeroing occurs, force
->>> +	 * writeback to remap pending blocks and restart the lookup.
->>> +	 */
->>> +	if ((flags & IOMAP_ZERO) && imap.br_startoff > offset_fsb) {
->>> +		if (filemap_range_needs_writeback(inode->i_mapping, offset,
->>> +						  offset + count - 1)) {
->>> +			xfs_iunlock(ip, lockmode);
->> I am a bit new to this section of the code - so a naive question:
->> Why do we need to unlock the inode here? Shouldn't the mappings be thread safe while the write/flush
->> is going on?
-> Writeback takes XFS_ILOCK, which we currently hold here (possibly in
-> exclusive mode) so we must drop it to write(back) and wait.
+That isn't enough. submit_bio() returning isn't enough to guaranteed DMA
+to the device has happened. And until it happens, modifying the pagecache
+page means modifying the data the disk will get. The best is probably to
+transition pages to writeback state and deal with it as with any other
+requirement for stable pages.
 
-Okay, got it. Thank you.
-
---NR
-
->
-> --D
->
->> --NR
->>> +			error = filemap_write_and_wait_range(inode->i_mapping,
->>> +						offset, offset + count - 1);
->>> +			if (error)
->>> +				return error;
->>> +			goto restart;
->>> +		}
->>>   		xfs_hole_to_iomap(ip, iomap, offset_fsb, imap.br_startoff);
->>>   		goto out_unlock;
->>>   	}
->>
+								Honza
 -- 
-Nirjhar Roy
-Linux Kernel Developer
-IBM, Bangalore
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
