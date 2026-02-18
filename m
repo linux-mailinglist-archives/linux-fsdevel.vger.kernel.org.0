@@ -1,52 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-77514-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QMyoNg9ZlWnQPAIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77514-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 07:15:43 +0100
+	id gLvhGR5ZlWnQPAIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 07:15:58 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0ECC1534AB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 07:15:43 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAB711534E8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 07:15:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 0F029301D0E5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 06:15:43 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 028DE300E68B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 06:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9406D3090F7;
-	Wed, 18 Feb 2026 06:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20FD1308F34;
+	Wed, 18 Feb 2026 06:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UAfAZw2C"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EbnHG8Iy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7D726FA6F;
-	Wed, 18 Feb 2026 06:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884E82C0F8C;
+	Wed, 18 Feb 2026 06:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771395338; cv=none; b=Q0z2z+0qf9zXFUJ2MCfhhH81lu69jpe8GBZVht6ddxxstb7NxfE3WmWwwpyr2i/XJlU1CTq9HF3ZkIYBpVjbZ0mM4mzei1fgENiRsNkkXyXTgctHFDy2HszV8KqcQnz+US7xk2jiudUYZls84wfEAKhRL3eDteiaudMJOnXOhT8=
+	t=1771395343; cv=none; b=RMJRLWw3dVVKsdaE4fYhaOH4hPHM5zxO11n9n7Pv1OlXTZYXSZdpP6zzy6KQmFYqsBeASUvCaNsocjPs+Mf0+/qW/LgLbqnTImubNrI3LLsef/TB5NBCx/mOlxtEbB803YncSSOJneUPw/PqACLCAjdjWhhEOpeJMOLyUA1eGfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771395338; c=relaxed/simple;
-	bh=hoQ5/U84bsuguMuewD1BFqmQWJ4u9kruzIdiTMJm1v8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XPAMTnpVtdDzAQnEAiS0KGRGFjbtW5mMAL175xkqR7TOgth3lcxtToK9qLSj8oEcJE76Mwg1bQjfh9A3hz30YD2/3eJ6273NxtsdQIycml4fanG7SPDA5aIvYY176LG9ywLTSwaxQ1sVC4mHi+SXXqMaCGqJERJe0ViFO2rVaDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UAfAZw2C; arc=none smtp.client-ip=198.137.202.133
+	s=arc-20240116; t=1771395343; c=relaxed/simple;
+	bh=Zh/fggMwn6Lfcw40q/PEojNJD7gTvWikxt1sBWBuVgQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mQ9wt5tECxTrAAdqoS7iZRBLutgtVmxutdZGkWwY/Uua7dlfIVyr/RVXyBlZWzvM7Xg1FCM162S1iG+lRy6NxeKjM1td4sOR1qRD8OiKG0haZAIWm7PEMcskmlRVsGE476S0pX07C3fa1EBGe9z/f1dxa1rWObHielTxTzm5dIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EbnHG8Iy; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=cIpjf5hWnYH6fYx2YR3FldNkF2HhRTKOd+610y1ar28=; b=UAfAZw2C/LvkMKQ4CLWfMCcXH8
-	a94h2MZbbIu1kjZPb/OTF/JhbGuTqzW7NdqO2pIHySURqhlX/q7zLCtpv+3wwZWItbQvwEp74ewJ6
-	UeGZSymB4EDmm2fG7jUiRuFLnIBGqsrBhAidPmCPZGzaBVLO6pbVEFRtrsSYH3DOJDh3U0vgoJeKd
-	1E7XmtUSGiKCUzUfCGW3fn3gpr0806Iwy0kXlkFdW9LpWTLlPWvU/zvTqXmhD1Ou3c4us8oyKBegb
-	EKk3esbz4EU5m3tiJEGP6RiWF1c3vCXDBBgNNF8Tha9ASQX5MydmGSHJyuBKVtJVUqjXCdHnGcy4f
-	A9lN0WGQ==;
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
+	:Reply-To:Content-Type:Content-ID:Content-Description;
+	bh=fLk9zPxCHjgA7o3Jv3x/8UsJXoxlSctDFNj7ITNPZxs=; b=EbnHG8IyWDNDhDW5D56W8BHVRt
+	n0pRGExEJ3BLQsecChVKgPpP9RzWnByCHWFO2xpeqOY/B/LVMF0zvkjM9vkFu7sehrSdxdSzQbtsi
+	/tAAvMy3zJzZ7KR/Sj16vs3uaON2WlSwMAmm0CGkjIDKd7LTNVhxlMWVFQeqnox4o54olY+cDGIPO
+	w6fO/TDp9d4SYgJKZiZD4kfomgj+EO1Eik+ZIX3Z1tCFybBishfdbG4+dvc0xxzChRePoqLxAxVmA
+	11vGH6KLKDv2KjJUn56iPayckF4x1W9xd514cvLcjARv3UnrpC0appLxgyfDkry92AfVhZTVqYis5
+	1IwwhduQ==;
 Received: from [2001:4bb8:2dc:9863:1842:9381:9c0f:de32] (helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vsaqW-00000009Lec-0JXr;
-	Wed, 18 Feb 2026 06:15:36 +0000
+	id 1vsaqb-00000009Lf5-3hm5;
+	Wed, 18 Feb 2026 06:15:42 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Eric Biggers <ebiggers@kernel.org>
 Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
@@ -59,10 +60,12 @@ Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
 	linux-ext4@vger.kernel.org,
 	linux-f2fs-devel@lists.sourceforge.net,
 	linux-fsdevel@vger.kernel.org
-Subject: fscrypt API cleanups
-Date: Wed, 18 Feb 2026 07:14:38 +0100
-Message-ID: <20260218061531.3318130-1-hch@lst.de>
+Subject: [PATCH 1/9] fscrypt: pass a byte offset to fscrypt_generate_dun
+Date: Wed, 18 Feb 2026 07:14:39 +0100
+Message-ID: <20260218061531.3318130-2-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260218061531.3318130-1-hch@lst.de>
+References: <20260218061531.3318130-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -77,18 +80,18 @@ X-Spamd-Result: default: False [-0.06 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
 	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), DKIM not aligned (relaxed),none];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77514-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77515-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[infradead.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	TO_DN_SOME(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
@@ -97,26 +100,90 @@ X-Spamd-Result: default: False [-0.06 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[11];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:mid,infradead.org:dkim,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: C0ECC1534AB
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,infradead.org:dkim,lst.de:mid,lst.de:email]
+X-Rspamd-Queue-Id: DAB711534E8
 X-Rspamd-Action: no action
 
-Hi all,
+Logical offsets into an inode are usually expresssed as bytes in the VFS.
+Switch fscrypt_generate_dun to that convention and remove the
+ci_data_units_per_block_bits member in struct fscrypt_inode_info that
+was only used to cache the DUN shift based on the logical block size
+granularity.
 
-this series cleans up various fscrypt APIs to pass logical offsets in
-and lengths in bytes, and on-disk sectors as 512-byte sector units,
-like most of the VFS and block code.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/crypto/fscrypt_private.h |  3 ---
+ fs/crypto/inline_crypt.c    | 10 ++++------
+ fs/crypto/keysetup.c        |  2 --
+ 3 files changed, 4 insertions(+), 11 deletions(-)
 
-Diffstat:
- fs/crypto/bio.c             |   35 +++++++++++++++--------------------
- fs/crypto/fscrypt_private.h |    3 ---
- fs/crypto/inline_crypt.c    |   34 ++++++++++++++++------------------
- fs/crypto/keysetup.c        |    2 --
- fs/ext4/inode.c             |    5 ++++-
- fs/ext4/readpage.c          |    7 ++++---
- fs/f2fs/data.c              |    7 +++++--
- fs/f2fs/file.c              |    4 +++-
- fs/iomap/direct-io.c        |    6 ++----
- include/linux/fscrypt.h     |   19 +++++++++----------
- 10 files changed, 58 insertions(+), 64 deletions(-)
+diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
+index 4e8e82a9ccf9..8d3c278a7591 100644
+--- a/fs/crypto/fscrypt_private.h
++++ b/fs/crypto/fscrypt_private.h
+@@ -278,9 +278,6 @@ struct fscrypt_inode_info {
+ 	 */
+ 	u8 ci_data_unit_bits;
+ 
+-	/* Cached value: log2 of number of data units per FS block */
+-	u8 ci_data_units_per_block_bits;
+-
+ 	/* Hashed inode number.  Only set for IV_INO_LBLK_32 */
+ 	u32 ci_hashed_ino;
+ 
+diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
+index ed6e926226b5..1773dd7ea7cf 100644
+--- a/fs/crypto/inline_crypt.c
++++ b/fs/crypto/inline_crypt.c
+@@ -268,14 +268,12 @@ bool __fscrypt_inode_uses_inline_crypto(const struct inode *inode)
+ EXPORT_SYMBOL_GPL(__fscrypt_inode_uses_inline_crypto);
+ 
+ static void fscrypt_generate_dun(const struct fscrypt_inode_info *ci,
+-				 u64 lblk_num,
+-				 u64 dun[BLK_CRYPTO_DUN_ARRAY_SIZE])
++				 loff_t pos, u64 dun[BLK_CRYPTO_DUN_ARRAY_SIZE])
+ {
+-	u64 index = lblk_num << ci->ci_data_units_per_block_bits;
+ 	union fscrypt_iv iv;
+ 	int i;
+ 
+-	fscrypt_generate_iv(&iv, index, ci);
++	fscrypt_generate_iv(&iv, pos >> ci->ci_data_unit_bits, ci);
+ 
+ 	BUILD_BUG_ON(FSCRYPT_MAX_IV_SIZE > BLK_CRYPTO_MAX_IV_SIZE);
+ 	memset(dun, 0, BLK_CRYPTO_MAX_IV_SIZE);
+@@ -309,7 +307,7 @@ void fscrypt_set_bio_crypt_ctx(struct bio *bio, const struct inode *inode,
+ 		return;
+ 	ci = fscrypt_get_inode_info_raw(inode);
+ 
+-	fscrypt_generate_dun(ci, first_lblk, dun);
++	fscrypt_generate_dun(ci, first_lblk << inode->i_blkbits, dun);
+ 	bio_crypt_set_ctx(bio, ci->ci_enc_key.blk_key, dun, gfp_mask);
+ }
+ EXPORT_SYMBOL_GPL(fscrypt_set_bio_crypt_ctx);
+@@ -401,7 +399,7 @@ bool fscrypt_mergeable_bio(struct bio *bio, const struct inode *inode,
+ 	if (bc->bc_key != ci->ci_enc_key.blk_key)
+ 		return false;
+ 
+-	fscrypt_generate_dun(ci, next_lblk, next_dun);
++	fscrypt_generate_dun(ci, next_lblk << inode->i_blkbits, next_dun);
+ 	return bio_crypt_dun_is_contiguous(bc, bio->bi_iter.bi_size, next_dun);
+ }
+ EXPORT_SYMBOL_GPL(fscrypt_mergeable_bio);
+diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
+index 40fa05688d3a..d83257e9945e 100644
+--- a/fs/crypto/keysetup.c
++++ b/fs/crypto/keysetup.c
+@@ -609,8 +609,6 @@ fscrypt_setup_encryption_info(struct inode *inode,
+ 
+ 	crypt_info->ci_data_unit_bits =
+ 		fscrypt_policy_du_bits(&crypt_info->ci_policy, inode);
+-	crypt_info->ci_data_units_per_block_bits =
+-		inode->i_blkbits - crypt_info->ci_data_unit_bits;
+ 
+ 	res = setup_file_encryption_key(crypt_info, need_dirhash_key, &mk);
+ 	if (res)
+-- 
+2.47.3
+
 
