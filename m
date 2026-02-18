@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-77499-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77500-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0DjbKmxYlWnQPAIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77499-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 07:13:00 +0100
+	id iM1jFJdYlWnQPAIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77500-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 07:13:43 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id D626D153378
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 07:12:59 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF9991533EA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 07:13:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id BB6AE300BEB9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 06:12:55 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0424B305148B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 06:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750B530BF5D;
-	Wed, 18 Feb 2026 06:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C52630B502;
+	Wed, 18 Feb 2026 06:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BlRy4xEX"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3iuVNsoy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8E930B510;
-	Wed, 18 Feb 2026 06:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A22D2DC323;
+	Wed, 18 Feb 2026 06:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771395172; cv=none; b=on/3ct0aNYkH4El/aCFvTBOvnyDtZVwJtY0CMkjBdWT46hGTo8qOe55qwQeq5r9BEqho99NzvJbhmh79JLBIlDetJdRYeSo3aw2jv5dZrPBRMsvAyJDcC7rM8L5qpPV7k57qL7rVek8tYof+sI65mTlF9KKQ8s+hP6u5z9R7AEw=
+	t=1771395176; cv=none; b=jIQRjxRF3kYJmKVehXBrtDiseY0sfPH2ZiYkHmb0GmRdS3em6OT6cDQT4WFWibxso5QBtTswxwLECfu1fcXxWzI9b126QSUmsgGx9BUbEir1TvbxmjQ7HcuyL4p5UbDeDfZcJdN6BBpYufWXC4toZbslSFv3cVicDjyTaFspPCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771395172; c=relaxed/simple;
-	bh=Tg6vUpScK/P8RA27TZfGy+b39Q6lup9FNi7lR8mB2Mc=;
+	s=arc-20240116; t=1771395176; c=relaxed/simple;
+	bh=VhDHLzvjR3dRX1RgabBzA0yf+T3RznpBt3ZgxTkiffc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IgkE624Ie2sj6BK5TpXeyu2BpxGUFiPKaWrM2HcIhtES9ET4mrhF5MdHdVAXOBl5d0LKmQTSxpCbQZD5VxwqICLhJufD6TQpLKaLjY7A85CeWkcIdfo2c8qD4JPQZaVFNF7V7Cg9e2fvuPD921oPu71rMrtiZ3fY72TkHyaIBOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BlRy4xEX; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=kLD4VXoORVNw0Pjzbk72auReebt3DN0BNhvze9lv1mQNz7kwnETJhZcQTA1rnu+scblRTcRhSqJlejUhWaz46xa+uee07zMy6BKEoEv3YsOfDIKnRPvGwGG3IcxHVVBtt4VRLaDL8ouHWZWUbmZzDQYeGvmeZ71X4gqLwlZzapc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3iuVNsoy; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=G+BE2DA2AJar/L8rX9QciCUr7mV8rsR6SaKlzqwH9T4=; b=BlRy4xEX/Wf424/+tzWWAu9rHH
-	EOAZkDnxfWQFXy59buhqf/+rcDAD0mkDEOk62W+GakHXxIljbGUOFfcX0fdfsl1KB3wN5l39IM3zq
-	UWibnlz7bCa9JT90w8gCLn7G5NiIPq5cJ9uLo2+E/vDdiT2y6yvsRPbj2FopQalngv9X/FtqsLDLj
-	hEaUPX53IIuYQCV9J7Ye82A1a1gmBJqxsN3SfHgWzEtUOd20tdabn/UpBJk+sMkbb8VuiUwSnoaNB
-	I8Xxs0RPydCnK3sbq/kLzf8vMkTu367mJxYiIJd8m0sJuWYzpG5H3Hus4kzVv9UCwQ6xA/VD6lGA+
-	ZbeZ+S0g==;
+	bh=4UqmimBgC4T4VOBTAGjhdnWrrZqSlubemuVex5yTg5w=; b=3iuVNsoyaIlsDsmbQOS64xrAmf
+	j2X9noamJLv1WFiTjn9riB0vKN/xGR88Ek0/BJA8UAE2/u2Mbj+002kVg0sWjPCj3c0NrY+vtDMHD
+	WXez/pfuyKpWtAp7dztPQVGEK5Tv7RelGL7W/P7HN18t0q0JB+ZJOUSgsfr50Z86SzYCQS+MTWimY
+	Emh0ApTabAdQQ4jLVr7nMQLlBB7/1hNwK0agjhx+BHZeQ0B00Gneyh5OsfDvAjxp47n38ydFH+h45
+	LdzY6zJAcDbc16IOLxWRVjHP2aPL5brQ8h9EdJ+dNjbEjeFTd1lhO8qUZwcdkDpNamRW4y53+X0YL
+	HN7FN9zw==;
 Received: from [2001:4bb8:2dc:9863:1842:9381:9c0f:de32] (helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vsano-00000009LQV-34DD;
-	Wed, 18 Feb 2026 06:12:49 +0000
+	id 1vsant-00000009LQo-3Mx3;
+	Wed, 18 Feb 2026 06:12:54 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>,
 	Christian Brauner <brauner@kernel.org>
@@ -60,9 +60,9 @@ Cc: "Darrick J. Wong" <djwong@kernel.org>,
 	nvdimm@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org,
 	linux-xfs@vger.kernel.org
-Subject: [PATCH 01/15] block: factor out a bio_integrity_action helper
-Date: Wed, 18 Feb 2026 07:11:55 +0100
-Message-ID: <20260218061238.3317841-2-hch@lst.de>
+Subject: [PATCH 02/15] block: factor out a bio_integrity_setup_default helper
+Date: Wed, 18 Feb 2026 07:11:56 +0100
+Message-ID: <20260218061238.3317841-3-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260218061238.3317841-1-hch@lst.de>
 References: <20260218061238.3317841-1-hch@lst.de>
@@ -80,18 +80,18 @@ X-Spamd-Result: default: False [-0.06 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
 	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), DKIM not aligned (relaxed),none];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77499-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77500-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[infradead.org:+];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	TO_DN_SOME(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
@@ -100,13 +100,16 @@ X-Spamd-Result: default: False [-0.06 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[11];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:mid,lst.de:email,infradead.org:dkim,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: D626D153378
+	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,lst.de:mid,lst.de:email,infradead.org:dkim]
+X-Rspamd-Queue-Id: BF9991533EA
 X-Rspamd-Action: no action
 
-Split the logic to see if a bio needs integrity metadata from
-bio_integrity_prep into a reusable helper than can be called from
-file system code.
+Add a helper to set the seed and check flag based on useful defaults
+from the profile.
+
+Note that this includes a small behavior change, as we now only set the
+seed if any action is set, which is fine as nothing will look at it
+otherwise.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Anuj Gupta <anuj20.g@samsung.com>
@@ -115,285 +118,81 @@ Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
 Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 Tested-by: Anuj Gupta <anuj20.g@samsung.com>
 ---
- block/bio-integrity-auto.c    | 64 +++++------------------------------
- block/bio-integrity.c         | 48 ++++++++++++++++++++++++++
- block/blk-mq.c                |  6 ++--
- drivers/nvdimm/btt.c          |  6 ++--
- include/linux/bio-integrity.h |  5 ++-
- include/linux/blk-integrity.h | 23 +++++++++++++
- 6 files changed, 89 insertions(+), 63 deletions(-)
+ block/bio-integrity-auto.c    | 14 ++------------
+ block/bio-integrity.c         | 16 ++++++++++++++++
+ include/linux/bio-integrity.h |  1 +
+ 3 files changed, 19 insertions(+), 12 deletions(-)
 
 diff --git a/block/bio-integrity-auto.c b/block/bio-integrity-auto.c
-index 44dcdf7520c5..e16f669dbf1e 100644
+index e16f669dbf1e..b64c71a7fc82 100644
 --- a/block/bio-integrity-auto.c
 +++ b/block/bio-integrity-auto.c
-@@ -50,11 +50,6 @@ static bool bip_should_check(struct bio_integrity_payload *bip)
- 	return bip->bip_flags & BIP_CHECK_FLAGS;
- }
- 
--static bool bi_offload_capable(struct blk_integrity *bi)
--{
--	return bi->metadata_size == bi->pi_tuple_size;
--}
--
- /**
-  * __bio_integrity_endio - Integrity I/O completion function
-  * @bio:	Protected bio
-@@ -84,69 +79,27 @@ bool __bio_integrity_endio(struct bio *bio)
- /**
-  * bio_integrity_prep - Prepare bio for integrity I/O
-  * @bio:	bio to prepare
-+ * @action:	preparation action needed (BI_ACT_*)
-+ *
-+ * Allocate the integrity payload.  For writes, generate the integrity metadata
-+ * and for reads, setup the completion handler to verify the metadata.
-  *
-- * Checks if the bio already has an integrity payload attached.  If it does, the
-- * payload has been generated by another kernel subsystem, and we just pass it
-- * through.
-- * Otherwise allocates integrity payload and for writes the integrity metadata
-- * will be generated.  For reads, the completion handler will verify the
-- * metadata.
-+ * This is used for bios that do not have user integrity payloads attached.
+@@ -88,7 +88,6 @@ bool __bio_integrity_endio(struct bio *bio)
   */
--bool bio_integrity_prep(struct bio *bio)
-+void bio_integrity_prep(struct bio *bio, unsigned int action)
+ void bio_integrity_prep(struct bio *bio, unsigned int action)
  {
- 	struct blk_integrity *bi = blk_get_integrity(bio->bi_bdev->bd_disk);
+-	struct blk_integrity *bi = blk_get_integrity(bio->bi_bdev->bd_disk);
  	struct bio_integrity_data *bid;
--	bool set_flags = true;
--	gfp_t gfp = GFP_NOIO;
--
--	if (!bi)
--		return true;
--
--	if (!bio_sectors(bio))
--		return true;
--
--	/* Already protected? */
--	if (bio_integrity(bio))
--		return true;
--
--	switch (bio_op(bio)) {
--	case REQ_OP_READ:
--		if (bi->flags & BLK_INTEGRITY_NOVERIFY) {
--			if (bi_offload_capable(bi))
--				return true;
--			set_flags = false;
--		}
--		break;
--	case REQ_OP_WRITE:
--		/*
--		 * Zero the memory allocated to not leak uninitialized kernel
--		 * memory to disk for non-integrity metadata where nothing else
--		 * initializes the memory.
--		 */
--		if (bi->flags & BLK_INTEGRITY_NOGENERATE) {
--			if (bi_offload_capable(bi))
--				return true;
--			set_flags = false;
--			gfp |= __GFP_ZERO;
--		} else if (bi->metadata_size > bi->pi_tuple_size)
--			gfp |= __GFP_ZERO;
--		break;
--	default:
--		return true;
--	}
--
--	if (WARN_ON_ONCE(bio_has_crypt_ctx(bio)))
--		return true;
  
  	bid = mempool_alloc(&bid_pool, GFP_NOIO);
- 	bio_integrity_init(bio, &bid->bip, &bid->bvec, 1);
+@@ -96,17 +95,8 @@ void bio_integrity_prep(struct bio *bio, unsigned int action)
  	bid->bio = bio;
  	bid->bip.bip_flags |= BIP_BLOCK_INTEGRITY;
--	bio_integrity_alloc_buf(bio, gfp & __GFP_ZERO);
-+	bio_integrity_alloc_buf(bio, action & BI_ACT_ZERO);
+ 	bio_integrity_alloc_buf(bio, action & BI_ACT_ZERO);
+-
+-	bip_set_seed(&bid->bip, bio->bi_iter.bi_sector);
+-
+-	if (action & BI_ACT_CHECK) {
+-		if (bi->csum_type == BLK_INTEGRITY_CSUM_IP)
+-			bid->bip.bip_flags |= BIP_IP_CHECKSUM;
+-		if (bi->csum_type)
+-			bid->bip.bip_flags |= BIP_CHECK_GUARD;
+-		if (bi->flags & BLK_INTEGRITY_REF_TAG)
+-			bid->bip.bip_flags |= BIP_CHECK_REFTAG;
+-	}
++	if (action & BI_ACT_CHECK)
++		bio_integrity_setup_default(bio);
  
- 	bip_set_seed(&bid->bip, bio->bi_iter.bi_sector);
- 
--	if (set_flags) {
-+	if (action & BI_ACT_CHECK) {
- 		if (bi->csum_type == BLK_INTEGRITY_CSUM_IP)
- 			bid->bip.bip_flags |= BIP_IP_CHECKSUM;
- 		if (bi->csum_type)
-@@ -160,7 +113,6 @@ bool bio_integrity_prep(struct bio *bio)
- 		blk_integrity_generate(bio);
- 	else
- 		bid->saved_bio_iter = bio->bi_iter;
--	return true;
- }
- EXPORT_SYMBOL(bio_integrity_prep);
- 
+ 	/* Auto-generate integrity metadata if this is a write */
+ 	if (bio_data_dir(bio) == WRITE && bip_should_check(&bid->bip))
 diff --git a/block/bio-integrity.c b/block/bio-integrity.c
-index 09eeaf6e74b8..6bdbb4ed2d1a 100644
+index 6bdbb4ed2d1a..0e8ebe84846e 100644
 --- a/block/bio-integrity.c
 +++ b/block/bio-integrity.c
-@@ -7,6 +7,7 @@
-  */
+@@ -101,6 +101,22 @@ void bio_integrity_free_buf(struct bio_integrity_payload *bip)
+ 		kfree(bvec_virt(bv));
+ }
  
- #include <linux/blk-integrity.h>
-+#include <linux/t10-pi.h>
- #include "blk.h"
- 
- struct bio_integrity_alloc {
-@@ -16,6 +17,53 @@ struct bio_integrity_alloc {
- 
- static mempool_t integrity_buf_pool;
- 
-+static bool bi_offload_capable(struct blk_integrity *bi)
-+{
-+	return bi->metadata_size == bi->pi_tuple_size;
-+}
-+
-+unsigned int __bio_integrity_action(struct bio *bio)
++void bio_integrity_setup_default(struct bio *bio)
 +{
 +	struct blk_integrity *bi = blk_get_integrity(bio->bi_bdev->bd_disk);
++	struct bio_integrity_payload *bip = bio_integrity(bio);
 +
-+	if (WARN_ON_ONCE(bio_has_crypt_ctx(bio)))
-+		return 0;
++	bip_set_seed(bip, bio->bi_iter.bi_sector);
 +
-+	switch (bio_op(bio)) {
-+	case REQ_OP_READ:
-+		if (bi->flags & BLK_INTEGRITY_NOVERIFY) {
-+			if (bi_offload_capable(bi))
-+				return 0;
-+			return BI_ACT_BUFFER;
-+		}
-+		return BI_ACT_BUFFER | BI_ACT_CHECK;
-+	case REQ_OP_WRITE:
-+		/*
-+		 * Flush masquerading as write?
-+		 */
-+		if (!bio_sectors(bio))
-+			return 0;
-+
-+		/*
-+		 * Zero the memory allocated to not leak uninitialized kernel
-+		 * memory to disk for non-integrity metadata where nothing else
-+		 * initializes the memory.
-+		 */
-+		if (bi->flags & BLK_INTEGRITY_NOGENERATE) {
-+			if (bi_offload_capable(bi))
-+				return 0;
-+			return BI_ACT_BUFFER | BI_ACT_ZERO;
-+		}
-+
-+		if (bi->metadata_size > bi->pi_tuple_size)
-+			return BI_ACT_BUFFER | BI_ACT_CHECK | BI_ACT_ZERO;
-+		return BI_ACT_BUFFER | BI_ACT_CHECK;
-+	default:
-+		return 0;
++	if (bi->csum_type) {
++		bip->bip_flags |= BIP_CHECK_GUARD;
++		if (bi->csum_type == BLK_INTEGRITY_CSUM_IP)
++			bip->bip_flags |= BIP_IP_CHECKSUM;
 +	}
++	if (bi->flags & BLK_INTEGRITY_REF_TAG)
++		bip->bip_flags |= BIP_CHECK_REFTAG;
 +}
-+EXPORT_SYMBOL_GPL(__bio_integrity_action);
 +
- void bio_integrity_alloc_buf(struct bio *bio, bool zero_buffer)
- {
- 	struct blk_integrity *bi = blk_get_integrity(bio->bi_bdev->bd_disk);
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index d5602ff62c7c..5cddfcad2381 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -3143,6 +3143,7 @@ void blk_mq_submit_bio(struct bio *bio)
- 	struct request_queue *q = bdev_get_queue(bio->bi_bdev);
- 	struct blk_plug *plug = current->plug;
- 	const int is_sync = op_is_sync(bio->bi_opf);
-+	unsigned int integrity_action;
- 	struct blk_mq_hw_ctx *hctx;
- 	unsigned int nr_segs;
- 	struct request *rq;
-@@ -3195,8 +3196,9 @@ void blk_mq_submit_bio(struct bio *bio)
- 	if (!bio)
- 		goto queue_exit;
- 
--	if (!bio_integrity_prep(bio))
--		goto queue_exit;
-+	integrity_action = bio_integrity_action(bio);
-+	if (integrity_action)
-+		bio_integrity_prep(bio, integrity_action);
- 
- 	blk_mq_bio_issue_init(q, bio);
- 	if (blk_mq_attempt_bio_merge(q, bio, nr_segs))
-diff --git a/drivers/nvdimm/btt.c b/drivers/nvdimm/btt.c
-index 237edfa1c624..bb2c1b9d56ca 100644
---- a/drivers/nvdimm/btt.c
-+++ b/drivers/nvdimm/btt.c
-@@ -1437,14 +1437,16 @@ static void btt_submit_bio(struct bio *bio)
- {
- 	struct bio_integrity_payload *bip = bio_integrity(bio);
- 	struct btt *btt = bio->bi_bdev->bd_disk->private_data;
-+	unsigned int integrity_action;
- 	struct bvec_iter iter;
- 	unsigned long start;
- 	struct bio_vec bvec;
- 	int err = 0;
- 	bool do_acct;
- 
--	if (!bio_integrity_prep(bio))
--		return;
-+	integrity_action = bio_integrity_action(bio);
-+	if (integrity_action)
-+		bio_integrity_prep(bio, integrity_action);
- 
- 	do_acct = blk_queue_io_stat(bio->bi_bdev->bd_disk->queue);
- 	if (do_acct)
+ /**
+  * bio_integrity_free - Free bio integrity payload
+  * @bio:	bio containing bip to be freed
 diff --git a/include/linux/bio-integrity.h b/include/linux/bio-integrity.h
-index 21e4652dcfd2..276cbbdd2c9d 100644
+index 276cbbdd2c9d..232b86b9bbcb 100644
 --- a/include/linux/bio-integrity.h
 +++ b/include/linux/bio-integrity.h
-@@ -78,7 +78,7 @@ int bio_integrity_add_page(struct bio *bio, struct page *page, unsigned int len,
- int bio_integrity_map_user(struct bio *bio, struct iov_iter *iter);
- int bio_integrity_map_iter(struct bio *bio, struct uio_meta *meta);
- void bio_integrity_unmap_user(struct bio *bio);
--bool bio_integrity_prep(struct bio *bio);
-+void bio_integrity_prep(struct bio *bio, unsigned int action);
- void bio_integrity_advance(struct bio *bio, unsigned int bytes_done);
- void bio_integrity_trim(struct bio *bio);
- int bio_integrity_clone(struct bio *bio, struct bio *bio_src, gfp_t gfp_mask);
-@@ -104,9 +104,8 @@ static inline void bio_integrity_unmap_user(struct bio *bio)
- {
- }
+@@ -143,5 +143,6 @@ static inline int bio_integrity_add_page(struct bio *bio, struct page *page,
  
--static inline bool bio_integrity_prep(struct bio *bio)
-+static inline void bio_integrity_prep(struct bio *bio, unsigned int action)
- {
--	return true;
- }
+ void bio_integrity_alloc_buf(struct bio *bio, bool zero_buffer);
+ void bio_integrity_free_buf(struct bio_integrity_payload *bip);
++void bio_integrity_setup_default(struct bio *bio);
  
- static inline int bio_integrity_clone(struct bio *bio, struct bio *bio_src,
-diff --git a/include/linux/blk-integrity.h b/include/linux/blk-integrity.h
-index c15b1ac62765..fd3f3c8c0fcd 100644
---- a/include/linux/blk-integrity.h
-+++ b/include/linux/blk-integrity.h
-@@ -180,4 +180,27 @@ static inline struct bio_vec rq_integrity_vec(struct request *rq)
- }
- #endif /* CONFIG_BLK_DEV_INTEGRITY */
- 
-+enum bio_integrity_action {
-+	BI_ACT_BUFFER		= (1u << 0),	/* allocate buffer */
-+	BI_ACT_CHECK		= (1u << 1),	/* generate / verify PI */
-+	BI_ACT_ZERO		= (1u << 2),	/* zero buffer */
-+};
-+
-+/**
-+ * bio_integrity_action - return the integrity action needed for a bio
-+ * @bio:	bio to operate on
-+ *
-+ * Returns the mask of integrity actions (BI_ACT_*) that need to be performed
-+ * for @bio.
-+ */
-+unsigned int __bio_integrity_action(struct bio *bio);
-+static inline unsigned int bio_integrity_action(struct bio *bio)
-+{
-+	if (!blk_get_integrity(bio->bi_bdev->bd_disk))
-+		return 0;
-+	if (bio_integrity(bio))
-+		return 0;
-+	return __bio_integrity_action(bio);
-+}
-+
- #endif /* _LINUX_BLK_INTEGRITY_H */
+ #endif /* _LINUX_BIO_INTEGRITY_H */
 -- 
 2.47.3
 
