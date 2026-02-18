@@ -1,219 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-77580-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77581-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 6GqEN6fOlWnjUwIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77580-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 15:37:27 +0100
+	id 8LtfF8fVlWlLVQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77581-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 16:07:51 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54B95157187
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 15:37:27 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB0BC15744C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 16:07:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 2B71C3019441
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 14:37:24 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 4BDD530066A0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 15:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36157334C2B;
-	Wed, 18 Feb 2026 14:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31D72FD1C5;
+	Wed, 18 Feb 2026 15:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rrnQhCXw"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="InhnU+3m"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68702D77FF;
-	Wed, 18 Feb 2026 14:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03F11A23AC
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 15:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771425439; cv=none; b=C2QAHppg2wREpvLs6s1W+8dbI0O0iWHUC4/q7r+BaN4mgjbPv+0YZQBs9rX1gFgI4Zi2J9FKVLBQsL7++kzdezg0rVTrhJXF5bWXWokV3kkMdVGEVLG6TBdxyjAxcpQK1nmx6jpb89LLb+bwP+3pprlqy5HZd23xk79K8gpk7aA=
+	t=1771427266; cv=none; b=P3LKEnatHfC51vzU07ZMVjoSOJ/tM0+yd4Jqvi8jOU3/TGecKi0DiNUBtvsVAFv4ryDzb9Ot60OyJ3yB9fCp2Y61oHJ6k2n/OGC0Ler9LoM2vS3Tu4tk8epRYbv0GE6sJZOzTgte7n5q7X4n0rffnFcW76UmY148kJRLGFhD1YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771425439; c=relaxed/simple;
-	bh=WVrTOELnfJzl9+EaWv4I60Yg619nZ93eNj6+a+T9StA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dBsoaMgCex9dzHMmccWrnzSg1Yf4Jj/oUvV5owibncnPIkBQvuJ7ltr7EecvLfuaAVcxoDrYgaewIZwrQG9zxgYvwN4XQCQmG+TF9qnz6bF1yTpRFpxWlJ2GOp2oC3bSREGk/BFCvZIZNFHrCxYdOjv/6G7227Yv00sMIvwBbHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rrnQhCXw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24462C116D0;
-	Wed, 18 Feb 2026 14:37:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771425439;
-	bh=WVrTOELnfJzl9+EaWv4I60Yg619nZ93eNj6+a+T9StA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=rrnQhCXwI5XK9dARklcKjMRgQ1zNQ4TrTcCBv3XeIIoo0OtQfZEzdQas1WHQOGdLe
-	 ko05y73toYV67FwhZdZ4LfF5SpPjHWaxMFj2Viwchk4zy8e1xAvCbVapq84vfPRIax
-	 OdUU5U27UuMyRrScczgYqJ83ph+JiXFegVvNybZe2TnAUyqlue8mvHVm5iC6PVJ0TL
-	 xcDRzvIhsu6Wtz4WWifFgSNTfH8RV6OqOzuUQfEOQyoFrIeUNkddbx1HsnueX/UyLU
-	 XOTU3ccJbFdHDt+OllrOoN0fPGxj9wwScD/rJd1Z4FG//G4fIex9AT0MIOG4UGx5od
-	 rDHAGVFmYOEgA==
-Message-ID: <f86345b7aa2b69e15c67ca0d8344533d8f099931.camel@kernel.org>
-Subject: Re: [LSF/MM/BPF TOPIC] VFS idmappings support in NFS
-From: Trond Myklebust <trondmy@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>, Alexander Mikhalitsyn
-	 <alexander@mihalicyn.com>, lsf-pc@lists.linux-foundation.org
-Cc: aleksandr.mikhalitsyn@futurfusion.io, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, stgraber@stgraber.org, brauner@kernel.org, 
-	ksugihara@preferred.jp, utam0k@preferred.jp, anna@kernel.org, 
-	chuck.lever@oracle.com, neilb@suse.de, miklos@szeredi.hu, jack@suse.cz, 
-	amir73il@gmail.com, trapexit@spawn.link
-Date: Wed, 18 Feb 2026 09:37:17 -0500
-In-Reply-To: <d11b39cb43ffe437868eef4bc1c01d3bce8509e9.camel@kernel.org>
-References: <65a53a2d6fcc053edeed688a8c8d580c03bd6f3b.camel@mihalicyn.com>
-	 <d11b39cb43ffe437868eef4bc1c01d3bce8509e9.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+	s=arc-20240116; t=1771427266; c=relaxed/simple;
+	bh=YZW2iQGAtFKQ/7s6trAhvZ2qOD64bzw2KXhFs7nSpLc=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Cpx/wV+7Qj+FyJ5qL6g6E/aZJwgMfQXnVXdZFUjAmm61rR39TRg0TpnAWDO8qH7nr/e4YtAFiu+4b0BB2iwvvhgDKMEEPk7xk5FRxSSmqnBTmxCAN/OsHAutCqMnqPWDoDDdgjggmqV3q2J9ejyJ54ZRk6sM9vA6YjE+u6m30uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=InhnU+3m; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from macsyma.thunk.org (pool-173-48-113-47.bstnma.fios.verizon.net [173.48.113.47])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 61IF7akg012888
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 18 Feb 2026 10:07:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1771427258; bh=27ui8DBGO2taK8Y0P9IqDtg96wYN5Ppdu7rSi2jn/VE=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=InhnU+3m2GyB9O5iN8aWPlbYGLm1SfabyaSv3okWKtALTgYg1K+AEewiuhDyHwgKv
+	 uiimoA0sKneFcjXL3Clkuu5XPez+4Pyf6srfpBXFqU8wWMlQ8y8q4W1tLr29bC3FnD
+	 24QjbYNWES313aiXgJAUekYHYJcVL7TtGk8pN7Lb+zL9rwxTIyPg/pG9LVD5yvGgve
+	 gAGgTmvy7kG8lz2ccz0qXMASfqY+6z7oBjH0nnBt5FkxmeKmTAD62g41mblhEfIlKm
+	 AbfdPA74KswtW7FX64WngngP9S3e19HWbLGHjrFaJvm8FOT7OxYmbZbH2efcqSdcSt
+	 lWHG5fsrwkhIg==
+Received: by macsyma.thunk.org (Postfix, from userid 15806)
+	id BE1145902FF3; Wed, 18 Feb 2026 10:07:36 -0500 (EST)
+Date: Wed, 18 Feb 2026 10:07:36 -0500
+From: "Theodore Tso" <tytso@mit.edu>
+To: linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org
+Subject: [LSF/MM/BPF TOPIC] File system testing
+Message-ID: <20260218150736.GD45984@macsyma-wired.lan>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[mit.edu,none];
+	R_DKIM_ALLOW(-0.20)[mit.edu:s=outgoing];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77580-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[futurfusion.io,vger.kernel.org,stgraber.org,kernel.org,preferred.jp,oracle.com,suse.de,szeredi.hu,suse.cz,gmail.com,spawn.link];
-	RCPT_COUNT_TWELVE(0.00)[17];
 	MIME_TRACE(0.00)[0:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,macsyma-wired.lan:mid];
+	RCPT_COUNT_TWO(0.00)[2];
+	TO_DN_NONE(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[tytso@mit.edu,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[trondmy@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linuxcontainers.org:url,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 54B95157187
+	TAGGED_FROM(0.00)[bounces-77581-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_FIVE(0.00)[5];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[mit.edu:+]
+X-Rspamd-Queue-Id: EB0BC15744C
 X-Rspamd-Action: no action
 
-On Wed, 2026-02-18 at 08:49 -0500, Jeff Layton wrote:
-> On Wed, 2026-02-18 at 13:44 +0100, Alexander Mikhalitsyn wrote:
-> > Dear friends,
-> >=20
-> > I would like to propose "VFS idmappings support in NFS" as a topic
-> > for discussion at the LSF/MM/BPF Summit.
-> >=20
-> > Previously, I worked on VFS idmap support for FUSE/virtiofs [2] and
-> > cephfs [1] with support/guidance
-> > from Christian.
-> >=20
-> > This experience with Cephfs & FUSE has shown that VFS idmap
-> > semantics, while being very elegant and
-> > intuitive for local filesystems, can be quite challenging to
-> > combine with network/network-like (e.g. FUSE)
-> > FSes. In case of Cephfs we had to modify its protocol (!) (see [2])
-> > as a part of our agreement with
-> > ceph folks about the right way to support idmaps.
-> >=20
-> > One obstacle here was that cephfs has some features that are not
-> > very Linux-wayish, I would say.
-> > In particular, system administrator can configure path-based
-> > UID/GID restrictions on a *server*-side (Ceph MDS).
-> > Basically, you can say "I expect UID 1000 and GID 2000 for all
-> > files under /stuff directory".
-> > The problem here is that these UID/GIDs are taken from a syscall-
-> > caller's creds (not from (struct file *)->f_cred)
-> > which makes cephfs FDs not very transferable through unix sockets.
-> > [3]
-> >=20
-> > These path-based UID/GID restrictions mean that server expects
-> > client to send UID/GID with every single request,
-> > not only for those OPs where UID/GID needs to be written to the
-> > disk (mknod, mkdir, symlink, etc).
-> > VFS idmaps API is designed to prevent filesystems developers from
-> > making a mistakes when supporting FS_ALLOW_IDMAP.
-> > For example, (struct mnt_idmap *) is not passed to every single
-> > i_op, but instead to only those where it can be
-> > used legitimately. Particularly, readlink/listxattr or rmdir are
-> > not expected to use idmapping information anyhow.
-> >=20
-> > We've seen very similar challenges with FUSE. Not a long time ago
-> > on Linux Containers project forum, there
-> > was a discussion about mergerfs (a popular FUSE-based filesystem) &
-> > VFS idmaps [5]. And I see that this problem
-> > of "caller UID/GID are needed everywhere" still blocks VFS idmaps
-> > adoption in some usecases.
-> > Antonio Musumeci (mergerfs maintainer) claimed that in many cases
-> > filesystems behind mergerfs may not be fully
-> > POSIX and basically, when mergerfs does IO on the underlying FSes
-> > it needs to do UID/GID switch to caller's UID/GID
-> > (taken from FUSE request header).
-> >=20
-> > We don't expect NFS to be any simpler :-) I would say that
-> > supporting NFS is a final boss. It would be great
-> > to have a deep technical discussion with VFS/FSes maintainers and
-> > developers about all these challenges and
-> > make some conclusions and identify a right direction/approach to
-> > these problems. From my side, I'm going
-> > to get more familiar with high-level part of NFS (or even make PoC
-> > if time permits), identify challenges,
-> > summarize everything and prepare some slides to navigate/plan
-> > discussion.
-> >=20
-> > [1] cephfs
-> > https://lore.kernel.org/linux-fsdevel/20230807132626.182101-1-aleksandr=
-.mikhalitsyn@canonical.com
-> > [2] cephfs protocol changes https://github.com/ceph/ceph/pull/52575
-> > [3] cephfs & f_cred
-> > https://lore.kernel.org/lkml/CAEivzxeZ6fDgYMnjk21qXYz13tHqZa8rP-cZ2jdxk=
-Y0eX+dOjw@mail.gmail.com/
-> > [4] fuse/virtiofs
-> > https://lore.kernel.org/linux-fsdevel/20240903151626.264609-1-aleksandr=
-.mikhalitsyn@canonical.com/
-> > [5]
-> > mergerfs
-> > https://discuss.linuxcontainers.org/t/is-it-the-case-that-you-
-> > cannot-use-shift-true-for-disk-devices-where-the-source-is-a-
-> > mergerfs-mount-is-there-a-workaround/25336/11?u=3Damikhalitsyn
-> >=20
-> > Kind regards,
-> > Alexander Mikhalitsyn @ futurfusion.io
->=20
->=20
-> IIUC, people mostly use vfs-layer idmappings because they want to
-> remap
-> the uid/gid values of files that get stored on the backing store
-> (disk,
-> ceph MDS, or whatever).
->=20
-> I've never used idmappings myself much in practice. Could you lay out
-> an example of how you would use them with NFS in a real environment
-> so
-> I understand the problem better? I'd start by assuming a simple setup
-> with AUTH_SYS and no NFSv4 idmapping involved, since that case should
-> be fairly straightforward.
->=20
-> Mixing in AUTH_GSS and real idmapping will be where things get
-> harder,
-> so let's not worry about those cases for now.
+I'd like to propose a perennial favorite file system testing as a
+topic for the FS track.  Topics to cover would include:
 
-I think you do need to worry about those cases. As the NFS and RPC
-protocols stand today, strong authentication will defeat any client
-side idmapping scheme, because the server can't know what uids or gids
-the client is using on its end; it just knows about the account that
-was used to authenticate.
+1) Standardizing test scenarios for various file systems.
 
-I think if you do want to implement something generic, you're going to
-have to consider how the client and server can exchange (and store) the
-information needed to allow the client to perform the mapping of file
-owners/group owners on its end. The client would presumably also need
-to be in charge of enforcing permissions for such mappings.
-It would be a very different security model than the one used by NFS
-today, and almost certainly require protocol extensions.
+   I have test scenarios for ext4 and xfs in my test appliance (e.g.,
+   4k, 64k, and 1k blocksizes, with fscrypt enabled, with dax enabled,
+   etc.)  But I don't have those for other file systems, such as
+   btrfs, etc.  It would be nice if this could be centrally documented
+   some where, perhaps in the kernel sources?
 
---=20
-Trond Myklebust
-Linux NFS client maintainer, Hammerspace
-trondmy@kernel.org, trond.myklebust@hammerspace.com
+2) Standardized way of expressing that certain tests are expected to
+   fail for a given test scenario.  Ideally, we can encode this in
+   xfstests upstream (an example of this is requiring metadata
+   journalling for generic/388).  But in some cases the failure is
+   very specific to a particular set of file system configurations,
+   and it may vary depending on kernel version (e.g., a problem that
+   was fixed in 6.6 and later LTS kernels, but it was too hard to
+   backport to earlier LTS kernels).
+
+3) Automating the use of tests to validate file system backports to
+   LTS kernels, so that commits which might cause file system
+   regressions can be automatically dropped from a LTS rc kernel.
+
+   	       	      		    	    	 - Ted
 
