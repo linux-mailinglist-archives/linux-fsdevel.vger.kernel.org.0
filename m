@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-77484-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77485-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yBBYFdUQlWmkKgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77484-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 02:07:33 +0100
+	id aKvAJtcQlWmkKgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77485-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 02:07:35 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E376152759
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 02:07:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C488152760
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 02:07:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id AD5A7303E3B3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 01:07:28 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 1275A30417A7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 01:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DFC2D97BA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4BAE2D8391;
 	Wed, 18 Feb 2026 01:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pooA/22O"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Srd+C08v"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235692D94BA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E212D9798;
 	Wed, 18 Feb 2026 01:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771376847; cv=none; b=WsDHNTvMQJdakaHvQag7FVXi50nAtcoP+EvXWDMJz4pw/XKDnlnlsfrJppEjuzzyZQwwE+azrzTIEMLWOosMPZcyp5ZjA7UQWuKTksyVq9M1EKZMxtfxJwUXEIi9eg6D9qAMlC1HizlkA0jfJmh7317IPbfnW878n2EBsRXtjFU=
+	t=1771376847; cv=none; b=jFM/IJs5WYvnCqGfGj50U1uh6a5KJsBalR3XYzY15DZ2Th7xrxj9vz+4mhaZKNW5juP/UhxTwKAH0rXx3UQOA+VkLXuE7/9hycYUH9h3pIBKhjiQI+I1zqAEI0kd1LvbxFvTezYxGD6CdmQbimkHW5CMRfyccVt6dzn24/cMZ3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1771376847; c=relaxed/simple;
-	bh=O3dLk96HCqOP4bm+/UDISNUGuTY/kvHS6P5aQSKjx4g=;
+	bh=J7ZTZq4X/3Y2QVbeFUP412jblzsMRFo21pG26WCfQTI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=f5Bpw9CYR+VMEJP9DLQ5c3LHUyGx8oKbda7LrBqzaAwSnCJNQiPlZ5z8fYF/3201fWP3i8oHi7OwlCrZDsfjS1+/mF391lRkgxaVfaOHNuzo3RNlchxUkOxSoZqpzrT2qd/AmwHj0y1bPyURncRwJXsw1LXHvjCnppkhXnPH6o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pooA/22O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1CB0C4CEF7;
-	Wed, 18 Feb 2026 01:07:26 +0000 (UTC)
+	 MIME-Version; b=of5AXqklP0GPfC2DgKZOSumYQfshhs5+a5SF2VEJd+W1GknpQdykdKqsvjCZicbJZo8NwznVMGS0Y+r1BSAd7B3/ptsjpHpFJ+CUqcI+vpo064GXg0mQlmyFtxFbrLjZpD0fOGltIAVXGzP3Emhg3DeoVs+zvCXrhN6G944Razo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Srd+C08v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E4E6C19423;
+	Wed, 18 Feb 2026 01:07:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771376846;
-	bh=O3dLk96HCqOP4bm+/UDISNUGuTY/kvHS6P5aQSKjx4g=;
+	s=k20201202; t=1771376847;
+	bh=J7ZTZq4X/3Y2QVbeFUP412jblzsMRFo21pG26WCfQTI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pooA/22OZ652zP3398OFf3SBzvc/c/IZCczNVV1m4nv627hVgkyiDDvAaTmCOKuWG
-	 ooYfTy/B/24rpuWhNynwE3Sxs6nGdQ+qTmBF3+ASssVhKdRdefv+7PxD7LEGJFtaiY
-	 Ozx/3UeBCS4X34viDZ+/UFhzfqM86A7G3+C/ZAbDEfnPeAWFaBMkV9qRCYglR2R+ZO
-	 LXjtGH4r5rF/V1sBhEjGVHns02OyqLYQsEKpbYGKC3JAwBmtfzILt/vycSEHKtcTJX
-	 kiYqM34iVvgeWR92JjYpmPtKh9/oT+vldkSqmKP1rJfGfKpZeHCJ5qvid5Bzk1hx5p
-	 23a9yF38TKO2A==
+	b=Srd+C08vslHfUG9Tw6b9RpfoD8kuvADMCGD9LgpLl4y8mGX/pOFAu3ZGA6SgxTvu9
+	 dHVt4Dc2MEm1svIi/8k1sRp1CgiQSkxrahw3glADDWMylDGUF0t0Sbk9087myC+yyh
+	 ZpTlwWDmmonBJuxCAQb4NACAKFz/aai1cxMcp7Xo7phkTV5bSigWidaaIN1qkIP/rU
+	 uvJP5Fb8NhSn971Fj3HlHbH7+VUX2OB6SM/KAuRXmqa+KkZgkRMUpGo8U1zy+cTlx0
+	 fuCiNbRb0IyitVwK733pAgdvf9kuDH3oA9R5D5g2cSUtrje97rDbQO4Ow/Cf0erZFK
+	 kSGVPXobOtdjQ==
 From: Eric Biggers <ebiggers@kernel.org>
 To: fsverity@lists.linux.dev
 Cc: linux-f2fs-devel@lists.sourceforge.net,
@@ -52,10 +52,11 @@ Cc: linux-f2fs-devel@lists.sourceforge.net,
 	Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>,
 	Matthew Wilcox <willy@infradead.org>,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v4 2/3] f2fs: make f2fs_verify_cluster() partially large-folio-aware
-Date: Tue, 17 Feb 2026 17:06:29 -0800
-Message-ID: <20260218010630.7407-3-ebiggers@kernel.org>
+	Eric Biggers <ebiggers@kernel.org>,
+	Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v4 3/3] fsverity: remove fsverity_verify_page()
+Date: Tue, 17 Feb 2026 17:06:30 -0800
+Message-ID: <20260218010630.7407-4-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260218010630.7407-1-ebiggers@kernel.org>
 References: <20260218010630.7407-1-ebiggers@kernel.org>
@@ -79,7 +80,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	HAS_LIST_UNSUB(-0.01)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-77484-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77485-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	DKIM_TRACE(0.00)[kernel.org:+];
@@ -90,54 +91,62 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
+	RCPT_COUNT_SEVEN(0.00)[9];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 0E376152759
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,lst.de:email,linux-foundation.org:email]
+X-Rspamd-Queue-Id: 1C488152760
 X-Rspamd-Action: no action
 
-f2fs_verify_cluster() is the only remaining caller of the
-non-large-folio-aware function fsverity_verify_page().   To unblock the
-removal of that function, change f2fs_verify_cluster() to verify the
-entire folio of each page and mark it up-to-date.
+Now that fsverity_verify_page() has no callers, remove it.
 
-Note that this doesn't actually make f2fs_verify_cluster()
-large-folio-aware, as it is still passed an array of pages.  Currently,
-it's never called with large folios.
-
-Suggested-by: Matthew Wilcox <willy@infradead.org>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
- fs/f2fs/compress.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ fs/verity/verify.c       | 4 ++--
+ include/linux/fsverity.h | 6 ------
+ 2 files changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 355762d11e25..8c76400ba631 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -1811,17 +1811,18 @@ static void f2fs_verify_cluster(struct work_struct *work)
- 	int i;
- 
- 	/* Verify, update, and unlock the decompressed pages. */
- 	for (i = 0; i < dic->cluster_size; i++) {
- 		struct page *rpage = dic->rpages[i];
-+		struct folio *rfolio;
- 
- 		if (!rpage)
- 			continue;
--
--		if (fsverity_verify_page(dic->vi, rpage))
--			SetPageUptodate(rpage);
--		unlock_page(rpage);
-+		rfolio = page_folio(rpage);
-+		if (fsverity_verify_folio(dic->vi, rfolio))
-+			folio_mark_uptodate(rfolio);
-+		folio_unlock(rfolio);
- 	}
- 
- 	f2fs_put_dic(dic, true);
+diff --git a/fs/verity/verify.c b/fs/verity/verify.c
+index 31797f9b24d0..3e38749fbc82 100644
+--- a/fs/verity/verify.c
++++ b/fs/verity/verify.c
+@@ -431,12 +431,12 @@ EXPORT_SYMBOL_GPL(fsverity_verify_blocks);
+  * verification, then bio->bi_status is set to an error status.
+  *
+  * This is a helper function for use by the ->readahead() method of filesystems
+  * that issue bios to read data directly into the page cache.  Filesystems that
+  * populate the page cache without issuing bios (e.g. non block-based
+- * filesystems) must instead call fsverity_verify_page() directly on each page.
+- * All filesystems must also call fsverity_verify_page() on holes.
++ * filesystems) must instead call fsverity_verify_blocks() directly.  All
++ * filesystems must also call fsverity_verify_blocks() on holes.
+  */
+ void fsverity_verify_bio(struct fsverity_info *vi, struct bio *bio)
+ {
+ 	struct fsverity_verification_context ctx;
+ 	struct folio_iter fi;
+diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
+index fed91023bea9..6de3ddf0b148 100644
+--- a/include/linux/fsverity.h
++++ b/include/linux/fsverity.h
+@@ -280,16 +280,10 @@ static inline bool fsverity_verify_folio(struct fsverity_info *vi,
+ 					 struct folio *folio)
+ {
+ 	return fsverity_verify_blocks(vi, folio, folio_size(folio), 0);
  }
  
+-static inline bool fsverity_verify_page(struct fsverity_info *vi,
+-					struct page *page)
+-{
+-	return fsverity_verify_blocks(vi, page_folio(page), PAGE_SIZE, 0);
+-}
+-
+ /**
+  * fsverity_file_open() - prepare to open a verity file
+  * @inode: the inode being opened
+  * @filp: the struct file being set up
+  *
 -- 
 2.53.0
 
