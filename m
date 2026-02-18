@@ -1,192 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-77555-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 2FnEELCNlWmbSQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77555-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 11:00:16 +0100
+	id OFxcBaeOlWl7SQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 11:04:23 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE01A1550D0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 11:00:15 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82C14155152
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 11:04:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 4CFF7301B155
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 10:00:06 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 30F833029789
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 10:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CEC32AACA;
-	Wed, 18 Feb 2026 10:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E918C33A9EF;
+	Wed, 18 Feb 2026 10:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LBTV49xX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ws1aFXsg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85C233CEB4;
-	Wed, 18 Feb 2026 10:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773F6211A14;
+	Wed, 18 Feb 2026 10:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771408804; cv=none; b=RtcjZrKwU/ujumWH0mB0ODQFxjcFdCACLrRx7Ckf25MuwKqYy4vfzKqlrSi3vEJGVUtpEZobLbBTZ2L2BnoQ9C2GeI2tGRSBj+9IcTXxC+H9mspS6DUNqlQO1SRF4zbemks5eMtWyT0NIoxldyA/TyBmsayYKEFeKxHz58mOtSw=
+	t=1771408838; cv=none; b=J09btQ46i2LzKhLjqonyhc+qUijF4fcr3AMrRYgrop8C1BBMccEW9Eq0G9nswiQryfXz5tsyIkkzbgvJ/F1kDu7I0KuYwozttOzA1WQD9X4k25PzIDdCVfIekMTsNE3kV6WP+B0ImtB/fjlkfvnTVxscg+xWqIT8vuJo9Oruyyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771408804; c=relaxed/simple;
-	bh=uX2lW6MbnfWchiey8c/EMDAtA9/Gv/JQOMvUJGK42Tg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cpQ/yTtLK2ajNnV4QVsJNFpxgxxo0mlflFY/VVulxNYG7FaiHU1/KnWzZwJUHbnnN5Xd7BA9K8tAYKo+SBYxoL9BJv7MM9ZzMVEvJTIlx+0bTqd/UUmOugT8sWCbtOX7ZT+jxP095HRJjLetRFcOGyC/rFqLL8uV51BRvx1z7sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LBTV49xX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4CCEC19421;
-	Wed, 18 Feb 2026 10:00:02 +0000 (UTC)
+	s=arc-20240116; t=1771408838; c=relaxed/simple;
+	bh=Bvdgrk8F1oPr4SzPe8KgFqDW6CjcaHb8TjxbKGlIK0k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pc4QOeUT9jEy60ly94G89Cnamtd9ioU2PzQsZELBsNuiQRAMaDiEPA6UR6bi2XD/JJhbbyctwIPkn8J4S43MSE9cbJ/GNWGII9Tf1SDrGxv4zubj02wOZQ0ajqEmAvQHS1uYwj/vCp10f064tKe+9yaBwtHJXbmENtwQqwKw/co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ws1aFXsg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BDB9C19421;
+	Wed, 18 Feb 2026 10:00:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771408804;
-	bh=uX2lW6MbnfWchiey8c/EMDAtA9/Gv/JQOMvUJGK42Tg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=LBTV49xXFzZWOwCF/vpgZnYKY8ER6WEVq75NBMPQ52LOoOppSLs5kypMxPAfpnciJ
-	 C9HHlYiRef9xlSPJ00l7xEqGNu01CU9TEB68fY0ykBIXAEQOLgVBD93mOwcnLa30dt
-	 7q6hsTHIRi1tshkXqJXAzc0xYlmVdMV0IPRHcRO02r4QVN5c8PurneEv9/JHohtwOC
-	 5LQqqF74WSFyB4+4crI0bNxV4E9agBIsVw8nYiwdgVLUNMt0Gv7tQaRg+CWTn3zTRd
-	 cGN+AG8SDm1NJ5KHR+13eJdBL5AKVQXNcZIN4ZnSi14q4Ar5mJ0ykbKCoR3wGVcf1K
-	 LzXnXH3VmQk/g==
-Date: Wed, 18 Feb 2026 10:59:13 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <kees@kernel.org>, Petr Mladek <pmladek@suse.com>, 
-	Jan Kara <jack@suse.cz>, Muchun Song <muchun.song@linux.dev>, 
-	Paolo Abeni <pabeni@redhat.com>, Suren Baghdasaryan <surenb@google.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] sysctl changes for v7.00-rc1
-Message-ID: <glab5jvehmpi6poog4lmsnai2ikkysnx2xrjqfizruuf63wvwn@7bsrznabpzka>
+	s=k20201202; t=1771408838;
+	bh=Bvdgrk8F1oPr4SzPe8KgFqDW6CjcaHb8TjxbKGlIK0k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ws1aFXsgI7ji3pN71/TBbN90pbb8d33w1E2L3mHsZmQBojJd+wmNEsbTNcwTd58rx
+	 pAmaeAOObLcyjPhEI0pqxg5m72bUmi8HMy8Xa4FO5C9E+HbK46AVcNAiiCi1dsRHig
+	 CqV+z5/fU100+xB/o5JH8QuTCpU6ocYXl4GQX5VAgNLjvUC3O7uQd3Fzypy2PmdIFS
+	 86IqE3hp7OIj4ptjiVWWIO2VPH3uQR2G+IvBfXMHZ2MevCe6sumljPIOpkV3czTVFH
+	 SynwIjm5N4MM7PSdvxLu1V3vhbd6oaYpP42bObe/SIVu0s3U4jzpsZm/8P24JBAkL+
+	 Pahm7j5dUh4AQ==
+Date: Wed, 18 Feb 2026 11:00:34 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Jann Horn <jannh@google.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC v3 2/4] pidfd: add CLONE_PIDFD_AUTOKILL
+Message-ID: <20260218-liefen-prost-1455830e3759@brauner>
+References: <20260217-work-pidfs-autoreap-v3-0-33a403c20111@kernel.org>
+ <20260217-work-pidfs-autoreap-v3-2-33a403c20111@kernel.org>
+ <CAG48ez0RcW2uChBsQOxrQ7ngvJbE_8mDfcXRb5=FCdkQJwKd+Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yoafj7qps4zppdv7"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez0RcW2uChBsQOxrQ7ngvJbE_8mDfcXRb5=FCdkQJwKd+Q@mail.gmail.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-3.76 / 15.00];
-	SIGNED_PGP(-2.00)[];
+X-Spamd-Result: default: False [2.34 / 15.00];
+	MID_END_EQ_FROM_USER_PART(4.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	MIME_GOOD(-0.20)[multipart/signed,text/plain];
 	MAILLIST(-0.15)[generic];
+	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77555-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77556-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+,1:+,2:~];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	MISSING_XM_UA(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[joel.granados@kernel.org,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
+	RCPT_COUNT_SEVEN(0.00)[7];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: AE01A1550D0
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 82C14155152
 X-Rspamd-Action: no action
 
+On Wed, Feb 18, 2026 at 12:43:59AM +0100, Jann Horn wrote:
+> On Tue, Feb 17, 2026 at 11:36 PM Christian Brauner <brauner@kernel.org> wrote:
+> > Add a new clone3() flag CLONE_PIDFD_AUTOKILL that ties a child's
+> > lifetime to the pidfd returned from clone3(). When the last reference to
+> > the struct file created by clone3() is closed the kernel sends SIGKILL
+> > to the child. A pidfd obtained via pidfd_open() for the same process
+> > does not keep the child alive and does not trigger autokill - only the
+> > specific struct file from clone3() has this property.
+> >
+> > This is useful for container runtimes, service managers, and sandboxed
+> > subprocess execution - any scenario where the child must die if the
+> > parent crashes or abandons the pidfd.
+> 
+> Idle thought, feel free to ignore:
+> In those scenarios, I guess what you'd ideally want would be a way to
+> kill the entire process hierarchy, not just the one process that was
+> spawned? Unless the process is anyway PID 1 of its own pid namespace.
+> But that would probably be more invasive and kind of an orthogonal
+> feature...
 
---yoafj7qps4zppdv7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It's something that I have as an exploration item on a ToDo. :)
 
-The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1e8:
+> 
+> [...]
+> > +static int pidfs_file_release(struct inode *inode, struct file *file)
+> > +{
+> > +       struct pid *pid = inode->i_private;
+> > +       struct task_struct *task;
+> > +
+> > +       guard(rcu)();
+> > +       task = pid_task(pid, PIDTYPE_TGID);
+> > +       if (task && READ_ONCE(task->signal->autokill_pidfd) == file)
+> 
+> Can you maybe also clear out the task->signal->autokill_pidfd pointer
+> here? It should be fine in practice either way, but theoretically,
 
-  Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
+Yes, of course.
 
-are available in the Git repository at:
+> with the current code, this equality check could wrongly match if the
+> actual autokill file has been released and a new pidfd file has been
+> reallocated at the same address... Of course, at worst that would kill
+> a task that has already been killed, so it wouldn't be particularly
+> bad, but still it's ugly.
+> 
+> > +               do_send_sig_info(SIGKILL, SEND_SIG_PRIV, task, PIDTYPE_TGID);
+> > +
+> > +       return 0;
+> > +}
+> [...]
+> > @@ -2470,8 +2479,11 @@ __latent_entropy struct task_struct *copy_process(
+> >         syscall_tracepoint_update(p);
+> >         write_unlock_irq(&tasklist_lock);
+> >
+> > -       if (pidfile)
+> > +       if (pidfile) {
+> > +               if (clone_flags & CLONE_PIDFD_AUTOKILL)
+> > +                       p->signal->autokill_pidfd = pidfile;
+> 
+> WRITE_ONCE() to match the READ_ONCE() in pidfs_file_release()?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git tags/sysc=
-tl-7.00-rc1
-
-for you to fetch changes up to d174174c6776a340f5c25aab1ac47a2dd950f380:
-
-  sysctl: replace SYSCTL_INT_CONV_CUSTOM macro with functions (2026-01-06 1=
-1:27:10 +0100)
-
-----------------------------------------------------------------
-Summary
-
-* Removed macros from proc handler converters
-
-  Replace the proc converter macros with "regular" functions. Though it is =
-more
-  verbose than the macro version, it helps when debugging and better aligns=
- with
-  coding-style.rst.
-
-* General cleanup
-
-  Remove superfluous ctl_table forward declarations. Const qualify the
-  memory_allocation_profiling_sysctl and loadpin_sysctl_table arrays. Add
-  missing kernel doc to proc_dointvec_conv.
-
-* Testing
-
-  This series was run through sysctl selftests/kunit test suite in
-  x86_64. And went into linux-next after rc4, giving it a good 3 weeks of
-  testing
-
-----------------------------------------------------------------
-Joel Granados (11):
-      sysctl: Add missing kernel-doc for proc_dointvec_conv
-      alloc_tag: move memory_allocation_profiling_sysctls into .rodata
-      loadpin: Implement custom proc_handler for enforce
-      sysctl: Remove unused ctl_table forward declarations
-      sysctl: Return -ENOSYS from proc_douintvec_conv when CONFIG_PROC_SYSC=
-TL=3Dn
-      sysctl: clarify proc_douintvec_minmax doc
-      sysctl: Add CONFIG_PROC_SYSCTL guards for converter macros
-      sysctl: Replace UINT converter macros with functions
-      sysctl: Add kernel doc to proc_douintvec_conv
-      sysctl: Replace unidirectional INT converter macros with functions
-      sysctl: replace SYSCTL_INT_CONV_CUSTOM macro with functions
-
- fs/pipe.c                  |  22 +++-
- include/linux/fs.h         |   1 -
- include/linux/hugetlb.h    |   2 -
- include/linux/printk.h     |   1 -
- include/linux/sysctl.h     | 120 +++----------------
- include/net/ax25.h         |   2 -
- kernel/printk/internal.h   |   2 +-
- kernel/printk/sysctl.c     |   1 -
- kernel/sysctl.c            | 290 +++++++++++++++++++++++++++++++++++++++++=
-----
- kernel/time/jiffies.c      | 134 +++++++++++++++++----
- lib/alloc_tag.c            |   5 +-
- security/loadpin/loadpin.c |  37 +++---
- 12 files changed, 437 insertions(+), 180 deletions(-)
-
---=20
-
-Joel Granados
-
---yoafj7qps4zppdv7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmmVjWIACgkQupfNUreW
-QU9P5wwAlRKA7oS2PSYReoTLNBAWKbV+gnuN0jsQ5nkSeTiiDQFNvhGexsebB/RU
-+72U3UTiv3OM6fY6rgVxqv4gtUmHYmSQOjvqcrqN6NFYyUN5Ri/xEXaulSweWjr/
-6kdgPn5LzKxpMLXdScmN8doQDP31dRbugFGnNx1dak3ezeIrSKavta6PWx6XSkkq
-wKrfVYYr1CR6yA20ePlhfoWskrvTpgTTND0rW6tZKssDiL73z1yyqLbb88YuRrON
-JEsKUY37xP/RcNuCsve0xVIC5IQriPJi9HUEsV+OzgA6dY2nWAaWrQ5WQGdMdsyZ
-Pk0S9+gzyK1eC7G25dqNHYlT+M4XHziWaInfrD1MyN8G1JW9URHqPdLxC4dpZwxW
-GxRTRS69pz4t1CsOoZjMoP+7mcrCkrE41lxnK6VvWG7IDHZf4AhPF6uFrKL0Dy09
-L58jzimb6CM9zo4AZTIGzfddC98RcH8oYMhANyhVq1zR/mCdEvjxzCQZQ34+xIB0
-bZwbQvqb
-=OASi
------END PGP SIGNATURE-----
-
---yoafj7qps4zppdv7--
+Agreed.
 
