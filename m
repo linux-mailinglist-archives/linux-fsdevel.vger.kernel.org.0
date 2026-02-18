@@ -1,229 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-77558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uH2BEbmWlWk1SgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 11:38:49 +0100
+	id IO1vMkuUlWk1SgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 11:28:27 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 733CC1558B1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 11:38:48 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 544E31556FD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 11:28:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id BA13630B47B8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 10:22:13 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id F09523046B99
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 10:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053EF2FE05B;
-	Wed, 18 Feb 2026 10:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9075A2ED87F;
+	Wed, 18 Feb 2026 10:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RsgwTny/"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eN11PawY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E101F239B;
-	Wed, 18 Feb 2026 10:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3BE145348;
+	Wed, 18 Feb 2026 10:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771410076; cv=none; b=aOmHleHn8IyioeRG+ButBzXBRbh+sNr2RhNbTrU9N7jQTLXe7aNWJG7sgGisOEVowcGyCNAoe33FO8ONJjJuFaqd3PKJc6LZdd29dLYmofXfCgJJEPaCO2+a/YANEFSH0CX/VMXZpbHZN1dE5Jq1MU5xUftTmQvxFSuEo+55aYw=
+	t=1771410203; cv=none; b=TX+e7ZPhhwuUxO+lCHCoohR+CKjpbs+PH60ZGKdMPA7GvFmz/q9+Dvwd+Zj7bKtc3rW54X0DjxeOPCdZk6foNfkNAihxufibKruYXRv16/GvDaCG//q0S37ufTJMRcTwdN0UYYoZrjhK6cV37BHBQ3Q31qIwD7/aVTkXq0+Zr4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771410076; c=relaxed/simple;
-	bh=hv0749+TPn0XaEpNvtWBOh7j3r+GNA5F74vffeJDUBM=;
+	s=arc-20240116; t=1771410203; c=relaxed/simple;
+	bh=oXenyoOf6ubR0OAzaErVRJ09tPZl9ka/sy7cxMIfFgk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ehp/IwZ/b8FIjObe6x56v3kuVJuOHVUITtcYuUiiJaPTGbqtas2LK9VJM66Y5Abg2I+8i4YMe3/NFbuaXX9L2D1AyCKDwuAUJ9OcHOxmimAcDWWaJBk2j+cLgvxpBi6g6O0V7bp0oi9T/Ma6ouXX/TwCbCE1JDcsRTd6sKVx6jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RsgwTny/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55CA4C19421;
-	Wed, 18 Feb 2026 10:21:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771410076;
-	bh=hv0749+TPn0XaEpNvtWBOh7j3r+GNA5F74vffeJDUBM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RsgwTny/0fZdrwtYDFxjJxHxPRaUb6XHMeP2v/qR3xTnBjCr1oYGlxm6EyqYpmsk8
-	 mdRfaZHOa0mPW7ZTyYby8+EiCP17G/SF5ppWRilvWidIkgd/9fzWXBxayqTFgV6DsS
-	 tasXiYKosi0KlHZItB7ZQ7LUqQXUn79inKUBf9X0K0FeUzm/O3T+zKLb2wgl+GLBaM
-	 E3kCoUuEChu2HN5GvWxSP4eFUMdXv6P5M491zuozgYG4+wHavXsjiYWJ4in27+cnVD
-	 2ifFiABTOufYC2czklFfX+nLd1IUmqVTGoAM+gPxI+sJa+5+5s//tdmYBzD7NuPhDc
-	 jeCbSRMvsx7kg==
-Date: Wed, 18 Feb 2026 11:21:11 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Jann Horn <jannh@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC v3 2/4] pidfd: add CLONE_PIDFD_AUTOKILL
-Message-ID: <20260218-festhalle-rohstoff-8b1a92750c1c@brauner>
-References: <20260217-work-pidfs-autoreap-v3-0-33a403c20111@kernel.org>
- <20260217-work-pidfs-autoreap-v3-2-33a403c20111@kernel.org>
- <CAHk-=wj80zwxy=5jp5SAi64cqCZgRjY1cRokVuDPd9_t3XMvUw@mail.gmail.com>
- <CAG48ez2YiL7RZ1fm9vwOCDGr9OsDrCHrCmkyRRoGRMWUZjyyBg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I8yJupn7Sd3mGdEka1slJivVoPBRZGSTyRsUsU/pb/z272ApJph60APcS3mwUhgIkF7HWnrNd+B2us/CGCeX1L5cbWZdDWqfXDl6A5PvkPGMGgtxa6VQ+o67w53MeUBD+d/ygY9Vsu3TacXjC5EmsHuRuHDLQ0upN2zWuuxSf74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eN11PawY; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1771410200; x=1802946200;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oXenyoOf6ubR0OAzaErVRJ09tPZl9ka/sy7cxMIfFgk=;
+  b=eN11PawY49pRa5ap08Zr4woiAdxQimf4ymxH+MUhccKe28nukRbVbS4w
+   GbFLGEdqGv5tn1b+zJpqRuU3AhoBuFYo5QEtA6Y3XWUI/jb5McXMhSBIU
+   CoT20pUsJbFAil6TBdyyLdzRBRYz4F5On2jMetRZwYeBkGgE0CynWmX1/
+   YMPs3qLj1UORqeqUElD63hrl2vjkRDvx7QVyOyMZrUM9FFmEo+bwz8uWc
+   qaZD28Rzen1HNRar+XKHgHvreVCNAurLAjmyytT84lHGMor4z8NB284zn
+   Bk+DxkVUIc27j2hLgLh/TeoWd3Zy6GXvyozX38iuvyYRUf7LazmsEL1Zp
+   w==;
+X-CSE-ConnectionGUID: HqEvs+F9RSm79iVwZ7miJw==
+X-CSE-MsgGUID: LbRCqElHTQa5uJrETyboCQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11704"; a="72195952"
+X-IronPort-AV: E=Sophos;i="6.21,298,1763452800"; 
+   d="scan'208";a="72195952"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2026 02:23:20 -0800
+X-CSE-ConnectionGUID: 3qDFRDz4QPC8MQHm8rM4GA==
+X-CSE-MsgGUID: fBOcfXBmSseTUcD99kqEAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,298,1763452800"; 
+   d="scan'208";a="218292192"
+Received: from igk-lkp-server01.igk.intel.com (HELO e5404a91d123) ([10.211.93.152])
+  by orviesa003.jf.intel.com with ESMTP; 18 Feb 2026 02:23:19 -0800
+Received: from kbuild by e5404a91d123 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vseiC-000000003Yf-17vP;
+	Wed, 18 Feb 2026 10:23:16 +0000
+Date: Wed, 18 Feb 2026 11:22:20 +0100
+From: kernel test robot <lkp@intel.com>
+To: Ethan Ferguson <ethan.ferguson@zetier.com>, hirofumi@mail.parknet.co.jp
+Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ethan Ferguson <ethan.ferguson@zetier.com>
+Subject: Re: [PATCH v2 2/2] fat: Add FS_IOC_SETFSLABEL ioctl
+Message-ID: <202602181149.k8dhUKY6-lkp@intel.com>
+References: <20260217230628.719475-3-ethan.ferguson@zetier.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez2YiL7RZ1fm9vwOCDGr9OsDrCHrCmkyRRoGRMWUZjyyBg@mail.gmail.com>
+In-Reply-To: <20260217230628.719475-3-ethan.ferguson@zetier.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [2.34 / 15.00];
-	MID_END_EQ_FROM_USER_PART(4.00)[];
+X-Spamd-Result: default: False [-1.16 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
+	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77558-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TAGGED_FROM(0.00)[bounces-77559-lists,linux-fsdevel=lfdr.de];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 733CC1558B1
+	FORGED_SENDER_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[lkp@intel.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[intel.com:+];
+	RCVD_COUNT_FIVE(0.00)[6];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_FIVE(0.00)[6];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,intel.com:mid,intel.com:dkim,intel.com:email,01.org:url]
+X-Rspamd-Queue-Id: 544E31556FD
 X-Rspamd-Action: no action
 
-On Wed, Feb 18, 2026 at 12:38:02AM +0100, Jann Horn wrote:
-> On Wed, Feb 18, 2026 at 12:18 AM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> > On Tue, 17 Feb 2026 at 14:36, Christian Brauner <brauner@kernel.org> wrote:
-> > >
-> > > Add a new clone3() flag CLONE_PIDFD_AUTOKILL that ties a child's
-> > > lifetime to the pidfd returned from clone3(). When the last reference to
-> > > the struct file created by clone3() is closed the kernel sends SIGKILL
-> > > to the child.
-> >
-> > Did I read this right? You can now basically kill suid binaries that
-> > you started but don't have rights to kill any other way.
-> >
-> > If I'm right, this is completely broken. Please explain.
-> 
-> You can already send SIGHUP to such binaries through things like job
-> control, right?
-> Do we know if there are setuid binaries out there that change their
-> ruid and suid to prevent being killable via kill_ok_by_cred(), then
-> set SIGHUP to SIG_IGN to not be killable via job control, and then do
-> some work that shouldn't be interrupted?
-> 
-> Also, on a Linux system with systemd, I believe a normal user, when
-> running in the context of a user session (but not when running in the
-> context of a system service), can already SIGKILL anything they launch
-> by launching it in a systemd user service, then doing something like
-> "echo 1 > /sys/fs/cgroup/user.slice/user-$UID.slice/user@$UID.service/app.slice/<servicename>.scope/cgroup.kill"
-> because systemd delegates cgroups for anything a user runs to that
-> user; and cgroup.kill goes through the codepath
-> cgroup_kill_write -> cgroup_kill -> __cgroup_kill -> send_sig(SIGKILL,
-> task, 0) -> send_sig_info -> do_send_sig_info
-> which, as far as I know, bypasses the normal signal sending permission
-> checks. (For comparison, group_send_sig_info() first calls
-> check_kill_permission(), then do_send_sig_info().)
-> 
-> I agree that this would be a change to the security model, but I'm not
-> sure if it would be that big a change. I guess an alternative might be
-> to instead gate the clone() flag on a `task_no_new_privs(current) ||
-> ns_capable()` check like in seccomp, but that might be too restrictive
-> for the usecases Christian has in mind...
+Hi Ethan,
 
-So I'm going to briefly reiterate what I wrote in my other replies because
-I really don't want to get anyone the impression that I don't understand
-that this is a change in the security model - It's what I explicitly
-wanted to discuss:
+kernel test robot noticed the following build errors:
 
-  I'm very aware that as written this will allow users to kill setuid
-  binaries. I explictly wrote the first RFC so autokill isn't reset during
-  bprm->secureexec nor during commit_creds() - in contrast to pdeath
-  signal.
+[auto build test ERROR on 9f2693489ef8558240d9e80bfad103650daed0af]
 
-I did indeed think of simply using the seccomp model. I have a long
-document about all of the different implications for all of this.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ethan-Ferguson/fat-Add-FS_IOC_GETFSLABEL-ioctl/20260218-071019
+base:   9f2693489ef8558240d9e80bfad103650daed0af
+patch link:    https://lore.kernel.org/r/20260217230628.719475-3-ethan.ferguson%40zetier.com
+patch subject: [PATCH v2 2/2] fat: Add FS_IOC_SETFSLABEL ioctl
+config: x86_64-rhel-9.4-ltp (https://download.01.org/0day-ci/archive/20260218/202602181149.k8dhUKY6-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260218/202602181149.k8dhUKY6-lkp@intel.com/reproduce)
 
-Ideally we'd not have to use the seccomp model but if we have to I'm
-fine with it. There are two problems I would want to avoid though. Right
-now pdeath_signal is reset on _any_ set*id() transition via
-commit_creds(). Which makes it really useless.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202602181149.k8dhUKY6-lkp@intel.com/
 
-For example, if you setup a container the child sets pdeath_signal so it
-gets auto-killed when the container setup process dies. But as soon as
-the child uses set*id() calls to become privileged over the container's
-namespaces pdeath_signal magically gets reset. So all container runtimes
-have this annoying code in some form:
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-static int do_start(void *data) /* container workload that gets setup */
-{
+>> ERROR: modpost: "msdos_format_name" [fs/fat/fat.ko] undefined!
 
-<snip>
-
-        /* This prctl must be before the synchro, so if the parent dies before
-         * we set the parent death signal, we will detect its death with the
-         * synchro right after, otherwise we have a window where the parent can
-         * exit before we set the pdeath signal leading to a unsupervized
-         * container.
-         */
-        ret = lxc_set_death_signal(SIGKILL, handler->monitor_pid, status_fd);
-        if (ret < 0) {
-                SYSERROR("Failed to set PR_SET_PDEATHSIG to SIGKILL");
-                goto out_warn_father;
-        }
-
-<snip>
-
-        /* If we are in a new user namespace, become root there to have
-         * privilege over our namespace.
-         */
-        if (!list_empty(&handler->conf->id_map)) {
-
-<snip>
-
-                /* Drop groups only after we switched to a valid gid in the new
-                 * user namespace.
-                 */
-                if (!lxc_drop_groups() &&
-                    (handler->am_root || errno != EPERM))
-                        goto out_warn_father;
-
-                if (!lxc_switch_uid_gid(nsuid, nsgid))
-                        goto out_warn_father;
-
-                ret = prctl(PR_SET_DUMPABLE, prctl_arg(1), prctl_arg(0),
-                            prctl_arg(0), prctl_arg(0));
-                if (ret < 0)
-                        goto out_warn_father;
-
-                /* set{g,u}id() clears deathsignal */
-                ret = lxc_set_death_signal(SIGKILL, handler->monitor_pid, status_fd);
-                if (ret < 0) {
-                        SYSERROR("Failed to set PR_SET_PDEATHSIG to SIGKILL");
-                        goto out_warn_father;
-                }
-
-<sip>
-
-I can't stress how useless this often makes pdeath_signal. Let alone
-that the child must set it so there's always a race with the parent
-dying while the child is setting it. And obviously it isn't just
-containers. It's anything that deprivileges itself including some
-services.
-
-If we require the seccomp task_no_new_privs() thing I really really
-would like to not have to reset autokill during commit_creds().
-
-Because then it is at least consistent for task_no_new_privs() without
-magic resets.
-
-TL;DR as long as we can come up with a model where there are no magical
-resets of the property by the kernel this is useful.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
