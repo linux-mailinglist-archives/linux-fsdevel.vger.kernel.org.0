@@ -1,313 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-77591-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77592-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +P4EMYPilWliVwIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77591-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 17:02:11 +0100
+	id wE9ZNzzjlWmrVwIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77592-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 17:05:16 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84D2F157900
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 17:02:08 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B469157982
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 17:05:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 939EA300E5BE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 16:01:52 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 1810530209F0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 16:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798C834107C;
-	Wed, 18 Feb 2026 16:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753CC344040;
+	Wed, 18 Feb 2026 16:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="WdZnOpHU"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fZng8OTW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B5D344059
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 16:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7C527FD40;
+	Wed, 18 Feb 2026 16:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771430504; cv=none; b=MhBvUwAe4Z6NmnJO8IJ7POhysAO0aLeEKsGd6W4uX+n7l5ZeSj1lSoLQd5YZLOOw7druvwkdgMOR/vTOyI3hian5QPfUxiGcPQuif+zkbhVDApjlWEnCv7N/7kTYDyplUrHM6TCrnYyICNPwyQhLZmxWaFKobMBvFSRIyn8KbiA=
+	t=1771430701; cv=none; b=sE/HHAAoEq7CoWbnXgyEbJLW4ak2olu5cZJ1CRSlvGjnC9ArTOiZZKUKdCnaCf7C9CkhETSUN/TVpNXdWh2k3otPSTXqeVs51WTAewiFujOZOE9kAvtIOdtLgKPvkkl3I9gr+7iXuPe7dyY/aWL2lwBeUR1lOYuSBd2WaE0X/ZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771430504; c=relaxed/simple;
-	bh=MgV2LzGE2tnVbJO/Rz8MR6RGZPmFaJ8fiTRY57hhD/Y=;
-	h=Content-Type:From:Mime-Version:Subject:Message-Id:Date:Cc:To; b=b7ZRaIBeJHUtyx2jLcthkdQpB6c55BqQ4hsd3XiJeYXUf2S+xyYa1mvITsRjMxwA+a2zhnHc709DDaNJjaQ63Y/CLk+er2dl5Oef0RtQ6C6FY7iY+pi0FFra8n1NMalD8a2l4t0wDnswS9wobX1Rr3qzM/hlbAGdzranv9WzIwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=WdZnOpHU; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=zetier.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zetier.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-5fc4220b0acso1194292137.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 08:01:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=zetier.com; s=gm; t=1771430501; x=1772035301; darn=vger.kernel.org;
-        h=to:cc:date:message-id:subject:mime-version:from
-         :content-transfer-encoding:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ODhbjXy6wk3D2HE0/UrjwI8BxjlEgTnz/AVFGc7F1Sw=;
-        b=WdZnOpHUym0pzuVxhXO9BK5XBNIh5hhsjKEyAmGAoANw0sdgatX9xzObnXyVgkFlqd
-         awlzMXYEIIXEr5cvCYXk6zd5I+LV/k44xfsQhybHETrhBx4JfW6zniHWP9kwjVbCqZx3
-         wFR0MkKwMqdcU7K5JhPMJJscamSRMhpzIHIeuE0f354RX0R8innsRQM87R+PMwnRJHbI
-         RzONP2TMKcYEyjYDo4ZVcIXe1rYsAtbVs2WBtmj1O+lnmjELTVlsQPXjJrivP/eOd+pn
-         0elqw1Mfx568mKA/Hzzkj+5NWlhuFqvwCgsoocT+5lMN1bDmPOb3dVW2QooPpq0vEm1V
-         lS9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771430501; x=1772035301;
-        h=to:cc:date:message-id:subject:mime-version:from
-         :content-transfer-encoding:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ODhbjXy6wk3D2HE0/UrjwI8BxjlEgTnz/AVFGc7F1Sw=;
-        b=GGjyu8t2IVDQH7GUaNiBldrdqbxG14X3wv4kXAAG+MHJRnUyrnIizSzEw4fmFNX5/y
-         bbRigJRwZOB8OyDkomo1VcO9PTOatWGkM7yXb56NR6fmoaUfbOajqodFSbVJS4RqXbO+
-         AFPR36S0v+5+lKHJBfb8hVGDq3TCsTvL/Ctncvz9ELeQAKOFARbL1gRcQjdJ6GU5D7sQ
-         w+bKeJMkCd2lUTBrPcCqvQPdEM3DYzzRX2Ui2L8LxxLFqiEuI6W5EbfOYfm4oBrh4faM
-         UieIeFWQ0657hSs8reumLTtu7vKZ+gDgLKMQdN4a3atas9BQMNROSlA3+wf3HyhCxdeF
-         lwrQ==
-X-Gm-Message-State: AOJu0Yw50XB/pyiPnc8azfCoVkF70eYkQGIEu1OeujucvNavqFL+0qcX
-	qKpf4QFxINfQn1yoGf3qvEnnho60eBATvNDHJ2uGoYkYCXwfmuaN7eW8oIjJXSLiC5s=
-X-Gm-Gg: AZuq6aJVYcKKbWElj0w9EZuF471K6kh63bwazt/mH5Q6fRtrODGsBQI/anzaDmD/k4N
-	oUhOxd2i/i2EIaFiL0CwfeExkvXi3NCX0eQnk4uyrpU5r9fH/LLwgE0fixs6HnE0+bdanGtl+pH
-	FSHtGxZkjUbud8aAmmd30GCx+4jyA9SmyicLFwTroprQzkEuVpDVulj53vrz+ojWHPFI0nhknBJ
-	3z7kL3VwPsH7fu+vm46r+s9F3y0pMiCQD7i1KxPEgAaNAspNFXiUNl21QFrbTdKbn1HxCAlAgIr
-	hk1z7AtBR064Xx3Z2yi8IEZvir5j5ufZOj5tfOZypJiF/6K3WkXN1p5YjyE25vl7eJmxOAZ0jaW
-	QJj103iA5xaw9BPTIup85F8oFWC+QU++0vhqpf9fi6OqB4C7KP5SBHF1+xkrBKPJDnJAgKy5IHl
-	No03UT/Yu/BmPrkxVc+0ix/yH8+HoNJkyUxyFG8vurMPY3V5j0sI4iKVYx++DZDQ==
-X-Received: by 2002:a05:6102:50a4:b0:5fd:eff4:825 with SMTP id ada2fe7eead31-5fe2aed01aamr4964089137.26.1771430496954;
-        Wed, 18 Feb 2026 08:01:36 -0800 (PST)
-Received: from smtpclient.apple ([2600:382:7e03:34fb:b0eb:9f57:81ff:5d84])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cb2b1c7d7csm1865031285a.27.2026.02.18.08.01.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Feb 2026 08:01:35 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From: Ethan Ferguson <ethan.ferguson@zetier.com>
+	s=arc-20240116; t=1771430701; c=relaxed/simple;
+	bh=jfnbMnFqB31FkL8fUDzsdjgyqkLz50CEZHl1Q8y2fck=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VffEWwkXHLuS2ggezRaDJzvOewI5RZSCX2Q7FcWMVs47LVMB8vCUPGWZQjmFa0cfsDG2+DgZx/RcSx90l7tG0LJtTXGMaS+ceQNvVgzRx+Eybaa9zpjJUXSCViMjo1MltcNHexHQth1YDvyLFOwKIuSw4MuJBGYHkAMnSrTvG7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fZng8OTW; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1771430700; x=1802966700;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=jfnbMnFqB31FkL8fUDzsdjgyqkLz50CEZHl1Q8y2fck=;
+  b=fZng8OTWyfZYLDdHpLVbaZ8Q3cW1uEZ+xx5OuIpEzhYaIIVkJV1uF0of
+   zbZOJpEVXZEPu9Z7nABFNZp4z/MkTpdmsdt/Rp4EXoAYo0Di+IXssmYMW
+   3HpFr1oIGKCrifxPJg4YckXwPiXvHyniuQhIMkyrBF4H9EWD2iG5Yr2Sk
+   tx/6KWvS56Q69lZk9FU+8dGqzqNXlrrdE2YaFVyt3La0fJd0Op9VJ22wh
+   DY92hCZRlYMI+sMPuFrE6g5XhSarzBi4/7amCpy3Zw5JvKk08bGIwSiwd
+   1AqzRTQbPqTkhctkVlO81u5DOcwkMhIeRQlmvp4daOghjmU3zH4IloxkR
+   Q==;
+X-CSE-ConnectionGUID: tuTv7uSGSW+5JGOT9T/6hw==
+X-CSE-MsgGUID: lt//4F1STpaZqYeHfPBzwg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11705"; a="83132752"
+X-IronPort-AV: E=Sophos;i="6.21,298,1763452800"; 
+   d="scan'208";a="83132752"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2026 08:04:59 -0800
+X-CSE-ConnectionGUID: /fb4gbLnS6e0K8xWnPiYcw==
+X-CSE-MsgGUID: yThti8vYRei3egf6s2kSNg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,298,1763452800"; 
+   d="scan'208";a="212313339"
+Received: from aduenasd-mobl5.amr.corp.intel.com (HELO [10.125.109.212]) ([10.125.109.212])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2026 08:04:56 -0800
+Message-ID: <7c551ba8-2d0e-4df4-a698-19cad4b78977@intel.com>
+Date: Wed, 18 Feb 2026 09:04:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v2 2/2] fat: Add FS_IOC_SETFSLABEL ioctl
-Message-Id: <594BF488-47D8-498F-9777-7E48F6997F5E@zetier.com>
-Date: Wed, 18 Feb 2026 11:01:25 -0500
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Hirofumi OGAWA <hirofumi@mail.parknet.co.jp>
-X-Mailer: iPhone Mail (23C71)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 5/9] dax: Track all dax_region allocations under a
+ global resource tree
+To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
+ linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Yazen Ghannam <yazen.ghannam@amd.com>, Davidlohr Bueso <dave@stgolabs.net>,
+ Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
+ Pavel Machek <pavel@kernel.org>, Li Ming <ming.li@zohomail.com>,
+ Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ Ying Huang <huang.ying.caritas@gmail.com>,
+ Yao Xingtao <yaoxt.fnst@fujitsu.com>, Peter Zijlstra <peterz@infradead.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Nathan Fontenot <nathan.fontenot@amd.com>,
+ Terry Bowman <terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>,
+ Benjamin Cheatham <benjamin.cheatham@amd.com>,
+ Zhijian Li <lizhijian@fujitsu.com>, Borislav Petkov <bp@alien8.de>,
+ Tomasz Wolski <tomasz.wolski@fujitsu.com>
+References: <20260210064501.157591-1-Smita.KoralahalliChannabasappa@amd.com>
+ <20260210064501.157591-6-Smita.KoralahalliChannabasappa@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20260210064501.157591-6-Smita.KoralahalliChannabasappa@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
-	FAKE_REPLY(1.00)[];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[zetier.com,quarantine];
-	R_DKIM_ALLOW(-0.20)[zetier.com:s=gm];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77591-lists,linux-fsdevel=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77592-lists,linux-fsdevel=lfdr.de];
+	RCPT_COUNT_TWELVE(0.00)[32];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[zetier.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	APPLE_IOS_MAILER_COMMON(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[ethan.ferguson@zetier.com,linux-fsdevel@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[3];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,intel.com,huawei.com,amd.com,stgolabs.net,infradead.org,suse.cz,zohomail.com,oss.qualcomm.com,gmail.com,fujitsu.com,linuxfoundation.org,alien8.de];
+	RCVD_TLS_LAST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,de.date:url,zetier.com:mid,zetier.com:dkim,zetier.com:email,parknet.co.jp:email]
-X-Rspamd-Queue-Id: 84D2F157900
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[dave.jiang@intel.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[intel.com:+];
+	RCVD_COUNT_FIVE(0.00)[5];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,intel.com:mid,intel.com:dkim,intel.com:email,amd.com:email]
+X-Rspamd-Queue-Id: 3B469157982
 X-Rspamd-Action: no action
 
-=EF=BB=BF
-> On Feb 18, 2026, at 02:22, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp> wr=
-ote:
->=20
-> =EF=BB=BFEthan Ferguson <ethan.ferguson@zetier.com> writes:
->=20
->> Add support for writing to the volume label of a FAT filesystem via the
->> FS_IOC_SETFSLABEL ioctl.
->> Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
->> ---
->> fs/fat/dir.c         | 51 +++++++++++++++++++++++++++++++++++
->> fs/fat/fat.h         |  6 +++++
->> fs/fat/file.c        | 63 ++++++++++++++++++++++++++++++++++++++++++++
->> fs/fat/inode.c       | 15 +++++++++++
->> fs/fat/namei_msdos.c |  4 +--
->> 5 files changed, 137 insertions(+), 2 deletions(-)
->> diff --git a/fs/fat/dir.c b/fs/fat/dir.c
->> index 07d95f1442c8..1b11713309ae 100644
->> --- a/fs/fat/dir.c
->> +++ b/fs/fat/dir.c
->> @@ -1425,3 +1425,54 @@ int fat_add_entries(struct inode *dir, void *slots=
-, int nr_slots,
->>  return err;
->> }
->> EXPORT_SYMBOL_GPL(fat_add_entries);
->> +
->> +static int fat_create_volume_label_dentry(struct super_block *sb, char *=
-vol_label)
->> +{
->> +    struct msdos_sb_info *sbi =3D MSDOS_SB(sb);
->> +    struct inode *root_inode =3D sb->s_root->d_inode;
->> +    struct msdos_dir_entry de;
->> +    struct fat_slot_info sinfo;
->> +    struct timespec64 ts =3D current_time(root_inode);
->> +    __le16 date, time;
->> +    u8 time_cs;
->> +
->> +    memcpy(de.name, vol_label, MSDOS_NAME);
->> +    de.attr =3D ATTR_VOLUME;
->> +    de.starthi =3D de.start =3D de.size =3D de.lcase =3D 0;
->> +
->> +    fat_time_unix2fat(sbi, &ts, &time, &date, &time_cs);
->> +    de.time =3D time;
->> +    de.date =3D date;
->> +    if (sbi->options.isvfat) {
->> +        de.cdate =3D de.adate =3D date;
->> +        de.ctime =3D time;
->> +        de.ctime_cs =3D time_cs;
->> +    } else
->> +        de.cdate =3D de.adate =3D de.ctime =3D de.ctime_cs =3D 0;
->> +
->> +    return fat_add_entries(root_inode, &de, 1, &sinfo);
->> +}
->> +
->> +int fat_rename_volume_label_dentry(struct super_block *sb, char *vol_lab=
-el)
->> +{
->> +    struct inode *root_inode =3D sb->s_root->d_inode;
->> +    struct buffer_head *bh =3D NULL;
->> +    struct msdos_dir_entry *de;
->> +    loff_t cpos =3D 0;
->> +    int err =3D 0;
->> +
->> +    while (1) {
->> +        if (fat_get_entry(root_inode, &cpos, &bh, &de) =3D=3D -1)
->> +            return fat_create_volume_label_dentry(sb, vol_label);
->> +
->> +        if (de->attr =3D=3D ATTR_VOLUME) {
->> +            memcpy(de->name, vol_label, MSDOS_NAME);
->> +            mark_buffer_dirty_inode(bh, root_inode);
->> +            if (IS_DIRSYNC(root_inode))
->> +                err =3D sync_dirty_buffer(bh);
->> +            brelse(bh);
->> +            return err;
->> +        }
->> +    }
->=20
-> I didn't check how to know the label though, the label is only if
-> ATTR_VOLUME? IOW, any other attributes are disallowed?
-I'm pretty sure ATTR_VOLUME is disallowed except for:
-* Volume labels, where it is the only flag present
-* Long file name entries, where it is /not/ the only flag present
-This is why I check if attr =3D=3D ATTR_VOLUME, not attr & ATTR_VOLUME
-> What if label is marked as deleted?
-As far as I know, a Volume label can never be marked as deleted, but if you w=
-ant me to change the behavior of my patch, just let me know how you would li=
-ke me to handle it and I'd be happy to change it.
-> I'm not sure though, no need to update timestamps? (need to investigate
-> spec or windows behavior)
-It's not in the spec that I know either, I'm happy to remove if you deem thi=
-s unnecessary.
->> +static int fat_convert_volume_label_str(struct msdos_sb_info *sbi, char *=
-in,
->> +                    char *out)
->> +{
->> +    int ret, in_len =3D max(strnlen(in, FSLABEL_MAX), 11);
->> +    char *needle;
->=20
-> Silently truncate is the common way for this ioctl?
-When I implemented this in exfat, I returned -EINVAL for names that were lon=
-ger than allowed, but only after converting from nls to UTF16. I can copy th=
-is behavior here as well.
->=20
->> +    /*
->> +     * '.' is not included in any bad_chars list in this driver,
->> +     * but it is specifically not allowed for volume labels
->> +     */
->> +    for (needle =3D in; needle - in < in_len; needle++)
->> +        if (*needle =3D=3D '.')
->> +            return -EINVAL;
->=20
-> memchr() or such?
-Noted, will use, thanks.
->> +    ret =3D msdos_format_name(in, in_len, out, &sbi->options);
->> +    if (ret)
->> +        return ret;
->=20
->> +    /*
->> +     * msdos_format_name assumes we're translating an 8.3 name, but
->> +     * we can handle 11 chars
->> +     */
->> +    if (in_len > 8)
->> +        ret =3D msdos_format_name(in + 8, in_len - 8, out + 8,
->> +                    &sbi->options);
->> +    return ret;
->=20
-> fat module should not import msdos module.
-Fair. How would you implement checking the validity of the new volume label?=
 
->=20
->> +static int fat_ioctl_set_volume_label(struct super_block *sb, char __use=
-r *arg)
->> +{
->> +    struct msdos_sb_info *sbi =3D MSDOS_SB(sb);
->> +    struct inode *root_inode =3D sb->s_root->d_inode;
->> +    char from_user[FSLABEL_MAX];
->> +    char new_vol_label[MSDOS_NAME];
->> +    int ret;
->> +
->> +    if (!capable(CAP_SYS_ADMIN))
->> +        return -EPERM;
->> +
->> +    if (sb_rdonly(sb))
->> +        return -EROFS;
->> +
->> +    if (copy_from_user(from_user, arg, FSLABEL_MAX))
->> +        return -EFAULT;
->> +
->> +    ret =3D fat_convert_volume_label_str(sbi, from_user, new_vol_label);=
 
->> +    if (ret)
->> +        return ret;
->> +
->> +    inode_lock(root_inode);
->> +    ret =3D fat_rename_volume_label_dentry(sb, new_vol_label);
->> +    inode_unlock(root_inode);
->> +    if (ret)
->> +        return ret;
->=20
-> This rename will have to take same or similar locks with rename(2)?
-Sure, so should I only lock on sbi->s_lock through the whole function?
->> diff --git a/fs/fat/inode.c b/fs/fat/inode.c
->> index 6f9a8cc1ad2a..a7528937383b 100644
->> --- a/fs/fat/inode.c
->> +++ b/fs/fat/inode.c
->> @@ -736,6 +736,21 @@ static void delayed_free(struct rcu_head *p)
->> static void fat_put_super(struct super_block *sb)
->> {
->>  struct msdos_sb_info *sbi =3D MSDOS_SB(sb);
->> +    struct buffer_head *bh =3D NULL;
->> +    struct fat_boot_sector *bs;
->> +
->> +    bh =3D sb_bread(sb, 0);
->> +    if (bh =3D=3D NULL)
->> +        fat_msg(sb, KERN_ERR, "unable to read boot sector");
->> +    else if (!sb_rdonly(sb)) {
->> +        bs =3D (struct fat_boot_sector *)bh->b_data;
->> +        if (is_fat32(sbi))
->> +            memcpy(bs->fat32.vol_label, sbi->vol_label, MSDOS_NAME);
->> +        else
->> +            memcpy(bs->fat16.vol_label, sbi->vol_label, MSDOS_NAME);
->> +        mark_buffer_dirty(bh);
->> +    }
->> +    brelse(bh);
->=20
-> Why this unconditionally update the vol_label at unmount?
-I can add a dirty bit to msdos_sb_info, and only write if it's present.
-> Thanks.
-> --
-> OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+On 2/9/26 11:44 PM, Smita Koralahalli wrote:
+> Introduce a global "DAX Regions" resource root and register each
+> dax_region->res under it via request_resource(). Release the resource on
+> dax_region teardown.
+> 
+> By enforcing a single global namespace for dax_region allocations, this
+> ensures only one of dax_hmem or dax_cxl can successfully register a
+> dax_region for a given range.
+> 
+> Co-developed-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+
+> ---
+>  drivers/dax/bus.c | 23 ++++++++++++++++++++---
+>  1 file changed, 20 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
+> index fde29e0ad68b..5f387feb95f0 100644
+> --- a/drivers/dax/bus.c
+> +++ b/drivers/dax/bus.c
+> @@ -10,6 +10,7 @@
+>  #include "dax-private.h"
+>  #include "bus.h"
+>  
+> +static struct resource dax_regions = DEFINE_RES_MEM_NAMED(0, -1, "DAX Regions");
+>  static DEFINE_MUTEX(dax_bus_lock);
+>  
+>  /*
+> @@ -625,6 +626,8 @@ static void dax_region_unregister(void *region)
+>  {
+>  	struct dax_region *dax_region = region;
+>  
+> +	scoped_guard(rwsem_write, &dax_region_rwsem)
+> +		release_resource(&dax_region->res);
+>  	sysfs_remove_groups(&dax_region->dev->kobj,
+>  			dax_region_attribute_groups);
+>  	dax_region_put(dax_region);
+> @@ -635,6 +638,7 @@ struct dax_region *alloc_dax_region(struct device *parent, int region_id,
+>  		unsigned long flags)
+>  {
+>  	struct dax_region *dax_region;
+> +	int rc;
+>  
+>  	/*
+>  	 * The DAX core assumes that it can store its private data in
+> @@ -667,14 +671,27 @@ struct dax_region *alloc_dax_region(struct device *parent, int region_id,
+>  		.flags = IORESOURCE_MEM | flags,
+>  	};
+>  
+> -	if (sysfs_create_groups(&parent->kobj, dax_region_attribute_groups)) {
+> -		kfree(dax_region);
+> -		return NULL;
+> +	scoped_guard(rwsem_write, &dax_region_rwsem)
+> +		rc = request_resource(&dax_regions, &dax_region->res);
+> +	if (rc) {
+> +		dev_dbg(parent, "dax_region resource conflict for %pR\n",
+> +			&dax_region->res);
+> +		goto err_res;
+>  	}
+>  
+> +	if (sysfs_create_groups(&parent->kobj, dax_region_attribute_groups))
+> +		goto err_sysfs;
+> +
+>  	if (devm_add_action_or_reset(parent, dax_region_unregister, dax_region))
+>  		return NULL;
+>  	return dax_region;
+> +
+> +err_sysfs:
+> +	scoped_guard(rwsem_write, &dax_region_rwsem)
+> +		release_resource(&dax_region->res);
+> +err_res:
+> +	kfree(dax_region);
+> +	return NULL;
+>  }
+>  EXPORT_SYMBOL_GPL(alloc_dax_region);
+>  
+
 
