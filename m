@@ -1,159 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-77489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77490-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id MOUDLXYrlWkwMgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 04:01:10 +0100
+	id eCJbGY0wlWmeMwIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77490-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 04:22:53 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 234B7152C5B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 04:01:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B00E9152D00
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 04:22:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C3001303DD2D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 03:00:56 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 2E89E3032673
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 03:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01772DE709;
-	Wed, 18 Feb 2026 03:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAA62116F6;
+	Wed, 18 Feb 2026 03:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="IbkSmj7W"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B70JCOX/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052F119DF4F;
-	Wed, 18 Feb 2026 03:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE8327FD45
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 03:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771383653; cv=none; b=AiHUdoRKgy56BUzOpLdr6PDYCuOW3kPFByO0Ms7MK0tdO9QhW1C/QWwyhqk/rN9TfZa5vcmFJN3mWkg0/fmtWpWvLai+c1IuNrQopAInl4cpW2T6T/mNeD7gF8B+r17ifMmNs6h4O5LlLzvk2ugfqrEQ3eGtQp5rVDTvqJxkh3E=
+	t=1771384966; cv=none; b=LiRUNgkvkvPCstmAAx7s3m9jiHc+C5GlkWbmPBuBvGChNAPE5mt10TeQS2QZk32bnnhha+l/Ke18XTh+obnWRW6Z3FDjwxJYSbF78TjRXItLOTgs//N1y/oNArt0lj1ciOevxACHaRLBdfSXil/qYyDTcFvJcR1g3oZpWZYMvpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771383653; c=relaxed/simple;
-	bh=RAAkTtc2W9BDVPW6YOz8VxRJYFKM7eMDfP9VRjrKpmg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oZvfHHw7w9SNTbZwnZcKtSk5rca8i1Cvax+PbWdSLLPU1F8mN9ARCzziScH3Gm94D/nvXxEygSADmtaZZFkaz9nZH0QBJ1hXvv8tDzRHgES2cQC6uTa/lr21PlmAq/RHZ7pSkoh0pGxS3peRwnotZVse6FtK2tc9mG3P0imBX4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=IbkSmj7W; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4fG1V55NWLz9sGX;
-	Wed, 18 Feb 2026 04:00:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1771383645;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RAAkTtc2W9BDVPW6YOz8VxRJYFKM7eMDfP9VRjrKpmg=;
-	b=IbkSmj7Wf13fCJ5Dk2vIP+xk/chtVjpODXk038uHEQN3+mZDJt99XDRcbXsKA8qaX1oFqX
-	ZrGbIwM2zYJAIb4BZ8MnwYnstULz7GoCKpnuXhTLx3hQ2zoOFwFfNxyay3I8x3q/VzmQtz
-	Sfx5sRiBOr8N+jdCMNBhD6NqcoyJCkr5Z69PcPNk9XiyZYnflfKLHWYXCpTJIh1I/W0tSv
-	DzqpvjV3k+kUU50aAl9TssLP4QxaRTTaxO8vPaKxBj+rZYl2s/i6HXQmLzcwJbgghRfPH4
-	LjdnQwC4FFcFmBN2q8e0T9oEMBvX5q/nFLpRqzypGE+8wpFfIRDBfTMliQz6iw==
-Date: Wed, 18 Feb 2026 14:00:28 +1100
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Shyam Prasad N <nspmangalore@gmail.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	CIFS <linux-cifs@vger.kernel.org>, linux-nfs@vger.kernel.org, David Howells <dhowells@redhat.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Support to split superblocks during remount
-Message-ID: <2026-02-17-grimy-washed-domes-aluminum-0HKtw9@cyphar.com>
-References: <CANT5p=orpQdzqxjNronnnKUo5HFGjuVwkwpjiGHQRmwh8es0Pw@mail.gmail.com>
+	s=arc-20240116; t=1771384966; c=relaxed/simple;
+	bh=32HF38AOD/I/0DWJn1DNDyTIUijzlwxnIPrqmmhrMEc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=IC6RLbexy/AkEsbyLdiG6JTxUYPlXlAdDdOveZAL6nQM/RQB+Sh48IR1ScC99Jffm6dIQKnU18e4RZ/g5OBTtTAsazN278rk6iRUGoE6rHoqzms39PEFijwX4movnmhU51AFtaH+VEl8AO7pOlXP93F9xYC8qPNVVKZhI/zC5OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tjmercier.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B70JCOX/; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tjmercier.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-354bf10ec2aso4234435a91.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Feb 2026 19:22:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1771384965; x=1771989765; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Z5oh2GGuUIGHttG6QQKJrDgyvg+KF11aDAOaopsiwdo=;
+        b=B70JCOX/inNG3gWIiBSuXhyja6cGFpC1aqa5uh1cKSsJ9zoSgkTsWo/Yfa7Ncf2IuQ
+         MG+Z5IrLg6kPKGIdW6rdcb+29+6nENjqskyAwVrTluMDZEhpSizkMAF8Ug31mHW+MJBf
+         om2pSwH1L7Eiei4ttENGh0gzq4BcYbqLxAhkiDmyt1MtshNulEWqDp84URURMTbnEUqt
+         HHq6vG0Ptp7un0tyWN701U+CzWzYLOCjRzHKaeCAdnyVjiv0hKTuxobucFLIr2AHTVK4
+         X7+j+wsIsD0eqbKo4tqO+DBEkEmvx47piB+uSLzmzLbja/2at0kHpb2ni7etIZrqXm4e
+         R5gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771384965; x=1771989765;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z5oh2GGuUIGHttG6QQKJrDgyvg+KF11aDAOaopsiwdo=;
+        b=WadMdadCP1RoBX3+E071Rhzw+Kdc5FVUSOWW8LiJ8ZnHFFliWj64fHYTpCb0JkZ1lx
+         XXhc49IrbIdHoDp65uH5oypXbInWy6w7UedqXwnxihtg5oZAa9Oe+kYj5Y4YCkrOQW5G
+         Pt7aUwUYp1AjzeKBi4xt81AJD1bkMZ3purAHPbAQ4OZBH3Ft0x7IOjiuQ5aH0XgWUxr+
+         wyWB2iz2UDgXBkYfNeZWNh++0qLJGD2cxIRndm1Lvby5Zlx3Av8a0eDP4b/oHkIr+LYC
+         mYwl1fbwjHZFQ3A8KiKnNxGIFuOXtcSxCn2Cd7sQpc7uT1yYGYy2zOa9ZZzzFCu0LyCU
+         T+uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVKevkk6rRvFoHKn6Vg0PknQ2HBvDHuTJ5ZSTF8eyTmFXWPqJm2UbSGeiq5JEkS+o5sFoybYBxXakbFGZly@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy0JqmjC9Cy9mMnkYtdzdIGyJVEcujEUpoF+k7Mkm8GP0fyKN/
+	91HF9Uc0sSu+QNxPmvAm45V3rcj/bIMTyFMeN5K/hl4vDKo5rRb8hBSVjdQOIzeDFtUszpboCch
+	xN7WUSAEJFnTveVfzPQ==
+X-Received: from pjal2.prod.google.com ([2002:a17:90a:1502:b0:34a:bebf:c162])
+ (user=tjmercier job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:3c08:b0:34a:e9b:26b1 with SMTP id 98e67ed59e1d1-35889194a48mr474071a91.26.1771384964802;
+ Tue, 17 Feb 2026 19:22:44 -0800 (PST)
+Date: Tue, 17 Feb 2026 19:22:29 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pqa547cvfgjehkdu"
-Content-Disposition: inline
-In-Reply-To: <CANT5p=orpQdzqxjNronnnKUo5HFGjuVwkwpjiGHQRmwh8es0Pw@mail.gmail.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.53.0.310.g728cabbaf7-goog
+Message-ID: <20260218032232.4049467-1-tjmercier@google.com>
+Subject: [PATCH v3 0/3] kernfs: Add inotify IN_DELETE_SELF, IN_IGNORED support
+ for files
+From: "T.J. Mercier" <tjmercier@google.com>
+To: gregkh@linuxfoundation.org, tj@kernel.org, driver-core@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, jack@suse.cz, amir73il@gmail.com, 
+	shuah@kernel.org, linux-kselftest@vger.kernel.org
+Cc: "T.J. Mercier" <tjmercier@google.com>
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-4.26 / 15.00];
-	SIGNED_PGP(-2.00)[];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[cyphar.com,reject];
+	MV_CASE(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
+	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[cyphar.com:s=MBO0001];
-	MIME_GOOD(-0.20)[multipart/signed,text/plain];
 	MAILLIST(-0.15)[generic];
+	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-77490-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_TO(0.00)[linuxfoundation.org,kernel.org,lists.linux.dev,vger.kernel.org,suse.cz,gmail.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77489-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+,1:+,2:~];
+	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[cyphar@cyphar.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[cyphar.com:+];
-	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[tjmercier@google.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[google.com:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,cyphar.com:mid,cyphar.com:url,cyphar.com:dkim]
-X-Rspamd-Queue-Id: 234B7152C5B
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: B00E9152D00
 X-Rspamd-Action: no action
 
+This series adds support for IN_DELETE_SELF and IN_IGNORED inotify
+events to kernfs files.
 
---pqa547cvfgjehkdu
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [LSF/MM/BPF TOPIC] Support to split superblocks during remount
-MIME-Version: 1.0
+Currently, kernfs (used by cgroup and others) supports IN_MODIFY events
+but fails to notify watchers when the file is removed (e.g. during
+cgroup destruction). This forces userspace monitors to maintain resource
+intensive side-channels like pidfds, procfs polling, or redundant
+directory watches to detect when a cgroup dies and a watched file is
+removed.
 
-On 2026-02-17, Shyam Prasad N <nspmangalore@gmail.com> wrote:
-> Filesystems today use sget/sget_fc at the time of mount to share
-> superblocks when possible to reuse resources. Often the reuse of
-> superblocks is a function of the mount options supplied. At the time
-> of umount, VFS handles the cleaning up of the superblock and only
-> notifies the filesystem when the last of those references is dropped.
->=20
-> Some mount options could change during remount, and remount is
-> associated with a mount point and not the superblock it uses. Ideally,
-> during remount, the mount API needs to provide the filesystem an
-> option to call sget to get a new superblock (that can also be shared)
-> and do a put_super on the old superblock.
->=20
-> I do realize that there are challenges here about how to transparently
-> failover resources (files, inodes, dentries etc) to the new
-> superblock. I would still like to understand if this is an idea worth
-> pursuing?
+By generating IN_DELETE_SELF events on destruction, we allow watchers to
+rely on a single watch descriptor for the entire lifecycle of the
+monitored file, reducing resource usage (file descriptors, CPU cycles)
+and complexity in userspace.
 
-I gave a talk at LPC 2025 about making the mount API more amenable to
-reporting these kinds of confusing behaviours with regards to mount
-options[1].
+The series is structured as follows:
+Patch 1 refactors kernfs_elem_attr to support arbitrary event types.
+Patch 2 implements the logic to generate DELETE_SELF and IGNORED events
+        on file removal.
+Patch 3 adds selftests to verify the new behavior.
 
-It seems to me that doing this kind of splitting is far less preferable
-than providing a more robust mechanism to tell userspace about what
-exact mount flags were ignored (or were already applied). This has some
-other issues (as Christian explains during the discussion segment) but
-it seems like a more workable solution to me and is closer to what
-userspace would want.
+---
+Changes in v3:
+Remove parent IN_DELETE notification per Amir.
+  Refactored kernfs_notify_workfn to avoid grabbing parent when
+  unnecessary for DELETE events as a result.
+Use notify_event for fsnotify_inode call per Amir
+Initialize memcg pointers to NULL in selftests
+Add Amir's Ack
+Add Tejun's Acks to the series
 
-[1]: https://www.youtube.com/watch?v=3DNX5IzF6JXp0
+Changes in v2:
+Remove unused variables from new selftests per kernel test robot
+Fix kernfs_type argument per Tejun
+Inline checks for FS_MODIFY, FS_DELETE in kernfs_notify_workfn per Tejun
 
---=20
-Aleksa Sarai
-https://www.cyphar.com/
+T.J. Mercier (3):
+  kernfs: allow passing fsnotify event types
+  kernfs: send IN_DELETE_SELF and IN_IGNORED on file deletion
+  selftests: memcg: Add tests IN_DELETE_SELF and IN_IGNORED on
+    memory.events
 
---pqa547cvfgjehkdu
-Content-Type: application/pgp-signature; name="signature.asc"
+ fs/kernfs/dir.c                               |  21 +++
+ fs/kernfs/file.c                              |  49 ++++---
+ fs/kernfs/kernfs-internal.h                   |   3 +
+ include/linux/kernfs.h                        |   1 +
+ .../selftests/cgroup/test_memcontrol.c        | 122 ++++++++++++++++++
+ 5 files changed, 175 insertions(+), 21 deletions(-)
 
------BEGIN PGP SIGNATURE-----
 
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaZUrSBsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG8f/QEA15/2cBMkygIGKx2Hjfyk
-7m89DdDG2KyFmD6Eeut1ExMBANGkff6GqlCerOVrFrfPYtjptTxZFTGoGHYwlH/u
-sEoE
-=HK5O
------END PGP SIGNATURE-----
+base-commit: ba268514ea14b44570030e8ed2aef92a38679e85
+-- 
+2.53.0.310.g728cabbaf7-goog
 
---pqa547cvfgjehkdu--
 
