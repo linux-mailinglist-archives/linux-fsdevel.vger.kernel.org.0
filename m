@@ -1,227 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-77641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77642-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 2KxGNLtElmmYdAIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 00:01:15 +0100
+	id 2B7hLFtFlmmYdAIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77642-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 00:03:55 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A97D15AC0F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 00:01:15 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C02B15AC45
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 00:03:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id F00C23034B36
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 23:01:05 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 33442300C032
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 23:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1BF233A6FB;
-	Wed, 18 Feb 2026 23:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D6633A039;
+	Wed, 18 Feb 2026 23:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fnn4Gy+Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IoVI7l5A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E898F2E888C;
-	Wed, 18 Feb 2026 23:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2012773E4;
+	Wed, 18 Feb 2026 23:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771455664; cv=none; b=CwTWeN4Ws391VgHVfzCFku48pLuDsNy5aSpCTyxfKMKqhURvcfQMLZIL6VWnQo9whmZ6t/aJ8+qxPVEK+/DDHOZDB67YNE8RTtvsQOUtm9TCbfocBSW9dS335qQyB+ZSUQQ5a17/yBl7s91Z7GQZcfwrlJNxxTLn/oJBLFqc9hc=
+	t=1771455829; cv=none; b=gmB0+vYSyFs7oA16ex2QhTdbnHoCl/VMEvDx9srzdFKDfCP8P3T3kloE7QJ0Exq4yJtJC/G6Mp/WaNrBgkdW4gtVpmsgPcxERQilPiqhGzJqvddXm0iT0CrYOMtCikTsNdiBBx6jfFohFjLIQL6pS2q+xrnzfmy5oPV/A2WCw5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771455664; c=relaxed/simple;
-	bh=Ka3shS3eNTr96+8Nt7+Mh2dJ1uTBTo6+XEd9mbl4GFA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O90D7eeAZKoS2wXwxUcdry2s80cO9R3LmlUdNf3Br1PIFC3+gCFa5dGw3wMjbCdrixMnZyi0pk7Er6kRrrwqruK5tDdGwR/fm2/SuJh+0g0C/9RhcFZjcNgExMT/5LcJbgHMN9c/XMkwTq5Hqk3YMvz/ZBXOjNGMNhOU3Ife6P8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fnn4Gy+Z; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1771455662; x=1802991662;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Ka3shS3eNTr96+8Nt7+Mh2dJ1uTBTo6+XEd9mbl4GFA=;
-  b=fnn4Gy+Z5C4TBGEJL2dPFtc8KOHlaqSIZNW/6cBLrenEs95skmlAPHkP
-   FwGjji2m9WM5jW5qYArS7KTKEa7/+V39ydnV63u4G8NTNFY5mHa4CWeZn
-   X3AcKtynm7RLDLjHe0z64dHbyDdm2YqQXkSyxjqtCyYL+gKvGXnar2gHy
-   gKHwxsDMUP0YQxN8UQs0059U0BR1NshfrBkUNYA7cw6djPeB1WmxlPoBr
-   qbvNqTeEPXyt9k4GbMI7etDOmfuAqDNCVbMwLZ+DJ4lXV+13a0CGnjVg9
-   j3e6oM6Ak/KhyjqEpOLw+zjAlSSY39ZKdfLcfMgQ+RX7yF8TmRV0OC2y2
-   w==;
-X-CSE-ConnectionGUID: NCYCuFw4SIqFJTpejWLscQ==
-X-CSE-MsgGUID: 8mtwow81SAGWUTE5vwgqWg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11705"; a="89952581"
-X-IronPort-AV: E=Sophos;i="6.21,299,1763452800"; 
-   d="scan'208";a="89952581"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2026 15:01:01 -0800
-X-CSE-ConnectionGUID: lu4mzYO2Qx2UJSEQGwEIKg==
-X-CSE-MsgGUID: UY/jyFuQQHq6b78u0N1xWg==
-X-ExtLoop1: 1
-Received: from aduenasd-mobl5.amr.corp.intel.com (HELO [10.125.109.212]) ([10.125.109.212])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2026 15:00:58 -0800
-Message-ID: <066c48be-032c-4d27-8b71-de6ba55a7349@intel.com>
-Date: Wed, 18 Feb 2026 16:00:57 -0700
+	s=arc-20240116; t=1771455829; c=relaxed/simple;
+	bh=mDvKmWUDmMaYad1iBo+euIDXuxPgRsvnUqyWGfdnJS8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SaNkCSl3KePWg2deLjJ4/Zfup+bXPtMc9fco7rBwyn6kJ+s8Av+DTiiBxJpBBTkmN8knDis2k5XfWCWddLCgv+22k7WIXDCbAiFNcaax/Kvo2ayZAL20t8+d3NBOik3N3xAJBbxZVt7KqKAlU2uxTl2viykBm5wc26h2/CjgZBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IoVI7l5A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D641CC116D0;
+	Wed, 18 Feb 2026 23:03:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771455828;
+	bh=mDvKmWUDmMaYad1iBo+euIDXuxPgRsvnUqyWGfdnJS8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IoVI7l5AZPJjp7DJDBqHHlJ4hEWFGLcDA0QNOgQNQ9y3HtWInBmG3s3qv/C9pMc67
+	 tEq2zozDC0UFLUzyR51fLkNlgzNOQN03ebKyaXSUirGlQGyKUwPn2XGUN7rHggwtCc
+	 k/J0b3nuVLFWVGO0vqDsCclYjobyFJVl2XxhjCL/3o19U2daf5p7cr9lKjGvi9sgkI
+	 jWlz0aBRwA5mdND1JgZ84wQEEq4x5jHA2NrmjqKdwEC0neMfa01/FrghF8oGqPrI/5
+	 T4Lw+RN1eGDOmxOdnc2hBG2tG7dHNs9MYsBGzea3ngZQ4JSzY+LVQiW1l0Zd6mNxLd
+	 b2fnN6EIzsFaQ==
+Date: Wed, 18 Feb 2026 15:03:48 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Andrey Albershteyn <aalbersh@kernel.org>
+Cc: linux-xfs@vger.kernel.org, fsverity@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, ebiggers@kernel.org, hch@lst.de
+Subject: Re: [PATCH v3 07/35] iomap: introduce IOMAP_F_FSVERITY
+Message-ID: <20260218230348.GF6467@frogsfrogsfrogs>
+References: <20260217231937.1183679-1-aalbersh@kernel.org>
+ <20260217231937.1183679-8-aalbersh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V7 01/19] dax: move dax_pgoff_to_phys from [drivers/dax/]
- device.c to bus.c
-To: John Groves <john@jagalactic.com>, John Groves <John@Groves.net>,
- Miklos Szeredi <miklos@szeredi.hu>, Dan Williams <dan.j.williams@intel.com>,
- Bernd Schubert <bschubert@ddn.com>,
- Alison Schofield <alison.schofield@intel.com>
-Cc: John Groves <jgroves@micron.com>, John Groves <jgroves@fastmail.com>,
- Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>,
- Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- David Hildenbrand <david@kernel.org>, Christian Brauner
- <brauner@kernel.org>, "Darrick J . Wong" <djwong@kernel.org>,
- Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>,
- Amir Goldstein <amir73il@gmail.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong
- <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
- Bagas Sanjaya <bagasdotme@gmail.com>, James Morse <james.morse@arm.com>,
- Fuad Tabba <tabba@google.com>, Sean Christopherson <seanjc@google.com>,
- Shivank Garg <shivankg@amd.com>, Ackerley Tng <ackerleytng@google.com>,
- Gregory Price <gourry@gourry.net>, Aravind Ramesh <arramesh@micron.com>,
- Ajay Joshi <ajayjoshi@micron.com>,
- "venkataravis@micron.com" <venkataravis@micron.com>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
- "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <0100019bd33b1f66-b835e86a-e8ae-443f-a474-02db88f7e6db-000000@email.amazonses.com>
- <20260118223100.92299-1-john@jagalactic.com>
- <0100019bd33bc40a-12130f8b-289d-4a38-ab4b-7dfedf614d34-000000@email.amazonses.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <0100019bd33bc40a-12130f8b-289d-4a38-ab4b-7dfedf614d34-000000@email.amazonses.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260217231937.1183679-8-aalbersh@kernel.org>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
-	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[intel.com:+];
-	FREEMAIL_CC(0.00)[micron.com,fastmail.com,lwn.net,intel.com,infradead.org,suse.cz,zeniv.linux.org.uk,kernel.org,gmail.com,huawei.com,redhat.com,toxicpanda.com,arm.com,google.com,amd.com,gourry.net,vger.kernel.org,lists.linux.dev];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77641-lists,linux-fsdevel=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[38];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[dave.jiang@intel.com,linux-fsdevel@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-77642-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCVD_COUNT_FIVE(0.00)[5];
-	MID_RHS_MATCH_FROM(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-0.999];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	TO_DN_SOME(0.00)[]
-X-Rspamd-Queue-Id: 7A97D15AC0F
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	RCPT_COUNT_FIVE(0.00)[6]
+X-Rspamd-Queue-Id: 4C02B15AC45
 X-Rspamd-Action: no action
 
-
-
-On 1/18/26 3:31 PM, John Groves wrote:
-> From: John Groves <john@groves.net>
+On Wed, Feb 18, 2026 at 12:19:07AM +0100, Andrey Albershteyn wrote:
+> Flag to indicate to iomap that write is happening beyond EOF and no
+> isize checks/update is needed.
 > 
-> This function will be used by both device.c and fsdev.c, but both are
-> loadable modules. Moving to bus.c puts it in core and makes it available
-> to both.
-> 
-> No code changes - just relocated.
-> 
-> Signed-off-by: John Groves <john@groves.net>
-
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-
+> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 > ---
->  drivers/dax/bus.c    | 24 ++++++++++++++++++++++++
->  drivers/dax/device.c | 23 -----------------------
->  2 files changed, 24 insertions(+), 23 deletions(-)
+>  fs/iomap/buffered-io.c | 8 +++++---
+>  fs/iomap/trace.h       | 3 ++-
+>  include/linux/iomap.h  | 5 +++++
+>  3 files changed, 12 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
-> index fde29e0ad68b..a73f54eac567 100644
-> --- a/drivers/dax/bus.c
-> +++ b/drivers/dax/bus.c
-> @@ -1417,6 +1417,30 @@ static const struct device_type dev_dax_type = {
->  	.groups = dax_attribute_groups,
->  };
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index ee7b845f5bc8..4cf9d0991dc1 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -533,7 +533,8 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
+>  			return 0;
 >  
-> +/* see "strong" declaration in tools/testing/nvdimm/dax-dev.c */
-> +__weak phys_addr_t dax_pgoff_to_phys(struct dev_dax *dev_dax, pgoff_t pgoff,
-> +			      unsigned long size)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < dev_dax->nr_range; i++) {
-> +		struct dev_dax_range *dax_range = &dev_dax->ranges[i];
-> +		struct range *range = &dax_range->range;
-> +		unsigned long long pgoff_end;
-> +		phys_addr_t phys;
-> +
-> +		pgoff_end = dax_range->pgoff + PHYS_PFN(range_len(range)) - 1;
-> +		if (pgoff < dax_range->pgoff || pgoff > pgoff_end)
-> +			continue;
-> +		phys = PFN_PHYS(pgoff - dax_range->pgoff) + range->start;
-> +		if (phys + size - 1 <= range->end)
-> +			return phys;
-> +		break;
-> +	}
-> +	return -1;
-> +}
-> +EXPORT_SYMBOL_GPL(dax_pgoff_to_phys);
-> +
->  static struct dev_dax *__devm_create_dev_dax(struct dev_dax_data *data)
->  {
->  	struct dax_region *dax_region = data->dax_region;
-> diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-> index 22999a402e02..132c1d03fd07 100644
-> --- a/drivers/dax/device.c
-> +++ b/drivers/dax/device.c
-> @@ -57,29 +57,6 @@ static int check_vma(struct dev_dax *dev_dax, struct vm_area_struct *vma,
->  			   vma->vm_file, func);
->  }
->  
-> -/* see "strong" declaration in tools/testing/nvdimm/dax-dev.c */
-> -__weak phys_addr_t dax_pgoff_to_phys(struct dev_dax *dev_dax, pgoff_t pgoff,
-> -		unsigned long size)
-> -{
-> -	int i;
-> -
-> -	for (i = 0; i < dev_dax->nr_range; i++) {
-> -		struct dev_dax_range *dax_range = &dev_dax->ranges[i];
-> -		struct range *range = &dax_range->range;
-> -		unsigned long long pgoff_end;
-> -		phys_addr_t phys;
-> -
-> -		pgoff_end = dax_range->pgoff + PHYS_PFN(range_len(range)) - 1;
-> -		if (pgoff < dax_range->pgoff || pgoff > pgoff_end)
-> -			continue;
-> -		phys = PFN_PHYS(pgoff - dax_range->pgoff) + range->start;
-> -		if (phys + size - 1 <= range->end)
-> -			return phys;
-> -		break;
-> -	}
-> -	return -1;
-> -}
-> -
->  static void dax_set_mapping(struct vm_fault *vmf, unsigned long pfn,
->  			      unsigned long fault_size)
->  {
+>  		/* zero post-eof blocks as the page may be mapped */
+> -		if (iomap_block_needs_zeroing(iter, pos)) {
+> +		if (iomap_block_needs_zeroing(iter, pos) &&
+> +		    !(iomap->flags & IOMAP_F_FSVERITY)) {
+>  			folio_zero_range(folio, poff, plen);
+>  			iomap_set_range_uptodate(folio, poff, plen);
+>  		} else {
+> @@ -1130,13 +1131,14 @@ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i,
+>  		 * unlock and release the folio.
+>  		 */
+>  		old_size = iter->inode->i_size;
+> -		if (pos + written > old_size) {
+> +		if (pos + written > old_size &&
+> +		    !(iter->iomap.flags & IOMAP_F_FSVERITY)) {
 
+I think this flag should be called IOMAP_F_POSTEOF since there's no
+"fsverity" logic dependent on this flag; it merely allows read/write
+access to folios beyond EOF without any of the usual clamping and
+zeroing...
+
+>  			i_size_write(iter->inode, pos + written);
+>  			iter->iomap.flags |= IOMAP_F_SIZE_CHANGED;
+>  		}
+>  		__iomap_put_folio(iter, write_ops, written, folio);
+>  
+> -		if (old_size < pos)
+> +		if (old_size < pos && !(iter->iomap.flags & IOMAP_F_FSVERITY))
+>  			pagecache_isize_extended(iter->inode, old_size, pos);
+>  
+>  		cond_resched();
+> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+> index 532787277b16..5252051cc137 100644
+> --- a/fs/iomap/trace.h
+> +++ b/fs/iomap/trace.h
+> @@ -118,7 +118,8 @@ DEFINE_RANGE_EVENT(iomap_zero_iter);
+>  	{ IOMAP_F_ATOMIC_BIO,	"ATOMIC_BIO" }, \
+>  	{ IOMAP_F_PRIVATE,	"PRIVATE" }, \
+>  	{ IOMAP_F_SIZE_CHANGED,	"SIZE_CHANGED" }, \
+> -	{ IOMAP_F_STALE,	"STALE" }
+> +	{ IOMAP_F_STALE,	"STALE" }, \
+> +	{ IOMAP_F_FSVERITY,	"FSVERITY" }
+>  
+>  
+>  #define IOMAP_DIO_STRINGS \
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index f0e3ed8ad6a6..94cf6241b37f 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -87,6 +87,11 @@ struct vm_fault;
+>  #define IOMAP_F_INTEGRITY	0
+>  #endif /* CONFIG_BLK_DEV_INTEGRITY */
+>  
+> +/*
+> + * IO happens beyound inode EOF, fsverity metadata is stored there
+
+s/beyound/beyond/
+
+--d
+
+> + */
+> +#define IOMAP_F_FSVERITY	(1U << 10)
+> +
+>  /*
+>   * Flag reserved for file system specific usage
+>   */
+> -- 
+> 2.51.2
+> 
+> 
 
