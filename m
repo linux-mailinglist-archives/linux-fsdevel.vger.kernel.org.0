@@ -1,200 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-77615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77616-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oFC2DRoalmkSaAIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 20:59:22 +0100
+	id 6IsvJdUflmmZagIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77616-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 21:23:49 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD8411594BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 20:59:21 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE7CC159687
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 21:23:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id E88EB3029629
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 19:59:08 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D8C613035278
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 20:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A62349B02;
-	Wed, 18 Feb 2026 19:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F58349AE1;
+	Wed, 18 Feb 2026 20:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AgeRmV1R"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jhZQuTZW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3823345CC9
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 19:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771444742; cv=pass; b=RsX8FB7/0J5g7oqfpgLmysHalqYIdT1GjZEHBO4KDhe7WgtXkWRlD2YqVZjmfi5vIMOQToYwPMq+qH1RM7yRGJJLHJto/e/zJ1aoB6wezYG3Ktsh4I/STZxAt8ikJUZt7H67c1R2TYn//jc49IjlBj6x8R8XbZQEFF+ewA9wGe0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771444742; c=relaxed/simple;
-	bh=fAj9Q1ygswz4E6SrtEFpUTAbwt8zju3u9r/LEpTkE3E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lpkywlX99ZSjzTQC+d5ZeHW6rx0TDuAgknJ/l045CthlRwPEEjzRX77K2/ka88Li+sjDxYOf8Le/vOgYha9WVuOH50QgGBjFWof0DJQLZlp+Jb7wP6w1OHQWlNigGl3adfvG3yod4XtEyO/LETFtp1fCZnXV4pKV4C8w8MljHTw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AgeRmV1R; arc=pass smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-48373ad38d2so15695e9.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 11:59:00 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771444739; cv=none;
-        d=google.com; s=arc-20240605;
-        b=RSiAta6iZ1uAY7vr7SkG0c5P5TkaIV1BzeF18mlOWQ7zCVU1l0zFprg9S60MX4TpPB
-         D/xHPRJ0XNjokzbpYi4YEx3pgMYIZU1Z5AwgxhsqGlzUaO2x9a2XBmcTeM+eqi9Q1KVS
-         1BJLlSInQTrr8ycdpsjY3OEHQcMy6TMweEGMWvlAHfQUB7ixX+sli+PyOqlXmgtwo5Z9
-         AVrVrRBxbOUxUcFh9i3OEZpY+CMYZkOLHEbQSgMREkK7FcCTnb3SM2gXfJyxSakDACJT
-         GTNC8LTwVD0QlXYk805SaJoW9HJCEMcEcFRN3lUl6BhqpDbzMRaG/+ZUu4NW5x20Mo7B
-         dEyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=OylA8EM9epDUNp/ar6ETdvAJBvo4gpIzvj6gp7Iy9D0=;
-        fh=alRnncBadoomD6n6i+Frs0/8QVGIq1iAauBtbwr9HY4=;
-        b=Yl0yGPlZI1yKu7hzPbviVUkgtrPrYEqQMEDSCGG3IyalX+DP7ndDUncwU0SBjSQ230
-         J9rb07vCKrni+8v4XhpDTpWYWPrRbjW5YfElThjRr3KZy9zm2/Gm2dQ0tOKlaoL7qmqj
-         Vi0QAr8ffEqHIbn07G4pSwjRf9b6t0ddBXJj4FP2lMTYl+VNRbaxFKlx2wvjbWNGoreV
-         D2Ml9KSk+No+dfy54KuHhSIIcmf4g5eLNgK2QT1W14gBQhI7pzRSvnI8Ynbm3kH0yc/L
-         vD7Gao1VOafxtC63EYR7x96S4gK5vdvBO8kN19UMx55ZsHVAc2g6uGLPgQdwS1Gzn9+R
-         ZSog==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1771444739; x=1772049539; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OylA8EM9epDUNp/ar6ETdvAJBvo4gpIzvj6gp7Iy9D0=;
-        b=AgeRmV1RhQBAlmnoA3RTul5w2nJ57KLE9ZZS9d2bLICsnWFYZTcAJGpdEciopvVxZd
-         Z7wQVRxI3QX5CmuHlZqv4sE+nONEMSVZnoijJp8+xCi/OZxFk1yQBjZti4TiIVG8P5hn
-         Ol9h//F+Zq/sWL8QbxfxuRIadPeuDnu4Zthz/UpA67xqevmyEUqmbwYfoX3z6aylsdha
-         J09LIjJoQvf6TVKT3u3ayg0QvnOffSJM2dKGVPi1DzbDbGNw2am3ehv99BldvySO4qcG
-         ARyY127U4WHG9UacPBZJ6VpsRlW0VHY1o1ahaA+oHnWlFwiM/enOn6MSLl7fcJEVRntj
-         s/2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771444739; x=1772049539;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=OylA8EM9epDUNp/ar6ETdvAJBvo4gpIzvj6gp7Iy9D0=;
-        b=du4mqFG399ixM8uYHOD3Y/crdiwoKr2GAgfl4wrHTpCkfikyuIAYeqZfpfir+D8ZD0
-         tYKITSylEeRwHwjZrEwnDTn1CJ7/b5PDZ7VqGmvlgCJPE5dVQpIC3qlQ9x/shMj1M7Fk
-         4hH7TJPPbgqh9UmMK8Pn/HZu2lEyVhU0AcGJeBfvfTZ7uRVNzlioyI81R4baA9ckYbpp
-         Kb2Rzxs6oSsLwsmFx4Z+o2sOv62iJiD9pS/CnqLtWFgdFdXZNTZ2gMxHwFW5qBlvCCFb
-         MWM77fRz7v06iUwFyC9beJInxgm7ONmRyfBq+78kSVdIOTTvJt/feEOpyk0KdC+3gbAo
-         E26A==
-X-Forwarded-Encrypted: i=1; AJvYcCUvok5I99hAwvE/e/qC7nUr9jdkwJ47p3d9iGo0awG9wko2sLXDxEAiTgyCdAzLItqFR7XI2Oje+3GTGehV@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1dtJUoW9GrLB2MyWesRD9Y4vltQp8bU8t+aZA/HMZcB3H4mKo
-	8C6JAcznERVoNXphkHvAr059aw/okWyJLm/QS6UttNw5pDr9rP2j+Cf+RRXP2FCrVlPwl8qpyuc
-	c5ePMYuylc6bd0HwweHRs1ydiq9DsTe97zzkUejNr
-X-Gm-Gg: AZuq6aJ2EFxU8QJituaQ3lvamp6j/XztvfVEXTtxOqu14CYR1vLDd+ibqTSymMSfDEL
-	GP/7wfFX9mIexxCBl/7JwRjqQS4ibZfgOrm+83wcUu5wBr8leDEt8hPPSfru2I0evyXW2OwJupc
-	l2IX1AFNkNdl4TMaxSdu3uXRQuQsCJq7/yA0qeGLxG9jcQbH92zFOAMhr6uK19qElWtcXo0jfno
-	R6EALv7Yjcs+wWphLcxF7pjYjY1tTzkRXEGE9ILRZHrpfNxcoQpRaE2a68vnJQjgYRrMQFB57sk
-	byFoT29ere2hqwqkPp4Wjb45fQ+biHy21OZfOOPq/5UydCbF3HJCmII0IEakprkDH0cBzQ==
-X-Received: by 2002:a05:600c:8b76:b0:475:da0c:38a8 with SMTP id
- 5b1f17b1804b1-4839e5d9a1dmr138535e9.4.1771444738775; Wed, 18 Feb 2026
- 11:58:58 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E08302176;
+	Wed, 18 Feb 2026 20:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771446208; cv=none; b=kJ1bgmkviU7BK9Zi6v0WPN3tFgOibACLiZlZvwmDqL2+QkYDLpjCmLI6J8KcYgioO0ZpcZE4BM5eEWkLzpLb+rtSr84C1HYg4SIDCLSCmxgS7VmOTEhhpNkcIgdnSxK+nffd/xyB9ATnJWZnW4DErmvzC9TzsKLV+9u64o3b3ww=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771446208; c=relaxed/simple;
+	bh=a+EJK4INIn3rrEmeU+8uqf68BGwI08tUjsSp41J2wwI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uExVD79BAIsvDxnP4IQSoN4y7WuSvvOYN+zhQ9oT42q4K5m3rauOSMe7X+D2WowGM4w15WOGW7L/GVgiQYlfx9OcZPIP/TjrikRNXSza89IJmAsNEY2TfzguHZNaWifs54vrB9ibIRMCVXV8oxs7zRkxCToJH0wrOf6RLbjnVFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jhZQuTZW; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61IEAEB41410265;
+	Wed, 18 Feb 2026 20:22:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=E+i1/faGO1lFhzHanw7UXC5RtBSvvF
+	1mijuShk8gkfI=; b=jhZQuTZWDC526OZq7bI3InheN/0s1ee1iDdXS7sBdxxWVT
+	0vxcEQ+6dr5E3yVw0MQ9DgMKFl6Ww7fr4IPPYiDrkdIqrla7V/eiKL5bfjrHfBOD
+	PfPhfTQCzlu1zVfjT5ayvpHPxFcZOiz5JmS+skR1x+SzOvXd7QDC7lmHtn5LKvKD
+	U/WNr+5N6QGJpXkYdyMkr6bQAaBUJe1blNUVbKOucrvqMgyM605aPwxmf4q5BldT
+	hW0Cg+LfXMUWCgcF3D0nlRzzAeueE/FUkgCi5YnUgx0LJFbQjydT/L9nsXOEotWT
+	/bFDlafoTxNKko6P9mkKS6ZUaM3sv+qc0gSFq3WQ==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4caj4khwth-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 18 Feb 2026 20:22:52 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 61IH03pO012024;
+	Wed, 18 Feb 2026 20:22:51 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4ccb271eu6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 18 Feb 2026 20:22:51 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 61IKMnkv35914068
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 18 Feb 2026 20:22:49 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6C5332005A;
+	Wed, 18 Feb 2026 20:22:49 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 196BD2004F;
+	Wed, 18 Feb 2026 20:22:45 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.25.124])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 18 Feb 2026 20:22:44 +0000 (GMT)
+Date: Thu, 19 Feb 2026 01:52:42 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Pankaj Raghav <pankaj.raghav@linux.dev>, linux-xfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        lsf-pc@lists.linux-foundation.org, Andres Freund <andres@anarazel.de>,
+        djwong@kernel.org, john.g.garry@oracle.com, willy@infradead.org,
+        hch@lst.de, ritesh.list@gmail.com,
+        Luis Chamberlain <mcgrof@kernel.org>, dchinner@redhat.com,
+        Javier Gonzalez <javier.gonz@samsung.com>, gost.dev@samsung.com,
+        tytso@mit.edu, p.raghav@samsung.com, vi.shah@samsung.com
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Buffered atomic writes
+Message-ID: <aZYfkuueWpMxEiHl@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <d0c4d95b-8064-4a7e-996d-7ad40eb4976b@linux.dev>
+ <aY8n97G_hXzA5MMn@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <7cf3f249-453d-423a-91d1-dfb45c474b78@linux.dev>
+ <aZSjUWBkUFeJNEL6@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <bf6eek2jagskkgu3isixqjjg3ftrkp5juf6lge3rjjutzzhbdd@vkliyqpsmrry>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260218032232.4049467-1-tjmercier@google.com>
- <20260218032232.4049467-3-tjmercier@google.com> <e7b4xiqvh76jvqukvcocblq5lrc5hldoiiexjlo5fmagbv3mgn@zhpzm4jwx3kg>
- <CABdmKX1S4wWFdsUOFOQ=_uVbmQVcQk0+VUVQjgAx_yqUcEd60A@mail.gmail.com>
- <s4vb5vshejyasdw2tkydhhk4m6p3ybexoi254qjiqexzgcxb5c@ctazolc3nh6f> <CABdmKX2cQCneFyZhTWmWYz-RTmAOQcEKh5ZQewz25E6Xfok1tQ@mail.gmail.com>
-In-Reply-To: <CABdmKX2cQCneFyZhTWmWYz-RTmAOQcEKh5ZQewz25E6Xfok1tQ@mail.gmail.com>
-From: "T.J. Mercier" <tjmercier@google.com>
-Date: Wed, 18 Feb 2026 11:58:46 -0800
-X-Gm-Features: AaiRm52n0lIK2grreFCNiF6qE3JVFwkwj9cGx62TA9xdekMRJsGok-FwMltR-JM
-Message-ID: <CABdmKX0BJcsv0TaPSsGN2a4nkQaKF=cX8rnnoL5kPTHNfuKL7Q@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] kernfs: send IN_DELETE_SELF and IN_IGNORED on file deletion
-To: Jan Kara <jack@suse.cz>
-Cc: gregkh@linuxfoundation.org, tj@kernel.org, driver-core@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, amir73il@gmail.com, shuah@kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bf6eek2jagskkgu3isixqjjg3ftrkp5juf6lge3rjjutzzhbdd@vkliyqpsmrry>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjE4MDE3MiBTYWx0ZWRfX9FLEzf7jtPZJ
+ gxRIrZ/x2mb/H3n910wOIdSzPtIrGUlfYxuofg56lSK0ItA0AyNFv8Kzn3TXJzZIrATwkusRCcG
+ 0Xu9sAKUIAo4niQIgJvB/rhGZ5z2sx70baKRjeCDv8ftTvGZth3eNx29448fjestSwgOHQpMKSz
+ 4EN8nz/qwWeVBGNI4PdG1jb8D4u50HpSPy6rPZvZ8AjixQDFsf+vXCnV9zBe9im2jSNVZLEeZ8D
+ 65VdPgdMP4yUsBDEWzmUtzHEAMdbrtHHG7x7WA8P0WNP3A6cKPh338RkH2592PRkf7PYbrixmft
+ 5xkKlIwNzF2cRpAscDzy90MLh+/F0Pgwb7rOsLImee/n4n/AUqN7bUtfV2wYRxp0FNR13VG8TnR
+ zDFTGH23MCWaerUBCCb2lX9bse28g1p3GVo1g0wE8xxC91oeWvkMkSPe+E80ZmuKjhmmm53rCep
+ /HZoD0qSHwr9ojMEJbA==
+X-Proofpoint-ORIG-GUID: Wn6Xsq6wTeBZ9-DdGXuQDbfw6exEBFXj
+X-Proofpoint-GUID: K4HPm-rnhFQtBUYE8FvRoE8HPd9myNYa
+X-Authority-Analysis: v=2.4 cv=M7hA6iws c=1 sm=1 tr=0 ts=69961f9c cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=kj9zAlcOel0A:10 a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22 a=iox4zFpeAAAA:8
+ a=NybPXLiR-Eq3wr7rucQA:9 a=CjuIK1q_8ugA:10 a=WzC6qhA0u3u7Ye7llzcV:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-18_04,2026-02-18_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1015 phishscore=0
+ impostorscore=0 suspectscore=0 priorityscore=1501 adultscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2602180172
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
-	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[ibm.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[ibm.com:s=pp1];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[linuxfoundation.org,kernel.org,lists.linux.dev,vger.kernel.org,gmail.com];
-	TAGGED_FROM(0.00)[bounces-77615-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[linux.dev,vger.kernel.org,kvack.org,lists.linux-foundation.org,anarazel.de,kernel.org,oracle.com,infradead.org,lst.de,gmail.com,redhat.com,samsung.com,mit.edu];
+	TAGGED_FROM(0.00)[bounces-77616-lists,linux-fsdevel=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,suse.com:email];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[google.com:+];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[ibm.com:+];
 	MISSING_XM_UA(0.00)[];
 	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[tjmercier@google.com,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[ojaswin@linux.ibm.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	NEURAL_HAM(-0.00)[-0.999];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,mail.gmail.com:mid,suse.cz:email]
-X-Rspamd-Queue-Id: BD8411594BB
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCVD_COUNT_SEVEN(0.00)[11]
+X-Rspamd-Queue-Id: EE7CC159687
 X-Rspamd-Action: no action
 
-On Wed, Feb 18, 2026 at 11:15=E2=80=AFAM T.J. Mercier <tjmercier@google.com=
-> wrote:
->
-> On Wed, Feb 18, 2026 at 10:37=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Wed 18-02-26 10:06:35, T.J. Mercier wrote:
-> > > On Wed, Feb 18, 2026 at 10:01=E2=80=AFAM Jan Kara <jack@suse.cz> wrot=
-e:
-> > > >
-> > > > On Tue 17-02-26 19:22:31, T.J. Mercier wrote:
-> > > > > Currently some kernfs files (e.g. cgroup.events, memory.events) s=
-upport
-> > > > > inotify watches for IN_MODIFY, but unlike with regular filesystem=
-s, they
-> > > > > do not receive IN_DELETE_SELF or IN_IGNORED events when they are
-> > > > > removed.
-> > > >
-> > > > Please see my email:
-> > > > https://lore.kernel.org/all/lc2jgt3yrvuvtdj2kk7q3rloie2c5mzyhfdy4zv=
-xylx732voet@ol3kl4ackrpb
-> > > >
-> > > > I think this is actually a bug in kernfs...
-> > > >
-> > > >                                                                 Hon=
-za
-> > >
-> > > Thanks, I'm looking at this now. I've tried calling clear_nlink in
-> > > kernfs_iop_rmdir, but I've found that when we get back to vfs_rmdir
-> > > and shrink_dcache_parent is called, d_walk doesn't find any entries,
-> > > so shrink_kill->__dentry_kill is not called. I'm investigating why
-> > > that is...
-> >
-> > Strange because when I was experimenting with this in my VM I have seen
-> > __dentry_kill being called (if the dentries were created by someone loo=
-king
-> > up the names).
->
-> Ahh yes, that's the difference. I was just doing mkdir
-> /sys/fs/cgroup/foo immediately followed by rmdir /sys/fs/cgroup/foo.
-> kernfs creates the dentries in kernfs_iop_lookup, so there were none
-> when I did the rmdir because I didn't cause any lookups.
->
-> If I actually have a program watching
-> /sys/fs/cgroup/foo/memory.events, then I do see the __dentry_kill kill
-> calls, but despite the prior clear_nlink call i_nlink is 1 so
-> fsnotify_inoderemove is skipped. Something must be incrementing it.
+On Wed, Feb 18, 2026 at 06:42:05PM +0100, Jan Kara wrote:
+> On Tue 17-02-26 22:50:17, Ojaswin Mujoo wrote:
+> > On Mon, Feb 16, 2026 at 10:52:35AM +0100, Pankaj Raghav wrote:
+> > > Hmm, IIUC, postgres will write their dirty buffer cache by combining multiple DB
+> > > pages based on `io_combine_limit` (typically 128kb). So immediately writing them
+> > > might be ok as long as we don't remove those pages from the page cache like we do in
+> > > RWF_UNCACHED.
+> > 
+> > Yep, and Ive not looked at the code path much but I think if we really
+> > care about the user not changing the data b/w write and writeback then
+> > we will probably need to start the writeback while holding the folio
+> > lock, which is currently not done in RWF_UNCACHED.
+> 
+> That isn't enough. submit_bio() returning isn't enough to guaranteed DMA
+> to the device has happened. And until it happens, modifying the pagecache
+> page means modifying the data the disk will get. The best is probably to
+> transition pages to writeback state and deal with it as with any other
+> requirement for stable pages.
 
-The issue was that kernfs_remove unlinks the kernfs nodes, but doesn't
-clear_nlink when it does so. Adding that seems to work to generate
-IN_DELETE_SELF and IN_IGNORED. I'll do some more testing and get a
-patch ready.
+Yes true, looking at the code, it does seem like we would also need to
+depend on the stable page mechanism to ensure nobody changes the buffers
+till the IO has actually finished.
+
+I think the right way to go would be to first start with an
+implementation of RWF_WRITETHOUGH and then utilize that and stable pages
+to enable RWF_ATOMIC for buffered IO.
+
+Regards,
+ojaswin
+
+> 
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
