@@ -1,329 +1,313 @@
-Return-Path: <linux-fsdevel+bounces-77590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77591-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0ObREl/ilWliVwIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 17:01:35 +0100
+	id +P4EMYPilWliVwIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77591-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 17:02:11 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id E99C61578E2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 17:01:29 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D2F157900
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 17:02:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 597FD301875C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 16:01:21 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 939EA300E5BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 16:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9785C342503;
-	Wed, 18 Feb 2026 16:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798C834107C;
+	Wed, 18 Feb 2026 16:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pz853NXx"
+	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="WdZnOpHU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239EA33373E;
-	Wed, 18 Feb 2026 16:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B5D344059
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 16:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771430480; cv=none; b=ROMDU7anjA3Ugar0c+K0M/1YUp0UIlyQCX3ZTRu9CUyI8H87qY2CiDV4CM0aYFbRhxZ68qfzQc7nNvtYvpMh8AEeUo3GCZEI8Sg8z2Vw7QM8mMaRcPexFu+CUSzX0zKnVEUfc0ip1L8t9ZG64fnGY7yAA6lx7kK0dLrI4h2ue+4=
+	t=1771430504; cv=none; b=MhBvUwAe4Z6NmnJO8IJ7POhysAO0aLeEKsGd6W4uX+n7l5ZeSj1lSoLQd5YZLOOw7druvwkdgMOR/vTOyI3hian5QPfUxiGcPQuif+zkbhVDApjlWEnCv7N/7kTYDyplUrHM6TCrnYyICNPwyQhLZmxWaFKobMBvFSRIyn8KbiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771430480; c=relaxed/simple;
-	bh=INZqfbN/D59+LHdLP9VRpEOnXZG0qlidg7YVC3kEYU8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gefIQXE25tLYzz+fmSVSZooeAcwkc5spM1qBghviWkrFnjkQc7aIg4x3G8UEvZEs1USdGgAuxSLPKIzgp6+oDG2+kL0D7JiYdC6ujjXYZuWZMTazuVM6J0JasnDqH4gjZrpFNdCP4EGSAeiSY7tiHiVdz/rBvTPI3Q2Z4MNRZ5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pz853NXx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D299C116D0;
-	Wed, 18 Feb 2026 16:01:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771430479;
-	bh=INZqfbN/D59+LHdLP9VRpEOnXZG0qlidg7YVC3kEYU8=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Pz853NXxw9Y9noItYLpY8pxphX0A8NWEUq0qJ+EUEz9guv1Ncm5h6yMl3TS5XSRkl
-	 nU8iB3/ht7ie3QRR5gTB3bn8dmw9HO+4GPF3nBaphw2mtQht3q/KMeUElAIsg4V2+6
-	 T0q/cNJTJeejNds2HgY7QoWuUtkgAO+AW/FJ/YX8F6fQevjhcXPZK8twCgRJrgnN8P
-	 qcU/c/VXJuYCSuaKWKAd60g8e1EIbHOaM0btffoKdn+yE9l2H4QIyQDhOvf0G62Sue
-	 AMJSUAaIZnH2vJkO9LFVlGjhX872u5yT3zmqjpzMI7P5zxEYNA1W9kRUvkCZREyAif
-	 vu9iWZ6dENUJQ==
-Message-ID: <e0be58df89ffaf41763312dfffe8402fdcb9d023.camel@kernel.org>
-Subject: Re: [LSF/MM/BPF TOPIC] VFS idmappings support in NFS
-From: Jeff Layton <jlayton@kernel.org>
-To: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Cc: lsf-pc@lists.linux-foundation.org, aleksandr.mikhalitsyn@futurfusion.io,
- 	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
- stgraber@stgraber.org, 	brauner@kernel.org, ksugihara@preferred.jp,
- utam0k@preferred.jp, 	trondmy@kernel.org, anna@kernel.org,
- chuck.lever@oracle.com, neilb@suse.de, 	miklos@szeredi.hu, jack@suse.cz,
- amir73il@gmail.com, trapexit@spawn.link
-Date: Wed, 18 Feb 2026 11:01:16 -0500
-In-Reply-To: <CAJqdLrqNzXRwMF2grTGCkaMKCEXAwemQLEi3wsL5Lp2W9D-ZVg@mail.gmail.com>
-References: <65a53a2d6fcc053edeed688a8c8d580c03bd6f3b.camel@mihalicyn.com>
-	 <d11b39cb43ffe437868eef4bc1c01d3bce8509e9.camel@kernel.org>
-	 <CAJqdLrqNzXRwMF2grTGCkaMKCEXAwemQLEi3wsL5Lp2W9D-ZVg@mail.gmail.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
+	s=arc-20240116; t=1771430504; c=relaxed/simple;
+	bh=MgV2LzGE2tnVbJO/Rz8MR6RGZPmFaJ8fiTRY57hhD/Y=;
+	h=Content-Type:From:Mime-Version:Subject:Message-Id:Date:Cc:To; b=b7ZRaIBeJHUtyx2jLcthkdQpB6c55BqQ4hsd3XiJeYXUf2S+xyYa1mvITsRjMxwA+a2zhnHc709DDaNJjaQ63Y/CLk+er2dl5Oef0RtQ6C6FY7iY+pi0FFra8n1NMalD8a2l4t0wDnswS9wobX1Rr3qzM/hlbAGdzranv9WzIwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=WdZnOpHU; arc=none smtp.client-ip=209.85.217.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=zetier.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zetier.com
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-5fc4220b0acso1194292137.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 08:01:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=zetier.com; s=gm; t=1771430501; x=1772035301; darn=vger.kernel.org;
+        h=to:cc:date:message-id:subject:mime-version:from
+         :content-transfer-encoding:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ODhbjXy6wk3D2HE0/UrjwI8BxjlEgTnz/AVFGc7F1Sw=;
+        b=WdZnOpHUym0pzuVxhXO9BK5XBNIh5hhsjKEyAmGAoANw0sdgatX9xzObnXyVgkFlqd
+         awlzMXYEIIXEr5cvCYXk6zd5I+LV/k44xfsQhybHETrhBx4JfW6zniHWP9kwjVbCqZx3
+         wFR0MkKwMqdcU7K5JhPMJJscamSRMhpzIHIeuE0f354RX0R8innsRQM87R+PMwnRJHbI
+         RzONP2TMKcYEyjYDo4ZVcIXe1rYsAtbVs2WBtmj1O+lnmjELTVlsQPXjJrivP/eOd+pn
+         0elqw1Mfx568mKA/Hzzkj+5NWlhuFqvwCgsoocT+5lMN1bDmPOb3dVW2QooPpq0vEm1V
+         lS9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771430501; x=1772035301;
+        h=to:cc:date:message-id:subject:mime-version:from
+         :content-transfer-encoding:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ODhbjXy6wk3D2HE0/UrjwI8BxjlEgTnz/AVFGc7F1Sw=;
+        b=GGjyu8t2IVDQH7GUaNiBldrdqbxG14X3wv4kXAAG+MHJRnUyrnIizSzEw4fmFNX5/y
+         bbRigJRwZOB8OyDkomo1VcO9PTOatWGkM7yXb56NR6fmoaUfbOajqodFSbVJS4RqXbO+
+         AFPR36S0v+5+lKHJBfb8hVGDq3TCsTvL/Ctncvz9ELeQAKOFARbL1gRcQjdJ6GU5D7sQ
+         w+bKeJMkCd2lUTBrPcCqvQPdEM3DYzzRX2Ui2L8LxxLFqiEuI6W5EbfOYfm4oBrh4faM
+         UieIeFWQ0657hSs8reumLTtu7vKZ+gDgLKMQdN4a3atas9BQMNROSlA3+wf3HyhCxdeF
+         lwrQ==
+X-Gm-Message-State: AOJu0Yw50XB/pyiPnc8azfCoVkF70eYkQGIEu1OeujucvNavqFL+0qcX
+	qKpf4QFxINfQn1yoGf3qvEnnho60eBATvNDHJ2uGoYkYCXwfmuaN7eW8oIjJXSLiC5s=
+X-Gm-Gg: AZuq6aJVYcKKbWElj0w9EZuF471K6kh63bwazt/mH5Q6fRtrODGsBQI/anzaDmD/k4N
+	oUhOxd2i/i2EIaFiL0CwfeExkvXi3NCX0eQnk4uyrpU5r9fH/LLwgE0fixs6HnE0+bdanGtl+pH
+	FSHtGxZkjUbud8aAmmd30GCx+4jyA9SmyicLFwTroprQzkEuVpDVulj53vrz+ojWHPFI0nhknBJ
+	3z7kL3VwPsH7fu+vm46r+s9F3y0pMiCQD7i1KxPEgAaNAspNFXiUNl21QFrbTdKbn1HxCAlAgIr
+	hk1z7AtBR064Xx3Z2yi8IEZvir5j5ufZOj5tfOZypJiF/6K3WkXN1p5YjyE25vl7eJmxOAZ0jaW
+	QJj103iA5xaw9BPTIup85F8oFWC+QU++0vhqpf9fi6OqB4C7KP5SBHF1+xkrBKPJDnJAgKy5IHl
+	No03UT/Yu/BmPrkxVc+0ix/yH8+HoNJkyUxyFG8vurMPY3V5j0sI4iKVYx++DZDQ==
+X-Received: by 2002:a05:6102:50a4:b0:5fd:eff4:825 with SMTP id ada2fe7eead31-5fe2aed01aamr4964089137.26.1771430496954;
+        Wed, 18 Feb 2026 08:01:36 -0800 (PST)
+Received: from smtpclient.apple ([2600:382:7e03:34fb:b0eb:9f57:81ff:5d84])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cb2b1c7d7csm1865031285a.27.2026.02.18.08.01.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Feb 2026 08:01:35 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+From: Ethan Ferguson <ethan.ferguson@zetier.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v2 2/2] fat: Add FS_IOC_SETFSLABEL ioctl
+Message-Id: <594BF488-47D8-498F-9777-7E48F6997F5E@zetier.com>
+Date: Wed, 18 Feb 2026 11:01:25 -0500
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Hirofumi OGAWA <hirofumi@mail.parknet.co.jp>
+X-Mailer: iPhone Mail (23C71)
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-1.16 / 15.00];
+	FAKE_REPLY(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	DMARC_POLICY_ALLOW(-0.50)[zetier.com,quarantine];
+	R_DKIM_ALLOW(-0.20)[zetier.com:s=gm];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77590-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[lists.linux-foundation.org,futurfusion.io,vger.kernel.org,stgraber.org,kernel.org,preferred.jp,oracle.com,suse.de,szeredi.hu,suse.cz,gmail.com,spawn.link];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	RSPAMD_EMAILBL_FAIL(0.00)[jlayton.kernel.org:query timed out];
+	TAGGED_FROM(0.00)[bounces-77591-lists,linux-fsdevel=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[zetier.com:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	APPLE_IOS_MAILER_COMMON(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jlayton@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[ethan.ferguson@zetier.com,linux-fsdevel@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[3];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[preferred.jp:url,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: E99C61578E2
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,de.date:url,zetier.com:mid,zetier.com:dkim,zetier.com:email,parknet.co.jp:email]
+X-Rspamd-Queue-Id: 84D2F157900
 X-Rspamd-Action: no action
 
-On Wed, 2026-02-18 at 15:36 +0100, Alexander Mikhalitsyn wrote:
-> Am Mi., 18. Feb. 2026 um 14:49 Uhr schrieb Jeff Layton <jlayton@kernel.or=
-g>:
-> >=20
-> > On Wed, 2026-02-18 at 13:44 +0100, Alexander Mikhalitsyn wrote:
-> > > Dear friends,
-> > >=20
-> > > I would like to propose "VFS idmappings support in NFS" as a topic fo=
-r discussion at the LSF/MM/BPF Summit.
-> > >=20
-> > > Previously, I worked on VFS idmap support for FUSE/virtiofs [2] and c=
-ephfs [1] with support/guidance
-> > > from Christian.
-> > >=20
-> > > This experience with Cephfs & FUSE has shown that VFS idmap semantics=
-, while being very elegant and
-> > > intuitive for local filesystems, can be quite challenging to combine =
-with network/network-like (e.g. FUSE)
-> > > FSes. In case of Cephfs we had to modify its protocol (!) (see [2]) a=
-s a part of our agreement with
-> > > ceph folks about the right way to support idmaps.
-> > >=20
-> > > One obstacle here was that cephfs has some features that are not very=
- Linux-wayish, I would say.
-> > > In particular, system administrator can configure path-based UID/GID =
-restrictions on a *server*-side (Ceph MDS).
-> > > Basically, you can say "I expect UID 1000 and GID 2000 for all files =
-under /stuff directory".
-> > > The problem here is that these UID/GIDs are taken from a syscall-call=
-er's creds (not from (struct file *)->f_cred)
-> > > which makes cephfs FDs not very transferable through unix sockets. [3=
-]
-> > >=20
-> > > These path-based UID/GID restrictions mean that server expects client=
- to send UID/GID with every single request,
-> > > not only for those OPs where UID/GID needs to be written to the disk =
-(mknod, mkdir, symlink, etc).
-> > > VFS idmaps API is designed to prevent filesystems developers from mak=
-ing a mistakes when supporting FS_ALLOW_IDMAP.
-> > > For example, (struct mnt_idmap *) is not passed to every single i_op,=
- but instead to only those where it can be
-> > > used legitimately. Particularly, readlink/listxattr or rmdir are not =
-expected to use idmapping information anyhow.
-> > >=20
-> > > We've seen very similar challenges with FUSE. Not a long time ago on =
-Linux Containers project forum, there
-> > > was a discussion about mergerfs (a popular FUSE-based filesystem) & V=
-FS idmaps [5]. And I see that this problem
-> > > of "caller UID/GID are needed everywhere" still blocks VFS idmaps ado=
-ption in some usecases.
-> > > Antonio Musumeci (mergerfs maintainer) claimed that in many cases fil=
-esystems behind mergerfs may not be fully
-> > > POSIX and basically, when mergerfs does IO on the underlying FSes it =
-needs to do UID/GID switch to caller's UID/GID
-> > > (taken from FUSE request header).
-> > >=20
-> > > We don't expect NFS to be any simpler :-) I would say that supporting=
- NFS is a final boss. It would be great
-> > > to have a deep technical discussion with VFS/FSes maintainers and dev=
-elopers about all these challenges and
-> > > make some conclusions and identify a right direction/approach to thes=
-e problems. From my side, I'm going
-> > > to get more familiar with high-level part of NFS (or even make PoC if=
- time permits), identify challenges,
-> > > summarize everything and prepare some slides to navigate/plan discuss=
-ion.
-> > >=20
-> > > [1] cephfs https://lore.kernel.org/linux-fsdevel/20230807132626.18210=
-1-1-aleksandr.mikhalitsyn@canonical.com
-> > > [2] cephfs protocol changes https://github.com/ceph/ceph/pull/52575
-> > > [3] cephfs & f_cred https://lore.kernel.org/lkml/CAEivzxeZ6fDgYMnjk21=
-qXYz13tHqZa8rP-cZ2jdxkY0eX+dOjw@mail.gmail.com/
-> > > [4] fuse/virtiofs https://lore.kernel.org/linux-fsdevel/2024090315162=
-6.264609-1-aleksandr.mikhalitsyn@canonical.com/
-> > > [5]
-> > > mergerfshttps://discuss.linuxcontainers.org/t/is-it-the-case-that-you=
--cannot-use-shift-true-for-disk-devices-where-the-source-is-a-mergerfs-moun=
-t-is-there-a-workaround/25336/11?u=3Damikhalitsyn
-> > >=20
-> > > Kind regards,
-> > > Alexander Mikhalitsyn @ futurfusion.io
-> >=20
+=EF=BB=BF
+> On Feb 18, 2026, at 02:22, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp> wr=
+ote:
 >=20
-> Hi Jeff,
+> =EF=BB=BFEthan Ferguson <ethan.ferguson@zetier.com> writes:
 >=20
-> thanks for such a fast reply! ;)
+>> Add support for writing to the volume label of a FAT filesystem via the
+>> FS_IOC_SETFSLABEL ioctl.
+>> Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
+>> ---
+>> fs/fat/dir.c         | 51 +++++++++++++++++++++++++++++++++++
+>> fs/fat/fat.h         |  6 +++++
+>> fs/fat/file.c        | 63 ++++++++++++++++++++++++++++++++++++++++++++
+>> fs/fat/inode.c       | 15 +++++++++++
+>> fs/fat/namei_msdos.c |  4 +--
+>> 5 files changed, 137 insertions(+), 2 deletions(-)
+>> diff --git a/fs/fat/dir.c b/fs/fat/dir.c
+>> index 07d95f1442c8..1b11713309ae 100644
+>> --- a/fs/fat/dir.c
+>> +++ b/fs/fat/dir.c
+>> @@ -1425,3 +1425,54 @@ int fat_add_entries(struct inode *dir, void *slots=
+, int nr_slots,
+>>  return err;
+>> }
+>> EXPORT_SYMBOL_GPL(fat_add_entries);
+>> +
+>> +static int fat_create_volume_label_dentry(struct super_block *sb, char *=
+vol_label)
+>> +{
+>> +    struct msdos_sb_info *sbi =3D MSDOS_SB(sb);
+>> +    struct inode *root_inode =3D sb->s_root->d_inode;
+>> +    struct msdos_dir_entry de;
+>> +    struct fat_slot_info sinfo;
+>> +    struct timespec64 ts =3D current_time(root_inode);
+>> +    __le16 date, time;
+>> +    u8 time_cs;
+>> +
+>> +    memcpy(de.name, vol_label, MSDOS_NAME);
+>> +    de.attr =3D ATTR_VOLUME;
+>> +    de.starthi =3D de.start =3D de.size =3D de.lcase =3D 0;
+>> +
+>> +    fat_time_unix2fat(sbi, &ts, &time, &date, &time_cs);
+>> +    de.time =3D time;
+>> +    de.date =3D date;
+>> +    if (sbi->options.isvfat) {
+>> +        de.cdate =3D de.adate =3D date;
+>> +        de.ctime =3D time;
+>> +        de.ctime_cs =3D time_cs;
+>> +    } else
+>> +        de.cdate =3D de.adate =3D de.ctime =3D de.ctime_cs =3D 0;
+>> +
+>> +    return fat_add_entries(root_inode, &de, 1, &sinfo);
+>> +}
+>> +
+>> +int fat_rename_volume_label_dentry(struct super_block *sb, char *vol_lab=
+el)
+>> +{
+>> +    struct inode *root_inode =3D sb->s_root->d_inode;
+>> +    struct buffer_head *bh =3D NULL;
+>> +    struct msdos_dir_entry *de;
+>> +    loff_t cpos =3D 0;
+>> +    int err =3D 0;
+>> +
+>> +    while (1) {
+>> +        if (fat_get_entry(root_inode, &cpos, &bh, &de) =3D=3D -1)
+>> +            return fat_create_volume_label_dentry(sb, vol_label);
+>> +
+>> +        if (de->attr =3D=3D ATTR_VOLUME) {
+>> +            memcpy(de->name, vol_label, MSDOS_NAME);
+>> +            mark_buffer_dirty_inode(bh, root_inode);
+>> +            if (IS_DIRSYNC(root_inode))
+>> +                err =3D sync_dirty_buffer(bh);
+>> +            brelse(bh);
+>> +            return err;
+>> +        }
+>> +    }
 >=20
-> >=20
-> > IIUC, people mostly use vfs-layer idmappings because they want to remap
-> > the uid/gid values of files that get stored on the backing store (disk,
-> > ceph MDS, or whatever).
+> I didn't check how to know the label though, the label is only if
+> ATTR_VOLUME? IOW, any other attributes are disallowed?
+I'm pretty sure ATTR_VOLUME is disallowed except for:
+* Volume labels, where it is the only flag present
+* Long file name entries, where it is /not/ the only flag present
+This is why I check if attr =3D=3D ATTR_VOLUME, not attr & ATTR_VOLUME
+> What if label is marked as deleted?
+As far as I know, a Volume label can never be marked as deleted, but if you w=
+ant me to change the behavior of my patch, just let me know how you would li=
+ke me to handle it and I'd be happy to change it.
+> I'm not sure though, no need to update timestamps? (need to investigate
+> spec or windows behavior)
+It's not in the spec that I know either, I'm happy to remove if you deem thi=
+s unnecessary.
+>> +static int fat_convert_volume_label_str(struct msdos_sb_info *sbi, char *=
+in,
+>> +                    char *out)
+>> +{
+>> +    int ret, in_len =3D max(strnlen(in, FSLABEL_MAX), 11);
+>> +    char *needle;
 >=20
-> yes, precisely.
+> Silently truncate is the common way for this ioctl?
+When I implemented this in exfat, I returned -EINVAL for names that were lon=
+ger than allowed, but only after converting from nls to UTF16. I can copy th=
+is behavior here as well.
 >=20
-> >=20
-> > I've never used idmappings myself much in practice. Could you lay out
-> > an example of how you would use them with NFS in a real environment so
-> > I understand the problem better? I'd start by assuming a simple setup
-> > with AUTH_SYS and no NFSv4 idmapping involved, since that case should
-> > be fairly straightforward.
+>> +    /*
+>> +     * '.' is not included in any bad_chars list in this driver,
+>> +     * but it is specifically not allowed for volume labels
+>> +     */
+>> +    for (needle =3D in; needle - in < in_len; needle++)
+>> +        if (*needle =3D=3D '.')
+>> +            return -EINVAL;
 >=20
-> For me, from the point of LXC/Incus project, idmapped mounts are used as
-> a way to "delegate" filesystems (or subtrees) to the containers:
-> 1. We, of course, assume that container enables user namespaces and
-> user can't mount a filesystem
-> inside because it has no FS_USERNS_MOUNT flag set (like in case of Cephfs=
-, NFS,
-> CIFS and many others).
-> 2. At the same time host's system administrator wants to avoid
-> remapping between container's user ns and
-> sb->s_user_ns (which is init_user_ns for those filesystems). [
-> motivation here is that in many
-> cases you may want to have the same subtree to be shared with other
-> containers and even host users too and
-> you want UIDs to be "compatible", i.e UID 1000 in one container and
-> UID 1000 in another container should
-> land as UID 1000 on the filesystem's inode ]
+> memchr() or such?
+Noted, will use, thanks.
+>> +    ret =3D msdos_format_name(in, in_len, out, &sbi->options);
+>> +    if (ret)
+>> +        return ret;
 >=20
-> For this usecase, when we bind-mount filesystem to container, we apply
-> VFS idmap equal to container's
-> user namespace. This makes a behavior I described.
+>> +    /*
+>> +     * msdos_format_name assumes we're translating an 8.3 name, but
+>> +     * we can handle 11 chars
+>> +     */
+>> +    if (in_len > 8)
+>> +        ret =3D msdos_format_name(in + 8, in_len - 8, out + 8,
+>> +                    &sbi->options);
+>> +    return ret;
 >=20
+> fat module should not import msdos module.
+Fair. How would you implement checking the validity of the new volume label?=
 
-Ok: so you have a process running in a userns as UID 2000 and you want
-to use vfs layer idmapping so that when you create a file as that user
-that it ends up being owned by UID 1000. Is that basically correct?
-
-Typically, the RPC credentials used in an OPEN or CREATE call is what
-determines its ownership (at least until a SETATTR comes in). With
-AUTH_SYS, the credential is just a uid and set of gids.
-
-So in this case, it sounds like you would need just do that conversion
-(maybe at the RPC client layer?) when issuing an RPC. You don't really
-need a protocol extension for that case.
-
-As Trond points out though, AUTH_GSS and NFSv4 idmapping will make this
-more complex. Once you're using kerberos credentials for
-authentication, you don't have much control over what the UIDs and GIDs
-will be on newly-created files, but is that really a problem? As long
-as all of the clients have a consistent view, I wouldn't think so.
-
-> But this is just one use case. I'm pretty sure there are some more
-> around here :)
-> I know that folks from Preferred Networks (preferred.jp) are also
-> interested in VFS idmap support in NFS,
-> probably they can share some ideas/use cases too.
 >=20
->=20
+>> +static int fat_ioctl_set_volume_label(struct super_block *sb, char __use=
+r *arg)
+>> +{
+>> +    struct msdos_sb_info *sbi =3D MSDOS_SB(sb);
+>> +    struct inode *root_inode =3D sb->s_root->d_inode;
+>> +    char from_user[FSLABEL_MAX];
+>> +    char new_vol_label[MSDOS_NAME];
+>> +    int ret;
+>> +
+>> +    if (!capable(CAP_SYS_ADMIN))
+>> +        return -EPERM;
+>> +
+>> +    if (sb_rdonly(sb))
+>> +        return -EROFS;
+>> +
+>> +    if (copy_from_user(from_user, arg, FSLABEL_MAX))
+>> +        return -EFAULT;
+>> +
+>> +    ret =3D fat_convert_volume_label_str(sbi, from_user, new_vol_label);=
 
-Yes, we don't want to focus too much on a single use-case, but I find
-it helpful to focus on a single simple problem first.
---=20
-Jeff Layton <jlayton@kernel.org>
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    inode_lock(root_inode);
+>> +    ret =3D fat_rename_volume_label_dentry(sb, new_vol_label);
+>> +    inode_unlock(root_inode);
+>> +    if (ret)
+>> +        return ret;
+>=20
+> This rename will have to take same or similar locks with rename(2)?
+Sure, so should I only lock on sbi->s_lock through the whole function?
+>> diff --git a/fs/fat/inode.c b/fs/fat/inode.c
+>> index 6f9a8cc1ad2a..a7528937383b 100644
+>> --- a/fs/fat/inode.c
+>> +++ b/fs/fat/inode.c
+>> @@ -736,6 +736,21 @@ static void delayed_free(struct rcu_head *p)
+>> static void fat_put_super(struct super_block *sb)
+>> {
+>>  struct msdos_sb_info *sbi =3D MSDOS_SB(sb);
+>> +    struct buffer_head *bh =3D NULL;
+>> +    struct fat_boot_sector *bs;
+>> +
+>> +    bh =3D sb_bread(sb, 0);
+>> +    if (bh =3D=3D NULL)
+>> +        fat_msg(sb, KERN_ERR, "unable to read boot sector");
+>> +    else if (!sb_rdonly(sb)) {
+>> +        bs =3D (struct fat_boot_sector *)bh->b_data;
+>> +        if (is_fat32(sbi))
+>> +            memcpy(bs->fat32.vol_label, sbi->vol_label, MSDOS_NAME);
+>> +        else
+>> +            memcpy(bs->fat16.vol_label, sbi->vol_label, MSDOS_NAME);
+>> +        mark_buffer_dirty(bh);
+>> +    }
+>> +    brelse(bh);
+>=20
+> Why this unconditionally update the vol_label at unmount?
+I can add a dirty bit to msdos_sb_info, and only write if it's present.
+> Thanks.
+> --
+> OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
