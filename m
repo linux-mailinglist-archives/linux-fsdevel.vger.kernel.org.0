@@ -1,180 +1,229 @@
-Return-Path: <linux-fsdevel+bounces-77557-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CFvvDMiTlWk1SgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77557-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 11:26:16 +0100
+	id uH2BEbmWlWk1SgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 11:38:49 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B6715561E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 11:26:15 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 733CC1558B1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 11:38:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8FF213057E8A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 10:20:57 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id BA13630B47B8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Feb 2026 10:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355CF2FDC20;
-	Wed, 18 Feb 2026 10:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053EF2FE05B;
+	Wed, 18 Feb 2026 10:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I3DFO7fu";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="oUr6bhcG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RsgwTny/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3EEB2FD699
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 10:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E101F239B;
+	Wed, 18 Feb 2026 10:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771409895; cv=none; b=oEvy9OX8qhKmZq8J8URWFOIctztw+NNLzpSzyHvXDWVsXVmsNzRRGymBxGiQIDTieXF3y/Md9/2IB+CwK6/fff7/vKo+VZxJP1Jb8Hznw5Uxxrptt6/RgxUl7hl7IeYoVV5ltCn7ggfyAgvn4FMwsXm/RJGbpa4Uk1cAeL1TbT0=
+	t=1771410076; cv=none; b=aOmHleHn8IyioeRG+ButBzXBRbh+sNr2RhNbTrU9N7jQTLXe7aNWJG7sgGisOEVowcGyCNAoe33FO8ONJjJuFaqd3PKJc6LZdd29dLYmofXfCgJJEPaCO2+a/YANEFSH0CX/VMXZpbHZN1dE5Jq1MU5xUftTmQvxFSuEo+55aYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771409895; c=relaxed/simple;
-	bh=hEkOYoZ+YvzCIzyqbCCHiW1cU9u4+rx18WM/qq/4Keo=;
+	s=arc-20240116; t=1771410076; c=relaxed/simple;
+	bh=hv0749+TPn0XaEpNvtWBOh7j3r+GNA5F74vffeJDUBM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sho6lUtHFUFi/TURVSqrjMGSYjvqnuhe5RQcphZK6KpFfK5ccntk2+bQyKsNT6sJNo5iY1+GNl4vNMOkDYmhWhnlDCV6MXCBmYT6RkOzJ5IupMSOIqs0ilX+E4R/jFs/VYyC9TFzHGh6aX8+Kjh0cfBPBqt79EDozY0DQxfmgik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I3DFO7fu; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=oUr6bhcG; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1771409893;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CdumppwhlBUdillyHNoUIaTpT4tIY7ONjvEdXG67S8c=;
-	b=I3DFO7fuOB/p7zSzjdb1yQVJKbUC7KK+UrxhPIa2ZWOo9OI7v5IuoqyDl0fsCLtVi5dgCQ
-	b98U18b7L7ngguPqo8gXt6sjOTUAfQWe75CfHgsJ9zPcDCA3ErGjbA6e4tWTHjp4PCqjpj
-	JARFquPNPwpEGxmAAXiwlqk4jxbpYBo=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-279-FLZ3aj3_O0erl2lfXvBH2w-1; Wed, 18 Feb 2026 05:18:10 -0500
-X-MC-Unique: FLZ3aj3_O0erl2lfXvBH2w-1
-X-Mimecast-MFC-AGG-ID: FLZ3aj3_O0erl2lfXvBH2w_1771409889
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-435db8ebc98so4872988f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 02:18:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1771409889; x=1772014689; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CdumppwhlBUdillyHNoUIaTpT4tIY7ONjvEdXG67S8c=;
-        b=oUr6bhcG2x4YhoM/N/QevpH+wQFl9gQQM9KVdzimEPUNex9wrf6w9Oc33XuXrOVLgE
-         RJ792Rw8QwEhuC++XXoDDDYjVo2+sEEu1HnuFBjoH9nvg8+1WE4zM8tTm2NX4FEr4EQB
-         66bqrMdNnlS9Y/l1rK6TkuW82MUgxeLjtBbgiSBi1COh6BVJP7U7GFi1yhfU3kCUSbsh
-         AXyPhtHw8WZ1xVzegH4gX2RJ3rMUsFKp8lmKLLdnTVBYvrY2FloOCImx0GyfSpDkM8De
-         cT008TvD6checaEAQ6FfI6gH24EaIw+SIxdaVoK2MpcM0Zr7WTOAV07gkwTd7KTT3GmS
-         cmrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771409889; x=1772014689;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CdumppwhlBUdillyHNoUIaTpT4tIY7ONjvEdXG67S8c=;
-        b=Bo/WUsIZlgntROvKkZPtbSXwyEzoqHdIPkFGFMjfkViVrf5eZ7/4ZiEhUziODnp8eC
-         yeyAKeXrxkFjtsymbuhscWJWseTV3djADjD9GlLj1DrQ90LC9bVlE45ueehUN0FRNv2a
-         VvfunvBRAX7EPq4XHCCi7leABsw1cuxIeWoTkSmPT0LBW9Sp8K13oBpaYJAKe+vdLXQN
-         NPb7jkAPbopOsMHTO06Qa/b8nPgravQGrp1g6gptvOm43n8UwcVQ+CwfDm+qRYxJS1mt
-         YqeTCucm9bxbyNyiI7DQS86eEV8m8Nys+mKFr9yPMbQ9aWMVYmyCn12aPm/FIWtMndxs
-         noOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUk1m77XKC06zxIeAVt8kfgAemwXnNU5EB2hEmVmbhzuM2EE7iKQ/CSo51QzJ/XXKl68kd6zXnQ04RdM0aS@vger.kernel.org
-X-Gm-Message-State: AOJu0YymKjqUzbaCjzbEs69fmkzqpmihq8HpZ/K9oeTYxlP0K4rDGOHF
-	D1v6v9V9eQ67uVkNxcmIe1EC+0OVvlQPKp+1FlsjMwEV6rnjU3zEiSQkau7s+ZwHFTI/brxpKN2
-	VP2wqb2D7q+kTrAoZrSoKiieCiim/M2Ay+FJadkkrMDkS5BnYUFPb7HStUhgjN5X+Fg==
-X-Gm-Gg: AZuq6aIerQjmyezOFOYwH/j0yKLS8RXuuBFwwAcPynrvAu1OToHOUBVljWJdkBxX50e
-	rw+Vpc5YLs9lKnMTjSJxxzhROardMPEUo+CQdGD8sAw1XbvRlw43+y9r9g9Il02zrOpxfffKX1J
-	pSvZCtF8pHDiHirOcxtYzpy9eYvSEHbbzw4kBpQBgf5JSRODa63sQm1Mqpbr/BEFIyL66xZGSp1
-	LtthVzDJWfeHsuLo1J3kX2a6pZYD8UakXCptPE8x+WJkml8onQbTbz8MnXRnXgOKIIOPYtAjXID
-	kLFzYcWgmTkmRb13EU4qW5tXY1SYJ96iHieODp4byGUXsWXcFY9muTutv5d/ubLf8aHW1R9eMsn
-	LiiAwE0I8MM0=
-X-Received: by 2002:a05:600c:19c6:b0:480:3bba:1ca9 with SMTP id 5b1f17b1804b1-48398a65e5cmr24011415e9.4.1771409888932;
-        Wed, 18 Feb 2026 02:18:08 -0800 (PST)
-X-Received: by 2002:a05:600c:19c6:b0:480:3bba:1ca9 with SMTP id 5b1f17b1804b1-48398a65e5cmr24010895e9.4.1771409888328;
-        Wed, 18 Feb 2026 02:18:08 -0800 (PST)
-Received: from thinky ([217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48398244e83sm29376605e9.2.2026.02.18.02.18.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Feb 2026 02:18:08 -0800 (PST)
-Date: Wed, 18 Feb 2026 11:18:07 +0100
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Andrey Albershteyn <aalbersh@kernel.org>, linux-xfs@vger.kernel.org, 
-	fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org, ebiggers@kernel.org, 
-	djwong@kernel.org
-Subject: Re: [PATCH v3 22/35] xfs: add iomap write/writeback and reading of
- Merkle tree pages
-Message-ID: <zpdrihys2jk2duk3o76ao4tykc4o7adree2lf3dqzuiqggcaka@xnmbkzswbmpz>
-References: <20260217231937.1183679-1-aalbersh@kernel.org>
- <20260217231937.1183679-23-aalbersh@kernel.org>
- <20260218063521.GC8600@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ehp/IwZ/b8FIjObe6x56v3kuVJuOHVUITtcYuUiiJaPTGbqtas2LK9VJM66Y5Abg2I+8i4YMe3/NFbuaXX9L2D1AyCKDwuAUJ9OcHOxmimAcDWWaJBk2j+cLgvxpBi6g6O0V7bp0oi9T/Ma6ouXX/TwCbCE1JDcsRTd6sKVx6jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RsgwTny/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55CA4C19421;
+	Wed, 18 Feb 2026 10:21:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771410076;
+	bh=hv0749+TPn0XaEpNvtWBOh7j3r+GNA5F74vffeJDUBM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RsgwTny/0fZdrwtYDFxjJxHxPRaUb6XHMeP2v/qR3xTnBjCr1oYGlxm6EyqYpmsk8
+	 mdRfaZHOa0mPW7ZTyYby8+EiCP17G/SF5ppWRilvWidIkgd/9fzWXBxayqTFgV6DsS
+	 tasXiYKosi0KlHZItB7ZQ7LUqQXUn79inKUBf9X0K0FeUzm/O3T+zKLb2wgl+GLBaM
+	 E3kCoUuEChu2HN5GvWxSP4eFUMdXv6P5M491zuozgYG4+wHavXsjiYWJ4in27+cnVD
+	 2ifFiABTOufYC2czklFfX+nLd1IUmqVTGoAM+gPxI+sJa+5+5s//tdmYBzD7NuPhDc
+	 jeCbSRMvsx7kg==
+Date: Wed, 18 Feb 2026 11:21:11 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Jann Horn <jannh@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC v3 2/4] pidfd: add CLONE_PIDFD_AUTOKILL
+Message-ID: <20260218-festhalle-rohstoff-8b1a92750c1c@brauner>
+References: <20260217-work-pidfs-autoreap-v3-0-33a403c20111@kernel.org>
+ <20260217-work-pidfs-autoreap-v3-2-33a403c20111@kernel.org>
+ <CAHk-=wj80zwxy=5jp5SAi64cqCZgRjY1cRokVuDPd9_t3XMvUw@mail.gmail.com>
+ <CAG48ez2YiL7RZ1fm9vwOCDGr9OsDrCHrCmkyRRoGRMWUZjyyBg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260218063521.GC8600@lst.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez2YiL7RZ1fm9vwOCDGr9OsDrCHrCmkyRRoGRMWUZjyyBg@mail.gmail.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [2.34 / 15.00];
+	MID_END_EQ_FROM_USER_PART(4.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719,redhat.com:s=google];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77557-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[redhat.com:+];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77558-lists,linux-fsdevel=lfdr.de];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[aalbersh@redhat.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCPT_COUNT_SEVEN(0.00)[7];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 88B6715561E
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 733CC1558B1
 X-Rspamd-Action: no action
 
-On 2026-02-18 07:35:21, Christoph Hellwig wrote:
-> > -	xfs_bmbt_to_iomap(ip, &wpc->iomap, &imap, 0, 0, XFS_WPC(wpc)->data_seq);
-> > +	xfs_bmbt_to_iomap(ip, &wpc->iomap, &imap, 0, iomap_flags, XFS_WPC(wpc)->data_seq);
+On Wed, Feb 18, 2026 at 12:38:02AM +0100, Jann Horn wrote:
+> On Wed, Feb 18, 2026 at 12:18 AM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> > On Tue, 17 Feb 2026 at 14:36, Christian Brauner <brauner@kernel.org> wrote:
+> > >
+> > > Add a new clone3() flag CLONE_PIDFD_AUTOKILL that ties a child's
+> > > lifetime to the pidfd returned from clone3(). When the last reference to
+> > > the struct file created by clone3() is closed the kernel sends SIGKILL
+> > > to the child.
+> >
+> > Did I read this right? You can now basically kill suid binaries that
+> > you started but don't have rights to kill any other way.
+> >
+> > If I'm right, this is completely broken. Please explain.
 > 
-> Overly long line.
+> You can already send SIGHUP to such binaries through things like job
+> control, right?
+> Do we know if there are setuid binaries out there that change their
+> ruid and suid to prevent being killable via kill_ok_by_cred(), then
+> set SIGHUP to SIG_IGN to not be killable via job control, and then do
+> some work that shouldn't be interrupted?
 > 
-> > +		if (xfs_iflags_test(ip, XFS_VERITY_CONSTRUCTION)) {
-> > +			wbc->range_start = fsverity_metadata_offset(VFS_I(ip));
-> > +			wbc->range_end = LLONG_MAX;
-> > +			wbc->nr_to_write = LONG_MAX;
+> Also, on a Linux system with systemd, I believe a normal user, when
+> running in the context of a user session (but not when running in the
+> context of a system service), can already SIGKILL anything they launch
+> by launching it in a systemd user service, then doing something like
+> "echo 1 > /sys/fs/cgroup/user.slice/user-$UID.slice/user@$UID.service/app.slice/<servicename>.scope/cgroup.kill"
+> because systemd delegates cgroups for anything a user runs to that
+> user; and cgroup.kill goes through the codepath
+> cgroup_kill_write -> cgroup_kill -> __cgroup_kill -> send_sig(SIGKILL,
+> task, 0) -> send_sig_info -> do_send_sig_info
+> which, as far as I know, bypasses the normal signal sending permission
+> checks. (For comparison, group_send_sig_info() first calls
+> check_kill_permission(), then do_send_sig_info().)
 > 
-> Shouldn't this be taken care of by the caller?
+> I agree that this would be a change to the security model, but I'm not
+> sure if it would be that big a change. I guess an alternative might be
+> to instead gate the clone() flag on a `task_no_new_privs(current) ||
+> ns_capable()` check like in seccomp, but that might be too restrictive
+> for the usecases Christian has in mind...
 
-hmm right, I will update filemap_write_and_wait() call in
-xfs_fsverity_end_enable(). That the only place writeback of verity
-metadata is requested.
+So I'm going to briefly reiterate what I wrote in my other replies because
+I really don't want to get anyone the impression that I don't understand
+that this is a change in the security model - It's what I explicitly
+wanted to discuss:
 
-> 
-> > +			/*
-> > +			 * Set IOMAP_F_FSVERITY to skip initial EOF check
-> > +			 * The following iomap->flags would be set in
-> > +			 * xfs_map_blocks()
-> > +			 */
-> > +			wpc.ctx.iomap.flags |= IOMAP_F_FSVERITY;
-> 
-> I'm usually a fan of more comments rather than less, but I don't think
-> this adds any value.
+  I'm very aware that as written this will allow users to kill setuid
+  binaries. I explictly wrote the first RFC so autokill isn't reset during
+  bprm->secureexec nor during commit_creds() - in contrast to pdeath
+  signal.
 
-Sure, I will rewrite it
+I did indeed think of simply using the seccomp model. I have a long
+document about all of the different implications for all of this.
 
--- 
-- Andrey
+Ideally we'd not have to use the seccomp model but if we have to I'm
+fine with it. There are two problems I would want to avoid though. Right
+now pdeath_signal is reset on _any_ set*id() transition via
+commit_creds(). Which makes it really useless.
 
+For example, if you setup a container the child sets pdeath_signal so it
+gets auto-killed when the container setup process dies. But as soon as
+the child uses set*id() calls to become privileged over the container's
+namespaces pdeath_signal magically gets reset. So all container runtimes
+have this annoying code in some form:
+
+static int do_start(void *data) /* container workload that gets setup */
+{
+
+<snip>
+
+        /* This prctl must be before the synchro, so if the parent dies before
+         * we set the parent death signal, we will detect its death with the
+         * synchro right after, otherwise we have a window where the parent can
+         * exit before we set the pdeath signal leading to a unsupervized
+         * container.
+         */
+        ret = lxc_set_death_signal(SIGKILL, handler->monitor_pid, status_fd);
+        if (ret < 0) {
+                SYSERROR("Failed to set PR_SET_PDEATHSIG to SIGKILL");
+                goto out_warn_father;
+        }
+
+<snip>
+
+        /* If we are in a new user namespace, become root there to have
+         * privilege over our namespace.
+         */
+        if (!list_empty(&handler->conf->id_map)) {
+
+<snip>
+
+                /* Drop groups only after we switched to a valid gid in the new
+                 * user namespace.
+                 */
+                if (!lxc_drop_groups() &&
+                    (handler->am_root || errno != EPERM))
+                        goto out_warn_father;
+
+                if (!lxc_switch_uid_gid(nsuid, nsgid))
+                        goto out_warn_father;
+
+                ret = prctl(PR_SET_DUMPABLE, prctl_arg(1), prctl_arg(0),
+                            prctl_arg(0), prctl_arg(0));
+                if (ret < 0)
+                        goto out_warn_father;
+
+                /* set{g,u}id() clears deathsignal */
+                ret = lxc_set_death_signal(SIGKILL, handler->monitor_pid, status_fd);
+                if (ret < 0) {
+                        SYSERROR("Failed to set PR_SET_PDEATHSIG to SIGKILL");
+                        goto out_warn_father;
+                }
+
+<sip>
+
+I can't stress how useless this often makes pdeath_signal. Let alone
+that the child must set it so there's always a race with the parent
+dying while the child is setting it. And obviously it isn't just
+containers. It's anything that deprivileges itself including some
+services.
+
+If we require the seccomp task_no_new_privs() thing I really really
+would like to not have to reset autokill during commit_creds().
+
+Because then it is at least consistent for task_no_new_privs() without
+magic resets.
+
+TL;DR as long as we can come up with a model where there are no magical
+resets of the property by the kernel this is useful.
 
