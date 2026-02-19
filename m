@@ -1,341 +1,264 @@
-Return-Path: <linux-fsdevel+bounces-77742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iFxtEimDl2nozQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 22:39:53 +0100
+	id MO9eKZqEl2mUzgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 22:46:02 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99267162E8C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 22:39:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBDDE162ED6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 22:46:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8E091301DAE5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 21:39:40 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 2E61F30214E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 21:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7D132AACA;
-	Thu, 19 Feb 2026 21:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACAEE326938;
+	Thu, 19 Feb 2026 21:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FCzXJhdp"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="I0cnulyW";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DYF/8y9Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD312C1589;
-	Thu, 19 Feb 2026 21:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA9E15539A;
+	Thu, 19 Feb 2026 21:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771537179; cv=none; b=cI1mjbpfahtpa48wzl/5VSvWfM6+4gd1chOmmppatEEjjsPTf8k2LoEJJAoQG9WVfJxnFWtEQUotNYUBBXisPA7GLk9/EgdTYA2vIaTK3VsdzF+4sD3/jmDvyW9tXm9XRu2Joi5Kc72YuKPCy9EsQHiMMU9pjWL/+m7R6WURTgY=
+	t=1771537549; cv=none; b=lgoeULTN1JTP+FXJP2papq8eS6TPsWBKopW15xncpiOkYQM+qaASIsgT3xFOmcxYLhXn2lGUeQwLdXnv4JIXwOwgIm8HRYHxvZd26NOWnHMFKrGXTRWtg6Ml4Mqs+uHVOoBMMFqUuhRecHb9Yk2L6uDNzEQSQ1bGXQYGlVYg0cI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771537179; c=relaxed/simple;
-	bh=x0fDg/mrvPWFdEqBiqFoNbiZbpHQldatRPd85b83IZw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ueBwLaSENiERJbgZ2taYzXHog2+paIDET+SBPKXV2yLP18pNlPBhgERfMpJFaLVswvqVUTYkZWw1Zcqka8cCm/AWCdxEXzZ2QiFfYBsA1wOER1qoV1Q8IkSs5YHTxfHdwg2zRwj9dLJsmgHy4CtVCjzToRmSoxlSYxs+WRAL46M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FCzXJhdp; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1771537177; x=1803073177;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=x0fDg/mrvPWFdEqBiqFoNbiZbpHQldatRPd85b83IZw=;
-  b=FCzXJhdp2QimJIV3qmv5m1C+WkmetSV/R5DqKbn+ryDGjxKmTPuXhoNd
-   Va9pF52n/OwKR8wGtNujnSRmh0fxmaylXf/IRSZ1pQKl/35bskaV5lvH6
-   F5Ho+0INA7PV3nm7TwmNB7LJOMK0mXok4VovnvpZ8ifB2dUBODi7MR1OU
-   dNDa9vVBu4l9W5zLRlVB/UjCFeAw309kZpHNBNx3oZGSqqJqE8g2VSUe0
-   sQ+uECsH8VQy0LQltq01lXchIVcxkAWSSHcGCd6oiOtTeCQX4CQCBaylI
-   Xk22NErM0Vo3LeAMEFgKx9nyuVEXINTrQAJSc3hknjnnzDOevdfBTP7Pr
-   Q==;
-X-CSE-ConnectionGUID: nKtAD5FIQCO6jbLG1bLotg==
-X-CSE-MsgGUID: BrMHlArZR4637U/x76pHwg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11706"; a="76250604"
-X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; 
-   d="scan'208";a="76250604"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2026 13:39:36 -0800
-X-CSE-ConnectionGUID: 5KF9G3n8SaCmnR2mMQDBjw==
-X-CSE-MsgGUID: +GBsdtR/SRGkofsen4P8Zw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; 
-   d="scan'208";a="219667309"
-Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.110.20]) ([10.125.110.20])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2026 13:39:33 -0800
-Message-ID: <7facce73-688a-408a-bcf9-f16d5ff36349@intel.com>
-Date: Thu, 19 Feb 2026 14:39:32 -0700
+	s=arc-20240116; t=1771537549; c=relaxed/simple;
+	bh=ly3qBAXwjEhv+qeI0w00JXn+ZbeKzuvxdcn+WjKFB0w=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=BRh0VnTupoiNf8XJnwpID56zTyFKGN1mCvjaJJaqj4G+QZZd4kfzoK4VPr0MKDIfU7aZn5gZQ8NQmRfTkFWVFmqL7gp3zXs2hCmsQSGo3uVI4YZWiAsG8YqrBbtLuLyw6tpZ+pgra+eNWYcBtmd3+x7AaEruqwL+NPfo58k9N1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=I0cnulyW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DYF/8y9Z; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id DA21F14000F3;
+	Thu, 19 Feb 2026 16:45:46 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Thu, 19 Feb 2026 16:45:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
+	1771537546; x=1771623946; bh=lM6k202zrI0eU9oty7kDeQMYg4/NxTHQwl4
+	SflOk00U=; b=I0cnulyWNAZIF6IrlT4b4m4yRr/BYmbXLIsroJtCztSOJi3XGky
+	fGlj22M2hnJMxpr3B3fU8UOWFsd8h3D8h8H/zwYNg0059YuENYmxoqK4gmAmyB9Y
+	PQ35ZudKFk7KZUVgSlXCiztmjVXKoMH9b0xJJuu7rYZKLfoBUQ4o4VSx+bsXY/Ra
+	oPZa2XGsPTqRX+xnbOd4tsiF3pTR6s/tv9/uQ84FOyRIFgYsh1kkcjbFHRGJYFPc
+	XaHJ2TqpKjE4A3A1JUZCYsA061GdbzeJZMdR2WcFYI8ciO6Siv4GVfVHgqGztYnw
+	QqWkW2GNX2OpXILDGVAd85cIHa1USArvong==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1771537546; x=
+	1771623946; bh=lM6k202zrI0eU9oty7kDeQMYg4/NxTHQwl4SflOk00U=; b=D
+	YF/8y9ZN616sV7XznnjNFyTVFYK1WIS9L39eM4bFbUTNXUJmcroIN6N3v5AtJIsb
+	BkJ2O5JJfwYhrYuoXNLISVUxxdd/7rf3DqMZFlN7c3hcVb5oDc2HxHNgQnn+ik/8
+	rBJQk5WzpzBzDJhORg1it+nVhbCNAK41HOhCAEdwQ5Q4jSvie94L3ZcpqkWC+Qog
+	jomZG+UXZ3pJJuwmJc378lMRVcGWMHrCkkmJ/cznSg8Mn5k3RnufGloZV6zYpwAi
+	VTmmhYzhBwunvCsK9XNcOqLuK6yrJJDeWKeRDjK32uQMkJF3nZIClk5piQZKxd5M
+	J/VMw/Or9t8GyTUPFKm2w==
+X-ME-Sender: <xms:ioSXaSxYEujFP8A-yLDa9UO9hFBTw1RR_nxavO9d7CIoHM7qGAEudw>
+    <xme:ioSXaUSKmZTuoxuhEr9ss6vHJPumjE0PFk2lJdezEI3CfzW1ApjlgxG6Elz4b0Hys
+    dhYLfF04YUuRG-iqDMhm4Qfzwm2NNIj2ncUQ7Me2sGgEC_fqg>
+X-ME-Received: <xmr:ioSXafJfCTr7Y2BhdkGK-kCOFSD6N2OKc8NXTSStxBtP4xQrEWbmtHfNp_BVi5HDjfduDKWVy6QmGi0ext0hRw7AAQwjHUw8MbE3ugEiXI-j>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvvdeiieehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegouf
+    hushhpvggtthffohhmrghinhculdegledmnecujfgurheptgfgggfhvfevufgjfhffkfhr
+    sehtqhertddttdejnecuhfhrohhmpefpvghilheurhhofihnuceonhgvihhlsgesohifnh
+    hmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffhfffkeegjeejtdffueekjeff
+    feeljedtvdekveduuddtudeiieeuhefhheehnecuffhomhgrihhnpehshiiikhgrlhhlvg
+    hrrdgrphhpshhpohhtrdgtohhmpdhgohhoghhlvggrphhishdrtghomhenucevlhhushht
+    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgssehofihnmh
+    grihhlrdhnvghtpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgt
+    phhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtoh
+    eplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
+    oheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehshiiisghothdotdgvrgehuddtkegrudhfhehfsgegfhgttgdvugeksehshiii
+    khgrlhhlvghrrdgrphhpshhpohhtmhgrihhlrdgtohhmpdhrtghpthhtohepjhgrtghkse
+    hsuhhsvgdrtgiipdhrtghpthhtoheprghgrhhuvghnsggrsehrvgguhhgrthdrtghomhdp
+    rhgtphhtthhopehgfhhsvdeslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhope
+    gsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehshiiikhgrlhhlvghr
+    qdgsuhhgshesghhoohhglhgvghhrohhuphhsrdgtohhm
+X-ME-Proxy: <xmx:ioSXabVWuzMljQtrK0f7VEYQp-msGrknKv_j6yvZjdZGXBZEaE4c3Q>
+    <xmx:ioSXaTRLAcXaoKX9RMm9F_Ly48T5KO3nblbExThquf47UME5j1PniA>
+    <xmx:ioSXaTBDhtlFnGVVFjSvBewbborAa_8KJKvNhsfJzOYVpXcX7cQL4g>
+    <xmx:ioSXaSL_FcZ0l55PDLvqfnE9bPc5hwNDCyiNerEYNv9pZASi5ubnVg>
+    <xmx:ioSXaYyhpsFOG_2284PyGcEsd7EKQeqAdu18mxifedb_BfbfkpIN4NnI>
+Feedback-ID: i9d664b8f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 19 Feb 2026 16:45:43 -0500 (EST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V7 19/19] famfs_fuse: Add documentation
-To: John Groves <john@jagalactic.com>, John Groves <John@Groves.net>,
- Miklos Szeredi <miklos@szeredi.hu>, Dan Williams <dan.j.williams@intel.com>,
- Bernd Schubert <bschubert@ddn.com>,
- Alison Schofield <alison.schofield@intel.com>
-Cc: John Groves <jgroves@micron.com>, John Groves <jgroves@fastmail.com>,
- Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>,
- Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- David Hildenbrand <david@kernel.org>, Christian Brauner
- <brauner@kernel.org>, "Darrick J . Wong" <djwong@kernel.org>,
- Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>,
- Amir Goldstein <amir73il@gmail.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong
- <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
- Bagas Sanjaya <bagasdotme@gmail.com>, James Morse <james.morse@arm.com>,
- Fuad Tabba <tabba@google.com>, Sean Christopherson <seanjc@google.com>,
- Shivank Garg <shivankg@amd.com>, Ackerley Tng <ackerleytng@google.com>,
- Gregory Price <gourry@gourry.net>, Aravind Ramesh <arramesh@micron.com>,
- Ajay Joshi <ajayjoshi@micron.com>,
- "venkataravis@micron.com" <venkataravis@micron.com>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
- "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <0100019bd33b1f66-b835e86a-e8ae-443f-a474-02db88f7e6db-000000@email.amazonses.com>
- <20260118223420.92690-1-john@jagalactic.com>
- <0100019bd33ed831-615df3db-7b06-4137-9877-97c0d0fc0a05-000000@email.amazonses.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <0100019bd33ed831-615df3db-7b06-4137-9877-97c0d0fc0a05-000000@email.amazonses.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: NeilBrown <neilb@ownmail.net>
+To: "Christian Brauner" <brauner@kernel.org>,
+ Andreas Gruenbacher <agruenba@redhat.com>, gfs2@lists.linux.dev
+Cc: "syzbot" <syzbot+0ea5108a1f5fb4fcc2d8@syzkaller.appspotmail.com>,
+ gfs2@lists.linux.dev, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+ viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [gfs2?] WARNING in filename_mkdirat
+In-reply-to: <20260219-kitzeln-vielmehr-22b6ce51bf5a@brauner>
+References: <6993b6a3.050a0220.340abe.0775.GAE@google.com>, <>,
+ <20260217-fanshop-akteur-af571819f78b@brauner>,
+ <177131956603.8396.12634282713089317@noble.neil.brown.name>,
+ <177136673378.8396.7219915415554001211@noble.neil.brown.name>,
+ <20260219-kitzeln-vielmehr-22b6ce51bf5a@brauner>
+Date: Fri, 20 Feb 2026 08:45:40 +1100
+Message-id: <177153754005.8396.8777398743501764194@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [0.34 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=ac00553de86d6bf0];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
+	DMARC_POLICY_ALLOW(-0.50)[ownmail.net,none];
+	R_DKIM_ALLOW(-0.20)[ownmail.net:s=fm3,messagingengine.com:s=fm3];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[38];
-	FREEMAIL_CC(0.00)[micron.com,fastmail.com,lwn.net,intel.com,infradead.org,suse.cz,zeniv.linux.org.uk,kernel.org,gmail.com,huawei.com,redhat.com,toxicpanda.com,arm.com,google.com,amd.com,gourry.net,vger.kernel.org,lists.linux.dev];
-	TAGGED_FROM(0.00)[bounces-77742-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77743-lists,linux-fsdevel=lfdr.de];
+	REPLYTO_DN_EQ_FROM_DN(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[ownmail.net:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,noble.neil.brown.name:mid,syzkaller.appspot.com:url,storage.googleapis.com:url];
+	REPLYTO_DOM_NEQ_FROM_DOM(0.00)[];
+	FREEMAIL_FROM(0.00)[ownmail.net];
 	RCVD_TLS_LAST(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	DKIM_TRACE(0.00)[intel.com:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[ownmail.net:+,messagingengine.com:+];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	HAS_REPLYTO(0.00)[neil@brown.name];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[dave.jiang@intel.com,linux-fsdevel@vger.kernel.org];
+	RCVD_COUNT_FIVE(0.00)[6];
+	FROM_NEQ_ENVFROM(0.00)[neilb@ownmail.net,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCVD_COUNT_FIVE(0.00)[5];
-	MID_RHS_MATCH_FROM(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,intel.com:mid,intel.com:dkim,infradead.org:email,huawei.com:email,groves.net:email]
-X-Rspamd-Queue-Id: 99267162E8C
+	TAGGED_RCPT(0.00)[linux-fsdevel,0ea5108a1f5fb4fcc2d8];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Rspamd-Queue-Id: EBDDE162ED6
 X-Rspamd-Action: no action
 
 
+[gfs2 maintainer an list added  - Hi Andreas!]
 
-On 1/18/26 3:34 PM, John Groves wrote:
-> From: John Groves <john@groves.net>
-> 
-> Add Documentation/filesystems/famfs.rst and update MAINTAINERS
-> 
-> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-> Tested-by: Randy Dunlap <rdunlap@infradead.org>
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Signed-off-by: John Groves <john@groves.net>
-> ---
->  Documentation/filesystems/famfs.rst | 142 ++++++++++++++++++++++++++++
->  Documentation/filesystems/index.rst |   1 +
->  MAINTAINERS                         |   1 +
->  3 files changed, 144 insertions(+)
->  create mode 100644 Documentation/filesystems/famfs.rst
-> 
-> diff --git a/Documentation/filesystems/famfs.rst b/Documentation/filesystems/famfs.rst
-> new file mode 100644
-> index 000000000000..bf0c0e6574bb
-> --- /dev/null
-> +++ b/Documentation/filesystems/famfs.rst
-> @@ -0,0 +1,142 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +.. _famfs_index:
-> +
-> +==================================================================
-> +famfs: The fabric-attached memory file system
-> +==================================================================
-> +
-> +- Copyright (C) 2024-2026 Micron Technology, Inc.
-> +
-> +Introduction
-> +============
-> +Compute Express Link (CXL) provides a mechanism for disaggregated or
-> +fabric-attached memory (FAM). This creates opportunities for data sharing;
-> +clustered apps that would otherwise have to shard or replicate data can
+On Thu, 19 Feb 2026, Christian Brauner wrote:
+> On Wed, Feb 18, 2026 at 09:18:53AM +1100, NeilBrown wrote:
+> > On Tue, 17 Feb 2026, NeilBrown wrote:
+> > > On Tue, 17 Feb 2026, Christian Brauner wrote:
+> > > > On Mon, Feb 16, 2026 at 04:30:27PM -0800, syzbot wrote:
+> > > > > Hello,
+> > > > >=20
+> > > > > syzbot found the following issue on:
+> > > > >=20
+> > > > > HEAD commit:    0f2acd3148e0 Merge tag 'm68knommu-for-v7.0' of git:=
+//git.k..
+> > > > > git tree:       upstream
+> > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D15331c0=
+2580000
+> > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dac00553=
+de86d6bf0
+> > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=3D0ea5108a1=
+f5fb4fcc2d8
+> > > > > compiler:       Debian clang version 21.1.8 (++20251221033036+2078d=
+a43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
+> > > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D146b2=
+95a580000
+> > > > >=20
+> > > > > Downloadable assets:
+> > > > > disk image (non-bootable): https://storage.googleapis.com/syzbot-as=
+sets/d900f083ada3/non_bootable_disk-0f2acd31.raw.xz
+> > > > > vmlinux: https://storage.googleapis.com/syzbot-assets/b7d134e71e9c/=
+vmlinux-0f2acd31.xz
+> > > > > kernel image: https://storage.googleapis.com/syzbot-assets/b1864305=
+8ceb/bzImage-0f2acd31.xz
+> > > > > mounted in repro: https://storage.googleapis.com/syzbot-assets/bbfe=
+d09077d3/mount_1.gz
+> > > > >   fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=
+=3D106b295a580000)
+> > > > >=20
+> > > > > IMPORTANT: if you fix the issue, please add the following tag to th=
+e commit:
+> > > > > Reported-by: syzbot+0ea5108a1f5fb4fcc2d8@syzkaller.appspotmail.com
+> > > >=20
+> > > > Neil, is this something you have time to look into?
+> > >=20
+> > > The reproducer appears to mount a gfs2 filesystem and mkdir 3
+> > > directories:
+> > >   ./file1
+> > >   ./file1/file4
+> > >   ./file1/file4/file7
+> > >=20
+> > > and somewhere in there it crashes because vfs_mkdir() returns a
+> > > non-error dentry for which ->d_parent->d_inode is not locked and
+> > > end_creating_path() tries to up_write().
+> > >=20
+> > > Presumably either ->d_parent has changed or the inode was unlocked?
+> > >=20
+> > > gfs2_mkdir() never returns a dentry, so it must be returning NULL.
+> > >=20
+> > > It's weird - but that is no surprise.
+> > >=20
+> > > I'll try building a kernel myself and see if the reproducer still fires.
+> > > if so some printk tracing my reveal something.
+> >=20
+> > Unfortunately that didn't work out.
+> > Using the provided vmlinux and root image and repro, and a syzkaller I
+> > compiled from current git, I cannot trigger the crash.
+> >=20
+> > I'll have another look at the code but I don't hold out a lot of hope.
+>=20
+> There's at least a proper C repro now.
+>=20
 
-s/shard/share/?
+Yes - and with the new C repro I can trigger the bug.
 
-> +share one copy in disaggregated memory.
-> +
-> +Famfs, which is not CXL-specific in any way, provides a mechanism for
-> +multiple hosts to concurrently access data in shared memory, by giving it
-> +a file system interface. With famfs, any app that understands files can
-> +access data sets in shared memory. Although famfs supports read and write,
-> +the real point is to support mmap, which provides direct (dax) access to
-> +the memory - either writable or read-only.
-> +
-> +Shared memory can pose complex coherency and synchronization issues, but
-> +there are also simple cases. Two simple and eminently useful patterns that
-> +occur frequently in data analytics and AI are:
-> +
-> +* Serial Sharing - Only one host or process at a time has access to a file
-> +* Read-only Sharing - Multiple hosts or processes share read-only access
-> +  to a file
-> +
-> +The famfs fuse file system is part of the famfs framework; user space
-> +components [1] handle metadata allocation and distribution, and provide a
-> +low-level fuse server to expose files that map directly to [presumably
-> +shared] memory.
-> +
-> +The famfs framework manages coherency of its own metadata and structures,
-> +but does not attempt to manage coherency for applications.
-> +
-> +Famfs also provides data isolation between files. That is, even though
-> +the host has access to an entire memory "device" (as a devdax device), apps
-> +cannot write to memory for which the file is read-only, and mapping one
-> +file provides isolation from the memory of all other files. This is pretty
-> +basic, but some experimental shared memory usage patterns provide no such
-> +isolation.
-> +
-> +Principles of Operation
-> +=======================
-> +
-> +Famfs is a file system with one or more devdax devices as a first-class
-> +backing device(s). Metadata maintenance and query operations happen
-> +entirely in user space.
-> +
-> +The famfs low-level fuse server daemon provides file maps (fmaps) and
-> +devdax device info to the fuse/famfs kernel component so that
-> +read/write/mapping faults can be handled without up-calls for all active
-> +files.
-> +
-> +The famfs user space is responsible for maintaining and distributing
-> +consistent metadata. This is currently handled via an append-only
-> +metadata log within the memory, but this is orthogonal to the fuse/famfs
-> +kernel code.
-> +
-> +Once instantiated, "the same file" on each host points to the same shared
-> +memory, but in-memory metadata (inodes, etc.) is ephemeral on each host
-> +that has a famfs instance mounted. Use cases are free to allow or not
-> +allow mutations to data on a file-by-file basis.
-> +
-> +When an app accesses a data object in a famfs file, there is no page cache
-> +involvement. The CPU cache is loaded directly from the shared memory. In
-> +some use cases, this is an enormous reduction read amplification compared
+The problem is in gfs2.  gfs2_create_inode() calls d_instantiate()
+before unlock_new_inode().  This is bad.  d_instantiate_new() should be
+used, which makes sure the two things happen in the correct order.
 
-"reduction in read amplification"?
+Key to understanding the problem is knowing that unlock_new_inode()
+calls lockdep_annotate_inode_mutex_key() which (potentially) calls=20
+  init_rwsem(&inode->i_rwsem);
 
-> +to loading an entire page into the page cache.
-> +
-> +
-> +Famfs is Not a Conventional File System
-> +---------------------------------------
-> +
-> +Famfs files can be accessed by conventional means, but there are
-> +limitations. The kernel component of fuse/famfs is not involved in the
-> +allocation of backing memory for files at all; the famfs user space
-> +creates files and responds as a low-level fuse server with fmaps and
-> +devdax device info upon request.
-> +
-> +Famfs differs in some important ways from conventional file systems:
-> +
-> +* Files must be pre-allocated by the famfs framework; allocation is never
-> +  performed on (or after) write.
-> +* Any operation that changes a file's size is considered to put the file
-> +  in an invalid state, disabling access to the data. It may be possible to
-> +  revisit this in the future. (Typically the famfs user space can restore
-> +  files to a valid state by replaying the famfs metadata log.)
-> +
-> +Famfs exists to apply the existing file system abstractions to shared
-> +memory so applications and workflows can more easily adapt to an
-> +environment with disaggregated shared memory.
-> +
-> +Memory Error Handling
-> +=====================
-> +
-> +Possible memory errors include timeouts, poison and unexpected
+So if anyone has locked the inode before unlock_new_inode() is called,
+the lock is lost when i_rwsem is reinitialised.
 
-s/poison and/poison, and/
+The reproducer calls mkdir("a") and mkdir("a/b") concurrently from
+separate threads.  The second mkdir() often fails (I assume) because "a"
+cannot be found.  But if that second mkdir() runs just after gfs2 has
+called d_instantiate(), then the lookup of "a" will succeed and so the
+inode will be locked ready for mkdir..  Then the mkdir("a") completes
+calling unlock_new_inode() which reinitialised i_rwsem.  When
+mkdir("a/b") comes to lock the parent, it finds that it isn't locked any
+more.
 
-DJ
+There is non-trivial code between the d_instantiate() call and the
+unlock_new_inode() call which I do not understand.  So I will not
+propose a patch.  I don't know if that code should be after
+d_instantiate_new(), or before it.
 
-> +reconfiguration of an underlying dax device. In all of these cases, famfs
-> +receives a call from the devdax layer via its iomap_ops->notify_failure()
-> +function. If any memory errors have been detected, access to the affected
-> +daxdev is disabled to avoid further errors or corruption.
-> +
-> +In all known cases, famfs can be unmounted cleanly. In most cases errors
-> +can be cleared by re-initializing the memory - at which point a new famfs
-> +file system can be created.
-> +
-> +Key Requirements
-> +================
-> +
-> +The primary requirements for famfs are:
-> +
-> +1. Must support a file system abstraction backed by sharable devdax memory
-> +2. Files must efficiently handle VMA faults
-> +3. Must support metadata distribution in a sharable way
-> +4. Must handle clients with a stale copy of metadata
-> +
-> +The famfs kernel component takes care of 1-2 above by caching each file's
-> +mapping metadata in the kernel.
-> +
-> +Requirements 3 and 4 are handled by the user space components, and are
-> +largely orthogonal to the functionality of the famfs kernel module.
-> +
-> +Requirements 3 and 4 cannot be met by conventional fs-dax file systems
-> +(e.g. xfs) because they use write-back metadata; it is not valid to mount
-> +such a file system on two hosts from the same in-memory image.
-> +
-> +
-> +Famfs Usage
-> +===========
-> +
-> +Famfs usage is documented at [1].
-> +
-> +
-> +References
-> +==========
-> +
-> +- [1] Famfs user space repository and documentation
-> +      https://github.com/cxl-micron-reskit/famfs
-> diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-> index f4873197587d..e6fb467c1680 100644
-> --- a/Documentation/filesystems/index.rst
-> +++ b/Documentation/filesystems/index.rst
-> @@ -89,6 +89,7 @@ Documentation for filesystem implementations.
->     ext3
->     ext4/index
->     f2fs
-> +   famfs
->     gfs2/index
->     hfs
->     hfsplus
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 6f8a7c813c2f..43141ee4fd4e 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -10385,6 +10385,7 @@ M:	John Groves <John@Groves.net>
->  L:	linux-cxl@vger.kernel.org
->  L:	linux-fsdevel@vger.kernel.org
->  S:	Supported
-> +F:	Documentation/filesystems/famfs.rst
->  F:	fs/fuse/famfs.c
->  F:	fs/fuse/famfs_kfmap.h
->  
+So I'll leave that to Andreas.
 
+Thanks,
+NeilBrown
 
