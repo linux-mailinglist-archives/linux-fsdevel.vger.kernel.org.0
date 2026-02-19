@@ -1,128 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-77715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77716-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KBFgLx4fl2m9uwIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 15:33:02 +0100
+	id 2MTeGsAgl2nwuwIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77716-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 15:40:00 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2190E15F878
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 15:33:01 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB57715FA5C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 15:39:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 85BD53068F09
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 14:31:40 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 977CA303323C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 14:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A3B33F8BC;
-	Thu, 19 Feb 2026 14:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74501340295;
+	Thu, 19 Feb 2026 14:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OVaaqx93"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mgK9N2vG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF3233374F
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 14:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC7133FE34
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 14:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771511499; cv=none; b=peW3q3OjJ0gAIHq0JuoulSTA/RgjVl/2dDryjOK05ukgT8gkGvNJTu0wio3vCyNaIG7VzcYKM2qgdW5Q+s7S2O31htEJxChNpXNCbAa0fIeXuwVoyHY/Dc46kZxWDWa/3UxcKorH06zuFC3aAykvGFNVb2akB5Y1edNj5WVnjug=
+	t=1771511843; cv=none; b=e66GeV32EGMqYibIRTUdiNc4SRNk8b5vPNcJvgJsXGpRDI8PXXaLXhJDWrgeu10bNHOAzTemdMdk5H5dBLSl3gSV87zCV7Djn3eAlLZewXyER5spKnXZjJ7b09N0jfFr9gNpWx8xmm3oMScBvySTIDLTZkvWse8KFmrd7uY/E1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771511499; c=relaxed/simple;
-	bh=tiKZimpL/sJd3I+RYRg7iv8iq/JXXydVHMkEhmQtc/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GVh8aHR/svTlDVi4A80Aa4jrJtxfzqXYR8QcPXN4EH6Hr+Zw5fEq7VJ9yw6uYtvAiTFBn6Nr3WRh17mnvfkQvEGABR+V4e+/JSArasHPaL2WCN4djnXYdbUwhmgyz++gSZ326P+OabU8c75Tk+ULTYvzL+oTONcfI+Ib12fbO9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OVaaqx93; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4482C4CEF7;
-	Thu, 19 Feb 2026 14:31:37 +0000 (UTC)
+	s=arc-20240116; t=1771511843; c=relaxed/simple;
+	bh=DSPahkdo8ILvWgbqPcBLidO0ahLMj0bm+B9KJZLcXng=;
+	h=MIME-Version:Date:From:To:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=KjXPTn0jmQdT9NeXR2O4s50kvbzqcC0/1ZXFayxynFyh8eOHauJBHV0HqEIryQkzthd5n/GnSICMlpiRuojFjP5E1NHW3fNEOJ8SvWzKTxILV2ZEnYN89vfPfpIGTbjPe3517cp0Wa+GZCxfQJ4LeDhCVd0T1hh9HEQIT9/Cs80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mgK9N2vG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33817C116C6;
+	Thu, 19 Feb 2026 14:37:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771511499;
-	bh=tiKZimpL/sJd3I+RYRg7iv8iq/JXXydVHMkEhmQtc/s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OVaaqx93UnEx0HVCo++C6fPmTt4RqFUx+JjYXfV6Sk4uYwxs0auvRnZQExik4WZze
-	 JuGu0N5SJCMu91782PBVzj8ya6QVdNgtY49vrBR6vfsiLtQ3wq79MCwzUMICtuiXp4
-	 K6/7uUXZvzDFepBYDxcDX1FXQ7O6yKVB0cVxVso0wUkelY51dt+mEBCnmaif3MRG+T
-	 81anpEqIJV5OCUrvgpZCVHoCGkDyzO58G7e52AhqikuI9CeUVcXmQZxRZZoXyJLYx3
-	 CrtVyaPVbK98dlVZPE893k3eBbMthkKWu/28yaDXGchhS7lYCI/9LzLA+wRl5OabOT
-	 J9dVRao8Oc0RA==
-Date: Thu, 19 Feb 2026 15:31:35 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [LSF/MM/BPF TOPIC] Should we make inode->i_ino a u64?
-Message-ID: <20260219-portrait-winkt-959070cee42f@brauner>
-References: <08f8444c7237566ffb4ba8c9eb0ab4b4a5f14440.camel@kernel.org>
+	s=k20201202; t=1771511843;
+	bh=DSPahkdo8ILvWgbqPcBLidO0ahLMj0bm+B9KJZLcXng=;
+	h=Date:From:To:In-Reply-To:References:Subject:From;
+	b=mgK9N2vGT0j/gYwwuROJyc51CF9k9zZ/XdOM8E3/LiRluv0G4H1AkHnZ94Z5qd+kY
+	 tEMSoQmJudOevnK71f/KJ8UpQj/IhQPVCuHG0oAa9lsTYv/nPYL9XeTWuh55reh/69
+	 CR9nKnj/GQ/MH+EfFYCSS+rUL1UaIiqa2xS8wHF4D+zXRHoBNLUAaawsKabi8iKzVd
+	 X3IMAMQyr6wN9fQgsEJBo96rdU8W747tahfA2lNg0XhrR7uqGcBu9aOYcRwtM+poQ4
+	 9xkz149b6j09iZqwLRdqgZ5w9Mz0BX4KLYNODk1FLMd5VnfysIsHPHk5bcVq2A/BhF
+	 Grr2w2mWIT3mA==
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id F11C8F40068;
+	Thu, 19 Feb 2026 09:37:21 -0500 (EST)
+Received: from phl-imap-15 ([10.202.2.104])
+  by phl-compute-10.internal (MEProxy); Thu, 19 Feb 2026 09:37:22 -0500
+X-ME-Sender: <xms:ISCXaVq2GU4tF0_E43cqX7gcndxIw_m6wLgKAGif2z2cs1sY4BmybQ>
+    <xme:ISCXaSdUTl2Ge5gOdPsGG67kb7U5qQL7GwgvPUtZG1yqGaHZFryDIjTA4NX-E2oOK
+    xKrrbt8D0Wafe4w5dWGugm70pwjYeVBt5WwEFTjlNLWVAg46URNjm4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvvdehjeelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvffkjghfufgtgfesthejredtredttdenucfhrhhomhepfdevhhhutghk
+    ucfnvghvvghrfdcuoegtvghlsehkvghrnhgvlhdrohhrgheqnecuggftrfgrthhtvghrnh
+    epheehjeelgeffffeihfduudevudeghfehheefhffgueeluedufeetjeduhfdukeelnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheptghhuhgtkh
+    hlvghvvghrodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduieefgeelleel
+    heelqdefvdelkeeggedvfedqtggvlheppehkvghrnhgvlhdrohhrghesfhgrshhtmhgrih
+    hlrdgtohhmpdhnsggprhgtphhtthhopeefpdhmohguvgepshhmthhpohhuthdprhgtphht
+    thhopehlshhfqdhptgeslhhishhtshdrlhhinhhugidqfhhouhhnuggrthhiohhnrdhorh
+    hgpdhrtghpthhtohepthihthhsohesmhhithdrvgguuhdprhgtphhtthhopehlihhnuhig
+    qdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:ISCXaTOhbMvu8CZlz-kAPnHF4vbToDLtDgwqhnfWEOoObxhtGF3Qbg>
+    <xmx:ISCXaeH1qRWQ32rq8-znAIA7qnnKSzhxpW5kKGenZDKYDtblwa7HUw>
+    <xmx:ISCXaaPghCMDXpF-MRGqCZ2M9CizKgqKbHYoNuA1I45m6ieiLjKNyQ>
+    <xmx:ISCXaf_X2FQ4b_2lBd5v0vTWgk4G_XS0l6JHf0M1OCFlSThQyRm4Yw>
+    <xmx:ISCXaWQfYaFwwUnnNGW3gkrSdN_h-ch8prOb4O3EOl7TaUtQ22QQ4ESW>
+Feedback-ID: ifa6e4810:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id D1F13780070; Thu, 19 Feb 2026 09:37:21 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <08f8444c7237566ffb4ba8c9eb0ab4b4a5f14440.camel@kernel.org>
+X-ThreadId: AF-UQ4tyUUpo
+Date: Thu, 19 Feb 2026 09:37:01 -0500
+From: "Chuck Lever" <cel@kernel.org>
+To: "Theodore Tso" <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
+ lsf-pc@lists.linux-foundation.org
+Message-Id: <b62498ba-51d1-47c1-8657-b8d2f4dbd979@app.fastmail.com>
+In-Reply-To: <20260218150736.GD45984@macsyma-wired.lan>
+References: <20260218150736.GD45984@macsyma-wired.lan>
+Subject: Re: [LSF/MM/BPF TOPIC] File system testing
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [3.34 / 15.00];
-	MID_END_EQ_FROM_USER_PART(4.00)[];
+X-Spamd-Result: default: False [-2.15 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	SUBJECT_ENDS_QUESTION(1.00)[];
-	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	XM_UA_NO_VERSION(0.01)[];
+	TAGGED_FROM(0.00)[bounces-77716-lists,linux-fsdevel=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,app.fastmail.com:mid];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77715-lists,linux-fsdevel=lfdr.de];
+	RCPT_COUNT_THREE(0.00)[3];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	TO_DN_SOME(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[cel@kernel.org,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_FIVE(0.00)[6];
+	NEURAL_HAM(-0.00)[-0.999];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 2190E15F878
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: DB57715FA5C
 X-Rspamd-Action: no action
 
-On Wed, Feb 18, 2026 at 10:36:01AM -0500, Jeff Layton wrote:
-> For historical reasons, the inode->i_ino field is an unsigned long.
-> Because it's only 32 bits on 32-bit CPUs, this has caused a lot of fs-
-> specific hacks on filesystems that have native 64-bit inode numbers
-> when running a 32-bit arch.
-> 
-> It would be a lot simpler if we just converted i_ino to be 64-bits and
-> dealt with the conversion at the kernel's edges. This would be a non-
-> event for the most part on 64-bit arches since unsigned long is already
-> 64 bits there.
-> 
-> The kernel itself doesn't deal much with i_ino, so the internal changes
-> look fairly straightforward. The bulk of the patches will be to format
-> strings and to tracepoints.
-> 
-> I think that the biggest problem will be that this will grow struct
-> inode on 32-bit arches by at least 4 bytes. That may have cacheline
-> alignment and slab sizing implications. We're actively talking about
-> deprecating 32-bit arches in the future however, so maybe we can
-> rationalize that away.
 
-If you already have a Claude instance open you may want ask it to please
-find the last ten mails about 32-bit that Linus sent and what his
-opinions are about worrying about it when doing such changes... :)
+On Wed, Feb 18, 2026, at 10:07 AM, Theodore Tso wrote:
+> I'd like to propose a perennial favorite file system testing as a
+> topic for the FS track.  Topics to cover would include:
+>
+> 1) Standardizing test scenarios for various file systems.
+>
+>    I have test scenarios for ext4 and xfs in my test appliance (e.g.,
+>    4k, 64k, and 1k blocksizes, with fscrypt enabled, with dax enabled,
+>    etc.)  But I don't have those for other file systems, such as
+>    btrfs, etc.  It would be nice if this could be centrally documented
+>    some where, perhaps in the kernel sources?
+>
+> 2) Standardized way of expressing that certain tests are expected to
+>    fail for a given test scenario.  Ideally, we can encode this in
+>    xfstests upstream (an example of this is requiring metadata
+>    journalling for generic/388).  But in some cases the failure is
+>    very specific to a particular set of file system configurations,
+>    and it may vary depending on kernel version (e.g., a problem that
+>    was fixed in 6.6 and later LTS kernels, but it was too hard to
+>    backport to earlier LTS kernels).
+>
+> 3) Automating the use of tests to validate file system backports to
+>    LTS kernels, so that commits which might cause file system
+>    regressions can be automatically dropped from a LTS rc kernel.
 
-> FWIW, I had Claude spin up a plan to do this (attached). It's not bad.
-> I'm tempted to tell it generate patches for this, since this is mostly
-> a mechanical change, but I'm curious whether anyone else might have
-> reasons that we shouldn't go ahead and do it.
+As a subsystem maintainer of kdevops, I'm interested in the topic
+of shared FS testing infrastructure. These talking points seem
+relevant and valuable.
 
-Please just do it. I didn't have time to do it myself yet.
+
+-- 
+Chuck Lever
 
