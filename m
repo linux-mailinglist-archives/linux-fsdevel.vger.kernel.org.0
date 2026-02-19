@@ -1,58 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-77677-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77678-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UB53EJuqlmlViwIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77677-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 07:15:55 +0100
+	id yLAqNGOulmlkjQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77678-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 07:32:03 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D452715C5AC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 07:15:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6924E15C64F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 07:32:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C3100302C6D2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 06:15:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0FC7230136A1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 06:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7702DB79F;
-	Thu, 19 Feb 2026 06:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12712EF64F;
+	Thu, 19 Feb 2026 06:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kov+KwbH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RNZPzLij"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A92C226CFD;
-	Thu, 19 Feb 2026 06:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8951EB5F8;
+	Thu, 19 Feb 2026 06:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771481747; cv=none; b=gEGK4UOjp9fSc0PZZk1DoeK/EsJECsi9bvRMWPPqau+P6RmS7xxQVwYIPfH+MkoRvz0K3JGLc10DeOruXOXm7XgLNGHz7yoPEVuQDmsbgt8TkRJ21+RSlROgua5CkNhY1UaGhg0Cde7aSI7WdgVbF+JLNBiY5adk0vFip1L1p+M=
+	t=1771482709; cv=none; b=NPAPqR3t8sb3n8LRsg/1yMF364kvQzkvYHTzp5jEAcqD8rSlV3XlUz5Q6msuqgYRarWgIrjFTUVQEFdxzsVuha5Cg7XNVKMF+Cu0cnEc38Jgc58CNbMVR5CejLWBIyLkGlekQM8gCEFaEiYAy4wMmn4VN8B6bddXebDLjfg3yWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771481747; c=relaxed/simple;
-	bh=Tqx6M5MwcjMrvVzocPJ1OYpdPRpNbyMIqQdqD5ugIJc=;
+	s=arc-20240116; t=1771482709; c=relaxed/simple;
+	bh=0HX4J8Dqjk/eO9ijBN0eFtuJSD4xDBAQIR6xOfcZTZA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZRiF9tNoGhGW/AAt1J6C0JMzEM2iQn6DJMJi6bGuIrCpt1FzCKnlj9RZJA9aRwcoyWZjBW/9iOZSe6FiBtAn527V2wnxwLahYGTt1Rxba87k5Qhke61+7B+PihstAAAi8gsOTIPsLdqoaZPiakM8+g84QgDwvrvHn+/zBJ9s3v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kov+KwbH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8C55C4CEF7;
-	Thu, 19 Feb 2026 06:15:46 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=jneuyWvjVkVMplzp8iOM7Gn456hMuc1GCLHARKRmz5RC6Y+c3avYEvAasQ2aHM/X17WJFr2mQAsL7tvLUTzEBYQR712USOATHZl9uxj8KsSK8cYtOe2NPB85+rw9IXeusnkEEB8UGJMJeIvQWRoTyp6SMfUtyJMJqowniPl3RpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RNZPzLij; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0F05C4CEF7;
+	Thu, 19 Feb 2026 06:31:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771481746;
-	bh=Tqx6M5MwcjMrvVzocPJ1OYpdPRpNbyMIqQdqD5ugIJc=;
+	s=k20201202; t=1771482709;
+	bh=0HX4J8Dqjk/eO9ijBN0eFtuJSD4xDBAQIR6xOfcZTZA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kov+KwbHkCOhVQym68J1GjNhHgIDklZjTNMYq59/BYed+0nTMyu3HX+F/YISVy5mO
-	 sm5uSY6rZdZ1oMl4g/yxXVRzAk6Yk6XlTufZAtTXSFvU4VC749LXYiMVxlez35RqJO
-	 cKseYvSqzQ9O7ql0YqZajV5Wr/N5CtOmk5nSd71ZxISpkAKzjVi48Xq5vAlPq274TW
-	 iY9e95PqYh6eBgX27muZHU9jXL0Aqk4bJ/kdCNy8XWqyaWrWOyL/BJubzhTesBp29V
-	 ca4x6N+2X3yJ+e6DH0YrEw7TFuheg8fpJoafJ0uswZWV6U09hvcANR7GMzgXAAqMIE
-	 /TOvqWUS3ECmA==
-Date: Wed, 18 Feb 2026 22:15:46 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: cem@kernel.org
-Cc: hch@infradead.org, brauner@kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] fserror: fix lockdep complaint when igrabbing inode
-Message-ID: <20260219061546.GP6467@frogsfrogsfrogs>
-References: <177148129514.716249.10889194125495783768.stgit@frogsfrogsfrogs>
- <177148129564.716249.3069780698231701540.stgit@frogsfrogsfrogs>
+	b=RNZPzLijTHEDRBrPjNXbh8hR0rWIdeIkjxt0UeVC7oNOSxO7LTDD3FXlEVcpMuXOe
+	 rPqoE1Z0Z+aDhRKOn+RB8+CAIyss+to39eMZr9nQBK3ZLPq2UdX2sTLSbCFQ9nSvRc
+	 ty3XzoxLH0IwwNgSV6K6UO3sTPJquKEr/C7nDrxmVD5m5P5b8AGQEGOoTeE3Iw2Qxk
+	 t2WtyOxmokBFCmloXRpZhEM+pkrMS/SCXkwRllvl4tvqL0tAgBYY36xMIyOXRIyXbu
+	 6YWyL+GQAoNRO57yWb+f9tuza5RG9e8vMgEfvWxjjhcwpYWjHIXzVvwOIZtYgmdZW6
+	 ExAYUlzEeiWOQ==
+Date: Wed, 18 Feb 2026 22:30:59 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Andrey Albershteyn <aalbersh@redhat.com>,
+	Andrey Albershteyn <aalbersh@kernel.org>, linux-xfs@vger.kernel.org,
+	fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	djwong@kernel.org
+Subject: Re: [PATCH v3 06/35] fsverity: pass digest size and hash of the
+ empty block to ->write
+Message-ID: <20260219063059.GA13306@sol>
+References: <20260217231937.1183679-1-aalbersh@kernel.org>
+ <20260217231937.1183679-7-aalbersh@kernel.org>
+ <20260218061834.GB8416@lst.de>
+ <wl5dkpyqtmbdyc7w7v4kqiydpuemaccmivi37ebbzohn4bvcwo@iny5xh3qaqsq>
+ <20260219055857.GA3739@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,7 +67,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <177148129564.716249.3069780698231701540.stgit@frogsfrogsfrogs>
+In-Reply-To: <20260219055857.GA3739@lst.de>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
@@ -73,7 +79,7 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77677-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77678-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
@@ -81,189 +87,54 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	MISSING_XM_UA(0.00)[];
-	TO_DN_NONE(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-0.999];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[ebiggers@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,qemu.org:url,infradead.org:email]
-X-Rspamd-Queue-Id: D452715C5AC
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 6924E15C64F
 X-Rspamd-Action: no action
 
-On Wed, Feb 18, 2026 at 10:09:37PM -0800, Darrick J. Wong wrote:
-> From: Darrick J. Wong <djwong@kernel.org>
+On Thu, Feb 19, 2026 at 06:58:57AM +0100, Christoph Hellwig wrote:
+> On Wed, Feb 18, 2026 at 01:17:52PM +0100, Andrey Albershteyn wrote:
+> > On 2026-02-18 07:18:34, Christoph Hellwig wrote:
+> > > On Wed, Feb 18, 2026 at 12:19:06AM +0100, Andrey Albershteyn wrote:
+> > > > Let filesystem iterate over hashes in the block and check if these are
+> > > > hashes of zeroed data blocks. XFS will use this to decide if it want to
+> > > > store tree block full of these hashes.
+> > > 
+> > > Does it make sense to pass in the zero_digest vs just having a global
+> > > symbol or accessor?  This should be static information.
+> > 
+> > I think this won't work if we have two filesystems with different
+> > block sizes and therefore different merkle block sizes => different
+> > hash.
 > 
-> Christoph Hellwig reported a lockdep splat in generic/108:
-> 
->  ================================
->  WARNING: inconsistent lock state
->  6.19.0+ #4827 Tainted: G                 N
->  --------------------------------
->  inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-W} usage.
->  swapper/1/0 [HC1[1]:SC0[0]:HE0:SE1] takes:
->  ffff88811ed1b140 (&sb->s_type->i_lock_key#33){?.+.}-{3:3}, at: igrab+0x1a/0xb0
->  {HARDIRQ-ON-W} state was registered at:
->    lock_acquire+0xca/0x2c0
->    _raw_spin_lock+0x2e/0x40
->    unlock_new_inode+0x2c/0xc0
->    xfs_iget+0xcf4/0x1080
->    xfs_trans_metafile_iget+0x3d/0x100
->    xfs_metafile_iget+0x2b/0x50
->    xfs_mount_setup_metadir+0x20/0x60
->    xfs_mountfs+0x457/0xa60
->    xfs_fs_fill_super+0x6b3/0xa90
->    get_tree_bdev_flags+0x13c/0x1e0
->    vfs_get_tree+0x27/0xe0
->    vfs_cmd_create+0x54/0xe0
->    __do_sys_fsconfig+0x309/0x620
->    do_syscall_64+0x8b/0xf80
->    entry_SYSCALL_64_after_hwframe+0x76/0x7e
->  irq event stamp: 139080
->  hardirqs last  enabled at (139079): [<ffffffff813a923c>] do_idle+0x1ec/0x270
->  hardirqs last disabled at (139080): [<ffffffff828a8d09>] common_interrupt+0x19/0xe0
->  softirqs last  enabled at (139032): [<ffffffff8134a853>] __irq_exit_rcu+0xc3/0x120
->  softirqs last disabled at (139025): [<ffffffff8134a853>] __irq_exit_rcu+0xc3/0x120
-> 
->  other info that might help us debug this:
->   Possible unsafe locking scenario:
-> 
->         CPU0
->         ----
->    lock(&sb->s_type->i_lock_key#33);
->    <Interrupt>
->      lock(&sb->s_type->i_lock_key#33);
-> 
->   *** DEADLOCK ***
-> 
->  1 lock held by swapper/1/0:
->   #0: ffff8881052c81a0 (&vblk->vqs[i].lock){-.-.}-{3:3}, at: virtblk_done+0x4b/0x110
-> 
->  stack backtrace:
->  CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Tainted: G                 N  6.19.0+ #4827 PREEMPT(full)
->  Tainted: [N]=TEST
->  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.17.0-0-gb52ca86e094d-prebuilt.qemu.org 04/01/2014
->  Call Trace:
->   <IRQ>
->   dump_stack_lvl+0x5b/0x80
->   print_usage_bug.part.0+0x22c/0x2c0
->   mark_lock+0xa6f/0xe90
->   __lock_acquire+0x10b6/0x25e0
->   lock_acquire+0xca/0x2c0
->   _raw_spin_lock+0x2e/0x40
->   igrab+0x1a/0xb0
->   fserror_report+0x135/0x260
->   iomap_finish_ioend_buffered+0x170/0x210
->   clone_endio+0x8f/0x1c0
->   blk_update_request+0x1e4/0x4d0
->   blk_mq_end_request+0x1b/0x100
->   virtblk_done+0x6f/0x110
->   vring_interrupt+0x59/0x80
->   __handle_irq_event_percpu+0x8a/0x2e0
->   handle_irq_event+0x33/0x70
->   handle_edge_irq+0xdd/0x1e0
->   __common_interrupt+0x6f/0x180
->   common_interrupt+0xb7/0xe0
->   </IRQ>
-> 
-> It looks like the concern here is that inode::i_lock is sometimes taken
-> in IRQ context, and sometimes it is held when going to IRQ context,
-> though it's a little difficult to tell since I think this is a kernel
-> from after the actual 6.19 release but before 7.0-rc1.
-> 
-> Either way, we don't need to take i_lock, because filesystems should
-> not report files to fserror if they're about to be freed or have not
-> yet been exposed to other threads, because the resulting fsnotify report
-> will be meaningless.
-> 
-> Therefore, bump inode::i_count directly and clarify the preconditions on
-> the inode being passed in.
+> Looking at this a bit more - you're storing the entirely zero_digest
+> in struct merkle_tree_params, which is embedded intothe
+> fsverity_info.  This means that you can trivially access it using an
+> accessor of the fsverity_inode.
 
-...and now I realize that I got so hung up on email cc list composition
-that I neglected to notice that I forgot to update the commit message
-to say:
+Not in ->write_merkle_tree_block(), since that's called during
+FS_IOC_ENABLE_VERITY before the fsverity_info has been set.
 
-"Therefore, add the ioend to a queue and get an async worker to chug
-through the error events from process context with no filesystem locks
-already held."
+> It also means that you actually bloat that structure quite a bit for
+> constant file system wide information.  Maybe it's time to split
+> out the file system wide part of it into a separate structure?
 
-Let's hope I got the paperwork right this time, all this friction to
-amend minor mistakes are why I don't want to be here anymore. <grumble>
+The hash of a block of zeroes depends on the salt, which is a per-file
+value.  The salt is optional, though.
 
---D
+There is already another dynamic allocation done only for files that use
+a salt: merkle_tree_params::hashstate.
 
-> Link: https://lore.kernel.org/linux-fsdevel/aY7BndIgQg3ci_6s@infradead.org/
-> Reported-by: Christoph Hellwig <hch@infradead.org>
-> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> ---
->  fs/iomap/ioend.c |   46 ++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 46 insertions(+)
-> 
-> 
-> diff --git a/fs/iomap/ioend.c b/fs/iomap/ioend.c
-> index e4d57cb969f1bb..4d1ef8a2cee90b 100644
-> --- a/fs/iomap/ioend.c
-> +++ b/fs/iomap/ioend.c
-> @@ -69,11 +69,57 @@ static u32 iomap_finish_ioend_buffered(struct iomap_ioend *ioend)
->  	return folio_count;
->  }
->  
-> +static DEFINE_SPINLOCK(failed_ioend_lock);
-> +static LIST_HEAD(failed_ioend_list);
-> +
-> +static void
-> +iomap_fail_ioends(
-> +	struct work_struct	*work)
-> +{
-> +	struct iomap_ioend	*ioend;
-> +	struct list_head	tmp;
-> +	unsigned long		flags;
-> +
-> +	spin_lock_irqsave(&failed_ioend_lock, flags);
-> +	list_replace_init(&failed_ioend_list, &tmp);
-> +	spin_unlock_irqrestore(&failed_ioend_lock, flags);
-> +
-> +	while ((ioend = list_first_entry_or_null(&tmp, struct iomap_ioend,
-> +			io_list))) {
-> +		list_del_init(&ioend->io_list);
-> +		iomap_finish_ioend_buffered(ioend);
-> +		cond_resched();
-> +	}
-> +}
-> +
-> +static DECLARE_WORK(failed_ioend_work, iomap_fail_ioends);
-> +
-> +static void iomap_fail_ioend_buffered(struct iomap_ioend *ioend)
-> +{
-> +	unsigned long flags;
-> +
-> +	/*
-> +	 * Bounce I/O errors to a workqueue to avoid nested i_lock acquisitions
-> +	 * in the fserror code.  The caller no longer owns the ioend reference
-> +	 * after the spinlock drops.
-> +	 */
-> +	spin_lock_irqsave(&failed_ioend_lock, flags);
-> +	if (list_empty(&failed_ioend_list))
-> +		WARN_ON_ONCE(!schedule_work(&failed_ioend_work));
-> +	list_add_tail(&ioend->io_list, &failed_ioend_list);
-> +	spin_unlock_irqrestore(&failed_ioend_lock, flags);
-> +}
-> +
->  static void ioend_writeback_end_bio(struct bio *bio)
->  {
->  	struct iomap_ioend *ioend = iomap_ioend_from_bio(bio);
->  
->  	ioend->io_error = blk_status_to_errno(bio->bi_status);
-> +	if (ioend->io_error) {
-> +		iomap_fail_ioend_buffered(ioend);
-> +		return;
-> +	}
-> +
->  	iomap_finish_ioend_buffered(ioend);
->  }
->  
-> 
-> 
+The hash could be stored in that same allocation for salted files, or as
+a fixed value in struct fsverity_hash_alg for unsalted files.  Then at
+least unsalted files wouldn't use any additional memory per-file.
+
+- Eric
 
