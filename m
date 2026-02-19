@@ -1,62 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-77690-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GAMqH3rHlmkGmwIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77690-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 09:19:06 +0100
+	id YKjaHHXGlmkGmwIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 09:14:45 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C960D15D022
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 09:19:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF98C15CF53
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 09:14:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1E39F3031E9A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 08:09:36 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8B5AB3046009
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 08:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1455133507D;
-	Thu, 19 Feb 2026 08:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1B5334C28;
+	Thu, 19 Feb 2026 08:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="quhL+pIY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ayZU+im4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960022222B2;
-	Thu, 19 Feb 2026 08:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B5722E542A;
+	Thu, 19 Feb 2026 08:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771488574; cv=none; b=CAxzBP0tz+pGvN2w6GgN0HjsV4bYIvc65hrIVd71jN57xcS/tBCTb0OBIoWXUDSMuP6drSxTh0TOoH4YUJCExAFVuksq46zagKUf1udmvNj0GfpslklTVclji0n2Fn4ejzXbE0O66EwqYHq7rlnJW/xkpi82lFBDOLRhbhUPk00=
+	t=1771488693; cv=none; b=G0Oul8/Kv90nqC7xCWHXUsSR2YQs8Y5akenYgk6Z4VOszrZX5Jlnqz1MlaEuf76yLZNlCQUh/d2z3/DofgfkKAmrCZTpNw4uu1e8R6ce97Q61QQhLwhpahGzJ+2+Y61qcfPGAfpnlZdpLOvyHpXpn8iYYV90gUxUlz0loiwRj+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771488574; c=relaxed/simple;
-	bh=yhMVar4nIHmgs69JaNMjCmYfk4vX3AzkEmoK1e7RXS0=;
+	s=arc-20240116; t=1771488693; c=relaxed/simple;
+	bh=7icexeky2KEJ6ti91A5R1aDETfDVVhmL2w16BTjdRo4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oTy+YH1MrDDeS+XQqPyX1JcY1hPYhjNfh19miPUVh2QOAuQRJjyY5cH0gXIEdUmY4o/LpazFStgr1y9XFxtCirXE3tUSbxCNOE5xuXkvlFmQ/oA1fw03EQx0hyV8kWSE8ZPvaGo+o50S03H9WKQ6SIus11unTTXPWVKjLhvP+A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=quhL+pIY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42DAAC4CEF7;
-	Thu, 19 Feb 2026 08:09:32 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=TpYose6XxNsadJG9+be3zZnAlWfgXSgG/lx4k0jWomvC3FS9qhleC7mUlW2Lx2YYFyA+KBeQ3TBryDQQIMV91jvOBesP2twy5TGTxQxzeczjp5E3MS1MtUnOcLzcPPcknP9cp6YR0tBPgeR3hqlEFBfvzZGqa1ZZh2RyfuXn8ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ayZU+im4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81A61C4CEF7;
+	Thu, 19 Feb 2026 08:11:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771488574;
-	bh=yhMVar4nIHmgs69JaNMjCmYfk4vX3AzkEmoK1e7RXS0=;
+	s=k20201202; t=1771488692;
+	bh=7icexeky2KEJ6ti91A5R1aDETfDVVhmL2w16BTjdRo4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=quhL+pIYCUh71eAYtIMpqgZ6kQMAglJuy7bKKYNGr3EcY0bwqbVJm57D0wIZ3lcPc
-	 lF3LRRnT1nuNcu7snE+R4beR78PmcKGsXc+wpW3VPFy4D33E/QfutLPw2qEorYo9xm
-	 xVnUG21xHdrvdHwGe6TSg1VpQrRHbkQScDLNBlAOAYF1KnA1I+yskDF4DL9NA4dH/l
-	 w6X+8Lw1yYwumB/GRuzv4Zf0h0jvZXqa/6n0LweHYl/Yyroyh38RdKxs+pEjlMf8Ks
-	 6720Yc20il+QIZljVjdUhhSDPbVUBsPgRZZ1e+pTfyHZ9okakTWdCkKPg0vE30UPcA
-	 +8+dID4384Gbg==
-Date: Thu, 19 Feb 2026 09:09:29 +0100
+	b=ayZU+im4kHHFZYydsrcgoVE6r3kb6NIeJ0Rq2vu7/Rbcp6QAf0Vt/8g4fq15gepGc
+	 T/4aAuqgw99g03yDGMRLxW0veG9AZp6c7APMHBEOf2caBUksrgPTtd0a237/dlf6v8
+	 d3bElQeytlXUR6O0qP2MbL7drh0YJ+MhrXO+5swq7IoSWZqrw7ZfQrw0MV2uYaOp90
+	 BRuOYLWFY4e8Wt27Wiwyoh4SCDmyKDP1quUprbI+m9MWFNoNPlLgSuOGOxwTHalT+9
+	 KNgVffXnR9FU+hcozKdvlramwh+59FJnJmG7yQesOrhET1NJ+Mfuf3+W6utJfDuaqS
+	 r7FZPgA2y+qJg==
+Date: Thu, 19 Feb 2026 09:11:28 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: NeilBrown <neil@brown.name>
-Cc: syzbot <syzbot+0ea5108a1f5fb4fcc2d8@syzkaller.appspotmail.com>, 
-	gfs2@lists.linux.dev, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [gfs2?] WARNING in filename_mkdirat
-Message-ID: <20260219-kitzeln-vielmehr-22b6ce51bf5a@brauner>
-References: <6993b6a3.050a0220.340abe.0775.GAE@google.com>
- <>
- <20260217-fanshop-akteur-af571819f78b@brauner>
- <177131956603.8396.12634282713089317@noble.neil.brown.name>
- <177136673378.8396.7219915415554001211@noble.neil.brown.name>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: cem@kernel.org, hch@infradead.org, linux-xfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] fserror: fix lockdep complaint when igrabbing inode
+Message-ID: <20260219-variabel-nackt-a9ce89e670d5@brauner>
+References: <177148129514.716249.10889194125495783768.stgit@frogsfrogsfrogs>
+ <177148129564.716249.3069780698231701540.stgit@frogsfrogsfrogs>
+ <20260219061546.GP6467@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,95 +62,141 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <177136673378.8396.7219915415554001211@noble.neil.brown.name>
+In-Reply-To: <20260219061546.GP6467@frogsfrogsfrogs>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [4.84 / 15.00];
+X-Spamd-Result: default: False [2.34 / 15.00];
 	MID_END_EQ_FROM_USER_PART(4.00)[];
-	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=ac00553de86d6bf0];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77690-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	GREYLIST(0.00)[pass,body];
+	TAGGED_FROM(0.00)[bounces-77691-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
+	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,appspotmail.com:email,storage.googleapis.com:url];
+	FROM_HAS_DN(0.00)[];
 	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel,0ea5108a1f5fb4fcc2d8];
-	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
 	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Rspamd-Queue-Id: C960D15D022
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: CF98C15CF53
 X-Rspamd-Action: no action
 
-On Wed, Feb 18, 2026 at 09:18:53AM +1100, NeilBrown wrote:
-> On Tue, 17 Feb 2026, NeilBrown wrote:
-> > On Tue, 17 Feb 2026, Christian Brauner wrote:
-> > > On Mon, Feb 16, 2026 at 04:30:27PM -0800, syzbot wrote:
-> > > > Hello,
-> > > > 
-> > > > syzbot found the following issue on:
-> > > > 
-> > > > HEAD commit:    0f2acd3148e0 Merge tag 'm68knommu-for-v7.0' of git://git.k..
-> > > > git tree:       upstream
-> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=15331c02580000
-> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=ac00553de86d6bf0
-> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=0ea5108a1f5fb4fcc2d8
-> > > > compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
-> > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=146b295a580000
-> > > > 
-> > > > Downloadable assets:
-> > > > disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-0f2acd31.raw.xz
-> > > > vmlinux: https://storage.googleapis.com/syzbot-assets/b7d134e71e9c/vmlinux-0f2acd31.xz
-> > > > kernel image: https://storage.googleapis.com/syzbot-assets/b18643058ceb/bzImage-0f2acd31.xz
-> > > > mounted in repro: https://storage.googleapis.com/syzbot-assets/bbfed09077d3/mount_1.gz
-> > > >   fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=106b295a580000)
-> > > > 
-> > > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > > Reported-by: syzbot+0ea5108a1f5fb4fcc2d8@syzkaller.appspotmail.com
-> > > 
-> > > Neil, is this something you have time to look into?
+On Wed, Feb 18, 2026 at 10:15:46PM -0800, Darrick J. Wong wrote:
+> On Wed, Feb 18, 2026 at 10:09:37PM -0800, Darrick J. Wong wrote:
+> > From: Darrick J. Wong <djwong@kernel.org>
 > > 
-> > The reproducer appears to mount a gfs2 filesystem and mkdir 3
-> > directories:
-> >   ./file1
-> >   ./file1/file4
-> >   ./file1/file4/file7
+> > Christoph Hellwig reported a lockdep splat in generic/108:
 > > 
-> > and somewhere in there it crashes because vfs_mkdir() returns a
-> > non-error dentry for which ->d_parent->d_inode is not locked and
-> > end_creating_path() tries to up_write().
+> >  ================================
+> >  WARNING: inconsistent lock state
+> >  6.19.0+ #4827 Tainted: G                 N
+> >  --------------------------------
+> >  inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-W} usage.
+> >  swapper/1/0 [HC1[1]:SC0[0]:HE0:SE1] takes:
+> >  ffff88811ed1b140 (&sb->s_type->i_lock_key#33){?.+.}-{3:3}, at: igrab+0x1a/0xb0
+> >  {HARDIRQ-ON-W} state was registered at:
+> >    lock_acquire+0xca/0x2c0
+> >    _raw_spin_lock+0x2e/0x40
+> >    unlock_new_inode+0x2c/0xc0
+> >    xfs_iget+0xcf4/0x1080
+> >    xfs_trans_metafile_iget+0x3d/0x100
+> >    xfs_metafile_iget+0x2b/0x50
+> >    xfs_mount_setup_metadir+0x20/0x60
+> >    xfs_mountfs+0x457/0xa60
+> >    xfs_fs_fill_super+0x6b3/0xa90
+> >    get_tree_bdev_flags+0x13c/0x1e0
+> >    vfs_get_tree+0x27/0xe0
+> >    vfs_cmd_create+0x54/0xe0
+> >    __do_sys_fsconfig+0x309/0x620
+> >    do_syscall_64+0x8b/0xf80
+> >    entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> >  irq event stamp: 139080
+> >  hardirqs last  enabled at (139079): [<ffffffff813a923c>] do_idle+0x1ec/0x270
+> >  hardirqs last disabled at (139080): [<ffffffff828a8d09>] common_interrupt+0x19/0xe0
+> >  softirqs last  enabled at (139032): [<ffffffff8134a853>] __irq_exit_rcu+0xc3/0x120
+> >  softirqs last disabled at (139025): [<ffffffff8134a853>] __irq_exit_rcu+0xc3/0x120
 > > 
-> > Presumably either ->d_parent has changed or the inode was unlocked?
+> >  other info that might help us debug this:
+> >   Possible unsafe locking scenario:
 > > 
-> > gfs2_mkdir() never returns a dentry, so it must be returning NULL.
+> >         CPU0
+> >         ----
+> >    lock(&sb->s_type->i_lock_key#33);
+> >    <Interrupt>
+> >      lock(&sb->s_type->i_lock_key#33);
 > > 
-> > It's weird - but that is no surprise.
+> >   *** DEADLOCK ***
 > > 
-> > I'll try building a kernel myself and see if the reproducer still fires.
-> > if so some printk tracing my reveal something.
+> >  1 lock held by swapper/1/0:
+> >   #0: ffff8881052c81a0 (&vblk->vqs[i].lock){-.-.}-{3:3}, at: virtblk_done+0x4b/0x110
+> > 
+> >  stack backtrace:
+> >  CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Tainted: G                 N  6.19.0+ #4827 PREEMPT(full)
+> >  Tainted: [N]=TEST
+> >  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.17.0-0-gb52ca86e094d-prebuilt.qemu.org 04/01/2014
+> >  Call Trace:
+> >   <IRQ>
+> >   dump_stack_lvl+0x5b/0x80
+> >   print_usage_bug.part.0+0x22c/0x2c0
+> >   mark_lock+0xa6f/0xe90
+> >   __lock_acquire+0x10b6/0x25e0
+> >   lock_acquire+0xca/0x2c0
+> >   _raw_spin_lock+0x2e/0x40
+> >   igrab+0x1a/0xb0
+> >   fserror_report+0x135/0x260
+> >   iomap_finish_ioend_buffered+0x170/0x210
+> >   clone_endio+0x8f/0x1c0
+> >   blk_update_request+0x1e4/0x4d0
+> >   blk_mq_end_request+0x1b/0x100
+> >   virtblk_done+0x6f/0x110
+> >   vring_interrupt+0x59/0x80
+> >   __handle_irq_event_percpu+0x8a/0x2e0
+> >   handle_irq_event+0x33/0x70
+> >   handle_edge_irq+0xdd/0x1e0
+> >   __common_interrupt+0x6f/0x180
+> >   common_interrupt+0xb7/0xe0
+> >   </IRQ>
+> > 
+> > It looks like the concern here is that inode::i_lock is sometimes taken
+> > in IRQ context, and sometimes it is held when going to IRQ context,
+> > though it's a little difficult to tell since I think this is a kernel
+> > from after the actual 6.19 release but before 7.0-rc1.
+> > 
+> > Either way, we don't need to take i_lock, because filesystems should
+> > not report files to fserror if they're about to be freed or have not
+> > yet been exposed to other threads, because the resulting fsnotify report
+> > will be meaningless.
+> > 
+> > Therefore, bump inode::i_count directly and clarify the preconditions on
+> > the inode being passed in.
 > 
-> Unfortunately that didn't work out.
-> Using the provided vmlinux and root image and repro, and a syzkaller I
-> compiled from current git, I cannot trigger the crash.
-> 
-> I'll have another look at the code but I don't hold out a lot of hope.
+> ...and now I realize that I got so hung up on email cc list composition
 
-There's at least a proper C repro now.
+I honestly just use b4 prep --auto-to-cc
+
+> that I neglected to notice that I forgot to update the commit message
+> to say:
+> 
+> "Therefore, add the ioend to a queue and get an async worker to chug
+> through the error events from process context with no filesystem locks
+> already held."
+> 
+> Let's hope I got the paperwork right this time, all this friction to
+> amend minor mistakes are why I don't want to be here anymore. <grumble>
+
+You know, I can just add that for you when applying. :)
 
