@@ -1,202 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-77691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YKjaHHXGlmkGmwIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 09:14:45 +0100
+	id vEDNKkrNlmn4nwIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 09:43:54 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF98C15CF53
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 09:14:44 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0331C15D180
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 09:43:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8B5AB3046009
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 08:11:34 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 173223025288
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 08:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1B5334C28;
-	Thu, 19 Feb 2026 08:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD68335579;
+	Thu, 19 Feb 2026 08:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ayZU+im4"
+	dkim=pass (1024-bit key) header.d=dev.snart.me header.i=@dev.snart.me header.b="rPFCrolS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from embla.dev.snart.me (embla.dev.snart.me [54.252.183.203])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B5722E542A;
-	Thu, 19 Feb 2026 08:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE0933342E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 08:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.252.183.203
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771488693; cv=none; b=G0Oul8/Kv90nqC7xCWHXUsSR2YQs8Y5akenYgk6Z4VOszrZX5Jlnqz1MlaEuf76yLZNlCQUh/d2z3/DofgfkKAmrCZTpNw4uu1e8R6ce97Q61QQhLwhpahGzJ+2+Y61qcfPGAfpnlZdpLOvyHpXpn8iYYV90gUxUlz0loiwRj+w=
+	t=1771490627; cv=none; b=uAIVtNk4/sSoefwQbQUSj5VdxSFqjtJkvZHuzD53kQa0D46RWcX6Je8Sw3rs33TpOU0U/9YDkiDDtVuSFpABL7wD7oVMt8sm+5v2AQUfuSbbduleAAjhfAuBV7UorOX14vbWd7kWPf2B1eCi2Tn7jLGs4jZIT5KEg7n6EJYL90g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771488693; c=relaxed/simple;
-	bh=7icexeky2KEJ6ti91A5R1aDETfDVVhmL2w16BTjdRo4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TpYose6XxNsadJG9+be3zZnAlWfgXSgG/lx4k0jWomvC3FS9qhleC7mUlW2Lx2YYFyA+KBeQ3TBryDQQIMV91jvOBesP2twy5TGTxQxzeczjp5E3MS1MtUnOcLzcPPcknP9cp6YR0tBPgeR3hqlEFBfvzZGqa1ZZh2RyfuXn8ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ayZU+im4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81A61C4CEF7;
-	Thu, 19 Feb 2026 08:11:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771488692;
-	bh=7icexeky2KEJ6ti91A5R1aDETfDVVhmL2w16BTjdRo4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ayZU+im4kHHFZYydsrcgoVE6r3kb6NIeJ0Rq2vu7/Rbcp6QAf0Vt/8g4fq15gepGc
-	 T/4aAuqgw99g03yDGMRLxW0veG9AZp6c7APMHBEOf2caBUksrgPTtd0a237/dlf6v8
-	 d3bElQeytlXUR6O0qP2MbL7drh0YJ+MhrXO+5swq7IoSWZqrw7ZfQrw0MV2uYaOp90
-	 BRuOYLWFY4e8Wt27Wiwyoh4SCDmyKDP1quUprbI+m9MWFNoNPlLgSuOGOxwTHalT+9
-	 KNgVffXnR9FU+hcozKdvlramwh+59FJnJmG7yQesOrhET1NJ+Mfuf3+W6utJfDuaqS
-	 r7FZPgA2y+qJg==
-Date: Thu, 19 Feb 2026 09:11:28 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: cem@kernel.org, hch@infradead.org, linux-xfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] fserror: fix lockdep complaint when igrabbing inode
-Message-ID: <20260219-variabel-nackt-a9ce89e670d5@brauner>
-References: <177148129514.716249.10889194125495783768.stgit@frogsfrogsfrogs>
- <177148129564.716249.3069780698231701540.stgit@frogsfrogsfrogs>
- <20260219061546.GP6467@frogsfrogsfrogs>
+	s=arc-20240116; t=1771490627; c=relaxed/simple;
+	bh=wvreH4wYeiClgBCEQlG2bHdebpIem8UveWgwllGyGSM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gwwbii1OEvUPaUT2N6J5emrkN6QCGr+Syi5bK5Xj9WQzCopy7eX6h+0faNGJHCkWfK84u/HUAJJ+aGlWQovHyKkopWBGtx2T/alSSgSzv2ZiUFKSoETnAkbyw5wfrogOcbEdQjfoja9oin1ucfLK10WShwBjKOOGqlhrGAmqqPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=dev.snart.me; spf=pass smtp.mailfrom=dev.snart.me; dkim=pass (1024-bit key) header.d=dev.snart.me header.i=@dev.snart.me header.b=rPFCrolS; arc=none smtp.client-ip=54.252.183.203
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=dev.snart.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.snart.me
+Received: from embla.dev.snart.me (localhost [IPv6:::1])
+	by embla.dev.snart.me (Postfix) with ESMTP id 9D9491D49A;
+	Thu, 19 Feb 2026 08:43:38 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 embla.dev.snart.me 9D9491D49A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dev.snart.me; s=00;
+	t=1771490619; bh=wvreH4wYeiClgBCEQlG2bHdebpIem8UveWgwllGyGSM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rPFCrolSpN6gGqrhS3RnfHEpjAyAtrtyuxez2y7Hz8pGOUGG5Y2OJh4aMspmq1VA6
+	 kObumE/0wi+niKwTnClRKiPLa7S9GWpjZyVKZZaTce+dhyMxE+3/H6I4HkykDE0k54
+	 2Nu6oVFl7kBMYBFwI0pvg6MfFiPiNJnh1wSBU4iQ=
+Received: from [192.168.1.18] ([182.226.25.243])
+	by embla.dev.snart.me with ESMTPSA
+	id pC6vETrNlmnhQQIA8KYfjw
+	(envelope-from <dxdt@dev.snart.me>); Thu, 19 Feb 2026 08:43:38 +0000
+Message-ID: <8709a255-0c8e-40d8-ab75-b3ea974f5823@dev.snart.me>
+Date: Thu, 19 Feb 2026 17:43:30 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260219061546.GP6467@frogsfrogsfrogs>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] exfat: add fallocate support
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Sungjong Seo <sj1557.seo@samsung.com>,
+ Yuezhang Mo <yuezhang.mo@sony.com>
+References: <d0e5da23-90ed-4529-b919-11ae551611f3@dev.snart.me>
+ <CAKYAXd-oj5Aa4rccp4iESFgoVUyPq2v+u=2m1AM8KQPpaZOOGg@mail.gmail.com>
+From: David Timber <dxdt@dev.snart.me>
+Content-Language: en-US, ko
+Autocrypt: addr=dxdt@dev.snart.me; keydata=
+ xjMEYmJg1hYJKwYBBAHaRw8BAQdAf5E+ri1XLtjqYbZdHOyc8oS+1/XJ5bSlbx5WHXmVBZzN
+ IERhdmlkIFRpbWJlciA8ZHhkdEBkZXYuc25hcnQubWU+wpQEExYKADwWIQQn/Jn96EMUaIoF
+ X+T/ldyyrZpWaAUCYmJg1gIbAwULCQgHAgMiAgEGFQoJCAsCBBYCAwECHgcCF4AACgkQ/5Xc
+ sq2aVmjJZwD8COjPlUwccrlRvbNQ6f87DWchtYO0o8W2DNRM3RLps0EA/jEhIbRV6AsyC8jr
+ 30Ut3aJ3/mO/6G4sLj7OvkEEBH0MzjgEYmJg1hIKKwYBBAGXVQEFAQEHQFpgtIgaByv9lIEY
+ EmpavMO0pYjtu7TMJynwdnGYkN9LAwEIB8J4BBgWCgAgFiEEJ/yZ/ehDFGiKBV/k/5Xcsq2a
+ VmgFAmJiYNYCGwwACgkQ/5Xcsq2aVmhFCwEA0kM9VyYB4bLCM7+SuXUUH+5Ec99Nj4RXxFad
+ Key9GuwA/2BZK6bNyrLSfEk2JDRoskqf7OIL0wa6JOD5SrBnMe8E
+In-Reply-To: <CAKYAXd-oj5Aa4rccp4iESFgoVUyPq2v+u=2m1AM8KQPpaZOOGg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [2.34 / 15.00];
-	MID_END_EQ_FROM_USER_PART(4.00)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[dev.snart.me,reject];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
+	R_DKIM_ALLOW(-0.20)[dev.snart.me:s=00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77691-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
-	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
+	DKIM_TRACE(0.00)[dev.snart.me:+];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77692-lists,linux-fsdevel=lfdr.de];
+	RCPT_COUNT_THREE(0.00)[4];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
+	FROM_NEQ_ENVFROM(0.00)[dxdt@dev.snart.me,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	NEURAL_HAM(-0.00)[-0.999];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: CF98C15CF53
+X-Rspamd-Queue-Id: 0331C15D180
 X-Rspamd-Action: no action
 
-On Wed, Feb 18, 2026 at 10:15:46PM -0800, Darrick J. Wong wrote:
-> On Wed, Feb 18, 2026 at 10:09:37PM -0800, Darrick J. Wong wrote:
-> > From: Darrick J. Wong <djwong@kernel.org>
-> > 
-> > Christoph Hellwig reported a lockdep splat in generic/108:
-> > 
-> >  ================================
-> >  WARNING: inconsistent lock state
-> >  6.19.0+ #4827 Tainted: G                 N
-> >  --------------------------------
-> >  inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-W} usage.
-> >  swapper/1/0 [HC1[1]:SC0[0]:HE0:SE1] takes:
-> >  ffff88811ed1b140 (&sb->s_type->i_lock_key#33){?.+.}-{3:3}, at: igrab+0x1a/0xb0
-> >  {HARDIRQ-ON-W} state was registered at:
-> >    lock_acquire+0xca/0x2c0
-> >    _raw_spin_lock+0x2e/0x40
-> >    unlock_new_inode+0x2c/0xc0
-> >    xfs_iget+0xcf4/0x1080
-> >    xfs_trans_metafile_iget+0x3d/0x100
-> >    xfs_metafile_iget+0x2b/0x50
-> >    xfs_mount_setup_metadir+0x20/0x60
-> >    xfs_mountfs+0x457/0xa60
-> >    xfs_fs_fill_super+0x6b3/0xa90
-> >    get_tree_bdev_flags+0x13c/0x1e0
-> >    vfs_get_tree+0x27/0xe0
-> >    vfs_cmd_create+0x54/0xe0
-> >    __do_sys_fsconfig+0x309/0x620
-> >    do_syscall_64+0x8b/0xf80
-> >    entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> >  irq event stamp: 139080
-> >  hardirqs last  enabled at (139079): [<ffffffff813a923c>] do_idle+0x1ec/0x270
-> >  hardirqs last disabled at (139080): [<ffffffff828a8d09>] common_interrupt+0x19/0xe0
-> >  softirqs last  enabled at (139032): [<ffffffff8134a853>] __irq_exit_rcu+0xc3/0x120
-> >  softirqs last disabled at (139025): [<ffffffff8134a853>] __irq_exit_rcu+0xc3/0x120
-> > 
-> >  other info that might help us debug this:
-> >   Possible unsafe locking scenario:
-> > 
-> >         CPU0
-> >         ----
-> >    lock(&sb->s_type->i_lock_key#33);
-> >    <Interrupt>
-> >      lock(&sb->s_type->i_lock_key#33);
-> > 
-> >   *** DEADLOCK ***
-> > 
-> >  1 lock held by swapper/1/0:
-> >   #0: ffff8881052c81a0 (&vblk->vqs[i].lock){-.-.}-{3:3}, at: virtblk_done+0x4b/0x110
-> > 
-> >  stack backtrace:
-> >  CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Tainted: G                 N  6.19.0+ #4827 PREEMPT(full)
-> >  Tainted: [N]=TEST
-> >  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.17.0-0-gb52ca86e094d-prebuilt.qemu.org 04/01/2014
-> >  Call Trace:
-> >   <IRQ>
-> >   dump_stack_lvl+0x5b/0x80
-> >   print_usage_bug.part.0+0x22c/0x2c0
-> >   mark_lock+0xa6f/0xe90
-> >   __lock_acquire+0x10b6/0x25e0
-> >   lock_acquire+0xca/0x2c0
-> >   _raw_spin_lock+0x2e/0x40
-> >   igrab+0x1a/0xb0
-> >   fserror_report+0x135/0x260
-> >   iomap_finish_ioend_buffered+0x170/0x210
-> >   clone_endio+0x8f/0x1c0
-> >   blk_update_request+0x1e4/0x4d0
-> >   blk_mq_end_request+0x1b/0x100
-> >   virtblk_done+0x6f/0x110
-> >   vring_interrupt+0x59/0x80
-> >   __handle_irq_event_percpu+0x8a/0x2e0
-> >   handle_irq_event+0x33/0x70
-> >   handle_edge_irq+0xdd/0x1e0
-> >   __common_interrupt+0x6f/0x180
-> >   common_interrupt+0xb7/0xe0
-> >   </IRQ>
-> > 
-> > It looks like the concern here is that inode::i_lock is sometimes taken
-> > in IRQ context, and sometimes it is held when going to IRQ context,
-> > though it's a little difficult to tell since I think this is a kernel
-> > from after the actual 6.19 release but before 7.0-rc1.
-> > 
-> > Either way, we don't need to take i_lock, because filesystems should
-> > not report files to fserror if they're about to be freed or have not
-> > yet been exposed to other threads, because the resulting fsnotify report
-> > will be meaningless.
-> > 
-> > Therefore, bump inode::i_count directly and clarify the preconditions on
-> > the inode being passed in.
-> 
-> ...and now I realize that I got so hung up on email cc list composition
+> Unlike before, I am no longer in favor of adding this logic to
+> evict_inode. One major concern is the potential for cluster leaks if a
+> device is unplugged while a file is still open. Instead, We can
+> sufficiently minimize fragmentation in applications like camera apps
+> by utilizing fallocate with mode 0. If there is any unused
+> pre-allocated space after the recording or write operation is
+> finished, the application can simply call ftruncate() to reclaim it.
+I agree, as stated in the doc change. Not a good look.
 
-I honestly just use b4 prep --auto-to-cc
+Would you meet the half way by dropping KEEP_SIZE support, then? The
+regular fallocate op can be treated as ftruncate which has already been
+the behaviour for a long time - just call exfat_cont_expand() in
+exfat_fallocate().
 
-> that I neglected to notice that I forgot to update the commit message
-> to say:
-> 
-> "Therefore, add the ioend to a queue and get an async worker to chug
-> through the error events from process context with no filesystem locks
-> already held."
-> 
-> Let's hope I got the paperwork right this time, all this friction to
-> amend minor mistakes are why I don't want to be here anymore. <grumble>
-
-You know, I can just add that for you when applying. :)
+exfatprogs still needs to be able to reclaim the orphaned clusters,
+though. That's still a very likely scenario, especially on the devices
+that run on batteries.
 
