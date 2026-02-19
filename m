@@ -1,264 +1,549 @@
-Return-Path: <linux-fsdevel+bounces-77743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id MO9eKZqEl2mUzgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 22:46:02 +0100
+	id IKjAHDmFl2mwzgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 22:48:41 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBDDE162ED6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 22:46:01 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE41E162F22
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 22:48:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2E61F30214E0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 21:45:54 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 29F1B304C4BE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 21:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACAEE326938;
-	Thu, 19 Feb 2026 21:45:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E29032AAD8;
+	Thu, 19 Feb 2026 21:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="I0cnulyW";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DYF/8y9Z"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZJvm/R/F"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA9E15539A;
-	Thu, 19 Feb 2026 21:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E94E329E62;
+	Thu, 19 Feb 2026 21:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771537549; cv=none; b=lgoeULTN1JTP+FXJP2papq8eS6TPsWBKopW15xncpiOkYQM+qaASIsgT3xFOmcxYLhXn2lGUeQwLdXnv4JIXwOwgIm8HRYHxvZd26NOWnHMFKrGXTRWtg6Ml4Mqs+uHVOoBMMFqUuhRecHb9Yk2L6uDNzEQSQ1bGXQYGlVYg0cI=
+	t=1771537667; cv=none; b=MIqdVfPg57W5WfZrKIbRUi45W8SuxBkA5ZI3OpN14BFYl22rmoqvBCjJBmtrF4XGVuUEW+GNFP7GYE/4l6438qyv6RA9t+NEw2J29tPTsXWbUfF6fF6IwrmNt1xinbRpkTX81b3YIy9+UZo5ATbIrusXyIPvNb6V4g5Q3jOTkpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771537549; c=relaxed/simple;
-	bh=ly3qBAXwjEhv+qeI0w00JXn+ZbeKzuvxdcn+WjKFB0w=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=BRh0VnTupoiNf8XJnwpID56zTyFKGN1mCvjaJJaqj4G+QZZd4kfzoK4VPr0MKDIfU7aZn5gZQ8NQmRfTkFWVFmqL7gp3zXs2hCmsQSGo3uVI4YZWiAsG8YqrBbtLuLyw6tpZ+pgra+eNWYcBtmd3+x7AaEruqwL+NPfo58k9N1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=I0cnulyW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DYF/8y9Z; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id DA21F14000F3;
-	Thu, 19 Feb 2026 16:45:46 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Thu, 19 Feb 2026 16:45:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
-	1771537546; x=1771623946; bh=lM6k202zrI0eU9oty7kDeQMYg4/NxTHQwl4
-	SflOk00U=; b=I0cnulyWNAZIF6IrlT4b4m4yRr/BYmbXLIsroJtCztSOJi3XGky
-	fGlj22M2hnJMxpr3B3fU8UOWFsd8h3D8h8H/zwYNg0059YuENYmxoqK4gmAmyB9Y
-	PQ35ZudKFk7KZUVgSlXCiztmjVXKoMH9b0xJJuu7rYZKLfoBUQ4o4VSx+bsXY/Ra
-	oPZa2XGsPTqRX+xnbOd4tsiF3pTR6s/tv9/uQ84FOyRIFgYsh1kkcjbFHRGJYFPc
-	XaHJ2TqpKjE4A3A1JUZCYsA061GdbzeJZMdR2WcFYI8ciO6Siv4GVfVHgqGztYnw
-	QqWkW2GNX2OpXILDGVAd85cIHa1USArvong==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1771537546; x=
-	1771623946; bh=lM6k202zrI0eU9oty7kDeQMYg4/NxTHQwl4SflOk00U=; b=D
-	YF/8y9ZN616sV7XznnjNFyTVFYK1WIS9L39eM4bFbUTNXUJmcroIN6N3v5AtJIsb
-	BkJ2O5JJfwYhrYuoXNLISVUxxdd/7rf3DqMZFlN7c3hcVb5oDc2HxHNgQnn+ik/8
-	rBJQk5WzpzBzDJhORg1it+nVhbCNAK41HOhCAEdwQ5Q4jSvie94L3ZcpqkWC+Qog
-	jomZG+UXZ3pJJuwmJc378lMRVcGWMHrCkkmJ/cznSg8Mn5k3RnufGloZV6zYpwAi
-	VTmmhYzhBwunvCsK9XNcOqLuK6yrJJDeWKeRDjK32uQMkJF3nZIClk5piQZKxd5M
-	J/VMw/Or9t8GyTUPFKm2w==
-X-ME-Sender: <xms:ioSXaSxYEujFP8A-yLDa9UO9hFBTw1RR_nxavO9d7CIoHM7qGAEudw>
-    <xme:ioSXaUSKmZTuoxuhEr9ss6vHJPumjE0PFk2lJdezEI3CfzW1ApjlgxG6Elz4b0Hys
-    dhYLfF04YUuRG-iqDMhm4Qfzwm2NNIj2ncUQ7Me2sGgEC_fqg>
-X-ME-Received: <xmr:ioSXafJfCTr7Y2BhdkGK-kCOFSD6N2OKc8NXTSStxBtP4xQrEWbmtHfNp_BVi5HDjfduDKWVy6QmGi0ext0hRw7AAQwjHUw8MbE3ugEiXI-j>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvvdeiieehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegouf
-    hushhpvggtthffohhmrghinhculdegledmnecujfgurheptgfgggfhvfevufgjfhffkfhr
-    sehtqhertddttdejnecuhfhrohhmpefpvghilheurhhofihnuceonhgvihhlsgesohifnh
-    hmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffhfffkeegjeejtdffueekjeff
-    feeljedtvdekveduuddtudeiieeuhefhheehnecuffhomhgrihhnpehshiiikhgrlhhlvg
-    hrrdgrphhpshhpohhtrdgtohhmpdhgohhoghhlvggrphhishdrtghomhenucevlhhushht
-    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgssehofihnmh
-    grihhlrdhnvghtpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgt
-    phhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtoh
-    eplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
-    oheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehshiiisghothdotdgvrgehuddtkegrudhfhehfsgegfhgttgdvugeksehshiii
-    khgrlhhlvghrrdgrphhpshhpohhtmhgrihhlrdgtohhmpdhrtghpthhtohepjhgrtghkse
-    hsuhhsvgdrtgiipdhrtghpthhtoheprghgrhhuvghnsggrsehrvgguhhgrthdrtghomhdp
-    rhgtphhtthhopehgfhhsvdeslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhope
-    gsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehshiiikhgrlhhlvghr
-    qdgsuhhgshesghhoohhglhgvghhrohhuphhsrdgtohhm
-X-ME-Proxy: <xmx:ioSXabVWuzMljQtrK0f7VEYQp-msGrknKv_j6yvZjdZGXBZEaE4c3Q>
-    <xmx:ioSXaTRLAcXaoKX9RMm9F_Ly48T5KO3nblbExThquf47UME5j1PniA>
-    <xmx:ioSXaTBDhtlFnGVVFjSvBewbborAa_8KJKvNhsfJzOYVpXcX7cQL4g>
-    <xmx:ioSXaSL_FcZ0l55PDLvqfnE9bPc5hwNDCyiNerEYNv9pZASi5ubnVg>
-    <xmx:ioSXaYyhpsFOG_2284PyGcEsd7EKQeqAdu18mxifedb_BfbfkpIN4NnI>
-Feedback-ID: i9d664b8f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 19 Feb 2026 16:45:43 -0500 (EST)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1771537667; c=relaxed/simple;
+	bh=VhveE971Wol08NHrou9PFE3GW2B0Q08SyEFuYI0D+ec=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=koypskj43tesxgf09XFr2S7sNzl6lq8rzF4OYvs96Fjwi5lTDIDGjFZtVM6Yb23xEjAAZwk9r97TTaXlytS1ZX7OBpl5yddCo1GH5WG784qobW9vCQ8mGOSqSV8B/pzsEv3K8i45hliV4q8KWRJf3H55MbYxCSWzWtFbyyDSXZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZJvm/R/F; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1771537666; x=1803073666;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=VhveE971Wol08NHrou9PFE3GW2B0Q08SyEFuYI0D+ec=;
+  b=ZJvm/R/FotSJ5KZxfioql5mmw6jjuFAbjSf38JH5nL848WfVllWJ4pu+
+   Cayuys4FPqT1qoIo+ZsLbnOZCEsRqo948t3mSqrY/LbrlNI52ASy0DRxJ
+   pFTi2ORhiHhvrx9A9j8awvFOZMX5Rxz3a5Q4aBhmtahbRrDckvnm+Ujc4
+   YrVHND/yp6JvxpGYJ/6ja8h/PGZrcAVsspEvSE7nAqQVpX5WFaCH52aQn
+   N/VDO9HP5SbC7/14OJ3/bpjYpnNsiYJ0B4PgMIFpcdh6lm9eVyQsaPw6K
+   aZ0wD0l4XHMk7b0XbykjlVFoPq70xg9nlLS6i4xuJznRTOxm6OV0H7ZhR
+   A==;
+X-CSE-ConnectionGUID: KbDTSnW8SVC/rwVswnUaaw==
+X-CSE-MsgGUID: +kQQW5jMRWCPqzdxtd5xyg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11706"; a="76251294"
+X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; 
+   d="scan'208";a="76251294"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2026 13:47:45 -0800
+X-CSE-ConnectionGUID: y/tUrnZ9TZ+cEs+cK5kDrQ==
+X-CSE-MsgGUID: 8znDFJuQTzScyR2OV9OTjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; 
+   d="scan'208";a="219670182"
+Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.110.20]) ([10.125.110.20])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2026 13:47:43 -0800
+Message-ID: <2de8faba-2157-44b3-8983-c239776f1c98@intel.com>
+Date: Thu, 19 Feb 2026 14:47:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Christian Brauner" <brauner@kernel.org>,
- Andreas Gruenbacher <agruenba@redhat.com>, gfs2@lists.linux.dev
-Cc: "syzbot" <syzbot+0ea5108a1f5fb4fcc2d8@syzkaller.appspotmail.com>,
- gfs2@lists.linux.dev, jack@suse.cz, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
- viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [gfs2?] WARNING in filename_mkdirat
-In-reply-to: <20260219-kitzeln-vielmehr-22b6ce51bf5a@brauner>
-References: <6993b6a3.050a0220.340abe.0775.GAE@google.com>, <>,
- <20260217-fanshop-akteur-af571819f78b@brauner>,
- <177131956603.8396.12634282713089317@noble.neil.brown.name>,
- <177136673378.8396.7219915415554001211@noble.neil.brown.name>,
- <20260219-kitzeln-vielmehr-22b6ce51bf5a@brauner>
-Date: Fri, 20 Feb 2026 08:45:40 +1100
-Message-id: <177153754005.8396.8777398743501764194@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 1/2] daxctl: Add support for famfs mode
+To: John Groves <john@jagalactic.com>, John Groves <John@Groves.net>,
+ Miklos Szeredi <miklos@szeredi.hu>, Dan Williams <dan.j.williams@intel.com>,
+ Bernd Schubert <bschubert@ddn.com>,
+ Alison Schofield <alison.schofield@intel.com>
+Cc: John Groves <jgroves@micron.com>, John Groves <jgroves@fastmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>,
+ Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ David Hildenbrand <david@kernel.org>, Christian Brauner
+ <brauner@kernel.org>, "Darrick J . Wong" <djwong@kernel.org>,
+ Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>,
+ Amir Goldstein <amir73il@gmail.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong
+ <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
+ Bagas Sanjaya <bagasdotme@gmail.com>, James Morse <james.morse@arm.com>,
+ Fuad Tabba <tabba@google.com>, Sean Christopherson <seanjc@google.com>,
+ Shivank Garg <shivankg@amd.com>, Ackerley Tng <ackerleytng@google.com>,
+ Gregory Price <gourry@gourry.net>, Aravind Ramesh <arramesh@micron.com>,
+ Ajay Joshi <ajayjoshi@micron.com>,
+ "venkataravis@micron.com" <venkataravis@micron.com>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
+ "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <0100019bd34040d9-0b6e9e4c-ecd4-464d-ab9d-88a251215442-000000@email.amazonses.com>
+ <20260118223629.92852-1-john@jagalactic.com>
+ <0100019bd340cdd5-89036a70-3ef5-4c34-abf8-07a3ea4d9f92-000000@email.amazonses.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <0100019bd340cdd5-89036a70-3ef5-4c34-abf8-07a3ea4d9f92-000000@email.amazonses.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.34 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=ac00553de86d6bf0];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[ownmail.net,none];
-	R_DKIM_ALLOW(-0.20)[ownmail.net:s=fm3,messagingengine.com:s=fm3];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77743-lists,linux-fsdevel=lfdr.de];
-	REPLYTO_DN_EQ_FROM_DN(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[ownmail.net:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,noble.neil.brown.name:mid,syzkaller.appspot.com:url,storage.googleapis.com:url];
-	REPLYTO_DOM_NEQ_FROM_DOM(0.00)[];
-	FREEMAIL_FROM(0.00)[ownmail.net];
-	RCVD_TLS_LAST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[ownmail.net:+,messagingengine.com:+];
+	RCPT_COUNT_TWELVE(0.00)[38];
+	FREEMAIL_CC(0.00)[micron.com,fastmail.com,lwn.net,intel.com,infradead.org,suse.cz,zeniv.linux.org.uk,kernel.org,gmail.com,huawei.com,redhat.com,toxicpanda.com,arm.com,google.com,amd.com,gourry.net,vger.kernel.org,lists.linux.dev];
+	TAGGED_FROM(0.00)[bounces-77744-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	DKIM_TRACE(0.00)[intel.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	HAS_REPLYTO(0.00)[neil@brown.name];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	FROM_NEQ_ENVFROM(0.00)[neilb@ownmail.net,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[dave.jiang@intel.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCVD_COUNT_FIVE(0.00)[5];
+	MID_RHS_MATCH_FROM(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[linux-fsdevel,0ea5108a1f5fb4fcc2d8];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Rspamd-Queue-Id: EBDDE162ED6
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[groves.net:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,intel.com:mid,intel.com:dkim]
+X-Rspamd-Queue-Id: EE41E162F22
 X-Rspamd-Action: no action
 
 
-[gfs2 maintainer an list added  - Hi Andreas!]
 
-On Thu, 19 Feb 2026, Christian Brauner wrote:
-> On Wed, Feb 18, 2026 at 09:18:53AM +1100, NeilBrown wrote:
-> > On Tue, 17 Feb 2026, NeilBrown wrote:
-> > > On Tue, 17 Feb 2026, Christian Brauner wrote:
-> > > > On Mon, Feb 16, 2026 at 04:30:27PM -0800, syzbot wrote:
-> > > > > Hello,
-> > > > >=20
-> > > > > syzbot found the following issue on:
-> > > > >=20
-> > > > > HEAD commit:    0f2acd3148e0 Merge tag 'm68knommu-for-v7.0' of git:=
-//git.k..
-> > > > > git tree:       upstream
-> > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D15331c0=
-2580000
-> > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dac00553=
-de86d6bf0
-> > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=3D0ea5108a1=
-f5fb4fcc2d8
-> > > > > compiler:       Debian clang version 21.1.8 (++20251221033036+2078d=
-a43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
-> > > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D146b2=
-95a580000
-> > > > >=20
-> > > > > Downloadable assets:
-> > > > > disk image (non-bootable): https://storage.googleapis.com/syzbot-as=
-sets/d900f083ada3/non_bootable_disk-0f2acd31.raw.xz
-> > > > > vmlinux: https://storage.googleapis.com/syzbot-assets/b7d134e71e9c/=
-vmlinux-0f2acd31.xz
-> > > > > kernel image: https://storage.googleapis.com/syzbot-assets/b1864305=
-8ceb/bzImage-0f2acd31.xz
-> > > > > mounted in repro: https://storage.googleapis.com/syzbot-assets/bbfe=
-d09077d3/mount_1.gz
-> > > > >   fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=
-=3D106b295a580000)
-> > > > >=20
-> > > > > IMPORTANT: if you fix the issue, please add the following tag to th=
-e commit:
-> > > > > Reported-by: syzbot+0ea5108a1f5fb4fcc2d8@syzkaller.appspotmail.com
-> > > >=20
-> > > > Neil, is this something you have time to look into?
-> > >=20
-> > > The reproducer appears to mount a gfs2 filesystem and mkdir 3
-> > > directories:
-> > >   ./file1
-> > >   ./file1/file4
-> > >   ./file1/file4/file7
-> > >=20
-> > > and somewhere in there it crashes because vfs_mkdir() returns a
-> > > non-error dentry for which ->d_parent->d_inode is not locked and
-> > > end_creating_path() tries to up_write().
-> > >=20
-> > > Presumably either ->d_parent has changed or the inode was unlocked?
-> > >=20
-> > > gfs2_mkdir() never returns a dentry, so it must be returning NULL.
-> > >=20
-> > > It's weird - but that is no surprise.
-> > >=20
-> > > I'll try building a kernel myself and see if the reproducer still fires.
-> > > if so some printk tracing my reveal something.
-> >=20
-> > Unfortunately that didn't work out.
-> > Using the provided vmlinux and root image and repro, and a syzkaller I
-> > compiled from current git, I cannot trigger the crash.
-> >=20
-> > I'll have another look at the code but I don't hold out a lot of hope.
->=20
-> There's at least a proper C repro now.
->=20
+On 1/18/26 3:36 PM, John Groves wrote:
+> From: John Groves <John@Groves.net>
+> 
+> Putting a daxdev in famfs mode means binding it to fsdev_dax.ko
+> (drivers/dax/fsdev.c). Finding a daxdev bound to fsdev_dax means
+> it is in famfs mode.
+> 
+> The test is added to the destructive test suite since it
+> modifies device modes.
+> 
+> With devdax, famfs, and system-ram modes, the previous logic that assumed
+> 'not in mode X means in mode Y' needed to get slightly more complicated
+> 
+> Add explicit mode detection functions:
+> - daxctl_dev_is_famfs_mode(): check if bound to fsdev_dax driver
+> - daxctl_dev_is_devdax_mode(): check if bound to device_dax driver
+> 
+> Fix mode transition logic in device.c:
+> - disable_devdax_device(): verify device is actually in devdax mode
+> - disable_famfs_device(): verify device is actually in famfs mode
+> - All reconfig_mode_*() functions now explicitly check each mode
+> - Handle unknown mode with error instead of wrong assumption
+> 
+> Modify json.c to show 'unknown' if device is not in a recognized mode.
+> 
+> Signed-off-by: John Groves <john@groves.net>
+> ---
+>  daxctl/device.c                | 126 ++++++++++++++++++++++++++++++---
+>  daxctl/json.c                  |   6 +-
+>  daxctl/lib/libdaxctl-private.h |   2 +
+>  daxctl/lib/libdaxctl.c         |  77 ++++++++++++++++++++
+>  daxctl/lib/libdaxctl.sym       |   7 ++
+>  daxctl/libdaxctl.h             |   3 +
+>  6 files changed, 210 insertions(+), 11 deletions(-)
+> 
+> diff --git a/daxctl/device.c b/daxctl/device.c
+> index e3993b1..14e1796 100644
+> --- a/daxctl/device.c
+> +++ b/daxctl/device.c
+> @@ -42,6 +42,7 @@ enum dev_mode {
+>  	DAXCTL_DEV_MODE_UNKNOWN,
+>  	DAXCTL_DEV_MODE_DEVDAX,
+>  	DAXCTL_DEV_MODE_RAM,
+> +	DAXCTL_DEV_MODE_FAMFS,
+>  };
+>  
+>  struct mapping {
+> @@ -471,6 +472,13 @@ static const char *parse_device_options(int argc, const char **argv,
+>  					"--no-online is incompatible with --mode=devdax\n");
+>  				rc =  -EINVAL;
+>  			}
+> +		} else if (strcmp(param.mode, "famfs") == 0) {
+> +			reconfig_mode = DAXCTL_DEV_MODE_FAMFS;
+> +			if (param.no_online) {
+> +				fprintf(stderr,
+> +					"--no-online is incompatible with --mode=famfs\n");
+> +				rc =  -EINVAL;
+> +			}
+>  		}
+>  		break;
+>  	case ACTION_CREATE:
+> @@ -696,8 +704,42 @@ static int disable_devdax_device(struct daxctl_dev *dev)
+>  	int rc;
+>  
+>  	if (mem) {
+> -		fprintf(stderr, "%s was already in system-ram mode\n",
+> -			devname);
+> +		fprintf(stderr, "%s is in system-ram mode\n", devname);
+> +		return 1;
+> +	}
+> +	if (daxctl_dev_is_famfs_mode(dev)) {
+> +		fprintf(stderr, "%s is in famfs mode\n", devname);
+> +		return 1;
+> +	}
+> +	if (!daxctl_dev_is_devdax_mode(dev)) {
+> +		fprintf(stderr, "%s is not in devdax mode\n", devname);
+> +		return 1;
+> +	}
+> +	rc = daxctl_dev_disable(dev);
+> +	if (rc) {
+> +		fprintf(stderr, "%s: disable failed: %s\n",
+> +			daxctl_dev_get_devname(dev), strerror(-rc));
+> +		return rc;
+> +	}
+> +	return 0;
+> +}
+> +
+> +static int disable_famfs_device(struct daxctl_dev *dev)
+> +{
+> +	struct daxctl_memory *mem = daxctl_dev_get_memory(dev);
+> +	const char *devname = daxctl_dev_get_devname(dev);
+> +	int rc;
+> +
+> +	if (mem) {
+> +		fprintf(stderr, "%s is in system-ram mode\n", devname);
+> +		return 1;
+> +	}
+> +	if (daxctl_dev_is_devdax_mode(dev)) {
+> +		fprintf(stderr, "%s is in devdax mode\n", devname);
+> +		return 1;
+> +	}
+> +	if (!daxctl_dev_is_famfs_mode(dev)) {
+> +		fprintf(stderr, "%s is not in famfs mode\n", devname);
+>  		return 1;
+>  	}
+>  	rc = daxctl_dev_disable(dev);
+> @@ -711,6 +753,7 @@ static int disable_devdax_device(struct daxctl_dev *dev)
+>  
+>  static int reconfig_mode_system_ram(struct daxctl_dev *dev)
+>  {
+> +	struct daxctl_memory *mem = daxctl_dev_get_memory(dev);
+>  	const char *devname = daxctl_dev_get_devname(dev);
+>  	int rc, skip_enable = 0;
+>  
+> @@ -724,11 +767,21 @@ static int reconfig_mode_system_ram(struct daxctl_dev *dev)
+>  	}
+>  
+>  	if (daxctl_dev_is_enabled(dev)) {
+> -		rc = disable_devdax_device(dev);
+> -		if (rc < 0)
+> -			return rc;
+> -		if (rc > 0)
+> +		if (mem) {
+> +			/* already in system-ram mode */
+>  			skip_enable = 1;
+> +		} else if (daxctl_dev_is_famfs_mode(dev)) {
+> +			rc = disable_famfs_device(dev);
+> +			if (rc)
+> +				return rc;
+> +		} else if (daxctl_dev_is_devdax_mode(dev)) {
+> +			rc = disable_devdax_device(dev);
+> +			if (rc)
+> +				return rc;
+> +		} else {
+> +			fprintf(stderr, "%s: unknown mode\n", devname);
+> +			return -EINVAL;
+> +		}
+>  	}
+>  
+>  	if (!skip_enable) {
+> @@ -750,7 +803,7 @@ static int disable_system_ram_device(struct daxctl_dev *dev)
+>  	int rc;
+>  
+>  	if (!mem) {
+> -		fprintf(stderr, "%s was already in devdax mode\n", devname);
+> +		fprintf(stderr, "%s is not in system-ram mode\n", devname);
+>  		return 1;
+>  	}
+>  
+> @@ -786,12 +839,28 @@ static int disable_system_ram_device(struct daxctl_dev *dev)
+>  
+>  static int reconfig_mode_devdax(struct daxctl_dev *dev)
+>  {
+> +	struct daxctl_memory *mem = daxctl_dev_get_memory(dev);
+> +	const char *devname = daxctl_dev_get_devname(dev);
+>  	int rc;
+>  
+>  	if (daxctl_dev_is_enabled(dev)) {
+> -		rc = disable_system_ram_device(dev);
+> -		if (rc)
+> -			return rc;
+> +		if (mem) {
+> +			rc = disable_system_ram_device(dev);
+> +			if (rc)
+> +				return rc;
+> +		} else if (daxctl_dev_is_famfs_mode(dev)) {
+> +			rc = disable_famfs_device(dev);
+> +			if (rc)
+> +				return rc;
+> +		} else if (daxctl_dev_is_devdax_mode(dev)) {
+> +			/* already in devdax mode, just re-enable */
+> +			rc = daxctl_dev_disable(dev);
+> +			if (rc)
+> +				return rc;
+> +		} else {
+> +			fprintf(stderr, "%s: unknown mode\n", devname);
+> +			return -EINVAL;
+> +		}
+>  	}
+>  
+>  	rc = daxctl_dev_enable_devdax(dev);
+> @@ -801,6 +870,40 @@ static int reconfig_mode_devdax(struct daxctl_dev *dev)
+>  	return 0;
+>  }
+>  
+> +static int reconfig_mode_famfs(struct daxctl_dev *dev)
+> +{
+> +	struct daxctl_memory *mem = daxctl_dev_get_memory(dev);
+> +	const char *devname = daxctl_dev_get_devname(dev);
+> +	int rc;
+> +
+> +	if (daxctl_dev_is_enabled(dev)) {
+> +		if (mem) {
+> +			fprintf(stderr,
+> +				"%s is in system-ram mode, must be in devdax mode to convert to famfs\n",
+> +				devname);
+> +			return -EINVAL;
+> +		} else if (daxctl_dev_is_famfs_mode(dev)) {
+> +			/* already in famfs mode, just re-enable */
+> +			rc = daxctl_dev_disable(dev);
+> +			if (rc)
+> +				return rc;
+> +		} else if (daxctl_dev_is_devdax_mode(dev)) {
+> +			rc = disable_devdax_device(dev);
+> +			if (rc)
+> +				return rc;
+> +		} else {
+> +			fprintf(stderr, "%s: unknown mode\n", devname);
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	rc = daxctl_dev_enable_famfs(dev);
+> +	if (rc)
+> +		return rc;
+> +
+> +	return 0;
+> +}
+> +
+>  static int do_create(struct daxctl_region *region, long long val,
+>  		     struct json_object **jdevs)
+>  {
+> @@ -887,6 +990,9 @@ static int do_reconfig(struct daxctl_dev *dev, enum dev_mode mode,
+>  	case DAXCTL_DEV_MODE_DEVDAX:
+>  		rc = reconfig_mode_devdax(dev);
+>  		break;
+> +	case DAXCTL_DEV_MODE_FAMFS:
+> +		rc = reconfig_mode_famfs(dev);
+> +		break;
+>  	default:
+>  		fprintf(stderr, "%s: unknown mode requested: %d\n",
+>  			devname, mode);
+> diff --git a/daxctl/json.c b/daxctl/json.c
+> index 3cbce9d..01f139b 100644
+> --- a/daxctl/json.c
+> +++ b/daxctl/json.c
+> @@ -48,8 +48,12 @@ struct json_object *util_daxctl_dev_to_json(struct daxctl_dev *dev,
+>  
+>  	if (mem)
+>  		jobj = json_object_new_string("system-ram");
+> -	else
+> +	else if (daxctl_dev_is_famfs_mode(dev))
+> +		jobj = json_object_new_string("famfs");
+> +	else if (daxctl_dev_is_devdax_mode(dev))
+>  		jobj = json_object_new_string("devdax");
+> +	else
+> +		jobj = json_object_new_string("unknown");
+>  	if (jobj)
+>  		json_object_object_add(jdev, "mode", jobj);
+>  
+> diff --git a/daxctl/lib/libdaxctl-private.h b/daxctl/lib/libdaxctl-private.h
+> index ae45311..0bb73e8 100644
+> --- a/daxctl/lib/libdaxctl-private.h
+> +++ b/daxctl/lib/libdaxctl-private.h
+> @@ -21,12 +21,14 @@ static const char *dax_subsystems[] = {
+>  enum daxctl_dev_mode {
+>  	DAXCTL_DEV_MODE_DEVDAX = 0,
+>  	DAXCTL_DEV_MODE_RAM,
+> +	DAXCTL_DEV_MODE_FAMFS,
+>  	DAXCTL_DEV_MODE_END,
+>  };
+>  
+>  static const char *dax_modules[] = {
+>  	[DAXCTL_DEV_MODE_DEVDAX] = "device_dax",
+>  	[DAXCTL_DEV_MODE_RAM] = "kmem",
+> +	[DAXCTL_DEV_MODE_FAMFS] = "fsdev_dax",
+>  };
+>  
+>  enum memory_op {
+> diff --git a/daxctl/lib/libdaxctl.c b/daxctl/lib/libdaxctl.c
+> index b7fa0de..0a6cbfe 100644
+> --- a/daxctl/lib/libdaxctl.c
+> +++ b/daxctl/lib/libdaxctl.c
+> @@ -418,6 +418,78 @@ DAXCTL_EXPORT int daxctl_dev_is_system_ram_capable(struct daxctl_dev *dev)
+>  	return false;
+>  }
+>  
+> +/*
+> + * Check if device is currently in famfs mode (bound to fsdev_dax driver)
+> + */
+> +DAXCTL_EXPORT int daxctl_dev_is_famfs_mode(struct daxctl_dev *dev)
 
-Yes - and with the new C repro I can trigger the bug.
+Should this return bool?
 
-The problem is in gfs2.  gfs2_create_inode() calls d_instantiate()
-before unlock_new_inode().  This is bad.  d_instantiate_new() should be
-used, which makes sure the two things happen in the correct order.
+> +{
+> +	const char *devname = daxctl_dev_get_devname(dev);
+> +	struct daxctl_ctx *ctx = daxctl_dev_get_ctx(dev);
+> +	char *mod_path, *mod_base;
+> +	char path[200];
+> +	const int len = sizeof(path);
+> +
+> +	if (!device_model_is_dax_bus(dev))
+> +		return false;
+> +
+> +	if (!daxctl_dev_is_enabled(dev))
+> +		return false;
+> +
+> +	if (snprintf(path, len, "%s/driver", dev->dev_path) >= len) {
+> +		err(ctx, "%s: buffer too small!\n", devname);
+> +		return false;
+> +	}
+> +
+> +	mod_path = realpath(path, NULL);
+> +	if (!mod_path)
+> +		return false;
+> +
+> +	mod_base = basename(mod_path);
+> +	if (strcmp(mod_base, dax_modules[DAXCTL_DEV_MODE_FAMFS]) == 0) {
+> +		free(mod_path);
+> +		return true;
+> +	}
+> +
+> +	free(mod_path);
+> +	return false;
+> +}
+> +
+> +/*
+> + * Check if device is currently in devdax mode (bound to device_dax driver)
+> + */
+> +DAXCTL_EXPORT int daxctl_dev_is_devdax_mode(struct daxctl_dev *dev)
 
-Key to understanding the problem is knowing that unlock_new_inode()
-calls lockdep_annotate_inode_mutex_key() which (potentially) calls=20
-  init_rwsem(&inode->i_rwsem);
+return bool?
 
-So if anyone has locked the inode before unlock_new_inode() is called,
-the lock is lost when i_rwsem is reinitialised.
+DJ
 
-The reproducer calls mkdir("a") and mkdir("a/b") concurrently from
-separate threads.  The second mkdir() often fails (I assume) because "a"
-cannot be found.  But if that second mkdir() runs just after gfs2 has
-called d_instantiate(), then the lookup of "a" will succeed and so the
-inode will be locked ready for mkdir..  Then the mkdir("a") completes
-calling unlock_new_inode() which reinitialised i_rwsem.  When
-mkdir("a/b") comes to lock the parent, it finds that it isn't locked any
-more.
+> +{
+> +	const char *devname = daxctl_dev_get_devname(dev);
+> +	struct daxctl_ctx *ctx = daxctl_dev_get_ctx(dev);
+> +	char *mod_path, *mod_base;
+> +	char path[200];
+> +	const int len = sizeof(path);
+> +
+> +	if (!device_model_is_dax_bus(dev))
+> +		return false;
+> +
+> +	if (!daxctl_dev_is_enabled(dev))
+> +		return false;
+> +
+> +	if (snprintf(path, len, "%s/driver", dev->dev_path) >= len) {
+> +		err(ctx, "%s: buffer too small!\n", devname);
+> +		return false;
+> +	}
+> +
+> +	mod_path = realpath(path, NULL);
+> +	if (!mod_path)
+> +		return false;
+> +
+> +	mod_base = basename(mod_path);
+> +	if (strcmp(mod_base, dax_modules[DAXCTL_DEV_MODE_DEVDAX]) == 0) {
+> +		free(mod_path);
+> +		return true;
+> +	}
+> +
+> +	free(mod_path);
+> +	return false;
+> +}
+> +
+>  /*
+>   * This checks for the device to be in system-ram mode, so calling
+>   * daxctl_dev_get_memory() on a devdax mode device will always return NULL.
+> @@ -982,6 +1054,11 @@ DAXCTL_EXPORT int daxctl_dev_enable_ram(struct daxctl_dev *dev)
+>  	return daxctl_dev_enable(dev, DAXCTL_DEV_MODE_RAM);
+>  }
+>  
+> +DAXCTL_EXPORT int daxctl_dev_enable_famfs(struct daxctl_dev *dev)
+> +{
+> +	return daxctl_dev_enable(dev, DAXCTL_DEV_MODE_FAMFS);
+> +}
+> +
+>  DAXCTL_EXPORT int daxctl_dev_disable(struct daxctl_dev *dev)
+>  {
+>  	const char *devname = daxctl_dev_get_devname(dev);
+> diff --git a/daxctl/lib/libdaxctl.sym b/daxctl/lib/libdaxctl.sym
+> index 3098811..2a812c6 100644
+> --- a/daxctl/lib/libdaxctl.sym
+> +++ b/daxctl/lib/libdaxctl.sym
+> @@ -104,3 +104,10 @@ LIBDAXCTL_10 {
+>  global:
+>  	daxctl_dev_is_system_ram_capable;
+>  } LIBDAXCTL_9;
+> +
+> +LIBDAXCTL_11 {
+> +global:
+> +	daxctl_dev_enable_famfs;
+> +	daxctl_dev_is_famfs_mode;
+> +	daxctl_dev_is_devdax_mode;
+> +} LIBDAXCTL_10;
+> diff --git a/daxctl/libdaxctl.h b/daxctl/libdaxctl.h
+> index 53c6bbd..84fcdb4 100644
+> --- a/daxctl/libdaxctl.h
+> +++ b/daxctl/libdaxctl.h
+> @@ -72,12 +72,15 @@ int daxctl_dev_is_enabled(struct daxctl_dev *dev);
+>  int daxctl_dev_disable(struct daxctl_dev *dev);
+>  int daxctl_dev_enable_devdax(struct daxctl_dev *dev);
+>  int daxctl_dev_enable_ram(struct daxctl_dev *dev);
+> +int daxctl_dev_enable_famfs(struct daxctl_dev *dev);
+>  int daxctl_dev_get_target_node(struct daxctl_dev *dev);
+>  int daxctl_dev_will_auto_online_memory(struct daxctl_dev *dev);
+>  int daxctl_dev_has_online_memory(struct daxctl_dev *dev);
+>  
+>  struct daxctl_memory;
+>  int daxctl_dev_is_system_ram_capable(struct daxctl_dev *dev);
+> +int daxctl_dev_is_famfs_mode(struct daxctl_dev *dev);
+> +int daxctl_dev_is_devdax_mode(struct daxctl_dev *dev);
+>  struct daxctl_memory *daxctl_dev_get_memory(struct daxctl_dev *dev);
+>  struct daxctl_dev *daxctl_memory_get_dev(struct daxctl_memory *mem);
+>  const char *daxctl_memory_get_node_path(struct daxctl_memory *mem);
 
-There is non-trivial code between the d_instantiate() call and the
-unlock_new_inode() call which I do not understand.  So I will not
-propose a patch.  I don't know if that code should be after
-d_instantiate_new(), or before it.
-
-So I'll leave that to Andreas.
-
-Thanks,
-NeilBrown
 
