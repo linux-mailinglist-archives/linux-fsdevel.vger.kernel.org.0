@@ -1,179 +1,232 @@
-Return-Path: <linux-fsdevel+bounces-77713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77714-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UCkAJ5MXl2lXugIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 15:00:51 +0100
+	id SJXyKt0cl2ktuwIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77714-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 15:23:25 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAB0415F4B7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 15:00:50 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11B6B15F726
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 15:23:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 16B28300C01D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 14:00:50 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7B93F301F489
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 14:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E879259CAF;
-	Thu, 19 Feb 2026 14:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C1F17ADE0;
+	Thu, 19 Feb 2026 14:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GKYrwKUs";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="MwzmhfR0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF70F24B45
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 14:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DF61DF759
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 14:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771509646; cv=none; b=IDFL6KDHOLOMjknx1RTgVQsEC5j9FX3PvnghpfHGEaReHFD2XEu0ZVWADe1lnGEML/knDITjBk9WMqMrE3IvAUq133+mPJMfDJgBKpn1HiV+miebYecytYGZWX0tVg22Ozx9r/XMEDbHX4clgo0YbuEXnrkFQkHb045ZlmcRgwI=
+	t=1771510998; cv=none; b=m8x/dhYCxYIAu64Yx9tdlp3SatLKLT2VPk4xQpQQ3mXyT3WNFJzd/L1N+VcvJrhd3b4g3271D4jKpfEx9ujysjcq8DrI4lvLGB5nzvZxXAPPTqifUBzsaBeCBTBvU4DhT5CK17+xm3wzrk171hbJzPwbaDa5pRItwni0WB+ENtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771509646; c=relaxed/simple;
-	bh=5IjJjHniOqxdypB4ABtjvZlYXXtQmktmND/HWkfDK6w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qkY1R5kchWQuao5tYhrrgJ4K7mR0EydWfNbGfa24Ch5B0ZcJ9nB1yL6xP7eEZmN7mmCeTacs7hpEeStOsUMKG6ZBiIkXCFy4Ax32jWfpB8fWK42V4B6+L3GKXS8P0w1WXT4Tv3Jm+M8WtATeX4GGBr5Q3TwdmuGDECMMoMfp8p8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 61JE0Non067312;
-	Thu, 19 Feb 2026 23:00:23 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 61JE0Nhl067309
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 19 Feb 2026 23:00:23 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <a6e9fe8b-5a20-4c01-a1f8-144572fc3f4a@I-love.SAKURA.ne.jp>
-Date: Thu, 19 Feb 2026 23:00:23 +0900
+	s=arc-20240116; t=1771510998; c=relaxed/simple;
+	bh=ZrKSzVTQMlzjhHHLkggaBkEKCBxQTXU9GuPjLSZmUro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LyWLCPUljlJ+aWB1m1a15Eljl8iCT11UVSZmiQTA2JEZlh40takHTnmWhBkcGXH6R4sj2Y9zZrx1Up52iuW0XH4EexTjpHo2diTjoHRVME8Nb667tKhrkcpbkC25frfb5MHFfBPL3XSxARsmCvzfixa3A+6cmb2PGu6pY2ETO6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GKYrwKUs; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=MwzmhfR0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1771510995;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FbHvuuKoNJAJaoIiQsSzhjqIeQ7NdHJUqSJNAtbvmAg=;
+	b=GKYrwKUsEbOllo3B+GDVFpywTEfTqXv9VG8Xy7HqcDkcwHXG6zSMkxh90ZjkIjSm1rkpcQ
+	J+u1QiM1Y+t/Lodf7msJ6P3SxLIoSqs4c/2KWsaimBNqhBfP9+ldYCjxTTxHGfmn8UpyUK
+	ATJzSwlGVarIym52w6CUb4lAFJIzZ/U=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-99-iLicBhWMPXmtD4JohN1X-A-1; Thu, 19 Feb 2026 09:23:14 -0500
+X-MC-Unique: iLicBhWMPXmtD4JohN1X-A-1
+X-Mimecast-MFC-AGG-ID: iLicBhWMPXmtD4JohN1X-A_1771510993
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4806cfffca6so10284615e9.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 06:23:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1771510993; x=1772115793; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FbHvuuKoNJAJaoIiQsSzhjqIeQ7NdHJUqSJNAtbvmAg=;
+        b=MwzmhfR0Zy6CSbE7SJSxjsLvqaUUiBLcnNMJny/BAkrni/rSK6a7N8+TEPBpqvqfFB
+         Jwn7FZm7CF9t8EbfxvEfa1JoZJjHHfVj8dv0IKOoe5uWdV82HbkhbiWrZu3Ub7rPBoTf
+         B9WSM/eTHC1znzpZsf8vpXA6UAQhujtgStLsXP18G5bt1iFMaEV8uebr+uBZr2PKqF+X
+         OCgit151JTNpUn18f/EMfg8eiAqyb5jFsJs4Vu9ZsRIqsCwh+WHugUHxp992r+kQ2d8B
+         kXygspLuHA8KQwpeV0PrEogQXaqVQVsIpCmb//+F35OKHXmNJNx+cQfjnN/4JueOQYHl
+         PC4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771510993; x=1772115793;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FbHvuuKoNJAJaoIiQsSzhjqIeQ7NdHJUqSJNAtbvmAg=;
+        b=PlGDgEsumAhtDMsQed+YHS8NaUADmGguVl1gXGqa15gPKAWmzexicPp7FI2SYErVd1
+         APFGdVHaAkE81YwJ8o9natNicHFXyWhJ9Uwf6nM0MAmGF01E3hL5F2LqdMtqwhD4Mii1
+         pWwHl9DJto0gR2ILrjNOrWR4tjj8VsKyDqs52Gw3nvPRhoppCHa93VvFfzPV8bboEgxN
+         3t+viNqCucW/mS9CtH5mbHdIpws82tsRdfV38wyED8qRG9P1PYWylH7bNedZTCWG6+M7
+         RjEjYnJ4lIPw1pWTVoHYA1FqxJc4NxeCQvWTRqPzT5nyjuaxCTRxk3msqsp+XmB1gekt
+         9Bmg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3uRJLpmqjn1x2OkMUYZR/CWPXK8PEAX4BZKEBEMx1DVjpik7W4pnLPz1Y7Tk0Rynsq7ElDOjHTznk+j4k@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEIhjn6ywUhPPphZspJBPGX2LqJtQmCDKtFzconSDTZ3DesPW4
+	a8whOD+18DjYi8O9KaIPOk4So5oIIXM+HStEsfIyWNTG4QM8rmI/UKcJYzeJGCkpivsIzANljc/
+	dFpNXJ9qfGFAlCVdk2HEBh7vhxBsEpg8uj2JmQZAyM3IRqBlW4BHeW2qyjfeO6h9ppg==
+X-Gm-Gg: AZuq6aKy+xhy0Oj9n7UEYvBLBbk9xKnXHjT3XbkW3Qtg26dEokJowMFUeM8blmC4EQq
+	+o/aoJYg6usgMVh7FeSCWn6Sgq9lLDF6TIgyd06rlhaV/UBP7HjCTdo6OaB+wGV8qczNEJFYERE
+	pPqlmcVpCisw0ObIeztpMJ7LTjEp/DM+99iX2h2xbJVRAtIOX+42inXfJmHoi/etagy/ofqUlt4
+	hTZFRau/sVAuVtxgAtLmwTSPwB6YZXJ5qGVQmzQOl8auuvNQ5Oo46DOe/RQjzEztN5PqaUtqPr8
+	psbiMc2G2dDPUfYtuOGFLMdQRPDc9bJyefNuJMCRDF0q/d8bgi1SOIsabVXEawau75QUnGfCO96
+	7bU57f15wsRU=
+X-Received: by 2002:a05:600c:458a:b0:483:6f37:1b33 with SMTP id 5b1f17b1804b1-48373a58babmr320615185e9.30.1771510993032;
+        Thu, 19 Feb 2026 06:23:13 -0800 (PST)
+X-Received: by 2002:a05:600c:458a:b0:483:6f37:1b33 with SMTP id 5b1f17b1804b1-48373a58babmr320614575e9.30.1771510992342;
+        Thu, 19 Feb 2026 06:23:12 -0800 (PST)
+Received: from thinky ([217.30.74.39])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483a31c56d8sm10551145e9.8.2026.02.19.06.23.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Feb 2026 06:23:11 -0800 (PST)
+Date: Thu, 19 Feb 2026 15:23:11 +0100
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Andrey Albershteyn <aalbersh@kernel.org>, linux-xfs@vger.kernel.org, 
+	fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org, ebiggers@kernel.org, 
+	djwong@kernel.org
+Subject: Re: [PATCH v3 11/35] iomap: allow filesystem to read fsverity
+ metadata beyound EOF
+Message-ID: <bltgc6uliclhzkuqd4la2tzp6x7vsww73nvjedxh7s624tby3k@jw4ij5irh6ni>
+References: <20260217231937.1183679-1-aalbersh@kernel.org>
+ <20260217231937.1183679-12-aalbersh@kernel.org>
+ <20260218063606.GD8600@lst.de>
+ <hfteu6bonpv7djecbf3d6ekh56ktgcl4c2lvtjtrjfetzaq5dw@scsrvxx5rgig>
+ <20260219060420.GC3739@lst.de>
+ <qheg77kxcl4ecqdrsnmz4acfvszjlamlb7ilgxxyf3pmt4r7ah@5fzzmcpurdfp>
+ <20260219133829.GA11935@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hfs: evaluate the upper 32bits for detecting overflow
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "jkoolstra@xs4all.nl" <jkoolstra@xs4all.nl>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <6e5fd94e-9073-4307-beb7-ee87f3f0665c@I-love.SAKURA.ne.jp>
- <68811931931db09c0ea84f1be8e1bdc0fd453776.camel@ibm.com>
- <4a026754-1c58-40a6-96f9-ecaafa67a2ae@I-love.SAKURA.ne.jp>
- <62e01a3505bca9d1e8779f85e0223ec02c24a6de.camel@ibm.com>
- <ef597d09-0fe0-44bc-93ff-b0223eb97ce8@I-love.SAKURA.ne.jp>
- <37b976e33847b4e3370d423825aaa23bdc081606.camel@ibm.com>
- <f8700c59-3763-4ea9-b5c2-f4510c2106ed@I-love.SAKURA.ne.jp>
- <40a8f3a228cf8f3580f633b9289cd371b553c3e4.camel@ibm.com>
- <524bed1e-fceb-4061-b274-219e64a6b619@I-love.SAKURA.ne.jp>
- <645baa4f25bb435217be8f9f6aa1448de5d5744e.camel@ibm.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <645baa4f25bb435217be8f9f6aa1448de5d5744e.camel@ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav104.rs.sakura.ne.jp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260219133829.GA11935@lst.de>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.46 / 15.00];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719,redhat.com:s=google];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77713-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[i-love.sakura.ne.jp];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[ibm.com,physik.fu-berlin.de,vivo.com,dubeyko.com,xs4all.nl];
+	DKIM_TRACE(0.00)[redhat.com:+];
+	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77714-lists,linux-fsdevel=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_FIVE(0.00)[5];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[penguin-kernel@I-love.SAKURA.ne.jp,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	NEURAL_HAM(-0.00)[-0.927];
-	MID_RHS_MATCH_FROM(0.00)[];
-	R_DKIM_NA(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[aalbersh@redhat.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,I-love.SAKURA.ne.jp:mid]
-X-Rspamd-Queue-Id: AAB0415F4B7
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 11B6B15F726
 X-Rspamd-Action: no action
 
-On 2026/02/19 7:07, Viacheslav Dubeyko wrote:
->> @@ -132,6 +132,7 @@ struct hfs_sb_info {
->>  	int work_queued;		/* non-zero delayed work is queued */
->>  	struct delayed_work mdb_work;	/* MDB flush delayed work */
->>  	spinlock_t work_lock;		/* protects mdb_work and work_queued */
->> +	bool suggest_fsck;
+On 2026-02-19 14:38:29, Christoph Hellwig wrote:
+> On Thu, Feb 19, 2026 at 12:11:18PM +0100, Andrey Albershteyn wrote:
+> > > > fsverity descriptor. This is basically the case as for EOF folio.
+> > > > Descriptor is the end of the fsverity metadata region. If we have 1k
+> > > > fs blocks (= merkle blocks) we can have [descriptor | hole ] folio.
+> > > > As we are not limited by i_size here, iomap_block_needs_zeroing()
+> > > > won't fire to zero this hole. So, this case is to mark this tail as
+> > > > uptodate.
+> > > 
+> > > How do we end up in that without ctx->vi set?
+> > 
+> > We're reading it
 > 
-> I completely don't see the point in adding likewise field. We always can share
-> warning message in the point of problem detection.
+> Did a part of that sentence get lost?
 
-Calling printk() so frequently can cause stall warnings.
-Calling printk() upon mount time or unmount time is fine, but
-calling printk() upon e.g. sync() time can become problematic.
+I mean that to have ctx->vi we need to read fsverity descriptor
+first. When iomap is reading fsverity descriptor inode won't have
+any fsverity_info yet.
 
-
-> What's the point to make code so complicated? What's wrong with atomic64_t? Are
-> you trying to save 32 bits? :) I completely don't see the point in such very
-> complicated logic.
-
-These are u32 version of atomic_add_unless(v, 1, -1) and atomic_add_unless(v, -1, 0),
-for you said that it is confusing to keep in mind that we need to treat negative
-value as positive.
-
-You also said that "It will introduce the bugs easily.", but the reality is that
-we had been failing to understand that the BUG_ON() in
-
-	BUG_ON(atomic64_read(&HFS_SB(sb)->file_count) > U32_MAX);
-	atomic64_dec(&HFS_SB(sb)->file_count);
-
-does not fire when HFS_SB(sb)->file_count < 0 due to s64 and u32 comparison.
-We can avoid such oversight if we change it to u32 and u32 comparison using
-dec_u32_unless_wraparound().
-
-
->> @@ -34,7 +34,6 @@ MODULE_LICENSE("GPL");
->>  
->>  static int hfs_sync_fs(struct super_block *sb, int wait)
->>  {
->> -	is_hfs_cnid_counts_valid(sb);
+> >  
+> > -               /* zero post-eof blocks as the page may be mapped */
+> > -               if (iomap_block_needs_zeroing(iter, pos) &&
+> > -                   !(iomap->flags & IOMAP_F_FSVERITY)) {
+> > +               /*
+> > +                * Handling of fsverity "holes". We hits this for two case:
+> > +                *   1. No need to go further, the hole after fsverity
+> > +                *      descriptor is the end of the fsverity metadata.
+> > +                *
+> > +                *   2. This folio contains merkle tree blocks which need to be
 > 
-> We need to check it for every sync because, potentially, file system could stay
-> in mounted state for days/weeks/months. And corruption could happen during
-> metadata modification.
-
-Calling printk() for every sync() might cause stall problems.
-
-Also, if I understand the code correctly, these counter values are "for your
-information" level which is not guaranteed to be in sync with actual number of
-files/directories. It does not worth making operations fail.
-
-
-> Nobody checks the file system message after unmount because nobody cares. But
-> everyone really cares about mount and regular file system operations. So, this
-> check is too late and it is not necessary here.
-
-Then, I suggest completely removing warning messages regarding these counter values.
-
-
->> @@ -66,8 +69,6 @@ static void flush_mdb(struct work_struct *work)
->>  	sbi->work_queued = 0;
->>  	spin_unlock(&sbi->work_lock);
->>  
->> -	is_hfs_cnid_counts_valid(sb);
->> -
+> Overly long line here.
 > 
-> This check is important because it is done during hfs_fill_super() call.
+> > +                *      synthesized and fsverity descriptor.
+> > +                */
+> > +               if ((iomap->flags & IOMAP_F_FSVERITY) &&
+> > +                   iomap->type == IOMAP_HOLE) {
+> > +                       /*
+> > +                        * Synthesize the hash value for a zeroed folio if we
+> > +                        * are reading merkle tree blocks.
+> > +                        */
+> 
+> .. and we'll probably want to merge this into the above comment.
 
-I couldn't catch, for INIT_DELAYED_WORK(&sbi->mdb_work, flush_mdb)
-in hfs_fill_super() does not call flush_mdb().
+sure
+
+> 
+> > +                       if (ctx->vi)
+> > +                               fsverity_folio_zero_hash(folio, poff, plen,
+> > +                                                        ctx->vi);
+> > +                       iomap_set_range_uptodate(folio, poff, plen);
+> > +               } else if (iomap_block_needs_zeroing(iter, pos) &&
+> > +                          !(iomap->flags & IOMAP_F_FSVERITY)) {
+> > +                       /* zero post-eof blocks as the page may be mapped */
+> >                         folio_zero_range(folio, poff, plen);
+> > +                       if (fsverity_active(iter->inode) &&
+> > +                           !fsverity_verify_blocks(ctx->vi, folio, plen, poff))
+> 
+> Another overly long line here.  Also we should avoid the
+> fsverity_active check here, as it causes a rhashtable lookup.  F2fs
+> and ext4 just check ctx->vi, but based on the checks above, we seem
+> to set this also for (some) reads of the fsverity metadata.  But as
+> we exclude IOMAP_F_FSVERITY above, we might actually be fine with a
+> ctx->vi anyway.
+
+Don't you confused this with fsverity_get_info()? I don't see how it
+could cause lookup.
+
+> 
+> Please document the rules for ctx->vi while were it.
+> 
+
+Hmm, the vi is set in iomap_read_folio() [1] and then used down
+through I/O up to ioend completion. What info you would like to see
+there?
+
+https://lore.kernel.org/fsverity/20260217231937.1183679-10-aalbersh@kernel.org/T/#u
+
+-- 
+- Andrey
 
 
