@@ -1,195 +1,335 @@
-Return-Path: <linux-fsdevel+bounces-77656-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77657-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id mBC9NSpclmkdeQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77656-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 01:41:14 +0100
+	id OCf1KPlclmlVeQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77657-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 01:44:41 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40AAE15B373
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 01:41:14 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C9AD15B3A9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 01:44:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id C1B41301AA8E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 00:41:10 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 6A55330071D2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 00:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3A322AE65;
-	Thu, 19 Feb 2026 00:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E157221FCD;
+	Thu, 19 Feb 2026 00:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LwJshFPA"
+	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="EEeFZU7m"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF64335977
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 00:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569471FC0EA
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 00:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771461668; cv=none; b=OQW8ZjdqLRgF1fTYL/Ub+XXA42zIcocYS+21aIIfG418DK7v45h7AGvLmAxrZkI/dz1j4GojouX4/Y5dKAgVmeDs6RN0TeT9zLTcK7BEjt96iXiQdrhm9evm6cG/Hf2hNgITZVHs5DemzoS+i00Fi+Y15CDkq7pOQTxg/RSBir4=
+	t=1771461878; cv=none; b=Fhj/e6PTr9iOWn8KpMcLfV4PmaFKhsrvpyVqbVFB6l/LzGAMw682GKanvbwnknvUTkZsB1jS3BWMNxK9nJpVnSvHp1zWMGYu30cbKXvsFarWaoXoGu0LLUiNPsRo3h0zY34TaJ91saSeN8vOcjv6fo0vxEMBfQBqTjq0UztsJ8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771461668; c=relaxed/simple;
-	bh=ZRL1SXWnWjPLQ/VrkAl6SWiHznrRctO6R7yh+olBTL4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BbPs7QLFcQ3J/pZyYlvNDi9+Ee++wb+CwaxYhJu+Xslv38zEJCphiT1XnXUoeplRIJpqqvPGXq/P8TyiYWIWxE54g2w3cnrJpf2XaNmuSgVnB32NGWW/xDchuGLaZbkLA2fitxwhTRZK7NEGdVwV+eLXJHNbEJ+bGKSdiFGgbv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LwJshFPA; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-8220bd582ddso158822b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 16:41:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771461666; x=1772066466; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1NAf2L+vziVfUUbGjJ+gAe6Z0Ze+h/IVnKOfn57mX2c=;
-        b=LwJshFPAm/DprO9AulkyaZ3rNGcBZOj5WpZTb2lOHHrnazJUVSS4gjSwMxfrcsCrxz
-         n2Z3PY8nERBK4/hMzEn9NoO+smCVFxjWrWSioO517BpjERLwrZxS7CgnE/hyYB6kf3Bv
-         4ucxT4Hmu7R7p7SFOaMZJWkRu1Nxzp8k3q6TbNJgKXPj5PvwzCsgLkhXfDO3KODLGwhK
-         G1qLdBFGM4NpC2cBTR+MCG9l+S+hxsimiJM/KsOEBdjQVOhRWull6osgAz3zW3nq+Kef
-         uoKZo/186q5CKiJ0rdYdOZakkRQmwFibUY8FwjLHYT13LnpcmaIS14jdRlNYzChLip/t
-         Rv2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771461666; x=1772066466;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=1NAf2L+vziVfUUbGjJ+gAe6Z0Ze+h/IVnKOfn57mX2c=;
-        b=wYAB0B8v0sNZlasiZV+bFuA9O3vWj+q4FeGR+vebB4ypXJbaBTnZBNKErRhHo55SwR
-         2yTJnLkutXIn/J15qnfWm8xzQrszof95K3nmZLC48A4eqCyHi55/Hhq3hJ6ATuwHcbfY
-         fPZW/qiy4+a3+xborqryfblFTwDHqN+646YgzuWsCBbYMl2f9hFh/jLfu9wt8s72aV6f
-         K4BwkYNR7CQzfrHFeMFg1SgEz7T9ZljJH8C/+XxTH8XkNMVw5yH4ma4Vxx7tQi7ZdUJk
-         1D2+ba2PcvlaJz281dXLdUpYpFndnfWY33laUK5NinXKpTRsKkZwocE2vT1YYZXWcJ5B
-         9vUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWL/qNSFiTXiUCrkiVKGo57SJW5KThqYhClP2WL0vahhW57idji2QvUiIpoKnYO25NvSQE29arA+qyye65e@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLgBwH+6+VoIJN1EunubcXrY1PvRjIFNax+zlF0xfyHXDTiIiO
-	ci4FYjbgZmfcTt38wKUNOBbJyc1Q9jyxrpw2lY62tcL6RSAc2MgJObje
-X-Gm-Gg: AZuq6aLOsx9tUrRmYAZov/a4nCOulACsx+QHq82ViCZep/utDMy9eYVvdKpjoELHpzz
-	e/Jhankz9UDXrhezIf1MVYnuQS7gozn3FUb9z8l/m8OnBHUAoQfOLzohficHOWlhXmLg4oUgVrA
-	YixnJjtxdU8DEqeINVlnY/A8MMEtEIQiXCaPHevLbdWMYAeoiiAEOYwTJkzleDnbIxg54AQYBkh
-	M5GuuYxdaxDplIv93Lr9Q1uLctkdtvIr84XQ72ddst6rCaDA/AkmNFiKw6N1bxhyhU6JS903tqK
-	NiZVPYMpWxspE8TRGXQMb/HAkAI+zlnd9lY4jp18CCTn8ffCsIPtMfITJRtNg4ENfRM239vL1Cz
-	8r28QmXV7mwfQ6Ou0udc6JHih+vq+F+mRDzgNmBfn9mo9vdm/9ibMhr12+feld5T9/MfUeJJGtz
-	2eLaIaiFcf3RyROFhMwDVYKIy3AyM=
-X-Received: by 2002:a05:6a00:a20e:b0:824:9451:c1e1 with SMTP id d2e1a72fcca58-825275ee977mr3128570b3a.58.1771461666157;
-        Wed, 18 Feb 2026 16:41:06 -0800 (PST)
-Received: from localhost ([2a03:2880:ff:4::])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-824c6b69ba2sm18441039b3a.38.2026.02.18.16.41.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Feb 2026 16:41:05 -0800 (PST)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: brauner@kernel.org
-Cc: willy@infradead.org,
-	wegao@suse.com,
-	sashal@kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v1 1/1] iomap: don't mark folio uptodate if read IO has bytes pending
-Date: Wed, 18 Feb 2026 16:39:11 -0800
-Message-ID: <20260219003911.344478-2-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260219003911.344478-1-joannelkoong@gmail.com>
-References: <20260219003911.344478-1-joannelkoong@gmail.com>
+	s=arc-20240116; t=1771461878; c=relaxed/simple;
+	bh=nQH7jYjmNyHUpdEDL1n3cOERApWtdjO11tQwfD3xwEY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=W4g+u4ee0Ohsvz3urHp7VdoAIWxkr0a8YwcBc3wHjd9pzqPSUtwRYCT2lXP7RQKOnHp2tAC5gWbqb0yg0srWv2JNC3F1nAaoCXCxiSmVzodHSLnLpWro2AD/LMFgzaP7M4Xf6URED5C4XK1uozuI7C4s0LhJTZCNVXslIPwo8Cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=EEeFZU7m; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id 2BEA3240027
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 01:44:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net; s=2017;
+	t=1771461868; bh=BsfF26EI6S3qTr6+RYJIEACJrK310ChY8MDFoZGqNt4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 From;
+	b=EEeFZU7mXoijP2neLjfv2lplNp5L7BPIzzyKIB0FXSglMCd267IlBdYsv0BZ50orp
+	 ak5W6Z+cDlmYzpUZel2fgkq+RYbNA+kL14nuzYtSOAx0DzETBeoCewoN36XmycEN61
+	 LNHL7y7qFJxa2fdRW9rT4mt2qS2WpKEEJ2MJK5O10Zlp/BB3d4VTPDtheDetU1/udr
+	 7sAFLXGrjvAaSLThshOqWEsIp8Iseh/8T//iB6B50GDl5jJ96tkS4J71BOn/WITQOs
+	 sPrTKVT001HsqBhTXAnvI4dG2HJpAAdYv1KU5WZlMXf05KFg5hgOToqaChcjPSupaW
+	 JNnod+AbcC2IQ==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4fGZQL1Rntz6tsb;
+	Thu, 19 Feb 2026 01:44:25 +0100 (CET)
+From: Charalampos Mitrodimas <charmitro@posteo.net>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+  "frank.li@vivo.com" <frank.li@vivo.com>,  "slava@dubeyko.com"
+ <slava@dubeyko.com>,  "linux-fsdevel@vger.kernel.org"
+ <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] hfs/hfsplus: fix timestamp wrapped issue
+In-Reply-To: <15b8136f279abd8320e2d4745a4f1e76c9f9aa83.camel@ibm.com>
+References: <20260216233556.4005400-1-slava@dubeyko.com>
+	<87a4x8f5zq.fsf@posteo.net>
+	<2b7b7a970926f56a3742cb76e394e9fb3d79b0eb.camel@ibm.com>
+	<m2bjhn81n2.fsf@posteo.net>
+	<15b8136f279abd8320e2d4745a4f1e76c9f9aa83.camel@ibm.com>
+Date: Thu, 19 Feb 2026 00:44:27 +0000
+Message-ID: <87jyw9blzq.fsf@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	DMARC_POLICY_ALLOW(-0.50)[posteo.net,none];
 	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_DKIM_ALLOW(-0.20)[posteo.net:s=2017];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[gmail.com:+];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77656-lists,linux-fsdevel=lfdr.de];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-77657-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[posteo.net:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[charmitro@posteo.net,linux-fsdevel@vger.kernel.org];
+	MID_RHS_MATCH_FROM(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	TO_DN_NONE(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	MISSING_XM_UA(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,suse.com:email]
-X-Rspamd-Queue-Id: 40AAE15B373
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	REDIRECTOR_URL(0.00)[proofpoint.com];
+	RCPT_COUNT_FIVE(0.00)[5];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 2C9AD15B3A9
 X-Rspamd-Action: no action
 
-If a folio has ifs metadata attached to it and the folio is partially
-read in through an async IO helper with the rest of it then being read
-in through post-EOF zeroing or as inline data, and the helper
-successfully finishes the read first, then post-EOF zeroing / reading
-inline will mark the folio as uptodate in iomap_set_range_uptodate().
+Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> writes:
 
-This is a problem because when the read completion path later calls
-iomap_read_end(), it will call folio_end_read(), which sets the uptodate
-bit using XOR semantics. Calling folio_end_read() on a folio that was
-already marked uptodate clears the uptodate bit.
+> On Wed, 2026-02-18 at 02:00 +0000, Charalampos Mitrodimas wrote:
+>> Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> writes:
+>> X-TUID: LHfQOjL/T+3i
+>> 
+>> > On Tue, 2026-02-17 at 02:39 +0000, Charalampos Mitrodimas wrote:
+>> > > Viacheslav Dubeyko <slava@dubeyko.com> writes:
+>> > > 
+>> > > > The xfstests' test-case generic/258 fails to execute
+>> > > > correctly:
+>> > > > 
+>> > > > FSTYP -- hfsplus
+>> > > > PLATFORM -- Linux/x86_64 hfsplus-testing-0001 6.15.0-rc4+ #8 SMP PREEMPT_DYNAMIC Thu May 1 16:43:22 PDT 2025
+>> > > > MKFS_OPTIONS -- /dev/loop51
+>> > > > MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
+>> > > > 
+>> > > > generic/258 [failed, exit status 1]- output mismatch (see xfstests-dev/results//generic/258.out.bad)
+>> > > > 
+>> > > > The main reason of the issue is the logic:
+>> > > > 
+>> > > > cpu_to_be32(lower_32_bits(ut) + HFSPLUS_UTC_OFFSET)
+>> > > > 
+>> > > > At first, we take the lower 32 bits of the value and, then
+>> > > > we add the time offset. However, if we have negative value
+>> > > > then we make completely wrong calculation.
+>> > > > 
+>> > > > This patch corrects the logic of __hfsp_mt2ut() and
+>> > > > __hfsp_ut2mt (HFS+ case), __hfs_m_to_utime() and
+>> > > > __hfs_u_to_mtime (HFS case). The HFS_MIN_TIMESTAMP_SECS and
+>> > > > HFS_MAX_TIMESTAMP_SECS have been introduced in
+>> > > > include/linux/hfs_common.h. Also, HFS_UTC_OFFSET constant
+>> > > > has been moved to include/linux/hfs_common.h. The hfs_fill_super()
+>> > > > and hfsplus_fill_super() logic defines sb->s_time_min,
+>> > > > sb->s_time_max, and sb->s_time_gran.
+>> > > > 
+>> > > > sudo ./check generic/258
+>> > > > FSTYP         -- hfsplus
+>> > > > PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.19.0-rc1+ #87 SMP PREEMPT_DYNAMIC Mon Feb 16 14:48:57 PST 2026
+>> > > > MKFS_OPTIONS  -- /dev/loop51
+>> > > > MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
+>> > > > 
+>> > > > generic/258 29s ...  39s
+>> > > > Ran: generic/258
+>> > > > Passed all 1 tests
+>> > > > 
+>> > > > [1] https://urldefense.proofpoint.com/v2/url?u=https-3A__github.com_hfs-2Dlinux-2Dkernel_hfs-2Dlinux-2Dkernel_issues_133&d=DwIBAg&c=BSDicqBQBDjDI9RkVyTcHQ&r=q5bIm4AXMzc8NJu1_RGmnQ2fMWKq4Y4RAkElvUgSs00&m=0fT-uL56OPndiS3viO0tbIofDhce7l_DvqX2Ig5e11E9sRGSZHesLvgpGvaEGpvj&s=52rC3TXLKWz8arNKZMySDx-vwms5z-Md0bnvP6tGkEM&e= 
+>> > > > 
+>> > > > Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
+>> > > > cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+>> > > > cc: Yangtao Li <frank.li@vivo.com>
+>> > > > cc: linux-fsdevel@vger.kernel.org
+>> > > > ---
+>> > > >  fs/hfs/hfs_fs.h            | 17 ++++-------------
+>> > > >  fs/hfs/super.c             |  4 ++++
+>> > > >  fs/hfsplus/hfsplus_fs.h    | 13 ++++---------
+>> > > >  fs/hfsplus/super.c         |  4 ++++
+>> > > >  include/linux/hfs_common.h | 18 ++++++++++++++++++
+>> > > >  5 files changed, 34 insertions(+), 22 deletions(-)
+>> > > > 
+>> > > > diff --git a/fs/hfs/hfs_fs.h b/fs/hfs/hfs_fs.h
+>> > > > index ac0e83f77a0f..7d529e6789b8 100644
+>> > > > --- a/fs/hfs/hfs_fs.h
+>> > > > +++ b/fs/hfs/hfs_fs.h
+>> > > > @@ -229,21 +229,11 @@ extern int hfs_mac2asc(struct super_block *sb,
+>> > > >  extern void hfs_mark_mdb_dirty(struct super_block *sb);
+>> > > >  
+>> > > >  /*
+>> > > > - * There are two time systems.  Both are based on seconds since
+>> > > > - * a particular time/date.
+>> > > > - *	Unix:	signed little-endian since 00:00 GMT, Jan. 1, 1970
+>> > > > - *	mac:	unsigned big-endian since 00:00 GMT, Jan. 1, 1904
+>> > > > - *
+>> > > > - * HFS implementations are highly inconsistent, this one matches the
+>> > > > - * traditional behavior of 64-bit Linux, giving the most useful
+>> > > > - * time range between 1970 and 2106, by treating any on-disk timestamp
+>> > > > - * under HFS_UTC_OFFSET (Jan 1 1970) as a time between 2040 and 2106.
+>> > > > + * time helpers: convert between 1904-base and 1970-base timestamps
+>> > > >   */
+>> > > > -#define HFS_UTC_OFFSET 2082844800U
+>> > > > -
+>> > > >  static inline time64_t __hfs_m_to_utime(__be32 mt)
+>> > > >  {
+>> > > > -	time64_t ut = (u32)(be32_to_cpu(mt) - HFS_UTC_OFFSET);
+>> > > > +	time64_t ut = (time64_t)be32_to_cpu(mt) - HFS_UTC_OFFSET;
+>> > > >  
+>> > > >  	return ut + sys_tz.tz_minuteswest * 60;
+>> > > >  }
+>> > > > @@ -251,8 +241,9 @@ static inline time64_t __hfs_m_to_utime(__be32 mt)
+>> > > >  static inline __be32 __hfs_u_to_mtime(time64_t ut)
+>> > > >  {
+>> > > >  	ut -= sys_tz.tz_minuteswest * 60;
+>> > > > +	ut += HFS_UTC_OFFSET;
+>> > > >  
+>> > > > -	return cpu_to_be32(lower_32_bits(ut) + HFS_UTC_OFFSET);
+>> > > > +	return cpu_to_be32(lower_32_bits(ut));
+>> > > >  }
+>> > > >  #define HFS_I(inode)	(container_of(inode, struct hfs_inode_info, vfs_inode))
+>> > > >  #define HFS_SB(sb)	((struct hfs_sb_info *)(sb)->s_fs_info)
+>> > > > diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+>> > > > index 97546d6b41f4..6b6c138812b7 100644
+>> > > > --- a/fs/hfs/super.c
+>> > > > +++ b/fs/hfs/super.c
+>> > > > @@ -341,6 +341,10 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
+>> > > >  	sb->s_flags |= SB_NODIRATIME;
+>> > > >  	mutex_init(&sbi->bitmap_lock);
+>> > > >  
+>> > > > +	sb->s_time_gran = NSEC_PER_SEC;
+>> > > > +	sb->s_time_min = HFS_MIN_TIMESTAMP_SECS;
+>> > > > +	sb->s_time_max = HFS_MAX_TIMESTAMP_SECS;
+>> > > > +
+>> > > >  	res = hfs_mdb_get(sb);
+>> > > >  	if (res) {
+>> > > >  		if (!silent)
+>> > > > diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
+>> > > > index 5f891b73a646..3554faf84c15 100644
+>> > > > --- a/fs/hfsplus/hfsplus_fs.h
+>> > > > +++ b/fs/hfsplus/hfsplus_fs.h
+>> > > > @@ -511,24 +511,19 @@ int hfsplus_read_wrapper(struct super_block *sb);
+>> > > >  
+>> > > >  /*
+>> > > >   * time helpers: convert between 1904-base and 1970-base timestamps
+>> > > > - *
+>> > > > - * HFS+ implementations are highly inconsistent, this one matches the
+>> > > > - * traditional behavior of 64-bit Linux, giving the most useful
+>> > > > - * time range between 1970 and 2106, by treating any on-disk timestamp
+>> > > > - * under HFSPLUS_UTC_OFFSET (Jan 1 1970) as a time between 2040 and 2106.
+>> > > >   */
+>> > > > -#define HFSPLUS_UTC_OFFSET 2082844800U
+>> > > > -
+>> > > >  static inline time64_t __hfsp_mt2ut(__be32 mt)
+>> > > >  {
+>> > > > -	time64_t ut = (u32)(be32_to_cpu(mt) - HFSPLUS_UTC_OFFSET);
+>> > > > +	time64_t ut = (time64_t)be32_to_cpu(mt) - HFS_UTC_OFFSET;
+>> > > >  
+>> > > >  	return ut;
+>> > > >  }
+>> > > >  
+>> > > >  static inline __be32 __hfsp_ut2mt(time64_t ut)
+>> > > >  {
+>> > > > -	return cpu_to_be32(lower_32_bits(ut) + HFSPLUS_UTC_OFFSET);
+>> > > > +	ut += HFS_UTC_OFFSET;
+>> > > > +
+>> > > > +	return cpu_to_be32(lower_32_bits(ut));
+>> > > >  }
+>> > > >  
+>> > > >  static inline enum hfsplus_btree_mutex_classes
+>> > > > diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
+>> > > > index 592d8fbb748c..dcd61868d199 100644
+>> > > > --- a/fs/hfsplus/super.c
+>> > > > +++ b/fs/hfsplus/super.c
+>> > > > @@ -487,6 +487,10 @@ static int hfsplus_fill_super(struct super_block *sb, struct fs_context *fc)
+>> > > >  	if (!sbi->rsrc_clump_blocks)
+>> > > >  		sbi->rsrc_clump_blocks = 1;
+>> > > >  
+>> > > > +	sb->s_time_gran = NSEC_PER_SEC;
+>> > > > +	sb->s_time_min = HFS_MIN_TIMESTAMP_SECS;
+>> > > > +	sb->s_time_max = HFS_MAX_TIMESTAMP_SECS;
+>> > > > +
+>> > > >  	err = -EFBIG;
+>> > > >  	last_fs_block = sbi->total_blocks - 1;
+>> > > >  	last_fs_page = (last_fs_block << sbi->alloc_blksz_shift) >>
+>> > > > diff --git a/include/linux/hfs_common.h b/include/linux/hfs_common.h
+>> > > > index dadb5e0aa8a3..816ac2f0996d 100644
+>> > > > --- a/include/linux/hfs_common.h
+>> > > > +++ b/include/linux/hfs_common.h
+>> > > > @@ -650,4 +650,22 @@ typedef union {
+>> > > >  	struct hfsplus_attr_key attr;
+>> > > >  } __packed hfsplus_btree_key;
+>> > > >  
+>> > > > +/*
+>> > > > + * There are two time systems.  Both are based on seconds since
+>> > > > + * a particular time/date.
+>> > > > + *	Unix:	signed little-endian since 00:00 GMT, Jan. 1, 1970
+>> > > > + *	mac:	unsigned big-endian since 00:00 GMT, Jan. 1, 1904
+>> > > > + *
+>> > > > + * HFS/HFS+ implementations are highly inconsistent, this one matches the
+>> > > > + * traditional behavior of 64-bit Linux, giving the most useful
+>> > > > + * time range between 1970 and 2106, by treating any on-disk timestamp
+>> > > > + * under HFS_UTC_OFFSET (Jan 1 1970) as a time between 2040 and 2106.
+>> > > > + */
+>> > > 
+>> > > Since this is replacing the wrapping behavior with a linear 1904-2040
+>> > > mapping, should we update this comment to match? It still describes the
+>> > > old "2040 to 2106" wrapping semantics.
+>> > > 
+>> > 
+>> > Frankly speaking, I don't quite follow what do you mean here. This patch doesn't
+>> > change the approach. It simply fixes the incorrect calculation logic. Do you
+>> > mean that this wrapping issue was the main approach? Currently, I don't see what
+>> > needs to be updated in the comment.
+>> 
+>> Hi,
+>> 
+>> The comment says "time range between 1970 and 2106, by treating any
+>> on-disk timestamp under HFS_UTC_OFFSET (Jan 1 1970) as a time between
+>> 2040 and 2106". That was the old behavior via the (u32) cast.
+>> 
+>> Your patch changes (u32) to (time64_t) in __hfsp_mt2ut/__hfs_m_to_utime,
+>> which removes that wrapping. For Mac time 0 (Jan 1, 1904):
+>> 
+>>   Old: (u32)     (0 - 2082844800) =  2212122496 -> 2040
+>>   New: (time64_t) 0 - 2082844800  = -2082844800 -> 1904
+>> 
+>> The new s_time_min/s_time_max also confirm the range is now 1904-2040,
+>> not 1970-2106. So the comment no longer matches the code.
+>> 
+>
+> OK. I see your point. So, we cannot execute the wrong calculation for timestamps
+> that are less than 1970. But it will be good to support the trick related to
+> 1970-2106. How can we improve the patch? What's your suggestion?
 
-Fix this by not marking the folio as uptodate if the read IO has bytes
-pending. The folio uptodate state will be set in the read completion
-path through iomap_end_read() -> folio_end_read().
+Well... the wrapping was the bug that broke generic/258 right? So trying
+to keep it would just reintroduce the problem. AFAIK since the on-disk
+timestamp is a 32bit unsigned counter from 1904 it tops out at
+2040. There are no spare bits to extend the range.
 
-Reported-by: Wei Gao <wegao@suse.com>
-Suggested-by: Sasha Levin <sashal@kernel.org>
-Tested-by: Wei Gao <wegao@suse.com>
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-Fixes: b2f35ac4146d ("iomap: add caller-provided callbacks for read and readahead")
----
- fs/iomap/buffered-io.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+The only way I can think of to support both would be a mount option that
+lets the user pick the mapping, something like "timerange=1904" and
+"timerange=1970". But that will introduce a lot of complexities.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 58887513b894..4fc5ce963feb 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -80,18 +80,27 @@ static void iomap_set_range_uptodate(struct folio *folio, size_t off,
- {
- 	struct iomap_folio_state *ifs = folio->private;
- 	unsigned long flags;
--	bool uptodate = true;
-+	bool mark_uptodate = true;
- 
- 	if (folio_test_uptodate(folio))
- 		return;
- 
- 	if (ifs) {
- 		spin_lock_irqsave(&ifs->state_lock, flags);
--		uptodate = ifs_set_range_uptodate(folio, ifs, off, len);
-+		/*
-+		 * If a read with bytes pending is in progress, we must not call
-+		 * folio_mark_uptodate(). The read completion path
-+		 * (iomap_read_end()) will call folio_end_read(), which uses XOR
-+		 * semantics to set the uptodate bit. If we set it here, the XOR
-+		 * in folio_end_read() will clear it, leaving the folio not
-+		 * uptodate.
-+		 */
-+		mark_uptodate = ifs_set_range_uptodate(folio, ifs, off, len) &&
-+				!ifs->read_bytes_pending;
- 		spin_unlock_irqrestore(&ifs->state_lock, flags);
- 	}
- 
--	if (uptodate)
-+	if (mark_uptodate)
- 		folio_mark_uptodate(folio);
- }
- 
--- 
-2.47.3
+IMO patch is correct, just the comment needs updating to say 1904-2040
+instead of 1970-2106.
 
+Cheers,
+C. Mitrodimas
 
