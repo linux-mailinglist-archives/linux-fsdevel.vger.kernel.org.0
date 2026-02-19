@@ -1,203 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-77709-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iClVDRsSl2n7uAIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77709-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 14:37:31 +0100
+	id UBwqD3cSl2n7uAIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 14:39:03 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC6D515F238
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 14:37:30 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7ADD15F272
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 14:39:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 18D013013D56
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 13:37:20 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 01C1F3044834
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 13:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5154933A6FE;
-	Thu, 19 Feb 2026 13:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="RPRXF583"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909532EE611;
+	Thu, 19 Feb 2026 13:38:34 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54F531AA91
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 13:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.179
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771508238; cv=pass; b=K7zP3V4cjMbvnKSyDqD5yQNVN4iUV04S4MazTd9HnECE907X/VfEchV53Z/jdb5h3x3VXV3OkTgaDULVVNUcQXzb/Uh6LDj/yQqaPhuY3lIG9F9CWmbokgHF9qX6WqbjvabZMmVEYFYk3dS1J80cxg7Ri8v94bDNABR5WIK3x4o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771508238; c=relaxed/simple;
-	bh=GmHo0NCL4ge/ErKlzJei0vodTI2hTzHGWFJJ3MMTDoQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=rqWtTSyr2JXMn9KmVyKo1CEc32eCHeKzDvi7eoVoEQ2GmWbGDctypS5FrBMVm0jdM6fkvSqzXijrm6fN3CiBG9U5vJzT9vz84X9MHukUwfRowvRddC0etxebO93n4yV7b02qfR1ghKjSFIrdevMa3MJ8vLR1hWAzNaYFOvNfdHY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=RPRXF583; arc=pass smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-79273a294edso8134937b3.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 05:37:17 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771508236; cv=none;
-        d=google.com; s=arc-20240605;
-        b=hdaZsNuo72SchrTtcjHoBGyB2XNDczM9s8t/IcbTWj27TFN3rsn8A20yI//BOHzK15
-         e9DT7AyrnQRAfIGXucFKWSi689u256KdeFMBAy8UDoWqj+Tc2wbOdaW1V03oonfZd32D
-         RcwhxibAgQbYyin9/+6f0wFGmFjtbI499wa/SSmNZJnSKD75i4/MKZgPyZhCPhFiaIni
-         VuTJZN5l2hbNHCGQaAWWzB0HqRLWAqhWJ6x7Y7F9YGKs9eP9NuD+IuAp8GjGXpJhMRWY
-         Lu+cqzxG0ZW63QrMVWMvq6H8r3Z40yEZYX9ClcLcQYQ8k9NwzP/pbPVOKis89F14Qot8
-         b63A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:dkim-signature;
-        bh=tcesM3lSjBahtXo0LHg5TOyW8wOpWKXFGTMFHZPHM9w=;
-        fh=ftTQKdqRjWOmeAcT8OgcDf5lb31uFstuAg/7ODeUOfs=;
-        b=l2vukAP06MxP6ZjZl6TYawEcHMyDtXCtUrpUFFfIrnAdwpAyPzowx5VqnOAgKXRupw
-         WGVjwCPQOxE2SQzL7XwJ1TE4DVVmCBivtSKciIIVEiLBTh7XA/MGsHqhfm6GKYgnQPbh
-         seUrwVqgDtcNWMWcdprjn34DsmO1xryzjnCjo3mjHdxvOaDEMOd6eMCU2gVzRdJLm/2A
-         7fqSA990hS6CivUYvaNP/EgDhteKW2azemDMI+kcfMvgwa4SiHYjgZZsNKCtiiiTHx7z
-         r79pg8bz+s7el0rk/0nTqI2l8g2YHmOHwIvlRmNDKpr11wLRwb8KK98eSKwEN1Nn+15d
-         EqCQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1771508236; x=1772113036; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tcesM3lSjBahtXo0LHg5TOyW8wOpWKXFGTMFHZPHM9w=;
-        b=RPRXF583zjUr9kLpSn9lofJHTsCiKArrm9nlvx8scRT7K19BqfhgT1h+pnZ8x8ZDgh
-         OGtm6RYI3mNfBnrcW7HR5XlB6jPvMsIleRIeBuYV/11A717OJuOOdv0zFJH2YntOSQdM
-         PmHdi46hywlf9WY8+8aSjZJC+dhUS+OPj70fAkWtj021T4e/9fnB7OXVCmCCSJYg4AIv
-         2BMvjB1zoF98quvTTrhHito2SL41gT9+x2Upjn/rpd4j5cRbCNnkicokiHTk8fitJN8p
-         xsRbXw3Wd4FBllEOgsFAln/mqSOC9YX4cVtnPQ8beh68VzxTW7LhY8D5k8H1ZpNjcU0O
-         nGPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771508236; x=1772113036;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tcesM3lSjBahtXo0LHg5TOyW8wOpWKXFGTMFHZPHM9w=;
-        b=iZGnrwxjaN8vZ+Oh0fL5n07S5MNPzBML1jd/E5tvfQvBW1ScngKN4rOLJgtp5m7DKL
-         EaIMLF2C8q/kBHKe0nMA2F/LtMsaxye2X+CUQz7vvBKEadCPm1x5XvxMvTbtjBgVeStJ
-         3ojnygbL9Soo4iPkCgb3kCwTWCV1EXAjKvvtMSMTw8UxR3tV6nEl571MjEGQfqxy/S/9
-         y5IEhGLL/vMRPj2WTl06xhWPiBYub0GgkXfNR93+elAHLOJ9rb1bkaYv88duz7nfxBeJ
-         T60AttEufqSUO3h8Yxyjuiu58QAaQw0jQ/hNlhAvBb6ajOeDcuSWdvtNdTVPho6nk7ou
-         A8Vw==
-X-Gm-Message-State: AOJu0YwT6CTpZhm3Brbqpwl5bwy8cqYUAGbBUnUCsEzxZHEWn3yllNcT
-	lSuzgX7Aj43gyBuhEpYKKAYJsWn7Z33Y+5IO0uJUMV7LDRRYBHGGJZ+TWfFNSvmG09zE20VvEOX
-	PJBEkIVX9hqRQEfHeCA70Sdsr5A2E3m/vRIvTW0c=
-X-Gm-Gg: AZuq6aKxI47fo1OmU43dh5aJ6VkHnWDzRNpdIx9ueAOpeCdIj6vfAQR1Z0R1Xyg5Q+5
-	25vP3ZqVbeMWe2iLsXwGmOVd3B46k179B92Z/mG2hnNEOjbyPEwxw82nJQTc77SIXefYijEcW/H
-	Klm2GTZ8BvBwnP/SpehDKzVvfWMQLjqN3EfPS1alFTxVb3AE75IvHPqdXZ1gLID1jjejSoqoJRv
-	sjXuok1SgooEOgvotTEh8iL2Vcv/k+k88edo0iDAv6PDguT7L9mRjVkC+t6/iQElIFPgMq6oRoD
-	V96j
-X-Received: by 2002:a05:690e:11c9:b0:644:60d9:8649 with SMTP id
- 956f58d0204a3-64c556dc612mr4509989d50.88.1771508236398; Thu, 19 Feb 2026
- 05:37:16 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562BD2EB87E;
+	Thu, 19 Feb 2026 13:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771508314; cv=none; b=L9nlcBfV6Gt8ZCClBy/Q2l2KrJ5SugekiZyYszgd2FG4Wp3sru/F4v88b1w2aQdZS5jOQFZzly3e/Dqs1XE3taiceHNf/qPvxLpoLDQs7qGKR1OAy8eY8umV1sBxGU4I0CvTx8qm0zJpWmjf90BUHbifRu/Mjhy2JNCq6Thyr5o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771508314; c=relaxed/simple;
+	bh=SNekF7prFibKS9mG5Fno51gLDqSAsz6awlkrLP9LR+M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lyL+zbyciCzMzQX6kcGd7jH0gu0j2Yg561OoibFNUYbaL6PaxC5NHvXYWVBLxBJqKv27kiONGydqvz7IGBDdDcUn/9jJzDL1W55JBuTyG7BdSDhZlUuasx5KPz9fkZdmXMTAu9fyZhggGog2EX/EeXFYieXNnTvWDHxeGvFh06Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id A7C5168B05; Thu, 19 Feb 2026 14:38:29 +0100 (CET)
+Date: Thu, 19 Feb 2026 14:38:29 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Andrey Albershteyn <aalbersh@kernel.org>, linux-xfs@vger.kernel.org,
+	fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	ebiggers@kernel.org, djwong@kernel.org
+Subject: Re: [PATCH v3 11/35] iomap: allow filesystem to read fsverity
+ metadata beyound EOF
+Message-ID: <20260219133829.GA11935@lst.de>
+References: <20260217231937.1183679-1-aalbersh@kernel.org> <20260217231937.1183679-12-aalbersh@kernel.org> <20260218063606.GD8600@lst.de> <hfteu6bonpv7djecbf3d6ekh56ktgcl4c2lvtjtrjfetzaq5dw@scsrvxx5rgig> <20260219060420.GC3739@lst.de> <qheg77kxcl4ecqdrsnmz4acfvszjlamlb7ilgxxyf3pmt4r7ah@5fzzmcpurdfp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Date: Thu, 19 Feb 2026 14:37:05 +0100
-X-Gm-Features: AZwV_QhEG-Dbyjabvuwr7JbE0kl4wjXOO6wTvaJKJoCU6g6GjPFeSI54b6DzZ8U
-Message-ID: <CAJ2a_Df6GOirF8TnNWTqNMpdWLHgjT9_v7G-PiL4e7LU2nr1PA@mail.gmail.com>
-Subject: Generic approach to avoid truncation of file on pseudo fs
-To: linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc: SElinux list <selinux@vger.kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <qheg77kxcl4ecqdrsnmz4acfvszjlamlb7ilgxxyf3pmt4r7ah@5fzzmcpurdfp>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[googlemail.com,quarantine];
-	R_DKIM_ALLOW(-0.20)[googlemail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+X-Spamd-Result: default: False [-1.36 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
+	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TO_DN_ALL(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77709-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_FROM(0.00)[googlemail.com];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[cgzones@googlemail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[googlemail.com:+];
-	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,lst.de:mid];
+	MID_RHS_MATCH_FROM(0.00)[];
+	NEURAL_HAM(-0.00)[-0.983];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,googlemail.com:dkim]
-X-Rspamd-Queue-Id: BC6D515F238
+	MIME_TRACE(0.00)[0:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCVD_COUNT_THREE(0.00)[4];
+	R_DKIM_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	PRECEDENCE_BULK(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77710-lists,linux-fsdevel=lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[]
+X-Rspamd-Queue-Id: C7ADD15F272
 X-Rspamd-Action: no action
 
-Hi all,
+On Thu, Feb 19, 2026 at 12:11:18PM +0100, Andrey Albershteyn wrote:
+> > > fsverity descriptor. This is basically the case as for EOF folio.
+> > > Descriptor is the end of the fsverity metadata region. If we have 1k
+> > > fs blocks (= merkle blocks) we can have [descriptor | hole ] folio.
+> > > As we are not limited by i_size here, iomap_block_needs_zeroing()
+> > > won't fire to zero this hole. So, this case is to mark this tail as
+> > > uptodate.
+> > 
+> > How do we end up in that without ctx->vi set?
+> 
+> We're reading it
 
-SELinux offers a memory mapping for userspace for status changes via
-the pseudo file /sys/fs/selinux/status.
-Currently this file can be truncated by a privileged process, leading
-to other userland processes getting signalled a bus error (SIGBUS).
-This affects for example systemd [1].
-I proposed a targeted fix [2], overriding the inode setattr handler
-and filtering O_TRUNC on open.
+Did a part of that sentence get lost?
 
-Is there there a general solution how to prevent truncation of pseudo
-files backed up by real memory?
-Are there more ways a file can be truncated that should be handled?
+> yes this would work
+> 
+> I've attached the current patch, with all the changes.
+> 
+> +               } else if (iomap_block_needs_zeroing(iter, pos) &&
+> +                          !(iomap->flags & IOMAP_F_FSVERITY)) {
+> 
+> This check is still needed as we should not hit it when we're
+> reading normal merkle tree block. iomap_block_needs_zeroing is
+> checking if offset is beyond i_size and will fire here for merkle
+> blocks.
+> 
+> Let me know if you prefer to split the first case further, or the
+> current patch is good enough.
+> 
+> -- 
+> - Andrey
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 47356c763744..af7b79073879 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -533,10 +533,31 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
+>                 if (plen == 0)
+>                         return 0;
+>  
+> -               /* zero post-eof blocks as the page may be mapped */
+> -               if (iomap_block_needs_zeroing(iter, pos) &&
+> -                   !(iomap->flags & IOMAP_F_FSVERITY)) {
+> +               /*
+> +                * Handling of fsverity "holes". We hits this for two case:
+> +                *   1. No need to go further, the hole after fsverity
+> +                *      descriptor is the end of the fsverity metadata.
+> +                *
+> +                *   2. This folio contains merkle tree blocks which need to be
 
+Overly long line here.
 
-If there is no generic way would the following patch be acceptable?
+> +                *      synthesized and fsverity descriptor.
+> +                */
+> +               if ((iomap->flags & IOMAP_F_FSVERITY) &&
+> +                   iomap->type == IOMAP_HOLE) {
+> +                       /*
+> +                        * Synthesize the hash value for a zeroed folio if we
+> +                        * are reading merkle tree blocks.
+> +                        */
 
- diff --git a/fs/libfs.c b/fs/libfs.c
+.. and we'll probably want to merge this into the above comment.
 
-index 9264523be85c..76f7fec136cb 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1089,6 +1089,7 @@ int simple_fill_super(struct super_block *s,
-unsigned long magic,
-               }
-               inode->i_mode =3D S_IFREG | files->mode;
-               simple_inode_init_ts(inode);
-+               inode->i_op =3D files->iops;
-               inode->i_fop =3D files->ops;
-               inode->i_ino =3D i;
-               d_make_persistent(dentry, inode);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 04ceeca12a0d..9f1a9f0a9b48 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3225,7 +3225,7 @@ extern const struct file_operations simple_dir_operat=
-ions;
-extern const struct inode_operations simple_dir_inode_operations;
-extern void make_empty_dir_inode(struct inode *inode);
-extern bool is_empty_dir_inode(struct inode *inode);
--struct tree_descr { const char *name; const struct file_operations
-*ops; int mode; };
-+struct tree_descr { const char *name; const struct file_operations
-*ops; int mode; const struct inode_operations *iops; };
-struct dentry *d_alloc_name(struct dentry *, const char *);
-extern int simple_fill_super(struct super_block *, unsigned long,
-                            const struct tree_descr *);
+> +                       if (ctx->vi)
+> +                               fsverity_folio_zero_hash(folio, poff, plen,
+> +                                                        ctx->vi);
+> +                       iomap_set_range_uptodate(folio, poff, plen);
+> +               } else if (iomap_block_needs_zeroing(iter, pos) &&
+> +                          !(iomap->flags & IOMAP_F_FSVERITY)) {
+> +                       /* zero post-eof blocks as the page may be mapped */
+>                         folio_zero_range(folio, poff, plen);
+> +                       if (fsverity_active(iter->inode) &&
+> +                           !fsverity_verify_blocks(ctx->vi, folio, plen, poff))
 
+Another overly long line here.  Also we should avoid the
+fsverity_active check here, as it causes a rhashtable lookup.  F2fs
+and ext4 just check ctx->vi, but based on the checks above, we seem
+to set this also for (some) reads of the fsverity metadata.  But as
+we exclude IOMAP_F_FSVERITY above, we might actually be fine with a
+ctx->vi anyway.
 
-and then adding the hook would just be
+Please document the rules for ctx->vi while were it.
 
--               [SEL_STATUS] =3D {"status", &sel_handle_status_ops, S_IRUGO=
-},
-+               [SEL_STATUS] =3D {"status", &sel_handle_status_ops,
-S_IRUGO, &sel_handle_status_iops},
-
-
-Best regards,
-       Christian G=C3=B6ttsche
-
-
-Link [1]: https://github.com/systemd/systemd/issues/37349
-Link [2]: https://lore.kernel.org/selinux/20260130171140.90966-1-cgoettsche=
-@seltendoof.de/
 
