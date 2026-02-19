@@ -1,133 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-77700-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77701-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id mN/mHvn1lmndrQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77700-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 12:37:29 +0100
+	id cJn7GMv3lmn4swIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77701-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 12:45:15 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA25915E550
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 12:37:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC25B15E659
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 12:45:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id A72EF302689A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 11:37:25 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 6AB0C3019440
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 11:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8147D2FD1B3;
-	Thu, 19 Feb 2026 11:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5F0301704;
+	Thu, 19 Feb 2026 11:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHQp1Oux"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Xq5+G16B";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nuD4K7bj";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Xq5+G16B";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nuD4K7bj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F7F241695
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 11:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFA430BBBA
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 11:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771501042; cv=none; b=YlGPAs/olf7WqA4UaGMr26NeNhTJ+H6O+RI+tst6eTD0PRlkC1zsSOWBMc3NAFrfnOun1NvTb6q7/v7b4Du7JrDWqvpm2JILCA1ax+voyQx/W6YRUtRXXOZ7cCWX6TuCUnsM5FGEuht1OYlAd4VSiiVTEGfAeitXVy1aeS7KD6M=
+	t=1771501512; cv=none; b=saB4jzOYPwp4GE94ftM0CuHMlDwg/GjItrz/eDL7WJhrWbJs5v/pMzp5MH1FkAjxSlCoBHCugEHOTpDI7+viGD2DJZC4LsGJocCA7y5BoB1iz7fpzdzJ3kiasoRxaf1dvvu1D1WoEOG9qGh+PZIo8rhaqlnQ9764y/NKciO6SFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771501042; c=relaxed/simple;
-	bh=9ssU5WZrgVG4IgiqFopoE8/6agi06eDPJNl7cL7/qIo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ftAuhj+INrOYuljym4RgDz22nkpgzmpmmHeQ5uIZ7jLYl2fWbkdoldrLexAI1PC/k84SDJkJ5wdbU4c1YLX2vR52AsEXu10PiB5ii3WeBlo1fKNmpk7oxhTpjMnPgMe12ESgzapSAZGVPYAMUvm2j5vUtNp8AjPuB265yMhUR0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHQp1Oux; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99A08C19424
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 11:37:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771501041;
-	bh=9ssU5WZrgVG4IgiqFopoE8/6agi06eDPJNl7cL7/qIo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VHQp1OuxzKA2ahAP9/UArahr7tryjpbk6xYqcB7IrQr6PwQoV0+qD/dL5x49nyCau
-	 yYVKitGdKC2yfgDiMWmpfpZyxWgLIl7BFp+cWmO8Ij0zUnKAyRGm7jTY3q7iPfG+Qj
-	 wcJvzWf83XjrLjc+HgbuG4DPUU3LGQwDTjjmk6uGJ0HOPVXyt7xsQPlXvNChOBPImk
-	 aKVrZyLzCQ9TECFP5vFlzg0u0owzzUQbxEtje/SlyXKuwUaSS1lqva+EOTbbBWWHQv
-	 x+AFJWZXFVLQAqck33wwgmRwP6r5pM1yoERd3j9pJWKTjyaBWxx+s+pEWKZDkR66Hh
-	 trIG3DJzCZKmQ==
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b8fbe5719ceso177687666b.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 03:37:21 -0800 (PST)
-X-Gm-Message-State: AOJu0Yxea2vhIwAfjWqRCkhPq7JwGV6aLKd1Ui0V6O7NiZA31dwv8tcI
-	hiON6Nm8DVLssnvsOb7K/YsVaKJtqxgs/BPDr/Bb1b+1Qk5+LEtf8pnKzpYkkDPbU6mYu3cgqLv
-	R27xsWtFmm4pt8gdrWAQP1jtrPriFbc4=
-X-Received: by 2002:a17:906:7305:b0:b8f:f74:d601 with SMTP id
- a640c23a62f3a-b904dea50acmr141894166b.50.1771501040066; Thu, 19 Feb 2026
- 03:37:20 -0800 (PST)
+	s=arc-20240116; t=1771501512; c=relaxed/simple;
+	bh=bxUgeBf/aiscgKEySoloKKEZUIudZSplfETR5q8I4Ko=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M0KxIOBjdpQJCb5I47fQpEIw7ujWPHUrw5vCPH6aiIZVqvOqjErYki3x5FeuNoFgKuQYqwhB2FRtFfTJDHLj07H+4RnSLHd4fGZqCJN6vqm+OEgzCHrGfv14kxOYK0kAM+PFXfJu7Gj7pfLKrcb0PTwGdzgFCd0z4RuaSLyefOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Xq5+G16B; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nuD4K7bj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Xq5+G16B; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nuD4K7bj; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 67AEA5BCC3;
+	Thu, 19 Feb 2026 11:45:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1771501509; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JQmiZygA1wbMu+ENW6V5hajhu11FdtcjIz/SbpfPE9Y=;
+	b=Xq5+G16BQpXy8ehJxYJTUeAEarD4MGxhOtb0ntaEGflgaQ3U8TYHEcnoSow2MWC8WDMpic
+	iWN6QsTHNeLdFXtWVoBX20x/4NW4P8ErcW1x3H5eGuvFPjAZjoEW3TD7XJEuc3zRlku6WP
+	lwJotMaV3FQvZPwykD8j9onf3Cywmxo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1771501509;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JQmiZygA1wbMu+ENW6V5hajhu11FdtcjIz/SbpfPE9Y=;
+	b=nuD4K7bjX9iXAVjW0JZXSRmzAdKNCG8aq6u3emGHFhk+X+q9J6/O0RneXlFp/qL7GvSWMq
+	gAQMxsKBJNwPy9AA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1771501509; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JQmiZygA1wbMu+ENW6V5hajhu11FdtcjIz/SbpfPE9Y=;
+	b=Xq5+G16BQpXy8ehJxYJTUeAEarD4MGxhOtb0ntaEGflgaQ3U8TYHEcnoSow2MWC8WDMpic
+	iWN6QsTHNeLdFXtWVoBX20x/4NW4P8ErcW1x3H5eGuvFPjAZjoEW3TD7XJEuc3zRlku6WP
+	lwJotMaV3FQvZPwykD8j9onf3Cywmxo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1771501509;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JQmiZygA1wbMu+ENW6V5hajhu11FdtcjIz/SbpfPE9Y=;
+	b=nuD4K7bjX9iXAVjW0JZXSRmzAdKNCG8aq6u3emGHFhk+X+q9J6/O0RneXlFp/qL7GvSWMq
+	gAQMxsKBJNwPy9AA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 537743EA65;
+	Thu, 19 Feb 2026 11:45:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id KK5bFMX3lmmvQAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 19 Feb 2026 11:45:09 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 155AFA06FE; Thu, 19 Feb 2026 12:45:09 +0100 (CET)
+Date: Thu, 19 Feb 2026 12:45:09 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: remove or unexport unused fs_conext infrastructure
+Message-ID: <2x23py5ueosaz2nnrukilugh2kb42jgr4sbxakptcjjyin2ih5@systah33aprs>
+References: <20260219065014.3550402-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d0e5da23-90ed-4529-b919-11ae551611f3@dev.snart.me>
- <CAKYAXd-oj5Aa4rccp4iESFgoVUyPq2v+u=2m1AM8KQPpaZOOGg@mail.gmail.com> <8709a255-0c8e-40d8-ab75-b3ea974f5823@dev.snart.me>
-In-Reply-To: <8709a255-0c8e-40d8-ab75-b3ea974f5823@dev.snart.me>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Thu, 19 Feb 2026 20:37:08 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd98fz=evAudpa8-GFhTfGbcLVioXFsO30pCKu_Q_ek8mg@mail.gmail.com>
-X-Gm-Features: AaiRm50v_MOcQ9s7fjODSoP3Wxe9pdTgd8tjitF4Cygb952UDKYLHvtRs7Tc6F8
-Message-ID: <CAKYAXd98fz=evAudpa8-GFhTfGbcLVioXFsO30pCKu_Q_ek8mg@mail.gmail.com>
-Subject: Re: [PATCH] exfat: add fallocate support
-To: David Timber <dxdt@dev.snart.me>
-Cc: linux-fsdevel@vger.kernel.org, Sungjong Seo <sj1557.seo@samsung.com>, 
-	Yuezhang Mo <yuezhang.mo@sony.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260219065014.3550402-1-hch@lst.de>
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-1.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	MID_RHS_NOT_FQDN(0.50)[];
 	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	FROM_HAS_DN(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	TAGGED_FROM(0.00)[bounces-77700-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,suse.cz:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns];
+	DMARC_NA(0.00)[suse.cz];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	TAGGED_FROM(0.00)[bounces-77701-lists,linux-fsdevel=lfdr.de];
 	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[linkinjeon@kernel.org,linux-fsdevel@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-0.999];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,mail.gmail.com:mid,snart.me:email]
-X-Rspamd-Queue-Id: EA25915E550
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: CC25B15E659
 X-Rspamd-Action: no action
 
-On Thu, Feb 19, 2026 at 5:43=E2=80=AFPM David Timber <dxdt@dev.snart.me> wr=
-ote:
->
-> > Unlike before, I am no longer in favor of adding this logic to
-> > evict_inode. One major concern is the potential for cluster leaks if a
-> > device is unplugged while a file is still open. Instead, We can
-> > sufficiently minimize fragmentation in applications like camera apps
-> > by utilizing fallocate with mode 0. If there is any unused
-> > pre-allocated space after the recording or write operation is
-> > finished, the application can simply call ftruncate() to reclaim it.
-> I agree, as stated in the doc change. Not a good look.
->
-> Would you meet the half way by dropping KEEP_SIZE support, then? The
-> regular fallocate op can be treated as ftruncate which has already been
-> the behaviour for a long time - just call exfat_cont_expand() in
-> exfat_fallocate().
-It is not that simple. In FAT, mode 0 seems to be hardly practical;
-the need to zero out preallocated clusters leads to significant
-latency. So the fallocate operation itself would be unnecessary
-without the keep size flag. Furthermore, I doubt we can easily remove
-it since there may already be applications relying on this. Unlike
-FAT, exFAT provides both data_size and valid_size, so there is no need
-to zero-out preallocated clusters in mode 0.
->
-> exfatprogs still needs to be able to reclaim the orphaned clusters,
-> though. That's still a very likely scenario, especially on the devices
-> that run on batteries.
-Okay, We will answer it in ISSUE of exfatprogs after checking it more.
+Hi!
+
+On Thu 19-02-26 07:50:00, Christoph Hellwig wrote:
+> now that the fs_context conversion is finished, remove all the bits
+> that did not end up having users, or unexport them if the users are
+> always built in.
+
+The patches look good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
