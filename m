@@ -1,61 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-77683-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77684-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GClwNcaylmmRjwIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77683-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 07:50:46 +0100
+	id UNaUDcmylmmRjwIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77684-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 07:50:49 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9628F15C7DE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 07:50:46 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F9C15C7E5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 07:50:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 700553014509
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 06:50:42 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 2AAA0300B456
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 06:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996F23054EF;
-	Thu, 19 Feb 2026 06:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798273090DE;
+	Thu, 19 Feb 2026 06:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oi1dP6a/"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UPVQKXmq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3024F3033F6
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 06:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200533093B8
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 06:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771483839; cv=none; b=Goa9793AFJ9Xmh7nBHhZrIuTUPW+WpH+iTuErsRax9kTHxEzS3Mbwvj/W/V4wt7KbpLaHeiUhOc4mbvp0COCVPtGVoergG1/gkiLryl7pNi2Mz9CDxAo2BUKxPGUnCXNa/uvvQ3h1rk4CIrCFn+3QJde2LyLy1YoXhQnQfuheog=
+	t=1771483842; cv=none; b=foqZraJgAWCOCLFOw6R/oE7r8DZsBGNC+Q4NM+VuXeuZJOewmWoufW6zCF2vBI58s3UUuEMKyfC14T9GWDCPH+FXilIHjjwdjILFGHkUrF6UgezEiZsO3xz658FQl6kuDkC5O+G9keg2UX6vddFmtI0K3Bqjd8mdVGcHjJgKA9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771483839; c=relaxed/simple;
-	bh=i0epLPUe7BiKlcAA/kepev5MGs//cdVUt41Ezs7zkuc=;
+	s=arc-20240116; t=1771483842; c=relaxed/simple;
+	bh=3ql4wbHoiZtYZFPEfeicGO4Usy42kcjmCcZ9/OU1ARU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AOh/8Fsd2/Bfi+7zz5sn4KCM4yghtb2IvPgnQqvseyeZnNxtZEogsvdv89kEBTd0h3kYliXJm2sAw4oQZKln0W1wchR8FHjZAw+xpG+hQB35ddXreijtfuqktkUJR5YC5aNMyFV4zDteWx9eQ9T0YDTmBaAHY7ezrWfL3oz4FFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oi1dP6a/; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=ZwdYefPqHJq/8UIOzAu8Vqr/z4/xH/gYMp1BzPozzKq86YXJfxRcZ/XSVvvP41bf0tcWaPq8h6JFMOxuqTRhUcWp3q3bw/EtcGFnbcT++K1bITosHjFVBhIoCmyNPM17XF8Q4sncCGCRxF7E13J85ZaHhZEltfOWHASMBTUK5Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UPVQKXmq; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=Wtqp0oDV/EbVz6o20pGLBbPLuSTemzWDeEaFWjeQbT8=; b=oi1dP6a/JxZW7sE++6gw0dnZpX
-	JBvRvc0nOybvS6MFhB4q3Szt132zFaAC1JDIWiKZDAj6MbFkn2R7liBSBIlOVWPKDncrtDLXpPuqn
-	Eq2ft5C8up7G6VxWay78bZ1j67KvYO1lRyiXVOlSRAhMPfeNw2bfJGfs+6ULz6egDTWxoHVhYlNQu
-	smRTgKwrQMXp55ciWTr32AaAlvMwPBSR9KtNEpv0DnSbvo9RIKzuQmmu/5QbH94k7CIOKh1hg6ove
-	VfOcSjOShrkF3cc9OVqiSPOeQfXGOgCIEKTZrovGZAjG8sB4nKhZmjogpyA9pNTReaXC7nBster8f
-	ERsFauEQ==;
+	bh=TLJYJtC9fFEev19iWbQSriAhf4bWE9Z0Bg0LyqpY/DU=; b=UPVQKXmqtCB58eVfBCYwsN5jfl
+	JyEHGDJ7mIPILdyQzn0Rq6Ygi1w85joSnywYKIMah+kEuKnnA953idYlOOOaB/mpZOSCmmsAQYPH2
+	TtdRyHHU2H2+fAZvloJvu8uennZdqJeeTAJIEiZsw8H72kFm1oGddrVykL9odgUIR73NDjEHL2bih
+	yNtFFloTxg9HKpjAH1nXV1y8HZxADBVNkwppxdo6CrzL1DR2OXQWjQCp2pOWVMA1votr1R+c3l9GA
+	HTOR8/jptLgqUxOcvgVMeXA9b02xkj5E2zGQYRS/2synQ4QX+O3oTVhPKOzYtmyoyvtsDxA38tKhy
+	rdWO0AfQ==;
 Received: from [212.185.66.17] (helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vsxrx-0000000AzJA-1eYp;
-	Thu, 19 Feb 2026 06:50:37 +0000
+	id 1vsxs0-0000000AzJJ-2FGL;
+	Thu, 19 Feb 2026 06:50:40 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>
 Cc: Jan Kara <jack@suse.cz>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 3/4] fs: remove fsparam_path / fs_param_is_path
-Date: Thu, 19 Feb 2026 07:50:03 +0100
-Message-ID: <20260219065014.3550402-4-hch@lst.de>
+Subject: [PATCH 4/4] fs: unexport fs_context_for_reconfigure
+Date: Thu, 19 Feb 2026 07:50:04 +0100
+Message-ID: <20260219065014.3550402-5-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260219065014.3550402-1-hch@lst.de>
 References: <20260219065014.3550402-1-hch@lst.de>
@@ -73,18 +73,18 @@ X-Spamd-Result: default: False [-0.06 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	R_MISSING_CHARSET(0.50)[];
 	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), DKIM not aligned (relaxed),none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77683-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77684-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	RCPT_COUNT_THREE(0.00)[4];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
@@ -94,79 +94,30 @@ X-Spamd-Result: default: False [-0.06 / 15.00];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:mid,lst.de:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,infradead.org:dkim]
-X-Rspamd-Queue-Id: 9628F15C7DE
+	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:mid,lst.de:email,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,infradead.org:dkim]
+X-Rspamd-Queue-Id: 66F9C15C7E5
 X-Rspamd-Action: no action
 
-These are not used anywhere even after the fs_context conversion is
-finished, so remove them.
+fs_context_for_reconfigure is only used by core VFS code and devtmpfs,
+so unexport it.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- Documentation/filesystems/mount_api.rst | 2 --
- fs/fs_parser.c                          | 7 -------
- include/linux/fs_parser.h               | 3 +--
- 3 files changed, 1 insertion(+), 11 deletions(-)
+ fs/fs_context.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/Documentation/filesystems/mount_api.rst b/Documentation/filesystems/mount_api.rst
-index b4a0f23914a6..e8b94357b4df 100644
---- a/Documentation/filesystems/mount_api.rst
-+++ b/Documentation/filesystems/mount_api.rst
-@@ -648,7 +648,6 @@ The members are as follows:
- 	fs_param_is_enum	Enum value name 	result->uint_32
- 	fs_param_is_string	Arbitrary string	param->string
- 	fs_param_is_blockdev	Blockdev path		* Needs lookup
--	fs_param_is_path	Path			* Needs lookup
- 	fs_param_is_fd		File descriptor		result->int_32
- 	fs_param_is_uid		User ID (u32)           result->uid
- 	fs_param_is_gid		Group ID (u32)          result->gid
-@@ -681,7 +680,6 @@ The members are as follows:
- 	fsparam_enum()		fs_param_is_enum
- 	fsparam_string()	fs_param_is_string
- 	fsparam_bdev()		fs_param_is_blockdev
--	fsparam_path()		fs_param_is_path
- 	fsparam_fd()		fs_param_is_fd
- 	fsparam_uid()		fs_param_is_uid
- 	fsparam_gid()		fs_param_is_gid
-diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-index 79e8fe9176fa..b4cc4cce518a 100644
---- a/fs/fs_parser.c
-+++ b/fs/fs_parser.c
-@@ -361,13 +361,6 @@ int fs_param_is_blockdev(struct p_log *log, const struct fs_parameter_spec *p,
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index 81ed94f46cac..4a7b8fde4c5c 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -318,7 +318,6 @@ struct fs_context *fs_context_for_reconfigure(struct dentry *dentry,
+ 	return alloc_fs_context(dentry->d_sb->s_type, dentry, sb_flags,
+ 				sb_flags_mask, FS_CONTEXT_FOR_RECONFIGURE);
  }
- EXPORT_SYMBOL(fs_param_is_blockdev);
+-EXPORT_SYMBOL(fs_context_for_reconfigure);
  
--int fs_param_is_path(struct p_log *log, const struct fs_parameter_spec *p,
--		     struct fs_parameter *param, struct fs_parse_result *result)
--{
--	return 0;
--}
--EXPORT_SYMBOL(fs_param_is_path);
--
- #ifdef CONFIG_VALIDATE_FS_PARSER
  /**
-  * fs_validate_description - Validate a parameter specification array
-diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
-index 961562b101c5..98b83708f92b 100644
---- a/include/linux/fs_parser.h
-+++ b/include/linux/fs_parser.h
-@@ -28,7 +28,7 @@ typedef int fs_param_type(struct p_log *,
-  */
- fs_param_type fs_param_is_bool, fs_param_is_u32, fs_param_is_s32, fs_param_is_u64,
- 	fs_param_is_enum, fs_param_is_string, fs_param_is_blockdev,
--	fs_param_is_path, fs_param_is_fd, fs_param_is_uid, fs_param_is_gid,
-+	fs_param_is_fd, fs_param_is_uid, fs_param_is_gid,
- 	fs_param_is_file_or_string;
- 
- /*
-@@ -126,7 +126,6 @@ static inline bool fs_validate_description(const char *name,
- #define fsparam_string(NAME, OPT) \
- 				__fsparam(fs_param_is_string, NAME, OPT, 0, NULL)
- #define fsparam_bdev(NAME, OPT)	__fsparam(fs_param_is_blockdev, NAME, OPT, 0, NULL)
--#define fsparam_path(NAME, OPT)	__fsparam(fs_param_is_path, NAME, OPT, 0, NULL)
- #define fsparam_fd(NAME, OPT)	__fsparam(fs_param_is_fd, NAME, OPT, 0, NULL)
- #define fsparam_file_or_string(NAME, OPT) \
- 				__fsparam(fs_param_is_file_or_string, NAME, OPT, 0, NULL)
+  * fs_context_for_submount: allocate a new fs_context for a submount
 -- 
 2.47.3
 
