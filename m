@@ -1,280 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-77719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77720-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oKuRIlExl2kcvgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 16:50:41 +0100
+	id mDOdKJI0l2kCvwIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77720-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 17:04:34 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E40301605FB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 16:50:40 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A5C51607B9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 17:04:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1409030B48C5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 15:45:34 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D327E30137AC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 16:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B183F34A3DC;
-	Thu, 19 Feb 2026 15:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8615348465;
+	Thu, 19 Feb 2026 16:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KBb7ndUW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FsKtkf+o"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3051734A76E;
-	Thu, 19 Feb 2026 15:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6746921A444
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 16:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771515931; cv=none; b=YpZQWQ0699m+/ePZwu1YFKxMW3sXDLZ0tMfcYGMQDPE8LEDIzFDo0qhgWBD6ld8ZbQug9LlCUA8PRJ7z4QxlBFlPNsxK94ZKqF0roNpbyu9hTnI06W4Cf+lRGQVdkhzaiOwRIU3p/NC/7mv0vBEuG4UzsqOeQloD0hjVsezIn4M=
+	t=1771517069; cv=none; b=EOC/yP7oAF123iGWawnXYBRwhz61Up6sfsNI17BfghkfE8OJUpQTCGisXvM248vX8uwXye6HhlOwLJaGvWuQioNDkPp6de45SabfZVhG5LWIV1uX9Pibcc07fPlJpJgaw18WJ1cw5/ImLH8nRSfCGDKq1ASftvb++falWekcbSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771515931; c=relaxed/simple;
-	bh=2tel+xr7GLPTXAeWWTV0pNMbxcro+AF4/Zk3M5cR9sc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vCU2FONYBtTBRwTbgHLm4t3ThPvltLEPhQEkPp2984NvWuLSP3mSsePg/Y8dH56jgaVZaU98/8USDhkHjNAXERZqE3J5QZJIJWzPaAdjB+e/uJOSwPtuOImpQrE+p46ZboXiW+KPzvkMmdKq7Y3EAf6z1iDQI5A73WsAtsoNtGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KBb7ndUW; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1771515928; x=1803051928;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=2tel+xr7GLPTXAeWWTV0pNMbxcro+AF4/Zk3M5cR9sc=;
-  b=KBb7ndUWvK8jmmjRYAN/U3nkUUcJ56ZZoyo3jyEtSAf7PcSXxpQPfXCb
-   NgQTE7ly+5uQsm3xzc9TZdv6irXkzFGfEogyv9hjbukT9uKPcAbffTMM5
-   n+DdPTOFVx71NmaEpZcuS76dt58dtOtv689f05VWNdT1DK3I0jvwLddW5
-   p16s5+3hTRUhsw64WJGVRrllKjFcu+8dkQUVKkgqLS3HnF/ovDLrgjKLD
-   L1yrestfM4E5cJ/22HnigKGtl2ZRUCk1W6MfNoE50ZgrCrwRuIUNVLDop
-   8EpnRs49vHrd7LzGtlCddW1tMhVcakI0yjmg2Jvk0XrPYru0S1U/ECFh8
-   A==;
-X-CSE-ConnectionGUID: iQ4CNZr/QSu4hccEnHVG0w==
-X-CSE-MsgGUID: ggKRObpEQWyqzWrY+L21MQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11706"; a="90011824"
-X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; 
-   d="scan'208";a="90011824"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2026 07:41:48 -0800
-X-CSE-ConnectionGUID: 2UNbJJT1QwWcglV/ZWOzMQ==
-X-CSE-MsgGUID: 2+Zeibn4Samq6kR6s/gMAQ==
-X-ExtLoop1: 1
-Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.110.20]) ([10.125.110.20])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2026 07:41:45 -0800
-Message-ID: <3d4f6d14-4b5e-42e4-bab6-2d055088de7b@intel.com>
-Date: Thu, 19 Feb 2026 08:41:44 -0700
+	s=arc-20240116; t=1771517069; c=relaxed/simple;
+	bh=PzFTL48OwA5tmWr6xRQlqoPXbP+mZjv9UaKGo7pLMR4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U32hU7QOCjZBKUQz8tKAT2suJ2dVFhnek9Z8nBtaRBBz1oyoe+sAGNDCsU1/qiKbvL9xWE3fvD5niA5X0ZXdfqMBnO9ApijL/UDfjYoUPGDNyVXekl7ti5ToMMYMgJs+EENW/LsBDjbnQx24LEjJ9KLnCzAtANfJzHnlOPmCoxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FsKtkf+o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAEB6C4CEF7;
+	Thu, 19 Feb 2026 16:04:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771517069;
+	bh=PzFTL48OwA5tmWr6xRQlqoPXbP+mZjv9UaKGo7pLMR4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FsKtkf+o5JL+OsNsDQXO6+J4YuhiWrn/2ZIJXYOtT7A6ETJdtwPmDqBOYL1H6gUbX
+	 WxT+aaNZJ0qSG9+oF4MwWHVCiQEaPSLqnSdlmJFTH1IMY0uGllxLIIi5PMLOx0S4xU
+	 LDvU+DBLr1xj3CcVF/EMnZgC+DJCA6CKSKDxmYD4gYGdjNw3cvR+nCTBOHFhw8/c9o
+	 MqmHE1Ot8eEoU0459Et1notA7IxGf6ZCnYtCNWcSyTksyTqCsPy2Xbz5pIRmQjylcf
+	 M3sjK+enAjnfI+AMvpK7nfYbSeDh1NX2awLYNFshFk4uXO7bmzNQZAsXCQBq60tkWb
+	 x3TiYM8lgs2kw==
+Date: Thu, 19 Feb 2026 08:04:28 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 3/4] fs: remove fsparam_path / fs_param_is_path
+Message-ID: <20260219160428.GQ6467@frogsfrogsfrogs>
+References: <20260219065014.3550402-1-hch@lst.de>
+ <20260219065014.3550402-4-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V7 06/19] dax: Add dax_set_ops() for setting
- dax_operations at bind time
-To: John Groves <john@jagalactic.com>, John Groves <John@Groves.net>,
- Miklos Szeredi <miklos@szeredi.hu>, Dan Williams <dan.j.williams@intel.com>,
- Bernd Schubert <bschubert@ddn.com>,
- Alison Schofield <alison.schofield@intel.com>
-Cc: John Groves <jgroves@micron.com>, John Groves <jgroves@fastmail.com>,
- Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>,
- Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- David Hildenbrand <david@kernel.org>, Christian Brauner
- <brauner@kernel.org>, "Darrick J . Wong" <djwong@kernel.org>,
- Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>,
- Amir Goldstein <amir73il@gmail.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong
- <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
- Bagas Sanjaya <bagasdotme@gmail.com>, James Morse <james.morse@arm.com>,
- Fuad Tabba <tabba@google.com>, Sean Christopherson <seanjc@google.com>,
- Shivank Garg <shivankg@amd.com>, Ackerley Tng <ackerleytng@google.com>,
- Gregory Price <gourry@gourry.net>, Aravind Ramesh <arramesh@micron.com>,
- Ajay Joshi <ajayjoshi@micron.com>,
- "venkataravis@micron.com" <venkataravis@micron.com>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
- "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <0100019bd33b1f66-b835e86a-e8ae-443f-a474-02db88f7e6db-000000@email.amazonses.com>
- <20260118223157.92407-1-john@jagalactic.com>
- <0100019bd33c9e30-6de962ed-6feb-4481-a68a-c225ee8808ff-000000@email.amazonses.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <0100019bd33c9e30-6de962ed-6feb-4481-a68a-c225ee8808ff-000000@email.amazonses.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260219065014.3550402-4-hch@lst.de>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[38];
-	FREEMAIL_CC(0.00)[micron.com,fastmail.com,lwn.net,intel.com,infradead.org,suse.cz,zeniv.linux.org.uk,kernel.org,gmail.com,huawei.com,redhat.com,toxicpanda.com,arm.com,google.com,amd.com,gourry.net,vger.kernel.org,lists.linux.dev];
-	TAGGED_FROM(0.00)[bounces-77719-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	DKIM_TRACE(0.00)[intel.com:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77720-lists,linux-fsdevel=lfdr.de];
 	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[dave.jiang@intel.com,linux-fsdevel@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCVD_COUNT_FIVE(0.00)[5];
-	MID_RHS_MATCH_FROM(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-0.999];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:mid,intel.com:dkim,intel.com:email,groves.net:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: E40301605FB
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 0A5C51607B9
 X-Rspamd-Action: no action
 
-
-
-On 1/18/26 3:32 PM, John Groves wrote:
-> From: John Groves <John@Groves.net>
+On Thu, Feb 19, 2026 at 07:50:03AM +0100, Christoph Hellwig wrote:
+> These are not used anywhere even after the fs_context conversion is
+> finished, so remove them.
 > 
-> Add a new dax_set_ops() function that allows drivers to set the
-> dax_operations after the dax_device has been allocated. This is needed
-> for fsdev_dax where the operations need to be set during probe and
-> cleared during unbind.
-> 
-> The fsdev driver uses devm_add_action_or_reset() for cleanup consistency,
-> avoiding the complexity of mixing devm-managed resources with manual
-> cleanup in a remove() callback. This ensures cleanup happens automatically
-> in the correct reverse order when the device is unbound.
-> 
-> Signed-off-by: John Groves <john@groves.net>
-
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  drivers/dax/fsdev.c | 16 ++++++++++++++++
->  drivers/dax/super.c | 38 +++++++++++++++++++++++++++++++++++++-
->  include/linux/dax.h |  1 +
->  3 files changed, 54 insertions(+), 1 deletion(-)
+>  Documentation/filesystems/mount_api.rst | 2 --
+>  fs/fs_parser.c                          | 7 -------
+>  include/linux/fs_parser.h               | 3 +--
+>  3 files changed, 1 insertion(+), 11 deletions(-)
 > 
-> diff --git a/drivers/dax/fsdev.c b/drivers/dax/fsdev.c
-> index 5d17ad39227f..4949aa41dcf4 100644
-> --- a/drivers/dax/fsdev.c
-> +++ b/drivers/dax/fsdev.c
-> @@ -119,6 +119,13 @@ static void fsdev_kill(void *dev_dax)
->  	kill_dev_dax(dev_dax);
->  }
->  
-> +static void fsdev_clear_ops(void *data)
-> +{
-> +	struct dev_dax *dev_dax = data;
-> +
-> +	dax_set_ops(dev_dax->dax_dev, NULL);
-> +}
-> +
->  /*
->   * Page map operations for FS-DAX mode
->   * Similar to fsdax_pagemap_ops in drivers/nvdimm/pmem.c
-> @@ -301,6 +308,15 @@ static int fsdev_dax_probe(struct dev_dax *dev_dax)
->  	if (rc)
->  		return rc;
->  
-> +	/* Set the dax operations for fs-dax access path */
-> +	rc = dax_set_ops(dax_dev, &dev_dax_ops);
-> +	if (rc)
-> +		return rc;
-> +
-> +	rc = devm_add_action_or_reset(dev, fsdev_clear_ops, dev_dax);
-> +	if (rc)
-> +		return rc;
-> +
->  	run_dax(dax_dev);
->  	return devm_add_action_or_reset(dev, fsdev_kill, dev_dax);
->  }
-> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-> index c00b9dff4a06..ba0b4cd18a77 100644
-> --- a/drivers/dax/super.c
-> +++ b/drivers/dax/super.c
-> @@ -157,6 +157,9 @@ long dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff, long nr_pages,
->  	if (!dax_alive(dax_dev))
->  		return -ENXIO;
->  
-> +	if (!dax_dev->ops)
-> +		return -EOPNOTSUPP;
-> +
->  	if (nr_pages < 0)
->  		return -EINVAL;
->  
-> @@ -207,6 +210,10 @@ int dax_zero_page_range(struct dax_device *dax_dev, pgoff_t pgoff,
->  
->  	if (!dax_alive(dax_dev))
->  		return -ENXIO;
-> +
-> +	if (!dax_dev->ops)
-> +		return -EOPNOTSUPP;
-> +
->  	/*
->  	 * There are no callers that want to zero more than one page as of now.
->  	 * Once users are there, this check can be removed after the
-> @@ -223,7 +230,7 @@ EXPORT_SYMBOL_GPL(dax_zero_page_range);
->  size_t dax_recovery_write(struct dax_device *dax_dev, pgoff_t pgoff,
->  		void *addr, size_t bytes, struct iov_iter *iter)
->  {
-> -	if (!dax_dev->ops->recovery_write)
-> +	if (!dax_dev->ops || !dax_dev->ops->recovery_write)
->  		return 0;
->  	return dax_dev->ops->recovery_write(dax_dev, pgoff, addr, bytes, iter);
->  }
-> @@ -307,6 +314,35 @@ void set_dax_nomc(struct dax_device *dax_dev)
->  }
->  EXPORT_SYMBOL_GPL(set_dax_nomc);
->  
-> +/**
-> + * dax_set_ops - set the dax_operations for a dax_device
-> + * @dax_dev: the dax_device to configure
-> + * @ops: the operations to set (may be NULL to clear)
-> + *
-> + * This allows drivers to set the dax_operations after the dax_device
-> + * has been allocated. This is needed when the device is created before
-> + * the driver that needs specific ops is bound (e.g., fsdev_dax binding
-> + * to a dev_dax created by hmem).
-> + *
-> + * When setting non-NULL ops, fails if ops are already set (returns -EBUSY).
-> + * When clearing ops (NULL), always succeeds.
-> + *
-> + * Return: 0 on success, -EBUSY if ops already set
-> + */
-> +int dax_set_ops(struct dax_device *dax_dev, const struct dax_operations *ops)
-> +{
-> +	if (ops) {
-> +		/* Setting ops: fail if already set */
-> +		if (cmpxchg(&dax_dev->ops, NULL, ops) != NULL)
-> +			return -EBUSY;
-> +	} else {
-> +		/* Clearing ops: always allowed */
-> +		dax_dev->ops = NULL;
-> +	}
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(dax_set_ops);
-> +
->  bool dax_alive(struct dax_device *dax_dev)
->  {
->  	lockdep_assert_held(&dax_srcu);
-> diff --git a/include/linux/dax.h b/include/linux/dax.h
-> index fe1315135fdd..5aaaca135737 100644
-> --- a/include/linux/dax.h
-> +++ b/include/linux/dax.h
-> @@ -247,6 +247,7 @@ static inline void dax_break_layout_final(struct inode *inode)
->  
->  bool dax_alive(struct dax_device *dax_dev);
->  void *dax_get_private(struct dax_device *dax_dev);
-> +int dax_set_ops(struct dax_device *dax_dev, const struct dax_operations *ops);
->  long dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff, long nr_pages,
->  		enum dax_access_mode mode, void **kaddr, unsigned long *pfn);
->  size_t dax_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
+> diff --git a/Documentation/filesystems/mount_api.rst b/Documentation/filesystems/mount_api.rst
+> index b4a0f23914a6..e8b94357b4df 100644
+> --- a/Documentation/filesystems/mount_api.rst
+> +++ b/Documentation/filesystems/mount_api.rst
+> @@ -648,7 +648,6 @@ The members are as follows:
+>  	fs_param_is_enum	Enum value name 	result->uint_32
+>  	fs_param_is_string	Arbitrary string	param->string
+>  	fs_param_is_blockdev	Blockdev path		* Needs lookup
 
+Unrelated: should xfs be using fsparam_bdev for its logdev/rtdev mount
+options?
+
+Or, more crazily, should it grow logfd/rtfd options that use fsparam_fd?
+
+This patch looks ok,
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+
+--D
+
+
+> -	fs_param_is_path	Path			* Needs lookup
+>  	fs_param_is_fd		File descriptor		result->int_32
+>  	fs_param_is_uid		User ID (u32)           result->uid
+>  	fs_param_is_gid		Group ID (u32)          result->gid
+> @@ -681,7 +680,6 @@ The members are as follows:
+>  	fsparam_enum()		fs_param_is_enum
+>  	fsparam_string()	fs_param_is_string
+>  	fsparam_bdev()		fs_param_is_blockdev
+> -	fsparam_path()		fs_param_is_path
+>  	fsparam_fd()		fs_param_is_fd
+>  	fsparam_uid()		fs_param_is_uid
+>  	fsparam_gid()		fs_param_is_gid
+> diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+> index 79e8fe9176fa..b4cc4cce518a 100644
+> --- a/fs/fs_parser.c
+> +++ b/fs/fs_parser.c
+> @@ -361,13 +361,6 @@ int fs_param_is_blockdev(struct p_log *log, const struct fs_parameter_spec *p,
+>  }
+>  EXPORT_SYMBOL(fs_param_is_blockdev);
+>  
+> -int fs_param_is_path(struct p_log *log, const struct fs_parameter_spec *p,
+> -		     struct fs_parameter *param, struct fs_parse_result *result)
+> -{
+> -	return 0;
+> -}
+> -EXPORT_SYMBOL(fs_param_is_path);
+> -
+>  #ifdef CONFIG_VALIDATE_FS_PARSER
+>  /**
+>   * fs_validate_description - Validate a parameter specification array
+> diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
+> index 961562b101c5..98b83708f92b 100644
+> --- a/include/linux/fs_parser.h
+> +++ b/include/linux/fs_parser.h
+> @@ -28,7 +28,7 @@ typedef int fs_param_type(struct p_log *,
+>   */
+>  fs_param_type fs_param_is_bool, fs_param_is_u32, fs_param_is_s32, fs_param_is_u64,
+>  	fs_param_is_enum, fs_param_is_string, fs_param_is_blockdev,
+> -	fs_param_is_path, fs_param_is_fd, fs_param_is_uid, fs_param_is_gid,
+> +	fs_param_is_fd, fs_param_is_uid, fs_param_is_gid,
+>  	fs_param_is_file_or_string;
+>  
+>  /*
+> @@ -126,7 +126,6 @@ static inline bool fs_validate_description(const char *name,
+>  #define fsparam_string(NAME, OPT) \
+>  				__fsparam(fs_param_is_string, NAME, OPT, 0, NULL)
+>  #define fsparam_bdev(NAME, OPT)	__fsparam(fs_param_is_blockdev, NAME, OPT, 0, NULL)
+> -#define fsparam_path(NAME, OPT)	__fsparam(fs_param_is_path, NAME, OPT, 0, NULL)
+>  #define fsparam_fd(NAME, OPT)	__fsparam(fs_param_is_fd, NAME, OPT, 0, NULL)
+>  #define fsparam_file_or_string(NAME, OPT) \
+>  				__fsparam(fs_param_is_file_or_string, NAME, OPT, 0, NULL)
+> -- 
+> 2.47.3
+> 
+> 
 
