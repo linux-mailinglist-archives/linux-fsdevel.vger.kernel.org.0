@@ -1,335 +1,341 @@
-Return-Path: <linux-fsdevel+bounces-77657-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77658-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OCf1KPlclmlVeQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77657-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 01:44:41 +0100
+	id IPH9NipglmkTegIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77658-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 01:58:18 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C9AD15B3A9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 01:44:40 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4598815B473
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 01:58:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 6A55330071D2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 00:44:40 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3F0EE30297A8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 00:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E157221FCD;
-	Thu, 19 Feb 2026 00:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A01522A7F9;
+	Thu, 19 Feb 2026 00:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="EEeFZU7m"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="QUPrI0wN";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="W+NZ3jac"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569471FC0EA
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 00:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC7D2AF00;
+	Thu, 19 Feb 2026 00:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771461878; cv=none; b=Fhj/e6PTr9iOWn8KpMcLfV4PmaFKhsrvpyVqbVFB6l/LzGAMw682GKanvbwnknvUTkZsB1jS3BWMNxK9nJpVnSvHp1zWMGYu30cbKXvsFarWaoXoGu0LLUiNPsRo3h0zY34TaJ91saSeN8vOcjv6fo0vxEMBfQBqTjq0UztsJ8w=
+	t=1771462689; cv=none; b=IOEY+pFlrfZ/2MYJrw7YbYiladkMAN0v4pl1Uc+2Naq1xubrAKqprPcSMJn5SxuMs5edbOX4XoD6Y9Htaz5E8oNmex/xYQL1hxSYIbP9oPVwwdKSKeb9angMtTsKwNvTaggxbYakmca5wD3fuOoG/oR0R8jyucm6B/ZIbdz0/CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771461878; c=relaxed/simple;
-	bh=nQH7jYjmNyHUpdEDL1n3cOERApWtdjO11tQwfD3xwEY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=W4g+u4ee0Ohsvz3urHp7VdoAIWxkr0a8YwcBc3wHjd9pzqPSUtwRYCT2lXP7RQKOnHp2tAC5gWbqb0yg0srWv2JNC3F1nAaoCXCxiSmVzodHSLnLpWro2AD/LMFgzaP7M4Xf6URED5C4XK1uozuI7C4s0LhJTZCNVXslIPwo8Cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=EEeFZU7m; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id 2BEA3240027
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 01:44:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net; s=2017;
-	t=1771461868; bh=BsfF26EI6S3qTr6+RYJIEACJrK310ChY8MDFoZGqNt4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 From;
-	b=EEeFZU7mXoijP2neLjfv2lplNp5L7BPIzzyKIB0FXSglMCd267IlBdYsv0BZ50orp
-	 ak5W6Z+cDlmYzpUZel2fgkq+RYbNA+kL14nuzYtSOAx0DzETBeoCewoN36XmycEN61
-	 LNHL7y7qFJxa2fdRW9rT4mt2qS2WpKEEJ2MJK5O10Zlp/BB3d4VTPDtheDetU1/udr
-	 7sAFLXGrjvAaSLThshOqWEsIp8Iseh/8T//iB6B50GDl5jJ96tkS4J71BOn/WITQOs
-	 sPrTKVT001HsqBhTXAnvI4dG2HJpAAdYv1KU5WZlMXf05KFg5hgOToqaChcjPSupaW
-	 JNnod+AbcC2IQ==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4fGZQL1Rntz6tsb;
-	Thu, 19 Feb 2026 01:44:25 +0100 (CET)
-From: Charalampos Mitrodimas <charmitro@posteo.net>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-  "frank.li@vivo.com" <frank.li@vivo.com>,  "slava@dubeyko.com"
- <slava@dubeyko.com>,  "linux-fsdevel@vger.kernel.org"
- <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] hfs/hfsplus: fix timestamp wrapped issue
-In-Reply-To: <15b8136f279abd8320e2d4745a4f1e76c9f9aa83.camel@ibm.com>
-References: <20260216233556.4005400-1-slava@dubeyko.com>
-	<87a4x8f5zq.fsf@posteo.net>
-	<2b7b7a970926f56a3742cb76e394e9fb3d79b0eb.camel@ibm.com>
-	<m2bjhn81n2.fsf@posteo.net>
-	<15b8136f279abd8320e2d4745a4f1e76c9f9aa83.camel@ibm.com>
-Date: Thu, 19 Feb 2026 00:44:27 +0000
-Message-ID: <87jyw9blzq.fsf@posteo.net>
+	s=arc-20240116; t=1771462689; c=relaxed/simple;
+	bh=/mLPN+gqX7WgqsuKT7hVJ2tT7/p3OQX0qBElguK9lqE=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=SgZqkQZrYEg3wNbGl0DHakbB4/RFVa94B4r6boiApFJ6Tz/EtDStnV3FdebLPkVaJu1sB/WAPJ5TbzBFIpr7gnR4Jw/ho2ftflykId+RLT1F0mRnebjrgvSgfcY7ujiBzemIZv2r3LAsHLWrzPK53JRx4+vudAwmdcQv5u9v7BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=QUPrI0wN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=W+NZ3jac; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id 30386EC05A5;
+	Wed, 18 Feb 2026 19:58:07 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Wed, 18 Feb 2026 19:58:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
+	1771462687; x=1771549087; bh=d3gGUdBAtomJarI2vjZZMoWKgO1aI7iK5Mx
+	uZziQs2Q=; b=QUPrI0wN6PvVratea+/Qb9rHKEPIbJ9gvS6cb98i8Lcn8FxQ7y5
+	76tWTi2nCh01/MO9ad0xuKiRAAbUIieZFICjdRQ4LUdgFuXcA+5xZF1VXbqD4hS9
+	b6lD/+N+pU0pEMl3lUOg0N/avS99jkvp8l4rO7iGo/xEkJNNCsxRmrrBs2pLXRes
+	H0u7hcnBVNYNRYZHiNP9CAYwLsMm7cPRgplSkidS12G2qBJmsDOImrK7PNsvv2Xv
+	8OlEIbZDMDi0QjA52yRb2EsMcbRTJBTHqK40dBFbRfZiFYPzZN4Vdz303tc1ceh6
+	suSbHulV0C7CQ4SHc/bC/YHYEO4Lddm/hSw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1771462687; x=
+	1771549087; bh=d3gGUdBAtomJarI2vjZZMoWKgO1aI7iK5MxuZziQs2Q=; b=W
+	+NZ3jac0mKFwX92kCEKNHamxzwvQ2r6oe24NHARXuCAYlrygIGfrDZROSQqReKlm
+	nqrpcE4rNP44ZglPUJRX5g7msfc2l0VA9tDTyydJn/vl9mte0QwfVgR8WK/56RUq
+	/+4y5y/XVr+0jSBlAbnQfb1mHehOhXUiO3r6fiNICadWygjx6nt2Sc6TBcRqFWqF
+	rqL+zFt5wE96F8bR5+Zl/YCPipXKFj7K7vMS3rjU0+C+o8mb/C+lqiuTscpRJeYU
+	M0fLGDrSuYPwIec3h0lr6MEwKrSr8Wi8Nm9CVgvfLDagipDQ7zriOViSrsrxMjDl
+	y0g5DFt2v+KvYyV8SCjzQ==
+X-ME-Sender: <xms:HWCWafSYS66TaYqZIILkZ3NFxai7vLuPFH9gfzn-WwcbzfHa40mZqA>
+    <xme:HWCWaRvWw_YLrQyXnOQMQdGNYlDxkhGdHOGKPF9mo9L01c8iU8aTrHjEHk4CcNt2x
+    LA7Ghx5n8LimvXeTUAglmCCfCtIggTlJSJHh_DJfYS1Hx69GA>
+X-ME-Received: <xmr:HWCWaVJxT62jjHIxUhNZMV4g1JHYgX476HmtA_mABIVC9nNVeiwPVfhRWo0Fp3JKrOhUZVa6sVqs2jHNeL3tgBjljR1bDAEYxQl86JReb0U3>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvvdegudegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epueefiedvjeekfeeludeuueduieejvdelledtudehgeetkeduvdelhfeuvdevudejnecu
+    ffhomhgrihhnpehkvghrnhgvlhdrohhrghdpghhithhhuhgsrdgtohhmpdhlihhnuhigtg
+    honhhtrghinhgvrhhsrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghm
+    pehmrghilhhfrhhomhepnhgvihhlsgesohifnhhmrghilhdrnhgvthdpnhgspghrtghpth
+    htohepudejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdhnfhhs
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvh
+    gvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehmihhklhhoshesshii
+    vghrvgguihdrhhhupdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtoh
+    epshhtghhrrggsvghrsehsthhgrhgrsggvrhdrohhrghdprhgtphhtthhopehtrhgrphgv
+    gihithesshhprgifnhdrlhhinhhkpdhrtghpthhtohepuhhtrghmtdhksehprhgvfhgvrh
+    hrvggurdhjphdprhgtphhtthhopehkshhughhihhgrrhgrsehprhgvfhgvrhhrvggurdhj
+    phdprhgtphhtthhopegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomh
+X-ME-Proxy: <xmx:HWCWade1vGvv6gy4czlGRXTXcawvXfI_jHkeeFsV5eWZZLFl4UGmAg>
+    <xmx:HWCWafU44jgAhExyi0X66CrfIDO_qA-nycSMuwQCdTphozwK9P2Azg>
+    <xmx:HWCWaTgdn7gwZ43jTs1JOuLCVC9r0WQ1E_M26b6DaSQKFZ5p5TvDqA>
+    <xmx:HWCWaRhdgdJB-fQ8X9yuNfX_9rlCf_nsjB8BLEBBtkSp6UF4-c4HGw>
+    <xmx:H2CWaV8h45gnVZG_1M3bCrOIyfBxvGj4pQdehycA5rAEs2sxa1HQLPK0>
+Feedback-ID: i9d664b8f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 18 Feb 2026 19:58:00 -0500 (EST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+From: NeilBrown <neilb@ownmail.net>
+To: "Jeff Layton" <jlayton@kernel.org>
+Cc: "Alexander Mikhalitsyn" <alexander@mihalicyn.com>,
+ lsf-pc@lists.linux-foundation.org, aleksandr.mikhalitsyn@futurfusion.io,
+ linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+ stgraber@stgraber.org, brauner@kernel.org, ksugihara@preferred.jp,
+ utam0k@preferred.jp, trondmy@kernel.org, anna@kernel.org,
+ chuck.lever@oracle.com, miklos@szeredi.hu, jack@suse.cz, amir73il@gmail.com,
+ trapexit@spawn.link
+Subject: Re: [LSF/MM/BPF TOPIC] VFS idmappings support in NFS
+In-reply-to: <e0be58df89ffaf41763312dfffe8402fdcb9d023.camel@kernel.org>
+References: <65a53a2d6fcc053edeed688a8c8d580c03bd6f3b.camel@mihalicyn.com>,
+ <d11b39cb43ffe437868eef4bc1c01d3bce8509e9.camel@kernel.org>,
+ <CAJqdLrqNzXRwMF2grTGCkaMKCEXAwemQLEi3wsL5Lp2W9D-ZVg@mail.gmail.com>,
+ <e0be58df89ffaf41763312dfffe8402fdcb9d023.camel@kernel.org>
+Date: Thu, 19 Feb 2026 11:57:59 +1100
+Message-id: <177146267901.8396.9601896246772305364@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[posteo.net,none];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[posteo.net:s=2017];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[ownmail.net,none];
+	R_DKIM_ALLOW(-0.20)[ownmail.net:s=fm3,messagingengine.com:s=fm3];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-77658-lists,linux-fsdevel=lfdr.de];
+	REPLYTO_DN_EQ_FROM_DN(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77657-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[posteo.net:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	TO_DN_SOME(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	FROM_NEQ_ENVFROM(0.00)[charmitro@posteo.net,linux-fsdevel@vger.kernel.org];
-	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_CC(0.00)[mihalicyn.com,lists.linux-foundation.org,futurfusion.io,vger.kernel.org,stgraber.org,kernel.org,preferred.jp,oracle.com,szeredi.hu,suse.cz,gmail.com,spawn.link];
+	FREEMAIL_FROM(0.00)[ownmail.net];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	REPLYTO_DOM_NEQ_FROM_DOM(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	HAS_REPLYTO(0.00)[neil@brown.name];
+	RCVD_COUNT_FIVE(0.00)[6];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_COUNT_FIVE(0.00)[5];
-	MISSING_XM_UA(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[neilb@ownmail.net,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[ownmail.net:+,messagingengine.com:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	REDIRECTOR_URL(0.00)[proofpoint.com];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 2C9AD15B3A9
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[brown.name:replyto,noble.neil.brown.name:mid,futurfusion.io:url,preferred.jp:url,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 4598815B473
 X-Rspamd-Action: no action
 
-Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> writes:
+On Thu, 19 Feb 2026, Jeff Layton wrote:
+> On Wed, 2026-02-18 at 15:36 +0100, Alexander Mikhalitsyn wrote:
+> > Am Mi., 18. Feb. 2026 um 14:49 Uhr schrieb Jeff Layton <jlayton@kernel.or=
+g>:
+> > >=20
+> > > On Wed, 2026-02-18 at 13:44 +0100, Alexander Mikhalitsyn wrote:
+> > > > Dear friends,
+> > > >=20
+> > > > I would like to propose "VFS idmappings support in NFS" as a topic fo=
+r discussion at the LSF/MM/BPF Summit.
+> > > >=20
+> > > > Previously, I worked on VFS idmap support for FUSE/virtiofs [2] and c=
+ephfs [1] with support/guidance
+> > > > from Christian.
+> > > >=20
+> > > > This experience with Cephfs & FUSE has shown that VFS idmap semantics=
+, while being very elegant and
+> > > > intuitive for local filesystems, can be quite challenging to combine =
+with network/network-like (e.g. FUSE)
+> > > > FSes. In case of Cephfs we had to modify its protocol (!) (see [2]) a=
+s a part of our agreement with
+> > > > ceph folks about the right way to support idmaps.
+> > > >=20
+> > > > One obstacle here was that cephfs has some features that are not very=
+ Linux-wayish, I would say.
+> > > > In particular, system administrator can configure path-based UID/GID =
+restrictions on a *server*-side (Ceph MDS).
+> > > > Basically, you can say "I expect UID 1000 and GID 2000 for all files =
+under /stuff directory".
+> > > > The problem here is that these UID/GIDs are taken from a syscall-call=
+er's creds (not from (struct file *)->f_cred)
+> > > > which makes cephfs FDs not very transferable through unix sockets. [3]
+> > > >=20
+> > > > These path-based UID/GID restrictions mean that server expects client=
+ to send UID/GID with every single request,
+> > > > not only for those OPs where UID/GID needs to be written to the disk =
+(mknod, mkdir, symlink, etc).
+> > > > VFS idmaps API is designed to prevent filesystems developers from mak=
+ing a mistakes when supporting FS_ALLOW_IDMAP.
+> > > > For example, (struct mnt_idmap *) is not passed to every single i_op,=
+ but instead to only those where it can be
+> > > > used legitimately. Particularly, readlink/listxattr or rmdir are not =
+expected to use idmapping information anyhow.
+> > > >=20
+> > > > We've seen very similar challenges with FUSE. Not a long time ago on =
+Linux Containers project forum, there
+> > > > was a discussion about mergerfs (a popular FUSE-based filesystem) & V=
+FS idmaps [5]. And I see that this problem
+> > > > of "caller UID/GID are needed everywhere" still blocks VFS idmaps ado=
+ption in some usecases.
+> > > > Antonio Musumeci (mergerfs maintainer) claimed that in many cases fil=
+esystems behind mergerfs may not be fully
+> > > > POSIX and basically, when mergerfs does IO on the underlying FSes it =
+needs to do UID/GID switch to caller's UID/GID
+> > > > (taken from FUSE request header).
+> > > >=20
+> > > > We don't expect NFS to be any simpler :-) I would say that supporting=
+ NFS is a final boss. It would be great
+> > > > to have a deep technical discussion with VFS/FSes maintainers and dev=
+elopers about all these challenges and
+> > > > make some conclusions and identify a right direction/approach to thes=
+e problems. From my side, I'm going
+> > > > to get more familiar with high-level part of NFS (or even make PoC if=
+ time permits), identify challenges,
+> > > > summarize everything and prepare some slides to navigate/plan discuss=
+ion.
+> > > >=20
+> > > > [1] cephfs https://lore.kernel.org/linux-fsdevel/20230807132626.18210=
+1-1-aleksandr.mikhalitsyn@canonical.com
+> > > > [2] cephfs protocol changes https://github.com/ceph/ceph/pull/52575
+> > > > [3] cephfs & f_cred https://lore.kernel.org/lkml/CAEivzxeZ6fDgYMnjk21=
+qXYz13tHqZa8rP-cZ2jdxkY0eX+dOjw@mail.gmail.com/
+> > > > [4] fuse/virtiofs https://lore.kernel.org/linux-fsdevel/2024090315162=
+6.264609-1-aleksandr.mikhalitsyn@canonical.com/
+> > > > [5]
+> > > > mergerfshttps://discuss.linuxcontainers.org/t/is-it-the-case-that-you=
+-cannot-use-shift-true-for-disk-devices-where-the-source-is-a-mergerfs-mount-=
+is-there-a-workaround/25336/11?u=3Damikhalitsyn
+> > > >=20
+> > > > Kind regards,
+> > > > Alexander Mikhalitsyn @ futurfusion.io
+> > >=20
+> >=20
+> > Hi Jeff,
+> >=20
+> > thanks for such a fast reply! ;)
+> >=20
+> > >=20
+> > > IIUC, people mostly use vfs-layer idmappings because they want to remap
+> > > the uid/gid values of files that get stored on the backing store (disk,
+> > > ceph MDS, or whatever).
+> >=20
+> > yes, precisely.
+> >=20
+> > >=20
+> > > I've never used idmappings myself much in practice. Could you lay out
+> > > an example of how you would use them with NFS in a real environment so
+> > > I understand the problem better? I'd start by assuming a simple setup
+> > > with AUTH_SYS and no NFSv4 idmapping involved, since that case should
+> > > be fairly straightforward.
+> >=20
+> > For me, from the point of LXC/Incus project, idmapped mounts are used as
+> > a way to "delegate" filesystems (or subtrees) to the containers:
+> > 1. We, of course, assume that container enables user namespaces and
+> > user can't mount a filesystem
+> > inside because it has no FS_USERNS_MOUNT flag set (like in case of Cephfs=
+, NFS,
+> > CIFS and many others).
+> > 2. At the same time host's system administrator wants to avoid
+> > remapping between container's user ns and
+> > sb->s_user_ns (which is init_user_ns for those filesystems). [
+> > motivation here is that in many
+> > cases you may want to have the same subtree to be shared with other
+> > containers and even host users too and
+> > you want UIDs to be "compatible", i.e UID 1000 in one container and
+> > UID 1000 in another container should
+> > land as UID 1000 on the filesystem's inode ]
+> >=20
+> > For this usecase, when we bind-mount filesystem to container, we apply
+> > VFS idmap equal to container's
+> > user namespace. This makes a behavior I described.
+> >=20
+>=20
+> Ok: so you have a process running in a userns as UID 2000 and you want
+> to use vfs layer idmapping so that when you create a file as that user
+> that it ends up being owned by UID 1000. Is that basically correct?
+>=20
+> Typically, the RPC credentials used in an OPEN or CREATE call is what
+> determines its ownership (at least until a SETATTR comes in). With
+> AUTH_SYS, the credential is just a uid and set of gids.
+>=20
+> So in this case, it sounds like you would need just do that conversion
+> (maybe at the RPC client layer?) when issuing an RPC. You don't really
+> need a protocol extension for that case.
 
-> On Wed, 2026-02-18 at 02:00 +0000, Charalampos Mitrodimas wrote:
->> Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> writes:
->> X-TUID: LHfQOjL/T+3i
->> 
->> > On Tue, 2026-02-17 at 02:39 +0000, Charalampos Mitrodimas wrote:
->> > > Viacheslav Dubeyko <slava@dubeyko.com> writes:
->> > > 
->> > > > The xfstests' test-case generic/258 fails to execute
->> > > > correctly:
->> > > > 
->> > > > FSTYP -- hfsplus
->> > > > PLATFORM -- Linux/x86_64 hfsplus-testing-0001 6.15.0-rc4+ #8 SMP PREEMPT_DYNAMIC Thu May 1 16:43:22 PDT 2025
->> > > > MKFS_OPTIONS -- /dev/loop51
->> > > > MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
->> > > > 
->> > > > generic/258 [failed, exit status 1]- output mismatch (see xfstests-dev/results//generic/258.out.bad)
->> > > > 
->> > > > The main reason of the issue is the logic:
->> > > > 
->> > > > cpu_to_be32(lower_32_bits(ut) + HFSPLUS_UTC_OFFSET)
->> > > > 
->> > > > At first, we take the lower 32 bits of the value and, then
->> > > > we add the time offset. However, if we have negative value
->> > > > then we make completely wrong calculation.
->> > > > 
->> > > > This patch corrects the logic of __hfsp_mt2ut() and
->> > > > __hfsp_ut2mt (HFS+ case), __hfs_m_to_utime() and
->> > > > __hfs_u_to_mtime (HFS case). The HFS_MIN_TIMESTAMP_SECS and
->> > > > HFS_MAX_TIMESTAMP_SECS have been introduced in
->> > > > include/linux/hfs_common.h. Also, HFS_UTC_OFFSET constant
->> > > > has been moved to include/linux/hfs_common.h. The hfs_fill_super()
->> > > > and hfsplus_fill_super() logic defines sb->s_time_min,
->> > > > sb->s_time_max, and sb->s_time_gran.
->> > > > 
->> > > > sudo ./check generic/258
->> > > > FSTYP         -- hfsplus
->> > > > PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.19.0-rc1+ #87 SMP PREEMPT_DYNAMIC Mon Feb 16 14:48:57 PST 2026
->> > > > MKFS_OPTIONS  -- /dev/loop51
->> > > > MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
->> > > > 
->> > > > generic/258 29s ...  39s
->> > > > Ran: generic/258
->> > > > Passed all 1 tests
->> > > > 
->> > > > [1] https://urldefense.proofpoint.com/v2/url?u=https-3A__github.com_hfs-2Dlinux-2Dkernel_hfs-2Dlinux-2Dkernel_issues_133&d=DwIBAg&c=BSDicqBQBDjDI9RkVyTcHQ&r=q5bIm4AXMzc8NJu1_RGmnQ2fMWKq4Y4RAkElvUgSs00&m=0fT-uL56OPndiS3viO0tbIofDhce7l_DvqX2Ig5e11E9sRGSZHesLvgpGvaEGpvj&s=52rC3TXLKWz8arNKZMySDx-vwms5z-Md0bnvP6tGkEM&e= 
->> > > > 
->> > > > Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
->> > > > cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
->> > > > cc: Yangtao Li <frank.li@vivo.com>
->> > > > cc: linux-fsdevel@vger.kernel.org
->> > > > ---
->> > > >  fs/hfs/hfs_fs.h            | 17 ++++-------------
->> > > >  fs/hfs/super.c             |  4 ++++
->> > > >  fs/hfsplus/hfsplus_fs.h    | 13 ++++---------
->> > > >  fs/hfsplus/super.c         |  4 ++++
->> > > >  include/linux/hfs_common.h | 18 ++++++++++++++++++
->> > > >  5 files changed, 34 insertions(+), 22 deletions(-)
->> > > > 
->> > > > diff --git a/fs/hfs/hfs_fs.h b/fs/hfs/hfs_fs.h
->> > > > index ac0e83f77a0f..7d529e6789b8 100644
->> > > > --- a/fs/hfs/hfs_fs.h
->> > > > +++ b/fs/hfs/hfs_fs.h
->> > > > @@ -229,21 +229,11 @@ extern int hfs_mac2asc(struct super_block *sb,
->> > > >  extern void hfs_mark_mdb_dirty(struct super_block *sb);
->> > > >  
->> > > >  /*
->> > > > - * There are two time systems.  Both are based on seconds since
->> > > > - * a particular time/date.
->> > > > - *	Unix:	signed little-endian since 00:00 GMT, Jan. 1, 1970
->> > > > - *	mac:	unsigned big-endian since 00:00 GMT, Jan. 1, 1904
->> > > > - *
->> > > > - * HFS implementations are highly inconsistent, this one matches the
->> > > > - * traditional behavior of 64-bit Linux, giving the most useful
->> > > > - * time range between 1970 and 2106, by treating any on-disk timestamp
->> > > > - * under HFS_UTC_OFFSET (Jan 1 1970) as a time between 2040 and 2106.
->> > > > + * time helpers: convert between 1904-base and 1970-base timestamps
->> > > >   */
->> > > > -#define HFS_UTC_OFFSET 2082844800U
->> > > > -
->> > > >  static inline time64_t __hfs_m_to_utime(__be32 mt)
->> > > >  {
->> > > > -	time64_t ut = (u32)(be32_to_cpu(mt) - HFS_UTC_OFFSET);
->> > > > +	time64_t ut = (time64_t)be32_to_cpu(mt) - HFS_UTC_OFFSET;
->> > > >  
->> > > >  	return ut + sys_tz.tz_minuteswest * 60;
->> > > >  }
->> > > > @@ -251,8 +241,9 @@ static inline time64_t __hfs_m_to_utime(__be32 mt)
->> > > >  static inline __be32 __hfs_u_to_mtime(time64_t ut)
->> > > >  {
->> > > >  	ut -= sys_tz.tz_minuteswest * 60;
->> > > > +	ut += HFS_UTC_OFFSET;
->> > > >  
->> > > > -	return cpu_to_be32(lower_32_bits(ut) + HFS_UTC_OFFSET);
->> > > > +	return cpu_to_be32(lower_32_bits(ut));
->> > > >  }
->> > > >  #define HFS_I(inode)	(container_of(inode, struct hfs_inode_info, vfs_inode))
->> > > >  #define HFS_SB(sb)	((struct hfs_sb_info *)(sb)->s_fs_info)
->> > > > diff --git a/fs/hfs/super.c b/fs/hfs/super.c
->> > > > index 97546d6b41f4..6b6c138812b7 100644
->> > > > --- a/fs/hfs/super.c
->> > > > +++ b/fs/hfs/super.c
->> > > > @@ -341,6 +341,10 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
->> > > >  	sb->s_flags |= SB_NODIRATIME;
->> > > >  	mutex_init(&sbi->bitmap_lock);
->> > > >  
->> > > > +	sb->s_time_gran = NSEC_PER_SEC;
->> > > > +	sb->s_time_min = HFS_MIN_TIMESTAMP_SECS;
->> > > > +	sb->s_time_max = HFS_MAX_TIMESTAMP_SECS;
->> > > > +
->> > > >  	res = hfs_mdb_get(sb);
->> > > >  	if (res) {
->> > > >  		if (!silent)
->> > > > diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
->> > > > index 5f891b73a646..3554faf84c15 100644
->> > > > --- a/fs/hfsplus/hfsplus_fs.h
->> > > > +++ b/fs/hfsplus/hfsplus_fs.h
->> > > > @@ -511,24 +511,19 @@ int hfsplus_read_wrapper(struct super_block *sb);
->> > > >  
->> > > >  /*
->> > > >   * time helpers: convert between 1904-base and 1970-base timestamps
->> > > > - *
->> > > > - * HFS+ implementations are highly inconsistent, this one matches the
->> > > > - * traditional behavior of 64-bit Linux, giving the most useful
->> > > > - * time range between 1970 and 2106, by treating any on-disk timestamp
->> > > > - * under HFSPLUS_UTC_OFFSET (Jan 1 1970) as a time between 2040 and 2106.
->> > > >   */
->> > > > -#define HFSPLUS_UTC_OFFSET 2082844800U
->> > > > -
->> > > >  static inline time64_t __hfsp_mt2ut(__be32 mt)
->> > > >  {
->> > > > -	time64_t ut = (u32)(be32_to_cpu(mt) - HFSPLUS_UTC_OFFSET);
->> > > > +	time64_t ut = (time64_t)be32_to_cpu(mt) - HFS_UTC_OFFSET;
->> > > >  
->> > > >  	return ut;
->> > > >  }
->> > > >  
->> > > >  static inline __be32 __hfsp_ut2mt(time64_t ut)
->> > > >  {
->> > > > -	return cpu_to_be32(lower_32_bits(ut) + HFSPLUS_UTC_OFFSET);
->> > > > +	ut += HFS_UTC_OFFSET;
->> > > > +
->> > > > +	return cpu_to_be32(lower_32_bits(ut));
->> > > >  }
->> > > >  
->> > > >  static inline enum hfsplus_btree_mutex_classes
->> > > > diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
->> > > > index 592d8fbb748c..dcd61868d199 100644
->> > > > --- a/fs/hfsplus/super.c
->> > > > +++ b/fs/hfsplus/super.c
->> > > > @@ -487,6 +487,10 @@ static int hfsplus_fill_super(struct super_block *sb, struct fs_context *fc)
->> > > >  	if (!sbi->rsrc_clump_blocks)
->> > > >  		sbi->rsrc_clump_blocks = 1;
->> > > >  
->> > > > +	sb->s_time_gran = NSEC_PER_SEC;
->> > > > +	sb->s_time_min = HFS_MIN_TIMESTAMP_SECS;
->> > > > +	sb->s_time_max = HFS_MAX_TIMESTAMP_SECS;
->> > > > +
->> > > >  	err = -EFBIG;
->> > > >  	last_fs_block = sbi->total_blocks - 1;
->> > > >  	last_fs_page = (last_fs_block << sbi->alloc_blksz_shift) >>
->> > > > diff --git a/include/linux/hfs_common.h b/include/linux/hfs_common.h
->> > > > index dadb5e0aa8a3..816ac2f0996d 100644
->> > > > --- a/include/linux/hfs_common.h
->> > > > +++ b/include/linux/hfs_common.h
->> > > > @@ -650,4 +650,22 @@ typedef union {
->> > > >  	struct hfsplus_attr_key attr;
->> > > >  } __packed hfsplus_btree_key;
->> > > >  
->> > > > +/*
->> > > > + * There are two time systems.  Both are based on seconds since
->> > > > + * a particular time/date.
->> > > > + *	Unix:	signed little-endian since 00:00 GMT, Jan. 1, 1970
->> > > > + *	mac:	unsigned big-endian since 00:00 GMT, Jan. 1, 1904
->> > > > + *
->> > > > + * HFS/HFS+ implementations are highly inconsistent, this one matches the
->> > > > + * traditional behavior of 64-bit Linux, giving the most useful
->> > > > + * time range between 1970 and 2106, by treating any on-disk timestamp
->> > > > + * under HFS_UTC_OFFSET (Jan 1 1970) as a time between 2040 and 2106.
->> > > > + */
->> > > 
->> > > Since this is replacing the wrapping behavior with a linear 1904-2040
->> > > mapping, should we update this comment to match? It still describes the
->> > > old "2040 to 2106" wrapping semantics.
->> > > 
->> > 
->> > Frankly speaking, I don't quite follow what do you mean here. This patch doesn't
->> > change the approach. It simply fixes the incorrect calculation logic. Do you
->> > mean that this wrapping issue was the main approach? Currently, I don't see what
->> > needs to be updated in the comment.
->> 
->> Hi,
->> 
->> The comment says "time range between 1970 and 2106, by treating any
->> on-disk timestamp under HFS_UTC_OFFSET (Jan 1 1970) as a time between
->> 2040 and 2106". That was the old behavior via the (u32) cast.
->> 
->> Your patch changes (u32) to (time64_t) in __hfsp_mt2ut/__hfs_m_to_utime,
->> which removes that wrapping. For Mac time 0 (Jan 1, 1904):
->> 
->>   Old: (u32)     (0 - 2082844800) =  2212122496 -> 2040
->>   New: (time64_t) 0 - 2082844800  = -2082844800 -> 1904
->> 
->> The new s_time_min/s_time_max also confirm the range is now 1904-2040,
->> not 1970-2106. So the comment no longer matches the code.
->> 
->
-> OK. I see your point. So, we cannot execute the wrong calculation for timestamps
-> that are less than 1970. But it will be good to support the trick related to
-> 1970-2106. How can we improve the patch? What's your suggestion?
+You also need to consider the conversion when receiving an RPC.
 
-Well... the wrapping was the bug that broke generic/258 right? So trying
-to keep it would just reintroduce the problem. AFAIK since the on-disk
-timestamp is a 32bit unsigned counter from 1904 it tops out at
-2040. There are no spare bits to extend the range.
+If you use krb5 and NFSv3 then you really want the mapping between krb5
+identity and uid to be the same on client and server, so then when an
+application creates a file and the stats it, it sees that it owns it.
 
-The only way I can think of to support both would be a mount option that
-lets the user pick the mapping, something like "timerange=1904" and
-"timerange=1970". But that will introduce a lot of complexities.
+If I use a krb5 identity in an idmapped NFS filesystem I'll want the
+server to map the identity to the "underlying" uid (was would be stored
+in a local filesystem) and then when the client gets a GETATTR reply,
+the VFS maps back to the uid seen by the application.
 
-IMO patch is correct, just the comment needs updating to say 1904-2040
-instead of 1970-2106.
+With NFSv4 and the idmapper you wouldn't need (or want) the kernel
+idmapping to be used at all.  You would want the idmapper deamon to run
+in the user-namespace and map from on-the-wire names to the appropriate
+app-level uids.
+This would mean that a given NFS mount would need to be an a given user
+namespace.  Maybe that isn't desired.
 
-Cheers,
-C. Mitrodimas
+If it is important for a given NFS mount to be available in multiple
+user namespaces, then the idmapper daemon would need to map to the
+underlying uid, and the VFS mapping would map that up to the app-level
+uid.
+
+NeilBrown
+
+
+>=20
+> As Trond points out though, AUTH_GSS and NFSv4 idmapping will make this
+> more complex. Once you're using kerberos credentials for
+> authentication, you don't have much control over what the UIDs and GIDs
+> will be on newly-created files, but is that really a problem? As long
+> as all of the clients have a consistent view, I wouldn't think so.
+>=20
+> > But this is just one use case. I'm pretty sure there are some more
+> > around here :)
+> > I know that folks from Preferred Networks (preferred.jp) are also
+> > interested in VFS idmap support in NFS,
+> > probably they can share some ideas/use cases too.
+> >=20
+> >=20
+>=20
+> Yes, we don't want to focus too much on a single use-case, but I find
+> it helpful to focus on a single simple problem first.
+> --=20
+> Jeff Layton <jlayton@kernel.org>
+>=20
+>=20
+
 
