@@ -1,79 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-77655-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77656-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 6M+cCidclmkdeQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77655-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 01:41:11 +0100
+	id mBC9NSpclmkdeQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77656-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 01:41:14 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFBA715B36C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 01:41:10 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40AAE15B373
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 01:41:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 1B27C301F16D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 00:41:09 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id C1B41301AA8E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Feb 2026 00:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CBA21FF2E;
-	Thu, 19 Feb 2026 00:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3A322AE65;
+	Thu, 19 Feb 2026 00:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O2N2GMLn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LwJshFPA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D620E35977
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 00:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF64335977
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Feb 2026 00:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771461665; cv=none; b=RFkCjM6SeeO6rAQdBhJxqDvGBuk1NP4nSSnNvaEWHyyZ+BSE5AaYzq3mVjUsfPDAWNPm0+7GRMsSGNyzfiy+Hoanay9jdNGn0zvF10emgIrZjnt0aPEkZ6F1oCCXryZpM2cE9d5t34BQobjNE9atEH2NmcFAl5Q3Iri9OYANDlM=
+	t=1771461668; cv=none; b=OQW8ZjdqLRgF1fTYL/Ub+XXA42zIcocYS+21aIIfG418DK7v45h7AGvLmAxrZkI/dz1j4GojouX4/Y5dKAgVmeDs6RN0TeT9zLTcK7BEjt96iXiQdrhm9evm6cG/Hf2hNgITZVHs5DemzoS+i00Fi+Y15CDkq7pOQTxg/RSBir4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771461665; c=relaxed/simple;
-	bh=sxQpAIX4AbQlLOLwcvZ1w2qKB01qBROhugZS/yUUQ+I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tqJlTLkLz4O06cXP55jysxHDr+EFa/0QF/coBjPpqZJN/SRtJD/OzH1LBds1RJMs4siExhOG3xA/VY6F46OERYRrKjPGgVskCcEIcXtqsN1rWn1t/ajDId016cPbtGR019slXQZ4hCua5QyhqgDAtPEa+KuNAQBunwmX5rF37wI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O2N2GMLn; arc=none smtp.client-ip=209.85.210.177
+	s=arc-20240116; t=1771461668; c=relaxed/simple;
+	bh=ZRL1SXWnWjPLQ/VrkAl6SWiHznrRctO6R7yh+olBTL4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BbPs7QLFcQ3J/pZyYlvNDi9+Ee++wb+CwaxYhJu+Xslv38zEJCphiT1XnXUoeplRIJpqqvPGXq/P8TyiYWIWxE54g2w3cnrJpf2XaNmuSgVnB32NGWW/xDchuGLaZbkLA2fitxwhTRZK7NEGdVwV+eLXJHNbEJ+bGKSdiFGgbv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LwJshFPA; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-824a3ba5222so175969b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 16:41:04 -0800 (PST)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-8220bd582ddso158822b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Feb 2026 16:41:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771461664; x=1772066464; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3fueMwuOXfHo4uF8ac/YNOqXibnj5Vce+f7zMVZ9C+4=;
-        b=O2N2GMLnw08ABGf2PHyI+FF1VdVL88k5akkYc7FaGs/sW9Vqs8bxUIMRg8un1KN5RO
-         o/DDqir9eyOq5+YH88qrFdXXgp6zO4YfcjB4x67aYMrZWKn+BojQwWULbX6El4JYF/HU
-         8YdXMPswlInNqBx4u+Okcj87Hkpcbwy8E1oaRHEzyiTnogm1ZKc2jWGcv9/kLJF349us
-         Lf4XgaayHW3rwXK30aH00/MPGebgTmMgceaDEYLBAJp0KtWhj2XLBJqmI4bwwOQZbLdL
-         ogtoan/djF1QSw2oSqqR60XEOx/95b8YtyRgatYCabL4Zs0JP1VRsib5F5zUzdNNUlVo
-         YXhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771461664; x=1772066464;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1771461666; x=1772066466; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3fueMwuOXfHo4uF8ac/YNOqXibnj5Vce+f7zMVZ9C+4=;
-        b=ruv76FdPVjFEMwsS4BByfPRjsnq52x1Rrl1g6z2wy4KBV+Vw33Mtcjq0ogXp9OjYZL
-         hjihdtdbAlW82vjdxvjf73AOf5ff3cqvGXD3ZRr11bh3yx+S62hxu9nTKEm/q25yw/cQ
-         eb7ZFvv/ns1rGXn6RlpW+AnJTMpRdN2knj9WguqU0afUloAeA+6cKLmk2ItHlOBQ6/5w
-         fIcpr2mLZ16ylzFx/V8c6ePRw82Ul34jDC1pztgHvgfpSVjssL3EaqfXojLu9F/9uy0g
-         G9y2o05O24R02uu0Tkx4ttKksYfsxnNDgFMNonxL9saeshjYmw6mu/6whvPZ62XB+DRp
-         V7CA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXN1fnhbRuOQvViu928n2nzSIUh66VbQtlbI5p/fSlyk0yve5yBt0b8iYD5RYDq+yC5UWVwheBgdtqloXi@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhEokEV4roXo5dvM2gsDOz3XaMk54VUF9P7hBIV53H96+DuOiw
-	5a3BpI8dqoNYdnTXHSR2GYwkJ09pSC7Ow4X7qg2euJqerZHC4ewvGo5Q
-X-Gm-Gg: AZuq6aL8ME+4xyXW/6w84YwSYBuJXTGnAxSOOS3vOXQJKegj5VkLFl277ZQuVP7nzEi
-	GduA45vI/YwxCeMveiaoFYlGI2Tz+zRm6H2AwYpe/SETK4JroflnupUjp754Dp1fmPrBpZ56Wz2
-	YOVEvCxi3qcc3AjjkimAW2Z81LjzO/V/dXV+O58lvjUbqWnuirv0X7zVR5NaahNftfOOWm23qqW
-	gwOHsA61KoX6xzQ5RCNfge889uHiEqbKj42vTQzjJ3fmQvs04fCmywn2chHR0L4YRZ+ApX3zaUI
-	LaV5Sh3/5Dss6rwLALQ1mHDFXARUurkjwCewJFRICR2ebbDHdmmYUZXeDdb26leeoiFvibt4kYN
-	H1Imo2ozSMDcT8dK06L3Rqad7V/+6CfB7saxQF/vFNOU4RUFWMm2232oLnOBj9fP6JKplZpPrJS
-	k3k0ReklaBm7a07E77bmcpdtUF2k4Z
-X-Received: by 2002:a17:90b:57e5:b0:356:7917:23c with SMTP id 98e67ed59e1d1-35844fc002cmr13711003a91.27.1771461664214;
-        Wed, 18 Feb 2026 16:41:04 -0800 (PST)
-Received: from localhost ([2a03:2880:ff:1d::])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35662f8cc13sm26542111a91.14.2026.02.18.16.41.03
+        bh=1NAf2L+vziVfUUbGjJ+gAe6Z0Ze+h/IVnKOfn57mX2c=;
+        b=LwJshFPAm/DprO9AulkyaZ3rNGcBZOj5WpZTb2lOHHrnazJUVSS4gjSwMxfrcsCrxz
+         n2Z3PY8nERBK4/hMzEn9NoO+smCVFxjWrWSioO517BpjERLwrZxS7CgnE/hyYB6kf3Bv
+         4ucxT4Hmu7R7p7SFOaMZJWkRu1Nxzp8k3q6TbNJgKXPj5PvwzCsgLkhXfDO3KODLGwhK
+         G1qLdBFGM4NpC2cBTR+MCG9l+S+hxsimiJM/KsOEBdjQVOhRWull6osgAz3zW3nq+Kef
+         uoKZo/186q5CKiJ0rdYdOZakkRQmwFibUY8FwjLHYT13LnpcmaIS14jdRlNYzChLip/t
+         Rv2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771461666; x=1772066466;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=1NAf2L+vziVfUUbGjJ+gAe6Z0Ze+h/IVnKOfn57mX2c=;
+        b=wYAB0B8v0sNZlasiZV+bFuA9O3vWj+q4FeGR+vebB4ypXJbaBTnZBNKErRhHo55SwR
+         2yTJnLkutXIn/J15qnfWm8xzQrszof95K3nmZLC48A4eqCyHi55/Hhq3hJ6ATuwHcbfY
+         fPZW/qiy4+a3+xborqryfblFTwDHqN+646YgzuWsCBbYMl2f9hFh/jLfu9wt8s72aV6f
+         K4BwkYNR7CQzfrHFeMFg1SgEz7T9ZljJH8C/+XxTH8XkNMVw5yH4ma4Vxx7tQi7ZdUJk
+         1D2+ba2PcvlaJz281dXLdUpYpFndnfWY33laUK5NinXKpTRsKkZwocE2vT1YYZXWcJ5B
+         9vUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWL/qNSFiTXiUCrkiVKGo57SJW5KThqYhClP2WL0vahhW57idji2QvUiIpoKnYO25NvSQE29arA+qyye65e@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLgBwH+6+VoIJN1EunubcXrY1PvRjIFNax+zlF0xfyHXDTiIiO
+	ci4FYjbgZmfcTt38wKUNOBbJyc1Q9jyxrpw2lY62tcL6RSAc2MgJObje
+X-Gm-Gg: AZuq6aLOsx9tUrRmYAZov/a4nCOulACsx+QHq82ViCZep/utDMy9eYVvdKpjoELHpzz
+	e/Jhankz9UDXrhezIf1MVYnuQS7gozn3FUb9z8l/m8OnBHUAoQfOLzohficHOWlhXmLg4oUgVrA
+	YixnJjtxdU8DEqeINVlnY/A8MMEtEIQiXCaPHevLbdWMYAeoiiAEOYwTJkzleDnbIxg54AQYBkh
+	M5GuuYxdaxDplIv93Lr9Q1uLctkdtvIr84XQ72ddst6rCaDA/AkmNFiKw6N1bxhyhU6JS903tqK
+	NiZVPYMpWxspE8TRGXQMb/HAkAI+zlnd9lY4jp18CCTn8ffCsIPtMfITJRtNg4ENfRM239vL1Cz
+	8r28QmXV7mwfQ6Ou0udc6JHih+vq+F+mRDzgNmBfn9mo9vdm/9ibMhr12+feld5T9/MfUeJJGtz
+	2eLaIaiFcf3RyROFhMwDVYKIy3AyM=
+X-Received: by 2002:a05:6a00:a20e:b0:824:9451:c1e1 with SMTP id d2e1a72fcca58-825275ee977mr3128570b3a.58.1771461666157;
+        Wed, 18 Feb 2026 16:41:06 -0800 (PST)
+Received: from localhost ([2a03:2880:ff:4::])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-824c6b69ba2sm18441039b3a.38.2026.02.18.16.41.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Feb 2026 16:41:03 -0800 (PST)
+        Wed, 18 Feb 2026 16:41:05 -0800 (PST)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: brauner@kernel.org
 Cc: willy@infradead.org,
@@ -82,10 +84,12 @@ Cc: willy@infradead.org,
 	djwong@kernel.org,
 	hch@infradead.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v1 0/1] iomap: don't mark folio uptodate if read IO has bytes pending
-Date: Wed, 18 Feb 2026 16:39:10 -0800
-Message-ID: <20260219003911.344478-1-joannelkoong@gmail.com>
+Subject: [PATCH v1 1/1] iomap: don't mark folio uptodate if read IO has bytes pending
+Date: Wed, 18 Feb 2026 16:39:11 -0800
+Message-ID: <20260219003911.344478-2-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260219003911.344478-1-joannelkoong@gmail.com>
+References: <20260219003911.344478-1-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -99,7 +103,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
@@ -108,7 +112,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	DKIM_TRACE(0.00)[gmail.com:+];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77655-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77656-lists,linux-fsdevel=lfdr.de];
 	RECEIVED_HELO_LOCALHOST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
@@ -116,51 +120,75 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	RCVD_COUNT_FIVE(0.00)[5];
 	NEURAL_HAM(-0.00)[-1.000];
 	TO_DN_NONE(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[7];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: AFBA715B36C
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,suse.com:email]
+X-Rspamd-Queue-Id: 40AAE15B373
 X-Rspamd-Action: no action
 
-This is a fix for this scenario:
+If a folio has ifs metadata attached to it and the folio is partially
+read in through an async IO helper with the rest of it then being read
+in through post-EOF zeroing or as inline data, and the helper
+successfully finishes the read first, then post-EOF zeroing / reading
+inline will mark the folio as uptodate in iomap_set_range_uptodate().
 
-->read_folio() gets called on a folio size that is 16k while the file is 4k:
-  a) ifs->read_bytes_pending gets initialized to 16k
-  b) ->read_folio_range() is called for the 4k read
-  c) the 4k read succeeds, ifs->read_bytes_pending is now 12k and the
-0 to 4k range is marked uptodate
-  d) the post-eof blocks are zeroed and marked uptodate in the call to
-iomap_set_range_uptodate()
-  e) iomap_set_range_uptodate() sees all the ranges are marked
-uptodate and it marks the folio uptodate
-  f) iomap_read_end() gets called to subtract the 12k from
-ifs->read_bytes_pending. it too sees all the ranges are marked
-uptodate and marks the folio uptodate using XOR
-  g) the XOR call clears the uptodate flag on the folio
+This is a problem because when the read completion path later calls
+iomap_read_end(), it will call folio_end_read(), which sets the uptodate
+bit using XOR semantics. Calling folio_end_read() on a folio that was
+already marked uptodate clears the uptodate bit.
 
-The same situation can occur if the last range read for the folio is done as an
-inline read and all the previous ranges have already completed by the time the
-inline read completes.
+Fix this by not marking the folio as uptodate if the read IO has bytes
+pending. The folio uptodate state will be set in the read completion
+path through iomap_end_read() -> folio_end_read().
 
-For more context, the full discussion can be found in [1]. There was a
-discussion about alternative approaches in that thread, but they had more
-complications.
-
-Thanks,
-Joanne
-
-[1] https://lore.kernel.org/linux-fsdevel/CAJnrk1Z9za5w4FoJqTGx50zR2haHHaoot1KJViQyEHJQq4=34w@mail.gmail.com/#t
-
-Joanne Koong (1):
-  iomap: don't mark folio uptodate if read IO has bytes pending
-
+Reported-by: Wei Gao <wegao@suse.com>
+Suggested-by: Sasha Levin <sashal@kernel.org>
+Tested-by: Wei Gao <wegao@suse.com>
+Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+Fixes: b2f35ac4146d ("iomap: add caller-provided callbacks for read and readahead")
+---
  fs/iomap/buffered-io.c | 15 ++++++++++++---
  1 file changed, 12 insertions(+), 3 deletions(-)
 
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 58887513b894..4fc5ce963feb 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -80,18 +80,27 @@ static void iomap_set_range_uptodate(struct folio *folio, size_t off,
+ {
+ 	struct iomap_folio_state *ifs = folio->private;
+ 	unsigned long flags;
+-	bool uptodate = true;
++	bool mark_uptodate = true;
+ 
+ 	if (folio_test_uptodate(folio))
+ 		return;
+ 
+ 	if (ifs) {
+ 		spin_lock_irqsave(&ifs->state_lock, flags);
+-		uptodate = ifs_set_range_uptodate(folio, ifs, off, len);
++		/*
++		 * If a read with bytes pending is in progress, we must not call
++		 * folio_mark_uptodate(). The read completion path
++		 * (iomap_read_end()) will call folio_end_read(), which uses XOR
++		 * semantics to set the uptodate bit. If we set it here, the XOR
++		 * in folio_end_read() will clear it, leaving the folio not
++		 * uptodate.
++		 */
++		mark_uptodate = ifs_set_range_uptodate(folio, ifs, off, len) &&
++				!ifs->read_bytes_pending;
+ 		spin_unlock_irqrestore(&ifs->state_lock, flags);
+ 	}
+ 
+-	if (uptodate)
++	if (mark_uptodate)
+ 		folio_mark_uptodate(folio);
+ }
+ 
 -- 
 2.47.3
 
