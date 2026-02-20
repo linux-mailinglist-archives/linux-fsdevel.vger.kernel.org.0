@@ -1,177 +1,200 @@
-Return-Path: <linux-fsdevel+bounces-77834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id wKIJBxfymGmnOQMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Feb 2026 00:45:27 +0100
+	id 2BCvElT1mGkaOgMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Feb 2026 00:59:16 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id A018216B6E5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Feb 2026 00:45:26 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id A64D416B77C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Feb 2026 00:59:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 7CFA030098A2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 23:45:25 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A73F7303A100
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 23:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BE03EBF28;
-	Fri, 20 Feb 2026 23:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EBF131062C;
+	Fri, 20 Feb 2026 23:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="teiNMy/J"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HACYJnpW"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0611470808
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Feb 2026 23:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDE3303A01
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Feb 2026 23:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771631123; cv=none; b=pSer1TBvzBbmblTTRmVmBYTyql6JJQMsri1GIcoIjIyuy2KH6gHQS4j0WE97AeFEL5cgOE2kNG4FQvnwX41nh1yzvk2OHkjIf8j+ifPafU96hNfaaQm7N9QHNPA9ZnZCSRIWxI3fu68H5UsyAQrSSuyB5JSQPIdmPJO/npAvkBQ=
+	t=1771631951; cv=none; b=Upi6XnKuaEdF1tzr/VS6onFSwBGF/6RSJXOg5VtBK9i8Wcuph03fmXf7ZVWPkXKHbS6eMZeSi+QyyzTMGPjvvjenisaHte2J9GiDK1PcHhxgJyyUx97aULnGCjaSoJl8tIT0sUUogNEIt/Cc0AQIM11vLXfZauWVrhC5Cr0tdv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771631123; c=relaxed/simple;
-	bh=NUa0ZvWk81Un3U+HrnS3fk9ftpj1C3nw66+Wpf5Earg=;
+	s=arc-20240116; t=1771631951; c=relaxed/simple;
+	bh=DQG+oGVv9nsBvAHuQ0UfRamnc3dmE27H+yyOYO1JUbY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GAEXySFHAXjJjVO48HClIl1iRXfL0dXBJ+5hD2Br3rPufZ73mDHiGEmLCe/PdYkkLwo0YXNEgR04YHjk/MHOOo739uMtCjx1V8n6/LFPY8k0RDo2zISSoCytMGP4gKQN4rsF5nvSGDjPu+QnW+DI1vxaK+O8LE8Cqbpt5N6cMuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=teiNMy/J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A3C9C116C6;
-	Fri, 20 Feb 2026 23:45:22 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=E4BqaXK1UQMI/g9enXjurlmeX/Al3m9G5AAE7T3tptpVyTE9YdrEDEuc5pJLgFQTgLX79F3yjUbdy/NBNnSlkTkIZgQSTQyNXhcT27vq5kTTwCMzWAwDTZ/Y/4I00asS12eWD8hVEYA/2idHawNc3WHpc8YbQ8Dbikp9NnTi0E4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HACYJnpW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B63E1C116C6;
+	Fri, 20 Feb 2026 23:59:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771631122;
-	bh=NUa0ZvWk81Un3U+HrnS3fk9ftpj1C3nw66+Wpf5Earg=;
+	s=k20201202; t=1771631950;
+	bh=DQG+oGVv9nsBvAHuQ0UfRamnc3dmE27H+yyOYO1JUbY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=teiNMy/JIhvfqh8gXH7ek4Hp+9fZ6tCWb22lVxlsRPU1MvJRHcNlHWMI7MIkURnY/
-	 LkkdgGH89767ULkijKxc1U58DXtTEBc6iQDKP4qLR5d49vmcRTAmKgroniaNoF58Yp
-	 nSuLgxhy20j0I+V8zsdcFyDjqbMAI2g3SPkra4OAP07lSyS3lihgY/obLbMz9AFxQA
-	 P8cDWtueS1pORJx5JRBwoYYPMtJve4a6M6oEofTDhVu2wcI4aV4BTbTka2T5NCkE7E
-	 wKKkYO3/LqlJJpK+geDtdBbvakhcw5x4xzZKYs9U1dNTts8mu88HjsSydn8fg5/TrU
-	 hH3rFojr6O3uA==
-Date: Fri, 20 Feb 2026 15:45:21 -0800
+	b=HACYJnpWqlSR2HF27ILfBSDBIXqWo61HwM0zL/Fi6/tdZY5pxvE0Orrw7xfvzR3g1
+	 SS3z7FMwdsqJOABdzPVNV+p8OWAikyOCskGltQyjpuH3BOkRXYCQPTjwBHAGEzmX9+
+	 wXZcwqmy4V3n2YRKeH1c+UZNQ0cEoWm6+2OXp1oOmPVOLcByHRd+0LEfMRkccv4Iok
+	 tKsvwxQTZy/qPZuCTTE+dbbl9clO6XmVAxw7acwi3eHTZxbvu1Ttk3S+wYL/SXEzeX
+	 hRohOW4fu1qRHcMcbNaSOLTVMrsFUkAk7f2U5/4/zZyDNAWkwOKAtwhAc3nZY2SJBM
+	 GHgwo1WvaBm7Q==
+Date: Fri, 20 Feb 2026 15:59:10 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Joanne Koong <joannelkoong@gmail.com>, brauner@kernel.org,
-	wegao@suse.com, sashal@kernel.org, hch@infradead.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] iomap: don't mark folio uptodate if read IO has
- bytes pending
-Message-ID: <20260220234521.GA11069@frogsfrogsfrogs>
-References: <20260219003911.344478-1-joannelkoong@gmail.com>
- <20260219003911.344478-2-joannelkoong@gmail.com>
- <20260219024534.GN6467@frogsfrogsfrogs>
- <aZaQO0jQaZXakwOA@casper.infradead.org>
+To: John Groves <john@groves.net>
+Cc: Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>,
+	"f-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	Joanne Koong <joannelkoong@gmail.com>,
+	Bernd Schubert <bernd@bsbernd.com>,
+	Luis Henriques <luis@igalia.com>,
+	Horst Birthelmer <horst@birthelmer.de>
+Subject: Re: [LSF/MM/BPF TOPIC] Where is fuse going? API cleanup,
+ restructuring and more
+Message-ID: <20260220235910.GA11076@frogsfrogsfrogs>
+References: <CAJfpegtzYdy3fGGO5E1MU8n+u1j8WVc2eCoOQD_1qq0UV92wRw@mail.gmail.com>
+ <aYQNcagFg6-Yz1Fw@groves.net>
+ <20260204190649.GB7693@frogsfrogsfrogs>
+ <0100019c2bdca8b7-b1760667-a4e6-4a52-b976-9f039e65b976-000000@email.amazonses.com>
+ <CAOQ4uxhzaTAw_sHVfY05HdLiB7f6Qu3GMZSBuPkmmsua0kqJBQ@mail.gmail.com>
+ <20260206055247.GF7693@frogsfrogsfrogs>
+ <aYZOVWXGxagpCYw5@groves.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aZaQO0jQaZXakwOA@casper.infradead.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aYZOVWXGxagpCYw5@groves.net>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[gmail.com,kernel.org,suse.com,infradead.org,vger.kernel.org];
-	TAGGED_FROM(0.00)[bounces-77834-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[gmail.com,szeredi.hu,lists.linux-foundation.org,vger.kernel.org,bsbernd.com,igalia.com,birthelmer.de];
 	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77835-lists,linux-fsdevel=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,jagalactic.com:email];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
+	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: A018216B6E5
+	RCPT_COUNT_SEVEN(0.00)[9];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Rspamd-Queue-Id: A64D416B77C
 X-Rspamd-Action: no action
 
-On Thu, Feb 19, 2026 at 04:23:23AM +0000, Matthew Wilcox wrote:
-> On Wed, Feb 18, 2026 at 06:45:34PM -0800, Darrick J. Wong wrote:
-> > On Wed, Feb 18, 2026 at 04:39:11PM -0800, Joanne Koong wrote:
-> > > If a folio has ifs metadata attached to it and the folio is partially
-> > > read in through an async IO helper with the rest of it then being read
-> > > in through post-EOF zeroing or as inline data, and the helper
-> > > successfully finishes the read first, then post-EOF zeroing / reading
-> > > inline will mark the folio as uptodate in iomap_set_range_uptodate().
-> > > 
-> > > This is a problem because when the read completion path later calls
-> > > iomap_read_end(), it will call folio_end_read(), which sets the uptodate
-> > > bit using XOR semantics. Calling folio_end_read() on a folio that was
-> > > already marked uptodate clears the uptodate bit.
+On Fri, Feb 06, 2026 at 02:48:43PM -0600, John Groves wrote:
+> On 26/02/05 09:52PM, Darrick J. Wong wrote:
+> > On Thu, Feb 05, 2026 at 10:27:52AM +0100, Amir Goldstein wrote:
+> > > On Thu, Feb 5, 2026 at 4:33 AM John Groves <john@jagalactic.com> wrote:
+> > > >
+> > > > On 26/02/04 11:06AM, Darrick J. Wong wrote:
+> > > >
+> > > > [ ... ]
+> > > >
+> > > > > >  - famfs: export distributed memory
+> > > > >
+> > > > > This has been, uh, hanging out for an extraordinarily long time.
+> > > >
+> > > > Um, *yeah*. Although a significant part of that time was on me, because
+> > > > getting it ported into fuse was kinda hard, my users and I are hoping we
+> > > > can get this upstreamed fairly soon now. I'm hoping that after the 6.19
+> > > > merge window dust settles we can negotiate any needed changes etc. and
+> > > > shoot for the 7.0 merge window.
 > > 
-> > Aha, I wondered if that xor thing was going to come back to bite us.
+> > I think we've all missed getting merged for 7.0 since 6.19 will be
+> > released in 3 days. :/
+> > 
+> > (Granted most of the maintainers I know are /much/ less conservative
+> > than I was about the schedule)
 > 
-> This isn't "the xor thing has come back to bite us".  This is "the iomap
-> code is now too complicated and I cannot figure out how to explain to
-> Joanne that there's really a simple way to do this".
+> Doh - right you are...
 > 
-> I'm going to have to set aside my current projects and redo the iomap
-> readahead/read_folio code myself, aren't I?
+> > 
+> > > I think that the work on famfs is setting an example, and I very much
+> > > hope it will be a good example, of how improving existing infrastructure
+> > > (FUSE) is a better contribution than adding another fs to the pile.
+> > 
+> > Yeah.  Joanne and I spent a couple of days this week coprogramming a
+> > prototype of a way for famfs to create BPF programs to handle
+> > INTERLEAVED_EXTENT files.  We might be ready to show that off in a
+> > couple of weeks, and that might be a way to clear up the
+> > GET_FMAP/IOMAP_BEGIN logjam at last.
+> 
+> I'd love to learn more about this; happy to do a call if that's a
+> good way to get me briefed.
+> 
+> I [generally but not specifically] understand how this could avoid
+> GET_FMAP, but not GET_DAXDEV. 
 
-<willy and I had a chat; this is a clumsy non-AI summary of it>
+fuse-iomap requires fuse servers to open block devices and register them
+with the fuse_conn as a backing file.  The kernel returns a magic cookie
+that can then be passed back to the kernel in iomap_begin.  This is
+(AFAICT) similar to what fuse does w.r.t. passthrough files.
 
-I started looking at folio read state management in iomap, and made a
-few observations that (I hope) match what willy's grumpy about.
+IIRC, GET_DAXDEV is an ondemand fuse request, which is quite different
+from the fuse-iomap model where bdevs have to be registered before you
+can use them.
 
-There are three ways that iomap can be reading into the pagecache:
-a) async ->readahead,
-b) synchronous ->read_folio (page faults), and
-c) synchronous ->read_folio_range (pagecache write).
+> But I'm not sure it could (or should) avoid dax_iomap_rw() and
+> dax_iomap_fault(). The thing is that those call my begin() function
+> to resolve an offset in a file to an offset on a daxdev, and then
+> dax completes the fault or memcpy. In that dance, famfs never knows
+> the kernel address of the memory at all (also true of xfs in fs-dax
+> mode, unless that's changed fairly recently). I think that's a pretty
+> decent interface all in all.
 
-(Note that (b) can call a different ->read_folio_range than (c), though
-all implementations seem to have the same function)
+Right.  dax_iomap_{rw,fault} call the ->iomap_begin they're given, which
+can be fuse_iomap_begin, which will either (a) look in the iext cache,
+(b) see if the fuse server supplied a bpf program, or (c) upcall the
+fuse server.
 
-All three of these IO paths share the behavior that they try to fill out
-the folio's contents and set the corresponding folio/ifs uptodate bits
-if that succeeds.  Folio contents can come from anywhere, whether it's:
+I also took another look at my broken fuse-iomap-dax patch and realized
+that in addition to corrupting data somewhere, there's also a gigantic
+XXX around dax_writeback_mapping_range because it takes a bdev instead
+of asking the filesystem for mappings, which means that it's broken for
+any fsdax file who stores data on more than one device.
 
-i) zeroing memory,
-ii) copying from an inlinedata buffer, or
-iii) asynchronously fetching the contents from somewhere
+> Also: dunno whether y'all have looked at the dax patches in the famfs
+> series, but the solution to working with Alistair's folio-ification 
+> and cleanup of the dax layer (which set me back months) was to create 
+> drivers/dax/fsdev.c, which, when bound to a daxdev in place of 
+> drivers/dax/device.c, configures folios & pages compatibly with 
+> fs-dax. So I kinda think I need the dax_iomap* interface.
 
-In the case of (c) above, if the read fails then we fail the write, and
-if the read succeeds then we start copying to the pagecache.
-
-However, (a) and (b) have this additional read_bytes_pending field in
-the ifs that implements some extra tracking.  AFAICT the purpose of this
-field is to ensure that we don't call folio_end_read prematurely if
-there's an async read in progress.  This can happen if iomap_iter
-returns a negative errno on a partially processed folio, I think?
-
-read_bytes_pending is initialized to the folio_size() at the start of a
-read and subtracted from when parts of the folio are supplied, whether
-that's synchronous zeroing or asynchronous read ioend completion.  When
-the field reaches zero, we can then call folio_end_read().
-
-But then there are twists, like the fact that we only call
-iomap_read_init() to set read_bytes_pending if we decide to do an
-asynchronous read.  Or that iomap_read_end and iomap_finish_folio_read
-have awfully similar code.  I think in the case of (i) and (ii) we also
-don't touch read_pending_bytes at all, and merely set the uptodate bits?
-
-This is confusing to me.  It would be more straightforward (I think) if
-we just did it for all cases instead of adding more conditionals.  IOWs,
-how hard would it be to consolidate the read code so that there's one
-function that iomap calls when it has filled out part of a folio.  Is
-that possible, even though we shouldn't be calling folio_end_read during
-a pagecache write?
-
-At the end of the day, however, there's a bug in Linus' tree and we need
-to fix it, so Joanne's patch is a sufficient bandaid until we can go
-clean this up.
+Oh that's good news!
 
 --D
+
+> As usual, if I'm overlooking something let me know...
+> 
+> Regards,
+> John
+> 
+> 
 
