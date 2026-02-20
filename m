@@ -1,233 +1,223 @@
-Return-Path: <linux-fsdevel+bounces-77823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iCoWFP/GmGlgMAMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 21:41:35 +0100
+	id 6HUhIeXHmGngMAMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 21:45:25 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id C560C16AB43
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 21:41:34 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46D9A16AB97
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 21:45:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id DCB843020FC3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 20:41:28 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 67D33300DA5F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 20:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7AD9314A78;
-	Fri, 20 Feb 2026 20:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24854253340;
+	Fri, 20 Feb 2026 20:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="K48oo9PH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c2WaxQ8P"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012015.outbound.protection.outlook.com [52.101.53.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f67.google.com (mail-ua1-f67.google.com [209.85.222.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299B222DFA5;
-	Fri, 20 Feb 2026 20:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D022D7DEF
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Feb 2026 20:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.222.67
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771620087; cv=fail; b=dIG0bp+9flqdaDO3XE9LOl1uNvWjGYrbZmJlc3gF0yxIwJG2+VKBv07yFt1mBFp6eHoeOFkV8kZdiZnIUrJvSadCt3JVmpt5vxHuc1iD7UGdebjcfTrcoRd+mFDFr0z2hOA2xl1920msjjEF6PjhTxJbCC2V57CgotGi5iwy/6Y=
+	t=1771620314; cv=pass; b=dN/SaVZ927W431VbkW3pg+GQkTk0zEqVYAIrA8EOx4H1wqomSxn3Bh5Tm7hHmaR+VZCL9pbmuvlPEGEPSUg36hlTW4qvYcv+huh/NMV84RjBgoXE443cu75c5tMCn/PadjZ1zpcFYCVJkpjs9Lq9dnOMnm+ZWdjuH+1SvM73q8w=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771620087; c=relaxed/simple;
-	bh=t1owTixmfy4IFai7DvOH8UPQgwMHjhVkHLaA/pcpXEE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YZT2bUl6dOihgPRJy3L+meFwLFshUoEIJQZru3PX5O2zISw4HyNEjI0/v6G/vhHyPc9ZLWgA3vJlaMTbtjEZxi1o1F1ziTMd3VOkCgqS3iD8uFhTtJUrnfudg608HLyjZkX76rLugFQi6pQAVnF72wmsjkRjbiv9JcmdXPzMOBs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=K48oo9PH; arc=fail smtp.client-ip=52.101.53.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=V8B7PclBkzFxmzUKtw+xXRT1swhkoH+RyCt2/MTZQdLg3EXhHv8ZA62XfzJpH35tAqhsubL9A2grFW73/GYyG1yZG+JN7lcrltMNQSzOcGSQKxG6R1byrVSycDiJmXEj9QCxtNkNKgTbBlT4vw0kAjhoVFgNw7eujmQl+AxNGEXMt2bwU5Tb7iq1KqeFcIxVJ9/qEPBryFbu0Zciy1uAn6xANzjQdXHLsk57BbFtQvum3yE8FNDTftmQvjK875PjOrgzzKLWp5SEgO8a3wloU01uHvZJ32SKVNbBg+PCriuKIgHcpR0Gm2Y9PJqICfa1MaV31+awIuhK8X2GPiti4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Kpi4xp4racxjDxJgayjArBG+7rdqDVUnnO6CGd3rfUQ=;
- b=Bpz43MnUCTA+Kvsag2baSkvQHhMyaG5yakItPAI3ymDif2NWutDNa0DmOR+p8ih6qkxlWGcGurALO9flABAnolRUd0MK68FMocab+AFLBa/0FHciGc9nGzXzEbU7gQEiMGTmjjsemYyKr/GzCjy5OtBt/JtAb73Dhk4pOo302fanhDoe3rDWPxhNmJdLfGmh4C+JFQfP47MtgzN2sRFvZLE+8Vy1YzhVlMrjTjqVWHvZ3AZ5oQm1BBqe+sxqzTixKlG1wqK5OcOONsiX6PsUaBYphGM2rxvdQDcCMS+YgYQsslZcCp3uTRA66xrtiNYalSRw0aUFXSn7SZ0NsYBZjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=szeredi.hu smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Kpi4xp4racxjDxJgayjArBG+7rdqDVUnnO6CGd3rfUQ=;
- b=K48oo9PHER4iyU8/m3TzzDdC/CR+G7Gl5DJsZjJf7lMlyowbeLsEGlKp9o16gkm0qHhp6lbdvz58qf17pqcYVZ3poipajztDC935U2TETry5Pr1ki0hfxCoBOoKnjdKPpIPPwsliJJN2GSMen5kiHavTlkZNrp6KlM1An305KA2PXDryQQ/KN7TiSNO/+nBVOZfLDr1dai8Zf3okle7iQ7vxmMr1PA8NoOpb+yLcdO5KdSB53wsjIVZyZ4jMNlZHta8Vx7zyRp/0rVrnihh3O+Px5GXsuDjX1SnAyYDvPQnhhKUY70KOXgtBkHtzU1o+5ZViTLnKjYchG31DcqA6Pg==
-Received: from CH2PR07CA0029.namprd07.prod.outlook.com (2603:10b6:610:20::42)
- by MW6PR12MB8736.namprd12.prod.outlook.com (2603:10b6:303:244::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9632.16; Fri, 20 Feb
- 2026 20:41:21 +0000
-Received: from CH1PEPF0000AD78.namprd04.prod.outlook.com
- (2603:10b6:610:20:cafe::ba) by CH2PR07CA0029.outlook.office365.com
- (2603:10b6:610:20::42) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9632.17 via Frontend
- Transport; Fri, 20 Feb 2026 20:41:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH1PEPF0000AD78.mail.protection.outlook.com (10.167.244.56) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9632.12 via Frontend Transport; Fri, 20 Feb 2026 20:41:20 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 20 Feb
- 2026 12:41:04 -0800
-Received: from ubuntu.localdomain (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 20 Feb
- 2026 12:41:04 -0800
-Received: by ubuntu.localdomain (Postfix, from userid 1000)
-	id EFD8F26299E; Fri, 20 Feb 2026 13:41:02 -0700 (MST)
-From: Jim Harris <jim.harris@nvidia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<jim.harris@nvidia.com>, <mgurtovoy@nvidia.com>, <ksztyber@nvidia.com>
-Subject: [PATCH] fuse: skip lookup during atomic_open() when O_CREAT is set
-Date: Fri, 20 Feb 2026 13:41:02 -0700
-Message-ID: <20260220204102.21317-1-jiharris@nvidia.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1771620314; c=relaxed/simple;
+	bh=twNtpoPLV92wLbRpHd1Jq94+3VlE5YGGP3StH2uelFg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EMP1Dt6FsxVcQ8PmNiOTBu1sK14913rhqMPGhCN446P7C8mtM5Q6p+kkVpFBG+MXP+XckrL6ZONIJhDd30NXQoNzpPbmsb9QgTTc1InbHLJ6iVMsHnscpoHRDQvJ3IyTdKne4/7qD4j8aOUdjbJ1iTRuiF6ly/XiVQm4WBYkkRk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c2WaxQ8P; arc=pass smtp.client-ip=209.85.222.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f67.google.com with SMTP id a1e0cc1a2514c-94abd52b274so723525241.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Feb 2026 12:45:13 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771620312; cv=none;
+        d=google.com; s=arc-20240605;
+        b=LGmdTJw6cTgtB4YBfXbpsYt8quqUgzNnih7LQmipAUhAANJvPUM6qBQ1wSHyAlo4HH
+         BxBvrdx//d56e0vLhJ1hX0GBCE1WkWRJkuwbk/B60Ny7+CUyMM99PjR49YvLxPt9ED0z
+         GeCoAv8t4EXvCG3bfk9irc85R4GxJT9onIYpBOrGQdeZ1pu306iZvp4EsZuLFy7mQl6G
+         xNsGWB0Co+Te50tcZsqDXKCXG5xub9NtnJr8dYlgI6eCsj2PIrxAbvKoavnCLyjEdWKP
+         layaBjE3Qtqcl9oWlFMvSnl6k+isN4HZpZFNCS8yMDYe8cotmfq2XVGSRPwT0bKyANo8
+         949w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=twNtpoPLV92wLbRpHd1Jq94+3VlE5YGGP3StH2uelFg=;
+        fh=3k7Y9w9q7yiRyLQH7afyu6swg9YdtXwWqUOQurlN2IY=;
+        b=Tq1YzFGMH2xE93Pqenc7yjtKQQzGEhVkEulz5mSjqTOJJqCOcMZ9FifvlY/kMmM7Vh
+         KjMasoWsS/Xr53gPTZ9d9CXhLKol7jAGVLYbOKcPUb1B56aF+re/WTeYflIFS/RRx+La
+         PF0O037q/l0st+ehZ7rhENrF6eHPYlgr6BPdgBpgTq+4ouaZzeVf8A3+F7b6KsfSd6yE
+         CqZ7RckVFkFPmj5elnp2e1BSfdMxP1Q4/XyxLO0z12bJHQw+OHI+5h24mspOQe4OaPXL
+         wL+XYAhjyrd35EGhSJbhld5356XRAIK1zbhD0g5TwfWi4zj+fpJibcYqL87lRkoMv/GX
+         mTHg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1771620312; x=1772225112; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=twNtpoPLV92wLbRpHd1Jq94+3VlE5YGGP3StH2uelFg=;
+        b=c2WaxQ8P4khqGusVN5wYxJZUaqdbb6iWAUT4GxA0PEMLqYPqsaJBdpZO3xwiK6OZyg
+         IPYnLt1+l+B41ezCs+nv9poBwkKG1j7mA9MyOFh2HJCbWwaK+0UIRxZC91Zd2s4xGk7+
+         V6BNxUKZboRQYwtZpWy543r14/eEG9RK+UN1ocqHrmF3FcpSlSWnZ3GazFuPp26WL/m1
+         wOkMM9AHtIwA1bptRa6fBN0r3qENqYUFj5X6tLWaoTKpg33MQUyMlcjUbf1U/BLq2+ph
+         K94P0tKb1waoxg5f0MFWGjVT/d53ih0Y70yQfbUhaz4b6lsxwaMzlWOTrphWmAtjnedH
+         KyoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771620312; x=1772225112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=twNtpoPLV92wLbRpHd1Jq94+3VlE5YGGP3StH2uelFg=;
+        b=Pfx/EWrpXDPicu3EFjGf2BeBwm2RTPGCgTiwACbUiK69baKwuydtNiVzrIMUW9Knh3
+         jjoVWTDe/4kZB3om0ZER/suF8GzEYH9QDmQ54NOBR1HzyqX6khxDnKY1A+zVfyzLzcNR
+         wcbepTcqGMcwHXw9JVfDWZrwWrXLez0gCsoQYi1vpfsrxeYt9HAGHkBlfBbseK0Waiff
+         Mi0yaO7I6U+FRy9ReObJFPPAaeufSS/gF/xFJWzDLPI5iNGVOA2w65qtQM2zHX2wgRFa
+         aUhFPMT4LJ1k6o4zC1WCut/xwWGLNY0rv93IaWzVQwDC/d2uj2zAA2E0pUr0cUHzUVW3
+         lR4g==
+X-Gm-Message-State: AOJu0YxRRRrGCJn3VyaCLLQFuDFH32xDH/fxW3DdCbKKWeSlWT7cqsOG
+	Tp1Nh5guXRzPSSKD4NZKI4fi71bPl0OJVBj+NhvVJ3hIPYfc+Eimiyx8e1U7KoD7zjWExzif0yl
+	e2x4PzxEZlchGy7Le6rBoBTbqjZJibPM=
+X-Gm-Gg: AZuq6aKfPsSbKNfxhSWDMKgwNE2DpCelUbXCFGQ4QfF4H9QqMvK7O7Fd55vQDzMgksS
+	x4GmCP6Mln7C3mU5lObrDlf0srQP7KcLGgWKX8b/CuD7CvVwu1p3T/0vtXVwqnQhcapWsYgvFRs
+	4As4ylvVjlGcAlejL+5+3XcwuIoPAb3ABARE9gI6DxiEqikihkshZygGMfFrSiRrQVPVivwTE4d
+	dR7Q8UYVUSXuMtt6MPam9+jOXJ4MSphL7zqMkMozEne+K7u3erPel6Jh7FTfZ8yXJenbn279iB6
+	4o1rtdjIBbfZ6b/mJA==
+X-Received: by 2002:a05:6102:b16:b0:5f5:514f:4e59 with SMTP id
+ ada2fe7eead31-5feb30a72d0mr465363137.27.1771620312379; Fri, 20 Feb 2026
+ 12:45:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD78:EE_|MW6PR12MB8736:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7c175eb3-d0e8-43f7-2425-08de70c067ab
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024|30052699003;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pqhzjE0oqCyC92iePNUwra5He6p/OFZYPqSdZ0Oc5DeMtyVruP7Hcw16fGx4?=
- =?us-ascii?Q?Q1LmyxRkrjeiZ5PbBApG+KGEJt7P8mVgeBN/cOGI8pbTDcHrOjzWJvqNg8L9?=
- =?us-ascii?Q?3wfMBUhzIrwWAS+UjkS3ab0ciub2RGmCVkNe3uRKcDkQ5LB94Ao8cH1fhe3u?=
- =?us-ascii?Q?ohf+PxumpwW9ikCsjR5EMSLn665kfs6VO3niLPxeSpMCUhP5gsw9cju6hrn3?=
- =?us-ascii?Q?BDBAF9YH+MR8+wqL8Y9DjAXn5EtMRUE9Xd1ny5eonPyDdm+CTJjBra1KZBXr?=
- =?us-ascii?Q?Bfzwd3HCqbR3ZBo/huq4QSLhh502Xa67G+Cq2BSmA3MBV+RXJNxfAxdd5GYN?=
- =?us-ascii?Q?7vQcIqoVoyV3FgSFT3+mZ033Ky22tpVqSjAAIvfxdRBQJFvb/eMRXTmtcHX0?=
- =?us-ascii?Q?6MYAzrvzRSxcnK/k1x7crkuihn9khYRlywWiHgQJhaILqe9F04igobJQiVWt?=
- =?us-ascii?Q?K/kJ1z3P0buRWXZkvnNn7U4o7bNf1HJLF+6awFJoEMhMRYnwUwjD64QlyiWq?=
- =?us-ascii?Q?GGZU1juL1F1z/XPhVwObrr962xt4ZjTJTx16hNDwO4nUhOu4HE5W8BpfMWau?=
- =?us-ascii?Q?kIWckCYwViEGth53g5QZHzpJyNB4+cz8vt3Q1LlcYoRZikJ9BD+E9WvwxRoq?=
- =?us-ascii?Q?xdcEYJXfMNVPha5rncdTt3OF+1hRQyVQvpNIDlg5MVCZkc4F/xB2JL9DSx4I?=
- =?us-ascii?Q?GbDaeE+iHR7lVC92uQbVToEtRy6SGR0Lcseu4HYZ1UCt8nsH6L1yZW1SvpJb?=
- =?us-ascii?Q?V7LG5hpu4pKN1iv3w3QRpYBYLY+Js8n6PYxk7R6AuhpJESTWBSYmgw3a+7ck?=
- =?us-ascii?Q?Ajjcr8bimp7/x+84okId85vt/mmcmukD9bNlx/ogi8P4mRB6lBDq79RoAa9K?=
- =?us-ascii?Q?ROkVVzQx0ArxOMMw67IaMeGuE/ZphIXc3bXqckf+iTQJWCrxoTRJLctH+e6V?=
- =?us-ascii?Q?xJ/d2NgTl4dkI/TU88ZpMzqqB8pqdj8ySuR+3K55HZD6pu/Pr98xYHYKxly8?=
- =?us-ascii?Q?Z6ORFDuVWFTs6jPhflrZSgQa7snFXX7J8JwjUh5EISnbIBuXeAEnTQ160BiP?=
- =?us-ascii?Q?jxy+b1XD5NivZfUagtzwdtHlpT10a2lO1QyFzY3+8Ta+CzyZuHubuwhQ1oDh?=
- =?us-ascii?Q?qVWEtZv8BsSDig5Qq7u+R0Rc8N+hixo/8HymcWjmWGp3gwIHVdixwobFMZ03?=
- =?us-ascii?Q?9n+iUNimC8prVNryfnRImF7/2F1ndGS3O11bn+tsAOGE/jwIs+e8KZBDKPly?=
- =?us-ascii?Q?0LQnVSpvbQ2J/LNQXE79ppQKYkQM7WA5hoCWRUwWImFd1lFJen7IxPMkuFRs?=
- =?us-ascii?Q?DCZBAXt83G5ZyEJ2gJMYsYRVuWlfOQeZNFmlJPRnboDdwg2xuDgpT/7Yyu4l?=
- =?us-ascii?Q?sbyzVvmPMbv3tJPuh4I3RAwwbxDOcuK7mB1V6AQ11wVaa5izcBZTyFW7ujUW?=
- =?us-ascii?Q?rZIbR6Bv2uR7gqy2CD81Q8RAZDZwLxgtrPV/CmS+N4p+5NeXmNge8cg5gedz?=
- =?us-ascii?Q?UmLcRhJ40hnygbAcEv9sa7EsZmRP1Grbsm4ZSs7QNY4XNeHM85P3wtRHw+Ax?=
- =?us-ascii?Q?y91EP79KPVoOPtntTRifA3hNQzvAzBcTB16i45pcghh1+HgH86DTkuobUYzJ?=
- =?us-ascii?Q?DuSfyMF5qcpRbeYoiZoag01v2BdQp6m/2+nJD7o/UMA5jmQOTNe+ncYaa5sw?=
- =?us-ascii?Q?pj6hUQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024)(30052699003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	dmMkgG5DGwww4lBzpdlp+6eptTfSWzfJHw01VZ1usDjSnLnmPmreSQbdUwtFJn1lpmSBxorBw8CbvXumXTpZ2SRJeDyEwJUWZEA2+SQnni3YPqjJz71enukhM4v7Qz4UmbshdE6Gx9HP0FnlL0b8JvWrUyeFBbxryTKTowGHBqueADQZaMdoR6jwCb7JI9WrPPbaIhfjM3PCqVPeqoTydqp4g271Odvq2K6bb3CPf5rWkAKFbuKWfckPAMOOraPTJePMP46vHha7hDNBQ+Inj/c9zFJquoetuGP2np1gYg13iQ86cP4hQYnUD5o0ET05Cbm2GshWwhdMu+CMi+vRe6vcQQPI+Io96N7avu1Mbf+xwDDDuNukCvrLjM8Ep0fpSqNs/299qYSVGrZFHQHBN6lUEwmIibb6IFembCxNvRCRwqKBcHQ/E2LZx2YElIy0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2026 20:41:20.6876
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7c175eb3-d0e8-43f7-2425-08de70c067ab
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000AD78.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8736
+References: <20260206180248.12418-1-danieldurning.work@gmail.com>
+ <20260209-spanplatten-zerrt-73851db30f18@brauner> <CAKrb_fEXR0uQnX5iK-ACH=amKMQ8qBSPGXmJb=1PgvEq8qsDEQ@mail.gmail.com>
+ <20260217-abgedankt-eilte-2386c98b3ef7@brauner>
+In-Reply-To: <20260217-abgedankt-eilte-2386c98b3ef7@brauner>
+From: Daniel Durning <danieldurning.work@gmail.com>
+Date: Fri, 20 Feb 2026 15:45:00 -0500
+X-Gm-Features: AaiRm52hM82IevVg7Vmo62C2F5Yss-2733FdxbX2tudFZkW41cTm1-3xKTkFeQI
+Message-ID: <CAKrb_fFEvf5VzY_-zcc800wjVGOFbiGrpzC7S6Ghy9qhYJrZ1w@mail.gmail.com>
+Subject: Re: [RFC PATCH] fs/pidfs: Add permission check to pidfd_info()
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	paul@paul-moore.com, stephen.smalley.work@gmail.com, omosnace@redhat.com, 
+	Oleg Nesterov <oleg@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.34 / 15.00];
-	ARC_REJECT(1.00)[cv is fail on i=2];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[nvidia.com,reject];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[Nvidia.com:s=selector2];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TO_DN_SOME(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-77824-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77823-lists,linux-fsdevel=lfdr.de];
-	DKIM_TRACE(0.00)[Nvidia.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	RCPT_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jim.harris@nvidia.com,linux-fsdevel@vger.kernel.org];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,zeniv.linux.org.uk,suse.cz,paul-moore.com,gmail.com,redhat.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns];
-	MID_RHS_MATCH_FROM(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
+	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[danieldurningwork@gmail.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCVD_COUNT_SEVEN(0.00)[9]
-X-Rspamd-Queue-Id: C560C16AB43
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: 46D9A16AB97
 X-Rspamd-Action: no action
 
-From: Jim Harris <jim.harris@nvidia.com>
+On Tue, Feb 17, 2026 at 7:01=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Wed, Feb 11, 2026 at 02:43:21PM -0500, Daniel Durning wrote:
+> > On Mon, Feb 9, 2026 at 9:01=E2=80=AFAM Christian Brauner <brauner@kerne=
+l.org> wrote:
+> > >
+> > > On Fri, Feb 06, 2026 at 06:02:48PM +0000, danieldurning.work@gmail.co=
+m wrote:
+> > > > From: Daniel Durning <danieldurning.work@gmail.com>
+> > > >
+> > > > Added a permission check to pidfd_info(). Originally, process info
+> > > > could be retrieved with a pidfd even if proc was mounted with hidep=
+id
+> > > > enabled, allowing pidfds to be used to bypass those protections. We
+> > > > now call ptrace_may_access() to perform some DAC checking as well
+> > > > as call the appropriate LSM hook.
+> > > >
+> > > > The downside to this approach is that there are now more restrictio=
+ns
+> > > > on accessing this info from a pidfd than when just using proc (with=
+out
+> > > > hidepid). I am open to suggestions if anyone can think of a better =
+way
+> > > > to handle this.
+> > >
+> > > This isn't really workable since this would regress userspace quite a
+> > > bit. I think we need a different approach. I've given it some thought
+> > > and everything's kinda ugly but this might work.
+> > >
+> > > In struct pid_namespace record whether anyone ever mounted a procfs
+> > > with hidepid turned on for this pidns. In pidfd_info() we check wheth=
+er
+> > > hidepid was ever turned on. If it wasn't we're done and can just retu=
+rn
+> > > the info. This will be the common case. If hidepid was ever turned on
+> > > use kern_path("/proc") to lookup procfs. If not found check
+> > > ptrace_may_access() to decide whether to return the info or not. If
+> > > /proc is found check it's hidepid settings and make a decision based =
+on
+> > > that.
+> > >
+> > > You can probably reorder this to call ptrace_may_access() first and t=
+hen
+> > > do the procfs lookup dance. Thoughts?
+> >
+> > Thanks for the feedback. I think your solution makes sense.
+> >
+> > Unfortunately, it seems like systemd mounts procfs with hidepid enabled=
+ on
+> > boot for services with the ProtectProc option enabled. This means that
+> > procfs will always have been mounted with hidepid in the init pid names=
+pace.
+> > Do you think it would be viable to record whether or not procfs was mou=
+nted
+> > with hidepid enabled in the mount namespace instead?
+>
+> I guess we can see what it looks like.
 
-When O_CREAT is set, we don't need the lookup. The lookup doesn't
-harm anything, but it's an extra FUSE operation that's not required.
+Having looked into this some more I am not sure if the mount
+namespace is viable either since a single proc instance could be in
+multiple mount namespaces. In addition the mount namespace
+does not seem to be easily accessible in the function where proc
+mount options are applied. I also considered adding an option
+similar to hidepid to pidfs, but since pidfs is not userspace-mounted
+I do not think that is possible without some significant changes.
 
-Signed-off-by: Jim Harris <jim.harris@nvidia.com>
----
- fs/fuse/dir.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+Doing a proc lookup with kern_path() does work, but it does not seem
+practical in terms of performance unless we had some other way to
+skip it in the common case.
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index f25ee47822ad..35f65d49ed2a 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -895,7 +895,8 @@ static int fuse_create_open(struct mnt_idmap *idmap, struct inode *dir,
- 		goto out_err;
- 	}
- 	kfree(forget);
--	d_instantiate(entry, inode);
-+	d_drop(entry);
-+	d_splice_alias(inode, entry);
- 	entry->d_time = epoch;
- 	fuse_change_entry_timeout(entry, &outentry);
- 	fuse_dir_changed(dir);
-@@ -936,14 +937,15 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
- 	if (fuse_is_bad(dir))
- 		return -EIO;
- 
--	if (d_in_lookup(entry)) {
--		struct dentry *res = fuse_lookup(dir, entry, 0);
--		if (res || d_really_is_positive(entry))
--			return finish_no_open(file, res);
--	}
-+	if (!(flags & O_CREAT)) {
-+		if (d_in_lookup(entry)) {
-+			struct dentry *res = fuse_lookup(dir, entry, 0);
- 
--	if (!(flags & O_CREAT))
-+			if (res || d_really_is_positive(entry))
-+				return finish_no_open(file, res);
-+		}
- 		return finish_no_open(file, NULL);
-+	}
- 
- 	/* Only creates */
- 	file->f_mode |= FMODE_CREATED;
--- 
-2.43.0
-
+Curious if anyone else has any ideas or suggestions on how this
+could be implemented.
 
