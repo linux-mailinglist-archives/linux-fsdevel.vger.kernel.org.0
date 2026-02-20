@@ -1,237 +1,215 @@
-Return-Path: <linux-fsdevel+bounces-77771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id ADS5OmAomGlqBwMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 10:24:48 +0100
+	id UBxqLlstmGmzCAMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 10:46:03 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 862301662F4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 10:24:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21D3B166663
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 10:46:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 64EE5303A927
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 09:24:04 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B14BE3052BA8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 09:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE8931ED6D;
-	Fri, 20 Feb 2026 09:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89AE329E6F;
+	Fri, 20 Feb 2026 09:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DGsyHYNw"
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="FFFsn7vP";
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="HhKqAT97";
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="HhKqAT97"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail1.bemta41.messagelabs.com (mail1.bemta41.messagelabs.com [195.245.230.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE9131D739;
-	Fri, 20 Feb 2026 09:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD0432A3DE;
+	Fri, 20 Feb 2026 09:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.245.230.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771579442; cv=none; b=VIXQl8B1PF6aNWpmqhgR7gzVSG6VUpYB9V/lNos0NVZGv6Guai0TkOi6E+0zvBkKbD6TKixH8uJL1D+qxKHqoegix9ZFPEMj82/r7j5jfM0V9bgjbM2XNQgTk2Z9TTW6HMQhe40DWYlmHQy/rBtZ5eifRzflVocm6xlWfyA9DLw=
+	t=1771580728; cv=none; b=UoBLZgx/UZf8JT07mzYRVqrhI1U4aIkC3ZrvEFpijwGm1YfyE76rRisqMoY3EdmFJ7UN3UZOT6Bix4VF+ve/daOdnxBL8eWsPZcDsvdY/tXU1qQrgVIKkk/nu2VFekQH84rpMyFtJ1SapJb3t7v4C9zSIwoc6wnMPbu9OJM47/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771579442; c=relaxed/simple;
-	bh=BHeY4ghWVmkcUwWQPrBz4LViBaL4pfipwy5Laz/tMBU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LheickmfwztA7tp4oH7BQF3C2NgJcBWSWZ+nP5YG2uDM38Qmy+hpbb/fEz+hAYsia61vn0itxR9BUL2149gwd8Jc+sl+1guoo0svntho9P68EZoooXjsGL1JoOwhuRMxZufVG/wmMbO32D5CrZk3NOKp5pY2EYAK4Az3dt1l3Bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DGsyHYNw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36455C116D0;
-	Fri, 20 Feb 2026 09:23:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771579441;
-	bh=BHeY4ghWVmkcUwWQPrBz4LViBaL4pfipwy5Laz/tMBU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DGsyHYNwmjHmKHTErCPbUzOMIEz5RBJFUZpcWdCAs6gEX2tsoSRcV+DxpXq9pSvIe
-	 IaAhs24gC5QLcp1MlbR8zn/MPKnmTXLczuNHvw/xffmNP6X8gxX1O6E+HFhepV5Rhk
-	 ffkPWVkWO6LZGLN2YNRtN9Udq6wNq1EWBRV5f+/bFvAdVxI3Z1l1Kf90DRBrm4xYKM
-	 EUKmDg461M3xhij+RtvGXi2vpAt6u1Ga0MNNroyUBjVmD4a44KyKfh4tZXjLE0jvg8
-	 rn6Iyiri9TfkiQQwTvLx2fo2l1QKUsJ3abNn36Q071N4YAsPRXVLd6TZmrcYnygnS/
-	 32NxPOoV5Ybsw==
-Date: Fri, 20 Feb 2026 10:23:55 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>, 
-	linux-mm@kvack.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Tejun Heo <tj@kernel.org>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Jann Horn <jannh@google.com>, netdev@vger.kernel.org
-Subject: Re: [PATCH 00/14] xattr: rework simple xattrs and support user.*
- xattrs on sockets
-Message-ID: <20260220-biobauer-beilhieb-2e792f9453cf@brauner>
-References: <20260216-work-xattr-socket-v1-0-c2efa4f74cb7@kernel.org>
- <20260220004454.GR6467@frogsfrogsfrogs>
+	s=arc-20240116; t=1771580728; c=relaxed/simple;
+	bh=wJWfGk7BNqg3EveEUI889GcA2wUx2SpY7lRosAW9aBM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=MhYLKdiFVFpWrVoRWPrT3NYcrkzHu+AUP1DYuOm/BOOsO/eQADymt0MizHIUkcDkcM4DktNxdpatxrniKXs0HfkRa1WwhMzr9oC/gZ5qFaWhE2IGAyKkJxHonKJLfXq51IeZz7xub3eLDAFfTaUMgM9CnhVvhPSNSX4UlvcH8l0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=FFFsn7vP; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=HhKqAT97; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=HhKqAT97; arc=none smtp.client-ip=195.245.230.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+	s=170520fj; t=1771580723; i=@fujitsu.com;
+	bh=jtIHzUFqVK9OPNLco4+7DqEQIozirk/DIYVzX5HTsD8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	b=FFFsn7vPE5ZlIHxMJVEAiiymF7QCALndmh4cBbbuk/ZUXRsLd5GA1vpMcZ7gf6FWQ
+	 BqjaxUw93q9E5wzsES9j3ZaBVKR1NQPqc28HuWkLm83zbUwFry8srB9zQj36y3lnJp
+	 Nog5C3JK8MBVLIFgXTbhbpnHZzUmG08s7mIP58jxisaH1B2WzX19sMcOxnl5eOR/+d
+	 KefOp79f9HUm8r2fj390VathJamVjsxAdVnnGRi2Ri+gMssTWO2aPL5WnBH6bRaiPq
+	 Z91oBEwvmbvqQrIaa92A2lZcxFqQVfkqZYmDmZD0tzEJoAHS6+J/F07uEv11juZP2Z
+	 /4uAKHApRpnCw==
+X-Brightmail-Tracker: H4sIAAAAAAAAA22Se0xbdRTH+d17e3vp6LxrR3ptxjCFoSIUEac
+  /ooAmxt04iGbEscxks8CVNrYFe4sDphFWKzgyeax3QHnIYwOGZIyymbnAeNgBZcgzOKg8suE2
+  YJlzFrchg3gLMmfifyfn8znfc/44BCr5EZcTTJqRMehVWgUuwiJfJ1TBocHFmhevDWyCU7NDO
+  FxavAtgQcV9BLrOruKwiBsCsHciC4ffTTQCaKppwuFgyyMctt+4hcHSIhMCCy+MobCh6mccWi
+  1tCBy09mGwtc2BwdGLZTh0HbMDaK64A2DODQ6Bpx8+EsCcu5ko7DnWgcDyRQ6FkydqAWxcvIf
+  CX3oHBdCZ343A5Yf87CX7DPbGdvqB+RuMNo+s4PQP1ikh/aX9joBuqQ+ka1rnEdrW8DVOt5c3
+  Cum5lhJAdyysAJor/YLur7QLaZdtO71c2g3e27xfoNHHJ6d9KFAPF85jKZV4muW6BckEFsFRI
+  CIk5DlAXTU9wI8CTwIj36VOlg4AN8DI7zHq8s2Jf6xshDp3akiwYdnqhoT/Y5UDavz+itBt4W
+  QINX68DLjrrWQg1ee4vTaBkhacWrp1Zm2hlDxA2euyeEDwUTuonvzd7raYjKSu5lWvKRTpS33
+  LOQRuxZOMobKmY9xtCRlNFd/sxNf1LZSj5FfMXaO8bjpfiq6PBlBjAzY0H0itT2jWJ7RKgDQA
+  yDKGTxlDcLgy3qBJUht1Ko1WqcoITlAyqYbkFCb4EMMaQ5VJCSlKhmWVbLouQZuo1DNGG+A/S
+  fT7M7EXwLVVc0gXeJpAFN5i76BijWRzfHJiulrFqg8aUrUM2wW2EYSCEic+z7MtBiaJSftIo+
+  X/cQNThJdiqzjkWR6L2RSVjtUkraM+EEY0T3e0ocS9ea4TlWD6ZD0jl4nPupNIt6pO1T8O2vj
+  tEeAjl4qBh4eHxCuFMeg0xv/yBSAjgEIqvv0Cn+Kl0Rsf71vgT0H4Uz7Qce5TjKp/kTwTyQmo
+  bY2LrXoqQOb3x+RypPO8eTL75Yw36/8q7I7I4xSfbJp5O2aOkvv17/0Kt5cV7Zz313/2WpXvO
+  5HtLudoeeehQOlLdNjEjrBw37eauCOhrVcyKuoj4g+2+jhdEX9mB+1SSKN+8lQPGD5e6k/cn/
+  b+lbrJrqby45dQbgr133Ym4nJd5pH+GW8Y4Fid2VVjPSEqFuwpEk2N7my2LY+VCT/PfS46vYC
+  L9bFcDPd4BfwWnRe+z9S0+8B0b1xcxqvaWVk1eVJmHA49PF7rp8sd77HSMsSs7mzHSkKud5+W
+  F8Bh/9zmw3RUddH0rJVuCYoamauXO/NNe8cdGT1j++Y1JQqMVatCA1EDq/obl6/DIlYEAAA=
+X-Env-Sender: tomasz.wolski@fujitsu.com
+X-Msg-Ref: server-10.tower-859.messagelabs.com!1771580720!48981!1
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received:
+X-StarScan-Version: 9.121.1; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 31228 invoked from network); 20 Feb 2026 09:45:21 -0000
+Received: from unknown (HELO n03ukasimr01.n03.fujitsu.local) (62.60.8.97)
+  by server-10.tower-859.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 20 Feb 2026 09:45:21 -0000
+Received: from n03ukasimr01.n03.fujitsu.local (localhost [127.0.0.1])
+	by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTP id 720361009DA;
+	Fri, 20 Feb 2026 09:45:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 n03ukasimr01.n03.fujitsu.local 720361009DA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+	s=dspueurope; t=1771580720;
+	bh=jtIHzUFqVK9OPNLco4+7DqEQIozirk/DIYVzX5HTsD8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=HhKqAT97F6SM58cIkKGHj3KnNHeVT7YoH7Wv50EvuIhRjQ5M09RsWAu/RaFyx4LwP
+	 +W/xgMssjygVwtA4NAM1iEkEKku966g3oHZNoRLty9Esr/dJpx3gvoUgFrF5rFxXy9
+	 ViDOHhttoNbWUrhKNuRustiAydpmmUMef2KAt0ZjtHcxf2cHqyCoEam7Yh5d/5q0at
+	 teyCaCg+5CYQySNKqaW/XTYEEV3lb4cZeSFiOE+qRx0wlYbZOEASz+Fv5UbXm3QBVs
+	 pIhAdYwdwRoiQ/yExIgYRoMkiS+U/vERzQkCl/0CztQxLafHFlxnG1UdJ0iIpos1uN
+	 HxPNOPCCbQQZw==
+Received: from ubuntudhcp (unknown [10.172.107.4])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTPS id 4E6631009D9;
+	Fri, 20 Feb 2026 09:45:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 n03ukasimr01.n03.fujitsu.local 4E6631009D9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+	s=dspueurope; t=1771580720;
+	bh=jtIHzUFqVK9OPNLco4+7DqEQIozirk/DIYVzX5HTsD8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=HhKqAT97F6SM58cIkKGHj3KnNHeVT7YoH7Wv50EvuIhRjQ5M09RsWAu/RaFyx4LwP
+	 +W/xgMssjygVwtA4NAM1iEkEKku966g3oHZNoRLty9Esr/dJpx3gvoUgFrF5rFxXy9
+	 ViDOHhttoNbWUrhKNuRustiAydpmmUMef2KAt0ZjtHcxf2cHqyCoEam7Yh5d/5q0at
+	 teyCaCg+5CYQySNKqaW/XTYEEV3lb4cZeSFiOE+qRx0wlYbZOEASz+Fv5UbXm3QBVs
+	 pIhAdYwdwRoiQ/yExIgYRoMkiS+U/vERzQkCl/0CztQxLafHFlxnG1UdJ0iIpos1uN
+	 HxPNOPCCbQQZw==
+Received: from isar2.ecs00.fujitsu.local (unknown [10.172.183.27])
+	by ubuntudhcp (Postfix) with ESMTP id D3CCD2204EA;
+	Fri, 20 Feb 2026 09:45:19 +0000 (UTC)
+From: Tomasz Wolski <tomasz.wolski@fujitsu.com>
+To: smita.koralahallichannabasappa@amd.com
+Cc: alison.schofield@intel.com,
+	ardb@kernel.org,
+	benjamin.cheatham@amd.com,
+	bp@alien8.de,
+	dan.j.williams@intel.com,
+	dave.jiang@intel.com,
+	dave@stgolabs.net,
+	gregkh@linuxfoundation.org,
+	huang.ying.caritas@gmail.com,
+	ira.weiny@intel.com,
+	jack@suse.cz,
+	jeff.johnson@oss.qualcomm.com,
+	jonathan.cameron@huawei.com,
+	len.brown@intel.com,
+	linux-cxl@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	lizhijian@fujitsu.com,
+	ming.li@zohomail.com,
+	nathan.fontenot@amd.com,
+	nvdimm@lists.linux.dev,
+	pavel@kernel.org,
+	peterz@infradead.org,
+	rafael@kernel.org,
+	rrichter@amd.com,
+	terry.bowman@amd.com,
+	tomasz.wolski@fujitsu.com,
+	vishal.l.verma@intel.com,
+	willy@infradead.org,
+	yaoxt.fnst@fujitsu.com,
+	yazen.ghannam@amd.com
+Subject: Re: [PATCH v6 0/9] dax/hmem, cxl: Coordinate Soft Reserved handling with CXL and HMEM
+Date: Fri, 20 Feb 2026 10:45:10 +0100
+Message-Id: <20260220094510.17955-1-tomasz.wolski@fujitsu.com>
+X-Mailer: git-send-email 2.35.3
+In-Reply-To: <20260210064501.157591-1-Smita.KoralahalliChannabasappa@amd.com>
+References: <20260210064501.157591-1-Smita.KoralahalliChannabasappa@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260220004454.GR6467@frogsfrogsfrogs>
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [2.34 / 15.00];
-	MID_END_EQ_FROM_USER_PART(4.00)[];
+X-Spamd-Result: default: False [0.84 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[fujitsu.com,reject];
+	R_DKIM_ALLOW(-0.20)[fujitsu.com:s=170520fj,fujitsu.com:s=dspueurope];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77771-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
-	RCPT_COUNT_TWELVE(0.00)[15];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TAGGED_FROM(0.00)[bounces-77772-lists,linux-fsdevel=lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[intel.com,kernel.org,amd.com,alien8.de,stgolabs.net,linuxfoundation.org,gmail.com,suse.cz,oss.qualcomm.com,huawei.com,vger.kernel.org,fujitsu.com,zohomail.com,lists.linux.dev,infradead.org];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[fujitsu.com:+];
 	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,localhost:url]
-X-Rspamd-Queue-Id: 862301662F4
+	RCPT_COUNT_TWELVE(0.00)[33];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[tomasz.wolski@fujitsu.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_NONE(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[fujitsu.com:mid,fujitsu.com:dkim,fujitsu.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: 21D3B166663
 X-Rspamd-Action: no action
 
-On Thu, Feb 19, 2026 at 04:44:54PM -0800, Darrick J. Wong wrote:
-> On Mon, Feb 16, 2026 at 02:31:56PM +0100, Christian Brauner wrote:
-> > Hey,
-> > 
-> > This reworks the simple_xattr infrastructure and adds support for
-> > user.* extended attributes on sockets.
-> > 
-> > The simple_xattr subsystem currently uses an rbtree protected by a
-> > reader-writer spinlock. This series replaces the rbtree with an
-> > rhashtable giving O(1) average-case lookup with RCU-based lockless
-> > reads. This sped up concurrent access patterns on tmpfs quite a bit and
-> > it's an overall easy enough conversion to do and gets rid or rwlock_t.
-> > 
-> > The conversion is done incrementally: a new rhashtable path is added
-> > alongside the existing rbtree, consumers are migrated one at a time
-> > (shmem, kernfs, pidfs), and then the rbtree code is removed. All three
-> > consumers switch from embedded structs to pointer-based lazy allocation
-> > so the rhashtable overhead is only paid for inodes that actually use
-> > xattrs.
-> 
-> Patches 1-6 look ok to me, at least in the sense that nothing stood out
-> to me as obviously wrong, so
-> Acked-by: "Darrick J. Wong" <djwong@kernel.org>
-> 
-> > With this infrastructure in place the series adds support for user.*
-> > xattrs on sockets. Path-based AF_UNIX sockets inherit xattr support
-> > from the underlying filesystem (e.g. tmpfs) but sockets in sockfs -
-> > that is everything created via socket() including abstract namespace
-> > AF_UNIX sockets - had no xattr support at all.
-> > 
-> > The xattr_permission() checks are reworked to allow user.* xattrs on
-> > S_IFSOCK inodes. Sockfs sockets get per-inode limits of 128 xattrs and
-> > 128KB total value size matching the limits already in use for kernfs.
-> > 
-> > The practical motivation comes from several directions. systemd and
-> > GNOME are expanding their use of Varlink as an IPC mechanism. For D-Bus
-> > there are tools like dbus-monitor that can observe IPC traffic across
-> > the system but this only works because D-Bus has a central broker. For
-> > Varlink there is no broker and there is currently no way to identify
-> 
-> Hum.  I suppose there's never going to be a central varlink broker, is
-> there?  That doesn't sound great for discoverability, unless the plan is
+Tested on QEMU and physical setups. 
 
-Varlink was explicitly designed to avoid having to have a broker.
-Practically it would have been one option to have a a central registry
-maintained as a bpf socket map. My naive take had always been something
-like: systemd can have a global socket map. sockets are picked up
-whenver the appropriate xattr is set and deleted from the map once the
-socket goes away (or the xattr is unset). Right now this is something
-that would require capabilities. Once signed bpf is more common it is
-easy to load that on per-container basis. But...
+I have one question about "Soft Reserve" parent entries in iomem.
+On QEMU I see parent "Soft Reserved":
 
-> to try to concentrate them in (say) /run/varlink?  But even then, could
+a90000000-b4fffffff : Soft Reserved
+  a90000000-b4fffffff : CXL Window 0
+    a90000000-b4fffffff : dax1.0
+      a90000000-b4fffffff : System RAM (kmem)
 
-... the future is already here :)
+While on my physical setup this is missing - not sure if this is okay?
 
-  https://github.com/systemd/systemd/pull/40590
+BIOS-e820: [mem 0x0000002070000000-0x000000a06fffffff] soft reserved
 
-All public varlink services that are supposed to be announced are now
-symlinked into:
+2070000000-606fffffff : CXL Window 0
+  2070000000-606fffffff : region0
+    2070000000-606fffffff : dax0.0
+      2070000000-606fffffff : System RAM (kmem)
+6070000000-a06fffffff : CXL Window 1
+  6070000000-a06fffffff : region1
+    6070000000-a06fffffff : dax1.0
+      6070000000-a06fffffff : System RAM (kmem)
 
-  /run/varlink/registry
-
-There are of-course non-public interfaces such as the interface
-between PID 1 and oomd. Such interfaces are not exposed.
-
-It's also possible to have per user registries at e.g.:
-
-  /run/user/1000/varlink/registry/
-
-Such varlink services can now also be listed via:
-
-  valinkctl list-services
-
-This then ties very neatly into the varlink bridge we're currently
-building:
-
-  https://github.com/mvo5/varlink-http-bridge
-
-It takes a directory with varlink sockets (or symlinks to varlink
-sockets) like /run/varlink/registry as the argument and will serve
-whatever it finds in there. Sockets can be added or removed dynamically
-in the dir as needed:
-
-  curl -s http://localhost:8080/sockets | jq
-  {
-    "sockets": [
-      "io.systemd.Login",
-      "io.systemd.Hostname",
-      "io.systemd.sysext",
-      "io.systemd.BootControl",
-      "io.systemd.Import",
-      "io.systemd.Repart",
-      "io.systemd.MuteConsole",
-      "io.systemd.FactoryReset",
-      "io.systemd.Credentials",
-      "io.systemd.AskPassword",
-      "io.systemd.Manager",
-      "io.systemd.ManagedOOM"
-    ]
-  }
-
-The xattrs allow to have a completely global view of such services and
-the per-user sessions all have their own sub-view.
-
-> you have N services that share the same otherwise private tmpfs in order
-> to talk to each other via a varlink socket?  I suppose in that case, the
-
-Yeah sure that's one way.
-
-> N services probably don't care/want others to discover their socket.
-> 
-> > which sockets speak Varlink. With user.* xattrs on sockets a service
-> > can label its socket with the IPC protocol it speaks (e.g.,
-> > user.varlink=1) and an eBPF program can then selectively capture
-> 
-> Who gets to set xattrs?  Can a malicious varlink socket user who has
-> connect() abilities also delete user.varlink to mess with everyone who
-> comes afterwards?
-
-The main focus is AF_UNIX sockets of course so a varlink service does:
-
-  fd = socket(AF_UNIX)
-  umask(0117);
-  bind(fd, "/run/foobar");
-  umask(original_umask);
-  chown("/run/foobar", -1, MYACCESSGID);
-  setxattr("/run/foobar", "user.varlink", "1");
-
-For non-path based sockets the inodes for client and server are
-inherently distinct so they cannot interfer with each other. But even
-then a chmod() + chown(-1, MYACCESSGID) on the sockfs socket fd will
-protect this.
-
-Thanks for the review. Please keep going. :)
+Tested-by: Tomasz Wolski <tomasz.wolski@fujitsu.com>
 
