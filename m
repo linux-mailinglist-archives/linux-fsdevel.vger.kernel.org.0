@@ -1,473 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-77828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OG5vKxPamGkSNgMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 23:02:59 +0100
+	id H0vbGp7cmGnBNgMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 23:13:50 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0594516B19C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 23:02:58 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D147016B213
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 23:13:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id DF6123033D0A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 22:02:24 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 948403011C6F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 22:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE10309F09;
-	Fri, 20 Feb 2026 22:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B065830F931;
+	Fri, 20 Feb 2026 22:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="cO3UP0uK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FRtCWix5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1532FE066
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Feb 2026 22:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771624943; cv=none; b=S5N98tAWgeDJv/edF7wtWdT7KjXWL2FOzAQK77BAOnGN5mkoAOxbnBmvAzlwrhEyeTb6q+BarqMknIWD76MenTmJJKH0JJSgNSnn5/PgFaRm5muN9T2jSDwe862vOWC+6uaByOECZzse+3ThD/GSmL2Yi9UzxtNRj0jyYjDMU7k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771624943; c=relaxed/simple;
-	bh=QTbdG+9No9SvhL80WgmQu4Oe0XJvjAspcq0PziZA7zM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fqFbx8F2i7WZMuTE7ZDc0u4bEJOYoFjmYtW21Kyn+WISTOPxy7XsmqugFcBBBveoOTxvVAyRGjBIxuDz5owJ1CqYT60Hk8etajXGRFCqi0Ed881GMv0sTQokhS6wJPF+QZV1XFYVNoC3+podzO7D1/Am0d0+O1WiIMr1Yl740qQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=cO3UP0uK; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-40438e0cba6so1660878fac.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Feb 2026 14:02:21 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B7D189F30
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Feb 2026 22:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.222.171
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771625627; cv=pass; b=hTBuxbCR6h7vxP/tcUgVKbt4rcKOyobF08XCrKpo2M70R4EeeV0AFCjiMY/zWlrefTPqkU5wJulfUFiqMt2E2H6Q14+bHiqvLuY41WmfMImj6hFYOjCn39cXnTiJ9t5zoeS63AETyV0xwQ6XQ4E9aDkptw1qoko+6gA6muRaUBU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771625627; c=relaxed/simple;
+	bh=aQQaRPkF9Af/HxAveUVH8+CWYJecFixMOYAW5ajrekU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T6dl7mqIgAcrG2JZVEuJhXO8vDmZFbOcYTjpUChPjXQzg3LdxGq7UrDUWemE0MhOYkSzOz0JMTqD7xqixw5nVzocWBbRWiFyuoptJJyHhvSPAHYwK+Wl7xCe7YY69vDu4223s4zDK0Wudmn+J7N7/sQDYJp255oOGvqHXHDSbnw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FRtCWix5; arc=pass smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-8cb38e6d164so284924285a.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Feb 2026 14:13:45 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771625625; cv=none;
+        d=google.com; s=arc-20240605;
+        b=YG4VEVMIRfS1ehiimlRViaT8aDR8YO1GOCtCCEFBfWrMFz03OhnfhediQnqu/VR9Xp
+         YyiWx8dnN/GBL0lJfhvvWSYsZL4n/Ql8kFWnryoDIpmnIfIL/Fvywu0njmanMTYgxWQY
+         AQKshLTVKlKmtlbAvhftpyW7fkhAaAX+VwPCCfkINYvT39HXdWKmhgwhG5NYJoQpario
+         iOFxT5JrG/nf+GCvQYgFv6H+vTWTsmhlDwg12VZkpQcWv+gUA/CBF/RZuogxok/MpQhS
+         v6BxIPk1zXwbC4Hnpbk5gyIySE1arQlQtmKSmMN4DhG3cfSWH2MaLq2DwflLN8ZM5mq7
+         Tm1g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=wkF+JLqSPjbmD4HGif44J1WystlNFJ5Sq67bNUlrgK0=;
+        fh=/8clLXfgzSifzie0twlOsNGT5gzZgLu/nC6SRI5Ga+Q=;
+        b=d5weNl4obkI+3js06f09VXb4ww3Es0BPS8IxpTFjvy5zcNTPRUpI+nTpvDbFW7FcvB
+         5fSnzcN6mI984WDZK+Cekzltgt3EUsuNN2ovcUQcyqt6BMUnUr0bGVpE9OyX407d3imH
+         I81ZE/wBIrVqpb2uWgggPF5GinnV/mOaHUi4/EpQ+IFYI+ON3/BarGZM4VKjsRyfqrmt
+         hrqOkNXfCUFotqeOJV13Dza9Hg7RP1uBI5HV37P+qWnZYJ+UKC0IgeKfd+AOK5aMDOla
+         zJr8ZXfvJyzpua9TzG1rh8KtPE4hrr2P5ubSPo3340Dmt/JQbyoGUC4wNlxXgbZElpzv
+         H1Cg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1771624940; x=1772229740; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6BMIV+ycb95ZXcwpSzbRTeTgcmQS/cT3RyP8tmpSyIo=;
-        b=cO3UP0uKUAvbO0JM/XNZ1ycTJ/L5AkuKSMltqKF+C/dkcbqrNPAor405qoQdz7O38T
-         cMgi6uGBPCfzdRrzwG0MabwGA2lbHKcFMrOujI8L5SIPUbZJVOZeyR4yKckkEXifqkwk
-         UukZ4wa40jEmTD6nVsOCKVKcIUUTKqeIxHUmLX8e2Omqt2oi8kB4n6rb2YVl24U+1WDR
-         tODLl567VG9pi/4N7h9s+2c1SwldolznMSGi1pyNAnUTSwH+00GfWNJsu1GnmTunqAm6
-         dg8qQQYPxhApfnqHspQNROet8Y9v3Ud1fQTXxr70CZQ8Q9DMotj5ahK42uqYSgR4NJml
-         TyzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771624940; x=1772229740;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1771625625; x=1772230425; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6BMIV+ycb95ZXcwpSzbRTeTgcmQS/cT3RyP8tmpSyIo=;
-        b=V5YEYhcJpjMx2+S8S6/70A7g5iDyLnJrjxjqajp6nsQV9wKWNe+gpHCDd1mM7XMvw7
-         GnEU6ncAB9h9gE2zCmU96vVHfk7JCSYL/sNtEmovLmlO0FoonFW83ORQFLVALFOHaECh
-         1niqHj0UnIjVhYwBZCLJVR6M+4gj1zSOB0SuH0Ea68QM6E0Ksvbd+EzEYXOXNZTtxPmc
-         slRlUP73eKMl9lCTP3Wjb77/BXfrozhgr+PNZnigXU6XLLI4WkXmotlp6TRk9MLloqtQ
-         9vzQYJzYhrBQ6i7+X/RU0mBgq9vi2bjwRKglRH1azjvDqtxoL09bO8tWLfpr4ut2ZxLj
-         N/0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU3c9acp+HDWIURswggBWem1mval1Aemn9SV2JotgN7Gil0i6CDWMnRt3YOCIW+k7B7xUUTgdGLt6tS118P@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ4cG2OXk2T2X3EYMVE6DvjjrPL443tW6+wvvbarOJT5xWmSqa
-	uoKpWgKwSDKvU8LTL5WCS0emO0MjyKRv3Pi6nck4m6XcR6bj0BSy8fsBT0VbFZrDRMU=
-X-Gm-Gg: AZuq6aIcNqstgWhVZ5JMRa14kqxa/gTbQ+8SJT7HeNj+oTeTJiSD1Hy/XVRyZRe2O5V
-	R8AsH5FNNVd8B9PsfzwbQVs1cWA//bPATGqrYeYlOGvVON2sxVa2+xufzxkQf3KFyZ/1PB9nRLs
-	feui+PWhcRIgF+J/l2Fz4pd7RNcpl/+0k2A/JSk5mnRP00Hk+XD2RJZ/hlnQ5cWGoKb71pgU3Tv
-	rVTDL303wuWkUV3BBX3FILPOhTtoTW4VElTZYq9ZmyIcEBhcmX02s00Rvdf4X4tnOlOs8ZhKZlv
-	Cw2LsiVCP7pNy+VJZv53DgOmMz+Qugclr8ThQG7eWTKIgnZCjR4kGn/wI3t8ZSZtwl4arE19dQ/
-	AyR9gIP8MYkoNTegnhFRI1AiKa4slA/GX5lwNBHXnkgL3juauswpG/1hpwKMgn+U/odQKjW3uou
-	vFA2vxEoSFtYaH0fgYWrqwsL5J9a6RqbHjkG80+KVVOjnpwwhEgNAq819u+wT1Zx5W6Mn7WN/nw
-	BC4Z6TlR1jNGH5yB9owuCOh
-X-Received: by 2002:a05:6870:f146:b0:409:79d2:43a6 with SMTP id 586e51a60fabf-4157b15e88dmr809710fac.36.1771624940214;
-        Fri, 20 Feb 2026 14:02:20 -0800 (PST)
-Received: from pop-os.attlocal.net ([2600:1700:6476:1430:ca04:7bff:75dc:8fb1])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4157cf9a231sm695419fac.5.2026.02.20.14.02.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Feb 2026 14:02:19 -0800 (PST)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: glaubitz@physik.fu-berlin.de,
-	linux-fsdevel@vger.kernel.org,
-	frank.li@vivo.com
-Cc: Slava.Dubeyko@ibm.com,
-	Viacheslav Dubeyko <slava@dubeyko.com>
-Subject: [PATCH] hfsplus: fix potential Allocation File corruption after fsync
-Date: Fri, 20 Feb 2026 14:01:53 -0800
-Message-Id: <20260220220152.152721-1-slava@dubeyko.com>
-X-Mailer: git-send-email 2.34.1
+        bh=wkF+JLqSPjbmD4HGif44J1WystlNFJ5Sq67bNUlrgK0=;
+        b=FRtCWix5Dezwdef0F4X+bpn/XAlUtPWrJ5B4lNkWjWFYNvncwQAc6g22vU8Lmzt7sR
+         wAbIKnjMrr0UhlFExkqKC/cNj1qIw8VgLwPeHcFJM6M8EFZaE2NFvuWufzzFb4X42MWs
+         Vzt8kCR3phWgUSAaTzNIEwQZVYN3p8eUYuTTB29jGuR1B+IC26fSGINv2yzbbQqHutxu
+         3bvJRbuYyfbAFJZrbBR1hx2ewISLq9lEcNmCyiyGwNGjbBLCmvZxepNyPRYP084i57xe
+         M4mrrKynnbbmdPu3rhihVt8cME61AOt6JldvRV3h7cOT14BYxDNa4K+aj+N3gfCM2RF3
+         nffw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771625625; x=1772230425;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=wkF+JLqSPjbmD4HGif44J1WystlNFJ5Sq67bNUlrgK0=;
+        b=dj24AnPwuF7Drra8EsXaURGueStzu+YxpOFLs+swSWsoySFuW30euzupWWG8edo+dH
+         VMnxHe/zKZx3GfHAHJppdUzgd/v7zhpwThW/LAoJ1p05Og5LA5NZW7rD1v/YhaTlL4+D
+         4P3tJfiwus++1VK5XyN4VEguQbp+ShC6FLPjykCxClBl1zJ7hCV1zMfSyIPGZQWA9zHe
+         jz07qTz4lFDasc6jPMwd65j4KHRJNxhjttdMwM+2yuCfZ8el/g4pttYmj5rBbFBzjGBs
+         6DcFZM0aJ2LuhRxO406XbUKvWUP1MhcwroiV+c2+5GVKucgnKXz08C/EB+2QTITq9dkw
+         xnPw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+84gMD3h5sZIoXeYQDHTt4dsLt8t/Yzoa+FyFxhntmcn/x4mOik1JOH5AOwOFARglxsjD/SwS+wqmgHBx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6M4u5+VN5kqMlkydTrAunxZ+H4kbgvE74ldy+5N/6/ONL45n6
+	EIpA+Rle0eB4alsC00hkRmSnHy+ZbNhPL0jutYqMqsz8+Hv3/kkYQ3TNJmaEfj8tc6oMj6JKRrM
+	yN8Y4gx4d+nCbaT34A7a3D9dnzaBdOIvlrVAW
+X-Gm-Gg: AZuq6aJL8G1lfaQyyO5ii9Ar0YUgJB9AttxDvZo7xUo0O5ivYHYMaUdEqSm0ZgGJbM3
+	NVe+JBotYUaf+Srn2rULgv9AWJxxTw2GTqFxejciR+QlS2jHoPKEFfE1IECf6XHSVIRvJHpabfx
+	AssILL6++21s9Pj8opQ16baK2Fr5Ktey0d6VqnWrsm5qZNZUetdVGhjEtv5UEkG+mRF0LasoLQm
+	vIjMtTWLpqtAfxd0lk420C1zYwORectEIr0w2WCu1A4SEWdtyLtb6HD1ZKLQViLpxwOh2I/RGBv
+	89g8wg==
+X-Received: by 2002:a05:620a:7086:b0:8b2:767c:31ab with SMTP id
+ af79cd13be357-8cb8ca8a72bmr142401685a.60.1771625625046; Fri, 20 Feb 2026
+ 14:13:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260219003911.344478-1-joannelkoong@gmail.com>
+ <20260219003911.344478-2-joannelkoong@gmail.com> <20260219024534.GN6467@frogsfrogsfrogs>
+ <aZaQO0jQaZXakwOA@casper.infradead.org> <20260219061101.GO6467@frogsfrogsfrogs>
+In-Reply-To: <20260219061101.GO6467@frogsfrogsfrogs>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Fri, 20 Feb 2026 14:13:34 -0800
+X-Gm-Features: AaiRm51fIgZJr3LfwRj8TzR0aj5YKHoVvqDiiKe8jQ_aQkC_kZmqLcnmAZ2vUDA
+Message-ID: <CAJnrk1aJJqafDkxMypUym6iFQ-HkaSxneOe6Sc746AwrmrDK4Q@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] iomap: don't mark folio uptodate if read IO has
+ bytes pending
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>, brauner@kernel.org, wegao@suse.com, 
+	sashal@kernel.org, hch@infradead.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[dubeyko-com.20230601.gappssmtp.com:s=20230601];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DMARC_NA(0.00)[dubeyko.com];
-	RCVD_TLS_LAST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-77828-lists,linux-fsdevel=lfdr.de];
-	TO_DN_SOME(0.00)[];
 	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77829-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	MISSING_XM_UA(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[slava@dubeyko.com,linux-fsdevel@vger.kernel.org];
-	NEURAL_HAM(-0.00)[-0.999];
-	RCVD_COUNT_FIVE(0.00)[5];
-	DKIM_TRACE(0.00)[dubeyko-com.20230601.gappssmtp.com:+];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[fu-berlin.de:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,vivo.com:email]
-X-Rspamd-Queue-Id: 0594516B19C
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: D147016B213
 X-Rspamd-Action: no action
 
-The generic/348 test-case has revealed the issue of
-HFS+ volume corruption after simulated power failure:
+On Wed, Feb 18, 2026 at 10:11=E2=80=AFPM Darrick J. Wong <djwong@kernel.org=
+> wrote:
+>
+> On Thu, Feb 19, 2026 at 04:23:23AM +0000, Matthew Wilcox wrote:
+> > On Wed, Feb 18, 2026 at 06:45:34PM -0800, Darrick J. Wong wrote:
+> > > On Wed, Feb 18, 2026 at 04:39:11PM -0800, Joanne Koong wrote:
+> > > > If a folio has ifs metadata attached to it and the folio is partial=
+ly
+> > > > read in through an async IO helper with the rest of it then being r=
+ead
+> > > > in through post-EOF zeroing or as inline data, and the helper
+> > > > successfully finishes the read first, then post-EOF zeroing / readi=
+ng
+> > > > inline will mark the folio as uptodate in iomap_set_range_uptodate(=
+).
+> > > >
+> > > > This is a problem because when the read completion path later calls
+> > > > iomap_read_end(), it will call folio_end_read(), which sets the upt=
+odate
+> > > > bit using XOR semantics. Calling folio_end_read() on a folio that w=
+as
+> > > > already marked uptodate clears the uptodate bit.
+> > >
+> > > Aha, I wondered if that xor thing was going to come back to bite us.
+> >
+> > This isn't "the xor thing has come back to bite us".  This is "the ioma=
+p
+> > code is now too complicated and I cannot figure out how to explain to
+> > Joanne that there's really a simple way to do this".
+> >
+> > I'm going to have to set aside my current projects and redo the iomap
+> > readahead/read_folio code myself, aren't I?
+>
+> Well you could try explaining to me what that simpler way is?
+>
+> /me gets the sense he's missing a discussion somewhere...
 
-FSTYP -- hfsplus
-PLATFORM -- Linux/x86_64 hfsplus-testing-0001 6.15.0-rc4+ #8 SMP PREEMPT_DYNAMIC Thu May 1 16:43:22 PDT 2025
-MKFS_OPTIONS -- /dev/loop51
-MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
+This is the link to the prior discussion
+https://lore.kernel.org/linux-fsdevel/20251223223018.3295372-1-sashal@kerne=
+l.org/T/#mbd61eaa5fd1e8922caa479720232628e39b8c9da
 
-generic/348 _check_generic_filesystem: filesystem on /dev/loop51 is inconsistent
-(see xfstests-dev/results//generic/348.full for details)
-
-The fsck tool complains about Allocation File (block bitmap)
-corruption as a result of such event. The generic/348 creates
-a symlink, fsync its parent directory, power fail and mount
-again the filesystem. Currently, HFS+ logic has several flags
-HFSPLUS_I_CAT_DIRTY, HFSPLUS_I_EXT_DIRTY, HFSPLUS_I_ATTR_DIRTY,
-HFSPLUS_I_ALLOC_DIRTY. If inode operation modified the Catalog
-File, Extents Overflow File, Attributes File, or Allocation
-File, then inode is marked as dirty and one of the mentioned
-flags has been set. When hfsplus_file_fsync() has been called,
-then this set of flags is checked and dirty b-tree or/and
-block bitmap is flushed. However, block bitmap can be modified
-during file's content allocation. It means that if we call
-hfsplus_file_fsync() for directory, then we never flush
-the modified Allocation File in such case because such inode
-cannot receive HFSPLUS_I_ALLOC_DIRTY flag. Moreover, this
-inode-centric model is not good at all because Catalog File,
-Extents Overflow File, Attributes File, and Allocation File
-represent the whole state of file system metadata. This
-inode-centric policy is the main reason of the issue.
-
-This patch saves the whole approach of using HFSPLUS_I_CAT_DIRTY,
-HFSPLUS_I_EXT_DIRTY, HFSPLUS_I_ATTR_DIRTY, and
-HFSPLUS_I_ALLOC_DIRTY flags. But Catalog File, Extents Overflow
-File, Attributes File, and Allocation File have associated
-inodes. And namely these inodes become the mechanism of
-checking the dirty state of metadata. The hfsplus_file_fsync()
-method checks the dirtiness of file system metadata by
-testing HFSPLUS_I_CAT_DIRTY, HFSPLUS_I_EXT_DIRTY,
-HFSPLUS_I_ATTR_DIRTY, and HFSPLUS_I_ALLOC_DIRTY flags of
-Catalog File's, Extents Overflow File's, Attributes File's, or
-Allocation File's inodes. As a result, even if we call
-hfsplus_file_fsync() for parent folder, then dirty Allocation File
-will be flushed anyway.
-
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-cc: Yangtao Li <frank.li@vivo.com>
-cc: linux-fsdevel@vger.kernel.org
----
- fs/hfsplus/attributes.c |  3 +++
- fs/hfsplus/catalog.c    |  3 +++
- fs/hfsplus/dir.c        |  6 ++++++
- fs/hfsplus/extents.c    |  7 +++++++
- fs/hfsplus/hfsplus_fs.h |  7 +++++++
- fs/hfsplus/inode.c      | 27 ++++++++++++++++++++-------
- fs/hfsplus/super.c      |  2 ++
- fs/hfsplus/xattr.c      | 19 +++++++++++++++++--
- 8 files changed, 65 insertions(+), 9 deletions(-)
-
-diff --git a/fs/hfsplus/attributes.c b/fs/hfsplus/attributes.c
-index 4b79cd606276..6585bcea731c 100644
---- a/fs/hfsplus/attributes.c
-+++ b/fs/hfsplus/attributes.c
-@@ -241,6 +241,7 @@ int hfsplus_create_attr_nolock(struct inode *inode, const char *name,
- 		return err;
- 	}
- 
-+	hfsplus_mark_inode_dirty(HFSPLUS_ATTR_TREE_I(sb), HFSPLUS_I_ATTR_DIRTY);
- 	hfsplus_mark_inode_dirty(inode, HFSPLUS_I_ATTR_DIRTY);
- 
- 	return 0;
-@@ -326,6 +327,8 @@ static int __hfsplus_delete_attr(struct inode *inode, u32 cnid,
- 	if (err)
- 		return err;
- 
-+	hfsplus_mark_inode_dirty(HFSPLUS_ATTR_TREE_I(inode->i_sb),
-+				 HFSPLUS_I_ATTR_DIRTY);
- 	hfsplus_mark_inode_dirty(inode, HFSPLUS_I_ATTR_DIRTY);
- 	return err;
- }
-diff --git a/fs/hfsplus/catalog.c b/fs/hfsplus/catalog.c
-index 02c1eee4a4b8..eef7412a4d58 100644
---- a/fs/hfsplus/catalog.c
-+++ b/fs/hfsplus/catalog.c
-@@ -313,6 +313,7 @@ int hfsplus_create_cat(u32 cnid, struct inode *dir,
- 	if (S_ISDIR(inode->i_mode))
- 		hfsplus_subfolders_inc(dir);
- 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
-+	hfsplus_mark_inode_dirty(HFSPLUS_CAT_TREE_I(sb), HFSPLUS_I_CAT_DIRTY);
- 	hfsplus_mark_inode_dirty(dir, HFSPLUS_I_CAT_DIRTY);
- 
- 	hfs_find_exit(&fd);
-@@ -418,6 +419,7 @@ int hfsplus_delete_cat(u32 cnid, struct inode *dir, const struct qstr *str)
- 	if (type == HFSPLUS_FOLDER)
- 		hfsplus_subfolders_dec(dir);
- 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
-+	hfsplus_mark_inode_dirty(HFSPLUS_CAT_TREE_I(sb), HFSPLUS_I_CAT_DIRTY);
- 	hfsplus_mark_inode_dirty(dir, HFSPLUS_I_CAT_DIRTY);
- 
- 	if (type == HFSPLUS_FILE || type == HFSPLUS_FOLDER) {
-@@ -540,6 +542,7 @@ int hfsplus_rename_cat(u32 cnid,
- 	}
- 	err = hfs_brec_insert(&dst_fd, &entry, entry_size);
- 
-+	hfsplus_mark_inode_dirty(HFSPLUS_CAT_TREE_I(sb), HFSPLUS_I_CAT_DIRTY);
- 	hfsplus_mark_inode_dirty(dst_dir, HFSPLUS_I_CAT_DIRTY);
- 	hfsplus_mark_inode_dirty(src_dir, HFSPLUS_I_CAT_DIRTY);
- out:
-diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
-index ca5f74a140ec..0f5eaad738e0 100644
---- a/fs/hfsplus/dir.c
-+++ b/fs/hfsplus/dir.c
-@@ -478,6 +478,9 @@ static int hfsplus_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 	if (!inode)
- 		goto out;
- 
-+	hfs_dbg("dir->i_ino %lu, inode->i_ino %lu\n",
-+		dir->i_ino, inode->i_ino);
-+
- 	res = page_symlink(inode, symname, strlen(symname) + 1);
- 	if (res)
- 		goto out_err;
-@@ -526,6 +529,9 @@ static int hfsplus_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	if (!inode)
- 		goto out;
- 
-+	hfs_dbg("dir->i_ino %lu, inode->i_ino %lu\n",
-+		dir->i_ino, inode->i_ino);
-+
- 	if (S_ISBLK(mode) || S_ISCHR(mode) || S_ISFIFO(mode) || S_ISSOCK(mode))
- 		init_special_inode(inode, mode, rdev);
- 
-diff --git a/fs/hfsplus/extents.c b/fs/hfsplus/extents.c
-index 8e886514d27f..a5f772de9985 100644
---- a/fs/hfsplus/extents.c
-+++ b/fs/hfsplus/extents.c
-@@ -121,6 +121,8 @@ static int __hfsplus_ext_write_extent(struct inode *inode,
- 	 * redirty the inode.  Instead the callers have to be careful
- 	 * to explicily mark the inode dirty, too.
- 	 */
-+	set_bit(HFSPLUS_I_EXT_DIRTY,
-+		&HFSPLUS_I(HFSPLUS_EXT_TREE_I(inode->i_sb))->flags);
- 	set_bit(HFSPLUS_I_EXT_DIRTY, &hip->flags);
- 
- 	return 0;
-@@ -513,6 +515,8 @@ int hfsplus_file_extend(struct inode *inode, bool zeroout)
- 	if (!res) {
- 		hip->alloc_blocks += len;
- 		mutex_unlock(&hip->extents_lock);
-+		hfsplus_mark_inode_dirty(HFSPLUS_SB(sb)->alloc_file,
-+					 HFSPLUS_I_ALLOC_DIRTY);
- 		hfsplus_mark_inode_dirty(inode, HFSPLUS_I_ALLOC_DIRTY);
- 		return 0;
- 	}
-@@ -582,6 +586,7 @@ void hfsplus_file_truncate(struct inode *inode)
- 		/* XXX: We lack error handling of hfsplus_file_truncate() */
- 		return;
- 	}
-+
- 	while (1) {
- 		if (alloc_cnt == hip->first_blocks) {
- 			mutex_unlock(&fd.tree->tree_lock);
-@@ -623,5 +628,7 @@ void hfsplus_file_truncate(struct inode *inode)
- 	hip->fs_blocks = (inode->i_size + sb->s_blocksize - 1) >>
- 		sb->s_blocksize_bits;
- 	inode_set_bytes(inode, hip->fs_blocks << sb->s_blocksize_bits);
-+	hfsplus_mark_inode_dirty(HFSPLUS_SB(sb)->alloc_file,
-+				 HFSPLUS_I_ALLOC_DIRTY);
- 	hfsplus_mark_inode_dirty(inode, HFSPLUS_I_ALLOC_DIRTY);
- }
-diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
-index 5f891b73a646..122ab57193bb 100644
---- a/fs/hfsplus/hfsplus_fs.h
-+++ b/fs/hfsplus/hfsplus_fs.h
-@@ -238,6 +238,13 @@ static inline struct hfsplus_inode_info *HFSPLUS_I(struct inode *inode)
- 	return container_of(inode, struct hfsplus_inode_info, vfs_inode);
- }
- 
-+#define HFSPLUS_CAT_TREE_I(sb) \
-+	HFSPLUS_SB(sb)->cat_tree->inode
-+#define HFSPLUS_EXT_TREE_I(sb) \
-+	HFSPLUS_SB(sb)->ext_tree->inode
-+#define HFSPLUS_ATTR_TREE_I(sb) \
-+	HFSPLUS_SB(sb)->attr_tree->inode
-+
- /*
-  * Mark an inode dirty, and also mark the btree in which the
-  * specific type of metadata is stored.
-diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-index 922ff41df042..cdf08393de44 100644
---- a/fs/hfsplus/inode.c
-+++ b/fs/hfsplus/inode.c
-@@ -324,6 +324,7 @@ int hfsplus_file_fsync(struct file *file, loff_t start, loff_t end,
- {
- 	struct inode *inode = file->f_mapping->host;
- 	struct hfsplus_inode_info *hip = HFSPLUS_I(inode);
-+	struct super_block *sb = inode->i_sb;
- 	struct hfsplus_sb_info *sbi = HFSPLUS_SB(inode->i_sb);
- 	struct hfsplus_vh *vhdr = sbi->s_vhdr;
- 	int error = 0, error2;
-@@ -344,29 +345,39 @@ int hfsplus_file_fsync(struct file *file, loff_t start, loff_t end,
- 	/*
- 	 * And explicitly write out the btrees.
- 	 */
--	if (test_and_clear_bit(HFSPLUS_I_CAT_DIRTY, &hip->flags))
-+	if (test_and_clear_bit(HFSPLUS_I_CAT_DIRTY,
-+				&HFSPLUS_I(HFSPLUS_CAT_TREE_I(sb))->flags)) {
-+		clear_bit(HFSPLUS_I_CAT_DIRTY, &hip->flags);
- 		error = filemap_write_and_wait(sbi->cat_tree->inode->i_mapping);
-+	}
- 
--	if (test_and_clear_bit(HFSPLUS_I_EXT_DIRTY, &hip->flags)) {
-+	if (test_and_clear_bit(HFSPLUS_I_EXT_DIRTY,
-+				&HFSPLUS_I(HFSPLUS_EXT_TREE_I(sb))->flags)) {
-+		clear_bit(HFSPLUS_I_EXT_DIRTY, &hip->flags);
- 		error2 =
- 			filemap_write_and_wait(sbi->ext_tree->inode->i_mapping);
- 		if (!error)
- 			error = error2;
- 	}
- 
--	if (test_and_clear_bit(HFSPLUS_I_ATTR_DIRTY, &hip->flags)) {
--		if (sbi->attr_tree) {
-+	if (sbi->attr_tree) {
-+		if (test_and_clear_bit(HFSPLUS_I_ATTR_DIRTY,
-+				&HFSPLUS_I(HFSPLUS_ATTR_TREE_I(sb))->flags)) {
-+			clear_bit(HFSPLUS_I_ATTR_DIRTY, &hip->flags);
- 			error2 =
- 				filemap_write_and_wait(
- 					    sbi->attr_tree->inode->i_mapping);
- 			if (!error)
- 				error = error2;
--		} else {
--			pr_err("sync non-existent attributes tree\n");
- 		}
-+	} else {
-+		if (test_and_clear_bit(HFSPLUS_I_ATTR_DIRTY, &hip->flags))
-+			pr_err("sync non-existent attributes tree\n");
- 	}
- 
--	if (test_and_clear_bit(HFSPLUS_I_ALLOC_DIRTY, &hip->flags)) {
-+	if (test_and_clear_bit(HFSPLUS_I_ALLOC_DIRTY,
-+				&HFSPLUS_I(sbi->alloc_file)->flags)) {
-+		clear_bit(HFSPLUS_I_ALLOC_DIRTY, &hip->flags);
- 		error2 = filemap_write_and_wait(sbi->alloc_file->i_mapping);
- 		if (!error)
- 			error = error2;
-@@ -709,6 +720,8 @@ int hfsplus_cat_write_inode(struct inode *inode)
- 					 sizeof(struct hfsplus_cat_file));
- 	}
- 
-+	set_bit(HFSPLUS_I_CAT_DIRTY,
-+		&HFSPLUS_I(HFSPLUS_CAT_TREE_I(inode->i_sb))->flags);
- 	set_bit(HFSPLUS_I_CAT_DIRTY, &HFSPLUS_I(inode)->flags);
- out:
- 	hfs_find_exit(&fd);
-diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
-index 592d8fbb748c..c963809e0106 100644
---- a/fs/hfsplus/super.c
-+++ b/fs/hfsplus/super.c
-@@ -625,6 +625,8 @@ static int hfsplus_fill_super(struct super_block *sb, struct fs_context *fc)
- 			}
- 
- 			mutex_unlock(&sbi->vh_mutex);
-+			hfsplus_mark_inode_dirty(HFSPLUS_CAT_TREE_I(sb),
-+						 HFSPLUS_I_CAT_DIRTY);
- 			hfsplus_mark_inode_dirty(sbi->hidden_dir,
- 						 HFSPLUS_I_CAT_DIRTY);
- 		}
-diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
-index 9904944cbd54..31b6cb9db770 100644
---- a/fs/hfsplus/xattr.c
-+++ b/fs/hfsplus/xattr.c
-@@ -236,6 +236,7 @@ static int hfsplus_create_attributes_file(struct super_block *sb)
- 		put_page(page);
- 	}
- 
-+	hfsplus_mark_inode_dirty(HFSPLUS_ATTR_TREE_I(sb), HFSPLUS_I_ATTR_DIRTY);
- 	hfsplus_mark_inode_dirty(attr_file, HFSPLUS_I_ATTR_DIRTY);
- 
- 	sbi->attr_tree = hfs_btree_open(sb, HFSPLUS_ATTR_CNID);
-@@ -314,8 +315,11 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
- 				hfs_bnode_write(cat_fd.bnode, &entry,
- 					cat_fd.entryoffset,
- 					sizeof(struct hfsplus_cat_folder));
--				hfsplus_mark_inode_dirty(inode,
-+				hfsplus_mark_inode_dirty(
-+						HFSPLUS_CAT_TREE_I(inode->i_sb),
- 						HFSPLUS_I_CAT_DIRTY);
-+				hfsplus_mark_inode_dirty(inode,
-+							 HFSPLUS_I_CAT_DIRTY);
- 			} else {
- 				err = -ERANGE;
- 				goto end_setxattr;
-@@ -327,8 +331,11 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
- 				hfs_bnode_write(cat_fd.bnode, &entry,
- 					cat_fd.entryoffset,
- 					sizeof(struct hfsplus_cat_file));
--				hfsplus_mark_inode_dirty(inode,
-+				hfsplus_mark_inode_dirty(
-+						HFSPLUS_CAT_TREE_I(inode->i_sb),
- 						HFSPLUS_I_CAT_DIRTY);
-+				hfsplus_mark_inode_dirty(inode,
-+							 HFSPLUS_I_CAT_DIRTY);
- 			} else {
- 				err = -ERANGE;
- 				goto end_setxattr;
-@@ -381,6 +388,8 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
- 		hfs_bnode_write_u16(cat_fd.bnode, cat_fd.entryoffset +
- 				offsetof(struct hfsplus_cat_folder, flags),
- 				cat_entry_flags);
-+		hfsplus_mark_inode_dirty(HFSPLUS_CAT_TREE_I(inode->i_sb),
-+					 HFSPLUS_I_CAT_DIRTY);
- 		hfsplus_mark_inode_dirty(inode, HFSPLUS_I_CAT_DIRTY);
- 	} else if (cat_entry_type == HFSPLUS_FILE) {
- 		cat_entry_flags = hfs_bnode_read_u16(cat_fd.bnode,
-@@ -392,6 +401,8 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
- 		hfs_bnode_write_u16(cat_fd.bnode, cat_fd.entryoffset +
- 				    offsetof(struct hfsplus_cat_file, flags),
- 				    cat_entry_flags);
-+		hfsplus_mark_inode_dirty(HFSPLUS_CAT_TREE_I(inode->i_sb),
-+					 HFSPLUS_I_CAT_DIRTY);
- 		hfsplus_mark_inode_dirty(inode, HFSPLUS_I_CAT_DIRTY);
- 	} else {
- 		pr_err("invalid catalog entry type\n");
-@@ -862,6 +873,8 @@ static int hfsplus_removexattr(struct inode *inode, const char *name)
- 		hfs_bnode_write_u16(cat_fd.bnode, cat_fd.entryoffset +
- 				offsetof(struct hfsplus_cat_folder, flags),
- 				flags);
-+		hfsplus_mark_inode_dirty(HFSPLUS_CAT_TREE_I(inode->i_sb),
-+					 HFSPLUS_I_CAT_DIRTY);
- 		hfsplus_mark_inode_dirty(inode, HFSPLUS_I_CAT_DIRTY);
- 	} else if (cat_entry_type == HFSPLUS_FILE) {
- 		flags = hfs_bnode_read_u16(cat_fd.bnode, cat_fd.entryoffset +
-@@ -873,6 +886,8 @@ static int hfsplus_removexattr(struct inode *inode, const char *name)
- 		hfs_bnode_write_u16(cat_fd.bnode, cat_fd.entryoffset +
- 				offsetof(struct hfsplus_cat_file, flags),
- 				flags);
-+		hfsplus_mark_inode_dirty(HFSPLUS_CAT_TREE_I(inode->i_sb),
-+					 HFSPLUS_I_CAT_DIRTY);
- 		hfsplus_mark_inode_dirty(inode, HFSPLUS_I_CAT_DIRTY);
- 	} else {
- 		pr_err("invalid catalog entry type\n");
--- 
-2.43.0
-
+Thanks,
+Joanne
+>
+> --D
 
