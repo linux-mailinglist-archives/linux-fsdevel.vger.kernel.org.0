@@ -1,274 +1,473 @@
-Return-Path: <linux-fsdevel+bounces-77827-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YLiWGfbPmGmcMwMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77827-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 22:19:50 +0100
+	id OG5vKxPamGkSNgMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 23:02:59 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BDAC16AF4D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 22:19:50 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0594516B19C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 23:02:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 0DB06300B1A5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 21:19:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id DF6123033D0A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 22:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D3230E0CC;
-	Fri, 20 Feb 2026 21:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE10309F09;
+	Fri, 20 Feb 2026 22:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3nffT8d6"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="cO3UP0uK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012063.outbound.protection.outlook.com [52.101.48.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE81946A;
-	Fri, 20 Feb 2026 21:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771622383; cv=fail; b=Kl//jGxury6zJhsO9wLDY8TMchwb5nDIlNkpeIQHnPxDg7I75jpqBUtOhlu99Fa+/Qv4KQBeFqQRMA4JMh8dnbRzV8HoVwIOSbcyIWjOP9caDsdcpttJpIpzB7vQPiSzws19xbqU4zm9xWp75HEbp2A+OGqNPpkXIMG5KEciHwo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771622383; c=relaxed/simple;
-	bh=fDair2He7yBX4uKAx24enNDWTTM04Yafx5hFXHkN4Dk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=tHmmBZIDOO2ZGP1vC3vH+Jn9TdGLP2FdTEzNR7OwJoMOI3NT4LzIKpZNsoKkmfRdipzgcV+1MfBODG5tLrCj9Jqqcy99jqH4oMUdvG25VSU0CHBIOK3vutH52CYNdv85ftcRbCddoUjplEC1iIE5Egy7edsPCj47chhQUNBgPgo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3nffT8d6; arc=fail smtp.client-ip=52.101.48.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WcW6gB/kP9AMvEeaQSbRnnNJGZfPdmjpyyW6vLQCEKiGuZHLmYoZXFTRFB4TR8ZEnhDnh7XpeMa9t7NswsL87MnW5B8DrVrAtGXwalEByqM0Vhv+fd+U9E9m2xvh6JLGh1NL/C6hqB/FR4+5j6Ui568XwhukDcxNTJgj2NQvRVrrRf/yE1XVf1S8Bu3km4k6poAQqyAuqiIcqPKz1dp9kiAlFPD6It+m2jA+SZzhkGSgbrbzSezDBsA8rGa7frtYK9rGB23z223Zb8Wti2i2cI8pqdgN0PrME0Rkh0Fvto0g3gsBZFoMAMZj24JD9MJ8vVtH2Wd/lFTMaNIddjjTTQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=G7lVpws8etTIa3aKwNpO0q93unw16rOLPKj+5HjlSHE=;
- b=hkNr3NfjMoMXd/jfOVeQHW9RiF4LEEIBZVDw/kAnSwdkG4lT7O5ynQ4zT2skzed9J59rpdwpiZiPJMVNJ9KgpOhkp2wkne619zDWvy6s5Cv4mdbJ1KgKYR8cvRDw/H0fVD5cONKK1OPhn7/tTSnR9+Q6iV+6vsxZBo6Fmh5zitZ914tn9a+LQu1W2xMqIl9SHpU7+XNRf8/KG11ehhY3+/25a/wz+4XHqBw20Jm6mLRExg3foYLtOVNAcp5OD2Ov4xwO973NTvVYwgduamXLWEPqgwph/08luPR4+UN9/JyGv7uaajtovNQZVLK1CuzfM4xvXVfDIe/ijt12ukbBbg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G7lVpws8etTIa3aKwNpO0q93unw16rOLPKj+5HjlSHE=;
- b=3nffT8d6P1TQRrO55hNx7j/bfqLFs4ylPSlV17X0yKQb702b7qKdfXC+erRmGjSj+Md0ja4Hui8UMAnxCP3Bglk8LpILOtqTqtg1C4rzMC5wR9ViaMRLo8qSRY1eYx5S6UdnnfJo4Ij8+B1al2coSH6lTX6TBedEB8gnyaRsVTs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from LV8PR12MB9714.namprd12.prod.outlook.com (2603:10b6:408:2a0::5)
- by IA1PR12MB6259.namprd12.prod.outlook.com (2603:10b6:208:3e5::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9632.17; Fri, 20 Feb
- 2026 21:19:36 +0000
-Received: from LV8PR12MB9714.namprd12.prod.outlook.com
- ([fe80::8c9f:3a5b:974b:99c6]) by LV8PR12MB9714.namprd12.prod.outlook.com
- ([fe80::8c9f:3a5b:974b:99c6%6]) with mapi id 15.20.9632.015; Fri, 20 Feb 2026
- 21:19:36 +0000
-Message-ID: <0b0eb8bb-44a5-422d-8d5b-070fb039ed68@amd.com>
-Date: Fri, 20 Feb 2026 13:19:32 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/9] dax/hmem, cxl: Coordinate Soft Reserved handling
- with CXL and HMEM
-To: Tomasz Wolski <tomasz.wolski@fujitsu.com>,
- smita.koralahallichannabasappa@amd.com
-Cc: alison.schofield@intel.com, ardb@kernel.org, benjamin.cheatham@amd.com,
- bp@alien8.de, dan.j.williams@intel.com, dave.jiang@intel.com,
- dave@stgolabs.net, gregkh@linuxfoundation.org, huang.ying.caritas@gmail.com,
- ira.weiny@intel.com, jack@suse.cz, jeff.johnson@oss.qualcomm.com,
- jonathan.cameron@huawei.com, len.brown@intel.com, linux-cxl@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, lizhijian@fujitsu.com, ming.li@zohomail.com,
- nathan.fontenot@amd.com, nvdimm@lists.linux.dev, pavel@kernel.org,
- peterz@infradead.org, rafael@kernel.org, rrichter@amd.com,
- terry.bowman@amd.com, vishal.l.verma@intel.com, willy@infradead.org,
- yaoxt.fnst@fujitsu.com, yazen.ghannam@amd.com
-References: <20260210064501.157591-1-Smita.KoralahalliChannabasappa@amd.com>
- <20260220094510.17955-1-tomasz.wolski@fujitsu.com>
-Content-Language: en-US
-From: "Koralahalli Channabasappa, Smita" <skoralah@amd.com>
-In-Reply-To: <20260220094510.17955-1-tomasz.wolski@fujitsu.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0342.namprd03.prod.outlook.com
- (2603:10b6:a03:39c::17) To LV8PR12MB9714.namprd12.prod.outlook.com
- (2603:10b6:408:2a0::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1532FE066
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Feb 2026 22:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771624943; cv=none; b=S5N98tAWgeDJv/edF7wtWdT7KjXWL2FOzAQK77BAOnGN5mkoAOxbnBmvAzlwrhEyeTb6q+BarqMknIWD76MenTmJJKH0JJSgNSnn5/PgFaRm5muN9T2jSDwe862vOWC+6uaByOECZzse+3ThD/GSmL2Yi9UzxtNRj0jyYjDMU7k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771624943; c=relaxed/simple;
+	bh=QTbdG+9No9SvhL80WgmQu4Oe0XJvjAspcq0PziZA7zM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fqFbx8F2i7WZMuTE7ZDc0u4bEJOYoFjmYtW21Kyn+WISTOPxy7XsmqugFcBBBveoOTxvVAyRGjBIxuDz5owJ1CqYT60Hk8etajXGRFCqi0Ed881GMv0sTQokhS6wJPF+QZV1XFYVNoC3+podzO7D1/Am0d0+O1WiIMr1Yl740qQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=cO3UP0uK; arc=none smtp.client-ip=209.85.160.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-40438e0cba6so1660878fac.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Feb 2026 14:02:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1771624940; x=1772229740; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6BMIV+ycb95ZXcwpSzbRTeTgcmQS/cT3RyP8tmpSyIo=;
+        b=cO3UP0uKUAvbO0JM/XNZ1ycTJ/L5AkuKSMltqKF+C/dkcbqrNPAor405qoQdz7O38T
+         cMgi6uGBPCfzdRrzwG0MabwGA2lbHKcFMrOujI8L5SIPUbZJVOZeyR4yKckkEXifqkwk
+         UukZ4wa40jEmTD6nVsOCKVKcIUUTKqeIxHUmLX8e2Omqt2oi8kB4n6rb2YVl24U+1WDR
+         tODLl567VG9pi/4N7h9s+2c1SwldolznMSGi1pyNAnUTSwH+00GfWNJsu1GnmTunqAm6
+         dg8qQQYPxhApfnqHspQNROet8Y9v3Ud1fQTXxr70CZQ8Q9DMotj5ahK42uqYSgR4NJml
+         TyzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771624940; x=1772229740;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6BMIV+ycb95ZXcwpSzbRTeTgcmQS/cT3RyP8tmpSyIo=;
+        b=V5YEYhcJpjMx2+S8S6/70A7g5iDyLnJrjxjqajp6nsQV9wKWNe+gpHCDd1mM7XMvw7
+         GnEU6ncAB9h9gE2zCmU96vVHfk7JCSYL/sNtEmovLmlO0FoonFW83ORQFLVALFOHaECh
+         1niqHj0UnIjVhYwBZCLJVR6M+4gj1zSOB0SuH0Ea68QM6E0Ksvbd+EzEYXOXNZTtxPmc
+         slRlUP73eKMl9lCTP3Wjb77/BXfrozhgr+PNZnigXU6XLLI4WkXmotlp6TRk9MLloqtQ
+         9vzQYJzYhrBQ6i7+X/RU0mBgq9vi2bjwRKglRH1azjvDqtxoL09bO8tWLfpr4ut2ZxLj
+         N/0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU3c9acp+HDWIURswggBWem1mval1Aemn9SV2JotgN7Gil0i6CDWMnRt3YOCIW+k7B7xUUTgdGLt6tS118P@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJ4cG2OXk2T2X3EYMVE6DvjjrPL443tW6+wvvbarOJT5xWmSqa
+	uoKpWgKwSDKvU8LTL5WCS0emO0MjyKRv3Pi6nck4m6XcR6bj0BSy8fsBT0VbFZrDRMU=
+X-Gm-Gg: AZuq6aIcNqstgWhVZ5JMRa14kqxa/gTbQ+8SJT7HeNj+oTeTJiSD1Hy/XVRyZRe2O5V
+	R8AsH5FNNVd8B9PsfzwbQVs1cWA//bPATGqrYeYlOGvVON2sxVa2+xufzxkQf3KFyZ/1PB9nRLs
+	feui+PWhcRIgF+J/l2Fz4pd7RNcpl/+0k2A/JSk5mnRP00Hk+XD2RJZ/hlnQ5cWGoKb71pgU3Tv
+	rVTDL303wuWkUV3BBX3FILPOhTtoTW4VElTZYq9ZmyIcEBhcmX02s00Rvdf4X4tnOlOs8ZhKZlv
+	Cw2LsiVCP7pNy+VJZv53DgOmMz+Qugclr8ThQG7eWTKIgnZCjR4kGn/wI3t8ZSZtwl4arE19dQ/
+	AyR9gIP8MYkoNTegnhFRI1AiKa4slA/GX5lwNBHXnkgL3juauswpG/1hpwKMgn+U/odQKjW3uou
+	vFA2vxEoSFtYaH0fgYWrqwsL5J9a6RqbHjkG80+KVVOjnpwwhEgNAq819u+wT1Zx5W6Mn7WN/nw
+	BC4Z6TlR1jNGH5yB9owuCOh
+X-Received: by 2002:a05:6870:f146:b0:409:79d2:43a6 with SMTP id 586e51a60fabf-4157b15e88dmr809710fac.36.1771624940214;
+        Fri, 20 Feb 2026 14:02:20 -0800 (PST)
+Received: from pop-os.attlocal.net ([2600:1700:6476:1430:ca04:7bff:75dc:8fb1])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4157cf9a231sm695419fac.5.2026.02.20.14.02.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Feb 2026 14:02:19 -0800 (PST)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: glaubitz@physik.fu-berlin.de,
+	linux-fsdevel@vger.kernel.org,
+	frank.li@vivo.com
+Cc: Slava.Dubeyko@ibm.com,
+	Viacheslav Dubeyko <slava@dubeyko.com>
+Subject: [PATCH] hfsplus: fix potential Allocation File corruption after fsync
+Date: Fri, 20 Feb 2026 14:01:53 -0800
+Message-Id: <20260220220152.152721-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9714:EE_|IA1PR12MB6259:EE_
-X-MS-Office365-Filtering-Correlation-Id: f5a0fe4e-ab9f-4763-22af-08de70c5bfcf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?M0t3dVFrWXYrMkEzWlEyMTFBSmRsUXNvWnRROTVMSHVYdXpQRjF2Z2pNL243?=
- =?utf-8?B?WFlSei82OXhyVFhuYWhLZURzek14cnEvcXNvRmhnMTljeEJwMEl3VGlMM09t?=
- =?utf-8?B?YjFVQ2NIMGtmQStOQ09jd2hFakxPQitwMG9xSFBNdHVKQmxlSUZVL1NBZXlp?=
- =?utf-8?B?UDlaWms5Sml1UnBHSFRPclIvVFAvWnpoZk5zS3FYbDRFNXNCUlpqT3hLdjVZ?=
- =?utf-8?B?ZXlwaFdvYXc2d0ZVeGZFQ0tmWjVlZkllUmo2M1kxWit3RE1ndUV4SWF4YmJa?=
- =?utf-8?B?a0ZmQlN5MkdjV0R3RER3M2R3NkNzZWdEbHpNSzg1WkJRSkt3N1BZTnRTS05h?=
- =?utf-8?B?QnVjOWI4MnVTNlBGd0tObkdSQXJsS0FCU0VMZ2hUK1h0L3habGRmMVNyWDlp?=
- =?utf-8?B?bnZYd0k5Z0JKZWRCa2puUGFzT1ZVN3NrVVRhU3F4aE9PU2F5Zm14L1ZnSXVh?=
- =?utf-8?B?M3JVdUw4aGhXOEhjYUVKNUhodFpSR2poKzJzd3JIdlZ0eWRnakovQmtmdlBH?=
- =?utf-8?B?MXIwcVVpUHZ4czVocXhPN0F5R3JuR1ZpbEM5WUJiSXJUbHBnSGl3WGM1TnlZ?=
- =?utf-8?B?Y0pXQmhaOEY3V3FCUFdhWEp5VnhIeXFoWXc3aE11UEY0YXdhVjloblJjekUy?=
- =?utf-8?B?SzVGcjVUMjFzU3RjRGxXbDdDOExnS3VOL0lTVXU2YVJ5YWdlcy9IQmd2Sm9z?=
- =?utf-8?B?WUJIaG5BV2RpZUlOKzVWZEZyREY5SHhaamFzSkpmQ2drc0sxbTZiZVo1UzVU?=
- =?utf-8?B?bEMwTkpIRXF6MzR4MDY5cjZZdUsrbEFYdktDK0l4Z3RseFZ1NVc4QlczSStG?=
- =?utf-8?B?Ym1LZk9neFViWnlPS0JsS0FxZitCL1VmTDFuQVJCVER4SDVDOEpwS3FtbkRn?=
- =?utf-8?B?VFR2dTFTZk5XenNLVzE2N3duZnkyLzd2Qm81TEpva1IvL0dvYjB5YjlQNUhD?=
- =?utf-8?B?bUVFakhjZ05NeGxyckp1TGRQVzB0azE0YzNieElBSTZCSXkzT1ljWWZnV253?=
- =?utf-8?B?cGFRQ2ZteXhNY3kyeHRXaGpmVmRrWHNCemxaZVRIYkQ4Sy9MTTRDbytEMmhv?=
- =?utf-8?B?SSs1b3RyZHRqdjdNM09Gc1RYeW92Zlk4bWg2SkVOVGtHc2VTL2prWW5wc1Zo?=
- =?utf-8?B?V0pMUk9qU3BxbFhMZnpDUTh5Wnh4RDlzMlJ6MFFnR0xzenFnU0FZcFFMckFN?=
- =?utf-8?B?KzE2S0QxNEtXQURhZWNRbFRDcUZqcjl1N29aSmk1dlNqM3hzU0o3ZTlnVFpz?=
- =?utf-8?B?S1hPT0svQWlnbGVGdlB4ZmhUQWZHRldza2NPd1Y5YU9hSFhyUE80aVB4b3NS?=
- =?utf-8?B?SHpWait0L0ZLelA5bWYvZlUrT3ovQk5KMS9GbU9DWkFZb3FIY3ZWcTk3Mk1v?=
- =?utf-8?B?eG9keVNqVTl1RTRtQ2ZVRzRXcU05TmQ5S09zMzJtY0JuVXp5d1FSaXVVZUxx?=
- =?utf-8?B?ZWNOTWVlMGhiazZvYzYvRjlaL2pnLzBCMmxyUEdKRVZBVEUrR2Y4VDcwUE55?=
- =?utf-8?B?dmZFdFdWSHM5KzBGeFNER2JEUWJEMkxDNUNtOHNUZzQ1WkFPUnlpWHpaZlFw?=
- =?utf-8?B?M2F3dFJvd1V1VytJdTl4Unl4K1dFOUI1dDUwd0JPOHNsNVhXOWY4cml0ZXFu?=
- =?utf-8?B?QmdXMC9pWUcyL1MyT2ovUHJ2UXJOdFVvNVYwbXJNanhmMWY5NnIzSDN5V05a?=
- =?utf-8?B?L0tUSW5aSmEweDl3RTMvMWR3R3FvR3FBdU41Y1kvZ1ZPTklkNVdtTE9VMkVG?=
- =?utf-8?B?YStHZVBTRVMyczl4MGdGZy9WdmY0UnRjMGMxbUNZUTFpOE9RdlFxNW5iUnV4?=
- =?utf-8?B?Y1FwM0prbFBka3pNMnN2RlRDTEhwZzZFd25kUkptUGlPY1dvYU5iL084Ky9Y?=
- =?utf-8?B?L2gwcW9qdHY1dlp1VmYvcmZUMGhVWVd4b3AvVWQyNS93ODJ2NjM5SDRWMkg3?=
- =?utf-8?B?ZnNHUkVoS2EzNzRJY0thWFZBSmlBZDRkTVVnK21JaGtEbEtlNzBSbExBN040?=
- =?utf-8?B?Y0hSUjlpVjBrSjRqTUFyaThNMFZDN3FXQXpTMk9EV2xadGRKQjhRNXZJVHF4?=
- =?utf-8?B?T1kyTjZUVEpIeFFEYnE5RnlPUEVheHRQa2FxUUFzcnNBV1F3RVdLWXNScWpu?=
- =?utf-8?Q?UuiI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9714.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NjcrdU5RQkhyejB1QnhBbDJlZXJ2dzhhckFSYjJoK0hXWnB5UG1KUnNyVWd3?=
- =?utf-8?B?OUtxekhJZ3JvNTdidDgyUzV3eXlVcE8wN0d6SXo5OUNOOGp3N25vSExRRUZ4?=
- =?utf-8?B?TGdFSkFkRUFWQXViS0FFZXNyckppbWw4WlZiaDJqaHVOMGQ3bHJIeXRMNW93?=
- =?utf-8?B?SWREUDQydUdNZ0dGd05UQ1RGWGNPUHhQb0hDaWpOcGh2UzMzM3pPdzNDcHZN?=
- =?utf-8?B?SWdTYm8xMUI0bHJYUllqNks2cTc1VU9EMGx5K3V4ZVFwMXk5amZpOHJHalVQ?=
- =?utf-8?B?N1BxK1ZXRGZiWnRXci9Vc09DL2tINFZwbjNpRm9aNEJPSUVFOThpNXF4T05z?=
- =?utf-8?B?U2FBZGpSUzl1eUNhQ1BzaHZYQlVScWcxbGdLeWdKT0FGVjZYaUZiL2tvandH?=
- =?utf-8?B?aHZwN2crL1VpREVESkhkTlQzcWx3UStTbVM3VUREUm85M2JZNFB3S3pIaE9r?=
- =?utf-8?B?eHNVNkZycEJobmtzSURTajV0L3FSRDhXclBCVjlGL3d2M01paU83TTFiRCtE?=
- =?utf-8?B?WXNiQ0phUytPb1dKOEsrNVJhZ1ZKb1laRXgxYmVzeVFzellPL3k5TGFrQlNW?=
- =?utf-8?B?SzE1RGZRSU52T1U5Kzh5YU9pcW54T0kwYmJKTlJlV2xPclM0QTlNcWhrSU9j?=
- =?utf-8?B?cHVsbE5NM1FQcFQ4VzhTSE5WTGZ5WEFMUFJGZzlEbzlTR0ZUVEFGbERvRFcy?=
- =?utf-8?B?Ti9CbTdOY2cwZjlnSFRnMjU4cG1HT0VqbzI5Q0VsUXpyWlJIeDF1QlVSWUhq?=
- =?utf-8?B?ektZWEovZE5ubkpUS1ErdS9qeHR5cmZ3eUVUZGszY3pyb3RvL1Z4a2RPbE9x?=
- =?utf-8?B?WXBsc1dDRnR4Ri8yZGVIM0s4KzZCeHdJd1hpVFpwd3hoYktOV2FNUXArZmZm?=
- =?utf-8?B?TmFDOUp2cTYvQ3Z2R0h6ank4VmdCK1g0b3YwT2RBTmlxL3lPcFNyYUdJRVNn?=
- =?utf-8?B?cFJGZ2g4bytwRmdQTCthUnVtaGFXQ2NRV3lrbHlNOUZsZ3UyQm96RTc5SkRY?=
- =?utf-8?B?SVQwY21CLzQ5RXVxTWZjQ3lWZFgwKy9nZS96S1Q4cVBJZXRqUiswcXJrbmlD?=
- =?utf-8?B?Rm9sbmFNQnBXS2VselVUUENobWJmckdoem9oSEVuOEVTSXIycUFSV1hNMVJa?=
- =?utf-8?B?cEJIVVNoZXY1MmNJcUhoWUhrVjNMS3NqMVAzUjRqWFRFOFBLd2lzeFBOUmRF?=
- =?utf-8?B?dXhSTldBdWx4Y2VSd0N5QjlYbDVoYTBweW1kZE1SRWN4d2RZbnk0YWpzaVcx?=
- =?utf-8?B?TjlaRjdiVjZPMmw2dE1rMDVFcFFYbTRhNkg5ZFBkdTJsL3BpbjROV3YvbDFt?=
- =?utf-8?B?VHZOS2hOOVlGd0MvenViMGk2d2RMenJBOEZVd0lUSnRJank3Kzk0aEhubTNj?=
- =?utf-8?B?VEdnaUh1cWIzVi95OUJlNWU1MFRDV0M3N3N6NWpHdWlmZVFOWC9xZGowNWJ1?=
- =?utf-8?B?OUJLREFhcm94U29uZGRja0lOK2NZU3VuNWhaM1BGeE9EUlZVMjJzZWpMem84?=
- =?utf-8?B?WlhYTDVRUjlKZ0tmUXBtbUp5Wk5XU0J1YlBOTGlIOGNGS3lPSlUzT05sQXQv?=
- =?utf-8?B?Y2dIWUFpUER4UHc4ck1Ja1FYT0cyTENYeDl6aHQyWWlZeE55ZE9nS29oM1Jk?=
- =?utf-8?B?OG8wRGxmM1lMZVJUQnA0LzJMSG1wai9JbitJaWxwaXRFU2RzYk1tZkRPOEZY?=
- =?utf-8?B?MkszSDYxendzMStDeWhkc1VxK2JyS1VJaWxjamtrdjBmSk1naTZMWjRSQ1Rv?=
- =?utf-8?B?TmFkQzZlUWhxM202WVdaUnJwLy9RSFVJVUtTOHFGcTJCbW9URis5RDZQaHlP?=
- =?utf-8?B?aDdTTmpBU2QxTUFJT3dyVVV6NktFRDJndXJTRVJ4Um5IQTFCVm5BNnY5b3pa?=
- =?utf-8?B?V05TQmJSRFVScHlKWFZNa1MrVkZJVzFxUkhpcktKOGJKclFEOURXcHl5OXZy?=
- =?utf-8?B?UFZteXNKbGtTYnRtUFk3YzVPbDBUcWgyeWZraVJXZTJRMWEwM1lJMk9mbDdV?=
- =?utf-8?B?L2JOMTZqaDY3QnZMTG5jOUlGQmRoc2VxVVZXRnJyVnlzQnBONExXckI1R2Vn?=
- =?utf-8?B?V28vS3NobzJlSkRYdk5KcWN3dnZvVkNoMzF6MEtKTUdvK1RpalhtYmlISEFl?=
- =?utf-8?B?VllUSWxFU2JjTnVTWVhlRmFzOVdMdHh4dXU1ODdiWGJMNzRtNU5ENk9yK295?=
- =?utf-8?B?Q3RMRzlOYlc1Q2Q2NXp3NllCN2p4L1p5Y1F3U0R1aWF4ZDc1dmZUd0Q1V1Bw?=
- =?utf-8?B?bkNKTTFNS2JiaFl6RDBIem5WRlkrRkJmOStoeW9mdW5PeUs2dmd5cnhJRlVu?=
- =?utf-8?B?bzhhZ1pBOEtVNXpnNWRBMGV3Rm9kQUhEWFd4Vmp2VUdHVXVkM1ZWdz09?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5a0fe4e-ab9f-4763-22af-08de70c5bfcf
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9714.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2026 21:19:36.3181
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YzCzCED3C9zRl+FX5hOr4cHhBaX+qFOcOGiPP6v/I1/Z3h8mH9+hK4IaE+WzGv+APP6SXpMJu9vEyce+CBS0hg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6259
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [1.34 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_REJECT(1.00)[cv is fail on i=2];
-	DMARC_POLICY_ALLOW(-0.50)[amd.com,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
-	R_DKIM_ALLOW(-0.20)[amd.com:s=selector1];
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[dubeyko-com.20230601.gappssmtp.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[33];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77827-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[intel.com,kernel.org,amd.com,alien8.de,stgolabs.net,linuxfoundation.org,gmail.com,suse.cz,oss.qualcomm.com,huawei.com,vger.kernel.org,fujitsu.com,zohomail.com,lists.linux.dev,infradead.org];
+	DMARC_NA(0.00)[dubeyko.com];
 	RCVD_TLS_LAST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-77828-lists,linux-fsdevel=lfdr.de];
+	TO_DN_SOME(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[slava@dubeyko.com,linux-fsdevel@vger.kernel.org];
+	NEURAL_HAM(-0.00)[-0.999];
 	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[skoralah@amd.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[amd.com:+];
-	NEURAL_HAM(-0.00)[-1.000];
+	DKIM_TRACE(0.00)[dubeyko-com.20230601.gappssmtp.com:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[amd.com:mid,amd.com:dkim,fujitsu.com:email,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 0BDAC16AF4D
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[fu-berlin.de:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,vivo.com:email]
+X-Rspamd-Queue-Id: 0594516B19C
 X-Rspamd-Action: no action
 
-Hi Tomasz,
+The generic/348 test-case has revealed the issue of
+HFS+ volume corruption after simulated power failure:
 
-On 2/20/2026 1:45 AM, Tomasz Wolski wrote:
-> Tested on QEMU and physical setups.
-> 
-> I have one question about "Soft Reserve" parent entries in iomem.
-> On QEMU I see parent "Soft Reserved":
-> 
-> a90000000-b4fffffff : Soft Reserved
->    a90000000-b4fffffff : CXL Window 0
->      a90000000-b4fffffff : dax1.0
->        a90000000-b4fffffff : System RAM (kmem)
-> 
-> While on my physical setup this is missing - not sure if this is okay?
-> 
-> BIOS-e820: [mem 0x0000002070000000-0x000000a06fffffff] soft reserved
-> 
-> 2070000000-606fffffff : CXL Window 0
->    2070000000-606fffffff : region0
->      2070000000-606fffffff : dax0.0
->        2070000000-606fffffff : System RAM (kmem)
-> 6070000000-a06fffffff : CXL Window 1
->    6070000000-a06fffffff : region1
->      6070000000-a06fffffff : dax1.0
->        6070000000-a06fffffff : System RAM (kmem)
+FSTYP -- hfsplus
+PLATFORM -- Linux/x86_64 hfsplus-testing-0001 6.15.0-rc4+ #8 SMP PREEMPT_DYNAMIC Thu May 1 16:43:22 PDT 2025
+MKFS_OPTIONS -- /dev/loop51
+MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
 
-Thanks for testing on both setups!
+generic/348 _check_generic_filesystem: filesystem on /dev/loop51 is inconsistent
+(see xfstests-dev/results//generic/348.full for details)
 
-On QEMU: there is no region, so HMEM took ownership of the Soft Reserved 
-range (REGISTER path). Patch 9 then reintroduced the Soft Reserved entry 
-back into the iomem tree to reflect HMEM ownership.
+The fsck tool complains about Allocation File (block bitmap)
+corruption as a result of such event. The generic/348 creates
+a symlink, fsync its parent directory, power fail and mount
+again the filesystem. Currently, HFS+ logic has several flags
+HFSPLUS_I_CAT_DIRTY, HFSPLUS_I_EXT_DIRTY, HFSPLUS_I_ATTR_DIRTY,
+HFSPLUS_I_ALLOC_DIRTY. If inode operation modified the Catalog
+File, Extents Overflow File, Attributes File, or Allocation
+File, then inode is marked as dirty and one of the mentioned
+flags has been set. When hfsplus_file_fsync() has been called,
+then this set of flags is checked and dirty b-tree or/and
+block bitmap is flushed. However, block bitmap can be modified
+during file's content allocation. It means that if we call
+hfsplus_file_fsync() for directory, then we never flush
+the modified Allocation File in such case because such inode
+cannot receive HFSPLUS_I_ALLOC_DIRTY flag. Moreover, this
+inode-centric model is not good at all because Catalog File,
+Extents Overflow File, Attributes File, and Allocation File
+represent the whole state of file system metadata. This
+inode-centric policy is the main reason of the issue.
 
-On physical setup: CXL fully claimed both ranges, region0 and region1 
-assembled successfully (DROP path). Since CXL owns the memory, there's 
-no Soft Reserved parent to reintroduce.
+This patch saves the whole approach of using HFSPLUS_I_CAT_DIRTY,
+HFSPLUS_I_EXT_DIRTY, HFSPLUS_I_ATTR_DIRTY, and
+HFSPLUS_I_ALLOC_DIRTY flags. But Catalog File, Extents Overflow
+File, Attributes File, and Allocation File have associated
+inodes. And namely these inodes become the mechanism of
+checking the dirty state of metadata. The hfsplus_file_fsync()
+method checks the dirtiness of file system metadata by
+testing HFSPLUS_I_CAT_DIRTY, HFSPLUS_I_EXT_DIRTY,
+HFSPLUS_I_ATTR_DIRTY, and HFSPLUS_I_ALLOC_DIRTY flags of
+Catalog File's, Extents Overflow File's, Attributes File's, or
+Allocation File's inodes. As a result, even if we call
+hfsplus_file_fsync() for parent folder, then dirty Allocation File
+will be flushed anyway.
 
-Soft Reserved appears in /proc/iomem only when CXL does not fully claim 
-the range and HMEM takes over. Your physical setup is showing it 
-correctly. Maybe CXL_REGION config is false or region assembly failed on 
-and has cleaned up on QEMU so there aren't any regions?
+Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
+cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+cc: Yangtao Li <frank.li@vivo.com>
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/hfsplus/attributes.c |  3 +++
+ fs/hfsplus/catalog.c    |  3 +++
+ fs/hfsplus/dir.c        |  6 ++++++
+ fs/hfsplus/extents.c    |  7 +++++++
+ fs/hfsplus/hfsplus_fs.h |  7 +++++++
+ fs/hfsplus/inode.c      | 27 ++++++++++++++++++++-------
+ fs/hfsplus/super.c      |  2 ++
+ fs/hfsplus/xattr.c      | 19 +++++++++++++++++--
+ 8 files changed, 65 insertions(+), 9 deletions(-)
 
-Thanks,
-Smita
-
-> 
-> Tested-by: Tomasz Wolski <tomasz.wolski@fujitsu.com>
-
-
+diff --git a/fs/hfsplus/attributes.c b/fs/hfsplus/attributes.c
+index 4b79cd606276..6585bcea731c 100644
+--- a/fs/hfsplus/attributes.c
++++ b/fs/hfsplus/attributes.c
+@@ -241,6 +241,7 @@ int hfsplus_create_attr_nolock(struct inode *inode, const char *name,
+ 		return err;
+ 	}
+ 
++	hfsplus_mark_inode_dirty(HFSPLUS_ATTR_TREE_I(sb), HFSPLUS_I_ATTR_DIRTY);
+ 	hfsplus_mark_inode_dirty(inode, HFSPLUS_I_ATTR_DIRTY);
+ 
+ 	return 0;
+@@ -326,6 +327,8 @@ static int __hfsplus_delete_attr(struct inode *inode, u32 cnid,
+ 	if (err)
+ 		return err;
+ 
++	hfsplus_mark_inode_dirty(HFSPLUS_ATTR_TREE_I(inode->i_sb),
++				 HFSPLUS_I_ATTR_DIRTY);
+ 	hfsplus_mark_inode_dirty(inode, HFSPLUS_I_ATTR_DIRTY);
+ 	return err;
+ }
+diff --git a/fs/hfsplus/catalog.c b/fs/hfsplus/catalog.c
+index 02c1eee4a4b8..eef7412a4d58 100644
+--- a/fs/hfsplus/catalog.c
++++ b/fs/hfsplus/catalog.c
+@@ -313,6 +313,7 @@ int hfsplus_create_cat(u32 cnid, struct inode *dir,
+ 	if (S_ISDIR(inode->i_mode))
+ 		hfsplus_subfolders_inc(dir);
+ 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
++	hfsplus_mark_inode_dirty(HFSPLUS_CAT_TREE_I(sb), HFSPLUS_I_CAT_DIRTY);
+ 	hfsplus_mark_inode_dirty(dir, HFSPLUS_I_CAT_DIRTY);
+ 
+ 	hfs_find_exit(&fd);
+@@ -418,6 +419,7 @@ int hfsplus_delete_cat(u32 cnid, struct inode *dir, const struct qstr *str)
+ 	if (type == HFSPLUS_FOLDER)
+ 		hfsplus_subfolders_dec(dir);
+ 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
++	hfsplus_mark_inode_dirty(HFSPLUS_CAT_TREE_I(sb), HFSPLUS_I_CAT_DIRTY);
+ 	hfsplus_mark_inode_dirty(dir, HFSPLUS_I_CAT_DIRTY);
+ 
+ 	if (type == HFSPLUS_FILE || type == HFSPLUS_FOLDER) {
+@@ -540,6 +542,7 @@ int hfsplus_rename_cat(u32 cnid,
+ 	}
+ 	err = hfs_brec_insert(&dst_fd, &entry, entry_size);
+ 
++	hfsplus_mark_inode_dirty(HFSPLUS_CAT_TREE_I(sb), HFSPLUS_I_CAT_DIRTY);
+ 	hfsplus_mark_inode_dirty(dst_dir, HFSPLUS_I_CAT_DIRTY);
+ 	hfsplus_mark_inode_dirty(src_dir, HFSPLUS_I_CAT_DIRTY);
+ out:
+diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
+index ca5f74a140ec..0f5eaad738e0 100644
+--- a/fs/hfsplus/dir.c
++++ b/fs/hfsplus/dir.c
+@@ -478,6 +478,9 @@ static int hfsplus_symlink(struct mnt_idmap *idmap, struct inode *dir,
+ 	if (!inode)
+ 		goto out;
+ 
++	hfs_dbg("dir->i_ino %lu, inode->i_ino %lu\n",
++		dir->i_ino, inode->i_ino);
++
+ 	res = page_symlink(inode, symname, strlen(symname) + 1);
+ 	if (res)
+ 		goto out_err;
+@@ -526,6 +529,9 @@ static int hfsplus_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ 	if (!inode)
+ 		goto out;
+ 
++	hfs_dbg("dir->i_ino %lu, inode->i_ino %lu\n",
++		dir->i_ino, inode->i_ino);
++
+ 	if (S_ISBLK(mode) || S_ISCHR(mode) || S_ISFIFO(mode) || S_ISSOCK(mode))
+ 		init_special_inode(inode, mode, rdev);
+ 
+diff --git a/fs/hfsplus/extents.c b/fs/hfsplus/extents.c
+index 8e886514d27f..a5f772de9985 100644
+--- a/fs/hfsplus/extents.c
++++ b/fs/hfsplus/extents.c
+@@ -121,6 +121,8 @@ static int __hfsplus_ext_write_extent(struct inode *inode,
+ 	 * redirty the inode.  Instead the callers have to be careful
+ 	 * to explicily mark the inode dirty, too.
+ 	 */
++	set_bit(HFSPLUS_I_EXT_DIRTY,
++		&HFSPLUS_I(HFSPLUS_EXT_TREE_I(inode->i_sb))->flags);
+ 	set_bit(HFSPLUS_I_EXT_DIRTY, &hip->flags);
+ 
+ 	return 0;
+@@ -513,6 +515,8 @@ int hfsplus_file_extend(struct inode *inode, bool zeroout)
+ 	if (!res) {
+ 		hip->alloc_blocks += len;
+ 		mutex_unlock(&hip->extents_lock);
++		hfsplus_mark_inode_dirty(HFSPLUS_SB(sb)->alloc_file,
++					 HFSPLUS_I_ALLOC_DIRTY);
+ 		hfsplus_mark_inode_dirty(inode, HFSPLUS_I_ALLOC_DIRTY);
+ 		return 0;
+ 	}
+@@ -582,6 +586,7 @@ void hfsplus_file_truncate(struct inode *inode)
+ 		/* XXX: We lack error handling of hfsplus_file_truncate() */
+ 		return;
+ 	}
++
+ 	while (1) {
+ 		if (alloc_cnt == hip->first_blocks) {
+ 			mutex_unlock(&fd.tree->tree_lock);
+@@ -623,5 +628,7 @@ void hfsplus_file_truncate(struct inode *inode)
+ 	hip->fs_blocks = (inode->i_size + sb->s_blocksize - 1) >>
+ 		sb->s_blocksize_bits;
+ 	inode_set_bytes(inode, hip->fs_blocks << sb->s_blocksize_bits);
++	hfsplus_mark_inode_dirty(HFSPLUS_SB(sb)->alloc_file,
++				 HFSPLUS_I_ALLOC_DIRTY);
+ 	hfsplus_mark_inode_dirty(inode, HFSPLUS_I_ALLOC_DIRTY);
+ }
+diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
+index 5f891b73a646..122ab57193bb 100644
+--- a/fs/hfsplus/hfsplus_fs.h
++++ b/fs/hfsplus/hfsplus_fs.h
+@@ -238,6 +238,13 @@ static inline struct hfsplus_inode_info *HFSPLUS_I(struct inode *inode)
+ 	return container_of(inode, struct hfsplus_inode_info, vfs_inode);
+ }
+ 
++#define HFSPLUS_CAT_TREE_I(sb) \
++	HFSPLUS_SB(sb)->cat_tree->inode
++#define HFSPLUS_EXT_TREE_I(sb) \
++	HFSPLUS_SB(sb)->ext_tree->inode
++#define HFSPLUS_ATTR_TREE_I(sb) \
++	HFSPLUS_SB(sb)->attr_tree->inode
++
+ /*
+  * Mark an inode dirty, and also mark the btree in which the
+  * specific type of metadata is stored.
+diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
+index 922ff41df042..cdf08393de44 100644
+--- a/fs/hfsplus/inode.c
++++ b/fs/hfsplus/inode.c
+@@ -324,6 +324,7 @@ int hfsplus_file_fsync(struct file *file, loff_t start, loff_t end,
+ {
+ 	struct inode *inode = file->f_mapping->host;
+ 	struct hfsplus_inode_info *hip = HFSPLUS_I(inode);
++	struct super_block *sb = inode->i_sb;
+ 	struct hfsplus_sb_info *sbi = HFSPLUS_SB(inode->i_sb);
+ 	struct hfsplus_vh *vhdr = sbi->s_vhdr;
+ 	int error = 0, error2;
+@@ -344,29 +345,39 @@ int hfsplus_file_fsync(struct file *file, loff_t start, loff_t end,
+ 	/*
+ 	 * And explicitly write out the btrees.
+ 	 */
+-	if (test_and_clear_bit(HFSPLUS_I_CAT_DIRTY, &hip->flags))
++	if (test_and_clear_bit(HFSPLUS_I_CAT_DIRTY,
++				&HFSPLUS_I(HFSPLUS_CAT_TREE_I(sb))->flags)) {
++		clear_bit(HFSPLUS_I_CAT_DIRTY, &hip->flags);
+ 		error = filemap_write_and_wait(sbi->cat_tree->inode->i_mapping);
++	}
+ 
+-	if (test_and_clear_bit(HFSPLUS_I_EXT_DIRTY, &hip->flags)) {
++	if (test_and_clear_bit(HFSPLUS_I_EXT_DIRTY,
++				&HFSPLUS_I(HFSPLUS_EXT_TREE_I(sb))->flags)) {
++		clear_bit(HFSPLUS_I_EXT_DIRTY, &hip->flags);
+ 		error2 =
+ 			filemap_write_and_wait(sbi->ext_tree->inode->i_mapping);
+ 		if (!error)
+ 			error = error2;
+ 	}
+ 
+-	if (test_and_clear_bit(HFSPLUS_I_ATTR_DIRTY, &hip->flags)) {
+-		if (sbi->attr_tree) {
++	if (sbi->attr_tree) {
++		if (test_and_clear_bit(HFSPLUS_I_ATTR_DIRTY,
++				&HFSPLUS_I(HFSPLUS_ATTR_TREE_I(sb))->flags)) {
++			clear_bit(HFSPLUS_I_ATTR_DIRTY, &hip->flags);
+ 			error2 =
+ 				filemap_write_and_wait(
+ 					    sbi->attr_tree->inode->i_mapping);
+ 			if (!error)
+ 				error = error2;
+-		} else {
+-			pr_err("sync non-existent attributes tree\n");
+ 		}
++	} else {
++		if (test_and_clear_bit(HFSPLUS_I_ATTR_DIRTY, &hip->flags))
++			pr_err("sync non-existent attributes tree\n");
+ 	}
+ 
+-	if (test_and_clear_bit(HFSPLUS_I_ALLOC_DIRTY, &hip->flags)) {
++	if (test_and_clear_bit(HFSPLUS_I_ALLOC_DIRTY,
++				&HFSPLUS_I(sbi->alloc_file)->flags)) {
++		clear_bit(HFSPLUS_I_ALLOC_DIRTY, &hip->flags);
+ 		error2 = filemap_write_and_wait(sbi->alloc_file->i_mapping);
+ 		if (!error)
+ 			error = error2;
+@@ -709,6 +720,8 @@ int hfsplus_cat_write_inode(struct inode *inode)
+ 					 sizeof(struct hfsplus_cat_file));
+ 	}
+ 
++	set_bit(HFSPLUS_I_CAT_DIRTY,
++		&HFSPLUS_I(HFSPLUS_CAT_TREE_I(inode->i_sb))->flags);
+ 	set_bit(HFSPLUS_I_CAT_DIRTY, &HFSPLUS_I(inode)->flags);
+ out:
+ 	hfs_find_exit(&fd);
+diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
+index 592d8fbb748c..c963809e0106 100644
+--- a/fs/hfsplus/super.c
++++ b/fs/hfsplus/super.c
+@@ -625,6 +625,8 @@ static int hfsplus_fill_super(struct super_block *sb, struct fs_context *fc)
+ 			}
+ 
+ 			mutex_unlock(&sbi->vh_mutex);
++			hfsplus_mark_inode_dirty(HFSPLUS_CAT_TREE_I(sb),
++						 HFSPLUS_I_CAT_DIRTY);
+ 			hfsplus_mark_inode_dirty(sbi->hidden_dir,
+ 						 HFSPLUS_I_CAT_DIRTY);
+ 		}
+diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
+index 9904944cbd54..31b6cb9db770 100644
+--- a/fs/hfsplus/xattr.c
++++ b/fs/hfsplus/xattr.c
+@@ -236,6 +236,7 @@ static int hfsplus_create_attributes_file(struct super_block *sb)
+ 		put_page(page);
+ 	}
+ 
++	hfsplus_mark_inode_dirty(HFSPLUS_ATTR_TREE_I(sb), HFSPLUS_I_ATTR_DIRTY);
+ 	hfsplus_mark_inode_dirty(attr_file, HFSPLUS_I_ATTR_DIRTY);
+ 
+ 	sbi->attr_tree = hfs_btree_open(sb, HFSPLUS_ATTR_CNID);
+@@ -314,8 +315,11 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
+ 				hfs_bnode_write(cat_fd.bnode, &entry,
+ 					cat_fd.entryoffset,
+ 					sizeof(struct hfsplus_cat_folder));
+-				hfsplus_mark_inode_dirty(inode,
++				hfsplus_mark_inode_dirty(
++						HFSPLUS_CAT_TREE_I(inode->i_sb),
+ 						HFSPLUS_I_CAT_DIRTY);
++				hfsplus_mark_inode_dirty(inode,
++							 HFSPLUS_I_CAT_DIRTY);
+ 			} else {
+ 				err = -ERANGE;
+ 				goto end_setxattr;
+@@ -327,8 +331,11 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
+ 				hfs_bnode_write(cat_fd.bnode, &entry,
+ 					cat_fd.entryoffset,
+ 					sizeof(struct hfsplus_cat_file));
+-				hfsplus_mark_inode_dirty(inode,
++				hfsplus_mark_inode_dirty(
++						HFSPLUS_CAT_TREE_I(inode->i_sb),
+ 						HFSPLUS_I_CAT_DIRTY);
++				hfsplus_mark_inode_dirty(inode,
++							 HFSPLUS_I_CAT_DIRTY);
+ 			} else {
+ 				err = -ERANGE;
+ 				goto end_setxattr;
+@@ -381,6 +388,8 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
+ 		hfs_bnode_write_u16(cat_fd.bnode, cat_fd.entryoffset +
+ 				offsetof(struct hfsplus_cat_folder, flags),
+ 				cat_entry_flags);
++		hfsplus_mark_inode_dirty(HFSPLUS_CAT_TREE_I(inode->i_sb),
++					 HFSPLUS_I_CAT_DIRTY);
+ 		hfsplus_mark_inode_dirty(inode, HFSPLUS_I_CAT_DIRTY);
+ 	} else if (cat_entry_type == HFSPLUS_FILE) {
+ 		cat_entry_flags = hfs_bnode_read_u16(cat_fd.bnode,
+@@ -392,6 +401,8 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
+ 		hfs_bnode_write_u16(cat_fd.bnode, cat_fd.entryoffset +
+ 				    offsetof(struct hfsplus_cat_file, flags),
+ 				    cat_entry_flags);
++		hfsplus_mark_inode_dirty(HFSPLUS_CAT_TREE_I(inode->i_sb),
++					 HFSPLUS_I_CAT_DIRTY);
+ 		hfsplus_mark_inode_dirty(inode, HFSPLUS_I_CAT_DIRTY);
+ 	} else {
+ 		pr_err("invalid catalog entry type\n");
+@@ -862,6 +873,8 @@ static int hfsplus_removexattr(struct inode *inode, const char *name)
+ 		hfs_bnode_write_u16(cat_fd.bnode, cat_fd.entryoffset +
+ 				offsetof(struct hfsplus_cat_folder, flags),
+ 				flags);
++		hfsplus_mark_inode_dirty(HFSPLUS_CAT_TREE_I(inode->i_sb),
++					 HFSPLUS_I_CAT_DIRTY);
+ 		hfsplus_mark_inode_dirty(inode, HFSPLUS_I_CAT_DIRTY);
+ 	} else if (cat_entry_type == HFSPLUS_FILE) {
+ 		flags = hfs_bnode_read_u16(cat_fd.bnode, cat_fd.entryoffset +
+@@ -873,6 +886,8 @@ static int hfsplus_removexattr(struct inode *inode, const char *name)
+ 		hfs_bnode_write_u16(cat_fd.bnode, cat_fd.entryoffset +
+ 				offsetof(struct hfsplus_cat_file, flags),
+ 				flags);
++		hfsplus_mark_inode_dirty(HFSPLUS_CAT_TREE_I(inode->i_sb),
++					 HFSPLUS_I_CAT_DIRTY);
+ 		hfsplus_mark_inode_dirty(inode, HFSPLUS_I_CAT_DIRTY);
+ 	} else {
+ 		pr_err("invalid catalog entry type\n");
+-- 
+2.43.0
 
 
