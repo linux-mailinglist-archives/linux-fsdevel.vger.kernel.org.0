@@ -1,213 +1,208 @@
-Return-Path: <linux-fsdevel+bounces-77806-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id eImUHvqWmGlaJwMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77806-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 18:16:42 +0100
+	id 2CawLRCbmGkTKAMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 18:34:08 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D23C169A80
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 18:16:42 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E033169BDF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 18:34:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 6838A3079672
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 17:16:13 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id B302B300D34D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 17:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480DE32ABF1;
-	Fri, 20 Feb 2026 17:16:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82DD236604E;
+	Fri, 20 Feb 2026 17:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T7lquW24"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GUmovhQZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-dl1-f45.google.com (mail-dl1-f45.google.com [74.125.82.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5738E322A1C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Feb 2026 17:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED901365A10
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Feb 2026 17:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.45
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771607771; cv=pass; b=IlrPZ/5gubRuYBjLCzERNftfmN9L/gzwsKbKLsS/FwMcY/HQFPQCbUSQOhQngdqofAGsjf9cQbCKQmZMNeXNcln1Q29503NfYOjGRlp6D+joflYngffVgwuWqZjiF4mG6se1N4wbAMqS2+wfPySgElStm3EXx4junRkg3s+Wi3M=
+	t=1771608845; cv=pass; b=tEg9RGp6Htp2dsB2glV5xjrtFih9PIoxDGv9oxJIdkhQN9eBh3iNNRcwsuHoOz0fdWLEOzPFWxMNaltwzh3fKBkjuUYV9u2CfR1ljPrLEJRI656Q87Vvo8QXY/sEfWSpAuMfc1k1fHASmkFLaIp9dCts4u9mqnD540JE+iO5SlE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771607771; c=relaxed/simple;
-	bh=qUpADLv3fW4c6VKkfzK/U52QH49WpAV8Od6WUnTJ06g=;
+	s=arc-20240116; t=1771608845; c=relaxed/simple;
+	bh=dW69iUku9IRFksYkhFKb49OwK2nuvLOXPied0JTmtvA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fF6Wob3DHtggsmnB1WruKAgF7cUiUPS/Ohrl5EMrozGSx/6BRbbX7fYvT5t7aBI2tS//k/uy7FfQrqjR5WLNJhShzPZWjhNK9XntKUUvLQ3tzvCEj6/948bTIkXR26cmQMMionp6T11fs6q/POg6nf+xWz6vbP8QujzkZ46mGVI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T7lquW24; arc=pass smtp.client-ip=209.85.208.42
+	 To:Cc:Content-Type; b=HH1V0TmtfhafVvWeq14DE0MDgTVz2j4vf58XlqMw6bEurZOwUuM9WUOtjQCDnSlhsLeMeMG/KLLhSq3CkDcUHFfKWT0nMKPYjomc5YYPUchNVR8A/8+8PuRIRfHxg/2mWhpXCfzoO4gx1VI5VGR8cGU6FVpZ9ZRaZ006fVC+pZ4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GUmovhQZ; arc=pass smtp.client-ip=74.125.82.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-65c5a778923so3389557a12.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Feb 2026 09:16:10 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771607769; cv=none;
+Received: by mail-dl1-f45.google.com with SMTP id a92af1059eb24-127148c2112so221437c88.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Feb 2026 09:34:03 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771608843; cv=none;
         d=google.com; s=arc-20240605;
-        b=VvpCNg/Ff50m0sXlGV3RgGxfrwkPudtKSPug84NCBgqv2eJ+T//6VtT3RQBRdKtGE4
-         jiHrZ8fz62MmRVEWEsXGj/8HbhTiOxrS4g82vrCj72jy3P/qKYmvRKJEOakuSQt7NbRV
-         JWJwvrwQyKP4N/8C0FOEdE+JWm+d4NCiGu4ON9YY834tgiihhPczluDxHKHKde5Mdjcg
-         5SzmqBCqmckST8IS2LrkNtTQ0ZAO7At/k7F/7q0EGEzswboX+ZlIFcvfMtYOQk2fAEhl
-         zZ60FefYmWccG6DycnNNDvNicEpGIDCnsHRCpzViRf6MqsUZ9Hd0l7QxbrKvnLYALBED
-         gYFA==
+        b=IkDrKKbo1VfFMLqWmE9jCKZOqpZUmhtpYAxeHloT8ni8N5v/eIVxFdVMWURqlNDcNl
+         98jt/sWXsZGpLUSd8hiZrXOUsjTrszRGV4fvDokB4ryoXS75oxMugPGzFJpqrG0JBHTC
+         XNDLxLgjHaonsHTk711BhgGk9uXq8eO/p1HxYjjbv/kdjJPtWC17E3rNDvDy/hNG0u8f
+         w3DKQufppXX9UG0/YpvtMrwd6yXfJU4tRijwb1zV4rjhseJvu3XjJP7db1RwfUXrWehw
+         6kSNgXytH69qhlt07OgDNm2ZKRRKXoBtrKrwwG8OMlqrbkCjrfAmoPkdNfnmDRHovfIz
+         qnmQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=+FIG9q/M+yTBjTrAHAw7SaWHpsPSmQOUIDS7bx4BpBE=;
-        fh=r6vw1uwUurd96GRCF2QgVZNh7CZo91vPrxiTdCNPYQ0=;
-        b=jLOcfpESUnS2OwXg+x9EMtc3te5EQ32WX6nzSMGoUuOYSUTCOlIMzOq5JICZ1PDyUl
-         XegBpQj4OiL71cc8GxnRa2hzCpw+ITsdzHoFmrwp79+6eLLDj8Y2GvIacOFVRVNPg0jd
-         5C9d3KRHnku+eMEX2/SAOXoui2JyCqO95Sa+APneq7iC9vFYzY42Zwa2iYz4AJ0Zolso
-         Ry2SrkVf/Ys98P2te5dm5g09Qcr6fzHRfDE02I/OuU9VQFUk/qWIgcKBp6I/nIQpmu6T
-         uwDrGODCulxxFf85TnfD7+mzdE67bZgxMEAqiDRx5GBrV7q5os+LFd01BoOFy4unYpCT
-         FBjA==;
+        bh=B3RiLfffpu7Ffa96sGXtUyFTXMqhEfmtMEWOofkZHzs=;
+        fh=OGnppa86UoermWoTgTjPtxHXr58z8nqwJcqWWn1Hfw4=;
+        b=iyH79U30yJZR3T9x0W7p2Md6bZvK4ZOh2PSP2DqVZvQZVDDtmG5IMDc69glPspLTL/
+         b8lm2ECpnvOBIgzZUTp4TK8KRYGOZihj0MZLG6oksrHVCB++yjIxG3K179Kms67P0qC1
+         jUNzO4qDe7bBAUbohQ1LPU0RSJvQjV2bDbvjxzFwAf2G2RMvelzuToVaqSnUfH+1Zofr
+         ooMGNBe71Idt1kl/DIORV+nKdBL9QbzLUt4H9oInKADUOx1S6XdGZ6Zsf+aaOtQq/ltD
+         T1sw7997k43AY/hoWhKQhD59Z0fzM0Gbogc4MftgDrL72Rhp4oRY1aa8fEQ4q2zxEqkN
+         v4Zg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771607769; x=1772212569; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1771608843; x=1772213643; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+FIG9q/M+yTBjTrAHAw7SaWHpsPSmQOUIDS7bx4BpBE=;
-        b=T7lquW24vMSRjgoEygIGRyE08/+q4o+RUfMXAZBhrE/0bR2snow2U7+jW02AKYKsl3
-         0YinK1VhhMdJbjruFy0rRj7VFT1eAKRxExNJgq+w/96MK3FpoSSbHoiwo568oGgUFcV/
-         BadXZPqH8QETK/iUAk+5JN3M8UF9i2vEDzFR1Lh/p/SNlEEaxzxLlhOKAd5iMABhg67Y
-         g/Ad2mlze4BV1iucz8EwJBH6ee0Zlnk+ZY8V/3L7z0QnrI3Se4T5q+ukxFzE+g1cD60d
-         vQVR09MX8uP3WurKjZkhRDQEA3klgP4YGhWfAa8WAIkHgux/rUjyFrQD1qx6bzq5Ytka
-         qlyg==
+        bh=B3RiLfffpu7Ffa96sGXtUyFTXMqhEfmtMEWOofkZHzs=;
+        b=GUmovhQZ0/gL6Csm9lB/oZvXQzoRbh+uVmBzc8YSv+cMKg9Uubues33H/9RyfdILfj
+         k+zc557ufFVnuu02HgkHoFuAOrYPjf492rTJMSJs+Y14GZdZJ6vatA+cSh9f6oo963Io
+         d0+6cjq3IXdboW94NV5+1nI2XbXJvpX520Bj2HNaDdIOD88O4E6cx87O+l9159ye1JVx
+         z5ECFYUXaEaFv94IyKrGZwFgzAl9mjpRAIoxg2VDDG4MXRpqli7BRe0VZzFziNXygZdF
+         C5HOej3GIe0ixLu5QAUeJFlzHR9sfGixz9LuDB31Pak32LJ1sCx/7snoqduumBjN/l3T
+         gKng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771607769; x=1772212569;
+        d=1e100.net; s=20230601; t=1771608843; x=1772213643;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=+FIG9q/M+yTBjTrAHAw7SaWHpsPSmQOUIDS7bx4BpBE=;
-        b=s481gYMPSNEcRN+FR06GX82ep8cOs22wTKpIIDaZhExObALUjtVbHU/H+pNtnru3lt
-         Obo6R38Hv2FCnCbO5hzzWuccFwXz8B6/j/LhzQek2dJVpUaTOv4kxjfWKT8cApZbqbMO
-         CAj3pj31EWC7I1XfZEkqV9nQWCGHrwN9+CrpOEtReXPMG98L2och6DzCXC6OTNZ09dh6
-         6yy4YBMgEEs6bvV0wf6yR8Tz85up+pEvzi9AM7EXGfMZQKfswV1z1jaMY/8y3t54yn6T
-         WiRXDoVfjkD/WyFfuCwams1rbo/hf1q8J49+GnqOuEvYlAgU8nu+mpE7/HXWEyBvHbcw
-         UDQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVPJK5Vc1hM36chgCyA3/dawLPdzthXNtPFY5zP0bxLu1JI5d+dKdcGt0AOOnfVBS7qGGfHm8Al1LCZ/Gap@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx5WAfkc9id/kmLcdED8tQcDvvpNzPt+xQOBil4qcquRGbjMQa
-	nTYYmf6y6WfycjTWsr7vISAnuza13rAHJLGgTbCao5UVzudyms2FEVozDJRHTZWel44BFWY7ZzZ
-	eW7gNzXcQ+g8vYLXOx5yl2BnDdLSveDU=
-X-Gm-Gg: AZuq6aLCZpg21yQA86Vy4+jpytf7t1m5ngyrza/C4wtxSKk42IMJbB8L4pDNQq2RUgm
-	3QnM9XWU5t3PDbFM71UQLZGNc171WSM1TW2epqCrzJMYsN+0mZNR6XXBfjKXczivtnHrd3DYvTg
-	foAW1ntxd7ngOzcNZWOVaH3hjDXl2Vh8Fs4QsnJmfUD+vH2rbG98QKNomxhD5dsTEgeKdtzmgpA
-	/6zg9rWD3v9T7m+AEUeb3zw9lvGje3JZMd3C8SZMotA2E9pJLzwWJPaSf0xxfDyOm1H9lMdmsnI
-	tVGYtOKGWI3lh8C/wYknuJ+YlLS+vKHNmbBy+EJRoA==
-X-Received: by 2002:a05:6402:50d2:b0:64b:58c0:a393 with SMTP id
- 4fb4d7f45d1cf-65ea4f07f63mr241574a12.30.1771607768401; Fri, 20 Feb 2026
- 09:16:08 -0800 (PST)
+        bh=B3RiLfffpu7Ffa96sGXtUyFTXMqhEfmtMEWOofkZHzs=;
+        b=WrNnQc3IKCoV2FEyGvXA1nfpzbvvYOd0dPBFkPIwO1z8owVkZkcE5AZV48CB7B8hWk
+         IeggrggS5MuoXG/0QO/a/B5AKsW9rLLGR1Ps1woCetM6ASOs9iq0CICOvqkJ5pM2Gj+9
+         a+5RzGQb1aHPFi2jvzmhQMMNMobwJnuJjYBb/T6ACqP74fNfwzwxGM18tHz/Y/BxRrkn
+         lDvyzinLvS8BefTEqeT2TUcSVqQxbf9teIhKtgj1plsXl1aqFR9s6tmsvaScWKHPsqtO
+         w7SGuL2UcG3PfR5TGphECVmrQ8qCBcTVH+jE26/h7ROWqSLbmqimgwrRqb0A0zB9/6/n
+         AuyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPbg45DkV7xwzQkVrQVg0gi0kS54XD5HTpoPetdYRNvoesIFiWKLnhRULc6EBH5siuT0m53McLYeLmS7lm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi1qvpAMqZps22LzuIjVmYNI5DpU32GUDeoeQFuVIPfg9K60Z6
+	Sax7KiOvqfDjmRdhOMn4ZjAEDSULMZ5SvjhFOhE2LgMgTP5iX9U79bAkXTG/O9wHpuseS01ZlFh
+	0ag25y2yJIlDjcA9COHAVwRAJTohEMMo=
+X-Gm-Gg: AZuq6aLz2/o05rXLJLDcwKr0EI6KCsT2j8KoOo7AKUMkTnsq3YHdnTlOy2R0Xb8oXlU
+	EHXpMFn3IgU9tTBtAun+pPvlniW5z5TgDJ8rCJ23LWyOg0i6Qj+mxaz5C/qKEjBybFTciH3xvv1
+	2fSWWNrowFpoLprQS4k7oXOSrTIFDxuQ7lviO4U1Vl+ZPamV3ubA6O1HQk2OxHxbp/gW9BNu98f
+	fuldv8rKnNclbRcUJ1K7PxGUEQFjnnn9CrDpoXUD66YCcIs59sOkm+juM+nHbRWWVntT1YHDFMQ
+	ewmyDt/iNw3qNCj6l8H6AQ/nF+XHTqJwuW3cOYZAutDAiMmZmPPnSoq+VEaa6mUKUBZhg1zxRTC
+	srELs49HtJ+Jcr2LXhFKuZjuD
+X-Received: by 2002:a05:693c:2c17:b0:2ba:674a:dbe8 with SMTP id
+ 5a478bee46e88-2bd7bdbce7cmr74947eec.8.1771608842904; Fri, 20 Feb 2026
+ 09:34:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260220055449.3073-1-tjmercier@google.com> <20260220055449.3073-3-tjmercier@google.com>
- <aZh-orwoaeAh52Bf@slm.duckdns.org>
-In-Reply-To: <aZh-orwoaeAh52Bf@slm.duckdns.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 20 Feb 2026 19:15:56 +0200
-X-Gm-Features: AaiRm51-NxZivWP9n79oFDzWvBAa9d7rBDJz7DAiXkp5nty2l6CfzMRpgIoYHak
-Message-ID: <CAOQ4uxjgXa1q-8-ajSBwza-Tkv91tFP-_wWzCQPW+PwJMehEWA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] kernfs: Send IN_DELETE_SELF and IN_IGNORED
-To: Tejun Heo <tj@kernel.org>
-Cc: "T.J. Mercier" <tjmercier@google.com>, gregkh@linuxfoundation.org, 
-	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz, 
-	shuah@kernel.org, linux-kselftest@vger.kernel.org
+References: <20260220-unique-ref-v15-0-893ed86b06cc@kernel.org> <20260220-unique-ref-v15-9-893ed86b06cc@kernel.org>
+In-Reply-To: <20260220-unique-ref-v15-9-893ed86b06cc@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 20 Feb 2026 18:33:49 +0100
+X-Gm-Features: AaiRm53lo0keI-FayfnRj4AYfVuM2jzmE06bNyAO-n4MO92LWSUkvblDHz_tCFM
+Message-ID: <CANiq72myc+tCEHm0WtZspZHWwsSzvesxsmUvk31=GCdUN_zVNA@mail.gmail.com>
+Subject: Re: [PATCH v15 9/9] rust: page: add `from_raw()`
+To: Andreas Hindborg <a.hindborg@kernel.org>, Tamir Duberstein <tamird@kernel.org>, 
+	Benno Lossin <lossin@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Leon Romanovsky <leon@kernel.org>, Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Igor Korotin <igor.korotin.linux@gmail.com>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Boqun Feng <boqun@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-pm@vger.kernel.org, 
+	linux-pci@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77806-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77807-lists,linux-fsdevel=lfdr.de];
+	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[40];
+	FREEMAIL_CC(0.00)[kernel.org,garyguo.net,protonmail.com,google.com,umich.edu,linuxfoundation.org,intel.com,paul-moore.com,gmail.com,ffwll.ch,zeniv.linux.org.uk,suse.cz,collabora.com,oracle.com,ti.com,vger.kernel.org,lists.freedesktop.org,kvack.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	MISSING_XM_UA(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[amir73il@gmail.com,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[miguelojedasandonis@gmail.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
 	MID_RHS_MATCH_FROMTLD(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid,memory.events:url]
-X-Rspamd-Queue-Id: 1D23C169A80
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,rust-lang.org:url,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: 5E033169BDF
 X-Rspamd-Action: no action
 
-On Fri, Feb 20, 2026 at 4:32=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
+On Fri, Feb 20, 2026 at 10:52=E2=80=AFAM Andreas Hindborg <a.hindborg@kerne=
+l.org> wrote:
 >
-> Hello,
->
-> On Thu, Feb 19, 2026 at 09:54:47PM -0800, T.J. Mercier wrote:
-> > Currently some kernfs files (e.g. cgroup.events, memory.events) support
-> > inotify watches for IN_MODIFY, but unlike with regular filesystems, the=
-y
-> > do not receive IN_DELETE_SELF or IN_IGNORED events when they are
-> > removed. This means inotify watches persist after file deletion until
-> > the process exits and the inotify file descriptor is cleaned up, or
-> > until inotify_rm_watch is called manually.
-> >
-> > This creates a problem for processes monitoring cgroups. For example, a
-> > service monitoring memory.events for memory.high breaches needs to know
-> > when a cgroup is removed to clean up its state. Where it's known that a
-> > cgroup is removed when all processes die, without IN_DELETE_SELF the
-> > service must resort to inefficient workarounds such as:
-> >   1) Periodically scanning procfs to detect process death (wastes CPU
-> >      and is susceptible to PID reuse).
-> >   2) Holding a pidfd for every monitored cgroup (can exhaust file
-> >      descriptors).
-> >
-> > This patch enables IN_DELETE_SELF and IN_IGNORED events for kernfs file=
-s
-> > and directories by clearing inode i_nlink values during removal. This
-> > allows VFS to make the necessary fsnotify calls so that userspace
-> > receives the inotify events.
-> >
-> > As a result, applications can rely on a single existing watch on a file
-> > of interest (e.g. memory.events) to receive notifications for both
-> > modifications and the eventual removal of the file, as well as automati=
-c
-> > watch descriptor cleanup, simplifying userspace logic and improving
-> > efficiency.
-> >
-> > There is gap in this implementation for certain file removals due their
-> > unique nature in kernfs. Directory removals that trigger file removals
-> > occur through vfs_rmdir, which shrinks the dcache and emits fsnotify
-> > events after the rmdir operation; there is no issue here. However kernf=
-s
-> > writes to particular files (e.g. cgroup.subtree_control) can also cause
-> > file removal, but vfs_write does not attempt to emit fsnotify events
-> > after the write operation, even if i_nlink counts are 0. As a usecase
-> > for monitoring this category of file removals is not known, they are
-> > left without having IN_DELETE or IN_DELETE_SELF events generated.
->
-> Adding a comment with the above content would probably be useful. It also
-> might be worthwhile to note that fanotify recursive monitoring wouldn't w=
-ork
-> reliably as cgroups can go away while inodes are not attached.
+> +    /// Create a `&Page` from a raw `struct page` pointer
 
-Sigh.. it's a shame to grow more weird semantics.
+Please end sentences with a period.
 
-But I take this back to the POV of "remote" vs. "local" vfs notifications.
-the IN_DELETE_SELF events added by this change are actually
-"local" vfs notifications.
+> +        // SAFETY: By function safety requirements, ptr is not null and =
+is
 
-If we would want to support monitoring cgroups fs super block
-for all added/removed cgroups with fanotify, we would be able
-to implement this as "remote" notifications and in this case, adding
-explicit fsnotify() calls could make sense.
+Please use Markdown in comments: `ptr`.
 
-Thanks,
-Amir.
+> +    /// `ptr` must be valid for use as a reference for the duration of `=
+'a`.
+
+Since we will likely try to starting introducing at least a subset of
+the Safety Standard soon, we should try to use standard terms.
+
+So I think this "valid for use as a reference" is not an established
+one, no? Isn't "convertible to a shared reference" the official term?
+
+  https://doc.rust-lang.org/std/ptr/index.html#pointer-to-reference-convers=
+ion
+
+In fact, I see `as_ref_unchecked()` and `as_mut_unchecked()` just got
+stabilized for 1.95.0, so we should probably starting using those were
+applicable as we bump the minimum, but we should probably use already
+a similar wording as the standard library for the safety section and
+the comment:
+
+  "`ptr` must be [convertible to a reference](...)."
+
+where the term is a link to that section. Cc'ing Benno.
+
+I have created a (future) issue for that:
+
+  https://github.com/Rust-for-Linux/linux/issues/1225
+
+Cc'ing Tamir since this is close to the cast work, so it may interest
+him as well.
+
+Cheers,
+Miguel
 
