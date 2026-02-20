@@ -1,50 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-77797-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QByjGU9+mGlMJQMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77797-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 16:31:27 +0100
+	id YEmOE7V+mGlMJQMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 16:33:09 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC493168E79
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 16:31:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1C77168E9F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 16:33:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8F14D303FDE3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 15:31:20 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 89E06307B206
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 15:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301903126D6;
-	Fri, 20 Feb 2026 15:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246AB342C8B;
+	Fri, 20 Feb 2026 15:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NXNhPjGQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C136729D29D;
-	Fri, 20 Feb 2026 15:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A242A20D4FC;
+	Fri, 20 Feb 2026 15:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771601478; cv=none; b=bz4H+uVIYG7wjPUFNBwdrLb9S6eRxzTBi7nwMjYdhtvMoT5nUlsgPAckcpSJX7ACHjzBKaGgLySn1zTUmGmm4VRFGVmJ41xI/wWEKW5bQk2cPe0tY244saXFD2zIxO5B7+0mTIlDelQhzP0J9MpzJ2ZC/fewaA3i8oot8vNjFGY=
+	t=1771601571; cv=none; b=oXMinaPxJoREmTS2+L2Sv7nfo94deKzMf/jgdMb3jp6FfQFTJbVC7BK0AGLSrdElYXRjrt04kl7CD4YXsjVir32/TEdF9hbCj1lo8xSMBHdtmc37i4g5PXIMFtTRSQOb2sS9f5l3GoUQ+lNsxnY/JrkbOQlZDtQXWeAHsTBx7oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771601478; c=relaxed/simple;
-	bh=fUcOx96hUH2xxWt5q41bPTjE5PJ87yVEHYVDDLnSaIM=;
+	s=arc-20240116; t=1771601571; c=relaxed/simple;
+	bh=fDGKx15Hxqu+IAN7+rfHjM/yq650i7Sc39dis0PLF/g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KuFpPI6xCluokuHP9Dji3xE5caklVVW3l/gS76TLLm1T688u1LRArMnH1otD+6c1f3ZqYLMy3x3qpSJUTl7RtptnZ/dUfjjoHByls8M8ONqlxw+S9s6JEa1nJntQ4GeHSN62BUlT4wslCbX8FCfqxBqCxp1CQdKqweui04Yk0Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 50A3A68B05; Fri, 20 Feb 2026 16:31:14 +0100 (CET)
-Date: Fri, 20 Feb 2026 16:31:13 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Andrey Albershteyn <aalbersh@kernel.org>, linux-xfs@vger.kernel.org,
-	fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	ebiggers@kernel.org, djwong@kernel.org
-Subject: Re: [PATCH v3 11/35] iomap: allow filesystem to read fsverity
- metadata beyound EOF
-Message-ID: <20260220153113.GA14359@lst.de>
-References: <20260217231937.1183679-1-aalbersh@kernel.org> <20260217231937.1183679-12-aalbersh@kernel.org> <20260218063606.GD8600@lst.de> <hfteu6bonpv7djecbf3d6ekh56ktgcl4c2lvtjtrjfetzaq5dw@scsrvxx5rgig> <20260219060420.GC3739@lst.de> <qheg77kxcl4ecqdrsnmz4acfvszjlamlb7ilgxxyf3pmt4r7ah@5fzzmcpurdfp> <20260219133829.GA11935@lst.de> <bltgc6uliclhzkuqd4la2tzp6x7vsww73nvjedxh7s624tby3k@jw4ij5irh6ni>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ovF74aNiiPSaa4IHMjhQqwyBf0RaxJM9QYADPxmEW1Zr/iJKApB/NfJDBp23a6hxAyvaCWyvl2m7zbZkylVx71bZr0+Oyk3vi9gn7YJqwXx8mUPZ+eSlSzMxLtl6vX5m55/4YaXPO7AJdM0Vl9zBbIkZ7pBRX1cNYhnOE4GheWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NXNhPjGQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AB33C116D0;
+	Fri, 20 Feb 2026 15:32:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771601571;
+	bh=fDGKx15Hxqu+IAN7+rfHjM/yq650i7Sc39dis0PLF/g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NXNhPjGQ5QYdl2bepA45yrtfCNKVLOylDAjxOF/AapIKqvwIuSWKCdEnAq/ROa/vL
+	 /vAOR/A2XkzziqUbY0+z5TKG5+JuI6+1iEzQj7RPwwmkYsx3ZkExH2hLM1/tD/Opyj
+	 uc9hwq131dSEDzwcPWTODZ9ToJuWyq2eVltFZ2zczZh5yB3+5zYb+iYTBWilhChA/I
+	 cI78u1BZB8rKMcUhhawofYf8MYo0c0b72ZPffmYlGaXjZC4OcXNKiMfQ/3yQDkcSkh
+	 eALixBppGk8Z5U+FBqU7mq5zsnvO/j40psyEG2XLkL4+ejYhXzDpWfXoJ02gSxvsry
+	 Dmd1AA7UlewNA==
+Date: Fri, 20 Feb 2026 05:32:50 -1000
+From: Tejun Heo <tj@kernel.org>
+To: "T.J. Mercier" <tjmercier@google.com>
+Cc: gregkh@linuxfoundation.org, driver-core@lists.linux.dev,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, jack@suse.cz, amir73il@gmail.com,
+	shuah@kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] kernfs: Send IN_DELETE_SELF and IN_IGNORED
+Message-ID: <aZh-orwoaeAh52Bf@slm.duckdns.org>
+References: <20260220055449.3073-1-tjmercier@google.com>
+ <20260220055449.3073-3-tjmercier@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,100 +63,90 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bltgc6uliclhzkuqd4la2tzp6x7vsww73nvjedxh7s624tby3k@jw4ij5irh6ni>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20260220055449.3073-3-tjmercier@google.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.36 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
-	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
-	MID_RHS_MATCH_FROM(0.00)[];
-	NEURAL_HAM(-0.00)[-0.965];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MIME_TRACE(0.00)[0:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCVD_COUNT_THREE(0.00)[4];
-	R_DKIM_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-77798-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[linuxfoundation.org,lists.linux.dev,vger.kernel.org,suse.cz,gmail.com,kernel.org];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	PRECEDENCE_BULK(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77797-lists,linux-fsdevel=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[]
-X-Rspamd-Queue-Id: BC493168E79
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	MISSING_XM_UA(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[tj@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[slm.duckdns.org:mid,suse.cz:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,memory.events:url]
+X-Rspamd-Queue-Id: A1C77168E9F
 X-Rspamd-Action: no action
 
-On Thu, Feb 19, 2026 at 03:23:11PM +0100, Andrey Albershteyn wrote:
-> On 2026-02-19 14:38:29, Christoph Hellwig wrote:
-> > On Thu, Feb 19, 2026 at 12:11:18PM +0100, Andrey Albershteyn wrote:
-> > > > > fsverity descriptor. This is basically the case as for EOF folio.
-> > > > > Descriptor is the end of the fsverity metadata region. If we have 1k
-> > > > > fs blocks (= merkle blocks) we can have [descriptor | hole ] folio.
-> > > > > As we are not limited by i_size here, iomap_block_needs_zeroing()
-> > > > > won't fire to zero this hole. So, this case is to mark this tail as
-> > > > > uptodate.
-> > > > 
-> > > > How do we end up in that without ctx->vi set?
-> > > 
-> > > We're reading it
-> > 
-> > Did a part of that sentence get lost?
+Hello,
+
+On Thu, Feb 19, 2026 at 09:54:47PM -0800, T.J. Mercier wrote:
+> Currently some kernfs files (e.g. cgroup.events, memory.events) support
+> inotify watches for IN_MODIFY, but unlike with regular filesystems, they
+> do not receive IN_DELETE_SELF or IN_IGNORED events when they are
+> removed. This means inotify watches persist after file deletion until
+> the process exits and the inotify file descriptor is cleaned up, or
+> until inotify_rm_watch is called manually.
 > 
-> I mean that to have ctx->vi we need to read fsverity descriptor
-> first. When iomap is reading fsverity descriptor inode won't have
-> any fsverity_info yet.
-
-So for ext4/f2fs the pattern is that it is set by:
-
-	if (folio->index < DIV_ROUND_UP(inode->i_size, PAGE_SIZE))
-		vi = fsverity_get_info(inode);
-
-i.e., only for reading the data.  OTOH, for iomap we do:
-
-	if (fsverity_active(iter.inode)) {
-		ctx->vi = fsverity_get_info(iter.inode);
-
-which means it now is set for all I/O on fsverity files, which
-is subtly different.
-
-(You don't actually need the fsverity_active chck, fsverity_get_info
-already does that, btw).
-
-I'm still not sure what "When iomap is reading fsverity descriptor
-inode" means.
-
-> > Another overly long line here.  Also we should avoid the
-> > fsverity_active check here, as it causes a rhashtable lookup.  F2fs
-> > and ext4 just check ctx->vi, but based on the checks above, we seem
-> > to set this also for (some) reads of the fsverity metadata.  But as
-> > we exclude IOMAP_F_FSVERITY above, we might actually be fine with a
-> > ctx->vi anyway.
+> This creates a problem for processes monitoring cgroups. For example, a
+> service monitoring memory.events for memory.high breaches needs to know
+> when a cgroup is removed to clean up its state. Where it's known that a
+> cgroup is removed when all processes die, without IN_DELETE_SELF the
+> service must resort to inefficient workarounds such as:
+>   1) Periodically scanning procfs to detect process death (wastes CPU
+>      and is susceptible to PID reuse).
+>   2) Holding a pidfd for every monitored cgroup (can exhaust file
+>      descriptors).
 > 
-> Don't you confused this with fsverity_get_info()? I don't see how it
-> could cause lookup.
-
-Yeah.  Still, having ctx->vi implies fsverity_active, and follows
-what we're doing elsewhere.
-
+> This patch enables IN_DELETE_SELF and IN_IGNORED events for kernfs files
+> and directories by clearing inode i_nlink values during removal. This
+> allows VFS to make the necessary fsnotify calls so that userspace
+> receives the inotify events.
 > 
-> > 
-> > Please document the rules for ctx->vi while were it.
-> > 
+> As a result, applications can rely on a single existing watch on a file
+> of interest (e.g. memory.events) to receive notifications for both
+> modifications and the eventual removal of the file, as well as automatic
+> watch descriptor cleanup, simplifying userspace logic and improving
+> efficiency.
 > 
-> Hmm, the vi is set in iomap_read_folio() [1] and then used down
-> through I/O up to ioend completion. What info you would like to see
-> there?
+> There is gap in this implementation for certain file removals due their
+> unique nature in kernfs. Directory removals that trigger file removals
+> occur through vfs_rmdir, which shrinks the dcache and emits fsnotify
+> events after the rmdir operation; there is no issue here. However kernfs
+> writes to particular files (e.g. cgroup.subtree_control) can also cause
+> file removal, but vfs_write does not attempt to emit fsnotify events
+> after the write operation, even if i_nlink counts are 0. As a usecase
+> for monitoring this category of file removals is not known, they are
+> left without having IN_DELETE or IN_DELETE_SELF events generated.
 
-See above, unlike ext4/f2fs we set it for all I/O on fsverity inodes.
-And afaik we don't actually need it, the only use in the fsverity
-metadata path is the fill zeroes hash values check (which I'm still
-totally confused about).
+Adding a comment with the above content would probably be useful. It also
+might be worthwhile to note that fanotify recursive monitoring wouldn't work
+reliably as cgroups can go away while inodes are not attached.
 
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: T.J. Mercier <tjmercier@google.com>
+
+Acked-by: Tejun Heo <tj@kernel.org>
+
+Thanks.
+
+-- 
+tejun
 
