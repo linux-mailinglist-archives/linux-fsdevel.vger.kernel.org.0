@@ -1,60 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-77798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YEmOE7V+mGlMJQMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 16:33:09 +0100
+	id 4H93Hm6CmGlMJQMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 16:49:02 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1C77168E9F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 16:33:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC3F0169087
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 16:49:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 89E06307B206
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 15:32:54 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E21FA3068ED2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Feb 2026 15:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246AB342C8B;
-	Fri, 20 Feb 2026 15:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3332F3314C4;
+	Fri, 20 Feb 2026 15:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NXNhPjGQ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gWvDjnLL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A242A20D4FC;
-	Fri, 20 Feb 2026 15:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67D125B31D
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Feb 2026 15:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771601571; cv=none; b=oXMinaPxJoREmTS2+L2Sv7nfo94deKzMf/jgdMb3jp6FfQFTJbVC7BK0AGLSrdElYXRjrt04kl7CD4YXsjVir32/TEdF9hbCj1lo8xSMBHdtmc37i4g5PXIMFtTRSQOb2sS9f5l3GoUQ+lNsxnY/JrkbOQlZDtQXWeAHsTBx7oc=
+	t=1771602522; cv=none; b=Rj62Yo6tNcYWCYCo59dE+O5fZGkKxMfJ4aR3Y9pANgnTlEM/qDD/9OhALnytLeeBeCMGe4VRZaJqE51kqx1U/Bwyff+jGGrY+jV05jI1EdIVqWQSwVt4UVpLGqgQHrvuaZ3uGf/JsF8Y5f/Y11YwkhMb9VO28EUrw3cP0DfE9N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771601571; c=relaxed/simple;
-	bh=fDGKx15Hxqu+IAN7+rfHjM/yq650i7Sc39dis0PLF/g=;
+	s=arc-20240116; t=1771602522; c=relaxed/simple;
+	bh=gmnNpUBKvKiLGLM3Pk7E/9CIskZGdhnWrzhUkfFre8I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ovF74aNiiPSaa4IHMjhQqwyBf0RaxJM9QYADPxmEW1Zr/iJKApB/NfJDBp23a6hxAyvaCWyvl2m7zbZkylVx71bZr0+Oyk3vi9gn7YJqwXx8mUPZ+eSlSzMxLtl6vX5m55/4YaXPO7AJdM0Vl9zBbIkZ7pBRX1cNYhnOE4GheWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NXNhPjGQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AB33C116D0;
-	Fri, 20 Feb 2026 15:32:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771601571;
-	bh=fDGKx15Hxqu+IAN7+rfHjM/yq650i7Sc39dis0PLF/g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NXNhPjGQ5QYdl2bepA45yrtfCNKVLOylDAjxOF/AapIKqvwIuSWKCdEnAq/ROa/vL
-	 /vAOR/A2XkzziqUbY0+z5TKG5+JuI6+1iEzQj7RPwwmkYsx3ZkExH2hLM1/tD/Opyj
-	 uc9hwq131dSEDzwcPWTODZ9ToJuWyq2eVltFZ2zczZh5yB3+5zYb+iYTBWilhChA/I
-	 cI78u1BZB8rKMcUhhawofYf8MYo0c0b72ZPffmYlGaXjZC4OcXNKiMfQ/3yQDkcSkh
-	 eALixBppGk8Z5U+FBqU7mq5zsnvO/j40psyEG2XLkL4+ejYhXzDpWfXoJ02gSxvsry
-	 Dmd1AA7UlewNA==
-Date: Fri, 20 Feb 2026 05:32:50 -1000
-From: Tejun Heo <tj@kernel.org>
-To: "T.J. Mercier" <tjmercier@google.com>
-Cc: gregkh@linuxfoundation.org, driver-core@lists.linux.dev,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, jack@suse.cz, amir73il@gmail.com,
-	shuah@kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] kernfs: Send IN_DELETE_SELF and IN_IGNORED
-Message-ID: <aZh-orwoaeAh52Bf@slm.duckdns.org>
-References: <20260220055449.3073-1-tjmercier@google.com>
- <20260220055449.3073-3-tjmercier@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eWvJ+4dVeh7SlmTgSvi0CjYytf6nWqsqE75gMRt5hDAVoLxY/5DBcFcak5a6PzVMi8WpGmzzAgKkMEtDlnxT6dIu1BhDdhs/06iq3NtFSnWF+Txn7SJOgv7GmFp3C70Jk+kMpk065vAD/8tsDDtg3o71ntQzkgboxKaR8PmrvyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gWvDjnLL; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=oDfl7ujLSAjPqRlO5CUQ6KS6JUy8p8t0K1tQN1Tn7uA=; b=gWvDjnLL035+PY6+cpFHvaeMZA
+	o2dJgyipbwR6nisBvBYbndKXYD3gp8cYJiG5KPweJ9HCZoGmey81U9jSZ7L/mOfuDqvKfhQD11R06
+	EI/Iq3Hu8eeJO0Ga5ZTGZxver0b9a3LkYTIaTouz8NancMdTSnggKd1bVcwCa5OYF8P3F9GXzXmW9
+	ZtRjRPznwlXqDe00Zl6mWpNILZRsjLmU6Zl6HJ7Wj+d9YVOSv7JViddUjcTXWQrUbTUBKDdSDMCOs
+	DhvhvCbCG55oGZZFrDR0aKe3Z/7m/VBiPoLs4Hbwu+GR0mXGRXy1jf2TJouBmcrfbL9edMje5obeN
+	ItOceroQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vtSkB-0000000F69H-1GkY;
+	Fri, 20 Feb 2026 15:48:39 +0000
+Date: Fri, 20 Feb 2026 07:48:39 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Nanzhe Zhao <nzzhao@126.com>
+Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	Christoph Hellwig <hch@infradead.org>, willy@infradead.org,
+	yi.zhang@huaweicloud.com, jaegeuk@kernel.org,
+	Chao Yu <chao@kernel.org>, Barry Song <21cnbao@gmail.com>,
+	wqu@suse.com
+Subject: Re: [LSF/MM/BPF TOPIC] Large folio support: iomap framework changes
+ versus filesystem-specific implementations
+Message-ID: <aZiCV2lPYhiQzYUJ@infradead.org>
+References: <75f43184.d57.19c7b2269dd.Coremail.nzzhao@126.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,90 +67,52 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260220055449.3073-3-tjmercier@google.com>
+In-Reply-To: <75f43184.d57.19c7b2269dd.Coremail.nzzhao@126.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77798-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[linuxfoundation.org,lists.linux.dev,vger.kernel.org,suse.cz,gmail.com,kernel.org];
+	TAGGED_FROM(0.00)[bounces-77799-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[lists.linux-foundation.org,vger.kernel.org,infradead.org,huaweicloud.com,kernel.org,gmail.com,suse.com];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_TO(0.00)[126.com];
 	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DKIM_TRACE(0.00)[infradead.org:+];
 	MISSING_XM_UA(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[tj@kernel.org,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[slm.duckdns.org:mid,suse.cz:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,memory.events:url]
-X-Rspamd-Queue-Id: A1C77168E9F
+	NEURAL_HAM(-0.00)[-0.999];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[hch@infradead.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:mid,infradead.org:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: CC3F0169087
 X-Rspamd-Action: no action
 
-Hello,
+Maybe you catch on the wrong foot, but this pisses me off.  I've been
+telling you guys to please actually fricking try converting f2fs to
+iomap, and it's been constantly ignored.
 
-On Thu, Feb 19, 2026 at 09:54:47PM -0800, T.J. Mercier wrote:
-> Currently some kernfs files (e.g. cgroup.events, memory.events) support
-> inotify watches for IN_MODIFY, but unlike with regular filesystems, they
-> do not receive IN_DELETE_SELF or IN_IGNORED events when they are
-> removed. This means inotify watches persist after file deletion until
-> the process exits and the inotify file descriptor is cleaned up, or
-> until inotify_rm_watch is called manually.
-> 
-> This creates a problem for processes monitoring cgroups. For example, a
-> service monitoring memory.events for memory.high breaches needs to know
-> when a cgroup is removed to clean up its state. Where it's known that a
-> cgroup is removed when all processes die, without IN_DELETE_SELF the
-> service must resort to inefficient workarounds such as:
->   1) Periodically scanning procfs to detect process death (wastes CPU
->      and is susceptible to PID reuse).
->   2) Holding a pidfd for every monitored cgroup (can exhaust file
->      descriptors).
-> 
-> This patch enables IN_DELETE_SELF and IN_IGNORED events for kernfs files
-> and directories by clearing inode i_nlink values during removal. This
-> allows VFS to make the necessary fsnotify calls so that userspace
-> receives the inotify events.
-> 
-> As a result, applications can rely on a single existing watch on a file
-> of interest (e.g. memory.events) to receive notifications for both
-> modifications and the eventual removal of the file, as well as automatic
-> watch descriptor cleanup, simplifying userspace logic and improving
-> efficiency.
-> 
-> There is gap in this implementation for certain file removals due their
-> unique nature in kernfs. Directory removals that trigger file removals
-> occur through vfs_rmdir, which shrinks the dcache and emits fsnotify
-> events after the rmdir operation; there is no issue here. However kernfs
-> writes to particular files (e.g. cgroup.subtree_control) can also cause
-> file removal, but vfs_write does not attempt to emit fsnotify events
-> after the write operation, even if i_nlink counts are 0. As a usecase
-> for monitoring this category of file removals is not known, they are
-> left without having IN_DELETE or IN_DELETE_SELF events generated.
+And arguments about "log structured filesystems" here are BS.  iomap
+has supported out of places writes for XFS since 2016, which is
+right after iomap.c was created, and long before the non-buffer_head
+buffered I/O path exist.  With zoned XFS we have a user that writes
+data purely log structures, and using zone append in a way where we
+don't even know the location at submission time.  So no, that's not
+an argument.  f2fs being really weird is one, but we've usually been
+trying to accommodate it, but for that everyone actually needs to
+understand what it's trying to do.
 
-Adding a comment with the above content would probably be useful. It also
-might be worthwhile to note that fanotify recursive monitoring wouldn't work
-reliably as cgroups can go away while inodes are not attached.
-
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: T.J. Mercier <tjmercier@google.com>
-
-Acked-by: Tejun Heo <tj@kernel.org>
-
-Thanks.
-
--- 
-tejun
 
