@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-78168-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78169-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id eLMFCzPmnGlxMAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78168-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:43:47 +0100
+	id cGr1AkTmnGlxMAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78169-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:44:04 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id D42E117FD69
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:43:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BC5C17FDA9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:44:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 7088830967DF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:40:20 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 53E3930AA049
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97C237FF4A;
-	Mon, 23 Feb 2026 23:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7D137FF4A;
+	Mon, 23 Feb 2026 23:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sFTDLNwm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t0ce6X5i"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559E91E9906;
-	Mon, 23 Feb 2026 23:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACCB437BE9E;
+	Mon, 23 Feb 2026 23:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771890015; cv=none; b=AXFYI+HD8gkxa+xQD27OPccfVPfsE0CIn9YxSga3wf1cYZAsPSzTUhdrRIkzs+slG/5bA9ue0H1nmVNsJmuSWm/lhClCjs3JhwHjXzSdnc4qLicaFKM5CvqiIJvd+TplEtB7+CVjkkFoLBrrCVDgWMcO0oeTU5mNSZz1hHGMDGQ=
+	t=1771890030; cv=none; b=tH5U/cuf7jmANgRWfE9bdF9kGisKEYwHwxYbAeWIFLpE7JIxN82cqg8ks/7WtfPWqkWHWVrvuWRmh4BbabkCQ2aGmZMwyTwVVYsYg5tORCA62e1bTK+EPf70deOdvh8QiyQvmTKwfejU4DcayecUUohZFTDRaxjNSYfRsuiHheQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771890015; c=relaxed/simple;
-	bh=Q3U8rPtW/sgM9nnMEZSMgV6ofowe0t5L8H8yJoRVK9c=;
+	s=arc-20240116; t=1771890030; c=relaxed/simple;
+	bh=mkFuK9hS4Ggbi5battVXcPpDstiKZ6ProlDdmdk2Ivc=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CNr4Jw1vRiqfdm3LmdmlZF6foCxs5b+vLFJqG/5cI5fC5WFqZNKGDDUANqUUq2I6fwzgFVqy77t2B9bzCFm9MJnQMjxWqO692SxihIG0QfgTqE7d3SlH3qc43j+k92g9ADJ4d/9gCXKNSGQ5rJbOMq7lf6uTlfkkhgUjBHJ6iUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sFTDLNwm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5637C2BC87;
-	Mon, 23 Feb 2026 23:40:14 +0000 (UTC)
+	 MIME-Version:Content-Type; b=cIb002p0zaqNocimtB3Kw8o7qvfbuPqtJmRc+UckWzYybR3Ht/2sNdbl/Rq3IRmBoOmJGum7pmM6kFFq0CDC1N5g4g6SPiwL0iDzD35hs+D+ybACuRM32GK4ZIi87ohIj4iXe36S80xfaTf0sxJZ9LpRsxYjRxtnJGO/vYEDf+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t0ce6X5i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85155C19424;
+	Mon, 23 Feb 2026 23:40:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771890014;
-	bh=Q3U8rPtW/sgM9nnMEZSMgV6ofowe0t5L8H8yJoRVK9c=;
+	s=k20201202; t=1771890030;
+	bh=mkFuK9hS4Ggbi5battVXcPpDstiKZ6ProlDdmdk2Ivc=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=sFTDLNwmdVy12G6wOa8iUN0244Z3rKnJ0DfDUDnc6uIaMsce1KbfiG95hGgzstdqN
-	 sEhkXF69yroNVH0Hw/vAMCsDceBplE0JvKumIzLFvOj9vvw0UqCEs+4XvO1Aszyx6t
-	 xDl79z1vTWSGUktFCk5xCRgfZI6pff9sTyXKEhvP+3cG7wNv5DbJXOga4cE63z/THI
-	 pyPV8X/n5w5nYBbdX/JCow7Z03vIIiJ0YFsgAzrlT1L1tiAUwGG2f46nohpKMJVdd9
-	 JRkqb1VQvG2v2qwTvQq0GTdSdaMojyVeAKzGHGtaAknoOAkr/Bf8iqiC0rn5IsMNT3
-	 SICyGPY5lzosg==
-Date: Mon, 23 Feb 2026 15:40:14 -0800
-Subject: [PATCH 16/19] fuse2fs: implement statx
+	b=t0ce6X5ix+dUVkSa3gtJCXDJ7nB4+1oIriYSriCsC6hVqCsukqm1uAhhXF26DqmCl
+	 yHb5ZwpbOTNpXc943ek3EQp5LZa6uQv8nX9ZHmMRfYWOYjJq8+kA/CJsIpDDNaUm9n
+	 2nbWh72FIMYWOA//22rzpbsMaMJf+FPTQvSvzNoAscuFpXrHj86zYQcmNVM0Ibpw1E
+	 h4wyTBGPZW26ZSPW30Szr5+i22nLApq+LfWXjay5vnBEqaz+u3X4Wt2dWfsOefXFPj
+	 M6hFW13ZP3DwgePby8FRaiIZc1t+yTARAbQT9GAIKmZ+691d6NJEmMmvsLG4pCihsH
+	 FJf5nDAZ8rbpw==
+Date: Mon, 23 Feb 2026 15:40:30 -0800
+Subject: [PATCH 17/19] fuse2fs: enable atomic writes
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-ext4@vger.kernel.org, miklos@szeredi.hu, bernd@bsbernd.com,
  joannelkoong@gmail.com, neal@gompa.dev
-Message-ID: <177188744769.3943178.8350488145026595053.stgit@frogsfrogsfrogs>
+Message-ID: <177188744786.3943178.3790964243258836932.stgit@frogsfrogsfrogs>
 In-Reply-To: <177188744403.3943178.7675407203918355137.stgit@frogsfrogsfrogs>
 References: <177188744403.3943178.7675407203918355137.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -73,7 +73,7 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_CC(0.00)[vger.kernel.org,szeredi.hu,bsbernd.com,gmail.com,gompa.dev];
-	TAGGED_FROM(0.00)[bounces-78168-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78169-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	RCVD_TLS_LAST(0.00)[];
@@ -91,336 +91,277 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: D42E117FD69
+X-Rspamd-Queue-Id: 9BC5C17FDA9
 X-Rspamd-Action: no action
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Implement statx.
+Advertise the single-fsblock atomic write capability that iomap can do.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fuse4fs/fuse4fs.c |  136 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- misc/fuse2fs.c    |  131 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 267 insertions(+)
+ fuse4fs/fuse4fs.c |   67 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ misc/fuse2fs.c    |   69 ++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 134 insertions(+), 2 deletions(-)
 
 
 diff --git a/fuse4fs/fuse4fs.c b/fuse4fs/fuse4fs.c
-index 90b365149910c9..62ab8f618015e9 100644
+index 62ab8f618015e9..77207bae19e544 100644
 --- a/fuse4fs/fuse4fs.c
 +++ b/fuse4fs/fuse4fs.c
-@@ -24,6 +24,7 @@
- #include <sys/xattr.h>
+@@ -285,6 +285,9 @@ struct fuse4fs {
+ 	void (*old_alloc_stats)(ext2_filsys fs, blk64_t blk, int inuse);
+ 	void (*old_alloc_stats_range)(ext2_filsys fs, blk64_t blk, blk_t num,
+ 				      int inuse);
++#ifdef STATX_WRITE_ATOMIC
++	unsigned int awu_min, awu_max;
++#endif
  #endif
- #include <sys/ioctl.h>
-+#include <sys/sysmacros.h>
- #include <unistd.h>
- #include <ctype.h>
- #include <assert.h>
-@@ -2189,6 +2190,138 @@ static void op_getattr(fuse_req_t req, fuse_ino_t fino,
- 				       fstat.entry.attr_timeout);
+ 	unsigned int blockmask;
+ 	unsigned long offset;
+@@ -910,10 +913,22 @@ static inline bool fuse4fs_can_iomap(const struct fuse4fs *ff)
+ {
+ 	return ff->iomap_cap & FUSE_IOMAP_SUPPORT_FILEIO;
+ }
++
++static inline bool fuse4fs_iomap_supports_hw_atomic(const struct fuse4fs *ff)
++{
++	return fuse4fs_iomap_enabled(ff) &&
++	       (ff->iomap_cap & FUSE_IOMAP_SUPPORT_ATOMIC) &&
++#ifdef STATX_WRITE_ATOMIC
++		ff->awu_min > 0 && ff->awu_min > 0;
++#else
++		0;
++#endif
++}
+ #else
+ # define fuse4fs_iomap_enabled(...)	(0)
+ # define fuse4fs_discover_iomap(...)	((void)0)
+ # define fuse4fs_can_iomap(...)		(false)
++# define fuse4fs_iomap_supports_hw_atomic(...)	(0)
+ #endif
+ 
+ static inline void fuse4fs_dump_extents(struct fuse4fs *ff, ext2_ino_t ino,
+@@ -2115,8 +2130,12 @@ static int fuse4fs_stat_inode(struct fuse4fs *ff, ext2_ino_t ino,
+ 
+ 	fstat->iflags = 0;
+ #ifdef HAVE_FUSE_IOMAP
+-	if (fuse4fs_iomap_enabled(ff))
++	if (fuse4fs_iomap_enabled(ff)) {
+ 		fstat->iflags |= FUSE_IFLAG_IOMAP | FUSE_IFLAG_EXCLUSIVE;
++
++		if (fuse4fs_iomap_supports_hw_atomic(ff))
++			fstat->iflags |= FUSE_IFLAG_ATOMIC;
++	}
+ #endif
+ 
+ 	return 0;
+@@ -2294,6 +2313,15 @@ static int fuse4fs_statx(struct fuse4fs *ff, ext2_ino_t ino, int statx_mask,
+ 
+ 	fuse4fs_statx_directio(ff, stx);
+ 
++#ifdef STATX_WRITE_ATOMIC
++	if (fuse4fs_iomap_supports_hw_atomic(ff)) {
++		stx->stx_mask |= STATX_WRITE_ATOMIC;
++		stx->stx_atomic_write_unit_min = ff->awu_min;
++		stx->stx_atomic_write_unit_max = ff->awu_max;
++		stx->stx_atomic_write_segments_max = 1;
++	}
++#endif
++
+ 	return 0;
  }
  
-+#if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 18) && defined(STATX_BASIC_STATS)
-+static inline void fuse4fs_set_statx_attr(struct statx *stx,
-+					  uint64_t statx_flag, int set)
-+{
-+	if (set)
-+		stx->stx_attributes |= statx_flag;
-+	stx->stx_attributes_mask |= statx_flag;
-+}
+@@ -6680,6 +6708,9 @@ static void op_iomap_begin(fuse_req_t req, fuse_ino_t fino, uint64_t dontcare,
+ 		}
+ 	}
+ 
++	if (opflags & FUSE_IOMAP_OP_ATOMIC)
++		read.flags |= FUSE_IOMAP_F_ATOMIC_BIO;
 +
-+static void fuse4fs_statx_directio(struct fuse4fs *ff, struct statx *stx)
+ out_unlock:
+ 	fuse4fs_finish(ff, ret);
+ 	if (ret)
+@@ -6844,6 +6875,38 @@ static int fuse4fs_set_bdev_blocksize(struct fuse4fs *ff, int fd)
+ 	return -EIO;
+ }
+ 
++#ifdef STATX_WRITE_ATOMIC
++static void fuse4fs_configure_atomic_write(struct fuse4fs *ff, int bdev_fd)
 +{
 +	struct statx devx;
-+	errcode_t err;
-+	int fd;
++	unsigned int awu_min, awu_max;
++	int ret;
 +
-+	err = io_channel_get_fd(ff->fs->io, &fd);
-+	if (err)
++	if (!ext2fs_has_feature_extents(ff->fs->super))
 +		return;
 +
-+	err = statx(fd, "", AT_EMPTY_PATH, STATX_DIOALIGN, &devx);
-+	if (err)
-+		return;
-+	if (!(devx.stx_mask & STATX_DIOALIGN))
-+		return;
-+
-+	stx->stx_mask |= STATX_DIOALIGN;
-+	stx->stx_dio_mem_align = devx.stx_dio_mem_align;
-+	stx->stx_dio_offset_align = devx.stx_dio_offset_align;
-+}
-+
-+static int fuse4fs_statx(struct fuse4fs *ff, ext2_ino_t ino, int statx_mask,
-+			 struct statx *stx)
-+{
-+	struct ext2_inode_large inode;
-+	ext2_filsys fs = ff->fs;;
-+	dev_t fakedev = 0;
-+	errcode_t err;
-+	struct timespec tv;
-+
-+	err = fuse4fs_read_inode(fs, ino, &inode);
-+	if (err)
-+		return translate_error(fs, ino, err);
-+
-+	memcpy(&fakedev, fs->super->s_uuid, sizeof(fakedev));
-+	stx->stx_mask = STATX_BASIC_STATS;
-+	stx->stx_dev_major = major(fakedev);
-+	stx->stx_dev_minor = minor(fakedev);
-+	stx->stx_ino = ino;
-+	stx->stx_mode = inode.i_mode;
-+	stx->stx_nlink = inode.i_links_count;
-+	stx->stx_uid = inode_uid(inode);
-+	stx->stx_gid = inode_gid(inode);
-+	stx->stx_size = EXT2_I_SIZE(&inode);
-+	stx->stx_blksize = fs->blocksize;
-+	stx->stx_blocks = ext2fs_get_stat_i_blocks(fs,
-+						EXT2_INODE(&inode));
-+	EXT4_INODE_GET_XTIME(i_atime, &tv, &inode);
-+	stx->stx_atime.tv_sec = tv.tv_sec;
-+	stx->stx_atime.tv_nsec = tv.tv_nsec;
-+
-+	EXT4_INODE_GET_XTIME(i_mtime, &tv, &inode);
-+	stx->stx_mtime.tv_sec = tv.tv_sec;
-+	stx->stx_mtime.tv_nsec = tv.tv_nsec;
-+
-+	EXT4_INODE_GET_XTIME(i_ctime, &tv, &inode);
-+	stx->stx_ctime.tv_sec = tv.tv_sec;
-+	stx->stx_ctime.tv_nsec = tv.tv_nsec;
-+
-+	if (EXT4_FITS_IN_INODE(&inode, i_crtime)) {
-+		stx->stx_mask |= STATX_BTIME;
-+		EXT4_INODE_GET_XTIME(i_crtime, &tv, &inode);
-+		stx->stx_btime.tv_sec = tv.tv_sec;
-+		stx->stx_btime.tv_nsec = tv.tv_nsec;
-+	}
-+
-+	dbg_printf(ff, "%s: ino=%d atime=%lld.%d mtime=%lld.%d ctime=%lld.%d btime=%lld.%d\n",
-+		   __func__, ino,
-+		   (long long int)stx->stx_atime.tv_sec, stx->stx_atime.tv_nsec,
-+		   (long long int)stx->stx_mtime.tv_sec, stx->stx_mtime.tv_nsec,
-+		   (long long int)stx->stx_ctime.tv_sec, stx->stx_ctime.tv_nsec,
-+		   (long long int)stx->stx_btime.tv_sec, stx->stx_btime.tv_nsec);
-+
-+	if (LINUX_S_ISCHR(inode.i_mode) ||
-+	    LINUX_S_ISBLK(inode.i_mode)) {
-+		if (inode.i_block[0]) {
-+			stx->stx_rdev_major = major(inode.i_block[0]);
-+			stx->stx_rdev_minor = minor(inode.i_block[0]);
-+		} else {
-+			stx->stx_rdev_major = major(inode.i_block[1]);
-+			stx->stx_rdev_minor = minor(inode.i_block[1]);
-+		}
-+	}
-+
-+	fuse4fs_set_statx_attr(stx, STATX_ATTR_COMPRESSED,
-+			       inode.i_flags & EXT2_COMPR_FL);
-+	fuse4fs_set_statx_attr(stx, STATX_ATTR_IMMUTABLE,
-+			       inode.i_flags & EXT2_IMMUTABLE_FL);
-+	fuse4fs_set_statx_attr(stx, STATX_ATTR_APPEND,
-+			       inode.i_flags & EXT2_APPEND_FL);
-+	fuse4fs_set_statx_attr(stx, STATX_ATTR_NODUMP,
-+			       inode.i_flags & EXT2_NODUMP_FL);
-+
-+	fuse4fs_statx_directio(ff, stx);
-+
-+	return 0;
-+}
-+
-+static void op_statx(fuse_req_t req, fuse_ino_t fino, int flags, int mask,
-+		     struct fuse_file_info *fi)
-+{
-+	struct statx stx = { };
-+	struct fuse4fs *ff = fuse4fs_get(req);
-+	ext2_ino_t ino;
-+	int ret = 0;
-+
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CONVERT_FINO(req, &ino, fino);
-+	fuse4fs_start(ff);
-+	ret = fuse4fs_statx(ff, ino, mask, &stx);
++	ret = statx(bdev_fd, "", AT_EMPTY_PATH, STATX_WRITE_ATOMIC, &devx);
 +	if (ret)
-+		goto out;
-+out:
-+	fuse4fs_finish(ff, ret);
-+	if (ret)
-+		fuse_reply_err(req, -ret);
-+	else
-+		fuse_reply_statx(req, 0, &stx, FUSE4FS_ATTR_TIMEOUT);
++		return;
++	if (!(devx.stx_mask & STATX_WRITE_ATOMIC))
++		return;
++
++	awu_min = max(ff->fs->blocksize, devx.stx_atomic_write_unit_min);
++	awu_max = min(ff->fs->blocksize, devx.stx_atomic_write_unit_max);
++	if (awu_min > awu_max)
++		return;
++
++	log_printf(ff, "%s awu_min: %u, awu_max: %u\n",
++		   _("Supports (experimental) DIO atomic writes"),
++		   awu_min, awu_max);
++
++	ff->awu_min = awu_min;
++	ff->awu_max = awu_max;
 +}
 +#else
-+# define op_statx		NULL
++# define fuse4fs_configure_atomic_write(...)	((void)0)
 +#endif
 +
- static void op_readlink(fuse_req_t req, fuse_ino_t fino)
+ static int fuse4fs_iomap_config_devices(struct fuse4fs *ff)
  {
- 	struct ext2_inode inode;
-@@ -7260,6 +7393,9 @@ static struct fuse_lowlevel_ops fs_ops = {
- #ifdef SUPPORT_FALLOCATE
- 	.fallocate = op_fallocate,
- #endif
-+#if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 18)
-+	.statx = op_statx,
-+#endif
- #ifdef HAVE_FUSE_IOMAP
- 	.iomap_begin = op_iomap_begin,
- 	.iomap_end = op_iomap_end,
+ 	errcode_t err;
+@@ -6868,6 +6931,8 @@ static int fuse4fs_iomap_config_devices(struct fuse4fs *ff)
+ 	dbg_printf(ff, "%s: registered iomap dev fd=%d iomap_dev=%u\n",
+ 		   __func__, fd, ff->iomap_dev);
+ 
++	fuse4fs_configure_atomic_write(ff, fd);
++
+ 	ff->iomap_dev = ret;
+ 	return 0;
+ }
 diff --git a/misc/fuse2fs.c b/misc/fuse2fs.c
-index ffcaf56314bdfd..f6f0eb9f54c7bf 100644
+index f6f0eb9f54c7bf..6266c1de163694 100644
 --- a/misc/fuse2fs.c
 +++ b/misc/fuse2fs.c
-@@ -23,6 +23,7 @@
- #include <sys/xattr.h>
+@@ -279,6 +279,9 @@ struct fuse2fs {
+ 	void (*old_alloc_stats)(ext2_filsys fs, blk64_t blk, int inuse);
+ 	void (*old_alloc_stats_range)(ext2_filsys fs, blk64_t blk, blk_t num,
+ 				      int inuse);
++#ifdef STATX_WRITE_ATOMIC
++	unsigned int awu_min, awu_max;
++#endif
  #endif
- #include <sys/ioctl.h>
-+#include <sys/sysmacros.h>
- #include <unistd.h>
- #include <ctype.h>
- #ifdef HAVE_FUSE_LOOPDEV
-@@ -1997,6 +1998,133 @@ static int op_getattr_iflags(const char *path, struct stat *statbuf,
+ 	unsigned int blockmask;
+ 	unsigned long offset;
+@@ -749,10 +752,22 @@ static inline bool fuse2fs_can_iomap(const struct fuse2fs *ff)
+ {
+ 	return ff->iomap_cap & FUSE_IOMAP_SUPPORT_FILEIO;
+ }
++
++static inline bool fuse2fs_iomap_supports_hw_atomic(const struct fuse2fs *ff)
++{
++	return fuse2fs_iomap_enabled(ff) &&
++	       (ff->iomap_cap & FUSE_IOMAP_SUPPORT_ATOMIC) &&
++#ifdef STATX_WRITE_ATOMIC
++		ff->awu_min > 0 && ff->awu_min > 0;
++#else
++		0;
++#endif
++}
+ #else
+ # define fuse2fs_iomap_enabled(...)	(0)
+ # define fuse2fs_discover_iomap(...)	((void)0)
+ # define fuse2fs_can_iomap(...)		(false)
++# define fuse2fs_iomap_supports_hw_atomic(...)	(0)
+ #endif
+ 
+ static inline void fuse2fs_dump_extents(struct fuse2fs *ff, ext2_ino_t ino,
+@@ -1986,14 +2001,19 @@ static int op_getattr(const char *path, struct stat *statbuf,
+ static int op_getattr_iflags(const char *path, struct stat *statbuf,
+ 			     unsigned int *iflags, struct fuse_file_info *fi)
+ {
++	struct fuse2fs *ff = fuse2fs_get();
+ 	int ret = op_getattr(path, statbuf, fi);
+ 
+ 	if (ret)
+ 		return ret;
+ 
+-	if (fuse_fs_can_enable_iomap(statbuf))
++	if (fuse_fs_can_enable_iomap(statbuf)) {
+ 		*iflags |= FUSE_IFLAG_IOMAP | FUSE_IFLAG_EXCLUSIVE;
+ 
++		if (fuse2fs_iomap_supports_hw_atomic(ff))
++			*iflags |= FUSE_IFLAG_ATOMIC;
++	}
++
+ 	return 0;
  }
  #endif
+@@ -2102,6 +2122,16 @@ static int fuse2fs_statx(struct fuse2fs *ff, ext2_ino_t ino, int statx_mask,
  
-+#if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 18) && defined(STATX_BASIC_STATS)
-+static inline void fuse2fs_set_statx_attr(struct statx *stx,
-+					  uint64_t statx_flag, int set)
-+{
-+	if (set)
-+		stx->stx_attributes |= statx_flag;
-+	stx->stx_attributes_mask |= statx_flag;
-+}
+ 	fuse2fs_statx_directio(ff, stx);
+ 
++#ifdef STATX_WRITE_ATOMIC
++	if (fuse_fs_can_enable_iomapx(stx) &&
++	    fuse2fs_iomap_supports_hw_atomic(ff)) {
++		stx->stx_mask |= STATX_WRITE_ATOMIC;
++		stx->stx_atomic_write_unit_min = ff->awu_min;
++		stx->stx_atomic_write_unit_max = ff->awu_max;
++		stx->stx_atomic_write_segments_max = 1;
++	}
++#endif
 +
-+static void fuse2fs_statx_directio(struct fuse2fs *ff, struct statx *stx)
+ 	return 0;
+ }
+ 
+@@ -6211,6 +6241,9 @@ static int op_iomap_begin(const char *path, uint64_t nodeid, uint64_t attr_ino,
+ 		}
+ 	}
+ 
++	if (opflags & FUSE_IOMAP_OP_ATOMIC)
++		read->flags |= FUSE_IOMAP_F_ATOMIC_BIO;
++
+ out_unlock:
+ 	fuse2fs_finish(ff, ret);
+ 	return ret;
+@@ -6372,6 +6405,38 @@ static int fuse2fs_set_bdev_blocksize(struct fuse2fs *ff, int fd)
+ 	return -EIO;
+ }
+ 
++#ifdef STATX_WRITE_ATOMIC
++static void fuse2fs_configure_atomic_write(struct fuse2fs *ff, int bdev_fd)
 +{
 +	struct statx devx;
-+	errcode_t err;
-+	int fd;
++	unsigned int awu_min, awu_max;
++	int ret;
 +
-+	err = io_channel_get_fd(ff->fs->io, &fd);
-+	if (err)
++	if (!ext2fs_has_feature_extents(ff->fs->super))
 +		return;
 +
-+	err = statx(fd, "", AT_EMPTY_PATH, STATX_DIOALIGN, &devx);
-+	if (err)
-+		return;
-+	if (!(devx.stx_mask & STATX_DIOALIGN))
-+		return;
-+
-+	stx->stx_mask |= STATX_DIOALIGN;
-+	stx->stx_dio_mem_align = devx.stx_dio_mem_align;
-+	stx->stx_dio_offset_align = devx.stx_dio_offset_align;
-+}
-+
-+static int fuse2fs_statx(struct fuse2fs *ff, ext2_ino_t ino, int statx_mask,
-+			 struct statx *stx)
-+{
-+	struct ext2_inode_large inode;
-+	ext2_filsys fs = ff->fs;;
-+	dev_t fakedev = 0;
-+	errcode_t err;
-+	struct timespec tv;
-+
-+	err = fuse2fs_read_inode(fs, ino, &inode);
-+	if (err)
-+		return translate_error(fs, ino, err);
-+
-+	memcpy(&fakedev, fs->super->s_uuid, sizeof(fakedev));
-+	stx->stx_mask = STATX_BASIC_STATS;
-+	stx->stx_dev_major = major(fakedev);
-+	stx->stx_dev_minor = minor(fakedev);
-+	stx->stx_ino = ino;
-+	stx->stx_mode = inode.i_mode;
-+	stx->stx_nlink = inode.i_links_count;
-+	stx->stx_uid = inode_uid(inode);
-+	stx->stx_gid = inode_gid(inode);
-+	stx->stx_size = EXT2_I_SIZE(&inode);
-+	stx->stx_blksize = fs->blocksize;
-+	stx->stx_blocks = ext2fs_get_stat_i_blocks(fs,
-+						EXT2_INODE(&inode));
-+	EXT4_INODE_GET_XTIME(i_atime, &tv, &inode);
-+	stx->stx_atime.tv_sec = tv.tv_sec;
-+	stx->stx_atime.tv_nsec = tv.tv_nsec;
-+
-+	EXT4_INODE_GET_XTIME(i_mtime, &tv, &inode);
-+	stx->stx_mtime.tv_sec = tv.tv_sec;
-+	stx->stx_mtime.tv_nsec = tv.tv_nsec;
-+
-+	EXT4_INODE_GET_XTIME(i_ctime, &tv, &inode);
-+	stx->stx_ctime.tv_sec = tv.tv_sec;
-+	stx->stx_ctime.tv_nsec = tv.tv_nsec;
-+
-+	if (EXT4_FITS_IN_INODE(&inode, i_crtime)) {
-+		stx->stx_mask |= STATX_BTIME;
-+		EXT4_INODE_GET_XTIME(i_crtime, &tv, &inode);
-+		stx->stx_btime.tv_sec = tv.tv_sec;
-+		stx->stx_btime.tv_nsec = tv.tv_nsec;
-+	}
-+
-+	dbg_printf(ff, "%s: ino=%d atime=%lld.%d mtime=%lld.%d ctime=%lld.%d btime=%lld.%d\n",
-+		   __func__, ino,
-+		   (long long int)stx->stx_atime.tv_sec, stx->stx_atime.tv_nsec,
-+		   (long long int)stx->stx_mtime.tv_sec, stx->stx_mtime.tv_nsec,
-+		   (long long int)stx->stx_ctime.tv_sec, stx->stx_ctime.tv_nsec,
-+		   (long long int)stx->stx_btime.tv_sec, stx->stx_btime.tv_nsec);
-+
-+	if (LINUX_S_ISCHR(inode.i_mode) ||
-+	    LINUX_S_ISBLK(inode.i_mode)) {
-+		if (inode.i_block[0]) {
-+			stx->stx_rdev_major = major(inode.i_block[0]);
-+			stx->stx_rdev_minor = minor(inode.i_block[0]);
-+		} else {
-+			stx->stx_rdev_major = major(inode.i_block[1]);
-+			stx->stx_rdev_minor = minor(inode.i_block[1]);
-+		}
-+	}
-+
-+	fuse2fs_set_statx_attr(stx, STATX_ATTR_COMPRESSED,
-+			       inode.i_flags & EXT2_COMPR_FL);
-+	fuse2fs_set_statx_attr(stx, STATX_ATTR_IMMUTABLE,
-+			       inode.i_flags & EXT2_IMMUTABLE_FL);
-+	fuse2fs_set_statx_attr(stx, STATX_ATTR_APPEND,
-+			       inode.i_flags & EXT2_APPEND_FL);
-+	fuse2fs_set_statx_attr(stx, STATX_ATTR_NODUMP,
-+			       inode.i_flags & EXT2_NODUMP_FL);
-+
-+	fuse2fs_statx_directio(ff, stx);
-+
-+	return 0;
-+}
-+
-+static int op_statx(const char *path, int statx_flags, int statx_mask,
-+		    struct statx *stx, struct fuse_file_info *fi)
-+{
-+	struct fuse2fs *ff = fuse2fs_get();
-+	ext2_ino_t ino;
-+	int ret = 0;
-+
-+	FUSE2FS_CHECK_CONTEXT(ff);
-+	fuse2fs_start(ff);
-+	ret = fuse2fs_file_ino(ff, path, fi, &ino);
++	ret = statx(bdev_fd, "", AT_EMPTY_PATH, STATX_WRITE_ATOMIC, &devx);
 +	if (ret)
-+		goto out;
-+	ret = fuse2fs_statx(ff, ino, statx_mask, stx);
-+out:
-+	fuse2fs_finish(ff, ret);
-+	return ret;
++		return;
++	if (!(devx.stx_mask & STATX_WRITE_ATOMIC))
++		return;
++
++	awu_min = max(ff->fs->blocksize, devx.stx_atomic_write_unit_min);
++	awu_max = min(ff->fs->blocksize, devx.stx_atomic_write_unit_max);
++	if (awu_min > awu_max)
++		return;
++
++	log_printf(ff, "%s awu_min: %u, awu_max: %u\n",
++		   _("Supports (experimental) DIO atomic writes"),
++		   awu_min, awu_max);
++
++	ff->awu_min = awu_min;
++	ff->awu_max = awu_max;
 +}
 +#else
-+# define op_statx		NULL
++# define fuse2fs_configure_atomic_write(...)	((void)0)
 +#endif
- 
- static int op_readlink(const char *path, char *buf, size_t len)
++
+ static int fuse2fs_iomap_config_devices(struct fuse2fs *ff)
  {
-@@ -6784,6 +6912,9 @@ static struct fuse_operations fs_ops = {
- #ifdef SUPPORT_FALLOCATE
- 	.fallocate = op_fallocate,
- #endif
-+#if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 18)
-+	.statx = op_statx,
-+#endif
- #if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 99)
- 	.getattr_iflags = op_getattr_iflags,
- #endif
+ 	errcode_t err;
+@@ -6396,6 +6461,8 @@ static int fuse2fs_iomap_config_devices(struct fuse2fs *ff)
+ 	dbg_printf(ff, "%s: registered iomap dev fd=%d iomap_dev=%u\n",
+ 		   __func__, fd, ff->iomap_dev);
+ 
++	fuse2fs_configure_atomic_write(ff, fd);
++
+ 	ff->iomap_dev = ret;
+ 	return 0;
+ }
 
 
