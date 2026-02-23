@@ -1,165 +1,233 @@
-Return-Path: <linux-fsdevel+bounces-77953-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id sKNaKZdWnGkAEQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77953-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 14:31:03 +0100
+	id EB12ObdWnGkAEQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 14:31:35 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84337176F2B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 14:31:02 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 465F7176F42
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 14:31:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 089FC305CA20
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 13:24:29 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7137830A52B5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 13:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228C41A3166;
-	Mon, 23 Feb 2026 13:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3A01F2B8D;
+	Mon, 23 Feb 2026 13:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fKhxjY68";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="lCvKj4WC"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="RF0FDuhZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E523A1D2
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 13:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAA23A1D2;
+	Mon, 23 Feb 2026 13:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771853067; cv=none; b=d2dLBD9oMqVoLz3P1yHt4NCaQm/Vh3SmMDqIiiov80kMcRWmCdFmXvxf/77/iqVqDCmhdsNlgdwtkqxjGAoYftwX1JDVCsIE/A4PUv/B+IKQ92gpfTBcl3KE/K0Flw74d9oEj+C/C6Uc/UZOUcOxpl38hbNdNKGRsDwEjrCz9GY=
+	t=1771853170; cv=none; b=MVskYky+PdWmhrezkK8yC90QmrYqMZcwja9AV3TWMuriGMqs7YI76J29yaJWWbSCaiF2Lv78HCoLF6GDcnAGFQUyHttLjpBjyh8YjI7d8fp/XaCyHVz/WLNwBC5PnCe80C5ZzFUTzFGz7tXfZTN9u2+yI4Y8jHH6awESVoXcoys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771853067; c=relaxed/simple;
-	bh=poGA6bo1jLXsV/w23+mdRU7Cm6PVshK+XcjhPgUMDlM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FBnipuy0dtLaVq603kCvBg2pENhTw3/bQGfyj60OEBs8gBNtska3QQEI44ZyZZ2yx5sqWc3n6po56mhfDLV1a5SaTqu16a6clKWTQsCBv2F1HCYzXlVTQuBP9y8mkzy23nm83r/dBS4P8MxQq4pUOq/JPtSzOMeBBpEfmC8oKo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fKhxjY68; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=lCvKj4WC; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1771853065;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ksBMn2vFs5bfQS6gxZSFoOu9S+2Bm4FmVN3N5GLrC7g=;
-	b=fKhxjY68o5vEz0x9vVoXuHvjrrL6OU9jNXF7EnLdwV3+M/4mKuw1yheLV+YilMWq/YillJ
-	/X7UWtPMfx2YLpqEW2+pgBzfgFn2pWok0LtnT9F0l179SI6AmQeG1NsK1Lillzr3tTfuQG
-	ZLPHp6hD5r8h+C/rHMj0GigUXFXXIIU=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-567-XJyEZHlvMf2r0mnmJ4bCdA-1; Mon, 23 Feb 2026 08:24:24 -0500
-X-MC-Unique: XJyEZHlvMf2r0mnmJ4bCdA-1
-X-Mimecast-MFC-AGG-ID: XJyEZHlvMf2r0mnmJ4bCdA_1771853063
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4837bfcfe0dso46503985e9.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 05:24:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1771853063; x=1772457863; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ksBMn2vFs5bfQS6gxZSFoOu9S+2Bm4FmVN3N5GLrC7g=;
-        b=lCvKj4WCveD433Dsw/xYiiqEEbiLFVim2z+wFeOXmAZca+PMmW8Cejks/z6sEFy/dt
-         ylcB+MDifsnt+f3t/D23sT+HL8wwxmU5979aOSm9rGauTirS4Btgme6Gr+40yqp+kd4g
-         /WJAHLSVkpqsLVkxqJc/L5ZHldrbB9D4djT3iaSZ/cGWkm3T/EGyLHSQ5NSSgiq98uCj
-         eAIHIdCgV/XhYMTwrFADsNixwDuvxIWMapAe0QNv6FqiUNzxRI8GIGI9a3vBQagYdGe9
-         Z70Hm3lkb4ko/RxBEHA2hj64Snhs330/O9Cfn6ogJsCuf5R/riMRoHtEwF2hXuM3xdzH
-         gWWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771853063; x=1772457863;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ksBMn2vFs5bfQS6gxZSFoOu9S+2Bm4FmVN3N5GLrC7g=;
-        b=ZXLGmgou6+In4Gw+1r9KZWIfCGLComBxA1NgXPiACRGSqivdPMWP0ieJnX+/yzScKh
-         WxZpmqjw6RwsE8DtHapFKHjwdpq8o0mFFlaufT7bM6nGqo6tIHVlvmgzQPo72v9OzTSu
-         GxWSRwYVk5sWohMlrT1WVg/AiRxcFwlGuxumsosjqE5AdsxY1iowUCcdxECpLN1Cf/4D
-         etDdZP+OnXE9Lv/21FJV6NIBW281/LFr01VoT2E9cFyUZ5ZzFkruC6sTTnvyGw6vSrz4
-         TF/pCAv/0ahSMdlU2u/xJCDV4p2Q4G/kBRKncwMKWl/u4JIe2Vl8p4cmqbT/mQdkjMlj
-         DYnA==
-X-Forwarded-Encrypted: i=1; AJvYcCXoO5vlYBfkREjVBYA0pMmme6ov5PAjOVDcEcGUU2wjAnmaIQF4oRLO8rEeX57srl1jbRcP4CFvWu67Wh9c@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYpI5sLmufpqcfYPLR1saT2x6AOQjm+eukiCd7bE1P5okxNdpf
-	zuLu+CINp/0Z0cHfHtutBawMmNORBgxsbuVnGCBVSIEccy3cNuANcB9JnKRRJY+KzCJ9l1uIdqW
-	6wwTjodi3UEeY7/jDiM7wslhLpFx9QHpveqvmZPlWQj7v7EgpFe8aEeFJ/tB8GhXdCQ==
-X-Gm-Gg: AZuq6aLENHSxvQwEHB8V/tRspgP8H3/WcwsC/3fXXa9kVinaiZBDwCVsQh/uvp4CbiD
-	aoLChk5ykzB5TSeRi9m04Cfw/ZKjoiIcUhlGCEU1E440RefRN1xCjbqW3zSRn9dRrT79N3kGLVX
-	OSzYQBV9JZrJ4NNxfKaiAK3jcZiKnYNPmlgFW5W8Bewy+S0fZn6ZNU0D3WfGRZjJ6S8VRKldCQJ
-	yCuzEAs1A+GJQK83ObZ17X2nHhOwzz3/AH6YxDF9nDdAvaOpFChnGJAWq5Vapza00WrTdC7Octf
-	XXau70wrZR+/oQKg2eV+Bkozaj6apiAn8cXT6wl11ehKT6K6vP7YPfAcCENUF77+khM5V8/e5bN
-	57qKs7yDk2Jc=
-X-Received: by 2002:a05:600c:1f8f:b0:480:4a4f:c363 with SMTP id 5b1f17b1804b1-483a95fb25dmr151444985e9.9.1771853062845;
-        Mon, 23 Feb 2026 05:24:22 -0800 (PST)
-X-Received: by 2002:a05:600c:1f8f:b0:480:4a4f:c363 with SMTP id 5b1f17b1804b1-483a95fb25dmr151444465e9.9.1771853062370;
-        Mon, 23 Feb 2026 05:24:22 -0800 (PST)
-Received: from thinky ([217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483a42cd49fsm122198985e9.5.2026.02.23.05.24.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Feb 2026 05:24:21 -0800 (PST)
-Date: Mon, 23 Feb 2026 14:23:51 +0100
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, 
-	Andrey Albershteyn <aalbersh@kernel.org>, linux-xfs@vger.kernel.org, fsverity@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, djwong@kernel.org
-Subject: Re: [PATCH v3 06/35] fsverity: pass digest size and hash of the
- empty block to ->write
-Message-ID: <gjehtg6itdgjysiksqmccrelsqev7so7366zmfer62tgse7u6d@2kucmtmrfq2t>
-References: <20260217231937.1183679-1-aalbersh@kernel.org>
- <20260217231937.1183679-7-aalbersh@kernel.org>
- <20260218061834.GB8416@lst.de>
- <wl5dkpyqtmbdyc7w7v4kqiydpuemaccmivi37ebbzohn4bvcwo@iny5xh3qaqsq>
- <20260219055857.GA3739@lst.de>
- <20260219063059.GA13306@sol>
+	s=arc-20240116; t=1771853170; c=relaxed/simple;
+	bh=SRAVdDf8NH6dQhsGRvBt/1wpgBOdKC9BirLKSw6L//k=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rrGIEjfM9bZlkM0qeBDDOXQlzgGI6xUIjD4y2ofXzlLneOnIX5oRsmVkCSxeZpWTTH9FxShSE+63jCO2xdrDFKPvSiAcbqsldC7rdd82U5zYn9WgV30IsmVeCzomxoQnEhgu6r+52LbvMqATsuiY6WZGcVWNs70/Ta7y+Kx0J+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=RF0FDuhZ; arc=none smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61NCxnfE1835072;
+	Mon, 23 Feb 2026 05:25:49 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
+	 bh=t2qu4JKn1z2iQeoE564X+mR26Wg8TVgaWbcVkQrE+7Y=; b=RF0FDuhZejP9
+	O5JCFhKqWVKfqcDIItAIaN4aS/uF+/M42J1SaZfNzph56n6gBmQnmkQKTpbDbExY
+	7QdsBb8uiVRoHnLbQduUssKI0YdUEX9ylj7Als1zF7UNvq6iR+VdimnNHkpLQash
+	4RhHifSCjPSNG+EQMXOa36aJxrH3OJEiynucoT7UXVfV10iHn62j6XyGLTVguqX7
+	0jC4Uis0I6fpScsGuFj0ZiVdShOrS6It7Zn5R1zwumY2eeHx7S1Dsc9dsc92Yaz/
+	fkeH7pTObYHwdouHXPqHAKhnXs3JpHwkXxb6rOd7Bufrkwa6hp7/CfQHKQ7C7/Ce
+	yy6Sd1p3+w==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4cgqcj0553-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 23 Feb 2026 05:25:49 -0800 (PST)
+Received: from devbig003.atn7.facebook.com (2620:10d:c085:208::7cb7) by
+ mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.35; Mon, 23 Feb 2026 13:25:47 +0000
+From: Chris Mason <clm@meta.com>
+To: NeilBrown <neil@brown.name>
+CC: Christian Brauner <brauner@kernel.org>,
+        Alexander Viro
+	<viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>, Jan Kara
+	<jack@suse.cz>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Jeff Layton
+	<jlayton@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>,
+        Amir Goldstein
+	<amir73il@gmail.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore
+	<paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn"
+	<serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        "Darrick J. Wong" <djwong@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <netfs@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+        <linux-nfs@vger.kernel.org>, <linux-unionfs@vger.kernel.org>,
+        <apparmor@lists.ubuntu.com>, <linux-security-module@vger.kernel.org>,
+        <selinux@vger.kernel.org>
+Subject: Re: [PATCH v2 06/15] selinux: Use simple_start_creating() / simple_done_creating()
+Date: Mon, 23 Feb 2026 05:24:41 -0800
+Message-ID: <20260223132533.136328-1-clm@meta.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260223011210.3853517-7-neilb@ownmail.net>
+References: <20260223011210.3853517-1-neilb@ownmail.net> <20260223011210.3853517-7-neilb@ownmail.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260219063059.GA13306@sol>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: D5qTdhAt4Lmhg6QxkEqk6H5lNzMRMp0K
+X-Authority-Analysis: v=2.4 cv=QqxTHFyd c=1 sm=1 tr=0 ts=699c555d cx=c_pps
+ a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
+ a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22 a=Mpw57Om8IfrbqaoTuvik:22
+ a=GgsMoib0sEa3-_RKJdDe:22 a=I-1mG6jRAAAA:8 a=VwQbUJbxAAAA:8 a=xVhDTqbCAAAA:8
+ a=Gzw8Aq_Vnp1Aj3qmndoA:9 a=vAntc5lzOlbkVmf1VcWC:22 a=GrmWmAYt4dzCMttCBZOh:22
+X-Proofpoint-ORIG-GUID: D5qTdhAt4Lmhg6QxkEqk6H5lNzMRMp0K
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjIzMDExNSBTYWx0ZWRfX5fZdKXimKO6+
+ kZyko22vbGzQln4wurgc8tw1wzQr7Z/M/sxa8EbahSsn61ubnLHxb8gTJ7VdRxSDu08D3AwU1rY
+ fYPR5qpyvuYl/aso5dEMraDpxPhDwEM2FUw26G2Sq34aXTmy17ginzdJjwK2WfiqWNj97HBe9p8
+ xzMxfRJJfjVae/wvrk7NxERz6hrtQfIc0UTgUjJyybKoMBwN0ET2QchyBOq7fsFDoBQ6xl8RzCn
+ lkdwDSnchrjDt/iAGlZDOY36cOEvSQBZzh6kK0FijItiyaEMAvRFvJ3Y/08YpbztYFsnOJEkB2k
+ o/eLu0xtuuBfvhqQuavN/mT0/Mj81CCR9wIXZZF3NKzda21leiHjfJzLzaQPR7bNJSPejFBRgtq
+ XjdDDrL5rtOWqzykt0hPhzBdEi9CZv6YlEb+KidoNOC6khhcqIxOTiEFu0wgQOmXNJJVZFBuQMG
+ qbs/pm/YTtp7YlcDtHQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-23_02,2026-02-23_02,2025-10-01_01
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [0.84 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719,redhat.com:s=google];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[meta.com,reject];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[meta.com:s=s2048-2025-q2];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,redhat.com,suse.cz,oracle.com,szeredi.hu,gmail.com,canonical.com,paul-moore.com,namei.org,hallyn.com,vger.kernel.org,lists.linux.dev,lists.ubuntu.com];
+	RCPT_COUNT_TWELVE(0.00)[23];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[redhat.com:+];
-	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77955-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77953-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[aalbersh@redhat.com,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	NEURAL_HAM(-0.00)[-0.999];
+	FROM_NEQ_ENVFROM(0.00)[clm@meta.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[meta.com:+];
+	RCVD_COUNT_FIVE(0.00)[6];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 84337176F2B
+	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[brown.name:email,paul-moore.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,ownmail.net:email,meta.com:mid,meta.com:dkim]
+X-Rspamd-Queue-Id: 465F7176F42
 X-Rspamd-Action: no action
 
-On 2026-02-18 22:30:59, Eric Biggers wrote:
-> The hash could be stored in that same allocation for salted files, or as
-> a fixed value in struct fsverity_hash_alg for unsalted files.  Then at
-> least unsalted files wouldn't use any additional memory per-file.
+NeilBrown <neilb@ownmail.net> wrote:
+> From: NeilBrown <neil@brown.name>
 > 
-> - Eric
+> Instead of explicitly locking the parent and performing a lookup in
+> selinux, use simple_start_creating(), and then use
+> simple_done_creating() to unlock.
+> 
 
-Hmm, but fsverity_hash_alg is global const, and anyway we will
-always have merkle_tree_params::hash_alg::zero_digest as fixed space
-for salted/unsalted.
+Hi everyone,
 
--- 
-- Andrey
+Amir suggested I run these through, and this commit was flagged:
+
+commit bc981629767980bbaee2ca3c7348b5a648665a9d
+Author: NeilBrown <neil@brown.name>
+
+selinux: Use simple_start_creating() / simple_done_creating()
+
+Instead of explicitly locking the parent and performing a lookup in
+selinux, use simple_start_creating(), and then use
+simple_done_creating() to unlock.
+
+This extends the region that the directory is locked for, and also
+performs a lookup. The lock extension is of no real consequence.
+The lookup uses simple_lookup() and so always succeeds. Thus when
+d_make_persistent() is called the dentry will already be hashed.
+d_make_persistent() handles this case.
+
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Acked-by: Paul Moore <paul@paul-moore.com>
+
+> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+> index 3245cc531555b..7d4f90e5b12a0 100644
+> --- a/security/selinux/selinuxfs.c
+> +++ b/security/selinux/selinuxfs.c
+> @@ -1931,15 +1931,16 @@ static const struct inode_operations swapover_dir_inode_operations = {
+>  static struct dentry *sel_make_swapover_dir(struct super_block *sb,
+>  						unsigned long *ino)
+>  {
+> -	struct dentry *dentry = d_alloc_name(sb->s_root, ".swapover");
+> +	struct dentry *dentry;
+>  	struct inode *inode;
+>
+> -	if (!dentry)
+> +	inode = sel_make_inode(sb, S_IFDIR);
+> +	if (!inode)
+>  		return ERR_PTR(-ENOMEM);
+>
+> -	inode = sel_make_inode(sb, S_IFDIR);
+> -	if (!inode) {
+> -		dput(dentry);
+> +	dentry = simple_start_creating(sb->s_root, ".swapover");
+> +	if (!dentry) {
+> +		iput(inode);
+>  		return ERR_PTR(-ENOMEM);
+>  	}
+
+Can this cause a kernel crash when simple_start_creating() fails?
+
+The function simple_start_creating() returns ERR_PTR on failure, not
+NULL. The check `if (!dentry)` only catches NULL values. When
+simple_start_creating() fails and returns an ERR_PTR value like
+ERR_PTR(-ENOMEM), this value is non-NULL and the error check is bypassed.
+
+Execution would continue to d_make_persistent(dentry, inode), which
+attempts to lock dentry->d_lock, dereferencing the ERR_PTR value and
+causing a kernel crash.
+
+The old code used d_alloc_name() which returns NULL on error. The new
+code uses simple_start_creating() which returns ERR_PTR on error, but
+the error checking pattern wasn't updated to match.
+
+Should the check be `if (IS_ERR(dentry))` instead, and return dentry
+rather than ERR_PTR(-ENOMEM) to preserve the actual error code?
+
+>
+> @@ -1947,11 +1948,9 @@ static struct dentry *sel_make_swapover_dir(struct super_block *sb,
+>  	inode->i_ino = ++(*ino);
+>  	/* directory inodes start off with i_nlink == 2 (for "." entry) */
+>  	inc_nlink(inode);
+> -	inode_lock(sb->s_root->d_inode);
+>  	d_make_persistent(dentry, inode);
+>  	inc_nlink(sb->s_root->d_inode);
+> -	inode_unlock(sb->s_root->d_inode);
+> -	dput(dentry);
+> +	simple_done_creating(dentry);
+>  	return dentry;	// borrowed
+>  }
 
 
