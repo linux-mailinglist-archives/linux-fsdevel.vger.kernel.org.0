@@ -1,147 +1,227 @@
-Return-Path: <linux-fsdevel+bounces-78029-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CNmqFKzdnGl/LwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78029-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:07:24 +0100
+	id GIslIx/dnGl/LwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:05:03 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF2ED17ED4A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:07:23 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B8CA17EC24
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:05:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E3196318DEA7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:04:16 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id B4F11301BDD9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73B037D126;
-	Mon, 23 Feb 2026 23:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F66837D128;
+	Mon, 23 Feb 2026 23:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XnOOyCc8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DrAAB+3k"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA8337D11D;
-	Mon, 23 Feb 2026 23:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771887855; cv=none; b=QdcAXz0wlxLFfP+Zl3WwWa1gFVq4Z9RQ5r5ZxxqAZy5LWUC1KMTu7OZJUMbI4j954lHQdnDYAHjbA3ezAsoARx9w+Qp53b0YQ2G4P0mJbgQRqLF8unCRaR91jlzlT4oaP8JyJSCKXbdh0KV3UBzRkb49sIuFe4wxKutEkBupqCs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771887855; c=relaxed/simple;
-	bh=RK2wQUhVjXMYMKbuFaa168T85P+VefLVbONdf2pvFz4=;
-	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gtdIoXZGspe6s7jtBTY5Ei9UK6BEq6Idcco3IRMUMx9LAsmwYMBGvOdXAQEk0xgcA/AqrbWTq/qyGHkXRKFV8PkrjRD0OhwTuoeMh0nHsH6zPlU+L9hAuTyaSlVBZuuewnE5bV4bhQRlbreOyZ/OHk5u3j6cF5KHtWJOK2UsGt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XnOOyCc8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCE21C116C6;
-	Mon, 23 Feb 2026 23:04:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771887854;
-	bh=RK2wQUhVjXMYMKbuFaa168T85P+VefLVbONdf2pvFz4=;
-	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=XnOOyCc8/Kt59oBMIbbSKFWI7tgApFEC/3vO1AIayuL0pTbJQygjdRNw+4doViTYJ
-	 SwqjIhwCib3Ilcxc7KJ/wo23VywSndwyLRLRGQ2+o4sZS9MGpcOnWuaCKanKJzuTmj
-	 ZQlAwx1YIN3NJFLJ4g56WU3tSpxmB1Q1MI3fUtVeViicx6K5YIw0XdHRzB1jKK27ED
-	 kAZndD7zLngpasg3QGxBHFwxTf7BaXbudLs0i77qXoMmHCcwsmrYbL01OojEQtdfia
-	 yF/J/4yKlunRTdxw/TmtZ22pmZpumP5a0FogQvdmwLPW0X+muypF71WRvS18m50MV/
-	 T/jSF/rEPMAfg==
-Date: Mon, 23 Feb 2026 15:04:14 -0800
-Subject: [PATCHSET RFC 6/6] fuse: allow fuse servers to upload iomap BPF
- programs
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: djwong@kernel.org, bschubert@ddn.com
-Cc: bernd@bsbernd.com, miklos@szeredi.hu, neal@gompa.dev,
- linux-ext4@vger.kernel.org, john@groves.net, linux-fsdevel@vger.kernel.org,
- bpf@vger.kernel.org, joannelkoong@gmail.com
-Message-ID: <177188741597.3942368.18114094782378370092.stgit@frogsfrogsfrogs>
-In-Reply-To: <20260223224617.GA2390314@frogsfrogsfrogs>
-References: <20260223224617.GA2390314@frogsfrogsfrogs>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE70F37D126
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 23:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.170
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771887898; cv=pass; b=Q6fpS1jJckXCSbeRSs8QGrfGxB/AiZH7DD/XpHTU+LLNdHGkY5y8eTaKqKz8yWVOF4Rx86lA+PjOGRoZwcbMxHERp9rdY/NeHl3ddZapU6FDzrxg+jwg6fY8ooOg83ybzDkOvcMb1mgVFw7NgHB4BTMc/Msxn5O+ZG8Bu3P0PQw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771887898; c=relaxed/simple;
+	bh=5iVARBZLENhP06ggeySaiFzVdgp8bTAAtxPPZZI/s4k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z+lv2esN5vGk1HfruGuzrnkiqPMHCTbjkdZ6XScqHl99AYm6GhDPs6HEu3VanQNdPL1zAtV+6AOXnIV4UliFKvOgfs7n+KV9kiXooutdSa4OamLJqio0ODyqiREJKTtE0vVh8NTKEYGI33Y+gZVJ2yA0v0DCCAZOsd01bfItGcw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DrAAB+3k; arc=pass smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-794911acb04so49032247b3.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 15:04:56 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771887896; cv=none;
+        d=google.com; s=arc-20240605;
+        b=MeYD6KnANaE88pYY4t61pK/9rVozTPFOB2c6yHOLIivqQV/97q4xMpZ07MZQu1pSfb
+         wAHUOTdr/ZPEoXOjMKJvSnraLH5nthyoVyf/uGl5ecv83zLyvQj2Vr4qzZEk/zvJEgUU
+         WedZx5J7SqhKywJSDT6/nnX4cS797n3tMkADdf5bxd6KaVLvvxfHCoPzFgz81hNHEQwV
+         59qqrgwIywPv+YL4AZqiUZpqWj+pSnR7cvewvmI6SimmofkId5wcxj3sGjBvTGaQVgNw
+         rYlI8tChcHXwdO3Ruxkrv7oWlpv1+yaHQXxxmGrNVljiGlzNOoeyTPoqXeQROFOa2oRA
+         WoiQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=5iVARBZLENhP06ggeySaiFzVdgp8bTAAtxPPZZI/s4k=;
+        fh=Mgur7GzePWUxcjdJmP9xCL4OBQshI7sL+3Y8EPJc8VM=;
+        b=d9kModosYAb7QFS0WodRxvBjGYqENYkNE8fpP3w3durXxhKw589ST2tTp00t3u8InT
+         d1MsyhLZGTXJtXmBlFKAcIyTe7sQPnc00lSBg5Yf1f7s/o9fHsh6oqWy1VE6XF2e1bfL
+         DOeAZXLkGGtw5iuKlc8Mv1XSUUNb25WSDSurHzTAbZBZ3GD+6Ji9bLQ/wHZyJEfI1Cfs
+         aUBN2sFaKX60y/9mRPxhusCnWTpmkmjpikXntFcxsbCfdzGOLvZ1b7nSmX7wcPlTxT12
+         +g27Z03st1Z645lqr7hSgFyyT21Bl3vquZ+qqp20PPWdvE37FDsiIV+l47EIQ8G81K5p
+         Prgw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1771887896; x=1772492696; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5iVARBZLENhP06ggeySaiFzVdgp8bTAAtxPPZZI/s4k=;
+        b=DrAAB+3krUOPSUGm37lQQJkEE9HoTlGF/HbNs4GdWUTZ4X3lXfQHENhFxfKUwTqVJL
+         4qeJbAIIy9RrdZgTqqPlnRE5+VUa+kwk97S8W3i5mryiRtrHkoyr1WORYyrUv5za3fcP
+         HSYlTgpFgrOrezAPiqjcfLlRqrwFOtQs82Dd/gT/gqDPupCekCkXs6vq6jiYIZ+SUf17
+         4PmtxsVvStJGhcGZh/PwkwWNH1erbD2wZRLF86q/Q3A7tOaieEfIlrVloBDA2jKBbQ+4
+         w0Fvmnd1XbjXStYEF4cDYW6VHqq55y1hnVpIYnQk8DXjaVET632P7JBM1bwSEbb9YNC8
+         TxCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771887896; x=1772492696;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=5iVARBZLENhP06ggeySaiFzVdgp8bTAAtxPPZZI/s4k=;
+        b=MN8qDI8GvWEf25bFMDh99wh8HlFWN3QFL2YI6YCSxfDv2DKa3nSSbx5LTANo3HKwah
+         8FXA2pIAuRxL5uebQrjT19KMNeWsK0CXXZGD30005P2nQcd03XFpbjgOHYy1MU3EV70P
+         ZyApo1VBJQIcgKEA661O0wFrXFRv+g9rLX+RcPTgdWk2XNqLFaQMSyD/zH5e2XrDzVjD
+         6h1vd45fe74sdyxyJtKiWAHiO6fdTk7p/WLPvlwitLP3dF2wuhMSV01X4deB3vU/3OL2
+         yyu/9JjRzSnhi5zToh/ydemSwnBvxQLY/4RR0agXxMYHtvov1c19Iu6WcWuH4TL2vdsp
+         ZzKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVQwziWLoybdKxt3I9EGJFFrLwUThoP1kC3w6P3lDaKH8szudi6RbAwVwG78QE22DcwmN8eR3BdgMcMlTTX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/PRNFeD6Mf3nDp6leo+ZV5R/pLC3dGXS9fv0Nw4lKEVAzfWhO
+	Rp6pPWzaKm+Eti1Ox9p7F0f/U6GNsVQx8+IX47Sxo/hN3+DO0kNgs1ds49UKT3p16wRT+yF7ZHN
+	h178z6OE9jkDr6hy7GgvmMhOl8P+mJrQ=
+X-Gm-Gg: ATEYQzzUiWEFJOz1yxE82WLuJT6mBO5vGV+UaoxoDcNBoMzKORU/LzO5q/hRDJBSZqG
+	V3ifvvzLjIC7826tNFVuGMtYcnH5/nuAqRXn9f8D+o5jPThv7Bl7niZWS1Oe+0l4HbSWwVmVCjo
+	dsTQ8SCp6vvOaEkgBRcqgIq2UmIMUAOsf48/kayG1R+z5Yuv7SBTjzydhlLkx+ddLrSpdPG2IGY
+	BHKGMaauSpTkTLjQmDpMCezpE/K7aZqXg/BTQvbz0t9ax9UQY0Kg3zvufx+VUHVNh2aHOmsfeRQ
+	YJ3wL/k=
+X-Received: by 2002:a05:690c:f09:b0:798:5333:ce36 with SMTP id
+ 00721157ae682-7985333d4f3mr19166357b3.7.1771887895866; Mon, 23 Feb 2026
+ 15:04:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20260219210312.3468980-1-safinaskar@gmail.com>
+ <20260219210312.3468980-2-safinaskar@gmail.com> <20260220105913.4b62e124.ddiss@suse.de>
+ <6d34c95a-a2ea-46a4-b491-45e7cb86049b@landley.net>
+In-Reply-To: <6d34c95a-a2ea-46a4-b491-45e7cb86049b@landley.net>
+From: Askar Safin <safinaskar@gmail.com>
+Date: Tue, 24 Feb 2026 02:04:19 +0300
+X-Gm-Features: AaiRm51ShYWisRZxqEP2jfYkn9npSVqKeCstRJL8gtXtjrs-RidKNfYk8lXIBQs
+Message-ID: <CAPnZJGDDonspVK1WxDac2omkLJVX=_1Tybn4ne+sf3KyaAuofA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] init: ensure that /dev/console is (nearly) always
+ available in initramfs
+To: Rob Landley <rob@landley.net>
+Cc: David Disseldorp <ddiss@suse.de>, linux-fsdevel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, initramfs@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[bsbernd.com,szeredi.hu,gompa.dev,vger.kernel.org,groves.net,gmail.com];
-	TAGGED_FROM(0.00)[bounces-78029-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	TO_DN_NONE(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-78032-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	FROM_HAS_DN(0.00)[];
 	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[safinaskar@gmail.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: DF2ED17ED4A
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[landley.net:email,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,bootlin.com:url,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: 6B8CA17EC24
 X-Rspamd-Action: no action
 
-Hi all,
+Rob, I THINK I KNOW HOW TO SOLVE YOUR PROBLEM! (See below.)
 
-There are certain fuse servers that might benefit from the ability to
-upload a BPF program into the kernel to respond to ->iomap_begin
-requests instead of upcalling the fuse server itself.
+On Mon, Feb 23, 2026 at 4:27=E2=80=AFAM Rob Landley <rob@landley.net> wrote=
+:
+>
+> On 2/19/26 17:59, David Disseldorp wrote:
+> >> This problem can be solved by using gen_init_cpio.
 
-For example, consider a fuse server that abstracts a large amount of
-storage for use as intermediate storage by programs.  If the storage is
-striped across hardware devices (e.g. RAID0 or interleaved memory
-controllers) then the iomapping pattern will be completely regular but
-the mappings themselves might be very small.
+I said this, not David.
 
-Performance for large IOs will suck if it is necessary to upcall the
-fuse server every time we cross a mapping boundary.  The fuse server can
-try to mitigate that hit by upserting mappings ahead of time, but
-there's a better solution for this usecase: BPF programs.
+> It used to work, then they broke it. (See below.)
 
-In this case, the fuse server can compile a BPF program that will
-compute the mapping data for a given request and upload the program.
-This avoids the overhead of cache lookups and server upcalls.  Note that
-the BPF verifier still imposes instruction count and complexity limits
-on the uploaded programs.
+So you have a directory with rootfs, and you want to add /dev/console
+to it? Do I understand your problem correctly?
 
-Note that I embraced and extended some code from Joanne, but at this
-point I've modified it so heavily that it's not really the original
-anymore.  But she still gets credit for coming up with the idea and
-engaging me in flinging prototypes around.
+This is how you can solve it.
 
-If you're going to start using this code, I strongly recommend pulling
-from my git trees, which are linked below.
+Option 1 (recommended).
 
-With a bit of luck, this should all go splendidly.
-Comments and questions are, as always, welcome.
+Let's assume you have your rootfs in a directory /tmp/rootfs . Then
+create /tmp/cplist with:
 
---D
+dir /dev 0755 0 0
+nod /dev/console 0600 0 0 c 5 1
 
-kernel git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=fuse-iomap-bpf
----
-Commits in this patchset:
- * libfuse: allow fuse servers to upload bpf code for iomap functions
- * libfuse: add kfuncs for iomap bpf programs to manage the cache
- * libfuse: make fuse_inode opaque to iomap bpf programs
----
- include/fuse_iomap_bpf.h |  263 ++++++++++++++++++++++++++++++++++++++++++++++
- include/meson.build      |    3 -
- 2 files changed, 265 insertions(+), 1 deletion(-)
- create mode 100644 include/fuse_iomap_bpf.h
+And add this to your config:
 
+CONFIG_INITRAMFS_SOURCE=3D"/tmp/rootfs /tmp/cplist"
+
+This will create builtin initramfs with contents of /tmp/rootfs AND
+nodes from /tmp/cplist
+(i. e. /dev/console).
+
+This will work, I just checked it.
+No need to build the kernel twice.
+Does this solve your problem?
+
+Option 2.
+Alternatively (assuming you already built gen_init_cpio) you can
+create cpio with /dev/console using gen_init_cpio and then
+concatenate it with cpio archive with your rootfs.
+
+Unfortunately, this may require building the kernel twice, as I
+explained in my previous letter in this thread. But this option
+is still doable.
+
+Option 3.
+Yet another way: run
+
+usr/gen_initramfs.sh /tmp/rootfs /tmp/cplist > some-output.cpio
+
+(again, here /tmp/rootfs is a directory with your rootfs and
+/tmp/cplist is a list of nodes.)
+
+Unfortunately, this requires gen_init_cpio to be present, so, again,
+similarly to option 2, this may require building the kernel twice.
+But, again, this is doable.
+
+In fact, gen_initramfs.sh accepts same options as CONFIG_INITRAMFS_SOURCE,
+this is explained in
+https://elixir.bootlin.com/linux/v6.19/source/Documentation/driver-api/earl=
+y-userspace/early_userspace_support.rst#L70
+.
+
+Conclusion.
+As I said, option 1 is the best in my opinion. It does not require
+building the kernel twice,
+and, as well as I understand, fully solves your problem.
+
+If I miss something, please, tell me this.
+
+I really want to help you, Rob.
+I sent this patch, because I want to help you.
+
+--=20
+Askar Safin
 
