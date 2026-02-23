@@ -1,446 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-77877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id kL7IM/6Vm2kK2wMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 00:49:18 +0100
+	id 0B3oM4+em2nP3gMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 01:25:51 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA40C170D93
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 00:49:18 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 647DD170ED0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 01:25:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 2652D301AE7C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Feb 2026 23:49:18 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 38AFC301A2F6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 00:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8617435FF73;
-	Sun, 22 Feb 2026 23:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DCAC1B4156;
+	Mon, 23 Feb 2026 00:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CrjLnC6J"
+	dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b="KAdio8I+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+Received: from fennec.ash.relay.mailchannels.net (fennec.ash.relay.mailchannels.net [23.83.222.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5FA35FF66
-	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Feb 2026 23:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771804155; cv=none; b=JHvIpLyoOlolCIQujfjqFuTr7X8bKtDwC4ctDmIU29kAfdTKvS5JeFQAgGrlfSYQoHSa7UT2KcF+IxWEtNcBFnczbSGaZSeBeXo864pM83j41dLzql2kOhXTgtwMRr6fPo3PE6GfzVa5XmfTrAIVmEfhedYHWilSxL1Rsk2zUkE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771804155; c=relaxed/simple;
-	bh=ZNl0hwlwMovxdQ2MQwq2WRIA1rd3ydK8yMeshKvjva4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=er8JcepW1Y8XeHJocC7yJNSF2kMa92zzkUBetO2wmeLRs1wpYsvcnweIehOWG+K0+ZwwkzNJdngi7nyTJJPJkm6sr93XZgGGebVzHiCzOhRypotKKQ8ttJku9Dmv7xVerU4QBAPPVHc03azVSYTmPeGDi47FQli7qUUMFt1pCGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CrjLnC6J; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sun, 22 Feb 2026 15:48:53 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1771804141;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0FA3EBF06;
+	Mon, 23 Feb 2026 00:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.222.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771806345; cv=pass; b=dMi7qmW/O+Pw/oyghpnMV31pLadTsEcRi9TcZn9s+T4ZRDH68EkUpBmW/ljfZ2x7+tY5/hwdRgCvX7Am8lOTrbNk2BZH1JD/Z+QgjN/0iDnvuM11CD4knVAyQhHbd4NkWnvgp+2bWoRl4zlqu4t1Kcugcy3/ajnp7Cy+Z3yO8LA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771806345; c=relaxed/simple;
+	bh=vnl3n6hiLRbYTraiOMb+bVU+YKg9dIaxSlm6mpPCZuE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kjrGX7uh0eHjOT7SKxRVrb8/s1u5lo9w2y31+qxzazfl0fX8wYNiQ98aEc2wCFCHvtXqnAQzXUgw7dv2ouKWf18APIb+eoIFQWL5uGQD0CN3WY2cl7k+VeOULni5emHX1QYR/OAxf9NFCf/c/J/BU0o/JBQ0BMFdPXqjnTxuS7c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net; spf=pass smtp.mailfrom=landley.net; dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b=KAdio8I+; arc=pass smtp.client-ip=23.83.222.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=landley.net
+X-Sender-Id: dreamhost|x-authsender|rob@landley.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id CB9EA78323A;
+	Mon, 23 Feb 2026 00:17:06 +0000 (UTC)
+Received: from pdx1-sub0-mail-a220.dreamhost.com (100-97-187-78.trex-nlb.outbound.svc.cluster.local [100.97.187.78])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 5F91078320C;
+	Mon, 23 Feb 2026 00:17:06 +0000 (UTC)
+ARC-Seal: i=1; a=rsa-sha256; d=mailchannels.net; s=arc-2022; cv=none;
+	t=1771805826;
+	b=nS39JAZZ1x7GEi8kd6hBEb0VddJIjmIN1ih8vqTrOPa3KljmW925tQ/jr4GcJMBeloTIhs
+	2kF6rAvjwWm53D80pv1bzQlek8Ta6Ru6m2tsnx2Jw9Aq0pyp+3EA9cyIarJ7KJXFNThDqS
+	gHA7adwCWLFiXr/Agcn3YmoVwQqXuODCKAICZ0n9N6aXLrM8UBnH6lZzGw1O+OTYEP+SYO
+	tH7dlHcjVVmxCgh+PzmJ3Wh/HWtT4NOmpUn2m2H79CWJlDZPFQzWod1MdMBs6YTs/RjWsb
+	+30P2A1y3daOsjUb1QNGD+BF0Oppuze9E00ZDYlj/tHNOEw5i5yL/ApJnEHIRA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1771805826;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wf1OfANA38l1Nqjx+a+UYfaqGfLco3xZ9QiXSc8+bzA=;
-	b=CrjLnC6JILfkdrFtkitx8WNrZzh/SpyN8brXdb+YUkYTugS6Wi3PSNDnM6X4kTDJfo4UdK
-	tTApzlJhUwSDhEz3EQOaU6KmYKK6DHcpd67RWoubBbUO1seAP++WmaKcIV6/4LSmsP4S6C
-	FH9flvlL2j1ZmkT58kG4f0z7JIuGNwY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Venkat Rao Bagalkote <venkat88@linux.ibm.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Carlos Maiolino <cem@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Ritesh Harjani <riteshh@linux.ibm.com>, ojaswin@linux.ibm.com, Muchun Song <muchun.song@linux.dev>, 
-	Cgroups <cgroups@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	Hao Li <hao.li@linux.dev>
-Subject: Re: [next-20260216]NULL pointer dereference in drain_obj_stock()
- (RCU free path)
-Message-ID: <aZuVgStlrvZ87duZ@linux.dev>
-References: <ca241daa-e7e7-4604-a48d-de91ec9184a5@linux.ibm.com>
- <aZReMzl-S9KM_snh@nidhogg.toxiclabs.cc>
- <b4288fae-f805-42ff-a823-f6b66748ecfe@suse.cz>
- <ccdcd672-b5e1-45bc-86f3-791af553f0d8@linux.ibm.com>
- <aZrstwhqX6bSpjtz@hyeyoo>
- <aZuR6_Mm9uqt_6Fp@linux.dev>
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=ejC93Nu7XMWnzidBneVNGHhfI3IKdCvyfDvNoCmZe5o=;
+	b=cKGwSgB0vfBiNtu1dFyo1LGfvIgzprANNnIF+iIunOUk4fNzzMDALACUhLTb1jGPBhZJBR
+	W2JA5L2C2mTbl93uGWAuQc5GCFDq3bGhEwzIiQ9pnc8Oi/WRHuT0JD/jSkUzI8KXGLvi3+
+	K+73V0R8ajEb//hJJqySV2YXrfMY9T355DReIMR+5HOAN+hIUuf3RYPSzno8m7CgwofQOB
+	rUcuEOAUKDC/OlrWxrCZHhB19EHB0bvfYNUljUlAZqjFDBs8BNp0J8DlXazYzeqQvAw9mN
+	DJk0ELFjp+CzTBMZCpThq47u2x263zzgvkao57C/94UROTEjh/6vxh5/KWhZMA==
+ARC-Authentication-Results: i=1;
+	rspamd-7f65b64645-s74qj;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=rob@landley.net
+X-Sender-Id: dreamhost|x-authsender|rob@landley.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|rob@landley.net
+X-MailChannels-Auth-Id: dreamhost
+X-Descriptive-Shrill: 1a594b3400788975_1771805826688_2785434387
+X-MC-Loop-Signature: 1771805826688:3386891487
+X-MC-Ingress-Time: 1771805826686
+Received: from pdx1-sub0-mail-a220.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.97.187.78 (trex/7.1.3);
+	Mon, 23 Feb 2026 00:17:06 +0000
+Received: from [192.168.14.155] (unknown [209.81.127.98])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: rob@landley.net)
+	by pdx1-sub0-mail-a220.dreamhost.com (Postfix) with ESMTPSA id 4fK1cx3K7JzQf;
+	Sun, 22 Feb 2026 16:17:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=landley.net;
+	s=dreamhost; t=1771805826;
+	bh=ejC93Nu7XMWnzidBneVNGHhfI3IKdCvyfDvNoCmZe5o=;
+	h=Date:Subject:To:Cc:From:Content-Type:Content-Transfer-Encoding;
+	b=KAdio8I+4ZC3SZr9noEGXA1dPIra+K58gvG05zU5jOQZkc0RirZwaZxLAoBlCIsR/
+	 c/HYyZhksRxOjmA8bw7SkM0NKHnGPwCAim9zuZMkqYdU1Sj4eC2kp9L85o5ZlHDSqE
+	 jZd+rhCiIKRWNeoOt3KDAQEWKhY4ojUDOuMVy8pqiF0FRHsChUdb3wGkvguzfQGDEn
+	 CGoc96VpC250tJ29hiSWU9d+igRn0BddbJ/5zIcbamM87+zxhnLyoCxQ0w/vee33Sy
+	 V1AbEj4Xyuh7ZQv6jJYUVwmxcaO578FIEOrRq8JHSkdkovJct2YP/a9rGJOYfnvoBf
+	 sQhnrkDENDYAQ==
+Message-ID: <a7cb199d-928d-4158-8f16-db7ae5309082@landley.net>
+Date: Sun, 22 Feb 2026 18:17:04 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aZuR6_Mm9uqt_6Fp@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] init: ensure that /dev/console and /dev/null are
+ (nearly) always available in initramfs
+To: Askar Safin <safinaskar@gmail.com>, linux-fsdevel@vger.kernel.org,
+ Christian Brauner <brauner@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, initramfs@vger.kernel.org,
+ David Disseldorp <ddiss@suse.de>, Nathan Chancellor <nathan@kernel.org>,
+ Nicolas Schier <nsc@kernel.org>, patches@lists.linux.dev
+References: <20260219210312.3468980-1-safinaskar@gmail.com>
+Content-Language: en-US
+From: Rob Landley <rob@landley.net>
+In-Reply-To: <20260219210312.3468980-1-safinaskar@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[linux.dev,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
-	R_DKIM_ALLOW(-0.20)[linux.dev:s=key1];
+X-Spamd-Result: default: False [-1.66 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_DKIM_ALLOW(-0.20)[landley.net:s=dreamhost];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77877-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77878-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
+	DMARC_NA(0.00)[landley.net];
+	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org,kernel.org,zeniv.linux.org.uk,suse.cz];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[landley.net:+];
+	RCPT_COUNT_TWELVE(0.00)[13];
 	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	DKIM_TRACE(0.00)[linux.dev:+];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[shakeel.butt@linux.dev,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,landley.net:mid,landley.net:url,landley.net:dkim];
+	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[rob@landley.net,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
 	NEURAL_HAM(-0.00)[-0.999];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,linux.dev:mid,linux.dev:dkim]
-X-Rspamd-Queue-Id: BA40C170D93
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: 647DD170ED0
 X-Rspamd-Action: no action
 
-On Sun, Feb 22, 2026 at 03:36:46PM -0800, Shakeel Butt wrote:
-> On Sun, Feb 22, 2026 at 08:47:03PM +0900, Harry Yoo wrote:
-> [...]
-> > 
-> > It seems it crashed while dereferencing objcg->ref->data->count.
-> > I think that implies that obj_cgroup_release()->percpu_ref_exit()
-> > is already called due to the refcount reaching zero and set
-> > ref->data = NULL.
-> > 
-> > Wait, was the stock->objcg ever a valid objcg?
-> > I think it should be valid when refilling the obj stock, otherwise
-> > it should have crashed in refill_obj_stock() -> obj_cgroup_get() path
-> > in the first place, rather than crashing when draining.
-> > 
-> > And that sounds like we're somehow calling obj_cgroup_put() more times
-> > than obj_cgroup_get().
-> > 
-> > Anyway, this is my theory that it may be due to mis-refcounting of objcgs.
-> > 
+On 2/19/26 15:03, Askar Safin wrote:
+> This patchset is for VFS.
 > 
-> I have not looked deeper into recent slub changes (sheafs or obj_exts savings)
-> but one thing looks weird to me:
-> 
-> allocate_slab() // for cache with SLAB_OBJ_EXT_IN_OBJ
-> 	-> alloc_slab_obj_exts_early()
-> 		-> slab_set_stride(slab, s->size)
-> 	-> account_slab()
-> 		-> alloc_slab_obj_exts()
-> 			-> slab_set_stride(slab, sizeof(struct slabobj_ext));
-> 
-> Unconditional overwrite of stride. Not sure if it is issue or even related to
-> this crash but looks odd.
-
-I asked AI to debug this crash report along with a nudge towards to look for
-stride corruption, it gave me the following output:
-
-
-# Stride Corruption Bug Analysis
-
-## Bug Report Context
-
-- **Crash Location**: `drain_obj_stock+0x620/0xa48` in `obj_cgroup_put(old)` at mm/memcontrol.c:3059
-- **Root Cause**: `percpu_ref.data` is NULL, meaning `obj_cgroup_release()` already ran
-- **Platform**: IBM Power11 (pSeries LPAR, Radix MMU, LE, 64K pages, kernel 6.19.0-next-20260216)
-- **Trigger**: xfstests generic/428
-
-## Identified Bug: Unconditional Stride Overwrite
-
-### Location: mm/slub.c lines 2196-2223 (alloc_slab_obj_exts)
-
-```c
-retry:
-    old_exts = READ_ONCE(slab->obj_exts);
-    handle_failed_objexts_alloc(old_exts, vec, objects);
-    slab_set_stride(slab, sizeof(struct slabobj_ext));  // BUG: UNCONDITIONALLY SET
-
-    if (new_slab) {
-        slab->obj_exts = new_exts;
-    } else if (old_exts & ~OBJEXTS_FLAGS_MASK) {
-        // obj_exts already exists, BUT stride was already modified above!
-        mark_objexts_empty(vec);
-        kfree(vec);
-        return 0;
-    } else if (cmpxchg(&slab->obj_exts, old_exts, new_exts) != old_exts) {
-        goto retry;
-    }
-```
-
-### The Problem
-
-The stride is set to `sizeof(struct slabobj_ext)` **BEFORE** checking if `obj_exts` already
-exists. If a slab was created with `SLAB_OBJ_EXT_IN_OBJ` mode (where stride = `s->size`),
-and later `alloc_slab_obj_exts` is called for any reason, the stride gets corrupted.
-
-### Stride Modes
-
-There are two stride modes (see alloc_slab_obj_exts_early):
-
-1. **Normal mode**: stride = `sizeof(struct slabobj_ext)` (~16 bytes)
-   - obj_exts is a separate array or in slab leftover space
-
-2. **SLAB_OBJ_EXT_IN_OBJ mode**: stride = `s->size` (object size, e.g., 64-256+ bytes)
-   - obj_ext is embedded within each object at a fixed offset
-
-### Consequences of Wrong Stride
-
-When `slab_obj_ext` is later called:
-```c
-obj_ext = (struct slabobj_ext *)(obj_exts + slab_get_stride(slab) * index);
-```
-
-With corrupted stride (16 instead of 256):
-- **Expected**: `obj_exts + 256 * 5 = obj_exts + 1280` (correct obj_ext for object 5)
-- **Actual**: `obj_exts + 16 * 5 = obj_exts + 80` (WRONG obj_ext - belongs to object 0!)
-
-This causes:
-1. Reading wrong object's objcg pointer
-2. Releasing wrong objcg reference (`obj_cgroup_put`)
-3. Reference underflow on victim objcg
-4. Early `obj_cgroup_release()` → `percpu_ref_exit()` → `data = NULL`
-5. Stock still caches the objcg pointer
-6. Later `drain_obj_stock()` tries to put it → **CRASH**
-
-## Missing Safety Check
-
-`slab_obj_ext()` in mm/slab.h has **no bounds checking**:
-
-```c
-static inline struct slabobj_ext *slab_obj_ext(struct slab *slab,
-                                               unsigned long obj_exts,
-                                               unsigned int index)
-{
-    struct slabobj_ext *obj_ext;
-
-    VM_WARN_ON_ONCE(obj_exts != slab_obj_exts(slab));
-    // MISSING: VM_WARN_ON_ONCE(index >= slab->objects);
-
-    obj_ext = (struct slabobj_ext *)(obj_exts +
-                                     slab_get_stride(slab) * index);
-    return kasan_reset_tag(obj_ext);
-}
-```
-
-## CRITICAL: Memory Ordering Bug on PowerPC (Likely Root Cause)
-
-### The Problem
-
-In `alloc_slab_obj_exts` (mm/slub.c lines 2199-2220), there is **NO memory barrier**
-between the stride store and the obj_exts visibility via cmpxchg:
-
-```c
-slab_set_stride(slab, sizeof(struct slabobj_ext));  // Store to stride (line 2199)
-                                                     // NO MEMORY BARRIER HERE!
-if (new_slab) {
-    slab->obj_exts = new_exts;                       // Store to obj_exts (line 2207)
-} else if (...) {
-} else if (cmpxchg(&slab->obj_exts, ...) != ...) {   // Atomic on obj_exts (line 2220)
-    goto retry;
-}
-```
-
-### Why This Crashes on PowerPC
-
-PowerPC has a **weakly-ordered memory model**. Stores can be reordered and may not be
-immediately visible to other processors. The cmpxchg provides a barrier AFTER it
-executes, but the stride store BEFORE cmpxchg may not be visible when obj_exts becomes
-visible.
-
-**Race Scenario:**
-1. CPU A: `slab_set_stride(slab, 16)` (store to stride, in CPU A's store buffer)
-2. CPU A: `cmpxchg(&slab->obj_exts, 0, new_exts)` succeeds, obj_exts is now visible
-3. CPU B: Sees `obj_exts` is set (from step 2)
-4. CPU B: Reads `slab->stride` → **sees OLD value (0 or garbage)** due to reordering!
-5. CPU B: `slab_obj_ext` calculates `obj_exts + 0 * index = obj_exts` for ALL indices!
-6. **All objects appear to share the same obj_ext at offset 0**
-
-### Consequences
-
-- Object 0's objcg is correct
-- Object 1..N all read object 0's objcg (WRONG!)
-- When freeing multiple objects, we `obj_cgroup_put` the SAME objcg multiple times
-- Reference count underflows → early `obj_cgroup_release()`
-- `percpu_ref_exit()` sets `data = NULL`
-- Later stock drain tries to put the objcg → **CRASH in `drain_obj_stock`**
-
-### Why This Matches the Bug Report
-
-- **Platform**: IBM Power11 (PowerPC) - weakly ordered memory
-- **Trigger**: xfstests generic/428 - creates high filesystem activity with many allocations
-- **Crash location**: `drain_obj_stock` → `obj_cgroup_put` with NULL data
-- **Pattern**: Stock has cached objcg that was prematurely released
-
-### Proposed Fix
-
-Add a write memory barrier to ensure stride is visible before obj_exts:
-
-```c
-slab_set_stride(slab, sizeof(struct slabobj_ext));
-smp_wmb();  // Ensure stride is visible before obj_exts
-
-if (new_slab) {
-    slab->obj_exts = new_exts;
-} else if (...) {
-} else if (cmpxchg(&slab->obj_exts, old_exts, new_exts) != old_exts) {
-    goto retry;
-}
-```
-
-And correspondingly, the reader side should use a read barrier:
-```c
-static inline unsigned short slab_get_stride(struct slab *slab)
-{
-    // Need acquire semantics when reading stride after seeing obj_exts
-    return smp_load_acquire(&slab->stride);
-}
-```
-
-Or use `smp_store_release` / `smp_load_acquire` pairs for proper ordering.
-
-### Also Applies to alloc_slab_obj_exts_early
-
-The same issue exists in `alloc_slab_obj_exts_early` (lines 2290-2291 and 2308-2309):
-
-```c
-slab->obj_exts = obj_exts;                           // Store obj_exts
-slab_set_stride(slab, sizeof(struct slabobj_ext));   // Store stride AFTER!
-```
-
-Here the order is **reversed** - obj_exts is set BEFORE stride! This is even worse
-for memory ordering, as other CPUs could see obj_exts before stride is set.
-
-## Original Theory: Unconditional Stride Overwrite
-
-(Kept for reference - less likely to be the root cause on this specific crash)
-
-The stride is set to `sizeof(struct slabobj_ext)` **BEFORE** checking if `obj_exts`
-already exists. However, analysis shows this is protected by the TOCTOU check in
-callers (`!slab_obj_exts(slab)`).
-
-## Trigger Scenarios
-
-1. **Memory ordering on PowerPC** (MOST LIKELY): Stride not visible when obj_exts
-   becomes visible due to missing memory barriers.
-
-2. **Race between alloc_slab_obj_exts calls**: Two CPUs trying to allocate obj_exts
-   for the same slab simultaneously.
-
-3. **Interaction with RCU free path**: Objects in RCU sheaf being processed when
-   stride is stale/zero.
-
-## Confirmed Code Analysis (CONFIG_64BIT)
-
-On 64-bit systems (including IBM Power11), the stride is stored dynamically:
-
-**mm/slab.h:562-569**:
-```c
-#ifdef CONFIG_64BIT
-static inline void slab_set_stride(struct slab *slab, unsigned short stride)
-{
-    slab->stride = stride;  // Plain store - NO memory ordering!
-}
-static inline unsigned short slab_get_stride(struct slab *slab)
-{
-    return slab->stride;    // Plain load - NO memory ordering!
-}
-```
-
-**mm/slab.h:533-548** (`slab_obj_exts`):
-```c
-static inline unsigned long slab_obj_exts(struct slab *slab)
-{
-    unsigned long obj_exts = READ_ONCE(slab->obj_exts);  // Only compiler barrier!
-    // ... validation ...
-    return obj_exts & ~OBJEXTS_FLAGS_MASK;
-}
-```
-
-`READ_ONCE` only provides compiler ordering, NOT CPU memory ordering. There's no
-acquire barrier to ensure the stride read happens after seeing obj_exts.
-
-## Complete Fix Using Release/Acquire Semantics
-
-### Fix 1: Reader side - slab_obj_exts (mm/slab.h)
-
-Change `READ_ONCE` to `smp_load_acquire`:
-
-```c
-static inline unsigned long slab_obj_exts(struct slab *slab)
-{
-    unsigned long obj_exts = smp_load_acquire(&slab->obj_exts);  // Acquire barrier
-    // ... validation ...
-    return obj_exts & ~OBJEXTS_FLAGS_MASK;
-}
-```
-
-### Fix 2: Writer side - alloc_slab_obj_exts (mm/slub.c:2196-2223)
-
-Use `smp_store_release` for obj_exts after setting stride:
-
-```c
-retry:
-    old_exts = READ_ONCE(slab->obj_exts);
-    handle_failed_objexts_alloc(old_exts, vec, objects);
-
-    if (new_slab) {
-        slab_set_stride(slab, sizeof(struct slabobj_ext));
-        smp_store_release(&slab->obj_exts, new_exts);  // Release barrier
-    } else if (old_exts & ~OBJEXTS_FLAGS_MASK) {
-        mark_objexts_empty(vec);
-        kfree(vec);
-        return 0;
-    } else {
-        slab_set_stride(slab, sizeof(struct slabobj_ext));
-        // cmpxchg already provides release semantics, but stride must be
-        // visible before cmpxchg. Need explicit barrier:
-        smp_wmb();
-        if (cmpxchg(&slab->obj_exts, old_exts, new_exts) != old_exts)
-            goto retry;
-    }
-```
-
-### Fix 3: Writer side - alloc_slab_obj_exts_early (mm/slub.c:2290-2291, 2308-2309)
-
-The order is REVERSED here - obj_exts is set BEFORE stride! Fix by using
-`smp_store_release`:
-
-```c
-// For normal obj_exts (lines 2290-2291):
-slab_set_stride(slab, sizeof(struct slabobj_ext));  // Set stride FIRST
-smp_store_release(&slab->obj_exts, obj_exts);       // Then release obj_exts
-
-// For SLAB_OBJ_EXT_IN_OBJ (lines 2308-2309):
-slab_set_stride(slab, s->size);                     // Set stride FIRST
-smp_store_release(&slab->obj_exts, obj_exts);       // Then release obj_exts
-```
-
-## Why This Fixes the Crash
-
-With proper release/acquire ordering:
-
-1. **Writer** (CPU A): Sets stride, then `smp_store_release(&obj_exts, ...)` ensures
-   stride is visible to all CPUs before obj_exts becomes visible
-
-2. **Reader** (CPU B): `smp_load_acquire(&obj_exts)` ensures that if obj_exts is
-   seen as set, the subsequent stride read will see the correct value
-
-This prevents the race where CPU B sees obj_exts but reads stale/zero stride,
-which caused all objects to appear to share obj_ext at offset 0, leading to
-multiple `obj_cgroup_put` calls on the same objcg → reference underflow → crash.
-
-## Additional Safety: Bounds Check in slab_obj_ext
-
-Add bounds check to catch any remaining issues:
-```c
-VM_WARN_ON_ONCE(index >= slab->objects);
-```
+> See commit messages for motivation and details.
+
+FYI I've been using (and occasionally posting) variants of 
+https://landley.net/bin/mkroot/0.8.13/linux-patches/0003-Wire-up-CONFIG_DEVTMPFS_MOUNT-to-initramfs.patch 
+since 2017.
+
+What needs /dev/null? I haven't encountered that.
+
+The problem with no /dev/console is init launches with no 
+stdin/stdout/stderr (which is what happens for static initramfs made 
+with normal user mode cpio, no easy way to insert /dev nodes into the 
+filesystem you're archiving up and most cpio tools don't offer an easy 
+way to hallucinate nodes). The problem with having no stderr when init 
+launches is if anything goes wrong you can't get debug messages.
+
+I have a shell script I run as PID 1 that mounts devtmpfs and then 
+redirects stdin/out/err ala 
+https://codeberg.org/landley/toybox/src/branch/master/mkroot/mkroot.sh#L111 
+but THAT's fiddly because when the shell is opening the file it 
+_becomes_ stderr (with the script _itself_ usually having been opened as 
+stdin because first available filehandle) so the shell needs plumbing to 
+dup2() them up to a high filehandle and close the original one and that 
+tends not to get regression tested when anything changes because "we ran 
+with no stdin/stdout/stderr is not a common case...
+
+Having the kernel auto-mount devtmpfs (which it already has a config 
+option for and all my patch does is make it work for initramfs) fixes 
+this, because /dev/console is then available before launching /init.
+
+How is manually editing initramfs _less_ awkward that automounting 
+devtmpfs when the config symbol requests it?
+
+Rob
 
