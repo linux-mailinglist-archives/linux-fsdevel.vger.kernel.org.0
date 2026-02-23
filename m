@@ -1,60 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-78047-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78048-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QBLHNmfenGl/LwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78047-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:10:31 +0100
+	id cP31Mn7enGl/LwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78048-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:10:54 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE1517EECA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:10:31 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4458817EF05
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:10:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8B61D312F704
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:08:43 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 7741130707A5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736E537E30A;
-	Mon, 23 Feb 2026 23:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F212D37E2F3;
+	Mon, 23 Feb 2026 23:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MkC2BbFi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O6pdfw67"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D5537E2F4;
-	Mon, 23 Feb 2026 23:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0D834CFC4;
+	Mon, 23 Feb 2026 23:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771888121; cv=none; b=R5+ppccOccw3Ofd51fKYj4WPr5tMW4y4g7EfyL840mJ19UF/azVKz8+CdgZIglaTiVBoWqFu8z4ly9MEy7k2idVa+0TI006b5EW0ydNePYqUF7gwyDixkpzzeTCKWpumiAijnAvjkD9tLCbwVdCtMzIs1cDtFO6bbykZWDioDu8=
+	t=1771888136; cv=none; b=Wpx0ARirSxvp2HynzueVaJEPmoa2D84FMlvw00U+rKcc+lIYxL6i+adnH3TNtBONZ2wK32HHeU1AdXirLqHgYZjKAQYwwrTs3sD37BIXTFr73yRHb9LX0Kj5oamXF0OCc81QIl3s2oCn4/S4Q26cA+Tfp6zk6h8FIxiFSYcs59I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771888121; c=relaxed/simple;
-	bh=IytVmE4pO4BPrH6h/7neOQU9xS9fu5UyQMn5loH/J30=;
+	s=arc-20240116; t=1771888136; c=relaxed/simple;
+	bh=ER7q+W0XP97pfRHg8+1pLz4xjaQVjhoYUp/mnek48S8=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fxiqdQQg3gD3JVr07/qFvYIn0KpDY5bqb6EqmY1aDdf3B3elwXB/htOnIeRKIOnUupwLtr72MjkI/wMDyDEeT1VzVlkYIkSfsszuoQBe0ABpUvJyKzjddk9W8OenMSfD3z+RqL77Nu2jLJoMWeCU98duwgw23gEd4fBGBsw5E6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MkC2BbFi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A8C6C116C6;
-	Mon, 23 Feb 2026 23:08:40 +0000 (UTC)
+	 MIME-Version:Content-Type; b=twRU9lGzChmGLOuG5vqV3FUwFjPPcG3A/tzUsQanNNKbhy/IWknyUkQjpVTMx0rN3vsrtQpQStORsYq46u43L+1qieg/6tztN53mW4HUS9xeMeiHkQn8hFOb/ju2S5ZZ6XcQ7Yd3Xmk4OGqScbA8snGRV2ZjlkUKz4PkSjlzVFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O6pdfw67; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 241B6C116C6;
+	Mon, 23 Feb 2026 23:08:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771888120;
-	bh=IytVmE4pO4BPrH6h/7neOQU9xS9fu5UyQMn5loH/J30=;
+	s=k20201202; t=1771888136;
+	bh=ER7q+W0XP97pfRHg8+1pLz4xjaQVjhoYUp/mnek48S8=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=MkC2BbFiE3S0huWPxqC6+y/5sjAkQCnZCxwji4AyLwbs+iRqUD1ZhFCPdjAutuMWy
-	 8RV4D3DVmkqf/DT7aF/NucQgnNVQpXkcwjoTL/Jm/1yYlNj8jgHAb5fS4zkGbRMgHe
-	 uf1XLQwpmfd3FZfIma7BoSiDD51xVxjH8+19Wzlvft/1iOKbNQE2WcFcMBoyoNkX/F
-	 juAaLKU0q0OuXfqOIXUU/XFG97GJ96uSfMf4Qi4GV6fdJouifBI+Wahrc4H3r1P1NN
-	 L+KcoWikEHdG5Awc1bYQD71v0a+3019XexTVmcX0pZsTVQ6U8LOfy8J2C94v5t+G3j
-	 8mXf97jPSAmOw==
-Date: Mon, 23 Feb 2026 15:08:40 -0800
-Subject: [PATCH 2/2] fuse_trace: move the passthrough-specific code back to
- passthrough.c
+	b=O6pdfw67dqMprJ/lQOIBHbtb6HlWwtO1yC83CD3vvVOLI+UasvR9935bmnA4Oh0u6
+	 onpop6D4EzjBUBn2brQAZE6URhzpdl9kayWj4CK+9yPwfVHQnVhymW8Bi38xQqFsyP
+	 KuonCmpfc3tj2oyOQ11CbvRCpeosfzuONCv8oOK4uPz7yViWbX7ksmuNtKccR4+h8L
+	 Yf+3lWp8TFGiBJv8vTPUDjsJc7+zs+5splfDLgfcOAKbbNJ5uEYnEt5hYETuSyIkph
+	 mj04h5LevCUzEEQcjfl3xS3pDfGO2cpFkWZZ0cJL0r0br+jij/kfNAF7XXzY+br4H/
+	 4R/62naxwRDeQ==
+Date: Mon, 23 Feb 2026 15:08:55 -0800
+Subject: [PATCH 01/33] fuse: implement the basic iomap mechanisms
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: miklos@szeredi.hu, djwong@kernel.org
-Cc: joannelkoong@gmail.com, joannelkoong@gmail.com, bpf@vger.kernel.org,
- bernd@bsbernd.com, neal@gompa.dev, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org
-Message-ID: <177188733751.3935601.17061277930300835596.stgit@frogsfrogsfrogs>
-In-Reply-To: <177188733698.3935601.154959695370946923.stgit@frogsfrogsfrogs>
-References: <177188733698.3935601.154959695370946923.stgit@frogsfrogsfrogs>
+Cc: joannelkoong@gmail.com, bpf@vger.kernel.org, bernd@bsbernd.com,
+ neal@gompa.dev, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+Message-ID: <177188734266.3935739.17474004107496488650.stgit@frogsfrogsfrogs>
+In-Reply-To: <177188734044.3935739.1368557343243072212.stgit@frogsfrogsfrogs>
+References: <177188734044.3935739.1368557343243072212.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,20 +66,20 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,bsbernd.com,gompa.dev];
-	TAGGED_FROM(0.00)[bounces-78047-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78048-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	MIME_TRACE(0.00)[0:+];
 	TO_DN_NONE(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
@@ -89,99 +87,780 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	MISSING_XM_UA(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[9];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 3EE1517EECA
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 4458817EF05
 X-Rspamd-Action: no action
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Add tracepoints for the previous patch.
+Implement functions to enable upcalling of iomap_begin and iomap_end to
+userspace fuse servers.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
 ---
- fs/fuse/fuse_trace.h |   35 +++++++++++++++++++++++++++++++++++
- fs/fuse/backing.c    |    5 +++++
- 2 files changed, 40 insertions(+)
+ fs/fuse/fuse_i.h          |    5 -
+ fs/fuse/fuse_iomap.h      |   26 +++
+ fs/fuse/fuse_iomap_i.h    |   28 +++
+ include/uapi/linux/fuse.h |   91 +++++++++-
+ fs/fuse/Kconfig           |   32 +++
+ fs/fuse/Makefile          |    1 
+ fs/fuse/fuse_iomap.c      |  430 +++++++++++++++++++++++++++++++++++++++++++++
+ fs/fuse/inode.c           |    9 +
+ 8 files changed, 620 insertions(+), 2 deletions(-)
+ create mode 100644 fs/fuse/fuse_iomap.h
+ create mode 100644 fs/fuse/fuse_iomap_i.h
+ create mode 100644 fs/fuse/fuse_iomap.c
 
 
-diff --git a/fs/fuse/fuse_trace.h b/fs/fuse/fuse_trace.h
-index bbe9ddd8c71696..286a0845dc0898 100644
---- a/fs/fuse/fuse_trace.h
-+++ b/fs/fuse/fuse_trace.h
-@@ -124,6 +124,41 @@ TRACE_EVENT(fuse_request_end,
- 		  __entry->unique, __entry->len, __entry->error)
- );
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 3373252ccd1678..2d62b6365fa931 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -938,6 +938,9 @@ struct fuse_conn {
+ 	/* Is synchronous FUSE_INIT allowed? */
+ 	unsigned int sync_init:1;
  
-+#ifdef CONFIG_FUSE_BACKING
-+TRACE_EVENT(fuse_backing_class,
-+	TP_PROTO(const struct fuse_conn *fc, unsigned int idx,
-+		 const struct fuse_backing *fb),
++	/* Enable fs/iomap for file operations */
++	unsigned int iomap:1;
 +
-+	TP_ARGS(fc, idx, fb),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,			connection)
-+		__field(unsigned int,		idx)
-+		__field(unsigned long,		ino)
-+	),
-+
-+	TP_fast_assign(
-+		struct inode *inode = file_inode(fb->file);
-+
-+		__entry->connection	=	fc->dev;
-+		__entry->idx		=	idx;
-+		__entry->ino		=	inode->i_ino;
-+	),
-+
-+	TP_printk("connection %u idx %u ino 0x%lx",
-+		  __entry->connection,
-+		  __entry->idx,
-+		  __entry->ino)
-+);
-+#define DEFINE_FUSE_BACKING_EVENT(name)		\
-+DEFINE_EVENT(fuse_backing_class, name,		\
-+	TP_PROTO(const struct fuse_conn *fc, unsigned int idx, \
-+		 const struct fuse_backing *fb), \
-+	TP_ARGS(fc, idx, fb))
-+DEFINE_FUSE_BACKING_EVENT(fuse_backing_open);
-+DEFINE_FUSE_BACKING_EVENT(fuse_backing_close);
-+#endif /* CONFIG_FUSE_BACKING */
-+
- #endif /* _TRACE_FUSE_H */
+ 	/* Use io_uring for communication */
+ 	unsigned int io_uring;
  
- #undef TRACE_INCLUDE_PATH
-diff --git a/fs/fuse/backing.c b/fs/fuse/backing.c
-index adb4d2ebb21379..d7e074c30f46cc 100644
---- a/fs/fuse/backing.c
-+++ b/fs/fuse/backing.c
-@@ -72,6 +72,7 @@ static int fuse_backing_id_free(int id, void *p, void *data)
- 
- 	WARN_ON_ONCE(refcount_read(&fb->count) != 1);
- 
-+	trace_fuse_backing_close((struct fuse_conn *)data, id, fb);
- 	fuse_backing_free(fb);
- 	return 0;
+@@ -1059,7 +1062,7 @@ static inline struct fuse_conn *get_fuse_conn_super(struct super_block *sb)
+ 	return get_fuse_mount_super(sb)->fc;
  }
-@@ -145,6 +146,8 @@ int fuse_backing_open(struct fuse_conn *fc, struct fuse_backing_map *map)
- 		fb = NULL;
- 		goto out;
- 	}
-+
-+	trace_fuse_backing_open(fc, res, fb);
- out:
- 	pr_debug("%s: fb=0x%p, ret=%i\n", __func__, fb, res);
  
-@@ -194,6 +197,8 @@ int fuse_backing_close(struct fuse_conn *fc, int backing_id)
- 	if (err)
- 		goto out_fb;
- 
-+	trace_fuse_backing_close(fc, backing_id, fb);
+-static inline struct fuse_mount *get_fuse_mount(struct inode *inode)
++static inline struct fuse_mount *get_fuse_mount(const struct inode *inode)
+ {
+ 	return get_fuse_mount_super(inode->i_sb);
+ }
+diff --git a/fs/fuse/fuse_iomap.h b/fs/fuse/fuse_iomap.h
+new file mode 100644
+index 00000000000000..6c71318365ca82
+--- /dev/null
++++ b/fs/fuse/fuse_iomap.h
+@@ -0,0 +1,26 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2025-2026 Oracle.  All Rights Reserved.
++ * Author: Darrick J. Wong <djwong@kernel.org>
++ */
++#ifndef _FS_FUSE_IOMAP_H
++#define _FS_FUSE_IOMAP_H
 +
- 	err = -ENOENT;
- 	test_fb = fuse_backing_id_remove(fc, backing_id);
- 	if (!test_fb)
++#if IS_ENABLED(CONFIG_FUSE_IOMAP)
++enum fuse_iomap_iodir {
++	READ_MAPPING,
++	WRITE_MAPPING,
++};
++
++bool fuse_iomap_enabled(void);
++
++static inline bool fuse_has_iomap(const struct inode *inode)
++{
++	return get_fuse_conn(inode)->iomap;
++}
++#else
++# define fuse_iomap_enabled(...)		(false)
++# define fuse_has_iomap(...)			(false)
++#endif /* CONFIG_FUSE_IOMAP */
++
++#endif /* _FS_FUSE_IOMAP_H */
+diff --git a/fs/fuse/fuse_iomap_i.h b/fs/fuse/fuse_iomap_i.h
+new file mode 100644
+index 00000000000000..2897049637fad2
+--- /dev/null
++++ b/fs/fuse/fuse_iomap_i.h
+@@ -0,0 +1,28 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2025-2026 Oracle.  All Rights Reserved.
++ * Author: Darrick J. Wong <djwong@kernel.org>
++ */
++#ifndef _FS_FUSE_IOMAP_I_H
++#define _FS_FUSE_IOMAP_I_H
++
++#if IS_ENABLED(CONFIG_FUSE_IOMAP)
++#if IS_ENABLED(CONFIG_FUSE_IOMAP_DEBUG)
++# define ASSERT(condition) do {						\
++	int __cond = !!(condition);					\
++	WARN(!__cond, "Assertion failed: %s, func: %s, line: %d", #condition, __func__, __LINE__); \
++} while (0)
++# define BAD_DATA(condition) ({						\
++	int __cond = !!(condition);					\
++	WARN(__cond, "Bad mapping: %s, func: %s, line: %d", #condition, __func__, __LINE__); \
++})
++#else
++# define ASSERT(condition)
++# define BAD_DATA(condition) ({						\
++	int __cond = !!(condition);					\
++	unlikely(__cond);						\
++})
++#endif /* CONFIG_FUSE_IOMAP_DEBUG */
++#endif /* CONFIG_FUSE_IOMAP */
++
++#endif /* _FS_FUSE_IOMAP_I_H */
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 18713cfaf09171..5a58011f66f501 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -240,6 +240,10 @@
+  *  - add FUSE_COPY_FILE_RANGE_64
+  *  - add struct fuse_copy_file_range_out
+  *  - add FUSE_NOTIFY_PRUNE
++ *
++ *  7.99
++ *  - XXX magic minor revision to make experimental code really obvious
++ *  - add FUSE_IOMAP and iomap_{begin,end,ioend} for regular file operations
+  */
+ 
+ #ifndef _LINUX_FUSE_H
+@@ -275,7 +279,7 @@
+ #define FUSE_KERNEL_VERSION 7
+ 
+ /** Minor version number of this interface */
+-#define FUSE_KERNEL_MINOR_VERSION 45
++#define FUSE_KERNEL_MINOR_VERSION 99
+ 
+ /** The node ID of the root inode */
+ #define FUSE_ROOT_ID 1
+@@ -448,6 +452,7 @@ struct fuse_file_lock {
+  * FUSE_OVER_IO_URING: Indicate that client supports io-uring
+  * FUSE_REQUEST_TIMEOUT: kernel supports timing out requests.
+  *			 init_out.request_timeout contains the timeout (in secs)
++ * FUSE_IOMAP: Client supports iomap for regular file operations.
+  */
+ #define FUSE_ASYNC_READ		(1 << 0)
+ #define FUSE_POSIX_LOCKS	(1 << 1)
+@@ -495,6 +500,7 @@ struct fuse_file_lock {
+ #define FUSE_ALLOW_IDMAP	(1ULL << 40)
+ #define FUSE_OVER_IO_URING	(1ULL << 41)
+ #define FUSE_REQUEST_TIMEOUT	(1ULL << 42)
++#define FUSE_IOMAP		(1ULL << 43)
+ 
+ /**
+  * CUSE INIT request/reply flags
+@@ -664,6 +670,9 @@ enum fuse_opcode {
+ 	FUSE_STATX		= 52,
+ 	FUSE_COPY_FILE_RANGE_64	= 53,
+ 
++	FUSE_IOMAP_BEGIN	= 4094,
++	FUSE_IOMAP_END		= 4095,
++
+ 	/* CUSE specific operations */
+ 	CUSE_INIT		= 4096,
+ 
+@@ -1314,4 +1323,84 @@ struct fuse_uring_cmd_req {
+ 	uint8_t padding[6];
+ };
+ 
++/* mapping types; see corresponding IOMAP_TYPE_ */
++#define FUSE_IOMAP_TYPE_HOLE		(0)
++#define FUSE_IOMAP_TYPE_DELALLOC	(1)
++#define FUSE_IOMAP_TYPE_MAPPED		(2)
++#define FUSE_IOMAP_TYPE_UNWRITTEN	(3)
++#define FUSE_IOMAP_TYPE_INLINE		(4)
++
++/* fuse-specific mapping type indicating that writes use the read mapping */
++#define FUSE_IOMAP_TYPE_PURE_OVERWRITE	(255)
++
++#define FUSE_IOMAP_DEV_NULL		(0U)	/* null device cookie */
++
++/* mapping flags passed back from iomap_begin; see corresponding IOMAP_F_ */
++#define FUSE_IOMAP_F_NEW		(1U << 0)
++#define FUSE_IOMAP_F_DIRTY		(1U << 1)
++#define FUSE_IOMAP_F_SHARED		(1U << 2)
++#define FUSE_IOMAP_F_MERGED		(1U << 3)
++#define FUSE_IOMAP_F_BOUNDARY		(1U << 4)
++#define FUSE_IOMAP_F_ANON_WRITE		(1U << 5)
++#define FUSE_IOMAP_F_ATOMIC_BIO		(1U << 6)
++
++/* fuse-specific mapping flag asking for ->iomap_end call */
++#define FUSE_IOMAP_F_WANT_IOMAP_END	(1U << 7)
++
++/* mapping flags passed to iomap_end */
++#define FUSE_IOMAP_F_SIZE_CHANGED	(1U << 8)
++#define FUSE_IOMAP_F_STALE		(1U << 9)
++
++/* operation flags from iomap; see corresponding IOMAP_* */
++#define FUSE_IOMAP_OP_WRITE		(1U << 0)
++#define FUSE_IOMAP_OP_ZERO		(1U << 1)
++#define FUSE_IOMAP_OP_REPORT		(1U << 2)
++#define FUSE_IOMAP_OP_FAULT		(1U << 3)
++#define FUSE_IOMAP_OP_DIRECT		(1U << 4)
++#define FUSE_IOMAP_OP_NOWAIT		(1U << 5)
++#define FUSE_IOMAP_OP_OVERWRITE_ONLY	(1U << 6)
++#define FUSE_IOMAP_OP_UNSHARE		(1U << 7)
++#define FUSE_IOMAP_OP_DAX		(1U << 8)
++#define FUSE_IOMAP_OP_ATOMIC		(1U << 9)
++#define FUSE_IOMAP_OP_DONTCACHE		(1U << 10)
++
++#define FUSE_IOMAP_NULL_ADDR		(-1ULL)	/* addr is not valid */
++
++struct fuse_iomap_io {
++	uint64_t offset;	/* file offset of mapping, bytes */
++	uint64_t length;	/* length of mapping, bytes */
++	uint64_t addr;		/* disk offset of mapping, bytes */
++	uint16_t type;		/* FUSE_IOMAP_TYPE_* */
++	uint16_t flags;		/* FUSE_IOMAP_F_* */
++	uint32_t dev;		/* device cookie */
++};
++
++struct fuse_iomap_begin_in {
++	uint32_t opflags;	/* FUSE_IOMAP_OP_* */
++	uint32_t reserved;	/* zero */
++	uint64_t attr_ino;	/* matches fuse_attr:ino */
++	uint64_t pos;		/* file position, in bytes */
++	uint64_t count;		/* operation length, in bytes */
++};
++
++struct fuse_iomap_begin_out {
++	/* read file data from here */
++	struct fuse_iomap_io	read;
++
++	/* write file data to here, if applicable */
++	struct fuse_iomap_io	write;
++};
++
++struct fuse_iomap_end_in {
++	uint32_t opflags;	/* FUSE_IOMAP_OP_* */
++	uint32_t reserved;	/* zero */
++	uint64_t attr_ino;	/* matches fuse_attr:ino */
++	uint64_t pos;		/* file position, in bytes */
++	uint64_t count;		/* operation length, in bytes */
++	int64_t written;	/* bytes processed */
++
++	/* mapping that the kernel acted upon */
++	struct fuse_iomap_io	map;
++};
++
+ #endif /* _LINUX_FUSE_H */
+diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
+index 290d1c09e0b924..934d48076a010c 100644
+--- a/fs/fuse/Kconfig
++++ b/fs/fuse/Kconfig
+@@ -69,6 +69,38 @@ config FUSE_PASSTHROUGH
+ config FUSE_BACKING
+ 	bool
+ 
++config FUSE_IOMAP
++	bool "FUSE file IO over iomap"
++	default y
++	depends on FUSE_FS
++	depends on BLOCK
++	select FS_IOMAP
++	help
++	  Enable fuse servers to operate the regular file I/O path through
++	  the fs-iomap library in the kernel.  This enables higher performance
++	  userspace filesystems by keeping the performance critical parts in
++	  the kernel while delegating the difficult metadata parsing parts to
++	  an easily-contained userspace program.
++
++	  This feature is considered EXPERIMENTAL.  Use with caution!
++
++	  If unsure, say N.
++
++config FUSE_IOMAP_BY_DEFAULT
++	bool "FUSE file I/O over iomap by default"
++	default n
++	depends on FUSE_IOMAP
++	help
++	  Enable sending FUSE file I/O over iomap by default.
++
++config FUSE_IOMAP_DEBUG
++	bool "Debug FUSE file IO over iomap"
++	default y
++	depends on FUSE_IOMAP
++	help
++	  Enable debugging assertions for the fuse iomap code paths and logging
++	  of bad iomap file mapping data being sent to the kernel.
++
+ config FUSE_IO_URING
+ 	bool "FUSE communication over io-uring"
+ 	default y
+diff --git a/fs/fuse/Makefile b/fs/fuse/Makefile
+index 46041228e5be2c..2536bc6a71b898 100644
+--- a/fs/fuse/Makefile
++++ b/fs/fuse/Makefile
+@@ -18,5 +18,6 @@ fuse-$(CONFIG_FUSE_PASSTHROUGH) += passthrough.o
+ fuse-$(CONFIG_FUSE_BACKING) += backing.o
+ fuse-$(CONFIG_SYSCTL) += sysctl.o
+ fuse-$(CONFIG_FUSE_IO_URING) += dev_uring.o
++fuse-$(CONFIG_FUSE_IOMAP) += fuse_iomap.o
+ 
+ virtiofs-y := virtio_fs.o
+diff --git a/fs/fuse/fuse_iomap.c b/fs/fuse/fuse_iomap.c
+new file mode 100644
+index 00000000000000..8785f86941a1d2
+--- /dev/null
++++ b/fs/fuse/fuse_iomap.c
+@@ -0,0 +1,430 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2025-2026 Oracle.  All Rights Reserved.
++ * Author: Darrick J. Wong <djwong@kernel.org>
++ */
++#include <linux/iomap.h>
++#include "fuse_i.h"
++#include "fuse_trace.h"
++#include "fuse_iomap.h"
++#include "fuse_iomap_i.h"
++
++static bool __read_mostly enable_iomap =
++#if IS_ENABLED(CONFIG_FUSE_IOMAP_BY_DEFAULT)
++	true;
++#else
++	false;
++#endif
++module_param(enable_iomap, bool, 0644);
++MODULE_PARM_DESC(enable_iomap, "Enable file I/O through iomap");
++
++bool fuse_iomap_enabled(void)
++{
++	/* Don't let anyone touch iomap until the end of the patchset. */
++	return false;
++
++	/*
++	 * There are fears that a fuse+iomap server could somehow DoS the
++	 * system by doing things like going out to lunch during a writeback
++	 * related iomap request.  Only allow iomap access if the fuse server
++	 * has rawio capabilities since those processes can mess things up
++	 * quite well even without our help.
++	 */
++	return enable_iomap && has_capability_noaudit(current, CAP_SYS_RAWIO);
++}
++
++/* Convert IOMAP_* mapping types to FUSE_IOMAP_TYPE_* */
++#define XMAP(word) \
++	case IOMAP_##word: \
++		return FUSE_IOMAP_TYPE_##word
++static inline uint16_t fuse_iomap_type_to_server(uint16_t iomap_type)
++{
++	switch (iomap_type) {
++	XMAP(HOLE);
++	XMAP(DELALLOC);
++	XMAP(MAPPED);
++	XMAP(UNWRITTEN);
++	XMAP(INLINE);
++	default:
++		ASSERT(0);
++	}
++	return 0;
++}
++#undef XMAP
++
++/* Convert FUSE_IOMAP_TYPE_* to IOMAP_* mapping types */
++#define XMAP(word) \
++	case FUSE_IOMAP_TYPE_##word: \
++		return IOMAP_##word
++static inline uint16_t fuse_iomap_type_from_server(uint16_t fuse_type)
++{
++	switch (fuse_type) {
++	XMAP(HOLE);
++	XMAP(DELALLOC);
++	XMAP(MAPPED);
++	XMAP(UNWRITTEN);
++	XMAP(INLINE);
++	default:
++		ASSERT(0);
++	}
++	return 0;
++}
++#undef XMAP
++
++/* Validate FUSE_IOMAP_TYPE_* */
++static inline bool fuse_iomap_check_type(uint16_t fuse_type)
++{
++	switch (fuse_type) {
++	case FUSE_IOMAP_TYPE_HOLE:
++	case FUSE_IOMAP_TYPE_DELALLOC:
++	case FUSE_IOMAP_TYPE_MAPPED:
++	case FUSE_IOMAP_TYPE_UNWRITTEN:
++	case FUSE_IOMAP_TYPE_INLINE:
++	case FUSE_IOMAP_TYPE_PURE_OVERWRITE:
++		return true;
++	}
++
++	return false;
++}
++
++#define FUSE_IOMAP_F_ALL (FUSE_IOMAP_F_NEW | \
++			  FUSE_IOMAP_F_DIRTY | \
++			  FUSE_IOMAP_F_SHARED | \
++			  FUSE_IOMAP_F_MERGED | \
++			  FUSE_IOMAP_F_BOUNDARY | \
++			  FUSE_IOMAP_F_ANON_WRITE | \
++			  FUSE_IOMAP_F_ATOMIC_BIO | \
++			  FUSE_IOMAP_F_WANT_IOMAP_END)
++
++static inline bool fuse_iomap_check_flags(uint16_t flags)
++{
++	return (flags & ~FUSE_IOMAP_F_ALL) == 0;
++}
++
++/* Convert IOMAP_F_* mapping state flags to FUSE_IOMAP_F_* */
++#define XMAP(word) \
++	if (iomap_f_flags & IOMAP_F_##word) \
++		ret |= FUSE_IOMAP_F_##word
++#define XMAP2(iword, oword) \
++	if (iomap_f_flags & IOMAP_F_##iword) \
++		ret |= FUSE_IOMAP_F_##oword
++static inline uint16_t fuse_iomap_flags_to_server(uint16_t iomap_f_flags)
++{
++	uint16_t ret = 0;
++
++	XMAP(NEW);
++	XMAP(DIRTY);
++	XMAP(SHARED);
++	XMAP(MERGED);
++	XMAP(BOUNDARY);
++	XMAP(ANON_WRITE);
++	XMAP(ATOMIC_BIO);
++	XMAP2(PRIVATE, WANT_IOMAP_END);
++
++	XMAP(SIZE_CHANGED);
++	XMAP(STALE);
++
++	return ret;
++}
++#undef XMAP2
++#undef XMAP
++
++/* Convert FUSE_IOMAP_F_* to IOMAP_F_* mapping state flags */
++#define XMAP(word) \
++	if (fuse_f_flags & FUSE_IOMAP_F_##word) \
++		ret |= IOMAP_F_##word
++#define XMAP2(iword, oword) \
++	if (fuse_f_flags & FUSE_IOMAP_F_##iword) \
++		ret |= IOMAP_F_##oword
++static inline uint16_t fuse_iomap_flags_from_server(uint16_t fuse_f_flags)
++{
++	uint16_t ret = 0;
++
++	XMAP(NEW);
++	XMAP(DIRTY);
++	XMAP(SHARED);
++	XMAP(MERGED);
++	XMAP(BOUNDARY);
++	XMAP(ANON_WRITE);
++	XMAP(ATOMIC_BIO);
++	XMAP2(WANT_IOMAP_END, PRIVATE);
++
++	return ret;
++}
++#undef XMAP2
++#undef XMAP
++
++/* Convert IOMAP_* operation flags to FUSE_IOMAP_OP_* */
++#define XMAP(word) \
++	if (iomap_op_flags & IOMAP_##word) \
++		ret |= FUSE_IOMAP_OP_##word
++static inline uint32_t fuse_iomap_op_to_server(unsigned iomap_op_flags)
++{
++	uint32_t ret = 0;
++
++	XMAP(WRITE);
++	XMAP(ZERO);
++	XMAP(REPORT);
++	XMAP(FAULT);
++	XMAP(DIRECT);
++	XMAP(NOWAIT);
++	XMAP(OVERWRITE_ONLY);
++	XMAP(UNSHARE);
++	XMAP(DAX);
++	XMAP(ATOMIC);
++	XMAP(DONTCACHE);
++
++	return ret;
++}
++#undef XMAP
++
++/* Validate an iomap mapping. */
++static inline bool fuse_iomap_check_mapping(const struct inode *inode,
++					    const struct fuse_iomap_io *map,
++					    enum fuse_iomap_iodir iodir)
++{
++	const unsigned int blocksize = i_blocksize(inode);
++	uint64_t end;
++
++	/* Type and flags must be known */
++	if (BAD_DATA(!fuse_iomap_check_type(map->type)))
++		return false;
++	if (BAD_DATA(!fuse_iomap_check_flags(map->flags)))
++		return false;
++
++	/* No zero-length mappings */
++	if (BAD_DATA(map->length == 0))
++		return false;
++
++	/* File range must be aligned to blocksize */
++	if (BAD_DATA(!IS_ALIGNED(map->offset, blocksize)))
++		return false;
++	if (BAD_DATA(!IS_ALIGNED(map->length, blocksize)))
++		return false;
++
++	/* No overflows in the file range */
++	if (BAD_DATA(check_add_overflow(map->offset, map->length, &end)))
++		return false;
++
++	/* File range cannot start past maxbytes */
++	if (BAD_DATA(map->offset >= inode->i_sb->s_maxbytes))
++		return false;
++
++	switch (map->type) {
++	case FUSE_IOMAP_TYPE_MAPPED:
++	case FUSE_IOMAP_TYPE_UNWRITTEN:
++		/* Mappings backed by space must have a device/addr */
++		if (BAD_DATA(map->dev == FUSE_IOMAP_DEV_NULL))
++			return false;
++		if (BAD_DATA(map->addr == FUSE_IOMAP_NULL_ADDR))
++			return false;
++		break;
++	case FUSE_IOMAP_TYPE_DELALLOC:
++	case FUSE_IOMAP_TYPE_HOLE:
++	case FUSE_IOMAP_TYPE_INLINE:
++		/* Mappings not backed by space cannot have a device addr. */
++		if (BAD_DATA(map->dev != FUSE_IOMAP_DEV_NULL))
++			return false;
++		if (BAD_DATA(map->addr != FUSE_IOMAP_NULL_ADDR))
++			return false;
++		break;
++	case FUSE_IOMAP_TYPE_PURE_OVERWRITE:
++		/* "Pure overwrite" only allowed for write mapping */
++		if (BAD_DATA(iodir != WRITE_MAPPING))
++			return false;
++		break;
++	default:
++		/* should have been caught already */
++		ASSERT(0);
++		return false;
++	}
++
++	/* XXX: we don't support devices yet */
++	if (BAD_DATA(map->dev != FUSE_IOMAP_DEV_NULL))
++		return false;
++
++	/* No overflows in the device range, if supplied */
++	if (map->addr != FUSE_IOMAP_NULL_ADDR &&
++	    BAD_DATA(check_add_overflow(map->addr, map->length, &end)))
++		return false;
++
++	return true;
++}
++
++/* Convert a mapping from the server into something the kernel can use */
++static inline void fuse_iomap_from_server(struct iomap *iomap,
++					  const struct fuse_iomap_io *fmap)
++{
++	iomap->addr = fmap->addr;
++	iomap->offset = fmap->offset;
++	iomap->length = fmap->length;
++	iomap->type = fuse_iomap_type_from_server(fmap->type);
++	iomap->flags = fuse_iomap_flags_from_server(fmap->flags);
++	iomap->bdev = NULL; /* XXX */
++}
++
++/* Convert a mapping from the kernel into something the server can use */
++static inline void fuse_iomap_to_server(struct fuse_iomap_io *fmap,
++					const struct iomap *iomap)
++{
++	fmap->addr = iomap->addr;
++	fmap->offset = iomap->offset;
++	fmap->length = iomap->length;
++	fmap->type = fuse_iomap_type_to_server(iomap->type);
++	fmap->flags = fuse_iomap_flags_to_server(iomap->flags);
++	fmap->dev = FUSE_IOMAP_DEV_NULL; /* XXX */
++}
++
++/* Check the incoming _begin mappings to make sure they're not nonsense. */
++static inline int
++fuse_iomap_begin_validate(const struct inode *inode,
++			  unsigned opflags, loff_t pos,
++			  const struct fuse_iomap_begin_out *outarg)
++{
++	/* Make sure the mappings aren't garbage */
++	if (!fuse_iomap_check_mapping(inode, &outarg->read, READ_MAPPING))
++		return -EFSCORRUPTED;
++
++	if (!fuse_iomap_check_mapping(inode, &outarg->write, WRITE_MAPPING))
++		return -EFSCORRUPTED;
++
++	/*
++	 * Must have returned a mapping for at least the first byte in the
++	 * range.  The main mapping check already validated that the length
++	 * is nonzero and there is no overflow in computing end.
++	 */
++	if (BAD_DATA(outarg->read.offset > pos))
++		return -EFSCORRUPTED;
++	if (BAD_DATA(outarg->write.offset > pos))
++		return -EFSCORRUPTED;
++
++	if (BAD_DATA(outarg->read.offset + outarg->read.length <= pos))
++		return -EFSCORRUPTED;
++	if (BAD_DATA(outarg->write.offset + outarg->write.length <= pos))
++		return -EFSCORRUPTED;
++
++	return 0;
++}
++
++static inline bool fuse_is_iomap_file_write(unsigned int opflags)
++{
++	return opflags & (IOMAP_WRITE | IOMAP_ZERO | IOMAP_UNSHARE);
++}
++
++static int fuse_iomap_begin(struct inode *inode, loff_t pos, loff_t count,
++			    unsigned opflags, struct iomap *iomap,
++			    struct iomap *srcmap)
++{
++	struct fuse_inode *fi = get_fuse_inode(inode);
++	struct fuse_iomap_begin_in inarg = {
++		.attr_ino = fi->orig_ino,
++		.opflags = fuse_iomap_op_to_server(opflags),
++		.pos = pos,
++		.count = count,
++	};
++	struct fuse_iomap_begin_out outarg = { };
++	struct fuse_mount *fm = get_fuse_mount(inode);
++	FUSE_ARGS(args);
++	int err;
++
++	args.opcode = FUSE_IOMAP_BEGIN;
++	args.nodeid = get_node_id(inode);
++	args.in_numargs = 1;
++	args.in_args[0].size = sizeof(inarg);
++	args.in_args[0].value = &inarg;
++	args.out_numargs = 1;
++	args.out_args[0].size = sizeof(outarg);
++	args.out_args[0].value = &outarg;
++	err = fuse_simple_request(fm, &args);
++	if (err)
++		return err;
++
++	err = fuse_iomap_begin_validate(inode, opflags, pos, &outarg);
++	if (err)
++		return err;
++
++	if (fuse_is_iomap_file_write(opflags) &&
++	    outarg.write.type != FUSE_IOMAP_TYPE_PURE_OVERWRITE) {
++		/*
++		 * For an out of place write, we must supply the write mapping
++		 * via @iomap, and the read mapping via @srcmap.
++		 */
++		fuse_iomap_from_server(iomap, &outarg.write);
++		fuse_iomap_from_server(srcmap, &outarg.read);
++	} else {
++		/*
++		 * For everything else (reads, reporting, and pure overwrites),
++		 * we can return the sole mapping through @iomap and leave
++		 * @srcmap unchanged from its default (HOLE).
++		 */
++		fuse_iomap_from_server(iomap, &outarg.read);
++	}
++
++	return 0;
++}
++
++/* Decide if we send FUSE_IOMAP_END to the fuse server */
++static bool fuse_should_send_iomap_end(const struct iomap *iomap,
++				       unsigned int opflags, loff_t count,
++				       ssize_t written)
++{
++	/* fuse server demanded an iomap_end call. */
++	if (iomap->flags & FUSE_IOMAP_F_WANT_IOMAP_END)
++		return true;
++
++	/* Reads and reporting should never affect the filesystem metadata */
++	if (!fuse_is_iomap_file_write(opflags))
++		return false;
++
++	/* Appending writes get an iomap_end call */
++	if (iomap->flags & IOMAP_F_SIZE_CHANGED)
++		return true;
++
++	/* Short writes get an iomap_end call to clean up delalloc */
++	return written < count;
++}
++
++static int fuse_iomap_end(struct inode *inode, loff_t pos, loff_t count,
++			  ssize_t written, unsigned opflags,
++			  struct iomap *iomap)
++{
++	struct fuse_inode *fi = get_fuse_inode(inode);
++	struct fuse_mount *fm = get_fuse_mount(inode);
++	int err;
++
++	if (fuse_should_send_iomap_end(iomap, opflags, count, written)) {
++		struct fuse_iomap_end_in inarg = {
++			.opflags = fuse_iomap_op_to_server(opflags),
++			.attr_ino = fi->orig_ino,
++			.pos = pos,
++			.count = count,
++			.written = written,
++		};
++		FUSE_ARGS(args);
++
++		fuse_iomap_to_server(&inarg.map, iomap);
++
++		args.opcode = FUSE_IOMAP_END;
++		args.nodeid = get_node_id(inode);
++		args.in_numargs = 1;
++		args.in_args[0].size = sizeof(inarg);
++		args.in_args[0].value = &inarg;
++		err = fuse_simple_request(fm, &args);
++		if (err == -ENOSYS) {
++			/*
++			 * libfuse returns ENOSYS for servers that don't
++			 * implement iomap_end
++			 */
++			err = 0;
++		}
++		if (err)
++			return err;
++	}
++
++	return 0;
++}
++
++const struct iomap_ops fuse_iomap_ops = {
++	.iomap_begin		= fuse_iomap_begin,
++	.iomap_end		= fuse_iomap_end,
++};
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 9012f4e8d68338..8f01844f89b261 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -9,6 +9,7 @@
+ #include "fuse_i.h"
+ #include "fuse_dev_i.h"
+ #include "dev_uring_i.h"
++#include "fuse_iomap.h"
+ 
+ #include <linux/dax.h>
+ #include <linux/pagemap.h>
+@@ -1460,6 +1461,12 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+ 
+ 			if (flags & FUSE_REQUEST_TIMEOUT)
+ 				timeout = arg->request_timeout;
++
++			if ((flags & FUSE_IOMAP) && fuse_iomap_enabled()) {
++				fc->iomap = 1;
++				pr_warn(
++ "EXPERIMENTAL iomap feature enabled.  Use at your own risk!");
++			}
+ 		} else {
+ 			ra_pages = fc->max_read / PAGE_SIZE;
+ 			fc->no_lock = 1;
+@@ -1528,6 +1535,8 @@ static struct fuse_init_args *fuse_new_init(struct fuse_mount *fm)
+ 	 */
+ 	if (fuse_uring_enabled())
+ 		flags |= FUSE_OVER_IO_URING;
++	if (fuse_iomap_enabled())
++		flags |= FUSE_IOMAP;
+ 
+ 	ia->in.flags = flags;
+ 	ia->in.flags2 = flags >> 32;
 
 
