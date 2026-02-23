@@ -1,213 +1,483 @@
-Return-Path: <linux-fsdevel+bounces-78177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id sPxUK+zlnGlNMAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:42:36 +0100
+	id OD72AeTmnGlNMAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:46:44 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5273617FCCC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:42:36 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70A8017FF0B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:46:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 7FDFB30364C5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:42:34 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 8DA4E3111023
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C7237FF5D;
-	Mon, 23 Feb 2026 23:42:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED2037FF5D;
+	Mon, 23 Feb 2026 23:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4npmqqkZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ATE7Ayox"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BC337FF47
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 23:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.222.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771890148; cv=pass; b=SjUQ+LlhItO9tjXoygwETq0Vn448OiWm+RVQOtOtvoGLCcVgb57BV5Og312/k5yDRCtG5SbqcqxXtR5ftSsxFfrq5qOdoDs6lPoI40BWaQIpeNU9lu5kcrVa82IRTMHPd51jd5QvHzWUwUtIFsZJvcMP9Z7fWkQrjMY8ggeeynE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771890148; c=relaxed/simple;
-	bh=G1G7Co3UGLp29oZTzIMMy89dawTZvG8ZKLFe9M3O6sY=;
-	h=From:In-Reply-To:References:MIME-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CP+o6fxG/vDg1G7537i+oaKhc+6oewVTcpKAIKkJyUL4UWnWBCvjJYSJsfkbxG/cEFbDV+ITneFrmn6JtuEUU9lZYt8RxDo9it+KyLDvuqNSXO0i/aWwZKjMvIupc3adeztPq+J0/gl+ZYGzUoeFYJlXnko3v3hATaGlF09r8Lg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4npmqqkZ; arc=pass smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-948029fb1f2so1344027241.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 15:42:27 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771890146; cv=none;
-        d=google.com; s=arc-20240605;
-        b=UptUHifCA21gxySNcZonpSXfa9SoDHhBncbtz94Af1tCSjXBSq8YLa5NxQTVjh1zLq
-         1eLW8elag/j/LiatmZJRW95VT/dFRNE/i7KaStM2Vv0lnJUvXCL3sndFkIyWyNs+bxEy
-         Nb96w7qg9tYCUHe7FUFat0sNAvMriH6hZ2WQMvFI+aLzYTpN5lXyiqAtYTkMHAYC9iEO
-         Bk9bxLB189n4ld9B2mJ4Nh+HkMls284fBqYPAM2sJAMoY6mICU2ZDgdbfceuxQdaJXtd
-         FExWT1kk1FfockaQWlBQih6iIF1jamUAT0ociU+lGu/13T5Kgj7Fa7U8wncx3I55K8RX
-         ohYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:dkim-signature;
-        bh=G1G7Co3UGLp29oZTzIMMy89dawTZvG8ZKLFe9M3O6sY=;
-        fh=s6d9tqh4jgXlujdHxvtWhRjeuMDPJqAkBRaCmARMJXM=;
-        b=INIiuOpXDT4BEh9BR/a4rnSetQsXH/OvXkVPS1wZrgEiEfLBVUssRAywLji7cEXD6O
-         J32sq6cAWpYiDf3zcQepn3FuWybNtO2YYoTu5pPF16QfrpMT5hm3OaSA7s9Qo1el1GJl
-         dusQ3/CXbE5r5bHpNiVornbPrhe1mEZ23UfQwK2pZhPYfMmh1TuMekdZukURsIIclwCj
-         bfh2ElN6tPrd0CiMrr4wjtndiOjXDJ9FuqhF8P7hNPFoGk14gfHIukvOq2y+LSbUHRnU
-         arhwbr+IkOL8nMM/Dskdiac7BpDYZreBxskbiiPcRCiAbRCSgmuRdikCkkyRm1gWU/3M
-         h9kQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1771890146; x=1772494946; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=G1G7Co3UGLp29oZTzIMMy89dawTZvG8ZKLFe9M3O6sY=;
-        b=4npmqqkZVD4RdxyIRdLVN3GJ7fxWuMZCnqv7lxvXKBLGnYLdgHySwMxoi65MgG7ZHj
-         q/mQv62NpefnTqLd5SVDhmDhjWjQs0eTdLhx0WK/S+dpkS6YzqJjbeGoLxj8en304v9P
-         WjJ2xHvxEejgELw1MUKyU+IGjKcCUEP8bHGCB+O1WkB+bIxrm1Jm0LJp4ZXaMTq/Yjyw
-         Aq1yTR4H6M+iZsZEIPqRNGjLmWUAxBEk/m3nKtxVTxufNpwaweCPnVtKKJvHPHnx85x5
-         hcfTk2fuxe/ilc3cu/6XP5AlNVlhu4IkSHLUt2xOYN2xfWvB0+yB1nQhxnQ3gd84iVka
-         Nmgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771890146; x=1772494946;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G1G7Co3UGLp29oZTzIMMy89dawTZvG8ZKLFe9M3O6sY=;
-        b=tdpxUiscz1I+4F6T7K/eczwF7l8ASthedMZtz3NuEI7Ms/XEPdkbXlKN3BXPgu7Pea
-         u/I4MAgoUkN9GMiIqaw2hnNyszHvRr9Tg6V7DjbwLQYnxYe83HiDtyCOLqgTEMLTJyH+
-         SqRz3mLW2DTH8YH49PHI0K/jVq9YPH9Sa5FrdtxVAppl+n9MA75cfUgtK5wiLWxJ/st/
-         UXjq1d0WAnsL6/UdOIZWefRK4rmaUdnfssQu2AxxXhNC31yCajk9P5sW83rJqtDD2VoJ
-         TxDxY67p5WbNhVl9CSgbs06YerGgivzf1etdTujErfGLf4C6AV4ZI8IjEhqQBXVri9/B
-         JwJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZM8uluWu2mywe8LwbLKeVcNDxqeUUi/zCIuvYowg0TgjvScVQ4panmnLNkbRLIZ0ABFtCBMUT1YGZwJjt@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgAsNDmvC+T3PIvV8PsfSqqUuOTO7QrkD35rgyxmQEbMnFgrXP
-	b5cBGHbai6yV19ZqjtGzGlGyjeUWhRlZ48RHIT4v5jV6+w7mDhNVXWnWpezeZpJ8hBO+/Jc15UI
-	cqvzxOTxNW5b/MT7orHEVSW0/MUPWl1jpFfA3KGfD
-X-Gm-Gg: ATEYQzy7vqLL010McUiqUmznCc7LoEszHTimTqR0CvldNdfq4xz90rIsw430pr7BIIS
-	AIhKCEzPDPqc51TV4UyRcXdEY3wAgOnbmA6WqA/lq7J7pazW2gFdIAMsCQfB/3EDo6ibFh8d75d
-	COBOR+HCSq2izGFmj+R2lkl9fs8QCOUCTuSGQGgeFeNgs0+Wp65RIF00GsgzCGQc6Uw5QF6z9Km
-	6u+TNbbLApXZeyZyCp2Q2+73aIaJbpkHZEeRzJHO6xu3aiEWrZJR/YfQY/F7gzBoQbmPbGFaGdk
-	0c8ypTKeOg9oropyGJIO6kA/Huh4a5L+OHLAWGyiRA==
-X-Received: by 2002:a05:6102:3053:b0:5f5:32e2:5ea2 with SMTP id
- ada2fe7eead31-5feb30fc3a8mr3035084137.37.1771890145956; Mon, 23 Feb 2026
- 15:42:25 -0800 (PST)
-Received: from 176938342045 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 23 Feb 2026 15:42:25 -0800
-Received: from 176938342045 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 23 Feb 2026 15:42:25 -0800
-From: Ackerley Tng <ackerleytng@google.com>
-In-Reply-To: <a97045a9-8866-40fe-aa15-d319cafa6f2c@kernel.org>
-References: <cover.1771826352.git.ackerleytng@google.com> <a97045a9-8866-40fe-aa15-d319cafa6f2c@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC25636922A;
+	Mon, 23 Feb 2026 23:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771890156; cv=none; b=gKiPFg5G9OXNfBCxVFmjesVB4stck7e3k1WNPfF2PVFEzw6L00yKRHPfpBVGBEPDECkZXqaJWHIKTy79F8G4gQe7Ss1rkfZ1mXupNtsvWIoSGBNSV30r3T0Rv6v0cbXOCesqKEIon6QqFKGMYtMielS6vN3HnMrNtSa6V+GTvBI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771890156; c=relaxed/simple;
+	bh=ngXUNB44NQuUbimKTCMUqixcZe9I6gp7J2um61W46qc=;
+	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L5DVb87zmYUvGhvisGp0KhTKDK8qZn87cCzZ6U8rFhoR5lRvLbD3blfYqBcWYkpdTbmc5PvzBE+RS2OwPFiR7DZc5N9ypjTagI8mvKsn7mceTMzhVmiziT3pXA2k6xQ2hmLD97VF/pINDJ2tYDN+uyI+lid9dQph6sXdIEoqelU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ATE7Ayox; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1A7DC116C6;
+	Mon, 23 Feb 2026 23:42:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771890155;
+	bh=ngXUNB44NQuUbimKTCMUqixcZe9I6gp7J2um61W46qc=;
+	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
+	b=ATE7AyoxWsenO8nEPEPHI3Z80uzdwobl1rXLFZczNnc+kb8Juqk4IvRU0R/Sm8r5e
+	 w5Xd2snyUICSfHQ949Yl+4WUfJ++dpTR9LpKHhaWwlOg0OL+qOMrV7EPmUnhCNFtAU
+	 niyO2OYU/9npHUQd+LIrN63QUt5vtS5RHraUPrOCV2fsPCgqwvNmFEdyEEhl1g9t1+
+	 C1lKejlzl2I9aGqxRiHzPkylzoDvOKGDotUgkjhfeFW6/U9iUX3pVdGH9Sh/aMIsUB
+	 1YLbgtqHnUpHTAgxYw9xD9roTv3NLI3D4ntNa6ez+NhKWDsrAvqAFpeUa9ORk77Vb5
+	 vg0c5B8myilgQ==
+Date: Mon, 23 Feb 2026 15:42:35 -0800
+Subject: [PATCH 05/10] fuse2fs: debug timestamp updates
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: tytso@mit.edu
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, miklos@szeredi.hu, bernd@bsbernd.com,
+ joannelkoong@gmail.com, neal@gompa.dev
+Message-ID: <177188745270.3944028.14444486216859288954.stgit@frogsfrogsfrogs>
+In-Reply-To: <177188745140.3944028.16289511572192714858.stgit@frogsfrogsfrogs>
+References: <177188745140.3944028.16289511572192714858.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 23 Feb 2026 15:42:25 -0800
-X-Gm-Features: AaiRm52aDnZI9CEbv5M2DeAz_Eaea7Sv4JJPWItwl1wMCqksqqJ4XC4LTodyGY8
-Message-ID: <CAEvNRgFF0+g9pmp1yitX48ebK=fDpYKSOQDmRfOjzSHxM5UpeQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 00/10] guest_memfd: Track amount of memory
- allocated on inode
-To: "David Hildenbrand (Arm)" <david@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Cc: akpm@linux-foundation.org, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
-	mhocko@suse.com, willy@infradead.org, pbonzini@redhat.com, shuah@kernel.org, 
-	seanjc@google.com, shivankg@amd.com, rick.p.edgecombe@intel.com, 
-	yan.y.zhao@intel.com, rientjes@google.com, fvdl@google.com, 
-	jthoughton@google.com, vannapurve@google.com, pratyush@kernel.org, 
-	pasha.tatashin@soleen.com, kalyazin@amazon.com, tabba@google.com, 
-	michael.roth@amd.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
-	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+X-Spamd-Result: default: False [-1.66 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78177-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,szeredi.hu,bsbernd.com,gmail.com,gompa.dev];
+	TAGGED_FROM(0.00)[bounces-78178-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[29];
-	DKIM_TRACE(0.00)[google.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[ackerleytng@google.com,linux-fsdevel@vger.kernel.org];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_NONE(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	MISSING_XM_UA(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	NEURAL_HAM(-0.00)[-0.999];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: 5273617FCCC
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 70A8017FF0B
 X-Rspamd-Action: no action
 
-"David Hildenbrand (Arm)" <david@kernel.org> writes:
+From: Darrick J. Wong <djwong@kernel.org>
 
-> On 2/23/26 08:04, Ackerley Tng wrote:
->> Hi,
->>
->> Currently, guest_memfd doesn't update inode's i_blocks or i_bytes at
->> all. Hence, st_blocks in the struct populated by a userspace fstat()
->> call on a guest_memfd will always be 0. This patch series makes
->> guest_memfd track the amount of memory allocated on an inode, which
->> allows fstat() to accurately report that on requests from userspace.
->>
->> The inode's i_blocks and i_bytes fields are updated when the folio is
->> associated or disassociated from the guest_memfd inode, which are at
->> allocation and truncation times respectively.
->>
->> To update inode fields at truncation time, this series implements a
->> custom truncation function for guest_memfd. An alternative would be to
->> update truncate_inode_pages_range() to return the number of bytes
->> truncated or add/use some hook.
->>
->> Implementing a custom truncation function was chosen to provide
->> flexibility for handling truncations in future when guest_memfd
->> supports sources of pages other than the buddy allocator. This
->> approach of a custom truncation function also aligns with shmem, which
->> has a custom shmem_truncate_range().
->
-> Just wondered how shmem does it: it's through
-> dquot_alloc_block_nodirty() / dquot_free_block_nodirty().
->
-> It's a shame we can't just use folio_free().
+Add tracing for timestamp updates to files.
 
-Yup, Hugh pointed out that struct address_space *mapping (and inode) may already
-have been freed by the time .free_folio() is called [1].
+Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+---
+ misc/fuse2fs.c |   97 +++++++++++++++++++++++++++++++++++---------------------
+ 1 file changed, 61 insertions(+), 36 deletions(-)
 
-[1] https://lore.kernel.org/all/7c2677e1-daf7-3b49-0a04-1efdf451379a@google.com/
 
-> Could we maybe have a
-> different callback (when the mapping is still guaranteed to be around)
-> from where we could update i_blocks on the freeing path?
+diff --git a/misc/fuse2fs.c b/misc/fuse2fs.c
+index 90f537efe525ce..21e27efb835659 100644
+--- a/misc/fuse2fs.c
++++ b/misc/fuse2fs.c
+@@ -864,7 +864,8 @@ static void increment_version(struct ext2_inode_large *inode)
+ 		inode->i_version_hi = ver >> 32;
+ }
+ 
+-static void init_times(struct ext2_inode_large *inode)
++static void fuse2fs_init_timestamps(struct fuse2fs *ff, ext2_ino_t ino,
++				    struct ext2_inode_large *inode)
+ {
+ 	struct timespec now;
+ 
+@@ -874,11 +875,15 @@ static void init_times(struct ext2_inode_large *inode)
+ 	EXT4_INODE_SET_XTIME(i_mtime, &now, inode);
+ 	EXT4_EINODE_SET_XTIME(i_crtime, &now, inode);
+ 	increment_version(inode);
++
++	dbg_printf(ff, "%s: ino=%u time %ld:%lu\n", __func__, ino, now.tv_sec,
++		   now.tv_nsec);
+ }
+ 
+-static int update_ctime(ext2_filsys fs, ext2_ino_t ino,
+-			struct ext2_inode_large *pinode)
++static int fuse2fs_update_ctime(struct fuse2fs *ff, ext2_ino_t ino,
++				struct ext2_inode_large *pinode)
+ {
++	ext2_filsys fs = ff->fs;
+ 	errcode_t err;
+ 	struct timespec now;
+ 	struct ext2_inode_large inode;
+@@ -889,6 +894,10 @@ static int update_ctime(ext2_filsys fs, ext2_ino_t ino,
+ 	if (pinode) {
+ 		increment_version(pinode);
+ 		EXT4_INODE_SET_XTIME(i_ctime, &now, pinode);
++
++		dbg_printf(ff, "%s: ino=%u ctime %ld:%lu\n", __func__, ino,
++			   now.tv_sec, now.tv_nsec);
++
+ 		return 0;
+ 	}
+ 
+@@ -900,6 +909,9 @@ static int update_ctime(ext2_filsys fs, ext2_ino_t ino,
+ 	increment_version(&inode);
+ 	EXT4_INODE_SET_XTIME(i_ctime, &now, &inode);
+ 
++	dbg_printf(ff, "%s: ino=%u ctime %ld:%lu\n", __func__, ino,
++		   now.tv_sec, now.tv_nsec);
++
+ 	err = fuse2fs_write_inode(fs, ino, &inode);
+ 	if (err)
+ 		return translate_error(fs, ino, err);
+@@ -907,8 +919,9 @@ static int update_ctime(ext2_filsys fs, ext2_ino_t ino,
+ 	return 0;
+ }
+ 
+-static int update_atime(ext2_filsys fs, ext2_ino_t ino)
++static int fuse2fs_update_atime(struct fuse2fs *ff, ext2_ino_t ino)
+ {
++	ext2_filsys fs = ff->fs;
+ 	errcode_t err;
+ 	struct ext2_inode_large inode, *pinode;
+ 	struct timespec atime, mtime, now;
+@@ -927,6 +940,10 @@ static int update_atime(ext2_filsys fs, ext2_ino_t ino)
+ 	dmtime = mtime.tv_sec + ((double)mtime.tv_nsec / NSEC_PER_SEC);
+ 	dnow = now.tv_sec + ((double)now.tv_nsec / NSEC_PER_SEC);
+ 
++	dbg_printf(ff, "%s: ino=%u atime %ld:%lu mtime %ld:%lu now %ld:%lu\n",
++		   __func__, ino, atime.tv_sec, atime.tv_nsec, mtime.tv_sec,
++		   mtime.tv_nsec, now.tv_sec, now.tv_nsec);
++
+ 	/*
+ 	 * If atime is newer than mtime and atime hasn't been updated in thirty
+ 	 * seconds, skip the atime update.  Same idea as Linux "relatime".  Use
+@@ -943,9 +960,10 @@ static int update_atime(ext2_filsys fs, ext2_ino_t ino)
+ 	return 0;
+ }
+ 
+-static int update_mtime(ext2_filsys fs, ext2_ino_t ino,
+-			struct ext2_inode_large *pinode)
++static int fuse2fs_update_mtime(struct fuse2fs *ff, ext2_ino_t ino,
++				struct ext2_inode_large *pinode)
+ {
++	ext2_filsys fs = ff->fs;
+ 	errcode_t err;
+ 	struct ext2_inode_large inode;
+ 	struct timespec now;
+@@ -955,6 +973,10 @@ static int update_mtime(ext2_filsys fs, ext2_ino_t ino,
+ 		EXT4_INODE_SET_XTIME(i_mtime, &now, pinode);
+ 		EXT4_INODE_SET_XTIME(i_ctime, &now, pinode);
+ 		increment_version(pinode);
++
++		dbg_printf(ff, "%s: ino=%u mtime/ctime %ld:%lu\n",
++			   __func__, ino, now.tv_sec, now.tv_nsec);
++
+ 		return 0;
+ 	}
+ 
+@@ -967,6 +989,9 @@ static int update_mtime(ext2_filsys fs, ext2_ino_t ino,
+ 	EXT4_INODE_SET_XTIME(i_ctime, &now, &inode);
+ 	increment_version(&inode);
+ 
++	dbg_printf(ff, "%s: ino=%u mtime/ctime %ld:%lu\n",
++		   __func__, ino, now.tv_sec, now.tv_nsec);
++
+ 	err = fuse2fs_write_inode(fs, ino, &inode);
+ 	if (err)
+ 		return translate_error(fs, ino, err);
+@@ -2228,7 +2253,7 @@ static int op_readlink(const char *path, char *buf, size_t len)
+ 	buf[len] = 0;
+ 
+ 	if (fuse2fs_is_writeable(ff)) {
+-		ret = update_atime(fs, ino);
++		ret = fuse2fs_update_atime(ff, ino);
+ 		if (ret)
+ 			goto out;
+ 	}
+@@ -2502,7 +2527,7 @@ static int op_mknod(const char *path, mode_t mode, dev_t dev)
+ 		goto out2;
+ 	}
+ 
+-	ret = update_mtime(fs, parent, NULL);
++	ret = fuse2fs_update_mtime(ff, parent, NULL);
+ 	if (ret)
+ 		goto out2;
+ 
+@@ -2525,7 +2550,7 @@ static int op_mknod(const char *path, mode_t mode, dev_t dev)
+ 	}
+ 
+ 	inode.i_generation = ff->next_generation++;
+-	init_times(&inode);
++	fuse2fs_init_timestamps(ff, child, &inode);
+ 	err = fuse2fs_write_inode(fs, child, &inode);
+ 	if (err) {
+ 		ret = translate_error(fs, child, err);
+@@ -2611,7 +2636,7 @@ static int op_mkdir(const char *path, mode_t mode)
+ 		goto out2;
+ 	}
+ 
+-	ret = update_mtime(fs, parent, NULL);
++	ret = fuse2fs_update_mtime(ff, parent, NULL);
+ 	if (ret)
+ 		goto out2;
+ 
+@@ -2638,7 +2663,7 @@ static int op_mkdir(const char *path, mode_t mode)
+ 	if (parent_sgid)
+ 		inode.i_mode |= S_ISGID;
+ 	inode.i_generation = ff->next_generation++;
+-	init_times(&inode);
++	fuse2fs_init_timestamps(ff, child, &inode);
+ 
+ 	err = fuse2fs_write_inode(fs, child, &inode);
+ 	if (err) {
+@@ -2721,7 +2746,7 @@ static int fuse2fs_unlink(struct fuse2fs *ff, const char *path,
+ 	if (err)
+ 		return translate_error(fs, dir, err);
+ 
+-	ret = update_mtime(fs, dir, NULL);
++	ret = fuse2fs_update_mtime(ff, dir, NULL);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -2812,7 +2837,7 @@ static int remove_inode(struct fuse2fs *ff, ext2_ino_t ino)
+ 			ext2fs_set_dtime(fs, EXT2_INODE(&inode));
+ 	}
+ 
+-	ret = update_ctime(fs, ino, &inode);
++	ret = fuse2fs_update_ctime(ff, ino, &inode);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -2982,7 +3007,7 @@ static int __op_rmdir(struct fuse2fs *ff, const char *path)
+ 			goto out;
+ 		}
+ 		ext2fs_dec_nlink(EXT2_INODE(&inode));
+-		ret = update_mtime(fs, rds.parent, &inode);
++		ret = fuse2fs_update_mtime(ff, rds.parent, &inode);
+ 		if (ret)
+ 			goto out;
+ 		err = fuse2fs_write_inode(fs, rds.parent, &inode);
+@@ -3079,7 +3104,7 @@ static int op_symlink(const char *src, const char *dest)
+ 	}
+ 
+ 	/* Update parent dir's mtime */
+-	ret = update_mtime(fs, parent, NULL);
++	ret = fuse2fs_update_mtime(ff, parent, NULL);
+ 	if (ret)
+ 		goto out2;
+ 
+@@ -3103,7 +3128,7 @@ static int op_symlink(const char *src, const char *dest)
+ 	fuse2fs_set_uid(&inode, ctxt->uid);
+ 	fuse2fs_set_gid(&inode, gid);
+ 	inode.i_generation = ff->next_generation++;
+-	init_times(&inode);
++	fuse2fs_init_timestamps(ff, child, &inode);
+ 
+ 	err = fuse2fs_write_inode(fs, child, &inode);
+ 	if (err) {
+@@ -3388,11 +3413,11 @@ static int op_rename(const char *from, const char *to,
+ 	}
+ 
+ 	/* Update timestamps */
+-	ret = update_ctime(fs, from_ino, NULL);
++	ret = fuse2fs_update_ctime(ff, from_ino, NULL);
+ 	if (ret)
+ 		goto out2;
+ 
+-	ret = update_mtime(fs, to_dir_ino, NULL);
++	ret = fuse2fs_update_mtime(ff, to_dir_ino, NULL);
+ 	if (ret)
+ 		goto out2;
+ 
+@@ -3486,7 +3511,7 @@ static int op_link(const char *src, const char *dest)
+ 	}
+ 
+ 	ext2fs_inc_nlink(fs, EXT2_INODE(&inode));
+-	ret = update_ctime(fs, ino, &inode);
++	ret = fuse2fs_update_ctime(ff, ino, &inode);
+ 	if (ret)
+ 		goto out2;
+ 
+@@ -3505,7 +3530,7 @@ static int op_link(const char *src, const char *dest)
+ 		goto out2;
+ 	}
+ 
+-	ret = update_mtime(fs, parent, NULL);
++	ret = fuse2fs_update_mtime(ff, parent, NULL);
+ 	if (ret)
+ 		goto out2;
+ 
+@@ -3653,7 +3678,7 @@ static int op_chmod(const char *path, mode_t mode, struct fuse_file_info *fi)
+ 
+ 	inode.i_mode = new_mode;
+ 
+-	ret = update_ctime(fs, ino, &inode);
++	ret = fuse2fs_update_ctime(ff, ino, &inode);
+ 	if (ret)
+ 		goto out;
+ 
+@@ -3720,7 +3745,7 @@ static int op_chown(const char *path, uid_t owner, gid_t group,
+ 		fuse2fs_set_gid(&inode, group);
+ 	}
+ 
+-	ret = update_ctime(fs, ino, &inode);
++	ret = fuse2fs_update_ctime(ff, ino, &inode);
+ 	if (ret)
+ 		goto out;
+ 
+@@ -3850,7 +3875,7 @@ static int fuse2fs_truncate(struct fuse2fs *ff, ext2_ino_t ino, off_t new_size)
+ 	if (err)
+ 		return translate_error(fs, ino, err);
+ 
+-	ret = update_mtime(fs, ino, NULL);
++	ret = fuse2fs_update_mtime(ff, ino, NULL);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -4085,7 +4110,7 @@ static int op_read(const char *path EXT2FS_ATTR((unused)), char *buf,
+ 	}
+ 
+ 	if (fh->check_flags != X_OK && fuse2fs_is_writeable(ff)) {
+-		ret = update_atime(fs, fh->ino);
++		ret = fuse2fs_update_atime(ff, fh->ino);
+ 		if (ret)
+ 			goto out;
+ 	}
+@@ -4169,7 +4194,7 @@ static int op_write(const char *path EXT2FS_ATTR((unused)),
+ 		goto out;
+ 	}
+ 
+-	ret = update_mtime(fs, fh->ino, NULL);
++	ret = fuse2fs_update_mtime(ff, fh->ino, NULL);
+ 	if (ret)
+ 		goto out;
+ 
+@@ -4531,7 +4556,7 @@ static int op_setxattr(const char *path EXT2FS_ATTR((unused)),
+ 		goto out2;
+ 	}
+ 
+-	ret = update_ctime(fs, ino, NULL);
++	ret = fuse2fs_update_ctime(ff, ino, NULL);
+ out2:
+ 	err = ext2fs_xattrs_close(&h);
+ 	if (!ret && err)
+@@ -4625,7 +4650,7 @@ static int op_removexattr(const char *path, const char *key)
+ 		goto out2;
+ 	}
+ 
+-	ret = update_ctime(fs, ino, NULL);
++	ret = fuse2fs_update_ctime(ff, ino, NULL);
+ out2:
+ 	err = ext2fs_xattrs_close(&h);
+ 	if (err && !ret)
+@@ -4743,7 +4768,7 @@ static int op_readdir(const char *path EXT2FS_ATTR((unused)), void *buf,
+ 	}
+ 
+ 	if (fuse2fs_is_writeable(ff)) {
+-		ret = update_atime(i.fs, fh->ino);
++		ret = fuse2fs_update_atime(ff, fh->ino);
+ 		if (ret)
+ 			goto out;
+ 	}
+@@ -4848,7 +4873,7 @@ static int op_create(const char *path, mode_t mode, struct fuse_file_info *fp)
+ 		goto out2;
+ 	}
+ 
+-	ret = update_mtime(fs, parent, NULL);
++	ret = fuse2fs_update_mtime(ff, parent, NULL);
+ 	if (ret)
+ 		goto out2;
+ 
+@@ -4879,7 +4904,7 @@ static int op_create(const char *path, mode_t mode, struct fuse_file_info *fp)
+ 	}
+ 
+ 	inode.i_generation = ff->next_generation++;
+-	init_times(&inode);
++	fuse2fs_init_timestamps(ff, child, &inode);
+ 	err = fuse2fs_write_inode(fs, child, &inode);
+ 	if (err) {
+ 		ret = translate_error(fs, child, err);
+@@ -4963,7 +4988,7 @@ static int op_utimens(const char *path, const struct timespec ctv[2],
+ 	if (tv[1].tv_nsec != UTIME_OMIT)
+ 		EXT4_INODE_SET_XTIME(i_mtime, &tv[1], &inode);
+ #endif /* UTIME_OMIT */
+-	ret = update_ctime(fs, ino, &inode);
++	ret = fuse2fs_update_ctime(ff, ino, &inode);
+ 	if (ret)
+ 		goto out;
+ 
+@@ -5031,7 +5056,7 @@ static int ioctl_setflags(struct fuse2fs *ff, struct fuse2fs_file_handle *fh,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = update_ctime(fs, fh->ino, &inode);
++	ret = fuse2fs_update_ctime(ff, fh->ino, &inode);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -5078,7 +5103,7 @@ static int ioctl_setversion(struct fuse2fs *ff, struct fuse2fs_file_handle *fh,
+ 
+ 	inode.i_generation = generation;
+ 
+-	ret = update_ctime(fs, fh->ino, &inode);
++	ret = fuse2fs_update_ctime(ff, fh->ino, &inode);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -5209,7 +5234,7 @@ static int ioctl_fssetxattr(struct fuse2fs *ff, struct fuse2fs_file_handle *fh,
+ 	if (ext2fs_inode_includes(inode_size, i_projid))
+ 		inode.i_projid = fsx->fsx_projid;
+ 
+-	ret = update_ctime(fs, fh->ino, &inode);
++	ret = fuse2fs_update_ctime(ff, fh->ino, &inode);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -5481,7 +5506,7 @@ static int fuse2fs_allocate_range(struct fuse2fs *ff,
+ 		}
+ 	}
+ 
+-	err = update_mtime(fs, fh->ino, &inode);
++	err = fuse2fs_update_mtime(ff, fh->ino, &inode);
+ 	if (err)
+ 		return err;
+ 
+@@ -5654,7 +5679,7 @@ static int fuse2fs_punch_range(struct fuse2fs *ff,
+ 			return translate_error(fs, fh->ino, err);
+ 	}
+ 
+-	err = update_mtime(fs, fh->ino, &inode);
++	err = fuse2fs_update_mtime(ff, fh->ino, &inode);
+ 	if (err)
+ 		return err;
+ 
 
-Do you mean that we should add a new callback to struct
-address_space_operations?
-
-.invalidate_folio semantically seems suitable. This is called from
-truncate_cleanup_folio() and is conditioned on
-folio_needs_release(). guest_memfd could make itself need release, but
-IIUC that would cause a NULL pointer dereference in
-filemap_release_folio() since try_to_free_buffers() -> drop_buffers()
-will dereference folio->private.
-
-From the name, .release_folio sounds eligible, but this is meant for
-releasing data attached to a folio, not quite the same as updating inode
-fields. This is also not called in the truncation path.
-
->
-> --
-> Cheers,
->
-> David
 
