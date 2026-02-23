@@ -1,191 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-77980-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id gC6hMtSCnGkKIwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77980-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 17:39:48 +0100
+	id EC6hIO6GnGm7IwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 17:57:18 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48E1C179F3A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 17:39:48 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F7F217A381
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 17:57:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 9247D303C80A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 16:33:18 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id AC69731975FD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 16:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F4C3148BF;
-	Mon, 23 Feb 2026 16:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF2F30BBA9;
+	Mon, 23 Feb 2026 16:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RbVgKdin"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="bKsFHwmM";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nOKlgPq0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+Received: from flow-b3-smtp.messagingengine.com (flow-b3-smtp.messagingengine.com [202.12.124.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5271B313539;
-	Mon, 23 Feb 2026 16:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB129319857;
+	Mon, 23 Feb 2026 16:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771864395; cv=none; b=UtDXxBQyUV3lNYWg5lGtDOkzM3aWkjCURoCyeG6jpUOHIPVJx9XPBPuUvQJWmWHtBkoDzSdz62smZwTu9OU5wyBv32qcVHuYdQuZZL8k5/dZMxS9xb2IypCSNtsgfgO2eQM9wWvFAvpzEDKADrItmUMUWZ9bsXNVgNXzqS3GzJQ=
+	t=1771864893; cv=none; b=ZZMSrnYICSX13/qBhZCk/7U1C2UusX140aknvJKlPuDPartZJUcleJjBZqhvNspeLyOuQ38NYdu2HkWMKZ+sWkQJ4oBZ9t061J7M5Fm+WmUYoP+wDypOviIIz7Lw1hIrtu/j3UaLUnLNufjfRnPeqGENCZOpLOL/a6NBFyIHBZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771864395; c=relaxed/simple;
-	bh=Lx3d4xCCjQqM4hNnnOHqhZ8wgehpmy9M0RqpkyDnTVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tq6xcnQ8yfEVqHYjENDXHpbmMw6nlHYgXgCCTKmEaGcS1EMuYYxt9+wL0l3UMNkDdDFq1uH9g/40Zji/ja94/jbWzxTuY6mMY0MS0JD/jUzKywiPdI+7xUv4BfwqpLVmpTttk2G8Ke2xulA8seKCQnt7vB56BsKv/bbbVFiILU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RbVgKdin; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1771864393; x=1803400393;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Lx3d4xCCjQqM4hNnnOHqhZ8wgehpmy9M0RqpkyDnTVI=;
-  b=RbVgKdin5k0nOa4HFFL1/iWa1oHoI6xfuA880M76MiopqObWHb9LekNB
-   n16nRFCeVZKEV9L+h8XdBiQiuhhkOhBbLUaGHd+Sg4PWx8EHdeKckE8Dn
-   kTVZSXiBOvEIxeh7prWkiQnXD5beRv/ditPdlE01dRUTsD9OyWxmE7+Uz
-   FqS1IQ89m5QmRwT+xik/aFtGRoMFmhV3x5Y6JZFDltnAZamtA+7/ncwPy
-   wEtkRFpr5dizWPsgquliSfx+XZHHd9D5HMxzhgstLfVhs7de8NvTxYyHF
-   Nh8Vxh4Jkx5lldPkSOnKdSnO37SNN3ROML+WCQjtGpDf6kVZV3bRFcTgJ
-   g==;
-X-CSE-ConnectionGUID: Cr+AFm8URAq2RF3kH4o7bw==
-X-CSE-MsgGUID: 68ALZjEXTDCpWzNUgVKNPg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11710"; a="75473023"
-X-IronPort-AV: E=Sophos;i="6.21,307,1763452800"; 
-   d="scan'208";a="75473023"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2026 08:33:13 -0800
-X-CSE-ConnectionGUID: 5eDstWmVSTuQYmT8trOspg==
-X-CSE-MsgGUID: xW3CMIadS5CwrtommhN3PQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,307,1763452800"; 
-   d="scan'208";a="213951680"
-Received: from lkp-server02.sh.intel.com (HELO a3936d6a266d) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 23 Feb 2026 08:33:10 -0800
-Received: from kbuild by a3936d6a266d with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vuYrr-000000000XF-2ez3;
-	Mon, 23 Feb 2026 16:33:07 +0000
-Date: Tue, 24 Feb 2026 00:32:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jori Koolstra <jkoolstra@xs4all.nl>, jlayton@kernel.org,
-	chuck.lever@oracle.com, alex.aring@gmail.com,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	arnd@arndb.de, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, jkoolstra@xs4all.nl
-Subject: Re: [PATCH] Add support for empty path in openat and openat2 syscalls
-Message-ID: <202602240038.MTqLbuRR-lkp@intel.com>
-References: <20260223151652.582048-1-jkoolstra@xs4all.nl>
+	s=arc-20240116; t=1771864893; c=relaxed/simple;
+	bh=rofHlyscVixKgf1FEKFDpIDDW2u8idFiC59ENbdtkIY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IGwDTFxOZmGiDd0j3F+8m5/dq6QUjfTrnOgtQK8G8B+UsE5MUuPP6G/PL+CNjvsSyEsxIcz39JH0k6BVJ712wchD/FbdwLy+84q94y+iQGC52E0iN0IS76NLzGAihq7o9iv0grquYcggooWplai3oUTLlrSq62YPqTiYOqnYclM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=bKsFHwmM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nOKlgPq0; arc=none smtp.client-ip=202.12.124.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailflow.stl.internal (Postfix) with ESMTP id 9A3C11300DB5;
+	Mon, 23 Feb 2026 11:41:27 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Mon, 23 Feb 2026 11:41:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1771864887;
+	 x=1771872087; bh=8a6j6M0tf+i8MfAQ2TV1Q4pC8GqD34qwzwYAqy+MN8k=; b=
+	bKsFHwmMY4m1J/AFr3QJ3vBdVaUg0T6D2Gksrpfr81Kj/emy7hfjnTa+AG7Hb9YX
+	QExgCzqVOg+EW6FFxEdgvDu+n0kEnlLy4kpS7ndMfA6fmDOlhWDlpYkfyxySA+3d
+	ryjilvVwKhILUG92pLp4TQunXvaHaAR4msP5ErSpQkWKUiXKlb4WiysS8ZFt8Kc4
+	uBju0jo45feP10sipYI/g+P3o/zcz2bnP0TEYiTq4nmuNwnR50xwYQpY1KMobJxG
+	notECBQtfUR3bT6w5bTr1eaYvcbXpIyu1QsQV5zrbOkIQbjQPYguGcYqa+oQBW3B
+	LHeXYvYqDTWH2E9YwvqtFg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1771864887; x=
+	1771872087; bh=8a6j6M0tf+i8MfAQ2TV1Q4pC8GqD34qwzwYAqy+MN8k=; b=n
+	OKlgPq0n4u5x7uVjai2dgXar8ZFnBozsHZ++POrOdJcdBrt9WT6ovWyLmpDYEaHB
+	8t/LUl963F0LH8I4Juh/8bFxbcbcqcX+e9TKDXUHcbb50xwiAttbRZO1fD/V0Cwv
+	+t23HTRiDu/RYyosDOdqtEF4BYoDB5eDEpyk2JbvE0byr5YaiCsFMQeOkWUeW3xZ
+	cO+fWfxlCirSAuiQBjmnpGzk//Vdd7gEuywRINwbF5vN9TzQMuK00ccciD7zkre2
+	9XKitagPvhlvm/SHKObFCdh2XBQUQMPwEOOS+DT1lWA5NUrOAiSOBOLVmEsNc/yD
+	01AZ2Z8KXM93/vWcRHYDg==
+X-ME-Sender: <xms:N4OcaTy20niKksR9amhsmfQjhbuUAU38t9aOfhs6QQS18iITeVPEkQ>
+    <xme:N4OcaUnvrqyabAaDPtP6_Q81y20RLenL2q0eONNNRPSYxjG5JxeC758HZSgh7I4D-
+    1Sb1Iy4mjJ-dCN6Cu1T8U32vib9Q2goCDTwlmB3AhuWtpzVZlnR>
+X-ME-Received: <xmr:N4OcaUlHOf0u8qR-dHSPNGnWAoXdDBJtcV6fNZBMniHdl676sxLitFK2KrQuVWM9c39y>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvfeejjeegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghrnhgu
+    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
+    htthgvrhhnpeehhfejueejleehtdehteefvdfgtdelffeuudejhfehgedufedvhfehueev
+    udeugeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    gsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgtphhtthhopeeipdhmohguvgep
+    shhmthhpohhuthdprhgtphhtthhopehjihhmrdhhrghrrhhishesnhhvihguihgrrdgtoh
+    hmpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehl
+    ihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    eplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
+    ohepmhhguhhrthhovhhohiesnhhvihguihgrrdgtohhmpdhrtghpthhtohepkhhsiihthi
+    gsvghrsehnvhhiughirgdrtghomh
+X-ME-Proxy: <xmx:N4OcaewO69tj8Xhb80oLIzEzDg5dLp382cqAUB_60FXUmqPvV2xE5g>
+    <xmx:N4OcaRrZFUou4lF0m-e_os5ReUPn9NN93Owx6tONzSiQUSSO9T11tA>
+    <xmx:N4OcaV7QINt2N7Iy6lSui0u46Mhql3r-uOOFdOrECxv3bVWd0sH5mA>
+    <xmx:N4OcaQcIGU74srrUaIHFdw5sufPCJDKrIf3m_fnGs2WgK1xD-MgRQQ>
+    <xmx:N4OcaRpiy-FffISfrhGnZTES3XJx7ZT3cRWmQ019X9vSxv2lPWVMogCv>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 23 Feb 2026 11:41:24 -0500 (EST)
+Message-ID: <a021f05c-a1bd-4219-b388-90437b4c587f@bsbernd.com>
+Date: Mon, 23 Feb 2026 17:41:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260223151652.582048-1-jkoolstra@xs4all.nl>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fuse: skip lookup during atomic_open() when O_CREAT is
+ set
+To: Jim Harris <jim.harris@nvidia.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ mgurtovoy@nvidia.com, ksztyber@nvidia.com
+References: <20260220204102.21317-1-jiharris@nvidia.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <20260220204102.21317-1-jiharris@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.34 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
+	DMARC_POLICY_ALLOW(-0.50)[bsbernd.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
+	R_DKIM_ALLOW(-0.20)[bsbernd.com:s=fm2,messagingengine.com:s=fm3];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[lists.linux.dev,xs4all.nl];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	TAGGED_FROM(0.00)[bounces-77980-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[xs4all.nl,kernel.org,oracle.com,gmail.com,zeniv.linux.org.uk,suse.cz,arndb.de,vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77981-lists,linux-fsdevel=lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[bsbernd.com:+,messagingengine.com:+];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
 	RCVD_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[lkp@intel.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[intel.com:+];
+	FROM_NEQ_ENVFROM(0.00)[bernd@bsbernd.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	NEURAL_HAM(-0.00)[-0.999];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[git-scm.com:url,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,intel.com:mid,intel.com:dkim,intel.com:email,01.org:url]
-X-Rspamd-Queue-Id: 48E1C179F3A
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,bsbernd.com:mid,bsbernd.com:dkim,nvidia.com:email]
+X-Rspamd-Queue-Id: 1F7F217A381
 X-Rspamd-Action: no action
 
-Hi Jori,
 
-kernel test robot noticed the following build errors:
+On 2/20/26 21:41, Jim Harris wrote:
+> From: Jim Harris <jim.harris@nvidia.com>
+> 
+> When O_CREAT is set, we don't need the lookup. The lookup doesn't
+> harm anything, but it's an extra FUSE operation that's not required.
 
-[auto build test ERROR on brauner-vfs/vfs.all]
-[also build test ERROR on linus/master v7.0-rc1 next-20260220]
-[cannot apply to arnd-asm-generic/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Jori-Koolstra/Add-support-for-empty-path-in-openat-and-openat2-syscalls/20260223-232002
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20260223151652.582048-1-jkoolstra%40xs4all.nl
-patch subject: [PATCH] Add support for empty path in openat and openat2 syscalls
-config: alpha-allnoconfig (https://download.01.org/0day-ci/archive/20260224/202602240038.MTqLbuRR-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 15.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260224/202602240038.MTqLbuRR-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202602240038.MTqLbuRR-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from <command-line>:
-   fs/fcntl.c: In function 'fcntl_init':
->> include/linux/compiler_types.h:705:45: error: call to '__compiletime_assert_393' declared with attribute error: BUILD_BUG_ON failed: 21 - 1 != HWEIGHT32( (VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) | __FMODE_EXEC)
-     705 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |                                             ^
-   include/linux/compiler_types.h:686:25: note: in definition of macro '__compiletime_assert'
-     686 |                         prefix ## suffix();                             \
-         |                         ^~~~~~
-   include/linux/compiler_types.h:705:9: note: in expansion of macro '_compiletime_assert'
-     705 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
-      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-         |                                     ^~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
-      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-         |         ^~~~~~~~~~~~~~~~
-   fs/fcntl.c:1172:9: note: in expansion of macro 'BUILD_BUG_ON'
-    1172 |         BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
-         |         ^~~~~~~~~~~~
+Problem is that it is a change of behavior - it might cause issues for
+some fuse server implementations that expect that a node-id was obtained
+before open of an existing file is done.
 
 
-vim +/__compiletime_assert_393 +705 include/linux/compiler_types.h
-
-eb5c2d4b45e3d2d Will Deacon 2020-07-21  691  
-eb5c2d4b45e3d2d Will Deacon 2020-07-21  692  #define _compiletime_assert(condition, msg, prefix, suffix) \
-eb5c2d4b45e3d2d Will Deacon 2020-07-21  693  	__compiletime_assert(condition, msg, prefix, suffix)
-eb5c2d4b45e3d2d Will Deacon 2020-07-21  694  
-eb5c2d4b45e3d2d Will Deacon 2020-07-21  695  /**
-eb5c2d4b45e3d2d Will Deacon 2020-07-21  696   * compiletime_assert - break build and emit msg if condition is false
-eb5c2d4b45e3d2d Will Deacon 2020-07-21  697   * @condition: a compile-time constant condition to check
-eb5c2d4b45e3d2d Will Deacon 2020-07-21  698   * @msg:       a message to emit if condition is false
-eb5c2d4b45e3d2d Will Deacon 2020-07-21  699   *
-eb5c2d4b45e3d2d Will Deacon 2020-07-21  700   * In tradition of POSIX assert, this macro will break the build if the
-eb5c2d4b45e3d2d Will Deacon 2020-07-21  701   * supplied condition is *false*, emitting the supplied error message if the
-eb5c2d4b45e3d2d Will Deacon 2020-07-21  702   * compiler has support to do so.
-eb5c2d4b45e3d2d Will Deacon 2020-07-21  703   */
-eb5c2d4b45e3d2d Will Deacon 2020-07-21  704  #define compiletime_assert(condition, msg) \
-eb5c2d4b45e3d2d Will Deacon 2020-07-21 @705  	_compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-eb5c2d4b45e3d2d Will Deacon 2020-07-21  706  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Bernd
 
