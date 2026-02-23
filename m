@@ -1,60 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-78136-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78137-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 4PzuH+DjnGn4LwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78136-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:33:52 +0100
+	id 8F6aL/rjnGn4LwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78137-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:34:18 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB27517F94B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:33:51 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 793A317F978
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:34:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 9F2CA3007AF9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:31:58 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 3577130CB027
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08AD37F8CA;
-	Mon, 23 Feb 2026 23:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B04537F8CA;
+	Mon, 23 Feb 2026 23:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="enuP1ePa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iYiyrFea"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1C737F739;
-	Mon, 23 Feb 2026 23:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA41369980;
+	Mon, 23 Feb 2026 23:32:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771889513; cv=none; b=ZJrOq9xmsDe9izvDnYeCVTZYDtKCgtTc0Vpr/f/hZ+qC64i/e+G6LRmAm2hpuJwZLADTEcwyV+9nzzbOodA76LRY7B9ZYxUFnXNT61Oii5o5JpCKvPyFW1J10vM4tjHYIiG7y60J1G2pthSe1U6C5tOab0lPU+HDxXji3D9PSdg=
+	t=1771889528; cv=none; b=GpA3CMoOOW0Fjs3DrPCHQGqo+YWg+vYVz2mLc0bPM7ehJ8FrCEL052V+ET5mc6eB+VbHlCwm5J0kjFY8hZGKCuQdyVQSyBZ97/RiHhXcBtxCygvetmpVzdheG7sNUsW+m56IAam8lkSWErJOi/5KEgxL0JOvkt2VLaQSSOR0Rb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771889513; c=relaxed/simple;
-	bh=h16x1XzjVSXNQ2WiwJZY34R1NW+M+Z0Yma6RETO4iFM=;
+	s=arc-20240116; t=1771889528; c=relaxed/simple;
+	bh=c9Y4NQbeJAGNlZ1TUgRQpy+3epgjsb72D3vk+v4IgWs=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ntywIFV//8S/JPCjufg5Wv202S60D0uWVSrHS/ixHIvXrCW3cu/8Bluum8je74pPuZ2DCw5pHCVyo7dyD0mHq42aGfZ+yetPb3GFMVOiP7yWI/Yw18em+YjFW4nPYOlNmZQ1eTgiRi4uDJQ5ekhm6r48j9JwU/ZzI7r/gAdR0HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=enuP1ePa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C858EC116C6;
-	Mon, 23 Feb 2026 23:31:52 +0000 (UTC)
+	 MIME-Version:Content-Type; b=PL+8Qjc23wGIeX5Mq6oivdMOF7HP8MqleQPYX1nSs9hLEgzAdWQoI2fVAThBQAfiKGsk97kOh2gtb5ozGl+1ICy95g+tPh6q7auJOWN1rYmp1eCKOG5Rmk8q/6wb8JBCuxtgHvr0/F9Wbgimht04vIu8YKVwA6qYgKUPmCJEHDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iYiyrFea; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 680E8C116C6;
+	Mon, 23 Feb 2026 23:32:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771889512;
-	bh=h16x1XzjVSXNQ2WiwJZY34R1NW+M+Z0Yma6RETO4iFM=;
+	s=k20201202; t=1771889528;
+	bh=c9Y4NQbeJAGNlZ1TUgRQpy+3epgjsb72D3vk+v4IgWs=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=enuP1ePaoOHXmUnX16v5V7NyEfFXvbvY9VggM1nSYtvhIbwoYIqVP3fEcf0+CRWfu
-	 GIOPGddGdVNDrtP8iTqdF1Xp+LAIDykmsKXnJZm0kAMpl3yRbCyyzD257Vfe26x0vs
-	 MoHeZPmqhAPWwf4Bv51ONOxrngEfoDvtAwEYLdn+EHHv7vyo/sFlBOHfpJtTAd1NjV
-	 EBW2o0JBNXMJCTjHajw4gg1xgCyXQzcg2dGKsBaq3D+x4WuZg1Nv6ZtkTz5CxOvBqd
-	 hKT85FD8mg1VEKJzRQDP5ZF6YQfkSviqSUcBLDj7pA+7a3x0xpB0/95kwI202Bx9CD
-	 WrtryVGc4HRlg==
-Date: Mon, 23 Feb 2026 15:31:52 -0800
-Subject: [PATCH 25/25] libfuse: add upper-level filesystem freeze, thaw,
- and shutdown events
+	b=iYiyrFeaPX0VsN78GH4Uov5iaW780tbmT45QR98PNI6LyCC3prnQHZH4agVfQCqYg
+	 obzl2gX/IUKqfPKHodisTCBZppfv4Ks/c+EC6+mIDGwB5XEXTe9j/YGcL55KdF6c4v
+	 pSP608PlFHOu8unkD/1hPUdNQGPhXV+wrNyhZAeyUn6FNUcPOeraIfPGK0B3M8Sk1V
+	 2uwAzwKPJKMsIka+ol9eVTHvgFcn0yFpzDnjHGF2g/mcQpabYOGHAwyRcfmqSRkXtC
+	 JY7uzPQgatTm4lzBTvBOwsMGqfl2SUVgyCVCKzZ35hE4ukcoyNPxgFYzMqJ8S+aykx
+	 L3fN3hHDY49Dw==
+Date: Mon, 23 Feb 2026 15:32:07 -0800
+Subject: [PATCH 1/1] libfuse: allow root_nodeid mount option
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, bschubert@ddn.com
 Cc: bernd@bsbernd.com, miklos@szeredi.hu, neal@gompa.dev,
  linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  bpf@vger.kernel.org, joannelkoong@gmail.com
-Message-ID: <177188740380.3940670.14838037135179850381.stgit@frogsfrogsfrogs>
-In-Reply-To: <177188739839.3940670.15233996351019069073.stgit@frogsfrogsfrogs>
-References: <177188739839.3940670.15233996351019069073.stgit@frogsfrogsfrogs>
+Message-ID: <177188740582.3941636.4880458250773757289.stgit@frogsfrogsfrogs>
+In-Reply-To: <177188740565.3941636.4202428671967258488.stgit@frogsfrogsfrogs>
+References: <177188740565.3941636.4202428671967258488.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,20 +67,20 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_CC(0.00)[bsbernd.com,szeredi.hu,gompa.dev,vger.kernel.org,gmail.com];
-	TAGGED_FROM(0.00)[bounces-78136-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78137-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	MIME_TRACE(0.00)[0:+];
 	TO_DN_NONE(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
@@ -91,168 +90,32 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[9];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: AB27517F94B
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 793A317F978
 X-Rspamd-Action: no action
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Pass filesystem freeze, thaw, and shutdown requests from the low level
-library to the upper level library so that those fuse servers can handle
-the events.
+Allow this mount option so that fuse servers can configure the root
+nodeid if they want to.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- include/fuse.h |   15 +++++++++
- lib/fuse.c     |   95 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 110 insertions(+)
+ lib/mount.c |    1 +
+ 1 file changed, 1 insertion(+)
 
 
-diff --git a/include/fuse.h b/include/fuse.h
-index db4281e3f330c6..2f73d42672acdd 100644
---- a/include/fuse.h
-+++ b/include/fuse.h
-@@ -925,6 +925,21 @@ struct fuse_operations {
- 	 */
- 	int (*iomap_config) (uint64_t supported_flags, off_t maxbytes,
- 			     struct fuse_iomap_config *cfg);
-+
-+	/**
-+	 * Freeze the filesystem
-+	 */
-+	int (*freezefs) (const char *path, uint64_t unlinked_files);
-+
-+	/**
-+	 * Thaw the filesystem
-+	 */
-+	int (*unfreezefs) (const char *path);
-+
-+	/**
-+	 * Shut down the filesystem
-+	 */
-+	int (*shutdownfs) (const char *path, uint64_t flags);
- };
- 
- /** Extra context that may be needed by some filesystems
-diff --git a/lib/fuse.c b/lib/fuse.c
-index 022888c475cb3d..2969e0f332045f 100644
---- a/lib/fuse.c
-+++ b/lib/fuse.c
-@@ -2980,6 +2980,38 @@ static int fuse_fs_iomap_config(struct fuse_fs *fs, uint64_t flags,
- 	return fs->op.iomap_config(flags, maxbytes, cfg);
- }
- 
-+static int fuse_fs_freezefs(struct fuse_fs *fs, const char *path,
-+			    uint64_t unlinked)
-+{
-+	fuse_get_context()->private_data = fs->user_data;
-+	if (!fs->op.freezefs)
-+		return -ENOSYS;
-+	if (fs->debug)
-+		fuse_log(FUSE_LOG_DEBUG, "freezefs[%s]\n", path);
-+	return fs->op.freezefs(path, unlinked);
-+}
-+
-+static int fuse_fs_unfreezefs(struct fuse_fs *fs, const char *path)
-+{
-+	fuse_get_context()->private_data = fs->user_data;
-+	if (!fs->op.unfreezefs)
-+		return -ENOSYS;
-+	if (fs->debug)
-+		fuse_log(FUSE_LOG_DEBUG, "unfreezefs[%s]\n", path);
-+	return fs->op.unfreezefs(path);
-+}
-+
-+static int fuse_fs_shutdownfs(struct fuse_fs *fs, const char *path,
-+			      uint64_t flags)
-+{
-+	fuse_get_context()->private_data = fs->user_data;
-+	if (!fs->op.shutdownfs)
-+		return -ENOSYS;
-+	if (fs->debug)
-+		fuse_log(FUSE_LOG_DEBUG, "shutdownfs[%s]\n", path);
-+	return fs->op.shutdownfs(path, flags);
-+}
-+
- static void fuse_lib_setattr(fuse_req_t req, fuse_ino_t ino, struct stat *attr,
- 			     int valid, struct fuse_file_info *fi)
- {
-@@ -4879,6 +4911,66 @@ static void fuse_lib_iomap_config(fuse_req_t req, uint64_t flags,
- 	fuse_reply_iomap_config(req, &cfg);
- }
- 
-+static void fuse_lib_freezefs(fuse_req_t req, fuse_ino_t ino, uint64_t unlinked)
-+{
-+	struct fuse *f = req_fuse_prepare(req);
-+	struct fuse_intr_data d;
-+	char *path;
-+	int err;
-+
-+	err = get_path(f, ino, &path);
-+	if (err) {
-+		reply_err(req, err);
-+		return;
-+	}
-+
-+	fuse_prepare_interrupt(f, req, &d);
-+	err = fuse_fs_freezefs(f->fs, path, unlinked);
-+	fuse_finish_interrupt(f, req, &d);
-+	free_path(f, ino, path);
-+	reply_err(req, err);
-+}
-+
-+static void fuse_lib_unfreezefs(fuse_req_t req, fuse_ino_t ino)
-+{
-+	struct fuse *f = req_fuse_prepare(req);
-+	struct fuse_intr_data d;
-+	char *path;
-+	int err;
-+
-+	err = get_path(f, ino, &path);
-+	if (err) {
-+		reply_err(req, err);
-+		return;
-+	}
-+
-+	fuse_prepare_interrupt(f, req, &d);
-+	err = fuse_fs_unfreezefs(f->fs, path);
-+	fuse_finish_interrupt(f, req, &d);
-+	free_path(f, ino, path);
-+	reply_err(req, err);
-+}
-+
-+static void fuse_lib_shutdownfs(fuse_req_t req, fuse_ino_t ino, uint64_t flags)
-+{
-+	struct fuse *f = req_fuse_prepare(req);
-+	struct fuse_intr_data d;
-+	char *path;
-+	int err;
-+
-+	err = get_path(f, ino, &path);
-+	if (err) {
-+		reply_err(req, err);
-+		return;
-+	}
-+
-+	fuse_prepare_interrupt(f, req, &d);
-+	err = fuse_fs_shutdownfs(f->fs, path, flags);
-+	fuse_finish_interrupt(f, req, &d);
-+	free_path(f, ino, path);
-+	reply_err(req, err);
-+}
-+
- static int clean_delay(struct fuse *f)
- {
- 	/*
-@@ -4981,6 +5073,9 @@ static struct fuse_lowlevel_ops fuse_path_ops = {
- 	.statx = fuse_lib_statx,
- #endif
- 	.syncfs = fuse_lib_syncfs,
-+	.freezefs = fuse_lib_freezefs,
-+	.unfreezefs = fuse_lib_unfreezefs,
-+	.shutdownfs = fuse_lib_shutdownfs,
- 	.iomap_begin = fuse_lib_iomap_begin,
- 	.iomap_end = fuse_lib_iomap_end,
- 	.iomap_ioend = fuse_lib_iomap_ioend,
+diff --git a/lib/mount.c b/lib/mount.c
+index 7a856c101a7fc4..c82fd4c293ce66 100644
+--- a/lib/mount.c
++++ b/lib/mount.c
+@@ -100,6 +100,7 @@ static const struct fuse_opt fuse_mount_opts[] = {
+ 	FUSE_OPT_KEY("defcontext=",		KEY_KERN_OPT),
+ 	FUSE_OPT_KEY("rootcontext=",		KEY_KERN_OPT),
+ 	FUSE_OPT_KEY("max_read=",		KEY_KERN_OPT),
++	FUSE_OPT_KEY("root_nodeid=",		KEY_KERN_OPT),
+ 	FUSE_OPT_KEY("user=",			KEY_MTAB_OPT),
+ 	FUSE_OPT_KEY("-n",			KEY_MTAB_OPT),
+ 	FUSE_OPT_KEY("-r",			KEY_RO),
 
 
