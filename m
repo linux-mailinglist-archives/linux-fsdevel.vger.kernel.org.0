@@ -1,57 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-78124-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78125-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GBIOBBHjnGn4LwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78124-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:30:25 +0100
+	id wLtsHCXjnGn4LwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78125-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:30:45 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A7D317F7A9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:30:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4C2E17F7EC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:30:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 4077D30A81BF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:28:51 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 232CC30AF3E4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D51537F8B7;
-	Mon, 23 Feb 2026 23:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF50537F8C3;
+	Mon, 23 Feb 2026 23:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q3V1+IJL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="izbbd66+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA08437F75D;
-	Mon, 23 Feb 2026 23:28:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C49537F8A5;
+	Mon, 23 Feb 2026 23:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771889325; cv=none; b=qgAVXj8UfV2K2Wqc4umRch5YczfYjwf2gzbd5ORm6YZjlyPH8SVy7iIAFgQsyMWQRAdJBd1aPqGquXXheeRdjfE7jvV+KmqK6PzVjFQdPVSV/ZgCzwlSCs/Nduh8sgzYM8x6G1glADHPjMWoBXkcivX7YYGwZf0Zw8G7wUtdBTI=
+	t=1771889341; cv=none; b=M1BVmUPuabsfmBpF8yXTiPOer4R2vZ9ainS3q8mTKwBxRfeFpjCzBCimaNJKiZp+N7lQFRqxhKUBFZVBeZhCh/m4ikQfPjkd3t0zmMGCbZevWD5yzqwJ48/G/U/j0QwHicSsh+ZAu6s/C671F0GNKMLt38cd63xzZvPDTWKhQwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771889325; c=relaxed/simple;
-	bh=+ZsxR58QL6TsVTVeVziua7xHC49QlsxWbW6TLv1grT0=;
+	s=arc-20240116; t=1771889341; c=relaxed/simple;
+	bh=cLMn5YOBKc/GmiQfqzk0AQ2ECiY/AKgLG2rYfGQdl9U=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XP4BwS5J0UDiGy5rxabSx19HL3RzQnB3EkuDPMFx2P5c+cKHbRgrcSBm6ZT6XJ8iyAFnFvDx0DWu9gOkUGyRRC7C4xEJC1SqKQDJD1APvy8EDcX5MnXNA4LdoGiFcwrt4L/822zmdm+guNfDCRrd4xwdcHgciL7IwfVK/5DjznA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q3V1+IJL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C599C116C6;
-	Mon, 23 Feb 2026 23:28:45 +0000 (UTC)
+	 MIME-Version:Content-Type; b=t2DtNP88T6KTKsqP6XoGszbepBTsP3szMMc0tPs+QN+pAIL5iCzkrLlu6AvOxD4CNMuUUf1gmUHkLNGCXxgQD531R2KqpfT9AQUyZqjzQJe2n10fU9Z+rTOwvX7FB1g0EqljnnQfT+4r9ojqBwGEh8lq4CGmA7TqQqHECUhDXYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=izbbd66+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F02DEC19421;
+	Mon, 23 Feb 2026 23:29:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771889325;
-	bh=+ZsxR58QL6TsVTVeVziua7xHC49QlsxWbW6TLv1grT0=;
+	s=k20201202; t=1771889341;
+	bh=cLMn5YOBKc/GmiQfqzk0AQ2ECiY/AKgLG2rYfGQdl9U=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=Q3V1+IJLwrrlVkdmUYGtj/k6kAWe7s0WLOHv2r/Dt1yUXJTEHw/9FLaAZco5n431T
-	 5TWQJKtsxTvGqFgYwk8BARcUxp0m3rcq91ZphSM8TQj3WjFIJWS8FrxcPDoxVwqvQQ
-	 0oyAL3H7cdWrJhCjvdCxvb35C3p8qfNFfZN7qK2jFza8ygjVXJmJ5WfQyHeIzBhtZA
-	 DzZLaKbPDb5BqiBRaIvD93TutVXlPETYv2JVBFLkh45Ls1oQ28YB7ou9vWAjiV4LHM
-	 Z9NqrfbV8hpE6buqzH+6yu5ooeL7T2IgyYeK0/jSqJ8R43m6Z2mCaZKPEI93oj9rDR
-	 KbmBF9mNWPfQA==
-Date: Mon, 23 Feb 2026 15:28:44 -0800
-Subject: [PATCH 13/25] libfuse: support direct I/O through iomap
+	b=izbbd66+ZKCfEciAuyXAHgLkRwrlhOVzNUzCSwIR8bPkZe4bTrim32mveMEpYh226
+	 dUXbQnwl9iqX91mhaX9d0zNKR3QiJSmROC5wVJcqH7Tv0uJJ6hurT7N3PPAfYrh7yX
+	 sVWE3/pPENDR5rQ1hibGZjORCNDONZuvLW7R9ovDvBxnPs2YGVN5BVID4WwbRRAXn5
+	 fFwftEM/dLLXaRfLyGAmidLPDKQ93XCdbdFGl8DIqTJlV3rIYwYeQCYWIO6tRXyGJx
+	 I4JQh9nXcuLV+LmlB5k0jelL3TusVKo0mdb6VtrjMtHbZs4BQEA4vVu6IvtvQ8jKZD
+	 4Gfd4kUAer8rg==
+Date: Mon, 23 Feb 2026 15:29:00 -0800
+Subject: [PATCH 14/25] libfuse: don't allow hardlinking of iomap files in the
+ upper level fuse library
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, bschubert@ddn.com
 Cc: bernd@bsbernd.com, miklos@szeredi.hu, neal@gompa.dev,
  linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  bpf@vger.kernel.org, joannelkoong@gmail.com
-Message-ID: <177188740168.3940670.10923943350297251384.stgit@frogsfrogsfrogs>
+Message-ID: <177188740186.3940670.11398665309070607810.stgit@frogsfrogsfrogs>
 In-Reply-To: <177188739839.3940670.15233996351019069073.stgit@frogsfrogsfrogs>
 References: <177188739839.3940670.15233996351019069073.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -73,7 +74,7 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_CC(0.00)[bsbernd.com,szeredi.hu,gompa.dev,vger.kernel.org,gmail.com];
-	TAGGED_FROM(0.00)[bounces-78124-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78125-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	RCVD_TLS_LAST(0.00)[];
@@ -91,72 +92,182 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	RCPT_COUNT_SEVEN(0.00)[9];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 9A7D317F7A9
+X-Rspamd-Queue-Id: E4C2E17F7EC
 X-Rspamd-Action: no action
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Make it so that fuse servers can ask the kernel fuse driver to use iomap
-to support direct IO.
+The upper level fuse library creates a separate node object for every
+(i)node referenced by a directory entry.  Unfortunately, it doesn't
+account for the possibility of hardlinks, which means that we can create
+multiple nodeids that refer to the same hardlinked inode.  Inode locking
+in iomap mode in the kernel relies there only being one inode object for
+a hardlinked file, so we cannot allow anyone to hardlink an iomap file.
+The client had better not turn on iomap for an existing hardlinked file.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- include/fuse_common.h |    2 ++
- include/fuse_kernel.h |    3 +++
- lib/fuse_lowlevel.c   |    2 ++
- 3 files changed, 7 insertions(+)
+ include/fuse.h         |   18 ++++++++++
+ lib/fuse.c             |   90 +++++++++++++++++++++++++++++++++++++++++++-----
+ lib/fuse_versionscript |    2 +
+ 3 files changed, 101 insertions(+), 9 deletions(-)
 
 
-diff --git a/include/fuse_common.h b/include/fuse_common.h
-index a21f1c8dd12e91..bece561ef3ec9c 100644
---- a/include/fuse_common.h
-+++ b/include/fuse_common.h
-@@ -1225,6 +1225,8 @@ static inline bool fuse_iomap_need_write_allocate(unsigned int opflags,
- #define FUSE_IFLAG_DAX			(1U << 0)
- /* exclusive attr mode */
- #define FUSE_IFLAG_EXCLUSIVE		(1U << 1)
-+/* use iomap for this inode */
-+#define FUSE_IFLAG_IOMAP		(1U << 2)
- 
- /* ----------------------------------------------------------- *
-  * Compatibility stuff					       *
-diff --git a/include/fuse_kernel.h b/include/fuse_kernel.h
-index 9b0894899ca453..6b1fcc44004dbf 100644
---- a/include/fuse_kernel.h
-+++ b/include/fuse_kernel.h
-@@ -245,6 +245,7 @@
-  *  - XXX magic minor revision to make experimental code really obvious
-  *  - add FUSE_IOMAP and iomap_{begin,end,ioend} for regular file operations
-  *  - add FUSE_ATTR_EXCLUSIVE to enable exclusive mode for specific inodes
-+ *  - add FUSE_ATTR_IOMAP to enable iomap for specific inodes
+diff --git a/include/fuse.h b/include/fuse.h
+index 0db5f7e961d8fa..817b3cf6c419c4 100644
+--- a/include/fuse.h
++++ b/include/fuse.h
+@@ -1438,6 +1438,24 @@ int fuse_fs_iomap_device_add(int fd, unsigned int flags);
   */
+ int fuse_fs_iomap_device_remove(int device_id);
  
- #ifndef _LINUX_FUSE_H
-@@ -587,10 +588,12 @@ struct fuse_file_lock {
-  * FUSE_ATTR_DAX: Enable DAX for this file in per inode DAX mode
-  * FUSE_ATTR_EXCLUSIVE: This file can only be modified by this mount, so the
-  * kernel can use cached attributes more aggressively (e.g. ACL inheritance)
-+ * FUSE_ATTR_IOMAP: Use iomap for this inode
-  */
- #define FUSE_ATTR_SUBMOUNT      (1 << 0)
- #define FUSE_ATTR_DAX		(1 << 1)
- #define FUSE_ATTR_EXCLUSIVE	(1 << 2)
-+#define FUSE_ATTR_IOMAP		(1 << 3)
++/**
++ * Decide if we can enable iomap mode for a particular file for an upper-level
++ * fuse server.
++ *
++ * @param statbuf stat information for the file.
++ * @return true if it can be enabled, false if not.
++ */
++bool fuse_fs_can_enable_iomap(const struct stat *statbuf);
++
++/**
++ * Decide if we can enable iomap mode for a particular file for an upper-level
++ * fuse server.
++ *
++ * @param statxbuf statx information for the file.
++ * @return true if it can be enabled, false if not.
++ */
++bool fuse_fs_can_enable_iomapx(const struct statx *statxbuf);
++
+ int fuse_notify_poll(struct fuse_pollhandle *ph);
  
  /**
-  * Open flags
-diff --git a/lib/fuse_lowlevel.c b/lib/fuse_lowlevel.c
-index f34c86406552f9..23169c1946ce0b 100644
---- a/lib/fuse_lowlevel.c
-+++ b/lib/fuse_lowlevel.c
-@@ -166,6 +166,8 @@ static void convert_stat(const struct stat *stbuf, struct fuse_attr *attr,
- 		attr->flags |= FUSE_ATTR_DAX;
- 	if (iflags & FUSE_IFLAG_EXCLUSIVE)
- 		attr->flags |= FUSE_ATTR_EXCLUSIVE;
-+	if (iflags & FUSE_IFLAG_IOMAP)
-+		attr->flags |= FUSE_ATTR_IOMAP;
+diff --git a/lib/fuse.c b/lib/fuse.c
+index 78812b66c05106..5d9acbc177a177 100644
+--- a/lib/fuse.c
++++ b/lib/fuse.c
+@@ -3266,10 +3266,66 @@ static void fuse_lib_rename(fuse_req_t req, fuse_ino_t olddir,
+ 	reply_err(req, err);
  }
  
- static void convert_attr(const struct fuse_setattr_in *attr, struct stat *stbuf)
++/*
++ * Decide if file IO for this inode can use iomap.
++ *
++ * The upper level libfuse creates internal node ids that have nothing to do
++ * with the ext2_ino_t that we give it.  These internal node ids are what
++ * actually gets igetted in the kernel, which means that there can be multiple
++ * fuse_inode objects in the kernel for a single hardlinked inode in the fuse
++ * server.
++ *
++ * What this means, horrifyingly, is that on a fuse filesystem that supports
++ * hard links, the in-kernel i_rwsem does not protect against concurrent writes
++ * between files that point to the same inode.  That in turn means that the
++ * file mode and size can get desynchronized between the multiple fuse_inode
++ * objects.  This also means that we cannot cache iomaps in the kernel AT ALL
++ * because the caches will get out of sync, leading to WARN_ONs from the iomap
++ * zeroing code and probably data corruption after that.
++ *
++ * Therefore, libfuse must never create hardlinks of iomap files, and the
++ * predicates below allow fuse servers to decide if they can turn on iomap for
++ * existing hardlinked files.
++ */
++bool fuse_fs_can_enable_iomap(const struct stat *statbuf)
++{
++	struct fuse_context *ctxt = fuse_get_context();
++	struct fuse_session *se = fuse_get_session(ctxt->fuse);
++
++	if (!(se->conn.want_ext & FUSE_CAP_IOMAP))
++		return false;
++
++	return statbuf->st_nlink < 2;
++}
++
++bool fuse_fs_can_enable_iomapx(const struct statx *statxbuf)
++{
++	struct fuse_context *ctxt = fuse_get_context();
++	struct fuse_session *se = fuse_get_session(ctxt->fuse);
++
++	if (!(se->conn.want_ext & FUSE_CAP_IOMAP))
++		return false;
++
++	return statxbuf->stx_nlink < 2;
++}
++
++static bool fuse_lib_can_link(fuse_req_t req, fuse_ino_t ino)
++{
++	struct fuse *f = req_fuse_prepare(req);
++	struct node *node;
++
++	if (!(req->se->conn.want_ext & FUSE_CAP_IOMAP))
++		return true;
++
++	node = get_node(f, ino);
++	return !(node->iflags & FUSE_IFLAG_IOMAP);
++}
++
+ static void fuse_lib_link(fuse_req_t req, fuse_ino_t ino, fuse_ino_t newparent,
+ 			  const char *newname)
+ {
+ 	struct fuse *f = req_fuse_prepare(req);
++	struct fuse_intr_data d;
+ 	struct fuse_entry_param e;
+ 	char *oldpath;
+ 	char *newpath;
+@@ -3278,17 +3334,33 @@ static void fuse_lib_link(fuse_req_t req, fuse_ino_t ino, fuse_ino_t newparent,
+ 
+ 	err = get_path2(f, ino, NULL, newparent, newname,
+ 			&oldpath, &newpath, NULL, NULL);
+-	if (!err) {
+-		struct fuse_intr_data d;
++	if (err)
++		goto out_reply;
+ 
+-		fuse_prepare_interrupt(f, req, &d);
+-		err = fuse_fs_link(f->fs, oldpath, newpath);
+-		if (!err)
+-			err = lookup_path(f, newparent, newname, newpath,
+-					  &e, &iflags, NULL);
+-		fuse_finish_interrupt(f, req, &d);
+-		free_path2(f, ino, newparent, NULL, NULL, oldpath, newpath);
++	/*
++	 * The upper level fuse library creates a separate node object for
++	 * every (i)node referenced by a directory entry.  Unfortunately, it
++	 * doesn't account for the possibility of hardlinks, which means that
++	 * we can create multiple nodeids that refer to the same hardlinked
++	 * inode.  Inode locking in iomap mode in the kernel relies there only
++	 * being one inode object for a hardlinked file, so we cannot allow
++	 * anyone to hardlink an iomap file.  The client had better not turn on
++	 * iomap for an existing hardlinked file.
++	 */
++	if (!fuse_lib_can_link(req, ino)) {
++		err = -EPERM;
++		goto out_path;
+ 	}
++
++	fuse_prepare_interrupt(f, req, &d);
++	err = fuse_fs_link(f->fs, oldpath, newpath);
++	if (!err)
++		err = lookup_path(f, newparent, newname, newpath,
++				  &e, &iflags, NULL);
++	fuse_finish_interrupt(f, req, &d);
++out_path:
++	free_path2(f, ino, newparent, NULL, NULL, oldpath, newpath);
++out_reply:
+ 	reply_entry(req, &e, iflags, err);
+ }
+ 
+diff --git a/lib/fuse_versionscript b/lib/fuse_versionscript
+index fa1943e18dcafa..67c3bd614c44fc 100644
+--- a/lib/fuse_versionscript
++++ b/lib/fuse_versionscript
+@@ -242,6 +242,8 @@ FUSE_3.99 {
+ 		fuse_reply_create_iflags;
+ 		fuse_reply_entry_iflags;
+ 		fuse_add_direntry_plus_iflags;
++		fuse_fs_can_enable_iomap;
++		fuse_fs_can_enable_iomapx;
+ } FUSE_3.19;
+ 
+ # Local Variables:
 
 
