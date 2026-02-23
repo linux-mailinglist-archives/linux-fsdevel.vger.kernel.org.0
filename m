@@ -1,185 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-77986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77978-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iP46FjGKnGl8JQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 18:11:13 +0100
+	id uCaTBrSBnGnaIgQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77978-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 17:35:00 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C820817A717
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 18:11:12 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34CEF179DED
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 17:34:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2537F302B3A6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 17:07:19 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 1C517309A41B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 16:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A1B329E43;
-	Mon, 23 Feb 2026 17:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FFBF311C22;
+	Mon, 23 Feb 2026 16:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b="E7yTKFH6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTtXnrul"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from beige.elm.relay.mailchannels.net (beige.elm.relay.mailchannels.net [23.83.212.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2094B32939C;
-	Mon, 23 Feb 2026 17:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.212.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771866431; cv=pass; b=uPSwl/3YdX+s2sRDixxIIbtdNfZJBYhEPD4hHQTDmUxWgA6ACyakJgPDuKLQNWcySxt1Q6PwIfKnssThiJ1YXQlIkmCesPFdG4WFWmKdrgYsISUIjTOt7FOvXbtdUjmNBEtaZBUGY4ChDJcrRr+ifXy1W+zylWaIiZ4vvWAAg6c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771866431; c=relaxed/simple;
-	bh=QmuNg1tBtzwmz+wkhgiXHLezpaCUDOCDyd8P/htnkvc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PuyuPB6eaRFsjLx/5JKE8UESFFnafWugjypXOn77c0+dVK1EN4++Y4W8zdpX9yQSX1OhXqm0mhLLi9IB0sQ9rCll5PVmuE/XZN07mSioryMTFQM+utpgoxUw7i5eClWEsTvRJ6nal87R4/+u+IXOLF/yeOWLLaedzBzxZvqchwU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net; spf=pass smtp.mailfrom=landley.net; dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b=E7yTKFH6; arc=pass smtp.client-ip=23.83.212.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=landley.net
-X-Sender-Id: dreamhost|x-authsender|rob@landley.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 96639160C57;
-	Mon, 23 Feb 2026 16:11:12 +0000 (UTC)
-Received: from pdx1-sub0-mail-a229.dreamhost.com (100-103-37-158.trex-nlb.outbound.svc.cluster.local [100.103.37.158])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 13DC4163A9E;
-	Mon, 23 Feb 2026 16:11:10 +0000 (UTC)
-ARC-Seal: i=1; a=rsa-sha256; d=mailchannels.net; s=arc-2022; cv=none;
-	t=1771863070;
-	b=D10lQ/C9uKN0awKaoY1DJbyw883z2sXTh1CP2yS9BDRhSH58rsf1CoH5LujX2k7UdyXoBD
-	t1bhwmCoGJUp9Vlj46sIobRvYohwXZMku0zgzlMBomVvtklhx9MTfMCq18nqt7BfSfv5sy
-	JVyRXMl+RWIB9TE/S+JSDtdPUzvkDAid+ovXQx2YKRnNJmpm5dGpxNqaSlaH32r3Q7Bgj8
-	Df91LPvo+OF+8/1j3YKIG3yfMANeWaohaeRJukOVHk0/p9XDuYaSP7vRB736CZPbK9+1uR
-	Q5fyNplw8uWgFHsNE6fxqfshimehi1AB1J9EDCVb/DyMbdGOH2nQUoa/y2CAhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1771863070;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=XuD6XCjlTOuLfHYtXzVsTlp4WOA/ge30qcw+P5i9Neg=;
-	b=J4JKNO/Aq56Qgvep1jBeLGTX0W4LsZYTzravitWIiHbtcBK53abXlKnP3aSwFPPxC8WCdU
-	2HKgwjMY25lyHqUUf86/lzeAksAERcKa5INoAEp/MKbQs0d2mcu9Vh7PZdoezJ3mJP05lD
-	9YgRxaG/As8lvZTDA3Ry3nd2hF4QVxeimG3XC4CAgaSbTC3J7Y1U6NJowVojfIyx2Ds9Dw
-	JldXum/9uH/Pg/DjU6owlT5lDyq1K7rZYtfgNDqXZbFJf3u6vf8yNkQzu+9oPmutrcJdcE
-	eMdaySlElaVd84WcD02Igp0Re0WMlbkG4IY++BztF09xTyEHTrW2wno/ZJNfTw==
-ARC-Authentication-Results: i=1;
-	rspamd-6fbd58c58b-q6pqj;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=rob@landley.net
-X-Sender-Id: dreamhost|x-authsender|rob@landley.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|rob@landley.net
-X-MailChannels-Auth-Id: dreamhost
-X-Glossy-Stupid: 51eb68441b29b606_1771863072406_1607851710
-X-MC-Loop-Signature: 1771863072406:3925674246
-X-MC-Ingress-Time: 1771863072404
-Received: from pdx1-sub0-mail-a229.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.103.37.158 (trex/7.1.3);
-	Mon, 23 Feb 2026 16:11:12 +0000
-Received: from [IPV6:2607:fb90:9a0f:889c:175:8594:632c:fd9c] (unknown [172.56.10.34])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	(Authenticated sender: rob@landley.net)
-	by pdx1-sub0-mail-a229.dreamhost.com (Postfix) with ESMTPSA id 4fKQnm4c9Yz6N;
-	Mon, 23 Feb 2026 08:11:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=landley.net;
-	s=dreamhost; t=1771863069;
-	bh=XuD6XCjlTOuLfHYtXzVsTlp4WOA/ge30qcw+P5i9Neg=;
-	h=Date:Subject:To:Cc:From:Content-Type:Content-Transfer-Encoding;
-	b=E7yTKFH61K6Rf3nyxMlL5gJn8Vu7IRd1pAZWYgnNR9pCVRRJUpvhMLFsUk6Xig3sX
-	 d6NWEP3DpNrj+DxqHNetE2uHwz9ZJUf/MP/SxA4TNEVqYNX1XyMQxsMbqnOItaYmhx
-	 kMG9i8DHBsDuwQZ/6swAy5TFwwx11Zc5Ry3lX1XRq5mq4C6CTDl7cGtAYkgBgq25SO
-	 fh7Lt1Up1B6KsjeaobDjAYsrfx59zhVGH+ott0uRMP1JJ71tbhFsbxkxnwXEXqRvlu
-	 t7uZaYSEx+P719OVfP3zRy8hYDm/Xq10VI5hBE26ZbFU1tWk0vFK0xtefoKtamHS2O
-	 AcHbh4zCO+A7w==
-Message-ID: <7e309fc3-7d55-4e95-8dea-f164a7a96b6c@landley.net>
-Date: Mon, 23 Feb 2026 10:11:05 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D93C30FC2E;
+	Mon, 23 Feb 2026 16:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771864052; cv=none; b=JqOgCqmYyjX8/w7Sjg0Z+6iMQgnZa/1Fb5RSHDDh4cZFxovGSodxonTrFxaQY83HjYHKG1ty6mBGdlI5jbV3zvzyTzWnswfx5FLCIgdvtAIhwwFJGSeMuWJWNo1ZCk/+2b2V6EJuz2Sgd3AhBDUil2qyToszR6MfAZgUO1wztmg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771864052; c=relaxed/simple;
+	bh=lE9B6+H9HeJSppu/EN5YwZOLzN80IR/3aJG1alsniHY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eyn3OoiwG54VbnSI601CZaGT7LNghRs5la9bBaD62f9GZaNMX2G1QHj1rceViIKgDJwwl+2tlRVch/O3eVYJJl8Iw4Y19EbXV2WFGxPrbwsEucHi8B9Hy9EDKby42RKiuSeJPwkK+Ic7QuunZZ3RM7iJKRvqG6zVu8PoLJL/R+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZTtXnrul; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15EBAC116C6;
+	Mon, 23 Feb 2026 16:27:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771864052;
+	bh=lE9B6+H9HeJSppu/EN5YwZOLzN80IR/3aJG1alsniHY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZTtXnrulLOI8zAjoZ46Ozt1xST1Zn9e5Pu0lemviHRUGhPwJBJBDsdLaZG0Drf9ry
+	 oaNXof1lbmtSzHF/0UdVFKILUr4xtPeJnAh0VmRfPaJrFPQDJIuFIUmLC/xrJdzAZ5
+	 TDkN77sp8+8kdnF6qAjh/1hLiT0pTn3s5QamaK0uX/XZi+ClkhpPjEbMZtgxAGSh3Z
+	 3oZQl1xN0vI0mxUbxevg/g6lqzMKtSC8zGUtpi2JM+tm0VuHspdH8vi/dFXL75HBny
+	 vqCmbhCYblIPptQdi4ZsEJ8x/GyVPXFRZz/IuXNOFdHtc0s5VC0Kqafn9XiU62q7W2
+	 XEQaCNDir2iIA==
+Date: Mon, 23 Feb 2026 06:27:31 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: "T.J. Mercier" <tjmercier@google.com>, gregkh@linuxfoundation.org,
+	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	jack@suse.cz, shuah@kernel.org, linux-kselftest@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v4 2/3] kernfs: Send IN_DELETE_SELF and IN_IGNORED
+Message-ID: <aZx_8_rJNPF2EYgn@slm.duckdns.org>
+References: <20260220055449.3073-1-tjmercier@google.com>
+ <20260220055449.3073-3-tjmercier@google.com>
+ <aZh-orwoaeAh52Bf@slm.duckdns.org>
+ <CAOQ4uxjgXa1q-8-ajSBwza-Tkv91tFP-_wWzCQPW+PwJMehEWA@mail.gmail.com>
+ <aZi6_K-pSRwAe7F5@slm.duckdns.org>
+ <CAOQ4uxjZZSRBwZ2ZL31juAUu0-sAUnPrJWvQuJ2NDaWZMeq0Fg@mail.gmail.com>
+ <aZju-GFHf8Eez-07@slm.duckdns.org>
+ <CAOQ4uxgzuxaLt2xs5a5snu9CBA_4esQ_+t0Wb6CX4M5OqM5AOA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] init: ensure that /dev/console is (nearly) always
- available in initramfs
-To: David Disseldorp <ddiss@suse.de>
-Cc: Askar Safin <safinaskar@gmail.com>, linux-fsdevel@vger.kernel.org,
- Christian Brauner <brauner@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
- linux-kbuild@vger.kernel.org, initramfs@vger.kernel.org,
- Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>,
- patches@lists.linux.dev
-References: <20260219210312.3468980-1-safinaskar@gmail.com>
- <20260219210312.3468980-2-safinaskar@gmail.com>
- <20260220105913.4b62e124.ddiss@suse.de>
- <6d34c95a-a2ea-46a4-b491-45e7cb86049b@landley.net>
- <20260223133357.0c3b8f8e.ddiss@suse.de>
-Content-Language: en-US
-From: Rob Landley <rob@landley.net>
-In-Reply-To: <20260223133357.0c3b8f8e.ddiss@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxgzuxaLt2xs5a5snu9CBA_4esQ_+t0Wb6CX4M5OqM5AOA@mail.gmail.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[landley.net:s=dreamhost];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77986-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,kernel.org,zeniv.linux.org.uk,suse.cz,infradead.org,lists.linux.dev];
-	DMARC_NA(0.00)[landley.net];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[landley.net:+];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[landley.net:mid,landley.net:url,landley.net:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[rob@landley.net,linux-fsdevel@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-77978-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	MISSING_XM_UA(0.00)[];
+	NEURAL_HAM(-0.00)[-0.999];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[tj@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: C820817A717
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 34CEF179DED
 X-Rspamd-Action: no action
 
-On 2/22/26 20:33, David Disseldorp wrote:
->> It's an archive format. There are tools that create that archive format
->> from a directory.
->>
->> The kernel itself had a fairly generic one one built-in, which you
->> _could_ use to create cpio archives with /dev/console as a regular
->> user... until the kernel guys decided to break it. I carried a patch to
->> fix that for a little while myself:
->>
->> https://landley.net/bin/mkroot/0.8.10/linux-patches/0011-gen_init_cpio-regression.patch
+(cc'ing Christian Brauner)
+
+On Sat, Feb 21, 2026 at 06:11:28PM +0200, Amir Goldstein wrote:
+> On Sat, Feb 21, 2026 at 12:32 AM Tejun Heo <tj@kernel.org> wrote:
+> >
+> > Hello, Amir.
+> >
+> > On Fri, Feb 20, 2026 at 10:11:15PM +0200, Amir Goldstein wrote:
+> > > > Yeah, that can be useful. For cgroupfs, there would probably need to be a
+> > > > way to scope it so that it can be used on delegation boundaries too (which
+> > > > we can require to coincide with cgroup NS boundaries).
+> > >
+> > > I have no idea what the above means.
+> > > I could ask Gemini or you and I prefer the latter ;)
+> >
+> > Ah, you chose wrong. :)
+> >
+> > > What are delegation boundaries and NFS boundaries in this context?
+> >
+> > cgroup delegation is giving control of a subtree to someone else:
+> >
+> > https://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git/tree/Documentation/admin-guide/cgroup-v2.rst#n537
+> >
+> > There's an old way of doing it by changing perms on some files and new way
+> > using cgroup namespace.
+> >
+> > > > Would it be possible to make FAN_MNT_ATTACH work for that?
+> > >
+> > > FAN_MNT_ATTACH is an event generated on a mntns object.
+> > > If "cgroup NS boundaries" is referring to a mntns object and if
+> > > this object is available in the context of cgroup create/destroy
+> > > then it should be possible.
+> >
+> > Great, yes, cgroup namespace way should work then.
+> >
+> > > But FAN_MNT_ATTACH reports a mountid. Is there a mountid
+> > > to report on cgroup create? Probably not?
+> >
+> > Sorry, I thought that was per-mount recursive file event monitoring.
+> > FAN_MARK_MOUNT looks like the right thing if we want to allow monitoring
+> > cgroup creations / destructions in a subtree without recursively watching
+> > each cgroup.
 > 
-> This seems like a helpful feature to me.
+> The problem sounds very similar to subtree monitoring for mkdir/rmdir on
+> a filesystem, which is a problem that we have not yet solved.
+> 
+> The problem with FAN_MARK_MOUNT is that it does not support the
+> events CREATE/DELETE, because those events are currently
 
-It was, but I want mkroot to at least be _able_ to build with vanilla 
-kernels, so couldn't depend on a feature upstream had abandoned.
+Ah, bummer.
 
-The real problem isn't cpio, it's that the kernel interface for 
-statically linking a cpio into the kernel wants you to point it at a 
-directory of files for _it_ to cpio up, and when you do that you need 
-root access (or fakeroot) to mknod.
+> monitored in context where the mount is not available and anyway
+> what users want to get notified on a deleted file/dir in a subtree
+> regardless of the mount through which the create/delete was done.
+> 
+> Since commit 58f5fbeb367ff ("fanotify: support watching filesystems
+> and mounts inside userns") and fnaotify groups can be associated
+> with a userns.
+> 
+> I was thinking that we can have a model where events are delivered
+> to a listener based on whether or not the uid/gid of the object are
+> mappable to the userns of the group.
 
-You used to be able to point it at one of those generated files (and 
-thus edit the file yourself to add the extra nodes), but that went away 
-the same time they broke the rest of the interface.
+Given how different NSes can be used independently of each other, it'd
+probably be cleaner if it doesn't have to depend on another NS.
 
-> Thanks, David
+> In a filesystem, this criteria cannot guarantee the subtree isolation.
+> I imagine that for delegated cgroups this criteria could match what
+> you need, but I am basing this on pure speculation.
 
-Rob
+There's a lot of flexibility in the mechanism, so it's difficult to tell.
+e.g. There's nothing preventing somebody from creating two separate subtrees
+delegated to the same user.
+
+Christian was mentioning allowing separate super for different cgroup mounts
+in another thread. cc'ing him for context.
+
+Thanks.
+
+-- 
+tejun
 
