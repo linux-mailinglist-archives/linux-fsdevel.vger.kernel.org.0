@@ -1,166 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-77966-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 8LMIAz9snGlNGQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77966-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 16:03:27 +0100
+	id COtfIO5unGlWHQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 16:14:54 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97C6A17866B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 16:03:26 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id F383317898D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 16:14:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id DB2A730398DC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 15:01:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3801931377BB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 15:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D600366DB2;
-	Mon, 23 Feb 2026 15:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E72364EBC;
+	Mon, 23 Feb 2026 15:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OaigYStr"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="rZUSiUXh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C00366073;
-	Mon, 23 Feb 2026 15:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771858882; cv=none; b=MOqA2rFbzl7rRw/wblHE5t7rP7gQ/fwOUpm6gFrzgwM28drGXX5xeY1AfTGHT0F9Lh482H+eB73/UooGhVDLZo/UtzvCa+wgzjNJPhhSAjeYkkyrCdlVK1EF+SuGfFus8lLYvBXSMlEjvnr+ooqPvPEwH8AJRzy1q1HhBEzoDRU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771858882; c=relaxed/simple;
-	bh=e5c5b74M3vTmffrZkxVqf33SIGqWmbbti+5cabgqU30=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Gz8/753a2iz7qFu0d/omKoqsYaK06rOR8TLZyh+7KhDoAHolPozHU/XnMq9FwIwXtkscrw9nsxkIdRUyBHm/3rEIZFAE6Ol2W28eD+2jokog2lTzggVFUF0rfMMjLKNTjDxArZC8PowuOtOP2pJVayO0OaT7aWW/pQHhHMI95e4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OaigYStr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40292C2BCB2;
-	Mon, 23 Feb 2026 15:01:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771858882;
-	bh=e5c5b74M3vTmffrZkxVqf33SIGqWmbbti+5cabgqU30=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=OaigYStrS0H58RnK9jYWZCcHDiqSEdAX7xgm52ZiTIH2hOr6lFz0pfIeHqnXSx22c
-	 fPLAmdIje8wpwT3qgmVJaXPsnkaS7NB7FwbUnfh6uL4pw4ZkNksgkgpQj1U9soOJP3
-	 I8zQ06tXZJNH9bmYxdwifxd2hS8ZyCjhPsUEDM0WvensrAB7wgg+ERxBdKJP20LcBg
-	 JyDzx8ODMtCb6QkuTBbIFDF1X1wLOYFev6Eyzhc0eMwdUu/PVzCaS4BJW214un6Gfw
-	 oem2r/xcNVnvVt1I21kKCGINo2ZynGSWPrRf7980RO65Ev+qkS2YfdT/tsiM9Vv5jR
-	 s31T8kd8QKH0w==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Tamir Duberstein
- <tamird@kernel.org>, Benno Lossin <lossin@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn?= Roy
- Baron <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman
- <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, Leon
- Romanovsky <leon@kernel.org>, Paul Moore <paul@paul-moore.com>, Serge
- Hallyn <sergeh@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Alexander
- Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, Igor Korotin <igor.korotin.linux@gmail.com>,
- Daniel Almeida <daniel.almeida@collabora.com>, Lorenzo Stoakes
- <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen
- Boyd <sboyd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Krzysztof
- =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Boqun Feng
- <boqun@kernel.org>,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-pm@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v15 9/9] rust: page: add `from_raw()`
-In-Reply-To: <CANiq72myc+tCEHm0WtZspZHWwsSzvesxsmUvk31=GCdUN_zVNA@mail.gmail.com>
-References: <20260220-unique-ref-v15-0-893ed86b06cc@kernel.org>
- <20260220-unique-ref-v15-9-893ed86b06cc@kernel.org>
- <CANiq72myc+tCEHm0WtZspZHWwsSzvesxsmUvk31=GCdUN_zVNA@mail.gmail.com>
-Date: Mon, 23 Feb 2026 16:00:02 +0100
-Message-ID: <87sear33pp.fsf@t14s.mail-host-address-is-not-set>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD59364055
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 15:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.174
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771859404; cv=pass; b=DBiT1A9+fAxSqJYshyDXwgQpH6eZQMtn/MFvHFDCBsGEDe5Er3vv2DKatlco5riOGoSipkMFnl3EiEJAxiLtMfkP3C4KOPoWVZkOpbEYw0MPtMFxLut+1Z/5U6jOp+YRaogFlu67wWNN/9Fi3Og7/w6tkkbcUX2juvQKDzAbJ7Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771859404; c=relaxed/simple;
+	bh=68+0GYjfNsF/v2lhskj0isLu8qOQzsFCvpehF7MPDUs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fzj/dUcEM0wNiQDxgRKo3vcm09Z+q+fofmfsdr2Ok9ByRDOVNQcfKa5YlwAJNDn1QjusKIUmB/943v9ljPLIS1V8bL55F45k6gFeIYUVzc9BnWd+1LISxC39H15R0UyDkLwEph4W4sBBwdhaAHjKzzG42biopVdunbN+Uyt4VPM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=rZUSiUXh; arc=pass smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-506aa68065eso39193991cf.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 07:10:03 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771859403; cv=none;
+        d=google.com; s=arc-20240605;
+        b=CVNYYWjwEoEaHtQ7/bJ1gNdO7HOb0u25S3HXVNKyd2l+xGFJScGtMl2OXoojWKzckt
+         tNtwQ4DPq8OhKraED/mWPHOzTw8xaKb7wrTRRXYEJfifAcb7VNfB01LkPUIxlUD4jtdA
+         6a983jpOYmCAedsOC8fRdt/zIjy/zfKhkdgyIf+KncSsaNgH81CJv/XSI5JZ6Aq9Ckob
+         M1I0ASeKHNvO5iOwmE5o28gyhw+sD0M0P4AhYL+5dVcrd1b1enKSwhsvZ580nwOUm5y3
+         H8XvuJQcOemd7nERl0klmrhbxn1a0m2PQA2Rnzqg4mnmbGWVgotFWSLp8nulMrDdwrkj
+         IEUA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=68+0GYjfNsF/v2lhskj0isLu8qOQzsFCvpehF7MPDUs=;
+        fh=x+1PyLCxMNvUFK8jxdLAxx/8+QTiDIRbeC0NEeDNb4c=;
+        b=FtTLU1Fy1p/+n1Vz38tTjsC+95A8pDAF9J0K0wYnojCkmBuliLcA4l9XqbxmWKgkU8
+         P/Dd59YGH8MBkPn0um4EAYXVVpD86mTjOPmYzlwxnsSLH5w4e8/K92+T4kSo9n+u2PWv
+         R0IR5f60s/5GM9MlaILWpHpwRpmQ78oMIsjCabFnnUW/IccYG7FT7sh8vxIt4mjsdirA
+         J3ORie1YlEJLiE/tbgV2UuzV+W26Ni9Zu+nIvjfcpXJuERPjubFgVneEZN7EXT2STVSn
+         +S248P9W5N4mSmIspCW+Ia9p2mKsCWehcGUudmQNB5AW5JqHzLH+4MUCmrbWakuSKonq
+         lReQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1771859403; x=1772464203; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=68+0GYjfNsF/v2lhskj0isLu8qOQzsFCvpehF7MPDUs=;
+        b=rZUSiUXhi7Wok9FV3G/8nvOK0rA3wHSOBN9YTxZATA3OmQuchezrYb2M1qyUlE07BI
+         0DSfUhcqJmQIuv+TPGHIb3BPf4z7ExRfTA4yncCZppvSrLPqc5AyHjY3Aw4+8S64P99J
+         pG0W5LrpXnR4aWQpUdu3RgXjXY8mGDXAtGEkc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771859403; x=1772464203;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=68+0GYjfNsF/v2lhskj0isLu8qOQzsFCvpehF7MPDUs=;
+        b=HH6r3UN/gdp1dpfC1thLqWUd4ci9aE5miMdMNK7jVoQEtRenSIxBxDcFkkUbFqyOGs
+         8czZN6cP6MqhCTEQsV/xqgJDMRRvHUIHFTpR8MnN4engcWJvHXtL2iHQ6TOFZgoAkqFE
+         xG7YOBJmP5EpF5Xz83rM8qSTDRJvlc5pv7ph32b+JqfPs2HIXl8PtFysY6ZbwfkDPaK1
+         r7cc55Cr6QhvuJBywPssXwaklwQ2HRgphR8YE38G6p6rGiRKUHwA95/TAnKRcw1HkN28
+         QIODUHXzTbeor2pX+6MTV3gMOfZNCSHi9g3s0nj6+SsO7JcPS70CQqMg6feDYLR55WMD
+         qqhA==
+X-Forwarded-Encrypted: i=1; AJvYcCULAJqr5MZeXaInH8KXftVFkWBYArZeYTH3lvktg2HqhdHmq3BQ4AQW4OF6uQyKLZM7NLCKx7TWud6rHtHu@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjYAON77hLp63vqPcNATXwaG8mfHC5wRpbA8oatZJcWF2NY7dE
+	G+b9kKvqLUHyBEj5BNkp8LNNV22/nvv2h0rDQcvj2JWY4YohfBNE/XQg0W7TbGFPEJhmXvtGGPJ
+	tTMYWCni0KcHIDG4npygBBlYqGngpkQ/tjWx5t404yA==
+X-Gm-Gg: AZuq6aJGrc4LjoLxHSwxwpyGqMk2K2bB/evJ8bwMlTtmS7Tws/vT1yol8bofN2ysyd9
+	qgu+AdcjhSUZsg1Lar8xFHsVSIvUdYEts/5P0+pgyl4DvwyiNiJ+oJjn7kZq04zX0gdbu5R8Jz9
+	bkgQNZo/YWQWx471ray1cZiubReBu0JTJnrhXSpTDXmcvOi7+4TiCMWlI5PxfrsirBnbSvXPt29
+	0IlQkqZLmYNpOjusmzWMOsqRGeakXSoBq2YSrM7E08fCKeJIUQV8FO74IiK9DPJ3bZBrhQ5+MGY
+	hq7LdtLr1/gD45Jt
+X-Received: by 2002:ac8:7dd4:0:b0:4ee:61f8:68d6 with SMTP id
+ d75a77b69052e-5070bba6c0fmr127821951cf.6.1771859402774; Mon, 23 Feb 2026
+ 07:10:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20260220204102.21317-1-jiharris@nvidia.com> <aZnLtrqN3u8N66GU@fedora-2.fritz.box>
+In-Reply-To: <aZnLtrqN3u8N66GU@fedora-2.fritz.box>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 23 Feb 2026 16:09:51 +0100
+X-Gm-Features: AaiRm527IRq1INedIsxKmX4eSni2tfyOO910SOjsTolaI7BUafUkCU7DdsaB62k
+Message-ID: <CAJfpegstf_hPN2+jyO_vNfjSqZpUZPJqNg59hGSqTYqyWx1VVg@mail.gmail.com>
+Subject: Re: [PATCH] fuse: skip lookup during atomic_open() when O_CREAT is set
+To: Horst Birthelmer <horst@birthelmer.de>
+Cc: Jim Harris <jim.harris@nvidia.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mgurtovoy@nvidia.com, ksztyber@nvidia.com, 
+	Bernd Schubert <bernd@bsbernd.com>
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77966-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77967-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,kernel.org];
-	RCPT_COUNT_TWELVE(0.00)[40];
 	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,garyguo.net,protonmail.com,google.com,umich.edu,linuxfoundation.org,intel.com,paul-moore.com,gmail.com,ffwll.ch,zeniv.linux.org.uk,suse.cz,collabora.com,oracle.com,ti.com,vger.kernel.org,lists.freedesktop.org,kvack.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[a.hindborg@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[szeredi.hu:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,t14s.mail-host-address-is-not-set:mid]
-X-Rspamd-Queue-Id: 97C6A17866B
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-0.999];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,szeredi.hu:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,birthelmer.de:email]
+X-Rspamd-Queue-Id: F383317898D
 X-Rspamd-Action: no action
 
-Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> writes:
+On Sat, 21 Feb 2026 at 16:19, Horst Birthelmer <horst@birthelmer.de> wrote:
 
-> On Fri, Feb 20, 2026 at 10:52=E2=80=AFAM Andreas Hindborg <a.hindborg@ker=
-nel.org> wrote:
->>
->> +    /// Create a `&Page` from a raw `struct page` pointer
+> I have been looking at that code lately a lot since I was planning to
+> replace it with a compound.
+> I'm not entirely convinced that your proposal is the right direction.
+> I would involve O_EXCL as well, since that lookup could actually
+> help in that case.
 >
-> Please end sentences with a period.
+> Take a look at what Miklos wrote here:
+> https://lore.kernel.org/linux-fsdevel/CAJfpegsDxsMsyfP4a_5H1q91xFtwcEdu9-WBnzWKwjUSrPNdmw@mail.gmail.com/
 
-Ok.
+Bernd had actual patches, that got sidetracked unfortunately:
 
->
->> +        // SAFETY: By function safety requirements, ptr is not null and=
- is
->
-> Please use Markdown in comments: `ptr`.
+https://lore.kernel.org/all/20231023183035.11035-1-bschubert@ddn.com/
 
-Ok.
-
->
->> +    /// `ptr` must be valid for use as a reference for the duration of =
-`'a`.
->
-> Since we will likely try to starting introducing at least a subset of
-> the Safety Standard soon, we should try to use standard terms.
->
-> So I think this "valid for use as a reference" is not an established
-> one, no? Isn't "convertible to a shared reference" the official term?
->
->   https://doc.rust-lang.org/std/ptr/index.html#pointer-to-reference-conve=
-rsion
->
-> In fact, I see `as_ref_unchecked()` and `as_mut_unchecked()` just got
-> stabilized for 1.95.0, so we should probably starting using those were
-> applicable as we bump the minimum, but we should probably use already
-> a similar wording as the standard library for the safety section and
-> the comment:
->
->   "`ptr` must be [convertible to a reference](...)."
-
-I'll change the wording to the "convertible" one.
-
-
-Best regards,
-Andreas Hindborg
-
-
+Thanks,
+Miklos
 
