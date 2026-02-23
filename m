@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-78036-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78037-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OAGABdvdnGl/LwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78036-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:08:11 +0100
+	id sDVgMuvdnGl/LwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78037-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:08:27 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EEB817ED81
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:08:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EF9717ED9F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:08:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 5D63030B045F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:05:55 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 64BB830B172C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB0437E2E7;
-	Mon, 23 Feb 2026 23:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0502737E2E7;
+	Mon, 23 Feb 2026 23:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DgcHj/9y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YoVu2nMA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD7437D11D;
-	Mon, 23 Feb 2026 23:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B3C37D134;
+	Mon, 23 Feb 2026 23:06:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771887949; cv=none; b=oZjIiSVGWYkNBjKQsYxZO4l/rvvdxdI56b0GtLNgWUDZyP0//7trhMhbScDxSNsMptNRfhzC6ZUfymI8CznuPph0cTcovmGsFJVBpkbCK/+y4tp0FL0UMzVjRRdBDsRjHu8XbkbxURJs77ncG7VlJnEVq7NfcdZ1/coNuiBdreY=
+	t=1771887964; cv=none; b=FsikpYoyZRimWapC8M347swHMBS4pvFtUKaqDmF7MhaSc1hlDpF3kJEZPAhCaK7r3JVUSAB9X7TUpBj8hJpTUA6l9g6PiiA12levzCBdCO1fUGxu4OIZ68Ny73bPqsFXBF0UrmC6u2plKv7wMFSGlI+MdAjcfpvH4XdxelDxNoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771887949; c=relaxed/simple;
-	bh=qmkb+SBJYQ8ojwyLEVECmDy0+0kXzeVqkC3Dz1g/9t8=;
+	s=arc-20240116; t=1771887964; c=relaxed/simple;
+	bh=ZGGJaGQVR3YHi+Nb0zQmXD4NbwM9BLrexoPk8/daqj0=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TvSuOXTRdU4X72VG4d1IUGxGI5ZwvaBKSIjuM0tksrHhONvI7W6B/BXmzU7dJE/MaSHZhlbrFd/exhv4znRFkuKBbYjCiruQ8JPC5/zcX3XaUvZB+V+LOaKMvU3LV9AO2kgNRurn2rQZgHBNNnwoDmcKiZUj3ueOYqXMA6Lh8+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DgcHj/9y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A23F1C116C6;
-	Mon, 23 Feb 2026 23:05:48 +0000 (UTC)
+	 MIME-Version:Content-Type; b=QGQkxPcns5fdQoiRyo67st0Ed2JFTu8NKjbfb+HVP1pTQvy1a8cb/AZIEogGVJdIDllOmBuXbvSaA1bd83OZTlVfNYBNwuFgBSj8jcgOsogrfN1JVilZvRlSyXCnuyrDZB60FCwVnDsBI3wHEpY3qDBu+IUd9wwlQe6uR7e++Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YoVu2nMA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F4F4C116C6;
+	Mon, 23 Feb 2026 23:06:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771887948;
-	bh=qmkb+SBJYQ8ojwyLEVECmDy0+0kXzeVqkC3Dz1g/9t8=;
+	s=k20201202; t=1771887964;
+	bh=ZGGJaGQVR3YHi+Nb0zQmXD4NbwM9BLrexoPk8/daqj0=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=DgcHj/9ynx4VkjhPz+O4i93E1O/sBBvylJ+idZ9nm6egUim3FZKLT6nIQn3cNxakM
-	 NYkoEln/rYySPbCBHinOkd0OpM4hISeim1KIXTCKEd7T0MDcOLxR1i9vxpyuNT+qR4
-	 Hh3qQi5fOgdOpibRsYGVG0XBK7a7m5c18WeXdkuOXM6xkIvh4JHSxWKdSWL54iKaXA
-	 GtXtLfiJPKlIkGBUKb8UP4pmqrsSz/4Jw7PiaNPcDnvQRq8x45WmA8o9KtVlB166Rv
-	 OUNfkD1BQMUz/xTdJxU+ZRyzFkNCk5KH/5zdKT7V4/ryIBygbw6AZu2mNAAmXEVh1H
-	 Y0plMQ4izkS/g==
-Date: Mon, 23 Feb 2026 15:05:48 -0800
-Subject: [PATCHSET v7 6/8] fuse4fs: run servers as a contained service
+	b=YoVu2nMAXE3UkkrrzQMZBo0jav3hpYGR7Y4qBdkGhQ+J2RE48DP49F9kl31GIKa5L
+	 68LTjHpADQ+3T1m2pMU8XyOoDTabCjum2fooDVkcPCftAE4Axe5osxlYlsw3gGdB8r
+	 0ojcMSAWqhUWYq7g7dyWhnUbqOutIoP85v+1vHCp7DVFnoBvXbYC272RPJsVPdr8Fl
+	 yJS7IZ+7xXZatAOhWohGMVm9kocrU9t3C1wT1oZqxcRJEDONmrQ93BgjQLmYBKtKic
+	 eUOir0+jt0Ti04wGabwtYMICeK94Agbou2BC+X/D1G4Ioq1y/Ty+tCyP2WzuDWuIKI
+	 Eaf0WdKJm5iqw==
+Date: Mon, 23 Feb 2026 15:06:03 -0800
+Subject: [PATCHSET v7 7/8] fuse4fs: reclaim buffer cache under memory pressure
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-ext4@vger.kernel.org, miklos@szeredi.hu, bernd@bsbernd.com,
  joannelkoong@gmail.com, neal@gompa.dev
-Message-ID: <177188745924.3944907.12406087337118974135.stgit@frogsfrogsfrogs>
+Message-ID: <177188746221.3945260.11225620337508354203.stgit@frogsfrogsfrogs>
 In-Reply-To: <20260223224617.GA2390314@frogsfrogsfrogs>
 References: <20260223224617.GA2390314@frogsfrogsfrogs>
 Precedence: bulk
@@ -73,7 +73,7 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_CC(0.00)[vger.kernel.org,szeredi.hu,bsbernd.com,gmail.com,gompa.dev];
-	TAGGED_FROM(0.00)[bounces-78036-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78037-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	RCVD_TLS_LAST(0.00)[];
@@ -90,16 +90,22 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mconfig.in:url,configure.ac:url,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 7EEB817ED81
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 8EF9717ED9F
 X-Rspamd-Action: no action
 
 Hi all,
 
-In this series of the fuse-iomap prototype, we package the newly created
-fuse4fs server into a systemd socket service.  This service can be used
-by the "mount.service" helper in libfuse to implement untrusted
-unprivileged mounts.
+Having a static buffer cache limit of 32MB is very conservative.  When
+there's plenty of free memory, evicting metadata from the cache isn't
+actually a good idea, so we'd like to let it grow to handle large
+working sets.  However, we also don't want to OOM the kernel or (in the
+future) the fuse4fs container cgroup, so we need to listen for memory
+reclamation events in the kernel.
+
+The solution to this is to open the kernel memory pressure stall
+indicator files, configure an event when too much time is spent waiting
+for reclamation, and to trim the buffer cache when the events happen.
 
 If you're going to start using this code, I strongly recommend pulling
 from my git trees, which are linked below.
@@ -107,35 +113,24 @@ from my git trees, which are linked below.
 Comments and questions are, as always, welcome.
 
 e2fsprogs git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/e2fsprogs.git/log/?h=fuse4fs-service-container
+https://git.kernel.org/cgit/linux/kernel/git/djwong/e2fsprogs.git/log/?h=fuse4fs-memory-reclaim
 ---
 Commits in this patchset:
- * libext2fs: fix MMP code to work with unixfd IO manager
- * fuse4fs: enable safe service mode
- * fuse4fs: set proc title when in fuse service mode
- * fuse4fs: upsert first file mapping to kernel on open
- * fuse4fs: set iomap backing device blocksize
- * fuse4fs: ask for loop devices when opening via fuservicemount
- * fuse4fs: make MMP work correctly in safe service mode
- * debian: update packaging for fuse4fs service
+ * libsupport: add pressure stall monitor
+ * fuse2fs: only reclaim buffer cache when there is memory pressure
+ * fuse4fs: enable memory pressure monitoring with service containers
+ * fuse2fs: flush dirty metadata periodically
 ---
- lib/ext2fs/ext2fs.h         |    1 
- MCONFIG.in                  |    1 
- configure                   |  190 +++++++++++++++++++
- configure.ac                |   54 ++++++
- debian/e2fsprogs.install    |    7 +
- debian/fuse4fs.install      |    3 
- debian/rules                |    3 
- fuse4fs/Makefile.in         |   42 ++++
- fuse4fs/fuse4fs.c           |  421 +++++++++++++++++++++++++++++++++++++++++--
- fuse4fs/fuse4fs.socket.in   |   17 ++
- fuse4fs/fuse4fs@.service.in |   99 ++++++++++
- lib/config.h.in             |    6 +
- lib/ext2fs/mmp.c            |   82 ++++++++
- util/subst.conf.in          |    2 
- 14 files changed, 902 insertions(+), 26 deletions(-)
- mode change 100644 => 100755 debian/fuse4fs.install
- create mode 100644 fuse4fs/fuse4fs.socket.in
- create mode 100644 fuse4fs/fuse4fs@.service.in
+ lib/support/psi.h       |   66 ++++++
+ fuse4fs/Makefile.in     |    2 
+ fuse4fs/fuse4fs.c       |  263 +++++++++++++++++++++-
+ lib/support/Makefile.in |    4 
+ lib/support/iocache.c   |   19 ++
+ lib/support/psi.c       |  557 +++++++++++++++++++++++++++++++++++++++++++++++
+ misc/Makefile.in        |    2 
+ misc/fuse2fs.c          |  196 ++++++++++++++++-
+ 8 files changed, 1089 insertions(+), 20 deletions(-)
+ create mode 100644 lib/support/psi.h
+ create mode 100644 lib/support/psi.c
 
 
