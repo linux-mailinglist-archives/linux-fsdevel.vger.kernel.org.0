@@ -1,236 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-77988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 6BPFOd2PnGnRJQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 18:35:25 +0100
+	id wF8RC2GQnGnRJQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 18:37:37 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AA3F17AE54
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 18:35:25 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 591BF17AE96
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 18:37:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id B935B302BEBA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 17:32:05 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 043B9300D74D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 17:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC9C2331A73;
-	Mon, 23 Feb 2026 17:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9E8331A6D;
+	Mon, 23 Feb 2026 17:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="F+M8ReRS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KDD602pt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD513321C7
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 17:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771867918; cv=pass; b=lWfYxt4V5DA8PGwiQFD4AbV8SVbmSYHb+czRWjSHBBG1uqmwAkniCYKlS7j0IAof8WeYh/DzGTDme6uY5kYpJM5d8+gdZmEZ2f/cpdv86ydtn5sCuDXs30Q6KOsUx5OacokFD9u5xy1sWb5KRfVdrZ6EykRu3jtn+8Fh1thUQEg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771867918; c=relaxed/simple;
-	bh=hK/0jeoKCkucbRZSvX1AYVctVojQdWNjxRFJpKPT85c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=grjlGxhE+g1KnfZY499G6l+kmFyHsHlCjW10e/t38CshGHoyh5bk7jlCXeH/CrLHU3ECXOfKWsVRBszIBzNIwjSZS/kLB4j9OarSJU4xmpjXVw9dc/kSem3qdbDjdAtrmt8ek+SOvfzzYuWsqBumCNo1lUxCCcKPPShzwhVmlB4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=F+M8ReRS; arc=pass smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-354c16d83b2so2163542a91.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 09:31:55 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771867915; cv=none;
-        d=google.com; s=arc-20240605;
-        b=IljCOCYQAigexwh5FxlxMLeE9alFudksZ7hjXFI6sg4jDZaq1Oh1uNFj4Xirvfn16+
-         8I2m3ixuG/FyCt5FHUpJggrSWC2eenWUZYpZlGQx0CRwzQWewNPj8nZLE0Y1dPk2J35d
-         ifvH9gN+k/+GrHwMbRqZErGWsycB4QhnrqLWuSjTHA8lh8hT64SjI9juwWyz6oK/UEKX
-         t8e9bXQzQXgJAp+aPGOD7lbUelIJ8SZYDzKh621ZIltl+aj61kfxZu7/aZiDELE4Rb97
-         Eoqoxx9mBO4oufjua4dBzI0UONtI0efNmhJI/VhGjYKCRFY80ItCF/yxB3nnPDvTb9nv
-         i8hg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=6UKo5s8UZQoKFDeeGaREA8NHzO9NWVOgEQkt9hAvBaw=;
-        fh=+K3LYCtlhH2JJSHqXoDB//qJycfkm6wXeFcZhEXipqk=;
-        b=HPENV07/Olu4zQb/ozLd/n/XdkWhDoqQXGz/MROVIYlaPbenj6rFW7uaLvVDBkk6oz
-         azOHOzvCy3d7LjlpcpgivflMoGJxNhGMjSBLwmDpObIuMAtYKpJJNOnZA50ZRdyO0EHz
-         h01VlYFGPLQps/fovs6xkhzCwPF8OKgjbQNcdCarTeBWWif+m91XIaneFnNLBuXOPZFW
-         c5SJVDtBKXzpWdxb90Guar0AqfG8/IwosQAifJaRod0TgOSIHGZGgTDyzXKY95mxOFpo
-         GduKwZa42Cb2IQ+2hZ3GeF5CslaXQf/bhHyCkGv7Z+Pa98crrF+xXKO2aluWNDQJKsji
-         xBiQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB511331235
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 17:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771868091; cv=none; b=NEH6nWfjHqaLDut0guWrPe6wJFK7/X/kSB+EV+/yZbuSp6dt3AYo5Fg2KoBQAVFh5UXG2ycU07gOnnOT/9QGNsKGeTIizoJ4LKUqwxcT6mHsXJjcKTZKHsjCWJZkKO13xIsUhYMJRJKyOrOimqLOnl9X/gRduUPMtTTDtjCw5DQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771868091; c=relaxed/simple;
+	bh=pPVYjjX+g8lwuvjjX9cEbFdLG+Rgns4g94OuadbV+lI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QfCZQHqzWyDv7i1YCGgG3gT/LhBHUaclySNAvr5W72yVAJ+lWvESUOvQnpTYspmQCot663/7CzT91iGFsNpYgEmAjjivaSpvP02w8fABg/0yzlxSmNn0MGQFW6uIsIQ8gjlxQEv0mMHKyLawmdJOtPBuRWr+DwSpkGAxuV44Qn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KDD602pt; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-48375f10628so29642705e9.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 09:34:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1771867915; x=1772472715; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1771868088; x=1772472888; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6UKo5s8UZQoKFDeeGaREA8NHzO9NWVOgEQkt9hAvBaw=;
-        b=F+M8ReRSjHBcODwL6YMsB62k5KM9tS8sOWzeJ5+cgWNwRgCriw3XQa/eD8Yx/Hni30
-         IdB+LiB/ApJjquQB5KcxVEI5HLkLWuZ1vTpKyL0E0HUfvIQZRWdXowU9+z67g7Gwx52C
-         +oyHQZzV3WLMrQboFAG7U9dC2B2apXVJrFgLqbBoeCt8vO8eZLDHjMm8iii0dsQnf5WW
-         Z+IHssdjgGYFzkGRQY1XVAsJ4gq0CVWEFyPOg2QbuYKPHrO7FhEUN0jl57qhGgMjZ2bq
-         zTkZ+QXwpKHtOYw10dJFzE57zltv532RD2Y3Hk+vJDyanvg3sI0G/4PpvFt2TNvnCaPd
-         NKxw==
+        bh=HUEz6YAu4nuheVqgpSXCLvSWu/dJuHAVRYNHbZZUc14=;
+        b=KDD602ptgLwZUkiYwqEY3ctJ6bnFLeGw4F3dDv3tqqouq2gA/YOh5kHWEBI4H7U6ku
+         IZ/OJCPlsgJTTg6israrsbj/MEeFAkUZkN+bjK4INGcsQIu12S60FJsdLpBJ43RtVta4
+         tRAEzYzILAO5PJ3FR6FLeVVICwl9syZ4Yt3N3paOpMpy9Ny69alxVadj04I+v6hhI42k
+         f3Oic7cnXRPwX1WBFS0rBNWJv27MFth5hlvp++bRCvSbZpmH9O1dO4g1B2STuKHOyYJp
+         HyHSxLCth9UFUddaUU3E0JquTttLRtI3BsKHC91WaOGT2GsQHCV+6VTPOpo5sgdheR/i
+         2Dhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771867915; x=1772472715;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1771868088; x=1772472888;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=6UKo5s8UZQoKFDeeGaREA8NHzO9NWVOgEQkt9hAvBaw=;
-        b=ODS4QuvFN6eqX/HEPXzyaaM2Ox9aY9sRZYZ69MM/ho5Gz7xqqC30CAU6ABtxZ7+7jC
-         eFnOQCydJkz3VtiBCLaoMIB4VVPYzZVlqVLZ8Eb4i+XhPAdK2MuUNwtgKB9kIDqvl3kK
-         lxbOuk3cVwjoupcmAidfJNRzMxyjbEuqX6dGQycQHqzNDqESucFN2P/vzoIyZb1I4ATN
-         LfecQcMbrhW7hVdzlLznUjaFPFV0Y74NLHOHbxwQb10bEwMsJ9PwIESb0oS5fZ7VtFZY
-         vKph8/2nGpoILsTgxXU0LOq/lXg5sJrMi1Zk1NCh6JFaYt2ct8gC56plVET8kTPr0fq2
-         LW2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWUZN+lyQhADulh+fvJAb7RX1ciJ+jKtK1yvJJXVgQ1zkbN4TvrBWc/ZySBD8jQFNLYvzO17HjW5byJ3KhK@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRO8j0OkAg0tecz/Py3PbFtiX/x+YNux+vU1ME2tschzCRfIXJ
-	nhio+2xQYn5+29NWC4u2uYzubYwC04SgOVNZNy+aU+QKCvBtwSzNlLfBZDcnhBsDEb+OYDbDzt8
-	Ud10mPJ9WE4Pg1llM+izXwtVEf7+YTHk+aqkISnSq
-X-Gm-Gg: ATEYQzwVVNqH/JchGpgqkKLI7Fx212UcnH2NqE9KJq/BBbDECyUfDJkBsxikMlP/J9h
-	XaxFdD+FGXB+y4OnLfldzyOIRQYfVek9v1gJYRx9Pam2FJezeCyVq7srfZRm6U308N7T9T6FkKd
-	4kxOsWF7OSQA88NR+9x6IrKtehqqyUI4HacAbQEwhMn2Jkl+vF5DvgIO+WxSqFCR6SW3GkrZf0K
-	aVtfq2dcP9+4ATwONcf1b6xBLIPGz7tDqNsD8nZoJrNnVkHjRFHtkcRuoPqFQqGPVyM3bwtO6Qv
-	E6B0dD0=
-X-Received: by 2002:a17:90b:2543:b0:352:b674:2592 with SMTP id
- 98e67ed59e1d1-358ae7c3605mr8357173a91.7.1771867914678; Mon, 23 Feb 2026
- 09:31:54 -0800 (PST)
+        bh=HUEz6YAu4nuheVqgpSXCLvSWu/dJuHAVRYNHbZZUc14=;
+        b=u6TBFyTGf5oOuNauAHBEVSplcG/mGvl50p+WiJ1Bc11a3TG46WHaV9wY/i3+ERpRDC
+         22/g6ezO3MxURyjKqsltCXgfaHFlHjMBt5szl4uBVVFsQlg2UBXXTAjOsAn1mnLuX+pq
+         sTGj/D8rpi6d6/plowioGR3s7/urGQwZJ91Oz98l8SH4Tm4kgfplOzRvc9mtafKRmikW
+         8vGfxONMdihz4czBD17jP2PXEb3hBSk0ZDcTdmUMPMVcs4fL41jsf6WLRfPg51mKJcD1
+         EJtGW24zbYnaeRU40O6ZdIv0fiJ2WF7GTBVi0CUkoK4sm5yPwH5b7EqLvE2UMWseHgny
+         QRMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVLT9yPjsVcWuUvSWhikvuUr/2wdInCkXh4lAw6fpLKWX8irksXTFj9ggH4O8wqmLhUJ1wlKrn2W7l/FmiG@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlsvqCqIaMljpG/cbdaXHCWKnubpWLCQJb+bRy9l6nN0bOWGqp
+	asfIPfobx/eyTZLlNiajgiHsFCL6Ahpich1iEkDh15gQWUdSFKRqPSEx
+X-Gm-Gg: AZuq6aKyLfzCB27rxlzNtY+y1OCq8pfQmJDm48YS86ALdzVEIrsd5ht8elWXoOO4r3+
+	qpmPTYJU1fx/OP/eAxzZjn1xFa6rz5mBmiXWArOS8832eEXdzU+Tp6tKwKRNBYNgPXOmoPgXCwY
+	kbd8PNQ9GBk6vaAO+c4ZyNpU3BtD41CpxvlGIiWQZZ6l8N97a4NcdOoZjPcUnCzarVWLX6qP56h
+	OqOAjR1d/a4uI5cuwdvUxxxOmsn6fUXxcgXTMnrXSYcqorlzJ0MzI6jv81fm3TOpPlQqzXrMa3e
+	4HN4Kwxzt2APLbDf8y2yR8D5iPPXH/qaYRHk1eF3pUq7tDFDKwMOiPXn/Boxt/U4mJHaMSnKU+R
+	O2vVx/9le37bAo/V1QTmuf6xO3LsDGR1E74fgelNIQz5d93WQXU2s6zjVFKatIiJri1xHosJDeN
+	hpnoATZAVBP4GQk859ScE=
+X-Received: by 2002:a05:600c:45ce:b0:483:a895:9d85 with SMTP id 5b1f17b1804b1-483a95b3e18mr165817715e9.2.1771868087959;
+        Mon, 23 Feb 2026 09:34:47 -0800 (PST)
+Received: from localhost ([212.73.77.104])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-483a9b668f3sm213824665e9.3.2026.02.23.09.34.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Feb 2026 09:34:47 -0800 (PST)
+From: Askar Safin <safinaskar@gmail.com>
+To: rob@landley.net
+Cc: brauner@kernel.org,
+	ddiss@suse.de,
+	initramfs@vger.kernel.org,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	nathan@kernel.org,
+	nsc@kernel.org,
+	patches@lists.linux.dev,
+	rdunlap@infradead.org,
+	safinaskar@gmail.com,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH 1/2] init: ensure that /dev/console is (nearly) always available in initramfs
+Date: Mon, 23 Feb 2026 20:34:42 +0300
+Message-ID: <20260223173443.327797-1-safinaskar@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <7e309fc3-7d55-4e95-8dea-f164a7a96b6c@landley.net>
+References: <7e309fc3-7d55-4e95-8dea-f164a7a96b6c@landley.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260223011210.3853517-1-neilb@ownmail.net> <20260223011210.3853517-7-neilb@ownmail.net>
- <20260223132533.136328-1-clm@meta.com>
-In-Reply-To: <20260223132533.136328-1-clm@meta.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 23 Feb 2026 12:31:40 -0500
-X-Gm-Features: AaiRm52jwDH7iM8Njra-WDPg6xnZ2flvbCTBnLCHZ5MkdIrvbyo0z9crRKbktmQ
-Message-ID: <CAHC9VhSVjLNeTdxHmwYsGX75Z4FOAP+26=PjVdFxpmEkTrPvxA@mail.gmail.com>
-Subject: Re: [PATCH v2 06/15] selinux: Use simple_start_creating() / simple_done_creating()
-To: Chris Mason <clm@meta.com>
-Cc: NeilBrown <neil@brown.name>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>, 
-	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
-	John Johansen <john.johansen@canonical.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[paul-moore.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[paul-moore.com:s=google];
+	MID_CONTAINS_FROM(1.00)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	FREEMAIL_CC(0.00)[kernel.org,suse.de,vger.kernel.org,suse.cz,lists.linux.dev,infradead.org,gmail.com,zeniv.linux.org.uk];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77988-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[23];
-	FREEMAIL_CC(0.00)[brown.name,kernel.org,zeniv.linux.org.uk,redhat.com,suse.cz,oracle.com,szeredi.hu,gmail.com,canonical.com,namei.org,hallyn.com,vger.kernel.org,lists.linux.dev,lists.ubuntu.com];
+	TAGGED_FROM(0.00)[bounces-77989-lists,linux-fsdevel=lfdr.de];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[paul@paul-moore.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[paul-moore.com:+];
-	NEURAL_HAM(-0.00)[-0.999];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[safinaskar@gmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	RCVD_COUNT_FIVE(0.00)[5];
+	NEURAL_HAM(-0.00)[-1.000];
+	TO_DN_NONE(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[brown.name:email,paul-moore.com:dkim,paul-moore.com:url,paul-moore.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,meta.com:email,ownmail.net:email,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: 3AA3F17AE54
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,landley.net:email]
+X-Rspamd-Queue-Id: 591BF17AE96
 X-Rspamd-Action: no action
 
-On Mon, Feb 23, 2026 at 8:26=E2=80=AFAM Chris Mason <clm@meta.com> wrote:
-> NeilBrown <neilb@ownmail.net> wrote:
-> > From: NeilBrown <neil@brown.name>
-> >
-> > Instead of explicitly locking the parent and performing a lookup in
-> > selinux, use simple_start_creating(), and then use
-> > simple_done_creating() to unlock.
-> >
->
-> Hi everyone,
->
-> Amir suggested I run these through, and this commit was flagged:
->
-> commit bc981629767980bbaee2ca3c7348b5a648665a9d
-> Author: NeilBrown <neil@brown.name>
->
-> selinux: Use simple_start_creating() / simple_done_creating()
->
-> Instead of explicitly locking the parent and performing a lookup in
-> selinux, use simple_start_creating(), and then use
-> simple_done_creating() to unlock.
->
-> This extends the region that the directory is locked for, and also
-> performs a lookup. The lock extension is of no real consequence.
-> The lookup uses simple_lookup() and so always succeeds. Thus when
-> d_make_persistent() is called the dentry will already be hashed.
-> d_make_persistent() handles this case.
->
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> Acked-by: Paul Moore <paul@paul-moore.com>
->
-> > diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.=
-c
-> > index 3245cc531555b..7d4f90e5b12a0 100644
-> > --- a/security/selinux/selinuxfs.c
-> > +++ b/security/selinux/selinuxfs.c
-> > @@ -1931,15 +1931,16 @@ static const struct inode_operations swapover_d=
-ir_inode_operations =3D {
-> >  static struct dentry *sel_make_swapover_dir(struct super_block *sb,
-> >                                               unsigned long *ino)
-> >  {
-> > -     struct dentry *dentry =3D d_alloc_name(sb->s_root, ".swapover");
-> > +     struct dentry *dentry;
-> >       struct inode *inode;
-> >
-> > -     if (!dentry)
-> > +     inode =3D sel_make_inode(sb, S_IFDIR);
-> > +     if (!inode)
-> >               return ERR_PTR(-ENOMEM);
-> >
-> > -     inode =3D sel_make_inode(sb, S_IFDIR);
-> > -     if (!inode) {
-> > -             dput(dentry);
-> > +     dentry =3D simple_start_creating(sb->s_root, ".swapover");
-> > +     if (!dentry) {
-> > +             iput(inode);
-> >               return ERR_PTR(-ENOMEM);
-> >       }
->
-> Can this cause a kernel crash when simple_start_creating() fails?
->
-> The function simple_start_creating() returns ERR_PTR on failure, not
-> NULL. The check `if (!dentry)` only catches NULL values. When
-> simple_start_creating() fails and returns an ERR_PTR value like
-> ERR_PTR(-ENOMEM), this value is non-NULL and the error check is bypassed.
->
-> Execution would continue to d_make_persistent(dentry, inode), which
-> attempts to lock dentry->d_lock, dereferencing the ERR_PTR value and
-> causing a kernel crash.
->
-> The old code used d_alloc_name() which returns NULL on error. The new
-> code uses simple_start_creating() which returns ERR_PTR on error, but
-> the error checking pattern wasn't updated to match.
->
-> Should the check be `if (IS_ERR(dentry))` instead, and return dentry
-> rather than ERR_PTR(-ENOMEM) to preserve the actual error code?
+Rob Landley <rob@landley.net>:
+> The real problem isn't cpio, it's that the kernel interface
 
-Good catch Chris, yes, please change this Neil and feel free to preserve my=
- ACK.
+So there is some bug here?
 
---=20
-paul-moore.com
+Then, please, describe properly this bug.
+
+I. e. using usual formula "steps to reproduce - what I got - what I expected to see".
+
+Also, does the kernel broke *documented* feature? If indeed some
+*documented* feature doesn't work, then this is indeed very real bug.
+
+I kindly ask you, please, please, describe this bug. I really want
+to help you.
+
+-- 
+Askar Safin
 
