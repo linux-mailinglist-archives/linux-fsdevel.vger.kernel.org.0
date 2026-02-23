@@ -1,57 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-78078-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78079-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YBO5N/fgnGnCLwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78078-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:21:27 +0100
+	id 8MKQIAThnGnCLwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78079-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:21:40 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4733517F350
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:21:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 053F217F366
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:21:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A66C73055C4D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:16:50 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A3B6931278BC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FAE537F733;
-	Mon, 23 Feb 2026 23:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B82237F733;
+	Mon, 23 Feb 2026 23:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vCCqopwJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NEqUY34d"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECD337D10B;
-	Mon, 23 Feb 2026 23:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98212749CF;
+	Mon, 23 Feb 2026 23:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771888606; cv=none; b=eeF+xt83jt7AS1jDAHMDD8okSaoaVT7sW4maLpbQB0tDan/I+ictUB0Yw8/yNvzm2lvwp/wwpYPCmBHImbH0jC4ZmHh10AK3M9VcrGLvM5jYYNKWIp1B75Ju9VRPeUr1VRTKZByCun+0NUhOiKuIhnpVroooRTiKQNUxvfaOp8A=
+	t=1771888622; cv=none; b=KQvhaUGBbfsbcOnq/2/chYEs/WGumo2S5IHvAKZsnYkKqMkbtAlI5/vhHQdGOalbg3YKeNnlX5+yyxsUcMgV+yUfdGxvX2ASR1ofgUyxR1Sgd5p1Xs1bosIp6xVCkm4/kvFcJgm8vk9YoI+OgEbCn7+OzMkS6wg2twe/av3qwvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771888606; c=relaxed/simple;
-	bh=NtTq4awIQEqJ81kchNvakygIdeRAzD6wKBk0Hlnr3BU=;
+	s=arc-20240116; t=1771888622; c=relaxed/simple;
+	bh=TKSkugr0i2LOKBumDRGPTX0OZLv3wHzWxm3/bhGMgbQ=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K5mCBCmZBEpyNhMJr/VkuuCiKl97tqtfiCDYRIOmKhyw8iSmTzYiQTqd6k87YmnAwkaC6V0dOtN9oSLirfsapoFSxQDqg8H2f9S9eZC/z2iumOkRX3Qbp0cru5BjJRtw74sdAQETHqXibyNELjYO33gkPicFyGdHA9JcUsrS6QM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vCCqopwJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67B91C116C6;
-	Mon, 23 Feb 2026 23:16:46 +0000 (UTC)
+	 MIME-Version:Content-Type; b=R7rXIigt6v/ikuMYDfJ9intT3+60EDUfubOVVGZkk87Q99QGHtG9foplYw0EQBS73mfvhYFAFR8BVMMd9r1c58LsKMytRH9O1ehg5EjFMIe/VqhbMEK0igkpw8G4j4+10Ye1mymlYRQ6pGl5mEtbew/hDtuT8rnw4qjJW7R1+lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NEqUY34d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 407CEC116C6;
+	Mon, 23 Feb 2026 23:17:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771888606;
-	bh=NtTq4awIQEqJ81kchNvakygIdeRAzD6wKBk0Hlnr3BU=;
+	s=k20201202; t=1771888622;
+	bh=TKSkugr0i2LOKBumDRGPTX0OZLv3wHzWxm3/bhGMgbQ=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=vCCqopwJrei8NDYzMW2CaxN1zReNFIPFPDO+rQW/NkM4I43IXB3Y/Jcnoe7Gvsc2c
-	 ++UzlW4ROlELpL8SvfjlofoJPyIPVcGaeHQfQ9E7rWSx/Irvbl3F9VigDE/ao7+FO1
-	 Z0igSBaWH+EL/2W4N/fKzrZDdP9Fa8ntRSwTLFU4Sf5AGex4lksztVJxZs/HeUvt7Z
-	 BmoaSGEdSQZjgUUTHO4csXm0WKshWSIJhtOR/FtlJf0fXE664jB+L33pzAPd4NttgP
-	 ul2+fqRHQdhTAPhP3gOXQMASYMq0w6pfYx/0Ti52GbqFNLyq2viXL3TWoEiu62YbQf
-	 qyb7TwtnMLhZA==
-Date: Mon, 23 Feb 2026 15:16:46 -0800
-Subject: [PATCH 31/33] fuse: disable direct fs reclaim for any fuse server
- that uses iomap
+	b=NEqUY34dNYh0YE9lNEgr7HsI+RPDoocbON/HCpXXY4kb5YK36k4mM/itc8K6hzPW4
+	 5kEM8+7/Nc7B/h7EcaOCQHOcYLNHpBEJOR5KWSBhfK0/FPBV3b4KdKM1fUpwWwD5Xl
+	 pHVfCJjPjapBFNTWJyB1jxQjifvAfwYIy4oXue2QhyMcI3UQ3nA0bu9Ps0a8lYl99B
+	 kk6Nvm8lION6TfbxNIkolSftWvREir5bSaUVNkuGK+hOFJiif1Xjv4jzmUSxNr2TLd
+	 cLoL37O4Xkf34f+Rp9gXS+v02kNoeV2uVlgIYlAnkhjg2frYOznWrhcokw+kyWeZg1
+	 RnsOdmBBKQkaA==
+Date: Mon, 23 Feb 2026 15:17:01 -0800
+Subject: [PATCH 32/33] fuse: enable swapfile activation on iomap
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: miklos@szeredi.hu, djwong@kernel.org
 Cc: joannelkoong@gmail.com, bpf@vger.kernel.org, bernd@bsbernd.com,
  neal@gompa.dev, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-Message-ID: <177188734908.3935739.11737668565290719291.stgit@frogsfrogsfrogs>
+Message-ID: <177188734929.3935739.10961119760938017137.stgit@frogsfrogsfrogs>
 In-Reply-To: <177188734044.3935739.1368557343243072212.stgit@frogsfrogsfrogs>
 References: <177188734044.3935739.1368557343243072212.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -73,7 +72,7 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,bsbernd.com,gompa.dev];
-	TAGGED_FROM(0.00)[bounces-78078-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78079-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	RCVD_TLS_LAST(0.00)[];
@@ -91,127 +90,155 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 4733517F350
+X-Rspamd-Queue-Id: 053F217F366
 X-Rspamd-Action: no action
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Any fuse server that uses iomap can create a substantial amount of dirty
-pages in the pagecache because we don't write dirty stuff until reclaim
-or fsync.  Therefore, memory reclaim on any fuse iomap server musn't
-ever recurse back into the same filesystem.  We must also never throttle
-the fuse server writes to a bdi because that will just slow down
-metadata operations.
-
-Add a new ioctl that the fuse server can call on the fuse device to set
-PF_MEMALLOC_NOFS and PF_LOCAL_THROTTLE.  Either the fuse connection must
-have already enabled iomap, or the caller must have CAP_SYS_RESOURCE.
+It turns out that fuse supports swapfile activation, so let's enable
+that.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/fuse/fuse_iomap.h      |    2 ++
- include/uapi/linux/fuse.h |    1 +
- fs/fuse/dev.c             |    2 ++
- fs/fuse/fuse_iomap.c      |   37 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 42 insertions(+)
+ fs/fuse/fuse_trace.h      |    1 +
+ include/uapi/linux/fuse.h |    5 ++++
+ fs/fuse/fuse_iomap.c      |   54 ++++++++++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 59 insertions(+), 1 deletion(-)
 
 
-diff --git a/fs/fuse/fuse_iomap.h b/fs/fuse/fuse_iomap.h
-index 1d9d39383ca9b2..bf6640c36465e1 100644
---- a/fs/fuse/fuse_iomap.h
-+++ b/fs/fuse/fuse_iomap.h
-@@ -75,6 +75,7 @@ int fuse_iomap_dev_inval(struct fuse_conn *fc,
- 			 const struct fuse_iomap_dev_inval_out *arg);
+diff --git a/fs/fuse/fuse_trace.h b/fs/fuse/fuse_trace.h
+index de7d483d4b0f34..63cc1496ee5ca1 100644
+--- a/fs/fuse/fuse_trace.h
++++ b/fs/fuse/fuse_trace.h
+@@ -300,6 +300,7 @@ struct iomap;
+ 	{ FUSE_IOMAP_OP_DAX,			"fsdax" }, \
+ 	{ FUSE_IOMAP_OP_ATOMIC,			"atomic" }, \
+ 	{ FUSE_IOMAP_OP_DONTCACHE,		"dontcache" }, \
++	{ FUSE_IOMAP_OP_SWAPFILE,		"swapfile" }, \
+ 	{ FUSE_IOMAP_OP_WRITEBACK,		"writeback" }
  
- int fuse_iomap_fadvise(struct file *file, loff_t start, loff_t end, int advice);
-+int fuse_dev_ioctl_iomap_set_nofs(struct file *file, uint32_t __user *argp);
- #else
- # define fuse_iomap_enabled(...)		(false)
- # define fuse_has_iomap(...)			(false)
-@@ -102,6 +103,7 @@ int fuse_iomap_fadvise(struct file *file, loff_t start, loff_t end, int advice);
- # define fuse_dev_ioctl_iomap_support(...)	(-EOPNOTSUPP)
- # define fuse_iomap_dev_inval(...)		(-ENOSYS)
- # define fuse_iomap_fadvise			NULL
-+# define fuse_dev_ioctl_iomap_set_nofs(...)	(-EOPNOTSUPP)
- #endif /* CONFIG_FUSE_IOMAP */
- 
- #endif /* _FS_FUSE_IOMAP_H */
+ #define FUSE_IOMAP_TYPE_STRINGS \
 diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index c454cea83083d3..9e59fba64f48d9 100644
+index 9e59fba64f48d9..5f3724f36f764a 100644
 --- a/include/uapi/linux/fuse.h
 +++ b/include/uapi/linux/fuse.h
-@@ -1195,6 +1195,7 @@ struct fuse_iomap_support {
- #define FUSE_DEV_IOC_SYNC_INIT		_IO(FUSE_DEV_IOC_MAGIC, 3)
- #define FUSE_DEV_IOC_IOMAP_SUPPORT	_IOR(FUSE_DEV_IOC_MAGIC, 99, \
- 					     struct fuse_iomap_support)
-+#define FUSE_DEV_IOC_SET_NOFS		_IOW(FUSE_DEV_IOC_MAGIC, 100, uint32_t)
+@@ -1406,6 +1406,9 @@ struct fuse_uring_cmd_req {
+ #define FUSE_IOMAP_OP_ATOMIC		(1U << 9)
+ #define FUSE_IOMAP_OP_DONTCACHE		(1U << 10)
  
- struct fuse_lseek_in {
- 	uint64_t	fh;
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 9a814a0d222fe6..896706c911cf24 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -2742,6 +2742,8 @@ static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
++/* swapfile config operation */
++#define FUSE_IOMAP_OP_SWAPFILE		(1U << 30)
++
+ /* pagecache writeback operation */
+ #define FUSE_IOMAP_OP_WRITEBACK		(1U << 31)
  
- 	case FUSE_DEV_IOC_IOMAP_SUPPORT:
- 		return fuse_dev_ioctl_iomap_support(file, argp);
-+	case FUSE_DEV_IOC_SET_NOFS:
-+		return fuse_dev_ioctl_iomap_set_nofs(file, argp);
+@@ -1460,6 +1463,8 @@ struct fuse_iomap_end_in {
+ #define FUSE_IOMAP_IOEND_APPEND		(1U << 4)
+ /* is pagecache writeback */
+ #define FUSE_IOMAP_IOEND_WRITEBACK	(1U << 5)
++/* swapfile deactivation */
++#define FUSE_IOMAP_IOEND_SWAPOFF	(1U << 6)
  
- 	default:
- 		return -ENOTTY;
+ struct fuse_iomap_ioend_in {
+ 	uint32_t flags;		/* FUSE_IOMAP_IOEND_* */
 diff --git a/fs/fuse/fuse_iomap.c b/fs/fuse/fuse_iomap.c
-index 84bc8bbd2eeb85..561b0105e6dadc 100644
+index 561b0105e6dadc..9a3703b2d65bbd 100644
 --- a/fs/fuse/fuse_iomap.c
 +++ b/fs/fuse/fuse_iomap.c
-@@ -12,6 +12,7 @@
+@@ -8,6 +8,7 @@
+ #include <linux/pagemap.h>
+ #include <linux/falloc.h>
+ #include <linux/fadvise.h>
++#include <linux/swap.h>
+ #include "fuse_i.h"
  #include "fuse_trace.h"
  #include "fuse_iomap.h"
- #include "fuse_iomap_i.h"
-+#include "fuse_dev_i.h"
+@@ -202,13 +203,16 @@ static inline uint16_t fuse_iomap_flags_from_server(uint16_t fuse_f_flags)
+ #undef XMAP2
+ #undef XMAP
  
- static bool __read_mostly enable_iomap =
- #if IS_ENABLED(CONFIG_FUSE_IOMAP_BY_DEFAULT)
-@@ -2280,3 +2281,39 @@ int fuse_iomap_dev_inval(struct fuse_conn *fc,
- 	up_read(&fc->killsb);
- 	return ret;
- }
++#define FUSE_IOMAP_PRIVATE_OPS	(FUSE_IOMAP_OP_WRITEBACK | \
++				 FUSE_IOMAP_OP_SWAPFILE)
 +
-+static inline bool can_set_nofs(struct fuse_dev *fud)
-+{
-+	if (fud && fud->fc && fud->fc->iomap)
-+	       return true;
-+
-+	return capable(CAP_SYS_RESOURCE);
-+}
-+
-+int fuse_dev_ioctl_iomap_set_nofs(struct file *file, uint32_t __user *argp)
-+{
-+	struct fuse_dev *fud = fuse_get_dev(file);
-+	uint32_t flags;
-+
-+	if (!can_set_nofs(fud))
-+		return -EPERM;
-+
-+	if (copy_from_user(&flags, argp, sizeof(flags)))
-+		return -EFAULT;
-+
+ /* Convert IOMAP_* operation flags to FUSE_IOMAP_OP_* */
+ #define XMAP(word) \
+ 	if (iomap_op_flags & IOMAP_##word) \
+ 		ret |= FUSE_IOMAP_OP_##word
+ static inline uint32_t fuse_iomap_op_to_server(unsigned iomap_op_flags)
+ {
+-	uint32_t ret = iomap_op_flags & FUSE_IOMAP_OP_WRITEBACK;
++	uint32_t ret = iomap_op_flags & FUSE_IOMAP_PRIVATE_OPS;
+ 
+ 	XMAP(WRITE);
+ 	XMAP(ZERO);
+@@ -749,6 +753,13 @@ fuse_should_send_iomap_ioend(const struct fuse_mount *fm,
+ 	if (inarg->error)
+ 		return true;
+ 
 +	/*
-+	 * The fuse server could be asked to perform a substantial amount of
-+	 * writeback, so prohibit reclaim from recursing into fuse or the
-+	 * kernel from throttling any bdis that the fuse server might write to.
++	 * Always send an ioend for swapoff to let the fuse server know the
++	 * long term layout "lease" is over.
 +	 */
-+	switch (flags) {
-+	case 1:
-+		current->flags |= PF_MEMALLOC_NOFS | PF_LOCAL_THROTTLE;
-+		return 0;
-+	case 0:
-+		current->flags &= ~(PF_MEMALLOC_NOFS | PF_LOCAL_THROTTLE);
-+		return 0;
-+	default:
-+		return -EINVAL;
-+	}
++	if (inarg->flags & FUSE_IOMAP_IOEND_SWAPOFF)
++		return true;
++
+ 	/* Send an ioend if we performed an IO involving metadata changes. */
+ 	return inarg->written > 0 &&
+ 	       (inarg->flags & (FUSE_IOMAP_IOEND_SHARED |
+@@ -1792,6 +1803,43 @@ static void fuse_iomap_readahead(struct readahead_control *rac)
+ 	iomap_bio_readahead(rac, &fuse_iomap_ops);
+ }
+ 
++#ifdef CONFIG_SWAP
++static int fuse_iomap_swapfile_begin(struct inode *inode, loff_t pos,
++				     loff_t count, unsigned opflags,
++				     struct iomap *iomap, struct iomap *srcmap)
++{
++	return fuse_iomap_begin(inode, pos, count,
++				FUSE_IOMAP_OP_SWAPFILE | opflags, iomap,
++				srcmap);
 +}
++
++static const struct iomap_ops fuse_iomap_swapfile_ops = {
++	.iomap_begin		= fuse_iomap_swapfile_begin,
++};
++
++static int fuse_iomap_swap_activate(struct swap_info_struct *sis,
++				    struct file *swap_file, sector_t *span)
++{
++	int ret;
++
++	/* obtain the block device from the header iomapping */
++	sis->bdev = NULL;
++	ret = iomap_swapfile_activate(sis, swap_file, span,
++				      &fuse_iomap_swapfile_ops);
++	if (ret < 0)
++		fuse_iomap_ioend(file_inode(swap_file), 0, 0, ret,
++				 FUSE_IOMAP_IOEND_SWAPOFF, NULL,
++				 FUSE_IOMAP_NULL_ADDR);
++	return ret;
++}
++
++static void fuse_iomap_swap_deactivate(struct file *file)
++{
++	fuse_iomap_ioend(file_inode(file), 0, 0, 0, FUSE_IOMAP_IOEND_SWAPOFF,
++			 NULL, FUSE_IOMAP_NULL_ADDR);
++}
++#endif
++
+ static const struct address_space_operations fuse_iomap_aops = {
+ 	.read_folio		= fuse_iomap_read_folio,
+ 	.readahead		= fuse_iomap_readahead,
+@@ -1802,6 +1850,10 @@ static const struct address_space_operations fuse_iomap_aops = {
+ 	.migrate_folio		= filemap_migrate_folio,
+ 	.is_partially_uptodate  = iomap_is_partially_uptodate,
+ 	.error_remove_folio	= generic_error_remove_folio,
++#ifdef CONFIG_SWAP
++	.swap_activate		= fuse_iomap_swap_activate,
++	.swap_deactivate	= fuse_iomap_swap_deactivate,
++#endif
+ 
+ 	/* These aren't pagecache operations per se */
+ 	.bmap			= fuse_bmap,
 
 
