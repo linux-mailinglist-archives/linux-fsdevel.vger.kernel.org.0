@@ -1,57 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-78128-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78129-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +Hv6HVPjnGn4LwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78128-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:31:31 +0100
+	id qK8cDm/jnGn4LwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78129-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:31:59 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A20BE17F813
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:31:30 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B3817F840
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:31:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 890383017A9E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:29:53 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 975763019C8B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C6037F8B8;
-	Mon, 23 Feb 2026 23:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7B337F8CC;
+	Mon, 23 Feb 2026 23:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lN6X7TYR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JQRbArWP"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD3437F728;
-	Mon, 23 Feb 2026 23:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9807937F8A4;
+	Mon, 23 Feb 2026 23:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771889388; cv=none; b=gMGSe8waAQsE/eN4vJEXl7xmsojwM9maqWIw7h759dk1tAbpJ+w5KI8QlNi43N5GpgYx9txUyyqKYgZ612xVbxMdDG6R5BJBYVd+KRyhneNLn7BOoT58GLapgmEcOzoaqVzMFuYYMkt8257BBFgYeb6wdQfQSgDrIsyFgnoCHxk=
+	t=1771889403; cv=none; b=gEYnxpsD1WWuT7Mv4OwrL/EcaIN6pK5WUqsMKbiLUS9BNd8p1kTtTjJknn5pMg/6jgTSw1HVURbCX5xy6WP/sAXrsm3dDDmkDF3LJ8fmmmZmKHU0Qwu45+C6Uz1Avkai3bEsbMrxr0RoGspTrXlz2WPKCxuONtCPArkL2zQsUqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771889388; c=relaxed/simple;
-	bh=gM3TePHJe+zFkamUmZu9cXxleEBbAth1KXFmz9i5pF4=;
+	s=arc-20240116; t=1771889403; c=relaxed/simple;
+	bh=sx0XC5QfkkedIX9MLp2ps2VD6XQL2vu9TrTXZ4mhAgU=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Iq7+0f3ohcsAFGfwBlfeEZCPZGrNDmBjbYghH1PTurSNZ0fNO/OYKi92CDmrr9fTYzKvvD8M8pxVXaP0Xj52H4dW2Tqx0rJdnZW9qedatxPF2hOzfHE8F37h8tKRk1GRjYGNgeS1nO/o6Yp6A9MGbU5tlJvkUuWai20abWWOdGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lN6X7TYR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFEC4C116C6;
-	Mon, 23 Feb 2026 23:29:47 +0000 (UTC)
+	 MIME-Version:Content-Type; b=RmkL7B0AtRHVWbx9P2WCuqryetKbMx9XC9ruvSF0S5UJi54x8uRIY1xCVYRI3cCje7R6AkZuxl3lUiMitnlGMt/dj3sdWg1OLWChyynDtoYvlkN45NlVnKZzpWw/YZzFTormz+ido5xhJM/QKHDmIX0LeJanRIDr9MfEiRklKzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JQRbArWP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 739B4C116C6;
+	Mon, 23 Feb 2026 23:30:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771889387;
-	bh=gM3TePHJe+zFkamUmZu9cXxleEBbAth1KXFmz9i5pF4=;
+	s=k20201202; t=1771889403;
+	bh=sx0XC5QfkkedIX9MLp2ps2VD6XQL2vu9TrTXZ4mhAgU=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=lN6X7TYRkAIR0QUZ7PAvpBKHyWWlxmkL1aujSPNo7Sn+4uWWfMzzPi4/20lC/EONt
-	 a5aVObMnwmugZkxYSh1an+owA6TKi6ckMD4ptHsoQZvfKUHHmLB3fFjjmKRB1z+cUO
-	 G0iPQiZDv6rxd6fhiBiVb5wWvt3pyarnSIlbMq35HvjGPDl6CFcgAEEDaNEWSx12pU
-	 pJMlkiPUjYypo/H73nM5vbjHHhG00GDXLqJ+QsQFwrOZX1tYaTncvsrSS++yDwuGh0
-	 MrUGIspGtKiwalcsRWvLPewjbowKNLUtxqF3joqwk4xh8LtuzliVeCq1sG4ec5Ag3a
-	 wYh5GHUmVdb5g==
-Date: Mon, 23 Feb 2026 15:29:47 -0800
-Subject: [PATCH 17/25] libfuse: add upper level iomap_config implementation
+	b=JQRbArWPELpMlqFAoLG+JlihNX+oXrMcadL0Z12y8mefVQV5UdgRVqb3zwn/Yr5zY
+	 ZesHy8vYmxmAiUhx76nGLkQC+TBYxnUmqboyH5ciaU2vZDfNUJWnLIyorwfPCATUUm
+	 7WV0Mi6da1i+A2fAIv8a0kxYe5rEfAHry49DOAdrMNxotU6bMOt3NYixMg2DEiw8+w
+	 BXVbbQP2XnWhxD6nwKuv4UvB1QQPR5JC/pfxM5aD9jJPz5Jca4y/NiGUY4McCWZ6D4
+	 HcDE5HNiaHzy3rvAICzuA78vLC7HOKr/ARWU3xoPcb4NktliQXDOOQ6+yO680D9rF4
+	 r2hdg3YepxYhg==
+Date: Mon, 23 Feb 2026 15:30:03 -0800
+Subject: [PATCH 18/25] libfuse: add low level code to invalidate iomap block
+ device ranges
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, bschubert@ddn.com
 Cc: bernd@bsbernd.com, miklos@szeredi.hu, neal@gompa.dev,
  linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  bpf@vger.kernel.org, joannelkoong@gmail.com
-Message-ID: <177188740239.3940670.16287074551625853221.stgit@frogsfrogsfrogs>
+Message-ID: <177188740256.3940670.7740651318167830863.stgit@frogsfrogsfrogs>
 In-Reply-To: <177188739839.3940670.15233996351019069073.stgit@frogsfrogsfrogs>
 References: <177188739839.3940670.15233996351019069073.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -67,20 +68,20 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_CC(0.00)[bsbernd.com,szeredi.hu,gompa.dev,vger.kernel.org,gmail.com];
-	TAGGED_FROM(0.00)[bounces-78128-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78129-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	MIME_TRACE(0.00)[0:+];
 	TO_DN_NONE(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
@@ -90,100 +91,134 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[9];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: A20BE17F813
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: E2B3817F840
 X-Rspamd-Action: no action
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Add FUSE_IOMAP_CONFIG helpers to the upper level fuse library.
+Make it easier to invalidate the page cache for a block device that is
+being used in conjunction with iomap.  This allows a fuse server to kill
+all cached data for a block that is being freed, so that block reuse
+doesn't result in file corruption.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- include/fuse.h |    7 +++++++
- lib/fuse.c     |   37 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 44 insertions(+)
+ include/fuse_kernel.h   |   15 +++++++++++++++
+ include/fuse_lowlevel.h |   15 +++++++++++++++
+ lib/fuse_lowlevel.c     |   22 ++++++++++++++++++++++
+ lib/fuse_versionscript  |    1 +
+ 4 files changed, 53 insertions(+)
 
 
-diff --git a/include/fuse.h b/include/fuse.h
-index 817b3cf6c419c4..9f0ac44295e46f 100644
---- a/include/fuse.h
-+++ b/include/fuse.h
-@@ -918,6 +918,13 @@ struct fuse_operations {
- 	 */
- 	int (*getattr_iflags) (const char *path, struct stat *buf,
- 			       unsigned int *iflags, struct fuse_file_info *fi);
-+
-+	/**
-+	 * Configure the filesystem geometry that will be used by iomap
-+	 * files.
-+	 */
-+	int (*iomap_config) (uint64_t supported_flags, off_t maxbytes,
-+			     struct fuse_iomap_config *cfg);
+diff --git a/include/fuse_kernel.h b/include/fuse_kernel.h
+index 897d996a0ce60d..1e7c9d8082cf23 100644
+--- a/include/fuse_kernel.h
++++ b/include/fuse_kernel.h
+@@ -247,6 +247,7 @@
+  *  - add FUSE_ATTR_EXCLUSIVE to enable exclusive mode for specific inodes
+  *  - add FUSE_ATTR_IOMAP to enable iomap for specific inodes
+  *  - add FUSE_IOMAP_CONFIG so the fuse server can configure more fs geometry
++ *  - add FUSE_NOTIFY_IOMAP_DEV_INVAL to invalidate iomap bdev ranges
+  */
+ 
+ #ifndef _LINUX_FUSE_H
+@@ -701,6 +702,7 @@ enum fuse_notify_code {
+ 	FUSE_NOTIFY_RESEND = 7,
+ 	FUSE_NOTIFY_INC_EPOCH = 8,
+ 	FUSE_NOTIFY_PRUNE = 9,
++	FUSE_NOTIFY_IOMAP_DEV_INVAL = 99,
  };
  
- /** Extra context that may be needed by some filesystems
-diff --git a/lib/fuse.c b/lib/fuse.c
-index 5d9acbc177a177..5301e34901bb3e 100644
---- a/lib/fuse.c
-+++ b/lib/fuse.c
-@@ -2954,6 +2954,23 @@ static int fuse_fs_iomap_ioend(struct fuse_fs *fs, const char *path,
- 				  ioendflags, error, dev, new_addr, newsize);
+ /* The read buffer is required to be at least 8k, but may be much larger */
+@@ -1421,4 +1423,17 @@ struct fuse_iomap_config_out {
+ 	int64_t s_maxbytes;	/* max file size */
+ };
+ 
++struct fuse_range {
++	uint64_t offset;
++	uint64_t length;
++};
++
++struct fuse_iomap_dev_inval_out {
++	uint32_t dev;		/* device cookie */
++	uint32_t reserved;	/* zero */
++
++	/* range of bdev pagecache to invalidate, in bytes */
++	struct fuse_range range;
++};
++
+ #endif /* _LINUX_FUSE_H */
+diff --git a/include/fuse_lowlevel.h b/include/fuse_lowlevel.h
+index a00b6d5a7fa0b6..95429ac096a82c 100644
+--- a/include/fuse_lowlevel.h
++++ b/include/fuse_lowlevel.h
+@@ -2208,6 +2208,21 @@ int fuse_lowlevel_iomap_device_add(struct fuse_session *se, int fd,
+  */
+ int fuse_lowlevel_iomap_device_remove(struct fuse_session *se, int device_id);
+ 
++/*
++ * Invalidate the page cache of a block device opened for use with iomap.
++ *
++ * Added in FUSE protocol version 7.99. If the kernel does not support
++ * this (or a newer) version, the function will return -ENOSYS and do
++ * nothing.
++ *
++ * @param se the session object
++ * @param dev device cookie returned by fuse_lowlevel_iomap_add_device
++ * @param offset start of the range to invalidate, in bytes
++ * @return length length of the range to invalidate, in bytes
++ */
++int fuse_lowlevel_iomap_device_invalidate(struct fuse_session *se, int dev,
++					  off_t offset, off_t length);
++
+ /* ----------------------------------------------------------- *
+  * Utility functions					       *
+  * ----------------------------------------------------------- */
+diff --git a/lib/fuse_lowlevel.c b/lib/fuse_lowlevel.c
+index 19f292c0cb8ee3..89e26f207addbf 100644
+--- a/lib/fuse_lowlevel.c
++++ b/lib/fuse_lowlevel.c
+@@ -3684,6 +3684,28 @@ int fuse_lowlevel_notify_store(struct fuse_session *se, fuse_ino_t ino,
+ 	return res;
  }
  
-+static int fuse_fs_iomap_config(struct fuse_fs *fs, uint64_t flags,
-+				uint64_t maxbytes,
-+				struct fuse_iomap_config *cfg)
++int fuse_lowlevel_iomap_device_invalidate(struct fuse_session *se, int dev,
++					  off_t offset, off_t length)
 +{
-+	fuse_get_context()->private_data = fs->user_data;
-+	if (!fs->op.iomap_config)
++	struct fuse_iomap_dev_inval_out arg = {
++		.dev = dev,
++		.range.offset = offset,
++		.range.length = length,
++	};
++	struct iovec iov[2];
++
++	if (!se)
++		return -EINVAL;
++
++	if (!(se->conn.want_ext & FUSE_CAP_IOMAP))
 +		return -ENOSYS;
 +
-+	if (fs->debug) {
-+		fuse_log(FUSE_LOG_DEBUG,
-+			 "iomap_config flags 0x%llx maxbytes %lld\n",
-+			 (unsigned long long)flags, (long long)maxbytes);
-+	}
++	iov[1].iov_base = &arg;
++	iov[1].iov_len = sizeof(arg);
 +
-+	return fs->op.iomap_config(flags, maxbytes, cfg);
++	return send_notify_iov(se, FUSE_NOTIFY_IOMAP_DEV_INVAL, iov, 2);
 +}
 +
- static void fuse_lib_setattr(fuse_req_t req, fuse_ino_t ino, struct stat *attr,
- 			     int valid, struct fuse_file_info *fi)
- {
-@@ -4834,6 +4851,25 @@ static void fuse_lib_iomap_ioend(fuse_req_t req, fuse_ino_t nodeid,
- 	fuse_reply_iomap_ioend(req, newsize);
- }
+ struct fuse_retrieve_req {
+ 	struct fuse_notify_req nreq;
+ 	void *cookie;
+diff --git a/lib/fuse_versionscript b/lib/fuse_versionscript
+index 14c59928ca9f00..56edd16862ca30 100644
+--- a/lib/fuse_versionscript
++++ b/lib/fuse_versionscript
+@@ -246,6 +246,7 @@ FUSE_3.99 {
+ 		fuse_fs_can_enable_iomapx;
+ 		fuse_lowlevel_discover_iomap;
+ 		fuse_reply_iomap_config;
++		fuse_lowlevel_iomap_device_invalidate;
+ } FUSE_3.19;
  
-+static void fuse_lib_iomap_config(fuse_req_t req, uint64_t flags,
-+				  uint64_t maxbytes)
-+{
-+	struct fuse_iomap_config cfg = { };
-+	struct fuse *f = req_fuse_prepare(req);
-+	struct fuse_intr_data d;
-+	int err;
-+
-+	fuse_prepare_interrupt(f, req, &d);
-+	err = fuse_fs_iomap_config(f->fs, flags, maxbytes, &cfg);
-+	fuse_finish_interrupt(f, req, &d);
-+	if (err) {
-+		reply_err(req, err);
-+		return;
-+	}
-+
-+	fuse_reply_iomap_config(req, &cfg);
-+}
-+
- static int clean_delay(struct fuse *f)
- {
- 	/*
-@@ -4939,6 +4975,7 @@ static struct fuse_lowlevel_ops fuse_path_ops = {
- 	.iomap_begin = fuse_lib_iomap_begin,
- 	.iomap_end = fuse_lib_iomap_end,
- 	.iomap_ioend = fuse_lib_iomap_ioend,
-+	.iomap_config = fuse_lib_iomap_config,
- };
- 
- int fuse_notify_poll(struct fuse_pollhandle *ph)
+ # Local Variables:
 
 
