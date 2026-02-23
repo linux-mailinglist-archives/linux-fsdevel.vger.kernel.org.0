@@ -1,192 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-77993-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id MI3vFumcnGmyJgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77993-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 19:31:05 +0100
+	id cOjqKvOinGnqJgQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 19:56:51 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4FE817B841
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 19:31:04 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2527117BE51
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 19:56:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 040C430DFED5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 18:29:14 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 18A0730364FA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 18:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E4D340D86;
-	Mon, 23 Feb 2026 18:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IwYOM4iD"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438F736997C;
+	Mon, 23 Feb 2026 18:55:59 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp06-ext.udag.de (smtp06-ext.udag.de [62.146.106.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5992D33B6C9
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 18:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771871353; cv=pass; b=aJORndBgLCT7SBz7FhTW8ETJH0xUwPdgWNaYiopKnoQIScy16/VFexBPalWlqFh5oF2dA2eWF1UZzNdbGlFup6o0NzCVIrR436zSPJLFI9/3KU/Ita0g2BXw3jH0XGA5zTVHlIkFRzjRs2U1e78AfFOjbv2G6nJUb0gJjPRkiU0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771871353; c=relaxed/simple;
-	bh=0Whh66IdtUGy70gmAC1xBj/5A+oOvnKahSu95aS7N60=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TJHiUR4AdFIAU5/TYLMNxx+eZ7UIhS8sAKOMvQPlGOtY3DK1thYt9Lg2mMPHPZv2IflXJ0R7ViUybR8mVxmSsOMXZ2Iqx1mk8xbAWSTEUIC4qdqpN2xexKcE1W1/8DM1QV/rRhNPtw99Jm8hgFfk5iRQvdV6Wt2Lhxdq09knK4U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IwYOM4iD; arc=pass smtp.client-ip=209.85.160.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-40ea36b56b7so2548145fac.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 10:29:12 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771871351; cv=none;
-        d=google.com; s=arc-20240605;
-        b=aao0tMoSWBzXvZIumqiURvjsS9R4W0IXJKDr7tV8A5zDlU5dDsyO0awf1ooYB3ti3I
-         vhBwDl7uJxaUPWiEslt9otFSbjOndnBMfKm+b6jWiy2cg00hNw2Se5Uh5ORWX+QVyYAD
-         Ka0O+7sziKFcV/FxYnDRLq272O5LDOhRlkOYFqoZO9/S6y5X7tZyMyjPopRXA1nBzLO5
-         /uLoc/WWX4+JgrWAJivycRFknjHO4TxoBChkvSzx0LLYtByR3gPkesXcmHBg1ilg6RWF
-         ncbdHbvLYaagO9RsjqwfZpBFZsQCj6suOB8jTR8AzMCTZlYKnanmHzy5glWDoma1G6sd
-         Cpzw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=0Whh66IdtUGy70gmAC1xBj/5A+oOvnKahSu95aS7N60=;
-        fh=Rk3yuZf9s/gY/YZw/cQMwN/V/Y8jv7/GN/Lqr4j1OAA=;
-        b=JyPJ+KAWzQAJWRrAgJkkr2QBjmpAYm/UOUareaKvLDEsGzuUvWhG/7vDQDrWqGTGFV
-         59P7RPHWqrcflj+SE7BjaSgtj8GIAV2vPXYNNQr2bDYPXk4Z3eWCEIUYZ6vcjhrJLNFr
-         9PNc+/CB/pDqUg5rB593PiQbyzXXx6Wi1urnrWL9NOJDor7hVeAlNdfcWFz0wYVf5N1k
-         b5tqPTEXTNsqpcc+9Rb3RnfMRNnDbW8on156I9gf8e6GPNOtid0JkcMoyqpBbvRV9dpA
-         tjqb5pfeX5dDmB1+dLb8loFW2abntPbpoHTdPT66q0Z0WtL1aOMQJuavWwgQjpaCvRQe
-         5Y7w==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771871351; x=1772476151; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0Whh66IdtUGy70gmAC1xBj/5A+oOvnKahSu95aS7N60=;
-        b=IwYOM4iDWnPfuZgSYZRCtI4/oif6ihNDNZcTlNdbqgRaGuo/1JsIrIEaiaWwpkqouH
-         cOuJ90UVgwA+HI6VtuPCal5P8RaZ3bAkwtF4HsvqaeQ4PZmyCv8TredQfFsckifeFCSD
-         +yaqVZEqyz388zZSkFE+jgiu98EwWrQJjVMKrrX9ayKMFaqxjrGoyGLcrpgb3iPt/jHs
-         SiRLQG4brjohBFkZB8cSaFRqGSxIELraCbprUU0QzB5wKYr80+NbxTLW9+oUqjLMI2LX
-         UNvsfVd7B6YOAe1HzEWGwKnro+hz8hOh4JzgXUsE3Z87HoOpT4xl6TkNVRuhdusMxMpB
-         rKaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771871351; x=1772476151;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=0Whh66IdtUGy70gmAC1xBj/5A+oOvnKahSu95aS7N60=;
-        b=klo+7W8Rfz03L/RJZsauoElMHZEoGk3KIoeM2XNHcewsaj9hkAHj3WO5IvyHnOWjwz
-         ALc17mjIYFYtE4lOX1Fru/IWc8tKJhhjucf3Dfaj2XqEa4EHjY0IbpVZUCsZUkKO1KNs
-         p2h/YU4evu0A5VOoFfjJ7+gzCEnBrqyB2ZbdJ9Zi2IPjBA14TFY1izdQ8ivBQ3R59TnG
-         x0I27r6zTjHfEzmB7+6jNP6gKTSY+UOuyMi2Hc3Zv/LaoDwFRFxb08ogmWSIH/eF9t4N
-         1rmVwgiHFhzhzERd20GPbCx5LVztux8ENnoQjbZU2/YHefEgRvUKDA/JwDbA60Ks1Alf
-         K7Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtO2j1zfycBDNSEvl2O1kG1eIsVCAzlTFI0OZsSm3DmQcCFeuQA17FAM89DsFTAkL23qUUa6g3ILv/LPPi@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi4zPOzZ3BLcuMaReUdRa/AUPZ7bWHKafwGjPCVYQCiWJVmaaV
-	Uk0lQjaV9pezdbrnpz4BGwxhXLZ6TthuZ+KZT8Kko8mxeVorQaiW+lde2gtDe0xObDpSNwDP4FY
-	tKgTkDFJjN/MCgCtkCM6Bw5UOomsuVQ4=
-X-Gm-Gg: ATEYQzwLPTbksGFqTGatndbgPS1zwj7dUW2nQ1sD0kVwLBiir94ibCZvt2tVIz0Z0C4
-	MzfNBZR6Hh0AQh4p1szqPOiwNQwOWPDObrKAoE2rJP4qvYQSsc/hRSKAFPyDpxJm994pIPDK7IH
-	zcYOFbrdCKrX2P/nr8gkVp6vyCIFXmopaijBuMPnA5Ixxm/wjI6uYa12c5dIAWG/BzbQQ6etW11
-	mY86rXlMmVUjVOEUH3bWCjEv4Ta1yj8CgRx+vK3/cllrdksKjyU0maWgdEQM0DtFgzl+T6fMoQ0
-	pdNvfZ0=
-X-Received: by 2002:a05:6870:a79f:b0:409:728e:3f2b with SMTP id
- 586e51a60fabf-4157ac28b31mr4638255fac.1.1771871351139; Mon, 23 Feb 2026
- 10:29:11 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B97E1EFF8D;
+	Mon, 23 Feb 2026 18:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.146.106.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771872959; cv=none; b=Wcdpu6ORZUH0l1nJz/80bmc7ZZP0YEo3rkgbVseMLCyRfMMf8prhy/Ql9/lUYy/ji96yegeSTlC/zYNT/C7l2Fg92jiacVNe4EDDeGk9Alcy4b6vMbzh97AMfI4lQsNmjvCiEJxVt+NoxRXRghTclo8X1VlMwH5G57uK5N3NVw8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771872959; c=relaxed/simple;
+	bh=vtJZ4PadBHebTQEBEXNF+Yo455CaPLKjlfD1awC25MY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mu3Fo4QbqAFORq2BARM6rh3Ksl9UtdFrvoLQvhPzULW5Hl9I1RZXl0yNBElfJutz2/hE2KR6cFduv5GU2sUQ9EamCR+ytcwa8ACU7i0lrW06Y+qufkuXwE+yj3L7WjBcR0Sin1WPR1LTtXj9JFhDqKlAucn1svmFuDtBbKRgXUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de; spf=pass smtp.mailfrom=birthelmer.de; arc=none smtp.client-ip=62.146.106.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birthelmer.de
+Received: from localhost (200-143-067-156.ip-addr.inexio.net [156.67.143.200])
+	by smtp06-ext.udag.de (Postfix) with ESMTPA id 61063E04F7;
+	Mon, 23 Feb 2026 19:55:48 +0100 (CET)
+Authentication-Results: smtp06-ext.udag.de;
+	auth=pass smtp.auth=birthelmercom-0001 smtp.mailfrom=horst@birthelmer.de
+Date: Mon, 23 Feb 2026 19:55:47 +0100
+From: Horst Birthelmer <horst@birthelmer.de>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Bernd Schubert <bernd@bsbernd.com>, Jim Harris <jim.harris@nvidia.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, mgurtovoy@nvidia.com, 
+	ksztyber@nvidia.com, Luis Henriques <luis@igalia.com>
+Subject: Re: Re: [PATCH] fuse: skip lookup during atomic_open() when O_CREAT
+ is set
+Message-ID: <aZyhkJSO7Ae7y1Pv@fedora.fritz.box>
+References: <20260220204102.21317-1-jiharris@nvidia.com>
+ <aZnLtrqN3u8N66GU@fedora-2.fritz.box>
+ <CAJfpegstf_hPN2+jyO_vNfjSqZpUZPJqNg59hGSqTYqyWx1VVg@mail.gmail.com>
+ <fa1b23a7-1dcb-4141-9334-8f9609bb13f7@bsbernd.com>
+ <CAJfpeguoQ4qnvYvv2_-e7POXiPeBR2go_J68S2E6c-YW-1tYbA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260217180108.1420024-1-avagin@google.com>
-In-Reply-To: <20260217180108.1420024-1-avagin@google.com>
-From: Andrei Vagin <avagin@gmail.com>
-Date: Mon, 23 Feb 2026 10:29:00 -0800
-X-Gm-Features: AaiRm516DL4wdtFRf7EQJjraaJNo9amL-ln10-8gw16pLLQ7cUL2md0iZsvWpvk
-Message-ID: <CANaxB-wNJWhyM7JUKT3y0Wp73=+8XZRnSkdudxqDwEo2FaJpwQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4 v4] exec: inherit HWCAPs from the parent process
-To: Kees Cook <kees@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Cyrill Gorcunov <gorcunov@gmail.com>, 
-	Mike Rapoport <rppt@kernel.org>, Alexander Mikhalitsyn <alexander@mihalicyn.com>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, criu@lists.linux.dev, 
-	Chen Ridong <chenridong@huawei.com>, Christian Brauner <brauner@kernel.org>, 
-	David Hildenbrand <david@kernel.org>, Eric Biederman <ebiederm@xmission.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Michal Koutny <mkoutny@suse.com>, 
-	Andrei Vagin <avagin@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpeguoQ4qnvYvv2_-e7POXiPeBR2go_J68S2E6c-YW-1tYbA@mail.gmail.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+X-Spamd-Result: default: False [-1.36 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
+	DMARC_POLICY_SOFTFAIL(0.10)[birthelmer.de : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77993-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77994-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,gmail.com,kernel.org,mihalicyn.com,vger.kernel.org,kvack.org,lists.linux.dev,huawei.com,xmission.com,oracle.com,suse.com,google.com];
-	FREEMAIL_FROM(0.00)[gmail.com];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[avagin@gmail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MIME_TRACE(0.00)[0:+];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: D4FE817B841
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	NEURAL_HAM(-0.00)[-0.942];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[horst@birthelmer.de,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	R_DKIM_NA(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,fedora.fritz.box:mid]
+X-Rspamd-Queue-Id: 2527117BE51
 X-Rspamd-Action: no action
 
-On Tue, Feb 17, 2026 at 10:01=E2=80=AFAM Andrei Vagin <avagin@google.com> w=
-rote:
->
-> This patch series introduces a mechanism to inherit hardware capabilities
-> (AT_HWCAP, AT_HWCAP2, etc.) from a parent process when they have been
-> modified via prctl.
->
-> To support C/R operations (snapshots, live migration) in heterogeneous
-> clusters, we must ensure that processes utilize CPU features available
-> on all potential target nodes. To solve this, we need to advertise a
-> common feature set across the cluster.
->
-> Initially, a cgroup-based approach was considered, but it was decided
-> that inheriting HWCAPs from a parent process that has set its own
-> auxiliary vector via prctl is a simpler and more flexible solution.
->
-> This implementation adds a new mm flag MMF_USER_HWCAP, which is set when =
-the
-> auxiliary vector is modified via prctl(PR_SET_MM_AUXV). When execve() is
-> called, if the current process has MMF_USER_HWCAP set, the HWCAP values a=
-re
-> extracted from the current auxiliary vector and inherited by the new proc=
-ess.
->
-> The first patch fixes AUXV size calculation for ELF_HWCAP3 and ELF_HWCAP4
-> in binfmt_elf_fdpic and updates AT_VECTOR_SIZE_BASE.
->
-> The second patch implements the core inheritance logic in execve().
->
-> The third patch adds a selftest to verify that HWCAPs are correctly
-> inherited across execve().
->
-> v4: minor fixes based on feedback from the previous version.
+On Mon, Feb 23, 2026 at 04:53:33PM +0100, Miklos Szeredi wrote:
+> On Mon, 23 Feb 2026 at 16:37, Bernd Schubert <bernd@bsbernd.com> wrote:
+> 
+> > After the discussion about LOOKUO_HANDLE my impression was actually that
+> > we want to use compounds for the atomic open.
+> 
+> I think we want to introduce an atomic operation that does a lookup +
+> an optional mknod, lets call this LOOKUP_CREATE_FH, this would return
+> a flag indicating whether the file was created or if it existed prior
+> to the operation.
+> 
+> Then, instead of the current CREATE operation there would be a
+> compound with LOOKUP_CREATE_FH + OPEN.
+> 
+> Does that make sense?
 
-Kees,
+What is wrong with a compound doing LOOKUP + MKNOD + OPEN?
+If the fuse server knows how to process that 'group' atomically
+in one big step it will do the right thing, 
+if not, we will call those in series and sort out the data 
+in kernel afterwards.
 
-I think it is ready to be merged. Let me know if you have any other
-comments/concerns/questions.
+If we preserve all flags and the real results we can do pretty
+much exactly the same thing that is done at the moment with just
+one call to user space.
 
-Thanks,
-Andrei
+That was actually what I was experimenting with.
+
+The MKNOD in the middle is optional depending on the O_CREAT flag.
+
+> 
+> Thanks,
+> Miklos
+
+Cheers,
+Horst
 
