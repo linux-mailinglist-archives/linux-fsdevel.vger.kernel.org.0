@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-78202-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +HDyMDTonGmNMAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78202-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:52:20 +0100
+	id SMHNKELonGmNMAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:52:34 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AF8A1800E8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:52:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BAF11800F7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:52:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A33AC31ADC51
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:48:53 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0015C31B2D5F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B323803C8;
-	Mon, 23 Feb 2026 23:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968D53803CC;
+	Mon, 23 Feb 2026 23:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XeXvX6w7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QlRbcpt2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427665695;
-	Mon, 23 Feb 2026 23:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A0C37FF70;
+	Mon, 23 Feb 2026 23:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771890531; cv=none; b=ImtFy5XUzzcebbfjI1csOkJIx8plCMPJWh0m6ibOdeZsPm/6x1Sad/bXrCEVrtN9smrxtvD+DoAGUfTKzUvrWE2VOFaglFvSagC1jv3BiiY88U3T5f6CsWXj0rhwgNKwU4jc7W14IMiptoLEj8LzLO5QRBfvNIRMqNR6G5NJtj8=
+	t=1771890547; cv=none; b=s0h+8NKdMTpaQ/mCzCCsdudaMGrU/ATCSY4vMv/SwHlqZxKSAevAFCRSxEydxN+vNKMoCizXqKfztYFUWMCQi6TS39DtsRkb55W3x7Ph5Rdqj2vOuaWX1H0LxFzumvPMCYrAmpZoIlN85JFZOROIwiH0/i6p6eF/vevzcoqLeUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771890531; c=relaxed/simple;
-	bh=sH1WmzhCNoLyRI4hRD0ULs4oASV5KhXVDoPUdXd7ah4=;
+	s=arc-20240116; t=1771890547; c=relaxed/simple;
+	bh=RE/+s6SOHAE8+brfY1pFPVvbb0I9zwQJhjLk10COkAw=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AME0Sgd6Skn2aWaHAjRjE7O3njiU/LqqZsN8nyafPC3tcIU0midIkupfNWZ0bluk/orJXCqmgyHH5DYoAYrFn0NWrinybnZQ6WweXqpHWAO3h7+iT1uPukUHb0kJpEz2QzRSbnO9/kCgeJCAbIAXAeS78N+AyiCHQ7ENf8VvbTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XeXvX6w7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19484C116C6;
-	Mon, 23 Feb 2026 23:48:51 +0000 (UTC)
+	 MIME-Version:Content-Type; b=PYPXLS6x4JMPciB5pps+UtZK4rPJqCO6rqxd35K2q0UCSjRggzfomaQYSQNODgN5GtvzplPbZIW0OCe8A9DzQ35MA6RSsLusweAX4YMxHD2IOovQN/L7YIYevlfBkueyh99ev3D338raY6UYSVv6tCWzRYZBIyyUYP9x46iSnNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QlRbcpt2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFAE1C116C6;
+	Mon, 23 Feb 2026 23:49:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771890531;
-	bh=sH1WmzhCNoLyRI4hRD0ULs4oASV5KhXVDoPUdXd7ah4=;
+	s=k20201202; t=1771890546;
+	bh=RE/+s6SOHAE8+brfY1pFPVvbb0I9zwQJhjLk10COkAw=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=XeXvX6w7du+mkMSHMkmTpkrn28ENpRGfTAGjbNUVVTDm8KWvCx3q6Ztv30weyKHyU
-	 vpA9s+lYnQwP0ItBS35qBfbWQjlNUzrUq3lE86urbmYyzOIn+F6OWEMHBEvuDfpftz
-	 1HPmZJ0QCoRFz9mvfLWeNLG6DoLjahmuawoXr/XtSCzElRRENoiaumwQhOltSj3vnm
-	 IDpVgEWRyHYGEm6xOKNCGcYacWfKl+36DR4vi7FW5tb0VbRngeu8Gt5v/iEiIz11A8
-	 eNzU+TlOutm71qC7EYqL3Y3YZMDTbWt5WN5l061+J3o5hYVXGeykAYHivttTNkSbS5
-	 29te1Gz5YrXcg==
-Date: Mon, 23 Feb 2026 15:48:50 -0800
-Subject: [PATCH 2/4] fuse2fs: only reclaim buffer cache when there is memory
- pressure
+	b=QlRbcpt2GBitVPAXdaY3B7yTPggzHjGCFeMkTp1kVT3rew3OdRbwV+FwACAWVM13S
+	 u53pB5zlFIiIo7v9+1GV7vrjNJEpJcL5PZcsi3LRYTIiYWwt952i9nsANj5Q5i07tN
+	 5fH/+wcK0G1vKL63GnaZAcgD+ujcbg4d7dYOLQ7rrozxPbhy9WtDKHOfjNR97p5tUe
+	 5BJrKd/rKnrVfP/5JRGnjUeyjkwIucrpDPO1HHUBiuUtSl6WT5/G+u6tIlMxVHNcq6
+	 KkEtdK99Cbc9VC2ltKiDQy537TVCXNoC2g1nRUvuu/M1qpC4kulO29l/72EtEUGlis
+	 0bLNqLij1882g==
+Date: Mon, 23 Feb 2026 15:49:06 -0800
+Subject: [PATCH 3/4] fuse4fs: enable memory pressure monitoring with service
+ containers
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-ext4@vger.kernel.org, miklos@szeredi.hu, bernd@bsbernd.com,
  joannelkoong@gmail.com, neal@gompa.dev
-Message-ID: <177188746271.3945260.15563480512654513408.stgit@frogsfrogsfrogs>
+Message-ID: <177188746289.3945260.10098153737399667981.stgit@frogsfrogsfrogs>
 In-Reply-To: <177188746221.3945260.11225620337508354203.stgit@frogsfrogsfrogs>
 References: <177188746221.3945260.11225620337508354203.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -74,7 +74,7 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_CC(0.00)[vger.kernel.org,szeredi.hu,bsbernd.com,gmail.com,gompa.dev];
-	TAGGED_FROM(0.00)[bounces-78202-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78203-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	RCVD_TLS_LAST(0.00)[];
@@ -92,323 +92,241 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 2AF8A1800E8
+X-Rspamd-Queue-Id: 1BAF11800F7
 X-Rspamd-Action: no action
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Use the pressure stall indicator library that we added in the previous
-patch to make it so that we only shrink the cache when there's memory
-pressure.
+Ask the fuse filesystem service mount helper to open the memory pressure
+stall files because we cannot open them ourselves.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fuse4fs/Makefile.in |    2 +
- fuse4fs/fuse4fs.c   |   84 +++++++++++++++++++++++++++++++++++++++++++++++++++
- misc/Makefile.in    |    2 +
- misc/fuse2fs.c      |   84 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 170 insertions(+), 2 deletions(-)
+ lib/support/psi.h |    9 +++++++
+ fuse4fs/fuse4fs.c |   71 ++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ lib/support/psi.c |   53 +++++++++++++++++++++++++++++++++++++---
+ 3 files changed, 128 insertions(+), 5 deletions(-)
 
 
-diff --git a/fuse4fs/Makefile.in b/fuse4fs/Makefile.in
-index f6473ad0027e51..0600485b074158 100644
---- a/fuse4fs/Makefile.in
-+++ b/fuse4fs/Makefile.in
-@@ -180,7 +180,7 @@ fuse4fs.o: $(srcdir)/fuse4fs.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/ext2fs/ext2fs.h $(top_srcdir)/version.h \
-  $(top_srcdir)/lib/e2p/e2p.h $(top_srcdir)/lib/support/cache.h \
-  $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/support/xbitops.h \
-- $(top_srcdir)/lib/support/iocache.h
-+ $(top_srcdir)/lib/support/iocache.h $(top_srcdir)/lib/support/psi.h
- journal.o: $(srcdir)/../debugfs/journal.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/../debugfs/journal.h \
-  $(top_srcdir)/e2fsck/jfs_user.h $(top_srcdir)/e2fsck/e2fsck.h \
+diff --git a/lib/support/psi.h b/lib/support/psi.h
+index 675ebeb553da3e..916ebf15d17431 100644
+--- a/lib/support/psi.h
++++ b/lib/support/psi.h
+@@ -54,4 +54,13 @@ static inline bool psi_active(struct psi *psi)
+ 	return psi != NULL;
+ }
+ 
++char *psi_system_path(enum psi_type type);
++ssize_t psi_cgroup_path(enum psi_type type, char *path, size_t pathsize);
++
++#define PSI_OPEN_FLAGS (O_RDWR | O_NONBLOCK)
++
++int psi_create_from(enum psi_type type, unsigned int psi_flags,
++		    uint64_t stall_us, uint64_t window_us, uint64_t timeout_us,
++		    int *system_fd, int *cgroup_fd, struct psi **psip);
++
+ #endif /* __PSI_H__ */
 diff --git a/fuse4fs/fuse4fs.c b/fuse4fs/fuse4fs.c
-index b12bd926931a69..87b17491beae13 100644
+index 87b17491beae13..4d48521fa8f763 100644
 --- a/fuse4fs/fuse4fs.c
 +++ b/fuse4fs/fuse4fs.c
-@@ -64,6 +64,7 @@
- #include "support/list.h"
- #include "support/cache.h"
- #include "support/iocache.h"
-+#include "support/psi.h"
- 
- #include "../version.h"
- #include "uuid/uuid.h"
-@@ -327,6 +328,8 @@ struct fuse4fs {
+@@ -327,6 +327,8 @@ struct fuse4fs {
+ 	char *svc_cmdline;
  	int bdev_fd;
  	int fusedev_fd;
++	int psi_sys_mem_fd;
++	int psi_cgroup_mem_fd;
  #endif
-+	struct psi *mem_psi;
-+	struct psi_handler *mem_psi_handler;
- };
+ 	struct psi *mem_psi;
+ 	struct psi_handler *mem_psi_handler;
+@@ -939,8 +941,16 @@ static int fuse4fs_psi_config(struct fuse4fs *ff)
+ 	 * Activate when there are memory stalls for 200ms every 2s; or
+ 	 * 5min goes by.  Unprivileged processes can only use 2s windows.
+ 	 */
+-	err = psi_create(PSI_MEMORY, PSI_TRIM_HEAP, 20100, 2000000,
+-			 5 * 60 * 1000000, &ff->mem_psi);
++#ifdef HAVE_FUSE_SERVICE
++	if (fuse4fs_is_service(ff))
++		err = psi_create_from(PSI_MEMORY, PSI_TRIM_HEAP, 202002,
++				      2000000, 5 * 60 * 1000000,
++				      &ff->psi_sys_mem_fd,
++				      &ff->psi_cgroup_mem_fd, &ff->mem_psi);
++	else
++#endif
++		err = psi_create(PSI_MEMORY, PSI_TRIM_HEAP, 202002, 2000000,
++				 5 * 60 * 1000000, &ff->mem_psi);
+ 	if (err) {
+ 		switch (errno) {
+ 		case ENOENT:
+@@ -1564,6 +1574,14 @@ static int fuse4fs_service_finish(struct fuse4fs *ff, int ret)
+ 	close(ff->bdev_fd);
+ 	ff->bdev_fd = -1;
  
++	if (ff->psi_sys_mem_fd >= 0)
++		close(ff->psi_sys_mem_fd);
++	ff->psi_sys_mem_fd = -1;
++
++	if (ff->psi_cgroup_mem_fd >= 0)
++		close(ff->psi_cgroup_mem_fd);
++	ff->psi_cgroup_mem_fd = -1;
++
+ 	/*
+ 	 * If we're being run as a service, the return code must fit the LSB
+ 	 * init script action error guidelines, which is to say that we
+@@ -1585,6 +1603,49 @@ static int fuse4fs_service_finish(struct fuse4fs *ff, int ret)
+ 	return EXIT_SUCCESS;
+ }
+ 
++/* Open PSI control files */
++static int fuse_service_open_psi_controls(struct fuse4fs *ff)
++{
++	const char *psifile = psi_system_path(PSI_MEMORY);
++	char cgpath[PATH_MAX];
++	ssize_t cgpathlen;
++	int ret;
++
++	ret = fuse_service_request_file(ff->service, psifile, PSI_OPEN_FLAGS,
++					0, 0);
++	if (ret)
++		return ret;
++
++	ret = fuse_service_receive_file(ff->service, psifile,
++					&ff->psi_sys_mem_fd);
++	if (ret)
++		return ret;
++	if (ff->psi_sys_mem_fd < 0)
++		err_printf(ff, "%s %s: %s.\n",
++			   _("opening system memory pressure monitor"),
++			   psifile, strerror(errno));
++
++	cgpathlen = psi_cgroup_path(PSI_MEMORY, cgpath, sizeof(cgpath));
++	if (!cgpathlen || cgpathlen >= sizeof(cgpath))
++		return 0;
++
++	ret = fuse_service_request_file(ff->service, cgpath, PSI_OPEN_FLAGS,
++					0, 0);
++	if (ret)
++		return ret;
++
++	ret = fuse_service_receive_file(ff->service, cgpath,
++					&ff->psi_cgroup_mem_fd);
++	if (ret)
++		return ret;
++	if (ff->psi_cgroup_mem_fd < 0)
++		err_printf(ff, "%s %s: %s.\n",
++			   _("opening cgroup memory pressure monitor"),
++			   cgpath, strerror(errno));
++
++	return 0;
++}
++
+ static int fuse4fs_service_get_config(struct fuse4fs *ff)
+ {
+ 	double deadline = init_deadline(FUSE4FS_OPEN_TIMEOUT);
+@@ -1620,6 +1681,10 @@ static int fuse4fs_service_get_config(struct fuse4fs *ff)
+ 		return -1;
+ 	}
+ 
++	ret = fuse_service_open_psi_controls(ff);
++	if (ret)
++		return ret;
++
+ 	ret = fuse_service_finish_file_requests(ff->service);
+ 	if (ret)
+ 		return ret;
+@@ -8581,6 +8646,8 @@ int main(int argc, char *argv[])
  #ifdef HAVE_FUSE_SERVICE
-@@ -908,6 +911,74 @@ static void fuse4fs_mmp_destroy(struct fuse4fs *ff)
- # define fuse4fs_mmp_destroy(...)	((void)0)
+ 		.bdev_fd = -1,
+ 		.fusedev_fd = -1,
++		.psi_sys_mem_fd = -1,
++		.psi_cgroup_mem_fd = -1,
  #endif
- 
-+static void fuse4fs_psi_memory(const struct psi *psi, unsigned int reasons,
-+			       void *data)
-+{
-+	struct fuse4fs *ff = data;
-+	ext2_filsys fs;
-+	errcode_t err;
-+	int ret = 0;
-+
-+	fs = fuse4fs_start(ff);
-+	dbg_printf(ff, "%s:\n", __func__);
-+	if (fs && !psi_thread_cancelled(ff->mem_psi)) {
-+		err = io_channel_set_options(fs->io, "cache_shrink");
-+		if (err)
-+			ret = translate_error(fs, 0, err);
-+	} else {
-+		psi_cancel_handler(ff->mem_psi, &ff->mem_psi_handler);
-+	}
-+	fuse4fs_finish(ff, ret);
-+}
-+
-+static int fuse4fs_psi_config(struct fuse4fs *ff)
-+{
-+	errcode_t err;
-+
-+	/*
-+	 * Activate when there are memory stalls for 200ms every 2s; or
-+	 * 5min goes by.  Unprivileged processes can only use 2s windows.
-+	 */
-+	err = psi_create(PSI_MEMORY, PSI_TRIM_HEAP, 20100, 2000000,
-+			 5 * 60 * 1000000, &ff->mem_psi);
-+	if (err) {
-+		switch (errno) {
-+		case ENOENT:
-+		case EINVAL:
-+		case EACCES:
-+		case EPERM:
-+			break;
-+		default:
-+			err_printf(ff, "PSI: %s.\n", error_message(errno));
-+			return -1;
-+		}
-+	}
-+
-+	err = psi_add_handler(ff->mem_psi, fuse4fs_psi_memory, ff,
-+			      &ff->mem_psi_handler);
-+	if (err) {
-+		err_printf(ff, "PSI: %s.\n", error_message(errno));
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+static void fuse4fs_psi_start(struct fuse4fs *ff)
-+{
-+	if (psi_active(ff->mem_psi))
-+		psi_start_thread(ff->mem_psi);
-+}
-+
-+static void fuse4fs_psi_destroy(struct fuse4fs *ff)
-+{
-+	if (!psi_active(ff->mem_psi))
-+		return;
-+
-+	psi_del_handler(ff->mem_psi, &ff->mem_psi_handler);
-+	psi_destroy(&ff->mem_psi);
-+}
-+
- static inline struct fuse4fs *fuse4fs_get(fuse_req_t req)
- {
- 	return (struct fuse4fs *)fuse_req_userdata(req);
-@@ -2020,6 +2091,11 @@ static errcode_t fuse4fs_config_cache(struct fuse4fs *ff)
- 		return err;
- 	}
- 
-+	if (psi_active(ff->mem_psi)) {
-+		snprintf(buf, sizeof(buf), "cache_auto_shrink=off");
-+		io_channel_set_options(ff->fs->io, buf);
-+	}
-+
- 	return 0;
- }
- 
-@@ -2365,6 +2441,7 @@ static void op_init(void *userdata, struct fuse_conn_info *conn)
- 	 * conveyed to the new child process.
- 	 */
- 	fuse4fs_mmp_start(ff);
-+	fuse4fs_psi_start(ff);
- 
- #if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 17)
- 	/*
-@@ -8590,6 +8667,12 @@ int main(int argc, char *argv[])
- 
- 	try_adjust_oom_score(&fctx);
- 
-+	err = fuse4fs_psi_config(&fctx);
-+	if (err) {
-+		ret |= 32;
-+		goto out;
-+	}
-+
- 	/* Will we allow users to allocate every last block? */
- 	if (getenv("FUSE4FS_ALLOC_ALL_BLOCKS")) {
- 		log_printf(&fctx, "%s\n",
-@@ -8679,6 +8762,7 @@ int main(int argc, char *argv[])
-  _("Mount failed while opening filesystem.  Check dmesg(1) for details."));
- 		fflush(orig_stderr);
- 	}
-+	fuse4fs_psi_destroy(&fctx);
- 	fuse4fs_mmp_destroy(&fctx);
- 	fuse4fs_unmount(&fctx);
- 	reset_com_err_hook();
-diff --git a/misc/Makefile.in b/misc/Makefile.in
-index 5b19cdc96bf4f7..5a37c942188ddc 100644
---- a/misc/Makefile.in
-+++ b/misc/Makefile.in
-@@ -882,7 +882,7 @@ fuse2fs.o: $(srcdir)/fuse2fs.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/ext2fs/ext2fs.h $(top_srcdir)/version.h \
-  $(top_srcdir)/lib/e2p/e2p.h $(top_srcdir)/lib/support/cache.h \
-  $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/support/xbitops.h \
-- $(top_srcdir)/lib/support/iocache.h
-+ $(top_srcdir)/lib/support/iocache.h $(top_srcdir)/lib/support/psi.h
- e2fuzz.o: $(srcdir)/e2fuzz.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(top_srcdir)/lib/ext2fs/ext2_fs.h \
-  $(top_builddir)/lib/ext2fs/ext2_types.h $(top_srcdir)/lib/ext2fs/ext2fs.h \
-diff --git a/misc/fuse2fs.c b/misc/fuse2fs.c
-index 4d62b5d44279f9..f2929ae0045bc9 100644
---- a/misc/fuse2fs.c
-+++ b/misc/fuse2fs.c
-@@ -56,6 +56,7 @@
- #include "support/list.h"
- #include "support/cache.h"
- #include "support/iocache.h"
-+#include "support/psi.h"
- 
- #include "../version.h"
- #include "uuid/uuid.h"
-@@ -306,6 +307,8 @@ struct fuse2fs {
- 	/* options set by fuse_opt_parse must be of type int */
- 	int timing;
- #endif
-+	struct psi *mem_psi;
-+	struct psi_handler *mem_psi_handler;
+ 	};
+ 	errcode_t err;
+diff --git a/lib/support/psi.c b/lib/support/psi.c
+index 26ce6ee1985641..531ae935701edf 100644
+--- a/lib/support/psi.c
++++ b/lib/support/psi.c
+@@ -54,7 +54,7 @@ struct psi {
+ 	enum psi_state state;
  };
  
- #define FUSE2FS_CHECK_HANDLE(ff, fh) \
-@@ -722,6 +725,74 @@ static void fuse2fs_mmp_destroy(struct fuse2fs *ff)
- # define fuse2fs_mmp_destroy(...)	((void)0)
- #endif
+-static const char *psi_system_path(enum psi_type type)
++char *psi_system_path(enum psi_type type)
+ {
+ 	switch (type) {
+ 	case PSI_MEMORY:
+@@ -300,7 +300,7 @@ void psi_destroy(struct psi **psip)
  
-+static void fuse2fs_psi_memory(const struct psi *psi, unsigned int reasons,
-+			       void *data)
+ static int psi_open_control(const char *path)
+ {
+-	return open(path, O_RDWR | O_NONBLOCK);
++	return open(path, PSI_OPEN_FLAGS);
+ }
+ 
+ static void psi_open_system_control(struct psi *psi)
+@@ -309,7 +309,7 @@ static void psi_open_system_control(struct psi *psi)
+ 	psi->system_fd = psi_open_control(psi_system_path(psi->type));
+ }
+ 
+-static ssize_t psi_cgroup_path(enum psi_type type, char *path, size_t pathsize)
++ssize_t psi_cgroup_path(enum psi_type type, char *path, size_t pathsize)
+ {
+ 	char cgpath[PATH_MAX];
+ 	char *p = cgpath;
+@@ -485,6 +485,53 @@ int psi_create(enum psi_type type, unsigned int psi_flags, uint64_t stall_us,
+ 	return -1;
+ }
+ 
++/*
++ * Same as psi_create, but you can specify the whole-system and per-cgroup
++ * monitoring fds.
++ */
++int psi_create_from(enum psi_type type, unsigned int psi_flags,
++		    uint64_t stall_us, uint64_t window_us, uint64_t timeout_us,
++		    int *system_fd, int *cgroup_fd, struct psi **psip)
 +{
-+	struct fuse2fs *ff = data;
-+	ext2_filsys fs;
-+	errcode_t err;
-+	int ret = 0;
++	struct psi *psi;
++	int ret;
 +
-+	fs = fuse2fs_start(ff);
-+	dbg_printf(ff, "%s:\n", __func__);
-+	if (fs && !psi_thread_cancelled(ff->mem_psi)) {
-+		err = io_channel_set_options(fs->io, "cache_shrink");
-+		if (err)
-+			ret = translate_error(fs, 0, err);
-+	} else {
-+		psi_cancel_handler(ff->mem_psi, &ff->mem_psi_handler);
-+	}
-+	fuse2fs_finish(ff, ret);
-+}
-+
-+static int fuse2fs_psi_config(struct fuse2fs *ff)
-+{
-+	errcode_t err;
-+
-+	/*
-+	 * Activate when there are memory stalls for 200ms every 2s; or
-+	 * 5min goes by.  Unprivileged processes can only use 2s windows.
-+	 */
-+	err = psi_create(PSI_MEMORY, PSI_TRIM_HEAP, 20100, 2000000,
-+			 5 * 60 * 1000000, &ff->mem_psi);
-+	if (err) {
-+		switch (errno) {
-+		case ENOENT:
-+		case EINVAL:
-+		case EACCES:
-+		case EPERM:
-+			break;
-+		default:
-+			err_printf(ff, "PSI: %s.\n", error_message(errno));
-+			return -1;
-+		}
-+	}
-+
-+	err = psi_add_handler(ff->mem_psi, fuse2fs_psi_memory, ff,
-+			      &ff->mem_psi_handler);
-+	if (err) {
-+		err_printf(ff, "PSI: %s.\n", error_message(errno));
++	if (psi_flags & ~PSI_FLAGS) {
++		errno = EINVAL;
 +		return -1;
 +	}
 +
++	psi = psi_alloc(type, psi_flags, timeout_us);
++	if (!psi)
++		return -1;
++
++	psi->system_fd = *system_fd;
++	psi->cgroup_fd = *cgroup_fd;
++
++	*system_fd = -1;
++	*cgroup_fd = -1;
++
++	if (psi->system_fd < 0 && psi->cgroup_fd < 0 && !psi->timeout_us) {
++		errno = ENOENT;
++		goto out_fds;
++	}
++
++	ret = psi_config_fd(psi, psi->system_fd, stall_us, window_us);
++	if (ret)
++		goto out_fds;
++
++	ret = psi_config_fd(psi, psi->cgroup_fd, stall_us, window_us);
++	if (ret)
++		goto out_fds;
++
++	*psip = psi;
 +	return 0;
++
++out_fds:
++	psi_destroy(&psi);
++	return -1;
 +}
 +
-+static void fuse2fs_psi_start(struct fuse2fs *ff)
-+{
-+	if (psi_active(ff->mem_psi))
-+		psi_start_thread(ff->mem_psi);
-+}
-+
-+static void fuse2fs_psi_destroy(struct fuse2fs *ff)
-+{
-+	if (!psi_active(ff->mem_psi))
-+		return;
-+
-+	psi_del_handler(ff->mem_psi, &ff->mem_psi_handler);
-+	psi_destroy(&ff->mem_psi);
-+}
-+
- static inline struct fuse2fs *fuse2fs_get(void)
+ /* Start monitoring for resource pressure stalls */
+ int psi_start_thread(struct psi *psi)
  {
- 	struct fuse_context *ctxt = fuse_get_context();
-@@ -1569,6 +1640,11 @@ static errcode_t fuse2fs_config_cache(struct fuse2fs *ff)
- 		return err;
- 	}
- 
-+	if (psi_active(ff->mem_psi)) {
-+		snprintf(buf, sizeof(buf), "cache_auto_shrink=off");
-+		err = io_channel_set_options(ff->fs->io, buf);
-+	}
-+
- 	return 0;
- }
- 
-@@ -1935,6 +2011,7 @@ static void *op_init(struct fuse_conn_info *conn,
- 	 * conveyed to the new child process.
- 	 */
- 	fuse2fs_mmp_start(ff);
-+	fuse2fs_psi_start(ff);
- 
- #if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 17)
- 	/*
-@@ -7619,6 +7696,12 @@ int main(int argc, char *argv[])
- 	try_set_io_flusher(&fctx);
- 	try_adjust_oom_score(&fctx);
- 
-+	err = fuse2fs_psi_config(&fctx);
-+	if (err) {
-+		ret |= 32;
-+		goto out;
-+	}
-+
- 	/* Will we allow users to allocate every last block? */
- 	if (getenv("FUSE2FS_ALLOC_ALL_BLOCKS")) {
- 		log_printf(&fctx, "%s\n",
-@@ -7708,6 +7791,7 @@ int main(int argc, char *argv[])
-  _("Mount failed while opening filesystem.  Check dmesg(1) for details."));
- 		fflush(orig_stderr);
- 	}
-+	fuse2fs_psi_destroy(&fctx);
- 	fuse2fs_mmp_destroy(&fctx);
- 	fuse2fs_unmount(&fctx);
- 	reset_com_err_hook();
 
 
