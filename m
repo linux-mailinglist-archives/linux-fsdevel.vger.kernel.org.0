@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-78109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78110-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iNMaIP7hnGnCLwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:25:50 +0100
+	id yBIoFoXinGnrLwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78110-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:28:05 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA0A417F56F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:25:49 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22E517F681
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:28:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 5D0A5302BB8C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:24:54 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7AE6B3173A8B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24BF37F75E;
-	Mon, 23 Feb 2026 23:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72FEF37F75B;
+	Mon, 23 Feb 2026 23:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i1slWimg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qECDZciX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6ED377572;
-	Mon, 23 Feb 2026 23:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BAE2749CF;
+	Mon, 23 Feb 2026 23:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771889091; cv=none; b=Z7Oqj9wMBAQkGosLkARjm9EKwLHQ1aNI6PbRJfRj0o2ngif+NArPDSD6/LLvUnFvOG8o7xN1aPDxDlRMX92aKtJWPy0kaZ82idf5UziwOxW35S76wKAqYzMn2U0jABEZkLOkOOMEOOATDkQo2sSGGdRzVXVsaS0jIKHnQBp87E8=
+	t=1771889107; cv=none; b=WrprsZ6Xr57jIaCFlOtOscj3QdyY2plBu0gxQtof5ZSJ5SCUai08aLbdV0nNQnXUzmi/ExERcHM+STH02DfHFrkh9t3N7U1TPkqM17DhYqbzK7MprnRsTlLXF3CHlkFZBo7FRBBRfgtGnLLJIumM4TOqARk01DQIy1S6k75CMsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771889091; c=relaxed/simple;
-	bh=QWmAhJ4/uLMy48ArCgQGOSVIRV+HzRmvRUTnn6pAp4s=;
+	s=arc-20240116; t=1771889107; c=relaxed/simple;
+	bh=wQWowouAFQMk5w6sCvGa/wihkeoEBOVM7T79u1LKwbU=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=adoGX2NCCt50Q44kts1WdLMe6kTrdF/j3qL5j3hl3+lbZpcSlIcW8Dyid39y4mkAkz4bOqvqf/2i7ndW2e0MAga24xXXy01o19NazzAqPwZMswwHuolH3bscUh8GXOrOILQwdSeXBItxwlfbB+YncK4NN8PkoiEeZWDPWqsnZK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i1slWimg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F16F3C116C6;
-	Mon, 23 Feb 2026 23:24:50 +0000 (UTC)
+	 MIME-Version:Content-Type; b=fP9o4yNGPoS8HouU3faIhZGZbVW20DwFE8MekDfzSyc3ew0iT7HbPCnjHzpxLEv2OLd63B8v9RsRBxWMu/SWD+tpqC9KwaVDowJVfuSaAEEbtYZM8wE2xbzjsF91v5aM4+zhOoTZXSDCqvxA+3AskKH5D524+SCmRhO6I1ltpXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qECDZciX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EC90C116C6;
+	Mon, 23 Feb 2026 23:25:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771889091;
-	bh=QWmAhJ4/uLMy48ArCgQGOSVIRV+HzRmvRUTnn6pAp4s=;
+	s=k20201202; t=1771889106;
+	bh=wQWowouAFQMk5w6sCvGa/wihkeoEBOVM7T79u1LKwbU=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=i1slWimg7qrwHmOqYbVNTA6ciBBmvZRKFIrOFBp2/rlIBxnCRljaAFzQjAYjR9usb
-	 aLL0JkaIBsNuPtuJElVrepzANY7g7fg+EK5ZqVtnxtlMfUEJ5oHBQ5WKE4iaZ/Z6Wt
-	 uC+gACULhhlt9FoXEvbhekYzki7YZUL/lQNEz0KbTrOJKfbH0qk+ioKbQkb+iu+ipz
-	 GZYczscZo289EfztUQPlyuycUTfhEvhufAA+oOY3wqXfzv9CcqaBAApoHldwUJdHe9
-	 9Yjzhz88Yxuuv0EDwW+btzgxKVwIBpgRhYccsu3S4Rzxw3ltocjOh77985Dw1bFQaA
-	 A1QUvjyhR4+UQ==
-Date: Mon, 23 Feb 2026 15:24:50 -0800
-Subject: [PATCH 3/5] fuse: prevent iomap bpf programs from writing to most of
- the system
+	b=qECDZciXyFFgQfwr9ZMgcGCMGxP+ODw9qi7+dqQWZFDuLOA3TCuyxTZwieqKA+CEe
+	 UdOvKnGC+fgRJRCqBPXrtNluyBs4ikPYqXdocjJrUtsw0LlsRq5cq+VOBjI14ccVUV
+	 AGORtBQcqdz8gqDmw6VW6IKHwGzU7DqyoWMIRJSkwMruOA+AcN8x4xUSCfbLd7P2Uk
+	 wAPha5Sudr8AwvAObeqdzUkp8Nibii9tCjH5B1hWi2P4f4HMxCVORoMdivWlSU3LXA
+	 ua5fMGp+L+JlBgb6+I+gP3pb4muoMdBct0lz5BB3pragTyo2FzRG0mg2nsiTQAfKb8
+	 lETHQ7K4uGSBA==
+Date: Mon, 23 Feb 2026 15:25:06 -0800
+Subject: [PATCH 4/5] fuse: add kfuncs for iomap bpf programs to manage the
+ cache
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: miklos@szeredi.hu, djwong@kernel.org
-Cc: bpf@vger.kernel.org, joannelkoong@gmail.com, bpf@vger.kernel.org,
- john@groves.net, bernd@bsbernd.com, neal@gompa.dev,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-Message-ID: <177188736859.3938194.1245756213398236681.stgit@frogsfrogsfrogs>
+Cc: joannelkoong@gmail.com, bpf@vger.kernel.org, john@groves.net,
+ bernd@bsbernd.com, neal@gompa.dev, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org
+Message-ID: <177188736880.3938194.6856727173434261882.stgit@frogsfrogsfrogs>
 In-Reply-To: <177188736765.3938194.6770791688236041940.stgit@frogsfrogsfrogs>
 References: <177188736765.3938194.6770791688236041940.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -68,20 +68,20 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com,groves.net,bsbernd.com,gompa.dev];
-	TAGGED_FROM(0.00)[bounces-78109-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,groves.net,bsbernd.com,gompa.dev];
+	TAGGED_FROM(0.00)[bounces-78110-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	MIME_TRACE(0.00)[0:+];
 	TO_DN_NONE(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
@@ -89,126 +89,164 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	MISSING_XM_UA(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[10];
+	RCPT_COUNT_SEVEN(0.00)[9];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: CA0A417F56F
+	DBL_BLOCKED_OPENRESOLVER(0.00)[outarg.read:url,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: B22E517F681
 X-Rspamd-Action: no action
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-The stub implementation fuse_iomap_bpf_ops_btf_struct_access has the
-unfortunate behavior of allowing the bpf program to write to any struct
-pointer passed into the function!  We don't want to allow random updates
-to struct fuse_inode, but we will eventually want to pass the pointer
-as a dumb cookie to the kfunc added a few patches from now.
+Add a couple of kfuncs so that a BPF program that generates iomappings
+can add them to the inode's mapping cache, thereby avoiding the need to
+go into BPF program on the next access.
 
-Therefore, look up the btf types of the two structs for which the bpf
-program *can* write, and disallow all writes to any other structs.
-This requires a new export from the bpf subsystem.
-
-Cc: bpf@vger.kernel.org
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/fuse/fuse_iomap_bpf.c |   49 ++++++++++++++++++++++++++++++++++++++++++++++
- kernel/bpf/btf.c         |    1 +
- 2 files changed, 50 insertions(+)
+ fs/fuse/fuse_iomap_i.h   |    6 ++++
+ fs/fuse/fuse_iomap.c     |    4 +-
+ fs/fuse/fuse_iomap_bpf.c |   76 ++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 84 insertions(+), 2 deletions(-)
 
 
+diff --git a/fs/fuse/fuse_iomap_i.h b/fs/fuse/fuse_iomap_i.h
+index c37a7c5cfc862f..70c5a831dc9134 100644
+--- a/fs/fuse/fuse_iomap_i.h
++++ b/fs/fuse/fuse_iomap_i.h
+@@ -40,6 +40,12 @@ while (static_branch_unlikely(&fuse_iomap_debug)) {			\
+ 	unlikely(__cond);						\
+ })
+ #endif /* CONFIG_FUSE_IOMAP_DEBUG */
++
++int fuse_iomap_inval_inode(struct inode *inode,
++		const struct fuse_iomap_inval_mappings_out *outarg);
++int fuse_iomap_upsert_inode(struct inode *inode,
++		const struct fuse_iomap_upsert_mappings_out *outarg);
++
+ #endif /* CONFIG_FUSE_IOMAP */
+ 
+ #endif /* _FS_FUSE_IOMAP_I_H */
+diff --git a/fs/fuse/fuse_iomap.c b/fs/fuse/fuse_iomap.c
+index 2e0c35e879ffcc..d2642eef59b779 100644
+--- a/fs/fuse/fuse_iomap.c
++++ b/fs/fuse/fuse_iomap.c
+@@ -2782,7 +2782,7 @@ fuse_iomap_upsert_validate_mappings(struct inode *inode,
+ 						  &outarg->write);
+ }
+ 
+-static int fuse_iomap_upsert_inode(struct inode *inode,
++int fuse_iomap_upsert_inode(struct inode *inode,
+ 		const struct fuse_iomap_upsert_mappings_out *outarg)
+ {
+ 	int ret = fuse_iomap_upsert_validate_mappings(inode, outarg);
+@@ -2877,7 +2877,7 @@ fuse_iomap_inval_validate_range(const struct inode *inode,
+ 	return true;
+ }
+ 
+-static int fuse_iomap_inval_inode(struct inode *inode,
++int fuse_iomap_inval_inode(struct inode *inode,
+ 		const struct fuse_iomap_inval_mappings_out *outarg)
+ {
+ 	int ret = 0, ret2 = 0;
 diff --git a/fs/fuse/fuse_iomap_bpf.c b/fs/fuse/fuse_iomap_bpf.c
-index d4b826e4440ca7..13b5d4b96b66b5 100644
+index 13b5d4b96b66b5..71bfcddae7f5b7 100644
 --- a/fs/fuse/fuse_iomap_bpf.c
 +++ b/fs/fuse/fuse_iomap_bpf.c
-@@ -5,6 +5,7 @@
-  * Copied from: Joanne Koong <joannelkoong@gmail.com>
+@@ -6,9 +6,12 @@
   */
  #include <linux/bpf.h>
-+#include <linux/bpf_verifier.h>
+ #include <linux/bpf_verifier.h>
++#include <linux/btf.h>
++#include <linux/btf_ids.h>
  
  #include "fuse_i.h"
  #include "fuse_dev_i.h"
-@@ -12,6 +13,8 @@
++#include "fuse_iomap.h"
+ #include "fuse_iomap_bpf.h"
  #include "fuse_iomap_i.h"
  #include "fuse_trace.h"
- 
-+static const struct btf_type *iomap_begin_out_type, *iomap_ioend_out_type;
-+
- /* spinlock for atomically updating fuse_conn <-> bpf_ops pointers */
- static DEFINE_SPINLOCK(fuse_iomap_bpf_ops_lock);
- 
-@@ -38,6 +41,14 @@ static int fuse_iomap_bpf_ops_btf_struct_access(struct bpf_verifier_log *log,
- 						const struct bpf_reg_state *reg,
- 						int off, int size)
- {
-+	const struct btf_type *t = btf_type_by_id(reg->btf, reg->btf_id);
-+
-+	if (t != iomap_begin_out_type && t != iomap_ioend_out_type) {
-+		bpf_log(log,
-+			"Cannot write to memory from a fuse-iomap program\n");
-+		return -EACCES;
-+	}
-+
- 	return 0;
- }
- 
-@@ -47,8 +58,46 @@ static const struct bpf_verifier_ops fuse_iomap_bpf_verifier_ops = {
- 	.btf_struct_access	= fuse_iomap_bpf_ops_btf_struct_access,
+@@ -284,9 +287,82 @@ static struct bpf_struct_ops fuse_iomap_bpf_struct_ops = {
+ 	.owner		= THIS_MODULE,
  };
  
-+static const struct btf_type *
-+fuse_iomap_find_struct_type(struct btf *btf, const char *name)
++__bpf_kfunc_start_defs();
++
++__bpf_kfunc int
++fuse_bpf_iomap_inval_mappings(struct fuse_inode *fi,
++			      const struct fuse_range *read__nullable,
++			      const struct fuse_range *write__nullable)
 +{
-+	struct btf *some_btf;
-+	const struct btf_type *ret;
-+	s32 type_id;
++	struct fuse_iomap_inval_mappings_out outarg = {
++		.nodeid = fi->nodeid,
++		.attr_ino = fi->orig_ino,
++	};
++	struct inode *inode = &fi->inode;
++	struct fuse_conn *fc = get_fuse_conn(inode);
 +
-+	type_id = bpf_find_btf_id(name, BTF_KIND_STRUCT, &some_btf);
-+	if (type_id < 0)
-+		return ERR_PTR(-ENOENT);
++	if (!fc->iomap)
++		return -EOPNOTSUPP;
 +
-+	/*
-+	 * It's only safe to alias a btf_type without a ref to the btf object
-+	 * if the type is from the current module because the btf object won't
-+	 * go away until the module unloads.
-+	 */
-+	if (some_btf == btf)
-+		ret = btf_type_by_id(some_btf, type_id);
-+	else
-+		ret = ERR_PTR(-ENOENT);
-+	btf_put(some_btf);
++	if (read__nullable)
++		memcpy(&outarg.read, read__nullable, sizeof(outarg.read));
++	if (write__nullable)
++		memcpy(&outarg.write, write__nullable, sizeof(outarg.write));
 +
-+	return ret;
++	trace_fuse_iomap_inval_mappings(inode, &outarg);
++
++	return fuse_iomap_inval_inode(inode, &outarg);
 +}
 +
- static int fuse_iomap_bpf_ops_init(struct btf *btf)
++__bpf_kfunc int
++fuse_bpf_iomap_upsert_mappings(struct fuse_inode *fi,
++			       const struct fuse_iomap_io *read__nullable,
++			       const struct fuse_iomap_io *write__nullable)
++{
++	struct fuse_iomap_upsert_mappings_out outarg = {
++		.nodeid = fi->nodeid,
++		.attr_ino = fi->orig_ino,
++		.read.type = FUSE_IOMAP_TYPE_NOCACHE,
++		.write.type = FUSE_IOMAP_TYPE_NOCACHE,
++	};
++	struct inode *inode = &fi->inode;
++	struct fuse_conn *fc = get_fuse_conn(inode);
++
++	if (!fc->iomap)
++		return -EOPNOTSUPP;
++
++	if (read__nullable)
++		memcpy(&outarg.read, read__nullable, sizeof(outarg.read));
++	if (write__nullable)
++		memcpy(&outarg.write, write__nullable, sizeof(outarg.write));
++
++	trace_fuse_iomap_upsert_mappings(inode, &outarg);
++
++	return fuse_iomap_upsert_inode(inode, &outarg);
++}
++
++__bpf_kfunc_end_defs();
++
++BTF_KFUNCS_START(fuse_iomap_kfunc_ids)
++BTF_ID_FLAGS(func, fuse_bpf_iomap_inval_mappings,
++	     KF_SLEEPABLE | KF_TRUSTED_ARGS)
++BTF_ID_FLAGS(func, fuse_bpf_iomap_upsert_mappings,
++	     KF_SLEEPABLE | KF_TRUSTED_ARGS)
++BTF_KFUNCS_END(fuse_iomap_kfunc_ids)
++
++static const struct btf_kfunc_id_set fuse_iomap_kfunc_set = {
++	.owner = THIS_MODULE,
++	.set   = &fuse_iomap_kfunc_ids,
++};
++
+ /* Register the iomap bpf ops so that fuse servers can attach to it */
+ int __init fuse_iomap_init_bpf(void)
  {
-+	const struct btf_type *t1, *t2;
++	int ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS,
++			&fuse_iomap_kfunc_set);
++	if (ret)
++		return ret;
 +
-+	t1 = fuse_iomap_find_struct_type(btf, "fuse_iomap_begin_out");
-+	if (IS_ERR(t1))
-+		return PTR_ERR(t1);
-+
-+	t2 = fuse_iomap_find_struct_type(btf, "fuse_iomap_ioend_out");
-+	if (IS_ERR(t2))
-+		return PTR_ERR(t2);
-+
-+	iomap_begin_out_type = t1;
-+	iomap_ioend_out_type = t2;
-+
- 	return 0;
+ 	return register_bpf_struct_ops(&fuse_iomap_bpf_struct_ops,
+ 				       fuse_iomap_bpf_ops);
  }
- 
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 4872d2a6c42d3a..9a5b6480243f14 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -1890,6 +1890,7 @@ void btf_put(struct btf *btf)
- 		call_rcu(&btf->rcu, btf_free_rcu);
- 	}
- }
-+EXPORT_SYMBOL_GPL(btf_put);
- 
- struct btf *btf_base_btf(const struct btf *btf)
- {
 
 
