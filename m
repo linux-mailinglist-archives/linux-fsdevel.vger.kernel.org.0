@@ -1,58 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-78126-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WIzEM9TinGnrLwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78126-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:29:24 +0100
+	id MDd1CufinGnrLwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:29:43 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77CF917F71D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:29:24 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F93917F74B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:29:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id CD8673027E37
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:29:22 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4A3713047037
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CC937F8B9;
-	Mon, 23 Feb 2026 23:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E032037F8A6;
+	Mon, 23 Feb 2026 23:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M4i9PdO0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H11gTJ4D"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B844F37C11F;
-	Mon, 23 Feb 2026 23:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AC637E300;
+	Mon, 23 Feb 2026 23:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771889356; cv=none; b=DW9pSf7TuIUW3xx5ucZK3I3WyMG+lp8rfk4QL9sHrwmhcoiGsp6V4EpdFIH982MNzo+zrRVe/eADdxe1hsLlz26abv01hFUogh3HY83C7wTCeWGtqEz37ema9xKXiUB2l+LAL/4CbXuRbG4sxKf69637s10vXd1MnloN/6QzJRw=
+	t=1771889372; cv=none; b=L8zMGHg+TWq/at814UI9QJRjL9XAx9th9i3eT0/VzBQOqy5itlm0oonX10BRTICD54OnAH1tUlVcJUN75jAIhCHOXK8qIQ3G1BSoooO9YQSHPuINNOYtR6TE8Eq4V1iSB8Ynd7vMlcloJMEuSnFJ0zoZH/W+I8HW3mIqeldIC0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771889356; c=relaxed/simple;
-	bh=LiZeJqGJCWxS/mtHHpdYXPcj+vef5mYuCVV24phe+4M=;
+	s=arc-20240116; t=1771889372; c=relaxed/simple;
+	bh=x3qd/zzR+E0ZNK8/Ds77fhNECH4VgmM3XFEbEapDD7g=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H9xlwT3GC3VwRpNOKD7YIuhwZsBGgVXY25BEcIQSb5SDBngHOMGbNiDnmejF7/cikYT0ULxO4ZV3wKrBXYnMGhsQYfSf3hADh0JKJRW3DhbUxJhW1o87hG9iiwB7d8uX7Q4c7Q5XyGL9nSZt65w/c/dgWkiNF72WlsfDeALF6P8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M4i9PdO0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96CD2C116C6;
-	Mon, 23 Feb 2026 23:29:16 +0000 (UTC)
+	 MIME-Version:Content-Type; b=hTt6hkoUJTXeJPdE1bVZ4je8mEBDKl/YdEqtmHC1jj65GoxMCAzt0bnBmeSAnVrzIg4K6V3m9NA5SDD85GXgGcB9/aDEF7n8yaX4YANYI2ln3tvilGj1Z9qLVVWe/CUmgbd1GcBN1nxoySVa/guCSMh/tBl1e3+azsdIc3D3JgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H11gTJ4D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E05DC116C6;
+	Mon, 23 Feb 2026 23:29:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771889356;
-	bh=LiZeJqGJCWxS/mtHHpdYXPcj+vef5mYuCVV24phe+4M=;
+	s=k20201202; t=1771889372;
+	bh=x3qd/zzR+E0ZNK8/Ds77fhNECH4VgmM3XFEbEapDD7g=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=M4i9PdO0zN3PI6BEuH714UIOxE6QhDdS6sLe1AxJAFYeijrtZf2NxqoKecwYhLDUn
-	 YWhyHZrxSJ2K+X/y8amZWXcmTGhQmM9Gvt73PDf8FY0DaHda86MEvxyz9auuYnZYY3
-	 JXF8TH5qfzZUPsKLxSZvFPxs3jdLbEy/NPCIRHEQ0sRDbEuUFQUZRxqNxmx0aGQpdO
-	 Lc9qcf5oWr4s+HNOrJeg17ec4iJ7Ziifns1By02pvaGVIoeybSTe5SMt7ea7Vnw4hl
-	 8pmBbxVP9MZS9Nu9m+JK9+hhZa0r6WhsaXWdORIvSA/QlWhwuFdrlgSsa2RXiNRpad
-	 HP0upHnnB6qXA==
-Date: Mon, 23 Feb 2026 15:29:16 -0800
-Subject: [PATCH 15/25] libfuse: allow discovery of the kernel's iomap
- capabilities
+	b=H11gTJ4DjWyPFaFjkLKsMLy6gINBJIHTFPr/x78z8GDyCqOCt4075eFd4i6jo2sYu
+	 xeN4TqMIx6BCQx9QRn6BlryrOhTEUfVOmjWc17jz3GQ/KP9+Pm4KAEJxhAFcassW1w
+	 ViveP7U4BVihkL4B8eiYekCK3nvjr5L4eQHHaaYspf0KzjoeeKjo8EyCmbmXSQ99xV
+	 y6u951DkWAuU9nAYqi5UXt/Vc/V5DUr0dfxZoD3e3VLGtUmqcUaNOq/bR6CQusltsa
+	 jGYLh3N5DklIiJNaeebQsN9IkknSQwlFLjL6mRNfDF+Sv+dwjz1J7vEnsn06M1SOgr
+	 wSmLisokDLP7A==
+Date: Mon, 23 Feb 2026 15:29:31 -0800
+Subject: [PATCH 16/25] libfuse: add lower level iomap_config implementation
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, bschubert@ddn.com
 Cc: bernd@bsbernd.com, miklos@szeredi.hu, neal@gompa.dev,
  linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  bpf@vger.kernel.org, joannelkoong@gmail.com
-Message-ID: <177188740203.3940670.1035105328969587298.stgit@frogsfrogsfrogs>
+Message-ID: <177188740221.3940670.13170101605049635687.stgit@frogsfrogsfrogs>
 In-Reply-To: <177188739839.3940670.15233996351019069073.stgit@frogsfrogsfrogs>
 References: <177188739839.3940670.15233996351019069073.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -68,20 +67,20 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_CC(0.00)[bsbernd.com,szeredi.hu,gompa.dev,vger.kernel.org,gmail.com];
-	TAGGED_FROM(0.00)[bounces-78126-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78127-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	MIME_TRACE(0.00)[0:+];
 	TO_DN_NONE(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
@@ -91,123 +90,281 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[9];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 77CF917F71D
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 7F93917F74B
 X-Rspamd-Action: no action
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Create a library function so that we can discover the kernel's iomap
-capabilities ahead of time.
+Add FUSE_IOMAP_CONFIG helpers to the low level fuse library.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- include/fuse_common.h   |    7 +++++++
- include/fuse_kernel.h   |    7 +++++++
- include/fuse_lowlevel.h |    9 +++++++++
- lib/fuse_lowlevel.c     |   19 +++++++++++++++++++
+ include/fuse_common.h   |   31 ++++++++++++++++++
+ include/fuse_kernel.h   |   31 ++++++++++++++++++
+ include/fuse_lowlevel.h |   27 +++++++++++++++
+ lib/fuse_lowlevel.c     |   82 +++++++++++++++++++++++++++++++++++++++++++++++
  lib/fuse_versionscript  |    1 +
- 5 files changed, 43 insertions(+)
+ 5 files changed, 172 insertions(+)
 
 
 diff --git a/include/fuse_common.h b/include/fuse_common.h
-index bece561ef3ec9c..cce263aa62f5d0 100644
+index cce263aa62f5d0..2f6672fc14d90d 100644
 --- a/include/fuse_common.h
 +++ b/include/fuse_common.h
-@@ -534,6 +534,13 @@ struct fuse_loop_config_v1 {
+@@ -1235,6 +1235,37 @@ static inline bool fuse_iomap_need_write_allocate(unsigned int opflags,
+ /* use iomap for this inode */
+ #define FUSE_IFLAG_IOMAP		(1U << 2)
  
- #define FUSE_IOCTL_MAX_IOV	256
- 
-+/**
-+ * iomap discovery flags
-+ *
-+ * FUSE_IOMAP_SUPPORT_FILEIO: basic file I/O functionality through iomap
-+ */
-+#define FUSE_IOMAP_SUPPORT_FILEIO	(1ULL << 0)
++/* Which fields are set in fuse_iomap_config_out? */
++#define FUSE_IOMAP_CONFIG_SID		(1 << 0ULL)
++#define FUSE_IOMAP_CONFIG_UUID		(1 << 1ULL)
++#define FUSE_IOMAP_CONFIG_BLOCKSIZE	(1 << 2ULL)
++#define FUSE_IOMAP_CONFIG_MAX_LINKS	(1 << 3ULL)
++#define FUSE_IOMAP_CONFIG_TIME		(1 << 4ULL)
++#define FUSE_IOMAP_CONFIG_MAXBYTES	(1 << 5ULL)
 +
- /**
-  * Connection information, passed to the ->init() method
-  *
-diff --git a/include/fuse_kernel.h b/include/fuse_kernel.h
-index 6b1fcc44004dbf..95c6c179a4398a 100644
---- a/include/fuse_kernel.h
-+++ b/include/fuse_kernel.h
-@@ -1156,12 +1156,19 @@ struct fuse_backing_map {
- 	uint64_t	padding;
- };
- 
-+struct fuse_iomap_support {
-+	uint64_t	flags;
-+	uint64_t	padding;
++struct fuse_iomap_config{
++	uint64_t flags;		/* FUSE_IOMAP_CONFIG_* */
++
++	char s_id[32];		/* Informational name */
++	char s_uuid[16];	/* UUID */
++
++	uint8_t s_uuid_len;	/* length of s_uuid */
++
++	uint8_t s_pad[3];	/* must be zeroes */
++
++	uint32_t s_blocksize;	/* fs block size */
++	uint32_t s_max_links;	/* max hard links */
++
++	/* Granularity of c/m/atime in ns (cannot be worse than a second) */
++	uint32_t s_time_gran;
++
++	/* Time limits for c/m/atime in seconds */
++	int64_t s_time_min;
++	int64_t s_time_max;
++
++	int64_t s_maxbytes;	/* max file size */
 +};
 +
- /* Device ioctls: */
- #define FUSE_DEV_IOC_MAGIC		229
- #define FUSE_DEV_IOC_CLONE		_IOR(FUSE_DEV_IOC_MAGIC, 0, uint32_t)
- #define FUSE_DEV_IOC_BACKING_OPEN	_IOW(FUSE_DEV_IOC_MAGIC, 1, \
- 					     struct fuse_backing_map)
- #define FUSE_DEV_IOC_BACKING_CLOSE	_IOW(FUSE_DEV_IOC_MAGIC, 2, uint32_t)
-+#define FUSE_DEV_IOC_IOMAP_SUPPORT	_IOR(FUSE_DEV_IOC_MAGIC, 99, \
-+					     struct fuse_iomap_support)
+ /* ----------------------------------------------------------- *
+  * Compatibility stuff					       *
+  * ----------------------------------------------------------- */
+diff --git a/include/fuse_kernel.h b/include/fuse_kernel.h
+index 95c6c179a4398a..897d996a0ce60d 100644
+--- a/include/fuse_kernel.h
++++ b/include/fuse_kernel.h
+@@ -246,6 +246,7 @@
+  *  - add FUSE_IOMAP and iomap_{begin,end,ioend} for regular file operations
+  *  - add FUSE_ATTR_EXCLUSIVE to enable exclusive mode for specific inodes
+  *  - add FUSE_ATTR_IOMAP to enable iomap for specific inodes
++ *  - add FUSE_IOMAP_CONFIG so the fuse server can configure more fs geometry
+  */
  
- struct fuse_lseek_in {
- 	uint64_t	fh;
+ #ifndef _LINUX_FUSE_H
+@@ -677,6 +678,7 @@ enum fuse_opcode {
+ 	FUSE_STATX		= 52,
+ 	FUSE_COPY_FILE_RANGE_64	= 53,
+ 
++	FUSE_IOMAP_CONFIG	= 4092,
+ 	FUSE_IOMAP_IOEND	= 4093,
+ 	FUSE_IOMAP_BEGIN	= 4094,
+ 	FUSE_IOMAP_END		= 4095,
+@@ -1390,4 +1392,33 @@ struct fuse_iomap_ioend_out {
+ 	uint64_t newsize;	/* new ondisk size */
+ };
+ 
++struct fuse_iomap_config_in {
++	uint64_t flags;		/* supported FUSE_IOMAP_CONFIG_* flags */
++	int64_t maxbytes;	/* max supported file size */
++	uint64_t padding[6];	/* zero */
++};
++
++struct fuse_iomap_config_out {
++	uint64_t flags;		/* FUSE_IOMAP_CONFIG_* */
++
++	char s_id[32];		/* Informational name */
++	char s_uuid[16];	/* UUID */
++
++	uint8_t s_uuid_len;	/* length of s_uuid */
++
++	uint8_t s_pad[3];	/* must be zeroes */
++
++	uint32_t s_blocksize;	/* fs block size */
++	uint32_t s_max_links;	/* max hard links */
++
++	/* Granularity of c/m/atime in ns (cannot be worse than a second) */
++	uint32_t s_time_gran;
++
++	/* Time limits for c/m/atime in seconds */
++	int64_t s_time_min;
++	int64_t s_time_max;
++
++	int64_t s_maxbytes;	/* max file size */
++};
++
+ #endif /* _LINUX_FUSE_H */
 diff --git a/include/fuse_lowlevel.h b/include/fuse_lowlevel.h
-index c113c85067fb82..f31f250f13a965 100644
+index f31f250f13a965..a00b6d5a7fa0b6 100644
 --- a/include/fuse_lowlevel.h
 +++ b/include/fuse_lowlevel.h
-@@ -2658,6 +2658,15 @@ bool fuse_req_is_uring(fuse_req_t req);
- int fuse_req_get_payload(fuse_req_t req, char **payload, size_t *payload_sz,
- 			 void **mr);
+@@ -1425,6 +1425,20 @@ struct fuse_lowlevel_ops {
+ 			     uint64_t attr_ino, off_t pos, uint64_t written,
+ 			     uint32_t ioendflags, int error, uint32_t dev,
+ 			     uint64_t new_addr);
++
++	/**
++	 * Configure the filesystem geometry for iomap mode
++	 *
++	 * Valid replies:
++	 *   fuse_reply_iomap_config
++	 *   fuse_reply_err
++	 *
++	 * @param req request handle
++	 * @param flags FUSE_IOMAP_CONFIG_* flags that can be passed back
++	 * @param maxbytes maximum supported file size
++	 */
++	void (*iomap_config) (fuse_req_t req, uint64_t flags,
++			      uint64_t maxbytes);
+ };
+ 
+ /**
+@@ -1927,6 +1941,19 @@ int fuse_reply_iomap_begin(fuse_req_t req, const struct fuse_file_iomap *read,
+  */
+ int fuse_reply_iomap_ioend(fuse_req_t req, off_t newsize);
  
 +/**
-+ * Discover the kernel's iomap capabilities.  Returns FUSE_CAP_IOMAP_* flags.
++ * Reply with iomap configuration
 + *
-+ * @param fd open file descriptor to a fuse device, or -1 if you're running
-+ *           in the same process that will call mount().
-+ * @return FUSE_IOMAP_SUPPORT_* flags
++ * Possible requests:
++ *   iomap_config
++ *
++ * @param req request handle
++ * @param cfg iomap configuration
++ * @return zero for success, -errno for failure to send reply
 + */
-+uint64_t fuse_lowlevel_discover_iomap(int fd);
++int fuse_reply_iomap_config(fuse_req_t req,
++			    const struct fuse_iomap_config *cfg);
 +
- #ifdef __cplusplus
- }
- #endif
+ /* ----------------------------------------------------------- *
+  * Notification						       *
+  * ----------------------------------------------------------- */
 diff --git a/lib/fuse_lowlevel.c b/lib/fuse_lowlevel.c
-index 23169c1946ce0b..4f3585f9a6841d 100644
+index 4f3585f9a6841d..19f292c0cb8ee3 100644
 --- a/lib/fuse_lowlevel.c
 +++ b/lib/fuse_lowlevel.c
-@@ -5073,3 +5073,22 @@ void fuse_session_stop_teardown_watchdog(void *data)
- 	pthread_join(tt->thread_id, NULL);
- 	fuse_tt_destruct(tt);
+@@ -2835,6 +2835,86 @@ static void do_iomap_ioend(fuse_req_t req, const fuse_ino_t nodeid,
+ 	_do_iomap_ioend(req, nodeid, inarg, NULL);
  }
+ 
++#define sizeof_field(TYPE, MEMBER) sizeof((((TYPE *)0)->MEMBER))
++#define offsetofend(TYPE, MEMBER) \
++	(offsetof(TYPE, MEMBER)	+ sizeof_field(TYPE, MEMBER))
 +
-+uint64_t fuse_lowlevel_discover_iomap(int fd)
++#define FUSE_IOMAP_CONFIG_V1 (FUSE_IOMAP_CONFIG_SID | \
++			      FUSE_IOMAP_CONFIG_UUID | \
++			      FUSE_IOMAP_CONFIG_BLOCKSIZE | \
++			      FUSE_IOMAP_CONFIG_MAX_LINKS | \
++			      FUSE_IOMAP_CONFIG_TIME | \
++			      FUSE_IOMAP_CONFIG_MAXBYTES)
++
++#define FUSE_IOMAP_CONFIG_ALL (FUSE_IOMAP_CONFIG_V1)
++
++static ssize_t iomap_config_reply_size(const struct fuse_iomap_config *cfg)
 +{
-+	struct fuse_iomap_support ios = { };
++	if (cfg->flags & ~FUSE_IOMAP_CONFIG_ALL)
++		return -EINVAL;
 +
-+	if (fd >= 0) {
-+		ioctl(fd, FUSE_DEV_IOC_IOMAP_SUPPORT, &ios);
-+		return ios.flags;
++	return offsetofend(struct fuse_iomap_config_out, s_maxbytes);
++}
++
++int fuse_reply_iomap_config(fuse_req_t req, const struct fuse_iomap_config *cfg)
++{
++	struct fuse_iomap_config_out arg = {
++		.flags = cfg->flags,
++	};
++	const ssize_t reply_size = iomap_config_reply_size(cfg);
++
++	if (reply_size < 0)
++		fuse_reply_err(req, -reply_size);
++
++	if (cfg->flags & FUSE_IOMAP_CONFIG_BLOCKSIZE)
++		arg.s_blocksize = cfg->s_blocksize;
++
++	if (cfg->flags & FUSE_IOMAP_CONFIG_SID)
++		memcpy(arg.s_id, cfg->s_id, sizeof(arg.s_id));
++
++	if (cfg->flags & FUSE_IOMAP_CONFIG_UUID) {
++		arg.s_uuid_len = cfg->s_uuid_len;
++		if (arg.s_uuid_len > sizeof(arg.s_uuid))
++			arg.s_uuid_len = sizeof(arg.s_uuid);
++		memcpy(arg.s_uuid, cfg->s_uuid, arg.s_uuid_len);
 +	}
 +
-+	fd = open("/dev/fuse", O_RDONLY | O_CLOEXEC);
-+	if (fd < 0)
-+		return 0;
++	if (cfg->flags & FUSE_IOMAP_CONFIG_MAX_LINKS)
++		arg.s_max_links = cfg->s_max_links;
 +
-+	ioctl(fd, FUSE_DEV_IOC_IOMAP_SUPPORT, &ios);
-+	close(fd);
++	if (cfg->flags & FUSE_IOMAP_CONFIG_TIME) {
++		arg.s_time_gran = cfg->s_time_gran;
++		arg.s_time_min = cfg->s_time_min;
++		arg.s_time_max = cfg->s_time_max;
++	}
 +
-+	return ios.flags;
++	if (cfg->flags & FUSE_IOMAP_CONFIG_MAXBYTES)
++		arg.s_maxbytes = cfg->s_maxbytes;
++
++	return send_reply_ok(req, &arg, reply_size);
 +}
++
++static void _do_iomap_config(fuse_req_t req, const fuse_ino_t nodeid,
++		      const void *op_in, const void *in_payload)
++{
++	(void)nodeid;
++	(void)in_payload;
++	const struct fuse_iomap_config_in *arg = op_in;
++
++	if (req->se->op.iomap_config)
++		req->se->op.iomap_config(req,
++					 arg->flags & FUSE_IOMAP_CONFIG_ALL,
++					 arg->maxbytes);
++	else
++		fuse_reply_err(req, ENOSYS);
++}
++
++static void do_iomap_config(fuse_req_t req, const fuse_ino_t nodeid,
++			    const void *inarg)
++{
++	_do_iomap_config(req, nodeid, inarg, NULL);
++}
++
+ static bool want_flags_valid(uint64_t capable, uint64_t want)
+ {
+ 	uint64_t unknown_flags = want & (~capable);
+@@ -3821,6 +3901,7 @@ static struct {
+ 	[FUSE_LSEEK]	   = { do_lseek,       "LSEEK"	     },
+ 	[FUSE_SYNCFS]	   = { do_syncfs,      "SYNCFS"      },
+ 	[FUSE_STATX]	   = { do_statx,       "STATX"	     },
++	[FUSE_IOMAP_CONFIG]= { do_iomap_config, "IOMAP_CONFIG" },
+ 	[FUSE_IOMAP_BEGIN] = { do_iomap_begin,	"IOMAP_BEGIN" },
+ 	[FUSE_IOMAP_END]   = { do_iomap_end,	"IOMAP_END" },
+ 	[FUSE_IOMAP_IOEND] = { do_iomap_ioend,	"IOMAP_IOEND" },
+@@ -3881,6 +3962,7 @@ static struct {
+ 	[FUSE_LSEEK]		= { _do_lseek,		"LSEEK" },
+ 	[FUSE_SYNCFS]		= { _do_syncfs,		"SYNCFS" },
+ 	[FUSE_STATX]		= { _do_statx,		"STATX" },
++	[FUSE_IOMAP_CONFIG]	= { _do_iomap_config,	"IOMAP_CONFIG" },
+ 	[FUSE_IOMAP_BEGIN]	= { _do_iomap_begin,	"IOMAP_BEGIN" },
+ 	[FUSE_IOMAP_END]	= { _do_iomap_end,	"IOMAP_END" },
+ 	[FUSE_IOMAP_IOEND]	= { _do_iomap_ioend,	"IOMAP_IOEND" },
 diff --git a/lib/fuse_versionscript b/lib/fuse_versionscript
-index 67c3bd614c44fc..f16698f3c4dbfa 100644
+index f16698f3c4dbfa..14c59928ca9f00 100644
 --- a/lib/fuse_versionscript
 +++ b/lib/fuse_versionscript
-@@ -244,6 +244,7 @@ FUSE_3.99 {
- 		fuse_add_direntry_plus_iflags;
+@@ -245,6 +245,7 @@ FUSE_3.99 {
  		fuse_fs_can_enable_iomap;
  		fuse_fs_can_enable_iomapx;
-+		fuse_lowlevel_discover_iomap;
+ 		fuse_lowlevel_discover_iomap;
++		fuse_reply_iomap_config;
  } FUSE_3.19;
  
  # Local Variables:
