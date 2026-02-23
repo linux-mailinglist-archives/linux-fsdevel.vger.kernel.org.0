@@ -1,157 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-77989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id wF8RC2GQnGnRJQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 18:37:37 +0100
+	id cJh6MX6anGmKJgQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 19:20:46 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 591BF17AE96
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 18:37:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E82F917B707
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 19:20:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 043B9300D74D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 17:34:53 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id AF33D3047951
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 18:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9E8331A6D;
-	Mon, 23 Feb 2026 17:34:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B0A33BBAA;
+	Mon, 23 Feb 2026 18:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KDD602pt"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GZ4YcwBb";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="g0X83UgK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB511331235
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 17:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37DA33B967
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 18:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771868091; cv=none; b=NEH6nWfjHqaLDut0guWrPe6wJFK7/X/kSB+EV+/yZbuSp6dt3AYo5Fg2KoBQAVFh5UXG2ycU07gOnnOT/9QGNsKGeTIizoJ4LKUqwxcT6mHsXJjcKTZKHsjCWJZkKO13xIsUhYMJRJKyOrOimqLOnl9X/gRduUPMtTTDtjCw5DQ=
+	t=1771870340; cv=none; b=INWvbtp5+jdu73ih2WHFfuISvpoT8s+jQnwg7qlCS+RED3ll/Tb4W68fNPNTpzG9IQd6LdzJdub5olIrHMyzbWG8JwkLR6g+K/+rBowa0/xtXlI9ORH72hthDC3OsosIsUEsNzYoBTj2oTwXyVBuo4f1uKzGnAd6dXgGDYNMgKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771868091; c=relaxed/simple;
-	bh=pPVYjjX+g8lwuvjjX9cEbFdLG+Rgns4g94OuadbV+lI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QfCZQHqzWyDv7i1YCGgG3gT/LhBHUaclySNAvr5W72yVAJ+lWvESUOvQnpTYspmQCot663/7CzT91iGFsNpYgEmAjjivaSpvP02w8fABg/0yzlxSmNn0MGQFW6uIsIQ8gjlxQEv0mMHKyLawmdJOtPBuRWr+DwSpkGAxuV44Qn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KDD602pt; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-48375f10628so29642705e9.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 09:34:49 -0800 (PST)
+	s=arc-20240116; t=1771870340; c=relaxed/simple;
+	bh=GpcFfjFqktZkq1PJJFTb0XK2gYmrC40W4g+B7g8ZrDc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZPI/rKCZcdNNHKzA0S+lrqrEb+duKS/BmwF1iLMJUEL3KAsCcWsiMfe0fsQfrmuiD3bNsTCXCllH7f/fnfAzdA0OdWhY3XMLeVcz+DzYq0xlgZtwNKTJtdZ4dECxupmDu/9x89MhtryXqUnOyWR2xUSlQGu5TGrZD9YiyhK6qm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GZ4YcwBb; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=g0X83UgK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1771870339;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=67lPNWHfQZaorsIQ9wDyrI/yXPhj5APVQRxZORYETQg=;
+	b=GZ4YcwBbzdepbQ8hmmFDiL4+Adr9q89TB4wQsRkyjFLlSgnrtETKofUcw5ed/jWZv5Vtsy
+	eDzvoiy3AYuaQpmKAxMLKzz1RxFgV2k9RfJpERHFg8ZQGpD/rx7T1Euv+xp/5nt/tv68qX
+	bD6q/dNgA+GAGTMbFF6qgQZ9oAl/toY=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-646-KWNTNF9zPz62Fb6QqWDGvg-1; Mon, 23 Feb 2026 13:12:17 -0500
+X-MC-Unique: KWNTNF9zPz62Fb6QqWDGvg-1
+X-Mimecast-MFC-AGG-ID: KWNTNF9zPz62Fb6QqWDGvg_1771870336
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4836c819456so39157215e9.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 10:12:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771868088; x=1772472888; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HUEz6YAu4nuheVqgpSXCLvSWu/dJuHAVRYNHbZZUc14=;
-        b=KDD602ptgLwZUkiYwqEY3ctJ6bnFLeGw4F3dDv3tqqouq2gA/YOh5kHWEBI4H7U6ku
-         IZ/OJCPlsgJTTg6israrsbj/MEeFAkUZkN+bjK4INGcsQIu12S60FJsdLpBJ43RtVta4
-         tRAEzYzILAO5PJ3FR6FLeVVICwl9syZ4Yt3N3paOpMpy9Ny69alxVadj04I+v6hhI42k
-         f3Oic7cnXRPwX1WBFS0rBNWJv27MFth5hlvp++bRCvSbZpmH9O1dO4g1B2STuKHOyYJp
-         HyHSxLCth9UFUddaUU3E0JquTttLRtI3BsKHC91WaOGT2GsQHCV+6VTPOpo5sgdheR/i
-         2Dhg==
+        d=redhat.com; s=google; t=1771870336; x=1772475136; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=67lPNWHfQZaorsIQ9wDyrI/yXPhj5APVQRxZORYETQg=;
+        b=g0X83UgKJyPy/wdsB894s8EoXzQNWxf5nhlhLIIekjBzegklMcLD6ZGrPp4PT9UWGk
+         uFgEE/xR/MJf4iK4iMJd6LRdoSSIzF88WpsVk1dk1Uo1BHVWTvQdCqJNGQOJ/snQS3We
+         gdz1emkyjL5PlSoFJr5I1Aj0lNtDPJVJJnYl1RSxidNDqX4HFteajPUov5PaEguQld8B
+         MuqFKhgjodA3EJDKsMoXu8f4BkolNGeT9U9VHZyD03IkTJ7V9rc2n3y8Pplf3LIGsiaG
+         Ct/BaFC9VdlH0lad8Jnr0A5X0tIhvrvPGDHY6wK6bxitAG45NzjWZ2wx/o7RiDn0CF5Y
+         f8vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771868088; x=1772472888;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=HUEz6YAu4nuheVqgpSXCLvSWu/dJuHAVRYNHbZZUc14=;
-        b=u6TBFyTGf5oOuNauAHBEVSplcG/mGvl50p+WiJ1Bc11a3TG46WHaV9wY/i3+ERpRDC
-         22/g6ezO3MxURyjKqsltCXgfaHFlHjMBt5szl4uBVVFsQlg2UBXXTAjOsAn1mnLuX+pq
-         sTGj/D8rpi6d6/plowioGR3s7/urGQwZJ91Oz98l8SH4Tm4kgfplOzRvc9mtafKRmikW
-         8vGfxONMdihz4czBD17jP2PXEb3hBSk0ZDcTdmUMPMVcs4fL41jsf6WLRfPg51mKJcD1
-         EJtGW24zbYnaeRU40O6ZdIv0fiJ2WF7GTBVi0CUkoK4sm5yPwH5b7EqLvE2UMWseHgny
-         QRMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVLT9yPjsVcWuUvSWhikvuUr/2wdInCkXh4lAw6fpLKWX8irksXTFj9ggH4O8wqmLhUJ1wlKrn2W7l/FmiG@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlsvqCqIaMljpG/cbdaXHCWKnubpWLCQJb+bRy9l6nN0bOWGqp
-	asfIPfobx/eyTZLlNiajgiHsFCL6Ahpich1iEkDh15gQWUdSFKRqPSEx
-X-Gm-Gg: AZuq6aKyLfzCB27rxlzNtY+y1OCq8pfQmJDm48YS86ALdzVEIrsd5ht8elWXoOO4r3+
-	qpmPTYJU1fx/OP/eAxzZjn1xFa6rz5mBmiXWArOS8832eEXdzU+Tp6tKwKRNBYNgPXOmoPgXCwY
-	kbd8PNQ9GBk6vaAO+c4ZyNpU3BtD41CpxvlGIiWQZZ6l8N97a4NcdOoZjPcUnCzarVWLX6qP56h
-	OqOAjR1d/a4uI5cuwdvUxxxOmsn6fUXxcgXTMnrXSYcqorlzJ0MzI6jv81fm3TOpPlQqzXrMa3e
-	4HN4Kwxzt2APLbDf8y2yR8D5iPPXH/qaYRHk1eF3pUq7tDFDKwMOiPXn/Boxt/U4mJHaMSnKU+R
-	O2vVx/9le37bAo/V1QTmuf6xO3LsDGR1E74fgelNIQz5d93WQXU2s6zjVFKatIiJri1xHosJDeN
-	hpnoATZAVBP4GQk859ScE=
-X-Received: by 2002:a05:600c:45ce:b0:483:a895:9d85 with SMTP id 5b1f17b1804b1-483a95b3e18mr165817715e9.2.1771868087959;
-        Mon, 23 Feb 2026 09:34:47 -0800 (PST)
-Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-483a9b668f3sm213824665e9.3.2026.02.23.09.34.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Feb 2026 09:34:47 -0800 (PST)
-From: Askar Safin <safinaskar@gmail.com>
-To: rob@landley.net
-Cc: brauner@kernel.org,
-	ddiss@suse.de,
-	initramfs@vger.kernel.org,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	nathan@kernel.org,
-	nsc@kernel.org,
-	patches@lists.linux.dev,
-	rdunlap@infradead.org,
-	safinaskar@gmail.com,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH 1/2] init: ensure that /dev/console is (nearly) always available in initramfs
-Date: Mon, 23 Feb 2026 20:34:42 +0300
-Message-ID: <20260223173443.327797-1-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <7e309fc3-7d55-4e95-8dea-f164a7a96b6c@landley.net>
-References: <7e309fc3-7d55-4e95-8dea-f164a7a96b6c@landley.net>
+        d=1e100.net; s=20230601; t=1771870336; x=1772475136;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=67lPNWHfQZaorsIQ9wDyrI/yXPhj5APVQRxZORYETQg=;
+        b=sqGeLjh/xd0x09D2xgVhS3RIkCDuD/AjBzINWJjg0WG2rqYh7rz5R96YohHpHj/ZqB
+         M8OQ6Eqf1ZnOLlemPtc2o0f0XGSJGaAhzeEmVrHEmr/ldQgve1z1LfIor5BdA/AufxOC
+         G3CIBulLPeqYWenaLW/rTtw+IsP3fG56qzv3fXeBlWRaiLgSVzqFAILQlQMCYgo8SJdr
+         EHXMBDAA+/VEjbF0FvOymZHfhZg2MhjL4lgIl7tZCGtx23+pmK09rND+XjoIN/mmwPQ/
+         GjlyxeMYxOZ7srGWjrxw3hfnxqbT8vCZXy0exAhZH3XuV0naOQlm5+xIQjSVYdoSZfgT
+         K9aw==
+X-Forwarded-Encrypted: i=1; AJvYcCXpCf8CbwuSaL+bGyk5n16bk71Kp9JTsXRULFZC9aykKhdM4H9x1lToQ02su1bDcpsSOXlELwKtyGgaxHXt@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzy+/LrB0jiVqBT1n9Z7nOpE/n1mQZx/3KRiggAlefHQSpqWaJP
+	nLmpZjGfkmoh92gJcpuUHVdFUZWHN+x+1nR5KkA6ljz3VxVryOpgwgFd764uJKFGjGqdpygSuut
+	CVxGel4p+Udb7EjcpV55pE1jP1lLs2mb9WXCsl/+jtQr272MRcSpZyu+Jv6yqN1k7hQ==
+X-Gm-Gg: AZuq6aL7BWvS73JG2Yx7GeOV/ZSPantihb2ADspsZSqAphkXIA/GQXG6BUfDd5o45Hu
+	jaDGh66D3E2n9brbm4fFWPYkACKbN3RETgjGV5EJW/rbU7tJ7eNrWJs9oIxOzcRDVvb5E1BzaWL
+	cPW6aTX+r60P5/TnCInk+fVFMuLbwoIuHhc0oDZYJTUden/f2luR6a+QXmEMItKVkc5qj0521iB
+	LzVHnzCq0lbvPoUTOHWVBT5uBIS0PXm222WEHqwYYADK6NXJ//vuOV+mOU+Ptery/3/npPFkH+l
+	0p6XLVlGB7UanztuH9hMSxi1tfSD3ukA83FsyUoKtguH2nOz6V+M1kHc1jGYYUtbveq+ZX7WgvJ
+	lCDkLL2V8WgM=
+X-Received: by 2002:a05:600d:6445:20b0:483:abeb:7a5c with SMTP id 5b1f17b1804b1-483abeb7b61mr97766885e9.12.1771870335610;
+        Mon, 23 Feb 2026 10:12:15 -0800 (PST)
+X-Received: by 2002:a05:600d:6445:20b0:483:abeb:7a5c with SMTP id 5b1f17b1804b1-483abeb7b61mr97766435e9.12.1771870335063;
+        Mon, 23 Feb 2026 10:12:15 -0800 (PST)
+Received: from thinky ([217.30.74.39])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483a430a33esm113087605e9.32.2026.02.23.10.12.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Feb 2026 10:12:14 -0800 (PST)
+Date: Mon, 23 Feb 2026 19:12:13 +0100
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Andrey Albershteyn <aalbersh@kernel.org>, linux-xfs@vger.kernel.org, 
+	fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org, ebiggers@kernel.org, hch@lst.de
+Subject: Re: [PATCH v3 34/35] xfs: add fsverity traces
+Message-ID: <ttfypsjh7cjab5o6wjvfjd4oj36wruigwqdttt35kdvnfptmex@2owry54j747a>
+References: <20260217231937.1183679-1-aalbersh@kernel.org>
+ <20260217231937.1183679-35-aalbersh@kernel.org>
+ <20260219173610.GM6490@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260219173610.GM6490@frogsfrogsfrogs>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719,redhat.com:s=google];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	FREEMAIL_CC(0.00)[kernel.org,suse.de,vger.kernel.org,suse.cz,lists.linux.dev,infradead.org,gmail.com,zeniv.linux.org.uk];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[redhat.com:+];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-77989-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	TAGGED_FROM(0.00)[bounces-77990-lists,linux-fsdevel=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[safinaskar@gmail.com,linux-fsdevel@vger.kernel.org];
+	MISSING_XM_UA(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	RCVD_COUNT_FIVE(0.00)[5];
-	NEURAL_HAM(-0.00)[-1.000];
-	TO_DN_NONE(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[aalbersh@redhat.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	NEURAL_HAM(-0.00)[-0.999];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,landley.net:email]
-X-Rspamd-Queue-Id: 591BF17AE96
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: E82F917B707
 X-Rspamd-Action: no action
 
-Rob Landley <rob@landley.net>:
-> The real problem isn't cpio, it's that the kernel interface
+On 2026-02-19 09:36:10, Darrick J. Wong wrote:
+> > +TRACE_EVENT(xfs_fsverity_get_descriptor,
+> > +	TP_PROTO(struct xfs_inode *ip),
+> > +	TP_ARGS(ip),
+> > +	TP_STRUCT__entry(
+> > +		__field(dev_t, dev)
+> > +		__field(xfs_ino_t, ino)
+> > +	),
+> > +	TP_fast_assign(
+> > +		__entry->dev = VFS_I(ip)->i_sb->s_dev;
+> > +		__entry->ino = ip->i_ino;
+> > +	),
+> > +	TP_printk("dev %d:%d ino 0x%llx",
+> > +		  MAJOR(__entry->dev), MINOR(__entry->dev),
+> > +		  __entry->ino)
+> > +);
+> > +
+> > +DECLARE_EVENT_CLASS(xfs_fsverity_class,
+> > +	TP_PROTO(struct xfs_inode *ip, u64 pos, unsigned int length),
+> 
+> I wonder if @length ought to be size_t instead of unsigned int?
+> Probably doesn't matter at this point, fsverity isn't going to send huge
+> multigigabyte IOs.
 
-So there is some bug here?
+I will update it
 
-Then, please, describe properly this bug.
+> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
-I. e. using usual formula "steps to reproduce - what I got - what I expected to see".
-
-Also, does the kernel broke *documented* feature? If indeed some
-*documented* feature doesn't work, then this is indeed very real bug.
-
-I kindly ask you, please, please, describe this bug. I really want
-to help you.
+Thanks!
 
 -- 
-Askar Safin
+- Andrey
+
 
