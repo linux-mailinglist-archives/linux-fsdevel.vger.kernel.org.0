@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-78033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id MChhLT3dnGl/LwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:05:33 +0100
+	id 8DLTBF3dnGl/LwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:06:05 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id E722E17EC68
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:05:32 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAED517ECB1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:06:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id B75523038ED3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:05:09 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 8C1CF308BB9B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA4837E2F7;
-	Mon, 23 Feb 2026 23:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1022A37D134;
+	Mon, 23 Feb 2026 23:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O7Y6E0r2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NiagtkFv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E872837D12A;
-	Mon, 23 Feb 2026 23:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFDD378D97;
+	Mon, 23 Feb 2026 23:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771887902; cv=none; b=bk5KSU+WxEChqBkJeiP2A8l0txhmhXtNIJKTY5zwA0kl6vdcB0lLoRqf9E3rWcUFjGr3prqgPVpAR1ADWw0Hbcgx7oR/iJ+J3dwxSWByZnw878Gaxa8DtLyeHDUsxTaigpCfJDTg8Z/J2Yk+pardiKP8rNGToV+3pIFhe57AbtI=
+	t=1771887917; cv=none; b=h1QEvACgfk0JyudfPHBOKeRzOXMMX2bPDlBR2rwzjE1Sw/X/vi/AX2+/lHG9xQ+berQ/cryRSe50sP6v+lCuGAygcvT7HjgZq5V8nZEDbFWUd+8rEy6b1rhXJ6yaAp5U1R1heLTJyCWW/gEWBg5CbZOtqH0OEXKJFMQtNMbUpnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771887902; c=relaxed/simple;
-	bh=U314RsHz0eK6Sj3sUzHusD/sSH04E+OsdWBA4IIRFuc=;
+	s=arc-20240116; t=1771887917; c=relaxed/simple;
+	bh=yBPKN+EjYK0Y/VaXzwl4UsIR6vZeEqSBTD8zM5Ud9gs=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tVC0Q7oVE6WLe6LVt0fSl6MMT7fGF5IA8ZGgtrwRWnVQUXieDA6b7QzbZA9eyWa4C7+j8Ih570K6Yai3NhcnUgG9GdmAEcVJaguE2RCIelzzyWoTYEv8THsOVFqe8Z3B5/CZD5BmFB5jKHu4GqXaV9tk2QybuVvjakCZctAvAa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O7Y6E0r2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0B87C116C6;
-	Mon, 23 Feb 2026 23:05:01 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Px6iOnbJiiVbPNNycKhnOgTJ4Vpa/MazqXiYeVkKeCkNnf28tjNEQKHYDterEyhnn+/iUT/DsjxEZXrFRHjuMgW14ImpQ3JaVr06Hrj59ZOR8UdB2n6DfDS7N8rUHC4scK7iobEv7gK7WCWHt4LD0YGR5mor8i4RypRMvrcr1vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NiagtkFv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 682E5C116C6;
+	Mon, 23 Feb 2026 23:05:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771887901;
-	bh=U314RsHz0eK6Sj3sUzHusD/sSH04E+OsdWBA4IIRFuc=;
+	s=k20201202; t=1771887917;
+	bh=yBPKN+EjYK0Y/VaXzwl4UsIR6vZeEqSBTD8zM5Ud9gs=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=O7Y6E0r2bwAEMjpeWsXzjbfWt0WVniKegD+SSzPPsn67obXiv3vORtxcPxVI/D8Qx
-	 a/irKNXO89guCZqof56x/84zolUMrhxKJzPhxcSRJCF8ixINpsvb/LBFGDl3rt9q0o
-	 tXVpHF8yEIt3YG5plgWbIOhy0f08qpJQmxIsYnXNy0JQ2NF3LTXNVBVzjU2ZpA6Na3
-	 k9mjcLYnwlSnpUAHio+jcTDb0P3BoKSHCyXoSg/GuVqcetlqoKEYGzrowKCtDoL73m
-	 x/wUoy309qJP0nujm8wLR6ZpiuInVZfo3qOTts3M/OXhLeEp/WL9NSia50AzGc579d
-	 HNWq6+KjBNxTg==
-Date: Mon, 23 Feb 2026 15:05:01 -0800
-Subject: [PATCHSET v7 3/8] fuse2fs: handle timestamps and ACLs correctly when
- iomap is enabled
+	b=NiagtkFvr16gk6O7jFasNVWF1BneLMjs4QhzFGMd5gCIXVe0pFOt8+/6KhgroEK1q
+	 OzFs1nO4NR4mx/agYQCCWR2jm+X+l9LQszXgepyyIJYnv8kisO36OZatmYB864W/OH
+	 0PTj/yIagkyYykxjKsjMmZBRoQjVjFzbtYKYf3ET2n8yYv38B2AAdEkWmF2SwMHmOz
+	 G0oZ04gtTP8GwswPvF1fFrjkPWYcBV6/H264JgpMxsUgj/lHjrj3I7oSSU/s5inQNY
+	 Q1eiDKGdHN1kIZchmWzcIGq50rNFA2Zr+AXqI2iXh+oSFawaxsLjOpixM/9aF9h4Ss
+	 ZptLPrCi1CLXA==
+Date: Mon, 23 Feb 2026 15:05:16 -0800
+Subject: [PATCHSET v7 4/8] fuse2fs: cache iomap mappings for even better file
+ IO performance
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-ext4@vger.kernel.org, miklos@szeredi.hu, bernd@bsbernd.com,
  joannelkoong@gmail.com, neal@gompa.dev
-Message-ID: <177188745140.3944028.16289511572192714858.stgit@frogsfrogsfrogs>
+Message-ID: <177188745484.3944453.12407213942915501693.stgit@frogsfrogsfrogs>
 In-Reply-To: <20260223224617.GA2390314@frogsfrogsfrogs>
 References: <20260223224617.GA2390314@frogsfrogsfrogs>
 Precedence: bulk
@@ -68,20 +68,20 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_CC(0.00)[vger.kernel.org,szeredi.hu,bsbernd.com,gmail.com,gompa.dev];
-	TAGGED_FROM(0.00)[bounces-78033-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78034-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	MIME_TRACE(0.00)[0:+];
 	TO_DN_NONE(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
@@ -91,31 +91,19 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: E722E17EC68
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: BAED517ECB1
 X-Rspamd-Action: no action
 
 Hi all,
 
-When iomap is enabled for a fuse file, we try to keep as much of the
-file IO path in the kernel as we possibly can.  That means no calling
-out to the fuse server in the IO path when we can avoid it.  However,
-the existing FUSE architecture defers all file attributes to the fuse
-server -- [cm]time updates, ACL metadata management, set[ug]id removal,
-and permissions checking thereof, etc.
-
-We'd really rather do all these attribute updates in the kernel, and
-only push them to the fuse server when it's actually necessary (e.g.
-fsync).  Furthermore, the POSIX ACL code has the weird behavior that if
-the access ACL can be represented entirely by i_mode bits, it will
-change the mode and delete the ACL, which fuse servers generally don't
-seem to implement.
-
-IOWs, we want consistent and correct (as defined by fstests) behavior
-of file attributes in iomap mode.  Let's make the kernel manage all that
-and push the results to userspace as needed.  This improves performance
-even further, since it's sort of like writeback_cache mode but more
-aggressive.
+This series improves the performance (and correctness for some
+filesystems) by adding the ability to cache iomap mappings in the
+kernel.  For filesystems that can change mapping states during pagecache
+writeback (e.g. unwritten extent conversion) this is absolutely
+necessary to deal with races with writes to the pagecache because
+writeback does not take i_rwsem.  For everyone else, it simply
+eliminates roundtrips to userspace.
 
 If you're going to start using this code, I strongly recommend pulling
 from my git trees, which are linked below.
@@ -123,24 +111,15 @@ from my git trees, which are linked below.
 Comments and questions are, as always, welcome.
 
 e2fsprogs git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/e2fsprogs.git/log/?h=fuse2fs-iomap-attrs
+https://git.kernel.org/cgit/linux/kernel/git/djwong/e2fsprogs.git/log/?h=fuse2fs-iomap-cache
 ---
 Commits in this patchset:
- * fuse2fs: add strictatime/lazytime mount options
- * fuse2fs: skip permission checking on utimens when iomap is enabled
- * fuse2fs: let the kernel tell us about acl/mode updates
- * fuse2fs: better debugging for file mode updates
- * fuse2fs: debug timestamp updates
- * fuse2fs: use coarse timestamps for iomap mode
- * fuse2fs: add tracing for retrieving timestamps
- * fuse2fs: enable syncfs
- * fuse2fs: set sync, immutable, and append at file load time
- * fuse4fs: increase attribute timeout in iomap mode
+ * fuse2fs: enable caching of iomaps
+ * fuse2fs: constrain iomap mapping cache size
+ * fuse2fs: enable iomap
 ---
- fuse4fs/fuse4fs.1.in |    6 +
- fuse4fs/fuse4fs.c    |  226 ++++++++++++++++++++++++++++++----------
- misc/fuse2fs.1.in    |    6 +
- misc/fuse2fs.c       |  282 +++++++++++++++++++++++++++++++++++++-------------
- 4 files changed, 389 insertions(+), 131 deletions(-)
+ fuse4fs/fuse4fs.c |   44 +++++++++++++++++++++++++++++++++++++-------
+ misc/fuse2fs.c    |   40 ++++++++++++++++++++++++++++++++++------
+ 2 files changed, 71 insertions(+), 13 deletions(-)
 
 
