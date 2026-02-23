@@ -1,83 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-77916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YNwBHHkBnGn6+wMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 08:27:53 +0100
+	id 0NqLHhgDnGkn/AMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 08:34:48 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2854172A36
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 08:27:52 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0D95172BC3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 08:34:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4EC6330528A3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 07:25:41 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 35A11301B67D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 07:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DC134AB16;
-	Mon, 23 Feb 2026 07:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FF5346FA9;
+	Mon, 23 Feb 2026 07:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aXHTMusH"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jWKWI2BS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E2E34B693
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 07:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF4925393B
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 07:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771831536; cv=none; b=qn3gVD0Z0+mESCXwtTnHoFtnzfMBW4h0MQDtxrKWE2dq4ROsGgBTj1NiFeDy7dbhg9Xc6gjPW8DlNStQvob7k7eL3zX1N1aMiB37lEXC+v7pOFZzaOLWzvDsQQM9bZeFJwQVy5rAO72CdPYU/Mq50oZbm9W8E35mfUpo10YbWbg=
+	t=1771832065; cv=none; b=nQtIBFfT2GD020cbqKMRdyJDke7naR7TRLcgCodD46xV7KVOCK+GUZPTAlU7Qoz6MivTfNBj+sdqlfpsW0mBvqJOv+KFlxKKrtwaL+oe0jAkUhVTWSm2bZOEmerHmBhQTU2xOo7KGDu+jAu4JXEm1xCCrgK8tjWqNAe0MEYAcPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771831536; c=relaxed/simple;
-	bh=8TT9Tx32iVjvXy73qsnKNxVBUZf2+bktrNgUPXib0vE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=P8kq5ij3AueMqL0R3HZoX3qVA2MXI1RY4zme4v/bixRPSzaBFC3LM2Swe1VtYp8HK7gimH/ubwCRLRwXo0cAmS8sFDcTNbiSbnpxc5maIVb7PijaaxXMk0P/VwR/WdoIv5pbtkursTmlsfYi9r+e8f/WaJ/7XJgKylDks6BxcJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aXHTMusH; arc=none smtp.client-ip=209.85.214.201
+	s=arc-20240116; t=1771832065; c=relaxed/simple;
+	bh=0huX/VxKilF8hpaSTLWepBfLKx2I+S2zYQYhOjq70Dw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=A+OMfImOtOFqqMqz9XJPcS/217n0Ld406VV5xqXYPm63v3HbVTYnXxfvTr3oaSUKO5RcSlQWBub/Xvz5iAsjmaPbtA+1GclaCuCRv/t0n5QPozbkZ3Z2McJmIXy2UDEXwE+BjevmFXOcCcWF8Rxqqyv0H/XDlDom+0/mOALy3aY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jWKWI2BS; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2a75ed2f89dso37434985ad.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Feb 2026 23:25:35 -0800 (PST)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-bce224720d8so2461312a12.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Feb 2026 23:34:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1771831535; x=1772436335; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QO6T3Hywklu95Q2Lh4PbmzrawpSi1ul2o5nH7XzPx2M=;
-        b=aXHTMusHTsJYrSkY6FeIw8Ru3rC/YhEPJAoDZhkkvxQwh7pv7uQNMaocOH1+JJpzQC
-         Qrw8CZ/GDvVfgo08THBhLpdzdh++8i03SodOCV2GNQiBwR5lg40hz5OxAMjo5VfSKL4R
-         ts6FWX73m/lHpUy+PgOWo8xwHUEgE+CwdxqxRLNrykq46OMB/5jyFtOJOXVEicHt9/IQ
-         FWp70getqymqujzsTFdLo29goJ5Xa3HnX2iapKigmPVwgocmZDQkYAg+1EQBaUpHQ3PU
-         CNtEujLJRoE+pZVf357PEbrzKveMy+J1oGLONrmctz9Zf7PaFhjslpmOTJ0A6XsUQpim
-         7Mlg==
+        d=google.com; s=20230601; t=1771832063; x=1772436863; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=s9KxNHasV2s2NqGw0lhhtRyZ4y7rgrLWzlcKrVq6wew=;
+        b=jWKWI2BSw7DXGXh3yljnoeQln9/RNdZac7+Ry42c5FGjDrqi5ximGr3zBUFUmxUT+9
+         jblMfgtpHtLcqLbyl9XQbDNcFIw69VKZm+4vgw+z3o+MYFKj8kFIWbi9Rfd52JdMPmF8
+         y5xXEMjR7hqmxMOU074Gxpdk/L0iEYBt9fsHCpbx9o+6/6KlTTAyfHjx/nJqD0+adCSZ
+         +vbMe8VhbBh4c2fxTLMtEx3Jwj9MlCU2y/WDsAzB8UcvN6mr5Piu1Dz/Sc/Ltg1NMWph
+         qakVvJnpVhV6yWhovuSHsdLygYw4z7Cj1c+TJr7m6Tqwt1xJ644qADO27/fadrY8yH56
+         OSiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771831535; x=1772436335;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QO6T3Hywklu95Q2Lh4PbmzrawpSi1ul2o5nH7XzPx2M=;
-        b=dbuNuVz9YiC7eEShY4ERloddbP9Cx9bVtrvwG0PFp9m52CBCH+lD+ZTj1/LN6nckcv
-         RQpwBrWLIwi91N3WeAyE4U1iA6uyofBA6I0DKZwHt4YkWjw+dfXqqhtAVYGKaCZCm1BA
-         7C+mEbCzIbKk8NlJCCCl6qVZ21j/ZwGjD1fWLBxYUl2ZpT4oKhAg09Zx5rAH2CoLgowk
-         ydhCpIrUe3KlRo6AJAS8dhuYY+1RZphJ7uhfrJDQnasbx32ivy7L7Fl/t6hSrBA8yRmi
-         Hi3CHtqXTNdtibgtocMDAmAa6W0Ize0/XWnDl4jMoXyOwRdIlu6y33kj0E14w/+AVMw8
-         jmeg==
-X-Forwarded-Encrypted: i=1; AJvYcCWbyC8lb6sqPBLdhx9DQAaLABbmDb/tfH/rndil2hJy+lhs8FZormfv+eNfM0f6AH6BpipK79fOQ5sbWU08@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEVimywbC+8D+8xY2CYQKInia1dk6Y8BO5z9IG5bjatkFueUPa
-	l7K1c1+HfCpZhuDEEJiqTrgBoAtsnptZaASC3zZy491Ad5+aKpaaHCroiomngGiBe2WO7gs5vDz
-	pdl72NaRESrn/OOHPkb+jJ+yBdg==
-X-Received: from pjbbp12.prod.google.com ([2002:a17:90b:c0c:b0:34c:2797:7072])
+        d=1e100.net; s=20230601; t=1771832063; x=1772436863;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=s9KxNHasV2s2NqGw0lhhtRyZ4y7rgrLWzlcKrVq6wew=;
+        b=Usq+gztagLmkvbG18DyUaESuoL5Nx+0gIRc3o3X9D3qLfVUqRdiso1pNZeRzHZ+To/
+         HwGkrPvCV5rRKkocVgVAiOTmmhrYWB96gJK3En8YVhEG1sBH6Fm37Oy/jS2NvIl8zUTF
+         AKK3fDRuqIsKud5cZ4HV17IJzDDfMzOkJ7wrTrpmrOchmvCscib2wTQT/dYo7v3VdIGF
+         Q6ewSV2sZiqEWNddUD4olMee63JzZgl9oxs9Zf+EhE7WSth8kEsMjV2tV04/PJ4Djw0p
+         sg/ef+fw4t2lCtxnFhQRoC5biDX4m2OEUbcav9ItRkyB7oY6YIzSdnx7jm2k8RYmJMIY
+         piBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXEgYbMr2z3EPrMt3x1/empPjvO9e7RpOoWKOKOnXh2uRQwMqw0Q+HXITCslNlAahzlhWQ1Vy6+PJRan77m@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxxxp7nimbDCF92ZQqpKXpLNI9NL3BhHu6quLcKkkdCQHNQDeGE
+	5aljCuz1vQE6+ihW3wFHHeLTMNV7aBeUIYj3LJ5Q6LC/eGd9RlMyQQyy4qHpqPwOJ3xm8nQDBxy
+	JjTVDXVodb7GHfbPlamg9UPaDzw==
+X-Received: from pgbcq6.prod.google.com ([2002:a05:6a02:4086:b0:c65:e8e7:d481])
  (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:4b28:b0:2a9:43a9:d367 with SMTP id d9443c01a7336-2ad745a5e98mr58917065ad.51.1771831534600;
- Sun, 22 Feb 2026 23:25:34 -0800 (PST)
-Date: Mon, 23 Feb 2026 07:25:28 +0000
-In-Reply-To: <cover.1771831180.git.ackerleytng@google.com>
+ 2002:a05:6a21:6e8a:b0:395:16a3:c142 with SMTP id adf61e73a8af0-39545fac8b8mr6774757637.60.1771832063160;
+ Sun, 22 Feb 2026 23:34:23 -0800 (PST)
+Date: Mon, 23 Feb 2026 07:34:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <cover.1771831180.git.ackerleytng@google.com>
 X-Mailer: git-send-email 2.53.0.345.g96ddfc5eaa-goog
-Message-ID: <bad1921421199c3009a773d006c1f8782e90452b.1771831180.git.ackerleytng@google.com>
-Subject: [RFC PATCH v1 RESEND 2/2] XArray tests: Verify xa_erase behavior in check_split
+Message-ID: <cover.1771831836.git.ackerleytng@google.com>
+Subject: [RFC PATCH v3 0/2] Fix storing in XArray check_split tests
 From: Ackerley Tng <ackerleytng@google.com>
 To: willy@infradead.org, akpm@linux-foundation.org, 
 	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
@@ -92,17 +89,17 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MV_CASE(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
 	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77916-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77917-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[ackerleytng@google.com,linux-fsdevel@vger.kernel.org];
@@ -111,53 +108,59 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: D2854172A36
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: A0D95172BC3
 X-Rspamd-Action: no action
 
-Both __xa_store() and xa_erase() use xas_store() under the hood, but when
-the entry being stored is NULL (as in the case of xa_erase()),
-xas->xa_sibs (and max) is only checked if the next entry is not a sibling,
-hence allowing xas_store() to keep iterating, hence updating
-node->nr_values correctly.
+Hi,
 
-Add xa_erase() to check_split tests that verify functionality, with the
-added intent to illustrate the usage differences between __xa_store(),
-xas_store() and xa_erase() with regard to multi-index XArrays.
+I hit an assertion while making some modifications to
+lib/test_xarray.c [1] and I believe this is the fix.
 
-Change-Id: Ibbbae5e6339b46203f22658cc84ea9f16025fa14
-Signed-off-by: Ackerley Tng <ackerleytng@google.com>
----
- lib/test_xarray.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+In check_split, the tests split the XArray node and then store values
+after the split to verify that splitting worked. While storing and
+retrieval works as expected, the node's metadata, specifically
+node->nr_values, is not updated correctly.
 
-diff --git a/lib/test_xarray.c b/lib/test_xarray.c
-index e71e8ff76900b..bb9471a3df65c 100644
---- a/lib/test_xarray.c
-+++ b/lib/test_xarray.c
-@@ -1874,6 +1874,10 @@ static void check_split_1(struct xarray *xa, unsigned long index,
- 	rcu_read_unlock();
- 	XA_BUG_ON(xa, found != 1 << (order - new_order));
- 
-+	for (i = 0; i < (1 << order); i += (1 << new_order))
-+		xa_erase(xa, index + i);
-+	XA_BUG_ON(xa, !xa_empty(xa));
-+
- 	xa_destroy(xa);
- }
- 
-@@ -1926,6 +1930,10 @@ static void check_split_2(struct xarray *xa, unsigned long index,
- 	}
- 	rcu_read_unlock();
- 	XA_BUG_ON(xa, found != 1 << (order - new_order));
-+
-+	for (i = 0; i < (1 << order); i += (1 << new_order))
-+		xa_erase(xa, index + i);
-+	XA_BUG_ON(xa, !xa_empty(xa));
- out:
- 	xas_destroy(&xas);
- 	xa_destroy(xa);
--- 
+This led to the assertion being hit in [1], since the storing process
+did not increment node->nr_values sufficiently, while the erasing
+process assumed the fully-incremented node->nr_values state.
+
+Would like to check my understanding on these:
+
+1. In the multi-index xarray world, is node->nr_values definitely the
+   total number of values *and siblings* in the node?
+
+2. IIUC xas_store() has significantly different behavior when entry is
+   NULL vs non-NULL: when entry is NULL, xas_store() does not make
+   assumptions on the number of siblings and erases all the way till
+   the next non-sibling entry. This sounds fair to me, but it's also
+   kind of surprising that it is differently handled when entry is
+   non-NULL, where xas_store() respects xas->xa_sibs.
+
+3. If xas_store() is dependent on its caller to set up xas correctly
+   (also sounds fair), then there are places where xas_store() is
+   used, like replace_page_cache_folio() or
+   migrate_huge_page_move_mapping(), where xas is set up assuming 0
+   order pages. Are those buggy?
+
+Previous versions:
+
++ RFC v3: Cleaned up commits and subject references (sorry for the noise!)
++ RFC v2: Rebased on Linux 7.0-rc1 (https://lore.kernel.org/all/cover.1771831180.git.ackerleytng@google.com/T/)
++ RFC v1: https://lore.kernel.org/all/720e32d8e185d5c82659bbdede05e87b3318c413.1769818406.git.ackerleytng@google.com/
+
+[1] https://lore.kernel.org/all/20251028223414.299268-1-ackerleytng@google.com/
+
+Ackerley Tng (2):
+  XArray tests: Fix check_split tests to store correctly
+  XArray tests: Verify xa_erase behavior in check_split
+
+ lib/test_xarray.c | 28 ++++++++++++++++++++++++----
+ 1 file changed, 24 insertions(+), 4 deletions(-)
+
+
+base-commit: 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f
+--
 2.53.0.345.g96ddfc5eaa-goog
-
 
