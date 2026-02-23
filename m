@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-77915-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YN2HF/0AnGn6+wMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77915-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 08:25:49 +0100
+	id YNwBHHkBnGn6+wMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 08:27:53 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id C45D7172A01
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 08:25:48 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2854172A36
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 08:27:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id B870B301451B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 07:25:38 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4EC6330528A3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 07:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCC934BA33;
-	Mon, 23 Feb 2026 07:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DC134AB16;
+	Mon, 23 Feb 2026 07:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lr5N7cWY"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aXHTMusH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC01334A783
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 07:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E2E34B693
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 07:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771831535; cv=none; b=UCuI4UU6MZFYHVR4E0AjzHvqO3zYsm/K7L1FQn0IbSECMcEmAqf4vGP6WkVy7X0QQCA7h1DTv5nMHe/oI/FqBeqKL7aXGEE63W78Cm5M+oHUMzvmKAJ6zFb/Pg6WeNQCXcjO28/aogovtZmOdiKLLlzSMZvz5tWz7bxbhN5g/M0=
+	t=1771831536; cv=none; b=qn3gVD0Z0+mESCXwtTnHoFtnzfMBW4h0MQDtxrKWE2dq4ROsGgBTj1NiFeDy7dbhg9Xc6gjPW8DlNStQvob7k7eL3zX1N1aMiB37lEXC+v7pOFZzaOLWzvDsQQM9bZeFJwQVy5rAO72CdPYU/Mq50oZbm9W8E35mfUpo10YbWbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771831535; c=relaxed/simple;
-	bh=3NT0l0ZKmTs6WjvKVLQ+p7YW9ogqw1ZJ9DDytU97MkA=;
+	s=arc-20240116; t=1771831536; c=relaxed/simple;
+	bh=8TT9Tx32iVjvXy73qsnKNxVBUZf2+bktrNgUPXib0vE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Y2/X/6t0GZYt7hopXn6VAKVRzYMNL59begSQ7Wuro7NBw3uWZf2/5pwika7otHc7Kk89uNSOQbnOY0aknHV4y6zubYFhvFRm+mf6TMBVf4/w+aYf9hLHtLj2QrmGBJNf8q7K0A1HTZXmyIK3sLRRbj8raOgBQacNVILwun0/Q8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lr5N7cWY; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=P8kq5ij3AueMqL0R3HZoX3qVA2MXI1RY4zme4v/bixRPSzaBFC3LM2Swe1VtYp8HK7gimH/ubwCRLRwXo0cAmS8sFDcTNbiSbnpxc5maIVb7PijaaxXMk0P/VwR/WdoIv5pbtkursTmlsfYi9r+e8f/WaJ/7XJgKylDks6BxcJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aXHTMusH; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-35658758045so2882717a91.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Feb 2026 23:25:33 -0800 (PST)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2a75ed2f89dso37434985ad.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Feb 2026 23:25:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1771831533; x=1772436333; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1771831535; x=1772436335; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hidpuNttSwZHxHCys+Rdwk1AShkIe4ps5Ps0hErcBKQ=;
-        b=lr5N7cWYz8ua9ZpWx3EVPTnC+gpTDEKytg+g4ttK55caCDugrIjlIajIcJ5IVd7CSb
-         st2qWFxIhMgFDmyt5fZZV+/OekvciTKY/E6Tr10lar491nBViSUzNAEDbhonLxIeMYnp
-         adSqkNmuUmdJgfLMZN60Qj0nejFnRaaNRjH0l7WAKoyxdbFFsOtGLk0NpuzfXA7Koovh
-         JLf0qElsM2qPP/cmd0B1XI8pZ7NgiMuPOlHRZOkuFuUeJloStZ89Cd/UFSYiE6ZoJGu4
-         xgCuKMOG/RnewF+yfiCQZLrjIsE+6Uv/yqCKVp+ELORTgwa4R5JZ9yydaer39TTXgdJ0
-         KjPg==
+        bh=QO6T3Hywklu95Q2Lh4PbmzrawpSi1ul2o5nH7XzPx2M=;
+        b=aXHTMusHTsJYrSkY6FeIw8Ru3rC/YhEPJAoDZhkkvxQwh7pv7uQNMaocOH1+JJpzQC
+         Qrw8CZ/GDvVfgo08THBhLpdzdh++8i03SodOCV2GNQiBwR5lg40hz5OxAMjo5VfSKL4R
+         ts6FWX73m/lHpUy+PgOWo8xwHUEgE+CwdxqxRLNrykq46OMB/5jyFtOJOXVEicHt9/IQ
+         FWp70getqymqujzsTFdLo29goJ5Xa3HnX2iapKigmPVwgocmZDQkYAg+1EQBaUpHQ3PU
+         CNtEujLJRoE+pZVf357PEbrzKveMy+J1oGLONrmctz9Zf7PaFhjslpmOTJ0A6XsUQpim
+         7Mlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771831533; x=1772436333;
+        d=1e100.net; s=20230601; t=1771831535; x=1772436335;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hidpuNttSwZHxHCys+Rdwk1AShkIe4ps5Ps0hErcBKQ=;
-        b=XNBr3brIxvS5sqFcwLEJA7pmyaBEPrkgtLgCWql5B42aUptRwlXMp59ZP+ILDVZ9lY
-         58hbOYzFtnXD4c7DdtXAXcJ0vHd66rWym48pQm97OExcWzMVOaIVRs7XTQu9/An9ZfkP
-         /zryD4VoJTOpvcPJo0VEcfun/dLXX/Ks4dEQpLWpXyu48kE1v95l3ay9qbHOwQPUjKvK
-         6P6Pc1kobXj+KZFKAcPoEkA4eGKlyAZxYWT14stYyUUaUEEbbr8NrDxH4ffin7am4lWm
-         UBqCQu8T1VM3QMC8BztJLRHx2GHhvc/kXLc0+1O9t7FgFM1AZMxxc6Z2bN8lyZXcYBAJ
-         VqQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVmN4ShBggVCmF+l6b81chInK2EHwC1NUk9B84N3P/Xsm6Ns6LKSuhxTfXFsDYXYWF5R3JD9ik1QILfwz99@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrYdohmWj2H26YUhi6c0GL6hJ634a2vo1Mo8ZlPnGpfIaGpNmR
-	BnfNJCbphNrqY8WNntDpl8kC1HP9lkscgBOXrUiZChZTvW3iwa+jCpLTCnQcF0noZZDBTSOcT1A
-	rl4ftNulzruZ+SoWtXY3bgJWnIg==
-X-Received: from pjbjs16.prod.google.com ([2002:a17:90b:1490:b0:32e:ca6a:7ca9])
+        bh=QO6T3Hywklu95Q2Lh4PbmzrawpSi1ul2o5nH7XzPx2M=;
+        b=dbuNuVz9YiC7eEShY4ERloddbP9Cx9bVtrvwG0PFp9m52CBCH+lD+ZTj1/LN6nckcv
+         RQpwBrWLIwi91N3WeAyE4U1iA6uyofBA6I0DKZwHt4YkWjw+dfXqqhtAVYGKaCZCm1BA
+         7C+mEbCzIbKk8NlJCCCl6qVZ21j/ZwGjD1fWLBxYUl2ZpT4oKhAg09Zx5rAH2CoLgowk
+         ydhCpIrUe3KlRo6AJAS8dhuYY+1RZphJ7uhfrJDQnasbx32ivy7L7Fl/t6hSrBA8yRmi
+         Hi3CHtqXTNdtibgtocMDAmAa6W0Ize0/XWnDl4jMoXyOwRdIlu6y33kj0E14w/+AVMw8
+         jmeg==
+X-Forwarded-Encrypted: i=1; AJvYcCWbyC8lb6sqPBLdhx9DQAaLABbmDb/tfH/rndil2hJy+lhs8FZormfv+eNfM0f6AH6BpipK79fOQ5sbWU08@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEVimywbC+8D+8xY2CYQKInia1dk6Y8BO5z9IG5bjatkFueUPa
+	l7K1c1+HfCpZhuDEEJiqTrgBoAtsnptZaASC3zZy491Ad5+aKpaaHCroiomngGiBe2WO7gs5vDz
+	pdl72NaRESrn/OOHPkb+jJ+yBdg==
+X-Received: from pjbbp12.prod.google.com ([2002:a17:90b:c0c:b0:34c:2797:7072])
  (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:3c43:b0:340:bfcd:6af8 with SMTP id 98e67ed59e1d1-358ae7be0b3mr6177609a91.4.1771831533175;
- Sun, 22 Feb 2026 23:25:33 -0800 (PST)
-Date: Mon, 23 Feb 2026 07:25:27 +0000
+ 2002:a17:903:4b28:b0:2a9:43a9:d367 with SMTP id d9443c01a7336-2ad745a5e98mr58917065ad.51.1771831534600;
+ Sun, 22 Feb 2026 23:25:34 -0800 (PST)
+Date: Mon, 23 Feb 2026 07:25:28 +0000
 In-Reply-To: <cover.1771831180.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -76,9 +76,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <cover.1771831180.git.ackerleytng@google.com>
 X-Mailer: git-send-email 2.53.0.345.g96ddfc5eaa-goog
-Message-ID: <3d698e6fcf052628629d9bd928fcef5fea049a76.1771831180.git.ackerleytng@google.com>
-Subject: [RFC PATCH v1 RESEND 1/2] XArray tests: Fix check_split tests to
- store correctly
+Message-ID: <bad1921421199c3009a773d006c1f8782e90452b.1771831180.git.ackerleytng@google.com>
+Subject: [RFC PATCH v1 RESEND 2/2] XArray tests: Verify xa_erase behavior in check_split
 From: Ackerley Tng <ackerleytng@google.com>
 To: willy@infradead.org, akpm@linux-foundation.org, 
 	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
@@ -93,17 +92,17 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MV_CASE(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
 	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77915-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-77916-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[ackerleytng@google.com,linux-fsdevel@vger.kernel.org];
@@ -112,62 +111,52 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: C45D7172A01
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: D2854172A36
 X-Rspamd-Action: no action
 
-__xa_store() does not set up xas->xa_sibs, and when it calls xas_store(),
-xas_store() stops prematurely and does not update node->nr_values to count
-all values and siblings. Hence, when working with multi-index XArrays,
-__xa_store() cannot be used.
+Both __xa_store() and xa_erase() use xas_store() under the hood, but when
+the entry being stored is NULL (as in the case of xa_erase()),
+xas->xa_sibs (and max) is only checked if the next entry is not a sibling,
+hence allowing xas_store() to keep iterating, hence updating
+node->nr_values correctly.
 
-Fix tests by calling xas_store() directly with xas->xa_sibs correctly set
-up.
+Add xa_erase() to check_split tests that verify functionality, with the
+added intent to illustrate the usage differences between __xa_store(),
+xas_store() and xa_erase() with regard to multi-index XArrays.
 
-Change-Id: I144b96b8724c27ac4a6d53be1e74125bf8d3aebe
+Change-Id: Ibbbae5e6339b46203f22658cc84ea9f16025fa14
 Signed-off-by: Ackerley Tng <ackerleytng@google.com>
 ---
- lib/test_xarray.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ lib/test_xarray.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/lib/test_xarray.c b/lib/test_xarray.c
-index 5ca0aefee9aa5..e71e8ff76900b 100644
+index e71e8ff76900b..bb9471a3df65c 100644
 --- a/lib/test_xarray.c
 +++ b/lib/test_xarray.c
-@@ -1846,8 +1846,14 @@ static void check_split_1(struct xarray *xa, unsigned long index,
- 	xas_split_alloc(&xas, xa, order, GFP_KERNEL);
- 	xas_lock(&xas);
- 	xas_split(&xas, xa, order);
--	for (i = 0; i < (1 << order); i += (1 << new_order))
--		__xa_store(xa, index + i, xa_mk_index(index + i), 0);
-+	for (i = 0; i < (1 << order); i += (1 << new_order)) {
-+		xas_set_order(&xas, index + i, new_order);
-+		/*
-+		 * Don't worry about -ENOMEM, xas_split_alloc() and
-+		 * xas_split() ensures that all nodes are allocated.
-+		 */
-+		xas_store(&xas, xa_mk_index(index + i));
-+	}
- 	xas_unlock(&xas);
+@@ -1874,6 +1874,10 @@ static void check_split_1(struct xarray *xa, unsigned long index,
+ 	rcu_read_unlock();
+ 	XA_BUG_ON(xa, found != 1 << (order - new_order));
  
- 	for (i = 0; i < (1 << order); i++) {
-@@ -1893,8 +1899,14 @@ static void check_split_2(struct xarray *xa, unsigned long index,
- 		xas_unlock(&xas);
- 		goto out;
++	for (i = 0; i < (1 << order); i += (1 << new_order))
++		xa_erase(xa, index + i);
++	XA_BUG_ON(xa, !xa_empty(xa));
++
+ 	xa_destroy(xa);
+ }
+ 
+@@ -1926,6 +1930,10 @@ static void check_split_2(struct xarray *xa, unsigned long index,
  	}
--	for (i = 0; i < (1 << order); i += (1 << new_order))
--		__xa_store(xa, index + i, xa_mk_index(index + i), 0);
-+	for (i = 0; i < (1 << order); i += (1 << new_order)) {
-+		xas_set_order(&xas, index + i, new_order);
-+		/*
-+		 * Don't worry about -ENOMEM, xas_split_alloc() and
-+		 * xas_split() ensures that all nodes are allocated.
-+		 */
-+		xas_store(&xas, xa_mk_index(index + i));
-+	}
- 	xas_unlock(&xas);
- 
- 	for (i = 0; i < (1 << order); i++) {
+ 	rcu_read_unlock();
+ 	XA_BUG_ON(xa, found != 1 << (order - new_order));
++
++	for (i = 0; i < (1 << order); i += (1 << new_order))
++		xa_erase(xa, index + i);
++	XA_BUG_ON(xa, !xa_empty(xa));
+ out:
+ 	xas_destroy(&xas);
+ 	xa_destroy(xa);
 -- 
 2.53.0.345.g96ddfc5eaa-goog
 
