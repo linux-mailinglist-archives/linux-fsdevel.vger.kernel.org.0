@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-78171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CMw+FVzmnGlNMAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:44:28 +0100
+	id uJ3xNXrmnGlNMAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:44:58 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07BD917FDD5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:44:28 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5102017FE19
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:44:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id B2B9A30BF857
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:41:06 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 2933D3069C5B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A8D37F8DA;
-	Mon, 23 Feb 2026 23:41:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EC837F8DF;
+	Mon, 23 Feb 2026 23:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y1ur0U0U"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itp1GHwr"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52B437F8DC;
-	Mon, 23 Feb 2026 23:41:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF92537FF55;
+	Mon, 23 Feb 2026 23:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771890061; cv=none; b=S2G0XxBT73JXs00NwjsR+lhGayeGju3RcS+Q4DLf5pwPT3245gHV7xBNLEbzWQD4aVaQ2U6HaOmL3jlz9yfCRAz1KauvJ3TdRHhs0N7SDJ6wd/7APKo9zPsCb4A3LbWP9MnVaz4w/ueTfFRd4QZ+GjPxuxq9UjoqpLqpQ7MP9AM=
+	t=1771890077; cv=none; b=h8tUK3uZab2TtHpQfk6+q6Tqfo+Ji5wKfsbmE2cyM8GnlmIvyJfn7GUHglYg/gAGRESBHK0aAA5m+o/M6feNj9od3SIyn6aaelhjTJ619TQv14HNmcgAMQtrEWm/sjKBJhfHMHV88ichFG1+XTLM9D838h+wpWfYW9UqGYPYBPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771890061; c=relaxed/simple;
-	bh=qTFs1CcReAsIhdOCN/88qiDJg4FfrkNzfBuASz5DxPg=;
+	s=arc-20240116; t=1771890077; c=relaxed/simple;
+	bh=notneqwy1X3OeXRkObOFxlBBPaGqCxXcZE/KfW8DCYE=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kMvAjT/ft5Msyz3sz5Q26YqbazMiOwspd+Dke6jv/sZUzhOyokmYRRN3TsVTkgvcaUxhJLBTy7MFTUk02YwqeWT80qEkrNJvd04HFIgQ8Qy2K67Po4VNliK0xlSnZuH/Kd73VF5hrCPVZ0g0iZUtAhM6z18EgrjcDhCL5OQ4OY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y1ur0U0U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADDF3C116C6;
-	Mon, 23 Feb 2026 23:41:01 +0000 (UTC)
+	 MIME-Version:Content-Type; b=SKgscPBVVfX0Zyw2RX7tnvEcyUM6Dt3b2KQZ3YjJcOyd0sxJ1bGaNCH6vpGJ+I2sVz+s4bHzGWCXMqzR81Xh6vjCMe+o5FJYgICZyf7rFT/cI6xbvykkbqd/sM4FzmBOBqbP6iIgfSH7yu8KJffiU7SVHXszOqvruD/OE6Rioe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itp1GHwr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74D2CC19424;
+	Mon, 23 Feb 2026 23:41:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771890061;
-	bh=qTFs1CcReAsIhdOCN/88qiDJg4FfrkNzfBuASz5DxPg=;
+	s=k20201202; t=1771890077;
+	bh=notneqwy1X3OeXRkObOFxlBBPaGqCxXcZE/KfW8DCYE=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=Y1ur0U0UJ9ZOcSSorazhV2U3vBnpYgA/ppTNjAAt7m5wO+sTBfd/uN5PytUhWln3d
-	 +fGJ2KzGUMBVkeSk+dygaLHjEHTCYo59bvs7QeOkQ7JoNZlCpyFfbFOpqSsaxc9mBJ
-	 xvUHhBfl6g4Ymtfr6qiDlsqaIhbc8tbig8/sH2W8MmMuaYD9/IV0dh39GvO0kFA0fv
-	 zxRO4+JPL4TOez2inccTz0Vg4Q9nMDGvQFgxUt1OmJyb8Yk+4pxa/VLFyh9E6aGtrY
-	 cHRSbbCyMMnBwcqCoIe9GEOUn+DLpHNU2WTifL/bo1xAt0LiXdPHhPmvsqZOGeCmjR
-	 fySJo01AlKQhA==
-Date: Mon, 23 Feb 2026 15:41:01 -0800
-Subject: [PATCH 19/19] fuse2fs: implement freeze and shutdown requests
+	b=itp1GHwrVUYI0CPa7+umd9sQYry6gFRkvNqUx5ICcn7wIGgB6QV1aoxd758WG+yoJ
+	 93XMMaZQQcOBQ/qZj3j7EcsQY31CknS4dJE49GXrLurjrDn9GNqlWx6b+B6/HR4Zoa
+	 B8xilMeoR5Uh5weOsHQ7aVwuctI21Y+8yRaQYhLACiwMjw/IlMabJH4kMdgFbzdOci
+	 Gswn9o/2zSAPnrPzhBRM46qCiSXEZ8y4S3lcVo6LOLFX3Er+qKmSPE7CZk89ny0eTi
+	 AsCK84h/12dmwtTGF7Ftnjt+xR+GB/9vvGkfFXyxYwgeoLR4rKsN8Xmz5v8tffTFVP
+	 33sal+N4kDNAg==
+Date: Mon, 23 Feb 2026 15:41:16 -0800
+Subject: [PATCH 1/1] fuse4fs: don't use inode number translation when possible
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-ext4@vger.kernel.org, miklos@szeredi.hu, bernd@bsbernd.com,
  joannelkoong@gmail.com, neal@gompa.dev
-Message-ID: <177188744822.3943178.4419152071339815367.stgit@frogsfrogsfrogs>
-In-Reply-To: <177188744403.3943178.7675407203918355137.stgit@frogsfrogsfrogs>
-References: <177188744403.3943178.7675407203918355137.stgit@frogsfrogsfrogs>
+Message-ID: <177188744984.3943927.9096434421214899658.stgit@frogsfrogsfrogs>
+In-Reply-To: <177188744965.3943927.10298806606780785317.stgit@frogsfrogsfrogs>
+References: <177188744965.3943927.10298806606780785317.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,20 +67,20 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_CC(0.00)[vger.kernel.org,szeredi.hu,bsbernd.com,gmail.com,gompa.dev];
-	TAGGED_FROM(0.00)[bounces-78171-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78172-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	MIME_TRACE(0.00)[0:+];
 	TO_DN_NONE(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
@@ -90,245 +90,111 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 07BD917FDD5
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 5102017FE19
 X-Rspamd-Action: no action
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Handle freezing and shutting down the filesystem if requested.
+Prior to the integration of iomap into fuse, the fuse client (aka the
+kernel) required that the root directory have an inumber of
+FUSE_ROOT_ID, which is 1.  However, the ext2 filesystem defines the root
+inode number to be EXT2_ROOT_INO, which is 2.  This dissonance means
+that we have to have translator functions, and that any access to
+inumber 1 (the ext2 badblocks file) will instead redirect to the root
+directory.
+
+That's horrible.  Use the new mount option to set the root directory
+nodeid to EXT2_ROOT_INO so that we don't need this translation.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fuse4fs/fuse4fs.c |   91 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- misc/fuse2fs.c    |   84 +++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 175 insertions(+)
+ fuse4fs/fuse4fs.c |   30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
 
 
 diff --git a/fuse4fs/fuse4fs.c b/fuse4fs/fuse4fs.c
-index 4499f4083f85dd..170accabfd9fd6 100644
+index 170accabfd9fd6..bebc2410af382e 100644
 --- a/fuse4fs/fuse4fs.c
 +++ b/fuse4fs/fuse4fs.c
-@@ -228,6 +228,7 @@ struct fuse4fs_file_handle {
+@@ -273,6 +273,7 @@ struct fuse4fs {
+ 	int directio;
+ 	int acl;
+ 	int dirsync;
++	int translate_inums;
  
- enum fuse4fs_opstate {
- 	F4OP_READONLY,
-+	F4OP_WRITABLE_FROZEN,
- 	F4OP_WRITABLE,
- 	F4OP_SHUTDOWN,
- };
-@@ -6166,6 +6167,91 @@ static void op_fallocate(fuse_req_t req, fuse_ino_t fino EXT2FS_ATTR((unused)),
+ 	enum fuse4fs_opstate opstate;
+ 	int logfd;
+@@ -345,17 +346,19 @@ struct fuse4fs {
+ #define FUSE4FS_CHECK_CONTEXT_INIT(req) \
+ 	__FUSE4FS_CHECK_CONTEXT((req), abort(), abort())
+ 
+-static inline void fuse4fs_ino_from_fuse(ext2_ino_t *inop, fuse_ino_t fino)
++static inline void fuse4fs_ino_from_fuse(const struct fuse4fs *ff,
++					 ext2_ino_t *inop, fuse_ino_t fino)
+ {
+-	if (fino == FUSE_ROOT_ID)
++	if (ff->translate_inums && fino == FUSE_ROOT_ID)
+ 		*inop = EXT2_ROOT_INO;
+ 	else
+ 		*inop = fino;
  }
- #endif /* SUPPORT_FALLOCATE */
  
-+#if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 99)
-+static void op_freezefs(fuse_req_t req, fuse_ino_t ino, uint64_t unlinked)
-+{
-+	struct fuse4fs *ff = fuse4fs_get(req);
-+	ext2_filsys fs;
-+	errcode_t err;
-+	int ret = 0;
-+
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	fs = fuse4fs_start(ff);
-+
-+	if (ff->opstate == F4OP_WRITABLE) {
-+		if (fs->super->s_error_count)
-+			fs->super->s_state |= EXT2_ERROR_FS;
-+		else if (!unlinked)
-+			fs->super->s_state |= EXT2_VALID_FS;
-+		ext2fs_mark_super_dirty(fs);
-+		err = ext2fs_set_gdt_csum(fs);
-+		if (err) {
-+			ret = translate_error(fs, 0, err);
-+			goto out_unlock;
-+		}
-+
-+		err = ext2fs_flush2(fs, 0);
-+		if (err) {
-+			ret = translate_error(fs, 0, err);
-+			goto out_unlock;
-+		}
-+
-+		ff->opstate = F4OP_WRITABLE_FROZEN;
-+	}
-+
-+out_unlock:
-+	fs->super->s_state &= ~EXT2_VALID_FS;
-+	fuse4fs_finish(ff, ret);
-+	fuse_reply_err(req, -ret);
-+}
-+
-+static void op_unfreezefs(fuse_req_t req, fuse_ino_t ino)
-+{
-+	struct fuse4fs *ff = fuse4fs_get(req);
-+	ext2_filsys fs;
-+	errcode_t err;
-+	int ret = 0;
-+
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	fs = fuse4fs_start(ff);
-+
-+	if (ff->opstate == F4OP_WRITABLE_FROZEN) {
-+		if (fs->super->s_error_count)
-+			fs->super->s_state |= EXT2_ERROR_FS;
-+		fs->super->s_state &= ~EXT2_VALID_FS;
-+		ext2fs_mark_super_dirty(fs);
-+		err = ext2fs_set_gdt_csum(fs);
-+		if (err) {
-+			ret = translate_error(fs, 0, err);
-+			goto out_unlock;
-+		}
-+
-+		err = ext2fs_flush2(fs, 0);
-+		if (err) {
-+			ret = translate_error(fs, 0, err);
-+			goto out_unlock;
-+		}
-+
-+		ff->opstate = F4OP_WRITABLE;
-+	}
-+
-+out_unlock:
-+	fuse4fs_finish(ff, ret);
-+	fuse_reply_err(req, -ret);
-+}
-+
-+static void op_shutdownfs(fuse_req_t req, fuse_ino_t ino, uint64_t flags)
-+{
-+	const struct fuse_ctx *ctxt = fuse_req_ctx(req);
-+	struct fuse4fs *ff = fuse4fs_get(req);
-+	int ret;
-+
-+	ret = ioctl_shutdown(ff, ctxt, NULL, NULL, 0);
-+
-+	fuse_reply_err(req, -ret);
-+}
-+#endif
-+
- #ifdef HAVE_FUSE_IOMAP
- static void fuse4fs_iomap_hole(struct fuse4fs *ff, struct fuse_file_iomap *iomap,
- 			       off_t pos, uint64_t count)
-@@ -7461,6 +7547,11 @@ static struct fuse_lowlevel_ops fs_ops = {
- #if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 18)
- 	.statx = op_statx,
- #endif
-+#if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 99)
-+	.freezefs = op_freezefs,
-+	.unfreezefs = op_unfreezefs,
-+	.shutdownfs = op_shutdownfs,
-+#endif
- #ifdef HAVE_FUSE_IOMAP
- 	.iomap_begin = op_iomap_begin,
- 	.iomap_end = op_iomap_end,
-diff --git a/misc/fuse2fs.c b/misc/fuse2fs.c
-index 6266c1de163694..4535bb16efd586 100644
---- a/misc/fuse2fs.c
-+++ b/misc/fuse2fs.c
-@@ -222,6 +222,7 @@ struct fuse2fs_file_handle {
+-static inline void fuse4fs_ino_to_fuse(fuse_ino_t *finop, ext2_ino_t ino)
++static inline void fuse4fs_ino_to_fuse(const struct fuse4fs *ff,
++				       fuse_ino_t *finop, ext2_ino_t ino)
+ {
+-	if (ino == EXT2_ROOT_INO)
++	if (ff->translate_inums && ino == EXT2_ROOT_INO)
+ 		*finop = FUSE_ROOT_ID;
+ 	else
+ 		*finop = ino;
+@@ -371,7 +374,7 @@ static inline void fuse4fs_ino_to_fuse(fuse_ino_t *finop, ext2_ino_t ino)
+ 			fuse_reply_err((req), EIO); \
+ 			return; \
+ 		} \
+-		fuse4fs_ino_from_fuse(ext2_inop, fuse_ino); \
++		fuse4fs_ino_from_fuse(fuse4fs_get(req), ext2_inop, fuse_ino); \
+ 	} while (0)
  
- enum fuse2fs_opstate {
- 	F2OP_READONLY,
-+	F2OP_WRITABLE_FROZEN,
- 	F2OP_WRITABLE,
- 	F2OP_SHUTDOWN,
- };
-@@ -5700,6 +5701,86 @@ static int op_fallocate(const char *path EXT2FS_ATTR((unused)), int mode,
- }
- #endif /* SUPPORT_FALLOCATE */
+ static int __translate_error(ext2_filsys fs, ext2_ino_t ino, errcode_t err,
+@@ -2124,7 +2127,7 @@ static int fuse4fs_stat_inode(struct fuse4fs *ff, ext2_ino_t ino,
+ 			statbuf->st_rdev = inodep->i_block[1];
+ 	}
  
-+#if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 99)
-+static int op_freezefs(const char *path, uint64_t unlinked)
-+{
-+	struct fuse2fs *ff = fuse2fs_get();
-+	ext2_filsys fs;
-+	errcode_t err;
-+	int ret = 0;
-+
-+	FUSE2FS_CHECK_CONTEXT(ff);
-+	fs = fuse2fs_start(ff);
-+
-+	if (ff->opstate == F2OP_WRITABLE) {
-+		if (fs->super->s_error_count)
-+			fs->super->s_state |= EXT2_ERROR_FS;
-+		else if (!unlinked)
-+			fs->super->s_state |= EXT2_VALID_FS;
-+		ext2fs_mark_super_dirty(fs);
-+		err = ext2fs_set_gdt_csum(fs);
-+		if (err) {
-+			ret = translate_error(fs, 0, err);
-+			goto out_unlock;
-+		}
-+
-+		err = ext2fs_flush2(fs, 0);
-+		if (err) {
-+			ret = translate_error(fs, 0, err);
-+			goto out_unlock;
-+		}
-+
-+		ff->opstate = F2OP_WRITABLE_FROZEN;
+-	fuse4fs_ino_to_fuse(&entry->ino, ino);
++	fuse4fs_ino_to_fuse(ff, &entry->ino, ino);
+ 	entry->generation = inodep->i_generation;
+ 	entry->attr_timeout = FUSE4FS_ATTR_TIMEOUT;
+ 	entry->entry_timeout = FUSE4FS_ATTR_TIMEOUT;
+@@ -7793,6 +7796,20 @@ static void fuse4fs_compute_libfuse_args(struct fuse4fs *ff,
+  "-oallow_other,default_permissions,suid,dev");
+ 	}
+ 
++	if (fuse4fs_can_iomap(ff)) {
++		/*
++		 * The root_nodeid mount option was added when iomap support
++		 * was added to fuse.  This enables us to control the root
++		 * nodeid in the kernel, which enables a 1:1 translation of
++		 * ext2 to kernel inumbers.
++		 */
++		snprintf(extra_args, BUFSIZ, "-oroot_nodeid=%d",
++			 EXT2_ROOT_INO);
++		fuse_opt_add_arg(args, extra_args);
++		ff->translate_inums = 0;
 +	}
 +
-+out_unlock:
-+	fs->super->s_state &= ~EXT2_VALID_FS;
-+	fuse2fs_finish(ff, ret);
-+	return ret;
-+}
 +
-+static int op_unfreezefs(const char *path)
-+{
-+	struct fuse2fs *ff = fuse2fs_get();
-+	ext2_filsys fs;
-+	errcode_t err;
-+	int ret = 0;
-+
-+	FUSE2FS_CHECK_CONTEXT(ff);
-+	fs = fuse2fs_start(ff);
-+
-+	if (ff->opstate == F2OP_WRITABLE_FROZEN) {
-+		if (fs->super->s_error_count)
-+			fs->super->s_state |= EXT2_ERROR_FS;
-+		ext2fs_mark_super_dirty(fs);
-+		err = ext2fs_set_gdt_csum(fs);
-+		if (err) {
-+			ret = translate_error(fs, 0, err);
-+			goto out_unlock;
-+		}
-+
-+		err = ext2fs_flush2(fs, 0);
-+		if (err) {
-+			ret = translate_error(fs, 0, err);
-+			goto out_unlock;
-+		}
-+
-+		ff->opstate = F2OP_WRITABLE;
-+	}
-+
-+out_unlock:
-+	fuse2fs_finish(ff, ret);
-+	return ret;
-+}
-+
-+static int op_shutdownfs(const char *path, uint64_t flags)
-+{
-+	struct fuse2fs *ff = fuse2fs_get();
-+
-+	return ioctl_shutdown(ff, NULL, NULL);
-+}
-+#endif
-+
- #ifdef HAVE_FUSE_IOMAP
- static void fuse2fs_iomap_hole(struct fuse2fs *ff, struct fuse_file_iomap *iomap,
- 			       off_t pos, uint64_t count)
-@@ -6984,6 +7065,9 @@ static struct fuse_operations fs_ops = {
+ 	if (ff->debug) {
+ 		int	i;
+ 
+@@ -7998,6 +8015,7 @@ int main(int argc, char *argv[])
+ #ifdef HAVE_FUSE_LOOPDEV
+ 		.loop_fd = -1,
  #endif
- #if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 99)
- 	.getattr_iflags = op_getattr_iflags,
-+	.freezefs = op_freezefs,
-+	.unfreezefs = op_unfreezefs,
-+	.shutdownfs = op_shutdownfs,
- #endif
- #ifdef HAVE_FUSE_IOMAP
- 	.iomap_begin = op_iomap_begin,
++		.translate_inums = 1,
+ 	};
+ 	errcode_t err;
+ 	FILE *orig_stderr = stderr;
 
 
