@@ -1,269 +1,228 @@
-Return-Path: <linux-fsdevel+bounces-77921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +KrLJ5cRnGna/QMAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 09:36:39 +0100
+	id 6GpoEiwgnGkZ/wMAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 10:38:52 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F8601731AC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 09:36:39 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9601174077
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 10:38:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E8DC63031E9E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 08:35:07 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E0BB830432EB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 09:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D72C34D3BE;
-	Mon, 23 Feb 2026 08:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE6034F244;
+	Mon, 23 Feb 2026 09:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EqFJVJGR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lvjUXwJM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B81F34D391
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 08:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771835706; cv=none; b=IFZoz1KVhtf4Ikvvyo8Es1dCkacJ3MSHIKaiwJwDDnyTSDwUbGsdU4u3lqCdGErdtXJPx6jVfpMdogS/HobLelz9MpXV3gOxz5lWx/nZoimCZ8G0XpWqm/TpNAjTd5iR/xky3scJclQhQVGkWIGi6dn00wwEezZ3Pd9Jy6ZU/e8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771835706; c=relaxed/simple;
-	bh=oD7+X79ct0fHHthUw1slK4FuWBROkKkRq34r8OEMvsM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kuj9vht4ILWR+5KACIZxH2Z5YLKf2PXCHIBMWu+ZC5lMgFfTHDE//JLgMcJJ48h3F4+uEPRkIcj+Mvy08m5sE+C6g/csYgXJaHBmaCM0ZU5V1r5L3W8lrDpb3kW3dtq//JT/C4VGwOOYx1hPEp/vDI8qC7T/Jf066wpiBgCvGY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EqFJVJGR; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-48375f1defeso28306835e9.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 00:35:04 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E6B34E75E
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 09:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771839328; cv=pass; b=WyZvCZ5FMzt7yJxVIwo/sEMLP4GQ3lbT9MEJqgHLlZ+I2RYhBNyNM29qLQNpxFHRAPuxC8mbzS87lAibvD8w2bZk6Ou6qHJ3WqL4sy3XvX1j4ppakVWOZu2THpGwHE8ZGmZqDU86m94jh1d1L3+4t2r7HfGpuHp/YMVh8+pGYn4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771839328; c=relaxed/simple;
+	bh=mAAOjC5VpT1HkXsRAwtGw0eUE/35I2Skqe677nArRZE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tvgkJLyGgNlE1jxFTKHuF08XuXeEBoAUS0TNyQ8C92mJWOkTP7B5gJU5lp8sLYPO1kpmLGclvSLrKHfdfAs+Ubh/L9pS4wrXmXL//b23kWDu+uvxuXxVklM4Lrc947eLv1Zz+dk4skdPpfBcJPUEcbgWivlCGjjmcSlDDsdyjfc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lvjUXwJM; arc=pass smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b8f992167dcso505137366b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 01:35:27 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771839326; cv=none;
+        d=google.com; s=arc-20240605;
+        b=ATBzaZGi5N7dqyoFA4qmxLZdOn8+wlhiYO3wAKvozBK+cV1EdFpno4ow0+1N46E0mk
+         VAU37Cq1hHwSa9lrbKT/68E7TCZ+f849wuIKn7TOr+xvUuK+COc+D8ZhN6PbIwmNxhD7
+         iLpoAB/za9yx2/MBOuIQD7WtzcE78GzueAMwDwIkEK4x9La1lmoFXr3mn0QDz1T76TEF
+         HV8aOKPxpjGknafnGmXpeEOkjo1J8sxQmvUS758/nkUJNb/g5obTMCU0uYKCguEWBLnb
+         uzQS4De+CmOI+dTkzXnbj1gZcvuztbc5xum3Ql5okUSsghjgvlIpGkzvp2uPzWTqyFXe
+         dY0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=5/tsVKpvOF9hjEuBModNYiVpSPXtrrKrMQ519faKcis=;
+        fh=Hgs3b3wv98Ut44sItKW5SdhcT4ad1br3zpiltembkdQ=;
+        b=Y2LTo5FQqdDtwO1NmcPvUaWlX5mrJl8jDjuSsTvo2uGZS9ECUohpQSfNaFexmV+04M
+         BmS0hi1/ZQUIn5V3bOj/jk5wiMtVETXVw2KniCeR5y/dtXXG1mqAB/1a/scivE+k65z4
+         t8cixtZF6aJRA11kfoSvWLFBOFpIxwak6hFQwd3AhwIMR6/KbXr450tCbwfCsAhG8xEC
+         MgfXGaTQDH9nuxln0spsim7jDoRZNJ2OkYgheJ/pCXlOIQFGvCHtqgTM2OYEDTMylJnn
+         swmiQZmtMQ5GHUt3HPqG9Cw0UF9qF31q4/QpJiv5WmTJ1nWDRvVssew8D+FpTTLb1RBe
+         PYlg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1771835703; x=1772440503; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=hAizR7Bvz+Bw0LuK1AlDU6wp4T74bA7euWnDx6p9HnI=;
-        b=EqFJVJGRbCz+FhYIgdx5tbyA+V9+L/Tcsu0x/33TYae+YLQ7BEaVhxiWr4yFHvIbAk
-         naEOJBwiJnjvQ1tO47/rdD9thbDXCcgxegNcNreffn1U+jnZYus0GxcBt/bHnpLiGbS4
-         KlCMJbEQC2iHncFkJEtOLj0ZeCeMbIY5+v7FBh4EzUh5WbMuLictUCaVLXjyaTJGsHoI
-         eMocUoaTj/aisbo4r8WCylJzPzppUjOBHMsEWpYpaV5OBGnBUmeRfAcSfa3h9FokXlHn
-         eo2fMxo0yzcKFs/uKz31+49A2hA4dsMnO1MFhPa1zVFjMy79GDJdr1+HIcpiuwXH2ybr
-         pr0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771835703; x=1772440503;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1771839326; x=1772444126; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hAizR7Bvz+Bw0LuK1AlDU6wp4T74bA7euWnDx6p9HnI=;
-        b=nSZU3xZdaWwjD7uXr/6Jhg39PVgZqGgVKJ9fM3Vi33BDZLirJPz8CnB/YybFWAJDGC
-         Mk5WOgXFIrKDaxI54CgjPO2TiDueVYqYYZD4SgBSlKzD14h6tI0/p46B86FBlKg7UbfN
-         OLTcpmGrUJCinZ6e0VgRgNgg1/sZcYNHArcDOzkbzXxvDm/8vPH2hsR8DlsugsmHO2fS
-         iFCT3jx0ULZqB3CRyy/7iwhVdfvQR/aBrsBRIX86d8JmO7NH748KFafoKvmD0Mw+ds/5
-         yEzYDj0D4r4zlHOXkliwDDxPAn5LvROZ3eSg8TWrNoGeBQcYRhY04+7Vjpal2L3Kekzg
-         OGdQ==
-X-Gm-Message-State: AOJu0YwEngNR1PxmlvlSQUFfcZw+h6yI/QG9+ERA5+RgBMP/ymwswhQv
-	i8LyeU5fuZdwmP+xPpYTgCyTrpNsKonPEFmDyFGDTMNCyIc+daJFmen5uerhqF6qEgE=
-X-Gm-Gg: AZuq6aLLK7VaxSv9XXFgsXXzIG/WKTZp4l9zEqHd78ODt9pDIS8puuXNDLklU1eQf/4
-	IvmweVaukuYX1EkwhyfegsktTTxJVzeXEqhuS15VGNYDZNKXzM48oBwV4NPPcjfgERJFg4tqvOx
-	gpUGnL337bSlY9F7Yy4xc7xi7sRWkhfXG6Q///xVsaFsy+xJuF/HLtHQg6Hf71J7VahfDr4OlDs
-	LmflSE3zYal0T17jT9jB2n/VKpgiPqK53texV/gPiRXJW8Tg0cSE8hAuaZIotXEvn29Fp8nnu6D
-	c5k5VMFt/0p9LhGk+MFB1o+0LZ7IbJfDYdn/8/mXUkSmi2BXiVJLnTvXu53U+iPG4JoMKaWF4bj
-	o4/pofOSPcoednd2Vd16CKNkF4E1oFg+OvI+tFipbpj1ybuRuQbtRCMEG99ZTxIS6bLIj/lRWMr
-	CbktUGP7yk1GGfn356B73x0EmvrkughvE6nStNYTSGzB7XGFMfjuoJbQrKTbHAPQ==
-X-Received: by 2002:a05:600c:c4a5:b0:483:a2ce:f461 with SMTP id 5b1f17b1804b1-483a95eb453mr124814625e9.4.1771835702691;
-        Mon, 23 Feb 2026 00:35:02 -0800 (PST)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-358a1b8e0cdsm6145415a91.2.2026.02.23.00.34.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Feb 2026 00:35:01 -0800 (PST)
-Message-ID: <8a66f4d4-601c-4e1c-97f0-0ba7781d6ae8@suse.com>
-Date: Mon, 23 Feb 2026 19:04:55 +1030
+        bh=5/tsVKpvOF9hjEuBModNYiVpSPXtrrKrMQ519faKcis=;
+        b=lvjUXwJMFDUVNdE9/6JGFIIEgXAr+NW/nxJYiNKP83A2h2rSdOYnS2Qap5SEi8qvuc
+         Xvv8mX7Ib5UTjZ2Ntgfe8sP1Y8sbStPRBVlVXYlUG96b6S34FcSJuKZLdABzCTwQSawB
+         6kEeAv1Xy3QQTZBXYrCOuzdG6KW4vFjs2HUXgSqvz4TtzIzp1VaFIlsTAa6b5Sp1Jd34
+         8+G7qchOZolFb2NrtqZ2ma6izvwW8ElQncc0YNDtZAtfeVwNdlTIquDlE1K/HvvMVBW5
+         MVSWix+ReYo/KfT3GNcH4MXXhrxRSIQZW2RW+9DJtcTlAkJOfHQiKIYj+U2ejfaspoaD
+         g7tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771839326; x=1772444126;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=5/tsVKpvOF9hjEuBModNYiVpSPXtrrKrMQ519faKcis=;
+        b=rx+FIsJaNLQXfZ7Ux2JXftZ9MoGGY5AwzI4nWFDH3pwmF82auXnDSoT5fJfiTKaYE+
+         kCxaQDgo6Hjozdh6E+vrbcPLgFtfEM4/TMGiXrNlCaJMXN/EhPuui5BH994gC8ZeHNwn
+         MhojxpInZ4/EQmecvYjy4BnTJDW1+850Qxs7TEgMhc/63V1/7V+jdr8GWHcmw/md6zWJ
+         j0FAJDJGd5a5NwvPsv7B1ETzH1FKn0AHS8gyIjhPk7GmzATC9lnFO+a1oYOY4IojVqTa
+         fFDwPYPZEuKjLRlJ+ueMAa1SG/scXXnMaiJWSTYvL0mp+0iU7OEKE7JT5hFlDdDrEFte
+         9Xiw==
+X-Forwarded-Encrypted: i=1; AJvYcCVb8uzkGXBQTg3DNPXZO5WwKBqJuMCpZcfDemTLy+LsJFePIozFJxCODcLHR8QZ0OlO1aPoOiXANN5N+tDu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzain1TACEUEMNHigZxGKd3yfpt3sJJ8W6kPrQWnhLlvh3fsXw3
+	hbo2BZDAimTsyyWaUjF/0XKlKk4H8I/hEkwxlDkhDLRhUBK6f8W1u4YUsqgaBdc/PaQprhqEYa3
+	mfbiu+A0y9ij6bgwgEw7woEOrt8mSpbc=
+X-Gm-Gg: AZuq6aLsHSUbzHx6Ko5V+Ln4CKklcDZCpRllCgHCJVy3Vrfrq0CoPOg6k1zT4/oqRtD
+	VnUpuvgBmr1wO3amV0+6Cx1MfK/s2R2ph3x8mBQwFLUu/qzFJqRQDUIew9FnIvUrOdVLMY9pRfA
+	g2d7y7MxiDW1OTp7OdyhX0AWlLF+BSgZTSfGTmD0zoBUXpr4dg/K9k7xf9ZYOGuQHwB41r6Pp2B
+	d8QvggIAC1wtu6HjO6K2ndXMRzH/bqA8j+GCONI5UvrfBqQNyzjOXQ16BotbF0+r9YSmQDoDw2v
+	hwhZ65KqtyYFkaGRcrJO1bzZN8jqE7Vz+IxOKh8/Tw==
+X-Received: by 2002:a17:906:7307:b0:b88:5002:50c0 with SMTP id
+ a640c23a62f3a-b90819db296mr564028666b.20.1771839325394; Mon, 23 Feb 2026
+ 01:35:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Iomap and compression? (Was "Re: [LSF/MM/BPF TOPIC] Large folio
- support: iomap framework changes versus filesystem-specific implementations")
-To: Nanzhe Zhao <nzzhao@126.com>, lsf-pc@lists.linux-foundation.org
-Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
- willy@infradead.org, yi.zhang@huaweicloud.com, jaegeuk@kernel.org,
- Chao Yu <chao@kernel.org>, Barry Song <21cnbao@gmail.com>
-References: <75f43184.d57.19c7b2269dd.Coremail.nzzhao@126.com>
-Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <75f43184.d57.19c7b2269dd.Coremail.nzzhao@126.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20260223011210.3853517-1-neilb@ownmail.net> <20260223011210.3853517-12-neilb@ownmail.net>
+In-Reply-To: <20260223011210.3853517-12-neilb@ownmail.net>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 23 Feb 2026 11:35:14 +0200
+X-Gm-Features: AaiRm51zLgcrRbPb_4HmwkH5uY0J9aukMWrvlX2vP_E-cCHRJFMZshxY7_A02Xw
+Message-ID: <CAOQ4uxibL=2Z0FZMz5wMAo=JMaJouOVo3p7t3Fi3FR59U5Tu=g@mail.gmail.com>
+Subject: Re: [PATCH v2 11/15] ovl: pass name buffer to ovl_start_creating_temp()
+To: NeilBrown <neil@brown.name>
+Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
+	Jeff Layton <jlayton@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, 
+	John Johansen <john.johansen@canonical.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[suse.com,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=google];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,infradead.org,huaweicloud.com,kernel.org,gmail.com];
-	DKIM_TRACE(0.00)[suse.com:+];
-	TAGGED_FROM(0.00)[bounces-77921-lists,linux-fsdevel=lfdr.de];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,suse.com:mid,suse.com:dkim];
-	FREEMAIL_TO(0.00)[126.com,lists.linux-foundation.org];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77922-lists,linux-fsdevel=lfdr.de];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,redhat.com,suse.cz,oracle.com,szeredi.hu,canonical.com,paul-moore.com,namei.org,hallyn.com,gmail.com,vger.kernel.org,lists.linux.dev,lists.ubuntu.com];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[wqu@suse.com,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCVD_COUNT_FIVE(0.00)[5];
-	MID_RHS_MATCH_FROM(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[amir73il@gmail.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Rspamd-Queue-Id: 1F8601731AC
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[brown.name:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: A9601174077
 X-Rspamd-Action: no action
 
+On Mon, Feb 23, 2026 at 2:14=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote=
+:
+>
+> From: NeilBrown <neil@brown.name>
+>
+> Now ovl_start_creating_temp() is passed a buffer in which to store the
+> temp name.  This will be useful in a future patch were ovl_create_real()
+> will need access to that name.
+>
+> Signed-off-by: NeilBrown <neil@brown.name>
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-
-在 2026/2/20 23:29, Nanzhe Zhao 写道:
-> Large folios can reduce per-page overhead and improve throughput for large buffered I/O, but enabling them in filesystems is not a mechanical “page → folio” conversion. The core difficulty is preserving correctness and performance when a folio must maintain subrange state, while existing filesystem code paths and the iomap buffered I/O framework make different assumptions about state tracking, locking lifetime, block mapping, and writeback semantics.
-> 
-> This session proposes a cross-filesystem discussion around two directions that are actively being explored:
-> 
-> Iomap approach: adopt iomap buffered I/O paths and benefit from iomap-style subrange folio state machinery. However, much of this machinery lives as static helpers inside iomap’s implementation (e.g., in buffered-io.c) and is not available as a reusable API, which pushes filesystems toward re-implementing similar logic. Moreover, iomap’s per-folio state relies on folio-private metadata storage, which can clash with filesystem-specific folio-private usage.
-> 
-> 
-> Native fs approach: keep native buffered I/O paths and implement filesystem-specific folio_state tracking and helpers to avoid whole-folio dirtying/write amplification and to match filesystem-private metadata (e.g., private flags). This avoids some iomap integration constraints and preserves filesystem-specific optimizations, but it increases filesystem-local complexity and long-term maintenance cost.
-
-Please note that, btrfs chose this "native fs" way only because there 
-are a lot of blockage preventing us from going full iomap directly.
-
-Our long term objective is to go full iomap, and Goldwyn is already 
-working on non-compressed buffered write path.
-And I'm working on the compressed write path, firstly to get rid of the 
-complex async submission thing, which makes btrfs per-folio tracking way 
-more complex than iomap.
-
-
-So there is no real "native fs" approach, it's just a middle ground 
-before we fully figure out how to do our buffered write path correct.
-
-[BTRFS COMPRESSION DILEMMA]
-
-I just want to take the chance to get the feedback from iomap guys on 
-how to support compression.
-
-Btrfs supports compression and implemented it in a very flex but also 
-very complex way.
-
-For the example of flexibility, any dirty range >= 2 fs blocks can go 
-through compression, and there is no alignment requirement other than fs 
-block size at all.
-
-And for the example of complexity, btrfs has a complex async extent 
-submission at delalloc time (similar to iomap_begin time), where we keep 
-the whole contig dirty range (can go beyond the current folio) locked, 
-and do the compression in a workqueue, and submit them in that workqueue.
-
-This introduced a lot of extra sub-folio tracking for locked/writeback 
-fs blocks, and kills concurrency (can not read the page cache since it's 
-locked during compression).
-
-
-Furthermore there are a lot of different corner cases we need to 
-address, e.g:
-
-- Compressed >= input
-
-   We need to fall back to non-compressed path.
-
-- Compression is done, but extent allocator failed
-
-   E.g. we got a 128K data, compressed it to 64K, but our on-disk free
-   space is fragmented, can only provide two 32K extents.
-
-   We still need to fallback to non-compressed path, as we do not support
-   splitting a compressed extent into two.
-
-
-[DELAYED UNTIL SUBMISSION]
-
-Although we're far from migrating to iomap, my current compression 
-rework will go a delayed method like the following, mostly to get rid of 
-the async submission code:
-
-- Allocate a place holder ordered extent at iomap_begin/delalloc time
-   Unlike regular iomap_begin() or run_delalloc_range(), we do not
-   reserve any on-disk space.
-
-   And the ordered extent will have a special flag to notify that the bio
-   should not be written into disk directly.
-
-- Queue the folio into a bio and submit
-   So the involved folios will get its dirty flags cleared, and set
-   writeback flags just before submission.
-
-   And at submission time, we find the bio has a special delayed flag,
-   and will queue the work load into a workqueue to handle the special
-   bio.
-
-- Do real work in the workqueue, including:
-
-   * Do the compression
-
-   * Allocate real on-disk extent(s)
-
-   * Assemble the real bio(s)
-     If the compression and allocation succeeded, we assmeble
-     the bio with compressed data.
-
-     Otherwise fallback to non-compressed path, using the page cache
-     to assemble the bio.
-
-   * Submit all involved bio(s) and wait for them to finish
-
-   * Do the endio of the original bio
-     Which will clear the writeback flags of all involved page cache
-     folios, and end ordered extents for them.
-
-[IOMAP WITH COMPRESSION?]
-If we want to apply this method to iomap, it means we will have a new 
-iomap type (DELAYED), and let the fs handle most of the work during 
-submission, and mostly kill the generification of iomap.
-
-Any ideas on this? Or will there be a better solution?
-
-Thanks,
-Qu
+> ---
+>  fs/overlayfs/dir.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
+>
+> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+> index ff3dbd1ca61f..c4feb89ad1e3 100644
+> --- a/fs/overlayfs/dir.c
+> +++ b/fs/overlayfs/dir.c
+> @@ -66,10 +66,9 @@ void ovl_tempname(char name[OVL_TEMPNAME_SIZE])
+>  }
+>
+>  static struct dentry *ovl_start_creating_temp(struct ovl_fs *ofs,
+> -                                             struct dentry *workdir)
+> +                                             struct dentry *workdir,
+> +                                             char name[OVL_TEMPNAME_SIZE=
+])
+>  {
+> -       char name[OVL_TEMPNAME_SIZE];
+> -
+>         ovl_tempname(name);
+>         return start_creating(ovl_upper_mnt_idmap(ofs), workdir,
+>                               &QSTR(name));
+> @@ -81,11 +80,12 @@ static struct dentry *ovl_whiteout(struct ovl_fs *ofs=
+)
+>         struct dentry *whiteout, *link;
+>         struct dentry *workdir =3D ofs->workdir;
+>         struct inode *wdir =3D workdir->d_inode;
+> +       char name[OVL_TEMPNAME_SIZE];
+>
+>         guard(mutex)(&ofs->whiteout_lock);
+>
+>         if (!ofs->whiteout) {
+> -               whiteout =3D ovl_start_creating_temp(ofs, workdir);
+> +               whiteout =3D ovl_start_creating_temp(ofs, workdir, name);
+>                 if (IS_ERR(whiteout))
+>                         return whiteout;
+>                 err =3D ovl_do_whiteout(ofs, wdir, whiteout);
+> @@ -97,7 +97,7 @@ static struct dentry *ovl_whiteout(struct ovl_fs *ofs)
+>         }
+>
+>         if (!ofs->no_shared_whiteout) {
+> -               link =3D ovl_start_creating_temp(ofs, workdir);
+> +               link =3D ovl_start_creating_temp(ofs, workdir, name);
+>                 if (IS_ERR(link))
+>                         return link;
+>                 err =3D ovl_do_link(ofs, ofs->whiteout, wdir, link);
+> @@ -247,7 +247,9 @@ struct dentry *ovl_create_temp(struct ovl_fs *ofs, st=
+ruct dentry *workdir,
+>                                struct ovl_cattr *attr)
+>  {
+>         struct dentry *ret;
+> -       ret =3D ovl_start_creating_temp(ofs, workdir);
+> +       char name[OVL_TEMPNAME_SIZE];
+> +
+> +       ret =3D ovl_start_creating_temp(ofs, workdir, name);
+>         if (IS_ERR(ret))
+>                 return ret;
+>         ret =3D ovl_create_real(ofs, workdir, ret, attr);
+> --
+> 2.50.0.107.gf914562f5916.dirty
+>
 
