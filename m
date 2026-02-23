@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-78170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id AKfUGk/mnGlNMAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:44:15 +0100
+	id CMw+FVzmnGlNMAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:44:28 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 086E817FDB8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:44:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07BD917FDD5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:44:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 6AFA230B7754
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:40:51 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id B2B9A30BF857
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B6037FF4D;
-	Mon, 23 Feb 2026 23:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A8D37F8DA;
+	Mon, 23 Feb 2026 23:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FH1q2z7S"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y1ur0U0U"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7411E9906;
-	Mon, 23 Feb 2026 23:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52B437F8DC;
+	Mon, 23 Feb 2026 23:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771890046; cv=none; b=U7QHgKuYb0/BTCp1/Em0tH+8euHEQ1OxLKsd2mWzUAgwZikx1oKKWelx6expw8jxaYvcvHPz+bml8AeZt+X+GGBD1cH8GsUCVyPhhGO6qfn81WlDeFL5Py0sTuYOZ7LfhhP82X/eyvZGaDrvAp0N3YiISRk+fzdcr4G2lUR5dJc=
+	t=1771890061; cv=none; b=S2G0XxBT73JXs00NwjsR+lhGayeGju3RcS+Q4DLf5pwPT3245gHV7xBNLEbzWQD4aVaQ2U6HaOmL3jlz9yfCRAz1KauvJ3TdRHhs0N7SDJ6wd/7APKo9zPsCb4A3LbWP9MnVaz4w/ueTfFRd4QZ+GjPxuxq9UjoqpLqpQ7MP9AM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771890046; c=relaxed/simple;
-	bh=/9YrKbT1Yll5lu37hT9MwYJOVGra563eoWxULLsgGW4=;
+	s=arc-20240116; t=1771890061; c=relaxed/simple;
+	bh=qTFs1CcReAsIhdOCN/88qiDJg4FfrkNzfBuASz5DxPg=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RoZ46/IGBQlFsQ7T1mWaOCP71gEqoH7GAQuYJiE2DJdbWgfAGFNM0WvqjfVgqRQxYOJJ+oV7KuK6SsK/lvuLmcEbE0+Y1eoYRSXL0xPiw+sjLjdXV0EBr4ZAnhnFGenXBs3YD1ZSRQxFhngKiWcaY2GkxxIVwCONzOAH+ZeVNVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FH1q2z7S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21255C19421;
-	Mon, 23 Feb 2026 23:40:46 +0000 (UTC)
+	 MIME-Version:Content-Type; b=kMvAjT/ft5Msyz3sz5Q26YqbazMiOwspd+Dke6jv/sZUzhOyokmYRRN3TsVTkgvcaUxhJLBTy7MFTUk02YwqeWT80qEkrNJvd04HFIgQ8Qy2K67Po4VNliK0xlSnZuH/Kd73VF5hrCPVZ0g0iZUtAhM6z18EgrjcDhCL5OQ4OY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y1ur0U0U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADDF3C116C6;
+	Mon, 23 Feb 2026 23:41:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771890046;
-	bh=/9YrKbT1Yll5lu37hT9MwYJOVGra563eoWxULLsgGW4=;
+	s=k20201202; t=1771890061;
+	bh=qTFs1CcReAsIhdOCN/88qiDJg4FfrkNzfBuASz5DxPg=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=FH1q2z7Sx5HpENT1Ie4/STOJ1hSDOF9l/0vIdiqDws+fT1IsY7iQtSskouKV4+sOX
-	 f/855jljKXccEaF/y6VGzgsgbQnf6mft7k2jKLEk+3OdZv1LuWAlpC+9m+U8JatizR
-	 OPg5hmDS33bT7TpjUl8LPvm2i40f4bHMmysB5m0c/ECKxtBWrRw539cLopwj8b5SvL
-	 z5C4cbq9iajqk1YchD/d6NpBRSwDmrWjEEZC4tJjKnjG7SVgmKMblTy7UWxV0wgP3a
-	 c5duPIrFlPE0Re1QyUghVEwmKkxSLflNG/4qXDR5v2N+UtSFTmPob8IxykWUYZVseE
-	 pOtIFaD7TRk+Q==
-Date: Mon, 23 Feb 2026 15:40:45 -0800
-Subject: [PATCH 18/19] fuse4fs: disable fs reclaim and write throttling
+	b=Y1ur0U0UJ9ZOcSSorazhV2U3vBnpYgA/ppTNjAAt7m5wO+sTBfd/uN5PytUhWln3d
+	 +fGJ2KzGUMBVkeSk+dygaLHjEHTCYo59bvs7QeOkQ7JoNZlCpyFfbFOpqSsaxc9mBJ
+	 xvUHhBfl6g4Ymtfr6qiDlsqaIhbc8tbig8/sH2W8MmMuaYD9/IV0dh39GvO0kFA0fv
+	 zxRO4+JPL4TOez2inccTz0Vg4Q9nMDGvQFgxUt1OmJyb8Yk+4pxa/VLFyh9E6aGtrY
+	 cHRSbbCyMMnBwcqCoIe9GEOUn+DLpHNU2WTifL/bo1xAt0LiXdPHhPmvsqZOGeCmjR
+	 fySJo01AlKQhA==
+Date: Mon, 23 Feb 2026 15:41:01 -0800
+Subject: [PATCH 19/19] fuse2fs: implement freeze and shutdown requests
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-ext4@vger.kernel.org, miklos@szeredi.hu, bernd@bsbernd.com,
  joannelkoong@gmail.com, neal@gompa.dev
-Message-ID: <177188744804.3943178.14306714883633979460.stgit@frogsfrogsfrogs>
+Message-ID: <177188744822.3943178.4419152071339815367.stgit@frogsfrogsfrogs>
 In-Reply-To: <177188744403.3943178.7675407203918355137.stgit@frogsfrogsfrogs>
 References: <177188744403.3943178.7675407203918355137.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -73,7 +73,7 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_CC(0.00)[vger.kernel.org,szeredi.hu,bsbernd.com,gmail.com,gompa.dev];
-	TAGGED_FROM(0.00)[bounces-78170-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78171-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	RCVD_TLS_LAST(0.00)[];
@@ -91,87 +91,244 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 086E817FDB8
+X-Rspamd-Queue-Id: 07BD917FDD5
 X-Rspamd-Action: no action
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Ask the kernel if we can disable fs reclaim and write throttling.
-
-Disabling fs reclaim prevents livelocks where the fuse server can
-allocate memory, fault into the kernel, and then the allocation tries to
-initiate writeback by calling back into the same fuse server.
-
-Disabling BDI write throttling means that writeback won't be throttled
-by metadata writes to the filesystem.
+Handle freezing and shutting down the filesystem if requested.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fuse4fs/fuse4fs.c |   33 ++++++++++++++++++++++++++++++---
- 1 file changed, 30 insertions(+), 3 deletions(-)
+ fuse4fs/fuse4fs.c |   91 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ misc/fuse2fs.c    |   84 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 175 insertions(+)
 
 
 diff --git a/fuse4fs/fuse4fs.c b/fuse4fs/fuse4fs.c
-index 77207bae19e544..4499f4083f85dd 100644
+index 4499f4083f85dd..170accabfd9fd6 100644
 --- a/fuse4fs/fuse4fs.c
 +++ b/fuse4fs/fuse4fs.c
-@@ -7737,6 +7737,19 @@ static void try_set_io_flusher(struct fuse4fs *ff)
- #endif
+@@ -228,6 +228,7 @@ struct fuse4fs_file_handle {
+ 
+ enum fuse4fs_opstate {
+ 	F4OP_READONLY,
++	F4OP_WRITABLE_FROZEN,
+ 	F4OP_WRITABLE,
+ 	F4OP_SHUTDOWN,
+ };
+@@ -6166,6 +6167,91 @@ static void op_fallocate(fuse_req_t req, fuse_ino_t fino EXT2FS_ATTR((unused)),
  }
+ #endif /* SUPPORT_FALLOCATE */
  
-+/* Undo try_set_io_flusher */
-+static void try_clear_io_flusher(struct fuse4fs *ff)
++#if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 99)
++static void op_freezefs(fuse_req_t req, fuse_ino_t ino, uint64_t unlinked)
 +{
-+#ifdef HAVE_PR_SET_IO_FLUSHER
-+	/*
-+	 * zero ret means it's already set, negative means we can't even
-+	 * look at the value so don't bother clearing it
-+	 */
-+	if (prctl(PR_GET_IO_FLUSHER, 0, 0, 0, 0) > 0)
-+		prctl(PR_SET_IO_FLUSHER, 0, 0, 0, 0);
-+#endif
-+}
++	struct fuse4fs *ff = fuse4fs_get(req);
++	ext2_filsys fs;
++	errcode_t err;
++	int ret = 0;
 +
- /* Try to adjust the OOM score so that we don't get killed */
- static void try_adjust_oom_score(struct fuse4fs *ff)
- {
-@@ -7842,12 +7855,27 @@ static int fuse4fs_main(struct fuse_args *args, struct fuse4fs *ff)
- 	fuse_loop_cfg_set_idle_threads(loop_config, opts.max_idle_threads);
- 	fuse_loop_cfg_set_max_threads(loop_config, 4);
- 
-+	/*
-+	 * Try to set ourselves up with fs reclaim disabled to prevent
-+	 * recursive reclaim and throttling.  This must be done before starting
-+	 * the worker threads so that they inherit the process flags.
-+	 */
-+	ret = fuse_lowlevel_disable_fsreclaim(ff->fuse, 1);
-+	if (ret) {
-+		err_printf(ff, "%s: %s.\n",
-+ _("Could not register as FS flusher thread"),
-+			   strerror(errno));
-+		try_set_io_flusher(ff);
-+		ret = 0;
++	FUSE4FS_CHECK_CONTEXT(req);
++	fs = fuse4fs_start(ff);
++
++	if (ff->opstate == F4OP_WRITABLE) {
++		if (fs->super->s_error_count)
++			fs->super->s_state |= EXT2_ERROR_FS;
++		else if (!unlinked)
++			fs->super->s_state |= EXT2_VALID_FS;
++		ext2fs_mark_super_dirty(fs);
++		err = ext2fs_set_gdt_csum(fs);
++		if (err) {
++			ret = translate_error(fs, 0, err);
++			goto out_unlock;
++		}
++
++		err = ext2fs_flush2(fs, 0);
++		if (err) {
++			ret = translate_error(fs, 0, err);
++			goto out_unlock;
++		}
++
++		ff->opstate = F4OP_WRITABLE_FROZEN;
 +	}
 +
- 	if (fuse_session_loop_mt(se, loop_config) != 0) {
- 		ret = 8;
--		goto out_loopcfg;
-+		goto out_flusher;
- 	}
++out_unlock:
++	fs->super->s_state &= ~EXT2_VALID_FS;
++	fuse4fs_finish(ff, ret);
++	fuse_reply_err(req, -ret);
++}
++
++static void op_unfreezefs(fuse_req_t req, fuse_ino_t ino)
++{
++	struct fuse4fs *ff = fuse4fs_get(req);
++	ext2_filsys fs;
++	errcode_t err;
++	int ret = 0;
++
++	FUSE4FS_CHECK_CONTEXT(req);
++	fs = fuse4fs_start(ff);
++
++	if (ff->opstate == F4OP_WRITABLE_FROZEN) {
++		if (fs->super->s_error_count)
++			fs->super->s_state |= EXT2_ERROR_FS;
++		fs->super->s_state &= ~EXT2_VALID_FS;
++		ext2fs_mark_super_dirty(fs);
++		err = ext2fs_set_gdt_csum(fs);
++		if (err) {
++			ret = translate_error(fs, 0, err);
++			goto out_unlock;
++		}
++
++		err = ext2fs_flush2(fs, 0);
++		if (err) {
++			ret = translate_error(fs, 0, err);
++			goto out_unlock;
++		}
++
++		ff->opstate = F4OP_WRITABLE;
++	}
++
++out_unlock:
++	fuse4fs_finish(ff, ret);
++	fuse_reply_err(req, -ret);
++}
++
++static void op_shutdownfs(fuse_req_t req, fuse_ino_t ino, uint64_t flags)
++{
++	const struct fuse_ctx *ctxt = fuse_req_ctx(req);
++	struct fuse4fs *ff = fuse4fs_get(req);
++	int ret;
++
++	ret = ioctl_shutdown(ff, ctxt, NULL, NULL, 0);
++
++	fuse_reply_err(req, -ret);
++}
++#endif
++
+ #ifdef HAVE_FUSE_IOMAP
+ static void fuse4fs_iomap_hole(struct fuse4fs *ff, struct fuse_file_iomap *iomap,
+ 			       off_t pos, uint64_t count)
+@@ -7461,6 +7547,11 @@ static struct fuse_lowlevel_ops fs_ops = {
+ #if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 18)
+ 	.statx = op_statx,
+ #endif
++#if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 99)
++	.freezefs = op_freezefs,
++	.unfreezefs = op_unfreezefs,
++	.shutdownfs = op_shutdownfs,
++#endif
+ #ifdef HAVE_FUSE_IOMAP
+ 	.iomap_begin = op_iomap_begin,
+ 	.iomap_end = op_iomap_end,
+diff --git a/misc/fuse2fs.c b/misc/fuse2fs.c
+index 6266c1de163694..4535bb16efd586 100644
+--- a/misc/fuse2fs.c
++++ b/misc/fuse2fs.c
+@@ -222,6 +222,7 @@ struct fuse2fs_file_handle {
  
--out_loopcfg:
-+out_flusher:
-+	try_clear_io_flusher(ff);
- 	fuse_loop_cfg_destroy(loop_config);
- out_remove_signal_handlers:
- 	fuse_remove_signal_handlers(se);
-@@ -7925,7 +7953,6 @@ int main(int argc, char *argv[])
- 		goto out;
- 	}
+ enum fuse2fs_opstate {
+ 	F2OP_READONLY,
++	F2OP_WRITABLE_FROZEN,
+ 	F2OP_WRITABLE,
+ 	F2OP_SHUTDOWN,
+ };
+@@ -5700,6 +5701,86 @@ static int op_fallocate(const char *path EXT2FS_ATTR((unused)), int mode,
+ }
+ #endif /* SUPPORT_FALLOCATE */
  
--	try_set_io_flusher(&fctx);
- 	try_adjust_oom_score(&fctx);
- 
- 	/* Will we allow users to allocate every last block? */
++#if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 99)
++static int op_freezefs(const char *path, uint64_t unlinked)
++{
++	struct fuse2fs *ff = fuse2fs_get();
++	ext2_filsys fs;
++	errcode_t err;
++	int ret = 0;
++
++	FUSE2FS_CHECK_CONTEXT(ff);
++	fs = fuse2fs_start(ff);
++
++	if (ff->opstate == F2OP_WRITABLE) {
++		if (fs->super->s_error_count)
++			fs->super->s_state |= EXT2_ERROR_FS;
++		else if (!unlinked)
++			fs->super->s_state |= EXT2_VALID_FS;
++		ext2fs_mark_super_dirty(fs);
++		err = ext2fs_set_gdt_csum(fs);
++		if (err) {
++			ret = translate_error(fs, 0, err);
++			goto out_unlock;
++		}
++
++		err = ext2fs_flush2(fs, 0);
++		if (err) {
++			ret = translate_error(fs, 0, err);
++			goto out_unlock;
++		}
++
++		ff->opstate = F2OP_WRITABLE_FROZEN;
++	}
++
++out_unlock:
++	fs->super->s_state &= ~EXT2_VALID_FS;
++	fuse2fs_finish(ff, ret);
++	return ret;
++}
++
++static int op_unfreezefs(const char *path)
++{
++	struct fuse2fs *ff = fuse2fs_get();
++	ext2_filsys fs;
++	errcode_t err;
++	int ret = 0;
++
++	FUSE2FS_CHECK_CONTEXT(ff);
++	fs = fuse2fs_start(ff);
++
++	if (ff->opstate == F2OP_WRITABLE_FROZEN) {
++		if (fs->super->s_error_count)
++			fs->super->s_state |= EXT2_ERROR_FS;
++		ext2fs_mark_super_dirty(fs);
++		err = ext2fs_set_gdt_csum(fs);
++		if (err) {
++			ret = translate_error(fs, 0, err);
++			goto out_unlock;
++		}
++
++		err = ext2fs_flush2(fs, 0);
++		if (err) {
++			ret = translate_error(fs, 0, err);
++			goto out_unlock;
++		}
++
++		ff->opstate = F2OP_WRITABLE;
++	}
++
++out_unlock:
++	fuse2fs_finish(ff, ret);
++	return ret;
++}
++
++static int op_shutdownfs(const char *path, uint64_t flags)
++{
++	struct fuse2fs *ff = fuse2fs_get();
++
++	return ioctl_shutdown(ff, NULL, NULL);
++}
++#endif
++
+ #ifdef HAVE_FUSE_IOMAP
+ static void fuse2fs_iomap_hole(struct fuse2fs *ff, struct fuse_file_iomap *iomap,
+ 			       off_t pos, uint64_t count)
+@@ -6984,6 +7065,9 @@ static struct fuse_operations fs_ops = {
+ #endif
+ #if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 99)
+ 	.getattr_iflags = op_getattr_iflags,
++	.freezefs = op_freezefs,
++	.unfreezefs = op_unfreezefs,
++	.shutdownfs = op_shutdownfs,
+ #endif
+ #ifdef HAVE_FUSE_IOMAP
+ 	.iomap_begin = op_iomap_begin,
 
 
