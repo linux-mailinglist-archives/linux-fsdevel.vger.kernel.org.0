@@ -1,199 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-77997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OLGoMZeunGmYJwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 20:46:31 +0100
+	id sLjkB8yynGmxJwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 21:04:28 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EC4E17C805
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 20:46:31 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AF5317CB09
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 21:04:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4F1FE30A9AA2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 19:45:43 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 888FD30AD8BD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 19:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E654537418F;
-	Mon, 23 Feb 2026 19:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF01137646E;
+	Mon, 23 Feb 2026 19:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b="XY1m8g4/"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PuTgYCgx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from hamster.birch.relay.mailchannels.net (hamster.birch.relay.mailchannels.net [23.83.209.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ACB919CD1B;
-	Mon, 23 Feb 2026 19:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.209.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771875941; cv=pass; b=cOHfh8/qsuem0WGTdLrtlNUD340UqnXWGDKg1X/zdDAAVV1RgdPaiZ31d9SPkDwvGPPpOdazblDQrcQRmgFDZuLlBpJbPBF3laC/By3yCL/90tTzuckzR06or/HP4LEnNn3h52l+qIGtYPKk5aNwqhviKK6TcF8oe6YdF5bmUyg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771875941; c=relaxed/simple;
-	bh=kOpRYhHICy8M4SINTpbmzOgXn90nTxRGVtaM2dJPMms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bLeCRlZH5GrW2c3cSn0DXrsy4d+7pd8OVdryx3jI1i0D6nvG0qRMSLMljXMEBV2D26o2taOz/QYLwTABCYLoHQAX3yR0SgwDrrI4hXgvxUIgm9sUVEsbIiAkkfwbis9SZjAohxS3PQxHoCjUT1qWkQOWmFuOB4O/DsXDrmPK4jo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net; spf=pass smtp.mailfrom=landley.net; dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b=XY1m8g4/; arc=pass smtp.client-ip=23.83.209.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=landley.net
-X-Sender-Id: dreamhost|x-authsender|rob@landley.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 566F1782A22;
-	Mon, 23 Feb 2026 19:45:33 +0000 (UTC)
-Received: from pdx1-sub0-mail-a220.dreamhost.com (trex-green-0.trex.outbound.svc.cluster.local [100.97.23.125])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id A95BE78268C;
-	Mon, 23 Feb 2026 19:45:30 +0000 (UTC)
-ARC-Seal: i=1; a=rsa-sha256; d=mailchannels.net; s=arc-2022; cv=none;
-	t=1771875930;
-	b=HS5BrAtCEc9sQVMENjEq5WJsoLSU3vyiM4PMStZ0Utnr8A+oyp/BqCE3XoQDSYnuDkoegI
-	iLN/wlLpRUhR+88Ub7PL7JUw3lEK51p0ozxaigfCpevNwUcdWsfJdONyFWJrLAtePbDJQ7
-	IUJQUsNsIvqpOvpeJA1iGkDp0FJOx88GwkZycSWozOBvB6BioUfvwuUekNU7ESotGGGL8x
-	Y5TNdVbRYN9t8Oc7dwji+W/gXj9In85xuEt0xj6IQ4Z9mQNhAI+77Qjye97x/307dOKqSY
-	hoYSEazgD3wo53v4LjK1h8IvkvCkZN9dflik2QMdNWosBZI8ZH2B2Q7yvTuOaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1771875930;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=wP25vflJhT12hSbFEFhoEPhTLE25qhuBvB1ca50gT0Y=;
-	b=O1SjRmuSoyyubokfLY8RlZneLPRlPtiPe5md2mFzL/iLoV3MGdOqkUBkiTgkz5YwUfSzr4
-	l/ckiAXiCCzZZVLMljhUryHQzQ03zkARhhKOMiDEWv28/RRhTiiteiLUdTlboMGE3w3hEZ
-	u4yE776biH5EYubatmsOfYYxlX3szNYCwS/JHCq1UpQt8sTJ0JBrKFc8/D7sM8y8L83gwl
-	yd9F3GEB5ac5MxSNJ6BIKHg0GjHX4PfGTBKrxmRd9fkDBydEDzEssXj5dlbPWW/V5htVt3
-	Fwy5YFdBUHxrm1BH/6lEMNrdWaaXf7GzYK0qNHg7laCAkg8DEU3nMPLMPKFzQg==
-ARC-Authentication-Results: i=1;
-	rspamd-7f65b64645-qcchb;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=rob@landley.net
-X-Sender-Id: dreamhost|x-authsender|rob@landley.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|rob@landley.net
-X-MailChannels-Auth-Id: dreamhost
-X-Drop-Reaction: 4b431d3e42cdc168_1771875933028_3808452060
-X-MC-Loop-Signature: 1771875933028:597152274
-X-MC-Ingress-Time: 1771875933027
-Received: from pdx1-sub0-mail-a220.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.97.23.125 (trex/7.1.3);
-	Mon, 23 Feb 2026 19:45:33 +0000
-Received: from [IPV6:2607:fb90:9a14:8897:ebb1:ed79:f171:374e] (unknown [172.58.13.16])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	(Authenticated sender: rob@landley.net)
-	by pdx1-sub0-mail-a220.dreamhost.com (Postfix) with ESMTPSA id 4fKWY52WL0zT0;
-	Mon, 23 Feb 2026 11:45:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=landley.net;
-	s=dreamhost; t=1771875930;
-	bh=wP25vflJhT12hSbFEFhoEPhTLE25qhuBvB1ca50gT0Y=;
-	h=Date:Subject:To:Cc:From:Content-Type:Content-Transfer-Encoding;
-	b=XY1m8g4/QBg4E6ewMEcQ8V1Tjeut+kdxCsuE7nMtxPHcm7ZqvuMPg/LrJ6sA76CGq
-	 +qImaZdzYY3mhA6dv2J6crcasv2ctHij1gsgBU4Ak415BNn9sDTWPm97RlO2XVGu1K
-	 7470VXh/i+51E/9aBbD5hjCBErklyDCM1REnzB833ydfZt7K11OXkbAhkceQrxssvr
-	 80HIANGhLOKPb7nv1tQUPaHAX8ljV7HL1hzwJFhyhmvt3Jzr3D2T7DzbvirpwNOq6b
-	 0W6OOBTopIDqQcQ6AgNd44u4m40icwLs0ZT5P2Sz136ZirdAssvaNVZJvH2YrGlnqP
-	 u2QhLfQuRCW5A==
-Message-ID: <258dbf49-c034-4e5d-b912-5723c7a68361@landley.net>
-Date: Mon, 23 Feb 2026 13:45:25 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A46374755
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 19:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771876786; cv=none; b=Tm2sO/GWP+fEjBpz9NqjcprXK5ElmNt1IqIgpMzhs2HwBBysD7VZBDlHvO/tyrPc9jhj33y9wTV+3tn/g3wU4zAE8pTLEag9lw56HGBoAejMT+2mKqrDH1woD2WZggpo4QrILXLk5bKEHCBV9DUI9BP04aXy0NObnHXZLLJ9Yb4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771876786; c=relaxed/simple;
+	bh=vSGezea+kHW8+I4FXMUBtjpPhAkkh38ljsBUp1un6Fs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Y1Vh5BdjOA3BDgb2TpoaCWW5oxeeNAQUU/VTgiwuHKOIXf2hl7MA1axJwJfVPHbw0azCzb/clIxW1P7Qndm0zKYR+ZLbPYJ6HbZKibt4W7nUwwuhc1C65IfzrtNbEL10NjVvnjogys0829VAmyXpgdtKxTdpRdvAFJDXZOiWPgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PuTgYCgx; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-48371d2f661so10835e9.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 11:59:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1771876783; x=1772481583; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=szNx6Q9HpZ/iwXNBTZ4lMVazeKKlYTctcpZDy3jvygs=;
+        b=PuTgYCgxqHEeEQaPpdXskpsK/s6pQE+bbQL11TWMGAdhyx5mvimruMIPGPQYuKn/c4
+         /4PvFooIdPWbfBvRbFEN344fS+lJZk5OB9H55jzjIJjLXNk+RNBjACQ+a78ab9meS4c7
+         FkcH4X9LfcKbP4LUrBkWx7kZdP2H+uRzA18kIwCOuuPRG/vKA6S3FqwgG8KvFbXwEd3R
+         o+8BLMvv0f3QlY77awO6OPiWUt7lNCGsH7o5O100LeS1Nw6WbwMQ1dMvf58WoQK6qwae
+         VASxq68Qyk62krV+RfmbiFY6zuR0VakymyNeigK0PhgGVLSFw2ghaISekar6OIiavimF
+         SL+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771876783; x=1772481583;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=szNx6Q9HpZ/iwXNBTZ4lMVazeKKlYTctcpZDy3jvygs=;
+        b=wt/mM8TXzrm3DXTaSB+2A0gMz8Em9q5Ym8v+zqaM7TfdnAWHeyOOUDE6KOR4WY4ChX
+         CkE++70ylOp2Xz1H8S6sRPxOagHhet6XW9hrUNEsJXoAjLvOUbzBMx4/bfUo6JGBLU2Z
+         3U/0d7rSdLSIv7MmtaJ9EfIJ5Th2fvNTw6KmYnnezeqE5eHZVLdWM2/LCCqZbOCQEPJK
+         rv4l4EFvQhCl6epEN0oePSVcg3IIcGMm0ywp0xP3393rVyQS4/7UnJiqcu/kiXXDF95Y
+         INTFtMWfodaJf5tGUNk6dorSDnMeihSJMrDoZSa9wu96Gj9nW3F2vPSXPqYxFuSSc3Xt
+         unOA==
+X-Gm-Message-State: AOJu0YyeOwRopVnY1nTnIaPBLILukXXfXIvzojdlapyeH50cbPILlD1P
+	nMwiRz3iF4QUmonljtKhK1HeojWT5egJPwFjbJV4EchRQxXN5M/+XkdLqySq9do+Vg==
+X-Gm-Gg: AZuq6aLBRJbaL4vORHBvlZnKoWfl8RptN1T4NR1Z1bYUzHoOQp1QUtn8VBKbn6rfyDw
+	sHxoqrn1N5KTwIEMtX6gp+S+MMUZAmM9QFBxJ+hkO4LSzxN6/wuQpl/hPrgG8AShvNHQfxlWDf/
+	uF3dnJltbjPkjojxA5qorqlQesDm5bz1uajCr8lqsHOoDBJAv9hoUwh0BfZMvAD4xVFPSM0Sb/U
+	qvLAZSytvLRTw2bsKBHMP/FwtzfM6Cj8pGrOP/iBK1SduwhEtERhD32LPRbXypFptyC5NEPJv/d
+	B9ez9LJ3Yz+kkh8Kk6jYVgtI1v4aOp6/ZIsnKo5f5akPcTSY99qn0zB+mKRUYrWNswhBpX0VNPr
+	0LWdl1Dmc+dVYgiug7o6kIe0zqGw8dqYvh66NtnoX1SzZtwp2qPRqkLB5BmUWsGtgBbRKHkrtUU
+	oMEs5eoAJ7NadF+3tBrbpyEj+AUwNdKRFHZAo7gEplfqFAzOGj8mE=
+X-Received: by 2002:a05:600c:4454:b0:477:86fd:fb1b with SMTP id 5b1f17b1804b1-483b878837emr116465e9.11.1771876782542;
+        Mon, 23 Feb 2026 11:59:42 -0800 (PST)
+Received: from localhost ([2a00:79e0:288a:8:e3f8:d6ab:bdc7:bdcf])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-483b81f8912sm4486845e9.1.2026.02.23.11.59.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Feb 2026 11:59:42 -0800 (PST)
+From: Jann Horn <jannh@google.com>
+Date: Mon, 23 Feb 2026 20:59:33 +0100
+Subject: [PATCH] eventpoll: Fix integer overflow in ep_loop_check_proc()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] init: ensure that /dev/console is (nearly) always
- available in initramfs
-To: Askar Safin <safinaskar@gmail.com>
-Cc: brauner@kernel.org, ddiss@suse.de, initramfs@vger.kernel.org,
- jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, nathan@kernel.org, nsc@kernel.org,
- patches@lists.linux.dev, rdunlap@infradead.org, viro@zeniv.linux.org.uk
-References: <7e309fc3-7d55-4e95-8dea-f164a7a96b6c@landley.net>
- <20260223173443.327797-1-safinaskar@gmail.com>
-Content-Language: en-US
-From: Rob Landley <rob@landley.net>
-In-Reply-To: <20260223173443.327797-1-safinaskar@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20260223-epoll-int-overflow-v1-1-452f35132224@google.com>
+X-B4-Tracking: v=1; b=H4sIAKSxnGkC/x3MQQqAIBBA0avErBswjYKuEi3MxhoQFY0KwrsnL
+ d/i/xcyJaYMU/NCooszB1/RtQ2YQ/udkLdqkEIOQkqFFINzyP7EcFGyLtyotOhXOyoyeoAaxkS
+ Wn386L6V8a/Zz4GQAAAA=
+X-Change-ID: 20260223-epoll-int-overflow-3a04bf73eca6
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Jann Horn <jannh@google.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Guenter Roeck <linux@roeck-us.net>, stable@vger.kernel.org
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1771876777; l=1946;
+ i=jannh@google.com; s=20240730; h=from:subject:message-id;
+ bh=vSGezea+kHW8+I4FXMUBtjpPhAkkh38ljsBUp1un6Fs=;
+ b=RdragfDp77ExTy4XNQd7Cde3KK3Eu2MW9GuvLXcoBKzltgC7byd5LbGI5kPdL8Vyo4Wccnt4U
+ 6Gt2X0RHjm4AJOJHzmkeblC3ZLcrSB3Jwn43TzRKzit2MbcKn7TWTZT
+X-Developer-Key: i=jannh@google.com; a=ed25519;
+ pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[landley.net:s=dreamhost];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77997-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[landley.net];
-	FREEMAIL_TO(0.00)[gmail.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[landley.net:+];
-	RCPT_COUNT_TWELVE(0.00)[13];
 	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-77998-lists,linux-fsdevel=lfdr.de];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[google.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[landley.net:mid,landley.net:dkim,landley.net:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[rob@landley.net,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	NEURAL_HAM(-0.00)[-0.999];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[jannh@google.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	NEURAL_HAM(-0.00)[-0.998];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: 5EC4E17C805
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[roeck-us.net:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 3AF5317CB09
 X-Rspamd-Action: no action
 
-On 2/23/26 11:34, Askar Safin wrote:
-> Rob Landley <rob@landley.net>:
->> The real problem isn't cpio, it's that the kernel interface
-> 
-> So there is some bug here?
-> 
-> Then, please, describe properly this bug.
-> 
-> I. e. using usual formula "steps to reproduce - what I got - what I expected to see".
+If a recursive call to ep_loop_check_proc() hits the `result = INT_MAX`,
+an integer overflow will occur in the calling ep_loop_check_proc() at
+`result = max(result, ep_loop_check_proc(ep_tovisit, depth + 1) + 1)`,
+breaking the recursion depth check.
 
-I think that the kernel special case creating files in initramfs is the 
-wrong design approach, but it would address the problem and it's what 
-the kernel already did in a different codepath.
+Fix it by using a different placeholder value that can't lead to an
+overflow.
 
-> Also, does the kernel broke *documented* feature? If indeed some
-> *documented* feature doesn't work, then this is indeed very real bug.
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Fixes: f2e467a48287 ("eventpoll: Fix semi-unbounded recursion")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+Gah, I introduced such an obvious integer overflow when I touched this
+code the last time...
 
-Documentation/filesystems/ramfs-rootfs-initramfs.txt section "populating 
-initramfs" described using the text file format back in 2005 
-(https://github.com/mpe/linux-fullhistory/commit/7f46a240b0a1 line 135) 
-and then commit 
-https://github.com/mpe/linux-fullhistory/commit/99aef427e206f a year 
-later described running usr/gen_init_cpio to create those files from a 
-directory to give you an easy starting point to edit.
+No "Closes:" link because the bug was not reported publicly.
+---
+ fs/eventpoll.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-But I wrote that documentation, so it probably doesn't count.
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index a8c278c50083..5714e900567c 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -2061,7 +2061,8 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+  * @ep: the &struct eventpoll to be currently checked.
+  * @depth: Current depth of the path being checked.
+  *
+- * Return: depth of the subtree, or INT_MAX if we found a loop or went too deep.
++ * Return: depth of the subtree, or a value bigger than EP_MAX_NESTS if we found
++ * a loop or went too deep.
+  */
+ static int ep_loop_check_proc(struct eventpoll *ep, int depth)
+ {
+@@ -2080,7 +2081,7 @@ static int ep_loop_check_proc(struct eventpoll *ep, int depth)
+ 			struct eventpoll *ep_tovisit;
+ 			ep_tovisit = epi->ffd.file->private_data;
+ 			if (ep_tovisit == inserting_into || depth > EP_MAX_NESTS)
+-				result = INT_MAX;
++				result = EP_MAX_NESTS+1;
+ 			else
+ 				result = max(result, ep_loop_check_proc(ep_tovisit, depth + 1) + 1);
+ 			if (result > EP_MAX_NESTS)
 
-> I kindly ask you, please, please, describe this bug. I really want
-> to help you.
-Back when the gen_init_cpio stuff let you create the file and consume 
-the file separately so you could edit it in between, there was an easy 
-way to address this problem by creating a cpio containing /dev/console 
-as a regular user using the kernel plumbing. Then the kernel broke that 
-and created a regression, which they decided to fix with special case 
-code doing mknod within the kernel before launching PID 1, but only for 
-one of two codepaths.
+---
+base-commit: 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f
+change-id: 20260223-epoll-int-overflow-3a04bf73eca6
 
-I think adding the special case hack to the other codepath is the wrong 
-_WAY_ to fix it... but I guess that ship has sailed. I agree doing that 
-can avoid the "init has no stdin/stdout/stderr" problem and thus address 
-the issue.
+--  
+Jann Horn <jannh@google.com>
 
-(I still think if you have a CONFIG_DEVTMPFS_MOUNT config symbol, it 
-should actually work, but that's a somewhat separate issue and a 
-half-dozen patches ignored by linux-kernel for a decade now apparently 
-argue otherwise...)
-
-Rob
 
