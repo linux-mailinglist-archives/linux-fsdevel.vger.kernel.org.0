@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-78184-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78185-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WA5LIbDmnGlNMAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78184-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:45:52 +0100
+	id WHHjOcDmnGmNMAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78185-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:46:08 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D849417FE90
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:45:51 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D94E17FECB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:46:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E86D8315C5F5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:44:11 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7436930C866C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A959737FF5F;
-	Mon, 23 Feb 2026 23:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419BF37FF65;
+	Mon, 23 Feb 2026 23:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g3r+tKCz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eE9Dn9MR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FC937F8C5;
-	Mon, 23 Feb 2026 23:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33E31E9B1A;
+	Mon, 23 Feb 2026 23:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771890250; cv=none; b=poaZQ6lM+k+qiVkvTrNMxJIT3iAJ6DffaO4aQ8KTATDIxIn6svIdVacT1bwN3eVWW62TENMj3PHyctEhiE1JWGOVpRGxxMYvnPxlba0Ms9gnEGwxREpmhDSd70o/97IrtQguTojGpG1MYc9kfHLvEAnPJFKWhT5chhnW96vEypY=
+	t=1771890265; cv=none; b=V9H9Me8cdyWWNYUx0MmaCO1f+Pd0y5WAtYWsfa/ngPcpVQBWlpPKa5fQfZnbjGiVPh0c4wTTtjJ6212lLaaUnz8mWagfOnO5JZnrHQwLnLKvVdOUfBH609W45Soc5u5nPbKMrXZbtxaqup2R5rJER/RJWWWSlfWGgvRbUA1WZt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771890250; c=relaxed/simple;
-	bh=8Cwak69rpMbl8VI/O5IYVFu9get6FOU9zNxLmzHUDrg=;
+	s=arc-20240116; t=1771890265; c=relaxed/simple;
+	bh=tWE/GnsdZUmcmQysEtguIQst6JstBG4aOcYbXOAUXKs=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h3zbxbrKBJHxm3ay14lzwFwY7/3gSyveJX9rIdMBXRIC2r+dMIvJ0ounp07RGGFS9ivARvzKT/Co2GwWlGNcnyBumMOHzOwpWvgWyzXLMGi+74cb0S7wosEq4hzBogFHVM0TZQE0C7YHK/85VC8x97tlEoS+4yT+NRvvwT2JNGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g3r+tKCz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5F79C116C6;
-	Mon, 23 Feb 2026 23:44:09 +0000 (UTC)
+	 MIME-Version:Content-Type; b=gioCRW1F2Q8/wbIWLNkP8vb095+iOlVvsiIN3M1XEdUPoe/Yc9uKPivpQmxgtJI9f7St5YsO2wZbpUjsBfwJviGmBxxYN9/HpcCU/JDhdoQN309/ugfAwVTamv9V3hnyEgJWyGfuNF4X+fYZN9kgykmbFa23TAuuclndk0Gita4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eE9Dn9MR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E252C116C6;
+	Mon, 23 Feb 2026 23:44:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771890249;
-	bh=8Cwak69rpMbl8VI/O5IYVFu9get6FOU9zNxLmzHUDrg=;
+	s=k20201202; t=1771890265;
+	bh=tWE/GnsdZUmcmQysEtguIQst6JstBG4aOcYbXOAUXKs=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=g3r+tKCz8TYVkvEq4E+naBwe4ssk5wqg2xlyzroko7e2LnyRkuI8n5exDsGxdZHo7
-	 1uO6+MF+IOAjBvK/jkkUFOmap/FdKUDj0rwBTqDGmczUOLXs1ydN81CXPVu24z8FFd
-	 4K/m+Lec3Fbgmn+FUqAuNCHeawq8Odh8q8atq5VONgT1bCPD3Yp/ejdcKKeS+flnfT
-	 DaGHOUjdPe04mUDWQ8i9wM+sX935omHr9cjHhSi/zqnvAhugdNF/cLTz4NNtxnLLUB
-	 jIoGiLkEbnXappe4DvDO8OxI36sWxXZvj56jIkbsOXXrW9dFX+E+9eJ+7Y26N2KlEQ
-	 gkx9Pm+1GudKw==
-Date: Mon, 23 Feb 2026 15:44:09 -0800
-Subject: [PATCH 1/3] fuse2fs: enable caching of iomaps
+	b=eE9Dn9MRRgaSFc730x4wabuoQ3lEug9G/3kTB+tYnKFr75pF5JJ5fLFIFBYtTP58S
+	 tSSzzeTIIWviEpwqtE1+36SyrNXJm/mCSN6BZ5gBDGoyCla4co8RiGyueXyXFTGBfZ
+	 ObEucWZ8LjeHcH9lG+m1OB+u8P9SxQ52t5YvxwcdsW39MYqAWbUcHpHAA9Q1LLgkcl
+	 9cg4zkxMmCTy89skJDolB6fftcG+myeJa2y4d8QxtPL9ECGkJ4nSjt7ylVrWzrnIMj
+	 R28In6TyvElf7dKmqIN/W7cXFgrFbYKAI8Iz9SIRQdIMbbahw9TVeWns4atKdnmPat
+	 Eh9NZuMdtsLPA==
+Date: Mon, 23 Feb 2026 15:44:24 -0800
+Subject: [PATCH 2/3] fuse2fs: constrain iomap mapping cache size
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-ext4@vger.kernel.org, miklos@szeredi.hu, bernd@bsbernd.com,
  joannelkoong@gmail.com, neal@gompa.dev
-Message-ID: <177188745511.3944453.6900210595156986351.stgit@frogsfrogsfrogs>
+Message-ID: <177188745529.3944453.16237870556453402118.stgit@frogsfrogsfrogs>
 In-Reply-To: <177188745484.3944453.12407213942915501693.stgit@frogsfrogsfrogs>
 References: <177188745484.3944453.12407213942915501693.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -67,20 +67,20 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_CC(0.00)[vger.kernel.org,szeredi.hu,bsbernd.com,gmail.com,gompa.dev];
-	TAGGED_FROM(0.00)[bounces-78184-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78185-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	MIME_TRACE(0.00)[0:+];
 	TO_DN_NONE(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
@@ -91,144 +91,73 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: D849417FE90
+X-Rspamd-Queue-Id: 8D94E17FECB
 X-Rspamd-Action: no action
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Cache the iomaps we generate in the kernel for better performance.
+Update the iomap config functions to handle the new iomap mapping cache
+size restriction knob.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fuse4fs/fuse4fs.c |   31 +++++++++++++++++++++++++++++++
- misc/fuse2fs.c    |   30 ++++++++++++++++++++++++++++++
- 2 files changed, 61 insertions(+)
+ fuse4fs/fuse4fs.c |    9 ++++++---
+ misc/fuse2fs.c    |    6 ++++--
+ 2 files changed, 10 insertions(+), 5 deletions(-)
 
 
 diff --git a/fuse4fs/fuse4fs.c b/fuse4fs/fuse4fs.c
-index 0f62d5a04fc4a4..d7238db25261dc 100644
+index d7238db25261dc..c5cf471d630451 100644
 --- a/fuse4fs/fuse4fs.c
 +++ b/fuse4fs/fuse4fs.c
-@@ -292,6 +292,8 @@ struct fuse4fs {
- #ifdef STATX_WRITE_ATOMIC
- 	unsigned int awu_min, awu_max;
- #endif
-+	/* options set by fuse_opt_parse must be of type int */
-+	int iomap_cache;
- #endif
- 	unsigned int blockmask;
- 	unsigned long offset;
-@@ -6890,6 +6892,30 @@ static void op_iomap_begin(fuse_req_t req, fuse_ino_t fino, uint64_t dontcare,
- 	if (opflags & FUSE_IOMAP_OP_ATOMIC)
- 		read.flags |= FUSE_IOMAP_F_ATOMIC_BIO;
+@@ -7187,7 +7187,8 @@ static void fuse4fs_alloc_stats_range(ext2_filsys fs, blk64_t blk, blk_t num,
+ 		ff->old_alloc_stats_range(fs, blk, num, inuse);
+ }
  
-+	/*
-+	 * Cache the mapping in the kernel so that we can reuse them for
-+	 * subsequent IO.
-+	 */
-+	if (ff->iomap_cache) {
-+		ret = fuse_lowlevel_iomap_upsert_mappings(ff->fuse, fino, ino,
-+							  &read, NULL);
-+		if (ret) {
-+			/*
-+			 * Log the cache upsert error, but we can still return
-+			 * the mapping via the reply.  EINVAL is the magic code
-+			 * for the kernel declining to cache the mapping.
-+			 */
-+			if (ret != -ENOMEM && ret != -EINVAL)
-+				translate_error(fs, ino, -ret);
-+			goto out_unlock;
-+		}
-+
-+		/* Tell the kernel to retry from cache */
-+		read.type = FUSE_IOMAP_TYPE_RETRY_CACHE;
-+		read.dev = FUSE_IOMAP_DEV_NULL;
-+		read.addr = FUSE_IOMAP_NULL_ADDR;
-+	}
-+
- out_unlock:
- 	fuse4fs_finish(ff, ret);
- 	if (ret)
-@@ -7707,6 +7733,10 @@ static struct fuse_opt fuse4fs_opts[] = {
- #ifdef HAVE_CLOCK_MONOTONIC
- 	FUSE4FS_OPT("timing",		timing,			1),
- #endif
-+#ifdef HAVE_FUSE_IOMAP
-+	FUSE4FS_OPT("iomap_cache",	iomap_cache,		1),
-+	FUSE4FS_OPT("noiomap_cache",	iomap_cache,		0),
-+#endif
+-static void op_iomap_config(fuse_req_t req, uint64_t flags, uint64_t maxbytes)
++static void op_iomap_config(fuse_req_t req, uint64_t flags, uint64_t maxbytes,
++			    uint32_t cache_maxbytes)
+ {
+ 	struct fuse_iomap_config cfg = { };
+ 	struct fuse4fs *ff = fuse4fs_get(req);
+@@ -7196,9 +7197,11 @@ static void op_iomap_config(fuse_req_t req, uint64_t flags, uint64_t maxbytes)
  
- #ifdef HAVE_FUSE_IOMAP
- #ifdef MS_LAZYTIME
-@@ -8119,6 +8149,7 @@ int main(int argc, char *argv[])
- 		.iomap_want = FT_DEFAULT,
- 		.iomap_state = IOMAP_UNKNOWN,
- 		.iomap_dev = FUSE_IOMAP_DEV_NULL,
-+		.iomap_cache = 1,
- #endif
- #ifdef HAVE_FUSE_LOOPDEV
- 		.loop_fd = -1,
+ 	FUSE4FS_CHECK_CONTEXT(req);
+ 
+-	dbg_printf(ff, "%s: flags=0x%llx maxbytes=0x%llx\n", __func__,
++	dbg_printf(ff, "%s: flags=0x%llx maxbytes=0x%llx cache_maxbytes=0x%x\n",
++		   __func__,
+ 		   (unsigned long long)flags,
+-		   (unsigned long long)maxbytes);
++		   (unsigned long long)maxbytes,
++		   cache_maxbytes);
+ 	fs = fuse4fs_start(ff);
+ 
+ 	cfg.flags |= FUSE_IOMAP_CONFIG_UUID;
 diff --git a/misc/fuse2fs.c b/misc/fuse2fs.c
-index 58ea8e1f2f1e51..5a217b821c2d4a 100644
+index 5a217b821c2d4a..4dab8034ebb317 100644
 --- a/misc/fuse2fs.c
 +++ b/misc/fuse2fs.c
-@@ -284,6 +284,8 @@ struct fuse2fs {
- #ifdef STATX_WRITE_ATOMIC
- 	unsigned int awu_min, awu_max;
- #endif
-+	/* options set by fuse_opt_parse must be of type int */
-+	int iomap_cache;
- #endif
- 	unsigned int blockmask;
- 	unsigned long offset;
-@@ -6444,6 +6446,29 @@ static int op_iomap_begin(const char *path, uint64_t nodeid, uint64_t attr_ino,
- 	if (opflags & FUSE_IOMAP_OP_ATOMIC)
- 		read->flags |= FUSE_IOMAP_F_ATOMIC_BIO;
+@@ -6737,6 +6737,7 @@ static void fuse2fs_alloc_stats_range(ext2_filsys fs, blk64_t blk, blk_t num,
+ }
  
-+	/*
-+	 * Cache the mapping in the kernel so that we can reuse them for
-+	 * subsequent IO.
-+	 */
-+	if (ff->iomap_cache) {
-+		ret = fuse_fs_iomap_upsert(nodeid, attr_ino, read, NULL);
-+		if (ret) {
-+			/*
-+			 * Log the cache upsert error, but we can still return
-+			 * the mapping via the reply.  EINVAL is the magic code
-+			 * for the kernel declining to cache the mapping.
-+			 */
-+			if (ret != -ENOMEM && ret != -EINVAL)
-+				translate_error(fs, attr_ino, -ret);
-+			goto out_unlock;
-+		}
-+
-+		/* Tell the kernel to retry from cache */
-+		read->type = FUSE_IOMAP_TYPE_RETRY_CACHE;
-+		read->dev = FUSE_IOMAP_DEV_NULL;
-+		read->addr = FUSE_IOMAP_NULL_ADDR;
-+	}
-+
- out_unlock:
- 	fuse2fs_finish(ff, ret);
- 	return ret;
-@@ -7250,6 +7275,10 @@ static struct fuse_opt fuse2fs_opts[] = {
- #ifdef HAVE_CLOCK_MONOTONIC
- 	FUSE2FS_OPT("timing",		timing,			1),
- #endif
-+#ifdef HAVE_FUSE_IOMAP
-+	FUSE2FS_OPT("iomap_cache",	iomap_cache,		1),
-+	FUSE2FS_OPT("noiomap_cache",	iomap_cache,		0),
-+#endif
+ static int op_iomap_config(uint64_t flags, off_t maxbytes,
++			   uint32_t cache_maxbytes,
+ 			   struct fuse_iomap_config *cfg)
+ {
+ 	struct fuse2fs *ff = fuse2fs_get();
+@@ -6745,9 +6746,10 @@ static int op_iomap_config(uint64_t flags, off_t maxbytes,
  
- #ifdef HAVE_FUSE_IOMAP
- #ifdef MS_LAZYTIME
-@@ -7530,6 +7559,7 @@ int main(int argc, char *argv[])
- 		.iomap_want = FT_DEFAULT,
- 		.iomap_state = IOMAP_UNKNOWN,
- 		.iomap_dev = FUSE_IOMAP_DEV_NULL,
-+		.iomap_cache = 1,
- #endif
- #ifdef HAVE_FUSE_LOOPDEV
- 		.loop_fd = -1,
+ 	FUSE2FS_CHECK_CONTEXT(ff);
+ 
+-	dbg_printf(ff, "%s: flags=0x%llx maxbytes=0x%llx\n", __func__,
++	dbg_printf(ff, "%s: flags=0x%llx maxbytes=0x%llx cache_maxbytes=%u\n", __func__,
+ 		   (unsigned long long)flags,
+-		   (unsigned long long)maxbytes);
++		   (unsigned long long)maxbytes,
++		   cache_maxbytes);
+ 	fs = fuse2fs_start(ff);
+ 
+ 	cfg->flags |= FUSE_IOMAP_CONFIG_UUID;
 
 
