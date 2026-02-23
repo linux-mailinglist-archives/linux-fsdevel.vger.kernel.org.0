@@ -1,208 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-77943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iOZiEPpUnGkAEQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 14:24:10 +0100
+	id aPoJKhlUnGmSEAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 14:20:25 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 953C2176C35
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 14:24:09 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF257176B01
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 14:20:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id A53F630341BF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 13:22:08 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id DB3543023D5D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 13:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E340D1FC7FB;
-	Mon, 23 Feb 2026 13:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE92919D081;
+	Mon, 23 Feb 2026 13:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZRaZMR7R"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fSvOqhNP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC0F18CBE1;
-	Mon, 23 Feb 2026 13:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6AF86337;
+	Mon, 23 Feb 2026 13:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771852923; cv=none; b=RNjX+i6192txycN+lF6mEK+HL/Lq74ngLtnbX/0anqwpaVDCDP2pO6Fskb/DiJhbPwCmz1CPQ1m6eUgUvAHobtGHUsFGmodM3eCXrJ6y6GmdUrK8sVdAVbzihVa1xIdsLtq19+yPJGTpUCabovXm8zsKDK13ebJRTQFI8Mj9Nzo=
+	t=1771852816; cv=none; b=ImTN1VOGyvCN4H3Zm0iADvR17wHW4G+ZpLJk5+QWSD3qIIu6g+Aszwyuy+Qw6hezm6mP/zVMmsqM8xObHawLJ48C049x1Drp/14rTjcTju//Z067kv9oNaNI5piOAI0iFnN49tGj6k1DzEFC3bvz6ossmJIbWx9N9UMKzu3DKTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771852923; c=relaxed/simple;
-	bh=qy8kAjwQVIpMfNGokBf/u2atO1HGTf60md7gjr1tf+U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UDa94cSAkIfJgVz0U92uGYieDMd55Yv2v0KRSwp2ZHddRaBJwL/60GcyfK8biWAoyOTmhyZ7z+YFUg4d3lcHHig9TWZaRPLGdnuaF6axx5KZArBw6GoGZUBLQMjo3l74z8QerRnYcdDRr+dhsudOu8vLZMUSpFZ8Qa6rDmzNW6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZRaZMR7R; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=+A0rObcFfgdd0PuUHX3+v1XDTdW55Rp9xT/Yf5/RHG0=; b=ZRaZMR7RXKZbXYWVSK8k2duJpi
-	i49i8x1o9BUAunFbRARWxnlZS7yaElW7DYSdrnDslEQvpaJrXX16S9E26esdQ+hOW+rObeFLHKRxE
-	ncD9ZzVDi4ViAJYCMNAiZDZU2OHivTlAdvu8J13UDufFauYI8rauErSqSCKTrD5MNY1aWVn8KyJbE
-	tfuOxPw3B7PC5LGOSODvsdiBKAXRPWVveVF9j62RupeyHdD+d8Lcc6RXBYUcPuYIqKsm9b0Stbpdb
-	Lrh2zypaxe7iTpiHiF7Xo9KLUt1fdj4Epr0k5tLNMQIsHRfAJmv7pS9ghfrP2EJfLW9drtmc/blSX
-	Un+8KSPA==;
-Received: from [94.156.175.41] (helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vuVsu-00000000LxN-0R83;
-	Mon, 23 Feb 2026 13:22:01 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Jens Axboe <axboe@kernel.dk>,
-	Christian Brauner <brauner@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Carlos Maiolino <cem@kernel.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Anuj Gupta <anuj20.g@samsung.com>,
-	Kanchan Joshi <joshi.k@samsung.com>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	ntfs3@lists.linux.dev,
-	linux-block@vger.kernel.org,
-	nvdimm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: [PATCH 07/16] block: pass a maxlen argument to bio_iov_iter_bounce
-Date: Mon, 23 Feb 2026 05:20:07 -0800
-Message-ID: <20260223132021.292832-8-hch@lst.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260223132021.292832-1-hch@lst.de>
-References: <20260223132021.292832-1-hch@lst.de>
+	s=arc-20240116; t=1771852816; c=relaxed/simple;
+	bh=iX7f4BYNyN7OXPgks7cDMKq43X3JYPYgohE1GM360Tg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=O+BNzy/LLjoZ/+5jsuzou3j6vcYee2gBEXq0AzVUErblQcJjlsNIkFHXOXfUvW9WFkdObpWxAyh2tyIiymLZDAJWuAFGn27cO8kAe7u1xnKl6dYqwTH7tkYwu1ikhd2WU4DHqSWoABKG4wFW8KEvVUZPWbPTGBrCxSKwZBtpvH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fSvOqhNP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64662C116C6;
+	Mon, 23 Feb 2026 13:20:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771852816;
+	bh=iX7f4BYNyN7OXPgks7cDMKq43X3JYPYgohE1GM360Tg=;
+	h=From:Subject:Date:To:Cc:From;
+	b=fSvOqhNPMwrkavNq7NUt3p75FM4tRVjbYc1dHTaZWsodXXT0qB2nXGKvBvyBCzRyu
+	 mgQnkMwjEZdmQAs4IRXhLfV68UO8ljsZkBkJmQohmkSATIKuGhaB4nh09tnrTxqDVV
+	 xHRzZiamxjgcATjqz8oHNTuUMt6w7pjKllvjYE8PMS6fdoMT36ZrR4ws0KpHUuQwxw
+	 k2r5UZq4dK3aj4AFKYxJYjjR1+eh2W+Vx8VvHCtQQ//kYWLYyfBFoLcZAZNLq8MiDF
+	 Kl7d9nbEl8zD1+2IraGgXOFSbT2MJo5ZKu9GImkqugHKL/t5qzViRBJsXRNhgs1yg/
+	 dAn3AmBySystg==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH RFC v3 0/2] pidfs: make the effective {g,u}id the owner of
+ the inode
+Date: Mon, 23 Feb 2026 14:20:07 +0100
+Message-Id: <20260223-work-pidfs-inode-owner-v3-0-490855c59999@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAdUnGkC/3WOywrCMBBFf0Wydkoe2lZXguAHuBUXSTtpQyWRi
+ USl9N9tiwtddHkvc8+ZnkUkh5HtVz0jTC664Meg1itWtdo3CK4eM5Nc5lwKAc9AHdxdbSM4H2q
+ E8PRIwCsteY07tFKxcXwntO41gy/sfDqy61gaHREMaV+1EzMVGQeqxHTfuvgI9J7/SGJefZX5k
+ jIJEGBLq3VuCrUr1aFD8njLAjWzLslfTrHIkROHb8w2V6USW/3HGYbhA6arMislAQAA
+X-Change-ID: 20260211-work-pidfs-inode-owner-0ca20de9ef23
+To: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>
+Cc: Kees Cook <kees@kernel.org>, Andy Lutomirski <luto@amacapital.net>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-47773
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3288; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=iX7f4BYNyN7OXPgks7cDMKq43X3JYPYgohE1GM360Tg=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTOCeE9fOqsd4cGZ+LUwitRzpPNz94/w2OVfoP1lZDRC
+ aFklxMrOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZi4cLIMMeyfZXE5JQVrDe/
+ 3TR6ZX+7vsX8oI+3yTpmfbZ45wjWowz/w9oLFxm2eh4u9jguMfPCWpP5098my/a73OwwP7J+p+N
+ 5TgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.06 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
-	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), DKIM not aligned (relaxed),none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-77932-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
 	RCVD_COUNT_THREE(0.00)[4];
-	TAGGED_FROM(0.00)[bounces-77943-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[infradead.org:+];
-	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:dkim,oracle.com:email,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,lst.de:mid,lst.de:email,samsung.com:email]
-X-Rspamd-Queue-Id: 953C2176C35
+	NEURAL_HAM(-0.00)[-0.999];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[msgid.link:url,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: BF257176B01
 X-Rspamd-Action: no action
 
-Allow the file system to limit the size processed in a single
-bounce operation.  This is needed when generating integrity data
-so that the size of a single integrity segment can't overflow.
+Hey,
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Anuj Gupta <anuj20.g@samsung.com>
-Reviewed-by: Kanchan Joshi <joshi.k@samsung.com>
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-Tested-by: Anuj Gupta <anuj20.g@samsung.com>
+This adds inode ownership and permission checking to pidfs.
+
+Right now pidfs only supports trusted.* xattrs which require
+CAP_SYS_ADMIN so there was never a need for real permission checking.
+In order to support user.* xattrs and custom pidfs.* xattrs in the
+future we need a permission model for pidfs inodes.
+
+The effective {u,g}id of the target task becomes the owner of the pidfs
+inode similar to what procfs does. Ownership is reported dynamically via
+getattr since credentials may change due to setuid() and similar
+operations. For kernel threads the owner is root, for exited tasks the
+credentials saved at exit time via pidfs_exit() are used.
+
+The permission callback checks access in two steps. First it verifies
+the caller is either in the same thread group as the target or has
+equivalent signal permissions reusing the same uid-based logic as
+kill(). Then it performs standard POSIX permission checking via
+generic_permission() against the inode's mode bits (S_IRWXU / 0700).
+
+This is intentionally less strict than ptrace_may_access() because pidfs
+currently does not allow operating on data that is completely private to
+the process such as its mm or file descriptors. Additional checks can be
+layered on once that changes.
+
+The second patch adds selftests covering ownership reporting via fstat
+and the permission model via user.* xattr operations which trigger
+pidfs_permission() through xattr_permission(). The tests exercise live
+credential changes, exited tasks with saved exit credentials, same-user
+cross-process access, cross-user denial, and kernel thread denial.
+
+Christian
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- block/bio.c          | 17 ++++++++++-------
- fs/iomap/direct-io.c |  2 +-
- include/linux/bio.h  |  2 +-
- 3 files changed, 12 insertions(+), 9 deletions(-)
+Changes in v3:
+- Simplify pidfs_fill_owner() into pidfs_update_owner() writing directly
+  to the inode via WRITE_ONCE() instead of using output parameters.
+- Drop the separate pidfs_update_inode() helper and the
+  security_task_to_inode() call.
+- Update pidfs_getattr() to write ownership to the inode via
+  pidfs_update_owner() instead of writing directly to stat.
+- Update pidfs_permission() to also write ownership to the inode before
+  calling generic_permission(), handling kernel threads with -EPERM.
+- Drop VFS_WARN_ON_ONCE() for idmap check from pidfs_permission().
+- Link to v2: https://patch.msgid.link/20260217-work-pidfs-inode-owner-v2-1-f04b5638315a@kernel.org
 
-diff --git a/block/bio.c b/block/bio.c
-index d80d5d26804e..784d2a66d3ae 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1327,9 +1327,10 @@ static void bio_free_folios(struct bio *bio)
- 	}
- }
- 
--static int bio_iov_iter_bounce_write(struct bio *bio, struct iov_iter *iter)
-+static int bio_iov_iter_bounce_write(struct bio *bio, struct iov_iter *iter,
-+		size_t maxlen)
- {
--	size_t total_len = iov_iter_count(iter);
-+	size_t total_len = min(maxlen, iov_iter_count(iter));
- 
- 	if (WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED)))
- 		return -EINVAL;
-@@ -1367,9 +1368,10 @@ static int bio_iov_iter_bounce_write(struct bio *bio, struct iov_iter *iter)
- 	return 0;
- }
- 
--static int bio_iov_iter_bounce_read(struct bio *bio, struct iov_iter *iter)
-+static int bio_iov_iter_bounce_read(struct bio *bio, struct iov_iter *iter,
-+		size_t maxlen)
- {
--	size_t len = min(iov_iter_count(iter), SZ_1M);
-+	size_t len = min3(iov_iter_count(iter), maxlen, SZ_1M);
- 	struct folio *folio;
- 
- 	folio = folio_alloc_greedy(GFP_KERNEL, &len);
-@@ -1408,6 +1410,7 @@ static int bio_iov_iter_bounce_read(struct bio *bio, struct iov_iter *iter)
-  * bio_iov_iter_bounce - bounce buffer data from an iter into a bio
-  * @bio:	bio to send
-  * @iter:	iter to read from / write into
-+ * @maxlen:	maximum size to bounce
-  *
-  * Helper for direct I/O implementations that need to bounce buffer because
-  * we need to checksum the data or perform other operations that require
-@@ -1415,11 +1418,11 @@ static int bio_iov_iter_bounce_read(struct bio *bio, struct iov_iter *iter)
-  * copies the data into it.  Needs to be paired with bio_iov_iter_unbounce()
-  * called on completion.
-  */
--int bio_iov_iter_bounce(struct bio *bio, struct iov_iter *iter)
-+int bio_iov_iter_bounce(struct bio *bio, struct iov_iter *iter, size_t maxlen)
- {
- 	if (op_is_write(bio_op(bio)))
--		return bio_iov_iter_bounce_write(bio, iter);
--	return bio_iov_iter_bounce_read(bio, iter);
-+		return bio_iov_iter_bounce_write(bio, iter, maxlen);
-+	return bio_iov_iter_bounce_read(bio, iter, maxlen);
- }
- 
- static void bvec_unpin(struct bio_vec *bv, bool mark_dirty)
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 95254aa1b654..21d4fad2eeb8 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -338,7 +338,7 @@ static ssize_t iomap_dio_bio_iter_one(struct iomap_iter *iter,
- 	bio->bi_end_io = iomap_dio_bio_end_io;
- 
- 	if (dio->flags & IOMAP_DIO_BOUNCE)
--		ret = bio_iov_iter_bounce(bio, dio->submit.iter);
-+		ret = bio_iov_iter_bounce(bio, dio->submit.iter, BIO_MAX_SIZE);
- 	else
- 		ret = bio_iov_iter_get_pages(bio, dio->submit.iter,
- 					     alignment - 1);
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 36a3f2275ecd..9693a0d6fefe 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -474,7 +474,7 @@ void __bio_release_pages(struct bio *bio, bool mark_dirty);
- extern void bio_set_pages_dirty(struct bio *bio);
- extern void bio_check_pages_dirty(struct bio *bio);
- 
--int bio_iov_iter_bounce(struct bio *bio, struct iov_iter *iter);
-+int bio_iov_iter_bounce(struct bio *bio, struct iov_iter *iter, size_t maxlen);
- void bio_iov_iter_unbounce(struct bio *bio, bool is_error, bool mark_dirty);
- 
- extern void bio_copy_data_iter(struct bio *dst, struct bvec_iter *dst_iter,
--- 
-2.47.3
+Changes in v2:
+- Fix an obvious null-deref during PIDFD_STALE (CLONE_PIDFD).
+- Link to v1: https://patch.msgid.link/20260216-work-pidfs-inode-owner-v1-1-f8faa6b73983@kernel.org
+
+---
+Christian Brauner (2):
+      pidfs: add inode ownership and permission checks
+      selftests/pidfd: add inode ownership and permission tests
+
+ fs/pidfs.c                                         | 133 +++++++++-
+ include/linux/cred.h                               |   2 +
+ kernel/signal.c                                    |  19 +-
+ tools/testing/selftests/pidfd/.gitignore           |   1 +
+ tools/testing/selftests/pidfd/Makefile             |   2 +-
+ .../selftests/pidfd/pidfd_inode_owner_test.c       | 289 +++++++++++++++++++++
+ 6 files changed, 427 insertions(+), 19 deletions(-)
+---
+base-commit: 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f
+change-id: 20260211-work-pidfs-inode-owner-0ca20de9ef23
 
 
