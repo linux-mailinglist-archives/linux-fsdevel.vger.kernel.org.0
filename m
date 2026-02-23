@@ -1,187 +1,291 @@
-Return-Path: <linux-fsdevel+bounces-77998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77999-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id sLjkB8yynGmxJwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 21:04:28 +0100
+	id 2CCTMi+ynGmxJwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77999-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 21:01:51 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AF5317CB09
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 21:04:27 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 498F417CA73
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 21:01:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 888FD30AD8BD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 19:59:48 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id DF7FA302DF60
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 20:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF01137646E;
-	Mon, 23 Feb 2026 19:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BA0376494;
+	Mon, 23 Feb 2026 20:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PuTgYCgx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GaZHY2Dy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A46374755
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 19:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5730369202
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 20:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771876786; cv=none; b=Tm2sO/GWP+fEjBpz9NqjcprXK5ElmNt1IqIgpMzhs2HwBBysD7VZBDlHvO/tyrPc9jhj33y9wTV+3tn/g3wU4zAE8pTLEag9lw56HGBoAejMT+2mKqrDH1woD2WZggpo4QrILXLk5bKEHCBV9DUI9BP04aXy0NObnHXZLLJ9Yb4=
+	t=1771876823; cv=none; b=IQba8qfokBVpAwwjSS3LvB9lWt29a9f100Hcx80oSnXDr0dCeWMYzln3B80xOaGM+xAUEL9mcFWYPRD+ungrOU6HkzOk9D0BWtPRdQRIii8WLdo/aildwwj0Qfr2uP+m+ldNwwYbMV9YxVtJzCytaPzbp1WMHaxbDecVBMXzQW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771876786; c=relaxed/simple;
-	bh=vSGezea+kHW8+I4FXMUBtjpPhAkkh38ljsBUp1un6Fs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Y1Vh5BdjOA3BDgb2TpoaCWW5oxeeNAQUU/VTgiwuHKOIXf2hl7MA1axJwJfVPHbw0azCzb/clIxW1P7Qndm0zKYR+ZLbPYJ6HbZKibt4W7nUwwuhc1C65IfzrtNbEL10NjVvnjogys0829VAmyXpgdtKxTdpRdvAFJDXZOiWPgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PuTgYCgx; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-48371d2f661so10835e9.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 11:59:44 -0800 (PST)
+	s=arc-20240116; t=1771876823; c=relaxed/simple;
+	bh=4jls0VB2pPpO17qp5P78+T6wnaEkTuXm3XnZVGXUqg8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aJZiRxwqdx2C/Wng2lvQzLOa/246GNTUgecHdQY7+ECVPOztHUkuNjzO+DtqcEbXJpLwoZg1oZ0qWmmeHdVEMHCvv356rDqxU5xIaJSScZZvt6ei8W/RgU4corxiL8PkWZqljniXHiG/UYLCCFjLmGfFTHts7TpqfYdu8wnZbqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GaZHY2Dy; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4836f363d0dso41504325e9.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 12:00:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1771876783; x=1772481583; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=szNx6Q9HpZ/iwXNBTZ4lMVazeKKlYTctcpZDy3jvygs=;
-        b=PuTgYCgxqHEeEQaPpdXskpsK/s6pQE+bbQL11TWMGAdhyx5mvimruMIPGPQYuKn/c4
-         /4PvFooIdPWbfBvRbFEN344fS+lJZk5OB9H55jzjIJjLXNk+RNBjACQ+a78ab9meS4c7
-         FkcH4X9LfcKbP4LUrBkWx7kZdP2H+uRzA18kIwCOuuPRG/vKA6S3FqwgG8KvFbXwEd3R
-         o+8BLMvv0f3QlY77awO6OPiWUt7lNCGsH7o5O100LeS1Nw6WbwMQ1dMvf58WoQK6qwae
-         VASxq68Qyk62krV+RfmbiFY6zuR0VakymyNeigK0PhgGVLSFw2ghaISekar6OIiavimF
-         SL+A==
+        d=gmail.com; s=20230601; t=1771876820; x=1772481620; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ppR0cEPQxTYV1q27SxXg+9iVDhkw6VgIGfU3vsgp4Sw=;
+        b=GaZHY2Dyq/JKlBz0WTXkhWNFaFjOVts5y5cCZKYizF+FeZ1mif1vH8g6U1DpXkF1p6
+         Wq5OLV9QrunWtGFF0cGrZAd+gplARJEQh/tiybCFZH4Daog6WdMfWwC9dzY9DjCIdXfX
+         mhzc2PXgt2P0Ef+eNv5maSjPks43P1iUagK0UUCmsHmk5Feaic0ohpZdOicm1a6Axt5Z
+         0zTharh7wmqDniVxTQEpW0Enf8Z7cP+ngap/EyumTRvai0MUHnBuogiXDqO4bhEaNN0b
+         X7VbRvA4GEZ/vQnAabLJa2KNnVpeK5POhv1I53I/wij7oVSAVVPv5UcyGU5Zi48gyQGh
+         yg5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771876783; x=1772481583;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=szNx6Q9HpZ/iwXNBTZ4lMVazeKKlYTctcpZDy3jvygs=;
-        b=wt/mM8TXzrm3DXTaSB+2A0gMz8Em9q5Ym8v+zqaM7TfdnAWHeyOOUDE6KOR4WY4ChX
-         CkE++70ylOp2Xz1H8S6sRPxOagHhet6XW9hrUNEsJXoAjLvOUbzBMx4/bfUo6JGBLU2Z
-         3U/0d7rSdLSIv7MmtaJ9EfIJ5Th2fvNTw6KmYnnezeqE5eHZVLdWM2/LCCqZbOCQEPJK
-         rv4l4EFvQhCl6epEN0oePSVcg3IIcGMm0ywp0xP3393rVyQS4/7UnJiqcu/kiXXDF95Y
-         INTFtMWfodaJf5tGUNk6dorSDnMeihSJMrDoZSa9wu96Gj9nW3F2vPSXPqYxFuSSc3Xt
-         unOA==
-X-Gm-Message-State: AOJu0YyeOwRopVnY1nTnIaPBLILukXXfXIvzojdlapyeH50cbPILlD1P
-	nMwiRz3iF4QUmonljtKhK1HeojWT5egJPwFjbJV4EchRQxXN5M/+XkdLqySq9do+Vg==
-X-Gm-Gg: AZuq6aLBRJbaL4vORHBvlZnKoWfl8RptN1T4NR1Z1bYUzHoOQp1QUtn8VBKbn6rfyDw
-	sHxoqrn1N5KTwIEMtX6gp+S+MMUZAmM9QFBxJ+hkO4LSzxN6/wuQpl/hPrgG8AShvNHQfxlWDf/
-	uF3dnJltbjPkjojxA5qorqlQesDm5bz1uajCr8lqsHOoDBJAv9hoUwh0BfZMvAD4xVFPSM0Sb/U
-	qvLAZSytvLRTw2bsKBHMP/FwtzfM6Cj8pGrOP/iBK1SduwhEtERhD32LPRbXypFptyC5NEPJv/d
-	B9ez9LJ3Yz+kkh8Kk6jYVgtI1v4aOp6/ZIsnKo5f5akPcTSY99qn0zB+mKRUYrWNswhBpX0VNPr
-	0LWdl1Dmc+dVYgiug7o6kIe0zqGw8dqYvh66NtnoX1SzZtwp2qPRqkLB5BmUWsGtgBbRKHkrtUU
-	oMEs5eoAJ7NadF+3tBrbpyEj+AUwNdKRFHZAo7gEplfqFAzOGj8mE=
-X-Received: by 2002:a05:600c:4454:b0:477:86fd:fb1b with SMTP id 5b1f17b1804b1-483b878837emr116465e9.11.1771876782542;
-        Mon, 23 Feb 2026 11:59:42 -0800 (PST)
-Received: from localhost ([2a00:79e0:288a:8:e3f8:d6ab:bdc7:bdcf])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-483b81f8912sm4486845e9.1.2026.02.23.11.59.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Feb 2026 11:59:42 -0800 (PST)
-From: Jann Horn <jannh@google.com>
-Date: Mon, 23 Feb 2026 20:59:33 +0100
-Subject: [PATCH] eventpoll: Fix integer overflow in ep_loop_check_proc()
+        d=1e100.net; s=20230601; t=1771876820; x=1772481620;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ppR0cEPQxTYV1q27SxXg+9iVDhkw6VgIGfU3vsgp4Sw=;
+        b=I8J+NNoCNiz8m+XsweOUIQGDFIGKUIxBgjlvpfr9hxlXd3f6rFaURzpgiUPmnxAU6w
+         9BZSLjWY6idB+bWRt0O9t6jQtWCrfbsfVNTOQ96ZpXd58DwBIZo8kIGYAAzt6Mx41un3
+         XE/OVT+Q6QHSQ/53zHpfKExGy9uWDvuZ3qb9B/k1W0WoR4i3qBqXsm5JpbaurnDPh8Az
+         yMe0KRgGoD5rDEap3/H+R0Hc8zfOqj9Yp4dMBl0AWbXdaA0Bp/yk2SXpqZqHV1S3ofD3
+         o5fTqE15Yduui+9Sz9kDRvG6Z0GR8OImtl6VwVykHZVaxZxepCzfqfT2l01ynvoZNjV1
+         Gzgw==
+X-Forwarded-Encrypted: i=1; AJvYcCVcii7/34r5mlFB8e0/m7e0LkG8z+r1j3WWUPU+xJVZl/WPIxkTsNoEgs+Bt4ZmIzGrHJbCxkRYyTuGX+FV@vger.kernel.org
+X-Gm-Message-State: AOJu0YyahizsXKVFmHt6gDBcdGnTs4HAQq3K+2+2cyihK8/kj/Nm9I7t
+	9iBRbNLHbDjnUVcOl7szlIKcB1jIAr9wxih5JQnPFz3UOkqVaR25h8uS
+X-Gm-Gg: AZuq6aKCrLgrlJApVNO8ByoH9y9Gz3dsSCcRGqQUYIwgpKenQeAprDcGLWHi190bAxd
+	lkxzjTBI6LHDCuxGolML7tBOMs12NBVJ1rQJNFyZRfxCMANrMxRhLoS4q8dlX+sASN8Xrt9DRfu
+	ry21Iz90z4Uf4QKv+xDNtq/DIe9M+1MNNWcXTjIo6FMHTDzlnaXAruCZR91rjQ45Mp6cpIOmMNx
+	V4upntPzAg+h8GVne9TdVHHyUXR3drpM+zNT+h3ii0s3kygeIW4dodX2nP13ivQP4Vu6/jiemAg
+	IetoQooLe5HfSPH4igapL1bflnOnNwxuZQvmbU2L+6LD7zW0Df98NLNKkurCv9tpa8bsRIo3dNV
+	5vF/u9Nsw6VE47mvnHSfTwtZo4et98IYoXpKaMXJ2omGljiTcH+sCyAemlILSSbdIvOQAKR2dqL
+	nJmqkip7QXKvPIBThJcCA7zbr/8HS44yFqtNuYZqXeFLsOpyGBMhgtP+KenUn5xZ+nqTUJfbl9P
+	wFpoaQNlFZveCLqYbaTFJDVRQi6tCxdD/uYNQoY95/RrpsGzZ0IO3DayR8iFLaDTb9e0I9Whh3h
+	IQ==
+X-Received: by 2002:a05:600c:3516:b0:483:7783:5373 with SMTP id 5b1f17b1804b1-483a963588bmr149371545e9.23.1771876819843;
+        Mon, 23 Feb 2026 12:00:19 -0800 (PST)
+Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483b822c9a5sm5178545e9.2.2026.02.23.12.00.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Feb 2026 12:00:18 -0800 (PST)
+Message-ID: <94ae832e-209a-4427-925c-d4e2f8217f5a@gmail.com>
+Date: Mon, 23 Feb 2026 20:00:15 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260223-epoll-int-overflow-v1-1-452f35132224@google.com>
-X-B4-Tracking: v=1; b=H4sIAKSxnGkC/x3MQQqAIBBA0avErBswjYKuEi3MxhoQFY0KwrsnL
- d/i/xcyJaYMU/NCooszB1/RtQ2YQ/udkLdqkEIOQkqFFINzyP7EcFGyLtyotOhXOyoyeoAaxkS
- Wn386L6V8a/Zz4GQAAAA=
-X-Change-ID: 20260223-epoll-int-overflow-3a04bf73eca6
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Jann Horn <jannh@google.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Guenter Roeck <linux@roeck-us.net>, stable@vger.kernel.org
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1771876777; l=1946;
- i=jannh@google.com; s=20240730; h=from:subject:message-id;
- bh=vSGezea+kHW8+I4FXMUBtjpPhAkkh38ljsBUp1un6Fs=;
- b=RdragfDp77ExTy4XNQd7Cde3KK3Eu2MW9GuvLXcoBKzltgC7byd5LbGI5kPdL8Vyo4Wccnt4U
- 6Gt2X0RHjm4AJOJHzmkeblC3ZLcrSB3Jwn43TzRKzit2MbcKn7TWTZT
-X-Developer-Key: i=jannh@google.com; a=ed25519;
- pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 03/11] io_uring/kbuf: add support for kernel-managed
+ buffer rings
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk,
+ io-uring@vger.kernel.org, csander@purestorage.com, krisman@suse.de,
+ bernd@bsbernd.com, linux-fsdevel@vger.kernel.org
+References: <20260210002852.1394504-1-joannelkoong@gmail.com>
+ <20260210002852.1394504-4-joannelkoong@gmail.com>
+ <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
+ <aYykILfX_u9-feH-@infradead.org>
+ <bd488a4e-a856-4fa5-b2bb-427280e6a053@gmail.com>
+ <aY7QX-BIW-SMJ3h_@infradead.org>
+ <34cf24a3-f7f3-46ed-96be-bf716b2db060@gmail.com>
+ <CAJnrk1a+YuPpoLghA01uJhEKrhmrLhQ+5bw2OeeuLG3tG8p6Ew@mail.gmail.com>
+ <7a62c5a9-1ac2-4cc2-a22f-e5b0c52dabea@gmail.com>
+ <CAJnrk1Y5iTOhj4_RbnR7RJPkr7fFcCdh1gY=3Hm72M91D-SnyQ@mail.gmail.com>
+ <11869d3d-1c40-4d49-a6c2-607fd621bf91@gmail.com>
+ <CAJnrk1Zr=9RMGpNXpe6=fSDkG2uVijB9qa1vENHpQozB3iPQtg@mail.gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <CAJnrk1Zr=9RMGpNXpe6=fSDkG2uVijB9qa1vENHpQozB3iPQtg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-77998-lists,linux-fsdevel=lfdr.de];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77999-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[google.com:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jannh@google.com,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	NEURAL_HAM(-0.00)[-0.998];
+	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	NEURAL_HAM(-0.00)[-1.000];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[roeck-us.net:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 3AF5317CB09
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 498F417CA73
 X-Rspamd-Action: no action
 
-If a recursive call to ep_loop_check_proc() hits the `result = INT_MAX`,
-an integer overflow will occur in the calling ep_loop_check_proc() at
-`result = max(result, ep_loop_check_proc(ep_tovisit, depth + 1) + 1)`,
-breaking the recursion depth check.
+On 2/21/26 02:14, Joanne Koong wrote:
+> On Fri, Feb 20, 2026 at 4:53 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+...
+>> So I'm asking whether you expect that a server or other user space
+>> program should be able to issue a READ_OP_RECV, READ_OP_READ or any
+>> other similar request, which would consume buffers/entries from the
+>> km ring without any fuse kernel code involved? Do you have some
+>> use case for that in mind?
+> 
+> Thanks for clarifying your question. Yes, this would be a useful
+> optimization in the future for fuse servers with certain workload
+> characteristics (eg network-backed servers with high concurrency and
+> unpredictable latencies). I don't think the concept of kmbufrings is
+> exclusively fuse-specific though (for example, Christoph's use case
+> being a recent instance);
 
-Fix it by using a different placeholder value that can't lead to an
-overflow.
+Sorry, I don't see relevance b/w km rings and what Christoph wants.
+I explained why in some sub-thread, but maybe someone can tell
+what I'm missing.
 
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Fixes: f2e467a48287 ("eventpoll: Fix semi-unbounded recursion")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jann Horn <jannh@google.com>
----
-Gah, I introduced such an obvious integer overflow when I touched this
-code the last time...
+> I think other subsystems/users that'll use
+> kmbuf rings would also generically find it useful to have the option
+> of READ_OP_RECV/READ_OP_READ operating directly on the ring.
 
-No "Closes:" link because the bug was not reported publicly.
----
- fs/eventpoll.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Yep, it could be, potentially, it's just the patchset doesn't plumb
+it to other requests and uses it within fuse. It's just cases like
+that always make me wonder, here it was why what is basically an
+internal kernel fuse API is exposed as an io_uring uapi. Maybe there
+was a discussion about it I missed?
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index a8c278c50083..5714e900567c 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -2061,7 +2061,8 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
-  * @ep: the &struct eventpoll to be currently checked.
-  * @depth: Current depth of the path being checked.
-  *
-- * Return: depth of the subtree, or INT_MAX if we found a loop or went too deep.
-+ * Return: depth of the subtree, or a value bigger than EP_MAX_NESTS if we found
-+ * a loop or went too deep.
-  */
- static int ep_loop_check_proc(struct eventpoll *ep, int depth)
- {
-@@ -2080,7 +2081,7 @@ static int ep_loop_check_proc(struct eventpoll *ep, int depth)
- 			struct eventpoll *ep_tovisit;
- 			ep_tovisit = epi->ffd.file->private_data;
- 			if (ep_tovisit == inserting_into || depth > EP_MAX_NESTS)
--				result = INT_MAX;
-+				result = EP_MAX_NESTS+1;
- 			else
- 				result = max(result, ep_loop_check_proc(ep_tovisit, depth + 1) + 1);
- 			if (result > EP_MAX_NESTS)
+>> So you already can do all that using the mmap()'ed region user
+>> pointer, and you just want it to be more efficient, right?
+>> For that let's just reuse registered buffers, we don't need a
+>> new mechanism that needs to be propagated to all request types.
+>> And registered buffer are already optimised for I/O in a bunch
+>> of ways. And as a bonus, it'll be similar to the zero-copy
+>> internally registered buffers if you still plan to add them.
+>>
+>> The simplest way to do that is to create a registered buffer out
+>> of the mmap'ed region pointer. Pseudo code:
+>>
+>> // mmap'ed if it's kernel allocated.
+>> {region_ptr, region_size} = create_region();
+>>
+>> struct iovec iov;
+>> iov.iov_base = region_ptr;
+>> iov.iov_len = region_size;
+>> io_uring_register_buffers(ring, &iov, 1);
+>>
+>> // later instead of this:
+>> ptr = region_ptr + off;
+>> io_uring_prep_read(sqe, fd, ptr, ...);
+>>
+>> // you use registered buffers as usual:
+>> io_uring_prep_read_fixed(sqe, fd, off, regbuf_idx, ...);
+>>
+> 
+> I feel like this design makes the interface more convoluted and now
+> muddies different concepts together by adding new complexity /
+> relationships between them whereas they were otherwise cleanly
+> isolated. Maybe I'm just not seeing/understanding the overarching
+> vision for why conceptually it makes sense for them to be tied
+> together besides as a mechanism to tell io-uring requests where to
+> copy from by reusing what exists for fixed buffer ids. There's more
+> complexity now on the kernel side (eg having to detect if the buffer
+> passed in is kernel-allocated to know whether to pin the pages /
+> charge it against the user's RLIMIT_MEMLOCK limit) but I'm not
+> understanding what we gain from it.
 
----
-base-commit: 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f
-change-id: 20260223-epoll-int-overflow-3a04bf73eca6
+That would avoid doing a large revamp of uapi and plumbing it
+to each every request type when there is already a uapi that does
+what you want, does it well and have lots of things figured out.
+Keeping the I/O path sane is important, io_uring already has 3
+different ways of passing buffers, let's not add a 4th one
+unless it achieves something meaningful.
 
---  
-Jann Horn <jannh@google.com>
+> I got the sense from your previous
+> comments that memory regions are the de facto way to go and should be
+
+Sorry, maybe I wasn't clear. With what I see you're trying to do,
+i.e. copying client's data into user space (server), I think
+registered buffers would be a better abstraction. However, I just
+went with your design on top of regions, since it's not the first
+iteration of the series and I wasn't following previous ones, and
+IIRC you was already using registered buffers in previous revisions
+but moved from that for some reason. IOW, I was taking you main I/O
+path and was trying to make the setup path a bit more flexible and
+reusable.
+
+> decoupled from other structures, so if that's the case, why doesn't it
+> make sense for io-uring to add native support for using memory regions
+> for io-uring requests? I feel like from the userspace side it makes
+> things more confusing with this extra layer of indirection that now
+> has to go through a fixed buffer.
+
+There is a high bar for adding a new interface for passing buffers
+that needs to be propagated to a good number of request handlers,
+and there is already one that gives you all you need to write
+efficient user space.
+
+>> IIRC the registration would fail because it doesn't allow file
+>> backed pages, but it should be fine if we know it's io_uring
+>> region memory, so that would need to be patched.
+>>
+>> There might be a bunch of other ways you can do that like
+>> create a kernel allocated registered buffer like what Cristoph
+>> wants, and then register it as a region. Or allow creating
+>> registered buffers out of a region. etc.
+>>
+>> I wanted to unify registered buffers and regions internally
+>> at some point, but then drifted away from active io_uring core
+>> infrastructure development, so I guess that could've been useful.
+>>
+>>> Right now there's only a uapi to register a memory region and none to
+>>> unregister one. Is it guaranteed that io-uring will never add
+>>> something in the future that will let userspace unregister the memory
+>>> region or at least unregister it while it's being used (eg if we add
+>>> future refcounting to it to track active uses of it)?
+>>
+>> Let's talk about it when it's needed or something changes, but if
+>> you do registered buffers instead as per above, they'll be holding
+>> page references and or have to pin the region in some other way.
+> 
+> I don't think we can guarantee that the caller will register the
+> memory region as a fixed buffer (eg if it doesn't need/want to use the
+> buffer for normal io-uring requests). On the kernel side, the internal
+
+It's up to the user (i.e. fuse server) to either use OP_READ/etc. using
+user addresses that you have in your design from mmap()ing regions, or
+registering it and using OP_READ_FIXED.
+
+> buffer entry uses the kaddr of the registered memory region buffer for
+> any memcpys. If it's not guaranteed that registered memory regions
+> persist for the lifetime of the ring, there'll have to be extra
+> overhead for every I/O (eg grab the io-uring lock, checking if the mem
+> region is still registered, grab a refcount to that mem region, unlock
+> the ring, do the memcpy to the kaddr, then grab the io-uring lock
+> again, decrement the refcount, and unlock). Or I guess we could add
+> pinning to a registered memory region.
+
+
+
+-- 
+Pavel Begunkov
 
 
