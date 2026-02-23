@@ -1,172 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-77973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-77974-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yANpFod1nGmwHwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-77973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 16:43:03 +0100
+	id 6A4MFv13nGlfIAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-77974-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 16:53:33 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8060178ED7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 16:43:02 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id C49571791F6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 16:53:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id CB72F303E74E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 15:37:03 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id B78E6315F060
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 15:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A63C2F28E3;
-	Mon, 23 Feb 2026 15:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9883A3033E2;
+	Mon, 23 Feb 2026 15:47:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="Z5rEfwE7";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cXrhNPjK"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b9WzjV/j"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from flow-b1-smtp.messagingengine.com (flow-b1-smtp.messagingengine.com [202.12.124.136])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECF42EC090;
-	Mon, 23 Feb 2026 15:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12BF93009E8
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 15:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771861022; cv=none; b=MX0xv7eBeqrb2YTafrA2pyD/DSIs5a+bOqewYiyjGK1eR5t02bCS7KhR7YpRY/B+ZkUFRGwauwqDtAYCMG5G65HWBWmPL2obXG9XRmKGvqNuCZSlti0AjBH2eFB5rA7ii5RKouDRHhxWcph/YgMcJUADfewf3+wNQY6j8ClURs8=
+	t=1771861636; cv=none; b=ODTmNpcJpbTm7T7pJ9AL00fgOySDSXIc1CheuwqoVzu9zHVd6r9Y3G19PlLy3NEep37kE/jI/M8FAMZrYZuItRKW48+jlOi9ffn/pHS9ojBinKBpL8xOBjA89oUTVVUXrboWmfG3hUqAIIdmFVMllZyt4xaJInlF8GSXgs/TVKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771861022; c=relaxed/simple;
-	bh=0RMgkioBPuT2P7CS0wBcuyMqgY63Y0p8t67334WChz0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NY2kbYFvfTmzL0qAJH2ZY/iSVTOe1KGcQttEA/G0Rgg816+ITER0FUHj2NIuyPHmp+dICqjjCtf+v5nt0HiUG0xdoFl8cpl/GX7uNmI/eYiE4owmdawKS16JmhBazBUatWhujuH1eAoelV9MZZSeMRC219AYRTURq8GJXnGrNDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=Z5rEfwE7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cXrhNPjK; arc=none smtp.client-ip=202.12.124.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailflow.stl.internal (Postfix) with ESMTP id D12751300C81;
-	Mon, 23 Feb 2026 10:36:58 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Mon, 23 Feb 2026 10:36:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1771861018;
-	 x=1771868218; bh=/FFUXBR5U3hFVPIZNm7m/6LA2a4Y9zUWlPmCbTkG2qk=; b=
-	Z5rEfwE7pLIbHLJUDKM2C1pww9ShQ8bA64hqzO7v+kl191guOxvSQgPjJ5xkSaTq
-	DYh3hIBg2d4OY+wye6edZMl/a/JZQ0z2w0R2f4kEba2OpTyyXXiPmrOMRda3Zf56
-	E1g6TYO6FjySkzUgtlEP6wLCuMP4czriEfQPC4bJU1GjzTvNVIBxa1+xy5NJF5NT
-	OwZjh/kTwH/S6aklPYLMIOzYDAwexvyXGZDoonuXtqSNX5X5zJT4LZsDjXHeZipT
-	3FH1+8QzcfZasvaxwB0my3x7okubX8DVZmsZt+WuJrzYgiVFn4rn0+zp9wGKeaCL
-	A0oQbt1hZAQccEVKSDX9Sg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1771861018; x=
-	1771868218; bh=/FFUXBR5U3hFVPIZNm7m/6LA2a4Y9zUWlPmCbTkG2qk=; b=c
-	XrhNPjKOMYRcD3kZq4btnJ/o4IEKjWkDrwvMTR0SfeXydTHAtcUG0QxM6ARYw/ca
-	qGQmYEJP08JAbEL7Nv8wyN3XfZEYTN7tQVY3mkbE1V0viw6Hj1UEPURxOmPDC2mZ
-	ag3ppdvjnP+td5HYpRnua+qzrbibzQWY8mHGCvHmyuXr0uZ4rzys0da+WOcIdmhC
-	1gM7cHaUnGYkDLNC2NtEPVVvrH2GQiCra/XG40HX2v1d0HrbgKpfEHZG9KKjppRR
-	NBOzgqDdlt8XwDjhsSp1vdWNt/TFIHjNuIQj9GVNf6dvugEbdl3dM+iSy5WJ3Iq6
-	9OqfeF5zFpDYOYAduQ9RQ==
-X-ME-Sender: <xms:GnScaY3NipfFtM-UeKVjPq_hBjZ36D8XM_YljgyOm7rgjx5uJwmzdA>
-    <xme:GnScadFQq3N2gjwNo6Va12rVKF-gJ35Fc52VsAdBI46DQAzhxy0Pyet1p5G6ACRk1
-    KU3MMBzxzlM07Y60KclUhtUdS7WzQHLRg1bGKOzJHipsgm_n4Bc>
-X-ME-Received: <xmr:GnScaXi9dxGku8yqXoyggCSsEUpRbnPW1hx6FVqberc1_JKXx96eXQpGEh99ZJsDoB20>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvfeejieduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghrnhgu
-    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
-    htthgvrhhnpeejgfeljeeuffehhfeukedvudfhteethedtheefjefhveduteehhfdttedv
-    keekveenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtgho
-    mhdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmh
-    hikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehhohhrshhtsegsihhrthhh
-    vghlmhgvrhdruggvpdhrtghpthhtohepjhhimhdrhhgrrhhrihhssehnvhhiughirgdrtg
-    homhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepmhhguhhrthhovhhohiesnhhvihguihgrrdgtohhmpdhr
-    tghpthhtohepkhhsiihthigsvghrsehnvhhiughirgdrtghomhdprhgtphhtthhopehluh
-    hishesihhgrghlihgrrdgtohhm
-X-ME-Proxy: <xmx:GnScaQB6jZ-_gPDzZdIACqlEQWc-KO3dI1B9MR9xsB-m9P87ic_83w>
-    <xmx:GnScaZRCnAVYrcsrfNyfTcaCarPXcnkjFUrn3ZHcymxYOKp88HD5ug>
-    <xmx:GnScaVUxfbLVLEQhnqnILYzHov3pkuDRqzBZoinUnr68dE5Sd1RFwA>
-    <xmx:GnScaSc0GjGk6pafpbTtQ9SmbEexrGtY4Uhm7rQbtKTKioXMxtNGHQ>
-    <xmx:GnScaceep0MMcH3DLHKXDxP9pZf0Oj-qdjOCxkITkPznLYTNouuaVFPT>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 23 Feb 2026 10:36:54 -0500 (EST)
-Message-ID: <fa1b23a7-1dcb-4141-9334-8f9609bb13f7@bsbernd.com>
-Date: Mon, 23 Feb 2026 16:36:50 +0100
+	s=arc-20240116; t=1771861636; c=relaxed/simple;
+	bh=iHyB59AlPRHpgu0nv4iN8OdrqTn2iD57mlJ8qAQE7fQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EbRxkTtzCyuqTe+QUSCm778rGEcOxdPFAO3aE4wulSqaWuNkZvFqgsx4KgKq9RBUnTP+zoVOa0A011oIJ6hXN96dZvP2felTWJhiCd/qMelVL46YZ7epim6AMi+rqqenplDttrNUFw+5d+2SMknlilmKjEbXbhoyvyCZcYBhM/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b9WzjV/j; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1771861634;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OxCdAMxs1g6kkp2ZQGBboQJcW5rUk38g9689Mz3dIek=;
+	b=b9WzjV/jh0Ra161Y8T3q2F6FLvnmtk6znhyQPmHvI3LLzxniJWMw9ojTsKE+sr58XTLTtT
+	Fm1+HS02WGoWVQLhR42wtnVgAsOeuYDivKinM1ctv+FtRrq2gDBi1qnqs7kvHe0ROzIQly
+	acvBoFqnghsnkZF1FIJZwQaAC+v3Lso=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-342-KiD2v9cqNZKA2fwgI8Qrgw-1; Mon,
+ 23 Feb 2026 10:47:10 -0500
+X-MC-Unique: KiD2v9cqNZKA2fwgI8Qrgw-1
+X-Mimecast-MFC-AGG-ID: KiD2v9cqNZKA2fwgI8Qrgw_1771861628
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A0849195608F;
+	Mon, 23 Feb 2026 15:47:07 +0000 (UTC)
+Received: from fedora (unknown [10.44.32.38])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 3FB291800465;
+	Mon, 23 Feb 2026 15:47:03 +0000 (UTC)
+Received: by fedora (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 23 Feb 2026 16:47:07 +0100 (CET)
+Date: Mon, 23 Feb 2026 16:47:02 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jann Horn <jannh@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 2/4] pidfd: add CLONE_PIDFD_AUTOKILL
+Message-ID: <aZx2dlV9tJaL5gDG@redhat.com>
+References: <20260223-work-pidfs-autoreap-v4-0-e393c08c09d1@kernel.org>
+ <20260223-work-pidfs-autoreap-v4-2-e393c08c09d1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fuse: skip lookup during atomic_open() when O_CREAT is
- set
-To: Miklos Szeredi <miklos@szeredi.hu>, Horst Birthelmer <horst@birthelmer.de>
-Cc: Jim Harris <jim.harris@nvidia.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, mgurtovoy@nvidia.com, ksztyber@nvidia.com,
- Luis Henriques <luis@igalia.com>
-References: <20260220204102.21317-1-jiharris@nvidia.com>
- <aZnLtrqN3u8N66GU@fedora-2.fritz.box>
- <CAJfpegstf_hPN2+jyO_vNfjSqZpUZPJqNg59hGSqTYqyWx1VVg@mail.gmail.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJfpegstf_hPN2+jyO_vNfjSqZpUZPJqNg59hGSqTYqyWx1VVg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260223-work-pidfs-autoreap-v4-2-e393c08c09d1@kernel.org>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[bsbernd.com,none];
-	R_DKIM_ALLOW(-0.20)[bsbernd.com:s=fm2,messagingengine.com:s=fm3];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-77973-lists,linux-fsdevel=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	DKIM_TRACE(0.00)[bsbernd.com:+,messagingengine.com:+];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_FIVE(0.00)[6];
+	DKIM_TRACE(0.00)[redhat.com:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-77974-lists,linux-fsdevel=lfdr.de];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[bernd@bsbernd.com,linux-fsdevel@vger.kernel.org];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[oleg@redhat.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	NEURAL_HAM(-0.00)[-0.999];
-	RCPT_COUNT_SEVEN(0.00)[8];
+	RCPT_COUNT_SEVEN(0.00)[7];
 	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	TO_DN_SOME(0.00)[]
-X-Rspamd-Queue-Id: C8060178ED7
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: C49571791F6
 X-Rspamd-Action: no action
 
+On 02/23, Christian Brauner wrote:
+>
+> @@ -2259,13 +2268,20 @@ __latent_entropy struct task_struct *copy_process(
+>  	 * if the fd table isn't shared).
+>  	 */
+>  	if (clone_flags & CLONE_PIDFD) {
+> -		int flags = (clone_flags & CLONE_THREAD) ? PIDFD_THREAD : 0;
+> +		unsigned flags = PIDFD_STALE;
+> +
+> +		if (clone_flags & CLONE_THREAD)
+> +			flags |= PIDFD_THREAD;
+> +		if (clone_flags & CLONE_PIDFD_AUTOKILL) {
+> +			task_set_no_new_privs(p);
+> +			flags |= PIDFD_AUTOKILL;
+> +		}
+>  
+>  		/*
+>  		 * Note that no task has been attached to @pid yet indicate
+>  		 * that via CLONE_PIDFD.
+>  		 */
+> -		retval = pidfd_prepare(pid, flags | PIDFD_STALE, &pidfile);
+> +		retval = pidfd_prepare(pid, flags, &pidfile);
 
+Confused... I think you also need to change pidfs_alloc_file() to restore
+O_TRUNC after do_dentry_open() clears this flag? Just like it curently does
 
-On 2/23/26 16:09, Miklos Szeredi wrote:
-> On Sat, 21 Feb 2026 at 16:19, Horst Birthelmer <horst@birthelmer.de> wrote:
-> 
->> I have been looking at that code lately a lot since I was planning to
->> replace it with a compound.
->> I'm not entirely convinced that your proposal is the right direction.
->> I would involve O_EXCL as well, since that lookup could actually
->> help in that case.
->>
->> Take a look at what Miklos wrote here:
->> https://lore.kernel.org/linux-fsdevel/CAJfpegsDxsMsyfP4a_5H1q91xFtwcEdu9-WBnzWKwjUSrPNdmw@mail.gmail.com/
-> 
-> Bernd had actual patches, that got sidetracked unfortunately:
-> 
-> https://lore.kernel.org/all/20231023183035.11035-1-bschubert@ddn.com/
+	pidfd_file->f_flags |= (flags & PIDFD_THREAD);
 
+?
 
-After the discussion about LOOKUO_HANDLE my impression was actually that
-we want to use compounds for the atomic open.
+Oleg.
 
-
-Thanks,
-Bernd
 
