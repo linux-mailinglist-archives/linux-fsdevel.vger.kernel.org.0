@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-78039-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78040-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yNK5N/DdnGl/LwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78039-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:08:32 +0100
+	id xRsuIwjenGm4LwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78040-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:08:56 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CFAA17EDB8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:08:32 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45C6217EE02
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:08:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id BD5F9304CEA5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:06:38 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 272FA3094154
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB3D37E2E0;
-	Mon, 23 Feb 2026 23:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD98A37E2ED;
+	Mon, 23 Feb 2026 23:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LEWx8Hi5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sp55KZOr"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1EA737D11D;
-	Mon, 23 Feb 2026 23:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570183783BB;
+	Mon, 23 Feb 2026 23:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771887996; cv=none; b=iwUFZlPFW/RNM7VFvXyTfbVGbQyb3baLOZOgthx+j47kEO/aWQ8k8ym+tsj0d80XudVQw4bwnCY+4YKXHLrgmf6lVtQOON2OshvAOZ1l+yfv+cEw44+CqvjBnqmld53/RjhSk2y/24iVw1zBTXI1e8ke/415Ow/5GvEH65WW7uA=
+	t=1771888011; cv=none; b=tu1azofdUZU3aea3iamQ2imQ1wQVOUzUyisNd6y51wHgdOkx3o2/LRRHANeA198cPQ3q2EQSXTNdoO8YvF84z3Ptn02DgKoQ/Rd9XtJN4PZEBgtrwzFJOHX57PTgb6FsheRa+lJlIft3PC9UChJiy7rw6lmec452B4kWKHaro18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771887996; c=relaxed/simple;
-	bh=2xV+wUcDg5Qbf0unWMWw7MKiuY2kzAYYBg+1fTOej9k=;
+	s=arc-20240116; t=1771888011; c=relaxed/simple;
+	bh=u6JnsKUda8GUWSdVhmWn4CwU4D4A5ozj9w7tOM+yUMY=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G/VtcfSG/Fu4R7U/19igHQJ+8+vaGziZpPasncvuBfjscR1Vtjgj7d4oLSp1rTxm24LhrjfcXV0atu838+9InpyrkE9dzUyGltXN7olHoIHRO0lorJqL+fOcuTrQk3V3eqXDeq6uYMc5tuXQYHcNyBmrdSroSNou/k1kYAsFUbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LEWx8Hi5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A145C116C6;
-	Mon, 23 Feb 2026 23:06:35 +0000 (UTC)
+	 MIME-Version:Content-Type; b=oKd9pu6NQP9Ab7iXTZEpn9OgUSB6PUNtoOOoquzVuKY7AifRjtztUQNz0DCMRrxB6ilWymlN+OLOzjcCJdbPoQeBNyNYYm7oF2lSXrK2t6bqSuv/IqmUWaX5a4NjksOtxwZ3MXCfUSn+9tppy5URg5zLQvn1wptymQSdFDOASN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sp55KZOr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32C52C116C6;
+	Mon, 23 Feb 2026 23:06:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771887995;
-	bh=2xV+wUcDg5Qbf0unWMWw7MKiuY2kzAYYBg+1fTOej9k=;
+	s=k20201202; t=1771888011;
+	bh=u6JnsKUda8GUWSdVhmWn4CwU4D4A5ozj9w7tOM+yUMY=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=LEWx8Hi5tAUnWyAH5lviIhmh51f8jd5gPXaA/btbpERMTJPI/pmuWX8oGH0NXfu5M
-	 Q+JVOQ1NPf2OWkuSSpQMWP12wwwkFMLyMt+uimoiquv/qGUXqrrB55/dAOjf3KjEfr
-	 I2g7IHo5zgSay27JpU7j2a1UZ6HttwcErC+BiHAO/Mebep7QoMFtsjGwWV3ckh37Bt
-	 PTBAOIH3xXZR4kPMrSfaDbq4Yb2gNr+9l+NCP8YUBEc0ox5Yu0xvkOiwPEMogYgWhd
-	 GCIbFt6AFKRr87DRv4HPdpQ6VBMmNbGhe8m0AJ6+MVYLMEuT7loeoD65UOXpitswyI
-	 o9wGOKwvQo+DA==
-Date: Mon, 23 Feb 2026 15:06:35 -0800
-Subject: [PATCH 1/5] fuse: flush pending FUSE_RELEASE requests before sending
- FUSE_DESTROY
+	b=sp55KZOrL9Xu99RZuCpWmqQo+wS5GhKAKdD/HsqBv/SYbZG7XeZvjDwVK0Wft+jMi
+	 OPt7V7Uhf3IIvdZHLQzfuTQIiMjxJhlCUqsnXAaYNbzAjPX+F99lwkO4HoELCFGE7+
+	 BxpTDTrFmoiBhGyqmCmlgYPgwtexh9x79aYh5gG3xFW8X5ZvhEGQO/HuMjxzaPaaN6
+	 vdixXFIDpdfgdm0ll7ZEjNS9nWwoKtMyf+p1Vm+tH61zCxyFEyxtAaCZhfXw2kE9Di
+	 Bw2ReMMCfzU+/2QTJbnyFfRYhxvTD67ZeY3j47qwRXdlflghvKeP/Ltc/J3d4qPyNJ
+	 d9c1EqOfT4V1Q==
+Date: Mon, 23 Feb 2026 15:06:50 -0800
+Subject: [PATCH 2/5] fuse: quiet down complaints in fuse_conn_limit_write
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: miklos@szeredi.hu, djwong@kernel.org
-Cc: joannelkoong@gmail.com, bpf@vger.kernel.org, bernd@bsbernd.com,
- neal@gompa.dev, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-Message-ID: <177188733133.3935219.4620873208351971726.stgit@frogsfrogsfrogs>
+Cc: stable@vger.kernel.org, joannelkoong@gmail.com, bpf@vger.kernel.org,
+ bernd@bsbernd.com, neal@gompa.dev, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org
+Message-ID: <177188733154.3935219.17731267668265272256.stgit@frogsfrogsfrogs>
 In-Reply-To: <177188733084.3935219.10400570136529869673.stgit@frogsfrogsfrogs>
 References: <177188733084.3935219.10400570136529869673.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,26 +61,26 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,bsbernd.com,gompa.dev];
-	TAGGED_FROM(0.00)[bounces-78039-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com,bsbernd.com,gompa.dev];
+	TAGGED_FROM(0.00)[bounces-78040-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	MIME_TRACE(0.00)[0:+];
 	TO_DN_NONE(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
@@ -88,143 +88,69 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	MISSING_XM_UA(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
+	RCPT_COUNT_SEVEN(0.00)[9];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 8CFAA17EDB8
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 45C6217EE02
 X-Rspamd-Action: no action
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-generic/488 fails with fuse2fs in the following fashion:
+gcc 15 complains about an uninitialized variable val that is passed by
+reference into fuse_conn_limit_write:
 
-generic/488       _check_generic_filesystem: filesystem on /dev/sdf is inconsistent
-(see /var/tmp/fstests/generic/488.full for details)
+ control.c: In function ‘fuse_conn_congestion_threshold_write’:
+ include/asm-generic/rwonce.h:55:37: warning: ‘val’ may be used uninitialized [-Wmaybe-uninitialized]
+    55 |         *(volatile typeof(x) *)&(x) = (val);                            \
+       |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+ include/asm-generic/rwonce.h:61:9: note: in expansion of macro ‘__WRITE_ONCE’
+    61 |         __WRITE_ONCE(x, val);                                           \
+       |         ^~~~~~~~~~~~
+ control.c:178:9: note: in expansion of macro ‘WRITE_ONCE’
+   178 |         WRITE_ONCE(fc->congestion_threshold, val);
+       |         ^~~~~~~~~~
+ control.c:166:18: note: ‘val’ was declared here
+   166 |         unsigned val;
+       |                  ^~~
 
-This test opens a large number of files, unlinks them (which really just
-renames them to fuse hidden files), closes the program, unmounts the
-filesystem, and runs fsck to check that there aren't any inconsistencies
-in the filesystem.
+Unfortunately there's enough macro spew involved in kstrtoul_from_user
+that I think gcc gives up on its analysis and sprays the above warning.
+AFAICT it's not actually a bug, but we could just zero-initialize the
+variable to enable using -Wmaybe-uninitialized to find real problems.
 
-Unfortunately, the 488.full file shows that there are a lot of hidden
-files left over in the filesystem, with incorrect link counts.  Tracing
-fuse_request_* shows that there are a large number of FUSE_RELEASE
-commands that are queued up on behalf of the unlinked files at the time
-that fuse_conn_destroy calls fuse_abort_conn.  Had the connection not
-aborted, the fuse server would have responded to the RELEASE commands by
-removing the hidden files; instead they stick around.
+Previously we would use some weird uninitialized_var annotation to quiet
+down the warnings, so clearly this code has been like this for quite
+some time.
 
-For upper-level fuse servers that don't use fuseblk mode this isn't a
-problem because libfuse responds to the connection going down by pruning
-its inode cache and calling the fuse server's ->release for any open
-files before calling the server's ->destroy function.
-
-For fuseblk servers this is a problem, however, because the kernel sends
-FUSE_DESTROY to the fuse server, and the fuse server has to write all of
-its pending changes to the block device before replying to the DESTROY
-request because the kernel releases its O_EXCL hold on the block device.
-This means that the kernel must flush all pending FUSE_RELEASE requests
-before issuing FUSE_DESTROY.
-
-For fuse-iomap servers this will also be a problem because iomap servers
-are expected to release all exclusively-held resources before unmount
-returns from the kernel.
-
-Create a function to push all the background requests to the queue
-before sending FUSE_DESTROY.  That way, all the pending file release
-events are processed by the fuse server before it tears itself down, and
-we don't end up with a corrupt filesystem.
-
-Note that multithreaded fuse servers will need to track the number of
-open files and defer a FUSE_DESTROY request until that number reaches
-zero.  An earlier version of this patch made the kernel wait for the
-RELEASE acknowledgements before sending DESTROY, but the kernel people
-weren't comfortable with adding blocking waits to unmount.
-
+Cc: <stable@vger.kernel.org> # v5.9
+Fixes: 3f649ab728cda8 ("treewide: Remove uninitialized_var() usage")
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/fuse/fuse_i.h |    5 +++++
- fs/fuse/dev.c    |   19 +++++++++++++++++++
- fs/fuse/inode.c  |   12 +++++++++++-
- 3 files changed, 35 insertions(+), 1 deletion(-)
+ fs/fuse/control.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 7f16049387d15e..1d4beca5c7018d 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -1287,6 +1287,11 @@ void fuse_request_end(struct fuse_req *req);
- void fuse_abort_conn(struct fuse_conn *fc);
- void fuse_wait_aborted(struct fuse_conn *fc);
- 
-+/**
-+ * Flush all pending requests but do not wait for them.
-+ */
-+void fuse_flush_requests(struct fuse_conn *fc);
-+
- /* Check if any requests timed out */
- void fuse_check_timeout(struct work_struct *work);
- 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 0b0241f47170d4..ac9d7a7b3f5e68 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -24,6 +24,7 @@
- #include <linux/splice.h>
- #include <linux/sched.h>
- #include <linux/seq_file.h>
-+#include <linux/nmi.h>
- 
- #include "fuse_trace.h"
- 
-@@ -2430,6 +2431,24 @@ static void end_polls(struct fuse_conn *fc)
- 	}
- }
- 
-+/*
-+ * Flush all pending requests and wait for them.  Only call this function when
-+ * it is no longer possible for other threads to add requests.
-+ */
-+void fuse_flush_requests(struct fuse_conn *fc)
-+{
-+	spin_lock(&fc->lock);
-+	spin_lock(&fc->bg_lock);
-+	if (fc->connected) {
-+		/* Push all the background requests to the queue. */
-+		fc->blocked = 0;
-+		fc->max_background = UINT_MAX;
-+		flush_bg_queue(fc);
-+	}
-+	spin_unlock(&fc->bg_lock);
-+	spin_unlock(&fc->lock);
-+}
-+
- /*
-  * Abort all requests.
-  *
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index e57b8af06be93e..58c3351b467221 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -2086,8 +2086,18 @@ void fuse_conn_destroy(struct fuse_mount *fm)
+diff --git a/fs/fuse/control.c b/fs/fuse/control.c
+index 140bd5730d9984..073c2d8e4dfc7c 100644
+--- a/fs/fuse/control.c
++++ b/fs/fuse/control.c
+@@ -121,7 +121,7 @@ static ssize_t fuse_conn_max_background_write(struct file *file,
+ 					      const char __user *buf,
+ 					      size_t count, loff_t *ppos)
  {
- 	struct fuse_conn *fc = fm->fc;
+-	unsigned val;
++	unsigned val = 0;
+ 	ssize_t ret;
  
--	if (fc->destroy)
-+	if (fc->destroy) {
-+		/*
-+		 * Flush all pending requests (most of which will be
-+		 * FUSE_RELEASE) before sending FUSE_DESTROY, because the fuse
-+		 * server must close the filesystem before replying to the
-+		 * destroy message, because unmount is about to release its
-+		 * O_EXCL hold on the block device.  We don't wait, so libfuse
-+		 * has to do that for us.
-+		 */
-+		fuse_flush_requests(fc);
- 		fuse_send_destroy(fm);
-+	}
+ 	ret = fuse_conn_limit_write(file, buf, count, ppos, &val,
+@@ -163,7 +163,7 @@ static ssize_t fuse_conn_congestion_threshold_write(struct file *file,
+ 						    const char __user *buf,
+ 						    size_t count, loff_t *ppos)
+ {
+-	unsigned val;
++	unsigned val = 0;
+ 	struct fuse_conn *fc;
+ 	ssize_t ret;
  
- 	fuse_abort_conn(fc);
- 	fuse_wait_aborted(fc);
 
 
