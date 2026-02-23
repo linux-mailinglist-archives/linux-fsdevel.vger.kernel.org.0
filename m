@@ -1,58 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-78034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 8DLTBF3dnGl/LwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:06:05 +0100
+	id sHPyEZvdnGl/LwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:07:07 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAED517ECB1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:06:04 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id C50D517ED1B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:07:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 8C1CF308BB9B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:05:22 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id CFBC3309D08E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1022A37D134;
-	Mon, 23 Feb 2026 23:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6B037E308;
+	Mon, 23 Feb 2026 23:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NiagtkFv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="htTuIbZl"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFDD378D97;
-	Mon, 23 Feb 2026 23:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7690437E2F9;
+	Mon, 23 Feb 2026 23:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771887917; cv=none; b=h1QEvACgfk0JyudfPHBOKeRzOXMMX2bPDlBR2rwzjE1Sw/X/vi/AX2+/lHG9xQ+berQ/cryRSe50sP6v+lCuGAygcvT7HjgZq5V8nZEDbFWUd+8rEy6b1rhXJ6yaAp5U1R1heLTJyCWW/gEWBg5CbZOtqH0OEXKJFMQtNMbUpnE=
+	t=1771887933; cv=none; b=FpVY5igmrg984fh7zZRPgASHm1gJg5OcFDhAc6NCX1TnIGCfhvea1S/SjLP5JCPGwISy6np84ly0u7LPpU9BtAGoYV9he8D465yTsNNA4ZJkIOLNO69Zs7qKmjvuixKMzQ2Q6GGHQ154CuW5pNMiGqJ+gagLA3Lfe5YOVP5VtVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771887917; c=relaxed/simple;
-	bh=yBPKN+EjYK0Y/VaXzwl4UsIR6vZeEqSBTD8zM5Ud9gs=;
+	s=arc-20240116; t=1771887933; c=relaxed/simple;
+	bh=erLnXXKfazJyfXqyTBmDRoDs7EW0FYC/FDwshxrCEvw=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Px6iOnbJiiVbPNNycKhnOgTJ4Vpa/MazqXiYeVkKeCkNnf28tjNEQKHYDterEyhnn+/iUT/DsjxEZXrFRHjuMgW14ImpQ3JaVr06Hrj59ZOR8UdB2n6DfDS7N8rUHC4scK7iobEv7gK7WCWHt4LD0YGR5mor8i4RypRMvrcr1vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NiagtkFv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 682E5C116C6;
-	Mon, 23 Feb 2026 23:05:17 +0000 (UTC)
+	 MIME-Version:Content-Type; b=f2e1nvjCM5dLXHlL0rG7P5TG8rODBGrmQcq3Y25+RQvpwPyAZLaNGNeuyLUXZ0Mx3YfbmTKXNi4BkwO5lIq0IyedZMt8wsLe6OugBU9zam2HfK+7tzW7RsY6CM6pDEJxwOk+XGD5xbi2SzkAo2YDgOXDyKtgGLnQqyjZk3fmVaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=htTuIbZl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FAE8C2BC86;
+	Mon, 23 Feb 2026 23:05:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771887917;
-	bh=yBPKN+EjYK0Y/VaXzwl4UsIR6vZeEqSBTD8zM5Ud9gs=;
+	s=k20201202; t=1771887933;
+	bh=erLnXXKfazJyfXqyTBmDRoDs7EW0FYC/FDwshxrCEvw=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=NiagtkFvr16gk6O7jFasNVWF1BneLMjs4QhzFGMd5gCIXVe0pFOt8+/6KhgroEK1q
-	 OzFs1nO4NR4mx/agYQCCWR2jm+X+l9LQszXgepyyIJYnv8kisO36OZatmYB864W/OH
-	 0PTj/yIagkyYykxjKsjMmZBRoQjVjFzbtYKYf3ET2n8yYv38B2AAdEkWmF2SwMHmOz
-	 G0oZ04gtTP8GwswPvF1fFrjkPWYcBV6/H264JgpMxsUgj/lHjrj3I7oSSU/s5inQNY
-	 Q1eiDKGdHN1kIZchmWzcIGq50rNFA2Zr+AXqI2iXh+oSFawaxsLjOpixM/9aF9h4Ss
-	 ZptLPrCi1CLXA==
-Date: Mon, 23 Feb 2026 15:05:16 -0800
-Subject: [PATCHSET v7 4/8] fuse2fs: cache iomap mappings for even better file
- IO performance
+	b=htTuIbZl5jCRnLsS9kaUpXQejQuutrqFLijlFPoG4ZP6XE3rQYx7agK+GRoWMmbmL
+	 KlwUuGXHsdjYXM5svbRl2XlV87pPyvYQOy2/uRpnmXTSqumJti8rmVMUQaNZXUxr6/
+	 bbgDTbxJoqBfM7bOxgA4SXstkzWohwQznk5cBykMm2YaPKVCDtenSyblZ4FCPfaH1x
+	 cF78DdcLwX/QFmRuP0bIuOfhCgosFeK6HezZ6ZpIVuzdIIfuIZ6YRkNV6YUall4OYj
+	 1sy9u5jGaHgjTzrQes7T7CZGmInhHDEXDOrpDYgKk8EjQKtjgxeL+Ppeh9u+v3H1Eh
+	 aci6KoXaIjbQA==
+Date: Mon, 23 Feb 2026 15:05:32 -0800
+Subject: [PATCHSET v7 5/8] fuse2fs: improve block and inode caching
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-ext4@vger.kernel.org, miklos@szeredi.hu, bernd@bsbernd.com,
  joannelkoong@gmail.com, neal@gompa.dev
-Message-ID: <177188745484.3944453.12407213942915501693.stgit@frogsfrogsfrogs>
+Message-ID: <177188745668.3944626.16408108516155796668.stgit@frogsfrogsfrogs>
 In-Reply-To: <20260223224617.GA2390314@frogsfrogsfrogs>
 References: <20260223224617.GA2390314@frogsfrogsfrogs>
 Precedence: bulk
@@ -68,20 +67,20 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_CC(0.00)[vger.kernel.org,szeredi.hu,bsbernd.com,gmail.com,gompa.dev];
-	TAGGED_FROM(0.00)[bounces-78034-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78035-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	MIME_TRACE(0.00)[0:+];
 	TO_DN_NONE(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
@@ -92,18 +91,16 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: BAED517ECB1
+X-Rspamd-Queue-Id: C50D517ED1B
 X-Rspamd-Action: no action
 
 Hi all,
 
-This series improves the performance (and correctness for some
-filesystems) by adding the ability to cache iomap mappings in the
-kernel.  For filesystems that can change mapping states during pagecache
-writeback (e.g. unwritten extent conversion) this is absolutely
-necessary to deal with races with writes to the pagecache because
-writeback does not take i_rwsem.  For everyone else, it simply
-eliminates roundtrips to userspace.
+This series ports the libext2fs inode cache to the new cache.c hashtable
+code that was added for fuse4fs unlinked file support and improves on
+the UNIX I/O manager's block cache by adding a new I/O manager that does
+its own caching.  Now we no longer have statically sized buffer caching
+for the two fuse servers.
 
 If you're going to start using this code, I strongly recommend pulling
 from my git trees, which are linked below.
@@ -111,15 +108,37 @@ from my git trees, which are linked below.
 Comments and questions are, as always, welcome.
 
 e2fsprogs git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/e2fsprogs.git/log/?h=fuse2fs-iomap-cache
+https://git.kernel.org/cgit/linux/kernel/git/djwong/e2fsprogs.git/log/?h=fuse2fs-caching
 ---
 Commits in this patchset:
- * fuse2fs: enable caching of iomaps
- * fuse2fs: constrain iomap mapping cache size
- * fuse2fs: enable iomap
+ * libsupport: add caching IO manager
+ * iocache: add the actual buffer cache
+ * iocache: bump buffer mru priority every 50 accesses
+ * fuse2fs: enable caching IO manager
+ * fuse2fs: increase inode cache size
+ * libext2fs: improve caching for inodes
 ---
- fuse4fs/fuse4fs.c |   44 +++++++++++++++++++++++++++++++++++++-------
- misc/fuse2fs.c    |   40 ++++++++++++++++++++++++++++++++++------
- 2 files changed, 71 insertions(+), 13 deletions(-)
+ lib/ext2fs/ext2fsP.h     |   13 +
+ lib/support/cache.h      |    1 
+ lib/support/iocache.h    |   17 +
+ debugfs/Makefile.in      |    8 
+ e2fsck/Makefile.in       |   12 -
+ fuse4fs/Makefile.in      |   11 -
+ fuse4fs/fuse4fs.c        |    8 
+ lib/ext2fs/Makefile.in   |   70 ++--
+ lib/ext2fs/inline_data.c |    4 
+ lib/ext2fs/inode.c       |  215 ++++++++++---
+ lib/ext2fs/io_manager.c  |    3 
+ lib/support/Makefile.in  |    6 
+ lib/support/cache.c      |   16 +
+ lib/support/iocache.c    |  765 ++++++++++++++++++++++++++++++++++++++++++++++
+ misc/Makefile.in         |   12 -
+ misc/fuse2fs.c           |   10 +
+ resize/Makefile.in       |   11 -
+ tests/fuzz/Makefile.in   |    4 
+ tests/progs/Makefile.in  |    4 
+ 19 files changed, 1068 insertions(+), 122 deletions(-)
+ create mode 100644 lib/support/iocache.h
+ create mode 100644 lib/support/iocache.c
 
 
