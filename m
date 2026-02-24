@@ -1,118 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-78237-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id SHWrFP95nWmAQAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78237-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 11:14:23 +0100
+	id qMzRMd16nWmAQAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 11:18:05 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E68351852E4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 11:14:22 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45D2F185362
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 11:18:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 43BC630B39DB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 10:10:16 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 3662830913DB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 10:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D19F376BF2;
-	Tue, 24 Feb 2026 10:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EF4376BE4;
+	Tue, 24 Feb 2026 10:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MYW3umej"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UEwojE27"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C84B29AB05;
-	Tue, 24 Feb 2026 10:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D30377541
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 10:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771927814; cv=none; b=N2DVO+3vkp+fmOR5ekqwjVNwyP0eY2XknIFaJzLlrHkA5G3OO5eWEJTuAACAuQcIRc5r7tCXuNk3qg+KoClFHj4U5Iuf59vutddOzyyKrta/0oOaQYEug2lZ65oEM296yf+Ac3Z/Ho8G8mBMCM3domhb3ZLuFLpTWOJXLFOFtEA=
+	t=1771928282; cv=none; b=MFhdyY7yzWpNH2uvJxUlsBe4+5QbN6WwrTeW4cci7BsMnaHwQu29yUF+uDOwyeoWhmnjxark/z7sTL/yIIiYipmPTEKg8kyADstp55wki4mHsIUyr7C+ddHJNZaQRDPcTfc2p0ewUEjKyYyoviXuarBdhZGJX61Q8vWLxVrXoK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771927814; c=relaxed/simple;
-	bh=Z97oeCqMuGbvSy3Be3opMeaqqrYJfEPzbPgkH8q779M=;
+	s=arc-20240116; t=1771928282; c=relaxed/simple;
+	bh=kwirtkezUKyttq19ZuH10pyRTvZLQj8wIqqJHevs7fY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m8jjTM0gWfe/RK57YW4cKojOUNuf3v+9eTfA3YH334v9/yXIJyy1Po9hPmMaA7ktIp/N0s82mjKS63+HnGMJprMrBVogzTKHI9iPJxQhRgw4SPhIn8ZbyM1u8rZ7exx/zLqapSvgIKD4fVCi3y4lvE2JMO3xfZKUcK9UOpTHJYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MYW3umej; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6BEBC116D0;
-	Tue, 24 Feb 2026 10:10:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771927814;
-	bh=Z97oeCqMuGbvSy3Be3opMeaqqrYJfEPzbPgkH8q779M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MYW3umej0heWTRwmXdbzk6ZnjNQ6RxMKF4GzL9W/96Wv7kKXRi8rU697Xs4yKQALB
-	 lRfH8g+z+KW32PKgMxT0rreWx4Z1zw8e+l3sea9GjU5UWmdswWEyWrpoQWVOEdN9jo
-	 QZ+E5n6J9aLtP69OKws2bKZ3zqoV7oKuzoBDdjYVQUW4RtpB9IBVtBqRq7v45lTc5n
-	 iwLhxex7lcqaQ5WpOL9CaEuTfFXWLooGz9lLY2lOKLjdFvumgjHSzr4wj8j03YWwN7
-	 x4t0hND+F7AM0uA9RT3De5jMQnhh4+QEiEeH+cuG5aOfFlL0CMZCfYsq/iXqp/1ZKi
-	 jHb16fRqdMvvA==
-Date: Tue, 24 Feb 2026 11:10:09 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Jori Koolstra <jkoolstra@xs4all.nl>, chuck.lever@oracle.com, 
-	alex.aring@gmail.com, viro@zeniv.linux.org.uk, jack@suse.cz, arnd@arndb.de, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH] Add support for empty path in openat and openat2 syscalls
-Message-ID: <20260224-karotten-wegnimmt-79410ef99aeb@brauner>
-References: <20260223151652.582048-1-jkoolstra@xs4all.nl>
- <44a2111e33631d78aded73e4b79908db6237227f.camel@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LkNYMbvhtF6QVpWcqC0FkJm66RJ84T1EvFIeqm92v31okNYeHhMoMzmC+/j89lYXHBvpSEEYiuW6xDSbFpagS0Ob7kulO0s9n9lXpJ862WumBJLPCOKzYLSGbM2XYy4hqCJc8qg87lK3pwjMNv8fYwSJDiR8HaPq4j7yVKd6wlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UEwojE27; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1771928280;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M87QNnsSCJlVJUoKJxVdXvjbujJhFeSG308AaM5lV3o=;
+	b=UEwojE278xjRVYI6QWzAc0A6oSkq3XWBbRzRfVJ8m6IjfCYd31x0TOPDhITTJ50m+Og7Tb
+	IB1s4qwKAWg2L5tDcRNyyziaZDilRr8oXgFmktlPMGSJ43NVSSZz4FrCDNap9fSllVTp2w
+	gMKNZuIhYBsvxc1q1piw6zIxnp/cZes=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-671-lgdNJAsjPlqNYJSgqZugwA-1; Tue,
+ 24 Feb 2026 05:17:51 -0500
+X-MC-Unique: lgdNJAsjPlqNYJSgqZugwA-1
+X-Mimecast-MFC-AGG-ID: lgdNJAsjPlqNYJSgqZugwA_1771928269
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 502CC18003F6;
+	Tue, 24 Feb 2026 10:17:49 +0000 (UTC)
+Received: from fedora (unknown [10.44.32.38])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A23351800465;
+	Tue, 24 Feb 2026 10:17:45 +0000 (UTC)
+Received: by fedora (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 24 Feb 2026 11:17:48 +0100 (CET)
+Date: Tue, 24 Feb 2026 11:17:43 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jann Horn <jannh@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: pidfd && O_RDWR
+Message-ID: <aZ16x0OH098LMqen@redhat.com>
+References: <20260223-work-pidfs-autoreap-v4-0-e393c08c09d1@kernel.org>
+ <20260223-work-pidfs-autoreap-v4-2-e393c08c09d1@kernel.org>
+ <aZx2dlV9tJaL5gDG@redhat.com>
+ <aZx3ctUf-ZyF-Krc@redhat.com>
+ <aZyI6Aht747CTLiC@redhat.com>
+ <aZyonv349Qy92yNA@redhat.com>
+ <20260223-ziemlich-gemalt-0900475140e5@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <44a2111e33631d78aded73e4b79908db6237227f.camel@kernel.org>
+In-Reply-To: <20260223-ziemlich-gemalt-0900475140e5@brauner>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [3.84 / 15.00];
-	MID_END_EQ_FROM_USER_PART(4.00)[];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	DKIM_TRACE(0.00)[redhat.com:+];
 	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-78237-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_CC(0.00)[xs4all.nl,oracle.com,gmail.com,zeniv.linux.org.uk,suse.cz,arndb.de,vger.kernel.org];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78238-lists,linux-fsdevel=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.826];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns];
 	TO_DN_SOME(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: E68351852E4
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[oleg@redhat.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	NEURAL_HAM(-0.00)[-1.000];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: 45D2F185362
 X-Rspamd-Action: no action
 
-On Mon, Feb 23, 2026 at 10:28:24AM -0500, Jeff Layton wrote:
-> On Mon, 2026-02-23 at 16:16 +0100, Jori Koolstra wrote:
-> > To get an operable version of an O_PATH file descriptors, it is possible
-> > to use openat(fd, ".", O_DIRECTORY) for directories, but other files
-> > currently require going through open("/proc/<pid>/fd/<nr>") which
-> > depends on a functioning procfs.
-> > 
-> > This patch adds the O_EMPTY_PATH flag to openat and openat2. If passed
-> > LOOKUP_EMPTY is set at path resolve time.
-> > 
-> 
-> This sounds valuable, but there was recent discussion around the
-> O_REGULAR flag that said that we shouldn't be adding new flags to older
-> syscalls [1]. Should this only be an OPENAT2_* flag instead?
-> 
-> [1]: https://lore.kernel.org/linux-fsdevel/20260129-siebzehn-adler-efe74ff8f1a9@brauner/
+On 02/23, Christian Brauner wrote:
+>
+> On Mon, Feb 23, 2026 at 08:21:02PM +0100, Oleg Nesterov wrote:
+> > On 02/23, Oleg Nesterov wrote:
+> > >
+> > > pidfd_prepare() does pidfs_alloc_file(pid, flags | O_RDWR) and "| O_RDWR"
+> > > makes no sense because pidfs_alloc_file() itself does
+> > >
+> > > 	flags |= O_RDWR;
+> > >
+> > > I was going to send the trivial cleanup, but why a pidfs file needs
+> > > O_RDWR/FMODE_WRITE ?
+> > >
+> > > Actually the same question about some anon_inode_getfile_fmode(O_RDWR)
+> > > users, for example signalfd.c.
+> >
+> > perhaps an accidental legacy from 628ff7c1d8d8 ("anonfd: Allow making anon
+> > files read-only") ?
+>
+> It was always a possibility that we would support some form of
+> write-like operation eventually. And we have support for setting trusted
+> extended attributes on pidfds for some time now (trusted xattrs require
+> global cap_sys_admin).
 
-I do like restricting it to openat2() as well.
+But why do we need O_RDWR right now? That was my question.
+
+I can be easily wrong, but I think that pidfs_xattr_handlers logic doesn't
+need it...
+
+OK, I won't pretend I understand fs, I'll send the trivial cleanup which just
+removes the unnecessary "flags | O_RDWR" in pidfd_prepare().
+
+Oleg.
+
 
