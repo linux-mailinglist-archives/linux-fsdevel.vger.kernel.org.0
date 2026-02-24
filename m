@@ -1,298 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-78216-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aErgEngUnWkGMwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78216-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 04:01:12 +0100
+	id CBaXJw8YnWlTMwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 04:16:31 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9D571813AE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 04:01:11 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1849F18157B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 04:16:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id F3BBB3142CA9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 03:00:21 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 2FFF0307E260
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 03:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2AA2749DF;
-	Tue, 24 Feb 2026 03:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7421229B76F;
+	Tue, 24 Feb 2026 03:16:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B3ymAhxx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EJtA40K9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A64F277C81
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 03:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.217.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC8023EA83
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 03:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.47
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771902020; cv=pass; b=QnVEkyHO3Z8heNE1vLOtB/vXi9o6UfOqvuvOAEZMCKPP9u9wG5svUaUSK48enTbFCdc1rZ0No0EYQ/BH6lEmqomlCmoCiAOwzj3CDxvQG2JirJHLDcW3nHIkUPhdD2IEA1A9MIEbEzXAZYOcmoIL8qj4pVnIzhskv4ofEDScrrA=
+	t=1771902977; cv=pass; b=RoYW5e4CSZtjVnxbRwhbW/zzvahYsz6SK1dwkxZSlB9U9ycwDoMZDwZXCudgEWFNlRQSoPceJF8oWHJptYIciTSGTlXztW9cEAOykMuYgcFlkIGCbfu3fub/DNMit/cKS8c0TB8zOQmZioApQTkD71rBEIy0EAiE6ZX42VMBv30=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771902020; c=relaxed/simple;
-	bh=URG9p5PA0AV/5bQlXeYXvRn2vYf4zuMTvunUlPWBpFY=;
-	h=From:In-Reply-To:References:MIME-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PZMpDdLJ18MDmfWNEiqV+71oxPTfTdQpj5Tnh8aD3o8Dg1vgf6F7NQf+NBmO7G3i3gynokMhC3l2IPxYt9qFBAFcUf11jXE6KfUDDNzdVp4/A051nBqoNtl47SLVepz1dgkdSf/Z+0b0xN8cu732wM+z6JanlP1pL01ove9HHIA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B3ymAhxx; arc=pass smtp.client-ip=209.85.217.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-5fe086fb0bcso1153976137.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 19:00:18 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771902017; cv=none;
+	s=arc-20240116; t=1771902977; c=relaxed/simple;
+	bh=/DZt0xtYa5lr6976gZvjB7WdGufQG5+fQI8ZuixrTvM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Avt+oU8kNyAvDHtXwvAna4W/xPl4nDwbSc20J4mQNF5RmGWfoP86D3ReNF+ghE6h+G6uLdLMgYR4x63gfJuNurbJovVl1R+gnCPqBt3EgjtPAbLTe5TitF9ZOqSEz7Voc6VvU6BoeZFmxNKweuQWCbhHUpPtkPxMHmt8w8OlrYI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EJtA40K9; arc=pass smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b885e8c6727so880926366b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 19:16:15 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771902974; cv=none;
         d=google.com; s=arc-20240605;
-        b=b3rPkJhA2sZ41UxTwEP39Dajq50jGUxAzuJSHPa/qeR0izcr8QO2WffcNfDpyCN664
-         EQP3OywBSSn1wIzqeIx8vLRAlE+ZXXaV6UlhOOjIeTXPzK2n7m1p03VGMAhK35xk5eAx
-         bQLmj8mzIUbRniL6vUecmg+486PVpxT6X4B3mb7F2BcEwtdlEMmdztYIAvSCPOAlhjgG
-         Xk7rE9xvn+QHyZTQXt39yp3gSrgIZCUe35BaXYu9IHT/S3701l+05vLFhtUGhk2iJ9Zt
-         ++aNIlx5S6qaolIjmcmnfpo0uke5fn2t/EFlljVGwXpy75Y53j2Q+yjpnn7EusFoFsp9
-         cXvg==
+        b=RDmYaWHaYXQI/swzOOIPPjokws/1QEy4ksRCxFg4YyUqpAu5PsOB9VWs6zXjbQETqk
+         ZHhxO+Hp3gxU8oFaQR/FzR8FpJZAr7H8ZBnluDX7gN8RK/HbfG97j3fRZDJofKkMesY9
+         c8A2N1pokvuOMCV69xzggUIbW26hHaAfHSeDsPD3vh0x+JnjUsu2WVNVNLlAkzGXgX3N
+         Wng203zZ5DaH2GWk3+/1DLxtSakbTi2xOJBcFlPLqv5Ouc9rtu1WJHhpqb8boLDQ0Msl
+         uwItSkPESMz9pTLUkZI2RSxTL/nrAKWyIek3Clyg9no95QzwJC8TtP5HoUmG8LO59BUW
+         nUcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:dkim-signature;
-        bh=xFe8WdiYvRsGLyynpqXx4xXBoM9FyyzukwEjWl1pbts=;
-        fh=guT89QCBatGtmJeLKMs942Tk1M+fNd6lIVrW0H4Lvc8=;
-        b=fOIfRyGxpnxQ4TGN1TMSGoNMpEO5tdWSlFk5zNzEn8XRVOQ2sCUj5rDhKIaDJtWchw
-         wOE8QlWS+eS2oixzgNThhTkSAVjgz//KvQOsyCFVqcfVcW/9tllgT0F6KMVRQetNLbs9
-         5vcyV0SygXCrp/Z0OTcga9TmYB2dq3m2ATXzAR2nXFS0bVM02/BYncnH2PLLFb3//2r4
-         76H8qnOa7mJtA5QMdDsCi0IcVpUk8yc9auDUJ76Ans6w3nODgHDbUH20vKblwUUz/bgx
-         bCdc4HaMvSnSVUNXet7BLwYhfwvYYg9TtJkFs/Sm5aEQAfxp0mw4KiTTOTx1eYrl1+bT
-         5iYQ==;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=/DZt0xtYa5lr6976gZvjB7WdGufQG5+fQI8ZuixrTvM=;
+        fh=V2lkiwaqEfVkQAMXWdr9SsAbGc7TvPDAJnSwLr1XaOw=;
+        b=PJTWIRGVoLCxKLwk6O96c1+B+rfsk+cKvUzP7S6TYM0bcAsaniWxWOYi28GJC0vivK
+         +5zXLJil5tQoqghKvEPm3Orm7/x4qsXmlzevmfj4mHLHZbFzGicZIwcxSLV/5KHEJKaB
+         2//NOboUw5f4w947ASgT661aZzfCz26Mtlv05+ydsIRgEFDCsjrEcKwghin4W2ApgwB0
+         5VgXZhnCTZrIPjEqLH3pLcxP1Ga0W9lvFTUqnaYqccDm9w6liHnYGrbIFGlvBFLqrRKi
+         7yhnfqt4yhRECqQlqTr+wbgEdZNbegdgFklyMbTlmffhdheEiwGGewhRAOTy9OxssMMS
+         Gk7A==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1771902017; x=1772506817; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xFe8WdiYvRsGLyynpqXx4xXBoM9FyyzukwEjWl1pbts=;
-        b=B3ymAhxxWeoTfsl0KRnGRCZw0Cw7PoBJbPwy3MCpelHkkc67TCEWmEMkObdOJ7M63x
-         aX2RR//RrqYDhs5WPF0G0EWfQ1CE6/aG+seMJBt31TstS8q18nx5tCnmFdQEah/GoF7P
-         Ss079WND2GVySuBN8bDw9gDHvsG4NBE4TnNHOOQLGkWWYRR/7uYcWg4qgJCBNx4/UowJ
-         gFnNLyjfvvBcOici+VtfIlJZQsW4j8pyEFjI3vOLDGpj2CqoWk/UuAdZblk8u+DoAL8Z
-         f+bSQDDVDdQSw2aZ2YZimO2Ewz9wgcow+pdeYzKHDwLQFH/+mchjBx2p6Cbbm4VmA8lW
-         GgfA==
+        d=gmail.com; s=20230601; t=1771902974; x=1772507774; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/DZt0xtYa5lr6976gZvjB7WdGufQG5+fQI8ZuixrTvM=;
+        b=EJtA40K9HAoSdu5Nf5Nq2aG9PozmLTjJXiVzaSxUyZRnHGlsmpYrUVq/RE7WvoHJPa
+         no/pdzQxnix8+xy8EOWY06jvz1LcZ4pWLu1F6rSQxFy12H/n/olMkaZg/r4zn/yiAj5s
+         UKa1/Vfmc0yGnCsnK8aVMhdkc/EUlUgIQPR9ADi/gkvxat9lWFnOLpzRaSdrHUSSWXvP
+         FWGJWa0DRFgIe2GFB7xjQjcgICPCoFCsooilZP4uExpbXEdORWr5lJPz5pSJNw/Zk5Lo
+         CjK0Gqc4Bz53LuDP46VFJfRsdYjgtXuh23ulzt/IrTDzLwUSQdGtLu47rGMkfxvgda/O
+         aiWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771902017; x=1772506817;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xFe8WdiYvRsGLyynpqXx4xXBoM9FyyzukwEjWl1pbts=;
-        b=lO6RqFBCATaJC8DGydrQE7LQjEd3JeMUa/DLK01ZVh0gKGNrPmjtApItjVeUBe1kWd
-         cltY1OX2kCkxKu/EqMCEsRieJ8Uvzi04m6k31ST/ASjcL3R8BSq+zth4xPLcep37BQ2x
-         QsI5QzyQA6CqbApSQibzJseyzYkUwPG8OBffPomtvn3dndCK9U1YIVH3KGoFCBXATEeh
-         rDG+Ym64O9/iJx+hxNX+2yXy3aLD4VDADm0HfJ/+laeZh+1I57GYXdXrdrz7cIHMRw7q
-         Wi9AiaP205ewKEIVcx8iKRW8YfEdIVnHpJIUe314qhYt0JGs45HaEAgeb55wZ4Si1A9B
-         sWmA==
-X-Forwarded-Encrypted: i=1; AJvYcCXE1SMoNU62P4+BTUV0wSlPID7ZL+WirtmYr9PTb7SVl7HEpahrBye7eyrygggsMp+cNmza6vtLyrsOXYQJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNN33V5/yraCuj01VNp2omd0hyR2YeyC6EYDd5Lj/3iNfb17Oh
-	2VC9B2iNyEVtMWFt9VTivCpzaS0Dfm0lOMEyAqxAl7bNM6astveB5qDvOWQUqyFQcw1l0vAZZZW
-	xzZzsv39vL8VymKsVJfcwV/yH8e9PfoXdNbamRuxd
-X-Gm-Gg: ATEYQzw8iOdRfIWI3oedOk8i4Zy4GnbENEkjuPhWydyQR9GcwUTqpd30dQLnb1wEJT7
-	MvMxMxMdby9NadI2Q6qlM2VOOJsOBZkUCqBF2lOzE6da3demCwgc8ZxOd1MnuPFJdttbRDK7mQK
-	Ynp/H6S/pi5PdqQVBJR57Uvp7wY5XiaoP2RRQHZAl93q94YwdBmcgT1KrjAydulXi1EyUbolMEF
-	4lwLO7VlbNkb/Q1VhgwCjx22YxBhQolV183Vh+QKg77kbC69FYAHJlBmgcVxIBmqVN71+l2R2wC
-	Qd4VwRYerhLY8VWtSHSja7fSRJ0z0hri9hbZAi4EPveVsNrJINFPoRNBUwIc0QPaZg==
-X-Received: by 2002:a05:6102:3048:b0:5f8:e2cb:d245 with SMTP id
- ada2fe7eead31-5feb2c23567mr4062890137.0.1771902016820; Mon, 23 Feb 2026
- 19:00:16 -0800 (PST)
-Received: from 176938342045 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 23 Feb 2026 19:00:16 -0800
-Received: from 176938342045 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 23 Feb 2026 19:00:16 -0800
-From: Ackerley Tng <ackerleytng@google.com>
-In-Reply-To: <0100019bd33bf5cc-3ab17b9e-cd67-4f0b-885e-55658a1207f0-000000@email.amazonses.com>
-References: <0100019bd33b1f66-b835e86a-e8ae-443f-a474-02db88f7e6db-000000@email.amazonses.com>
- <20260118223110.92320-1-john@jagalactic.com> <0100019bd33bf5cc-3ab17b9e-cd67-4f0b-885e-55658a1207f0-000000@email.amazonses.com>
+        d=1e100.net; s=20230601; t=1771902974; x=1772507774;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=/DZt0xtYa5lr6976gZvjB7WdGufQG5+fQI8ZuixrTvM=;
+        b=v+Gy/Tw85QRVAhvgkNNlVkoQExSBOfV/jaEAW5R+IUM/kIcqkhBTynCrQ+jVRMIQWq
+         evm3k2uU6DplV/pDBoPuFaSIedbVXqO5t50togkhTy3LlJuz8FWgIuN/U4/w+UtjqbYu
+         NrevlaERa8uSNsLX7rnkp2lGxkquUXFSACA5h/ACV2xmza6cxskq/0D/TE9SAjiFQfJZ
+         bzd8tQ7q5j+5gyHdCRXBcROcCjpUn9flM/ikeGNEwuf+FT1Q/cSO/r5nP9ktXS/Tz6MU
+         nwwae+PvpRuSA7XH4TTFCvvsanK9FYip0udQ8Rn8UkyTimgWS4hg2adqAprHQEySf+Ka
+         q1nA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhT1OA7l+7qAz+Y/6fOyGJmIQY0/R2lMBdSqjVrv5ap7UoQQW+YYCohcWSWyqd4W9RzqU2j6ofRMqOInBU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0TPHKfA33sCf6bZKedx2cc3o6xjmpBcgFyccV1E9qrBGWWqYg
+	lPzIsw+esnteZ1qsnxSsGXtnnCEdESN7Him9ODCwSqVmPdseb2bWSejdb5RKWTWtgKr23LQQv5K
+	7QOAqqAeEq4S2xxJIxUyposwo+qKj+Cg=
+X-Gm-Gg: AZuq6aKBWPA1fAVXZUc37EkNhadVrB8qEics431QCiL0XZs9rZpWN2QlbkLAr6OnsXw
+	zPk8tvCXk+nEmcEteYFq+wMS2yhCiF8NNCu49H3FYksFHklXZ1UH2aeeifL8XD1e4lG52B4u8cg
+	PmTuKt8sgXIRGv1Lpa9sx6Idy5ZoJm2nxa7OLZphKnW0PaDJ9T09hg7UuDIY2Ny4TZxUTLxX5iF
+	wyYx4cpj3KUeBcNfk9M7pTPlZ7bbcQNPrJwVEO1CRRBwLMw6yVptCCrhPA8PH4Dd/3SSIpx5RPY
+	9E4zSw==
+X-Received: by 2002:a17:907:268c:b0:b8e:380:5669 with SMTP id
+ a640c23a62f3a-b905448b905mr922119166b.32.1771902973804; Mon, 23 Feb 2026
+ 19:16:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 23 Feb 2026 19:00:16 -0800
-X-Gm-Features: AaiRm52vebMvqU0lH0n0vOtDAX6OI7Y7um56VSKnaZ96AOmxaI9gmZymUaqHfu0
-Message-ID: <CAEvNRgHmfpx0BXPzt81DenKbyvQ1QwM5rZeJWMnKUO8fB8MeqA@mail.gmail.com>
-Subject: Re: [PATCH V7 02/19] dax: Factor out dax_folio_reset_order() helper
-To: John Groves <john@jagalactic.com>, John Groves <John@groves.net>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Dan Williams <dan.j.williams@intel.com>, 
-	Bernd Schubert <bschubert@ddn.com>, Alison Schofield <alison.schofield@intel.com>
-Cc: John Groves <jgroves@micron.com>, John Groves <jgroves@fastmail.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, David Hildenbrand <david@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, "Darrick J . Wong" <djwong@kernel.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
-	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Bagas Sanjaya <bagasdotme@gmail.com>, 
-	James Morse <james.morse@arm.com>, Fuad Tabba <tabba@google.com>, 
-	Sean Christopherson <seanjc@google.com>, Shivank Garg <shivankg@amd.com>, Gregory Price <gourry@gourry.net>, 
-	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>, 
-	"venkataravis@micron.com" <venkataravis@micron.com>, 
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>, 
-	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <CANT5p=rDxeYKXoCJoWRwGGXv4tPCM2OuX+US_G3hm_tL3UyqtA@mail.gmail.com>
+ <7570f43c-8f6c-4419-a8b8-141efdb1363a@app.fastmail.com> <CANT5p=rpJDx0xXfeS3G01VEWGS4SzTeFqm2vO6tEnq9kS=+iOw@mail.gmail.com>
+ <510c1f0a-4f42-4ce5-ab85-20d491019c53@app.fastmail.com>
+In-Reply-To: <510c1f0a-4f42-4ce5-ab85-20d491019c53@app.fastmail.com>
+From: Shyam Prasad N <nspmangalore@gmail.com>
+Date: Tue, 24 Feb 2026 08:45:57 +0530
+X-Gm-Features: AaiRm51Gum82xCPbCea-rxtnj6tTimqhg7EvD-Mp_KEO3nKBntLMk04j3n-RZRE
+Message-ID: <CANT5p=q05gni_jd4=KHsmR0LnF5HE9gNfo17q6f8ngsjY5EZdw@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Namespace-aware upcalls from kernel filesystems
+To: Chuck Lever <cel@kernel.org>
+Cc: lsf-pc@lists.linux-foundation.org, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, keyrings@vger.kernel.org, 
+	CIFS <linux-cifs@vger.kernel.org>, linux-nfs@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
-	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[micron.com,fastmail.com,lwn.net,intel.com,infradead.org,suse.cz,zeniv.linux.org.uk,kernel.org,gmail.com,huawei.com,redhat.com,toxicpanda.com,arm.com,google.com,amd.com,gourry.net,vger.kernel.org,lists.linux.dev];
-	TAGGED_FROM(0.00)[bounces-78216-lists,linux-fsdevel=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[38];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[google.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[ackerleytng@google.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	NEURAL_HAM(-0.00)[-0.999];
+	TAGGED_FROM(0.00)[bounces-78217-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[jagalactic.com:email,huawei.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid,groves.net:email]
-X-Rspamd-Queue-Id: D9D571813AE
+	DKIM_TRACE(0.00)[gmail.com:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	MISSING_XM_UA(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[nspmangalore@gmail.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 1849F18157B
 X-Rspamd-Action: no action
 
-John Groves <john@jagalactic.com> writes:
-
-> From: John Groves <John@Groves.net>
+On Tue, Feb 17, 2026 at 7:51=E2=80=AFPM Chuck Lever <cel@kernel.org> wrote:
 >
-> Both fs/dax.c:dax_folio_put() and drivers/dax/fsdev.c:
-> fsdev_clear_folio_state() (the latter coming in the next commit after this
-> one) contain nearly identical code to reset a compound DAX folio back to
-> order-0 pages. Factor this out into a shared helper function.
 >
-> The new dax_folio_reset_order() function:
-> - Clears the folio's mapping and share count
-> - Resets compound folio state via folio_reset_order()
-> - Clears PageHead and compound_head for each sub-page
-> - Restores the pgmap pointer for each resulting order-0 folio
-> - Returns the original folio order (for callers that need to advance by
->   that many pages)
 >
-> This simplifies fsdev_clear_folio_state() from ~50 lines to ~15 lines while
-> maintaining the same functionality in both call sites.
+> On Mon, Feb 16, 2026, at 11:14 PM, Shyam Prasad N wrote:
+> > On Sat, Feb 14, 2026 at 9:10=E2=80=AFPM Chuck Lever <cel@kernel.org> wr=
+ote:
+> >>
+> >>
+> >> On Sat, Feb 14, 2026, at 5:06 AM, Shyam Prasad N wrote:
+> >> > Kernel filesystems sometimes need to upcall to userspace to get some
+> >> > work done, which cannot be achieved in kernel code (or rather it is
+> >> > better to be done in userspace). Some examples are DNS resolutions,
+> >> > user authentication, ID mapping etc.
+> >> >
+> >> > Filesystems like SMB and NFS clients use the kernel keys subsystem f=
+or
+> >> > some of these, which has an upcall facility that can exec a binary i=
+n
+> >> > userspace. However, this upcall mechanism is not namespace aware and
+> >> > upcalls to the host namespaces (namespaces of the init process).
+> >>
+> >> Hello Shyam, we've been introducing netlink control interfaces, which
+> >> are namespace-aware. The kernel TLS handshake mechanism now uses
+> >> this approach, as does the new NFSD netlink protocol.
+> >>
+> >>
+> >> --
+> >> Chuck Lever
+> >
+> > Hi Chuck,
+> >
+> > Interesting. Let me explore this a bit more.
+> > I'm assuming that this is the file that I should be looking into:
+> > fs/nfsd/nfsctl.c
 >
-> Suggested-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Signed-off-by: John Groves <john@groves.net>
-> ---
->  fs/dax.c | 60 +++++++++++++++++++++++++++++++++++++++-----------------
->  1 file changed, 42 insertions(+), 18 deletions(-)
+> Yes, clustered towards the end of the file. NFSD's use of netlink
+> is as a downcall-style administrative control plane.
 >
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 289e6254aa30..7d7bbfb32c41 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -378,6 +378,45 @@ static void dax_folio_make_shared(struct folio *folio)
->  	folio->share = 1;
->  }
+> net/handshake/netlink.c uses netlink as an upcall for driving
+> kernel-initiated TLS handshake requests up to a user daemon. This
+> mechanism has been adopted by NFSD, the NFS client, and the NVMe
+> over TCP drivers. An in-kernel QUIC implementation is planned and
+> will also be using this.
 >
-> +/**
-> + * dax_folio_reset_order - Reset a compound DAX folio to order-0 pages
-> + * @folio: The folio to reset
-> + *
-> + * Splits a compound folio back into individual order-0 pages,
-> + * clearing compound state and restoring pgmap pointers.
-> + *
-> + * Returns: the original folio order (0 if already order-0)
-> + */
-> +int dax_folio_reset_order(struct folio *folio)
-> +{
-> +	struct dev_pagemap *pgmap = page_pgmap(&folio->page);
-> +	int order = folio_order(folio);
-> +	int i;
-> +
-> +	folio->mapping = NULL;
-> +	folio->share = 0;
-> +
-> +	if (!order) {
-> +		folio->pgmap = pgmap;
-> +		return 0;
-> +	}
-> +
-> +	folio_reset_order(folio);
-> +
-> +	for (i = 0; i < (1UL << order); i++) {
-> +		struct page *page = folio_page(folio, i);
-> +		struct folio *f = (struct folio *)page;
-> +
-> +		ClearPageHead(page);
-> +		clear_compound_head(page);
-> +		f->mapping = NULL;
-> +		f->share = 0;
-> +		f->pgmap = pgmap;
-> +	}
-> +
-> +	return order;
-> +}
-> +
-
-I'm implementing something similar for guest_memfd and was going to
-reuse __split_folio_to_order(). Would you consider using the
-__split_folio_to_order() function?
-
-I see that dax_folio_reset_order() needs to set f->share to 0 though,
-which is a union with index, and __split_folio_to_order() sets non-0
-indices.
-
-Also, __split_folio_to_order() doesn't handle f->pgmap (or f->lru).
-
-Could these two steps be added to a separate loop after
-__split_folio_to_order()?
-
-Does dax_folio_reset_order() need to handle any of the folio flags that
-__split_folio_to_order() handles?
-
->  static inline unsigned long dax_folio_put(struct folio *folio)
->  {
->  	unsigned long ref;
-> @@ -391,28 +430,13 @@ static inline unsigned long dax_folio_put(struct folio *folio)
->  	if (ref)
->  		return ref;
 >
-> -	folio->mapping = NULL;
-> -	order = folio_order(folio);
-> -	if (!order)
-> -		return 0;
-> -	folio_reset_order(folio);
-> +	order = dax_folio_reset_order(folio);
+> > And that there would be a corresponding handler in nfs-utils?
 >
-> +	/* Debug check: verify refcounts are zero for all sub-folios */
->  	for (i = 0; i < (1UL << order); i++) {
-> -		struct dev_pagemap *pgmap = page_pgmap(&folio->page);
->  		struct page *page = folio_page(folio, i);
-> -		struct folio *new_folio = (struct folio *)page;
+> For NFSD, nfs-utils has a new tool called nfsdctl.
 >
-> -		ClearPageHead(page);
-> -		clear_compound_head(page);
-> -
-> -		new_folio->mapping = NULL;
-> -		/*
-> -		 * Reset pgmap which was over-written by
-> -		 * prep_compound_page().
-> -		 */
-
-Actually, where's the call to prep_compound_page()? Was that in
-dax_folio_init()? Is this comment still valid and does pgmap have to be
-reset?
-
-> -		new_folio->pgmap = pgmap;
-> -		new_folio->share = 0;
-> -		WARN_ON_ONCE(folio_ref_count(new_folio));
-> +		WARN_ON_ONCE(folio_ref_count((struct folio *)page));
->  	}
+> The TLS handshake user space components are in ktls-utils. See:
+> https://github.com/oracle/ktls-utils
 >
->  	return ref;
 > --
-> 2.52.0
+> Chuck Lever
+
+Thanks Chuck. Will explore this in more detail.
+
+--=20
+Regards,
+Shyam
 
