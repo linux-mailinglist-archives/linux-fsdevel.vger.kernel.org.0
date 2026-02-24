@@ -1,95 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-78316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78317-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KJS/H40lnmn5TgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 23:26:21 +0100
+	id aCIcGK8lnmn5TgQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78317-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 23:26:55 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF00818D20D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 23:26:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB9F218D273
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 23:26:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id EFBF13066BEB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 22:26:03 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 569E6309C285
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 22:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D121D3451B5;
-	Tue, 24 Feb 2026 22:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28823451B5;
+	Tue, 24 Feb 2026 22:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="Bm41EYvD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YVWCZYzt"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="SASpB0jn";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HkUvYZy2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from flow-a2-smtp.messagingengine.com (flow-a2-smtp.messagingengine.com [103.168.172.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6FB33A9C4;
-	Tue, 24 Feb 2026 22:25:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F215B33A9C4;
+	Tue, 24 Feb 2026 22:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771971962; cv=none; b=CX1XtqMiUWoFYxxNbwiRWqB8t26d3UIuL+thzkn7Mbw+CQxw7xOT+/MjAjTCapb0/8F/Uk7GHwLWAqAlgXUrFPRWuM/D6XYNRHdRm7HdbiianuSVNjJYXY0t1Of5UNu0K8L1q+Tl2VRiA++QVhrfSitfoIUPY2wJGB2+lkxRFDo=
+	t=1771971968; cv=none; b=GrKhi4G6S1TsEDEcY4eheqOBVYxDi3EmI6VJpw1apCbbhLWWmb3+t9jX4sUYkekyskVQCzyxC0DPwbHQQ7ykrn15aDfO7WxdNiimOJA5vZ0aVilbUuGl9P0ybkxlH2pM5mKzVNd9KdAeWbFZw1Jo+XOh1qLOBIvFDxpo95s95Mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771971962; c=relaxed/simple;
-	bh=XNsgNmZoNlsbdzYWAoyx+rMJkU0C5hWhl58m7ePFqX8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JMAVZm8FpKEv8A1iJbO3iKwS+SwnPZZCQKWuAbC4LVyjaXIEe70ednw5htv9S3FVtVkMQLWjiJgu0akPfEKA/8kTFxsDADBWZJVaaql8i/W4i9ss8Fq/tYyvgZ+O0wstU2TVH4sexWAZcJk7l+YNf13f8Cw4v09HTw/R81JIkd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=Bm41EYvD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YVWCZYzt; arc=none smtp.client-ip=103.168.172.137
+	s=arc-20240116; t=1771971968; c=relaxed/simple;
+	bh=8pfwM/oiJ7V1Xu1rcLqhbbFwuMvNN87UDEvkhe3kSJk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BT+7BYWB1lmhs2wbKEc+3ycHPgUlFQMedaYgxlmcW8OAdKItcxKzmRtU6FYlkBitk8rTwytx4pv335pdu3XQySK3L4toZH3GqE9fnFnA1pwKxnqdF14ut21EqYDWX/BrVdBo7FrnoSalcjof88PAzSwYyqm7CzOD02TSVGixjGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=SASpB0jn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HkUvYZy2; arc=none smtp.client-ip=103.168.172.137
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
 Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailflow.phl.internal (Postfix) with ESMTP id 3CA271380B87;
-	Tue, 24 Feb 2026 17:25:58 -0500 (EST)
+	by mailflow.phl.internal (Postfix) with ESMTP id 645B9138052C;
+	Tue, 24 Feb 2026 17:26:06 -0500 (EST)
 Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Tue, 24 Feb 2026 17:25:58 -0500
+  by phl-compute-06.internal (MEProxy); Tue, 24 Feb 2026 17:26:06 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
 	cc:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:reply-to:subject
-	:subject:to:to; s=fm3; t=1771971958; x=1771979158; bh=h1rNXkHkcZ
-	4cMhepaUBJCHY4sMt0fLPm1jE4sfNdLx8=; b=Bm41EYvDY3wWjoKO9Dg4GQs+K7
-	cZ+9rkdCqW4DWg2/n02Xxhll8WET1UKRv2xjVnyISv5eTeXPxw9lMuqv5LWlj2/l
-	YzC39szJXiGzqhHmPIW5unvAljd9AINf44jC46QUbSkxJC4Uzj5S8g9wTyymc5eK
-	6umAKASGZ5SNoXvX4WYCPTmKnbviVxKOlaNXi81+nMH7HsX3Dwh2OQCaVce5MXUm
-	TOefBGwt4W4JhCs2+rPA2w1fHcgyz/0nJrkPoTgnTm7f1ragqA5M49ZsUqF41+Lz
-	48FljGfvzG8iuI1HHzhizGeeqEg7uEPgx68xfh1Fw0MLAPKTcktOG4vlSi/g==
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:reply-to:subject:subject:to:to; s=fm3; t=1771971966;
+	 x=1771979166; bh=bc9azlh/VG6ae6PkDsWsI4XhYvmFw1STenuoUYZ/MBs=; b=
+	SASpB0jnygHPumGAlWS91bgfQg5zVUOVMHKOq00zAYqspcXFZUx++8j5Hyoq/V9Q
+	WNdWgMStsw9ANiYmzA7M3hNAS3fajikRG71Ds+45ffN+sPaj4NcnlwGzxEt10udz
+	ns2nO1tlPzw4vFYEmZGJjelVSMf/Brv43bJZ/BxF2YzDBbfs9Wt7Z9rcraW4UaKU
+	waRkVw8ZqH9j4XRXgPW+T/Xrw0kNsC1HgwMzato61qaky2k7CGGtgZIgZRiRZOmL
+	b5geKeh9nRq1D94XwELilFtZKQtbPcv/VjmRR1ao3z+MUB/HjdO7mYBLgroHWNvI
+	bHL1JyrEHpW5QIqszOvl+g==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1771971958; x=1771979158; bh=h1rNXkHkcZ4cMhepaUBJCHY4sMt0
-	fLPm1jE4sfNdLx8=; b=YVWCZYztzFJEgw0/P15jwVo2Zq6mHpQLCPU8/3LKBLGh
-	57MvUxA/kPjZOfEgwroCqeJIvAocpDonpTTzeO7VkSd0vdcYEgfAjfz1S+J27yPH
-	ibp9xn/SlbXIOAANLTgfTdZ1VBtOVuFLNu74RzyUBZ2rzwFmi84V1lO1ee7nU5eU
-	Swv0iwDFvsYUytGKwUXuWkuDN3ReejDJF50ww/Sv1JfeqxdlO97psVCMg5qpJdLN
-	l5589hLjqQ/AdCfNnx6DH184ui/VMrHllibdRaU1oS7s4SUxTuLHTlhmeIUXIPmc
-	3w/hA6dPTMTYuh/8a/5BjLr6Ydwxhtk1buo0GnixtA==
-X-ME-Sender: <xms:dCWeaeN68INVWUP76lm6LSn_-KPn-BpbZV20agYBbf3-MRusda4nxg>
-    <xme:dCWeaQ6MOi1M6jhBiz321-vu_icRM95I_6tTHrBS3kjPG6P4H7qv4MS40GFqlOXeL
-    JWaPc9gZdbNSC717W5pWIYUDnEX-0yoZjFskhRJ0jAXvUrcsPs>
-X-ME-Received: <xmr:dCWeadx1Z2VeucV0GVjerBQHJFbLfewF1ivvXIk7V7xM93rCDRjuVW8hJh3_pbP0Wvi7GoOlKRPxJbTKzbfoXXp4xdHx9RB-R1G_GBK_NM7c>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvgedufeejucetufdoteggodetrf
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm3; t=1771971966; x=1771979166; bh=b
+	c9azlh/VG6ae6PkDsWsI4XhYvmFw1STenuoUYZ/MBs=; b=HkUvYZy25Jt1baGUe
+	y+N7jaWMDyzl16a97dbnGlyoya0pq0RMyJWNFHRfeyGiahB1YCSgP2dZqyPBXnrj
+	//JjdCMdIc1Gc80UI5/smG0EfUrXqxRxeIiGbpmdrQQu8kRhuf9vPWv5z47MKYf+
+	GBfMklXEPmTX9loCgJ9bLF4te9SL+L93IgIRkLPh4SoNrU2zkEX88jRLrOxTKGzf
+	xl+01llOci5Br22sgxJUNpKZmsjd+Lcvu0f8qiOR2opMbJ/6nJMaKdYlVvgb3XVP
+	MOTvzrs2DuS4LMiIYDmhIzBLDaOJCeVP5eJlfsqvs6GW9OzNYa1/Ye2qBq3UqI1B
+	YXCjg==
+X-ME-Sender: <xms:fiWeaVvsfF-xHqqo3ZT9m5ybwhqP8j8L2nLlKeGn9OVurzfPnnjbKQ>
+    <xme:fiWeaSasmIAJNymyu2js4bZRukDYsbTv_SxaEfJ4qNFj0MSRrkAwsWWOeDtvj0IJO
+    FlmfN4VtolELg8PmO_xvp1_-L04of8NUDTOo5m8HPX3UIfI1Q>
+X-ME-Received: <xmr:fiWeaRSwcNulcCAF78z6aWWOuEwDP_37RjeQnUtrHjQsVHTxcdkHc13qUAlT9BDfkGrGnUWyKPH4F9gJZrjIyqRNZda5mtenH7SE1Pvz3oS3>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvgedufeekucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhephffvvefufffkofhrggfgsedtkeertdertddtnecuhfhrohhmpefpvghilheurhho
-    fihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepge
-    etfeegtddtvdeigfegueevfeelleelgfejueefueektdelieeikeevtdelveelnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsgesoh
-    ifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepvddvpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtg
-    hpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
-    htoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrd
-    horhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghp
-    thhtohepjhgrtghksehsuhhsvgdrtgii
-X-ME-Proxy: <xmx:dCWeaYTnnAGgE05nS_GR7sZfZRuy59Y0zqIVusI9LOlQQpHGDIRuzA>
-    <xmx:dCWead99R1zdBpDm82pTcMeZYBPKAx6sGnfp62gsSSCupDW5ykpRug>
-    <xmx:dCWeadIDZPDRPdCUp43NByezinPatv8WUvR63xK4ud410k9ifxlfSw>
-    <xmx:dCWeaZtyjSe5uARiEy6VurJ-WbKbb-zsEPhCG0-qX0zcrp0SUVBvMg>
-    <xmx:diWeaSWS-R28POMt9UY8aq--iCqH1D9ZQByHSNfCqNcdrRW7UTOfk-tL>
+    gurhephffvvefufffkofgjfhhrggfgsedtkeertdertddtnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epgfevjeduvdeufeeileefteegudetheetffdtjeegvdfgtdetjeeihfeigeffffehnecu
+    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehnvghilhgssehofihnmhgrihhlrdhnvghtpdhnsggp
+    rhgtphhtthhopedvvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepvhhirhhose
+    iivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehsvghlihhnuhigsehv
+    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidquhhnihhonhhfsh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvggtuhhr
+    ihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
+    hinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
+    uhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
+    hnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    mhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehjrggtkhesshhushgvrd
+    gtii
+X-ME-Proxy: <xmx:fiWeaVwBeclayjunEON81xneBywxAcijxwNWzT2nxJm7prXC2je-Rg>
+    <xmx:fiWeadeOVle6LoJcuB7GYIr4sdGubHipyUId2sGFvNtxwKy9baCr8g>
+    <xmx:fiWeaWoNrRPg_DhKUrc0fjTq4SosmgdvMP3hyHG2HbbDhD8IyJBksg>
+    <xmx:fiWeaVMYZXTSPlErtC7h9Ng2j8FrxFSq2lPawevy4o_1KQOshdEd-Q>
+    <xmx:fiWeaX1Y6CT_dtMx4OtF1zm23cMrJswGeEQYFIrkC1o5joZJvixR0F9o>
 Feedback-ID: i9d664b8f:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 24 Feb 2026 17:25:50 -0500 (EST)
+ 24 Feb 2026 17:26:00 -0500 (EST)
 From: NeilBrown <neilb@ownmail.net>
 To: Christian Brauner <brauner@kernel.org>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -113,10 +117,12 @@ Cc: linux-kernel@vger.kernel.org,
 	apparmor@lists.ubuntu.com,
 	linux-security-module@vger.kernel.org,
 	selinux@vger.kernel.org
-Subject: [PATCH v3 00/15] Further centralising of directory locking for name ops.
-Date: Wed, 25 Feb 2026 09:16:45 +1100
-Message-ID: <20260224222542.3458677-1-neilb@ownmail.net>
+Subject: [PATCH v3 01/15] VFS: note error returns in documentation for various lookup functions
+Date: Wed, 25 Feb 2026 09:16:46 +1100
+Message-ID: <20260224222542.3458677-2-neilb@ownmail.net>
 X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
+In-Reply-To: <20260224222542.3458677-1-neilb@ownmail.net>
+References: <20260224222542.3458677-1-neilb@ownmail.net>
 Reply-To: NeilBrown <neil@brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -141,7 +147,7 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	REPLYTO_DN_EQ_FROM_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
 	RCPT_COUNT_TWELVE(0.00)[22];
-	TAGGED_FROM(0.00)[bounces-78316-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78317-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_FROM(0.00)[ownmail.net];
 	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
@@ -153,72 +159,114 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	FROM_NEQ_ENVFROM(0.00)[neilb@ownmail.net,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
 	REPLYTO_DOM_NEQ_FROM_DOM(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	NEURAL_HAM(-0.00)[-0.999];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DKIM_TRACE(0.00)[ownmail.net:+,messagingengine.com:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,brown.name:replyto,messagingengine.com:dkim]
-X-Rspamd-Queue-Id: DF00818D20D
+	DBL_BLOCKED_OPENRESOLVER(0.00)[brown.name:replyto,brown.name:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,messagingengine.com:dkim,ownmail.net:mid,ownmail.net:dkim]
+X-Rspamd-Queue-Id: CB9F218D273
 X-Rspamd-Action: no action
 
-Following Chris Mason's tool-based review, here is v3 with some fixes.
-Particularly 06/15 mistakenly tested the result of start_creating for NULL
-and 09/15 had some really messed up flow in error handling.
-Also human-language typos fixed.
+From: NeilBrown <neil@brown.name>
 
-This code is in 
-  github.com:neilbrown/linux.git
-  branch pdirops
+Darrick recently noted that try_lookup_noperm() is documented as
+"Look up a dentry by name in the dcache, returning NULL if it does not
+currently exist." but it can in fact return an error.
 
-For anyone interested, my next batch is in branch pdirops-next
+So update the documentation for that and related functions.
 
-Original patch description below.
+Link: https://lore.kernel.org/all/20260218234917.GA6490@frogsfrogsfrogs/
+Cc: "Darrick J. Wong" <djwong@kernel.org>
+Signed-off-by: NeilBrown <neil@brown.name>
+---
+ fs/namei.c | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
-Thanks,
-NeilBrown
+diff --git a/fs/namei.c b/fs/namei.c
+index 58f715f7657e..6f595f58acfe 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3124,7 +3124,8 @@ static int lookup_one_common(struct mnt_idmap *idmap,
+  * @base:	base directory to lookup from
+  *
+  * Look up a dentry by name in the dcache, returning NULL if it does not
+- * currently exist.  The function does not try to create a dentry and if one
++ * currently exist or an error if there is a problem with the name.
++ * The function does not try to create a dentry and if one
+  * is found it doesn't try to revalidate it.
+  *
+  * Note that this routine is purely a helper for filesystem usage and should
+@@ -3132,6 +3133,11 @@ static int lookup_one_common(struct mnt_idmap *idmap,
+  *
+  * No locks need be held - only a counted reference to @base is needed.
+  *
++ * Returns:
++ *   - ref-counted dentry on success, or
++ *   - %NULL if name could not be found, or
++ *   - ERR_PTR(-EACCES) if name is dot or dotdot or contains a slash or nul, or
++ *   - ERR_PTR() if fs provide ->d_hash, and this returned an error.
+  */
+ struct dentry *try_lookup_noperm(struct qstr *name, struct dentry *base)
+ {
+@@ -3208,6 +3214,11 @@ EXPORT_SYMBOL(lookup_one);
+  *
+  * Unlike lookup_one, it should be called without the parent
+  * i_rwsem held, and will take the i_rwsem itself if necessary.
++ *
++ * Returns: - A dentry, possibly negative, or
++ *	    - same errors as try_lookup_noperm() or
++ *	    - ERR_PTR(-ENOENT) if parent has been removed, or
++ *	    - ERR_PTR(-EACCES) if parent directory is not searchable.
+  */
+ struct dentry *lookup_one_unlocked(struct mnt_idmap *idmap, struct qstr *name,
+ 				   struct dentry *base)
+@@ -3244,6 +3255,10 @@ EXPORT_SYMBOL(lookup_one_unlocked);
+  * It should be called without the parent i_rwsem held, and will take
+  * the i_rwsem itself if necessary.  If a fatal signal is pending or
+  * delivered, it will return %-EINTR if the lock is needed.
++ *
++ * Returns: A dentry, possibly negative, or
++ *	   - same errors as lookup_one_unlocked() or
++ *	   - ERR_PTR(-EINTR) if a fatal signal is pending.
+  */
+ struct dentry *lookup_one_positive_killable(struct mnt_idmap *idmap,
+ 					    struct qstr *name,
+@@ -3283,6 +3298,10 @@ EXPORT_SYMBOL(lookup_one_positive_killable);
+  * This can be used for in-kernel filesystem clients such as file servers.
+  *
+  * The helper should be called without i_rwsem held.
++ *
++ * Returns: A positive dentry, or
++ *	   - ERR_PTR(-ENOENT) if the name could not be found, or
++ *	   - same errors as lookup_one_unlocked().
+  */
+ struct dentry *lookup_one_positive_unlocked(struct mnt_idmap *idmap,
+ 					    struct qstr *name,
+@@ -3311,6 +3330,10 @@ EXPORT_SYMBOL(lookup_one_positive_unlocked);
+  *
+  * Unlike try_lookup_noperm() it *does* revalidate the dentry if it already
+  * existed.
++ *
++ * Returns: A dentry, possibly negative, or
++ *	   - ERR_PTR(-ENOENT) if parent has been removed, or
++ *	   - same errors as try_lookup_noperm()
+  */
+ struct dentry *lookup_noperm_unlocked(struct qstr *name, struct dentry *base)
+ {
+@@ -3335,6 +3358,10 @@ EXPORT_SYMBOL(lookup_noperm_unlocked);
+  * _can_ become positive at any time, so callers of lookup_noperm_unlocked()
+  * need to be very careful; pinned positives have ->d_inode stable, so
+  * this one avoids such problems.
++ *
++ * Returns: A positive dentry, or
++ *	   - ERR_PTR(-ENOENT) if name cannot be found or parent has been removed, or
++ *	   - same errors as try_lookup_noperm()
+  */
+ struct dentry *lookup_noperm_positive_unlocked(struct qstr *name,
+ 					       struct dentry *base)
+-- 
+2.50.0.107.gf914562f5916.dirty
 
-I am working towards changing the locking rules for name-operations: locking
-the name rather than the whole directory.
-
-The current part of this process is centralising all the locking so that
-it can be changed in one place.
-
-Recently "start_creating", "start_removing", "start_renaming" and related
-interaces were added which combine the locking and the lookup.  At that time
-many callers were changed to use the new interfaces.  However there are still
-an assortment of places out side of fs/namei.c where the directory is locked
-explictly, whether with inode_lock() or lock_rename() or similar.  These were
-missed in the first pass for an assortment of uninteresting reasons.
-
-This series addresses the remaining places where explicit locking is
-used, and changes them to use the new interfaces, or otherwise removes
-the explicit locking.
-
-The biggest changes are in overlayfs.  The other changes are quite
-simple, though maybe the cachefiles changes is the least simple of those.
-
-I'm running the --overlay tests in xfstests and nothing has popped yet.
-I'll continue with this and run some NFS tests too.
-
-Thanks for your review of these patches!
-
-NeilBrown
-
- [PATCH v3 01/15] VFS: note error returns in documentation for various
- [PATCH v3 02/15] fs/proc: Don't lock root inode when creating "self"
- [PATCH v3 03/15] VFS: move the start_dirop() kerndoc comment to
- [PATCH v3 04/15] libfs: change simple_done_creating() to use
- [PATCH v3 05/15] Apparmor: Use simple_start_creating() /
- [PATCH v3 06/15] selinux: Use simple_start_creating() /
- [PATCH v3 07/15] nfsd: switch purge_old() to use
- [PATCH v3 08/15] VFS: make lookup_one_qstr_excl() static.
- [PATCH v3 09/15] ovl: Simplify ovl_lookup_real_one()
- [PATCH v3 10/15] cachefiles: change cachefiles_bury_object to use
- [PATCH v3 11/15] ovl: pass name buffer to ovl_start_creating_temp()
- [PATCH v3 12/15] ovl: change ovl_create_real() to get a new lock when
- [PATCH v3 13/15] ovl: use is_subdir() for testing if one thing is a
- [PATCH v3 14/15] ovl: remove ovl_lock_rename_workdir()
- [PATCH v3 15/15] VFS: unexport lock_rename(), lock_rename_child(),
 
