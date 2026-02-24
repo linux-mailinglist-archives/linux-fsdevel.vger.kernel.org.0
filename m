@@ -1,80 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-78230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iNbbH49tnWk9QAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 10:21:19 +0100
+	id WIfDG8JtnWk9QAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 10:22:10 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id F393918476A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 10:21:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCD5B1847BD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 10:22:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id E511B3087685
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 09:20:57 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id BB58E30A54F6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 09:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57CB36BCED;
-	Tue, 24 Feb 2026 09:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380DC36AB60;
+	Tue, 24 Feb 2026 09:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d33MvPat"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bUxd6dFR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367DB36B05C;
-	Tue, 24 Feb 2026 09:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B804718C933;
+	Tue, 24 Feb 2026 09:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771924854; cv=none; b=anxpV3M16Ykh8djxUbvR7USPr80VrFiqF/3ktXc+ndKijX1ebgGeRp0IiLAiU2MaAsBn3gWhoCuPJPQTriRbfuhbq5zrXqyC/QKXffiaIy2p4hHBD744o44yBCCBDhIsM9JQH+HNcuMvvnDadSQ6KDM6adgPMeApIY1MubZW99o=
+	t=1771924917; cv=none; b=V16HcvLEsl1kd8OGA9h7fb7Rfy+atO6ocfS1zXpZ1Kgvesg269hDm5O8guTkcLx+J7Wie0Yrn2Vo3RbH5MPVaz/5EaMf4VF6aF/bvvaRWlJhyXDGOa11MBUsswC0Gvxt9PJucl1VihEyy4xLWbkYZl1tt6K/Qn79Opa6awh1qmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771924854; c=relaxed/simple;
-	bh=zQsck/PbdutrfjuyGfWsZrSGCznNVHiinSu2WQcwhXM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qUlHm2UqmPRIGoPnjlvQb0GhPbYirJt677h9/a20VDdnvOS7zWc5xGdc+osxAyGSKHU+rF6XVJU6qCQfcNawb5UUEtyy0lWs56V5kgkuoAWGTkimCmapEt6eBscPVqakFri6twkSO5IZWIdCWOlkbf3GUfzL5JlqdGZUxDWZK6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d33MvPat; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFC04C116D0;
-	Tue, 24 Feb 2026 09:20:48 +0000 (UTC)
+	s=arc-20240116; t=1771924917; c=relaxed/simple;
+	bh=+ZgRL78h59vYKmP3VyntioFtrGYkFQJZf4vOZNcd73Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mq8Hw6R79NGtWJp+M86WKiI7iPp9wUZ4pnHUVc+0SM11e7xgOjTgDkRV3lPoKt7cH7hZvDnf1vl0p74SfxzBFLWMKHcO8jsfa4xmL3HMY4BbUAPus7S2xLDYGZ/OwAMyHbeKa4RcQvnbSLKfXRNcmnJGguVujrrd4AQ+Mc8OL9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bUxd6dFR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D05AC116D0;
+	Tue, 24 Feb 2026 09:21:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771924853;
-	bh=zQsck/PbdutrfjuyGfWsZrSGCznNVHiinSu2WQcwhXM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d33MvPatWU9dWg+Iyd8o/6Y/ldYwKOH8cRg0Twmt0370/HtNEBoWP3z5uOe6wmFXJ
-	 YM9ycD9PQCBY6f2pUjrO96/u5KF7xm8ivKI2Fh9vCGLwg5th0xGGx+/N3bPn616+er
-	 dlPZiqPuHcSGvxYT6sAfWt7q6WkwtO/P0RFeZQS+YU296u3wkl+HM6Pc0aQp5zvzEE
-	 X6nxMKN1zyPs4ALdzch6DfnAy/FTnYRsMnHX+NVzC9EriWNJBe5KoE1zL64sE0Qrsj
-	 no9HXBs4Wj5/XGONNbVLX4l0ye+IcMDVik2w/nSZhnQyRG+ywegsYDlZMV36f9l8VM
-	 i7cfOC2T30jgw==
-Date: Tue, 24 Feb 2026 10:20:46 +0100
+	s=k20201202; t=1771924917;
+	bh=+ZgRL78h59vYKmP3VyntioFtrGYkFQJZf4vOZNcd73Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bUxd6dFRYF5CjDz33X1r/UnQKXjKmMF9dEuf62vIwFLdnNkcY0OyWYHxXbXD54A/F
+	 vTh3dnkEceRvQUFpvZOjTh5DW4S+lpZOjtNfCA3+jrdIX9aMT+rlcXZxQy7oXuHFku
+	 NSJ3BAYqLoSiZaCXJoOxiMkJRv1fhK1V2F++TLbemTHMxfN3gsEQTMH8GlokVIYkBc
+	 eIKTmX1tuKPFWX/kB+ot2Cq6oFrjXVonHmwylG0cRCHj2Q5LpQym3QdW1b/7ChBosW
+	 vk/vHOwrp8rL+nEoTlulg8VWi3v7fg/GKnskb0x5tTt2ir0In5D25MduK33aCMTev3
+	 zRtbD92kfWgxQ==
 From: Christian Brauner <brauner@kernel.org>
-To: Chris Mason <clm@meta.com>
-Cc: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
-	Jeff Layton <jlayton@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Amir Goldstein <amir73il@gmail.com>, John Johansen <john.johansen@canonical.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v2 12/15] ovl: change ovl_create_real() to get a new lock
- when re-opening created file.
-Message-ID: <20260224-granulat-joggen-cd082d178959@brauner>
-References: <20260223011210.3853517-1-neilb@ownmail.net>
- <20260223011210.3853517-13-neilb@ownmail.net>
- <20260223132424.105125-1-clm@meta.com>
+To: Jann Horn <jannh@google.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Guenter Roeck <linux@roeck-us.net>,
+	stable@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] eventpoll: Fix integer overflow in ep_loop_check_proc()
+Date: Tue, 24 Feb 2026 10:21:45 +0100
+Message-ID: <20260224-flutwelle-gelernt-a94c18edb860@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260223-epoll-int-overflow-v1-1-452f35132224@google.com>
+References: <20260223-epoll-int-overflow-v1-1-452f35132224@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260223132424.105125-1-clm@meta.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1187; i=brauner@kernel.org; h=from:subject:message-id; bh=+ZgRL78h59vYKmP3VyntioFtrGYkFQJZf4vOZNcd73Y=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTOzd2wKiDhzaHSZ7cuMcs/fCq04fuzlbUzztZ5zV1ro bVBvvuYZEcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBE9t9hZGj0XxpzxPWh/PkO s1t9zHNnLrBvXXdm0rP1abm6bAt2yOxlZHhWbrrj367u36v8bTUeOajX25S5SmqwTNl//1imyw4 bVT4A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [3.84 / 15.00];
+X-Spamd-Result: default: False [2.34 / 15.00];
 	MID_END_EQ_FROM_USER_PART(4.00)[];
-	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	MID_RHS_NOT_FQDN(0.50)[];
@@ -84,56 +81,51 @@ X-Spamd-Result: default: False [3.84 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78230-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78231-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[23];
-	FREEMAIL_CC(0.00)[brown.name,zeniv.linux.org.uk,redhat.com,suse.cz,oracle.com,kernel.org,szeredi.hu,gmail.com,canonical.com,paul-moore.com,namei.org,hallyn.com,vger.kernel.org,lists.linux.dev,lists.ubuntu.com];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[ownmail.net:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,brown.name:email]
-X-Rspamd-Queue-Id: F393918476A
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: DCD5B1847BD
 X-Rspamd-Action: no action
 
-On Mon, Feb 23, 2026 at 05:23:00AM -0800, Chris Mason wrote:
-> NeilBrown <neilb@ownmail.net> wrote:
-> > From: NeilBrown <neil@brown.name>
-> > 
-> > When ovl_create_real() is used to create a file on the upper filesystem
-> > it needs to return the resulting dentry - positive and hashed.
-> > It is usually the case the that dentry passed to the create function
-> > (e.g.  vfs_create()) will be suitable but this is not guaranteed.  The
-> > filesystem may unhash that dentry forcing a repeat lookup next time the
-> > name is wanted.
-> > 
+On Mon, 23 Feb 2026 20:59:33 +0100, Jann Horn wrote:
+> If a recursive call to ep_loop_check_proc() hits the `result = INT_MAX`,
+> an integer overflow will occur in the calling ep_loop_check_proc() at
+> `result = max(result, ep_loop_check_proc(ep_tovisit, depth + 1) + 1)`,
+> breaking the recursion depth check.
 > 
-> Hi everyone,
+> Fix it by using a different placeholder value that can't lead to an
+> overflow.
 > 
-> Amir suggested I run these through, and this commit was flagged:
-> 
-> commit 62d49d1e44667e4f93bec415faabec5526992ac0
-> Author: NeilBrown <neil@brown.name>
-> 
-> ovl: change ovl_create_real() to get a new lock when re-opening created file.
-> 
-> This commit changes ovl_create_real() to drop the directory lock and
-> reacquire a new lock for lookup when the created dentry is unhashed. It
-> also removes ovl_lookup_upper() which is no longer used.
-> 
-> Signed-off-by: NeilBrown <neil@brown.name>
+> [...]
 
-Fwiw, all patches that are applied go through AI review. My plan is to
-have a discussion on getting automation set up for this at LSFMM so that
-we can have the bot directly reply to reviews but under our control so
-we can vet reviews.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] eventpoll: Fix integer overflow in ep_loop_check_proc()
+      https://git.kernel.org/vfs/vfs/c/fdcfce93073d
 
