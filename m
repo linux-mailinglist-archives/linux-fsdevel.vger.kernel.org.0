@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-78329-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78330-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CPhmG4cmnmn5TgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78329-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 23:30:31 +0100
+	id YIeWCd4mnmn5TgQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78330-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 23:31:58 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83C318D4D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 23:30:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB33318D57B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 23:31:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id B3E2931286A7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 22:27:52 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 68B923144D7E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 22:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7CFC34A765;
-	Tue, 24 Feb 2026 22:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D148735BDBD;
+	Tue, 24 Feb 2026 22:27:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="eunBjtdv";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DFvVp2g0"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="hy7u65I+";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ChwCLTxk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from flow-a2-smtp.messagingengine.com (flow-a2-smtp.messagingengine.com [103.168.172.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DC6349AF5;
-	Tue, 24 Feb 2026 22:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074C0350A08;
+	Tue, 24 Feb 2026 22:27:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771972069; cv=none; b=Ou+11k0fWpLuyduWTa2w0Vwqt+BjMuLsNyWm03tT9H9zYkvYEUWRv5BhplFHTiiv8r41RvqqrIzBee4O/X8qmlGDHUk5G/uipsho5uUAaxXlTWMWg1oFiPkLEWkAz3amp7NPOPPyn5YkDkH+i/mVFZEx8ieeb/3ftQGFEXYsg20=
+	t=1771972077; cv=none; b=rBhLwEL5ukfSHnm9w12AvCAHQ2iB7yS1cR8Tr2oF5TbAc4VlkxCWfDQRejNAdagC4kgPVSz53nrA1fB+mXL1u9y3Cw5FeHKlsdIeFabZB5e1BoQwYT/0Aav7Jor5sT90l7BSBNiK7dj6O2zg42DaQfNjPwuNxsTHUJU9PF8v1dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771972069; c=relaxed/simple;
-	bh=8npN8lDUKLB/B/vi6olsXCscd/grdMnQXyTSElVQCIQ=;
+	s=arc-20240116; t=1771972077; c=relaxed/simple;
+	bh=SohgNuLUXSQSkgtDnRyuTdAQDh9isNIABR5R5Yifjlo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nyY/PNOhlOQnqg5ehihYfnisCylprj3kJ6LFxdw1//4T4EX2oOZ2Pt7zya95AuG7tc4VGb3KRo8NySL3u9aO+ruwGubikxi4M3K68ewo+DpDqTtJabGT04i86XHsHJkvdB7uheI54zLN/PGWHZzZTUex2HwG9lWzBM/FwVkqpos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=eunBjtdv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DFvVp2g0; arc=none smtp.client-ip=103.168.172.137
+	 MIME-Version; b=oeU0xjkw3aqLiJae7VGtDpR+drVAsDEe3NeKYC1dkMUIVO68Qp468YRnkvsojrgIf39AQf/CEy3QnmTc/n7RdvLhigDkdbBOpL/427mjzKBicKDPis80LgOaytfjL6UZwl8FrsZn8dy1BAPm7i45qErG0PpdwkOHGXhZzklO5O8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=hy7u65I+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ChwCLTxk; arc=none smtp.client-ip=103.168.172.137
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
-	by mailflow.phl.internal (Postfix) with ESMTP id A16B0138052C;
-	Tue, 24 Feb 2026 17:27:46 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-11.internal (MEProxy); Tue, 24 Feb 2026 17:27:46 -0500
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailflow.phl.internal (Postfix) with ESMTP id 3D3A1138052C;
+	Tue, 24 Feb 2026 17:27:55 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Tue, 24 Feb 2026 17:27:55 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
 	cc:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to; s=fm3; t=1771972066;
-	 x=1771979266; bh=zoLaKvUIcq0LBSrvSvYdTrZyLAsLuraYZU3vedQYf7U=; b=
-	eunBjtdvb7py65uKkhmWny3U0yrgkknbEzMVQWKR+94mqZBtzVxNG5UcQZeTXet1
-	f+sFFa1H7+k0RQ3dGy17Q8a4likxcrMxwnAG/xA499ylO5Abt49a3ZDk85O9WQr9
-	Cz0DTv8sPh8sqCI+a9KXs/NaCZ1kJGNLh1MCaj4Ag5LoDF8GCMewVz6BNuXdz1tL
-	+WSGeeV8W7HNwadLfkZJdMj/b2WxWBMSME2ppKQ28WbR+H/+ugCmHg7deoZiiZWv
-	PSfz9SjKvntrtb6Z8/ba/hoFi1Y2tsfv6rq+4AW6LMiMsxHzAAoG6skhYXbrIjXN
-	+c2A0Ea/Sv+A43yHxjYu/g==
+	:reply-to:reply-to:subject:subject:to:to; s=fm3; t=1771972074;
+	 x=1771979274; bh=bIUlSuwFKeFIuLZj8rOB/AbskaH/BxVOAKu2PHwCVKQ=; b=
+	hy7u65I+Q9tpvbtcV5WQpUFJvQgpsRwv2rvP+I7kvnfDA2SHObxNGtFreHDTOSpg
+	09z5WCa/28GuKNBjXyppssw8J3Uj1ZOsoC2eGUwFjpwUIWUgfIT4JJLNTK0hpsd1
+	zxUbyQbXhfWzRKrmAQu8x9zmGv/ZfgfbNGFvmC6BaloDTtBfY5R29PQfmXaV0gNk
+	trMCyaOl7XwljFqdU53OxnkUFmdtLoA/vRTpRsha+Ms+jfYYr3n+68C6FJkCUc1j
+	1fCICJdAnXvQuuxISxUUEI88SC9G/7WxaiGqvMgSdpfPetdheLPfbciehBmpb4Pb
+	d/j8SR622VN3qhsTWP5PdA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1771972066; x=1771979266; bh=z
-	oLaKvUIcq0LBSrvSvYdTrZyLAsLuraYZU3vedQYf7U=; b=DFvVp2g0aej3dNXGt
-	WHFp/uzE8GtGq2WoHKtqHDsKXVgQ6Q7svrfudc4BRLDYwF3ZxQ0DcNnh7bJ0Y7Ly
-	3PBvs8vIjLmWL76cuGp601c+1oOwQnel/RaE9da0J5l0iuMTeDVpRRV8O11455SG
-	kNCkqICmXWzTkaZN1demnwZvrZgKHrTVekon1VvKRJQDackfFkM51A2Wa+Iqkxu0
-	CBd6pi8lMlBSrn3VIs141ef66gGoy81xRjSb4mnmuxyWUNvIERuuYIIVgzuUEkon
-	oSxZJSRGrdBIrQSE7yMPTqlbVdZotyhWZzEONFfP4J6acQyOTW0v/5FTIm6ZBB/o
-	vViKw==
-X-ME-Sender: <xms:4iWeaSCkrulfSSLGPswGsBm3-I1EpzIzXVMfhzn51t6xnQ70lFFIAQ>
-    <xme:4iWeaQfpekKpKmYAxrlm-eOt4JJwC-UV1Vwxe-rKjznRmJdJLJgppmfsup5WRUoji
-    Ng_X1OFLLPzGHylK2ql41SETEbd5_dXWB8V_HKbrCZ1znDb9Q>
-X-ME-Received: <xmr:4iWeaeHB4ujld8rTbzIBqbicinQ1h_qqYflrTzCfA7GHEclvVBivm3Iok-rgmU3zNDHBKD8BCPj_EUmHa4f5egznf23gIbKvBIen4pI1hfvk>
+	:x-me-sender:x-sasl-enc; s=fm3; t=1771972074; x=1771979274; bh=b
+	IUlSuwFKeFIuLZj8rOB/AbskaH/BxVOAKu2PHwCVKQ=; b=ChwCLTxk1c0zImyBL
+	o1kANErg77ogwCm8US7Si3pa7+uAi2BjF1NsmTVx3inbCEynTVl8WEWS5fZtkU3E
+	+OTBB6d7aLRGIZyoZawqFkFwK7a+MXQGmKlrEdkl5rnr++KLM9EX1OxzNaDO2lUK
+	GRUNm7ZTjM6l9ww9i2GH8rxX9lRdyf9JwFBo3ghiv4aijGzJx2YDOab042LFVSRK
+	GrDV8MaV2eIFCSiUpJoqKE0Y/DqGGDDYsrWNeBsgVrOzgiLLJjYFNhzAUVGq4MB/
+	VNt0nmx6+E4H/n7tMX/4MDGaSiw9olL3vcDDbKfFzfFURKIKzbFQ+0qVESQIhMM5
+	kn+Ww==
+X-ME-Sender: <xms:6iWeaR8zjrSULEgJxL4HxQeMb0iNrr7oldp1caBAy34wh68VNn6jIQ>
+    <xme:6iWeaZrlN3Pvk6uuJlkWEtNzi9_Xgju7-jOWrKwNAwErzBbyJYjHMThEdno8Sh_al
+    2GAuGyHkHHsPoHHCLAmYsv8vFyVNgQf1rRAGCP03l9kV0rxOA>
+X-ME-Received: <xmr:6iWeaXheysVn-uoUcSyQv4xBDu9Api4cdR_yaIJwU7jIWGz2IGp3Pug8ie9SzTS_qRMVE2o_yJLpED929HsTd4H-yxFV3N_egTxE0nBhDhF1>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvgedufeekucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
     gurhephffvvefufffkofgjfhhrggfgsedtkeertdertddtnecuhfhrohhmpefpvghilheu
     rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
     epveevkeffudeuvefhieeghffgudektdelkeejiedtjedugfeukedvkeffvdefvddunecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    vehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
     esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepvddvpdhmohguvgepshhmthhp
     ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
     hrtghpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
@@ -85,14 +85,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvgedufeekucetufdote
     vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvg
     hrnhgvlhdrohhrghdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhr
     tghpthhtohepjhgrtghksehsuhhsvgdrtgii
-X-ME-Proxy: <xmx:4iWeaaXDBC5x9Iad4eIzwRsf5TAWzZYe55nciyN5A6tPxAA1WR41dg>
-    <xmx:4iWeaezdsSAM519uoLl6n385isoXBcUnWsEFizUVa-MnamggMYVFVg>
-    <xmx:4iWeaVuX9vW-FdcViHd5GtAdk9KR2ZYJ06ok1egm9w1Az4bS3We8kQ>
-    <xmx:4iWeafBZzwciAvXxla5DYM3dJnt9GQkYuHTstkJPCM1IUml5Wvrj0g>
-    <xmx:4iWeafYran51VVKU68fjE_PM0fsWRcxFL9TkxDQyd_eJC-z3g_VSnVvj>
+X-ME-Proxy: <xmx:6iWeafAZhqD0o-xubhL_NLxGif5moM4AVm6R2w-HkR4VrNBWFRCyCw>
+    <xmx:6iWeadv9bqx7fnW0gA_j7o77UPv6Is2EdCFioHTryJPYnBKYXo1nNw>
+    <xmx:6iWeaR7qgRLo6XdfLxRwDTRgu2O927KGrOYBde6D_XveM6jd-YwYkg>
+    <xmx:6iWeaffIQMEmijHro1jv9uWsOZ1i6qlbmbESWKz3svGjNkr9-nkXpw>
+    <xmx:6iWeadFi3JtRYFd-LF_nWGJ_7B0vwYcxYUH6IZHFBvnbRAwHQP5h9N2L>
 Feedback-ID: i9d664b8f:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 24 Feb 2026 17:27:40 -0500 (EST)
+ 24 Feb 2026 17:27:48 -0500 (EST)
 From: NeilBrown <neilb@ownmail.net>
 To: Christian Brauner <brauner@kernel.org>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -116,9 +116,9 @@ Cc: linux-kernel@vger.kernel.org,
 	apparmor@lists.ubuntu.com,
 	linux-security-module@vger.kernel.org,
 	selinux@vger.kernel.org
-Subject: [PATCH v3 13/15] ovl: use is_subdir() for testing if one thing is a subdir of another
-Date: Wed, 25 Feb 2026 09:16:58 +1100
-Message-ID: <20260224222542.3458677-14-neilb@ownmail.net>
+Subject: [PATCH v3 14/15] ovl: remove ovl_lock_rename_workdir()
+Date: Wed, 25 Feb 2026 09:16:59 +1100
+Message-ID: <20260224222542.3458677-15-neilb@ownmail.net>
 X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
 In-Reply-To: <20260224222542.3458677-1-neilb@ownmail.net>
 References: <20260224222542.3458677-1-neilb@ownmail.net>
@@ -146,7 +146,7 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	REPLYTO_DN_EQ_FROM_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
 	RCPT_COUNT_TWELVE(0.00)[22];
-	TAGGED_FROM(0.00)[bounces-78329-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78330-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_FROM(0.00)[ownmail.net];
 	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
@@ -164,56 +164,72 @@ X-Spamd-Result: default: False [0.84 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[brown.name:replyto,brown.name:email,ownmail.net:mid,ownmail.net:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,messagingengine.com:dkim]
-X-Rspamd-Queue-Id: D83C318D4D5
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,ownmail.net:mid,ownmail.net:dkim,brown.name:replyto,brown.name:email,messagingengine.com:dkim]
+X-Rspamd-Queue-Id: AB33318D57B
 X-Rspamd-Action: no action
 
 From: NeilBrown <neil@brown.name>
 
-Rather than using lock_rename(), use the more obvious is_subdir() for
-ensuring that neither upper nor workdir contain the other.
-Also be explicit in the comment that the two directories cannot be the
-same.
-
-As this is a point-it-time sanity check and does not provide any
-on-going guarantees, the removal of locking does not introduce any
-interesting races.
+This function is unused since
+   Commit 833d2b3a072f ("Add start_renaming_two_dentries()")
 
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 Signed-off-by: NeilBrown <neil@brown.name>
 ---
- fs/overlayfs/super.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ fs/overlayfs/overlayfs.h |  2 --
+ fs/overlayfs/util.c      | 25 -------------------------
+ 2 files changed, 27 deletions(-)
 
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index 109643930b9f..58adefb1c5b8 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -451,18 +451,13 @@ static int ovl_lower_dir(const char *name, const struct path *path,
- 	return 0;
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index 714a1cec3709..6fb99c583c31 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -569,8 +569,6 @@ bool ovl_is_inuse(struct dentry *dentry);
+ bool ovl_need_index(struct dentry *dentry);
+ int ovl_nlink_start(struct dentry *dentry);
+ void ovl_nlink_end(struct dentry *dentry);
+-int ovl_lock_rename_workdir(struct dentry *workdir, struct dentry *work,
+-			    struct dentry *upperdir, struct dentry *upper);
+ int ovl_check_metacopy_xattr(struct ovl_fs *ofs, const struct path *path,
+ 			     struct ovl_metacopy *data);
+ int ovl_set_metacopy_xattr(struct ovl_fs *ofs, struct dentry *d,
+diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+index 3f1b763a8bb4..aa2a32793c2f 100644
+--- a/fs/overlayfs/util.c
++++ b/fs/overlayfs/util.c
+@@ -1213,31 +1213,6 @@ void ovl_nlink_end(struct dentry *dentry)
+ 	ovl_inode_unlock(inode);
  }
  
--/* Workdir should not be subdir of upperdir and vice versa */
-+/*
-+ * Workdir should not be subdir of upperdir and vice versa, and
-+ * they should not be the same.
-+ */
- static bool ovl_workdir_ok(struct dentry *workdir, struct dentry *upperdir)
- {
--	bool ok = false;
+-int ovl_lock_rename_workdir(struct dentry *workdir, struct dentry *work,
+-			    struct dentry *upperdir, struct dentry *upper)
+-{
+-	struct dentry *trap;
 -
--	if (workdir != upperdir) {
--		struct dentry *trap = lock_rename(workdir, upperdir);
--		if (!IS_ERR(trap))
--			unlock_rename(workdir, upperdir);
--		ok = (trap == NULL);
--	}
--	return ok;
-+	return !is_subdir(workdir, upperdir) && !is_subdir(upperdir, workdir);
- }
- 
- static int ovl_setup_trap(struct super_block *sb, struct dentry *dir,
+-	/* Workdir should not be subdir of upperdir and vice versa */
+-	trap = lock_rename(workdir, upperdir);
+-	if (IS_ERR(trap))
+-		goto err;
+-	if (trap)
+-		goto err_unlock;
+-	if (work && (work->d_parent != workdir || d_unhashed(work)))
+-		goto err_unlock;
+-	if (upper && (upper->d_parent != upperdir || d_unhashed(upper)))
+-		goto err_unlock;
+-
+-	return 0;
+-
+-err_unlock:
+-	unlock_rename(workdir, upperdir);
+-err:
+-	pr_err("failed to lock workdir+upperdir\n");
+-	return -EIO;
+-}
+-
+ /*
+  * err < 0, 0 if no metacopy xattr, metacopy data size if xattr found.
+  * an empty xattr returns OVL_METACOPY_MIN_SIZE to distinguish from no xattr value.
 -- 
 2.50.0.107.gf914562f5916.dirty
 
