@@ -1,171 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-78220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iAqqGKMgnWniMwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 04:53:07 +0100
+	id +O80Hx80nWlINQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 06:16:15 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC901817B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 04:53:07 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDDCF181D86
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 06:16:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 8B54A302926C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 03:53:06 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 6099F3013EDA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 05:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C561A38F9;
-	Tue, 24 Feb 2026 03:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077A82836A6;
+	Tue, 24 Feb 2026 05:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Teyf8iQ5"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="QHkHk3Lb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yx1-f43.google.com (mail-yx1-f43.google.com [74.125.224.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515E61C01
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 03:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771905185; cv=pass; b=eyVcBPvsO9tMuA0Kz38SRIDYRwMNWPvrj7UVtDplpcLrVa8HCV4l3JWTnRmbXlhrl37/r/W8TT9JdxntccGJj48S3EntnWZ774h5qOACrUozwcr9dvrq9Vn0aKySInO5pXcmfuauOU/QFSlVUBx86FWq3nerQOIvUrgMEn99+zE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771905185; c=relaxed/simple;
-	bh=mxHe/wBeje0IHM84/OUx1nFmAzSuOXwCPR3VB4IUhrM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H/GnUO9JtFV/P2sz6UlYHQkHXjnB2Ok1c3YZkmn2Os/LzGQ7h/iO/hzpa7trgjJV19Fl5fnUbIAUhIg6ATGYCyKmzzzjvUZFs1II051vwftgVrZauD3BwqOPASkshPt1M6b8C9i8RW5csUR7ayqRfDsb9FuGtsH1DscqPf3W4Z0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Teyf8iQ5; arc=pass smtp.client-ip=74.125.224.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f43.google.com with SMTP id 956f58d0204a3-64ad9fabd08so4723108d50.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 19:53:04 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771905183; cv=none;
-        d=google.com; s=arc-20240605;
-        b=jM5s021hJLLjFpW65LYrn9fTZ4Y2To7gz18uXSZhSnrfLsOo7qAKw7WYH8Jpvf8aGh
-         VzTfqfi6TrajjjaH0RmiSwtopL8VgopuEcDdPeVcV/6V8Jzan3QVl8/wM5ovlzE1EXJj
-         3hduPLa0fvmcKcWMPrxrIcYlGUgKGtZ1yLhhyWYiWTlno1mXZlJF55XxWQzwamzyeUR1
-         Y3kMWNq49sBejuYJlBZEjRjqqWY9NkjFJoTkfwLolaItQuuypJ+XRatB2HsFosvcjFzG
-         t5lGtkiATR6c+x6fumNDOrZL7FhMNEY5IgnI/5Tr4010H/hsui5FJrQaV0A3gY70RoAh
-         l8Aw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=idVJIGjiU1QJV7DJ13fE6/94mIRjjSU5wnNEa/aUN70=;
-        fh=FgJJadUkqlNV1oAPa53la2bfxlwV7vIglPh9tNMWKr4=;
-        b=ToIR1vw08FWyxoSsKjkXXkKpxCa0gQaPgnPB6McOaw+sSsDGjM4+dBBjuarY09/yUY
-         lhd7+yjSFS1IfIM0D/LEaTHI6QxYgWTczGs0Btn1pamN5J2IJWE9PVSsE5q0sGnI9fj0
-         1E+RV+Pcg2HMln0EoCjyPbck/igs9B9ATnwjCv3cHSQ4PgvHdVSFTrxCyLJy//oOqVIg
-         oB4nGK9Dhvd6f5SwFTdNmY9/BPCXk2DWbbqVLDLkUIP6jgUR6aIb0gP3GOViLX5MLEJ5
-         UzHbj8FFLQpf5nu+CWymOt2BmVc5qr4BRm1AioKqYGiWz8YyCtIQGQvKG8GpNjB+1V5F
-         Wzpw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771905183; x=1772509983; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=idVJIGjiU1QJV7DJ13fE6/94mIRjjSU5wnNEa/aUN70=;
-        b=Teyf8iQ5Qb9l16J6rRAA4Bv3o2xgKEk71cz/U64jFZ0lmKUfS64sQ7CwBD/LpgLpxq
-         12f/bIZHhPorR5/zpXGr48YdPjEydxsGEeOnIMJHDQbh8MoOQbSz7J8qRiZX2yrpo2/6
-         cRUlqS9JjOzxXtYfnoSs3V5bQmvJh+3fyoDmk9Ab7kc4NLTxBRpLwfbf5/Qp15hWojbv
-         VnSz3CuEqOhdahJIDeGBlHbbDWL93WHN/ntLqOWi0JACTA5aPczuFR+8rnCIKTrfcfLD
-         G1VD/mMfNB9hlYI7Xn+PfIKmgVphhGBM4FnHJCz8hc1FBgCvZ3ru7N6Hl4Zf+R+3OxHT
-         FpYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771905183; x=1772509983;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=idVJIGjiU1QJV7DJ13fE6/94mIRjjSU5wnNEa/aUN70=;
-        b=NKg0AwnUvy0aXX+fT8RKNNw4imZwqUGWYBpl+cjuorhB+Vp4Cbd9mo2T5JeyY0taa6
-         3M4tZc/f3WwQgbwm8iUgjPfAzNn0uWQ+hC2RMn1Kbr4Mdd2anWVOYsoHtdxYISLD+FjB
-         CHhelXD+lN8YLZ5EOq/Z8sw0RgSUuFIv/yi/PHzqPV+FapSqNKm7/V0shhOjZiFxhXLM
-         BwrZ1g/tsD80b6aT0M5eXKxnb4lFQNRQ/f9XAbHMb9oG8KDIklbZXtJ+D1Jxmf1h8P/h
-         Wc3lW2jNvv9zKerI0s2vvPLloBBvLYN3CwP/4XJJD0dhcurl5p1iEfdEn4ej5VveuY/Z
-         2KPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV13cvQOrLACP0eDJxBoMdSOXCjX75WLKM3xr+FBEety2NWu1rUS5cXqeSPmuPQM/FBDvPDLBPEfHKWkyld@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHQJNDKtfGcqi8f0WGhV875Fpb4kXfDufX1/eM7AHFM70QfKKg
-	jRQTu2Nbqxx2gEEuQkcXx4T2w7QZ0UeqTDDDf0NEAK5B+9JI266TQUYXtsGCUVXsywY6U9F3RXM
-	dgN+TuaBg7Mlpo8SNJTY4Fd8uhBT7f1E=
-X-Gm-Gg: ATEYQzyvM77XanI6Q6H3nR5Pyy3voEHKhiN+RhbtGYyFlXtNJZ1vDpmv/sX6O2E1LhZ
-	zqY04NCBsLc0VBB/+Q4ZKq6wfvKCUWUU5KMFv4EIcLcU6RedFu/6dvxFehNGfM+1ECP6Tk+Kgr+
-	aMQ1I4dIuMwh1BdC1AGBVUe1X2iJdozTYMwSPTz0mT3S7zGvWunwFz5aVN9vFYScRQGdaQLDc4l
-	0H4GEbftNGT016l7WpsJ/ccsdzOxho7MvwBKca1Oy7h1gGvx1iP4ejWsUPm0cVYMz+Ya5rBMjUY
-	7uYdpt9Vr1yfBBpr9OSCILCJ32X+gglXp8cG2q2+YgzDwvSRTFsi7bjjk+ujzQuKyALJCbBPYAk
-	vP0gs9Q==
-X-Received: by 2002:a05:690e:1488:b0:649:97a4:d5d4 with SMTP id
- 956f58d0204a3-64c790725e7mr8489842d50.78.1771905183308; Mon, 23 Feb 2026
- 19:53:03 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4932227CB35;
+	Tue, 24 Feb 2026 05:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771910099; cv=none; b=Zkj2gzx5Ba3/oS7/pwkt+CpZHm5RrYQxXbDvCXv2/tplimQgZepmqHplMAIPAX/us+mJwoNrHtFQ8ASXZ10gzTqod4mCvh7ySOot+2j5IofXQBk4XYMxfggVgVhjdR9qW6aGkuVeJZWVSgAgvPpMU59R481/bzyFzQZWuilMT/s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771910099; c=relaxed/simple;
+	bh=5gjYpTIN4YCsnqqxfusMWKco5LaTTOjrlumXA9PBJa0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AQOHLV+PmaA3LbhIWP7aeSX7ApnhlOqNeMendTLRia9ioYUKeX/gSnM5oYCbwkpFEouwgqcf0v+zZvc6BP3bL4xzD/O7eFVSkIYooUAgTCeMsi36i+r1p5cUFQp8hSw2+sBhjVvRoHPMcYGIiN6QAy1bPQVdJScfjn5I+TX4osg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=QHkHk3Lb; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=fScT3edAvk0SBxL7di0v4GgtE3hfdRqW25fjnSh97hE=; b=QHkHk3LbYFKkyKXls9QK+w6VcD
+	OTdKi0duhWT1kgJ0fNSsqxLHkVOTlJ2q6NxZmi448+gIYwWN58BTa2knJnLxsOwD/dri8R9aOe0s4
+	OhxL6+t/lRId0fAk2YSfR9eOrF2tnXQQM+yM+TMGTEuB6NPGbEPDBB6tLYSCfgb/1HRsJlHJen3ca
+	WcfXlBd8OTDTXINzSkQlDmWs07iE5cvwNq5qUlG6V7EmBp8ey/iPJtrKWST+n21uIvf6NHvA/R5r5
+	6CIuk5B6o8bqUQRcyK/P1RGxMx0Mw4+rPbRCIif85dsEh8Mydbk4zGG1YbroII6aXV+/xO39A2XJF
+	BhjbD3pg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1vuknZ-00000008Z6H-0tl8;
+	Tue, 24 Feb 2026 05:17:29 +0000
+Date: Tue, 24 Feb 2026 05:17:29 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Shyam Prasad N <nspmangalore@gmail.com>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	CIFS <linux-cifs@vger.kernel.org>, linux-nfs@vger.kernel.org,
+	David Howells <dhowells@redhat.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Support to split superblocks during remount
+Message-ID: <20260224051729.GB1762976@ZenIV>
+References: <CANT5p=orpQdzqxjNronnnKUo5HFGjuVwkwpjiGHQRmwh8es0Pw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260221061626.15853-1-kartikey406@gmail.com> <9f5701d8b45cba21a01baf5d2ce758e3a5a4a8b9.camel@ibm.com>
-In-Reply-To: <9f5701d8b45cba21a01baf5d2ce758e3a5a4a8b9.camel@ibm.com>
-From: Deepanshu Kartikey <kartikey406@gmail.com>
-Date: Tue, 24 Feb 2026 09:22:48 +0530
-X-Gm-Features: AaiRm50GW1szmcU6LQm9GG8s5HQl05mPW4eM0gSV7YBOg1UsKyBk9VJ5ShVt3LU
-Message-ID: <CADhLXY4Of=3ekg86ggi68_VEtYh6qDr-OtfP-D3=4mc9xm0i+Q@mail.gmail.com>
-Subject: Re: [PATCH v5] hfsplus: fix uninit-value by validating catalog record size
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>, "frank.li@vivo.com" <frank.li@vivo.com>, 
-	"slava@dubeyko.com" <slava@dubeyko.com>, "charmitro@posteo.net" <charmitro@posteo.net>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"syzbot+d80abb5b890d39261e72@syzkaller.appspotmail.com" <syzbot+d80abb5b890d39261e72@syzkaller.appspotmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANT5p=orpQdzqxjNronnnKUo5HFGjuVwkwpjiGHQRmwh8es0Pw@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+X-Spamd-Result: default: False [-1.66 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[zeniv.linux.org.uk,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[linux.org.uk:s=zeniv-20220401];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78220-lists,linux-fsdevel=lfdr.de];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[kartikey406@gmail.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel,d80abb5b890d39261e72];
-	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: 4AC901817B1
+	TO_DN_SOME(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78221-lists,linux-fsdevel=lfdr.de];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[viro@zeniv.linux.org.uk,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[linux.org.uk:+];
+	NEURAL_HAM(-0.00)[-0.998];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,linux.org.uk:dkim]
+X-Rspamd-Queue-Id: EDDCF181D86
 X-Rspamd-Action: no action
 
-On Tue, Feb 24, 2026 at 12:28=E2=80=AFAM Viacheslav Dubeyko
-<Slava.Dubeyko@ibm.com> wrote:
->
+On Tue, Feb 17, 2026 at 10:15:58AM +0530, Shyam Prasad N wrote:
+> Filesystems today use sget/sget_fc at the time of mount to share
+> superblocks when possible to reuse resources. Often the reuse of
+> superblocks is a function of the mount options supplied. At the time
+> of umount, VFS handles the cleaning up of the superblock and only
+> notifies the filesystem when the last of those references is dropped.
+> 
+> Some mount options could change during remount, and remount is
+> associated with a mount point and not the superblock it uses. Ideally,
+> during remount, the mount API needs to provide the filesystem an
+> option to call sget to get a new superblock (that can also be shared)
+> and do a put_super on the old superblock.
+> 
+> I do realize that there are challenges here about how to transparently
+> failover resources (files, inodes, dentries etc) to the new
+> superblock.
 
-> > +     case HFSPLUS_FILE_THREAD:
-> > +             /* Ensure we have at least the fixed fields before readin=
-g nodeName.length */
-> > +             if (fd->entrylength < offsetof(struct hfsplus_cat_thread,=
- nodeName) +
-> > +                 offsetof(struct hfsplus_unistr, unicode)) {
-> > +                     pr_err("thread record too short (got %u)\n", fd->=
-entrylength);
-> > +                     return -EIO;
-> > +             }
+That's putting it way too mildly.  A _lot_ of places rely upon the following:
+	* any struct inode instance belongs to the same superblock through the
+entire lifetime.  ->i_sb is assign-once and can be accessed as such.
+	* any struct dentry instance belongs to the same superblock through
+the entire lifetime; ->d_sb is assign-once and can be accessed as such.  If it's
+postive, the corresponding inode will belong to the same superblock.
+	* any struct mount instance is associated with the same superblock
+through the entire lifetime; ->mnt_sb is assign-once and can be accessed as such.
+	* any opened file is associated with the same dentry and mount through
+the entire lifetime; mount and dentry are from the same superblock.
 
-The check is in the HFSPLUS_FOLDER_THREAD/HFSPLUS_FILE_THREAD case in
-hfsplus_brec_read_cat() function (fs/hfsplus/bfind.c):
+Exclusion that would required to cope with the possibility of the above
+being violated would cost far too much, and that's without going into the
+amount of analysis needed to make sure that things wouldn't break.
 
-This validates that we have at least the minimum bytes needed before
-calling hfsplus_cat_thread_size() which reads nodeName.length.
+Which filesystem do you have in mind?
 
