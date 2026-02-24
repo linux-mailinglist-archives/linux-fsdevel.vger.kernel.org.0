@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-78287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cIH0BTLWnWk0SQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 17:47:46 +0100
+	id mHf4EH3XnWmFSQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 17:53:17 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B15018A072
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 17:47:45 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id D67EA18A1BB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 17:53:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id B406831EA361
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 16:41:06 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C049C3064BC7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 16:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E473AE70D;
-	Tue, 24 Feb 2026 16:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8783AE71A;
+	Tue, 24 Feb 2026 16:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tZLM9wKd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nqHZPIvk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D393AE6F2;
-	Tue, 24 Feb 2026 16:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0013A0EAA;
+	Tue, 24 Feb 2026 16:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771951153; cv=none; b=fQadetJWL795xU1wHcL09BwDDQ2qIhdNwLC5ubfnTiKpKbr5Ei1lStGK5kiYEmU38O5iivnWaAiHwmFm8owMAxvJHbhK40zDBydtY+/cb8RL2I8Ft2j/EtF0e6XWe3+s2krC5ivVF+l+EmnJvg/YL1boJOKfbI7T/+vg5QT11kk=
+	t=1771951154; cv=none; b=dENJ0C9yPt0z/Fe4RM1mxlThGj7jNXGbrDpRnONcW7K19StkXZ0onoh1XHKNKNV6qQlnXaqhUhYtENuRht8PaukXN0D6Ilsl8t2+5Z0SIvEZhmxByABG3XXIhjUun237CTDqnWNzktXvFJ9a0YRDjXZnjoV6FlyL48qz5nyIDZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771951153; c=relaxed/simple;
-	bh=9clOHcgbdO4lewCbPq+twqADjEi+SDDtferQgm6dDmQ=;
+	s=arc-20240116; t=1771951154; c=relaxed/simple;
+	bh=SRXw5r0DNxoiGNo85P/BdKmiW9+p6kKaZFM13ivQvbY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J51GQl6tLPGfFXO5lj+QVHcpEc/DpZYdxOYRzMlOwWcbvI7+UJMmNRxYRlLmc2Kng1/2CNyKJSGZwrY9A6Lu6ZB+B26hTG1yJGX8KMOxibzdgRzl/NDR1AL4mcmBNrYvunSpcUDpXSKgKa4vujNJMP/vZ4dnfJBdP7F139mkP0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tZLM9wKd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0692C116D0;
-	Tue, 24 Feb 2026 16:39:12 +0000 (UTC)
+	 MIME-Version; b=Lg6Nm5I2gnV638kHRtBT/P0fJq1vzS2wPrzrlDlhGHt+wM+51eNySbL9tcvt1MWWRKg7uqVl+xbV/XB4kA3SZ1vlA1K6cPqnHakVeTxVucHsBfkH+WozKOQKTZbmjg5bO9Slpbu+7msN6F6uIGrjVV+PA3XXu/RkpHKkehPmrQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nqHZPIvk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 928C3C19423;
+	Tue, 24 Feb 2026 16:39:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771951153;
-	bh=9clOHcgbdO4lewCbPq+twqADjEi+SDDtferQgm6dDmQ=;
+	s=k20201202; t=1771951154;
+	bh=SRXw5r0DNxoiGNo85P/BdKmiW9+p6kKaZFM13ivQvbY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tZLM9wKdlTqQsLGeqk/8uK2dqtfoAdCuO1cJcFjwJDPeN2Wl8PomjMkyqwn45/gCO
-	 F3Iseljwcs0hAN/3Ib+44z07apVti1oBM+MXTjaN56QTPeLivgnobTiEwQWtSs4qJA
-	 6TDvWqZT5l09pGtpSMC/iJxSkC96n3Eb/GkeC+Dbj/sJUq6i5S5uNuBV5BLOxi063X
-	 FIuqmukTtRTn3I1Ei1xefGKWK7oa06/mdXBKTvjBoLzePMK04jd+oS7LV24XHJFVzr
-	 33zzs1xsCEcp4KWnwMA+vWz9CLmKdMLQgE3HXIpEI8Lwcmlukv67IN+vgiwcI/pX/a
-	 Flmzm5XbMFiiA==
+	b=nqHZPIvkPZfHEKr1XV7omAH/GodtqeUl0sttNOYCbvWDHnDYqQQXZfoI9n+cDNx2R
+	 oLQO9poDJNOOmAz5TMv4nC9Ufkt+h0SaJqsF4vZlWXH6tw2bm5KF9zRODR/za88Nvx
+	 2T+Jf0x6IjV9oC+00LsBdPJZJLUXZOPjL1oY+sT9JTsf4+RGU3oE0VUinN1h6oUvJu
+	 l7i0WdjIIFYQgwJJdJFY63ZkpTktv/vSHFXNVhGGODK5wI9WkocdZYMd6A7FJL5QuG
+	 +9y6qkNSOvUhYXhSl398mybFYy6CfVWfg5bqYhlYswyyUOyeG5ASe+jIT+0HH+255K
+	 4/cfnS1WuRIQA==
 From: Chuck Lever <cel@kernel.org>
 To: NeilBrown <neilb@ownmail.net>,
 	Jeff Layton <jlayton@kernel.org>,
@@ -53,9 +53,9 @@ To: NeilBrown <neilb@ownmail.net>,
 Cc: linux-nfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	Chuck Lever <chuck.lever@oracle.com>
-Subject: [PATCH v3 2/3] nfsd: revoke NFSv4 state when filesystem is unmounted
-Date: Tue, 24 Feb 2026 11:39:07 -0500
-Message-ID: <20260224163908.44060-3-cel@kernel.org>
+Subject: [PATCH v3 3/3] nfsd: close cached files on filesystem unmount
+Date: Tue, 24 Feb 2026 11:39:08 -0500
+Message-ID: <20260224163908.44060-4-cel@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260224163908.44060-1-cel@kernel.org>
 References: <20260224163908.44060-1-cel@kernel.org>
@@ -73,18 +73,18 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_MISSING_CHARSET(0.50)[];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78287-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78288-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
 	FREEMAIL_TO(0.00)[ownmail.net,kernel.org,redhat.com,oracle.com,talpey.com];
 	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[cel@kernel.org,linux-fsdevel@vger.kernel.org];
@@ -94,493 +94,145 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 8B15018A072
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,oracle.com:email]
+X-Rspamd-Queue-Id: D67EA18A1BB
 X-Rspamd-Action: no action
 
 From: Chuck Lever <chuck.lever@oracle.com>
 
-When an NFS server's local filesystem is unmounted while NFS clients
-are still accessing it, NFSv4 state holds files open which pins the
-filesystem, preventing unmount.
+When a filesystem is unmounted while NFS is exporting it, the
+unmount can fail with EBUSY even after NFSv4 state has been revoked.
+This occurs because the nfsd_file cache holds open NFSv2/3 file
+handles that pin the filesystem.
 
-Previously, administrators had to manually revoke state via
-/proc/fs/nfsd/unlock_fs before a formerly exported filesystem could
-be unmounted.
+Extend the mechanism that revokes NFSv4 state on unmount to also
+close cached file handles. nfsd_file_close_sb() walks the nfsd_file
+cache and disposes of entries belonging to the target superblock.
+It runs after NFSv4 state revocation, handling NFSv2/3 file handles
+that remain in the cache.
 
-Register with the VFS umount notifier chain to detect filesystem
-unmounts and revoke NFSv4 state and NLM locks associated with that
-filesystem. An xarray in nfsd_net tracks per-superblock entries.
-When NFS state is created for a file on a given superblock, an entry
-is registered (idempotently) for that superblock. When the filesystem
-is unmounted, VFS invokes the notifier callback which queues work to:
+Entries under construction (nf_file not yet set) are skipped; these
+have no open file to close.
 
- - Cancel ongoing async COPY operations (nfsd4_cancel_copy_by_sb)
- - Release NLM locks (nlmsvc_unlock_all_by_sb)
- - Revoke NFSv4 state (nfsd4_revoke_states)
+The hashtable walk releases the mutex periodically to avoid blocking
+other NFSD operations during large cache walks. Entries are disposed
+incrementally in batches, keeping memory usage bounded and spreading
+the I/O load.
 
-Each network namespace registers its own notifier_block, allowing the
-callback to directly access the correct nfsd_net via container_of().
+A log message is emitted when cached file handles are closed during
+unmount, informing administrators that NFS clients may receive stale
+file handle errors.
 
-The revocation work runs on a dedicated workqueue (nfsd_sb_wq) to
-avoid deadlocks since the VFS notifier callback should not block for
-extended periods. Synchronization between VFS unmount and NFSD shutdown
-uses xa_erase() atomicity: the path that successfully erases the xarray
-entry triggers work.
-
-If state revocation takes an unexpectedly long time (e.g., when
-re-exporting an NFS mount whose backend server is unresponsive),
-periodic warnings are emitted every 30 seconds. The wait is
-interruptible: if interrupted before work starts, cancel_work()
-removes the queued work and revocation runs directly in the unmount
-context; if work is already running, the callback returns and
-revocation continues in the background. Open files keep the superblock
-alive until revocation closes them.
+A flush_workqueue() call is added to nfsd_sb_watch_shutdown() to
+ensure that any work items still executing complete before shutdown
+proceeds. Without this, if an unmount notification returns early
+due to signal interruption while the work function is still running,
+nfsd_file_cache_shutdown() could destroy the file cache slab while
+nfsd_file_close_sb() is still disposing entries.
 
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- fs/nfsd/Makefile    |   2 +-
- fs/nfsd/netns.h     |   5 +
- fs/nfsd/nfs4state.c |  29 +++++
- fs/nfsd/nfsctl.c    |  10 +-
- fs/nfsd/sb_watch.c  | 273 ++++++++++++++++++++++++++++++++++++++++++++
- fs/nfsd/state.h     |   7 ++
- 6 files changed, 323 insertions(+), 3 deletions(-)
- create mode 100644 fs/nfsd/sb_watch.c
+ fs/nfsd/filecache.c | 45 +++++++++++++++++++++++++++++++++++++++++++++
+ fs/nfsd/filecache.h |  1 +
+ fs/nfsd/sb_watch.c  | 10 ++++++++++
+ 3 files changed, 56 insertions(+)
 
-diff --git a/fs/nfsd/Makefile b/fs/nfsd/Makefile
-index f0da4d69dc74..bf6146283165 100644
---- a/fs/nfsd/Makefile
-+++ b/fs/nfsd/Makefile
-@@ -13,7 +13,7 @@ nfsd-y			+= trace.o
- nfsd-y 			+= nfssvc.o nfsctl.o nfsfh.o vfs.o \
- 			   export.o auth.o lockd.o nfscache.o \
- 			   stats.o filecache.o nfs3proc.o nfs3xdr.o \
--			   netlink.o
-+			   netlink.o sb_watch.o
- nfsd-$(CONFIG_NFSD_V2) += nfsproc.o nfsxdr.o
- nfsd-$(CONFIG_NFSD_V2_ACL) += nfs2acl.o
- nfsd-$(CONFIG_NFSD_V3_ACL) += nfs3acl.o
-diff --git a/fs/nfsd/netns.h b/fs/nfsd/netns.h
-index 9fa600602658..bc6004c85a4d 100644
---- a/fs/nfsd/netns.h
-+++ b/fs/nfsd/netns.h
-@@ -13,6 +13,7 @@
- #include <linux/filelock.h>
- #include <linux/nfs4.h>
- #include <linux/percpu_counter.h>
-+#include <linux/xarray.h>
- #include <linux/percpu-refcount.h>
- #include <linux/siphash.h>
- #include <linux/sunrpc/stats.h>
-@@ -219,6 +220,10 @@ struct nfsd_net {
- 	/* last time an admin-revoke happened for NFSv4.0 */
- 	time64_t		nfs40_last_revoke;
+diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
+index 1e2b38ed1d35..d1a6f7cf40b2 100644
+--- a/fs/nfsd/filecache.c
++++ b/fs/nfsd/filecache.c
+@@ -894,6 +894,51 @@ __nfsd_file_cache_purge(struct net *net)
+ 	nfsd_file_dispose_list(&dispose);
+ }
  
-+	/* Superblock watch for automatic state revocation on unmount */
-+	struct xarray		nfsd_sb_watches;
-+	struct notifier_block	nfsd_umount_notifier;
-+
- #if IS_ENABLED(CONFIG_NFS_LOCALIO)
- 	/* Local clients to be invalidated when net is shut down */
- 	spinlock_t              local_clients_lock;
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 6b9c399b89df..d35a578db1c0 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -6463,6 +6463,16 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
- 		status = nfserr_bad_stateid;
- 		if (nfsd4_is_deleg_cur(open))
- 			goto out;
-+		/*
-+		 * Watch the superblock so unmount can trigger revocation
-+		 * of NFSv4 state (opens, locks, delegations) held by
-+		 * clients on this filesystem. nfsd_sb_watch() returns
-+		 * immediately if a watch already exists for this sb.
-+		 */
-+		status = nfsd_sb_watch(SVC_NET(rqstp),
-+				       current_fh->fh_export->ex_path.mnt);
-+		if (status)
-+			goto out;
- 	}
- 
- 	if (!stp) {
-@@ -9010,8 +9020,13 @@ static int nfs4_state_create_net(struct net *net)
- 
- 	shrinker_register(nn->nfsd_client_shrinker);
- 
-+	if (nfsd_sb_watch_setup(nn))
-+		goto err_sb_entries;
-+
- 	return 0;
- 
-+err_sb_entries:
-+	shrinker_free(nn->nfsd_client_shrinker);
- err_shrinker:
- 	put_net(net);
- 	kfree(nn->sessionid_hashtbl);
-@@ -9111,6 +9126,8 @@ nfs4_state_shutdown_net(struct net *net)
- 	struct list_head *pos, *next, reaplist;
- 	struct nfsd_net *nn = net_generic(net, nfsd_net_id);
- 
-+	nfsd_sb_watch_shutdown(nn);
-+
- 	shrinker_free(nn->nfsd_client_shrinker);
- 	cancel_work_sync(&nn->nfsd_shrinker_work);
- 	disable_delayed_work_sync(&nn->laundromat_work);
-@@ -9465,6 +9482,18 @@ nfsd_get_dir_deleg(struct nfsd4_compound_state *cstate,
- 	if (rfp != fp) {
- 		put_nfs4_file(fp);
- 		fp = rfp;
-+	} else {
-+		/*
-+		 * Watch the superblock so unmount can trigger revocation
-+		 * of directory delegations held by clients on this
-+		 * filesystem. nfsd_sb_watch() returns immediately if a
-+		 * watch already exists for this sb.
-+		 */
-+		if (nfsd_sb_watch(clp->net,
-+				  cstate->current_fh.fh_export->ex_path.mnt)) {
-+			put_nfs4_file(fp);
-+			return ERR_PTR(-EAGAIN);
-+		}
- 	}
- 
- 	/* if this client already has one, return that it's unavailable */
-diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-index e9acd2cd602c..5d8a95a48ff9 100644
---- a/fs/nfsd/nfsctl.c
-+++ b/fs/nfsd/nfsctl.c
-@@ -2268,9 +2268,12 @@ static int __init init_nfsd(void)
- 	retval = nfsd4_create_laundry_wq();
- 	if (retval)
- 		goto out_free_cld;
-+	retval = nfsd_sb_watch_init();
-+	if (retval)
-+		goto out_free_laundry;
- 	retval = register_filesystem(&nfsd_fs_type);
- 	if (retval)
--		goto out_free_nfsd4;
-+		goto out_free_sb;
- 	retval = genl_register_family(&nfsd_nl_family);
- 	if (retval)
- 		goto out_free_filesystem;
-@@ -2284,7 +2287,9 @@ static int __init init_nfsd(void)
- 	genl_unregister_family(&nfsd_nl_family);
- out_free_filesystem:
- 	unregister_filesystem(&nfsd_fs_type);
--out_free_nfsd4:
-+out_free_sb:
-+	nfsd_sb_watch_exit();
-+out_free_laundry:
- 	nfsd4_destroy_laundry_wq();
- out_free_cld:
- 	unregister_cld_notifier();
-@@ -2307,6 +2312,7 @@ static void __exit exit_nfsd(void)
- 	remove_proc_entry("fs/nfs", NULL);
- 	genl_unregister_family(&nfsd_nl_family);
- 	unregister_filesystem(&nfsd_fs_type);
-+	nfsd_sb_watch_exit();
- 	nfsd4_destroy_laundry_wq();
- 	unregister_cld_notifier();
- 	unregister_pernet_subsys(&nfsd_net_ops);
-diff --git a/fs/nfsd/sb_watch.c b/fs/nfsd/sb_watch.c
-new file mode 100644
-index 000000000000..8f711956a12e
---- /dev/null
-+++ b/fs/nfsd/sb_watch.c
-@@ -0,0 +1,273 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Superblock watch for automatic NFSv4 state revocation on unmount.
++/**
++ * nfsd_file_close_sb - close GC-managed cached files for a superblock
++ * @sb: target superblock
 + *
-+ * When a local filesystem is unmounted while NFS clients hold state,
-+ * this code automatically revokes that state so the unmount can proceed.
-+ *
-+ * Copyright (C) 2025 Oracle. All rights reserved.
-+ *
-+ * Author: Chuck Lever <chuck.lever@oracle.com>
++ * Walk the nfsd_file cache and close out GC-managed entries (those
++ * acquired via nfsd_file_acquire_gc) that belong to @sb. Called during
++ * filesystem unmount after NFSv4 state revocation to release remaining
++ * cached file handles that may be pinning the filesystem.
 + */
-+
-+#include <linux/fs.h>
-+#include <linux/mount.h>
-+#include <linux/slab.h>
-+#include <linux/sunrpc/svc.h>
-+#include <linux/lockd/lockd.h>
-+
-+#include "nfsd.h"
-+#include "netns.h"
-+#include "state.h"
-+#include "filecache.h"
-+
-+#define NFSDDBG_FACILITY	NFSDDBG_PROC
-+
-+static struct workqueue_struct *nfsd_sb_watch_wq;
-+
-+/* Interval for progress warnings during unmount (in seconds) */
-+#define NFSD_STATE_REVOKE_INTERVAL	30
-+
-+/*
-+ * Watch record for a superblock with NFS state. When the filesystem
-+ * is unmounted, the notifier callback finds this record and triggers
-+ * state revocation.
-+ */
-+struct nfsd_sb_watch {
-+	struct super_block	*sb;
-+	struct net		*net;
-+	struct work_struct	work;
-+	struct completion	done;
-+	struct rcu_head		rcu;
-+};
-+
-+static void nfsd_sb_watch_free_rcu(struct rcu_head *rcu)
++void nfsd_file_close_sb(struct super_block *sb)
 +{
-+	struct nfsd_sb_watch *watch = container_of(rcu, struct nfsd_sb_watch, rcu);
++	struct rhashtable_iter iter;
++	struct nfsd_file *nf;
++	unsigned int closed = 0;
++	LIST_HEAD(dispose);
 +
-+	put_net(watch->net);
-+	kfree(watch);
-+}
-+
-+/*
-+ * Work function for nfsd_sb_watch - runs in process context.
-+ * Cancels async COPYs, releases NLM locks, revokes NFSv4 state, and closes
-+ * cached NFSv2/3 files for the superblock.
-+ */
-+static void nfsd_sb_revoke_work(struct work_struct *work)
-+{
-+	struct nfsd_sb_watch *watch = container_of(work, struct nfsd_sb_watch, work);
-+	struct nfsd_net *nn = net_generic(watch->net, nfsd_net_id);
-+
-+	pr_info("nfsd: unmount of %s, revoking NFS state\n", watch->sb->s_id);
-+
-+	nfsd4_cancel_copy_by_sb(watch->net, watch->sb);
-+	/* Errors are logged by lockd; no recovery is possible. */
-+	(void)nlmsvc_unlock_all_by_sb(watch->sb);
-+	nfsd4_revoke_states(nn, watch->sb);
-+
-+	pr_info("nfsd: state revocation for %s complete\n", watch->sb->s_id);
-+
-+	complete(&watch->done);
-+	call_rcu(&watch->rcu, nfsd_sb_watch_free_rcu);
-+}
-+
-+/*
-+ * Trigger state revocation for a superblock and wait for completion.
-+ *
-+ * The xa_erase() ensures exactly one path (either this notification or
-+ * NFSD shutdown) handles cleanup for a given watch record.
-+ */
-+static void nfsd_sb_trigger_revoke(struct nfsd_net *nn, struct super_block *sb)
-+{
-+	struct nfsd_sb_watch *watch;
-+	unsigned int elapsed = 0;
-+	long ret;
-+
-+	watch = xa_erase(&nn->nfsd_sb_watches, (unsigned long)sb);
-+	if (!watch)
++	if (!test_bit(NFSD_FILE_CACHE_UP, &nfsd_file_flags))
 +		return;
 +
-+	queue_work(nfsd_sb_watch_wq, &watch->work);
++	rhltable_walk_enter(&nfsd_file_rhltable, &iter);
++	do {
++		rhashtable_walk_start(&iter);
 +
-+	/*
-+	 * Block until state revocation completes. Periodic warnings help
-+	 * diagnose stuck operations (e.g., re-exports of an NFS mount
-+	 * whose backend server is unresponsive).
-+	 *
-+	 * The work function handles freeing, so this function can return
-+	 * early on interrupt. Open files keep the superblock alive until
-+	 * revocation closes them.
-+	 */
-+	for (;;) {
-+		ret = wait_for_completion_interruptible_timeout(&watch->done,
-+						NFSD_STATE_REVOKE_INTERVAL * HZ);
-+		if (ret > 0)
-+			return;
-+
-+		if (ret == -ERESTARTSYS) {
-+			/*
-+			 * Interrupted by signal. If the work has not yet
-+			 * started, cancel it and run in this context: a
-+			 * successful cancel_work() means no other context
-+			 * will execute the work function, so it must run
-+			 * here to ensure state revocation occurs.
-+			 *
-+			 * If already running, cancel_work() waits for
-+			 * completion before returning false.
-+			 */
-+			if (cancel_work(&watch->work)) {
-+				pr_warn("nfsd: unmount of %s interrupted, revoking state in unmount context\n",
-+					sb->s_id);
-+				nfsd_sb_revoke_work(&watch->work);
-+				return;
++		nf = rhashtable_walk_next(&iter);
++		while (!IS_ERR_OR_NULL(nf)) {
++			if (test_bit(NFSD_FILE_GC, &nf->nf_flags) &&
++			    nf->nf_file &&
++			    file_inode(nf->nf_file)->i_sb == sb) {
++				nfsd_file_cond_queue(nf, &dispose);
++				closed++;
 +			}
-+			pr_warn("nfsd: unmount of %s interrupted; revocation continues in background\n",
-+				sb->s_id);
-+			return;
++			nf = rhashtable_walk_next(&iter);
 +		}
 +
-+		/* Timed out - print warning and continue waiting */
-+		elapsed += NFSD_STATE_REVOKE_INTERVAL;
-+		pr_warn("nfsd: unmount of %s blocked for %u seconds waiting for NFS state revocation\n",
-+			sb->s_id, elapsed);
-+	}
++		rhashtable_walk_stop(&iter);
++	} while (nf == ERR_PTR(-EAGAIN));
++	rhashtable_walk_exit(&iter);
++
++	nfsd_file_dispose_list(&dispose);
++
++	if (closed)
++		pr_info("nfsd: closed %u cached file handle%s on %s\n",
++			closed, closed == 1 ? "" : "s", sb->s_id);
 +}
 +
-+/*
-+ * Notifier callback invoked when any filesystem is unmounted.
-+ * Check if this superblock is being watched and trigger revocation.
-+ */
-+static int nfsd_umount_notifier_call(struct notifier_block *nb,
-+				     unsigned long action, void *data)
-+{
-+	struct nfsd_net *nn = container_of(nb, struct nfsd_net, nfsd_umount_notifier);
-+	struct super_block *sb = data;
-+
-+	nfsd_sb_trigger_revoke(nn, sb);
-+	return NOTIFY_DONE;
-+}
-+
-+/**
-+ * nfsd_sb_watch - watch a superblock for unmount to trigger state revocation
-+ * @net: network namespace
-+ * @mnt: vfsmount for the filesystem
-+ *
-+ * When NFS state is created for a file on this filesystem, register a
-+ * watch so the umount notifier can revoke that state on unmount.
-+ * Returns nfs_ok on success, or an NFS error on failure.
-+ *
-+ * This function is idempotent - if a watch already exists for the
-+ * superblock, no new watch is created.
-+ */
-+__be32 nfsd_sb_watch(struct net *net, struct vfsmount *mnt)
-+{
-+	struct nfsd_net *nn = net_generic(net, nfsd_net_id);
-+	struct super_block *sb = mnt->mnt_sb;
-+	struct nfsd_sb_watch *new;
-+	int ret;
-+
-+	if (xa_load(&nn->nfsd_sb_watches, (unsigned long)sb))
-+		return nfs_ok;
-+
-+	new = kzalloc(sizeof(*new), GFP_KERNEL);
-+	if (!new)
-+		return nfserr_jukebox;
-+
-+	new->sb = sb;
-+	new->net = get_net(net);
-+	INIT_WORK(&new->work, nfsd_sb_revoke_work);
-+	init_completion(&new->done);
-+
-+	ret = xa_insert(&nn->nfsd_sb_watches, (unsigned long)sb, new, GFP_KERNEL);
-+	if (ret) {
-+		/*
-+		 * Another task beat us to it. Even if the winner has not
-+		 * yet completed insertion, returning here is safe: the
-+		 * caller holds an open file reference that prevents
-+		 * unmount from completing until state creation finishes.
-+		 */
-+		put_net(new->net);
-+		kfree(new);
-+		return nfs_ok;
-+	}
-+
+ static struct nfsd_fcache_disposal *
+ nfsd_alloc_fcache_disposal(void)
+ {
+diff --git a/fs/nfsd/filecache.h b/fs/nfsd/filecache.h
+index b383dbc5b921..66ca7fc6189b 100644
+--- a/fs/nfsd/filecache.h
++++ b/fs/nfsd/filecache.h
+@@ -70,6 +70,7 @@ struct net *nfsd_file_put_local(struct nfsd_file __rcu **nf);
+ struct nfsd_file *nfsd_file_get(struct nfsd_file *nf);
+ struct file *nfsd_file_file(struct nfsd_file *nf);
+ void nfsd_file_close_inode_sync(struct inode *inode);
++void nfsd_file_close_sb(struct super_block *sb);
+ void nfsd_file_net_dispose(struct nfsd_net *nn);
+ bool nfsd_file_is_cached(struct inode *inode);
+ __be32 nfsd_file_acquire_gc(struct svc_rqst *rqstp, struct svc_fh *fhp,
+diff --git a/fs/nfsd/sb_watch.c b/fs/nfsd/sb_watch.c
+index 8f711956a12e..34e50afe566c 100644
+--- a/fs/nfsd/sb_watch.c
++++ b/fs/nfsd/sb_watch.c
+@@ -65,6 +65,7 @@ static void nfsd_sb_revoke_work(struct work_struct *work)
+ 	/* Errors are logged by lockd; no recovery is possible. */
+ 	(void)nlmsvc_unlock_all_by_sb(watch->sb);
+ 	nfsd4_revoke_states(nn, watch->sb);
++	nfsd_file_close_sb(watch->sb);
+ 
+ 	pr_info("nfsd: state revocation for %s complete\n", watch->sb->s_id);
+ 
+@@ -257,6 +258,15 @@ void nfsd_sb_watch_shutdown(struct nfsd_net *nn)
+ {
+ 	umount_unregister_notifier(&nn->nfsd_umount_notifier);
+ 	nfsd_sb_watches_destroy(nn);
 +	/*
-+	 * Callers hold an open file reference, so unmount cannot clear
-+	 * SB_ACTIVE while this function executes. Warn if this assumption
-+	 * is violated, but handle it gracefully by cleaning up and
-+	 * returning an error.
++	 * Ensure any work items still running complete before shutdown
++	 * proceeds. This handles the case where an unmount notification
++	 * returned early due to signal interruption but the work function
++	 * is still executing nfsd_file_close_sb(). Without this flush,
++	 * nfsd_file_cache_shutdown() could destroy the slab while the
++	 * work function is still disposing file cache entries.
 +	 */
-+	if (WARN_ON_ONCE(!(READ_ONCE(sb->s_flags) & SB_ACTIVE))) {
-+		new = xa_erase(&nn->nfsd_sb_watches, (unsigned long)sb);
-+		if (new) {
-+			put_net(new->net);
-+			kfree(new);
-+		}
-+		return nfserr_stale;
-+	}
-+
-+	return nfs_ok;
-+}
-+
-+/**
-+ * nfsd_sb_watch_setup - initialize umount watch for a network namespace
-+ * @nn: nfsd_net for this network namespace
-+ *
-+ * Called during nfs4_state_create_net(). Registers with the VFS umount
-+ * notifier chain to receive callbacks when filesystems are unmounted.
-+ */
-+int nfsd_sb_watch_setup(struct nfsd_net *nn)
-+{
-+	xa_init(&nn->nfsd_sb_watches);
-+	nn->nfsd_umount_notifier.notifier_call = nfsd_umount_notifier_call;
-+	return umount_register_notifier(&nn->nfsd_umount_notifier);
-+}
-+
-+/*
-+ * Clean up all watch records during NFSD shutdown.
-+ *
-+ * xa_erase() synchronizes with nfsd_sb_trigger_revoke(): the path that
-+ * successfully erases an xarray entry performs cleanup for that entry.
-+ * A NULL return indicates the umount notification path is handling cleanup.
-+ */
-+static void nfsd_sb_watches_destroy(struct nfsd_net *nn)
-+{
-+	struct nfsd_sb_watch *watch;
-+	unsigned long index;
-+
-+	xa_for_each(&nn->nfsd_sb_watches, index, watch) {
-+		watch = xa_erase(&nn->nfsd_sb_watches, index);
-+		if (!watch)
-+			continue; /* Umount notification path handling this */
-+		cancel_work_sync(&watch->work);
-+		put_net(watch->net);
-+		kfree(watch);
-+	}
-+	xa_destroy(&nn->nfsd_sb_watches);
-+}
-+
-+/**
-+ * nfsd_sb_watch_shutdown - shutdown umount watch for a network namespace
-+ * @nn: nfsd_net for this network namespace
-+ *
-+ * Must be called during nfsd shutdown before tearing down client state.
-+ */
-+void nfsd_sb_watch_shutdown(struct nfsd_net *nn)
-+{
-+	umount_unregister_notifier(&nn->nfsd_umount_notifier);
-+	nfsd_sb_watches_destroy(nn);
-+}
-+
-+int nfsd_sb_watch_init(void)
-+{
-+	nfsd_sb_watch_wq = alloc_workqueue("nfsd_sb_watch", WQ_UNBOUND, 0);
-+	if (!nfsd_sb_watch_wq)
-+		return -ENOMEM;
-+	return 0;
-+}
-+
-+void nfsd_sb_watch_exit(void)
-+{
-+	destroy_workqueue(nfsd_sb_watch_wq);
-+}
-diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
-index 6fcbf1e427d4..4b57d04f868a 100644
---- a/fs/nfsd/state.h
-+++ b/fs/nfsd/state.h
-@@ -853,6 +853,13 @@ static inline void nfsd4_cancel_copy_by_sb(struct net *net, struct super_block *
++	flush_workqueue(nfsd_sb_watch_wq);
  }
- #endif
  
-+/* superblock watch for unmount notification (sb_watch.c) */
-+int nfsd_sb_watch_init(void);
-+void nfsd_sb_watch_exit(void);
-+__be32 nfsd_sb_watch(struct net *net, struct vfsmount *mnt);
-+int nfsd_sb_watch_setup(struct nfsd_net *nn);
-+void nfsd_sb_watch_shutdown(struct nfsd_net *nn);
-+
- /* grace period management */
- bool nfsd4_force_end_grace(struct nfsd_net *nn);
- 
+ int nfsd_sb_watch_init(void)
 -- 
 2.53.0
 
