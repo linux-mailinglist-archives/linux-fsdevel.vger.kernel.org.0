@@ -1,299 +1,315 @@
-Return-Path: <linux-fsdevel+bounces-78302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78303-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oKGUBo38nWmeSwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 20:31:25 +0100
+	id gFoNBBL9nWmeSwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78303-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 20:33:38 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD3418C17E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 20:31:24 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EDFC18C1E5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 20:33:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 39CA5306C7EE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 19:31:21 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id D0CBC309C008
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 19:33:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5D52989B0;
-	Tue, 24 Feb 2026 19:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FFEA30BBB9;
+	Tue, 24 Feb 2026 19:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BBVezdOV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JFQ6BWez"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B238264A9D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 19:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771961480; cv=none; b=UoHEUXMUr0tI1s6ZBJCdxM4pG7WNr44/bAxCcaHVeE4bWYE2N1ZOKpGIjgGGwBizR9Gi39lGf67W134oBrrPotftWLS13ka2QWkdjRTS4SmrnjAVhjIiP0c9wTqJXv0vQfaPwQryNfZRwPM/63s5Fo1blpAOK1j5RK9jbHbMFQs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771961480; c=relaxed/simple;
-	bh=l3fKH2Lg7U2V+94owGDOYblXvSmIcRX8LuWi/lZfpL0=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43CC2FF170
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 19:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.181
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771961606; cv=pass; b=ng1L484hsz6fY+P/BI24c/IrGaVEKOIvMT9IaIwao5bVenGeaWHD/9MCC/52MHkXvcxOdGUPGqmmt2RnTTnL9w6aOy1+BuPB6xU+lgVbkKeEIuGrEIRWvRp2TN8MD5Tm6FTGn8SJGlyEhw8/jAmlc4j94/w1pw5D89VLxKQox9w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771961606; c=relaxed/simple;
+	bh=Qi3E8lxAiasJoxhjDairTt0suuDxo1NvocxikjcwkxM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HLBlpJb3dx7mjvLmDh27hVegFHSjisNSRkoqDJp+YaEPky3uZdQvUtM7G4yBUCSpOdeh02y9TWwZRKjQNFqXQkfOhFq7Z6je540eGt/Ql9KvU+1qfjU4wtGCkk86nBQKS5UgWex85JCNws4TsqqxY2tgXd8ODbbmWZiqqzUokL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BBVezdOV; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b8869cd7bb1so971446566b.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 11:31:18 -0800 (PST)
+	 To:Cc:Content-Type; b=obXrVcR8JD1XJIMH7e+xiII/xZrNtCldboTPd5JU4/bIR94L+bhbZvEf2DK5+pNCHEepark3xgRlQzosukb3jf9YEndqz1GL9uXEYyyha+/Cio9z1fVIXQprulw55Hk0tUH/Je7/Y2Z5DiqJ7+Vg2VCBbI3e9fYeQ5ZwclULzOY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JFQ6BWez; arc=pass smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-50336cffef9so46103361cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 11:33:24 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771961604; cv=none;
+        d=google.com; s=arc-20240605;
+        b=PxIEAmYQOkymCs60Ja5l01HOBKQxxOMOKSfpgyz987pKNisd+PZMdJKvc1MP+gSV2Z
+         u6l6RDE0Y79nGTvyabWwHyBzSmjvZnIOZpgJcoy1t46c0gUNLWAx/bfj2T8Rt8p2W/qb
+         vHrE56fyR7LtzMTCVvo2DhXmxK9Fa8iRHK4aPyU9BQ0g4n/RZc5NunN0uwHwX278Uq7T
+         1ZK61GzrR2MiFTFC0WIxIJ26Wa3PszOobhPqU3tI7WiXVYenzi8WYPmWpSQ04Osn5ixc
+         fTM1FFJk1sqU7CaZko8d/pVz+RvW0IoL2dQIZTeDTOjssJNRjzny8GEQ1u7ZLPT7XVkF
+         u17A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=fpmiCKHcBcH02P89/1LkI481lYphcfAkiuIQq/g8bh0=;
+        fh=UyZz6iCVSRFFJ1+vXAdyIhYEZ3ZOP8R2+Xg8n4RfTdU=;
+        b=D8lChcjUJZ77+pCRAQ0n0LnYzRLwVF/9nhlfVwPlbFBy4SpFXR2Ah/EmJmV7pnyb4z
+         LvWMnz3H/fQ9jyiBtOGtW92mUTUY5FuPAyUt/OZt+2NDqSjPkNowR2wRU31cOic6Yc6i
+         II4ElqOoMM57PCNGkg+h1AwzKDFZOmta4zTEWzHC0MAly8g/6kU1gNifwaxZRzQYzVdn
+         qPxzdSI6urCNv7V5WlEpO3WHM95taTSoa2t5RRvgoevQaCCWciDWFnCZxJd5MweYA3Ep
+         mgB1qgmKFgTu3ICADdk7fTIyfXZV8JxdafmK6i5NQugnLxbju86HOhhNh7uAmkUAIFKE
+         WWUg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1771961476; x=1772566276; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CEZDHj2to1OcbNKf2nC3SkdLtqd7DJO13tKCMalBiJc=;
-        b=BBVezdOVvdxZPc7vrncqjc7mfAbEeFbHUmLE9ABuBRJ4xOQEyPwRPuCxQi4SJxgWbp
-         vD0Ys7qqagIcDSvSm22Ilz+RBVskS0FRSGjjBiZIWqyeIRMasVxNOWpWdbySTT7aBgAS
-         hzfRNjn2FlMT5pUgabjvtaDlM5QQuRItSR5mU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771961476; x=1772566276;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1771961604; x=1772566404; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CEZDHj2to1OcbNKf2nC3SkdLtqd7DJO13tKCMalBiJc=;
-        b=hSfulNlVJtmbijOOi9/StSlBNHMoahUYMHVAclyNmL9m//Y259PZASB/UJ/PrcUUpe
-         yXn1ajA/qC0FaZDkWu1pDAmPNF6ee3LUVLe8hgpwFk5ww7WTvn9VpJGxRJCiNoBXUU+Z
-         dF2k6Ij/YNtM4xtGgQcdbtrOg7/3ZU02UrSMeGHWt1eE4U9VzoaRgzIuE7RhbIEPQsRL
-         Tk5rNdLcJadpz7Zh27H/Ud47kzJLQZ8LMLXW1y2YKmKAFwTs/fV3YLNmtAKuE1ZBORUe
-         +At5X2tYaHE9AgtmDrYbTOSNGj5zmdIV2eo/B1aQvXIE0lvYTrv8EqXusxgPyT3yIkuw
-         4lLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMO868t/V4kx4P18uHpi3Zf4YM/MoGXKZwiCu9x0uEKWEJV2Zi2O6bPtP+q9w5bRKN3aHJlrREeAGMkdj+@vger.kernel.org
-X-Gm-Message-State: AOJu0YyonFPP8uy75Uzjk0ofJZPjRE3uRchUwPAv7RrjTSiMiOqOUIBY
-	2eSe1UHiGXOQCU0RQul25MoLrA/GJjPsIwQxGeyuNzroj6yA0QDxA97JMSp5/p9TeUWLRnOpozh
-	yV+sCs3s=
-X-Gm-Gg: ATEYQzyWBNv5RCK79HLn6uOwy9zPrDsw0Z4kBOBU0yCCTStE/T4UJXJgHUzqQ31JcP+
-	pXAx3w4LnAAKJA677pjw0YYvgnKY28p66bdViTYXjwq0LGJB5M1kgt0nFtqCdKUzDMHkS7LZvB2
-	+skcc5IZX0TR+tWPS7rykaOZMe2diYFe9XHwt76tVDnMfNBSedSwC+utb9QGaoBRGc7usSJqPHU
-	B/pVBuCcOra2fe0h/nc7afwIS0t02dxuv+V60OYuuDI8pVBp6ciVyvUNFB12avoWWcVAFqJvSFT
-	bDi3L+PH8tpWMmX4emw44tVJiIh5bQXJKS/w69GMIhSEstutY2wvEVq6p2hhGDsgzTSdqmp5QAN
-	9889TGuIhVBmAZqeOxyzC76sxXMvKId20KE8pSgOQgkHb8yehK5FGQUppgOP51kTKDtI4juz99o
-	sKfEG0TsAM55QcDBg43FDnFnQJpmAX7bns6B9v+IA4wnCVaisQvPcl2EO5PCnJaWTONLOWC250
-X-Received: by 2002:a17:906:7311:b0:b88:7093:3ca3 with SMTP id a640c23a62f3a-b9081a48372mr913221566b.23.1771961476170;
-        Tue, 24 Feb 2026 11:31:16 -0800 (PST)
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b9084c5d45esm453868766b.9.2026.02.24.11.31.14
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Feb 2026 11:31:14 -0800 (PST)
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b8869cd7bb1so971436066b.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 11:31:14 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU7OVdB3JyhpPZQ8lNFuPd18VAGClvqu2rLLm+FbwQIJsk7DrpMDtJUWb3JffciaDHnaqApLgtnWFlo5NGD@vger.kernel.org
-X-Received: by 2002:a17:907:3e84:b0:b87:115c:4a30 with SMTP id
- a640c23a62f3a-b9081a1d370mr795130666b.16.1771961473964; Tue, 24 Feb 2026
- 11:31:13 -0800 (PST)
+        bh=fpmiCKHcBcH02P89/1LkI481lYphcfAkiuIQq/g8bh0=;
+        b=JFQ6BWeziykqAsXWvcGXh2Ym5Zg74nB2GmuM+cvwITUZkMXD4nGijTLw3eQ+WNFW2H
+         EnVVTMYuUnR9wJj3cCFOP8wRpm/Mt7pjiWYm4Wfvye1pxzmStIE3of+HnyxOfFQNfj6C
+         BgWmTDzwmagG+PzcLRHp31r+Sstu1goidE1TAOmt9FIpwC5jeyoYnkmoolbvNJl4/IsW
+         EOsnp+9qNBc+iyE5g8ZEnw7Y/E3O8G5UNwAGAaoruskTJefHJ2VWkg6Ap3PZzAZfkPQW
+         KQBADLt4JPid+79bWQXsP7ma1qs3040ZRqFc/yxetxIfbpFLw6OlKuwIlU6QZlId9vNB
+         YDXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771961604; x=1772566404;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=fpmiCKHcBcH02P89/1LkI481lYphcfAkiuIQq/g8bh0=;
+        b=PLzuYSpGbOvZxxzp1pyJbSncUujOpM2oTstR864pu9YxWVRc7pdylJ1+kgYmhh2tfN
+         C1m0x0YFVuO+JLswc/XgoM+pDefQyL6f6ebMMuPnMfSVyQ+DhD0AO0NN1zYNvaCJLPRk
+         whKIIrw17NPK+aIL5ZRhHoQpdRhLblIXje3qHZvjTzsu0NyYcLmWRYyd3dB3pv4Chj6B
+         oVGhqxM4KwXcq2pc/HOXpOPsXDubz2M5m76HC5darFWy8lMG/ZvMkLpJg6WC+cjE8rJE
+         WUrZBwC78hM22xde/5n/k5ZpZ0K54oGyUk4TS/GvVCResH1zJjN2zO2ZuJNqUqoitylR
+         0IRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvuuqdlqjIoX5iV5EzUc4iwDcoGMxPE0YHkTRUzy09/gvjjT6LgZBMpJ2kqdAesc72aPDuvKQTpC/YwUuH@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTwoZCLU82Z4kDvvvznwkdCx0ujvD18u9V+7tBL8GAZvF3IT6e
+	B0Ri7s2v2brmEGtF7eLSSc2wDuG+18CobUg2VH8J4oP90Fij8Zvv8BiswX910gHyEORu7paT8fO
+	NEEsR4FKRnVdPFDT9Qvqm028+ZTA/Enk=
+X-Gm-Gg: AZuq6aKr8FEpURUf9uTl5eTsmP7AVyq7S8jOVkpVF/UAjNlPJsvdFEKqRj0Wk6A2XwM
+	5nAsV6MKnmFib0cDqyMgPfKli0ssQmRHCeJCT2f3ZHkW412haQW/9uWfaPg5851TQfLov35bI0M
+	gzaLm6amWmC8+InQip0dHUcPMc+aEwssR/3+hm1GgPx3RcuxgiMpD4sEr7eIhCnajOfgty4+Ilq
+	XxudCQr4heRo6yvuaocwABIhPIoNRUZaE8Z2CYHIIoZdA3H6e2rAdYlAJELCC2ePMXtSZuDFTpG
+	AahlL45YtvXKjlOE
+X-Received: by 2002:a05:622a:164d:b0:4ee:2721:9ebd with SMTP id
+ d75a77b69052e-5070bc737a6mr173920921cf.45.1771961603601; Tue, 24 Feb 2026
+ 11:33:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260120-work-pidfs-rhashtable-v2-1-d593c4d0f576@kernel.org>
- <0150e237-41d2-40ae-a857-4f97ca664468@gtucker.io> <20260224-kurzgeschichten-urteil-976e57a38c5c@brauner>
- <20260224-mittlerweile-besessen-2738831ae7f6@brauner>
-In-Reply-To: <20260224-mittlerweile-besessen-2738831ae7f6@brauner>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 24 Feb 2026 11:30:57 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whEtuxXcgYLZPk1_mWd2VsLP2WPPCOr5fjPb2SpDsYdew@mail.gmail.com>
-X-Gm-Features: AaiRm51lzHVgiYo0DfnqWCPlFyUhqEvW2vxicaMsmHyT7ntvI3WnV5io6jeF-lY
-Message-ID: <CAHk-=whEtuxXcgYLZPk1_mWd2VsLP2WPPCOr5fjPb2SpDsYdew@mail.gmail.com>
-Subject: Re: make_task_dead() & kthread_exit()
-To: Christian Brauner <brauner@kernel.org>
-Cc: Guillaume Tucker <gtucker@gtucker.io>, Tejun Heo <tj@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	Mark Brown <broonie@kernel.org>, kunit-dev@googlegroups.com, 
-	David Gow <davidgow@google.com>
-Content-Type: multipart/mixed; boundary="000000000000366993064b96ee94"
+References: <177188733084.3935219.10400570136529869673.stgit@frogsfrogsfrogs> <177188733133.3935219.4620873208351971726.stgit@frogsfrogsfrogs>
+In-Reply-To: <177188733133.3935219.4620873208351971726.stgit@frogsfrogsfrogs>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 24 Feb 2026 11:33:12 -0800
+X-Gm-Features: AaiRm50-VsLD_zmLLD3udHzp2NCTKRbMnT9y8JS0gqm_pLEzk3Fb9cwmor2ZxsM
+Message-ID: <CAJnrk1ZZ=1jF4DUF-NyedLP-BJM_5d3s0zfD4oHGyR51PM9E7Q@mail.gmail.com>
+Subject: Re: [PATCH 1/5] fuse: flush pending FUSE_RELEASE requests before
+ sending FUSE_DESTROY
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: miklos@szeredi.hu, bpf@vger.kernel.org, bernd@bsbernd.com, neal@gompa.dev, 
+	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.56 / 15.00];
-	MIME_BASE64_TEXT_BOGUS(1.00)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[linux-foundation.org:s=google];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
-	MIME_GOOD(-0.10)[multipart/mixed,text/plain,text/x-patch];
-	MIME_BASE64_TEXT(0.10)[];
+	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_CC(0.00)[gtucker.io,kernel.org,gmail.com,zeniv.linux.org.uk,suse.cz,vger.kernel.org,googlegroups.com,google.com];
-	TAGGED_FROM(0.00)[bounces-78302-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	DMARC_NA(0.00)[linux-foundation.org];
-	HAS_ATTACHMENT(0.00)[];
-	MIME_TRACE(0.00)[0:+,1:+,2:+];
+	TAGGED_FROM(0.00)[bounces-78303-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[linux-foundation.org:+];
-	MISSING_XM_UA(0.00)[];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[torvalds@linux-foundation.org,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	MISSING_XM_UA(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid,linux-foundation.org:dkim]
-X-Rspamd-Queue-Id: 6FD3418C17E
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: 6EDFC18C1E5
 X-Rspamd-Action: no action
 
---000000000000366993064b96ee94
-Content-Type: text/plain; charset="UTF-8"
-
-On Tue, 24 Feb 2026 at 08:25, Christian Brauner <brauner@kernel.org> wrote:
+On Mon, Feb 23, 2026 at 3:06=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
 >
-> If a kthread exits via a path that bypasses kthread_exit() (e.g.,
-> make_task_dead() after an oops -- which calls do_exit() directly),
-> the affinity_node remains in the global kthread_affinity_list. When
-> free_kthread_struct() later frees the kthread struct, the linked list
-> still references the freed memory. Any subsequent list_del() by another
-> kthread in kthread_exit() writes to the freed memory:
+> From: Darrick J. Wong <djwong@kernel.org>
+>
+> generic/488 fails with fuse2fs in the following fashion:
+>
+> generic/488       _check_generic_filesystem: filesystem on /dev/sdf is in=
+consistent
+> (see /var/tmp/fstests/generic/488.full for details)
+>
+> This test opens a large number of files, unlinks them (which really just
+> renames them to fuse hidden files), closes the program, unmounts the
+> filesystem, and runs fsck to check that there aren't any inconsistencies
+> in the filesystem.
+>
+> Unfortunately, the 488.full file shows that there are a lot of hidden
+> files left over in the filesystem, with incorrect link counts.  Tracing
+> fuse_request_* shows that there are a large number of FUSE_RELEASE
+> commands that are queued up on behalf of the unlinked files at the time
+> that fuse_conn_destroy calls fuse_abort_conn.  Had the connection not
+> aborted, the fuse server would have responded to the RELEASE commands by
+> removing the hidden files; instead they stick around.
+>
+> For upper-level fuse servers that don't use fuseblk mode this isn't a
+> problem because libfuse responds to the connection going down by pruning
+> its inode cache and calling the fuse server's ->release for any open
+> files before calling the server's ->destroy function.
+>
+> For fuseblk servers this is a problem, however, because the kernel sends
+> FUSE_DESTROY to the fuse server, and the fuse server has to write all of
+> its pending changes to the block device before replying to the DESTROY
+> request because the kernel releases its O_EXCL hold on the block device.
+> This means that the kernel must flush all pending FUSE_RELEASE requests
+> before issuing FUSE_DESTROY.
+>
+> For fuse-iomap servers this will also be a problem because iomap servers
+> are expected to release all exclusively-held resources before unmount
+> returns from the kernel.
+>
+> Create a function to push all the background requests to the queue
+> before sending FUSE_DESTROY.  That way, all the pending file release
+> events are processed by the fuse server before it tears itself down, and
+> we don't end up with a corrupt filesystem.
+>
+> Note that multithreaded fuse servers will need to track the number of
+> open files and defer a FUSE_DESTROY request until that number reaches
+> zero.  An earlier version of this patch made the kernel wait for the
+> RELEASE acknowledgements before sending DESTROY, but the kernel people
+> weren't comfortable with adding blocking waits to unmount.
+>
+> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 
-Ugh.
+Overall LGTM, left a few comments below
 
-So this is nasty, but I really detest the suggested fix. It just
-smells wrong to have that affinity_node cleanup done in two different
-places depending on how the exit is done.
+Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
 
-IOW, I think the proper fix would be to just make sure that
-kthread_exit() isn't actually ever bypassed.
+> ---
+>  fs/fuse/fuse_i.h |    5 +++++
+>  fs/fuse/dev.c    |   19 +++++++++++++++++++
+>  fs/fuse/inode.c  |   12 +++++++++++-
+>  3 files changed, 35 insertions(+), 1 deletion(-)
+>
+>
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 7f16049387d15e..1d4beca5c7018d 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -1287,6 +1287,11 @@ void fuse_request_end(struct fuse_req *req);
+>  void fuse_abort_conn(struct fuse_conn *fc);
+>  void fuse_wait_aborted(struct fuse_conn *fc);
+>
+> +/**
+> + * Flush all pending requests but do not wait for them.
+> + */
 
-Because looking at this, there are other issues with do_exit() killing
-a kthread - it currently also means that kthread->result randomly
-doesn't get set, for example, so kthread_stop() would appear to
-basically return garbage.
+nit: /*  */ comment style
 
-No, nobody likely cares about the kthread_stop() return value for that
-case, but it's an example of the same kind of "two different exit
-paths, inconsistent data structures" issue.
+> +void fuse_flush_requests(struct fuse_conn *fc);
+> +
+>  /* Check if any requests timed out */
+>  void fuse_check_timeout(struct work_struct *work);
+>
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index 0b0241f47170d4..ac9d7a7b3f5e68 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/splice.h>
+>  #include <linux/sched.h>
+>  #include <linux/seq_file.h>
+> +#include <linux/nmi.h>
 
-How about something like the attached, in other words?
+I don't think you meant to add this?
 
-NOTE NOTE NOTE! This is *entirely* untested. It might do unspeakable
-things to your pets, so please check it. I'm sending this patch out as
-a "I really would prefer this kind of approach" example, not as
-anything more than that.
+>
+>  #include "fuse_trace.h"
+>
+> @@ -2430,6 +2431,24 @@ static void end_polls(struct fuse_conn *fc)
+>         }
+>  }
+>
+> +/*
+> + * Flush all pending requests and wait for them.  Only call this functio=
+n when
 
-Because I really think the core fundamental problem was that there
-were two different exit paths that did different things, and we
-shouldn't try to fix the symptoms of that problem, but instead really
-fix the core issue.
+I think you meant "don't wait" for them?
+> + * it is no longer possible for other threads to add requests.
+> + */
+> +void fuse_flush_requests(struct fuse_conn *fc)
+> +{
+> +       spin_lock(&fc->lock);
+> +       spin_lock(&fc->bg_lock);
+> +       if (fc->connected) {
+> +               /* Push all the background requests to the queue. */
+> +               fc->blocked =3D 0;
+> +               fc->max_background =3D UINT_MAX;
+> +               flush_bg_queue(fc);
+> +       }
+> +       spin_unlock(&fc->bg_lock);
+> +       spin_unlock(&fc->lock);
+> +}
+> +
+>  /*
+>   * Abort all requests.
+>   *
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index e57b8af06be93e..58c3351b467221 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -2086,8 +2086,18 @@ void fuse_conn_destroy(struct fuse_mount *fm)
+>  {
+>         struct fuse_conn *fc =3D fm->fc;
+>
+> -       if (fc->destroy)
+> +       if (fc->destroy) {
+> +               /*
+> +                * Flush all pending requests (most of which will be
+> +                * FUSE_RELEASE) before sending FUSE_DESTROY, because the=
+ fuse
+> +                * server must close the filesystem before replying to th=
+e
+> +                * destroy message, because unmount is about to release i=
+ts
+> +                * O_EXCL hold on the block device.  We don't wait, so li=
+bfuse
+> +                * has to do that for us.
 
-Hmm?
+nit: imo the "because the fuse server must close the filesystem before
+replying to the destroy message, because..." part is confusing. Even
+if that weren't true, the pending requests would still have to be sent
+before the destroy, no? i think it would be less confusing if that
+part of the paragraph was removed. I think it might be better to
+remove the "we don't wait, so libfuse has to do that for us" part too
+or rewording it to something like "flushed requests are sent before
+the FUSE_DESTROY. Userspace is responsible for ensuring flushed
+requests are handled before replying to the FUSE_DESTROY".
 
-Side note: while writing this suggested patch, I do note that this
-comment is wrong:
+Thanks,
+Joanne
 
- * When "(p->flags & PF_KTHREAD)" is set the task is a kthread and will
- * always remain a kthread.  For kthreads p->worker_private always
- * points to a struct kthread.  For tasks that are not kthreads
- * p->worker_private is used to point to other things.
-
-because 'init_task' is marked as PF_KTHREAD, but does *not* have a
-p->worker_private.
-
-Anyway, that doesn't affect this particular code, but it might be
-worth thinking about.
-
-               Linus
-
---000000000000366993064b96ee94
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_mm101azr0>
-X-Attachment-Id: f_mm101azr0
-
-IGluY2x1ZGUvbGludXgva3RocmVhZC5oIHwgMjEgKysrKysrKysrKysrKysrKysrKystCiBrZXJu
-ZWwvZXhpdC5jICAgICAgICAgICB8ICA2ICsrKysrKwoga2VybmVsL2t0aHJlYWQuYyAgICAgICAg
-fCA0MSArKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMyBmaWxlcyBj
-aGFuZ2VkLCAzMSBpbnNlcnRpb25zKCspLCAzNyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9p
-bmNsdWRlL2xpbnV4L2t0aHJlYWQuaCBiL2luY2x1ZGUvbGludXgva3RocmVhZC5oCmluZGV4IGM5
-MmMxMTQ5ZWU2ZS4uYTI3OWI2MjZkODU0IDEwMDY0NAotLS0gYS9pbmNsdWRlL2xpbnV4L2t0aHJl
-YWQuaAorKysgYi9pbmNsdWRlL2xpbnV4L2t0aHJlYWQuaApAQCAtNyw2ICs3LDI0IEBACiAKIHN0
-cnVjdCBtbV9zdHJ1Y3Q7CiAKKy8qIE9wYXF1ZSBrdGhyZWFkIGRhdGEsIGludGVybmFsIHRvIGtl
-cm5lbC90aHJlYWQuYyAqLworc3RydWN0IGt0aHJlYWQ7CisKKy8qCisgKiBXaGVuICIocC0+Zmxh
-Z3MgJiBQRl9LVEhSRUFEKSIgaXMgc2V0IHRoZSB0YXNrIGlzIGEga3RocmVhZCBhbmQgd2lsbAor
-ICogYWx3YXlzIHJlbWFpbiBhIGt0aHJlYWQuICBGb3Iga3RocmVhZHMgcC0+d29ya2VyX3ByaXZh
-dGUgYWx3YXlzCisgKiBwb2ludHMgdG8gYSBzdHJ1Y3Qga3RocmVhZC4gIEZvciB0YXNrcyB0aGF0
-IGFyZSBub3Qga3RocmVhZHMKKyAqIHAtPndvcmtlcl9wcml2YXRlIGlzIHVzZWQgdG8gcG9pbnQg
-dG8gb3RoZXIgdGhpbmdzLgorICoKKyAqIFJldHVybiBOVUxMIGZvciBhbnkgdGFzayB0aGF0IGlz
-IG5vdCBhIGt0aHJlYWQuCisgKi8KK3N0YXRpYyBpbmxpbmUgc3RydWN0IGt0aHJlYWQgKnRza19p
-c19rdGhyZWFkKHN0cnVjdCB0YXNrX3N0cnVjdCAqcCkKK3sKKwlpZiAocC0+ZmxhZ3MgJiBQRl9L
-VEhSRUFEKQorCQlyZXR1cm4gcC0+d29ya2VyX3ByaXZhdGU7CisJcmV0dXJuIE5VTEw7Cit9CisK
-IF9fcHJpbnRmKDQsIDUpCiBzdHJ1Y3QgdGFza19zdHJ1Y3QgKmt0aHJlYWRfY3JlYXRlX29uX25v
-ZGUoaW50ICgqdGhyZWFkZm4pKHZvaWQgKmRhdGEpLAogCQkJCQkgICB2b2lkICpkYXRhLApAQCAt
-OTgsOSArMTE2LDEwIEBAIHZvaWQgKmt0aHJlYWRfcHJvYmVfZGF0YShzdHJ1Y3QgdGFza19zdHJ1
-Y3QgKmspOwogaW50IGt0aHJlYWRfcGFyayhzdHJ1Y3QgdGFza19zdHJ1Y3QgKmspOwogdm9pZCBr
-dGhyZWFkX3VucGFyayhzdHJ1Y3QgdGFza19zdHJ1Y3QgKmspOwogdm9pZCBrdGhyZWFkX3Bhcmtt
-ZSh2b2lkKTsKLXZvaWQga3RocmVhZF9leGl0KGxvbmcgcmVzdWx0KSBfX25vcmV0dXJuOworI2Rl
-ZmluZSBrdGhyZWFkX2V4aXQocmVzdWx0KSBkb19leGl0KHJlc3VsdCkKIHZvaWQga3RocmVhZF9j
-b21wbGV0ZV9hbmRfZXhpdChzdHJ1Y3QgY29tcGxldGlvbiAqLCBsb25nKSBfX25vcmV0dXJuOwog
-aW50IGt0aHJlYWRzX3VwZGF0ZV9ob3VzZWtlZXBpbmcodm9pZCk7Cit2b2lkIGt0aHJlYWRfZG9f
-ZXhpdChzdHJ1Y3Qga3RocmVhZCAqLCBsb25nKTsKIAogaW50IGt0aHJlYWRkKHZvaWQgKnVudXNl
-ZCk7CiBleHRlcm4gc3RydWN0IHRhc2tfc3RydWN0ICprdGhyZWFkZF90YXNrOwpkaWZmIC0tZ2l0
-IGEva2VybmVsL2V4aXQuYyBiL2tlcm5lbC9leGl0LmMKaW5kZXggOGE4NzAyMTIxMWFlLi5lZGUz
-MTE3ZmE3ZDQgMTAwNjQ0Ci0tLSBhL2tlcm5lbC9leGl0LmMKKysrIGIva2VybmVsL2V4aXQuYwpA
-QCAtODk2LDExICs4OTYsMTYgQEAgc3RhdGljIHZvaWQgc3luY2hyb25pemVfZ3JvdXBfZXhpdChz
-dHJ1Y3QgdGFza19zdHJ1Y3QgKnRzaywgbG9uZyBjb2RlKQogdm9pZCBfX25vcmV0dXJuIGRvX2V4
-aXQobG9uZyBjb2RlKQogewogCXN0cnVjdCB0YXNrX3N0cnVjdCAqdHNrID0gY3VycmVudDsKKwlz
-dHJ1Y3Qga3RocmVhZCAqa3RocmVhZDsKIAlpbnQgZ3JvdXBfZGVhZDsKIAogCVdBUk5fT04oaXJx
-c19kaXNhYmxlZCgpKTsKIAlXQVJOX09OKHRzay0+cGx1Zyk7CiAKKwlrdGhyZWFkID0gdHNrX2lz
-X2t0aHJlYWQodHNrKTsKKwlpZiAodW5saWtlbHkoa3RocmVhZCkpCisJCWt0aHJlYWRfZG9fZXhp
-dChrdGhyZWFkLCBjb2RlKTsKKwogCWtjb3ZfdGFza19leGl0KHRzayk7CiAJa21zYW5fdGFza19l
-eGl0KHRzayk7CiAKQEAgLTEwMTMsNiArMTAxOCw3IEBAIHZvaWQgX19ub3JldHVybiBkb19leGl0
-KGxvbmcgY29kZSkKIAlsb2NrZGVwX2ZyZWVfdGFzayh0c2spOwogCWRvX3Rhc2tfZGVhZCgpOwog
-fQorRVhQT1JUX1NZTUJPTChkb19leGl0KTsKIAogdm9pZCBfX25vcmV0dXJuIG1ha2VfdGFza19k
-ZWFkKGludCBzaWducikKIHsKZGlmZiAtLWdpdCBhL2tlcm5lbC9rdGhyZWFkLmMgYi9rZXJuZWwv
-a3RocmVhZC5jCmluZGV4IDIwNDUxYjYyNGI2Ny4uNzkxMjEwZGFmOGI0IDEwMDY0NAotLS0gYS9r
-ZXJuZWwva3RocmVhZC5jCisrKyBiL2tlcm5lbC9rdGhyZWFkLmMKQEAgLTg1LDI0ICs4NSw2IEBA
-IHN0YXRpYyBpbmxpbmUgc3RydWN0IGt0aHJlYWQgKnRvX2t0aHJlYWQoc3RydWN0IHRhc2tfc3Ry
-dWN0ICprKQogCXJldHVybiBrLT53b3JrZXJfcHJpdmF0ZTsKIH0KIAotLyoKLSAqIFZhcmlhbnQg
-b2YgdG9fa3RocmVhZCgpIHRoYXQgZG9lc24ndCBhc3N1bWUgQHAgaXMgYSBrdGhyZWFkLgotICoK
-LSAqIFdoZW4gIihwLT5mbGFncyAmIFBGX0tUSFJFQUQpIiBpcyBzZXQgdGhlIHRhc2sgaXMgYSBr
-dGhyZWFkIGFuZCB3aWxsCi0gKiBhbHdheXMgcmVtYWluIGEga3RocmVhZC4gIEZvciBrdGhyZWFk
-cyBwLT53b3JrZXJfcHJpdmF0ZSBhbHdheXMKLSAqIHBvaW50cyB0byBhIHN0cnVjdCBrdGhyZWFk
-LiAgRm9yIHRhc2tzIHRoYXQgYXJlIG5vdCBrdGhyZWFkcwotICogcC0+d29ya2VyX3ByaXZhdGUg
-aXMgdXNlZCB0byBwb2ludCB0byBvdGhlciB0aGluZ3MuCi0gKgotICogUmV0dXJuIE5VTEwgZm9y
-IGFueSB0YXNrIHRoYXQgaXMgbm90IGEga3RocmVhZC4KLSAqLwotc3RhdGljIGlubGluZSBzdHJ1
-Y3Qga3RocmVhZCAqX190b19rdGhyZWFkKHN0cnVjdCB0YXNrX3N0cnVjdCAqcCkKLXsKLQl2b2lk
-ICprdGhyZWFkID0gcC0+d29ya2VyX3ByaXZhdGU7Ci0JaWYgKGt0aHJlYWQgJiYgIShwLT5mbGFn
-cyAmIFBGX0tUSFJFQUQpKQotCQlrdGhyZWFkID0gTlVMTDsKLQlyZXR1cm4ga3RocmVhZDsKLX0K
-LQogdm9pZCBnZXRfa3RocmVhZF9jb21tKGNoYXIgKmJ1Ziwgc2l6ZV90IGJ1Zl9zaXplLCBzdHJ1
-Y3QgdGFza19zdHJ1Y3QgKnRzaykKIHsKIAlzdHJ1Y3Qga3RocmVhZCAqa3RocmVhZCA9IHRvX2t0
-aHJlYWQodHNrKTsKQEAgLTE5Myw3ICsxNzUsNyBAQCBFWFBPUlRfU1lNQk9MX0dQTChrdGhyZWFk
-X3Nob3VsZF9wYXJrKTsKIAogYm9vbCBrdGhyZWFkX3Nob3VsZF9zdG9wX29yX3Bhcmsodm9pZCkK
-IHsKLQlzdHJ1Y3Qga3RocmVhZCAqa3RocmVhZCA9IF9fdG9fa3RocmVhZChjdXJyZW50KTsKKwlz
-dHJ1Y3Qga3RocmVhZCAqa3RocmVhZCA9IHRza19pc19rdGhyZWFkKGN1cnJlbnQpOwogCiAJaWYg
-KCFrdGhyZWFkKQogCQlyZXR1cm4gZmFsc2U7CkBAIC0yMzQsNyArMjE2LDcgQEAgRVhQT1JUX1NZ
-TUJPTF9HUEwoa3RocmVhZF9mcmVlemFibGVfc2hvdWxkX3N0b3ApOwogICovCiB2b2lkICprdGhy
-ZWFkX2Z1bmMoc3RydWN0IHRhc2tfc3RydWN0ICp0YXNrKQogewotCXN0cnVjdCBrdGhyZWFkICpr
-dGhyZWFkID0gX190b19rdGhyZWFkKHRhc2spOworCXN0cnVjdCBrdGhyZWFkICprdGhyZWFkID0g
-dHNrX2lzX2t0aHJlYWQodGFzayk7CiAJaWYgKGt0aHJlYWQpCiAJCXJldHVybiBrdGhyZWFkLT50
-aHJlYWRmbjsKIAlyZXR1cm4gTlVMTDsKQEAgLTI2Niw3ICsyNDgsNyBAQCBFWFBPUlRfU1lNQk9M
-X0dQTChrdGhyZWFkX2RhdGEpOwogICovCiB2b2lkICprdGhyZWFkX3Byb2JlX2RhdGEoc3RydWN0
-IHRhc2tfc3RydWN0ICp0YXNrKQogewotCXN0cnVjdCBrdGhyZWFkICprdGhyZWFkID0gX190b19r
-dGhyZWFkKHRhc2spOworCXN0cnVjdCBrdGhyZWFkICprdGhyZWFkID0gdHNrX2lzX2t0aHJlYWQo
-dGFzayk7CiAJdm9pZCAqZGF0YSA9IE5VTEw7CiAKIAlpZiAoa3RocmVhZCkKQEAgLTMwOSwxOSAr
-MjkxLDggQEAgdm9pZCBrdGhyZWFkX3BhcmttZSh2b2lkKQogfQogRVhQT1JUX1NZTUJPTF9HUEwo
-a3RocmVhZF9wYXJrbWUpOwogCi0vKioKLSAqIGt0aHJlYWRfZXhpdCAtIENhdXNlIHRoZSBjdXJy
-ZW50IGt0aHJlYWQgcmV0dXJuIEByZXN1bHQgdG8ga3RocmVhZF9zdG9wKCkuCi0gKiBAcmVzdWx0
-OiBUaGUgaW50ZWdlciB2YWx1ZSB0byByZXR1cm4gdG8ga3RocmVhZF9zdG9wKCkuCi0gKgotICog
-V2hpbGUga3RocmVhZF9leGl0IGNhbiBiZSBjYWxsZWQgZGlyZWN0bHksIGl0IGV4aXN0cyBzbyB0
-aGF0Ci0gKiBmdW5jdGlvbnMgd2hpY2ggZG8gc29tZSBhZGRpdGlvbmFsIHdvcmsgaW4gbm9uLW1v
-ZHVsYXIgY29kZSBzdWNoIGFzCi0gKiBtb2R1bGVfcHV0X2FuZF9rdGhyZWFkX2V4aXQgY2FuIGJl
-IGltcGxlbWVudGVkLgotICoKLSAqIERvZXMgbm90IHJldHVybi4KLSAqLwotdm9pZCBfX25vcmV0
-dXJuIGt0aHJlYWRfZXhpdChsb25nIHJlc3VsdCkKK3ZvaWQga3RocmVhZF9kb19leGl0KHN0cnVj
-dCBrdGhyZWFkICprdGhyZWFkLCBsb25nIHJlc3VsdCkKIHsKLQlzdHJ1Y3Qga3RocmVhZCAqa3Ro
-cmVhZCA9IHRvX2t0aHJlYWQoY3VycmVudCk7CiAJa3RocmVhZC0+cmVzdWx0ID0gcmVzdWx0Owog
-CWlmICghbGlzdF9lbXB0eSgma3RocmVhZC0+YWZmaW5pdHlfbm9kZSkpIHsKIAkJbXV0ZXhfbG9j
-aygma3RocmVhZF9hZmZpbml0eV9sb2NrKTsKQEAgLTMzMyw5ICszMDQsNyBAQCB2b2lkIF9fbm9y
-ZXR1cm4ga3RocmVhZF9leGl0KGxvbmcgcmVzdWx0KQogCQkJa3RocmVhZC0+cHJlZmVycmVkX2Fm
-ZmluaXR5ID0gTlVMTDsKIAkJfQogCX0KLQlkb19leGl0KDApOwogfQotRVhQT1JUX1NZTUJPTChr
-dGhyZWFkX2V4aXQpOwogCiAvKioKICAqIGt0aHJlYWRfY29tcGxldGVfYW5kX2V4aXQgLSBFeGl0
-IHRoZSBjdXJyZW50IGt0aHJlYWQuCkBAIC02ODMsNyArNjUyLDcgQEAgdm9pZCBrdGhyZWFkX3Nl
-dF9wZXJfY3B1KHN0cnVjdCB0YXNrX3N0cnVjdCAqaywgaW50IGNwdSkKIAogYm9vbCBrdGhyZWFk
-X2lzX3Blcl9jcHUoc3RydWN0IHRhc2tfc3RydWN0ICpwKQogewotCXN0cnVjdCBrdGhyZWFkICpr
-dGhyZWFkID0gX190b19rdGhyZWFkKHApOworCXN0cnVjdCBrdGhyZWFkICprdGhyZWFkID0gdHNr
-X2lzX2t0aHJlYWQocCk7CiAJaWYgKCFrdGhyZWFkKQogCQlyZXR1cm4gZmFsc2U7CiAK
---000000000000366993064b96ee94--
+> +                */
+> +               fuse_flush_requests(fc);
+>                 fuse_send_destroy(fm);
+> +       }
+>
+>         fuse_abort_conn(fc);
+>         fuse_wait_aborted(fc);
+>
 
