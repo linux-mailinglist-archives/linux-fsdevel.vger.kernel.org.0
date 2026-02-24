@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-78209-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78210-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id fWUuJInznGk5MQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78209-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 01:40:41 +0100
+	id cPjoHI7znGk5MQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78210-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 01:40:46 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DA7A18047B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 01:40:41 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7320218048A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 01:40:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 891FF3030FC2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:40:40 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id B3A2C3011D4F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E9222A1E1;
-	Tue, 24 Feb 2026 00:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E177C233723;
+	Tue, 24 Feb 2026 00:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vHOAsa6z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="coF+OnyJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91EB1367
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 00:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718211367
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 00:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771893637; cv=none; b=iH7oyLZSp2+/B14z6tKMJDym8bZplYmuE1Q0MupnLerAGOtEGN5P+aTeUKEVDG/E2SYDwCcHh7lcvVt2y1JBPu/zK0SJ+zoA6oWc5QCO10g0uCDEXuUzHUhMWSDBT6vB9tTzP17aX4+vQryY9iqxZxBY3Ms4e5WbcjYOFzZrx+4=
+	t=1771893638; cv=none; b=SCbcHJrjoPYElrKyhg1kusgEWNmebtCVDuu9fFzQmWAYAE7SiLP3yNg2bGrGlmoOU6ak/CsaIfELOKv9DetjIXZdqikd5U1tt+AapzYjuj440udA11ltdue4HuAWbRdGoZUUXCxS0HEKoDv8Mj2CrRFLndFS3d9V1AGAFkT36wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771893637; c=relaxed/simple;
-	bh=O7RPHvSlozQsT1ZKa2hmcU1xHi+cmFKY9UNuTW5qgaY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KIicAPLr2RGS6bSn0hgaMKDbt9bCzgLJ3oYMa3sttVgyv1WDx0BbR70BQuCA5HD4rpPZEBU1yh9ji+SiAaqDhg0+5EN9QxpHdWNgw4eXcbcUcMbG9ZRlggossXc54jXoYE1AUtBdXk13Brfhn2HziaCQpX307zgnQI4tt+trmuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vHOAsa6z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F5C3C116C6;
-	Tue, 24 Feb 2026 00:40:35 +0000 (UTC)
+	s=arc-20240116; t=1771893638; c=relaxed/simple;
+	bh=C+xPza4eFwrBmPy+6xJnvwElTqsUVNZSDeChbofTjD4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=TkxAnJD+8CwsE81EaPCxme2yBOOy5vJNBb39mlaadZ1C4MRER6d/zj5oBldHaX5jPUW7ufg3MG8X7PjQ2pUd11JEv3H868Jz2c4xYAvL/lPpCw7+7+y16hDPmn4yUtfhAWeLLPi9/hHV52XBZW5UOCjeBKkF8ZiQx2oSFJJsBew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=coF+OnyJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00330C19423;
+	Tue, 24 Feb 2026 00:40:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771893636;
-	bh=O7RPHvSlozQsT1ZKa2hmcU1xHi+cmFKY9UNuTW5qgaY=;
-	h=From:Subject:Date:To:Cc:From;
-	b=vHOAsa6zqpP9omULcTCHfr1PbeKylPJfiNrTOjyMiShfxd6msR+FJgC2DjCWUMrt4
-	 OLEPYFcn+BjM4wDETAscBPb4dw6nWvLEAkDhTloGxOpEsjsrz7sHIi7prOEL8BR5qq
-	 ZHmaByYw5f9Rkc/iTDCHpkBLkfqqV1y4ohYDhXWgJn7o/uK69NIp0Hf1/ryri/AOY3
-	 TLAuEAkBML4eouUSOv8Aol8ziTZPo7QcLFjKIoCRh6Oaz2hon+UO+ZZFVfF5YYVv1j
-	 Jr2SMsV7F1kPCbHIf6N4br1sTXHBE2ZVpUOGfrHnqQXxRIzO/V9ZaSsdQJQo8kTIOH
-	 5KpGSdE/0yYOw==
+	s=k20201202; t=1771893638;
+	bh=C+xPza4eFwrBmPy+6xJnvwElTqsUVNZSDeChbofTjD4=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=coF+OnyJLuSu8yGY9SySbkMHDXydSp3GzipGRXTxxw9RaI/6GwxETsFlV4Hwdz44B
+	 cLMN4GkeS/CTBMexg+mkvXX89k6i6V2BjEkzSfYfyV5BVWc+LBeCbNq1dEmpk7Us+D
+	 5R4e6SwRbfO1IL7CycuCsoTIiizmeef+ucXL0Zw+xfyatnHlZYqT4dyAHYTos2/2MY
+	 oWQTIAwkyLyOy8EBxzeT3XArumlDBBBCPM/ZocKPVC7YrlhF8veu5tp9NVQ8hOwMmz
+	 BqdCvjqly5ijvDItsZa97L8+GgT2ad4XRq/jWwCDF/2WXCakjKmTHOKKFGRQ4CboZj
+	 0AuxDFaDw/bRg==
 From: Christian Brauner <brauner@kernel.org>
-Subject: [PATCH RFC 0/3] move_mount: expand MOVE_MOUNT_BENEATH
-Date: Tue, 24 Feb 2026 01:40:25 +0100
-Message-Id: <20260224-work-mount-beneath-rootfs-v1-0-8c58bf08488f@kernel.org>
+Date: Tue, 24 Feb 2026 01:40:26 +0100
+Subject: [PATCH RFC 1/3] move_mount: transfer MNT_LOCKED
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,41 +55,40 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHrznGkC/yWMQQ7CIBBFr9LM2jGFGFC3Jh7ArXEBOBU0ghloN
- Wl6d0GX7+X/N0MmDpRh383ANIUcUqwgVh04b+KNMFwrg+yl6qUU+E78wGcaY0FLkUzxyCmVIeN
- OqM2gtNVCbqH+X0xD+PzaZzgdD3D5yzzaO7nSqm1mTSa0bKLzTU163SM7AcvyBU/oNuKdAAAA
-X-Change-ID: 20260221-work-mount-beneath-rootfs-9164f67b7128
+Message-Id: <20260224-work-mount-beneath-rootfs-v1-1-8c58bf08488f@kernel.org>
+References: <20260224-work-mount-beneath-rootfs-v1-0-8c58bf08488f@kernel.org>
+In-Reply-To: <20260224-work-mount-beneath-rootfs-v1-0-8c58bf08488f@kernel.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
  Linus Torvalds <torvalds@linux-foundation.org>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-47773
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3613; i=brauner@kernel.org;
- h=from:subject:message-id; bh=O7RPHvSlozQsT1ZKa2hmcU1xHi+cmFKY9UNuTW5qgaY=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTO+dz0fL+Vkeb327sX9609unSpzbcPvxmy4hZa/Nurk
- v83XqBjcUcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBEfiox/Pd6/yr/blicyu7g
- BcXCOQt2dGWvfFDMoXZrs7g9iyXjpwWMDJ/i2BYmJB2V+LBNbZHUzW3by+w/1LVPZLiQaXBg5sn
- +iewA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3320; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=C+xPza4eFwrBmPy+6xJnvwElTqsUVNZSDeChbofTjD4=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTO+dxkwFf5TMgoSNixSKVxhZ7ypfVzeWedKT0S8OzR3
+ 2SvvbYeHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABN5cJXhv1ub3Yq1y74d/uw9
+ VWr1iaDgeL95n9TufNSe6FK09a/Qn3mMDFu2S9YUHD2iJVUxWWZjVJ/d9zPTGg59bMvZP0VfUU6
+ 5nhMA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78209-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78210-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	RCPT_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
@@ -98,95 +97,95 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 2DA7A18047B
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 7320218048A
 X-Rspamd-Action: no action
 
-I'm too tired now to keep refining this but I think it's in good enough
-shape for review.
+When performing a mount-beneath operation the target mount can often be
+locked:
 
-Allow MOVE_MOUNT_BENEATH to target the caller's rootfs, allowing to
-switch out the rootfs without pivot_root(2).
-
-The traditional approach to switching the rootfs involves pivot_root(2)
-or a chroot_fs_refs()-based mechanism that atomically updates fs->root
-for all tasks sharing the same fs_struct. This has consequences for
-fork(), unshare(CLONE_FS), and setns().
-
-This series instead decomposes root-switching into individually atomic,
-locally-scoped steps:
-
-    fd_tree = open_tree(-EBADF, "/newroot",
-                        OPEN_TREE_CLONE | OPEN_TREE_CLOEXEC);
-    fchdir(fd_tree);
-    move_mount(fd_tree, "", AT_FDCWD, "/",
-               MOVE_MOUNT_BENEATH | MOVE_MOUNT_F_EMPTY_PATH);
-    chroot(".");
-    umount2(".", MNT_DETACH);
-
-Since each step only modifies the caller's own state, the
-fork/unshare/setns races are eliminated by design.
-
-A key step to making this possible is to remove the locked mount
-restriction. Originally MOVE_MOUNT_BENEATH doesn't support mounting
-beneath a mount that is locked. The locked mount protects the underlying
-mount from being revealed. This is a core mechanism of
-unshare(CLONE_NEWUSER | CLONE_NEWNS). The mounts in the new mount
-namespace become locked. That effectively makes the new mount table
-useless as the caller cannot ever get rid of any of the mounts no matter
-how useless they are.
-
-We can lift this restriction though. We simply transfer the locked
-property from the top mount to the mount beneath. This works because
-what we care about is to protect the underlying mount aka the parent.
-The mount mounted between the parent and the top mount takes over the
-job of protecting the parent mount from the top mount mount. This leaves
-us free to remove the locked property from the top mount which can
-consequently be unmounted:
-
-  unshare(CLONE_NEWUSER | CLONE_NEWNS)
-
-and we inherit a clone of procfs on /proc then currently we cannot
-unmount it as:
-
-  umount -l /proc
-
-will fail with EINVAL because the procfs mount is locked.
-
-After this series we can now do:
-
+  unshare(CLONE_NEWUSER | CLONE_NEWNS);
   mount --beneath -t tmpfs tmpfs /proc
-  umount -l /proc
 
-after which a tmpfs mount has been placed beneath the procfs mount. The
-tmpfs mount has become locked and the procfs mount has become unlocked.
+will fail because the procfs mount on /proc became locked when the mount
+namespace was created from the parent mount namespace. Same logic for:
 
-This means you can safely modify an inherited mount table after
-unprivileged namespace creation.
+  unshare(CLONE_NEWUSER | CLONE_NEWNS);
+  mount --beneath -t tmpfs tmpfs /
 
-Afterwards we simply make it possible to move a mount beneath the
-rootfs allowing to upgrade the rootfs.
+MNT_LOCKED is raised to prevent an unprivileged mount namespace from
+revealing whatever is under a given mount. To replace the rootfs we need
+to handle that case though.
 
-Removing the locked restriction makes this very useful for containers
-created with unshare(CLONE_NEWUSER | CLONE_NEWNS) to reshuffle an
-inherited mount table safely and MOVE_MOUNT_BENEATH makes it possible to
-switch out the rootfs instead of using the costly pivot_root(2).
+We can simply transfer the locked mount property from the top mount to
+the mount beneath. The new mount we mounted beneath the top mount takes
+over the job of the top mount in protecting the parent mount from being
+revealed. This leaves us free to allow the top mount to be unmounted.
+
+This also works during mount propagation and also works for the
+non-MOVE_MOUNT_BENEATH case:
+
+(1) move_mount(MOVE_MOUNT_BENEATH): @source_mnt->overmount always NULL
+(2) move_mount():                   @source_mnt->overmount maybe !NULL
+
+For (1) can_move_mount_beneath() rejects overmounted @source_mnt (We
+could allow this but whatever it's not really a use-case and it's fugly
+to move an overmounted mount stack around. What are you even doing? So
+let's keep that restriction.
+
+For (2) we can have @source_mnt overmounted (Someone overmounted us
+while we locked the target mount.). Both are fine. @source_mnt will be
+mounted on whatever @q was mounted on and @q will be mounted on the top
+of the @source_mnt mount stack. Even in such cases we can unlock @q and
+lock @source_mnt if @q was locked.
+
+This effectively makes mount propagation useful in cases where a mount
+namespace has a locked mount somewhere and we propagate a new mount
+beneath it but the mount namespace could never get at it because the old
+top mount remains locked. Again, we just let the newly propagated mount
+take over the protection and unlock the top mount.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
-Christian Brauner (3):
-      move_mount: transfer MNT_LOCKED
-      move_mount: allow MOVE_MOUNT_BENEATH on the rootfs
-      selftests/filesystems: add MOVE_MOUNT_BENEATH rootfs tests
+ fs/namespace.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
- fs/namespace.c                                     |  37 +-
- tools/testing/selftests/Makefile                   |   1 +
- .../selftests/filesystems/move_mount/.gitignore    |   2 +
- .../selftests/filesystems/move_mount/Makefile      |  10 +
- .../filesystems/move_mount/move_mount_test.c       | 492 +++++++++++++++++++++
- 5 files changed, 523 insertions(+), 19 deletions(-)
----
-base-commit: 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f
-change-id: 20260221-work-mount-beneath-rootfs-9164f67b7128
+diff --git a/fs/namespace.c b/fs/namespace.c
+index ebe19ded293a..cdde6c6a30ee 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2636,6 +2636,19 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+ 
+ 			if (unlikely(shorter) && child != source_mnt)
+ 				mp = shorter;
++			/*
++			 * If @q was locked it was meant to hide
++			 * whatever was under it. Let @child take over
++			 * that job and lock it, then we can unlock @q.
++			 * That'll allow another namespace to shed @q
++			 * and reveal @child. Clearly, that mounter
++			 * consented to this by not severing the mount
++			 * relationship. Otherwise, what's the point.
++			 */
++			if (IS_MNT_LOCKED(q)) {
++				child->mnt.mnt_flags |= MNT_LOCKED;
++				q->mnt.mnt_flags &= ~MNT_LOCKED;
++			}
+ 			mnt_change_mountpoint(r, mp, q);
+ 		}
+ 	}
+@@ -3529,9 +3542,6 @@ static int can_move_mount_beneath(const struct mount *mnt_from,
+ {
+ 	struct mount *parent_mnt_to = mnt_to->mnt_parent;
+ 
+-	if (IS_MNT_LOCKED(mnt_to))
+-		return -EINVAL;
+-
+ 	/* Avoid creating shadow mounts during mount propagation. */
+ 	if (mnt_from->overmount)
+ 		return -EINVAL;
+
+-- 
+2.47.3
 
 
