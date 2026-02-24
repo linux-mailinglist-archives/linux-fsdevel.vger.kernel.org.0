@@ -1,168 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-78281-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78282-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +NFWLzfGnWkkSAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78281-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 16:39:35 +0100
+	id OMugAXTJnWl9SAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78282-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 16:53:24 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 127C81892BC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 16:39:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C7B41895DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 16:53:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A738D31BF8C9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 15:33:49 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 2BD753071A7C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 15:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B5827F4F5;
-	Tue, 24 Feb 2026 15:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BD83A63F2;
+	Tue, 24 Feb 2026 15:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="EymRLdch"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tv/V5M0V"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8054927380A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 15:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.171
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771947226; cv=pass; b=C3T0Lr50gYq2hqCxrSjr6TXfvzkk+nF4yZnnB4mxjQ6UZ0BT57W1Lau3LShJH02t5OB1bmsbLC1sjMGepF2gC++YqA7gHswYLjQcHbq0NpXiqIsUj8itypjBzTot4h1KMWMg6fxqopcIIOaW5ABsJ4ZZmD4jI1Pl9q1Oa9sxagw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771947226; c=relaxed/simple;
-	bh=mcIhrVy4N2qlGxdPCkr+8Ie+aeZgHuS6eyHLWbWlvk8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QnoTLLi1p9cdtCtvGBxQ4swLYpQG18WtaOWF+2uQH1IHmDZ/PjpEaKhszOgzX1qXsA6yeEIEGOidaaLggQvzChXCfNluitFB6/gHKb3R0ZLDtWjT4cV6GN2yPD6q0WQydWmOlISWVuq1+0IpHzZZmRIufsEO95D049w9u9/zKdI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=EymRLdch; arc=pass smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-50336cffef9so44103291cf.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 07:33:44 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771947223; cv=none;
-        d=google.com; s=arc-20240605;
-        b=L0rWWuO3oQqv0pMzvsfY5yqXzdxtQphom8iBEeG2F9F4LWzMyPkA0vTwo+s1ZEVKx1
-         grRo+/ukBUFcX4aHOZdL/OZQvJsSJr1avRVQZJbtsTC054vwSCDEHy74tRSbXm+j2sRk
-         kE1p9KmGKleogtBR8RFsOHLbHA4hHY6JwNBTp0iXJ0Ekqi9qFBVhLItz2cVj2rqI7R5I
-         FBOqS5nhu9FvUYo0INUbgvznt5k+0R8oKD6aU/5c4ZNGFpyTYyn0VdksPPUJ0FlNVU6G
-         7mxK/Q0GNkwzqoWMDoaL/LJVoehpuk13WGwoLHa+u9iJH8brKJDzmisFYiH10ITRma9n
-         sFVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=j8vK2PoxqyfTvn1s+umNDZZz0IG/77B9ZtXLXLB4Zjg=;
-        fh=r5jrcNWk+QyCSpn/VlN4XChGHoOqBd1B5+Ha6qngoUE=;
-        b=Df/8GUlN8JfcblNtObqrPxO+Q2FULKrf0T0rFEQoMj0xGyf9z7m9Sj/PHKmmCuXfBh
-         ekG5SGPQA4+O1OCIX/S1CNUrDlnwut9D02XF1Gr7Bz5rW+ZrFSQzk4TVJeB40bji/3Ee
-         Gp9RUKCSNkxXfCIwilTncfU94Om6h1aQ26hXPZgoBs8AYq1IdaxC/Kg7u/9juISEIDZg
-         JzR06yIo2OCQp4jSykY7zdjrE1tS1yoJsjTvy6JpS7cZdp7f8swKlRmz+aPu6fevAizS
-         Y0Z5VMQbQ1IQGWEb3Ei37uwAri4EujW3yGvG9Da2bg5y6mH9Ct/C4rcqrMowwFLXDBLQ
-         ti8w==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1771947223; x=1772552023; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=j8vK2PoxqyfTvn1s+umNDZZz0IG/77B9ZtXLXLB4Zjg=;
-        b=EymRLdchX5/QVSwlLsWI4fBShcIsj0moilkCndhKtm2Bo1VGLunwOgDkbkINMagVHB
-         amEODb57eJnFlMCGxHFzpcjwnaXolgYBUI4iWhWcShot6i+awB2bAEAdCx1kcbAd+RJ3
-         dYOUiWgw86oUcIYibWEnfpni4wZkywr2tBNpg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771947223; x=1772552023;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j8vK2PoxqyfTvn1s+umNDZZz0IG/77B9ZtXLXLB4Zjg=;
-        b=ekq5B4KYk8Iu44JhOvzLmDc6u671q18M2jinLoxsLmFiHJRAPQf2H+sG8RttQxeG4I
-         PWNMkfEfbiCEanwfMloMhMdnYN1es8zcQbaRjzkW4dUtpOupKgpyajatM/S7TtCy+06k
-         o4/HT0EL1r/rGOW0YhSwZopaD7Ob8+T/L/WkyT+fIYkwmV4yxHOUy1KOXN3JTsqgVWRl
-         ZgWsObDgEDFecde8alO9x1Mt6ANiIPLa6khX1rmXdVzlcg9BNXg01Gw94WgxWtG1xM6M
-         6iFuaTtU4vrIdQw3eVZeDuIQz6cwFC1s/XrYCUfVURuOD2rKxy9zHTH04GNrt4RKb3+/
-         THKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVWOcMM7jtzfeuuk5Tp2o2hKqc76ECrW6VM5HagS5WPIDBp27rEV5YDOtCHCQlln0lIe/IkX/bZrJDojSWn@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJCSEWMeZI9KmxqmN8gYWlYecVdrlPeTRrza5TkOnX8F9dutbs
-	VYVg3vxtLZvGHOZOww4w8ZyUNrAJb1HbsWZvpLt9tg5nCikwooeg4Mc+3IqYa6kVElj9fVN5OOh
-	3XcVXZb0I6GX9VMgoJftAybItD5e2VdEvLd/0+NiVEQ==
-X-Gm-Gg: AZuq6aISOg0YfN1Th4JidzDjJe9Y1DA2FIkvnBzKd2fVE3j8Jbw0WZZh9sjfZ/h1fna
-	Z+VmXgA9jolc5QvKbpbFALEvREB23dZgb2vnCzsotCkCpZCrlO7l9QbGRLO6TXhuZQe0dfOWtrJ
-	Ej8o6NqHGxqrEo5NqFZqgMsoDSPbep9YmYyEx+ROuUEhKlm68v4KIqT1fLBHE62rYSLdWxSIK88
-	p0rHqt2LQ302AULk7YZh4qbkMsEl3R+pWJmFsXoC2QHjjufOG16r24B1w31CSvioSC7gV+7UYxt
-	+BmmPw==
-X-Received: by 2002:a05:622a:1b8b:b0:4ff:c14d:65cc with SMTP id
- d75a77b69052e-5070bcb2d46mr155016191cf.51.1771947223251; Tue, 24 Feb 2026
- 07:33:43 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5003A63E5;
+	Tue, 24 Feb 2026 15:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771947998; cv=none; b=KvsKUoFMNWLcQY3Sckrvyc//ZcbL45OeSNV+bmniTz49nDAnoLyUHQy497CZ3yrU612t5xgxFbGZGA+RKiWIKdRVsCaqArQFx3kxsmDAZgdNVR6gBmz0LciLVd5N95E9gOGFN2eJQkB1QkU5SKcwcE7MIauYthUXeLdGmbxSl74=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771947998; c=relaxed/simple;
+	bh=pgNWTALCG31c8QV/yBVOrazzlcOyBJhDOZW21qXbjhI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GymaRbzZRyP0pvuBbNtXCRUKMK7vy+2HoCdRoFfIfM1BtzW552mGQRTDNyyAARY3tNFy4BZnsULKrwjuJ45CwQNUm1PhKSc8b/wCbLykAgNHRx7+kKTJiDiSL/DWwxGa8z52PjD1B2IdQwy78HspWF1r8HkkQ4AU0akR8/KAtMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tv/V5M0V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2F43C19422;
+	Tue, 24 Feb 2026 15:46:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771947997;
+	bh=pgNWTALCG31c8QV/yBVOrazzlcOyBJhDOZW21qXbjhI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Tv/V5M0VxLy+PjeHfd02WY7DFNUhs0MVccD+Ru9neqlRi7/flV8FFCJ645OjtWV/a
+	 o8n7vPRCm27DNK9FqvvgKwEsDddiE/iM19zZ/agnVKJ0eqU8rvOfoXU7tQWAspLxW8
+	 1Qb1c7O/joB/Nmpqngk/YfJSKsyDULglkgMRiMIHEDpXAp3ixDiU45vRHgiWYz5fJO
+	 Xt9Q5uzq512bYlm1n/2r3zjBfVOSsS1PfeZIq5LBiXbpsGNcEb90Uof9+rOEwtuQ5g
+	 AfT+KCqyMnnhRpPX8xaFAYaHxbgJwwAeDPXwvNDrRonRt1ehPvMbSjqWVfU4ikyH0U
+	 +jodJbE57a/8g==
+Date: Tue, 24 Feb 2026 07:46:37 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	xfs <linux-xfs@vger.kernel.org>,
+	Christian Brauner <brauner@kernel.org>
+Subject: [PATCH] iomap: don't report direct-io retries to fserror
+Message-ID: <20260224154637.GD2390381@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260220204102.21317-1-jiharris@nvidia.com> <aZnLtrqN3u8N66GU@fedora-2.fritz.box>
- <CAJfpegstf_hPN2+jyO_vNfjSqZpUZPJqNg59hGSqTYqyWx1VVg@mail.gmail.com>
- <fa1b23a7-1dcb-4141-9334-8f9609bb13f7@bsbernd.com> <CAJfpeguoQ4qnvYvv2_-e7POXiPeBR2go_J68S2E6c-YW-1tYbA@mail.gmail.com>
- <aZyhkJSO7Ae7y1Pv@fedora.fritz.box>
-In-Reply-To: <aZyhkJSO7Ae7y1Pv@fedora.fritz.box>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 24 Feb 2026 16:33:32 +0100
-X-Gm-Features: AaiRm53a5UNONpLiEimd4xU0OpNMNm9R7JWewPURY4JHQLrXCzVRugCMPz4D-pE
-Message-ID: <CAJfpegvFhvbzTEjyPXP4jX26qPOVYCyvBmzrbkO3CWOmVCHhSw@mail.gmail.com>
-Subject: Re: Re: [PATCH] fuse: skip lookup during atomic_open() when O_CREAT
- is set
-To: Horst Birthelmer <horst@birthelmer.de>
-Cc: Bernd Schubert <bernd@bsbernd.com>, Jim Harris <jim.harris@nvidia.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mgurtovoy@nvidia.com, ksztyber@nvidia.com, Luis Henriques <luis@igalia.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
+X-Spamd-Result: default: False [-1.66 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78281-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	TO_DN_ALL(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78282-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[szeredi.hu:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
 	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,szeredi.hu:dkim,birthelmer.de:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 127C81892BC
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 4C7B41895DE
 X-Rspamd-Action: no action
 
-On Mon, 23 Feb 2026 at 19:55, Horst Birthelmer <horst@birthelmer.de> wrote:
+From: Darrick J. Wong <djwong@kernel.org>
 
-> What is wrong with a compound doing LOOKUP + MKNOD + OPEN?
-> If the fuse server knows how to process that 'group' atomically
-> in one big step it will do the right thing,
-> if not, we will call those in series and sort out the data
-> in kernel afterwards.
->
-> If we preserve all flags and the real results we can do pretty
-> much exactly the same thing that is done at the moment with just
-> one call to user space.
->
-> That was actually what I was experimenting with.
->
-> The MKNOD in the middle is optional depending on the O_CREAT flag.
+iomap's directio implementation has two magic errno codes that it uses
+to signal callers -- ENOTBLK tells the filesystem that it should retry
+a write with the pagecache; and EAGAIN tells the caller that pagecache
+flushing or invalidation failed and that it should try again.
 
-Okay, I won't stop you experimenting.
+Neither of these indicate data loss, so let's not report them.
 
-My thinking is that it's simpler as a separate op (dir handle and name
-are the same for LOOKUP and MKNOD).   But adding this special "stop if
-error or non-regular, else skip create if positive" dependency would
-also work.
+Fixes: a9d573ee88af98 ("iomap: report file I/O errors to the VFS")
+Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+---
+ fs/iomap/direct-io.c |   15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-Thanks,
-Miklos
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 95254aa1b6546a..e911daedff65ae 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -87,6 +87,19 @@ static inline enum fserror_type iomap_dio_err_type(const struct iomap_dio *dio)
+ 	return FSERR_DIRECTIO_READ;
+ }
+ 
++static inline bool should_report_dio_fserror(const struct iomap_dio *dio)
++{
++	switch (dio->error) {
++	case 0:
++	case -EAGAIN:
++	case -ENOTBLK:
++		/* don't send fsnotify for success or magic retry codes */
++		return false;
++	default:
++		return true;
++	}
++}
++
+ ssize_t iomap_dio_complete(struct iomap_dio *dio)
+ {
+ 	const struct iomap_dio_ops *dops = dio->dops;
+@@ -96,7 +109,7 @@ ssize_t iomap_dio_complete(struct iomap_dio *dio)
+ 
+ 	if (dops && dops->end_io)
+ 		ret = dops->end_io(iocb, dio->size, ret, dio->flags);
+-	if (dio->error)
++	if (should_report_dio_fserror(dio))
+ 		fserror_report_io(file_inode(iocb->ki_filp),
+ 				  iomap_dio_err_type(dio), offset, dio->size,
+ 				  dio->error, GFP_NOFS);
 
