@@ -1,136 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-78272-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id MKtnF7a2nWlyRQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78272-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 15:33:26 +0100
+	id eP+HDw+5nWnERQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 15:43:27 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9D53188681
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 15:33:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F2318892B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 15:43:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id EFBB330470B7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 14:33:20 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 3B4C530A8D19
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 14:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFFC39B4A5;
-	Tue, 24 Feb 2026 14:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxV065U2"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF4B39E6E8;
+	Tue, 24 Feb 2026 14:42:53 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2948405C;
-	Tue, 24 Feb 2026 14:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6CD376BE5;
+	Tue, 24 Feb 2026 14:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771943599; cv=none; b=M2Lzn4x0e07A9wfEocfcuxxYwGHS8jeprMNvN/R9OoORdwmklhMvn387YiCr40nllKOo/Hv7c0/sBqZ5KRT8pNgh2EyqOD5Q1buTqy0Nsk609FbzVl2ix1xEgeIWjo4CF4bTLKtMLCeixoyetb6w1ipL3aUZ5iE+in0VYwANPas=
+	t=1771944173; cv=none; b=O6CyGQUE/etQoeYHRX/s/rKccxm7btezLX0z3njNAzM+5FhgvtuSGyL5vFlPcWNmLEuFhVFzVkMhPVAtA9LDf+e9va1CBbGHNsMjuS0r/nHJruZI72w0GeIn4cZscX7FTDAa/rbwOn9ERORE38hqdJcixnaR2LKAbIq6/b3FsWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771943599; c=relaxed/simple;
-	bh=GCvt8CSMBX2Qiv35I5lQiTRee1Kb/Fn2qrghMvy0YrI=;
+	s=arc-20240116; t=1771944173; c=relaxed/simple;
+	bh=wC9Y4jz9b+cciDywQ8+900OuS6yQXQOyS1NadcFn5gs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DzoVVPSBi8SYhhGigeXWQ+XyXF6wl86+lXSxYHU2FbIIudPPLHtFQWMjc+tnCciWwtrOEOrZg5iQHjgEaVYguUPjdTbie6WDwkxhW5GCL/ZaxpKOowlZF/2cYNt1Sfm77ONZ4lBKp4+ZkotQWHhb6IO4gGmxzALvc6clf72h4S8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxV065U2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06330C116D0;
-	Tue, 24 Feb 2026 14:33:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771943598;
-	bh=GCvt8CSMBX2Qiv35I5lQiTRee1Kb/Fn2qrghMvy0YrI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rxV065U2S9Sxtu8JdY1REylYwHLXFrlSGxuQHktKntLnjOZHwsoFDY07FEQ+v420+
-	 C1vvKWN/niTtgk/49T5I2osc8VorDfsggJDLuP2XPOhJrhb5XxYO/Fy62PtyPdNjJ8
-	 4kl/ebS3eWmKjm5q/3EHK4NOuUyALo1KS9sYkRSLgcjjoMCxVuHjYqjCp1xJp9EWjJ
-	 qqrLaQ2S8LuKJsSq/zPgi/MiTqMMY331oDTRIdBASSrWd1GRK9c0h4LVfzVckuwd69
-	 8xKlJCFQYGQ4cBOaeBIze6K2v+FEYmt2uR4zvJFPPv+m+wv8BcjEwiRW7hksxDVUtY
-	 3mw3TW7bMoDFw==
-Date: Tue, 24 Feb 2026 15:33:13 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Florian Weimer <fweimer@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Amir Goldstein <amir73il@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Jan Kara <jack@suse.cz>, Aleksa Sarai <cyphar@cyphar.com>, 
-	linux-api@vger.kernel.org, rudi@heitbaum.com
-Subject: Re: [PATCH 1/2] mount: add OPEN_TREE_NAMESPACE
-Message-ID: <20260224-kandidat-wohltat-ae8fb7a57738@brauner>
-References: <20251229-work-empty-namespace-v1-0-bfb24c7b061f@kernel.org>
- <20251229-work-empty-namespace-v1-1-bfb24c7b061f@kernel.org>
- <lhuecmaz8p6.fsf@oldenburg.str.redhat.com>
- <20260224-erbitten-kaufleute-6f14e3072c5d@brauner>
- <lhuv7fmxo8y.fsf@oldenburg.str.redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AAm9b8C0IVMIvM6hjAB8VPoKllaVGOpfGGL6FJNFRrwSYzQ2WgenxwCxPC7INIect4Qq7Tu4mWQZ2q7vAU1J5KyBCEkH7q9PRYKXNvm3q7TLNE7PWSFHpZLxgEQaXIiiN8/QW6+DuDGlUsBZZ2TabUfmhZ1aab2bgcANN4F2hVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 5CA4368D09; Tue, 24 Feb 2026 15:42:49 +0100 (CET)
+Date: Tue, 24 Feb 2026 15:42:48 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Andrey Albershteyn <aalbersh@kernel.org>, linux-xfs@vger.kernel.org,
+	fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	ebiggers@kernel.org, djwong@kernel.org
+Subject: Re: [PATCH v3 11/35] iomap: allow filesystem to read fsverity
+ metadata beyound EOF
+Message-ID: <20260224144248.GA12746@lst.de>
+References: <20260217231937.1183679-1-aalbersh@kernel.org> <20260217231937.1183679-12-aalbersh@kernel.org> <20260218063606.GD8600@lst.de> <hfteu6bonpv7djecbf3d6ekh56ktgcl4c2lvtjtrjfetzaq5dw@scsrvxx5rgig> <20260219060420.GC3739@lst.de> <qheg77kxcl4ecqdrsnmz4acfvszjlamlb7ilgxxyf3pmt4r7ah@5fzzmcpurdfp> <20260219133829.GA11935@lst.de> <bltgc6uliclhzkuqd4la2tzp6x7vsww73nvjedxh7s624tby3k@jw4ij5irh6ni> <20260220153113.GA14359@lst.de> <ujwgs5xb6rienyskr7qbekmsbyn5qea2ew4untas5drqdufirp@2qea2ndmnchs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <lhuv7fmxo8y.fsf@oldenburg.str.redhat.com>
+In-Reply-To: <ujwgs5xb6rienyskr7qbekmsbyn5qea2ew4untas5drqdufirp@2qea2ndmnchs>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [2.34 / 15.00];
-	MID_END_EQ_FROM_USER_PART(4.00)[];
+X-Spamd-Result: default: False [-1.36 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
+	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78272-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.org,zeniv.linux.org.uk,gmail.com,toxicpanda.com,suse.cz,cyphar.com,heitbaum.com];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	MISSING_XM_UA(0.00)[];
-	NEURAL_HAM(-0.00)[-0.989];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,lst.de:mid];
+	MID_RHS_MATCH_FROM(0.00)[];
+	NEURAL_HAM(-0.00)[-0.999];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MIME_TRACE(0.00)[0:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	RCVD_COUNT_THREE(0.00)[4];
+	R_DKIM_NA(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,sourceware.org:url]
-X-Rspamd-Queue-Id: C9D53188681
+	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	PRECEDENCE_BULK(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78273-lists,linux-fsdevel=lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[]
+X-Rspamd-Queue-Id: B3F2318892B
 X-Rspamd-Action: no action
 
-On Tue, Feb 24, 2026 at 02:30:37PM +0100, Florian Weimer wrote:
-> * Christian Brauner:
+On Mon, Feb 23, 2026 at 04:10:23PM +0100, Andrey Albershteyn wrote:
 > 
-> > On Tue, Feb 24, 2026 at 12:23:33PM +0100, Florian Weimer wrote:
-> >> * Christian Brauner:
-> >> 
-> >> > diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-> >> > index 5d3f8c9e3a62..acbc22241c9c 100644
-> >> > --- a/include/uapi/linux/mount.h
-> >> > +++ b/include/uapi/linux/mount.h
-> >> > @@ -61,7 +61,8 @@
-> >> >  /*
-> >> >   * open_tree() flags.
-> >> >   */
-> >> > -#define OPEN_TREE_CLONE		1		/* Clone the target tree and attach the clone */
-> >> > +#define OPEN_TREE_CLONE		(1 << 0)	/* Clone the target tree and attach the clone */
-> >> 
-> >> This change causes pointless -Werror=undef errors in projects that have
-> >> settled on the old definition.
-> >> 
-> >> Reported here:
-> >> 
-> >>   Bug 33921 - Building with Linux-7.0-rc1 errors on OPEN_TREE_CLONE
-> >>   <https://sourceware.org/bugzilla/show_bug.cgi?id=33921>
-> >
-> > Send a patch to change it back, please.
-> > Otherwise it might take a few days until I get around to it.
+> > 
+> > I'm still not sure what "When iomap is reading fsverity descriptor
+> > inode" means.
 > 
-> Rudi, could you post a patch?
+> "When iomap is reading fsverity descriptor, inode won't have any
+> fsverity_info yet."
 
-I'm a bit confused though and not super happy that you're basically
-asking us to be so constrained that we aren't even allowed to change 1
-to 1 - just syntactically different.
+What code path is this?  __fsverity_file_open -> ensure_verity_info ->
+fsverity_get_descriptor?
+
+> > See above, unlike ext4/f2fs we set it for all I/O on fsverity inodes.
+> > And afaik we don't actually need it, the only use in the fsverity
+> > metadata path is the fill zeroes hash values check (which I'm still
+> > totally confused about).
+> 
+> Yeah, for metadata the only use is to fill zero hash blocks. I will
+> try to split it so lookup happens for data and holes in fsverity
+> metadata. This way we would have less lookups for metadata.
+
+I think doing one lookup per ->read_folio / ->readahead is fine.
+I just really need to understand the differences here.  I think I'm
+finally getting it, and it would be greast to capture all this in
+comments.  I'll carefully read over the next versions and will suggest
+updates to the comments based on the my understanding if needed.
+
 
