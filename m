@@ -1,157 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-78256-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oG0ZFW+SnWlKQgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78256-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 12:58:39 +0100
+	id ILM+IAyUnWnEQgQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 13:05:32 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9360186ACA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 12:58:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6BCC186B58
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 13:05:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 484D331AFBD4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 11:56:22 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 70E01304651B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 12:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F68C3806C0;
-	Tue, 24 Feb 2026 11:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B3338BF86;
+	Tue, 24 Feb 2026 12:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="ploN+3RT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rrQISAiB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from pdx-out-012.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-012.esa.us-west-2.outbound.mail-perimeter.amazon.com [35.162.73.231])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D175F3806A1;
-	Tue, 24 Feb 2026 11:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.162.73.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B0D38BF60;
+	Tue, 24 Feb 2026 12:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771934180; cv=none; b=bxmChgknTCpnkTNtE4841grZCRQTF422HAX1wthtzb6aVzYThKunCzmydriU/ntJqTB3zVHSMKVtSoUUsVWQ6owPlb2ItiyUxvRQrmAGUoyg8YSfK1QUB8V9v9Of2vILqeuU+fJzBAYA/3MUmsJDTDJfh3+qgbxPGZONwEoSqZA=
+	t=1771934718; cv=none; b=l2it+w6H6V09d1m7OP6u6V3umCCcIMBIeLtcXNQKaVLppkrXhgKJCiqxOSTgjWMhao80sW5Xw8Um1FPQ2/qvi4hStFVTp/pDWKrK0ff6km+QJfgfzJzidBnawTCtac/IU+R8ceA5TWcRzueBF4pAfGKJtptupHD6B0dJh8FPTH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771934180; c=relaxed/simple;
-	bh=srpLL5U9iTOojIaPu/WlZF4fGmvvQZbJumftBSOyAXY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HeyFaqtlHXUlGQKMGtdMk3D/nAFwL3OVmh/WRX8oIJjlJRCGtoUdGE+INyouKsY1l0YLOr5l7coPxh/iTrLgLR6rTtk8XNeLtKznGocUviPXOvEBWB+DooE9wfE2MQ079+GwUUatE3pr9e9cRP27Jxd9CGnrqSywjVGkCYPEz1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=ploN+3RT; arc=none smtp.client-ip=35.162.73.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1771934179; x=1803470179;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=lNm+qpcn+86D78pkQFn2GxBWwuUGg4Iw0xHk9NJNaRk=;
-  b=ploN+3RTFbjnWn0S+7J47Z6dTfSYhh9zCikusj8QLDhhquy+vyLC6oLN
-   5U+T0/HnV/DPKahxHbA+9We//VU1kniUnmJaEJ36XvzWNIP0w7VEyOwwA
-   A4PHY8cQlWI0MhGCujpOZdhr0WVCB9d7GPZS6szqa7ih3Dz0AVgTsVpXB
-   o2dtF0387q+g7t5CJ2Ln8MsDYwNLQ0UPNISpcI2q7It54Nieyaiqx1IZL
-   NgEC5XsKgkWCT3pwD0pL7jYnd+h2YHL11pw52MsVVC2LJkb7ncwZ9lC4l
-   jeBnUX/m/It6nzxxu7CfcylCFe6RFzSCjtyBpaYOy7BMw6I/1N9BrtK4l
-   w==;
-X-CSE-ConnectionGUID: Y8yDxO9qTuSUitf/APdozA==
-X-CSE-MsgGUID: NNh8eb5JTrKEFh58cvlmug==
-X-IronPort-AV: E=Sophos;i="6.21,308,1763424000"; 
-   d="scan'208";a="13478288"
-Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
-  by internal-pdx-out-012.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2026 11:56:17 +0000
-Received: from EX19MTAUWB001.ant.amazon.com [205.251.233.104:19167]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.52.246:2525] with esmtp (Farcaster)
- id 44172891-dcbf-46fa-ad60-09fb3aa957e8; Tue, 24 Feb 2026 11:56:16 +0000 (UTC)
-X-Farcaster-Flow-ID: 44172891-dcbf-46fa-ad60-09fb3aa957e8
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.37;
- Tue, 24 Feb 2026 11:56:16 +0000
-Received: from c889f3b07a0a.amazon.com (10.106.82.9) by
- EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.37;
- Tue, 24 Feb 2026 11:56:15 +0000
-From: Yuto Ohnuki <ytohnuki@amazon.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Yuto
- Ohnuki" <ytohnuki@amazon.com>
-Subject: [PATCH] fuse: replace BUG_ON with WARN_ON and -EBUSY in fuse_ctl_fill_super
-Date: Tue, 24 Feb 2026 11:56:07 +0000
-Message-ID: <20260224115606.4249-2-ytohnuki@amazon.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1771934718; c=relaxed/simple;
+	bh=uyHZHiDaI76P3wMbcjfRYTIsblHmF/n0kgvN3nM67TQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ug3n5kkiZZiUQVrfJWeFfo3YggddQo8huw2JLQWCMIfLuiCRVq4VZ0//e44tNhHTYjA/yGUyG0hxfrpUiV6pdqnAub0cpgTXE7JXbUjVBUApt43TleHaZ6oC2Zi/EY2JKCiBgtrhsfsfMqMUJRgyfZ/2m8fVgsiMgPd9fYFhY0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rrQISAiB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68992C116D0;
+	Tue, 24 Feb 2026 12:05:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771934717;
+	bh=uyHZHiDaI76P3wMbcjfRYTIsblHmF/n0kgvN3nM67TQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rrQISAiBZbxi014QUg+0NsptwrL/HoyNe8+pINU/fOqAkzXQsDuOc+HYQYbjDNcdj
+	 N6xdOuLC/SxMD9Xdhcv7Z98YsMQ9QmF8DRDkt+bXUVV6xi3RpzHjg17N9Y/7VwRLMZ
+	 76/KE+jRmQYHAeRgOyoHawrUN6z3yc+KUHErpaMZnbQv+6uGfsCxqDRL6qI1Mx+wNW
+	 oHZcdtCST1nMSg6ynsSFVAQZm3BESolWjq70dCl5geiZwATPdeseqECT9dP0rM8MYn
+	 qdFpW0IQ1DbuPnN+Bdm0+vOBkvOAjtmYUDullhHcIQClGLF6rWQ/50RlGr6xiMzKwt
+	 W+/lgwN81vx2A==
+Date: Tue, 24 Feb 2026 13:05:12 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Florian Weimer <fweimer@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Amir Goldstein <amir73il@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Jan Kara <jack@suse.cz>, Aleksa Sarai <cyphar@cyphar.com>, 
+	linux-api@vger.kernel.org, rudi@heitbaum.com
+Subject: Re: [PATCH 1/2] mount: add OPEN_TREE_NAMESPACE
+Message-ID: <20260224-erbitten-kaufleute-6f14e3072c5d@brauner>
+References: <20251229-work-empty-namespace-v1-0-bfb24c7b061f@kernel.org>
+ <20251229-work-empty-namespace-v1-1-bfb24c7b061f@kernel.org>
+ <lhuecmaz8p6.fsf@oldenburg.str.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D044UWB003.ant.amazon.com (10.13.139.168) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <lhuecmaz8p6.fsf@oldenburg.str.redhat.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-8.16 / 15.00];
-	WHITELIST_DMARC(-7.00)[amazon.com:D:+];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [2.34 / 15.00];
+	MID_END_EQ_FROM_USER_PART(4.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[amazon.com,quarantine];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[amazon.com:s=amazoncorp2];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCPT_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-78257-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.org,zeniv.linux.org.uk,gmail.com,toxicpanda.com,suse.cz,cyphar.com,heitbaum.com];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78256-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[ytohnuki@amazon.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[amazon.com:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	MISSING_XM_UA(0.00)[];
+	NEURAL_HAM(-0.00)[-0.991];
 	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	NEURAL_HAM(-0.00)[-1.000];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: B9360186ACA
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sourceware.org:url,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: C6BCC186B58
 X-Rspamd-Action: no action
 
-Replace BUG_ON(fuse_control_sb) with WARN_ON() that returns -EBUSY.
+On Tue, Feb 24, 2026 at 12:23:33PM +0100, Florian Weimer wrote:
+> * Christian Brauner:
+> 
+> > diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+> > index 5d3f8c9e3a62..acbc22241c9c 100644
+> > --- a/include/uapi/linux/mount.h
+> > +++ b/include/uapi/linux/mount.h
+> > @@ -61,7 +61,8 @@
+> >  /*
+> >   * open_tree() flags.
+> >   */
+> > -#define OPEN_TREE_CLONE		1		/* Clone the target tree and attach the clone */
+> > +#define OPEN_TREE_CLONE		(1 << 0)	/* Clone the target tree and attach the clone */
+> 
+> This change causes pointless -Werror=undef errors in projects that have
+> settled on the old definition.
+> 
+> Reported here:
+> 
+>   Bug 33921 - Building with Linux-7.0-rc1 errors on OPEN_TREE_CLONE
+>   <https://sourceware.org/bugzilla/show_bug.cgi?id=33921>
 
-Currently get_tree_single() prevents duplicate calls to
-fuse_ctl_fill_super(), making this condition unreachable in practice.
-However, BUG_ON() should not be used for conditions that can be handled
-gracefully. Use WARN_ON() to log the unexpected state instead of
-crashing.
-
-Signed-off-by: Yuto Ohnuki <ytohnuki@amazon.com>
----
- fs/fuse/control.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/fs/fuse/control.c b/fs/fuse/control.c
-index 140bd5730d99..8bac837fd4e1 100644
---- a/fs/fuse/control.c
-+++ b/fs/fuse/control.c
-@@ -316,7 +316,11 @@ static int fuse_ctl_fill_super(struct super_block *sb, struct fs_context *fsc)
- 		return err;
- 
- 	mutex_lock(&fuse_mutex);
--	BUG_ON(fuse_control_sb);
-+	if (WARN_ON(fuse_control_sb)) {
-+		mutex_unlock(&fuse_mutex);
-+		return -EBUSY;
-+	}
-+
- 	fuse_control_sb = sb;
- 	list_for_each_entry(fc, &fuse_conn_list, entry) {
- 		err = fuse_ctl_add_conn(fc);
--- 
-2.50.1
-
-
-
-
-Amazon Web Services EMEA SARL, 38 avenue John F. Kennedy, L-1855 Luxembourg, R.C.S. Luxembourg B186284
-
-Amazon Web Services EMEA SARL, Irish Branch, One Burlington Plaza, Burlington Road, Dublin 4, Ireland, branch registration number 908705
-
-
-
+Send a patch to change it back, please.
+Otherwise it might take a few days until I get around to it.
 
