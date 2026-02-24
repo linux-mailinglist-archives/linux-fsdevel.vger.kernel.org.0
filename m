@@ -1,166 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-78284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cGBPF1HVnWk0SQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 17:44:01 +0100
+	id sDZrA2vXnWmFSQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 17:52:59 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id C177F189F56
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 17:44:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A19B118A18E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 17:52:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id AB4623051847
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 16:37:46 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id DC12931E6C9B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 16:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EBA3A63EB;
-	Tue, 24 Feb 2026 16:37:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B043AE6EB;
+	Tue, 24 Feb 2026 16:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LuSb3AGt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0RCkZ2d"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD483A9616
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 16:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36113A9634;
+	Tue, 24 Feb 2026 16:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771951031; cv=none; b=cg5Ro6P1ozpfTEwV/Xs2e5xxYXBv0EjS2kqRB1/IgBp+BMmG+fC/RPMB6A3eK+TcsjgWx+dg9XAnZORUhWKeNNeiZUok0jDF/mVs1YBAfYjf/7pz9sf6TTF+UWuew+zvIwT42jZ2RQEiYJ6dGm0dQSXiKKhQ6qcvEr971JHKn24=
+	t=1771951151; cv=none; b=IsAiMSYXF+DqOeUncpDSPVXswL+kgXU1BHGKFFNPfjABDUJdTGnQLhQrHahfUzTGnamzSzxu9aJKGUH/Rsy6osHrWdgap4v3cLIQ5z7onIF9VlZ2JQSq0T83Z9jHaunu4nlckAJiALp7AmIfy2/uVaXoUAf3/Aeppjbw286t0po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771951031; c=relaxed/simple;
-	bh=p/9SdvBSogz8pVh5FXvynPjBzAfPBEKuHPbg+eeIrK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ckEzB8Qb8lUigGNEADMAKzRXO/ziFqWjxRfdbX5HVcotvVlmrhogq3QzUhz8Gsj1GBAk4UpMoOjCT11dM/j2OVxqUtkg0Fd+hEw0ZolsawMMjfMSSPIwskOGUR/ACpRw2C4MxForHQmjmtAfGY9IgIIfQeCGCBO9/uCiTR85PWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LuSb3AGt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01330C19425;
-	Tue, 24 Feb 2026 16:37:07 +0000 (UTC)
+	s=arc-20240116; t=1771951151; c=relaxed/simple;
+	bh=IlIcZvuWrnYBniv2AVd4SyZHU7eb0N18hBt7+gtanEo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LDgW4PKmjZwllsjmF9RyjPv6Z7UrYcNuCLsBZLVqFLU/SriodwjikEeCT3azA1Y9TSB/So7v5Fx8pWlBxAUfkxBbolbazHq5giTYwUUb/qZlxF4MUpb6PYvCy4CQmjGdeRrwuLQVq4KHjcIRV2uNEAvoHPIBW5/Dur910r/y/g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a0RCkZ2d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8F36C19423;
+	Tue, 24 Feb 2026 16:39:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771951031;
-	bh=p/9SdvBSogz8pVh5FXvynPjBzAfPBEKuHPbg+eeIrK8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LuSb3AGt4iG0vU6TWGNuVTm6HCDCs04OHP1s3q1TfPp2SmNTJdokKVBxKWT8jjsF+
-	 0EBHCz2r56H8AJAbxjpiXxvVzkqCKFTm/B7EExsG3Gv2j1Q2uIjY0MKDsIMY7VeeDd
-	 vo7Zk2Id8kRXRfTDI7yw3EkWT7wP5vKV7S2sQVsF28xV/46922RSDR9AP3oSxIqZN/
-	 33Sm0VlfZSy7370UY1T2KBJweQ8ZZwr32IngQXclk1wklkk/fs8qciA7WmPJKP1MBP
-	 jRuHIDRv1G2bP8sMpzSLwTMV6Zzrasi5S9A2LLOl4UTs5Ls75HkA4gQ6jhnPfpdHeb
-	 cNAmyZMePdFWQ==
-Date: Tue, 24 Feb 2026 16:37:02 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Guillaume Tucker <gtucker@gtucker.io>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, kunit-dev@googlegroups.com,
-	David Gow <davidgow@google.com>
-Subject: Re: [PATCH RFC v2] pidfs: convert rb-tree to rhashtable
-Message-ID: <c4a6ffe9-f625-4c0a-83f4-a2ea5451f914@sirena.org.uk>
-References: <20260120-work-pidfs-rhashtable-v2-1-d593c4d0f576@kernel.org>
- <0150e237-41d2-40ae-a857-4f97ca664468@gtucker.io>
- <20260224-kurzgeschichten-urteil-976e57a38c5c@brauner>
+	s=k20201202; t=1771951151;
+	bh=IlIcZvuWrnYBniv2AVd4SyZHU7eb0N18hBt7+gtanEo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=a0RCkZ2dFahrKTdYCb414r+G9IR9ouKN56ZWeOSmDeQmr/z3Clum1sWU6PKsLIYVg
+	 grK8EKpPas+OVIJCWm5QkNZJZxjLguQ9sA4TIQ4P1KabRyXMPvOZAWQThQAUEz2WFM
+	 h6YQVh/dDu5v6/YfoaoP0e3JTM7du1hUzVzEqQOom1fCHG8cCvnhq0NSHGWR0m4Rcu
+	 fzjleuw/Aa+u1tuVeGP07sZ3M8Dl1wexQ9ZRX/zsuZ6McKdhnwRuNQsrA+PhNyjojv
+	 jK0CKmTzV+nLzv9StX6Qx6ALe+wCJae5/j6YYR4UArBkh8+tjpiVJwwNZoCvyHxcaN
+	 6n9uiXuL55YTw==
+From: Chuck Lever <cel@kernel.org>
+To: NeilBrown <neilb@ownmail.net>,
+	Jeff Layton <jlayton@kernel.org>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <dai.ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>
+Cc: linux-nfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Chuck Lever <chuck.lever@oracle.com>
+Subject: [PATCH v3 0/3] Automatic NFSv4 state revocation on filesystem unmount
+Date: Tue, 24 Feb 2026 11:39:05 -0500
+Message-ID: <20260224163908.44060-1-cel@kernel.org>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1kvh4KE5BqJ6Lwrs"
-Content-Disposition: inline
-In-Reply-To: <20260224-kurzgeschichten-urteil-976e57a38c5c@brauner>
-X-Cookie: An apple a day makes 365 apples a year.
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-4.26 / 15.00];
-	SIGNED_PGP(-2.00)[];
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_CONTAINS_FROM(1.00)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_MISSING_CHARSET(0.50)[];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	MIME_GOOD(-0.20)[multipart/signed,text/plain];
 	MAILLIST(-0.15)[generic];
+	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78284-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[gtucker.io,gmail.com,zeniv.linux.org.uk,suse.cz,vger.kernel.org,googlegroups.com,google.com];
-	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78285-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_TO(0.00)[ownmail.net,kernel.org,redhat.com,oracle.com,talpey.com];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+,1:+,2:~];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	MISSING_XM_UA(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[broonie@kernel.org,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[cel@kernel.org,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: C177F189F56
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,oracle.com:email]
+X-Rspamd-Queue-Id: A19B118A18E
 X-Rspamd-Action: no action
 
+From: Chuck Lever <chuck.lever@oracle.com>
 
---1kvh4KE5BqJ6Lwrs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+When an NFS server exports a filesystem and clients hold NFSv4 state
+(opens, locks, delegations), unmounting the underlying filesystem
+fails with EBUSY. The /proc/fs/nfsd/unlock_fs interface exists for
+administrators to manually revoke state before retrying the unmount,
+but this approach has significant operational drawbacks.
 
-On Tue, Feb 24, 2026 at 02:22:31PM +0100, Christian Brauner wrote:
-> On Fri, Feb 20, 2026 at 04:11:43PM +0100, Guillaume Tucker wrote:
+Manual intervention breaks automation workflows. Containerized NFS
+servers, orchestration systems, and unattended maintenance scripts
+cannot reliably unmount exported filesystems without implementing
+custom logic to detect the failure and invoke unlock_fs. System
+administrators managing many exports face tedious, error-prone
+procedures when decommissioning storage.
 
-> > we can see that the last pointer ffffffff99026d40 was never enqueued,
-> > and the one from free_pid() ffffffff988adaf0 was never dequeued.
-> > This is where I stopped investigating as it looked legit and someone
-> > else might have more clues as to what's going on here.  I've only
-> > seen the problem with this callback but again, KUnit is a very narrow
-> > kind of workload so the root cause may well be lying elsewhere.
+This series enables the NFS server to detect filesystem unmount
+events and automatically revoke associated state. The mechanism
+registers with a new SRCU notifier chain in VFS that fires during
+mount teardown, after processing stuck children but before
+fsnotify_vfsmount_delete(), while SB_ACTIVE is still set. When a
+filesystem is unmounted, all NFSv4 opens, locks, and delegations
+referencing it are revoked, async COPY operations are cancelled
+with NFS4ERR_ADMIN_REVOKED sent to clients, NLM locks are released,
+and cached file handles are closed.
 
-> > Please let me know if you need any more debugging details or if I can
-> > help test a fix.  Hope this helps!
+With automatic revocation, unmount operations complete without
+administrator intervention once the brief state cleanup finishes.
+Clients receive immediate notification of state loss through
+standard NFSv4 error codes, allowing applications to handle the
+situation appropriately rather than encountering silent failures.
 
-> Thanks for the report. I have so far no idea how that can happen:
+Based on v7.0-rc1
 
-> * Is this reproducible with multiple compilers?
+---
 
-FWIW I've been seeing RCU stalls and crashes in KUnit while building
--next which I believe are the same as Guillaume is reporting, these have
-reproduced with multiple arches using the Debian GCC 14 and with LLVM
-for me.  Example of my command line:
+Changes since v2:
+- Replace fs_pin with an SRCU umount notifier chain in VFS
+- Merge the pending COPY cancellation patch
+- Replace xa_cmpxchg() with xa_insert()
+- Use cancel_work_sync() instead of flush_workqueue()
+- Remove rcu_barrier()
+- Correct misleading claims in kdoc comments and commit messages
 
-   ./tools/testing/kunit/kunit.py run --arch arm64 --cross_compile=aarch64-linux-gnu-
+Changes since v1:
+- Explain why drop_client() is being renamed
+- Finish implementing revocation on umount
+- Rename pin_insert_group
+- Clarified log output and code comments
+- Hold nfsd_mutex while closing nfsd_files
 
-> * Is this reproducible on v7.0-rc1?
+Chuck Lever (3):
+  fs: add umount notifier chain for filesystem unmount notification
+  nfsd: revoke NFSv4 state when filesystem is unmounted
+  nfsd: close cached files on filesystem unmount
 
-The issues I'm seeing certainly are.  I just tried testing on this
-specific commit (802182490445f6bcf5de0e0518fb967c2afb6da1) and managed
-to have KUnit complete though...
+ fs/namespace.c        |  69 ++++++++++
+ fs/nfsd/Makefile      |   2 +-
+ fs/nfsd/filecache.c   |  45 +++++++
+ fs/nfsd/filecache.h   |   1 +
+ fs/nfsd/netns.h       |   5 +
+ fs/nfsd/nfs4state.c   |  29 +++++
+ fs/nfsd/nfsctl.c      |  10 +-
+ fs/nfsd/sb_watch.c    | 283 ++++++++++++++++++++++++++++++++++++++++++
+ fs/nfsd/state.h       |   7 ++
+ include/linux/mount.h |   4 +
+ 10 files changed, 452 insertions(+), 3 deletions(-)
+ create mode 100644 fs/nfsd/sb_watch.c
 
-> Fwiw, we're missing one check currently:
+-- 
+2.53.0
 
-...
-
-> But it seems unlikely that pidfs_add_pid() fails here.
-
-That doesn't seem to have any impact for me.  I suspect that there may
-be multiple interacting changes triggering the issue (or making it more
-likely to occur) which isn't helping anything :/  See also:
-
-   https://lore.kernel.org/r/59e8c352-7bc8-4358-af74-fee8c29280ba@davidgow.net
-
---1kvh4KE5BqJ6Lwrs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmd060ACgkQJNaLcl1U
-h9Bawgf7Byz6T02MG5YslfytZUJofCIUAFR4lrIs2kl6znYF0p9FwaJ00oMsRyu0
-HweVZgFLwSpSFBYXqt7q5zrAtbrilUHt4ZP7d1CGgirm610rzptxY7TYSLwJb57I
-CmWl0VPYmgPHcvvWqk9sffgfR7ANGHoq+ca+B44zCv/kE0uPUX+0rN36tVZifClY
-IaaNyf2eEYRWs0zlxEhUvhw2ETd7ClW4zDst7+sdZqgnk2Yv8UtgOK7s1H/AYrMI
-mMBFBLSK2EAVAziMhYoViVfxGJ6zvWbR7o/ZuhGU+2ZExrxhrYIngim5DcQWx2pv
-q1d3UkvD/WyFo8CP70t+vd85EdOC6A==
-=Q2Kb
------END PGP SIGNATURE-----
-
---1kvh4KE5BqJ6Lwrs--
 
