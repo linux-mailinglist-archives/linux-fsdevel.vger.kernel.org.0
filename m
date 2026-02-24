@@ -1,150 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-78262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id AOlZA8+onWnRQwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 14:34:07 +0100
+	id iPI8Fm+qnWmgQwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 14:41:03 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7278187C1D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 14:34:06 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7D71187E25
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 14:41:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id BC1423067E5E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 13:31:17 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 28F9E31AB2D4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 13:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC9A39E180;
-	Tue, 24 Feb 2026 13:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5302A39A806;
+	Tue, 24 Feb 2026 13:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PeID7xlx"
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="BkgfNWYD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46BF53815C3
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 13:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F5236CDF4
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 13:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771939848; cv=none; b=HCQ1cR9ytG219wPqvTQJEMbuvoG4F6Ri9bo5dw7EXvMGyygHK71HHvUWkAX6YG3j2v1BWbfAINpSzFdpaXowb3LXe3bmo+5lwUk4KSoJreBClHgPg9uThoRw6QoecvJoCehv+EMkLj3dWltkPsT0bAnJthY0w4KS+y61jVhRAGY=
+	t=1771940058; cv=none; b=hZNK5d9Wab8V1LeeWq1vncfu1hM6qfABC4npPHTXrXi4XC4BLRU2WZRjIpIX8VKUg7NOFQyHFbHOs0Mktux/xiFmeJSDu9dgRxdQMBiAw5Z5RfNgJBJJHiAol78tA/PemnSbi3Z4NvG2sXDw33Vzhw48to91ajb/KEg7E5qAcAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771939848; c=relaxed/simple;
-	bh=/TZ/AG5Kc0xtO9W0moZJcN0I9hdCsXW6hBm9rKTSrZk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YgdBqMk0m9e+lUSG8VwgxxaT0WK+yF96Acp5VhmGU2xA3aKqyiAClQpn5TaHqwNUf4MQLXBNVLR109d1DBoDWbh5eZczfNwR/Bws0zdxVuPQMa64p0WWpbZwgamL2Hz16Yifr4uFE2gJqYqZEiMSAJDE+FoysiBVFgxi6H0chJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PeID7xlx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1771939846;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6c20ZLI9McCTXb0oIWc48mGaBegUBJyrFiDcNdbceSQ=;
-	b=PeID7xlxn1ZOO6VqkknPSbguF74JAcAOQ8MKyeMGP5kYwwq2NNPv9tt1NBxkF1FNPd33XJ
-	4I/2Fl6ItJnmXDDzC4lxV8cjLNax8Xe6HG9VCmQfP+l4YonCDjcuWjmo+PzweyOcSrM2dS
-	2TQO8ZuLLzE4QG0WANJoxX1KXCeiT9o=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-75-EUYAjSEyMPmasDyasY9NEQ-1; Tue,
- 24 Feb 2026 08:30:44 -0500
-X-MC-Unique: EUYAjSEyMPmasDyasY9NEQ-1
-X-Mimecast-MFC-AGG-ID: EUYAjSEyMPmasDyasY9NEQ_1771939843
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AAF951800758;
-	Tue, 24 Feb 2026 13:30:42 +0000 (UTC)
-Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.45.226.43])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 968FE19560A2;
-	Tue, 24 Feb 2026 13:30:39 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
+	s=arc-20240116; t=1771940058; c=relaxed/simple;
+	bh=pbJuBwrGiFvLSeEEiP9VFTHTVlzvnp9pgTmeouYlAEE=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=G5xHv74mgow6kgN1oAYNCS0J/j9mk3QAUhqShU/nSMerQ4mG+gL96dQHJarL3PRH3WpLOoVwjNGg4yV7CywjO1kDdhsvj2KoME+38J4wBjBXOL9uB2UjXXcxsAmqMyqAuhJSqAXLYD/YoOTDYpXS6cM6H6/zLP7vdHIshNxOOd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=BkgfNWYD; arc=none smtp.client-ip=195.121.94.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
+X-KPN-MessageId: 5a32b4b3-1185-11f1-be9e-005056992ed3
+Received: from mta.kpnmail.nl (unknown [10.31.161.190])
+	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
+	id 5a32b4b3-1185-11f1-be9e-005056992ed3;
+	Tue, 24 Feb 2026 14:33:06 +0100 (CET)
+Received: from mtaoutbound.kpnmail.nl (unknown [10.128.135.190])
+	by mta.kpnmail.nl (Halon) with ESMTP
+	id 5a2fcbc4-1185-11f1-99c4-0050569977a2;
+	Tue, 24 Feb 2026 14:33:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=xs4all.nl; s=xs4all01;
+	h=content-type:mime-version:subject:message-id:to:from:date;
+	bh=aGyipz4pWmEYX0gvkICTkbhmS+Eai5y36qsPUexYHBA=;
+	b=BkgfNWYDFAd01i/lfMygeS5TZQW1PEpotQK4p2Fr01Mdst5o039/SnyUPI0vIqLYckQUwwvatFxV4
+	 4Ewot/OpvpiXIm+TR8g8D6VDV5uYklnRCIVcBkqLM5gD2DVoHIqjwTNOeHQrfOxnJWTc7af5+kXOma
+	 D3volotf2ZqQllXQodITd7+qKtuuAq1ewiACk90umSh7Oi+BaM8gT3Ow2AZAWllP41T9D3hlSLCmU2
+	 d2iAsgS2ysv94QRR5Ul15Iv6hB3ajdg9ElEa319z+uSRskUEFq+ceCJM3bAQwycmIRYbF2lYBLdZTM
+	 mUnkKx3c3w7SB6l5iRz4DGIioEslP+A==
+X-KPN-MID: 33|IA2rdwJDq5taCllBPzP4wVegZ5vJdixpi6dfJsZrtOsCRJ8dXfSs6Rh/1M7rlVr
+ g4dFbBcAzUFF62HhgPS5QYQ==
+X-CMASSUN: 33|1CBd4L86Up2sAQuKGWPuQ64lLnNDWUZ1T4ZSZXzOnnGORDxrVg/S8xOqxj/rtLD
+ ++xymAe8/+yIhrIAy6272eA==
+X-KPN-VerifiedSender: Yes
+Received: from cpxoxapps-mh03 (cpxoxapps-mh03.personalcloud.so.kpn.org [10.128.135.209])
+	by mtaoutbound.kpnmail.nl (Halon) with ESMTPSA
+	id 5a25f500-1185-11f1-b8d7-005056995d6c;
+	Tue, 24 Feb 2026 14:33:06 +0100 (CET)
+Date: Tue, 24 Feb 2026 14:33:06 +0100 (CET)
+From: Jori Koolstra <jkoolstra@xs4all.nl>
 To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org,  Jeff Layton <jlayton@kernel.org>,
-  Alexander Viro <viro@zeniv.linux.org.uk>,  Amir Goldstein
- <amir73il@gmail.com>,  Josef Bacik <josef@toxicpanda.com>,  Jan Kara
- <jack@suse.cz>,  Aleksa Sarai <cyphar@cyphar.com>,
-  linux-api@vger.kernel.org,  rudi@heitbaum.com
-Subject: Re: [PATCH 1/2] mount: add OPEN_TREE_NAMESPACE
-In-Reply-To: <20260224-erbitten-kaufleute-6f14e3072c5d@brauner> (Christian
-	Brauner's message of "Tue, 24 Feb 2026 13:05:12 +0100")
-References: <20251229-work-empty-namespace-v1-0-bfb24c7b061f@kernel.org>
-	<20251229-work-empty-namespace-v1-1-bfb24c7b061f@kernel.org>
-	<lhuecmaz8p6.fsf@oldenburg.str.redhat.com>
-	<20260224-erbitten-kaufleute-6f14e3072c5d@brauner>
-Date: Tue, 24 Feb 2026 14:30:37 +0100
-Message-ID: <lhuv7fmxo8y.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+Cc: jlayton@kernel.org, chuck.lever@oracle.com, alex.aring@gmail.com,
+	viro@zeniv.linux.org.uk, jack@suse.cz, arnd@arndb.de,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org
+Message-ID: <1215721492.1952426.1771939986592@kpc.webmail.kpnmail.nl>
+In-Reply-To: <20260224-vorfuhr-spitzen-783550d623a2@brauner>
+References: <20260223151652.582048-1-jkoolstra@xs4all.nl>
+ <20260224-vorfuhr-spitzen-783550d623a2@brauner>
+Subject: Re: [PATCH] Add support for empty path in openat and openat2
+ syscalls
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	DMARC_POLICY_ALLOW(-0.50)[xs4all.nl,reject];
+	R_DKIM_ALLOW(-0.20)[xs4all.nl:s=xs4all01];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.org,zeniv.linux.org.uk,gmail.com,toxicpanda.com,suse.cz,cyphar.com,heitbaum.com];
-	TAGGED_FROM(0.00)[bounces-78262-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
+	HAS_X_PRIO_THREE(0.00)[3];
+	FREEMAIL_CC(0.00)[kernel.org,oracle.com,gmail.com,zeniv.linux.org.uk,suse.cz,arndb.de,vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[fweimer@redhat.com,linux-fsdevel@vger.kernel.org];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[redhat.com:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	NEURAL_HAM(-0.00)[-0.998];
-	RCVD_COUNT_FIVE(0.00)[6];
-	RCPT_COUNT_SEVEN(0.00)[10];
+	TAGGED_FROM(0.00)[bounces-78263-lists,linux-fsdevel=lfdr.de];
 	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[xs4all.nl:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_FROM(0.00)[xs4all.nl];
+	RCVD_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,sourceware.org:url,oldenburg.str.redhat.com:mid]
-X-Rspamd-Queue-Id: C7278187C1D
+	FROM_NEQ_ENVFROM(0.00)[jkoolstra@xs4all.nl,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-0.999];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,kpc.webmail.kpnmail.nl:mid,xs4all.nl:dkim]
+X-Rspamd-Queue-Id: C7D71187E25
 X-Rspamd-Action: no action
 
-* Christian Brauner:
+Hi Christian,
 
-> On Tue, Feb 24, 2026 at 12:23:33PM +0100, Florian Weimer wrote:
->> * Christian Brauner:
->> 
->> > diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
->> > index 5d3f8c9e3a62..acbc22241c9c 100644
->> > --- a/include/uapi/linux/mount.h
->> > +++ b/include/uapi/linux/mount.h
->> > @@ -61,7 +61,8 @@
->> >  /*
->> >   * open_tree() flags.
->> >   */
->> > -#define OPEN_TREE_CLONE		1		/* Clone the target tree and attach the clone */
->> > +#define OPEN_TREE_CLONE		(1 << 0)	/* Clone the target tree and attach the clone */
->> 
->> This change causes pointless -Werror=undef errors in projects that have
->> settled on the old definition.
->> 
->> Reported here:
->> 
->>   Bug 33921 - Building with Linux-7.0-rc1 errors on OPEN_TREE_CLONE
->>   <https://sourceware.org/bugzilla/show_bug.cgi?id=33921>
->
-> Send a patch to change it back, please.
-> Otherwise it might take a few days until I get around to it.
+> Op 24-02-2026 10:30 CET schreef Christian Brauner <brauner@kernel.org>:
+> 
+> Out of curiosity, did you pick this taken from our uapi-group list?
+> 
+> https://github.com/uapi-group/kernel-features?tab=readme-ov-file#at_empty_path-support-for-openat-and-openat2
+> https://github.com/uapi-group/kernel-features/issues/47
+> 
+> ?
 
-Rudi, could you post a patch?
+Yes, I took the advice you gave me at FOSDEM to heart :) . I should have maybe
+mentioned that this patch is in reference to the UAPI list, but forgot that in
+the patch message and did not want to send another email about it.
 
-Thanks,
-Florian
-
+Best,
+Jori.
 
