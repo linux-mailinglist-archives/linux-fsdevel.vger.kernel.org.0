@@ -1,52 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-78227-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78228-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +D/lN4pjnWksPQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78227-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 09:38:34 +0100
+	id eBx0FQ1onWlgPQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78228-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 09:57:49 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65849183D9E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 09:38:34 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A76011841A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 09:57:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A04DC306815C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 08:36:50 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9F35331343C0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 08:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C444366DD3;
-	Tue, 24 Feb 2026 08:36:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF70736920D;
+	Tue, 24 Feb 2026 08:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZsCVfk2s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp02-ext3.udag.de (smtp02-ext3.udag.de [62.146.106.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D86233121E;
-	Tue, 24 Feb 2026 08:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.146.106.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9F7368276;
+	Tue, 24 Feb 2026 08:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771922208; cv=none; b=XRrBYQ3Rhj/2iMJOZ9s1qUvHfhBAPd99NySQ73j13nTQfdvDrOpI4ibSLOYVPAtwk+c8U4gelAXusP2rxtOO1enKu8i9EWRljwneoLOQCyL3voj1vAuPD41kzkpmCe2l87WpG1eyRw9c+AZn7UewD7hllsV8JpK91JeMelJ45iw=
+	t=1771923277; cv=none; b=Flaa4tnJ14oIpd8Ek+NdQuaRMglMb0lbetuO0jUfOP/K9woNxu9HdyxKj6yrs4XG0rQ5+sfMsS6p1Yd9OpUtxRDv32M2OYTSJPFGyuXVeKIRw3IOq2pYVIMqCeqp/ao8iZyxqjexHHPf7LM3Tn4rUO7IfMPymNZtJMCr2V2cMoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771922208; c=relaxed/simple;
-	bh=7mnOkl0qBsY0BUBWyCoFBzJO3ONHvC/fRvepJG//lvw=;
+	s=arc-20240116; t=1771923277; c=relaxed/simple;
+	bh=+fH3lSsZu9D7GVuFPuK+C/cKUuKAdkgXib0DwMXQijc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oUTKUpLFwwuy95egBZxFyM/Pyf0LaGfZo0c6qf1G/3/oB+yt/sEvnh5+0O1djNotszmxJmxDiPWR1r2jzvJ8KMDKDenh7mAAN9SMZWPjVNbEOBG6OdL4qhKJ7u0XPlA3BL7TMVdPtv0MomVo2ibPSAOMw8H4wacZGZ4b3qTiVcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de; spf=pass smtp.mailfrom=birthelmer.de; arc=none smtp.client-ip=62.146.106.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birthelmer.de
-Received: from localhost (200-143-067-156.ip-addr.inexio.net [156.67.143.200])
-	by smtp02-ext3.udag.de (Postfix) with ESMTPA id D2488E078D;
-	Tue, 24 Feb 2026 09:36:38 +0100 (CET)
-Authentication-Results: smtp02-ext3.udag.de;
-	auth=pass smtp.auth=birthelmercom-0001 smtp.mailfrom=horst@birthelmer.de
-Date: Tue, 24 Feb 2026 09:36:38 +0100
-From: Horst Birthelmer <horst@birthelmer.de>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: miklos@szeredi.hu, stable@vger.kernel.org, joannelkoong@gmail.com, 
-	bpf@vger.kernel.org, bernd@bsbernd.com, neal@gompa.dev, linux-fsdevel@vger.kernel.org, 
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 2/5] fuse: quiet down complaints in fuse_conn_limit_write
-Message-ID: <aZ1iT-KBp8Vt002k@fedora.fritz.box>
-References: <177188733084.3935219.10400570136529869673.stgit@frogsfrogsfrogs>
- <177188733154.3935219.17731267668265272256.stgit@frogsfrogsfrogs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DGKlc0ph3F5oW5CSNHeiEMZ9LITPXNqVt4REOq8N5ckl3BrgcgLwpj+Pdcclp8bi1vSH/b0HhxlfwJj6xmnuGvP1WzhdZjA13ZspejkjP3t5xJDRlBe70Yoo4x7Qe4mda4MduVTCc5Suue570iJUzMos7zqDdupQh9iC1CBhwsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZsCVfk2s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9C0CC116D0;
+	Tue, 24 Feb 2026 08:54:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771923277;
+	bh=+fH3lSsZu9D7GVuFPuK+C/cKUuKAdkgXib0DwMXQijc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZsCVfk2sawWIhzsqQ+HrMfwZN4zos8A9H7n7qfPACHlMkNV4Hcwzd1cYKnflJb9yb
+	 0O2Il81r2ZkblLeLjQDVfgzu2vomIUkIt5nDiY3GHLuaVS+nMncvRwRquAJifqnqik
+	 3F7xHXKl6mh5FxoftBRjweFjC9PXabaMB8C7QWeZrvEb0beFuSmAgI70PMj77eq9nf
+	 F0k7Ere+E3yYvMbmFVlGVVZID2IrdDSNZe4svOF/nGS3mdxQRlJsLBHa3Ckh3UHh5m
+	 Jh8P1tag8oIZmxZtqhpcrlwafOcO5UMsiWgN5+R8fuX9eNA2H5SBuIOlhzLIS67tMn
+	 X2stESgVE4syQ==
+Date: Tue, 24 Feb 2026 09:54:30 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Demi Marie Obenour <demiobenour@gmail.com>
+Cc: Alexander Mikhalitsyn <alexander@mihalicyn.com>, 
+	lsf-pc@lists.linux-foundation.org, aleksandr.mikhalitsyn@futurfusion.io, 
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, stgraber@stgraber.org, 
+	ksugihara@preferred.jp, utam0k@preferred.jp, trondmy@kernel.org, anna@kernel.org, 
+	jlayton@kernel.org, chuck.lever@oracle.com, neilb@suse.de, miklos@szeredi.hu, 
+	jack@suse.cz, amir73il@gmail.com, trapexit@spawn.link
+Subject: Re: [LSF/MM/BPF TOPIC] VFS idmappings support in NFS
+Message-ID: <20260224-bannen-waldlauf-481ad13899a9@brauner>
+References: <65a53a2d6fcc053edeed688a8c8d580c03bd6f3b.camel@mihalicyn.com>
+ <980c04e5-5685-43a2-a4fb-9d3a842205aa@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,101 +65,141 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <177188733154.3935219.17731267668265272256.stgit@frogsfrogsfrogs>
+In-Reply-To: <980c04e5-5685-43a2-a4fb-9d3a842205aa@gmail.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.36 / 15.00];
+X-Spamd-Result: default: False [2.34 / 15.00];
+	MID_END_EQ_FROM_USER_PART(4.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	DMARC_POLICY_SOFTFAIL(0.10)[birthelmer.de : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-78227-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[szeredi.hu,vger.kernel.org,gmail.com,bsbernd.com,gompa.dev];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	MISSING_XM_UA(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78228-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[mihalicyn.com,lists.linux-foundation.org,futurfusion.io,vger.kernel.org,stgraber.org,preferred.jp,kernel.org,oracle.com,suse.de,szeredi.hu,suse.cz,gmail.com,spawn.link];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-0.977];
+	NEURAL_HAM(-0.00)[-0.999];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[horst@birthelmer.de,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	R_DKIM_NA(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[9];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,ddn.com:email,fedora.fritz.box:mid]
-X-Rspamd-Queue-Id: 65849183D9E
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[gitlab.com:url,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: A76011841A6
 X-Rspamd-Action: no action
 
-On Mon, Feb 23, 2026 at 03:06:50PM -0800, Darrick J. Wong wrote:
-> From: Darrick J. Wong <djwong@kernel.org>
+On Sat, Feb 21, 2026 at 01:44:26AM -0500, Demi Marie Obenour wrote:
+> On 2/18/26 07:44, Alexander Mikhalitsyn wrote:
+> > Dear friends,
+> > 
+> > I would like to propose "VFS idmappings support in NFS" as a topic for discussion at the LSF/MM/BPF Summit.
+> > 
+> > Previously, I worked on VFS idmap support for FUSE/virtiofs [2] and cephfs [1] with support/guidance
+> > from Christian.
+> > 
+> > This experience with Cephfs & FUSE has shown that VFS idmap semantics, while being very elegant and
+> > intuitive for local filesystems, can be quite challenging to combine with network/network-like (e.g. FUSE)
+> > FSes. In case of Cephfs we had to modify its protocol (!) (see [2]) as a part of our agreement with
+> > ceph folks about the right way to support idmaps.
+> > 
+> > One obstacle here was that cephfs has some features that are not very Linux-wayish, I would say.
+> > In particular, system administrator can configure path-based UID/GID restrictions on a *server*-side (Ceph MDS).
+> > Basically, you can say "I expect UID 1000 and GID 2000 for all files under /stuff directory".
+> > The problem here is that these UID/GIDs are taken from a syscall-caller's creds (not from (struct file *)->f_cred)
+> > which makes cephfs FDs not very transferable through unix sockets. [3]
+> > 
+> > These path-based UID/GID restrictions mean that server expects client to send UID/GID with every single request,
+> > not only for those OPs where UID/GID needs to be written to the disk (mknod, mkdir, symlink, etc).
+> > VFS idmaps API is designed to prevent filesystems developers from making a mistakes when supporting FS_ALLOW_IDMAP.
+> > For example, (struct mnt_idmap *) is not passed to every single i_op, but instead to only those where it can be
+> > used legitimately. Particularly, readlink/listxattr or rmdir are not expected to use idmapping information anyhow.
+> > 
+> > We've seen very similar challenges with FUSE. Not a long time ago on Linux Containers project forum, there
+> > was a discussion about mergerfs (a popular FUSE-based filesystem) & VFS idmaps [5]. And I see that this problem
+> > of "caller UID/GID are needed everywhere" still blocks VFS idmaps adoption in some usecases.
+> > Antonio Musumeci (mergerfs maintainer) claimed that in many cases filesystems behind mergerfs may not be fully
+> > POSIX and basically, when mergerfs does IO on the underlying FSes it needs to do UID/GID switch to caller's UID/GID
+> > (taken from FUSE request header).
+> > 
+> > We don't expect NFS to be any simpler :-) I would say that supporting NFS is a final boss. It would be great
+> > to have a deep technical discussion with VFS/FSes maintainers and developers about all these challenges and
+> > make some conclusions and identify a right direction/approach to these problems. From my side, I'm going
+> > to get more familiar with high-level part of NFS (or even make PoC if time permits), identify challenges,
+> > summarize everything and prepare some slides to navigate/plan discussion.
+> > 
+> > [1] cephfs https://lore.kernel.org/linux-fsdevel/20230807132626.182101-1-aleksandr.mikhalitsyn@canonical.com
+> > [2] cephfs protocol changes https://github.com/ceph/ceph/pull/52575
+> > [3] cephfs & f_cred https://lore.kernel.org/lkml/CAEivzxeZ6fDgYMnjk21qXYz13tHqZa8rP-cZ2jdxkY0eX+dOjw@mail.gmail.com/
+> > [4] fuse/virtiofs https://lore.kernel.org/linux-fsdevel/20240903151626.264609-1-aleksandr.mikhalitsyn@canonical.com/
+> > [5]
+> > mergerfshttps://discuss.linuxcontainers.org/t/is-it-the-case-that-you-cannot-use-shift-true-for-disk-devices-where-the-source-is-a-mergerfs-mount-is-there-a-workaround/25336/11?u=amikhalitsyn
+> > 
+> > Kind regards,
+> > Alexander Mikhalitsyn @ futurfusion.io
 > 
-> gcc 15 complains about an uninitialized variable val that is passed by
-> reference into fuse_conn_limit_write:
-> 
->  control.c: In function ‘fuse_conn_congestion_threshold_write’:
->  include/asm-generic/rwonce.h:55:37: warning: ‘val’ may be used uninitialized [-Wmaybe-uninitialized]
->     55 |         *(volatile typeof(x) *)&(x) = (val);                            \
->        |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
->  include/asm-generic/rwonce.h:61:9: note: in expansion of macro ‘__WRITE_ONCE’
->     61 |         __WRITE_ONCE(x, val);                                           \
->        |         ^~~~~~~~~~~~
->  control.c:178:9: note: in expansion of macro ‘WRITE_ONCE’
->    178 |         WRITE_ONCE(fc->congestion_threshold, val);
->        |         ^~~~~~~~~~
->  control.c:166:18: note: ‘val’ was declared here
->    166 |         unsigned val;
->        |                  ^~~
-> 
-> Unfortunately there's enough macro spew involved in kstrtoul_from_user
-> that I think gcc gives up on its analysis and sprays the above warning.
-> AFAICT it's not actually a bug, but we could just zero-initialize the
-> variable to enable using -Wmaybe-uninitialized to find real problems.
-> 
-> Previously we would use some weird uninitialized_var annotation to quiet
-> down the warnings, so clearly this code has been like this for quite
-> some time.
-> 
-> Cc: <stable@vger.kernel.org> # v5.9
-> Fixes: 3f649ab728cda8 ("treewide: Remove uninitialized_var() usage")
-> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> ---
->  fs/fuse/control.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> 
-> diff --git a/fs/fuse/control.c b/fs/fuse/control.c
-> index 140bd5730d9984..073c2d8e4dfc7c 100644
-> --- a/fs/fuse/control.c
-> +++ b/fs/fuse/control.c
-> @@ -121,7 +121,7 @@ static ssize_t fuse_conn_max_background_write(struct file *file,
->  					      const char __user *buf,
->  					      size_t count, loff_t *ppos)
->  {
-> -	unsigned val;
-> +	unsigned val = 0;
->  	ssize_t ret;
->  
->  	ret = fuse_conn_limit_write(file, buf, count, ppos, &val,
-> @@ -163,7 +163,7 @@ static ssize_t fuse_conn_congestion_threshold_write(struct file *file,
->  						    const char __user *buf,
->  						    size_t count, loff_t *ppos)
->  {
-> -	unsigned val;
-> +	unsigned val = 0;
->  	struct fuse_conn *fc;
->  	ssize_t ret;
->  
-> 
-> 
+> The secure case (strong authentication) has similar problems to
+> In both cases, there is no way to store the files with the UID/GID/etc
 
-This looks good to me. Trivial fix for an annoying problem.
-Reviewed-by: Horst Birthelmer <hbirthelmer@ddn.com>
+It's easy to support idmapped mounts without user namespaces. They're
+completely decoupled from them already for that purpose so they can
+support id squashing and so on going forward. The only thing that's
+needed is to extend the api so that we can specific mappings to be used
+for a mount. That's not difficult and there's no need to adhere to any
+inherent limit on the number of mappings that user namespaces have.
+
+It's also useful indepent of all that for local filesystems that want to
+expose files with different ownership at different locations without
+getting into namespaces at all.
+
+> that the VFS says they should have.  The server (NFS) or kernel
+> (virtiofsd) simply will not (and, for security reasons, *must not*)
+> allow this.
+> 
+> I proposed a workaround for virtiofsd [1] that I will also propose
+> here: store the mapped UID and GID as a user.* xattr.  This requires
+
+xattrs as an ownership side-channel are an absolute clusterfuck. The
+kernel implementation for POSIX ACLs and filesystem capabilities that
+slap ownership information that the VFS must consume on arbitraries
+inodes should be set on fire. I've burned way too many cycles getting
+this into an even remotely acceptable shape and it still sucks to no
+end. Permission checking is a completely nightmare because we need to go
+fetch stuff from disk, cache it in a global format, then do an in-place
+translation having to parse ownership out of binary data stored
+alongside the inode.
+
+Nowever, if userspace wants to consume ownership information by storing
+arbitrary ownership information as user.* xattrs then I obviously
+couldn't care less but it won't nest, performance will suck, and it will
+be brittle to get this right imho.
+
+> no special permissions, and so it completely solves this problem.
+> It is also the only solution I know of that scales to NFS servers
+> with over 2^16 users, which might well exist.
+> 
+> The only better solution I can think of is to replace the numeric
+> UID/GID with hierarchical identifier, such as a Windows-style SID.
+> Those are much more complex, though.
+> 
+> [1]: https://gitlab.com/virtio-fs/virtiofsd/-/issues/225
+> -- 
+> Sincerely,
+> Demi Marie Obenour (she/her/hers)
+
+
+
+
+
 
