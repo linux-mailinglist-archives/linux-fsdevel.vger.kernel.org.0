@@ -1,285 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-78208-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78209-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oOfEA6XonGmNMAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78208-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:54:13 +0100
+	id fWUuJInznGk5MQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78209-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 01:40:41 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76F1D18013D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:54:12 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA7A18047B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 01:40:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 628A2301BC2B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Feb 2026 23:53:31 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 891FF3030FC2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 00:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614DD37E308;
-	Mon, 23 Feb 2026 23:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E9222A1E1;
+	Tue, 24 Feb 2026 00:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OwJVVkmN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vHOAsa6z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B19A34DCE2
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 23:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.219.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771890810; cv=pass; b=p4/rmlJl9pN626498ZiuOd03jbb15ilZP3wtp6M5J6hTvuWBVhHyDegrKnKavuKeRhuya1u/ATn2N0APoTl+eJ4SCtqLgQersL4iZQohAJgVNwr/HZY+hagdkHv29/okm6KE5nWXPyjLtVUy/f794z5gwuHTVz7EvfV87Qr6818=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771890810; c=relaxed/simple;
-	bh=P0nxApqL67Uch6bD60kpq3sEbnJY3RxaWIGADaZfTZk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gYAHjwBilQSeADYPHI70WTkVf/R5rravvL4tykr0Po0ZweHP/gVtsKqZXwrFC+sCCqd4rvW77kVI42oQuoajyGL8y+R1+mFAFZe/+fV0oF37B5BA3GaruNRyES+cUs3fMdJMi6zL/DOw+y6mV4FchIxG7UKOfqstgFC1PyjfAio=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OwJVVkmN; arc=pass smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-8972a14e27bso65162346d6.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Feb 2026 15:53:28 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771890807; cv=none;
-        d=google.com; s=arc-20240605;
-        b=ZJGCkOxVqtZ8G07SS0DCLZ2fkDXxh3BO9Db9ju/G0sAIAFDBHcrrLw64cZZyoLFZfW
-         Jdsl1NZwHjgdpxP9rMRHXXoFz0/63G4wZqTKDRcD6KKiYVR6Z25w/gABBhUsY98sTeOu
-         WSCLP9ayUY2ATjprwpqIOvk5c1j2gLj053ILDy74XjfK6pQpqpKv2LbbelN2zX8JUyMo
-         Zw0pxdEnV+YlJ/2jbkxxxobIaB6QI7q/Z8f8uSiTdUPX4eCaGbjZYEq0vcarj6PiZ2Wb
-         KqaGyXKTgXnwFnNKhdZuI9Y6HRPJzhfSqMm83+p7b4Gqg+Y6Lehi+sWjPZxRW1bMrEew
-         hWuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=WokFcgWHzHLmsBrCXZikSrtkdMiE4lGy98lwNnOtPo8=;
-        fh=WBCBnSrWe4AMJzmsq5vOFKESrdkLEgIGaGQfpQLiJXc=;
-        b=XX6ld0CtXo1xqmYdVoKYnXBe5uKzd3+ilhiTLML6qGVpYU3SNJsdJ4CV/QLaa9csNd
-         fRlagvckz9NIO2aNdty0QgFEuR6/u/vE+9L33KGBls02LowQgQwOBA/MjW7uUsD6OHd0
-         xpsQr6j/BniRC1YxzH+wDaDwdzBBH9Po1gq4+Nh04ZyrkWGzSHfNJs8a0CmIPDPt13JR
-         K52S+eF6ynBvurrkCKx190FK2Z2kTC4Lw1Jo7bxYoaonPg+T7EFrTi+fV+31+aN/Z9Bv
-         FsgAxwAuKcfgkiRtAmQhnAV+IykxQGYSzCbqS9HBwhk0PFxs4GC5xHFZ7qcDF2l3gUWE
-         R/kQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771890807; x=1772495607; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WokFcgWHzHLmsBrCXZikSrtkdMiE4lGy98lwNnOtPo8=;
-        b=OwJVVkmNugiGtz1nuvUsziMNCQKxBc8uHveu7TChG8VejRKrOifz4GlKNccboLC62P
-         7f9KOenwZ3Y/QSlqtHMV1Vu7XISnxnuoLu6R3ObT1OD0t9SIuvR9PDP1j0Rvr809+lIB
-         JESdqQ0USuron8Y4BMRP//lwdVm4RK0c51k7alYcpFhgfgR6asxxoBKEBKwaZ1Ec7Y0A
-         yj677zct2lDv4OM0rXEMNMDXXNvOjxhzProA3AtU20E9Dw7rrs6SdRXEhWyAth2Dcq4U
-         f2dg4aBbzOINebH5Qr0rJ7URWNfDwnbqD1hJTFbyz91iGuRdCg571k5uPqt97+8xUNaa
-         +Gzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771890807; x=1772495607;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=WokFcgWHzHLmsBrCXZikSrtkdMiE4lGy98lwNnOtPo8=;
-        b=OtxjRfR/w1j16KIhMwQn1zD65/BCwc5FSyBlDxgAs+ChRmXBfm3LLM7FyK7MHc59oQ
-         tPjSjmhjuEJqJYYpzElRRwL8kdnO+2tGY6L5ZQueX2me1i6z4VcbkSTwf9/7GowqYsIE
-         JYlH70Ag9wLhJ7o90NTUjGLGLV82dGMd4xsX4UgXC/GVubMvtk6FFmHQvfzk9i2JGdie
-         6RLZkdL8VGqCRevuMsAeRKScg76lb/mscL4i/KZeJukCsy8KvPVQfjj5GknYRYEGR7Q6
-         FVveDHgGX/lK3yhX11xHCXBAnuDrWSifTxzkEgKD/0ZqxkA07+7LXi5IhlwTEqUBxxsV
-         1RkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBAodGh5Fg825h5mVykBrcj2ScuR4q8XgCx0a+5zgIVuFxCphyiZwiz7//0JPqMWbRKGKSO/HSGfLx0pmL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2bjk8lV1tCpNTqGTNvklbs0wmugoS6H5RojJGCxBF3jktl1XZ
-	Ohnpho+0FLtD+efLwEkC2Gh3Eq/w3Z30xMLgCvt64HFyn1IXq8SgRVM1Fs1M2W2mVQYxw87jw5G
-	jBT+iu68mzSfE69O1QJPxtYxPOTtSVEI=
-X-Gm-Gg: ATEYQzzB/Hu7V8zCCy9CipLsu+2mrwZOKR8LUQUdZiyoP5oxqIWlB7uJQU7K2AeuTtL
-	e+LcXkfrieB1S5qEB58Ip5id9IWH5W2gglBQABOHlLDdy2uMddICWVoWWWm7UiNVqPdCw7P/9n/
-	pXlp4L4TFiwokVsoF1HbSeWBUjxw84XRgZL21hNmqceqTFLMb39ES3alSQT59O4BXnhWtQdyjJZ
-	tXngX8h8Bqe4mc7Xm8bTI+1ChijKUIHMXaHcTiJyWwGChGehsNueRfb7uhi6jamphhzt5jzuMRH
-	V8oVafJtwaZ5ZiWO
-X-Received: by 2002:ad4:5b82:0:b0:888:23a9:7b01 with SMTP id
- 6a1803df08f44-89979ecb5a0mr147580746d6.42.1771890807324; Mon, 23 Feb 2026
- 15:53:27 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91EB1367
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 00:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771893637; cv=none; b=iH7oyLZSp2+/B14z6tKMJDym8bZplYmuE1Q0MupnLerAGOtEGN5P+aTeUKEVDG/E2SYDwCcHh7lcvVt2y1JBPu/zK0SJ+zoA6oWc5QCO10g0uCDEXuUzHUhMWSDBT6vB9tTzP17aX4+vQryY9iqxZxBY3Ms4e5WbcjYOFzZrx+4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771893637; c=relaxed/simple;
+	bh=O7RPHvSlozQsT1ZKa2hmcU1xHi+cmFKY9UNuTW5qgaY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KIicAPLr2RGS6bSn0hgaMKDbt9bCzgLJ3oYMa3sttVgyv1WDx0BbR70BQuCA5HD4rpPZEBU1yh9ji+SiAaqDhg0+5EN9QxpHdWNgw4eXcbcUcMbG9ZRlggossXc54jXoYE1AUtBdXk13Brfhn2HziaCQpX307zgnQI4tt+trmuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vHOAsa6z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F5C3C116C6;
+	Tue, 24 Feb 2026 00:40:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771893636;
+	bh=O7RPHvSlozQsT1ZKa2hmcU1xHi+cmFKY9UNuTW5qgaY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=vHOAsa6zqpP9omULcTCHfr1PbeKylPJfiNrTOjyMiShfxd6msR+FJgC2DjCWUMrt4
+	 OLEPYFcn+BjM4wDETAscBPb4dw6nWvLEAkDhTloGxOpEsjsrz7sHIi7prOEL8BR5qq
+	 ZHmaByYw5f9Rkc/iTDCHpkBLkfqqV1y4ohYDhXWgJn7o/uK69NIp0Hf1/ryri/AOY3
+	 TLAuEAkBML4eouUSOv8Aol8ziTZPo7QcLFjKIoCRh6Oaz2hon+UO+ZZFVfF5YYVv1j
+	 Jr2SMsV7F1kPCbHIf6N4br1sTXHBE2ZVpUOGfrHnqQXxRIzO/V9ZaSsdQJQo8kTIOH
+	 5KpGSdE/0yYOw==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH RFC 0/3] move_mount: expand MOVE_MOUNT_BENEATH
+Date: Tue, 24 Feb 2026 01:40:25 +0100
+Message-Id: <20260224-work-mount-beneath-rootfs-v1-0-8c58bf08488f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260219003911.344478-1-joannelkoong@gmail.com>
- <20260219003911.344478-2-joannelkoong@gmail.com> <20260219024534.GN6467@frogsfrogsfrogs>
- <aZaQO0jQaZXakwOA@casper.infradead.org> <20260220234521.GA11069@frogsfrogsfrogs>
-In-Reply-To: <20260220234521.GA11069@frogsfrogsfrogs>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Mon, 23 Feb 2026 15:53:15 -0800
-X-Gm-Features: AaiRm51UQQsM1jyQjP5zhNU4OCXR8lVzGFmCWxdxikJ_mHq5yCo_jnEuiO0Mgqc
-Message-ID: <CAJnrk1Zk1hHCoC4xaY_KT0m_04CQ=pO6j3e1tGrdj7LTf5BHsA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] iomap: don't mark folio uptodate if read IO has
- bytes pending
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>, brauner@kernel.org, wegao@suse.com, 
-	sashal@kernel.org, hch@infradead.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHrznGkC/yWMQQ7CIBBFr9LM2jGFGFC3Jh7ArXEBOBU0ghloN
+ Wl6d0GX7+X/N0MmDpRh383ANIUcUqwgVh04b+KNMFwrg+yl6qUU+E78wGcaY0FLkUzxyCmVIeN
+ OqM2gtNVCbqH+X0xD+PzaZzgdD3D5yzzaO7nSqm1mTSa0bKLzTU163SM7AcvyBU/oNuKdAAAA
+X-Change-ID: 20260221-work-mount-beneath-rootfs-9164f67b7128
+To: linux-fsdevel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ Linus Torvalds <torvalds@linux-foundation.org>, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-47773
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3613; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=O7RPHvSlozQsT1ZKa2hmcU1xHi+cmFKY9UNuTW5qgaY=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTO+dz0fL+Vkeb327sX9609unSpzbcPvxmy4hZa/Nurk
+ v83XqBjcUcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBEfiox/Pd6/yr/blicyu7g
+ BcXCOQt2dGWvfFDMoXZrs7g9iyXjpwWMDJ/i2BYmJB2V+LBNbZHUzW3by+w/1LVPZLiQaXBg5sn
+ +iewA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78208-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78209-lists,linux-fsdevel=lfdr.de];
+	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	MISSING_XM_UA(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	RCPT_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
+	NEURAL_HAM(-0.00)[-0.999];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 76F1D18013D
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 2DA7A18047B
 X-Rspamd-Action: no action
 
-On Fri, Feb 20, 2026 at 3:45=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
- wrote:
->
-> On Thu, Feb 19, 2026 at 04:23:23AM +0000, Matthew Wilcox wrote:
-> > On Wed, Feb 18, 2026 at 06:45:34PM -0800, Darrick J. Wong wrote:
-> > > On Wed, Feb 18, 2026 at 04:39:11PM -0800, Joanne Koong wrote:
-> > > > If a folio has ifs metadata attached to it and the folio is partial=
-ly
-> > > > read in through an async IO helper with the rest of it then being r=
-ead
-> > > > in through post-EOF zeroing or as inline data, and the helper
-> > > > successfully finishes the read first, then post-EOF zeroing / readi=
-ng
-> > > > inline will mark the folio as uptodate in iomap_set_range_uptodate(=
-).
-> > > >
-> > > > This is a problem because when the read completion path later calls
-> > > > iomap_read_end(), it will call folio_end_read(), which sets the upt=
-odate
-> > > > bit using XOR semantics. Calling folio_end_read() on a folio that w=
-as
-> > > > already marked uptodate clears the uptodate bit.
-> > >
-> > > Aha, I wondered if that xor thing was going to come back to bite us.
-> >
-> > This isn't "the xor thing has come back to bite us".  This is "the ioma=
-p
-> > code is now too complicated and I cannot figure out how to explain to
-> > Joanne that there's really a simple way to do this".
-> >
-> > I'm going to have to set aside my current projects and redo the iomap
-> > readahead/read_folio code myself, aren't I?
->
-> <willy and I had a chat; this is a clumsy non-AI summary of it>
->
-> I started looking at folio read state management in iomap, and made a
-> few observations that (I hope) match what willy's grumpy about.
->
-> There are three ways that iomap can be reading into the pagecache:
-> a) async ->readahead,
-> b) synchronous ->read_folio (page faults), and
+I'm too tired now to keep refining this but I think it's in good enough
+shape for review.
 
-b) is async as well. The code for b) and a) are exactly the same (the
-logic in iomap_read_folio_iter())
+Allow MOVE_MOUNT_BENEATH to target the caller's rootfs, allowing to
+switch out the rootfs without pivot_root(2).
 
-> c) synchronous ->read_folio_range (pagecache write).
->
-> (Note that (b) can call a different ->read_folio_range than (c), though
-> all implementations seem to have the same function)
->
-> All three of these IO paths share the behavior that they try to fill out
-> the folio's contents and set the corresponding folio/ifs uptodate bits
-> if that succeeds.  Folio contents can come from anywhere, whether it's:
->
-> i) zeroing memory,
-> ii) copying from an inlinedata buffer, or
-> iii) asynchronously fetching the contents from somewhere
->
-> In the case of (c) above, if the read fails then we fail the write, and
-> if the read succeeds then we start copying to the pagecache.
->
-> However, (a) and (b) have this additional read_bytes_pending field in
-> the ifs that implements some extra tracking.  AFAICT the purpose of this
-> field is to ensure that we don't call folio_end_read prematurely if
-> there's an async read in progress.  This can happen if iomap_iter
-> returns a negative errno on a partially processed folio, I think?
->
-> read_bytes_pending is initialized to the folio_size() at the start of a
-> read and subtracted from when parts of the folio are supplied, whether
-> that's synchronous zeroing or asynchronous read ioend completion.  When
+The traditional approach to switching the rootfs involves pivot_root(2)
+or a chroot_fs_refs()-based mechanism that atomically updates fs->root
+for all tasks sharing the same fs_struct. This has consequences for
+fork(), unshare(CLONE_FS), and setns().
 
-Synchronous zeroing does not update read_bytes_pending, only async
-read completions do.
+This series instead decomposes root-switching into individually atomic,
+locally-scoped steps:
 
-> the field reaches zero, we can then call folio_end_read().
->
-> But then there are twists, like the fact that we only call
-> iomap_read_init() to set read_bytes_pending if we decide to do an
-> asynchronous read.  Or that iomap_read_end and iomap_finish_folio_read
-> have awfully similar code.  I think in the case of (i) and (ii) we also
-> don't touch read_pending_bytes at all, and merely set the uptodate bits?
->
-> This is confusing to me.  It would be more straightforward (I think) if
-> we just did it for all cases instead of adding more conditionals.  IOWs,
-> how hard would it be to consolidate the read code so that there's one
-> function that iomap calls when it has filled out part of a folio.  Is
-> that possible, even though we shouldn't be calling folio_end_read during
-> a pagecache write?
+    fd_tree = open_tree(-EBADF, "/newroot",
+                        OPEN_TREE_CLONE | OPEN_TREE_CLOEXEC);
+    fchdir(fd_tree);
+    move_mount(fd_tree, "", AT_FDCWD, "/",
+               MOVE_MOUNT_BENEATH | MOVE_MOUNT_F_EMPTY_PATH);
+    chroot(".");
+    umount2(".", MNT_DETACH);
 
-imo, I don't think the synchronous ->read_folio_range() for buffered
-writes should be consolidated with the async read logic. If we have
-the synchronous write path setting read_bytes_pending, that adds extra
-overhead with having to acquire/release the spinlock for every range
-read in. It also makes the handling more complicated (eg now having to
-differentiate whether the folio was read in for a read vs. a write).
-Synchronous ->read_folio_range() for buffered writes is extremely
-simple and self-contained right now and I think it should be kept that
-way.
+Since each step only modifies the caller's own state, the
+fork/unshare/setns races are eliminated by design.
 
-For async reads, I agree that there are a bunch of different edge
-cases that arise from i) ii) and iii), and from the fact that a folio
-could be composed of a mixture of i) ii) and iii).
+A key step to making this possible is to remove the locked mount
+restriction. Originally MOVE_MOUNT_BENEATH doesn't support mounting
+beneath a mount that is locked. The locked mount protects the underlying
+mount from being revealed. This is a core mechanism of
+unshare(CLONE_NEWUSER | CLONE_NEWNS). The mounts in the new mount
+namespace become locked. That effectively makes the new mount table
+useless as the caller cannot ever get rid of any of the mounts no matter
+how useless they are.
 
-The motivation for adding read_bytes_pending was so we could know
-which async read finishes last. eg this example scenario: read a 64k
-folio where the first and last page are not uptodate but everything in
-between is
-* ->read_folio_range() for 0 to 4k
-* ->read_folio_range() for 60k to 64k
-These two async read calls may be two different I/O requests that
-complete at different times but only the last finisher should call
-folio_end_read().
+We can lift this restriction though. We simply transfer the locked
+property from the top mount to the mount beneath. This works because
+what we care about is to protect the underlying mount aka the parent.
+The mount mounted between the parent and the top mount takes over the
+job of protecting the parent mount from the top mount mount. This leaves
+us free to remove the locked property from the top mount which can
+consequently be unmounted:
 
-I don't think having the zeroing and inline read paths also
-manipulating read_bytes_pending helps here. This was discussed a bit
-in [1] but I think it runs into other edge cases / race conditions [2]
-that would need to be accounted for and makes some paths more
-suboptimal (eg unnecessary ifs allocations and spinlock acquires). But
-maybe I'm missing something here and there is a better approach for
-doing this?
+  unshare(CLONE_NEWUSER | CLONE_NEWNS)
 
-Thanks,
-Joanne
+and we inherit a clone of procfs on /proc then currently we cannot
+unmount it as:
 
-[1] https://lore.kernel.org/linux-fsdevel/CAJnrk1YcuhKwbZLo-11=3DumcTzH_OJ+=
-bdwZq5=3DXjeJo8gb9e5ig@mail.gmail.com/T/#md09648082a96122ec1e541993872e0c43=
-da5105f
-[2] https://lore.kernel.org/linux-fsdevel/CAJnrk1YcuhKwbZLo-11=3DumcTzH_OJ+=
-bdwZq5=3DXjeJo8gb9e5ig@mail.gmail.com/T/#mdc49b649378798fa9e850c9c6914c8c6a=
-f5e2895
+  umount -l /proc
 
->
-> At the end of the day, however, there's a bug in Linus' tree and we need
-> to fix it, so Joanne's patch is a sufficient bandaid until we can go
-> clean this up.
->
-> --D
+will fail with EINVAL because the procfs mount is locked.
+
+After this series we can now do:
+
+  mount --beneath -t tmpfs tmpfs /proc
+  umount -l /proc
+
+after which a tmpfs mount has been placed beneath the procfs mount. The
+tmpfs mount has become locked and the procfs mount has become unlocked.
+
+This means you can safely modify an inherited mount table after
+unprivileged namespace creation.
+
+Afterwards we simply make it possible to move a mount beneath the
+rootfs allowing to upgrade the rootfs.
+
+Removing the locked restriction makes this very useful for containers
+created with unshare(CLONE_NEWUSER | CLONE_NEWNS) to reshuffle an
+inherited mount table safely and MOVE_MOUNT_BENEATH makes it possible to
+switch out the rootfs instead of using the costly pivot_root(2).
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Christian Brauner (3):
+      move_mount: transfer MNT_LOCKED
+      move_mount: allow MOVE_MOUNT_BENEATH on the rootfs
+      selftests/filesystems: add MOVE_MOUNT_BENEATH rootfs tests
+
+ fs/namespace.c                                     |  37 +-
+ tools/testing/selftests/Makefile                   |   1 +
+ .../selftests/filesystems/move_mount/.gitignore    |   2 +
+ .../selftests/filesystems/move_mount/Makefile      |  10 +
+ .../filesystems/move_mount/move_mount_test.c       | 492 +++++++++++++++++++++
+ 5 files changed, 523 insertions(+), 19 deletions(-)
+---
+base-commit: 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f
+change-id: 20260221-work-mount-beneath-rootfs-9164f67b7128
+
 
