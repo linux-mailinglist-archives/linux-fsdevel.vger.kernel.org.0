@@ -1,68 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-78277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78278-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QE+KOyfBnWnzRgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 16:17:59 +0100
+	id YCb2FOzCnWmsRwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78278-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 16:25:32 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47BEF188E7B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 16:17:59 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C42188F55
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 16:25:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 79FEC3014C0D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 15:16:50 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 861D4304BE81
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 15:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCFB03803C5;
-	Tue, 24 Feb 2026 15:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E527F3A1E81;
+	Tue, 24 Feb 2026 15:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZWJMr0f7"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="U997oiXo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D681A2C0B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 15:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6903A1E91
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 15:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771946209; cv=none; b=FqrpI39OCjHU6LseBuU122VR3LTJx3eRqfb3m8zHXyGw1+JGjHe2pfyQLKpm+wr47+E3De6K6sp+T/urOHEWhUMq2PvGuwK2U+8p+2E4EW0MpnKczZTXazlbwDtr60vtMZoZxkhApsYgfYhZDbe+enzqJAk6dRYdqHZDzI8h758=
+	t=1771946720; cv=none; b=BzOZrn+VP2Q499yjEeLEyrMtZkb27a2/ARKpV1r0lWrBtdygff44w+ezcVCh3XP/4I2dBOorLuzTOiNhMBwfT1QixQrUWyucQ0cVYBoEdENzMWKDhIaB4AwHeIOz9Vl2wsxoS6uG42GntgI8wR7zHH2+eW+5eGNy0KBWxA7BEV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771946209; c=relaxed/simple;
-	bh=Mxlg1ANq24WxEc2AYt3PC8nX+3sAtUtqtW/el81V+DA=;
+	s=arc-20240116; t=1771946720; c=relaxed/simple;
+	bh=y1Td8ktXwoJSPrRKZ0fP2h6lcagQl30y0VXis8wxycM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JIcc5duiMEvPDdu/XcfWSPHBglqv6xffxRRjrifWL9QK9L0V1U9tUuydIrY2esMmNjjS4KXOSE2JrCRPlTgGRHG1Ph/bDcfgpERNpA93LjOMJsqd3bv5GnH0XdLRqW7nSLKt4MPSUN8B97swPTAKpxAERDRqfNwbtkO2/thQLfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZWJMr0f7; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Bdq4r65KWAK9EOSSvggqu+cTC0+EuaDlx8bobu/peho=; b=ZWJMr0f71ySZ4JX+aGbNxEXss2
-	fyOmO/mb1RrxXlkIVxle3W3vKKBc1NcVDNudBwWIuODrtPu+R02yzE2ajoNp3ZkGkzd1xCn9WsgEv
-	ifs4GtAbBu745BuPyqFpLdCrup2j5VM6P+v9nD1E+PKOnw41oGd9gr2N9B4mRSCI/VYpzIYY57cDy
-	8xqH/3UFoSwxcIHmlzzTEniiyd3O+yiUiaZO2jFB/QKHzfpHvRlYXVkpgrF59Sr02NQQrfymT7G7+
-	1BkFn/gcSCNBz2Yjv+X0AqfxAjiJKVHw4msUcZi1aHsvtRcxXhgb9Mi/PsOe76iWt3vvd4gdnu/Pg
-	fP5t5EBw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vuu9X-00000002IZk-1F5L;
-	Tue, 24 Feb 2026 15:16:47 +0000
-Date: Tue, 24 Feb 2026 07:16:47 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>, brauner@kernel.org,
-	wegao@suse.com, sashal@kernel.org, hch@infradead.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] iomap: don't mark folio uptodate if read IO has
- bytes pending
-Message-ID: <aZ3A39jztKdUmWoT@infradead.org>
-References: <20260219003911.344478-1-joannelkoong@gmail.com>
- <20260219003911.344478-2-joannelkoong@gmail.com>
- <20260219024534.GN6467@frogsfrogsfrogs>
- <aZaQO0jQaZXakwOA@casper.infradead.org>
- <20260220234521.GA11069@frogsfrogsfrogs>
- <CAJnrk1Zk1hHCoC4xaY_KT0m_04CQ=pO6j3e1tGrdj7LTf5BHsA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZZIQ61sQBnrRn7Y3UDDHVbg8xZ0IFeIBrQSQul/oR913M0ahZOsLK38v287we55F7Ss4VwIIsPtSnkQuNsMvYeY+bXJjaObbgHtzAheTAkgSpECC9LBhQGK6bDkAHYEiHEJvQqgG86W590y905VrFg/Z2vIMoX0u3jB8NT8utiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=U997oiXo; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from macsyma.thunk.org (pool-173-48-111-182.bstnma.fios.verizon.net [173.48.111.182])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 61OFOqSx010759
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Feb 2026 10:24:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1771946694; bh=xDSAnXoB9ejN/bLi5BfMqVBcp3Wg5UbG7Pg4difgCEo=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=U997oiXoilh/FS+HP/sc9+AhvTSPm0sBVkyHybp7gSa3iwBR/F0vHIr9gMl1tvktL
+	 geUmnMAjAkBOiWEs0omBnR23bwxfTcKdEFoorNTnzCi2IANakgSzfbDF1IZtx1UAXD
+	 F463L33LgFV/nTPaE90lpwOv4t5pO1N3CMCqURjK5IyTc0SZGaQocu9PBIirS2jT2B
+	 38WkzQSpSshgvUurqCVerpzXVYQ7WTTmiaoofZbkU+I979He89eQrXvo8HWtaqBM7X
+	 9A7bqjC2LHLFwYamCJdTBTMqvXLae972b2/zlSPQXb+TTvh45vFdLkHokDvoOLYd8n
+	 XbqE2fwiJvdUw==
+Received: by macsyma.thunk.org (Postfix, from userid 15806)
+	id EDB4759B421E; Tue, 24 Feb 2026 10:24:51 -0500 (EST)
+Date: Tue, 24 Feb 2026 10:24:51 -0500
+From: "Theodore Tso" <tytso@mit.edu>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] fsverity: add dependency on 64K or smaller pages
+Message-ID: <20260224152451.GB16846@macsyma-wired.lan>
+References: <20260221204525.30426-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -71,70 +69,53 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJnrk1Zk1hHCoC4xaY_KT0m_04CQ=pO6j3e1tGrdj7LTf5BHsA@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20260221204525.30426-1-ebiggers@kernel.org>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
+	DMARC_POLICY_ALLOW(-0.50)[mit.edu,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_DKIM_ALLOW(-0.20)[mit.edu:s=outgoing];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78277-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[infradead.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	MISSING_XM_UA(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@infradead.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[mit.edu:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78278-lists,linux-fsdevel=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,infradead.org:mid,infradead.org:dkim]
-X-Rspamd-Queue-Id: 47BEF188E7B
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[tytso@mit.edu,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	RCVD_COUNT_FIVE(0.00)[5];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	NEURAL_HAM(-0.00)[-1.000];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,lst.de:email]
+X-Rspamd-Queue-Id: 67C42188F55
 X-Rspamd-Action: no action
 
-On Mon, Feb 23, 2026 at 03:53:15PM -0800, Joanne Koong wrote:
-> > There are three ways that iomap can be reading into the pagecache:
-> > a) async ->readahead,
-> > b) synchronous ->read_folio (page faults), and
+On Sat, Feb 21, 2026 at 12:45:25PM -0800, Eric Biggers wrote:
+> Currently, all filesystems that support fsverity (ext4, f2fs, and btrfs)
+> cache the Merkle tree in the pagecache at a 64K aligned offset after the
+> end of the file data.  This offset needs to be a multiple of the page
+> size, which is guaranteed only when the page size is 64K or smaller.
 > 
-> b) is async as well. The code for b) and a) are exactly the same (the
-> logic in iomap_read_folio_iter())
-
-Yes.
-
-> > This is confusing to me.  It would be more straightforward (I think) if
-> > we just did it for all cases instead of adding more conditionals.  IOWs,
-> > how hard would it be to consolidate the read code so that there's one
-> > function that iomap calls when it has filled out part of a folio.  Is
-> > that possible, even though we shouldn't be calling folio_end_read during
-> > a pagecache write?
+> 64K was chosen to be the "largest reasonable page size".  But it isn't
+> the largest *possible* page size: the hexagon and powerpc ports of Linux
+> support 256K pages, though that configuration is rarely used.
 > 
-> imo, I don't think the synchronous ->read_folio_range() for buffered
-> writes should be consolidated with the async read logic.
+> For now, just disable support for FS_VERITY in these odd configurations
+> to ensure it isn't used in cases where it would have incorrect behavior.
+> 
+> Fixes: 671e67b47e9f ("fs-verity: add Kconfig and the helper functions for hashing")
+> Reported-by: Christoph Hellwig <hch@lst.de>
+> Closes: https://lore.kernel.org/r/20260119063349.GA643@lst.de
+> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 
-Yes.  I've been thinking about that on and off, but unfortunately so far
-I've not come up with a good idea how to merge the code.  Doing so would
-be very useful for many reasons.
-
-The problem with that isn't really async vs sync; ->read_folio clearly
-shows you you turn underlying asynchronous logic into a synchronous call.
-It's really about the range logic, where the writer preparation might
-want to only read the head and the tail segments of a folio.
-
-But if we can merge that into the main implementation and have a single
-core implementation we'd be much better off.
-
-Anyone looking for a "little" project? :)
+Reviewed-by: Theodore Ts'o <tytso@mit.edu>
 
