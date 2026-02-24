@@ -1,140 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-78234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78233-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id eNf/CjFznWmAQAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 10:45:21 +0100
+	id aGQQLZJznWmAQAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78233-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 10:46:58 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAC3F184DF6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 10:45:20 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D795F184E5B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 10:46:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C0D3830F9E47
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 09:44:25 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 9F482303D4FB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 09:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2246336D507;
-	Tue, 24 Feb 2026 09:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C641E36D4FB;
+	Tue, 24 Feb 2026 09:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=synology.com header.i=@synology.com header.b="Ehr8TQsq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b0nWSWjG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.synology.com (mail.synology.com [211.23.38.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B0236D51A;
-	Tue, 24 Feb 2026 09:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.23.38.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2728136C593
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 09:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771926264; cv=none; b=CLdaq3ovcBrmb1nVFiFXe/SGvRrl0oGtzaR/FK2sdM8lWMDoZWwnXmdQuNAb5vQOo+49Mq/CYs6w2uPyZF2cAH9VGnIj7caui7JeQGY36GOax65TV8FJQN+6tDEIaO9ISqoTrDdMTN2XacFgaGmeKTVOXJaqkRp26UuCecIF0Z8=
+	t=1771926194; cv=none; b=hvvvazNsHRvLDx0gT0kSAJI7g3dRaJXhhGTfj96zmKhOSDwGXl5OmTcYiw30/9JAh36ho1jBxElypgF7l08/dgBbtnSCbOQvEqejOl7XfO55Dt48OppENGO/WojsUoqVqlgD9+EHk+h5DGFNUKGD84lMIBv4N/RI7uPvyibpP5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771926264; c=relaxed/simple;
-	bh=OmPphWIswswzkb8ygwgtW6VZUdzTMmZz7ARHmGWQNwI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=LdgABJmt56dZUo2YLt3TeHgKCrcP2CaEMovp4OD+kukXQThsbR+V/2whD1+8rcVtkRVVNnJiBHRg+iPzC3CA1TEwocVibguK5xUyCKvVIqAdCMUfIFQnNiPrLWdmaUu23SMaJjU+IFPL+SowehfJMQ/ZfuNq0y5UjrWfJbvq7do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=synology.com; spf=pass smtp.mailfrom=synology.com; dkim=pass (1024-bit key) header.d=synology.com header.i=@synology.com header.b=Ehr8TQsq; arc=none smtp.client-ip=211.23.38.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=synology.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=synology.com
-From: Chia-Ming Chang <chiamingc@synology.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synology.com; s=123;
-	t=1771925697; bh=OmPphWIswswzkb8ygwgtW6VZUdzTMmZz7ARHmGWQNwI=;
-	h=From:To:Cc:Subject:Date;
-	b=Ehr8TQsqdHuX5XfMp3dWLA2nvxJCM8zgTT2LbIkd3ou4gcEqqWDIrBHxWNryXiE1M
-	 J0NLsXEDyzgfIcUQvqvpnEhjJh6n9AhqswFgFHbbbWB8KBUBlVZkH7pNPtpN1PnYTc
-	 0Tvro0YBq3fZf/wFBkxyhlpIE+5WpMPSUCvvwcDE=
-To: jack@suse.cz
-Cc: amir73il@gmail.com,
-	serge@hallyn.com,
-	ebiederm@xmission.com,
-	n.borisov.lkml@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chia-Ming Chang <chiamingc@synology.com>,
-	stable@vger.kernel.org,
-	robbieko <robbieko@synology.com>
-Subject: [PATCH] inotify: fix watch count leak when fsnotify_add_inode_mark_locked() fails
-Date: Tue, 24 Feb 2026 17:34:42 +0800
-Message-Id: <20260224093442.3076294-1-chiamingc@synology.com>
+	s=arc-20240116; t=1771926194; c=relaxed/simple;
+	bh=VbSSEvqYaIRsDaq6BXt//7gJ4j08UhZh1G8iYfMmN7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jIEooYCMZ6fWYUveHdE3OAqnhNpSOJ2jtFIFkGa9iwxS3UfRvnQ/IYbb8xUBUsBZUhO0O+bnM05O99iF/uQj9lllKCZf2dJSQwrZLgpumj5fvANlyoeyRsQw0MOv62Mliy4incahrriJ+iKP2NOEVQ1zs169JkIPtDJTDexQykE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b0nWSWjG; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-483a2338616so33886485e9.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 01:43:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1771926191; x=1772530991; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IWa3PZrQfAyHU/Z5llWO4iuXhqNdy8SPoogWplvEUCw=;
+        b=b0nWSWjGuDR0ursGxRMFd07ibqI+X30Q4rgeBwvqS+LG1Cy0xpnOIDsglUkqzHOjoJ
+         xdVLyVYQhWDNaVU34GKmti7U+JB5QeTdXKDPTPx7N0ZNp+Wk6TUHh+fLTAbIT5hgbzKr
+         HtYVn9bmT4Rz/1q1Us/Ft5lvhQVhTaSFec+gQljxh6jbdAxAqZWa9mDD6XRUIVIsggw9
+         wQGFXSzTssRu93zW5O1Q2ggDaFIxPf9s3EghX+mzQkTLmp4rDN6yBCqJx1iTLhI7Yaud
+         Fvf0fD0hE52jRcpppBHf/KArfR/9lNiKlT8jpSx4TutvSycF03IneY6OlBKck6BsSwab
+         ZN8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771926191; x=1772530991;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=IWa3PZrQfAyHU/Z5llWO4iuXhqNdy8SPoogWplvEUCw=;
+        b=bev6APlGhEuP3Q/bPmXs77z4GDEM44yex+oa1Nd/sgZIN7D6i/eEjySnayenunPNAh
+         sa7JWKwBLajtCWQ+vPKTnCiXglati3OMT2hoOXL5v/oNjzSu1gaP1MusDy3+Okn0+5gc
+         bSRWqa6Yed/5ZWg6SkfgOp8AeuQmeWO8SHg28emDKniI38FOD9nvOyTBPiYnknDnOXJm
+         X0JUNwmVi6YjtUST4wU7oT50s2850yDkRtLETtJqAzkeHx/Bg/AcapBNuOVeajZGPwRH
+         4ODrGtIH4UsMXvUva75QYHfppeNy604OVMVW15uT1LzpVtF8hw2RovDb2mLzKL87ZxzP
+         u27Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUwEynUoKyPbXIE0q1g/vE29JPjzndvxGKqoIak5AS6rs3wobYGwAtq+pwyZOo2yjOXCfr2NC8awstsZQyo@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzaWYkU6kzQIVf/YF8Aq42gsDYUD1yPwbG4CRscKwh42kZTJt5
+	vDXW+k52gJJIMIw1PPlExV5hsL6FXwT9cwoxUK7CROcuXxGcIT96SDkJ
+X-Gm-Gg: AZuq6aLykSLiCyOkqZJ4NtpVnFhkbukNqkgh0NoxQRBxA5tDOGl1bIL0vvXNnLeLhun
+	6+A8+UdBGrv75SHdDiO8YLjj+MB6Zaxwo+cjebKDn9rRm4tAS5BZ7YHFV6g0kqhoJBaDWT+GRA7
+	ORx1GpsTZxPKKrcSpQlmqAFrvFlyddWAdFYz1VIM1gYTeSi9xZ6pXwun8lNrhEjiFcWNPWNyLUK
+	c/Uqbm1tDfVOD4V1wVV9QBupl3us0Y5+edsoCmm8NDg9RYJw5jalfa90hDYzCzq/HArc5PTPwij
+	LADyEEeUAAsf8EQ+hpfgUona6h/MWhP/ISSResUW2geMB7hwoadOQu07a851QtvTqhV8ttCmYdt
+	imLpseBy5sFtbgy46KllNDkHR0826sVuPtFFjnVIfF0lYnNDub63YKWzpmG9uRVaKgmTsrQ9cSl
+	DlnJKYPKqAnkdzET2Tw16u34usp21mJD82yWxW+c56UdYPX+vxvytQaSo7PdNw4VOU
+X-Received: by 2002:a05:600c:548e:b0:47a:935f:61a0 with SMTP id 5b1f17b1804b1-483a95643b3mr201212155e9.0.1771926191065;
+        Tue, 24 Feb 2026 01:43:11 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483b81986cdsm29112075e9.0.2026.02.24.01.43.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Feb 2026 01:43:10 -0800 (PST)
+Date: Tue, 24 Feb 2026 09:43:09 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>, Linus
+ Torvalds <torvalds@linux-foundation.org>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: pidfd && O_RDWR
+Message-ID: <20260224094309.591e7db1@pumpkin>
+In-Reply-To: <20260223-ziemlich-gemalt-0900475140e5@brauner>
+References: <20260223-work-pidfs-autoreap-v4-0-e393c08c09d1@kernel.org>
+	<20260223-work-pidfs-autoreap-v4-2-e393c08c09d1@kernel.org>
+	<aZx2dlV9tJaL5gDG@redhat.com>
+	<aZx3ctUf-ZyF-Krc@redhat.com>
+	<aZyI6Aht747CTLiC@redhat.com>
+	<aZyonv349Qy92yNA@redhat.com>
+	<20260223-ziemlich-gemalt-0900475140e5@brauner>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Synology-Virus-Status: no
-X-Synology-MCP-Status: no
-X-Synology-Spam-Status: score=0, required 6, WHITELIST_FROM_ADDRESS 0
-X-Synology-Spam-Flag: no
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.84 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[synology.com,quarantine];
-	R_DKIM_ALLOW(-0.20)[synology.com:s=123];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[gmail.com,hallyn.com,xmission.com,vger.kernel.org,synology.com];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78234-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[3];
-	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[chiamingc@synology.com,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[synology.com:+];
-	NEURAL_HAM(-0.00)[-0.999];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[10];
+	TAGGED_FROM(0.00)[bounces-78233-lists,linux-fsdevel=lfdr.de];
 	TO_DN_SOME(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: AAC3F184DF6
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[davidlaightlinux@gmail.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	NEURAL_HAM(-0.00)[-1.000];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: D795F184E5B
 X-Rspamd-Action: no action
 
-When fsnotify_add_inode_mark_locked() fails in inotify_new_watch(),
-the error path calls inotify_remove_from_idr() but does not call
-dec_inotify_watches() to undo the preceding inc_inotify_watches().
-This leaks a watch count, and repeated failures can exhaust the
-max_user_watches limit with -ENOSPC even when no watches are active.
+On Mon, 23 Feb 2026 22:39:22 +0100
+Christian Brauner <brauner@kernel.org> wrote:
 
-Prior to commit 1cce1eea0aff ("inotify: Convert to using per-namespace
-limits"), the watch count was incremented after fsnotify_add_mark_locked()
-succeeded, so this path was not affected. The conversion moved
-inc_inotify_watches() before the mark insertion without adding the
-corresponding rollback.
+> On Mon, Feb 23, 2026 at 08:21:02PM +0100, Oleg Nesterov wrote:
+> > On 02/23, Oleg Nesterov wrote:  
+> > >
+> > > pidfd_prepare() does pidfs_alloc_file(pid, flags | O_RDWR) and "| O_RDWR"
+> > > makes no sense because pidfs_alloc_file() itself does
+> > >
+> > > 	flags |= O_RDWR;
+> > >
+> > > I was going to send the trivial cleanup, but why a pidfs file needs
+> > > O_RDWR/FMODE_WRITE ?
+> > >
+> > > Actually the same question about some anon_inode_getfile_fmode(O_RDWR)
+> > > users, for example signalfd.c.  
+> > 
+> > perhaps an accidental legacy from 628ff7c1d8d8 ("anonfd: Allow making anon
+> > files read-only") ?  
+> 
+> It was always a possibility that we would support some form of
+> write-like operation eventually. And we have support for setting trusted
+> extended attributes on pidfds for some time now (trusted xattrs require
+> global cap_sys_admin).
+> 
 
-Add the missing dec_inotify_watches() call in the error path.
+Isn't 'sending a signal' a write-like operation?
 
-Fixes: 1cce1eea0aff ("inotify: Convert to using per-namespace limits")
-Cc: stable@vger.kernel.org
-Signed-off-by: Chia-Ming Chang <chiamingc@synology.com>
-Signed-off-by: robbieko <robbieko@synology.com>
----
- fs/notify/inotify/inotify_user.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-index b372fb2c56bd..0d813c52ff9c 100644
---- a/fs/notify/inotify/inotify_user.c
-+++ b/fs/notify/inotify/inotify_user.c
-@@ -621,6 +621,7 @@ static int inotify_new_watch(struct fsnotify_group *group,
- 	if (ret) {
- 		/* we failed to get on the inode, get off the idr */
- 		inotify_remove_from_idr(group, tmp_i_mark);
-+		dec_inotify_watches(group->inotify_data.ucounts);
- 		goto out_err;
- 	}
- 
--- 
-2.34.1
-
-
-Disclaimer: The contents of this e-mail message and any attachments are confidential and are intended solely for addressee. The information may also be legally privileged. This transmission is sent in trust, for the sole purpose of delivery to the intended recipient. If you have received this transmission in error, any use, reproduction or dissemination of this transmission is strictly prohibited. If you are not the intended recipient, please immediately notify the sender by reply e-mail or phone and delete this message and its attachments, if any.
+	David
 
