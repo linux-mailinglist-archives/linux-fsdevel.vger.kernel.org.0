@@ -1,53 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-78246-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78250-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YFlOOU2KnWnBQQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78246-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 12:23:57 +0100
+	id 4DwmHBOKnWnBQQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78250-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 12:22:59 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B39C1862AD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 12:23:57 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB79B186243
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 12:22:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 553A531EBC3C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 11:19:24 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id CD75C30723CC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 11:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F32C37D104;
-	Tue, 24 Feb 2026 11:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9138B37C11E;
+	Tue, 24 Feb 2026 11:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tFUvOs9g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HdqzLYlm"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF7137C0E6;
-	Tue, 24 Feb 2026 11:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C5F37B3F1;
+	Tue, 24 Feb 2026 11:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771931961; cv=none; b=VvAyoXtfGRpwCnJRQ99NzYh1AoHZb9k09xJtDS2syqzS2U+Z5xboPX1I2iExIKzHljHhW2iyCwpa4ZvS+TK+I/Wx+Wktyj6qe426IrSwj4xnGhGHCWDXyEy5kocCNedmqoaf53+fx8hynd1WcAIpTfFSQussfEle42biiOjbMpE=
+	t=1771932000; cv=none; b=LiS3yTA435sRCp8M4ggbR4sE1VH/X0WtrtYNDAph/Xoo1HXwTs4WHQ5O8204P/e0jmT8CysindzEp4492WIqs+yWIt9OWZvCAt6/NT7KFL2Ux68t+wh7IUfJLKm+PbHwdUwJxUMU0yfKn1EP4lIbA1C6Yfsr8hhrscH/GM7gE7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771931961; c=relaxed/simple;
-	bh=fnHuKwO7YKsiBEzcJ4WSpUwI9pJ1E1um3MRGk7ZK9EA=;
+	s=arc-20240116; t=1771932000; c=relaxed/simple;
+	bh=Cv+ro0rgKKTNndu1LXkpKQFAsbhVDrLwsjlr+g88uog=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pdUednw5llYB2X4zs9gUpZjFds1Ek9dilpJhpmSeyqzftsPg6ws/KvwbpIFfEpYpxLBTzC91o1Y1LGcq0RkXJzrHUWOH4bn2wW5t5wnbhBXUNRm7UtNfA6JHmRiVYsaDSyZgYp5fEFZZTUw5iyz/nY11pNrip1ylFNkiViYv6uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tFUvOs9g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3475C2BCB2;
-	Tue, 24 Feb 2026 11:19:11 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=IuS8V5LqCf3GOYBfBY8xfJHt9i3AP5wMH/xSK8FVMEHzoxIUuLUvSOkMst72+P+tZu7yv2tEHZOpK0fMeEXFPDBL0eumg/5VJLcVqx049uZX3R31n9cTWLtW7rdbU38tRkQ8mfszAGEGKI7Zlr/zr4LHhCy5IXxgb3Spf3WRa8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HdqzLYlm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58D8BC116D0;
+	Tue, 24 Feb 2026 11:19:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771931961;
-	bh=fnHuKwO7YKsiBEzcJ4WSpUwI9pJ1E1um3MRGk7ZK9EA=;
+	s=k20201202; t=1771931999;
+	bh=Cv+ro0rgKKTNndu1LXkpKQFAsbhVDrLwsjlr+g88uog=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=tFUvOs9gyzy7Ba7ekjjypN2kAfFvNhFK6Ym27l7W170CaSEHNkLV7YYAlGJ5DY17V
-	 owZdqMEDEr5KFkPWDencHzpnD6natiZrnAmC/FLAi4Z9Lz9zfRJbd1sxhstw3Hl1qy
-	 u3TmQQtb1p0mU4qoPVMfcuGSdi/6NzTWthDZ8/25H8RJLWbJ/6pT30wRAygqhzSOXc
-	 POq8PYVHC3gY7LnkY5G1YFdreQr6i4ir+kQ0NPvmhP8liRwLK0+oaicE1UhUTsYKpW
-	 VCO6Y+I1ha5MuldT5BNfYVtKlVWFlcwhaRF0Ial+V7749Z0vgjvOQ47+NKhdP80WIe
-	 oTCMnGg6JKtEQ==
+	b=HdqzLYlmRb3TVe2hLfyaAeT0QbXfs78M3TRb3E0NDn89wwEK4fRY5WmX/jrbvQDL1
+	 5efYY+T10vBU1kIR5uTfVO3tiDrUgzG3MA9Lrwtrwz4HKPEbbPB8bDxQMstX90wLNe
+	 7/caSsxNgBpZvhZeSictKOSRKfaRaTFAzeDwXGE31oo+tEmVF9c+kKOlzDasQD/O/g
+	 Df5fKMfSAXTsGZ4+ZBGt1VgcrMx5lTp1WYHN1ovyzgjrqrFdWR6h/nW9T9Pwkz4Uzs
+	 +Ypjx0M41BhOmxFpplST2zMxs7sA+EpkwwuD0XjHB8jvF8sgOKiS/IjVU2yAdOvgPp
+	 l2F1QjiQtEcHA==
 From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Tue, 24 Feb 2026 12:17:59 +0100
-Subject: [PATCH v16 04/10] rust: Add missing SAFETY documentation for
- `ARef` example
+Date: Tue, 24 Feb 2026 12:18:00 +0100
+Subject: [PATCH v16 05/10] rust: aref: update formatting of use statements
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260224-unique-ref-v16-4-c21afcb118d3@kernel.org>
+Message-Id: <20260224-unique-ref-v16-5-c21afcb118d3@kernel.org>
 References: <20260224-unique-ref-v16-0-c21afcb118d3@kernel.org>
 In-Reply-To: <20260224-unique-ref-v16-0-c21afcb118d3@kernel.org>
 To: Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
@@ -83,23 +82,22 @@ Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
  linux-block@vger.kernel.org, linux-security-module@vger.kernel.org, 
  dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, 
  linux-mm@kvack.org, linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, 
- Andreas Hindborg <a.hindborg@kernel.org>, 
- Oliver Mangold <oliver.mangold@pm.me>
+ Andreas Hindborg <a.hindborg@kernel.org>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1545; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=hSYEjFGzugCDI1W/rekaqf2DA13xvb84HHFFaBF1/aI=;
- b=owEBbQKS/ZANAwAKAeG4Gj55KGN3AcsmYgBpnYj39reO0a7D2MQbsv0XqEQumCgi03QYrtHI/
- ZYn1cQw0UOJAjMEAAEKAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaZ2I9wAKCRDhuBo+eShj
- d918D/0dNadTGYW4J53gaqBX2Pq2oWBZGwS79C0CdceTypFO5fLqCVqxcqXPCooqVOZ11C6YMVf
- nMG3oUX/TxD3GSgCMT32HQCYprMppcd53Pt4ne9SNDH001yDQwxMLHtNTKcpRyRCyvPkSn61Ot7
- vx4Rx/e7RRI1FkWXDubxT9H0137dXGskODt5t9Asv4KyYOrxv3ulMIDkJLQowoKQOF5s92uqIoJ
- xNbZr7Cbui2WcPA3z4Dv8hBkHETBbOiI9ZWyX/vzBhf9FVBTLhRq15q63fsDd2YSOhGsYcE0Kaw
- cxbfsyFqBCEmYKLrPq0/LCZBV2szgX041hacce/RW4TaXwcLNA8OqKFfDi4nyc9aWdzP0ZDo52u
- Y3S3xvgTa0o/JNmM0+RHewjsPyAuXGTZ9qDhKv4T0ZBVi3WBBJRL8tMGAz4NNmBm2xCWAeGh5JN
- JLBXN0Mzj+uh0wtXz1/YIW41PFoS8isp3E0P6XlRIQOe1/Bh6TvPXSeAk5mKDYpSyP8aQRAOoqM
- aIbdQNjcoDaMVPrUz6IKm/FAi9LvWEI55GbXkoXGV+VkvL5MamXv9diHQKLqnMGH8yQ2QuG9zaK
- PpvAvvEKSA2iT7kc50MybsG6wBDt9DwvNXXuJgSCkdHVO8ISQKjqIjAonQP04V0i/0C64vwIodc
- nSi+sCMbQh0moHA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=753; i=a.hindborg@kernel.org;
+ h=from:subject:message-id; bh=Cv+ro0rgKKTNndu1LXkpKQFAsbhVDrLwsjlr+g88uog=;
+ b=owEBbQKS/ZANAwAKAeG4Gj55KGN3AcsmYgBpnYj3SgJinL4mzNCGJB/VLOiKjYIotpZTAeQ5d
+ eiujQ/x9mmJAjMEAAEKAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaZ2I9wAKCRDhuBo+eShj
+ d3ysD/0XSb30S75V7XwmTKiRWjUL3YRT0n+cqNFGirejC2hDTAlc45ifHqn5BqDHPpxlN4259sn
+ JL858hlbzJzoatv7LAvF11urCZjNWN6J+hdE6QOW4BHuyJ2yLNgGV676GOzDcToOmfPOKBOgNav
+ tClWhpadwI3oyrs+v8v+kuwlOCEl+P2GCkpjQ6T8UsDk36ZDMF37vBtR1JG1J/hUUx0ZWQzewXq
+ rUs0v6+QsxeaIe0GKCi4tT5p7avyJU1e7T0WAorLYzLb4jidXod3lnSQxQqZosDciGhCkn2iUpf
+ Kp2xH+AWuSEyVLUdMOUp6pAc4hS3QfB05dKeQCbTXd7XTaF98QhLuW9F1R1JDwk5lzrl/n6ifHW
+ a4iHIRVLfU6EleuG6f5MBh8/SKyj+faoS9mKgJbkfoD4kW8Hr8YRBrKrsFqsDE/2lKCzUudOupA
+ oFpnOowIQqCm7iXRyVGnIxaKDMd+HqJ6KhuH1QJDojEgMZsLHZrpLcQYKAETyk0MOR2xhCmSmpN
+ OMxoqfGwnO8Xwzk7fNHWAXezkISwJ6wFPmkG4Wb2vz6E0QPkHEtAjA6pNZwjtmarcSBnlX3axhb
+ h1srotfFPhfGHOeu86lBShAiJD4EDSb9IoWPjgEh4imYv7anzzgS1wA5qJtX6rSLm9DxpJHzFfy
+ Pqz7QVN5g1wyAIA==
 X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
  fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 X-Rspamd-Server: lfdr
@@ -108,68 +106,57 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78246-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78250-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_TO(0.00)[kernel.org,garyguo.net,protonmail.com,google.com,umich.edu,linuxfoundation.org,intel.com,paul-moore.com,gmail.com,ffwll.ch,zeniv.linux.org.uk,suse.cz,collabora.com,oracle.com,ti.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	RCPT_COUNT_TWELVE(0.00)[43];
+	RCPT_COUNT_TWELVE(0.00)[42];
 	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
+	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[a.hindborg@kernel.org,linux-fsdevel@vger.kernel.org];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[pm.me:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,collabora.com:email]
-X-Rspamd-Queue-Id: 4B39C1862AD
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: BB79B186243
 X-Rspamd-Action: no action
 
-From: Oliver Mangold <oliver.mangold@pm.me>
+Update formatting if use statements in preparation for next commit.
 
-SAFETY comment in rustdoc example was just 'TODO'. Fixed.
-
-Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-Co-developed-by: Andreas Hindborg <a.hindborg@kernel.org>
 Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 ---
- rust/kernel/sync/aref.rs | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ rust/kernel/sync/aref.rs | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/rust/kernel/sync/aref.rs b/rust/kernel/sync/aref.rs
-index 61caddfd89619..76deab0cb225e 100644
+index 76deab0cb225e..8c23662a7e6a1 100644
 --- a/rust/kernel/sync/aref.rs
 +++ b/rust/kernel/sync/aref.rs
-@@ -134,7 +134,9 @@ pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
-     ///
-     /// struct Empty {}
-     ///
--    /// # // SAFETY: TODO.
-+    /// // SAFETY: The `RefCounted` implementation for `Empty` does not count references and never
-+    /// // frees the underlying object. Thus we can act as owning an increment on the refcount for
-+    /// // the object that we pass to the newly created `ARef`.
-     /// unsafe impl RefCounted for Empty {
-     ///     fn inc_ref(&self) {}
-     ///     unsafe fn dec_ref(_obj: NonNull<Self>) {}
-@@ -142,7 +144,7 @@ pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
-     ///
-     /// let mut data = Empty {};
-     /// let ptr = NonNull::<Empty>::new(&mut data).unwrap();
--    /// # // SAFETY: TODO.
-+    /// // SAFETY: We keep `data` around longer than the `ARef`.
-     /// let data_ref: ARef<Empty> = unsafe { ARef::from_raw(ptr) };
-     /// let raw_ptr: NonNull<Empty> = ARef::into_raw(data_ref);
-     ///
+@@ -17,7 +17,12 @@
+ //! [`Arc`]: crate::sync::Arc
+ //! [`Arc<T>`]: crate::sync::Arc
+ 
+-use core::{marker::PhantomData, mem::ManuallyDrop, ops::Deref, ptr::NonNull};
++use core::{
++    marker::PhantomData,
++    mem::ManuallyDrop,
++    ops::Deref,
++    ptr::NonNull, //
++};
+ 
+ /// Types that are internally reference counted.
+ ///
 
 -- 
 2.51.2
