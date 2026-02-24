@@ -1,149 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-78264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id MEYDJ9apnWmgQwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 14:38:30 +0100
+	id KHgKN86qnWmgQwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 14:42:38 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AF55187D73
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 14:38:30 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 420B0187E70
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 14:42:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 503713086A30
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 13:36:33 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 427153025D1F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 13:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F5639E162;
-	Tue, 24 Feb 2026 13:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE65639E19D;
+	Tue, 24 Feb 2026 13:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="NzfOE5Xy"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="NGlk9KXQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.184])
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D22039E166
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 13:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A75839C625;
+	Tue, 24 Feb 2026 13:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771940170; cv=none; b=ZhyakChlEx+edh+lemHR0AS0xr2wpkvPACHG99G1RZbGy7/eCJA9CFp6kKmLeiRu1D8qXoBf+w7fcdkZoVRy/WSO+sAAW2Mcvv8gkrQzJAhp3H7EZy4mqGdwpHQwvYjG7zXeJmZ0C+oJvZMpDNOs9cq5jm1I+ZUdtDdkBADk5lo=
+	t=1771940256; cv=none; b=UxDxzIdItQaPokqyDCIq+yXcmbAq+yuhgfywz5Xx4CYib3w9VfZCuBbE5Muk9JFN+2xLU/kiNECcKQd7qBlP3YVdZs1h33vHuE1q05y9VgbsVfEU9ww5C1wCv8JCkcRQ7+EGalqKj75ECzGZ272NhIspXJBbMUWO6BMjmyMussU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771940170; c=relaxed/simple;
-	bh=OoD7JAHwm9O36mk6PbNskGpkXMgV9cyxrrozT+uNL2g=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=F6lHdQTxKYfz+gF/aVGY7gqutRfEJT5jqIvCNwy5AE6+QKTc2JbB3F/wKrjWCvmF0/FjDMOWbKTtvr6/35JTYCgLDCk5DTUlZXvXJFyfgpBJEk4NS1f8kfhfs5t+il6Xw/XoCNCyYcXkLGslZOMTXm1AN/qUzdAfLJljN60eu8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=NzfOE5Xy; arc=none smtp.client-ip=195.121.94.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
-X-KPN-MessageId: 9e560ea5-1185-11f1-afd4-005056994fde
-Received: from mta.kpnmail.nl (unknown [10.31.161.188])
-	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
-	id 9e560ea5-1185-11f1-afd4-005056994fde;
-	Tue, 24 Feb 2026 14:35:01 +0100 (CET)
-Received: from mtaoutbound.kpnmail.nl (unknown [10.128.135.189])
-	by mta.kpnmail.nl (Halon) with ESMTP
-	id 9e54fa9c-1185-11f1-80e7-00505699693e;
-	Tue, 24 Feb 2026 14:35:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=xs4all.nl; s=xs4all01;
-	h=content-type:mime-version:subject:message-id:to:from:date;
-	bh=MGMbcjG9yWINyKUjmmh5Y/Q4xHGot+ypOWnbV7Xk/xg=;
-	b=NzfOE5Xy+wCDQ+63wDZc5o3gsbOH7qHgGDutKD0sar2SBB6Q+MocUVxZ9geVtFkML0sRg9Q0+u964
-	 sc1ubeycxv/ZoLdLJ+pnoisDJG8z+2pXKmnxEJXaAZksAn5MYE9e2ewIczLhDwV1gfmiheRNseufan
-	 oUGfCghLISATELfbmFWlfzRmpyvALjECh+TJSHhRdPE4qKP7xPFLJqTQ4bHH6Dtx1QR6TzUOrgilKF
-	 P71RfQpbLXxKjroOyBWxCfxl8BwI+WxKygPIYoPDF9E0V0F2z7a2axQ01q6tnLQ0MMbuNh+cVDFvuv
-	 t8fjTG7Il1Dfdlgkd8qVi2+w35fRtxQ==
-X-KPN-MID: 33|+3gTJu8PmtJ2GJE3YqX4nz+uwXyydx9ulTKgQuTw87z7vFgOOy3f58t66cMB0D2
- gN4XUHMjAM4OjEZO8eqN7aIRl9SrZA1aQGTpz5vveSgA=
-X-CMASSUN: 33|xHrH2hb1Q/0iV1uxKpkYGgHDBJwIPuU/+H5UoCx1OC5tVfBjHmPkUzqP2O15MFV
- BlFoQfIlDUIGwba4xKLB9pw==
-X-KPN-VerifiedSender: Yes
-Received: from cpxoxapps-mh03 (cpxoxapps-mh03.personalcloud.so.kpn.org [10.128.135.209])
-	by mtaoutbound.kpnmail.nl (Halon) with ESMTPSA
-	id 9e453f50-1185-11f1-94b1-00505699eff2;
-	Tue, 24 Feb 2026 14:35:00 +0100 (CET)
-Date: Tue, 24 Feb 2026 14:35:00 +0100 (CET)
-From: Jori Koolstra <jkoolstra@xs4all.nl>
-To: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>
-Cc: chuck.lever@oracle.com, alex.aring@gmail.com, viro@zeniv.linux.org.uk,
-	jack@suse.cz, arnd@arndb.de, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Message-ID: <695828658.1952887.1771940100883@kpc.webmail.kpnmail.nl>
-In-Reply-To: <20260224-karotten-wegnimmt-79410ef99aeb@brauner>
-References: <20260223151652.582048-1-jkoolstra@xs4all.nl>
- <44a2111e33631d78aded73e4b79908db6237227f.camel@kernel.org>
- <20260224-karotten-wegnimmt-79410ef99aeb@brauner>
-Subject: Re: [PATCH] Add support for empty path in openat and openat2
- syscalls
+	s=arc-20240116; t=1771940256; c=relaxed/simple;
+	bh=N+y9fema4fxMIXCGy9yuAezozfWEywSX0IbLhPWbQXk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RaW2SjJiLYJlmEbnrskF1Ml0wacLf0prF/WOOsXhIx7uhSbCdDn0tVq6ekCGiFMWNFBMMp7Qnh2DvtmybTTXtj5UH5bwzWektkxPD7MI6Hg0+5/u9ECxCYlSpKewWUBA6ZBrB2LMInMbUVFifibhZTtxHiLYkgksjDTOvL9ctEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=NGlk9KXQ; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1771940252;
+	bh=N+y9fema4fxMIXCGy9yuAezozfWEywSX0IbLhPWbQXk=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=NGlk9KXQNPaoBvbjaF6D5At679PxdxNFUxH7x9mNGOShwMMH8lmGNd1cOx20OC7Ob
+	 08ABzVn8Fb4pPl+yaBi6SgsLuCcJgcK0O6QQz9O7BTly4IE47dMUasgXnBXxa1jIUJ
+	 IjUSIe2pGLbSTOuEkRPpsvBUMgk2icZB57FiKIrk=
+Received: from [IPv6:2601:5c4:4300:d341::a774] (unknown [IPv6:2601:5c4:4300:d341::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 8BB401C033A;
+	Tue, 24 Feb 2026 08:37:32 -0500 (EST)
+Message-ID: <72f731b8153106fd32ee991da10f847a3a8d768a.camel@HansenPartnership.com>
+Subject: Re: LSF/MM/BPF: 2026: Call for Proposals
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+ linux-mm@kvack.org, linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
+  linux-scsi@vger.kernel.org, linux-nvme@lists.infradead.org,
+ bpf@vger.kernel.org,  lwn@lwn.net
+Cc: lsf-pc@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Date: Tue, 24 Feb 2026 08:37:31 -0500
+In-Reply-To: <20260224-sangen-aufatmen-06ba16719f33@brauner>
+References: <20260110-lsfmm-2026-cfp-ae970765d60e@brauner>
+	 <20260119-bagger-desaster-e11c27458c49@brauner>
+	 <20260129-beidseitig-unwohl-9ae543e9f9f5@brauner>
+	 <20260216-ruhelosigkeit-umlegen-548e2a107686@brauner>
+	 <20260224-sangen-aufatmen-06ba16719f33@brauner>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[xs4all.nl,reject];
-	R_DKIM_ALLOW(-0.20)[xs4all.nl:s=xs4all01];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[hansenpartnership.com,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[hansenpartnership.com:s=20151216];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	HAS_X_PRIO_THREE(0.00)[3];
-	FREEMAIL_CC(0.00)[oracle.com,gmail.com,zeniv.linux.org.uk,suse.cz,arndb.de,vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78265-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78264-lists,linux-fsdevel=lfdr.de];
-	TO_DN_SOME(0.00)[];
+	DKIM_TRACE(0.00)[hansenpartnership.com:+];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[xs4all.nl:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_FROM(0.00)[xs4all.nl];
-	RCVD_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jkoolstra@xs4all.nl,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[James.Bottomley@HansenPartnership.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	RCPT_COUNT_SEVEN(0.00)[11];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[xs4all.nl:dkim,kpc.webmail.kpnmail.nl:mid,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 3AF55187D73
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,hansenpartnership.com:dkim,linuxfoundation.org:url,linuxfoundation.org:email,HansenPartnership.com:mid]
+X-Rspamd-Queue-Id: 420B0187E70
 X-Rspamd-Action: no action
 
+On Tue, 2026-02-24 at 10:53 +0100, Christian Brauner wrote:
+> > Don't forget to pester^wask^wremind your respective organizations
+> > to sponsor LSF/MM/BPF 2026! If it helps, you can tell them that
+> > we're considering renaming it LSF/MM/BPF/AI.
+>=20
+> I have just looked at the sponsorship site for LSF/MM/BPF/AI again
+> and we all really need to go out and go steal some of that AI funding
+> money and funnel it into one of the conferences that really drives
+> development of the operating system that drives the compute for all
+> of this.
+>=20
+> Please go and remind your organizations to sponsor. They should know
+> how to get in touch with the Linux Foundation. Just going by the
+> sponsorship page we're missing a bunch of large organizations that we
+> would appreciate if they decided to pitch in. :)
 
-> Op 24-02-2026 11:10 CET schreef Christian Brauner <brauner@kernel.org>:
-> 
->  
-> On Mon, Feb 23, 2026 at 10:28:24AM -0500, Jeff Layton wrote:
-> > On Mon, 2026-02-23 at 16:16 +0100, Jori Koolstra wrote:
-> > > To get an operable version of an O_PATH file descriptors, it is possible
-> > > to use openat(fd, ".", O_DIRECTORY) for directories, but other files
-> > > currently require going through open("/proc/<pid>/fd/<nr>") which
-> > > depends on a functioning procfs.
-> > > 
-> > > This patch adds the O_EMPTY_PATH flag to openat and openat2. If passed
-> > > LOOKUP_EMPTY is set at path resolve time.
-> > > 
-> > 
-> > This sounds valuable, but there was recent discussion around the
-> > O_REGULAR flag that said that we shouldn't be adding new flags to older
-> > syscalls [1]. Should this only be an OPENAT2_* flag instead?
-> > 
-> > [1]: https://lore.kernel.org/linux-fsdevel/20260129-siebzehn-adler-efe74ff8f1a9@brauner/
-> 
-> I do like restricting it to openat2() as well.
+Just on this point, at least for Linux Plumbers Conference, we've found
+that increasingly OSPOs (which usually hold the LF contacts) are
+aligned with Marketing organizations and don't see as much value in
+sponsoring pure engineering events (like LSF and LPC).  We've thus
+started getting our money from the Engineering organizations themselves
+(where you are all better placed to wield influence).  To convince your
+engineering management chain (who may never have done this before) you
+need to articulate the value (it's the place where Linux features
+you're working on get presented, discussed and decided so a good
+showing by your engineers can drastically shorten the time to
+acceptance of something, or actually set direction better than a
+mailing list discussion, which provides more roadmap certainty for VPs)
+and provide the details, so the sponsor prospectus is here:
 
-So would you want to filter the O_EMPTY_PATH flag from openat(), or maybe add
-a RESOLVE_EMPTY flag to the resolve options?
+http://events.linuxfoundation.org/sponsor-lsfmm-bp-f26
 
-Thanks,
-Jori.
+You have to go high enough in your organization to find someone with an
+actual budget, which can be a bit daunting, so if you need outside
+help, the PC (lsf-pc@lists.linuxfoundation.org) will be able to help
+articulate the value once you've found the person to convince.
+
+If you manage to convince them to sponsor, the address to request a
+contract and a PO is
+
+sponsorships@linuxfoundation.org
+
+Regards,
+
+James
+
 
