@@ -1,61 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-78271-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78272-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id mJMzN6+2nWlyRQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78271-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 15:33:19 +0100
+	id MKtnF7a2nWlyRQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78272-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 15:33:26 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CD16188673
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 15:33:19 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9D53188681
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 15:33:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id E5381306AF49
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 14:31:38 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id EFBB330470B7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Feb 2026 14:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263CF3806A5;
-	Tue, 24 Feb 2026 14:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFFC39B4A5;
+	Tue, 24 Feb 2026 14:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KryYQSna"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxV065U2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CE01DE894;
-	Tue, 24 Feb 2026 14:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2948405C;
+	Tue, 24 Feb 2026 14:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771943494; cv=none; b=Un1E62Yfque03+eGZZ6SOStRChAdI/UlD+YAl48N4YMQgUetHl04jWhQz7UZS3ELYwby1cn3zOa31H6CJ/XBGaKILiPg6PorMZ1plQy1+XufDi/Ay6cxVnpwN7VvTX2HR42Icn94pkwVNhJZa3gAv2B9MbVLnRO0NmDhHt7W9mU=
+	t=1771943599; cv=none; b=M2Lzn4x0e07A9wfEocfcuxxYwGHS8jeprMNvN/R9OoORdwmklhMvn387YiCr40nllKOo/Hv7c0/sBqZ5KRT8pNgh2EyqOD5Q1buTqy0Nsk609FbzVl2ix1xEgeIWjo4CF4bTLKtMLCeixoyetb6w1ipL3aUZ5iE+in0VYwANPas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771943494; c=relaxed/simple;
-	bh=/bd114QHkC3A2lk/V0zjOM3mgCNoj5ks7ZlnedEGf0o=;
+	s=arc-20240116; t=1771943599; c=relaxed/simple;
+	bh=GCvt8CSMBX2Qiv35I5lQiTRee1Kb/Fn2qrghMvy0YrI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aXVBNdnRawhKYUtv2OxSn4ZEOnNBAMJq8G5mGBNNnrwlZjI8LeV2GJ16pn5VfX7r1Y12KDVHak2PIQqahjD8V0EbyQ0Oh9QlgD6uTJKB6P1TXI8m2zbYGE/Q5ExNPICJlWMA1RXCEqvk60LlAwwWW7ZckeHav//6iXOfcPWPu4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KryYQSna; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDF9AC116D0;
-	Tue, 24 Feb 2026 14:31:31 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=DzoVVPSBi8SYhhGigeXWQ+XyXF6wl86+lXSxYHU2FbIIudPPLHtFQWMjc+tnCciWwtrOEOrZg5iQHjgEaVYguUPjdTbie6WDwkxhW5GCL/ZaxpKOowlZF/2cYNt1Sfm77ONZ4lBKp4+ZkotQWHhb6IO4gGmxzALvc6clf72h4S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxV065U2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06330C116D0;
+	Tue, 24 Feb 2026 14:33:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771943494;
-	bh=/bd114QHkC3A2lk/V0zjOM3mgCNoj5ks7ZlnedEGf0o=;
+	s=k20201202; t=1771943598;
+	bh=GCvt8CSMBX2Qiv35I5lQiTRee1Kb/Fn2qrghMvy0YrI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KryYQSnasbEt23Cyz4aYQsuaS1HKeuiqyRG/58RWhyDichRA3mvQ9vvIZOfOdBOn+
-	 3nOD7omh0HwWUhmQWG7tbCfIbrc4rpY4/+KYhTnoCnPbE+UzjHx5EbHtlH7wtlzQU0
-	 k7xmuZQbOAEwVqpgFJFCfbQ2tpH/0IseTEG8KO5VlWTT7hQA9WRNXWKG2akosAITBm
-	 eZGgsChyGPjVR8lh8KRwpoCrjGoJ+r23WJZ1lD2ys2CCNnSatp+cb6FnoJtQLNqD+S
-	 bcd67BTU1GGdLqyjrZXjl9XpXfBF7iyAPmQgg6x+sHBUPlje0ajyiLUYZ021AFa9Qz
-	 95uQOFXKbPcpQ==
-Date: Tue, 24 Feb 2026 15:31:29 +0100
+	b=rxV065U2S9Sxtu8JdY1REylYwHLXFrlSGxuQHktKntLnjOZHwsoFDY07FEQ+v420+
+	 C1vvKWN/niTtgk/49T5I2osc8VorDfsggJDLuP2XPOhJrhb5XxYO/Fy62PtyPdNjJ8
+	 4kl/ebS3eWmKjm5q/3EHK4NOuUyALo1KS9sYkRSLgcjjoMCxVuHjYqjCp1xJp9EWjJ
+	 qqrLaQ2S8LuKJsSq/zPgi/MiTqMMY331oDTRIdBASSrWd1GRK9c0h4LVfzVckuwd69
+	 8xKlJCFQYGQ4cBOaeBIze6K2v+FEYmt2uR4zvJFPPv+m+wv8BcjEwiRW7hksxDVUtY
+	 3mw3TW7bMoDFw==
+Date: Tue, 24 Feb 2026 15:33:13 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Jori Koolstra <jkoolstra@xs4all.nl>
-Cc: Jeff Layton <jlayton@kernel.org>, chuck.lever@oracle.com, 
-	alex.aring@gmail.com, viro@zeniv.linux.org.uk, jack@suse.cz, arnd@arndb.de, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH] Add support for empty path in openat and openat2 syscalls
-Message-ID: <20260224-einquartieren-lahmen-aa7e0203f917@brauner>
-References: <20260223151652.582048-1-jkoolstra@xs4all.nl>
- <44a2111e33631d78aded73e4b79908db6237227f.camel@kernel.org>
- <20260224-karotten-wegnimmt-79410ef99aeb@brauner>
- <695828658.1952887.1771940100883@kpc.webmail.kpnmail.nl>
+To: Florian Weimer <fweimer@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Amir Goldstein <amir73il@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Jan Kara <jack@suse.cz>, Aleksa Sarai <cyphar@cyphar.com>, 
+	linux-api@vger.kernel.org, rudi@heitbaum.com
+Subject: Re: [PATCH 1/2] mount: add OPEN_TREE_NAMESPACE
+Message-ID: <20260224-kandidat-wohltat-ae8fb7a57738@brauner>
+References: <20251229-work-empty-namespace-v1-0-bfb24c7b061f@kernel.org>
+ <20251229-work-empty-namespace-v1-1-bfb24c7b061f@kernel.org>
+ <lhuecmaz8p6.fsf@oldenburg.str.redhat.com>
+ <20260224-erbitten-kaufleute-6f14e3072c5d@brauner>
+ <lhuv7fmxo8y.fsf@oldenburg.str.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,71 +66,71 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <695828658.1952887.1771940100883@kpc.webmail.kpnmail.nl>
+In-Reply-To: <lhuv7fmxo8y.fsf@oldenburg.str.redhat.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [3.84 / 15.00];
+X-Spamd-Result: default: False [2.34 / 15.00];
 	MID_END_EQ_FROM_USER_PART(4.00)[];
-	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-78272-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.org,zeniv.linux.org.uk,gmail.com,toxicpanda.com,suse.cz,cyphar.com,heitbaum.com];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78271-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_TO(0.00)[xs4all.nl];
-	FREEMAIL_CC(0.00)[kernel.org,oracle.com,gmail.com,zeniv.linux.org.uk,suse.cz,arndb.de,vger.kernel.org];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.936];
+	NEURAL_HAM(-0.00)[-0.989];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCPT_COUNT_SEVEN(0.00)[10];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 8CD16188673
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,sourceware.org:url]
+X-Rspamd-Queue-Id: C9D53188681
 X-Rspamd-Action: no action
 
-On Tue, Feb 24, 2026 at 02:35:00PM +0100, Jori Koolstra wrote:
+On Tue, Feb 24, 2026 at 02:30:37PM +0100, Florian Weimer wrote:
+> * Christian Brauner:
 > 
-> > Op 24-02-2026 11:10 CET schreef Christian Brauner <brauner@kernel.org>:
-> > 
-> >  
-> > On Mon, Feb 23, 2026 at 10:28:24AM -0500, Jeff Layton wrote:
-> > > On Mon, 2026-02-23 at 16:16 +0100, Jori Koolstra wrote:
-> > > > To get an operable version of an O_PATH file descriptors, it is possible
-> > > > to use openat(fd, ".", O_DIRECTORY) for directories, but other files
-> > > > currently require going through open("/proc/<pid>/fd/<nr>") which
-> > > > depends on a functioning procfs.
-> > > > 
-> > > > This patch adds the O_EMPTY_PATH flag to openat and openat2. If passed
-> > > > LOOKUP_EMPTY is set at path resolve time.
-> > > > 
-> > > 
-> > > This sounds valuable, but there was recent discussion around the
-> > > O_REGULAR flag that said that we shouldn't be adding new flags to older
-> > > syscalls [1]. Should this only be an OPENAT2_* flag instead?
-> > > 
-> > > [1]: https://lore.kernel.org/linux-fsdevel/20260129-siebzehn-adler-efe74ff8f1a9@brauner/
-> > 
-> > I do like restricting it to openat2() as well.
+> > On Tue, Feb 24, 2026 at 12:23:33PM +0100, Florian Weimer wrote:
+> >> * Christian Brauner:
+> >> 
+> >> > diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+> >> > index 5d3f8c9e3a62..acbc22241c9c 100644
+> >> > --- a/include/uapi/linux/mount.h
+> >> > +++ b/include/uapi/linux/mount.h
+> >> > @@ -61,7 +61,8 @@
+> >> >  /*
+> >> >   * open_tree() flags.
+> >> >   */
+> >> > -#define OPEN_TREE_CLONE		1		/* Clone the target tree and attach the clone */
+> >> > +#define OPEN_TREE_CLONE		(1 << 0)	/* Clone the target tree and attach the clone */
+> >> 
+> >> This change causes pointless -Werror=undef errors in projects that have
+> >> settled on the old definition.
+> >> 
+> >> Reported here:
+> >> 
+> >>   Bug 33921 - Building with Linux-7.0-rc1 errors on OPEN_TREE_CLONE
+> >>   <https://sourceware.org/bugzilla/show_bug.cgi?id=33921>
+> >
+> > Send a patch to change it back, please.
+> > Otherwise it might take a few days until I get around to it.
 > 
-> So would you want to filter the O_EMPTY_PATH flag from openat(), or maybe add
-> a RESOLVE_EMPTY flag to the resolve options?
+> Rudi, could you post a patch?
 
-No, add a OPENAT2_EMPTY_PATH in the upper 32 bit of the 64-bit flag
-argument for struct open_how. Then it cannot be used in openat(). But
-let's wait a day or so to see whether we have someone that really wants
-to extend this to openat() as well...
+I'm a bit confused though and not super happy that you're basically
+asking us to be so constrained that we aren't even allowed to change 1
+to 1 - just syntactically different.
 
