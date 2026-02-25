@@ -1,52 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-78412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OMTYJVaEn2mVcgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 00:23:02 +0100
+	id qB9uLnKEn2mVcgQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 00:23:30 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01CF619EC10
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 00:23:01 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2712B19EC27
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 00:23:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8CCC630610C7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 23:22:55 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 39ED43072DB5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 23:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590393806CA;
-	Wed, 25 Feb 2026 23:22:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BB0377556;
+	Wed, 25 Feb 2026 23:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yu0wz58+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nY482vpc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6FB3016F1;
-	Wed, 25 Feb 2026 23:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9F93815EF;
+	Wed, 25 Feb 2026 23:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772061772; cv=none; b=nwpQjLa7SSGPqGoikKgNA/YEERJLMoMuHkHaaQachbEV4ZEmrl/6XbGhkTf7Qb+Q424weK2nSq2mNh5cWhN7i3e7x7zUcHUBcq5vZT57iBeGk3Rbo1MaKEmWFqp/zrFwdblfBH2UDwd82lOYIGi6VrV24sav1p5++N1Ujilj3cY=
+	t=1772061775; cv=none; b=UuK+gcenMbWGsusTjzrjlwdc2yHEks6vTzXAwfz3tspaNLAtLkT2BXjfn19Pd8l9z7dRW9hXRbARp0uEVotdUt713bSuPVaiAuQOaltGfeEYz8RZMWgTZnw1HJWUbR8fG9bIJZsenPa/z6Byp8QgG6P45sOg9olERuSFvQN6ueU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772061772; c=relaxed/simple;
-	bh=b5G+/cnDPnxqxYSudJSMptEph1vuCvxq3yfoKXpq3Sk=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=igXzr+niLD6T+U1fdDAYiB3YVblKccpH91XQMCgUVgyKcuPq9AGkROoZVs32tFYf7cPG+k4xrSI5Tqjh5vvplT0tLAynruE11bnKQl6JPAtpns8Kw+Yjq0Rd8iFSJQ8RgnOsaFKH1kMwZFXoGQTDerus76E0vn/GORgCrTpEKzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yu0wz58+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBA09C116D0;
-	Wed, 25 Feb 2026 23:22:50 +0000 (UTC)
+	s=arc-20240116; t=1772061775; c=relaxed/simple;
+	bh=rRBHQ5Tj/mkAX07rI6Q3wXDtZyOHOyBYMgozaxdM7Pg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=SuF/xdnPXHVZf9srZtbsBIWgcmWVzADzQcgyWdYoPrxJKwy/Sy0ukw0Mxhe2BKalAV0XMNwVmnKVbIRQqPA66jvEEzVdO8eIEU8fcP25zPMj8HRFsPkmSsW75rlKxNXGr3XKKSuibH5OUNB2xqQXVl+A9ck1kCnL5M/IR+QhwxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nY482vpc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9F05C19423;
+	Wed, 25 Feb 2026 23:22:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772061772;
-	bh=b5G+/cnDPnxqxYSudJSMptEph1vuCvxq3yfoKXpq3Sk=;
-	h=From:Subject:Date:To:Cc:From;
-	b=Yu0wz58+v90UsLXyNgBpX+XWTc5ukUwOfUNl1nfyUer/DbvwI6nuWnuhI05gO+TKw
-	 c4iROGQPCgKL2wWWs0g4s50zCamnwKYrpLd1f+9u0+m1NCRgmosmADV69qXlReinJI
-	 FrATae+cI2jYU+GQGJRfN5BqiF7JCVjs+O3EwEHRUt8jc0a782VQ3RnbEWUQHZDDNj
-	 xq+yD467FSiT/bjbBx+2ppK9JHL263uZooqU9FW5EV6o1Gr/RxNWnJAAAZ7mDUt2UN
-	 BgVbqT2+CulZO0QDg2quXcjFkn2OJmnSku7lJDynDXBZfzEWXyvPJAgGAh/8EzcM6z
-	 UZFq/bUeprzHA==
+	s=k20201202; t=1772061774;
+	bh=rRBHQ5Tj/mkAX07rI6Q3wXDtZyOHOyBYMgozaxdM7Pg=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=nY482vpcquKA6zKf3Vak+GopmiancyFXH7dezb4Y40hg1uhToem28F591K1gYOeqv
+	 mUei71zGeBf3ZqnGlMd1MmXTT/qavbxiEgKFqjZdnnGFrQOi6UcFjyD2WsJ1lkv4Rn
+	 yDtSjGU/6raxKnIstLHAZ8eI8OOiOVBKfHWp0TMXlRrfYMU50jINQWmcqwIWVyZ8KL
+	 9ldYtl+mFKPTFYbWBSW8lZ1sfkBm3ve1ZOdTlgnRr8rcscXh2IIp1ustLb0Kk+rbk0
+	 IXI+VbGocKcP4tVBeQoLwZhxP14KsnUPmfBqcHSLfAWgMV5Go0F0jULl4bPKL6BUqS
+	 0oILJDRvZQWMw==
 From: Christian Brauner <brauner@kernel.org>
-Subject: [PATCH RFC v4 0/2] pidfs: make the {g,u}id the owner of the inode
-Date: Thu, 26 Feb 2026 00:22:43 +0100
-Message-Id: <20260226-work-pidfs-inode-owner-v4-0-990032ec9700@kernel.org>
+Date: Thu, 26 Feb 2026 00:22:44 +0100
+Subject: [PATCH RFC v4 1/2] pidfs: add inode ownership and permission
+ checks
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,128 +56,328 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAEOEn2kC/3XOzWrDMAwH8FcpPlfFH3E+ehoM+gC9jh0cR25Mi
- 13k4naUvPucsENHiW4S0u+vJ0tIHhPbb56MMPvkYyhNtd0wO5pwQvBD6ZnksuZSCLhHOsPVDy6
- BD3FAiPeABNwayQfs0EnFyvGV0PnHAn+x4+GTfZdhbxJCTybYcTZzs+NAVsz7o0+3SD/LH1ksV
- 3+R9VpkFiDAtc6Yum9U16qPM1LAyy7SaYnL8tVpVh05O7zqda1aJbR5c9SLI9Wqo4BD1fFWa6u
- 7Uv+caZp+AcQ+bDdtAQAA
-X-Change-ID: 20260211-work-pidfs-inode-owner-0ca20de9ef23
+Message-Id: <20260226-work-pidfs-inode-owner-v4-1-990032ec9700@kernel.org>
+References: <20260226-work-pidfs-inode-owner-v4-0-990032ec9700@kernel.org>
+In-Reply-To: <20260226-work-pidfs-inode-owner-v4-0-990032ec9700@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>
 Cc: Kees Cook <kees@kernel.org>, Andy Lutomirski <luto@amacapital.net>, 
  Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
  linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-47773
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3809; i=brauner@kernel.org;
- h=from:subject:message-id; bh=b5G+/cnDPnxqxYSudJSMptEph1vuCvxq3yfoKXpq3Sk=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTOb/E6a5J1r71eaenBJBbpdd3rnacG1Ow5k/Mqu7Mv4
- y1L5u6AjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIl83MLwi2my4EpevRmzoo6v
- ++H1aF2f75V/U5nfPbF4PiXw/anULZ8ZGX5oMQf/1TvXlcp+Yte8/YqlavneCQ5NMouln3brt3f
- v4wUA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9051; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=rRBHQ5Tj/mkAX07rI6Q3wXDtZyOHOyBYMgozaxdM7Pg=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTOb/FqmcjXvFuffct60QX7f66b2NcmMk8tYmrWjO1Ha
+ vZXis550VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRFVsZGa4JmmtPTSiRED+z
+ 2uyPWlk/l6b9bf/If89nt7EsPMu91JCRYb+Miv7UVi3fw77bGXeaWJ6+8/dI5t6rs3li5+7s229
+ cxg4A
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78412-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78413-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	RCVD_COUNT_THREE(0.00)[4];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	NEURAL_HAM(-0.00)[-1.000];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[msgid.link:url]
-X-Rspamd-Queue-Id: 01CF619EC10
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Queue-Id: 2712B19EC27
 X-Rspamd-Action: no action
 
-This adds inode ownership and permission checking to pidfs.
+Right now we only support trusted.* xattrs which require CAP_SYS_ADMIN
+which doesn't really require any meaningful permission checking. But in
+order to support user.* xattrs and custom pidfs.* xattrs in the future
+we need permission checking for pidfs inodes. Add baseline permission
+checking that can later be extended with additional write-time checks
+for specific pidfs.* xattrs.
 
-Right now pidfs only supports trusted.* xattrs which require
-CAP_SYS_ADMIN so there was never a need for real permission checking.
-In order to support user.* xattrs and custom pidfs.* xattrs in the
-future we need a permission model for pidfs inodes.
+Make the {u,g}id of the task the owner of the pidfs inode. The ownership
+is set when the dentry is first stashed and reported dynamically via
+getattr since credentials may change due to setuid() and similar
+operations. For kernel threads use root, for exited tasks use the
+credentials saved at exit time.
 
-The {u,g}id of the target task becomes the owner of the pidfs inode.
-Ownership is reported dynamically via getattr since credentials may
-change due to setresuid() and similar operations. For kernel threads the
-owner is root, for exited tasks the credentials saved at exit time via
-pidfs_exit() are used.
+The inode's ownership is dynamically updated via pidfs_update_owner()
+which is called from the getattr() and permission() callbacks. It writes
+the uid/gid directly to the inode via WRITE_ONCE(). This doesn't
+serialize against inode->i_op->setattr() but since pidfs rejects
+setattr() this isn't currently an issue. A seqcount-based approach can
+be used if setattr() support is added in the future [1].
 
-The permission callback updates the inode ownership via
-pidfs_update_owner() and then performs standard POSIX permission
-checking via generic_permission().
+Save the task's credentials and thread group pid inode number at exit
+time so that ownership and permission checks remain functional after the
+task has been reaped.
+
+The permission callback updates the inode's ownership via
+pidfs_update_owner() and then performs standard POSIX permission checking
+via generic_permission() against the inode's ownership and mode bits
+(S_IRWXU / 0700).
 
 This is intentionally less strict than ptrace_may_access() because pidfs
 currently does not allow operating on data that is completely private to
-the process such as its mm or file descriptors. Additional checks can be
-layered on once that changes.
+the process such as its mm or file descriptors. Additional checks will
+be needed once that changes.
 
-The second patch adds selftests covering ownership reporting via fstat
-and the permission model via user.* xattr operations which trigger
-pidfs_permission() through xattr_permission(). The tests exercise live
-credential changes, exited tasks with saved exit credentials, same-user
-cross-process access, and cross-user denial.
-
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=work.inode.seqcount [1]
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
-Changes in v4:
-- Switch from euid/egid to uid/gid for inode ownership per Jann Horn's
-  feedback. Use cred->uid/cred->gid instead of cred->euid/cred->egid.
-- Simplify pidfs_permission() to just call pidfs_update_owner() followed
-  by generic_permission() instead of open-coding credential checks.
-- Drop the may_signal_creds() helper and the kill_ok_by_cred() changes
-  that were part of v3's two-step permission model.
-- Fix bitmask enum values: use BIT(N) instead of plain integers since
-  attr_mask is now an atomic_t using atomic_or()/atomic_read() instead
-  of set_bit()/test_bit().
-- Make PIDFS_ATTR_BIT_KTHREAD conditional on PF_KTHREAD in pidfs_exit()
-  instead of unconditionally setting it for all exiting tasks.
-- Remove unused kuid_t/kgid_t variables from pidfs_update_owner().
-- Link to v3: https://patch.msgid.link/20260223-work-pidfs-inode-owner-v3-0-490855c59999@kernel.org
+ fs/pidfs.c | 110 +++++++++++++++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 93 insertions(+), 17 deletions(-)
 
-Changes in v3:
-- Simplify pidfs_fill_owner() into pidfs_update_owner() writing directly
-  to the inode via WRITE_ONCE() instead of using output parameters.
-- Drop the separate pidfs_update_inode() helper and the
-  security_task_to_inode() call.
-- Update pidfs_getattr() to write ownership to the inode via
-  pidfs_update_owner() instead of writing directly to stat.
-- Update pidfs_permission() to also write ownership to the inode before
-  calling generic_permission(), handling kernel threads with -EPERM.
-- Drop VFS_WARN_ON_ONCE() for idmap check from pidfs_permission().
-- Link to v2: https://patch.msgid.link/20260217-work-pidfs-inode-owner-v2-1-f04b5638315a@kernel.org
+diff --git a/fs/pidfs.c b/fs/pidfs.c
+index 318253344b5c..4f480a814c5a 100644
+--- a/fs/pidfs.c
++++ b/fs/pidfs.c
+@@ -42,21 +42,30 @@ void pidfs_get_root(struct path *path)
+ }
+ 
+ enum pidfs_attr_mask_bits {
+-	PIDFS_ATTR_BIT_EXIT	= 0,
+-	PIDFS_ATTR_BIT_COREDUMP	= 1,
++	PIDFS_ATTR_BIT_EXIT	= (1U << 0),
++	PIDFS_ATTR_BIT_COREDUMP	= (1U << 1),
++	PIDFS_ATTR_BIT_KTHREAD	= (1U << 2),
+ };
+ 
+-struct pidfs_attr {
+-	unsigned long attr_mask;
+-	struct simple_xattrs *xattrs;
+-	struct /* exit info */ {
+-		__u64 cgroupid;
+-		__s32 exit_code;
+-	};
++struct pidfs_exit_attr {
++	__u64 cgroupid;
++	__s32 exit_code;
++	const struct cred *exit_cred;
++	u64 exit_tgid_ino;
++};
++
++struct pidfs_coredump_attr {
+ 	__u32 coredump_mask;
+ 	__u32 coredump_signal;
+ };
+ 
++struct pidfs_attr {
++	atomic_t attr_mask;
++	struct simple_xattrs *xattrs;
++	struct pidfs_exit_attr;
++	struct pidfs_coredump_attr;
++};
++
+ static struct rhashtable pidfs_ino_ht;
+ 
+ static const struct rhashtable_params pidfs_ino_ht_params = {
+@@ -200,6 +209,7 @@ void pidfs_free_pid(struct pid *pid)
+ 	if (IS_ERR(attr))
+ 		return;
+ 
++	put_cred(attr->exit_cred);
+ 	xattrs = no_free_ptr(attr->xattrs);
+ 	if (xattrs)
+ 		simple_xattrs_free(xattrs, NULL);
+@@ -364,7 +374,7 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
+ 
+ 	attr = READ_ONCE(pid->attr);
+ 	if (mask & PIDFD_INFO_EXIT) {
+-		if (test_bit(PIDFS_ATTR_BIT_EXIT, &attr->attr_mask)) {
++		if (atomic_read(&attr->attr_mask) & PIDFS_ATTR_BIT_EXIT) {
+ 			smp_rmb();
+ 			kinfo.mask |= PIDFD_INFO_EXIT;
+ #ifdef CONFIG_CGROUPS
+@@ -376,7 +386,7 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
+ 	}
+ 
+ 	if (mask & PIDFD_INFO_COREDUMP) {
+-		if (test_bit(PIDFS_ATTR_BIT_COREDUMP, &attr->attr_mask)) {
++		if (atomic_read(&attr->attr_mask) & PIDFS_ATTR_BIT_COREDUMP) {
+ 			smp_rmb();
+ 			kinfo.mask |= PIDFD_INFO_COREDUMP | PIDFD_INFO_COREDUMP_SIGNAL;
+ 			kinfo.coredump_mask = attr->coredump_mask;
+@@ -674,6 +684,7 @@ void pidfs_exit(struct task_struct *tsk)
+ {
+ 	struct pid *pid = task_pid(tsk);
+ 	struct pidfs_attr *attr;
++	unsigned int mask;
+ #ifdef CONFIG_CGROUPS
+ 	struct cgroup *cgrp;
+ #endif
+@@ -703,17 +714,22 @@ void pidfs_exit(struct task_struct *tsk)
+ 	 * is put
+ 	 */
+ 
+-#ifdef CONFIG_CGROUPS
+ 	rcu_read_lock();
++#ifdef CONFIG_CGROUPS
+ 	cgrp = task_dfl_cgroup(tsk);
+ 	attr->cgroupid = cgroup_id(cgrp);
+-	rcu_read_unlock();
+ #endif
++	attr->exit_cred = get_cred(__task_cred(tsk));
++	rcu_read_unlock();
++	attr->exit_tgid_ino = task_tgid(tsk)->ino;
+ 	attr->exit_code = tsk->exit_code;
+ 
+ 	/* Ensure that PIDFD_GET_INFO sees either all or nothing. */
+ 	smp_wmb();
+-	set_bit(PIDFS_ATTR_BIT_EXIT, &attr->attr_mask);
++	mask = PIDFS_ATTR_BIT_EXIT;
++	if (unlikely(tsk->flags & PF_KTHREAD))
++		mask |= PIDFS_ATTR_BIT_KTHREAD;
++	atomic_or(mask, &attr->attr_mask);
+ }
+ 
+ #ifdef CONFIG_COREDUMP
+@@ -735,12 +751,49 @@ void pidfs_coredump(const struct coredump_params *cprm)
+ 	/* Expose the signal number that caused the coredump. */
+ 	attr->coredump_signal = cprm->siginfo->si_signo;
+ 	smp_wmb();
+-	set_bit(PIDFS_ATTR_BIT_COREDUMP, &attr->attr_mask);
++	atomic_or(PIDFS_ATTR_BIT_COREDUMP, &attr->attr_mask);
+ }
+ #endif
+ 
+ static struct vfsmount *pidfs_mnt __ro_after_init;
+ 
++static void pidfs_update_owner(struct inode *inode)
++{
++	struct pid *pid = inode->i_private;
++	struct task_struct *task;
++	struct pidfs_attr *attr;
++	const struct cred *cred;
++
++	VFS_WARN_ON_ONCE(!pid);
++
++	attr = READ_ONCE(pid->attr);
++	VFS_WARN_ON_ONCE(!attr);
++
++	if (unlikely(atomic_read(&attr->attr_mask) & PIDFS_ATTR_BIT_KTHREAD))
++		return;
++
++	guard(rcu)();
++	task = pid_task(pid, PIDTYPE_PID);
++	if (task) {
++		cred = __task_cred(task);
++		WRITE_ONCE(inode->i_uid, cred->uid);
++		WRITE_ONCE(inode->i_gid, cred->gid);
++		return;
++	}
++
++	/*
++	 * During copy_process() with CLONE_PIDFD the task hasn't been
++	 * attached to the pid yet so pid_task() returns NULL and
++	 * there's no exit_cred as the task obviously hasn't exited. Use
++	 * the parent's credentials.
++	 */
++	cred = attr->exit_cred;
++	if (!cred)
++		cred = current_cred();
++	WRITE_ONCE(inode->i_uid, cred->uid);
++	WRITE_ONCE(inode->i_gid, cred->gid);
++}
++
+ /*
+  * The vfs falls back to simple_setattr() if i_op->setattr() isn't
+  * implemented. Let's reject it completely until we have a clean
+@@ -756,6 +809,9 @@ static int pidfs_getattr(struct mnt_idmap *idmap, const struct path *path,
+ 			 struct kstat *stat, u32 request_mask,
+ 			 unsigned int query_flags)
+ {
++	struct inode *inode = d_inode(path->dentry);
++
++	pidfs_update_owner(inode);
+ 	return anon_inode_getattr(idmap, path, stat, request_mask, query_flags);
+ }
+ 
+@@ -773,10 +829,24 @@ static ssize_t pidfs_listxattr(struct dentry *dentry, char *buf, size_t size)
+ 	return simple_xattr_list(inode, xattrs, buf, size);
+ }
+ 
++static int pidfs_permission(struct mnt_idmap *idmap, struct inode *inode,
++			    int mask)
++{
++	struct pid *pid = inode->i_private;
++	struct pidfs_attr *attr = READ_ONCE(pid->attr);
++
++	if (unlikely(atomic_read(&attr->attr_mask) & PIDFS_ATTR_BIT_KTHREAD))
++		return -EPERM;
++
++	pidfs_update_owner(inode);
++	return generic_permission(&nop_mnt_idmap, inode, mask);
++}
++
+ static const struct inode_operations pidfs_inode_operations = {
+ 	.getattr	= pidfs_getattr,
+ 	.setattr	= pidfs_setattr,
+ 	.listxattr	= pidfs_listxattr,
++	.permission	= pidfs_permission,
+ };
+ 
+ static void pidfs_evict_inode(struct inode *inode)
+@@ -835,7 +905,7 @@ static struct pid *pidfs_ino_get_pid(u64 ino)
+ 	attr = READ_ONCE(pid->attr);
+ 	if (IS_ERR_OR_NULL(attr))
+ 		return NULL;
+-	if (test_bit(PIDFS_ATTR_BIT_EXIT, &attr->attr_mask))
++	if (atomic_read(&attr->attr_mask) & PIDFS_ATTR_BIT_EXIT)
+ 		return NULL;
+ 	/* Within our pid namespace hierarchy? */
+ 	if (pid_vnr(pid) == 0)
+@@ -949,6 +1019,7 @@ static void pidfs_put_data(void *data)
+ int pidfs_register_pid(struct pid *pid)
+ {
+ 	struct pidfs_attr *new_attr __free(kfree) = NULL;
++	struct task_struct *task;
+ 	struct pidfs_attr *attr;
+ 
+ 	might_sleep();
+@@ -975,6 +1046,9 @@ int pidfs_register_pid(struct pid *pid)
+ 	if (unlikely(attr))
+ 		return 0;
+ 
++	task = pid_task(pid, PIDTYPE_PID);
++	if (task && (task->flags & PF_KTHREAD))
++		atomic_or(PIDFS_ATTR_BIT_KTHREAD, &new_attr->attr_mask);
+ 	pid->attr = no_free_ptr(new_attr);
+ 	return 0;
+ }
+@@ -983,7 +1057,8 @@ static struct dentry *pidfs_stash_dentry(struct dentry **stashed,
+ 					 struct dentry *dentry)
+ {
+ 	int ret;
+-	struct pid *pid = d_inode(dentry)->i_private;
++	struct inode *inode = d_inode(dentry);
++	struct pid *pid = inode->i_private;
+ 
+ 	VFS_WARN_ON_ONCE(stashed != &pid->stashed);
+ 
+@@ -991,6 +1066,7 @@ static struct dentry *pidfs_stash_dentry(struct dentry **stashed,
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ 
++	pidfs_update_owner(inode);
+ 	return stash_dentry(stashed, dentry);
+ }
+ 
 
-Changes in v2:
-- Fix an obvious null-deref during PIDFD_STALE (CLONE_PIDFD).
-- Link to v1: https://patch.msgid.link/20260216-work-pidfs-inode-owner-v1-1-f8faa6b73983@kernel.org
-
----
-Christian Brauner (2):
-      pidfs: add inode ownership and permission checks
-      selftests/pidfd: add inode ownership and permission tests
-
- fs/pidfs.c                                         | 110 ++++++--
- tools/testing/selftests/pidfd/.gitignore           |   1 +
- tools/testing/selftests/pidfd/Makefile             |   2 +-
- .../selftests/pidfd/pidfd_inode_owner_test.c       | 314 +++++++++++++++++++++
- 4 files changed, 409 insertions(+), 18 deletions(-)
----
-base-commit: 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f
-change-id: 20260211-work-pidfs-inode-owner-0ca20de9ef23
+-- 
+2.47.3
 
 
