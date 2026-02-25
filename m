@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-78344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78345-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oLpnM8OknmlPWgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 08:29:07 +0100
+	id +DfJLg2lnmmrWgQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78345-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 08:30:21 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B6FF193705
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 08:29:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68C1D193759
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 08:30:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id D0C9C316E79B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 07:22:44 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 180853179E25
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 07:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F889330B3C;
-	Wed, 25 Feb 2026 07:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0446B33B6EC;
+	Wed, 25 Feb 2026 07:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kl49/QXT"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I3tpnjvQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9942A31BC84
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Feb 2026 07:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB9832D7F0
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Feb 2026 07:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772004055; cv=none; b=KDjERpEavMBkcecW0rBp6g7vUmf6mcBGG9cbOBusLW+nCY217Rrz54JWMNmm02UhEtetyXOB0YIVGr5C1fuW01GnliGoq5Gna1Qz+cp8E5f2HLVIeEiIk3Zrp9vNwjfkKvXOkIX7VMBFucxrUhH1c7T3AaqRtnL2cizLO4BHaFQ=
+	t=1772004057; cv=none; b=bwnbIV+yLmlez3/kSikiY0pGKV1Ed74R1+m/dIP+DAdGdPNLKdxLvpKmqB7Ca3kDL+61li8/BL8Nl6jt3oiYFUmriAm4PTUsKXh77pbbDXQt7L7ccyQt0t79xGHJv8MODYQBE+XYXAy0+e+aIjP4SZkGgtrY5c2KC8H18y6eCCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772004055; c=relaxed/simple;
-	bh=41+6neAL0d27ks2wQws7sEuDZgQjzT5nG62AnxD5qpc=;
+	s=arc-20240116; t=1772004057; c=relaxed/simple;
+	bh=dOYyBdQXA1usfepnnNuDszu6x3QfaYGIbNqVbOtmh7o=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UmMLu4Uqw7uZIhj0nl5a4kiLKosuTg/lLyGDScSdk1xpNtydWPhjf97CbulMc+qtW2K436X7cqJ+wSImgowu/zWJo6xnY0vFp77Ii+joXvCEBBmS69qOYAFFkSmyCdJihl2NohL7q0OzZRl9rkJ1G7UAUuaZxZ5qua4iShFEDAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kl49/QXT; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=DVcrRIvSb42pQUzgz9oB1H6oGwXjNADLtlk/Nrtw/jBzJ9cSZaUwhqlmMMGee5pucOqwNyeGyEO52e22NWGpFDDCD1fPjSTjbUK7+0waMaZJZ0j1BjWxKYZbbACsSziIyzLdQDsBwyt2ZjflRDe8Hj6fhT3tiHHiiDBU/yevbk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I3tpnjvQ; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-c709551ec08so29060255a12.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 23:20:53 -0800 (PST)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2ab4de9580dso463311425ad.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 23:20:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1772004053; x=1772608853; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1772004054; x=1772608854; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lmqeDy1YGPO6heAH4dtg7V9yIhQw7gZPhshB9Ud1SBU=;
-        b=kl49/QXTyHNtzK3awy/yDH8SdYKO5eimqBUQi+UII5h9a9SBFLxjantR3qhGW+uYd8
-         mYgQLJVaw0XA6/AV9emQXbYPTYlV4sNCnCj3XUCI8QdJcRtMWv3kYRCiSsZJ+1hV9Hcp
-         hBuwHtRnVIszSeYM465KYcCumfhasyjWMat+2JnYCcBAWI9Rl9AhupAbcrc5jdp6chno
-         TxlQX9RNq5CXzsQ72qm7LnUK7P286lheZHu9aVJULLBDqjMAokM6/p/U9zeINILNcUMH
-         2+ZPyG4CREVQWJ2erErVhEeUsY2SCnGFCAojzxw/ZLnUtQgiogxK004UD809ZrIm8z1j
-         b3+Q==
+        bh=uCRWKaRAQP2gBMw/IwAKqq2A0WtVFQ88sM/7soXGb8M=;
+        b=I3tpnjvQuA+B/47Xi93nsUnNz4ABiLiO81bZWolQQPkRP1MvkYIHXHPcOHtDzHOify
+         PgkdDgVxvzLGDnW4K8ka2w2JP7gAWU/wkpwAidUfBD69+O43IxV94mlbrPqfLgAdHPcX
+         OjRh81UOBI/d6q5DtwbrYBvaSMeukq6Dd7aU4gwXzzBpAizPc8bmGZM0Mh9YCMD0gdYd
+         TGdtNxefz49ybrs2EHiWpLKfZiSrI454tp9hIaJQyJ7zubi2ke7h0SM5+ngCPTHdfan4
+         q0noHo7uCAamVcCngr2oNwYcdDTHvf6jzPQJQ3AA/JXPJp/fldP4KQ33wlrj5hM34Ab4
+         vBhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772004053; x=1772608853;
+        d=1e100.net; s=20230601; t=1772004054; x=1772608854;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lmqeDy1YGPO6heAH4dtg7V9yIhQw7gZPhshB9Ud1SBU=;
-        b=q0qG/KTYFyjnNDH4g5vIdaIyQeVxJPqPgyQS0CN8C8WG02XFYna+IzAuK5bULgiDWY
-         tpgDEaHoAiFM/Pgzd596nqEOsPTjRPmKtG1Lz8zFiv1ekt9Wqh8I9Uc3bYDKZTHwLsLO
-         lY1Zv1QXePCfRkwGdXMaNv8TFcQg6RIENXZoyOaa6EBDF5liamyQnvOt1ncAJiPa/UCN
-         77YWp/F07hjPwxg0A6kE/eFGMacacpsdIRwaqAnLYi8AVaIE07PUdnSYPdLDOHXLT5k5
-         xwx8qKopcBb3IsRPcIcqbU5JgRKTqgAB1ErpmjI8rAWw5LBkTkad3/g8z1ZYwH0oPmXG
-         UWQg==
-X-Forwarded-Encrypted: i=1; AJvYcCW45jXrmSuh0j5P2lsNnT34IK/7gJqX0rysN3LTJS9BZO0NVA/QCrs/DzojgNzXcHho45q3fhF+4NisvkT1@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNhVlRQDpLt6qS3cWGiiWFN3nUGKY5P1WzKYm+1UH2r6auM/HZ
-	8/ky0INPw8QIaQtR0EevOq7OZOIAzr0MB9tCtsDwF1Dg22TcSVQNzq9S1PRx/oLQy9gBzQg+r5C
-	VK8SqxLw3tRPzFy270FTbNEw/5g==
-X-Received: from pgbfp5.prod.google.com ([2002:a05:6a02:2ce5:b0:c0e:c1b4:51a5])
+        bh=uCRWKaRAQP2gBMw/IwAKqq2A0WtVFQ88sM/7soXGb8M=;
+        b=I1HTBIW0iclA1fHOorSjsnzaXXyzSgyHT3vhrvDWImaQEhvONMB9qrxMYFHj3Fzo5N
+         Q0IkuevIyTrIQrnacCZYp6dZ4EPfUh5ew6xbHW0kBR/cx1Sj8vP71aoYmDd0apShpe1/
+         leHiovz89LaGbWvXkNjQC7UZ/+DrxZ4fh4eEVsTukhWZsg5rR3jtYfc5qnxbtcp1L4Ro
+         rUZihDwLLFKYSBVMjXzKLLmkyU9Hbbn7Tc4iCstF2aYt5kXufnseLjQ3PTq3roz+4Wpm
+         0F3jO/ia3XDa8Nc80BMwPaMwVlPh+SKUdTjy7EFLDW+a5cMXrDQKeyd5LtcgEFv1k2sm
+         fb2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVJWdt6jVlqpCcf1WM3VNsuTpchH0Hkg/KJAmww2aN/geLRO0XBkIhtdaaELIJBq8IfqhBVx36nIAS1Ld/x@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdvyJ8eBa70882Kh5/L+A+Hiw1QVMeB1FpwFfPdOMuOnK/hZb3
+	10u9ywxGzndPp4bASUwigjAXnn/nZA+NmVfsaYN+byrbqrIicgP/WyxA4kzjIoewJ43/ga1whqc
+	+ghkqC5U/cQtrbN4K5Eb60V4KWA==
+X-Received: from plsk6.prod.google.com ([2002:a17:902:ba86:b0:29f:1738:99f3])
  (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:7f89:b0:394:58eb:48fa with SMTP id adf61e73a8af0-39545dc0482mr14694770637.6.1772004052747;
- Tue, 24 Feb 2026 23:20:52 -0800 (PST)
-Date: Wed, 25 Feb 2026 07:20:40 +0000
+ 2002:a17:902:d511:b0:2a7:c188:bd1f with SMTP id d9443c01a7336-2add14146b1mr15540455ad.40.1772004054358;
+ Tue, 24 Feb 2026 23:20:54 -0800 (PST)
+Date: Wed, 25 Feb 2026 07:20:41 +0000
 In-Reply-To: <20260225-gmem-st-blocks-v2-0-87d7098119a9@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -76,13 +76,13 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20260225-gmem-st-blocks-v2-0-87d7098119a9@google.com>
 X-Developer-Key: i=ackerleytng@google.com; a=ed25519; pk=sAZDYXdm6Iz8FHitpHeFlCMXwabodTm7p8/3/8xUxuU=
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1772004043; l=3022;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1772004043; l=3384;
  i=ackerleytng@google.com; s=20260225; h=from:subject:message-id;
- bh=41+6neAL0d27ks2wQws7sEuDZgQjzT5nG62AnxD5qpc=; b=Qf0H2UQ2mVaGwE9fmA4IWjbnRJGJ7WGDq8UI2QM5uIsOM4kNu9y1rdgzh53H+jjev44oOi+/r
- kT+aePH4Im8Br8uVg3C6xnPFChAqWmmulNjoE70K9V+ksKWXjrvsGjL
+ bh=dOYyBdQXA1usfepnnNuDszu6x3QfaYGIbNqVbOtmh7o=; b=zZrSG7T8hLIyNxblKZAGfB+9IN1V9IOqYlhpVMvYXXGbthbgU9tmocvsvN/c7FJF4snDqAhSr
+ TzWnTmDXwh2DG87+Tp1yHs6y/+kQ/SVsCjVtOclQbRZ0IyhxW13o7OV
 X-Mailer: b4 0.14.3
-Message-ID: <20260225-gmem-st-blocks-v2-5-87d7098119a9@google.com>
-Subject: [PATCH RFC v2 5/6] KVM: selftests: Wrap fstat() to assert success
+Message-ID: <20260225-gmem-st-blocks-v2-6-87d7098119a9@google.com>
+Subject: [PATCH RFC v2 6/6] KVM: selftests: Test that st_blocks is updated on allocation
 From: Ackerley Tng <ackerleytng@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
 	David Hildenbrand <david@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
@@ -111,7 +111,7 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78344-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78345-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
 	RCPT_COUNT_TWELVE(0.00)[35];
 	MIME_TRACE(0.00)[0:+];
@@ -126,83 +126,89 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	NEURAL_HAM(-0.00)[-0.999];
 	TO_DN_SOME(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 6B6FF193705
+X-Rspamd-Queue-Id: 68C1D193759
 X-Rspamd-Action: no action
 
-Extend kvm_syscalls.h to wrap fstat() to assert success. This will be used
-in the next patch.
+The st_blocks field reported by fstat should reflect the number of
+allocated 512-byte blocks for the guest memfd file.
+
+Extend the fallocate test to verify that st_blocks is correctly updated
+when memory is allocated or deallocated via
+fallocate(FALLOC_FL_PUNCH_HOLE).
+
+Add checks after each fallocate call to ensure that st_blocks increases on
+allocation, decreases when a hole is punched, and is restored when the hole
+is re-allocated. Also verify that st_blocks remains unchanged for failing
+fallocate calls.
 
 Signed-off-by: Ackerley Tng <ackerleytng@google.com>
 ---
- tools/testing/selftests/kvm/guest_memfd_test.c     | 15 +++++----------
- tools/testing/selftests/kvm/include/kvm_syscalls.h |  2 ++
- 2 files changed, 7 insertions(+), 10 deletions(-)
+ tools/testing/selftests/kvm/guest_memfd_test.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
 diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
-index 618c937f3c90f..81387f06e770a 100644
+index 81387f06e770a..89228d73fa736 100644
 --- a/tools/testing/selftests/kvm/guest_memfd_test.c
 +++ b/tools/testing/selftests/kvm/guest_memfd_test.c
-@@ -212,10 +212,8 @@ static void test_mmap_not_supported(int fd, size_t total_size)
- static void test_file_size(int fd, size_t total_size)
- {
- 	struct stat sb;
--	int ret;
- 
--	ret = fstat(fd, &sb);
--	TEST_ASSERT(!ret, "fstat should succeed");
-+	kvm_fstat(fd, &sb);
- 	TEST_ASSERT_EQ(sb.st_size, total_size);
+@@ -218,41 +218,58 @@ static void test_file_size(int fd, size_t total_size)
  	TEST_ASSERT_EQ(sb.st_blksize, page_size);
  }
-@@ -303,25 +301,22 @@ static void test_create_guest_memfd_invalid_sizes(struct kvm_vm *vm,
  
- static void test_create_guest_memfd_multiple(struct kvm_vm *vm)
++static void assert_st_blocks_matches_size(int fd, size_t expected_size)
++{
++	struct stat sb;
++
++	kvm_fstat(fd, &sb);
++	TEST_ASSERT_EQ(sb.st_blocks, expected_size / 512);
++}
++
+ static void test_fallocate(int fd, size_t total_size)
  {
--	int fd1, fd2, ret;
-+	int fd1, fd2;
- 	struct stat st1, st2;
+ 	int ret;
  
- 	fd1 = __vm_create_guest_memfd(vm, page_size, 0);
- 	TEST_ASSERT(fd1 != -1, "memfd creation should succeed");
+ 	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE, 0, total_size);
+ 	TEST_ASSERT(!ret, "fallocate with aligned offset and size should succeed");
++	assert_st_blocks_matches_size(fd, total_size);
  
--	ret = fstat(fd1, &st1);
--	TEST_ASSERT(ret != -1, "memfd fstat should succeed");
-+	kvm_fstat(fd1, &st1);
- 	TEST_ASSERT(st1.st_size == page_size, "memfd st_size should match requested size");
+ 	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
+ 			page_size - 1, page_size);
+ 	TEST_ASSERT(ret, "fallocate with unaligned offset should fail");
++	assert_st_blocks_matches_size(fd, total_size);
  
- 	fd2 = __vm_create_guest_memfd(vm, page_size * 2, 0);
- 	TEST_ASSERT(fd2 != -1, "memfd creation should succeed");
+ 	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE, total_size, page_size);
+ 	TEST_ASSERT(ret, "fallocate beginning at total_size should fail");
++	assert_st_blocks_matches_size(fd, total_size);
  
--	ret = fstat(fd2, &st2);
--	TEST_ASSERT(ret != -1, "memfd fstat should succeed");
-+	kvm_fstat(fd2, &st2);
- 	TEST_ASSERT(st2.st_size == page_size * 2, "second memfd st_size should match requested size");
+ 	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE, total_size + page_size, page_size);
+ 	TEST_ASSERT(ret, "fallocate beginning after total_size should fail");
++	assert_st_blocks_matches_size(fd, total_size);
  
--	ret = fstat(fd1, &st1);
--	TEST_ASSERT(ret != -1, "memfd fstat should succeed");
-+	kvm_fstat(fd1, &st1);
- 	TEST_ASSERT(st1.st_size == page_size, "first memfd st_size should still match requested size");
- 	TEST_ASSERT(st1.st_ino != st2.st_ino, "different memfd should have different inode numbers");
+ 	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
+ 			total_size, page_size);
+ 	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) at total_size should succeed");
++	assert_st_blocks_matches_size(fd, total_size);
  
-diff --git a/tools/testing/selftests/kvm/include/kvm_syscalls.h b/tools/testing/selftests/kvm/include/kvm_syscalls.h
-index d4e613162bba9..3f039c34e12e0 100644
---- a/tools/testing/selftests/kvm/include/kvm_syscalls.h
-+++ b/tools/testing/selftests/kvm/include/kvm_syscalls.h
-@@ -2,6 +2,7 @@
- #ifndef SELFTEST_KVM_SYSCALLS_H
- #define SELFTEST_KVM_SYSCALLS_H
+ 	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
+ 			total_size + page_size, page_size);
+ 	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) after total_size should succeed");
++	assert_st_blocks_matches_size(fd, total_size);
  
-+#include <sys/stat.h>
- #include <sys/syscall.h>
+ 	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
+ 			page_size, page_size - 1);
+ 	TEST_ASSERT(ret, "fallocate with unaligned size should fail");
++	assert_st_blocks_matches_size(fd, total_size);
  
- #define MAP_ARGS0(m,...)
-@@ -77,5 +78,6 @@ __KVM_SYSCALL_DEFINE(munmap, 2, void *, mem, size_t, size);
- __KVM_SYSCALL_DEFINE(close, 1, int, fd);
- __KVM_SYSCALL_DEFINE(fallocate, 4, int, fd, int, mode, loff_t, offset, loff_t, len);
- __KVM_SYSCALL_DEFINE(ftruncate, 2, unsigned int, fd, off_t, length);
-+__KVM_SYSCALL_DEFINE(fstat, 2, int, fd, struct stat *, buf);
+ 	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
+ 			page_size, page_size);
+ 	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) with aligned offset and size should succeed");
++	assert_st_blocks_matches_size(fd, total_size - page_size);
  
- #endif /* SELFTEST_KVM_SYSCALLS_H */
+ 	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE, page_size, page_size);
+ 	TEST_ASSERT(!ret, "fallocate to restore punched hole should succeed");
++	assert_st_blocks_matches_size(fd, total_size);
+ }
+ 
+ static void test_invalid_punch_hole(int fd, size_t total_size)
 
 -- 
 2.53.0.414.gf7e9f6c205-goog
