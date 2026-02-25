@@ -1,277 +1,200 @@
-Return-Path: <linux-fsdevel+bounces-78373-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id ECAsJjrynmnoXwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78373-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 13:59:38 +0100
+	id wL0wH2j5nmm+YAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 14:30:16 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5281A197B9E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 13:59:38 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC95C19815D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 14:30:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 92574305C339
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 12:59:24 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C91113183FF6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 13:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237E53B8BBA;
-	Wed, 25 Feb 2026 12:59:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB363B8D40;
+	Wed, 25 Feb 2026 13:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LlPNEieb";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="nlpnbb2B"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PysBdkzu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDCA38E5FB
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Feb 2026 12:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06A917BB21;
+	Wed, 25 Feb 2026 13:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772024362; cv=none; b=gxRS1xDUBwSmvXGJuzYRQCQ0pvRLICla46EHkaalPD/Zs64/qt1+j1EAtNv3g6981+jixVPtVgTokMFdHLr2RgJ6vYSnYh5lHy7H/fcw7Gh6N1hZLEm9ZSNVLaz5ukqB45kLYYy/Hfv7dkDQxY61dnuFqCxD2FJ5SZCnUeMoqu4=
+	t=1772025938; cv=none; b=DLrxO4WudvBCE8jpY27IjM62fd6cIWxOXM20CaFLAwP6EppwDD3/G2goGYovmh44hDtWR+2OqBky5mWRgc3CXeXjp/81tsKsrXWq5ldGEMtBuFNEKNAfJIBbE7fE9HeZXTgsdKm/d9mAKqW/ibj5v5WBYMFNf6ftDbAd4+EJBVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772024362; c=relaxed/simple;
-	bh=bGwRVvd3ajNn4t+dSLjh1eK2i+/FzUMc5/O4uhriyQw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Uw82uOsgknPa/ctbLqGUR93bWH6HwF92cIL4bk3/O6ajEfe0pl4c+DILvCxn//ctSUp41uJ2Dh+1k3QVU9tEVYYLVwWGpidLCWRmTncuM5t8Xgf7S2ZCGrgILEkPHwTQssHkwK0S5Q9EFneM8TeEdJkwVzdOW0u1xgqOJN/khBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LlPNEieb; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=nlpnbb2B; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1772024360;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0kOIIK0zwnK1vvhLt6PsS43bfbxLU6KWtPkGNCJ0ZHw=;
-	b=LlPNEiebrvI+7UqZI244Vk+TYew8d3YYC8WTNUp+OFdCBK90GonoQU7w7OaASeOOObQjiH
-	41W3rNMXvfFG68rmHtYOiiRvdFAsuESFUtzDS3HgdCd2zbnyLpE1UeOc+Y+E9jc3+zQOiW
-	VLyant2gVH69hB/qMMw5FW7UnNRTI2s=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-693-uYdsV5DENQC9G55KxahCig-1; Wed, 25 Feb 2026 07:59:19 -0500
-X-MC-Unique: uYdsV5DENQC9G55KxahCig-1
-X-Mimecast-MFC-AGG-ID: uYdsV5DENQC9G55KxahCig_1772024359
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8c71655aa11so8207331285a.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Feb 2026 04:59:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1772024359; x=1772629159; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0kOIIK0zwnK1vvhLt6PsS43bfbxLU6KWtPkGNCJ0ZHw=;
-        b=nlpnbb2B266JFeGs2HZmgqmBHMv45vCuu/+zGqQryZ52h3Dff42cXmOMJG355fneYt
-         mLBts8T0LdEGzdaawVF6SEF/zfWMXY/tVsSiSETi8Evm1ct8zFrBtBbjl67ICfzni21I
-         k4qdHljsiTf9JT+KwzWDfLvXFcUJoH69apLMCMVPpM5PnfNZdFYPaUTz3n9JMi5OiUjf
-         H23bMyhV7uz52tCKrWKPeFYl1BTWFwATJWUWU2ACiMQ9WgwdaC2QvHo8bbRfQ4I8ErDh
-         EKeLQ9ETt8xTWD+M2Lz0bUWw8bhkVNFdqGdFPItDfjX30uBFnjH4NZyzsbuyhz7BShQQ
-         rhag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772024359; x=1772629159;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=0kOIIK0zwnK1vvhLt6PsS43bfbxLU6KWtPkGNCJ0ZHw=;
-        b=rCvrgHZ0nsufOlxQQEeFyIPPfkAhwcPbWsY9atpzsJqQNG99rT+L8ZRONV5mHR+HwY
-         T1G94SUgEdv9cJ7UdXofG842T5usFDW55Bw0xMbWCTGURqwqBfPr9thuWDNX380TtDuS
-         d9Z6O0e9q4eunQAF3fMAxFpAt42h9ozCjHmywBfcCSpIWKH15LhehBeAMagYRL2OlLyz
-         jcXnhuw6FJApMoDdF9hL02tnoTEd+ZvjViqkJp9gJDWu8Xxo4HBWA842tY9pvsOwFhZ1
-         0lttCMP2A0V/6e5mcMoONPLZESj1y+pC/oWzBHVdwHsJHGoEc+ws51O5qc6vKxsGlrM0
-         9XdA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxDoM5xAabuF25xmDtG38Y10CvqBMdvYUXl3x9vJR0N8QqdezqF0tLBOvOFbm0/sx4Qj9snep7Oh8hLGDB@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvC+IglZoDW6zwZOjDnvNBCeYCtZ2/REo4wrd9+cS5V9Th56gp
-	b3I3tCdRMnVXUebS65wpWU3ZnDkFwE7Nd03v+C9AyGhJF6+FoaEYzNA9ObUO8S20wWX4LNOrsRE
-	xQ4xnjF8k49b/CePxjurAeSKluKO2faB0IFscDOYnykdzOExooBJ9efDE01F9K9ULZm6l3cmIUf
-	BbqeTL
-X-Gm-Gg: ATEYQzySo5BZvXpavpBXFe4ftJH3IV5c1Efb63cahUOBSxOhe+lXqe5G1Y5ZmRgSrdU
-	QR9yO1OqAst8amS9xWxv33MJ4/Xa+kKxOVYsFh7/sDWPTDhIKeeKAkrq8DWS7BsJ/SQ+tHlyJmY
-	SxhMU8vszCcqAmYK3ZkskI4akyV/CSKY+W2Fe23NGuLLnSa8KP5jMcVXsEnZP4EWmrr891N7Egv
-	BjrDBWMmIQAi/yDdADJfy8btOYTAoVZcdrL3jhgLk4zBSmJZYsotkn11L5/VBOdn8I1Oo9mSP3T
-	xJZdoOJ/74sg8yAMiPK1FUxPva59Zy6G9QQcdAypRHMVkX3uKp25GiW0ss3DFymMohUhCxbmimz
-	EUtKHoYUNL21BOeojzWvnNo9pq47YP/lug6y7L9ukNm98s0Upyokzxe0=
-X-Received: by 2002:a05:620a:45ab:b0:8c6:d2ca:1d0e with SMTP id af79cd13be357-8cb8c9e62a4mr1886938985a.11.1772024358733;
-        Wed, 25 Feb 2026 04:59:18 -0800 (PST)
-X-Received: by 2002:a05:620a:45ab:b0:8c6:d2ca:1d0e with SMTP id af79cd13be357-8cb8c9e62a4mr1886935885a.11.1772024358265;
-        Wed, 25 Feb 2026 04:59:18 -0800 (PST)
-Received: from cluster.. (4f.55.790d.ip4.static.sl-reverse.com. [13.121.85.79])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cb8d046055sm1514219685a.8.2026.02.25.04.59.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Feb 2026 04:59:18 -0800 (PST)
-From: Alex Markuze <amarkuze@redhat.com>
-To: ceph-devel@vger.kernel.org
-Cc: idryomov@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	amarkuze@redhat.com,
-	vdubeyko@redhat.com
-Subject: [RFC PATCH v1 4/4] ceph: rework mds_peer_reset() for robust session recovery
-Date: Wed, 25 Feb 2026 12:59:07 +0000
-Message-Id: <20260225125907.53851-5-amarkuze@redhat.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260225125907.53851-1-amarkuze@redhat.com>
-References: <20260225125907.53851-1-amarkuze@redhat.com>
+	s=arc-20240116; t=1772025938; c=relaxed/simple;
+	bh=ipECqI7cd59CYi34i5Y36GacUMUAmIYn8MWSFPiNvVE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cnjCb6UobKpfatQjrrmZwCSs2G0fHFNtlMIGjWNq7yLuvDGDsrX+v8IisW8ZY2VKPBtn4nCtdCffqfLBON57rOf6EoBFdVJwoYj44WY/YF40r7MFzZ5fyTEXIYN6iRpwqglxAGouegjeydPzwH7rhopzxRz6W2sDhm5n3uQ2qVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PysBdkzu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B242C116D0;
+	Wed, 25 Feb 2026 13:25:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772025938;
+	bh=ipECqI7cd59CYi34i5Y36GacUMUAmIYn8MWSFPiNvVE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PysBdkzuyhh3S4Nucw+rxb56SeX2b3mqivj7ctxoNnKqPHUxnglSOPRYRKzhYEY2D
+	 bKuyCisfsgVXJ5Hx1f8yksOn64Z1yBLgbhaOjKZjuxU0c6fL/5DocrOpjPVCEZDw4j
+	 dDf9q7Kk+zHoCRe1RNCzRVnLrxrt1jEx8aJRZLbUZ4aYpDWLo+QYvNasm1u7viTs5c
+	 0jCIpAcJrKc3Ba1v972+uBYxjZT2w34P9I7TVuqB9MSqXrgulDFerdMGnbct+CvF9a
+	 rUZQxOlrnI7rhIy83nGK46N0ubEB+if72a4oIRxIGKh1zoUUgG2APZQq28LmP6HEv+
+	 SO65WR7jGCEJA==
+Date: Wed, 25 Feb 2026 08:25:37 -0500
+From: Sasha Levin <sashal@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	changfengnan@bytedance.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] buffer: fix kmemleak false positive in submit_bh_wbc
+Message-ID: <aZ74UbGA261L4mxQ@laps>
+References: <20260224190637.3279019-1-sashal@kernel.org>
+ <825ab511-9335-4827-a3fd-6dd6f498326e@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <825ab511-9335-4827-a3fd-6dd6f498326e@kernel.dk>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719,redhat.com:s=google];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78373-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,redhat.com];
-	RCVD_COUNT_FIVE(0.00)[6];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78375-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
-	FROM_NEQ_ENVFROM(0.00)[amarkuze@redhat.com,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	MISSING_XM_UA(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
-	TO_DN_NONE(0.00)[];
-	DKIM_TRACE(0.00)[redhat.com:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_NEQ_ENVFROM(0.00)[sashal@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 5281A197B9E
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: DC95C19815D
 X-Rspamd-Action: no action
 
-Rewrite mds_peer_reset() to properly handle all session states when
-the MDS resets our connection. Previously it unconditionally called
-send_mds_reconnect() for any state >= RECONNECT, which could leave
-sessions in inconsistent states.
+On Tue, Feb 24, 2026 at 02:57:35PM -0700, Jens Axboe wrote:
+>On 2/24/26 12:06 PM, Sasha Levin wrote:
+>> Bios allocated in submit_bh_wbc are properly freed via their end_io
+>> handler. Since commit 48f22f80938d, bio_put() caches them in a per-CPU
+>> bio cache for reuse rather than freeing them back to the mempool.
+>> While cached bios are reachable by kmemleak via the per-CPU cache
+>> pointers, once recycled for new I/O they are only referenced by block
+>> layer internals that kmemleak does not scan, causing false positive
+>> leak reports.
+>>
+>> Mark the bio allocation with kmemleak_not_leak() to suppress the false
+>> positive.
+>>
+>> Fixes: 48f22f80938d ("block: enable per-cpu bio cache by default")
+>> Assisted-by: Claude:claude-opus-4-6
+>> Signed-off-by: Sasha Levin <sashal@kernel.org>
+>> ---
+>>  fs/buffer.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/fs/buffer.c b/fs/buffer.c
+>> index 22b43642ba574..c298df6c7f8c6 100644
+>> --- a/fs/buffer.c
+>> +++ b/fs/buffer.c
+>> @@ -49,6 +49,7 @@
+>>  #include <linux/sched/mm.h>
+>>  #include <trace/events/block.h>
+>>  #include <linux/fscrypt.h>
+>> +#include <linux/kmemleak.h>
+>>  #include <linux/fsverity.h>
+>>  #include <linux/sched/isolation.h>
+>>
+>> @@ -2799,6 +2800,7 @@ static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
+>>  		opf |= REQ_PRIO;
+>>
+>>  	bio = bio_alloc(bh->b_bdev, 1, opf, GFP_NOIO);
+>> +	kmemleak_not_leak(bio);
+>>
+>>  	fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
+>
+>What if they do end up getting leaked? This seems like an odd
 
-The new implementation:
-  - Returns early for FENCE_IO or MDS not yet in reconnect state
-  - For MDS in RECONNECT state, directly reconnects (no locks)
-  - For active sessions (OPEN/OPENING/CLOSING), performs full
-    cleanup: unregister session, wake waiting requests, clean up
-    caps, and kick pending requests
-  - For RECONNECTING sessions, restarts the reconnect
-  - Snapshots session state under s_mutex, then re-acquires locks
-    in the correct order (s_mutex -> mdsc->mutex) matching the
-    convention used by check_new_map() and cleanup_session_requests()
+I was under the impression that kmemleak doesn't really track much under the
+hood of the block layer to begin with, but looking at the code I'm probably
+wrong.
 
-Signed-off-by: Alex Markuze <amarkuze@redhat.com>
----
- fs/ceph/mds_client.c | 89 ++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 86 insertions(+), 3 deletions(-)
+>work-around, would be better to ensure the caching side marks them as
+>in-use when grabbed and freed when put.
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index d350bf502a15..d9baa0073bbd 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -6737,12 +6737,95 @@ static void mds_peer_reset(struct ceph_connection *con)
- {
- 	struct ceph_mds_session *s = con->private;
- 	struct ceph_mds_client *mdsc = s->s_mdsc;
-+	int session_state;
- 
- 	pr_warn_client(mdsc->fsc->client, "mds%d closed our session\n",
- 		       s->s_mds);
--	if (READ_ONCE(mdsc->fsc->mount_state) != CEPH_MOUNT_FENCE_IO &&
--	    ceph_mdsmap_get_state(mdsc->mdsmap, s->s_mds) >= CEPH_MDS_STATE_RECONNECT)
--		send_mds_reconnect(mdsc, s);
+Something like:?
+
+diff --git a/block/bio.c b/block/bio.c
+index d80d5d26804e3..45a19de02eca6 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -17,6 +17,7 @@
+  #include <linux/cgroup.h>
+  #include <linux/highmem.h>
+  #include <linux/blk-crypto.h>
++#include <linux/kmemleak.h>
+  #include <linux/xarray.h>
+  
+  #include <trace/events/block.h>
+@@ -504,6 +505,9 @@ static struct bio *bio_alloc_percpu_cache(struct block_device *bdev,
+         cache->nr--;
+         put_cpu();
+  
++       kmemleak_alloc((void *)bio - bs->front_pad,
++                      kmem_cache_size(bs->bio_slab), 1, gfp);
 +
-+	if (READ_ONCE(mdsc->fsc->mount_state) == CEPH_MOUNT_FENCE_IO ||
-+	    ceph_mdsmap_get_state(mdsc->mdsmap, s->s_mds) < CEPH_MDS_STATE_RECONNECT)
-+		return;
-+
-+	if (ceph_mdsmap_get_state(mdsc->mdsmap, s->s_mds) == CEPH_MDS_STATE_RECONNECT) {
-+		int rc = send_mds_reconnect(mdsc, s, false);
-+		if (rc)
-+			pr_err_client(mdsc->fsc->client,
-+				      "mds%d reconnect failed: %d\n",
-+				      s->s_mds, rc);
-+		return;
-+	}
-+
-+	/*
-+	 * Snapshot session state under s->s_mutex, then release before
-+	 * re-acquiring in the correct order: s->s_mutex -> mdsc->mutex
-+	 * (matching check_new_map() and cleanup_session_requests()).
-+	 */
-+	mutex_lock(&s->s_mutex);
-+	session_state = s->s_state;
-+	mutex_unlock(&s->s_mutex);
-+
-+	switch (session_state) {
-+	case CEPH_MDS_SESSION_RECONNECTING: {
-+		int rc;
-+
-+		pr_info_client(mdsc->fsc->client,
-+			       "mds%d reset during reconnect, restarting\n",
-+			       s->s_mds);
-+		rc = send_mds_reconnect(mdsc, s, false);
-+		if (rc) {
-+			pr_err_client(mdsc->fsc->client,
-+				      "mds%d reconnect restart failed: %d\n",
-+				      s->s_mds, rc);
-+			mutex_lock(&s->s_mutex);
-+			ceph_mdsc_reconnect_session_done(mdsc, s);
-+			mutex_unlock(&s->s_mutex);
-+		}
-+		return;
-+	}
-+	case CEPH_MDS_SESSION_CLOSING:
-+	case CEPH_MDS_SESSION_OPEN:
-+	case CEPH_MDS_SESSION_HUNG:
-+	case CEPH_MDS_SESSION_OPENING:
-+		mutex_lock(&s->s_mutex);
-+		mutex_lock(&mdsc->mutex);
-+		if (s->s_state != session_state) {
-+			pr_info_client(mdsc->fsc->client,
-+				       "mds%d state changed to %s during peer reset\n",
-+				       s->s_mds,
-+				       ceph_session_state_name(s->s_state));
-+			mutex_unlock(&mdsc->mutex);
-+			mutex_unlock(&s->s_mutex);
-+			return;
-+		}
-+
-+		ceph_get_mds_session(s);
-+		__unregister_session(mdsc, s);
-+
-+		s->s_state = CEPH_MDS_SESSION_CLOSED;
-+		__wake_requests(mdsc, &s->s_waiting);
-+		mutex_unlock(&mdsc->mutex);
-+		mutex_unlock(&s->s_mutex);
-+
-+		mutex_lock(&s->s_mutex);
-+		cleanup_session_requests(mdsc, s);
-+		remove_session_caps(s);
-+		mutex_unlock(&s->s_mutex);
-+
-+		wake_up_all(&mdsc->session_close_wq);
-+
-+		mutex_lock(&mdsc->mutex);
-+		kick_requests(mdsc, s->s_mds);
-+		mutex_unlock(&mdsc->mutex);
-+
-+		ceph_put_mds_session(s);
-+		break;
-+	default:
-+		pr_warn_client(mdsc->fsc->client,
-+			       "mds%d peer reset in unexpected state %s\n",
-+			       s->s_mds,
-+			       ceph_session_state_name(session_state));
-+		break;
-+	}
- }
- 
- static void mds_dispatch(struct ceph_connection *con, struct ceph_msg *msg)
+         if (nr_vecs)
+                 bio_init_inline(bio, bdev, nr_vecs, opf);
+         else
+@@ -765,6 +769,9 @@ static int __bio_alloc_cache_prune(struct bio_alloc_cache *cache,
+         while ((bio = cache->free_list) != NULL) {
+                 cache->free_list = bio->bi_next;
+                 cache->nr--;
++               kmemleak_alloc((void *)bio - bio->bi_pool->front_pad,
++                              kmem_cache_size(bio->bi_pool->bio_slab),
++                              1, GFP_NOWAIT);
+                 bio_free(bio);
+                 if (++i == nr)
+                         break;
+@@ -823,6 +830,7 @@ static inline void bio_put_percpu_cache(struct bio *bio)
+  
+         if (in_task()) {
+                 bio_uninit(bio);
++               kmemleak_free((void *)bio - bio->bi_pool->front_pad);
+                 bio->bi_next = cache->free_list;
+                 /* Not necessary but helps not to iopoll already freed bios */
+                 bio->bi_bdev = NULL;
+@@ -832,6 +840,7 @@ static inline void bio_put_percpu_cache(struct bio *bio)
+                 lockdep_assert_irqs_disabled();
+  
+                 bio_uninit(bio);
++               kmemleak_free((void *)bio - bio->bi_pool->front_pad);
+                 bio->bi_next = cache->free_list_irq;
+                 cache->free_list_irq = bio;
+                 cache->nr_irq++;
+
 -- 
-2.34.1
-
+Thanks,
+Sasha
 
