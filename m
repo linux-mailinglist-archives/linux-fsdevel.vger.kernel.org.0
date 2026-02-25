@@ -1,251 +1,464 @@
-Return-Path: <linux-fsdevel+bounces-78336-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yHZ3DfRknmlCVAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78336-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 03:56:52 +0100
+	id 6H9EDfNnnmmWVAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 04:09:39 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8E01191132
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 03:56:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E2961911FD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 04:09:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id CB8C930EB6C0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 02:56:02 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id BFE0F3084BCE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 03:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC76329ACD1;
-	Wed, 25 Feb 2026 02:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WAVBHzGb"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD5728FFE7;
+	Wed, 25 Feb 2026 03:09:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011000.outbound.protection.outlook.com [40.93.194.0])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com [209.85.161.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168C0296BD1;
-	Wed, 25 Feb 2026 02:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.0
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771988160; cv=fail; b=e7QcWQDOXLa9zXDjeFQyNU7l2Bl4YtY1ZC809zJ6bDDi63Zu+9Et1vz4u0Owx4Z+2fvHJ2DIhuPX4HntbRWs1sTs1weIPeLxUkTdwDkaivZ+LEkVeNZzHySvlGv4fuTJRjllUYC8Bl+kpJt2kFCKSpXC9jnW69olmtihm/RPnok=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771988160; c=relaxed/simple;
-	bh=7WDsbDaBG2InMsXavwTS4Po4W0I2lVyCdy86DuhKznM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=WPJ5Zob62EzGivjNWtneRhLv9oRnUz87joZ3Fje1ZUFVzSbet0GXJ+cpICIHw/bZ0c2vWt5DVldGN+hYhd8CMoROH85b6yV+xEYplGT6FINk/gP6pKyTXVoP3a0M9SJFPAOy2FDeZH0LpFzhRmvpl3CUQxqKle7lygUt1oUupco=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WAVBHzGb; arc=fail smtp.client-ip=40.93.194.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RMWR4jwZX9Xdx3u+heOUa1IxcaoZLtw8WEFhaQbstOR621yeLWPB3zNq190ERThZ2iAz4KyiJv6Ww69t4aQLJtGwEJ5NNY18Z32tEVmv2WkLmg6AHfFLoEeCatOsfpTiZ6GX3FvrlL3JPmBXbB0yizFt5Ucs+C674sZJDEAbk9IfKY5o6qh2/oiJUdCjAlMHnU7WgH8vKXmGubNagrOpBx616UOm96TdQSN0UL8pm0hLGXS42mXldtNu1RaxzsVX8HGXFlPMI1NeqWz74O8T8hadjyw4c90p3+ijyaqssysqlUBE1z3/Dn8KMlgclDYSh0Wfggrj0Jj9RB4ojsSs9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7WDsbDaBG2InMsXavwTS4Po4W0I2lVyCdy86DuhKznM=;
- b=DKSHZUx/bfgVkKOCsrb1Grgbt808LRt54yuVtiTpmgjxAbL0XXW9llYLB9efXTuu8m1rsxdyThN3XF7+AWxkhh5a/JiIyhwfAICyJptQI+qXVnJ4L/PeEu9rf4lBNewaV2MxItM1LXVExiKKcREG+RuLoNQQN6Srga8taFTd3jc35mtvHP7qUXJQ4abCFiJ45sU79Mbvrl5IadtoJS+TA/MBUaKCTkEHKAByMZ3ynAGKIVUHEzS3VjrpB7tbOeybe/fbIVoZ5Dlh1TyqW/JMqkyQL9a+aeD15/bsfvPJLtTMFHxlgTdUgkWz7THfNgJTUlBr4FcJ8qAzG+9TceX1mQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7WDsbDaBG2InMsXavwTS4Po4W0I2lVyCdy86DuhKznM=;
- b=WAVBHzGbJ+eVBANkvXVtpnAFDlGBktgvFH7U/48VJknX7u7GbWkaW81COiBAU1O7shFWMA+z+i0MJ2xdbacequoU3CD6SDosDKgQeLQm/MKJxTSuGhRahswzj9oKZucMTiy1KtI4gbUlLRU2EUIY2yQMgR1dFO7mWFhr9EzxvKnJhrDlxDzne50LS50ZY1tqp9Y5HDbxl29b41yK/M1LylCzHE2Tc+aAPQ98qW7ySHueGAJf7z5+ynEfLxQJgRJ4mY69HVG0N/0O8THvs7+HXEziTMlYxdO3LpDyJvwP+PBpfBafOQEIzTqvUYAXkJQS8XkiVJEwfy3tpBtxOScetQ==
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com (2603:10b6:408:219::9)
- by SA1PR12MB8988.namprd12.prod.outlook.com (2603:10b6:806:38e::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9632.22; Wed, 25 Feb
- 2026 02:55:55 +0000
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::2109:679c:3b3e:b008]) by LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::2109:679c:3b3e:b008%6]) with mapi id 15.20.9632.017; Wed, 25 Feb 2026
- 02:55:55 +0000
-From: Chaitanya Kulkarni <chaitanyak@nvidia.com>
-To: Bart Van Assche <bvanassche@acm.org>, Haris Iqbal <haris.iqbal@ionos.com>,
-	Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
-CC: Daniel Wagner <dwagner@suse.de>, "linux-block@vger.kernel.org"
-	<linux-block@vger.kernel.org>, "linux-scsi@vger.kernel.org"
-	<linux-scsi@vger.kernel.org>, "linux-nvme@lists.infradead.org"
-	<linux-nvme@lists.infradead.org>, "lsf-pc@lists.linux-foundation.org"
-	<lsf-pc@lists.linux-foundation.org>, Hannes Reinecke <hare@suse.de>, hch
-	<hch@lst.de>, Jens Axboe <axboe@kernel.dk>, "sagi@grimberg.me"
-	<sagi@grimberg.me>, "tytso@mit.edu" <tytso@mit.edu>, Johannes Thumshirn
-	<Johannes.Thumshirn@wdc.com>, Christian Brauner <brauner@kernel.org>, "Martin
- K. Petersen" <martin.petersen@oracle.com>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>, =?utf-8?B?SmF2aWVyIEdvbnrDoWxleg==?=
-	<javier@javigon.com>, "willy@infradead.org" <willy@infradead.org>, Jan Kara
-	<jack@suse.cz>, "amir73il@gmail.com" <amir73il@gmail.com>, "vbabka@suse.cz"
-	<vbabka@suse.cz>, Damien Le Moal <dlemoal@kernel.org>
-Subject: Re: [LSF/MM/BPF ATTEND][LSF/MM/BPF TOPIC] : blktests: status,
- expansion plan for the storage stack test framework
-Thread-Topic: [LSF/MM/BPF ATTEND][LSF/MM/BPF TOPIC] : blktests: status,
- expansion plan for the storage stack test framework
-Thread-Index: AQHcm5X3JV2Wg40sGEa2ESr3cOMLpbV+sd+AgAHNaQCAA8rNAIAMTMYAgAI2fAA=
-Date: Wed, 25 Feb 2026 02:55:54 +0000
-Message-ID: <7b168caf-805c-4002-9101-fda54cf8fbaf@nvidia.com>
-References: <31a2a4c2-8c33-429a-a2b1-e1f3a0e90d72@nvidia.com>
- <459953fa-5330-4eb1-a1b4-7683b04e3d45@flourine.local>
- <aY77ogf5nATlJUg_@shinmob>
- <CAJpMwyis1iZB2dQMC4VC8stVhRhOg0mfauCWQd_Nv8Ojb+X-Yw@mail.gmail.com>
- <40edeeec-dbc3-4aef-ac86-691e1ed2ed06@acm.org>
-In-Reply-To: <40edeeec-dbc3-4aef-ac86-691e1ed2ed06@acm.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV3PR12MB9404:EE_|SA1PR12MB8988:EE_
-x-ms-office365-filtering-correlation-id: 4abdbfd7-5cd8-4f49-533e-08de741964f8
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|376014|7416014|10070799003|366016|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?cDEwVVpPLy9OaUpSQi9wZFE1eFF0M1pWWmJ6dVpTTHBHeGRoWHNLUlM0RnZI?=
- =?utf-8?B?WWl6N0NiZVArM203TkgvdjFvTWNjLzlXL1BkOW9GeDkzUHBOa1lrYzVWTHZ3?=
- =?utf-8?B?NWR0SHA2Qy9qYTlJYnhISWwzV1JIaDNqMExoaGNBdUJnT3lPQTRIelQ3Y3lx?=
- =?utf-8?B?VkJuTTduVDFGeFZxa2VRZnhaazZwRzRrbkdmdTFEODZQaC92ZGZPWEsrQU5w?=
- =?utf-8?B?bDJxVzJJRUtXeWUyQjVyK1lyc0RIWnhHYnZhTzVLRGdXbjU0Z2dGYWQ1cW11?=
- =?utf-8?B?cmE1OU1jK0hsVTZTK2lFajQwR1lLZGk2V0s0eGlnbklVSFE3WlAyV1p0aDdF?=
- =?utf-8?B?ZmFMZFdTK2k1OHY5aityc1hhNU1mTFlFeVNJU0hyTk1PMXNsWXBXZkNXcUtp?=
- =?utf-8?B?RjJnRWU4aklPRGdwNWkwWTQvZlVDSDl3QlAvOWdXSnVZTTRaU1doVGJXbU5r?=
- =?utf-8?B?QzkyejNSV3BsWCtqM1hkYTRRMEhzYitlOFBDUGo3T0FqQnIxRkFpOSt5SXVN?=
- =?utf-8?B?RkRNR1g0L1czODdSTE5iOHdvVjEwa2dFdmtnT0t4U3gvbmtsQzhYbTlJM2dW?=
- =?utf-8?B?R0paRlorVW1acjhGYm9KUGhwVFllNFVIdkVkYk1VMGpHWUx4UE1FYUJiTlhh?=
- =?utf-8?B?OTJsNVMrREMybHNCQjN5QUFNZUprMC8vZ1daam8vM2pOeUhqNGRhQVhFVGdj?=
- =?utf-8?B?VDJldEY5ZTU2ZG45R0h0Y0poQmtucnl6MUtTSkEzYjhtNkE5dGFnQjcwVXVE?=
- =?utf-8?B?Wmk0TEwzVUxKdE5jZXRtM0owTEJacHpSb25GbVV2YjllbndqbkYrSWEybGFW?=
- =?utf-8?B?K1U4YWtTc1IreDBDSHFYcXBqTUxEaWdhUDQySnYrUWZkcW9zdzJRbXZuY0JT?=
- =?utf-8?B?WTNxVWJkWUpnUkJ3MTF6WCtDSndyMjhDd0pzQmV6ZTVhdTRQcG1rQlJSeGhL?=
- =?utf-8?B?Tk5kYkQ0TS9GOWo4L1hJNUJtVmJ1ZEszbklaOHhzZXZ0UVZzRWxKVUFhdVd1?=
- =?utf-8?B?RmN4YkpZK0ZmYnVkMG5GWWtLRU13ejZXY1JkbUxpcENTOGhHUmpOOXZDSHds?=
- =?utf-8?B?c1ZaamN0RS8ySnJHcXhKYjlEMS9ITVR0ZjQ1RFU3NEJYNnNEVUNqSmxnK3NM?=
- =?utf-8?B?d2JDYVJlUUQ0Qm55MEpVMVYwYTQ5Y1pRMEhNblk1K0J4MThETjdaZitHOHhE?=
- =?utf-8?B?a28zMTR2Y08vZ1IwUnh3VFRxUkZZaDJuT29aMUFYRGZhdEtqZ0RPdFlsVjZs?=
- =?utf-8?B?OVdsQXNlaU8raFV0aFE4SVpZMUNiTk5PT2dZdkhTQVNqa0FGZTJiTWdmaU84?=
- =?utf-8?B?UWtYRDMyRWdYcVc3dWJyY1hXVWVpbndxOWtHaEV0cGo0UUFOK2ZoL2EyWjlM?=
- =?utf-8?B?SjhuTXU4VE9STnd5R0V1WGVEaDJmWkFCNlA0TnVBZWVQa1ZMOFlzeFpucGZH?=
- =?utf-8?B?cjdUUHErWXdmQWlHYXJhSlZERzQzZ0M1ZisrMDAwcDhaQnhuVExCZG9KRlNR?=
- =?utf-8?B?M01vdGU1bmhrck1qUXJ2b0VSS2VIRkMzR0ZxSU9qc3Y4YUM2czdPS2YzTE1K?=
- =?utf-8?B?bDJEaXh6VmpEaVVJQmNEQldtVHVnWk40RUJmdWlmeWdWT3lkYkpnMkRPQXdX?=
- =?utf-8?B?NnhWQ2g5QjkwMU5uYkJNaDdPRG9GM2pFT1FSSmFDTGdQeWlpeU5UNXY2RXdu?=
- =?utf-8?B?U3NBQlFTZ0RXQmkxYXh2eGdtSE9ybnBTRkRUZ2t4UHI0OFR4LzJKNThpN0hh?=
- =?utf-8?B?cmFVUEF2MmF1YTJDMWsvcUVlUlF5eHRiMlNWaFBhVTdCUkdlMUNLVUFGSmpH?=
- =?utf-8?B?S2VQWW9TdDlGZ3JCUEpTZHd4dkNtci9SZ2d3RVpxZVVXek9GRWtDS3I0bVNT?=
- =?utf-8?B?K2UzSklscnZvQVlvRTNTT0l5L3Q5M3JMWVZlZjV1ekt2bnFzVklzQnBBTEY2?=
- =?utf-8?B?WndoaUxqeFI4aFNUa1YvbEMvemU4eDl0VUZCYngwcVhra0RXY1hxSXVCdk9l?=
- =?utf-8?B?bEdLRW4zUkUxa0ZVR0lwc0pyMzBSTnhwb0haOGhrT053UGtKSnRUS1FmWlBE?=
- =?utf-8?B?TlJpWGtGK1JqREMzTE1TdEEzOFRpblNMejRVc1B1NExrK2JmdDk1UE9lcUNr?=
- =?utf-8?B?VFc2SzlCTHpZbnJFODFkbkEzWjZYM1FnSEFuWGVzZWZCcnZhU01KTGVPTml1?=
- =?utf-8?Q?V7lrnuH1BdyoeAPmEpdXDfE=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9404.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(10070799003)(366016)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 2
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?TFh4em94TFlMT3dQNGRFMlNzTjBGbWlWS1IxbFAxQWh2R2pTZ2pDRG1HdWh4?=
- =?utf-8?B?S2R0RUdaTjVMMG8wVDIraFpNaEVvSmxyOGtZeHRkdWtoVzFHWHBFVUFYUXZu?=
- =?utf-8?B?cGRqSmNYSENiYzBDNVBRWnUxa1JZOTNId0NGRzZBOTRQeUJOaE0vMG5aWXJ1?=
- =?utf-8?B?ZERJcWdjbGNDdzBLQVJnUkdGUlYzUzEzUkRiSXpEeWd0WEZFVFVVeVA3akYz?=
- =?utf-8?B?WHZWdnM2YlpVY0hVK3Q3a3JOeHp3eW9UK3paTXROM3hBYWFwb2xBM2xXY0d5?=
- =?utf-8?B?MnRoTU02T3kwVUlEZ2M1aG1BNWtGbEZ0ZThvdUZLT3YzS3N0TFg1dEV5bmZU?=
- =?utf-8?B?M3BWS1RmNjJubEtZZHh3QlhlYTN3OFNaWDhtcnNwemJjVTFzeGFkUGhrQmxH?=
- =?utf-8?B?YThSMGlJaWZTQUFnZzFqZ3hrMkxlc2tNTjNaUGo1ODFJRG9rQmJIeGsxTldH?=
- =?utf-8?B?bld6YWlpSmdMT2EwQWRVVTEwVDZHcDBuQW9lNWYxbzNvbnpsNzJvSHY5bkJG?=
- =?utf-8?B?eGwySVlnVU85VzU1bW9CQWgwSWJHUjZMdTArajI5alNxdmo3ZDRYbURFNDds?=
- =?utf-8?B?a3F1OVBjTkZZVkxCTHJQL1YyRWwrdnVRZUgwV1c4MFJGUVJ3bDFKc3RxNklF?=
- =?utf-8?B?VnpuMHZScE5QeWoxRm5TeGZPdTFadVphU1Z1bFV3MmlDdFE5VVVudStHK1lk?=
- =?utf-8?B?YkN5V2tHM2NlQkh3alY0Nk9iY2JSVHhSMmh3b05NNVdnU2JqRXo1RUIrVTlO?=
- =?utf-8?B?eUsxZEVqalI2UXJDOW1OZ0pGVXRMS24vc0xyaU5CNmxzMElidmEyWDBGTUVy?=
- =?utf-8?B?b0hSdHlSSkdyZzk2NHNnbU1mcnhrczljOUI2aEhmUW9YVmdFZkhDUTBpdEQy?=
- =?utf-8?B?UlAzVmhuZE1FZDRla2d2SDRLNVhkZG51ZEl6Uko2azVuRkR1RTlZSDY5WkQ2?=
- =?utf-8?B?UzlFQWVhaTA5MDVzNHlUWGROWkZjc0QyRXhMeUFBbnlaK2d5ZDVmWFVCRU1q?=
- =?utf-8?B?SlVOYnFTNHkvZlVOTDdvYVB0QmJTUWxVdy9WVmxnNGZkc3FmdGZWRTVGTUVW?=
- =?utf-8?B?MGdaVC9VM1k4eHB0U2EyR1lzQjZsamh0OEZCV2c1anVaOWZZejd6WUd3WVNL?=
- =?utf-8?B?SjlwZjBYdkNqVmlGVitQOVFBRFVHSEhmOWdpMlJ2cU1ub25oYnpVZjcySUcr?=
- =?utf-8?B?Sm5LSDB3bDBHNk1adFdSRkNiRWZ5R3pCeG5Ddm1DbWw5RTRwak1yL0lOUkRR?=
- =?utf-8?B?U0hxZFlEbEVUVmd6cnBXaTJMcC9aNWtURjhDaytqSFpFZkhtTnhGVHZqRVNl?=
- =?utf-8?B?Wk5jNEVjODIrREJGT00rOGlBMG5IQWhmZlJHSy9jbU56aHVaZU1PV210WFRC?=
- =?utf-8?B?bzhWNVlaUUpFbDkvcXgwTmJzK09PNU9sUjY3SGVKYXFtalN6NUp2OXMyb2Vz?=
- =?utf-8?B?ZDVSeFhUbmtqajBDSSszbHlIdWpidXNzbFBZYlNidWlGZ2hEZXJOS25Qc09N?=
- =?utf-8?B?ckRrTURmcGM1ZWlHMDR3a3VPNXhWQWo2Z0dEeVpjcERSb1BWZnZDMXlpNnlx?=
- =?utf-8?B?THd1TldQWXdLK3pNRTFERnhkZFVXSk9PbEJQbzlnUm1ZWlZtZkptMnE5Skhk?=
- =?utf-8?B?MDBmcndJNjhWV1U1OStibG5MbFpFQmtJR0gvSmlKMEVIMXVhSzBDUnBIMVps?=
- =?utf-8?B?QmZBUTBCcERvYm9kWVJtcW1QN3dhZEZIQmtKNFZQZmw1V01SQ21YK3lDdWNp?=
- =?utf-8?B?ZElHR1VMUTBRZVNpV1RVbmtHMXhLM0xjTHNSNitab1ZXbG9Pb2ljdC96U1hp?=
- =?utf-8?B?SnRsNW8rQW45TFhhTitwN0hBR3B5WHlXV3EwNVlnWHFBM1h3M2dLRExmait5?=
- =?utf-8?B?RE9ObEdTY28zTjZyN2pBUjZzcGpvbTdSNXpaUHZjUlV4bWIrQ25OcDBHUFhD?=
- =?utf-8?B?bk1JUVFya1krUWFOQVBvQnFYVDNWQ0prbFAwaWljMFFtRDBuMUhaTnFpNGJ2?=
- =?utf-8?B?MmxFdE9pbDVEYlJLUm1jaUppWk9YY0ZJSTNBbVhEY0hWM0RUQUtXaXJHL0xD?=
- =?utf-8?B?Ky84OWpaYlB4QkQ4YlJmNFc1d0RHaGRHSjkrdjRGS2dLa2thQlZPNUxrN3dw?=
- =?utf-8?B?TmRjdTJFWjBWWWl0akxhclNLOHZiMDB5Q2dpSEtHUGdSNVFvSEFuWkdITVRS?=
- =?utf-8?B?a2FNZ0ZsdDhybG4rMVZTNFJqU3FEQ1l5L290ZFBaT2pFQ05TdE1RZGFkd0hN?=
- =?utf-8?B?N1FSRC9pQzRNc1ZtZndUZzllenBwdDBCNDhkbDVTZ1dxTkZqU3B3cEliNVVL?=
- =?utf-8?B?dFVkdVRKd2grSWlIOGdRamh6ckFGeE5XMktzWEFMU295Yk9LN1F1VGxDMkNY?=
- =?utf-8?Q?JYeAkzbAtpfqfBIv4r8trEbSuBdc1lER3n9QsUfgeZ0/3?=
-x-ms-exchange-antispam-messagedata-1: U0ilQDhok1/Gxw==
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <CA1E5570AF0A1241B23057BF8307A3DE@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4A727280F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Feb 2026 03:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.69
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771988970; cv=none; b=RAydjsJckl9sHajzVY2vBBZD0UtTfZWopol+h1ArEtHyvGIK5sD1kKUq5zgWstbTFEgJNPcN1BW8owEL/ze2sr/8OjJAafk7N40p8OXth4hcsLyd22hTqLvu1opfKL7Xo8dG7azmUhtKTKX7pu66SRsIz/62+5tCCduEad3viCM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771988970; c=relaxed/simple;
+	bh=FCLy/p/RqGxzSDoGn73X8Ry/hUJOKX7wa/NWxU9Rm+8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=aDTrLOGf6wrq37V149Ske5agGaK3dkMk9vzCbqZlwMQZ1X+zJxsJtTApV7AMNF+eBM9nv5TigaDBaWdYST6Linj4nkOx/l7Mn5k6zbicbRBVLCVpl0uUxZP0PxHp664rPnCbd1z4ZxMEpmLmK4mE7lXGQKDhqDWkwCPx51xTVnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-679862e4413so102950363eaf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 19:09:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771988967; x=1772593767;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9EL7M3bd4yijGcAxsMbmxxz5lO6yXPYmbt5FWso09qU=;
+        b=Fuhw6wLpsT2mvuVbR7f3g32EkN1lj2bXWp/6eZJE6OPYQM7Vo60KpA1dYfcx9k7azj
+         2kFeQzrp7ZxPjVKAi/7ulrOx8aW8hyWXUzB/CBJO8FPKiYd4fizgby/EwaDI6px1jSQV
+         KCWp0dAPOFT20CV13z4DHn2/uo0TuvEORGyzm7s9/fHDXiaJqOPDdxqEt/b3cvcX+hXT
+         w+QEhj/i2fn9XB97Cyk5wyHLOpywzy+ZF1bAysy756o/ZKfs/YGnSlvrcKKHxc548FCn
+         45VSegXWZtG/2fRt4V7XT/y+Y8qfKxm4ynBmZCnF0RFCkBtuSki0OwCbt0yVqi9Ad8P7
+         ONLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYC0vP9sLQMhH8kxMRBacXnt/OkjFigLfFcuVt4mFrUWNSqdX4rBwYtVxXK2lc6CTaTJaLZSEjQTDu0Qw2@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZwqOCdO+FggdQa0BLm2zVeVr/ADd5f67I8sBpKLC338OObN9n
+	YVFEgBvHwr1zpZHLXPJtO/rPn7GSaEVkLumSLQuRLrFDOmNZ964E7qyygpbcuS17iNeM3QoVPHw
+	RFcPNqtNLW/COoWmNcgcrCVRY9IerglNE4UccT/WYnupPqM3jOQbohK9EQFQ=
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9404.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4abdbfd7-5cd8-4f49-533e-08de741964f8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2026 02:55:54.9674
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: AVTS0idlBUnk6KqreZN9hby4xwcSp+Akxp04SIkb4PxfpkmvycLHpUlL26a0ULJuwPNn4xgiW/XaXGxu1dI+YQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8988
+X-Received: by 2002:a4a:d899:0:b0:679:c549:202c with SMTP id
+ 006d021491bc7-679c549210cmr5391925eaf.14.1771988967598; Tue, 24 Feb 2026
+ 19:09:27 -0800 (PST)
+Date: Tue, 24 Feb 2026 19:09:27 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <699e67e7.a00a0220.301b66.0000.GAE@google.com>
+Subject: [syzbot] [jfs?] INFO: task hung in generic_file_write_iter (4)
+From: syzbot <syzbot+9dd2144719bb071036a4@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, jfs-discussion@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.94 / 15.00];
-	MIME_BASE64_TEXT_BOGUS(1.00)[];
-	ARC_REJECT(1.00)[cv is fail on i=2];
-	DMARC_POLICY_ALLOW(-0.50)[nvidia.com,reject];
-	R_DKIM_ALLOW(-0.20)[Nvidia.com:s=selector2];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+X-Spamd-Result: default: False [-0.36 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=abe4fa590468dbfb];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	MIME_BASE64_TEXT(0.10)[];
+	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[23];
-	TAGGED_FROM(0.00)[bounces-78336-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
 	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_CC(0.00)[suse.de,vger.kernel.org,lists.infradead.org,lists.linux-foundation.org,lst.de,kernel.dk,grimberg.me,mit.edu,wdc.com,kernel.org,oracle.com,javigon.com,infradead.org,suse.cz,gmail.com];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[chaitanyak@nvidia.com,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[Nvidia.com:+];
-	RCVD_COUNT_FIVE(0.00)[5];
-	MID_RHS_MATCH_FROM(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
+	MISSING_XM_UA(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-78337-lists,linux-fsdevel=lfdr.de,9dd2144719bb071036a4];
+	SUBJECT_HAS_QUESTION(0.00)[];
+	REDIRECTOR_URL(0.00)[goo.gl];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[Nvidia.com:dkim,nvidia.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: A8E01191132
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_NONE(0.00)[];
+	R_DKIM_NA(0.00)[];
+	NEURAL_HAM(-0.00)[-0.999];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,appspotmail.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,googlegroups.com:email,goo.gl:url]
+X-Rspamd-Queue-Id: 7E2961911FD
 X-Rspamd-Action: no action
 
-T24gMi8yMy8yNiAwOTowOCwgQmFydCBWYW4gQXNzY2hlIHdyb3RlOg0KPiBPbiAyLzE1LzI2IDE6
-MTggUE0sIEhhcmlzIElxYmFsIHdyb3RlOg0KPj4gQSBwb3NzaWJsZSBmZWF0dXJlIGZvciBibGt0
-ZXN0IGNvdWxkIGJlIGludGVncmF0aW9uIHdpdGggc29tZXRoaW5nDQo+PiBsaWtlIHZpcnRtZS1u
-Zy4NCj4+IFJ1bm5pbmcgb24gVk0gY2FuIGJlIHZlcnNhdGlsZSBhbmQgZmFzdC4gVGhlIHJ1biBj
-YW4gYmUgbWFkZSBwYXJhbGxlbA0KPj4gdG9vLCBieSBzcGF3bmluZyBtdWx0aXBsZSBWTXMgc2lt
-dWx0YW5lb3VzbHkuDQo+IEhtbSAuLi4gdGhpcyBwcm9iYWJseSB3b3VsZCBicmVhayB0ZXN0cyB0
-aGF0IG1lYXN1cmUgcGVyZm9ybWFuY2UgYW5kDQo+IGFsc28gdGVzdHMgdGhhdCBtb2RpZnkgZGF0
-YSBvciByZXNlcnZhdGlvbnMgb2YgYSBwaHlzaWNhbCBzdG9yYWdlDQo+IGRldmljZS4NCj4NCj4g
-QmFydC4NCg0KV2UgY2FuIGFsd2F5cyBtYWtlIGEgZmxhZyBhbmQgbWFrZSB0ZXN0IHRoYXQgYXJl
-IHBhcmFsbGVsIGNvbXBhdGlibGUgPw0Kc28gd2UgZG9uJ3QgaGF2ZSB0byBmb3IgdGhlIHBhcmFs
-bGVsIGV4ZWN1dGlvbiBieSBkZWZhdWx0Lg0KDQpXRFlUID8NCg0KLWNrDQoNCg0K
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    a95f71ad3e2e Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14385722580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=abe4fa590468dbfb
+dashboard link: https://syzkaller.appspot.com/bug?extid=9dd2144719bb071036a4
+compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1175c55a580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8676ab01a8b8/disk-a95f71ad.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e3314e350353/vmlinux-a95f71ad.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6e2905ccbd1e/bzImage-a95f71ad.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/4a8adaa9093f/mount_0.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=16fbbc02580000)
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9dd2144719bb071036a4@syzkaller.appspotmail.com
+
+INFO: task syz.0.17:6090 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.0.17        state:D stack:28864 pid:6090  tgid:6084  ppid:5926   task_flags:0x400040 flags:0x00080002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5295 [inline]
+ __schedule+0x14fb/0x52c0 kernel/sched/core.c:6907
+ __schedule_loop kernel/sched/core.c:6989 [inline]
+ rt_mutex_schedule+0x76/0xf0 kernel/sched/core.c:7285
+ rt_mutex_slowlock_block kernel/locking/rtmutex.c:1647 [inline]
+ __rt_mutex_slowlock kernel/locking/rtmutex.c:1721 [inline]
+ __rt_mutex_slowlock_locked+0x1f8f/0x25c0 kernel/locking/rtmutex.c:1760
+ rt_mutex_slowlock+0xbd/0x170 kernel/locking/rtmutex.c:1800
+ __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
+ rwbase_write_lock+0x14d/0x730 kernel/locking/rwbase_rt.c:244
+ inode_lock include/linux/fs.h:1028 [inline]
+ generic_file_write_iter+0x11f/0x690 mm/filemap.c:4454
+ new_sync_write fs/read_write.c:595 [inline]
+ vfs_write+0x629/0xba0 fs/read_write.c:688
+ ksys_write+0x156/0x270 fs/read_write.c:740
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb97161c629
+RSP: 002b:00007fb970c55028 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007fb971896090 RCX: 00007fb97161c629
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 00007fb9716b2b39 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fb971896128 R14: 00007fb971896090 R15: 00007fff19dbf018
+ </TASK>
+INFO: task syz.2.19:6098 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.2.19        state:D stack:28920 pid:6098  tgid:6094  ppid:5931   task_flags:0x400040 flags:0x00080002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5295 [inline]
+ __schedule+0x14fb/0x52c0 kernel/sched/core.c:6907
+ __schedule_loop kernel/sched/core.c:6989 [inline]
+ rt_mutex_schedule+0x76/0xf0 kernel/sched/core.c:7285
+ rt_mutex_slowlock_block kernel/locking/rtmutex.c:1647 [inline]
+ __rt_mutex_slowlock kernel/locking/rtmutex.c:1721 [inline]
+ __rt_mutex_slowlock_locked+0x1f8f/0x25c0 kernel/locking/rtmutex.c:1760
+ rt_mutex_slowlock+0xbd/0x170 kernel/locking/rtmutex.c:1800
+ __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
+ rwbase_write_lock+0x14d/0x730 kernel/locking/rwbase_rt.c:244
+ inode_lock include/linux/fs.h:1028 [inline]
+ generic_file_write_iter+0x11f/0x690 mm/filemap.c:4454
+ new_sync_write fs/read_write.c:595 [inline]
+ vfs_write+0x629/0xba0 fs/read_write.c:688
+ ksys_write+0x156/0x270 fs/read_write.c:740
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3c0760c629
+RSP: 002b:00007f3c06c45028 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f3c07886090 RCX: 00007f3c0760c629
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 00007f3c076a2b39 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f3c07886128 R14: 00007f3c07886090 R15: 00007fff24e91218
+ </TASK>
+INFO: task syz.3.20:6100 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.3.20        state:D stack:28648 pid:6100  tgid:6096  ppid:5939   task_flags:0x400040 flags:0x00080002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5295 [inline]
+ __schedule+0x14fb/0x52c0 kernel/sched/core.c:6907
+ __schedule_loop kernel/sched/core.c:6989 [inline]
+ rt_mutex_schedule+0x76/0xf0 kernel/sched/core.c:7285
+ rt_mutex_slowlock_block kernel/locking/rtmutex.c:1647 [inline]
+ __rt_mutex_slowlock kernel/locking/rtmutex.c:1721 [inline]
+ __rt_mutex_slowlock_locked+0x1f8f/0x25c0 kernel/locking/rtmutex.c:1760
+ rt_mutex_slowlock+0xbd/0x170 kernel/locking/rtmutex.c:1800
+ __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
+ rwbase_write_lock+0x14d/0x730 kernel/locking/rwbase_rt.c:244
+ inode_lock include/linux/fs.h:1028 [inline]
+ generic_file_write_iter+0x11f/0x690 mm/filemap.c:4454
+ new_sync_write fs/read_write.c:595 [inline]
+ vfs_write+0x629/0xba0 fs/read_write.c:688
+ ksys_write+0x156/0x270 fs/read_write.c:740
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc0a48cc629
+RSP: 002b:00007fc0a3f0d028 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007fc0a4b46090 RCX: 00007fc0a48cc629
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 00007fc0a4962b39 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fc0a4b46128 R14: 00007fc0a4b46090 R15: 00007ffd7a419a68
+ </TASK>
+INFO: task syz.1.18:6104 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.1.18        state:D stack:28840 pid:6104  tgid:6099  ppid:5932   task_flags:0x400040 flags:0x00080002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5295 [inline]
+ __schedule+0x14fb/0x52c0 kernel/sched/core.c:6907
+ __schedule_loop kernel/sched/core.c:6989 [inline]
+ rt_mutex_schedule+0x76/0xf0 kernel/sched/core.c:7285
+ rt_mutex_slowlock_block kernel/locking/rtmutex.c:1647 [inline]
+ __rt_mutex_slowlock kernel/locking/rtmutex.c:1721 [inline]
+ __rt_mutex_slowlock_locked+0x1f8f/0x25c0 kernel/locking/rtmutex.c:1760
+ rt_mutex_slowlock+0xbd/0x170 kernel/locking/rtmutex.c:1800
+ __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
+ rwbase_write_lock+0x14d/0x730 kernel/locking/rwbase_rt.c:244
+ inode_lock include/linux/fs.h:1028 [inline]
+ generic_file_write_iter+0x11f/0x690 mm/filemap.c:4454
+ new_sync_write fs/read_write.c:595 [inline]
+ vfs_write+0x629/0xba0 fs/read_write.c:688
+ ksys_write+0x156/0x270 fs/read_write.c:740
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5b4e2ac629
+RSP: 002b:00007f5b4d8ed028 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f5b4e526090 RCX: 00007f5b4e2ac629
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 00007f5b4e342b39 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f5b4e526128 R14: 00007f5b4e526090 R15: 00007ffe2deb5398
+ </TASK>
+INFO: task syz.4.21:6108 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.4.21        state:D stack:28704 pid:6108  tgid:6106  ppid:5938   task_flags:0x400040 flags:0x00080002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5295 [inline]
+ __schedule+0x14fb/0x52c0 kernel/sched/core.c:6907
+ __schedule_loop kernel/sched/core.c:6989 [inline]
+ rt_mutex_schedule+0x76/0xf0 kernel/sched/core.c:7285
+ rt_mutex_slowlock_block kernel/locking/rtmutex.c:1647 [inline]
+ __rt_mutex_slowlock kernel/locking/rtmutex.c:1721 [inline]
+ __rt_mutex_slowlock_locked+0x1f8f/0x25c0 kernel/locking/rtmutex.c:1760
+ rt_mutex_slowlock+0xbd/0x170 kernel/locking/rtmutex.c:1800
+ __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
+ rwbase_write_lock+0x14d/0x730 kernel/locking/rwbase_rt.c:244
+ inode_lock include/linux/fs.h:1028 [inline]
+ generic_file_write_iter+0x11f/0x690 mm/filemap.c:4454
+ new_sync_write fs/read_write.c:595 [inline]
+ vfs_write+0x629/0xba0 fs/read_write.c:688
+ ksys_write+0x156/0x270 fs/read_write.c:740
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f81ffc6c629
+RSP: 002b:00007f81ff2ad028 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f81ffee6090 RCX: 00007f81ffc6c629
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 00007f81ffd02b39 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f81ffee6128 R14: 00007f81ffee6090 R15: 00007fffb07d9958
+ </TASK>
+
+Showing all locks held in the system:
+3 locks held by ksoftirqd/0/15:
+1 lock held by khungtaskd/38:
+ #0: ffffffff8ddcd780 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:312 [inline]
+ #0: ffffffff8ddcd780 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:850 [inline]
+ #0: ffffffff8ddcd780 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6775
+2 locks held by getty/5549:
+ #0: ffff888037eae0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc90003e8b2e0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x462/0x13c0 drivers/tty/n_tty.c:2211
+2 locks held by syz.0.17/6085:
+3 locks held by syz.0.17/6090:
+ #0: ffff88803e18ff28 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x252/0x320 fs/file.c:1261
+ #1: ffff88804d77c480 (sb_writers#12){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2710 [inline]
+ #1: ffff88804d77c480 (sb_writers#12){.+.+}-{0:0}, at: vfs_write+0x22d/0xba0 fs/read_write.c:684
+ #2: ffff88805fe73a68 (&sb->s_type->i_mutex_key#24){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:1028 [inline]
+ #2: ffff88805fe73a68 (&sb->s_type->i_mutex_key#24){+.+.}-{4:4}, at: generic_file_write_iter+0x11f/0x690 mm/filemap.c:4454
+2 locks held by syz.2.19/6095:
+3 locks held by syz.2.19/6098:
+ #0: ffff88803ae8fb28 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x252/0x320 fs/file.c:1261
+ #1: ffff88803fce0480 (sb_writers#12){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2710 [inline]
+ #1: ffff88803fce0480 (sb_writers#12){.+.+}-{0:0}, at: vfs_write+0x22d/0xba0 fs/read_write.c:684
+ #2: ffff88805ff5a598 (&sb->s_type->i_mutex_key#24){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:1028 [inline]
+ #2: ffff88805ff5a598 (&sb->s_type->i_mutex_key#24){+.+.}-{4:4}, at: generic_file_write_iter+0x11f/0x690 mm/filemap.c:4454
+2 locks held by syz.3.20/6097:
+3 locks held by syz.3.20/6100:
+ #0: ffff88803b2cbf28 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x252/0x320 fs/file.c:1261
+ #1: ffff8880289bc480 (sb_writers#12){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2710 [inline]
+ #1: ffff8880289bc480 (sb_writers#12){.+.+}-{0:0}, at: vfs_write+0x22d/0xba0 fs/read_write.c:684
+ #2: ffff88805ff589d8 (&sb->s_type->i_mutex_key#24){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:1028 [inline]
+ #2: ffff88805ff589d8 (&sb->s_type->i_mutex_key#24){+.+.}-{4:4}, at: generic_file_write_iter+0x11f/0x690 mm/filemap.c:4454
+2 locks held by syz.1.18/6102:
+3 locks held by syz.1.18/6104:
+ #0: ffff8880319dd728 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x252/0x320 fs/file.c:1261
+ #1: ffff88802abf4480 (sb_writers#12){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2710 [inline]
+ #1: ffff88802abf4480 (sb_writers#12){.+.+}-{0:0}, at: vfs_write+0x22d/0xba0 fs/read_write.c:684
+ #2: ffff88805fe76af8 (&sb->s_type->i_mutex_key#24){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:1028 [inline]
+ #2: ffff88805fe76af8 (&sb->s_type->i_mutex_key#24){+.+.}-{4:4}, at: generic_file_write_iter+0x11f/0x690 mm/filemap.c:4454
+2 locks held by syz.4.21/6107:
+3 locks held by syz.4.21/6108:
+ #0: ffff88803c18f728 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x252/0x320 fs/file.c:1261
+ #1: ffff88803c510480 (sb_writers#12){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2710 [inline]
+ #1: ffff88803c510480 (sb_writers#12){.+.+}-{0:0}, at: vfs_write+0x22d/0xba0 fs/read_write.c:684
+ #2: ffff88805ff5f8d8 (&sb->s_type->i_mutex_key#24){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:1028 [inline]
+ #2: ffff88805ff5f8d8 (&sb->s_type->i_mutex_key#24){+.+.}-{4:4}, at: generic_file_write_iter+0x11f/0x690 mm/filemap.c:4454
+2 locks held by syz.5.22/6230:
+3 locks held by syz.5.22/6237:
+ #0: ffff888034873928 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x252/0x320 fs/file.c:1261
+ #1: ffff88805d8d2480 (sb_writers#12){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2710 [inline]
+ #1: ffff88805d8d2480 (sb_writers#12){.+.+}-{0:0}, at: vfs_write+0x22d/0xba0 fs/read_write.c:684
+ #2: ffff88805fe71ea8 (&sb->s_type->i_mutex_key#24){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:1028 [inline]
+ #2: ffff88805fe71ea8 (&sb->s_type->i_mutex_key#24){+.+.}-{4:4}, at: generic_file_write_iter+0x11f/0x690 mm/filemap.c:4454
+2 locks held by syz.7.24/6246:
+3 locks held by syz.7.24/6250:
+ #0: ffff888034641b28 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x252/0x320 fs/file.c:1261
+ #1: ffff888033b68480 (sb_writers#12){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2710 [inline]
+ #1: ffff888033b68480 (sb_writers#12){.+.+}-{0:0}, at: vfs_write+0x22d/0xba0 fs/read_write.c:684
+ #2: ffff88805fe702e8 (&sb->s_type->i_mutex_key#24){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:1028 [inline]
+ #2: ffff88805fe702e8 (&sb->s_type->i_mutex_key#24){+.+.}-{4:4}, at: generic_file_write_iter+0x11f/0x690 mm/filemap.c:4454
+3 locks held by syz.8.25/6249:
+3 locks held by syz.8.25/6252:
+ #0: ffff8880312b8728 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x252/0x320 fs/file.c:1261
+ #1: ffff888034d42480 (sb_writers#12){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2710 [inline]
+ #1: ffff888034d42480 (sb_writers#12){.+.+}-{0:0}, at: vfs_write+0x22d/0xba0 fs/read_write.c:684
+ #2: ffff88805ff5c848 (&sb->s_type->i_mutex_key#24){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:1028 [inline]
+ #2: ffff88805ff5c848 (&sb->s_type->i_mutex_key#24){+.+.}-{4:4}, at: generic_file_write_iter+0x11f/0x690 mm/filemap.c:4454
+2 locks held by syz.6.23/6253:
+3 locks held by syz.6.23/6256:
+ #0: ffff8880375c0728 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x252/0x320 fs/file.c:1261
+ #1: ffff888032a3a480 (sb_writers#12){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2710 [inline]
+ #1: ffff888032a3a480 (sb_writers#12){.+.+}-{0:0}, at: vfs_write+0x22d/0xba0 fs/read_write.c:684
+ #2: ffff8880601dba68 (&sb->s_type->i_mutex_key#24){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:1028 [inline]
+ #2: ffff8880601dba68 (&sb->s_type->i_mutex_key#24){+.+.}-{4:4}, at: generic_file_write_iter+0x11f/0x690 mm/filemap.c:4454
+2 locks held by syz.9.26/6258:
+3 locks held by syz.9.26/6259:
+ #0: ffff888036d13f28 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x252/0x320 fs/file.c:1261
+ #1: ffff88805570c480 (sb_writers#12){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2710 [inline]
+ #1: ffff88805570c480 (sb_writers#12){.+.+}-{0:0}, at: vfs_write+0x22d/0xba0 fs/read_write.c:684
+ #2: ffff8880601db378 (&sb->s_type->i_mutex_key#24){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:1028 [inline]
+ #2: ffff8880601db378 (&sb->s_type->i_mutex_key#24){+.+.}-{4:4}, at: generic_file_write_iter+0x11f/0x690 mm/filemap.c:4454
+2 locks held by syz.0.268/7113:
+3 locks held by syz.0.268/7119:
+ #0: ffff888038ce5528 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x252/0x320 fs/file.c:1261
+ #1: ffff888033dc4480 (sb_writers#5){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2710 [inline]
+ #1: ffff888033dc4480 (sb_writers#5){.+.+}-{0:0}, at: vfs_write+0x22d/0xba0 fs/read_write.c:684
+ #2: ffff888064bee598 (&sb->s_type->i_mutex_key#14){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:1028 [inline]
+ #2: ffff888064bee598 (&sb->s_type->i_mutex_key#14){+.+.}-{4:4}, at: shmem_file_write_iter+0x82/0x120 mm/shmem.c:3492
+3 locks held by syz.4.270/7118:
+4 locks held by syz.2.271/7122:
+1 lock held by syz.1.272/7124:
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 38 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2026
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0xe8/0x150 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x274/0x2d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:161 [inline]
+ __sys_info lib/sys_info.c:157 [inline]
+ sys_info+0x135/0x170 lib/sys_info.c:165
+ check_hung_uninterruptible_tasks kernel/hung_task.c:346 [inline]
+ watchdog+0xfd9/0x1030 kernel/hung_task.c:515
+ kthread+0x388/0x470 kernel/kthread.c:467
+ ret_from_fork+0x51e/0xb90 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 7124 Comm: syz.1.272 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2026
+RIP: 0010:lockdep_recursion_finish kernel/locking/lockdep.c:470 [inline]
+RIP: 0010:lock_acquire+0x10d/0x2e0 kernel/locking/lockdep.c:5870
+Code: b4 24 88 00 00 00 41 56 e8 80 02 00 00 48 83 c4 28 48 c7 c7 c7 76 7b 8d e8 50 f4 81 09 b8 ff ff ff ff 65 0f c1 05 23 0d ae 10 <83> f8 01 0f 85 b0 00 00 00 9c 58 a9 00 02 00 00 0f 85 c3 00 00 00
+RSP: 0000:ffffc90006c9f9d8 EFLAGS: 00000057
+RAX: 0000000000000001 RBX: 0000000000000046 RCX: 0000000080000002
+RDX: 00000000038e8b00 RSI: ffffffff8d7b76c7 RDI: ffffffff8ba64380
+RBP: 0000000000000000 R08: ffffffff8193b67b R09: ffff88805aea4730
+R10: dffffc0000000000 R11: fffffbfff1ed4477 R12: 0000000000000000
+R13: ffff88805aea4730 R14: 0000000000000000 R15: 0000000000000001
+FS:  00007f1a29ce66c0(0000) GS:ffff888126442000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f1a21bf3000 CR3: 0000000034962000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:132 [inline]
+ _raw_spin_lock_irqsave+0x40/0x60 kernel/locking/spinlock.c:162
+ _task_rq_lock+0x5b/0x470 kernel/sched/core.c:745
+ __set_cpus_allowed_ptr kernel/sched/core.c:3104 [inline]
+ ___migrate_enable+0xbb/0x1f0 kernel/sched/core.c:2378
+ __migrate_enable include/linux/sched.h:2425 [inline]
+ migrate_enable include/linux/sched.h:2474 [inline]
+ rt_spin_unlock+0x17d/0x200 kernel/locking/spinlock_rt.c:81
+ spin_unlock include/linux/spinlock_rt.h:109 [inline]
+ do_anonymous_page mm/memory.c:5322 [inline]
+ do_pte_missing+0xf8a/0x2d30 mm/memory.c:4475
+ handle_pte_fault mm/memory.c:6316 [inline]
+ __handle_mm_fault mm/memory.c:6454 [inline]
+ handle_mm_fault+0xd0a/0x13c0 mm/memory.c:6623
+ do_user_addr_fault+0xa73/0x1340 arch/x86/mm/fault.c:1334
+ handle_page_fault arch/x86/mm/fault.c:1474 [inline]
+ exc_page_fault+0x6a/0xc0 arch/x86/mm/fault.c:1527
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:618
+RIP: 0033:0x7f1a2a543b0e
+Code: c1 49 39 4f 08 72 54 8d 4d ff 85 ed 74 3b 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 39 f0 72 1b 4d 8b 07 49 89 c1 49 29 f1 <47> 0f b6 0c 08 45 84 c9 74 08 45 88 0c 00 49 8b 47 10 48 83 c0 01
+RSP: 002b:00007f1a29ce5470 EFLAGS: 00010206
+RAX: 000000000032d001 RBX: 00007f1a29ce5530 RCX: 000000000000003c
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 00007f1a29ce55d0
+RBP: 0000000000000102 R08: 00007f1a218c6000 R09: 000000000032d000
+R10: 0000000000000000 R11: 00007f1a29ce5540 R12: 0000000000000001
+R13: 00007f1a2a742200 R14: 0000000000000000 R15: 00007f1a29ce55d0
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
