@@ -1,295 +1,247 @@
-Return-Path: <linux-fsdevel+bounces-78347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 2NndJBy9nmnYXAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 10:13:00 +0100
+	id YDmjCe6/nmnsXAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 10:25:02 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3368E194B7D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 10:12:59 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD7C0194E5F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 10:25:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 6AD133006158
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 09:12:59 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 0427630514A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 09:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A933803F8;
-	Wed, 25 Feb 2026 09:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5828138E5F0;
+	Wed, 25 Feb 2026 09:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V+Xm/LYt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com [209.85.161.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04C43815D8
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Feb 2026 09:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E1438E5DB;
+	Wed, 25 Feb 2026 09:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772010774; cv=none; b=kygr7lv70xdq4xHf2BOBtc4lMSQMMiN3Q1GvKyOzKHIs3hz6Qp508nU5Ggl5i93dITHCFV6bcuOIwvYxo/sp48abALlmtlcEZK4p6JpFFUQwiMwcqavJyYN/aeblAk84W+4IyfOYWiYFuU97IbS7JXOmZU/soku/gqRAmZO2DfU=
+	t=1772011310; cv=none; b=Zc6g7VFcaXJ2Cxy7uv1BHhYKIKB85SRaOOGSwMhYBqLemvkohjUqwAWq+vdYyj2OYepDUZIGgJ2bUj+bLRE/J8Eg6OkRRS4q/V8ozCy/PGOb1CYXbcDxMzGssLWb8oCex/Ffge856tNBArm2fcDk1yo/MJ8b+v1w2ThzzYUlON0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772010774; c=relaxed/simple;
-	bh=Rj0WRPWI/1OZsyjrja5BPuIjb2XaIjOhtKO/MTD9LaU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=I1rV5ChInWWkbgFoJWziqCXPTDl8TQqOchG+iRVt4B6QwdlAYWnzY9/3tjK1IpSGG/WkW3ox/F7WdcutC7Cd0Emp9G7lJjgvZkxz2A9gP/LiZgVPTi0Yzk0JXo6KjshvWFcOtjdmyFvXOWYVPtUWM+CJIGXGmOXWqH8fWptI1ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-6798747187eso101814155eaf.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Feb 2026 01:12:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772010769; x=1772615569;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NQefKd/FMJZjNkjcfOMqZE28IH7UDte/+y3dOHKHDNQ=;
-        b=NOId4944UoM7EGf0JRsfu2fpFjshQhlEtr7JKIaFSstBPudhIhhp/H5PO6gNbtwLxt
-         Q2OnBNP8KBZ5S4Fuuap6woPkhYxQYwdp4/rUpPUxZdMWU13+DUrk0qRSKji0cKZQcMoP
-         5s2jJlCF6Kn1SfIbypMhF/b/lz9qDcOVHKWhu2pYwbN9HjQ4bYJ2TWUtjhWMK1sC3gKn
-         XWV/w0oeIVdYKY5t9fjuwuFBeBNx9I8yLOE+JrlTLI7JM34aAvgDIdYHUKxLvzCYC93n
-         RDjIP31EbnBZtIuP3huN9vLiFih9Ec3ZYsOAqBKWt9ZUjfzyNAx4tQvDaXJGu2cX5cGh
-         DF2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXFEcKoj7LIl8q/ylwskpOELEVcHeSTwkCjrh/IcR8JHx18/2jCtqqKDOESgRH2JQTVn4F5Ii5ga+Q9JTN0@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUcIXrRpWvI5B23cu4/XX7Diom1dNKoumftKpYEXE3A18juhqT
-	d7lUhHrjd6jzRYBPGCBY/yKxJx/J02gLNKmj3lS6EEoVDJds9KefwNNe+2PSbTkcpljyHyi/o4a
-	o3GQ6AFVl/5t92WYvwoUgAYCjeCQqLDAWx3XK5r34APU3o46lVP7UksAYT3Y=
+	s=arc-20240116; t=1772011310; c=relaxed/simple;
+	bh=kx7pq8DDspnaKIfXROIyERaWB0WWO84KzMGW4mlWQSw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P8yQe7dS2cjb7KsO4Z6sdu7uS4h6+sS/211Im8Ev1Wg7OWNnpFi0OIrzrnsmt4a+hNeQUDzUxQyFnK2Kp6kZwmJTVBDt70vzI4dKyjH1IljTmKvngvhl9bSUXCHytQDIJOvtvZiPK7btQ1zV7IP0KV2WqW/ieCU+c1+tpwyBKdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V+Xm/LYt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA4C1C116D0;
+	Wed, 25 Feb 2026 09:21:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772011310;
+	bh=kx7pq8DDspnaKIfXROIyERaWB0WWO84KzMGW4mlWQSw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=V+Xm/LYtmxMDUJ5A8US73eDHyRZSl8sIZdld/LxkspZPgqIE9oLO7fLvhnBXQQii3
+	 UO6DqoseaIx9fToKO6WQRhPGlraKtDYDKqo1I1N5LawSkpWqfFmMaxer+E2ihHqmk7
+	 SAzDu92PidPFo3qpJC1Lh24gvDfAW3bjONnKh3UAW6IfQ6rjHzqU0V4VqSfeH68cAD
+	 XjXZkL4TILHLvhOTzPZ7efIYtU1i2C5FueVPt5MPiWbiLj3cKu5ZNmZhv6x7M9u7VB
+	 qIlwKMcxK39yIWX0bky32qPHXgTiEMDkdPhuSUalRSfKIycxVq60oSBpm5xR+O3sNs
+	 G3bNy3ZjetlSw==
+Message-ID: <f6649b09-aa64-4c91-bf3a-ba706f023180@kernel.org>
+Date: Wed, 25 Feb 2026 10:21:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a4a:edc9:0:b0:679:94c0:117f with SMTP id
- 006d021491bc7-679c4267a48mr8234100eaf.23.1772010769450; Wed, 25 Feb 2026
- 01:12:49 -0800 (PST)
-Date: Wed, 25 Feb 2026 01:12:49 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <699ebd11.a00a0220.21906d.0005.GAE@google.com>
-Subject: [syzbot] [ext4?] INFO: task hung in filename_unlinkat
-From: syzbot <syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 00/10] guest_memfd: Track amount of memory
+ allocated on inode
+To: Ackerley Tng <ackerleytng@google.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
+Cc: akpm@linux-foundation.org, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
+ mhocko@suse.com, willy@infradead.org, pbonzini@redhat.com, shuah@kernel.org,
+ seanjc@google.com, shivankg@amd.com, rick.p.edgecombe@intel.com,
+ yan.y.zhao@intel.com, rientjes@google.com, fvdl@google.com,
+ jthoughton@google.com, vannapurve@google.com, pratyush@kernel.org,
+ pasha.tatashin@soleen.com, kalyazin@amazon.com, tabba@google.com,
+ michael.roth@amd.com
+References: <cover.1771826352.git.ackerleytng@google.com>
+ <a97045a9-8866-40fe-aa15-d319cafa6f2c@kernel.org>
+ <CAEvNRgFF0+g9pmp1yitX48ebK=fDpYKSOQDmRfOjzSHxM5UpeQ@mail.gmail.com>
+ <9ef9a0bd-4cff-4518-b7fb-e65c9b761a5a@kernel.org>
+ <CAEvNRgESctVm9CcEyK36hY8Ta=DEDOS1oW5w0qRDoNfdd=470g@mail.gmail.com>
+ <CAEvNRgFyRsqhv7CuuDARHTFSanzOHaudM6JMBLwxDwsrjTNCGQ@mail.gmail.com>
+From: "David Hildenbrand (Arm)" <david@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=david@kernel.org; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <CAEvNRgFyRsqhv7CuuDARHTFSanzOHaudM6JMBLwxDwsrjTNCGQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.36 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=abe4fa590468dbfb];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	TAGGED_FROM(0.00)[bounces-78347-lists,linux-fsdevel=lfdr.de,1659aaaaa8d9d11265d7];
-	SUBJECT_HAS_QUESTION(0.00)[];
-	REDIRECTOR_URL(0.00)[goo.gl];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-78348-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
-	TO_DN_NONE(0.00)[];
-	R_DKIM_NA(0.00)[];
-	NEURAL_HAM(-0.00)[-0.998];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,googlegroups.com:email,storage.googleapis.com:url,syzkaller.appspot.com:url]
-X-Rspamd-Queue-Id: 3368E194B7D
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[29];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[david@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: BD7C0194E5F
 X-Rspamd-Action: no action
 
-Hello,
+On 2/25/26 08:31, Ackerley Tng wrote:
+> Ackerley Tng <ackerleytng@google.com> writes:
+> 
+>> "David Hildenbrand (Arm)" <david@kernel.org> writes:
+>>
+>>>
+>>> [...snip...]
+>>>
+>>>
+>>> If that avoids having to implement truncation completely ourselves, that might be one
+>>> option we could discuss, yes.
+>>>
+>>> Something like:
+>>>
+>>> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+>>> index 7c753148af88..94f8bb81f017 100644
+>>> --- a/Documentation/filesystems/vfs.rst
+>>> +++ b/Documentation/filesystems/vfs.rst
+>>> @@ -764,6 +764,7 @@ cache in your filesystem.  The following members are defined:
+>>>                 sector_t (*bmap)(struct address_space *, sector_t);
+>>>                 void (*invalidate_folio) (struct folio *, size_t start, size_t len);
+>>>                 bool (*release_folio)(struct folio *, gfp_t);
+>>> +               void (*remove_folio)(struct folio *folio);
+>>>                 void (*free_folio)(struct folio *);
+>>>                 ssize_t (*direct_IO)(struct kiocb *, struct iov_iter *iter);
+>>>                 int (*migrate_folio)(struct mapping *, struct folio *dst,
+>>> @@ -922,6 +923,11 @@ cache in your filesystem.  The following members are defined:
+>>>         its release_folio will need to ensure this.  Possibly it can
+>>>         clear the uptodate flag if it cannot free private data yet.
+>>>
+>>> +``remove_folio``
+>>> +       remove_folio is called just before the folio is removed from the
+>>> +       page cache in order to allow the cleanup of properties (e.g.,
+>>> +       accounting) that needs the address_space mapping.
+>>> +
+>>>  ``free_folio``
+>>>         free_folio is called once the folio is no longer visible in the
+>>>         page cache in order to allow the cleanup of any private data.
+>>> diff --git a/include/linux/fs.h b/include/linux/fs.h
+>>> index 8b3dd145b25e..f7f6930977a1 100644
+>>> --- a/include/linux/fs.h
+>>> +++ b/include/linux/fs.h
+>>> @@ -422,6 +422,7 @@ struct address_space_operations {
+>>>         sector_t (*bmap)(struct address_space *, sector_t);
+>>>         void (*invalidate_folio) (struct folio *, size_t offset, size_t len);
+>>>         bool (*release_folio)(struct folio *, gfp_t);
+>>> +       void (*remove_folio)(struct folio *folio);
+>>>         void (*free_folio)(struct folio *folio);
+>>>         ssize_t (*direct_IO)(struct kiocb *, struct iov_iter *iter);
+>>>         /*
+>>> diff --git a/mm/filemap.c b/mm/filemap.c
+>>> index 6cd7974d4ada..5a810eaacab2 100644
+>>> --- a/mm/filemap.c
+>>> +++ b/mm/filemap.c
+>>> @@ -250,8 +250,14 @@ void filemap_free_folio(struct address_space *mapping, struct folio *folio)
+>>>  void filemap_remove_folio(struct folio *folio)
+>>>  {
+>>>         struct address_space *mapping = folio->mapping;
+>>> +       void (*remove_folio)(struct folio *);
+>>>
+>>>         BUG_ON(!folio_test_locked(folio));
+>>> +
+>>> +       remove_folio = mapping->a_ops->remove_folio;
+>>> +       if (unlikely(remove_folio))
+>>> +               remove_folio(folio);
+>>> +
+>>>         spin_lock(&mapping->host->i_lock);
+>>>         xa_lock_irq(&mapping->i_pages);
+>>>         __filemap_remove_folio(folio, NULL);
+>>>
+>>
+>> Thanks for this suggestion, I'll try this out and send another revision.
+>>
+>>>
+>>> Ideally we'd perform it under the lock just after clearing folio->mapping, but I guess that
+>>> might be more controversial.
+>>>
+> 
+> I'm not sure which lock you were referring to, I hope it's not the
+> inode's i_lock? Why is calling the callback under lock frowned upon?
 
-syzbot found the following issue on:
+I meant the two locks: mapping->host->i_lock and mapping->i_pages.
 
-HEAD commit:    a95f71ad3e2e Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15cfc55a580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=abe4fa590468dbfb
-dashboard link: https://syzkaller.appspot.com/bug?extid=1659aaaaa8d9d11265d7
-compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11294eaa580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14a47c02580000
+I'd assume new callbacks that might result in holding these precious
+locks longer might be a problem for some people. Well, maybe, maybe not.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/8676ab01a8b8/disk-a95f71ad.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e3314e350353/vmlinux-a95f71ad.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6e2905ccbd1e/bzImage-a95f71ad.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/94e3ac0ab12f/mount_0.gz
-  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=14a88152580000)
+I guess .free_folio() is called outside the lock because it's assumed to
+possibly do more expensive operations.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
+-- 
+Cheers,
 
-INFO: task syz.0.17:5995 blocked for more than 143 seconds.
-      Not tainted syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.0.17        state:D stack:29024 pid:5995  tgid:5990  ppid:5927   task_flags:0x400040 flags:0x00080002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5295 [inline]
- __schedule+0x14fb/0x52c0 kernel/sched/core.c:6907
- __schedule_loop kernel/sched/core.c:6989 [inline]
- rt_mutex_schedule+0x76/0xf0 kernel/sched/core.c:7285
- rt_mutex_slowlock_block kernel/locking/rtmutex.c:1647 [inline]
- __rt_mutex_slowlock kernel/locking/rtmutex.c:1721 [inline]
- __rt_mutex_slowlock_locked+0x1f8f/0x25c0 kernel/locking/rtmutex.c:1760
- rt_mutex_slowlock+0xbd/0x170 kernel/locking/rtmutex.c:1800
- __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
- rwbase_write_lock+0x14d/0x730 kernel/locking/rwbase_rt.c:244
- inode_lock_nested include/linux/fs.h:1073 [inline]
- __start_dirop fs/namei.c:2923 [inline]
- start_dirop fs/namei.c:2934 [inline]
- filename_unlinkat+0x2ad/0x610 fs/namei.c:5521
- __do_sys_unlink fs/namei.c:5575 [inline]
- __se_sys_unlink+0x2e/0x140 fs/namei.c:5572
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f6cd2b5c629
-RSP: 002b:00007f6cd2195028 EFLAGS: 00000246 ORIG_RAX: 0000000000000057
-RAX: ffffffffffffffda RBX: 00007f6cd2dd6090 RCX: 00007f6cd2b5c629
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000200000000180
-RBP: 00007f6cd2bf2b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f6cd2dd6128 R14: 00007f6cd2dd6090 R15: 00007ffd3df50108
- </TASK>
-
-Showing all locks held in the system:
-4 locks held by pr/legacy/17:
-1 lock held by khungtaskd/38:
- #0: ffffffff8ddcd780 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:312 [inline]
- #0: ffffffff8ddcd780 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:850 [inline]
- #0: ffffffff8ddcd780 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6775
-4 locks held by kworker/u8:6/783:
-3 locks held by kworker/u8:11/1173:
-2 locks held by getty/5552:
- #0: ffff888036cdf0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90003e832e0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x462/0x13c0 drivers/tty/n_tty.c:2211
-7 locks held by syz.0.17/5991:
-2 locks held by syz.0.17/5995:
- #0: ffff888034904480 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:493
- #1: ffff888054ce9c70 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:1073 [inline]
- #1: ffff888054ce9c70 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: __start_dirop fs/namei.c:2923 [inline]
- #1: ffff888054ce9c70 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: start_dirop fs/namei.c:2934 [inline]
- #1: ffff888054ce9c70 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: filename_unlinkat+0x2ad/0x610 fs/namei.c:5521
-7 locks held by syz.1.18/6018:
-2 locks held by syz.1.18/6022:
- #0: ffff8880294e6480 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:493
- #1: ffff888044ea3430 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:1073 [inline]
- #1: ffff888044ea3430 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: __start_dirop fs/namei.c:2923 [inline]
- #1: ffff888044ea3430 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: start_dirop fs/namei.c:2934 [inline]
- #1: ffff888044ea3430 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: filename_unlinkat+0x2ad/0x610 fs/namei.c:5521
-6 locks held by syz.2.19/6044:
-2 locks held by syz.2.19/6048:
- #0: ffff8880247b0480 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:493
- #1: ffff888044c92850 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:1073 [inline]
- #1: ffff888044c92850 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: __start_dirop fs/namei.c:2923 [inline]
- #1: ffff888044c92850 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: start_dirop fs/namei.c:2934 [inline]
- #1: ffff888044c92850 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: filename_unlinkat+0x2ad/0x610 fs/namei.c:5521
-3 locks held by syz.3.20/6075:
-2 locks held by syz.3.20/6080:
- #0: ffff888034d36480 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:493
- #1: ffff888054cee3b0 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:1073 [inline]
- #1: ffff888054cee3b0 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: __start_dirop fs/namei.c:2923 [inline]
- #1: ffff888054cee3b0 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: start_dirop fs/namei.c:2934 [inline]
- #1: ffff888054cee3b0 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: filename_unlinkat+0x2ad/0x610 fs/namei.c:5521
-7 locks held by syz.4.21/6113:
-2 locks held by syz.4.21/6117:
- #0: ffff888035624480 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:493
- #1: ffff888044c9cbf0 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:1073 [inline]
- #1: ffff888044c9cbf0 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: __start_dirop fs/namei.c:2923 [inline]
- #1: ffff888044c9cbf0 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: start_dirop fs/namei.c:2934 [inline]
- #1: ffff888044c9cbf0 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: filename_unlinkat+0x2ad/0x610 fs/namei.c:5521
-7 locks held by syz.5.22/6147:
-2 locks held by syz.5.22/6151:
- #0: ffff88804c26c480 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:493
- #1: ffff888044c96f90 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:1073 [inline]
- #1: ffff888044c96f90 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: __start_dirop fs/namei.c:2923 [inline]
- #1: ffff888044c96f90 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: start_dirop fs/namei.c:2934 [inline]
- #1: ffff888044c96f90 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: filename_unlinkat+0x2ad/0x610 fs/namei.c:5521
-7 locks held by syz.6.23/6185:
-2 locks held by syz.6.23/6190:
- #0: ffff888025968480 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:493
- #1: ffff888044e5c010 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:1073 [inline]
- #1: ffff888044e5c010 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: __start_dirop fs/namei.c:2923 [inline]
- #1: ffff888044e5c010 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: start_dirop fs/namei.c:2934 [inline]
- #1: ffff888044e5c010 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: filename_unlinkat+0x2ad/0x610 fs/namei.c:5521
-3 locks held by udevd/6219:
-5 locks held by syz.7.24/6221:
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 38 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2026
-Call Trace:
- <TASK>
- dump_stack_lvl+0xe8/0x150 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x274/0x2d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:161 [inline]
- __sys_info lib/sys_info.c:157 [inline]
- sys_info+0x135/0x170 lib/sys_info.c:165
- check_hung_uninterruptible_tasks kernel/hung_task.c:346 [inline]
- watchdog+0xfd9/0x1030 kernel/hung_task.c:515
- kthread+0x388/0x470 kernel/kthread.c:467
- ret_from_fork+0x51e/0xb90 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 783 Comm: kworker/u8:6 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2026
-Workqueue: bat_events batadv_dat_purge
-RIP: 0010:__local_bh_enable_ip+0x1c2/0x2b0 kernel/softirq.c:307
-Code: f7 89 df e8 60 01 00 00 41 f7 c4 00 02 00 00 74 05 e8 52 60 44 00 9c 58 a9 00 02 00 00 75 23 41 f7 c4 00 02 00 00 74 01 fb 5b <41> 5c 41 5d 41 5e 41 5f 5d e9 c0 d7 9d 09 cc 90 0f 0b 90 e9 66 fe
-RSP: 0018:ffffc900046ffa58 EFLAGS: 00000206
-RAX: 0000000000000006 RBX: ffffffffffffffe8 RCX: 0000000000000046
-RDX: 0000000000000006 RSI: ffffffff8d55b178 RDI: ffffffff8ba64380
-RBP: 1ffff11004a23cc4 R08: ffffffff8f6a23b7 R09: 1ffffffff1ed4476
-R10: dffffc0000000000 R11: fffffbfff1ed4477 R12: 0000000000000286
-R13: dffffc0000000000 R14: ffff88802511e624 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff888126442000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2fb63fff CR3: 00000000354ae000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- local_bh_enable include/linux/bottom_half.h:33 [inline]
- spin_unlock_bh include/linux/spinlock_rt.h:116 [inline]
- __batadv_dat_purge+0x344/0x400 net/batman-adv/distributed-arp-table.c:185
- batadv_dat_purge+0x20/0x70 net/batman-adv/distributed-arp-table.c:204
- process_one_work kernel/workqueue.c:3275 [inline]
- process_scheduled_works+0xb02/0x1830 kernel/workqueue.c:3358
- worker_thread+0xa50/0xfc0 kernel/workqueue.c:3439
- kthread+0x388/0x470 kernel/kthread.c:467
- ret_from_fork+0x51e/0xb90 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+David
 
