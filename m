@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-78342-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78343-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id wFSNCCGknmlPWgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78342-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 08:26:25 +0100
+	id uFDkIWCmnmmrWgQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78343-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 08:36:00 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BFED193614
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 08:26:24 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01E6F193875
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 08:35:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 1FED73068056
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 07:22:17 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D36FF31AB089
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 07:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99FE531BCA9;
-	Wed, 25 Feb 2026 07:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8232C329E5C;
+	Wed, 25 Feb 2026 07:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vOaO09bs"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N+dpvAW2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54084318B9E
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Feb 2026 07:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54CA419D891
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Feb 2026 07:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772004053; cv=none; b=Ij+yk1cuxVih1h0EWaJztjMY0AffUaJ8CxOlFymlxanxuoBh41+JHp/dvjhddfzYv/66q6sePNX9Z+AtKXqaqC/thqB6BSGVtAaBTyi/gNO3FgZ9bRKkdLRhZiNYzwSXoMu6emEG/sCiRCII48tANopetYA1vgngS8H2MPX1Mj8=
+	t=1772004053; cv=none; b=KjbUlcQG+TrE2C2heqPmZj6YvYvBa9YCO7wIXojU+vVO4aRYQlj+tXdwV/xSYQ5H8hnorJjiqrBW4oiZENvRcqd6huHmsXe6sBHIVr44BdXy6R0d6FTCTslOlKg3mk1daSph0lM0/OGkj4QGf8YaC2uItbEFLFQBid3a20R1SPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1772004053; c=relaxed/simple;
-	bh=+MHXSU/V11E98W6bAwMdpmIpdBoJLEJvOCREqpfDnG0=;
+	bh=qLKykmEADbn2/q4Ccup9gI+7j5uvqRK9sZMPeThKEJc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=otRoIGnaJydTwqD0iwKoiky2DuoWuVVoqEwGKKjM0Efad4VwGmEUnG/ouPIftaHnGGBlCWyLuoLCK05QBmf06fr/I/5uIbxOXitrkL7+i1jDEgNtDZpJ3oSvkptdXCv/mJuj9IUjk0YNQKadjTMpyIVee9buHOvEWwY6ZpbiyBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vOaO09bs; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=jrtTvG+nNjzP+30PQP9Av4xNFlupOcOerA5cNagDF9tXTtF6J9qu4BMWEAxirdSEG7LaLGWRgzi+e4c49wzOYwCUQszrNGjb97Ekfq4mrPLaP5H/Tnl+25caIKQP9FXIa4awlarln4BMgCN3V4+ZDDafH+OSNWfTvjV6YbSQRPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=N+dpvAW2; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-358e5e33ddcso1398714a91.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 23:20:50 -0800 (PST)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2add1118c19so3642765ad.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 23:20:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1772004050; x=1772608850; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1772004052; x=1772608852; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/OzVXGrSvNTobLr90pUtUa2BKuGgT0v7RjuQ020m/80=;
-        b=vOaO09bso+xnxcobuyNRaQd7HOFqUhH6anqZc4F3sIPJ20xtYFg32HjHLIVuBGkftY
-         AfsT8/nZtZXB1l0Cg3e9f2pTJslLDlUsEkXP77ypCwnH6SWocOCmukxTLor07m1+eyud
-         cbQW4ikwgGRO2PWRc+8QnD6B+vvoqGxS6K9vmfumQcWKefuQh3ggX8pGbIQzY96oiaw2
-         +QzCjPSpsS7j9Cbi0ftIS5Ylp9alOrI975nDT/1kB3f0FBGE46yhRS+1sX1tFP1JTbvV
-         pAwn4zb9diLL1cg7f6VHZpeuvPhXS7ywJTEzYpznfj47smk8x91NeXJ4LNZ/Aqwd/Mdm
-         GPDQ==
+        bh=RDRU6RwH6vqwiVf/LjeEDphDyyED18VHPEr6YXDP6Vo=;
+        b=N+dpvAW2soWMirm/woczj2Vuo11c1dB3ITJqjQfCp8UI7Q0/fKUTSuMJNzCAb9k95V
+         DkUkmKeIlbYesGrDuU0ssAYT/5wnxFmG+UjRi1vx7TvK/V2YwGCesWs6JtNqeyHlbaHE
+         aKQ6cwrexKm6T9q2C+JWQYJVWeS3YZoiEWDpRKJrgeFhVjL5ItYNOgiLv1NcYCHuq2+Z
+         Rq2bR/dbGJlpD8cf72qDfhPPZWHO33qd8Z/wqK5ENH8D/gxnKFGBzxosV77iUBaYxTwP
+         LvbqpC6NcIFOITLtXJuxeFzKMUbECTm8eodEobmuFiJS5mofK1MM9DdMTdfDjMVtCdlm
+         G36g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772004050; x=1772608850;
+        d=1e100.net; s=20230601; t=1772004052; x=1772608852;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/OzVXGrSvNTobLr90pUtUa2BKuGgT0v7RjuQ020m/80=;
-        b=RFiqLwm/ip5+xwrryVxxIsSRnrqnyjVYZNG6yxznqcOMYRxF1YqFVQpFymk4pjB0ml
-         apA/vX5Uay6yCvSMKa4fkcasGxz6519aIU5LGNOv7zbMEDRUoOs/3IWzrXFl7WV3zEBh
-         zt+m1N6voxkKwc0kmh6E0Yv8100j0mopRgAyCUAl8TfiVv3RxCWsWFdp8OxmRbDK+Yuv
-         T1IkFA6d7246M6l6d8PzYlWmMtQ4SJ3VP0yFwjXhfgw6HK1CHAEPoZLxauI1zAi/Or6j
-         PvwAz2BuoKVjIO+GtCSpSqA5QzP9oXV4Ft8oQsobd57JEwNjvAbPzg8OidGo9xc+dHnc
-         baug==
-X-Forwarded-Encrypted: i=1; AJvYcCUKTrjCWkbzo2piuXWx51hfB2epLLjbIPNBqQqcMOzIMhO721HQAcMPRDYV3Xol6x1VBZ9uY/qsAzEYERl3@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbfX6K4F8bJnJ4WGud0vh+SUzixh6zHSFbUhIngHXw+w1cjZj2
-	yjaf8TfjJ87ofOikn9kxL74sVIhR1m3rc6UABCFMNHyIJEzFvBwpl5YAfPZYMcydzgT2igZ2iF+
-	tZdpAL2OSU2K/SPqIjhsDEPS3Vg==
-X-Received: from pgar14.prod.google.com ([2002:a05:6a02:2e8e:b0:c6e:4387:496a])
+        bh=RDRU6RwH6vqwiVf/LjeEDphDyyED18VHPEr6YXDP6Vo=;
+        b=VkmHH2h5XISgUcOV+s+PIjJVkHBm0B2Aw12SW/fQ3wisT9X3OLILqlielA28S4xqx4
+         CqKWvpNsBkuk11g5IJibj+br88Xh7OPRMXjymZw4KZX9Cmzk0WIMS1yxaUtv+j15YrlC
+         4pAetTzDz83JT8/0ETX07QEjfINM2B0Nxg2g8FoXJZ4FMSp/bpJGZ0LwkTQXd9na9bw0
+         sqTIztt7RBO0yGNeyHdcxN+41SeM+1B1Pycc6Vm6Fmafct0SbSn0JIp2WQieAFMHQiWw
+         /EaxH7+RgpJfFChKzyrmAPRiY7fHTJRtPG4yp/gITcVtc0LHvZTxWNP3Maps8U39xXPh
+         kkkw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCMQ+Wtxg/7gJ80+YeHOc6uWjhvntXd8Alz6AzxwOFH1yLyEkJIo4EwJlf/Jk7yNbw9CU2K0/W1MBwyhZ1@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiFqjcEfMcxfDf8YdGotCd2mKLi9Q6JvSNGdQ0IKMOFr6qQc0A
+	+j43dii/8ANoVZRa+0cKlesZKcaLXkGBvZ3aZlOCn5G0z1ZWzJHdiy+AptdYkqsJOkch+GHTpmZ
+	CbBiyrJwStz5LQC4TtkjoH2sn6Q==
+X-Received: from plgz12.prod.google.com ([2002:a17:903:18c:b0:2ad:ae4d:4a00])
  (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:3297:b0:35f:27d:2ded with SMTP id adf61e73a8af0-39545ea8a07mr12406592637.25.1772004049471;
- Tue, 24 Feb 2026 23:20:49 -0800 (PST)
-Date: Wed, 25 Feb 2026 07:20:38 +0000
+ 2002:a17:903:2c5:b0:2a0:c58c:fdd2 with SMTP id d9443c01a7336-2ad74516011mr136747995ad.26.1772004051111;
+ Tue, 24 Feb 2026 23:20:51 -0800 (PST)
+Date: Wed, 25 Feb 2026 07:20:39 +0000
 In-Reply-To: <20260225-gmem-st-blocks-v2-0-87d7098119a9@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -76,13 +76,14 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20260225-gmem-st-blocks-v2-0-87d7098119a9@google.com>
 X-Developer-Key: i=ackerleytng@google.com; a=ed25519; pk=sAZDYXdm6Iz8FHitpHeFlCMXwabodTm7p8/3/8xUxuU=
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1772004043; l=3726;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1772004043; l=1673;
  i=ackerleytng@google.com; s=20260225; h=from:subject:message-id;
- bh=+MHXSU/V11E98W6bAwMdpmIpdBoJLEJvOCREqpfDnG0=; b=KKEMJylkZyQJS+IxTxG9HS0TUG+xGT7E9m0Nde3MM1Szh24vjYNbYhe+Zg9jWgMOtoQmg2xvM
- IBdn2AEimOhD80lhpH2xrQdgnNMxZuX0jFXVYJErsuwoepz+kV933x6
+ bh=qLKykmEADbn2/q4Ccup9gI+7j5uvqRK9sZMPeThKEJc=; b=PxKzCcZpN4XBlCkb+5wYqal7atRqWZJGyLYGiwIgdVnxm+1x2H3IPSPZKe0CxJWfo9pjig1VC
+ VIXLsNc8fL3CSev+ABXwmk1qEQrJyPu2C3V81bGGt4IF7QyCFliofNZ
 X-Mailer: b4 0.14.3
-Message-ID: <20260225-gmem-st-blocks-v2-3-87d7098119a9@google.com>
-Subject: [PATCH RFC v2 3/6] fs: Add .unaccount_folio callback
+Message-ID: <20260225-gmem-st-blocks-v2-4-87d7098119a9@google.com>
+Subject: [PATCH RFC v2 4/6] KVM: guest_memfd: Track amount of memory allocated
+ on inode
 From: Ackerley Tng <ackerleytng@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
 	David Hildenbrand <david@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
@@ -104,116 +105,77 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
 	MV_CASE(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78342-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78343-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
-	RCPT_COUNT_TWELVE(0.00)[35];
 	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[google.com:+];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[ackerleytng@google.com,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[google.com:+];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	NEURAL_HAM(-0.00)[-0.999];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 4BFED193614
+	RCPT_COUNT_TWELVE(0.00)[35];
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Queue-Id: 01E6F193875
 X-Rspamd-Action: no action
 
-Add .unaccount_folio callback to allow filesystems to do accounting-related
-updates to the inode or struct address_space mapping, when the folio is
-about to be removed from the filemap/page_cache.
+The guest memfd currently does not update the inode's i_blocks and i_bytes
+count when memory is allocated or freed. Hence, st_blocks returned from
+fstat() is always 0.
 
-.free_folio cannot be used since .free_folio cannot assume that struct
-address_space mapping still exists.
+Introduce byte accounting for guest memfd inodes.  When a new folio is
+added to the filemap, add the folio's size.  Conversely, when folios are
+truncated and removed from the mapping, deduct the folio's size.
 
-From the name, .invalidate_folio and .release_folio seem suitable, but
-those are meant only to handle freeing of a folio's private
-data. .release_folio is also not called in the truncation path.
-
-An alternative would be to add a more general callback and call that from
-filemap_remove_folio() and delete_from_page_cache_batch(). .unaccount_folio
-was chosen as it is more specific to the how guest_memfd will be using this
-callback in later patches. Also, .unaccount_folio only needs a single call
-site.
-
-This further refactoring was considered:
-
-if (mapping->a_ops->unaccount_folio &&
-    mapping->a_ops->unaccount_folio(folio))
-	... do generic page_cache unaccounting ...
-
-but that was abandoned since a hugetlb folio may not have an associated
-mapping.
+With this change, stat.st_blocks for a guest_memfd will correctly report
+the number of 512-byte blocks allocated to the file, consistent with other
+memory-based filesystems like tmpfs.
 
 Signed-off-by: Ackerley Tng <ackerleytng@google.com>
 ---
- Documentation/filesystems/vfs.rst | 8 ++++++++
- include/linux/fs.h                | 1 +
- mm/filemap.c                      | 3 +++
- 3 files changed, 12 insertions(+)
+ virt/kvm/guest_memfd.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index 670ba66b60e49..5ed5c43d5768b 100644
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -809,6 +809,7 @@ cache in your filesystem.  The following members are defined:
- 		sector_t (*bmap)(struct address_space *, sector_t);
- 		void (*invalidate_folio) (struct folio *, size_t start, size_t len);
- 		bool (*release_folio)(struct folio *, gfp_t);
-+		void (*unaccount_folio)(struct folio *folio);
- 		void (*free_folio)(struct folio *);
- 		ssize_t (*direct_IO)(struct kiocb *, struct iov_iter *iter);
- 		int (*migrate_folio)(struct mapping *, struct folio *dst,
-@@ -967,6 +968,13 @@ cache in your filesystem.  The following members are defined:
- 	its release_folio will need to ensure this.  Possibly it can
- 	clear the uptodate flag if it cannot free private data yet.
- 
-+``unaccount_folio``
-+       unaccount_folio is called under inode lock and struct
-+       address_space's xa_lock, just before the folio is removed from
-+       the page cache in order to allow updating any kind of
-+       accounting on the inode or address_space mapping while the
-+       address_space mapping still exists.
-+
- ``free_folio``
- 	free_folio is called once the folio is no longer visible in the
- 	page cache in order to allow the cleanup of any private data.
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index a01621fa636a6..c71f327032142 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -422,6 +422,7 @@ struct address_space_operations {
- 	sector_t (*bmap)(struct address_space *, sector_t);
- 	void (*invalidate_folio) (struct folio *, size_t offset, size_t len);
- 	bool (*release_folio)(struct folio *, gfp_t);
-+	void (*unaccount_folio)(struct folio *folio);
- 	void (*free_folio)(struct folio *folio);
- 	ssize_t (*direct_IO)(struct kiocb *, struct iov_iter *iter);
- 	/*
-diff --git a/mm/filemap.c b/mm/filemap.c
-index ebd75684cb0a7..ff957929e6087 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -176,6 +176,9 @@ static void filemap_unaccount_folio(struct address_space *mapping,
- 		}
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index 2488d7b8f2b0d..b31e6612d16a8 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -137,6 +137,8 @@ static struct folio *__kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
+ 		return ERR_PTR(ret);
  	}
  
-+	if (unlikely(mapping->a_ops->unaccount_folio))
-+		mapping->a_ops->unaccount_folio(folio);
++	inode_add_bytes(inode, folio_size(folio));
 +
- 	/* hugetlb folios do not participate in page cache accounting. */
- 	if (folio_test_hugetlb(folio))
- 		return;
+ 	return folio;
+ }
+ 
+@@ -553,10 +555,16 @@ static void kvm_gmem_free_folio(struct folio *folio)
+ }
+ #endif
+ 
++static void kvm_gmem_unaccount_folio(struct folio *folio)
++{
++	__inode_sub_bytes(folio_inode(folio), folio_size(folio));
++}
++
+ static const struct address_space_operations kvm_gmem_aops = {
+ 	.dirty_folio = noop_dirty_folio,
+ 	.migrate_folio	= kvm_gmem_migrate_folio,
+ 	.error_remove_folio = kvm_gmem_error_folio,
++	.unaccount_folio = kvm_gmem_unaccount_folio,
+ #ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE
+ 	.free_folio = kvm_gmem_free_folio,
+ #endif
 
 -- 
 2.53.0.414.gf7e9f6c205-goog
