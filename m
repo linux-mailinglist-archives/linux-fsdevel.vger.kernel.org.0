@@ -1,88 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-78339-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KP4YKrGjnmlPWgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78339-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 08:24:33 +0100
+	id YMJqJ3CknmmhWgQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 08:27:44 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA671935A2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 08:24:33 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 373D91936AC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 08:27:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id DA41F3032D63
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 07:21:41 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 534D131509C3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Feb 2026 07:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542F73148D5;
-	Wed, 25 Feb 2026 07:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87EF3148A6;
+	Wed, 25 Feb 2026 07:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KxY3I4e6"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="esOssuLF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880A4313E0A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Feb 2026 07:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F72D313E0D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Feb 2026 07:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772004046; cv=none; b=NEwgAx64326qxiPoFzF/Vyu8AwLt97pp5oTmzX99iHCcxKaBU8NAeVaRpD46AwHNJWRsvMHam4tatxt2Pa6bHC1kqII3/FZ5CRBAWcB8mjEkMv0fOPJA9pnQFLTv7ZYdkRb/gBgsUcPvu+LLJyAeThuo4OakaDn9owPWUe9jQP4=
+	t=1772004048; cv=none; b=IGjaYvafRe7T3flwPc30s41iYLxH1iXjfcFsPEKWt7kpmSaUD9ldPy6zMeQ4JHCQ7yc23k2FW+xzeow+FXS7uPFPTsz58cB8IpXo+L5b8Fj8bvxmzDjQGRrj6yXAjAE+zT/vGyf/3fmxYm92Uq+4Rrvbr7pLroJswk+5xOa2vPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772004046; c=relaxed/simple;
-	bh=1KBuBd+iCF9NBYsLqHZsB0ZWhDlklDnzPDb6M6VWVQ0=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=di+6qCNxEJxeIMx9CeSrG7YavLkpY+/NjpF1gGw9qFYFkWjATVHtHMIvSY43XaFAZCbNNWSREofjSmoblesxjVY5gXmN2Le6Ha2ntXxfB2u0W0QBPFD9e5vxhQyOCaiaDjvdu9yAalUytveIsw7muB5t1sqPUw5bgpGDKYjapk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KxY3I4e6; arc=none smtp.client-ip=209.85.215.201
+	s=arc-20240116; t=1772004048; c=relaxed/simple;
+	bh=ZMQPV7Y8H88+MGQYlAsk4qj1ohZaV8k9fkkraEOtToU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=AIbWnIkGo9rIz0QKxSNm5cmvAt/7wb5oUJKvARHMlFf+LBlQER35YWj2jogcYvsBn5/QEWKFYUz2rUu3k6Z+q/Z3RyXtt+wAkGN1ifVioz24FADb6RH3H3TqjcxI7KEbn5mIJK6i9WoK/ssb0SyR8Bu5MMJ5R6/afgMKPblTYuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=esOssuLF; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-c70eb4d56fcso169523a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 23:20:45 -0800 (PST)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2aaf0dbd073so77078105ad.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Feb 2026 23:20:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1772004045; x=1772608845; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=d6TXtnvwLicbHQpLQAZLl5+hwl+mc9lbUmp9ZzO2MHE=;
-        b=KxY3I4e64XPtdRbbquS4fw0lcME1kABx69qQtcxLG7HAKbH015pBZdaW15w4zlweQr
-         nO3ktmIczHBdBPiNPvR6ZLg8VBWbc4w3vuKVJIsg+h8AlLp0GhJa+f2LhQiWBTD8WZQ8
-         /Pu76DqcMoFnZWKmKr6zKZTbCZKaEHjJt7Ncbq6g6rPsydfzugoYaqBE871usY/61kIQ
-         OX9dsX4HoMMOT7F2JxrmvleF5qfdtn94V086BhflR5txb/s6UInSajy8p+sJoZKziIsg
-         vCRJ/qYfSIgyxHA4ZwSFXqRtgQ8yxg2tjJC6QQv8pDjxox4NXmiuA4L9LpfjQFEiGdX1
-         YwLQ==
+        d=google.com; s=20230601; t=1772004046; x=1772608846; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RxvzdHDHaSHLdjnOnYt7Pz8oF0XFcbFcMtFEzYFn1AQ=;
+        b=esOssuLFcA56b+69h2S6cCu4y9evuNJTX/UOpJs4VmtUTLfgRz7J5Di4T2ocXlyJpa
+         aHmNTJ24bp0tauf8kdLZAfe7NaPLIkFzpOoIwBKJ0VvOqdjRm6gMCtKLT3EahwYnVn4w
+         MkKMITpVyFmUuA+s+OaphgQq/iRgZS00rUmTvP7ZZToJpgEI0GFfl/4UPN1cF5CuRfEQ
+         tS7lGSDQ8XzL684soyjjntfVtTXsBYiZxX/5iVWHxV+2lQD+DlhpeVj8mW+6J9PyuVdb
+         Ew9+soXzKmOgIwZu5eq3loLlatAVZNyi895LWexOpewTFKzMqPMncyP/mquQmWerq+0J
+         yS4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772004045; x=1772608845;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d6TXtnvwLicbHQpLQAZLl5+hwl+mc9lbUmp9ZzO2MHE=;
-        b=o+EPuHRH7m5hqNyHoyYtoKXP4nga7mhXe7kQFlMHdBvmsbmhH1Updwm/fda6UVi5Rm
-         nyqgQY9D0MuoUjtbLdVZdfQPj6TDuFxP63sCPW1vPBijEEOj0UnDOcMWvfpJ81fDaiZ7
-         aqh6+RogbIngLNvRL/QLB9JTT3DzAw08L25Xa2YP5kzc/xFzwt5G8sIQ5Rtzc0F7dU1Z
-         Ozs7mPlFSghk7BGwO0TuWBMGamQZbeogJ4Reca+xwCB4BW46mphuoSR/0R3YavhhvU7W
-         KbP4lXJqD3ne+lw1XfnSZlZNHZDrEJj2YkG8Jv+sYi01B/LwxOsLRbhlT59Y7Ua4kbXS
-         5++A==
-X-Forwarded-Encrypted: i=1; AJvYcCWufRC4vq0VQua35jBsWL0XpyvUy4+B09t6l1qtT18TWp/IHjMvIRZdDG/L1YevxTtE26x//Wq+O6zhnQrE@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRtQ64v7bL77YYVBxOr8aqU4tQOtrEMUxaOnrKP/niayHs+v53
-	XqK0cd5da1xfm7eEEqj0n1VFGimu0lOd5C4phViU3bpX5CKs/2WP75fAVcRMVPf6wkgxrqaFqq5
-	Fd0uPiFZGSiRW3MF33NpWfhOsbg==
-X-Received: from pfrd8.prod.google.com ([2002:aa7:8e48:0:b0:7dd:8bba:63ae])
+        d=1e100.net; s=20230601; t=1772004046; x=1772608846;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RxvzdHDHaSHLdjnOnYt7Pz8oF0XFcbFcMtFEzYFn1AQ=;
+        b=xRhWZoTE4tuwDkTB2+Z3EHY9TPlpIbtejuuVmsaVuoaPukrMxu6xXdKaI4D5L55Zuv
+         wTgY7aQSNMZpagqc+yMeBf/Y/7Th9fY8zvLTmh6YKHY+o1dd0ypipvCE/8a23d4OVqcA
+         Z4DdMQutdSXteVQd/xT0WTSElaf+NWkJqYTH+noyxKZ6QtKOEEk2SkrGHF1dLQU6TBgD
+         IWMP/YN3HBQCyMJmKhFn6bEO2cAoL/lVv8hjmwythewftwelQX/5VYgtpBSHdJIn0rSh
+         CKu0BakT7x8vFPnP3tFXBOlEMd7wb7tMqvQr7n3+1DiwCDgvB4mflhmj/rlS9hrr0urN
+         NkzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVdhdr7FzfsfN8yFJQQLevM55Guz/wYSNS/DZMAOZk5BcU8AfdycJtgDYFsUpQxoBPxelKEk4nOg+Npal2H@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw27KOKOCoi8o6iFrIrhBzNGqzD4tYxAPpYlmioMUt0ZVdyxbDQ
+	gJuEYq6M4i8gJNsZYP4vHobQfgufegBg763E45qhZS2NvdotnaLiYqWWTyuNoJ+FJuzRIPurxVJ
+	7HCCp1qQY2q+Nup+QskJfx2ihGQ==
+X-Received: from pjbjs14.prod.google.com ([2002:a17:90b:148e:b0:358:df96:881])
  (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:4b48:b0:824:3cf6:3fb4 with SMTP id d2e1a72fcca58-82724ad3d76mr1244872b3a.32.1772004044566;
- Tue, 24 Feb 2026 23:20:44 -0800 (PST)
-Date: Wed, 25 Feb 2026 07:20:35 +0000
+ 2002:a05:6a21:2982:b0:35d:53dc:cb61 with SMTP id adf61e73a8af0-39545ed4ecbmr13199551637.24.1772004046254;
+ Tue, 24 Feb 2026 23:20:46 -0800 (PST)
+Date: Wed, 25 Feb 2026 07:20:36 +0000
+In-Reply-To: <20260225-gmem-st-blocks-v2-0-87d7098119a9@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAMSinmkC/x2MQQqDMBAAvyJ77tJkgy30WugDei0ekrhqsImSF
- RHEv5v2OAMzOwjnwAKPaofMa5AwpQJ0qcAPNvWMoS0MpOimiGrsI0eUBd138qPg3ZjO1K1WpDW UaM7che0//MD79YSmSGeF0WWb/PB7jWu8Jt4WOI4T4brp3IAAAAA=
-X-Change-Id: 20260225-gmem-st-blocks-733f35d10211
+References: <20260225-gmem-st-blocks-v2-0-87d7098119a9@google.com>
 X-Developer-Key: i=ackerleytng@google.com; a=ed25519; pk=sAZDYXdm6Iz8FHitpHeFlCMXwabodTm7p8/3/8xUxuU=
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1772004043; l=2746;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1772004043; l=1374;
  i=ackerleytng@google.com; s=20260225; h=from:subject:message-id;
- bh=1KBuBd+iCF9NBYsLqHZsB0ZWhDlklDnzPDb6M6VWVQ0=; b=Zz87QRaHSCeDiOsHB8ebvN65q32EcPSJmRS6Ln83VHPYZkFWp0MlXR9c101r0+U45Euo2bPtx
- hkGErWsyijFCg09E6FZl6oFb5HuZujG5xLp0UOWWG/tslIKNb5ZEzQL
+ bh=ZMQPV7Y8H88+MGQYlAsk4qj1ohZaV8k9fkkraEOtToU=; b=UnVR/uLYP7ieBpWEAadpA6sROUIT4SgE39FHR7vRTz9HvHgkz8Qjcpq+AL3FU4w88yU1gGUOS
+ sJFEPjg87ZGArJKumnOvSjc+SZz2h+qBgaWpg2xkrvCz9aXcDFKM56w
 X-Mailer: b4 0.14.3
-Message-ID: <20260225-gmem-st-blocks-v2-0-87d7098119a9@google.com>
-Subject: [PATCH RFC v2 0/6] guest_memfd: Track amount of memory allocated on inode
+Message-ID: <20260225-gmem-st-blocks-v2-1-87d7098119a9@google.com>
+Subject: [PATCH RFC v2 1/6] KVM: guest_memfd: Don't set FGP_ACCESSED when
+ getting folios
 From: Ackerley Tng <ackerleytng@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
 	David Hildenbrand <david@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
@@ -104,19 +105,19 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
 	MV_CASE(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78339-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78340-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
 	RCPT_COUNT_TWELVE(0.00)[35];
 	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[ackerleytng@google.com,linux-fsdevel@vger.kernel.org];
@@ -125,69 +126,45 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	NEURAL_HAM(-0.00)[-0.999];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 1AA671935A2
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 373D91936AC
 X-Rspamd-Action: no action
 
-Hi,
-
-Currently, guest_memfd doesn't update inode's i_blocks or i_bytes at
-all. Hence, st_blocks in the struct populated by a userspace fstat()
-call on a guest_memfd will always be 0. This patch series makes
-guest_memfd track the amount of memory allocated on an inode, which
-allows fstat() to accurately report that on requests from userspace.
-
-The inode's i_blocks and i_bytes fields are updated when the folio is
-associated or disassociated from the guest_memfd inode, which are at
-allocation and truncation times respectively.
-
-In RFC v2, to update inode fields at truncation time, this series adds a
-new .unaccount_folio callback to struct address_space_operations, which
-guest_memfd uses to deduct the folio's size at truncation time.
-
-The second patch, to use filemap_alloc_folio() during allocation of
-guest_memfd folios, was written as a debugging step to resolve a bug
-found by syzbot [1], but turned out to not be the fix. I include it
-here because it cleans up the allocation process and provides a nice
-foundation for updating inode fields during allocations.
-
-The first patch was separately submitted [2], and provided here since
-it is a prerequisite simplication before application of the second
-patch.
-
-Changes from RFC v1:
-
-+ Removed a full custom implementation of .evict_inode for guest_memfd
-  in favor of adding .unaccount_folio callback.
-
-RFC v1: https://lore.kernel.org/all/cover.1771826352.git.ackerleytng@google.com/T/
-
-[1] https://lore.kernel.org/all/29c347bde68ec027259654e8e85371307edf7058.1770148108.git.ackerleytng@google.com/
-[2] https://lore.kernel.org/all/20260129172646.2361462-1-ackerleytng@google.com/
+guest_memfd folios don't care about accessed flags since the memory is
+unevictable and there is no storage to write back to, hence, cleanup the
+allocation path by not setting FGP_ACCESSED.
 
 Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Acked-by: David Hildenbrand (arm) <david@kernel.org>
 ---
-Ackerley Tng (6):
-      KVM: guest_memfd: Don't set FGP_ACCESSED when getting folios
-      KVM: guest_memfd: Directly allocate folios with filemap_alloc_folio()
-      fs: Add .unaccount_folio callback
-      KVM: guest_memfd: Track amount of memory allocated on inode
-      KVM: selftests: Wrap fstat() to assert success
-      KVM: selftests: Test that st_blocks is updated on allocation
+ virt/kvm/guest_memfd.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
- Documentation/filesystems/vfs.rst                  |  8 +++
- include/linux/fs.h                                 |  1 +
- mm/filemap.c                                       |  3 ++
- tools/testing/selftests/kvm/guest_memfd_test.c     | 32 ++++++++----
- tools/testing/selftests/kvm/include/kvm_syscalls.h |  2 +
- virt/kvm/guest_memfd.c                             | 60 ++++++++++++++++------
- 6 files changed, 80 insertions(+), 26 deletions(-)
----
-base-commit: b1195183ed42f1522fae3fe44ebee3af437aa000
-change-id: 20260225-gmem-st-blocks-733f35d10211
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index 923c51a3a5256..2df27b6443115 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -126,14 +126,13 @@ static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
+ 	 * Fast-path: See if folio is already present in mapping to avoid
+ 	 * policy_lookup.
+ 	 */
+-	folio = __filemap_get_folio(inode->i_mapping, index,
+-				    FGP_LOCK | FGP_ACCESSED, 0);
++	folio = filemap_lock_folio(inode->i_mapping, index);
+ 	if (!IS_ERR(folio))
+ 		return folio;
+ 
+ 	policy = mpol_shared_policy_lookup(&GMEM_I(inode)->policy, index);
+ 	folio = __filemap_get_folio_mpol(inode->i_mapping, index,
+-					 FGP_LOCK | FGP_ACCESSED | FGP_CREAT,
++					 FGP_LOCK | FGP_CREAT,
+ 					 mapping_gfp_mask(inode->i_mapping), policy);
+ 	mpol_cond_put(policy);
+ 
 
-Best regards,
---
-Ackerley Tng <ackerleytng@google.com>
+-- 
+2.53.0.414.gf7e9f6c205-goog
 
 
