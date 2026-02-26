@@ -1,409 +1,463 @@
-Return-Path: <linux-fsdevel+bounces-78624-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78625-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cOUFMWudoGlVlAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78624-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 20:22:19 +0100
+	id MHPUN8ehoGlVlAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78625-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 20:40:55 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC2221AE487
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 20:22:18 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 808561AE8CD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 20:40:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id BC3AB3046F4A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 19:12:16 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 1266F30B84AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 19:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7533C1996;
-	Thu, 26 Feb 2026 19:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFBE44DB81;
+	Thu, 26 Feb 2026 19:35:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UEK7WE+1"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sNP/T8BS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531DB3603C5
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 19:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDB844D695;
+	Thu, 26 Feb 2026 19:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.156.1
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772133134; cv=pass; b=SUPHjNE14siXdu0mKh5AgFPmcp6e9E+GV6pAJRJE1MIzI9BQv+ze/HuytIoVIM27gM+VUhDo9IRHcK/jor+TNUSG4eijYtF5xkcDq8APwrFQG0LWyKzgHogk7dNolnSVF0MjyOojWlvuvvzsjsrPnwvhHi1E0q1BM+Xt5PK2VOU=
+	t=1772134516; cv=fail; b=FM14fq3hpa81g2q9T5IA3m/r0YRKp84lp86f1PmF3iPN1sEf4mmxBdWr2ewQk+MqtQdf0WVnfaga/fXINrvnL33i6Ow/alE7X358cScVrxdWvOEUMbJzVpkYUeMW8qwAqH5y0DwfgVmGWIFGf5jhPj/HlPPMlgRo5frToIjOQzk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772133134; c=relaxed/simple;
-	bh=Uc7WbgMVB/udrGq37f5VNegLOg2BQRF0XJJ9jXBZ33Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ftYzOoAXuZNVBqRt84F2TruC+yKyWSvLk+CLE+H2irgck7aRnXARU8UBLwL2DVeu8bZiWiLt/lthib3unLnLEFXqA/zDf3wpnitOURsgQCcW/0qWPECveaLa/XxtdxlaMMDy6Co3P+C4aioG/oUvdR1CWG6Db+FQNhDS0xKcRpc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UEK7WE+1; arc=pass smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-506251815a3so10373331cf.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 11:12:12 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772133131; cv=none;
-        d=google.com; s=arc-20240605;
-        b=lCyCUf2J0hSgR/dVDUUuOvcLSBemSClsEv5MIKV/7VpH/UGiUJD5iX/BvNnnvRPVTf
-         CUmANTb+aKJO+462sGdUCyTqXur5tzV4JDfHUeBmrQguFxru14OlrYW142+hOF0BggER
-         vwa6MntCDMSVZoyIr+Klg5Z1KJTMGk1IxGOU8lWm4hMb1f1dWpid3aaBOqbGK1ai4ARA
-         OSUOjJdgLJXrFjghR117yNwjShJSRHMQAGZiFm8enUWVISJFiiGZfwFzvEhEPV0lip2y
-         VYPunWwJScKhhwOzASTU/6CHkrxAS8/AduTZ9Emwp9yhHdYykI/o4C2sM/C8q2eIX7Dn
-         Szow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=4EEBmL5KBxI+KSECYqxoF7VO8+7e1awDT4mppzVmIJM=;
-        fh=BAAZ4Jf3/VV6W/oAEPykx7nVsbkycY2MF0wBfGARfr8=;
-        b=L8Tbq2/bCQdsV2EzT/U9m1vL8SeH7oSb+hhgtBwHrZFdUAV/3zrpvbfSdY9Is7qrlW
-         4xuHfUzFu1NR5oIhmL2Ibq/X3rCoNDnE1v6g83rYb3y9SYTZCp2FKQOg9L7C+D/ImPDT
-         pHTBpvyws7m7GvJ/N9axx5/2WavrzzeyKUrNi9I3WeGGLw5kqlvXnainHeSM8cXdTWrI
-         8isSZE5E5wfcvc9OlJYL7quUlicAtQwCCFFA/Irkdnnu4wU4U9jfsRSTKgZEDBHRgSgo
-         iZ898swweHdi7K225DY5pZ+UaLwjoZcx0Vmy6b+Df5TdzdkG56VdGZ2U/r9kvblGlKbQ
-         /SoQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772133131; x=1772737931; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4EEBmL5KBxI+KSECYqxoF7VO8+7e1awDT4mppzVmIJM=;
-        b=UEK7WE+1TBbTNrVMoyf/CFxJyciUmCcXecz+Ff8Vl66+iXN5JeBCXGRflsDK2szAEa
-         ZnXXpMNnogxj7LOkQlV3d+U6Jk0u6dXazfCAGmD57GRQgIxt2ZSM9ghIFbX/RMvCWt84
-         MR1/1wTcXhHnlMwSCT7oOFNMkE7keHa+dMsljF3F3Jvh76rCd4isb+GyFS+Yp0VWUYey
-         O2Q9/mEEUEotuypkTAq78P5DWszIzrDcrvz6Dat2oqkuPVwvCI+P/LbMtrsh1chduKLV
-         CXAAuRhIH6qSbQeWURx+Y8YxEzjE6O4FhLp6pq3tVmqN9dWbsRLdpVW68C2woyWRknfl
-         V7VQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772133131; x=1772737931;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=4EEBmL5KBxI+KSECYqxoF7VO8+7e1awDT4mppzVmIJM=;
-        b=Qjr15v1J3dr7eUpakL89BCye7umZ27AfLLdwOwfUGzP4Cl8G232qv2mdT/4KYyXJLh
-         vkpCe5s5DUicWsigAjsu0RAMgFofmqi0xVWQO35dZ/FIrIUoRqDelZHUwE46Sh4XxWvG
-         ifd5JqOobFWAKAm9LZ3Kxlh/kWZ6KiSseBy2NrUazLDwaANXT50P7Gbbo5l8Otmk08X4
-         5h1fBviQ12L8HazReAOIDPbr6Xcrtq9XaDJ8OfXTbqMP6Yv0sxiXGd49NFnY9C/BJVNm
-         cH94wHtRgq3n5SQgFQEPZLEAQ07alFHLVsLlktkitwcpDmFz8i+x/V+QmoWI4rxOFRe1
-         oJfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHHN0MAUMf9TC8GXY74Co7clhSsC4w3aIuxTU2aEg5TD7iVFBunyIJjOtBLth0Z11ZovVGZ6iDO6sd3DVz@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjIab8uwCrdSH91ETX8TR0nRUZgXNLmPb5nh2efk4PUIBKLM+X
-	pDDpYI7q/VL7pFI0RJaWL2iITrUgMQCifvHtg7dkS0KkMtJQdz8+eA5RHGvfw45FsuoQ/Zkq+h1
-	AG6l9DH/3E+spLJx3TPZRaLGHcIYB+OE=
-X-Gm-Gg: ATEYQzy3qC2FhOsIVnG0yL/tUN+lySVSH/n5bca/pDxwTj0igPcLgbRlbAmBR7pK2LZ
-	Fn0QKXe/eXpPshYJikiucAxprFZ9xfG7avu3PmwsjuIc4zfhXxozJ46skDaamHs5TRPUmvpoOdJ
-	xLa8oYVDvkdkx19h9fvCApOWRe2Y4pA+rOAiss+1RcSYeD9AvHbxcyL6qd9/a6aEiw9cVux7ZjX
-	EJ8NbOFButq3N6I0AGUVMcVjtCuLdt0K7CRm4fOCLvyMocdSayvg56gGGGTzB0BH1djp4+0ZQN7
-	nkSsyA==
-X-Received: by 2002:ac8:5e0c:0:b0:502:a3b:f367 with SMTP id
- d75a77b69052e-507529b4cbdmr15001cf.51.1772133131092; Thu, 26 Feb 2026
- 11:12:11 -0800 (PST)
+	s=arc-20240116; t=1772134516; c=relaxed/simple;
+	bh=LILfmGjZqKoX4SxkAinliX4KD5JtQIXnFpvI7AAiOtM=;
+	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
+	 MIME-Version:Subject; b=IxgJwtHApdoNS992QsMq4Yazz2+jOqmALfBwop+M2TYx6k9dDFf8dz5UJVoNYV3+LqvJMEiCrPGlZQnVrVsrA3FCdoUzzLczJ05n+lufoV3CujiTktSb/h0jwSzm9mnyJTHndN6C+LDnJ2V9cDa0PgjzTWBUQ3DeKE3xMISTGTM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sNP/T8BS; arc=fail smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61QIuUWg2346005;
+	Thu, 26 Feb 2026 19:33:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-id:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	pp1; bh=LILfmGjZqKoX4SxkAinliX4KD5JtQIXnFpvI7AAiOtM=; b=sNP/T8BS
+	JO9xuFg2jGdAZZv19ntk3EIagQdH/11b4uWWozLL5KqjhhA5YRevSv0Vh8y7oW6V
+	HGQYZJ32apoYLqHN/8NOU8mBQeiJ/kSu7qbcGb7Ld70dyrqpFNBq+iZV+ycMTNLv
+	HjKOc8yF5T5d0Lm9A6nADkG1q583M+PBr1Xlud2yVXYHG79pz00DZTsoawUKI0rE
+	foQUbtQvtLtNdH/gVnuZOCJZN6hZXvINt57izE05sTTU+GfLC0p0ed517ql4/J5v
+	+Offuuz/PehR8wzwXIAzAcg+CDplik6jQFwhntHOJSpP4yPC85NoU6NtuB4lN0Ga
+	3JIaYsMwQUYtQA==
+Received: from dm1pr04cu001.outbound.protection.outlook.com (mail-centralusazon11010016.outbound.protection.outlook.com [52.101.61.16])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4ch858x26j-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 26 Feb 2026 19:33:45 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cTEVROjL1MpGC37SBIVoReLpQ0Va4hNcQbJvgn7X3fL2SrXMBxEJIDd/McrU9k8G2SFRJgI8btykTT18oY8jBXzvLwLk3ydqsrElAjbj8KNQ/htYNRgUae0/s8QSI4G/bRHOBZzJSkv+4L3Sp8VdjqwuH3e4iWKQk3jC3kVfZ7ofi8IhzOXun33OrWcK61/SJOymg3ztjz55g2W7mcQYsMtAGippbZUnCkt3NL7Da8sx/JITpgfBXw1zuM2Arl91GNsgXl5EngolXtlJS4uShFo4XlpfP4V/0e04rNbZjmmDkvKzoZut63f+A09Tf6n/C7W7ZqfELxRrAOvTcMS+gQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LILfmGjZqKoX4SxkAinliX4KD5JtQIXnFpvI7AAiOtM=;
+ b=YO4RqbqURYeCTWkCP9IvWw3ilw/uc/3KBxzCPXq8sdBcR272n1stFAweHqdpHd2JpwlU3aSKIDkuCi6VHgZyyw1v1CZMW+3DA0aKCf2V4Bf75VR4yO9rnCcV+768CpbzL6zBTnKqLBcaJiMubmFvjofw4vDpE2xZf2XOS7ua5qyMDGpd8TtOh43c5/jUG/aCB+zg7Bz/6N3oDoiGYeIAop4SVUy4a+QICq9Xs6avg1GrnLLyyda7Qr501e3b6XCRlhArPGHzqXB011tYrj8PsHIbxbC2vwWGLSdkJwslElGCuLLnYOkvilTW5+GzRRI79nM+dtl/JIQaWQjtbEF7nA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
+ header.d=ibm.com; arc=none
+Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
+ by PH7PR15MB5693.namprd15.prod.outlook.com (2603:10b6:510:270::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9632.21; Thu, 26 Feb
+ 2026 19:33:37 +0000
+Received: from SA1PR15MB5819.namprd15.prod.outlook.com
+ ([fe80::920c:d2ba:5432:b539]) by SA1PR15MB5819.namprd15.prod.outlook.com
+ ([fe80::920c:d2ba:5432:b539%7]) with mapi id 15.20.9632.017; Thu, 26 Feb 2026
+ 19:33:37 +0000
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+To: "david@kernel.org" <david@kernel.org>,
+        "namhyung@kernel.org"
+	<namhyung@kernel.org>,
+        "oleg@redhat.com" <oleg@redhat.com>,
+        "anna@kernel.org"
+	<anna@kernel.org>, "ms@dev.tdt.de" <ms@dev.tdt.de>,
+        "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "ebiggers@kernel.org" <ebiggers@kernel.org>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        "mark.rutland@arm.com"
+	<mark.rutland@arm.com>,
+        "casey@schaufler-ca.com" <casey@schaufler-ca.com>,
+        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+        "miklos@szeredi.hu" <miklos@szeredi.hu>,
+        "sumit.semwal@linaro.org"
+	<sumit.semwal@linaro.org>,
+        "john.johansen@canonical.com"
+	<john.johansen@canonical.com>,
+        "amir73il@gmail.com" <amir73il@gmail.com>,
+        "slava@dubeyko.com" <slava@dubeyko.com>,
+        "willy@infradead.org"
+	<willy@infradead.org>,
+        "tytso@mit.edu" <tytso@mit.edu>,
+        "asmadeus@codewreck.org" <asmadeus@codewreck.org>,
+        "jth@kernel.org"
+	<jth@kernel.org>,
+        "shaggy@kernel.org" <shaggy@kernel.org>,
+        "serge@hallyn.com"
+	<serge@hallyn.com>,
+        "jaharkes@cs.cmu.edu" <jaharkes@cs.cmu.edu>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "trondmy@kernel.org"
+	<trondmy@kernel.org>,
+        "jolsa@kernel.org" <jolsa@kernel.org>,
+        "ericvh@kernel.org" <ericvh@kernel.org>,
+        "simona@ffwll.ch" <simona@ffwll.ch>,
+        "willemb@google.com" <willemb@google.com>,
+        "aivazian.tigran@gmail.com"
+	<aivazian.tigran@gmail.com>,
+        "hubcap@omnibond.com" <hubcap@omnibond.com>,
+        "muchun.song@linux.dev" <muchun.song@linux.dev>,
+        "sfrench@samba.org"
+	<sfrench@samba.org>,
+        "neil@brown.name" <neil@brown.name>,
+        "jmorris@namei.org"
+	<jmorris@namei.org>,
+        "jlbec@evilplan.org" <jlbec@evilplan.org>,
+        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+        "ronniesahlberg@gmail.com"
+	<ronniesahlberg@gmail.com>,
+        "lucho@ionkov.net" <lucho@ionkov.net>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "raven@themaw.net"
+	<raven@themaw.net>,
+        Alex Markuze <amarkuze@redhat.com>,
+        "mhiramat@kernel.org"
+	<mhiramat@kernel.org>,
+        "alexander.deucher@amd.com"
+	<alexander.deucher@amd.com>,
+        "mathieu.desnoyers@efficios.com"
+	<mathieu.desnoyers@efficios.com>,
+        "horms@kernel.org" <horms@kernel.org>,
+        "tom@talpey.com" <tom@talpey.com>, "mark@fasheh.com" <mark@fasheh.com>,
+        "mikulas@artax.karlin.mff.cuni.cz" <mikulas@artax.karlin.mff.cuni.cz>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "edumazet@google.com"
+	<edumazet@google.com>,
+        Olga Kornievskaia <okorniev@redhat.com>,
+        "bharathsm@microsoft.com" <bharathsm@microsoft.com>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "osalvador@suse.de"
+	<osalvador@suse.de>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "christian.koenig@amd.com" <christian.koenig@amd.com>,
+        "pc@manguebit.org"
+	<pc@manguebit.org>,
+        "martin@omnibond.com" <martin@omnibond.com>,
+        "naohiro.aota@wdc.com" <naohiro.aota@wdc.com>,
+        "frank.li@vivo.com"
+	<frank.li@vivo.com>,
+        "dsterba@suse.com" <dsterba@suse.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "code@tyhicks.com"
+	<code@tyhicks.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "kuba@kernel.org" <kuba@kernel.org>,
+        "kuniyu@google.com" <kuniyu@google.com>,
+        "nico@fluxnic.net" <nico@fluxnic.net>, "jack@suse.com" <jack@suse.com>,
+        "dlemoal@kernel.org" <dlemoal@kernel.org>,
+        "viro@zeniv.linux.org.uk"
+	<viro@zeniv.linux.org.uk>,
+        "stephen.smalley.work@gmail.com"
+	<stephen.smalley.work@gmail.com>,
+        "salah.triki@gmail.com"
+	<salah.triki@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        "paul@paul-moore.com" <paul@paul-moore.com>,
+        "luisbg@kernel.org"
+	<luisbg@kernel.org>,
+        "irogers@google.com" <irogers@google.com>,
+        "acme@kernel.org" <acme@kernel.org>, "richard@nod.at" <richard@nod.at>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "idryomov@gmail.com"
+	<idryomov@gmail.com>,
+        "joseph.qi@linux.alibaba.com"
+	<joseph.qi@linux.alibaba.com>,
+        "al@alarsen.net" <al@alarsen.net>,
+        "james.clark@linaro.org" <james.clark@linaro.org>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "roberto.sassu@huawei.com" <roberto.sassu@huawei.com>,
+        "konishi.ryusuke@gmail.com" <konishi.ryusuke@gmail.com>,
+        "sprasad@microsoft.com" <sprasad@microsoft.com>,
+        "jaegeuk@kernel.org"
+	<jaegeuk@kernel.org>,
+        "linux_oss@crudebyte.com" <linux_oss@crudebyte.com>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "Dai.Ngo@oracle.com"
+	<Dai.Ngo@oracle.com>,
+        "eric.snowberg@oracle.com" <eric.snowberg@oracle.com>,
+        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+        "chao@kernel.org"
+	<chao@kernel.org>,
+        "wufan@kernel.org" <wufan@kernel.org>,
+        "coda@cs.cmu.edu"
+	<coda@cs.cmu.edu>, Ingo Molnar <mingo@redhat.com>,
+        "alex.aring@gmail.com"
+	<alex.aring@gmail.com>,
+        "airlied@gmail.com" <airlied@gmail.com>,
+        "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
+        Paolo Abeni
+	<pabeni@redhat.com>,
+        "marc.dionne@auristor.com" <marc.dionne@auristor.com>,
+        "almaz.alexandrovich@paragon-software.com"
+	<almaz.alexandrovich@paragon-software.com>,
+        "davem@davemloft.net"
+	<davem@davemloft.net>,
+        "hch@infradead.org" <hch@infradead.org>
+CC: "ecryptfs@vger.kernel.org" <ecryptfs@vger.kernel.org>,
+        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
+        "apparmor@lists.ubuntu.com" <apparmor@lists.ubuntu.com>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "autofs@vger.kernel.org" <autofs@vger.kernel.org>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "fsverity@lists.linux.dev" <fsverity@lists.linux.dev>,
+        "ntfs3@lists.linux.dev" <ntfs3@lists.linux.dev>,
+        "ocfs2-devel@lists.linux.dev" <ocfs2-devel@lists.linux.dev>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
+        "linux-nilfs@vger.kernel.org" <linux-nilfs@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+        "linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+        "v9fs@lists.linux.dev" <v9fs@lists.linux.dev>,
+        "linux-xfs@vger.kernel.org"
+	<linux-xfs@vger.kernel.org>,
+        "linux-x25@vger.kernel.org"
+	<linux-x25@vger.kernel.org>,
+        "linux-f2fs-devel@lists.sourceforge.net"
+	<linux-f2fs-devel@lists.sourceforge.net>,
+        "nvdimm@lists.linux.dev"
+	<nvdimm@lists.linux.dev>,
+        "ceph-devel@vger.kernel.org"
+	<ceph-devel@vger.kernel.org>,
+        "jfs-discussion@lists.sourceforge.net"
+	<jfs-discussion@lists.sourceforge.net>,
+        "linux-mtd@lists.infradead.org"
+	<linux-mtd@lists.infradead.org>,
+        "devel@lists.orangefs.org"
+	<devel@lists.orangefs.org>,
+        "linux-afs@lists.infradead.org"
+	<linux-afs@lists.infradead.org>,
+        "linux-fscrypt@vger.kernel.org"
+	<linux-fscrypt@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+	<linux-security-module@vger.kernel.org>,
+        "linux-cifs@vger.kernel.org"
+	<linux-cifs@vger.kernel.org>,
+        "linux-hams@vger.kernel.org"
+	<linux-hams@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org"
+	<linux-nfs@vger.kernel.org>,
+        "codalist@coda.cs.cmu.edu"
+	<codalist@coda.cs.cmu.edu>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "netfs@lists.linux.dev" <netfs@lists.linux.dev>,
+        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Thread-Topic: [EXTERNAL] [PATCH 33/61] hfs: update format strings for u64
+ i_ino
+Thread-Index: AQHcpz2x4TUu0p1b1UOrTR9iSPzcyLWVXx4A
+Date: Thu, 26 Feb 2026 19:33:37 +0000
+Message-ID: <0bc9e485e475a12e1e2c9a73b781308fd94a97a4.camel@ibm.com>
+References: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
+	 <20260226-iino-u64-v1-33-ccceff366db9@kernel.org>
+In-Reply-To: <20260226-iino-u64-v1-33-ccceff366db9@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|PH7PR15MB5693:EE_
+x-ms-office365-filtering-correlation-id: ae649948-3a84-4c30-576a-08de756deff5
+x-ld-processed: fcf67057-50c9-4ad4-98f3-ffca64add9e9,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|10070799003|1800799024|366016|38070700021|921020;
+x-microsoft-antispam-message-info:
+ cahQUZvB1A3MAJEwPbxU3hSrLW7Ns8lPCLl5gpVuCZSGcPU97Z+M3LcXk87iMbetSbW04W5Y7KY2xx9pu+9IuBXZyYoB+CBXBnhWhAYPUi4bwz7zuYCOJJ0XITR9SnKqJmZsmk9ygX2gXymHaLEZelkJcGMk8BzplRZkpHXBzdPTBVeUFt6MWpp6O4aSttrBl0W56A9WmRcCNgqB+tIMdA3lYWTKg0RYOb7M3D1AqlUScc3Z/eRfRAJLkcMAL+muO6rQUX55/qmzgc8O2RNyLvsFWBjQq2dhONyQTeU91TL0weMZwz3jeZFwFrZqH3kp8pPfe/WIqJ74hz2M3jWbxixjMNE263BFamcUH+41CbgexFmz4ch30Wz8DFx3dFZlu52m0RfmYo2za74W55Pg2I34K1amiVsxHS7NNQ05R7jrjiVkrQZ6XuD1iMaIBniaM6O+fc5KK8mcNY1ZhiwpQRaYs92ar4qJAXl9cSgAgsp6K8LBdwooJsnqpTv9Hjpkdr/pgAnMJEft3YiD0h2n7ZPtUPFuPENO+nJammUVtXXBxs0eMBp3MrRSX53cf2fE+lYIVZSRCTzTTliwz+fRoH2GdFUS2GwIl/yx85nFdmJWbWOZ462PZPlfvOZpM6nq1V+RN+vIWpRycJydjxxbP1tgbEboW9AdgguT699AtVQnOOkszAkJglsu2liZCtBCkh5TJ+/16yclEpJyln5IxMKvRACrPR2GwjAUljw5fTU7YEZVUDmhpSebx46g6vut8S8BG1geJQv7gJGZEx5wgmnJn9ysa5KMSBFD+ySRq19PR1oDT+16n2X9rgd6WRIM
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(10070799003)(1800799024)(366016)(38070700021)(921020);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?SnBDZ3NhcjNmZ1FPemRzOE1haldNZXdIK1dnT3FES3BleTFNVVE1TURQaVJD?=
+ =?utf-8?B?UzE1azFuTFgwRUxKYkU4QytIeTk0MnU3ZEptajdTbjRvWkRqRFE5a3ZoakN1?=
+ =?utf-8?B?QlNuUUd1M3VDWis2clRCdFF6ODlQUVkxeGtBTk9ZUHRzWWZMVmdlaEJvT1NH?=
+ =?utf-8?B?TFNxbktKT3c3QmFuSGhYT1JGTGhYclhMaVV1ZkRhZUloeTVmQTRDajgxM1o0?=
+ =?utf-8?B?Z2VtdExvMUhXZU9yYk90dllqZUNuQkdtamJrdTBZK3B2emVCNjFmeTdwdHRh?=
+ =?utf-8?B?dEhVSnVOYkJKVlVBaFJKb01sNUZJNFVPR1BveFFGVkIxamEzdGRrdTRnallq?=
+ =?utf-8?B?bjB3a29UVTVsbENyVjF4U1FNaEx5TGY5bG0zbGhwRU53aWRqUkJSSU9aSFA2?=
+ =?utf-8?B?NzM5VmRwak1qdjVHNzFMTFdnTkttUWRUUEZNSHFyak5GMS9KL3Z0NUV1RG1Q?=
+ =?utf-8?B?TjB2UG9DNnNjZVBPRk1JbkxxVFVIeko1T2ZVTXRBSnFFZ3lSbHpLaWZnTVJ4?=
+ =?utf-8?B?R1ladkpFcG92dEFkS3RpbUNLMDNXQlkxcFJpMVZ4bENFSFVYZ2EzcTJvMStT?=
+ =?utf-8?B?d3BYTkRKR2diVTRmYmF3RW1HQjF6RkNnWkswbkZFQ0tzcyswdEJGNWpSVUtP?=
+ =?utf-8?B?VWdkWkhLSHEyMFlJZXR2UmlGOXdjRGUyK01zanBvWWxZa2ZmMW5hNTdLMDhV?=
+ =?utf-8?B?VWJGOGZ2b1VvekhjeTVtZE1TWS9MdnNDTDJLY015VFVkb1NveHNEZ0VTckhw?=
+ =?utf-8?B?TXFvUU96Mk9KL0JQcFJzdmkwclRSYytPUmpvT1pWWVJtVTFON2FEVm5iRkUv?=
+ =?utf-8?B?NDJhcHhrbjc2UnVZVmxrSnNDQkpiSU5HWURnV0UwcHg0MitNZGRUOWo5NDVv?=
+ =?utf-8?B?U0czY1NlZmJldDhHN25GOTE1UVloUllsdldKTG1kYkhBamtOQjFkNldFVFBq?=
+ =?utf-8?B?S2ovRk03QTZ0cS9SNmJ5cVo5WStoOVo1Q3JEbCt6aTBVbC9IUFNNbjdpYms2?=
+ =?utf-8?B?RTVaV2FIL2gwTllFTUVJd3JQQmJHMVlQN0QyYmJVTWRtSzljK1paN2lqV3Fq?=
+ =?utf-8?B?NGhTdlRnVkd3WXZzUUY4SEpDTXQ4cUttL0xIVmVHaFJ2OE1wcEFOVzMrcnJF?=
+ =?utf-8?B?b3Rsa242NUFYU0dhK2xSQUR3dWdORFphOE8vN1duenBTK2FaQU5qUEg2RlR3?=
+ =?utf-8?B?eEM4Qi9wZzBtRis3eGdUYXJIb0k0TnJhMy9RRktYeGx0LzFKbXRLVml0OWk1?=
+ =?utf-8?B?c2NiMlJlbFNtK0w4Tm10WkN3TStia08vRWw2L2NMQTZGK3NmbjBHeEI5WjQ1?=
+ =?utf-8?B?c0QwL3NMUlY3VjkrLzRCN3U1cjhCMDIwNkNTT2xmVzV6ZWlYaS9ZZnpyTWNs?=
+ =?utf-8?B?b2FPTjQ0ZklhMTJEdWo3OTBIV3FWazRyempBYno4SjVwZDNmMHFha3o4WTh0?=
+ =?utf-8?B?YmxydlNjbFZRd3JJVXJDZ1dMQ0dicTJxMXJzaWlMc1EycVZ0ajlBeUduSmcx?=
+ =?utf-8?B?aWprZTF4L3R2MXI2YVowZU5PckkyYVpZWEZ1NFg1YytzMGNKLzI4KzlkaFVW?=
+ =?utf-8?B?Yk1xcHQyVlErbjB0YWFXY28vQVUwWVV6TGk3OGsrQWlGTldUVUtyNlJnaHdQ?=
+ =?utf-8?B?bGhOM1Q5V2JXclAvdU42M0RxZlEvNFk2dzF4THRXbTZ0SUpOb29GYndBTi82?=
+ =?utf-8?B?OFh1VXVSZGxGY2dxbUdOVldsaFZheU1VOUFKYlFLdUw2VURZdkEyT1RVK1NU?=
+ =?utf-8?B?RHYrUHJoc2FpeXg5a2tXTU1zZjMydFNzbHh2MVF3WEVaVTc4YytBVXpYM3Fp?=
+ =?utf-8?B?NXFIcWx5bUpVTmp0aG1PRkpmeE1Cc1FFdTJxNVRXWmc0TmFZaTRrR2p4ZDh1?=
+ =?utf-8?B?OGhSQWtJM25NYmgwQlhPNXBRYVcycUdYRXAwamQ5aGtJKzRpMGwwaTArakxj?=
+ =?utf-8?B?TjlBeFhuUnpEYlJrUEVETnBIMFI0djZTNDg4SWp4alAwZHVoRnhlWnliVEZ0?=
+ =?utf-8?B?SUdBZmpQZDUrVlNpTHh6SFh4QWNqM092ZnNWMU8vUENTNy9sSXBFWlVzait0?=
+ =?utf-8?B?TXlNRFhhbi93Q2xaZ2VkU3pJaDB1YTlPd2tMamxBaTU4SGdibW83OWpMTk5H?=
+ =?utf-8?B?NHN3UTJjbzRyUGpTN2hkTlV0ZU83ZnFEZm1XRU05YUJyZFI3TEdWSkQxSUdO?=
+ =?utf-8?B?NVNIcnpGMU5ybHhSMzgyTlNZTUYwUk53N1hQRmRUQmY2WHRMclFQSjdMcGpn?=
+ =?utf-8?B?Y1F0VVVYZ2o5WDRwUzhGZnZzQ3N1WTM5MWJ4Z1BOa2IramxpK2ttR1l5cXlS?=
+ =?utf-8?B?ZjRXYm1WYUlDcFpNVWVmYXgzOG9yZFJjTjA2RmNKTlQ5b3R0a0xJV2E4TytM?=
+ =?utf-8?Q?afM8HRvGgw/e39HF8UrsDNex8gAAAp5LZ70om?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7670BFBF0951D141B560A656DB2C329E@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260226-fuse-compounds-upstream-v6-0-8585c5fcd2fc@ddn.com> <20260226-fuse-compounds-upstream-v6-3-8585c5fcd2fc@ddn.com>
-In-Reply-To: <20260226-fuse-compounds-upstream-v6-3-8585c5fcd2fc@ddn.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 26 Feb 2026 11:12:00 -0800
-X-Gm-Features: AaiRm51LGTHPPATd9L_-sBOQR-iOhXIxy2aOF4ic8uX8mwrQ1jVDSQ1I5A6YxCg
-Message-ID: <CAJnrk1ZsvtZh9vZoN=ca_wrs5enTfAQeNBYppOzZH=c+ARaP3Q@mail.gmail.com>
-Subject: Re: [PATCH v6 3/3] fuse: add an implementation of open+getattr
-To: Horst Birthelmer <horst@birthelmer.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, 
-	Luis Henriques <luis@igalia.com>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Horst Birthelmer <hbirthelmer@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: ibm.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae649948-3a84-4c30-576a-08de756deff5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2026 19:33:37.0865
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: adyAmpJa7swZ6AcvnPyJYk2pY8i3CfPRcdpdV9jL/28MJfjDrmc+Bvpmn9egnZikqJYDqcTSZHSuFmAxkfCPKg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR15MB5693
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjI2MDE3NSBTYWx0ZWRfX+ChE7NJba+Se
+ xlhStllv5ZamUeo+RBh7vS+HuMO7eDYyGxeBUDv/itpR45KikbJW0pQpTmL852IxlQY+UMrgYhm
+ 8wyp8laR8xFWvLS9aPJ15cpZ/YbnphMZH55XXBFPNWApjZ6l9F2XFMyOB6fO5JlL2ANLk5DxXyb
+ 1Cd2G4x3Obw0fNVZhlXZRzn5Ejy0dHIWWPc8HvM7CN2vz1DXN9sKUVLUo4V0o/AkS3nbOX44o+K
+ fdigmJCgpr9jlzSMfpeVipjfv/ra3jS0B+qxAVcejy9H+GeuXwa2fX936SvyDNSRLCT4u7UQJFi
+ 8HcHp+wnTL7oaqSTHKnNnsbyGjV1rhWEeonR+QtzS1TcAZ8nDWg9V/G+jRouuWKueBsIH2O/sg2
+ oegqM+ToRCfeJD38IYy012bA6OI2zAMpo+7Xho85JBt1k2gAdYAFesdSiGdlbMcb6jGr4u4EKHr
+ Cm36PlD4g3Jdmh2nAzg==
+X-Proofpoint-GUID: s8Cy8G7RLCTAYofI-Fb-MvbcVZyaT8xK
+X-Authority-Analysis: v=2.4 cv=S4HUAYsP c=1 sm=1 tr=0 ts=69a0a01a cx=c_pps
+ a=ItoRIIcZIWT0tNr6APkIeA==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22 a=Mpw57Om8IfrbqaoTuvik:22
+ a=GgsMoib0sEa3-_RKJdDe:22 a=VwQbUJbxAAAA:8 a=wCmvBT1CAAAA:8
+ a=p87Qy_SXhRj_V6A2eicA:9 a=QEXdDO2ut3YA:10 a=6z96SAwNL0f8klobD5od:22
+X-Proofpoint-ORIG-GUID: A99ac75_wtlLubPgvGPQMPkpOYw2QEeg
+Subject: Re:  [PATCH 33/61] hfs: update format strings for u64 i_ino
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-26_02,2026-02-26_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1011 impostorscore=0 malwarescore=0 bulkscore=0
+ phishscore=0 adultscore=0 lowpriorityscore=0 spamscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2602260175
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+X-Spamd-Result: default: False [2.44 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_REJECT(1.00)[cv is fail on i=2];
+	MIME_BASE64_TEXT_BOGUS(1.00)[];
+	DMARC_POLICY_ALLOW(-0.50)[ibm.com,reject];
+	R_DKIM_ALLOW(-0.20)[ibm.com:s=pp1];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
+	MIME_BASE64_TEXT(0.10)[];
 	HAS_LIST_UNSUB(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78624-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
-	MISSING_XM_UA(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-78625-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_TO(0.00)[kernel.org,redhat.com,dev.tdt.de,linux.intel.com,suse.cz,arm.com,schaufler-ca.com,physik.fu-berlin.de,szeredi.hu,linaro.org,canonical.com,gmail.com,dubeyko.com,infradead.org,mit.edu,codewreck.org,hallyn.com,cs.cmu.edu,ffwll.ch,google.com,omnibond.com,linux.dev,samba.org,brown.name,namei.org,evilplan.org,oracle.com,ionkov.net,intel.com,themaw.net,amd.com,efficios.com,talpey.com,fasheh.com,artax.karlin.mff.cuni.cz,microsoft.com,suse.de,manguebit.org,wdc.com,vivo.com,suse.com,linux.ibm.com,tyhicks.com,fluxnic.net,zeniv.linux.org.uk,paul-moore.com,nod.at,goodmis.org,linux.alibaba.com,alarsen.net,huawei.com,crudebyte.com,dilger.ca,auristor.com,paragon-software.com,davemloft.net];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,dubeyko.com:email];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[146];
+	FROM_NEQ_ENVFROM(0.00)[Slava.Dubeyko@ibm.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[ibm.com:+];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,birthelmer.com:email,mail.gmail.com:mid,ddn.com:email]
-X-Rspamd-Queue-Id: CC2221AE487
+	MID_RHS_MATCH_FROM(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: 808561AE8CD
 X-Rspamd-Action: no action
 
-On Thu, Feb 26, 2026 at 8:43=E2=80=AFAM Horst Birthelmer <horst@birthelmer.=
-com> wrote:
->
-> From: Horst Birthelmer <hbirthelmer@ddn.com>
->
-> The discussion about compound commands in fuse was
-> started over an argument to add a new operation that
-> will open a file and return its attributes in the same operation.
->
-> Here is a demonstration of that use case with compound commands.
->
-> Signed-off-by: Horst Birthelmer <hbirthelmer@ddn.com>
-> ---
->  fs/fuse/file.c   | 111 +++++++++++++++++++++++++++++++++++++++++++++++--=
-------
->  fs/fuse/fuse_i.h |   4 +-
->  fs/fuse/ioctl.c  |   2 +-
->  3 files changed, 99 insertions(+), 18 deletions(-)
->
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index a408a9668abbb361e2c1e386ebab9dfcb0a7a573..daa95a640c311fc393241bdf7=
-27e00a2bc714f35 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -136,8 +136,71 @@ static void fuse_file_put(struct fuse_file *ff, bool=
- sync)
->         }
->  }
->
-> +static int fuse_compound_open_getattr(struct fuse_mount *fm, u64 nodeid,
-> +                                     struct inode *inode, int flags, int=
- opcode,
-> +                                     struct fuse_file *ff,
-> +                                     struct fuse_attr_out *outattrp,
-> +                                     struct fuse_open_out *outopenp)
-> +{
-> +       struct fuse_conn *fc =3D fm->fc;
-> +       struct fuse_compound_req *compound;
-> +       struct fuse_args open_args =3D {};
-> +       struct fuse_args getattr_args =3D {};
-> +       struct fuse_open_in open_in =3D {};
-> +       struct fuse_getattr_in getattr_in =3D {};
-> +       int err;
-> +
-> +       compound =3D fuse_compound_alloc(fm, 2, FUSE_COMPOUND_SEPARABLE);
-> +       if (!compound)
-> +               return -ENOMEM;
-> +
-> +       open_in.flags =3D flags & ~(O_CREAT | O_EXCL | O_NOCTTY);
-> +       if (!fm->fc->atomic_o_trunc)
-> +               open_in.flags &=3D ~O_TRUNC;
-> +
-> +       if (fm->fc->handle_killpriv_v2 &&
-> +           (open_in.flags & O_TRUNC) && !capable(CAP_FSETID))
-> +               open_in.open_flags |=3D FUSE_OPEN_KILL_SUIDGID;
-
-Do you think it makes sense to move this chunk of logic into
-fuse_open_args_fill() since this logic has to be done in
-fuse_send_open() as well?
-
-> +
-> +       fuse_open_args_fill(&open_args, nodeid, opcode, &open_in, outopen=
-p);
-> +
-> +       err =3D fuse_compound_add(compound, &open_args, NULL);
-> +       if (err)
-> +               goto out;
-> +
-> +       fuse_getattr_args_fill(&getattr_args, nodeid, &getattr_in, outatt=
-rp);
-> +
-> +       err =3D fuse_compound_add(compound, &getattr_args, NULL);
-> +       if (err)
-> +               goto out;
-> +
-> +       err =3D fuse_compound_send(compound);
-> +       if (err)
-> +               goto out;
-> +
-> +       err =3D fuse_compound_get_error(compound, 0);
-> +       if (err)
-> +               goto out;
-> +
-> +       ff->fh =3D outopenp->fh;
-> +       ff->open_flags =3D outopenp->open_flags;
-
-It looks like this logic is shared between here and the non-compound
-open path, maybe a bit better to just do this in fuse_file_open()
-instead? That way we also don't need to pass the struct fuse_file *ff
-as an arg either.
-
-> +
-> +       err =3D fuse_compound_get_error(compound, 1);
-> +       if (err)
-> +               goto out;
-
-For this open+getattr case, if getattr fails but the open succeeds,
-should this still succeed the open since they're separable requests? I
-think we had a conversation about it in v4, but imo this case should.
-
-> +
-> +       fuse_change_attributes(inode, &outattrp->attr, NULL,
-> +                              ATTR_TIMEOUT(outattrp),
-> +                              fuse_get_attr_version(fc));
-> +
-> +out:
-> +       fuse_compound_free(compound);
-> +       return err;
-> +}
-> +
->  struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
-> -                                unsigned int open_flags, bool isdir)
-> +                               struct inode *inode,
-
-As I understand it, now every open() is a opengetattr() (except for
-the ioctl path) but is this the desired behavior? for example if there
-was a previous FUSE_LOOKUP that was just done, doesn't this mean
-there's no getattr that's needed since the lookup refreshed the attrs?
-or if the server has reasonable entry_valid and attr_valid timeouts,
-multiple opens() of the same file would only need to send FUSE_OPEN
-and not the FUSE_GETATTR, no?
-
-
-> +                               unsigned int open_flags, bool isdir)
->  {
->         struct fuse_conn *fc =3D fm->fc;
->         struct fuse_file *ff;
-> @@ -163,23 +226,40 @@ struct fuse_file *fuse_file_open(struct fuse_mount =
-*fm, u64 nodeid,
->         if (open) {
->                 /* Store outarg for fuse_finish_open() */
->                 struct fuse_open_out *outargp =3D &ff->args->open_outarg;
-> -               int err;
-> +               int err =3D -ENOSYS;
->
-> -               err =3D fuse_send_open(fm, nodeid, open_flags, opcode, ou=
-targp);
-> -               if (!err) {
-> -                       ff->fh =3D outargp->fh;
-> -                       ff->open_flags =3D outargp->open_flags;
-> -               } else if (err !=3D -ENOSYS) {
-> -                       fuse_file_free(ff);
-> -                       return ERR_PTR(err);
-> -               } else {
-> -                       if (isdir) {
-> +               if (inode) {
-> +                       struct fuse_attr_out attr_outarg;
-> +
-> +                       err =3D fuse_compound_open_getattr(fm, nodeid, in=
-ode,
-> +                                                        open_flags, opco=
-de, ff,
-> +                                                        &attr_outarg, ou=
-targp);
-
-instead of passing in &attr_outarg, what about just having that moved
-to fuse_compound_open_getattr()?
-
-> +               }
-> +
-> +               if (err =3D=3D -ENOSYS) {
-> +                       err =3D fuse_send_open(fm, nodeid, open_flags, op=
-code,
-> +                                            outargp);
-> +                       if (!err) {
-> +                               ff->fh =3D outargp->fh;
-> +                               ff->open_flags =3D outargp->open_flags;
-> +                       }
-> +               }
-> +
-> +               if (err) {
-> +                       if (err !=3D -ENOSYS) {
-> +                               /* err is not ENOSYS */
-> +                               fuse_file_free(ff);
-> +                               return ERR_PTR(err);
-> +                       } else {
->                                 /* No release needed */
->                                 kfree(ff->args);
->                                 ff->args =3D NULL;
-> -                               fc->no_opendir =3D 1;
-> -                       } else {
-> -                               fc->no_open =3D 1;
-> +
-> +                               /* we don't have open */
-> +                               if (isdir)
-> +                                       fc->no_opendir =3D 1;
-> +                               else
-> +                                       fc->no_open =3D 1;
-
-kfree(ff->args) and ff->args =3D NULL should not be called for the
-!isdir case or it leads to the deadlock that was fixed in
-https://lore.kernel.org/linux-fsdevel/20251010220738.3674538-2-joannelkoong=
-@gmail.com/
-
-I think if you have the "ff->fh =3D outargp..." and "ff->open_flags =3D
-..." logic shared between fuse_compound_open_getattr() and
-fuse_send_open() then the original errorr handling for this could just
-be left as-is.
-
-Thanks,
-Joanne
-
->                         }
->                 }
->         }
-> @@ -195,11 +275,10 @@ struct fuse_file *fuse_file_open(struct fuse_mount =
-*fm, u64 nodeid,
->  int fuse_do_open(struct fuse_mount *fm, u64 nodeid, struct file *file,
->                  bool isdir)
->  {
-> -       struct fuse_file *ff =3D fuse_file_open(fm, nodeid, file->f_flags=
-, isdir);
-> +       struct fuse_file *ff =3D fuse_file_open(fm, nodeid, file_inode(fi=
-le), file->f_flags, isdir);
->
->         if (!IS_ERR(ff))
->                 file->private_data =3D ff;
-> -
->         return PTR_ERR_OR_ZERO(ff);
->  }
->  EXPORT_SYMBOL_GPL(fuse_do_open);
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index ff8222b66c4f7b04c0671a980237a43871affd0a..40409a4ab016a061eea20afee=
-76c8a7fe9c15adb 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -1588,7 +1588,9 @@ void fuse_file_io_release(struct fuse_file *ff, str=
-uct inode *inode);
->
->  /* file.c */
->  struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
-> -                                unsigned int open_flags, bool isdir);
-> +                                                               struct in=
-ode *inode,
-> +                                                               unsigned =
-int open_flags,
-> +                                                               bool isdi=
-r);
->  void fuse_file_release(struct inode *inode, struct fuse_file *ff,
->                        unsigned int open_flags, fl_owner_t id, bool isdir=
-);
->
-> diff --git a/fs/fuse/ioctl.c b/fs/fuse/ioctl.c
-> index fdc175e93f74743eb4d2e5a4bc688df1c62e64c4..07a02e47b2c3a68633d213675=
-a8cc380a0cf31d8 100644
-> --- a/fs/fuse/ioctl.c
-> +++ b/fs/fuse/ioctl.c
-> @@ -494,7 +494,7 @@ static struct fuse_file *fuse_priv_ioctl_prepare(stru=
-ct inode *inode)
->         if (!S_ISREG(inode->i_mode) && !isdir)
->                 return ERR_PTR(-ENOTTY);
->
-> -       return fuse_file_open(fm, get_node_id(inode), O_RDONLY, isdir);
-> +       return fuse_file_open(fm, get_node_id(inode), NULL, O_RDONLY, isd=
-ir);
->  }
->
->  static void fuse_priv_ioctl_cleanup(struct inode *inode, struct fuse_fil=
-e *ff)
->
-> --
-> 2.53.0
->
+T24gVGh1LCAyMDI2LTAyLTI2IGF0IDEwOjU1IC0wNTAwLCBKZWZmIExheXRvbiB3cm90ZToNCj4g
+VXBkYXRlIGZvcm1hdCBzdHJpbmdzIGFuZCBsb2NhbCB2YXJpYWJsZSB0eXBlcyBpbiBoZnMgZm9y
+IHRoZQ0KPiBpX2lubyB0eXBlIGNoYW5nZSBmcm9tIHVuc2lnbmVkIGxvbmcgdG8gdTY0Lg0KPiAN
+Cj4gU2lnbmVkLW9mZi1ieTogSmVmZiBMYXl0b24gPGpsYXl0b25Aa2VybmVsLm9yZz4NCj4gLS0t
+DQo+ICBmcy9oZnMvY2F0YWxvZy5jIHwgMiArLQ0KPiAgZnMvaGZzL2V4dGVudC5jICB8IDQgKyst
+LQ0KPiAgZnMvaGZzL2lub2RlLmMgICB8IDQgKystLQ0KPiAgMyBmaWxlcyBjaGFuZ2VkLCA1IGlu
+c2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZnMvaGZzL2Nh
+dGFsb2cuYyBiL2ZzL2hmcy9jYXRhbG9nLmMNCj4gaW5kZXggYjgwYmE0MGUzODc3NjEyMzc1OWRm
+NGI4NWM3ZjY1ZGFhMTljNjQzNi4uN2Y1MzM5ZWU1N2MxNWFhZTJkNWQwMDQ3NDEzM2E5ODViZTNh
+ZjZjYSAxMDA2NDQNCj4gLS0tIGEvZnMvaGZzL2NhdGFsb2cuYw0KPiArKysgYi9mcy9oZnMvY2F0
+YWxvZy5jDQo+IEBAIC00MTcsNyArNDE3LDcgQEAgaW50IGhmc19jYXRfbW92ZSh1MzIgY25pZCwg
+c3RydWN0IGlub2RlICpzcmNfZGlyLCBjb25zdCBzdHJ1Y3QgcXN0ciAqc3JjX25hbWUsDQo+ICAJ
+aW50IGVudHJ5X3NpemUsIHR5cGU7DQo+ICAJaW50IGVycjsNCj4gIA0KPiAtCWhmc19kYmcoImNu
+aWQgJXUgLSAoaW5vICVsdSwgbmFtZSAlcykgLSAoaW5vICVsdSwgbmFtZSAlcylcbiIsDQo+ICsJ
+aGZzX2RiZygiY25pZCAldSAtIChpbm8gJWxsdSwgbmFtZSAlcykgLSAoaW5vICVsbHUsIG5hbWUg
+JXMpXG4iLA0KPiAgCQljbmlkLCBzcmNfZGlyLT5pX2lubywgc3JjX25hbWUtPm5hbWUsDQo+ICAJ
+CWRzdF9kaXItPmlfaW5vLCBkc3RfbmFtZS0+bmFtZSk7DQo+ICAJc2IgPSBzcmNfZGlyLT5pX3Ni
+Ow0KPiBkaWZmIC0tZ2l0IGEvZnMvaGZzL2V4dGVudC5jIGIvZnMvaGZzL2V4dGVudC5jDQo+IGlu
+ZGV4IGEwOTc5MDhiMjY5ZDBhZDE1NzU4NDdkZDAxZDZkNGE0NTM4MjYyYmYuLmYwNjZhOTlhODYz
+YmM3Mzk5NDhhYWM5MjFiYzkwNjg3NGM2MDA5YjIgMTAwNjQ0DQo+IC0tLSBhL2ZzL2hmcy9leHRl
+bnQuYw0KPiArKysgYi9mcy9oZnMvZXh0ZW50LmMNCj4gQEAgLTQxMSw3ICs0MTEsNyBAQCBpbnQg
+aGZzX2V4dGVuZF9maWxlKHN0cnVjdCBpbm9kZSAqaW5vZGUpDQo+ICAJCWdvdG8gb3V0Ow0KPiAg
+CX0NCj4gIA0KPiAtCWhmc19kYmcoImlubyAlbHUsIHN0YXJ0ICV1LCBsZW4gJXVcbiIsIGlub2Rl
+LT5pX2lubywgc3RhcnQsIGxlbik7DQo+ICsJaGZzX2RiZygiaW5vICVsbHUsIHN0YXJ0ICV1LCBs
+ZW4gJXVcbiIsIGlub2RlLT5pX2lubywgc3RhcnQsIGxlbik7DQo+ICAJaWYgKEhGU19JKGlub2Rl
+KS0+YWxsb2NfYmxvY2tzID09IEhGU19JKGlub2RlKS0+Zmlyc3RfYmxvY2tzKSB7DQo+ICAJCWlm
+ICghSEZTX0koaW5vZGUpLT5maXJzdF9ibG9ja3MpIHsNCj4gIAkJCWhmc19kYmcoImZpcnN0X2V4
+dGVudDogc3RhcnQgJXUsIGxlbiAldVxuIiwNCj4gQEAgLTQ4Miw3ICs0ODIsNyBAQCB2b2lkIGhm
+c19maWxlX3RydW5jYXRlKHN0cnVjdCBpbm9kZSAqaW5vZGUpDQo+ICAJdTMyIHNpemU7DQo+ICAJ
+aW50IHJlczsNCj4gIA0KPiAtCWhmc19kYmcoImlubyAlbHUsIHBoeXNfc2l6ZSAlbGx1IC0+IGlf
+c2l6ZSAlbGx1XG4iLA0KPiArCWhmc19kYmcoImlubyAlbGx1LCBwaHlzX3NpemUgJWxsdSAtPiBp
+X3NpemUgJWxsdVxuIiwNCj4gIAkJaW5vZGUtPmlfaW5vLCAobG9uZyBsb25nKUhGU19JKGlub2Rl
+KS0+cGh5c19zaXplLA0KPiAgCQlpbm9kZS0+aV9zaXplKTsNCj4gIAlpZiAoaW5vZGUtPmlfc2l6
+ZSA+IEhGU19JKGlub2RlKS0+cGh5c19zaXplKSB7DQo+IGRpZmYgLS1naXQgYS9mcy9oZnMvaW5v
+ZGUuYyBiL2ZzL2hmcy9pbm9kZS5jDQo+IGluZGV4IDg3ODUzNWRiNjRkNjc5OTk1Y2QxZjVjMjE1
+ZjU2YzUyNThjM2M3MjAuLjk1ZjAzMzNhNjA4YjBmYjU3MjM5Y2Y1ZWVjN2Q5NDg5YTI1ZWZiM2Eg
+MTAwNjQ0DQo+IC0tLSBhL2ZzL2hmcy9pbm9kZS5jDQo+ICsrKyBiL2ZzL2hmcy9pbm9kZS5jDQo+
+IEBAIC0yNzAsNyArMjcwLDcgQEAgdm9pZCBoZnNfZGVsZXRlX2lub2RlKHN0cnVjdCBpbm9kZSAq
+aW5vZGUpDQo+ICB7DQo+ICAJc3RydWN0IHN1cGVyX2Jsb2NrICpzYiA9IGlub2RlLT5pX3NiOw0K
+PiAgDQo+IC0JaGZzX2RiZygiaW5vICVsdVxuIiwgaW5vZGUtPmlfaW5vKTsNCj4gKwloZnNfZGJn
+KCJpbm8gJWxsdVxuIiwgaW5vZGUtPmlfaW5vKTsNCj4gIAlpZiAoU19JU0RJUihpbm9kZS0+aV9t
+b2RlKSkgew0KPiAgCQlhdG9taWM2NF9kZWMoJkhGU19TQihzYiktPmZvbGRlcl9jb3VudCk7DQo+
+ICAJCWlmIChIRlNfSShpbm9kZSktPmNhdF9rZXkuUGFySUQgPT0gY3B1X3RvX2JlMzIoSEZTX1JP
+T1RfQ05JRCkpDQo+IEBAIC00NTUsNyArNDU1LDcgQEAgaW50IGhmc193cml0ZV9pbm9kZShzdHJ1
+Y3QgaW5vZGUgKmlub2RlLCBzdHJ1Y3Qgd3JpdGViYWNrX2NvbnRyb2wgKndiYykNCj4gIAloZnNf
+Y2F0X3JlYyByZWM7DQo+ICAJaW50IHJlczsNCj4gIA0KPiAtCWhmc19kYmcoImlubyAlbHVcbiIs
+IGlub2RlLT5pX2lubyk7DQo+ICsJaGZzX2RiZygiaW5vICVsbHVcbiIsIGlub2RlLT5pX2lubyk7
+DQo+ICAJcmVzID0gaGZzX2V4dF93cml0ZV9leHRlbnQoaW5vZGUpOw0KPiAgCWlmIChyZXMpDQo+
+ICAJCXJldHVybiByZXM7DQoNCkxvb2tzIGdvb2QuDQoNClJldmlld2VkLWJ5OiBWaWFjaGVzbGF2
+IER1YmV5a28gPHNsYXZhQGR1YmV5a28uY29tPg0KDQpUaGFua3MsDQpTbGF2YS4NCg==
 
