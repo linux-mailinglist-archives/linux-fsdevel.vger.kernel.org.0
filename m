@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-78576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id EKrgGVN6oGn9kAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 17:52:35 +0100
+	id 2HexNRWAoGnWkQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:17:09 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F30B1AB3BE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 17:52:35 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 828B01AC1B2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:17:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 38AB73118736
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 16:37:01 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 93728331FCE7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 16:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D2A4DA53C;
-	Thu, 26 Feb 2026 16:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D7F4DA55F;
+	Thu, 26 Feb 2026 16:07:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MTzuK409"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oP0XhNxc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7329543E9D0;
-	Thu, 26 Feb 2026 16:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF24E4418F5;
+	Thu, 26 Feb 2026 16:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772122029; cv=none; b=mImD79P8eOg5fpSKwnsOM4nv50Ti0+Ud5fUtwJQktKt9FAsncGP3ftg5R84kZUh8aTuYzbcIcdRhkwNnhXNR4KPYxsxKGQ+w49gN+JaXekoD6Xk4DGxiy/a44ypdKHbFYP6H48ejqdMl82tnz7M9moz91zq5VmtPg9RSSdcrgu4=
+	t=1772122042; cv=none; b=TjwNkBhIJTmuZbdik7xm+74Y2LOwz0DCRcOQ87afAdMVRHQEVYtBmqDk50Qa+G9fzLzW6E7HaUb/i0n9lAeZvugnnqNsXfduskgh3y7HtEymy8I8QhPkOCS7y37UwVE/bfYGKmEA7XL0BoS4YdKiR/PetZ8tlGmNwtsUg6W3oFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772122029; c=relaxed/simple;
-	bh=7K/FmEuDwTdjSg9C4rAKy27XY8EaYM64Jbqxib0imtg=;
+	s=arc-20240116; t=1772122042; c=relaxed/simple;
+	bh=guIyR8txAyswD3hV7ksTPOwKgOC5jl6K3IuEHEeuazY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NMxJj+U7V7iGUEmt3X2xepziQCflxHCd08W9c7DLeeMqCwt5hOcVyeSKIaH4RMdJse72d61E5rJ9zNyawvGWqfJkeqecPAvaoZrkwhPPi+ik990YIak1itHWfHSpLHaXLkuYx8/8JfiP4p8RiQgGwg1ccpnhhQe/MMJYPMXTk1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MTzuK409; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 546B1C2BCAF;
-	Thu, 26 Feb 2026 16:06:56 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=nWzykUOXZ75+j8pm8ejTcqD7a032dXhxLtpVEK4R71ERUvQClf2ei5uAfrb6X0KZiTuPEmDtAimA0+814PRB+M8eOsAlBJP9lYwcu6USH7phlN505HmsvjAPgdhl7n21xflfAsR5EAmGC0p7cAhsMEOH3aDi5OUP5rGk3n0ujxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oP0XhNxc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14A8EC2BC9E;
+	Thu, 26 Feb 2026 16:07:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772122028;
-	bh=7K/FmEuDwTdjSg9C4rAKy27XY8EaYM64Jbqxib0imtg=;
+	s=k20201202; t=1772122041;
+	bh=guIyR8txAyswD3hV7ksTPOwKgOC5jl6K3IuEHEeuazY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=MTzuK409usSF/cCRJwKXtZdkSE+7pHi8yAZ9UZ76L5NsHfF5ERt7nC6cuK6PyEV6L
-	 wuPk+HwpV4SYjH4tCBsNgiI/678QKspeymc5VXcjQXnq70cN/JUrG+t75ZyU/HFl3v
-	 IJlI42/zJZkvI9VmjeDxiHpkaLAsKRxdoGmJ5kZFm2BOFKtZP0fiIPawonOspYjOYh
-	 ElsV6nhu1rfvM7+lq9jzj9SzP31ih3vT+/mK4TWTONAfGnk4jDs0Z4HSGmkmhX5MPm
-	 l6O6P6KmcK4u8AF0coLoixJNbAxHMZED6GQQ46ntc5J7spZJa0dE7vmlt628I3T4XT
-	 +I1+GhJYaCqkQ==
+	b=oP0XhNxch+g3ihBD0nKGKJbH8GWy25UibaNuGneJv2vKAKAvpBXyRRyDQAh+7r/mj
+	 0tj5DG3z5WZiIBo6ukSqM/xNVCclXpalBC8EnHMcepR/Id/T8kJiYvdIQoz/8BGD+Y
+	 4cX1i9xUrbUhQ+qs3cT3KBOvXfScQAVx40mJkk7zu90aUJRfq+6vndvqiubk6S8UAG
+	 OCdrgWUILGd8iCGxzF5Tuo4w70SkeQb5LvixBFHRHfCw72oXu4u5HmxqEEHaHjD2N6
+	 t3+5KOuAMEvXLdKEXQyTsMsboXwEHUiapjR7XM+/H97N0pDnM4Kh22dmlU6WPmD+fB
+	 s0fHo8dLgp/hg==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 26 Feb 2026 10:55:54 -0500
-Subject: [PATCH 52/61] drm/amdgpu: update for u64 i_ino
+Date: Thu, 26 Feb 2026 10:55:55 -0500
+Subject: [PATCH 53/61] fsnotify: update fdinfo format strings for u64 i_ino
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260226-iino-u64-v1-52-ccceff366db9@kernel.org>
+Message-Id: <20260226-iino-u64-v1-53-ccceff366db9@kernel.org>
 References: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
 In-Reply-To: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -150,20 +150,20 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-xfs@vger.kernel.org, linux-hams@vger.kernel.org, 
  linux-x25@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1179; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=7K/FmEuDwTdjSg9C4rAKy27XY8EaYM64Jbqxib0imtg=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpoG0RH0BlVgd1hc2ARIapdMesOcS14opM003NR
- 0erAY72K1uJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaBtEQAKCRAADmhBGVaC
- FVkrEACFYDnqY+DXVKQGR0Z58808QWgMd5pKPx2DTRKvHR17M3Hp++u6sixkYKtqtN5Vgtjtves
- COCxrY5lB6ULDLg/YhlBrempWhSvAlbQnsrmNV1Vz4kpbHhknIPakEgxTz1NH2lBS3Gh2z6yTkh
- vq4UOlQjzeLuBVa8St9lXEr6JyYIMYlccfZ6wvlGG32nzar5ePPSRk22lJixkBhqiK2zYyW/qza
- dQMjurfZLFcy0HxoBnoy14C2/TgwvEf+hSykLI5YwCnOfyZnZ9ymGxexwtDoTn5ew7qLwuO0+Yb
- 13buCK6sXK6vZDcJqU1pObj+2Q+OhPftmJoGVBwYZhvyb5B7NJsgsFllJ7AvzW519vIYgF/CZ/j
- vwmDwyGT8qiQbeCAeWlK/t7xRN/FFYxTNDN5/aAATKmOCGE/v1TjgrV3Aha7It/M1Yvc/Gp4hTe
- gJdO5OQEF2tRaq/FqrRPOJRWPPqruBbOfz7WyLHAgVBSFcIzU8sl3p9GXiTZP2TYRcLpRQ3m33e
- yhVzI4bWSiqG+WeMlfMvzndN98pBgwCnDN/d5Zr09Jy777jlU4bqCdVDj/L8ryxSWfU7CXDVqUO
- g1hF/vxaNXaMtE4O62LJCjZI/tDh7Uw/IvtWG1FQHdgeWA/PJNtmZnA7jY6iekxKbYCjsmTkZ7k
- YT8fFRkl5728AJw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1455; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=guIyR8txAyswD3hV7ksTPOwKgOC5jl6K3IuEHEeuazY=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpoG0RiY9iQ/WI9xzF8HjuSF0msd9z65XTS1K3v
+ W0Jme2yHyeJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaBtEQAKCRAADmhBGVaC
+ FUdXEACVy0RSg//ixaXELfj5UYiV+H80XbKRqlys8++/J+rh+FUyeqvaKy3D8aWpMOzazuduA4H
+ N3+TGxw3ybpjbHT/F94iC/Lap37RUxYODHLoirg+hdONUnX3UiWOMmm7EGl+D9lEionRSeK59Ud
+ NYqDJgfaYqg4ElQ8kkK6Sj/OCB4DF5OVQPsO7ajqz59MBYDNWIORf8StRcDgClB4jfSdtU01Lfs
+ 3VMa9eqaG2AoO6jUI7XdX/CyvsbaIcrCvMvlNmpAJcd/My+rWY1ePJdybAmHaSaQHEhNbFTA74A
+ dl0kZP5lWE2a+5Xjb0BjiviDEua1jaJQ/XXhjoITYssXmchunqi2XGiG8CSkelRfXV+Dj/iUeoX
+ 2jWkJg4vtYV74oCqJ7EQkNuV8DckUTxePz/vgkmjiUC3Rouj09LGiXtdgz/L32fL5qm6qq/XKZn
+ AZ0b47pHHvLrz5+2ZcNK97YTeScVVL1ksJrPodgioUmRwdjcxSrbQxXs4anUPhlfHCfc3AjRqFi
+ LRk0kVjY2MFBuYmha4wXPXmzs9LqGEl17305Fak20VPYzOSMV8mbJeQPCi0WqrycFSf5qvjZl4n
+ Qv8ymGVAGxz2vIrWx8CH0jaVxPfGKHp3HESyfW4gBjmUvw/KMOtBn1LJ1WjVsBnInM68bFVVzO2
+ sa5ABNGi9XyWjug==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 X-Rspamd-Server: lfdr
@@ -172,11 +172,11 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78576-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78577-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de];
@@ -184,44 +184,50 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
 	TO_DN_SOME(0.00)[];
 	RCPT_COUNT_GT_50(0.00)[146];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[jlayton@kernel.org,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	NEURAL_HAM(-0.00)[-0.999];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 0F30B1AB3BE
+X-Rspamd-Queue-Id: 828B01AC1B2
 X-Rspamd-Action: no action
 
-Update %lu to %llu in drm_info() calls that print inode->i_ino, since
-i_ino is now u64.
+Update %lx to %llx in inotify and fanotify fdinfo output for printing
+inode->i_ino, since i_ino is now u64.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_object.c | 4 ++--
+ fs/notify/fdinfo.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-index 1fb95640069667bf731df05990b57c6e0a0d2c16..aaa8cdc122c49ebf0b5b6c55edb3a1db2a4fd710 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-@@ -1676,9 +1676,9 @@ u64 amdgpu_bo_print_info(int id, struct amdgpu_bo *bo, struct seq_file *m)
- 	attachment = READ_ONCE(bo->tbo.base.import_attach);
- 
- 	if (attachment)
--		seq_printf(m, " imported from ino:%lu", file_inode(dma_buf->file)->i_ino);
-+		seq_printf(m, " imported from ino:%llu", file_inode(dma_buf->file)->i_ino);
- 	else if (dma_buf)
--		seq_printf(m, " exported as ino:%lu", file_inode(dma_buf->file)->i_ino);
-+		seq_printf(m, " exported as ino:%llu", file_inode(dma_buf->file)->i_ino);
- 
- 	amdgpu_bo_print_flag(m, bo, CPU_ACCESS_REQUIRED);
- 	amdgpu_bo_print_flag(m, bo, NO_CPU_ACCESS);
+diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
+index 9cc7eb863643774b83da8b6228c38db16d0dbed1..0f731eddeb8be74113361f45aa4fca2943395e9d 100644
+--- a/fs/notify/fdinfo.c
++++ b/fs/notify/fdinfo.c
+@@ -84,7 +84,7 @@ static void inotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark)
+ 	inode_mark = container_of(mark, struct inotify_inode_mark, fsn_mark);
+ 	inode = igrab(fsnotify_conn_inode(mark->connector));
+ 	if (inode) {
+-		seq_printf(m, "inotify wd:%x ino:%lx sdev:%x mask:%x ignored_mask:0 ",
++		seq_printf(m, "inotify wd:%x ino:%llx sdev:%x mask:%x ignored_mask:0 ",
+ 			   inode_mark->wd, inode->i_ino, inode->i_sb->s_dev,
+ 			   inotify_mark_user_mask(mark));
+ 		show_mark_fhandle(m, inode);
+@@ -111,7 +111,7 @@ static void fanotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark)
+ 		inode = igrab(fsnotify_conn_inode(mark->connector));
+ 		if (!inode)
+ 			return;
+-		seq_printf(m, "fanotify ino:%lx sdev:%x mflags:%x mask:%x ignored_mask:%x ",
++		seq_printf(m, "fanotify ino:%llx sdev:%x mflags:%x mask:%x ignored_mask:%x ",
+ 			   inode->i_ino, inode->i_sb->s_dev,
+ 			   mflags, mark->mask, mark->ignore_mask);
+ 		show_mark_fhandle(m, inode);
 
 -- 
 2.53.0
