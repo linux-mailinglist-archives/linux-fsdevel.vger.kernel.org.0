@@ -1,170 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-78630-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78631-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UAfpD8enoGnilQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78630-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 21:06:31 +0100
+	id cMPbMY2poGnilQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78631-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 21:14:05 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 249C91AED43
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 21:06:31 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B7011AEF0C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 21:14:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id A3DE53010B5E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 20:06:29 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9D5233152611
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 20:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AFC6364923;
-	Thu, 26 Feb 2026 20:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3AEC4657F7;
+	Thu, 26 Feb 2026 20:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GoiapCCj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T6YnEYfl"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D313164B5;
-	Thu, 26 Feb 2026 20:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E383389445;
+	Thu, 26 Feb 2026 20:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772136378; cv=none; b=BNc4ExfPHH6M4eb43y/0nuKZIwPiUCyV/so+roElQDUR/Fmta13OsLh0WM6KTWrOggMLP4K/ndS5royk91ZvYbPeB1+8PQvzq/c+MnjlL4VnxYB7h4ZRjGqnlbvApgje+b4jtBA3GtuqG/+LmOvMW3Y5QbMMdv5ivqsEcmzCYFo=
+	t=1772136411; cv=none; b=W3y57g/TXojYZ/g3iLRR5egSBas4coRN5A/3Og6H+eoqR+QXbAuLp3wDPBv936Qt0uDWiC+Msmq4fKiBr2ZWlKTgzchFUe9OXwOwj1e1kWhuF1hyUQYL/fnAtnQiol54QDRSKLZgzdaoZTG/jAi1xVGdS09OdUmvh1xjbWJJQDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772136378; c=relaxed/simple;
-	bh=amJIWoT1nC09hCk+fwfbrDXhDDzedSUJ2LEhzzxxTsU=;
+	s=arc-20240116; t=1772136411; c=relaxed/simple;
+	bh=76x3DU9MzBkl90lZYLvAbZAUO09C1G9Su6aBBpYsJFY=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uAmVADDuUMcy84oU5XnUeKkPERHIT8YhLZG/78LNp8tNqbyXSRCX9ybuCU/pHgpU3CQjJTYuE6kQFt0qLwyoBmINyV27Iq93PQmKTM9vgpmNQmMJmi11ocBGq2+lLuJ2i/0SsXEw9C6d7kBL68Vui4A5awFKTc3lHcg9infH304=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GoiapCCj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1109C116C6;
-	Thu, 26 Feb 2026 20:06:05 +0000 (UTC)
+	 Content-Type:MIME-Version; b=Oaq/oRoedUGglK1mpvsAIiTn0FRd71I4OioM7+x2yUm1zD37T7oGIPbVQP5oKACe9lcHUwdPNrvJgu6ImBYb3FfzxTD7oBeUNP2G9zZ+hHPJ/LChNoPtS1Vg0tYd4CujF1a+QZHPHqlylG3WstuCDwnPXBaem6PDAKp1/Iv66R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T6YnEYfl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 520C4C116C6;
+	Thu, 26 Feb 2026 20:06:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772136377;
-	bh=amJIWoT1nC09hCk+fwfbrDXhDDzedSUJ2LEhzzxxTsU=;
+	s=k20201202; t=1772136410;
+	bh=76x3DU9MzBkl90lZYLvAbZAUO09C1G9Su6aBBpYsJFY=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=GoiapCCjXtcW/ncWAnCZfJR5QyfV+JUZXXnUIjhxbyDc7L9/74824XjLGF/9FcdJR
-	 SHDVHPsQnmcX9UVRLy8HgT37wgK6s8QXPaw6c3IwlPsGwOa3bfi8lNSWFLe/Bah+sW
-	 ZA/4okeZZPZJ7mvZzl3EE6xRSak7Kyr4Yu/stsPLfya2o43enXoLgzD9mTD+FyXLtX
-	 +yY8TWh/m28GLJhf7ExEjMw72g8WiX6uYn3ecMNMArIST8tJ8isTBaGjNYY7m790z7
-	 pQLCm+TMkPfrsnPhjngtxwcWPP0z2TyIJi4xqcJt/EgJRaTRJCjXT19SFgFPN0H64M
-	 eqDgsSpMWSpow==
-Message-ID: <d8d47ebf099b21bf20f7284837f8164a19590010.camel@kernel.org>
-Subject: Re:  [PATCH 17/61] nilfs2: update for u64 i_ino
+	b=T6YnEYfl11ih7xUSiFK61/RDBp81heXTpln3ok8zs3Zd3nR9+pOnRsLAGh/eo6zzB
+	 xh1FFGrV6ghTw8iJhqrMVYDcQ7Io+PErWnVjKKQrZ1K9m8FptJkjvekaVsWXJU24My
+	 UlJTUr1mw9KmSblPgaqK4kPBOMclcTyGUg6sIEibALC6s9Eo0RAC4P98mpmWUxKxML
+	 WCYGgFC1YjtgKQbYQpyc/2jhWHqhTn6/UIey3SlJZaM8cFB91k1Jrn8n4CCOSeLC5x
+	 1Zz9aVxBrExtMgqHMxE6dB/3PmeoJvP6nYlZZkPZRM4Wr+F97z1rOiIzHljyWlcR5y
+	 +jc4SHRMUt5HA==
+Message-ID: <9dd2d94989c395a99576b6a8896c582dd33f6740.camel@kernel.org>
+Subject: Re: [PATCH 12/61] nfsd: update format strings for u64 i_ino
 From: Jeff Layton <jlayton@kernel.org>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, "david@kernel.org"	
- <david@kernel.org>, "namhyung@kernel.org" <namhyung@kernel.org>, 
- "oleg@redhat.com"	 <oleg@redhat.com>, "anna@kernel.org" <anna@kernel.org>,
- "ms@dev.tdt.de"	 <ms@dev.tdt.de>, "alexander.shishkin@linux.intel.com"	
- <alexander.shishkin@linux.intel.com>, "jack@suse.cz" <jack@suse.cz>, 
- "ebiggers@kernel.org"	 <ebiggers@kernel.org>, Ondrej Mosnacek
- <omosnace@redhat.com>,  "mark.rutland@arm.com"	 <mark.rutland@arm.com>,
- "casey@schaufler-ca.com" <casey@schaufler-ca.com>, 
- "glaubitz@physik.fu-berlin.de"	 <glaubitz@physik.fu-berlin.de>,
- "miklos@szeredi.hu" <miklos@szeredi.hu>,  "sumit.semwal@linaro.org"	
- <sumit.semwal@linaro.org>, "john.johansen@canonical.com"	
- <john.johansen@canonical.com>, "amir73il@gmail.com" <amir73il@gmail.com>, 
- "slava@dubeyko.com"	 <slava@dubeyko.com>, "willy@infradead.org"
- <willy@infradead.org>,  "tytso@mit.edu"	 <tytso@mit.edu>,
- "asmadeus@codewreck.org" <asmadeus@codewreck.org>,  "jth@kernel.org"	
- <jth@kernel.org>, "shaggy@kernel.org" <shaggy@kernel.org>,
- "serge@hallyn.com"	 <serge@hallyn.com>, "jaharkes@cs.cmu.edu"
- <jaharkes@cs.cmu.edu>,  "trondmy@kernel.org"	 <trondmy@kernel.org>,
- "jolsa@kernel.org" <jolsa@kernel.org>,  "ericvh@kernel.org"	
- <ericvh@kernel.org>, "simona@ffwll.ch" <simona@ffwll.ch>,
- "willemb@google.com"	 <willemb@google.com>, "aivazian.tigran@gmail.com"
- <aivazian.tigran@gmail.com>,  "hubcap@omnibond.com"	 <hubcap@omnibond.com>,
- "muchun.song@linux.dev" <muchun.song@linux.dev>,  "sfrench@samba.org"	
- <sfrench@samba.org>, "neil@brown.name" <neil@brown.name>,
- "jmorris@namei.org"	 <jmorris@namei.org>, "jlbec@evilplan.org"
- <jlbec@evilplan.org>,  "chuck.lever@oracle.com"	 <chuck.lever@oracle.com>,
- "ronniesahlberg@gmail.com" <ronniesahlberg@gmail.com>,  "lucho@ionkov.net"	
- <lucho@ionkov.net>, "dan.j.williams@intel.com" <dan.j.williams@intel.com>, 
- "raven@themaw.net"	 <raven@themaw.net>, Alex Markuze <amarkuze@redhat.com>,
- "mhiramat@kernel.org"	 <mhiramat@kernel.org>, "alexander.deucher@amd.com"
- <alexander.deucher@amd.com>,  "mathieu.desnoyers@efficios.com"	
- <mathieu.desnoyers@efficios.com>, "horms@kernel.org" <horms@kernel.org>, 
- "tom@talpey.com"	 <tom@talpey.com>, "mark@fasheh.com" <mark@fasheh.com>, 
- "mikulas@artax.karlin.mff.cuni.cz"	 <mikulas@artax.karlin.mff.cuni.cz>,
- "djwong@kernel.org" <djwong@kernel.org>,  "edumazet@google.com"	
- <edumazet@google.com>, Olga Kornievskaia <okorniev@redhat.com>, 
- "bharathsm@microsoft.com"	 <bharathsm@microsoft.com>,
- "adrian.hunter@intel.com" <adrian.hunter@intel.com>,  "osalvador@suse.de"	
- <osalvador@suse.de>, "peterz@infradead.org" <peterz@infradead.org>, 
- "christian.koenig@amd.com"	 <christian.koenig@amd.com>, "pc@manguebit.org"
- <pc@manguebit.org>,  "martin@omnibond.com"	 <martin@omnibond.com>,
- "naohiro.aota@wdc.com" <naohiro.aota@wdc.com>,  "frank.li@vivo.com"	
- <frank.li@vivo.com>, "dsterba@suse.com" <dsterba@suse.com>, 
- "zohar@linux.ibm.com"	 <zohar@linux.ibm.com>, "code@tyhicks.com"
- <code@tyhicks.com>,  "dwmw2@infradead.org"	 <dwmw2@infradead.org>,
- "kuba@kernel.org" <kuba@kernel.org>, "kuniyu@google.com"	
- <kuniyu@google.com>, "nico@fluxnic.net" <nico@fluxnic.net>, "jack@suse.com"
-	 <jack@suse.com>, "dlemoal@kernel.org" <dlemoal@kernel.org>, 
- "viro@zeniv.linux.org.uk"	 <viro@zeniv.linux.org.uk>,
- "stephen.smalley.work@gmail.com"	 <stephen.smalley.work@gmail.com>,
- "salah.triki@gmail.com"	 <salah.triki@gmail.com>, David Howells
- <dhowells@redhat.com>,  "paul@paul-moore.com"	 <paul@paul-moore.com>,
- "luisbg@kernel.org" <luisbg@kernel.org>,  "irogers@google.com"	
- <irogers@google.com>, "acme@kernel.org" <acme@kernel.org>, "richard@nod.at"
-	 <richard@nod.at>, "rostedt@goodmis.org" <rostedt@goodmis.org>, 
- "idryomov@gmail.com"	 <idryomov@gmail.com>, "joseph.qi@linux.alibaba.com"	
- <joseph.qi@linux.alibaba.com>, "al@alarsen.net" <al@alarsen.net>, 
- "james.clark@linaro.org"	 <james.clark@linaro.org>,
- "dmitry.kasatkin@gmail.com"	 <dmitry.kasatkin@gmail.com>,
- "roberto.sassu@huawei.com"	 <roberto.sassu@huawei.com>,
- "konishi.ryusuke@gmail.com"	 <konishi.ryusuke@gmail.com>,
- "sprasad@microsoft.com" <sprasad@microsoft.com>,  "jaegeuk@kernel.org"	
- <jaegeuk@kernel.org>, "linux_oss@crudebyte.com" <linux_oss@crudebyte.com>, 
- "brauner@kernel.org"	 <brauner@kernel.org>, "Dai.Ngo@oracle.com"
- <Dai.Ngo@oracle.com>,  "eric.snowberg@oracle.com"	
- <eric.snowberg@oracle.com>, "adilger.kernel@dilger.ca"	
- <adilger.kernel@dilger.ca>, "chao@kernel.org" <chao@kernel.org>, 
- "wufan@kernel.org"	 <wufan@kernel.org>, "coda@cs.cmu.edu"
- <coda@cs.cmu.edu>, Ingo Molnar	 <mingo@redhat.com>, "alex.aring@gmail.com"
- <alex.aring@gmail.com>,  "airlied@gmail.com"	 <airlied@gmail.com>,
- "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,  Paolo Abeni
- <pabeni@redhat.com>, "marc.dionne@auristor.com" <marc.dionne@auristor.com>,
-  "almaz.alexandrovich@paragon-software.com"	
- <almaz.alexandrovich@paragon-software.com>, "davem@davemloft.net"	
- <davem@davemloft.net>, "hch@infradead.org" <hch@infradead.org>
-Cc: "ecryptfs@vger.kernel.org" <ecryptfs@vger.kernel.org>, 
- "linux-unionfs@vger.kernel.org"	 <linux-unionfs@vger.kernel.org>,
- "apparmor@lists.ubuntu.com"	 <apparmor@lists.ubuntu.com>,
- "linux-ext4@vger.kernel.org"	 <linux-ext4@vger.kernel.org>,
- "autofs@vger.kernel.org" <autofs@vger.kernel.org>, 
- "amd-gfx@lists.freedesktop.org"	 <amd-gfx@lists.freedesktop.org>,
- "fsverity@lists.linux.dev"	 <fsverity@lists.linux.dev>,
- "ntfs3@lists.linux.dev" <ntfs3@lists.linux.dev>, 
- "ocfs2-devel@lists.linux.dev"	 <ocfs2-devel@lists.linux.dev>,
- "linux-fsdevel@vger.kernel.org"	 <linux-fsdevel@vger.kernel.org>,
- "linux-media@vger.kernel.org"	 <linux-media@vger.kernel.org>,
- "linux-kernel@vger.kernel.org"	 <linux-kernel@vger.kernel.org>,
- "netdev@vger.kernel.org"	 <netdev@vger.kernel.org>,
- "linux-integrity@vger.kernel.org"	 <linux-integrity@vger.kernel.org>,
- "samba-technical@lists.samba.org"	 <samba-technical@lists.samba.org>,
- "linux-nilfs@vger.kernel.org"	 <linux-nilfs@vger.kernel.org>,
- "selinux@vger.kernel.org"	 <selinux@vger.kernel.org>,
- "linaro-mm-sig@lists.linaro.org"	 <linaro-mm-sig@lists.linaro.org>,
- "linux-trace-kernel@vger.kernel.org"	 <linux-trace-kernel@vger.kernel.org>,
- "v9fs@lists.linux.dev"	 <v9fs@lists.linux.dev>, "linux-xfs@vger.kernel.org"
- <linux-xfs@vger.kernel.org>,  "linux-x25@vger.kernel.org"	
- <linux-x25@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net"	
- <linux-f2fs-devel@lists.sourceforge.net>, "nvdimm@lists.linux.dev"	
- <nvdimm@lists.linux.dev>, "ceph-devel@vger.kernel.org"	
- <ceph-devel@vger.kernel.org>, "jfs-discussion@lists.sourceforge.net"	
- <jfs-discussion@lists.sourceforge.net>, "linux-mtd@lists.infradead.org"	
- <linux-mtd@lists.infradead.org>, "devel@lists.orangefs.org"	
- <devel@lists.orangefs.org>, "linux-afs@lists.infradead.org"	
- <linux-afs@lists.infradead.org>, "linux-fscrypt@vger.kernel.org"	
- <linux-fscrypt@vger.kernel.org>, "linux-security-module@vger.kernel.org"	
- <linux-security-module@vger.kernel.org>, "linux-cifs@vger.kernel.org"	
- <linux-cifs@vger.kernel.org>, "linux-hams@vger.kernel.org"	
- <linux-hams@vger.kernel.org>, "linux-nfs@vger.kernel.org"	
- <linux-nfs@vger.kernel.org>, "codalist@coda.cs.cmu.edu"	
- <codalist@coda.cs.cmu.edu>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
- "netfs@lists.linux.dev"	 <netfs@lists.linux.dev>,
- "linux-perf-users@vger.kernel.org"	 <linux-perf-users@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org"	 <dri-devel@lists.freedesktop.org>
-Date: Thu, 26 Feb 2026 15:06:03 -0500
-In-Reply-To: <34b1d1f43043ca1b71a3ca9ea5ebce597a4c02aa.camel@ibm.com>
+To: Chuck Lever <chuck.lever@oracle.com>, Alexander Viro	
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+	 <jack@suse.cz>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu	
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
+ <willy@infradead.org>, Eric Biggers	 <ebiggers@kernel.org>, "Theodore Y.
+ Ts'o" <tytso@mit.edu>, Muchun Song	 <muchun.song@linux.dev>, Oscar Salvador
+ <osalvador@suse.de>, David Hildenbrand	 <david@kernel.org>, David Howells
+ <dhowells@redhat.com>, Paulo Alcantara	 <pc@manguebit.org>, Andreas Dilger
+ <adilger.kernel@dilger.ca>, Jan Kara	 <jack@suse.com>, Jaegeuk Kim
+ <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,  Trond Myklebust
+ <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, NeilBrown
+ <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo
+ <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, Steve French	
+ <sfrench@samba.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam
+ Prasad N	 <sprasad@microsoft.com>, Bharath SM <bharathsm@microsoft.com>,
+ Alexander Aring	 <alex.aring@gmail.com>, Ryusuke Konishi
+ <konishi.ryusuke@gmail.com>,  Viacheslav Dubeyko	 <slava@dubeyko.com>, Eric
+ Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov	 <lucho@ionkov.net>,
+ Dominique Martinet <asmadeus@codewreck.org>, Christian Schoenebeck
+ <linux_oss@crudebyte.com>, David Sterba <dsterba@suse.com>, Marc Dionne	
+ <marc.dionne@auristor.com>, Ian Kent <raven@themaw.net>, Luis de
+ Bethencourt	 <luisbg@kernel.org>, Salah Triki <salah.triki@gmail.com>,
+ "Tigran A. Aivazian"	 <aivazian.tigran@gmail.com>, Ilya Dryomov
+ <idryomov@gmail.com>, Alex Markuze	 <amarkuze@redhat.com>, Jan Harkes
+ <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,  Nicolas Pitre <nico@fluxnic.net>,
+ Tyler Hicks <code@tyhicks.com>, Amir Goldstein <amir73il@gmail.com>, 
+ Christoph Hellwig	 <hch@infradead.org>, John Paul Adrian Glaubitz
+ <glaubitz@physik.fu-berlin.de>,  Yangtao Li <frank.li@vivo.com>, Mikulas
+ Patocka <mikulas@artax.karlin.mff.cuni.cz>, David Woodhouse	
+ <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>, Dave Kleikamp	
+ <shaggy@kernel.org>, Konstantin Komarov	
+ <almaz.alexandrovich@paragon-software.com>, Mark Fasheh <mark@fasheh.com>, 
+ Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>,
+ Mike Marshall	 <hubcap@omnibond.com>, Martin Brandenburg
+ <martin@omnibond.com>, Miklos Szeredi	 <miklos@szeredi.hu>, Anders Larsen
+ <al@alarsen.net>, Zhihao Cheng	 <chengzhihao1@huawei.com>, Damien Le Moal
+ <dlemoal@kernel.org>, Naohiro Aota	 <naohiro.aota@wdc.com>, Johannes
+ Thumshirn <jth@kernel.org>, John Johansen	 <john.johansen@canonical.com>,
+ Paul Moore <paul@paul-moore.com>, James Morris	 <jmorris@namei.org>, "Serge
+ E. Hallyn" <serge@hallyn.com>, Mimi Zohar	 <zohar@linux.ibm.com>, Roberto
+ Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin
+ <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, Fan
+ Wu	 <wufan@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>, Casey Schaufler
+ <casey@schaufler-ca.com>, Alex Deucher	 <alexander.deucher@amd.com>,
+ Christian =?ISO-8859-1?Q?K=F6nig?=	 <christian.koenig@amd.com>, David
+ Airlie <airlied@gmail.com>, Simona Vetter	 <simona@ffwll.ch>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Eric Dumazet	 <edumazet@google.com>, Kuniyuki
+ Iwashima <kuniyu@google.com>, Paolo Abeni	 <pabeni@redhat.com>, Willem de
+ Bruijn <willemb@google.com>, "David S. Miller"	 <davem@davemloft.net>,
+ Jakub Kicinski <kuba@kernel.org>, Simon Horman	 <horms@kernel.org>, Oleg
+ Nesterov <oleg@redhat.com>, Peter Zijlstra	 <peterz@infradead.org>, Ingo
+ Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland	 <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,  Jiri Olsa
+ <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter
+ <adrian.hunter@intel.com>,  James Clark <james.clark@linaro.org>, "Darrick
+ J. Wong" <djwong@kernel.org>, Martin Schiller <ms@dev.tdt.de>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
+	fsverity@lists.linux.dev, linux-mm@kvack.org, netfs@lists.linux.dev, 
+	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+	samba-technical@lists.samba.org, linux-nilfs@vger.kernel.org, 
+	v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+ autofs@vger.kernel.org, 	ceph-devel@vger.kernel.org,
+ codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org, 
+	linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net, 
+	ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+ devel@lists.orangefs.org, 	linux-unionfs@vger.kernel.org,
+ apparmor@lists.ubuntu.com, 	linux-security-module@vger.kernel.org,
+ linux-integrity@vger.kernel.org, 	selinux@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org, 	dri-devel@lists.freedesktop.org,
+ linux-media@vger.kernel.org, 	linaro-mm-sig@lists.linaro.org,
+ netdev@vger.kernel.org, 	linux-perf-users@vger.kernel.org,
+ linux-fscrypt@vger.kernel.org, 	linux-xfs@vger.kernel.org,
+ linux-hams@vger.kernel.org, linux-x25@vger.kernel.org
+Date: Thu, 26 Feb 2026 15:06:36 -0500
+In-Reply-To: <8b0bb056-9504-4835-8063-7ddeba328721@oracle.com>
 References: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
-		 <20260226-iino-u64-v1-17-ccceff366db9@kernel.org>
-	 <34b1d1f43043ca1b71a3ca9ea5ebce597a4c02aa.camel@ibm.com>
+	 <20260226-iino-u64-v1-12-ccceff366db9@kernel.org>
+	 <8b0bb056-9504-4835-8063-7ddeba328721@oracle.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -253,509 +218,132 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78630-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_TO(0.00)[ibm.com,kernel.org,redhat.com,dev.tdt.de,linux.intel.com,suse.cz,arm.com,schaufler-ca.com,physik.fu-berlin.de,szeredi.hu,linaro.org,canonical.com,gmail.com,dubeyko.com,infradead.org,mit.edu,codewreck.org,hallyn.com,cs.cmu.edu,ffwll.ch,google.com,omnibond.com,linux.dev,samba.org,brown.name,namei.org,evilplan.org,oracle.com,ionkov.net,intel.com,themaw.net,amd.com,efficios.com,talpey.com,fasheh.com,artax.karlin.mff.cuni.cz,microsoft.com,suse.de,manguebit.org,wdc.com,vivo.com,suse.com,linux.ibm.com,tyhicks.com,fluxnic.net,zeniv.linux.org.uk,paul-moore.com,nod.at,goodmis.org,linux.alibaba.com,alarsen.net,huawei.com,crudebyte.com,dilger.ca,auristor.com,paragon-software.com,davemloft.net];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-78631-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[146];
+	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_TO(0.00)[oracle.com,zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[145];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[jlayton@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	NEURAL_HAM(-0.00)[-0.999];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROM(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 249C91AED43
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,oracle.com:email]
+X-Rspamd-Queue-Id: 3B7011AEF0C
 X-Rspamd-Action: no action
 
-On Thu, 2026-02-26 at 19:46 +0000, Viacheslav Dubeyko wrote:
-> On Thu, 2026-02-26 at 10:55 -0500, Jeff Layton wrote:
-> > Update nilfs2 trace events and filesystem code for u64 i_ino:
-> >=20
-> > - Change __field(ino_t, ...) to __field(u64, ...) in trace events
-> > - Update format strings from %lu to %llu
-> > - Cast to (unsigned long long) in TP_printk
+On Thu, 2026-02-26 at 14:48 -0500, Chuck Lever wrote:
+> On 2/26/26 10:55 AM, Jeff Layton wrote:
+> > Update format strings from %ld/%lu to %lld/%llu for i_ino, which is
+> > now a u64.
 > >=20
 > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > > ---
-> >  fs/nilfs2/alloc.c             | 10 +++++-----
-> >  fs/nilfs2/bmap.c              |  2 +-
-> >  fs/nilfs2/btnode.c            |  2 +-
-> >  fs/nilfs2/btree.c             | 12 ++++++------
-> >  fs/nilfs2/dir.c               | 12 ++++++------
-> >  fs/nilfs2/direct.c            |  4 ++--
-> >  fs/nilfs2/gcinode.c           |  2 +-
-> >  fs/nilfs2/inode.c             |  8 ++++----
-> >  fs/nilfs2/mdt.c               |  2 +-
-> >  fs/nilfs2/namei.c             |  2 +-
-> >  fs/nilfs2/segment.c           |  2 +-
-> >  include/trace/events/nilfs2.h | 12 ++++++------
-> >  12 files changed, 35 insertions(+), 35 deletions(-)
+> >  fs/nfsd/export.c    | 2 +-
+> >  fs/nfsd/nfs4state.c | 4 ++--
+> >  fs/nfsd/nfsfh.c     | 4 ++--
+> >  fs/nfsd/vfs.c       | 2 +-
+> >  4 files changed, 6 insertions(+), 6 deletions(-)
 > >=20
-> > diff --git a/fs/nilfs2/alloc.c b/fs/nilfs2/alloc.c
-> > index e7eebb04f9a4080a39f17d4123e58ed7df6b2f4b..7b1cd2baefcf21e54f92608=
-45b02c7c95c148c64 100644
-> > --- a/fs/nilfs2/alloc.c
-> > +++ b/fs/nilfs2/alloc.c
-> > @@ -707,7 +707,7 @@ void nilfs_palloc_commit_free_entry(struct inode *i=
-node,
+> > diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
+> > index 8fdbba7cad96443d92cc7fdeea6158c4cc681be1..334b63eb966e71e6af6adde=
+61aa1123f01b4390b 100644
+> > --- a/fs/nfsd/export.c
+> > +++ b/fs/nfsd/export.c
+> > @@ -1039,7 +1039,7 @@ exp_rootfh(struct net *net, struct auth_domain *c=
+lp, char *name,
+> >  	}
+> >  	inode =3D d_inode(path.dentry);
 > > =20
-> >  	if (!nilfs_clear_bit_atomic(lock, group_offset, bitmap))
-> >  		nilfs_warn(inode->i_sb,
-> > -			   "%s (ino=3D%lu): entry number %llu already freed",
-> > +			   "%s (ino=3D%llu): entry number %llu already freed",
-> >  			   __func__, inode->i_ino,
-> >  			   (unsigned long long)req->pr_entry_nr);
-> >  	else
-> > @@ -748,7 +748,7 @@ void nilfs_palloc_abort_alloc_entry(struct inode *i=
-node,
+> > -	dprintk("nfsd: exp_rootfh(%s [%p] %s:%s/%ld)\n",
+> > +	dprintk("nfsd: exp_rootfh(%s [%p] %s:%s/%lld)\n",
+> >  		 name, path.dentry, clp->name,
+> >  		 inode->i_sb->s_id, inode->i_ino);
+> >  	exp =3D exp_parent(cd, clp, &path);
+> > diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> > index 6b9c399b89dfb71a52b9c97f0efe9a1dea0558a6..a569d89ac9123d66bb47e7d=
+74c7c98610de21da2 100644
+> > --- a/fs/nfsd/nfs4state.c
+> > +++ b/fs/nfsd/nfs4state.c
+> > @@ -1253,7 +1253,7 @@ static void nfsd4_finalize_deleg_timestamps(struc=
+t nfs4_delegation *dp, struct f
+> >  	if (ret) {
+> >  		struct inode *inode =3D file_inode(f);
 > > =20
-> >  	if (!nilfs_clear_bit_atomic(lock, group_offset, bitmap))
-> >  		nilfs_warn(inode->i_sb,
-> > -			   "%s (ino=3D%lu): entry number %llu already freed",
-> > +			   "%s (ino=3D%llu): entry number %llu already freed",
-> >  			   __func__, inode->i_ino,
-> >  			   (unsigned long long)req->pr_entry_nr);
-> >  	else
-> > @@ -861,7 +861,7 @@ int nilfs_palloc_freev(struct inode *inode, __u64 *=
-entry_nrs, size_t nitems)
-> >  			if (!nilfs_clear_bit_atomic(lock, group_offset,
-> >  						    bitmap)) {
-> >  				nilfs_warn(inode->i_sb,
-> > -					   "%s (ino=3D%lu): entry number %llu already freed",
-> > +					   "%s (ino=3D%llu): entry number %llu already freed",
-> >  					   __func__, inode->i_ino,
-> >  					   (unsigned long long)entry_nrs[j]);
-> >  			} else {
-> > @@ -906,7 +906,7 @@ int nilfs_palloc_freev(struct inode *inode, __u64 *=
-entry_nrs, size_t nitems)
-> >  							      last_nrs[k]);
-> >  			if (ret && ret !=3D -ENOENT)
-> >  				nilfs_warn(inode->i_sb,
-> > -					   "error %d deleting block that object (entry=3D%llu, ino=3D%lu)=
- belongs to",
-> > +					   "error %d deleting block that object (entry=3D%llu, ino=3D%llu=
-) belongs to",
-> >  					   ret, (unsigned long long)last_nrs[k],
-> >  					   inode->i_ino);
-> >  		}
-> > @@ -923,7 +923,7 @@ int nilfs_palloc_freev(struct inode *inode, __u64 *=
-entry_nrs, size_t nitems)
-> >  			ret =3D nilfs_palloc_delete_bitmap_block(inode, group);
-> >  			if (ret && ret !=3D -ENOENT)
-> >  				nilfs_warn(inode->i_sb,
-> > -					   "error %d deleting bitmap block of group=3D%lu, ino=3D%lu",
-> > +					   "error %d deleting bitmap block of group=3D%lu, ino=3D%llu",
-> >  					   ret, group, inode->i_ino);
-> >  		}
-> >  	}
-> > diff --git a/fs/nilfs2/bmap.c b/fs/nilfs2/bmap.c
-> > index ccc1a7aa52d2064d56b826058554264c498d592f..824f2bd91c167965ec3a660=
-202b6e6c5f1fe007e 100644
-> > --- a/fs/nilfs2/bmap.c
-> > +++ b/fs/nilfs2/bmap.c
-> > @@ -33,7 +33,7 @@ static int nilfs_bmap_convert_error(struct nilfs_bmap=
- *bmap,
+> > -		pr_notice_ratelimited("nfsd: Unable to update timestamps on inode %0=
+2x:%02x:%lu: %d\n",
+> > +		pr_notice_ratelimited("nfsd: Unable to update timestamps on inode %0=
+2x:%02x:%llu: %d\n",
+> >  					MAJOR(inode->i_sb->s_dev),
+> >  					MINOR(inode->i_sb->s_dev),
+> >  					inode->i_ino, ret);
+> > @@ -2888,7 +2888,7 @@ static void nfs4_show_superblock(struct seq_file =
+*s, struct nfsd_file *f)
+> >  {
+> >  	struct inode *inode =3D file_inode(f->nf_file);
 > > =20
-> >  	if (err =3D=3D -EINVAL) {
-> >  		__nilfs_error(inode->i_sb, fname,
-> > -			      "broken bmap (inode number=3D%lu)", inode->i_ino);
-> > +			      "broken bmap (inode number=3D%llu)", inode->i_ino);
-> >  		err =3D -EIO;
-> >  	}
-> >  	return err;
-> > diff --git a/fs/nilfs2/btnode.c b/fs/nilfs2/btnode.c
-> > index 56836712909201775907483887e8a0022851bbec..2e553d698d0f3980de98fce=
-d415dfd819ddbca0a 100644
-> > --- a/fs/nilfs2/btnode.c
-> > +++ b/fs/nilfs2/btnode.c
-> > @@ -64,7 +64,7 @@ nilfs_btnode_create_block(struct address_space *btnc,=
- __u64 blocknr)
-> >  		 * clearing of an abandoned b-tree node is missing somewhere).
-> >  		 */
-> >  		nilfs_error(inode->i_sb,
-> > -			    "state inconsistency probably due to duplicate use of b-tree no=
-de block address %llu (ino=3D%lu)",
-> > +			    "state inconsistency probably due to duplicate use of b-tree no=
-de block address %llu (ino=3D%llu)",
-> >  			    (unsigned long long)blocknr, inode->i_ino);
-> >  		goto failed;
-> >  	}
-> > diff --git a/fs/nilfs2/btree.c b/fs/nilfs2/btree.c
-> > index dd0c8e560ef6a2c96515025321914e0d73f41144..3c03f5a741d144d22d1ffb5=
-acf43a035e88c00dc 100644
-> > --- a/fs/nilfs2/btree.c
-> > +++ b/fs/nilfs2/btree.c
-> > @@ -353,7 +353,7 @@ static int nilfs_btree_node_broken(const struct nil=
-fs_btree_node *node,
-> >  		     nchildren <=3D 0 ||
-> >  		     nchildren > NILFS_BTREE_NODE_NCHILDREN_MAX(size))) {
-> >  		nilfs_crit(inode->i_sb,
-> > -			   "bad btree node (ino=3D%lu, blocknr=3D%llu): level =3D %d, flags=
- =3D 0x%x, nchildren =3D %d",
-> > +			   "bad btree node (ino=3D%llu, blocknr=3D%llu): level =3D %d, flag=
-s =3D 0x%x, nchildren =3D %d",
-> >  			   inode->i_ino, (unsigned long long)blocknr, level,
-> >  			   flags, nchildren);
-> >  		ret =3D 1;
-> > @@ -384,7 +384,7 @@ static int nilfs_btree_root_broken(const struct nil=
-fs_btree_node *node,
-> >  		     nchildren > NILFS_BTREE_ROOT_NCHILDREN_MAX ||
-> >  		     (nchildren =3D=3D 0 && level > NILFS_BTREE_LEVEL_NODE_MIN))) {
-> >  		nilfs_crit(inode->i_sb,
-> > -			   "bad btree root (ino=3D%lu): level =3D %d, flags =3D 0x%x, nchil=
-dren =3D %d",
-> > +			   "bad btree root (ino=3D%llu): level =3D %d, flags =3D 0x%x, nchi=
-ldren =3D %d",
-> >  			   inode->i_ino, level, flags, nchildren);
-> >  		ret =3D 1;
-> >  	}
-> > @@ -453,7 +453,7 @@ static int nilfs_btree_bad_node(const struct nilfs_=
-bmap *btree,
-> >  	if (unlikely(nilfs_btree_node_get_level(node) !=3D level)) {
-> >  		dump_stack();
-> >  		nilfs_crit(btree->b_inode->i_sb,
-> > -			   "btree level mismatch (ino=3D%lu): %d !=3D %d",
-> > +			   "btree level mismatch (ino=3D%llu): %d !=3D %d",
-> >  			   btree->b_inode->i_ino,
-> >  			   nilfs_btree_node_get_level(node), level);
-> >  		return 1;
-> > @@ -521,7 +521,7 @@ static int __nilfs_btree_get_block(const struct nil=
-fs_bmap *btree, __u64 ptr,
-> >   out_no_wait:
-> >  	if (!buffer_uptodate(bh)) {
-> >  		nilfs_err(btree->b_inode->i_sb,
-> > -			  "I/O error reading b-tree node block (ino=3D%lu, blocknr=3D%llu)"=
+> > -	seq_printf(s, "superblock: \"%02x:%02x:%ld\"",
+> > +	seq_printf(s, "superblock: \"%02x:%02x:%llu\"",
+> >  					MAJOR(inode->i_sb->s_dev),
+> >  					 MINOR(inode->i_sb->s_dev),
+> >  					 inode->i_ino);
+> > diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
+> > index ed85dd43da18e6d4c4667ff14dc035f2eacff1d6..cfd143b41eb1fb53868f378=
+d668905c1c7d5f868 100644
+> > --- a/fs/nfsd/nfsfh.c
+> > +++ b/fs/nfsd/nfsfh.c
+> > @@ -601,9 +601,9 @@ fh_compose(struct svc_fh *fhp, struct svc_export *e=
+xp, struct dentry *dentry,
+> >  	struct inode * inode =3D d_inode(dentry);
+> >  	dev_t ex_dev =3D exp_sb(exp)->s_dev;
+> > =20
+> > -	dprintk("nfsd: fh_compose(exp %02x:%02x/%ld %pd2, ino=3D%ld)\n",
+> > +	dprintk("nfsd: fh_compose(exp %02x:%02x/%lld %pd2, ino=3D%lld)\n",
+> >  		MAJOR(ex_dev), MINOR(ex_dev),
+> > -		(long) d_inode(exp->ex_path.dentry)->i_ino,
+> > +		(long long) d_inode(exp->ex_path.dentry)->i_ino,
+> >  		dentry,
+> >  		(inode ? inode->i_ino : 0));
+> > =20
+> > diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> > index c884c3f34afb044ee5cacc962a04a97de2f7fd88..dde09f3734c2844a3fe0b6d=
+18d596276a19aa2d1 100644
+> > --- a/fs/nfsd/vfs.c
+> > +++ b/fs/nfsd/vfs.c
+> > @@ -1163,7 +1163,7 @@ nfsd_direct_read(struct svc_rqst *rqstp, struct s=
+vc_fh *fhp,
+> >  	} else if (unlikely(host_err =3D=3D -EINVAL)) {
+> >  		struct inode *inode =3D d_inode(fhp->fh_dentry);
+> > =20
+> > -		pr_info_ratelimited("nfsd: Direct I/O alignment failure on %s/%ld\n"=
 ,
-> > +			  "I/O error reading b-tree node block (ino=3D%llu, blocknr=3D%llu)=
+> > +		pr_info_ratelimited("nfsd: Direct I/O alignment failure on %s/%lld\n=
 ",
-> >  			  btree->b_inode->i_ino, (unsigned long long)ptr);
-> >  		brelse(bh);
-> >  		return -EIO;
-> > @@ -2104,7 +2104,7 @@ static int nilfs_btree_propagate(struct nilfs_bma=
-p *btree,
-> >  	if (ret < 0) {
-> >  		if (unlikely(ret =3D=3D -ENOENT)) {
-> >  			nilfs_crit(btree->b_inode->i_sb,
-> > -				   "writing node/leaf block does not appear in b-tree (ino=3D%lu) =
-at key=3D%llu, level=3D%d",
-> > +				   "writing node/leaf block does not appear in b-tree (ino=3D%llu)=
- at key=3D%llu, level=3D%d",
-> >  				   btree->b_inode->i_ino,
-> >  				   (unsigned long long)key, level);
-> >  			ret =3D -EINVAL;
-> > @@ -2146,7 +2146,7 @@ static void nilfs_btree_add_dirty_buffer(struct n=
-ilfs_bmap *btree,
-> >  	    level >=3D NILFS_BTREE_LEVEL_MAX) {
-> >  		dump_stack();
-> >  		nilfs_warn(btree->b_inode->i_sb,
-> > -			   "invalid btree level: %d (key=3D%llu, ino=3D%lu, blocknr=3D%llu)=
-",
-> > +			   "invalid btree level: %d (key=3D%llu, ino=3D%llu, blocknr=3D%llu=
-)",
-> >  			   level, (unsigned long long)key,
-> >  			   btree->b_inode->i_ino,
-> >  			   (unsigned long long)bh->b_blocknr);
-> > diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
-> > index b243199036dfa1ab2299efaaa5bdf5da2d159ff2..3653db5cdb65137d1e660bb=
-509c14ec4cbc8840b 100644
-> > --- a/fs/nilfs2/dir.c
-> > +++ b/fs/nilfs2/dir.c
-> > @@ -150,7 +150,7 @@ static bool nilfs_check_folio(struct folio *folio, =
-char *kaddr)
-> > =20
-> >  Ebadsize:
-> >  	nilfs_error(sb,
-> > -		    "size of directory #%lu is not a multiple of chunk size",
-> > +		    "size of directory #%llu is not a multiple of chunk size",
-> >  		    dir->i_ino);
-> >  	goto fail;
-> >  Eshort:
-> > @@ -169,7 +169,7 @@ static bool nilfs_check_folio(struct folio *folio, =
-char *kaddr)
-> >  	error =3D "disallowed inode number";
-> >  bad_entry:
-> >  	nilfs_error(sb,
-> > -		    "bad entry in directory #%lu: %s - offset=3D%lu, inode=3D%lu, re=
-c_len=3D%zd, name_len=3D%d",
-> > +		    "bad entry in directory #%llu: %s - offset=3D%lu, inode=3D%lu, r=
-ec_len=3D%zd, name_len=3D%d",
->=20
-> I think you missed 'inode=3D%lu' here.=20
-
-That is actually the placeholder for this:
-
-    (unsigned long)le64_to_cpu(p->inode)
-
-...which is not inode->i_ino. I do agree that the cast probably no
-longer makes sense with this change, but I'd probably leave that to a
-later cleanup so we can keep this set focused on the i_ino change.
-
-
-> >  		    dir->i_ino, error, (folio->index << PAGE_SHIFT) + offs,
-> >  		    (unsigned long)le64_to_cpu(p->inode),
-> >  		    rec_len, p->name_len);
-> > @@ -177,7 +177,7 @@ static bool nilfs_check_folio(struct folio *folio, =
-char *kaddr)
-> >  Eend:
-> >  	p =3D (struct nilfs_dir_entry *)(kaddr + offs);
-> >  	nilfs_error(sb,
-> > -		    "entry in directory #%lu spans the page boundary offset=3D%lu, i=
-node=3D%lu",
-> > +		    "entry in directory #%llu spans the page boundary offset=3D%lu, =
-inode=3D%lu",
->=20
-> Ditto. You missed 'inode=3D%lu' here.
->=20
->
-
-Same here.
-
-> >  		    dir->i_ino, (folio->index << PAGE_SHIFT) + offs,
-> >  		    (unsigned long)le64_to_cpu(p->inode));
-> >  fail:
-> > @@ -251,7 +251,7 @@ static int nilfs_readdir(struct file *file, struct =
-dir_context *ctx)
-> > =20
-> >  		kaddr =3D nilfs_get_folio(inode, n, &folio);
-> >  		if (IS_ERR(kaddr)) {
-> > -			nilfs_error(sb, "bad page in #%lu", inode->i_ino);
-> > +			nilfs_error(sb, "bad page in #%llu", inode->i_ino);
-> >  			ctx->pos +=3D PAGE_SIZE - offset;
-> >  			return -EIO;
-> >  		}
-> > @@ -336,7 +336,7 @@ struct nilfs_dir_entry *nilfs_find_entry(struct ino=
-de *dir,
-> >  		/* next folio is past the blocks we've got */
-> >  		if (unlikely(n > (dir->i_blocks >> (PAGE_SHIFT - 9)))) {
-> >  			nilfs_error(dir->i_sb,
-> > -			       "dir %lu size %lld exceeds block count %llu",
-> > +			       "dir %llu size %lld exceeds block count %llu",
-> >  			       dir->i_ino, dir->i_size,
-> >  			       (unsigned long long)dir->i_blocks);
-> >  			goto out;
-> > @@ -382,7 +382,7 @@ struct nilfs_dir_entry *nilfs_dotdot(struct inode *=
-dir, struct folio **foliop)
-> >  	return next_de;
-> > =20
-> >  fail:
-> > -	nilfs_error(dir->i_sb, "directory #%lu %s", dir->i_ino, msg);
-> > +	nilfs_error(dir->i_sb, "directory #%llu %s", dir->i_ino, msg);
-> >  	folio_release_kmap(folio, de);
-> >  	return NULL;
-> >  }
-> > diff --git a/fs/nilfs2/direct.c b/fs/nilfs2/direct.c
-> > index 2d8dc6b35b5477947ca12a70288d3a3cce858aab..8bd0b1374e25f8ff510f3b3=
-6dbde2acc01aafc1e 100644
-> > --- a/fs/nilfs2/direct.c
-> > +++ b/fs/nilfs2/direct.c
-> > @@ -338,7 +338,7 @@ static int nilfs_direct_assign(struct nilfs_bmap *b=
-map,
-> >  	key =3D nilfs_bmap_data_get_key(bmap, *bh);
-> >  	if (unlikely(key > NILFS_DIRECT_KEY_MAX)) {
-> >  		nilfs_crit(bmap->b_inode->i_sb,
-> > -			   "%s (ino=3D%lu): invalid key: %llu",
-> > +			   "%s (ino=3D%llu): invalid key: %llu",
-> >  			   __func__,
-> >  			   bmap->b_inode->i_ino, (unsigned long long)key);
-> >  		return -EINVAL;
-> > @@ -346,7 +346,7 @@ static int nilfs_direct_assign(struct nilfs_bmap *b=
-map,
-> >  	ptr =3D nilfs_direct_get_ptr(bmap, key);
-> >  	if (unlikely(ptr =3D=3D NILFS_BMAP_INVALID_PTR)) {
-> >  		nilfs_crit(bmap->b_inode->i_sb,
-> > -			   "%s (ino=3D%lu): invalid pointer: %llu",
-> > +			   "%s (ino=3D%llu): invalid pointer: %llu",
-> >  			   __func__,
-> >  			   bmap->b_inode->i_ino, (unsigned long long)ptr);
-> >  		return -EINVAL;
-> > diff --git a/fs/nilfs2/gcinode.c b/fs/nilfs2/gcinode.c
-> > index 561c220799c7aee879ad866865e377799c8ee6bb..62d4c1b787e95c961a360a4=
-214d621d564ad8b4c 100644
-> > --- a/fs/nilfs2/gcinode.c
-> > +++ b/fs/nilfs2/gcinode.c
-> > @@ -137,7 +137,7 @@ int nilfs_gccache_wait_and_mark_dirty(struct buffer=
-_head *bh)
-> >  		struct inode *inode =3D bh->b_folio->mapping->host;
-> > =20
-> >  		nilfs_err(inode->i_sb,
-> > -			  "I/O error reading %s block for GC (ino=3D%lu, vblocknr=3D%llu)",
-> > +			  "I/O error reading %s block for GC (ino=3D%llu, vblocknr=3D%llu)"=
-,
-> >  			  buffer_nilfs_node(bh) ? "node" : "data",
-> >  			  inode->i_ino, (unsigned long long)bh->b_blocknr);
-> >  		return -EIO;
-> > diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
-> > index 51bde45d586509dda3ef0cb7c46facb7fb2c61dd..51f7e125a311b868860e3e1=
-11700d49d4cb98fa6 100644
-> > --- a/fs/nilfs2/inode.c
-> > +++ b/fs/nilfs2/inode.c
-> > @@ -108,7 +108,7 @@ int nilfs_get_block(struct inode *inode, sector_t b=
-lkoff,
-> >  				 * be locked in this case.
-> >  				 */
-> >  				nilfs_warn(inode->i_sb,
-> > -					   "%s (ino=3D%lu): a race condition while inserting a data block=
- at offset=3D%llu",
-> > +					   "%s (ino=3D%llu): a race condition while inserting a data bloc=
-k at offset=3D%llu",
-> >  					   __func__, inode->i_ino,
-> >  					   (unsigned long long)blkoff);
-> >  				err =3D -EAGAIN;
-> > @@ -789,7 +789,7 @@ static void nilfs_truncate_bmap(struct nilfs_inode_=
-info *ii,
-> >  		goto repeat;
-> > =20
-> >  failed:
-> > -	nilfs_warn(ii->vfs_inode.i_sb, "error %d truncating bmap (ino=3D%lu)"=
-,
-> > +	nilfs_warn(ii->vfs_inode.i_sb, "error %d truncating bmap (ino=3D%llu)=
-",
-> >  		   ret, ii->vfs_inode.i_ino);
-> >  }
-> > =20
-> > @@ -1026,7 +1026,7 @@ int nilfs_set_file_dirty(struct inode *inode, uns=
-igned int nr_dirty)
-> >  			 * this inode.
-> >  			 */
-> >  			nilfs_warn(inode->i_sb,
-> > -				   "cannot set file dirty (ino=3D%lu): the file is being freed",
-> > +				   "cannot set file dirty (ino=3D%llu): the file is being freed",
-> >  				   inode->i_ino);
-> >  			spin_unlock(&nilfs->ns_inode_lock);
-> >  			return -EINVAL; /*
-> > @@ -1057,7 +1057,7 @@ int __nilfs_mark_inode_dirty(struct inode *inode,=
- int flags)
-> >  	err =3D nilfs_load_inode_block(inode, &ibh);
-> >  	if (unlikely(err)) {
-> >  		nilfs_warn(inode->i_sb,
-> > -			   "cannot mark inode dirty (ino=3D%lu): error %d loading inode blo=
-ck",
-> > +			   "cannot mark inode dirty (ino=3D%llu): error %d loading inode bl=
-ock",
-> >  			   inode->i_ino, err);
-> >  		return err;
+> >  				    inode->i_sb->s_id, inode->i_ino);
+> >  		host_err =3D -ESERVERFAULT;
 > >  	}
-> > diff --git a/fs/nilfs2/mdt.c b/fs/nilfs2/mdt.c
-> > index 946b0d3534a5f22f34ac44a91fb121541881c548..09adb40c65e505d92012a3d=
-2f5fe8a5696e10056 100644
-> > --- a/fs/nilfs2/mdt.c
-> > +++ b/fs/nilfs2/mdt.c
-> > @@ -203,7 +203,7 @@ static int nilfs_mdt_read_block(struct inode *inode=
-, unsigned long block,
-> >  	err =3D -EIO;
-> >  	if (!buffer_uptodate(first_bh)) {
-> >  		nilfs_err(inode->i_sb,
-> > -			  "I/O error reading meta-data file (ino=3D%lu, block-offset=3D%lu)=
-",
-> > +			  "I/O error reading meta-data file (ino=3D%llu, block-offset=3D%lu=
-)",
-> >  			  inode->i_ino, block);
-> >  		goto failed_bh;
-> >  	}
-> > diff --git a/fs/nilfs2/namei.c b/fs/nilfs2/namei.c
-> > index 40f4b1a28705b6e0eb8f0978cf3ac18b43aa1331..40ac679ec56e400b1df98e9=
-be6fe9ca338a9ba51 100644
-> > --- a/fs/nilfs2/namei.c
-> > +++ b/fs/nilfs2/namei.c
-> > @@ -292,7 +292,7 @@ static int nilfs_do_unlink(struct inode *dir, struc=
-t dentry *dentry)
-> > =20
-> >  	if (!inode->i_nlink) {
-> >  		nilfs_warn(inode->i_sb,
-> > -			   "deleting nonexistent file (ino=3D%lu), %d",
-> > +			   "deleting nonexistent file (ino=3D%llu), %d",
-> >  			   inode->i_ino, inode->i_nlink);
-> >  		set_nlink(inode, 1);
-> >  	}
-> > diff --git a/fs/nilfs2/segment.c b/fs/nilfs2/segment.c
-> > index 098a3bd103e04cd09b0689fe2017380d74664496..4b1bf559f3524b1cc3965da=
-e9fd3e5745718569d 100644
-> > --- a/fs/nilfs2/segment.c
-> > +++ b/fs/nilfs2/segment.c
-> > @@ -2024,7 +2024,7 @@ static int nilfs_segctor_collect_dirty_files(stru=
-ct nilfs_sc_info *sci,
-> >  				ifile, ii->vfs_inode.i_ino, &ibh);
-> >  			if (unlikely(err)) {
-> >  				nilfs_warn(sci->sc_super,
-> > -					   "log writer: error %d getting inode block (ino=3D%lu)",
-> > +					   "log writer: error %d getting inode block (ino=3D%llu)",
-> >  					   err, ii->vfs_inode.i_ino);
-> >  				return err;
-> >  			}
-> > diff --git a/include/trace/events/nilfs2.h b/include/trace/events/nilfs=
-2.h
-> > index 8880c11733dd307c223cc62ee34ebeff650ecb12..86a0011c9eeaf031cfa0b79=
-875b2b106ef8b7cfd 100644
-> > --- a/include/trace/events/nilfs2.h
-> > +++ b/include/trace/events/nilfs2.h
-> > @@ -165,14 +165,14 @@ TRACE_EVENT(nilfs2_segment_usage_freed,
-> > =20
-> >  TRACE_EVENT(nilfs2_mdt_insert_new_block,
-> >  	    TP_PROTO(struct inode *inode,
-> > -		     unsigned long ino,
-> > +		     u64 ino,
-> >  		     unsigned long block),
-> > =20
-> >  	    TP_ARGS(inode, ino, block),
-> > =20
-> >  	    TP_STRUCT__entry(
-> >  		    __field(struct inode *, inode)
-> > -		    __field(unsigned long, ino)
-> > +		    __field(u64, ino)
-> >  		    __field(unsigned long, block)
-> >  	    ),
-> > =20
-> > @@ -182,7 +182,7 @@ TRACE_EVENT(nilfs2_mdt_insert_new_block,
-> >  		    __entry->block =3D block;
-> >  		    ),
-> > =20
-> > -	    TP_printk("inode =3D %p ino =3D %lu block =3D %lu",
-> > +	    TP_printk("inode =3D %p ino =3D %llu block =3D %lu",
-> >  		      __entry->inode,
-> >  		      __entry->ino,
-> >  		      __entry->block)
-> > @@ -190,7 +190,7 @@ TRACE_EVENT(nilfs2_mdt_insert_new_block,
-> > =20
-> >  TRACE_EVENT(nilfs2_mdt_submit_block,
-> >  	    TP_PROTO(struct inode *inode,
-> > -		     unsigned long ino,
-> > +		     u64 ino,
-> >  		     unsigned long blkoff,
-> >  		     enum req_op mode),
-> > =20
-> > @@ -198,7 +198,7 @@ TRACE_EVENT(nilfs2_mdt_submit_block,
-> > =20
-> >  	    TP_STRUCT__entry(
-> >  		    __field(struct inode *, inode)
-> > -		    __field(unsigned long, ino)
-> > +		    __field(u64, ino)
-> >  		    __field(unsigned long, blkoff)
-> >  		    /*
-> >  		     * Use field_struct() to avoid is_signed_type() on the
-> > @@ -214,7 +214,7 @@ TRACE_EVENT(nilfs2_mdt_submit_block,
-> >  		    __entry->mode =3D mode;
-> >  		    ),
-> > =20
-> > -	    TP_printk("inode =3D %p ino =3D %lu blkoff =3D %lu mode =3D %x",
-> > +	    TP_printk("inode =3D %p ino =3D %llu blkoff =3D %lu mode =3D %x",
-> >  		      __entry->inode,
-> >  		      __entry->ino,
-> >  		      __entry->blkoff,
+> >=20
+>=20
+> Suggestion: Let's use the %llu format specifier consistently for
+> inode->i_ino, which is unsigned.
+>=20
+> Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
+>=20
 
+Good plan. I'll have claude do a pass for that in the next set.
 --=20
 Jeff Layton <jlayton@kernel.org>
 
