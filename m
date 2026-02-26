@@ -1,238 +1,207 @@
-Return-Path: <linux-fsdevel+bounces-78598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78599-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KLxwMqyDoGkDkgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:32:28 +0100
+	id IGEXDS6EoGkDkgQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78599-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:34:38 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CA7F1AC7C0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:32:27 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CDA41AC838
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:34:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2606A3366F75
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 16:56:00 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8855D37237DD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 16:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3580A3290B8;
-	Thu, 26 Feb 2026 16:41:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5EA3603FE;
+	Thu, 26 Feb 2026 16:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="GSyPd+jT"
+	dkim=pass (2048-bit key) header.d=birthelmer.com header.i=@birthelmer.com header.b="VU78AH1E"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from YQZPR01CU011.outbound.protection.outlook.com (mail-canadaeastazon11020139.outbound.protection.outlook.com [52.101.191.139])
+Received: from smtp03-ext2.udag.de (smtp03-ext2.udag.de [62.146.106.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D0F3290A9;
-	Thu, 26 Feb 2026 16:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.191.139
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772124060; cv=fail; b=Dsx+c0nf9myyqH8azlW8KvPRaADwZU2tbF/3PXVSENhFrJAY+xGj7F/Djzzuv8IfRL6YhSC+gdClq5q+VHaz8Tqkh8qj7//auGqS71RvPcZ5HG1JA3+rfu47ksrbmjurtNHR3ruelMD3lMBc0O95qd4ihZdEasAgpVYDDntc4S8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772124060; c=relaxed/simple;
-	bh=UBW5EOhQYklkf/9E+JX6kJ/8VR1WLxUsek3EgtQjGOI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=q6f8wfTlWor8JaTA9ys2nGx+13T4x9FuV5jWcz78gT6/ld6Nt51rJcdZ8f4WsVQ/7kK285IseBv9Q4yZZ63HJ/1BdmVKoiS8F8swLegXJwB+VTzXorvsIOYTker7phnx+yBdkgXR/4ILQbEVl9BboGOo35ASrOpQbSTfR+QMIK4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=GSyPd+jT; arc=fail smtp.client-ip=52.101.191.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jbfFQ6i5ISV4Z7YUMQDOHb923NTkybEOmdcqE4FmX6GqE77q+SEvJUhkBiAqkGPoY56YSMX/Q4t2LYS847/nJscQ7Cy6xeYbOjSbLNvs1B5Dje8rWEWMUlxGcWYavr7htecCpnG/PIFXMWLymap49rNOWzlRBBSGIbV4k9u8ulhDJoQzaglTeLCfj3/ohWCWh/dete+9NluDyS9foXKIny8Ner0s87zA+RZ14B9cF3FWNRnqlULcT0wx/Yh94s+GPHCWPj5fnYpEfjAVdoYhVT2EyZJpIDcgS+NRpDL+2sFOA+d8knqdzd8b9i74sHDH+QLA2HB+YPfl42jtE6b4dQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AiSxF2GJ5iPLF9Z5QKv0+UvuKqhizFojrOViC9jU7b8=;
- b=czFkyZlCC+WuM3qo90ayJaykywdKTmtXVG4XwRFcazIFucB3HUJx02/Afx5gkuAxjuNtu2uVNy/inUvm+TBORDo4Sgs0gcNtnPnNmP9O7MdlFSFNbT/MK4NLBixK6Khw3Un71wXjVKqKrqRCEp5vRtVCA0WiE/W1d5iqP5+uy1E9F1RI0Qpl9Hc8qjI515f5UPV7meX8FAcSdHn4ub/MDrNiFXPRPhuDSRyonfeMPyWHktLAdRAC00lkTXWbwmZ31bgFSD11rZLcNcWrMmK67OG+Y/xoWWwjZlCaWjGyqHSFpQA2ZDYc2G83eiDMnysxiKE6NpelWmUUnZNb5cMX6g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AiSxF2GJ5iPLF9Z5QKv0+UvuKqhizFojrOViC9jU7b8=;
- b=GSyPd+jTErYQq8xaXUC18if+Zjo0zjBzHbpIuDkFfujfhPkrk7nWIo1v786mk1kvvs9Djgiwis658X413xY/DlIwqmjC6oc/OWBv2FuULEkJED8gpggc/avSYRXZxXBphJhWQurBQqiy2wQVqbRReoe/9IVH1m7vP7ptgkZaLRStGBwvrZIDCwv3N7JlRtL5wxmS1nOwdAs7DcF55c2zzet3jjkGIhURCvD3PUHz1kHJYkjYNGzDAJXQZ6+yAG/X1EZXpu30+zO+osHS00K9XtATzyetRtjoeWs7vPnzcFLTThdt55wv5JsJmEmDC+YSg2Z4E5hpRbJ4/BTs1dEVVw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YT2PR01MB5871.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:57::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.15; Thu, 26 Feb
- 2026 16:40:55 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::6004:a862:d45d:90c1]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::6004:a862:d45d:90c1%3]) with mapi id 15.20.9654.014; Thu, 26 Feb 2026
- 16:40:55 +0000
-Message-ID: <540a4fa6-40fc-4302-aaef-3df5fb3a8cef@efficios.com>
-Date: Thu, 26 Feb 2026 11:40:53 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/61] vfs: change i_ino from unsigned long to u64
-To: Jeff Layton <jlayton@kernel.org>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
- <20260226-iino-u64-v1-2-ccceff366db9@kernel.org>
- <06c94e29-32d8-4753-a78c-8f5497680cf4@efficios.com>
- <df0b9e26fca0dc56a10e2f6792892c7b5f23c84b.camel@kernel.org>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <df0b9e26fca0dc56a10e2f6792892c7b5f23c84b.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YT4PR01CA0398.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:108::19) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67EF4368974;
+	Thu, 26 Feb 2026 16:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.146.106.30
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772124246; cv=none; b=s59F1QFZb3xknDXeN6LKD5rNGmnqVK80fxJf+RTATK7/NnjjEusjvz7qMOU8GnPiXRA4PWtkxYdPDzLWmtJv/C0pJ6fQM82hQdeLtMyDZa/ln/IomH77NGh2pIEUofLduOpQhkFTS9gywnyTo9dunAi+U2x/i6bMymoE6yIZv4k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772124246; c=relaxed/simple;
+	bh=udtgNQd1mz2KxThAyQPN6PFxCfS47eDTr/tnmFRr29Q=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JvnPsJdxE3T3GP+JLfhuw1On14hbrEVqO3r9qXY40oTzRDn95xe7sgK180Iqyq0aNmODOnl477Olo2yGyyFMOuxoHujxdVaxn0aA9esXe2xBWgbOKMH3aX8zMdJ/y5WheEwCSuqAVqN7Z+w5F7gIgCn7kzzkcBPPCTYi+77BJv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.com; spf=pass smtp.mailfrom=birthelmer.com; dkim=pass (2048-bit key) header.d=birthelmer.com header.i=@birthelmer.com header.b=VU78AH1E; arc=none smtp.client-ip=62.146.106.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birthelmer.com
+Received: from fedora.fritz.box (200-143-067-156.ip-addr.inexio.net [156.67.143.200])
+	by smtp03-ext2.udag.de (Postfix) with ESMTPA id 57E5CE0351;
+	Thu, 26 Feb 2026 17:43:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=birthelmer.com;
+	s=uddkim-202310; t=1772124236;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=aJZSlvlVhTNL57DQLfx7dLjf4OuHSukoafTN8QV/vuc=;
+	b=VU78AH1EDV/TZ9GEemFaqo9QVTRxiLFlvJuQUaxYdQX4P0FDqHkaqVFHvpeYLse3nbRtjI
+	hGi+Ngf1QPk2KCmQ4X6qDlcrOHFZYt8ljtv/SHbJlIZqgN9S6mwJPIIeQi4FWkbgo/zmz1
+	lP9iyGNAGPbcJglVdw7rYtDlyfHqoL5sR3uDrU30kVEh/hqv5ejndxS8Vtwyu8qq8vvuFZ
+	cn+vE6xUDlSKUsyeYduj7MLkyxOAgqg5V43B0NfONCazFpeIRseYCkBau8ndDliM6PjDDk
+	MZnyW055KleCYepJHK9kt2BiCw9R4LXTmW10P4H20nz71zqqNy1pUSq9PK/i4w==
+Authentication-Results: smtp03-ext2.udag.de;
+	auth=pass smtp.auth=birthelmercom-0001 smtp.mailfrom=horst@birthelmer.com
+From: Horst Birthelmer <horst@birthelmer.com>
+Subject: [PATCH v6 0/3] fuse: compound commands
+Date: Thu, 26 Feb 2026 17:43:52 +0100
+Message-Id: <20260226-fuse-compounds-upstream-v6-0-8585c5fcd2fc@ddn.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT2PR01MB5871:EE_
-X-MS-Office365-Filtering-Correlation-Id: 407258dd-4889-468f-38a1-08de7555cfa0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	T2A5KWkJ8AXw1OHx2nEBuk5ZuDJiwNaSfdkN0F7qOPTKuiswUF3Lpr6PxuS7j6cj9uhetK2ECAH5gEIiV2g0NGTIC79cyABLk8fntWN9AXnipz/z3ogMqXr8bpRa2nZjV+QRPdGSvZg1hHQimTgeQAl3kCaBiYEtb/UFA6tWPsDD5u43w3kpqc+A4nlSMfpy7z0MUqf3Agyv04jVI4+UJUpls0iG3jNQ8xYr1XIhRckKbw9XqlFqc+gzVQKosf897VsnVwIlPA50FT9L/jubXUH4AfhErnCwUsRSHC/4vRuIlbQYPjR/Co6tuiJBoq7ZETVNQ4AWZgSQMUhCSvZE6ZC/+QEbKawjVIRQtIqzgJIFtbkCF2CPh6lsuwsQY5En2Chyu3XlOZSmLyclXTZIQ+gry0NN0jyivygiafy4RBB/TOSk7aoUKvsXpJ7byALhzWBeUTdK5HzJReCzQ5ecpyFu7wCQMfrOHdCDiuofP3uIzDNVnk3LKv1runQmYFeT2GjbpIPrkKnxBhddo9sYpo7W+eWZSyO3VcAHKzxa1X+UPFEdHhlAuzU/OuOKRDqXi/0xtXz7chmHWMs//lpU3XYuz2jFD/ppamzr/tDt5Bs93M7OTBpN7Ya71N5k16Xv2i+hkG0ykQNEHYKpph1WEf/GmWnxk5Kp/oz9KYs5ih8Oe0adWPVvKdvG0Wd4OMAV
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bEJqaWtoclA2aDJ4d3djdklCNXYwYjNaQkN6TExNUnQ5S2pBTjF4VnhyZzVp?=
- =?utf-8?B?RTUrYlZFQ1dBMnV3a2s0bDQyS2lPUXZpSDZOVlV4di94WTVVcnVvYmsvY0FM?=
- =?utf-8?B?ZG4yQUs5VUlETmJRUWdCdHRqMU1NeFJDNjNtdEZvNmthQ0k5ZWVBR0tjckhp?=
- =?utf-8?B?U25uQ3RPVXpnSEdFL3dRZmhuSkpIalRvQkZpK2lJR3duNThFSlhXREdWN09k?=
- =?utf-8?B?M2FMUlRWRlVpendqMUxQblJiQ3ZPVXRJRW9RTjIvVFRkeDdNeUZMaFJRSUsz?=
- =?utf-8?B?TnVWRjhJQmNhT3dJdDhMQXN6TTl5QmpCb1BPK0hHamxLMTIzRTF0TTZNNWxI?=
- =?utf-8?B?L2NtS0F6SlNXdVV0by9nc3h6cTAwUjBTNFdpNjRIRzkyTTVaeUpJZTBGZ0xU?=
- =?utf-8?B?ZE0yQ20wcVI0SWExRmhHNDZjQ0ZNeEFPbzVCcnJpTExEbTEvMHBFazVSeUtC?=
- =?utf-8?B?cm5Qd2VLSkkyRGUzSWhwR2ZiY3l1SCtiaWhxYkE5MGpOd0xkdlh1MGR4LzBM?=
- =?utf-8?B?MmFnWE9lK3FEUjNPbWgyNGdJMlBMaG5ibEtIbU5QYU5YQmVYWjVOTUgzTWxT?=
- =?utf-8?B?eWd6RGxWSmNBdlV5Z3VQR21BKzZLSEZWZEtRN2oyZmswZTg3SlNJVTNIeVhY?=
- =?utf-8?B?RCt6WExBTjZJdTIvdFhEKy9vYVNNVVpTOXRqMG5yV2hVRGdzaGdFZVNXL3RC?=
- =?utf-8?B?ZUVscWM3Tm9KYVlmTUE0ejdQbmRIRkRRelpzdDNmL1YyTlBnUHQ4dm0zQ1Nn?=
- =?utf-8?B?KzhjYlFJRnpQemJDb0VJejZCckZQWng1aW8xZWs5b1d5eUpoOGFvNmJTeGJX?=
- =?utf-8?B?MjYyclpVbDhLazhoUFNOSDF1S3U4aFk4cVdHWlBKTjB1VjVTUld4UTdyNUYv?=
- =?utf-8?B?dnQwKzJrNGRkTUZKWjVyQ2E5U0pmZC9TbGNPWk5CQkVNUkxJZFhFWVBnd0Np?=
- =?utf-8?B?eWh4c0MxbmhsaGJhd3Q5RkVwOWc2WkF2WjY1cTV4NkZIK0RlSVRRZ2JBUnhr?=
- =?utf-8?B?MUdwaGw3NmtTUEV6a3d4a2gwNnFWYzRQcHhSZGpJVEw3TG5CWThtNHRpR1Nl?=
- =?utf-8?B?UUgwMWVja2FnaStpUjM3RzVNV2ZaU0dwK3ozYTZsT3BmK2VtZnBiVnlSaFRj?=
- =?utf-8?B?UWJQMjJZTUQ0ZFhQZmFSSG9YZHEzcWN6SW8zdzZXUU1rZ0FDYmtQNVFGR25p?=
- =?utf-8?B?RnIxUnh3RGt0eG1ydEFUcnVjSkREdERQOVphdHpPRzZ2VStmaVYyekU3OWQr?=
- =?utf-8?B?a001RGhtQy8zanZFM0xYVTdKMEdxRGEyWDNobkJxOE9FOVA1alQxOEU5MVZj?=
- =?utf-8?B?YjNGc3R5T0hoSS83U1B6d2VYdEFDaVRFb3BtZHBKWE1kWkRmQUp0SU1pa3RM?=
- =?utf-8?B?SFV6eDVLaTFTaHhEbHhxcGErRGpIVnluUjI5bUdadTZoRTVSSE01dDRKenFs?=
- =?utf-8?B?QnZ0eGM4QklZOWEwVTN5eEFYd0FSWmRUMUxrWUVWakJHa20rM2pxb1ZsdzJz?=
- =?utf-8?B?YTdRMHJGMnhmT29GZ1lEZzUvWHRPVHMxQlU5SHc1MHJvV3RIY2trMTBoNHh4?=
- =?utf-8?B?bFlGeTRZdWtwY3RTZmVQckdLemZHSitZei9VRnBPUEZxa2VpQjVTV3AwOEFE?=
- =?utf-8?B?bEZLK3U4QWNnamNVN0xzckZzZ2xCc2JNR3dNc0lrbWhXcTdWZzhkOThQdWhI?=
- =?utf-8?B?WmtuaERSaTVsR2ZubUFpOG9DN3o5YURIU1J1N2FxM2labU9aN2VvZStxcVpS?=
- =?utf-8?B?dkF4b05DZkRtZnJxVGRXOG9IS1lsVFpoUUV2NTV2UU44cU1WTGVHQmthMVhj?=
- =?utf-8?B?Y0Y0OUhmUmtXTlJSWEUzNUIvTEl2YmorOVR6TGFQTnVDUWJTSlVUckpsSzY2?=
- =?utf-8?B?d21ZVFp4VVJTcWkvZUgvbFRwSytHTmdDK01RSjhaRnA3L0ZhOXVZV1FDdWIz?=
- =?utf-8?B?UVBuVG1OYkRMbUk1d1dYNGZCQWRsVHIrMVdreEdkZGpYWEFjbXQzd3F3bDZ0?=
- =?utf-8?B?WWQ3aXFZUWhyTit2Qm84bjlURDZDL1ZXM0hGOU9HUGtGRXF3MWYxWnU0cTBw?=
- =?utf-8?B?THg0T0pybWZjTXhtdDVQT0FqSlBjL28xTncvWjNQR281VjlPTjBPWFpGTCtO?=
- =?utf-8?B?b0F0TmtET012Mmo4Kzl4blM4VGZDTW03MGNFbVU4NCtjZXcwbUtqMS9RY1BI?=
- =?utf-8?B?VWJIUEZWYlRySEJWWVc1V0lRb0hJdmtSOHlmKzQvOWZQbnpzRU41SmV3SDRL?=
- =?utf-8?B?V3krSnk5OHJ6S1dKNzJVMklhNjlXUXlPaE84NHB3ODRXRU9jUDVxc25LNWhU?=
- =?utf-8?B?c2FYd2RHM3NiUy9CRnhTR0swbGZtQjUyYmVwWm9Tb1puaVhaMnFheXNXOTlX?=
- =?utf-8?Q?lCH7ydG5N46iDM9NIlRsLV+liV6SSjht9KsNQ?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 407258dd-4889-468f-38a1-08de7555cfa0
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2026 16:40:55.1371
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iu5dKKP+/8NTfMrIiiZPrmicoSFhtIkg0jXl292z4Z+ER2kZoP2MY7tLg9N20yFrYaBmnSQlGxJWAPhdVygyaVV+X76CknIZNJgS04AKUAk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT2PR01MB5871
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/43OwW7DIAwG4FepOJcJMBDSU99j2gFi03JoEkETb
+ ary7iOVpi6HaDv+lv35f7BCOVFhp8ODZZpTSUNfgz0eWHf1/YV4wpqZEspIpYDHqRDvhts4TD0
+ WPo3lnsnfeOdM0ARtAARWr8dMMX0+5fePmq+p3If89Xw0y3X6tzlLLngTPJK10OomnBH7t7rIV
+ nFW/1RUVURsgtZG1pq0VeBHsUIKt69AVRx2raQQodFiq+jfSruv6LULQnDKa2tt3CrmpSgp9hV
+ TFfLCOBOtQu9fyrIs3+Vi+c3UAQAA
+X-Change-ID: 20251223-fuse-compounds-upstream-c85b4e39b3d3
+To: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, 
+ Joanne Koong <joannelkoong@gmail.com>, Luis Henriques <luis@igalia.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ Horst Birthelmer <hbirthelmer@ddn.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1772124235; l=4178;
+ i=hbirthelmer@ddn.com; s=20251006; h=from:subject:message-id;
+ bh=udtgNQd1mz2KxThAyQPN6PFxCfS47eDTr/tnmFRr29Q=;
+ b=PhNvUcBFKyNOw27nKCJU/w5CX/gn6yPagXuC74a6WxZQuFxn5RhQXVCcTpbbU8VK9Uan3SG04
+ lyYmCgujo0qCRDzrDwyF7IOse/7Ou8C3L/fPS0z8U/mh0SGqa8uFB2y
+X-Developer-Key: i=hbirthelmer@ddn.com; a=ed25519;
+ pk=v3BVDFoy16EzgHZ23ObqW+kbpURtjrwxgKu8YNDKjGg=
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	ARC_REJECT(1.00)[cv is fail on i=2];
-	DMARC_POLICY_ALLOW(-0.50)[efficios.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[efficios.com:s=selector1];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[birthelmer.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[birthelmer.com:s=uddkim-202310];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-78598-lists,linux-fsdevel=lfdr.de];
-	DKIM_TRACE(0.00)[efficios.com:+];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78599-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_TO(0.00)[szeredi.hu,ddn.com,gmail.com,igalia.com];
+	URIBL_MULTI_FAIL(0.00)[ddn.com:server fail,birthelmer.com:server fail,sea.lore.kernel.org:server fail];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[mathieu.desnoyers@efficios.com,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[horst@birthelmer.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[birthelmer.com:+];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[efficios.com:mid,efficios.com:url,efficios.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 2CA7F1AC7C0
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[birthelmer.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,ddn.com:mid,ddn.com:email]
+X-Rspamd-Queue-Id: 8CDA41AC838
 X-Rspamd-Action: no action
 
-On 2026-02-26 11:35, Jeff Layton wrote:
-> On Thu, 2026-02-26 at 11:16 -0500, Mathieu Desnoyers wrote:
->> On 2026-02-26 10:55, Jeff Layton wrote:
->>> Change the type of i_ino in struct inode from unsigned long to u64.
->>>
->>> On 64-bit architectures, unsigned long is already 64 bits, so this is
->>> effectively a type alias change with no runtime impact. On 32-bit
->>> architectures, this widens i_ino from 32 to 64 bits, allowing
->>> filesystems like NFS, CIFS, XFS, Ceph, and FUSE to store their native
->>> 64-bit inode numbers without folding/hashing.
->>>
->>> The VFS already handles 64-bit inode numbers in kstat.ino (u64) and
->>> statx.stx_ino (__u64). The existing overflow checks in cp_new_stat(),
->>> cp_old_stat(), and cp_compat_stat() handle narrowing to 32-bit st_ino
->>> with -EOVERFLOW, so userspace ABI is preserved.
->>>
->>> struct inode will grow by 4 bytes on 32-bit architectures.
->>
->> Changing this type first without changing its associated format strings
->> breaks git bisect.
->>
->> One alternative would be to introduce something like the PRIu64 macro
->> but for printing inode values. This would allow gradually introducing
->> the change without breaking the world as you do so.
->>
->>
-> 
-> True, but it makes all of the format strings even harder to read. After
-> the conversion, we could go back and eliminate the macro though and it
-> would keep things more bisectable. I'm not sure what to do about
-> tracepoints though. I guess we could declare a new typedef and change
-> its definition when i_ino's type changes?
+In the discussion about open+getattr here [1] Bernd and Miklos talked
+about the need for a compound command in fuse that could send multiple
+commands to a fuse server.
 
-For tracepoints there are two things: a TP_printk format string (which
-would be handled by a new pretty printing macro similar to PRIu64), and
-the type used within TP_STRUCT__entry. I don't see why you'd need to
-change from ino_t to u64 there. The conversion will happen when you flip
-the ino_t typedef from unsigned long to u64.
+This can be used to reduce the number of switches from user to kernel
+space but also to define atomic operations that the fuse server can
+process as one command even though they are multiple requests combined.
 
-> 
-> I'll let others chime in first, but I'm open to going back and doing it
-> that way if we don't want to live with the compiler warnings during a
-> bisect.
+After various dscussions in the previous versions I have added an
+automatic sequencialization in case the fuse server does not know
+the compound. In this case the kernel will call the requests one
+after the other.
 
-On 32-bit archs, I suspect it will do more than emit compiler warnings.
-Trying to boot a kernel in the middle of the series is likely to lead to
-interesting inode value printout results.
+In case the requests have interdependent args there is the possibility
+to add an arg conversion function that has to be provided which 
+can handle the filling of the args right before the request is called.
+This function has access to the whole compound, so basically to all the
+requests that came before including their results.
 
-Thanks,
+The series contains an example of a compound that was already discussed
+before open+getattr.
+    
+The pull request for libfuse is here [2]
+That pull request contains a patch for handling compounds 
+and a patch for passthrough_hp that demonstrates multiple ways of
+handling a compound. Either calling the helper in libfuse to decode and 
+execute every request sequencially or decoding and handling it in the
+fuse server itself.
 
-Mathieu
+[1] https://lore.kernel.org/linux-fsdevel/CAJfpegshcrjXJ0USZ8RRdBy=e0MxmBTJSCE0xnxG8LXgXy-xuQ@mail.gmail.com/
+[2] https://github.com/libfuse/libfuse/pull/1418
 
+Signed-off-by: Horst Birthelmer <hbirthelmer@ddn.com>
+---
+Changes in v6:
+- got rid of the count in the compound header
+- added the automatic calling of the combined request if the fuse
+server doesn't process the compound and the implementation allows it
+- due to the variable max operations in the compounds request struct 
+fuse_compound_free() had be brought back
+- Link to v5: https://lore.kernel.org/r/20260210-fuse-compounds-upstream-v5-0-ea0585f62daa@ddn.com
+
+Changes in v5:
+- introduced the flag FUSE_COMPOUND_SEPARABLE as discussed here
+- simplify result parsing and streamline the code
+- simplify the result and error handling for open+getattr
+- fixed a couple of issues pointed out by Joanne
+- Link to v4: https://lore.kernel.org/r/20260109-fuse-compounds-upstream-v4-0-0d3b82a4666f@ddn.com
+
+Changes in v4:
+- removed RFC 
+- removed the unnecessary 'parsed' variable in fuse_compound_req, since
+  we parse the result only once
+- reordered the patches about the helper functions to fill in the fuse
+  args for open and getattr calls
+- Link to v3: https://lore.kernel.org/r/20260108-fuse-compounds-upstream-v3-0-8dc91ebf3740@ddn.com
+
+Changes in v3:
+- simplified the data handling for compound commands
+- remove the validating functionality, since it was only a helper for
+  development
+- remove fuse_compound_request() and use fuse_simple_request()
+- add helper functions for creating args for open and attr
+- use the newly createn helper functions for arg creation for open and
+  getattr
+- Link to v2: https://lore.kernel.org/r/20251223-fuse-compounds-upstream-v2-0-0f7b4451c85e@ddn.com
+
+Changes in v2:
+- fixed issues with error handling in the compounds as well as in the
+  open+getattr
+- Link to v1: https://lore.kernel.org/r/20251223-fuse-compounds-upstream-v1-0-7bade663947b@ddn.com
+
+---
+Horst Birthelmer (3):
+      fuse: add compound command to combine multiple requests
+      fuse: create helper functions for filling in fuse args for open and getattr
+      fuse: add an implementation of open+getattr
+
+ fs/fuse/Makefile          |   2 +-
+ fs/fuse/compound.c        | 308 ++++++++++++++++++++++++++++++++++++++++++++++
+ fs/fuse/dir.c             |  26 ++--
+ fs/fuse/file.c            | 137 +++++++++++++++++----
+ fs/fuse/fuse_i.h          |  49 +++++++-
+ fs/fuse/ioctl.c           |   2 +-
+ include/uapi/linux/fuse.h |  52 ++++++++
+ 7 files changed, 541 insertions(+), 35 deletions(-)
+---
+base-commit: 05f7e89ab9731565d8a62e3b5d1ec206485eeb0b
+change-id: 20251223-fuse-compounds-upstream-c85b4e39b3d3
+
+Best regards,
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+Horst Birthelmer <hbirthelmer@ddn.com>
+
 
