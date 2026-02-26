@@ -1,315 +1,382 @@
-Return-Path: <linux-fsdevel+bounces-78472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GDHmLxNGoGmrhAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 14:09:39 +0100
+	id YDLtKutIoGkuhwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 14:21:47 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A6951A61DD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 14:09:39 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id F03921A6570
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 14:21:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0A4F430FD746
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 13:03:19 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 0BB5F3091912
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 13:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6BE30AD02;
-	Thu, 26 Feb 2026 13:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44AE63218DD;
+	Thu, 26 Feb 2026 13:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FXkehMmY"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VGr+5vEt";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="69XqZjby";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="F9/qrZcg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uMdyIKIf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DA93043BD;
-	Thu, 26 Feb 2026 13:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772110988; cv=fail; b=PtMs/Md7zo9U64mTeTHWRGr6p9+xykGG6+Carg9VBMpMS8ikPK6R80e5772SX1bndxi/lB8aubyXKQCHV6wa+pqw7l4S6sRibhcZ6FFqkD1HiPECXprzQvcgZn8SMagzwBbEdVkEjWv8/G8y99wkdZitr4ZKbk6W/g1RzTapT2A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772110988; c=relaxed/simple;
-	bh=ymD1BOq3ejQ3/2dAm0Sr5Qtb9SoTRSnsO8+gdDm2gI4=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=qJ8PoLgqtD/IKIMUCQiybpiU6cxWxqS0IU/FE6R9GQMPRHH6UpLD06UHENPD8W1MnuqDYZsDgIanklHTXlF8tZGGWqYEJ7cQDudHZJ22vmW6R1/lCvXvso+WsJBJDjcbrTu0yNLK8+l/F+A/xtzP6Q6VBk2ZIubhwWe/57+7+bc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FXkehMmY; arc=fail smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1772110987; x=1803646987;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=ymD1BOq3ejQ3/2dAm0Sr5Qtb9SoTRSnsO8+gdDm2gI4=;
-  b=FXkehMmYnfuzNSjOr7aNoBqd5x7BJzStTcquPN2WJaKRir1CNGpIPqfx
-   F7hIC805edRN5nwhdzaDYRROa0wS5dUKE4WcyADnav/fsbH8OYaas+CbH
-   23OWKpncMsVYQzxdtVWeqlVJ6sfmkRmyBkD3KVrMgyeXbPalnDC79KAt2
-   S5mHG87hBXGSJPjwCCQSUx6TR106M5XTYUyW/wPGyLynO9PLgoaXn1Z62
-   gXK1v3KeoiEDhUQHgBrAGKFJQ0tRf2PXxmqnp6+xjbWqBrvluHK+GJQCW
-   SfsLH/wp67oS6u474YtwOhhNAPPO2hJxlNIg+/c654PiCovwt/zLKRnbw
-   g==;
-X-CSE-ConnectionGUID: TetmCEKuT62NLnsHTLDACA==
-X-CSE-MsgGUID: KzFKykj2SrqUzNlHArL6pw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11712"; a="95786794"
-X-IronPort-AV: E=Sophos;i="6.21,312,1763452800"; 
-   d="scan'208";a="95786794"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2026 05:03:07 -0800
-X-CSE-ConnectionGUID: iu4vKxcBR1qI8SFeOkwu5g==
-X-CSE-MsgGUID: dHzcfaGuTGq2wb2s7VNTRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,312,1763452800"; 
-   d="scan'208";a="239549161"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2026 05:03:06 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Thu, 26 Feb 2026 05:03:05 -0800
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Thu, 26 Feb 2026 05:03:05 -0800
-Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.62) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Thu, 26 Feb 2026 05:03:05 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=k+gf0+ojDoE9GEV53L51Mid7s6Sy0Ai3y4uIfPshUxhf6NtyUtDJYrC8ARHumHF8MOqo0lQ8ZYe+PA+XQsA1BHjqDoBZvdUvBVevdCDC05vdafX4WKoHzG57sOIyBxPahaEoXmVvXjbIXtCv4KbwQW/00c65jaVC3/qYk8LFsuHmiZphp+AMQuZh7rqSXjnPEQ9vRwoL8xZiVaybe6nf2jj9vrDkDIK0no7jPJ++6PA7iykofdKJS1dY7CNG9kxEBafVU5bl3W1PHKger84sW8lBzmmU1WsrEHu/V9vWpIkF71i5IhBqtr1bqw9tmpd2QycV2U6Otk6yGWs8aCjUHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bLCT6EXRW5gAPXCg1G5HjTD+PNK5L1Y7omAGZQwnF5k=;
- b=DYmdWDHONOjitzb01Ozp7VmPd2UPPZF0K6ZggzUAlLro7lDiM7NYX7UO8toR8Y77WZldHXsgP+IO+8hct4OT+oDh9dlXNLHO44MPGMLXZdYqE20iGxfVrVoPdBgqpWR8F7m0N5R8fn2Ze8hGDzXIWl5YgjDg8ZEy8KxJy3qo/6JnEwprnsqK5IXuvA6q7P1DWQslC1hWLZeGoELUfVZA+P+NndzC4By7vaNEqZ8k51LWIvzRoST62+mj5j/n3PgLJB9bRxNphrnv2YkZl7scTG3Pb/gnEJQiTuKLkRnDZ/B9afuqtnfrZHhKzoiATOxlc2H4M53FotsgUSIYywkfaA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by IA1PR11MB7871.namprd11.prod.outlook.com (2603:10b6:208:3f5::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.14; Thu, 26 Feb
- 2026 13:03:02 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::e4de:b1d:5557:7257]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::e4de:b1d:5557:7257%5]) with mapi id 15.20.9654.014; Thu, 26 Feb 2026
- 13:03:02 +0000
-Date: Thu, 26 Feb 2026 21:02:51 +0800
-From: kernel test robot <oliver.sang@intel.com>
-To: Christoph Hellwig <hch@lst.de>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	<linux-fsdevel@vger.kernel.org>, <linux-btrfs@vger.kernel.org>,
-	<gfs2@lists.linux.dev>, <linux-nfs@vger.kernel.org>,
-	<devel@lists.orangefs.org>, <linux-unionfs@vger.kernel.org>,
-	<linux-mtd@lists.infradead.org>, <linux-xfs@vger.kernel.org>,
-	<oliver.sang@intel.com>
-Subject: [linus:master] [fs]  761475268f:
- BUG:KCSAN:data-race_in_atime_needs_update/touch_atime
-Message-ID: <202602262015.d00ee0c9-lkp@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-User-Agent: s-nail v14.9.25
-X-ClientProxiedBy: SI2P153CA0015.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:140::21) To LV3PR11MB8603.namprd11.prod.outlook.com
- (2603:10b6:408:1b6::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D74231A568
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 13:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772111579; cv=none; b=cYGGyCOmykfW/3i6Fn8W+Rw59srvPMhfXYFm1ClNXUfxn+M4NpL8SHBd8Cw1wYu+8r2jWVYxtA6aktRIkzQoObOpkNypuU3Ldx7aYjKG0Ts/1HdmAn2nShj8JFREOBLROyEdhoHIxGiWS/zci5ybc1tr1g1qw6WEbG2mtCnwFEE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772111579; c=relaxed/simple;
+	bh=vegVhIJhcUiP5X8JHJRDRq8HeUl3UwDpwhcfSI9tT2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PzObTxN1vwKKy3qGHevSSE+/FIzOhYHR7/ff+U096B0o//xQ2KLadBC5AmqDGTTX31VICkGyyyx9mjywcnosPLhXPLVapiCYV0Vp4fzDEgaEs0iPQY7X0eAr2qznPk0zip1NjMZlS04HyT0fCItr3bMcIHMQOK2v9pbISjh1VvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VGr+5vEt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=69XqZjby; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=F9/qrZcg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uMdyIKIf; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id DA9EC1FA54;
+	Thu, 26 Feb 2026 13:12:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1772111576; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t9pIdsXl9YcbrN7MEcIZiwr5nHNouAJ8lo4fxykwpls=;
+	b=VGr+5vEttV5KSq8KiEHuA26h/lUE7LlTpKXuEPlZT6DHY8M0THqc8Wu4WiiN1rMKTDa6OR
+	5Zwq7W2zP5J9H2ZZtsgp7HFYiY7A5pTLtjNy0TniXfJ1K1ZfjtmltW1AfqY66XIH5dEDdF
+	VeWG6x2cAMoVE/5vHhJrUfeSClIjrGI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1772111576;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t9pIdsXl9YcbrN7MEcIZiwr5nHNouAJ8lo4fxykwpls=;
+	b=69XqZjby1BkpPQKJs37ti4jhyJiLv1OPj8pDlz96Ez+SqXyH4PTF7HJvtJR1jjG+ILIaff
+	xw7ztXeG0NlBlDCA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1772111575; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t9pIdsXl9YcbrN7MEcIZiwr5nHNouAJ8lo4fxykwpls=;
+	b=F9/qrZcgGN/hgxgLb3qI//qiHnxBKsB5Ntd3IGQuMTlxZWdr2ZN0mP/0xmZRIkCuKafDWW
+	+xk6zJK7T/iYLhGjEM5isA7Eem1B8k1QXrKcyY15lvatrlOTH99iXwpZ6R10io+b8DM7zy
+	RLtfnL1PTllGjvJOTHiKeaQnegihWz4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1772111575;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t9pIdsXl9YcbrN7MEcIZiwr5nHNouAJ8lo4fxykwpls=;
+	b=uMdyIKIfyG5+TXpjkra12NBuPmWqX7KgZp3+we3ktt8NePQQXrpbFT4ToI2DhSA7MGpiSM
+	FOl4NQaT3QPKQJDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CA6F53EA62;
+	Thu, 26 Feb 2026 13:12:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 1O9nMddGoGkmSAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 26 Feb 2026 13:12:55 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 8CCF6A0A27; Thu, 26 Feb 2026 14:12:51 +0100 (CET)
+Date: Thu, 26 Feb 2026 14:12:51 +0100
+From: Jan Kara <jack@suse.cz>
+To: Tal Zussman <tz2294@columbia.edu>
+Cc: David Howells <dhowells@redhat.com>, 
+	Marc Dionne <marc.dionne@auristor.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@kernel.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@kernel.org>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Chris Li <chrisl@kernel.org>, 
+	Kairui Song <kasong@tencent.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
+	Paulo Alcantara <pc@manguebit.org>, Trond Myklebust <trondmy@kernel.org>, 
+	Anna Schumaker <anna@kernel.org>, Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
+	Joseph Qi <joseph.qi@linux.alibaba.com>, Steve French <sfrench@samba.org>, 
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
+	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, 
+	Ilya Dryomov <idryomov@gmail.com>, Alex Markuze <amarkuze@redhat.com>, 
+	Viacheslav Dubeyko <slava@dubeyko.com>, Andreas Gruenbacher <agruenba@redhat.com>, 
+	Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
+	Ryusuke Konishi <konishi.ryusuke@gmail.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
+	Brendan Jackman <jackmanb@google.com>, Zi Yan <ziy@nvidia.com>, Hugh Dickins <hughd@google.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, 
+	Qi Zheng <zhengqi.arch@bytedance.com>, linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, linux-ext4@vger.kernel.org, netfs@lists.linux.dev, 
+	linux-nfs@vger.kernel.org, ocfs2-devel@lists.linux.dev, linux-cifs@vger.kernel.org, 
+	samba-technical@lists.samba.org, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
+	linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org, gfs2@lists.linux.dev, 
+	linux-nilfs@vger.kernel.org, linux-xfs@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] fs: Remove unncessary pagevec.h includes
+Message-ID: <hulhfdnrv4bbm6nvy3x4xbuxmc5ypmhpwdpt3jurfkibq5t2pu@6dcvs2uzzr46>
+References: <20260225-pagevec_cleanup-v2-0-716868cc2d11@columbia.edu>
+ <20260225-pagevec_cleanup-v2-2-716868cc2d11@columbia.edu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|IA1PR11MB7871:EE_
-X-MS-Office365-Filtering-Correlation-Id: 65e4857b-ef74-4a90-5dba-08de75375fe8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info: dAeIMkDv7G4kqmRwYs3TWodHKDPuwcOViay013OEV4/5KzqJn/uDJhxia2Uf4eXVUqV935/eiElVb4YZnv1fzFPAf3RIdB+I3c2tlBhpkV/JhSrv9jY7hvbzNmAPQMhMUPWm6AtVfWlDcK3Z+pNhu47kVjOqZxtpHWELr6bsk0lUUnUfoYNETMdMy1hQUwQ8Eno4290aeoVjGj0Fjk12a7aFUiNxsPzMlccyDp3BJP4PUlJ2PNgFyzparbniewQ09qSvKn68J56CCzAyx0Merijd//jIrJgbqBpf7iueS3gk0mH5tY01e0h5RHymILYwIuk3sFhW9vtQ77LkFbWJi5JOnH+QT8TWySVOiDorVa4Tn/LfiZvkto1rWcgIyfXcxejUG5QhfuiNMtaLYHFfQipsn214Ai//asGGgeY6mbtcpJylRAkJUlaXFnD1V0w9vwt9hzlL1dH8sGd/I8wDi4us1oG+OwZJITBa6lQ7lIpmVQxJ1PJ8FdObefTPOqJ6U3GnZLnitl8xcvjuEZjvbXoBKlSHXbOJ9ofyS0HzitCpM+vXk/skJAHQPhyyqsiDsdX/KcC4m802TWndoqwoKCfshWc+9/HhKI/kMCjHxsXTLsPlYM/0QDwc1uMeQc6IP5/sMgvx1HAjdX3/bMY2PFI5AB2oxkP/woXbZRndkasBKozQh/8rQDaKcC9uyULk
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?BYVweZdNkHdbawzadXh0PqqD6XgxU4QezXQHYwIU1fVfFQJGkSVmyfkkSuVj?=
- =?us-ascii?Q?sPVVldC67T45I0Y0g49Ve8tE0orh2SIvTwcXQNcUCiuPY1wJ5/ukdiXdKQ8J?=
- =?us-ascii?Q?uQ0gamNqsdewc1Rzqjom4HMKI1OAWRUL6SDCbtDSuLjtnJlFHaJPtVZ9Cmiw?=
- =?us-ascii?Q?3imgMQE86l9huiior0rbsL2uINzbuFGg0Na8gMtj/sktnpQvyuljSM5rlMI/?=
- =?us-ascii?Q?zZdiIDHYqZ4XlfOTdcaTEl3++uZ7yjwcLSRmrvJbd3XvEQxkVS5H7Z/6/EMv?=
- =?us-ascii?Q?W4WWxv2KXZn+lzYjvfiT+KALNG2UH0s8deKGC1Miq4NOYbvsEtN3ROC1Wkyu?=
- =?us-ascii?Q?eVAR6q+Zqd5T8uENBXjeytuaIre+aH/h2wfUeXhcUhqA+iL8I6mWBQjfuOaz?=
- =?us-ascii?Q?H3ozoWNEex+uZ+qIV60EgOo7OCv7sniUm9a6Yta1zu9ZfOmRcKjzXxgoeGg+?=
- =?us-ascii?Q?yJp6S83akIVlHd0lG5YF2FQgClnCs7fPFsEmfjzOAhbj8LdRnfm4DI2ywjjN?=
- =?us-ascii?Q?dsfUXZB+ApHjuF2hD66ZE680oNZ8BskmgQXKJE1ThtpwnsRc9+weQbFR2oSU?=
- =?us-ascii?Q?iO8eaS1nJ7vBfqFvssp2icn3cavm4qKogBEs4aPX2oloy6X0Ya3KOqK2+eHZ?=
- =?us-ascii?Q?4CZtfSA8dYBUWOHaJfWnj3DiArT8AbI+69oRPwhCQdyzhyr6/lqzcp+mtsON?=
- =?us-ascii?Q?aG0XxnXyzqr3Fgaj8UWktxE6btNXjJIRxZhCOSsb2agpnkLzHn9ChKsjd5H+?=
- =?us-ascii?Q?3AjCy9UCIghV+eNo1v909xNZQ3i+nsOyjT1fNeqa47n4hxhXwn0Z7PVfIJKA?=
- =?us-ascii?Q?QkgEA5MeiEBue6o2dg2qrSMShpMbkQUkqPynBy8Z2cpCd3LdkicL5XJz5B8z?=
- =?us-ascii?Q?1NsOXKOdBNWnXaOnbEOQ2FzRVbE/U56vtitF2V8xdwIgnOiLQl6+SQlkZgFZ?=
- =?us-ascii?Q?m7ZA1zbPUpPKGqjv8qla4BAXjyJTXNYKpd1O+VScRILVmsz/dcwuiU8SRzMT?=
- =?us-ascii?Q?3VxVVe5b+uJzZKCrA8v3LO53BrO0uwTvKF8Kh+Xth9xWX9IvnWRdHora5Fbe?=
- =?us-ascii?Q?oc5bFEU5ExR+DZZOu8xJyk4Hqrl1Rxn2uOu3t9dErjnOrsrmFDjLxpzrvLzY?=
- =?us-ascii?Q?7SGmweGncTWijkYX+UdaRAsG2NuLpO8vgD+4ECEfYp3kMl+ita/VRVTkbMUj?=
- =?us-ascii?Q?S/RSP0sGlStYVdef2vGbNx51x54wsmIFRdI9V4xpXuAD1pTUPQTSMC4omqoK?=
- =?us-ascii?Q?n9J7FW3uZZIiqneN7SPMEvcsy+PWSlBCe87DeZCvCnGS/Yl8B3ontGd3pULc?=
- =?us-ascii?Q?4Ik7nDdVe9sxp+NmNLMwoN93+LjSBQwDgMDxlgvnMOuc35mUz8d/eZNIqYKw?=
- =?us-ascii?Q?7R+QW8wX4ZrINed7tFq2qfZ9HMZ02cnTa7+NW0Vl45T3ImY1Mb8mqoyecse0?=
- =?us-ascii?Q?v3GjT+/PIeJSaRABRLylL7sXtjQLI3niWuieuJzDf47R1EvmPijMRxs6vV8s?=
- =?us-ascii?Q?JydWjTUrp9XnYBEZXfJNOqI4awVtlG2GzX3lU4dpjONrusTc03dD4gaQumzC?=
- =?us-ascii?Q?XZi1idkPxMZFi4x3vmzRSiCMT/1lVbiOEze+MiSGMQSPkBsC6/K26BRlCajb?=
- =?us-ascii?Q?5+RpOYRfDfNVDTXJjY515jaYYkp/BWBHroMv4xbJC0HFOJ0wBlAX4K+fVK6r?=
- =?us-ascii?Q?1ysB1VlcuQCD/1DbtMMNovzWxIJtLqqa7bAHPqT5C3T0d0wZAoQhO9aOO6UE?=
- =?us-ascii?Q?EtBcnVsEHQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65e4857b-ef74-4a90-5dba-08de75375fe8
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2026 13:03:02.7746
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6tly7fc2h+iZueUAa7IlWxo9KhCik31RxqsEBimhaik8QY5TuRx81GBmaRUaiNEAGIrFe/zDuyHOc4w2CM8mrg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7871
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260225-pagevec_cleanup-v2-2-716868cc2d11@columbia.edu>
+X-Spam-Flag: NO
+X-Spam-Score: -2.30
+X-Spam-Level: 
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	ARC_REJECT(1.00)[cv is fail on i=2];
-	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
-	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
+X-Spamd-Result: default: False [0.34 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78472-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78473-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,intel.com:mid,intel.com:dkim,intel.com:email,01.org:url];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,suse.cz:dkim,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,columbia.edu:email];
+	DMARC_NA(0.00)[suse.cz];
+	FREEMAIL_CC(0.00)[redhat.com,auristor.com,kernel.org,linux-foundation.org,oracle.com,google.com,suse.com,tencent.com,huaweicloud.com,gmail.com,infradead.org,intel.com,suse.cz,zeniv.linux.org.uk,mit.edu,dilger.ca,manguebit.org,fasheh.com,evilplan.org,linux.alibaba.com,samba.org,microsoft.com,talpey.com,linux.intel.com,suse.de,ffwll.ch,ursulin.net,fb.com,dubeyko.com,linux.dev,brown.name,ziepe.ca,nvidia.com,cmpxchg.org,bytedance.com,lists.infradead.org,vger.kernel.org,lists.sourceforge.net,kvack.org,lists.linux.dev,lists.samba.org,lists.freedesktop.org];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	DKIM_TRACE(0.00)[intel.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	TO_DN_SOME(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[oliver.sang@intel.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	MISSING_XM_UA(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	RCPT_COUNT_GT_50(0.00)[97];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCVD_COUNT_SEVEN(0.00)[10]
-X-Rspamd-Queue-Id: 1A6951A61DD
+	NEURAL_HAM(-0.00)[-0.998];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: F03921A6570
 X-Rspamd-Action: no action
 
+On Wed 25-02-26 18:44:26, Tal Zussman wrote:
+> Remove unused pagevec.h includes from .c files. These were found with
+> the following command:
+> 
+>   grep -rl '#include.*pagevec\.h' --include='*.c' | while read f; do
+>   	grep -qE 'PAGEVEC_SIZE|folio_batch' "$f" || echo "$f"
+>   done
+> 
+> There are probably more removal candidates in .h files, but those are
+> more complex to analyze.
+> 
+> Signed-off-by: Tal Zussman <tz2294@columbia.edu>
 
+If it compiles than it's nice to get rid of. Feel free to add:
 
-Hello,
+Reviewed-by: Jan Kara <jack@suse.cz>
 
+								Honza
 
-it seems to us this change causes the stats changes for various (random)
-KCSAN issues. just FYI what we observed in tests.
-
-=========================================================================================
-tbox_group/testcase/rootfs/kconfig/compiler/runtime/group/nr_groups:
-  vm-snb/trinity/yocto-i386-minimal-20190520.cgz/x86_64-randconfig-013-20260223/gcc-14/300s/group-01/5
-
-1cbc822816758b26 761475268fa8e322fe6b80bcf55
----------------- ---------------------------
-       fail:runs  %reproduction    fail:runs
-           |             |             |
-          1:200          2%           4:200   dmesg.BUG:KCSAN:data-race_in_alloc_pid/copy_process
-          1:200         -0%            :200   dmesg.BUG:KCSAN:data-race_in_atime_needs_update/inode_set_ctime_current
-         32:200        -16%            :200   dmesg.BUG:KCSAN:data-race_in_atime_needs_update/inode_update_timestamps
-           :200         17%          34:200   dmesg.BUG:KCSAN:data-race_in_atime_needs_update/touch_atime
-          1:200          0%           1:200   dmesg.BUG:KCSAN:data-race_in_credit_init_bits/try_to_generate_entropy
-          2:200         -1%            :200   dmesg.BUG:KCSAN:data-race_in_crng_reseed/try_to_generate_entropy
-          1:200          1%           3:200   dmesg.BUG:KCSAN:data-race_in_file_update_time_flags/inode_set_ctime_current
-          2:200         -1%            :200   dmesg.BUG:KCSAN:data-race_in_file_update_time_flags/inode_update_timestamps
-          6:200         -3%            :200   dmesg.BUG:KCSAN:data-race_in_generic_fillattr/inode_update_timestamps
-           :200          6%          11:200   dmesg.BUG:KCSAN:data-race_in_generic_fillattr/touch_atime
-           :200          1%           2:200   dmesg.BUG:KCSAN:data-race_in_inode_set_ctime_current/inode_update_time
-         22:200        -11%            :200   dmesg.BUG:KCSAN:data-race_in_inode_update_timestamps/inode_update_timestamps
-           :200         10%          20:200   dmesg.BUG:KCSAN:data-race_in_touch_atime/touch_atime
-
-
-kernel test robot noticed "BUG:KCSAN:data-race_in_atime_needs_update/touch_atime" on:
-
-commit: 761475268fa8e322fe6b80bcf557dc65517df71e ("fs: refactor ->update_time handling")
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-
-
-in testcase: trinity
-version: 
-with following parameters:
-
-	runtime: 300s
-	group: group-01
-	nr_groups: 5
-
-
-config: x86_64-randconfig-013-20260223
-compiler: gcc-14
-test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 32G
-
-(please refer to attached dmesg/kmsg for entire log/backtrace)
-
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202602262015.d00ee0c9-lkp@intel.com
-
-
-[  180.177701][T23712] BUG: KCSAN: data-race in atime_needs_update / touch_atime
-[  180.178300][T23712]
-[  180.178556][T23712] write to 0xffff8881005bf140 of 4 bytes by task 23711 on cpu 0:
-[  180.179221][T23712]  touch_atime (include/linux/fs.h:1624 fs/inode.c:2092 fs/inode.c:2135 fs/inode.c:2158 fs/inode.c:2236)
-[  180.179620][T23712]  pick_link (fs/namei.c:1989)
-[  180.180009][T23712]  step_into_slowpath (fs/namei.c:2066)
-[  180.180442][T23712]  open_last_lookups (fs/namei.c:2091 fs/namei.c:4575)
-[  180.180870][T23712]  path_openat (fs/namei.c:4784)
-[  180.181260][T23712]  do_filp_open (fs/namei.c:4814)
-[  180.181665][T23712]  do_open_execat (fs/exec.c:783)
-[  180.184266][T23712]  open_exec (fs/exec.c:823)
-[  180.184645][T23712]  load_elf_binary (include/linux/slab.h:957 fs/binfmt_elf.c:919)
-[  180.185075][T23712]  exec_binprm (fs/exec.c:1671 fs/exec.c:1701)
-[  180.185469][T23712]  bprm_execve (fs/exec.c:1735)
-[  180.185898][T23712]  bprm_execve (fs/exec.c:1781)
-[  180.186295][T23712]  kernel_execve (fs/exec.c:1919)
-[  180.186707][T23712]  call_usermodehelper_exec_async (kernel/umh.c:113)
-[  180.187226][T23712]  ret_from_fork (arch/x86/kernel/process.c:164)
-[  180.187637][T23712]  ret_from_fork_asm (arch/x86/entry/entry_64.S:256)
-[  180.188059][T23712]
-[  180.188315][T23712] read to 0xffff8881005bf140 of 4 bytes by task 23712 on cpu 1:
-[  180.188962][T23712]  atime_needs_update (fs/inode.c:2056 fs/inode.c:2201)
-[  180.189403][T23712]  pick_link (fs/namei.c:1983 (discriminator 2))
-[  180.189795][T23712]  step_into_slowpath (fs/namei.c:2066)
-[  180.190229][T23712]  open_last_lookups (fs/namei.c:2091 fs/namei.c:4575)
-[  180.190657][T23712]  path_openat (fs/namei.c:4784)
-[  180.191075][T23712]  do_filp_open (fs/namei.c:4814)
-[  180.191479][T23712]  do_open_execat (fs/exec.c:783)
-[  180.191885][T23712]  open_exec (fs/exec.c:823)
-[  180.192256][T23712]  load_elf_binary (include/linux/slab.h:957 fs/binfmt_elf.c:919)
-[  180.192683][T23712]  exec_binprm (fs/exec.c:1671 fs/exec.c:1701)
-[  180.193082][T23712]  bprm_execve (fs/exec.c:1735)
-[  180.193537][T23712]  bprm_execve (fs/exec.c:1781)
-[  180.193922][T23712]  kernel_execve (fs/exec.c:1919)
-[  180.194333][T23712]  call_usermodehelper_exec_async (kernel/umh.c:113)
-[  180.194850][T23712]  ret_from_fork (arch/x86/kernel/process.c:164)
-[  180.195265][T23712]  ret_from_fork_asm (arch/x86/entry/entry_64.S:256)
-[  180.195684][T23712]
-[  180.195936][T23712] value changed: 0x2160ec00 -> 0x22921900
-[  180.196415][T23712]
-[  180.196667][T23712] Reported by Kernel Concurrency Sanitizer on:
-[  180.197175][T23712] CPU: 1 UID: 0 PID: 23712 Comm: kworker/u8:0 Not tainted 6.19.0-rc1-00005-g761475268fa8 #1 PREEMPT  0fd055f61ee6c01889a41da1288262ad66e4a70f
-[  180.198323][T23712] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[  180.199162][T23712] ==================================================================
-
-
-
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20260226/202602262015.d00ee0c9-lkp@intel.com
-
-
-
+> ---
+>  fs/afs/write.c                   | 1 -
+>  fs/dax.c                         | 1 -
+>  fs/ext4/file.c                   | 1 -
+>  fs/ext4/page-io.c                | 1 -
+>  fs/ext4/readpage.c               | 1 -
+>  fs/f2fs/file.c                   | 1 -
+>  fs/mpage.c                       | 1 -
+>  fs/netfs/buffered_write.c        | 1 -
+>  fs/nfs/blocklayout/blocklayout.c | 1 -
+>  fs/nfs/dir.c                     | 1 -
+>  fs/ocfs2/refcounttree.c          | 1 -
+>  fs/smb/client/connect.c          | 1 -
+>  fs/smb/client/file.c             | 1 -
+>  13 files changed, 13 deletions(-)
+> 
+> diff --git a/fs/afs/write.c b/fs/afs/write.c
+> index 93ad86ff3345..fcfed9d24e0a 100644
+> --- a/fs/afs/write.c
+> +++ b/fs/afs/write.c
+> @@ -10,7 +10,6 @@
+>  #include <linux/fs.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/writeback.h>
+> -#include <linux/pagevec.h>
+>  #include <linux/netfs.h>
+>  #include <trace/events/netfs.h>
+>  #include "internal.h"
+> diff --git a/fs/dax.c b/fs/dax.c
+> index b78cff9c91b3..a5237169b467 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -15,7 +15,6 @@
+>  #include <linux/memcontrol.h>
+>  #include <linux/mm.h>
+>  #include <linux/mutex.h>
+> -#include <linux/pagevec.h>
+>  #include <linux/sched.h>
+>  #include <linux/sched/signal.h>
+>  #include <linux/uio.h>
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index f1dc5ce791a7..5e02f6cf653e 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -27,7 +27,6 @@
+>  #include <linux/dax.h>
+>  #include <linux/filelock.h>
+>  #include <linux/quotaops.h>
+> -#include <linux/pagevec.h>
+>  #include <linux/uio.h>
+>  #include <linux/mman.h>
+>  #include <linux/backing-dev.h>
+> diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
+> index a8c95eee91b7..98da200d11c8 100644
+> --- a/fs/ext4/page-io.c
+> +++ b/fs/ext4/page-io.c
+> @@ -16,7 +16,6 @@
+>  #include <linux/string.h>
+>  #include <linux/buffer_head.h>
+>  #include <linux/writeback.h>
+> -#include <linux/pagevec.h>
+>  #include <linux/mpage.h>
+>  #include <linux/namei.h>
+>  #include <linux/uio.h>
+> diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+> index 830f3b8a321f..3c7aabde719c 100644
+> --- a/fs/ext4/readpage.c
+> +++ b/fs/ext4/readpage.c
+> @@ -43,7 +43,6 @@
+>  #include <linux/mpage.h>
+>  #include <linux/writeback.h>
+>  #include <linux/backing-dev.h>
+> -#include <linux/pagevec.h>
+>  
+>  #include "ext4.h"
+>  #include <trace/events/ext4.h>
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index c8a2f17a8f11..c6b6a1465d08 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -17,7 +17,6 @@
+>  #include <linux/compat.h>
+>  #include <linux/uaccess.h>
+>  #include <linux/mount.h>
+> -#include <linux/pagevec.h>
+>  #include <linux/uio.h>
+>  #include <linux/uuid.h>
+>  #include <linux/file.h>
+> diff --git a/fs/mpage.c b/fs/mpage.c
+> index 7dae5afc2b9e..e5285fbfcf09 100644
+> --- a/fs/mpage.c
+> +++ b/fs/mpage.c
+> @@ -28,7 +28,6 @@
+>  #include <linux/mm_inline.h>
+>  #include <linux/writeback.h>
+>  #include <linux/backing-dev.h>
+> -#include <linux/pagevec.h>
+>  #include "internal.h"
+>  
+>  /*
+> diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
+> index 22a4d61631c9..05ea5b0cc0e8 100644
+> --- a/fs/netfs/buffered_write.c
+> +++ b/fs/netfs/buffered_write.c
+> @@ -10,7 +10,6 @@
+>  #include <linux/mm.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/slab.h>
+> -#include <linux/pagevec.h>
+>  #include "internal.h"
+>  
+>  static void __netfs_set_group(struct folio *folio, struct netfs_group *netfs_group)
+> diff --git a/fs/nfs/blocklayout/blocklayout.c b/fs/nfs/blocklayout/blocklayout.c
+> index cb0a645aeb50..11f9f69cde61 100644
+> --- a/fs/nfs/blocklayout/blocklayout.c
+> +++ b/fs/nfs/blocklayout/blocklayout.c
+> @@ -36,7 +36,6 @@
+>  #include <linux/namei.h>
+>  #include <linux/bio.h>		/* struct bio */
+>  #include <linux/prefetch.h>
+> -#include <linux/pagevec.h>
+>  
+>  #include "../pnfs.h"
+>  #include "../nfs4session.h"
+> diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
+> index 2402f57c8e7d..0d276441206b 100644
+> --- a/fs/nfs/dir.c
+> +++ b/fs/nfs/dir.c
+> @@ -32,7 +32,6 @@
+>  #include <linux/nfs_fs.h>
+>  #include <linux/nfs_mount.h>
+>  #include <linux/pagemap.h>
+> -#include <linux/pagevec.h>
+>  #include <linux/namei.h>
+>  #include <linux/mount.h>
+>  #include <linux/swap.h>
+> diff --git a/fs/ocfs2/refcounttree.c b/fs/ocfs2/refcounttree.c
+> index c1cdececdfa4..b4acd081bbc4 100644
+> --- a/fs/ocfs2/refcounttree.c
+> +++ b/fs/ocfs2/refcounttree.c
+> @@ -31,7 +31,6 @@
+>  #include <linux/blkdev.h>
+>  #include <linux/slab.h>
+>  #include <linux/writeback.h>
+> -#include <linux/pagevec.h>
+>  #include <linux/swap.h>
+>  #include <linux/security.h>
+>  #include <linux/string.h>
+> diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
+> index 33dfe116ca52..9e57812b7b95 100644
+> --- a/fs/smb/client/connect.c
+> +++ b/fs/smb/client/connect.c
+> @@ -20,7 +20,6 @@
+>  #include <linux/delay.h>
+>  #include <linux/completion.h>
+>  #include <linux/kthread.h>
+> -#include <linux/pagevec.h>
+>  #include <linux/freezer.h>
+>  #include <linux/namei.h>
+>  #include <linux/uuid.h>
+> diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
+> index 18f31d4eb98d..853ce1817810 100644
+> --- a/fs/smb/client/file.c
+> +++ b/fs/smb/client/file.c
+> @@ -15,7 +15,6 @@
+>  #include <linux/stat.h>
+>  #include <linux/fcntl.h>
+>  #include <linux/pagemap.h>
+> -#include <linux/pagevec.h>
+>  #include <linux/writeback.h>
+>  #include <linux/task_io_accounting_ops.h>
+>  #include <linux/delay.h>
+> 
+> -- 
+> 2.39.5
+> 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
