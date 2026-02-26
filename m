@@ -1,262 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-78445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oBMnKvTzn2kyfAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 08:19:16 +0100
+	id 4A3GFJr9n2n3fAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 09:00:26 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41F3D1A1BFC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 08:19:16 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3B0C1A22DA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 09:00:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 3D4133033D4B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 07:19:11 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id B615B3080C30
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 07:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DF6226D00;
-	Thu, 26 Feb 2026 07:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ACBF392807;
+	Thu, 26 Feb 2026 07:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UkVgGHqo"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TMYYDIEH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A87A38F23C
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 07:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.217.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772090341; cv=pass; b=ry0c+CshLwpQ3tFCw3rsBX39YG5obbXmqZMnJZBU69Q+16RpvbfE4OGODNrBbqNbRzsfx7G3NljInGdaUELF47kcu9H0yjTkfTJxu0P3MfTy7zb2uz8/pgcywOg5LTkQK3d6qKf/dloTXkPrnl2iLnoFu2qxpNKPrZGDYMpT02E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772090341; c=relaxed/simple;
-	bh=5kZAYgXFbfkfi4UQTiPb13p2MazR2wn4poiXvnKgRZ4=;
-	h=From:In-Reply-To:References:MIME-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WG+Lhc4N1T9W/mj23exI7fXMJroVNIPxYYq3OXbm9mgQnMrndwl+dfceU8y62ufv/FGeHVN1eGV7zmqAu49PiotU5tabYye7LrNhMXR5eB2joX2K7m2OoO65z2o4w/QPPIL+KmdaRKfUu3807vnHn1TDUS9e0yAa1h4GWgNf3p0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UkVgGHqo; arc=pass smtp.client-ip=209.85.217.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-5fe086fb0bcso91584137.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Feb 2026 23:19:00 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772090339; cv=none;
-        d=google.com; s=arc-20240605;
-        b=IIpjlZLHntkTSg7ngLy95Y3hfS5NLuEA8bpvcmwJgRHFgoMvAN3VDdRV9vU4ItUJYX
-         swaIqZSmPyA2vVjujO/7m692ZaY6R667Po4qkdLxWCpC+VqIMTUjFnfGCoj3dyl5+nea
-         N7/W3/PAZH/Uhxotn98IbGc9TZxPFbY1OEgjCtS7c0vuDrFebcFP/JpsETC9mvgYqEhf
-         B1D3aDcuCs3DonYVV/ugpa5Cs4UWid0oI+mUvdn0wLU+RN+CNh28TQTkkRLXE9SBgsTz
-         A1tlV3XrlBBS4PNvGF0+OSTyy2hTxO2V0Ndx5t1PQvFELQ8N4yOVqipaijmW0siokz+a
-         7VfA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:dkim-signature;
-        bh=38TkFjWu/yMjVfuieCXSU8i+AJioChf0CvAqY9rgty4=;
-        fh=nYsLCiEf6d4ZdWecUjR6YIbiM+3SNfGy2n7EHSD1Q3U=;
-        b=Oety0qDPEdJuj5Vf4S/IMbWhYmlsVNCs2IDvxvoqoZfybK4MToCkEidqvllMBwWSAa
-         SE/sH9b94PVjZz6lNIKCSYfPdI3nUHigRuzbK6zcw/QRgll6pSiP97r69EWCw0B6nE7D
-         3KEZ3olDZo1Rt+pI+tX20jwZ9fcSOinJe0hZeVqtaQQixukUjiiXc9ZMHcppJVoCBxvd
-         dPAaZ8bQWk9eKANsowvs6v9igW4BB5fH5NODDffHWzM222kg3o4tAgOLeMKaVx16IXdH
-         s02MvsErjn10atPyuOEC6VGEpkyZtq9OatqHRCyzRu61j6XwCntjPUJre7lSfMli82Tw
-         rw3w==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CE3392C3E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 07:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772092718; cv=none; b=aHvzfbuIb9qWHyDysYHiGtjWmwrnWnEZCTAiediz4M1E3yhZsjMk5bSD9MfJpDUaLUABESnDnGd+hwXpxJIiaxy6lsWJxUilk80z7YjY6RZ3AYOBu0iAFqAdRIoIP18Pk9ENYMRqKUnDtNYnxexnWlYYMg94ftoq1uH+5ijVCRI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772092718; c=relaxed/simple;
+	bh=EWLxH83qNnDN4T6VeDaz8zy4WhWTxn76DHDOMhidy5E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OQ2DVM7/XjqjHSWAoX0EbDG9MlTDQx9TSx9i6N+Qc31lxnJ2Pqn6dKRL6Pyz3v4ihRhv8gOCn2osC2jwtT3MThdhgQa0qM/cbBezZHYA57BKX09zv2Hf/URbwUjT8IOtN5cWzOaoRJkTEEk6NNm1M/r3kJUkRnsLTnbmqKyLySk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TMYYDIEH; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-43992e3f9b8so523585f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Feb 2026 23:58:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1772090339; x=1772695139; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=38TkFjWu/yMjVfuieCXSU8i+AJioChf0CvAqY9rgty4=;
-        b=UkVgGHqohjH+9DegPTESkRCcW5GUEqXvHEODRmFWxtri5m9ThGxc4fKgZxf5Saqr8L
-         YJrx321iwCj2lurexXPSzZLRMuMfSLaeQ5XJwZpvWgrEsjqL6YSH3oI9aYCxLuciOV2h
-         Th3mtvnHTE3jibadRUa+/d1c3fLeqAjVIhgsNS7MDhAsuzKLu/kTjFW7wFk1pfE0UK89
-         rLmkznK+fNm1ZoxRdE2UwXAQWBk0B+shMZuOtjUKqb9gSdMWSDPA94hpuqoEAeCbC5Ws
-         /qtppmWA9nUOL4IdxWS/iQwOlrAUzPQIRiWQ0MavabJ8C/bh7UY+dLfjza95EZAGluFR
-         tEGQ==
+        d=suse.com; s=google; t=1772092716; x=1772697516; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=sD6qKNXNuBEjqxXtt/5YnY5j89NAwzOwCU5i6ozZ/HQ=;
+        b=TMYYDIEH1SG9Ux/r+b/1dMjzxjBBwHK3guQrm0uSLhUnUBTgwHZae491AHWvUngjEv
+         yu+czT+OEmrsCxhsLOsftAlLYhlci/348KY02DCQHrWwXSQ8Ou/l/1cMFW0JvgunUydi
+         A6r/HUVJ1kWEh5psZpk4+T4J1b1ZauFSpwXdO6fsZgagXw4gxZI7ibk+vi6CTW7rt1Un
+         Y+XgKK2qvti36l9JSWSxL5aTDvG9XD41FC8HSDlWNiXUWhFziJJ8o/hJDQUB0gN/I5Bk
+         BTk/3kePXCxTUiXGpP13S6+7beWYz3A2w04zkohc0vMRcoEG6igUACYzBwZzjMAPqY+K
+         xNdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772090339; x=1772695139;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=38TkFjWu/yMjVfuieCXSU8i+AJioChf0CvAqY9rgty4=;
-        b=N/U0dgOyaZ4KUBM58VGHH016MmUKUJambPIEr1+7AZhmRx3aCzmbblM1YjjAcuJwkg
-         w0u6iebD5LHppe5OVesgOxTQYfgfEjwVYxsjGnzHxxMNE4jup2RoZePFjmIpizLiaRPj
-         zH4GH5cDfRHXLkBos28KnfHsyVd7+MLPgSs+vdBajChhgdfC2mgkau2eXf8rlax4ZkSS
-         ThbuXv2s3sMgJlUX9pzD4xTJfW47hj/oMhy6Pv0jAvW3lnR/j2hrA95yVl0+wPeGommA
-         hZu5MKbmXjBUe93O0+xyjyp053cjqTJVaMMHUDT99Ty3keP/SFVBGHEslzSu3LJ8QYbL
-         PSeg==
-X-Forwarded-Encrypted: i=1; AJvYcCWmDCSWXKrLkKHl5Wjkk0xJWzbwqMDsPfanDEL3KgrWRjqIFCJu4yt4rtd6fq7kJ4QMBBV+FdXn70ARGSl1@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/DiWAYlrsz3Uzc6/OnByJJ8Z1vGqRYU83qTOdhUZ36L4fhPGw
-	TtR6ijw1Uw0hmp1mJZ0zf2X31/ik+m6eupTdmzMPXnBoHfbKJFYsol+myQV9oWV2QmfEQffKm+i
-	wJ/1Zn2zsHyjT2ruIQE8tmQP/rnOqTt5i+8G0Wdzg
-X-Gm-Gg: ATEYQzwldWEPeYqzjpDO7qi9zjvUp6KmVx+E1F0erTIiaoD1CA4LYUf+srdjnIsYu1W
-	jMEhXAWUQPZISiPhBJP+Q6vN+tC5XnL7mHtZ/8Pct5VG3wYIHmNA1lWYFBiFoAX9lDoSD7Qly73
-	JxdUVzmTUD2E1SrnGJp2ilEzRXIqufOIsN4lnrvKfTTARifjZtOLpSGL1kYGqbnUh4ZbUOISNu6
-	Qnw9+TcfL/SjV4MPe9pDIy+u32Gr22vYhh38xQAiIltmDN07kh7Nh95VfG3g27EP12Lsp4u2K2M
-	p3cRVjjjmc5AXU68qH7zUUVzc88zkQVomA8+87KGmZJofMUiB4qUNQ7KxEiXFZaVzQfLRA==
-X-Received: by 2002:a05:6102:3581:b0:5ef:2cb8:e9db with SMTP id
- ada2fe7eead31-5ff13ef650bmr1386972137.18.1772090338420; Wed, 25 Feb 2026
- 23:18:58 -0800 (PST)
-Received: from 176938342045 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 25 Feb 2026 23:18:57 -0800
-Received: from 176938342045 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 25 Feb 2026 23:18:57 -0800
-From: Ackerley Tng <ackerleytng@google.com>
-In-Reply-To: <f6649b09-aa64-4c91-bf3a-ba706f023180@kernel.org>
-References: <cover.1771826352.git.ackerleytng@google.com> <a97045a9-8866-40fe-aa15-d319cafa6f2c@kernel.org>
- <CAEvNRgFF0+g9pmp1yitX48ebK=fDpYKSOQDmRfOjzSHxM5UpeQ@mail.gmail.com>
- <9ef9a0bd-4cff-4518-b7fb-e65c9b761a5a@kernel.org> <CAEvNRgESctVm9CcEyK36hY8Ta=DEDOS1oW5w0qRDoNfdd=470g@mail.gmail.com>
- <CAEvNRgFyRsqhv7CuuDARHTFSanzOHaudM6JMBLwxDwsrjTNCGQ@mail.gmail.com> <f6649b09-aa64-4c91-bf3a-ba706f023180@kernel.org>
+        d=1e100.net; s=20230601; t=1772092716; x=1772697516;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sD6qKNXNuBEjqxXtt/5YnY5j89NAwzOwCU5i6ozZ/HQ=;
+        b=DDw4BbOL/aQywwNEsE/gyb4aB0Vp3xc2e5E0wesKIZZK9hoDAVjjVJwX/rBhTLTia+
+         QkJ8z8AwlfbymjlBLrll7JAcHad6GYEZYxoDkAzB4tTJh6VmZ542DFhJM14zens/XEBR
+         7pFcEtq+9HOB8dJC3XgJ0dMBHD7MN5ymV5vrCK1OzuiZsP8THWJirSWbqPT5E4NyAiaU
+         A1IV+aDJIuD0UIP9vDfGaIRhD60M19ZuGx0QI0Ur00Rbh2hUqaH1hot7ZNAFAkl6MWJ0
+         zJ/3YgJKXGIAjSeMT9M5yaGFETbG2f/8bt+lXDupJITMOZ+e4mTk24bld8PZF0sYmC36
+         lJiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUX9nP1+awevP+lxpsejirRX+EIJpCQOUknHjznajm2zXaIwYxrY1Ccq1hOMXiZaDu2JJsPb3YZD+Qd62wd@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXc8y17isCMI7MKYSM1Xs9PyCZrCg+5pj/AdoQB7e15lwwe2bD
+	8u8c4vcGH7hlkCqIfZHJkfZsrb4/0qx6/TY7nJMVXLRLugabW64UYRe/gVPKHQ6mIVD/die272m
+	0ZngZ
+X-Gm-Gg: ATEYQzyaRA8rComwrpsUEh1xXhoNbfLTkekM+mH4AZ4oY6uUnEi11dY7TGnSOGfdhwQ
+	6OjyM+Q9ipAH5KSO1mq6YvTuyOXwBm/bkgoWPTDeK6d7C9GZL0QdL1kaBw55iPjqtZgwvLj+S/H
+	o972aiZtD3MvkFB9cP0at00LioetxETbJWbXZu4mRrZ+U8ykGzgDE6lo+s0AlLnepie+HJms9Tz
+	B+T/gQdBqhNprAKKg/lVbPqw7wqZN4nOGXSd87nb9I1cKf9X6bdRhMwpQ65Yx4gAJhalMRNn3Wn
+	xtyUrdZjdF5yunuDK6KmBAnraoi54YmUV8U2U7aMoCIEvhO+VJdRhi7VIkNGS0PCyLHL1naIvKk
+	qe4t8P0K1Dl5LOrW8OxUjI8s+aNthSNwNsFbEdWNHoJtRdXEiir7lrJOUoLbmaDjU627baB2kh4
+	AYPMG/YN7lISAtEXdi+QwS/wMPM8Nr2L0ZnqPRsmW1HpdB2vw=
+X-Received: by 2002:a05:6000:2311:b0:439:8a9d:66fa with SMTP id ffacd0b85a97d-439942f2a52mr5792147f8f.42.1772092715708;
+        Wed, 25 Feb 2026 23:58:35 -0800 (PST)
+Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [185.218.67.59])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439927c3e01sm8315029f8f.11.2026.02.25.23.58.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Feb 2026 23:58:34 -0800 (PST)
+Message-ID: <d05ab6b6-197d-462f-977c-b2d8d98e1f8a@suse.com>
+Date: Thu, 26 Feb 2026 09:58:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 25 Feb 2026 23:18:57 -0800
-X-Gm-Features: AaiRm51uhp_e3rB2FjbroD20Md18UNjoNkKYVi3b2D7VPNikPNLP_eyGmYzYmA4
-Message-ID: <CAEvNRgHaDDTW_CFT_91Rqzx=OErmiP1GvtuCYnAs_wNRWb-hZw@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 00/10] guest_memfd: Track amount of memory
- allocated on inode
-To: "David Hildenbrand (Arm)" <david@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Cc: akpm@linux-foundation.org, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
-	mhocko@suse.com, willy@infradead.org, pbonzini@redhat.com, shuah@kernel.org, 
-	seanjc@google.com, shivankg@amd.com, rick.p.edgecombe@intel.com, 
-	yan.y.zhao@intel.com, rientjes@google.com, fvdl@google.com, 
-	jthoughton@google.com, vannapurve@google.com, pratyush@kernel.org, 
-	pasha.tatashin@soleen.com, kalyazin@amazon.com, tabba@google.com, 
-	michael.roth@amd.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] inotify: fix watch count leak when
+ fsnotify_add_inode_mark_locked() fails
+To: Chia-Ming Chang <chiamingc@synology.com>, jack@suse.cz
+Cc: amir73il@gmail.com, serge@hallyn.com, ebiederm@xmission.com,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, robbieko <robbieko@synology.com>
+References: <20260224093442.3076294-1-chiamingc@synology.com>
+Content-Language: en-US
+From: Nikolay Borisov <nik.borisov@suse.com>
+Autocrypt: addr=nik.borisov@suse.com; keydata=
+ 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
+In-Reply-To: <20260224093442.3076294-1-chiamingc@synology.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
-	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[suse.com,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=google];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78445-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[suse.com:+];
+	FREEMAIL_CC(0.00)[gmail.com,hallyn.com,xmission.com,vger.kernel.org,synology.com];
+	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[29];
-	DKIM_TRACE(0.00)[google.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[ackerleytng@google.com,linux-fsdevel@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-78446-lists,linux-fsdevel=lfdr.de];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	NEURAL_HAM(-0.00)[-1.000];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 41F3D1A1BFC
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[nik.borisov@suse.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	NEURAL_HAM(-0.00)[-1.000];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:dkim,suse.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,synology.com:email]
+X-Rspamd-Queue-Id: C3B0C1A22DA
 X-Rspamd-Action: no action
 
-"David Hildenbrand (Arm)" <david@kernel.org> writes:
 
-> On 2/25/26 08:31, Ackerley Tng wrote:
->> Ackerley Tng <ackerleytng@google.com> writes:
->>
->>> "David Hildenbrand (Arm)" <david@kernel.org> writes:
->>>
->>>>
->>>> [...snip...]
->>>>
->>>>
->>>> If that avoids having to implement truncation completely ourselves, that might be one
->>>> option we could discuss, yes.
->>>>
->>>> Something like:
->>>>
->>>> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
->>>> index 7c753148af88..94f8bb81f017 100644
->>>> --- a/Documentation/filesystems/vfs.rst
->>>> +++ b/Documentation/filesystems/vfs.rst
->>>> @@ -764,6 +764,7 @@ cache in your filesystem.  The following members are defined:
->>>>                 sector_t (*bmap)(struct address_space *, sector_t);
->>>>                 void (*invalidate_folio) (struct folio *, size_t start, size_t len);
->>>>                 bool (*release_folio)(struct folio *, gfp_t);
->>>> +               void (*remove_folio)(struct folio *folio);
->>>>                 void (*free_folio)(struct folio *);
->>>>                 ssize_t (*direct_IO)(struct kiocb *, struct iov_iter *iter);
->>>>                 int (*migrate_folio)(struct mapping *, struct folio *dst,
->>>> @@ -922,6 +923,11 @@ cache in your filesystem.  The following members are defined:
->>>>         its release_folio will need to ensure this.  Possibly it can
->>>>         clear the uptodate flag if it cannot free private data yet.
->>>>
->>>> +``remove_folio``
->>>> +       remove_folio is called just before the folio is removed from the
->>>> +       page cache in order to allow the cleanup of properties (e.g.,
->>>> +       accounting) that needs the address_space mapping.
->>>> +
->>>>  ``free_folio``
->>>>         free_folio is called once the folio is no longer visible in the
->>>>         page cache in order to allow the cleanup of any private data.
->>>> diff --git a/include/linux/fs.h b/include/linux/fs.h
->>>> index 8b3dd145b25e..f7f6930977a1 100644
->>>> --- a/include/linux/fs.h
->>>> +++ b/include/linux/fs.h
->>>> @@ -422,6 +422,7 @@ struct address_space_operations {
->>>>         sector_t (*bmap)(struct address_space *, sector_t);
->>>>         void (*invalidate_folio) (struct folio *, size_t offset, size_t len);
->>>>         bool (*release_folio)(struct folio *, gfp_t);
->>>> +       void (*remove_folio)(struct folio *folio);
->>>>         void (*free_folio)(struct folio *folio);
->>>>         ssize_t (*direct_IO)(struct kiocb *, struct iov_iter *iter);
->>>>         /*
->>>> diff --git a/mm/filemap.c b/mm/filemap.c
->>>> index 6cd7974d4ada..5a810eaacab2 100644
->>>> --- a/mm/filemap.c
->>>> +++ b/mm/filemap.c
->>>> @@ -250,8 +250,14 @@ void filemap_free_folio(struct address_space *mapping, struct folio *folio)
->>>>  void filemap_remove_folio(struct folio *folio)
->>>>  {
->>>>         struct address_space *mapping = folio->mapping;
->>>> +       void (*remove_folio)(struct folio *);
->>>>
->>>>         BUG_ON(!folio_test_locked(folio));
->>>> +
->>>> +       remove_folio = mapping->a_ops->remove_folio;
->>>> +       if (unlikely(remove_folio))
->>>> +               remove_folio(folio);
->>>> +
->>>>         spin_lock(&mapping->host->i_lock);
->>>>         xa_lock_irq(&mapping->i_pages);
->>>>         __filemap_remove_folio(folio, NULL);
->>>>
->>>
->>> Thanks for this suggestion, I'll try this out and send another revision.
->>>
->>>>
->>>> Ideally we'd perform it under the lock just after clearing folio->mapping, but I guess that
->>>> might be more controversial.
->>>>
->>
->> I'm not sure which lock you were referring to, I hope it's not the
->> inode's i_lock? Why is calling the callback under lock frowned upon?
->
-> I meant the two locks: mapping->host->i_lock and mapping->i_pages.
->
-> I'd assume new callbacks that might result in holding these precious
-> locks longer might be a problem for some people. Well, maybe, maybe not.
->
 
-The extra time (for guest_memfd, and almost no extra time for other
-filesystems) is on the truncation path, hopefully that isn't a hot path!
+On 24.02.26 г. 11:34 ч., Chia-Ming Chang wrote:
+> When fsnotify_add_inode_mark_locked() fails in inotify_new_watch(),
+> the error path calls inotify_remove_from_idr() but does not call
+> dec_inotify_watches() to undo the preceding inc_inotify_watches().
+> This leaks a watch count, and repeated failures can exhaust the
+> max_user_watches limit with -ENOSPC even when no watches are active.
+> 
+> Prior to commit 1cce1eea0aff ("inotify: Convert to using per-namespace
+> limits"), the watch count was incremented after fsnotify_add_mark_locked()
+> succeeded, so this path was not affected. The conversion moved
+> inc_inotify_watches() before the mark insertion without adding the
+> corresponding rollback.
+> 
+> Add the missing dec_inotify_watches() call in the error path.
+> 
+> Fixes: 1cce1eea0aff ("inotify: Convert to using per-namespace limits")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Chia-Ming Chang <chiamingc@synology.com>
+> Signed-off-by: robbieko <robbieko@synology.com>
 
-> I guess .free_folio() is called outside the lock because it's assumed to
-> possibly do more expensive operations.
->
+Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
 
-I thought .free_folio() was called outside of the lock because after the
-folio is removed from the filemap, there should be no more inode/filemap
-related contention, so any cleanup can definitely be done outside the
-inode/filemap locks.
+> ---
+>   fs/notify/inotify/inotify_user.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+> index b372fb2c56bd..0d813c52ff9c 100644
+> --- a/fs/notify/inotify/inotify_user.c
+> +++ b/fs/notify/inotify/inotify_user.c
+> @@ -621,6 +621,7 @@ static int inotify_new_watch(struct fsnotify_group *group,
+>   	if (ret) {
+>   		/* we failed to get on the inode, get off the idr */
+>   		inotify_remove_from_idr(group, tmp_i_mark);
+> +		dec_inotify_watches(group->inotify_data.ucounts);
+>   		goto out_err;
+>   	}
+>   
 
-> --
-> Cheers,
->
-> David
 
