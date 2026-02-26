@@ -1,145 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-78432-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0EYWBUG2n2mKdQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78432-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 03:56:01 +0100
+	id iICcHkC3n2mKdQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 04:00:16 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CEE41A03B8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 03:56:00 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA4E1A0455
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 04:00:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id D68DB306E629
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 02:55:45 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 1C112306147A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 03:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F103815D8;
-	Thu, 26 Feb 2026 02:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73FE9385531;
+	Thu, 26 Feb 2026 03:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lT4z/kxJ"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2EJNt8fv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B693451CF;
-	Thu, 26 Feb 2026 02:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772074539; cv=none; b=OptAEXjK0biR9zPz31TD3uNb3ngZ6MxprxAaa2NrFZGA6UxI3lIC2gH/mfbL4cyFXFZX1KSvZJV1rSJMSzrWJuOWEEIXQUFlGgKhfsdmvxGGXjeyjBUskgdVrhqcayN99h9gqNbLp3sfgjP3hehVmGhcfxefZSjRedDG6q2L2h8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772074539; c=relaxed/simple;
-	bh=C4NznxqjcoVcyOiI3PHdefTOI5IbbnZt/ta8EjHjsBc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QsZBrju4oM1OjwPbH3OwVJiPaycywOiydaFCgcVDQXoHfxjmz2TeQQ4HGxxsqLL7T/W0Fy2/8oQ18mgSp3cQ5JmfpfyFwNIFAz0nmjP/soHbQH79cm9S8pg+9niqA6pS3EucMzBuP+3g3jKvsRvnB5VxMntO9unAVsQ23JslR6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lT4z/kxJ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YhcyepidlpHsmGgGlbRMBKJer3APQ37SWyjKz6GiydU=; b=lT4z/kxJOpRr2y8PL3itayYgJ3
-	i7ZwoiMb1z2uyIxU40ivVgqHH9trh+os4979z2Zqho9027f2XMpjQwXu4WrFWsVhiC7TPeJPMFiWA
-	gY5Nx0DUj/IlPs4LB5T3TQX9JwzlCZKXG/qNd44L3nFJxmZwkUt/c5d4yVFzQMVrqTMgiAckXiQQv
-	VXSOgWR4lM/M5fbsc7o8/LNO/njgdgbDcnsTUTjWfa2X7I1OeE/KtKZWKBd50xC/8qWXOdJrRtHxa
-	bjHSfDSEJawaj9ug3LKsibAnOPgnzmVmc7GOT2cW8fy/u0uTmIAJ5HciOQcjzplM+oJiP/C0Gl3mu
-	rjc+CEBg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vvRX9-000000024RA-1i48;
-	Thu, 26 Feb 2026 02:55:23 +0000
-Date: Thu, 26 Feb 2026 02:55:23 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Tal Zussman <tz2294@columbia.edu>,
-	"Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Sungjong Seo <sj1557.seo@samsung.com>,
-	Yuezhang Mo <yuezhang.mo@sony.com>,
-	Dave Kleikamp <shaggy@kernel.org>,
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-	Viacheslav Dubeyko <slava@dubeyko.com>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	Bob Copeland <me@bobcopeland.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-	jfs-discussion@lists.sourceforge.net, linux-nilfs@vger.kernel.org,
-	ntfs3@lists.linux.dev, linux-karma-devel@lists.sourceforge.net,
-	linux-mm@kvack.org,
-	"Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Subject: Re: [PATCH RFC v2 1/2] filemap: defer dropbehind invalidation from
- IRQ context
-Message-ID: <aZ-2G_6lDZePLSyx@casper.infradead.org>
-References: <20260225-blk-dontcache-v2-0-70e7ac4f7108@columbia.edu>
- <20260225-blk-dontcache-v2-1-70e7ac4f7108@columbia.edu>
- <c8078a80-f801-4f8a-b3cd-e2ccbfca1def@kernel.dk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB09385512
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 02:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.222.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772074802; cv=pass; b=AMA317PEJHbhsFXOCYDngb4jfOoNmdP5k1rTRmvU7+ufpm2OCMv7Vo2AY94RswB1FcDm4Chz2IxrruFX7SkF76CqdO2W7yyQ/vmDTV/ELUblOIboswFZVDWxMbd4fJt1x150yLfSpFdqc4CkZ6YmxgZNi/BVn5HWI6jxp7hd5dI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772074802; c=relaxed/simple;
+	bh=/aZyyGLLkO7o9RiI3yBwvqEMpXbBUdrnEXILdc8vy+c=;
+	h=From:MIME-Version:Date:Message-ID:Subject:To:Content-Type; b=jN4BcCNwWe8OCnwsgJsCXRZ55CxPbNveJaY+MtLWmxx9Ku8dL8yTpJHtygVIR5g6+SbkpAdX53f0Ih/E037qgDpS5MgYS5avAKsreit5u7WZydddmM1Jo/INWL2blS+bZ+t+TyGo541JERycbWTe8uYal/cbmUJZq3D7ftvHjzk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2EJNt8fv; arc=pass smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-94ac8cbf3feso295503241.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Feb 2026 18:59:58 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772074798; cv=none;
+        d=google.com; s=arc-20240605;
+        b=UJnBtQfrwZ36lslz5/aWlgBdAPuTi3ebnnnhB9Vkt7hvRC0YtiVvcC7PSditV0UvQe
+         UG6t9JaFrUZtxe/Va0EaVHFd/+pfOl7iImtb9dMIyEwPn5ptKqaK1b1kbADPk7xs5cy+
+         bo44MjFObGpYEOo0MEZVuGoXVJAM1zlP+UXvnIEVAWhUZ7rBKcwb03L1DgDSNJYImzy6
+         m7HFf97eSabuzW/mFvLJyEtKvP5rYT2shNsytkCIfqVWdhfUOGzRN/5SnRIOR0k/QLBB
+         Koj+FNc1pxA9d9pXxTZkrommtO9qOUtz1N31W48DrmTO1Y5Q/t0x0s0RYrifFAuSl2/v
+         6MOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=to:subject:message-id:date:mime-version:from:dkim-signature;
+        bh=8F8DPv1+8kXX8FrzoNjsuCyL9jUTbkIPz4J+MH2Hlts=;
+        fh=Vs/oAIaEoq/jewLmkz3VoscL8LXnl5Zb3e737rSY9vw=;
+        b=jH3N8VzusdLyDh0fkjecySiq5uD/2rcjhGBI8sayycgQHjG7uhD+jV46+dJOq99GQx
+         dyFx/9fa0cWRBn87UPPYTz/uQ0uCptf+vB+gI5lXXE8/u7kRBAh9kYDxU0cOhvkgDYhv
+         ygBEIiKg1DHaBLYr3bbSdHmJZ94jhwy2al/W8ac+t1TNCbltInawyR4dFOmslT1SxhWv
+         q+relsr0U6cGN6mmx8WwRas8tObmg0ym3rD5MFeXhPhBiv/Ju6ldtvxziMh00u8HyFkI
+         VKkYPGJPgbK1HdP6ApFBDaZwTSI1ZEO91ibyz8QUhYHpLu1aoZzgq/fl5viUiV+3tjRG
+         7MLA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1772074798; x=1772679598; darn=vger.kernel.org;
+        h=to:subject:message-id:date:mime-version:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8F8DPv1+8kXX8FrzoNjsuCyL9jUTbkIPz4J+MH2Hlts=;
+        b=2EJNt8fvakyf0B/QwyyYAdILk9OZtTQTnRWc0U+8b6Q9FSP04XwF2uJOiMOSiOtxnk
+         qM5ROx5mM/u8V/US/+LnnLLbkrH2JRyORCs6UPPBC27/SfNMMHsuCLee6QSprPQibgjK
+         NUcVDzmx+FjUpPx0n6WWOR5e3I1kOZEfQNh8tcToV/nQUj1W5W8hfUn3FJEExgLlAbF3
+         CkPP2wzmADaDMNLrPKWIRTCbcV6X3ajelzgTE1ws3NfQk4gSFC1Rxmyi4yG7A5VRJdvF
+         KxEGv0xLOB/7hSpArEQa/lVY8i/1d2EPM4rwNrMoGoRNQgXruaD1GNQtkL8sIv/1oYPk
+         dHcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772074798; x=1772679598;
+        h=to:subject:message-id:date:mime-version:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8F8DPv1+8kXX8FrzoNjsuCyL9jUTbkIPz4J+MH2Hlts=;
+        b=SRKOPAdCQ4/1PlzehhM0OCgkbXdthstAycxuYkhP9Th7JzhTMVEP5mUDIGW6oft0dc
+         giEFE3cc2MrlLAkNTfuNICUKC7alqOLDWb9GogPYLPKaIs+nz+a1CqfVAwFB1mC2W1nk
+         AOIAcgyKD25qoSAcRQFhZ60aS+k3A2de7TyNWM7a9ctm1rOZgUIS8CVnH4btyNDGfRhF
+         YVyRECIeQSHZiUgAKXGzqYKYEMiQWJE9VxUauFSrr010lBljx8vJvSOOc7PU5hkOmhzy
+         VlvVxB7kTINGWQ5cODPId0X6XPgE10Otr/mRSYA3aJRmIbaX1UUXYgNdt0XScXdKVkOh
+         GQBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjblTSsU0SRxBagUccTUzk525KGef+0WYqnFMLf8irTUEKhtsSJv8pgxUGs5uRlcuffAoduSkN3jkJ90Qh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5lVaQekbVFIp6WQHQFNorJN79vbzn2OK4BnTgTONo53GIY/oz
+	FgFH4G8VexgoI7sg/r/03FvG41RsZLQDoGK9j7daQnrS/8mfuY+/QcKnfqJ6JQ4POYn+utFjRuU
+	ubWoehOBZNYLQMIt/MTOCR7A9KRcja+Nb5GPVTPhtseLaUzwJDK9Bk+3XuCk=
+X-Gm-Gg: ATEYQzz16oH7+ePeG5VAQCcdyjreGWK7dwTr+JuLynLiWotkbolqgHBMHyqxQgMBWSu
+	anoxvaXjF+T5443Htast/Sbvuc7rt9pmCnxxtbP8kxPcRrX2HQUFctyHGiRR39fxiaTVRySI4tZ
+	1g3lpmGkSmLWcIHOIESvSu3bCD2b+jvuYfgDqNR+0Akdwd+0N5FCxQCbpovfcueaP5PfDEC5TTW
+	dDxnwLqskVFrtR6uQVzVw2BVgP71ShJuUVgLfuQPylKpXh9um/JFOFoEpe4QMUxKJhXXSsjRJBL
+	aoYWDVzhDU2exl6R2y0Bjr0wn+P2sPqEew6JxAfTvWoFktEPsJhG98p4HBIKBHMoS3NdYA==
+X-Received: by 2002:a05:6102:418d:b0:5f1:bcb3:5577 with SMTP id
+ ada2fe7eead31-5ff20c30c12mr353313137.32.1772074797488; Wed, 25 Feb 2026
+ 18:59:57 -0800 (PST)
+Received: from 176938342045 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 25 Feb 2026 18:59:56 -0800
+Received: from 176938342045 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 25 Feb 2026 18:59:56 -0800
+From: Ackerley Tng <ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c8078a80-f801-4f8a-b3cd-e2ccbfca1def@kernel.dk>
+Date: Wed, 25 Feb 2026 18:59:56 -0800
+X-Gm-Features: AaiRm50M8XWgDMJ9cOTMEwCcIKXEzhH3SzAKiIj_3KCzzjf8AvWJgkzJ68SfaSI
+Message-ID: <CAEvNRgFvHNH6GwuY5yLYD+0OK19mC3pRJKDBR=HsKgym=rghWA@mail.gmail.com>
+Subject: [LSF/MM/BPF TOPIC] Opening HugeTLB up for more generic use
+To: lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=casper.20170209];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
+	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78432-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[columbia.edu,gmail.com,zeniv.linux.org.uk,kernel.org,suse.cz,samsung.com,sony.com,dubeyko.com,paragon-software.com,bobcopeland.com,linux-foundation.org,vger.kernel.org,lists.sourceforge.net,lists.linux.dev,kvack.org];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-0.985];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[willy@infradead.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[infradead.org:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78433-lists,linux-fsdevel=lfdr.de];
+	DKIM_TRACE(0.00)[google.com:+];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,infradead.org:dkim,casper.infradead.org:mid]
-X-Rspamd-Queue-Id: 8CEE41A03B8
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[ackerleytng@google.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCVD_COUNT_FIVE(0.00)[6];
+	NEURAL_HAM(-0.00)[-1.000];
+	TO_DN_NONE(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: ECA4E1A0455
 X-Rspamd-Action: no action
 
-On Wed, Feb 25, 2026 at 03:52:41PM -0700, Jens Axboe wrote:
-> How well does this scale? I did a patch basically the same as this, but
-> not using a folio batch though. But the main sticking point was
-> dropbehind_lock contention, to the point where I left it alone and
-> thought "ok maybe we just do this when we're done with the awful
-> buffer_head stuff". What happens if you have N threads doing IO at the
-> same time to N block devices? I suspect it'll look absolutely terrible,
-> as each thread will be banging on that dropbehind_lock.
-> 
-> One solution could potentially be to use per-cpu lists for this. If you
-> have N threads working on separate block devices, they will tend to be
-> sticky to their CPU anyway.
+Hi all,
 
-Back in 2021, I had Vishal look at switching the page cache from using
-hardirq-disabling locks to softirq-disabling locks [1].  Some of the
-feedback (which doesn't seem to be entirely findable on the lists ...)
-was that we'd be better off punting writeback completion from interrupt
-context to task context and going from spin_lock_irq() to spin_lock()
-rather than going to spin_lock_bh().
+I would like to propose to open HugeTLB up for more generic use.
 
-I recently saw something (possibly XFS?) promoting this idea again.
-And now there's this.  Perhaps the time has come to process all
-write-completions in task context, rather than everyone coming up with
-their own workqueues to solve their little piece of the problem?
+Motivation
+==========
 
-[1] https://lore.kernel.org/linux-block/20210730213630.44891-1-vishal.moola@gmail.com/
+This proposal was motivated by guest_memfd needing to provide huge
+pages. guest_memfd wraps existing allocators to provide memory for
+backing KVM virtual machines, and wants to use HugeTLB as a source of
+huge pages.
+
+Proposal details
+================
+
+The proposal is to (re)think the in-memory filesystems as memory
+providers around memory sources:
+
+| Memory Provider                | Memory Source            |
+|--------------------------------|--------------------------|
+| Anonymous (mmap(MAP_ANONYMOUS) | Buddy allocator          |
+| Tmpfs/shmem                    | Buddy allocator          |
+| HugeTLBfs                      | HugeTLB                  |
+| guest_memfd                    | Buddy allocator, HugeTLB |
+
+While working on HugeTLB and exploring HugeTLBfs vs HugeTLB, my
+impression is that these two are overly coupled together and could
+benefit from better conceptual separation, as well as code separation
+between mm/hugetlb.c and fs/hugetlbfs/inode.c.
+
+Status
+======
+
+I've been working on guest_memfd HugeTLB support for a while now, and
+Google is in the process of qualifying guest_memfd HugeTLB
+support. Here [1] is an earlier version of what's being qualified.
+
+Here [2] is an RFC patch series, split out from [1] and updated, that
+refactors the HugeTLB allocation routine for more generic use. I hope
+this will serve as a starting point for this discussion.
+
+Goals of the discussion
+=======================
+
++ Find out what the community thinks of opening up HugeTLB as a more
+  generic source of huge pages, not coupled to HugeTLBfs
+    + Get feedback on guest_memfd using HugeTLB
++ Find out what the plan is for HugeTLB(fs) testing
+    + Is the plan to continue maintaining tests in libhugetlbfs?
+    + Should the tests be migrated as kernel selftests?
++ Gather key components that would need refactoring
+
+Requested attendees
+===================
+
++ David Hildenbrand
++ Muchun Song
++ Oscar Salvador
++ Peter Xu
+
+References
+==========
+
+[1] https://lore.kernel.org/all/cover.1726009989.git.ackerleytng@google.com/T/
+[2] https://lore.kernel.org/all/cover.1770854662.git.ackerleytng@google.com/T/
+[3] https://github.com/libhugetlbfs/libhugetlbfs/
+
+
+Thanks,
+
+Ackerley
 
