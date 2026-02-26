@@ -1,233 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-78635-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78636-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id AAwIKJqsoGlulgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78635-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 21:27:06 +0100
+	id 0ADYM9KxoGnUlgQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78636-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 21:49:22 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41A3C1AF1A7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 21:27:06 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D7FA1AF4BD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 21:49:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id ABCB830A2BA3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 20:22:49 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 80A283044153
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 20:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871D1466B61;
-	Thu, 26 Feb 2026 20:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A449A283FCF;
+	Thu, 26 Feb 2026 20:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UQrL6ITS"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="I6YG+Bh6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012015.outbound.protection.outlook.com [40.93.195.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA553A4F48
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 20:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772137368; cv=none; b=is0xgsUfKHm+0NOOtauzHCxdO2xBtD36tszhzJ7RGW1yXljBlByVl0G041kN3QyY7K9zMVfXNUqYLinSkzMyTX/QWGt8lCZwe8run0tDTGtjerCszpXp395ikg9oMm2jVXnfBU9NU1g8pr9ZRm9uPxURCrwEK50yIMfVKNUuyH8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772137368; c=relaxed/simple;
-	bh=goH8RCwy3vIyoMa9jRYpSrn5Zkp3LvqVeAVfYxxYTvs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fqV8fJxF4P3Egu4tQ0hr1FTTIAyncAkpYLJBiPONUkUW9MGIaCilVuUK6QPQ+hsgS+9SAryBp0YaDT3AOnY7H/GZZT74hA9EgFIhtYSz/sKrUVxTV7lN6STl3cj7VUmWYBwHt9sM6dOWonyGyFAvgEEh1tfIvByy21UPM1INRpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UQrL6ITS; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1772137365;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yWZNpYzf4Dqw3i94iV7fiiH7gq94n6HGTsUtIH3AsWA=;
-	b=UQrL6ITSY0feq6fQVCgBdMT6y2tRwg88mtZCdMVQYJiu+sQreuW9bZmFgdFPyN7MQBgWYP
-	XtV1JUYsZtP+Iw4pPWJ06lSdXNhIu8k7Lp3PXYOz6QbfT59mKTWKrSKEhCdifaFweWzRdm
-	/Te0yaQF+uLEkN8reeX1ENV6qtLJqeU=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-397-XAF75V7rOmW6OA1s9pG8XQ-1; Thu,
- 26 Feb 2026 15:22:41 -0500
-X-MC-Unique: XAF75V7rOmW6OA1s9pG8XQ-1
-X-Mimecast-MFC-AGG-ID: XAF75V7rOmW6OA1s9pG8XQ_1772137360
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 339CB1956064;
-	Thu, 26 Feb 2026 20:22:39 +0000 (UTC)
-Received: from bfoster (unknown [10.22.80.229])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3E41019560B5;
-	Thu, 26 Feb 2026 20:22:36 +0000 (UTC)
-Date: Thu, 26 Feb 2026 15:22:32 -0500
-From: Brian Foster <bfoster@redhat.com>
-To: Morduan Zang <zhangdandan@uniontech.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, willy@infradead.org
-Subject: Re: [PATCH] mm: fix pagecache_isize_extended() early-return bypass
- for large folio mappings
-Message-ID: <aaCriOt-CDs4sciP@bfoster>
-References: <20240919160741.208162-3-bfoster@redhat.com>
- <3F3A46783F8E9D52+20260226133149.79586-1-zhangdandan@uniontech.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0383327B327
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 20:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772138957; cv=fail; b=fwMUtnp4LWIpaAco3MX8LCfTUwauGlVVXLHEKExAFMNPVXQ8i89uSrsXalKGCPN0Quk8wPNogzv/yD3jGlUKdJGx25CR9y4wtq66rHDOSXDRo8D47WD4F4fZL7j6cJK2MfmwlUcPS/R4heGX6wj46Ej4/EtdFMIW9B/k7o9GkOg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772138957; c=relaxed/simple;
+	bh=YnGLhm9ZEtahFAjyQNL1OMicVSt/RhyK0P8gnTVLiUk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uPPJsyP815uW3yxFMHooxgGwcRsfUqp7FePRd2K65zL4ZOZoHqthxvactCixvQJoMhQ4V6MbVCzbMFRcme7IvGeySm+xuZWNxx8lw1sy/jRBwA7yiKV5cSJqaZOC5oFXdr9UbPj8Dx16McFdwBx0XcaSVXFZIXKywq3CzLNSo1w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=I6YG+Bh6; arc=fail smtp.client-ip=40.93.195.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XUREu/GJWw2QmS8qIFqkzG6rCsPi+/Z2I095Zcx2lmYSwYJdsm7bnVOGC6ZAveHBIrUWckFZIKe0s0BMCt0SdYr4eR5nt+yzN82LF9Knb5yKMDloP8C99S9af1cKIbDe6IIZC5zvHuBPClRJt8SgCNNfj+mIXZbup4wu4hsxVWB2fTeTlgxJjlQBt9KCB3YHXXcCCrF6g2CqKsGZjVDQ60RSWanYsrY+r6m78dxgaphFBNdyD3UBcSqJyEfGG0neZKvCQrPeVAjCErIBGanKeMOboZF4cCYoKnD4m2/i4BJJCw7J/RZnusSHwoCEKktf+sosfPnNhe/BPZjvt3ZS+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8zma5mBBrWc/5mba9cBE0XFLOY+IQdJfbuXFBGzi6Mc=;
+ b=li9EgUWcCvvRwIKiWjI6tcORXfuA8uaZr1GdYrsYzr+DBjho72U/DCvfLjkfvshfkUscmjMP1W1vZZIhIIdBkKma9AplnyqtuARWKCf3SWSfOb7o6Cm9kpEFKotUdEyEwJ63WZnwI9Fal5l6GtfzEEI347Y7e2dSRAKmdUiEZ/H13R2cwq/c1N/QcBmS2FAQ8TkU/xeGtek4GjSYe9F5A7K/EtTe6Q0cdVdWIhr5DaPoHQ9YZivNENWyPhz+0jTHA7/8MqlymcZvM5FeA0AW0FNPyKQFT7Bjbbc6DSIllaK7/xpYYqvK7OS1qcAfZ3036ZBaH78lvqZHLb1+AIVhPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8zma5mBBrWc/5mba9cBE0XFLOY+IQdJfbuXFBGzi6Mc=;
+ b=I6YG+Bh6f5HYv+KrMBynlnux2DdiPflKnJrhj3UMnSssbmZl1Z8USTAqFZnBX8B05n6fM7U1ms98xKJGUx1Nsv/9ynErTYXO4IYUHEWqdz5hO2bpJb2eVSoQA9HFE488Ud/cmYG2gqKVCEX4+ThaCHxxhA6xesb+9D/p1PXnPGOG9/xaHfun/NeQzFSp7OqCANdUQNvc0XvEYFJ51AdZnO46U9pH5R1w+F332ovHi70h7dN+0BYoaDGmV+En3xfKUNaMuKir5C7TXxhhGYVsrGv4joVbbPz+FnJECSGSUb8BcUFcwYXsGPfOn7AvDMx06iRBENhS8zQqNlk68fsyDQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ DS7PR12MB8370.namprd12.prod.outlook.com (2603:10b6:8:eb::22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9654.14; Thu, 26 Feb 2026 20:49:10 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::f01d:73d2:2dda:c7b2]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::f01d:73d2:2dda:c7b2%4]) with mapi id 15.20.9654.014; Thu, 26 Feb 2026
+ 20:49:10 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Bas van Dijk <bas@dfinity.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>, regressions@lists.linux.dev,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ Eero Kelly <eero.kelly@dfinity.org>,
+ Andrew Battat <andrew.battat@dfinity.org>,
+ Adam Bratschi-Kaye <adam.bratschikaye@dfinity.org>
+Subject: Re: [REGRESSION] madvise(MADV_REMOVE) corrupts pages in THP-backed
+ MAP_SHARED memfd (bisected to 7460b470a131)
+Date: Thu, 26 Feb 2026 15:49:05 -0500
+X-Mailer: MailMate (2.0r6290)
+Message-ID: <CB5EF1C4-6285-4EEC-ABD0-A8870E7241E8@nvidia.com>
+In-Reply-To: <CAKNNEtw5_kZomhkugedKMPOG-sxs5Q5OLumWJdiWXv+C9Yct0w@mail.gmail.com>
+References: <CAKNNEtw5_kZomhkugedKMPOG-sxs5Q5OLumWJdiWXv+C9Yct0w@mail.gmail.com>
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR13CA0112.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c5::27) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3F3A46783F8E9D52+20260226133149.79586-1-zhangdandan@uniontech.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DS7PR12MB8370:EE_
+X-MS-Office365-Filtering-Correlation-Id: af17ae90-10d2-46fa-199b-08de75787dce
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	yTbHNpgBivIs9gpPBaVwbH+D5Nbg7/N9ONYtXfmgV6Cm8V4dwDxMIWz3936sZa8CQlQjEeWOYNXy++kh5zIHvuIRxzaX3cPfGoFJWKNk30zLR24hxMFJtmotaSh2vPU5ug3ulrJiEUSIco6G0ca4ydarD7L6Bdn5A8fj1Eyafhgapnqqe4o5c+HXZwYQwGvXbooMMc6DHKLKTFRVb2nIE6y/i0R6P2tBK8BgHud7U0PqPmrQwzZpRx5jpi+bg6D5dkDXBjaULhtE3lHWqXH/xBe5sCPvjsJW8Kr9jrSvc+ckXgyBNyiPGbwqEoniDPNHBRZSlYUl5J/EaoZcsK116p/AhkkFbrqkArdoLq56IkDhPPtuMVqMHmiuZ+4+cZtzI/0xhXKHGaqa4WMSnjE76qr9pFUnWblB8W3Qn4lO5Ua9BKdQbezMDQnNpFy9Rdlz5EBon1SyBPJHIsd7fQ2WkTxBbcnVChn+6/AiTpyC2KihFA0tCGvXcKEJjYp3fLzYx7PaeKRJs9barigH8BjXajB2W4bQ3k+zyq5bLpOi0/PwUskg5ZL/mdYgdBWaAG2cS4EbuzdGSEJ29xUwEI+ZOKlY++o5QOIglaOKHoIgKnU5uYDZjHRHxEJ97BJsnAl4nv4NGWmR30AawSySwyw9uP3wPiSmnQqMSwmzrVD28Nfkdjf/FZwLG8FJDfmj5re7IoZozIL2afL5641DDg+tD8CrklgadfCvzpfO+UzH3no=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?G28TCbOu7oBHa1Q94kqlZcTuCMbWjYaoXRh4I88MhsHRVQoZ7RlHF2fDvYiO?=
+ =?us-ascii?Q?9qNEdc9WeoW1ePAJM/OCkEAYkKT5C5PneL0Dbq26f8h0Cps3+Tt3c2CQmVhw?=
+ =?us-ascii?Q?hBfZ3rxpWn7wrIrq7ffHAhHgZng4XMfpyE/Jbmzl0zXBOwI/HmMFaZkzsoe2?=
+ =?us-ascii?Q?+0QNpouYHHsuSf5DyCQmcceHP4ARQpd1KtLb/0JaRkkOw8xGQF9FpRQy7ARx?=
+ =?us-ascii?Q?/u/xbGogg9qwVzZSmINrcnd4tUhzUptK1cn3CBkVRtGg/S7v3O+dwXhoLcGY?=
+ =?us-ascii?Q?U2n3WanBeD1VLh7aajw073gbeXPSzBa6gfKkBXmmHNwoTSu/hszkCanSVsvC?=
+ =?us-ascii?Q?zdDfaIVSdd7iYmGk1tgONzF6Cf8u57HK0qIZrzAxnbShCEvZAECSoxd7g6/g?=
+ =?us-ascii?Q?MiM3T1XooEvgoQjZ3piCrNE2FLIDCE0bX/T/XCikF21yNYLxrIuGXEcYwOxt?=
+ =?us-ascii?Q?yj2e/eu1abirDsKUv8gHAShqfl0lO45MVmQ08AaNhC6VA/B0oxN2aZxkC+Yh?=
+ =?us-ascii?Q?n0K74VsZf/rg2aE8p2r1jgr7onGFUB8vxkRPsLDFy0Ri+fWQuRsJRaVDT5Ka?=
+ =?us-ascii?Q?nJfEY1N6jIUsn6TDFTJSo+d/8y4VkTEEv+QFxBc1FlCDXsXsNARAKCmk+Tin?=
+ =?us-ascii?Q?e+O8CFQi/An28nqW5CXPIuipAz7XzCjLxE8OmhlrAgTXG6K7+/pBFr4PXzcN?=
+ =?us-ascii?Q?0DGSwjcG68sN1beT5+KKYsauSV+W4UhArNm3cPxeJNYGolxlhotk3ZqAmsem?=
+ =?us-ascii?Q?d3NdH+dElrt9POibU0VLCF5PSOn2HV3xk3e6Dq3DxB1iAns+1y8fvAgWEU6u?=
+ =?us-ascii?Q?lRSNlxbMTO3l1opV9lGf/swOEm+Np0uhjVe+zoIEqYYorBFYpbGhhDmBDaWp?=
+ =?us-ascii?Q?EiisKpJrp0gAdNY7ctIngpZ10Inqzvo1OKduyn+XcwnCtuaGy7bhqAHH7rZg?=
+ =?us-ascii?Q?erRFpqPX9YJVmkKJdRUnHhqUsCaNC/cwrU2ApGk/D1JZ6p8PjuaO+m6hqzOo?=
+ =?us-ascii?Q?RBsnbRRVfpyVB6bBxSSfeDGAXBXQMNvlPx4v7FBzai10f8weWzX6RV/MVPFy?=
+ =?us-ascii?Q?731Gl+6PxYgK74+Ck8HqMdvxkq8u+t2jG/1MurCD9QLYilngVHpCFJ2NyYx4?=
+ =?us-ascii?Q?T72J1hoMapI3f9BBEnp6Jo5BhmI7oAlcsoMUbDGF66UsoT8mhi1LJUfRLVbf?=
+ =?us-ascii?Q?zR5xzTkRCMT/TMu9pHAjZo4YxuMADzgpsRiBcmBL5LPkFaXNr927FZ1MBwLY?=
+ =?us-ascii?Q?MLa2I7KyaeTRTXxXfJVPwrjGxFXS6xZIMKF01iAr0Vv7EJ+U8gcjVNoJpsCT?=
+ =?us-ascii?Q?d0cT3gyhj2oNwoBE6W/NHPJIprWPuyRY2aHRLqMSHS3I2vjrXu1VtpzBJNFk?=
+ =?us-ascii?Q?qzG4eZPRuhYKhjq0cLpyWoj3N4fybm2GbHnBEz81eZCc5CRU3c4hw+lFKFzr?=
+ =?us-ascii?Q?M58K89mox/YOcuCS1TpCv/QF/X0u9nPqU/ZT3Pe68MMMyxhxPGkDMODGn7AS?=
+ =?us-ascii?Q?ICJroD2X/vA0GD9nWMUQ4/jvmrvcqKvOoLZ2xI5rGrir12yffeumhw8D96pn?=
+ =?us-ascii?Q?3ombnLAnJQ47ZxNfexJZJd8j4k66yHOJqlkkBN59zXwIv+sX/2Z+mwHig/4V?=
+ =?us-ascii?Q?ho1JvkAy5GOi+ITwW1JDDORvX/YePQqIlQV6DkhkWoiO6g4Xsi18Bx0JKLOt?=
+ =?us-ascii?Q?ac9aDvHwn5qkTvCCpC0PaiHSm6yK6oOGoZali+crdCw6E8BH?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: af17ae90-10d2-46fa-199b-08de75787dce
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2026 20:49:10.2243
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9t7zI+e8zVEvYlnBEeXhIG5N1AGGeQQshquUNorXrotyBZZOhQMYqgoIZgGvG2sK
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8370
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [2.34 / 15.00];
-	MID_END_EQ_FROM_USER_PART(4.00)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+X-Spamd-Result: default: False [0.34 / 15.00];
+	ARC_REJECT(1.00)[cv is fail on i=2];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[nvidia.com,reject];
+	R_DKIM_ALLOW(-0.20)[Nvidia.com:s=selector2];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78635-lists,linux-fsdevel=lfdr.de];
+	FROM_NEQ_ENVFROM(0.00)[ziy@nvidia.com,linux-fsdevel@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-78636-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_TRACE(0.00)[redhat.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	MISSING_XM_UA(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[bfoster@redhat.com,linux-fsdevel@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[Nvidia.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	MID_RHS_MATCH_FROM(0.00)[];
 	NEURAL_HAM(-0.00)[-0.999];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 41A3C1AF1A7
+	RCVD_COUNT_FIVE(0.00)[5];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[Nvidia.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,nvidia.com:mid,nvidia.com:email]
+X-Rspamd-Queue-Id: 2D7FA1AF4BD
 X-Rspamd-Action: no action
 
-On Thu, Feb 26, 2026 at 09:31:49PM +0800, Morduan Zang wrote:
-> pagecache_isize_extended() has two early-return guards that were designed
-> for the traditional sub-page block-size case:
-> 
->   Guard 1:  if (from >= to || bsize >= PAGE_SIZE)
->                 return;
-> 
->   Guard 2:  rounded_from = round_up(from, bsize);
->             if (to <= rounded_from || !(rounded_from & (PAGE_SIZE - 1)))
->                 return;
-> 
-> Guard 1 was originally "bsize == PAGE_SIZE" and was widened to
-> "bsize >= PAGE_SIZE" by commit 2ebe90dab980 ("mm: convert
-> pagecache_isize_extended to use a folio").  The rationale is correct
-> for the traditional buffer_head path: when the block size equals the page
-> size, every folio covers exactly one block, so writeback's EOF handling
-> (e.g. iomap_writepage_handle_eof()) zeros the post-EOF tail of the folio
-> before writing it out, and no action is needed here.
-> 
-> Guard 2 covers the case where @from rounded up to the next block boundary
-> is already PAGE_SIZE-aligned, meaning no hole block straddles a page
-> boundary.
-> 
-> Both guards are correct for the traditional case.  However, commit
-> 52aecaee1c26 ("mm: zero range of eof folio exposed by inode size extension")
-> added post-EOF zeroing inside pagecache_isize_extended() to
-> handle dirty folios that will not go through writeback before the new
-> i_size becomes visible.  That zeroing code is placed after both guards,
-> so it is unreachable whenever either guard fires.
-> 
-> The same stale-data window is also covered by xfstests generic/363
-> which uses fsx with "-e 1" (EOF pollution mode) and exercises a broad
-> range of size-changing operations.
-> 
+On 26 Feb 2026, at 15:34, Bas van Dijk wrote:
 
-Hi Morduan,
+> #regzbot introduced: 7460b470a131f985a70302a322617121efdd7caa
+>
+> Hey folks,
+>
+> We discovered madvise(MADV_REMOVE) on a 4KiB range within a
+> huge-page-backed MAP_SHARED memfd region corrupts nearby pages.
+>
+> Using the reproducible test in
+> https://github.com/dfinity/thp-madv-remove-test this was bisected to the
+> first bad commit:
+>
+> commit 7460b470a131f985a70302a322617121efdd7caa
+> Author: Zi Yan <ziy@nvidia.com>
+> Date:   Fri Mar 7 12:40:00 2025 -0500
+>
+>     mm/truncate: use folio_split() in truncate operation
+>
+> v7.0-rc1 still has the regression.
+>
+> The repo mentioned above explains how to reproduce the regression and
+> contains the necessary logs of failed runs on 7460b470a131 and v7.0-rc1, as
+> well as a successful run on its parent 4b94c18d1519.
 
-So looking back at the original cover letter for this, this bit was for
-the case where we had a dirty folio in pagecache that might be partially
-hole backed due to eof, therefore fs zeroing might not occur.  Hence we
-do the page zeroing here before exposing this range to the file (i.e.
-that writeback would have done if the folio were clean).
+Thanks for the report. I will look into it.
 
-I thought at the time this plus the ext4 patch covered the bases for
-generic/363 on ext4. You refer to this test above but don't mention if
-it fails. Do you reproduce a failure with that test, or is this
-something discovered by inspection?
-
-> Fixes: 52aecaee1c26 ("mm: zero range of eof folio exposed by inode size extension")
-> Fixes: 2ebe90dab980 ("mm: convert pagecache_isize_extended to use a folio")
-> Signed-off-by: Morduan Zang <zhangdandan@uniontech.com>
-> ---
->  mm/truncate.c | 21 ++++++++++++++++++++-
->  1 file changed, 20 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/truncate.c b/mm/truncate.c
-> index 12467c1bd711..d3e473a206b3 100644
-> --- a/mm/truncate.c
-> +++ b/mm/truncate.c
-> @@ -847,13 +847,32 @@ void pagecache_isize_extended(struct inode *inode, loff_t from, loff_t to)
->  
->  	WARN_ON(to > inode->i_size);
->  
-> -	if (from >= to || bsize >= PAGE_SIZE)
-> +	if (from >= to)
->  		return;
-> +
-> +	/*
-> +	 * For filesystems with bsize >= PAGE_SIZE, the traditional buffer_head
-> +	 * path handles post-EOF zeroing correctly at writeback time. However,
-> +	 * with large folios enabled, a single folio can span multiple PAGE_SIZE
-> +	 * blocks, so mmap writes beyond EOF within the same folio are not zeroed
-> +	 * at writeback time before i_size is extended. We must handle this here.
-> +	 */
-> +	if (bsize >= PAGE_SIZE) {
-> +		/*
-> +		 * Only needed if the mapping supports large folios, since otherwise
-> +		 * each folio is exactly one page and writeback handles EOF zeroing.
-> +		 */
-> +		if (!mapping_large_folio_support(inode->i_mapping))
-> +			return;
-
-Is there currently a case for bsize >= PAGE_SIZE &&
-!mapping_large_folio_support()? I thought there was a WIP for
-multi-block folios, but I wasn't sure if that actually worked anywhere.
-
-> +		goto find_folio;
-> +	}
-> +
->  	/* Page straddling @from will not have any hole block created? */
->  	rounded_from = round_up(from, bsize);
->  	if (to <= rounded_from || !(rounded_from & (PAGE_SIZE - 1)))
->  		return;
->  
-
-If I understood this code correctly (and I very well may not), the
-purpose of this is to basically filter out cases where a dirty eof folio
-doesn't require a refault after the size update for the fs to fully
-populate it with blocks. If that is the case, this makes me wonder if
-perhaps this check should remain, but instead use folio_size() of the
-eof folio (if one exists)..?
-
-My understanding at one point was that we wouldn't have large eof folios
-that included a page aligned offset beyond eof, but I also feel like
-I've run into that once or twice when dealing with some other oddball fs
-related issues, so I'm not really clear on what the expected behavior is
-supposed to be there. Maybe it's a corner case (i.e. related to split
-failure or some such)..? That is probably a question for Willy..
-
-Brian
-
-> +find_folio:
->  	folio = filemap_lock_folio(inode->i_mapping, from / PAGE_SIZE);
->  	/* Folio not cached? Nothing to do */
->  	if (IS_ERR(folio))
-> -- 
-> 2.50.1
-> 
-> 
-
+Best Regards,
+Yan, Zi
 
