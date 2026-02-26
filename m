@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-78495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id qAZRN9xSoGnriAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 15:04:12 +0100
+	id OODrKJFToGlLiQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 15:07:13 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75D461A72E9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 15:04:10 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 419611A7379
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 15:07:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 4E12730ADB6D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 13:51:54 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 1818330C0BCF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 13:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A38583A7852;
-	Thu, 26 Feb 2026 13:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041EB3AA1A1;
+	Thu, 26 Feb 2026 13:51:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pij3uZXH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qZwP3f38"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A9539A817;
-	Thu, 26 Feb 2026 13:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8360C3A7849;
+	Thu, 26 Feb 2026 13:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772113879; cv=none; b=kAC+7+UmdNJms4eiqDjUK0hnoc93kJKu+6ech1nunzzICn6BEHOsj9l9TpwLawhq4SglBWO3LejFDGP2CoZRg0nyOU2TL1qGLvxnuSgrllOzap//56uZZ2WdCHAuWA0968U1yUSpvix+3A3DDqPc53/lV/C484Vff3m2UoUyvJA=
+	t=1772113881; cv=none; b=Gvl6jubPHWCjsACv49wkDp+DlpyxGLprX2PMfP519GZcuCo4qxNX+omppeGSK6fbg3laXMkD7ZnNh4r5wBj6O7KFbSndrD8XdutGIebAlBrmXLRHQtCj8bPFcQNtQoZx0DNpuGRpLCtcJbf/dm9TmtXo92DF656sctc6Y/r2vaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772113879; c=relaxed/simple;
-	bh=X2kNHjyqR+3iLO9bHV2aqSIMFWma9GzWC7MByJ9D3F8=;
+	s=arc-20240116; t=1772113881; c=relaxed/simple;
+	bh=XMWruOYLkxF4dZAR02/HIKIt+BPClxko2uWALy0QcoI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qSaauVYYFJDJtSSYt02Ld+/hwuNlgLQEF0gxjRzMvM4T18x1TuaeCiyG7nbqhokhSTw4fVN5Qja560Y4le/Tm7/1pqnKkpUe7aEOLU2dRKPZCNZ0q+X/i4LphqyS9YV5mEra/hj/G2+DOxiKgoi37P4DKjx2xjmz6y40U8Il/oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pij3uZXH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E4B7C19424;
-	Thu, 26 Feb 2026 13:51:16 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=brjaYyX6JVR+ec84EAfEcQbQv6gm5Us7jeYQ9QIUhV9GnqOzgXiJ7IhiC8TI3fHB9IjJxtbWPrlCDiZcMqmzco2JhN/nZzacc7gcqoMbjJyxz652qm6TYD36QkmWUdX0t8zpwT+XTt3WfisDqi25DnPq/EpCixWsyPXC7tbU7jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qZwP3f38; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ED7BC116C6;
+	Thu, 26 Feb 2026 13:51:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772113878;
-	bh=X2kNHjyqR+3iLO9bHV2aqSIMFWma9GzWC7MByJ9D3F8=;
+	s=k20201202; t=1772113881;
+	bh=XMWruOYLkxF4dZAR02/HIKIt+BPClxko2uWALy0QcoI=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=pij3uZXHo8HrJUVZwu4osCX+vTkhPTNlijrVFJSdFf4fJl8g8+BPWlTGHH7pNPB7X
-	 spO46PqAVV/wVmvmlCkiZ/0OAB69J3wgiL8TDTbWh/CuQ08OYkhshqIneYdD0wj3ls
-	 kR2e1A9Zq0Yw+NYBpiEYMW/JFVSPGyeH8U5LEksQ9AE2gcIZhEFs+4Dk7l2F7w1NRe
-	 y5kbCLv4uxAjJdPnb7+f7zuNyI7rCwVv4/hPKA/DimXTfJb2LJPBj5AdGM5mmHfsnk
-	 RB3eRaRpPi5gLbthqogXhAIQE4DIR0sgDru19xNf+HOOqMX0WAFeN4bP73AutsYuJ5
-	 pz+mW5D0jupIw==
+	b=qZwP3f38uKfGB9fq7IYo9TahVOr4ZYqbWZ3EleDaFyAIcdPKLxjizwC4CDqnxZnhO
+	 /SIBVkvhQyjW8zT/LzxL4sVsmsnduB2JeLOPPUnUbDnyNkn/efD0huJjkmYQPujb+I
+	 3z7vUUCIIsBxNG8m5EfjbCrTwRbI3C7m5Hvo+MeVHM7QClUoZYIrCxrbZ4ya4G+nS0
+	 0EQs7/oUZZi/pI0MuSk/g1EndWylKco4Wf9Q4h41Sp8MHFNDYvK8/EqmFZoOxvweSB
+	 VxQIsH5RGPAGSCCQc2jQlzVB92DsKqxraJfU6WBh+6GEGFmFn/+mVbiQ7kdtfcx+WJ
+	 tYQBLQYkMFF7Q==
 From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 26 Feb 2026 14:51:02 +0100
-Subject: [PATCH v5 4/6] selftests/pidfd: add CLONE_AUTOREAP tests
+Date: Thu, 26 Feb 2026 14:51:03 +0100
+Subject: [PATCH v5 5/6] selftests/pidfd: add CLONE_NNP tests
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260226-work-pidfs-autoreap-v5-4-d148b984a989@kernel.org>
+Message-Id: <20260226-work-pidfs-autoreap-v5-5-d148b984a989@kernel.org>
 References: <20260226-work-pidfs-autoreap-v5-0-d148b984a989@kernel.org>
 In-Reply-To: <20260226-work-pidfs-autoreap-v5-0-d148b984a989@kernel.org>
 To: Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>
@@ -64,24 +64,24 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
  linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-47773
-X-Developer-Signature: v=1; a=openpgp-sha256; l=14401; i=brauner@kernel.org;
- h=from:subject:message-id; bh=X2kNHjyqR+3iLO9bHV2aqSIMFWma9GzWC7MByJ9D3F8=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQu8D/d4r96S0Vb3s3nH968n51dxahzeMKeQ9kmOxR2m
- 289JfvdsaOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAi2bwM/2wiF8e83W9pfK6y
- /lTrhQXf/hV8jP7NZD1759cti3IXlLox/HddkJKryrn52clVWT8mx51+ovE5KJnp44W78t3CR2d
- InWMHAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4306; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=XMWruOYLkxF4dZAR02/HIKIt+BPClxko2uWALy0QcoI=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQu8D9ddnibmWbDlzJ5Z97z+T2KOyUCArnzy1mCXFX+F
+ M5WfVDQUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJFpkxkZzsrlZHq8zkgIyxN8
+ vezFx9AuIfZbgSkCxvP+m9ecbrrxhOF/2fGXK/3D+V0vrDyY3hfc9mO2ia+Sx/Us0Q0a97NfTTn
+ PCQA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78495-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78496-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -93,176 +93,120 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
 	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[pfd.events:url,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 75D461A72E9
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,pfd.events:url]
+X-Rspamd-Queue-Id: 419611A7379
 X-Rspamd-Action: no action
 
-Add tests for the new CLONE_AUTOREAP clone3() flag:
+Add tests for the new CLONE_NNP flag:
 
-- autoreap_without_pidfd: CLONE_AUTOREAP without CLONE_PIDFD works
-  (fire-and-forget)
-- autoreap_rejects_exit_signal: CLONE_AUTOREAP with non-zero
-  exit_signal fails
-- autoreap_rejects_parent: CLONE_AUTOREAP with CLONE_PARENT fails
-- autoreap_rejects_thread: CLONE_AUTOREAP with CLONE_THREAD fails
-- autoreap_basic: child exits, pidfd poll works, PIDFD_GET_INFO returns
-  correct exit code, waitpid() returns -ECHILD
-- autoreap_signaled: child killed by signal, exit info correct via pidfd
-- autoreap_reparent: autoreap grandchild reparented to subreaper still
-  auto-reaps
-- autoreap_multithreaded: autoreap process with sub-threads auto-reaps
-  after last thread exits
-- autoreap_no_inherit: grandchild forked without CLONE_AUTOREAP becomes
-  a regular zombie
+- nnp_sets_no_new_privs: Verify a child created with CLONE_NNP has
+  no_new_privs set while the parent does not.
+
+- nnp_rejects_thread: Verify CLONE_NNP | CLONE_THREAD is rejected
+  with -EINVAL since threads share credentials.
+
+- autoreap_no_new_privs_unset: Verify a plain CLONE_AUTOREAP child
+  does not get no_new_privs.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- tools/testing/selftests/pidfd/.gitignore           |   1 +
- tools/testing/selftests/pidfd/Makefile             |   2 +-
- .../testing/selftests/pidfd/pidfd_autoreap_test.c  | 496 +++++++++++++++++++++
- 3 files changed, 498 insertions(+), 1 deletion(-)
+ .../testing/selftests/pidfd/pidfd_autoreap_test.c  | 126 +++++++++++++++++++++
+ 1 file changed, 126 insertions(+)
 
-diff --git a/tools/testing/selftests/pidfd/.gitignore b/tools/testing/selftests/pidfd/.gitignore
-index 144e7ff65d6a..4cd8ec7fd349 100644
---- a/tools/testing/selftests/pidfd/.gitignore
-+++ b/tools/testing/selftests/pidfd/.gitignore
-@@ -12,3 +12,4 @@ pidfd_info_test
- pidfd_exec_helper
- pidfd_xattr_test
- pidfd_setattr_test
-+pidfd_autoreap_test
-diff --git a/tools/testing/selftests/pidfd/Makefile b/tools/testing/selftests/pidfd/Makefile
-index 764a8f9ecefa..4211f91e9af8 100644
---- a/tools/testing/selftests/pidfd/Makefile
-+++ b/tools/testing/selftests/pidfd/Makefile
-@@ -4,7 +4,7 @@ CFLAGS += -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES) -pthread -Wall
- TEST_GEN_PROGS := pidfd_test pidfd_fdinfo_test pidfd_open_test \
- 	pidfd_poll_test pidfd_wait pidfd_getfd_test pidfd_setns_test \
- 	pidfd_file_handle_test pidfd_bind_mount pidfd_info_test \
--	pidfd_xattr_test pidfd_setattr_test
-+	pidfd_xattr_test pidfd_setattr_test pidfd_autoreap_test
- 
- TEST_GEN_PROGS_EXTENDED := pidfd_exec_helper
- 
 diff --git a/tools/testing/selftests/pidfd/pidfd_autoreap_test.c b/tools/testing/selftests/pidfd/pidfd_autoreap_test.c
-new file mode 100644
-index 000000000000..e230d2fe4a64
---- /dev/null
+index e230d2fe4a64..5fb11230fb07 100644
+--- a/tools/testing/selftests/pidfd/pidfd_autoreap_test.c
 +++ b/tools/testing/selftests/pidfd/pidfd_autoreap_test.c
-@@ -0,0 +1,496 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2026 Christian Brauner <brauner@kernel.org>
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <linux/types.h>
-+#include <poll.h>
-+#include <pthread.h>
-+#include <sched.h>
-+#include <signal.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <syscall.h>
-+#include <sys/ioctl.h>
-+#include <sys/prctl.h>
-+#include <sys/socket.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+
-+#include "pidfd.h"
-+#include "kselftest_harness.h"
-+
-+#ifndef CLONE_AUTOREAP
-+#define CLONE_AUTOREAP 0x400000000ULL
+@@ -26,6 +26,10 @@
+ #define CLONE_AUTOREAP 0x400000000ULL
+ #endif
+ 
++#ifndef CLONE_NNP
++#define CLONE_NNP 0x1000000000ULL
 +#endif
 +
-+static pid_t create_autoreap_child(int *pidfd)
-+{
-+	struct __clone_args args = {
-+		.flags		= CLONE_PIDFD | CLONE_AUTOREAP,
-+		.exit_signal	= 0,
-+		.pidfd		= ptr_to_u64(pidfd),
-+	};
-+
-+	return sys_clone3(&args, sizeof(args));
-+}
-+
+ static pid_t create_autoreap_child(int *pidfd)
+ {
+ 	struct __clone_args args = {
+@@ -493,4 +497,126 @@ TEST(autoreap_no_inherit)
+ 	close(pidfd);
+ }
+ 
 +/*
-+ * Test that CLONE_AUTOREAP works without CLONE_PIDFD (fire-and-forget).
++ * Test that CLONE_NNP sets no_new_privs on the child.
++ * The child checks via prctl(PR_GET_NO_NEW_PRIVS) and reports back.
++ * The parent must NOT have no_new_privs set afterwards.
 + */
-+TEST(autoreap_without_pidfd)
++TEST(nnp_sets_no_new_privs)
 +{
 +	struct __clone_args args = {
-+		.flags		= CLONE_AUTOREAP,
++		.flags		= CLONE_PIDFD | CLONE_AUTOREAP | CLONE_NNP,
 +		.exit_signal	= 0,
 +	};
++	struct pidfd_info info = { .mask = PIDFD_INFO_EXIT };
++	int pidfd = -1, ret;
++	struct pollfd pfd;
 +	pid_t pid;
-+	int ret;
++
++	/* Ensure parent does not already have no_new_privs. */
++	ret = prctl(PR_GET_NO_NEW_PRIVS, 0, 0, 0, 0);
++	ASSERT_EQ(ret, 0) {
++		TH_LOG("Parent already has no_new_privs set, cannot run test");
++	}
++
++	args.pidfd = ptr_to_u64(&pidfd);
 +
 +	pid = sys_clone3(&args, sizeof(args));
 +	if (pid < 0 && errno == EINVAL)
-+		SKIP(return, "CLONE_AUTOREAP not supported");
++		SKIP(return, "CLONE_NNP not supported");
 +	ASSERT_GE(pid, 0);
 +
-+	if (pid == 0)
-+		_exit(0);
++	if (pid == 0) {
++		/*
++		 * Child: check no_new_privs. Exit 0 if set, 1 if not.
++		 */
++		ret = prctl(PR_GET_NO_NEW_PRIVS, 0, 0, 0, 0);
++		_exit(ret == 1 ? 0 : 1);
++	}
 +
-+	/*
-+	 * Give the child a moment to exit and be autoreaped.
-+	 * Then verify no zombie remains.
-+	 */
-+	usleep(200000);
-+	ret = waitpid(pid, NULL, WNOHANG);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, ECHILD);
++	ASSERT_GE(pidfd, 0);
++
++	/* Parent must still NOT have no_new_privs. */
++	ret = prctl(PR_GET_NO_NEW_PRIVS, 0, 0, 0, 0);
++	ASSERT_EQ(ret, 0) {
++		TH_LOG("Parent got no_new_privs after creating CLONE_NNP child");
++	}
++
++	/* Wait for child to exit. */
++	pfd.fd = pidfd;
++	pfd.events = POLLIN;
++	ret = poll(&pfd, 1, 5000);
++	ASSERT_EQ(ret, 1);
++
++	/* Verify child exited with 0 (no_new_privs was set). */
++	ret = ioctl(pidfd, PIDFD_GET_INFO, &info);
++	ASSERT_EQ(ret, 0);
++	ASSERT_TRUE(info.mask & PIDFD_INFO_EXIT);
++	ASSERT_TRUE(WIFEXITED(info.exit_code));
++	ASSERT_EQ(WEXITSTATUS(info.exit_code), 0) {
++		TH_LOG("Child did not have no_new_privs set");
++	}
++
++	close(pidfd);
 +}
 +
 +/*
-+ * Test that CLONE_AUTOREAP with a non-zero exit_signal fails.
++ * Test that CLONE_NNP with CLONE_THREAD fails with EINVAL.
 + */
-+TEST(autoreap_rejects_exit_signal)
++TEST(nnp_rejects_thread)
 +{
 +	struct __clone_args args = {
-+		.flags		= CLONE_AUTOREAP,
-+		.exit_signal	= SIGCHLD,
-+	};
-+	pid_t pid;
-+
-+	pid = sys_clone3(&args, sizeof(args));
-+	ASSERT_EQ(pid, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+}
-+
-+/*
-+ * Test that CLONE_AUTOREAP with CLONE_PARENT fails.
-+ */
-+TEST(autoreap_rejects_parent)
-+{
-+	struct __clone_args args = {
-+		.flags		= CLONE_AUTOREAP | CLONE_PARENT,
-+		.exit_signal	= 0,
-+	};
-+	pid_t pid;
-+
-+	pid = sys_clone3(&args, sizeof(args));
-+	ASSERT_EQ(pid, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+}
-+
-+/*
-+ * Test that CLONE_AUTOREAP with CLONE_THREAD fails.
-+ */
-+TEST(autoreap_rejects_thread)
-+{
-+	struct __clone_args args = {
-+		.flags		= CLONE_AUTOREAP | CLONE_THREAD |
++		.flags		= CLONE_NNP | CLONE_THREAD |
 +				  CLONE_SIGHAND | CLONE_VM,
 +		.exit_signal	= 0,
 +	};
@@ -274,59 +218,10 @@ index 000000000000..e230d2fe4a64
 +}
 +
 +/*
-+ * Basic test: create an autoreap child, let it exit, verify:
-+ * - pidfd becomes readable (poll returns POLLIN)
-+ * - PIDFD_GET_INFO returns the correct exit code
-+ * - waitpid() returns -1/ECHILD (no zombie)
++ * Test that a plain CLONE_AUTOREAP child does NOT get no_new_privs.
++ * Only CLONE_NNP should set it.
 + */
-+TEST(autoreap_basic)
-+{
-+	struct pidfd_info info = { .mask = PIDFD_INFO_EXIT };
-+	int pidfd = -1, ret;
-+	struct pollfd pfd;
-+	pid_t pid;
-+
-+	pid = create_autoreap_child(&pidfd);
-+	if (pid < 0 && errno == EINVAL)
-+		SKIP(return, "CLONE_AUTOREAP not supported");
-+	ASSERT_GE(pid, 0);
-+
-+	if (pid == 0)
-+		_exit(42);
-+
-+	ASSERT_GE(pidfd, 0);
-+
-+	/* Wait for the child to exit via pidfd poll. */
-+	pfd.fd = pidfd;
-+	pfd.events = POLLIN;
-+	ret = poll(&pfd, 1, 5000);
-+	ASSERT_EQ(ret, 1);
-+	ASSERT_TRUE(pfd.revents & POLLIN);
-+
-+	/* Verify exit info via PIDFD_GET_INFO. */
-+	ret = ioctl(pidfd, PIDFD_GET_INFO, &info);
-+	ASSERT_EQ(ret, 0);
-+	ASSERT_TRUE(info.mask & PIDFD_INFO_EXIT);
-+	/*
-+	 * exit_code is in waitpid format: for _exit(42),
-+	 * WIFEXITED is true and WEXITSTATUS is 42.
-+	 */
-+	ASSERT_TRUE(WIFEXITED(info.exit_code));
-+	ASSERT_EQ(WEXITSTATUS(info.exit_code), 42);
-+
-+	/* Verify no zombie: waitpid should fail with ECHILD. */
-+	ret = waitpid(pid, NULL, WNOHANG);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, ECHILD);
-+
-+	close(pidfd);
-+}
-+
-+/*
-+ * Test that an autoreap child killed by a signal reports
-+ * the correct exit info.
-+ */
-+TEST(autoreap_signaled)
++TEST(autoreap_no_new_privs_unset)
 +{
 +	struct pidfd_info info = { .mask = PIDFD_INFO_EXIT };
 +	int pidfd = -1, ret;
@@ -339,318 +234,32 @@ index 000000000000..e230d2fe4a64
 +	ASSERT_GE(pid, 0);
 +
 +	if (pid == 0) {
-+		pause();
-+		_exit(1);
-+	}
-+
-+	ASSERT_GE(pidfd, 0);
-+
-+	/* Kill the child. */
-+	ret = sys_pidfd_send_signal(pidfd, SIGKILL, NULL, 0);
-+	ASSERT_EQ(ret, 0);
-+
-+	/* Wait for exit via pidfd. */
-+	pfd.fd = pidfd;
-+	pfd.events = POLLIN;
-+	ret = poll(&pfd, 1, 5000);
-+	ASSERT_EQ(ret, 1);
-+	ASSERT_TRUE(pfd.revents & POLLIN);
-+
-+	/* Verify signal info. */
-+	ret = ioctl(pidfd, PIDFD_GET_INFO, &info);
-+	ASSERT_EQ(ret, 0);
-+	ASSERT_TRUE(info.mask & PIDFD_INFO_EXIT);
-+	ASSERT_TRUE(WIFSIGNALED(info.exit_code));
-+	ASSERT_EQ(WTERMSIG(info.exit_code), SIGKILL);
-+
-+	/* No zombie. */
-+	ret = waitpid(pid, NULL, WNOHANG);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, ECHILD);
-+
-+	close(pidfd);
-+}
-+
-+/*
-+ * Test autoreap survives reparenting: middle process creates an
-+ * autoreap grandchild, then exits. The grandchild gets reparented
-+ * to us (the grandparent, which is a subreaper). When the grandchild
-+ * exits, it should still be autoreaped - no zombie under us.
-+ */
-+TEST(autoreap_reparent)
-+{
-+	int ipc_sockets[2], ret;
-+	int pidfd = -1;
-+	struct pollfd pfd;
-+	pid_t mid_pid, grandchild_pid;
-+	char buf[32] = {};
-+
-+	/* Make ourselves a subreaper so reparented children come to us. */
-+	ret = prctl(PR_SET_CHILD_SUBREAPER, 1);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = socketpair(AF_LOCAL, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets);
-+	ASSERT_EQ(ret, 0);
-+
-+	mid_pid = fork();
-+	ASSERT_GE(mid_pid, 0);
-+
-+	if (mid_pid == 0) {
-+		/* Middle child: create an autoreap grandchild. */
-+		int gc_pidfd = -1;
-+
-+		close(ipc_sockets[0]);
-+
-+		grandchild_pid = create_autoreap_child(&gc_pidfd);
-+		if (grandchild_pid < 0) {
-+			write_nointr(ipc_sockets[1], "E", 1);
-+			close(ipc_sockets[1]);
-+			_exit(1);
-+		}
-+
-+		if (grandchild_pid == 0) {
-+			/* Grandchild: wait for signal to exit. */
-+			close(ipc_sockets[1]);
-+			if (gc_pidfd >= 0)
-+				close(gc_pidfd);
-+			pause();
-+			_exit(0);
-+		}
-+
-+		/* Send grandchild PID to grandparent. */
-+		snprintf(buf, sizeof(buf), "%d", grandchild_pid);
-+		write_nointr(ipc_sockets[1], buf, strlen(buf));
-+		close(ipc_sockets[1]);
-+		if (gc_pidfd >= 0)
-+			close(gc_pidfd);
-+
-+		/* Middle child exits, grandchild gets reparented. */
-+		_exit(0);
-+	}
-+
-+	close(ipc_sockets[1]);
-+
-+	/* Read grandchild's PID. */
-+	ret = read_nointr(ipc_sockets[0], buf, sizeof(buf) - 1);
-+	close(ipc_sockets[0]);
-+	ASSERT_GT(ret, 0);
-+
-+	if (buf[0] == 'E') {
-+		waitpid(mid_pid, NULL, 0);
-+		prctl(PR_SET_CHILD_SUBREAPER, 0);
-+		SKIP(return, "CLONE_AUTOREAP not supported");
-+	}
-+
-+	grandchild_pid = atoi(buf);
-+	ASSERT_GT(grandchild_pid, 0);
-+
-+	/* Wait for the middle child to exit. */
-+	ret = waitpid(mid_pid, NULL, 0);
-+	ASSERT_EQ(ret, mid_pid);
-+
-+	/*
-+	 * Now the grandchild is reparented to us (subreaper).
-+	 * Open a pidfd for the grandchild and kill it.
-+	 */
-+	pidfd = sys_pidfd_open(grandchild_pid, 0);
-+	ASSERT_GE(pidfd, 0);
-+
-+	ret = sys_pidfd_send_signal(pidfd, SIGKILL, NULL, 0);
-+	ASSERT_EQ(ret, 0);
-+
-+	/* Wait for it to exit via pidfd poll. */
-+	pfd.fd = pidfd;
-+	pfd.events = POLLIN;
-+	ret = poll(&pfd, 1, 5000);
-+	ASSERT_EQ(ret, 1);
-+	ASSERT_TRUE(pfd.revents & POLLIN);
-+
-+	/*
-+	 * The grandchild should have been autoreaped even though
-+	 * we (the new parent) haven't set SA_NOCLDWAIT.
-+	 * waitpid should return -1/ECHILD.
-+	 */
-+	ret = waitpid(grandchild_pid, NULL, WNOHANG);
-+	EXPECT_EQ(ret, -1);
-+	EXPECT_EQ(errno, ECHILD);
-+
-+	close(pidfd);
-+
-+	/* Clean up subreaper status. */
-+	prctl(PR_SET_CHILD_SUBREAPER, 0);
-+}
-+
-+static int thread_sock_fd;
-+
-+static void *thread_func(void *arg)
-+{
-+	/* Signal parent we're running. */
-+	write_nointr(thread_sock_fd, "1", 1);
-+
-+	/* Give main thread time to call _exit() first. */
-+	usleep(200000);
-+
-+	return NULL;
-+}
-+
-+/*
-+ * Test that an autoreap child with multiple threads is properly
-+ * autoreaped only after all threads have exited.
-+ */
-+TEST(autoreap_multithreaded)
-+{
-+	struct pidfd_info info = { .mask = PIDFD_INFO_EXIT };
-+	int ipc_sockets[2], ret;
-+	int pidfd = -1;
-+	struct pollfd pfd;
-+	pid_t pid;
-+	char c;
-+
-+	ret = socketpair(AF_LOCAL, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets);
-+	ASSERT_EQ(ret, 0);
-+
-+	pid = create_autoreap_child(&pidfd);
-+	if (pid < 0 && errno == EINVAL) {
-+		close(ipc_sockets[0]);
-+		close(ipc_sockets[1]);
-+		SKIP(return, "CLONE_AUTOREAP not supported");
-+	}
-+	ASSERT_GE(pid, 0);
-+
-+	if (pid == 0) {
-+		pthread_t thread;
-+
-+		close(ipc_sockets[0]);
-+
 +		/*
-+		 * Create a sub-thread that outlives the main thread.
-+		 * The thread signals readiness, then sleeps.
-+		 * The main thread waits briefly, then calls _exit().
++		 * Child: check no_new_privs. Exit 0 if NOT set, 1 if set.
 +		 */
-+		thread_sock_fd = ipc_sockets[1];
-+		pthread_create(&thread, NULL, thread_func, NULL);
-+		pthread_detach(thread);
-+
-+		/* Wait for thread to be running. */
-+		usleep(100000);
-+
-+		/* Main thread exits; sub-thread is still alive. */
-+		_exit(99);
++		ret = prctl(PR_GET_NO_NEW_PRIVS, 0, 0, 0, 0);
++		_exit(ret == 0 ? 0 : 1);
 +	}
 +
-+	close(ipc_sockets[1]);
++	ASSERT_GE(pidfd, 0);
 +
-+	/* Wait for the sub-thread to signal readiness. */
-+	ret = read_nointr(ipc_sockets[0], &c, 1);
-+	close(ipc_sockets[0]);
-+	ASSERT_EQ(ret, 1);
-+
-+	/* Wait for the process to fully exit via pidfd poll. */
 +	pfd.fd = pidfd;
 +	pfd.events = POLLIN;
 +	ret = poll(&pfd, 1, 5000);
 +	ASSERT_EQ(ret, 1);
-+	ASSERT_TRUE(pfd.revents & POLLIN);
 +
-+	/* Verify exit info. */
 +	ret = ioctl(pidfd, PIDFD_GET_INFO, &info);
 +	ASSERT_EQ(ret, 0);
 +	ASSERT_TRUE(info.mask & PIDFD_INFO_EXIT);
 +	ASSERT_TRUE(WIFEXITED(info.exit_code));
-+	ASSERT_EQ(WEXITSTATUS(info.exit_code), 99);
-+
-+	/* No zombie. */
-+	ret = waitpid(pid, NULL, WNOHANG);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, ECHILD);
++	ASSERT_EQ(WEXITSTATUS(info.exit_code), 0) {
++		TH_LOG("Plain autoreap child unexpectedly has no_new_privs");
++	}
 +
 +	close(pidfd);
 +}
 +
-+/*
-+ * Test that autoreap is NOT inherited by grandchildren.
-+ */
-+TEST(autoreap_no_inherit)
-+{
-+	int ipc_sockets[2], ret;
-+	int pidfd = -1;
-+	pid_t pid;
-+	char buf[2] = {};
-+	struct pollfd pfd;
-+
-+	ret = socketpair(AF_LOCAL, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets);
-+	ASSERT_EQ(ret, 0);
-+
-+	pid = create_autoreap_child(&pidfd);
-+	if (pid < 0 && errno == EINVAL) {
-+		close(ipc_sockets[0]);
-+		close(ipc_sockets[1]);
-+		SKIP(return, "CLONE_AUTOREAP not supported");
-+	}
-+	ASSERT_GE(pid, 0);
-+
-+	if (pid == 0) {
-+		pid_t gc;
-+		int status;
-+
-+		close(ipc_sockets[0]);
-+
-+		/* Autoreap child forks a grandchild (without autoreap). */
-+		gc = fork();
-+		if (gc < 0) {
-+			write_nointr(ipc_sockets[1], "E", 1);
-+			_exit(1);
-+		}
-+		if (gc == 0) {
-+			/* Grandchild: exit immediately. */
-+			close(ipc_sockets[1]);
-+			_exit(77);
-+		}
-+
-+		/*
-+		 * The grandchild should become a regular zombie
-+		 * since it was NOT created with CLONE_AUTOREAP.
-+		 * Wait for it to verify.
-+		 */
-+		ret = waitpid(gc, &status, 0);
-+		if (ret == gc && WIFEXITED(status) &&
-+		    WEXITSTATUS(status) == 77) {
-+			write_nointr(ipc_sockets[1], "P", 1);
-+		} else {
-+			write_nointr(ipc_sockets[1], "F", 1);
-+		}
-+		close(ipc_sockets[1]);
-+		_exit(0);
-+	}
-+
-+	close(ipc_sockets[1]);
-+
-+	ret = read_nointr(ipc_sockets[0], buf, 1);
-+	close(ipc_sockets[0]);
-+	ASSERT_EQ(ret, 1);
-+
-+	/*
-+	 * 'P' means the autoreap child was able to waitpid() its
-+	 * grandchild (correct - grandchild should be a normal zombie,
-+	 * not autoreaped).
-+	 */
-+	ASSERT_EQ(buf[0], 'P');
-+
-+	/* Wait for the autoreap child to exit. */
-+	pfd.fd = pidfd;
-+	pfd.events = POLLIN;
-+	ret = poll(&pfd, 1, 5000);
-+	ASSERT_EQ(ret, 1);
-+
-+	/* Autoreap child itself should be autoreaped. */
-+	ret = waitpid(pid, NULL, WNOHANG);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, ECHILD);
-+
-+	close(pidfd);
-+}
-+
-+TEST_HARNESS_MAIN
+ TEST_HARNESS_MAIN
 
 -- 
 2.47.3
