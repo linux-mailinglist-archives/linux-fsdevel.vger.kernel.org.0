@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-78600-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id kLZ2Mx5+oGlgkQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78600-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:08:46 +0100
+	id CEY2IeaEoGkakgQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:37:42 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id D39C21ABC78
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:08:45 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 983A81AC93F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:37:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id EF0613457B4B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 16:58:51 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 83B6932238B9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 16:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED1C3603F1;
-	Thu, 26 Feb 2026 16:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76663426EAC;
+	Thu, 26 Feb 2026 16:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=birthelmer.com header.i=@birthelmer.com header.b="dNdryYmp"
+	dkim=pass (2048-bit key) header.d=birthelmer.com header.i=@birthelmer.com header.b="DWRS2aar"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp03-ext2.udag.de (smtp03-ext2.udag.de [62.146.106.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FF53603CC;
-	Thu, 26 Feb 2026 16:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0A736B04B;
+	Thu, 26 Feb 2026 16:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.146.106.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772124246; cv=none; b=AcPTiWj0n/ypZD+WuA5fQQhvD6Mh668hljFHnQ0orOAGvHjZ0gS83Q1cQTP6ch2u7SYGMAeldB7TZ7Y5j2C4JdjlTAVLj3xPzsDv0hihmo2wu/Q53Jf7cKJFWYAWibY/6tRRyxhyuew5fRRNU2spr3zScbZ0NIDXl293ZOy7X9Y=
+	t=1772124249; cv=none; b=m513UhwYUpAnmr58cXJnibdKsiykYLo1mmpIKEhSWrTg13Z7Q79ECs1HvoQE53F5KWXONamITGmrWj27waEl/73AkdW3Pr+SYHh13pW6g3UmBxX6Ifzo+30jcWBDkczuO7LdaEhptgFYANPdjSeFRHtDBbofBbpj2j6XJO5ePgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772124246; c=relaxed/simple;
-	bh=EjAzSgzjObUM5dhOlxitVf8/fAu+sdE0ybuv8LpQfm4=;
+	s=arc-20240116; t=1772124249; c=relaxed/simple;
+	bh=0kzc9erjXODarwfpNMQnQ3iZ7a8L3MxgsLdlgnpU7Zo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gqf+tYugqJ1xg7H/CFNEFKrXAQol5GxZApLaiqZG1hCc2rfnUYGpVftPOmEnqRsAU/xDnP792lxRyoKPkoR6hpfnxk0ozuQ7WqXoHPggPGCL9fnOVPqlR22pbsfz0pTXQb6F6BR+Ahqxyr8lOnf8GusCnGInMbodhAdRRxd5AQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.com; spf=pass smtp.mailfrom=birthelmer.com; dkim=pass (2048-bit key) header.d=birthelmer.com header.i=@birthelmer.com header.b=dNdryYmp; arc=none smtp.client-ip=62.146.106.30
+	 In-Reply-To:To:Cc; b=R4lX6qdg13DpFafV8Jljsd6j5A0R7q07LA/rz8sEpulEjSPX2oKOqaIajffuhYiaIqZxZZa2wC5Plgrr9rUsNbDLOWqQOR/QK14s5VHjBvFJYw/L8OYO9BtfVxSLMTPi6BsF7hEy7wmXSfoBNz+A4egC11h+elC7LlCzZJyN0z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.com; spf=pass smtp.mailfrom=birthelmer.com; dkim=pass (2048-bit key) header.d=birthelmer.com header.i=@birthelmer.com header.b=DWRS2aar; arc=none smtp.client-ip=62.146.106.30
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birthelmer.com
 Received: from fedora.fritz.box (200-143-067-156.ip-addr.inexio.net [156.67.143.200])
-	by smtp03-ext2.udag.de (Postfix) with ESMTPA id 28FD8E0354;
+	by smtp03-ext2.udag.de (Postfix) with ESMTPA id BE3BAE0360;
 	Thu, 26 Feb 2026 17:43:57 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=birthelmer.com;
-	s=uddkim-202310; t=1772124237;
+	s=uddkim-202310; t=1772124238;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BUEBsyMed4N11PbJMO0GR1OSz5oxIcmpiXGAsRr+jQI=;
-	b=dNdryYmpF799ZJC+I1Wa7W1FMBlSkAkjuyn5PVhaDkzcl6iCvBcXIvIeIf1PvMsv5NId6y
-	ec1/x/Bn46e6aqUYZcjHIiMaeuXmCHav38nvXq+K+dIoqkqx8W6S/E715fv0dyE6pEytb2
-	gNj6KkHpIwvpcQZ0RZE0c518XX2rY8h0lBhfuwvj0J9P85Q1mXQKho10kP3R/oqbxsRPTe
-	a7R/ncsF4n6b82gKz/p8YUZMnUD3o1/E8ktgtKYQ5B/rXO/rwqGMNgDsV5VG8eL50yPpXO
-	D15R607dHBwMqOrQd7PvFQn1U9M61DSBU0o5prmhKjjKkad9QhbOFLL2zm9rAg==
+	bh=eGydO6FwFqLLphmOSbDH/70Uh6txyr6vYs0h8O6bVb4=;
+	b=DWRS2aarxCP7nUIvSpxjjkPMTtrJwZ5L8DydvWWkF0t0luLakoY82ZWQ4HY1teetm4GQCp
+	JRN7gKy2fO4c6PBG6QrGJUnY+IuWwfBjz0KZjQUHEcurpoUkhB/3VyhrT48ldmMF8e0agl
+	1HddZcdwqtD1CYmauU6G4kHrRsxTw75eNwNDAMp6iO+eGvUZeMGp7HjyhAb/Bnl75ZgGbB
+	Y3y6ORHf6ym60vdwk0JvSsvex0CtxyM0vQOSF0psXFMubJ5if6K8nSZEeHgJz/W8afZAS1
+	ZByQqJW5NNKqiiDQawZ37Oszy2SBbzuGuEVSIaVhEHE8DmZhh9N9PdIA4seQVQ==
 Authentication-Results: smtp03-ext2.udag.de;
 	auth=pass smtp.auth=birthelmercom-0001 smtp.mailfrom=horst@birthelmer.com
 From: Horst Birthelmer <horst@birthelmer.com>
-Date: Thu, 26 Feb 2026 17:43:53 +0100
-Subject: [PATCH v6 1/3] fuse: add compound command to combine multiple
- requests
+Date: Thu, 26 Feb 2026 17:43:54 +0100
+Subject: [PATCH v6 2/3] fuse: create helper functions for filling in fuse
+ args for open and getattr
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260226-fuse-compounds-upstream-v6-1-8585c5fcd2fc@ddn.com>
+Message-Id: <20260226-fuse-compounds-upstream-v6-2-8585c5fcd2fc@ddn.com>
 References: <20260226-fuse-compounds-upstream-v6-0-8585c5fcd2fc@ddn.com>
 In-Reply-To: <20260226-fuse-compounds-upstream-v6-0-8585c5fcd2fc@ddn.com>
 To: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, 
@@ -71,31 +71,31 @@ To: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>,
 Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Horst Birthelmer <hbirthelmer@ddn.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1772124235; l=13452;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1772124235; l=4228;
  i=hbirthelmer@ddn.com; s=20251006; h=from:subject:message-id;
- bh=zB9dxl9WuMwc9QRTsSIuZYa0kBA+Bipx0HoYFgbETZc=;
- b=RgsgynSd4s4SFAIfwl12bTondWfPKABtUjJptOiUSr1RkBU11zyZU8Mi/HhyHMc+hh9RkfJFG
- 0I+E6o3LPtPCwJ2Ve8WZOo9RTTpNMLhasnj79U1eLNwRcOq8SICbVBo
+ bh=fIrksBFbOfxzwmxEToaZUQ6D6sUY/NeffJ6fTnRgRhQ=;
+ b=U7QVwGjdVV5qIwsDoRFOKdclptpzWtGK6qECtVOdXFZde0Vgzi2b95NZoOmTbqIdvlwZessfV
+ VwZet4OemXwAQ5xQVEdVkJMx8Pc0SPZK4NwWPjvjGJ6GP4QLal35jT4
 X-Developer-Key: i=hbirthelmer@ddn.com; a=ed25519;
  pk=v3BVDFoy16EzgHZ23ObqW+kbpURtjrwxgKu8YNDKjGg=
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[birthelmer.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	R_DKIM_ALLOW(-0.20)[birthelmer.com:s=uddkim-202310];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78600-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78602-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	FREEMAIL_TO(0.00)[szeredi.hu,ddn.com,gmail.com,igalia.com];
 	MIME_TRACE(0.00)[0:+];
 	DKIM_TRACE(0.00)[birthelmer.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[horst@birthelmer.com,linux-fsdevel@vger.kernel.org];
@@ -104,480 +104,131 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[7];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,ddn.com:mid,ddn.com:email]
-X-Rspamd-Queue-Id: D39C21ABC78
+	DBL_BLOCKED_OPENRESOLVER(0.00)[ddn.com:mid,ddn.com:email,birthelmer.com:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 983A81AC93F
 X-Rspamd-Action: no action
 
 From: Horst Birthelmer <hbirthelmer@ddn.com>
 
-For a FUSE_COMPOUND we add a small header that informs the
-fuse server how much buffer memory the kernel has for the result.
-This will make the interpretation in libfuse easier,
-since we can preallocate the whole result and work on the return
-buffer.
-Then we append the requests that belong to this compound.
+create fuse_getattr_args_fill() and fuse_open_args_fill() to fill in
+the parameters for the open and getattr calls.
 
-The API for the compound command has:
-  fuse_compound_alloc()
-  fuse_compound_add()
-  fuse_compound_send()
-  fuse_compound_free()
+This is in preparation for implementing open+getattr and does not
+represent any functional change.
 
+Suggested-by: Joanne Koong <joannelkoong@gmail.com>
 Signed-off-by: Horst Birthelmer <hbirthelmer@ddn.com>
 ---
- fs/fuse/Makefile          |   2 +-
- fs/fuse/compound.c        | 308 ++++++++++++++++++++++++++++++++++++++++++++++
- fs/fuse/fuse_i.h          |  39 ++++++
- include/uapi/linux/fuse.h |  52 ++++++++
- 4 files changed, 400 insertions(+), 1 deletion(-)
+ fs/fuse/dir.c    | 26 ++++++++++++++++++--------
+ fs/fuse/file.c   | 26 ++++++++++++++++++--------
+ fs/fuse/fuse_i.h |  6 ++++++
+ 3 files changed, 42 insertions(+), 16 deletions(-)
 
-diff --git a/fs/fuse/Makefile b/fs/fuse/Makefile
-index 22ad9538dfc4b80c6d9b52235bdfead6a6567ae4..4c09038ef995d1b9133c2b6871b97b280a4693b0 100644
---- a/fs/fuse/Makefile
-+++ b/fs/fuse/Makefile
-@@ -11,7 +11,7 @@ obj-$(CONFIG_CUSE) += cuse.o
- obj-$(CONFIG_VIRTIO_FS) += virtiofs.o
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 3927cb069236e9c52674301831c6d655397f24c5..e5ae033a15e85757a10a38b5e7d03dac86067c2a 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -1471,6 +1471,23 @@ static int fuse_do_statx(struct mnt_idmap *idmap, struct inode *inode,
+ 	return 0;
+ }
  
- fuse-y := trace.o	# put trace.o first so we see ftrace errors sooner
--fuse-y += dev.o dir.o file.o inode.o control.o xattr.o acl.o readdir.o ioctl.o
-+fuse-y += dev.o dir.o file.o inode.o control.o xattr.o acl.o readdir.o ioctl.o compound.o
- fuse-y += iomode.o
- fuse-$(CONFIG_FUSE_DAX) += dax.o
- fuse-$(CONFIG_FUSE_PASSTHROUGH) += passthrough.o backing.o
-diff --git a/fs/fuse/compound.c b/fs/fuse/compound.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..68f30123f39b244dd82b835717077cc271518e14
---- /dev/null
-+++ b/fs/fuse/compound.c
-@@ -0,0 +1,308 @@
-+// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * FUSE: Filesystem in Userspace
-+ * Copyright (C) 2025-2026
-+ *
-+ * Compound operations for FUSE - batch multiple operations into a single
-+ * request to reduce round trips between kernel and userspace.
++ * Helper function to initialize fuse_args for GETATTR operations
 + */
-+
-+#include "fuse_i.h"
-+
-+struct fuse_compound_req *fuse_compound_alloc(struct fuse_mount *fm,
-+					       u32 max_count, u32 flags)
++void fuse_getattr_args_fill(struct fuse_args *args, u64 nodeid,
++			     struct fuse_getattr_in *inarg,
++			     struct fuse_attr_out *outarg)
 +{
-+	struct fuse_compound_req *compound;
-+
-+	if (max_count == 0)
-+		return NULL;
-+
-+	compound = kzalloc(sizeof(*compound), GFP_KERNEL);
-+	if (!compound)
-+		return NULL;
-+
-+	compound->max_count = max_count;
-+	compound->count = 0;
-+	compound->fm = fm;
-+	compound->compound_header.flags = flags;
-+
-+	compound->op_errors = kcalloc(max_count, sizeof(int), GFP_KERNEL);
-+	if (!compound->op_errors)
-+		goto out_free_compound;
-+
-+	compound->op_args = kcalloc(max_count, sizeof(struct fuse_args *),
-+				    GFP_KERNEL);
-+	if (!compound->op_args)
-+		goto out_free_op_errors;
-+
-+	compound->op_converters = kcalloc(max_count,
-+					  sizeof(int (*)(struct fuse_compound_req *, unsigned int)),
-+					  GFP_KERNEL);
-+	if (!compound->op_converters)
-+		goto out_free_op_args;
-+
-+	return compound;
-+
-+out_free_op_args:
-+	kfree(compound->op_args);
-+out_free_op_errors:
-+	kfree(compound->op_errors);
-+out_free_compound:
-+	kfree(compound);
-+	return NULL;
++	args->opcode = FUSE_GETATTR;
++	args->nodeid = nodeid;
++	args->in_numargs = 1;
++	args->in_args[0].size = sizeof(*inarg);
++	args->in_args[0].value = inarg;
++	args->out_numargs = 1;
++	args->out_args[0].size = sizeof(*outarg);
++	args->out_args[0].value = outarg;
 +}
 +
-+void fuse_compound_free(struct fuse_compound_req *compound)
-+{
-+	kfree(compound->op_errors);
-+	kfree(compound->op_args);
-+	kfree(compound->op_converters);
-+	kfree(compound);
-+}
-+
-+int fuse_compound_add(struct fuse_compound_req *compound,
-+			struct fuse_args *args,
-+			int (*converter)(struct fuse_compound_req *compound,
-+			unsigned int index))
-+{
-+	if (!compound || compound->count >= compound->max_count)
-+		return -EINVAL;
-+
-+	if (args->in_pages)
-+		return -EINVAL;
-+
-+	compound->op_args[compound->count] = args;
-+	compound->op_converters[compound->count] = converter;
-+	compound->count++;
-+	return 0;
-+}
-+
-+static void fuse_copy_resp_data_per_req(const struct fuse_args *args,
-+				char *resp)
-+{
-+	const struct fuse_arg *arg;
-+	int i;
-+
-+	for (i = 0; i < args->out_numargs; i++) {
-+		arg = &args->out_args[i];
-+		memcpy(arg->value, resp, arg->size);
-+		resp += arg->size;
-+	}
-+}
-+
-+static char *fuse_compound_parse_one_op(struct fuse_compound_req *compound,
-+					char *response,
-+					char *response_end,
-+					int op_count)
-+{
-+	struct fuse_out_header *op_hdr = (struct fuse_out_header *)response;
-+	struct fuse_args *args;
-+
-+	if (op_hdr->len < sizeof(struct fuse_out_header))
-+		return NULL;
-+
-+	if (response + op_hdr->len > response_end)
-+		return NULL;
-+
-+	if (op_count >= compound->max_count)
-+		return NULL;
-+
-+	if (op_hdr->error) {
-+		compound->op_errors[op_count] = op_hdr->error;
-+	} else {
-+		args = compound->op_args[op_count];
-+		fuse_copy_resp_data_per_req(args, response +
-+					    sizeof(struct fuse_out_header));
-+	}
-+
-+	/* In case of error, we still need to advance to the next op */
-+	return response + op_hdr->len;
-+}
-+
-+static int fuse_compound_parse_resp(struct fuse_compound_req *compound,
-+				    char *response, char *response_end)
-+{
-+	int op_count = 0;
-+
-+	while (response < response_end) {
-+		response = fuse_compound_parse_one_op(compound, response,
-+						      response_end, op_count);
-+		if (!response)
-+			return -EIO;
-+		op_count++;
-+	}
-+
-+	return 0;
-+}
-+
-+static int fuse_handle_compound_results(struct fuse_compound_req *compound,
-+					struct fuse_args *args)
-+{
-+	size_t actual_response_size;
-+	size_t buffer_size;
-+	char *resp_payload_buffer;
-+	int ret;
-+
-+	buffer_size = compound->compound_header.result_size +
-+		      compound->count * sizeof(struct fuse_out_header);
-+
-+	resp_payload_buffer = args->out_args[1].value;
-+	actual_response_size = args->out_args[1].size;
-+
-+	if (actual_response_size <= buffer_size) {
-+		ret = fuse_compound_parse_resp(compound,
-+					       (char *)resp_payload_buffer,
-+					       resp_payload_buffer +
-+					       actual_response_size);
-+	} else {
-+		/* FUSE server sent more data than expected */
-+		ret = -EIO;
-+	}
-+
-+	return ret;
-+}
-+
+ static int fuse_do_getattr(struct mnt_idmap *idmap, struct inode *inode,
+ 			   struct kstat *stat, struct file *file)
+ {
+@@ -1492,14 +1509,7 @@ static int fuse_do_getattr(struct mnt_idmap *idmap, struct inode *inode,
+ 		inarg.getattr_flags |= FUSE_GETATTR_FH;
+ 		inarg.fh = ff->fh;
+ 	}
+-	args.opcode = FUSE_GETATTR;
+-	args.nodeid = get_node_id(inode);
+-	args.in_numargs = 1;
+-	args.in_args[0].size = sizeof(inarg);
+-	args.in_args[0].value = &inarg;
+-	args.out_numargs = 1;
+-	args.out_args[0].size = sizeof(outarg);
+-	args.out_args[0].value = &outarg;
++	fuse_getattr_args_fill(&args, get_node_id(inode), &inarg, &outarg);
+ 	err = fuse_simple_request(fm, &args);
+ 	if (!err) {
+ 		if (fuse_invalid_attr(&outarg.attr) ||
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 3b2a171e652f0c9dd1c9e37253d3d3e88caab148..a408a9668abbb361e2c1e386ebab9dfcb0a7a573 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -23,6 +23,23 @@
+ #include <linux/task_io_accounting_ops.h>
+ #include <linux/iomap.h>
+ 
 +/*
-+ * Build a single operation request in the buffer
-+ *
-+ * Returns the new buffer position after writing the operation.
++ * Helper function to initialize fuse_args for OPEN/OPENDIR operations
 + */
-+static char *fuse_compound_build_one_op(struct fuse_conn *fc,
-+					struct fuse_args *op_args,
-+					char *buffer_pos,
-+					unsigned int index)
++static void fuse_open_args_fill(struct fuse_args *args, u64 nodeid, int opcode,
++			 struct fuse_open_in *inarg, struct fuse_open_out *outarg)
 +{
-+	struct fuse_in_header *hdr;
-+	size_t needed_size = sizeof(struct fuse_in_header);
-+	int j;
-+
-+	for (j = 0; j < op_args->in_numargs; j++)
-+		needed_size += op_args->in_args[j].size;
-+
-+	hdr = (struct fuse_in_header *)buffer_pos;
-+	hdr->unique = index;
-+	hdr->len = needed_size;
-+	hdr->opcode = op_args->opcode;
-+	hdr->nodeid = op_args->nodeid;
-+	buffer_pos += sizeof(*hdr);
-+
-+	for (j = 0; j < op_args->in_numargs; j++) {
-+		memcpy(buffer_pos, op_args->in_args[j].value,
-+		       op_args->in_args[j].size);
-+		buffer_pos += op_args->in_args[j].size;
-+	}
-+
-+	return buffer_pos;
++	args->opcode = opcode;
++	args->nodeid = nodeid;
++	args->in_numargs = 1;
++	args->in_args[0].size = sizeof(*inarg);
++	args->in_args[0].value = inarg;
++	args->out_numargs = 1;
++	args->out_args[0].size = sizeof(*outarg);
++	args->out_args[0].value = outarg;
 +}
 +
-+static ssize_t fuse_compound_fallback_separate(struct fuse_compound_req *compound)
-+{
-+	unsigned int req_count = compound->count;
-+	ssize_t ret = 0;
-+	unsigned int i;
 +
-+	/* Try separate requests */
-+	for (i = 0; i < req_count; i++) {
-+		/* fill the current args from the already received responses */
-+		if (compound->op_converters[i])
-+			ret = compound->op_converters[i](compound, i);
-+
-+		ret = fuse_simple_request(compound->fm, compound->op_args[i]);
-+		if (ret < 0) {
-+			compound->op_errors[i] = ret;
-+			if (!(compound->compound_header.flags & FUSE_COMPOUND_CONTINUE))
-+				break;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+ssize_t fuse_compound_send(struct fuse_compound_req *compound)
-+{
-+	struct fuse_conn *fc = compound->fm->fc;
-+	struct fuse_args args = {
-+		.opcode = FUSE_COMPOUND,
-+		.in_numargs = 2,
-+		.out_numargs = 2,
-+		.out_argvar = true,
-+	};
-+	unsigned int req_count = compound->count;
-+	size_t total_expected_out_size = 0;
-+	size_t buffer_size = 0;
-+	void *resp_payload_buffer;
-+	char *buffer_pos;
-+	void *buffer = NULL;
-+	ssize_t ret;
-+	unsigned int i, j;
-+
-+	for (i = 0; i < req_count; i++) {
-+		struct fuse_args *op_args = compound->op_args[i];
-+		size_t needed_size = sizeof(struct fuse_in_header);
-+
-+		for (j = 0; j < op_args->in_numargs; j++)
-+			needed_size += op_args->in_args[j].size;
-+
-+		buffer_size += needed_size;
-+
-+		for (j = 0; j < op_args->out_numargs; j++)
-+			total_expected_out_size += op_args->out_args[j].size;
-+	}
-+
-+	buffer = kzalloc(buffer_size, GFP_KERNEL);
-+	if (!buffer)
-+		return -ENOMEM;
-+
-+	buffer_pos = buffer;
-+	for (i = 0; i < req_count; i++) {
-+		if (compound->op_converters[i]) {
-+			ret = compound->op_converters[i](compound, i);
-+			if (ret < 0)
-+				goto out_free_buffer;
-+		}
-+
-+		buffer_pos = fuse_compound_build_one_op(fc,
-+							compound->op_args[i],
-+							buffer_pos, i);
-+	}
-+
-+	compound->compound_header.result_size = total_expected_out_size;
-+
-+	args.in_args[0].size = sizeof(compound->compound_header);
-+	args.in_args[0].value = &compound->compound_header;
-+	args.in_args[1].size = buffer_size;
-+	args.in_args[1].value = buffer;
-+
-+	buffer_size = total_expected_out_size +
-+		      req_count * sizeof(struct fuse_out_header);
-+
-+	resp_payload_buffer = kzalloc(buffer_size, GFP_KERNEL);
-+	if (!resp_payload_buffer) {
-+		ret = -ENOMEM;
-+		goto out_free_buffer;
-+	}
-+
-+	args.out_args[0].size = sizeof(compound->result_header);
-+	args.out_args[0].value = &compound->result_header;
-+	args.out_args[1].size = buffer_size;
-+	args.out_args[1].value = resp_payload_buffer;
-+
-+	ret = fuse_simple_request(compound->fm, &args);
-+	if (ret < 0)
-+		goto fallback_separate;
-+
-+	ret = fuse_handle_compound_results(compound, &args);
-+	if (ret == 0)
-+		goto out;
-+
-+fallback_separate:
-+	/* Kernel tries to fallback to separate requests */
-+	if (!(compound->compound_header.flags & FUSE_COMPOUND_ATOMIC))
-+		ret = fuse_compound_fallback_separate(compound);
-+
-+out:
-+	kfree(resp_payload_buffer);
-+out_free_buffer:
-+	kfree(buffer);
-+	return ret;
-+}
+ static int fuse_send_open(struct fuse_mount *fm, u64 nodeid,
+ 			  unsigned int open_flags, int opcode,
+ 			  struct fuse_open_out *outargp)
+@@ -40,14 +57,7 @@ static int fuse_send_open(struct fuse_mount *fm, u64 nodeid,
+ 		inarg.open_flags |= FUSE_OPEN_KILL_SUIDGID;
+ 	}
+ 
+-	args.opcode = opcode;
+-	args.nodeid = nodeid;
+-	args.in_numargs = 1;
+-	args.in_args[0].size = sizeof(inarg);
+-	args.in_args[0].value = &inarg;
+-	args.out_numargs = 1;
+-	args.out_args[0].size = sizeof(*outargp);
+-	args.out_args[0].value = outargp;
++	fuse_open_args_fill(&args, nodeid, opcode, &inarg, outargp);
+ 
+ 	return fuse_simple_request(fm, &args);
+ }
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 7f16049387d15e869db4be23a93605098588eda9..e46315aa428c9d0e704c62a0b80811172c5ec9c1 100644
+index e46315aa428c9d0e704c62a0b80811172c5ec9c1..ff8222b66c4f7b04c0671a980237a43871affd0a 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
-@@ -1273,6 +1273,45 @@ static inline ssize_t fuse_simple_idmap_request(struct mnt_idmap *idmap,
- int fuse_simple_background(struct fuse_mount *fm, struct fuse_args *args,
- 			   gfp_t gfp_flags);
+@@ -1179,6 +1179,12 @@ struct fuse_io_args {
+ void fuse_read_args_fill(struct fuse_io_args *ia, struct file *file, loff_t pos,
+ 			 size_t count, int opcode);
  
 +/*
-+ * Compound request builder, state tracker, and args pointer storage
++ * Helper functions to initialize fuse_args for common operations
 + */
-+struct fuse_compound_req {
-+	struct fuse_mount *fm;
-+	struct fuse_compound_in compound_header;
-+	struct fuse_compound_out result_header;
-+
-+	struct fuse_args **op_args;
-+
-+	/*
-+	 * Every op can add a converter function to construct the ops args from
-+	 * the already received responses.
-+	 */
-+	int (**op_converters)(struct fuse_compound_req *compound,
-+			      unsigned int index);
-+	int *op_errors;
-+
-+	unsigned int max_count;
-+	unsigned int count;
-+};
-+
-+/*
-+ * Compound request API
-+ */
-+ssize_t fuse_compound_send(struct fuse_compound_req *compound);
-+
-+struct fuse_compound_req *fuse_compound_alloc(struct fuse_mount *fm,
-+					       u32 max_count, u32 flags);
-+int fuse_compound_add(struct fuse_compound_req *compound,
-+		      struct fuse_args *args,
-+		      int (*converter)(struct fuse_compound_req *compound,
-+				       unsigned int index));
-+void fuse_compound_free(struct fuse_compound_req *compound);
-+static inline int fuse_compound_get_error(struct fuse_compound_req *compound, int op_idx)
-+{
-+	return compound->op_errors[op_idx];
-+}
-+
- /**
-  * Assign a unique id to a fuse request
-  */
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index c13e1f9a2f12bd39f535188cb5466688eba42263..d43bffd1ccbe2b3d144864407d60ff7a48db53ed 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -664,6 +664,13 @@ enum fuse_opcode {
- 	FUSE_STATX		= 52,
- 	FUSE_COPY_FILE_RANGE_64	= 53,
++void fuse_getattr_args_fill(struct fuse_args *args, u64 nodeid,
++			    struct fuse_getattr_in *inarg,
++			    struct fuse_attr_out *outarg);
  
-+	/* A compound request is handled like a single request,
-+	 * but contains multiple requests as input.
-+	 * This can be used to signal to the fuse server that
-+	 * the requests can be combined atomically.
-+	 */
-+	FUSE_COMPOUND		= 54,
-+
- 	/* CUSE specific operations */
- 	CUSE_INIT		= 4096,
- 
-@@ -1245,6 +1252,51 @@ struct fuse_supp_groups {
- 	uint32_t	groups[];
- };
- 
-+/*
-+ * This is a hint to the fuse server that all requests are complete and it can
-+ * use automatic decoding and sequential processing from libfuse.
-+ */
-+#define FUSE_COMPOUND_SEPARABLE (1 << 0)
-+/*
-+ * This will be used by the kernel to continue on
-+ * even after one of the requests fail.
-+ */
-+#define FUSE_COMPOUND_CONTINUE (1 << 1)
-+/*
-+ * This flags the compound as atomic, which
-+ * means that the operation has to be interpreted
-+ * atomically and be directly supported by the fuse server
-+ * itself.
-+ */
-+#define FUSE_COMPOUND_ATOMIC (1 << 2)
-+
-+/*
-+ * Compound request header
-+ *
-+ * This header is followed by the fuse requests
-+ */
-+struct fuse_compound_in {
-+	uint32_t	flags;			/* Compound flags */
-+
-+	/* Total size of all results expected from the fuse server.
-+	 * This is needed for preallocating the whole result for all
-+	 * commands in the fuse server.
-+	 */
-+	uint32_t	result_size;
-+	uint64_t	reserved;
-+};
-+
-+/*
-+ * Compound response header
-+ *
-+ * This header is followed by complete fuse responses
-+ */
-+struct fuse_compound_out {
-+	uint32_t	flags;     /* Result flags */
-+	uint32_t	padding;
-+	uint64_t	reserved;
-+};
-+
- /**
-  * Size of the ring buffer header
-  */
+ struct fuse_file *fuse_file_alloc(struct fuse_mount *fm, bool release);
+ void fuse_file_free(struct fuse_file *ff);
 
 -- 
 2.53.0
