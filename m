@@ -1,192 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-78462-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78463-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id gIY5M2kdoGmzfgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78462-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 11:16:09 +0100
+	id KDZdK+0goGkDfwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78463-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 11:31:09 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C661A41D7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 11:16:09 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1097F1A446A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 11:31:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 7E67230D3E80
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 10:13:20 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id DD5F1308822C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 10:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087873A4F23;
-	Thu, 26 Feb 2026 10:13:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4523A7F54;
+	Thu, 26 Feb 2026 10:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A0TWyIdM"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="PLELvequ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F799393DF6
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 10:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E53316190
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 10:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.175
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772100796; cv=pass; b=t0pMIMpuLZAcZBvJPGyGwTh9RwyZuj7g7wHcYKIqRGA5gkRQ/gHSqvz1/5WWbX29F+leTqQ+7ZIIaJ1Tnmeq/g81ldLglk9XqNsjh9xg8qUTUra7KV0Rfad5zesOpR/FPwHrmrx1a+p2k8csqAaokKL8COX7Gs3lpjUWTndQmRc=
+	t=1772101798; cv=pass; b=Sv3EVywCXggju6uZVeP3nIS7rqMujelRTR7FilAttyLt0k3lcGCQaTuxfqHvpyGJeLip9zuXeeg2wMYJGYE423a0of1ZeR0enK/35iuakenpyXsZuC/PKajmA5z0uQf1ONGNzhSr/+FHRiXo8VoESXoWsm/jrbarFEKNdHWFwzM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772100796; c=relaxed/simple;
-	bh=eqcgfxKwweo3g7DbLJ8+WLgh5kmbXwc5z41fwt0ySSE=;
+	s=arc-20240116; t=1772101798; c=relaxed/simple;
+	bh=hjsN5//5jsVAZeRSuT5WNNeYNRaiZIQYQtWlnsr+Z6E=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r+Q6cGmUGvz/U3Vof8wQZ2B4vlyYkfIY5PipmJOGz+u7flBxnPvtvBcCe4F7mHOzKn5tfzLLLi6gdxsSI51Fy/HPXizoPUNx4BBxS5HtslQicW63V9d63y7igAuEXQgjA3mXcIfQCu8MIKN4Qu3dT0XeriMdO3nu3zMfDqUK9h8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A0TWyIdM; arc=pass smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-56a973a7bdfso490431e0c.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 02:13:15 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772100794; cv=none;
+	 To:Cc:Content-Type; b=PvqOCUBCjTVvf8WTl9c/e9vRZ9baLiAw7WjtYu/PpQoAyedkqAYIZ5w12WX/ak7zF7/0gwIT6Z6Q7niIq48JrWCR3ecxIZibLu+zkSxKVzbHfUacz0vC9YnpWtC9/rZB57ylngIkx35aF6oUmGR64QpIRSGfs7J6vbjxNlfI6XQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=PLELvequ; arc=pass smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-506c02ec1b3so8329271cf.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 02:29:54 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772101794; cv=none;
         d=google.com; s=arc-20240605;
-        b=JniINomvYvq6T0Uj7kLdoUzvB6vY8WxOtik/JNRFitSgpU17v/315tI5bmEmjW8OYd
-         q+mFzxhmD5FPnD6mYADj5G/LOqU34+x7ELt7G9+SyKo9t8mm51VNSrbHh1NRzyGeCmGX
-         SdUBa8TJ20uwj/0EmwO+DnTXD/nA40q37ADaUOtnscMz5xaephm6uVCbfAxYrx4qYHNz
-         U8HEPjtv0WWpzXkXX7rA8oS8acWlfZy291xktRQQV9DvZcribWHv+a2zYyUFh0hy9jXe
-         iSdBZcAXCoHZuRbi6leS4nHGkApS3xtfNOmZjiXbaGKgIfOaTGwP5o4332YrMS/UF87J
-         Sc0g==
+        b=NTcHpcUmDEjV/sUAc73xvx7/fah0uleFN+sy5/Kge1F+y3oYIaiAUauBRc8kBFWhJg
+         v71gZk5IRxIpEr6Z12cHXlVTNrNZrGNQ3p+Ii/U7ZiyKNgPkuHfsKH/hYwIMdamOOsR5
+         GAi5pKbXH27gs+0HBDGVU29n2xJR23UYxcWjTMlfE/VbrCKmXQPVpy028ylKPLpZS2Pz
+         BSCz5KCe4MqEVmv6dwXERaM2BNAzuvo0f198aJxIRt2J31p5npO25UVI1vpLLntHaspR
+         G4p8Xh5yDDMQEloawiEQhtCR1udL5fgvL89u2+EtHwWNpAnM0CstI8rcf3ZWejzO8mNs
+         JPzw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=QpKHBD0mhwVP9kJAJUi3zD5uY8oKKK5cQ3gsTRpGswo=;
-        fh=8IaL6Eswo8CBBqh+z5uNfwaz5zPDW2Mttu45vqfCiGw=;
-        b=h3G5w7nIPa336UV+dGk7nV66/k1sdjkX5KzsKQav35gCn3AQVgkvWkWF98ev5wtoEM
-         ig4HMUeEwvCMLEiSJRuHaq6/YWHsXLmTib9zTovBTqUKD+/In9TA3TSA4ZwyuDRJyhDh
-         z7m+UwF+ips5XXt1KNb9IrNvpa/F3cwO4ILecnnWbQJirvwRRW4Okg7xKoTD07O+M9te
-         i4MJRJOooKGcxUZKuj40ZjxVzDbjdwmUXcrPZgYGx8ZtEg21cobX4U5SkhKA6NzeR+H1
-         C9BSY0iv2jU9wFJP+TzvTNl1gRBrIiHFZg8uKnLRddrxG8SjFX7/MBd6yaNL0yQ1+RPE
-         MYOQ==;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=rzYc//p4H41oTH8p4tNC0vhAA0rjUA0WVHYr2lMVuzM=;
+        fh=7ehCKw/yM9k+pxQJ4h/Vo0Rjo+7Kct7m1lSNs2GZbVA=;
+        b=BHBKvFhsAGvqquORL3M6iYsS/MdH22lI9HEMJteVHx5X4PpdU0q2PGD5dkeOYExLJU
+         /avvFU6oBGjllWLefikTLYZaOQsBIjCuwK8UWwVURk9Pe0yHEChvErRmBpSXeKJHKUSQ
+         Fev2dyjVTayjlJjfb1B5kL4IkY32u2kWy00rPoYjZrLu3IcDdBALOd0jsF5hhZZI5VTI
+         2DAP9DPrE7P+EvnBS2JMstEXIoIAOdJJaVjEXSs4TXrjSw6NlMi7cBpgkyyEttPNVa/c
+         KUdc1doma/fsG2JjaN5on2zcnE4VFaD0i/O3RXWFpKH3E+/ZzzJYANWKyQKp8fBF9HHB
+         aV4w==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772100794; x=1772705594; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QpKHBD0mhwVP9kJAJUi3zD5uY8oKKK5cQ3gsTRpGswo=;
-        b=A0TWyIdMuG+DugL9znw8oNPWc/Js01vwtRhIURRjglohg4P6OTZv/nyamtBqhZVBC/
-         YAVZym07i3Ko2u/Ze7UVE01RnO8TvNCoCbLtPNO/T4jG1XC9rgIyDQVImi3JYpmJZs+7
-         krbexD51O7ar7GcxcI/arc016rIVFujPI5xw8Q2cJa1FyJ+4LpVan/aFulrZxqjBi35A
-         ccsbkFbJRaPgx2+wt6+UTXDixM9ur/YzLFKCHJgGBBP22SfEsngTUKe2J87nXZP+KQBV
-         YUcmSYf1BG+UFgOuQ17mOgj6vcqACtmJbdU4JNbGOnLj/9NMSg5xcK5KR0aDgpXAXhu0
-         ZBmg==
+        d=szeredi.hu; s=google; t=1772101794; x=1772706594; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rzYc//p4H41oTH8p4tNC0vhAA0rjUA0WVHYr2lMVuzM=;
+        b=PLELvequ1kGcS/osnxh4OGGbbI70qTmBlf273FZCykrBbdd5oLX7hKTxnsY7FoMgGd
+         EQtrgHVVmJT3WbbzvL41NnNtR9uOB+BzjSk6dtPj8TSXIl78XbP2ufx5vb6Wwe50SWnG
+         T3bGKTUVDLAyz9NxvN2vE3axTe7NDKtjN2PGE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772100794; x=1772705594;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=QpKHBD0mhwVP9kJAJUi3zD5uY8oKKK5cQ3gsTRpGswo=;
-        b=mxFeazbpwAMqh08+35bNlEdcCLzMSPf2PzYkgzBr2IQm0Mq6w7duh7HMQF1L1d8wsx
-         0cymCoLMkl/Zb1ipRjHSGh2cJ8CeyqwsrmFX2CqHz96Jh0DaAKpTNcv3FerVN6sotpcj
-         PMNJm7e9rVpK1lM77RujCnv2r6JYZyADWEPhmcXKO4/TIFRn+v39JMiinOhZPfHiA6vJ
-         tL2XS2xn2/MluAuw19eZjb6iHHDGWmjnBNcVBA6fzjcf8JyccA8oNiqfFBXLixO9AzES
-         g1u5ET92lybFQVXlIZ5krrAzEQk+b4S+k9jUbpuiLSgqQJv+SPJS1mKe/JQBpebZmipQ
-         0AOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtG5cSMzzGjtmUI2ekaX9XRwT3Ibz1At8nGWB72yKkBAL7/iVhHtp8lKLGXGq1V53vbqb98uUOvf6gZfl1@vger.kernel.org
-X-Gm-Message-State: AOJu0YwttOmjs+4/Xxb7yVILMfN42VYEPxnc3urNpyFirk+i+D+vRTsE
-	YCwoW+jZB7flCYPyQHNrSOhmn/ccmaubN320X9HeY/Pyt1f6hBNIUWHSbGJr4pJImI4MJ47kaAW
-	Mw9CmDs82mpgU8xC7Mi6le2R56ReSI5g=
-X-Gm-Gg: ATEYQzxTvqfN0tI9GFKUbahrX4EeN8yDqpOdv+47lGITPeBJSTeLD5ZweUCQf9ClCAo
-	S8E19jGwogo6F1TcZKQntUpLaCu4Syq0bfu2NoDPfl8BE7uFEFH3nl45t7t4MPF6pFXaJY0Ae9I
-	YnVUYoQjBsVwf9jxx1wvjBrh27R3BLaS+VsVZMU4biTFR4P1LFpn3CCi00ADhpge15hT0bplfnx
-	2F1yzR4YZ8WUcCbhXrDHy3Vyp5SY5Jd3fHHyOaTkECM6f4QVdyI0COEkR1YSxL+rEhb6QmLKKdS
-	Lg4UKQ==
-X-Received: by 2002:a05:6102:3746:b0:5fd:f8d6:e5d7 with SMTP id
- ada2fe7eead31-5ff20a265a3mr869277137.11.1772100793952; Thu, 26 Feb 2026
- 02:13:13 -0800 (PST)
+        d=1e100.net; s=20230601; t=1772101794; x=1772706594;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rzYc//p4H41oTH8p4tNC0vhAA0rjUA0WVHYr2lMVuzM=;
+        b=rmLM5pS+KQO6/CAT2M/oCMm+tMkhg5YguZGGHpY8CucU5r7qR9hMisb52Qzzo8jbiz
+         YXsDPIR+GVjgQ0Oy9MWapmQ9IGswA8qdfVepH939OCsNbDUWvsAu3+9YIT3fVn/aKd57
+         pGe8OQWtKMbb8fd+EFCx8YFANBhJeFJDmjwnGqF0Hxq1WTONoO6SJR4g5ST3HUsRfoPT
+         Qyuoh1irSfLv6lNiCPKW+6U719Op4vnAFW6g9TRIg3slxnYQ7Ex7jMMdv75NCT4f4dNU
+         1fLP+5tNd5iKFn2uWyIuMqnhrPT/KCQTxmO8vNCvAqJRgW0xZhMvbTDW6dfUM5Zfs+GW
+         JlZg==
+X-Forwarded-Encrypted: i=1; AJvYcCV+5f9f48Fp7pOa0GyY4iIkddRGfIn69JVE3lQ66yrB8E5yZN5DXfbsF89fhv+xX0Ojvmsqc/fkwzzvrZCI@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIZCXyT0yqpqYWolhnZFu9BGPh+Q0delgSPgwIw4oZ01PD30n/
+	LuuuYMuioPLUHmLOYXZEotH6CeiuoVC6qfpC0tuFatOVM1Wjk0JMEqzqLWO2AABL0aDK6nbvw54
+	BsWZB2fhWQLejoPjCb5eYX1fwmxEP8SRzyBiINhK26Q==
+X-Gm-Gg: ATEYQzyZYCjGqlIxqwAs5r4+k/Jl6wMpdJDt8mLzYGKSem4iCUGEByd6m3iYRSqp/RG
+	HzSh/BB3kYeBSoitS8QS3THDz6il0zdi8T2JazOfMC+ohvSxzXWa8ZW+HwyTTW/0Le4OPTNY+KZ
+	/EIlVeNkZKlTQ9n3IpLrhtpKsiyZeTCuEnkHoznRsyuTIdUaRV0vOjpzvqCZwsZdx0RGoZ219qD
+	qZ63AKiSd543Uu+0oUFSxQhkQMGwv6neelHHObiQ+jKudt5bTC2Iok8Vg39YgmAkCssdFW4tNwK
+	eskVPA==
+X-Received: by 2002:a05:622a:1348:b0:4f1:c1fe:ba3d with SMTP id
+ d75a77b69052e-5074433f0fdmr28518441cf.7.1772101793679; Thu, 26 Feb 2026
+ 02:29:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <75f43184.d57.19c7b2269dd.Coremail.nzzhao@126.com>
- <aZiCV2lPYhiQzYUJ@infradead.org> <aZiqsQsWFSCjcfE_@casper.infradead.org> <aZzIUnYprj_wTyqn@google.com>
-In-Reply-To: <aZzIUnYprj_wTyqn@google.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 26 Feb 2026 18:13:01 +0800
-X-Gm-Features: AaiRm51jChSZI5BEV-wZgNYqeWNjz7J8xjz21TRTV8Vtb2crImnWPP2nMbwao7E
-Message-ID: <CAGsJ_4yN+RyF5hh-=sBfnRGp-r8KZBYY-ByT_V9KjiiKy1FgSA@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Large folio support: iomap framework changes
- versus filesystem-specific implementations
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>, Christoph Hellwig <hch@infradead.org>, Nanzhe Zhao <nzzhao@126.com>, 
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	yi.zhang@huaweicloud.com, Chao Yu <chao@kernel.org>, wqu@suse.com
+References: <20260225112439.27276-1-luis@igalia.com> <20260225112439.27276-7-luis@igalia.com>
+ <CAOQ4uxgvgRwfrHX3OMJ-Fvs2FXcp7d7bexrvx0acsy3t3gxv5w@mail.gmail.com>
+ <87zf4v7rte.fsf@wotan.olymp> <CAOQ4uxj-uVBvLQZxpsfNC+AR8+kFGUDEV6tOzH76AC0KU_g7Hg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxj-uVBvLQZxpsfNC+AR8+kFGUDEV6tOzH76AC0KU_g7Hg@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 26 Feb 2026 11:29:42 +0100
+X-Gm-Features: AaiRm50Ulg_iMjnkrAypdNuMWdG_oVdUjateStJKADh1WLijKmsSpl4CeCOLAO4
+Message-ID: <CAJfpegspUg_e9W7k5W7+eJxJscvtiCq5Hvt6CTDVCbijqP0HyA@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 6/8] fuse: implementation of lookup_handle+statx
+ compound operation
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Luis Henriques <luis@igalia.com>, Bernd Schubert <bschubert@ddn.com>, 
+	Bernd Schubert <bernd@bsbernd.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	Horst Birthelmer <hbirthelmer@ddn.com>, Joanne Koong <joannelkoong@gmail.com>, Kevin Chen <kchen@ddn.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Matt Harvey <mharvey@jumptrading.com>, kernel-dev@igalia.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78462-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[infradead.org,126.com,lists.linux-foundation.org,vger.kernel.org,huaweicloud.com,kernel.org,suse.com];
 	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78463-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_TO(0.00)[gmail.com];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[21cnbao@gmail.com,linux-fsdevel@vger.kernel.org];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FREEMAIL_CC(0.00)[igalia.com,ddn.com,bsbernd.com,kernel.org,gmail.com,vger.kernel.org,jumptrading.com];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
+	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[szeredi.hu:+];
+	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 52C661A41D7
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid,szeredi.hu:dkim]
+X-Rspamd-Queue-Id: 1097F1A446A
 X-Rspamd-Action: no action
 
-On Tue, Feb 24, 2026 at 5:36=E2=80=AFAM Jaegeuk Kim <jaegeuk@kernel.org> wr=
-ote:
->
-> On 02/20, Matthew Wilcox wrote:
-> > On Fri, Feb 20, 2026 at 07:48:39AM -0800, Christoph Hellwig wrote:
-> > > Maybe you catch on the wrong foot, but this pisses me off.  I've been
-> > > telling you guys to please actually fricking try converting f2fs to
-> > > iomap, and it's been constantly ignored.
-> >
-> > Christoph isn't alone here.  There's a consistent pattern of f2fs going
-> > off and doing weird shit without talking to anyone else.  A good start
-> > would be f2fs maintainers actually coming to LSFMM, but a lot more desi=
-gn
-> > decisions need to be cc'd to linux-fsdevel.
->
-> What's the benefit of supporting the large folio on the write path? And,
-> which other designs are you talking about?
->
-> I'm also getting the consistent pattern: 1) posting patches in f2fs for
-> production, 2) requested to post patches modifying the generic layer, 3)
-> posting the converted patches after heavy tests, 4) sitting there for
-> months without progress.
+On Thu, 26 Feb 2026 at 11:08, Amir Goldstein <amir73il@gmail.com> wrote:
 
-It can sometimes be a bit tricky for the common layer and
-filesystem-specific layers to coordinate smoothly. At times,
-it can be somewhat frustrating.
+> file handle on stack only makes sense for small pre allocated size.
+> If the server has full control over handle size, then that is not relevant.
 
-Privately, I know how tough it was for Nanzhe to decide whether
-to make changes in the iomap layer or in filesystem-specific code.
-Nevertheless, he has the dedication and care to implement F2FS
-large folio support in the best possible way, as he has discussed
-with me many times in private.
+I thought the point was that the file handle is available in
+fi->handle and doesn't need to be allocated/copied.   Instead
+extensions could be done with an argument vector, like this:
 
-I strongly suggest that LSF/MM/BPF invite Kim (and Chao, if possible)
-along with the iomap team to discuss this together=E2=80=94at least
-remotely if not everyone can attend in person.
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -326,6 +326,12 @@ struct fuse_folio_desc {
+        unsigned int offset;
+ };
 
->
-> E.g.,
-> https://lore.kernel.org/lkml/20251202013212.964298-1-jaegeuk@kernel.org/
++struct fuse_ext_arg {
++       u32 type;
++       u32 size;
++       const void *value;
++};
++
+ struct fuse_args {
+        uint64_t nodeid;
+        uint32_t opcode;
+@@ -346,6 +352,7 @@ struct fuse_args {
+        bool is_pinned:1;
+        bool invalidate_vmap:1;
+        struct fuse_in_arg in_args[4];
++       struct fuse_ext_arg ext_args[2];
+        struct fuse_arg out_args[2];
+        void (*end)(struct fuse_mount *fm, struct fuse_args *args, int error);
+        /* Used for kvec iter backed by vmalloc address */
 
-Thanks
-Barry
+Thanks,
+Miklos
 
