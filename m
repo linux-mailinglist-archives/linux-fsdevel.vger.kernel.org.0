@@ -1,228 +1,260 @@
-Return-Path: <linux-fsdevel+bounces-78655-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78656-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aEiHE3jQoGmTmwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78655-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 00:00:08 +0100
+	id IMmDBrrRoGlHnAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78656-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 00:05:30 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A47871B0B2E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 00:00:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7152A1B0BB9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 00:05:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 71E0830FF293
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 22:56:47 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 6676C3031834
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 23:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E64047AF74;
-	Thu, 26 Feb 2026 22:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F8A38BF81;
+	Thu, 26 Feb 2026 23:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ln4pWb9Z"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MngdCyGN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904A53A783E;
-	Thu, 26 Feb 2026 22:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772146602; cv=none; b=qGRpibsGF4WetNUeXKRvNNbrYh4K6iNcifJHrwM3u0/OIlyBUZX5OD8iNOhCF7MJKZ4CHvNvMuTiH/ul0igZVTgVzdEY7/iVyG5Dy755z8kWejyJ+qu40fgyRMGHgk62FBQri+ywrJORCkgLb64+06A5448dSQQi+ZIpjPT3eTQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772146602; c=relaxed/simple;
-	bh=ElkHN/R2fcBT5rLZGFbsSk4BZBEcI1Z5rkz7cnL9q58=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kXmdDYzUiiVaMI7g7pMec5/wrwftZ2VX+GDrNZxvwZU9drFVcXboLVqblVoWvj8otDc2BLCYw29IfBmAxAkURNX3l+k3vaZCW5uk0TUokgnjWWqceDuQU3O2Oo1jFlhD31hLfmZiAbdYHExipr9i/BqV4/LCK7AM+EKNZ8nMwCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ln4pWb9Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E473EC116C6;
-	Thu, 26 Feb 2026 22:56:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772146602;
-	bh=ElkHN/R2fcBT5rLZGFbsSk4BZBEcI1Z5rkz7cnL9q58=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ln4pWb9ZIa3iii1vd5gskrCoKmm1t9tEjYVEd5fbke5FD8fPQDsw2mkbqPb5Bnw+S
-	 z3+EiWtdlhrUEY/TzIpfb4TaDwuEYYePiDKvB2OL6xLfeGklpk4bZ6oZPa7zFemslG
-	 rGqmK29WoeRiHAvoCn9ydRfTOnwb3b8GUvcCmKy2jWa2lV07OB5alxRd6yvLlYu4sb
-	 GaIsxiVCRS8rqhZm6xuDYkrjN+izm2sJOCaV0gENsM1vxdjD6EFWvjkPYxW+Mk0ppk
-	 CgdPwGLujPkowNzYZB2g8SKWMopeLJvORgQ3TQwNfrH9FkU9y/THXIshdB3DErq5Vf
-	 e80DkaSCt9oCA==
-Message-ID: <044291bc-9841-44fe-813e-c50772962f09@kernel.org>
-Date: Fri, 27 Feb 2026 07:56:18 +0900
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878E2326942
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 23:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.170
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772147113; cv=pass; b=IB4IXXNRoK581wrKhp1AE8Wxl9bILmUC1WXqVhsiRVjLS+9J7OdfCoeg5UgVclnO3NixOr6rhdlJ8b+21ax3he6R7E9iQsIPSON81rD0C+gj58liwA1NBY5jUZACBLZuURt9wnxRL2tRevdIwcJsT7SObEPyLn3rpz+9tofhKaU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772147113; c=relaxed/simple;
+	bh=4K5YGPabkZvQyZy58tkV2oQCb8c6qZD03nIR4wIrckU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dLTJQmiFuVNL01U9z93PsCBg7c3v/LhNxGLFCMfQ75qSqPxdjR5QSOsHfxmv2FYlGRP59TEhACzSX9YQNbakytstMz1TyuEkchpevQ6XqlVwwJ7aejPSetnVvbCS+GguihgPqg3m+sjcjcHaW8++AoFtrLvYMXTRfWabBBBYK1c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MngdCyGN; arc=pass smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-503347dea84so16797671cf.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 15:05:12 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772147111; cv=none;
+        d=google.com; s=arc-20240605;
+        b=QSSxxrh83FB2mGgGHksIYgbrO8/kXjLGGxVaGGpccHl066N2UciYeTemINPXDH3LT0
+         7MroQZsyHbGrTsy2Goy/5gQezQN/LazwlOdH/H/tezkc2zm1rOX4xuH0biaZyUsCVCG3
+         PDeQKUjXQnspbGKHmEc7Q8pRXo5Ln18xr+U5tHx3pfM/y0+fYxzGMPbLOWiUdB5wfiX2
+         A3TC0gqSeFgMDZvaYY0TOwcvbvb/XWye9tTvKqAhgXYYpgPTy7ljvqqqC3BANfb3zXhA
+         vUXpNXHtyiLVot75Xh1wPRYJNjDLsW52j0+7kjQ0QtVyTVtft+hZ1jI19G7azI8yFy+M
+         VjCQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=NMT1crbYSBRFZxDVhGHICXjBW8vvKEYJ0DTMCQDicec=;
+        fh=aKY6jYYzH7gRtQ2cCK++3DP1G5IeT3WPmpiOmdCKNnM=;
+        b=CCNOk4OHqLkaDLULooSiK9fTk3NDnurEMRL6i8UMsgHV0H99gQFtSqYYmVDQEJgPUa
+         s9FFT4Hkn+k2jRd1AhTQ/Xe8NB5RDd1tOX/2CdrrTBshVn7d3QeSLMnNqDCff1JNYRpY
+         jB2ARBqQQ/5d3hg6fL8GUASsNDftSjYWPeR0lt1UpNX8YEkoDf1sr1LERCT1MjTfTowq
+         cro7d/kQqlH/hn2QXrO4tGuLfSl4ep/KbrQTj4osbdaFcSdJp9pCeucxYXW8LMOKzDd4
+         Vis4oap+kX8z3XnKdTYcT+SQyMfFesNU1i8zEKCqqB5SB0QzQ5Ln5GDWQBYGRDLfOWWK
+         ZWdA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772147111; x=1772751911; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NMT1crbYSBRFZxDVhGHICXjBW8vvKEYJ0DTMCQDicec=;
+        b=MngdCyGNQmcmohkeCeGKzQn24YXYFR0Z2rVtZgQVp8spRsNWJTh3ue9HdxBZapvTjc
+         ouh8arcDe2VI88nHWfglK5nNnFOAv5lNeqo304mkuR/FtR+g296ijrw6Zz566vLUhZMZ
+         1YGYq6in2VHFzVGwgXJ08rbaV8TW4MOMMC+PCYrYoBFeuE+B2RIper/uPFRKwoUHTj3X
+         zDFksnXx+OjSNI6QvONDOnsPXn2K6VjVYaRVq13Klyoi1SgbQCw0Zk1r6fksr0aELyzN
+         viHGBzy+nYmXtACWamCJQJk4lDrcLjgOQcOn3vz7XFWsmLqBOb5lyiB6dOl2+D601wEW
+         WfVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772147111; x=1772751911;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=NMT1crbYSBRFZxDVhGHICXjBW8vvKEYJ0DTMCQDicec=;
+        b=nh1QH/AA4WUzAa7R8Vg/cgtzxcTzHDD57Z5d1YW/NXWIE7Myrjs7K4Laj7jETaM9lz
+         ZpllJb75of31U5WnvmgcIfRGjLIEez+DC6UojjeXr4NkQJtbxHG8nV0Btyrnwc4ZGIkK
+         9P18mY47oE9J9pZk6II4gfIaP3whpDBM2XmKQBkZj6Uxge+vy6CljdqcO7RG/pX+4J+6
+         STJDsNMMBdUv8TBF8YSx/IOTqGS4CpMZdL8+16LFfhgqnmGIHe1BJrvoeDvyH+R6Kd+g
+         3maF1OT8tQDHezCiMcAlpUT3mlczEJjHhPzUO1VyyiiT4raPluYHTrxF1Cuy94+QgJ8v
+         +Wmw==
+X-Forwarded-Encrypted: i=1; AJvYcCXRC5zKjvNyeCgrBE2DQ8jw7S6TxlYt+sEiT5e9UjEjzD9Wwgh6TvPh8jJgeQS6xM2EPmqjZM6NEut/mPZ5@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW/nF7J3zgi7H+ja0ghsPHbrOpxFwAiViQ1iUXa0cDKYfJLnte
+	/13wGmMOV6FgIIJ06iia9pxzdbXkBqslndLI6jzocmlW6Mgp2d9We/hx/wEZcectOGm81wRrSwG
+	/gCJPtJwypznJ6tCHu1nWyqfDV764rUY=
+X-Gm-Gg: ATEYQzxVhN6tFiFx0AioUkBlJfixKgHULDTSbixJ0s1uH6kWIqqD0MVcQs/V12lG3PO
+	1xDOkudSVVy7fboYtijsMDmJgpN47tQAV3k43MzwE/L1hxl2XLUbEpHrHxfExomihnStkC7Fazw
+	ssxPpypuRzi3X77bjs07oyXtl9nyU5uBn01Hu/WVyX2RpSRizGYjgt5FbDAghx4F4mN7kSN0Efa
+	vx46CSYBjUy2TSYi7b2+1dfSjDIZ5WdVS77Jy0RDqi0a4X1grq6bMXOflWTqxXxIWtkKZTCXLJf
+	L8D7Ew==
+X-Received: by 2002:a05:622a:a70a:b0:506:1c3b:c8a3 with SMTP id
+ d75a77b69052e-507527824a5mr7777371cf.27.1772147111405; Thu, 26 Feb 2026
+ 15:05:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/61] vfs: widen inode hash/lookup functions to u64
-To: Jeff Layton <jlayton@kernel.org>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
- <willy@infradead.org>, Eric Biggers <ebiggers@kernel.org>,
- "Theodore Y. Ts'o" <tytso@mit.edu>, Muchun Song <muchun.song@linux.dev>,
- Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@kernel.org>,
- David Howells <dhowells@redhat.com>, Paulo Alcantara <pc@manguebit.org>,
- Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>,
- Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
- Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
- Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>,
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>,
- Tom Talpey <tom@talpey.com>, Steve French <sfrench@samba.org>,
- Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- Shyam Prasad N <sprasad@microsoft.com>, Bharath SM
- <bharathsm@microsoft.com>, Alexander Aring <alex.aring@gmail.com>,
- Ryusuke Konishi <konishi.ryusuke@gmail.com>,
- Viacheslav Dubeyko <slava@dubeyko.com>,
- Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
- <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>,
- Christian Schoenebeck <linux_oss@crudebyte.com>,
- David Sterba <dsterba@suse.com>, Marc Dionne <marc.dionne@auristor.com>,
- Ian Kent <raven@themaw.net>, Luis de Bethencourt <luisbg@kernel.org>,
- Salah Triki <salah.triki@gmail.com>,
- "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
- Ilya Dryomov <idryomov@gmail.com>, Alex Markuze <amarkuze@redhat.com>,
- Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
- Nicolas Pitre <nico@fluxnic.net>, Tyler Hicks <code@tyhicks.com>,
- Amir Goldstein <amir73il@gmail.com>, Christoph Hellwig <hch@infradead.org>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Yangtao Li <frank.li@vivo.com>,
- Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
- David Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>,
- Dave Kleikamp <shaggy@kernel.org>,
- Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
- Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
- Joseph Qi <joseph.qi@linux.alibaba.com>, Mike Marshall
- <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>,
- Miklos Szeredi <miklos@szeredi.hu>, Anders Larsen <al@alarsen.net>,
- Zhihao Cheng <chengzhihao1@huawei.com>, Naohiro Aota <naohiro.aota@wdc.com>,
- Johannes Thumshirn <jth@kernel.org>,
- John Johansen <john.johansen@canonical.com>, Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>,
- Roberto Sassu <roberto.sassu@huawei.com>,
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
- Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>,
- Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>,
- Casey Schaufler <casey@schaufler-ca.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Sumit Semwal <sumit.semwal@linaro.org>, Eric Dumazet <edumazet@google.com>,
- Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Willem de Bruijn <willemb@google.com>, "David S. Miller"
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Simon Horman <horms@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, James Clark
- <james.clark@linaro.org>, "Darrick J. Wong" <djwong@kernel.org>,
- Martin Schiller <ms@dev.tdt.de>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
- fsverity@lists.linux.dev, linux-mm@kvack.org, netfs@lists.linux.dev,
- linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
- samba-technical@lists.samba.org, linux-nilfs@vger.kernel.org,
- v9fs@lists.linux.dev, linux-afs@lists.infradead.org, autofs@vger.kernel.org,
- ceph-devel@vger.kernel.org, codalist@coda.cs.cmu.edu,
- ecryptfs@vger.kernel.org, linux-mtd@lists.infradead.org,
- jfs-discussion@lists.sourceforge.net, ntfs3@lists.linux.dev,
- ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org,
- linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
- selinux@vger.kernel.org, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org, netdev@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-fscrypt@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-hams@vger.kernel.org,
- linux-x25@vger.kernel.org
-References: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
- <20260226-iino-u64-v1-1-ccceff366db9@kernel.org>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20260226-iino-u64-v1-1-ccceff366db9@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20260226-fuse-compounds-upstream-v6-0-8585c5fcd2fc@ddn.com> <20260226-fuse-compounds-upstream-v6-1-8585c5fcd2fc@ddn.com>
+In-Reply-To: <20260226-fuse-compounds-upstream-v6-1-8585c5fcd2fc@ddn.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 26 Feb 2026 15:05:00 -0800
+X-Gm-Features: AaiRm52oMarlGwA-25EIYUYWoBhU-RrlGtCF3if3tR068hAdRZ_kfa9nMFRlfFc
+Message-ID: <CAJnrk1ZjhgGtZY556C3wptdw7uJoo8kuakfTvkQ-D3LzV4BkHg@mail.gmail.com>
+Subject: Re: [PATCH v6 1/3] fuse: add compound command to combine multiple requests
+To: Horst Birthelmer <horst@birthelmer.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, 
+	Luis Henriques <luis@igalia.com>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Horst Birthelmer <hbirthelmer@ddn.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78655-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_TO(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de];
-	HAS_ORG_HEADER(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[145];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[dlemoal@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78656-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: A47871B0B2E
+	TO_DN_SOME(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	MISSING_XM_UA(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,birthelmer.com:email,ddn.com:email,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: 7152A1B0BB9
 X-Rspamd-Action: no action
 
-On 2/27/26 00:55, Jeff Layton wrote:
-> Change the inode hash/lookup VFS API functions to accept u64 parameters
-> instead of unsigned long for inode numbers and hash values. This is
-> preparation for widening i_ino itself to u64, which will allow
-> filesystems to store full 64-bit inode numbers on 32-bit architectures.
-> 
-> Since unsigned long implicitly widens to u64 on all architectures, this
-> change is backward-compatible with all existing callers.
-> 
-> Functions updated:
->   - hash(), find_inode_fast(), find_inode_by_ino_rcu(), test_inode_iunique()
->   - __insert_inode_hash(), iget_locked(), iget5_locked(), iget5_locked_rcu()
->   - ilookup(), ilookup5(), ilookup5_nowait()
->   - find_inode_nowait(), find_inode_rcu()
->   - inode_insert5(), insert_inode_locked4()
->   - insert_inode_locked() (local variable)
->   - dump_mapping() (local variable and format string)
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+On Thu, Feb 26, 2026 at 8:43=E2=80=AFAM Horst Birthelmer <horst@birthelmer.=
+com> wrote:
+>
+> From: Horst Birthelmer <hbirthelmer@ddn.com>
+>
+> +ssize_t fuse_compound_send(struct fuse_compound_req *compound)
+> +{
+> +       struct fuse_conn *fc =3D compound->fm->fc;
+> +       struct fuse_args args =3D {
+> +               .opcode =3D FUSE_COMPOUND,
+> +               .in_numargs =3D 2,
+> +               .out_numargs =3D 2,
+> +               .out_argvar =3D true,
+> +       };
+> +       unsigned int req_count =3D compound->count;
+> +       size_t total_expected_out_size =3D 0;
+> +       size_t buffer_size =3D 0;
+> +       void *resp_payload_buffer;
+> +       char *buffer_pos;
+> +       void *buffer =3D NULL;
+> +       ssize_t ret;
+> +       unsigned int i, j;
+> +
+> +       for (i =3D 0; i < req_count; i++) {
+> +               struct fuse_args *op_args =3D compound->op_args[i];
+> +               size_t needed_size =3D sizeof(struct fuse_in_header);
+> +
+> +               for (j =3D 0; j < op_args->in_numargs; j++)
+> +                       needed_size +=3D op_args->in_args[j].size;
+> +
+> +               buffer_size +=3D needed_size;
+> +
+> +               for (j =3D 0; j < op_args->out_numargs; j++)
+> +                       total_expected_out_size +=3D op_args->out_args[j]=
+.size;
+> +       }
+> +
+> +       buffer =3D kzalloc(buffer_size, GFP_KERNEL);
+> +       if (!buffer)
+> +               return -ENOMEM;
+> +
+> +       buffer_pos =3D buffer;
+> +       for (i =3D 0; i < req_count; i++) {
+> +               if (compound->op_converters[i]) {
+> +                       ret =3D compound->op_converters[i](compound, i);
 
-[...]
+Can you explain why this is needed? The caller has all the information
+up front, so why can't it just set this information before calling
+fuse_compoudn_send() instead of needing this to be done in the
+->op_converters callback?
 
-> -int insert_inode_locked4(struct inode *inode, unsigned long hashval,
-> +int insert_inode_locked4(struct inode *inode, u64 hashval,
->  		int (*test)(struct inode *, void *), void *data)
->  {
->  	struct inode *old;
-> @@ -2642,7 +2642,7 @@ void init_special_inode(struct inode *inode, umode_t mode, dev_t rdev)
->  		break;
->  	default:
->  		printk(KERN_DEBUG "init_special_inode: bogus i_mode (%o) for"
-> -				  " inode %s:%lu\n", mode, inode->i_sb->s_id,
-> +				  " inode %s:%llu\n", mode, inode->i_sb->s_id,
+> +                       if (ret < 0)
+> +                               goto out_free_buffer;
+> +               }
+> +
+> +               buffer_pos =3D fuse_compound_build_one_op(fc,
+> +                                                       compound->op_args=
+[i],
+> +                                                       buffer_pos, i);
+> +       }
+> +
+> +       compound->compound_header.result_size =3D total_expected_out_size=
+;
+> +
+> +       args.in_args[0].size =3D sizeof(compound->compound_header);
+> +       args.in_args[0].value =3D &compound->compound_header;
+> +       args.in_args[1].size =3D buffer_size;
+> +       args.in_args[1].value =3D buffer;
+> +
+> +       buffer_size =3D total_expected_out_size +
+> +                     req_count * sizeof(struct fuse_out_header);
+> +
+> +       resp_payload_buffer =3D kzalloc(buffer_size, GFP_KERNEL);
+> +       if (!resp_payload_buffer) {
+> +               ret =3D -ENOMEM;
+> +               goto out_free_buffer;
+> +       }
+> +
+> +       args.out_args[0].size =3D sizeof(compound->result_header);
+> +       args.out_args[0].value =3D &compound->result_header;
+> +       args.out_args[1].size =3D buffer_size;
+> +       args.out_args[1].value =3D resp_payload_buffer;
+> +
+> +       ret =3D fuse_simple_request(compound->fm, &args);
+> +       if (ret < 0)
+> +               goto fallback_separate;
+> +
+> +       ret =3D fuse_handle_compound_results(compound, &args);
+> +       if (ret =3D=3D 0)
+> +               goto out;
+> +
+> +fallback_separate:
+> +       /* Kernel tries to fallback to separate requests */
+> +       if (!(compound->compound_header.flags & FUSE_COMPOUND_ATOMIC))
+> +               ret =3D fuse_compound_fallback_separate(compound);
 
-Hmmm. the type of ino in struct inode is changed in patch 2, not this patch. So
-this feels incorrect. Why not just squash patch 2 in here ?
+imo it's libfuse's responsibility to handle everything correctly and
+if the compound request cannot be handled by libfuse for whatever
+reason, the kernel should just fail it instead of retrying each
+request separately. I don't see it being likely that if the compound
+request fails, then sending each request separately helps. This would
+also let us get rid of the FUSE_COMPOUND_CONTINUE flag which imo is a
+bit confusing.
 
-While at it, maybe you could change this to use pr_debug() too ?
+Thanks,
+Joanne
 
--- 
-Damien Le Moal
-Western Digital Research
+> +
+> +out:
+> +       kfree(resp_payload_buffer);
+> +out_free_buffer:
+> +       kfree(buffer);
+> +       return ret;
+> +}
 
