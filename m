@@ -1,53 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-78491-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78492-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id kDMTGp1RoGnriAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78491-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 14:58:53 +0100
+	id CMIyOi9UoGlLiQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78492-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 15:09:51 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEE861A71DF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 14:58:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 413971A73DA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 15:09:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 388BE317AE82
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 13:51:13 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 2D8FE3183FEA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 13:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D6C396D2A;
-	Thu, 26 Feb 2026 13:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F34B3A0E9D;
+	Thu, 26 Feb 2026 13:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h8X1lQuf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WErjZFeX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F1F3246EB;
-	Thu, 26 Feb 2026 13:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE4127F72C;
+	Thu, 26 Feb 2026 13:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772113870; cv=none; b=ctcRbmVxiIKvvLbrtDeLkZlGaDw5WsXUyaIKsFxQOiz7XpQs2YLFg4u1tu2boQ0T1khc0x8EJPQVo0JVurWDa7bUknYWaJHy2BxYe2f9j8EZCtqcGp05h6uP7WQ8daI7aXTSJ5QttLBWDGsDIF0QvqFU1L1dQKE1PpZjhscg0b0=
+	t=1772113873; cv=none; b=rv0qbEnzUejv0/aLudmRloplh7I3JwSTrL2l0aNFEnVAwTXFhoRCz/nxxLZ6zjt2LJUDSDVbFcUmq3iE4MIjFLnWUzC1g7NazJsK7xX5lRVq1oi+2jIM8pjTpIZY2arv5+m5zRSAuNQvTB+3VD5xmNqMeSxAF7i0lgjA6TxpDCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772113870; c=relaxed/simple;
-	bh=V6IJBd7br9ZXr2ywz4D2JlGXakfOQjwONRm7+MR7rAs=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Y9ReOb0IGeljGVer550rgoEWUktaJxY+ny9HeussJMxEPH4ilq1myBv8g8UzrhQE8DESIz2KbM6D5jrF6Lg2UxxBeWSTSKHCNnIOfJEHBlOhIeQAAT4zvvyGUg6DzfH+zDCiZMlz593xxCPhqtTxTqNOfKfeDXTuXv8/V+XLqAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h8X1lQuf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D80FC116C6;
-	Thu, 26 Feb 2026 13:51:08 +0000 (UTC)
+	s=arc-20240116; t=1772113873; c=relaxed/simple;
+	bh=oHaJZts+QrjYBNUL0bMFZBKLhJ1qXU7/bPzzxp7wO58=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=gviCAEGBhu54SkCmAUY/L+Hx+GuTe9WdH626ZGc+e4rPmKQLXYhhxR2KY9gM0extG2DwVl6ZZOUUVmAr6GYm1+zkrZA/8w5CNC0QrrpwjE53j/fcdXZQ8D3kkQdjxAtDjhxUBi5LtXcxCoku1O8Da71Za2lOpDerETXGCt6sCIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WErjZFeX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F2E8C116C6;
+	Thu, 26 Feb 2026 13:51:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772113870;
-	bh=V6IJBd7br9ZXr2ywz4D2JlGXakfOQjwONRm7+MR7rAs=;
-	h=From:Subject:Date:To:Cc:From;
-	b=h8X1lQufFk3tZdPqosRC0lzrdAABxcLlX/frgQbHcZc8y56fN3pRjIBEBWrKMxTJe
-	 DQ4oR9yZOeQwWnRGqdoL8NPlj5pRz86VbN3SYdukd8YJctRaR3tdVzR86NGlhjgzVo
-	 TwTfxU+3fQ8MVCFfca+2hiFIYn8z18THPXccndHUP0uiCtpJIxNI22vMAPqvqoKhRC
-	 FvUyO66jx5IDEIohdyLT9uXO3D2kxVl0zF1RhNUZ4Ev8H1O8od8OTlmjdYk0XpprNH
-	 JvY7chow5w78WXv08RXtFbA3xcZRtPzAidG4PYyzo2ansVKjRajV1S1jq9QSACEglK
-	 i1QmKBKnHCrQQ==
+	s=k20201202; t=1772113872;
+	bh=oHaJZts+QrjYBNUL0bMFZBKLhJ1qXU7/bPzzxp7wO58=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=WErjZFeXdGKHyXShvVNqpaJVGu5gNaaJobXSBgnwQqxpcg1C3MRXVopPZfJ7lTSFe
+	 qBhljkWfo86dxo3Jfo4IioKREgMVpXxId8a1v+SQBCWzmKWL6NyoU2dpdJ5bWWVOd9
+	 WfVe7Y2ViK1uW5Rs3/6b1VkfuwIadEfI7JAMm8QxZFtGqX7Jj5u+givLjeqaL+83Nm
+	 0NX5876s1om7x88DvR9Z9snQ6P3LbFEdA1lS/vu5CRUmSz1GXgk2Rj9JCs6twO7mAb
+	 uz0CV4nlF83mY6bGNqo5hhXOcmICPin79uWOzP2PMOfZ8wWdpntm0dbFQ064jYsA5A
+	 pvevy4awFA5lA==
 From: Christian Brauner <brauner@kernel.org>
-Subject: [PATCH v5 0/6] pidfd: add CLONE_AUTOREAP, CLONE_NNP, and
- CLONE_PIDFD_AUTOKILL
-Date: Thu, 26 Feb 2026 14:50:58 +0100
-Message-Id: <20260226-work-pidfs-autoreap-v5-0-d148b984a989@kernel.org>
+Date: Thu, 26 Feb 2026 14:50:59 +0100
+Subject: [PATCH v5 1/6] clone: add CLONE_AUTOREAP
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,24 +55,21 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAMJPoGkC/23OQWrDMBAF0KsErTthpFFkp6veI3ShyONYpNhml
- CgtwXevFAik1MsP89+fu0oskZN639yVcI4pTmMJu7eNCoMfTwyxK1kZNA6NtnCb5Axz7PoE/nq
- ZhP0MxOyaho1F36rSnIX7+P1QD58lH31iOIofw1Ct3GwRJOh6OsRUkJ/Hfta18Jxyq1NZAwI76
- p0jxLY3H2eWkb+2k5xU3cr0ijTrCBWEyFukYFBr/Q+xL4ihdcTWT2hPAduA++4vsizLL/Lhvyt
- cAQAA
-X-Change-ID: 20260214-work-pidfs-autoreap-3ee677e240a8
+Message-Id: <20260226-work-pidfs-autoreap-v5-1-d148b984a989@kernel.org>
+References: <20260226-work-pidfs-autoreap-v5-0-d148b984a989@kernel.org>
+In-Reply-To: <20260226-work-pidfs-autoreap-v5-0-d148b984a989@kernel.org>
 To: Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
  Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
  linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-47773
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6520; i=brauner@kernel.org;
- h=from:subject:message-id; bh=V6IJBd7br9ZXr2ywz4D2JlGXakfOQjwONRm7+MR7rAs=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQu8D/9IHl71q9jbgx/nsyZYrRitnzyyZjHMUe3LQmc6
- vnUaN/PiR2lLAxiXAyyYoosDu0m4XLLeSo2G2VqwMxhZQIZwsDFKQATcfnN8D9Auk+hqaj6RHKs
- RWXFLO+FhnIxeV7SlxXPrj9cdE7HkYXhfxxXfOIKIcM6qzSWOvm5m6s2ZTHsmpJvOa24VZXtyvK
- jXAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5721; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=oHaJZts+QrjYBNUL0bMFZBKLhJ1qXU7/bPzzxp7wO58=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQu8D/99W9EN6Obt2elWu2Wpoirs7XaDNw3BtzzWfhG4
+ qDVlwl5HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOp8WJkeDvV64iw8OEic/lr
+ uj3K5Rq/1oadWDNV0zgwYJbAjpU3lBn+6X58L5t+kdtcXJ/11z6bU0vYl2z6qn1mrpLC3qM/jv+
+ awA8A
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 X-Rspamd-Server: lfdr
@@ -85,15 +81,15 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78491-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	URIBL_MULTI_FAIL(0.00)[sea.lore.kernel.org:server fail];
+	TAGGED_FROM(0.00)[bounces-78492-lists,linux-fsdevel=lfdr.de];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
@@ -102,19 +98,15 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,msgid.link:url]
-X-Rspamd-Queue-Id: CEE861A71DF
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Queue-Id: 413971A73DA
 X-Rspamd-Action: no action
 
-Add three new clone3() flags for pidfd-based process lifecycle
-management.
-
-=== CLONE_AUTOREAP ===
-
-CLONE_AUTOREAP makes a child process auto-reap on exit without ever
-becoming a zombie. This is a per-process property in contrast to the
-existing auto-reap mechanism via SA_NOCLDWAIT or SIG_IGN for SIGCHLD
-which applies to all children of a given parent.
+Add a new clone3() flag CLONE_AUTOREAP that makes a child process
+auto-reap on exit without ever becoming a zombie. This is a per-process
+property in contrast to the existing auto-reap mechanism via
+SA_NOCLDWAIT or SIG_IGN for SIGCHLD which applies to all children of a
+given parent.
 
 Currently the only way to automatically reap children is to set
 SA_NOCLDWAIT or SIG_IGN on SIGCHLD. This is a parent-scoped property
@@ -127,112 +119,129 @@ When the child exits do_notify_parent() checks this flag and causes
 exit_notify() to transition the task directly to EXIT_DEAD. Since the
 flag lives on the child it survives reparenting: if the original parent
 exits and the child is reparented to a subreaper or init the child still
-auto-reaps when it eventually exits. This is cleaner than forcing the
-subreaper to get SIGCHLD and then reaping it. If the parent doesn't care
-the subreaper won't care. If there's a subreaper that would care it
-would be easy enough to add a prctl() that either just turns back on
-SIGCHLD and turns off auto-reaping or a prctl() that just notifies the
-subreaper whenever a child is reparented to it.
+auto-reaps when it eventually exits.
 
 CLONE_AUTOREAP can be combined with CLONE_PIDFD to allow the parent to
 monitor the child's exit via poll() and retrieve exit status via
 PIDFD_GET_INFO. Without CLONE_PIDFD it provides a fire-and-forget
-pattern. No exit signal is delivered so exit_signal must be zero.
-CLONE_THREAD and CLONE_PARENT are rejected: CLONE_THREAD because
-autoreap is a process-level property, and CLONE_PARENT because an
-autoreap child reparented via CLONE_PARENT could become an invisible
-zombie under a parent that never calls wait().
+pattern where the parent simply doesn't care about the child's exit
+status. No exit signal is delivered so exit_signal must be zero.
+
+CLONE_AUTOREAP is rejected in combination with CLONE_PARENT. If a
+CLONE_AUTOREAP child were to clone(CLONE_PARENT) the new grandchild
+would inherit exit_signal == 0 from the autoreap parent's group leader
+but without signal->autoreap. This grandchild would become a zombie that
+never sends a signal and is never autoreaped - confusing and arguably
+broken behavior.
 
 The flag is not inherited by the autoreap process's own children. Each
 child that should be autoreaped must be explicitly created with
 CLONE_AUTOREAP.
 
-=== CLONE_NNP ===
-
-CLONE_NNP sets no_new_privs on the child at clone time. Unlike
-prctl(PR_SET_NO_NEW_PRIVS) which a process sets on itself, CLONE_NNP
-allows the parent to impose no_new_privs on the child at creation
-without affecting the parent's own privileges. CLONE_THREAD is rejected
-because threads share credentials. CLONE_NNP is useful on its own for
-any spawn-and-sandbox pattern but was specifically introduced to enable
-unprivileged usage of CLONE_PIDFD_AUTOKILL.
-
-=== CLONE_PIDFD_AUTOKILL ===
-
-This flag ties a child's lifetime to the pidfd returned from clone3().
-When the last reference to the struct file created by clone3() is closed
-the kernel sends SIGKILL to the child. A pidfd obtained via pidfd_open()
-for the same process does not keep the child alive and does not trigger
-autokill - only the specific struct file from clone3() has this
-property. This is useful for container runtimes, service managers, and
-sandboxed subprocess execution - any scenario where the child must die
-if the parent crashes or abandons the pidfd or just wants a throwaway
-helper process.
-
-CLONE_PIDFD_AUTOKILL requires both CLONE_PIDFD and CLONE_AUTOREAP. It
-requires CLONE_PIDFD because the whole point is tying the child's
-lifetime to the pidfd. It requires CLONE_AUTOREAP because a killed child
-with no one to reap it would become a zombie - the primary use case is
-the parent crashing or abandoning the pidfd so no one is around to call
-waitpid(). CLONE_THREAD is rejected because autokill targets a process
-not a thread.
-
-If CLONE_NNP is specified together with CLONE_PIDFD_AUTOKILL an
-unprivileged user may spawn a process that is autokilled. The child
-cannot escalate privileges via setuid/setgid exec after being spawned.
-If CLONE_PIDFD_AUTOKILL is specified without CLONE_NNP the caller must
-have have CAP_SYS_ADMIN in its user namespace.
-
+Link: https://github.com/uapi-group/kernel-features/issues/45
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
-Changes in v5:
-- Split no_new_privs into separate CLONE_NNP flag instead of having
-  CLONE_PIDFD_AUTOKILL implicitly set it.
-- CLONE_PIDFD_AUTOKILL now requires either CLONE_NNP or CAP_SYS_ADMIN.
-- Link to v4: https://patch.msgid.link/20260223-work-pidfs-autoreap-v4-0-e393c08c09d1@kernel.org
+ include/linux/sched/signal.h |  1 +
+ include/uapi/linux/sched.h   |  1 +
+ kernel/fork.c                | 14 +++++++++++++-
+ kernel/ptrace.c              |  3 ++-
+ kernel/signal.c              |  4 ++++
+ 5 files changed, 21 insertions(+), 2 deletions(-)
 
-Changes in v4:
-- Set no_new_privs on child when CLONE_PIDFD_AUTOKILL is used. This
-  prevents the child from escalating privileges via setuid/setgid exec
-  and eliminates the need for magical resets during credential changes.
-  The parent retains full privileges.
-- Replace autokill_pidfd pointer with PIDFD_AUTOKILL file flag checked
-  in pidfs_file_release(). This eliminates the need for pointer
-  comparison, stale pointer concerns, and WRITE_ONCE/READ_ONCE pairing
-  (Oleg, Jann).
-- Reject CLONE_AUTOREAP | CLONE_PARENT to prevent a CLONE_AUTOREAP
-  child from creating silent zombies via clone(CLONE_PARENT) (Oleg).
-- Link to v3: https://patch.msgid.link/20260217-work-pidfs-autoreap-v3-0-33a403c20111@kernel.org
+diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+index a22248aebcf9..f842c86b806f 100644
+--- a/include/linux/sched/signal.h
++++ b/include/linux/sched/signal.h
+@@ -132,6 +132,7 @@ struct signal_struct {
+ 	 */
+ 	unsigned int		is_child_subreaper:1;
+ 	unsigned int		has_child_subreaper:1;
++	unsigned int		autoreap:1;
+ 
+ #ifdef CONFIG_POSIX_TIMERS
+ 
+diff --git a/include/uapi/linux/sched.h b/include/uapi/linux/sched.h
+index 359a14cc76a4..8a22ea640817 100644
+--- a/include/uapi/linux/sched.h
++++ b/include/uapi/linux/sched.h
+@@ -36,6 +36,7 @@
+ /* Flags for the clone3() syscall. */
+ #define CLONE_CLEAR_SIGHAND 0x100000000ULL /* Clear any signal handler and reset to SIG_DFL. */
+ #define CLONE_INTO_CGROUP 0x200000000ULL /* Clone into a specific cgroup given the right permissions. */
++#define CLONE_AUTOREAP 0x400000000ULL /* Auto-reap child on exit. */
+ 
+ /*
+  * cloning flags intersect with CSIGNAL so can be used with unshare and clone3
+diff --git a/kernel/fork.c b/kernel/fork.c
+index e832da9d15a4..0dedf2999f0c 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2028,6 +2028,15 @@ __latent_entropy struct task_struct *copy_process(
+ 			return ERR_PTR(-EINVAL);
+ 	}
+ 
++	if (clone_flags & CLONE_AUTOREAP) {
++		if (clone_flags & CLONE_THREAD)
++			return ERR_PTR(-EINVAL);
++		if (clone_flags & CLONE_PARENT)
++			return ERR_PTR(-EINVAL);
++		if (args->exit_signal)
++			return ERR_PTR(-EINVAL);
++	}
++
+ 	/*
+ 	 * Force any signals received before this point to be delivered
+ 	 * before the fork happens.  Collect up signals sent to multiple
+@@ -2435,6 +2444,8 @@ __latent_entropy struct task_struct *copy_process(
+ 			 */
+ 			p->signal->has_child_subreaper = p->real_parent->signal->has_child_subreaper ||
+ 							 p->real_parent->signal->is_child_subreaper;
++			if (clone_flags & CLONE_AUTOREAP)
++				p->signal->autoreap = 1;
+ 			list_add_tail(&p->sibling, &p->real_parent->children);
+ 			list_add_tail_rcu(&p->tasks, &init_task.tasks);
+ 			attach_pid(p, PIDTYPE_TGID);
+@@ -2897,7 +2908,8 @@ static bool clone3_args_valid(struct kernel_clone_args *kargs)
+ {
+ 	/* Verify that no unknown flags are passed along. */
+ 	if (kargs->flags &
+-	    ~(CLONE_LEGACY_FLAGS | CLONE_CLEAR_SIGHAND | CLONE_INTO_CGROUP))
++	    ~(CLONE_LEGACY_FLAGS | CLONE_CLEAR_SIGHAND | CLONE_INTO_CGROUP |
++	      CLONE_AUTOREAP))
+ 		return false;
+ 
+ 	/*
+diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+index 392ec2f75f01..68c17daef8d4 100644
+--- a/kernel/ptrace.c
++++ b/kernel/ptrace.c
+@@ -549,7 +549,8 @@ static bool __ptrace_detach(struct task_struct *tracer, struct task_struct *p)
+ 	if (!dead && thread_group_empty(p)) {
+ 		if (!same_thread_group(p->real_parent, tracer))
+ 			dead = do_notify_parent(p, p->exit_signal);
+-		else if (ignoring_children(tracer->sighand)) {
++		else if (ignoring_children(tracer->sighand) ||
++			 p->signal->autoreap) {
+ 			__wake_up_parent(p, tracer);
+ 			dead = true;
+ 		}
+diff --git a/kernel/signal.c b/kernel/signal.c
+index d65d0fe24bfb..e61f39fa8c8a 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -2251,6 +2251,10 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
+ 		if (psig->action[SIGCHLD-1].sa.sa_handler == SIG_IGN)
+ 			sig = 0;
+ 	}
++	if (!tsk->ptrace && tsk->signal->autoreap) {
++		autoreap = true;
++		sig = 0;
++	}
+ 	/*
+ 	 * Send with __send_signal as si_pid and si_uid are in the
+ 	 * parent's namespaces.
 
-Changes in v2:
-- Add CLONE_PIDFD_AUTOKILL flag
-- Decouple CLONE_AUTOREAP from CLONE_PIDFD: the autoreap mechanism has
-  no dependency on pidfds. This allows fire-and-forget patterns where
-  the parent does not need exit status.
-- Link to v1: https://patch.msgid.link/20260216-work-pidfs-autoreap-v1-0-e63f663008f2@kernel.org
-
----
-Christian Brauner (6):
-      clone: add CLONE_AUTOREAP
-      clone: add CLONE_NNP
-      pidfd: add CLONE_PIDFD_AUTOKILL
-      selftests/pidfd: add CLONE_AUTOREAP tests
-      selftests/pidfd: add CLONE_NNP tests
-      selftests/pidfd: add CLONE_PIDFD_AUTOKILL tests
-
- fs/pidfs.c                                         |  38 +-
- include/linux/sched/signal.h                       |   1 +
- include/uapi/linux/pidfd.h                         |   1 +
- include/uapi/linux/sched.h                         |   3 +
- kernel/fork.c                                      |  49 +-
- kernel/ptrace.c                                    |   3 +-
- kernel/signal.c                                    |   4 +
- tools/testing/selftests/pidfd/.gitignore           |   1 +
- tools/testing/selftests/pidfd/Makefile             |   2 +-
- .../testing/selftests/pidfd/pidfd_autoreap_test.c  | 900 +++++++++++++++++++++
- 10 files changed, 991 insertions(+), 11 deletions(-)
----
-base-commit: 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f
-change-id: 20260214-work-pidfs-autoreap-3ee677e240a8
+-- 
+2.47.3
 
 
