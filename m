@@ -1,122 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-78499-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78500-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CIkdC6FVoGlLiQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78499-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 15:16:01 +0100
+	id cK0cDFBZoGl2igQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78500-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 15:31:44 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id C575B1A7542
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 15:16:00 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 782341A7942
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 15:31:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 219C731D8C1C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 14:03:40 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id E350130995C4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 14:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C6B3D3331;
-	Thu, 26 Feb 2026 14:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA83136CDE4;
+	Thu, 26 Feb 2026 14:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W6sO2eJx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960753D3328
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 14:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4715133A9F7;
+	Thu, 26 Feb 2026 14:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772114542; cv=none; b=IHQjq1ApTmj8QMO5gXJHxS64HBNO/M2sjA9TpkgwECl3Jklo5/m5qm4/q/VFQd/YPjbPAXaN+Xs+H+aSVSRHfHsu0EKRMJ2pn6h2Tu771H8f34eKDgVQ8maH/n9s3KJgW6DDanU33fwuo0eQ6EB6zBqTemqc1yeT6mxpGbbInZ4=
+	t=1772114955; cv=none; b=ZWKpKF89ln6VilsltSPQA+nTQD3erhAh+k/z1CHp3bVCidMlEgjvo07ogBqIYELJlhLUrGGyLOVzPoXFfPeIoKOGtDr3pgz9zaPaBCnjcHlCCWe2qyGLoHGQ15Wp7sQu7aJNLBekkwYqsh4mlHHEAd/jFg/VHqwpZF3anw+rPmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772114542; c=relaxed/simple;
-	bh=Dgy8lnG9ibb9weBBNmiRKKijIXpaU0IVOTiJhb7BJEs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=WUFnxx8D7bAcCOGEda1n5WqIf6P2/0wOQ+LjSLwn14jbC59e5vQ/jJ/ImcFined2UEufvQsvdyjZgJUYDX48xPtfvObOjOXBj4StEZrvhvt8OTXGuoUYhXhpLp9HlIoyTRLAO1Iw8yR8PISDS1u+XoxUZQlKwMi5DLiqM4wPFC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 61QE23G0014721;
-	Thu, 26 Feb 2026 23:02:03 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.2] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 61QE22Gb014718
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 26 Feb 2026 23:02:03 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <0cef4eb7-987e-4fa6-a5b1-a64c5db1f42b@I-love.SAKURA.ne.jp>
-Date: Thu, 26 Feb 2026 23:01:59 +0900
+	s=arc-20240116; t=1772114955; c=relaxed/simple;
+	bh=8WDXKaLHom5c3E/DwCunlAjOlHZNSGTUJkRY5uIDLx4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kbBeudcFUGzQ3mUbRC+G+Nb6Sxsd7dH3Rd24xINUQOZ1LKVYmk3jjzsUHDAcq+VG3m9j0LiweQKbrI1GXyugaO25nfp6jRca10nIDd78YVw6AUSOJrdD1IE0NUM25jByrZaGKnsyXsHXnjIzZtQjYnCmdZEkfQL2XqbFl4uU3bE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W6sO2eJx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B342AC116C6;
+	Thu, 26 Feb 2026 14:09:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772114954;
+	bh=8WDXKaLHom5c3E/DwCunlAjOlHZNSGTUJkRY5uIDLx4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W6sO2eJxeOLvlQ9mpL1mZ9pdNYgf/x6X5Vk3jytPpF4EeK4GOxcnfskcBjkXwDBBV
+	 2qq5q2kU1XKnmM99cg64n+IdHCe8KdA2GjbHFihYphUV1uUGBG91N+11GIsz5QtpxO
+	 0NfvN2cBrEpXNTvuy1xGq2lBTE/GPrPkgLdRTOLnEwCvFpV6DltN0qx3CTZ+6BQNW0
+	 bfqqlUuRoRHyRAybpbDIk8nqS68HJ4O1ryrNqw3k/JN6CCEIo6TVj99sko3SfM1NS7
+	 ZTJSJllW0WTGH/QTTJFxoIZiGN4fcxYT5Wq7wKdCUt1+oYza8TsdDQ9MqHgVaZ/wQ7
+	 71YDJv0xlj/Ug==
+Date: Thu, 26 Feb 2026 09:09:13 -0500
+From: Sasha Levin <sashal@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Amir Goldstein <amir73il@gmail.com>, patches@lists.linux.dev,
+	stable@vger.kernel.org, Jakub Acs <acsjakub@amazon.de>,
+	Christian Brauner <brauner@kernel.org>, viro@zeniv.linux.org.uk,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 6.19-5.15] fsnotify: Shutdown fsnotify before
+ destroying sb's dcache
+Message-ID: <aaBUCU50P-GYMnne@laps>
+References: <20260214212452.782265-1-sashal@kernel.org>
+ <20260214212452.782265-85-sashal@kernel.org>
+ <CAOQ4uxgKwp2FSAUwqhHN-kTBcy0DsFmLstGUY+zJWppOzTAmHA@mail.gmail.com>
+ <z6nyopsvzubwxowiqxdg2yt5v6yu4i3uzlflvryjwuk2su7z4m@35ikyzqbxb46>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hfs: don't fail operations when files/directories counter
- overflows
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "jkoolstra@xs4all.nl" <jkoolstra@xs4all.nl>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <6e5fd94e-9073-4307-beb7-ee87f3f0665c@I-love.SAKURA.ne.jp>
- <68811931931db09c0ea84f1be8e1bdc0fd453776.camel@ibm.com>
- <4a026754-1c58-40a6-96f9-ecaafa67a2ae@I-love.SAKURA.ne.jp>
- <62e01a3505bca9d1e8779f85e0223ec02c24a6de.camel@ibm.com>
- <ef597d09-0fe0-44bc-93ff-b0223eb97ce8@I-love.SAKURA.ne.jp>
- <37b976e33847b4e3370d423825aaa23bdc081606.camel@ibm.com>
- <f8700c59-3763-4ea9-b5c2-f4510c2106ed@I-love.SAKURA.ne.jp>
- <40a8f3a228cf8f3580f633b9289cd371b553c3e4.camel@ibm.com>
- <524bed1e-fceb-4061-b274-219e64a6b619@I-love.SAKURA.ne.jp>
- <645baa4f25bb435217be8f9f6aa1448de5d5744e.camel@ibm.com>
- <a6e9fe8b-5a20-4c01-a1f8-144572fc3f4a@I-love.SAKURA.ne.jp>
- <fd5c05a5-2752-4dab-ba98-2750577fb9a4@I-love.SAKURA.ne.jp>
- <be0afbc9cf2816b19952a8d38ffb4a82519454e2.camel@ibm.com>
- <15eebd5d-cf5b-42ca-a772-6918520ff140@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-In-Reply-To: <15eebd5d-cf5b-42ca-a772-6918520ff140@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav104.rs.sakura.ne.jp
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <z6nyopsvzubwxowiqxdg2yt5v6yu4i3uzlflvryjwuk2su7z4m@35ikyzqbxb46>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.46 / 15.00];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78499-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[gmail.com,lists.linux.dev,vger.kernel.org,amazon.de,kernel.org,zeniv.linux.org.uk];
+	TAGGED_FROM(0.00)[bounces-78500-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[i-love.sakura.ne.jp];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[ibm.com,physik.fu-berlin.de,vivo.com,dubeyko.com,xs4all.nl];
+	FROM_HAS_DN(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	MISSING_XM_UA(0.00)[];
 	TO_DN_SOME(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[penguin-kernel@I-love.SAKURA.ne.jp,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
-	MID_RHS_MATCH_FROM(0.00)[];
-	R_DKIM_NA(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[sashal@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,share.google:url]
-X-Rspamd-Queue-Id: C575B1A7542
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 782341A7942
 X-Rspamd-Action: no action
 
-On 2026/02/21 10:50, Tetsuo Handa wrote:
->> We cannot simply silently stop accounting folders count. We should complain and
->> must return error.
+On Tue, Feb 17, 2026 at 11:00:42AM +0100, Jan Kara wrote:
+>On Sun 15-02-26 09:11:30, Amir Goldstein wrote:
+>> On Sat, Feb 14, 2026 at 11:27 PM Sasha Levin <sashal@kernel.org> wrote:
+>> >
+>> > From: Jan Kara <jack@suse.cz>
+>> >
+>> > [ Upstream commit 74bd284537b3447c651588101c32a203e4fe1a32 ]
+>> >
+>> > Currently fsnotify_sb_delete() was called after we have evicted
+>> > superblock's dcache and inode cache. This was done mainly so that we
+>> > iterate as few inodes as possible when removing inode marks. However, as
+>> > Jakub reported, this is problematic because for some filesystems
+>> > encoding of file handles uses sb->s_root which gets cleared as part of
+>> > dcache eviction. And either delayed fsnotify events or reading fdinfo
+>> > for fsnotify group with marks on fs being unmounted may trigger encoding
+>> > of file handles during unmount.
+>>
+>> In retrospect, the text "Now that we iterate inode connectors..."
+>> would have helped LLM (as well as human) patch backports understand
+>> that this is NOT a standalone patch.
+>
+>Good point :)
+>
+>> Sasha,
+>>
+>> I am very for backporting this fix, but need to backport the series
+>> https://lore.kernel.org/linux-fsdevel/20260121135513.12008-1-jack@suse.cz/
+>
+>Yes. Without commits 94bd01253c3d5 ("fsnotify: Track inode connectors for a
+>superblock") and a05fc7edd988c ("fsnotify: Use connector list for
+>destroying inode marks") the reordering alone can cause large latencies
+>during filesystem unmount.
 
-Here is an opinion from Google AI mode.
+Looks like going even to 6.18 requires a bunch of dependencies, so a backport
+would be appreciated :)
 
-https://share.google/aimode/VTH5mHPFmaH62fnwx (Expires in 7 days. Please save if needed.)
-
+-- 
+Thanks,
+Sasha
 
