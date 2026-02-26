@@ -1,127 +1,254 @@
-Return-Path: <linux-fsdevel+bounces-78448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CB/lORkDoGl/fQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 09:23:53 +0100
+	id SLsuGSEHoGl/fQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 09:41:05 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90DD41A27F6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 09:23:53 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93F431A2B38
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 09:41:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 80E98301C15C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 08:23:51 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id A0D5A300BC76
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 08:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DCC138BF76;
-	Thu, 26 Feb 2026 08:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0210395259;
+	Thu, 26 Feb 2026 08:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z3CeIa8z"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="T5K+2bTN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2513451CF;
-	Thu, 26 Feb 2026 08:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E443395247
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 08:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772094226; cv=none; b=jJJhUJHr1+a67dqWb6WErXeFBECGJa8x6wJS9aF8fYnUIXawpjslEhVepayAxqsWuvxtNtmWlyC6xAbJNUESNrIRonGEcSAM17OIOxgtSD3xKuP0lFwl0l1Y2flGXC7enB3r7z/4m3wUIcQV2HAlBJXS4/ITIrrphIReT65ANlI=
+	t=1772095253; cv=none; b=l0Ssj3eIa8mrU1OVwkQ3EXMTWv5kyLdvnpq3Wqy8FrOBvvG/Lb6c9nicm9m/ho+MtVdEajiaI+TQ/bZWAB1Bso5Nrychbo2e9PeyMSK6+9vL3DdYyiOIUBL6b9gy7YeB+roLR3oJZvKc8sOS/M+20uddkYuKPp6FUbZfaoMUBLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772094226; c=relaxed/simple;
-	bh=9UTL05T45jVAVEyq9bj9rPEbOxgONPJewtdQnNrLGag=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZsQScwXONNpZZnL44Jrv2TBfQ7eqNHnx8VWUas/5DCdQWtf+8SW+eD9pECt2ddCYZmSTtog+l15T3MyEnEoFk1TpSMZOB5YgaBKFshQDxo1bNMNyGrTfJDY8dFrLi4atk7gqc9sjQi7pyr4LlJeBGqyAoDSuCG8hCBhqaORfYCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z3CeIa8z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68EAFC19424;
-	Thu, 26 Feb 2026 08:23:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772094225;
-	bh=9UTL05T45jVAVEyq9bj9rPEbOxgONPJewtdQnNrLGag=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Z3CeIa8zV0lNze7dfMNQs3U71TXcKVvchAp0nBteMimOgXEhrwrEViQZ8HLWqqr7W
-	 dPQH6lfqlWSrqqlET7SXDw5qdVk+AseBmBm1wxuNMtx2OxJds0Z531kbG9gdvnnGZx
-	 vJjTyeq+jWiTqEr6DegABUAjZmLlQL8v1QG7ve01Bdm4FrJ0m9FTQU6qrB4pWpawB/
-	 ZbXdioKOgmACc5I9pTXFyLTUTLoV0mHcctOqum0zh4KjrZuqLWpJxA1eylyOuaeuW/
-	 ql6IA6ahZNXFJfOotrLrWiqgkNg07AUHAJYU70hax142Ilg1UCaFH91lHODHcgZK51
-	 MOihfApvQ3gAg==
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>,
-	"Darrick J. Wong" <djwong@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	xfs <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH] iomap: don't report direct-io retries to fserror
-Date: Thu, 26 Feb 2026 09:23:39 +0100
-Message-ID: <20260226-wolfsrudel-vulkan-ec9c79c916ca@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260224154637.GD2390381@frogsfrogsfrogs>
-References: <20260224154637.GD2390381@frogsfrogsfrogs>
+	s=arc-20240116; t=1772095253; c=relaxed/simple;
+	bh=dwrTDGeh95iZKaCEtAc0YWQ6wKjI5cJcO3Vg+xhvHkQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S1gi8DWcEBAPgl6/dyw7RipFFdOwKqbSXuLybaRn+GZVl0/lQckuQ1lPVzVmP1LztRVayL9ZCpchJIVyWGCdBHOpYZQ4MlGrL+XKyCam8rrE2BkSwEEUVdJdk32TprIgMQpB+Idb6BgFC8Ux6ni6dIijkrjmO75fqtQPxg1PPC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=T5K+2bTN; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1772095248;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=r6ok+REfdEcAEOyYdN8mpwOjfAi6PmuRiNBeuWg5TUU=;
+	b=T5K+2bTNXbyiZNubyfIgKzDWc7n++7B7nePN71sU4f09J1Z1zIXlbtNc+/wUPPFZr90CyP
+	WGRtf1eL2ccboUEI1sH532tb4YN/k/NZBD/VWOkRmOeKLQR6AWkjAVuuyOzUIdv48y05/E
+	r/+dWZ9KNUA0tglW3MTUw+5KWgo1dkU=
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: linux-mm@kvack.org
+Cc: jiayuan.chen@linux.dev,
+	Jiayuan Chen <jiayuan.chen@shopee.com>,
+	syzbot+6880f676b265dbd42d63@syzkaller.appspotmail.com,
+	"Theodore Ts'o" <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Hugh Dickins <hughd@google.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Jan Kara <jack@suse.cz>,
+	linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ntfs3@lists.linux.dev,
+	linux-trace-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v1] mm: annotate data race of f_ra.prev_pos
+Date: Thu, 26 Feb 2026 16:40:07 +0800
+Message-ID: <20260226084020.163720-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1193; i=brauner@kernel.org; h=from:subject:message-id; bh=9UTL05T45jVAVEyq9bj9rPEbOxgONPJewtdQnNrLGag=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQuYOYVEGyRTfo27f3bC2HtW/OnPGcVYO1infQhXu5Rh YOLZt6jjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImY5jH895r7+5jC5l2zGE8J CFfeSZb6e2BhBf/8I821Kzs2X56XZMXI8FjWXPOO4b4dTcwuM2WfB1m91vtvcsSMW83Oy0V+okM XDwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [2.34 / 15.00];
-	MID_END_EQ_FROM_USER_PART(4.00)[];
+X-Spamd-Result: default: False [0.84 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[linux.dev,none];
+	R_DKIM_ALLOW(-0.20)[linux.dev:s=key1];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TO_DN_ALL(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78448-lists,linux-fsdevel=lfdr.de];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	TAGGED_FROM(0.00)[bounces-78449-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	NEURAL_HAM(-0.00)[-0.995];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 90DD41A27F6
+	FROM_NEQ_ENVFROM(0.00)[jiayuan.chen@linux.dev,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[linux.dev:+];
+	NEURAL_HAM(-0.00)[-0.993];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	TAGGED_RCPT(0.00)[linux-fsdevel,6880f676b265dbd42d63];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,syzkaller.appspot.com:url,shopee.com:email]
+X-Rspamd-Queue-Id: 93F431A2B38
 X-Rspamd-Action: no action
 
-On Tue, 24 Feb 2026 07:46:37 -0800, Darrick J. Wong wrote:
-> iomap's directio implementation has two magic errno codes that it uses
-> to signal callers -- ENOTBLK tells the filesystem that it should retry
-> a write with the pagecache; and EAGAIN tells the caller that pagecache
-> flushing or invalidation failed and that it should try again.
-> 
-> Neither of these indicate data loss, so let's not report them.
-> 
-> [...]
+From: Jiayuan Chen <jiayuan.chen@shopee.com>
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+KCSAN reports a data race when concurrent readers access the same
+struct file:
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+  BUG: KCSAN: data-race in filemap_read / filemap_splice_read
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+  write to 0xffff88811a6f8228 of 8 bytes by task 10061 on cpu 0:
+   filemap_splice_read+0x523/0x780 mm/filemap.c:3125
+   ...
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+  write to 0xffff88811a6f8228 of 8 bytes by task 10066 on cpu 1:
+   filemap_read+0x98d/0xa10 mm/filemap.c:2873
+   ...
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
+Both filemap_read() and filemap_splice_read() update f_ra.prev_pos
+without synchronization. This is a benign race since prev_pos is only
+used as a hint for readahead heuristics in page_cache_sync_ra(), and a
+stale or torn value merely results in a suboptimal readahead decision,
+not a correctness issue.
 
-[1/1] iomap: don't report direct-io retries to fserror
-      https://git.kernel.org/vfs/vfs/c/cd3c877d0468
+Use WRITE_ONCE/READ_ONCE to annotate all accesses to prev_pos across
+the tree for consistency and silence KCSAN.
+
+Reported-by: syzbot+6880f676b265dbd42d63@syzkaller.appspotmail.com
+Link: https://syzkaller.appspot.com/bug?extid=6880f676b265dbd42d63
+Signed-off-by: Jiayuan Chen <jiayuan.chen@shopee.com>
+---
+ fs/ext4/dir.c                    | 2 +-
+ fs/ntfs3/fsntfs.c                | 2 +-
+ include/trace/events/readahead.h | 2 +-
+ mm/filemap.c                     | 6 +++---
+ mm/readahead.c                   | 4 ++--
+ mm/shmem.c                       | 2 +-
+ 6 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
+index 28b2a3deb954..1ddf7acce5ca 100644
+--- a/fs/ext4/dir.c
++++ b/fs/ext4/dir.c
+@@ -200,7 +200,7 @@ static int ext4_readdir(struct file *file, struct dir_context *ctx)
+ 					sb->s_bdev->bd_mapping,
+ 					&file->f_ra, file, index,
+ 					1 << EXT4_SB(sb)->s_min_folio_order);
+-			file->f_ra.prev_pos = (loff_t)index << PAGE_SHIFT;
++			WRITE_ONCE(file->f_ra.prev_pos, (loff_t)index << PAGE_SHIFT);
+ 			bh = ext4_bread(NULL, inode, map.m_lblk, 0);
+ 			if (IS_ERR(bh)) {
+ 				err = PTR_ERR(bh);
+diff --git a/fs/ntfs3/fsntfs.c b/fs/ntfs3/fsntfs.c
+index 0df2aa81d884..d1232fc03c08 100644
+--- a/fs/ntfs3/fsntfs.c
++++ b/fs/ntfs3/fsntfs.c
+@@ -1239,7 +1239,7 @@ int ntfs_read_run_nb_ra(struct ntfs_sb_info *sbi, const struct runs_tree *run,
+ 			if (!ra_has_index(ra, index)) {
+ 				page_cache_sync_readahead(mapping, ra, NULL,
+ 							  index, 1);
+-				ra->prev_pos = (loff_t)index << PAGE_SHIFT;
++				WRITE_ONCE(ra->prev_pos, (loff_t)index << PAGE_SHIFT);
+ 			}
+ 		}
+ 
+diff --git a/include/trace/events/readahead.h b/include/trace/events/readahead.h
+index 0997ac5eceab..63d8df6c2983 100644
+--- a/include/trace/events/readahead.h
++++ b/include/trace/events/readahead.h
+@@ -101,7 +101,7 @@ DECLARE_EVENT_CLASS(page_cache_ra_op,
+ 		__entry->async_size = ra->async_size;
+ 		__entry->ra_pages = ra->ra_pages;
+ 		__entry->mmap_miss = ra->mmap_miss;
+-		__entry->prev_pos = ra->prev_pos;
++		__entry->prev_pos = READ_ONCE(ra->prev_pos);
+ 		__entry->req_count = req_count;
+ 	),
+ 
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 63f256307fdd..d3e2d4b826b9 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2771,7 +2771,7 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+ 	int i, error = 0;
+ 	bool writably_mapped;
+ 	loff_t isize, end_offset;
+-	loff_t last_pos = ra->prev_pos;
++	loff_t last_pos = READ_ONCE(ra->prev_pos);
+ 
+ 	if (unlikely(iocb->ki_pos < 0))
+ 		return -EINVAL;
+@@ -2870,7 +2870,7 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+ 	} while (iov_iter_count(iter) && iocb->ki_pos < isize && !error);
+ 
+ 	file_accessed(filp);
+-	ra->prev_pos = last_pos;
++	WRITE_ONCE(ra->prev_pos, last_pos);
+ 	return already_read ? already_read : error;
+ }
+ EXPORT_SYMBOL_GPL(filemap_read);
+@@ -3122,7 +3122,7 @@ ssize_t filemap_splice_read(struct file *in, loff_t *ppos,
+ 			len -= n;
+ 			total_spliced += n;
+ 			*ppos += n;
+-			in->f_ra.prev_pos = *ppos;
++			WRITE_ONCE(in->f_ra.prev_pos, *ppos);
+ 			if (pipe_is_full(pipe))
+ 				goto out;
+ 		}
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 7b05082c89ea..de49b35b0329 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -142,7 +142,7 @@ void
+ file_ra_state_init(struct file_ra_state *ra, struct address_space *mapping)
+ {
+ 	ra->ra_pages = inode_to_bdi(mapping->host)->ra_pages;
+-	ra->prev_pos = -1;
++	WRITE_ONCE(ra->prev_pos, -1);
+ }
+ EXPORT_SYMBOL_GPL(file_ra_state_init);
+ 
+@@ -584,7 +584,7 @@ void page_cache_sync_ra(struct readahead_control *ractl,
+ 	}
+ 
+ 	max_pages = ractl_max_pages(ractl, req_count);
+-	prev_index = (unsigned long long)ra->prev_pos >> PAGE_SHIFT;
++	prev_index = (unsigned long long)READ_ONCE(ra->prev_pos) >> PAGE_SHIFT;
+ 	/*
+ 	 * A start of file, oversized read, or sequential cache miss:
+ 	 * trivial case: (index - prev_index) == 1
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 5e7dcf5bc5d3..03569199baf4 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -3642,7 +3642,7 @@ static ssize_t shmem_file_splice_read(struct file *in, loff_t *ppos,
+ 		len -= n;
+ 		total_spliced += n;
+ 		*ppos += n;
+-		in->f_ra.prev_pos = *ppos;
++		WRITE_ONCE(in->f_ra.prev_pos, *ppos);
+ 		if (pipe_is_full(pipe))
+ 			break;
+ 
+-- 
+2.43.0
+
 
