@@ -1,406 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-78519-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KHSnFthgoGkRjAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78519-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 16:03:52 +0100
+	id GEs7L4NioGk0jAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 16:10:59 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFF961A8305
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 16:03:46 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47C8D1A84A0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 16:10:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D588B320010E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 14:55:48 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 90C8130A02C7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 15:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8CA3A0B02;
-	Thu, 26 Feb 2026 14:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2560D3C199F;
+	Thu, 26 Feb 2026 15:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M+7qc2bG";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="NtdvbAvC"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Mfn1hrHG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF9E332902
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 14:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.129.124
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772117713; cv=pass; b=l0X6P3x3Mvb/hFSuk4wDNSzr/o+Z0b01tni8nBtLgsWgvrE0uofurfFnR0sJb3fBuHJAPz9jAU8CmIltpVDJWYHMIPiQMfi1ATW8vOQDYKTdOfR6G/35OwOIyGavh2UgCMbU/T3wNFzK3F0oGYZIGBIfZe0Dc+y+Oc02ZsaC2BU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772117713; c=relaxed/simple;
-	bh=JjxxiXXZWgMFxudX4ekizp1A/oNO/hFL2M0/NegHUi8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EOsWU/Vylk4RndlPZ9NxPJKxFVF7g8DypfZMplSlMw0njBdg9spnrQYNKqXRiXkGSxFrWUjyMrMzLHMVDQ1MI9vRIydNlKT368C4BPa+rIaVNjsOCn2FkmnpB99LpVan6B2EpYP3jtqT9OJqlxLcn8hn8aAFJdrySARTAG9kFb8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M+7qc2bG; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=NtdvbAvC; arc=pass smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1772117711;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bzt1awm7sHAcRDD8LgZDdEZ4lqJ7TP1WSTZGq6P9xEo=;
-	b=M+7qc2bGoRutPgCloQLW4yuL+CYYUO5wWzuR9kpD0fRrUAxGblem+HA1myrCnonMlY5qfa
-	JnSd10BlL2uS8z/yhrgGotoCqTUBFr/0pCVxwq/jE88TLZfGtzp3upvmAtYzkIW6CwHqT5
-	PChqOAATEkA29VvfTPnl9uG66jT5erc=
-Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com
- [209.85.217.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-615-HOS4eN0vN1anzfz1NDIpXQ-1; Thu, 26 Feb 2026 09:55:09 -0500
-X-MC-Unique: HOS4eN0vN1anzfz1NDIpXQ-1
-X-Mimecast-MFC-AGG-ID: HOS4eN0vN1anzfz1NDIpXQ_1772117709
-Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-5ff22daa71fso823580137.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 06:55:09 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772117709; cv=none;
-        d=google.com; s=arc-20240605;
-        b=j/FpbTJUXXNokVoDDO/DcAa9fUbGtPGdwvCfYzTJApmJAI80K/VKzb6rnup2EMBofQ
-         EviW8K2WrLFa/5Bvr6RtzUKnqfKbFINsLsMWPwP3mzixCvi3jfxz4P+W6WEht2kIJOCR
-         CN4WTDDT87+FGzS/Pcpn15UUQ2PhDuZTOShrWD6VUJgx44XEpzjoj5HkmJP/3WwPdVin
-         8xJs6HJRTQVUwMmxOmEYqdZoOgVm34tRpvQIF2o7B1q3WDWeGEX8QwbEbQyH//+9ClHC
-         Q56Zc3K3jAvVqeasPgH9anRKzDlDOrebuu94PC5jtmAxZcIk/c5vZ1a8M3eVyXF5vlfH
-         zYsw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Bzt1awm7sHAcRDD8LgZDdEZ4lqJ7TP1WSTZGq6P9xEo=;
-        fh=gRlkrLZHYWvR/qIXeRZU2GwCFvR7dZ+2uPJDoR6t+Lo=;
-        b=XfgwgOlDfEq/RJYTX/XGGqvzTSiL/Ydsn8Y3/lzdOblLuKXG+01ROV426EnzWnPNGr
-         Cb9qkCRDo6xXR66SmfOSzmk+NP5hN6p3LwAZyPZt8PEXtNG7K2kJDNlQSeSeqxZtH5rn
-         UV/TxV0utOyeXjZBEAR+l023FClj2ZgtIKEcE5pmGCSyRP94W2NjKxw5GexkNVr0h8pr
-         CJFMzrXx0Pdm6t4ePk3tUYIrr0ZXVC+Dkpq31dRzs4LiWjcZ9MKW80vR6uyS+XIfsyUd
-         ZyZ+Zk8Rxm4OTHmDXWdiMJRqDHN22A9KDHWf0Zg75IKuwTOXFyC7c5aVdTE0id2GPrRr
-         pX6g==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1772117709; x=1772722509; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bzt1awm7sHAcRDD8LgZDdEZ4lqJ7TP1WSTZGq6P9xEo=;
-        b=NtdvbAvCmWzW8ARoUcrzLrsRmP3Bayv1bCZVSt5Rbq3+zyb04fOlQ2CABj09ZXy4nC
-         nLrTHfUhXUIKNH8sXxMyhEyGttRLVKq0C4oxGTkz3mTddF+gUPId1oz+8/66pFH72jhe
-         7PW4KT9WEl9DHxmiek4TLus6nOkjGU5VcwsO9nkNfCfS1Avg1JG/Iy6rehu2m/lwz7qY
-         7ggqKYMhw5NyIvjgYo2IwIop026VaBICDg+pZD3QZHiE+nkNK78UbhyvoqGeQ/4kq+Zh
-         NTP+US9OlBaRXl51WTMJWMEWJ1gFsaVjdZZzxqva1bUhWavPNGPntoImaXqpxRJk7oRB
-         T1mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772117709; x=1772722509;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Bzt1awm7sHAcRDD8LgZDdEZ4lqJ7TP1WSTZGq6P9xEo=;
-        b=PmRgwd16IOvnVCmg3OBEmtPuUsDi5sTfrEBTZS3E/ImR8wYxnE2Ig/0xyPdAr3PTmG
-         sALD8kF9DyJI3FsCqQCBKoRxEI9QsbYdO91s+ncj9CpDo3EOMTK0p81Zq0zUUF/KbrCL
-         tMz/2uprPiCfmzH1CTbPU7BNfH+ffAvvHCnnBkO9q+o+Th4FROsGeR8HdVh91xNgG0rR
-         wkNAAF5Y7lgaWjNx/awU+sYEDw30tgW7uutUd5N8IPzqnOP1c+IOnhse02Lojt69EcjR
-         t168fK27XrebuQmQ11Oyc8iDkORY9mK+uTBV1DPHYghXo18jm9xxzDR2ZY9MYs3nCBQn
-         De+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXXsQ+7xbXl+Ajqxkb3+DJXFEQwwLFqNv1y8uierPViB9e/HgWKaB70tyuPnNPPtMDhFu1sPKuII6Vt1FSj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6xMTBvZ4JPvwjxDGwnER2qMEGTKHOxbrrX/c9qscD7wpcJgod
-	TgFLJZRlVvkOV+ttROS/HmhBwol3kPNlQS20YZe1uCE0Ojgm68VO7MHXmpzgXDAolOpKrFxeE4l
-	0HptVAlKiYtpIHnDXbVKI0AllidVuLjdd+CD5JDC1ZaHzOFUH2/IBoPq5yM1jvQdgz11KhJjkbf
-	UqFf0RJbE9CmBAjuwGGWulpqu12h4Spsmu06YGMEcmkw==
-X-Gm-Gg: ATEYQzweC/bEkYnZZ1HNd2wyy0C1MICAaydXDp+KzVfDyJTI8iptY35OWvQelLIjcQu
-	ffrDXP9r+85qBE0j5T9EuxCfOCJcvMExOrZDPRTSe6vln0WLCgyTHU5m/HUaVdr70mFbOpitW0Q
-	ij1uuUUd53wWBw76E+42joE4vdKDTcKYUHBBCXDlES9BTKLkS+3Pa5PzT7eGe0sYu5JEk4OtthE
-	g0/fSWlP2FDqctfyOCT9OXEiw==
-X-Received: by 2002:a05:6102:ccd:b0:5ff:2cdb:4bf3 with SMTP id ada2fe7eead31-5ff2cdb4f19mr363125137.2.1772117708547;
-        Thu, 26 Feb 2026 06:55:08 -0800 (PST)
-X-Received: by 2002:a05:6102:ccd:b0:5ff:2cdb:4bf3 with SMTP id
- ada2fe7eead31-5ff2cdb4f19mr363105137.2.1772117707934; Thu, 26 Feb 2026
- 06:55:07 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1759C313546;
+	Thu, 26 Feb 2026 15:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772118440; cv=none; b=Q7rF6bHz+xwBDajs/8jZtVd1kWsUhRKNNNn49y8Z1g3qDwf95XHQci8G2xVWtEzoW1vWEabicxVxJoJNu7plCSgblOgy9OqXr6T5rS9gt20CLFFnRHJ0aw3D/BAPiTaPopJk30LNIKdddhejtTwRrIOrXpbTUiuFwbgC4zC/wJQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772118440; c=relaxed/simple;
+	bh=o/4xltha1jxOlXukHYJTieLTzZdF6ef3l836NJoVbes=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=EOgxayJLhBTj4Eox4/+mE5CXv0ztJkghdQ6klGxwStpb7Y7j2nal3Dj2eZvU+PTLZZ0lB1kHReV/FMmI4oCKZmFGGrM5ZWbxyCqQbZfDTVt0eHiwrQRnPqH0X68QwZSEngbDzX+UrP/Nd76Pu/Ez6VLFuD9M27xEJcEYDe1Cvvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Mfn1hrHG; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=XTv4xfQ192B0SmuHRteHD40H6b8pM1j6mC75DTcCkv8=; b=Mfn1hrHGj9UMGHExnxV0wbx/5y
+	SmiN+vkvLsNsLCZgBxC3K51H0PqFdQlVmJgkuj93fguUKT7vF0FQ5GbF/FYjmfjCUsuWu0cHu7Mcl
+	Vqeoz20AVaGPH6k0MEgGtw1yJfX7ZoXoxfrO7L/cocZPOtanePDtFYp14Lh2HtoofP+7I/khLtzFl
+	ZrccrtthAxho/O+opZRFthBzuPNFfCVznRSIrEYORw6SGoILVaeLNFNquuysrbspL+6vpDI3g0OC0
+	zfR3iPYqiZntMkop0EyS9vkWnKCXREXKfJtJBOxTD7nla3kce4xCzla1LoXiI7wpoKDCENNNelpXO
+	JsN6TdGQ==;
+Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1vvcx7-005j0y-EU; Thu, 26 Feb 2026 16:06:57 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Amir Goldstein <amir73il@gmail.com>,  Bernd Schubert
+ <bschubert@ddn.com>,  Bernd Schubert <bernd@bsbernd.com>,  "Darrick J.
+ Wong" <djwong@kernel.org>,  Horst Birthelmer <hbirthelmer@ddn.com>,
+  Joanne Koong <joannelkoong@gmail.com>,  Kevin Chen <kchen@ddn.com>,
+  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,  Matt
+ Harvey <mharvey@jumptrading.com>,  kernel-dev@igalia.com
+Subject: Re: [RFC PATCH v3 6/8] fuse: implementation of lookup_handle+statx
+ compound operation
+In-Reply-To: <CAJfpegspUg_e9W7k5W7+eJxJscvtiCq5Hvt6CTDVCbijqP0HyA@mail.gmail.com>
+	(Miklos Szeredi's message of "Thu, 26 Feb 2026 11:29:42 +0100")
+References: <20260225112439.27276-1-luis@igalia.com>
+	<20260225112439.27276-7-luis@igalia.com>
+	<CAOQ4uxgvgRwfrHX3OMJ-Fvs2FXcp7d7bexrvx0acsy3t3gxv5w@mail.gmail.com>
+	<87zf4v7rte.fsf@wotan.olymp>
+	<CAOQ4uxj-uVBvLQZxpsfNC+AR8+kFGUDEV6tOzH76AC0KU_g7Hg@mail.gmail.com>
+	<CAJfpegspUg_e9W7k5W7+eJxJscvtiCq5Hvt6CTDVCbijqP0HyA@mail.gmail.com>
+Date: Thu, 26 Feb 2026 15:06:51 +0000
+Message-ID: <87fr6n7ddg.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260225125907.53851-1-amarkuze@redhat.com> <c64f9d66a10d151e3725336d2980f56ca5aff5a4.camel@redhat.com>
-In-Reply-To: <c64f9d66a10d151e3725336d2980f56ca5aff5a4.camel@redhat.com>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Thu, 26 Feb 2026 16:54:56 +0200
-X-Gm-Features: AaiRm53XGOPV7oe7JMKPNdUKSqAPSxfZFf9OZj0774GR3VFmCVT2wZ2vkQNlFtg
-Message-ID: <CAO8a2SgkgCDubKkRp6ZOQVFpbTEXbSX9Rjooya6x4DF_R-PEBA@mail.gmail.com>
-Subject: Re: [EXTERNAL] [RFC PATCH v1 0/4] ceph: manual client session reset
- via debugfs
-To: Viacheslav Dubeyko <vdubeyko@redhat.com>
-Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719,redhat.com:s=google];
+X-Spamd-Result: default: False [-0.36 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_DKIM_REJECT(1.00)[igalia.com:s=20170329];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
+	DMARC_POLICY_SOFTFAIL(0.10)[igalia.com : SPF not aligned (relaxed),none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78519-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78520-lists,linux-fsdevel=lfdr.de];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[redhat.com:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FREEMAIL_CC(0.00)[gmail.com,ddn.com,bsbernd.com,kernel.org,vger.kernel.org,jumptrading.com,igalia.com];
 	MISSING_XM_UA(0.00)[];
-	RSPAMD_EMAILBL_FAIL(0.00)[vdubeyko.redhat.com:query timed out];
-	RCVD_COUNT_FIVE(0.00)[5];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-0.994];
+	FROM_NEQ_ENVFROM(0.00)[luis@igalia.com,linux-fsdevel@vger.kernel.org];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[amarkuze@redhat.com,linux-fsdevel@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[4];
-	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DKIM_TRACE(0.00)[igalia.com:-];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: EFF961A8305
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,wotan.olymp:mid]
+X-Rspamd-Queue-Id: 47C8D1A84A0
 X-Rspamd-Action: no action
 
-> What do you mean by "reason text"? Usually, it should be some command. Do=
- you
-> mean that any string will trigger the reset? Is it good approach? What if=
- a user
-> sends something by mistake or any malicious garbage? Potentially, it coul=
-d be
-> security breach.
+On Thu, Feb 26 2026, Miklos Szeredi wrote:
 
-The string is an optional free-form operator note that gets logged and
-recorded in the status output for post-mortem diagnostics (e.g.
-"RHBZ#12345" or "mds0 stuck after failover"). Any write to the
-trigger file initiates the reset -- the content is not interpreted as
-a command.
-
-The input length is capped at `CEPH_CLIENT_RESET_REASON_LEN - 1`
-(63 bytes) via `min_t()` before `copy_from_user()`, then
-null-terminated and `strim()`'d. Anything longer is silently
-truncated -- no overflow is possible.
-
-Regarding security: the trigger file is created with mode 0200
-(write-only, owner-only), and debugfs itself is typically mounted
-root-only. So the write is restricted to a privileged operator, same
-as any other debugfs knob. That said, I agree the interface question
-is open -- see below.
-
-> This "reset/status" sounds slightly ambiguous. Is it status of reset proc=
-ess? If
-> we didn't request the reset, then what this status means?
-
-It is the status of the reset subsystem. When no reset has been
-requested, it shows the idle state:
-
-```
-in_progress: no
-trigger_count: 0
-success_count: 0
-failure_count: 0
-last_start_ms_ago: (never)
-last_finish_ms_ago: (never)
-last_errno: 0
-last_reason: (none)
-inject_error_pending: no
-pending_reconnects: 0
-blocked_requests: 0
-```
-
-Happy to rename it to something less ambiguous, maybe
-`reset/reset_status` or just moving the counters into the existing
-top-level `status` file. Open to suggestions.
-
-> Recently, I had short discussion with Greg Kroah-Hartman. He was complete=
-ly
-> against of using sysfs for transferring commands from user-space to kerne=
-l-
-> space. So, we could have troubles of using sysfs for this. And
-> /sys/kernel/debug/ sounds like completely wrong place. Because, this is n=
-ot
-> debug feature or option. You are suggesting this as a regular feature for
-> production.
+> On Thu, 26 Feb 2026 at 11:08, Amir Goldstein <amir73il@gmail.com> wrote:
 >
-> Maybe, we can consider eBPF here?
-
-Yeah, debugfs is not the right place for a production feature.
-
-The debugfs interface is there for now as a development/testing
-trigger while the core reset mechanism is reviewed. The longer-term
-goal is automated recovery: the client would detect stuck/hung
-sessions and trigger the reset internally without operator
-intervention. Once that's in place, the manual trigger becomes a
-fallback rather than the primary interface.
-
-For production manual triggering (before automated recovery is
-ready), we can consider other approaches, e.g.,  ioctl, netlink, or
-extending the existing `recover_session=3Dclean` path. That path
-already handles automatic recovery from blocklisting via
-`maybe_recover_session()` / `ceph_force_reconnect()`; the manual
-reset solves a related but different problem (sessions stuck without
-blocklisting), so the machinery could potentially be unified.
-
-> So, we have "MDS sessions become stuck or hung" and we are trying to subm=
-it
-> another request. Is it sane enough? We already have a dead session. :)
-
-The gating does not submit requests to the dead session, it does
-the opposite. When a reset is in progress,
-`ceph_mdsc_wait_for_reset()` blocks new incoming requests (and new
-lock acquisitions) until the reset completes and sessions are
-re-established. Only then do the blocked requests proceed through
-the normal `__do_request()` path, which will find the freshly
-reconnected sessions.
-
-The "best-effort" note refers to the fact that we don't take a lock
-on the hot path, a request could slip past the check in the narrow
-window before `in_progress` is set. That's acceptable because such
-a request would either complete normally on the still-alive session
-or fail and be retried by the caller after the reset.
-
-> I think we already have some timeout option in the mount options. Are you
-> suggesting yet another one?
-
-Fair point. The existing `mount_timeout` controls how long mount and
-reconnect operations wait. The two timeouts here are:
-
-- 60s for the reset work to wait for session reconnects to complete
-- 120s for blocked requests to wait for the reset to finish
-
-I think these can stay as compile-time constants
-(`CEPH_CLIENT_RESET_TIMEOUT_SEC` / `CEPH_CLIENT_RESET_WAIT_TIMEOUT_SEC`)
-rather than becoming mount options. They're operational bounds for a
-rare manual operation, not something an admin would typically need to
-tune. If reviewers feel otherwise I can tie them to `mount_timeout`.
-
-> Do you mean patch 3 or 4? Because, patch 3 is huge in size.
-
-You're right, patch 3 is the large one (~700 lines). I can split it
-further if that helps review. A natural split would be:
-
-- 3a: `ceph_client_reset_state` struct, init/destroy, and
-  `ceph_mdsc_wait_for_reset()` blocking infrastructure
-- 3b: `ceph_mdsc_reset_workfn()`, `send_mds_reconnect()` changes,
-  and session completion tracking
-- 3c: debugfs interface (trigger, status, inject_error)
-- 3d: tracepoints
-
-Let me know if that granularity makes sense or if you'd prefer a
-different split.
-
-Thanks for the review, Slava.
-
-On Wed, Feb 25, 2026 at 10:51=E2=80=AFPM Viacheslav Dubeyko <vdubeyko@redha=
-t.com> wrote:
+>> file handle on stack only makes sense for small pre allocated size.
+>> If the server has full control over handle size, then that is not releva=
+nt.
 >
-> On Wed, 2026-02-25 at 12:59 +0000, Alex Markuze wrote:
-> > In production CephFS deployments we regularly encounter situations
-> > where MDS sessions become stuck or hung, requiring a full unmount/
-> > remount cycle to recover.  This is disruptive for workloads that
-> > cannot tolerate the downtime or the loss of cached state that comes
-> > with unmounting.
-> >
-> > This series adds a mechanism to manually trigger MDS session
-> > reconnection from the client side without unmounting, exposed via
-> > debugfs:
-> >
-> >   echo "reason text" > /sys/kernel/debug/ceph/<fsid>/reset/trigger
+> I thought the point was that the file handle is available in
+> fi->handle and doesn't need to be allocated/copied.   Instead
+> extensions could be done with an argument vector, like this:
+
+Right now the code is using extensions in the lookup_handle operation
+inargs, and only if a file handle is available for the parent inode.
+
+Are you saying that outargs should also use extensions for getting the
+file handle in a lookup_handle?
+
+Cheers,
+--=20
+Lu=C3=ADs
+
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -326,6 +326,12 @@ struct fuse_folio_desc {
+>         unsigned int offset;
+>  };
 >
-> What do you mean by "reason text"? Usually, it should be some command. Do=
- you
-> mean that any string will trigger the reset? Is it good approach? What if=
- a user
-> sends something by mistake or any malicious garbage? Potentially, it coul=
-d be
-> security breach.
->
-> >   cat /sys/kernel/debug/ceph/<fsid>/reset/status
->
-> This "reset/status" sounds slightly ambiguous. Is it status of reset proc=
-ess? If
-> we didn't request the reset, then what this status means?
->
-> >
-> > The reset lifecycle:
-> >   1. Operator writes to the trigger file
-> >   2. A work item collects all active sessions and initiates
-> >      reconnection on each (via send_mds_reconnect with from_reset=3Dtru=
-e)
-> >   3. New metadata requests and lock acquisitions are blocked until
-> >      the reset completes (120s timeout)
-> >   4. Session completions are tracked via a per-session generation
-> >      counter to handle stale completions from timed-out prior resets
-> >   5. Lock reclamation is always attempted during reset-initiated
-> >      reconnects, regardless of prior CEPH_I_ERROR_FILELOCK state
-> >
-> > Patch breakdown:
-> >   1. Convert CEPH_I_* flags to named bit positions so test_bit/
-> >      set_bit/clear_bit can be used in reconnect paths
-> >   2. Make wait_caps_flush() bounded with periodic diagnostic dumps
-> >      to aid debugging hung flush scenarios (independent improvement
-> >      that surfaced during development)
-> >   3. The core reset implementation: debugfs interface, reset work
-> >      function, request/lock blocking, tracepoints, and session
-> >      reconnect completion tracking
-> >   4. Rework mds_peer_reset() to properly handle all session states
-> >      and integrate with the reset completion tracking
-> >
-> > Open questions / areas for review:
-> >   - Is debugfs the right interface, or should this be a mount option
-> >     / sysfs attribute / netlink command?
->
-> Recently, I had short discussion with Greg Kroah-Hartman. He was complete=
-ly
-> against of using sysfs for transferring commands from user-space to kerne=
-l-
-> space. So, we could have troubles of using sysfs for this. And
-> /sys/kernel/debug/ sounds like completely wrong place. Because, this is n=
-ot
-> debug feature or option. You are suggesting this as a regular feature for
-> production.
->
-> Maybe, we can consider eBPF here?
->
-> >   - The request gating in ceph_mdsc_submit_request() is best-effort
-> >     (no lock serialization) to avoid penalizing the normal path.
-> >     Is this acceptable?
->
-> So, we have "MDS sessions become stuck or hung" and we are trying to subm=
-it
-> another request. Is it sane enough? We already have a dead session. :)
->
-> >   - Should the 60s reconnect timeout and 120s blocked-request timeout
-> >     be configurable (e.g. via mount options)?
->
-> I think we already have some timeout option in the mount options. Are you
-> suggesting yet another one?
->
-> >   - mds_peer_reset() rework (patch 4) is substantial -- would
-> >     reviewers prefer it split further?
->
-> Do you mean patch 3 or 4? Because, patch 3 is huge in size.
+> +struct fuse_ext_arg {
+> +       u32 type;
+> +       u32 size;
+> +       const void *value;
+> +};
+> +
+>  struct fuse_args {
+>         uint64_t nodeid;
+>         uint32_t opcode;
+> @@ -346,6 +352,7 @@ struct fuse_args {
+>         bool is_pinned:1;
+>         bool invalidate_vmap:1;
+>         struct fuse_in_arg in_args[4];
+> +       struct fuse_ext_arg ext_args[2];
+>         struct fuse_arg out_args[2];
+>         void (*end)(struct fuse_mount *fm, struct fuse_args *args, int er=
+ror);
+>         /* Used for kvec iter backed by vmalloc address */
 >
 > Thanks,
-> Slava.
->
-> >
-> >
-> > Alex Markuze (4):
-> >   ceph: convert inode flags to named bit positions
-> >   ceph: add bounded timeout and diagnostics to wait_caps_flush()
-> >   ceph: implement manual client session reset via debugfs
-> >   ceph: rework mds_peer_reset() for robust session recovery
-> >
-> >  fs/ceph/caps.c              |   7 +
-> >  fs/ceph/debugfs.c           | 171 ++++++++++-
-> >  fs/ceph/locks.c             |  24 +-
-> >  fs/ceph/mds_client.c        | 577 ++++++++++++++++++++++++++++++++++--
-> >  fs/ceph/mds_client.h        |  33 +++
-> >  fs/ceph/super.h             |  60 ++--
-> >  include/trace/events/ceph.h |  60 ++++
-> >  7 files changed, 879 insertions(+), 53 deletions(-)
->
->
+> Miklos
 
 
