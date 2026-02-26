@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-78567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id qMdUBKt+oGlgkQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:11:07 +0100
+	id mPp0Ebl9oGmXkQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:07:05 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A72581ABDDD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:11:06 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563C51ABB83
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:07:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 4E0D9310D58A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 16:30:35 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 78F8231FF892
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 16:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BAA84A33FB;
-	Thu, 26 Feb 2026 16:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EDA94ADDBC;
+	Thu, 26 Feb 2026 16:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XWjYSLSM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZFzN5/gW"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FB443D515;
-	Thu, 26 Feb 2026 16:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DA643E9CF;
+	Thu, 26 Feb 2026 16:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772121916; cv=none; b=YSBC9futbG23rANY3BvIRVmooTMitcp1LaekjjQe3POJd9bjSMf7/0p0aFxj/H6b9BrbiIlnQgW0vecAdd1zskliPu5pGZDJvQROJf60aGzbpzotoLM1/CTIkJRmoOzSnk4vls2C0h99LardBMJgVPNgpdWo187GL8FKJwTmIVE=
+	t=1772121929; cv=none; b=LQOhRzkD3hJITcsiNrddgufpOd0VM/ooRdMoR9V+fWR3t4UBlmCsHgRbjYclXtUHV/GagLTFrv3pd1gwTOUqcF93X+uQrV/dJLcwLMC7Kv8VUc/5+pAzFjkKnq2jsed0oH+WNy/p8BBcjgC1FyE75bEMcDTyIXkDMUg96dWIpk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772121916; c=relaxed/simple;
-	bh=+pnQ8La3nnL9HS2EVrCQAp5yF4hT3O2Rul83Y/lIgNA=;
+	s=arc-20240116; t=1772121929; c=relaxed/simple;
+	bh=6UN3al2tzYcVr4bhkYBjIiJcg7kY6ll3XiJLa1oVlfY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ImsY5yTsls4vtbCLhFEEewPZUfCmWzOTxHYPJeIy8X3dBR0z9lqI7lEODH0MzYm+S7unwf6ycdwqQ31T9XlBCq5IQM4CgKSbCzNNrzzo1mnBK142X3Yh/yV8U/dhw6YaCQj70rkRAXyfd6n6sYHBFSJmd6e62BX3djlT3uEe0ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XWjYSLSM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D351C19424;
-	Thu, 26 Feb 2026 16:05:04 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=CyBDsyml+r4JNy1fSD0Y+HnzycEXeGisBae6nWE7l52GaiTRzXjk0VeezuQDxOffroFqDxEfI5yT0kOMCK8M7DOscb3ztJclr7TaRmw2X58QH52hw656xLSQxL+K2cLbTRUNQlwPvTzIwp/tRI8klXy8t2pFZROLf36c2WRZh4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZFzN5/gW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADAD6C116C6;
+	Thu, 26 Feb 2026 16:05:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772121916;
-	bh=+pnQ8La3nnL9HS2EVrCQAp5yF4hT3O2Rul83Y/lIgNA=;
+	s=k20201202; t=1772121928;
+	bh=6UN3al2tzYcVr4bhkYBjIiJcg7kY6ll3XiJLa1oVlfY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=XWjYSLSM8MNgl2VhR7assRMUrmqUb67e41ZpF/HEp+Zl76IEXGuo46t/ehib5cQBv
-	 uRggDYTAjpxRBx11gOz/2fJIuuvPmvuWkGTu4obykRoSb55b521uUBDBAJswshCq4W
-	 FfDbrXkqiC/VTfVNiOOtM2Qk9HmR17AeneKUXOsujG21SDPDltVV3jXMryG8Dqq0S3
-	 CNLLXVe9zBwekQT5q9/s84LHJKckbhBy3ow41/xdmP7c4idOzDAmUTPdcE3RIx3GeP
-	 e7Meln1rBS/c0NKNAiubURo9NOegQGPt0lDuRM1xPOAwg6pJoIOg3LVj5p1GWs7TqI
-	 mo+zGjUGJSrTg==
+	b=ZFzN5/gWqI9gVceO21c3BlE3ZOAJdQoQM8i9DH0/agwltGQfJBEj2IZiSMGobNPVQ
+	 qBR6afkadV23GWyE9polaKgasPkxRt9pVcNxjkkCRuv75exdLsba1i4bjFk30U4fFD
+	 UX9ijQ9hwUqkVl3r/XBmRg0F7V8PSUA2ZpThgY+oEqEpq0zqD4e/ryCk4JajBRvsAv
+	 lVCjmimZLSzAFRgQh9TG2Gwr5k+xiKNxvFGnRUWmrCTyM3Gc0rXm3YT9wEYE6kitvS
+	 EI2JXuKLyYi2twKciyQHWfESTvgYf9be/q35EEgBc1xBLbg4ilPdK1D8vnIy3OWz0g
+	 FHhaJQ7ROg3VQ==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 26 Feb 2026 10:55:45 -0500
-Subject: [PATCH 43/61] orangefs: update format strings for u64 i_ino
+Date: Thu, 26 Feb 2026 10:55:46 -0500
+Subject: [PATCH 44/61] overlayfs: update format strings for u64 i_ino
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260226-iino-u64-v1-43-ccceff366db9@kernel.org>
+Message-Id: <20260226-iino-u64-v1-44-ccceff366db9@kernel.org>
 References: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
 In-Reply-To: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -150,20 +150,20 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-xfs@vger.kernel.org, linux-hams@vger.kernel.org, 
  linux-x25@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=790; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=+pnQ8La3nnL9HS2EVrCQAp5yF4hT3O2Rul83Y/lIgNA=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpoG0PbsKa4p2zwoBYu+jpKVGBywcC4wbxn3Fv5
- QY8YgoZQSCJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaBtDwAKCRAADmhBGVaC
- FSAnD/0e97/yCaqr7LNCmzcAr94/eBgG3Od2/vIhcgrO6Zln1dxic8+5A7hSqtBdq4KBmKHPaIK
- pSBT53zlzsY2pX1f4afF8oL6VmFbimSF+WRZCol8xpgAeupsdciq/ixwa+AIh4Rgh29o435mRiU
- b/KwWh8/b4A1jZNF1tx01xtGz9WhcpFzM6Z5NN43rsmkQYoEk2uznZNsFgN9u4eQ2JbFnUAhX/8
- hfwulzL0D44QxG3vVr+9qsNnBQAvFMZV08Ll/ouL24zfpvmhYU/rfF2Y02YvUsho6fDu5OhyRa8
- nR2Ffu8KMbSXuPWda5b1asEmlVFPpNoWCl+uIflVF4u+PKmpZwkUtOMN0vCJoGq8YPmtd1rNBlk
- zxU1iNqHblPpTDeGveFLkrJ2cWNCp3pTZ41DuCcsaSaFK+Ynke1MerNc6eCOkKiMbXTpNUiK4oy
- hv+0NIr/Gw59YsdFgdQvGDqsqIQCxbZDGYg10dRlDMJB664nqgHAFTQrXLUXvseIvgu4MX88LL6
- 94xFysFTeAHGFompkZj7dRrr48abb8itvzdfgqgsfXGpb5zhn1AnYtekOJ5gLNQz1KW9uLk7jCt
- D5Cs2FcilYhaHSUO/iap3WkBQD1K3hmMvKhUJ6JDw9qsBmj6DtT445IAMGtTNn9rTeDwVCI+B9q
- y/+cbUENvzLt/Rg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2573; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=6UN3al2tzYcVr4bhkYBjIiJcg7kY6ll3XiJLa1oVlfY=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpoG0PmAX6po+Me1LtXOxELbE3YbRF+E3FwKFhW
+ iRe4MINX9GJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaBtDwAKCRAADmhBGVaC
+ FfUvD/9jNP3wjvadvWrklZqzkFB0cB/NqSi8mDICkvziy9OFAtTNtEYvzW+khlIKBucHQ54yIOM
+ zY/xF5a7/YoFhl9C5394YJjBShWBN6KvHBfe8MnxqXAiRGCDX2AF9XRxZTwbl40wcxMQ837uA2X
+ 9StKcjWI012KgN3nMFJ4wJUCCBvHGlzZODxlnzPYuc73B8I6LzYkjL7b1Hrdol24+O7nOyUipAr
+ fFldocux2lUhdNtFG7o51ByNpYPvZR9ikm4Eq+M7CUk7NFbHViPsh0ZazAsodIfS4KWawW3EuCh
+ BbPcItOXDx4PD/GtKrZchiaeBTGQs56DFgH27H2I1skP7wG7/tU4qWkZOYGp1ynUj8nWjdM5jzJ
+ lz8WUSw4nXKgGxltV/z//r1obNY8QYL6RMPvILX5WCmvazbWL3p7fENvjKNzlbOI8RWZQkgUrt+
+ 09RTMnokkTxKg+zs77OKTRBHDu8x58IdE3xaecJG5TmrObPp1lXiMnCpU5baPwXt/FHuI+x+La1
+ eH5/LL/aIOL1lk1vt3yWAnQrzMgtRXV5VlqxeT4lS5U0iaQEDcWRikUd5yoBXNOM+8loEjduUTw
+ 7eoLOS0VNr9gAabi/VS2wquojz/TBJKG0K054mFYwl5ABhYOoge/H7vCbLV87Kq5cRYyVIoYdM0
+ DEiwZhMl+TVsm4g==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 X-Rspamd-Server: lfdr
@@ -172,11 +172,11 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78567-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78568-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de];
@@ -184,7 +184,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	TO_DN_SOME(0.00)[];
 	RCPT_COUNT_GT_50(0.00)[146];
 	PRECEDENCE_BULK(0.00)[];
@@ -194,31 +194,68 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: A72581ABDDD
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 563C51ABB83
 X-Rspamd-Action: no action
 
-Update format strings and local variable types in orangefs for the
+Update format strings and local variable types in overlayfs for the
 i_ino type change from unsigned long to u64.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/orangefs/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/overlayfs/export.c | 2 +-
+ fs/overlayfs/namei.c  | 4 ++--
+ fs/overlayfs/util.c   | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index 2d4710d0e05e195855186c6bedd211bc419abc36..9e8a2a9e5229861a4976d67483a0f6452048f86b 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -1062,7 +1062,7 @@ struct inode *orangefs_iget(struct super_block *sb,
- 	unlock_new_inode(inode);
+diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
+index 83f80fdb156749e65a4ea0ab708cbff338dacdad..0a35d1a20f13fbab5bbee5f271d41f52334a9a6a 100644
+--- a/fs/overlayfs/export.c
++++ b/fs/overlayfs/export.c
+@@ -262,7 +262,7 @@ static int ovl_dentry_to_fid(struct ovl_fs *ofs, struct inode *inode,
+ 	return err;
  
- 	gossip_debug(GOSSIP_INODE_DEBUG,
--		     "iget handle %pU, fsid %d hash %ld i_ino %lu\n",
-+		     "iget handle %pU, fsid %d hash %ld i_ino %llu\n",
- 		     &ref->khandle,
- 		     ref->fs_id,
- 		     hash,
+ fail:
+-	pr_warn_ratelimited("failed to encode file handle (ino=%lu, err=%i)\n",
++	pr_warn_ratelimited("failed to encode file handle (ino=%llu, err=%i)\n",
+ 			    inode->i_ino, err);
+ 	goto out;
+ }
+diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+index d8dd4b0529843bc20e4efc1924c2be3b5712b343..ca899fdfaafd21f4bb31807e73883b4978116732 100644
+--- a/fs/overlayfs/namei.c
++++ b/fs/overlayfs/namei.c
+@@ -591,7 +591,7 @@ int ovl_verify_origin_xattr(struct ovl_fs *ofs, struct dentry *dentry,
+ 
+ fail:
+ 	inode = d_inode(real);
+-	pr_warn_ratelimited("failed to verify %s (%pd2, ino=%lu, err=%i)\n",
++	pr_warn_ratelimited("failed to verify %s (%pd2, ino=%llu, err=%i)\n",
+ 			    is_upper ? "upper" : "origin", real,
+ 			    inode ? inode->i_ino : 0, err);
+ 	goto out;
+@@ -831,7 +831,7 @@ struct dentry *ovl_lookup_index(struct ovl_fs *ofs, struct dentry *upper,
+ 			index = NULL;
+ 			goto out;
+ 		}
+-		pr_warn_ratelimited("failed inode index lookup (ino=%lu, key=%.*s, err=%i);\n"
++		pr_warn_ratelimited("failed inode index lookup (ino=%llu, key=%.*s, err=%i);\n"
+ 				    "overlayfs: mount with '-o index=off' to disable inodes index.\n",
+ 				    d_inode(origin)->i_ino, name.len, name.name,
+ 				    err);
+diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+index 3f1b763a8bb4cb842e5d5cebffbee6b8dbe01de9..2edad9a146486bda5edf47dc60e1645d49af6539 100644
+--- a/fs/overlayfs/util.c
++++ b/fs/overlayfs/util.c
+@@ -1092,7 +1092,7 @@ static void ovl_cleanup_index(struct dentry *dentry)
+ 	got_write = true;
+ 	inode = d_inode(upperdentry);
+ 	if (!S_ISDIR(inode->i_mode) && inode->i_nlink != 1) {
+-		pr_warn_ratelimited("cleanup linked index (%pd2, ino=%lu, nlink=%u)\n",
++		pr_warn_ratelimited("cleanup linked index (%pd2, ino=%llu, nlink=%u)\n",
+ 				    upperdentry, inode->i_ino, inode->i_nlink);
+ 		/*
+ 		 * We either have a bug with persistent union nlink or a lower
 
 -- 
 2.53.0
