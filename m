@@ -1,229 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-78467-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UP2SErAuoGkrgAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78467-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 12:29:52 +0100
+	id UFZtHlo1oGkqgwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 12:58:18 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B034D1A50D0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 12:29:51 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB28A1A5757
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 12:58:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 6808E307AFDF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 11:29:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 204733124682
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 11:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EF0369988;
-	Thu, 26 Feb 2026 11:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D595637AA7B;
+	Thu, 26 Feb 2026 11:54:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gcMXQ1K+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Uoj7Ytir";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gcMXQ1K+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Uoj7Ytir"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hAVMQWMa";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZDAoyZI8";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qIs99Uwl";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2ELRmH1S"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2897B369990
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 11:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B9037A481
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 11:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772105384; cv=none; b=mzPIEd+sRxFzFz7FBNEeRqXfKZ+jmRoOzOxB3AerNSbfwmt5JEcoGKmK9Nm7S6Gwdoe3gMo2wkdApRYuiRyGsKt64a1O1kHgWhvBVoRkdr8a+6PiE/5BAvYnfMlk3xvFwE9HVFizMEjPpkGOt21mzfWYo5HTiuP22J1vTNGLrNs=
+	t=1772106867; cv=none; b=C+pUpVWnjaJaMR5aUImCXIaeMss5t5iEdCBiHBWBYpAKGSGOsK+Pw9bK6Fk+VcnbthXXMmqLKyvngw+aktVCICwBo+Bx2QYdpyD64UkZeHyPMN302vfPLgG5SDw3ymZQ32fNkjoLQZlY8DcdIU4SDX/VPaUBs+DDm1tjYom0Y5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772105384; c=relaxed/simple;
-	bh=AndIrKyQHy+il0EwGoW2/aFvltHI4Xk44RYUVWnT4N4=;
+	s=arc-20240116; t=1772106867; c=relaxed/simple;
+	bh=mkEfYemzIR+QHhtRKvdwkAcl9n+fPDGKeENTRyZ0xek=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gadQp+1gE0tBzHJ5y4krsvLeZpzhcmgdJob5qucxBIbCdSLhrZyU8gD+TLTmJGlCuomvFfKw0d0n4CzNJ5DhcdUZN/wC9xiUsyjEcExjrZM/CdzXeVTi0c1RfseHUtZmHrncrVZEfYVWWQvjOn9dq6Rf89rBqlmd4Im/BEQZ8XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gcMXQ1K+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Uoj7Ytir; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gcMXQ1K+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Uoj7Ytir; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=CtTO2243VjcwCPGckK7reOZIoeOEMdkO4ZmrFYh7g696R2zrNObLplTzg2eG20D0awjHGELhUopKC8pPPvZ6dSigNbJB0xrcbpbHwV8WOOUaFpeMOobkHBWbjfR1TI2+9K9POJ5htLDmon7SZFYwAwgwJK270kRL3zNVhV+mjHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hAVMQWMa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZDAoyZI8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qIs99Uwl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2ELRmH1S; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 69CC21FA7B;
-	Thu, 26 Feb 2026 11:29:41 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C24854D21F;
+	Thu, 26 Feb 2026 11:54:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1772105381; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1772106864; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BuMgGX8SlMhcVTfISf0evxu3cUrTp/iLJp3o2AALQ24=;
-	b=gcMXQ1K+K6+isb94DqG/NTJv0/S3mR9XaHs/VFa2jkMxAK6mUs9wt1NPsscgEIET1aujds
-	oeMBxMAUNCtWVqIADOkXVR+IPYsqEG41SenZ9ciDj/bTE2vC+gXpfn1CKpwbChgzT/Voa6
-	xsEoP3exT95ZlBZifc/jaqMPWGNmouk=
+	bh=X5bBznvZoKbp3YHpDSYOeq/RTIHqXZ4OqLndlPT5A0E=;
+	b=hAVMQWMaxU/MN/uMA1vA53yu0R38Td+beuAqGhy4hRZIVgz5VOsN32pL0CMNAUHQ7xUmTI
+	6jZmB/yDp3mQOH73R9ksa596ueqwkNLcrUgn7IK3xTkCY383KEEMCgB685W9a/YC1JlNzh
+	qxfojwnou2tJCE/JPaFMdZNPFQNyNEw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1772105381;
+	s=susede2_ed25519; t=1772106864;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BuMgGX8SlMhcVTfISf0evxu3cUrTp/iLJp3o2AALQ24=;
-	b=Uoj7YtirM+vpPj2ECwkEjhVNPWyXprLDLuPQBk4L3Q6zASclwwx6HVk2i9ssDy6VvtVvdj
-	OZKv7tg8ESE0CaCQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
+	bh=X5bBznvZoKbp3YHpDSYOeq/RTIHqXZ4OqLndlPT5A0E=;
+	b=ZDAoyZI8C4hu8IXioAa/i/Zw8xctdqk2OTu39Nw1pKYW7r104iC5Pf4NA1xx7ETmiT+xgx
+	AYxjiUU2slpin8DA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=qIs99Uwl;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=2ELRmH1S
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1772105381; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1772106863; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BuMgGX8SlMhcVTfISf0evxu3cUrTp/iLJp3o2AALQ24=;
-	b=gcMXQ1K+K6+isb94DqG/NTJv0/S3mR9XaHs/VFa2jkMxAK6mUs9wt1NPsscgEIET1aujds
-	oeMBxMAUNCtWVqIADOkXVR+IPYsqEG41SenZ9ciDj/bTE2vC+gXpfn1CKpwbChgzT/Voa6
-	xsEoP3exT95ZlBZifc/jaqMPWGNmouk=
+	bh=X5bBznvZoKbp3YHpDSYOeq/RTIHqXZ4OqLndlPT5A0E=;
+	b=qIs99UwlRW2BlP+Vwv+l3XflhEh8w1hRizSwIEvxNyaoTcnez1ceoivwAWTPTJbp2jnI+g
+	s25bxm/Wiq+M0vGHOngCtufCEANBslFVpOnXWur4yIs0Ks/lr82R62TVbv4K5CbGvc5XZF
+	UlQc8oMF3ihXAB3EuYi6zZJ+kvMhMp8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1772105381;
+	s=susede2_ed25519; t=1772106863;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BuMgGX8SlMhcVTfISf0evxu3cUrTp/iLJp3o2AALQ24=;
-	b=Uoj7YtirM+vpPj2ECwkEjhVNPWyXprLDLuPQBk4L3Q6zASclwwx6HVk2i9ssDy6VvtVvdj
-	OZKv7tg8ESE0CaCQ==
+	bh=X5bBznvZoKbp3YHpDSYOeq/RTIHqXZ4OqLndlPT5A0E=;
+	b=2ELRmH1SmgBvGR+QHJVLdwnHOd8iBLL6l9zCBAwkbadswFTGDEkX0rn5S7toG2J2z5w6I8
+	/ioR5NNG+fnCOwAg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5AE533EA62;
-	Thu, 26 Feb 2026 11:29:41 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B918A3EA62;
+	Thu, 26 Feb 2026 11:54:23 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id toSJFaUuoGmQWAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 26 Feb 2026 11:29:41 +0000
+	id sAYkLW80oGmScwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 26 Feb 2026 11:54:23 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0A9F0A0A27; Thu, 26 Feb 2026 12:29:33 +0100 (CET)
-Date: Thu, 26 Feb 2026 12:29:33 +0100
+	id 7FCFBA0A27; Thu, 26 Feb 2026 12:54:23 +0100 (CET)
+Date: Thu, 26 Feb 2026 12:54:23 +0100
 From: Jan Kara <jack@suse.cz>
-To: Christian =?utf-8?B?R8O2dHRzY2hl?= <cgzones@googlemail.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	SElinux list <selinux@vger.kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: Generic approach to avoid truncation of file on pseudo fs
-Message-ID: <nivmqedi2e4wgufmr74fed5jda24dmzj6kroufd5krqrnj4fdm@jnfkf27ncjy3>
-References: <CAJ2a_Df6GOirF8TnNWTqNMpdWLHgjT9_v7G-PiL4e7LU2nr1PA@mail.gmail.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Florian Weimer <fweimer@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	Jeff Layton <jlayton@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Amir Goldstein <amir73il@gmail.com>, Josef Bacik <josef@toxicpanda.com>, Jan Kara <jack@suse.cz>, 
+	Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org, rudi@heitbaum.com
+Subject: Re: [PATCH 1/2] mount: add OPEN_TREE_NAMESPACE
+Message-ID: <2cy27sadqeldndtkkf47z5bgf6w7yhsg7sp3saz35wu6x65p5b@ul75lea7q4vv>
+References: <20251229-work-empty-namespace-v1-0-bfb24c7b061f@kernel.org>
+ <20251229-work-empty-namespace-v1-1-bfb24c7b061f@kernel.org>
+ <lhuecmaz8p6.fsf@oldenburg.str.redhat.com>
+ <20260224-erbitten-kaufleute-6f14e3072c5d@brauner>
+ <lhuv7fmxo8y.fsf@oldenburg.str.redhat.com>
+ <20260224-kandidat-wohltat-ae8fb7a57738@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJ2a_Df6GOirF8TnNWTqNMpdWLHgjT9_v7G-PiL4e7LU2nr1PA@mail.gmail.com>
-X-Spam-Score: -3.80
-X-Spam-Level: 
+In-Reply-To: <20260224-kandidat-wohltat-ae8fb7a57738@brauner>
 X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Spam-Level: 
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
 	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TO_DN_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[redhat.com,vger.kernel.org,kernel.org,zeniv.linux.org.uk,gmail.com,toxicpanda.com,suse.cz,cyphar.com,heitbaum.com];
+	TAGGED_FROM(0.00)[bounces-78468-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,suse.com:email];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sourceware.org:url,suse.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,suse.cz:dkim];
 	DMARC_NA(0.00)[suse.cz];
-	FREEMAIL_TO(0.00)[googlemail.com];
-	TAGGED_FROM(0.00)[bounces-78467-lists,linux-fsdevel=lfdr.de];
+	DKIM_TRACE(0.00)[suse.cz:+];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: B034D1A50D0
+X-Rspamd-Queue-Id: CB28A1A5757
 X-Rspamd-Action: no action
 
-On Thu 19-02-26 14:37:05, Christian Göttsche wrote:
-> Hi all,
+On Tue 24-02-26 15:33:13, Christian Brauner wrote:
+> On Tue, Feb 24, 2026 at 02:30:37PM +0100, Florian Weimer wrote:
+> > * Christian Brauner:
+> > 
+> > > On Tue, Feb 24, 2026 at 12:23:33PM +0100, Florian Weimer wrote:
+> > >> * Christian Brauner:
+> > >> 
+> > >> > diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+> > >> > index 5d3f8c9e3a62..acbc22241c9c 100644
+> > >> > --- a/include/uapi/linux/mount.h
+> > >> > +++ b/include/uapi/linux/mount.h
+> > >> > @@ -61,7 +61,8 @@
+> > >> >  /*
+> > >> >   * open_tree() flags.
+> > >> >   */
+> > >> > -#define OPEN_TREE_CLONE		1		/* Clone the target tree and attach the clone */
+> > >> > +#define OPEN_TREE_CLONE		(1 << 0)	/* Clone the target tree and attach the clone */
+> > >> 
+> > >> This change causes pointless -Werror=undef errors in projects that have
+> > >> settled on the old definition.
+> > >> 
+> > >> Reported here:
+> > >> 
+> > >>   Bug 33921 - Building with Linux-7.0-rc1 errors on OPEN_TREE_CLONE
+> > >>   <https://sourceware.org/bugzilla/show_bug.cgi?id=33921>
+> > >
+> > > Send a patch to change it back, please.
+> > > Otherwise it might take a few days until I get around to it.
+> > 
+> > Rudi, could you post a patch?
 > 
-> SELinux offers a memory mapping for userspace for status changes via
-> the pseudo file /sys/fs/selinux/status.
-> Currently this file can be truncated by a privileged process, leading
-> to other userland processes getting signalled a bus error (SIGBUS).
-> This affects for example systemd [1].
-> I proposed a targeted fix [2], overriding the inode setattr handler
-> and filtering O_TRUNC on open.
-> 
-> Is there there a general solution how to prevent truncation of pseudo
-> files backed up by real memory?
-> Are there more ways a file can be truncated that should be handled?
-> 
-> 
-> If there is no generic way would the following patch be acceptable?
+> I'm a bit confused though and not super happy that you're basically
+> asking us to be so constrained that we aren't even allowed to change 1
+> to 1 - just syntactically different.
 
-OK, since my knowledge about this code is limited, I did some research :).
-Firstly, I've checked how other virtual filesystems behave and the answer
-is "it depends". E.g. those that are based on kernfs (e.g. sysfs) have
-their own .setattr handler which just ignores ATTR_SIZE. From those that
-are based on simple_fill_super as is the case for selinux (but also
-debugfs, nfsctl, tracefs, fusectl, binfmt) all of them just allow the file
-size to be changed which likely has some potential for confusing userspace
-for some of them. So I don't see a problem with allowing to pass
-inode_operations to use by simple_fill_super() but I'm a bit undecided
-whether it wouldn't be more sensible for pseudo_fs_fill_super() to just
-set inode->i_op to inode operations that don't allow truncate because for
-none of the filesystems using it, it looks useful to say the least.
+Agreed, this looks more like a tooling bug than anything else...
 
-								Honze
-
->  diff --git a/fs/libfs.c b/fs/libfs.c
-> 
-> index 9264523be85c..76f7fec136cb 100644
-> --- a/fs/libfs.c
-> +++ b/fs/libfs.c
-> @@ -1089,6 +1089,7 @@ int simple_fill_super(struct super_block *s,
-> unsigned long magic,
->                }
->                inode->i_mode = S_IFREG | files->mode;
->                simple_inode_init_ts(inode);
-> +               inode->i_op = files->iops;
->                inode->i_fop = files->ops;
->                inode->i_ino = i;
->                d_make_persistent(dentry, inode);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 04ceeca12a0d..9f1a9f0a9b48 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3225,7 +3225,7 @@ extern const struct file_operations simple_dir_operations;
-> extern const struct inode_operations simple_dir_inode_operations;
-> extern void make_empty_dir_inode(struct inode *inode);
-> extern bool is_empty_dir_inode(struct inode *inode);
-> -struct tree_descr { const char *name; const struct file_operations
-> *ops; int mode; };
-> +struct tree_descr { const char *name; const struct file_operations
-> *ops; int mode; const struct inode_operations *iops; };
-> struct dentry *d_alloc_name(struct dentry *, const char *);
-> extern int simple_fill_super(struct super_block *, unsigned long,
->                             const struct tree_descr *);
-> 
-> 
-> and then adding the hook would just be
-> 
-> -               [SEL_STATUS] = {"status", &sel_handle_status_ops, S_IRUGO},
-> +               [SEL_STATUS] = {"status", &sel_handle_status_ops,
-> S_IRUGO, &sel_handle_status_iops},
-> 
-> 
-> Best regards,
->        Christian Göttsche
-> 
-> 
-> Link [1]: https://github.com/systemd/systemd/issues/37349
-> Link [2]: https://lore.kernel.org/selinux/20260130171140.90966-1-cgoettsche@seltendoof.de/
+								Honza
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
