@@ -1,77 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-78589-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aJh/IE2BoGn6kQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78589-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:22:21 +0100
+	id 0Lz7IV6JoGlvkgQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:56:46 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E391AC41A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:22:20 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 285921AD115
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:56:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 8956530BECDC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 16:42:33 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 5DDD03252437
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 16:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E144244B670;
-	Thu, 26 Feb 2026 16:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BCBC3603FE;
+	Thu, 26 Feb 2026 16:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZkKW0TcO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cfBu1XsT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C898F426D18
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 16:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B40F364927
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 16:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772122172; cv=none; b=jyN/Hv6C6FPOdlG6vQjLqJu5oZtteS7Cn4e1uFn1VLRlNGhqz2zREov9j9HRpp6jU2Narg7+ze4zxzhHbeiTGzDdYYOWqdM3pGeYqBMDHn4OD+5eCvKBSJHVCjvMizcaftm7nSA8zEWM90ogAtarHcVvzsk2/fl41FC14quMAhI=
+	t=1772122173; cv=none; b=rK1bkupX7cB9WuSMW3pT9TcCxgpXXpKl6/MSfgXBFzVYGOY86YV2JnH4nlka+umnpnUz/jX0jtUjtg3kvAnypK28ENvlSFM+qqQXJx6N2vtBcVTt3YpgJLmXB5D1iyyqloVuTrLGnCju63hdRPP1PeprW7G8yZ8ldtpVGhPAg68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772122172; c=relaxed/simple;
-	bh=mGwXJxQ8B9+61F8/VPcfgs6XYDIXRha1M1Q+adyZkxw=;
+	s=arc-20240116; t=1772122173; c=relaxed/simple;
+	bh=BNXRnQsioUUb9bosFAHfjcgiZPyuhfz+W0IXydZGb0g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZfpoKEliWx0K324++UwK77B1+aeMUlllNt9WAu+XmdYHeXskqB6T8BorR+5DiQXhHUvRV10vQyZXIzQtmLoujK2mRmNAMkMbb+141K5VV3KKmntTjGWy6474jY+RJkBtR0ygcZt4khCRv/PZjdPN9CfhRV+Gmw5zuwyFi1AHicQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZkKW0TcO; arc=none smtp.client-ip=209.85.128.182
+	 MIME-Version; b=GUt3wRXBsv4eRaqu5BCZ5Zc3nE+Fm4C9UZKqmDtveh5Em0tun1PtySO4gm213o/yB4P+kTMc2hFrsBGmq5gqEA4Q4xSWaGFKv2vegQmXvMF5sGR3kiC2457w0b+jI4i6hcnYJKzue+hc/nTF6rehQu5nUXRPzNk0GeFkAehmxCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cfBu1XsT; arc=none smtp.client-ip=209.85.128.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-7986fb839f5so8960107b3.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 08:09:27 -0800 (PST)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-7927261a3acso8061117b3.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 08:09:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772122166; x=1772726966; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1772122167; x=1772726967; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OtssGMmgpsS0GlJdNGMxqurgMvcq6MJjd3dPtJY3SVc=;
-        b=ZkKW0TcOoLZUPtOuXL19MBosyrwtx4L34DQfFdD5C7q5TXDyK6C7+6XBWMjR8Qx86e
-         kfnTWsblnqP9PvI8cFL8GGdzTZfmTGPCGtheXsgac7wFIdnjSY5cpf9H8H5fvg2z4Uea
-         h4tWyHKZyw5rl//4PEm+0H01LqRb4gTKEJqSyPOOcMnHrbEcw26UTStgYDCapS38GZ8b
-         ni7W61YMVGoZftbs8l9o9q2UREPyFacfCIDgABVlRnvuYLdOSTuDwM1Dh4rsP2ffeyD3
-         CCbGvzSoOCD8INuWeo/AOy+hewL6azcj+0E+zsAO3amX60gjjtAQ3tbY5D2DwGVMEJUT
-         qWfg==
+        bh=jr9OUWJlzV6KyFu2dUOpeqmh+0oHETiN+VeCYXo8ah4=;
+        b=cfBu1XsTQkI1a008eCqXGxY3tkKfttEch8XfgjUSLaN8RqWwIFWszHDIBhHVAcMFEX
+         ryVUiGjxrSp/2kHB698H8IAgs/skkoefYEzd3d1/K9/nnS2Z8pqCDp4ZqRqTEoFpHHf0
+         5OgU/iJVI7i7IinkTtnl2gIAXniZTlPRd/c5Tby697L9VsPdDBGWCHO9LwV3uVOt0sZk
+         /u0Opluor8xrkGCh0O2F9eGR3ANL6/GkrQ/jimX63g1eCFxVjQ7BK0KIWmVR+9gI+H0p
+         LDSFJfNK+oChvOZ5lMbVsR35tgfr1fU3OlCS0gons5+yroukFRK8EpVfCouf7/PemKs7
+         8v5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772122166; x=1772726966;
+        d=1e100.net; s=20230601; t=1772122167; x=1772726967;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=OtssGMmgpsS0GlJdNGMxqurgMvcq6MJjd3dPtJY3SVc=;
-        b=F0vllCkeipuLtH9ps/CxF7f2uFMkTRaD4w/9rvX90HkxlXnC7oCS7YzBiOt14uc0yA
-         7vjFMxCVRgChgsGpP+inxJ98/mk7f7jPIP5Qokpj/Zpt/bzcdoA93OhivIcRTdIfkfWL
-         cQeRMPNqR7GW84kPb0SC4sI8iG5EIemmS7El9QLh9p/A8o5qLqntQ1zzuYoG8guYY+W0
-         Ax8hvG+sF9cuuKqnCaNc2xiLvP4NLRnkciIayEp3oY8m/tomFwWv10dPph8kfAu5FSu4
-         fzwEfKu8YY36X9MgFrgbDbiPAuVaMR1/XPrkh1aA2Dxer61qzb8yqz4Fpv3pEtL5Dr4v
-         pEIA==
-X-Gm-Message-State: AOJu0YxhSaDC/L6jX//434vTSJVkcpfUCmQDu2GTHzmo9RqG69omYrag
-	75xuinMZzgu1/tq1fZU77kq8PLEowFfHmZoQxRSuZsfngnJzxQMWWk7tGNjAsC6x/uU=
-X-Gm-Gg: ATEYQzyw9CZRzM9w2kFSB33TP4/EBSTB1LvL5nRslaqNlUkBW+Q8NVa1bId1SHwgOq8
-	IOHK9O7DZ1tuZYwv3SfnceWn7c2emomYBhcoy/bQTe/p8/Pi0+x4jH9scuN0WVKOXtAtbKOR97+
-	UQQ0s68aPIJQJmaEa9INY3gqAiJIg3QMcMqHaHEY7bHUdbNJBM5RvcNF/2jCwn2MinjwNyzfHRY
-	zjeVyRQG+o2C0sOhbPQxZVQUEEpqwWfZlk5JZeqfs5k6cquJbNoFYrLeomVNyZve86jebmhsNh5
-	0OpePfzscpgWVqp3Vwwf/VC6rCApnfQfAVr2gxq01hLPzt20koFK5uVPMWn6Kxo0CztQheoxxdW
-	+OX8kyWj36aG41ndng6vZ209/AQ3QNiyAB7Vldq+NrtjLA/4zOZ3oXCFYjNRAgVOEFr5TO3NXG/
-	stO+Qx6udBMSKuB1AidVxJnWEz7ud9HI7RKcBE/q5tBuhEY7hzML3Z17PvxiclPcaIseVdeMGTX
-	ZqZiW2WX1jFBKLj/S9342ZL
-X-Received: by 2002:a05:690c:d8a:b0:797:ddf2:7cac with SMTP id 00721157ae682-798291548e2mr177249357b3.63.1772122166458;
-        Thu, 26 Feb 2026 08:09:26 -0800 (PST)
+        bh=jr9OUWJlzV6KyFu2dUOpeqmh+0oHETiN+VeCYXo8ah4=;
+        b=US/Z11qMBQl43REc2h5XxwxQSAj+F+9qCcxAHEM7uNuXkhZVCSs0dOpVnDc7a3d5ZK
+         MVxCy9oxRpUyNsc2wh4bu3zOXJ7ChHrTeGl1J2mvOwelsmlmTQijEveZQOPP/S8dCHZo
+         OCnn11MnChJzWGIniusgPSW2aazmZ/lCo8TY+rpNJz2B3Gn3MbwXcJkSbr9VS89y0q/D
+         ERPZHQa054i0onvYjvElK5fRFb2GFK4VfRsG7tkUDD3aGLTKala0xXl+HzwmHnWvJzYJ
+         5d8bkquyp7vrzBj5PUuyHA3KadwAMTv9/6LalRLkZKyc9DGxP4OcbqmSPGhi3igSCm53
+         TGSw==
+X-Gm-Message-State: AOJu0Yz1GXKSDrAtjW0H0waOb5mcduNbvRH0h92PLtolgDMwJ2crAa1b
+	e2zzUOIpJpvK6neeeHVjAj7FjRLwjI7p131mDIxPcU77X18FidPkcqOt
+X-Gm-Gg: ATEYQzxfEpsITvWHPyqMRbCHeG2xLkAAoEvyyTsLRERH4RcfEY2QC4lVYx+qXSZIfqW
+	XkFd5YycuC+C7hroLzSoyGb3A4sW60qdhXfIcA1OT75dKL0wC13y/QpHSvAF27ee1c69xiKs/hg
+	25EOP5cU05sZI7EnMKbR+CwwwCGLHJerrgBx8qsMNAO0wR8FhHjyivbhnQR+MZV5ooRGWU+/I8Y
+	fnORC9SHVcgOIKW8Yy94UyxQ7cxkSKvEFry+M6Dc0U9NHPHy3BQoLk4/17kxD2aPVbi+LAqd/ry
+	wIgeFGFLlhd5EIsVUc+a/LKnEVD/1DNn/X4EQSlUNaVJIomm9n8slB0KtOc688tbQN1D4RSHlK+
+	J2AyJ9GOTREN/SSSLfdIEv/6g4/SqqRRhQgB2f9QmTVXZ0Bn5hXyircbQnnPPWvjxtpWPtZWlTm
+	UQIVpEVIG1Lc8SnFK2GfMg00ezzFCEgBwgNWKr1xA3mYaqRP8EEiBgdZ06vJ6gix/ilOBYAJLOx
+	WmeVBXxYgLW7DixauPsr00t
+X-Received: by 2002:a05:690c:389:b0:798:270:fec0 with SMTP id 00721157ae682-7986fc9b3afmr44428927b3.5.1772122167314;
+        Thu, 26 Feb 2026 08:09:27 -0800 (PST)
 Received: from tux ([2601:7c0:c37c:4c00::5c0b])
         by smtp.gmail.com with ESMTPSA id 00721157ae682-79876cb9f19sm10225967b3.53.2026.02.26.08.09.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
@@ -82,9 +82,9 @@ To: linkinjeon@kernel.org,
 Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Ethan Tidmore <ethantidmore06@gmail.com>
-Subject: [PATCH 2/3] ntfs: Add missing error code
-Date: Thu, 26 Feb 2026 10:09:05 -0600
-Message-ID: <20260226160906.7175-3-ethantidmore06@gmail.com>
+Subject: [PATCH 3/3] ntfs: Fix possible deadlock
+Date: Thu, 26 Feb 2026 10:09:06 -0600
+Message-ID: <20260226160906.7175-4-ethantidmore06@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260226160906.7175-1-ethantidmore06@gmail.com>
 References: <20260226160906.7175-1-ethantidmore06@gmail.com>
@@ -101,12 +101,12 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78589-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78590-lists,linux-fsdevel=lfdr.de];
 	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com];
 	FREEMAIL_FROM(0.00)[gmail.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -123,35 +123,43 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	RCVD_COUNT_FIVE(0.00)[5];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 24E391AC41A
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 285921AD115
 X-Rspamd-Action: no action
 
-If ntfs_attr_iget() fails no error code is assigned to be returned.
+In the error path for ntfs_attr_map_whole_runlist() the lock is not
+released.
+
+Add release for lock.
 
 Detected by Smatch:
-fs/ntfs/attrib.c:2665 ntfs_attr_add() warn:
-missing error code 'err'
+fs/ntfs/attrib.c:5197 ntfs_non_resident_attr_collapse_range() warn:
+inconsistent returns '&ni->runlist.lock'.
 
+Fixes: 495e90fa33482 ("ntfs: update attrib operations")
 Signed-off-by: Ethan Tidmore <ethantidmore06@gmail.com>
 ---
- fs/ntfs/attrib.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/ntfs/attrib.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/fs/ntfs/attrib.c b/fs/ntfs/attrib.c
-index e260540eb7c5..71ad870eceac 100644
+index 71ad870eceac..2af45df2aab1 100644
 --- a/fs/ntfs/attrib.c
 +++ b/fs/ntfs/attrib.c
-@@ -2661,6 +2661,7 @@ int ntfs_attr_add(struct ntfs_inode *ni, __le32 type,
- 	/* Open new attribute and resize it. */
- 	attr_vi = ntfs_attr_iget(VFS_I(ni), type, name, name_len);
- 	if (IS_ERR(attr_vi)) {
-+		err = PTR_ERR(attr_vi);
- 		ntfs_error(sb, "Failed to open just added attribute");
- 		goto rm_attr_err_out;
- 	}
+@@ -5124,8 +5124,10 @@ int ntfs_non_resident_attr_collapse_range(struct ntfs_inode *ni, s64 start_vcn,
+ 
+ 	down_write(&ni->runlist.lock);
+ 	ret = ntfs_attr_map_whole_runlist(ni);
+-	if (ret)
++	if (ret) {
++		up_write(&ni->runlist.lock);
+ 		return ret;
++	}
+ 
+ 	len = min(len, end_vcn - start_vcn);
+ 	for (rl = ni->runlist.rl, dst_cnt = 0; rl && rl->length; rl++)
 -- 
 2.53.0
 
