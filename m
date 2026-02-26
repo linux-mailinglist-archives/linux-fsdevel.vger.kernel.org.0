@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-78542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0LPWHYt4oGmzkAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 17:44:59 +0100
+	id 4GfJEUF0oGlZjwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 17:26:41 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2F1A1AAF1A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 17:44:58 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95B2E1AA461
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 17:26:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7AF3233638CD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 16:14:21 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 442A230EE452
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 16:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF01445BD5C;
-	Thu, 26 Feb 2026 16:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FBE45BD57;
+	Thu, 26 Feb 2026 16:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDzbCEdI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WKYLjoM/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429C442DFE0;
-	Thu, 26 Feb 2026 16:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC0F3E8C74;
+	Thu, 26 Feb 2026 16:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772121604; cv=none; b=K4+i21RURG7AR4KR2/8i0F+ni6ixXM9rc6Mf4Es8f8wIWGSV+xSmFc4qzwQP9AzGbAYhVMkYS2RUM7pQXSPKVxPkBMem+WfSDn2qLc6J2xv/wY//DM8nJ9pcx/mFudJH3mL0oAdCsCgi0ayhJnpgrJaiRRYKqyn47FEmxbCGLSE=
+	t=1772121617; cv=none; b=MBUouZXVjdjqxT46i6YHSyb+UiYe7QBL7Fek7Xma0DgLRQd2EznauIlIvMXZHG6HE5oHhW/cqEN7DlpfAvZdtGEeki6wLOAzVfnUvRSrnKN9www8ttFGYzi6Y9n8CavBpRzoBOSDsZdKhcOXISuP/UFZ1V4+0PniYO0QzFJBHeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772121604; c=relaxed/simple;
-	bh=kIVFsmXtBE3YuzRB+strxcrcOEXNDR/4sXDdnMV6RAw=;
+	s=arc-20240116; t=1772121617; c=relaxed/simple;
+	bh=PMTUPg+Vtukd7ZH3GogoOQ4MO2V415SHtzBbqVns09Q=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eP0hECZSLzJqggTCZSU31ziBbad+TIbJXMVP7QlWqWwLKJYb9JcneV0KltibSb76oNxBsO4bY5LGZ0AhCA2fU9gyIdDFNfLPE2KwOu3/mc8zhutb3ORWfPnrUD4wgydAqEWmWY/gyvTE15RfZPKsHCG/Ja2NnWLROuAsx0WYhkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YDzbCEdI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10356C2BCB3;
-	Thu, 26 Feb 2026 15:59:50 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=MUrDr9wxWaEOhM6F0nM6vmbs9RcikO+giwPAkT3h3jmb1oXGkAXGwMfVKx8qC4aHLFTZGCpu/pbsaEQ0PG8UGOaKeuShD/uKevBseSvtXUcudldDByv2EtKaPihFy7MVHfvsptb6Zyb1qACPa1wwKECpHy/pWGQDtpcaWTzoGls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WKYLjoM/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4361C4AF09;
+	Thu, 26 Feb 2026 16:00:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772121603;
-	bh=kIVFsmXtBE3YuzRB+strxcrcOEXNDR/4sXDdnMV6RAw=;
+	s=k20201202; t=1772121616;
+	bh=PMTUPg+Vtukd7ZH3GogoOQ4MO2V415SHtzBbqVns09Q=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=YDzbCEdIFAS3XGTFYeKhbBvMOHdk2GCv65NO1aAYs5h3azw9VRNLRJ9Fbn00BONBd
-	 XZ7Q5YtaGOLoNjN44S8s2loYRg9chGJoSdQqOQUCUSyyrTuMXpdER+QNm8x2gyF7L8
-	 ri1g5oeJ1OfZ/tOcgVd456us4+YacMZX/hr46U25NZBBgnaKDgHrOprTihC/bgFhA1
-	 RiYO1VO8vRpTLjdTKTu+uePcGEN6072PH5y/cukbIpk3bxRe2aKXlakKytXJdfNbg8
-	 CPNEVITwSY9we00NyTjK9lJzoNG5SDqRTyk7TCSii+0E3vkMGJPHWkJzKpDUpL4qH8
-	 o5DeOf1pEvh1Q==
+	b=WKYLjoM/OQ0ArET9Kvb62cUrV0wnBoZn8f2sBMFTymTNiTJV+uHPfmmiVjrLlwIYy
+	 BUKlRVKY5gsHWZ1bbMydTwS4nXnGHW4lWYMMbktPfa+bV8Lz9POKlMsQY7+9OxwmYT
+	 RmShAqP8d6HXcNHWVj7XfrCEqoFMTJc920ouIupqQglM74awJf2I4DTUEc7/oBc+Sa
+	 O0w6YPanA2fnHqvxpPQpkgp48mpJYdIgwJmYGEtu9bZjpZUKaGSiAsdbz+/3K1kf3p
+	 OKL+CNJy+lWJgr7Dd4Sjh7Lla52+3Hc2BJKSoCDfKrMuElkhtY0kdKsghB91ws07ov
+	 tCejBPz9D1Oiw==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 26 Feb 2026 10:55:20 -0500
-Subject: [PATCH 18/61] 9p: update format strings for u64 i_ino
+Date: Thu, 26 Feb 2026 10:55:21 -0500
+Subject: [PATCH 19/61] affs: update format strings for u64 i_ino
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260226-iino-u64-v1-18-ccceff366db9@kernel.org>
+Message-Id: <20260226-iino-u64-v1-19-ccceff366db9@kernel.org>
 References: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
 In-Reply-To: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -150,20 +150,20 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-xfs@vger.kernel.org, linux-hams@vger.kernel.org, 
  linux-x25@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3755; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=kIVFsmXtBE3YuzRB+strxcrcOEXNDR/4sXDdnMV6RAw=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpoG0If6psvaFLhG5GB3QWW9P7h7vG/pnb7lxXs
- CZ+gDM6mG2JAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaBtCAAKCRAADmhBGVaC
- FdKIEADP6XMRuAe/OrAUfesmSxFdHao88/Flin1MLL7xtSytZJHGQ4CZFPmxHE0vn4cXVNtsXur
- 4lOmKOvGEvRgPNsggDD5qBh1Arb0M9DX0QxIvm/EH79Z0ptVoVu8m7SpOj6e6IQ3y6SFjZBjicK
- dO+LW3XgSPLXjy9hxv+oS432GzeyPdrOlNQF4wKgxYtRUc0dPnzDFSC1CqjNRxP+T7l5aySDOoe
- S8oLG4YoEk63+3sJj5kjGMBIFveg23IW0jalUkrEIl0D1ZSUvoSKpsoHYU1Y4XuIHGW63gfJskj
- /jwpRMnzoio+x5aNIiRplu8qY5Jo/nAnwCKdqddKWLeo3pys8P4TKPmEQ7gL2MsuAQ8feiD3hht
- hOkyH1vUB4bT6NZe7njX6tr7A6vvrgITD2WiVwput54LNflG7A3WKXLtV/UTR3QEdRAxxeJUfvt
- ooybLC4A0ZpJDd0YYSP4zGcUmWDvmBSUmBEbP8sD2mQNLoJMuM9h8OySjaQ9NZtx2iCuCS4Rxoj
- RciUZM5QkBcyuBTeD4YDGohYKBN4wgy9Gg3GdJ8fDeRjJytnZnFAx/dyUY7PTGqG+UwgfU94Fwl
- h3fv5Myhfxhuy1PDazOm/qHMj9NpBQAZiaLTm5d1PxJL0ih+NNN95P4uEvVH+76atxLGWmN8zO6
- u/SWlnT7tELjwcA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11775; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=PMTUPg+Vtukd7ZH3GogoOQ4MO2V415SHtzBbqVns09Q=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpoG0I/GZxrTrxW27NqkBzXi03S398C1gpdVKop
+ G4gmAuooeaJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaBtCAAKCRAADmhBGVaC
+ FZ10D/kBlG801DflhJWEuWomWZV2XI1b2h4CXXT2GzfcIMyoAtutRoW6qzaUgaJBJg1WjikH2Q8
+ 4y7JHoLr6eWOtVbYeE2FZFkDuiar3DRWM2FF8FrhJLaCcZE1QFgUhk0OyPqK6oo3jhL4fAoS1vG
+ Y+1JK1J3GIi8VGzBw9WCHbcIG1JL4c5NiU93mZ0MpkllJ2IZPPKllEJKLY37dtRxzxEi0E7bL/e
+ 6/GhxrbkJ3LJ3z1SJPmokDcZmVJXb+ThUf3JbEjelMAo+BdspGLJpyNdf7oFrutUhabZDQOUr4P
+ 0WSKgXM0lqis4STIGE6L6p05JEd/VGFhw+kT+efbTdyxOVILq/7dZd87cA5x3snO2aZ3Ocom1lR
+ zVKEmSNvtqO+stqUx1abiUcE4AYV8vODG99mnRRoWUxaX4KUSpioQgUAiSJStFPew8OpT6Mx8fo
+ kkZgiz5T/MrL3uvxmwlSbHT93lBLZOsy0acH2U3fbNIpDNGvyiI7nqzCzilfuTZpAwJKGzC6JBH
+ cor98pThLAMCmTfHo5wyWb5n1vB/J5ejETlHtbW/YMDj59P3xUoyTSwzxembDQBX+Q6kpSM39+S
+ O6q0SEzAZUtwHzj7HIAA5iWkcP1ll15TAtfMWMvoH+N1FYW4bTsAGOBnzihcvKX0lhBj3D1OMh5
+ Vij2OwHGtazlRkw==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 X-Rspamd-Server: lfdr
@@ -172,11 +172,11 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78542-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78543-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de];
@@ -184,114 +184,331 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	TO_DN_SOME(0.00)[];
 	RCPT_COUNT_GT_50(0.00)[146];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[jlayton@kernel.org,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	NEURAL_HAM(-0.00)[-0.999];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: F2F1A1AAF1A
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 95B2E1AA461
 X-Rspamd-Action: no action
 
-Update format strings and local variable types in 9p for the
+Update format strings and local variable types in affs for the
 i_ino type change from unsigned long to u64.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/9p/vfs_addr.c       | 4 ++--
- fs/9p/vfs_inode.c      | 6 +++---
- fs/9p/vfs_inode_dotl.c | 6 +++---
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ fs/affs/amigaffs.c |  8 ++++----
+ fs/affs/bitmap.c   |  2 +-
+ fs/affs/dir.c      |  2 +-
+ fs/affs/file.c     | 20 ++++++++++----------
+ fs/affs/inode.c    | 12 ++++++------
+ fs/affs/namei.c    | 14 +++++++-------
+ fs/affs/symlink.c  |  2 +-
+ 7 files changed, 30 insertions(+), 30 deletions(-)
 
-diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
-index 862164181baca1e88ecf8859c55868bb01525ce1..c21d33830f5f021904f490ab6185db5fd40f736d 100644
---- a/fs/9p/vfs_addr.c
-+++ b/fs/9p/vfs_addr.c
-@@ -36,7 +36,7 @@ static void v9fs_begin_writeback(struct netfs_io_request *wreq)
+diff --git a/fs/affs/amigaffs.c b/fs/affs/amigaffs.c
+index fd669daa4e7bc951d8d7959c7a5ab1b60b75c61a..868dedbe236cfb284e88dcee3bc50fd9ea4ffe51 100644
+--- a/fs/affs/amigaffs.c
++++ b/fs/affs/amigaffs.c
+@@ -33,7 +33,7 @@ affs_insert_hash(struct inode *dir, struct buffer_head *bh)
+ 	ino = bh->b_blocknr;
+ 	offset = affs_hash_name(sb, AFFS_TAIL(sb, bh)->name + 1, AFFS_TAIL(sb, bh)->name[0]);
  
- 	fid = v9fs_fid_find_inode(wreq->inode, true, INVALID_UID, true);
- 	if (!fid) {
--		WARN_ONCE(1, "folio expected an open fid inode->i_ino=%lx\n",
-+		WARN_ONCE(1, "folio expected an open fid inode->i_ino=%llx\n",
- 			  wreq->inode->i_ino);
- 		return;
- 	}
-@@ -133,7 +133,7 @@ static int v9fs_init_request(struct netfs_io_request *rreq, struct file *file)
- 	return 0;
+-	pr_debug("%s(dir=%lu, ino=%d)\n", __func__, dir->i_ino, ino);
++	pr_debug("%s(dir=%llu, ino=%d)\n", __func__, dir->i_ino, ino);
  
- no_fid:
--	WARN_ONCE(1, "folio expected an open fid inode->i_ino=%lx\n",
-+	WARN_ONCE(1, "folio expected an open fid inode->i_ino=%llx\n",
- 		  rreq->inode->i_ino);
- 	return -EINVAL;
- }
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index 97abe65bf7c1f00e94e431fc69dc5ce647d1742b..d1508b1fe10929d8d847af313f7661d693167d96 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -1245,7 +1245,7 @@ static int
- v9fs_vfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 		 struct dentry *dentry, const char *symname)
+ 	dir_bh = affs_bread(sb, dir->i_ino);
+ 	if (!dir_bh)
+@@ -83,7 +83,7 @@ affs_remove_hash(struct inode *dir, struct buffer_head *rem_bh)
+ 	sb = dir->i_sb;
+ 	rem_ino = rem_bh->b_blocknr;
+ 	offset = affs_hash_name(sb, AFFS_TAIL(sb, rem_bh)->name+1, AFFS_TAIL(sb, rem_bh)->name[0]);
+-	pr_debug("%s(dir=%lu, ino=%d, hashval=%d)\n", __func__, dir->i_ino,
++	pr_debug("%s(dir=%llu, ino=%d, hashval=%d)\n", __func__, dir->i_ino,
+ 		 rem_ino, offset);
+ 
+ 	bh = affs_bread(sb, dir->i_ino);
+@@ -147,7 +147,7 @@ affs_remove_link(struct dentry *dentry)
+ 	u32 link_ino, ino;
+ 	int retval;
+ 
+-	pr_debug("%s(key=%ld)\n", __func__, inode->i_ino);
++	pr_debug("%s(key=%lld)\n", __func__, inode->i_ino);
+ 	retval = -EIO;
+ 	bh = affs_bread(sb, inode->i_ino);
+ 	if (!bh)
+@@ -279,7 +279,7 @@ affs_remove_header(struct dentry *dentry)
+ 	if (!inode)
+ 		goto done;
+ 
+-	pr_debug("%s(key=%ld)\n", __func__, inode->i_ino);
++	pr_debug("%s(key=%lld)\n", __func__, inode->i_ino);
+ 	retval = -EIO;
+ 	bh = affs_bread(sb, (u32)(long)dentry->d_fsdata);
+ 	if (!bh)
+diff --git a/fs/affs/bitmap.c b/fs/affs/bitmap.c
+index 5ba9ef2742f6ee5e903b3df04c5f627fc4fc00ae..40bc4ce6af4ac9d8dba81809e22516a58f0aaf15 100644
+--- a/fs/affs/bitmap.c
++++ b/fs/affs/bitmap.c
+@@ -125,7 +125,7 @@ affs_alloc_block(struct inode *inode, u32 goal)
+ 	sb = inode->i_sb;
+ 	sbi = AFFS_SB(sb);
+ 
+-	pr_debug("balloc(inode=%lu,goal=%u): ", inode->i_ino, goal);
++	pr_debug("balloc(inode=%llu,goal=%u): ", inode->i_ino, goal);
+ 
+ 	if (AFFS_I(inode)->i_pa_cnt) {
+ 		pr_debug("%d\n", AFFS_I(inode)->i_lastalloc+1);
+diff --git a/fs/affs/dir.c b/fs/affs/dir.c
+index 5c8d83387a394146f8df2e97af3b65723a076be1..11e2bac2e391896a32109335530a6af5543a0abe 100644
+--- a/fs/affs/dir.c
++++ b/fs/affs/dir.c
+@@ -90,7 +90,7 @@ affs_readdir(struct file *file, struct dir_context *ctx)
+ 	u32			 ino;
+ 	int			 error = 0;
+ 
+-	pr_debug("%s(ino=%lu,f_pos=%llx)\n", __func__, inode->i_ino, ctx->pos);
++	pr_debug("%s(ino=%llu,f_pos=%llx)\n", __func__, inode->i_ino, ctx->pos);
+ 
+ 	if (ctx->pos < 2) {
+ 		data->ino = 0;
+diff --git a/fs/affs/file.c b/fs/affs/file.c
+index 6c9258359ddb9ba344976dd5a9a435f71f3fabc1..a51dee9d7d7ec3724c642725812415bd33c76273 100644
+--- a/fs/affs/file.c
++++ b/fs/affs/file.c
+@@ -24,7 +24,7 @@ static struct buffer_head *affs_get_extblock_slow(struct inode *inode, u32 ext);
+ static int
+ affs_file_open(struct inode *inode, struct file *filp)
  {
--	p9_debug(P9_DEBUG_VFS, " %lu,%pd,%s\n",
-+	p9_debug(P9_DEBUG_VFS, " %llu,%pd,%s\n",
- 		 dir->i_ino, dentry, symname);
+-	pr_debug("open(%lu,%d)\n",
++	pr_debug("open(%llu,%d)\n",
+ 		 inode->i_ino, atomic_read(&AFFS_I(inode)->i_opencnt));
+ 	atomic_inc(&AFFS_I(inode)->i_opencnt);
+ 	return 0;
+@@ -33,7 +33,7 @@ affs_file_open(struct inode *inode, struct file *filp)
+ static int
+ affs_file_release(struct inode *inode, struct file *filp)
+ {
+-	pr_debug("release(%lu, %d)\n",
++	pr_debug("release(%llu, %d)\n",
+ 		 inode->i_ino, atomic_read(&AFFS_I(inode)->i_opencnt));
  
- 	return v9fs_vfs_mkspecial(dir, dentry, P9_DMSYMLINK, symname);
-@@ -1269,7 +1269,7 @@ v9fs_vfs_link(struct dentry *old_dentry, struct inode *dir,
- 	char name[1 + U32_MAX_DIGITS + 2]; /* sign + number + \n + \0 */
- 	struct p9_fid *oldfid;
+ 	if (atomic_dec_and_test(&AFFS_I(inode)->i_opencnt)) {
+@@ -301,7 +301,7 @@ affs_get_block(struct inode *inode, sector_t block, struct buffer_head *bh_resul
+ 	struct buffer_head	*ext_bh;
+ 	u32			 ext;
  
--	p9_debug(P9_DEBUG_VFS, " %lu,%pd,%pd\n",
-+	p9_debug(P9_DEBUG_VFS, " %llu,%pd,%pd\n",
- 		 dir->i_ino, dentry, old_dentry);
+-	pr_debug("%s(%lu, %llu)\n", __func__, inode->i_ino,
++	pr_debug("%s(%llu, %llu)\n", __func__, inode->i_ino,
+ 		 (unsigned long long)block);
  
- 	oldfid = v9fs_fid_clone(old_dentry);
-@@ -1305,7 +1305,7 @@ v9fs_vfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	char name[2 + U32_MAX_DIGITS + 1 + U32_MAX_DIGITS + 1];
- 	u32 perm;
+ 	BUG_ON(block > (sector_t)0x7fffffffUL);
+@@ -534,7 +534,7 @@ static int affs_do_read_folio_ofs(struct folio *folio, size_t to, int create)
+ 	size_t bidx, boff, bsize;
+ 	u32 tmp;
  
--	p9_debug(P9_DEBUG_VFS, " %lu,%pd mode: %x MAJOR: %u MINOR: %u\n",
-+	p9_debug(P9_DEBUG_VFS, " %llu,%pd mode: %x MAJOR: %u MINOR: %u\n",
- 		 dir->i_ino, dentry, mode,
- 		 MAJOR(rdev), MINOR(rdev));
+-	pr_debug("%s(%lu, %ld, 0, %zu)\n", __func__, inode->i_ino,
++	pr_debug("%s(%llu, %ld, 0, %zu)\n", __func__, inode->i_ino,
+ 		 folio->index, to);
+ 	BUG_ON(to > folio_size(folio));
+ 	bsize = AFFS_SB(sb)->s_data_blksize;
+@@ -566,7 +566,7 @@ affs_extent_file_ofs(struct inode *inode, u32 newsize)
+ 	u32 size, bsize;
+ 	u32 tmp;
  
-diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
-index 643e759eacb2a46855c7db6187fe6b29b7534c9a..71796a89bcf4745363b59af1047ecfd7e3f4d956 100644
---- a/fs/9p/vfs_inode_dotl.c
-+++ b/fs/9p/vfs_inode_dotl.c
-@@ -691,7 +691,7 @@ v9fs_vfs_symlink_dotl(struct mnt_idmap *idmap, struct inode *dir,
- 	struct p9_fid *fid = NULL;
+-	pr_debug("%s(%lu, %d)\n", __func__, inode->i_ino, newsize);
++	pr_debug("%s(%llu, %d)\n", __func__, inode->i_ino, newsize);
+ 	bsize = AFFS_SB(sb)->s_data_blksize;
+ 	bh = NULL;
+ 	size = AFFS_I(inode)->mmu_private;
+@@ -634,7 +634,7 @@ static int affs_read_folio_ofs(struct file *file, struct folio *folio)
+ 	size_t to;
+ 	int err;
  
- 	name = dentry->d_name.name;
--	p9_debug(P9_DEBUG_VFS, "%lu,%s,%s\n", dir->i_ino, name, symname);
-+	p9_debug(P9_DEBUG_VFS, "%llu,%s,%s\n", dir->i_ino, name, symname);
+-	pr_debug("%s(%lu, %ld)\n", __func__, inode->i_ino, folio->index);
++	pr_debug("%s(%llu, %ld)\n", __func__, inode->i_ino, folio->index);
+ 	to = folio_size(folio);
+ 	if (folio_pos(folio) + to > inode->i_size) {
+ 		to = inode->i_size - folio_pos(folio);
+@@ -658,7 +658,7 @@ static int affs_write_begin_ofs(const struct kiocb *iocb,
+ 	pgoff_t index;
+ 	int err = 0;
  
- 	dfid = v9fs_parent_fid(dentry);
- 	if (IS_ERR(dfid)) {
-@@ -734,7 +734,7 @@ v9fs_vfs_link_dotl(struct dentry *old_dentry, struct inode *dir,
- 	struct p9_fid *dfid, *oldfid;
- 	struct v9fs_session_info *v9ses;
+-	pr_debug("%s(%lu, %llu, %llu)\n", __func__, inode->i_ino, pos,
++	pr_debug("%s(%llu, %llu, %llu)\n", __func__, inode->i_ino, pos,
+ 		 pos + len);
+ 	if (pos > AFFS_I(inode)->mmu_private) {
+ 		/* XXX: this probably leaves a too-big i_size in case of
+@@ -710,7 +710,7 @@ static int affs_write_end_ofs(const struct kiocb *iocb,
+ 	 * due to write_begin.
+ 	 */
  
--	p9_debug(P9_DEBUG_VFS, "dir ino: %lu, old_name: %pd, new_name: %pd\n",
-+	p9_debug(P9_DEBUG_VFS, "dir ino: %llu, old_name: %pd, new_name: %pd\n",
- 		 dir->i_ino, old_dentry, dentry);
+-	pr_debug("%s(%lu, %llu, %llu)\n", __func__, inode->i_ino, pos,
++	pr_debug("%s(%llu, %llu, %llu)\n", __func__, inode->i_ino, pos,
+ 		 pos + len);
+ 	bsize = AFFS_SB(sb)->s_data_blksize;
+ 	data = folio_address(folio);
+@@ -854,7 +854,7 @@ affs_free_prealloc(struct inode *inode)
+ {
+ 	struct super_block *sb = inode->i_sb;
  
- 	v9ses = v9fs_inode2v9ses(dir);
-@@ -798,7 +798,7 @@ v9fs_vfs_mknod_dotl(struct mnt_idmap *idmap, struct inode *dir,
- 	struct p9_qid qid;
- 	struct posix_acl *dacl = NULL, *pacl = NULL;
+-	pr_debug("free_prealloc(ino=%lu)\n", inode->i_ino);
++	pr_debug("free_prealloc(ino=%llu)\n", inode->i_ino);
  
--	p9_debug(P9_DEBUG_VFS, " %lu,%pd mode: %x MAJOR: %u MINOR: %u\n",
-+	p9_debug(P9_DEBUG_VFS, " %llu,%pd mode: %x MAJOR: %u MINOR: %u\n",
- 		 dir->i_ino, dentry, omode,
- 		 MAJOR(rdev), MINOR(rdev));
+ 	while (AFFS_I(inode)->i_pa_cnt) {
+ 		AFFS_I(inode)->i_pa_cnt--;
+@@ -874,7 +874,7 @@ affs_truncate(struct inode *inode)
+ 	struct buffer_head *ext_bh;
+ 	int i;
  
+-	pr_debug("truncate(inode=%lu, oldsize=%llu, newsize=%llu)\n",
++	pr_debug("truncate(inode=%llu, oldsize=%llu, newsize=%llu)\n",
+ 		 inode->i_ino, AFFS_I(inode)->mmu_private, inode->i_size);
+ 
+ 	last_blk = 0;
+diff --git a/fs/affs/inode.c b/fs/affs/inode.c
+index 0bfc7d151dcd383af31d1fa41723e7391ec9d4c0..561fc0185e89c47947c83bd1a56cdc8be46f8d0e 100644
+--- a/fs/affs/inode.c
++++ b/fs/affs/inode.c
+@@ -32,7 +32,7 @@ struct inode *affs_iget(struct super_block *sb, unsigned long ino)
+ 	if (!(inode_state_read_once(inode) & I_NEW))
+ 		return inode;
+ 
+-	pr_debug("affs_iget(%lu)\n", inode->i_ino);
++	pr_debug("affs_iget(%llu)\n", inode->i_ino);
+ 
+ 	block = inode->i_ino;
+ 	bh = affs_bread(sb, block);
+@@ -171,14 +171,14 @@ affs_write_inode(struct inode *inode, struct writeback_control *wbc)
+ 	uid_t			 uid;
+ 	gid_t			 gid;
+ 
+-	pr_debug("write_inode(%lu)\n", inode->i_ino);
++	pr_debug("write_inode(%llu)\n", inode->i_ino);
+ 
+ 	if (!inode->i_nlink)
+ 		// possibly free block
+ 		return 0;
+ 	bh = affs_bread(sb, inode->i_ino);
+ 	if (!bh) {
+-		affs_error(sb,"write_inode","Cannot read block %lu",inode->i_ino);
++		affs_error(sb, "write_inode", "Cannot read block %llu", inode->i_ino);
+ 		return -EIO;
+ 	}
+ 	tail = AFFS_TAIL(sb, bh);
+@@ -219,7 +219,7 @@ affs_notify_change(struct mnt_idmap *idmap, struct dentry *dentry,
+ 	struct inode *inode = d_inode(dentry);
+ 	int error;
+ 
+-	pr_debug("notify_change(%lu,0x%x)\n", inode->i_ino, attr->ia_valid);
++	pr_debug("notify_change(%llu,0x%x)\n", inode->i_ino, attr->ia_valid);
+ 
+ 	error = setattr_prepare(&nop_mnt_idmap, dentry, attr);
+ 	if (error)
+@@ -260,7 +260,7 @@ void
+ affs_evict_inode(struct inode *inode)
+ {
+ 	unsigned long cache_page;
+-	pr_debug("evict_inode(ino=%lu, nlink=%u)\n",
++	pr_debug("evict_inode(ino=%llu, nlink=%u)\n",
+ 		 inode->i_ino, inode->i_nlink);
+ 	truncate_inode_pages_final(&inode->i_data);
+ 
+@@ -353,7 +353,7 @@ affs_add_entry(struct inode *dir, struct inode *inode, struct dentry *dentry, s3
+ 	u32 block = 0;
+ 	int retval;
+ 
+-	pr_debug("%s(dir=%lu, inode=%lu, \"%pd\", type=%d)\n", __func__,
++	pr_debug("%s(dir=%llu, inode=%llu, \"%pd\", type=%d)\n", __func__,
+ 		 dir->i_ino, inode->i_ino, dentry, type);
+ 
+ 	retval = -EIO;
+diff --git a/fs/affs/namei.c b/fs/affs/namei.c
+index f883be50db122d3b09f0ae4d24618bd49b55186b..8705321926007f559bac1af42fbadca8da67afcc 100644
+--- a/fs/affs/namei.c
++++ b/fs/affs/namei.c
+@@ -235,7 +235,7 @@ affs_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
+ int
+ affs_unlink(struct inode *dir, struct dentry *dentry)
+ {
+-	pr_debug("%s(dir=%lu, %lu \"%pd\")\n", __func__, dir->i_ino,
++	pr_debug("%s(dir=%llu, %llu \"%pd\")\n", __func__, dir->i_ino,
+ 		 d_inode(dentry)->i_ino, dentry);
+ 
+ 	return affs_remove_header(dentry);
+@@ -249,7 +249,7 @@ affs_create(struct mnt_idmap *idmap, struct inode *dir,
+ 	struct inode	*inode;
+ 	int		 error;
+ 
+-	pr_debug("%s(%lu,\"%pd\",0%ho)\n",
++	pr_debug("%s(%llu,\"%pd\",0%ho)\n",
+ 		 __func__, dir->i_ino, dentry, mode);
+ 
+ 	inode = affs_new_inode(dir);
+@@ -280,7 +280,7 @@ affs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 	struct inode		*inode;
+ 	int			 error;
+ 
+-	pr_debug("%s(%lu,\"%pd\",0%ho)\n",
++	pr_debug("%s(%llu,\"%pd\",0%ho)\n",
+ 		 __func__, dir->i_ino, dentry, mode);
+ 
+ 	inode = affs_new_inode(dir);
+@@ -306,7 +306,7 @@ affs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ int
+ affs_rmdir(struct inode *dir, struct dentry *dentry)
+ {
+-	pr_debug("%s(dir=%lu, %lu \"%pd\")\n", __func__, dir->i_ino,
++	pr_debug("%s(dir=%llu, %llu \"%pd\")\n", __func__, dir->i_ino,
+ 		 d_inode(dentry)->i_ino, dentry);
+ 
+ 	return affs_remove_header(dentry);
+@@ -323,7 +323,7 @@ affs_symlink(struct mnt_idmap *idmap, struct inode *dir,
+ 	int			 i, maxlen, error;
+ 	char			 c, lc;
+ 
+-	pr_debug("%s(%lu,\"%pd\" -> \"%s\")\n",
++	pr_debug("%s(%llu,\"%pd\" -> \"%s\")\n",
+ 		 __func__, dir->i_ino, dentry, symname);
+ 
+ 	maxlen = AFFS_SB(sb)->s_hashsize * sizeof(u32) - 1;
+@@ -395,7 +395,7 @@ affs_link(struct dentry *old_dentry, struct inode *dir, struct dentry *dentry)
+ {
+ 	struct inode *inode = d_inode(old_dentry);
+ 
+-	pr_debug("%s(%lu, %lu, \"%pd\")\n", __func__, inode->i_ino, dir->i_ino,
++	pr_debug("%s(%llu, %llu, \"%pd\")\n", __func__, inode->i_ino, dir->i_ino,
+ 		 dentry);
+ 
+ 	return affs_add_entry(dir, inode, dentry, ST_LINKFILE);
+@@ -511,7 +511,7 @@ int affs_rename2(struct mnt_idmap *idmap, struct inode *old_dir,
+ 	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE))
+ 		return -EINVAL;
+ 
+-	pr_debug("%s(old=%lu,\"%pd\" to new=%lu,\"%pd\")\n", __func__,
++	pr_debug("%s(old=%llu,\"%pd\" to new=%llu,\"%pd\")\n", __func__,
+ 		 old_dir->i_ino, old_dentry, new_dir->i_ino, new_dentry);
+ 
+ 	if (flags & RENAME_EXCHANGE)
+diff --git a/fs/affs/symlink.c b/fs/affs/symlink.c
+index 094aec8d17b88bab9392abdd497ed687cd85584e..de31ed2e71dfcb71b770a98c9b43a248de8d7041 100644
+--- a/fs/affs/symlink.c
++++ b/fs/affs/symlink.c
+@@ -21,7 +21,7 @@ static int affs_symlink_read_folio(struct file *file, struct folio *folio)
+ 	char			 c;
+ 	char			 lc;
+ 
+-	pr_debug("get_link(ino=%lu)\n", inode->i_ino);
++	pr_debug("get_link(ino=%llu)\n", inode->i_ino);
+ 
+ 	bh = affs_bread(inode->i_sb, inode->i_ino);
+ 	if (!bh)
 
 -- 
 2.53.0
