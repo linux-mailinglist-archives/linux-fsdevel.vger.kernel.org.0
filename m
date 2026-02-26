@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-78559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78560-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UCtTJ/J2oGmtjwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 17:38:10 +0100
+	id UPeeAEN2oGmtjwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78560-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 17:35:15 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F681AAAB6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 17:38:08 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90EE41AA902
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 17:35:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 13989301BD47
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 16:25:44 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9498C30A7A77
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 16:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790BD48AE1E;
-	Thu, 26 Feb 2026 16:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B4043D510;
+	Thu, 26 Feb 2026 16:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N/wtq9Yq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KcTCpPsq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726DC48034B;
-	Thu, 26 Feb 2026 16:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD74143D4F9;
+	Thu, 26 Feb 2026 16:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772121817; cv=none; b=QPy/CU7V/7+CtfpfT8fxi6hMlfWsuA9A0mcfXNAQzNUNErPpAzp0uLqmn9+WasVkxjYX2EE9BLZ/S9jpgD8/VLu8WtEhzD4aAX2PKgE2aeWE4pNDydzAI6TAJl7hJHLnhtyXtKPYCsfJxBZkNlI1PSJW9YRIQsM/WDqEAItY6+g=
+	t=1772121830; cv=none; b=L4vvcLir4q+oYzeeJ9hylhktWIGxyU3v+uMdQeiH1YTMpD5xI+/ZeCgxvkRoE379LHAckxlauc2ZvxF2PDZsMhzf4os2T9hLLF2Sb0Lipseay46C+RKvM/Cg2eztHjT7WK36jdXjTs3YG84ovbcPn6ouyrk2YquVXE1Fy1jefgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772121817; c=relaxed/simple;
-	bh=Mm9/OP1Us2ZjMqs5yAJOCtSY+KcTrwpYMhIt9vayw6Q=;
+	s=arc-20240116; t=1772121830; c=relaxed/simple;
+	bh=7ZXyl76yXKAVgEB9XnfKu8Y7KFxyRRm589E8p3gkT2s=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UwZwfEhvC/hglK1ow9Tc6gRhw8X7mEr5XaUxK99OIUb5Y39/ZGKJZ/rnls6x9sZk6jfJdeoFR8hwGcIp+eGh5ihSD3iRHy75BwUsjSbbsgxq23V82Pjo2SScINkoXax2m1zBrfqQl5NQEBLfbxpbbAexU3okIvEd6Enl8l1C/OA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N/wtq9Yq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E0E9C2BC86;
-	Thu, 26 Feb 2026 16:03:24 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=OWt+4vrpiSoXhtEiBjQrq+I1RJ3dH79fHgTfA6fv3D11VXE+m2nKwdXBF53AiUareajsA/A5szeeo4WRD04HVOH4Wc0B4+AtDM7mK7i5IHdPGJTcP68ruhQWXVjvCM9wIxBcO7akUmnvighWHifwxLsPeJ/VhpbezFHqm2KtQ/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KcTCpPsq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE2E7C2BCB3;
+	Thu, 26 Feb 2026 16:03:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772121816;
-	bh=Mm9/OP1Us2ZjMqs5yAJOCtSY+KcTrwpYMhIt9vayw6Q=;
+	s=k20201202; t=1772121829;
+	bh=7ZXyl76yXKAVgEB9XnfKu8Y7KFxyRRm589E8p3gkT2s=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=N/wtq9Yq1v9LjJEvOJcB4GqjdG6FyOkiqDeKIjlIp1hJXZG2nttGDsAuWI3sa/hUN
-	 XTxIAFPfrbTTj9ShQOTTox1X2bHJOkY9NB2iEz93vj4GrIzNlux88w8z407qzForZH
-	 1a87Kim/akMpwP6GwC22lGad82iCSV/DBT28s5v0xnEAMLmbQpLZawhGzqr5oRDcXP
-	 OKZtqGXtDlq7wrOjIb7ynIOkMKne58O0jsE7Tk6RIfAbw3oCLieGp+GfH8auZnKYuC
-	 RcyVvVHgkZo0bZrDNq0DsihqpKZkBUrLzrhhCr5gnCdOKGGzszV4WTirWYtIE/0mu9
-	 tFRgaJMbr07zw==
+	b=KcTCpPsqT0E5ocLxE89k0oKhHGVx7VoQTn3/uYe5/qXwIXPvYdQEwFRCyS6KM1cNQ
+	 zBEzmngpDW+7qc2cn+9opn0tPt8pJ7awOyzzo0R5hQL5PQdk4CPX09raGl2N5LarlE
+	 7+YA4JD9zTwdj4F6AXiUzJ9Vh7bLryWHvL9ZqFHCerZTQRHd/fYOQx7E1Wh7ou7xgX
+	 BxRLHJs9N2l7iFfbzvFtwyb2aFJy0N6n6b9nIrxXFd0GZBeTaQbiZSvOMvGG+M89eU
+	 MR+4+e3oV4GpXdunFeQDn39GpWw62ct90x3cMW7WCAK3bvjdi6sKTZKRMHVG66nLiR
+	 F4O2Jt9m7SwHw==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 26 Feb 2026 10:55:37 -0500
-Subject: [PATCH 35/61] hpfs: update format strings for u64 i_ino
+Date: Thu, 26 Feb 2026 10:55:38 -0500
+Subject: [PATCH 36/61] isofs: update format strings for u64 i_ino
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260226-iino-u64-v1-35-ccceff366db9@kernel.org>
+Message-Id: <20260226-iino-u64-v1-36-ccceff366db9@kernel.org>
 References: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
 In-Reply-To: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -150,20 +150,20 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-xfs@vger.kernel.org, linux-hams@vger.kernel.org, 
  linux-x25@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2961; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=Mm9/OP1Us2ZjMqs5yAJOCtSY+KcTrwpYMhIt9vayw6Q=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpoG0N7kdaYrUk/5+PhJXM2cVD9G1tsSNaaeQNq
- x2+GLQgWSiJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaBtDQAKCRAADmhBGVaC
- FZC/D/0e/0AVhKBe5ozYYOnbgiAtc1nrTMnGaFW8Rdg/h1dux1f37tU+G8wakXQcfRJ+LTzQ9R3
- 41/wptHxxGiF2TF7NuBK4AJoFJ2K/vthItVl9PKqGT3znPVGctxHrJd3/TqAUVA2HD2RnH8vZY9
- HDofY52XzY9t0Y7ozbRmq07Voi3EokGoVvYNHhU/SWRgNrp+uRfmloaN5Dd4vp4Eiei4rsblfco
- Pk3r3cTXLszGokDkB56olfZy9coVhY2zlD1E73gh1tivftXDQdZx2J0VLfslN/EXiCEcqW66stW
- PiTLj3Tl2SBExh7Wbd7PCSQHFeYWjGY5QblzfySOeHk4Qn6naqktDjXrjudaJHbIeP6VBbXVRNn
- mhxIvVpYE2rhU2EfdFxrK6gSE7N09E6aosv6yw3AkkDoEGNhsa/pxYhbI8PXXM+v1EIP7bqiF1W
- 9BJRu/Z+enOQfgFZlV8n3UTqD5LMiWSqVTD1hI6oTapARo5mp9FVgCTQ35t094RRkjp1MXgZt/Q
- 2RIW0w85r2dct6IHBA6UcOcFW6xn0SjsehuFmzMvyzP1ccF/AVHC+Rtu7UPC6WU+1hjq3jGJ3aD
- MUGE2bCkZFuVsXb7vZQdaAGkWhfjgvIgiglP7fQJXuqhLQ/o1NXaaxiANsHkSdpmOO21vsnp/6M
- SdxP3CWDbZzdz7Q==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3467; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=7ZXyl76yXKAVgEB9XnfKu8Y7KFxyRRm589E8p3gkT2s=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpoG0Nmf52pdo656jlWG4t6yni37xfclzHx2ZRe
+ Hw1/6GQjdmJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaBtDQAKCRAADmhBGVaC
+ FW3AD/9rOAXtG95ctw6n0QBFd93xKDo7vJh93xVrf1hM7M7M9YqMLCRzKaYvrvf8+yQ1GDCcm3J
+ S/+kU0HuaVEfXXKjGWe8VYJS5AHh2kuXydz4f8AZaFEh5T3E/tj5W6xHU2l3kMYX9rKqM+TLKUV
+ 6eDA2MJcyUi8LBzCkaElVmMUIuvbHvuj5FeqDDymRc0g5DEq88RLsQafiDn+oIBtQav0OwofD/H
+ UQA2j5KV382N7yGCPNhG0xeX70APRR15I5Jkkh5E3JyUIUuJ/dgFHSNUFUvA6gV7BOMc9T75Idw
+ /HFKLptC7dGdiHO2WKVZBqq3/xTN6Dy8AiyxY/qR2SBAPlRvyagaRa5sg3Nh5fqyn7rEO+K1SWz
+ p2A0gQ+Pf1CwKBuynNegFK7pPKf29/drS5qS45bhHmF3NH/U2HdfJL4P6FzfjulDLVEZChFiqJr
+ Z5Qok9gagjzuWpfkx9r97B/LKvi2+qoJXIwoRY4kPevQhamlcZ5ep4h5Af18MGgCCLLFoT08ZmV
+ qUabhq/rjFG0UEiy72/s0O3dRIfUi16mLehRNeqlBe539MhbgGK1XFlaDDUVcGvzWA9YBWDWwBb
+ bIZSztIcE7iXdNRY3OdAt/IfwuQbe0vr8GuaY4IIHodKPolCQQghHhemHJpZ91FU9wQppzWJQ2Y
+ BHEQ22WX0qewrzQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 X-Rspamd-Server: lfdr
@@ -172,11 +172,11 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78559-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78560-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de];
@@ -184,7 +184,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	TO_DN_SOME(0.00)[];
 	RCPT_COUNT_GT_50(0.00)[146];
 	PRECEDENCE_BULK(0.00)[];
@@ -194,82 +194,91 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 05F681AAAB6
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 90EE41AA902
 X-Rspamd-Action: no action
 
-Update format strings and local variable types in hpfs for the
+Update format strings and local variable types in isofs for the
 i_ino type change from unsigned long to u64.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/hpfs/dir.c   | 4 ++--
- fs/hpfs/dnode.c | 4 ++--
- fs/hpfs/ea.c    | 4 ++--
- fs/hpfs/inode.c | 4 ++--
- 4 files changed, 8 insertions(+), 8 deletions(-)
+ fs/isofs/compress.c | 2 +-
+ fs/isofs/dir.c      | 2 +-
+ fs/isofs/inode.c    | 6 +++---
+ fs/isofs/namei.c    | 2 +-
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/fs/hpfs/dir.c b/fs/hpfs/dir.c
-index ceb50b2dc91a9da02997a40836d6543786d883d3..3398b3417a4966450e8e070ddb7a45a19c442d3c 100644
---- a/fs/hpfs/dir.c
-+++ b/fs/hpfs/dir.c
-@@ -96,8 +96,8 @@ static int hpfs_readdir(struct file *file, struct dir_context *ctx)
- 		}
- 		if (!fnode_is_dir(fno)) {
- 			e = 1;
--			hpfs_error(inode->i_sb, "not a directory, fnode %08lx",
--					(unsigned long)inode->i_ino);
-+			hpfs_error(inode->i_sb, "not a directory, fnode %08llx",
-+					(unsigned long long)inode->i_ino);
- 		}
- 		if (hpfs_inode->i_dno != le32_to_cpu(fno->u.external[0].disk_secno)) {
- 			e = 1;
-diff --git a/fs/hpfs/dnode.c b/fs/hpfs/dnode.c
-index dde764ebe24673c339d4602172618dbf6ca0b5c9..a89c5b795c4bcee590bb9200296ce78c64211bef 100644
---- a/fs/hpfs/dnode.c
-+++ b/fs/hpfs/dnode.c
-@@ -550,9 +550,9 @@ static void delete_empty_dnode(struct inode *i, dnode_secno dno)
- 			if (hpfs_sb(i->i_sb)->sb_chk)
- 				if (up != i->i_ino) {
- 					hpfs_error(i->i_sb,
--						   "bad pointer to fnode, dnode %08x, pointing to %08x, should be %08lx",
-+						   "bad pointer to fnode, dnode %08x, pointing to %08x, should be %08llx",
- 						   dno, up,
--						   (unsigned long)i->i_ino);
-+						   (unsigned long long)i->i_ino);
- 					return;
- 				}
- 			if ((d1 = hpfs_map_dnode(i->i_sb, down, &qbh1))) {
-diff --git a/fs/hpfs/ea.c b/fs/hpfs/ea.c
-index 2149d3ca530b6f635ff884988383bdde21be5e7a..7440d31d2821fabb3e2cf4327281c20d16773225 100644
---- a/fs/hpfs/ea.c
-+++ b/fs/hpfs/ea.c
-@@ -245,8 +245,8 @@ void hpfs_set_ea(struct inode *inode, struct fnode *fnode, const char *key,
- 		fnode->ea_offs = cpu_to_le16(0xc4);
+diff --git a/fs/isofs/compress.c b/fs/isofs/compress.c
+index 50b4cb3aea87c7fc46b8b5483162bce84573b483..397568b9c7e7d3e28873be02c8a4befcddaec7b5 100644
+--- a/fs/isofs/compress.c
++++ b/fs/isofs/compress.c
+@@ -156,7 +156,7 @@ static loff_t zisofs_uncompress_block(struct inode *inode, loff_t block_start,
+ 				else {
+ 					printk(KERN_DEBUG
+ 					       "zisofs: zisofs_inflate returned"
+-					       " %d, inode = %lu,"
++					       " %d, inode = %llu,"
+ 					       " page idx = %d, bh idx = %d,"
+ 					       " avail_in = %ld,"
+ 					       " avail_out = %ld\n",
+diff --git a/fs/isofs/dir.c b/fs/isofs/dir.c
+index 2ca16c3fe5ef3427e5bbd0631eb8323ef3c58bf1..2fd9948d606e9c92f3003bfbaa4f0271c750a93d 100644
+--- a/fs/isofs/dir.c
++++ b/fs/isofs/dir.c
+@@ -152,7 +152,7 @@ static int do_isofs_readdir(struct inode *inode, struct file *file,
+ 		    de_len < de->name_len[0] +
+ 					sizeof(struct iso_directory_record)) {
+ 			printk(KERN_NOTICE "iso9660: Corrupted directory entry"
+-			       " in block %lu of inode %lu\n", block,
++			       " in block %lu of inode %llu\n", block,
+ 			       inode->i_ino);
+ 			brelse(bh);
+ 			return -EIO;
+diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
+index 5c01536c5e8fecb73a95d801cdd3b8ee22011a3c..1d9a8aeee1fd55998abca74c7e171dc2bc242084 100644
+--- a/fs/isofs/inode.c
++++ b/fs/isofs/inode.c
+@@ -1261,7 +1261,7 @@ static int isofs_read_level3_size(struct inode *inode)
+ 
+ out_toomany:
+ 	printk(KERN_INFO "%s: More than 100 file sections ?!?, aborting...\n"
+-		"isofs_read_level3_size: inode=%lu\n",
++		"isofs_read_level3_size: inode=%llu\n",
+ 		__func__, inode->i_ino);
+ 	goto out;
+ }
+@@ -1380,7 +1380,7 @@ static int isofs_read_inode(struct inode *inode, int relocated)
+ 	/* I have no idea what file_unit_size is used for, so
+ 	   we will flag it for now */
+ 	if (de->file_unit_size[0] != 0) {
+-		printk(KERN_DEBUG "ISOFS: File unit size != 0 for ISO file (%ld).\n",
++		printk(KERN_DEBUG "ISOFS: File unit size != 0 for ISO file (%lld).\n",
+ 			inode->i_ino);
  	}
- 	if (le16_to_cpu(fnode->ea_offs) < 0xc4 || le16_to_cpu(fnode->ea_offs) + le16_to_cpu(fnode->acl_size_s) + le16_to_cpu(fnode->ea_size_s) > 0x200) {
--		hpfs_error(s, "fnode %08lx: ea_offs == %03x, ea_size_s == %03x",
--			(unsigned long)inode->i_ino,
-+		hpfs_error(s, "fnode %08llx: ea_offs == %03x, ea_size_s == %03x",
-+			(unsigned long long)inode->i_ino,
- 			le16_to_cpu(fnode->ea_offs), le16_to_cpu(fnode->ea_size_s));
- 		return;
- 	}
-diff --git a/fs/hpfs/inode.c b/fs/hpfs/inode.c
-index 93d528f4f4f28d5070162faacd65d3fc2341248a..cbde82a53066c5d467173b67b5e1c445fe3c9101 100644
---- a/fs/hpfs/inode.c
-+++ b/fs/hpfs/inode.c
-@@ -250,8 +250,8 @@ void hpfs_write_inode_nolock(struct inode *i)
- 			hpfs_brelse4(&qbh);
- 		} else
- 			hpfs_error(i->i_sb,
--				"directory %08lx doesn't have '.' entry",
--				(unsigned long)i->i_ino);
-+				"directory %08llx doesn't have '.' entry",
-+				(unsigned long long)i->i_ino);
- 	}
- 	mark_buffer_dirty(bh);
- 	brelse(bh);
+ 
+@@ -1450,7 +1450,7 @@ static int isofs_read_inode(struct inode *inode, int relocated)
+ 		/* XXX - parse_rock_ridge_inode() had already set i_rdev. */
+ 		init_special_inode(inode, inode->i_mode, inode->i_rdev);
+ 	} else {
+-		printk(KERN_DEBUG "ISOFS: Invalid file type 0%04o for inode %lu.\n",
++		printk(KERN_DEBUG "ISOFS: Invalid file type 0%04o for inode %llu.\n",
+ 			inode->i_mode, inode->i_ino);
+ 		ret = -EIO;
+ 		goto fail;
+diff --git a/fs/isofs/namei.c b/fs/isofs/namei.c
+index 58f80e1b3ac0d5082c24b5dbfd064cf5bff7d5a5..8dd3911717e0cc221f60fb6447e1bf26cc2223dd 100644
+--- a/fs/isofs/namei.c
++++ b/fs/isofs/namei.c
+@@ -100,7 +100,7 @@ isofs_find_entry(struct inode *dir, struct dentry *dentry,
+ 		/* Basic sanity check, whether name doesn't exceed dir entry */
+ 		if (de_len < dlen + sizeof(struct iso_directory_record)) {
+ 			printk(KERN_NOTICE "iso9660: Corrupted directory entry"
+-			       " in block %lu of inode %lu\n", block,
++			       " in block %lu of inode %llu\n", block,
+ 			       dir->i_ino);
+ 			brelse(bh);
+ 			return 0;
 
 -- 
 2.53.0
