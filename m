@@ -1,426 +1,364 @@
-Return-Path: <linux-fsdevel+bounces-78497-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78498-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aGpEOfhVoGlLiQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78497-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 15:17:28 +0100
+	id 4G10H4tWoGlLiQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78498-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 15:19:55 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B3281A75A2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 15:17:27 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44AE61A763D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 15:19:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 176FE30AFD6B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 13:52:23 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 29AC13185225
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 13:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9703ACF05;
-	Thu, 26 Feb 2026 13:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5261DE2D3;
+	Thu, 26 Feb 2026 13:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W9dBo1bH"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SiToQ7vX";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="S6AMp2V5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20673ACEE9;
-	Thu, 26 Feb 2026 13:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772113883; cv=none; b=L1e11DR3Rz6wun/KJcnSig5NQlcH0VsMStRnrMz9uDoLDhceOaDvjKRGBf92Gok2HdZTA/w/vJ17ZiATJRT1wjilL1yifzNfWLYCehmfzne4WQ90Uaj4fcmDY8W21X20kUoSE7SYyNWQ1FYqzMmFiQ5z/q+fCIxNrFuYznlP8pA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772113883; c=relaxed/simple;
-	bh=TDnJu/pMKQyvPl38p8goYkYRU9gufN4lR8yOJqLo3HU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JL48fbmo+vWCZm3Y8gMMkNiXSZwBa/cnZ7a+fhwptceKhjFMzKPF2MLqGgmXSfsyYU61fNIe4FBEYI9oiJqQSRnjPMkr4GXKDuiMXiwltLOdKHz5gLZx7FX+9MHwjZu/nLmEarQF9xb/m9v3NyyTjHeHYdixEvfgOMhH94kNTl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W9dBo1bH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93C29C19423;
-	Thu, 26 Feb 2026 13:51:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772113883;
-	bh=TDnJu/pMKQyvPl38p8goYkYRU9gufN4lR8yOJqLo3HU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=W9dBo1bH6sGVvjfealiq/uFOSoAlmLRBbeIF2iPiW9oEcbYv6tQ0dnw7krt2jeBqt
-	 yJ/j729uTuxB9JKO3Lg/THQXDwT+3RyminZny4re1+4/9H8eZJ6dtxJiF/bAH/vovW
-	 LuE/bx8H2+5dOwX76D8DySPtswX385ZLkQ/DzKM1lrf3Aqt1af1lo3iGv/x18m1/uS
-	 mtrKbZVw0/CMdVkNOCJLVSD+NdOHGCcjEKETPgC2noPfsDwwjy4YpKjf8zR3zYudl1
-	 N27ug9n8EwuQ4qMHHnhO4NGLJWnqijSYVzgklYBiu+AHZIFA7GPSCTsWcdqOvYHpse
-	 mS5L7wP1wF79Q==
-From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 26 Feb 2026 14:51:04 +0100
-Subject: [PATCH v5 6/6] selftests/pidfd: add CLONE_PIDFD_AUTOKILL tests
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1911F3B8BAC
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 13:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.129.124
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772114197; cv=pass; b=RWwLXmYgUgChkv9kt1pV+fJz2Vru/3zPDPbssiQjxNxPTaySYSCLYU5uATxWp6RT38r9IoRt5LxQDsI4NWbx+iAAw+6rLfx7WWYVYYKGsBlHMYQr+YQxeNqG6+XQoBFOGxpAJrIwGRj61qaykwfqHPGPzuDwoWT+2/+3C5E24cM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772114197; c=relaxed/simple;
+	bh=1y9G44eykZXCRMbqWo4Gbo0Fu3X9DE/FOzp00Uhpy6M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XCME07qAfcEMe3SDimC8N2ODo2D7TzCEzZzBiahsg+XHQ4+st2g3vOg3g8Xn0H/FapMI0OsaJBseEQ92/Bw3gzFQLVTGF/dtdA4FnM8l7tbBeEoEAZivvXQZa9QwmyUvgdJpHpgXK+mp/ncwm4nnnmmt/mERGflf/GbB8DOez1Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SiToQ7vX; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=S6AMp2V5; arc=pass smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1772114193;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pa40UGOtLEf+lUXJi+W2eAsZrpePRgbKwxqj2/6a6JM=;
+	b=SiToQ7vXGoBXC77t76Rjevwkqo6gKLxzJ3y2eS1Ji2V+qfvg4z4eiL3lnyDpRQtTTduWWM
+	xq7SGxPkK6f6w2Yx4E1s+Q+5hd6NKBdw+fNTRmsbivAETW5cK86tvoUhSjEkIr4gfga36T
+	C4uKaJlVArDObLcLXffWhy5bL6vAbv0=
+Received: from mail-ua1-f69.google.com (mail-ua1-f69.google.com
+ [209.85.222.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-147-8js_uHRHOZm2JaQ1HpmQAg-1; Thu, 26 Feb 2026 08:56:31 -0500
+X-MC-Unique: 8js_uHRHOZm2JaQ1HpmQAg-1
+X-Mimecast-MFC-AGG-ID: 8js_uHRHOZm2JaQ1HpmQAg_1772114191
+Received: by mail-ua1-f69.google.com with SMTP id a1e0cc1a2514c-94dde7a60edso847358241.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 05:56:31 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772114191; cv=none;
+        d=google.com; s=arc-20240605;
+        b=eJuOFt5LG09rx1lfBeVfNGInglE9uV0Whz8YchYhbpjgqQk2lxkK0zFZLcyhWRkCgN
+         PgtJ/FOtBjJSy8b316EuPR4wYhNs1dug1LvkE6R4zy0bUunZ65ixnzZTB9U7Q1aNmNEk
+         DLprHvFUvNok9tNpd9HfMmtLJjIBamF5BzOXe+NFV8pUqIacEDTjlRIi0DBYmh26YMWY
+         1KFtE6BOHykPuZHhVLQmKgXLfZFLCUbtHRftJFcgWXlo6jrFm5KGW2W+TBlesWOYMkUO
+         gzHrbflU33ZYYqKbrRJIrskc0aqcKIrSAE+jNKd7X1I5013tayGmpNPkD7T3cKYOaj5n
+         ULMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=pa40UGOtLEf+lUXJi+W2eAsZrpePRgbKwxqj2/6a6JM=;
+        fh=iKo7VZ+xY4F1JwmLzdVYnscfvNTJZiMuJAnL+EUDHv4=;
+        b=OyrS3wHPqSSeapai08eahL0KQg0Ouu42XNYt3Z863WuY3JqMFluWy4BMsPTaPsOJeG
+         kejyDK/9sqfPtWxGRtVcRL+owcf8PttCZ/d11xWUiY6NLT8kmu+TpXiCI7rQhGHdfjkP
+         Ik7hidDTebgGEMorVroJ6kz1WXf/J5CEERx2T0KnDRLE1x9x0l1cP0aDZAag4w/4j+M9
+         54eeLRtJOSZ3z0tu5T9AxAzzUfNnaWhjTsKdN/bobF3MUqnz3JbvcenScsA7RguLWIyh
+         kodQvZyhEwaMwBZKlxJ8/rpMiaw6a+ypnqGoqWfR4BZN9wfdDDT2hMlDgMVEAD+60Y0o
+         AmJw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1772114191; x=1772718991; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pa40UGOtLEf+lUXJi+W2eAsZrpePRgbKwxqj2/6a6JM=;
+        b=S6AMp2V5pKKAKZtEwUynfZQ8zn3wFGhPrHl8vU68pmwPdpRDyzHREtQfB/t2jtuc41
+         mTUitO2wHhOkhN7Kqr4GA+Uk0plS1SskrbZNIemBsHrX3s9nXeKuP63ymmF6nxbgu7dj
+         Yly8inJ3mkwzagpvIA+bV+awnCzCjRz6dxXD1mywGjUrrfTlOmZtPfi7JOZhC95A9+lQ
+         CVFZY9XX6H6K4Ham0aS66SwZFdpJBiQMTn4U+XN9Iq1Gdf9my6EyTlu3YxjQDgUsvEfM
+         A/+H2ufomE7lFl5AxHHYvwzbS51Op85zKJKqN8IHfMho7x4IJbm6Mc7ovtyhm2tmCChG
+         X2GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772114191; x=1772718991;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=pa40UGOtLEf+lUXJi+W2eAsZrpePRgbKwxqj2/6a6JM=;
+        b=tmiEH8Eot4U8s7rzAT6PxxpOixsxAzXJNch6/vIGN9B4IgePKaOrzu5OXoPHZ3guXX
+         kyyBLrOkMn2MuPIpQpLHky1oICR8z2uZMivnf4XXzeWhIqEcHTQY/ewexzELAmyv8qyy
+         yC0FE0BTC1UeDwK4nmuFHl2AHn8lw54GS+I7u7rXBAcVWZmMmE8ib6mgi6t65e8sty9O
+         5y93/EnmkkyTUMUvvIKBpe1OPmAfYuAWjAcxylk/J18g2TqsvTCHUJwymFBuBs3CQ1pL
+         huUqZrdkUcAMKPO+x98SClQq4wFFEbIFhYn11ZcwzRTAMUHHDZSlm9KI2UITQrLJZtiH
+         NXqg==
+X-Forwarded-Encrypted: i=1; AJvYcCWqDKUSKm8UNktRo9LaPSabLmIhGxr6XxX5fGsOLLYfothaN4oHss0+D76FW6wu4mu26oO4G0Qqt9JQFpj7@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRcD48d7lycc+MSu5+npkROacfHxz8yxPi7VvG/8vIPmEFaUVl
+	w7vBOchthvyuzujL+jEOoySPV5/I4HeRfXCwCGFJUnItSgxEv6ktbTCoxh6iOjdkkz39eMJodXA
+	/Bckcw4dQMrFNFkOtfmMBsSeQcfzyBvH4E8UC2aCjRHHoN6wHe1W5x2Xj5taSl7D05uPvNvc0UO
+	uu44t3WmEnugoZQHwwfqzmuhOhZiidWe0tNYOCVCijaQ==
+X-Gm-Gg: ATEYQzzeg0Um6coeQEu5Xs8YTk6RC0aq5gVWmbzb9YzM5jMBTPINFVbWGrV6wb5BUIx
+	3X8fpcnwVTQ8HuB2mHjtLT6WuJLqSOgcJNyFG+D7z96h0ci6GNF0fqfCUbOLJL4unHNGIYiVcFx
+	veHvTItvu9HUUFbfIkwdPDCpvCYxqXcyUUegIY6Bv5dGPbdS/HARXewR23JxLqRlPsDU5xEhoK2
+	oc8cBKdBf8cdFOxcsE+oVT+
+X-Received: by 2002:a05:6102:3a09:b0:5ff:20c5:cd6 with SMTP id ada2fe7eead31-5ff20c51797mr830106137.18.1772114191173;
+        Thu, 26 Feb 2026 05:56:31 -0800 (PST)
+X-Received: by 2002:a05:6102:3a09:b0:5ff:20c5:cd6 with SMTP id
+ ada2fe7eead31-5ff20c51797mr830098137.18.1772114190749; Thu, 26 Feb 2026
+ 05:56:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260226-work-pidfs-autoreap-v5-6-d148b984a989@kernel.org>
-References: <20260226-work-pidfs-autoreap-v5-0-d148b984a989@kernel.org>
-In-Reply-To: <20260226-work-pidfs-autoreap-v5-0-d148b984a989@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.15-dev-47773
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8062; i=brauner@kernel.org;
- h=from:subject:message-id; bh=TDnJu/pMKQyvPl38p8goYkYRU9gufN4lR8yOJqLo3HU=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQu8D+d3NvnbPbtofCe3dVy/e0LlKfIRRbem+d1/0K2b
- Iq8TtPDjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlY+jH8jzqt+unfxkUrtv0M
- 6vod77z+YMb+/UG8j3lOOj+9Xsyw5RXD/+h711eqGXw6arm0c06vfFGHQkUPi8IGxgO3Tq/U077
- xnRkA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+References: <20260225125907.53851-1-amarkuze@redhat.com> <20260225125907.53851-2-amarkuze@redhat.com>
+ <9687495100c02050c09c503fad1b840ddbfa313c.camel@redhat.com>
+In-Reply-To: <9687495100c02050c09c503fad1b840ddbfa313c.camel@redhat.com>
+From: Alex Markuze <amarkuze@redhat.com>
+Date: Thu, 26 Feb 2026 15:56:20 +0200
+X-Gm-Features: AaiRm50aLyjCETwKDojvUJBPiNoCYBibDGxffgYMF-j2AYy83taMK9QDUr26TaE
+Message-ID: <CAO8a2SinY_+Ysn4Sx30x_mntLOCTLot0x3psU=DdEJCJ=VNJug@mail.gmail.com>
+Subject: Re: [EXTERNAL] [RFC PATCH v1 1/4] ceph: convert inode flags to named
+ bit positions
+To: Viacheslav Dubeyko <vdubeyko@redhat.com>
+Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719,redhat.com:s=google];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78497-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com];
+	DKIM_TRACE(0.00)[redhat.com:+];
 	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78498-lists,linux-fsdevel=lfdr.de];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_THREE(0.00)[4];
+	MISSING_XM_UA(0.00)[];
 	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
-	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[amarkuze@redhat.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,pfd.events:url]
-X-Rspamd-Queue-Id: 4B3281A75A2
+	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: 44AE61A763D
 X-Rspamd-Action: no action
 
-Add tests for CLONE_PIDFD_AUTOKILL:
+I think I remember reviewing it, now that you mention it.
+Let's discuss offline, I'll set up a 1x1.
 
-- autokill_basic: Verify closing the clone3 pidfd kills the child.
-- autokill_requires_pidfd: Verify AUTOKILL without CLONE_PIDFD fails.
-- autokill_requires_autoreap: Verify AUTOKILL without CLONE_AUTOREAP
-  fails.
-- autokill_rejects_thread: Verify AUTOKILL with CLONE_THREAD fails.
-- autokill_pidfd_open_no_effect: Verify only the clone3 pidfd triggers
-  autokill, not pidfd_open().
-- autokill_requires_cap_sys_admin: Verify AUTOKILL without CLONE_NNP
-  fails with -EPERM for an unprivileged caller.
-- autokill_without_nnp_with_cap: Verify AUTOKILL without CLONE_NNP
-  succeeds with CAP_SYS_ADMIN.
-
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- .../testing/selftests/pidfd/pidfd_autoreap_test.c  | 278 +++++++++++++++++++++
- 1 file changed, 278 insertions(+)
-
-diff --git a/tools/testing/selftests/pidfd/pidfd_autoreap_test.c b/tools/testing/selftests/pidfd/pidfd_autoreap_test.c
-index 5fb11230fb07..36adee6c424e 100644
---- a/tools/testing/selftests/pidfd/pidfd_autoreap_test.c
-+++ b/tools/testing/selftests/pidfd/pidfd_autoreap_test.c
-@@ -26,10 +26,37 @@
- #define CLONE_AUTOREAP 0x400000000ULL
- #endif
- 
-+#ifndef CLONE_PIDFD_AUTOKILL
-+#define CLONE_PIDFD_AUTOKILL 0x800000000ULL
-+#endif
-+
- #ifndef CLONE_NNP
- #define CLONE_NNP 0x1000000000ULL
- #endif
- 
-+#ifndef _LINUX_CAPABILITY_VERSION_3
-+#define _LINUX_CAPABILITY_VERSION_3 0x20080522
-+#endif
-+
-+struct cap_header {
-+	__u32 version;
-+	int pid;
-+};
-+
-+struct cap_data {
-+	__u32 effective;
-+	__u32 permitted;
-+	__u32 inheritable;
-+};
-+
-+static int drop_all_caps(void)
-+{
-+	struct cap_header hdr = { .version = _LINUX_CAPABILITY_VERSION_3 };
-+	struct cap_data data[2] = {};
-+
-+	return syscall(__NR_capset, &hdr, data);
-+}
-+
- static pid_t create_autoreap_child(int *pidfd)
- {
- 	struct __clone_args args = {
-@@ -619,4 +646,255 @@ TEST(autoreap_no_new_privs_unset)
- 	close(pidfd);
- }
- 
-+/*
-+ * Helper: create a child with CLONE_PIDFD | CLONE_PIDFD_AUTOKILL | CLONE_AUTOREAP | CLONE_NNP.
-+ */
-+static pid_t create_autokill_child(int *pidfd)
-+{
-+	struct __clone_args args = {
-+		.flags		= CLONE_PIDFD | CLONE_PIDFD_AUTOKILL |
-+				  CLONE_AUTOREAP | CLONE_NNP,
-+		.exit_signal	= 0,
-+		.pidfd		= ptr_to_u64(pidfd),
-+	};
-+
-+	return sys_clone3(&args, sizeof(args));
-+}
-+
-+/*
-+ * Basic autokill test: child blocks in pause(), parent closes the
-+ * clone3 pidfd, child should be killed and autoreaped.
-+ */
-+TEST(autokill_basic)
-+{
-+	int pidfd = -1, pollfd_fd = -1, ret;
-+	struct pollfd pfd;
-+	pid_t pid;
-+
-+	pid = create_autokill_child(&pidfd);
-+	if (pid < 0 && errno == EINVAL)
-+		SKIP(return, "CLONE_PIDFD_AUTOKILL not supported");
-+	ASSERT_GE(pid, 0);
-+
-+	if (pid == 0) {
-+		pause();
-+		_exit(1);
-+	}
-+
-+	ASSERT_GE(pidfd, 0);
-+
-+	/*
-+	 * Open a second pidfd via pidfd_open() so we can observe the
-+	 * child's death after closing the clone3 pidfd.
-+	 */
-+	pollfd_fd = sys_pidfd_open(pid, 0);
-+	ASSERT_GE(pollfd_fd, 0);
-+
-+	/* Close the clone3 pidfd — this should trigger autokill. */
-+	close(pidfd);
-+
-+	/* Wait for the child to die via the pidfd_open'd fd. */
-+	pfd.fd = pollfd_fd;
-+	pfd.events = POLLIN;
-+	ret = poll(&pfd, 1, 5000);
-+	ASSERT_EQ(ret, 1);
-+	ASSERT_TRUE(pfd.revents & POLLIN);
-+
-+	/* Child should be autoreaped — no zombie. */
-+	usleep(100000);
-+	ret = waitpid(pid, NULL, WNOHANG);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, ECHILD);
-+
-+	close(pollfd_fd);
-+}
-+
-+/*
-+ * CLONE_PIDFD_AUTOKILL without CLONE_PIDFD must fail with EINVAL.
-+ */
-+TEST(autokill_requires_pidfd)
-+{
-+	struct __clone_args args = {
-+		.flags		= CLONE_PIDFD_AUTOKILL | CLONE_AUTOREAP,
-+		.exit_signal	= 0,
-+	};
-+	pid_t pid;
-+
-+	pid = sys_clone3(&args, sizeof(args));
-+	ASSERT_EQ(pid, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+}
-+
-+/*
-+ * CLONE_PIDFD_AUTOKILL without CLONE_AUTOREAP must fail with EINVAL.
-+ */
-+TEST(autokill_requires_autoreap)
-+{
-+	int pidfd = -1;
-+	struct __clone_args args = {
-+		.flags		= CLONE_PIDFD | CLONE_PIDFD_AUTOKILL,
-+		.exit_signal	= 0,
-+		.pidfd		= ptr_to_u64(&pidfd),
-+	};
-+	pid_t pid;
-+
-+	pid = sys_clone3(&args, sizeof(args));
-+	ASSERT_EQ(pid, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+}
-+
-+/*
-+ * CLONE_PIDFD_AUTOKILL with CLONE_THREAD must fail with EINVAL.
-+ */
-+TEST(autokill_rejects_thread)
-+{
-+	int pidfd = -1;
-+	struct __clone_args args = {
-+		.flags		= CLONE_PIDFD | CLONE_PIDFD_AUTOKILL |
-+				  CLONE_AUTOREAP | CLONE_THREAD |
-+				  CLONE_SIGHAND | CLONE_VM,
-+		.exit_signal	= 0,
-+		.pidfd		= ptr_to_u64(&pidfd),
-+	};
-+	pid_t pid;
-+
-+	pid = sys_clone3(&args, sizeof(args));
-+	ASSERT_EQ(pid, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+}
-+
-+/*
-+ * Test that only the clone3 pidfd triggers autokill, not pidfd_open().
-+ * Close the pidfd_open'd fd first — child should survive.
-+ * Then close the clone3 pidfd — child should be killed and autoreaped.
-+ */
-+TEST(autokill_pidfd_open_no_effect)
-+{
-+	int pidfd = -1, open_fd = -1, ret;
-+	struct pollfd pfd;
-+	pid_t pid;
-+
-+	pid = create_autokill_child(&pidfd);
-+	if (pid < 0 && errno == EINVAL)
-+		SKIP(return, "CLONE_PIDFD_AUTOKILL not supported");
-+	ASSERT_GE(pid, 0);
-+
-+	if (pid == 0) {
-+		pause();
-+		_exit(1);
-+	}
-+
-+	ASSERT_GE(pidfd, 0);
-+
-+	/* Open a second pidfd via pidfd_open(). */
-+	open_fd = sys_pidfd_open(pid, 0);
-+	ASSERT_GE(open_fd, 0);
-+
-+	/*
-+	 * Close the pidfd_open'd fd — child should survive because
-+	 * only the clone3 pidfd has autokill.
-+	 */
-+	close(open_fd);
-+	usleep(200000);
-+
-+	/* Verify child is still alive by polling the clone3 pidfd. */
-+	pfd.fd = pidfd;
-+	pfd.events = POLLIN;
-+	ret = poll(&pfd, 1, 0);
-+	ASSERT_EQ(ret, 0) {
-+		TH_LOG("Child died after closing pidfd_open fd — should still be alive");
-+	}
-+
-+	/* Open another observation fd before triggering autokill. */
-+	open_fd = sys_pidfd_open(pid, 0);
-+	ASSERT_GE(open_fd, 0);
-+
-+	/* Now close the clone3 pidfd — this triggers autokill. */
-+	close(pidfd);
-+
-+	pfd.fd = open_fd;
-+	pfd.events = POLLIN;
-+	ret = poll(&pfd, 1, 5000);
-+	ASSERT_EQ(ret, 1);
-+	ASSERT_TRUE(pfd.revents & POLLIN);
-+
-+	/* Child should be autoreaped — no zombie. */
-+	usleep(100000);
-+	ret = waitpid(pid, NULL, WNOHANG);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, ECHILD);
-+
-+	close(open_fd);
-+}
-+
-+/*
-+ * Test that CLONE_PIDFD_AUTOKILL without CLONE_NNP fails with EPERM
-+ * for an unprivileged caller.
-+ */
-+TEST(autokill_requires_cap_sys_admin)
-+{
-+	int pidfd = -1, ret;
-+	struct __clone_args args = {
-+		.flags		= CLONE_PIDFD | CLONE_PIDFD_AUTOKILL |
-+				  CLONE_AUTOREAP,
-+		.exit_signal	= 0,
-+		.pidfd		= ptr_to_u64(&pidfd),
-+	};
-+	pid_t pid;
-+
-+	/* Drop all capabilities so we lack CAP_SYS_ADMIN. */
-+	ret = drop_all_caps();
-+	ASSERT_EQ(ret, 0);
-+
-+	pid = sys_clone3(&args, sizeof(args));
-+	ASSERT_EQ(pid, -1);
-+	ASSERT_EQ(errno, EPERM);
-+}
-+
-+/*
-+ * Test that CLONE_PIDFD_AUTOKILL without CLONE_NNP succeeds with
-+ * CAP_SYS_ADMIN.
-+ */
-+TEST(autokill_without_nnp_with_cap)
-+{
-+	struct __clone_args args = {
-+		.flags		= CLONE_PIDFD | CLONE_PIDFD_AUTOKILL |
-+				  CLONE_AUTOREAP,
-+		.exit_signal	= 0,
-+	};
-+	struct pidfd_info info = { .mask = PIDFD_INFO_EXIT };
-+	int pidfd = -1, ret;
-+	struct pollfd pfd;
-+	pid_t pid;
-+
-+	if (geteuid() != 0)
-+		SKIP(return, "Need root/CAP_SYS_ADMIN");
-+
-+	args.pidfd = ptr_to_u64(&pidfd);
-+
-+	pid = sys_clone3(&args, sizeof(args));
-+	if (pid < 0 && errno == EINVAL)
-+		SKIP(return, "CLONE_PIDFD_AUTOKILL not supported");
-+	ASSERT_GE(pid, 0);
-+
-+	if (pid == 0)
-+		_exit(0);
-+
-+	ASSERT_GE(pidfd, 0);
-+
-+	/* Wait for child to exit. */
-+	pfd.fd = pidfd;
-+	pfd.events = POLLIN;
-+	ret = poll(&pfd, 1, 5000);
-+	ASSERT_EQ(ret, 1);
-+
-+	ret = ioctl(pidfd, PIDFD_GET_INFO, &info);
-+	ASSERT_EQ(ret, 0);
-+	ASSERT_TRUE(info.mask & PIDFD_INFO_EXIT);
-+	ASSERT_TRUE(WIFEXITED(info.exit_code));
-+	ASSERT_EQ(WEXITSTATUS(info.exit_code), 0);
-+
-+	close(pidfd);
-+}
-+
- TEST_HARNESS_MAIN
-
--- 
-2.47.3
+On Wed, Feb 25, 2026 at 10:56=E2=80=AFPM Viacheslav Dubeyko <vdubeyko@redha=
+t.com> wrote:
+>
+> On Wed, 2026-02-25 at 12:59 +0000, Alex Markuze wrote:
+> > Define all CEPH_I_* flags as named bit positions with derived
+> > bitmask values, making them usable with test_bit/set_bit/clear_bit.
+> > Previously only CEPH_I_ODIRECT_BIT and CEPH_ASYNC_CREATE_BIT had
+> > named bit positions; the rest were bare bitmask constants.
+> >
+>
+> As I remember, I've reworked all constants for having name for every bit.
+> Probably, this patch has ignored and it has never been sent to upstream. =
+And I
+> converted pretty everything for using test_bit/set_bit/clear_bit. :) You =
+did
+> this work again. :)
+>
+> Thanks,
+> Slava.
+>
+> > Convert CEPH_I_ERROR_WRITE and CEPH_I_ERROR_FILELOCK usage sites
+> > to use atomic bit operations (test_bit, set_bit, clear_bit) via
+> > the new _BIT constants.
+> >
+> > This is preparation for the client reset feature which needs
+> > test_bit() on CEPH_I_ERROR_FILELOCK_BIT in reconnect paths.
+> >
+> > Signed-off-by: Alex Markuze <amarkuze@redhat.com>
+> > ---
+> >  fs/ceph/locks.c      |  8 +++----
+> >  fs/ceph/mds_client.c |  3 ++-
+> >  fs/ceph/super.h      | 54 +++++++++++++++++++++++++++-----------------
+> >  3 files changed, 38 insertions(+), 27 deletions(-)
+> >
+> > diff --git a/fs/ceph/locks.c b/fs/ceph/locks.c
+> > index dd764f9c64b9..2f21574dfb99 100644
+> > --- a/fs/ceph/locks.c
+> > +++ b/fs/ceph/locks.c
+> > @@ -58,7 +58,7 @@ static void ceph_fl_release_lock(struct file_lock *fl=
+)
+> >       if (atomic_dec_and_test(&ci->i_filelock_ref)) {
+> >               /* clear error when all locks are released */
+> >               spin_lock(&ci->i_ceph_lock);
+> > -             ci->i_ceph_flags &=3D ~CEPH_I_ERROR_FILELOCK;
+> > +             clear_bit(CEPH_I_ERROR_FILELOCK_BIT, &ci->i_ceph_flags);
+> >               spin_unlock(&ci->i_ceph_lock);
+> >       }
+> >       fl->fl_u.ceph.inode =3D NULL;
+> > @@ -272,9 +272,8 @@ int ceph_lock(struct file *file, int cmd, struct fi=
+le_lock *fl)
+> >               wait =3D 1;
+> >
+> >       spin_lock(&ci->i_ceph_lock);
+> > -     if (ci->i_ceph_flags & CEPH_I_ERROR_FILELOCK) {
+> > +     if (test_bit(CEPH_I_ERROR_FILELOCK_BIT, &ci->i_ceph_flags))
+> >               err =3D -EIO;
+> > -     }
+> >       spin_unlock(&ci->i_ceph_lock);
+> >       if (err < 0) {
+> >               if (op =3D=3D CEPH_MDS_OP_SETFILELOCK && lock_is_unlock(f=
+l))
+> > @@ -332,9 +331,8 @@ int ceph_flock(struct file *file, int cmd, struct f=
+ile_lock *fl)
+> >       doutc(cl, "fl_file: %p\n", fl->c.flc_file);
+> >
+> >       spin_lock(&ci->i_ceph_lock);
+> > -     if (ci->i_ceph_flags & CEPH_I_ERROR_FILELOCK) {
+> > +     if (test_bit(CEPH_I_ERROR_FILELOCK_BIT, &ci->i_ceph_flags))
+> >               err =3D -EIO;
+> > -     }
+> >       spin_unlock(&ci->i_ceph_lock);
+> >       if (err < 0) {
+> >               if (lock_is_unlock(fl))
+> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> > index 23b6d00643c9..28bb27b09b40 100644
+> > --- a/fs/ceph/mds_client.c
+> > +++ b/fs/ceph/mds_client.c
+> > @@ -3610,7 +3610,8 @@ static void __do_request(struct ceph_mds_client *=
+mdsc,
+> >
+> >               spin_lock(&ci->i_ceph_lock);
+> >               cap =3D ci->i_auth_cap;
+> > -             if (ci->i_ceph_flags & CEPH_I_ASYNC_CREATE && mds !=3D ca=
+p->mds) {
+> > +             if (test_bit(CEPH_ASYNC_CREATE_BIT, &ci->i_ceph_flags) &&
+> > +                 mds !=3D cap->mds) {
+> >                       doutc(cl, "session changed for auth cap %d -> %d\=
+n",
+> >                             cap->session->s_mds, session->s_mds);
+> >
+> > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> > index 29a980e22dc2..69a71848240f 100644
+> > --- a/fs/ceph/super.h
+> > +++ b/fs/ceph/super.h
+> > @@ -655,23 +655,35 @@ static inline struct inode *ceph_find_inode(struc=
+t super_block *sb,
+> >  /*
+> >   * Ceph inode.
+> >   */
+> > -#define CEPH_I_DIR_ORDERED   (1 << 0)  /* dentries in dir are ordered =
+*/
+> > -#define CEPH_I_FLUSH         (1 << 2)  /* do not delay flush of dirty =
+metadata */
+> > -#define CEPH_I_POOL_PERM     (1 << 3)  /* pool rd/wr bits are valid */
+> > -#define CEPH_I_POOL_RD               (1 << 4)  /* can read from pool *=
+/
+> > -#define CEPH_I_POOL_WR               (1 << 5)  /* can write to pool */
+> > -#define CEPH_I_SEC_INITED    (1 << 6)  /* security initialized */
+> > -#define CEPH_I_KICK_FLUSH    (1 << 7)  /* kick flushing caps */
+> > -#define CEPH_I_FLUSH_SNAPS   (1 << 8)  /* need flush snapss */
+> > -#define CEPH_I_ERROR_WRITE   (1 << 9) /* have seen write errors */
+> > -#define CEPH_I_ERROR_FILELOCK        (1 << 10) /* have seen file lock =
+errors */
+> > -#define CEPH_I_ODIRECT_BIT   (11) /* inode in direct I/O mode */
+> > -#define CEPH_I_ODIRECT               (1 << CEPH_I_ODIRECT_BIT)
+> > -#define CEPH_ASYNC_CREATE_BIT        (12)      /* async create in flig=
+ht for this */
+> > -#define CEPH_I_ASYNC_CREATE  (1 << CEPH_ASYNC_CREATE_BIT)
+> > -#define CEPH_I_SHUTDOWN              (1 << 13) /* inode is no longer u=
+sable */
+> > -#define CEPH_I_ASYNC_CHECK_CAPS      (1 << 14) /* check caps immediate=
+ly after async
+> > -                                          creating finishes */
+> > +#define CEPH_I_DIR_ORDERED_BIT               (0)  /* dentries in dir a=
+re ordered */
+> > +#define CEPH_I_FLUSH_BIT             (2)  /* do not delay flush of dir=
+ty metadata */
+> > +#define CEPH_I_POOL_PERM_BIT         (3)  /* pool rd/wr bits are valid=
+ */
+> > +#define CEPH_I_POOL_RD_BIT           (4)  /* can read from pool */
+> > +#define CEPH_I_POOL_WR_BIT           (5)  /* can write to pool */
+> > +#define CEPH_I_SEC_INITED_BIT                (6)  /* security initiali=
+zed */
+> > +#define CEPH_I_KICK_FLUSH_BIT                (7)  /* kick flushing cap=
+s */
+> > +#define CEPH_I_FLUSH_SNAPS_BIT               (8)  /* need flush snapss=
+ */
+> > +#define CEPH_I_ERROR_WRITE_BIT               (9)  /* have seen write e=
+rrors */
+> > +#define CEPH_I_ERROR_FILELOCK_BIT    (10) /* have seen file lock error=
+s */
+> > +#define CEPH_I_ODIRECT_BIT           (11) /* inode in direct I/O mode =
+*/
+> > +#define CEPH_ASYNC_CREATE_BIT                (12) /* async create in f=
+light for this */
+> > +#define CEPH_I_SHUTDOWN_BIT          (13) /* inode is no longer usable=
+ */
+> > +#define CEPH_I_ASYNC_CHECK_CAPS_BIT  (14) /* check caps after async cr=
+eating finishes */
+> > +
+> > +#define CEPH_I_DIR_ORDERED           (1 << CEPH_I_DIR_ORDERED_BIT)
+> > +#define CEPH_I_FLUSH                 (1 << CEPH_I_FLUSH_BIT)
+> > +#define CEPH_I_POOL_PERM             (1 << CEPH_I_POOL_PERM_BIT)
+> > +#define CEPH_I_POOL_RD                       (1 << CEPH_I_POOL_RD_BIT)
+> > +#define CEPH_I_POOL_WR                       (1 << CEPH_I_POOL_WR_BIT)
+> > +#define CEPH_I_SEC_INITED            (1 << CEPH_I_SEC_INITED_BIT)
+> > +#define CEPH_I_KICK_FLUSH            (1 << CEPH_I_KICK_FLUSH_BIT)
+> > +#define CEPH_I_FLUSH_SNAPS           (1 << CEPH_I_FLUSH_SNAPS_BIT)
+> > +#define CEPH_I_ERROR_WRITE           (1 << CEPH_I_ERROR_WRITE_BIT)
+> > +#define CEPH_I_ERROR_FILELOCK                (1 << CEPH_I_ERROR_FILELO=
+CK_BIT)
+> > +#define CEPH_I_ODIRECT                       (1 << CEPH_I_ODIRECT_BIT)
+> > +#define CEPH_I_ASYNC_CREATE          (1 << CEPH_ASYNC_CREATE_BIT)
+> > +#define CEPH_I_SHUTDOWN                      (1 << CEPH_I_SHUTDOWN_BIT=
+)
+> > +#define CEPH_I_ASYNC_CHECK_CAPS              (1 << CEPH_I_ASYNC_CHECK_=
+CAPS_BIT)
+> >
+> >  /*
+> >   * Masks of ceph inode work.
+> > @@ -691,18 +703,18 @@ static inline struct inode *ceph_find_inode(struc=
+t super_block *sb,
+> >   */
+> >  static inline void ceph_set_error_write(struct ceph_inode_info *ci)
+> >  {
+> > -     if (!(READ_ONCE(ci->i_ceph_flags) & CEPH_I_ERROR_WRITE)) {
+> > +     if (!test_bit(CEPH_I_ERROR_WRITE_BIT, &ci->i_ceph_flags)) {
+> >               spin_lock(&ci->i_ceph_lock);
+> > -             ci->i_ceph_flags |=3D CEPH_I_ERROR_WRITE;
+> > +             set_bit(CEPH_I_ERROR_WRITE_BIT, &ci->i_ceph_flags);
+> >               spin_unlock(&ci->i_ceph_lock);
+> >       }
+> >  }
+> >
+> >  static inline void ceph_clear_error_write(struct ceph_inode_info *ci)
+> >  {
+> > -     if (READ_ONCE(ci->i_ceph_flags) & CEPH_I_ERROR_WRITE) {
+> > +     if (test_bit(CEPH_I_ERROR_WRITE_BIT, &ci->i_ceph_flags)) {
+> >               spin_lock(&ci->i_ceph_lock);
+> > -             ci->i_ceph_flags &=3D ~CEPH_I_ERROR_WRITE;
+> > +             clear_bit(CEPH_I_ERROR_WRITE_BIT, &ci->i_ceph_flags);
+> >               spin_unlock(&ci->i_ceph_lock);
+> >       }
+> >  }
+>
 
 
