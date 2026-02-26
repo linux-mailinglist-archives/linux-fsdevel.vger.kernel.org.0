@@ -1,208 +1,227 @@
-Return-Path: <linux-fsdevel+bounces-78639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id IEhyAo22oGnClwQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 22:09:33 +0100
+	id +MleILu2oGnClwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 22:10:19 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E25F1AF78B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 22:09:32 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id F157C1AF7DC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 22:10:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id CA58D30985A4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 21:06:45 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 762F030A8E46
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 21:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2C83939B3;
-	Thu, 26 Feb 2026 21:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WqPRPndM"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A72466B4F;
+	Thu, 26 Feb 2026 21:06:39 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012005.outbound.protection.outlook.com [40.93.195.5])
+Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F831389456
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 21:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772139988; cv=fail; b=XRVeFWsEpSd3p7ePaPmmN6AGiJ6sPcAhr92CPg1KAmI8TXNW1iNfC5TblKM3nntaAVkgPK4QcSUvo9XYDX4DmAsfum7ZhAvbHUcAuphHb78TQpu02iBvU7qYqq9YFjlsGsWCupd5122tWaOxagds3qWyz78J2wLpsveH01R6WA8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772139988; c=relaxed/simple;
-	bh=fuiIrRfwKx/doxHxA+bF9yJU3bFg7n9mA+VEMf5auZ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=I7hLykBylCkm+zHXr3HTgY0hQvlhc8DHUK6mpoiZ+TbEPK5avXsuPeaE/XCLqSK2EfyiAWoV0TpDxxt50TIwPhukRNfnKJsbu/vqhP5VSCrWkhKV+Z7Brg8f1fCEUJ0wZ11RtI6qfLdA8a9LWcrfc5I/H3Zmtz1elP7Y7wyW8a0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WqPRPndM; arc=fail smtp.client-ip=40.93.195.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=a0l2i0kVg+Ld2o7AOHh90bH04NXe4uy3XiMGRf92IxFyHR7w5XKefCQ7IpigfXpam9izGN0+qKiD87rT9AG/ec+9EZqBkQoPu95a8yc3G55HNVh1Z79DD4SvBrLCzchFVqheMPUJvkQ7h6qzssnXuk6mMKBTyG9Mo2YWTGoHlu+Ku+L0lFjB+zw1iHiGkO/gsLBvd0RmyGFRZR904oGqL9aG7KwBaCWb2Tg9dd/LaB7Z6E62Q4CPFfk/NUVx24L7udPnuLCoGkFXgvb9VepIhvSrPWLk41A9I5FhFkTsVLgskXqZGBPvrBygOqgYsZYWMqA/rxgBQ456Z/RZiwm0Rg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7I2Ej1xdJZkVyxaoVEE1kbh+d3X89VaxfOyiF/TzOKw=;
- b=fQLjCZr2wCjWJ+aAsbHvqe2qs2iD68yx7pTnTKErD3RjWzozG7Iz1eyAscSKNge2Ae6/CaQr3/eb6aG2yPOYO2ksO1uA8zLsNKvsMYxBIuI4k0SM57czcfwRshldLN5eAsheW0fLCOdyrAk2OMleiFtXd6vSNFIMZc9tOKXVJCCelsr6A8+PYKN3HOwzdn6GJTHrFm4C1GWLS3thv1ozXBYaq3NA2l/YcXKwHqtOfpuyE9/WmOQ1wi7rDGwczgxP6zLwuAQ937Z07bhGyTuVJocBI4IefOBNx6Aye1WN1+isv2BaJoqJrZwWh7zs1hlD3jKaVlWtGMtpE1pjUVqWbg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7I2Ej1xdJZkVyxaoVEE1kbh+d3X89VaxfOyiF/TzOKw=;
- b=WqPRPndMuBWGcR9m0zCzC0y5U3pKIx2tWACtp5yahgeCGNMpbkNYeTak22LM/+v/zqY2yX9cU1S4aDy85LPRU7Mq4iuFA19PW0ks8NEFHE11wssaQvc+KB3fuOKMEbyqJFa9lppEtLCNrwsVwpI+Y0cReQkw3PHPrnBdjLdlUOzfpgCGz515mmO2gNx6fffQMTugkigkAbsjwb2OOd6ZFPIHYNtr54aMdGrqKqGRjFLDWgUQLDQXtd8Uh02NpFJHf9OA2wracAOtqsA3L7SFrHfWRXQBapPpyodBYf/nRGGSOhY8O5QJGNcP8ZlAuyujA4U1yy4WHMLkxieFi4As7Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- MN2PR12MB4174.namprd12.prod.outlook.com (2603:10b6:208:15f::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.15; Thu, 26 Feb
- 2026 21:06:23 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::f01d:73d2:2dda:c7b2]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::f01d:73d2:2dda:c7b2%4]) with mapi id 15.20.9654.014; Thu, 26 Feb 2026
- 21:06:21 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Bas van Dijk <bas@dfinity.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- <regressions@lists.linux.dev>, <linux-mm@kvack.org>,
- <linux-fsdevel@vger.kernel.org>, Eero Kelly <eero.kelly@dfinity.org>,
- Andrew Battat <andrew.battat@dfinity.org>,
- Adam Bratschi-Kaye <adam.bratschikaye@dfinity.org>
-Subject: Re: [REGRESSION] madvise(MADV_REMOVE) corrupts pages in THP-backed
- MAP_SHARED memfd (bisected to 7460b470a131)
-Date: Thu, 26 Feb 2026 16:06:16 -0500
-X-Mailer: MailMate (2.0r6290)
-Message-ID: <D4BD80F5-6CA2-42E1-B826-92EACD77A3F3@nvidia.com>
-In-Reply-To: <CB5EF1C4-6285-4EEC-ABD0-A8870E7241E8@nvidia.com>
-References: <CAKNNEtw5_kZomhkugedKMPOG-sxs5Q5OLumWJdiWXv+C9Yct0w@mail.gmail.com>
- <CB5EF1C4-6285-4EEC-ABD0-A8870E7241E8@nvidia.com>
-Content-Type: text/plain
-X-ClientProxiedBy: BY3PR03CA0020.namprd03.prod.outlook.com
- (2603:10b6:a03:39a::25) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB99939446F;
+	Thu, 26 Feb 2026 21:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772139999; cv=none; b=puHId4VBaLOdGmb+WlEd7WY2Mvt144csdRJ80M2R5iYnJ36VXtMeWE1MHneP2525Hp/Vc1U/ZEedcPjB8Qihzl/BAlvPhqdkhaDe2sOOEyxWymo2TbKdS6nFUQ0VbmlZlT/mT44eVtcHGlbvsdCjdLu68QPx18zzWGeTkJs3ams=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772139999; c=relaxed/simple;
+	bh=CQG6cerFtYv/0ee9CKn8UQrC/xKUsT6OPLVfmy6FJz8=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=MkRWtJnYSWxGdh/MxwRYIu0quIPl2c3boHqspOVMHMXLVBxuG6wONPhW+XKZUHjwNjmJsQugUKkyMn1o27P8mfmUx2+3hXcdi0Xu+VwEuRr02ioDao999UN9gU1agJySq1nDCS1L4zBK0WxeOfI7+U3PwNvyS2bDqVAu+fZRS10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 757B929ABE4;
+	Thu, 26 Feb 2026 22:06:34 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id pHoXigw69yds; Thu, 26 Feb 2026 22:06:33 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 19E5129859D;
+	Thu, 26 Feb 2026 22:06:33 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id uepQ4Bwi8CEx; Thu, 26 Feb 2026 22:06:32 +0100 (CET)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id EFF89298599;
+	Thu, 26 Feb 2026 22:06:31 +0100 (CET)
+Date: Thu, 26 Feb 2026 22:06:31 +0100 (CET)
+From: Richard Weinberger <richard@nod.at>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Jan Kara <jack@suse.cz>, Steven Rostedt <rostedt@goodmis.org>, 
+	mhiramat <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	dan j williams <dan.j.williams@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, 
+	Eric Biggers <ebiggers@kernel.org>, tytso <tytso@mit.edu>, 
+	Muchun Song <muchun.song@linux.dev>, 
+	Oscar Salvador <osalvador@suse.de>, 
+	David Hildenbrand <david@kernel.org>, 
+	David Howells <dhowells@redhat.com>, 
+	Paulo Alcantara <pc@manguebit.org>, 
+	Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>, 
+	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, 
+	Trond Myklebust <trondmy@kernel.org>, anna <anna@kernel.org>, 
+	chuck lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
+	Olga Kornievskaia <okorniev@redhat.com>, 
+	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
+	Steve French <sfrench@samba.org>, 
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+	Shyam <sprasad@microsoft.com>, Bharath SM <bharathsm@microsoft.com>, 
+	Alexander Aring <alex.aring@gmail.com>, 
+	Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
+	Viacheslav Dubeyko <slava@dubeyko.com>, 
+	Eric Van Hensbergen <ericvh@kernel.org>, 
+	Latchesar Ionkov <lucho@ionkov.net>, 
+	Dominique Martinet <asmadeus@codewreck.org>, 
+	Christian Schoenebeck <linux_oss@crudebyte.com>, 
+	David Sterba <dsterba@suse.com>, 
+	Marc Dionne <marc.dionne@auristor.com>, raven <raven@themaw.net>, 
+	Luis de Bethencourt <luisbg@kernel.org>, 
+	Salah Triki <salah.triki@gmail.com>, 
+	"Tigran A. Aivazian" <aivazian.tigran@gmail.com>, 
+	Ilya Dryomov <idryomov@gmail.com>, 
+	Alex Markuze <amarkuze@redhat.com>, Jan Harkes <jaharkes@cs.cmu.edu>, 
+	coda@cs.cmu.edu, Nicolas Pitre <nico@fluxnic.net>, 
+	Tyler Hicks <code@tyhicks.com>, Amir Goldstein <amir73il@gmail.com>, 
+	Christoph Hellwig <hch@infradead.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+	Yangtao Li <frank.li@vivo.com>, 
+	Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, 
+	David Woodhouse <dwmw2@infradead.org>, 
+	Dave Kleikamp <shaggy@kernel.org>, 
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, 
+	Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
+	Joseph Qi <joseph.qi@linux.alibaba.com>, 
+	Mike Marshall <hubcap@omnibond.com>, 
+	Martin Brandenburg <martin@omnibond.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Anders Larsen <al@alarsen.net>, 
+	chengzhihao1 <chengzhihao1@huawei.com>, 
+	Damien Le Moal <dlemoal@kernel.org>, 
+	Naohiro Aota <naohiro.aota@wdc.com>, 
+	Johannes Thumshirn <jth@kernel.org>, 
+	John Johansen <john.johansen@canonical.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+	Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, 
+	Christian =?utf-8?Q?K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	sumit semwal <sumit.semwal@linaro.org>, 
+	edumazet <edumazet@google.com>, 
+	Kuniyuki Iwashima <kuniyu@google.com>, pabeni <pabeni@redhat.com>, 
+	Willem de Bruijn <willemb@google.com>, davem <davem@davemloft.net>, 
+	kuba <kuba@kernel.org>, Simon Horman <horms@kernel.org>, 
+	oleg <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	mingo <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, 
+	James Clark <james.clark@linaro.org>, 
+	"Darrick J. Wong" <djwong@kernel.org>, 
+	Martin Schiller <ms@dev.tdt.de>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, 
+	nvdimm@lists.linux.dev, fsverity@lists.linux.dev, 
+	linux-mm <linux-mm@kvack.org>, netfs@lists.linux.dev, 
+	linux-ext4 <linux-ext4@vger.kernel.org>, 
+	linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>, 
+	linux-nfs <linux-nfs@vger.kernel.org>, 
+	linux-cifs <linux-cifs@vger.kernel.org>, 
+	samba-technical <samba-technical@lists.samba.org>, 
+	linux-nilfs <linux-nilfs@vger.kernel.org>, 
+	v9fs <v9fs@lists.linux.dev>, 
+	linux-afs <linux-afs@lists.infradead.org>, autofs@vger.kernel.org, 
+	ceph-devel <ceph-devel@vger.kernel.org>, codalist@coda.cs.cmu.edu, 
+	ecryptfs <ecryptfs@vger.kernel.org>, 
+	linux-mtd <linux-mtd@lists.infradead.org>, 
+	jfs-discussion <jfs-discussion@lists.sourceforge.net>, 
+	ntfs3 <ntfs3@lists.linux.dev>, 
+	ocfs2-devel <ocfs2-devel@lists.linux.dev>, 
+	devel <devel@lists.orangefs.org>, 
+	linux-unionfs <linux-unionfs@vger.kernel.org>, 
+	apparmor@lists.ubuntu.com, 
+	LSM <linux-security-module@vger.kernel.org>, 
+	linux-integrity <linux-integrity@vger.kernel.org>, 
+	selinux@vger.kernel.org, amd-gfx@lists.freedesktop.org, 
+	DRI mailing list <dri-devel@lists.freedesktop.org>, 
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org, 
+	netdev <netdev@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
+	linux-fscrypt <linux-fscrypt@vger.kernel.org>, 
+	linux-xfs <linux-xfs@vger.kernel.org>, linux-hams@vger.kernel.org, 
+	linux-x25@vger.kernel.org
+Message-ID: <1889140340.1973.1772139991688.JavaMail.zimbra@nod.at>
+In-Reply-To: <20260226-iino-u64-v1-37-ccceff366db9@kernel.org>
+References: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org> <20260226-iino-u64-v1-37-ccceff366db9@kernel.org>
+Subject: Re: [PATCH 37/61] jffs2: update format strings for u64 i_ino
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|MN2PR12MB4174:EE_
-X-MS-Office365-Filtering-Correlation-Id: e07bd22c-3c06-426b-a584-08de757ae450
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	xOxa3qNP8blyPb1qYqSPIztHpPkJwCn8HvPI3xaB9saEmSOYdHI28VBwgLWXMiabIuWu9wcAeS0wl5MvsrpHknqOC+W4oNy/B5VN0LqDutnuPKd/IbAXIIOjhVSNhcQzxT2953AExCl8AsmP9lpJl59riMGu7kuEjhccK0j304R1hZawot3eDfs3iREGIDxyd4vLTcAaiQ56RalzgiGUGmSjQIuIvMqK9LlBT7eXmXUaF7iytFu2ksffBD4UvyNslEH4l8Ni7IRtg2aE9SE+VZvJNatk6ifYjaYozjFxDMyJsVrVda3txOH81gMGmC3dstRv7kR7NwnIiOAH+qRUl7B2z89mfl6Wl0NwAi+2Q5z7+JL8WcRPoN7TImn9JH3lffMGUxm4Wy9iC5sPYTclapIpCDnXTaCVtjTN6aeWZHObPqOOgGb5/2B4K4P+CmYxJjPkbiiGUMJ9Pg3CRcNcEzIpK10WHw2D04wHIeoudNg3yH49euLUDGr3/BPnOl0q1pWGppNTT7g+OMsXibP6vHKJUGUF8hDLBncxvBLPFEvImDy72UVDXLkFezaHGUrCYwhF80rMgbTf74RZId19ip/CUXEP/laCnP1BoeWkf0bnyFdX3IRgg9yV6KV2Kdd5iiFxKKEKPFFernZPx5qLdu6nUzorpWuzM1ZrP6p0mVtCYfmlniL48OBjoBQxldDoiwGlkCpvwv9ladn8P2/jGKEIRDN9O/QF4C2IuynfjT4=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?jdNUXjsGxElTiwlhQqMQiH7CUpugo8Ev1QjV7lBvpgkhNBp8Mlw5tgKuIgUK?=
- =?us-ascii?Q?5NplUGvvv2OknxIzC4fuYWVYU6ZEfiwFEYfcMY4Q0JGIa5lfQ8uaVmHjM8dQ?=
- =?us-ascii?Q?1DrrO3sZxFlAUXNTE4OtEHTKr1GNE5hdA7Qpz/J2ysmLjeqqKdpdgg2nSOzc?=
- =?us-ascii?Q?6/4QrTGVJyIQ4rI6GCMmFAP+pzHq+ooUIWw7tg9lgfCkIV+SAKe2gtbhTvmm?=
- =?us-ascii?Q?VyoJkTREHL5Wx61VHoA4VzaxfiofYXF6wuS8ygAoiFIfu509Wp78V0DZtayE?=
- =?us-ascii?Q?Pk61ZwOHnAh//MYp339RlJJ13dPyermFNwsqk4GhWipoarTnMiV+wCooBarE?=
- =?us-ascii?Q?B2eRlxQVn3o/R1HqvOVDV5jQOQZf3WPswGF07ZUt58++JKql1W2SWRMoiAKE?=
- =?us-ascii?Q?NpC9kiuUnHhT9ySTUvtRh6gTPVd00UEt1bt8owGsQgwcZNxIeQFYA4kNSr/F?=
- =?us-ascii?Q?VWFCAgexdAceGutqgf4hpT8ghKsZ/vEXw77BzrjdpvbG5OeZQu4R3N7rFbO6?=
- =?us-ascii?Q?nOLk9ocbHZUCRqceUSRS+ZRO4LoqW7NUkqXqMO56PGs31m673jfQ/syp2z3X?=
- =?us-ascii?Q?5M8VQRYwH57HOKmWScPp8hqkYAGdh+HusYONl4kqg0Rjdpr7OHrXjI7iA5Mm?=
- =?us-ascii?Q?2JQN4D57rkiBgGQFC/wKuYPt/3Bl/+kthmLkmMPr5fugeSE6cyAOUs8cO6lP?=
- =?us-ascii?Q?uaMxLeSDmVoPFbBXLJh1S65Gtoh0vcMyjrqPn81NjVwzFDFOiduQ6WZCTCvg?=
- =?us-ascii?Q?holBjHEPc30coJmpzcnOmHp/z57yd8vzDLCbT/+N3y74MdONL5Tgbhexgvo4?=
- =?us-ascii?Q?9gHnhvb+onUl60KpcmfD0iH0jND9iRlNKWbyOLMbhmglPxeSV/n/wselwJg3?=
- =?us-ascii?Q?SV2PaVqdXUPR9cabWfGhAqlJRVuEPBtPHKrOGE7Urng3uw8kPQIGrvq2ky4d?=
- =?us-ascii?Q?QW6jt4841pg8Ta4xN95XuYTztn0wMv/9XB8fn8Ndu1JHlmePaqVHykwj8PCo?=
- =?us-ascii?Q?nrjoPy6cXv/HbD4v2sDt2OVUOinHUq4ZblDbMZ1qec29V0CZtps+LuNE5VJD?=
- =?us-ascii?Q?b9u+NPfoZTpiwXS/zUs1RxunpABIdnzNnOYNV3sdx3CIKXjjz6cDt1VacS3d?=
- =?us-ascii?Q?OujEF5gWnU/3yVEovmqtoTE8Yr7D/ev84XIhQKn63zNDL2e0/X7aszfGu0p1?=
- =?us-ascii?Q?RdeuD9iucg7Yu5S/KQCwHWtWdC79Z8oRM2Zbw9OajNm2hj4T1xxq3w2MbdAs?=
- =?us-ascii?Q?Ss/L01mX5XVOumEBek2LI1zv+GKcv/+7DemXg0oiyN5Rf/7p12/MIfCb24nD?=
- =?us-ascii?Q?RCjTYCG2m/Rawzgb5enSSBXlTZsOPPfp7O9GQXumJKn6MjbhJLk2acRSdJGK?=
- =?us-ascii?Q?Ow6Qx+14DhuL/dSI7IbM3n9ikb6DB5Wt9QHfnZ0YQDK7ZsOsNM91tfr2bHRT?=
- =?us-ascii?Q?mx78nRDuG7BpodDK5k/hILYSXO3WzcytNUlPaVHKFjIPZ91QAJj6E1ZKfbHO?=
- =?us-ascii?Q?AZKsLvK814jfW8U9GQT7s+fcYMQ328p7T4z1TDml3q+ldW5wC2/k9J9MXFjk?=
- =?us-ascii?Q?yKPv5JmMs4BL5iwacj2lXM4rxYcYp920x+UEcdRVgteN1xfBmKtsh5Ve6S50?=
- =?us-ascii?Q?E4lgZoZ3h6E731nssSfTmyJ6QQ1yP5lP/P7KBWJ63QxCgpQlthRDNWyuvltE?=
- =?us-ascii?Q?SRGQ+SKJx56kVThtd4Qe/uPhXi5jHpT8UMmChNCSxhWtyc6TCux/C2NuhVDw?=
- =?us-ascii?Q?Cxz+4op0pQ=3D=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e07bd22c-3c06-426b-a584-08de757ae450
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2026 21:06:21.1270
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JTqrOpV9ysnXWEFJtH6+riEMZHLGi4pz+iSxNZauRdrQJ9o9YzGquRUPdheppHDT
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4174
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF147 (Linux)/8.8.12_GA_3809)
+Thread-Topic: jffs2: update format strings for u64 i_ino
+Thread-Index: xD7TK6/dJ7pUGRHHehUamcKvWNrpNA==
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.34 / 15.00];
-	ARC_REJECT(1.00)[cv is fail on i=2];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[nvidia.com,reject];
-	R_DKIM_ALLOW(-0.20)[Nvidia.com:s=selector2];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+X-Spamd-Result: default: False [0.04 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FROM_NEQ_ENVFROM(0.00)[ziy@nvidia.com,linux-fsdevel@vger.kernel.org];
-	TAGGED_FROM(0.00)[bounces-78639-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[Nvidia.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	MID_RHS_MATCH_FROM(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
-	RCVD_COUNT_FIVE(0.00)[5];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	TO_DN_SOME(0.00)[];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de,vger.kernel.org,lists.linux.dev,kvack.org,lists.sourceforge.net,lists.samba.org,lists.infradead.org,coda.cs.cmu.edu,lists.orangefs.org,lists.ubuntu.com,lists.freedesktop.org,lists.linaro.org];
+	DMARC_NA(0.00)[nod.at];
+	TAGGED_FROM(0.00)[bounces-78640-lists,linux-fsdevel=lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	RCVD_COUNT_SEVEN(0.00)[8];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,Nvidia.com:dkim,nvidia.com:mid,nvidia.com:email]
-X-Rspamd-Queue-Id: 7E25F1AF78B
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[richard@nod.at,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[145];
+	R_DKIM_NA(0.00)[];
+	NEURAL_HAM(-0.00)[-0.929];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,nod.at:mid,nod.at:email]
+X-Rspamd-Queue-Id: F157C1AF7DC
 X-Rspamd-Action: no action
 
-On 26 Feb 2026, at 15:49, Zi Yan wrote:
+----- Urspr=C3=BCngliche Mail -----
+> Von: "Jeff Layton" <jlayton@kernel.org>
+> Update format strings and local variable types in jffs2 for the
+> i_ino type change from unsigned long to u64.
+>=20
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+> fs/jffs2/dir.c  |  4 ++--
+> fs/jffs2/file.c |  4 ++--
+> fs/jffs2/fs.c   | 18 +++++++++---------
+> 3 files changed, 13 insertions(+), 13 deletions(-)
 
-> On 26 Feb 2026, at 15:34, Bas van Dijk wrote:
->
->> #regzbot introduced: 7460b470a131f985a70302a322617121efdd7caa
->>
->> Hey folks,
->>
->> We discovered madvise(MADV_REMOVE) on a 4KiB range within a
->> huge-page-backed MAP_SHARED memfd region corrupts nearby pages.
->>
->> Using the reproducible test in
->> https://github.com/dfinity/thp-madv-remove-test this was bisected to the
->> first bad commit:
->>
->> commit 7460b470a131f985a70302a322617121efdd7caa
->> Author: Zi Yan <ziy@nvidia.com>
->> Date:   Fri Mar 7 12:40:00 2025 -0500
->>
->>     mm/truncate: use folio_split() in truncate operation
->>
->> v7.0-rc1 still has the regression.
->>
->> The repo mentioned above explains how to reproduce the regression and
->> contains the necessary logs of failed runs on 7460b470a131 and v7.0-rc1, as
->> well as a successful run on its parent 4b94c18d1519.
->
-> Thanks for the report. I will look into it.
+Acked-by: Richard Weinberger <richard@nod.at>
 
-Can you also share your kernel config file? I just ran the reproducer and
-could not trigger the corruption.
-
-Thanks.
-
-Best Regards,
-Yan, Zi
+Thanks,
+//richard
 
