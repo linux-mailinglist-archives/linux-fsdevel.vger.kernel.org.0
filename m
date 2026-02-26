@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-78607-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78608-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CA62KRSGoGknkgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78607-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:42:44 +0100
+	id WF1mAlOEoGkakgQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78608-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:35:15 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5904E1ACB18
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:42:44 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id D219F1AC898
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 18:35:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id E2EC431B4E3D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 17:04:41 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id DA4E632CE7F0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Feb 2026 17:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4841033262D;
-	Thu, 26 Feb 2026 16:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2707A35A38D;
+	Thu, 26 Feb 2026 16:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b="ulkKHiYz"
+	dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b="nlx+CJv1"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx1.manguebit.org (mx1.manguebit.org [143.255.12.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ABC6368950;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4B936894F;
 	Thu, 26 Feb 2026 16:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.255.12.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772125128; cv=none; b=SwYoKtfC8gxhZS+UhL84CmtWyLLq6LjBgw4op/YReWdrcd2I9ZA9NN5qTl3O7bxCZWr7vCIfgTMSgRVL1decrCv2fUTX/qhdrpMXg0yz4FG46gikrml4DfbYP5CqtZ8OFt7TCH0Bl3TQsHJ2xLGirz4IkvD2RLvmyw6xw+AvWDQ=
+	t=1772125129; cv=none; b=ZA1KbuQfA4mooOuJ1CI/dt5xHZ7xnJQ8jAQJTPz/fnEFWL3neKB3j2iVpAw8ztba7xpD0zlWrUzs1arNarHKCBrq/35K0hb9CQSPE7SD4ExWSNS9pYRsLVefyj17AAsoDjOUHLF84L/qjjMJtJ/j0WHEL+25Vm/uEILPG0k3bAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772125128; c=relaxed/simple;
-	bh=HO28usF71NeAhhYR8PitMnne2bQFfyYlNZURbq+92+M=;
+	s=arc-20240116; t=1772125129; c=relaxed/simple;
+	bh=BTBsFxFgqkwEIGB43dDZrV44AEDn/svkEIniI0FsAnc=;
 	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 MIME-Version:Content-Type; b=TKF563dr++oZtxq8KxM4dMJKY5CYOPd4XBTLQzvXG4/L2k9SAp38IrmRQlTozs+DHAneJfPg9RkQmZaLMda1jcpqVmuCWk4tNGtO+mHgRuMlLuO1ljpxMFMEFGN8VELlQTfdW8N/GPgr0QauCMDgNmIONR0G+is9oN1+Pe8LuNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org; spf=pass smtp.mailfrom=manguebit.org; dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b=ulkKHiYz; arc=none smtp.client-ip=143.255.12.172
+	 MIME-Version:Content-Type; b=ZYEhMYwQdbbwpw4yM7y2k5rrRyaSNbZEQVNf6kg6y202KqOX4mgttlxdncLBWMEdjgTOr4+T3QoVhhRhpfwAfelV1sDdPqh4S2ryEc6A8w3ogpkmNuw5CfkLn2DodZVZ1fH2BdexN/RDojaQROZereHxlzOEf/7VZya7HcCB15U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org; spf=pass smtp.mailfrom=manguebit.org; dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b=nlx+CJv1; arc=none smtp.client-ip=143.255.12.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=manguebit.org; s=dkim; h=Content-Type:MIME-Version:Date:References:
 	In-Reply-To:Subject:Cc:To:From:Message-ID:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=lHNPvXjvxrRY/KHE3atTkGQgKEoBn4K5FRw/b5IfwZY=; b=ulkKHiYzv6I+6IIa14ftoupjDe
-	J6D5Nic3w9+LTbwjPerGaRkKolwfy2KcZUzYubTFBR1C6YfViQ9IzWzOqE1PMBvOSLtWvDqYWHDkS
-	e8YKhk2RZVgK/kgJGqWlaX1VlOeT5XV51JNx7TY19yYOoCL9WPMfL7DEx3UWQDxjJXBn4KZXjEq/L
-	QYbtmeNM6AGz7YQoWObfC/Wgr1ca8Ha69hN8dnEa+b8qtPVTc9YoU/4JL/CqWgk9ghL/akGLMqNBo
-	zcPi7YHA7wTZsVYKJPKxzvhBKFb5Xcdj6osXFB4VEMUpfmqou7ST10TYaQkSCLGoa+WvRtMN6QWb5
-	s7cLVI5g==;
+	bh=GBAAeNpvfWupATD/Mqi5LhBKxQa5mgBWtQkeTAghv8U=; b=nlx+CJv1x/UuNttwKXynH0qJFV
+	GGPlyhyb56jCAmfo2Dkhao6Akb/whBUWKrLHAtLp2UnbAxsZRiEEnc/PA6a02dlJyun7VB/WjZ/4Y
+	gSNeA6HN4mQbMGOcTdkRiDsoEk5l6Ssb6qUdMgoH7JYTbpZDll0K3Gc9Sl8LgYozq3/3dgHYhmDwe
+	fRUIm7haKSMEmY1/NzzgcvEuyT7l/TJWKX2NJMO7AKfx12ThZPHB/q8MyHq+NyeW4NqEFdN0DjrLH
+	BhCTcfbtcrlXDP67PmPWXw2HF4zz7VIOb15e9g0uBhXA6DI+uxHuKzWDbVQB6y2V+HCbHUW7dwsue
+	9tQXYUVA==;
 Received: from pc by mx1.manguebit.org with local (Exim 4.99.1)
-	id 1vvegP-00000000rdH-33sy;
-	Thu, 26 Feb 2026 13:57:49 -0300
-Message-ID: <5687bdf62ddd20660394eb0d7dabb96a@manguebit.org>
+	id 1vvegu-00000000rdY-0Taa;
+	Thu, 26 Feb 2026 13:58:20 -0300
+Message-ID: <8dcf2c77013a0de245c4417eb4726752@manguebit.org>
 From: Paulo Alcantara <pc@manguebit.org>
 To: Jeff Layton <jlayton@kernel.org>, Alexander Viro
  <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
@@ -129,11 +129,11 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-fscrypt@vger.kernel.org, linux-xfs@vger.kernel.org,
  linux-hams@vger.kernel.org, linux-x25@vger.kernel.org, Jeff Layton
  <jlayton@kernel.org>
-Subject: Re: [PATCH 13/61] smb: store full 64-bit uniqueid in i_ino
-In-Reply-To: <20260226-iino-u64-v1-13-ccceff366db9@kernel.org>
+Subject: Re: [PATCH 14/61] smb: remove cifs_uniqueid_to_ino_t()
+In-Reply-To: <20260226-iino-u64-v1-14-ccceff366db9@kernel.org>
 References: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
- <20260226-iino-u64-v1-13-ccceff366db9@kernel.org>
-Date: Thu, 26 Feb 2026 13:57:49 -0300
+ <20260226-iino-u64-v1-14-ccceff366db9@kernel.org>
+Date: Thu, 26 Feb 2026 13:58:19 -0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -148,7 +148,7 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[manguebit.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[manguebit.org:s=dkim];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
@@ -157,9 +157,9 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	RCVD_COUNT_THREE(0.00)[4];
 	FREEMAIL_TO(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,mit.edu,linux.dev,suse.de,redhat.com,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78607-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78608-lists,linux-fsdevel=lfdr.de];
 	DKIM_TRACE(0.00)[manguebit.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
 	MISSING_XM_UA(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[pc@manguebit.org,linux-fsdevel@vger.kernel.org];
@@ -170,25 +170,25 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	NEURAL_HAM(-0.00)[-0.999];
 	TO_DN_SOME(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,manguebit.org:mid,manguebit.org:dkim,manguebit.org:email]
-X-Rspamd-Queue-Id: 5904E1ACB18
+	DBL_BLOCKED_OPENRESOLVER(0.00)[manguebit.org:mid,manguebit.org:dkim,manguebit.org:email,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: D219F1AC898
 X-Rspamd-Action: no action
 
 Jeff Layton <jlayton@kernel.org> writes:
 
-> With i_ino now u64, CIFS/SMB can store the full 64-bit uniqueid in
-> i_ino without the XOR-folding hack previously needed on 32-bit
-> architectures.
+> Now that i_ino is u64, cifs_uniqueid_to_ino_t() is a trivial identity
+> function. Remove it and use fattr->cf_uniqueid directly at both call
+> sites.
 >
-> - Simplify cifs_uniqueid_to_ino_t() to return u64 directly
-> - Update hash variable type in cifs_get_inode_info()
-> - Update format strings from %lu to %llu
+> Also remove the now-unused #include <linux/hash.h>, which was only
+> needed for the old XOR-folding logic.
 >
 > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->  fs/smb/client/cifsfs.h | 12 +++---------
->  fs/smb/client/inode.c  |  4 ++--
->  2 files changed, 5 insertions(+), 11 deletions(-)
+>  fs/smb/client/cifsfs.h  | 11 -----------
+>  fs/smb/client/inode.c   |  2 +-
+>  fs/smb/client/readdir.c |  2 +-
+>  3 files changed, 2 insertions(+), 13 deletions(-)
 
 Acked-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
 
