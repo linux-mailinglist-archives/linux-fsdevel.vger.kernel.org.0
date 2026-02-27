@@ -1,175 +1,275 @@
-Return-Path: <linux-fsdevel+bounces-78723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78724-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 8JLgFD21oWmMvgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 16:16:13 +0100
+	id IFMeKOC0oWmMvgQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78724-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 16:14:40 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id C31231B98AC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 16:16:12 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id E57B51B984C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 16:14:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 92DE9311DD5B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 15:09:51 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id BE379314456E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 15:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FB7439011;
-	Fri, 27 Feb 2026 15:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C8243C062;
+	Fri, 27 Feb 2026 15:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="CQLZ08Ot"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="n4TpTiQo";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="frjS/mKq";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="n4TpTiQo";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="frjS/mKq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A20438FE1
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 15:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.174
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772204960; cv=pass; b=Lxp7fl6WkVNQRD3ymWs9FjJf7BZafQn/3lj38gzmyNWavyn/ceogYhC+M7c2Asu0pZ+fUP9w8LRjShcwsTvsxxn2IWUBTdrjCoNhe1ziZ3OqzCMy6hCJm4h13SWec65awuKNfU86elHeg4NbzV0w57GRqGfSRnDCisfQepY0Odo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772204960; c=relaxed/simple;
-	bh=SNezquXlRvPUbw6WVotPxqNcwLw56ZMIFvmLqshjY0Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uiiqyKzU58TtV0ImvKGAz8/OrJf6KFbwhvW7Ix6jlSyuYt/okJn6pEH+p7uTMHQR9s8AnTHtNgwkZlVd1S0wohAhblm7Lfy+pguI7+uhV+qIhMt+7cRyMGfYy3OG1tMmOV3BpSVVIDICB4WhMJkS2Ie+jNpchUoohrJqMhBpXkk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=CQLZ08Ot; arc=pass smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-506aa685d62so12639611cf.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 07:09:18 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772204957; cv=none;
-        d=google.com; s=arc-20240605;
-        b=lQs0ppI6hpF+EbTci7K9VFEC71S4si3l+VSm1hOf3ZDS5dQslCxuXRiacmvpuZgjVu
-         YnMeHKi4LH/tkK0uUby4aS48j6Ce/dKL6oBeZcBVeYJhY3bEyH6VwAPDoqvCXrnUx2GL
-         6OqS4FJSgsUSa8T+/txDD9auCOeCzEMLM8mq7mJkM5exJNC1Dce6hYKDsh/SvnVhz5z6
-         xLOmQ2ln7lJvFPJsmay766CNYO2ZWaelDWWSWtSkNc5OsaVAwdeAqHq8QN3Cv+Rz6OgV
-         zByphaOawhJYEbSzuT2n3BS9jJums2NfM4mL45mTMJrLwwQVUFP4hWPLdFW6npGdGKNG
-         Wm6A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=+k730C0R+Pi70VqxBjKSUyuJT6sjaxDcUSEzMZtx3QA=;
-        fh=jxN+Ojlmf29Io7YwVd0kYvGzoHLjV8nN91nYbbzz1R4=;
-        b=LoGLn2sfj6Q9jpSxQrz8Ne/U+pxxgXX6NsBJrJIF9yM9ZlJHEKOQ8Jckbkul1V/jxd
-         mZg4sdyRajW3xdmZP2wRlU+mhnu/4ROn8K2x8bHemRBTNriKSg1m8trqB15WWASsiAXD
-         jLDgN2Qef52zEjudYLzxAuSq/fv5nEFjdI8NwbtZ4eT4NzduXw6De7dyxEmak6/LTS4o
-         c35JKx042XFkXjcMHEnktjdA9Cn2r3igsHHLFuaWH87AMfh9zNNWMOdbUMvdNgiLW5gt
-         mG2G/H47F/S3rKqhfKcMfXW4+fxJQB1F3nDcqnbiRiv0JJlcsv/bd4dYu6PlH/gUaiAR
-         1UUQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1772204957; x=1772809757; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+k730C0R+Pi70VqxBjKSUyuJT6sjaxDcUSEzMZtx3QA=;
-        b=CQLZ08OtFUhRuN5G784XpAHPZlsyZBAPCbqwR/fJuhWddBTEvST/KQZIrq1nfkSr+1
-         OOLCTUf1zr5UOILszWVsBjO8sgffJ+0JDLC0CPrP2I3Dm1OKK9nqgRw2tHWctDNmYfdb
-         ljOHDNp3dMlCWw6Ps23V326bXj2i1DaZIvBY0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772204957; x=1772809757;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+k730C0R+Pi70VqxBjKSUyuJT6sjaxDcUSEzMZtx3QA=;
-        b=qNkEspPzb/bFxQHCdxSu3gKumf3vkKA/dZDLZB8NA79s4yftSoo0IjZKf+hZkdTCVd
-         W0L41gckgxKqWleS9xrYB8GnI8HXKm/3usYrTpscWcYQzgu+ZN+Xj3gXwnYwnUgZEyNp
-         TQpde9ccS3si4RgC9CX/qY3NO7yR3JFs/BhF14Bv7aLF+VD4U/4mmoOY87Xf9udaBjg5
-         XXWRjBhqku4YPUJYQc7a/D5yUE4maZ6204FHrchrDQjOeH2WlKQVbsTqr4IPEZZD4NUD
-         6YXDv8bptFr9mdkd4MsrIRzqgWkn4EX9SL58k2TLGuz6rbGWZra2xT+pnYswiJk+xg7K
-         Jbaw==
-X-Gm-Message-State: AOJu0YxqtdFyNXVyF9m0rIqnKTCWgggCt0kJIMMO34wJcxNdwwLmOcz2
-	RWyMg1I/gRiKDJVRcCLVzov7otx5eTuSXAVeUWPq4Nv4uUUQcch7F0smv2l6hjlM9RTpNpcvel2
-	Td27vstcUZJjWTeUecI4iDRo1XviX8VrVE0znFtE6PQ==
-X-Gm-Gg: ATEYQzwhPm0lzcNo5dKnOHD9JIj5N7k2feuFw4h/4PKre4nWr4xi3uJlRC9dETFZFKD
-	LjnIU+ATAbYBERV4ZwHbfxAYQPhb8L1mW/GWcldZkeP0nnhWa6ovoAJ4+OoKEb27GbRoBtfuCCs
-	PfhslN1SeL8DF+Cfni9GhbLuGyZzIel2vIrRJD9wdqIfryxLfCPbsOUjLHeNrp0xI257sMUN+xJ
-	lz/5kS6DbMSJTUrsOJKTAoxfaQlkAJkcYft7HD++WeDtSbOvrXTO5zBRupnp7rDKcYQzr/bEFen
-	1QVqpg==
-X-Received: by 2002:ac8:5747:0:b0:4f1:abb3:7571 with SMTP id
- d75a77b69052e-507528e15bfmr36993111cf.33.1772204956947; Fri, 27 Feb 2026
- 07:09:16 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140D043C043
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 15:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772204964; cv=none; b=dNJYvgkKVU/QYGaHC4Z6wAlcOYvXL5WX9gvlKZUhnWChnhCrK0Ede/P2OZEUQLH4xjaaWbKmsFaxXqiX2u3DHBfluNbb6EX2Sn6RMANF03huN+me5uYfi7jfiok7T9HVDpVfR8OXO1V3/qZSaEtL+os9pve2p1vqWfYaJ8DGIo8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772204964; c=relaxed/simple;
+	bh=9smuQxeW6OC2ywWonZqPlrsd1307vN8mZ2S7bE9T9Ak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PTeQMMSWxa77ghE3lQX0bKxZK3CG4wgWXgLLhp1SJyanO6x2XLYONUaKXqyTJKI8Hvh3dCaFy6XhsMHmG9gs4YgdoK++zPp0ngCxMqTvYHAFJcKGZrFYPlGdSXAYNI45bC2B3755Qu1qLBVO5eaJQd7TuzdZL4AJjQUoRU4A0HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=n4TpTiQo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=frjS/mKq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=n4TpTiQo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=frjS/mKq; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 560223FA0D;
+	Fri, 27 Feb 2026 15:09:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1772204960; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IgC4TAut0oAE46fR5Ae6UByQ/Iym7IYeieMNOTiDBXU=;
+	b=n4TpTiQo7AH/0uoo++HfsYLrlTXL8UK00zJUZSewWB+J9Xg/rbCYE6aWAksOV4N5aan7Fo
+	kaSS8i+8J2EGIq9jijKgQgKPGK9Lm6G9CjT2msnz9SDkcvRWe04rmNHCF55M7si0ZnPElF
+	Du4XWBE0zpoUUPa9Wd8ApwAtnDJs32M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1772204960;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IgC4TAut0oAE46fR5Ae6UByQ/Iym7IYeieMNOTiDBXU=;
+	b=frjS/mKqtQ041leJMmhBzqFTIWXixTqYMtKv1wh/jYW0R1WZiqPIdmGbbyC58w30PY6FeX
+	mA2R3jREjsJnubBg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=n4TpTiQo;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="frjS/mKq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1772204960; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IgC4TAut0oAE46fR5Ae6UByQ/Iym7IYeieMNOTiDBXU=;
+	b=n4TpTiQo7AH/0uoo++HfsYLrlTXL8UK00zJUZSewWB+J9Xg/rbCYE6aWAksOV4N5aan7Fo
+	kaSS8i+8J2EGIq9jijKgQgKPGK9Lm6G9CjT2msnz9SDkcvRWe04rmNHCF55M7si0ZnPElF
+	Du4XWBE0zpoUUPa9Wd8ApwAtnDJs32M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1772204960;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IgC4TAut0oAE46fR5Ae6UByQ/Iym7IYeieMNOTiDBXU=;
+	b=frjS/mKqtQ041leJMmhBzqFTIWXixTqYMtKv1wh/jYW0R1WZiqPIdmGbbyC58w30PY6FeX
+	mA2R3jREjsJnubBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4AA553EA69;
+	Fri, 27 Feb 2026 15:09:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nLYzEqCzoWkAFQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 27 Feb 2026 15:09:20 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 0818AA06D4; Fri, 27 Feb 2026 16:09:16 +0100 (CET)
+Date: Fri, 27 Feb 2026 16:09:15 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+	Josef Bacik <josef@toxicpanda.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>, 
+	linux-mm@kvack.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Tejun Heo <tj@kernel.org>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Jann Horn <jannh@google.com>, netdev@vger.kernel.org
+Subject: Re: [PATCH 05/14] pidfs: adapt to rhashtable-based simple_xattrs
+Message-ID: <qxctwu77wp7gv4ua3hn6kg7r2vt57laomn3ebjisemzzaybagy@mvoo2wpvu2ux>
+References: <20260216-work-xattr-socket-v1-0-c2efa4f74cb7@kernel.org>
+ <20260216-work-xattr-socket-v1-5-c2efa4f74cb7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260111073701.6071-1-jefflexu@linux.alibaba.com>
-In-Reply-To: <20260111073701.6071-1-jefflexu@linux.alibaba.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 27 Feb 2026 16:09:05 +0100
-X-Gm-Features: AaiRm50L5RZBMwEEH-vSG3thwCwN76NeEdvq7x5wbRaGtLJskZY1Zm0_WEzxFc0
-Message-ID: <CAJfpegtS+rX37qLVPW+Ciso_+yqjTqGKNnvSacpd7HdniGXjAQ@mail.gmail.com>
-Subject: Re: [PATCH v3] fuse: invalidate the page cache after direct write
-To: Jingbo Xu <jefflexu@linux.alibaba.com>
-Cc: linux-fsdevel@vger.kernel.org, bschubert@ddn.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260216-work-xattr-socket-v1-5-c2efa4f74cb7@kernel.org>
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Spam-Level: 
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
-	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+X-Spamd-Result: default: False [-1.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78723-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,suse.com:email];
+	DMARC_NA(0.00)[suse.cz];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[szeredi.hu:+];
+	TAGGED_FROM(0.00)[bounces-78724-lists,linux-fsdevel=lfdr.de];
+	RCPT_COUNT_TWELVE(0.00)[15];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[4];
+	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,alibaba.com:email,mail.gmail.com:mid,szeredi.hu:dkim,ddn.com:email]
-X-Rspamd-Queue-Id: C31231B98AC
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: E57B51B984C
 X-Rspamd-Action: no action
 
-On Sun, 11 Jan 2026 at 08:37, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
->
-> This fixes xfstests generic/451 (for both O_DIRECT and FOPEN_DIRECT_IO
-> direct write).
->
-> Commit b359af8275a9 ("fuse: Invalidate the page cache after
-> FOPEN_DIRECT_IO write") tries to fix the similar issue for
-> FOPEN_DIRECT_IO write, which can be reproduced by xfstests generic/209.
-> It only fixes the issue for synchronous direct write, while omitting
-> the case for asynchronous direct write (exactly targeted by
-> generic/451).
->
-> While for O_DIRECT direct write, it's somewhat more complicated.  For
-> synchronous direct write, generic_file_direct_write() will invalidate
-> the page cache after the write, and thus it can pass generic/209.  While
-> for asynchronous direct write, the invalidation in
-> generic_file_direct_write() is bypassed since the invalidation shall be
-> done when the asynchronous IO completes.  This is omitted in FUSE and
-> generic/451 fails whereby.
->
-> Fix this by conveying the invalidation for both synchronous and
-> asynchronous write.
->
-> - with FOPEN_DIRECT_IO
->   - sync write,  invalidate in fuse_send_write()
->   - async write, invalidate in fuse_aio_complete() with FUSE_ASYNC_DIO,
->                  fuse_send_write() otherwise
-> - without FOPEN_DIRECT_IO
->   - sync write,  invalidate in generic_file_direct_write()
->   - async write, invalidate in fuse_aio_complete() with FUSE_ASYNC_DIO,
->                  generic_file_direct_write() otherwise
->
-> Reviewed-by: Bernd Schubert <bschubert@ddn.com>
-> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+On Mon 16-02-26 14:32:01, Christian Brauner wrote:
+> Adapt pidfs to use the rhashtable-based xattr path by switching from a
+> dedicated slab cache to simple_xattrs_alloc().
+> 
+> Previously pidfs used a custom kmem_cache (pidfs_xattr_cachep) that
+> allocated a struct containing an embedded simple_xattrs plus
+> simple_xattrs_init(). Replace this with simple_xattrs_alloc() which
+> combines kzalloc + rhashtable_init, and drop the dedicated slab cache
+> entirely.
+> 
+> Use simple_xattr_free_rcu() for replaced xattr entries to allow
+> concurrent RCU readers to finish.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Applied, thanks.
+One question below:
 
-Miklos
+> +static LLIST_HEAD(pidfs_free_list);
+> +
+> +static void pidfs_free_attr_work(struct work_struct *work)
+> +{
+> +	struct pidfs_attr *attr, *next;
+> +	struct llist_node *head;
+> +
+> +	head = llist_del_all(&pidfs_free_list);
+> +	llist_for_each_entry_safe(attr, next, head, pidfs_llist) {
+> +		struct simple_xattrs *xattrs = attr->xattrs;
+> +
+> +		if (xattrs) {
+> +			simple_xattrs_free(xattrs, NULL);
+> +			kfree(xattrs);
+> +		}
+> +		kfree(attr);
+> +	}
+> +}
+> +
+> +static DECLARE_WORK(pidfs_free_work, pidfs_free_attr_work);
+> +
+
+So you bother with postponing the freeing to a scheduled work because
+put_pid() can be called from a context where acquiring rcu to iterate
+rhashtable would not be possible? Frankly I have hard time imagining such
+context (where previous rbtree code wouldn't have issues as well), in
+particular because AFAIR rcu is safe to arbitrarily nest. What am I
+missing?
+
+								Honza
+
+
+>  void pidfs_free_pid(struct pid *pid)
+>  {
+> -	struct pidfs_attr *attr __free(kfree) = no_free_ptr(pid->attr);
+> -	struct simple_xattrs *xattrs __free(kfree) = NULL;
+> +	struct pidfs_attr *attr = pid->attr;
+>  
+>  	/*
+>  	 * Any dentry must've been wiped from the pid by now.
+> @@ -169,9 +196,10 @@ void pidfs_free_pid(struct pid *pid)
+>  	if (IS_ERR(attr))
+>  		return;
+>  
+> -	xattrs = no_free_ptr(attr->xattrs);
+> -	if (xattrs)
+> -		simple_xattrs_free(xattrs, NULL);
+> +	if (likely(!attr->xattrs))
+> +		kfree(attr);
+> +	else if (llist_add(&attr->pidfs_llist, &pidfs_free_list))
+> +		schedule_work(&pidfs_free_work);
+>  }
+>  
+>  #ifdef CONFIG_PROC_FS
+> @@ -998,7 +1026,7 @@ static int pidfs_xattr_get(const struct xattr_handler *handler,
+>  
+>  	xattrs = READ_ONCE(attr->xattrs);
+>  	if (!xattrs)
+> -		return 0;
+> +		return -ENODATA;
+>  
+>  	name = xattr_full_name(handler, suffix);
+>  	return simple_xattr_get(xattrs, name, value, size);
+> @@ -1018,22 +1046,16 @@ static int pidfs_xattr_set(const struct xattr_handler *handler,
+>  	/* Ensure we're the only one to set @attr->xattrs. */
+>  	WARN_ON_ONCE(!inode_is_locked(inode));
+>  
+> -	xattrs = READ_ONCE(attr->xattrs);
+> -	if (!xattrs) {
+> -		xattrs = kmem_cache_zalloc(pidfs_xattr_cachep, GFP_KERNEL);
+> -		if (!xattrs)
+> -			return -ENOMEM;
+> -
+> -		simple_xattrs_init(xattrs);
+> -		smp_store_release(&pid->attr->xattrs, xattrs);
+> -	}
+> +	xattrs = simple_xattrs_lazy_alloc(&attr->xattrs, value, flags);
+> +	if (IS_ERR_OR_NULL(xattrs))
+> +		return PTR_ERR(xattrs);
+>  
+>  	name = xattr_full_name(handler, suffix);
+>  	old_xattr = simple_xattr_set(xattrs, name, value, size, flags);
+>  	if (IS_ERR(old_xattr))
+>  		return PTR_ERR(old_xattr);
+>  
+> -	simple_xattr_free(old_xattr);
+> +	simple_xattr_free_rcu(old_xattr);
+>  	return 0;
+>  }
+>  
+> @@ -1108,11 +1130,6 @@ void __init pidfs_init(void)
+>  					 (SLAB_HWCACHE_ALIGN | SLAB_RECLAIM_ACCOUNT |
+>  					  SLAB_ACCOUNT | SLAB_PANIC), NULL);
+>  
+> -	pidfs_xattr_cachep = kmem_cache_create("pidfs_xattr_cache",
+> -					       sizeof(struct simple_xattrs), 0,
+> -					       (SLAB_HWCACHE_ALIGN | SLAB_RECLAIM_ACCOUNT |
+> -						SLAB_ACCOUNT | SLAB_PANIC), NULL);
+> -
+>  	pidfs_mnt = kern_mount(&pidfs_type);
+>  	if (IS_ERR(pidfs_mnt))
+>  		panic("Failed to mount pidfs pseudo filesystem");
+> 
+> -- 
+> 2.47.3
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
