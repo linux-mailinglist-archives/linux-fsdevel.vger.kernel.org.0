@@ -1,311 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-78685-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78689-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WAwVMUZMoWkfsAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78685-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 08:48:22 +0100
+	id 4OkMHwFToWkfsAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78689-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 09:17:05 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44D8A1B4162
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 08:48:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 164C31B45C7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 09:17:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 23E413064937
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 07:48:20 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 93E3A309C9C3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 08:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6172433B6C5;
-	Fri, 27 Feb 2026 07:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AAA37756A;
+	Fri, 27 Feb 2026 08:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="mY6r9ygk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp02-ext3.udag.de (smtp02-ext3.udag.de [62.146.106.33])
+Received: from e3i670.smtp2go.com (e3i670.smtp2go.com [158.120.86.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B67528150F;
-	Fri, 27 Feb 2026 07:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.146.106.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CF7242D76
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 08:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.86.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772178496; cv=none; b=lSPUyI4Z2KnVqlZfqueVSNFxvJzUI/0kMtv8YYim0WU6SjWT7ayVlQv/3B3q/xrQ+8NuCBkZ+27+NDxzozPjZS2Y6NMPFBe8huvIcPKW2dU/rbfH+9TNL+S8jCkIbrZIxKki0txiJTlSR0bLJosl6uuXqsl79qI77eQQTpA/p5k=
+	t=1772180165; cv=none; b=q8qbxgHxMP+cqBo9Wx4eDXZTLiULCBJnnfR48dI3p97xeAYZN0AKgGWXIHnrHXxJFDzqHkz6SaWLoG3JtOrq0nCAY3Qt6ook/HAbPHxRb062qNI6S1MEatQOHqphV1xEIqyx673NrMF0vo9MExgeqmmyoW5Za+qu3mv6x9hiMQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772178496; c=relaxed/simple;
-	bh=QiIibAVxS1HtSHXNlSEgrebtr9i2FOO56gK4AV5TB/Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PdmnSs1315OGSlC9iPGg9DJlnRX4/zh8vAeV9UgrRIOFFtzQA8huk78yP+lNRVOIdyGqmT0a6+sgFiJTK0vYR2AW+tarCtlMyUzfQkMkpyX5sMJ5U9HCIFOjcWKQYg664eeR49YeACkYKgc9XJWAkA8T4e0UDrbo4lLsNeyO+9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de; spf=pass smtp.mailfrom=birthelmer.de; arc=none smtp.client-ip=62.146.106.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birthelmer.de
-Received: from localhost (200-143-067-156.ip-addr.inexio.net [156.67.143.200])
-	by smtp02-ext3.udag.de (Postfix) with ESMTPA id 84C17E064D;
-	Fri, 27 Feb 2026 08:48:05 +0100 (CET)
-Authentication-Results: smtp02-ext3.udag.de;
-	auth=pass smtp.auth=birthelmercom-0001 smtp.mailfrom=horst@birthelmer.de
-Date: Fri, 27 Feb 2026 08:48:04 +0100
-From: Horst Birthelmer <horst@birthelmer.de>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Horst Birthelmer <horst@birthelmer.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, 
-	Luis Henriques <luis@igalia.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Horst Birthelmer <hbirthelmer@ddn.com>
-Subject: Re: Re: [PATCH v6 3/3] fuse: add an implementation of open+getattr
-Message-ID: <aaFJEeeeDrdqSEX9@fedora.fritz.box>
-References: <20260226-fuse-compounds-upstream-v6-0-8585c5fcd2fc@ddn.com>
- <20260226-fuse-compounds-upstream-v6-3-8585c5fcd2fc@ddn.com>
- <CAJnrk1ZsvtZh9vZoN=ca_wrs5enTfAQeNBYppOzZH=c+ARaP3Q@mail.gmail.com>
+	s=arc-20240116; t=1772180165; c=relaxed/simple;
+	bh=cPPm/LxTGin0WTZSGhPPnZCVw13guVicL/ExTN0AdKQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kHyNJdGTQrrrLjoTxWJJJB+oarP7w5ZYkMXRE+yczVRmOCVkQIh0bU81vvZUIN8goZR0AKtMIXkrfIbPpwivx+YdaozqVwXbvlEIa/0fGX/r95ygWcPl0ycuj/6aKTiXnJlnD4u7HUMyviCIhLa25ripwQlgCiTieReWNH+9Ofc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=mY6r9ygk; arc=none smtp.client-ip=158.120.86.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
+ i=@triplefau.lt; q=dns/txt; s=s510616; t=1772180161; h=from : subject
+ : to : message-id : date;
+ bh=7q4ck1jSkFF2a7txlvqCLczhxHn0jMNnagqqcLi9F7A=;
+ b=mY6r9ygk5PwOUjlcBhO9RmiXDpLmXjXltQxzyGD+bocJKvhOn1x2YNejYJmBC76LRdyUK
+ hKTeIw9Ia4bVZVLkUv+jO0aoZp/98g1eJyUK5vc5JyyVuVRIMsonaqm8IiJzFwprI1SBUcm
+ WLmXwNWJmWAkqqZ1cOXtj6FyE/XwuqQcjPMByqeH+cUiM/DhpTcAIja3nxqI9BuOIqJinJm
+ RXqSsTijQUZKFt/sgKFS8T+b4MQr4J2bg704+uMBoiLe9sr8OyEb17NwjJcMK8Ka4HGnvU0
+ Vqle4Fs/Bq4kHPwbcPnkdbRysyhyZ35x5oVXwS4bCxJM1c2TTy42b9BVfsTA==
+Received: from [10.12.239.196] (helo=localhost)
+	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.99.1-S2G)
+	(envelope-from <repk@triplefau.lt>)
+	id 1vvt0t-FnQW0hPlFgP-nUw0;
+	Fri, 27 Feb 2026 08:15:55 +0000
+From: Remi Pommarel <repk@triplefau.lt>
+To: v9fs@lists.linux.dev
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Remi Pommarel <repk@triplefau.lt>
+Subject: [PATCH v3 0/4] 9p: Performance improvements for build workloads
+Date: Fri, 27 Feb 2026 08:56:51 +0100
+Message-ID: <cover.1772178819.git.repk@triplefau.lt>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1ZsvtZh9vZoN=ca_wrs5enTfAQeNBYppOzZH=c+ARaP3Q@mail.gmail.com>
+X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
+Feedback-ID: 510616m:510616apGKSTK:510616siJYhIGm7G
+X-smtpcorp-track: oXoiTDVUyrmh.OOotcqFyEizW.0OGBjQ7mmji
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.36 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[triplefau.lt,quarantine];
 	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[triplefau.lt:s=s510616];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	DMARC_POLICY_SOFTFAIL(0.10)[birthelmer.de : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78685-lists,linux-fsdevel=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[horst@birthelmer.de,linux-fsdevel@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78689-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[triplefau.lt:+];
 	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	R_DKIM_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[repk@triplefau.lt,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 44D8A1B4162
+	FROM_HAS_DN(0.00)[]
+X-Rspamd-Queue-Id: 164C31B45C7
 X-Rspamd-Action: no action
 
-On Thu, Feb 26, 2026 at 11:12:00AM -0800, Joanne Koong wrote:
-> On Thu, Feb 26, 2026 at 8:43 AM Horst Birthelmer <horst@birthelmer.com> wrote:
-> >
-> > From: Horst Birthelmer <hbirthelmer@ddn.com>
-> >
-> > The discussion about compound commands in fuse was
-> > started over an argument to add a new operation that
-> > will open a file and return its attributes in the same operation.
-> >
-> > Here is a demonstration of that use case with compound commands.
-> >
-> > Signed-off-by: Horst Birthelmer <hbirthelmer@ddn.com>
-> > ---
-> >  fs/fuse/file.c   | 111 +++++++++++++++++++++++++++++++++++++++++++++++--------
-> >  fs/fuse/fuse_i.h |   4 +-
-> >  fs/fuse/ioctl.c  |   2 +-
-> >  3 files changed, 99 insertions(+), 18 deletions(-)
-> >
-> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> > index a408a9668abbb361e2c1e386ebab9dfcb0a7a573..daa95a640c311fc393241bdf727e00a2bc714f35 100644
-> > --- a/fs/fuse/file.c
-> > +++ b/fs/fuse/file.c
-> > @@ -136,8 +136,71 @@ static void fuse_file_put(struct fuse_file *ff, bool sync)
-> >         }
-> >  }
-> >
-> > +static int fuse_compound_open_getattr(struct fuse_mount *fm, u64 nodeid,
-> > +                                     struct inode *inode, int flags, int opcode,
-> > +                                     struct fuse_file *ff,
-> > +                                     struct fuse_attr_out *outattrp,
-> > +                                     struct fuse_open_out *outopenp)
-> > +{
-> > +       struct fuse_conn *fc = fm->fc;
-> > +       struct fuse_compound_req *compound;
-> > +       struct fuse_args open_args = {};
-> > +       struct fuse_args getattr_args = {};
-> > +       struct fuse_open_in open_in = {};
-> > +       struct fuse_getattr_in getattr_in = {};
-> > +       int err;
-> > +
-> > +       compound = fuse_compound_alloc(fm, 2, FUSE_COMPOUND_SEPARABLE);
-> > +       if (!compound)
-> > +               return -ENOMEM;
-> > +
-> > +       open_in.flags = flags & ~(O_CREAT | O_EXCL | O_NOCTTY);
-> > +       if (!fm->fc->atomic_o_trunc)
-> > +               open_in.flags &= ~O_TRUNC;
-> > +
-> > +       if (fm->fc->handle_killpriv_v2 &&
-> > +           (open_in.flags & O_TRUNC) && !capable(CAP_FSETID))
-> > +               open_in.open_flags |= FUSE_OPEN_KILL_SUIDGID;
-> 
-> Do you think it makes sense to move this chunk of logic into
-> fuse_open_args_fill() since this logic has to be done in
-> fuse_send_open() as well?
->
+This patchset introduces several performance optimizations for the 9p
+filesystem when used with cache=loose option (exclusive or read only
+mounts). These improvements particularly target workloads with frequent
+lookups of non-existent paths and repeated symlink resolutions.
 
-Yes, I think that makes sense and would be beneficial to other requests in 
-other compounds that will be constructed with that function.
+The very state of the art benchmark consisting of cloning a fresh
+hostap repository and building hostapd and wpa_supplicant for hwsim
+tests (cd tests/hwsim; time ./build.sh) in a VM running on a 9pfs rootfs
+(with trans=virtio,cache=loose options) has been used to test those
+optimizations impact.
 
-> > +
-> > +       fuse_open_args_fill(&open_args, nodeid, opcode, &open_in, outopenp);
-> > +
-> > +       err = fuse_compound_add(compound, &open_args, NULL);
-> > +       if (err)
-> > +               goto out;
-> > +
-> > +       fuse_getattr_args_fill(&getattr_args, nodeid, &getattr_in, outattrp);
-> > +
-> > +       err = fuse_compound_add(compound, &getattr_args, NULL);
-> > +       if (err)
-> > +               goto out;
-> > +
-> > +       err = fuse_compound_send(compound);
-> > +       if (err)
-> > +               goto out;
-> > +
-> > +       err = fuse_compound_get_error(compound, 0);
-> > +       if (err)
-> > +               goto out;
-> > +
-> > +       ff->fh = outopenp->fh;
-> > +       ff->open_flags = outopenp->open_flags;
-> 
-> It looks like this logic is shared between here and the non-compound
-> open path, maybe a bit better to just do this in fuse_file_open()
-> instead? That way we also don't need to pass the struct fuse_file *ff
-> as an arg either.
-> 
+For reference, the build takes 0m56.492s on my laptop natively while it
+completes in 2m18.702sec on the VM. This represents a significant
+performance penalty considering running the same build on a VM using a
+virtiofs rootfs (with "--cache always" virtiofsd option) takes around
+1m32.141s. This patchset aims to bring the 9pfs build time close to
+that of virtiofs, rather than the native host time, as a realistic
+expectation.
 
-Will do that.
+This first three patches in this series focus on keeping negative
+dentries in the cache, ensuring that subsequent lookups for paths known
+to not exist do not require redundant 9P RPC calls. This optimization
+reduces the time needed for the compiler to search for header files
+across known locations. The two first patches introduce a new mount
+option, ndentrycache, which specifies the number of ms to keep the
+dentry in the cache. Using ndentrycache without value (i.e. keeping the
+negative dentry indifinetly) shrunk build time to 1m46.198s. The third
+patch enable the negative dentry caching for 24 hours by default on
+cache=loose.
 
-> > +
-> > +       err = fuse_compound_get_error(compound, 1);
-> > +       if (err)
-> > +               goto out;
-> 
-> For this open+getattr case, if getattr fails but the open succeeds,
-> should this still succeed the open since they're separable requests? I
-> think we had a conversation about it in v4, but imo this case should.
-> 
-You are right, we had the conversation and other people joined, so I
-changed this code but to something else. Sorry about that.
+The fourth patch extends page cache usage to symlinks by allowing
+p9_client_readlink() results to be cached. Resolving symlink is
+apparently something done quite frequently during the build process and
+avoiding the cost of a 9P RPC call round trip for already known symlinks
+helps reduce the build time to 1m26.602s, outperforming the virtiofs
+setup.
 
-I think your idea will work, since the behavior then is exactly what happens
-at the moment with exactly the same drawback.
+Here is summary of the different hostapd/wpa_supplicant build times:
 
-> > +
-> > +       fuse_change_attributes(inode, &outattrp->attr, NULL,
-> > +                              ATTR_TIMEOUT(outattrp),
-> > +                              fuse_get_attr_version(fc));
-> > +
-> > +out:
-> > +       fuse_compound_free(compound);
-> > +       return err;
-> > +}
-> > +
-> >  struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
-> > -                                unsigned int open_flags, bool isdir)
-> > +                               struct inode *inode,
-> 
-> As I understand it, now every open() is a opengetattr() (except for
-> the ioctl path) but is this the desired behavior? for example if there
-> was a previous FUSE_LOOKUP that was just done, doesn't this mean
-> there's no getattr that's needed since the lookup refreshed the attrs?
-> or if the server has reasonable entry_valid and attr_valid timeouts,
-> multiple opens() of the same file would only need to send FUSE_OPEN
-> and not the FUSE_GETATTR, no?
+  - Baseline (no patch): 2m18.702s
+  - negative dentry caching (patches 1-3): 1m46.198s (23% improvement)
+  - Above + symlink caching (patches 1-4): 1m26.302s (an additional 18%
+    improvement, 37% in total)
 
-So your concern is, that we send too many requests?
-If the fuse server implwments the compound that is not the case.
+With this ~37% performance gain, 9pfs with cache=loose can compete with
+virtiofs for (at least) this specific scenario. Although this benchmark
+is not the most typical, I do think that these caching optimizations
+could benefit a wide range of other workflows as well.
 
-> 
-> 
-> > +                               unsigned int open_flags, bool isdir)
-> >  {
-> >         struct fuse_conn *fc = fm->fc;
-> >         struct fuse_file *ff;
-> > @@ -163,23 +226,40 @@ struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
-> >         if (open) {
-> >                 /* Store outarg for fuse_finish_open() */
-> >                 struct fuse_open_out *outargp = &ff->args->open_outarg;
-> > -               int err;
-> > +               int err = -ENOSYS;
-> >
-> > -               err = fuse_send_open(fm, nodeid, open_flags, opcode, outargp);
-> > -               if (!err) {
-> > -                       ff->fh = outargp->fh;
-> > -                       ff->open_flags = outargp->open_flags;
-> > -               } else if (err != -ENOSYS) {
-> > -                       fuse_file_free(ff);
-> > -                       return ERR_PTR(err);
-> > -               } else {
-> > -                       if (isdir) {
-> > +               if (inode) {
-> > +                       struct fuse_attr_out attr_outarg;
-> > +
-> > +                       err = fuse_compound_open_getattr(fm, nodeid, inode,
-> > +                                                        open_flags, opcode, ff,
-> > +                                                        &attr_outarg, outargp);
-> 
-> instead of passing in &attr_outarg, what about just having that moved
-> to fuse_compound_open_getattr()?
-> 
+Changes since v2:
+  - Rename v9fs_dentry_is_{expired,refresh} to ndentry
+  - Some grammatical fixes in couple of comments
+  - Rename the negative cache mount option to ndentrycache. Using
+    ndentrycache without value enable infinite caching while
+    ndentrycache=<time> enable caching for <time> milliseconds.
+    This allows the option to be unsigned.
+  - Make it more obvious v9fs_issue_read() is only called on dotl
+    symlinks
 
-This is a victim of 'code move' already.
-I had the code to handle the outarg here before and did not change the functions
-signature, which now looks stupid.
+Changes since v1:
+  - Rebase on 9p-next (with new mount API conversion)
+  - Integrated symlink caching with the network filesystem helper
+    library for robustness (a lot of code expects a valid netfs context)
+  - Instantiate symlink dentry at creation to avoid keeping a negative
+    dentry in cache
+  - Moved IO waiting time accounting to a separate patch series
 
-> > +               }
-> > +
-> > +               if (err == -ENOSYS) {
-> > +                       err = fuse_send_open(fm, nodeid, open_flags, opcode,
-> > +                                            outargp);
-> > +                       if (!err) {
-> > +                               ff->fh = outargp->fh;
-> > +                               ff->open_flags = outargp->open_flags;
-> > +                       }
-> > +               }
-> > +
-> > +               if (err) {
-> > +                       if (err != -ENOSYS) {
-> > +                               /* err is not ENOSYS */
-> > +                               fuse_file_free(ff);
-> > +                               return ERR_PTR(err);
-> > +                       } else {
-> >                                 /* No release needed */
-> >                                 kfree(ff->args);
-> >                                 ff->args = NULL;
-> > -                               fc->no_opendir = 1;
-> > -                       } else {
-> > -                               fc->no_open = 1;
-> > +
-> > +                               /* we don't have open */
-> > +                               if (isdir)
-> > +                                       fc->no_opendir = 1;
-> > +                               else
-> > +                                       fc->no_open = 1;
-> 
-> kfree(ff->args) and ff->args = NULL should not be called for the
-> !isdir case or it leads to the deadlock that was fixed in
-> https://lore.kernel.org/linux-fsdevel/20251010220738.3674538-2-joannelkoong@gmail.com/
-> 
-> I think if you have the "ff->fh = outargp..." and "ff->open_flags =
-> ..." logic shared between fuse_compound_open_getattr() and
-> fuse_send_open() then the original errorr handling for this could just
-> be left as-is.
+Thanks.
 
-Very good argument to share the error handling then ...
+Remi Pommarel (4):
+  9p: Cache negative dentries for lookup performance
+  9p: Add mount option for negative dentry cache retention
+  9p: Set default negative dentry retention time for cache=loose
+  9p: Enable symlink caching in page cache
 
-> 
-> Thanks,
-> Joanne
-> 
+ fs/9p/fid.c             |  11 +++--
+ fs/9p/v9fs.c            |  84 +++++++++++++++++++++-----------
+ fs/9p/v9fs.h            |  28 +++++++----
+ fs/9p/v9fs_vfs.h        |  15 ++++++
+ fs/9p/vfs_addr.c        |  29 +++++++++--
+ fs/9p/vfs_dentry.c      | 105 ++++++++++++++++++++++++++++++++++------
+ fs/9p/vfs_inode.c       |  18 ++++---
+ fs/9p/vfs_inode_dotl.c  |  72 ++++++++++++++++++++++++---
+ fs/9p/vfs_super.c       |   1 +
+ include/net/9p/client.h |   2 +
+ 10 files changed, 290 insertions(+), 75 deletions(-)
 
-Thanks for taking the time,
-Horst
+-- 
+2.52.0
 
 
