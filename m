@@ -1,275 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-78724-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78725-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id IFMeKOC0oWmMvgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78724-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 16:14:40 +0100
+	id GD15LPy0oWmMvgQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78725-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 16:15:08 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id E57B51B984C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 16:14:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2459B1B986F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 16:15:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id BE379314456E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 15:10:01 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 2BE0C31898B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 15:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C8243C062;
-	Fri, 27 Feb 2026 15:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13AFE438FF1;
+	Fri, 27 Feb 2026 15:10:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="n4TpTiQo";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="frjS/mKq";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="n4TpTiQo";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="frjS/mKq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HYPB2qwQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140D043C043
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 15:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C4C436356;
+	Fri, 27 Feb 2026 15:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772204964; cv=none; b=dNJYvgkKVU/QYGaHC4Z6wAlcOYvXL5WX9gvlKZUhnWChnhCrK0Ede/P2OZEUQLH4xjaaWbKmsFaxXqiX2u3DHBfluNbb6EX2Sn6RMANF03huN+me5uYfi7jfiok7T9HVDpVfR8OXO1V3/qZSaEtL+os9pve2p1vqWfYaJ8DGIo8=
+	t=1772205019; cv=none; b=LtUN3ENMjUkmtCQURPVupM16CLwZrLsFddq1NvxUM7xUxZ/Nn+Fy8Jg3egz6KBiYl3PII8sl7/cI6h7truOruk5z8cmy9zvI/gcyYmUtvItErDV0DaUvH+jPFR3b5MvxhQnl5lXwHHxFFp0SbLn21A6WrKqTAOxCQl3cfWRO9LE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772204964; c=relaxed/simple;
-	bh=9smuQxeW6OC2ywWonZqPlrsd1307vN8mZ2S7bE9T9Ak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PTeQMMSWxa77ghE3lQX0bKxZK3CG4wgWXgLLhp1SJyanO6x2XLYONUaKXqyTJKI8Hvh3dCaFy6XhsMHmG9gs4YgdoK++zPp0ngCxMqTvYHAFJcKGZrFYPlGdSXAYNI45bC2B3755Qu1qLBVO5eaJQd7TuzdZL4AJjQUoRU4A0HQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=n4TpTiQo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=frjS/mKq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=n4TpTiQo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=frjS/mKq; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 560223FA0D;
-	Fri, 27 Feb 2026 15:09:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1772204960; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IgC4TAut0oAE46fR5Ae6UByQ/Iym7IYeieMNOTiDBXU=;
-	b=n4TpTiQo7AH/0uoo++HfsYLrlTXL8UK00zJUZSewWB+J9Xg/rbCYE6aWAksOV4N5aan7Fo
-	kaSS8i+8J2EGIq9jijKgQgKPGK9Lm6G9CjT2msnz9SDkcvRWe04rmNHCF55M7si0ZnPElF
-	Du4XWBE0zpoUUPa9Wd8ApwAtnDJs32M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1772204960;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IgC4TAut0oAE46fR5Ae6UByQ/Iym7IYeieMNOTiDBXU=;
-	b=frjS/mKqtQ041leJMmhBzqFTIWXixTqYMtKv1wh/jYW0R1WZiqPIdmGbbyC58w30PY6FeX
-	mA2R3jREjsJnubBg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=n4TpTiQo;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="frjS/mKq"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1772204960; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IgC4TAut0oAE46fR5Ae6UByQ/Iym7IYeieMNOTiDBXU=;
-	b=n4TpTiQo7AH/0uoo++HfsYLrlTXL8UK00zJUZSewWB+J9Xg/rbCYE6aWAksOV4N5aan7Fo
-	kaSS8i+8J2EGIq9jijKgQgKPGK9Lm6G9CjT2msnz9SDkcvRWe04rmNHCF55M7si0ZnPElF
-	Du4XWBE0zpoUUPa9Wd8ApwAtnDJs32M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1772204960;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IgC4TAut0oAE46fR5Ae6UByQ/Iym7IYeieMNOTiDBXU=;
-	b=frjS/mKqtQ041leJMmhBzqFTIWXixTqYMtKv1wh/jYW0R1WZiqPIdmGbbyC58w30PY6FeX
-	mA2R3jREjsJnubBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4AA553EA69;
-	Fri, 27 Feb 2026 15:09:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id nLYzEqCzoWkAFQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 27 Feb 2026 15:09:20 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0818AA06D4; Fri, 27 Feb 2026 16:09:16 +0100 (CET)
-Date: Fri, 27 Feb 2026 16:09:15 +0100
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>, 
-	linux-mm@kvack.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Tejun Heo <tj@kernel.org>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Jann Horn <jannh@google.com>, netdev@vger.kernel.org
-Subject: Re: [PATCH 05/14] pidfs: adapt to rhashtable-based simple_xattrs
-Message-ID: <qxctwu77wp7gv4ua3hn6kg7r2vt57laomn3ebjisemzzaybagy@mvoo2wpvu2ux>
-References: <20260216-work-xattr-socket-v1-0-c2efa4f74cb7@kernel.org>
- <20260216-work-xattr-socket-v1-5-c2efa4f74cb7@kernel.org>
+	s=arc-20240116; t=1772205019; c=relaxed/simple;
+	bh=wnLzP+olm9LzrB34JLMNYVuHGs1RANXyxuRdPEAj4LM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n363D492KCQqxitck7QUIPD2gY/Db9pDeSEQc84mh5ZIb2jpfdlSGtH+8jvoq3HHfDV11x9hXJuqQ9fqhphyoGL0emDohKYFYS6Msr1VfxX1XDbZS0QEwdrgZUnWt2GEgSOZM0namwzaoTP8+4x+egCVJ84YDNe6Eh/VZnYUv/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HYPB2qwQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39F42C19422;
+	Fri, 27 Feb 2026 15:10:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772205019;
+	bh=wnLzP+olm9LzrB34JLMNYVuHGs1RANXyxuRdPEAj4LM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HYPB2qwQXLk2C8IL9q1I9HlqLtkGkDzdVHLjV6VE7hiTcQYK5LpnzpfnSjqmBio5w
+	 t20CAqX2rmwxVnwn+XIonnZdCPVLaacEUSH9NJdXmZNUmTmIruEmTRQHVTfS3zcdHO
+	 dqfBZtqMpozPxkhBK4PrEk3JY0rtvIga/Litj55UZ7PraiUzUCY2Sj/ASYppcgJwgp
+	 fjbIMSj3R/CnFINYsQDMf2zgehiJZAzz+z5M5eOV12A6yor0HeNeSHsLTZHoLMC3qn
+	 iZNrwOnIXh/zzmsuEdsUwUw7dpUp4UOk86QJmw8PGr9IH25Frt/gmrxDuzUJF8p31u
+	 YAZw3N6Jcu+uw==
+Message-ID: <3cff098e-74a8-4111-babb-9c13c7ba2344@kernel.org>
+Date: Fri, 27 Feb 2026 10:10:17 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260216-work-xattr-socket-v1-5-c2efa4f74cb7@kernel.org>
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] fs: add umount notifier chain for filesystem
+ unmount notification
+To: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+ Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.com>, NeilBrown <neilb@ownmail.net>,
+ Jeff Layton <jlayton@kernel.org>, Olga Kornievskaia <okorniev@redhat.com>,
+ Dai Ngo <dai.ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+ linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Chuck Lever <chuck.lever@oracle.com>
+References: <20260224163908.44060-1-cel@kernel.org>
+ <20260224163908.44060-2-cel@kernel.org>
+ <20260226-alimente-kunst-fb9eae636deb@brauner>
+ <CAOQ4uxhEpf1p3agEF7_HBrhUeKz1Fb_yKAQ0Pjo0zztTJfMoXA@mail.gmail.com>
+ <1165a90b-acbf-4c0d-a7e3-3972eba0d35a@kernel.org>
+ <jxyalrg3a2yjtjfmdylncg7fz63jstbq6pwhhqlaaxju5sk72f@55lb7mfucc5i>
+From: Chuck Lever <cel@kernel.org>
+Content-Language: en-US
+Organization: kernel.org
+In-Reply-To: <jxyalrg3a2yjtjfmdylncg7fz63jstbq6pwhhqlaaxju5sk72f@55lb7mfucc5i>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,suse.com:email];
-	DMARC_NA(0.00)[suse.cz];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78724-lists,linux-fsdevel=lfdr.de];
-	RCPT_COUNT_TWELVE(0.00)[15];
+	TAGGED_FROM(0.00)[bounces-78725-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_TO(0.00)[suse.cz,gmail.com,kernel.org];
+	FREEMAIL_CC(0.00)[suse.com,ownmail.net,kernel.org,redhat.com,oracle.com,talpey.com,vger.kernel.org];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[suse.cz:+];
+	HAS_ORG_HEADER(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[cel@kernel.org,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MID_RHS_MATCH_FROM(0.00)[];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: E57B51B984C
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 2459B1B986F
 X-Rspamd-Action: no action
 
-On Mon 16-02-26 14:32:01, Christian Brauner wrote:
-> Adapt pidfs to use the rhashtable-based xattr path by switching from a
-> dedicated slab cache to simple_xattrs_alloc().
+On 2/26/26 8:32 AM, Jan Kara wrote:
+> On Thu 26-02-26 08:27:00, Chuck Lever wrote:
+>> On 2/26/26 5:52 AM, Amir Goldstein wrote:
+>>> On Thu, Feb 26, 2026 at 9:48 AM Christian Brauner <brauner@kernel.org> wrote:
+>>>> Another thing: These ad-hoc notifiers are horrific. So I'm pitching
+>>>> another idea and I hope that Jan and Amir can tell me that this is
+>>>> doable...
+>>>>
+>>>> Can we extend fsnotify so that it's possible for a filesystem to
+>>>> register "internal watches" on relevant objects such as mounts and
+>>>> superblocks and get notified and execute blocking stuff if needed.
+>>>>
+>>>
+>>> You mean like nfsd_file_fsnotify_group? ;)
+>>>
+>>>> Then we don't have to add another set of custom notification mechanisms
+>>>> but have it available in a single subsystem and uniformely available.
+>>>>
+>>>
+>>> I don't see a problem with nfsd registering for FS_UNMOUNT
+>>> event on sb (once we add it).
+>>>
+>>> As a matter of fact, I think that nfsd can already add an inode
+>>> mark on the export root path for FS_UNMOUNT event.
+>>
+>> There isn't much required here aside from getting a synchronous notice
+>> that the final file system unmount is going on. I'm happy to try
+>> whatever mechanism VFS maintainers are most comfortable with.
 > 
-> Previously pidfs used a custom kmem_cache (pidfs_xattr_cachep) that
-> allocated a struct containing an embedded simple_xattrs plus
-> simple_xattrs_init(). Replace this with simple_xattrs_alloc() which
-> combines kzalloc + rhashtable_init, and drop the dedicated slab cache
-> entirely.
-> 
-> Use simple_xattr_free_rcu() for replaced xattr entries to allow
-> concurrent RCU readers to finish.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> Yeah, then as Amir writes placing a mark with FS_UNMOUNT event on the
+> export root path and handling the event in
+> nfsd_file_fsnotify_handle_event() should do what you need?
 
-One question below:
+Turns out FS_UNMOUNT doesn't do what I need.
 
-> +static LLIST_HEAD(pidfs_free_list);
-> +
-> +static void pidfs_free_attr_work(struct work_struct *work)
-> +{
-> +	struct pidfs_attr *attr, *next;
-> +	struct llist_node *head;
-> +
-> +	head = llist_del_all(&pidfs_free_list);
-> +	llist_for_each_entry_safe(attr, next, head, pidfs_llist) {
-> +		struct simple_xattrs *xattrs = attr->xattrs;
-> +
-> +		if (xattrs) {
-> +			simple_xattrs_free(xattrs, NULL);
-> +			kfree(xattrs);
-> +		}
-> +		kfree(attr);
-> +	}
-> +}
-> +
-> +static DECLARE_WORK(pidfs_free_work, pidfs_free_attr_work);
-> +
+1/3 here has a fatal flaw: the SRCU notifier does not fire until all
+files on the mount are closed. The problem is that NFSD holds files
+open when there is outstanding NFSv4 state. So the SRCU notifier will
+never fire, on umount, to release that state.
 
-So you bother with postponing the freeing to a scheduled work because
-put_pid() can be called from a context where acquiring rcu to iterate
-rhashtable would not be possible? Frankly I have hard time imagining such
-context (where previous rbtree code wouldn't have issues as well), in
-particular because AFAIR rcu is safe to arbitrarily nest. What am I
-missing?
+FS_UNMOUNT notifiers have the same issue.
 
-								Honza
+They fire from fsnotify_sb_delete() inside generic_shutdown_super(),
+which runs inside deactivate_locked_super(), which runs when s_active
+drops to 0. That requires all mounts to be freed, which requires all
+NFSD files to be closed: the same problem.
+
+For any notification approach to actually do what is needed, it needs to
+fire during do_umount(), before propagate_mount_busy(). Something like:
+
+do_umount(mnt):
+    <- NEW: notify subsystems, allow them to release file refs
+    retval = propagate_mount_busy(mnt, 2)   // now passes
+    umount_tree(mnt, ...)
+
+This is what Christian's "internal watches... execute blocking stuff"
+would need to enable. The existing fsnotify plumbing (groups, marks,
+event dispatch) provides the infrastructure, but a new notification hook
+in do_umount() is required — neither fsnotify_vfsmount_delete() nor
+fsnotify_sb_delete() fires early enough.
+
+But a hook in do_umount() fires for every mount namespace teardown, not
+just admin-initiated unmounts. NFSD's callback would need to filter
+(e.g., only act when it's the last mount of a superblock that NFSD is
+exporting).
+
+This is why I originally went with fs_pin. Not saying the series should
+go back to that, but this is the basic requirement: NFSD needs
+notification of a umount request while files are still open on that
+mount, so that it can revoke the NFSv4 state and close those files.
 
 
->  void pidfs_free_pid(struct pid *pid)
->  {
-> -	struct pidfs_attr *attr __free(kfree) = no_free_ptr(pid->attr);
-> -	struct simple_xattrs *xattrs __free(kfree) = NULL;
-> +	struct pidfs_attr *attr = pid->attr;
->  
->  	/*
->  	 * Any dentry must've been wiped from the pid by now.
-> @@ -169,9 +196,10 @@ void pidfs_free_pid(struct pid *pid)
->  	if (IS_ERR(attr))
->  		return;
->  
-> -	xattrs = no_free_ptr(attr->xattrs);
-> -	if (xattrs)
-> -		simple_xattrs_free(xattrs, NULL);
-> +	if (likely(!attr->xattrs))
-> +		kfree(attr);
-> +	else if (llist_add(&attr->pidfs_llist, &pidfs_free_list))
-> +		schedule_work(&pidfs_free_work);
->  }
->  
->  #ifdef CONFIG_PROC_FS
-> @@ -998,7 +1026,7 @@ static int pidfs_xattr_get(const struct xattr_handler *handler,
->  
->  	xattrs = READ_ONCE(attr->xattrs);
->  	if (!xattrs)
-> -		return 0;
-> +		return -ENODATA;
->  
->  	name = xattr_full_name(handler, suffix);
->  	return simple_xattr_get(xattrs, name, value, size);
-> @@ -1018,22 +1046,16 @@ static int pidfs_xattr_set(const struct xattr_handler *handler,
->  	/* Ensure we're the only one to set @attr->xattrs. */
->  	WARN_ON_ONCE(!inode_is_locked(inode));
->  
-> -	xattrs = READ_ONCE(attr->xattrs);
-> -	if (!xattrs) {
-> -		xattrs = kmem_cache_zalloc(pidfs_xattr_cachep, GFP_KERNEL);
-> -		if (!xattrs)
-> -			return -ENOMEM;
-> -
-> -		simple_xattrs_init(xattrs);
-> -		smp_store_release(&pid->attr->xattrs, xattrs);
-> -	}
-> +	xattrs = simple_xattrs_lazy_alloc(&attr->xattrs, value, flags);
-> +	if (IS_ERR_OR_NULL(xattrs))
-> +		return PTR_ERR(xattrs);
->  
->  	name = xattr_full_name(handler, suffix);
->  	old_xattr = simple_xattr_set(xattrs, name, value, size, flags);
->  	if (IS_ERR(old_xattr))
->  		return PTR_ERR(old_xattr);
->  
-> -	simple_xattr_free(old_xattr);
-> +	simple_xattr_free_rcu(old_xattr);
->  	return 0;
->  }
->  
-> @@ -1108,11 +1130,6 @@ void __init pidfs_init(void)
->  					 (SLAB_HWCACHE_ALIGN | SLAB_RECLAIM_ACCOUNT |
->  					  SLAB_ACCOUNT | SLAB_PANIC), NULL);
->  
-> -	pidfs_xattr_cachep = kmem_cache_create("pidfs_xattr_cache",
-> -					       sizeof(struct simple_xattrs), 0,
-> -					       (SLAB_HWCACHE_ALIGN | SLAB_RECLAIM_ACCOUNT |
-> -						SLAB_ACCOUNT | SLAB_PANIC), NULL);
-> -
->  	pidfs_mnt = kern_mount(&pidfs_type);
->  	if (IS_ERR(pidfs_mnt))
->  		panic("Failed to mount pidfs pseudo filesystem");
-> 
-> -- 
-> 2.47.3
-> 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Chuck Lever
 
