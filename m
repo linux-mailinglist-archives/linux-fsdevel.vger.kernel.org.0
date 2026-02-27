@@ -1,302 +1,429 @@
-Return-Path: <linux-fsdevel+bounces-78716-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78717-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WEmSF/igoWnEvAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78716-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 14:49:44 +0100
+	id YINVDQetoWk3vgQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78717-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 15:41:11 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86A901B7E30
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 14:49:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 474B31B9219
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 15:41:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 9300030419EC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 13:49:38 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 54495305F550
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 14:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3123F23BA;
-	Fri, 27 Feb 2026 13:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C798286D4E;
+	Fri, 27 Feb 2026 14:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PypMnjJM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com [209.85.161.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D1D26B777
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 13:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453071A9FAF;
+	Fri, 27 Feb 2026 14:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772200174; cv=none; b=R6fKbT/vwE+HTDwHplgpqVKVsyTiIWiO2QGeBlPelAZOQGThee9CublaCEdULHKE0w5XkLbDeePW0sMXdHiKfsfKcZHE79sV2/LMM1zg2jcFKrr8eeijij/dcnvjFwUlvP7r3gy+qzdfcLKL4aWi029IIVWZwiA1oBrcSfzbBNQ=
+	t=1772202151; cv=none; b=RxOl1IPNMP9JVhGhWFourqx5ageeStpj+/u3L5aOAiaCHKD2jmxOXBtk/1vWAfC9x9jK02CRRanqWZ5k+TkTY3uS+9Gm2XEBryvIEC+EoKHG/neDYtRumY9WqDeuiSowewZdWNgSYHprmSVuwxm5C03aFeLjAiw/tnZSxn/ueuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772200174; c=relaxed/simple;
-	bh=YMDMC8FEVtqZlH7IsvBTLPfDjmYHZyM6F6jDfk2fB5w=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=E+mfOmahGZN0VoU0bYPBRLywrLfNGCXc+j4lph9YiaRInUiMci5fEirQph70xFYyZ57dKrdY9Q5Sp37I2gQlAGe6TFSiehJBPwR1PW9byCRPbucvfI4UVbzGgCSYMfuI+WApJtPaR90/rT5laViTbzP7yiVSpiCt73JHNOTEEGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-679f6f264ceso20968748eaf.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 05:49:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772200171; x=1772804971;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=t9GvV4edThET8ZS8pVmyfj1XanVmMwu7Dpx+u7H+L3Q=;
-        b=CIhi3+b6o3egyffkJtGXcVsz85fzeQujg6rEyJT61TGoc/v8DqCgIfhM5FEpNe/nBW
-         RtS7VWj6Qv1CP9HLnx/fqb6HV5YJ7+gNAuio8LQtVUjGiulVIAa4UivHfrRCyf+uqZ1M
-         dovnMrRcnC8kI4kvm28R2lYG5xqqSipd6hnPEXiRcZIC9IOlgnpA3sua/MYnLe56J9BR
-         njwLSHcxmZiOzmBC5LoYN6ydepojJdhIDJctc6x7quGmAjDh+O3gjNBita9Gs7AsZkSL
-         SZJV5kySB6wUWWpzxreO22cNgvXKIS3AinNjks5bMb8FDBP4LkAMHAQQPUktk1ZCmIn1
-         xHWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwvwFlsvq72TEGfqRDhkUFzXdObJPnaWNb/yvHzW8BNOlrbZTM8JEYNynWDjXHN1TEzJJCh0yWYpjpC86U@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd9rqarq19aVCLY2WJLuUADZmn7GASZhJFr8JkVMpv7/eYHDLI
-	XbNOf2c0RuBYOvaDsC94+E44b7uVEi4Gd7qT/P+doL+lJiz9gZ9heH1DsgMPL5Af7W6o+tcbpGJ
-	9Q/RqjY1iQ7MEM8ei0iSpSXOKvLaOJ/09Vdfqm57dAsuaUsU5sn8Glq96PRo=
+	s=arc-20240116; t=1772202151; c=relaxed/simple;
+	bh=qfT2Mr35jf7uJaOGpgAujO40WzOULEbrUPaqrBMPcXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TjypcYjhYOhPwCNIZhn4kFlQeWZl1E/JrhgGYqCbf5/WDs58KrGlGAbP7GLXojGMjp9R8yjMCUp9G/n5f55r0ZrifHQQLl5hx8CAzCElRCsG3cNkUqvFWupREYBOj2y9MsZxV4vJ0K+MC1a/xGqokmVjuxKr+t6xJALpYUJzk9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PypMnjJM; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1772202150; x=1803738150;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qfT2Mr35jf7uJaOGpgAujO40WzOULEbrUPaqrBMPcXw=;
+  b=PypMnjJMCO3GuEe4tgephfTfq566UbWMktmJMkIEUMKC8UPcKILD4uxt
+   gKa5x0zTtgZ4QbHgixhEbTUnI8yyPYlEYh4utB2b9DxzwIJ8O2qJ8ko7d
+   rFcMpm46gsiWZJh1Xk29aPl1R9fane1N2sYUt7HGtezolzTMjLTSZknkB
+   FKGRutO01R4bAuPf76Ai3LlR9Ni0fEyYTqrIBv9NDqoB28oLEhv3nVLF6
+   UE/kYpfB0czxxo6Lcwg5Jjs2TvSnoWnkWjMLOaJS1q8bcEQYPdzZTIRpv
+   s8bMKTclg+jo1nTAnaurDvy7GZOuKVvbqxWiBqtUbmOJzhq3ooMqotBey
+   w==;
+X-CSE-ConnectionGUID: Ie5fD75JS9CQjA9YrepY+g==
+X-CSE-MsgGUID: PXtDdtcFT22XyUSWyj7Ueg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11714"; a="83615063"
+X-IronPort-AV: E=Sophos;i="6.21,314,1763452800"; 
+   d="scan'208";a="83615063"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2026 06:22:29 -0800
+X-CSE-ConnectionGUID: XVZI3Zo3Sdy/HUKz8JjXpQ==
+X-CSE-MsgGUID: 0CAEpBZ+TSOXtOZ/EhbyiQ==
+X-ExtLoop1: 1
+Received: from lkp-server02.sh.intel.com (HELO a3936d6a266d) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 27 Feb 2026 06:22:26 -0800
+Received: from kbuild by a3936d6a266d with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vvyjY-00000000Aex-0R1W;
+	Fri, 27 Feb 2026 14:22:24 +0000
+Date: Fri, 27 Feb 2026 22:20:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] hpfs: obsolete check=none mount option
+Message-ID: <202602272252.89OlLXUV-lkp@intel.com>
+References: <fd8dabf8-f0a5-418a-9b3d-da981101ca86@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:4410:b0:679:8a47:abab with SMTP id
- 006d021491bc7-679faf8a790mr1482868eaf.71.1772200171470; Fri, 27 Feb 2026
- 05:49:31 -0800 (PST)
-Date: Fri, 27 Feb 2026 05:49:31 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69a1a0eb.050a0220.3a55be.0021.GAE@google.com>
-Subject: [syzbot] [ext4?] INFO: task hung in filename_rmdir
-From: syzbot <syzbot+512459401510e2a9a39f@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fd8dabf8-f0a5-418a-9b3d-da981101ca86@I-love.SAKURA.ne.jp>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.36 / 15.00];
+X-Spamd-Result: default: False [-1.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=d91443204e48b7a1];
+	MID_CONTAINS_FROM(1.00)[];
+	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
+	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
 	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	TAGGED_FROM(0.00)[bounces-78716-lists,linux-fsdevel=lfdr.de,512459401510e2a9a39f];
-	SUBJECT_HAS_QUESTION(0.00)[];
-	REDIRECTOR_URL(0.00)[goo.gl];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-78717-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	TO_DN_NONE(0.00)[];
-	R_DKIM_NA(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[appspotmail.com:email,goo.gl:url,storage.googleapis.com:url,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,syzkaller.appspot.com:url]
-X-Rspamd-Queue-Id: 86A901B7E30
+	DKIM_TRACE(0.00)[intel.com:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[lkp@intel.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[01.org:url,git-scm.com:url,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,intel.com:mid,intel.com:dkim,intel.com:email]
+X-Rspamd-Queue-Id: 474B31B9219
 X-Rspamd-Action: no action
 
-Hello,
+Hi Tetsuo,
 
-syzbot found the following issue on:
+kernel test robot noticed the following build warnings:
 
-HEAD commit:    6de23f81a5e0 Linux 7.0-rc1
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=176ad9e6580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d91443204e48b7a1
-dashboard link: https://syzkaller.appspot.com/bug?extid=512459401510e2a9a39f
-compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14630202580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11dd4006580000
+[auto build test WARNING on brauner-vfs/vfs.all]
+[also build test WARNING on linus/master linux/master v7.0-rc1 next-20260226]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/a3fcd7d8bed6/disk-6de23f81.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4956764f8450/vmlinux-6de23f81.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b9f8616ac66b/bzImage-6de23f81.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/6c600d0e3ce2/mount_0.gz
-  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=1779655a580000)
+url:    https://github.com/intel-lab-lkp/linux/commits/Tetsuo-Handa/hpfs-obsolete-check-none-mount-option/20260226-222815
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/fd8dabf8-f0a5-418a-9b3d-da981101ca86%40I-love.SAKURA.ne.jp
+patch subject: [PATCH] hpfs: obsolete check=none mount option
+config: x86_64-randconfig-r071-20260227 (https://download.01.org/0day-ci/archive/20260227/202602272252.89OlLXUV-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+smatch version: v0.5.0-8994-gd50c5a4c
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+512459401510e2a9a39f@syzkaller.appspotmail.com
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202602272252.89OlLXUV-lkp@intel.com/
 
-INFO: task syz.0.17:5981 blocked for more than 143 seconds.
-      Not tainted syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.0.17        state:D stack:29024 pid:5981  tgid:5976  ppid:5922   task_flags:0x400040 flags:0x00080002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5295 [inline]
- __schedule+0x14fb/0x52c0 kernel/sched/core.c:6907
- __schedule_loop kernel/sched/core.c:6989 [inline]
- rt_mutex_schedule+0x76/0xf0 kernel/sched/core.c:7285
- rt_mutex_slowlock_block kernel/locking/rtmutex.c:1647 [inline]
- __rt_mutex_slowlock kernel/locking/rtmutex.c:1721 [inline]
- __rt_mutex_slowlock_locked+0x1f8f/0x25c0 kernel/locking/rtmutex.c:1760
- rt_mutex_slowlock+0xbd/0x170 kernel/locking/rtmutex.c:1800
- __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
- rwbase_write_lock+0x14d/0x730 kernel/locking/rwbase_rt.c:244
- inode_lock_nested include/linux/fs.h:1073 [inline]
- __start_dirop fs/namei.c:2923 [inline]
- start_dirop fs/namei.c:2934 [inline]
- filename_rmdir+0x1cd/0x520 fs/namei.c:5386
- __do_sys_rmdir fs/namei.c:5416 [inline]
- __se_sys_rmdir+0x2e/0x140 fs/namei.c:5413
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fd6182ac629
-RSP: 002b:00007fd6178e5028 EFLAGS: 00000246 ORIG_RAX: 0000000000000054
-RAX: ffffffffffffffda RBX: 00007fd618526090 RCX: 00007fd6182ac629
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00002000000000c0
-RBP: 00007fd618342b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fd618526128 R14: 00007fd618526090 R15: 00007fff2f2a73b8
- </TASK>
+New smatch warnings:
+fs/hpfs/anode.c:92 hpfs_add_sector_to_btree() warn: inconsistent indenting
+fs/hpfs/anode.c:289 hpfs_remove_btree() warn: inconsistent indenting
+fs/hpfs/anode.c:444 hpfs_truncate_btree() warn: inconsistent indenting
+fs/hpfs/dnode.c:445 move_to_top() warn: inconsistent indenting
+fs/hpfs/dnode.c:547 delete_empty_dnode() warn: inconsistent indenting
+fs/hpfs/dnode.c:751 hpfs_count_dnodes() warn: inconsistent indenting
+fs/hpfs/dnode.c:824 hpfs_de_as_down_as_possible() warn: inconsistent indenting
+fs/hpfs/dnode.c:1056 map_fnode_dirent() warn: inconsistent indenting
 
-Showing all locks held in the system:
-1 lock held by khungtaskd/37:
- #0: ffffffff8ddcd780 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:312 [inline]
- #0: ffffffff8ddcd780 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:850 [inline]
- #0: ffffffff8ddcd780 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6775
-2 locks held by kworker/u8:3/58:
-3 locks held by kworker/1:2/863:
- #0: ffff888019c03d38 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3250 [inline]
- #0: ffff888019c03d38 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x9ea/0x1830 kernel/workqueue.c:3358
- #1: ffffc90004ca7c40 ((work_completion)(&data->fib_event_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3251 [inline]
- #1: ffffc90004ca7c40 ((work_completion)(&data->fib_event_work)){+.+.}-{0:0}, at: process_scheduled_works+0xa25/0x1830 kernel/workqueue.c:3358
- #2: ffff88805aa3e260 (&data->fib_lock){+.+.}-{4:4}, at: nsim_fib_event_work+0x222/0x3e0 drivers/net/netdevsim/fib.c:1490
-2 locks held by getty/5552:
- #0: ffff8880370f50a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90003e8b2e0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x462/0x13c0 drivers/tty/n_tty.c:2211
-6 locks held by syz.0.17/5977:
-2 locks held by syz.0.17/5981:
- #0: ffff88803704c480 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:493
- #1: ffff8880445acbf0 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:1073 [inline]
- #1: ffff8880445acbf0 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: __start_dirop fs/namei.c:2923 [inline]
- #1: ffff8880445acbf0 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: start_dirop fs/namei.c:2934 [inline]
- #1: ffff8880445acbf0 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: filename_rmdir+0x1cd/0x520 fs/namei.c:5386
-5 locks held by syz.1.18/6004:
-2 locks held by syz.1.18/6008:
- #0: ffff888027ddc480 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:493
- #1: ffff88805812b430 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:1073 [inline]
- #1: ffff88805812b430 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: __start_dirop fs/namei.c:2923 [inline]
- #1: ffff88805812b430 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: start_dirop fs/namei.c:2934 [inline]
- #1: ffff88805812b430 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: filename_rmdir+0x1cd/0x520 fs/namei.c:5386
-7 locks held by syz.2.19/6030:
-2 locks held by syz.2.19/6034:
- #0: ffff888036f74480 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:493
- #1: ffff8880581c6f90 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:1073 [inline]
- #1: ffff8880581c6f90 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: __start_dirop fs/namei.c:2923 [inline]
- #1: ffff8880581c6f90 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: start_dirop fs/namei.c:2934 [inline]
- #1: ffff8880581c6f90 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: filename_rmdir+0x1cd/0x520 fs/namei.c:5386
-8 locks held by syz.3.20/6059:
-2 locks held by syz.3.20/6063:
- #0: ffff88803c04c480 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:493
- #1: ffff88804005c010 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:1073 [inline]
- #1: ffff88804005c010 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: __start_dirop fs/namei.c:2923 [inline]
- #1: ffff88804005c010 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: start_dirop fs/namei.c:2934 [inline]
- #1: ffff88804005c010 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: filename_rmdir+0x1cd/0x520 fs/namei.c:5386
-7 locks held by syz.4.21/6098:
-2 locks held by syz.4.21/6102:
- #0: ffff88803297c480 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:493
- #1: ffff88805812e3b0 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:1073 [inline]
- #1: ffff88805812e3b0 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: __start_dirop fs/namei.c:2923 [inline]
- #1: ffff88805812e3b0 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: start_dirop fs/namei.c:2934 [inline]
- #1: ffff88805812e3b0 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: filename_rmdir+0x1cd/0x520 fs/namei.c:5386
-7 locks held by syz.5.22/6133:
-2 locks held by syz.5.22/6137:
- #0: ffff88805b0a8480 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:493
- #1: ffff888058311c70 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:1073 [inline]
- #1: ffff888058311c70 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: __start_dirop fs/namei.c:2923 [inline]
- #1: ffff888058311c70 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: start_dirop fs/namei.c:2934 [inline]
- #1: ffff888058311c70 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: filename_rmdir+0x1cd/0x520 fs/namei.c:5386
-2 locks held by syz.6.23/6167:
- #0: ffff88805e904480 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:493
- #1: ffff888044774bf0 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:1073 [inline]
- #1: ffff888044774bf0 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: __start_dirop fs/namei.c:2923 [inline]
- #1: ffff888044774bf0 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: start_dirop fs/namei.c:2934 [inline]
- #1: ffff888044774bf0 (&type->i_mutex_dir_key#3/1){+.+.}-{4:4}, at: filename_rmdir+0x1cd/0x520 fs/namei.c:5386
-7 locks held by syz.6.23/6172:
-2 locks held by syz-executor/6180:
+Old smatch warnings:
+fs/hpfs/anode.c:167 hpfs_add_sector_to_btree() warn: inconsistent indenting
+fs/hpfs/anode.c:301 hpfs_remove_btree() warn: inconsistent indenting
+fs/hpfs/anode.c:322 hpfs_remove_btree() warn: passing freed memory 'bh' (line 300)
+fs/hpfs/anode.c:452 hpfs_truncate_btree() warn: passing freed memory 'bh' (line 443)
+fs/hpfs/anode.c:470 hpfs_truncate_btree() warn: passing freed memory 'bh' (line 443)
+fs/hpfs/dnode.c:47 hpfs_add_pos() error: we previously assumed 'hpfs_inode->i_rddir_off' could be null (see line 31)
+fs/hpfs/dnode.c:786 hpfs_count_dnodes() warn: inconsistent indenting
+fs/hpfs/dnode.c:1074 map_fnode_dirent() warn: inconsistent indenting
 
-=============================================
+vim +92 fs/hpfs/anode.c
 
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 37 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2026
-Call Trace:
- <TASK>
- dump_stack_lvl+0xe8/0x150 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x274/0x2d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:161 [inline]
- __sys_info lib/sys_info.c:157 [inline]
- sys_info+0x135/0x170 lib/sys_info.c:165
- check_hung_uninterruptible_tasks kernel/hung_task.c:346 [inline]
- watchdog+0xfd9/0x1030 kernel/hung_task.c:515
- kthread+0x388/0x470 kernel/kthread.c:467
- ret_from_fork+0x51e/0xb90 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 58 Comm: kworker/u8:3 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2026
-Workqueue: bat_events batadv_dat_purge
-RIP: 0010:__lock_acquire+0x273/0x2cf0 kernel/locking/lockdep.c:-1
-Code: e8 f2 93 39 03 4d 89 f1 48 8b 74 24 18 44 8b 74 24 20 48 83 bc 24 20 01 00 00 00 0f 85 ce fe ff ff 44 89 74 24 20 44 89 3c 24 <8b> bc 24 38 01 00 00 4c 8b 84 24 28 01 00 00 4c 8b 74 24 08 4d 8d
-RSP: 0018:ffffc9000124f800 EFLAGS: 00000046
-RAX: 0000000000000113 RBX: 0000000000000000 RCX: ffffffff92f693f0
-RDX: 0000000000000005 RSI: 000000000000000b RDI: ffffffff8ddcd780
-RBP: 0000000000000005 R08: 0000000000000000 R09: ffffffff8ddcd780
-R10: dffffc0000000000 R11: fffffbfff1ed44b7 R12: 0000000000000000
-R13: 0000000000000002 R14: 0000000000000000 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff888126443000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fe67c399068 CR3: 0000000039862000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- lock_acquire+0xf0/0x2e0 kernel/locking/lockdep.c:5868
- rcu_lock_acquire include/linux/rcupdate.h:312 [inline]
- rcu_read_lock include/linux/rcupdate.h:850 [inline]
- __rt_spin_lock kernel/locking/spinlock_rt.c:50 [inline]
- rt_spin_lock+0x1fc/0x400 kernel/locking/spinlock_rt.c:57
- spin_lock_bh include/linux/spinlock_rt.h:90 [inline]
- __batadv_dat_purge+0x131/0x400 net/batman-adv/distributed-arp-table.c:173
- batadv_dat_purge+0x20/0x70 net/batman-adv/distributed-arp-table.c:204
- process_one_work kernel/workqueue.c:3275 [inline]
- process_scheduled_works+0xb02/0x1830 kernel/workqueue.c:3358
- worker_thread+0xa50/0xfc0 kernel/workqueue.c:3439
- kthread+0x388/0x470 kernel/kthread.c:467
- ret_from_fork+0x51e/0xb90 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+^1da177e4c3f41 Linus Torvalds      2005-04-16   60  
+^1da177e4c3f41 Linus Torvalds      2005-04-16   61  secno hpfs_add_sector_to_btree(struct super_block *s, secno node, int fnod, unsigned fsecno)
+^1da177e4c3f41 Linus Torvalds      2005-04-16   62  {
+^1da177e4c3f41 Linus Torvalds      2005-04-16   63  	struct bplus_header *btree;
+^1da177e4c3f41 Linus Torvalds      2005-04-16   64  	struct anode *anode = NULL, *ranode = NULL;
+^1da177e4c3f41 Linus Torvalds      2005-04-16   65  	struct fnode *fnode;
+^1da177e4c3f41 Linus Torvalds      2005-04-16   66  	anode_secno a, na = -1, ra, up = -1;
+^1da177e4c3f41 Linus Torvalds      2005-04-16   67  	secno se;
+^1da177e4c3f41 Linus Torvalds      2005-04-16   68  	struct buffer_head *bh, *bh1, *bh2;
+^1da177e4c3f41 Linus Torvalds      2005-04-16   69  	int n;
+^1da177e4c3f41 Linus Torvalds      2005-04-16   70  	unsigned fs;
+^1da177e4c3f41 Linus Torvalds      2005-04-16   71  	int c1, c2 = 0;
+68a74490629eb6 Gustavo A. R. Silva 2025-08-11   72  
+^1da177e4c3f41 Linus Torvalds      2005-04-16   73  	if (fnod) {
+^1da177e4c3f41 Linus Torvalds      2005-04-16   74  		if (!(fnode = hpfs_map_fnode(s, node, &bh))) return -1;
+68a74490629eb6 Gustavo A. R. Silva 2025-08-11   75  		btree = GET_BTREE_PTR(&fnode->btree);
+^1da177e4c3f41 Linus Torvalds      2005-04-16   76  	} else {
+^1da177e4c3f41 Linus Torvalds      2005-04-16   77  		if (!(anode = hpfs_map_anode(s, node, &bh))) return -1;
+68a74490629eb6 Gustavo A. R. Silva 2025-08-11   78  		btree = GET_BTREE_PTR(&anode->btree);
+^1da177e4c3f41 Linus Torvalds      2005-04-16   79  	}
+^1da177e4c3f41 Linus Torvalds      2005-04-16   80  	a = node;
+^1da177e4c3f41 Linus Torvalds      2005-04-16   81  	go_down:
+^1da177e4c3f41 Linus Torvalds      2005-04-16   82  	if ((n = btree->n_used_nodes - 1) < -!!fnod) {
+^1da177e4c3f41 Linus Torvalds      2005-04-16   83  		hpfs_error(s, "anode %08x has no entries", a);
+^1da177e4c3f41 Linus Torvalds      2005-04-16   84  		brelse(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16   85  		return -1;
+^1da177e4c3f41 Linus Torvalds      2005-04-16   86  	}
+ddc19e6e04c113 Al Viro             2012-04-17   87  	if (bp_internal(btree)) {
+0b69760be6968c Mikulas Patocka     2011-05-08   88  		a = le32_to_cpu(btree->u.internal[n].down);
+0b69760be6968c Mikulas Patocka     2011-05-08   89  		btree->u.internal[n].file_secno = cpu_to_le32(-1);
+^1da177e4c3f41 Linus Torvalds      2005-04-16   90  		mark_buffer_dirty(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16   91  		brelse(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  @92  			if (hpfs_stop_cycles(s, a, &c1, &c2, "hpfs_add_sector_to_btree #1")) return -1;
+^1da177e4c3f41 Linus Torvalds      2005-04-16   93  		if (!(anode = hpfs_map_anode(s, a, &bh))) return -1;
+68a74490629eb6 Gustavo A. R. Silva 2025-08-11   94  		btree = GET_BTREE_PTR(&anode->btree);
+^1da177e4c3f41 Linus Torvalds      2005-04-16   95  		goto go_down;
+^1da177e4c3f41 Linus Torvalds      2005-04-16   96  	}
+^1da177e4c3f41 Linus Torvalds      2005-04-16   97  	if (n >= 0) {
+0b69760be6968c Mikulas Patocka     2011-05-08   98  		if (le32_to_cpu(btree->u.external[n].file_secno) + le32_to_cpu(btree->u.external[n].length) != fsecno) {
+^1da177e4c3f41 Linus Torvalds      2005-04-16   99  			hpfs_error(s, "allocated size %08x, trying to add sector %08x, %cnode %08x",
+0b69760be6968c Mikulas Patocka     2011-05-08  100  				le32_to_cpu(btree->u.external[n].file_secno) + le32_to_cpu(btree->u.external[n].length), fsecno,
+^1da177e4c3f41 Linus Torvalds      2005-04-16  101  				fnod?'f':'a', node);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  102  			brelse(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  103  			return -1;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  104  		}
+0b69760be6968c Mikulas Patocka     2011-05-08  105  		if (hpfs_alloc_if_possible(s, se = le32_to_cpu(btree->u.external[n].disk_secno) + le32_to_cpu(btree->u.external[n].length))) {
+32daab969cc16e Wei Yongjun         2012-10-04  106  			le32_add_cpu(&btree->u.external[n].length, 1);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  107  			mark_buffer_dirty(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  108  			brelse(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  109  			return se;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  110  		}
+^1da177e4c3f41 Linus Torvalds      2005-04-16  111  	} else {
+^1da177e4c3f41 Linus Torvalds      2005-04-16  112  		if (fsecno) {
+^1da177e4c3f41 Linus Torvalds      2005-04-16  113  			hpfs_error(s, "empty file %08x, trying to add sector %08x", node, fsecno);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  114  			brelse(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  115  			return -1;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  116  		}
+^1da177e4c3f41 Linus Torvalds      2005-04-16  117  		se = !fnod ? node : (node + 16384) & ~16383;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  118  	}	
+7d23ce36e3f52f Mikulas Patocka     2011-05-08  119  	if (!(se = hpfs_alloc_sector(s, se, 1, fsecno*ALLOC_M>ALLOC_FWD_MAX ? ALLOC_FWD_MAX : fsecno*ALLOC_M<ALLOC_FWD_MIN ? ALLOC_FWD_MIN : fsecno*ALLOC_M))) {
+^1da177e4c3f41 Linus Torvalds      2005-04-16  120  		brelse(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  121  		return -1;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  122  	}
+0b69760be6968c Mikulas Patocka     2011-05-08  123  	fs = n < 0 ? 0 : le32_to_cpu(btree->u.external[n].file_secno) + le32_to_cpu(btree->u.external[n].length);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  124  	if (!btree->n_free_nodes) {
+0b69760be6968c Mikulas Patocka     2011-05-08  125  		up = a != node ? le32_to_cpu(anode->up) : -1;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  126  		if (!(anode = hpfs_alloc_anode(s, a, &na, &bh1))) {
+^1da177e4c3f41 Linus Torvalds      2005-04-16  127  			brelse(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  128  			hpfs_free_sectors(s, se, 1);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  129  			return -1;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  130  		}
+^1da177e4c3f41 Linus Torvalds      2005-04-16  131  		if (a == node && fnod) {
+0b69760be6968c Mikulas Patocka     2011-05-08  132  			anode->up = cpu_to_le32(node);
+ddc19e6e04c113 Al Viro             2012-04-17  133  			anode->btree.flags |= BP_fnode_parent;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  134  			anode->btree.n_used_nodes = btree->n_used_nodes;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  135  			anode->btree.first_free = btree->first_free;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  136  			anode->btree.n_free_nodes = 40 - anode->btree.n_used_nodes;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  137  			memcpy(&anode->u, &btree->u, btree->n_used_nodes * 12);
+ddc19e6e04c113 Al Viro             2012-04-17  138  			btree->flags |= BP_internal;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  139  			btree->n_free_nodes = 11;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  140  			btree->n_used_nodes = 1;
+0b69760be6968c Mikulas Patocka     2011-05-08  141  			btree->first_free = cpu_to_le16((char *)&(btree->u.internal[1]) - (char *)btree);
+0b69760be6968c Mikulas Patocka     2011-05-08  142  			btree->u.internal[0].file_secno = cpu_to_le32(-1);
+0b69760be6968c Mikulas Patocka     2011-05-08  143  			btree->u.internal[0].down = cpu_to_le32(na);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  144  			mark_buffer_dirty(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  145  		} else if (!(ranode = hpfs_alloc_anode(s, /*a*/0, &ra, &bh2))) {
+^1da177e4c3f41 Linus Torvalds      2005-04-16  146  			brelse(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  147  			brelse(bh1);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  148  			hpfs_free_sectors(s, se, 1);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  149  			hpfs_free_sectors(s, na, 1);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  150  			return -1;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  151  		}
+^1da177e4c3f41 Linus Torvalds      2005-04-16  152  		brelse(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  153  		bh = bh1;
+68a74490629eb6 Gustavo A. R. Silva 2025-08-11  154  		btree = GET_BTREE_PTR(&anode->btree);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  155  	}
+^1da177e4c3f41 Linus Torvalds      2005-04-16  156  	btree->n_free_nodes--; n = btree->n_used_nodes++;
+32daab969cc16e Wei Yongjun         2012-10-04  157  	le16_add_cpu(&btree->first_free, 12);
+0b69760be6968c Mikulas Patocka     2011-05-08  158  	btree->u.external[n].disk_secno = cpu_to_le32(se);
+0b69760be6968c Mikulas Patocka     2011-05-08  159  	btree->u.external[n].file_secno = cpu_to_le32(fs);
+0b69760be6968c Mikulas Patocka     2011-05-08  160  	btree->u.external[n].length = cpu_to_le32(1);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  161  	mark_buffer_dirty(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  162  	brelse(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  163  	if ((a == node && fnod) || na == -1) return se;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  164  	c2 = 0;
+0b69760be6968c Mikulas Patocka     2011-05-08  165  	while (up != (anode_secno)-1) {
+^1da177e4c3f41 Linus Torvalds      2005-04-16  166  		struct anode *new_anode;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  167  			if (hpfs_stop_cycles(s, up, &c1, &c2, "hpfs_add_sector_to_btree #2")) return -1;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  168  		if (up != node || !fnod) {
+^1da177e4c3f41 Linus Torvalds      2005-04-16  169  			if (!(anode = hpfs_map_anode(s, up, &bh))) return -1;
+68a74490629eb6 Gustavo A. R. Silva 2025-08-11  170  			btree = GET_BTREE_PTR(&anode->btree);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  171  		} else {
+^1da177e4c3f41 Linus Torvalds      2005-04-16  172  			if (!(fnode = hpfs_map_fnode(s, up, &bh))) return -1;
+68a74490629eb6 Gustavo A. R. Silva 2025-08-11  173  			btree = GET_BTREE_PTR(&fnode->btree);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  174  		}
+^1da177e4c3f41 Linus Torvalds      2005-04-16  175  		if (btree->n_free_nodes) {
+^1da177e4c3f41 Linus Torvalds      2005-04-16  176  			btree->n_free_nodes--; n = btree->n_used_nodes++;
+32daab969cc16e Wei Yongjun         2012-10-04  177  			le16_add_cpu(&btree->first_free, 8);
+0b69760be6968c Mikulas Patocka     2011-05-08  178  			btree->u.internal[n].file_secno = cpu_to_le32(-1);
+0b69760be6968c Mikulas Patocka     2011-05-08  179  			btree->u.internal[n].down = cpu_to_le32(na);
+0b69760be6968c Mikulas Patocka     2011-05-08  180  			btree->u.internal[n-1].file_secno = cpu_to_le32(fs);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  181  			mark_buffer_dirty(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  182  			brelse(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  183  			brelse(bh2);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  184  			hpfs_free_sectors(s, ra, 1);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  185  			if ((anode = hpfs_map_anode(s, na, &bh))) {
+0b69760be6968c Mikulas Patocka     2011-05-08  186  				anode->up = cpu_to_le32(up);
+ddc19e6e04c113 Al Viro             2012-04-17  187  				if (up == node && fnod)
+ddc19e6e04c113 Al Viro             2012-04-17  188  					anode->btree.flags |= BP_fnode_parent;
+ddc19e6e04c113 Al Viro             2012-04-17  189  				else
+ddc19e6e04c113 Al Viro             2012-04-17  190  					anode->btree.flags &= ~BP_fnode_parent;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  191  				mark_buffer_dirty(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  192  				brelse(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  193  			}
+^1da177e4c3f41 Linus Torvalds      2005-04-16  194  			return se;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  195  		}
+0b69760be6968c Mikulas Patocka     2011-05-08  196  		up = up != node ? le32_to_cpu(anode->up) : -1;
+0b69760be6968c Mikulas Patocka     2011-05-08  197  		btree->u.internal[btree->n_used_nodes - 1].file_secno = cpu_to_le32(/*fs*/-1);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  198  		mark_buffer_dirty(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  199  		brelse(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  200  		a = na;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  201  		if ((new_anode = hpfs_alloc_anode(s, a, &na, &bh))) {
+^1da177e4c3f41 Linus Torvalds      2005-04-16  202  			anode = new_anode;
+0b69760be6968c Mikulas Patocka     2011-05-08  203  			/*anode->up = cpu_to_le32(up != -1 ? up : ra);*/
+ddc19e6e04c113 Al Viro             2012-04-17  204  			anode->btree.flags |= BP_internal;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  205  			anode->btree.n_used_nodes = 1;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  206  			anode->btree.n_free_nodes = 59;
+0b69760be6968c Mikulas Patocka     2011-05-08  207  			anode->btree.first_free = cpu_to_le16(16);
+68a74490629eb6 Gustavo A. R. Silva 2025-08-11  208  			GET_BTREE_PTR(&anode->btree)->u.internal[0].down = cpu_to_le32(a);
+68a74490629eb6 Gustavo A. R. Silva 2025-08-11  209  			GET_BTREE_PTR(&anode->btree)->u.internal[0].file_secno = cpu_to_le32(-1);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  210  			mark_buffer_dirty(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  211  			brelse(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  212  			if ((anode = hpfs_map_anode(s, a, &bh))) {
+0b69760be6968c Mikulas Patocka     2011-05-08  213  				anode->up = cpu_to_le32(na);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  214  				mark_buffer_dirty(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  215  				brelse(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  216  			}
+^1da177e4c3f41 Linus Torvalds      2005-04-16  217  		} else na = a;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  218  	}
+^1da177e4c3f41 Linus Torvalds      2005-04-16  219  	if ((anode = hpfs_map_anode(s, na, &bh))) {
+0b69760be6968c Mikulas Patocka     2011-05-08  220  		anode->up = cpu_to_le32(node);
+ddc19e6e04c113 Al Viro             2012-04-17  221  		if (fnod)
+ddc19e6e04c113 Al Viro             2012-04-17  222  			anode->btree.flags |= BP_fnode_parent;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  223  		mark_buffer_dirty(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  224  		brelse(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  225  	}
+^1da177e4c3f41 Linus Torvalds      2005-04-16  226  	if (!fnod) {
+^1da177e4c3f41 Linus Torvalds      2005-04-16  227  		if (!(anode = hpfs_map_anode(s, node, &bh))) {
+^1da177e4c3f41 Linus Torvalds      2005-04-16  228  			brelse(bh2);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  229  			return -1;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  230  		}
+68a74490629eb6 Gustavo A. R. Silva 2025-08-11  231  		btree = GET_BTREE_PTR(&anode->btree);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  232  	} else {
+^1da177e4c3f41 Linus Torvalds      2005-04-16  233  		if (!(fnode = hpfs_map_fnode(s, node, &bh))) {
+^1da177e4c3f41 Linus Torvalds      2005-04-16  234  			brelse(bh2);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  235  			return -1;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  236  		}
+68a74490629eb6 Gustavo A. R. Silva 2025-08-11  237  		btree = GET_BTREE_PTR(&fnode->btree);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  238  	}
+0b69760be6968c Mikulas Patocka     2011-05-08  239  	ranode->up = cpu_to_le32(node);
+0b69760be6968c Mikulas Patocka     2011-05-08  240  	memcpy(&ranode->btree, btree, le16_to_cpu(btree->first_free));
+ddc19e6e04c113 Al Viro             2012-04-17  241  	if (fnod)
+ddc19e6e04c113 Al Viro             2012-04-17  242  		ranode->btree.flags |= BP_fnode_parent;
+68a74490629eb6 Gustavo A. R. Silva 2025-08-11  243  	GET_BTREE_PTR(&ranode->btree)->n_free_nodes = (bp_internal(GET_BTREE_PTR(&ranode->btree)) ? 60 : 40) - GET_BTREE_PTR(&ranode->btree)->n_used_nodes;
+68a74490629eb6 Gustavo A. R. Silva 2025-08-11  244  	if (bp_internal(GET_BTREE_PTR(&ranode->btree))) for (n = 0; n < GET_BTREE_PTR(&ranode->btree)->n_used_nodes; n++) {
+^1da177e4c3f41 Linus Torvalds      2005-04-16  245  		struct anode *unode;
+0b69760be6968c Mikulas Patocka     2011-05-08  246  		if ((unode = hpfs_map_anode(s, le32_to_cpu(ranode->u.internal[n].down), &bh1))) {
+0b69760be6968c Mikulas Patocka     2011-05-08  247  			unode->up = cpu_to_le32(ra);
+ddc19e6e04c113 Al Viro             2012-04-17  248  			unode->btree.flags &= ~BP_fnode_parent;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  249  			mark_buffer_dirty(bh1);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  250  			brelse(bh1);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  251  		}
+^1da177e4c3f41 Linus Torvalds      2005-04-16  252  	}
+ddc19e6e04c113 Al Viro             2012-04-17  253  	btree->flags |= BP_internal;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  254  	btree->n_free_nodes = fnod ? 10 : 58;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  255  	btree->n_used_nodes = 2;
+0b69760be6968c Mikulas Patocka     2011-05-08  256  	btree->first_free = cpu_to_le16((char *)&btree->u.internal[2] - (char *)btree);
+0b69760be6968c Mikulas Patocka     2011-05-08  257  	btree->u.internal[0].file_secno = cpu_to_le32(fs);
+0b69760be6968c Mikulas Patocka     2011-05-08  258  	btree->u.internal[0].down = cpu_to_le32(ra);
+0b69760be6968c Mikulas Patocka     2011-05-08  259  	btree->u.internal[1].file_secno = cpu_to_le32(-1);
+0b69760be6968c Mikulas Patocka     2011-05-08  260  	btree->u.internal[1].down = cpu_to_le32(na);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  261  	mark_buffer_dirty(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  262  	brelse(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  263  	mark_buffer_dirty(bh2);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  264  	brelse(bh2);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  265  	return se;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  266  }
+^1da177e4c3f41 Linus Torvalds      2005-04-16  267  
+^1da177e4c3f41 Linus Torvalds      2005-04-16  268  /*
+^1da177e4c3f41 Linus Torvalds      2005-04-16  269   * Remove allocation tree. Recursion would look much nicer but
+^1da177e4c3f41 Linus Torvalds      2005-04-16  270   * I want to avoid it because it can cause stack overflow.
+^1da177e4c3f41 Linus Torvalds      2005-04-16  271   */
+^1da177e4c3f41 Linus Torvalds      2005-04-16  272  
+^1da177e4c3f41 Linus Torvalds      2005-04-16  273  void hpfs_remove_btree(struct super_block *s, struct bplus_header *btree)
+^1da177e4c3f41 Linus Torvalds      2005-04-16  274  {
+^1da177e4c3f41 Linus Torvalds      2005-04-16  275  	struct bplus_header *btree1 = btree;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  276  	struct anode *anode = NULL;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  277  	anode_secno ano = 0, oano;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  278  	struct buffer_head *bh;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  279  	int level = 0;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  280  	int pos = 0;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  281  	int i;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  282  	int c1, c2 = 0;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  283  	int d1, d2;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  284  	go_down:
+^1da177e4c3f41 Linus Torvalds      2005-04-16  285  	d2 = 0;
+ddc19e6e04c113 Al Viro             2012-04-17  286  	while (bp_internal(btree1)) {
+0b69760be6968c Mikulas Patocka     2011-05-08  287  		ano = le32_to_cpu(btree1->u.internal[pos].down);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  288  		if (level) brelse(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16 @289  			if (hpfs_stop_cycles(s, ano, &d1, &d2, "hpfs_remove_btree #1"))
+^1da177e4c3f41 Linus Torvalds      2005-04-16  290  				return;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  291  		if (!(anode = hpfs_map_anode(s, ano, &bh))) return;
+68a74490629eb6 Gustavo A. R. Silva 2025-08-11  292  		btree1 = GET_BTREE_PTR(&anode->btree);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  293  		level++;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  294  		pos = 0;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  295  	}
+^1da177e4c3f41 Linus Torvalds      2005-04-16  296  	for (i = 0; i < btree1->n_used_nodes; i++)
+0b69760be6968c Mikulas Patocka     2011-05-08  297  		hpfs_free_sectors(s, le32_to_cpu(btree1->u.external[i].disk_secno), le32_to_cpu(btree1->u.external[i].length));
+^1da177e4c3f41 Linus Torvalds      2005-04-16  298  	go_up:
+^1da177e4c3f41 Linus Torvalds      2005-04-16  299  	if (!level) return;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  300  	brelse(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  301  		if (hpfs_stop_cycles(s, ano, &c1, &c2, "hpfs_remove_btree #2")) return;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  302  	hpfs_free_sectors(s, ano, 1);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  303  	oano = ano;
+0b69760be6968c Mikulas Patocka     2011-05-08  304  	ano = le32_to_cpu(anode->up);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  305  	if (--level) {
+^1da177e4c3f41 Linus Torvalds      2005-04-16  306  		if (!(anode = hpfs_map_anode(s, ano, &bh))) return;
+68a74490629eb6 Gustavo A. R. Silva 2025-08-11  307  		btree1 = GET_BTREE_PTR(&anode->btree);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  308  	} else btree1 = btree;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  309  	for (i = 0; i < btree1->n_used_nodes; i++) {
+0b69760be6968c Mikulas Patocka     2011-05-08  310  		if (le32_to_cpu(btree1->u.internal[i].down) == oano) {
+^1da177e4c3f41 Linus Torvalds      2005-04-16  311  			if ((pos = i + 1) < btree1->n_used_nodes)
+^1da177e4c3f41 Linus Torvalds      2005-04-16  312  				goto go_down;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  313  			else
+^1da177e4c3f41 Linus Torvalds      2005-04-16  314  				goto go_up;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  315  		}
+^1da177e4c3f41 Linus Torvalds      2005-04-16  316  	}
+^1da177e4c3f41 Linus Torvalds      2005-04-16  317  	hpfs_error(s,
+^1da177e4c3f41 Linus Torvalds      2005-04-16  318  		   "reference to anode %08x not found in anode %08x "
+^1da177e4c3f41 Linus Torvalds      2005-04-16  319  		   "(probably bad up pointer)",
+^1da177e4c3f41 Linus Torvalds      2005-04-16  320  		   oano, level ? ano : -1);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  321  	if (level)
+^1da177e4c3f41 Linus Torvalds      2005-04-16  322  		brelse(bh);
+^1da177e4c3f41 Linus Torvalds      2005-04-16  323  }
+^1da177e4c3f41 Linus Torvalds      2005-04-16  324  
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
