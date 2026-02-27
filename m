@@ -1,205 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-78762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78763-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WCUiAVTfoWlcwgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 19:15:48 +0100
+	id oAHRI0/moWmUwwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78763-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 19:45:35 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B7661BBDC9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 19:15:47 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBE551BC235
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 19:45:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 75B2B30F6C9C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 18:12:41 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4B2E0309344C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 18:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8E535D5F8;
-	Fri, 27 Feb 2026 18:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031F23A1A26;
+	Fri, 27 Feb 2026 18:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="bpIh67kD"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="F6U9hWoD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA76636B05A;
-	Fri, 27 Feb 2026 18:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4EDB30EF96
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 18:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772215959; cv=none; b=o7bjubQvYD7titQW7xfOUofYcxWfFoxPSQYZ3p/LD2RFrVf22pa6FZWXsLAGNGJJdD6W+Q9ZS9hg4jYS85SU4NGfFE/8w/fDJcCxse4eYwd044qUaf6Fd3MQDKcwkQitB0ky+a/piblPepQ9dnozGw4MkL/pAIJ065OUqyWrANI=
+	t=1772217929; cv=none; b=c13pDMczGc9+BCnpP7V0cz3abwrmn9MR7RQEjZDBEvX7lXV6LTXyEm9/yBqBVOXwHAY0Jh+sJgaEULoTA4K2BgmHTG3rRKJrBwg9AqM+Y9RP1k+HfmywiBEB9OtzFo7ZDatHZHGkzlBPaREYYPd25NmARNdps3BfeV5+YlCHYU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772215959; c=relaxed/simple;
-	bh=gYxbqG8k+xasiN54/GEPSiW3fJoxtQS8sCev+XNK1FU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=OgIBeBydlISg/PgabveYJr5Ext7PgpOhg7HjaevJBtiR/cDVRbdKqIsYklNBlEa1FYZtiX6e8TFw6YDg2lMyTAcnTIw+El91Yef8blptAA3qsUIsbb+pH/ErdQAvByquBnqqxeorWOCCD2Om5Q/O7Q21aQ6bafPySVu9brEE7Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=bpIh67kD; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	To:From:Sender:Reply-To:Cc:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=TXz5r/Smk/Jr8ClBPbDf+2+KCLgaYCb3Cg5DtS0mJz0=; b=bpIh67kDNgkmSMFkSjd2PUtMay
-	DwCi7vbetHQCZKE6KIf3tkY6rk4WuT/evRoDacYEgldVOz76skE895DpLOdgBFsbNe21LI7SFNxRl
-	vOytEdaGPhmLE7Z+oGCb/LYd+jQxgSGOqZ6IKH0vaFg7qrv7n0IcuwPziGsK7+S9bCPQX/GwOGaMU
-	plvS9beReydjGyOWfkEKy5kgZPE8Ik/9110//OOX7QnOEXEnmkTIRMcA0+OsFcNuDBzquRITC/GkE
-	T3Zwh+LOSDtAiGuTJghVe7bUXBnlIJc+c7+NeWdCn/R80Lb5IUdA1cB0JkSwaJIv+OXdzDOrTLj3l
-	ruMG3S2w==;
-Received: from [191.54.27.153] (helo=toolbx)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vw2K0-006dFM-Al; Fri, 27 Feb 2026 19:12:16 +0100
-From: Helen Koike <koike@igalia.com>
-To: shaggy@kernel.org,
-	koike@igalia.com,
-	jfs-discussion@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	kernel-dev@igalia.com
-Subject: [PATCH] jfs: hold LOG_LOCK on umount to avoid null-ptr-deref
-Date: Fri, 27 Feb 2026 15:11:50 -0300
-Message-ID: <20260227181150.736848-1-koike@igalia.com>
-X-Mailer: git-send-email 2.53.0
+	s=arc-20240116; t=1772217929; c=relaxed/simple;
+	bh=OV59z+v8QXYIGkHgeQ0HgUC5XX0G029Y4uNdyFJsBic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q9XqIuFg/JWWOODqzx1L0o6xZnI6lf0tAR0m+wIbYduyQoe3DDHncmdbAN9ol5fXbDfMgVpfQQUROwQNHG1/JIyuECzqMChONXzYzv5/ob8ghwfOSL85tS9KlITg819lt3nXWvrYJZczh6JUeytN6AzegPXFwXy4Dai83Z6g9r4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=F6U9hWoD; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=xf/Xguk0i0ou334iTYbS1A9S5uLdl09+LA+LZNhDHek=; b=F6U9hWoDvVZ67toI1R9jIhZ8lD
+	txK0qWYl6fjvhcwLoxzWjbE8iq4KmO8hZdkik7VQSR4WylINNAhn5Vhmt+w0wB52D6GeoZzFNGSiT
+	CTJQUgB4/i8HB4mncSjT0yGs/uvljG3OdB9Y7XoBDZ5utrqYFZCHBL5yYKGVbjJuqJT/2K1+yLl7D
+	6r6VJbWeJ7YTw4z/9uCwkFIg8RkchmjFQUb15rNslMhr7WIqiuuOy+B5OwyejfKJgXa5v9zEK98ZN
+	mEdA+S4qp3dIM/2zb4esN++JiGNzeVyKWNtP0rt44sYw67FjdVBRiGSTRRpQdfJ4oEfuoN9hx+/e4
+	i5jTRqRg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1vw2se-00000008qsT-1AVr;
+	Fri, 27 Feb 2026 18:48:04 +0000
+Date: Fri, 27 Feb 2026 18:48:04 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: hooanon05g@gmail.com
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: v7.0-rc1, name_to_handle_at(..., AT_EMPTY_PATH)
+Message-ID: <20260227184804.GC3836593@ZenIV>
+References: <14544.1772189098@jrotkm2>
+ <20260227152211.GB3836593@ZenIV>
+ <26309.1772206864@jrotkm2>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <26309.1772206864@jrotkm2>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [1.14 / 15.00];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_DKIM_REJECT(1.00)[igalia.com:s=20170329];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[zeniv.linux.org.uk,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[linux.org.uk:s=zeniv-20220401];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	DMARC_POLICY_SOFTFAIL(0.10)[igalia.com : SPF not aligned (relaxed),none];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78762-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
-	TO_DN_NONE(0.00)[];
+	RCPT_COUNT_TWO(0.00)[2];
+	TAGGED_FROM(0.00)[bounces-78763-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
 	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	PRECEDENCE_BULK(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[koike@igalia.com,linux-fsdevel@vger.kernel.org];
+	TO_DN_NONE(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[viro@zeniv.linux.org.uk,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[linux.org.uk:+];
+	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	NEURAL_HAM(-0.00)[-0.931];
-	DKIM_TRACE(0.00)[igalia.com:-];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	RCPT_COUNT_FIVE(0.00)[6];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,appspotmail.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 6B7661BBDC9
+	MIME_TRACE(0.00)[0:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: DBE551BC235
 X-Rspamd-Action: no action
 
-write_special_inodes() function iterate through the log->sb_list and
-access the sbi fields, which can be set to NULL concurrently by umount.
+On Sat, Feb 28, 2026 at 12:41:04AM +0900, hooanon05g@gmail.com wrote:
+> Al Viro:
+> > This
+> > struct filename *getname_uflags(const char __user *filename, int uflags)
+> > {
+> >         int flags = (uflags & AT_EMPTY_PATH) ? LOOKUP_EMPTY : 0;
+> >
+> > 	return getname_flags(filename, flags);
+> > }
+> > is where AT_EMPTY_PATH is handled; could you check the arguuments it's getting
+> > in your reproducer and argument passed to getname_flags()?
+> 
+> getname_flags() is not a problem.
+> For me, the problem looks that LOOKUP_EMPTY is NOT passed to
+> path_lookupat().
 
-Fix concurrency issue by holding LOG_LOCK and checking for NULL.
+Could you please show me a single place in path_lookupat() where we would
+check for for LOOKUP_EMPTY?
 
-Reported-by: syzbot+e14b1036481911ae4d77@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=e14b1036481911ae4d77
-Signed-off-by: Helen Koike <koike@igalia.com>
----
- fs/jfs/jfs_logmgr.c | 16 +++++++---------
- fs/jfs/jfs_logmgr.h |  7 +++++++
- fs/jfs/jfs_umount.c | 10 ++++++++++
- 3 files changed, 24 insertions(+), 9 deletions(-)
+The last point where LOOKUP_EMPTY (or AT_EMPTY_PATH) matters is (and had
+always been) getname_flags(); pathname resolution proper doesn't care.
 
-diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
-index 5b1c5da04163..59f94c28007d 100644
---- a/fs/jfs/jfs_logmgr.c
-+++ b/fs/jfs/jfs_logmgr.c
-@@ -74,12 +74,6 @@ static struct lbuf *log_redrive_list;
- static DEFINE_SPINLOCK(log_redrive_lock);
- 
- 
--/*
-- *	log read/write serialization (per log)
-- */
--#define LOG_LOCK_INIT(log)	mutex_init(&(log)->loglock)
--#define LOG_LOCK(log)		mutex_lock(&((log)->loglock))
--#define LOG_UNLOCK(log)		mutex_unlock(&((log)->loglock))
- 
- 
- /*
-@@ -204,9 +198,13 @@ static void write_special_inodes(struct jfs_log *log,
- 	struct jfs_sb_info *sbi;
- 
- 	list_for_each_entry(sbi, &log->sb_list, log_list) {
--		writer(sbi->ipbmap->i_mapping);
--		writer(sbi->ipimap->i_mapping);
--		writer(sbi->direct_inode->i_mapping);
-+		/* These pointers can be NULL before list_del during umount */
-+		if (sbi->ipbmap)
-+			writer(sbi->ipbmap->i_mapping);
-+		if (sbi->ipimap)
-+			writer(sbi->ipimap->i_mapping);
-+		if (sbi->direct_inode)
-+			writer(sbi->direct_inode->i_mapping);
- 	}
- }
- 
-diff --git a/fs/jfs/jfs_logmgr.h b/fs/jfs/jfs_logmgr.h
-index 8b8994e48cd0..09e0ef6aecce 100644
---- a/fs/jfs/jfs_logmgr.h
-+++ b/fs/jfs/jfs_logmgr.h
-@@ -402,6 +402,13 @@ struct jfs_log {
- 	int no_integrity;	/* 3: flag to disable journaling to disk */
- };
- 
-+/*
-+ * log read/write serialization (per log)
-+ */
-+#define LOG_LOCK_INIT(log)	mutex_init(&(log)->loglock)
-+#define LOG_LOCK(log)		mutex_lock(&((log)->loglock))
-+#define LOG_UNLOCK(log)		mutex_unlock(&((log)->loglock))
-+
- /*
-  * Log flag
-  */
-diff --git a/fs/jfs/jfs_umount.c b/fs/jfs/jfs_umount.c
-index 8ec43f53f686..18569f1eaabd 100644
---- a/fs/jfs/jfs_umount.c
-+++ b/fs/jfs/jfs_umount.c
-@@ -20,6 +20,7 @@
- #include "jfs_superblock.h"
- #include "jfs_dmap.h"
- #include "jfs_imap.h"
-+#include "jfs_logmgr.h"
- #include "jfs_metapage.h"
- #include "jfs_debug.h"
- 
-@@ -57,6 +58,12 @@ int jfs_umount(struct super_block *sb)
- 		 */
- 		jfs_flush_journal(log, 2);
- 
-+	/*
-+	 * Hold log lock so write_special_inodes (lmLogSync) cannot see
-+	 * this sbi with a NULL inode pointer while iterating log->sb_list.
-+	 */
-+	if (log)
-+		LOG_LOCK(log);
- 	/*
- 	 * close fileset inode allocation map (aka fileset inode)
- 	 */
-@@ -95,6 +102,9 @@ int jfs_umount(struct super_block *sb)
- 	 */
- 	filemap_write_and_wait(sbi->direct_inode->i_mapping);
- 
-+	if (log)
-+		LOG_UNLOCK(log);
-+
- 	/*
- 	 * ensure all file system file pages are propagated to their
- 	 * home blocks on disk (and their in-memory buffer pages are
--- 
-2.53.0
+In theory some out-of-tree filesystem might have been playing silly
+buggers with LOOKUP_EMPTY in its ->d_revalidate(); there's no good
+reason for doing so, though, and none of the in-tree filesystems had
+ever tried to pull that off.
 
+Could you describe the reproducer in more details?
 
