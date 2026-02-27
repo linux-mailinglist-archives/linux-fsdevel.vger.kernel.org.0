@@ -1,89 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-78669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aKXeNr8CoWlVpQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 03:34:39 +0100
+	id gAYaGW8DoWlVpQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 03:37:35 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68F761B2131
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 03:34:39 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 965381B217B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 03:37:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 381CD30626C5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 02:32:20 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 1E3C33026D8A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 02:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ABB82EB5CD;
-	Fri, 27 Feb 2026 02:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7F72EB862;
+	Fri, 27 Feb 2026 02:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d9PkOwzE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FcWcb7ef"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF977FBA2
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 02:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DB01DE2C9
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 02:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772159538; cv=none; b=BILzoQCrI98BvnZ5X90IUClKlfraqSVBdFvg8XH/fDYV/raHKclDmzKPfcXuRDWPxOoIiBeV66YAl4lVi9Rej2bmoO7iP7txlqwvY2gDZICA04UHBMLLUdv6EhK0II3nmNoDoytb0SmPHlxEK3Oc1BtJhLx4c6IrvXWvS3g1G3A=
+	t=1772159849; cv=none; b=OW8i5tFjV87HYVWnyW+T4V3kLJ6XPNPvqP98dHM95CdnIP7G7VTwLLkKNV8up240ZcL4v3yb9p4i+AAYnNJjaWRUnFenbtIPOTsuFv4KFmtGEEjzpjGyR8X0hEhfz7Le2Q2jW904Lz5GBik+8XjGX+plrm9QqmTb5ihFJfZXXPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772159538; c=relaxed/simple;
-	bh=+QNGgBGk23myA0SA/WMPSLUpBjDeY69somOdOMoeXHI=;
+	s=arc-20240116; t=1772159849; c=relaxed/simple;
+	bh=C28s0pkucCY1/3AUlZBnGHThQ3Km1467UYXZg75LfJM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N6vOCL6x6qaPPtOaS/QmTHDKo2j0DEVbIlenOd8fOEHVzy9wBBbZ5UrSZHisJ25t4IKmb3MC75iYPgdotCPCnBiCyXz3GlJNOSr+q06QAADI6Rr5KIB9dRTOnh6vl2YeaYFOSPTkrcqN8cZQGMJhB/r7Zr4myXtGtaJqfN5OecY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d9PkOwzE; arc=none smtp.client-ip=209.85.210.169
+	 Content-Type:Content-Disposition:In-Reply-To; b=BDpSU25u+fLSO3mE4ZzRMwNlcfz/Q5bil78wY+2QKMhwewO60Uv1kP1znpdd3X+rm0uiBqmJYSoUZwJMmjLxgQfmTOZSd3cXeKRSOvahzzx9NxA7swcutjcQzwvr+akCY5Sa5AXt/VVEhVQDtpDc+WAnz++t2LI3qigfSvMXAZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FcWcb7ef; arc=none smtp.client-ip=209.85.215.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-82748095963so435052b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 18:32:17 -0800 (PST)
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-c6e72d7a4d7so927927a12.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 18:37:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772159537; x=1772764337; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1772159848; x=1772764648; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=z4kgNnGHgGyMchRm6sI8YqU2dIGIe0OTPSSS5REQVtI=;
-        b=d9PkOwzE0bln0jFQ5PkAdDdUt6QWr66mOSu3DwsntBsBLntcpAFi/r/T9Y2660AmMU
-         87n52GdU9v38VrpogntZAUvLOYUpEx7FQBQFaQuWXeDbkJXMOS0e7OwmtZgUfVQyyBkH
-         Jj0snG6uhwk05hDBJAudKiExR70f95uM1nHtOB4TzK0YbrfsjWskjUKL3+9t6m4OVwX5
-         wAFkX5PMUFW+Jje/R4d54iPOf+OtO7UMqZQ7tym20bermgHcVkyJGhy1uLx3L90EkYPB
-         PYZeQCTMsqkufTn/hOdUF5VKBYAEZ2lxKA+3sEIcZYaROEYmYDT9AFcRm4thf4DBiWVn
-         FGgg==
+        bh=+5GScX1NjOU/hHr0ro6XId7zlzuoUAQ6PCqQbIHGtXo=;
+        b=FcWcb7ef4pkYyX7YWNqkKIhHUUUQnALJMdgdRLcKVC2PALJXnup5U7eizHLgrtHwpd
+         aDCKcvVKDKHwMhhoFIL7tMIY2jBGES8w5ePg3eGoXx+cfH/5QylGWGG9M88HkRSCarMG
+         8sR4Ih8mDE6e2aTmqyeeocG3QaAbv25UAxPrFV0iw31UugROtNj/Xk20MBNmljB3ZzfR
+         vokJIovTsnhtv9kyw9pEekJBuQIHXZUB78OLXwPYWo7cn3lfa0paskgXqA7WhEGVwPvH
+         URoVOLDmWVen9bFIc2xOz8+f2uvIxp46gUqLTkLRAI/CfnD8aSvyGpDi10uESm1qc251
+         sIVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772159537; x=1772764337;
+        d=1e100.net; s=20230601; t=1772159848; x=1772764648;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=z4kgNnGHgGyMchRm6sI8YqU2dIGIe0OTPSSS5REQVtI=;
-        b=jbju5JoqmgFBQnIW5gk55v4F2c87Tj+Lj5oQGow0fRR0HXnP5yEnTCXXtOJFytEXI/
-         JFxBLZbnjMdgQ7hu3l5gi9MF/cMj46QHk9V8+XhD6SxMu9BTECmn+BmmhUl2Ye8ml9ZF
-         dJHfSWd2LQukpG1Sx8hV8v1pTfp/i/PC+B6JtaLYu7w8otn5mBUocO4+73bLfSnzGsNS
-         gWQ0jMNFpU63BMGKG1OXGhXBIrUU6+rKkF+0/WC2V4s0fc1yb3d0glXjwKnC+x26POca
-         kCegKDEh6BIi/Iy9qfUarPD1pRMlxBzvv1qPdgLhtER0kdQDEBwGmzrhryni3ORMkMbY
-         NtZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUC/+Z8q1aFbCj2zBWy6emezItIws+TRMtVec+JEfSgBUxOH47s/TDVKRPk/zacFC62/I/4hRtctNCgRRD4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBlmq8EHbMZyPRDdkdbzrU615kEBmITSpdBgUr7NgvtKOeCxeU
-	rFz55vkAVX/z/VioV44q/UjlkZbMFhZxeXeHKDV00MhKOr4pvCZc6zn2
-X-Gm-Gg: ATEYQzxcYEMhEKZGcuQNNvny0bHZq79aKxEgfW977w+kM4APkl58h0oweVamQ+pdl8g
-	yFNm3i4cEmS0xg/8tnoW27pffMyoZym7xRIRe+simOtMXUDmIZUUfewXNCamBC/OZEqdNYrKPKF
-	XreX+YAkJi7YazByPs+GSW/Hd0khTv8r3Y2b2xURONesdDTwghcAJxggjlX8o0QVcWnd1QfcCUW
-	TBWBv9gBiX8K+y8gPNarJZ7T2eRjIQaFejAYxRhG8lARgJYfOSCsVqcheYSzNkjk4YxQq4XhRbD
-	7D0EVEG2Vwxc+cQRqp3PlfAoiov06SI7hbLGz520vrT0+QqA84jIhKmvObU7RD72l50fXc12XE3
-	DRkf5W2eIKOK/LaEleBvEuqXK4qtWWihXiHrktMWyBb2iU779IM6wdGTzXVuhZdVetvutGjEuBg
-	UIvvUDK/SEEtY7KQ==
-X-Received: by 2002:a05:6a00:450c:b0:7ff:885f:9c2a with SMTP id d2e1a72fcca58-8274d92e050mr1026603b3a.12.1772159537126;
-        Thu, 26 Feb 2026 18:32:17 -0800 (PST)
+        bh=+5GScX1NjOU/hHr0ro6XId7zlzuoUAQ6PCqQbIHGtXo=;
+        b=e2SonP4xIpIq5vhpPB4SjGTktBfjd9K+DfsFQ5UZ6YyIpqcjpILn852go5R1tK7cfv
+         +Y7f8+NDXLiRTb2/4qyOU4beV7KCdj8ZXYiOnjBcCO/T/d6XFmRDe6ArnX3bAsW20amw
+         bgg570D8q6Dvu5CAC3qzLDsa4KOfF8p5rGOV6oiiSvZthxUtpXFeRzkdAklfPLIlEphM
+         /6OUGM3umkYSGBAckf7ZgBlCR3M4fyda/6QSgvVGl4d1XQGEf684YCBDQXSkWJD1I14q
+         jNWVe5RE1Ysg3IMo0KvYCK0TzB+4VTlK+IAK0WPRRZp3ewurUGSn9lx0BRkBRouB88pi
+         e9tw==
+X-Forwarded-Encrypted: i=1; AJvYcCVeHyNla0JQ9yjMtW14nR9RnhzXqcNFoBElO+T92oq46fIjo2sm3fm7tHkkdSt0IgopuM5VYBi/QFBxvELw@vger.kernel.org
+X-Gm-Message-State: AOJu0YwedP7z3+CEOp3Z4sEQ6DStTyXPFKtnIVbtinM47xnYESS/o4cr
+	BezsQmybOwVdDVmBi2H0XrPdt94AX+Cd+tLR6TBjbS0SlMLKOjD2DV8z
+X-Gm-Gg: ATEYQzxduDi6457WR93wcnOeE69+COu2lbe+sL20M6Pv0rdKVDPG/9T+r+A9CMPdJkj
+	0nL9jztBheFVQu8lEOwgoL15RPoYturPDBqfR1FJpIcf933pKDRjqwsfbabV4diIKuwUZEKynxZ
+	TPVAtjiTwT8ZOAkx6W4FD9+FkJ9yaM1UnebWZhPqvjpMug8VrzAt9FSJKDuEy24++w7mOeUjGrc
+	ExUKKxCa25pHLGtSPC/JADxBnXeKuAP+X3pH3TjyOPkOi1+tEK4PD2ihrA7JFpjQMzzHUwKPTlo
+	g6Fgxdk7R9t/SiGvDYzlT62X1yh2iPozlwDdCVpPNMFoAwhRFZtcpiLKL1nZNxSEcVlvvkTfiPj
+	bOrlkOUcalawRO+wUEpMYEe6oAEzemUbd6hlbtYRTFfdnkXWnzU/7Ec0qI8rFIUwt9wPc+6EwaN
+	178F1k5Sz3rJJbaUnVZmPjdXl+
+X-Received: by 2002:a05:6a21:114c:b0:366:187f:3365 with SMTP id adf61e73a8af0-395c373e8f9mr1304884637.0.1772159847894;
+        Thu, 26 Feb 2026 18:37:27 -0800 (PST)
 Received: from localhost ([27.122.242.71])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8273a048615sm3448883b3a.52.2026.02.26.18.32.16
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c70fa5ef857sm2982398a12.7.2026.02.26.18.37.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Feb 2026 18:32:16 -0800 (PST)
-Date: Fri, 27 Feb 2026 11:32:14 +0900
+        Thu, 26 Feb 2026 18:37:26 -0800 (PST)
+Date: Fri, 27 Feb 2026 11:37:24 +0900
 From: Hyunchul Lee <hyc.lee@gmail.com>
 To: Ethan Tidmore <ethantidmore06@gmail.com>
 Cc: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] ntfs: Place check before dereference
-Message-ID: <aaECLoLaA3rXaAqf@hyunchul-PC02>
+Subject: Re: [PATCH 2/3] ntfs: Add missing error code
+Message-ID: <aaEDZEc0yJwCRDz9@hyunchul-PC02>
 References: <20260226160906.7175-1-ethantidmore06@gmail.com>
- <20260226160906.7175-2-ethantidmore06@gmail.com>
+ <20260226160906.7175-3-ethantidmore06@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,27 +92,28 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260226160906.7175-2-ethantidmore06@gmail.com>
+In-Reply-To: <20260226160906.7175-3-ethantidmore06@gmail.com>
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	MID_RHS_NOT_FQDN(0.50)[];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78669-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78670-lists,linux-fsdevel=lfdr.de];
 	RECEIVED_HELO_LOCALHOST(0.00)[];
 	FREEMAIL_TO(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
 	RCPT_COUNT_THREE(0.00)[4];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[hyclee@gmail.com,linux-fsdevel@vger.kernel.org];
@@ -120,24 +121,18 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	NEURAL_HAM(-0.00)[-1.000];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	TO_DN_SOME(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	FREEMAIL_FROM(0.00)[gmail.com]
-X-Rspamd-Queue-Id: 68F761B2131
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 965381B217B
 X-Rspamd-Action: no action
 
-On Thu, Feb 26, 2026 at 10:09:04AM -0600, Ethan Tidmore wrote:
-> The variable ni has the possiblity of being null and is checked for it
-> but, only after it was dereferenced in a log message.
-> 
-> Put check before dereference.
+On Thu, Feb 26, 2026 at 10:09:05AM -0600, Ethan Tidmore wrote:
+> If ntfs_attr_iget() fails no error code is assigned to be returned.
 > 
 > Detected by Smatch:
-> fs/ntfs/attrib.c:2115 ntfs_resident_attr_record_add() warn:
-> variable dereferenced before check 'ni' (see line 2111)
-> 
-> fs/ntfs/attrib.c:2237 ntfs_non_resident_attr_record_add() warn:
-> variable dereferenced before check 'ni' (see line 2232)
+> fs/ntfs/attrib.c:2665 ntfs_attr_add() warn:
+> missing error code 'err'
 > 
 > Signed-off-by: Ethan Tidmore <ethantidmore06@gmail.com>
 
@@ -145,48 +140,21 @@ Looks good to me. Thank for the patch
 
 Reviewed-by: Hyunchul Lee <hyc.lee@gmail.com> 
 > ---
->  fs/ntfs/attrib.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+>  fs/ntfs/attrib.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 > diff --git a/fs/ntfs/attrib.c b/fs/ntfs/attrib.c
-> index e8285264f619..e260540eb7c5 100644
+> index e260540eb7c5..71ad870eceac 100644
 > --- a/fs/ntfs/attrib.c
 > +++ b/fs/ntfs/attrib.c
-> @@ -2108,13 +2108,13 @@ int ntfs_resident_attr_record_add(struct ntfs_inode *ni, __le32 type,
->  	int err, offset;
->  	struct ntfs_inode *base_ni;
->  
-> +	if (!ni || (!name && name_len))
-> +		return -EINVAL;
-> +
->  	ntfs_debug("Entering for inode 0x%llx, attr 0x%x, flags 0x%x.\n",
->  			(long long) ni->mft_no, (unsigned int) le32_to_cpu(type),
->  			(unsigned int) le16_to_cpu(flags));
->  
-> -	if (!ni || (!name && name_len))
-> -		return -EINVAL;
-> -
->  	err = ntfs_attr_can_be_resident(ni->vol, type);
->  	if (err) {
->  		if (err == -EPERM)
-> @@ -2229,14 +2229,14 @@ static int ntfs_non_resident_attr_record_add(struct ntfs_inode *ni, __le32 type,
->  	struct ntfs_inode *base_ni;
->  	int err, offset;
->  
-> +	if (!ni || dataruns_size <= 0 || (!name && name_len))
-> +		return -EINVAL;
-> +
->  	ntfs_debug("Entering for inode 0x%llx, attr 0x%x, lowest_vcn %lld, dataruns_size %d, flags 0x%x.\n",
->  			(long long) ni->mft_no, (unsigned int) le32_to_cpu(type),
->  			(long long) lowest_vcn, dataruns_size,
->  			(unsigned int) le16_to_cpu(flags));
->  
-> -	if (!ni || dataruns_size <= 0 || (!name && name_len))
-> -		return -EINVAL;
-> -
->  	err = ntfs_attr_can_be_non_resident(ni->vol, type);
->  	if (err) {
->  		if (err == -EPERM)
+> @@ -2661,6 +2661,7 @@ int ntfs_attr_add(struct ntfs_inode *ni, __le32 type,
+>  	/* Open new attribute and resize it. */
+>  	attr_vi = ntfs_attr_iget(VFS_I(ni), type, name, name_len);
+>  	if (IS_ERR(attr_vi)) {
+> +		err = PTR_ERR(attr_vi);
+>  		ntfs_error(sb, "Failed to open just added attribute");
+>  		goto rm_attr_err_out;
+>  	}
 > -- 
 > 2.53.0
 > 
