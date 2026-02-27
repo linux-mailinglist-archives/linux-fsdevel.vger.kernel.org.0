@@ -1,429 +1,279 @@
-Return-Path: <linux-fsdevel+bounces-78717-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YINVDQetoWk3vgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78717-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 15:41:11 +0100
+	id SP3yNQWroWm1vQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 15:32:37 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 474B31B9219
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 15:41:10 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EE481B9026
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 15:32:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 54495305F550
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 14:22:34 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id B2BFA3019CAD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 14:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C798286D4E;
-	Fri, 27 Feb 2026 14:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D572C1598;
+	Fri, 27 Feb 2026 14:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PypMnjJM"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wBkMZQY0";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/yUo8dPI";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wBkMZQY0";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/yUo8dPI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453071A9FAF;
-	Fri, 27 Feb 2026 14:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EE2238C1F
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 14:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772202151; cv=none; b=RxOl1IPNMP9JVhGhWFourqx5ageeStpj+/u3L5aOAiaCHKD2jmxOXBtk/1vWAfC9x9jK02CRRanqWZ5k+TkTY3uS+9Gm2XEBryvIEC+EoKHG/neDYtRumY9WqDeuiSowewZdWNgSYHprmSVuwxm5C03aFeLjAiw/tnZSxn/ueuo=
+	t=1772202487; cv=none; b=U0UoyOhV74CuvaDX9GS0zb6zev2M0dzm5wsDrOQOKXyYiZEN9mXEPy0oqGxZQDWH1G47MkPBHCK/8YJQVOmWXc3zDN6WtWmDE96cc+CBns3cG10hYHbFwbRQeUTsYNVcgz/PWRRcIX4gdSHKDqmF8zd6BgR572xYwQZUDNxIwAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772202151; c=relaxed/simple;
-	bh=qfT2Mr35jf7uJaOGpgAujO40WzOULEbrUPaqrBMPcXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TjypcYjhYOhPwCNIZhn4kFlQeWZl1E/JrhgGYqCbf5/WDs58KrGlGAbP7GLXojGMjp9R8yjMCUp9G/n5f55r0ZrifHQQLl5hx8CAzCElRCsG3cNkUqvFWupREYBOj2y9MsZxV4vJ0K+MC1a/xGqokmVjuxKr+t6xJALpYUJzk9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PypMnjJM; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1772202150; x=1803738150;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qfT2Mr35jf7uJaOGpgAujO40WzOULEbrUPaqrBMPcXw=;
-  b=PypMnjJMCO3GuEe4tgephfTfq566UbWMktmJMkIEUMKC8UPcKILD4uxt
-   gKa5x0zTtgZ4QbHgixhEbTUnI8yyPYlEYh4utB2b9DxzwIJ8O2qJ8ko7d
-   rFcMpm46gsiWZJh1Xk29aPl1R9fane1N2sYUt7HGtezolzTMjLTSZknkB
-   FKGRutO01R4bAuPf76Ai3LlR9Ni0fEyYTqrIBv9NDqoB28oLEhv3nVLF6
-   UE/kYpfB0czxxo6Lcwg5Jjs2TvSnoWnkWjMLOaJS1q8bcEQYPdzZTIRpv
-   s8bMKTclg+jo1nTAnaurDvy7GZOuKVvbqxWiBqtUbmOJzhq3ooMqotBey
-   w==;
-X-CSE-ConnectionGUID: Ie5fD75JS9CQjA9YrepY+g==
-X-CSE-MsgGUID: PXtDdtcFT22XyUSWyj7Ueg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11714"; a="83615063"
-X-IronPort-AV: E=Sophos;i="6.21,314,1763452800"; 
-   d="scan'208";a="83615063"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2026 06:22:29 -0800
-X-CSE-ConnectionGUID: XVZI3Zo3Sdy/HUKz8JjXpQ==
-X-CSE-MsgGUID: 0CAEpBZ+TSOXtOZ/EhbyiQ==
-X-ExtLoop1: 1
-Received: from lkp-server02.sh.intel.com (HELO a3936d6a266d) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 27 Feb 2026 06:22:26 -0800
-Received: from kbuild by a3936d6a266d with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vvyjY-00000000Aex-0R1W;
-	Fri, 27 Feb 2026 14:22:24 +0000
-Date: Fri, 27 Feb 2026 22:20:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] hpfs: obsolete check=none mount option
-Message-ID: <202602272252.89OlLXUV-lkp@intel.com>
-References: <fd8dabf8-f0a5-418a-9b3d-da981101ca86@I-love.SAKURA.ne.jp>
+	s=arc-20240116; t=1772202487; c=relaxed/simple;
+	bh=+nVEdOmJkGJZNjkDjRddOwBhEMoZVl51iafnz5c2Wrc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s+Il7vJwN0yKBY1fjwg9KoMq3SC5ZxA4DWH3Wvt6fJo3oaMrLWHLIuD8oBYOT/R901uwSgZefDjtkUqx4urb3rWhQLSSDGQx805LLGTp0H38yVpQI1Qhl2ol8QsvLMH4ioqBlPbf6bzq+w3VoVs3i1uUGmMb9GTIDEMcLiZfVQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wBkMZQY0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/yUo8dPI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wBkMZQY0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/yUo8dPI; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 012665D6C8;
+	Fri, 27 Feb 2026 14:28:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1772202483; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=IzUdZpCslYW9KcHYK/QEaOL7KjWpgGG717+tFDlnDxo=;
+	b=wBkMZQY0VmHFt2nfVt08SaJEaz1uTItmEHrwWyXPK0BNAEqbUQi1W5c5GODtt89EtmL/5Y
+	GZQYffRgSaV29oK21SpRf2y/vVK87MWgY95E9NV2cgv6FZ6UcSzz8zQ2bgOXVqI+yn3D7q
+	K8YEqcypA1pBfpb1O7+vfqsm7ZN5bTI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1772202483;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=IzUdZpCslYW9KcHYK/QEaOL7KjWpgGG717+tFDlnDxo=;
+	b=/yUo8dPI/eeVXV8UancZkJSi4LjKLzcaBLGMsgbuwdxEAaGgiRdnLZN2yHkXMd5sMQlr0k
+	CpvMeFoXUIG/MYCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1772202483; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=IzUdZpCslYW9KcHYK/QEaOL7KjWpgGG717+tFDlnDxo=;
+	b=wBkMZQY0VmHFt2nfVt08SaJEaz1uTItmEHrwWyXPK0BNAEqbUQi1W5c5GODtt89EtmL/5Y
+	GZQYffRgSaV29oK21SpRf2y/vVK87MWgY95E9NV2cgv6FZ6UcSzz8zQ2bgOXVqI+yn3D7q
+	K8YEqcypA1pBfpb1O7+vfqsm7ZN5bTI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1772202483;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=IzUdZpCslYW9KcHYK/QEaOL7KjWpgGG717+tFDlnDxo=;
+	b=/yUo8dPI/eeVXV8UancZkJSi4LjKLzcaBLGMsgbuwdxEAaGgiRdnLZN2yHkXMd5sMQlr0k
+	CpvMeFoXUIG/MYCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E01C63EA69;
+	Fri, 27 Feb 2026 14:28:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id pHayNvKpoWkyaQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 27 Feb 2026 14:28:02 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A9A66A06D4; Fri, 27 Feb 2026 15:28:02 +0100 (CET)
+From: Jan Kara <jack@suse.cz>
+To: <linux-fsdevel@vger.kernel.org>
+Cc: Sam Sun <samsun1006219@gmail.com>,
+	Jan Kara <jack@suse.cz>
+Subject: [PATCH] quota: Fix race of dquot_scan_active() with quota deactivation
+Date: Fri, 27 Feb 2026 15:27:43 +0100
+Message-ID: <20260227142742.18396-2-jack@suse.cz>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fd8dabf8-f0a5-418a-9b3d-da981101ca86@I-love.SAKURA.ne.jp>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5063; i=jack@suse.cz; h=from:subject; bh=+nVEdOmJkGJZNjkDjRddOwBhEMoZVl51iafnz5c2Wrc=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBpoane/E1dVf7RQcUgsbae4IScbl+C09cT2JEuP onEl60GcjuJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCaaGp3gAKCRCcnaoHP2RA 2fR2B/wIp4hDyRfAK4hurb3ezPvf1djGHNXx2EwjNolwpXucTEoXC9hLM/tJr+8+9grBz4aJQfF 29AzMHgg2d4c3DsowNmfCXpAi3vK7P3c5+Ecchk9TVNwRR0LIo736FjiasizUHIm1tWed2twwXb 3jziNPvWxotBaKs8DkKaDA01OTCGz40CXxZ5P6Kwb0Darhy3SgSD/NsKas9fQKHchTf4tkh/b/6 CnrQMhFnRA7rjUN3qeYrEj9ycz7DqS3CP/Aq6SxEKpxL7v+lQdg15vCNHCgTnnLLtEDapWAQODz 305rGnpzM71Jlhnp8+xNJOVrkH4TRMZJl3nu9hTptXyuM27j
+X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -2.80
+X-Spam-Level: 
+X-Spam-Flag: NO
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+X-Spamd-Result: default: False [-0.16 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
-	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_MISSING_CHARSET(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78717-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,suse.cz];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78718-lists,linux-fsdevel=lfdr.de];
+	DMARC_NA(0.00)[suse.cz];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[intel.com:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[lkp@intel.com,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
+	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[01.org:url,git-scm.com:url,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,intel.com:mid,intel.com:dkim,intel.com:email]
-X-Rspamd-Queue-Id: 474B31B9219
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: 6EE481B9026
 X-Rspamd-Action: no action
 
-Hi Tetsuo,
+dquot_scan_active() can race with quota deactivation in
+quota_release_workfn() like:
 
-kernel test robot noticed the following build warnings:
+  CPU0 (quota_release_workfn)         CPU1 (dquot_scan_active)
+  ==============================      ==============================
+  spin_lock(&dq_list_lock);
+  list_replace_init(
+    &releasing_dquots, &rls_head);
+    /* dquot X on rls_head,
+       dq_count == 0,
+       DQ_ACTIVE_B still set */
+  spin_unlock(&dq_list_lock);
+  synchronize_srcu(&dquot_srcu);
+                                      spin_lock(&dq_list_lock);
+                                      list_for_each_entry(dquot,
+                                          &inuse_list, dq_inuse) {
+                                        /* finds dquot X */
+                                        dquot_active(X) -> true
+                                        atomic_inc(&X->dq_count);
+                                      }
+                                      spin_unlock(&dq_list_lock);
+  spin_lock(&dq_list_lock);
+  dquot = list_first_entry(&rls_head);
+  WARN_ON_ONCE(atomic_read(&dquot->dq_count));
 
-[auto build test WARNING on brauner-vfs/vfs.all]
-[also build test WARNING on linus/master linux/master v7.0-rc1 next-20260226]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The problem is not only a cosmetic one as under memory pressure the
+caller of dquot_scan_active() can end up working on freed dquot.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Tetsuo-Handa/hpfs-obsolete-check-none-mount-option/20260226-222815
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/fd8dabf8-f0a5-418a-9b3d-da981101ca86%40I-love.SAKURA.ne.jp
-patch subject: [PATCH] hpfs: obsolete check=none mount option
-config: x86_64-randconfig-r071-20260227 (https://download.01.org/0day-ci/archive/20260227/202602272252.89OlLXUV-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-smatch version: v0.5.0-8994-gd50c5a4c
+Fix the problem by making sure the dquot is removed from releasing list
+when we acquire a reference to it.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202602272252.89OlLXUV-lkp@intel.com/
+Fixes: 869b6ea1609f ("quota: Fix slow quotaoff")
+Reported-by: Sam Sun <samsun1006219@gmail.com>
+Link: https://lore.kernel.org/all/CAEkJfYPTt3uP1vAYnQ5V2ZWn5O9PLhhGi5HbOcAzyP9vbXyjeg@mail.gmail.com
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/quota/dquot.c         | 38 ++++++++++++++++++++++++++++++--------
+ include/linux/quotaops.h |  9 +--------
+ 2 files changed, 31 insertions(+), 16 deletions(-)
 
-New smatch warnings:
-fs/hpfs/anode.c:92 hpfs_add_sector_to_btree() warn: inconsistent indenting
-fs/hpfs/anode.c:289 hpfs_remove_btree() warn: inconsistent indenting
-fs/hpfs/anode.c:444 hpfs_truncate_btree() warn: inconsistent indenting
-fs/hpfs/dnode.c:445 move_to_top() warn: inconsistent indenting
-fs/hpfs/dnode.c:547 delete_empty_dnode() warn: inconsistent indenting
-fs/hpfs/dnode.c:751 hpfs_count_dnodes() warn: inconsistent indenting
-fs/hpfs/dnode.c:824 hpfs_de_as_down_as_possible() warn: inconsistent indenting
-fs/hpfs/dnode.c:1056 map_fnode_dirent() warn: inconsistent indenting
+I plan to merge this fix through my tree.
 
-Old smatch warnings:
-fs/hpfs/anode.c:167 hpfs_add_sector_to_btree() warn: inconsistent indenting
-fs/hpfs/anode.c:301 hpfs_remove_btree() warn: inconsistent indenting
-fs/hpfs/anode.c:322 hpfs_remove_btree() warn: passing freed memory 'bh' (line 300)
-fs/hpfs/anode.c:452 hpfs_truncate_btree() warn: passing freed memory 'bh' (line 443)
-fs/hpfs/anode.c:470 hpfs_truncate_btree() warn: passing freed memory 'bh' (line 443)
-fs/hpfs/dnode.c:47 hpfs_add_pos() error: we previously assumed 'hpfs_inode->i_rddir_off' could be null (see line 31)
-fs/hpfs/dnode.c:786 hpfs_count_dnodes() warn: inconsistent indenting
-fs/hpfs/dnode.c:1074 map_fnode_dirent() warn: inconsistent indenting
-
-vim +92 fs/hpfs/anode.c
-
-^1da177e4c3f41 Linus Torvalds      2005-04-16   60  
-^1da177e4c3f41 Linus Torvalds      2005-04-16   61  secno hpfs_add_sector_to_btree(struct super_block *s, secno node, int fnod, unsigned fsecno)
-^1da177e4c3f41 Linus Torvalds      2005-04-16   62  {
-^1da177e4c3f41 Linus Torvalds      2005-04-16   63  	struct bplus_header *btree;
-^1da177e4c3f41 Linus Torvalds      2005-04-16   64  	struct anode *anode = NULL, *ranode = NULL;
-^1da177e4c3f41 Linus Torvalds      2005-04-16   65  	struct fnode *fnode;
-^1da177e4c3f41 Linus Torvalds      2005-04-16   66  	anode_secno a, na = -1, ra, up = -1;
-^1da177e4c3f41 Linus Torvalds      2005-04-16   67  	secno se;
-^1da177e4c3f41 Linus Torvalds      2005-04-16   68  	struct buffer_head *bh, *bh1, *bh2;
-^1da177e4c3f41 Linus Torvalds      2005-04-16   69  	int n;
-^1da177e4c3f41 Linus Torvalds      2005-04-16   70  	unsigned fs;
-^1da177e4c3f41 Linus Torvalds      2005-04-16   71  	int c1, c2 = 0;
-68a74490629eb6 Gustavo A. R. Silva 2025-08-11   72  
-^1da177e4c3f41 Linus Torvalds      2005-04-16   73  	if (fnod) {
-^1da177e4c3f41 Linus Torvalds      2005-04-16   74  		if (!(fnode = hpfs_map_fnode(s, node, &bh))) return -1;
-68a74490629eb6 Gustavo A. R. Silva 2025-08-11   75  		btree = GET_BTREE_PTR(&fnode->btree);
-^1da177e4c3f41 Linus Torvalds      2005-04-16   76  	} else {
-^1da177e4c3f41 Linus Torvalds      2005-04-16   77  		if (!(anode = hpfs_map_anode(s, node, &bh))) return -1;
-68a74490629eb6 Gustavo A. R. Silva 2025-08-11   78  		btree = GET_BTREE_PTR(&anode->btree);
-^1da177e4c3f41 Linus Torvalds      2005-04-16   79  	}
-^1da177e4c3f41 Linus Torvalds      2005-04-16   80  	a = node;
-^1da177e4c3f41 Linus Torvalds      2005-04-16   81  	go_down:
-^1da177e4c3f41 Linus Torvalds      2005-04-16   82  	if ((n = btree->n_used_nodes - 1) < -!!fnod) {
-^1da177e4c3f41 Linus Torvalds      2005-04-16   83  		hpfs_error(s, "anode %08x has no entries", a);
-^1da177e4c3f41 Linus Torvalds      2005-04-16   84  		brelse(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16   85  		return -1;
-^1da177e4c3f41 Linus Torvalds      2005-04-16   86  	}
-ddc19e6e04c113 Al Viro             2012-04-17   87  	if (bp_internal(btree)) {
-0b69760be6968c Mikulas Patocka     2011-05-08   88  		a = le32_to_cpu(btree->u.internal[n].down);
-0b69760be6968c Mikulas Patocka     2011-05-08   89  		btree->u.internal[n].file_secno = cpu_to_le32(-1);
-^1da177e4c3f41 Linus Torvalds      2005-04-16   90  		mark_buffer_dirty(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16   91  		brelse(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  @92  			if (hpfs_stop_cycles(s, a, &c1, &c2, "hpfs_add_sector_to_btree #1")) return -1;
-^1da177e4c3f41 Linus Torvalds      2005-04-16   93  		if (!(anode = hpfs_map_anode(s, a, &bh))) return -1;
-68a74490629eb6 Gustavo A. R. Silva 2025-08-11   94  		btree = GET_BTREE_PTR(&anode->btree);
-^1da177e4c3f41 Linus Torvalds      2005-04-16   95  		goto go_down;
-^1da177e4c3f41 Linus Torvalds      2005-04-16   96  	}
-^1da177e4c3f41 Linus Torvalds      2005-04-16   97  	if (n >= 0) {
-0b69760be6968c Mikulas Patocka     2011-05-08   98  		if (le32_to_cpu(btree->u.external[n].file_secno) + le32_to_cpu(btree->u.external[n].length) != fsecno) {
-^1da177e4c3f41 Linus Torvalds      2005-04-16   99  			hpfs_error(s, "allocated size %08x, trying to add sector %08x, %cnode %08x",
-0b69760be6968c Mikulas Patocka     2011-05-08  100  				le32_to_cpu(btree->u.external[n].file_secno) + le32_to_cpu(btree->u.external[n].length), fsecno,
-^1da177e4c3f41 Linus Torvalds      2005-04-16  101  				fnod?'f':'a', node);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  102  			brelse(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  103  			return -1;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  104  		}
-0b69760be6968c Mikulas Patocka     2011-05-08  105  		if (hpfs_alloc_if_possible(s, se = le32_to_cpu(btree->u.external[n].disk_secno) + le32_to_cpu(btree->u.external[n].length))) {
-32daab969cc16e Wei Yongjun         2012-10-04  106  			le32_add_cpu(&btree->u.external[n].length, 1);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  107  			mark_buffer_dirty(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  108  			brelse(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  109  			return se;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  110  		}
-^1da177e4c3f41 Linus Torvalds      2005-04-16  111  	} else {
-^1da177e4c3f41 Linus Torvalds      2005-04-16  112  		if (fsecno) {
-^1da177e4c3f41 Linus Torvalds      2005-04-16  113  			hpfs_error(s, "empty file %08x, trying to add sector %08x", node, fsecno);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  114  			brelse(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  115  			return -1;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  116  		}
-^1da177e4c3f41 Linus Torvalds      2005-04-16  117  		se = !fnod ? node : (node + 16384) & ~16383;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  118  	}	
-7d23ce36e3f52f Mikulas Patocka     2011-05-08  119  	if (!(se = hpfs_alloc_sector(s, se, 1, fsecno*ALLOC_M>ALLOC_FWD_MAX ? ALLOC_FWD_MAX : fsecno*ALLOC_M<ALLOC_FWD_MIN ? ALLOC_FWD_MIN : fsecno*ALLOC_M))) {
-^1da177e4c3f41 Linus Torvalds      2005-04-16  120  		brelse(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  121  		return -1;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  122  	}
-0b69760be6968c Mikulas Patocka     2011-05-08  123  	fs = n < 0 ? 0 : le32_to_cpu(btree->u.external[n].file_secno) + le32_to_cpu(btree->u.external[n].length);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  124  	if (!btree->n_free_nodes) {
-0b69760be6968c Mikulas Patocka     2011-05-08  125  		up = a != node ? le32_to_cpu(anode->up) : -1;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  126  		if (!(anode = hpfs_alloc_anode(s, a, &na, &bh1))) {
-^1da177e4c3f41 Linus Torvalds      2005-04-16  127  			brelse(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  128  			hpfs_free_sectors(s, se, 1);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  129  			return -1;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  130  		}
-^1da177e4c3f41 Linus Torvalds      2005-04-16  131  		if (a == node && fnod) {
-0b69760be6968c Mikulas Patocka     2011-05-08  132  			anode->up = cpu_to_le32(node);
-ddc19e6e04c113 Al Viro             2012-04-17  133  			anode->btree.flags |= BP_fnode_parent;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  134  			anode->btree.n_used_nodes = btree->n_used_nodes;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  135  			anode->btree.first_free = btree->first_free;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  136  			anode->btree.n_free_nodes = 40 - anode->btree.n_used_nodes;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  137  			memcpy(&anode->u, &btree->u, btree->n_used_nodes * 12);
-ddc19e6e04c113 Al Viro             2012-04-17  138  			btree->flags |= BP_internal;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  139  			btree->n_free_nodes = 11;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  140  			btree->n_used_nodes = 1;
-0b69760be6968c Mikulas Patocka     2011-05-08  141  			btree->first_free = cpu_to_le16((char *)&(btree->u.internal[1]) - (char *)btree);
-0b69760be6968c Mikulas Patocka     2011-05-08  142  			btree->u.internal[0].file_secno = cpu_to_le32(-1);
-0b69760be6968c Mikulas Patocka     2011-05-08  143  			btree->u.internal[0].down = cpu_to_le32(na);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  144  			mark_buffer_dirty(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  145  		} else if (!(ranode = hpfs_alloc_anode(s, /*a*/0, &ra, &bh2))) {
-^1da177e4c3f41 Linus Torvalds      2005-04-16  146  			brelse(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  147  			brelse(bh1);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  148  			hpfs_free_sectors(s, se, 1);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  149  			hpfs_free_sectors(s, na, 1);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  150  			return -1;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  151  		}
-^1da177e4c3f41 Linus Torvalds      2005-04-16  152  		brelse(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  153  		bh = bh1;
-68a74490629eb6 Gustavo A. R. Silva 2025-08-11  154  		btree = GET_BTREE_PTR(&anode->btree);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  155  	}
-^1da177e4c3f41 Linus Torvalds      2005-04-16  156  	btree->n_free_nodes--; n = btree->n_used_nodes++;
-32daab969cc16e Wei Yongjun         2012-10-04  157  	le16_add_cpu(&btree->first_free, 12);
-0b69760be6968c Mikulas Patocka     2011-05-08  158  	btree->u.external[n].disk_secno = cpu_to_le32(se);
-0b69760be6968c Mikulas Patocka     2011-05-08  159  	btree->u.external[n].file_secno = cpu_to_le32(fs);
-0b69760be6968c Mikulas Patocka     2011-05-08  160  	btree->u.external[n].length = cpu_to_le32(1);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  161  	mark_buffer_dirty(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  162  	brelse(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  163  	if ((a == node && fnod) || na == -1) return se;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  164  	c2 = 0;
-0b69760be6968c Mikulas Patocka     2011-05-08  165  	while (up != (anode_secno)-1) {
-^1da177e4c3f41 Linus Torvalds      2005-04-16  166  		struct anode *new_anode;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  167  			if (hpfs_stop_cycles(s, up, &c1, &c2, "hpfs_add_sector_to_btree #2")) return -1;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  168  		if (up != node || !fnod) {
-^1da177e4c3f41 Linus Torvalds      2005-04-16  169  			if (!(anode = hpfs_map_anode(s, up, &bh))) return -1;
-68a74490629eb6 Gustavo A. R. Silva 2025-08-11  170  			btree = GET_BTREE_PTR(&anode->btree);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  171  		} else {
-^1da177e4c3f41 Linus Torvalds      2005-04-16  172  			if (!(fnode = hpfs_map_fnode(s, up, &bh))) return -1;
-68a74490629eb6 Gustavo A. R. Silva 2025-08-11  173  			btree = GET_BTREE_PTR(&fnode->btree);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  174  		}
-^1da177e4c3f41 Linus Torvalds      2005-04-16  175  		if (btree->n_free_nodes) {
-^1da177e4c3f41 Linus Torvalds      2005-04-16  176  			btree->n_free_nodes--; n = btree->n_used_nodes++;
-32daab969cc16e Wei Yongjun         2012-10-04  177  			le16_add_cpu(&btree->first_free, 8);
-0b69760be6968c Mikulas Patocka     2011-05-08  178  			btree->u.internal[n].file_secno = cpu_to_le32(-1);
-0b69760be6968c Mikulas Patocka     2011-05-08  179  			btree->u.internal[n].down = cpu_to_le32(na);
-0b69760be6968c Mikulas Patocka     2011-05-08  180  			btree->u.internal[n-1].file_secno = cpu_to_le32(fs);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  181  			mark_buffer_dirty(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  182  			brelse(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  183  			brelse(bh2);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  184  			hpfs_free_sectors(s, ra, 1);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  185  			if ((anode = hpfs_map_anode(s, na, &bh))) {
-0b69760be6968c Mikulas Patocka     2011-05-08  186  				anode->up = cpu_to_le32(up);
-ddc19e6e04c113 Al Viro             2012-04-17  187  				if (up == node && fnod)
-ddc19e6e04c113 Al Viro             2012-04-17  188  					anode->btree.flags |= BP_fnode_parent;
-ddc19e6e04c113 Al Viro             2012-04-17  189  				else
-ddc19e6e04c113 Al Viro             2012-04-17  190  					anode->btree.flags &= ~BP_fnode_parent;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  191  				mark_buffer_dirty(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  192  				brelse(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  193  			}
-^1da177e4c3f41 Linus Torvalds      2005-04-16  194  			return se;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  195  		}
-0b69760be6968c Mikulas Patocka     2011-05-08  196  		up = up != node ? le32_to_cpu(anode->up) : -1;
-0b69760be6968c Mikulas Patocka     2011-05-08  197  		btree->u.internal[btree->n_used_nodes - 1].file_secno = cpu_to_le32(/*fs*/-1);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  198  		mark_buffer_dirty(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  199  		brelse(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  200  		a = na;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  201  		if ((new_anode = hpfs_alloc_anode(s, a, &na, &bh))) {
-^1da177e4c3f41 Linus Torvalds      2005-04-16  202  			anode = new_anode;
-0b69760be6968c Mikulas Patocka     2011-05-08  203  			/*anode->up = cpu_to_le32(up != -1 ? up : ra);*/
-ddc19e6e04c113 Al Viro             2012-04-17  204  			anode->btree.flags |= BP_internal;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  205  			anode->btree.n_used_nodes = 1;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  206  			anode->btree.n_free_nodes = 59;
-0b69760be6968c Mikulas Patocka     2011-05-08  207  			anode->btree.first_free = cpu_to_le16(16);
-68a74490629eb6 Gustavo A. R. Silva 2025-08-11  208  			GET_BTREE_PTR(&anode->btree)->u.internal[0].down = cpu_to_le32(a);
-68a74490629eb6 Gustavo A. R. Silva 2025-08-11  209  			GET_BTREE_PTR(&anode->btree)->u.internal[0].file_secno = cpu_to_le32(-1);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  210  			mark_buffer_dirty(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  211  			brelse(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  212  			if ((anode = hpfs_map_anode(s, a, &bh))) {
-0b69760be6968c Mikulas Patocka     2011-05-08  213  				anode->up = cpu_to_le32(na);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  214  				mark_buffer_dirty(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  215  				brelse(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  216  			}
-^1da177e4c3f41 Linus Torvalds      2005-04-16  217  		} else na = a;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  218  	}
-^1da177e4c3f41 Linus Torvalds      2005-04-16  219  	if ((anode = hpfs_map_anode(s, na, &bh))) {
-0b69760be6968c Mikulas Patocka     2011-05-08  220  		anode->up = cpu_to_le32(node);
-ddc19e6e04c113 Al Viro             2012-04-17  221  		if (fnod)
-ddc19e6e04c113 Al Viro             2012-04-17  222  			anode->btree.flags |= BP_fnode_parent;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  223  		mark_buffer_dirty(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  224  		brelse(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  225  	}
-^1da177e4c3f41 Linus Torvalds      2005-04-16  226  	if (!fnod) {
-^1da177e4c3f41 Linus Torvalds      2005-04-16  227  		if (!(anode = hpfs_map_anode(s, node, &bh))) {
-^1da177e4c3f41 Linus Torvalds      2005-04-16  228  			brelse(bh2);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  229  			return -1;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  230  		}
-68a74490629eb6 Gustavo A. R. Silva 2025-08-11  231  		btree = GET_BTREE_PTR(&anode->btree);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  232  	} else {
-^1da177e4c3f41 Linus Torvalds      2005-04-16  233  		if (!(fnode = hpfs_map_fnode(s, node, &bh))) {
-^1da177e4c3f41 Linus Torvalds      2005-04-16  234  			brelse(bh2);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  235  			return -1;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  236  		}
-68a74490629eb6 Gustavo A. R. Silva 2025-08-11  237  		btree = GET_BTREE_PTR(&fnode->btree);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  238  	}
-0b69760be6968c Mikulas Patocka     2011-05-08  239  	ranode->up = cpu_to_le32(node);
-0b69760be6968c Mikulas Patocka     2011-05-08  240  	memcpy(&ranode->btree, btree, le16_to_cpu(btree->first_free));
-ddc19e6e04c113 Al Viro             2012-04-17  241  	if (fnod)
-ddc19e6e04c113 Al Viro             2012-04-17  242  		ranode->btree.flags |= BP_fnode_parent;
-68a74490629eb6 Gustavo A. R. Silva 2025-08-11  243  	GET_BTREE_PTR(&ranode->btree)->n_free_nodes = (bp_internal(GET_BTREE_PTR(&ranode->btree)) ? 60 : 40) - GET_BTREE_PTR(&ranode->btree)->n_used_nodes;
-68a74490629eb6 Gustavo A. R. Silva 2025-08-11  244  	if (bp_internal(GET_BTREE_PTR(&ranode->btree))) for (n = 0; n < GET_BTREE_PTR(&ranode->btree)->n_used_nodes; n++) {
-^1da177e4c3f41 Linus Torvalds      2005-04-16  245  		struct anode *unode;
-0b69760be6968c Mikulas Patocka     2011-05-08  246  		if ((unode = hpfs_map_anode(s, le32_to_cpu(ranode->u.internal[n].down), &bh1))) {
-0b69760be6968c Mikulas Patocka     2011-05-08  247  			unode->up = cpu_to_le32(ra);
-ddc19e6e04c113 Al Viro             2012-04-17  248  			unode->btree.flags &= ~BP_fnode_parent;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  249  			mark_buffer_dirty(bh1);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  250  			brelse(bh1);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  251  		}
-^1da177e4c3f41 Linus Torvalds      2005-04-16  252  	}
-ddc19e6e04c113 Al Viro             2012-04-17  253  	btree->flags |= BP_internal;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  254  	btree->n_free_nodes = fnod ? 10 : 58;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  255  	btree->n_used_nodes = 2;
-0b69760be6968c Mikulas Patocka     2011-05-08  256  	btree->first_free = cpu_to_le16((char *)&btree->u.internal[2] - (char *)btree);
-0b69760be6968c Mikulas Patocka     2011-05-08  257  	btree->u.internal[0].file_secno = cpu_to_le32(fs);
-0b69760be6968c Mikulas Patocka     2011-05-08  258  	btree->u.internal[0].down = cpu_to_le32(ra);
-0b69760be6968c Mikulas Patocka     2011-05-08  259  	btree->u.internal[1].file_secno = cpu_to_le32(-1);
-0b69760be6968c Mikulas Patocka     2011-05-08  260  	btree->u.internal[1].down = cpu_to_le32(na);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  261  	mark_buffer_dirty(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  262  	brelse(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  263  	mark_buffer_dirty(bh2);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  264  	brelse(bh2);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  265  	return se;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  266  }
-^1da177e4c3f41 Linus Torvalds      2005-04-16  267  
-^1da177e4c3f41 Linus Torvalds      2005-04-16  268  /*
-^1da177e4c3f41 Linus Torvalds      2005-04-16  269   * Remove allocation tree. Recursion would look much nicer but
-^1da177e4c3f41 Linus Torvalds      2005-04-16  270   * I want to avoid it because it can cause stack overflow.
-^1da177e4c3f41 Linus Torvalds      2005-04-16  271   */
-^1da177e4c3f41 Linus Torvalds      2005-04-16  272  
-^1da177e4c3f41 Linus Torvalds      2005-04-16  273  void hpfs_remove_btree(struct super_block *s, struct bplus_header *btree)
-^1da177e4c3f41 Linus Torvalds      2005-04-16  274  {
-^1da177e4c3f41 Linus Torvalds      2005-04-16  275  	struct bplus_header *btree1 = btree;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  276  	struct anode *anode = NULL;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  277  	anode_secno ano = 0, oano;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  278  	struct buffer_head *bh;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  279  	int level = 0;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  280  	int pos = 0;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  281  	int i;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  282  	int c1, c2 = 0;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  283  	int d1, d2;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  284  	go_down:
-^1da177e4c3f41 Linus Torvalds      2005-04-16  285  	d2 = 0;
-ddc19e6e04c113 Al Viro             2012-04-17  286  	while (bp_internal(btree1)) {
-0b69760be6968c Mikulas Patocka     2011-05-08  287  		ano = le32_to_cpu(btree1->u.internal[pos].down);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  288  		if (level) brelse(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16 @289  			if (hpfs_stop_cycles(s, ano, &d1, &d2, "hpfs_remove_btree #1"))
-^1da177e4c3f41 Linus Torvalds      2005-04-16  290  				return;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  291  		if (!(anode = hpfs_map_anode(s, ano, &bh))) return;
-68a74490629eb6 Gustavo A. R. Silva 2025-08-11  292  		btree1 = GET_BTREE_PTR(&anode->btree);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  293  		level++;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  294  		pos = 0;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  295  	}
-^1da177e4c3f41 Linus Torvalds      2005-04-16  296  	for (i = 0; i < btree1->n_used_nodes; i++)
-0b69760be6968c Mikulas Patocka     2011-05-08  297  		hpfs_free_sectors(s, le32_to_cpu(btree1->u.external[i].disk_secno), le32_to_cpu(btree1->u.external[i].length));
-^1da177e4c3f41 Linus Torvalds      2005-04-16  298  	go_up:
-^1da177e4c3f41 Linus Torvalds      2005-04-16  299  	if (!level) return;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  300  	brelse(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  301  		if (hpfs_stop_cycles(s, ano, &c1, &c2, "hpfs_remove_btree #2")) return;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  302  	hpfs_free_sectors(s, ano, 1);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  303  	oano = ano;
-0b69760be6968c Mikulas Patocka     2011-05-08  304  	ano = le32_to_cpu(anode->up);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  305  	if (--level) {
-^1da177e4c3f41 Linus Torvalds      2005-04-16  306  		if (!(anode = hpfs_map_anode(s, ano, &bh))) return;
-68a74490629eb6 Gustavo A. R. Silva 2025-08-11  307  		btree1 = GET_BTREE_PTR(&anode->btree);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  308  	} else btree1 = btree;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  309  	for (i = 0; i < btree1->n_used_nodes; i++) {
-0b69760be6968c Mikulas Patocka     2011-05-08  310  		if (le32_to_cpu(btree1->u.internal[i].down) == oano) {
-^1da177e4c3f41 Linus Torvalds      2005-04-16  311  			if ((pos = i + 1) < btree1->n_used_nodes)
-^1da177e4c3f41 Linus Torvalds      2005-04-16  312  				goto go_down;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  313  			else
-^1da177e4c3f41 Linus Torvalds      2005-04-16  314  				goto go_up;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  315  		}
-^1da177e4c3f41 Linus Torvalds      2005-04-16  316  	}
-^1da177e4c3f41 Linus Torvalds      2005-04-16  317  	hpfs_error(s,
-^1da177e4c3f41 Linus Torvalds      2005-04-16  318  		   "reference to anode %08x not found in anode %08x "
-^1da177e4c3f41 Linus Torvalds      2005-04-16  319  		   "(probably bad up pointer)",
-^1da177e4c3f41 Linus Torvalds      2005-04-16  320  		   oano, level ? ano : -1);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  321  	if (level)
-^1da177e4c3f41 Linus Torvalds      2005-04-16  322  		brelse(bh);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  323  }
-^1da177e4c3f41 Linus Torvalds      2005-04-16  324  
-
+diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+index 376739f6420e..64cf42721496 100644
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -363,6 +363,31 @@ static inline int dquot_active(struct dquot *dquot)
+ 	return test_bit(DQ_ACTIVE_B, &dquot->dq_flags);
+ }
+ 
++static struct dquot *__dqgrab(struct dquot *dquot)
++{
++	lockdep_assert_held(&dq_list_lock);
++	if (!atomic_read(&dquot->dq_count))
++		remove_free_dquot(dquot);
++	atomic_inc(&dquot->dq_count);
++	return dquot;
++}
++
++/*
++ * Get reference to dquot when we got pointer to it by some other means. The
++ * dquot has to be active and the caller has to make sure it cannot get
++ * deactivated under our hands.
++ */
++struct dquot *dqgrab(struct dquot *dquot)
++{
++	spin_lock(&dq_list_lock);
++	WARN_ON_ONCE(!dquot_active(dquot));
++	dquot = __dqgrab(dquot);
++	spin_unlock(&dq_list_lock);
++
++	return dquot;
++}
++EXPORT_SYMBOL_GPL(dqgrab);
++
+ static inline int dquot_dirty(struct dquot *dquot)
+ {
+ 	return test_bit(DQ_MOD_B, &dquot->dq_flags);
+@@ -641,15 +666,14 @@ int dquot_scan_active(struct super_block *sb,
+ 			continue;
+ 		if (dquot->dq_sb != sb)
+ 			continue;
+-		/* Now we have active dquot so we can just increase use count */
+-		atomic_inc(&dquot->dq_count);
++		__dqgrab(dquot);
+ 		spin_unlock(&dq_list_lock);
+ 		dqput(old_dquot);
+ 		old_dquot = dquot;
+ 		/*
+ 		 * ->release_dquot() can be racing with us. Our reference
+-		 * protects us from new calls to it so just wait for any
+-		 * outstanding call and recheck the DQ_ACTIVE_B after that.
++		 * protects us from dquot_release() proceeding so just wait for
++		 * any outstanding call and recheck the DQ_ACTIVE_B after that.
+ 		 */
+ 		wait_on_dquot(dquot);
+ 		if (dquot_active(dquot)) {
+@@ -717,7 +741,7 @@ int dquot_writeback_dquots(struct super_block *sb, int type)
+ 			/* Now we have active dquot from which someone is
+  			 * holding reference so we can safely just increase
+ 			 * use count */
+-			dqgrab(dquot);
++			__dqgrab(dquot);
+ 			spin_unlock(&dq_list_lock);
+ 			err = dquot_write_dquot(dquot);
+ 			if (err && !ret)
+@@ -963,9 +987,7 @@ struct dquot *dqget(struct super_block *sb, struct kqid qid)
+ 		spin_unlock(&dq_list_lock);
+ 		dqstats_inc(DQST_LOOKUPS);
+ 	} else {
+-		if (!atomic_read(&dquot->dq_count))
+-			remove_free_dquot(dquot);
+-		atomic_inc(&dquot->dq_count);
++		__dqgrab(dquot);
+ 		spin_unlock(&dq_list_lock);
+ 		dqstats_inc(DQST_CACHE_HITS);
+ 		dqstats_inc(DQST_LOOKUPS);
+diff --git a/include/linux/quotaops.h b/include/linux/quotaops.h
+index c334f82ed385..f9c0f9d7c9d9 100644
+--- a/include/linux/quotaops.h
++++ b/include/linux/quotaops.h
+@@ -44,14 +44,7 @@ int dquot_initialize(struct inode *inode);
+ bool dquot_initialize_needed(struct inode *inode);
+ void dquot_drop(struct inode *inode);
+ struct dquot *dqget(struct super_block *sb, struct kqid qid);
+-static inline struct dquot *dqgrab(struct dquot *dquot)
+-{
+-	/* Make sure someone else has active reference to dquot */
+-	WARN_ON_ONCE(!atomic_read(&dquot->dq_count));
+-	WARN_ON_ONCE(!test_bit(DQ_ACTIVE_B, &dquot->dq_flags));
+-	atomic_inc(&dquot->dq_count);
+-	return dquot;
+-}
++struct dquot *dqgrab(struct dquot *dquot);
+ 
+ static inline bool dquot_is_busy(struct dquot *dquot)
+ {
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.51.0
+
 
