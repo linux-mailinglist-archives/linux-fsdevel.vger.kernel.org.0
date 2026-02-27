@@ -1,185 +1,279 @@
-Return-Path: <linux-fsdevel+bounces-78706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id wAExK1uAoWkUtgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 12:30:35 +0100
+	id 8LMqJ3GBoWnztwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 12:35:13 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EF831B692F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 12:30:34 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 539321B6A44
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 12:35:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7A808310CFD2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 11:29:26 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 1709430A41F4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 11:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A469B3EFD09;
-	Fri, 27 Feb 2026 11:29:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C893330642;
+	Fri, 27 Feb 2026 11:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="SkiKxtlm"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yzNBLfXK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OLWU5ivG";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yzNBLfXK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OLWU5ivG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E903EF0D3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 11:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.170
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772191757; cv=pass; b=Z3bZCzNr3mRWXJNGEYoKiwPZREKVXZZzQkB3fIduyRhpW3+9F1qm30KltpzkaXnjAgTbHBiDlBq4c2G5GYtDN/g78KHCbjtEwqkPb9J8dXYwUWlhIM6Rw7+5Ps9XJdaeCqzTCjJiVQWA6OJMj/uz3oosVSokRh5v3SUAix51gvw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772191757; c=relaxed/simple;
-	bh=5apxEmsZ5k/V4WaJUnpn0eyx24PQ+sSpGfBIGPwBrFA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QJOO8Z1HHTM11aB3EsC3M0zFpq93/KPIF8xuUa1KeWvifnxwtJSFcf+f/JIhrlzz3QW/Z8YpblKElkjv+T4n8IXE68dcXMYIYx+XEEOEMfeNpUaYu8BX13PFFLvQ8W8EXsfQHNYBHoJlyLeRbikmHgB34vptP0OkXq+jm7eX56M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=SkiKxtlm; arc=pass smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-506362ac5f7so17876031cf.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 03:29:13 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772191752; cv=none;
-        d=google.com; s=arc-20240605;
-        b=VRcZ5uKDK0MxRxX2j1avP5X7KG6r9ncCl20+z7Kmx6RlffxPJEsEdD+Bw2XyXPQvJN
-         Yq61e60/DIaGbjTPK+0FfvSrpt34dlKzkzcwNjInw0G/50ZkhgVNG6+cQFCWGxtQB7Br
-         0tECnPEHX7u0EQMLWHXNQgL7hynumFyuXyk8B2hhRVEqXp2mWQtKqi2o+m5T9WZizTN5
-         8BUyvV0G8CzPsIHaKPLDYlG34gnP3RVKDqTEzVdUGdx03Z+BRQD9eABmgj4MJuYDz45L
-         A0QQ2pLS/i1tCD5I4a3m5fltw/Aq11n8aMglXFQREZ31fE2xNfBOPtwY6xt0Gpj1r2S0
-         /qAA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=m8LFRyqi+lkEuWrw8hv5m1iY3CSZorTJdV9oCqgI28c=;
-        fh=WqekBisCs40BrqORJEDvh74PKdYD8MXGUWMRMN7akrg=;
-        b=BJ5uKZ5e+3xcgvP4ycIZwGodbxzh1R2MtGliaXwTSxhIt4vws21aI6OO6rmUUFT0g/
-         7q4VoI2RSNQgIwRwKg+LnXSiExKp1Qi99ERF/bLJaTOHaj7+9v8eXbdrdJawoA0xsexF
-         UWrq5S+2RRPmpYAcUUUCe0vp8hg9885Y0Pg0mSAXAXxwjebCd4NSULjqxmLiqgeEn7yM
-         gMHCS4axElCQAQQl7NhODi4waTIn2IkG6Xw1yTECbTUCkobqrdxECwzl/fxg4LsKoOgO
-         3+Pjh6zEueOHUx2gEVeMZPHv4VpKf8DaowN5pFZ3MDbYRlNqOV0Qd+DAQd48BStJZKSP
-         9ayQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1772191752; x=1772796552; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=m8LFRyqi+lkEuWrw8hv5m1iY3CSZorTJdV9oCqgI28c=;
-        b=SkiKxtlmQquTqKnMhYMlC+R9renJiVu/7tVy/FiG7uSciTGlo/H8dDiPSLO4R/KPLx
-         Q0YVv/cZiBkuNFGWP9GwdAbTe/9aUCnLtAjN2HCM8Ow42SfsbeCJPTtO6LDYJC5Od/rN
-         UOgqlCLfq4mMrHrW3iI0WuUhtR/sH77D7wzOI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772191752; x=1772796552;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m8LFRyqi+lkEuWrw8hv5m1iY3CSZorTJdV9oCqgI28c=;
-        b=hIvQs2ap3TXlEZ8WgNbuxMDIDyhyYn1LTB8H6xO62pcq2DeFUsDvzhKKhE6zpcol6/
-         iu27BdU+k415jkMtSm+L96oytYS9eVkZ1mx88hoAFSDSE+0waqTZI/ALq1DcxPtGOwka
-         sbzrAyDTi2/U2G5G9Hzwk0uTvmjq9UZYTxy8A/geML2sP/4xUsgFGaRd8cQ/NdA8shSa
-         7qH04z0oqePMD50x9ux1X4m+EkGyCq2su8OOg0I4WqDHushojVWA6+ZtE82k42hVESjr
-         cG2kUVp5r4nx5rslOFurDXoVbiLhf8yddi/G8lK/tK2bwf3iatQQzLB4l9brO/2fVt2Y
-         Pq3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXa6xWxJOBuQcD5VZyrNVasLOZufma9IoYkYNbrQz1LNFVvdKrTvOLqapFMtRAhZAdD0LT3snc+QIkA/WON@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh9IQN2IQDh3mIIgMiHSmI2M1aCH25LBulnb3PD/xQdxGu6fJj
-	H9wQFy9zcNV8JUxsCu1EFg4kyPZOaVVW/7zTgruhJBJlPG9gOEzKpO6ohev9L3WrYD+0jTwNgi0
-	sW0VtwdXmJRBTcK/2azvIr0ssXV03pcNP9kMpbLT5iQ==
-X-Gm-Gg: ATEYQzyB1d1yU/nsX/7JfBZumLrQr1p+7xILsb0v2USvm23lsuL4H8f/mguaw1RB9Zo
-	WGS3668W8VuUZyRVWpHltH+ZbWlK+MriHKRf0/Nq40p60rFDVxi5YhsgiiZdTfuQSd+/y4F2a85
-	mXNEKo2J8GuaMJThXRowO4mq2DW8uHmiRLw9HAf1CIG9ANbokRGxCkQKOOBROHQzANENJYbFcpX
-	wWtVpHD9wVDP8dbjqqwE8cfL2lXowSsP7nZomlDWT4369EfLnvPOcZozoSNPf3Nc3iS169bbfi7
-	zGcW2g==
-X-Received: by 2002:a05:622a:138d:b0:506:a15c:507e with SMTP id
- d75a77b69052e-507528a836dmr26409931cf.64.1772191752216; Fri, 27 Feb 2026
- 03:29:12 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC1B361674
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 11:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772192074; cv=none; b=FsLLBx7sjufgk+NEZoFLjf82UwaQee0C2x+b+gs05fIuUVaETvQKNM7JdZ8s0I4fJ8+QcwyeSvkGci7SnuEq7QfjF4lJRDjAw2mitnqsO/ilCzkLVaesxbdpzKKoN5ZuLgUC2wgU45c9RtGhgiFTslstNm60k9P3mpOeLBDD7q8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772192074; c=relaxed/simple;
+	bh=/DYKZzwiZf7JORlpCwaYSZ4w+lIYmVegY+urJY1I7Zc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WLkr7BybpZ9cOcTqrRuiI6lkqY+Ok9yGVptEc2SP9GiMZGd6VPGXESd408e/ivZKM3riX/q6ZI7SCo+oy2XLIDSsRx0a6nCiRWdyjuR5SjrzxqMn4fipyWfevG5WRLUcOu1WhMXD8eUCkaEzBECNtTNFfCmoYm7mT7AJewuzLmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yzNBLfXK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OLWU5ivG; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yzNBLfXK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OLWU5ivG; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9F4115BDF8;
+	Fri, 27 Feb 2026 11:34:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1772192070; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IcwzK4XVgXogdPbxbbJoSTt0FD2Bb9QBnrGjayGfvZM=;
+	b=yzNBLfXK+tYE0mTr6cv5Xc9DRb7sKV/48FxOb3BL6L8gr8/SztQ86e+i75x3i5JU8MIHq+
+	Foif2ZfZ2YMDSp0zDP2cwq7GeXar2rH++IeEMIG0IG8EA6XFWp9OniiFoNgqCvn7ZiREVl
+	Gr+DUjT3EwrVCHZGW2sYQOAf/MFKpOk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1772192070;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IcwzK4XVgXogdPbxbbJoSTt0FD2Bb9QBnrGjayGfvZM=;
+	b=OLWU5ivGNUJ4qes+LLrsYb/10z52jI6sC6kltAiVjL01EcSLqvWRQMHNYmXIpO1KtmsG6u
+	ntaoFB5s3+I+wpCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=yzNBLfXK;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=OLWU5ivG
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1772192070; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IcwzK4XVgXogdPbxbbJoSTt0FD2Bb9QBnrGjayGfvZM=;
+	b=yzNBLfXK+tYE0mTr6cv5Xc9DRb7sKV/48FxOb3BL6L8gr8/SztQ86e+i75x3i5JU8MIHq+
+	Foif2ZfZ2YMDSp0zDP2cwq7GeXar2rH++IeEMIG0IG8EA6XFWp9OniiFoNgqCvn7ZiREVl
+	Gr+DUjT3EwrVCHZGW2sYQOAf/MFKpOk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1772192070;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IcwzK4XVgXogdPbxbbJoSTt0FD2Bb9QBnrGjayGfvZM=;
+	b=OLWU5ivGNUJ4qes+LLrsYb/10z52jI6sC6kltAiVjL01EcSLqvWRQMHNYmXIpO1KtmsG6u
+	ntaoFB5s3+I+wpCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 834BF3EA69;
+	Fri, 27 Feb 2026 11:34:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id CsECIEaBoWmkLwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 27 Feb 2026 11:34:30 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 40858A06D4; Fri, 27 Feb 2026 12:34:30 +0100 (CET)
+Date: Fri, 27 Feb 2026 12:34:30 +0100
+From: Jan Kara <jack@suse.cz>
+To: Chuck Lever <cel@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org, 
+	sj1557.seo@samsung.com, yuezhang.mo@sony.com, almaz.alexandrovich@paragon-software.com, 
+	slava@dubeyko.com, glaubitz@physik.fu-berlin.de, frank.li@vivo.com, tytso@mit.edu, 
+	adilger.kernel@dilger.ca, cem@kernel.org, sfrench@samba.org, pc@manguebit.org, 
+	ronniesahlberg@gmail.com, sprasad@microsoft.com, trondmy@kernel.org, anna@kernel.org, 
+	jaegeuk@kernel.org, chao@kernel.org, hansg@kernel.org, senozhatsky@chromium.org, 
+	Chuck Lever <chuck.lever@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>
+Subject: Re: [PATCH v8 01/17] fs: Move file_kattr initialization to callers
+Message-ID: <ih3mvucoroudud5l4pndgjxbxfxgcizu2mpli4fhkbnxwufrlm@cyoqgtmvlvpq>
+References: <20260217214741.1928576-1-cel@kernel.org>
+ <20260217214741.1928576-2-cel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260226-fuse-compounds-upstream-v6-0-8585c5fcd2fc@ddn.com>
- <20260226-fuse-compounds-upstream-v6-1-8585c5fcd2fc@ddn.com>
- <CAJfpegsNpWb-miyx+P-W_=11dB3Shz6ikNOQ6Qp_hyOp1DqE9A@mail.gmail.com> <aaFyQX9ZI4KmqtFQ@fedora.fritz.box>
-In-Reply-To: <aaFyQX9ZI4KmqtFQ@fedora.fritz.box>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 27 Feb 2026 12:29:00 +0100
-X-Gm-Features: AaiRm523z_EYulx2QM9-2LVxnRAiAEizZFDVZrMwNhoCQ9mXbVysXKBSnBwScUk
-Message-ID: <CAJfpegun=NNM099f6GC2_E2TbG0s936V_sW5SExt6mOEC0_WMQ@mail.gmail.com>
-Subject: Re: Re: [PATCH v6 1/3] fuse: add compound command to combine multiple requests
-To: Horst Birthelmer <horst@birthelmer.de>
-Cc: Horst Birthelmer <horst@birthelmer.com>, Bernd Schubert <bschubert@ddn.com>, 
-	Joanne Koong <joannelkoong@gmail.com>, Luis Henriques <luis@igalia.com>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Horst Birthelmer <hbirthelmer@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260217214741.1928576-2-cel@kernel.org>
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Spam-Level: 
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
-	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+X-Spamd-Result: default: False [-1.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[birthelmer.com,ddn.com,gmail.com,igalia.com,vger.kernel.org];
-	TAGGED_FROM(0.00)[bounces-78706-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-78707-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,suse.cz:dkim,oracle.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns];
+	DMARC_NA(0.00)[suse.cz];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[szeredi.hu:+];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,vger.kernel.org,lists.sourceforge.net,mail.parknet.co.jp,samsung.com,sony.com,paragon-software.com,dubeyko.com,physik.fu-berlin.de,vivo.com,mit.edu,dilger.ca,samba.org,manguebit.org,gmail.com,microsoft.com,chromium.org,oracle.com];
+	RCPT_COUNT_TWELVE(0.00)[34];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[suse.cz:+];
 	MISSING_XM_UA(0.00)[];
 	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,szeredi.hu:dkim]
-X-Rspamd-Queue-Id: 0EF831B692F
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: 539321B6A44
 X-Rspamd-Action: no action
 
-On Fri, 27 Feb 2026 at 11:48, Horst Birthelmer <horst@birthelmer.de> wrote:
+On Tue 17-02-26 16:47:25, Chuck Lever wrote:
+> From: Chuck Lever <chuck.lever@oracle.com>
+> 
+> fileattr_fill_xflags() and fileattr_fill_flags() zero the entire
+> file_kattr struct before populating select fields. This behavior
+> prevents callers from setting flags in fa->fsx_xflags before
+> calling these helpers; the zeroing clears any pre-set values.
+> 
+> As Darrick Wong observed, when a function named "fill_xflags"
+> modifies more than just xflags, filesystems must understand
+> implementation details beyond the function's apparent scope. When
+> initialization occurs at entry points, helper functions need not
+> duplicate that zeroing.
+> 
+> Move struct file_kattr zero-initialization from the fill functions
+> to their callers. Entry points such as ioctl_setflags(),
+> ioctl_fssetxattr(), and the file_getattr/file_setattr syscalls
+> now perform aggregate initialization directly. The fill functions
+> retain their field-setting logic but no longer clear the struct.
+> 
+> This change enables subsequent patches where filesystem
+> ->fileattr_get() handlers can set case-sensitivity flags
+> (FS_XFLAG_CASEFOLD, FS_XFLAG_CASENONPRESERVING) in fa->fsx_xflags
+> before calling the fill functions.
+> 
+> Suggested-by: Darrick J. Wong <djwong@kernel.org>
+> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 
-> > FUSE_SUB_IS_ENTRY - this sub request will return a new entry on
-> > success (nodeid, filehandle)
-> > FUSE_SUB_DEP_ENTRY - this sub request depends on the result of a previous lookup
-> >
->
-> we don't need this if we use my converters from above.
+Looks good. Feel free to add:
 
-Dependencies need to be handled by the kernel and libfuse as well.
-Makes no sense to have two separate mechanisms for handling
-dependencies, so the kernel should use the same flags.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-> Could you maybe provide some examples of usecases, that I should try to drill the
-> new logic?
+								Honza
 
-- LOOKUP + GETATTR[L]
-- MKOBJ + (SETXATTR[L]  (only for posix_acl inheritance)) + GETATTR[L]
-+ (OPEN[L] (optional)
-- SETATTR + SETXATTR (setting posix_acl that modifies mode or setting
-mode on file with posix_acl)
-- INIT + LOOKUP_ROOT + GETATTR[L]
-- OPEN + IOCTL[O] + RELEASE[O] (fileattr_get/set)
-
-Only two dependencies here: lookup or open.  Both are simple in terms
-of just needing to copy a field from a previous request to the current
-one with fixed positions in all of the above cases.
-
-The LOOKUP + MKNOD one *is* more complicated, because it makes
-execution of the MKNOD dependent on the result of the LOOKUP, so the
-dependency handler needs to look inside the result and decide how to
-proceed based on that.  Some pros and cons of both approaches, so I'm
-curious to see how yours looks like.
-
-> I have used compounds to send groups of semantically linked requests to the fuse server
-> signalling to it if the kernel expects it to be one atomic operation or a preferred
-> 'group' of requests (like open+getattr, nothing happens if those are not processed atomic
-> in a distributed file system)
-
-Which is the case where the kernel expects them to be atomic?
-
-Thanks,
-Miklos
+> ---
+>  fs/file_attr.c     | 14 +++++---------
+>  fs/xfs/xfs_ioctl.c |  2 +-
+>  2 files changed, 6 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/file_attr.c b/fs/file_attr.c
+> index 6d2a298a786d..42aa511111a0 100644
+> --- a/fs/file_attr.c
+> +++ b/fs/file_attr.c
+> @@ -15,12 +15,10 @@
+>   * @fa:		fileattr pointer
+>   * @xflags:	FS_XFLAG_* flags
+>   *
+> - * Set ->fsx_xflags, ->fsx_valid and ->flags (translated xflags).  All
+> - * other fields are zeroed.
+> + * Set ->fsx_xflags, ->fsx_valid and ->flags (translated xflags).
+>   */
+>  void fileattr_fill_xflags(struct file_kattr *fa, u32 xflags)
+>  {
+> -	memset(fa, 0, sizeof(*fa));
+>  	fa->fsx_valid = true;
+>  	fa->fsx_xflags = xflags;
+>  	if (fa->fsx_xflags & FS_XFLAG_IMMUTABLE)
+> @@ -48,11 +46,9 @@ EXPORT_SYMBOL(fileattr_fill_xflags);
+>   * @flags:	FS_*_FL flags
+>   *
+>   * Set ->flags, ->flags_valid and ->fsx_xflags (translated flags).
+> - * All other fields are zeroed.
+>   */
+>  void fileattr_fill_flags(struct file_kattr *fa, u32 flags)
+>  {
+> -	memset(fa, 0, sizeof(*fa));
+>  	fa->flags_valid = true;
+>  	fa->flags = flags;
+>  	if (fa->flags & FS_SYNC_FL)
+> @@ -325,7 +321,7 @@ int ioctl_setflags(struct file *file, unsigned int __user *argp)
+>  {
+>  	struct mnt_idmap *idmap = file_mnt_idmap(file);
+>  	struct dentry *dentry = file->f_path.dentry;
+> -	struct file_kattr fa;
+> +	struct file_kattr fa = {};
+>  	unsigned int flags;
+>  	int err;
+>  
+> @@ -357,7 +353,7 @@ int ioctl_fssetxattr(struct file *file, void __user *argp)
+>  {
+>  	struct mnt_idmap *idmap = file_mnt_idmap(file);
+>  	struct dentry *dentry = file->f_path.dentry;
+> -	struct file_kattr fa;
+> +	struct file_kattr fa = {};
+>  	int err;
+>  
+>  	err = copy_fsxattr_from_user(&fa, argp);
+> @@ -378,7 +374,7 @@ SYSCALL_DEFINE5(file_getattr, int, dfd, const char __user *, filename,
+>  	struct path filepath __free(path_put) = {};
+>  	unsigned int lookup_flags = 0;
+>  	struct file_attr fattr;
+> -	struct file_kattr fa;
+> +	struct file_kattr fa = {};
+>  	int error;
+>  
+>  	BUILD_BUG_ON(sizeof(struct file_attr) < FILE_ATTR_SIZE_VER0);
+> @@ -431,7 +427,7 @@ SYSCALL_DEFINE5(file_setattr, int, dfd, const char __user *, filename,
+>  	struct path filepath __free(path_put) = {};
+>  	unsigned int lookup_flags = 0;
+>  	struct file_attr fattr;
+> -	struct file_kattr fa;
+> +	struct file_kattr fa = {};
+>  	int error;
+>  
+>  	BUILD_BUG_ON(sizeof(struct file_attr) < FILE_ATTR_SIZE_VER0);
+> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> index 4eeda4d4e3ab..369555275140 100644
+> --- a/fs/xfs/xfs_ioctl.c
+> +++ b/fs/xfs/xfs_ioctl.c
+> @@ -498,7 +498,7 @@ xfs_ioc_fsgetxattra(
+>  	xfs_inode_t		*ip,
+>  	void			__user *arg)
+>  {
+> -	struct file_kattr	fa;
+> +	struct file_kattr	fa = {};
+>  
+>  	xfs_ilock(ip, XFS_ILOCK_SHARED);
+>  	xfs_fill_fsxattr(ip, XFS_ATTR_FORK, &fa);
+> -- 
+> 2.53.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
