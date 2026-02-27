@@ -1,279 +1,246 @@
-Return-Path: <linux-fsdevel+bounces-78718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id SP3yNQWroWm1vQQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 15:32:37 +0100
+	id yMpFE6etoWk3vgQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 15:43:51 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EE481B9026
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 15:32:37 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A3631B9265
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 15:43:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id B2BFA3019CAD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 14:28:08 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4227D309D199
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 14:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D572C1598;
-	Fri, 27 Feb 2026 14:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3372841C31C;
+	Fri, 27 Feb 2026 14:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wBkMZQY0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/yUo8dPI";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wBkMZQY0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/yUo8dPI"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZoHzfiTE";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="J901+09n";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZoHzfiTE";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="J901+09n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EE2238C1F
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 14:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8140241C2EA
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 14:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772202487; cv=none; b=U0UoyOhV74CuvaDX9GS0zb6zev2M0dzm5wsDrOQOKXyYiZEN9mXEPy0oqGxZQDWH1G47MkPBHCK/8YJQVOmWXc3zDN6WtWmDE96cc+CBns3cG10hYHbFwbRQeUTsYNVcgz/PWRRcIX4gdSHKDqmF8zd6BgR572xYwQZUDNxIwAk=
+	t=1772203419; cv=none; b=rJFfx8BHwiy3hxI/NfGq4ceujfEEJldQ/JJf8Xm996LoEZlTovss+6tiFrnMNng8tLO5fLuOr19XpJ6aih4t25DggdvgxNiW+nCsIbAjveOmDROlpB1iDw/7tGR5OYS5AGBRfbj4i2K8x06wBKe/Xyl2Zhpgc+4J0a/LCsl+YKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772202487; c=relaxed/simple;
-	bh=+nVEdOmJkGJZNjkDjRddOwBhEMoZVl51iafnz5c2Wrc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s+Il7vJwN0yKBY1fjwg9KoMq3SC5ZxA4DWH3Wvt6fJo3oaMrLWHLIuD8oBYOT/R901uwSgZefDjtkUqx4urb3rWhQLSSDGQx805LLGTp0H38yVpQI1Qhl2ol8QsvLMH4ioqBlPbf6bzq+w3VoVs3i1uUGmMb9GTIDEMcLiZfVQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wBkMZQY0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/yUo8dPI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wBkMZQY0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/yUo8dPI; arc=none smtp.client-ip=195.135.223.131
+	s=arc-20240116; t=1772203419; c=relaxed/simple;
+	bh=zJzCKImqsgZeIOLfYm/UGl6q/lJoADe4Q+Yerq9X/nM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OBaaM2LCEwZb+G5EbPIb5jg1tL5da4U6k7tKLnZoc/+Xb4hKLGHMlpF+ocQ9dnrpdqZnxDtREofVsq8TqHHghzMNK+PD89bCSqD/a3drVubnWRGZn1O1e7RanAvCjuARgVB9tVVS+J3q0aDlZ1a1mUafyimZdmknVQM0tnne0iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZoHzfiTE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=J901+09n; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZoHzfiTE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=J901+09n; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 012665D6C8;
-	Fri, 27 Feb 2026 14:28:03 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B2FDE6B025;
+	Fri, 27 Feb 2026 14:43:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1772202483; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=IzUdZpCslYW9KcHYK/QEaOL7KjWpgGG717+tFDlnDxo=;
-	b=wBkMZQY0VmHFt2nfVt08SaJEaz1uTItmEHrwWyXPK0BNAEqbUQi1W5c5GODtt89EtmL/5Y
-	GZQYffRgSaV29oK21SpRf2y/vVK87MWgY95E9NV2cgv6FZ6UcSzz8zQ2bgOXVqI+yn3D7q
-	K8YEqcypA1pBfpb1O7+vfqsm7ZN5bTI=
+	t=1772203416; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y9LKCiBVL3H1H1O10DFdcwMW83GWaN+Qa6e2JLqtQoM=;
+	b=ZoHzfiTEUZFC5kSAbwWL0Xdwus5dTFIKH7DBiFmndaRaiWZedeixp6+B6wSgJmqUU2w3JX
+	sOYw0zH20DxH4UMAduA4kIE5kcau3NeCPqz9hgl3wGLRZfU2Wt/YUpIIL5WY/hTY/ZjQHj
+	7pH4iGvTPI8u3F6uxyq5eeHMPYUL8pE=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1772202483;
+	s=susede2_ed25519; t=1772203416;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=IzUdZpCslYW9KcHYK/QEaOL7KjWpgGG717+tFDlnDxo=;
-	b=/yUo8dPI/eeVXV8UancZkJSi4LjKLzcaBLGMsgbuwdxEAaGgiRdnLZN2yHkXMd5sMQlr0k
-	CpvMeFoXUIG/MYCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y9LKCiBVL3H1H1O10DFdcwMW83GWaN+Qa6e2JLqtQoM=;
+	b=J901+09n3K5/8bTE8FLKROZyCMy8zTVNsMgbi60qMgdgQcwwUNLd/CDiJV/mRZXWmM8zf3
+	9yETEUKOXsb7M8BA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ZoHzfiTE;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=J901+09n
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1772202483; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=IzUdZpCslYW9KcHYK/QEaOL7KjWpgGG717+tFDlnDxo=;
-	b=wBkMZQY0VmHFt2nfVt08SaJEaz1uTItmEHrwWyXPK0BNAEqbUQi1W5c5GODtt89EtmL/5Y
-	GZQYffRgSaV29oK21SpRf2y/vVK87MWgY95E9NV2cgv6FZ6UcSzz8zQ2bgOXVqI+yn3D7q
-	K8YEqcypA1pBfpb1O7+vfqsm7ZN5bTI=
+	t=1772203416; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y9LKCiBVL3H1H1O10DFdcwMW83GWaN+Qa6e2JLqtQoM=;
+	b=ZoHzfiTEUZFC5kSAbwWL0Xdwus5dTFIKH7DBiFmndaRaiWZedeixp6+B6wSgJmqUU2w3JX
+	sOYw0zH20DxH4UMAduA4kIE5kcau3NeCPqz9hgl3wGLRZfU2Wt/YUpIIL5WY/hTY/ZjQHj
+	7pH4iGvTPI8u3F6uxyq5eeHMPYUL8pE=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1772202483;
+	s=susede2_ed25519; t=1772203416;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=IzUdZpCslYW9KcHYK/QEaOL7KjWpgGG717+tFDlnDxo=;
-	b=/yUo8dPI/eeVXV8UancZkJSi4LjKLzcaBLGMsgbuwdxEAaGgiRdnLZN2yHkXMd5sMQlr0k
-	CpvMeFoXUIG/MYCg==
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y9LKCiBVL3H1H1O10DFdcwMW83GWaN+Qa6e2JLqtQoM=;
+	b=J901+09n3K5/8bTE8FLKROZyCMy8zTVNsMgbi60qMgdgQcwwUNLd/CDiJV/mRZXWmM8zf3
+	9yETEUKOXsb7M8BA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E01C63EA69;
-	Fri, 27 Feb 2026 14:28:02 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A82CF3EA69;
+	Fri, 27 Feb 2026 14:43:36 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pHayNvKpoWkyaQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 27 Feb 2026 14:28:02 +0000
+	id PVwDKZitoWkJeQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 27 Feb 2026 14:43:36 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A9A66A06D4; Fri, 27 Feb 2026 15:28:02 +0100 (CET)
+	id 6BD42A06D4; Fri, 27 Feb 2026 15:43:28 +0100 (CET)
+Date: Fri, 27 Feb 2026 15:43:28 +0100
 From: Jan Kara <jack@suse.cz>
-To: <linux-fsdevel@vger.kernel.org>
-Cc: Sam Sun <samsun1006219@gmail.com>,
-	Jan Kara <jack@suse.cz>
-Subject: [PATCH] quota: Fix race of dquot_scan_active() with quota deactivation
-Date: Fri, 27 Feb 2026 15:27:43 +0100
-Message-ID: <20260227142742.18396-2-jack@suse.cz>
-X-Mailer: git-send-email 2.51.0
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+	Josef Bacik <josef@toxicpanda.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>, 
+	linux-mm@kvack.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Tejun Heo <tj@kernel.org>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Jann Horn <jannh@google.com>, netdev@vger.kernel.org
+Subject: Re: [PATCH 01/14] xattr: add rcu_head and rhash_head to struct
+ simple_xattr
+Message-ID: <vk7mausaumazk6iho7f2z7ld7byeyjhyczietf4rdi3c4dt3ya@ytbqtfdwvmfp>
+References: <20260216-work-xattr-socket-v1-0-c2efa4f74cb7@kernel.org>
+ <20260216-work-xattr-socket-v1-1-c2efa4f74cb7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5063; i=jack@suse.cz; h=from:subject; bh=+nVEdOmJkGJZNjkDjRddOwBhEMoZVl51iafnz5c2Wrc=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBpoane/E1dVf7RQcUgsbae4IScbl+C09cT2JEuP onEl60GcjuJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCaaGp3gAKCRCcnaoHP2RA 2fR2B/wIp4hDyRfAK4hurb3ezPvf1djGHNXx2EwjNolwpXucTEoXC9hLM/tJr+8+9grBz4aJQfF 29AzMHgg2d4c3DsowNmfCXpAi3vK7P3c5+Ecchk9TVNwRR0LIo736FjiasizUHIm1tWed2twwXb 3jziNPvWxotBaKs8DkKaDA01OTCGz40CXxZ5P6Kwb0Darhy3SgSD/NsKas9fQKHchTf4tkh/b/6 CnrQMhFnRA7rjUN3qeYrEj9ycz7DqS3CP/Aq6SxEKpxL7v+lQdg15vCNHCgTnnLLtEDapWAQODz 305rGnpzM71Jlhnp8+xNJOVrkH4TRMZJl3nu9hTptXyuM27j
-X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260216-work-xattr-socket-v1-1-c2efa4f74cb7@kernel.org>
 X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Spam-Level: 
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [-1.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,suse.cz];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78718-lists,linux-fsdevel=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,suse.cz:email,suse.cz:dkim];
 	DMARC_NA(0.00)[suse.cz];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78719-lists,linux-fsdevel=lfdr.de];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	MIME_TRACE(0.00)[0:+];
 	DKIM_TRACE(0.00)[suse.cz:+];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	TO_DN_SOME(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	MISSING_XM_UA(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TO_DN_SOME(0.00)[];
 	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: 6EE481B9026
+X-Rspamd-Queue-Id: 9A3631B9265
 X-Rspamd-Action: no action
 
-dquot_scan_active() can race with quota deactivation in
-quota_release_workfn() like:
+On Mon 16-02-26 14:31:57, Christian Brauner wrote:
+> In preparation for converting simple_xattrs from rbtree to rhashtable,
+> add rhash_head and rcu_head members to struct simple_xattr. The
+> rhashtable implementation will use rhash_head for hash table linkage
+> and RCU-based lockless reads, requiring that replaced or removed xattr
+> entries be freed via call_rcu() rather than immediately.
+> 
+> Add simple_xattr_free_rcu() which schedules RCU-deferred freeing of an
+> xattr entry.  This will be used by callers of simple_xattr_set() once
+> they switch to the rhashtable-based xattr store.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-  CPU0 (quota_release_workfn)         CPU1 (dquot_scan_active)
-  ==============================      ==============================
-  spin_lock(&dq_list_lock);
-  list_replace_init(
-    &releasing_dquots, &rls_head);
-    /* dquot X on rls_head,
-       dq_count == 0,
-       DQ_ACTIVE_B still set */
-  spin_unlock(&dq_list_lock);
-  synchronize_srcu(&dquot_srcu);
-                                      spin_lock(&dq_list_lock);
-                                      list_for_each_entry(dquot,
-                                          &inuse_list, dq_inuse) {
-                                        /* finds dquot X */
-                                        dquot_active(X) -> true
-                                        atomic_inc(&X->dq_count);
-                                      }
-                                      spin_unlock(&dq_list_lock);
-  spin_lock(&dq_list_lock);
-  dquot = list_first_entry(&rls_head);
-  WARN_ON_ONCE(atomic_read(&dquot->dq_count));
+Looks good. Feel free to add:
 
-The problem is not only a cosmetic one as under memory pressure the
-caller of dquot_scan_active() can end up working on freed dquot.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Fix the problem by making sure the dquot is removed from releasing list
-when we acquire a reference to it.
+								Honza
 
-Fixes: 869b6ea1609f ("quota: Fix slow quotaoff")
-Reported-by: Sam Sun <samsun1006219@gmail.com>
-Link: https://lore.kernel.org/all/CAEkJfYPTt3uP1vAYnQ5V2ZWn5O9PLhhGi5HbOcAzyP9vbXyjeg@mail.gmail.com
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/quota/dquot.c         | 38 ++++++++++++++++++++++++++++++--------
- include/linux/quotaops.h |  9 +--------
- 2 files changed, 31 insertions(+), 16 deletions(-)
-
-I plan to merge this fix through my tree.
-
-diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index 376739f6420e..64cf42721496 100644
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -363,6 +363,31 @@ static inline int dquot_active(struct dquot *dquot)
- 	return test_bit(DQ_ACTIVE_B, &dquot->dq_flags);
- }
- 
-+static struct dquot *__dqgrab(struct dquot *dquot)
-+{
-+	lockdep_assert_held(&dq_list_lock);
-+	if (!atomic_read(&dquot->dq_count))
-+		remove_free_dquot(dquot);
-+	atomic_inc(&dquot->dq_count);
-+	return dquot;
-+}
-+
-+/*
-+ * Get reference to dquot when we got pointer to it by some other means. The
-+ * dquot has to be active and the caller has to make sure it cannot get
-+ * deactivated under our hands.
-+ */
-+struct dquot *dqgrab(struct dquot *dquot)
-+{
-+	spin_lock(&dq_list_lock);
-+	WARN_ON_ONCE(!dquot_active(dquot));
-+	dquot = __dqgrab(dquot);
-+	spin_unlock(&dq_list_lock);
-+
-+	return dquot;
-+}
-+EXPORT_SYMBOL_GPL(dqgrab);
-+
- static inline int dquot_dirty(struct dquot *dquot)
- {
- 	return test_bit(DQ_MOD_B, &dquot->dq_flags);
-@@ -641,15 +666,14 @@ int dquot_scan_active(struct super_block *sb,
- 			continue;
- 		if (dquot->dq_sb != sb)
- 			continue;
--		/* Now we have active dquot so we can just increase use count */
--		atomic_inc(&dquot->dq_count);
-+		__dqgrab(dquot);
- 		spin_unlock(&dq_list_lock);
- 		dqput(old_dquot);
- 		old_dquot = dquot;
- 		/*
- 		 * ->release_dquot() can be racing with us. Our reference
--		 * protects us from new calls to it so just wait for any
--		 * outstanding call and recheck the DQ_ACTIVE_B after that.
-+		 * protects us from dquot_release() proceeding so just wait for
-+		 * any outstanding call and recheck the DQ_ACTIVE_B after that.
- 		 */
- 		wait_on_dquot(dquot);
- 		if (dquot_active(dquot)) {
-@@ -717,7 +741,7 @@ int dquot_writeback_dquots(struct super_block *sb, int type)
- 			/* Now we have active dquot from which someone is
-  			 * holding reference so we can safely just increase
- 			 * use count */
--			dqgrab(dquot);
-+			__dqgrab(dquot);
- 			spin_unlock(&dq_list_lock);
- 			err = dquot_write_dquot(dquot);
- 			if (err && !ret)
-@@ -963,9 +987,7 @@ struct dquot *dqget(struct super_block *sb, struct kqid qid)
- 		spin_unlock(&dq_list_lock);
- 		dqstats_inc(DQST_LOOKUPS);
- 	} else {
--		if (!atomic_read(&dquot->dq_count))
--			remove_free_dquot(dquot);
--		atomic_inc(&dquot->dq_count);
-+		__dqgrab(dquot);
- 		spin_unlock(&dq_list_lock);
- 		dqstats_inc(DQST_CACHE_HITS);
- 		dqstats_inc(DQST_LOOKUPS);
-diff --git a/include/linux/quotaops.h b/include/linux/quotaops.h
-index c334f82ed385..f9c0f9d7c9d9 100644
---- a/include/linux/quotaops.h
-+++ b/include/linux/quotaops.h
-@@ -44,14 +44,7 @@ int dquot_initialize(struct inode *inode);
- bool dquot_initialize_needed(struct inode *inode);
- void dquot_drop(struct inode *inode);
- struct dquot *dqget(struct super_block *sb, struct kqid qid);
--static inline struct dquot *dqgrab(struct dquot *dquot)
--{
--	/* Make sure someone else has active reference to dquot */
--	WARN_ON_ONCE(!atomic_read(&dquot->dq_count));
--	WARN_ON_ONCE(!test_bit(DQ_ACTIVE_B, &dquot->dq_flags));
--	atomic_inc(&dquot->dq_count);
--	return dquot;
--}
-+struct dquot *dqgrab(struct dquot *dquot);
- 
- static inline bool dquot_is_busy(struct dquot *dquot)
- {
+> ---
+>  fs/xattr.c            | 23 +++++++++++++++++++++++
+>  include/linux/xattr.h |  4 ++++
+>  2 files changed, 27 insertions(+)
+> 
+> diff --git a/fs/xattr.c b/fs/xattr.c
+> index 3e49e612e1ba..9cbb1917bcb2 100644
+> --- a/fs/xattr.c
+> +++ b/fs/xattr.c
+> @@ -1197,6 +1197,29 @@ void simple_xattr_free(struct simple_xattr *xattr)
+>  	kvfree(xattr);
+>  }
+>  
+> +static void simple_xattr_rcu_free(struct rcu_head *head)
+> +{
+> +	struct simple_xattr *xattr;
+> +
+> +	xattr = container_of(head, struct simple_xattr, rcu);
+> +	simple_xattr_free(xattr);
+> +}
+> +
+> +/**
+> + * simple_xattr_free_rcu - free an xattr object after an RCU grace period
+> + * @xattr: the xattr object
+> + *
+> + * Schedule RCU-deferred freeing of an xattr entry. This is used by
+> + * rhashtable-based callers of simple_xattr_set() that replace or remove
+> + * an existing entry while concurrent RCU readers may still be accessing
+> + * it.
+> + */
+> +void simple_xattr_free_rcu(struct simple_xattr *xattr)
+> +{
+> +	if (xattr)
+> +		call_rcu(&xattr->rcu, simple_xattr_rcu_free);
+> +}
+> +
+>  /**
+>   * simple_xattr_alloc - allocate new xattr object
+>   * @value: value of the xattr object
+> diff --git a/include/linux/xattr.h b/include/linux/xattr.h
+> index 64e9afe7d647..1328f2bfd2ce 100644
+> --- a/include/linux/xattr.h
+> +++ b/include/linux/xattr.h
+> @@ -16,6 +16,7 @@
+>  #include <linux/types.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/mm.h>
+> +#include <linux/rhashtable-types.h>
+>  #include <linux/user_namespace.h>
+>  #include <uapi/linux/xattr.h>
+>  
+> @@ -112,6 +113,8 @@ struct simple_xattrs {
+>  
+>  struct simple_xattr {
+>  	struct rb_node rb_node;
+> +	struct rhash_head hash_node;
+> +	struct rcu_head rcu;
+>  	char *name;
+>  	size_t size;
+>  	char value[];
+> @@ -122,6 +125,7 @@ void simple_xattrs_free(struct simple_xattrs *xattrs, size_t *freed_space);
+>  size_t simple_xattr_space(const char *name, size_t size);
+>  struct simple_xattr *simple_xattr_alloc(const void *value, size_t size);
+>  void simple_xattr_free(struct simple_xattr *xattr);
+> +void simple_xattr_free_rcu(struct simple_xattr *xattr);
+>  int simple_xattr_get(struct simple_xattrs *xattrs, const char *name,
+>  		     void *buffer, size_t size);
+>  struct simple_xattr *simple_xattr_set(struct simple_xattrs *xattrs,
+> 
+> -- 
+> 2.47.3
+> 
 -- 
-2.51.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
