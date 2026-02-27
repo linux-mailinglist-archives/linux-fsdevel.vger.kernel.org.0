@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-78782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78783-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id gIcqMmH7oWl4yAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 21:15:29 +0100
+	id mOVVNjL9oWl4yAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78783-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 21:23:14 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA4861BD6B1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 21:15:29 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 534081BD92C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 21:23:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 3582C30A1459
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 20:13:01 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 1A3AC31A96DA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 20:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E463847AF64;
-	Fri, 27 Feb 2026 20:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED23477E5E;
+	Fri, 27 Feb 2026 20:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+uZFzLt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mqTK4ziI"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608E0478E27;
-	Fri, 27 Feb 2026 20:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64091472797;
+	Fri, 27 Feb 2026 20:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772223098; cv=none; b=pnxmZrU0VPfIfar41Wy/2dfSYflfpX/dVe2m/iH+QQ78bx0PodPW++oAJzeKTdsbwnB3JKkV8+Ro/TVFX14RVKIdiAohHBzjGmAEVhDegt1BOpwoP/wxiwwOytoGX1r4iYE0LcmFR76c45muiOpDpstr5B52qXlEtiBPKVBLouQ=
+	t=1772223114; cv=none; b=qd+0978d/0xZSuuQPs1pVRzCuB7tYA0pbV9KczWXBlx+UdfLhcXsr5hdjei4uPzT0QpRZ3qvZQzU6b+HASUcasLVRl2mk2zZiMOfLyxv14bgDdYp/sMNEFRguvqLCmQhYx/V1KrzAlf3yNsVzKcHKuF+1fHhp8JL2vzD1mzaRJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772223098; c=relaxed/simple;
-	bh=KcfCcPy+dBQFq2iZWWRAzMkc9iA3mhQIqe4VKvKm/84=;
+	s=arc-20240116; t=1772223114; c=relaxed/simple;
+	bh=I5k8d/7BhjTgSAWiS/rU+NWa+WlmbxH2nIHZouG4qQM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Es3tNLruDZ8BRldSbrztSDLpD95RQYXczH+wkVwMDCaB0UMMbu2ST5bcqF7cdhrt3m42B49q99q/Azv3vfFVEPJbOVx8sExf7zi86DeEZHoG+GkgWykwaSyhx2C+6Pu9m/N02pdrR3dJybk8K7R5ADxMPQChpaadBZtqk/ZNZVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R+uZFzLt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C83C0C2BC86;
-	Fri, 27 Feb 2026 20:11:21 +0000 (UTC)
+	 MIME-Version; b=puujtq0a9MskLETPBI0Aszhd/Qn3RXP87zXhhsWmcxKE229rV2ezdPCR8EymVJ/Bj9ltvPuCq8xcQARHnH3a8BrRYX4QGyLd67wn9BaQeBfYMPnGj7asYzyk8vq1/ZDHCci1Tafe0Hz2CTEjdQkv1rx96fHjTc31T1EezlVvAX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mqTK4ziI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0F1FC116C6;
+	Fri, 27 Feb 2026 20:11:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772223098;
-	bh=KcfCcPy+dBQFq2iZWWRAzMkc9iA3mhQIqe4VKvKm/84=;
+	s=k20201202; t=1772223114;
+	bh=I5k8d/7BhjTgSAWiS/rU+NWa+WlmbxH2nIHZouG4qQM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=R+uZFzLtdrG65b8hmVxNKYNlrS/AesJe5C0CdRLLG0CXN4yBdaUTdPL6zW++yDFfV
-	 d9morv+7a1pkXjkKZLGhg42leomEsG3yOY/LUvmeI7p74dvImpIdlZ+hVxW2bRPJa1
-	 EnR+f8uCtq2nwqb4bowrT5fporOqCSIT2OWtiwOHYZKKevZ2sqcl0dhKRiXN/W1VTf
-	 T3JnjgarvGwRpiC+6sbx7CJfmMTNXMJbxZ+2eZvxX9FSc8qEYjP7BB1HwU+r3h1AXj
-	 QaDl1DJbAtFutxlyg3qP2d0PNjBvS5b6oUjoQZ0i0yJpmByBkdKGovCyF8vwNHNDEe
-	 YwpOXuN0+M/Ig==
+	b=mqTK4ziIkeceLpOMlpc9Z3pxLBxf+uElw1bxcxQsf50OwHmsXyG8JxCnQBvafY8L8
+	 CBoR0oUKd8BfbexVek1eSk440DDZw8CZg1d3pBVVBhMAofC8lV7GSd4wOs8ZGvwQc6
+	 gG2H8vqWX8ELemznuQXqyAwHtagW9ERzcgDt+oTFrkOj6Hnrd+KZQbWXQcmnthmek8
+	 +vBEQhzvxIXjGxGImAh3NyciAlusUwXZudtLW9IZnKynhZJO4tb/IuLubzDUsLdgNg
+	 2YWaQinZZpstMXww2VbVV42oOagkVcy4IAHbH1UPy7e8FZkiElL1SY+N80lOyHpM+g
+	 OaaWmRapbAJgA==
 From: "David Hildenbrand (Arm)" <david@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: "linux-mm @ kvack . org" <linux-mm@kvack.org>,
@@ -119,9 +119,9 @@ Cc: "linux-mm @ kvack . org" <linux-mm@kvack.org>,
 	netdev@vger.kernel.org,
 	rust-for-linux@vger.kernel.org,
 	x86@kernel.org
-Subject: [PATCH v1 09/16] mm/memory: convert details->even_cows into details->skip_cows
-Date: Fri, 27 Feb 2026 21:08:40 +0100
-Message-ID: <20260227200848.114019-10-david@kernel.org>
+Subject: [PATCH v1 10/16] mm/memory: use __zap_vma_range() in zap_vma_for_reaping()
+Date: Fri, 27 Feb 2026 21:08:41 +0100
+Message-ID: <20260227200848.114019-11-david@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260227200848.114019-1-david@kernel.org>
 References: <20260227200848.114019-1-david@kernel.org>
@@ -138,7 +138,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
@@ -146,11 +146,11 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FREEMAIL_CC(0.00)[kvack.org,kernel.org,linux-foundation.org,oracle.com,google.com,suse.com,suse.de,linux.dev,infradead.org,linux.ibm.com,ellerman.id.au,redhat.com,alien8.de,linuxfoundation.org,android.com,mev.co.uk,visionengravers.com,linux.intel.com,intel.com,ursulin.net,gmail.com,ffwll.ch,ziepe.ca,hpe.com,arndb.de,iogearbox.net,arm.com,davemloft.net,lists.ozlabs.org,vger.kernel.org,lists.freedesktop.org];
-	TAGGED_FROM(0.00)[bounces-78782-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78783-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
 	RCVD_TLS_LAST(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[david@kernel.org,linux-fsdevel@vger.kernel.org];
@@ -160,102 +160,85 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	NEURAL_HAM(-0.00)[-1.000];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: AA4861BD6B1
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 534081BD92C
 X-Rspamd-Action: no action
 
-The current semantics are confusing: simply because someone specifies an
-empty zap_detail struct suddenly makes should_zap_cows() behave
-differently. The default should be to also zap CoW'ed anonymous pages.
+Let's call __zap_vma_range() instead of unmap_page_range() to prepare
+for further cleanups.
 
-Really only unmap_mapping_pages() and friends want to skip zapping of
-these anon folios.
+To keep the existing behavior, whereby we do not call uprobe_munmap()
+which could block, add a new "reaping" member to zap_details and use it.
 
-So let's invert the meaning; turn the confusing "reclaim_pt" check that
-overrides other properties in should_zap_cows() into a safety check.
-
-Note that the only caller that sets reclaim_pt=true is
-madvise_dontneed_single_vma(), which wants to zap any pages.
+Likely we should handle the possible blocking in uprobe_munmap()
+differently, but for now keep it unchanged.
 
 Signed-off-by: David Hildenbrand (Arm) <david@kernel.org>
 ---
- include/linux/mm.h |  2 +-
- mm/madvise.c       |  1 -
- mm/memory.c        | 12 ++++++------
- 3 files changed, 7 insertions(+), 8 deletions(-)
+ include/linux/mm.h |  1 +
+ mm/memory.c        | 13 +++++++++----
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
 diff --git a/include/linux/mm.h b/include/linux/mm.h
-index d3ef586ee1c0..21b67c203e62 100644
+index 21b67c203e62..4710f7c7495a 100644
 --- a/include/linux/mm.h
 +++ b/include/linux/mm.h
-@@ -2798,7 +2798,7 @@ extern void pagefault_out_of_memory(void);
-  */
- struct zap_details {
+@@ -2800,6 +2800,7 @@ struct zap_details {
  	struct folio *single_folio;	/* Locked folio to be unmapped */
--	bool even_cows;			/* Zap COWed private pages too? */
-+	bool skip_cows;			/* Do not zap COWed private pages */
+ 	bool skip_cows;			/* Do not zap COWed private pages */
  	bool reclaim_pt;		/* Need reclaim page tables? */
++	bool reaping;			/* Reaping, do not block. */
  	zap_flags_t zap_flags;		/* Extra flags for zapping */
  };
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 557a360f7919..b51f216934f3 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -853,7 +853,6 @@ static long madvise_dontneed_single_vma(struct madvise_behavior *madv_behavior)
- 	struct madvise_behavior_range *range = &madv_behavior->range;
- 	struct zap_details details = {
- 		.reclaim_pt = true,
--		.even_cows = true,
- 	};
  
- 	zap_page_range_single_batched(
 diff --git a/mm/memory.c b/mm/memory.c
-index fdcd2abf29c2..7d7c24c6917c 100644
+index 7d7c24c6917c..394b2e931974 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -1554,11 +1554,13 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
- static inline bool should_zap_cows(struct zap_details *details)
+@@ -2079,14 +2079,18 @@ static void __zap_vma_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 		unsigned long start, unsigned long end,
+ 		struct zap_details *details)
  {
- 	/* By default, zap all pages */
--	if (!details || details->reclaim_pt)
-+	if (!details)
- 		return true;
- 
-+	VM_WARN_ON_ONCE(details->skip_cows && details->reclaim_pt);
++	const bool reaping = details && details->reaping;
 +
- 	/* Or, we zap COWed pages only if the caller wants to */
--	return details->even_cows;
-+	return !details->skip_cows;
- }
+ 	VM_WARN_ON_ONCE(start >= end || !range_in_vma(vma, start, end));
  
- /* Decides whether we should zap this folio with the folio pointer specified */
-@@ -2149,8 +2151,6 @@ void unmap_vmas(struct mmu_gather *tlb, struct unmap_desc *unmap)
+-	if (vma->vm_file)
++	/* uprobe_munmap() might sleep, so skip it when reaping. */
++	if (vma->vm_file && !reaping)
+ 		uprobe_munmap(vma, start, end);
+ 
+ 	if (unlikely(is_vm_hugetlb_page(vma))) {
+ 		zap_flags_t zap_flags = details ? details->zap_flags : 0;
+ 
++		VM_WARN_ON_ONCE(reaping);
+ 		/*
+ 		 * vm_file will be NULL when we fail early while instantiating
+ 		 * a new mapping. In this case, no pages were mapped yet and
+@@ -2111,11 +2115,12 @@ static void __zap_vma_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
+  */
+ int zap_vma_for_reaping(struct vm_area_struct *vma)
+ {
++	struct zap_details details = {
++		.reaping = true,
++	};
  	struct mmu_notifier_range range;
- 	struct zap_details details = {
- 		.zap_flags = ZAP_FLAG_DROP_MARKER | ZAP_FLAG_UNMAP,
--		/* Careful - we need to zap private pages too! */
--		.even_cows = true,
- 	};
+ 	struct mmu_gather tlb;
  
- 	vma = unmap->first;
-@@ -4282,7 +4282,7 @@ void unmap_mapping_folio(struct folio *folio)
- 	first_index = folio->index;
- 	last_index = folio_next_index(folio) - 1;
- 
--	details.even_cows = false;
-+	details.skip_cows = true;
- 	details.single_folio = folio;
- 	details.zap_flags = ZAP_FLAG_DROP_MARKER;
- 
-@@ -4312,7 +4312,7 @@ void unmap_mapping_pages(struct address_space *mapping, pgoff_t start,
- 	pgoff_t	first_index = start;
- 	pgoff_t	last_index = start + nr - 1;
- 
--	details.even_cows = even_cows;
-+	details.skip_cows = !even_cows;
- 	if (last_index < first_index)
- 		last_index = ULONG_MAX;
- 
+-	VM_WARN_ON_ONCE(is_vm_hugetlb_page(vma));
+-
+ 	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma->vm_mm,
+ 				vma->vm_start, vma->vm_end);
+ 	tlb_gather_mmu(&tlb, vma->vm_mm);
+@@ -2123,7 +2128,7 @@ int zap_vma_for_reaping(struct vm_area_struct *vma)
+ 		tlb_finish_mmu(&tlb);
+ 		return -EBUSY;
+ 	}
+-	unmap_page_range(&tlb, vma, range.start, range.end, NULL);
++	__zap_vma_range(&tlb, vma, range.start, range.end, &details);
+ 	mmu_notifier_invalidate_range_end(&range);
+ 	tlb_finish_mmu(&tlb);
+ 	return 0;
 -- 
 2.43.0
 
