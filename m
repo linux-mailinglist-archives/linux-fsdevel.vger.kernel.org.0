@@ -1,51 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-78791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QGWNLHf8oWl4yAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 21:20:07 +0100
+	id AAtGNhwDomn5yAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 21:48:28 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DBFE1BD863
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 21:20:07 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 852F81BDEFB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 21:48:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id C1283309EE3B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 20:19:45 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id D8819303D5F7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 20:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5843A46AF11;
-	Fri, 27 Feb 2026 20:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836C03939DB;
+	Fri, 27 Feb 2026 20:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UZ+5OHFJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fR+CSNf6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D194836D50C;
-	Fri, 27 Feb 2026 20:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF15D33A9EF
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 20:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772223581; cv=none; b=qpwiDfXVFWldPGjy5efLqaO2uYV/H8Zl2lQKsL8IEHwwYevUIFxNH66r4f5kvP3Ugv/M24X7NuglDSirvGsTQwp1YLWzCRMPhunPvJUBY3YnqNB0XPwX4l/f4CT//h1WGWH/3J5N9apRX+QHIz2elI/VDbwPt4xWN+30DyKA/Kk=
+	t=1772225304; cv=none; b=umyIB4Q7MGlv42yocEqwHpOXeo5LrdDrUFotkNfaXR44DdIMIN4Jn+45ms/ui65gdLisP9BfnwKu7pUixquimzjptMDtS4a2tPwFnrQg6PF2WcgndAqCIOTaJJvWY6q8SJTxfM8tMRcldrZllTctLsso47uVCQwr/YPBHfeyWWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772223581; c=relaxed/simple;
-	bh=5fNPUXE9oJb6B1Ux6lQSkqsmnxeecDugz+nW9DMgWIU=;
+	s=arc-20240116; t=1772225304; c=relaxed/simple;
+	bh=IGfb1kLmcBrVmnBiSaNaZ9o6tR51V8EMPWSkJML7PBk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AcE1E8DiQsxeKxlTte2I2FNkOYgBZsHjKKDar7R4UUuBb8Ep2Dez08GXsU5N6mKYL3W4o3mCxX9FYVw8w77Y0aBKXU9ibk9k8sfWFKdQTSQ7BhOFP571xMpLj5OCVnWxNO/7H7WucLm3Tss5Eq3LWe1icoFFdjedJKsAs30lAY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UZ+5OHFJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2CA6C2BC86;
-	Fri, 27 Feb 2026 20:19:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772223581;
-	bh=5fNPUXE9oJb6B1Ux6lQSkqsmnxeecDugz+nW9DMgWIU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UZ+5OHFJw8pCNgSDIal04w300OTtvf75IVcavv+h2cRgEeIRGcSos5vNdhdzqX5LF
-	 2uC8P9Dc397mmwlw6XLnK7jOW5GNq1KKVHJSUI2+Q1K3NZKcz+LZEsZLnszIbAoLdr
-	 wlEDznrUJFclAhccN9P5aPvuR/DM/DagXD5/jEhUfRTl0v3beb81Appkd1s9xQ/hL/
-	 6Px0l0A4bEfg3BEBmNCYvx0KsZLeulh6ADHN4nJIDjezI675/UGkD7AaaE5dGlboHa
-	 +K2NsAnHcUmOUqVh+7Dylwppu5/lV1HtJ5+obaqVL9a09DrfdpyOxdNBziQwLboSu5
-	 cUelPX5cSNmVg==
-Message-ID: <65bc73f4-e07c-4ead-9eda-b142e691e110@kernel.org>
-Date: Fri, 27 Feb 2026 21:19:34 +0100
+	 In-Reply-To:Content-Type; b=RmvWW7ngt8x8koNWx0wtJb+sWFBkbdgkN5aaBVLOMFMvj7UTMMp7n/GeU9DM+bxqEYMDqhiUKLYmyYSLB8O1N+Nt+TVTCcu5INqZQPfdIGmkYu82MT5vP38sBxltzieSQwz5R8LwaYlOYdLkDKgSWkyb50nmmCA8Mf3WJerEtZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fR+CSNf6; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-43987b97701so1921738f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 12:48:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772225301; x=1772830101; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Xcg3jBdVXKkgCFEIQmOkVAOPdVJjauymlm8Tt0QYeSQ=;
+        b=fR+CSNf6l+26DT1T24a34fBF0wrn7UdnOaPm4MxXCzxhBuQAnEoXWhMcH1apoYHlZo
+         FVEUZX4XFU5s9uy4fSagO9wjAVuN1fZFImC1t2Vygv3AIzub2ClmUgJbCEBzVe4dxM+X
+         PD7z1knC0l8ZEp+3k7bxpoV1DIGoJUgaDLhKVGkvZ19bCWElUpbyuFf3yR9YIJoDYR2w
+         qiz5vP4YyHeZ0dUW0WvUYEObrfj1Bkt8lzz9rsxbXCCBaW8WYOAuL/ugRzSB82v3HJk9
+         N4ycrgO4MAFx10xMXi35eX7T2P7or31tWkdHoDS1OhhiOn7xbmXresYPr1fFy+NS5SWs
+         zeVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772225301; x=1772830101;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xcg3jBdVXKkgCFEIQmOkVAOPdVJjauymlm8Tt0QYeSQ=;
+        b=agz2JbtV4oUk0jEmhMsHmGCTZY/sxcpI7O4OTSnH43AotgBIeQt5+ia2E7yHCwX4fL
+         3XJmh3Tl63fZxxc3dionWuud3VpNU0mMEBiDCFBms3uJ2WF/5oqIXGhRQP5pHbuNROMS
+         b1onU0apbRSI0V22tPDwnMaPo+8CP9HhqoBAURZtjryF1KysmEay4wyRd4lNKw8A4jm3
+         EAIPWwBFxPa0VkiN5xQP/yBG4HQCL8xMeWkQ+VuGDAEP4D8yTBT/Jzh/CPlqzZC5evvp
+         FNck5Jy7yQJcRZdmsHxN9+x2Xntng8EeaLnezMput18Bchsb4fWKy7Tns+ABYknDi+8C
+         KcOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLwSm2oMGMAvyrjylEvaqiGkTPn4bhn5BK35D0ej9nmHpEDIjIsXGkCBZX3Dmjg3kCOA4UfQwqnEd7QCxv@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0YuYIBBMMjJXESry2Vvme2Rnj+QTL02v27l8SeZSehU6IwBbW
+	wu47o9IlaWFB+YWL51puQooCm741HWzl7fylYgjUqSZKqyDk8pYRJ9WgQGxg1Q==
+X-Gm-Gg: ATEYQzx1c4aqGUgybltmnz4oxivybg6hTKGay0qxZGyANzLBxQP7V4pgxCPw/rr0HsV
+	eERMTCXfDwfj2pJs08EZy+/lSt9tXAmiGDIf/NJLYjxASH12N4now9qvb6hhbqRca79kSevrngS
+	ZRk7akAL82++M1JKXMB7aRNqgeq2xfnxsZVZUZ5C3lyl5kk0K+Eq1S66yx9gjN82C70LRzqIzj+
+	LjtYbEpJLTWgX+36iod3daawXqUt3+ZAS2Mt3hMqUBMLLUZqzbk/RZBY9PMdhCph1vewcDgFL/i
+	NP5vHsfM1v3dYEdr3SKzI6ATtCxS8u8fPukvw5raKX6dx3TaBhW2NVUSDLhinWe7NTZTZYN9mj0
+	+SNgovGnUxkBkIaL4n3oguq8VuhhGTNmMWV0QSSbUv7syPkgsZTbKjnBDiYGJd6/qDN/feT/p80
+	xi8N9TPR9bWYAIPjwz479rGL9fGhkv5YE3+Cd3wRAVEnackgATvC2c7c05qqLzAkQgIIH6n+WMm
+	6ntBz83GibtXk7lcxQYzgvBbhAbPQNxhV1WMmPyP1e3AxzI9Ct1kunaGwUyY1OSvAfRuYT+GEiA
+	EA==
+X-Received: by 2002:a05:600c:a16:b0:46e:4a13:e6c6 with SMTP id 5b1f17b1804b1-483c9bfb2f2mr65037215e9.19.1772225301182;
+        Fri, 27 Feb 2026 12:48:21 -0800 (PST)
+Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bfb87030sm67387005e9.10.2026.02.27.12.48.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Feb 2026 12:48:19 -0800 (PST)
+Message-ID: <ae3d2ea3-c835-495b-a033-01a5c9fd82fc@gmail.com>
+Date: Fri, 27 Feb 2026 20:48:16 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,141 +88,97 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v2 0/3] Decoupling large folios dependency on THP
-To: Zi Yan <ziy@nvidia.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Pankaj Raghav
- <p.raghav@samsung.com>, Suren Baghdasaryan <surenb@google.com>,
- Mike Rapoport <rppt@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Michal Hocko <mhocko@suse.com>, Lance Yang <lance.yang@linux.dev>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Nico Pache <npache@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- mcgrof@kernel.org, gost.dev@samsung.com, kernel@pankajraghav.com,
- tytso@mit.edu
-References: <20251206030858.1418814-1-p.raghav@samsung.com>
- <aaEsOu0hgCUznzl3@casper.infradead.org>
- <8ca84535-861c-4ab0-a46b-5dfe319ac8ac@kernel.org>
- <aaG2GkICML-St3B4@casper.infradead.org>
- <653e34d4-6356-4f9e-8298-40b4e237f761@kernel.org>
- <4A89F75A-325B-4FFC-AAB6-07C206844B02@nvidia.com>
-From: "David Hildenbrand (Arm)" <david@kernel.org>
+Subject: Re: [PATCH v1 03/11] io_uring/kbuf: add support for kernel-managed
+ buffer rings
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: axboe@kernel.dk, io-uring@vger.kernel.org, csander@purestorage.com,
+ krisman@suse.de, bernd@bsbernd.com, hch@infradead.org,
+ linux-fsdevel@vger.kernel.org
+References: <20260210002852.1394504-1-joannelkoong@gmail.com>
+ <20260210002852.1394504-4-joannelkoong@gmail.com>
+ <89c75fc1-2def-4681-a790-78b12b45478a@gmail.com>
+ <CAJnrk1ZZyYmwtzcHAnv2x8rt=ZVsz7CXCVV6jtgMMDZytyxp3A@mail.gmail.com>
+ <1c657f67-0862-4e13-9c71-7217aeecef61@gmail.com>
+ <CAJnrk1YXmxqUnT561-J7seaicxFRJTyJ=F3_MX1rmtAROC6Ybg@mail.gmail.com>
+ <CAJnrk1YoaHnCmuwQra0XwOxf0aC_PQGby-DT1y_p=YRzotiE-w@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=david@kernel.org; keydata=
- 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
- qIws/H2t
-In-Reply-To: <4A89F75A-325B-4FFC-AAB6-07C206844B02@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <CAJnrk1YoaHnCmuwQra0XwOxf0aC_PQGby-DT1y_p=YRzotiE-w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-78792-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78791-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	DKIM_TRACE(0.00)[gmail.com:+];
 	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[david@kernel.org,linux-fsdevel@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 6DBFE1BD863
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 852F81BDEFB
 X-Rspamd-Action: no action
 
-On 2/27/26 21:16, Zi Yan wrote:
-> On 27 Feb 2026, at 15:10, David Hildenbrand (Arm) wrote:
+On 2/27/26 01:12, Joanne Koong wrote:
+...
+>>> Regions shouldn't know anything about your buffers, how it's
+>>> subdivided after, etc.
 > 
->> On 2/27/26 16:19, Matthew Wilcox wrote:
->>>
->>> In the Ottawa interpretation, that's true, but I'd prefer not to revisit
->>> this code when transitioning to the New York interpretation.  This is
->>> the NOMMU code after all, and the less time we spend on it, the better.
->>>
->>>
->>> Depending on your point of view, either everything is mapped on nommu,
->>> or nothing is mapped ;-)  In any case, the folio is freshly-allocated
->>> and locked, so there's no chance anybody has mapped it yet.
->>>
->>>
->>> Well, it is, but it's also exactly what we need to do -- frees folios
->>> which are now entirely beyond i_size.  And it's code that's also used on
->>> MMU systems, and the more code that's shared, the better.
->>>
->>>
->>> Right, we could do that.  But that's more code and special code in the
->>> nommu codebase.
->>
->> I guess I'd have to see the frankenstein folio_split() to judge if it is
->> really better :)
->>
->> If it's really just about skipping the unmap+remap the end result would
->> indeed be nice.
-> 
-> Without unmap+remap, that is just __folio_freeze_and_split_unmapped()? ;)
+> I still think the memory for the buffers should be tied to the ring
+> itself and allocated physically contiguously per buffer. Per-buffer
+> contiguity will enable the most efficient DMA path for servers to send
+> read/write data to local storage or the network. If the buffers for
+> the bufring have to be allocated as one single memory region, the
+> io_mem_alloc_compound() call will fail for this large allocation size.
+> Even if io_mem_alloc_compound() did succeed, this is a waste as the
+> buffer pool as an entity doesn't need to be physically contiguous,
+> just the individual buffers themselves. For fuse, the server
+> configures what buffer pool size it wants to use, depending on what
+> queue depth and max request size it needs. So for most use cases, at
+> least for high-performance servers, allocation will have to fall back
+> to alloc_pages_bulk_node(), which doesn't allocate contiguously. You
+> mentioned in an earlier comment that this "only violates abstractions"
+> - which abstractions does this break? The pre-existing behavior
+> already defaults to allocating pages non-contiguously if the mem
+> region can't be allocated fully contiguously.
 
-I'm rather wondering what else we find when we try actually using it :)
+Regions has uapi (see struct io_uring_region_desc) so that users
+can operate with them in a unified manner. If you want regions to
+be allocated in some special way, just extend it.
+
+> Going through registered buffers doesn't help either. Fuse servers can
+> be unprivileged and it's not guaranteed that there are enough huge
+> pages reserved or that another process hasn't taken them or that the
+> server has privileges to pre-reserve pages for the allocation. Also
+
+There is THP these days. And FWIW, we should be vigilant about not
+using io_uring to work around capabilities and mm policies. If user
+can't do it, io_uring shouldn't either. It's also all accounted
+against mlock, if the limit is not high enough, you won't be able
+to use this feature at all.
+
+> the 2 MB granularity is inflexible while 1 GB is too much.
 
 -- 
-Cheers,
+Pavel Begunkov
 
-David
 
