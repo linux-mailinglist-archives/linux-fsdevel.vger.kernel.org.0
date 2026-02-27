@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-78754-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78755-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 4LznG9rPoWkfwgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78754-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 18:09:46 +0100
+	id KB44HQ3PoWn3wQQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78755-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 18:06:21 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6B5E1BB3EA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 18:09:45 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A61D1BB304
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 18:06:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7D770302D5DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 17:05:24 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id D2ED7303A883
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 17:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679F135B645;
-	Fri, 27 Feb 2026 17:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6623612FA;
+	Fri, 27 Feb 2026 17:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mpiricsoftware.com header.i=shardul.b@mpiricsoftware.com header.b="J97D6RNk"
+	dkim=pass (1024-bit key) header.d=mpiricsoftware.com header.i=shardul.b@mpiricsoftware.com header.b="VMsjgNqr"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from sender4-of-o54.zoho.com (sender4-of-o54.zoho.com [136.143.188.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E96528D8D1;
-	Fri, 27 Feb 2026 17:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750F035CBDD;
+	Fri, 27 Feb 2026 17:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.54
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772211922; cv=pass; b=OjPc5fzWFemVhseSKN/fYi7E3rfENikfnxIaMpRqqKqrLN+PseURn8QFSrSR4LvIImuI2rg8XRjvc0RKycwmtwewekA0Qe0Tb/hEXMAbeB0NidErM9eY+/uUbTH1DjMT7d+1Qqoe8VyOYyQrb3PfAAYfTNUsuUYK51HdbU+3bXk=
+	t=1772211941; cv=pass; b=iQZ2D2e5DJjGdpGpKqSLq3cG7HcISEYsop/b4ujplHD50Bchdjsc6EUnMn7u0CdUBp6HGM30pZKOP4bM2S7CbsfMyeXMaEvAUeNCDgaoIdSwG0iO+05q/s6HX8xctDtRGSYjNjiQ5xJyBjyRVzD6kEGSqO3MvqiMUJzwxTkaUA0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772211922; c=relaxed/simple;
-	bh=kfWRfTIDSqg2B9hu2YEcIB/q+pJ2owEpsdr20hpyOM0=;
+	s=arc-20240116; t=1772211941; c=relaxed/simple;
+	bh=H8DyLWsQ7NOgYQlaJ2DWUZ0puthu8F2YnJ4Khk2Slq8=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KaZUb3WMjs5isCr83qR2Cj81Hq4oPXAt6MFQ0/oUKtrZYUqekr/L69QifyN+etkg8Xg0oaG+ODl44i84DByw3EhILYkCPaE+vvKBWi4IYs7l9chFehXdWUbkecB5qIevdN0XKDksVLImhA3fEHC1Y/MlQLnkBrIiuA1qQsB3QqA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mpiricsoftware.com; spf=pass smtp.mailfrom=mpiricsoftware.com; dkim=pass (1024-bit key) header.d=mpiricsoftware.com header.i=shardul.b@mpiricsoftware.com header.b=J97D6RNk; arc=pass smtp.client-ip=136.143.188.54
+	 Content-Type:MIME-Version; b=DjzFwpXqpC/3Jb7ykxEFHkTcim5DQGAhlQ+xBzsWFMvEOV22NWzJVOLuQF+qPzyrloBLesLkuW3XGT7U3PCtR+rtemyCcNv+zXFR1BayEUVJJ/1tH4DAD/3fDOW67yGhko+SVr5KJ2riCEwnzjH7kGdtLNA5+WHa5IaYh4ZmZuQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mpiricsoftware.com; spf=pass smtp.mailfrom=mpiricsoftware.com; dkim=pass (1024-bit key) header.d=mpiricsoftware.com header.i=shardul.b@mpiricsoftware.com header.b=VMsjgNqr; arc=pass smtp.client-ip=136.143.188.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mpiricsoftware.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mpiricsoftware.com
-ARC-Seal: i=1; a=rsa-sha256; t=1772211883; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1772211899; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=OR4nnIffeMpvg6jOqAF4pPFew4NbI4r02rwaK0MeVYR3v+EkrEha2Dv9xMMtP/OourZdFY8V/yCYMbzBKgMUa99NfhM6li/RoFKJW1WvrT7py7fHkC8BVHqV5/JPE+ymTNHbY+lkpGiMMpBUMcylsEbQeN2H72uFtjxlSXq+Tmo=
+	b=OXwqiOgoqfZV3ebvRx0WBiE5MeGO/kwXqlqMju8f2CNLyCQ0xQilgzAgmZb40roNrA0oGmGlhsKyWyjEAP8AN+x2HVLnchyJ/MJovXkIVxVqPqunMf7UzKfCfENvC4KG1ZxvJ3dZUweT8xxnnV1VyGkncqjzgs6z7AdRTneBn7w=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1772211883; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=kfWRfTIDSqg2B9hu2YEcIB/q+pJ2owEpsdr20hpyOM0=; 
-	b=F1fNOBaaQU77ydhZXvTaVAfp3B55ceHrZGTFoI0L6xjQ7hnBKiNNuoI6U2es2Cmv6qo0m2fpZ0RxsxBduuDdX6ssqkirPGwh/2m3p49EdgI9Vsbt8mSD/ahMmtTlEtj8naA75kMZYd91aaFxanJUT2R4SGjtjoIuyazpcnvRNws=
+	t=1772211899; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=TA3sRHKe0OcNPL6uH6v4W54gyE+1eSoM+HnL7BDXkgw=; 
+	b=Evp2hH+1l0k/JRRgroj5qQJ92QEmT5X7EqgfeGhX+kmlsfeVSjIxpoCXPqrsw3RdslnQ4/T09eBaD2zJojepLsUZgxkHVOWQ/GrIUUAXKhcY98R/AEvDCZF5JWyogdPJTsbQCQM5iVWQ7QdOSHhxPKbO/IEi8DbKPRyh+blFCaM=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=mpiricsoftware.com;
 	spf=pass  smtp.mailfrom=shardul.b@mpiricsoftware.com;
 	dmarc=pass header.from=<shardul.b@mpiricsoftware.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1772211883;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1772211899;
 	s=mpiric; d=mpiricsoftware.com; i=shardul.b@mpiricsoftware.com;
 	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=kfWRfTIDSqg2B9hu2YEcIB/q+pJ2owEpsdr20hpyOM0=;
-	b=J97D6RNkqxXm/CVG5YpSaMAAlitOQ3NnZWJgRIj+J0vGVXiYicL9gy4ZUAQ5hJQd
-	iV9p7zt+6EMao7yGQR04kWMT+25UCSJU9+662QDN3zFgKKg8HUXIMsnl+dIdXGAjE5L
-	ve51XYfFUyZn5sPxEaySQlbUTROs5sXCRP0IXlas=
-Received: by mx.zohomail.com with SMTPS id 17722118812471002.445276395772;
-	Fri, 27 Feb 2026 09:04:41 -0800 (PST)
-Message-ID: <ddbe6849175101b586519a138b0bc50f19b79ce5.camel@mpiricsoftware.com>
-Subject: Re:  [PATCH v4 1/2] hfsplus: refactor b-tree map page access and
- add node-type validation
+	bh=TA3sRHKe0OcNPL6uH6v4W54gyE+1eSoM+HnL7BDXkgw=;
+	b=VMsjgNqrapvXynl5X+904d+71TUgsW1ondPbxEaVLMu+RvG0xe1FHVekmTuM6kD2
+	uXMW7ATYYFzy6L9ALInGKM/SYDG1ztieHzEU1jamSPL3FB5+F6Y2s03Nc1Ticz3xiTd
+	gmB+Bs1QDNsSwlOU6F3YdujWsGlChNrol5/acH1w=
+Received: by mx.zohomail.com with SMTPS id 1772211897618310.3022746451577;
+	Fri, 27 Feb 2026 09:04:57 -0800 (PST)
+Message-ID: <7d3c9221cc49a47779606d8c67667544f27de2df.camel@mpiricsoftware.com>
+Subject: Re:  [PATCH v4 2/2] hfsplus: validate b-tree node 0 bitmap at mount
+ time
 From: Shardul Bankar <shardul.b@mpiricsoftware.com>
 To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, 
 	"glaubitz@physik.fu-berlin.de"
@@ -66,12 +66,15 @@ To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
 	 <linux-kernel@vger.kernel.org>, "linux-fsdevel@vger.kernel.org"
 	 <linux-fsdevel@vger.kernel.org>
 Cc: "janak@mpiric.us" <janak@mpiric.us>, "janak@mpiricsoftware.com"
-	 <janak@mpiricsoftware.com>, shardulsb08@gmail.com
-Date: Fri, 27 Feb 2026 22:34:35 +0530
-In-Reply-To: <66941e77b76d1930a759a843783f1c68bb3089a8.camel@ibm.com>
+	 <janak@mpiricsoftware.com>, 
+	"syzbot+1c8ff72d0cd8a50dfeaa@syzkaller.appspotmail.com"
+	 <syzbot+1c8ff72d0cd8a50dfeaa@syzkaller.appspotmail.com>, 
+	shardulsb08@gmail.com
+Date: Fri, 27 Feb 2026 22:34:52 +0530
+In-Reply-To: <5deb0aa2971a6385091c121e65f0798de357befd.camel@ibm.com>
 References: <20260226091235.927749-1-shardul.b@mpiricsoftware.com>
-	 <20260226091235.927749-2-shardul.b@mpiricsoftware.com>
-	 <66941e77b76d1930a759a843783f1c68bb3089a8.camel@ibm.com>
+	 <20260226091235.927749-3-shardul.b@mpiricsoftware.com>
+	 <5deb0aa2971a6385091c121e65f0798de357befd.camel@ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.44.4-0ubuntu2.1 
@@ -83,120 +86,132 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-ZohoMailClient: External
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
 	DMARC_POLICY_ALLOW(-0.50)[mpiricsoftware.com,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	R_DKIM_ALLOW(-0.20)[mpiricsoftware.com:s=mpiric];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78754-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78755-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	TO_DN_EQ_ADDR_SOME(0.00)[];
-	FREEMAIL_CC(0.00)[mpiric.us,mpiricsoftware.com,gmail.com];
+	FREEMAIL_CC(0.00)[mpiric.us,mpiricsoftware.com,syzkaller.appspotmail.com,gmail.com];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[shardul.b@mpiricsoftware.com,linux-fsdevel@vger.kernel.org];
 	DKIM_TRACE(0.00)[mpiricsoftware.com:+];
 	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mpiricsoftware.com:mid,mpiricsoftware.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: C6B5E1BB3EA
+	TAGGED_RCPT(0.00)[linux-fsdevel,1c8ff72d0cd8a50dfeaa];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,mpiricsoftware.com:mid,mpiricsoftware.com:dkim]
+X-Rspamd-Queue-Id: 9A61D1BB304
 X-Rspamd-Action: no action
 
-On Thu, 2026-02-26 at 23:50 +0000, Viacheslav Dubeyko wrote:
+On Thu, 2026-02-26 at 23:29 +0000, Viacheslav Dubeyko wrote:
 > On Thu, 2026-02-26 at 14:42 +0530, Shardul Bankar wrote:
-> >=20
-> > +/*
-> > + * Maps the page containing the b-tree map record and calculates
-> > offsets.
-> > + * Automatically handles the difference between header and map
-> > nodes.
-> > + * Returns the mapped data pointer, or an ERR_PTR on failure.
-> > + * Note: The caller is responsible for calling kunmap_local(data).
-> > + */
-> > +static u8 *hfs_bmap_get_map_page(struct hfs_bnode *node, u16 *off,
-> > u16 *len,
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0switch (id) {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0case HFSPLUS_EXT_CNID:
 > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int *page_idx)
+=A0=C2=A0=C2=A0=C2=A0tree_name =3D "Extents";
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0break;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0case HFSPLUS_CAT_CNID:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0tree_name =3D "Catalog";
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0break;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0case HFSPLUS_ATTR_CNID:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0tree_name =3D "Attributes";
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0break;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0default:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0tree_name =3D "Unknown";
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0break;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
 >=20
-> I think we don't need in off, len, page_idx arguments here. I suggest
-> slightly
-> different interface:
+> Frankly speaking, it could be enough to share only cnid. But if you
+> would like
+> to be really nice and to share the tree's name, then I prefer to see
+> an array of
+> constant strings where you can use cnid as an index. And macro or
+> static inline
+> method that can check cnid as a input argument. At minimum, simply
+> move this
+> code into the static inline method. But, array of constant strings
+> could be much
+> compact and elegant solution for my taste. Because, art of
+> programming is to
+> represent everything as arrays of something and to apply the
+> generalized loops.
+> :)
 >=20
-> u8 hfs_bmap_get_map_byte(struct hfs_bnode *node, u32 bit_index);
-> int hfs_bmap_set_map_byte(struct hfs_bnode *node, u32 bit_index, u8
-> byte);
->=20
-> In this case memory operations will be atomic ones and all
-> kmap_local()/kunmap_local() will be hidden inside these methods.=20
 
 Hi Slava,
 
-Regarding the get_map_byte/set_map_byte interface: there would be a
-severe performance regression if we force
-kmap_local_page()/kunmap_local() on a per-byte basis inside the
-hfs_bmap_alloc() linear scan. I am providing a detailed breakdown of
-this overhead and a proposed alternative in my reply to your review on
-Patch 2/2.
+Sounds good. :) I will implement an array of constant strings indexed
+by cnid in v5.
 
-
-> However, I am
-> slightly worried that I don't see any locking mechanisms in
-> hfs_bmap_alloc(). At
-> minimum, I believe we can use lock_page()/unlock_page() here.
-> However, it will
-> be not enough. It is good for accessing only one page. But we need
-> some lock for
-> the whole bitmap. Maybe, I am missing something. But if I am not,
-> then we have a
-> huge room for race conditions in b-tree operations.
-
-Regarding the locking, concurrent access to the allocator is already
-prevented by the per-tree tree->tree_lock mutex. Operations that reach
-hfs_bmap_alloc() (e.g., node splits via hfs_brec_insert) are executed
-within a search context initialized by hfs_find_init(), which holds
-mutex_lock(&tree->tree_lock). Therefore, the map nodes are safely
-serialized without needing individual lock_page() calls during the
-scan.
-
+> I prefer not to have the obligation of using this asynchronous
+> paradigm of
+> kmap_local()/kunmap_local(). It will be great to keep this inside of
+> hfs_bmap_get_map_<something>() method.
 >=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0for (;;) {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0while (len) {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-byte =3D data[off];
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-if (byte !=3D 0xff) {
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0for (m =3D 0x80, i =3D 0; i < 8; =
-m >>=3D
-> > 1, i++) {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0for (m =3D HFSPLUS_BTREE_NODE0_BI=
-T, i
-> > =3D 0; i < 8; m >>=3D 1, i++) {
+> I prefer not to keep the whole page/folio for complete operation
+> locked. And,
+> frankly speaking, you don't need in the whole page because you need a
+> byte or
+> unsigned long portion of bitmap. So, we can consider likewise
+> interface:
 >=20
-> You are not right here. The 0x80 is simply pattern and it's not
-> HFSPLUS_BTREE_NODE0_BIT. Because, it could be any byte of the map.
+> u8 hfs_bmap_get_map_byte(struct hfs_bnode *node, u32 bit_index);
+>=20
+> Here, you simply need to check the state of bit in byte (READ-ONLY
+> operation).
+> So, you can atomically copy the state of the byte in local variable
+> and to check
+> the bit state in local variable.
 >=20
 
-Ack'ed. Good catch, I will retain the original 0x80 pattern in the
-allocation loop.
+While this byte-level interface is perfect for the mount-time
+validation in hfs_btree_open() where we only need to check a single
+bit, using it inside hfs_bmap_alloc() introduces a significant
+performance regression.
+
+Because hfs_bmap_alloc() performs a linear scan to find a free node,
+using hfs_bmap_get_map_byte() inside the while (len) loop would force
+the kernel to execute kmap_local_page() and kunmap_local() for every
+single byte evaluated (potentially thousands of times per page). The
+current logic maps the page once, scans memory linearly, and only
+unmaps when crossing a PAGE_SIZE boundary.
+
+To address your request for a generalized map access method without
+sacrificing the allocator's O(N) scanning performance, how about this
+for v5?
+
+    -We introduce the hfs_bmap_get_map_byte() specifically for single-
+bit reads (like the mount-time check). This can internally call
+hfs_bmap_get_map_page() from Patch 1/2 to avoid duplicating the offset
+math.
+
+    -We retain the page-level helper (hfs_bmap_get_map_page) for
+hfs_bmap_alloc() to preserve its fast linear scanning.
+
+Let me know if this dual-helper approach sounds acceptable, and I will
+prepare v5.
 
 Thanks,
 Shardul
