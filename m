@@ -1,156 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-78731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78733-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 8D53Ex+5oWkYwAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 16:32:47 +0100
+	id oPqZG0m5oWkYwAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78733-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 16:33:29 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1CBD1B9D7D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 16:32:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 199EE1B9DBF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 16:33:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id DA6D4320AFB6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 15:20:40 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 30AFD321AE17
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 15:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF94441C2FB;
-	Fri, 27 Feb 2026 15:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1275643CEC3;
+	Fri, 27 Feb 2026 15:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BP9gWk1R"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BMY0rTOk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8252E43C07B;
-	Fri, 27 Feb 2026 15:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9334B43C056;
+	Fri, 27 Feb 2026 15:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772205614; cv=none; b=IJtYqfJ9+D+qdllSrkz8VjUzJA2xVqJ9zYLUuu+tZLfwFzciYvX/3O9zQW994DGB982OCctoxNYdniRzpi44utdBDRpkWYyz4EMsR1gNqWCQ4uKnUqfRc92FDOXe/tqS6NYWzh4H/XQO0YYvCjCk92HFo4pLGglFd+S72/d1mqY=
+	t=1772205644; cv=none; b=dH9lIvOxGkf9+oSLDODA7cKxlfXuBUIYbtrOY/bKF1G7LJNa5mJ5g+Ias8mppikU4QxhPggSNgfeeHFxJsYtRWNvGmlRHZpBnm/XcZM2L8YroEdQBLb0pW4MW5Zl+4MVmNXP5Udiuh9gzxtxA8QPTEXhG1qgu3HuiyiWFyBjMNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772205614; c=relaxed/simple;
-	bh=xGnhZ6cyzcE6XY1nG/LDxblnQBcXSXIBaA0mnqv9XWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u17YJPqCUjq9pmW02DrGngtjkKWxnqVpOPwn7srfEzkrSexxhhEgPosTjr8L3IgLb4fkcTYsPCroLLcFaHbOcbKOT5lmc7u3Rgo25jtaijtTuzUDZQmr3b4esONwvKPfzJ41rmmt+hOnjr0zk1HlgaFeJTnKwkUNq6/ktNmHoNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BP9gWk1R; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=re+X6ck1AQZQchao0ynbIryXcVgPOwh7dKHH9EvgBr4=; b=BP9gWk1RTiW1qovhNGxhD9zEDq
-	H24UnepRzhoEGp8jmVB75TB3tgUrUkwOAV2s9QulxkEWG6xFpqFV+BljiLpJeXGcWUKEFvcaq56lu
-	UY7cbVSBEONJ5NmV88jrLLgL7aTMrnsHfRWRXhiQPguUjSctEqAFP83fM4tESFmHx/8kivPpdgi/y
-	z7+zCF68ep7RIKRgMbJR6jrtlBmzgQQpUeA1dOv0RkmpzZF55PwtEjkyQUQcWmBd0J5Uf8cj9Uy7T
-	ktLJUj8cXYEevOxSRDdzzqgJh2xXNECvf7M+7fVZgcCO9/eaovNg6sKxAryWF5DSt8RGXTqA0TxDC
-	GB0qG6UQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vvzdC-00000004kz2-17tX;
-	Fri, 27 Feb 2026 15:19:54 +0000
-Date: Fri, 27 Feb 2026 15:19:54 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: "David Hildenbrand (Arm)" <david@kernel.org>
-Cc: Pankaj Raghav <p.raghav@samsung.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>, Michal Hocko <mhocko@suse.com>,
-	Lance Yang <lance.yang@linux.dev>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Nico Pache <npache@redhat.com>, Zi Yan <ziy@nvidia.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, mcgrof@kernel.org,
-	gost.dev@samsung.com, kernel@pankajraghav.com, tytso@mit.edu
-Subject: Re: [RFC v2 0/3] Decoupling large folios dependency on THP
-Message-ID: <aaG2GkICML-St3B4@casper.infradead.org>
-References: <20251206030858.1418814-1-p.raghav@samsung.com>
- <aaEsOu0hgCUznzl3@casper.infradead.org>
- <8ca84535-861c-4ab0-a46b-5dfe319ac8ac@kernel.org>
+	s=arc-20240116; t=1772205644; c=relaxed/simple;
+	bh=zjmsx5oq16zysg8L8WJOCU1HqD9oMxXD4LVv5E0RhVs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WaG1rrW/OGZue/PXdBP2hbuJ9nEDeIDuD+WgtDpbPOOIE3kNvy5aHm1l+b0JaSwFMdMJU/Kx79c5l6fmZqEmDzDUxkslHzxbUs3+4hmkg9K7PPqeNmzsU+YHg9mXfUr4ms8s0nQXITQPjKE87GpzX3gOEQx/ywJ7+V09ACZ7U3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BMY0rTOk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2C12C19422;
+	Fri, 27 Feb 2026 15:20:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772205644;
+	bh=zjmsx5oq16zysg8L8WJOCU1HqD9oMxXD4LVv5E0RhVs=;
+	h=From:Date:Subject:To:Cc:From;
+	b=BMY0rTOk+ymiw8JyvlaMBxBJvkLronYSxySGlluGWWAC4K+mAVveBozSi697R518x
+	 uunsQqREDm1CE8Ncip6NUmztFaP6RPTdsrIK7wp7nqG5ksaYsE2jLJXIDXSbN4cPey
+	 8VBY5kY1GoFLhUef10+yvv2HyK0vDTPxnjrOb558SMUbOpuxUehiC91os1Nd1wgkCA
+	 gmzz5oMyotcSoMmcN1MZZoMMqKdqmIO0Vu6y8WsoZrCrK/yiUJAbz86Q0DL8/UbAs9
+	 iYQHFY7k7M/43vH8doWFdnnSvzRer09tFIb90Wp1bdHXoQ6ipYnwd+M9DYjShaa+DG
+	 j8qNaPe32Tlfg==
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 27 Feb 2026 15:20:35 +0000
+Subject: [PATCH v3] selftests/filesystems: Assume that TIOCGPTPEER is
+ defined
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8ca84535-861c-4ab0-a46b-5dfe319ac8ac@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260227-selftests-filesystems-devpts-tiocgptpeer-v3-1-07db4d85d5aa@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAEK2oWkC/52NsQ6DIBQAf6VhLo1gUejU/2g6qDyU1ArhEVJj/
+ PeiS9OxHe+Gu4UgBAtILoeFBEgWrZsylMcD6YZm6oFanZnwggvGeEURRhMBI1JjR8AZIzyRakg
+ +q2hd1/voAQI1rS4LELWSQpGc8wGMfe2r2z3zYDG6MO/nxDb7xyQxyqjira6ELriS7PqAMMF4c
+ qEn2yXxT5kz+UOZ53IjTCvkuTYg5Fd5Xdc3NHoiDzsBAAA=
+X-Change-ID: 20251126-selftests-filesystems-devpts-tiocgptpeer-fbd30e579859
+To: Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+ linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-47773
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1627; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=zjmsx5oq16zysg8L8WJOCU1HqD9oMxXD4LVv5E0RhVs=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBpobZJ5ekNHznEW5s/NuBTABpDBWVZVBUe6c/4k
+ UTlLh3D4A2JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaaG2SQAKCRAk1otyXVSH
+ 0NdJB/9C9ZyAjlme8dJSu2hjuAsCd65gzpOSfFl3U6UY7b7mNVxPfR/hMeMHqcQiJeaHMEykuni
+ +EqgIkyDKM3dRbaY5sOztbrRDe8pSy++89KUt9ZmAisyZSlC27rf3UH5a2t46Pt3eWsM/zXaVze
+ 0ek7vLJgkJKY43dOHkQ5w5qtnGsH1vcsDDWzwg1tXw/UNZB5sey0KBPKhPc3U3DW1IdL/SMAJWh
+ aVXpysp2SRtxEAV2L09jI28l/QtxJWsDWXlSj29GiYoNOXy4G/JMLpm07X/B99q7MjVU4mjLXil
+ gqmc0phCcNvyOg6V9SnnTFBWY6UaHhUbRfaU80Mit77l8GQ5
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=casper.20170209];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-78733-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78731-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	DKIM_TRACE(0.00)[infradead.org:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[willy@infradead.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[broonie@kernel.org,linux-fsdevel@vger.kernel.org];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,infradead.org:dkim]
-X-Rspamd-Queue-Id: A1CBD1B9D7D
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[msgid.link:url,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 199EE1B9DBF
 X-Rspamd-Action: no action
 
-On Fri, Feb 27, 2026 at 09:45:07AM +0100, David Hildenbrand (Arm) wrote:
-> I guess it would be rather trivial to just replace
-> add_to_page_cache_lru() by filemap_add_folio() in below code.
+The devpts_pts selftest has an ifdef in case an architecture does not
+define TIOCGPTPEER, but the handling for this is broken since we need
+errno to be set to EINVAL in order to skip the test as we should. Given
+that this ioctl() has been defined since v4.15 we may as well just assume
+it's there rather than write handling code which will probably never get
+used.
 
-In the Ottawa interpretation, that's true, but I'd prefer not to revisit
-this code when transitioning to the New York interpretation.  This is
-the NOMMU code after all, and the less time we spend on it, the better.
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v3:
+- Rebase onto v7.0-rc1
+- Link to v2: https://patch.msgid.link/20251218-selftests-filesystems-devpts-tiocgptpeer-v2-1-a5fb5847fe58@kernel.org
 
-> > So either we need to reimplement all the good stuff that folio_split()
-> > does for us, or we need to make folio_split() available on nommu.
-> 
-> folio splitting usually involves unmapping pages, which is rather
-> cumbersome on nommu ;) So we'd have to think about that and the
-> implications.
+Changes in v2:
+- Rebase onto v6.19-rc1.
+- Link to v1: https://patch.msgid.link/20251126-selftests-filesystems-devpts-tiocgptpeer-v1-1-92bd65d02981@kernel.org
+---
+ tools/testing/selftests/filesystems/devpts_pts.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Depending on your point of view, either everything is mapped on nommu,
-or nothing is mapped ;-)  In any case, the folio is freshly-allocated
-and locked, so there's no chance anybody has mapped it yet.
+diff --git a/tools/testing/selftests/filesystems/devpts_pts.c b/tools/testing/selftests/filesystems/devpts_pts.c
+index 54fea349204e..aa8d5324f2a6 100644
+--- a/tools/testing/selftests/filesystems/devpts_pts.c
++++ b/tools/testing/selftests/filesystems/devpts_pts.c
+@@ -119,9 +119,7 @@ static int do_tiocgptpeer(char *ptmx, char *expected_procfd_contents)
+ 		goto do_cleanup;
+ 	}
+ 
+-#ifdef TIOCGPTPEER
+ 	slave = ioctl(master, TIOCGPTPEER, O_RDWR | O_NOCTTY | O_CLOEXEC);
+-#endif
+ 	if (slave < 0) {
+ 		if (errno == EINVAL) {
+ 			fprintf(stderr, "TIOCGPTPEER is not supported. "
 
-> ramfs_nommu_expand_for_mapping() is all about allocating memory, not
-> splitting something that might already in use somewhere.
-> 
-> So I folio_split() on nommu is a bit weird in that context.
+---
+base-commit: 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f
+change-id: 20251126-selftests-filesystems-devpts-tiocgptpeer-fbd30e579859
 
-Well, it is, but it's also exactly what we need to do -- frees folios
-which are now entirely beyond i_size.  And it's code that's also used on
-MMU systems, and the more code that's shared, the better.
+Best regards,
+--  
+Mark Brown <broonie@kernel.org>
 
-> When it comes to allocating memory, I would assume that it would be
-> better (and faster!) to
-> 
-> a) allocate a frozen high-order page
-> 
-> b) Create the (large) folios directly on chunks of the frozen page, and
-> add them through filemap_add_folio().
-> 
-> We'd have a function that consumes a suitable page range and turns it
-> into a folio (later allocates memdesc).
-> 
-> c) Return all unused frozen bits to the page allocator
-
-Right, we could do that.  But that's more code and special code in the
-nommu codebase.
 
