@@ -1,227 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-78672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 5/YuEvkEoWmSpgQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 03:44:09 +0100
+	id YKLQCRwIoWlXpwQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 03:57:32 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FFBD1B21BC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 03:44:08 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F6F71B221C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 03:57:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 825193049960
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 02:44:05 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E0F6630713CA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 02:57:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF012EAB83;
-	Fri, 27 Feb 2026 02:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZL3FTDcN"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01352FF148;
+	Fri, 27 Feb 2026 02:57:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908A81DE2C9
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 02:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.219.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772160243; cv=pass; b=RQHHsI9hpsjFWno2XFEiE54EFr/otITyhYzmf8HsLH8wqYuRQcvYoyYz4nsbUrOpz9FrAxj5qm3Xdtacckim12iG5dVBMltTXTyM8Qr/+zSqcDHX1AtzoyWk8m55WyJqjgdJCRXF0LMo4r3ssOuxQje9pod2N1XKWP3zSxZbv8w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772160243; c=relaxed/simple;
-	bh=kqc0Q8nhhn3btGydrYNTBaTS51KXyWTp7vY/Q4qZzeA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uDWTcS5/RREhgKu/J+l88pOy+pPc+rtgmzMerziaaxIyExGgttkBozOtIc4CJZeNJQAbgetGO8Coz2xxiuLrOKkVjiBvTb7SWX0QK+pavc3KrnTZK6SbztY1mBf7ztA4H8o0jVG3g49Ycvnsl+IZfVqIcapQE6HK2O3yZxEWkq8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZL3FTDcN; arc=pass smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-899c97c5addso17731026d6.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 18:44:02 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772160241; cv=none;
-        d=google.com; s=arc-20240605;
-        b=DSUAcagoEXHjaY3sWnqfoxhggqQWpJ0TMyPbBGQ155NgLCzzXg8CJ+wNYvXUnGriKO
-         POlgCi7114T8tykkcCjE2r2kKSItssPAmT3BxLwNWcvqVgG0KEdYqRvkD/P6UQxr0nWq
-         QNAPBUhpM9OxcPcAIcGbTVA2rv/KM+T3JlJzsq5p0B8r0wjoQDhSOHXSCEOLNV9NUhMk
-         WLTP2yoabUmjhOnw1GQCDmtfQFLFWvkCmvsz/gl7L1DjBnliCcKKt+QzUH4ivimTNlBC
-         JXZ5iznA6UXpitkhXAYqcBZm9wxzTxBK5n9rcxILji7Bl3bKpkqgLBbzx7jToS2BaxC0
-         7luA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=OepVsImbDy+KSgEARNrV04CP8F8rjel+Y+lfhx3Eafg=;
-        fh=tKRPMvKzNDCxN0gjWvR8G4XSwQWUi/j7mO4hiR7BoA0=;
-        b=fesRd/h4kiUJr+I/2TsXwHA9jGlPT8Nq0wwpZ0t3KmLNoQZ1f4Kl+O86LAwQX0086r
-         s58dkTpsgPP54IM+GCirk8GZwuRJcqUESmY4bNNOY5cnptScmxskvl37Mw3UDXJe7RaR
-         KrkJt7ZWP42P6M5SGARJRCdp6ri29dX+Gv9hPYmyOt/OqgL2aWTWC0TeOHc1TVr4JZGG
-         217AShx2pO59eayT+E9Na3PAtdeFuZypJimw+Wic7ycykzKvWBc7wof9j3nTt2r/Z0XM
-         lnphyjdbv1jo7kyZLe+v/uDFpP6wpi/tca+JJ2614S7g4uG+IbZRuUel75T3E1tGeDga
-         WSig==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772160241; x=1772765041; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OepVsImbDy+KSgEARNrV04CP8F8rjel+Y+lfhx3Eafg=;
-        b=ZL3FTDcNqlY4aLaQPTXPjKc+CnKxpwnRe4m9t0HXlaDzB8M3VDWudN9zasKfVkJ1az
-         baKFy2dMduBWzrayJZIjoSIAJMc87R1v8n/tmXHrMaqtRavlYws9emOoaylh5OWGFIVk
-         SkkO1rxBQhNqkPd9sVAwYZJGyde8uPGDzMachFHmamykJUctkI0NxnONEW4+bU3RyHyZ
-         MY8nmW0GrlhxYpBDh0+krMBdfpLDmpgaLbLN+WWP39Wmhehb4ZC15M5R6ml4y7U1VfL1
-         QFh3azHDPaxuaVSuY5sBGUrQe+4GjGcce9Gni1DiZSxYsZNLjVRncxOjCIo4abKTjFaj
-         KtHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772160241; x=1772765041;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=OepVsImbDy+KSgEARNrV04CP8F8rjel+Y+lfhx3Eafg=;
-        b=RdA5EvnKQzZCXT99wHX/HTEFzPXB9SFQ6HCiWWUEQBwYGv2OG3ZEAM3BEh0p0DDTJ9
-         bx8p3Z3PRUCHFOVI1MTlWBJihDCJQLeD62Bs+00Mg8MOkcjuCZ8F+X9Ub6vfKOmxcrsx
-         f+SV5XVg4ap37K8MlRgmT0iymijBPVlhACdHiuX0va8c+IPsRQDGzCfD2sefaZgiu9vt
-         ynLr6lPwB3G4kjofiUC1TCOD6U/riIcDtShDlTHgel/PQMv/S7Tgruz1qMHuA+X6f5mg
-         SJWAGHzE244pVnT+0WdZg7DajU3ECSGFQwgM1oHOLX7KVhAtPlp+C7pl2CjoRnYYxK/N
-         TJlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUc3e2PfunGlVx1mdKRhmRJH8HFS27YXHepFBh2h1CJTGEXWQcUxk2Wn+YB3Pesf6CzPlMfsnxtWbX9j4Kw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7EB91A0YwAsHJeil/c/KKa8JcCwPaRRkssFD+wD9t1bn5xmSB
-	y1LFDQnh+qxON6y5RN1SP8tyxsJb0NGjUvV+LyRTU/rZpG4OJQgBN+CaV4awEVUcg0XRXZN50fL
-	F3e2WO1W7OTtNvR0fiXliwmP7/w4ULGE=
-X-Gm-Gg: ATEYQzz8vVDKJ+dh/K9YZKDqAP6oDu3/WAA2y9EQE0xiRtulCSyft8+BWAHLSoKOyMa
-	cXYHZnhFepw42AuwficG6az3PmY/B2uH9GAOW/YSUeaz1CtIyLRsrQse1hVR+Bg1vpN1etHhBom
-	ywQKeUm7lkLOxaa4PtFazB7kcR9y0q3vCiFlBs8PlQdjnNYHziAlptb/OACmKOJnlOrpOG31K8H
-	2vZPZWsvm1gTMMButYTYuQ4T6t0D7xaAj7J6RIl7yy4xsPeDe/DR+ViaYkYb6SZJ/05k1ilU4xD
-	wC3SJg==
-X-Received: by 2002:ad4:5b89:0:b0:895:4852:ef49 with SMTP id
- 6a1803df08f44-899d1e54f38mr20558826d6.34.1772160241078; Thu, 26 Feb 2026
- 18:44:01 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBEF2FF140
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 02:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772161040; cv=none; b=C+j6DyNk7xWIAsNPi6bjiMi898yurXGl+JFW6LLovgkGncNkGIHF3TNNZjw99SRfBkD1Qo5xHzbKI9JAvByjqCQpLBUlij3PJ2ozM1DQ9F37jpZF1EhN/fdASmPevL7CBhIMfthv6Jl2tP4CYOYtKVsk7KMcnNT4U5zOp8dWi7E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772161040; c=relaxed/simple;
+	bh=YQPDUz6dwT2AAzb3zKocnX1wL6n/fVlA1xzTuZIjYMI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pTvtjbfqjIrCyEf7xHejuqt/ifSt6Mq+HEuUl4pLix4zy918/tqsuNVVAkc5pz01gv1MD+m5txhNVe/QFeodLhYWVVuMyidIsCpBkFJiwmXl2bNxY9UPkxndEraZj0espfU3V1atdMgf6HL7kumb3MqPVgmLDQff1V4yPFikgms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.177])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4fMXzN3tSNzYQtj0
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 10:56:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id EF1AE40590
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 10:57:14 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.50.87.132])
+	by APP4 (Coremail) with SMTP id gCh0CgBXuPgJCKFpsEGdIw--.32070S4;
+	Fri, 27 Feb 2026 10:57:13 +0800 (CST)
+From: Ye Bin <yebin@huaweicloud.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org
+Cc: akpm@linux-foundation.org,
+	david@fromorbit.com,
+	zhengqi.arch@bytedance.com,
+	roman.gushchin@linux.dev,
+	muchun.song@linux.dev,
+	linux-mm@kvack.org,
+	yebin10@huawei.com
+Subject: [PATCH v3 0/3] add support for drop_caches for individual filesystem
+Date: Fri, 27 Feb 2026 10:55:45 +0800
+Message-Id: <20260227025548.2252380-1-yebin@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <75f43184.d57.19c7b2269dd.Coremail.nzzhao@126.com>
- <aZiCV2lPYhiQzYUJ@infradead.org> <aZiqsQsWFSCjcfE_@casper.infradead.org>
- <aZzIUnYprj_wTyqn@google.com> <CAGsJ_4yN+RyF5hh-=sBfnRGp-r8KZBYY-ByT_V9KjiiKy1FgSA@mail.gmail.com>
- <aaD7Qf1ljl4yFB8e@google.com>
-In-Reply-To: <aaD7Qf1ljl4yFB8e@google.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 27 Feb 2026 10:43:49 +0800
-X-Gm-Features: AaiRm510HyYOJcNs9d7INj8mxdW--GNTCph1Pr3PQSqsJ-9cIWscEsMFF2mztVU
-Message-ID: <CAGsJ_4zNvSYa+fyBVkt1eOqpMPGi0Wrckb+fxn8Pqt5erZbTfw@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Large folio support: iomap framework changes
- versus filesystem-specific implementations
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>, Christoph Hellwig <hch@infradead.org>, Nanzhe Zhao <nzzhao@126.com>, 
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	yi.zhang@huaweicloud.com, Chao Yu <chao@kernel.org>, wqu@suse.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBXuPgJCKFpsEGdIw--.32070S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kw1fCF4UKw4kJr4xZw1xGrg_yoW8Cr1xpa
+	9ruw15Kr4rAF1fGr93Aw48Z3WFvw4kua17t3ZxWw1FyrnxAFyIvrnI93y5XFyDZrW7uw4q
+	v3WDtr1Yg34DZw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
+	tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+	CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IUbmii3UUUUU==
+X-CM-SenderInfo: p1hex046kxt4xhlfz01xgou0bp/
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+X-Spamd-Result: default: False [0.04 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_MISSING_CHARSET(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78672-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[infradead.org,126.com,lists.linux-foundation.org,vger.kernel.org,huaweicloud.com,kernel.org,suse.com];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	DMARC_NA(0.00)[huaweicloud.com];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[21cnbao@gmail.com,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78673-lists,linux-fsdevel=lfdr.de];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MIME_TRACE(0.00)[0:+];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[yebin@huaweicloud.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: 8FFBD1B21BC
+	RCVD_COUNT_FIVE(0.00)[6];
+	NEURAL_HAM(-0.00)[-0.997];
+	TO_DN_NONE(0.00)[];
+	R_DKIM_NA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,huaweicloud.com:mid]
+X-Rspamd-Queue-Id: 7F6F71B221C
 X-Rspamd-Action: no action
 
-On Fri, Feb 27, 2026 at 10:02=E2=80=AFAM Jaegeuk Kim <jaegeuk@kernel.org> w=
-rote:
->
-> On 02/26, Barry Song wrote:
-> > On Tue, Feb 24, 2026 at 5:36=E2=80=AFAM Jaegeuk Kim <jaegeuk@kernel.org=
-> wrote:
-> > >
-> > > On 02/20, Matthew Wilcox wrote:
-> > > > On Fri, Feb 20, 2026 at 07:48:39AM -0800, Christoph Hellwig wrote:
-> > > > > Maybe you catch on the wrong foot, but this pisses me off.  I've =
-been
-> > > > > telling you guys to please actually fricking try converting f2fs =
-to
-> > > > > iomap, and it's been constantly ignored.
-> > > >
-> > > > Christoph isn't alone here.  There's a consistent pattern of f2fs g=
-oing
-> > > > off and doing weird shit without talking to anyone else.  A good st=
-art
-> > > > would be f2fs maintainers actually coming to LSFMM, but a lot more =
-design
-> > > > decisions need to be cc'd to linux-fsdevel.
-> > >
-> > > What's the benefit of supporting the large folio on the write path? A=
-nd,
-> > > which other designs are you talking about?
-> > >
-> > > I'm also getting the consistent pattern: 1) posting patches in f2fs f=
-or
-> > > production, 2) requested to post patches modifying the generic layer,=
- 3)
-> > > posting the converted patches after heavy tests, 4) sitting there for
-> > > months without progress.
-> >
-> > It can sometimes be a bit tricky for the common layer and
-> > filesystem-specific layers to coordinate smoothly. At times,
-> > it can be somewhat frustrating.
-> >
-> > Privately, I know how tough it was for Nanzhe to decide whether
-> > to make changes in the iomap layer or in filesystem-specific code.
-> > Nevertheless, he has the dedication and care to implement F2FS
-> > large folio support in the best possible way, as he has discussed
-> > with me many times in private.
-> >
-> > I strongly suggest that LSF/MM/BPF invite Kim (and Chao, if possible)
-> > along with the iomap team to discuss this together=E2=80=94at least
-> > remotely if not everyone can attend in person.
->
-> We don't have a plan to attend this year summit. But I'm open to have an =
-offline
+From: Ye Bin <yebin10@huawei.com>
 
-It=E2=80=99s truly a shame, but I understand that you have prior commitment=
-s.
+In order to better analyze the issue of file system uninstallation caused
+by kernel module opening files, it is necessary to perform dentry recycling
+on a single file system. But now, apart from global dentry recycling, it is
+not supported to do dentry recycling on a single file system separately.
+This feature has usage scenarios in problem localization scenarios.At the
+same time, it also provides users with a slightly fine-grained
+pagecache/entry recycling mechanism.
+This patchset supports the recycling of pagecache/entry for individual file
+systems.
 
-> call to discuss about what we can do in f2fs, if you guys are interested =
-in.
-> Let me know.
+Diff v3 vs v2
+1. Introduce introduce drop_sb_dentry_inode() helper instead of
+reclaim_dcache_sb()/reclaim_icache_sb() helper for reclaim dentry/inode.
+2. Fixing compilation issues in specific architectures and configurations.
 
-Many thanks for your willingness to have an offline call.
+Diff v2 vs v1:
+1. Fix possible live lock for shrink_icache_sb().
+2. Introduce reclaim_dcache_sb() for reclaim dentry.
+3. Fix potential deadlocks as follows:
+https://lore.kernel.org/linux-fsdevel/00000000000098f75506153551a1@google.com/
+After some consideration, it was decided that this feature would primarily
+be used for debugging purposes. Instead of adding a new IOCTL command, the
+task_work mechanism was employed to address potential deadlock issues.
 
-Absolutely, I=E2=80=99m very interested. I spoke with Nanzhe today, and he=
-=E2=80=99ll
-prepare documents and code to review with you, gather your feedback,
-and incorporate all your guidance.
+Ye Bin (3):
+  mm/vmscan: introduce drop_sb_dentry_inode() helper
+  sysctl: add support for drop_caches for individual filesystem
+  Documentation: add instructions for using 'drop_fs_caches sysctl'
+    sysctl
 
-Nanzhe can then bring all the points to LSF afterward
-if the topic is scheduled.
+ Documentation/admin-guide/sysctl/vm.rst |  44 +++++++++
+ fs/drop_caches.c                        | 125 ++++++++++++++++++++++++
+ include/linux/mm.h                      |   1 +
+ mm/internal.h                           |   3 +
+ mm/shrinker.c                           |   4 +-
+ mm/vmscan.c                             |  50 ++++++++++
+ 6 files changed, 225 insertions(+), 2 deletions(-)
 
-> > >
-> > > E.g.,
-> > > https://lore.kernel.org/lkml/20251202013212.964298-1-jaegeuk@kernel.o=
-rg/
-> >
+-- 
+2.34.1
 
-Thanks
-Barry
 
