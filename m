@@ -1,152 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-78743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +J5KKNe8oWmswAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 16:48:39 +0100
+	id gKWRIOK8oWmswAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 16:48:50 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B0001BA3EF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 16:48:39 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id D925C1BA405
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 16:48:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 378C53134C33
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 15:42:00 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id CF5AA3029A5B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 15:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BE543E4AF;
-	Fri, 27 Feb 2026 15:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2841943E499;
+	Fri, 27 Feb 2026 15:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="SwJZcnmO"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xYUAN8sr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iQZoXb8e";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xYUAN8sr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iQZoXb8e"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7D043DA4E
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 15:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.181
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772206907; cv=pass; b=jj6/eB2Xgpwc9mAUowWUtmBAcb+gMsAsEv5IgizhdHMTjECyQmh133sZd3+etnAcP57tlsDbTFpWGqVooyfnuXq/rXMtvcnQDhvT1vgNLd2zsuvi7AsIdfkSskjWAfuBOXkwFDWVWSrSOoliAEg/WDsGWiP/LYt++aUGkxGLzQk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772206907; c=relaxed/simple;
-	bh=PHt4NiLzR7dgV3oqH9i3dVECclObgWcZBOq4W3yTzMw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uP0ExaR7aCIQ+f698Rjn28mm2KKeNyDJpmeEyRLgWEfk/xMprjolKu81olyZ5FH7wjWdDkgFvEtf96G1Tde+3oBXPbHAt2kWEcBeTiDaME/IHaUtVpnjiwZbuLPlVFF+M7YpTchBWTULYt9nvJyQyQxbKd0cAKKHclH3Wu7hQ04=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=SwJZcnmO; arc=pass smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-50698970941so25706481cf.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 07:41:43 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772206902; cv=none;
-        d=google.com; s=arc-20240605;
-        b=j733vvYmdBU63ZCWm4IsVpnCBd+s320S774K1/WB5EW1j9v2oG8MZWYDPL2WJezK0v
-         UJDqSi8PlD8LHfjUGdETJy/Btl/xVBDBauUsIdtUTPmPmYCnbI4CDvpwv1mu3L2jIKM3
-         3s+pQ0rbkSqHvWQ9icSDuwGoSuiYyyXomenYM2ubTkpPXIHfSEafAoEdrvhj+A3F8TPS
-         psKc06bsj6Zbx1quqxsxbvZO3hDXTeoRpBC8LMLykgjBK20kwp5oTnkzMsvStDevlyY9
-         2HWARN59AvCdpDsBpqv30WMUJCi9qgoilt8NZH1aVEk+EeJH9w2BNpGwjvg7yyfXF2Iu
-         NYog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=XIL3GEy4W9JLXepAvHr6QNdM6M8cHoFdNaJMYaWbS34=;
-        fh=7um94BVIsLQWq3CJ67dLePcAnV3nYRFiHTwygLnydls=;
-        b=BQ8+a7KhwNgxPvRoak9J01O3CKIGMb3Pb5h5406OYTBcAszlGMyDMFmn3193Uzsj11
-         T1EDVTC1kZJTXswMxjbN4U4valjJLoRzVqq0gJQOA2HKH5GWUn2OMJnhM8BHWP7HEftQ
-         2pkd0AcPGnYpFmesZhqI7+ZHSp9rfl8pMZEwWkMukNVI4w5ZVKyLcChDl2twGa+gXo7y
-         yx/LZO75GVpiBWTBY2e4/T6DtHhsoP7abOKWJNWDqPYTYIahxbckaXgss92PjSVc7Eew
-         Q5MR0Qp+rnmoGT3dB8tLHM2ydlZj3jy0EoVWnXESfUO/kKLAuL3k8J6tK1Dh1/5XnU6G
-         v73w==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1772206902; x=1772811702; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XIL3GEy4W9JLXepAvHr6QNdM6M8cHoFdNaJMYaWbS34=;
-        b=SwJZcnmOu6wh08M1Xcwya3uBHCM+t9rhGHWTsxCK3/arfcjGnFcvWufZoCzc8iDBGa
-         2ycIoM637qeb+3OBObipt8+MvyjAlnSMJRK2jNRE6Fn9th/6/WBRnizbs9ujCSoZIwBk
-         LNpLFKPjo/ntrTUZtRjmAFxzV76xLdjfVgNtw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772206902; x=1772811702;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XIL3GEy4W9JLXepAvHr6QNdM6M8cHoFdNaJMYaWbS34=;
-        b=SeaszgIkvMQ/5uHReYkbkFpqZ0aw2ZnmNDum9PZuYem0SOF0KZBtbwaP5YbFiuGclO
-         Kt3UcW0JcPmXz1dmvYN8UIaxsowqb98oTHnQ8h3NoHowTj7xK6WpOl3s3ZBlQ31GwpJD
-         dsbI6k0ActkogDT6468reGuF1zGIYJu/AjKJt2fp4cRegkNzlFNlDR7eE4WD/xiN/31J
-         jit/oQF0ohDKJYftlf0SzujbqA9ZymZ/XhCLywbQZkk5w9LCIbbwiZCCkHNRtA+Avx6l
-         bkLiKC2yPcwuTZVBahTb4lEUZywq8EYUVfIFsE2/5s+bJUk91qb07u+S0ecfEAWCZTi6
-         cQnA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0qHLBueYNF2H1eJzGGxTW2e5bx6HKV8ngJ0/NK5Fgwd8YBhZoMnzmjr+ekYR19CvxSD6EFN9GvhKewdsU@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBQXnp9mAdhWfahGL/h+LKIk1bkyyCP3o8L+H3azdzjlWbv86r
-	zJA4iDtO3ZnqEAblN1CgwMI9lvjv72lISFfC8pJEb1SeQtJ/Oqm5uukPr6L7jMolzKQ/Rn6Gyxc
-	Bw8jZBcEjcnnGwWk8kaFcEmNxmv3qIQxn3JiKtPPb3WTIbwMavfhF
-X-Gm-Gg: ATEYQzyG3+on2Z9OgcrwrzVZt3KgbL+x0jB9LjxYz9rdi3Kt+A5iWbgVDlsgBsJLJaM
-	x06ii6PaRZlQ5Q2RlEBCtRp/nOjpDalsKW6TmjiAH6b6SBB/LKnMLWf9jJiXuhb64TSh3TdRI1L
-	ub3XakD1zg4DfBYd/+Iukt6iA7lQH45scYd7yUEearYMr1h8+QpP5WdxUenm3kAvlqtAJ0a654t
-	q7DeohyyDnucLxZ/HgXd0Dx6NPSLzOqBITeG807TyMWl1/x1OH2ouDLQ+/9oqlHk1KzcTmRxxxT
-	XmLvHw==
-X-Received: by 2002:a05:622a:3c7:b0:4ee:56c0:712f with SMTP id
- d75a77b69052e-507528fbdc3mr40426491cf.76.1772206902556; Fri, 27 Feb 2026
- 07:41:42 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02FA43DA32
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 15:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772206905; cv=none; b=I/+w6rJzwjuioPYNhYWaQK121j1tMtx57HYxHb7XARcKZpPJ/9Ly1BDXZXDy9DeZ4tgKNpoDcV8AP1ZRZBKJJWnoPr+Bf6tS+7mPRhxzo4C1dWr+7GfUy3oaVjy76pWTThvVJuwBUbUxoBoGo8TePLYhxPGGPgSGaoIRQim2GeE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772206905; c=relaxed/simple;
+	bh=5cIiKo/fQLPVCAfUeXRXs1YmF8ZcPiWmYt8R2yggZAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hi3YLSMgzmwl/0f6PRVyLusNJO2Dmz3LRkbiOoJj7SQvd7HnfHa2STcw4fWpKY5DCXcOYW8guXXSM/XhvroBN5GIntikPJGMY2DKCACM3UwMgGGHt13Kdrye3Ap4QGzopVB1OA4uMjaaFlnKeSJg3NTTTv07Nf+GzBvdC2nMbcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xYUAN8sr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iQZoXb8e; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xYUAN8sr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iQZoXb8e; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 074CC4DA95;
+	Fri, 27 Feb 2026 15:41:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1772206901; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VhF2G6Z5061vbfNwfyrCX/8unOXEc30npSiOmm4lEgA=;
+	b=xYUAN8srxLRGa/bNI0WCBpvF+iH0q5DJ8KSuFs5//Z2BkGUc/FaNEzqV++RY5kptyzgbem
+	qO59OJjlKEZQ67FJKJwPouaVeYtRMidR55dqtbDfqsXcfQqXxDXK8KhRXRq0WQNCL/MhII
+	muzsRDQzwa17492n2QZk7K8HaT9TuIw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1772206901;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VhF2G6Z5061vbfNwfyrCX/8unOXEc30npSiOmm4lEgA=;
+	b=iQZoXb8em8jRoviVgVy2a5NyIS1QO3owbeG8/9L2ET+vMeK8LjjaTFAN6uZXosTqKy5fNG
+	cScUtxEEveMe2LBA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1772206901; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VhF2G6Z5061vbfNwfyrCX/8unOXEc30npSiOmm4lEgA=;
+	b=xYUAN8srxLRGa/bNI0WCBpvF+iH0q5DJ8KSuFs5//Z2BkGUc/FaNEzqV++RY5kptyzgbem
+	qO59OJjlKEZQ67FJKJwPouaVeYtRMidR55dqtbDfqsXcfQqXxDXK8KhRXRq0WQNCL/MhII
+	muzsRDQzwa17492n2QZk7K8HaT9TuIw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1772206901;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VhF2G6Z5061vbfNwfyrCX/8unOXEc30npSiOmm4lEgA=;
+	b=iQZoXb8em8jRoviVgVy2a5NyIS1QO3owbeG8/9L2ET+vMeK8LjjaTFAN6uZXosTqKy5fNG
+	cScUtxEEveMe2LBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F274C3EA69;
+	Fri, 27 Feb 2026 15:41:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VtgsOzS7oWnRNgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 27 Feb 2026 15:41:40 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B98BFA06D4; Fri, 27 Feb 2026 16:41:40 +0100 (CET)
+Date: Fri, 27 Feb 2026 16:41:40 +0100
+From: Jan Kara <jack@suse.cz>
+To: Yuto Ohnuki <ytohnuki@amazon.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v2] fs: remove stale and duplicate forward declarations
+Message-ID: <tzjqeyms46zvrcl4ai7hes4unshkdqnr4kcbj4hjfmrj7nlpve@ujg2satvhk4u>
+References: <20260226201857.27310-2-ytohnuki@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260225112439.27276-1-luis@igalia.com> <20260225112439.27276-4-luis@igalia.com>
-In-Reply-To: <20260225112439.27276-4-luis@igalia.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 27 Feb 2026 16:41:31 +0100
-X-Gm-Features: AaiRm53v_gaQtg1rspbTONuu-Nf29AaoczBKJCkTetHtBXTDw2umJbJdIYPlpYg
-Message-ID: <CAJfpegtCNoNn-Ro04QO+k25_25v0_AyR=Po7hpnz1r4o=2Lnjg@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 3/8] fuse: store index of the variable length argument
-To: Luis Henriques <luis@igalia.com>
-Cc: Amir Goldstein <amir73il@gmail.com>, Bernd Schubert <bschubert@ddn.com>, 
-	Bernd Schubert <bernd@bsbernd.com>, "Darrick J. Wong" <djwong@kernel.org>, 
-	Horst Birthelmer <hbirthelmer@ddn.com>, Joanne Koong <joannelkoong@gmail.com>, Kevin Chen <kchen@ddn.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Matt Harvey <mharvey@jumptrading.com>, kernel-dev@igalia.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260226201857.27310-2-ytohnuki@amazon.com>
+X-Spam-Score: -3.80
+X-Spam-Level: 
+X-Spam-Flag: NO
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
-	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+X-Spamd-Result: default: False [-1.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78743-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,ddn.com,bsbernd.com,kernel.org,vger.kernel.org,jumptrading.com,igalia.com];
-	RCPT_COUNT_TWELVE(0.00)[12];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	TAGGED_FROM(0.00)[bounces-78742-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DMARC_NA(0.00)[suse.cz];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,suse.cz:email,suse.cz:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,suse.com:email];
 	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[szeredi.hu:+];
+	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,igalia.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,szeredi.hu:dkim]
-X-Rspamd-Queue-Id: 1B0001BA3EF
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: D925C1BA405
 X-Rspamd-Action: no action
 
-On Wed, 25 Feb 2026 at 12:25, Luis Henriques <luis@igalia.com> wrote:
->
-> Operations that have a variable length argument assume that it will always
-> be the last argument on the list.  This patch allows this assumption to be
-> removed by keeping track of the index of variable length argument.
+On Thu 26-02-26 20:18:58, Yuto Ohnuki wrote:
+> Remove the following unnecessary forward declarations from fs.h, which
+> improves maintainability.
+> 
+> - struct hd_geometry: became unused in fs.h when
+>   block_device_operations was moved to blkdev.h in commit 08f858512151
+>   ("[PATCH] move block_device_operations to blkdev.h"). The forward
+>   declaration is now added to blkdev.h where it is actually used.
+> 
+> - struct iovec: became unused when aio_read/aio_write were removed in
+>   commit 8436318205b9 ("->aio_read and ->aio_write removed")
+> 
+> - struct iov_iter: duplicate forward declaration. This removes the
+>   redundant second declaration, added in commit 293bc9822fa9
+>   ("new methods: ->read_iter() and ->write_iter()")
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202512301303.s7YWTZHA-lkp@intel.com/
+> Closes: https://lore.kernel.org/oe-kbuild-all/202512302139.Wl0soAlz-lkp@intel.com/
+> Closes: https://lore.kernel.org/oe-kbuild-all/202512302105.pmzYfmcV-lkp@intel.com/
+> Closes: https://lore.kernel.org/oe-kbuild-all/202512302125.FNgHwu5z-lkp@intel.com/
+> Closes: https://lore.kernel.org/oe-kbuild-all/202512302108.nIV8r5ES-lkp@intel.com/
+> Signed-off-by: Yuto Ohnuki <ytohnuki@amazon.com>
 
-Example please.
+Makes sense. Thanks. Feel free to add:
 
-Thanks,
-Miklos
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+> Changes in v2:
+> - Add forward declaration of struct hd_geometry to blkdev.h to fix
+>   build errors reported by kernel test robot.
+> - Verified with allmodconfig build and all configs reported by 
+>   kernel test robot.
+> 
+> v1: https://lore.kernel.org/lkml/20251229071401.98146-1-ytohnuki@amazon.com/
+> ---
+>  include/linux/blkdev.h | 1 +
+>  include/linux/fs.h     | 3 ---
+>  2 files changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index d463b9b5a0a5..0b5942e08754 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -38,6 +38,7 @@ struct blk_flush_queue;
+>  struct kiocb;
+>  struct pr_ops;
+>  struct rq_qos;
+> +struct hd_geometry;
+>  struct blk_report_zones_args;
+>  struct blk_queue_stats;
+>  struct blk_stat_callback;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 8b3dd145b25e..75c97faf8799 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -55,8 +55,6 @@ struct bdi_writeback;
+>  struct bio;
+>  struct io_comp_batch;
+>  struct fiemap_extent_info;
+> -struct hd_geometry;
+> -struct iovec;
+>  struct kiocb;
+>  struct kobject;
+>  struct pipe_inode_info;
+> @@ -1917,7 +1915,6 @@ struct dir_context {
+>   */
+>  #define COPY_FILE_SPLICE		(1 << 0)
+>  
+> -struct iov_iter;
+>  struct io_uring_cmd;
+>  struct offset_ctx;
+>  
+> -- 
+> 2.50.1
+> 
+> 
+> 
+> 
+> Amazon Web Services EMEA SARL, 38 avenue John F. Kennedy, L-1855 Luxembourg, R.C.S. Luxembourg B186284
+> 
+> Amazon Web Services EMEA SARL, Irish Branch, One Burlington Plaza, Burlington Road, Dublin 4, Ireland, branch registration number 908705
+> 
+> 
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
