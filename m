@@ -1,386 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-78739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 2NaHKAK6oWlhwAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 16:36:34 +0100
+	id QL83I7a7oWmswAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 16:43:50 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 208BB1B9EC0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 16:36:34 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 077361BA22E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 16:43:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 525D33054666
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 15:32:30 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 794CA31752C0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 15:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781DD3F074C;
-	Fri, 27 Feb 2026 15:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE5043DA51;
+	Fri, 27 Feb 2026 15:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="abdOL05C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="puBOlULr";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="abdOL05C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="puBOlULr"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="gfNQjr/k"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F3C3290A1
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 15:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772206346; cv=none; b=dMXzi/L/aTQqP5L2Ge6TszWWCtI0lAg56xiDvef1fDv5/VCnCoTt1j9Wx40jzcEAsQFhcSGMtDmgf7OUnkwGxFjdULBm+0IuFmU8A4fx5O17slFMK8RaU7XSgJsLXUpkeinDjSsXK6d7/EdqrKuWgd861ap1/kcsdhjqrx9leW4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772206346; c=relaxed/simple;
-	bh=p2TGSq12qURnjf+OFDnPWvwGVoYs6i+5CqpfMFFB1PI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kh2SvjkFDpYFtb1pxAtKOGVnJ4tn0KMCBmqAwNCa7geqhQHBbcgqMAojJDYXVvPxJlsFTD2x5ufzotTSJX/YUmzOucDknAxe2AdHNiIGOMjffFMlAurs6BR9ROuMQhVrZOjl8iKe60xrjkM7imXGI4lhYof5CbmGiuhi49sZ/rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=abdOL05C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=puBOlULr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=abdOL05C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=puBOlULr; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C54144016E;
-	Fri, 27 Feb 2026 15:32:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1772206342; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aiCgKQVi3dUFiUibT/uh6m3Uz8Bs/xGtX9sK7unl3iI=;
-	b=abdOL05COYb01PZO0mHWmJDigRktpsMjCGPhXhge9tkF1pIDAsu+tmVq2NbNG2/h/EAT0U
-	0/kRh1F4QbIY1w36hy5AK/L6oX/dB6PzWunuvoarz4Ve1cX+0IY38Y94DM9EamO0MFtuND
-	R72mX13U4xmsKWgojmrpb2kQo2dBQ08=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1772206342;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aiCgKQVi3dUFiUibT/uh6m3Uz8Bs/xGtX9sK7unl3iI=;
-	b=puBOlULrNvGzbYBWZU2AHhuAxNfQamn9MPCpldggVQNZiA+Za0kavZotm1JbndBnpyFYXp
-	xRw2ucJvgjinMUBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1772206342; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aiCgKQVi3dUFiUibT/uh6m3Uz8Bs/xGtX9sK7unl3iI=;
-	b=abdOL05COYb01PZO0mHWmJDigRktpsMjCGPhXhge9tkF1pIDAsu+tmVq2NbNG2/h/EAT0U
-	0/kRh1F4QbIY1w36hy5AK/L6oX/dB6PzWunuvoarz4Ve1cX+0IY38Y94DM9EamO0MFtuND
-	R72mX13U4xmsKWgojmrpb2kQo2dBQ08=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1772206342;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aiCgKQVi3dUFiUibT/uh6m3Uz8Bs/xGtX9sK7unl3iI=;
-	b=puBOlULrNvGzbYBWZU2AHhuAxNfQamn9MPCpldggVQNZiA+Za0kavZotm1JbndBnpyFYXp
-	xRw2ucJvgjinMUBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B6D2F3EA69;
-	Fri, 27 Feb 2026 15:32:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id fKmhLAa5oWk2LQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 27 Feb 2026 15:32:22 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 75DF6A06D4; Fri, 27 Feb 2026 16:32:22 +0100 (CET)
-Date: Fri, 27 Feb 2026 16:32:22 +0100
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>, 
-	linux-mm@kvack.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Tejun Heo <tj@kernel.org>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Jann Horn <jannh@google.com>, netdev@vger.kernel.org
-Subject: Re: [PATCH 14/14] selftests/xattr: test xattrs on various socket
- families
-Message-ID: <i2pa5ov2voy23ap5vwbtl7ollwiw2jri2nzroethcqn4nnetrr@u2azc3pfi4qs>
-References: <20260216-work-xattr-socket-v1-0-c2efa4f74cb7@kernel.org>
- <20260216-work-xattr-socket-v1-14-c2efa4f74cb7@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F4D43CEE9
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 15:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.175
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772206490; cv=pass; b=XuEB8fnIyGGMKvpS4yGH95Y7YU0H7o7KH96tTNwIky2Zo45j8g5C+LPjmvOfa5gSPm9dQ4bGXs2nYx3dMeBshIKwfuZzXswS+vWW4Jf6n2yeMzRdSzJ+ebGQtm9Rkr6bUfIFwwuNjgynB0pnmanGcKVtJY3iRV4OB2EkmAw9AYs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772206490; c=relaxed/simple;
+	bh=suqfaEcgAZrntyjq3ycHMFQA+8Hv+XKhnDLCv0g00kc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EqXdxS1nS215Wo+TaFpPVOBH+yHw6zvVSVtqBDS8QCuGKd0W7ivAcVzCqJoPanZ4NaSZkryko1xBr0NAFPjsa+aDwMwJhHUy1JpNhITTIBPXqESsNWatuhleC5Kfd5VinY186N7htJ1OUwz6JQYAXobYuMqKeCTceefsBJGe3Us=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=gfNQjr/k; arc=pass smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-506a3400f30so18929501cf.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 07:34:48 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772206488; cv=none;
+        d=google.com; s=arc-20240605;
+        b=dGqy4PPygHOjCjTxIiy2LPnVygZSK6iaoBG6yxcqIBwRLnX8NTx2JeolfVH4oPNE6W
+         M6lZk8F3YAbUXPrj0MT8UEQxNYN1bQ3Jf9NC6z+MfJEv29fep/QGetKv8ttS9dkWGDUm
+         3aktual4md2Czb6cyfi6YvjtJvz4neL7liSQSrpHK4GB/kQQTSk5LkeqIasXC53RhFEc
+         dWh6E4A1FwVcyOab0g/grCwBOlkhkXH/NbGRRbAajMQzuAldn1fzREmAzspG5wzqA+we
+         2TC6npmq+xvtmTCE/p0Y4CAM77GNy5uBA3L0dgFbKFeQHSK1r3lzQ1e/i+FG/oHcg/iv
+         X/Ig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=N7wVn5532g/w1wEPrem5YwBw+ywVcwRHRuGGZ7DwaHk=;
+        fh=HiRe2iq5/zrlU2zS7FN7rZ3LrLrL3nyZWfKODYsTasw=;
+        b=CLJRu69ME7RJMQcVRqBIOuk1SjVA7786RphTeSUKB6iI1vcA5auH97OJDUCe7PGjH1
+         4LOW28qVaXUTj0SaZNu0P+WNPTgIfvllrc+6wUICZCBDQr1qo/buPYz7QW5o+yGRj3vx
+         Acwmhb4RzX+17sqrKsNvAizuuAEqZfnsM0HB7Kmp5iA5RsvyEa7Xsu5p2k15z6hAGGxy
+         LEABSK5tdlOdMTK61ZsXtW50PtwQe5UVbiOESLP2vTu2b4xV5yTmse9KrHAmyVLGGYFi
+         DLbtGUTEUB3VQuZER4syQKagfNVmyrCjUGQSyHFt5lz3fci/2Fxiw7xLV7Pt+TfbOdqj
+         Y6mA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1772206488; x=1772811288; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=N7wVn5532g/w1wEPrem5YwBw+ywVcwRHRuGGZ7DwaHk=;
+        b=gfNQjr/kLZagnmtbUdUQTEBh/no6SMmHTci7TdWOecoSj0nGsxI5ms+8eIy+E5BeO2
+         lF9IVDdKmL6IUl0mP6o4d/UKOFxPd7ewQQUOct3Zd3g9vY2H9nLYwl4eUbTtULyC9Zcq
+         5DMQHiCemPjlkQ5dKXidwZHX0fm9zh3qIOnUs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772206488; x=1772811288;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N7wVn5532g/w1wEPrem5YwBw+ywVcwRHRuGGZ7DwaHk=;
+        b=a4tcON45JilzxWNrzPsZvNebT8m2dbsbgcZgUId4Y3dzkKjbqZfeOVoZGy0aZkHQ+V
+         JWzCBCMtOFc9dIwGWBijMr80EY3gUU/ROnnTr9n1HbdV/GMnvWtpa5sOOA1KWLTO/mVd
+         h3O3qnqC/zNWbruYFH5cfd5mID2+uu3yln/bVgnMbD2JR1ZwmtaSNuoZqmL4GZqwROjm
+         e/SwoAphMZLVv4nLxTDxjiJwRSAio0Nb1bS5Wlb8Pr6m3DF4qxwmgPUxdkP4Vp5+xcgR
+         qFx9yM+LogTU2cE+G5sMrJB1K3aOWVPrMbFzDBfNn2+G1ULtUA7rseDp4EeUufYvkaHq
+         +cRw==
+X-Gm-Message-State: AOJu0Yyam/lDqi2w+QRIjcEwnSy1k0Z2OQCcGtfclfeUg36TwjLZ2Ac+
+	qnX0xtAQw2joBUnl9YSVfBtYsl/+hNdZdr8bU/d5sKzXR51GWwgbrVuZwAP+y/mwWmMCuNkM00b
+	PZeerOhQF2jcRwjuB/QE4fuEtKN0hk4wy3a3SGnF9Cg==
+X-Gm-Gg: ATEYQzzXo05lw/SeeWIIpp+/Wdda+c3p5KkywvNUDypKO6FfWrI7dcYn2TgDh/9mITM
+	UkCLBrbyuGxJ7juiJF8uhnqaz879GhV94sEgG86IKibF7sGyr7ZVnHfJc6GbCXckCJKG8EJdieo
+	Ap2e73MEjFtiXUOtSQVheT5HeXZQGeoj3nOfXT81RY1ThpYrXI3p0mlDzwF2kfoovnoVkttQJ7O
+	A0wzqJrxb95RBYzNnEGrAVl4anTyr0brFRDiz5xGb7n5vDlvVkXofxaDdaBg5LX+0exEtSzEnxd
+	24Fi2VY0ZTV0ErLj
+X-Received: by 2002:ac8:59d3:0:b0:506:2048:36c9 with SMTP id
+ d75a77b69052e-507522c1c0amr38958761cf.1.1772206487711; Fri, 27 Feb 2026
+ 07:34:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260216-work-xattr-socket-v1-14-c2efa4f74cb7@kernel.org>
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spam-Flag: NO
+References: <20260226125001.16287-1-zhangtianci.1997@bytedance.com>
+In-Reply-To: <20260226125001.16287-1-zhangtianci.1997@bytedance.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 27 Feb 2026 16:34:36 +0100
+X-Gm-Features: AaiRm50E3_J_FiL3x21Wm9OylcHGk1TP7mxbbeXfgxK53HEVx_NfC3vOaXNjj3Q
+Message-ID: <CAJfpeguobO4UHmb1n+zQUMrSCH0FYh6DLAWNfGYNj29iX9Pxjg@mail.gmail.com>
+Subject: Re: [PATCH v2] fuse: send forget req when lookup outarg is invalid
+To: Zhang Tianci <zhangtianci.1997@bytedance.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bernd@bsbernd.com, Xie Yongji <xieyongji@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
+	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,suse.com:email,suse.cz:email,suse.cz:dkim];
-	DMARC_NA(0.00)[suse.cz];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78739-lists,linux-fsdevel=lfdr.de];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TAGGED_FROM(0.00)[bounces-78740-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: 208BB1B9EC0
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[szeredi.hu:+];
+	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_FIVE(0.00)[5];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,mail.gmail.com:mid,szeredi.hu:dkim,bytedance.com:email]
+X-Rspamd-Queue-Id: 077361BA22E
 X-Rspamd-Action: no action
 
-On Mon 16-02-26 14:32:10, Christian Brauner wrote:
-> Test user.* xattr operations on sockets from different address families:
-> AF_INET, AF_INET6, AF_NETLINK, and AF_PACKET. All socket types use
-> sockfs for their inodes, so user.* xattrs should work regardless of
-> address family.
-> 
-> Each fixture creates a socket (no bind needed) and verifies the full
-> fsetxattr/fgetxattr/flistxattr/fremovexattr cycle. AF_INET6 skips if
-> not supported; AF_PACKET skips if CAP_NET_RAW is unavailable.
-> 
-> Also tests abstract namespace AF_UNIX sockets, which live in sockfs
-> (not on a filesystem) and should support user.* xattrs.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+On Thu, 26 Feb 2026 at 13:50, Zhang Tianci
+<zhangtianci.1997@bytedance.com> wrote:
+>
+> We shall send forget request if lookup/create/open success but returned
+> outarg.attr is invalid, because FUSEdaemon had increase the lookup count
 
-Looks good. Feel free to add:
+These are cases when the fuse daemon is broken anyway.  Keeping it
+working does not make much sense, and adds complexity to the kernel.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+So NAK unless there's a use case which explains why this would be a good thing.
 
-								Honza
-
-> ---
->  .../testing/selftests/filesystems/xattr/.gitignore |   1 +
->  tools/testing/selftests/filesystems/xattr/Makefile |   2 +-
->  .../filesystems/xattr/xattr_socket_types_test.c    | 177 +++++++++++++++++++++
->  3 files changed, 179 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/filesystems/xattr/.gitignore b/tools/testing/selftests/filesystems/xattr/.gitignore
-> index 00a59c89efab..092d14094c0f 100644
-> --- a/tools/testing/selftests/filesystems/xattr/.gitignore
-> +++ b/tools/testing/selftests/filesystems/xattr/.gitignore
-> @@ -1,2 +1,3 @@
->  xattr_socket_test
->  xattr_sockfs_test
-> +xattr_socket_types_test
-> diff --git a/tools/testing/selftests/filesystems/xattr/Makefile b/tools/testing/selftests/filesystems/xattr/Makefile
-> index 2cd722dba47b..95364ffb10e9 100644
-> --- a/tools/testing/selftests/filesystems/xattr/Makefile
-> +++ b/tools/testing/selftests/filesystems/xattr/Makefile
-> @@ -1,6 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  
->  CFLAGS += $(KHDR_INCLUDES)
-> -TEST_GEN_PROGS := xattr_socket_test xattr_sockfs_test
-> +TEST_GEN_PROGS := xattr_socket_test xattr_sockfs_test xattr_socket_types_test
->  
->  include ../../lib.mk
-> diff --git a/tools/testing/selftests/filesystems/xattr/xattr_socket_types_test.c b/tools/testing/selftests/filesystems/xattr/xattr_socket_types_test.c
-> new file mode 100644
-> index 000000000000..bfabe91b2ed1
-> --- /dev/null
-> +++ b/tools/testing/selftests/filesystems/xattr/xattr_socket_types_test.c
-> @@ -0,0 +1,177 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (c) 2026 Christian Brauner <brauner@kernel.org>
-> +/*
-> + * Test user.* xattrs on various socket families.
-> + *
-> + * All socket types use sockfs for their inodes, so user.* xattrs should
-> + * work on any socket regardless of address family. This tests AF_INET,
-> + * AF_INET6, AF_NETLINK, AF_PACKET, and abstract namespace AF_UNIX sockets.
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#include <errno.h>
-> +#include <stddef.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <string.h>
-> +#include <sys/socket.h>
-> +#include <sys/types.h>
-> +#include <sys/un.h>
-> +#include <sys/xattr.h>
-> +#include <linux/netlink.h>
-> +#include <unistd.h>
-> +
-> +#include "../../kselftest_harness.h"
-> +
-> +#define TEST_XATTR_NAME		"user.testattr"
-> +#define TEST_XATTR_VALUE	"testvalue"
-> +
-> +FIXTURE(xattr_socket_types)
-> +{
-> +	int sockfd;
-> +};
-> +
-> +FIXTURE_VARIANT(xattr_socket_types)
-> +{
-> +	int family;
-> +	int type;
-> +	int protocol;
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(xattr_socket_types, inet) {
-> +	.family = AF_INET,
-> +	.type = SOCK_STREAM,
-> +	.protocol = 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(xattr_socket_types, inet6) {
-> +	.family = AF_INET6,
-> +	.type = SOCK_STREAM,
-> +	.protocol = 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(xattr_socket_types, netlink) {
-> +	.family = AF_NETLINK,
-> +	.type = SOCK_RAW,
-> +	.protocol = NETLINK_USERSOCK,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(xattr_socket_types, packet) {
-> +	.family = AF_PACKET,
-> +	.type = SOCK_DGRAM,
-> +	.protocol = 0,
-> +};
-> +
-> +FIXTURE_SETUP(xattr_socket_types)
-> +{
-> +	self->sockfd = socket(variant->family, variant->type,
-> +			      variant->protocol);
-> +	if (self->sockfd < 0 &&
-> +	    (errno == EAFNOSUPPORT || errno == EPERM || errno == EACCES))
-> +		SKIP(return, "socket(%d, %d, %d) not available: %s",
-> +		     variant->family, variant->type, variant->protocol,
-> +		     strerror(errno));
-> +	ASSERT_GE(self->sockfd, 0) {
-> +		TH_LOG("Failed to create socket(%d, %d, %d): %s",
-> +		       variant->family, variant->type, variant->protocol,
-> +		       strerror(errno));
-> +	}
-> +}
-> +
-> +FIXTURE_TEARDOWN(xattr_socket_types)
-> +{
-> +	if (self->sockfd >= 0)
-> +		close(self->sockfd);
-> +}
-> +
-> +TEST_F(xattr_socket_types, set_get_list_remove)
-> +{
-> +	char buf[256], list[4096], *ptr;
-> +	ssize_t ret;
-> +	bool found;
-> +
-> +	ret = fsetxattr(self->sockfd, TEST_XATTR_NAME,
-> +			TEST_XATTR_VALUE, strlen(TEST_XATTR_VALUE), 0);
-> +	ASSERT_EQ(ret, 0) {
-> +		TH_LOG("fsetxattr failed: %s", strerror(errno));
-> +	}
-> +
-> +	memset(buf, 0, sizeof(buf));
-> +	ret = fgetxattr(self->sockfd, TEST_XATTR_NAME, buf, sizeof(buf));
-> +	ASSERT_EQ(ret, (ssize_t)strlen(TEST_XATTR_VALUE));
-> +	ASSERT_STREQ(buf, TEST_XATTR_VALUE);
-> +
-> +	memset(list, 0, sizeof(list));
-> +	ret = flistxattr(self->sockfd, list, sizeof(list));
-> +	ASSERT_GT(ret, 0);
-> +	found = false;
-> +	for (ptr = list; ptr < list + ret; ptr += strlen(ptr) + 1) {
-> +		if (strcmp(ptr, TEST_XATTR_NAME) == 0)
-> +			found = true;
-> +	}
-> +	ASSERT_TRUE(found);
-> +
-> +	ret = fremovexattr(self->sockfd, TEST_XATTR_NAME);
-> +	ASSERT_EQ(ret, 0);
-> +
-> +	ret = fgetxattr(self->sockfd, TEST_XATTR_NAME, buf, sizeof(buf));
-> +	ASSERT_EQ(ret, -1);
-> +	ASSERT_EQ(errno, ENODATA);
-> +}
-> +
-> +/*
-> + * Test abstract namespace AF_UNIX socket.
-> + * Abstract sockets don't have a filesystem path; their inodes live in
-> + * sockfs so user.* xattrs should work via fsetxattr/fgetxattr.
-> + */
-> +FIXTURE(xattr_abstract)
-> +{
-> +	int sockfd;
-> +};
-> +
-> +FIXTURE_SETUP(xattr_abstract)
-> +{
-> +	struct sockaddr_un addr;
-> +	char name[64];
-> +	int ret, len;
-> +
-> +	self->sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
-> +	ASSERT_GE(self->sockfd, 0);
-> +
-> +	len = snprintf(name, sizeof(name), "xattr_test_abstract_%d", getpid());
-> +
-> +	memset(&addr, 0, sizeof(addr));
-> +	addr.sun_family = AF_UNIX;
-> +	addr.sun_path[0] = '\0';
-> +	memcpy(&addr.sun_path[1], name, len);
-> +
-> +	ret = bind(self->sockfd, (struct sockaddr *)&addr,
-> +		   offsetof(struct sockaddr_un, sun_path) + 1 + len);
-> +	ASSERT_EQ(ret, 0);
-> +}
-> +
-> +FIXTURE_TEARDOWN(xattr_abstract)
-> +{
-> +	if (self->sockfd >= 0)
-> +		close(self->sockfd);
-> +}
-> +
-> +TEST_F(xattr_abstract, set_get)
-> +{
-> +	char buf[256];
-> +	ssize_t ret;
-> +
-> +	ret = fsetxattr(self->sockfd, TEST_XATTR_NAME,
-> +			TEST_XATTR_VALUE, strlen(TEST_XATTR_VALUE), 0);
-> +	ASSERT_EQ(ret, 0) {
-> +		TH_LOG("fsetxattr on abstract socket failed: %s",
-> +		       strerror(errno));
-> +	}
-> +
-> +	memset(buf, 0, sizeof(buf));
-> +	ret = fgetxattr(self->sockfd, TEST_XATTR_NAME, buf, sizeof(buf));
-> +	ASSERT_EQ(ret, (ssize_t)strlen(TEST_XATTR_VALUE));
-> +	ASSERT_STREQ(buf, TEST_XATTR_VALUE);
-> +}
-> +
-> +TEST_HARNESS_MAIN
-> 
-> -- 
-> 2.47.3
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Miklos
 
