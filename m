@@ -1,325 +1,234 @@
-Return-Path: <linux-fsdevel+bounces-78690-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78686-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OBIBMu1SoWkfsAQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78690-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 09:16:45 +0100
+	id 0I1+CshOoWkfsAQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78686-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 08:59:04 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D781B45A8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 09:16:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C58AC1B42EF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 08:59:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 8E19A3051729
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 08:16:27 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id D5932304A0C2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Feb 2026 07:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B280B38B7D1;
-	Fri, 27 Feb 2026 08:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78CE36CDF7;
+	Fri, 27 Feb 2026 07:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="Cj62H3cT"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XWpzPLLF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from e3i670.smtp2go.com (e3i670.smtp2go.com [158.120.86.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0C637C0FB
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 08:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.86.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC58163
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Feb 2026 07:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772180171; cv=none; b=Ds2YrNd+u6D6TOye36mxuvSiHCTxVC5ViolXvCE+8QoJbjrM+r9xSCCFxYpxDd4iOtR37zk4kFtVFfLMb3ThU6AR2hVWdctGY9zixHA9kSGxFZ9M9eG/wxR5VbI1/S7xv10hsAE/z1L4XM/AyN0bGhUTQeKwD4s5ErP9ozFMn2Y=
+	t=1772179141; cv=none; b=jMaQ2VEHv09LcfsVqQr8IN3gjEBLjHuvfU+EpUWCNyyDMJ8nqXMIiJuQ978DGWnTBe/6EVE5LojBBCsYd+qmwqcR/0lkIt8MzCeUkuCKZvCckt1Dl/fBVdg/8IHRp7ePEs+DP64xJjSSDma7e6adVcvxpyp4IWmajwfTcXyRQAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772180171; c=relaxed/simple;
-	bh=VJzOVm3d+UInNVvJHA3UFeTzICW+bacfZ9dNPm5PZLM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I7arWUvbkAsJRHy3oMdMnJTJrCHnFpegMGeAOMmqHKzLSCi/c5J47RH8fbcnvzXrKPgXkIKAl8qrhHVNuu2VT/CDwunp6IKzJqjLIjMlM3JZEOdLtGUsHftuDAP9AckUuaq/gJ65/wIZNMcJ5zBCZqN4zKwxDAmuN3ktGRZU9GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=Cj62H3cT; arc=none smtp.client-ip=158.120.86.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
- i=@triplefau.lt; q=dns/txt; s=s510616; t=1772180166; h=from : subject
- : to : message-id : date;
- bh=srBzmYxFdm2Z87VKEA6e9S7JlctVLD7IafBiS0gswbA=;
- b=Cj62H3cTVZubc+PnbrhLt0NzcvWaZBgoQILXy6qESs4au3NdDS/64jEwWmvUay/uDYb3Y
- dfep7QC2SN+sSV759FaTmWcJMYmtA3E9kJvN0O4eal7MpqeyoIY776XMfD4+caAffNJHYUF
- /APmuZ5Ncx96omMDkE/7TGZf6yCaIslPN6ui2dWkVmfMuSilzD2jSk9oGLRSI0vvUYRwooS
- CfxUgZAAxDkwXYl6yxzPWJYvvmUzpuGjSSF6tGB//wknEPQPx3y7Arhvq9D/xrOcTYITfZi
- a3OWZzT1fRIc19P0MuRjO/NxNE0uT83evEtVfgfdAfEQAm7K8pJAWYVmzYLQ==
-Received: from [10.12.239.196] (helo=localhost)
-	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.99.1-S2G)
-	(envelope-from <repk@triplefau.lt>)
-	id 1vvt0z-AIkwcC8lk1Q-GnCM;
-	Fri, 27 Feb 2026 08:16:01 +0000
-From: Remi Pommarel <repk@triplefau.lt>
-To: v9fs@lists.linux.dev
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH v3 4/4] 9p: Enable symlink caching in page cache
-Date: Fri, 27 Feb 2026 08:56:55 +0100
-Message-ID: <c17ddf1cf0b8962407cf023eb18b30c307c44f50.1772178819.git.repk@triplefau.lt>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <cover.1772178819.git.repk@triplefau.lt>
-References: <cover.1772178819.git.repk@triplefau.lt>
+	s=arc-20240116; t=1772179141; c=relaxed/simple;
+	bh=4+TUB7yoSoPLv12gu4rBUAUm93w/iLQPRp1YBDrUtRM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lXevIZSwRmze46ZydGl0/Ov4gVMKGCZGGf0oqALoCpm5vbWUX3IskVFDQQhHh+TEApt32GUHfzhbdGAGWMnCyS1PicjMtsDKWRZq6AgriBZvbXYJ2YLZ55xjFl+cdV/GwT15KjIwN9U1opCc+nVmQlcbq1tO4ETnbrpmRlrU0lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XWpzPLLF; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-4398c7083d7so1496162f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Feb 2026 23:58:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1772179138; x=1772783938; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=r2QrhCbecYwCtjU+xCj5mYbcpftK/AETlZM6xQRfUMg=;
+        b=XWpzPLLFutmdKjx8yvtYYGjaIFTMEummSwZduWy8CeB+LR4eQR//39XX3JlfAoy1Eq
+         5KKtMBBHSkXM20/+RBnHyVyMrhdbwrVyCaAdMqmnnsmIjZEtU2A/L7DMNjkcX/I4cFxd
+         fUBUvpxRvFZUogHftnnaFGBMogbUYO4F/3GqyBmVZC44NWUwvi6Z3SfvjG5lt7n8JT86
+         Amx9ew9ZTjjOPza67QvNz6y97O7Z6aDhg532BzpjL5qo18/IxTWek2cbnY+EBy1eKXly
+         dkZEv/hRjXlY4k7UePFWt65Md51M20QERAFXThLJlvTcWw0uBXJrpjkKTkPEyxK+hZ/L
+         kkwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772179138; x=1772783938;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r2QrhCbecYwCtjU+xCj5mYbcpftK/AETlZM6xQRfUMg=;
+        b=I+vaIqXqGEPtguOLTgO28FVGSWr87fKQ0FxEvWcD8f37VcOJMcdEb77HH4IsoD4R4z
+         VAky3rxNJ5wYEpfojVjLwHiN0klD/NoEGxGnfmd+wsX6PPx8/5wYwRfjdpEkmuuFAjbk
+         qvu6j3zf8yi3FRB2Ajkx5U+wyqiNE/448pDNPM41hMGZHDP3P/cG5R/4Kf3rTShhvtAx
+         HqKs1PF3zvFc0dXTjaUS7kjXcpx2cQVY53qaH2pj9nnI0Pa5iCBpZjFg0JE9SxdbgjVS
+         v4UyGod8izq+whrz8K1qTVqbDyF5UYlT7keuV80ghClg6U9oet/ieoMb0F6dTpzHUliO
+         rjQQ==
+X-Gm-Message-State: AOJu0YwzgmoUJf1ZaWZjMDlKiY3sIO2/o6KLxtQi1gnGTqnVciAMSmWd
+	tQWTmIBh0c7/3HXZVEpdVex2h88a8julgY6eM/PdE3K+gU7zK1wYp4sxou9Ihrw3FLL4rg7aejr
+	067kZ
+X-Gm-Gg: ATEYQzwwwvoMqiwMZfwu1kSDOI96Eitka5LdGpEpaUZgjoo42MGAv65HLzCOnlUWAoI
+	EZFYLh14vYDF3O/L0cxGxpinpGC1/rAOkL/cPInxRxOTgxxRvIN9RDsrhZ5hPlZ2HjVDRkKJ83r
+	hYnz7BUP25T5W5YvVBZYxlzfkBvSEMo37O8fFntTLXE0TwI3rHK6CFb+EnIHsstb+nLZZAfW2D5
+	xlM8JAGokAbdjNMQ1t9i+vv3b8bQg3YjH/iEqlQt3Bc1ThIRbMGAWvZ6KMZ7SmBCSo2wgfclkw8
+	fj0B93LKoajWn4mRO5L6IlUBHfKB/rNxkQz1Htd9lXOxPsoDX9VULCOo3E5MCEx4tWEpiVxmlSs
+	ZIisQX6cHFbf/K3aly7r4EfWVePHr6ju614AaVdBQJ/kDVZ4Qs5lEgEDjyIdeXPhOmL/MR0GAGV
+	9bT6SpTJx1n2O4dljkM5wKKZ8DxxUO
+X-Received: by 2002:a05:6000:2007:b0:437:6dc8:c372 with SMTP id ffacd0b85a97d-4399de194e5mr2810738f8f.38.1772179138126;
+        Thu, 26 Feb 2026 23:58:58 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4399c75b272sm5041677f8f.24.2026.02.26.23.58.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Feb 2026 23:58:57 -0800 (PST)
+Date: Fri, 27 Feb 2026 10:58:54 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: [bug report] ntfs: update attrib operations
+Message-ID: <aaFOvvCNNEsDXXBT@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
-Feedback-ID: 510616m:510616apGKSTK:510616sP6GiIHyuP
-X-smtpcorp-track: 8E7mrf5_4MXX.74itNSjH-dv-.bL9D8gh7nlN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[triplefau.lt,quarantine];
+	DMARC_POLICY_ALLOW(-0.50)[linaro.org,none];
+	R_DKIM_ALLOW(-0.20)[linaro.org:s=google];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
-	R_DKIM_ALLOW(-0.20)[triplefau.lt:s=s510616];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78690-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78686-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[triplefau.lt:+];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCPT_COUNT_TWO(0.00)[2];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[linaro.org:+];
 	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[repk@triplefau.lt,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[dan.carpenter@linaro.org,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[]
-X-Rspamd-Queue-Id: 68D781B45A8
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,linaro.org:dkim,stanley.mountain:mid]
+X-Rspamd-Queue-Id: C58AC1B42EF
 X-Rspamd-Action: no action
 
-Currently, when cache=loose is enabled, file reads are cached in the
-page cache, but symlink reads are not. This patch allows the results
-of p9_client_readlink() to be stored in the page cache, eliminating
-the need for repeated 9P transactions on subsequent symlink accesses.
+[ Smatch checking is paused while we raise funding. #SadFace
+  https://lore.kernel.org/all/aTaiGSbWZ9DJaGo7@stanley.mountain/ -dan ]
 
-This change improves performance for workloads that involve frequent
-symlink resolution.
+Hello Namjae Jeon,
 
-Signed-off-by: Remi Pommarel <repk@triplefau.lt>
----
- fs/9p/vfs_addr.c       | 29 +++++++++++++++--
- fs/9p/vfs_inode.c      |  6 ++--
- fs/9p/vfs_inode_dotl.c | 72 +++++++++++++++++++++++++++++++++++++-----
- 3 files changed, 94 insertions(+), 13 deletions(-)
+Commit 495e90fa3348 ("ntfs: update attrib operations") from Feb 13,
+2026 (linux-next), leads to the following Smatch static checker
+warning:
 
-diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
-index 862164181bac..0683090a5f15 100644
---- a/fs/9p/vfs_addr.c
-+++ b/fs/9p/vfs_addr.c
-@@ -70,10 +70,24 @@ static void v9fs_issue_read(struct netfs_io_subrequest *subreq)
- {
- 	struct netfs_io_request *rreq = subreq->rreq;
- 	struct p9_fid *fid = rreq->netfs_priv;
-+	char *target;
- 	unsigned long long pos = subreq->start + subreq->transferred;
--	int total, err;
--
--	total = p9_client_read(fid, pos, &subreq->io_iter, &err);
-+	int total, err, len, n;
-+
-+	if (S_ISLNK(rreq->inode->i_mode)) {
-+		/* p9_client_readlink() must not be called for legacy protocols
-+		 * 9p2000 or 9p2000.u.
-+		 */
-+		BUG_ON(!p9_is_proto_dotl(fid->clnt));
-+		err = p9_client_readlink(fid, &target);
-+		len = strnlen(target, PAGE_SIZE - 1);
-+		n = copy_to_iter(target, len, &subreq->io_iter);
-+		if (n != len)
-+			err = -EFAULT;
-+		total = i_size_read(rreq->inode);
-+	} else {
-+		total = p9_client_read(fid, pos, &subreq->io_iter, &err);
-+	}
- 
- 	/* if we just extended the file size, any portion not in
- 	 * cache won't be on server and is zeroes */
-@@ -99,6 +113,7 @@ static void v9fs_issue_read(struct netfs_io_subrequest *subreq)
- static int v9fs_init_request(struct netfs_io_request *rreq, struct file *file)
- {
- 	struct p9_fid *fid;
-+	struct dentry *dentry;
- 	bool writing = (rreq->origin == NETFS_READ_FOR_WRITE ||
- 			rreq->origin == NETFS_WRITETHROUGH ||
- 			rreq->origin == NETFS_UNBUFFERED_WRITE ||
-@@ -115,6 +130,14 @@ static int v9fs_init_request(struct netfs_io_request *rreq, struct file *file)
- 		if (!fid)
- 			goto no_fid;
- 		p9_fid_get(fid);
-+	} else if (S_ISLNK(rreq->inode->i_mode)){
-+		dentry = d_find_alias(rreq->inode);
-+		if (!dentry)
-+			goto no_fid;
-+		fid = v9fs_fid_lookup(dentry);
-+		dput(dentry);
-+		if (IS_ERR(fid))
-+			goto no_fid;
- 	} else {
- 		fid = v9fs_fid_find_inode(rreq->inode, writing, INVALID_UID, true);
- 		if (!fid)
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index c82db6fe0c39..98644f27d6f1 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -302,10 +302,12 @@ int v9fs_init_inode(struct v9fs_session_info *v9ses,
- 			goto error;
- 		}
- 
--		if (v9fs_proto_dotl(v9ses))
-+		if (v9fs_proto_dotl(v9ses)) {
- 			inode->i_op = &v9fs_symlink_inode_operations_dotl;
--		else
-+			inode_nohighmem(inode);
-+		} else {
- 			inode->i_op = &v9fs_symlink_inode_operations;
-+		}
- 
- 		break;
- 	case S_IFDIR:
-diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
-index 643e759eacb2..a286a078d6a6 100644
---- a/fs/9p/vfs_inode_dotl.c
-+++ b/fs/9p/vfs_inode_dotl.c
-@@ -686,9 +686,13 @@ v9fs_vfs_symlink_dotl(struct mnt_idmap *idmap, struct inode *dir,
- 	int err;
- 	kgid_t gid;
- 	const unsigned char *name;
-+	umode_t mode;
-+	struct v9fs_session_info *v9ses;
- 	struct p9_qid qid;
- 	struct p9_fid *dfid;
- 	struct p9_fid *fid = NULL;
-+	struct inode *inode;
-+	struct posix_acl *dacl = NULL, *pacl = NULL;
- 
- 	name = dentry->d_name.name;
- 	p9_debug(P9_DEBUG_VFS, "%lu,%s,%s\n", dir->i_ino, name, symname);
-@@ -702,6 +706,14 @@ v9fs_vfs_symlink_dotl(struct mnt_idmap *idmap, struct inode *dir,
- 
- 	gid = v9fs_get_fsgid_for_create(dir);
- 
-+	/* Update mode based on ACL value */
-+	err = v9fs_acl_mode(dir, &mode, &dacl, &pacl);
-+	if (err) {
-+		p9_debug(P9_DEBUG_VFS, "Failed to get acl values in mknod %d\n",
-+			 err);
-+		goto error;
-+	}
-+
- 	/* Server doesn't alter fid on TSYMLINK. Hence no need to clone it. */
- 	err = p9_client_symlink(dfid, name, symname, gid, &qid);
- 
-@@ -712,8 +724,30 @@ v9fs_vfs_symlink_dotl(struct mnt_idmap *idmap, struct inode *dir,
- 
- 	v9fs_invalidate_inode_attr(dir);
- 
-+	/* instantiate inode and assign the unopened fid to the dentry */
-+	fid = p9_client_walk(dfid, 1, &name, 1);
-+	if (IS_ERR(fid)) {
-+		err = PTR_ERR(fid);
-+		p9_debug(P9_DEBUG_VFS, "p9_client_walk failed %d\n",
-+			 err);
-+		goto error;
-+	}
-+
-+	v9ses = v9fs_inode2v9ses(dir);
-+	inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
-+	if (IS_ERR(inode)) {
-+		err = PTR_ERR(inode);
-+		p9_debug(P9_DEBUG_VFS, "inode creation failed %d\n",
-+			 err);
-+		goto error;
-+	}
-+	v9fs_set_create_acl(inode, fid, dacl, pacl);
-+	v9fs_fid_add(dentry, &fid);
-+	d_instantiate(dentry, inode);
-+	err = 0;
- error:
- 	p9_fid_put(fid);
-+	v9fs_put_acl(dacl, pacl);
- 	p9_fid_put(dfid);
- 	return err;
- }
-@@ -853,24 +887,23 @@ v9fs_vfs_mknod_dotl(struct mnt_idmap *idmap, struct inode *dir,
- }
- 
- /**
-- * v9fs_vfs_get_link_dotl - follow a symlink path
-+ * v9fs_vfs_get_link_nocache_dotl - Resolve a symlink directly.
-+ *
-+ * To be used when symlink caching is not enabled.
-+ *
-  * @dentry: dentry for symlink
-  * @inode: inode for symlink
-  * @done: destructor for return value
-  */
--
- static const char *
--v9fs_vfs_get_link_dotl(struct dentry *dentry,
--		       struct inode *inode,
--		       struct delayed_call *done)
-+v9fs_vfs_get_link_nocache_dotl(struct dentry *dentry,
-+			       struct inode *inode,
-+			       struct delayed_call *done)
- {
- 	struct p9_fid *fid;
- 	char *target;
- 	int retval;
- 
--	if (!dentry)
--		return ERR_PTR(-ECHILD);
--
- 	p9_debug(P9_DEBUG_VFS, "%pd\n", dentry);
- 
- 	fid = v9fs_fid_lookup(dentry);
-@@ -884,6 +917,29 @@ v9fs_vfs_get_link_dotl(struct dentry *dentry,
- 	return target;
- }
- 
-+/**
-+ * v9fs_vfs_get_link_dotl - follow a symlink path
-+ * @dentry: dentry for symlink
-+ * @inode: inode for symlink
-+ * @done: destructor for return value
-+ */
-+static const char *
-+v9fs_vfs_get_link_dotl(struct dentry *dentry,
-+		       struct inode *inode,
-+		       struct delayed_call *done)
-+{
-+	struct v9fs_session_info *v9ses;
-+
-+	if (!dentry)
-+		return ERR_PTR(-ECHILD);
-+
-+	v9ses = v9fs_inode2v9ses(inode);
-+	if (v9ses->cache & (CACHE_META|CACHE_LOOSE))
-+		return page_get_link(dentry, inode, done);
-+
-+	return v9fs_vfs_get_link_nocache_dotl(dentry, inode, done);
-+}
-+
- int v9fs_refresh_inode_dotl(struct p9_fid *fid, struct inode *inode)
- {
- 	struct p9_stat_dotl *st;
--- 
-2.52.0
+	fs/ntfs/attrib.c:5197 ntfs_non_resident_attr_collapse_range()
+	warn: inconsistent returns '&ni->runlist.lock'.
 
+fs/ntfs/attrib.c
+    5107 int ntfs_non_resident_attr_collapse_range(struct ntfs_inode *ni, s64 start_vcn, s64 len)
+    5108 {
+    5109         struct ntfs_volume *vol = ni->vol;
+    5110         struct runlist_element *punch_rl, *rl;
+    5111         struct ntfs_attr_search_ctx *ctx = NULL;
+    5112         s64 end_vcn;
+    5113         int dst_cnt;
+    5114         int ret;
+    5115         size_t new_rl_cnt;
+    5116 
+    5117         if (NInoAttr(ni) || ni->type != AT_DATA)
+    5118                 return -EOPNOTSUPP;
+    5119 
+    5120         end_vcn = ntfs_bytes_to_cluster(vol, ni->allocated_size);
+    5121         if (start_vcn >= end_vcn)
+    5122                 return -EINVAL;
+    5123 
+    5124         down_write(&ni->runlist.lock);
+    5125         ret = ntfs_attr_map_whole_runlist(ni);
+    5126         if (ret)
+    5127                 return ret;
+
+up_write(&ni->runlist.lock) before returning.
+
+    5128 
+    5129         len = min(len, end_vcn - start_vcn);
+    5130         for (rl = ni->runlist.rl, dst_cnt = 0; rl && rl->length; rl++)
+    5131                 dst_cnt++;
+    5132         rl = ntfs_rl_find_vcn_nolock(ni->runlist.rl, start_vcn);
+    5133         if (!rl) {
+    5134                 up_write(&ni->runlist.lock);
+    5135                 return -EIO;
+    5136         }
+    5137 
+    5138         rl = ntfs_rl_collapse_range(ni->runlist.rl, dst_cnt + 1,
+    5139                                     start_vcn, len, &punch_rl, &new_rl_cnt);
+    5140         if (IS_ERR(rl)) {
+    5141                 up_write(&ni->runlist.lock);
+    5142                 return PTR_ERR(rl);
+    5143         }
+    5144         ni->runlist.rl = rl;
+    5145         ni->runlist.count = new_rl_cnt;
+    5146 
+    5147         ni->allocated_size -= ntfs_cluster_to_bytes(vol, len);
+    5148         if (ni->data_size > ntfs_cluster_to_bytes(vol, start_vcn)) {
+    5149                 if (ni->data_size > ntfs_cluster_to_bytes(vol, (start_vcn + len)))
+    5150                         ni->data_size -= ntfs_cluster_to_bytes(vol, len);
+    5151                 else
+    5152                         ni->data_size = ntfs_cluster_to_bytes(vol, start_vcn);
+    5153         }
+    5154         if (ni->initialized_size > ntfs_cluster_to_bytes(vol, start_vcn)) {
+    5155                 if (ni->initialized_size >
+    5156                     ntfs_cluster_to_bytes(vol, start_vcn + len))
+    5157                         ni->initialized_size -= ntfs_cluster_to_bytes(vol, len);
+    5158                 else
+    5159                         ni->initialized_size = ntfs_cluster_to_bytes(vol, start_vcn);
+    5160         }
+    5161 
+    5162         if (ni->allocated_size > 0) {
+    5163                 ret = ntfs_attr_update_mapping_pairs(ni, 0);
+    5164                 if (ret) {
+    5165                         up_write(&ni->runlist.lock);
+    5166                         goto out_rl;
+    5167                 }
+    5168         }
+    5169         up_write(&ni->runlist.lock);
+    5170 
+    5171         ctx = ntfs_attr_get_search_ctx(ni, NULL);
+    5172         if (!ctx) {
+    5173                 ret = -ENOMEM;
+    5174                 goto out_rl;
+    5175         }
+    5176 
+    5177         ret = ntfs_attr_lookup(ni->type, ni->name, ni->name_len, CASE_SENSITIVE,
+    5178                                0, NULL, 0, ctx);
+    5179         if (ret)
+    5180                 goto out_ctx;
+    5181 
+    5182         ctx->attr->data.non_resident.data_size = cpu_to_le64(ni->data_size);
+    5183         ctx->attr->data.non_resident.initialized_size = cpu_to_le64(ni->initialized_size);
+    5184         if (ni->allocated_size == 0)
+    5185                 ntfs_attr_make_resident(ni, ctx);
+    5186         mark_mft_record_dirty(ctx->ntfs_ino);
+    5187 
+    5188         ret = ntfs_cluster_free_from_rl(vol, punch_rl);
+    5189         if (ret)
+    5190                 ntfs_error(vol->sb, "Freeing of clusters failed");
+    5191 out_ctx:
+    5192         if (ctx)
+    5193                 ntfs_attr_put_search_ctx(ctx);
+    5194 out_rl:
+    5195         kvfree(punch_rl);
+    5196         mark_mft_record_dirty(ni);
+--> 5197         return ret;
+    5198 }
+
+regards,
+dan carpenter
 
