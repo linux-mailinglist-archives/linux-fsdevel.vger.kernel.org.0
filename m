@@ -1,245 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-78832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id eF3KMuxIo2l//AQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 20:58:36 +0100
+	id yNm8Hvldo2myBQUAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 22:28:25 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E15F1C7AAE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 20:58:36 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id A29521C9196
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 22:28:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 030A431CD664
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 19:43:46 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id DE90530AB0B3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 19:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506B74A2E14;
-	Sat, 28 Feb 2026 17:48:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A643B233D;
+	Sat, 28 Feb 2026 18:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uhnYncYr"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QoH/JI34"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B8235A3B7;
-	Sat, 28 Feb 2026 17:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF2F3B232A
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Feb 2026 18:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772300910; cv=none; b=fgTE7yNHKd7snx8/U73ppbLEOaLwas4uprlpgkFFBff4Qn0dJpqB6KjkW1VtmLk8I+V/nw7RF9Lyk8YjlwYA1NrMQRI2s7eEUDH1IiGGwbLrLXE4Q9+lxevMB3PS6pyfW8nD1U4gDeIRvwiFYR5C2kGyDE7L3eKvggCvwJb+CPk=
+	t=1772303295; cv=none; b=U/0+5XRqxrhRWJYuVKiZ3tseIdCcRnhbcGmFhfi0bIBWayCJG9W6uxY7YlEN1Ah5AyZoKE7N/j7S9JyhRXsQZC39csEZLXxlpfHI1LM7rAOPZLZ+0OkjbMwpjYnXLcVGkDD4r20pO1YtOJuaCG4oFYCO6i6CAfjb5QD5sL3kuJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772300910; c=relaxed/simple;
-	bh=lgckruRzCqInsR1TwxzrE/g9fFUJVXK1HokDjmRbsYk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a4MawOFyV26wo1sEpr+Eat5FdrY+/CupbIQB9zzsO+chJqvG0U5OP5WKAg8owZqFY6mxgIJj+X90XLAKX6THqN1knhzNnjhbyLny8rP/4hWxPMr2oPp74psYIv9aauWBMleiGQfTomDD2gKZoU8J4wraCKGfVN9+1evtCbOU1ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uhnYncYr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A26EC116D0;
-	Sat, 28 Feb 2026 17:48:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772300910;
-	bh=lgckruRzCqInsR1TwxzrE/g9fFUJVXK1HokDjmRbsYk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uhnYncYriERdHE2lyL+KOWzkzXcJ8hQtTjh2Rys7hLdJd2jBJXjIJh8+mz0btlhPk
-	 QwgB+3mbTvQZmA+TwUHBRd/pRnfSlL1jrYFkon5ACiglkJRPQHSu8qgWLTAPvR7F6r
-	 qVyfQoBg5p+EmYugGjbCz66/omIUj80b+CrAHluqGPGcZfrTIKzpEM09hcb4PQgxWx
-	 Op2H3dTHUh1bScn7u0jHdaOnU4n355Z8O8ai2+mcl/0nIsJP5CkJzFMjKd/tGMAkQ9
-	 m/JVJUrPEKMFGGM27VbAsihIwGYcpo2zE+djLca4Udplhayzhp7XtuSFuhq91PbxMi
-	 s3VZooeGqq7pg==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev
-Cc: Viacheslav Dubeyko <slava@dubeyko.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Yangtao Li <frank.li@vivo.com>,
+	s=arc-20240116; t=1772303295; c=relaxed/simple;
+	bh=xSHZE2a4FmsJnbM6miwzdJ5cI4Xsdj1vy/YMTH+O/nY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dTcJQbTiTNaovqKrVSw/eS+okPnULmkiKajigFp+lMaerXW1Mu6vRsqoBMe2c9pDEmOhkJYgERygu/ImxysN07QrwDSo/mzB6cJoY6sbeelgV6wt9ox8lxhPHvwrO26lQTxjUbcv7ZqdqJ0lRhTw3MTZWxObZa1AUmc8clweDzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QoH/JI34; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1772303292;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=a/hFCs81cNsxu+qlQAKknDKpc+SOHunIa7+2foWYf/4=;
+	b=QoH/JI34rXsypSpUM+D8kusV7687ZdoyN5WCtltXC74RbN11n8XKbsWbAn4w8rxVeJU+6A
+	xPdI/4cQuiFsahvc8m0YPfYt1W7y68Ud1poYwQHiohZFqxrbFkzN9Mv4Ws1tjGOfzmjgK7
+	omd24AuUmNHmnr3TIYhr+X57z7AWN0E=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-462-Q46BqXX7MMa8chVasbN7_w-1; Sat,
+ 28 Feb 2026 13:28:08 -0500
+X-MC-Unique: Q46BqXX7MMa8chVasbN7_w-1
+X-Mimecast-MFC-AGG-ID: Q46BqXX7MMa8chVasbN7_w_1772303287
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1E1E6195609E;
+	Sat, 28 Feb 2026 18:28:07 +0000 (UTC)
+Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.2.16.6])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C0F071800351;
+	Sat, 28 Feb 2026 18:28:03 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Paul Moore <paul@paul-moore.com>,
+	Eric Paris <eparis@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Cc: linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.18 025/752] hfsplus: fix volume corruption issue for generic/498
-Date: Sat, 28 Feb 2026 12:35:36 -0500
-Message-ID: <20260228174750.1542406-25-sashal@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260228174750.1542406-1-sashal@kernel.org>
-References: <20260228174750.1542406-1-sashal@kernel.org>
+	audit@vger.kernel.org,
+	Richard Guy Briggs <rgb@redhat.com>,
+	Ricardo Robaina <rrobaina@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH v4 0/2] fs, audit: Avoid excessive dput/dget in audit_context setup and reset paths
+Date: Sat, 28 Feb 2026 13:27:55 -0500
+Message-ID: <20260228182757.90528-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_CONTAINS_FROM(1.00)[];
+	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
 	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78832-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[sashal@kernel.org,linux-fsdevel@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-78833-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[longman@redhat.com,linux-fsdevel@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[redhat.com:+];
+	MISSING_XM_UA(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	NEURAL_HAM(-0.00)[-0.999];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_FIVE(0.00)[6];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 4E15F1C7AAE
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: A29521C9196
 X-Rspamd-Action: no action
 
-From: Viacheslav Dubeyko <slava@dubeyko.com>
+ v4:
+  - Add ack and review tags
+  - Simplify put_fs_pwd_pool() in patch 1 as suggested by Paul Moore
 
-[ Upstream commit 9a8c4ad44721da4c48e1ff240ac76286c82837fe ]
+ v3:
+  - https://lore.kernel.org/lkml/20260206201918.1988344-1-longman@redhat.com/
 
-The xfstests' test-case generic/498 leaves HFS+ volume
-in corrupted state:
+When the audit subsystem is enabled, it can do a lot of get_fs_pwd()
+calls to get references to fs->pwd and then releasing those references
+back with path_put() later. That may cause a lot of spinlock contention
+on a single pwd's dentry lock because of the constant changes to the
+reference count when there are many processes on the same working
+directory actively doing open/close system calls. This can cause
+noticeable performance regresssion when compared with the case where
+the audit subsystem is turned off especially on systems with a lot of
+CPUs which is becoming more common these days.
 
-sudo ./check generic/498
-FSTYP -- hfsplus
-PLATFORM -- Linux/x86_64 hfsplus-testing-0001 6.18.0-rc1+ #18 SMP PREEMPT_DYNAMIC Thu Dec 4 12:24:45 PST 2025
-MKFS_OPTIONS -- /dev/loop51
-MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
+This patch series aim to avoid this type of performance regression caused
+by audit by adding a new set of fs_struct helpers to reduce unncessary
+path_get() and path_put() calls and the audit code is modified to use
+these new helpers.
 
-generic/498 _check_generic_filesystem: filesystem on /dev/loop51 is inconsistent
-(see XFSTESTS-2/xfstests-dev/results//generic/498.full for details)
+Waiman Long (2):
+  fs: Add a pool of extra fs->pwd references to fs_struct
+  audit: Use the new {get,put}_fs_pwd_pool() APIs to get/put pwd
+    references
 
-Ran: generic/498
-Failures: generic/498
-Failed 1 of 1 tests
+ fs/fs_struct.c            | 26 +++++++++++++++++++++-----
+ fs/namespace.c            |  8 ++++++++
+ include/linux/fs_struct.h | 28 +++++++++++++++++++++++++++-
+ kernel/auditsc.c          |  7 +++++--
+ 4 files changed, 61 insertions(+), 8 deletions(-)
 
-sudo fsck.hfsplus -d /dev/loop51
-** /dev/loop51
-Using cacheBlockSize=32K cacheTotalBlock=1024 cacheSize=32768K.
-Executing fsck_hfs (version 540.1-Linux).
-** Checking non-journaled HFS Plus Volume.
-The volume name is untitled
-** Checking extents overflow file.
-** Checking catalog file.
-Invalid leaf record count
-(It should be 16 instead of 2)
-** Checking multi-linked files.
-CheckHardLinks: found 1 pre-Leopard file inodes.
-** Checking catalog hierarchy.
-** Checking extended attributes file.
-** Checking volume bitmap.
-** Checking volume information.
-Verify Status: VIStat = 0x0000, ABTStat = 0x0000 EBTStat = 0x0000
-CBTStat = 0x8000 CatStat = 0x00000000
-** Repairing volume.
-** Rechecking volume.
-** Checking non-journaled HFS Plus Volume.
-The volume name is untitled
-** Checking extents overflow file.
-** Checking catalog file.
-** Checking multi-linked files.
-CheckHardLinks: found 1 pre-Leopard file inodes.
-** Checking catalog hierarchy.
-** Checking extended attributes file.
-** Checking volume bitmap.
-** Checking volume information.
-** The volume untitled was repaired successfully.
-
-The generic/498 test executes such steps on final phase:
-
-mkdir $SCRATCH_MNT/A
-mkdir $SCRATCH_MNT/B
-mkdir $SCRATCH_MNT/A/C
-touch $SCRATCH_MNT/B/foo
-$XFS_IO_PROG -c "fsync" $SCRATCH_MNT/B/foo
-
-ln $SCRATCH_MNT/B/foo $SCRATCH_MNT/A/C/foo
-$XFS_IO_PROG -c "fsync" $SCRATCH_MNT/A
-
-"Simulate a power failure and mount the filesystem
-to check that what we explicitly fsync'ed exists."
-
-_flakey_drop_and_remount
-
-The FSCK tool complains about "Invalid leaf record count".
-HFS+ b-tree header contains leaf_count field is updated
-by hfs_brec_insert() and hfs_brec_remove(). The hfs_brec_insert()
-is involved into hard link creation process. However,
-modified in-core leaf_count field is stored into HFS+
-b-tree header by hfs_btree_write() method. But,
-unfortunately, hfs_btree_write() hasn't been called
-by hfsplus_cat_write_inode() and hfsplus_file_fsync()
-stores not fully consistent state of the Catalog File's
-b-tree.
-
-This patch adds calling hfs_btree_write() method in
-the hfsplus_cat_write_inode() with the goal of
-storing consistent state of Catalog File's b-tree.
-Finally, it makes FSCK tool happy.
-
-sudo ./check generic/498
-FSTYP         -- hfsplus
-PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.18.0-rc1+ #22 SMP PREEMPT_DYNAMIC Sat Dec  6 17:01:31 PST 2025
-MKFS_OPTIONS  -- /dev/loop51
-MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
-
-generic/498 33s ...  31s
-Ran: generic/498
-Passed all 1 tests
-
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-cc: Yangtao Li <frank.li@vivo.com>
-cc: linux-fsdevel@vger.kernel.org
-Link: https://lore.kernel.org/r/20251207035821.3863657-1-slava@dubeyko.com
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/hfsplus/inode.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-index c762bf909d1aa..6153e5cc6eb65 100644
---- a/fs/hfsplus/inode.c
-+++ b/fs/hfsplus/inode.c
-@@ -615,6 +615,7 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
- int hfsplus_cat_write_inode(struct inode *inode)
- {
- 	struct inode *main_inode = inode;
-+	struct hfs_btree *tree = HFSPLUS_SB(inode->i_sb)->cat_tree;
- 	struct hfs_find_data fd;
- 	hfsplus_cat_entry entry;
- 	int res = 0;
-@@ -627,7 +628,7 @@ int hfsplus_cat_write_inode(struct inode *inode)
- 	if (!main_inode->i_nlink)
- 		return 0;
- 
--	if (hfs_find_init(HFSPLUS_SB(main_inode->i_sb)->cat_tree, &fd))
-+	if (hfs_find_init(tree, &fd))
- 		/* panic? */
- 		return -EIO;
- 
-@@ -692,6 +693,15 @@ int hfsplus_cat_write_inode(struct inode *inode)
- 	set_bit(HFSPLUS_I_CAT_DIRTY, &HFSPLUS_I(inode)->flags);
- out:
- 	hfs_find_exit(&fd);
-+
-+	if (!res) {
-+		res = hfs_btree_write(tree);
-+		if (res) {
-+			pr_err("b-tree write err: %d, ino %lu\n",
-+			       res, inode->i_ino);
-+		}
-+	}
-+
- 	return res;
- }
- 
 -- 
-2.51.0
+2.53.0
 
 
