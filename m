@@ -1,65 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-78834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id qKR5JRxPo2nW/AQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 21:25:00 +0100
+	id uNmnFulJo2kF/QQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 21:02:49 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D7AF1C852F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 21:24:59 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADC951C7D02
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 21:02:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 8D41F3210ACD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 19:53:29 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B167C34D2F06
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 19:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27483B234C;
-	Sat, 28 Feb 2026 18:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659A93B3C07;
+	Sat, 28 Feb 2026 18:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FrNxX96F"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YpFHuRcS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261C03B2349
-	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Feb 2026 18:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B923B3BE2
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Feb 2026 18:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772303297; cv=none; b=rVhAP4EAv7fLjmVMr0ww9Pd05+/c+19l4NjSpIBBkYob4Fo4kHOnQ4Vr7UhpQOBbYURAIhC+9eN6IisWrAucZldGasZnRGNGEx4bx4riG0MMNhv4jEn4Qwdrm1UbciEUo1qz/XbzdqT+DQ1bnj81f+KtBBMFc2Jk+V/tsByUG2Y=
+	t=1772303301; cv=none; b=EciMwagJYjJfbU30IPBuOwou9QMeEpxIfIgGBKmElm4C4Ic7pLkLRPDw+p0letnvtQ7wxfvpSNDBS93VVEMXUYmZGV3WI6XS1NRFQyjZG38/lHDO8DknMx47yxE5g/VHTLLKNeA+2qwNsZ9WkweEqOnW7zR0p8GJZ8gq2lrWSEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772303297; c=relaxed/simple;
-	bh=JK0WuN2W9e9vtsZTDx1aUaSC3joEllv3YfQdmUK5FOY=;
+	s=arc-20240116; t=1772303301; c=relaxed/simple;
+	bh=6gz20nsM24m2S/dck8ZmFQ35FSYPIPpH8Q92e6D/gI8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r0MfYkHou+iZq3s5swh27BOcsU4thC3k1I63TC9otVd9s7nRQA1sCEJOo3IbbcQKSb3gS0tMPaQiCSt0AKg8UNENn+sgYcesFtQMa1UnXLLvT9pjq+Vb0fxtZ68N233pC2y8nRAL9jNi2qDfCBxvlyBeuZ4EpzWnNrszQXRlFFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FrNxX96F; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=NK1bmVEa1IQh7DmincpoGVm1uLmG5iezKG6eYF5n719ATwlexVetNytxVGEMErcxZ59CwIbtfWOt8Kb/mB2A0aTRbNUlmY2626IUBtrwd+cfcOqa2bKfuEBSDQHD31dzMSeWB0svBebi0dBJa+2dA72ZzjL162FBEROQBfkpRmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YpFHuRcS; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1772303295;
+	s=mimecast20190719; t=1772303298;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YdUUSuhz4rUHhjIdCOjmR2mCL+qfpF5oQsqY8Qu1sxc=;
-	b=FrNxX96F9Hw9PSioBls3GZvoGDs1vZuwR1Biqm7uoJH+pS0hEh1BigrnOcINMh5HUZNCvX
-	Pi63KRZFMUL9crOGrLFTlcnIhZfUEz+TmIYoU6CzKlInRVSqEYW/JCa8G5FzbSP+3Rn7h8
-	erVex49KLIieiuiZhtcMtzrxjJnZdd0=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+	bh=IoIBsfhbhKEi7ETTfW3xNVUCfo/hcm8J/JCFyb6okZw=;
+	b=YpFHuRcSXLW7gLDQ5bPqaIQUbFEvv6Vc65SwDwQXDtpXOoGR47JyF1ZxZh9VZNZZINrWWD
+	Y1i0nSmPbStFCUrcPbLh1hAsYmPJxbWotz4+z6IVz/dMTS2lKRRbjazuhRhx1tKd/EgUMR
+	7ks7FBNQlFgCvpNqZMeSA3zM5zQMlR8=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-477-TMnmMC0uNmeNydVTSkWD-w-1; Sat,
- 28 Feb 2026 13:28:11 -0500
-X-MC-Unique: TMnmMC0uNmeNydVTSkWD-w-1
-X-Mimecast-MFC-AGG-ID: TMnmMC0uNmeNydVTSkWD-w_1772303290
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-427-GF4WwlKAM_uhwhWHQGt9Dg-1; Sat,
+ 28 Feb 2026 13:28:15 -0500
+X-MC-Unique: GF4WwlKAM_uhwhWHQGt9Dg-1
+X-Mimecast-MFC-AGG-ID: GF4WwlKAM_uhwhWHQGt9Dg_1772303294
 Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 43C7B1956095;
-	Sat, 28 Feb 2026 18:28:10 +0000 (UTC)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C5F3C195608A;
+	Sat, 28 Feb 2026 18:28:13 +0000 (UTC)
 Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.2.16.6])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 942CF1800351;
-	Sat, 28 Feb 2026 18:28:07 +0000 (UTC)
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B32781800286;
+	Sat, 28 Feb 2026 18:28:10 +0000 (UTC)
 From: Waiman Long <longman@redhat.com>
 To: Paul Moore <paul@paul-moore.com>,
 	Eric Paris <eparis@redhat.com>,
@@ -72,9 +72,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Richard Guy Briggs <rgb@redhat.com>,
 	Ricardo Robaina <rrobaina@redhat.com>,
 	Waiman Long <longman@redhat.com>
-Subject: [PATCH v4 1/2] fs: Add a pool of extra fs->pwd references to fs_struct
-Date: Sat, 28 Feb 2026 13:27:56 -0500
-Message-ID: <20260228182757.90528-2-longman@redhat.com>
+Subject: [PATCH v4 2/2] audit: Use the new {get,put}_fs_pwd_pool() APIs to get/put pwd references
+Date: Sat, 28 Feb 2026 13:27:57 -0500
+Message-ID: <20260228182757.90528-3-longman@redhat.com>
 In-Reply-To: <20260228182757.90528-1-longman@redhat.com>
 References: <20260228182757.90528-1-longman@redhat.com>
 Precedence: bulk
@@ -92,12 +92,12 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
 	R_MISSING_CHARSET(0.50)[];
 	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78834-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78835-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[6];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -110,10 +110,10 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	NEURAL_HAM(-0.00)[-1.000];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 0D7AF1C852F
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,paul-moore.com:email]
+X-Rspamd-Queue-Id: ADC951C7D02
 X-Rspamd-Action: no action
 
 When the audit subsystem is enabled, it can do a lot of get_fs_pwd()
@@ -126,175 +126,70 @@ noticeable performance regresssion when compared with the case where
 the audit subsystem is turned off especially on systems with a lot of
 CPUs which is becoming more common these days.
 
-A simple and elegant solution to avoid this kind of performance
-regression is to add a common pool of extra fs->pwd references inside
-the fs_struct. When a caller needs a pwd reference, it can borrow one
-from pool, if available, to avoid an explicit path_get(). When it is
-time to release the reference, it can put it back into the common pool
-if fs->pwd isn't changed before without doing a path_put(). We still
-need to acquire the fs's spinlock, but fs_struct is more distributed
-and it is less common to have many tasks sharing a single fs_struct.
+To avoid this kind of performance regression, use the new
+get_fs_pwd_pool() and put_fs_pwd_pool() APIs to acquire and release a
+fs->pwd reference. This should greatly reduce the number of path_get()
+and path_put() calls that are needed.
 
-A new set of get_fs_pwd_pool/put_fs_pwd_pool() APIs are introduced
-with this patch to enable other subsystems to acquire and release
-a pwd reference from the common pool without doing unnecessary
-path_get/path_put().
+After installing a test kernel with auditing enabled and counters
+added to track the get_fs_pwd_pool() and put_fs_pwd_pool() calls on
+a 2-socket 96-core test system and running a parallel kernel build,
+the counter values for this particular test run were shown below.
 
-Besides fs/fs_struct.c, the copy_mnt_ns() function of fs/namespace.c is
-also modified to properly handle the extra pwd references, if available.
+  fs_get_path=307,903
+  fs_get_pool=56,583,192
+  fs_put_path=6,209
+  fs_put_pool=56,885,147
+
+Of the about 57M calls to get_fs_pwd_pool() and put_fs_pwd_pool(), the
+majority of them are just updating the pwd_refs counters. Only less than
+1% of those calls require an actual path_get() and path_put() calls. The
+difference between fs_get_path and fs_put_path represents the extra pwd
+references that were still stored in various active task->fs's when the
+counter values were retrieved.
+
+It can be seen that the number of path_get() and path_put() calls are
+reduced by quite a lot.
 
 Signed-off-by: Waiman Long <longman@redhat.com>
+Acked-by: Paul Moore <paul@paul-moore.com>
 Reviewed-by: Richard Guy Briggs <rgb@redhat.com>
 ---
- fs/fs_struct.c            | 26 +++++++++++++++++++++-----
- fs/namespace.c            |  8 ++++++++
- include/linux/fs_struct.h | 28 +++++++++++++++++++++++++++-
- 3 files changed, 56 insertions(+), 6 deletions(-)
+ kernel/auditsc.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/fs/fs_struct.c b/fs/fs_struct.c
-index 394875d06fd6..43af98e0a10c 100644
---- a/fs/fs_struct.c
-+++ b/fs/fs_struct.c
-@@ -33,15 +33,19 @@ void set_fs_root(struct fs_struct *fs, const struct path *path)
- void set_fs_pwd(struct fs_struct *fs, const struct path *path)
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index f6af6a8f68c4..26ba61eabfb0 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -931,6 +931,9 @@ static inline void audit_free_names(struct audit_context *context)
  {
- 	struct path old_pwd;
-+	int count;
+ 	struct audit_names *n, *next;
  
- 	path_get(path);
- 	write_seqlock(&fs->seq);
- 	old_pwd = fs->pwd;
- 	fs->pwd = *path;
-+	count = fs->pwd_refs + 1;
-+	fs->pwd_refs = 0;
- 	write_sequnlock(&fs->seq);
- 
- 	if (old_pwd.dentry)
--		path_put(&old_pwd);
-+		while (count--)
-+			path_put(&old_pwd);
- }
- 
- static inline int replace_path(struct path *p, const struct path *old, const struct path *new)
-@@ -63,10 +67,15 @@ void chroot_fs_refs(const struct path *old_root, const struct path *new_root)
- 		task_lock(p);
- 		fs = p->fs;
- 		if (fs) {
--			int hits = 0;
-+			int hits;
++	if (!context->name_count)
++		return;	/* audit_alloc_name() has not been called */
 +
- 			write_seqlock(&fs->seq);
-+			hits = replace_path(&fs->pwd, old_root, new_root);
-+			if (hits && fs->pwd_refs) {
-+				count += fs->pwd_refs;
-+				fs->pwd_refs = 0;
-+			}
- 			hits += replace_path(&fs->root, old_root, new_root);
--			hits += replace_path(&fs->pwd, old_root, new_root);
- 			while (hits--) {
- 				count++;
- 				path_get(new_root);
-@@ -82,8 +91,11 @@ void chroot_fs_refs(const struct path *old_root, const struct path *new_root)
- 
- void free_fs_struct(struct fs_struct *fs)
- {
-+	int count = fs->pwd_refs + 1;
-+
- 	path_put(&fs->root);
--	path_put(&fs->pwd);
-+	while (count--)
-+		path_put(&fs->pwd);
- 	kmem_cache_free(fs_cachep, fs);
- }
- 
-@@ -111,6 +123,7 @@ struct fs_struct *copy_fs_struct(struct fs_struct *old)
- 	if (fs) {
- 		fs->users = 1;
- 		fs->in_exec = 0;
-+		fs->pwd_refs = 0;
- 		seqlock_init(&fs->seq);
- 		fs->umask = old->umask;
- 
-@@ -118,7 +131,10 @@ struct fs_struct *copy_fs_struct(struct fs_struct *old)
- 		fs->root = old->root;
- 		path_get(&fs->root);
- 		fs->pwd = old->pwd;
--		path_get(&fs->pwd);
-+		if (old->pwd_refs)
-+			old->pwd_refs--;
-+		else
-+			path_get(&fs->pwd);
- 		read_sequnlock_excl(&old->seq);
+ 	list_for_each_entry_safe(n, next, &context->names_list, list) {
+ 		list_del(&n->list);
+ 		if (n->name)
+@@ -939,7 +942,7 @@ static inline void audit_free_names(struct audit_context *context)
+ 			kfree(n);
  	}
- 	return fs;
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 854f4fc66469..96d41f00add6 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -4272,6 +4272,14 @@ struct mnt_namespace *copy_mnt_ns(u64 flags, struct mnt_namespace *ns,
- 	 * as belonging to new namespace.  We have already acquired a private
- 	 * fs_struct, so tsk->fs->lock is not needed.
- 	 */
-+	if (new_fs)
-+		WARN_ON_ONCE(new_fs->users != 1);
-+
-+	/* Release the extra pwd references of new_fs, if present. */
-+	while (new_fs && new_fs->pwd_refs) {
-+		path_put(&new_fs->pwd);
-+		new_fs->pwd_refs--;
-+	}
- 	p = old;
- 	q = new;
- 	while (p) {
-diff --git a/include/linux/fs_struct.h b/include/linux/fs_struct.h
-index 0070764b790a..f8cf3b280398 100644
---- a/include/linux/fs_struct.h
-+++ b/include/linux/fs_struct.h
-@@ -8,10 +8,11 @@
- #include <linux/seqlock.h>
+ 	context->name_count = 0;
+-	path_put(&context->pwd);
++	put_fs_pwd_pool(current->fs, &context->pwd);
+ 	context->pwd.dentry = NULL;
+ 	context->pwd.mnt = NULL;
+ }
+@@ -2165,7 +2168,7 @@ static struct audit_names *audit_alloc_name(struct audit_context *context,
  
- struct fs_struct {
--	int users;
- 	seqlock_t seq;
-+	int users;
- 	int umask;
- 	int in_exec;
-+	int pwd_refs;	/* A pool of extra pwd references */
- 	struct path root, pwd;
- } __randomize_layout;
- 
-@@ -40,6 +41,31 @@ static inline void get_fs_pwd(struct fs_struct *fs, struct path *pwd)
- 	read_sequnlock_excl(&fs->seq);
+ 	context->name_count++;
+ 	if (!context->pwd.dentry)
+-		get_fs_pwd(current->fs, &context->pwd);
++		get_fs_pwd_pool(current->fs, &context->pwd);
+ 	return aname;
  }
  
-+/* Acquire a pwd reference from the pwd_refs pool, if available */
-+static inline void get_fs_pwd_pool(struct fs_struct *fs, struct path *pwd)
-+{
-+	read_seqlock_excl(&fs->seq);
-+	*pwd = fs->pwd;
-+	if (fs->pwd_refs)
-+		fs->pwd_refs--;
-+	else
-+		path_get(pwd);
-+	read_sequnlock_excl(&fs->seq);
-+}
-+
-+/* Release a pwd reference back to the pwd_refs pool, if appropriate */
-+static inline void put_fs_pwd_pool(struct fs_struct *fs, struct path *pwd)
-+{
-+	read_seqlock_excl(&fs->seq);
-+	if ((fs->pwd.dentry == pwd->dentry) && (fs->pwd.mnt == pwd->mnt)) {
-+		fs->pwd_refs++;
-+		pwd = NULL;
-+	}
-+	read_sequnlock_excl(&fs->seq);
-+	if (pwd)
-+		path_put(pwd);
-+}
-+
- extern bool current_chrooted(void);
- 
- static inline int current_umask(void)
 -- 
 2.53.0
 
