@@ -1,147 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-78810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id EMPAL8Zcomlw2QQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 04:11:02 +0100
+	id gNc8Ee5eomkX2gQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 04:20:14 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 174F11C0163
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 04:11:02 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A32091C01C4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 04:20:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A6D4D302C935
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 03:10:59 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8054F305A42D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 03:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604BC2C15B8;
-	Sat, 28 Feb 2026 03:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8006C2BD5A7;
+	Sat, 28 Feb 2026 03:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="i/IUwjHo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tk3xxCe9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8340D2BEFE7
-	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Feb 2026 03:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C951DF980;
+	Sat, 28 Feb 2026 03:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772248257; cv=none; b=njotPnDRVmxCKcO/h1gpxjCRJSkDI79gIZBxgNatOcHz76bEyiDlFm3ahByZuqRSG1DgEOvx9VGJ4XODy9yneDnTAuXj4vhAgbnvM7RMctxM5Te8VQLAkN4tmokHEPbMUm+dBlTrRkEfeZ040bCFhfsBin3Rvw7LSn434hCOhM8=
+	t=1772248798; cv=none; b=Nk/CC9I7ND8MDeUUO9ZEKifIcC4112oZYzPZsR0+0IhgmK8c1t5mV3W2c3pbDc9oeDr3S6Vb86WENu821aGIB0bCCrQ8m4m3fv57hZmUDgfTjGlxon4LQ+aeQ+UlVkwPZkn3U3oRs2iYrXxEGHjBMHQj5Exqhr+ZtzKScYte3Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772248257; c=relaxed/simple;
-	bh=mNl1LbMGjYUbCzU4vQByzQJiBmXZeLfvhuiL59GXBDo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DBBZnOtyzDAtAs2nOXYAFivBMqRgDeg95emhL7n7ULfC5zLwEjI6a9SdjxaAtGPk+ombKDrXqQYuz9ueM1whjeOa8vxezfRZ3yaWnU5Y98yUTCrAp4Nxn4XeWfCjOTP6TBawLoZYLQqKsgHNHoNo9KiYiMdjU0cLFBuWd+i8LsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=i/IUwjHo; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d9e30bef-621f-444a-a1b0-510c50927d9b@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1772248253;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PYQQLk8wpmk+sABOYPuHFRoK/LYQ6t6e9PEJlhNNQ1c=;
-	b=i/IUwjHoBmbin/bk4vmzAyNuXXnNsDly9+ntzJ+UD3h3i+ybef+o76so/8CXJDE5DIeaBh
-	KBLEDNWenb4Ov8Mc/yi3lIUejaCsiv3OD4dv8VHcyYBNonnljwaj+M/qAoUibHlR1xEpTo
-	K/3dqOsB2xj9dcW8neHDZYTamke2rrM=
-Date: Sat, 28 Feb 2026 11:10:30 +0800
+	s=arc-20240116; t=1772248798; c=relaxed/simple;
+	bh=jAaTl8amz6NojQ8tNyBlQViGuePzEjqJZ7SlMppHCuA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M0TkzMVQnUU8JDFBCBC5LeCcQcHuRpKNFzBdxZ/n/7tzxco9bThGGZX1gC6y6vW4U3W7nr4hvhAfhOEgoZlLs4n7/b4CwcKnE4PxCaj2I+F2y/IEmgzBeCBT1MUdK0bQi6AOmwyinYFmaqB18/258tZUrzpL0O+JQoyk8UrQf9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tk3xxCe9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10876C116D0;
+	Sat, 28 Feb 2026 03:19:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772248797;
+	bh=jAaTl8amz6NojQ8tNyBlQViGuePzEjqJZ7SlMppHCuA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tk3xxCe9/xYjrflhO5Ellc9EE+aDKPaKTveLIc4SfXEEHOO9Xo6Q0GfbS+MVrnfx6
+	 CHgIkw3FxADDIaZqbzhGmxQvZVaKxB1Ar2r8S4eozjwPhv9S0Gkf1uSHpEFyOAzEIM
+	 ZwxCvxNgRml8f9zUi2SzOqOP6W8+rcTnA0puYNrfx5ZvfjcaEDRh1ALKBjBNc2SWlG
+	 2FpGw94Oc0y+7LVKvDYlrcUAl6dDl82x+gPgTKvhLEGv1SzEI7QmRHx2mLjGTXQzDu
+	 4XaDopUI61PFEwOPbt2ymGTuL526avgXaBvFpIsSG71f9os9Hnka/JweQW3+1GN/CB
+	 sndgjtFbb/1PQ==
+Date: Fri, 27 Feb 2026 19:19:56 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Chuck Lever <cel@kernel.org>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, David
+ Howells <dhowells@redhat.com>, <netdev@vger.kernel.org>,
+ <linux-fsdevel@vger.kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, linux-block@vger.kernel.org
+Subject: Re: [PATCH net-next] net: datagram: Bypass usercopy checks for
+ kernel iterators
+Message-ID: <20260227191956.56539ecc@kernel.org>
+In-Reply-To: <20260225162532.30587-1-cel@kernel.org>
+References: <20260225162532.30587-1-cel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] mm/huge_memory: fix a folio_split() race condition with
- folio_try_get()
-To: Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@kernel.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Hugh Dickins
- <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Matthew Wilcox <willy@infradead.org>,
- Bas van Dijk <bas@dfinity.org>, Eero Kelly <eero.kelly@dfinity.org>,
- Andrew Battat <andrew.battat@dfinity.org>,
- Adam Bratschi-Kaye <adam.bratschikaye@dfinity.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20260228010614.2536430-1-ziy@nvidia.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <20260228010614.2536430-1-ziy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[linux.dev,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[linux.dev:s=key1];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78810-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	DKIM_TRACE(0.00)[linux.dev:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[lance.yang@linux.dev,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	TAGGED_FROM(0.00)[bounces-78811-lists,linux-fsdevel=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[kuba@kernel.org,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	MID_RHS_MATCH_FROM(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,nvidia.com:email,linux.dev:mid,linux.dev:dkim,linux.dev:email]
-X-Rspamd-Queue-Id: 174F11C0163
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: A32091C01C4
 X-Rspamd-Action: no action
 
-
-
-On 2026/2/28 09:06, Zi Yan wrote:
-> During a pagecache folio split, the values in the related xarray should not
-> be changed from the original folio at xarray split time until all
-> after-split folios are well formed and stored in the xarray. Current use
-> of xas_try_split() in __split_unmapped_folio() lets some after-split folios
-> show up at wrong indices in the xarray. When these misplaced after-split
-> folios are unfrozen, before correct folios are stored via __xa_store(), and
-> grabbed by folio_try_get(), they are returned to userspace at wrong file
-> indices, causing data corruption.
+On Wed, 25 Feb 2026 11:25:32 -0500 Chuck Lever wrote:
+> From: Chuck Lever <chuck.lever@oracle.com>
 > 
-> Fix it by using the original folio in xas_try_split() calls, so that
-> folio_try_get() can get the right after-split folios after the original
-> folio is unfrozen.
+> Profiling NFSD under an iozone workload showed that hardened
+> usercopy checks consume roughly 1.3% of CPU in the TCP receive path.
+> These checks validate memory regions during copies, but provide no
+> security benefit when both source (skb data) and destination (kernel
+> pages in BVEC/KVEC iterators) reside in kernel address space.
 > 
-> Uniform split, split_huge_page*(), is not affected, since it uses
-> xas_split_alloc() and xas_split() only once and stores the original folio
-> in the xarray.
+> Modify simple_copy_to_iter() and crc32c_and_copy_to_iter() to call
+> _copy_to_iter() directly when the destination is a kernel-only
+> iterator, bypassing the usercopy hardening validation. User-backed
+> iterators (ITER_UBUF, ITER_IOVEC) continue to use copy_to_iter()
+> with full validation.
 > 
-> Fixes below points to the commit introduces the code, but folio_split() is
-> used in a later commit 7460b470a131f ("mm/truncate: use folio_split() in
-> truncate operation").
-> 
-> Fixes: 00527733d0dc8 ("mm/huge_memory: add two new (not yet used) functions for folio_split()")
-> Reported-by: Bas van Dijk <bas@dfinity.org>
-> Closes: https://lore.kernel.org/all/CAKNNEtw5_kZomhkugedKMPOG-sxs5Q5OLumWJdiWXv+C9Yct0w@mail.gmail.com/
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> Cc: <stable@vger.kernel.org>
-> ---
+> This benefits kernel consumers of TCP receive such as the NFS client
+> and server and NVMe-TCP, which use ITER_BVEC for their receive
+> buffers.
 
-Thanks for the fix!
+If it makes such a difference why not make copy_to_iter()
+check the iter type? Why force callers to check it?
 
-I also made a C reproducer and tested this patch - the corruption
-disappeared.
+> diff --git a/net/core/datagram.c b/net/core/datagram.c
+> index c285c6465923..e83cf0125008 100644
+> --- a/net/core/datagram.c
+> +++ b/net/core/datagram.c
+> @@ -490,7 +490,10 @@ static size_t crc32c_and_copy_to_iter(const void *addr, size_t bytes,
+>  	u32 *crcp = _crcp;
+>  	size_t copied;
+>  
+> -	copied = copy_to_iter(addr, bytes, i);
+> +	if (user_backed_iter(i))
+> +		copied = copy_to_iter(addr, bytes, i);
+> +	else
+> +		copied = _copy_to_iter(addr, bytes, i);
+>  	*crcp = crc32c(*crcp, addr, copied);
+>  	return copied;
+>  }
+> @@ -515,10 +518,17 @@ int skb_copy_and_crc32c_datagram_iter(const struct sk_buff *skb, int offset,
+>  EXPORT_SYMBOL(skb_copy_and_crc32c_datagram_iter);
+>  #endif /* CONFIG_NET_CRC32C */
+>  
+> +/*
+> + * Bypass usercopy hardening for kernel-only iterators: no data
+> + * crosses the user/kernel boundary, so the slab whitelist check
+> + * on the source buffer is unnecessary overhead.
+> + */
+>  static size_t simple_copy_to_iter(const void *addr, size_t bytes,
+>  		void *data __always_unused, struct iov_iter *i)
+>  {
+> -	return copy_to_iter(addr, bytes, i);
+> +	if (user_backed_iter(i))
+> +		return copy_to_iter(addr, bytes, i);
+> +	return _copy_to_iter(addr, bytes, i);
+>  }
+>  
+>  /**
 
-Without patch: corruption in < 10 iterations
-With patch: 1000 iterations, all clean
-
-Tested-by: Lance Yang <lance.yang@linux.dev>
 
