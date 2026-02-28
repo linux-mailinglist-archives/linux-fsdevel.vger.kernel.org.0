@@ -1,206 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-78823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yM4UIrreomkV7gQAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 13:25:30 +0100
+	id UHscJ+bhomkQ7wQAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 13:39:02 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id E13DC1C2EED
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 13:25:29 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 422021C2FFC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 13:39:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7A66830A1544
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 12:24:47 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 3104030383FE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Feb 2026 12:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DEDE43CED1;
-	Sat, 28 Feb 2026 12:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1ADD43DA44;
+	Sat, 28 Feb 2026 12:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mpiricsoftware.com header.i=shardul.b@mpiricsoftware.com header.b="VVGWNGjT"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Mx+suYO4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender4-of-o54.zoho.com (sender4-of-o54.zoho.com [136.143.188.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9A6423141;
-	Sat, 28 Feb 2026 12:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772281486; cv=pass; b=lZMId6c0yOsSKjdCOZH+J4V4BkiQ4rC+NfWCCny/Dr8vDmlXftWmrKfjfmvbsBjHcbCzR0pdS6iKhYcydB2GAkjcTsUE+1lWRiQz7A9oPd8qgXqjMHWo/lslfQc0OA/tt42VNaNL0TdpyW3LiY/T0nN8IuuFlxeJWvVhOuVrTqA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772281486; c=relaxed/simple;
-	bh=D8IQ/dSgkS8q4qDP/WHoXvMPzPsf0DvQXi4zEMgXOh4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=G6XEUqrjP8nTO/m8y8QVvps2JVgT7edLjGnrS4CsPRPVvQTB4zHpSduZu8Sz3l0PJz2ItggK08Ebo979dOzeenCq9Rp4pcl1rc+8gOw5XN6EWaiu2+p8IkWUtmD4H901epYQLb14bTxVladfqBaLNSmQvGtIhymOyCWlMGhywww=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mpiricsoftware.com; spf=pass smtp.mailfrom=mpiricsoftware.com; dkim=pass (1024-bit key) header.d=mpiricsoftware.com header.i=shardul.b@mpiricsoftware.com header.b=VVGWNGjT; arc=pass smtp.client-ip=136.143.188.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mpiricsoftware.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mpiricsoftware.com
-ARC-Seal: i=1; a=rsa-sha256; t=1772281403; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=EHKeQ/g28D3PcojRPEv626YXrTDhIbJ2/copoExbyLCwp9nF+dfbLVP4Ep2iGniW5ypV+uxd+pDhHePVIkYfpLklVAw4iNDKPx+KrYj1iDFo5GIx8wMHZkxsNuwKHnYXfb0cfRJRp31aLvQQXyvGnO5kFdcpviBTzCxwb/ZKeRo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1772281403; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=pn9CST5OW722hXNukxq5ItUixPhC81Qjbu1Drjb5oJY=; 
-	b=DXPBHn9bM3n9njs53eyJNmIuLKDYCovgr+otc6ZVMO+fNa/+XhA9KHoOjlo4pj69rF0nwG3mYdrfntMZWEQBO9NzkIi3pjQyqyNzL97BWdfgqEwZ9jnKzAHn4JIowiGS4ylLSUHrfKQfJlXmW7qAs7w+sIp9nLVgk1TcZfj2aOU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=mpiricsoftware.com;
-	spf=pass  smtp.mailfrom=shardul.b@mpiricsoftware.com;
-	dmarc=pass header.from=<shardul.b@mpiricsoftware.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1772281403;
-	s=mpiric; d=mpiricsoftware.com; i=shardul.b@mpiricsoftware.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=pn9CST5OW722hXNukxq5ItUixPhC81Qjbu1Drjb5oJY=;
-	b=VVGWNGjT1y/4T2VEg9vscuMT52Z+RRhT8UqZRZlqHlDfe+EfRgmkc03itd3/a8nG
-	wWMhRQ37uJMZCtD1DPMz1+U8cU1EW1A1xhIN4OYrPCzBydrW1aQc6RLzRTGzKbw99M7
-	xxcBGmRwSqKTLmaO/mWy1Cy88x6PDIWd8O4axB4I=
-Received: by mx.zohomail.com with SMTPS id 1772281401429696.177219428546;
-	Sat, 28 Feb 2026 04:23:21 -0800 (PST)
-From: Shardul Bankar <shardul.b@mpiricsoftware.com>
-To: slava@dubeyko.com,
-	glaubitz@physik.fu-berlin.de,
-	frank.li@vivo.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: janak@mpiricsoftware.com,
-	janak@mpiric.us,
-	shardulsb08@gmail.com,
-	Shardul Bankar <shardul.b@mpiricsoftware.com>,
-	syzbot+1c8ff72d0cd8a50dfeaa@syzkaller.appspotmail.com
-Subject: [PATCH v5 2/2] hfsplus: validate b-tree node 0 bitmap at mount time
-Date: Sat, 28 Feb 2026 17:53:05 +0530
-Message-Id: <20260228122305.1406308-3-shardul.b@mpiricsoftware.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260228122305.1406308-1-shardul.b@mpiricsoftware.com>
-References: <20260228122305.1406308-1-shardul.b@mpiricsoftware.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D8136EA87
+	for <linux-fsdevel@vger.kernel.org>; Sat, 28 Feb 2026 12:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772282333; cv=none; b=fhswNSJ9y2ssqAI0n19cROHzb9AcMONzFIDzJ9LuqA9vY2uW0WuhWUEg2w1rzC3Mngz8xIZ1I82Ibol96iV3pg835mLCFDjwd4nBZSH2e5K1aTG+xj3p7TUvxzlmwocKDfMUPSi62Mi7MVTA2Z+Q2/uenjPgVTVebgC3Cy40nl4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772282333; c=relaxed/simple;
+	bh=PEA8vWjT5ovfF14s1Tw4RTm8694oQcfI75jIBt+A4lE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=uUFAQrMbznzquWfBXmUV4QaTCInnF2qcv0nJ6dnk11jYGFx7astD1BBJczG3kj8y43rK73NS0GwNSn1550Bk0gb/wWD8WPaTHqF2ApI9+KM2Tb5vbDIjC4RMK8pSd8673aUemne1x29g03zOvfcG37lECCWb19JxeVVjSIqcR/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Mx+suYO4; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-48378df3469so19515315e9.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 28 Feb 2026 04:38:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1772282330; x=1772887130; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mOaqhQImVlbU+bIaPkzVliN+MSpqLdHsMK4C5p4HbTE=;
+        b=Mx+suYO4WAm6Esi84MZAoAmYsEg+faHqpOo9+bFiEOnlJdfwT+vS7ye5q++/MXA6g4
+         mTIXqomnM6dz7b4tpK1KbP9UZmW5hzlb/wweLxY7zC8AbdZzTDy3F/KaN2VMw1wXsB66
+         IAC4aSt0G9xxuaODA2KLVyEhRLb0dYJmfeWOOZXWzZ3Tj7iGwN4DH5r8OirXx5emK83X
+         hFC6Ge2zWg/fc7qE1q3VrENHESF+g8ifwk+SOkHMggXufiEcnyLhtXrm+uV2F1gK9IJW
+         /vh/E8zN7TllRgrU9JQ7pdZHtwYv695+yKsE8ye6vRoR2MHRk0HW1MoBXpi7GyXxLEJ7
+         t7nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772282330; x=1772887130;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mOaqhQImVlbU+bIaPkzVliN+MSpqLdHsMK4C5p4HbTE=;
+        b=ZukDpyLxwxJYmzxORayMWhQtz6mfZrF6QJ9RcMnknXbmkLfN+krZMXm5SfXkPYbRRz
+         5khL8pB4WltpVIcDkq0WG4FYQFcWeSHO3519SKnlUDOVQEZGcjB2h3r6nFeVydKfvhYw
+         ScLLvvKsG6rtWk7/yei5fR6vBs7qORGFZZLdPzw/e3vHAznBv+IgbGbSnQBZ48Z15glt
+         l+jyQ9lQqfXEQsK1k8jtd9wn0i+7woQAO+ZcgIeA/2qjvsYmSUMY85inu6I+G6Xh/Ccg
+         +u4O5Fm9iAAdUl3s4Gvjz3Q6/brXTdtxC3CjYFiJOr0Utm+CT1okMNhOFB8WG7la09sB
+         tq3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWk+dTN5OZDe1v7JtADpv7ff7/nVd5pAXNtt1KOUDvMGSiUeuNYg11pU3cfTpWGShXvdHELe7Dod+DndpXk@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2Jcsu1HCoV+GooG37i2vONjzUmWjMjR34WKWJBRNXgQtWNVfk
+	kzE55SVjNN9LaBNrAT4lEryruk0JA6f3ALcyTSzNinGER44f+1xxIj0ChsoFxldliOSxxRs+89i
+	dngcwf+g8+DJBh5/58Q==
+X-Received: from wmby19.prod.google.com ([2002:a05:600c:c053:b0:480:690c:88de])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:8b5b:b0:481:a662:b3f3 with SMTP id 5b1f17b1804b1-483c990c263mr116931775e9.7.1772282329804;
+ Sat, 28 Feb 2026 04:38:49 -0800 (PST)
+Date: Sat, 28 Feb 2026 12:38:48 +0000
+In-Reply-To: <20260227200848.114019-3-david@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Mime-Version: 1.0
+References: <20260227200848.114019-1-david@kernel.org> <20260227200848.114019-3-david@kernel.org>
+Message-ID: <aaLh2BxSgC9Jl5iS@google.com>
+Subject: Re: [PATCH v1 02/16] mm/memory: remove "zap_details" parameter from zap_page_range_single()
+From: Alice Ryhl <aliceryhl@google.com>
+To: "David Hildenbrand (Arm)" <david@kernel.org>
+Cc: linux-kernel@vger.kernel.org, 
+	"linux-mm @ kvack . org" <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@kernel.org>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, David Rientjes <rientjes@google.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, 
+	Vasily Gorbik <gor@linux.ibm.com>, Jarkko Sakkinen <jarkko@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Arve =?utf-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, 
+	Christian Brauner <brauner@kernel.org>, Carlos Llamas <cmllamas@google.com>, Ian Abbott <abbotti@mev.co.uk>, 
+	H Hartley Sweeten <hsweeten@visionengravers.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, 
+	Dimitri Sivanich <dimitri.sivanich@hpe.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Andy Lutomirski <luto@kernel.org>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, Eric Dumazet <edumazet@google.com>, 
+	Neal Cardwell <ncardwell@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org, 
+	linux-s390@vger.kernel.org, linux-sgx@vger.kernel.org, 
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-rdma@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="utf-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.84 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[mpiricsoftware.com,quarantine];
-	R_DKIM_ALLOW(-0.20)[mpiricsoftware.com:s=mpiric];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
+X-Spamd-Result: default: False [-1.66 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
+	MV_CASE(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[mpiricsoftware.com,mpiric.us,gmail.com,syzkaller.appspotmail.com];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kvack.org,linux-foundation.org,oracle.com,kernel.org,google.com,suse.com,suse.de,linux.dev,infradead.org,linux.ibm.com,ellerman.id.au,redhat.com,alien8.de,linuxfoundation.org,android.com,mev.co.uk,visionengravers.com,linux.intel.com,intel.com,ursulin.net,gmail.com,ffwll.ch,ziepe.ca,hpe.com,arndb.de,iogearbox.net,arm.com,davemloft.net,lists.ozlabs.org,lists.freedesktop.org];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78823-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-78824-lists,linux-fsdevel=lfdr.de];
+	DKIM_TRACE(0.00)[google.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[shardul.b@mpiricsoftware.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[mpiricsoftware.com:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	RCPT_COUNT_GT_50(0.00)[73];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[aliceryhl@google.com,linux-fsdevel@vger.kernel.org];
+	MISSING_XM_UA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
 	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[linux-fsdevel,1c8ff72d0cd8a50dfeaa];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,mpiricsoftware.com:mid,mpiricsoftware.com:dkim,mpiricsoftware.com:email]
-X-Rspamd-Queue-Id: E13DC1C2EED
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Queue-Id: 422021C2FFC
 X-Rspamd-Action: no action
 
-Syzkaller reported an issue with corrupted HFS+ images where the b-tree
-allocation bitmap indicates that the header node (Node 0) is free. Node 0
-must always be allocated as it contains the b-tree header record and the
-allocation bitmap itself. Violating this invariant leads to allocator
-corruption, which cascades into kernel panics or undefined behavior when
-the filesystem attempts to allocate blocks.
+On Fri, Feb 27, 2026 at 09:08:33PM +0100, David Hildenbrand (Arm) wrote:
+> Nobody except memory.c should really set that parameter to non-NULL. So
+> let's just drop it and make unmap_mapping_range_vma() use
+> zap_page_range_single_batched() instead.
+> 
+> Signed-off-by: David Hildenbrand (Arm) <david@kernel.org>
 
-Prevent trusting a corrupted allocator state by adding a validation check
-during hfs_btree_open(). Using the newly introduced hfs_bmap_test_bit()
-helper, verify that the MSB of the first bitmap byte (representing Node 0)
-is marked as allocated.
+> diff --git a/rust/kernel/mm/virt.rs b/rust/kernel/mm/virt.rs
+> index da21d65ccd20..b8e59e4420f3 100644
+> --- a/rust/kernel/mm/virt.rs
+> +++ b/rust/kernel/mm/virt.rs
+> @@ -124,7 +124,7 @@ pub fn zap_page_range_single(&self, address: usize, size: usize) {
+>          // sufficient for this method call. This method has no requirements on the vma flags. The
+>          // address range is checked to be within the vma.
+>          unsafe {
+> -            bindings::zap_page_range_single(self.as_ptr(), address, size, core::ptr::null_mut())
+> +            bindings::zap_page_range_single(self.as_ptr(), address, size)
+>          };
 
-If corruption is detected (either structurally invalid map records or an
-illegally cleared bit), print a warning identifying the specific
-corrupted tree and force the filesystem to mount read-only (SB_RDONLY).
-This prevents kernel panics from corrupted images while enabling data
-recovery.
+Please run rustfmt on Rust changes. Here, rustfmt leads to this being
+formatted on a single line:
 
-Reported-by: syzbot+1c8ff72d0cd8a50dfeaa@syzkaller.appspotmail.com
-Link: https://syzkaller.appspot.com/bug?extid=1c8ff72d0cd8a50dfeaa
-Link: https://lore.kernel.org/all/54dc9336b514fb10547e27c7d6e1b8b967ee2eda.camel@ibm.com/
-Signed-off-by: Shardul Bankar <shardul.b@mpiricsoftware.com>
----
- fs/hfsplus/btree.c | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+unsafe { bindings::zap_page_range_single(self.as_ptr(), address, size) };
 
-diff --git a/fs/hfsplus/btree.c b/fs/hfsplus/btree.c
-index 87650e23cd65..ee1edb03a38e 100644
---- a/fs/hfsplus/btree.c
-+++ b/fs/hfsplus/btree.c
-@@ -239,15 +239,31 @@ static int hfs_bmap_clear_bit(struct hfs_bnode *node, u32 bit_idx)
- 	return 0;
- }
- 
-+static const char *hfs_btree_name(u32 cnid)
-+{
-+	static const char * const tree_names[] = {
-+		[HFSPLUS_EXT_CNID] = "Extents",
-+		[HFSPLUS_CAT_CNID] = "Catalog",
-+		[HFSPLUS_ATTR_CNID] = "Attributes",
-+	};
-+
-+	if (cnid < ARRAY_SIZE(tree_names) && tree_names[cnid])
-+		return tree_names[cnid];
-+
-+	return "Unknown";
-+}
-+
- /* Get a reference to a B*Tree and do some initial checks */
- struct hfs_btree *hfs_btree_open(struct super_block *sb, u32 id)
- {
- 	struct hfs_btree *tree;
- 	struct hfs_btree_header_rec *head;
- 	struct address_space *mapping;
-+	struct hfs_bnode *node;
- 	struct inode *inode;
- 	struct page *page;
- 	unsigned int size;
-+	int res;
- 
- 	tree = kzalloc_obj(*tree);
- 	if (!tree)
-@@ -352,6 +368,26 @@ struct hfs_btree *hfs_btree_open(struct super_block *sb, u32 id)
- 
- 	kunmap_local(head);
- 	put_page(page);
-+
-+	node = hfs_bnode_find(tree, HFSPLUS_TREE_HEAD);
-+	if (IS_ERR(node))
-+		goto free_inode;
-+
-+	res = hfs_bmap_test_bit(node, 0);
-+	if (res < 0) {
-+		pr_warn("(%s): %s Btree (cnid 0x%x) map record invalid/corrupted, forcing read-only.\n",
-+				sb->s_id, hfs_btree_name(id), id);
-+		pr_warn("Run fsck.hfsplus to repair.\n");
-+		sb->s_flags |= SB_RDONLY;
-+	} else if (res == 0) {
-+		pr_warn("(%s): %s Btree (cnid 0x%x) bitmap corruption detected, forcing read-only.\n",
-+				sb->s_id, hfs_btree_name(id), id);
-+		pr_warn("Run fsck.hfsplus to repair.\n");
-+		sb->s_flags |= SB_RDONLY;
-+	}
-+
-+	hfs_bnode_put(node);
-+
- 	return tree;
- 
-  fail_page:
--- 
-2.34.1
+with the above changed:
 
+Acked-by: Alice Ryhl <aliceryhl@google.com> # Rust and Binder
+
+Alice
 
