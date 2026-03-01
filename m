@@ -1,91 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-78861-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78862-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id EBLoDme1pGlHpgUAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78861-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Mar 2026 22:53:43 +0100
+	id yLl6HOy2pGkepwUAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78862-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Mar 2026 23:00:12 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB1B1D1C12
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Mar 2026 22:53:42 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E961D1C66
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Mar 2026 23:00:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 955FE30160D0
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Mar 2026 21:53:04 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id D8E653010253
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Mar 2026 22:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BDA2C159E;
-	Sun,  1 Mar 2026 21:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B388230DEA2;
+	Sun,  1 Mar 2026 21:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZR6TzZVJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EgIp2NwM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E675A237713
-	for <linux-fsdevel@vger.kernel.org>; Sun,  1 Mar 2026 21:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638A32F28FF
+	for <linux-fsdevel@vger.kernel.org>; Sun,  1 Mar 2026 21:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772401982; cv=none; b=M7dUdAOxx949a/vemwGRmG+pwVjqPvkTKfKvV6UQhJXerixOV+FqDgXOsg6IFHLmVBqG7o3Ty5BW5aKd9N4eg/EQq98kIYjv9sM99cmoU2j1P2h3iqe8ppgjUEV2KCaiwlx/GxTNnLSh4H5Dn7GGtgmsbN7SjJBTpMvOamECBRc=
+	t=1772402396; cv=none; b=i7Pc9c4vy/OlY2l4XDGweC/GAuXgRXI4Tqklbno7M/WRtwtW3T/uDFkfEzC7hXsXWGgE9xV7yG+2HvfSgLJTYeatrJk0VZncdcn6z0OFza5M7k2O1U0kLlXw53HwskYfXkmTzTznhNYbvVeuRfOAK8PyJBxPfbw70w5zo/nRhkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772401982; c=relaxed/simple;
-	bh=UZuV4vRle4QPExsCoWwOx/8Bt6/Fqaq7WbJVQeadgG4=;
+	s=arc-20240116; t=1772402396; c=relaxed/simple;
+	bh=kDs9LBWyn9QMil9Ec3Kwi6PapAxHBc3vX406latBklE=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mJdFu0vRa/XHASwBkoOY6PyfapfQG/TBn7d2TeRtCsHEnmvwR1ipOqlgBXReNoLhbFR4kt4jLq6XERzV9dspl9ERTSu4dIch0F2pzKD2yBvf3UUeUGxv3BP6BvwmzjmacYzL9p/5+m5s+f8y9312UBdF/VZWML5EUduhQDTNX5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZR6TzZVJ; arc=none smtp.client-ip=209.85.221.42
+	 MIME-Version:Content-Type; b=AeuX5jE1y660M9rkBkSQ5O0mTSId/dKE6twTC8QKol8L0S5j4B97KvWSrvUW4ZJ8+0j0mPiFGbvLVYjq1irx14RF9zmCpoLPHv7BMhwgdZUDQgflEB+cN3Bzdsxk2Y5R2DRPll2D5FwEho1qDKWVSZvF7l/QqtDTM3JiR+urw28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EgIp2NwM; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-439afc58ac7so895991f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Mar 2026 13:53:00 -0800 (PST)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-439b5d78592so393703f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Mar 2026 13:59:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772401979; x=1773006779; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1772402393; x=1773007193; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ylRWWUwK5o3MfEB7pGrnKLZH79m/zlgSbzMzkIBZ2EE=;
-        b=ZR6TzZVJr3DP8uFrAQAqaQLDHdUeHQNdUpwsfIueIbLeUGw8smk1/8T2LpCGzgJ82t
-         D8D2zG73T6pUxc8sjxKEOL8aRDgi3L6cp6ZZpopeOjey5McoaxpL+jgKL2rppML3IaFE
-         Y4pD+jIoN3seNEsq0etIGExw0i7twrlIVblsmsNVJ9gVTS9dldsWL1DX0uVES4m/7G19
-         bblXB7d9T0b8HxN6ZmwjUXU5YUmJOhl2Y4bpYMIJrdNb/N4Hs+nbQVCCaQvsOzYgYozU
-         iVISzjeTK9VJkvAn1ylCTASaM7UE0+yhUd/oadVrlgzSOofrE5O5VW/EGxWOv2aSEUow
-         XPMw==
+        bh=XdF90L2tMXaU2D2ZcWRZkQORWHdME4B3q+DTo4zCDx4=;
+        b=EgIp2NwMp0tsJEKn5c7aY7HPhL1T06qlBBgAnbSwW+qZ7d0ogKfQR3SuX/aAuUrg0r
+         FznTifxM4H/vjzme8eBF79AG2vklaRUQYk6a/5oQXrO5XJOVpp+uvQS7hGBkAuKqLkw9
+         lU+AahxaSFbu4ls8RUb0EDxM5V4LFQ7CqXYim9kxHKcRVJoLFT7vXyOoI64OHgvnR9KI
+         3SMKykTmvckkDK/GJokYMy9mNCnz3V5ifHjfNAQzQxHLsJbKweCe3xLqCsfVF6zn+SoC
+         pNJ820yXu0lMab0ZhTRu44EhauzrUBgHbk9t/QCg6vMgYoQCZPBaKkq1cHOWo+bZaF2s
+         R8fQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772401979; x=1773006779;
+        d=1e100.net; s=20230601; t=1772402393; x=1773007193;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=ylRWWUwK5o3MfEB7pGrnKLZH79m/zlgSbzMzkIBZ2EE=;
-        b=K5yNzVSAJlAWP6NzrqXDu868KxNwy3yvWXJ4xuAzPTsbB1S0CRRhVR45/gK29+DUzY
-         c5clW1BJ6llqeCBNgmtSRvoz8G/51y1wso+/66U8pCcFJn/HUi6ZbeuNGNUGC2JSLmkQ
-         Gj5MtW96QaAJn2VY6LE+8zme5UTxFBFHvY+YQF/Z9FdIAPHbPkQ1sbqbrir1gEb7spLO
-         Rk2o6yiLRS6Sr6jznUXS+LWCbzrfO2fYDTYi7rt4P/LrBxuT8Lxi3x7unTfE8BfqRdjN
-         IBKnlQNt3c51YGdfLy30QSi8aLS3e3TiKVUJGup11FHC53SlvSpB5x8HJDQNVaTiHTDO
-         oY1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWSCdjo8JcBNhGi9QP+ZyWeg4P9Y1cJdHvRGjgYk6pwsvywSugVOgczOHMM33sLI5z2ed+06xSYXsb9JH7h@vger.kernel.org
-X-Gm-Message-State: AOJu0YzomX+yiRQVqlTa3NnUEFv7p4Y9i/uUBGnSxmksL1wXlYkkLVZc
-	cPzTr26DEXVGzqnPKl8VHcjN7Yk5UQtegPse/dGmFwI0LIP1at8mz+By
-X-Gm-Gg: ATEYQzxCF/RAo9qkr4cWB0NLuMsXQgkaqS72/+Xi0I7AZ6m/NXMWR6a4WV4d1bjiygd
-	Ss9H13Q4rr1IReTmC5Vuuow81kC5I6BFkQxSz+lVxM8GJ6lTEYqji/nhLJ8rbcgE9KTE7D6PxXd
-	WZCKCQNoBlxELzOOBVlWVDpi4DYbfrN9pmWzJTTPmtJUPEN5mPVbttYoEMSnz3FTK6XwgMmxe0r
-	LcYtN9ojmsd3+LkJjvuOi1s/iIP4cb1aaouRbcwKzAUpdCYcCjuCEahOAJhQawn3ncc2JkRj7Tn
-	rVa4UDXNwPd0sSt9OXPSvenxnXm2FIKpfZ1oOPm8U4J3aVUpdvNsK0iCtHieYCzcso0DKwZH88w
-	1I5zNxegWAV5qsEn4lgKwKVpk6B/Iigh2ihNH5qi2PWyrazLdjsPqPfVuorM55mYvZ+odmsq9BW
-	Z6wTF04Gxc5m1qZ0oLrEiZjlKipRtptyq1Iv1JQ2VB0xBkcIlEnt7aoeQaxOXdX1DZnz7oXdJQn
-	pU=
-X-Received: by 2002:a5d:588f:0:b0:439:afd8:6235 with SMTP id ffacd0b85a97d-439afd86565mr5809623f8f.18.1772401979049;
-        Sun, 01 Mar 2026 13:52:59 -0800 (PST)
+        bh=XdF90L2tMXaU2D2ZcWRZkQORWHdME4B3q+DTo4zCDx4=;
+        b=OC+XWajJsJgOVsXaZAJX43bZpKMlP5AXwdKMT0Ucxuwby0PmK4ihXGtK3ODdMVPvGh
+         ZttRwCSQnkMCrr2NaB0QT+fm9i4bzBff3I9c/pVDApbRoMwKFUjUX7+D6+upO2Xoi292
+         Y6eeaapxft6GzT/8BxTRrWifMttrNSxu3GOnauPHG93uU/bH22OR3e88v1BIqj+qvA19
+         NljIqnBszBSYC1maOyGguHL0wxUPkhu/om2A4IiXDxeo1Ei719NPHiY5C6gI0S2egMsk
+         IIWpJax8Xb+AWYNHS2HiJWLIZUQ89O2d1Hu2Ki05wEU4Nxky2LQ4t7/IICekL5tK5EdL
+         IFGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUB6i6+t3Qu6Qfam1ouBAOd1xtBvhVAFQYbPxB5lXPCGIM3thY98MdzlRryXBpZ/daGwZ82CiKZeTSyHW9y@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdARbWhkvj+Vp+a2rbGxQFijesYjtHI1Fs/aPHtYEAxDb3iPM1
+	QcfgqXJwmle8lj9oCx4ozIzL1bmjNPN/FZrXnNmTxpNs7u6d7MYVr+6C
+X-Gm-Gg: ATEYQzxID01O/1oaAzMeGX34EuuXfy85c+VUYviJtOLqqKUwLJG4FBI+x5mVWTAKVYJ
+	mFBFGkzcKuhWYxjuxwabCb//fBS95shl7gceUl4kCw2pBVQN7x/72kfLfZt7vSb5k4nmMoqDnuD
+	HIefU8d5eDWAr8Kb+suwJioZSQlTMaUZITvQdBDgLSjat3kr4diz2B0oQGzpcQIPCE37Mol/KsU
+	DI5ZWltZ6wxLhJtpjWnAFIw2woad4/4ewRj2v+sLy48cgoPDzwVD39oKPQGrIXXjC5Htzw2CktO
+	xthkRXk96tBn/Sx46Z+NUiLDTGlmuef2+C+ejwPMFHI7xGWwjSgCWBxQstImXusflY5h+e4DvLQ
+	uaHMGAQoBs3/1gwzmBXMY+nfA3j4CEemM0xXjZgTZlI2ijF43HK5W0V26mywH/dKK+CMhkCoCX8
+	p9rSmgRxBTuR52bjTK0WQ11UkRXv2WBUyyklheLeRJJp0vGoLheP20lpOcZAYfmkto
+X-Received: by 2002:a05:6000:18a6:b0:439:b886:20cd with SMTP id ffacd0b85a97d-439b886219amr989086f8f.16.1772402392592;
+        Sun, 01 Mar 2026 13:59:52 -0800 (PST)
 Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439ba2a58dasm61132f8f.27.2026.03.01.13.52.58
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4399c75a523sm22434797f8f.19.2026.03.01.13.59.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Mar 2026 13:52:58 -0800 (PST)
-Date: Sun, 1 Mar 2026 21:52:57 +0000
+        Sun, 01 Mar 2026 13:59:52 -0800 (PST)
+Date: Sun, 1 Mar 2026 21:59:50 +0000
 From: David Laight <david.laight.linux@gmail.com>
-To: "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, LKML
- <linux-kernel@vger.kernel.org>, Christophe Leroy
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, Christophe Leroy
  <christophe.leroy@csgroup.eu>, Mathieu Desnoyers
  <mathieu.desnoyers@efficios.com>, Andrew Cooper
- <andrew.cooper3@citrix.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, kernel test robot <lkp@intel.com>, Russell
+ <andrew.cooper3@citrix.com>, kernel test robot <lkp@intel.com>, Russell
  King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
  x86@kernel.org, Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman
  <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
@@ -101,9 +99,10 @@ Cc: Thomas Gleixner <tglx@linutronix.de>, LKML
  <jack@suse.cz>, linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH] uaccess: Fix build of scoped user access with const
  pointer
-Message-ID: <20260301215257.7bdad5f1@pumpkin>
-In-Reply-To: <4e994e13b48420ef36be686458ce3512657ddb41.1772393211.git.chleroy@kernel.org>
+Message-ID: <20260301215950.2fef5722@pumpkin>
+In-Reply-To: <CAHk-=wixyP1mzyVcpZqQZd_xbabZQ873KVph3L-EkrNZGv3Ygw@mail.gmail.com>
 References: <4e994e13b48420ef36be686458ce3512657ddb41.1772393211.git.chleroy@kernel.org>
+	<CAHk-=wixyP1mzyVcpZqQZd_xbabZQ873KVph3L-EkrNZGv3Ygw@mail.gmail.com>
 X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -119,15 +118,15 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78861-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78862-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[linutronix.de,vger.kernel.org,csgroup.eu,efficios.com,citrix.com,linux-foundation.org,intel.com,armlinux.org.uk,lists.infradead.org,kernel.org,linux.ibm.com,ellerman.id.au,gmail.com,lists.ozlabs.org,dabbelt.com,inria.fr,imag.fr,infradead.org,stgolabs.net,igalia.com,zeniv.linux.org.uk,suse.cz];
+	FREEMAIL_CC(0.00)[kernel.org,linutronix.de,vger.kernel.org,csgroup.eu,efficios.com,citrix.com,intel.com,armlinux.org.uk,lists.infradead.org,linux.ibm.com,ellerman.id.au,gmail.com,lists.ozlabs.org,dabbelt.com,inria.fr,imag.fr,infradead.org,stgolabs.net,igalia.com,zeniv.linux.org.uk,suse.cz];
 	FREEMAIL_FROM(0.00)[gmail.com];
 	RCPT_COUNT_TWELVE(0.00)[32];
 	FROM_HAS_DN(0.00)[];
@@ -140,64 +139,126 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	NEURAL_HAM(-0.00)[-1.000];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 9FB1B1D1C12
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,linux-foundation.org:email]
+X-Rspamd-Queue-Id: 25E961D1C66
 X-Rspamd-Action: no action
 
-On Sun,  1 Mar 2026 20:33:58 +0100
-"Christophe Leroy (CS GROUP)" <chleroy@kernel.org> wrote:
+On Sun, 1 Mar 2026 12:01:08 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-> After converting powerpc checksum wrappers to scoped user access,
-> following build failure happens:
+> On Sun, 1 Mar 2026 at 11:34, Christophe Leroy (CS GROUP)
+> <chleroy@kernel.org> wrote:
+> >
+> > -       for (void __user *_tmpptr = __scoped_user_access_begin(mode, uptr, size, elbl); \
+> > +       for (void __user *_tmpptr = (void __user *)                                     \
+> > +                                   __scoped_user_access_begin(mode, uptr, size, elbl); \  
 > 
-> 	  CC      arch/powerpc/lib/checksum_wrappers.o
-> 	In file included from arch/powerpc/lib/checksum_wrappers.c:12:
-> 	arch/powerpc/lib/checksum_wrappers.c: In function 'csum_and_copy_from_user':
-> 	./include/linux/uaccess.h:691:1: error: initialization discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
-> 	  691 | ({                                                                      \
-> 	      | ^
-> 	./include/linux/uaccess.h:755:37: note: in expansion of macro '__scoped_user_access_begin'
-> 	  755 |         for (void __user *_tmpptr = __scoped_user_access_begin(mode, uptr, size, elbl); \
-> 	      |                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> 	./include/linux/uaccess.h:770:9: note: in expansion of macro '__scoped_user_access'
-> 	  770 |         __scoped_user_access(read, usrc, size, elbl)
-> 	      |         ^~~~~~~~~~~~~~~~~~~~
-> 	arch/powerpc/lib/checksum_wrappers.c:17:9: note: in expansion of macro 'scoped_user_read_access_size'
-> 	   17 |         scoped_user_read_access_size(src, len, efault)
-> 	      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> Why are you casting this return value? Wouldn't it be a lot better to
+> just make the types be the CORRECT ones?
 > 
-> Cast __scoped_user_access_begin() to (void __user *) to fix it.
+> I didn't test this, so maybe I'm missing something, but why isn't that
+> just doing
+> 
+>         for (auto _tmpptr = __scoped_user_access_begin(mode, uptr,
+> size, elbl);         \
+> 
+> instead? No cast, just a "use the right type automatically".
+> 
+> That macro actually does something similar just a few lines later, in
+> that the innermost loop uses
+> 
+>          for (const typeof(uptr) uptr = _tmpptr; !done; done = true)
+> 
+> which picks up the type automatically from the argument (and then it
+> uses the argument both for the type and name, which is horrendously
+> confusing, but that's a separate thing).
+> 
+> Does that simple "auto" approach break something else?
 
-I posted a patch to fix this in december, I'll find it and resend it.
+This is what I needed to do:
+(Note that is pre-dates 'auto', but it should work.)
+Send at 21:56 on dec 20.
+
+If a 'const struct foo __user *ptr' is used for the address passed
+to scoped_user_read_access() then you get a warning/error
+uaccess.h:691:1: error: initialization discards 'const' qualifier
+    from pointer target type [-Werror=discarded-qualifiers]
+for the
+    void __user *_tmpptr = __scoped_user_access_begin(mode, uptr, size, elbl)
+assignment.
+
+Fix by using typeof(uptr) in that assignment and changing the 'read' functions
+to use 'const void __user *ptr' rather than 'void __user *ptr'.
+
+Fixes: e497310b4ffb "(uaccess: Provide scoped user access regions)"
+Signed-off-by: David Laight <david.laight.linux@gmail.com>
+---
+ include/linux/uaccess.h | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+index 1f3804245c06..c5d5f2d395bc 100644
+--- a/include/linux/uaccess.h
++++ b/include/linux/uaccess.h
+@@ -650,32 +650,32 @@ static inline void user_access_restore(unsigned long flags) { }
+ #define user_rw_access_end()		user_access_end()
+ 
+ /* Scoped user access */
+-#define USER_ACCESS_GUARD(_mode)				\
+-static __always_inline void __user *				\
+-class_user_##_mode##_begin(void __user *ptr)			\
++#define USER_ACCESS_GUARD(_mode, type)				\
++static __always_inline type __user *				\
++class_user_##_mode##_begin(type __user *ptr)			\
+ {								\
+ 	return ptr;						\
+ }								\
+ 								\
+ static __always_inline void					\
+-class_user_##_mode##_end(void __user *ptr)			\
++class_user_##_mode##_end(type __user *ptr)			\
+ {								\
+ 	user_##_mode##_access_end();				\
+ }								\
+ 								\
+-DEFINE_CLASS(user_ ##_mode## _access, void __user *,		\
++DEFINE_CLASS(user_ ##_mode## _access, type __user *,		\
+ 	     class_user_##_mode##_end(_T),			\
+-	     class_user_##_mode##_begin(ptr), void __user *ptr)	\
++	     class_user_##_mode##_begin(ptr), type __user *ptr)	\
+ 								\
+ static __always_inline class_user_##_mode##_access_t		\
+-class_user_##_mode##_access_ptr(void __user *scope)		\
++class_user_##_mode##_access_ptr(type __user *scope)		\
+ {								\
+ 	return scope;						\
+ }
+ 
+-USER_ACCESS_GUARD(read)
+-USER_ACCESS_GUARD(write)
+-USER_ACCESS_GUARD(rw)
++USER_ACCESS_GUARD(read, const void)
++USER_ACCESS_GUARD(write, void)
++USER_ACCESS_GUARD(rw, void)
+ #undef USER_ACCESS_GUARD
+ 
+ /**
+@@ -752,7 +752,7 @@ USER_ACCESS_GUARD(rw)
+  */
+ #define __scoped_user_access(mode, uptr, size, elbl)					\
+ for (bool done = false; !done; done = true)						\
+-	for (void __user *_tmpptr = __scoped_user_access_begin(mode, uptr, size, elbl); \
++	for (typeof(uptr) _tmpptr = __scoped_user_access_begin(mode, uptr, size, elbl); \
+ 	     !done; done = true)							\
+ 		for (CLASS(user_##mode##_access, scope)(_tmpptr); !done; done = true)	\
+ 			/* Force modified pointer usage within the scope */		\
+-- 
+2.39.5
 
 	David
 
 > 
-> Fixes: e497310b4ffb ("uaccess: Provide scoped user access regions")
-> Signed-off-by: Christophe Leroy (CS GROUP) <chleroy@kernel.org>
-> ---
-> Thomas, I encountered this problem while preparing some patches to start using
-> scope user access widely on powerpc in order to benefit more from masked user
-> access. Can you make this patch go into 7.0 as a fix in order avoid dependency
-> on this change when we start using scoped user access ?
-> 
->  include/linux/uaccess.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-> index 1f3804245c06..5d9f6d45d301 100644
-> --- a/include/linux/uaccess.h
-> +++ b/include/linux/uaccess.h
-> @@ -752,7 +752,8 @@ USER_ACCESS_GUARD(rw)
->   */
->  #define __scoped_user_access(mode, uptr, size, elbl)					\
->  for (bool done = false; !done; done = true)						\
-> -	for (void __user *_tmpptr = __scoped_user_access_begin(mode, uptr, size, elbl); \
-> +	for (void __user *_tmpptr = (void __user *)					\
-> +				    __scoped_user_access_begin(mode, uptr, size, elbl); \
->  	     !done; done = true)							\
->  		for (CLASS(user_##mode##_access, scope)(_tmpptr); !done; done = true)	\
->  			/* Force modified pointer usage within the scope */		\
+>                    Linus
 
 
