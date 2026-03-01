@@ -1,174 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-78857-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78858-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CJ2zKc+UpGmxkwUAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78857-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Mar 2026 20:34:39 +0100
+	id QBDVEdSapGnamAUAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78858-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Mar 2026 21:00:20 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BEB41D15DB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Mar 2026 20:34:39 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF451D16C7
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Mar 2026 21:00:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id EA1D9301CFEA
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Mar 2026 19:34:22 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 37A683017507
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Mar 2026 20:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADEA30EF7E;
-	Sun,  1 Mar 2026 19:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25CF335BA8;
+	Sun,  1 Mar 2026 19:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fBMoKZh/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bu1SLlPE"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CC719CCF7;
-	Sun,  1 Mar 2026 19:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695431E5B64;
+	Sun,  1 Mar 2026 19:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772393657; cv=none; b=XVyAnZd9e9E4mz3/c/clGpI94XxswprJNlzXSlyTGjKWIqV0v1boxgSTBtYtFsZRoSS6TgAN2W7UTqt59lOP1OVVqKoG8Eg95m9o89d0SKaY4NsE3aR9ZcfVq5s6TZQV/oRgSAtbw5Tuth3EBw34Q7qguFTdbS4FWriLFQVmk9g=
+	t=1772395191; cv=none; b=P1pRDfaZPpaTxX6VbsHe+61c0dS/3JeRHCzv/HOLUoYwXQkhTW2MNbXV4J9bbI6rS0NUmNQCwyQsFNSwbkmBtaHP0Hp5YodK8lvYpJ/6Qqobvnes9jgbMPG3taRnNAZl/Bp7sVkgBrEjfuVjcA2MxR7mT8E87rPj9DY+If344sI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772393657; c=relaxed/simple;
-	bh=BS3ZMwHlDBcAakH4xSCy5YZLU7NRjvFZNyLUzpzSoag=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y+jtE+xeJ0T5/vypWHr9Pa0vCzBU/scttETG2x9NVX6fYf6gOVrxlGkedOste2ipd2dMDutumLX9B9a4VQ9jW0E6NWOJh9QEEuuj4+ZXCDblG/xt1MKTrkR6GWhIJm+hBF8VTz7IlQ0Ln3k32kxwlZogdLG3AeVt7LVYrh5/+28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fBMoKZh/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46D9BC116C6;
-	Sun,  1 Mar 2026 19:34:08 +0000 (UTC)
+	s=arc-20240116; t=1772395191; c=relaxed/simple;
+	bh=c7Lf0pg//jvb+3j7ibNw1PDnDJENzEb1R7UG7EkUWBo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=DTG20OkN5GQJOGWw8iRr4vNdaA+nkz/sPVCtS9t2U6OiLHr+3JU7XSi04VQ6sw6YAFhYPPJkSIOagD7ace4pXvah7Ad8cnf0rKpFHTJ6VdP3bz6hwr3sNr05PZ42pfkh+/3MmmR6cibArpmBFttt7JTfvT2kBoywhnXZyNwJaN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bu1SLlPE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93A73C116C6;
+	Sun,  1 Mar 2026 19:59:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772393656;
-	bh=BS3ZMwHlDBcAakH4xSCy5YZLU7NRjvFZNyLUzpzSoag=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fBMoKZh/LWCvwocBJu3/DdC0EKLnEGnsvFsFINLPykRPzdRWemfcP23uVosUvNyQU
-	 LRS5bvFJZDxSZkMlwzOw4Q9gcfCc9YeJPDZ595R+nFJuTlGbuECzRBOyUNBixZFt5D
-	 iE6iCR4qfZsuoqEikqKYjCmQqHupeKgd5ohtJHLAKZG9ct5D+lRrUezJ2xNtVUijBa
-	 Af6pXyHwm+tJZeEEamUZy10vahwIWTBFKZnBtk749nsFwX6r3fnDReMFMlj+wF5hhC
-	 s98itWgns3vCxpdLt7eM0O1669ALiZebwBSZ8BHviYayyJ1j0E9NlR26Z/ra4XBWdC
-	 Zj+TlcM/lie1Q==
-From: "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>
-Cc: "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	David Laight <david.laight.linux@gmail.com>,
-	kernel test robot <lkp@intel.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	x86@kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	linux-riscv@lists.infradead.org,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	linux-s390@vger.kernel.org,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Andre Almeida <andrealmeid@igalia.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] uaccess: Fix build of scoped user access with const pointer
-Date: Sun,  1 Mar 2026 20:33:58 +0100
-Message-ID: <4e994e13b48420ef36be686458ce3512657ddb41.1772393211.git.chleroy@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=k20201202; t=1772395191;
+	bh=c7Lf0pg//jvb+3j7ibNw1PDnDJENzEb1R7UG7EkUWBo=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=Bu1SLlPExanZzJBk/3KZ/KJEQNSweZ38bl1tkZtVFxhnq0oJlUvJegoCFn4bRC5Uz
+	 8JDJaAmHXk5dhybtqUAV/W3yC/U52oInYwdv69V1GK+nnTYouG94WW/x7Xw8lxDOZW
+	 NLQl7cIpj6VKUwwEwSu3f2J+rajFU7zgPKfetnELrePj1Nlrv58tgQA8w7IEJTypc8
+	 IkJhPuewEYoACBnMZr2n7CuzKUSdrgsOeKZ16KgdW5hPuSMIlSi+farv4EpkH6PCj9
+	 YYCQdHxF61C67tz1eYO2FCji1QDBfhLkU34F5H3EpcsZm3OxSXvAcfEcGrmjaGYIaG
+	 zXQ1ANgq2n3QQ==
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2510; i=chleroy@kernel.org; h=from:subject:message-id; bh=BS3ZMwHlDBcAakH4xSCy5YZLU7NRjvFZNyLUzpzSoag=; b=owGbwMvMwCV2d0KB2p7V54MZT6slMWQumbKswe2Zuf6EuTudmqtKPfYcXrNP0W3Fv5jev4WbX s0s28pV0lHKwiDGxSArpshy/D/3rhldX1Lzp+7Sh5nDygQyhIGLUwAmkpLB8D+a+w/zg3+ige3h eQsXCTO+PXiEYyrjCsvO1ltzHW5ZPPvO8IspVKT412bj9XLyP/d83ZRVd+LX0vcHZX+6RcXGh8T 9EmYFAA==
-X-Developer-Key: i=chleroy@kernel.org; a=openpgp; fpr=10FFE6F8B390DE17ACC2632368A92FEB01B8DD78
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 01 Mar 2026 20:59:41 +0100
+Message-Id: <DGRPNLWTEQJG.27A17T7HREAF4@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-block@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-mm@kvack.org>, <linux-pm@vger.kernel.org>,
+ <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v16 01/10] rust: alloc: add `KBox::into_nonnull`
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Gary Guo" <gary@garyguo.net>, "Andreas Hindborg"
+ <a.hindborg@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Alice Ryhl"
+ <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Danilo
+ Krummrich" <dakr@kernel.org>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Dave Ertman" <david.m.ertman@intel.com>,
+ "Ira Weiny" <ira.weiny@intel.com>, "Leon Romanovsky" <leon@kernel.org>,
+ "Paul Moore" <paul@paul-moore.com>, "Serge Hallyn" <sergeh@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Alexander Viro"
+ <viro@zeniv.linux.org.uk>, "Christian Brauner" <brauner@kernel.org>, "Jan
+ Kara" <jack@suse.cz>, "Igor Korotin" <igor.korotin.linux@gmail.com>,
+ "Daniel Almeida" <daniel.almeida@collabora.com>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ "Viresh Kumar" <vireshk@kernel.org>, "Nishanth Menon" <nm@ti.com>, "Stephen
+ Boyd" <sboyd@kernel.org>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Boqun
+ Feng" <boqun@kernel.org>, "Vlastimil Babka" <vbabka@suse.cz>, "Uladzislau
+ Rezki" <urezki@gmail.com>
+X-Mailer: aerc 0.21.0
+References: <20260224-unique-ref-v16-0-c21afcb118d3@kernel.org>
+ <20260224-unique-ref-v16-1-c21afcb118d3@kernel.org>
+ <eeDADnWQGSX9PG7jNOEyh9Z-iXlTEy6eK8CZ-KE7UWlWo-TJy15t_R1SkLj-Zway00qMRKkb0xBdxADLH766dA==@protonmail.internalid> <DGRHAEM7OFBD.27RUUCHCRHI6K@garyguo.net> <87ldgbbjal.fsf@t14s.mail-host-address-is-not-set> <DGROXQD756OU.T2CRAPKA2HCB@garyguo.net>
+In-Reply-To: <DGROXQD756OU.T2CRAPKA2HCB@garyguo.net>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.84 / 15.00];
+X-Spamd-Result: default: False [-0.16 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
+	MV_CASE(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_MISSING_CHARSET(0.50)[];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	RCPT_COUNT_TWELVE(0.00)[33];
-	MIME_TRACE(0.00)[0:+];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78858-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_TO(0.00)[garyguo.net,kernel.org,protonmail.com,google.com,umich.edu,linuxfoundation.org,intel.com,paul-moore.com,gmail.com,ffwll.ch,zeniv.linux.org.uk,suse.cz,collabora.com,oracle.com,ti.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78857-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[kernel.org,csgroup.eu,efficios.com,citrix.com,linux-foundation.org,gmail.com,intel.com,armlinux.org.uk,lists.infradead.org,linux.ibm.com,ellerman.id.au,lists.ozlabs.org,dabbelt.com,vger.kernel.org,inria.fr,imag.fr,infradead.org,stgolabs.net,igalia.com,zeniv.linux.org.uk,suse.cz];
-	DKIM_TRACE(0.00)[kernel.org:+];
+	RCVD_COUNT_THREE(0.00)[4];
+	RCPT_COUNT_TWELVE(0.00)[40];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[chleroy@kernel.org,linux-fsdevel@vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	FROM_NEQ_ENVFROM(0.00)[lossin@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	NEURAL_HAM(-0.00)[-0.999];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	FROM_HAS_DN(0.00)[]
-X-Rspamd-Queue-Id: 2BEB41D15DB
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: DFF451D16C7
 X-Rspamd-Action: no action
 
-After converting powerpc checksum wrappers to scoped user access,
-following build failure happens:
+On Sun Mar 1, 2026 at 8:25 PM CET, Gary Guo wrote:
+> `#[inline]` is a hint to make it more likely for compilers to inline. Wit=
+hout
+> them, you're relying on compiler heurstics only. There're cases (especial=
+ly with
+> abstractions) where the function may look complex as it contains lots of
+> function calls (so compiler heurstics avoid inlining them), but they're a=
+ll
+> zero-cost abstractions so eventually things get optimized away.
+>
+> For non-generic functions, there is additional issue where only very smal=
+l
+> functions get automatically inlined, otherwise a single copy is generated=
+ at the
+> defining crate and compiler run on a dependant crate has no chance to eve=
+n peek
+> what's in the function.
+>
+> If you know a function should be inlined, it's better to just mark them a=
+s such,
+> so there're no surprises.
 
-	  CC      arch/powerpc/lib/checksum_wrappers.o
-	In file included from arch/powerpc/lib/checksum_wrappers.c:12:
-	arch/powerpc/lib/checksum_wrappers.c: In function 'csum_and_copy_from_user':
-	./include/linux/uaccess.h:691:1: error: initialization discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
-	  691 | ({                                                                      \
-	      | ^
-	./include/linux/uaccess.h:755:37: note: in expansion of macro '__scoped_user_access_begin'
-	  755 |         for (void __user *_tmpptr = __scoped_user_access_begin(mode, uptr, size, elbl); \
-	      |                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~
-	./include/linux/uaccess.h:770:9: note: in expansion of macro '__scoped_user_access'
-	  770 |         __scoped_user_access(read, usrc, size, elbl)
-	      |         ^~~~~~~~~~~~~~~~~~~~
-	arch/powerpc/lib/checksum_wrappers.c:17:9: note: in expansion of macro 'scoped_user_read_access_size'
-	   17 |         scoped_user_read_access_size(src, len, efault)
-	      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Should we set clippy::missing_inline_in_public_items [1] to "warn"?
 
-Cast __scoped_user_access_begin() to (void __user *) to fix it.
+[1]: https://rust-lang.github.io/rust-clippy/master/index.html?search=3Dmis=
+sing_inline_in_public_items
 
-Fixes: e497310b4ffb ("uaccess: Provide scoped user access regions")
-Signed-off-by: Christophe Leroy (CS GROUP) <chleroy@kernel.org>
----
-Thomas, I encountered this problem while preparing some patches to start using
-scope user access widely on powerpc in order to benefit more from masked user
-access. Can you make this patch go into 7.0 as a fix in order avoid dependency
-on this change when we start using scoped user access ?
-
- include/linux/uaccess.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-index 1f3804245c06..5d9f6d45d301 100644
---- a/include/linux/uaccess.h
-+++ b/include/linux/uaccess.h
-@@ -752,7 +752,8 @@ USER_ACCESS_GUARD(rw)
-  */
- #define __scoped_user_access(mode, uptr, size, elbl)					\
- for (bool done = false; !done; done = true)						\
--	for (void __user *_tmpptr = __scoped_user_access_begin(mode, uptr, size, elbl); \
-+	for (void __user *_tmpptr = (void __user *)					\
-+				    __scoped_user_access_begin(mode, uptr, size, elbl); \
- 	     !done; done = true)							\
- 		for (CLASS(user_##mode##_access, scope)(_tmpptr); !done; done = true)	\
- 			/* Force modified pointer usage within the scope */		\
--- 
-2.49.0
-
+Cheers,
+Benno
 
