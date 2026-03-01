@@ -1,241 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-78838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id mED5AJP7o2lPTgUAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Mar 2026 09:40:51 +0100
+	id mCiiJOUQpGlcWQUAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Mar 2026 11:11:49 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A6271CEE15
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Mar 2026 09:40:50 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E6C01CF080
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Mar 2026 11:11:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 492F33019F21
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Mar 2026 08:40:42 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E152D301D6A5
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Mar 2026 10:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C54B32FA3D;
-	Sun,  1 Mar 2026 08:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222DD335BA8;
+	Sun,  1 Mar 2026 10:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="Ek2T8Bcf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hFeiTvDE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F32A932;
-	Sun,  1 Mar 2026 08:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92231A9FA0
+	for <linux-fsdevel@vger.kernel.org>; Sun,  1 Mar 2026 10:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772354440; cv=none; b=XrlozgNUrCaGsitugOjVRAv47OoOXAA9++RXQ1qY9gl4/hZYp2mOEmu3UkihTVHSV1g2mA21HOGsQ8C9alfTqLsjAdB4dIYzvsJb9wFy6jqE5eimqnkBgCwWSDOP2HsfLplkpdaXsH2ZISjqStNiMUuRF0bPvN2pnbri83K8+QY=
+	t=1772359889; cv=none; b=uoXGbU+JaAZExgwA1lnKiYZhSqi7d7jn5rPzhjBoxA6iRjmxq0MxVKidoz3JtPAFQaxFovn0Ee1+07AS928OtuAE1I/m28hyZDQnUdsOSSJhgTxQBxkr5bGsdgMEDhEac2o9KTIJLyCDhXzHs06l17gfnm+TBk4fmw8ZuAxtiq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772354440; c=relaxed/simple;
-	bh=QXC4GGpRUNa98ffrfmxlM4QdE5cMsb5xA4dsxoNHgcc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jnXoQu4WSI0+uKhbB3gnX1MB3VTViezG2Ax0GX8GAonev0WvbSqU4A8Dv6YHEUYN6AjUbhBF9Pa9PntX2Ug5MgnPsZo330RNXJfkwAvzE0rjTZar61OVyttuspvlyXw+dQ7HWBGmgaUJGrE1/EA5iNayEzIF4pO0CukZ6bNKswE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=Ek2T8Bcf; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=PFp2jwYoJiwmHoZgumraJXdJLAau7/xpL1zGznQ0p4A=; b=Ek2T8Bcf0qd2IcGD9c6aEKkby4
-	MTj0F3QPFeWyISNPdDba/GT+KXGhATS+MRWMJDtbKDOZUGWeVn4aqpEK6a/KrxsrGNBubTPYoz5rV
-	EmIW4IwFaXlV5yeZHkTi8GK1TdT6nnirTEYrBHgSZiPGJLLOLJXpLCuYD9BUgQm9gJsMd+9xVeHIy
-	hNVaRNpTIT/FL/5aI03iSGX/pmjRM9QikrkQSHJwSYg5VYVQQ4RSBUYciXUYgBD5liS1u2oHF2ne/
-	Y+b/wvZIngs2LkbhAZ25GcpvouP7gViTXSE3qF1S4zST2POzC2VlAtvXNomN7D9xdkgTRFnmZA4wH
-	L03qxFDQ==;
-Received: from authenticated user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.94.2)
-	(envelope-from <zeha@debian.org>)
-	id 1vwcLm-00DVlM-Lo; Sun, 01 Mar 2026 08:40:31 +0000
-Date: Sun, 1 Mar 2026 10:40:28 +0200
-From: Chris Hofstaedtler <zeha@debian.org>
-To: Sumanth Korikkar <sumanthk@linux.ibm.com>, 
-	debian-loongarch@lists.debian.org
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	util-linux@vger.kernel.org, Karel Zak <kzak@redhat.com>
-Subject: Re: [ANNOUNCE] util-linux v2.42-rc1
-Message-ID: <aaP6atFYpVqulTO1@zeha.at>
-References: <wid276gkq7tblvkfwc6kum4nacamstiigqjj5ux6j6zd4blz4l@jzq3sgfh6cj5>
+	s=arc-20240116; t=1772359889; c=relaxed/simple;
+	bh=woIS/wsHPvPvHWzL5+iJBEcWbuA0XO2nXIIe/7Qg0EM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pfg9TZ6/dzurlKFFuULmbqGCA5mkuj7hb9k+ZYWLF6RViaHCPpNPuLG7ts+7c/+eeA7DO7Rw1SdDAkf868OS9cEyA0Z8zri4vVsZw2IE22ifNrtoyNDQnEmCE0P8rp/0UT+wzt1Yd5s54QQ83RvGJUPYP7vJBYOAIwJF7Zj0w4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hFeiTvDE; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-8274843810cso1705664b3a.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Mar 2026 02:11:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772359887; x=1772964687; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cp14pMKS6bkJE/Z/f1aNlGhNOXRNaHWCDHan9dnJcZo=;
+        b=hFeiTvDEZyKuXLEIrztl8hrKJYwI7L2sfCXMIvoGECfpMSYPSQVAvdjdGQcM1XdKfj
+         //lZZ3J8Mqyo4SHxEXP/BGbhNt5ZA/GzBm2KHbRIZDt4SZoJ4hhqlAQhbu8EXEsY8cTT
+         8IGtG7JTc3BCRpsaouJInrtdrYR/78C1xojufDpIFSc7VfoZB75YJX5hYRU8vOJoXn93
+         mhzLUK3lLwb1c0RX8BA4sqKW7bZxqdFIIhIzWjBi5cCJziqA2r2RT8Cujk+F0ykBfAag
+         eiUNjPGX9AUZeid6gF468yYw0itn9s0Zyps9z549P1m8OE7GKZqD6g1D1bDPLIW2Oc95
+         qHgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772359887; x=1772964687;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Cp14pMKS6bkJE/Z/f1aNlGhNOXRNaHWCDHan9dnJcZo=;
+        b=HzcfFeuZNeI4C09mYymXQTkG9q1saIEc/uDjo0paBphJ01w6uGdd7gWJbHUWYffa/U
+         RmkRs+xLemQOMSBbo1RHdeBudmcgY4JttV9C+TotrlTAipti+klbkZsybnsZBpoNStUy
+         6f680sLUJP81iuorMBhTJLBbdpWo5w0Rd1l/IYhvfkdgDTpmol3d7xncawPvENPLT0ks
+         eFNJhFO954qZ96FYoHQnNkoloPn2jYy8CRRgZkZ3ItC4K1p4Zoa0NItuZHRZMTEz9Q7D
+         N+HPkH/JI0WcFR+F4qlBNK4Pd4eXfg3hs7KDhv9wG233G+aAfGEVtZWKYij/5+byIFSW
+         sZuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWwPdDl4Xrzy7QnE2DBr+fpUnGFuxJ4h78gDCHCHQnVl+dWuGZr9gEPAsjM6S14uE3xarPRELSirkw4OWlC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7eco/BOO6rpJiB/HQyfIDFZJL+/Wlevr2L3mJxcBrCdB5LPed
+	G/0ehYP72A/D3IMf+fb0ffleBXEZRwRCPdFt0nuC2MetOtqwAhd3aALQ
+X-Gm-Gg: ATEYQzwAn6X7+Vvc+jsPVvmjQ7z7t+DNQkb/r681xMSfgGVuXSPk0Z30rMf3ta7hIr5
+	twdH2jNqzGBXCoimASv/Wc7XJVy2pdALEYWe1Oo7dBi3almRKxW4rzT3anltqt1k0FSljJNxrgM
+	sZuWCPPdEadK6lBy87Zub7Y6QaBATGL3VLeX1+R8g95WyA1KnTdug0wYSP0p4lLvJYbktZMX7mF
+	w1iZA+xWDNlwu/vKEceVPFUcA+wOT2Tfg8M94ceJOZHGX/WCOKotsd0Q2sOjv6fEqYoPucDtGMT
+	IomRDqXn7+L5dHxmz7xaTNUY/a9Auh1Y7lljqrdmOdccQWfaulGijGFFC4Uul4lk2LGoU0Xrh/1
+	AamneqIarDS8jGX3o1ihCYc/ceXYj29dFu77tshwYGnSGR2AB5fyqnO5eW/otxM7nD/wjpSeMRB
+	wcHXvkNojSOpBnDwG5TF657gYRfOwOPhKGt9Io+VrFqd78
+X-Received: by 2002:a05:6a21:d89:b0:394:56ae:8a73 with SMTP id adf61e73a8af0-395c3af018amr8410142637.48.1772359887093;
+        Sun, 01 Mar 2026 02:11:27 -0800 (PST)
+Received: from yangwen.localdomain ([121.225.53.117])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c70fa62147esm9205452a12.12.2026.03.01.02.11.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Mar 2026 02:11:26 -0800 (PST)
+From: Yang Wen <anmuxixixi@gmail.com>
+To: linkinjeon@kernel.org,
+	sj1557.seo@samsung.com
+Cc: yuezhang.mo@sony.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yang Wen <anmuxixixi@gmail.com>
+Subject: [PATCH] exfat: initialize caching fields during inode allocation
+Date: Sun,  1 Mar 2026 18:11:19 +0800
+Message-ID: <20260301101119.447-1-anmuxixixi@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <wid276gkq7tblvkfwc6kum4nacamstiigqjj5ux6j6zd4blz4l@jzq3sgfh6cj5>
-X-Debian-User: zeha
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_DKIM_ALLOW(-0.20)[debian.org:s=smtpauto.stravinsky];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[sony.com,vger.kernel.org,gmail.com];
+	TAGGED_FROM(0.00)[bounces-78839-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[debian.org];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-78838-lists,linux-fsdevel=lfdr.de];
-	MISSING_XM_UA(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[zeha@debian.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[debian.org:+];
-	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[anmuxixixi@gmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	RCVD_COUNT_FIVE(0.00)[5];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
+	NEURAL_HAM(-0.00)[-1.000];
 	RCPT_COUNT_FIVE(0.00)[6];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,zeha.at:mid]
-X-Rspamd-Queue-Id: 4A6271CEE15
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 0E6C01CF080
 X-Rspamd-Action: no action
 
-Hi Sumanth, looong64 porters,
+exfat_alloc_inode() does not initialize the cache_lru list head of
+struct exfat_inode_info.
 
-* Karel Zak <kzak@redhat.com> [260226 14:53]:
->The util-linux release v2.42-rc1 is now available at
->  http://www.kernel.org/pub/linux/utils/util-linux/v2.42/
-[..]
->lsmem:
->    - display global memmap on memory parameter (by Sumanth Korikkar)
+If an inode is evicted before its cache structures are properly
+initialized (e.g., during a forced unmount), the cleanup
+path in __exfat_cache_inval_inode() may observe an uninitialized
+list head.
 
-It appears the test for this is run on looong64 and fails there (failing the
-entire build), at least in the Debian build infra.
-https://buildd.debian.org/status/fetch.php?pkg=util-linux&arch=loong64&ver=2.42%7Erc1-1&stamp=1772312955&raw=0
+The check:
 
-See below for log output excerpts.
+    while (!list_empty(&ei->cache_lru))
 
-Thanks,
-Chris
+may incorrectly succeed when stale pointers remain from a reused
+slab object. Subsequent list traversal can then operate on invalid
+entries, potentially leading to a NULL pointer dereference or
+memory corruption.
 
+Initialize cache_lru, cache_lru_lock, nr_caches, and cache_valid_id
+in exfat_alloc_inode() to ensure a well-defined state at allocation
+time.
 
-log snippets:
+Signed-off-by: Yang Wen <anmuxixixi@gmail.com>
+---
+ fs/exfat/super.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-================= O/E diff ===================
---- /build/reproducible-path/util-linux-2.42~rc1/tests/output/lsmem/lsmem-s390-zvm-6g	2026-02-28 21:08:31.577617951 +0000
-+++ /build/reproducible-path/util-linux-2.42~rc1/tests/expected/lsmem/lsmem-s390-zvm-6g	2026-02-18 11:33:47.804188659 +0000
-@@ -17,6 +17,7 @@
-  Memory block size:                256M
-  Total online memory:              4.8G
-  Total offline memory:             1.3G
-+Memmap on memory parameter:         no
-  
-  ---
-  
-@@ -27,6 +28,7 @@
-  Memory block size:                256M
-  Total online memory:              4.8G
-  Total offline memory:             1.3G
-+Memmap on memory parameter:         no
-  
-  ---
-  
-@@ -40,6 +42,7 @@
-  Memory block size:                256M
-  Total online memory:              4.8G
-  Total offline memory:             1.3G
-+Memmap on memory parameter:         no
-  
-  ---
-  
-@@ -73,6 +76,7 @@
-  Memory block size:                256M
-  Total online memory:              4.8G
-  Total offline memory:             1.3G
-+Memmap on memory parameter:         no
-  
-  ---
-  
-@@ -216,6 +220,7 @@
-  Memory block size:                256M
-  Total online memory:              4.8G
-  Total offline memory:             1.3G
-+Memmap on memory parameter:         no
-  
-  ---
-  
-@@ -237,6 +242,7 @@
-  Memory block size:                256M
-  Total online memory:              4.8G
-  Total offline memory:             1.3G
-+Memmap on memory parameter:         no
-  
-  ---
-  
-@@ -256,3 +262,4 @@
-  Memory block size:                256M
-  Total online memory:              4.8G
-  Total offline memory:             1.3G
-+Memmap on memory parameter:         no
-==============================================
-
-...
-
---- /build/reproducible-path/util-linux-2.42~rc1/tests/expected/lsmem/lsmem-x86_64-16g	2026-02-18 11:33:47.804978102 +0000
-+++ /build/reproducible-path/util-linux-2.42~rc1/tests/output/lsmem/lsmem-x86_64-16g	2026-02-28 21:08:31.887234145 +0000
-@@ -37,7 +37,6 @@
-  Memory block size:                128M
-  Total online memory:               16G
-  Total offline memory:               0B
--Memmap on memory parameter:         no
-  
-  ---
-  
-@@ -49,7 +48,6 @@
-  Memory block size:                128M
-  Total online memory:               16G
-  Total offline memory:               0B
--Memmap on memory parameter:         no
-  
-  ---
-  
-@@ -61,7 +59,6 @@
-  Memory block size:                128M
-  Total online memory:               16G
-  Total offline memory:               0B
--Memmap on memory parameter:         no
-  
-  ---
-  
-@@ -199,7 +196,6 @@
-  Memory block size:                128M
-  Total online memory:               16G
-  Total offline memory:               0B
--Memmap on memory parameter:         no
-  
-  ---
-  
-@@ -523,7 +519,6 @@
-  Memory block size:                128M
-  Total online memory:               16G
-  Total offline memory:               0B
--Memmap on memory parameter:         no
-  
-  ---
-  
-@@ -563,7 +558,6 @@
-  Memory block size:                128M
-  Total online memory:               16G
-  Total offline memory:               0B
--Memmap on memory parameter:         no
-  
-  ---
-  
-@@ -603,4 +597,3 @@
-  Memory block size:                128M
-  Total online memory:               16G
-  Total offline memory:               0B
--Memmap on memory parameter:         no
-}}}-diff
-
-  FAILED (lsmem/lsmem-x86_64-16g)
-========= script: /build/reproducible-path/util-linux-2.42~rc1/tests/ts/lsmem/lsmem =================
+diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+index 83396fd265cd..0c4a22b8d5fa 100644
+--- a/fs/exfat/super.c
++++ b/fs/exfat/super.c
+@@ -195,6 +195,10 @@ static struct inode *exfat_alloc_inode(struct super_block *sb)
+ 	if (!ei)
+ 		return NULL;
+ 
++	spin_lock_init(&ei->cache_lru_lock);
++	ei->nr_caches = 0;
++	ei->cache_valid_id = EXFAT_CACHE_VALID + 1;
++	INIT_LIST_HEAD(&ei->cache_lru);
+ 	init_rwsem(&ei->truncate_lock);
+ 	return &ei->vfs_inode;
+ }
+-- 
+2.43.0
 
 
