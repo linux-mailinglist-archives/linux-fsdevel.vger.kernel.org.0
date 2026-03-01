@@ -1,90 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-78839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id mCiiJOUQpGlcWQUAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Mar 2026 11:11:49 +0100
+	id SOHUHxkSpGlcWQUAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Mar 2026 11:16:57 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E6C01CF080
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Mar 2026 11:11:48 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 846511CF19F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Mar 2026 11:16:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E152D301D6A5
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Mar 2026 10:11:31 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 1B33C30091DE
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Mar 2026 10:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222DD335BA8;
-	Sun,  1 Mar 2026 10:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB81175A90;
+	Sun,  1 Mar 2026 10:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hFeiTvDE"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="pM/QUlwL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92231A9FA0
-	for <linux-fsdevel@vger.kernel.org>; Sun,  1 Mar 2026 10:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7E3A937;
+	Sun,  1 Mar 2026 10:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772359889; cv=none; b=uoXGbU+JaAZExgwA1lnKiYZhSqi7d7jn5rPzhjBoxA6iRjmxq0MxVKidoz3JtPAFQaxFovn0Ee1+07AS928OtuAE1I/m28hyZDQnUdsOSSJhgTxQBxkr5bGsdgMEDhEac2o9KTIJLyCDhXzHs06l17gfnm+TBk4fmw8ZuAxtiq8=
+	t=1772360202; cv=none; b=p1avpQG8qwXMbOwAPL9Perk9gB1u62zV4ws3cITQiBcGWmIySCmHdd7VcJm2B3UP/E9blYHeYxzXUX6fYU8fGPZWnINwQbATfXmws4TpUPq0gO/6ypS7cP9xQxhLO1yOMQRXXqXr00CvX5E4GgxsTfKsekpp8Vt2mwSOM2pRL88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772359889; c=relaxed/simple;
-	bh=woIS/wsHPvPvHWzL5+iJBEcWbuA0XO2nXIIe/7Qg0EM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pfg9TZ6/dzurlKFFuULmbqGCA5mkuj7hb9k+ZYWLF6RViaHCPpNPuLG7ts+7c/+eeA7DO7Rw1SdDAkf868OS9cEyA0Z8zri4vVsZw2IE22ifNrtoyNDQnEmCE0P8rp/0UT+wzt1Yd5s54QQ83RvGJUPYP7vJBYOAIwJF7Zj0w4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hFeiTvDE; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-8274843810cso1705664b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Mar 2026 02:11:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772359887; x=1772964687; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cp14pMKS6bkJE/Z/f1aNlGhNOXRNaHWCDHan9dnJcZo=;
-        b=hFeiTvDEZyKuXLEIrztl8hrKJYwI7L2sfCXMIvoGECfpMSYPSQVAvdjdGQcM1XdKfj
-         //lZZ3J8Mqyo4SHxEXP/BGbhNt5ZA/GzBm2KHbRIZDt4SZoJ4hhqlAQhbu8EXEsY8cTT
-         8IGtG7JTc3BCRpsaouJInrtdrYR/78C1xojufDpIFSc7VfoZB75YJX5hYRU8vOJoXn93
-         mhzLUK3lLwb1c0RX8BA4sqKW7bZxqdFIIhIzWjBi5cCJziqA2r2RT8Cujk+F0ykBfAag
-         eiUNjPGX9AUZeid6gF468yYw0itn9s0Zyps9z549P1m8OE7GKZqD6g1D1bDPLIW2Oc95
-         qHgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772359887; x=1772964687;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cp14pMKS6bkJE/Z/f1aNlGhNOXRNaHWCDHan9dnJcZo=;
-        b=HzcfFeuZNeI4C09mYymXQTkG9q1saIEc/uDjo0paBphJ01w6uGdd7gWJbHUWYffa/U
-         RmkRs+xLemQOMSBbo1RHdeBudmcgY4JttV9C+TotrlTAipti+klbkZsybnsZBpoNStUy
-         6f680sLUJP81iuorMBhTJLBbdpWo5w0Rd1l/IYhvfkdgDTpmol3d7xncawPvENPLT0ks
-         eFNJhFO954qZ96FYoHQnNkoloPn2jYy8CRRgZkZ3ItC4K1p4Zoa0NItuZHRZMTEz9Q7D
-         N+HPkH/JI0WcFR+F4qlBNK4Pd4eXfg3hs7KDhv9wG233G+aAfGEVtZWKYij/5+byIFSW
-         sZuw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwPdDl4Xrzy7QnE2DBr+fpUnGFuxJ4h78gDCHCHQnVl+dWuGZr9gEPAsjM6S14uE3xarPRELSirkw4OWlC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7eco/BOO6rpJiB/HQyfIDFZJL+/Wlevr2L3mJxcBrCdB5LPed
-	G/0ehYP72A/D3IMf+fb0ffleBXEZRwRCPdFt0nuC2MetOtqwAhd3aALQ
-X-Gm-Gg: ATEYQzwAn6X7+Vvc+jsPVvmjQ7z7t+DNQkb/r681xMSfgGVuXSPk0Z30rMf3ta7hIr5
-	twdH2jNqzGBXCoimASv/Wc7XJVy2pdALEYWe1Oo7dBi3almRKxW4rzT3anltqt1k0FSljJNxrgM
-	sZuWCPPdEadK6lBy87Zub7Y6QaBATGL3VLeX1+R8g95WyA1KnTdug0wYSP0p4lLvJYbktZMX7mF
-	w1iZA+xWDNlwu/vKEceVPFUcA+wOT2Tfg8M94ceJOZHGX/WCOKotsd0Q2sOjv6fEqYoPucDtGMT
-	IomRDqXn7+L5dHxmz7xaTNUY/a9Auh1Y7lljqrdmOdccQWfaulGijGFFC4Uul4lk2LGoU0Xrh/1
-	AamneqIarDS8jGX3o1ihCYc/ceXYj29dFu77tshwYGnSGR2AB5fyqnO5eW/otxM7nD/wjpSeMRB
-	wcHXvkNojSOpBnDwG5TF657gYRfOwOPhKGt9Io+VrFqd78
-X-Received: by 2002:a05:6a21:d89:b0:394:56ae:8a73 with SMTP id adf61e73a8af0-395c3af018amr8410142637.48.1772359887093;
-        Sun, 01 Mar 2026 02:11:27 -0800 (PST)
-Received: from yangwen.localdomain ([121.225.53.117])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c70fa62147esm9205452a12.12.2026.03.01.02.11.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Mar 2026 02:11:26 -0800 (PST)
-From: Yang Wen <anmuxixixi@gmail.com>
-To: linkinjeon@kernel.org,
-	sj1557.seo@samsung.com
-Cc: yuezhang.mo@sony.com,
+	s=arc-20240116; t=1772360202; c=relaxed/simple;
+	bh=y6L8k0vASMz/bPcRIzrGwf6ssOdNeQe5cZLM2rVE9YY=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=qGJAWGCNyePN+EiXb/KZfhZru2SufLo1XUqd0juRYyy2qMjLOJtFplFHM1SqukC4OewK2pKXdP9Cy7GseRzvjt5HNgYCxd8u+jVb1KkNTdrAXXTikUI/E4zFwEdLTrBcwOM056miq4mFQNafFdShJWQL7HhUEO0Pt/KD/eHZjGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=pM/QUlwL; arc=none smtp.client-ip=162.62.57.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1772360184; bh=6YDJwzaTNZZXldRpDl0UFDy3tH3MQT89XnIJD7yZKuk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=pM/QUlwLYkJiXEwwa6qgOucmGCxe8LhN2u/y87Qsmqqt+pjnF88yeBPindBn1UMDa
+	 zk6SuD7sV8OADFn0ZzdpQpu608SYZ6U8UpSYWpDjczIkznHZsbC5dPtxoEbEy9Ltqc
+	 rg94prkZgLxetEldFvIanb5NJ+Iftw5iq4ed/bhI=
+Received: from lxu-ped-host.. ([114.244.57.237])
+	by newxmesmtplogicsvrszb51-0.qq.com (NewEsmtp) with SMTP
+	id 32E2288B; Sun, 01 Mar 2026 18:12:46 +0800
+X-QQ-mid: xmsmtpt1772359966t2fgdsc5b
+Message-ID: <tencent_4C5966F83C65375A97D236684A6C75237609@qq.com>
+X-QQ-XMAILINFO: NVJ0hJNx7N5SFSfUZiYQ1kR0aN4OxOMO1jiunMtturwGsgFa9lAMdy1kRkRpaT
+	 orcwqu364X6TmAUXagAxa5QI1V1NETAAWnH+axbWFzngJxwM3aU87w0PNXnwFtB1nJZ4sxXwIDa/
+	 O+dzPi00X1fTeP+cA2tOw2PZ8IKkoKdds48ZmP6PM4SOjj33CvFwPHgWNWaNGs3SVfuUFX9/9oeN
+	 YsqbVhSvYZFnrrQ3Gd7oP6c7XkmU9oIzi1m1N/CqeLJvdmUgAsIQx6MeNPy2YUtJb1kNKBTlOFiF
+	 wyaWQi/oFwHlE7N47pzorIg+74XSfcbzeSX6NaELq8lT7+0GqVGodnebVbPRjP/S/o0xhErJzWFs
+	 i+409210+MW6wjTd0/GWrvs191XnEXAzlNFZ+erCR/LP2FBcLE0YMrhDLC3rWs3CF3w4wuTKqJCv
+	 2rNiahUyx3JqfYTs0WoK7QQ/QCXGs32W/7m1IsYhw2gMEEUmpIdsYsBEGJIuM8l0bmintPV2DGvF
+	 uIKyyVke0Ca+u+SHbf99bmiVsE4vcxbLfKmJHYu7LZR6cBNIY+vaQeu9e255nI3IjWQ+mshKX++I
+	 mZiMcG0utsiss3pWhP+O57YNMvvJtHbfRgdX3CL1RQbuI31ZmKIvgsDHXX4KfbeCwKQV1l8amfWT
+	 RFMgnNad2oJTuEmUWjLAgpBphqK0imAcMpY3XJl+0gad2taKcW2iG0AftJvabFP6MWV9/vvndcgo
+	 l9ejzYCYILDPFHqX71dov8u/9tBaFafqituILghNMfTfmA8adMAsA+XBkN6kpY6KXPbQ5kcgcG3Z
+	 dTrxohL/MkSbqcRyX5Lha725PNdYdSvgQTDfJdZ0YnA2qiNTlQ4i4sz2QENkeFHi13NFNhke9GEs
+	 w7CKrvXneE7BxVsWqolhpYdm0XBfK71TNwb6IBHJqoovZdCU9vqWvEYF9Ya2xzdXeIaKKH3agzOr
+	 hZUPpIA4azYtwE5A9VUsQkPgUPKNk/LFhh+6TNq+gyJJzt73zwkYwyaq1w9Josz6S1Mc9DXdMNxz
+	 fJeXg8MEqIGIGiIfLi5vm9FepYMYSCCdTnmRJLHw==
+X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
+Cc: brauner@kernel.org,
+	jack@suse.cz,
+	linux-ext4@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Yang Wen <anmuxixixi@gmail.com>
-Subject: [PATCH] exfat: initialize caching fields during inode allocation
-Date: Sun,  1 Mar 2026 18:11:19 +0800
-Message-ID: <20260301101119.447-1-anmuxixixi@gmail.com>
+	syzkaller-bugs@googlegroups.com,
+	viro@zeniv.linux.org.uk
+Subject: [PATCH] ext4: avoid infinite loops caused by data conflicts
+Date: Sun,  1 Mar 2026 18:12:47 +0800
+X-OQ-MSGID: <20260301101246.246595-2-eadavis@qq.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <699ebd11.a00a0220.21906d.0005.GAE@google.com>
+References: <699ebd11.a00a0220.21906d.0005.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,79 +84,124 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[qq.com,quarantine];
 	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[qq.com:s=s201512];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[sony.com,vger.kernel.org,gmail.com];
-	TAGGED_FROM(0.00)[bounces-78839-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-78841-lists,linux-fsdevel=lfdr.de];
+	TO_DN_NONE(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_NEQ_ENVFROM(0.00)[eadavis@qq.com,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[anmuxixixi@gmail.com,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	RCVD_COUNT_FIVE(0.00)[5];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MID_RHS_MATCH_FROM(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 0E6C01CF080
+	DKIM_TRACE(0.00)[qq.com:+];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FREEMAIL_FROM(0.00)[qq.com];
+	TAGGED_RCPT(0.00)[linux-fsdevel,1659aaaaa8d9d11265d7];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,appspotmail.com:email,syzkaller.appspot.com:url,qq.com:mid,qq.com:dkim,qq.com:email]
+X-Rspamd-Queue-Id: 846511CF19F
 X-Rspamd-Action: no action
 
-exfat_alloc_inode() does not initialize the cache_lru list head of
-struct exfat_inode_info.
+In the execution paths of mkdir and openat, there are two different
+structures, struct ext4_xattr_header and struct ext4_dir_entry_2,
+that both reference the same buffer head.
 
-If an inode is evicted before its cache structures are properly
-initialized (e.g., during a forced unmount), the cleanup
-path in __exfat_cache_inval_inode() may observe an uninitialized
-list head.
+In the mkdir path, ext4_add_entry() first sets the rec_len member of
+the struct ext4_dir_entry_2 to 2048, and then sets the file_type value
+to 2 in add_dirent_to_buf()->ext4_insert_dentry()->ext4_set_de_type().
 
-The check:
+This causes the h_refcount value in the other struct ext4_xattr_header,
+which references the same buffer head, to be too large in the openat
+path.
 
-    while (!list_empty(&ei->cache_lru))
+The above causes ext4_xattr_block_set() to enter an infinite loop about
+"inserted" and cannot release the inode lock, ultimately leading to the
+143s blocking problem mentioned in [1].
 
-may incorrectly succeed when stale pointers remain from a reused
-slab object. Subsequent list traversal can then operate on invalid
-entries, potentially leading to a NULL pointer dereference or
-memory corruption.
+When accessing the ext4_xattr_header structure in xattr, the accessed
+buffer head data is placed after ext4_dir_entry_2 to prevent data
+collisions caused by data overlap.
 
-Initialize cache_lru, cache_lru_lock, nr_caches, and cache_valid_id
-in exfat_alloc_inode() to ensure a well-defined state at allocation
-time.
+[1]
+INFO: task syz.0.17:5995 blocked for more than 143 seconds.
+Call Trace:
+ inode_lock_nested include/linux/fs.h:1073 [inline]
+ __start_dirop fs/namei.c:2923 [inline]
+ start_dirop fs/namei.c:2934 [inline]
 
-Signed-off-by: Yang Wen <anmuxixixi@gmail.com>
+Reported-by: syzbot+512459401510e2a9a39f@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=1659aaaaa8d9d11265d7
+Tested-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
+Reported-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=512459401510e2a9a39f
+Tested-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 ---
- fs/exfat/super.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/ext4/ext4.h  | 2 ++
+ fs/ext4/xattr.c | 2 +-
+ fs/ext4/xattr.h | 3 ++-
+ 3 files changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index 83396fd265cd..0c4a22b8d5fa 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -195,6 +195,10 @@ static struct inode *exfat_alloc_inode(struct super_block *sb)
- 	if (!ei)
- 		return NULL;
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 293f698b7042..4b72da4d646f 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -2425,6 +2425,8 @@ struct ext4_dir_entry_2 {
+ 	char	name[EXT4_NAME_LEN];	/* File name */
+ };
  
-+	spin_lock_init(&ei->cache_lru_lock);
-+	ei->nr_caches = 0;
-+	ei->cache_valid_id = EXFAT_CACHE_VALID + 1;
-+	INIT_LIST_HEAD(&ei->cache_lru);
- 	init_rwsem(&ei->truncate_lock);
- 	return &ei->vfs_inode;
- }
++#define DIFF_AREA_DE_XH sizeof(struct ext4_dir_entry_2)
++
+ /*
+  * Access the hashes at the end of ext4_dir_entry_2
+  */
+diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+index 7bf9ba19a89d..313c460a93c5 100644
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -2160,7 +2160,7 @@ ext4_xattr_block_set(handle_t *handle, struct inode *inode,
+ 				error = -EIO;
+ 				goto getblk_failed;
+ 			}
+-			memcpy(new_bh->b_data, s->base, new_bh->b_size);
++			memcpy(new_bh->b_data + DIFF_AREA_DE_XH, s->base, new_bh->b_size);
+ 			ext4_xattr_block_csum_set(inode, new_bh);
+ 			set_buffer_uptodate(new_bh);
+ 			unlock_buffer(new_bh);
+diff --git a/fs/ext4/xattr.h b/fs/ext4/xattr.h
+index 1fedf44d4fb6..4a28023c72e8 100644
+--- a/fs/ext4/xattr.h
++++ b/fs/ext4/xattr.h
+@@ -8,6 +8,7 @@
+ */
+ 
+ #include <linux/xattr.h>
++#include "ext4.h"
+ 
+ /* Magic value in attribute blocks */
+ #define EXT4_XATTR_MAGIC		0xEA020000
+@@ -90,7 +91,7 @@ struct ext4_xattr_entry {
+ #define EXT4_XATTR_MIN_LARGE_EA_SIZE(b)					\
+ 	((b) - EXT4_XATTR_LEN(3) - sizeof(struct ext4_xattr_header) - 4)
+ 
+-#define BHDR(bh) ((struct ext4_xattr_header *)((bh)->b_data))
++#define BHDR(bh) ((struct ext4_xattr_header *)((bh)->b_data + DIFF_AREA_DE_XH))
+ #define ENTRY(ptr) ((struct ext4_xattr_entry *)(ptr))
+ #define BFIRST(bh) ENTRY(BHDR(bh)+1)
+ #define IS_LAST_ENTRY(entry) (*(__u32 *)(entry) == 0)
 -- 
 2.43.0
 
