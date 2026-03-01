@@ -1,208 +1,268 @@
-Return-Path: <linux-fsdevel+bounces-78841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id SOHUHxkSpGlcWQUAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Mar 2026 11:16:57 +0100
+	id 4EBgLgQSpGlcWQUAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Mar 2026 11:16:36 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 846511CF19F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Mar 2026 11:16:56 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 155E61CF188
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 01 Mar 2026 11:16:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 1B33C30091DE
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Mar 2026 10:16:47 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id B2B5E3008620
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Mar 2026 10:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB81175A90;
-	Sun,  1 Mar 2026 10:16:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035E41A9FB0;
+	Sun,  1 Mar 2026 10:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="pM/QUlwL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N04lOntM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7E3A937;
-	Sun,  1 Mar 2026 10:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772360202; cv=none; b=p1avpQG8qwXMbOwAPL9Perk9gB1u62zV4ws3cITQiBcGWmIySCmHdd7VcJm2B3UP/E9blYHeYxzXUX6fYU8fGPZWnINwQbATfXmws4TpUPq0gO/6ypS7cP9xQxhLO1yOMQRXXqXr00CvX5E4GgxsTfKsekpp8Vt2mwSOM2pRL88=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772360202; c=relaxed/simple;
-	bh=y6L8k0vASMz/bPcRIzrGwf6ssOdNeQe5cZLM2rVE9YY=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=qGJAWGCNyePN+EiXb/KZfhZru2SufLo1XUqd0juRYyy2qMjLOJtFplFHM1SqukC4OewK2pKXdP9Cy7GseRzvjt5HNgYCxd8u+jVb1KkNTdrAXXTikUI/E4zFwEdLTrBcwOM056miq4mFQNafFdShJWQL7HhUEO0Pt/KD/eHZjGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=pM/QUlwL; arc=none smtp.client-ip=162.62.57.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1772360184; bh=6YDJwzaTNZZXldRpDl0UFDy3tH3MQT89XnIJD7yZKuk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=pM/QUlwLYkJiXEwwa6qgOucmGCxe8LhN2u/y87Qsmqqt+pjnF88yeBPindBn1UMDa
-	 zk6SuD7sV8OADFn0ZzdpQpu608SYZ6U8UpSYWpDjczIkznHZsbC5dPtxoEbEy9Ltqc
-	 rg94prkZgLxetEldFvIanb5NJ+Iftw5iq4ed/bhI=
-Received: from lxu-ped-host.. ([114.244.57.237])
-	by newxmesmtplogicsvrszb51-0.qq.com (NewEsmtp) with SMTP
-	id 32E2288B; Sun, 01 Mar 2026 18:12:46 +0800
-X-QQ-mid: xmsmtpt1772359966t2fgdsc5b
-Message-ID: <tencent_4C5966F83C65375A97D236684A6C75237609@qq.com>
-X-QQ-XMAILINFO: NVJ0hJNx7N5SFSfUZiYQ1kR0aN4OxOMO1jiunMtturwGsgFa9lAMdy1kRkRpaT
-	 orcwqu364X6TmAUXagAxa5QI1V1NETAAWnH+axbWFzngJxwM3aU87w0PNXnwFtB1nJZ4sxXwIDa/
-	 O+dzPi00X1fTeP+cA2tOw2PZ8IKkoKdds48ZmP6PM4SOjj33CvFwPHgWNWaNGs3SVfuUFX9/9oeN
-	 YsqbVhSvYZFnrrQ3Gd7oP6c7XkmU9oIzi1m1N/CqeLJvdmUgAsIQx6MeNPy2YUtJb1kNKBTlOFiF
-	 wyaWQi/oFwHlE7N47pzorIg+74XSfcbzeSX6NaELq8lT7+0GqVGodnebVbPRjP/S/o0xhErJzWFs
-	 i+409210+MW6wjTd0/GWrvs191XnEXAzlNFZ+erCR/LP2FBcLE0YMrhDLC3rWs3CF3w4wuTKqJCv
-	 2rNiahUyx3JqfYTs0WoK7QQ/QCXGs32W/7m1IsYhw2gMEEUmpIdsYsBEGJIuM8l0bmintPV2DGvF
-	 uIKyyVke0Ca+u+SHbf99bmiVsE4vcxbLfKmJHYu7LZR6cBNIY+vaQeu9e255nI3IjWQ+mshKX++I
-	 mZiMcG0utsiss3pWhP+O57YNMvvJtHbfRgdX3CL1RQbuI31ZmKIvgsDHXX4KfbeCwKQV1l8amfWT
-	 RFMgnNad2oJTuEmUWjLAgpBphqK0imAcMpY3XJl+0gad2taKcW2iG0AftJvabFP6MWV9/vvndcgo
-	 l9ejzYCYILDPFHqX71dov8u/9tBaFafqituILghNMfTfmA8adMAsA+XBkN6kpY6KXPbQ5kcgcG3Z
-	 dTrxohL/MkSbqcRyX5Lha725PNdYdSvgQTDfJdZ0YnA2qiNTlQ4i4sz2QENkeFHi13NFNhke9GEs
-	 w7CKrvXneE7BxVsWqolhpYdm0XBfK71TNwb6IBHJqoovZdCU9vqWvEYF9Ya2xzdXeIaKKH3agzOr
-	 hZUPpIA4azYtwE5A9VUsQkPgUPKNk/LFhh+6TNq+gyJJzt73zwkYwyaq1w9Josz6S1Mc9DXdMNxz
-	 fJeXg8MEqIGIGiIfLi5vm9FepYMYSCCdTnmRJLHw==
-X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
-Cc: brauner@kernel.org,
-	jack@suse.cz,
-	linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	viro@zeniv.linux.org.uk
-Subject: [PATCH] ext4: avoid infinite loops caused by data conflicts
-Date: Sun,  1 Mar 2026 18:12:47 +0800
-X-OQ-MSGID: <20260301101246.246595-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <699ebd11.a00a0220.21906d.0005.GAE@google.com>
-References: <699ebd11.a00a0220.21906d.0005.GAE@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B3C430BB1
+	for <linux-fsdevel@vger.kernel.org>; Sun,  1 Mar 2026 10:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.222.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772360186; cv=pass; b=eAO4M80dM7tjV8QKQZDTVSpUhS+FpWWZJu3BmTVmlj0c0SkdMnTpkfTX8oy18MDGn+ALLSlQX4me2cJJjtwhwt5reYwzoBVAIPIna3AQPKDZCgol3BLuzKZv1G6aDFKHNURm/P26MvK5bb0xYy7mPMXNeSZOvhDBNQL4D7yYE5Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772360186; c=relaxed/simple;
+	bh=s7rfjnPtFd6SU6xoPH3SYe9hNrVk5+6PWUoUYgGCnIM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KQniZ0UHdc0Yizy9PmPTEGDp2OFhJKPCRjfPV77k/T8NkaKK0CYx4j4zfGA5VcMkTwo+u5cw5fnZth1nOiTaprVbahdfzXNqT7JIe/4JZ3QxORvLoWArORPsJUlqNitaMaFUbYxJ6pFnwY0h2lbZgVbGApa2k7Cxz2NrjD++9pU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N04lOntM; arc=pass smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-948029fb1f2so1043464241.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Mar 2026 02:16:25 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772360184; cv=none;
+        d=google.com; s=arc-20240605;
+        b=JC1UVw9aIlhq6cPRia+YQlrGG0beIUDjv2zmJ/NsYPwyDRTDCxUwZubpfvnAZ8ZsAg
+         leX+GS1eUtLZbYbsVXBuAh5MBb44iD4N174I8lrvWZUHbBENfVfQFLRt2JeWVkWnbLsO
+         ADIgZdvqzhnd67vHP6fLN5IvFEj/hznWuFkPLfKJTqUD7MP1O1dheu8seDSU8xMyn7tS
+         Pzkm89HzJbAGxzkYTyprmG7Dxl8f6Wnj82cpC88NYlYkck1vlqd1aDfnCiu8n3cKzaGM
+         0S2JAL1U1mTkduOYoAhbVqbYycdlNmB1Npcea8qr+PTXwxB4441RYIP8Fbl+Gmoy0NXg
+         NB8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=ZrlN72XdG30IkaSiOSU/cpdfc/g67VmbA5qDRZerWc4=;
+        fh=QmP7FmnHBnfXKJWHkz8FRhPdYzdsDA8OP6XZkpJDshc=;
+        b=gi5rL+Ky+StMmCZ2zouCIvby5ibkqS0WDSLrd6hQTnXUz/YtTaCg5PNJIF2GfxJgUj
+         /joYuSV3IgMN7z60gQdvTcuz8d8Xtg5aEkmh7Wuz4n+e5kJTM424whjT1TmG3YfJ+P7e
+         0pafLgCwk6XOxj+kThjqA4WJWSw1dEBS/7niOtdl4bHMFIaj7VMq6k6Uu9jPJJ+9G0Iy
+         qg/Zw6PkUoOD+jT2f7Z7ngiBcknXACW6318EnVIO+5BrxOOf0BYS615LbG0NToPAM7Ve
+         EWvDaCJm704l9Q6+NNXLfzuxtaMBr33yhUJg/1RlljE45lZXnmcroYspXUWyVXlpkDCi
+         CPGw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772360184; x=1772964984; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZrlN72XdG30IkaSiOSU/cpdfc/g67VmbA5qDRZerWc4=;
+        b=N04lOntMi64Tm+WqmzZhhWbQVrZnkQBqb/MlNznFDsXrPLPhUMz2dw+9bZmRLd62x6
+         gIZip+2v7bDGN3YmJtyk4HJAS4UVN1WG1U0Aqu+faG+/IK+3n9PscrvR3J8Hc2r3L5vD
+         A5uXJoMIZWCHG9gWgha3KPr9hJU5Pwao6gkNx9B+qbzu5kCnHRCJ5NXOFZVE81rWZMuy
+         oNEWxKfvREP7ll/7g5gPcPb1e+5IBkH+hqPqacUdRkaFalxafjYraKIm9CEePams18fe
+         kE2Ybd6TdGJv+3qXBbPDTeW23hLy3ZGb08T1SoziBB2S3B18vq2kSbBKkP1SUMhuR+Hw
+         L1zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772360184; x=1772964984;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ZrlN72XdG30IkaSiOSU/cpdfc/g67VmbA5qDRZerWc4=;
+        b=rBuD/F8VKwySbkErr1Plg+UC4xAuAWmO2Yobtkge3zdMJ0WPtCBezI6Kq1jP4m7CcY
+         xwR470Kxj0QMNQej5lqVxSpEkrfw+hNqwAN7Ba6rv2O5tkmmycrsjOTdAXMYetLgPn1i
+         u36lO2gk78hzby2dU9/byGNOCZZGzuuNSDr0ip3wkwIkeIT0uJMEEPqWP3A0nut2ym3k
+         G1CtKd5c0G28dCCohTjrfR1xpWWaVghfCPnHN+mDQEGCYbDOUO6VHVKWAzr6aYzuihOO
+         lItBol1gVrQAYxZdJOHWZmoPdPfhX6hv9fPSN0ogkwu3dzfG8ALCMNb4wp3oKFAB9zEW
+         3GVQ==
+X-Gm-Message-State: AOJu0YwbGThsnxW1O/ZbNMs70dSyIg60WG7pnVIVrQckAXQwmp3OSdvF
+	YFGsVHBP4Yk72vKjwrR8tIaV4qE8xm2ZQh4uuWCgZFZ1FNbEk5aZKN33jDYKbZF3eT0/G5MNPSC
+	LbDTBKj9CLXRiGwGKtd7qV2lyLko2PfmGBA==
+X-Gm-Gg: ATEYQzxPfMlbR/GZ5hkCHNq2IWW1XSwyN26X8yYg4/MiPs1Oy3E2ZtZFg+V21M1DZP/
+	jwcS1Z3R25wVibIUjWbPFE9hJQ2ZPvHEnKk+s5ua3siiMoeJYg7ktVsqzf/PUo0ZiMi+0Z8+1/7
+	/MwXMk8U+UtzrsApjBRscTpgM6nkotvaZ9zEgbTFnjyykuWATvHNYVHC6GJKqKR7/+/q0xLgOhO
+	2b8A6nwlISPRmuLyZCwQopKTz+Z+FfAGP7ZoMRWSYI5OW5z/qStUVE1Ea/ew769RRP7YlfoEIiX
+	OPp6qrg/e+OgykaAjOd2fvxtbTSx4VkmQAy4yuL2+g==
+X-Received: by 2002:a05:6102:5091:b0:5f7:24dc:3ac3 with SMTP id
+ ada2fe7eead31-5ff322bf4bdmr2863289137.7.1772360184080; Sun, 01 Mar 2026
+ 02:16:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260221145915.81749-1-dorjoychy111@gmail.com>
+In-Reply-To: <20260221145915.81749-1-dorjoychy111@gmail.com>
+From: Dorjoy Chowdhury <dorjoychy111@gmail.com>
+Date: Sun, 1 Mar 2026 16:16:13 +0600
+X-Gm-Features: AaiRm52S_i7uxGvz2GvDZgmu6T0jp37pcUwvZrAaDhnW-l9lgBlZerFtvlbrSME
+Message-ID: <CAFfO_h6Y1QcW7mNGdCuY-_J6zrF_F8aW+Q8O9SvoBbXTxteFjQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/4] OPENAT2_REGULAR flag support in openat2
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org, 
+	gfs2@lists.linux.dev, linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+	v9fs@lists.linux.dev, linux-kselftest@vger.kernel.org, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, jlayton@kernel.org, 
+	chuck.lever@oracle.com, alex.aring@gmail.com, arnd@arndb.de, 
+	adilger@dilger.ca, mjguzik@gmail.com, smfrench@gmail.com, 
+	richard.henderson@linaro.org, mattst88@gmail.com, linmag7@gmail.com, 
+	tsbogend@alpha.franken.de, James.Bottomley@hansenpartnership.com, 
+	deller@gmx.de, davem@davemloft.net, andreas@gaisler.com, idryomov@gmail.com, 
+	amarkuze@redhat.com, slava@dubeyko.com, agruenba@redhat.com, 
+	trondmy@kernel.org, anna@kernel.org, sfrench@samba.org, pc@manguebit.org, 
+	ronniesahlberg@gmail.com, sprasad@microsoft.com, tom@talpey.com, 
+	bharathsm@microsoft.com, shuah@kernel.org, miklos@szeredi.hu, 
+	hansg@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[qq.com,quarantine];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[qq.com:s=s201512];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-78840-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78841-lists,linux-fsdevel=lfdr.de];
-	TO_DN_NONE(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,lists.linux.dev,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,arndb.de,dilger.ca,linaro.org,alpha.franken.de,hansenpartnership.com,gmx.de,davemloft.net,gaisler.com,redhat.com,dubeyko.com,samba.org,manguebit.org,microsoft.com,talpey.com,szeredi.hu];
+	RCPT_COUNT_TWELVE(0.00)[41];
 	MIME_TRACE(0.00)[0:+];
-	FROM_NEQ_ENVFROM(0.00)[eadavis@qq.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_NONE(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[dorjoychy111@gmail.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	DKIM_TRACE(0.00)[qq.com:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FREEMAIL_FROM(0.00)[qq.com];
-	TAGGED_RCPT(0.00)[linux-fsdevel,1659aaaaa8d9d11265d7];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,appspotmail.com:email,syzkaller.appspot.com:url,qq.com:mid,qq.com:dkim,qq.com:email]
-X-Rspamd-Queue-Id: 846511CF19F
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: 155E61CF188
 X-Rspamd-Action: no action
 
-In the execution paths of mkdir and openat, there are two different
-structures, struct ext4_xattr_header and struct ext4_dir_entry_2,
-that both reference the same buffer head.
+Ping...
+Requesting for review on this patch series please.
 
-In the mkdir path, ext4_add_entry() first sets the rec_len member of
-the struct ext4_dir_entry_2 to 2048, and then sets the file_type value
-to 2 in add_dirent_to_buf()->ext4_insert_dentry()->ext4_set_de_type().
+Regards,
+Dorjoy
 
-This causes the h_refcount value in the other struct ext4_xattr_header,
-which references the same buffer head, to be too large in the openat
-path.
-
-The above causes ext4_xattr_block_set() to enter an infinite loop about
-"inserted" and cannot release the inode lock, ultimately leading to the
-143s blocking problem mentioned in [1].
-
-When accessing the ext4_xattr_header structure in xattr, the accessed
-buffer head data is placed after ext4_dir_entry_2 to prevent data
-collisions caused by data overlap.
-
-[1]
-INFO: task syz.0.17:5995 blocked for more than 143 seconds.
-Call Trace:
- inode_lock_nested include/linux/fs.h:1073 [inline]
- __start_dirop fs/namei.c:2923 [inline]
- start_dirop fs/namei.c:2934 [inline]
-
-Reported-by: syzbot+512459401510e2a9a39f@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=1659aaaaa8d9d11265d7
-Tested-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
-Reported-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=512459401510e2a9a39f
-Tested-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/ext4/ext4.h  | 2 ++
- fs/ext4/xattr.c | 2 +-
- fs/ext4/xattr.h | 3 ++-
- 3 files changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 293f698b7042..4b72da4d646f 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -2425,6 +2425,8 @@ struct ext4_dir_entry_2 {
- 	char	name[EXT4_NAME_LEN];	/* File name */
- };
- 
-+#define DIFF_AREA_DE_XH sizeof(struct ext4_dir_entry_2)
-+
- /*
-  * Access the hashes at the end of ext4_dir_entry_2
-  */
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index 7bf9ba19a89d..313c460a93c5 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -2160,7 +2160,7 @@ ext4_xattr_block_set(handle_t *handle, struct inode *inode,
- 				error = -EIO;
- 				goto getblk_failed;
- 			}
--			memcpy(new_bh->b_data, s->base, new_bh->b_size);
-+			memcpy(new_bh->b_data + DIFF_AREA_DE_XH, s->base, new_bh->b_size);
- 			ext4_xattr_block_csum_set(inode, new_bh);
- 			set_buffer_uptodate(new_bh);
- 			unlock_buffer(new_bh);
-diff --git a/fs/ext4/xattr.h b/fs/ext4/xattr.h
-index 1fedf44d4fb6..4a28023c72e8 100644
---- a/fs/ext4/xattr.h
-+++ b/fs/ext4/xattr.h
-@@ -8,6 +8,7 @@
- */
- 
- #include <linux/xattr.h>
-+#include "ext4.h"
- 
- /* Magic value in attribute blocks */
- #define EXT4_XATTR_MAGIC		0xEA020000
-@@ -90,7 +91,7 @@ struct ext4_xattr_entry {
- #define EXT4_XATTR_MIN_LARGE_EA_SIZE(b)					\
- 	((b) - EXT4_XATTR_LEN(3) - sizeof(struct ext4_xattr_header) - 4)
- 
--#define BHDR(bh) ((struct ext4_xattr_header *)((bh)->b_data))
-+#define BHDR(bh) ((struct ext4_xattr_header *)((bh)->b_data + DIFF_AREA_DE_XH))
- #define ENTRY(ptr) ((struct ext4_xattr_entry *)(ptr))
- #define BFIRST(bh) ENTRY(BHDR(bh)+1)
- #define IS_LAST_ENTRY(entry) (*(__u32 *)(entry) == 0)
--- 
-2.43.0
-
+On Sat, Feb 21, 2026 at 8:59=E2=80=AFPM Dorjoy Chowdhury <dorjoychy111@gmai=
+l.com> wrote:
+>
+> Hi,
+>
+> I came upon this "Ability to only open regular files" uapi feature sugges=
+tion
+> from https://uapi-group.org/kernel-features/#ability-to-only-open-regular=
+-files
+> and thought it would be something I could do as a first patch and get to
+> know the kernel code a bit better.
+>
+> I only tested this new flag on my local system (fedora btrfs).
+>
+> Note that I had submitted a v4 previously (that had -EINVAL for the atomi=
+c_open
+> code paths) but did not do a get_maintainers.pl. It didn't get any review=
+ and
+> please ignore that one anyway. In this version, I have tried to properly =
+update
+> the filesystems that provide atomic_open (fs/ceph, fs/nfs, fs/smb, fs/gfs=
+2,
+> fs/fuse, fs/vboxsf, fs/9p) for the new OPENAT2_REGULAR flag. Some of them
+> (fs/fuse, fs/vboxsf, fs/9p) didn't need any changing. As far as I see, mo=
+st of
+> the filesystems do finish_no_open for ~O_CREAT and have file->f_mode |=3D=
+ FMODE_CREATED
+> for the O_CREAT code path which I assume means they always create new fil=
+e which
+> is a regular file. OPENAT2_REGULAR | O_DIRECTORY returns -EINVAL (instead=
+ of working
+> if path is either a directory or regular file) as it was easier to reason=
+ about when
+> making changes in all the filesystems.
+>
+> Changes in v4:
+> - changed O_REGULAR to OPENAT2_REGULAR
+> - OPENAT2_REGULAR does not affect O_PATH
+> - atomic_open codepaths updated to work properly for OPENAT2_REGULAR
+> - commit message includes the uapi-group URL
+> - v3 is at: https://lore.kernel.org/linux-fsdevel/20260127180109.66691-1-=
+dorjoychy111@gmail.com/T/
+>
+> Changes in v3:
+> - included motivation about O_REGULAR flag in commit message e.g., progra=
+ms not wanting to be tricked into opening device nodes
+> - fixed commit message wrongly referencing ENOTREGULAR instead of ENOTREG
+> - fixed the O_REGULAR flag in arch/parisc/include/uapi/asm/fcntl.h from 0=
+60000000 to 0100000000
+> - added 2 commits converting arch/{mips,sparc}/include/uapi/asm/fcntl.h O=
+_* macros from hex to octal
+> - v2 is at: https://lore.kernel.org/linux-fsdevel/20260126154156.55723-1-=
+dorjoychy111@gmail.com/T/
+>
+> Changes in v2:
+> - rename ENOTREGULAR to ENOTREG
+> - define ENOTREG in uapi/asm-generic/errno.h (instead of errno-base.h) an=
+d in arch/*/include/uapi/asm/errno.h files
+> - override O_REGULAR in arch/{alpha,sparc,parisc}/include/uapi/asm/fcntl.=
+h due to clash with include/uapi/asm-generic/fcntl.h
+> - I have kept the kselftest but now that O_REGULAR and ENOTREG can have d=
+ifferent value on different architectures I am not sure if it's right
+> - v1 is at: https://lore.kernel.org/linux-fsdevel/20260125141518.59493-1-=
+dorjoychy111@gmail.com/T/
+>
+> Thanks.
+>
+> Regards,
+> Dorjoy
+>
+> Dorjoy Chowdhury (4):
+>   openat2: new OPENAT2_REGULAR flag support
+>   kselftest/openat2: test for OPENAT2_REGULAR flag
+>   sparc/fcntl.h: convert O_* flag macros from hex to octal
+>   mips/fcntl.h: convert O_* flag macros from hex to octal
+>
+>  arch/alpha/include/uapi/asm/errno.h           |  2 +
+>  arch/alpha/include/uapi/asm/fcntl.h           |  1 +
+>  arch/mips/include/uapi/asm/errno.h            |  2 +
+>  arch/mips/include/uapi/asm/fcntl.h            | 22 +++++------
+>  arch/parisc/include/uapi/asm/errno.h          |  2 +
+>  arch/parisc/include/uapi/asm/fcntl.h          |  1 +
+>  arch/sparc/include/uapi/asm/errno.h           |  2 +
+>  arch/sparc/include/uapi/asm/fcntl.h           | 35 +++++++++---------
+>  fs/ceph/file.c                                |  4 ++
+>  fs/gfs2/inode.c                               |  2 +
+>  fs/namei.c                                    |  4 ++
+>  fs/nfs/dir.c                                  |  4 +-
+>  fs/open.c                                     |  4 +-
+>  fs/smb/client/dir.c                           | 11 +++++-
+>  include/linux/fcntl.h                         |  2 +
+>  include/uapi/asm-generic/errno.h              |  2 +
+>  include/uapi/asm-generic/fcntl.h              |  4 ++
+>  tools/arch/alpha/include/uapi/asm/errno.h     |  2 +
+>  tools/arch/mips/include/uapi/asm/errno.h      |  2 +
+>  tools/arch/parisc/include/uapi/asm/errno.h    |  2 +
+>  tools/arch/sparc/include/uapi/asm/errno.h     |  2 +
+>  tools/include/uapi/asm-generic/errno.h        |  2 +
+>  .../testing/selftests/openat2/openat2_test.c  | 37 ++++++++++++++++++-
+>  23 files changed, 119 insertions(+), 32 deletions(-)
+>
+> --
+> 2.53.0
+>
 
