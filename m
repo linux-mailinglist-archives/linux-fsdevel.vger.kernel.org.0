@@ -1,159 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-78892-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78893-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yBc2Fz2MpWmoDgYAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78892-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:10:21 +0100
+	id 8J9oOSePpWmoDgYAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78893-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:22:47 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0CBF1D9834
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:10:20 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6196E1D9AF0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:22:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 26F9C3006167
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 13:10:20 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id C24B33072FE6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 13:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E7C3CC9FC;
-	Mon,  2 Mar 2026 13:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B9E3E0C77;
+	Mon,  2 Mar 2026 13:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="JKZVwZw/"
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="nKDgCSEM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F393B3C0D
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Mar 2026 13:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.181
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772457015; cv=pass; b=hKP1jgsylNr+uGCe6jJk/CPupW72dNvG9z0nFjAl7eo7zxzJJYla+jUE+y2y31Z9VNBLcpMwf5DzpGBVNS6FHVMVvDErKkkZWx0XyttsI+yPTbLqEv3hXu7TR3KGQd1mvUhMbgpmrDdaDzCiob3MqNrWQUgaCb0mYf/npx7SeUc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772457015; c=relaxed/simple;
-	bh=Ksz8OwQoJjwiki5w9Te5otX/+tgrm32ehBP+y00qL38=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t3Wtl47/HTZ3joNsgB8mfr55G+8cQaClCmTHAGP+aVDoHOQdM2NgQCVQfTbjaUMVOxaVFjvSZmKfGiMdae9muFm4ffJe9k8anBa7tU968MOxFFS1ZCq8cykurzOxOWDUm4V5r5xdKhVTI1kyovo8REPDzv97ncH7D8BnltC/oOQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=JKZVwZw/; arc=pass smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-503347dea84so50929621cf.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2026 05:10:12 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772457012; cv=none;
-        d=google.com; s=arc-20240605;
-        b=DIc4eIHHdbC4H3CqNasSQYWyaBunjsFv51WiMsgrmendItxegRENVrUmWh8wBY4Xxc
-         9IpAx34fyN6RAav9M5PoJLZfKQlDmZiynDATHAH4lGlGZiSx5w/rIrElxLB51fSS95r7
-         1FP+ZPxxlMy8HRngH9/6KS2ZXc4Yg8sIYU+YOhapGIuxeK02uuTghlsZ4KEkhJDUXlpU
-         Ejt7tkVKrQNNxaYzqkBCD7lZDyguiaW9tBjK8c/rRmfn+vsSFbgyu77yW+R4UFmUkHS9
-         NNVri8znSEmaFzx5qPS1tz8J7YaO++ycrhsQm4/TXXIBZftTvI/S4o1VTcyncyXhi8fj
-         n+lQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=yCykOgsZd5+39Ruq/TC9BPanTCyxkc5loRrEIysX2iA=;
-        fh=ulp5+SAB8BflR3ZmWXhNYJyx0dUOvcLxAcxtaRDoto8=;
-        b=D3j3HzOVpMds0AdN0ixhV/eV45hB8fjueJ0MoVlR2kiUSbiGkHnDiCMhiB4qbNjf/A
-         6FQ/MZxQfzRYoz+yYCg1CeWxqTwDAY049jtlJeSan8AxmPrhQK0WXNXmyMB3YwO4Fh+G
-         ypQyLSqGn6rXZO4DqccXg75gCkDYrvdX7nPUahV4WXO2t+c9SZeN3uySyArbEX3M5LGU
-         jlgg0Uq0hb62XyYYZcwv4kyQzuZlodrXKVakNDVdXWyjC1U7gfdZoCaDav1EkPKHHVbo
-         I1ot45XrJZIwiosNOk8EAvkgHp9GFwsCNsCdc/JgIHbm5e/QEP2KqFwSKT9TngnXCaO2
-         IdsQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061591E22E9
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Mar 2026 13:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.186
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772457478; cv=none; b=tTVUcUO3LFpY8DXrYNoYluSXPam9u17+I/AIz/s4GtPqW1SPqem+Mc9SI1nA6JkaP5kDuRAH45XtkARxQgtYgPcyScYeUyUiDwIfGP/BSg+TGij9HZnYgj+IVgZT7qWJFNFhHQipSU9m9d3ysNFRh3HBQGcA/5GZJ0EQ0/EtzPk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772457478; c=relaxed/simple;
+	bh=HvN+5WSDnnaMmBob8vPdPAy1L1OeRTuABSQ4GCZi6gw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rDJlol/BsAG3SADcuToOicibVKug3QSL6zjZWDDj6DpynkyNiW30ug6EGEYqqxPE6YjMOckTp+0iRCMUbm+iUvQdsqUB104Xt7Piw6AXzJ68YudHKpIkj8RVEkBqwU2kxUVR42ukDXhGueyGAw7zvxRRr3ZnsGdQa1+P3gtSmjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=nKDgCSEM; arc=none smtp.client-ip=195.121.94.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
+X-KPN-MessageId: 0fe854ce-163a-11f1-89dd-00505699b430
+Received: from smtp.kpnmail.nl (unknown [10.31.155.8])
+	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
+	id 0fe854ce-163a-11f1-89dd-00505699b430;
+	Mon, 02 Mar 2026 14:16:45 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1772457012; x=1773061812; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yCykOgsZd5+39Ruq/TC9BPanTCyxkc5loRrEIysX2iA=;
-        b=JKZVwZw/oaycI4RDtlWmkoIraHxgx6xHp+jDgFGqxlTvK1zs4TJNnpIPJWEH6+URlk
-         sQz0cf4++43czKupZHZ/UFt+Kwvyg+iy8Xb0fW1xrbaw5AKT1LxBMRHJs0PLXRxDD0Z9
-         uYIwoRdjW7w9OlaySanYHi/rLFBxpoY/fjAK0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772457012; x=1773061812;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yCykOgsZd5+39Ruq/TC9BPanTCyxkc5loRrEIysX2iA=;
-        b=BCSbYZZs+p0vb72cgqvKeeFHRi/5Hvvov6pARGkZZfBx1d/6No5l+9n7QQwbSCV1gD
-         +ap815A2htPU5r20DAeTsnVQyfA5ciplCHwOl4SEW6z1/ZaU7vY/csD51LHo9RU42LEM
-         3ho2iI7RAvM7NrqjdmtXkLqBgNT+mJdrq0AYudBekTbJzafb4DPVy2kfl/LkWd+rsrfP
-         OdzWT6PZnqhCh7UfujUSnvVwS+26hvnFq4QYCvYPvNJmeyJvFlZfBgv9WDVSB7Qa6JUe
-         s4UiUqlPFp0EnXPHg4h8lhvJYz14lOiZtJrIKtU62W2Me7Ae4/hNLBLWTi6OOgB1kkGm
-         gZ7g==
-X-Forwarded-Encrypted: i=1; AJvYcCX73TYAyBzskxPxlXlp2LBWxg5aQtBS1dcEDtI7cJDrqsz9DuLxxDxC0lISyD6CjC96dtZcCKwEX45OuHKe@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd8MpXp/fRZL0mpbOZ+I9b+Me8VqT95I6Kzhv54YEuG/8LwOJy
-	qu+n3I+F84ExXiBwfnY8DaBad1WWSZJ2S/Nf/jmJzQat6EmxrW4HdpCtBhsfD2rdHU80qt2t5zs
-	HGS3XaBmZnV3oHH4bcczQIsUuRkYCIS0FAHn+eLeUeg==
-X-Gm-Gg: ATEYQzzAnC+ti7lcPNqVvTckUvmEXoxAU/ZA6cZ+9VJa8iEFvFZNaZozphQGw0BhyFO
-	351QivtA69dq+81Q6vtYASN9T9CDZBFlGRjazlMbiqhXQg4zY/w8dTCldaMn6V3CpxwEXTENi4D
-	KP/8Bsu5FtAnkbvRKvWyIJ7rgLd/qA8QY0hte1WxrmII90oYqihreEyxYqQ4jT0B7Ed8KBn9lUw
-	pgyraH7LMM8ZIIEWc6PYDZWf0PutC1xeeHIJoxTD+1TM3Lp7EL1n31yiJmXhpJl2C14xHlT+pkI
-	fTgMif1BvQ==
-X-Received: by 2002:a05:622a:4d2:b0:503:42a4:96fb with SMTP id
- d75a77b69052e-507528d6928mr170189501cf.65.1772457011655; Mon, 02 Mar 2026
- 05:10:11 -0800 (PST)
+	d=xs4all.nl; s=xs4all01;
+	h=mime-version:message-id:date:subject:to:from;
+	bh=UXOUq0SPuTwj8yiZauBk+IGzhYE4jhkwANNAtQNGrwo=;
+	b=nKDgCSEMFuPHLhkvzBBa7QoiJn/nK64ml2iiskFgSL5fh+wFZ1trcdNR/IBkZuxJIAVl6fxNyxey5
+	 wXRJL79zB56nl2hMQupfoAqAvFMgDd70PuKIT1suKsUy82J5/Nel9/h+qx4CM7Y6nyK1rhsaB2ZflS
+	 WoMoqT6t9kQuFw6ucKuMkEo42oPdXomyQptkOZBq1Zd9BIfPP3u8dKHraI9n+tyFzJA06YTKnr/IWf
+	 YXRAvcg99vfyyoP6ia+43+ve4a+hclWNF1LgKpapKLLfkcc2WUcIJQJBO0eq6tqm1uJVmevHwzMJ12
+	 rTv0038+U2qg94UZXlEOyyuL2Aq8k4w==
+X-KPN-MID: 33|oaSdtL18s0S3rmYtAKo3wUuP64Wro3UI8fc2nbCgSYkZFJ1PIcvm+PDGrnhJnIq
+ Pe58mfy9QcxWMjNND2NoMh/s8ZHM67GgrW6A4SSxGsvA=
+X-KPN-VerifiedSender: Yes
+X-CMASSUN: 33|6wtsfzs6BSedgfqbgXrjx0lfIjIgBkINRsDDAaq8ZaMu5vBQCwFuS51AkST6mq4
+ FDgpvF0pSnSB6B4VrhqmHKA==
+Received: from daedalus.home (unknown [178.225.116.246])
+	by smtp.xs4all.nl (Halon) with ESMTPSA
+	id 0c049981-163a-11f1-9c00-00505699d6e5;
+	Mon, 02 Mar 2026 14:16:45 +0100 (CET)
+From: Jori Koolstra <jkoolstra@xs4all.nl>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>
+Cc: Jan Kara <jack@suse.cz>,
+	Alexander Aring <alex.aring@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jkoolstra@xs4all.nl
+Subject: [PATCH v2] vfs: add support for empty path to openat2(2)
+Date: Mon,  2 Mar 2026 14:16:50 +0100
+Message-ID: <20260302131650.3259153-1-jkoolstra@xs4all.nl>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260120224449.1847176-1-joannelkoong@gmail.com>
-In-Reply-To: <20260120224449.1847176-1-joannelkoong@gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 2 Mar 2026 14:10:00 +0100
-X-Gm-Features: AaiRm51JDUWRF-Hpjrk-95Lhnfwkfxd17Ra5kmf02jAYPY90Lu2jZUIscLdIW9w
-Message-ID: <CAJfpegvg8R7tiERDa3D=k_jxKGMU5B8i8GBd4SJSqqYC8=hn=Q@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] fuse: clean up offset and page count calculations
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: jefflexu@linux.alibaba.com, luochunsheng@ustc.edu, djwong@kernel.org, 
-	horst@birthelmer.de, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
-	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+X-Spamd-Result: default: False [0.84 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_CONTAINS_FROM(1.00)[];
+	DMARC_POLICY_ALLOW(-0.50)[xs4all.nl,reject];
+	R_MISSING_CHARSET(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[xs4all.nl:s=xs4all01];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org,xs4all.nl];
 	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78892-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78893-lists,linux-fsdevel=lfdr.de];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[xs4all.nl:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	FREEMAIL_FROM(0.00)[xs4all.nl];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[jkoolstra@xs4all.nl,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[szeredi.hu:+];
-	NEURAL_HAM(-0.00)[-0.993];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	RCVD_COUNT_FIVE(0.00)[5];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	NEURAL_HAM(-0.00)[-1.000];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,mail.gmail.com:mid,szeredi.hu:dkim]
-X-Rspamd-Queue-Id: F0CBF1D9834
+	DBL_BLOCKED_OPENRESOLVER(0.00)[xs4all.nl:mid,xs4all.nl:dkim,xs4all.nl:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: 6196E1D9AF0
 X-Rspamd-Action: no action
 
-On Tue, 20 Jan 2026 at 23:51, Joanne Koong <joannelkoong@gmail.com> wrote:
->
-> This patchset aims to simplify the folio parsing logic in fuse_notify_store()
-> and fuse_retrieve() and use standard kernel helper macros for common
-> calculations:
->  * offset_in_folio() for large folio offset calculations
->  * DIV_ROUND_UP() for page count calculations
->  * offset_in_page() for page offset calculations
->
-> The 1st patch (outarg offset and size validation) is needed for the 2nd patch
-> (simplify logic in fuse_notify_store()/fuse_retrieve()) in order to use
-> "loff_t pos" for file position tracking.
->
-> No functional changes intended.
->
-> This patchset is on top of Jingbo's patch in [1].
+To get an operable version of an O_PATH file descriptors, it is possible
+to use openat(fd, ".", O_DIRECTORY) for directories, but other files
+currently require going through open("/proc/<pid>/fd/<nr>") which
+depends on a functioning procfs.
 
-Applied, thanks.
+This patch adds the OPENAT2_EMPTY_PATH flag to openat2(2). If passed
+LOOKUP_EMPTY is set at path resolve time.
 
-Miklos
+Signed-off-by: Jori Koolstra <jkoolstra@xs4all.nl>
+---
+ fs/open.c                    | 9 ++++-----
+ include/linux/fcntl.h        | 5 ++++-
+ include/uapi/linux/openat2.h | 4 ++++
+ 3 files changed, 12 insertions(+), 6 deletions(-)
+
+diff --git a/fs/open.c b/fs/open.c
+index 91f1139591ab..4f0a76dc8993 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1160,7 +1160,7 @@ struct file *kernel_file_open(const struct path *path, int flags,
+ EXPORT_SYMBOL_GPL(kernel_file_open);
+ 
+ #define WILL_CREATE(flags)	(flags & (O_CREAT | __O_TMPFILE))
+-#define O_PATH_FLAGS		(O_DIRECTORY | O_NOFOLLOW | O_PATH | O_CLOEXEC)
++#define O_PATH_FLAGS		(O_DIRECTORY | O_NOFOLLOW | O_PATH | O_CLOEXEC | OPENAT2_EMPTY_PATH)
+ 
+ inline struct open_how build_open_how(int flags, umode_t mode)
+ {
+@@ -1185,9 +1185,6 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
+ 	int lookup_flags = 0;
+ 	int acc_mode = ACC_MODE(flags);
+ 
+-	BUILD_BUG_ON_MSG(upper_32_bits(VALID_OPEN_FLAGS),
+-			 "struct open_flags doesn't yet handle flags > 32 bits");
+-
+ 	/*
+ 	 * Strip flags that aren't relevant in determining struct open_flags.
+ 	 */
+@@ -1281,6 +1278,8 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
+ 		lookup_flags |= LOOKUP_DIRECTORY;
+ 	if (!(flags & O_NOFOLLOW))
+ 		lookup_flags |= LOOKUP_FOLLOW;
++	if (flags & OPENAT2_EMPTY_PATH)
++		lookup_flags |= LOOKUP_EMPTY;
+ 
+ 	if (how->resolve & RESOLVE_NO_XDEV)
+ 		lookup_flags |= LOOKUP_NO_XDEV;
+@@ -1362,7 +1361,7 @@ static int do_sys_openat2(int dfd, const char __user *filename,
+ 	if (unlikely(err))
+ 		return err;
+ 
+-	CLASS(filename, name)(filename);
++	CLASS(filename_flags, name)(filename, op.lookup_flags);
+ 	return FD_ADD(how->flags, do_file_open(dfd, name, &op));
+ }
+ 
+diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
+index a332e79b3207..d1bb87ff70e3 100644
+--- a/include/linux/fcntl.h
++++ b/include/linux/fcntl.h
+@@ -7,10 +7,13 @@
+ 
+ /* List of all valid flags for the open/openat flags argument: */
+ #define VALID_OPEN_FLAGS \
++	 /* lower 32-bit flags */ \
+ 	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC | \
+ 	 O_APPEND | O_NDELAY | O_NONBLOCK | __O_SYNC | O_DSYNC | \
+ 	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
+-	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
++	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | \
++	 /* upper 32-bit flags (openat2(2) only) */ \
++	 OPENAT2_EMPTY_PATH)
+ 
+ /* List of all valid flags for the how->resolve argument: */
+ #define VALID_RESOLVE_FLAGS \
+diff --git a/include/uapi/linux/openat2.h b/include/uapi/linux/openat2.h
+index a5feb7604948..c34f32e6fa96 100644
+--- a/include/uapi/linux/openat2.h
++++ b/include/uapi/linux/openat2.h
+@@ -40,4 +40,8 @@ struct open_how {
+ 					return -EAGAIN if that's not
+ 					possible. */
+ 
++/* openat2(2) exclusive flags are defined in the upper 32 bits of
++   open_how->flags  */
++#define OPENAT2_EMPTY_PATH	0x100000000 /* (1ULL << 32) */
++
+ #endif /* _UAPI_LINUX_OPENAT2_H */
+-- 
+2.53.0
+
 
