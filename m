@@ -1,156 +1,258 @@
-Return-Path: <linux-fsdevel+bounces-78890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id sAa6DO2JpWmWDQYAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:00:29 +0100
+	id qCz/EneLpWk4DgYAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:07:03 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A941D956F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:00:28 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563561D9773
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:07:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 09965308942A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 12:52:07 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id B8BC0303A8BC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 13:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126553AE6E9;
-	Mon,  2 Mar 2026 12:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F583E0C61;
+	Mon,  2 Mar 2026 13:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="J5bGpV24"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Sa0eumLa";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="z+bGIWNS";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="p/KXgvPs";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FZQ/Ame9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E412C11C6
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Mar 2026 12:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.219.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772455925; cv=pass; b=KXiVRQ/bitAbKihXwAa0NV0WH0pSWHajiINEGjB3RfGhEEK6077F7rC3u8SAALTviL5uH9V8yHbJvzAeRkW7Gxq8WpoklzCiAA1PPCk2elXRi58g7qB0Jm7P3KHnlTogrj4fqTXUGFAL7LbJa8JG0YaiJ5PvwSt9Zwf1VlwCzmg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772455925; c=relaxed/simple;
-	bh=IBb8h3H4mC7JvfxAGxqNwalFIOgvy4nMMnYn8mNtouU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SX3h33HEIjPKUi3sOJrTY7AycNhaBWb1MGmlP8zipuXKgNkj6fAA/7LulnWk5GNPoc+bZeMhFPP6LCuE8SkCqvDdLCTRlPT8CbdXRMbs0ioiovT9J3CkTEoKvJrday/pHoX5WloiVI4W8z/X3exayzNFyrm7I0mbSKs20JNe8JQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=J5bGpV24; arc=pass smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-899f79df682so10917936d6.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2026 04:52:04 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772455923; cv=none;
-        d=google.com; s=arc-20240605;
-        b=fLDeSfVQD/PWvm9xMd/tp1EL5Hno66/+yp7qnZ15ZWJGQhJqaoW64hYqccnxFAVHgd
-         KAQz1OrynT6qaLE8Lk94CDs/bT2Y7FGDi/jkIw1FZi97pXFmbsipGlzyOoas4AD+lE0w
-         loELD3C9YJtgyNvxZGVAbu0MpLfLX2OP9GjYZfXz03aQcDRImNnqiTZKUbTKcbyEqTTq
-         mXtZ1f2bjTTf/icHDVeQ71NcSKWN3N7qc+BaKK1igzmAcJ4errEpl9+9UhI7gX5ix7e9
-         g6Gwj74Yz+Nc93ORUUpD78nyqV+TTVqo0ALsVcYPCbmXw1fziag9y8fT3R7eSM64I+/z
-         5neQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=IBb8h3H4mC7JvfxAGxqNwalFIOgvy4nMMnYn8mNtouU=;
-        fh=E4IDKGZmfKFczg/ARax7wWwbE7y3Td1r1OZ6LSWqiwc=;
-        b=JHwKdl4lT83Px1pEZy2yAJn4uUdy7V/RbVpLXeqtjCiJT3HFrG/L9NFbjqmmW2f1/v
-         GiDVu4JHNwhEuuxjqmHxAXu6SEwYUZQOblXZnwYU3NCdmPYtGg7dh0Cadjp1BqggSD/1
-         1S+FmHyYhOYYQ9PgAKIkBvxUJdcqVbRuKJTWVEd4UMy7ZjJ1IZCbxyg3rN3NjGmH9a1D
-         npFKYNoTgDUhRickbWqdmLrN+V7PcAXATe4P4K8t1kYYptDXe91E2FE/LSH0huTmsECS
-         /lbQKGOKRj3rt2EuwcCiuLN9EAVMJ6X+GxUmxfCSkqybP/ajdJ1twIXWk4nV93mUFybo
-         CD9Q==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1772455923; x=1773060723; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IBb8h3H4mC7JvfxAGxqNwalFIOgvy4nMMnYn8mNtouU=;
-        b=J5bGpV24U6r+ap+XL+LO6Z+Rygw3KA1y4RUamxMuGtaex70cWRrIkTjwPWgOdduTlX
-         5fq9bI7/e/Y0vQ1wBvt69TlTFVo8Do3TEQ9VMtvekHGxLwfJqeJ3DAS67eKmxDPTq+8k
-         y6oSPwZLgnUTRB3yURCf1QuV7rGg0J/OuEDNw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772455923; x=1773060723;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IBb8h3H4mC7JvfxAGxqNwalFIOgvy4nMMnYn8mNtouU=;
-        b=WiFkppSAIwlyaxVb98w9SmSq3LgYUidrioGwESjCX8DujNnutVAQwwFPce66jedMSP
-         Kg6SpeEP8BDLgDzUOCpI3l7UZ5fluz0dyD+KhB996IfLjgYNJ259mM2FB4JBlc6Vi/+g
-         I1zPH/p2zWLDfKOT+8D+u3YdIc0pVDlhNDXE1DJ8DLC+l+5pUPxFtwyLEcifHEdn0NsK
-         XQiDy/Hif8qo8hy0zXJLm8ND5zWswPyAD4H+NCSo6KfXBYUuhxur4rqZbAPe1EMdDNhm
-         pfLeNx3YuTwSyvoCBehF6nYoFbaUl1Qdp9pZBmZgSRqt6sw22Iiz9RiwDVskjfQoUsl7
-         m8VA==
-X-Gm-Message-State: AOJu0YyzlwygNCuEbCkkyj2xXnSw7nhgT89nrT5495q2FUswvkKAeJJO
-	KNTM8T8iXuPrboixdEOFBexnsmOYEphpQ1utPbU92W1RFDSJQgRRY45FH1rIa3Z3BDiLOGKo49T
-	PD6+hrG4YXxOKU9PnKBM08xVxY38lJ8KYlN7V7w219Q==
-X-Gm-Gg: ATEYQzzrL+1J/0QIQSFOYULAY8FMwfLAEiKLU3N0fK9Np2PQfgpYQuMzBxGXivrgS4d
-	1+15vK7tyOVsD96R9CyllyrP42jR3jLnbFPAAkGUnC87HWRjnlcDCny5gAa+MclXMRmzQGTDQEv
-	WmAxO5h3gNEJ76fExmQlP6s7mSlp1aKr25wacEUzSACozLaFPwigwZ7E0dAxZatLsXP4R+hSzwk
-	GQ+4wS3+atxajXURlsYwQuZTlfj6kYPfSGXdOijQPTfm1qAnJvVne2m27LWCnHVMnA09GWx9OSZ
-	r0iuzQIDyQ==
-X-Received: by 2002:ac8:5801:0:b0:502:9b85:a609 with SMTP id
- d75a77b69052e-507528d6a97mr146117621cf.30.1772455923205; Mon, 02 Mar 2026
- 04:52:03 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BED336495A
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Mar 2026 13:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772456500; cv=none; b=gdMFV3er2vaR+6Jwm677xqUjQkQy9Lseg1zv1hhATAOsscSsJFXcz0+/vmDaOt1Q7+H7OAyORln54cNuhaBeN/ACdVfxapPK6fR7rjvtXMmWvBDXABe1JpQXTz6t83XYkwEiIA+pOS3QXdqH1NC3CKvDD2zMzrDqeVPFBdu02pI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772456500; c=relaxed/simple;
+	bh=xGwSV26LdCjiNLhVbbZlN+97mEotcPLH1qgtIlOwu0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L/OeIsCLo0+xB6koFkv90UTJH7Sbv3inR+X3Hpo4jvpOoU15A1fyR1sQL6b+wf1y2iAmPwmdZ9k7hFl1CjwEljU6zuluRIPbMnfCEBi/DE4i0OYftZnKyQrqRAdwhb+rOyYIRMF/Pe8sobLQZzxonAMrIC7cK6pRCt6PYw1NiFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Sa0eumLa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=z+bGIWNS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=p/KXgvPs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FZQ/Ame9; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6063C3E71B;
+	Mon,  2 Mar 2026 13:01:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1772456496; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=veDmyBVTWr5b7pSCd1QFkoCpBzq0+j/LESeohDLDHy4=;
+	b=Sa0eumLaJeBR5mLZ4afeMWYmxWUZ6PTmIRcmrOKazeUGqxa04Q/t4KzNbFe0KjEkEMXpeP
+	uI7Sg6KXmaiOhIibv+t2aAtdNoVOy83Q1yyC11cBTjlwYeia5UBVc9TDwAe6sUfMQGGkYg
+	yUqoGmTsBwov3Ok/hINs5z3oLRZ7W7g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1772456496;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=veDmyBVTWr5b7pSCd1QFkoCpBzq0+j/LESeohDLDHy4=;
+	b=z+bGIWNS5lIoqQ0qevO80196eirz12+NtcwLvBCs+UxoQP/oPfA7u0XGw+J8imhf8JkPz+
+	UPH3jDps4cWugaBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1772456493; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=veDmyBVTWr5b7pSCd1QFkoCpBzq0+j/LESeohDLDHy4=;
+	b=p/KXgvPsHgJIEhyAMxziR3IRqhbHmjwtiH7FzJl8dL1oi9h6a0uLiIc2SAGxu2FZWKnfsy
+	kergXLW8zoQTnbVxpU6IYQ+p+Q1r5V7oJriXSg1NkC9A0mK3PRyrcr+mYZPiQb5nJ4KXge
+	THPtqbFlnpLHGOZenjPFW4xS6BQqyBE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1772456493;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=veDmyBVTWr5b7pSCd1QFkoCpBzq0+j/LESeohDLDHy4=;
+	b=FZQ/Ame9DtN+xIy8pjv/131WN/5jM2thsSUOpDdpSGP90eAyITMLJeEWd64z9Lr+p6SXfo
+	Zy+5dJt2aGg+hqDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 560513EA69;
+	Mon,  2 Mar 2026 13:01:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id dGT4FC2KpWkiWwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 02 Mar 2026 13:01:33 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 0D2E1A0A0B; Mon,  2 Mar 2026 14:01:33 +0100 (CET)
+Date: Mon, 2 Mar 2026 14:01:33 +0100
+From: Jan Kara <jack@suse.cz>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com, 
+	brauner@kernel.org, jack@suse.cz, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] ext4: avoid infinite loops caused by data conflicts
+Message-ID: <4x3xixojbclwq45cpitmylbhis4ya4g3sugtnmj2yzv6avngqb@5xkwu6l467rm>
+References: <699ebd11.a00a0220.21906d.0005.GAE@google.com>
+ <tencent_4C5966F83C65375A97D236684A6C75237609@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260111-fuse_try_move_folio-check-large-folio-v1-1-04921ecf466f@ddn.com>
-In-Reply-To: <20260111-fuse_try_move_folio-check-large-folio-v1-1-04921ecf466f@ddn.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 2 Mar 2026 13:51:52 +0100
-X-Gm-Features: AaiRm53cf4qEObJN3O6WPl1Q0g2YyJCuNaf5Tt_XEdcgghEoaed5e10RMcoumaE
-Message-ID: <CAJfpegutV_jsLAMo8Jnr=GYsYg0b_A9Z1MkgeMZYua0r-XnY-A@mail.gmail.com>
-Subject: Re: [PATCH] fuse: Check for large folio with SPLICE_F_MOVE
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: linux-fsdevel@vger.kernel.org, stable@vger.kernel.org, 
-	Horst Birthelmer <hbirthelmer@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_4C5966F83C65375A97D236684A6C75237609@qq.com>
+X-Spam-Flag: NO
+X-Spam-Score: -2.30
+X-Spam-Level: 
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
-	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+X-Spamd-Result: default: False [0.34 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78890-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-78891-lists,linux-fsdevel=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,appspotmail.com:email,qq.com:email,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,suse.cz:dkim,suse.com:email];
+	DMARC_NA(0.00)[suse.cz];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[szeredi.hu:+];
+	FREEMAIL_TO(0.00)[qq.com];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[4];
-	NEURAL_HAM(-0.00)[-0.999];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-0.998];
+	TAGGED_RCPT(0.00)[linux-fsdevel,1659aaaaa8d9d11265d7];
+	RCPT_COUNT_SEVEN(0.00)[9];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[szeredi.hu:dkim,ddn.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: 79A941D956F
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_SEVEN(0.00)[7]
+X-Rspamd-Queue-Id: 563561D9773
 X-Rspamd-Action: no action
 
-On Sun, 11 Jan 2026 at 12:48, Bernd Schubert <bschubert@ddn.com> wrote:
->
-> xfstest generic/074 and generic/075 complain result in kernel
-> warning messages / page dumps.
-> This is easily reproducible (on 6.19) with
-> CONFIG_TRANSPARENT_HUGEPAGE_SHMEM_HUGE_ALWAYS=y
-> CONFIG_TRANSPARENT_HUGEPAGE_TMPFS_HUGE_ALWAYS=y
->
-> This just adds a test for large folios fuse_try_move_folio
-> with the same page copy fallback, but to avoid the warnings
-> from fuse_check_folio().
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> Signed-off-by: Horst Birthelmer <hbirthelmer@ddn.com>
+On Sun 01-03-26 18:12:47, Edward Adam Davis wrote:
+> In the execution paths of mkdir and openat, there are two different
+> structures, struct ext4_xattr_header and struct ext4_dir_entry_2,
+> that both reference the same buffer head.
+> 
+> In the mkdir path, ext4_add_entry() first sets the rec_len member of
+> the struct ext4_dir_entry_2 to 2048, and then sets the file_type value
+> to 2 in add_dirent_to_buf()->ext4_insert_dentry()->ext4_set_de_type().
 
-Applied, thanks.
+If I understand it right, the filesystem is corrupted so that directory
+block of some directory is also pointed to as xattr block of some inode.
+The right question to investigate here is why the block passed validation
+as both xattr block and directory block - that needs explanation. Likely
+metadata checksums were disabled and with some effort we could then create
+a block that will be both valid directory block and valid xattr block. If
+that is indeed the case, this is game over and we can't fix this in ext4
+(the kernel just doesn't have enough resources to validate against such
+cases) - enable metadata checksums if you need to protect against such
+corruptions.
 
-Miklos
+Your attempt at a "fix" changes the on disk filesystem format. I don't
+think you've put too much thought into that, did you?
+
+								Honza
+
+> This causes the h_refcount value in the other struct ext4_xattr_header,
+> which references the same buffer head, to be too large in the openat
+> path.
+> 
+> The above causes ext4_xattr_block_set() to enter an infinite loop about
+> "inserted" and cannot release the inode lock, ultimately leading to the
+> 143s blocking problem mentioned in [1].
+> 
+> When accessing the ext4_xattr_header structure in xattr, the accessed
+> buffer head data is placed after ext4_dir_entry_2 to prevent data
+> collisions caused by data overlap.
+> 
+> [1]
+> INFO: task syz.0.17:5995 blocked for more than 143 seconds.
+> Call Trace:
+>  inode_lock_nested include/linux/fs.h:1073 [inline]
+>  __start_dirop fs/namei.c:2923 [inline]
+>  start_dirop fs/namei.c:2934 [inline]
+> 
+> Reported-by: syzbot+512459401510e2a9a39f@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=1659aaaaa8d9d11265d7
+> Tested-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
+> Reported-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=512459401510e2a9a39f
+> Tested-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> ---
+>  fs/ext4/ext4.h  | 2 ++
+>  fs/ext4/xattr.c | 2 +-
+>  fs/ext4/xattr.h | 3 ++-
+>  3 files changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 293f698b7042..4b72da4d646f 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -2425,6 +2425,8 @@ struct ext4_dir_entry_2 {
+>  	char	name[EXT4_NAME_LEN];	/* File name */
+>  };
+>  
+> +#define DIFF_AREA_DE_XH sizeof(struct ext4_dir_entry_2)
+> +
+>  /*
+>   * Access the hashes at the end of ext4_dir_entry_2
+>   */
+> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+> index 7bf9ba19a89d..313c460a93c5 100644
+> --- a/fs/ext4/xattr.c
+> +++ b/fs/ext4/xattr.c
+> @@ -2160,7 +2160,7 @@ ext4_xattr_block_set(handle_t *handle, struct inode *inode,
+>  				error = -EIO;
+>  				goto getblk_failed;
+>  			}
+> -			memcpy(new_bh->b_data, s->base, new_bh->b_size);
+> +			memcpy(new_bh->b_data + DIFF_AREA_DE_XH, s->base, new_bh->b_size);
+>  			ext4_xattr_block_csum_set(inode, new_bh);
+>  			set_buffer_uptodate(new_bh);
+>  			unlock_buffer(new_bh);
+> diff --git a/fs/ext4/xattr.h b/fs/ext4/xattr.h
+> index 1fedf44d4fb6..4a28023c72e8 100644
+> --- a/fs/ext4/xattr.h
+> +++ b/fs/ext4/xattr.h
+> @@ -8,6 +8,7 @@
+>  */
+>  
+>  #include <linux/xattr.h>
+> +#include "ext4.h"
+>  
+>  /* Magic value in attribute blocks */
+>  #define EXT4_XATTR_MAGIC		0xEA020000
+> @@ -90,7 +91,7 @@ struct ext4_xattr_entry {
+>  #define EXT4_XATTR_MIN_LARGE_EA_SIZE(b)					\
+>  	((b) - EXT4_XATTR_LEN(3) - sizeof(struct ext4_xattr_header) - 4)
+>  
+> -#define BHDR(bh) ((struct ext4_xattr_header *)((bh)->b_data))
+> +#define BHDR(bh) ((struct ext4_xattr_header *)((bh)->b_data + DIFF_AREA_DE_XH))
+>  #define ENTRY(ptr) ((struct ext4_xattr_entry *)(ptr))
+>  #define BFIRST(bh) ENTRY(BHDR(bh)+1)
+>  #define IS_LAST_ENTRY(entry) (*(__u32 *)(entry) == 0)
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
