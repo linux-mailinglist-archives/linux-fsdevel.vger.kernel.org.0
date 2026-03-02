@@ -1,315 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-78865-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78866-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aK+iHZ4KpWky0AUAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78865-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 04:57:18 +0100
+	id 2LKeOnwNpWmT0gUAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78866-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 05:09:32 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D88591D2D22
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 04:57:17 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60FC51D2E3A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 05:09:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 9729F3017F83
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 03:57:08 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 96EDF3018740
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 04:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F44F2DCC04;
-	Mon,  2 Mar 2026 03:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB0A277035;
+	Mon,  2 Mar 2026 04:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="jwgdHYRr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hrbCb7Me"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com [209.85.161.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF952DC334
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Mar 2026 03:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7DFA23C4F2;
+	Mon,  2 Mar 2026 04:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772423824; cv=none; b=k5mZEmpoVGFw8VDu52sxjhQmXU1Y9fmvbNIJKAXFcAEnoCquSM4qV7BrQMg7FKfVrwuACz3cj0CmynZ7ETiAJDjtZSb15FnD44hO7FmV/+fjfKebfLVmiOEyNvpf+LE2LgSh/9oHp3at5rIDfXzQz4Fv7bOWpueAQTopoWk5bJg=
+	t=1772424555; cv=none; b=glXzVQB1+ll6nzOUWpbJnl6+CJqwlAIJIo7woVFRiKbcAl57m/+mY0EnE77J21wMfyG+NovoVtaToTOBumKHvNIUtfoGZga6cuPN9ZeR3QDOUaT6ZOfUUQZMJIdGEBMxeuSz8QorECBIdJaEFBvy/Szf8+vWIkuR5ylh9tVM1uY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772423824; c=relaxed/simple;
-	bh=MrAdbzvaNDVVmq5AuxaSVfQlcESLYbLh6FuxlAd7o7E=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=sGFlg49HdSmFOY0j9QXk9RBTRMY505Vi/Wv4NJoJr1qXnW4Uqxdn9950COCWFsTW1pse6BLoIfqfcXNtYMU46ScjBxvWQMC1OAyLfwZTHnbeQs4dALqW9ptLG2UStc6y7KEP67rNFGNDwqDkUSISXuNHHoiQWx20C7RdnB5+vdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-66b47c7a795so50686712eaf.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Mar 2026 19:57:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772423822; x=1773028622;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JmWvfmtgAcDRz4bFImh8rJEfEmq6Cak2/bFtX09VN9Q=;
-        b=jpIaq4dyWhz7JeRVthEHWZJGLGEM5bgXVn4iBrjWqUW7HSwCtXufqIB1pcdFeAoA0r
-         VIn4JCQ4+70SjSal3YtR/XYduQcB8qHFp8paajVo4ybQT4E3tIDl8X0OXInTM6PitRpT
-         ZrSQtWLm/X+hEW5YOQ6iZpTPCH28J9EiirLcilw0n22urX68VxWNolzKORYVGaCxlsdO
-         Igj6XA/q2nD4XVexqB3pCPI2xhUtUVvOwSPTv2DcIpoYqq+BEQJiI29wHz8ZfOgsKqQA
-         qkA4CpVbV5Y7eyGn09jQVwbNzLARty/rn9+4pSYltd+zA1q02W6X0jePV2t+ANgv0toN
-         8t9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXWwSwC4cBwCSaYuTvKltL0TV81C/TU6+4VJInnRboqWmPVESh3SKrSL8KiP+KlikMR0QzFX2oQPx4EfD/k@vger.kernel.org
-X-Gm-Message-State: AOJu0YznjnKgwhBIV4YGjfUjFzVNmtI+51rlBa1YyhPBs/E5w93i5NRs
-	l8PD1HkLeT66738X9E2n2wjMXdrDF0Tzm0jOOW8mtABCDsZh2QM80Ycz0z46vCDA9hgDZDiSdhI
-	9rzbN5ms+ZLD3RIpg1IAWBi+BvZezesymHCxdWvTeCFOevd4PtkEYSNWOZuA=
+	s=arc-20240116; t=1772424555; c=relaxed/simple;
+	bh=RL7YHfo9DlN6erX11ZBVFCufHA/U7iCLg3LKMdHX4LA=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=EkYFaHoA9CBVgp7Qp3VmfoSKxypWfwmGdZwCn/oUU1bBTLQf28WLJO9bOc1oYdO5YbsQdKlcY++anf4pR9+RSYa02QA+etiucmFHpaYrMTFe1SyEDYKkUwNLQ/sGomNDei8dYFhcTCuLlAunG0MIR18n2KNyZOCBRNCys9xCf1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=jwgdHYRr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hrbCb7Me; arc=none smtp.client-ip=202.12.124.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfout.stl.internal (Postfix) with ESMTP id B2B2B1D00187;
+	Sun,  1 Mar 2026 23:09:11 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-12.internal (MEProxy); Sun, 01 Mar 2026 23:09:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm1; t=
+	1772424551; x=1772510951; bh=xdPM9Ho77dh5HWd18OeTmi5IVBzLIHu1iNH
+	8LvaFcAg=; b=jwgdHYRrfQSaRj5Ikn7XXxeFhosDsAMqF/FmnKcRRKkg+mi4ptg
+	ifPg0qK7rH2l2jVLJxVE4MYik22w/BruwcQ9QguHTWyMbL2+sSZRDQGAA62vag7P
+	Nxx6R3oMlWzvfzBHKxnNbmlvy3ijWnc0V32wv2nMSK+zSWvNS6O7/yoa6T7XEgB3
+	wXpUfObUIJDO0oxtU6w9a4LKuOe/WfgRutEZqhBIyW4vNDT5ujcaqSdDZszuwCXB
+	yksjsoOKRPu7QXIJbkzu9NsO/j8osBflj8buJsRRiF5knUo/yuzbbrXViKiKbBSd
+	o1AYFSGwbFlSexZzoXVBN4pE23Hu7rjK90w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1772424551; x=
+	1772510951; bh=xdPM9Ho77dh5HWd18OeTmi5IVBzLIHu1iNH8LvaFcAg=; b=h
+	rbCb7MeT51nKiLff/BxLJouP7U3ydtmgkFI2J0Y5UqnBlnMBfiUAlh/rotdaRopj
+	X93+ZuVxQMR9k1r6mgT+DQXBJHhqun1OFl3OI+EA9nAcPANm97vUAcikqMDih+/X
+	b4I4aAZexFRw+qqlF6axkpBQormXyeL2RDz/c7ikJ9G4MLvbq8h50ubbXVJhTBIS
+	j8LnVkiGrYeu1k4uoeb8Ou9DlIbwsoQcQOkvj1IWJVIDc4n5fYHsTxKJ/ra/b1Si
+	Me99qrAzKD+2QXbrzzAuQBGHp0vCC8hLq0DgXA2mk5UdL0V64IA28p1RR1neICBl
+	1W2jnJXMi0PqWCQ1WW+UQ==
+X-ME-Sender: <xms:Zw2laUXtx87Ec_EYOzof9RplFox5VvQGLATmW55jwJYoFBeg_D4MzQ>
+    <xme:Zw2laaJBlm5YcyYwXENs8qAcyHMZLQySaZMpNh5buWs4VtF7em9eKYQK8vzK9oD-j
+    y_MRU0WB2l-vtBhn3sYog0j_TTbfLc9E0bpdu43eTzV0Fc0gg>
+X-ME-Received: <xmr:Zw2laXoU1FgOObyiNQb7dztklqAzbekWwmQZGypPlttrslnI7vDQ1fv9Z_FAYfkiAk_eCezD__jyaxiGBPU_BwPqkMo4JyMBQ7K3Hcd_WZam>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvheeiieejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtkeertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epvdfhgfehkeekiedtleefhefhkeevvdegfffhgfduffeiveelffehlefhfeehveetnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehtohhmsehtrghlphgvhidrtghomhdprhgtphhtthhopehjrg
+    gtkhesshhushgvrdgtiidprhgtphhtthhopehjrggtkhesshhushgvrdgtohhmpdhrtghp
+    thhtohepohhkohhrnhhivghvsehrvgguhhgrthdrtghomhdprhgtphhtthhopegurghird
+    hnghhosehorhgrtghlvgdrtghomhdprhgtphhtthhopegthhhutghkrdhlvghvvghrseho
+    rhgrtghlvgdrtghomhdprhgtphhtthhopehjlhgrhihtohhnsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:Zw2laZwlKTSO1r6zJAWUt85cyqlmbZ78zAiSl_xFMTinilyP2jB5KA>
+    <xmx:Zw2laTs5uOpt2mpaDvQ2hUxoPr_5XZYvhywERIASc3E8jyD2Vk6hnQ>
+    <xmx:Zw2laa3eqbLISs5Ww8YezMWTKOTQCEEhDSrmx54FnhLCG-8R_npI9A>
+    <xmx:Zw2laTBfz3rpgopvxw4iDNEA-WiPx-XA0Vjq5fDy1pXF8a19XS8k4g>
+    <xmx:Zw2laadawXE9PF8Pj_DcFFEkKMaOG9ft98CQ7KuR-Xt5U7Fiwin66dMn>
+Feedback-ID: i9d664b8f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 1 Mar 2026 23:09:07 -0500 (EST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:418e:b0:67a:61f:646b with SMTP id
- 006d021491bc7-67a061f67bfmr3305124eaf.74.1772423821722; Sun, 01 Mar 2026
- 19:57:01 -0800 (PST)
-Date: Sun, 01 Mar 2026 19:57:01 -0800
-In-Reply-To: <20260302034102.3145719-1-wangqing7171@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69a50a8d.050a0220.3a55be.006f.GAE@google.com>
-Subject: Re: [syzbot] [mm?] [f2fs?] [exfat?] memory leak in __kfree_rcu_sheaf
-From: syzbot <syzbot+cae7809e9dc1459e4e63@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, chao@kernel.org, jaegeuk@kernel.org, 
-	jannh@google.com, liam.howlett@oracle.com, linkinjeon@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
-	pfalcato@suse.de, sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, 
-	vbabka@suse.cz, wangqing7171@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+From: NeilBrown <neilb@ownmail.net>
+To: "Chuck Lever" <cel@kernel.org>
+Cc: "Amir Goldstein" <amir73il@gmail.com>, "Jan Kara" <jack@suse.cz>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.com>,
+ "Jeff Layton" <jlayton@kernel.org>, "Olga Kornievskaia" <okorniev@redhat.com>,
+ "Dai Ngo" <dai.ngo@oracle.com>, "Tom Talpey" <tom@talpey.com>,
+ linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ "Chuck Lever" <chuck.lever@oracle.com>
+Subject: Re: [PATCH v3 1/3] fs: add umount notifier chain for filesystem
+ unmount notification
+In-reply-to: <07a2af61-6737-4e47-ad69-652af18eb47b@app.fastmail.com>
+References: <20260224163908.44060-1-cel@kernel.org>,
+ <20260224163908.44060-2-cel@kernel.org>,
+ <20260226-alimente-kunst-fb9eae636deb@brauner>,
+ <CAOQ4uxhEpf1p3agEF7_HBrhUeKz1Fb_yKAQ0Pjo0zztTJfMoXA@mail.gmail.com>,
+ <1165a90b-acbf-4c0d-a7e3-3972eba0d35a@kernel.org>,
+ <jxyalrg3a2yjtjfmdylncg7fz63jstbq6pwhhqlaaxju5sk72f@55lb7mfucc5i>,
+ <3cff098e-74a8-4111-babb-9c13c7ba2344@kernel.org>,
+ <CAOQ4uxiX5anNeZge9=uzw8Dkbad3bMBk5Ana5S94t9VfKNFO5g@mail.gmail.com>,
+ <d7f2562a-7d32-41d5-a02e-904aa4203ed3@app.fastmail.com>,
+ <CAOQ4uxiO+NCjhBme=YWCfnVyhJ=Zcg4zmnfoRspJab3n5waSCA@mail.gmail.com>,
+ <07a2af61-6737-4e47-ad69-652af18eb47b@app.fastmail.com>
+Date: Mon, 02 Mar 2026 15:09:03 +1100
+Message-id: <177242454307.7472.11164903103911826962@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.36 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=2c6ad6fefffa76b1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[ownmail.net,none];
+	R_DKIM_ALLOW(-0.20)[ownmail.net:s=fm1,messagingengine.com:s=fm1];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
-	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78865-lists,linux-fsdevel=lfdr.de,cae7809e9dc1459e4e63];
+	TAGGED_FROM(0.00)[bounces-78866-lists,linux-fsdevel=lfdr.de];
+	REPLYTO_DN_EQ_FROM_DN(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[linux-foundation.org,kernel.org,google.com,oracle.com,lists.sourceforge.net,vger.kernel.org,kvack.org,suse.de,samsung.com,googlegroups.com,suse.cz,gmail.com];
-	MISSING_XM_UA(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	TO_DN_NONE(0.00)[];
-	R_DKIM_NA(0.00)[];
-	NEURAL_HAM(-0.00)[-0.346];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,suse.cz,kernel.org,suse.com,redhat.com,oracle.com,talpey.com,vger.kernel.org];
+	FREEMAIL_FROM(0.00)[ownmail.net];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	REPLYTO_DOM_NEQ_FROM_DOM(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	HAS_REPLYTO(0.00)[neil@brown.name];
+	RCVD_COUNT_FIVE(0.00)[6];
+	NEURAL_HAM(-0.00)[-0.999];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[neilb@ownmail.net,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[ownmail.net:+,messagingengine.com:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: D88591D2D22
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[noble.neil.brown.name:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,messagingengine.com:dkim,brown.name:replyto]
+X-Rspamd-Queue-Id: 60FC51D2E3A
 X-Rspamd-Action: no action
 
-Hello,
+On Mon, 02 Mar 2026, Chuck Lever wrote:
+> 
+> On Sun, Mar 1, 2026, at 1:09 PM, Amir Goldstein wrote:
+> > On Sun, Mar 1, 2026 at 6:21 PM Chuck Lever <cel@kernel.org> wrote:
+> >> Perhaps that description nails down too much implementation detail,
+> >> and it might be stale. A broader description is this user story:
+> >>
+> >> "As a system administrator, I'd like to be able to unexport an NFSD
+> >
+> > Doesn't "unexporting" involve communicating to nfsd?
+> > Meaning calling to svc_export_put() to path_put() the
+> > share root path?
+> >
+> >> share that is being accessed by NFSv4 clients, and then unmount it,
+> >> reliably (for example, via automation). Currently the umount step
+> >> hangs if there are still outstanding delegations granted to the NFSv4
+> >> clients."
+> >
+> > Can't svc_export_put() be the trigger for nfsd to release all resources
+> > associated with this share?
+> 
+> Currently unexport does not revoke NFSv4 state. So, that would
+> be a user-visible behavior change. I suggested that approach a
+> few months ago to linux-nfs@ and there was push-back.
+> 
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-memory leak in __pcs_replace_empty_main
+Could we add a "-F" or similar flag to "exportfs -u" which implements the
+desired semantic?  i.e.  asking nfsd to release all locks and close all
+state on the filesystem.
 
-BUG: memory leak
-unreferenced object 0xffff88810005fa00 (size 512):
-  comm "swapper/0", pid 0, jiffies 4294937296
-  hex dump (first 32 bytes):
-    00 2e c5 05 81 88 ff ff 00 a2 96 0a 81 88 ff ff  ................
-    00 12 04 00 81 88 ff ff 3c 00 00 00 00 00 00 00  ........<.......
-  backtrace (crc ee49fed0):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4520 [inline]
-    slab_alloc_node mm/slub.c:4844 [inline]
-    __do_kmalloc_node mm/slub.c:5237 [inline]
-    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5250
-    kmalloc_noprof include/linux/slab.h:954 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
-    alloc_empty_sheaf mm/slub.c:2786 [inline]
-    alloc_full_sheaf mm/slub.c:2834 [inline]
-    __pcs_replace_empty_main+0x1e4/0x260 mm/slub.c:4602
-    alloc_from_pcs mm/slub.c:4695 [inline]
-    slab_alloc_node mm/slub.c:4829 [inline]
-    __kmalloc_cache_noprof+0x3ac/0x480 mm/slub.c:5353
-    kmalloc_noprof include/linux/slab.h:950 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    __irq_domain_alloc_fwnode+0x37/0x140 kernel/irq/irqdomain.c:95
-    irq_domain_alloc_named_fwnode include/linux/irqdomain.h:271 [inline]
-    arch_early_irq_init+0x1c/0x70 arch/x86/kernel/apic/vector.c:803
-    start_kernel+0x931/0xb80 init/main.c:1114
-    x86_64_start_reservations+0x24/0x30 arch/x86/kernel/head64.c:310
-    x86_64_start_kernel+0xce/0xd0 arch/x86/kernel/head64.c:291
-    common_startup_64+0x13e/0x148
-
-BUG: memory leak
-unreferenced object 0xffff8881008f8c00 (size 512):
-  comm "kthreadd", pid 2, jiffies 4294937339
-  hex dump (first 32 bytes):
-    00 d6 04 00 81 88 ff ff 00 92 96 0a 81 88 ff ff  ................
-    00 12 04 00 81 88 ff ff 3c 00 00 00 00 00 00 00  ........<.......
-  backtrace (crc f2ef5290):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4520 [inline]
-    slab_alloc_node mm/slub.c:4844 [inline]
-    __do_kmalloc_node mm/slub.c:5237 [inline]
-    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5250
-    kmalloc_noprof include/linux/slab.h:954 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
-    alloc_empty_sheaf mm/slub.c:2786 [inline]
-    alloc_full_sheaf mm/slub.c:2834 [inline]
-    __pcs_replace_empty_main+0x1e4/0x260 mm/slub.c:4602
-    alloc_from_pcs mm/slub.c:4695 [inline]
-    slab_alloc_node mm/slub.c:4829 [inline]
-    __kmalloc_cache_node_noprof+0x3ef/0x4e0 mm/slub.c:5366
-    kmalloc_node_noprof include/linux/slab.h:1077 [inline]
-    __get_vm_area_node+0xc6/0x1d0 mm/vmalloc.c:3221
-    __vmalloc_node_range_noprof+0x1d3/0xe50 mm/vmalloc.c:4024
-    __vmalloc_node_noprof+0x71/0x90 mm/vmalloc.c:4124
-    alloc_thread_stack_node kernel/fork.c:355 [inline]
-    dup_task_struct kernel/fork.c:924 [inline]
-    copy_process+0x3e5/0x28c0 kernel/fork.c:2050
-    kernel_clone+0xac/0x6e0 kernel/fork.c:2654
-    kernel_thread+0x80/0xb0 kernel/fork.c:2715
-    create_kthread kernel/kthread.c:490 [inline]
-    kthreadd+0x186/0x250 kernel/kthread.c:848
-    ret_from_fork+0x23c/0x4b0 arch/x86/kernel/process.c:158
-    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-BUG: memory leak
-unreferenced object 0xffff888105c53200 (size 512):
-  comm "kworker/1:0", pid 23, jiffies 4294937917
-  hex dump (first 32 bytes):
-    00 a2 96 0a 81 88 ff ff 00 d4 04 00 81 88 ff ff  ................
-    00 12 04 00 81 88 ff ff 3c 00 00 00 00 00 00 00  ........<.......
-  backtrace (crc d24dd055):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4520 [inline]
-    slab_alloc_node mm/slub.c:4844 [inline]
-    __do_kmalloc_node mm/slub.c:5237 [inline]
-    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5250
-    kmalloc_noprof include/linux/slab.h:954 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
-    alloc_empty_sheaf mm/slub.c:2786 [inline]
-    __pcs_replace_full_main+0xe9/0x2c0 mm/slub.c:5700
-    free_to_pcs mm/slub.c:5753 [inline]
-    slab_free mm/slub.c:6154 [inline]
-    kfree+0x352/0x390 mm/slub.c:6467
-    vfree.part.0+0x1d5/0x4d0 mm/vmalloc.c:3485
-    vfree mm/vmalloc.c:3456 [inline]
-    delayed_vfree_work+0x5b/0x90 mm/vmalloc.c:3398
-    process_one_work+0x26c/0x5d0 kernel/workqueue.c:3275
-    process_scheduled_works kernel/workqueue.c:3358 [inline]
-    worker_thread+0x243/0x490 kernel/workqueue.c:3439
-    kthread+0x14e/0x1a0 kernel/kthread.c:467
-    ret_from_fork+0x23c/0x4b0 arch/x86/kernel/process.c:158
-    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-BUG: memory leak
-unreferenced object 0xffff888105c52e00 (size 512):
-  comm "kworker/u8:5", pid 4440, jiffies 4294937918
-  hex dump (first 32 bytes):
-    c8 2c 04 00 81 88 ff ff 00 fa 05 00 81 88 ff ff  .,..............
-    00 12 04 00 81 88 ff ff 3c 00 00 00 00 00 00 00  ........<.......
-  backtrace (crc a68b63de):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4520 [inline]
-    slab_alloc_node mm/slub.c:4844 [inline]
-    __do_kmalloc_node mm/slub.c:5237 [inline]
-    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5250
-    kmalloc_noprof include/linux/slab.h:954 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
-    alloc_empty_sheaf mm/slub.c:2786 [inline]
-    __pcs_replace_full_main+0xe9/0x2c0 mm/slub.c:5700
-    free_to_pcs mm/slub.c:5753 [inline]
-    slab_free mm/slub.c:6154 [inline]
-    kfree+0x352/0x390 mm/slub.c:6467
-    call_usermodehelper_freeinfo kernel/umh.c:43 [inline]
-    umh_complete kernel/umh.c:57 [inline]
-    call_usermodehelper_exec_async+0x1c7/0x1f0 kernel/umh.c:119
-    ret_from_fork+0x23c/0x4b0 arch/x86/kernel/process.c:158
-    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-BUG: memory leak
-unreferenced object 0xffff88810a96a200 (size 512):
-  comm "udevadm", pid 5177, jiffies 4294938175
-  hex dump (first 32 bytes):
-    00 fa 05 00 81 88 ff ff 00 32 c5 05 81 88 ff ff  .........2......
-    00 12 04 00 81 88 ff ff 3c 00 00 00 00 00 00 00  ........<.......
-  backtrace (crc 94107438):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4520 [inline]
-    slab_alloc_node mm/slub.c:4844 [inline]
-    __do_kmalloc_node mm/slub.c:5237 [inline]
-    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5250
-    kmalloc_noprof include/linux/slab.h:954 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
-    alloc_empty_sheaf mm/slub.c:2786 [inline]
-    alloc_full_sheaf mm/slub.c:2834 [inline]
-    __pcs_replace_empty_main+0x1e4/0x260 mm/slub.c:4602
-    alloc_from_pcs mm/slub.c:4695 [inline]
-    slab_alloc_node mm/slub.c:4829 [inline]
-    __kmalloc_cache_noprof+0x3ac/0x480 mm/slub.c:5353
-    kmalloc_noprof include/linux/slab.h:950 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    kernfs_get_open_node fs/kernfs/file.c:543 [inline]
-    kernfs_fop_open+0x4f3/0x580 fs/kernfs/file.c:718
-    do_dentry_open+0x202/0x8d0 fs/open.c:949
-    vfs_open+0x3d/0x1b0 fs/open.c:1081
-    do_open fs/namei.c:4671 [inline]
-    path_openat+0x154d/0x1e20 fs/namei.c:4830
-    do_file_open+0x121/0x200 fs/namei.c:4859
-    do_sys_openat2+0xa5/0x140 fs/open.c:1366
-    do_sys_open fs/open.c:1372 [inline]
-    __do_sys_openat fs/open.c:1388 [inline]
-    __se_sys_openat fs/open.c:1383 [inline]
-    __x64_sys_openat+0x82/0xf0 fs/open.c:1383
-    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-    do_syscall_64+0xe2/0xf80 arch/x86/entry/syscall_64.c:94
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-BUG: memory leak
-unreferenced object 0xffff888109d58400 (size 512):
-  comm "udevd", pid 5176, jiffies 4294938222
-  hex dump (first 32 bytes):
-    00 12 47 2a 81 88 ff ff 00 ee 46 2a 81 88 ff ff  ..G*......F*....
-    00 12 04 00 81 88 ff ff 00 00 00 00 00 00 00 00  ................
-  backtrace (crc af8b5cec):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4520 [inline]
-    slab_alloc_node mm/slub.c:4844 [inline]
-    __do_kmalloc_node mm/slub.c:5237 [inline]
-    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5250
-    kmalloc_noprof include/linux/slab.h:954 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
-    alloc_empty_sheaf mm/slub.c:2786 [inline]
-    __kfree_rcu_sheaf+0x164/0x240 mm/slub.c:5887
-    kfree_rcu_sheaf mm/slab_common.c:1608 [inline]
-    kvfree_call_rcu+0x1f6/0x3c0 mm/slab_common.c:1957
-    kernfs_unlink_open_file+0x194/0x1b0 fs/kernfs/file.c:604
-    kernfs_fop_release+0x55/0x110 fs/kernfs/file.c:783
-    __fput+0x1b5/0x4f0 fs/file_table.c:469
-    fput_close_sync+0x67/0x120 fs/file_table.c:574
-    __do_sys_close fs/open.c:1509 [inline]
-    __se_sys_close fs/open.c:1494 [inline]
-    __x64_sys_close+0x4a/0xc0 fs/open.c:1494
-    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-    do_syscall_64+0xe2/0xf80 arch/x86/entry/syscall_64.c:94
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-connection error: failed to recv *flatrpc.ExecutorMessageRawT: EOF
-
-
-Tested on:
-
-commit:         11439c46 Linux 7.0-rc2
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1277a202580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2c6ad6fefffa76b1
-dashboard link: https://syzkaller.appspot.com/bug?extid=cae7809e9dc1459e4e63
-compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13801006580000
-
+NeilBrown
 
