@@ -1,180 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-78880-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78881-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GNdNNmBipWmx+wUAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78880-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 11:11:44 +0100
+	id 6HNMDHhjpWmJ/QUAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78881-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 11:16:24 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D6051D6204
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 11:11:44 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id E57401D63F6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 11:16:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 2F51630172D5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 10:11:43 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id CAB38301F6BE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 10:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6547421A459;
-	Mon,  2 Mar 2026 10:11:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B90239E6DE;
+	Mon,  2 Mar 2026 10:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ld0iTfc0"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BWz/wJq1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5A233A70A;
-	Mon,  2 Mar 2026 10:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD55399000
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Mar 2026 10:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772446300; cv=none; b=nPu549YXIsK6jgxVochzSARXVEmZcgaDFFKB61XjZou01OB56Vt8t5S4OOFINzPcz7euPTAO0Q4u0i5INZqUZk2gbKThmXRowCa/Q+XO/xaZythWz3n/QsQoSrBxXeE4pAwmK9AwkWtTZtGla0XC5dLIcljEDnJlqS+h4aUtt5I=
+	t=1772446552; cv=none; b=Jn8MAHsZwkTECxm3rzNXdoETJeDKycbk1pt3/ObZxWY1+/ScWxmEBf08KOZWve4JpmsmN6cmFhpDLBkGL+uPHUI/suLmtVOz/rfSx+BMyATEwzcDtW+PVEWnx5lHbnv/icGfofDsxXDQi4NHYIH5hkKEJdcaXmYifwMnTWUbpfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772446300; c=relaxed/simple;
-	bh=kUc0farZiGjD/n/ZNvbtXOu1ZJEABLXUI1WRJsXmbXM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g/rAMOFtQmWwICYCJWX1z8ZmVZi9TQxFlXVYawg1t+UGd2JbYnP9zqIrUxdecPT/LcWTmqizTdl+PdtCVTQeUbCTaKtNZGEkYZz418sP8eNGsRKIkBtZsD8ugTZ8Hsz4oX7WKrx1t/GzO5Xcp60guOyxF9KZ/h7dSDEyLd3TKkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ld0iTfc0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C359C19423;
-	Mon,  2 Mar 2026 10:11:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772446299;
-	bh=kUc0farZiGjD/n/ZNvbtXOu1ZJEABLXUI1WRJsXmbXM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ld0iTfc0cwdtiAlPMEakYAevL8IA888m/oSGOWsZW9Vt/zRCmvQ4Uc2DLU421l8Ep
-	 FeEfp7BAVN3Md4S7xoDs560NSkIPqpAgGZjI8duIgTUDUN4ffC/n9jlqR9mSdh7DOK
-	 i+fwYRegrrDbqO2zS5LTbG0RJJekRLaCqvE4GMYHd2g6AqdC5IbN1o6ybzmA2KYMQj
-	 H8/+Z0X4Lskdq25zp26NlH+MAudrmt8Ze01H0WanxEKFuUQOsSeWHdU+ioNIsSNDJn
-	 l1yOC6qj/LVeXnfey1eygn3X+LetUHp/cr/wpE8fSTUC2ZAQM12IfB/Z06v2wfSFCz
-	 rcqnAPVmF3txA==
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Carlos Maiolino <cem@kernel.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Anuj Gupta <anuj20.g@samsung.com>,
-	Kanchan Joshi <joshi.k@samsung.com>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	ntfs3@lists.linux.dev,
-	linux-block@vger.kernel.org,
-	nvdimm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>
-Subject: Re: support file system generated / verified integrity information v4
-Date: Mon,  2 Mar 2026 11:11:22 +0100
-Message-ID: <20260302-legehennen-musizieren-08d0e3caa674@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260223132021.292832-1-hch@lst.de>
-References: <20260223132021.292832-1-hch@lst.de>
+	s=arc-20240116; t=1772446552; c=relaxed/simple;
+	bh=I7ttot40u9IpsWOSgKrSBYUTZtG6k/1UaMnoq/5aYcs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=glL0qCnTN3KlcinJi1qF+5OUNt+hhpTn/VWeoktDWOyzQQcEM62o7YWssC8eK4hvEm93x/AWFBIRAFkVRRCBmUH0soAD5DQ/xyCv+NtPTgnbevIP1SAHhhlIx+4nZMW9ODpLQXhf8BibfUbBNlInwrP6Xl/CuRXUS821nLxJDt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BWz/wJq1; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1772446550;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0Nt9u/V9Fc/ykFf+eRLO4mIzzqQz1u88ZtONS7n3Oag=;
+	b=BWz/wJq1wbg8xYefll/7XwIQLNwor9HqQvEUdHDjHFtNMhUj7OFElOO79Nlwyjy9yhdZ4+
+	cf1fuMO6EF4G+tJ0DXM9cJSybTz8Es9yFL9T24jBtFdzRWO3ksoTcaLEq+hrCu2OmZImoM
+	eNpNl5hCtEtE/RS274GJboN5J7G8HzI=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-435-RsymwK4INuedX1EllCx00A-1; Mon,
+ 02 Mar 2026 05:15:45 -0500
+X-MC-Unique: RsymwK4INuedX1EllCx00A-1
+X-Mimecast-MFC-AGG-ID: RsymwK4INuedX1EllCx00A_1772446543
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4BFE61956056;
+	Mon,  2 Mar 2026 10:15:43 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.44.32.151])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 07E6930001B9;
+	Mon,  2 Mar 2026 10:15:39 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org,  Jeff Layton <jlayton@kernel.org>,
+  Alexander Viro <viro@zeniv.linux.org.uk>,  Amir Goldstein
+ <amir73il@gmail.com>,  Josef Bacik <josef@toxicpanda.com>,  Jan Kara
+ <jack@suse.cz>,  Aleksa Sarai <cyphar@cyphar.com>,
+  linux-api@vger.kernel.org,  rudi@heitbaum.com
+Subject: Re: [PATCH 1/2] mount: add OPEN_TREE_NAMESPACE
+In-Reply-To: <20260224-kandidat-wohltat-ae8fb7a57738@brauner> (Christian
+	Brauner's message of "Tue, 24 Feb 2026 15:33:13 +0100")
+References: <20251229-work-empty-namespace-v1-0-bfb24c7b061f@kernel.org>
+	<20251229-work-empty-namespace-v1-1-bfb24c7b061f@kernel.org>
+	<lhuecmaz8p6.fsf@oldenburg.str.redhat.com>
+	<20260224-erbitten-kaufleute-6f14e3072c5d@brauner>
+	<lhuv7fmxo8y.fsf@oldenburg.str.redhat.com>
+	<20260224-kandidat-wohltat-ae8fb7a57738@brauner>
+Date: Mon, 02 Mar 2026 11:15:37 +0100
+Message-ID: <lhuqzq2fsfq.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3749; i=brauner@kernel.org; h=from:subject:message-id; bh=kUc0farZiGjD/n/ZNvbtXOu1ZJEABLXUI1WRJsXmbXM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQuTQr5LTEvM/FaGJOD/CtL7fimM5MvX52/7GFUWNlF5 gnPizyZOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZyO4zhf+nviJw1/T92tyfF 9+oxcPcx3b+kpPDy0xazm+GSsTvXxDMyTOuLZW/sZO/YaLDhx4U9+x7ZqCtYeCwNmqqhk85+08S cAwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [2.34 / 15.00];
-	MID_END_EQ_FROM_USER_PART(4.00)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.org,zeniv.linux.org.uk,gmail.com,toxicpanda.com,suse.cz,cyphar.com,heitbaum.com];
+	TAGGED_FROM(0.00)[bounces-78881-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78880-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[fweimer@redhat.com,linux-fsdevel@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[redhat.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	NEURAL_HAM(-0.00)[-0.735];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	NEURAL_HAM(-0.00)[-0.998];
+	RCVD_COUNT_FIVE(0.00)[6];
+	RCPT_COUNT_SEVEN(0.00)[10];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 7D6051D6204
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	PRECEDENCE_BULK(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,sourceware.org:url,oldenburg.str.redhat.com:mid]
+X-Rspamd-Queue-Id: E57401D63F6
 X-Rspamd-Action: no action
 
-On Mon, 23 Feb 2026 05:20:00 -0800, Christoph Hellwig wrote:
-> this series adds support to generate and verify integrity information
-> (aka T10 PI) in the file system, instead of the automatic below the
-> covers support that is currently used.
-> 
-> There two reasons for this:
-> 
->   a) to increase the protection enveloped.  Right now this is just a
->      minor step from the bottom of the block layer to the file system,
->      but it is required to support io_uring integrity data passthrough in
->      the file system similar to the currently existing support for block
->      devices, which will follow next.  It also allows the file system to
->      directly see the integrity error and act upon in, e.g. when using
->      RAID either integrated (as in btrfs) or by supporting reading
->      redundant copies through the block layer.
->   b) to make the PI processing more efficient.  This is primarily a
->      concern for reads, where the block layer auto PI has to schedule a
->      work item for each bio, and the file system them has to do it again
->      for bounce buffering.  Additionally the current iomap post-I/O
->      workqueue handling is a lot more efficient by supporting merging and
->      avoiding workqueue scheduling storms.
-> 
-> [...]
+* Christian Brauner:
 
-Applied to the vfs-7.1.verity branch of the vfs/vfs.git tree.
-Patches in the vfs-7.1.verity branch should appear in linux-next soon.
+> On Tue, Feb 24, 2026 at 02:30:37PM +0100, Florian Weimer wrote:
+>> * Christian Brauner:
+>> 
+>> > On Tue, Feb 24, 2026 at 12:23:33PM +0100, Florian Weimer wrote:
+>> >> * Christian Brauner:
+>> >> 
+>> >> > diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+>> >> > index 5d3f8c9e3a62..acbc22241c9c 100644
+>> >> > --- a/include/uapi/linux/mount.h
+>> >> > +++ b/include/uapi/linux/mount.h
+>> >> > @@ -61,7 +61,8 @@
+>> >> >  /*
+>> >> >   * open_tree() flags.
+>> >> >   */
+>> >> > -#define OPEN_TREE_CLONE		1		/* Clone the target tree and attach the clone */
+>> >> > +#define OPEN_TREE_CLONE		(1 << 0)	/* Clone the target tree and attach the clone */
+>> >> 
+>> >> This change causes pointless -Werror=undef errors in projects that have
+>> >> settled on the old definition.
+>> >> 
+>> >> Reported here:
+>> >> 
+>> >>   Bug 33921 - Building with Linux-7.0-rc1 errors on OPEN_TREE_CLONE
+>> >>   <https://sourceware.org/bugzilla/show_bug.cgi?id=33921>
+>> >
+>> > Send a patch to change it back, please.
+>> > Otherwise it might take a few days until I get around to it.
+>> 
+>> Rudi, could you post a patch?
+>
+> I'm a bit confused though and not super happy that you're basically
+> asking us to be so constrained that we aren't even allowed to change 1
+> to 1 - just syntactically different.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+I'm not happy about it, either.  But it has happened before, for the
+RENAME_* constants I believe.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+We are already including <linux/mount.h> from <sys/mount.h>, so we can
+work around this reliably on the glibc side, regardless of header
+inclusion order.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Thanks,
+Florian
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-7.1.verity
-
-[01/16] block: factor out a bio_integrity_action helper
-        https://git.kernel.org/vfs/vfs/c/08163237c7be
-[02/16] block: factor out a bio_integrity_setup_default helper
-        https://git.kernel.org/vfs/vfs/c/32d5010c428f
-[03/16] block: add a bdev_has_integrity_csum helper
-        https://git.kernel.org/vfs/vfs/c/840b166bef09
-[04/16] block: prepare generation / verification helpers for fs usage
-        https://git.kernel.org/vfs/vfs/c/179c2a24466b
-[05/16] block: make max_integrity_io_size public
-        https://git.kernel.org/vfs/vfs/c/1b9353e52c31
-[06/16] block: add fs_bio_integrity helpers
-        https://git.kernel.org/vfs/vfs/c/e539fc923425
-[07/16] block: pass a maxlen argument to bio_iov_iter_bounce
-        https://git.kernel.org/vfs/vfs/c/fc9fc9482061
-[08/16] iomap: refactor iomap_bio_read_folio_range
-        https://git.kernel.org/vfs/vfs/c/9701407ec63e
-[09/16] iomap: pass the iomap_iter to ->submit_read
-        https://git.kernel.org/vfs/vfs/c/f11d7d3307f4
-[10/16] iomap: only call into ->submit_read when there is a read_ctx
-        https://git.kernel.org/vfs/vfs/c/46441138b832
-[11/16] iomap: allow file systems to hook into buffered read bio submission
-        https://git.kernel.org/vfs/vfs/c/04c2cc5bb77b
-[12/16] ntfs3: remove copy and pasted iomap code
-        https://git.kernel.org/vfs/vfs/c/4c3906772536
-[13/16] iomap: add a bioset pointer to iomap_read_folio_ops
-        https://git.kernel.org/vfs/vfs/c/c1dec831dd53
-[14/16] iomap: support ioends for buffered reads
-        https://git.kernel.org/vfs/vfs/c/9c617c91f801
-[15/16] iomap: support T10 protection information
-        https://git.kernel.org/vfs/vfs/c/fa1758bda166
-[16/16] xfs: support T10 protection information
-        https://git.kernel.org/vfs/vfs/c/330cc116c7a0
 
