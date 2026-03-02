@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-79052-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79053-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id sO0YK3MEpmnvIwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79052-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:43:15 +0100
+	id AC12NJEEpmnvIwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79053-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:43:45 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5874C1E3D10
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:43:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E3171E3DBD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:43:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id EC4A7340CED9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 21:21:52 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 72E283199612
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 21:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEAE3375F66;
-	Mon,  2 Mar 2026 20:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E91E3D0EEE;
+	Mon,  2 Mar 2026 20:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WD9QSZaB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QFK/l67W"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2321B31F99A;
-	Mon,  2 Mar 2026 20:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC58375F98;
+	Mon,  2 Mar 2026 20:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772484365; cv=none; b=vF+RPSjFjfDjMKcXcHHpLsNaVCscpQxzvpUWQfSC3oshE+hsR2Enxzeiasa+42NuyqyRkhhlMdJZ8XpVJrSfmG5FcnayXo/cRL47vsjMc+XNE8Zp/DQt2y4lT1w3uTyXoWXwjK3mlX+zXLcY7UkDw0x0rYKCnGc3pPI4L7snJHA=
+	t=1772484379; cv=none; b=Ek+pHKkXYdA/rvPP0ZPuciJLnMp+4I5rvqT15eul2iFoRwBpXGKcWwn0QShLh6hXZ1y5JCLCarXqT8auVoiGQ1aBMT3p618mdH+q3ve++f1Sws9crByBYv2FOeE1yYauVqq5Uqs/SBrm9UPG2qZ6VsUjwu53p2K/p2L0uKY6Vvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772484365; c=relaxed/simple;
-	bh=qBOGZ+H4FCJyoScuTijEcAxm33DX4t54AKihmOD4lfc=;
+	s=arc-20240116; t=1772484379; c=relaxed/simple;
+	bh=oOhSUmlogX3hUkfVoKDF8y8a/pqC/DLSTod5Uj4+yCo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SHSJnDqSDPzVz3LNg4gBtB6CcAa7ehe14AczOHWG/fuN87xOW1BX/6FtWlS5Tuu8K18pT0D3JYkAoj81ufBL+pDGse71+CirZRfOiK/vesHy4Oxhc/NfZRX/gv0Y8xqcV2pH87KWssRx0F85IHtRqEGNo2Sr1ZaTOKmB1CJze3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WD9QSZaB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A47FC2BC9E;
-	Mon,  2 Mar 2026 20:45:50 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=uZQw5VQ1RkkB6OptMnpBESif582YYu8b78VodS4pdQfn13aEL7e7bDBJRJabADSRr0vZd+A9E2NuOLhhQjzIhDSN9JfTW/bE2omnpbakP4sm29xSSNQYilEciWz9UdSFs+YdeMncXdLJP3QBgomyDyXHIe12GrMbeJDZ88PLRtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QFK/l67W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC442C19425;
+	Mon,  2 Mar 2026 20:46:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772484364;
-	bh=qBOGZ+H4FCJyoScuTijEcAxm33DX4t54AKihmOD4lfc=;
+	s=k20201202; t=1772484379;
+	bh=oOhSUmlogX3hUkfVoKDF8y8a/pqC/DLSTod5Uj4+yCo=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=WD9QSZaB4Ynf3T2024pRykq9e0/jdmE8EG7gpxceQsWLs9ldUDrFlX4ArZiie0vbL
-	 19LbIvHDGkRkdQlFvg2Y7NwamnoN3dr7aJrGPp3z71wIC5mJJ7qSa4bmsCB3TH/SeC
-	 hUi3DjOP9V4XSETuRPjeZTuWgMSi9immDKfUAEtwEpfS0taqUCB19NTdwT9PAl2Dr1
-	 X6n/FZutnR9+MwmmLPosjsknaR7URHBAA5CT4uRPA0WQdzY1319ktmFMHsHOHDXsX6
-	 uClORVRaA5wOmwgDDGWX9W7QBFGsaZ2Twg5ddM1UZAYTdINoixEOU0+4vzdq6qPVwW
-	 Ibfy5Y48Gl/bg==
+	b=QFK/l67WhGTxY3MNVSkTneymqOrQE5FKXZDHe6SB+nNMXtNeYjIew5DQgABkgt0Gn
+	 lNM8YjJvoVkj+HtgUYYgAW9IQzpr0/cfOIHJ4dGkG9iAxa7WPVTRI7LfMjERvp1g20
+	 NB2RNHKtU66gMxoH3/HZRV4R+2rfoO7mGxOFgvn81JNmQu79EVZeqb5N7sgERHMisD
+	 XaWcM75KqkO3sODXZYDjBLbuOWxKgLDuUYiEf04D7AYj7x0tsxaMfo2IGzfcO0gSOD
+	 YcWpwatBWQJMdZT69vmlZKdq2eHu04aKj7o7WnXXgMX3icvM9eeDG89T5QFXZHV9ki
+	 qqt8UpZV8JT4Q==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 02 Mar 2026 15:25:12 -0500
-Subject: [PATCH v2 088/110] jffs2: replace PRIino with %llu/%llx format
+Date: Mon, 02 Mar 2026 15:25:13 -0500
+Subject: [PATCH v2 089/110] jfs: replace PRIino with %llu/%llx format
  strings
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260302-iino-u64-v2-88-e5388800dae0@kernel.org>
+Message-Id: <20260302-iino-u64-v2-89-e5388800dae0@kernel.org>
 References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
 In-Reply-To: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -171,23 +171,23 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-sctp@vger.kernel.org, bpf@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4782; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=qBOGZ+H4FCJyoScuTijEcAxm33DX4t54AKihmOD4lfc=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBppfIHR7PXwpRijiaDSNoHBRx6sRq6q8UIIYKp7
- 0L0gu64QBiJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaXyBwAKCRAADmhBGVaC
- FdutD/9ObZxe+nOy3nsTFaq7Ut8ArWcplsqSov2kMlKcZpVCHHzCKDenXVX9I9pFuqNSk3FCVmR
- ZtENkgoSqrEgrLbDJ9RYgQz5YLIkClSpE+d+3sRwa1vcidi9xUmF9r1539KnV74bVbjnUn7n39b
- 5Yz4oalHYtyM0RxZBk4NYEBKtBfrTqeXOydheHjmorfO4SLpKbS0DJSXG6yKJp+8cYAotA5dyLc
- 3wz9mx4uNNIi189tf6M4st3QnK1Rse02wHg82ld1a3TZwDRBfVMBrAtlw7DNUBGBc+nVPRYksak
- VxsyEvoslW6Mw05AybupfOtcxkiI7AacYGnromEJLcZ9ZlsBvV9WkRnM9x/QaFVylYPnp96tPfm
- vie5eyII+IYTlT43Ms7C5qU2fcqdKWkC6fZeKSw3Kh7u/pRdAWPgmiOQdnJIZMUoz4UB6CSQJK8
- a47IYq+UxK3Wc55K1/6Nr/HQ7be+ZGdPny2IRYMf644RLf9W0bUdW+9jBTSSRT7I/77bh4GypLj
- 13ZdGuuNKShNp8yE8pV0NP6WB8IbR3yr/yVN3F5UOGRYYRzT5c7/SWeas3JKNG3EhQqXtFQBTC8
- n8AEMtgsyD6/eAVFe8FdKpcragAugbl/JXE/AL/jlB+vFGxVdYQthx9JOUOfU1J2NFyfRZMlbfb
- M6QevW1Grdb83mA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2019; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=oOhSUmlogX3hUkfVoKDF8y8a/pqC/DLSTod5Uj4+yCo=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBppfIHVuyPWm6Ogyyr4Uaitgz5+Zy0QdOagQ0LM
+ rh3nzuPVViJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaXyBwAKCRAADmhBGVaC
+ FUG8EAC6sR6nI8JObBOYvouIGChfBANCmxFZ2xYcY1j5s2hD9uFCg7fQJ0jAKZMouw/tMAZgjd/
+ m4N7AubbGIA/9/WBMScxAnpsIYHXZraFaWvOsndsTukur5JxALyIhPFz6+GpkFDN2s2OT66hKfh
+ C/RT3gGd4yxg98E2KnCo8aHKhr5lG/0fXpqgH+IOfdddVYehawAK6JakiIfhF2nyW8nDX8U0Eif
+ /6Wj4ib6XZsuiGvHt7SJ07d2Q8QTzUhgWiyNtu8KcSYMces0Gj6zeg+i/SvD0L0ALWJ56UUe659
+ pdyiLnatxvmsx1NdT/UKUKlFugXyUeJFD46H6wHulnrl6XCiWi8FzNwUrOe41pj5DwtyLLp2E9Y
+ sAA5HchXdhWof5rVVqElVkMrXdASYBe7HPu/dRMeWwAdQalBHWFivg2gKMIpej4I8Uhqffimo7K
+ Ax4qoBlNlESu4VpNIsliVjzhHvzh2cmxafpGTewoFYW4P5GIh1IZHN6nd73fG9NauLvMC/J3K+w
+ kqx0oRG4EpCQ1U/ntMliW508gwqp7fjR6/uekoTUSYH9eplK82F0BA7QAlBmiB1LBAj9pVj3DLn
+ jte/6qynA4B5h0jRQkSRTuvbLsRccq+akrBDBXmhP8CALxeqnjlFNMsC6dLgInpOlFCBea/12HK
+ JZIjXU3wI/gm1HQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
-X-Rspamd-Queue-Id: 5874C1E3D10
+X-Rspamd-Queue-Id: 6E3171E3DBD
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
@@ -198,7 +198,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79052-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79053-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de,yaina.de,holtmann.org,hartkopp.net,pengutronix.de,secunet.com,gondor.apana.org.au,fomichev.me,iogearbox.net];
@@ -220,123 +220,54 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 X-Rspamd-Action: no action
 
 Now that i_ino is u64 and the PRIino format macro has been removed,
-replace all uses in jffs2 with the concrete format strings.
+replace all uses in jfs with the concrete format strings.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/jffs2/dir.c  |  4 ++--
- fs/jffs2/file.c |  4 ++--
- fs/jffs2/fs.c   | 14 +++++++-------
- 3 files changed, 11 insertions(+), 11 deletions(-)
+ fs/jfs/inode.c        | 2 +-
+ fs/jfs/jfs_imap.c     | 2 +-
+ fs/jfs/jfs_metapage.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/jffs2/dir.c b/fs/jffs2/dir.c
-index 6ef2641b39b3c66924eb4641f5c0024ae11ff255..c4088c3b4ac0362074cfa186c04f9c3afcccdff2 100644
---- a/fs/jffs2/dir.c
-+++ b/fs/jffs2/dir.c
-@@ -129,7 +129,7 @@ static int jffs2_readdir(struct file *file, struct dir_context *ctx)
- 	struct jffs2_full_dirent *fd;
- 	unsigned long curofs = 1;
+diff --git a/fs/jfs/inode.c b/fs/jfs/inode.c
+index 7529043baaf30a6227e5d8edbefd9e37a8105d43..c7914dbc91ed97e200edbd114e2d4c695b46fb7e 100644
+--- a/fs/jfs/inode.c
++++ b/fs/jfs/inode.c
+@@ -64,7 +64,7 @@ struct inode *jfs_iget(struct super_block *sb, unsigned long ino)
+ 		inode->i_op = &jfs_file_inode_operations;
+ 		init_special_inode(inode, inode->i_mode, inode->i_rdev);
+ 	} else {
+-		printk(KERN_DEBUG "JFS: Invalid file type 0%04o for inode %" PRIino "u.\n",
++		printk(KERN_DEBUG "JFS: Invalid file type 0%04o for inode %llu.\n",
+ 		       inode->i_mode, inode->i_ino);
+ 		iget_failed(inode);
+ 		return ERR_PTR(-EIO);
+diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
+index c9ea54f06114ce210ab2d80ad80d0dfa6c55b250..13ab21e66f510befc477bd15d40f69544cb7a386 100644
+--- a/fs/jfs/jfs_imap.c
++++ b/fs/jfs/jfs_imap.c
+@@ -302,7 +302,7 @@ int diRead(struct inode *ip)
+ 	unsigned long pageno;
+ 	int rel_inode;
  
--	jffs2_dbg(1, "jffs2_readdir() for dir_i #%" PRIino "u\n", inode->i_ino);
-+	jffs2_dbg(1, "jffs2_readdir() for dir_i #%llu\n", inode->i_ino);
+-	jfs_info("diRead: ino = %" PRIino "u", ip->i_ino);
++	jfs_info("diRead: ino = %llu", ip->i_ino);
  
- 	if (!dir_emit_dots(file, ctx))
- 		return 0;
-@@ -211,7 +211,7 @@ static int jffs2_create(struct mnt_idmap *idmap, struct inode *dir_i,
+ 	ipimap = sbi->ipimap;
+ 	JFS_IP(ip)->ipimap = ipimap;
+diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
+index 0a1efacaf4e2196197cfe44e5c51d89b15d39545..c95804f6dc1912510c51163cc120d536de652fd3 100644
+--- a/fs/jfs/jfs_metapage.c
++++ b/fs/jfs/jfs_metapage.c
+@@ -692,7 +692,7 @@ struct metapage *__get_metapage(struct inode *inode, unsigned long lblock,
+ 	unsigned long page_index;
+ 	unsigned long page_offset;
  
- 	jffs2_free_raw_inode(ri);
+-	jfs_info("__get_metapage: ino = %" PRIino "u, lblock = 0x%lx, abs=%d",
++	jfs_info("__get_metapage: ino = %llu, lblock = 0x%lx, abs=%d",
+ 		 inode->i_ino, lblock, absolute);
  
--	jffs2_dbg(1, "%s(): Created ino #%" PRIino "u with mode %o, nlink %d(%d). nrpages %ld\n",
-+	jffs2_dbg(1, "%s(): Created ino #%llu with mode %o, nlink %d(%d). nrpages %ld\n",
- 		  __func__, inode->i_ino, inode->i_mode, inode->i_nlink,
- 		  f->inocache->pino_nlink, inode->i_mapping->nrpages);
- 
-diff --git a/fs/jffs2/file.c b/fs/jffs2/file.c
-index f6b9d76d9dbc32f582069aeef0b73cf3c6ff842e..1e18d3a798409d23440a5890808bc25372549e93 100644
---- a/fs/jffs2/file.c
-+++ b/fs/jffs2/file.c
-@@ -88,7 +88,7 @@ static int jffs2_do_readpage_nolock(struct inode *inode, struct folio *folio)
- 	unsigned char *kaddr;
- 	int ret;
- 
--	jffs2_dbg(2, "%s(): ino #%" PRIino "u, page at offset 0x%lx\n",
-+	jffs2_dbg(2, "%s(): ino #%llu, page at offset 0x%lx\n",
- 		  __func__, inode->i_ino, folio->index << PAGE_SHIFT);
- 
- 	BUG_ON(!folio_test_locked(folio));
-@@ -259,7 +259,7 @@ static int jffs2_write_end(const struct kiocb *iocb,
- 	uint32_t writtenlen = 0;
- 	void *buf;
- 
--	jffs2_dbg(1, "%s(): ino #%" PRIino "u, page at 0x%llx, range %d-%d, flags %lx\n",
-+	jffs2_dbg(1, "%s(): ino #%llu, page at 0x%llx, range %d-%d, flags %lx\n",
- 		  __func__, inode->i_ino, folio_pos(folio),
- 		  start, end, folio->flags.f);
- 
-diff --git a/fs/jffs2/fs.c b/fs/jffs2/fs.c
-index 4ad37a42c03d8357f3ef99596b725bea3db1932b..6ada8369a76227c30ec27e8efebd93939376494e 100644
---- a/fs/jffs2/fs.c
-+++ b/fs/jffs2/fs.c
-@@ -43,7 +43,7 @@ int jffs2_do_setattr (struct inode *inode, struct iattr *iattr)
- 	int ret;
- 	int alloc_type = ALLOC_NORMAL;
- 
--	jffs2_dbg(1, "%s(): ino #%" PRIino "u\n", __func__, inode->i_ino);
-+	jffs2_dbg(1, "%s(): ino #%llu\n", __func__, inode->i_ino);
- 
- 	/* Special cases - we don't want more than one data node
- 	   for these types on the medium at any time. So setattr
-@@ -243,7 +243,7 @@ void jffs2_evict_inode (struct inode *inode)
- 	struct jffs2_sb_info *c = JFFS2_SB_INFO(inode->i_sb);
- 	struct jffs2_inode_info *f = JFFS2_INODE_INFO(inode);
- 
--	jffs2_dbg(1, "%s(): ino #%" PRIino "u mode %o\n",
-+	jffs2_dbg(1, "%s(): ino #%llu mode %o\n",
- 		  __func__, inode->i_ino, inode->i_mode);
- 	truncate_inode_pages_final(&inode->i_data);
- 	clear_inode(inode);
-@@ -334,7 +334,7 @@ struct inode *jffs2_iget(struct super_block *sb, unsigned long ino)
- 		ret = jffs2_read_dnode(c, f, f->metadata, (char *)&jdev, 0, f->metadata->size);
- 		if (ret < 0) {
- 			/* Eep */
--			pr_notice("Read device numbers for inode %" PRIino "u failed\n",
-+			pr_notice("Read device numbers for inode %llu failed\n",
- 				  inode->i_ino);
- 			goto error;
- 		}
-@@ -351,7 +351,7 @@ struct inode *jffs2_iget(struct super_block *sb, unsigned long ino)
- 		break;
- 
- 	default:
--		pr_warn("%s(): Bogus i_mode %o for ino %" PRIino "u\n",
-+		pr_warn("%s(): Bogus i_mode %o for ino %llu\n",
- 			__func__, inode->i_mode, inode->i_ino);
- 	}
- 
-@@ -374,12 +374,12 @@ void jffs2_dirty_inode(struct inode *inode, int flags)
- 	struct iattr iattr;
- 
- 	if (!(inode_state_read_once(inode) & I_DIRTY_DATASYNC)) {
--		jffs2_dbg(2, "%s(): not calling setattr() for ino #%" PRIino "u\n",
-+		jffs2_dbg(2, "%s(): not calling setattr() for ino #%llu\n",
- 			  __func__, inode->i_ino);
- 		return;
- 	}
- 
--	jffs2_dbg(1, "%s(): calling setattr() for ino #%" PRIino "u\n",
-+	jffs2_dbg(1, "%s(): calling setattr() for ino #%llu\n",
- 		  __func__, inode->i_ino);
- 
- 	iattr.ia_valid = ATTR_MODE|ATTR_UID|ATTR_GID|ATTR_ATIME|ATTR_MTIME|ATTR_CTIME;
-@@ -428,7 +428,7 @@ struct inode *jffs2_new_inode (struct inode *dir_i, umode_t mode, struct jffs2_r
- 	struct jffs2_inode_info *f;
- 	int ret;
- 
--	jffs2_dbg(1, "%s(): dir_i %" PRIino "u, mode 0x%x\n",
-+	jffs2_dbg(1, "%s(): dir_i %llu, mode 0x%x\n",
- 		  __func__, dir_i->i_ino, mode);
- 
- 	c = JFFS2_SB_INFO(sb);
+ 	l2bsize = inode->i_blkbits;
 
 -- 
 2.53.0
