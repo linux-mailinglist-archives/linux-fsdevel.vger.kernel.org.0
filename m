@@ -1,216 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-78889-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id MLIsMgKIpWmWDQYAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78889-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 13:52:18 +0100
+	id sAa6DO2JpWmWDQYAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:00:29 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 733381D92E5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 13:52:17 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A941D956F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:00:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 13781300E6AF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 12:51:42 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 09965308942A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 12:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50E63B3BF3;
-	Mon,  2 Mar 2026 12:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126553AE6E9;
+	Mon,  2 Mar 2026 12:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="aoh+6kza"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="J5bGpV24"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA15A3ACF07;
-	Mon,  2 Mar 2026 12:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.205
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772455890; cv=none; b=ENjDwOFe25dJLopzzdPnLiLcotkRFcim4ZLnebM2MsFtUFdWyzpcsHdkBRn5XoPu9dOtL7xpz5St8JgTyV+NFzmVoQGWKmbYAjAgUO+XiWI++K5E2e3+DgmH1IbGBtu4GgvqSa8PgN/kJGJ3Vv1yxqm3DHUqVIYylaDNPyUss2E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772455890; c=relaxed/simple;
-	bh=K1Jc76yBOdiCZOrE3NEBAzT9ZvTZAZqaMZg2bmP72dw=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=eRQAH5jOinbZsTzlLrS19kTTdnGABuD4OwV1qEo8Xvz0EMegxB+RjM8oDk2qy7SNGwITmkvDSTcm5SIGlTn1jvrd8i2vasxB10649CrxDxjb6eMnOAGQA486wiC62J/9G/3cabxsWN9rDxtV5I3/adO+YhWurJWTYvqXYF3jlt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=aoh+6kza; arc=none smtp.client-ip=203.205.221.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1772455883; bh=35TKkxftZA66OCmA/rR9k9ldi2Fyql3rrrUYj6gwYw4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=aoh+6kza1w3+vcOzytVw9WHY6lXHi6b7K/CVEmb+s3Ai4+EdFiIsTXmbnP6IQ+vPC
-	 +s1r8pTRK0LWxcXgMP75CoW9Ivns6+hn2zT904vSEoOo804lYX3Xuk+YYbiBfXHEKb
-	 ihrbpfcA2ldRN97vKd8J0LIEpMqtCrm2pXH+mIFk=
-Received: from lxu-ped-host.. ([114.244.57.237])
-	by newxmesmtplogicsvrszc41-0.qq.com (NewEsmtp) with SMTP
-	id CD40C2C8; Mon, 02 Mar 2026 20:51:20 +0800
-X-QQ-mid: xmsmtpt1772455880tp6j0zsna
-Message-ID: <tencent_13E236704A527419766767443D6736EE9609@qq.com>
-X-QQ-XMAILINFO: MyIXMys/8kCtCp4bty5WLlyBVFn0IiXDDRbLGqBeKwDsq++0NgJ58DAF/DgpuP
-	 BkKbL3NrZtCiUR/vJVx6zWCfYyuFPrlqtFmhqzGgMMDJjsipdrXHik+v9o3c0205EiyNo50z287D
-	 Ndu+b2X+NgjR+fiEcIm+oyyVhNz6oWHxODhjBM6wGOBEgXNn2oaKJJ0MUqUYsPUk90qoXQmVDqo7
-	 GJ6mn0nCebM80rNS/qF78btCbsPoFzMDRqCMEdoPwfo6ia293nXJIcTQikI50jm6611ckNNJ/fiN
-	 wtM/+OU6Ae9L4D9sLl3uEsmLWwcvcFOw5tzWVDAuBHK1CY6+jpOc72kyCpaBKQPMhHw2IbZBhTdp
-	 Kt47+pcIXULJVnwdYOC45NP0OULyEaM/3KPkS+SDwHRbFZOpZt7a/0ZM5rVymwcoGiO2Im0qobEw
-	 hXbpSBgCxPcXBn9fWAD1Z3hCZSexb3gdc/FfBLv7LeZxzqQyOJYDkkc9KRo9J0QRpW6CacrkTGv4
-	 i93OiWE/bO2LDi8fzXLC1ULAjrO5iCf4PVYNvwgtRu8+3HYKN159kpBxbU2J0ICAtEk/lhTYzIpY
-	 KJLrdcRxqUZ/c2xBC4R6wuMEt8y4qyW0UbEemIOOYn9Uh9qb+4it2L6KLe/DVs0a5OCqq0ZNvCXE
-	 45LLojF2fkXVF79hssMpY4HisWS3COe2bfL9+lRIorsZE+7J5XYkdc3YbClTt68nBUGPUQMJeged
-	 EBA9iX9RwVoY3wyxGC3rlmuXXohSwMU7c6nzPgU9y1M/mB/VrZa8eZuroqBT4QbyJwdRln6JdJlf
-	 F6QKqQ2TINYLzkNHarA7ZIJ5nixBuqSR7Or0d4ztyLXJxfAMFFK5Rg4dDPCf1XmF9i7Z09v5gBl5
-	 sKoKUiKRRQ1y/s262/DQsclNPgHcuxxIKZpwP+XkuGOOOj6HRiIrMi3E03z6uxmSoP4TNsYP/GmA
-	 8h4Dlk23hNhaANQQ2jNY28zPCsxYomocgBU2nzHIrVIR79zGBpNE7whZ6Ld8ztD/2H6PoUDAn5U3
-	 jh86AQQPh3FvE7Z6/M9riut5nUG1FcRLQwtYLo6qLSf07ZR7K17t+IEPhNyw20iPHrHZA7DEo1yo
-	 IO/YgWWnm6zhVy+4A=
-X-QQ-XMRINFO: NyFYKkN4Ny6FuXrnB5Ye7Aabb3ujjtK+gg==
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+ci4ea9e91a328607dd@syzkaller.appspotmail.com
-Cc: brauner@kernel.org,
-	eadavis@qq.com,
-	jack@suse.cz,
-	linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot@lists.linux.dev,
-	syzbot@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com,
-	viro@zeniv.linux.org.uk
-Subject: [PATCH v2] ext4: avoid infinite loops caused by data conflicts
-Date: Mon,  2 Mar 2026 20:51:20 +0800
-X-OQ-MSGID: <20260302125119.282902-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <69a56bf2.050a0220.3a55be.0074.GAE@google.com>
-References: <69a56bf2.050a0220.3a55be.0074.GAE@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E412C11C6
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Mar 2026 12:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.219.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772455925; cv=pass; b=KXiVRQ/bitAbKihXwAa0NV0WH0pSWHajiINEGjB3RfGhEEK6077F7rC3u8SAALTviL5uH9V8yHbJvzAeRkW7Gxq8WpoklzCiAA1PPCk2elXRi58g7qB0Jm7P3KHnlTogrj4fqTXUGFAL7LbJa8JG0YaiJ5PvwSt9Zwf1VlwCzmg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772455925; c=relaxed/simple;
+	bh=IBb8h3H4mC7JvfxAGxqNwalFIOgvy4nMMnYn8mNtouU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SX3h33HEIjPKUi3sOJrTY7AycNhaBWb1MGmlP8zipuXKgNkj6fAA/7LulnWk5GNPoc+bZeMhFPP6LCuE8SkCqvDdLCTRlPT8CbdXRMbs0ioiovT9J3CkTEoKvJrday/pHoX5WloiVI4W8z/X3exayzNFyrm7I0mbSKs20JNe8JQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=J5bGpV24; arc=pass smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-899f79df682so10917936d6.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2026 04:52:04 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772455923; cv=none;
+        d=google.com; s=arc-20240605;
+        b=fLDeSfVQD/PWvm9xMd/tp1EL5Hno66/+yp7qnZ15ZWJGQhJqaoW64hYqccnxFAVHgd
+         KAQz1OrynT6qaLE8Lk94CDs/bT2Y7FGDi/jkIw1FZi97pXFmbsipGlzyOoas4AD+lE0w
+         loELD3C9YJtgyNvxZGVAbu0MpLfLX2OP9GjYZfXz03aQcDRImNnqiTZKUbTKcbyEqTTq
+         mXtZ1f2bjTTf/icHDVeQ71NcSKWN3N7qc+BaKK1igzmAcJ4errEpl9+9UhI7gX5ix7e9
+         g6Gwj74Yz+Nc93ORUUpD78nyqV+TTVqo0ALsVcYPCbmXw1fziag9y8fT3R7eSM64I+/z
+         5neQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=IBb8h3H4mC7JvfxAGxqNwalFIOgvy4nMMnYn8mNtouU=;
+        fh=E4IDKGZmfKFczg/ARax7wWwbE7y3Td1r1OZ6LSWqiwc=;
+        b=JHwKdl4lT83Px1pEZy2yAJn4uUdy7V/RbVpLXeqtjCiJT3HFrG/L9NFbjqmmW2f1/v
+         GiDVu4JHNwhEuuxjqmHxAXu6SEwYUZQOblXZnwYU3NCdmPYtGg7dh0Cadjp1BqggSD/1
+         1S+FmHyYhOYYQ9PgAKIkBvxUJdcqVbRuKJTWVEd4UMy7ZjJ1IZCbxyg3rN3NjGmH9a1D
+         npFKYNoTgDUhRickbWqdmLrN+V7PcAXATe4P4K8t1kYYptDXe91E2FE/LSH0huTmsECS
+         /lbQKGOKRj3rt2EuwcCiuLN9EAVMJ6X+GxUmxfCSkqybP/ajdJ1twIXWk4nV93mUFybo
+         CD9Q==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1772455923; x=1773060723; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=IBb8h3H4mC7JvfxAGxqNwalFIOgvy4nMMnYn8mNtouU=;
+        b=J5bGpV24U6r+ap+XL+LO6Z+Rygw3KA1y4RUamxMuGtaex70cWRrIkTjwPWgOdduTlX
+         5fq9bI7/e/Y0vQ1wBvt69TlTFVo8Do3TEQ9VMtvekHGxLwfJqeJ3DAS67eKmxDPTq+8k
+         y6oSPwZLgnUTRB3yURCf1QuV7rGg0J/OuEDNw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772455923; x=1773060723;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IBb8h3H4mC7JvfxAGxqNwalFIOgvy4nMMnYn8mNtouU=;
+        b=WiFkppSAIwlyaxVb98w9SmSq3LgYUidrioGwESjCX8DujNnutVAQwwFPce66jedMSP
+         Kg6SpeEP8BDLgDzUOCpI3l7UZ5fluz0dyD+KhB996IfLjgYNJ259mM2FB4JBlc6Vi/+g
+         I1zPH/p2zWLDfKOT+8D+u3YdIc0pVDlhNDXE1DJ8DLC+l+5pUPxFtwyLEcifHEdn0NsK
+         XQiDy/Hif8qo8hy0zXJLm8ND5zWswPyAD4H+NCSo6KfXBYUuhxur4rqZbAPe1EMdDNhm
+         pfLeNx3YuTwSyvoCBehF6nYoFbaUl1Qdp9pZBmZgSRqt6sw22Iiz9RiwDVskjfQoUsl7
+         m8VA==
+X-Gm-Message-State: AOJu0YyzlwygNCuEbCkkyj2xXnSw7nhgT89nrT5495q2FUswvkKAeJJO
+	KNTM8T8iXuPrboixdEOFBexnsmOYEphpQ1utPbU92W1RFDSJQgRRY45FH1rIa3Z3BDiLOGKo49T
+	PD6+hrG4YXxOKU9PnKBM08xVxY38lJ8KYlN7V7w219Q==
+X-Gm-Gg: ATEYQzzrL+1J/0QIQSFOYULAY8FMwfLAEiKLU3N0fK9Np2PQfgpYQuMzBxGXivrgS4d
+	1+15vK7tyOVsD96R9CyllyrP42jR3jLnbFPAAkGUnC87HWRjnlcDCny5gAa+MclXMRmzQGTDQEv
+	WmAxO5h3gNEJ76fExmQlP6s7mSlp1aKr25wacEUzSACozLaFPwigwZ7E0dAxZatLsXP4R+hSzwk
+	GQ+4wS3+atxajXURlsYwQuZTlfj6kYPfSGXdOijQPTfm1qAnJvVne2m27LWCnHVMnA09GWx9OSZ
+	r0iuzQIDyQ==
+X-Received: by 2002:ac8:5801:0:b0:502:9b85:a609 with SMTP id
+ d75a77b69052e-507528d6a97mr146117621cf.30.1772455923205; Mon, 02 Mar 2026
+ 04:52:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260111-fuse_try_move_folio-check-large-folio-v1-1-04921ecf466f@ddn.com>
+In-Reply-To: <20260111-fuse_try_move_folio-check-large-folio-v1-1-04921ecf466f@ddn.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 2 Mar 2026 13:51:52 +0100
+X-Gm-Features: AaiRm53cf4qEObJN3O6WPl1Q0g2YyJCuNaf5Tt_XEdcgghEoaed5e10RMcoumaE
+Message-ID: <CAJfpegutV_jsLAMo8Jnr=GYsYg0b_A9Z1MkgeMZYua0r-XnY-A@mail.gmail.com>
+Subject: Re: [PATCH] fuse: Check for large folio with SPLICE_F_MOVE
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: linux-fsdevel@vger.kernel.org, stable@vger.kernel.org, 
+	Horst Birthelmer <hbirthelmer@ddn.com>
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[qq.com,quarantine];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
-	R_DKIM_ALLOW(-0.20)[qq.com:s=s201512];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
+	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-78890-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78889-lists,linux-fsdevel=lfdr.de];
-	TO_DN_NONE(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,qq.com,suse.cz,vger.kernel.org,lists.linux.dev,syzkaller.appspotmail.com,googlegroups.com,zeniv.linux.org.uk];
+	DKIM_TRACE(0.00)[szeredi.hu:+];
 	MIME_TRACE(0.00)[0:+];
-	FROM_NEQ_ENVFROM(0.00)[eadavis@qq.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	DKIM_TRACE(0.00)[qq.com:+];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FREEMAIL_FROM(0.00)[qq.com];
-	TAGGED_RCPT(0.00)[linux-fsdevel,ci4ea9e91a328607dd];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[qq.com:mid,qq.com:dkim,qq.com:email,syzkaller.appspot.com:url,appspotmail.com:email]
-X-Rspamd-Queue-Id: 733381D92E5
+	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[4];
+	NEURAL_HAM(-0.00)[-0.999];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[szeredi.hu:dkim,ddn.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: 79A941D956F
 X-Rspamd-Action: no action
 
-In the execution paths of mkdir and openat, there are two different
-structures, struct ext4_xattr_header and struct ext4_dir_entry_2,
-that both reference the same buffer head.
+On Sun, 11 Jan 2026 at 12:48, Bernd Schubert <bschubert@ddn.com> wrote:
+>
+> xfstest generic/074 and generic/075 complain result in kernel
+> warning messages / page dumps.
+> This is easily reproducible (on 6.19) with
+> CONFIG_TRANSPARENT_HUGEPAGE_SHMEM_HUGE_ALWAYS=y
+> CONFIG_TRANSPARENT_HUGEPAGE_TMPFS_HUGE_ALWAYS=y
+>
+> This just adds a test for large folios fuse_try_move_folio
+> with the same page copy fallback, but to avoid the warnings
+> from fuse_check_folio().
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+> Signed-off-by: Horst Birthelmer <hbirthelmer@ddn.com>
 
-In the mkdir path, ext4_add_entry() first sets the rec_len member of
-the struct ext4_dir_entry_2 to 2048, and then sets the file_type value
-to 2 in add_dirent_to_buf()->ext4_insert_dentry()->ext4_set_de_type().
+Applied, thanks.
 
-This causes the h_refcount value in the other struct ext4_xattr_header,
-which references the same buffer head, to be too large in the openat
-path.
-
-The above causes ext4_xattr_block_set() to enter an infinite loop about
-"inserted" and cannot release the inode lock, ultimately leading to the
-143s blocking problem mentioned in [1].
-
-When accessing the ext4_xattr_header structure in xattr, the accessed
-buffer head data is placed after ext4_dir_entry_2 to prevent data
-collisions caused by data overlap.
-
-[1]
-INFO: task syz.0.17:5995 blocked for more than 143 seconds.
-Call Trace:
- inode_lock_nested include/linux/fs.h:1073 [inline]
- __start_dirop fs/namei.c:2923 [inline]
- start_dirop fs/namei.c:2934 [inline]
-
-Reported-by: syzbot+512459401510e2a9a39f@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=1659aaaaa8d9d11265d7
-Tested-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
-Reported-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=512459401510e2a9a39f
-Tested-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
-v1 -> v2: fix ci reported issues
-
- fs/ext4/ext4.h  | 2 ++
- fs/ext4/xattr.c | 3 ++-
- fs/ext4/xattr.h | 3 ++-
- 3 files changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 293f698b7042..4b72da4d646f 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -2425,6 +2425,8 @@ struct ext4_dir_entry_2 {
- 	char	name[EXT4_NAME_LEN];	/* File name */
- };
- 
-+#define DIFF_AREA_DE_XH sizeof(struct ext4_dir_entry_2)
-+
- /*
-  * Access the hashes at the end of ext4_dir_entry_2
-  */
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index 7bf9ba19a89d..b7bdf8ae2b4f 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -2160,7 +2160,8 @@ ext4_xattr_block_set(handle_t *handle, struct inode *inode,
- 				error = -EIO;
- 				goto getblk_failed;
- 			}
--			memcpy(new_bh->b_data, s->base, new_bh->b_size);
-+			memcpy(new_bh->b_data + DIFF_AREA_DE_XH, s->base,
-+			       new_bh->b_size - DIFF_AREA_DE_XH);
- 			ext4_xattr_block_csum_set(inode, new_bh);
- 			set_buffer_uptodate(new_bh);
- 			unlock_buffer(new_bh);
-diff --git a/fs/ext4/xattr.h b/fs/ext4/xattr.h
-index 1fedf44d4fb6..4a28023c72e8 100644
---- a/fs/ext4/xattr.h
-+++ b/fs/ext4/xattr.h
-@@ -8,6 +8,7 @@
- */
- 
- #include <linux/xattr.h>
-+#include "ext4.h"
- 
- /* Magic value in attribute blocks */
- #define EXT4_XATTR_MAGIC		0xEA020000
-@@ -90,7 +91,7 @@ struct ext4_xattr_entry {
- #define EXT4_XATTR_MIN_LARGE_EA_SIZE(b)					\
- 	((b) - EXT4_XATTR_LEN(3) - sizeof(struct ext4_xattr_header) - 4)
- 
--#define BHDR(bh) ((struct ext4_xattr_header *)((bh)->b_data))
-+#define BHDR(bh) ((struct ext4_xattr_header *)((bh)->b_data + DIFF_AREA_DE_XH))
- #define ENTRY(ptr) ((struct ext4_xattr_entry *)(ptr))
- #define BFIRST(bh) ENTRY(BHDR(bh)+1)
- #define IS_LAST_ENTRY(entry) (*(__u32 *)(entry) == 0)
--- 
-2.43.0
-
+Miklos
 
