@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-79000-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79002-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id AFbdOiL7pWljIgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79000-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:03:30 +0100
+	id OPtoCYr9pWkOIwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79002-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:13:46 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00DAD1E18E9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:03:29 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE971E214F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:13:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 8AE8A306F4E5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 20:49:26 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id D32FC31FF83A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 20:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61671386444;
-	Mon,  2 Mar 2026 20:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5926388E42;
+	Mon,  2 Mar 2026 20:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="us9kuFVN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z+57nIPb"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBA5382F3C;
-	Mon,  2 Mar 2026 20:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB9438837D;
+	Mon,  2 Mar 2026 20:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772483647; cv=none; b=G2ftXMRQJhoOsaBiOukSA6Gufl3v6mSWIW0yIgMsKPAogeaNLxZS/W4OMeCXNmZkTHaVrp0pkPBNN+JjMzGoBMmlpJbMB4T3KDVSiBHcHkkS0VD0euTB4i/POoviK67qaPU8SUxt+JIFw3YwP1rU8POm5pP3d0LWLK3v1PdZixg=
+	t=1772483662; cv=none; b=dnM2FjSwXeO1zNoIKuOWrzyC+++Dw6ic2wLNooTwPHICu+/HKzGIN7K9swwf/fFH2CUW72vbLbyhlSfrmkQ9mmZwWLzxNmzPzPz8AxD9s4t/4T9vDQSoZ37edQL8rxn4u6rAIeJWrKaQNW3r4TxD1phqKTm6WAdqLssr0mACtGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772483647; c=relaxed/simple;
-	bh=O6E/wWymcmTFXnHRYlBNuOEnEuI3iSQ7UQxyw69+kG8=;
+	s=arc-20240116; t=1772483662; c=relaxed/simple;
+	bh=9vOORhA9m+Cr2DfixXDJ8c/2SDQAvlb5ujFFzPjzDlc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RK79VpUA6MkX0FPDmlbb7hyK4BbtVPfS29jRENxiViYL3Th3w4nEbIOTF+45L1CtFol4b4WVnIEoFTBtykdGzqrELbK/bd99dxMNnmiqmLG6Oybdj3MSHfBm5A6+NcmuC2Dj6tuxQcoyzYoYkOVr0VOA2sYbdrnseJFJSZ9cMFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=us9kuFVN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EE46C2BCB5;
-	Mon,  2 Mar 2026 20:33:52 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=uVYxQKWe2wGz8RWtdnm24uFQzgDN4/kqBZQcxeFiTTMgh3MKPzkLQunY3Csbiuar4xzRhFfwCii+mPiH/w+TdiILFszTzMPXYJ59oDEAyqmnPQPpYPPGKoE4HYsys6c68PbraxTGlRBsTG3yEq1NLQjVyHr6GB6IvuFPU8+uB7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z+57nIPb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BAC9C19423;
+	Mon,  2 Mar 2026 20:34:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772483647;
-	bh=O6E/wWymcmTFXnHRYlBNuOEnEuI3iSQ7UQxyw69+kG8=;
+	s=k20201202; t=1772483661;
+	bh=9vOORhA9m+Cr2DfixXDJ8c/2SDQAvlb5ujFFzPjzDlc=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=us9kuFVN5+eJcWNCT1WvuDJBcdT4qSgZm5FciUUdFDPVCrpEdAtotU3qdHtNsEZ6G
-	 fl67hg1lyDRhO2v+62bpFTS2fX6Q0GimDVN9ZxLUpCExms/R1PfW4BzRPaoGYFjPoM
-	 JVzFrDbkMmYLKuVFQWwOg6rPr/tNLhNz67Wp1T3cERICx4UHd1h8JDplhVBL6xmirR
-	 3BanCCeVRAD5haF1qLoNT1NvuAIvcs/+xUaBO7eNY7n0ywsCixWy7syP/vpLa2M6Ry
-	 mVkDEGojwZpP+AVFWleuKqc8Y5IvMQ8i5pkK5Qfy4RxYodcEvAeWB8GB1lOX8L8ZAr
-	 7sCX83iwYeaPA==
+	b=Z+57nIPb+bk9zi1MjrJosbkn0fEdK3CorLwsR0v6ukr/wnxc2efBPpczQ602ZCKGC
+	 z7p/vwb/xRQdC63uq2tnxlejzgMl1TpFX3nXcclQBK+AFWIp0SDBT5qqwuZK+D6Pz7
+	 mRqRNzvHf7HlkXaqphW33b/7nPkioKJ5VPplLeCLO2okSKOLt47oiwWkoYr0jAabk8
+	 J8SojMzvb4PfpcYJH6Glzrr+Cy+bcL5EkHFY1UgXQ4xbI1+sAppFKh/JJPnnqsFrRi
+	 TBC7OjKJ6OmwSlm05TD857yF975y2YZ4Q5sWIl5jpRkUS/GVtZViwwM4E6Q8hl5IyP
+	 PcOkhImYnSTpQ==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 02 Mar 2026 15:24:22 -0500
-Subject: [PATCH v2 038/110] nsfs: use PRIino format for i_ino
+Date: Mon, 02 Mar 2026 15:24:23 -0500
+Subject: [PATCH v2 039/110] ntfs3: use PRIino format for i_ino
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260302-iino-u64-v2-38-e5388800dae0@kernel.org>
+Message-Id: <20260302-iino-u64-v2-39-e5388800dae0@kernel.org>
 References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
 In-Reply-To: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -170,83 +170,75 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-sctp@vger.kernel.org, bpf@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1123; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=O6E/wWymcmTFXnHRYlBNuOEnEuI3iSQ7UQxyw69+kG8=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBppfH4nr1zAdiW5p2+lCqnezrC50G0DgPOGslhI
- SVgDwbzfQOJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaXx+AAKCRAADmhBGVaC
- FQ7qD/9Crc5dXcYjfDYsJq0pJ2tGKu0dX9jXy1EPC80+gepRKX95KNN8/+NDUKNZJ2X8nun84QH
- 6CSV8mUcd36OvMzmw8CsOR23929nd8IU6sfDxv6IY6zF7iW/N/Q3lG9ZhxTP2VsC2MVnlg3ed4m
- gK97DBUZ1yLvx1MWYR5mNxUbaIdrFxlQufcHmLmQbnRK53W0PLahurhcvgndRQ1ARgjV8PPuKt6
- IqgUKKK54IiKTMAGPULJPF23H1eZJ5UHXRxsTqb0fD8ewbSM5HtaGAJ1PFLJR+lnfzc1mwR3ZA2
- WeK78R5S3k6/IifwNgBDKnno7pW8KBlUv5UmNgxKqGIhbm8umg6ZWPW1TWmn2eCwW/AuZT34LQ7
- cfpccxYJAjwdk0VRhRBJ50TtmVFhDS8v8qBaeqbQfHNUEe9a6sAsj90dAfDFBMvNdsUEXeoWJHM
- ZbfQbHc/28m9ydAf+AYHZkZiNXz3rlH/KwSUnkaOzozOshxNe65gvHTwoooRagSzjMWAN1nbyTT
- WSrnCapknoBfQW/lBNp10qtIs8c1ht8t+huigk6Jqw+qGpkFwO7bBk0mCm/p8jT1yKICL7bcZ8A
- 5+NgyIDMEPDvMUUcnc81ZJ/1yv9UUcs9daePE760epq5urvrcj6qyAiIIDPEhfzs8WLJiw+RRL7
- nYRmX3jQMrIuTWw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=833; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=9vOORhA9m+Cr2DfixXDJ8c/2SDQAvlb5ujFFzPjzDlc=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBppfH55egcRR4/mhYfnDyqBlADGfqgvIRt1PCN4
+ x+gMyWmMCCJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaXx+QAKCRAADmhBGVaC
+ FdEmD/41M/JHEs7IP3sfe79Y0dcvJeMl84jQGbpG214MGAeA/jtquJXDxncE2gWgJIjMsvDQ8g0
+ C3mWf/U5TfDjdFFUx0T4a4Ut7VzCiw6oZ/KlqDMJFJqbui7JZFTyWwIc3FD3s7iMncRlChMLZPp
+ q05zf0ttbgtIHWawPfZu732vWozbRo6TqyCT7RYqor8fKO65yquJqUD9sBuwLxRPz7VLijOr7sn
+ qUh97KrpLnoHZ3HchUw7dE6yR5rTd9dOO7izjatKYI6hATXuN3CAbZnT5kxcXB7Y5Ubd/49n553
+ xbS6DR6HfR9DTweBVmy9gz4J1S2ML9hAn0i9hEoPMM6bwTfnGnirO2MbqsnxjSmKtg27t4NIPZ/
+ LGoVO6MVj/BUGAfrAzR/HhoQXt9z7TRb6Ka8msUIfeL6LDAxcrk2sPoVbs+9ZLIL2Ql7cL6e52o
+ PT0igEsHZ/hNIjPCPFYO53UYOCyCoSapxCnKhSKzojC6DvcA0nL6oO6kHv/MvjHI2a+th9gNzgM
+ Re07vU50RULgKDmWkrWZowfm3su2IvZpZKdEd5YtCd+UbjB2IxJdHyDxcw6DbqQyX29Ohh7yNQi
+ ZJeSVNN/CgV37dmFdJKjePETW9gfpjtphDsPGE86Pc6iRKaB8gn8oYsRC7PkH7yEBPCDbPPwip8
+ UQ17gyzCLJ44b3Q==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
-X-Rspamd-Queue-Id: 00DAD1E18E9
+X-Rspamd-Queue-Id: 5DE971E214F
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de,yaina.de,holtmann.org,hartkopp.net,pengutronix.de,secunet.com,gondor.apana.org.au,fomichev.me,iogearbox.net];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79000-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-79002-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de,yaina.de,holtmann.org,hartkopp.net,pengutronix.de,secunet.com,gondor.apana.org.au,fomichev.me,iogearbox.net];
+	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	TO_DN_SOME(0.00)[];
 	RCPT_COUNT_GT_50(0.00)[172];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[jlayton@kernel.org,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-0.999];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-Convert nsfs i_ino format strings to use the PRIino format
+Convert ntfs3 i_ino format strings to use the PRIino format
 macro in preparation for the widening of i_ino via kino_t.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/nsfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ntfs3/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/nsfs.c b/fs/nsfs.c
-index db91de2086456bb9fe0547be7dbbd2de87c97ca7..0e099ee2121f8831645c3a25d759793ef2ff9ce6 100644
---- a/fs/nsfs.c
-+++ b/fs/nsfs.c
-@@ -46,7 +46,7 @@ static char *ns_dname(struct dentry *dentry, char *buffer, int buflen)
- 	struct ns_common *ns = inode->i_private;
- 	const struct proc_ns_operations *ns_ops = ns->ops;
+diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+index 174a7cb202a08c550b3b8497cdf6105192be2e43..f32227750d6f569286fd973a5ca745a655a470de 100644
+--- a/fs/ntfs3/super.c
++++ b/fs/ntfs3/super.c
+@@ -153,7 +153,7 @@ void ntfs_inode_printk(struct inode *inode, const char *fmt, ...)
+ 	vaf.fmt = printk_skip_level(fmt);
+ 	vaf.va = &args;
  
--	return dynamic_dname(buffer, buflen, "%s:[%lu]",
-+	return dynamic_dname(buffer, buflen, "%s:[%" PRIino "u]",
- 		ns_ops->name, inode->i_ino);
- }
+-	printk("%c%cntfs3(%s): ino=%lx,%s %pV\n", KERN_SOH_ASCII, level,
++	printk("%c%cntfs3(%s): ino=%" PRIino "x,%s %pV\n", KERN_SOH_ASCII, level,
+ 	       sb->s_id, inode->i_ino, name ? name : "", &vaf);
  
-@@ -394,7 +394,7 @@ static int nsfs_show_path(struct seq_file *seq, struct dentry *dentry)
- 	const struct ns_common *ns = inode->i_private;
- 	const struct proc_ns_operations *ns_ops = ns->ops;
- 
--	seq_printf(seq, "%s:[%lu]", ns_ops->name, inode->i_ino);
-+	seq_printf(seq, "%s:[%" PRIino "u]", ns_ops->name, inode->i_ino);
- 	return 0;
- }
- 
+ 	va_end(args);
 
 -- 
 2.53.0
