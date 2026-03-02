@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-79013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id ELygOEH8pWkOIwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:08:17 +0100
+	id gJsiF2z8pWkOIwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:09:00 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA1311E1CA1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:08:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 168C41E1D77
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:09:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 2C53F3045D61
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 20:56:38 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 08DD5313F5B0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 20:57:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8D44BCAAB;
-	Mon,  2 Mar 2026 20:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926583A2548;
+	Mon,  2 Mar 2026 20:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jb0EwRhp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B9vuT9Sd"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD2F39EF13;
-	Mon,  2 Mar 2026 20:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92C639FCD9;
+	Mon,  2 Mar 2026 20:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772483805; cv=none; b=IOt7RhKxP87xFBTuDNDlDbipnJMXdaCo/bSRl71ZkKaDiPzYsRjaNPgMdfLHKth+cH3VLW1bbIksPQzRlzwvczbVZHg0bHFcf+dH7ypNOhIGRQhddRnbBRACnxVFBGEmE+HNSb5c+hCt5r99QloNdsHrsCplx8qmOHBOH9jZs48=
+	t=1772483819; cv=none; b=NGu2P0nH6daWD673dHwahVyBmOpoSJweWYSu0t/nxmJkxvvuxLYX1ovc5xKOcV9Jnv5FgLzglClT0xQw7EHEhyzVk5SiYcIj/W/1LAVK8fJbvs/utgJTKnfd8w2uWMen31rw6VQyjcmvaCGsY7Js88mY0fsn2+tlc2kWGYgANdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772483805; c=relaxed/simple;
-	bh=H3tL61fbWz+6oVu8xWt6IvuT0fFPzYC+T2ZsfuwYtEE=;
+	s=arc-20240116; t=1772483819; c=relaxed/simple;
+	bh=0ZE73lCrVEdpMXz91AbIXmMh1XqQRzyOg6foj3qrPFg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=smcFwSZ4f7CYIhbsapnqxBvDT5gmUaagjNWASTf/QR8dL9lDnDJm3cVwIg3W3Vp7gER0orNeEIJCC75MA0WZAZrBsAo3QalmnFw6qoDHvyz6AOXh+WManvylNaKBJjktWFNDo0rrG0zQCbOTqpTItGTXuKjnJVEG3enLrhM0e98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jb0EwRhp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11E28C2BC87;
-	Mon,  2 Mar 2026 20:36:30 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=N0cdeeZKcBveWuhrowH9aejc1CAo3Y0SgFPnvxzYyBvooLuWvj2h5PcQeDzvvdKUtTXCddUjT5vpnkiNW8B9QRHT9WS48d0xxk/ZCF1YJzxfZHYuKj/T7cf1wn8S1Yz58/QiFXpumnUpk8rQWJ6PU0yW01v67gjOSH/WZobMXGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B9vuT9Sd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A117C2BC9E;
+	Mon,  2 Mar 2026 20:36:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772483805;
-	bh=H3tL61fbWz+6oVu8xWt6IvuT0fFPzYC+T2ZsfuwYtEE=;
+	s=k20201202; t=1772483819;
+	bh=0ZE73lCrVEdpMXz91AbIXmMh1XqQRzyOg6foj3qrPFg=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=jb0EwRhpHGcE220YDMsWSuPg35XSq9cyiwcFhJQ8siQHLMQWzG8i2y3FoBOtdsxS9
-	 /EDw7m1rf0WcV5mtk0FOjBB0zCbpG7g1rtQxNdqr6jhRcr+BbjiUm/sYPWDTSY3p8c
-	 IQXLH/KIH0e4kWvqpZ54+HPEHzQaOhGJaPC7QVzKeWNtWoDth/SKHT0Dy3XzCN94A0
-	 RaeG5MiKhhWwatscIOBrsa2NW3KO2i2v94MUPvP0MdcEGNt4dFzcNMtV2Qok4k1a3I
-	 uxmlDo6F4HEGR6q8t+BVX2Nv0OXZ+To870NHKFm9/QQh62tmbhyPuTdmgvQV/j3muj
-	 jte1N/R0jEc7w==
+	b=B9vuT9SdMGIoze9C+yqVn924bJJ+P/cFYMS6dixpaI5Btyb/sfbUJp8vwEjCPXFiF
+	 Wmk8b6d4Axkj6LczBx/A/OoW3u1aHAnxcHJdbIsYggfPkj2YKpPbtaS/8r+efGtClW
+	 8H/hAkIZkrIY/5sQQSYKCjNVm/qeQgD0wGVvUEc+1ikXnv04zuqRFju31Hcb99Acf+
+	 RoVPQXBDoiqz1kshO4InItYtqH6ICN97dgbrf7T/OCW418hsz06O0t989B2uXdGYcy
+	 yESxdVOw7NdL0gBdMXC+eip8AmrHMKjU0yfEuICWHSK657x0Psg3TqwaupkEb+oNTt
+	 DPGNx3BwIGc+w==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 02 Mar 2026 15:24:33 -0500
-Subject: [PATCH v2 049/110] security: use PRIino format for i_ino
+Date: Mon, 02 Mar 2026 15:24:34 -0500
+Subject: [PATCH v2 050/110] drm/amdgpu: use PRIino format for i_ino
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260302-iino-u64-v2-49-e5388800dae0@kernel.org>
+Message-Id: <20260302-iino-u64-v2-50-e5388800dae0@kernel.org>
 References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
 In-Reply-To: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -170,23 +170,23 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-sctp@vger.kernel.org, bpf@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9136; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=H3tL61fbWz+6oVu8xWt6IvuT0fFPzYC+T2ZsfuwYtEE=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBppfH7D5zjUk6ZmaUDERwrTJr0eT7+HFUlu3gfC
- gJ2G/7C4vGJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaXx+wAKCRAADmhBGVaC
- FUGAD/4tZ8ATwOq5FhuMuFqlnoBgDgX4KgpAqw3nDkOioCbzRI2x0A4UdyghtBNj2ENMISFUiSc
- Aat6uAxQuXz216zBpHpV0AvGeuW74IDTVEqTkP1iKmKXcM/nf879ZTeWUl9HvtNFB5piLmT0AKb
- USC2zGKx8pih/uyufVImQcZsLvJcWz6RX+jADkYFTA1ttN5lyahaRFJ6EZ3ZJkwCm+ZpRMjFXDh
- pt8C5Cl0GWw4x81tnJgbSYHUGwzPyYnNZHLXD8Wlbkxa/CB4hQNdIOqUkkg/+9UcICK3/RENtoJ
- zqs0aQrqzBvk2AlX1q5OmLhGejCZuGefd4y+2LigaI5FJj5g282DBNppyCEyOipT2eqHAF2Na/+
- KCCMeC5OWo4zMrmypcQJ+kkKUYo9ZKvj2X0Mudel7eLUZ1I0dMfcs1od4E74C2m9jsspDR4JF7S
- lf/NjzfWtH8CaY/x+DvvAlG+ExMGk5hM6kreEq34SLp0ibsAD/8lp55HGc2xXQHfcbeqYseMkyV
- LlXACKLdA0S53mH4jZi0vfT1bOWAwC6HMhDhfrejzvZpXezlkoNVo077BtvVXMHW20PhJ5c61pQ
- 74oQLAYB8YWWR7ZqRuTKTXsdcqVx74hcl6wMQak/8LWj2D0dyeMxqws9EgC3tzGM8ct2S5rMvb/
- agR0vgUd1qAypMg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1231; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=0ZE73lCrVEdpMXz91AbIXmMh1XqQRzyOg6foj3qrPFg=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBppfH8bWEVwsBbOa/3fhQXi5WtIWQ3JhiCAoIem
+ 86pCTSDgfGJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaXx/AAKCRAADmhBGVaC
+ Fd7JEAC4rhc+en5RK1++F7YzWXknLhX6D5LT7nLIWMuNPlNshWUqaUZgLyrGqrRxvONjVg6lljX
+ w/XxprnxonbekUKFhURqX5POoQg7A7fly0I63bfHa582/Z44VdFqR8dJfc4rlKNLrKXgHXm/GHa
+ eREHxVCd/KoQ6okzPx42ZNo1EgiajVbz9rRzAb9FnLUemaXHJn8FR0GZNpHUC/ZCtKNBrQdQHBz
+ DBRqngy6qSL5zK5nJf3uIVMhdc2wfh65Bqv/L+kBuRiAXZzBdSFa8d+L6GjuG4HHvvHAu5aT9ln
+ kBTohpygzBp+Lfi3Pbkigv75oeLO0BqvpkCe7/WOjwzbGGM1u70iFGcx+aJLcT8dOyGBsd18/fW
+ 5qTXdZ5DqeKbeLczod/TumsCebxfh2wOI0Fp4O07ncbj7dG6RRUswbkWgvMa9O7hGtrebzvJa/e
+ I6MIfMCMBRO32PFvsFjGfdF12IS1OqtD6boc7kn8yOhn1M67Oy24tV2rqoM6wADl8VSG/dcj72s
+ DV2GMyXe8bmMXE/zXxXwNMqRHMdlJUqnyrXY+cuNlsdhc5WP3hRRyqrchkhS1Kjk35fOczwuL2Z
+ F4zLOqTUP0EwBDdlSP1mhpuR6DxSpllNHXjKclV91I2uBWHZjKbczXkJHACIGsmkn9Wn8lc1opU
+ MWMpr+08JwGFnlQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
-X-Rspamd-Queue-Id: CA1311E1CA1
+X-Rspamd-Queue-Id: 168C41E1D77
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
@@ -197,7 +197,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79013-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79014-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de,yaina.de,holtmann.org,hartkopp.net,pengutronix.de,secunet.com,gondor.apana.org.au,fomichev.me,iogearbox.net];
@@ -218,216 +218,30 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-Convert security i_ino format strings to use the PRIino format
+Convert drm/amdgpu i_ino format strings to use the PRIino format
 macro in preparation for the widening of i_ino via kino_t.
-
-Also correct signed format specifiers to unsigned, since inode
-numbers are unsigned values.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- security/apparmor/apparmorfs.c       |  4 ++--
- security/integrity/integrity_audit.c |  2 +-
- security/ipe/audit.c                 |  2 +-
- security/lsm_audit.c                 | 10 +++++-----
- security/selinux/hooks.c             | 10 +++++-----
- security/smack/smack_lsm.c           | 12 ++++++------
- 6 files changed, 20 insertions(+), 20 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_object.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-index 2f84bd23edb69e7e69cb097e554091df0132816d..be343479f80b71566be6fda90fc4e00912faad63 100644
---- a/security/apparmor/apparmorfs.c
-+++ b/security/apparmor/apparmorfs.c
-@@ -149,7 +149,7 @@ static int aafs_count;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+index 1fb95640069667bf731df05990b57c6e0a0d2c16..d62f7cd1bdd3643803a99c3cbe35fa5b19217eeb 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+@@ -1676,9 +1676,9 @@ u64 amdgpu_bo_print_info(int id, struct amdgpu_bo *bo, struct seq_file *m)
+ 	attachment = READ_ONCE(bo->tbo.base.import_attach);
  
- static int aafs_show_path(struct seq_file *seq, struct dentry *dentry)
- {
--	seq_printf(seq, "%s:[%lu]", AAFS_NAME, d_inode(dentry)->i_ino);
-+	seq_printf(seq, "%s:[%" PRIino "u]", AAFS_NAME, d_inode(dentry)->i_ino);
- 	return 0;
- }
+ 	if (attachment)
+-		seq_printf(m, " imported from ino:%lu", file_inode(dma_buf->file)->i_ino);
++		seq_printf(m, " imported from ino:%" PRIino "u", file_inode(dma_buf->file)->i_ino);
+ 	else if (dma_buf)
+-		seq_printf(m, " exported as ino:%lu", file_inode(dma_buf->file)->i_ino);
++		seq_printf(m, " exported as ino:%" PRIino "u", file_inode(dma_buf->file)->i_ino);
  
-@@ -2644,7 +2644,7 @@ static int policy_readlink(struct dentry *dentry, char __user *buffer,
- 	char name[32];
- 	int res;
- 
--	res = snprintf(name, sizeof(name), "%s:[%lu]", AAFS_NAME,
-+	res = snprintf(name, sizeof(name), "%s:[%" PRIino "u]", AAFS_NAME,
- 		       d_inode(dentry)->i_ino);
- 	if (res > 0 && res < sizeof(name))
- 		res = readlink_copy(buffer, buflen, name, strlen(name));
-diff --git a/security/integrity/integrity_audit.c b/security/integrity/integrity_audit.c
-index 0ec5e4c22cb2a1066c2b897776ead6d3db72635c..d28dac23a4e7cf651856b80ab7756d250187ccde 100644
---- a/security/integrity/integrity_audit.c
-+++ b/security/integrity/integrity_audit.c
-@@ -62,7 +62,7 @@ void integrity_audit_message(int audit_msgno, struct inode *inode,
- 	if (inode) {
- 		audit_log_format(ab, " dev=");
- 		audit_log_untrustedstring(ab, inode->i_sb->s_id);
--		audit_log_format(ab, " ino=%lu", inode->i_ino);
-+		audit_log_format(ab, " ino=%" PRIino "u", inode->i_ino);
- 	}
- 	audit_log_format(ab, " res=%d errno=%d", !result, errno);
- 	audit_log_end(ab);
-diff --git a/security/ipe/audit.c b/security/ipe/audit.c
-index 3f0deeb54912730d9acf5e021a4a0cb29a34e982..0de95dd4fbea15d4d913fc42e197c3120a9d24a0 100644
---- a/security/ipe/audit.c
-+++ b/security/ipe/audit.c
-@@ -153,7 +153,7 @@ void ipe_audit_match(const struct ipe_eval_ctx *const ctx,
- 		if (inode) {
- 			audit_log_format(ab, " dev=");
- 			audit_log_untrustedstring(ab, inode->i_sb->s_id);
--			audit_log_format(ab, " ino=%lu", inode->i_ino);
-+			audit_log_format(ab, " ino=%" PRIino "u", inode->i_ino);
- 		} else {
- 			audit_log_format(ab, " dev=? ino=?");
- 		}
-diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-index 7d623b00495c14b079e10e963c21a9f949c11f07..523f2ee116f0f928003aec30a105d6d4ecb49b0b 100644
---- a/security/lsm_audit.c
-+++ b/security/lsm_audit.c
-@@ -202,7 +202,7 @@ void audit_log_lsm_data(struct audit_buffer *ab,
- 		if (inode) {
- 			audit_log_format(ab, " dev=");
- 			audit_log_untrustedstring(ab, inode->i_sb->s_id);
--			audit_log_format(ab, " ino=%lu", inode->i_ino);
-+			audit_log_format(ab, " ino=%" PRIino "u", inode->i_ino);
- 		}
- 		break;
- 	}
-@@ -215,7 +215,7 @@ void audit_log_lsm_data(struct audit_buffer *ab,
- 		if (inode) {
- 			audit_log_format(ab, " dev=");
- 			audit_log_untrustedstring(ab, inode->i_sb->s_id);
--			audit_log_format(ab, " ino=%lu", inode->i_ino);
-+			audit_log_format(ab, " ino=%" PRIino "u", inode->i_ino);
- 		}
- 		break;
- 	}
-@@ -228,7 +228,7 @@ void audit_log_lsm_data(struct audit_buffer *ab,
- 		if (inode) {
- 			audit_log_format(ab, " dev=");
- 			audit_log_untrustedstring(ab, inode->i_sb->s_id);
--			audit_log_format(ab, " ino=%lu", inode->i_ino);
-+			audit_log_format(ab, " ino=%" PRIino "u", inode->i_ino);
- 		}
- 
- 		audit_log_format(ab, " ioctlcmd=0x%hx", a->u.op->cmd);
-@@ -246,7 +246,7 @@ void audit_log_lsm_data(struct audit_buffer *ab,
- 		if (inode) {
- 			audit_log_format(ab, " dev=");
- 			audit_log_untrustedstring(ab, inode->i_sb->s_id);
--			audit_log_format(ab, " ino=%lu", inode->i_ino);
-+			audit_log_format(ab, " ino=%" PRIino "u", inode->i_ino);
- 		}
- 		break;
- 	}
-@@ -265,7 +265,7 @@ void audit_log_lsm_data(struct audit_buffer *ab,
- 		}
- 		audit_log_format(ab, " dev=");
- 		audit_log_untrustedstring(ab, inode->i_sb->s_id);
--		audit_log_format(ab, " ino=%lu", inode->i_ino);
-+		audit_log_format(ab, " ino=%" PRIino "u", inode->i_ino);
- 		rcu_read_unlock();
- 		break;
- 	}
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index d8224ea113d1ac273aac1fb52324f00b3301ae75..9430f44c81447708c67ddc35c5b4254f16731b8f 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -1400,7 +1400,7 @@ static int inode_doinit_use_xattr(struct inode *inode, struct dentry *dentry,
- 	if (rc < 0) {
- 		kfree(context);
- 		if (rc != -ENODATA) {
--			pr_warn("SELinux: %s:  getxattr returned %d for dev=%s ino=%ld\n",
-+			pr_warn("SELinux: %s:  getxattr returned %d for dev=%s ino=%" PRIino "u\n",
- 				__func__, -rc, inode->i_sb->s_id, inode->i_ino);
- 			return rc;
- 		}
-@@ -1412,13 +1412,13 @@ static int inode_doinit_use_xattr(struct inode *inode, struct dentry *dentry,
- 					     def_sid, GFP_NOFS);
- 	if (rc) {
- 		char *dev = inode->i_sb->s_id;
--		unsigned long ino = inode->i_ino;
-+		kino_t ino = inode->i_ino;
- 
- 		if (rc == -EINVAL) {
--			pr_notice_ratelimited("SELinux: inode=%lu on dev=%s was found to have an invalid context=%s.  This indicates you may need to relabel the inode or the filesystem in question.\n",
-+			pr_notice_ratelimited("SELinux: inode=%" PRIino "u on dev=%s was found to have an invalid context=%s.  This indicates you may need to relabel the inode or the filesystem in question.\n",
- 					      ino, dev, context);
- 		} else {
--			pr_warn("SELinux: %s:  context_to_sid(%s) returned %d for dev=%s ino=%ld\n",
-+			pr_warn("SELinux: %s:  context_to_sid(%s) returned %d for dev=%s ino=%" PRIino "u\n",
- 				__func__, context, -rc, dev, ino);
- 		}
- 	}
-@@ -3477,7 +3477,7 @@ static void selinux_inode_post_setxattr(struct dentry *dentry, const char *name,
- 					   &newsid);
- 	if (rc) {
- 		pr_err("SELinux:  unable to map context to SID"
--		       "for (%s, %lu), rc=%d\n",
-+		       "for (%s, %" PRIino "u), rc=%d\n",
- 		       inode->i_sb->s_id, inode->i_ino, -rc);
- 		return;
- 	}
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 98af9d7b943469d0ddd344fc78c0b87ca40c16c4..22b6bd322840c82697c38c07b19a4677e7da2598 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -182,7 +182,7 @@ static int smk_bu_inode(struct inode *inode, int mode, int rc)
- 	char acc[SMK_NUM_ACCESS_TYPE + 1];
- 
- 	if (isp->smk_flags & SMK_INODE_IMPURE)
--		pr_info("Smack Unconfined Corruption: inode=(%s %ld) %s\n",
-+		pr_info("Smack Unconfined Corruption: inode=(%s %" PRIino "u) %s\n",
- 			inode->i_sb->s_id, inode->i_ino, current->comm);
- 
- 	if (rc <= 0)
-@@ -195,7 +195,7 @@ static int smk_bu_inode(struct inode *inode, int mode, int rc)
- 
- 	smk_bu_mode(mode, acc);
- 
--	pr_info("Smack %s: (%s %s %s) inode=(%s %ld) %s\n", smk_bu_mess[rc],
-+	pr_info("Smack %s: (%s %s %s) inode=(%s %" PRIino "u) %s\n", smk_bu_mess[rc],
- 		tsp->smk_task->smk_known, isp->smk_inode->smk_known, acc,
- 		inode->i_sb->s_id, inode->i_ino, current->comm);
- 	return 0;
-@@ -214,7 +214,7 @@ static int smk_bu_file(struct file *file, int mode, int rc)
- 	char acc[SMK_NUM_ACCESS_TYPE + 1];
- 
- 	if (isp->smk_flags & SMK_INODE_IMPURE)
--		pr_info("Smack Unconfined Corruption: inode=(%s %ld) %s\n",
-+		pr_info("Smack Unconfined Corruption: inode=(%s %" PRIino "u) %s\n",
- 			inode->i_sb->s_id, inode->i_ino, current->comm);
- 
- 	if (rc <= 0)
-@@ -223,7 +223,7 @@ static int smk_bu_file(struct file *file, int mode, int rc)
- 		rc = 0;
- 
- 	smk_bu_mode(mode, acc);
--	pr_info("Smack %s: (%s %s %s) file=(%s %ld %pD) %s\n", smk_bu_mess[rc],
-+	pr_info("Smack %s: (%s %s %s) file=(%s %" PRIino "u %pD) %s\n", smk_bu_mess[rc],
- 		sskp->smk_known, smk_of_inode(inode)->smk_known, acc,
- 		inode->i_sb->s_id, inode->i_ino, file,
- 		current->comm);
-@@ -244,7 +244,7 @@ static int smk_bu_credfile(const struct cred *cred, struct file *file,
- 	char acc[SMK_NUM_ACCESS_TYPE + 1];
- 
- 	if (isp->smk_flags & SMK_INODE_IMPURE)
--		pr_info("Smack Unconfined Corruption: inode=(%s %ld) %s\n",
-+		pr_info("Smack Unconfined Corruption: inode=(%s %" PRIino "u) %s\n",
- 			inode->i_sb->s_id, inode->i_ino, current->comm);
- 
- 	if (rc <= 0)
-@@ -253,7 +253,7 @@ static int smk_bu_credfile(const struct cred *cred, struct file *file,
- 		rc = 0;
- 
- 	smk_bu_mode(mode, acc);
--	pr_info("Smack %s: (%s %s %s) file=(%s %ld %pD) %s\n", smk_bu_mess[rc],
-+	pr_info("Smack %s: (%s %s %s) file=(%s %" PRIino "u %pD) %s\n", smk_bu_mess[rc],
- 		sskp->smk_known, smk_of_inode(inode)->smk_known, acc,
- 		inode->i_sb->s_id, inode->i_ino, file,
- 		current->comm);
+ 	amdgpu_bo_print_flag(m, bo, CPU_ACCESS_REQUIRED);
+ 	amdgpu_bo_print_flag(m, bo, NO_CPU_ACCESS);
 
 -- 
 2.53.0
