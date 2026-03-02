@@ -1,205 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-78893-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78894-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 8J9oOSePpWmoDgYAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78893-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:22:47 +0100
+	id RicLC2mOpWmVDwYAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78894-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:19:37 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6196E1D9AF0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:22:47 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBEBC1D9A68
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:19:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id C24B33072FE6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 13:18:03 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 35A36303DAB6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 13:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B9E3E0C77;
-	Mon,  2 Mar 2026 13:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="nKDgCSEM"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB7A383C75;
+	Mon,  2 Mar 2026 13:19:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.186])
+Received: from smtp06-ext.udag.de (smtp06-ext.udag.de [62.146.106.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061591E22E9
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Mar 2026 13:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E72F334681;
+	Mon,  2 Mar 2026 13:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.146.106.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772457478; cv=none; b=tTVUcUO3LFpY8DXrYNoYluSXPam9u17+I/AIz/s4GtPqW1SPqem+Mc9SI1nA6JkaP5kDuRAH45XtkARxQgtYgPcyScYeUyUiDwIfGP/BSg+TGij9HZnYgj+IVgZT7qWJFNFhHQipSU9m9d3ysNFRh3HBQGcA/5GZJ0EQ0/EtzPk=
+	t=1772457569; cv=none; b=C3FjieEXapLcHWSSjSP3+2+A9TAicR0xq0qvow1rQq8x7dG8NwZ4+pmuVa5AIE1w6ggERAmTkQMYrFl6t6IP9nhxJSKahntX//A3KVKT7Nl6pyKU7VgzqQQPkkS+nw4eDzEwdsGzSyk14mJvjSd8LZJfB+BjtLi+K9Sek095HqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772457478; c=relaxed/simple;
-	bh=HvN+5WSDnnaMmBob8vPdPAy1L1OeRTuABSQ4GCZi6gw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rDJlol/BsAG3SADcuToOicibVKug3QSL6zjZWDDj6DpynkyNiW30ug6EGEYqqxPE6YjMOckTp+0iRCMUbm+iUvQdsqUB104Xt7Piw6AXzJ68YudHKpIkj8RVEkBqwU2kxUVR42ukDXhGueyGAw7zvxRRr3ZnsGdQa1+P3gtSmjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=nKDgCSEM; arc=none smtp.client-ip=195.121.94.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
-X-KPN-MessageId: 0fe854ce-163a-11f1-89dd-00505699b430
-Received: from smtp.kpnmail.nl (unknown [10.31.155.8])
-	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
-	id 0fe854ce-163a-11f1-89dd-00505699b430;
-	Mon, 02 Mar 2026 14:16:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=xs4all.nl; s=xs4all01;
-	h=mime-version:message-id:date:subject:to:from;
-	bh=UXOUq0SPuTwj8yiZauBk+IGzhYE4jhkwANNAtQNGrwo=;
-	b=nKDgCSEMFuPHLhkvzBBa7QoiJn/nK64ml2iiskFgSL5fh+wFZ1trcdNR/IBkZuxJIAVl6fxNyxey5
-	 wXRJL79zB56nl2hMQupfoAqAvFMgDd70PuKIT1suKsUy82J5/Nel9/h+qx4CM7Y6nyK1rhsaB2ZflS
-	 WoMoqT6t9kQuFw6ucKuMkEo42oPdXomyQptkOZBq1Zd9BIfPP3u8dKHraI9n+tyFzJA06YTKnr/IWf
-	 YXRAvcg99vfyyoP6ia+43+ve4a+hclWNF1LgKpapKLLfkcc2WUcIJQJBO0eq6tqm1uJVmevHwzMJ12
-	 rTv0038+U2qg94UZXlEOyyuL2Aq8k4w==
-X-KPN-MID: 33|oaSdtL18s0S3rmYtAKo3wUuP64Wro3UI8fc2nbCgSYkZFJ1PIcvm+PDGrnhJnIq
- Pe58mfy9QcxWMjNND2NoMh/s8ZHM67GgrW6A4SSxGsvA=
-X-KPN-VerifiedSender: Yes
-X-CMASSUN: 33|6wtsfzs6BSedgfqbgXrjx0lfIjIgBkINRsDDAaq8ZaMu5vBQCwFuS51AkST6mq4
- FDgpvF0pSnSB6B4VrhqmHKA==
-Received: from daedalus.home (unknown [178.225.116.246])
-	by smtp.xs4all.nl (Halon) with ESMTPSA
-	id 0c049981-163a-11f1-9c00-00505699d6e5;
-	Mon, 02 Mar 2026 14:16:45 +0100 (CET)
-From: Jori Koolstra <jkoolstra@xs4all.nl>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>
-Cc: Jan Kara <jack@suse.cz>,
-	Alexander Aring <alex.aring@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jkoolstra@xs4all.nl
-Subject: [PATCH v2] vfs: add support for empty path to openat2(2)
-Date: Mon,  2 Mar 2026 14:16:50 +0100
-Message-ID: <20260302131650.3259153-1-jkoolstra@xs4all.nl>
-X-Mailer: git-send-email 2.53.0
+	s=arc-20240116; t=1772457569; c=relaxed/simple;
+	bh=szXZa/RffQNkLt0qmFKE+NwKIkBxd7BocfgKPvzRcP0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EsU905dtWmKwHaov4PJFX2MS7KA9wTImy4YkYUnXO2A7KhODAy0MM2L6YWCRmILiqOXPysTwZWlv7QjktwsvhRNMss3KQEfc330wd1wDkJxnvWNsaTFN/EFok3xXmJEihvR+OMNFyrMXvZCd0bPGnGcTMLbeJ5Qm7SONp66vJUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de; spf=pass smtp.mailfrom=birthelmer.de; arc=none smtp.client-ip=62.146.106.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birthelmer.de
+Received: from localhost (200-143-067-156.ip-addr.inexio.net [156.67.143.200])
+	by smtp06-ext.udag.de (Postfix) with ESMTPA id CA3C7E032E;
+	Mon,  2 Mar 2026 14:19:18 +0100 (CET)
+Authentication-Results: smtp06-ext.udag.de;
+	auth=pass smtp.auth=birthelmercom-0001 smtp.mailfrom=horst@birthelmer.de
+Date: Mon, 2 Mar 2026 14:19:18 +0100
+From: Horst Birthelmer <horst@birthelmer.de>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Horst Birthelmer <horst@birthelmer.com>, 
+	Bernd Schubert <bschubert@ddn.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	Luis Henriques <luis@igalia.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Horst Birthelmer <hbirthelmer@ddn.com>
+Subject: Re: Re: Re: [PATCH v6 1/3] fuse: add compound command to combine
+ multiple requests
+Message-ID: <aaWNGdV6XoZZXvJW@fedora.fritz.box>
+References: <20260226-fuse-compounds-upstream-v6-0-8585c5fcd2fc@ddn.com>
+ <20260226-fuse-compounds-upstream-v6-1-8585c5fcd2fc@ddn.com>
+ <CAJfpegsNpWb-miyx+P-W_=11dB3Shz6ikNOQ6Qp_hyOp1DqE9A@mail.gmail.com>
+ <aaVcSK1x7qTr1dlc@fedora.fritz.box>
+ <CAJfpegvPD3nrOjuXtQzJpg_krH0SUhSwewAMNfZmGjju50jK2Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegvPD3nrOjuXtQzJpg_krH0SUhSwewAMNfZmGjju50jK2Q@mail.gmail.com>
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.84 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.36 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[xs4all.nl,reject];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[xs4all.nl:s=xs4all01];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
+	DMARC_POLICY_SOFTFAIL(0.10)[birthelmer.de : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org,xs4all.nl];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78893-lists,linux-fsdevel=lfdr.de];
-	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[xs4all.nl:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	FREEMAIL_FROM(0.00)[xs4all.nl];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jkoolstra@xs4all.nl,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78894-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[birthelmer.com,ddn.com,gmail.com,igalia.com,vger.kernel.org];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	NEURAL_HAM(-0.00)[-0.680];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[horst@birthelmer.de,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	R_DKIM_NA(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[xs4all.nl:mid,xs4all.nl:dkim,xs4all.nl:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 6196E1D9AF0
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,fedora.fritz.box:mid]
+X-Rspamd-Queue-Id: CBEBC1D9A68
 X-Rspamd-Action: no action
 
-To get an operable version of an O_PATH file descriptors, it is possible
-to use openat(fd, ".", O_DIRECTORY) for directories, but other files
-currently require going through open("/proc/<pid>/fd/<nr>") which
-depends on a functioning procfs.
+On Mon, Mar 02, 2026 at 12:03:35PM +0100, Miklos Szeredi wrote:
+> On Mon, 2 Mar 2026 at 10:56, Horst Birthelmer <horst@birthelmer.de> wrote:
+> >
+> > On Fri, Feb 27, 2026 at 10:45:36AM +0100, Miklos Szeredi wrote:
+> > > On Thu, 26 Feb 2026 at 17:43, Horst Birthelmer <horst@birthelmer.com> wrote:
+> > > > +
+> > > > +       unsigned int max_count;
+> > > > +       unsigned int count;
+> > > > +};
+> > > > +/*
+> > > > + * This is a hint to the fuse server that all requests are complete and it can
+> > > > + * use automatic decoding and sequential processing from libfuse.
+> > > > + */
+> > > > +#define FUSE_COMPOUND_SEPARABLE (1 << 0)
+> > >
+> > > We really need per sub-request flags, not per-compound flags.
+> > >
+> > > I.e:
+> > >
+> > > FUSE_SUB_IS_ENTRY - this sub request will return a new entry on
+> > > success (nodeid, filehandle)
+> > > FUSE_SUB_DEP_ENTRY - this sub request depends on the result of a previous lookup
+> > >
+> >
+> > Couldn't we just save boolean flags in the fuse_args?
+> > Something like 'bool is_sub_entry:1' and so on?
+> 
+> Sure, that's fine.
+> 
+> > If we have the automatic separation and call of requests in the kernel
+> > when the fuse server returns ENOSYS, I don't see the point in adding this
+> > to libfuse as well, since there will never be the case,  that kernel
+> > doesn't support compounds but libfuse does.
+> > It's either the fuse server handles the whole compound, or the kernel does.
+> 
+> No, I think the library is in a good position to handle compounds,
+> because that can reduce the complexity in the server while keeping
+> most of the performance benefits.
+> 
+> > My point is, we don't need to send that information anywhere.
+> 
+> We need to send that information in any case.  It needs to be part of
+> the matching done by the server to "recognize" a certain compound,
+> because the same sequence of operations could have different meaning
+> if the dependencies are different.
 
-This patch adds the OPENAT2_EMPTY_PATH flag to openat2(2). If passed
-LOOKUP_EMPTY is set at path resolve time.
+OK, if I have to send flags, that are only present if the fuse request
+is inside a compound then I would suggest that we preface the fuse request
+with a small compound header, where we store that information.
 
-Signed-off-by: Jori Koolstra <jkoolstra@xs4all.nl>
----
- fs/open.c                    | 9 ++++-----
- include/linux/fcntl.h        | 5 ++++-
- include/uapi/linux/openat2.h | 4 ++++
- 3 files changed, 12 insertions(+), 6 deletions(-)
+I would not want to change the fuse request, especially not define the same
+flags for every type of fuse requests.
 
-diff --git a/fs/open.c b/fs/open.c
-index 91f1139591ab..4f0a76dc8993 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -1160,7 +1160,7 @@ struct file *kernel_file_open(const struct path *path, int flags,
- EXPORT_SYMBOL_GPL(kernel_file_open);
- 
- #define WILL_CREATE(flags)	(flags & (O_CREAT | __O_TMPFILE))
--#define O_PATH_FLAGS		(O_DIRECTORY | O_NOFOLLOW | O_PATH | O_CLOEXEC)
-+#define O_PATH_FLAGS		(O_DIRECTORY | O_NOFOLLOW | O_PATH | O_CLOEXEC | OPENAT2_EMPTY_PATH)
- 
- inline struct open_how build_open_how(int flags, umode_t mode)
- {
-@@ -1185,9 +1185,6 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
- 	int lookup_flags = 0;
- 	int acc_mode = ACC_MODE(flags);
- 
--	BUILD_BUG_ON_MSG(upper_32_bits(VALID_OPEN_FLAGS),
--			 "struct open_flags doesn't yet handle flags > 32 bits");
--
- 	/*
- 	 * Strip flags that aren't relevant in determining struct open_flags.
- 	 */
-@@ -1281,6 +1278,8 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
- 		lookup_flags |= LOOKUP_DIRECTORY;
- 	if (!(flags & O_NOFOLLOW))
- 		lookup_flags |= LOOKUP_FOLLOW;
-+	if (flags & OPENAT2_EMPTY_PATH)
-+		lookup_flags |= LOOKUP_EMPTY;
- 
- 	if (how->resolve & RESOLVE_NO_XDEV)
- 		lookup_flags |= LOOKUP_NO_XDEV;
-@@ -1362,7 +1361,7 @@ static int do_sys_openat2(int dfd, const char __user *filename,
- 	if (unlikely(err))
- 		return err;
- 
--	CLASS(filename, name)(filename);
-+	CLASS(filename_flags, name)(filename, op.lookup_flags);
- 	return FD_ADD(how->flags, do_file_open(dfd, name, &op));
- }
- 
-diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-index a332e79b3207..d1bb87ff70e3 100644
---- a/include/linux/fcntl.h
-+++ b/include/linux/fcntl.h
-@@ -7,10 +7,13 @@
- 
- /* List of all valid flags for the open/openat flags argument: */
- #define VALID_OPEN_FLAGS \
-+	 /* lower 32-bit flags */ \
- 	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC | \
- 	 O_APPEND | O_NDELAY | O_NONBLOCK | __O_SYNC | O_DSYNC | \
- 	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
--	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
-+	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | \
-+	 /* upper 32-bit flags (openat2(2) only) */ \
-+	 OPENAT2_EMPTY_PATH)
- 
- /* List of all valid flags for the how->resolve argument: */
- #define VALID_RESOLVE_FLAGS \
-diff --git a/include/uapi/linux/openat2.h b/include/uapi/linux/openat2.h
-index a5feb7604948..c34f32e6fa96 100644
---- a/include/uapi/linux/openat2.h
-+++ b/include/uapi/linux/openat2.h
-@@ -40,4 +40,8 @@ struct open_how {
- 					return -EAGAIN if that's not
- 					possible. */
- 
-+/* openat2(2) exclusive flags are defined in the upper 32 bits of
-+   open_how->flags  */
-+#define OPENAT2_EMPTY_PATH	0x100000000 /* (1ULL << 32) */
-+
- #endif /* _UAPI_LINUX_OPENAT2_H */
--- 
-2.53.0
+Would that be acceptable?
 
+> 
+> Thanks,
+> Miklos
+> 
+
+Thanks,
+Horst
 
