@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-78899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id AGVhLzSRpWmoDgYAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:31:32 +0100
+	id EOWdJuuQpWmoDgYAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:30:19 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 374581D9CC2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:31:31 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 988631D9C71
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:30:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 6C3513064CCF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 13:29:24 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 84707301222E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 13:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6303F23AC;
-	Mon,  2 Mar 2026 13:28:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23183F076F;
+	Mon,  2 Mar 2026 13:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=runbox.com header.i=@runbox.com header.b="pfYMBjDr"
+	dkim=pass (2048-bit key) header.d=runbox.com header.i=@runbox.com header.b="RaIJo34Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
+Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5034E3346AD;
-	Mon,  2 Mar 2026 13:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A098C3242AB;
+	Mon,  2 Mar 2026 13:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772458131; cv=none; b=bTJEPPzZVHH3qBrzApwsRbYQwi8c2cteM5XeE2GQ7CYWqjld25UdhUXyWZSvKlvN6TDImnFJFzOBnY/RNUyI7cLPACWtppnPtcgyngRqKfCKvK9JEWoMpjFaSEFfsNl5UESmEdbUo/iLBOy+1shtlSm/y32TwgIJB3sksUwFrOs=
+	t=1772458125; cv=none; b=JCCCOYAHb6WZXBiGjkTmqihzWHg9jdyk3Q585AVW2F2Dicv8ZkvbbPSTrWr0Qvr9rfE0sFBFE8yBQNPNoibspiwYlOX7tdB0ycVAwXlvyF56gmOqeVG4Bbb06be3oK1N+Fh33C4gI1xYRXKdP5bJrqqGKvpan+Qzta7D4zZ1+zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772458131; c=relaxed/simple;
-	bh=/vw1o/tgaqgXlymwWBfNq0gtWd8qwqkw++waY5+/oWo=;
+	s=arc-20240116; t=1772458125; c=relaxed/simple;
+	bh=FKFw9WDEltFsWTOOSmYNAvvnsX/tHlWIyPea6wX7cZU=;
 	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=shbsRoCRMfdXnziC/NzqGtgzuCVaMbvSrTSeFN6X1X3yAwEV/K9CzSJBBx6zTmWcsDfQgkmoeESoEl3T9nwTt1N5sDbyS8vw8yEWqJJEFQlX7b+24kzRUwBGZOu4txG3fv3uNNDwcKInK1diIdZubSCMklZMNNOwGpHXTt5irh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=runbox.com; dkim=pass (2048-bit key) header.d=runbox.com header.i=@runbox.com header.b=pfYMBjDr; arc=none smtp.client-ip=185.226.149.37
+	 MIME-Version; b=iIih01IsR0kAR3nLwp9UrRRf5dodOzXhX5FsAfD3G6WUO4qmb3r8WiiTFw0/dKzg9ajELeBc/EQPi4yOm2QO1Xn7ztmF6c9b03nesUkfYKcFCNNnv1aLD2aAmFQUmAPyOlOQKd7u12Pc4OIf3HP2X+ZsEcy6nuU7O1z+kwPu96M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=runbox.com; dkim=pass (2048-bit key) header.d=runbox.com header.i=@runbox.com header.b=RaIJo34Y; arc=none smtp.client-ip=185.226.149.38
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=runbox.com
-Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
-	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
+	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
 	(Exim 4.93)
 	(envelope-from <david.laight.linux_spam@runbox.com>)
-	id 1vx3Jw-003ZE4-Au; Mon, 02 Mar 2026 14:28:24 +0100
+	id 1vx3Jx-003blN-9N; Mon, 02 Mar 2026 14:28:25 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=runbox.com;
 	 s=selector2; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To
 	:Message-Id:Date:Subject:To:From;
-	bh=7cjIEqDAe6MTPa2yql8v8L5e7mjA+roV54bcD0Te3Y4=; b=pfYMBjDrxtDGIuseYyHfRKhdlY
-	wxGF1P6KMNx6ObRuGN6ZC4wsAsw2hRQ/moIf5DlPtJ4OdcFDVbbZfYlXOaHjFV7UCzwT+RFpEzmxH
-	qWXXDA4ONYMAsNi6ePJIKCLTLb8MT74QJNuqJ6sdh6Tq/4chxS0eBiQlHuCMuynNI3HaM4H+mIWD+
-	MfMF3aDGj96f3wG2XdkXTZREX71lpkYTiXzClo5Rgz07oqNqD1x1j5Sva9T4TMi13zMpJPrbafMuY
-	y2tpwibHn24xe00sD61gejFnTEEHP9CDzwhRxR2Z0zEadqZouQs+4eZ2DS+v9eN8M5kbcQczC3zdl
-	N7bMTDQg==;
+	bh=o2ClYLRupqDrO68wbhPYoX/KO8vhOPlwFWoOd/NbY3w=; b=RaIJo34Y0Q7j2egm9oaHOlOtOd
+	qIf5fI6+l/d2wpNaqq8G9dXTQ9MMLD3B96RqcrmcIuZWAbHSJrVvAOsCyxNnHmB0ApiOwjvIA/WUq
+	2QHmlroveisu5RbpBCARdjIwFelcSMWSgnuhcGGnezIcVvrdSc/czwp60dIuZ0dJ0UBhYTt3Dir6A
+	kPjMxT6Sx+w5jzEelLAoWpF5WZwr5068t7N9pLbu3BuEHsUXyhRpZNDULOe1NTcLEJsTarSsqPA3q
+	jO3BiP4+6U4spuDiRYWorjNHk7ZXXdxC/8mJTlzMjB17nS6wB8o7mn+sdiXsOXXocQv+tO32ThUWi
+	FRs2OCew==;
 Received: from [10.9.9.73] (helo=submission02.runbox)
-	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
+	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
 	(envelope-from <david.laight.linux_spam@runbox.com>)
-	id 1vx3Jv-0003tI-NG; Mon, 02 Mar 2026 14:28:23 +0100
+	id 1vx3Jw-0001hU-9m; Mon, 02 Mar 2026 14:28:24 +0100
 Received: by submission02.runbox with esmtpsa  [Authenticated ID (1493616)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
 	(Exim 4.93)
-	id 1vx3Ji-008UTR-OY; Mon, 02 Mar 2026 14:28:10 +0100
+	id 1vx3Jj-008UTR-SY; Mon, 02 Mar 2026 14:28:11 +0100
 From: david.laight.linux@gmail.com
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Andre Almeida <andrealmeid@igalia.com>,
@@ -90,9 +90,9 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	x86@kernel.org,
 	Kees Cook <kees@kernel.org>,
 	akpm@linux-foundation.org
-Subject: [PATCH v2 3/5] uaccess.h: Use with() and and_with() in __scoped_user_access()
-Date: Mon,  2 Mar 2026 13:27:53 +0000
-Message-Id: <20260302132755.1475451-4-david.laight.linux@gmail.com>
+Subject: [PATCH v2 4/5] uaccess: Disable -Wshadow in __scoped_user_access()
+Date: Mon,  2 Mar 2026 13:27:54 +0000
+Message-Id: <20260302132755.1475451-5-david.laight.linux@gmail.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20260302132755.1475451-1-david.laight.linux@gmail.com>
 References: <20260302132755.1475451-1-david.laight.linux@gmail.com>
@@ -109,12 +109,12 @@ X-Spamd-Result: default: False [0.44 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	R_MISSING_CHARSET(0.50)[];
 	R_DKIM_ALLOW(-0.20)[runbox.com:s=selector2];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	DMARC_POLICY_SOFTFAIL(0.10)[gmail.com : SPF not aligned (relaxed), DKIM not aligned (relaxed),none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78899-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78896-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,igalia.com,citrix.com,linux.ibm.com,kernel.org,csgroup.eu,infradead.org,gmail.com,stgolabs.net,suse.cz,inria.fr,linux-foundation.org,lists.infradead.org,vger.kernel.org,lists.ozlabs.org,efficios.com,ellerman.id.au,imag.fr,dabbelt.com,armlinux.org.uk,linutronix.de];
 	MIME_TRACE(0.00)[0:+];
@@ -131,41 +131,35 @@ X-Spamd-Result: default: False [0.44 / 15.00];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROM(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[runbox.com:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 374581D9CC2
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,runbox.com:dkim]
+X-Rspamd-Queue-Id: 988631D9C71
 X-Rspamd-Action: no action
 
 From: David Laight <david.laight.linux@gmail.com>
 
-Wrappers for autoterminating nested for() loops have been added to
-compiler.h, use them to hide the gory details.
+-Wshadow is enabled by W=2 builds and __scoped_user_access() quite
+deliberately creates a 'const' shadow of the 'user' address that
+references a 'guard page' when the application passes a kernel pointer.
 
 Signed-off-by: David Laight <david.laight.linux@gmail.com>
 ---
- include/linux/uaccess.h | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ include/linux/uaccess.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-index 809e4f7dfdbd..64bc2492eb99 100644
+index 64bc2492eb99..445391ec5a6d 100644
 --- a/include/linux/uaccess.h
 +++ b/include/linux/uaccess.h
-@@ -736,13 +736,10 @@ static __always_inline void __scoped_user_rw_access_end(const void *p)
-  *
-  * Don't use directly. Use scoped_masked_user_$MODE_access() instead.
-  */
--#define __scoped_user_access(mode, uptr, size, elbl)				\
--for (bool done = false; !done; done = true)					\
--	for (auto _tmpptr = __scoped_user_access_begin(mode, uptr, size, elbl);	\
--	     !done; done = true)						\
--		/* Force modified pointer usage within the scope */		\
--		for (const auto uptr  __cleanup(__scoped_user_##mode##_access_end) = \
--		     _tmpptr; !done; done = true)
-+#define __scoped_user_access(mode, uptr, size, elbl)					\
-+	with (auto _tmpptr = __scoped_user_access_begin(mode, uptr, size, elbl))	\
-+		/* Force modified pointer usage within the scope */			\
-+		and_with (const auto uptr __cleanup(__scoped_user_##mode##_access_end) = _tmpptr)
+@@ -739,7 +739,9 @@ static __always_inline void __scoped_user_rw_access_end(const void *p)
+ #define __scoped_user_access(mode, uptr, size, elbl)					\
+ 	with (auto _tmpptr = __scoped_user_access_begin(mode, uptr, size, elbl))	\
+ 		/* Force modified pointer usage within the scope */			\
+-		and_with (const auto uptr __cleanup(__scoped_user_##mode##_access_end) = _tmpptr)
++		__diag_push() __diag_ignore_all("-Wshadow", "uptr is readonly copy")	\
++		and_with (const auto uptr __cleanup(__scoped_user_##mode##_access_end) = _tmpptr) \
++		__diag_pop()
  
  /**
   * scoped_user_read_access_size - Start a scoped user read access with given size
