@@ -1,80 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-78950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aAJ6Jf/YpWmuHQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 19:37:51 +0100
+	id QMMBHgbZpWmuHQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 19:37:58 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA6C1DE6E2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 19:37:50 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCB1C1DE6E9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 19:37:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 12F6C30210FF
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9727D30512AE
 	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 18:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DF6340282;
-	Mon,  2 Mar 2026 18:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5618F352C3C;
+	Mon,  2 Mar 2026 18:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hBsw8GxX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d2OFcsbg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F1733B951
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Mar 2026 18:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C9533F8BA
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Mar 2026 18:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772476665; cv=none; b=OCIcWxq4woV/pNWEg6uVur76CIFB+TLDep2VraumrtdZu4NlE5dp3W5sAyWseBm0tCcMGEG4jWu26k+EOo8HnlWUHvEGfnmFu+mvvmDTkaFMh18yje1jnmQvFvkgY634x/ixKBNIJT5xgeDK4u33+dZnwtd8jQLC+axGylA40bQ=
+	t=1772476666; cv=none; b=F84nf05lGojpwhJ93vP1/MjRtM5ABUqObP2ua/O1TIjDrw3uQB/WXtV4ndjctdB6DvDbjedmws0T2cMZjWZvStbaQ4DaH1escOiuOikdbkOKowqsLUyb0Y1tWl2Mq6eJ7l9sydHNcJkOFCFEei4R9xdSGbzS78bE0HxXp+0XR5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772476665; c=relaxed/simple;
-	bh=TTUvc1mWVYgW+kwq1PikmwiCXLizG3upacpm/97f6Jc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JYnpTQrWJqQWybB/rLTI6SOdrObF9DnOHL71NBclN5koT99P2TtOssTr6Cfg3BUZUdwTuxVgTpx2Y+5NchUDhBspV3d/y697ZU1Z3/pBANrU0+2GtbOcCij+yQCZFBz8oV2jVhkS+mWya5qPLNEA0C6uzCSvQKBEuVVDK8QUmmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hBsw8GxX; arc=none smtp.client-ip=209.85.218.49
+	s=arc-20240116; t=1772476666; c=relaxed/simple;
+	bh=NdH6PGFv1SMAzPF2cmEQqn/xHptmIsz99bH9F3jAa3Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=aIaHOXkSMrpPiLEFkMpz3YPEQwQtpe2ZVqeUeb/ZEScrMW2fWWL1S5EU/5wL204B1F2iDTbwsuJCR890GqqDBfuhs2wx6hD1qp/PU29Y+SL1tuaEy8seNfWqLGGzAw3a5rlPYL94fRC1gJBT3wInXFgKuSmnZNquopJncqk080E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d2OFcsbg; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b8f9568e074so876281766b.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2026 10:37:44 -0800 (PST)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-65f94011dfaso8357658a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2026 10:37:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772476663; x=1773081463; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eeo1R+v6Bv2MwXmFAWju127SK93P7acP3plyrDB2rlM=;
-        b=hBsw8GxXUsrcwRnWhvXJcpgxBpiOrUX/tnIIaJK9sSsUka9XGneJOo/YXFiVGRAZi/
-         qZJQEP2ESDXAX1C13PXl8ww5lv7AJ0vqxIkoAg/V1fjA73GtiuKzprOeQnE695wn55Ux
-         ShJOoZ9hipoV1US98PaPMRlLHAAAPjv5rUeZ60XN+czsfezKfYZ2DQ8xz/p4rTen0mTd
-         leqcjyvstbaUYTrsf+VfrPRxAfqXbK+tuOfTzMElRVhTkQ/XHeGXmA8kFI4cbDJ0W7YO
-         bwx1fREGbF91r4RKaR9yxB2QwRubd+7YkKdQMYj6/ZlvwStmcVEgWiky5bV1sjEpT4d6
-         zlhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772476663; x=1773081463;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1772476664; x=1773081464; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eeo1R+v6Bv2MwXmFAWju127SK93P7acP3plyrDB2rlM=;
-        b=wHaR6kpg1CiNrOBzThbNzgQR0EfOJZhPA1usFg5EqsG/uxi3MagicD77FlVHdGYZXc
-         TGl3D/LXlQA7llKLyNdxwnna6e8oloYKf6dh78DonGY/iYJHaT92fjqmp9AJbRWrZ6m1
-         f3aKVrs0mqiJfntrmPpSZrvrl4hv/XXr7CDaBUhISIMQut1q522GMyyO1ccgY6NDhQls
-         xNSPGS4estl6A+U9MgaOaWO7Cu/zjIxdumPRY5lCE6GBQp2PAAZ9XtwNQ+0R6DL0/Afo
-         JhNhq0XywiJ9U11IXHBl4RAzeiPbY0Jn8kKfIH0CwuCNuTUy2NXKZlB2JJq40S9zRw4S
-         nG4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVDwh8TxTactEjamS/Fv0EkP8glLWwF7DZcTvs18ikDLn0vj+cVNAFtlEZXh+iCI+1S3OFhrpzAAOJODGFr@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxeMElSkpWKG4b+7H6FL72Qt+6OaCj/LYPitgfGMdCESxGeHek
-	57YWKRJA3gHGeTOABWok1plbO/iqEaUm4l3sMkdAldfdv8AqGwEH3QUaIi6uzvbc
-X-Gm-Gg: ATEYQzywh6ejt1m2v5h7mQSMNhgyhMz/u1LcYW058EzYdthaRM0mXzLgk3hBaNdMeSP
-	SguiojlOUZslmR1riKsfLNT44cjcf627CJ/p97O23Db0YNrVzlUvEfMpgGNnuB8MheiuwXF3Gl9
-	1FmlgqjYRK9cdO72lOJzab5K3BWgBxx2u7VkptFCgf4+BPp050QcfQnar/PcJknVqnDPWIME0tx
-	FekrLaeTuzcxfTofX6oE4dYhpIollJ/jFCKd6GQVBW2o9SjGPP6Cyb9Uh0HuN6mNoLBxrzG/vpp
-	TOFFNTimH7ZC72002Jm4mxdMTHfZZXiTsdCNsa0S0XgsUebQDNekYA+s3R7+OuPGBClB59MvxbZ
-	HY9U+zOTmAJrPgCcxjVz/GfDrNkLKUEPeCN3naoSQLc0fD9MC2L+jSe5efwogMGLSHSm6qqJyJQ
-	aIE/jGMurJbZDZ9j2TqG4iUfHukwJDy13OpJcZ6iF90G3js1mxo65WHAX3zAJtrAz798VxZi36D
-	YBksxXxqgYMiOHV4+kxLbftfAk=
-X-Received: by 2002:a17:907:26c9:b0:b87:701d:341a with SMTP id a640c23a62f3a-b93763d9f58mr885224966b.25.1772476662456;
-        Mon, 02 Mar 2026 10:37:42 -0800 (PST)
+        bh=u6wxRMK3gKP7JTnkcBFfSrgUrs9VAzxTDGFiMc7uL/k=;
+        b=d2OFcsbgtZ8GziHHWistvYMA+N/9nOgBtHmJGnIZvOpNy+U5fg22dKvxhtB4+aE6uG
+         BhppM58OxlP8nV89c3Ch/A+MBsU+6Is3B5WWkTyvn4X0laesUgxR1uM3pY85IDkwhkt5
+         jzFBIOXELq78OZy8ZkoDQs2i1oM4G2gK0er/pmj6KT2ztcRlAcds3nF3ZjFvSAUHY0DS
+         6XohY48Hh81iA6uNCiF+F8XY+yxlFGqY3ZalU1VsTp2LXFVoGf09mFqtlAmugV52Dkvj
+         7NvR9l+GsI56rax5aJYsAswFTZcMPmmUo13cyPFwHwylpL3fhCmR3WDg+frb0ywvYwdJ
+         pnvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772476664; x=1773081464;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=u6wxRMK3gKP7JTnkcBFfSrgUrs9VAzxTDGFiMc7uL/k=;
+        b=Q90HmPR30DpkmRj2GTPLvhUGeNzwtviin9W6+RyOf7Z+sm+9FiaImH1O1nshDN7LjA
+         P529RX9NWIhAPjsfwQnl09xv5BqwUyQu5qmDQPwv+9Qme96oNnuKInuLNM6fZ8toQ6nS
+         6HYjIu8go8o9kT8PgXKc5Y3ZXkyaBmYNdMiBBFqXvJJ6DxlxYOaDXtkfNbYfn+eBMOlr
+         YIkOVLbCxJDGM++JR10TYpx1SGiCHTpyEIk1WvlsMdCUGQSLLVPuNJ4IQcrJFdf5P5GO
+         N1AKq1Vna2LeaWd6cPdvyIEGYZrxXHwRYQJ3SuaaOfsVJUsSyfh4BF0yb3RoJJfIsI27
+         EN0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWfvux5HcmjAXeKfi6E4j5QW5PAs77avQV7pMF9gqi/jPfe15R/SV2eC64qNr7qwPCWsXhb5Zdu7AtXvPfI@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOok6Xg1al7cSLXE8lBcwP7x352a5SjeI/RvJR143x6ry8RJR+
+	meQhhbefq+KOL5ys9sz+vgJuI6nJ8uliI+9szQmmpefxa2Xs4GBfRApZ
+X-Gm-Gg: ATEYQzws3Fe6hK5qBqqLXn9Wsl19fZ+fDQdyxfdeTSaNSDJnWLmyd30vSZnDRuHfwFf
+	tjkNytICQTH7ziGKXaKKUnBbXElHXTZkmuK44TW4kmWvxKHs0hT1CPiuiUnuEXEhQCxgmY02syw
+	/HeTtulO/hFx1it6u+rBnp8sasWq+Uro2f63COi4UJqifQzhRYUAIF9P2pcZ2s0K7GzPu7gKe8W
+	2iZeAnfFRqCIhAj3zOMck1epHYoptyNZ5k56DLBURx21OedQzeO5rkybpmCLTYvTavaz3vrYvnj
+	My6IjYDEV8zI/dy+lAT4sxl/2+lzlc6+SR/l2vDGxr+VFFalGXPmIA1TjWS9P0ACj+4lME+v60M
+	++NR3xRa5Glfli3y18W2+rgSkZTFBKa3hWQuZa4JeUGx79obN+hbiggX8zJz9Iqyer+aF39/1ry
+	z/1pdsDWoEC56kgkFO8KKmaFYjsvci+5X/GeGZxnNPNYzRKAs0QHonACbt/Nk2kEooHijoEPDiO
+	RLRwrDIInSxkmtKyFk+k4N3GXs=
+X-Received: by 2002:a05:6402:2751:b0:658:1304:b699 with SMTP id 4fb4d7f45d1cf-65fde0e6105mr6230755a12.31.1772476663813;
+        Mon, 02 Mar 2026 10:37:43 -0800 (PST)
 Received: from localhost (2001-1c00-570d-ee00-11a2-6710-0774-33c0.cable.dynamic.v6.ziggo.nl. [2001:1c00:570d:ee00:11a2:6710:774:33c0])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b935ab1552csm492373566b.13.2026.03.02.10.37.41
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-65fabf6d068sm3664913a12.21.2026.03.02.10.37.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2026 10:37:41 -0800 (PST)
+        Mon, 02 Mar 2026 10:37:43 -0800 (PST)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Jan Kara <jack@suse.cz>
 Cc: Christian Brauner <brauner@kernel.org>,
@@ -84,10 +86,12 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Steven Rostedt <rostedt@goodmis.org>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 0/2] fsnotify hooks consolidation
-Date: Mon,  2 Mar 2026 19:37:39 +0100
-Message-ID: <20260302183741.1308767-1-amir73il@gmail.com>
+Subject: [PATCH 1/2] fsnotify: make fsnotify_create() agnostic to file/dir
+Date: Mon,  2 Mar 2026 19:37:40 +0100
+Message-ID: <20260302183741.1308767-2-amir73il@gmail.com>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260302183741.1308767-1-amir73il@gmail.com>
+References: <20260302183741.1308767-1-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -95,7 +99,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 1AA6C1DE6E2
+X-Rspamd-Queue-Id: CCB1C1DE6E9
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
@@ -103,12 +107,12 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_MISSING_CHARSET(0.50)[];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_COUNT_FIVE(0.00)[5];
-	TAGGED_FROM(0.00)[bounces-78950-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78951-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RECEIVED_HELO_LOCALHOST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -124,41 +128,43 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	FREEMAIL_FROM(0.00)[gmail.com];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-Jan,
+Like fsnotify_delete(), let fsnotify_create() handle creation of both
+dir and non-dir objects, if d_inode is available at creation time.
 
-I've found this opportunity to reduce the amount of sprinkled
-fsnotify hooks.
+Unlike fsnotify_rmdir(), we do not call fsnotify_create() from
+fsnotify_mkdir(), because of the case where d_inode is instantiated
+lazily (e.g. kernfs).
 
-There are still a few fsnotify hooks sprinkled in some pseudo fs,
-but all those removed by this series are obvious boiler plate code
-and for most of these fs, this removes all of the custom hooks.
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
+ include/linux/fsnotify.h | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-I could send a series to convert each fs with its own patch,
-but to me that seems a bit unnecessary.
-
-WDYT?
-Amir.
-
-Amir Goldstein (2):
-  fsnotify: make fsnotify_create() agnostic to file/dir
-  fs: use simple_end_creating helper to consolidate fsnotify hooks
-
- drivers/android/binder/rust_binderfs.c | 11 +++--------
- drivers/android/binderfs.c             | 10 +++-------
- fs/debugfs/inode.c                     |  5 +----
- fs/libfs.c                             | 14 ++++++++++++++
- fs/nfsd/nfsctl.c                       | 11 +++--------
- fs/tracefs/event_inode.c               |  2 --
- fs/tracefs/inode.c                     |  5 +----
- include/linux/fs.h                     |  1 +
- include/linux/fsnotify.h               |  8 +++++++-
- net/sunrpc/rpc_pipe.c                  | 10 +++-------
- 10 files changed, 36 insertions(+), 41 deletions(-)
-
+diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+index 079c18bcdbde6..13156d165d845 100644
+--- a/include/linux/fsnotify.h
++++ b/include/linux/fsnotify.h
+@@ -318,9 +318,15 @@ static inline void fsnotify_inoderemove(struct inode *inode)
+  */
+ static inline void fsnotify_create(struct inode *dir, struct dentry *dentry)
+ {
++	struct inode *inode = d_inode(dentry);
++	__u32 mask = FS_CREATE;
++
++	if (inode && S_ISDIR(inode->i_mode))
++		mask |= FS_ISDIR;
++
+ 	audit_inode_child(dir, dentry, AUDIT_TYPE_CHILD_CREATE);
+ 
+-	fsnotify_dirent(dir, dentry, FS_CREATE);
++	fsnotify_dirent(dir, dentry, mask);
+ }
+ 
+ /*
 -- 
 2.53.0
 
