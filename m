@@ -1,51 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-78923-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78924-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id sG4HIKuepWmuCAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78923-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 15:28:59 +0100
+	id sCR4K2mhpWmuCAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78924-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 15:40:41 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C4A91DAC9F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 15:28:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 537A71DB091
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 15:40:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 8CE26302196B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 14:28:28 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id E80EC300752D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 14:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9903FFABA;
-	Mon,  2 Mar 2026 14:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6613FD156;
+	Mon,  2 Mar 2026 14:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d+0g6yjn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i3jVvCCf"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC803FD130;
-	Mon,  2 Mar 2026 14:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85D43FD13D;
+	Mon,  2 Mar 2026 14:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772461701; cv=none; b=BVPmJCLmeJMuf6gAmANkX3Nsxt1DgyZAJ4JZKdRlSvD3Q/23v/jm0Ql32R0n7FJV/seQtItp0Rd2NNbudVxSVsjrYpybc3Db2bM3SbXw5UA8aKa0/SeCM3jEOTDXlQCYIlCVLbkpDr90DqFx0qLQpnouEqcMqQjF32uJ98yftbw=
+	t=1772462433; cv=none; b=KSAHXNOAMnkJqJMEUNWCIk7PEPBnamM3oiej55GzN1JSG/eO9JgXaFWCZ+L3ptEUmZGsWKrZSoP9mQSsX1kRveB+PlOyD3xm006XmcM0i2IBlC7QaNm+YYRol8UK3y3GO09GLeQ43XI/1FyMUjSApuZYY4wf1SfpewtO4aHmkSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772461701; c=relaxed/simple;
-	bh=NHChwr26MecOHxxoRdWaM4AmCzT0wwXCZr7gSsRU8c0=;
+	s=arc-20240116; t=1772462433; c=relaxed/simple;
+	bh=wpFu9y+6TnLxJpo9lrnsoN4LUcOEqD5oLyYF4BEFJyk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ViJ3bFs3vNncZE4JMBbW3R9sCLXOrdGl8kSQDHEQVUjckox34LzIQo/p9pNSzJlGHMn+VF8EC5jg3rH+DlgxYErC4NrePAHJe2zkkPIv0SRG7gu7aJfreKEe2a+V3g4O1zwFKR/Uy5X/Rw26LfLjSK80Nnil9IumLof4EOnXWcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d+0g6yjn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02E98C19423;
-	Mon,  2 Mar 2026 14:28:15 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=CXbZSmhkOHdynkvNEJFgh+p24QCLnIF2kDhHe7y9Qm3xh3YlAowsMgc7107CCOS8nQ842Yoq672VlKndN1hQTaFLPF5Pgzgf5rpnu2RSsPS7TqJrfWkg+cTsJA9Efh911CmVlm9gLQ/mQPEDGlOK0iS6WgTFoFpfVfv8dll9HDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i3jVvCCf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB07CC19423;
+	Mon,  2 Mar 2026 14:40:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772461700;
-	bh=NHChwr26MecOHxxoRdWaM4AmCzT0wwXCZr7gSsRU8c0=;
+	s=k20201202; t=1772462433;
+	bh=wpFu9y+6TnLxJpo9lrnsoN4LUcOEqD5oLyYF4BEFJyk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=d+0g6yjnQCN4aYh+WOUT93XZp/DuyCrZCxG65S61sRopnERaQHTmssaV+0HlzK2QQ
-	 PfLvTTJS2Ao0k8ZVxHfflUOHTWdTvao6ajK8n2zU0tjL9S+P4r6ZeGa6Ev32KzGDcg
-	 B9ynwUmY+vWB1pb1vc9rhM/ntTlp3bUax1d0heIA1uhvjTTchr+8XRR3e+LgTdgTtZ
-	 NGMB7msNIPRRIE2t1V8U3k2bycORDwl+Luo2H1OAkvbGau8eQcM6hqZc5EKdgljTf7
-	 bMmWssD/fmrGgcp2zLZ2h1mcl/YaUbPSAW78re+Chm1TsHRhNfvkbYi/ETVqjttG1b
-	 NzJEqWcLONsYw==
-Message-ID: <64fa6a73-8952-4ee1-b7c3-8b0ebef3ea78@kernel.org>
-Date: Mon, 2 Mar 2026 15:28:13 +0100
+	b=i3jVvCCfvaFrhQXN+TRWNan8/m8GQBfWL/HDjS+ZSau1QmHjw2jGc1vQn2tsHxnbV
+	 miA+rIyjjUT/x3C7hSXPZ9Z1WLdHN86DQhaoUuLeAAPDbHBZ8LaQhx9SwE4G4XjGSF
+	 tLEuyQ7iz/EPQFJX9GLkf9louxvnrl6IJjkuCXGkIpj+opXB/oAA9gSBnRGJT7PNqJ
+	 t2Xm0ISLIIb6Nl78y9uUOpKF+Tq2AvR0+ycjAVlFK6hOLfy94vXI6N+45b2rUHKXdH
+	 9GUSZrrT0jfy6OYrTTmfTKLOSPIFKl/tJ3toKQzqnFQNg1gwX7haV1FIWnYE6mF12q
+	 XCtRX1jJXIRcQ==
+Message-ID: <f41facc9-42b1-4c58-a681-715961631fce@kernel.org>
+Date: Mon, 2 Mar 2026 15:40:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,21 +55,20 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] mm/huge_memory: fix a folio_split() race condition with
  folio_try_get()
-To: Lance Yang <lance.yang@linux.dev>, Zi Yan <ziy@nvidia.com>,
- Andrew Morton <akpm@linux-foundation.org>
+To: Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>
 Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
  Hugh Dickins <hughd@google.com>, Baolin Wang
  <baolin.wang@linux.alibaba.com>, "Liam R. Howlett"
  <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
  Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Matthew Wilcox <willy@infradead.org>,
- Bas van Dijk <bas@dfinity.org>, Eero Kelly <eero.kelly@dfinity.org>,
+ Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
+ Matthew Wilcox <willy@infradead.org>, Bas van Dijk <bas@dfinity.org>,
+ Eero Kelly <eero.kelly@dfinity.org>,
  Andrew Battat <andrew.battat@dfinity.org>,
  Adam Bratschi-Kaye <adam.bratschikaye@dfinity.org>, linux-mm@kvack.org,
  linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  stable@vger.kernel.org
 References: <20260228010614.2536430-1-ziy@nvidia.com>
- <d9e30bef-621f-444a-a1b0-510c50927d9b@linux.dev>
 From: "David Hildenbrand (Arm)" <david@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=david@kernel.org; keydata=
@@ -116,10 +115,10 @@ Autocrypt: addr=david@kernel.org; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <d9e30bef-621f-444a-a1b0-510c50927d9b@linux.dev>
+In-Reply-To: <20260228010614.2536430-1-ziy@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 2C4A91DAC9F
+X-Rspamd-Queue-Id: 537A71DB091
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
@@ -129,69 +128,53 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78923-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78924-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	RCPT_COUNT_TWELVE(0.00)[20];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[david@kernel.org,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	NEURAL_HAM(-0.00)[-0.999];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On 2/28/26 04:10, Lance Yang wrote:
+On 2/28/26 02:06, Zi Yan wrote:
+> During a pagecache folio split, the values in the related xarray should not
+> be changed from the original folio at xarray split time until all
+> after-split folios are well formed and stored in the xarray. Current use
+> of xas_try_split() in __split_unmapped_folio() lets some after-split folios
+> show up at wrong indices in the xarray. When these misplaced after-split
+> folios are unfrozen, before correct folios are stored via __xa_store(), and
+> grabbed by folio_try_get(), they are returned to userspace at wrong file
+> indices, causing data corruption.
 > 
+> Fix it by using the original folio in xas_try_split() calls, so that
+> folio_try_get() can get the right after-split folios after the original
+> folio is unfrozen.
 > 
-> On 2026/2/28 09:06, Zi Yan wrote:
->> During a pagecache folio split, the values in the related xarray
->> should not
->> be changed from the original folio at xarray split time until all
->> after-split folios are well formed and stored in the xarray. Current use
->> of xas_try_split() in __split_unmapped_folio() lets some after-split
->> folios
->> show up at wrong indices in the xarray. When these misplaced after-split
->> folios are unfrozen, before correct folios are stored via
->> __xa_store(), and
->> grabbed by folio_try_get(), they are returned to userspace at wrong file
->> indices, causing data corruption.
->>
->> Fix it by using the original folio in xas_try_split() calls, so that
->> folio_try_get() can get the right after-split folios after the original
->> folio is unfrozen.
->>
->> Uniform split, split_huge_page*(), is not affected, since it uses
->> xas_split_alloc() and xas_split() only once and stores the original folio
->> in the xarray.
->>
->> Fixes below points to the commit introduces the code, but
->> folio_split() is
->> used in a later commit 7460b470a131f ("mm/truncate: use folio_split() in
->> truncate operation").
->>
->> Fixes: 00527733d0dc8 ("mm/huge_memory: add two new (not yet used)
->> functions for folio_split()")
->> Reported-by: Bas van Dijk <bas@dfinity.org>
->> Closes: https://lore.kernel.org/all/CAKNNEtw5_kZomhkugedKMPOG-
->> sxs5Q5OLumWJdiWXv+C9Yct0w@mail.gmail.com/
->> Signed-off-by: Zi Yan <ziy@nvidia.com>
->> Cc: <stable@vger.kernel.org>
->> ---
-> 
-> Thanks for the fix!
-> 
-> I also made a C reproducer and tested this patch - the corruption
-> disappeared.
+> Uniform split, split_huge_page*(), is not affected, since it uses
+> xas_split_alloc() and xas_split() only once and stores the original folio
+> in the xarray.
 
-Should we link that reproducer somehow from the patch description?
+Could we make both code paths similar and store the original folio in
+both cases?
+
+IIUC, the __xa_store() is performed unconditionally after
+__split_unmapped_folio().
+
+I'm wondering, though, about the "new_folio->index >= end" case.
+Wouldn't we leave some stale entries in the xarray? But that handling
+has always been confusing to me :)
 
 -- 
 Cheers,
