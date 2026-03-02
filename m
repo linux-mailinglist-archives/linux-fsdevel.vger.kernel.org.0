@@ -1,159 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-78905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78906-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0JbYGkKapWnxEgYAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 15:10:10 +0100
+	id CI+vMYebpWmfEwYAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78906-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 15:15:35 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 716411DA699
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 15:10:09 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id C703E1DA816
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 15:15:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id A10E830372F7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 14:01:56 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 38AE730299DC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 14:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E8B3FB06C;
-	Mon,  2 Mar 2026 14:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289643FD13F;
+	Mon,  2 Mar 2026 14:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="pnEBbNCg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jGyoAzwf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1393D4133
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Mar 2026 14:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.222.178
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772460115; cv=pass; b=McOdZWmr9BhiQizLBdUmoC5FQKehaqeC53Fd3WYvC2VRXHEGlop2dSdwNZHKgy7340H5XiTM+WUUi2nGIl+ur5y21GbE5+VoOC5dW0GYAkViAXQt8evRibrwtLcIHh4QCy4+ZUEy5vcukH/bcAm37mTn9iYJtLjJg0ym6rBn928=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772460115; c=relaxed/simple;
-	bh=cn4Q1z7eYPG0s+/rrH8sogr3zfNgU163mlMYVJCsXFE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U7QcXErt5L5DmdFhySGGS1qVxCPU2XrYsMAHNTStRA/0XXke+i/VPKcxA01ggfG6Mw3m+8hfsKEBZ4rNt86BaT/8KgKDft/gZswtZ+5UwNgVSVdTriYU1ADcCMCUFxcPd8KfjKB6CzUymKQ9UuscDFJaDtfdGJ0UcVxmUVyeUeI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=pnEBbNCg; arc=pass smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-8c711959442so455997285a.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2026 06:01:53 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772460113; cv=none;
-        d=google.com; s=arc-20240605;
-        b=Fk7Xvzv76qGaZeeqRuFAQVEbAhdP/WcWIz7eQ1VkjIJzXXtR9ubdXNFptajVmngAmA
-         vFu7BbDQkixTV5P4AA9prHLwA/D4Eb2pyDSXy1rECkkY/6AuQVSa5KBsl3BUo5UVqgyL
-         0154XqGhT6fKLR2KwdArMOpKjJcasapSFooGnvjyPi/riN2cvKj47G1f26Mwoc+nw4tM
-         Nut0zLuHZPuVDAFm5/Hpzw1OTUCdcvXJ0EWx7hOZfs1PYEGo6lbCJ/1hGq+fAwP6drrz
-         3QVByRUlRwEmN0pIRaI1CCYTp/yh1AZ6icMyJyrI5sz3dHsJL76YkH/KHqrDCGw+Xve5
-         c74g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=cn4Q1z7eYPG0s+/rrH8sogr3zfNgU163mlMYVJCsXFE=;
-        fh=VCFDIVV9IRaoAgt5xBAQyLAnJoCZItWw3w58hCNWbEk=;
-        b=TbTCkGqj0QzuPf26IJKPhp/Eq8VDDsuDSYFjgw9X4Jf+AAJfTCZYZV0FvYdmbze9vL
-         iDXOKbzIsxs451Vr8AJklF44OlYO+himzgccQxkodnyN139zOZ60NXlZHwPf0RnaCjOl
-         Gl2zwFwLutXP8JeCD9mK5vjBHnFJPziZMA+kEQOHTmEOhEtgaYb835K+i5Hkkz0UeA8S
-         90o+zzX0Q6okf/b3Lo8BO5OcP+9ftnGBQps4w/S69DeIPkqUCieiBADOF/MORRvwXv6S
-         MTBVsjDEzu3qL5Z6Svao5E9Utp4bCamTqPwEgVq5SWWS8sH7rLNtPd3bUohG4r4fhYP1
-         qLQQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19AE3FB066
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Mar 2026 14:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772460611; cv=none; b=R3sX5fT2n1mO9zZGjaSSJada9OScpLl0nUzoIHD1D5xSy9McYsaB5yg+acxt5jEsuKcRtCWDBXrus8sURfVWn2tlvIo0fUpyCyFknIi0TEip3JmjIg2nXVez08i+1QheOUpGsUnDjbjZyV1lP8dIaRB9yh4giauW2bR+qcahA3Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772460611; c=relaxed/simple;
+	bh=qyZTSf5Si3NqMjr5V8jrFs3PXm4h5IveD0OTiI10Xwc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=iabpmz0bVD6XawFH3IzNgpRt2d41Op+VfZQwq1fnXnJ+y3ce8O6l/QlkX/v70WQUMSHB+XwcpngHAyxxhdShDqWBAKTrCKETBKV7nXL2YY6jDQ1f41rJtfJfRSuPpGeJqWyt88WWNYQkRlRpS9viPdGUW0akp9yFyIJ9WvtKbWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jGyoAzwf; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2ae4d48dc2fso4943945ad.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2026 06:10:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1772460113; x=1773064913; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cn4Q1z7eYPG0s+/rrH8sogr3zfNgU163mlMYVJCsXFE=;
-        b=pnEBbNCgqaLtGKz1dB3yeyXRZhfVcMxeHLVZngM0ntbYYi2ft3r9k2gtl4j62XI7Gp
-         kKIlWubVEzwu8xKoCmv8WCG42/sJKHGRw/6IsCAGxC425wyzH6bymS4Gr7GeRUmYH8RY
-         ndN8FOu5ANOvF/CgZVol/27VuUQRnmdBJSZVM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772460113; x=1773064913;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1772460610; x=1773065410; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cn4Q1z7eYPG0s+/rrH8sogr3zfNgU163mlMYVJCsXFE=;
-        b=n3DKqiya90LOB8QShxKSdN/pUAYln36ZKqoEDRjfuKaBpWuFbbGAsiGUWGtECGDAMj
-         eJesQ6+8Kp6VYhiQ1WQMOWcZ51ys8QQtXt83O1Z0aWiYDr+1d8KpWmN3rnKdsZRG+Tbi
-         KTiRqnwXmtHWWiMfmbiUvpuq8QvNA3lrRC24klFQ3MlVyONcQYt1jumwtu85MPfEJDlx
-         XkFRX2RKj2RGQzOH4yUrTJOVH13kJpFpN5R8HEJYkasyI9juNOqwerHpk5fF5G28dktb
-         TYmcfU92xo1ihWG57QnLcxzsdUJwrXJfj+apRJs8ZHaYHCNikqWnTWRLtc9qyK/Sd6jR
-         VbRw==
-X-Gm-Message-State: AOJu0Yw+ii+yw0Hb2qgDlsg53ODP2ODQEgmhYqCl/glB2ZgJU1kC9WjH
-	fBCRGLgGCzFeFX8Q42zsP6BblGga1Q4z2bmG7Z4PSUPDD/1feAZeyh1GjqO4TBt/o1eiJKFpW8e
-	8wd4nMuco0h9SChxK87/p0tZarHs04mW+35+Dh+ICvA==
-X-Gm-Gg: ATEYQzy3vXFF+h7BXidq5sjpE/dF4eVFRPcdhRHOi/7DP9tQoQz5pMPPTr24nUXXWLh
-	OGVfFO6kr4F9FL46OG4059gDqLDfay46gr2KFkJcN6C5M37K3YhUpjknVMacj7s3YebRRfAMcsZ
-	UR+39QNm+ear560U4fliMp++IWsVQGLVJo5rlRfaSojacLLf8bmbU+EYxI+IGTIoixjWi47BwCD
-	ieUBSewGx5o5MD9JrRH3MG2WNeWIF5YSOFaO6s0ZrM+nZJby4MJ1Nh1CHj1KaKJGmHS2vRAXfuz
-	hZuc5VOTiw==
-X-Received: by 2002:a05:622a:1923:b0:4ff:b0f4:c307 with SMTP id
- d75a77b69052e-507523e002cmr143247421cf.24.1772460111313; Mon, 02 Mar 2026
- 06:01:51 -0800 (PST)
+        bh=EZR4SU7BAv0LyCxj4xdBAOVWg9UwODZh/qWxLhm3ig0=;
+        b=jGyoAzwfup0t0eREeWQ/2p1nDGjbRtGtbPuRSTB35zKbhkpE57V1w6KVAxvNr4yU4t
+         BK9QaeE/PEMVZ74dhfNKfYOyii7OTvE9AYHA4hekq7XLAYupMt4FoxWfvzTMeOwKvrn0
+         x/MPHsI1Lim4ordxZoLUdWqjbmwCchsv0/vuYRYifWtndzSHFIzzipEQttr9CDQGkJyj
+         HoRWMn6RSzGG6DTcYyCW5reVev0ar/cq6EE+h6qdXYT104zNc2+QCTZahudS8yXFiMae
+         R0F/dkVOItml48B3WjGriF1nPkoUmb5C33u538puO2iHIi4S9SYb+uPiVddRholt7wMa
+         fDbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772460610; x=1773065410;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=EZR4SU7BAv0LyCxj4xdBAOVWg9UwODZh/qWxLhm3ig0=;
+        b=PHAFaMjIA5eWtWDHCNjd7vbYEEbieNOf7BAng3uJ/7pzJ8G3tBarvFdZRkoaTKaHaf
+         8j/SQA4JGnahhN5F29oMYqnBr8EykLzO1K01bQdZmzIhTTxttnWvmogsTMCaSqPNLk+I
+         NBjkqThrQlyaNZwhrdXJP9FpiJT+W+ziYVZNLHWH78WrKkPiSV9tep95peYULn/a1/o1
+         NwDXSIbb3U1YQA/bnrzswwijQ6jP1ydwSY3hquFbgPSjTcWPO+7wlVQqS1vEjFlnzzg1
+         XXD0X91WlKbrqVP5aT2VfjhwWTWHZYfRybYMvmEB7dUtuEKJS5zAT/tCDpjOqCsHxIsL
+         cVoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXl5lHGhpdjyhD4JZ9loiqDoSWNB6gKQDeXl8j5+rAtyTiyl4rFBpt5nprjdtmOeqcOKUqQGFTZWOTnPpMs@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdfxTFvPa6oPqWqsFbJ0x8629HOtQqfHMQbAadxtGJNu6oJ1/M
+	F8CREBhvvjUBhixAWCC5ulgLWP1jWdgQTjzUohOnD0LeuQNuhFhvAGCd
+X-Gm-Gg: ATEYQzxX136nmo/rrZe4H8t11pKUfpAaYU7C1Ja30GG27lmvNdt1uTxm3MWgDcufhCH
+	3m+vxlXeIINFFZGd6DAAMuoyziin0fDpSmwurAQec/nyvK+TLsWo4E/5OvZmdxg/ICCaFgVVK6Y
+	FHwSA209kQs3lS+MWAheR/F2aISXVIXa/x4V43KGjR9U8h4FxrsU/4HL/6ET08M1wHQL6Xi6qmR
+	nenQyTGySgBmHxvwHv0O1r01ij+vPHp3Zyj2OE8AaLG1c5LmUA/ngrUks7LEWVXjJWmlTtkAP1W
+	zQCMD3qcHbuVYI8uq4YA7jQSfUCr5nXIN9UTENYt/0vVjxSvZw8H3p9PPkXtLVn3qkHiN+ggVAZ
+	BordOs8BUcYILzqrrGCxj0C/6oMT+E1YCOl0YQz2nyheQjlI4/NoUQgobNOZaoul6wdilHclzdD
+	nUHH43XvyFiE6HLHWjpbhbHh51IyfK4f0wdQ==
+X-Received: by 2002:a17:902:dacc:b0:2ae:50ec:fa27 with SMTP id d9443c01a7336-2ae50ed022fmr30688775ad.45.1772460609891;
+        Mon, 02 Mar 2026 06:10:09 -0800 (PST)
+Received: from yangwen.localdomain ([121.225.53.117])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ae5043971esm31045165ad.3.2026.03.02.06.10.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Mar 2026 06:10:09 -0800 (PST)
+From: Yang Wen <anmuxixixi@gmail.com>
+To: linkinjeon@kernel.org
+Cc: anmuxixixi@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	sj1557.seo@samsung.com,
+	yuezhang.mo@sony.com
+Subject: Re: [PATCH] exfat: initialize caching fields during inode allocation
+Date: Mon,  2 Mar 2026 22:10:05 +0800
+Message-ID: <20260302141005.107-1-anmuxixixi@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CAKYAXd8PmK6jXa+6kbF2Gf2HZ7Ne1-3_ZwBS9kSOY-JwogZTpg@mail.gmail.com>
+References: <CAKYAXd8PmK6jXa+6kbF2Gf2HZ7Ne1-3_ZwBS9kSOY-JwogZTpg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260131165056.94142-1-ytohnuki@amazon.com>
-In-Reply-To: <20260131165056.94142-1-ytohnuki@amazon.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 2 Mar 2026 15:01:40 +0100
-X-Gm-Features: AaiRm51fyeKJitzEmL7QgSAkl6iDSucRyp0uyPHuyO9b-PDGpQdHVMhfRygG2xA
-Message-ID: <CAJfpegvhAevmVpcAWhMsOVRJ3D_ZqC4vskcS=OxE9oi9AgoBhg@mail.gmail.com>
-Subject: Re: [PATCH] fuse: update atime on DAX read
-To: Yuto Ohnuki <ytohnuki@amazon.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
-	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_CONTAINS_FROM(1.00)[];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78905-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-78906-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,samsung.com,sony.com];
+	RCVD_COUNT_FIVE(0.00)[5];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[szeredi.hu:+];
 	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	FROM_NEQ_ENVFROM(0.00)[anmuxixixi@gmail.com,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[3];
-	NEURAL_HAM(-0.00)[-0.998];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	NEURAL_HAM(-0.00)[-1.000];
+	TO_DN_NONE(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,mail.gmail.com:mid,szeredi.hu:dkim]
-X-Rspamd-Queue-Id: 716411DA699
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+X-Rspamd-Queue-Id: C703E1DA816
 X-Rspamd-Action: no action
 
-On Sat, 31 Jan 2026 at 17:51, Yuto Ohnuki <ytohnuki@amazon.com> wrote:
->
-> Address the TODO comment in fuse_dax_read_iter() which has been present
-> since the initial DAX implementation in commit c2d0ad00d948 ("virtiofs:
-> implement dax read/write operations").
->
-> Simply calling file_accessed() is insufficient for FUSE, as it only
-> updates the local inode without notifying the server.
->
-> This patch introduces fuse_flush_atime() to explicitly send atime
-> updates to the server via SETATTR, followed by fuse_invalidate_atime()
-> to invalidate the attribute cache.
->
-> Signed-off-by: Yuto Ohnuki <ytohnuki@amazon.com>
+On Mon, 2 Mar 2026 18:58:41 Namjae Jeon <linkinjeon@kernel.org> wrote:
 
-Does this actually do anything useful?
+> >diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+> >index 83396fd265cd..0c4a22b8d5fa 100644
+> >--- a/fs/exfat/super.c
+> >+++ b/fs/exfat/super.c
+> >@@ -195,6 +195,10 @@ static struct inode *exfat_alloc_inode(struct super_block *sb)
+> >        if (!ei)
+> >                return NULL;
+> >
+> >+       spin_lock_init(&ei->cache_lru_lock);
+> >+       ei->nr_caches = 0;
+> >+       ei->cache_valid_id = EXFAT_CACHE_VALID + 1;
+> >+       INIT_LIST_HEAD(&ei->cache_lru);
+> These fields are already initialized in exfat_inode_init_once().
+> Please check exfat_inode_init_once().
+> Thanks.
 
-Fuse hasn't supported atime updates at all, see:
+Thanks for your replay. While it's true that exfat_inode_init_once()
+initializes these fields, that constructor is only invoked when the
+slab object is first created.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/fuse/inode.c#n509
+In the case of inode reuse (when an object is freed to the slab cache
+and subsequently re-allocated), the fields inherit stale values from
+the previous user of that memory block. If an eviction occurs before
+these fields are re-initialized by the new owner,
+__exfat_cache_inval_inode() sees a non-empty list due to stale
+pointers, leading to a NULL pointer dereference.
 
-Thanks,
-Miklos
+We have recently observed kernel panics on mobile devices, which were
+traced back to a NULL pointer dereference in list_del_init()
+within __exfat_cache_inval_inode().
+
+Thanks.
 
