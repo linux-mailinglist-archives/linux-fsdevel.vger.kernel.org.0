@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-79006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79007-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id gAk/MjH+pWlQIwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:16:33 +0100
+	id UFMSDsz9pWnvIgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79007-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:14:52 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D22F71E238D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:16:32 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D35A81E2258
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:14:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 167683089176
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 20:52:33 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 94E5C32293FE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 20:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4D9394782;
-	Mon,  2 Mar 2026 20:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF153914E8;
+	Mon,  2 Mar 2026 20:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pLx8cGjt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m6XxlkSn"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF9C39184B;
-	Mon,  2 Mar 2026 20:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987FC3947B2;
+	Mon,  2 Mar 2026 20:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772483719; cv=none; b=oVlZZmTRTuFFpmCFjWxiUT5G+qggnwTkRYmb0zhWSDXm1n+8e28zxRu/SHMUJUR6EbDEC1By8xQZi2IXQx9WF7jg8WAh791nh42BS/WhKwloKQmpbqBaYpWV4Pk1+4R/nwucUOaQ+dNYkbBSCbR/XA3ah6ZTuF4qFTQ9KWLTRxs=
+	t=1772483733; cv=none; b=LNd9PN11moSEU/g2Ae27u+gGFNftOyLymsKNy07g/ELb+M5vQEGryXZqKk9ghNK0usNIcheh/+v9a9y899yDkBq8DdAuM54IbIMemKNlbyrldpBRYs888jbQloLgszzjJ5LSo/kHJtoxK7rhzwi9wSjaCwfe26YZyc3/tj6tYlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772483719; c=relaxed/simple;
-	bh=U3KpNq06HVb6xR2bnjz6Ns7LWxuPeJzECvQHHCOjgKk=;
+	s=arc-20240116; t=1772483733; c=relaxed/simple;
+	bh=lWf448UGMXudQ8B1VgEJeBVXqLyKfodUZAp30JCf+B0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=K49Ol7zeG3UGSm5WR0Jwz9NATB4fpS7VOHtcuIZtnRhNbgD38ZCBcdXFsS3wVDanmRAMxmh/wvZeBV7mQVKH79rPc+xrOuJkf4QBoGW9LOrlsgxwzid7LLteNNByh61kjgx26kmuT38778GRKbWxKXnYWdG1Mzf44jX4oRthJ3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pLx8cGjt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBABBC2BCB2;
-	Mon,  2 Mar 2026 20:35:04 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=sx9Fl/xK9Des8T9Aya6Jji7v8PJh3ArSjN9269hXaCQnbbEW8yYYNOzqeOfRWWkbm1YEFUOrW/9nGmbIUc0AEoQU7Wz9Ly0d7K2nsX4L4KsLsfpYumJyyQ/UKo7uE29bvlmtjh0yFb1LaTCkkfqPb5LJZ8ovNhdQb0hftagvw8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m6XxlkSn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 370FCC19423;
+	Mon,  2 Mar 2026 20:35:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772483719;
-	bh=U3KpNq06HVb6xR2bnjz6Ns7LWxuPeJzECvQHHCOjgKk=;
+	s=k20201202; t=1772483733;
+	bh=lWf448UGMXudQ8B1VgEJeBVXqLyKfodUZAp30JCf+B0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=pLx8cGjty4Av7EvuFhZGm06zvE+fJEx/T6LdYbGuWr1Kpn7VXQ8VwYafXrDnbdGA8
-	 OTOcSvmMteKhRNPpONLMHZ9/j7peBuet7bN0a8VyXX0fAXV0iclQHv6kh9HVu6MIAm
-	 DlrESCS7LYO7JztMixwR443j4hsExnSBrlTNcOxXedAyisLMpuFOTIuFnz/YpGcexf
-	 EqeOXJEst0+5/M01sL0p2V5J6uYtPzLZFYEn5MkFmPwm9+8PjR8FoiXMPOQNNV1CUx
-	 stv6xhWEG1bjNnN73vUPFdKCdrpxy4w6DkjhvId8+HpV7G1x2tNA7/wd1c47mEsp/8
-	 59qfVJ1WsOLMw==
+	b=m6XxlkSnJTMRJCps7ybYdo+e7wluY471f5jMMgETDx7npcxrPLAAS5IAXfL0Q1Bh0
+	 AFbTzA8T5oZoGUBvADEJ+0TtIFwqCTsMPnCXDZfNb9CP6RyWsP7+iak2VmcSeeQtJd
+	 7Qy3+CKs1MtMEbsMPr1F0beOUXYdPwVeqUf1wYmmKsJNSfwRHCgggZL5ZI/by97IEn
+	 8bDM32GpFRddFSyIOTmaVcdatrCXwLkkTQw+2r73pQ29Zz71+kkNTyDKK19sWpwaJK
+	 psE77cE0SOjhDV0KoqDd/l6+Mxm0ag25Asi6akNMiP+seLYsk1tmLs/oEKuVBmYMIk
+	 nIwUF6wTPvylQ==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 02 Mar 2026 15:24:27 -0500
-Subject: [PATCH v2 043/110] qnx4: use PRIino format for i_ino
+Date: Mon, 02 Mar 2026 15:24:28 -0500
+Subject: [PATCH v2 044/110] qnx6: use PRIino format for i_ino
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260302-iino-u64-v2-43-e5388800dae0@kernel.org>
+Message-Id: <20260302-iino-u64-v2-44-e5388800dae0@kernel.org>
 References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
 In-Reply-To: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -170,54 +170,55 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-sctp@vger.kernel.org, bpf@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1304; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=U3KpNq06HVb6xR2bnjz6Ns7LWxuPeJzECvQHHCOjgKk=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBppfH6tGlXo9qnz4TnjlgdQUVua3GSVfoKz23su
- VdlF9QDcUSJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaXx+gAKCRAADmhBGVaC
- FeRJEACqBomLSQl899X2tkLcb+Mqxa+0zQydlhBs5zMB3tLj1dC4mhQ3qXhr9GZdy2QuDdEXvR6
- vXwurD8v/1nTDZLG9XQLSP8sRIixE4Em8uwyHAWIP2OVXlWoxwX6pPlfuUdwwq926PANjPdM5vO
- 4ddU2YnYdZLplqR56VOCioDxob7oxZQLRlwnGiWF6d2kQsZsQMwKl5NeUX1T8S9Co60DP6zd/3f
- ZLGej4CuVQEvn9zjEuTmnISBcYIBpPI5S2scJ+scU4e2YO4IxDD6DsBxQgZCnmgkJGGlLIPe4E8
- cL2iVaAoC/C2m54CnBY4Ukj5o7qSQ0Txck0LuTfS26luzsaQlJ0KthqjxLtbeMfDV9aPjfCrzO9
- 9R/LMA+z4YvyDAmsihoaRFWArYKK9ZvFw431NvDIrMiJan87FIiFVHzc2qYHsTgT89T5bIradyh
- UdKj4iemeH8I9WXXW2+a1CMagwjFrhg/LxDFYV2MNhqgFHOVn8xYIbUOfzoG00EiSoV+f6HAEJp
- C7lLp+ZQuJW3Ok5eXfNGbu+wP5FJT37ql+u7/pRYeNl5ecwnFVXSch6rB78FSwpHdCHjPuPirlg
- Zfrmgto7pAcwfM9ZJxlgrSDPdpReleRhXjit8C2IkQigtXJ7UHT9AOLH+wCEUM4TgnWXHnVoXPE
- /cNmeh0F91M/fAQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=871; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=lWf448UGMXudQ8B1VgEJeBVXqLyKfodUZAp30JCf+B0=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBppfH6kEu6DiAEc02xSfhZdMCb8Qj46n6ykbtXd
+ mVp2VirwwyJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaXx+gAKCRAADmhBGVaC
+ FSnYD/wP6n93JAu8E2arFdXKlOQCAJY9cUuf5kcncBbnxHhRensERQpBumPgpB04J+1nSx7rBAm
+ /2vV3AQnI/ynCCWL8pIw4l+4TA+RAb1ztfS5Ly7z/zvMK+CoRCNSW7Rxz4dn5cWUa4OJZfwUFyf
+ KcMOZMSD7qugW8mpKWGM4SaZXKqkn6V28hJozNSEaMlWYAGKeYyWJFK0Jkk7494Mxg1hdPOngdc
+ lPIBjjiVRJyc2dxiFRU5rizVE0AKeh5k+hsFpEMqI4u7DBu8r6hlPl37be+qaEE9pfEFeIN9ZJL
+ jqLgtwAlraAWkTe8D24n+gSsToh7T1OXHsQMlpyjsfLr2kFpevlFER1w5x4VPssHRW9M+kpjbHl
+ IAIL4/TtRITSw+6wP59km9nZbH2FlzTHUjGjIfuaCR39IEd4psQfZrPWfWv5YlWtCCbKEw11SVS
+ 3WgZ7hc904ScIv+9gl/gDE6rR/2wDStlnosPb0UtX9DvLxsegVCbtiefzKqMOlV0jzhO6vQnRMl
+ 31MGnUmRKqP0duwCsima+30F+GiEaV7M77rtX6zJB9cp+vIZRNbg5mo1bjc3JJYTO2w4jjCSj2o
+ I+SZVhs2qMPVG7CMYSQsXaT4hdS5hw4vOCRGHlYoQ9T+0PWs7Nm231bg78BdK5i+rDpMhRwJGNj
+ OnzqkKjiDqUG84w==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
-X-Rspamd-Queue-Id: D22F71E238D
+X-Rspamd-Queue-Id: D35A81E2258
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de,yaina.de,holtmann.org,hartkopp.net,pengutronix.de,secunet.com,gondor.apana.org.au,fomichev.me,iogearbox.net];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79006-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-79007-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de,yaina.de,holtmann.org,hartkopp.net,pengutronix.de,secunet.com,gondor.apana.org.au,fomichev.me,iogearbox.net];
+	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	TO_DN_SOME(0.00)[];
 	RCPT_COUNT_GT_50(0.00)[172];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[jlayton@kernel.org,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	NEURAL_HAM(-0.00)[-0.999];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-Convert qnx4 i_ino format strings to use the PRIino format
+Convert qnx6 i_ino format strings to use the PRIino format
 macro in preparation for the widening of i_ino via kino_t.
 
 Also correct signed format specifiers to unsigned, since inode
@@ -225,31 +226,22 @@ numbers are unsigned values.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/qnx4/inode.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/qnx6/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/qnx4/inode.c b/fs/qnx4/inode.c
-index 8aeb63d397cfd6c87b7862f0dc7a34cdfdf02f9b..1226de01f2d3c1d79fc054f2b882fdca2d9d78ff 100644
---- a/fs/qnx4/inode.c
-+++ b/fs/qnx4/inode.c
-@@ -62,7 +62,7 @@ static int qnx4_get_block( struct inode *inode, sector_t iblock, struct buffer_h
+diff --git a/fs/qnx6/inode.c b/fs/qnx6/inode.c
+index c4049bb8bd60d47f9edd3d724a5d5be6b5deb5ee..630ebaa8a1c554b4d83ae75e5940a512e847bf51 100644
+--- a/fs/qnx6/inode.c
++++ b/fs/qnx6/inode.c
+@@ -75,7 +75,7 @@ static int qnx6_get_block(struct inode *inode, sector_t iblock,
  {
- 	unsigned long phys;
+ 	unsigned phys;
  
--	QNX4DEBUG((KERN_INFO "qnx4: qnx4_get_block inode=[%ld] iblock=[%ld]\n",inode->i_ino,iblock));
-+	QNX4DEBUG((KERN_INFO "qnx4: qnx4_get_block inode=[%" PRIino "u] iblock=[%ld]\n", inode->i_ino, iblock));
+-	pr_debug("qnx6_get_block inode=[%ld] iblock=[%ld]\n",
++	pr_debug("qnx6_get_block inode=[%" PRIino "u] iblock=[%ld]\n",
+ 		 inode->i_ino, (unsigned long)iblock);
  
- 	phys = qnx4_block_map( inode, iblock );
- 	if ( phys ) {
-@@ -128,7 +128,7 @@ unsigned long qnx4_block_map( struct inode *inode, long iblock )
- 			brelse( bh );
- 	}
- 
--	QNX4DEBUG((KERN_INFO "qnx4: mapping block %ld of inode %ld = %ld\n",iblock,inode->i_ino,block));
-+	QNX4DEBUG((KERN_INFO "qnx4: mapping block %ld of inode %" PRIino "u = %ld\n", iblock, inode->i_ino, block));
- 	return block;
- }
- 
+ 	phys = qnx6_block_map(inode, iblock);
 
 -- 
 2.53.0
