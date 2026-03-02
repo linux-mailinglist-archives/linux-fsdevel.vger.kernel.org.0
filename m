@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-79014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id gJsiF2z8pWkOIwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:09:00 +0100
+	id oIbKHZ38pWnvIgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:09:49 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 168C41E1D77
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:09:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 248691E1E27
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:09:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 08DD5313F5B0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 20:57:21 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 74ED630A8556
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 20:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926583A2548;
-	Mon,  2 Mar 2026 20:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248D13A3428;
+	Mon,  2 Mar 2026 20:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B9vuT9Sd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HXw1mief"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92C639FCD9;
-	Mon,  2 Mar 2026 20:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79CC148AE18;
+	Mon,  2 Mar 2026 20:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772483819; cv=none; b=NGu2P0nH6daWD673dHwahVyBmOpoSJweWYSu0t/nxmJkxvvuxLYX1ovc5xKOcV9Jnv5FgLzglClT0xQw7EHEhyzVk5SiYcIj/W/1LAVK8fJbvs/utgJTKnfd8w2uWMen31rw6VQyjcmvaCGsY7Js88mY0fsn2+tlc2kWGYgANdo=
+	t=1772483834; cv=none; b=tJCdlCDMXPgKhdAY3NNAxuaurVjx8+Up5pEmvgBEnpEd9S3DpM1zTxZ/x7pAiuplQeViVcoezGUJ+NmLQ9Clr5TRLN2LbS8I0jUz7Gzwz+wV0UBN24BTCnPhPCXmapCtsoayOBeMJrJ6qGTNZHOAR8jJ8W0dKPYimCPooDQ2YS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772483819; c=relaxed/simple;
-	bh=0ZE73lCrVEdpMXz91AbIXmMh1XqQRzyOg6foj3qrPFg=;
+	s=arc-20240116; t=1772483834; c=relaxed/simple;
+	bh=UgVJPM8BqxMlT560fdqc1noj6F6UhsdCukOI8Wq5nIg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=N0cdeeZKcBveWuhrowH9aejc1CAo3Y0SgFPnvxzYyBvooLuWvj2h5PcQeDzvvdKUtTXCddUjT5vpnkiNW8B9QRHT9WS48d0xxk/ZCF1YJzxfZHYuKj/T7cf1wn8S1Yz58/QiFXpumnUpk8rQWJ6PU0yW01v67gjOSH/WZobMXGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B9vuT9Sd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A117C2BC9E;
-	Mon,  2 Mar 2026 20:36:45 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=pkgRD/gMt4VidHflprjZxP4qkWw/Klrt3b4ZenAoNccoFH2vDUgM8BdydwRwJjKK1lv6BpREWtjmer09LjEJ5EO5+yWQjSNN9yN6IO3pNNeypP98ZjSXkeL4p58pk19sPd747UrwuDw/f6g8Y7V4swVZxvzwtvOWpU0ZhcT8F9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HXw1mief; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0EFAC2BCB5;
+	Mon,  2 Mar 2026 20:36:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772483819;
-	bh=0ZE73lCrVEdpMXz91AbIXmMh1XqQRzyOg6foj3qrPFg=;
+	s=k20201202; t=1772483834;
+	bh=UgVJPM8BqxMlT560fdqc1noj6F6UhsdCukOI8Wq5nIg=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=B9vuT9SdMGIoze9C+yqVn924bJJ+P/cFYMS6dixpaI5Btyb/sfbUJp8vwEjCPXFiF
-	 Wmk8b6d4Axkj6LczBx/A/OoW3u1aHAnxcHJdbIsYggfPkj2YKpPbtaS/8r+efGtClW
-	 8H/hAkIZkrIY/5sQQSYKCjNVm/qeQgD0wGVvUEc+1ikXnv04zuqRFju31Hcb99Acf+
-	 RoVPQXBDoiqz1kshO4InItYtqH6ICN97dgbrf7T/OCW418hsz06O0t989B2uXdGYcy
-	 yESxdVOw7NdL0gBdMXC+eip8AmrHMKjU0yfEuICWHSK657x0Psg3TqwaupkEb+oNTt
-	 DPGNx3BwIGc+w==
+	b=HXw1miefYXbtIR6JE39RM09xEPjBmSrYJnc3qKdbSp6N5ItcD+3dqGMszplv1N51y
+	 FWyqgcWzhdjGCTvf4qERhS6VpTiXBI8l4n7NfS5KqzE84xU9lOB1OBDinG2QVBUc0U
+	 6WHJFMrk5n2jcImnUlQrHHjr5Pfi+8D6j/0VttCKj7s4ZbjYP4yoVdh5s65pBnHnKU
+	 eQEHEcm+TWFIcZLQPDS6f/az/q7e1/JvJU1wVI2zC2IkbPObkZWYj/YlqOkmiugZtE
+	 Io2SG6evn1tZgNUCy/ziVq5GkMQ52nu/w/LQNuTBDxOYr6RT9Btat+MaRhpqETOL+f
+	 gjSkv9mWpqP+g==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 02 Mar 2026 15:24:34 -0500
-Subject: [PATCH v2 050/110] drm/amdgpu: use PRIino format for i_ino
+Date: Mon, 02 Mar 2026 15:24:35 -0500
+Subject: [PATCH v2 051/110] fsnotify: use PRIino format for i_ino
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260302-iino-u64-v2-50-e5388800dae0@kernel.org>
+Message-Id: <20260302-iino-u64-v2-51-e5388800dae0@kernel.org>
 References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
 In-Reply-To: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -170,23 +170,23 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-sctp@vger.kernel.org, bpf@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1231; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=0ZE73lCrVEdpMXz91AbIXmMh1XqQRzyOg6foj3qrPFg=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBppfH8bWEVwsBbOa/3fhQXi5WtIWQ3JhiCAoIem
- 86pCTSDgfGJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaXx/AAKCRAADmhBGVaC
- Fd7JEAC4rhc+en5RK1++F7YzWXknLhX6D5LT7nLIWMuNPlNshWUqaUZgLyrGqrRxvONjVg6lljX
- w/XxprnxonbekUKFhURqX5POoQg7A7fly0I63bfHa582/Z44VdFqR8dJfc4rlKNLrKXgHXm/GHa
- eREHxVCd/KoQ6okzPx42ZNo1EgiajVbz9rRzAb9FnLUemaXHJn8FR0GZNpHUC/ZCtKNBrQdQHBz
- DBRqngy6qSL5zK5nJf3uIVMhdc2wfh65Bqv/L+kBuRiAXZzBdSFa8d+L6GjuG4HHvvHAu5aT9ln
- kBTohpygzBp+Lfi3Pbkigv75oeLO0BqvpkCe7/WOjwzbGGM1u70iFGcx+aJLcT8dOyGBsd18/fW
- 5qTXdZ5DqeKbeLczod/TumsCebxfh2wOI0Fp4O07ncbj7dG6RRUswbkWgvMa9O7hGtrebzvJa/e
- I6MIfMCMBRO32PFvsFjGfdF12IS1OqtD6boc7kn8yOhn1M67Oy24tV2rqoM6wADl8VSG/dcj72s
- DV2GMyXe8bmMXE/zXxXwNMqRHMdlJUqnyrXY+cuNlsdhc5WP3hRRyqrchkhS1Kjk35fOczwuL2Z
- F4zLOqTUP0EwBDdlSP1mhpuR6DxSpllNHXjKclV91I2uBWHZjKbczXkJHACIGsmkn9Wn8lc1opU
- MWMpr+08JwGFnlQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1485; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=UgVJPM8BqxMlT560fdqc1noj6F6UhsdCukOI8Wq5nIg=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBppfH8DjQ61VuGHYqnx4y2RrHHfswITVgpEIRC2
+ nyttXLIXcKJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaXx/AAKCRAADmhBGVaC
+ FSp0EAC2mUe7VbzdzmXlDBKaHjpH8DkeAZ99MO7xXMFQrxi8LyQHDnksKIabJ1CMbWRV/7a+AcG
+ JhcXJYEASNFrvvQlot+lJ1YU5aBLLnWRSDfbjx3I+nN8wIkqyKJlZcfaf6UJw7ynquQlQbO0q/1
+ hCj4l4ff5JhTCvb4SGY85ttZDXzHn69Qo5KrvTTZxYtAyobrzpPZntiPtLl9Tf+GufsnYlSxss1
+ wF1/NMmA1v8Orp6i1U8bP7B6eaWyLPpLg3NBtHMWGI1rl8HV0YGoj76ycIWtfNDtl9K4zcKwE0b
+ eHeIQBn0KnUhRvigirZeqGAq2xj4LQykixIs2eWy6TK3U4ASfA5xNgeoU++63nkZ5gqpjB+CE5d
+ Ut3/4LrcQSE4ZJlhvlPuetDghmdNKQ3zOgtxJPTe+Q1eITJMTliYd+0GuN6eCtPEkjGUOmo3R0F
+ z20u/6T1nghDE37cI2psJQNUBlUOR5XPH5wqhA5cxuuDAe3Jd7ZmOOfLZefbivFHSm+A3pU07H/
+ gKWVwXcZmY3tDJR126BbBscgE1xItR4sp9XIK8qY0AbIlUtahC4Ofs3+0E2Urzwm2pRgHvPcfAq
+ HIqKoifPwSRSVoW5nkPIXYjrJGonxL2GGljvkLW7tnGX26B9t7VI2PyKvW47n31dx19lKsk4ze3
+ D4V8Yn2yXUUmYmg==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
-X-Rspamd-Queue-Id: 168C41E1D77
+X-Rspamd-Queue-Id: 248691E1E27
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
@@ -197,7 +197,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79014-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79015-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de,yaina.de,holtmann.org,hartkopp.net,pengutronix.de,secunet.com,gondor.apana.org.au,fomichev.me,iogearbox.net];
@@ -218,30 +218,36 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-Convert drm/amdgpu i_ino format strings to use the PRIino format
+Convert fsnotify i_ino format strings to use the PRIino format
 macro in preparation for the widening of i_ino via kino_t.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_object.c | 4 ++--
+ fs/notify/fdinfo.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-index 1fb95640069667bf731df05990b57c6e0a0d2c16..d62f7cd1bdd3643803a99c3cbe35fa5b19217eeb 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-@@ -1676,9 +1676,9 @@ u64 amdgpu_bo_print_info(int id, struct amdgpu_bo *bo, struct seq_file *m)
- 	attachment = READ_ONCE(bo->tbo.base.import_attach);
- 
- 	if (attachment)
--		seq_printf(m, " imported from ino:%lu", file_inode(dma_buf->file)->i_ino);
-+		seq_printf(m, " imported from ino:%" PRIino "u", file_inode(dma_buf->file)->i_ino);
- 	else if (dma_buf)
--		seq_printf(m, " exported as ino:%lu", file_inode(dma_buf->file)->i_ino);
-+		seq_printf(m, " exported as ino:%" PRIino "u", file_inode(dma_buf->file)->i_ino);
- 
- 	amdgpu_bo_print_flag(m, bo, CPU_ACCESS_REQUIRED);
- 	amdgpu_bo_print_flag(m, bo, NO_CPU_ACCESS);
+diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
+index 9cc7eb863643774b83da8b6228c38db16d0dbed1..586eaa7f65a4a61b892fb9c39e6a0d81e025b790 100644
+--- a/fs/notify/fdinfo.c
++++ b/fs/notify/fdinfo.c
+@@ -84,7 +84,7 @@ static void inotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark)
+ 	inode_mark = container_of(mark, struct inotify_inode_mark, fsn_mark);
+ 	inode = igrab(fsnotify_conn_inode(mark->connector));
+ 	if (inode) {
+-		seq_printf(m, "inotify wd:%x ino:%lx sdev:%x mask:%x ignored_mask:0 ",
++		seq_printf(m, "inotify wd:%x ino:%" PRIino "x sdev:%x mask:%x ignored_mask:0 ",
+ 			   inode_mark->wd, inode->i_ino, inode->i_sb->s_dev,
+ 			   inotify_mark_user_mask(mark));
+ 		show_mark_fhandle(m, inode);
+@@ -111,7 +111,7 @@ static void fanotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark)
+ 		inode = igrab(fsnotify_conn_inode(mark->connector));
+ 		if (!inode)
+ 			return;
+-		seq_printf(m, "fanotify ino:%lx sdev:%x mflags:%x mask:%x ignored_mask:%x ",
++		seq_printf(m, "fanotify ino:%" PRIino "x sdev:%x mflags:%x mask:%x ignored_mask:%x ",
+ 			   inode->i_ino, inode->i_sb->s_dev,
+ 			   mflags, mark->mask, mark->ignore_mask);
+ 		show_mark_fhandle(m, inode);
 
 -- 
 2.53.0
