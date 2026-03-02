@@ -1,292 +1,270 @@
-Return-Path: <linux-fsdevel+bounces-78958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iG7PFjXtpWlLHwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 21:04:05 +0100
+	id kEMLDYDvpWlLHwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 21:13:52 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FEFB1DF19C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 21:04:04 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91D851DF31E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 21:13:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 4B94C300B8F6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 20:04:01 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E9CD33083DEC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 20:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA9E330B0B;
-	Mon,  2 Mar 2026 20:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6856647ECC5;
+	Mon,  2 Mar 2026 20:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="W4XUPszU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qjk4bcuq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outbound-ip191b.ess.barracuda.com (outbound-ip191b.ess.barracuda.com [209.222.82.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D8747DD48
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Mar 2026 20:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.124
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772481836; cv=fail; b=aYruyTMdBU36ANe3y9RRyo6rVHH1mq+L+T/xpSaVbuRPpwgfOAa118EcZQBxtLTQU/VuiDDrtXbrPepyVfJBi1KoR7qdb0cu3AT6eM4jo85T90R94Qdw1uKrBPbzR82PtTnOZhSfv34yIySMe6l0/pZkHJ0gWThvXm9W/CrIwQY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772481836; c=relaxed/simple;
-	bh=RK6GR99qE6cAIpAKeACzR4JblO8cGnMAfMVEL6xHOIA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=XZpVchTAGAGpE/UaHaz7XgkmotRTWiN1ziHvT8g2kNA+qCZCvr3edI48rjl4fMNUjJpQSu3CH5ehu6oIgzcIYD5aBHf3LLG3NEg58UcRiKzZ+wEmU/P6Frt9jyZZr08CRviteD0J1QGW5NM2ySck81YMjXcb9PfvaTwCXDIf2+0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=W4XUPszU; arc=fail smtp.client-ip=209.222.82.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ddn.com
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11022109.outbound.protection.outlook.com [40.93.195.109]) by mx-outbound20-5.us-east-2b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Mon, 02 Mar 2026 20:03:35 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R/8msG2YWv3Ugzk8iyW21dFn5hqteoNiJOfKkqqt93QfIYcPLZtanexdEuXbHrCnnyUXMiY9vXqu3Dr3328ptB+YruUexOWkaFsRHx+zSvQP1TY7yTipV9EGZlRZaJq4QFaBugLluXAFrcRoukcL88ZPoyqBhnaH3rdiRxe9HtOiuvCC78LtaNU03W6HNODA3y8fb+X+dKzxjB2g746ywb7ZovjQP9PwiHR1oXmaNaQHzebNIoRcfTWWD3ISYUMNuD3qcAjxWHMXnzRhQayiG6jIORWKoezkFPImeiVGZItUnSOBwWYA8MzTh2q7LyNtjAPBywhyoHKHE3MxqLxjAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CPVipiWHECGSYzip1pVk/oGOdojdclToFBJzOFgZC6k=;
- b=u4boHLgxd+fmIsT4MAHKplYuqlKPuPVBWiRpUjtDkVuv9v5JgV1CPCuKlNKlUffDSWeKcEd81G76IA1QGDbEnOcX+aXhh3QI1A3w73fhULQmN22M+SjKFwS3Gt33iM0oQKIDDV8aRl7gVZYuFAChHxOvwh5tzPk6mFDoZ2DdrJmxEnXpH2Gsv6A6rcgMpdA3oENYkgYc/tUIFRcCY2mivNRiQxZwPzhfkOiaLkHce0DrOd5RwYqwM2q0D7ID6ebFf6cF6JceiOEk79bdX+4XP0Nw3BsLmp34QKBPu/ebJaX6BSeHEe6Isf/1ICDI5YE4xfEDgIQBJlLlmO71ehxf7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ddn.com; dmarc=pass action=none header.from=ddn.com; dkim=pass
- header.d=ddn.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CPVipiWHECGSYzip1pVk/oGOdojdclToFBJzOFgZC6k=;
- b=W4XUPszUoEAUBYflw2EXkXy1rdSgXVGKExBapFHNYhvjoE+ReeiZz6eZoE+d8xqrCKcLCylUz+9P9c7Jtz9Kj5JLzt4SeEJCmDpoKCmvdU/o4CbdOAMssQlmzcCUsTcf/VmUmfyXPWT6Oio6PAmPJNkxZmu6RhCPxzz10hG9/qw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=ddn.com;
-Received: from CH2PR19MB3864.namprd19.prod.outlook.com (2603:10b6:610:93::21)
- by DM6PR19MB4310.namprd19.prod.outlook.com (2603:10b6:5:294::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.18; Mon, 2 Mar
- 2026 20:03:32 +0000
-Received: from CH2PR19MB3864.namprd19.prod.outlook.com
- ([fe80::c2de:bba2:8877:3704]) by CH2PR19MB3864.namprd19.prod.outlook.com
- ([fe80::c2de:bba2:8877:3704%6]) with mapi id 15.20.9654.020; Mon, 2 Mar 2026
- 20:03:30 +0000
-Message-ID: <62edc506-2b0c-4470-8bdd-ee2d7fcc1cf1@ddn.com>
-Date: Mon, 2 Mar 2026 21:03:26 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/3] fuse: add an implementation of open+getattr
-To: Joanne Koong <joannelkoong@gmail.com>,
- Horst Birthelmer <horst@birthelmer.de>
-Cc: Horst Birthelmer <horst@birthelmer.com>,
- Miklos Szeredi <miklos@szeredi.hu>, Luis Henriques <luis@igalia.com>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Horst Birthelmer <hbirthelmer@ddn.com>
-References: <20260226-fuse-compounds-upstream-v6-0-8585c5fcd2fc@ddn.com>
- <20260226-fuse-compounds-upstream-v6-3-8585c5fcd2fc@ddn.com>
- <CAJnrk1ZsvtZh9vZoN=ca_wrs5enTfAQeNBYppOzZH=c+ARaP3Q@mail.gmail.com>
- <aaFJEeeeDrdqSEX9@fedora.fritz.box>
- <CAJnrk1ZiKyi4jVN=mP2N-27nmcf929jsN7u6LhzdYePiEzJWaA@mail.gmail.com>
- <CAJnrk1ZQN6vGog2p_CsOh=C=O_jg6qHgXA0s4dKsgNbZycN2Cg@mail.gmail.com>
- <aaKiWhdfLqF0qI3w@fedora.fritz.box>
- <CAJnrk1bHSRxiKNefNH_SUq1E93Ysnyk-POjh5GWxy+=8BewKtA@mail.gmail.com>
-From: Bernd Schubert <bschubert@ddn.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJnrk1bHSRxiKNefNH_SUq1E93Ysnyk-POjh5GWxy+=8BewKtA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PA7P264CA0126.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:36e::12) To CH2PR19MB3864.namprd19.prod.outlook.com
- (2603:10b6:610:93::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C460447ECE6;
+	Mon,  2 Mar 2026 20:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772482265; cv=none; b=M3OX0NfsuOwINg7xxyNfs3Ze7ezFxOOvc+j5kbhQ1QcUW3al4lGjhyKpMoIiu/oSXLvcolCw3SuX7R00P5bABC0FUDPrxXHXfBp5ZmJXEb0fQOPxqkf05WumCTIC1gPAyJ6l5ZxYbKFyIODNY5IXC5OVDzf8LK2w37pOlWgOFvY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772482265; c=relaxed/simple;
+	bh=jxMNWDwdHnBzeQXGjwHec86Pw+l4VieaGKcp7ushtfw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NcW2GgnS3iuFEK4YhRGLub2keeNqUbctzEjhn/3T2/D22e9NgxWVLnssVBfBJeRuA+YJj7TbWbZorLhWwTjfXvA1UNYzHRx+MUW54vLmcheMiCW58bJu+7DZelQxdGcAkxoWf2vb8F36X7o3jVOtIcfRCm/dzTh2HMV9IwSDpVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qjk4bcuq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 491A3C19425;
+	Mon,  2 Mar 2026 20:11:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772482265;
+	bh=jxMNWDwdHnBzeQXGjwHec86Pw+l4VieaGKcp7ushtfw=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Qjk4bcuqJowii1X/fCGGAvXKvBkXXtkb5Nti2iZE9U1kFgMX+MPoWaRG7l9ev/3iV
+	 6MAHsFguKbcCB4Lg2XIXt/LoqGCzBxTCmJkmhopLX8gUNx2zPMBdRM6CBfkHxc9MG9
+	 MhpEz6RYP2l+njY+H++JHuCeos9LpDsq63D3b9hsymESxQJA5Rrj5rUzcYOVcY5yCC
+	 F0eMkCCADJLo1qtYD0rIj5NXYJqhVcpvff0wBhsV5ePWtbRMW2DKxCJPKOrekxZWFl
+	 9yLrYAFrUE8vwOypY7g1cyC74/Y5c1lpgFZM8y93LEpAizvIx6A0dHwNy5y+meeb7r
+	 +H7h2htsNaf8Q==
+Message-ID: <df3a0c1d7c2aa4653725a20401264de2ca1645b3.camel@kernel.org>
+Subject: Re: [PATCH v3 01/15] VFS: note error returns in documentation for
+ various lookup functions
+From: Jeff Layton <jlayton@kernel.org>
+To: NeilBrown <neil@brown.name>, Christian Brauner <brauner@kernel.org>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, David Howells
+ <dhowells@redhat.com>, Jan Kara <jack@suse.cz>, Chuck Lever
+ <chuck.lever@oracle.com>, Miklos Szeredi <miklos@szeredi.hu>, Amir
+ Goldstein	 <amir73il@gmail.com>, John Johansen
+ <john.johansen@canonical.com>, Paul Moore	 <paul@paul-moore.com>, James
+ Morris <jmorris@namei.org>, "Serge E. Hallyn"	 <serge@hallyn.com>, Stephen
+ Smalley <stephen.smalley.work@gmail.com>,  "Darrick J. Wong"	
+ <djwong@kernel.org>
+Cc: linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Date: Mon, 02 Mar 2026 15:11:00 -0500
+In-Reply-To: <20260224222542.3458677-2-neilb@ownmail.net>
+References: <20260224222542.3458677-1-neilb@ownmail.net>
+	 <20260224222542.3458677-2-neilb@ownmail.net>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR19MB3864:EE_|DM6PR19MB4310:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6f7b63ba-b132-4f6d-2d63-08de7896c681
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|19092799006|10070799003|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	kitcOZyVN6wXwytk95ns1HrfYq0Sp3oRB6HScqfgu+JMCnmRb4vW4YYw3POS3Fyp0mkK7l8kEBdsU01wTiOTHCNl3gZNg2zGLtUv/W9ZxJGL+JtVYGpM3A5ma+vSSI7aqaAzMJpFgU6Jqhpd9kEdthnGAqj+Jn/HoL+he4BX86xyLxYN+6wRyZg7SkSdO90vXre8GEv+5cqXxocFtqLWvLWLCFrPdA1oSVoyN3bOdFvCIwpaICIUgSJXiVBfpL6JrehEe/wNO9bRunmQNZ9XUPVdX6C7r0OTixp45HfIaRHj7s4uiB0MVxkDDwScuybMSyOIuRBAIs2oeXVGyC5TltVayHwGpBn+nhn+k97eoGIr645tvnoPozDvjB4F/OP6lEgD8PrueVKyoNVzvXTuQs3w56KAZdA+mNdvXlTZbNR3fSH83D7N9nzoaGdfNzJNEGUoMbLRXgm86NQHw1nCd0w9hE165bpw3LeOnxxP8qIs8Aqo78CujWqwNG0lwD2mdJUoN96XLgMXIiKOGqZfxLdisg/PytRi1S3k+/6+jcc5wOrwaWoSPl/HpL0q9BBNtwNtJ2YunMOx9PbFJKoLXTiHikHBBKGztzg/EEVzlpJ688Nuwgmlw3/P3we9seHPXsXL7IrIp14Xg36oqjw8m+TqBxo+6lJF6ssemcATYjMTZwDlqvKqgojkTYEr9H54m+4Tr5mjO4wL8rHeRMfJ4jn7o5V654hhkqSECO8hFu4=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR19MB3864.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(10070799003)(376014)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cFR3b05CWmd2RVIwWEMwRmRMVW14NHp0SGYvdnR2ZEp5N0pJT0dzM0l1d3E5?=
- =?utf-8?B?bnBGakVEMXpSUDBtZDJ6UGk5aXcrQ0hHM0R2N2MzRml5UlBNeUJaQzZJWXlt?=
- =?utf-8?B?WkVSR3pJVmwvOFNsSk05cFlkQVZpaWNMc0dkUkhGV2tUNTY5V0NvNS93UURW?=
- =?utf-8?B?QUZISkcvbjV2MHRJWGcvN2NyQ0JqM01oMDBncGFGZWkya084bUR2c2FmS3hT?=
- =?utf-8?B?N1VvODE4Um5zWk1lRkpRRFhPSmN2RWMzVnFwRjE3TUdMc3NITWs2NEhpQjZY?=
- =?utf-8?B?QWk5NnQwd1FMUXFsL1U1U2dtaUtRRm9ONk9zcEwrZDEvWm44Z09SeHV1TWpn?=
- =?utf-8?B?eU1xeWsya0IrOUNXVkVTT2lhd3E3ZnhOdTZiQmpVODlGaElJQjRkUmh2bGRk?=
- =?utf-8?B?NjVLY0YyK3daeTNiMmtwVnVIelArTDlQMTN3UzEvYkJiMTBzdWZKbEl1MEt3?=
- =?utf-8?B?MWp5RmJZMU5pUWxlRU9vek9uNGprelBHZWhMVmg2SGdmVlc4eG5MazdvNzZR?=
- =?utf-8?B?ZlVNY0dKR1NEYUkzMGpyejgzdTlqV0tNRFdLckQ0STNhTmR3cjVsaHBVKzk0?=
- =?utf-8?B?Qk52Z3RKbTRkNnl4TzJNT1RQc3JZZDNhN3ZCUDJ6aElGWU00YmJuWU1Nd0Rh?=
- =?utf-8?B?bWhiVUpCQStGZC95Uk9IdWQ0anlOSVZJenJCbTB6KzR0eW9xUTc2cWgzdVI4?=
- =?utf-8?B?aXQrUEZ0YjltZGJmd2hWYlRHb0JNeThQM1ZZTTNzRTlDRlk5UGhrWjhRbTFI?=
- =?utf-8?B?NkpDZlEzS0dJd2FCMUZ1Skp0WjM3RnZXend5WU1MK05KaXJoSXFxUnluM3FX?=
- =?utf-8?B?R21qVmthYlBNcmdweVNRMllaVCtHU0FMYjVNbmJWRExxQ2ZpeXBzV1hsQ1JS?=
- =?utf-8?B?b1l5RXRQUDBNYzJPMEp3VGlJT0RvOEU0bVViU2tjUjVxVzZWa0sxcDdEM01u?=
- =?utf-8?B?dnI3NFI3USsxOVYxRGpaM1N2SVBwVXkzdkp1ZDM3eFEzSHdCSlZxOVdKZDdB?=
- =?utf-8?B?R2RxK1dUdXNSSTJNZTFkMzFLQWdQTE01SUxrbW9MOVRvVStBdEdxN1VjWGY0?=
- =?utf-8?B?RFV5QUppVE11NHNjSW5TS2RkanVreXVsWmNoUzNrcXQwWGNyNkVnczdhZmps?=
- =?utf-8?B?YkU5NXlrU0E2Z2VINExreHJSViswb3RYcXVlT3JqSjhCRDgzN3FncnBoSCtk?=
- =?utf-8?B?K1NjR2ZKb1JZRWwyWDNjNGJUZHJjMy9xa2EzUEhzUUFuUUJ3elR1SnZwb0Q3?=
- =?utf-8?B?UkM4L1pWdFVhU2JPZlM5ekIwWXBEUzd6L09KMlVZWnEwZExvWS9ieWJMZTBX?=
- =?utf-8?B?a0I5d2d6V1VlQjN2QVZiN2hYRXhpdUVqZXBzL1d5SzlBb3hhZnlIdGh3ekc4?=
- =?utf-8?B?Zml5eUN6MUVMZWFHUU10bndkV0tJT1FvVjBjYmlFWjFDOVFZeExnVnh6eG5I?=
- =?utf-8?B?bUw2VXFIaVpQVUhBNTNSdDhjSStBWWRkZGl3ZlkxbXhwSmt6ekxTSjd0Sk53?=
- =?utf-8?B?MFpDRGgzd3ZNbDIwVkZRTkpWREJMbGJ1UUx5RkdtYmg0THU2d3FVbnBIeDBE?=
- =?utf-8?B?NDlrYXVZRURYS0NBTGZ1S0FhdTBnM2NTYjc1WFR6TkZPbldYQkhOWnJ1RFIy?=
- =?utf-8?B?ZUordFJITzNiakJNT012MTNTNURuSUoyR1pRT2hWTjY4NmdqSXBFWjBLRktB?=
- =?utf-8?B?blUrdzBmalg5Y2NHeGhqbU1Ebi9zOXlEZ2lOVzhaeUxPaDRHcUVweFgxRUJz?=
- =?utf-8?B?YVNGdlorc0VIUlJKRENCSjJRK2tycTZDU0V2NGdudExKVEJtRXplZWRPR0VZ?=
- =?utf-8?B?ZnJpOG5SSGM2enNKL0srY2pLYU8xc0RuK05URGVieTIrNXNUcFBHM2FaVS9h?=
- =?utf-8?B?dWVhQnN2NjFNdVlnNTNIN0FCejhxOE5PeUhmMm1HTmpXNEx2eGhUNlkrcDQw?=
- =?utf-8?B?UDU3M0hwaUFmRno1c1BzVmduMS9xRzE1TGRTbSsxTWU1N3lZSVIwbWlBdlBS?=
- =?utf-8?B?Y3BDL1d0Qzh1Z0dSc3hnQ2pQV05uVGNnL2RmcU9GV0picFVrbk5LQ0VxbG82?=
- =?utf-8?B?MlBROW1hQVl5MGxPcVBMOVhOanVyZzBWZTBxaG1UeWJjTjZtK0hmT09xdVUx?=
- =?utf-8?B?QjRaOHFLQlZzSk1GK1pxTkx2R0dJMDRibFhFeFpJcW96S25EUUZGVSt3T1c3?=
- =?utf-8?B?b2NSMnhBc1NaZWVYcS9UZDJ3SVlxWjlOY3l3VXVsY2JQZmc3anlCMXlGQmM4?=
- =?utf-8?B?UzErNTVuUmlSRzBmVGF2OCs0R3RNNUt6SHBnL2FFRVU4TkhVVkh6OGpva2sx?=
- =?utf-8?B?dXUrby9XVjVQTUJBQzB3Tk9ZZDBha2Q1NUxMQXF5dGptVzA0a2JNbUxYM1Nu?=
- =?utf-8?Q?rUNJ4s9oe16AMsPTYdAgKvDmoNGPa7afcLu1486zz94Lw?=
-X-MS-Exchange-AntiSpam-MessageData-1: y+gXVkT1dwf35g==
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	Ou4k5WEyP2RsqoI9YAJfXEUMf8DqPMZ96s8LOJKGEDqbuxIyhsNMB0x/IGaPmnnqQTCh3iL+/wRnPVrmhu1QbuXjhJ2zE5HFZHxb+wTC+YQjmrEE/P5Usgvryb0OKrTGiOFchtUfrQSuHsyZ/tK6IpYrj8yz7ZgTpDJq46EXiYU2lyJWM88c/Uyl1/tsgS6ila/1zQXTyxMejDhtYLpHzqNJaKB2EnRgBATl8gJHUnIhjtlUajmQVmxFPH21FENbsFGF7YyJCxcSa5B41tKsR/judn2JEmYT3PM71x06LGiFnygyd/chpOekwPVI1Ezg+Seg8fjn+AWoN/3azmzsxAhyswkbS9IEFaO6ALuf7H2Wt/XD3ti0lOUdibjDHk07opKOXYpJQuTHAzZx9L0tvehL6aC6inAjLKven6H258ED+EIrtm31LsVKBeo5X5LGZ9ej6OgD9jU70SRJAzAxkIvjtYjbgotwKj7Fa7SvwXZZWyoNKxaezPTBLVwAo479vgamcf3MxcBCAX8AAKO9MSYk1+Gr7W54ts1e0C4BGdSTPzy0XXgUu71Z2fkjUsPh1fNiuUgl/XTcUt9T1jUqlpRHgXj7DVIfa9CvW/ZVboxcQNtvYvG/WJwEwyyxWZCL8RrQ9lz1c6um9QWwPjz3HQ==
-X-OriginatorOrg: ddn.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6f7b63ba-b132-4f6d-2d63-08de7896c681
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR19MB3864.namprd19.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Mar 2026 20:03:30.5506
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tboWaOe7E178kSe3njn3f/JX4zu7urbXdqfYOjc8W5ZSWZHgeH6IBjLamWQpnwxI9IJp7NuVWX+AWpgGuDv/CA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR19MB4310
-X-BESS-ID: 1772481815-105125-7700-1364-1
-X-BESS-VER: 2019.1_20260224.2149
-X-BESS-Apparent-Source-IP: 40.93.195.109
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVsaWRhZAVgZQ0NQ41dIsOS3FwN
-	jCJNEg2STFNNnE3NLU0jg11cjIIClNqTYWALvXHZZBAAAA
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.271522 [from 
-	cloudscan9-154.us-east-2a.ess.aws.cudaops.com]
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------
-	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status:1
-X-Rspamd-Queue-Id: 5FEFB1DF19C
+X-Rspamd-Queue-Id: 91D851DF31E
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	ARC_REJECT(1.00)[cv is fail on i=2];
-	DMARC_POLICY_ALLOW(-0.50)[ddn.com,reject];
-	R_DKIM_ALLOW(-0.20)[ddn.com:s=selector2];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78958-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78959-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_TO(0.00)[brown.name,kernel.org,zeniv.linux.org.uk,redhat.com,suse.cz,oracle.com,szeredi.hu,gmail.com,canonical.com,paul-moore.com,namei.org,hallyn.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,birthelmer.de];
+	RCVD_COUNT_THREE(0.00)[4];
+	RCPT_COUNT_TWELVE(0.00)[22];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[ddn.com:+];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[bschubert@ddn.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.997];
-	RCPT_COUNT_SEVEN(0.00)[8];
+	TO_DN_SOME(0.00)[];
+	NEURAL_HAM(-0.00)[-0.999];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[jlayton@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo,ddn.com:dkim,ddn.com:email,ddn.com:mid,birthelmer.de:email]
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,brown.name:email]
 X-Rspamd-Action: no action
 
+On Wed, 2026-02-25 at 09:16 +1100, NeilBrown wrote:
+> From: NeilBrown <neil@brown.name>
+>=20
+> Darrick recently noted that try_lookup_noperm() is documented as
+> "Look up a dentry by name in the dcache, returning NULL if it does not
+> currently exist." but it can in fact return an error.
+>=20
+> So update the documentation for that and related functions.
+>=20
+> Link: https://lore.kernel.org/all/20260218234917.GA6490@frogsfrogsfrogs/
+> Cc: "Darrick J. Wong" <djwong@kernel.org>
+> Signed-off-by: NeilBrown <neil@brown.name>
+> ---
+>  fs/namei.c | 29 ++++++++++++++++++++++++++++-
+>  1 file changed, 28 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 58f715f7657e..6f595f58acfe 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3124,7 +3124,8 @@ static int lookup_one_common(struct mnt_idmap *idma=
+p,
+>   * @base:	base directory to lookup from
+>   *
+>   * Look up a dentry by name in the dcache, returning NULL if it does not
+> - * currently exist.  The function does not try to create a dentry and if=
+ one
+> + * currently exist or an error if there is a problem with the name.
+> + * The function does not try to create a dentry and if one
+>   * is found it doesn't try to revalidate it.
+>   *
+>   * Note that this routine is purely a helper for filesystem usage and sh=
+ould
+> @@ -3132,6 +3133,11 @@ static int lookup_one_common(struct mnt_idmap *idm=
+ap,
+>   *
+>   * No locks need be held - only a counted reference to @base is needed.
+>   *
+> + * Returns:
+> + *   - ref-counted dentry on success, or
+> + *   - %NULL if name could not be found, or
+> + *   - ERR_PTR(-EACCES) if name is dot or dotdot or contains a slash or =
+nul, or
+> + *   - ERR_PTR() if fs provide ->d_hash, and this returned an error.
+>   */
+>  struct dentry *try_lookup_noperm(struct qstr *name, struct dentry *base)
+>  {
+> @@ -3208,6 +3214,11 @@ EXPORT_SYMBOL(lookup_one);
+>   *
+>   * Unlike lookup_one, it should be called without the parent
+>   * i_rwsem held, and will take the i_rwsem itself if necessary.
+> + *
+> + * Returns: - A dentry, possibly negative, or
+> + *	    - same errors as try_lookup_noperm() or
+> + *	    - ERR_PTR(-ENOENT) if parent has been removed, or
+> + *	    - ERR_PTR(-EACCES) if parent directory is not searchable.
+>   */
+>  struct dentry *lookup_one_unlocked(struct mnt_idmap *idmap, struct qstr =
+*name,
+>  				   struct dentry *base)
+> @@ -3244,6 +3255,10 @@ EXPORT_SYMBOL(lookup_one_unlocked);
+>   * It should be called without the parent i_rwsem held, and will take
+>   * the i_rwsem itself if necessary.  If a fatal signal is pending or
+>   * delivered, it will return %-EINTR if the lock is needed.
+> + *
+> + * Returns: A dentry, possibly negative, or
+> + *	   - same errors as lookup_one_unlocked() or
+> + *	   - ERR_PTR(-EINTR) if a fatal signal is pending.
+>   */
+>  struct dentry *lookup_one_positive_killable(struct mnt_idmap *idmap,
+>  					    struct qstr *name,
+
+Claude says:
+
+  lookup_one_positive_killable() documentation says "A dentry, possibly neg=
+ative" but the function
+  explicitly converts negative dentries to ERR_PTR(-ENOENT). It should say =
+"A positive dentry" like
+  the companion functions lookup_one_positive_unlocked() and lookup_noperm_=
+positive_unlocked().
+
+...but that seems to be the only "regression" it found.=20
 
 
-On 3/2/26 19:56, Joanne Koong wrote:
-> On Sat, Feb 28, 2026 at 12:14 AM Horst Birthelmer <horst@birthelmer.de> wrote:
->>
->> On Fri, Feb 27, 2026 at 10:07:20AM -0800, Joanne Koong wrote:
->>> On Fri, Feb 27, 2026 at 9:51 AM Joanne Koong <joannelkoong@gmail.com> wrote:
->>>>
->>>> On Thu, Feb 26, 2026 at 11:48 PM Horst Birthelmer <horst@birthelmer.de> wrote:
->>>>>
->>>>> On Thu, Feb 26, 2026 at 11:12:00AM -0800, Joanne Koong wrote:
->>>>>> On Thu, Feb 26, 2026 at 8:43 AM Horst Birthelmer <horst@birthelmer.com> wrote:
->>>>>>>
->>>>>>> From: Horst Birthelmer <hbirthelmer@ddn.com>
->>>>>>>
->>>>>>> The discussion about compound commands in fuse was
->>>>>>> started over an argument to add a new operation that
->>>>>>> will open a file and return its attributes in the same operation.
->>>>>>>
->>>>>>> Here is a demonstration of that use case with compound commands.
->>>>>>>
->>>>>>> Signed-off-by: Horst Birthelmer <hbirthelmer@ddn.com>
->>>>>>> ---
->>>>>>>  fs/fuse/file.c   | 111 +++++++++++++++++++++++++++++++++++++++++++++++--------
->>>>>>>  fs/fuse/fuse_i.h |   4 +-
->>>>>>>  fs/fuse/ioctl.c  |   2 +-
->>>>>>>  3 files changed, 99 insertions(+), 18 deletions(-)
->>>>>>>
->>>>>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
->>>>>>> index a408a9668abbb361e2c1e386ebab9dfcb0a7a573..daa95a640c311fc393241bdf727e00a2bc714f35 100644
->>>>>>> --- a/fs/fuse/file.c
->>>>>>> +++ b/fs/fuse/file.c
->>>>>>>  struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
->>>>>>> -                                unsigned int open_flags, bool isdir)
->>>>>>> +                               struct inode *inode,
->>>>>>
->>>>>> As I understand it, now every open() is a opengetattr() (except for
->>>>>> the ioctl path) but is this the desired behavior? for example if there
->>>>>> was a previous FUSE_LOOKUP that was just done, doesn't this mean
->>>>>> there's no getattr that's needed since the lookup refreshed the attrs?
->>>>>> or if the server has reasonable entry_valid and attr_valid timeouts,
->>>>>> multiple opens() of the same file would only need to send FUSE_OPEN
->>>>>> and not the FUSE_GETATTR, no?
->>>>>
->>>>> So your concern is, that we send too many requests?
->>>>> If the fuse server implwments the compound that is not the case.
->>>>>
->>>>
->>>> My concern is that we're adding unnecessary overhead for every open
->>>> when in most cases, the attributes are already uptodate. I don't think
->>>> we can assume that the server always has attributes locally cached, so
->>>> imo the extra getattr is nontrivial (eg might require having to
->>>> stat()).
->>>
->>> Looking at where the attribute valid time gets set... it looks like
->>> this gets stored in fi->i_time (as per
->>> fuse_change_attributes_common()), so maybe it's better to only send
->>> the compound open+getattr if time_before64(fi->i_time,
->>> get_jiffies_64()) is true, otherwise only the open is needed. This
->>> doesn't solve the O_APPEND data corruption bug seen in [1] but imo
->>> this would be a more preferable way of doing it.
->>>
->> Don't take this as an objection. I'm looking for arguments, since my defense
->> was always the line I used above (if the fuse server implements the compound,
->> it's one call).
-> 
-> The overhead for the server to fetch the attributes may be nontrivial
-> (eg may require stat()). I really don't think we can assume the data
-> is locally cached somewhere. Why always compound the getattr to the
-> open instead of only compounding the getattr when the attributes are
-> actually invalid?
-> 
-> But maybe I'm wrong here and this is the preferable way of doing it.
-> Miklos, could you provide your input on this?
+Aside from that nit, this looks fine to me.
 
-Personally I would see it as change of behavior if out of the sudden
-open is followed by getattr. In my opinion fuse server needs to make a
-decision that it wants that. Let's take my favorite sshfs example with a
-1s latency - it be very noticeable if open would get slowed down by
-factor 2.
-
-Thanks,
-Bernd
-
-
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
