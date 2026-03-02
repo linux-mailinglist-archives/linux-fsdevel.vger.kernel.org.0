@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-78900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iENQG0GRpWmoDgYAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:31:45 +0100
+	id AGVhLzSRpWmoDgYAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:31:32 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D06C91D9CD0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:31:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 374581D9CC2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:31:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 4514A3067847
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 13:29:31 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 6C3513064CCF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 13:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E7B3F23C5;
-	Mon,  2 Mar 2026 13:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6303F23AC;
+	Mon,  2 Mar 2026 13:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=runbox.com header.i=@runbox.com header.b="dr2IYEGX"
+	dkim=pass (2048-bit key) header.d=runbox.com header.i=@runbox.com header.b="pfYMBjDr"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADCE37701A;
-	Mon,  2 Mar 2026 13:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5034E3346AD;
+	Mon,  2 Mar 2026 13:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772458132; cv=none; b=Ao49kKEBRSgDMXiwa8dOOP32xFlbD4YvfryNcoAhfr4GMawzi4ijhKsexHkMeC7LIeQSQf9BtWxdV8pJfSApkAoE/xMhezh69QGcHGRFacVkf2DlVorK8+lJRBO2CodClm7hPNvs6lZmZS3cM+8To4w+blHLOpaecf9bcKz1wZM=
+	t=1772458131; cv=none; b=bTJEPPzZVHH3qBrzApwsRbYQwi8c2cteM5XeE2GQ7CYWqjld25UdhUXyWZSvKlvN6TDImnFJFzOBnY/RNUyI7cLPACWtppnPtcgyngRqKfCKvK9JEWoMpjFaSEFfsNl5UESmEdbUo/iLBOy+1shtlSm/y32TwgIJB3sksUwFrOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772458132; c=relaxed/simple;
-	bh=IATyzkK6xWW9YiXL0DIDlHPO2PCygJ/MYODtpq9Z3Ms=;
+	s=arc-20240116; t=1772458131; c=relaxed/simple;
+	bh=/vw1o/tgaqgXlymwWBfNq0gtWd8qwqkw++waY5+/oWo=;
 	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=el9IiXC5VJ7X1bT7CqA7wPnBrmK45PUJJci7bCXJxMdv6k9jU7oyTBO2Z80GKByiYDzQHCFciT/kwIV2mJTHy+6aPVFs5UozkrTGj0Yys4i1ECiI4wXcXNvQ0mOAMNxNK2GXXNcHpcbbbFqJ0sGCaXCX7s1Y53NrBa3Aw4i9XRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=runbox.com; dkim=pass (2048-bit key) header.d=runbox.com header.i=@runbox.com header.b=dr2IYEGX; arc=none smtp.client-ip=185.226.149.37
+	 MIME-Version; b=shbsRoCRMfdXnziC/NzqGtgzuCVaMbvSrTSeFN6X1X3yAwEV/K9CzSJBBx6zTmWcsDfQgkmoeESoEl3T9nwTt1N5sDbyS8vw8yEWqJJEFQlX7b+24kzRUwBGZOu4txG3fv3uNNDwcKInK1diIdZubSCMklZMNNOwGpHXTt5irh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=runbox.com; dkim=pass (2048-bit key) header.d=runbox.com header.i=@runbox.com header.b=pfYMBjDr; arc=none smtp.client-ip=185.226.149.37
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=runbox.com
-Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
+Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
 	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
 	(Exim 4.93)
 	(envelope-from <david.laight.linux_spam@runbox.com>)
-	id 1vx3Jv-003ZDi-SM; Mon, 02 Mar 2026 14:28:23 +0100
+	id 1vx3Jw-003ZE4-Au; Mon, 02 Mar 2026 14:28:24 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=runbox.com;
 	 s=selector2; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To
 	:Message-Id:Date:Subject:To:From;
-	bh=D3P/KaCqbTVRLW734Le3jm//dWEzoj6aOdRHjsDkHB0=; b=dr2IYEGXpLn70YtwZCSevHlElv
-	/BDRdlUO4zDGofnTsHi42LvbEdi3VipTLE3qO2jms6/GGfUGILr2ElGxq76Qqa1IVjSRbEvOAc1Ro
-	pNaEyMGT7NC4B24epdTZtJNVCwBM3fXGAKN7d+4ezQMOiK4oex69VUMtEUOAjx+EPd5g+ct38316h
-	qxQXAxcAiiKRb6oyp9RzKKLymdA7Gx+8gSGQAGBZIzLD4BxE+G55Ccnmk/qMfgl9N6JGa4es8sujn
-	nzOnVNpMKlbluysxX5nsv82z0JQ/qI/Tt/bJCX331CVLx9DxsrepkWNzyJUPNhYsRNbEfHp1c25Sv
-	5z427ECQ==;
+	bh=7cjIEqDAe6MTPa2yql8v8L5e7mjA+roV54bcD0Te3Y4=; b=pfYMBjDrxtDGIuseYyHfRKhdlY
+	wxGF1P6KMNx6ObRuGN6ZC4wsAsw2hRQ/moIf5DlPtJ4OdcFDVbbZfYlXOaHjFV7UCzwT+RFpEzmxH
+	qWXXDA4ONYMAsNi6ePJIKCLTLb8MT74QJNuqJ6sdh6Tq/4chxS0eBiQlHuCMuynNI3HaM4H+mIWD+
+	MfMF3aDGj96f3wG2XdkXTZREX71lpkYTiXzClo5Rgz07oqNqD1x1j5Sva9T4TMi13zMpJPrbafMuY
+	y2tpwibHn24xe00sD61gejFnTEEHP9CDzwhRxR2Z0zEadqZouQs+4eZ2DS+v9eN8M5kbcQczC3zdl
+	N7bMTDQg==;
 Received: from [10.9.9.73] (helo=submission02.runbox)
-	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
+	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
 	(envelope-from <david.laight.linux_spam@runbox.com>)
-	id 1vx3Jv-0001hG-7S; Mon, 02 Mar 2026 14:28:23 +0100
+	id 1vx3Jv-0003tI-NG; Mon, 02 Mar 2026 14:28:23 +0100
 Received: by submission02.runbox with esmtpsa  [Authenticated ID (1493616)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
 	(Exim 4.93)
-	id 1vx3Jh-008UTR-Jt; Mon, 02 Mar 2026 14:28:09 +0100
+	id 1vx3Ji-008UTR-OY; Mon, 02 Mar 2026 14:28:10 +0100
 From: david.laight.linux@gmail.com
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Andre Almeida <andrealmeid@igalia.com>,
@@ -90,9 +90,9 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	x86@kernel.org,
 	Kees Cook <kees@kernel.org>,
 	akpm@linux-foundation.org
-Subject: [PATCH v2 2/5] compiler.h: Add generic support for 'autoterminating nested for() loops'
-Date: Mon,  2 Mar 2026 13:27:52 +0000
-Message-Id: <20260302132755.1475451-3-david.laight.linux@gmail.com>
+Subject: [PATCH v2 3/5] uaccess.h: Use with() and and_with() in __scoped_user_access()
+Date: Mon,  2 Mar 2026 13:27:53 +0000
+Message-Id: <20260302132755.1475451-4-david.laight.linux@gmail.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20260302132755.1475451-1-david.laight.linux@gmail.com>
 References: <20260302132755.1475451-1-david.laight.linux@gmail.com>
@@ -114,7 +114,7 @@ X-Spamd-Result: default: False [0.44 / 15.00];
 	DMARC_POLICY_SOFTFAIL(0.10)[gmail.com : SPF not aligned (relaxed), DKIM not aligned (relaxed),none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78900-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78899-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,igalia.com,citrix.com,linux.ibm.com,kernel.org,csgroup.eu,infradead.org,gmail.com,stgolabs.net,suse.cz,inria.fr,linux-foundation.org,lists.infradead.org,vger.kernel.org,lists.ozlabs.org,efficios.com,ellerman.id.au,imag.fr,dabbelt.com,armlinux.org.uk,linutronix.de];
 	MIME_TRACE(0.00)[0:+];
@@ -134,67 +134,41 @@ X-Spamd-Result: default: False [0.44 / 15.00];
 	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[runbox.com:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: D06C91D9CD0
+X-Rspamd-Queue-Id: 374581D9CC2
 X-Rspamd-Action: no action
 
 From: David Laight <david.laight.linux@gmail.com>
 
-Autoterminating nested for() loops can be used inside #defines to
-declare variables that are scoped to the statement that follows.
-These are used by __scoped_user_access() but may have other uses
-and the gory details are best separated from the use.
-
-Using 'with (declaration)' and 'and_with (declaration)' seems to
-read reasonably well and doesn't seem to collide with any existing
-code.
-
-As an example the scoped user access definition becomes:
-	with (auto _tmpptr = __scoped_user_access_begin(mode, uptr, size, elbl)) \
-		/* Force modified pointer usage within the scope */		\
-		and_with (const auto uptr __cleanup(...) = _tmpptr)
+Wrappers for autoterminating nested for() loops have been added to
+compiler.h, use them to hide the gory details.
 
 Signed-off-by: David Laight <david.laight.linux@gmail.com>
 ---
- include/linux/compiler.h | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ include/linux/uaccess.h | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index af16624b29fd..1098a91b5591 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -369,6 +369,32 @@ static inline void *offset_to_ptr(const int *off)
+diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+index 809e4f7dfdbd..64bc2492eb99 100644
+--- a/include/linux/uaccess.h
++++ b/include/linux/uaccess.h
+@@ -736,13 +736,10 @@ static __always_inline void __scoped_user_rw_access_end(const void *p)
+  *
+  * Don't use directly. Use scoped_masked_user_$MODE_access() instead.
   */
- #define prevent_tail_call_optimization()	mb()
+-#define __scoped_user_access(mode, uptr, size, elbl)				\
+-for (bool done = false; !done; done = true)					\
+-	for (auto _tmpptr = __scoped_user_access_begin(mode, uptr, size, elbl);	\
+-	     !done; done = true)						\
+-		/* Force modified pointer usage within the scope */		\
+-		for (const auto uptr  __cleanup(__scoped_user_##mode##_access_end) = \
+-		     _tmpptr; !done; done = true)
++#define __scoped_user_access(mode, uptr, size, elbl)					\
++	with (auto _tmpptr = __scoped_user_access_begin(mode, uptr, size, elbl))	\
++		/* Force modified pointer usage within the scope */			\
++		and_with (const auto uptr __cleanup(__scoped_user_##mode##_access_end) = _tmpptr)
  
-+/*
-+ * Sometimes a #define needs to declare a variable that is scoped
-+ * to the statement that follows without having mismatched {}.
-+ *	with (int x = expression) {
-+ *		statements
-+ *	}
-+ * is the same as:
-+ *	{
-+ *		int x = expression;
-+ *		statements
-+ *	}
-+ * but lets it all be hidden from the call site, eg:
-+ *	frobnicate(x, args) {
-+ *		statements
-+ *	} 
-+ * Only a single variable can be defined, and_with() allows extra ones
-+ * without adding an additional outer loop.
-+ *
-+ * The controlled scope can be terminated using return, break, continue or goto.
-+ */
-+#define with(declaration) \
-+	for (bool _with_done = false; !_with_done; _with_done = true)	\
-+		and_with (declaration)
-+#define and_with(declaration) \
-+	for (declaration; !_with_done; _with_done = true)
-+
- #include <asm/rwonce.h>
- 
- #endif /* __LINUX_COMPILER_H */
+ /**
+  * scoped_user_read_access_size - Start a scoped user read access with given size
 -- 
 2.39.5
 
