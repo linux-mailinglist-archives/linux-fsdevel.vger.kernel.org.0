@@ -1,197 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-78932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78933-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id gMwcKJ6wpWkiEgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 16:45:34 +0100
+	id 6BEmHEmwpWkiEgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78933-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 16:44:09 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC1BC1DC1AF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 16:45:33 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AB6F1DC125
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 16:44:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id CC04630C2230
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 15:41:48 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 692B5301A7B1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 15:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE274413237;
-	Mon,  2 Mar 2026 15:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06516411626;
+	Mon,  2 Mar 2026 15:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NpcLcN9z"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="dVXSb9xZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0F2411605
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Mar 2026 15:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772466106; cv=none; b=E44FIStC3hKaYBPyaDvfhAPMLKtGnBoNPtwKH0gROGUOxDq/Oqz8/GCh/TAFHFsVPSYl7C7zMi4Wn39k0yc5jsWZbnmWKcVCWLj3CULM4XgwsrA+jd6XxznNfJ00l2tKix/H6qT2R9WP//5dtixhOOHopswtSu2Vnn93MXiy3yE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772466106; c=relaxed/simple;
-	bh=V5eDYyeSzEe01Qy0X2d3YjmdmOm2DlobDKTfwH81yIk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=NUsio2EFPgOjY1KiADrTXK43zEWSZELS+uhK9+s/LVdjtEw7KI9iDtap/fCjWfMmAJKQaLUQloL4uADIpejBat9EP4bZphEEnEYVjmnSmXbLVeOy1gnlRy/0/4YZAMyuuIuvvhdAXSEbSPQNmtx5YwDurOh/EE3rPAZKDmc6/ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NpcLcN9z; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4830e7c6131so47836495e9.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2026 07:41:44 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763A5283FE5
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Mar 2026 15:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.219.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772466244; cv=pass; b=VW3TI/S6j2+ra4bfZ+uMYbB7a45naY/3cSuIrcmXJGKfgHzgCXfBUX89ES13se8yQnNIucemON91OPpPUTdBBFc/OICEthgqF57ifnhgDm5jnq+B7MCjscxAWlPP54HXIL3qc3L9H9G2yKu2D1UuSfSBaj2JJmq3h+Ya/t9TmFE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772466244; c=relaxed/simple;
+	bh=y5jmz51OP11F2w1N6J8Q0eekBLPergcwDQ8lUfOts2g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qPUU6lQoMAS93hfOcAjyMuR3mBjkAMvcdISFNH/jb+NKzdN1f9poju3Hx7ugR9B7NwCkn25NGlU0/dAw89bjQFz1VnGhspvJFoE62krKwa7YyyANU+eRdCUSyJOdREAaJ6G1GEHKQG/z2by7PofTDuzbeIPFwERm0IKOqF4+W34=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=dVXSb9xZ; arc=pass smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-899fb2b94c1so18731066d6.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2026 07:44:03 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772466242; cv=none;
+        d=google.com; s=arc-20240605;
+        b=j19yXMLEmyUSxxNxvIqjS6L1EABgFIDFGHJ6BmAzWqVtfodmlvWpE1yWT26zYRyxjp
+         Yrf7vd4Ih3YnzxwQ7PkcUPMiA6nUe19VoyPiXMJcb1wJcf7VaWHKC/er07F0X9pOnyTw
+         LZ3J7kNcFWAfdMTgbQ0szB+pXg1ztJ1IzjojShR3DF1eKHbHj72vt1cA+VY4mI7IPpZk
+         pqhY1Md0qrTvzA+FPml7sZnI+fLXTeYXNwuABd6GpCp+12AcJtjicFkMfveKSoXcMrET
+         k+0rp2+g18N2j8a0Omz8YetTUiVlitg+Lk1JF/CaX7TYjNcCVQTX+tkmh5VMbSKO7PaT
+         +X2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=y5jmz51OP11F2w1N6J8Q0eekBLPergcwDQ8lUfOts2g=;
+        fh=VCFDIVV9IRaoAgt5xBAQyLAnJoCZItWw3w58hCNWbEk=;
+        b=brpHjpeyxrC3FaW0DC7EKEPIox20z2Y/cjkxEddwwRVZ3ko3KJKTMfNi6OYtEfpb+p
+         H3ivK9gXFz8pue5AO+o/UbXuqO7S5GT8EVcIhDqMqWHz2B7eFDy+i+KAlWBeSADh7XpZ
+         vCD4Kbzj8+7ek09IDZ5OC+VdI23O+/MZ9mRc5W9F3Z/nKhilq1ybN0+0Uc7yf3ZVn1+i
+         sqWjJt1LuI7bEDWOx8PinLV90umGLJThpkj+IwU+KtgBDT76aEYhRe1/rNez9ilkVG+c
+         dl2E3d285eJPgpcpLzniyQ87VDWuIZjXmmMJfmEFbhji5FPLfwyVm+is3fRBKnq+m+7B
+         3KZg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1772466103; x=1773070903; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fvJ4Pj0Wo9ryI9xJ6mJ9OBJG9CVcmeBhutvadxQnZZs=;
-        b=NpcLcN9zaHs6viT1xkKDJ6JmpmAjvhKns6ydmfiwCNU5XOvLSWikyNvN/hsLBDVKJz
-         CQQPekhDUK//hEnOaLL8NjKhpzzxiWvoWaI4iDzJQ6VvtfYDpc2SIo7ODSRQiiQb7rqY
-         T9pBkMdn8THxrSV2LAPfXGfKwuuA6tvQsEkDmBikv2i/8u0CaDqNDDwZ4e1s1FsnJO69
-         W3EqubJd3HDoLvp5I9MGEIOo2Qcwmg2YaPYpkcCM/kWWdJ5gcy7yhiwmQqY4q76okx0C
-         xa7i0vCr56hW1eHA53+8TLarCTCI/Ivx3qE0J7nXzkaUQbXbHUIOfhT7j+CJYJPjammY
-         XWeA==
+        d=szeredi.hu; s=google; t=1772466242; x=1773071042; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=y5jmz51OP11F2w1N6J8Q0eekBLPergcwDQ8lUfOts2g=;
+        b=dVXSb9xZH7/O63OLyxLFdThVmd59GxJWwZhGwcR98q85RAhJGT0HtTzvQFCAt40tPL
+         WpT4KAFDu7GcVNcMhDe21cS6rtXU6HGohM4eeZ0s4KXsUKNuSz0tQ8STOk67E3V1T5yt
+         LTl3mF7kNyXR1H8BqB5AwRmI77q+KxNiUQJc4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772466103; x=1773070903;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fvJ4Pj0Wo9ryI9xJ6mJ9OBJG9CVcmeBhutvadxQnZZs=;
-        b=K7IhXFGddw+DJZXHtSXcfPQi72iQaDl9ovS9qlwWAVWK+3BJmPlRnlbK2FCRK9DbKn
-         yic+rafsRbLgtgPqt4c8SRXtmwu4z79cjtGBD91V4JvRRbhXsmztynr0A35ZQPGC3Mob
-         jcbuKIyuZCfNyhH4Hci3DDDfeoOUYMR+zVtNu5wkPM1cq+NQyE9okQY+PPfVMFjnME7l
-         GPApDC1p8A8FFvPQSwIv4WlQ8ihyA6UGxjab9FF7KhhmIIBF5AxXX/+01Oa+friPIV8Y
-         9rLoZ3WDINrGvCVEsnYP8FNEBlRLEyiU1k6alpgWVIh/A8MI44OlF2amm2hSZlgA6L/y
-         xRkg==
-X-Forwarded-Encrypted: i=1; AJvYcCXFUqQX/aZDY3VDaYfD37ondIRkVVHEVANp9NQLB7IsB+n/CeDA9DEpFRbJBbqMFpwbfSnJiJGthr+EmP95@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxeoe7uBYVeJTV5Sa9OJFoTISBo4EIbG2Bn295jaTJqiEPrGsiz
-	HMrNOA9Vj4qcf8hTqeDltnND/xhTFBgn76PEQmcb/jDzASsSv7MM0hcFBtwViNLP0rsIS4U8vBF
-	It0/muIimNds87zTZmQ==
-X-Received: from wmby19.prod.google.com ([2002:a05:600c:c053:b0:480:690c:88de])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3b18:b0:483:7432:a761 with SMTP id 5b1f17b1804b1-483c9bc558bmr213622465e9.24.1772466102970;
- Mon, 02 Mar 2026 07:41:42 -0800 (PST)
-Date: Mon, 2 Mar 2026 15:41:42 +0000
-In-Reply-To: <5f8dcb7f-9e4f-4484-b160-3a9ce541d63c@kernel.org>
+        d=1e100.net; s=20230601; t=1772466242; x=1773071042;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y5jmz51OP11F2w1N6J8Q0eekBLPergcwDQ8lUfOts2g=;
+        b=cPzyQI60uOp1sS6raknHMZeXTTgtW9LkkDRLL7jfFQqoxSbgVTeC8dVRaAga1HqIav
+         ZvMbPm41bhK5imM/+Gvqq7yZAVTNHJsCdDEM1h2PX7gAkaJphsnLa0rlO5tj3wGEWUk6
+         oTe2UrEHHhop97l2no84QU5zpuMXU7i4IcoVWgNI/wsyWlmYEjyluPZ8L8BRPKrWBb8l
+         myr0vzeRSZpzAnR5xBbeh0sGdcmSqnCXbqQTTfGxFTT+uGMqatzdcZzC9b1icRqb8aVb
+         cwwd+wExCt4/PiTTsYcusRKqIQ3GqvAzO/h5MTQnL6WeYkwxG0JWQ4n1g7Z3AfiQbae8
+         mXTA==
+X-Gm-Message-State: AOJu0YzDBkjF4S3D1126u9DdA6+aj9r2K6bRTqgOBjeJktk8FxqMW7K/
+	0jnWz9Lt3DTpIiJrd8tlWSOv8rP4KXXtPzyG9i7u84vRNSfHfN8Xk/eZde7WCg3GR7P7bNikRbe
+	eyK53DIbQ0nd9+yxCp3HWQJ2P1G0yLkA91bjsCFQPZQ==
+X-Gm-Gg: ATEYQzxd8lDs4c+c7S0hsquB55z+viqekYbJG5NCwHNzQFwYUx03nMt3neJn7zSymai
+	o1H/438Bi0NxXYfOkZFR7VGNJIEAfHrBP21KJIL0LVLKd9a1+K1is5E9QU2xh68Tg7pn5hbLS42
+	h5v5y3fxbONUV96gTfgOGXhxq5X9MS0L29um7h69bmLOIs/6tQfukI22o2/J2sYQEfTC7pGnVcX
+	lvHlwboihHuaWPAz0RzxdHcBJqYKBxMvMgaOKxu98MGdOeMTnkcEGzVsGbKX3NDq2eOkpD/KP05
+	rdYYSK0WeQ==
+X-Received: by 2002:a05:622a:15ca:b0:506:be2c:a96e with SMTP id
+ d75a77b69052e-507528c4502mr157339771cf.67.1772466242357; Mon, 02 Mar 2026
+ 07:44:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20260227200848.114019-1-david@kernel.org> <20260227200848.114019-3-david@kernel.org>
- <aaLh2BxSgC9Jl5iS@google.com> <8a27e9ac-2025-4724-a46d-0a7c90894ba7@kernel.org>
- <aaVf5gv4XjV6Ddt-@google.com> <f2f3a8a1-3dbf-4ef9-a89a-a6ec20791d1c@kernel.org>
- <aaVnifbdxKhBddQp@google.com> <5f8dcb7f-9e4f-4484-b160-3a9ce541d63c@kernel.org>
-Message-ID: <aaWvtn48X8UizaaN@google.com>
-Subject: Re: [PATCH v1 02/16] mm/memory: remove "zap_details" parameter from zap_page_range_single()
-From: Alice Ryhl <aliceryhl@google.com>
-To: "David Hildenbrand (Arm)" <david@kernel.org>
-Cc: linux-kernel@vger.kernel.org, 
-	"linux-mm @ kvack . org" <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@kernel.org>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, David Rientjes <rientjes@google.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Jarkko Sakkinen <jarkko@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Arve =?utf-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, 
-	Christian Brauner <brauner@kernel.org>, Carlos Llamas <cmllamas@google.com>, Ian Abbott <abbotti@mev.co.uk>, 
-	H Hartley Sweeten <hsweeten@visionengravers.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, 
-	Dimitri Sivanich <dimitri.sivanich@hpe.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Andy Lutomirski <luto@kernel.org>, 
-	Vincenzo Frascino <vincenzo.frascino@arm.com>, Eric Dumazet <edumazet@google.com>, 
-	Neal Cardwell <ncardwell@google.com>, "David S. Miller" <davem@davemloft.net>, 
-	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org, 
-	linux-s390@vger.kernel.org, linux-sgx@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-rdma@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="utf-8"
-X-Rspamd-Queue-Id: EC1BC1DC1AF
+MIME-Version: 1.0
+References: <20260224115606.4249-2-ytohnuki@amazon.com>
+In-Reply-To: <20260224115606.4249-2-ytohnuki@amazon.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 2 Mar 2026 16:43:51 +0100
+X-Gm-Features: AaiRm50xyOkRKWQBZRjdCFZt9afxqRbv3oGTAFQrcGtizwGYCrliNO7thtUr08g
+Message-ID: <CAJfpegsvMOyTwaAB8KydKpJOT_JuhmvY=CeGk8FCgT_khdd5qg@mail.gmail.com>
+Subject: Re: [PATCH] fuse: replace BUG_ON with WARN_ON and -EBUSY in fuse_ctl_fill_super
+To: Yuto Ohnuki <ytohnuki@amazon.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Rspamd-Queue-Id: 0AB6F1DC125
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MV_CASE(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
-	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
+	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kvack.org,linux-foundation.org,oracle.com,kernel.org,google.com,suse.com,suse.de,linux.dev,infradead.org,linux.ibm.com,ellerman.id.au,redhat.com,alien8.de,linuxfoundation.org,android.com,mev.co.uk,visionengravers.com,linux.intel.com,intel.com,ursulin.net,gmail.com,ffwll.ch,ziepe.ca,hpe.com,arndb.de,iogearbox.net,arm.com,davemloft.net,lists.ozlabs.org,lists.freedesktop.org];
-	TAGGED_FROM(0.00)[bounces-78932-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-78933-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[google.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DKIM_TRACE(0.00)[szeredi.hu:+];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
 	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[73];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[aliceryhl@google.com,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[3];
+	NEURAL_HAM(-0.00)[-0.999];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	NEURAL_HAM(-0.00)[-0.998];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo,mail.gmail.com:mid,szeredi.hu:dkim]
 X-Rspamd-Action: no action
 
-On Mon, Mar 02, 2026 at 04:01:44PM +0100, David Hildenbrand (Arm) wrote:
-> On 3/2/26 11:33, Alice Ryhl wrote:
-> > On Mon, Mar 02, 2026 at 11:27:40AM +0100, David Hildenbrand (Arm) wrote:
-> >> On 3/2/26 11:01, Alice Ryhl wrote:
-> >>>
-> >>> Well, rustfmt comes with the compiler, and it would be ideal to build
-> >>> test changes before sending them :)
-> >>
-> >> At least on Ubuntu on my notebook where I do most of the coding+patch
-> >> submissions it's a separate package?
-> >>
-> >> I do all my builds on a different (more powerful) machine where the
-> >> whole rust machinery's in place. Further, build bots that run on my
-> >> private branches did not report any issues.
-> > 
-> > There are some build bots that check for rustfmt, though not all of
-> > them.
-> > 
-> >>> But no worries, I took care of testing it. Thanks for taking the time to
-> >>> update the Rust code as well.
-> >>
-> >> I just did an allyesconfig and it does not report any warnings.
-> >>
-> >> So apparently, rustfmt problems not result in the compiler complaining?
-> >>
-> >> Or something else is off here that rust/kernel/mm/virt.rs won't get
-> >> compiled on my machine, even with allyesconfig. I can definitely see
-> >> some RUSTC stuff happening in the logs, like
-> >>
-> >> 	RUSTC L rust/kernel.o
-> >>
-> >> Thanks for the review and for pointing out rustfmt!
-> > 
-> > Similar to kerneldoc and other similar targets, formatting isn't checked
-> > in the normal build, but make can be invoked on the rustfmtcheck target
-> > to check it.
-> 
-> Thanks adding that to my cross-compile chain.
+On Tue, 24 Feb 2026 at 12:56, Yuto Ohnuki <ytohnuki@amazon.com> wrote:
+>
+> Replace BUG_ON(fuse_control_sb) with WARN_ON() that returns -EBUSY.
+>
+> Currently get_tree_single() prevents duplicate calls to
+> fuse_ctl_fill_super(), making this condition unreachable in practice.
+> However, BUG_ON() should not be used for conditions that can be handled
+> gracefully. Use WARN_ON() to log the unexpected state instead of
+> crashing.
 
-Awesome, thanks!
+NAK, I don't want to add complexity where it has zero benefit.
 
-It's not relevant in this patch, but another thing that may be useful is
-to add CLIPPY=1 to the make invocation when building normally. This
-causes additional warnings to be checked using a tool called clippy.
-
-Alice
+Thanks,
+Miklos
 
