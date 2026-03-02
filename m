@@ -1,155 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-78904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CBhWFnaYpWnXEgYAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 15:02:30 +0100
+	id 0JbYGkKapWnxEgYAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 15:10:10 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AB6A1DA4A7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 15:02:29 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 716411DA699
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 15:10:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 14DE6303D4E1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 13:57:38 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id A10E830372F7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 14:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552B93FB052;
-	Mon,  2 Mar 2026 13:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E8B3FB06C;
+	Mon,  2 Mar 2026 14:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jd2LsCVC"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="pnEBbNCg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43343E5563;
-	Mon,  2 Mar 2026 13:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772459850; cv=none; b=gxMHg/1MDny2NCI/5VgYwPpXgH44FZcJ7fcPHdlPpt3W2jRZ+jcxSk9wdX5F+v8j4l1wW+vAzvfJffhnvUG7jAy7yD2VI0SeBjs4Y+pHCBobZKqi4FAq8U6YO6ycoUR33yqLpDp9BEJ4lqkIu6owiR888xhW014MevKbUAQ0goI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772459850; c=relaxed/simple;
-	bh=UV2mNPBNzqomza8bGMJZVxSDC6YpRR0TOAlLfetIp9M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eiyieAFqxgRjvk8xSbOZnYfaEccU4LIqHPuI413eTFS9HRhBzc8VuBzRQqlRbJEj3JbBzbcwqqhCCYlFpX2Awlt6wzvvB5/lonsvhKs+Z323s6JxX/sqxjxTYI0srG3kD6z79FjqCTMM9XcZtaUhXSCqpL03Q1XfFDhjBKF0l4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jd2LsCVC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80786C19423;
-	Mon,  2 Mar 2026 13:57:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772459850;
-	bh=UV2mNPBNzqomza8bGMJZVxSDC6YpRR0TOAlLfetIp9M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Jd2LsCVCQ7xuIl5ZNQ/Usg0S+rgGGYa+BwwiymmVREWmOaCSGbGfPcTHS60e3cECR
-	 eieLMPUsvOqbrIzsQuCDbaGARJ5YxKGeohDjdJzjpDI+uVaZ3uGcbJtSDAiZ/o1Hjo
-	 zzZkvU9Jjm1Z4sKQMokRZOrB7wRIhNt9GzMTUhMi1O+HoDBUACxdvdJ8RIspigE9zh
-	 iu/+2FmrskCm3sYPA8MiWu0qCrX6J2MdJeMQ3Z7uxoWvGmNaGGaTGANfhRwNNQmDbw
-	 h9LidjBVhgij0rY8yI90uTAochDeVyjY4FexLkmaD5atdgFlx54jV7iuT/WT2+oW4s
-	 9VQ00DlFkw2xQ==
-Message-ID: <d7abef36-ce90-4b36-af16-e8bd61b963ed@kernel.org>
-Date: Mon, 2 Mar 2026 08:57:28 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1393D4133
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Mar 2026 14:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.222.178
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772460115; cv=pass; b=McOdZWmr9BhiQizLBdUmoC5FQKehaqeC53Fd3WYvC2VRXHEGlop2dSdwNZHKgy7340H5XiTM+WUUi2nGIl+ur5y21GbE5+VoOC5dW0GYAkViAXQt8evRibrwtLcIHh4QCy4+ZUEy5vcukH/bcAm37mTn9iYJtLjJg0ym6rBn928=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772460115; c=relaxed/simple;
+	bh=cn4Q1z7eYPG0s+/rrH8sogr3zfNgU163mlMYVJCsXFE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U7QcXErt5L5DmdFhySGGS1qVxCPU2XrYsMAHNTStRA/0XXke+i/VPKcxA01ggfG6Mw3m+8hfsKEBZ4rNt86BaT/8KgKDft/gZswtZ+5UwNgVSVdTriYU1ADcCMCUFxcPd8KfjKB6CzUymKQ9UuscDFJaDtfdGJ0UcVxmUVyeUeI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=pnEBbNCg; arc=pass smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-8c711959442so455997285a.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2026 06:01:53 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772460113; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Fk7Xvzv76qGaZeeqRuFAQVEbAhdP/WcWIz7eQ1VkjIJzXXtR9ubdXNFptajVmngAmA
+         vFu7BbDQkixTV5P4AA9prHLwA/D4Eb2pyDSXy1rECkkY/6AuQVSa5KBsl3BUo5UVqgyL
+         0154XqGhT6fKLR2KwdArMOpKjJcasapSFooGnvjyPi/riN2cvKj47G1f26Mwoc+nw4tM
+         Nut0zLuHZPuVDAFm5/Hpzw1OTUCdcvXJ0EWx7hOZfs1PYEGo6lbCJ/1hGq+fAwP6drrz
+         3QVByRUlRwEmN0pIRaI1CCYTp/yh1AZ6icMyJyrI5sz3dHsJL76YkH/KHqrDCGw+Xve5
+         c74g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=cn4Q1z7eYPG0s+/rrH8sogr3zfNgU163mlMYVJCsXFE=;
+        fh=VCFDIVV9IRaoAgt5xBAQyLAnJoCZItWw3w58hCNWbEk=;
+        b=TbTCkGqj0QzuPf26IJKPhp/Eq8VDDsuDSYFjgw9X4Jf+AAJfTCZYZV0FvYdmbze9vL
+         iDXOKbzIsxs451Vr8AJklF44OlYO+himzgccQxkodnyN139zOZ60NXlZHwPf0RnaCjOl
+         Gl2zwFwLutXP8JeCD9mK5vjBHnFJPziZMA+kEQOHTmEOhEtgaYb835K+i5Hkkz0UeA8S
+         90o+zzX0Q6okf/b3Lo8BO5OcP+9ftnGBQps4w/S69DeIPkqUCieiBADOF/MORRvwXv6S
+         MTBVsjDEzu3qL5Z6Svao5E9Utp4bCamTqPwEgVq5SWWS8sH7rLNtPd3bUohG4r4fhYP1
+         qLQQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1772460113; x=1773064913; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cn4Q1z7eYPG0s+/rrH8sogr3zfNgU163mlMYVJCsXFE=;
+        b=pnEBbNCgqaLtGKz1dB3yeyXRZhfVcMxeHLVZngM0ntbYYi2ft3r9k2gtl4j62XI7Gp
+         kKIlWubVEzwu8xKoCmv8WCG42/sJKHGRw/6IsCAGxC425wyzH6bymS4Gr7GeRUmYH8RY
+         ndN8FOu5ANOvF/CgZVol/27VuUQRnmdBJSZVM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772460113; x=1773064913;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cn4Q1z7eYPG0s+/rrH8sogr3zfNgU163mlMYVJCsXFE=;
+        b=n3DKqiya90LOB8QShxKSdN/pUAYln36ZKqoEDRjfuKaBpWuFbbGAsiGUWGtECGDAMj
+         eJesQ6+8Kp6VYhiQ1WQMOWcZ51ys8QQtXt83O1Z0aWiYDr+1d8KpWmN3rnKdsZRG+Tbi
+         KTiRqnwXmtHWWiMfmbiUvpuq8QvNA3lrRC24klFQ3MlVyONcQYt1jumwtu85MPfEJDlx
+         XkFRX2RKj2RGQzOH4yUrTJOVH13kJpFpN5R8HEJYkasyI9juNOqwerHpk5fF5G28dktb
+         TYmcfU92xo1ihWG57QnLcxzsdUJwrXJfj+apRJs8ZHaYHCNikqWnTWRLtc9qyK/Sd6jR
+         VbRw==
+X-Gm-Message-State: AOJu0Yw+ii+yw0Hb2qgDlsg53ODP2ODQEgmhYqCl/glB2ZgJU1kC9WjH
+	fBCRGLgGCzFeFX8Q42zsP6BblGga1Q4z2bmG7Z4PSUPDD/1feAZeyh1GjqO4TBt/o1eiJKFpW8e
+	8wd4nMuco0h9SChxK87/p0tZarHs04mW+35+Dh+ICvA==
+X-Gm-Gg: ATEYQzy3vXFF+h7BXidq5sjpE/dF4eVFRPcdhRHOi/7DP9tQoQz5pMPPTr24nUXXWLh
+	OGVfFO6kr4F9FL46OG4059gDqLDfay46gr2KFkJcN6C5M37K3YhUpjknVMacj7s3YebRRfAMcsZ
+	UR+39QNm+ear560U4fliMp++IWsVQGLVJo5rlRfaSojacLLf8bmbU+EYxI+IGTIoixjWi47BwCD
+	ieUBSewGx5o5MD9JrRH3MG2WNeWIF5YSOFaO6s0ZrM+nZJby4MJ1Nh1CHj1KaKJGmHS2vRAXfuz
+	hZuc5VOTiw==
+X-Received: by 2002:a05:622a:1923:b0:4ff:b0f4:c307 with SMTP id
+ d75a77b69052e-507523e002cmr143247421cf.24.1772460111313; Mon, 02 Mar 2026
+ 06:01:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] fs: add umount notifier chain for filesystem
- unmount notification
-To: NeilBrown <neil@brown.name>
-Cc: Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.com>,
- Jeff Layton <jlayton@kernel.org>, Olga Kornievskaia <okorniev@redhat.com>,
- Dai Ngo <dai.ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
- linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Chuck Lever <chuck.lever@oracle.com>
-References: <20260224163908.44060-1-cel@kernel.org>
- <20260224163908.44060-2-cel@kernel.org>
- <20260226-alimente-kunst-fb9eae636deb@brauner>
- <CAOQ4uxhEpf1p3agEF7_HBrhUeKz1Fb_yKAQ0Pjo0zztTJfMoXA@mail.gmail.com>
- <1165a90b-acbf-4c0d-a7e3-3972eba0d35a@kernel.org>
- <jxyalrg3a2yjtjfmdylncg7fz63jstbq6pwhhqlaaxju5sk72f@55lb7mfucc5i>
- <3cff098e-74a8-4111-babb-9c13c7ba2344@kernel.org>
- <CAOQ4uxiX5anNeZge9=uzw8Dkbad3bMBk5Ana5S94t9VfKNFO5g@mail.gmail.com>
- <d7f2562a-7d32-41d5-a02e-904aa4203ed3@app.fastmail.com>
- <CAOQ4uxiO+NCjhBme=YWCfnVyhJ=Zcg4zmnfoRspJab3n5waSCA@mail.gmail.com>
- <07a2af61-6737-4e47-ad69-652af18eb47b@app.fastmail.com>
- <177242454307.7472.11164903103911826962@noble.neil.brown.name>
-From: Chuck Lever <cel@kernel.org>
-Content-Language: en-US
-Organization: kernel.org
-In-Reply-To: <177242454307.7472.11164903103911826962@noble.neil.brown.name>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20260131165056.94142-1-ytohnuki@amazon.com>
+In-Reply-To: <20260131165056.94142-1-ytohnuki@amazon.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 2 Mar 2026 15:01:40 +0100
+X-Gm-Features: AaiRm51fyeKJitzEmL7QgSAkl6iDSucRyp0uyPHuyO9b-PDGpQdHVMhfRygG2xA
+Message-ID: <CAJfpegvhAevmVpcAWhMsOVRJ3D_ZqC4vskcS=OxE9oi9AgoBhg@mail.gmail.com>
+Subject: Re: [PATCH] fuse: update atime on DAX read
+To: Yuto Ohnuki <ytohnuki@amazon.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
+	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[gmail.com,suse.cz,kernel.org,suse.com,redhat.com,oracle.com,talpey.com,vger.kernel.org];
-	TAGGED_FROM(0.00)[bounces-78904-lists,linux-fsdevel=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	HAS_ORG_HEADER(0.00)[];
+	TAGGED_FROM(0.00)[bounces-78905-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[szeredi.hu:+];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[cel@kernel.org,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[3];
+	NEURAL_HAM(-0.00)[-0.998];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
-X-Rspamd-Queue-Id: 5AB6A1DA4A7
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,mail.gmail.com:mid,szeredi.hu:dkim]
+X-Rspamd-Queue-Id: 716411DA699
 X-Rspamd-Action: no action
 
-On 3/1/26 11:09 PM, NeilBrown wrote:
-> On Mon, 02 Mar 2026, Chuck Lever wrote:
->>
->> On Sun, Mar 1, 2026, at 1:09 PM, Amir Goldstein wrote:
->>> On Sun, Mar 1, 2026 at 6:21 PM Chuck Lever <cel@kernel.org> wrote:
->>>> Perhaps that description nails down too much implementation detail,
->>>> and it might be stale. A broader description is this user story:
->>>>
->>>> "As a system administrator, I'd like to be able to unexport an NFSD
->>>
->>> Doesn't "unexporting" involve communicating to nfsd?
->>> Meaning calling to svc_export_put() to path_put() the
->>> share root path?
->>>
->>>> share that is being accessed by NFSv4 clients, and then unmount it,
->>>> reliably (for example, via automation). Currently the umount step
->>>> hangs if there are still outstanding delegations granted to the NFSv4
->>>> clients."
->>>
->>> Can't svc_export_put() be the trigger for nfsd to release all resources
->>> associated with this share?
->>
->> Currently unexport does not revoke NFSv4 state. So, that would
->> be a user-visible behavior change. I suggested that approach a
->> few months ago to linux-nfs@ and there was push-back.
->>
-> 
-> Could we add a "-F" or similar flag to "exportfs -u" which implements the
-> desired semantic?  i.e.  asking nfsd to release all locks and close all
-> state on the filesystem.
+On Sat, 31 Jan 2026 at 17:51, Yuto Ohnuki <ytohnuki@amazon.com> wrote:
+>
+> Address the TODO comment in fuse_dax_read_iter() which has been present
+> since the initial DAX implementation in commit c2d0ad00d948 ("virtiofs:
+> implement dax read/write operations").
+>
+> Simply calling file_accessed() is insufficient for FUSE, as it only
+> updates the local inode without notifying the server.
+>
+> This patch introduces fuse_flush_atime() to explicitly send atime
+> updates to the server via SETATTR, followed by fuse_invalidate_atime()
+> to invalidate the attribute cache.
+>
+> Signed-off-by: Yuto Ohnuki <ytohnuki@amazon.com>
 
-That meets my needs, but should be passed by the linux-nfs@ review
-committee.
+Does this actually do anything useful?
 
--F could probably just use the existing "unlock filesystem" API
-after it does the unexport.
+Fuse hasn't supported atime updates at all, see:
 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/fuse/inode.c#n509
 
--- 
-Chuck Lever
+Thanks,
+Miklos
 
