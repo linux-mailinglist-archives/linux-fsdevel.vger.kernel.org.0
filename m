@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-78961-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WGAtAUDypWn6IAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78961-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 21:25:36 +0100
+	id QL9hHBLzpWkeIQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 21:29:06 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 711031DF4F0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 21:25:35 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id F19B11DF73F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 21:29:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 454CB3033241
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 20:25:15 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A6CC13115330
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 20:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED61E47F2D0;
-	Mon,  2 Mar 2026 20:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECBC48094D;
+	Mon,  2 Mar 2026 20:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cHu2iKyX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WUgJCdF5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9102FE044;
-	Mon,  2 Mar 2026 20:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63A547ECCD;
+	Mon,  2 Mar 2026 20:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772483101; cv=none; b=p+Te/CdhONP96DfggsH6jZKYhyB0pdrfRODJDN4Klf81CUMmyi7aoTjr077uoUUIjgR2fDDDBPncylTNQPRJ7RX/Xzp2HzMthC/vcPtbPA/Tt2vQCarNSEChTwzs1nwaGjD7uDeJSbJ4rglQxa7y8SnqMgrYWReZz168bLqsGqA=
+	t=1772483116; cv=none; b=p7M9qEeSQRdlscxPZNS2UqHxfA5kdjfMtvRVk8fgAnN+rWinOPXri+lBOVPQZ9TbNElhIW4ZBDbCSkoSAx4fH4sRESf9Wp+HTkBDlg8o+bOwNp6Wng7yvW5ixc/M05+vwaIMAL9oNP5QR5+0cFMQQPjXdqFb5obDkealGmyQo2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772483101; c=relaxed/simple;
-	bh=QDxKqN1aWhMFnYUc1odbHS9kXFhMLp/XyZDDA7haX3M=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=s6lIT0dlHxFGg2wNYQBGYS0pC7htD9ozMTt5XlmB26V9yf4MZ1XVf0lo0Wy2aCigC/Etqu4OX+4utrXMXWoPMc/b2pSPz43yPMb5clPx/rCU0Jm6ES7Wj6TIuzlojhcD55qFK04y6YsQlqvEpkaMcYNmFbkI/VY1Y2aTpJ42fTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cHu2iKyX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A61DC19423;
-	Mon,  2 Mar 2026 20:24:46 +0000 (UTC)
+	s=arc-20240116; t=1772483116; c=relaxed/simple;
+	bh=a/GWSK0b9QXvtWMAeqXB3u+MddZFQoYzg2G9mjzwaQE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=jdjYYVg2ZGBp+ZNavYxf9rX+sj1cqGR7tAeOCZlFG5U2deGzR0QgTvW6+IBTPrkOd3tXUuMIEswy9Hfv6YaT4F1nx2miybhc07vjodzMpU8MJbfnq+d14K3dixlm6KsKOa3agqzzaesUBMyGMNIjhfD032+fYGgL7a43E5BNMlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WUgJCdF5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 043D8C2BC87;
+	Mon,  2 Mar 2026 20:25:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772483100;
-	bh=QDxKqN1aWhMFnYUc1odbHS9kXFhMLp/XyZDDA7haX3M=;
-	h=From:Subject:Date:To:Cc:From;
-	b=cHu2iKyXY4agdCXmzBTDMnWRsTQUGp5Gktu5PjqkGlbWkkoAeX16dS9tdaoGxdknl
-	 ECREpq3HSxntlz7lhfo6y0K+ACEDdjWeefDfqI25+p8tgIE+KlvY0ocOG/250z/NUd
-	 783P3OQ4WB9AiB5sPNyVimRd3CmDJpBirkTO5nNcE9FkcLBQJiHm047n9ry/lUhLmZ
-	 8VfN/gCFGYQfg/9Cc+9XjaAznMYlk0Xk8nFQRiG0XjLVZINPKn4esjjGtcPyeRU2m+
-	 5a/4N3NEqGX5mpRhsogEqjxcpHCl5Sx94CTDwccdE2qLMWHuWwvhIzAKGfzA+kRTXF
-	 4qC+K6ZAZTEXA==
+	s=k20201202; t=1772483115;
+	bh=a/GWSK0b9QXvtWMAeqXB3u+MddZFQoYzg2G9mjzwaQE=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=WUgJCdF5t+Q1hK98cJHCI3yR4RRoaShPYoOuDVqA7bN0VVkGDmdd+xm+7ktLcUk01
+	 EGdiF3IXRPe/50XIN/hcE50LLQL5RkjKg0n2DlG1WQL9loLiI5A5a/gZ9UIV4bsZTc
+	 CmW8JtCoNZPuZPMgbWlhxWemup/Rm8sUzlLv5FQ+LBGmQz5a0Vrt4SK71foF1X9nWM
+	 tEYcSb9RsFzTsrGm8Jcfaic19f8MaHL69up0/JoRawoxpouAHK7TmPnhvW74EAmIcJ
+	 8MXLzhZlvizURsAInXf0jL+7Fn0tgIPFDwmr8aFk/Ljlg1e++4RbexATuMW3x9CnKj
+	 2PBS37WBUhsTQ==
 From: Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH v2 000/110] vfs: change inode->i_ino from unsigned long to
- u64
-Date: Mon, 02 Mar 2026 15:23:44 -0500
-Message-Id: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
+Date: Mon, 02 Mar 2026 15:23:45 -0500
+Subject: [PATCH v2 001/110] vfs: introduce kino_t typedef and PRIino format
+ macro
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,10 +56,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/0XMQQrCMBCF4auUWRtJ0xjRlfeQLtJ00g5KUiYal
- JK7Gwvi8n88vhUSMmGCc7MCY6ZEMdRQuwbcbMOEgsbaoKQyUiktiEIUT6PFoLXt7FEddOeg3hd
- GT6+Nuva1Z0qPyO9Nzu13/SHmj+RWSOGcQ+87Y8bhdLkhB7zvI0/Ql1I+4af1EaEAAAA=
-X-Change-ID: 20260224-iino-u64-b44a3a72543c
+Message-Id: <20260302-iino-u64-v2-1-e5388800dae0@kernel.org>
+References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
+In-Reply-To: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
  Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
  Steven Rostedt <rostedt@goodmis.org>, 
@@ -172,34 +171,34 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-sctp@vger.kernel.org, bpf@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=20524; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=QDxKqN1aWhMFnYUc1odbHS9kXFhMLp/XyZDDA7haX3M=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBppfHvd6Xa5qPNp/iwSU34NwgPJFsY1EsbhO8Tb
- Jb0JQrC5vyJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaXx7wAKCRAADmhBGVaC
- FTEqEAC8R2eMoxAYPwc4rs0SZobO+TNnW2+wshdq+W5N+hB6SQHLM7D8eeK7DbkPGmwlkqmar1o
- MldSWfu0J48lOe+l2K8jhVHfsKXIwkBqFiWnz12nS7A88+2+RSFKcvwyGakxgC+q2KYigkxYuej
- FXLd/Lea5TS/2oWmUcOdQxWQn8tWGthL2xgN4TyQOzOmIhSk7eaf0qcaVRGhLv0cZfljRVlLs1A
- VuPWTsMaBTwkSM+kCDDg+FqP5m2qJTarTVChSYBDbCf2Th0vi2Flf8kid2djnAh31USP0ENvf8f
- 1L5WjfZJAbsTaRy0atgpFu/6/1xXVVBOGKN41KQHdjAEdBaH7wxtUa4StjjCHPgS7072hRNMepQ
- 5ZxVVkcEMbVO4fVkWJ/HGi+kKu7V2TnTvzxpuX51SGIecEGOXMG27WpQmEUBbUUt5e2nIeZlYoQ
- Xh2l+VCVvGZSO2GOoPjJYMWzpdQOz0m/SsJNKKD5I3W6abQyRZ3Bq1NcV0x9qFOTP3zgsoFHZ8D
- Q6uXGkJY/tM88Nf3ZoqNd0MuAdXY4RMkLIvw/3ctvzbnsxqpsZIxB6KGyA5RoXwI9YSOcazwOx5
- ExH9GL2ezwbsZqa+JBc7f4pB7IWs7vik2BzUiXCw8tTGMoXJii2hN6IbaaHRoU082J50be/PP6U
- OLmKwAFXV8nvtSg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1721; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=a/GWSK0b9QXvtWMAeqXB3u+MddZFQoYzg2G9mjzwaQE=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBppfHvSSPODOGv+IDeLjtFG7YpO1D5z3aKetMMJ
+ fVghWz/+YeJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaXx7wAKCRAADmhBGVaC
+ FbwmD/9p2V49BAW6bIXPo2PewhpDsNQPKpX1wZUIsvxqGpZ6OoPwCdTPl5JCdJpBZmDUV7xAAet
+ GlbT9i4wB/NFkKQ4KrOGznjzpC7tpffCcO2sYntinXsiW8KC/5wjT+XwLP9beoYik1TS7LEA2D+
+ vfj6urKts/Z2WhB8n+dPuEeFdMe26J7GcxDgZXJJaxtbQFIK2Kx9kxNE6YqgzGsCiCR6SUqooDa
+ Z5h8Xj6w9sbvUV4NVm3Geb9YZn1s1u0TuJmIReIOZakp9qXk5bjhxeKsvbm9LcG1LZtvYnwny0I
+ 9HCRSTm5S904N17xb4gq9ptERLW/oJODRgpI84H15dAXxJQ0OMXmVMcldx6KF2V3cfXmEyJADQX
+ HivLqyZD1/kytrFqvn32XWRqpdxCzgUFEEcKv2bUPnerzqbTT4N+3jZhRHyPowqPc14BLN5BZ8A
+ 0nvAFTFwK51nt5JY4VwpS253elwJVd8n8K5ZGEXB+K6KeLl08JL7UK59u7/W46KRFbFJfP7ggtE
+ xR+Z1fmcG2iKvEAeQ+FN4loRB8iPdg6XUfBeTjfL/XUa3xEexjDxV7bZzoYVCZCSFttt0n84DwN
+ dTfnY8nwZyuQDq6o+DlqztqDyUiCLpF4wd74VvQk92opgYHwEbXw0SmGlbxwF3ccsa/VT4qmkiD
+ 0g11lTFvRYNLbBQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
-X-Rspamd-Queue-Id: 711031DF4F0
+X-Rspamd-Queue-Id: F19B11DF73F
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-78961-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-78962-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de,yaina.de,holtmann.org,hartkopp.net,pengutronix.de,secunet.com,gondor.apana.org.au,fomichev.me,iogearbox.net];
@@ -207,7 +206,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	TO_DN_SOME(0.00)[];
 	RCPT_COUNT_GT_50(0.00)[172];
 	PRECEDENCE_BULK(0.00)[];
@@ -217,410 +216,55 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-This version splits the change up to be more bisectable. It first adds a
-new kino_t typedef and a new "PRIino" macro to hold the width specifier
-for format strings. The conversion is done, and then everything is
-changed to remove the new macro and typedef.
+Introduce a kino_t typedef and PRIino format macro to enable a
+bisect-clean transition of i_ino from unsigned long to u64.
 
-I also missed a few places in the earlier set. This one hopefully does a
-bit more thorough job.
+kino_t is initially defined as unsigned long (matching the original
+i_ino type), and PRIino is "l" (the format length modifier for
+unsigned long). A later patch will change these to u64 and "ll"
+respectively once all format strings have been updated to use PRIino.
 
-My thanks and apologies to everyone who sent R-b/A-b for the v1 series.
-v2 breaks a lot of the changes up into two patches so many of those
-didn't carry over.  Please resend those if you're still OK with it.
+The PRIino macro is a length modifier, not a complete format specifier.
+It is used as: "%" PRIino "u" for decimal, "%" PRIino "x" for hex, etc.
+This follows the pattern used by userspace PRIu64/PRIx64 macros.
 
-The entire pile is in the "iino-u64" branch of my tree, if anyone is
-interested in testing this:
-
-    https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git/
-
-Original cover letter follows:
-
-----------------------8<-----------------------
-
-Christian said [1] to "just do it" when I proposed this, so here we are!
-
-For historical reasons, the inode->i_ino field is an unsigned long,
-which means that it's 32 bits on 32 bit architectures. This has caused a
-number of filesystems to implement hacks to hash a 64-bit identifier
-into a 32-bit field, and deprives us of a universal identifier field for
-an inode.
-
-This patchset changes the inode->i_ino field from an unsigned long to a
-u64. This shouldn't make any material difference on 64-bit hosts, but
-32-bit hosts will see struct inode grow by at least 4 bytes. This could
-have effects on slabcache sizes and field alignment.
-
-The bulk of the changes are to format strings and tracepoints, since the
-kernel itself doesn't care that much about the i_ino field. The first
-patch changes some vfs function arguments, so check that one out
-carefully.
-
-With this change, we may be able to shrink some inode structures. For
-instance, struct nfs_inode has a fileid field that holds the 64-bit
-inode number. With this set of changes, that field could be eliminated.
-I'd rather leave that sort of cleanups for later just to keep this
-simple.
-
-Much of this set was generated by LLM, but I attributed it to myself
-since I consider this to be in the "menial tasks" category of LLM usage.
-
-[1]: https://lore.kernel.org/linux-fsdevel/20260219-portrait-winkt-959070cee42f@brauner/
+Format strings using i_ino should be updated to use PRIino instead of
+a hard-coded length modifier to ensure warning-free compilation on
+both 32-bit and 64-bit architectures throughout the transition.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
-Changes in v2:
-- Use a typedef and macro and do the change in two steps to make it cleanly bisectable
-- Fix check_for_busy_inodes() in fscrypt
-- Added patch to reorganize tracepoint structs for better packing
-- Added patch to change sock.sk_ino to u64
-- Added patch to clean up internal handling of inode numbers in audit subsystem
-- Drop some unnecessary casts
-- Link to v1: https://lore.kernel.org/r/20260226-iino-u64-v1-0-ccceff366db9@kernel.org
+ include/linux/fs.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
----
-Jeff Layton (110):
-      vfs: introduce kino_t typedef and PRIino format macro
-      vfs: widen inode hash/lookup functions to u64
-      audit: widen ino fields to u64
-      net: change sock.sk_ino and sock_i_ino() to u64
-      trace: store i_ino as u64 instead of ino_t/unsigned long
-      trace: reorder TP_STRUCT__entry fields for better packing on 32-bit
-      ext4: use PRIino format for i_ino
-      jbd2: use PRIino format for i_ino
-      f2fs: use PRIino format for i_ino
-      lockd: use PRIino format for i_ino
-      nfs: use PRIino format for i_ino
-      nfsd: use PRIino format for i_ino
-      locks: use PRIino format for i_ino
-      proc: use PRIino format for i_ino
-      nilfs2: use PRIino format for i_ino
-      9p: use PRIino format for i_ino
-      affs: use PRIino format for i_ino
-      afs: use PRIino format for i_ino
-      autofs: use PRIino format for i_ino
-      befs: use PRIino format for i_ino
-      bfs: use PRIino format for i_ino
-      cachefiles: use PRIino format for i_ino
-      ceph: use PRIino format for i_ino
-      coda: use PRIino format for i_ino
-      cramfs: use PRIino format for i_ino
-      ecryptfs: use PRIino format for i_ino
-      efs: use PRIino format for i_ino
-      exportfs: use PRIino format for i_ino
-      ext2: use PRIino format for i_ino
-      freevxfs: use PRIino format for i_ino
-      hfs: use PRIino format for i_ino
-      hfsplus: use PRIino format for i_ino
-      hpfs: use PRIino format for i_ino
-      isofs: use PRIino format for i_ino
-      jffs2: use PRIino format for i_ino
-      jfs: use PRIino format for i_ino
-      minix: use PRIino format for i_ino
-      nsfs: use PRIino format for i_ino
-      ntfs3: use PRIino format for i_ino
-      ocfs2: use PRIino format for i_ino
-      orangefs: use PRIino format for i_ino
-      overlayfs: use PRIino format for i_ino
-      qnx4: use PRIino format for i_ino
-      qnx6: use PRIino format for i_ino
-      ubifs: use PRIino format for i_ino
-      udf: use PRIino format for i_ino
-      ufs: use PRIino format for i_ino
-      zonefs: use PRIino format for i_ino
-      security: use PRIino format for i_ino
-      drm/amdgpu: use PRIino format for i_ino
-      fsnotify: use PRIino format for i_ino
-      net: use PRIino format for i_ino
-      uprobes: use PRIino format for i_ino
-      dma-buf: use PRIino format for i_ino
-      fscrypt: use PRIino format for i_ino
-      fsverity: use PRIino format for i_ino
-      iomap: use PRIino format for i_ino
-      net: use PRIino format for i_ino
-      vfs: use PRIino format for i_ino
-      vfs: change kino_t from unsigned long to u64
-      ext4: replace PRIino with %llu/%llx format strings
-      jbd2: replace PRIino with %llu/%llx format strings
-      f2fs: replace PRIino with %llu/%llx format strings
-      lockd: replace PRIino with %llu/%llx format strings
-      nfs: replace PRIino with %llu/%llx format strings
-      nfsd: replace PRIino with %llu/%llx format strings
-      proc: replace PRIino with %llu/%llx format strings
-      nilfs2: replace PRIino with %llu/%llx format strings
-      9p: replace PRIino with %llu/%llx format strings
-      affs: replace PRIino with %llu/%llx format strings
-      afs: replace PRIino with %llu/%llx format strings
-      autofs: replace PRIino with %llu/%llx format strings
-      befs: replace PRIino with %llu/%llx format strings
-      bfs: replace PRIino with %llu/%llx format strings
-      cachefiles: replace PRIino with %llu/%llx format strings
-      ceph: replace PRIino with %llu/%llx format strings
-      coda: replace PRIino with %llu/%llx format strings
-      cramfs: replace PRIino with %llu/%llx format strings
-      ecryptfs: replace PRIino with %llu/%llx format strings
-      efs: replace PRIino with %llu/%llx format strings
-      exportfs: replace PRIino with %llu/%llx format strings
-      ext2: replace PRIino with %llu/%llx format strings
-      freevxfs: replace PRIino with %llu/%llx format strings
-      hfs: replace PRIino with %llu/%llx format strings
-      hfsplus: replace PRIino with %llu/%llx format strings
-      hpfs: replace PRIino with %llu/%llx format strings
-      isofs: replace PRIino with %llu/%llx format strings
-      jffs2: replace PRIino with %llu/%llx format strings
-      jfs: replace PRIino with %llu/%llx format strings
-      minix: replace PRIino with %llu/%llx format strings
-      ntfs3: replace PRIino with %llu/%llx format strings
-      ocfs2: replace PRIino with %llu/%llx format strings
-      orangefs: replace PRIino with %llu/%llx format strings
-      overlayfs: replace PRIino with %llu/%llx format strings
-      qnx4: replace PRIino with %llu/%llx format strings
-      qnx6: replace PRIino with %llu/%llx format strings
-      ubifs: replace PRIino with %llu/%llx format strings
-      udf: replace PRIino with %llu/%llx format strings
-      ufs: replace PRIino with %llu/%llx format strings
-      zonefs: replace PRIino with %llu/%llx format strings
-      fscrypt: replace PRIino with %llu/%llx format strings
-      fsverity: replace PRIino with %llu/%llx format strings
-      iomap: replace PRIino with %llu/%llx format strings
-      fsnotify: replace PRIino with %llu/%llx format strings
-      security: replace PRIino with %llu/%llx format strings
-      drm/amdgpu: replace PRIino with %llu/%llx format strings
-      dma-buf: replace PRIino with %llu/%llx format strings
-      net: replace PRIino with %llu/%llx format strings
-      uprobes: replace PRIino with %llu/%llx format strings
-      vfs: remove kino_t typedef and PRIino format macro
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 8b3dd145b25ec12b00ac1df17a952d9116b88047..e38bc5ece1f360d679a8f30b8171292f7a65c218 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -758,6 +758,9 @@ struct inode_state_flags {
+ 	enum inode_state_flags_enum __state;
+ };
+ 
++typedef unsigned long	kino_t;
++#define PRIino		"l"
++
+ /*
+  * Keep mostly read-only and often accessed (especially for
+  * the RCU path lookup and 'stat' data) fields at the beginning
+@@ -783,7 +786,7 @@ struct inode {
+ #endif
+ 
+ 	/* Stat data, not accessed from path walking */
+-	unsigned long		i_ino;
++	kino_t			i_ino;
+ 	/*
+ 	 * Filesystems may only read i_nlink directly.  They shall use the
+ 	 * following functions for modification:
 
- drivers/dma-buf/dma-buf.c                  |   2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_object.c |   4 +-
- fs/9p/vfs_addr.c                           |   4 +-
- fs/9p/vfs_inode.c                          |   6 +-
- fs/9p/vfs_inode_dotl.c                     |   6 +-
- fs/affs/amigaffs.c                         |   8 +-
- fs/affs/bitmap.c                           |   2 +-
- fs/affs/dir.c                              |   2 +-
- fs/affs/file.c                             |  20 +-
- fs/affs/inode.c                            |  12 +-
- fs/affs/namei.c                            |  14 +-
- fs/affs/symlink.c                          |   2 +-
- fs/afs/dir.c                               |  10 +-
- fs/afs/dir_search.c                        |   2 +-
- fs/afs/dynroot.c                           |   2 +-
- fs/afs/inode.c                             |   2 +-
- fs/autofs/inode.c                          |   2 +-
- fs/befs/linuxvfs.c                         |  28 +-
- fs/bfs/dir.c                               |   4 +-
- fs/cachefiles/io.c                         |   6 +-
- fs/cachefiles/namei.c                      |  12 +-
- fs/cachefiles/xattr.c                      |   2 +-
- fs/ceph/crypto.c                           |   4 +-
- fs/coda/dir.c                              |   2 +-
- fs/coda/inode.c                            |   2 +-
- fs/cramfs/inode.c                          |   2 +-
- fs/crypto/crypto.c                         |   2 +-
- fs/crypto/hooks.c                          |   2 +-
- fs/crypto/keyring.c                        |   4 +-
- fs/crypto/keysetup.c                       |   2 +-
- fs/dcache.c                                |   4 +-
- fs/ecryptfs/crypto.c                       |   6 +-
- fs/ecryptfs/file.c                         |   2 +-
- fs/efs/inode.c                             |   6 +-
- fs/eventpoll.c                             |   2 +-
- fs/exportfs/expfs.c                        |   4 +-
- fs/ext2/dir.c                              |  10 +-
- fs/ext2/ialloc.c                           |   9 +-
- fs/ext2/inode.c                            |   2 +-
- fs/ext2/trace.h                            |   8 +-
- fs/ext2/xattr.c                            |  14 +-
- fs/ext4/dir.c                              |   2 +-
- fs/ext4/ext4.h                             |   4 +-
- fs/ext4/extents.c                          |   8 +-
- fs/ext4/extents_status.c                   |  28 +-
- fs/ext4/fast_commit.c                      |   8 +-
- fs/ext4/ialloc.c                           |  10 +-
- fs/ext4/indirect.c                         |   2 +-
- fs/ext4/inline.c                           |  14 +-
- fs/ext4/inode.c                            |  22 +-
- fs/ext4/ioctl.c                            |   4 +-
- fs/ext4/mballoc.c                          |   6 +-
- fs/ext4/migrate.c                          |   2 +-
- fs/ext4/move_extent.c                      |  20 +-
- fs/ext4/namei.c                            |  10 +-
- fs/ext4/orphan.c                           |  16 +-
- fs/ext4/page-io.c                          |  10 +-
- fs/ext4/super.c                            |  22 +-
- fs/ext4/xattr.c                            |  10 +-
- fs/f2fs/compress.c                         |   4 +-
- fs/f2fs/dir.c                              |   2 +-
- fs/f2fs/extent_cache.c                     |   8 +-
- fs/f2fs/f2fs.h                             |   6 +-
- fs/f2fs/file.c                             |  12 +-
- fs/f2fs/gc.c                               |   2 +-
- fs/f2fs/inline.c                           |   4 +-
- fs/f2fs/inode.c                            |  48 ++--
- fs/f2fs/namei.c                            |   8 +-
- fs/f2fs/node.c                             |  12 +-
- fs/f2fs/recovery.c                         |  10 +-
- fs/f2fs/xattr.c                            |  10 +-
- fs/freevxfs/vxfs_bmap.c                    |   4 +-
- fs/fserror.c                               |   2 +-
- fs/hfs/catalog.c                           |   2 +-
- fs/hfs/extent.c                            |   4 +-
- fs/hfs/inode.c                             |   4 +-
- fs/hfsplus/attributes.c                    |  10 +-
- fs/hfsplus/catalog.c                       |   2 +-
- fs/hfsplus/dir.c                           |   6 +-
- fs/hfsplus/extents.c                       |   6 +-
- fs/hfsplus/inode.c                         |   8 +-
- fs/hfsplus/super.c                         |   6 +-
- fs/hfsplus/xattr.c                         |  10 +-
- fs/hpfs/dir.c                              |   4 +-
- fs/hpfs/dnode.c                            |   4 +-
- fs/hpfs/ea.c                               |   4 +-
- fs/hpfs/inode.c                            |   4 +-
- fs/inode.c                                 |  49 ++--
- fs/iomap/ioend.c                           |   2 +-
- fs/iomap/trace.h                           |   8 +-
- fs/isofs/compress.c                        |   2 +-
- fs/isofs/dir.c                             |   2 +-
- fs/isofs/inode.c                           |   6 +-
- fs/isofs/namei.c                           |   2 +-
- fs/jbd2/journal.c                          |   4 +-
- fs/jbd2/transaction.c                      |   2 +-
- fs/jffs2/dir.c                             |   4 +-
- fs/jffs2/file.c                            |   4 +-
- fs/jffs2/fs.c                              |  18 +-
- fs/jfs/inode.c                             |   2 +-
- fs/jfs/jfs_imap.c                          |   2 +-
- fs/jfs/jfs_metapage.c                      |   2 +-
- fs/lockd/svclock.c                         |   8 +-
- fs/lockd/svcsubs.c                         |   2 +-
- fs/locks.c                                 |   6 +-
- fs/minix/inode.c                           |  10 +-
- fs/nfs/dir.c                               |  20 +-
- fs/nfs/file.c                              |   8 +-
- fs/nfs/filelayout/filelayout.c             |   8 +-
- fs/nfs/flexfilelayout/flexfilelayout.c     |   8 +-
- fs/nfs/inode.c                             |   6 +-
- fs/nfs/nfs4proc.c                          |   4 +-
- fs/nfs/pnfs.c                              |  12 +-
- fs/nfsd/export.c                           |   2 +-
- fs/nfsd/nfs4state.c                        |   4 +-
- fs/nfsd/nfsfh.c                            |   4 +-
- fs/nfsd/vfs.c                              |   2 +-
- fs/nilfs2/alloc.c                          |  10 +-
- fs/nilfs2/bmap.c                           |   2 +-
- fs/nilfs2/btnode.c                         |   2 +-
- fs/nilfs2/btree.c                          |  12 +-
- fs/nilfs2/dir.c                            |  12 +-
- fs/nilfs2/direct.c                         |   4 +-
- fs/nilfs2/gcinode.c                        |   2 +-
- fs/nilfs2/inode.c                          |   8 +-
- fs/nilfs2/mdt.c                            |   2 +-
- fs/nilfs2/namei.c                          |   2 +-
- fs/nilfs2/segment.c                        |   2 +-
- fs/notify/fdinfo.c                         |   4 +-
- fs/nsfs.c                                  |   4 +-
- fs/ntfs3/super.c                           |   2 +-
- fs/ocfs2/alloc.c                           |   2 +-
- fs/ocfs2/aops.c                            |   4 +-
- fs/ocfs2/dir.c                             |   8 +-
- fs/ocfs2/dlmfs/dlmfs.c                     |  10 +-
- fs/ocfs2/extent_map.c                      |  12 +-
- fs/ocfs2/inode.c                           |   2 +-
- fs/ocfs2/quota_local.c                     |   2 +-
- fs/ocfs2/refcounttree.c                    |  10 +-
- fs/ocfs2/xattr.c                           |   4 +-
- fs/orangefs/inode.c                        |   2 +-
- fs/overlayfs/export.c                      |   2 +-
- fs/overlayfs/namei.c                       |   4 +-
- fs/overlayfs/util.c                        |   2 +-
- fs/pipe.c                                  |   2 +-
- fs/proc/fd.c                               |   2 +-
- fs/proc/task_mmu.c                         |   4 +-
- fs/qnx4/inode.c                            |   4 +-
- fs/qnx6/inode.c                            |   2 +-
- fs/ubifs/debug.c                           |   8 +-
- fs/ubifs/dir.c                             |  28 +-
- fs/ubifs/file.c                            |  28 +-
- fs/ubifs/journal.c                         |   6 +-
- fs/ubifs/super.c                           |  16 +-
- fs/ubifs/tnc.c                             |   4 +-
- fs/ubifs/xattr.c                           |  14 +-
- fs/udf/directory.c                         |  18 +-
- fs/udf/file.c                              |   2 +-
- fs/udf/inode.c                             |  12 +-
- fs/udf/namei.c                             |   8 +-
- fs/udf/super.c                             |   2 +-
- fs/ufs/balloc.c                            |   6 +-
- fs/ufs/dir.c                               |  10 +-
- fs/ufs/ialloc.c                            |   6 +-
- fs/ufs/inode.c                             |  18 +-
- fs/ufs/ufs_fs.h                            |   6 +-
- fs/ufs/util.c                              |   2 +-
- fs/verity/init.c                           |   2 +-
- fs/zonefs/super.c                          |   8 +-
- fs/zonefs/trace.h                          |  18 +-
- include/linux/audit.h                      |   2 +-
- include/linux/fs.h                         |  28 +-
- include/net/sock.h                         |   4 +-
- include/trace/events/cachefiles.h          |  18 +-
- include/trace/events/ext4.h                | 423 +++++++++++++++--------------
- include/trace/events/f2fs.h                | 172 ++++++------
- include/trace/events/filelock.h            |  34 +--
- include/trace/events/filemap.h             |  20 +-
- include/trace/events/fs_dax.h              |  20 +-
- include/trace/events/fsverity.h            |  30 +-
- include/trace/events/hugetlbfs.h           |  42 +--
- include/trace/events/netfs.h               |   8 +-
- include/trace/events/nilfs2.h              |  12 +-
- include/trace/events/readahead.h           |  18 +-
- include/trace/events/timestamp.h           |  16 +-
- include/trace/events/writeback.h           | 162 +++++------
- kernel/audit.h                             |   9 +-
- kernel/audit_fsnotify.c                    |   4 +-
- kernel/audit_watch.c                       |   8 +-
- kernel/auditsc.c                           |   2 +-
- kernel/events/uprobes.c                    |   4 +-
- net/ax25/af_ax25.c                         |   2 +-
- net/bluetooth/af_bluetooth.c               |   4 +-
- net/can/bcm.c                              |   2 +-
- net/ipv4/ping.c                            |   2 +-
- net/ipv4/raw.c                             |   2 +-
- net/ipv4/tcp_ipv4.c                        |   2 +-
- net/ipv4/udp.c                             |   2 +-
- net/ipv6/datagram.c                        |   2 +-
- net/ipv6/tcp_ipv6.c                        |   2 +-
- net/key/af_key.c                           |   2 +-
- net/netlink/af_netlink.c                   |   2 +-
- net/netlink/diag.c                         |   2 +-
- net/netrom/af_netrom.c                     |   4 +-
- net/packet/af_packet.c                     |   2 +-
- net/packet/diag.c                          |   2 +-
- net/phonet/socket.c                        |   4 +-
- net/rose/af_rose.c                         |   4 +-
- net/sctp/proc.c                            |   4 +-
- net/socket.c                               |   2 +-
- net/unix/af_unix.c                         |   2 +-
- net/unix/diag.c                            |   6 +-
- net/x25/x25_proc.c                         |   4 +-
- net/xdp/xsk_diag.c                         |   2 +-
- security/apparmor/apparmorfs.c             |   4 +-
- security/integrity/integrity_audit.c       |   2 +-
- security/ipe/audit.c                       |   2 +-
- security/lsm_audit.c                       |  10 +-
- security/selinux/hooks.c                   |  10 +-
- security/smack/smack_lsm.c                 |  12 +-
- 220 files changed, 1181 insertions(+), 1181 deletions(-)
----
-base-commit: 842cfe0733c5a03982a7ae496de6fdc0dd661a41
-change-id: 20260224-iino-u64-b44a3a72543c
-
-Best regards,
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.53.0
 
 
