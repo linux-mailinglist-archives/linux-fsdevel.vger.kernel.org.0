@@ -1,258 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-78891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78892-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id qCz/EneLpWk4DgYAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:07:03 +0100
+	id yBc2Fz2MpWmoDgYAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78892-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:10:21 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 563561D9773
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:07:02 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0CBF1D9834
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 14:10:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id B8BC0303A8BC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 13:02:05 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 26F9C3006167
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 13:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F583E0C61;
-	Mon,  2 Mar 2026 13:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E7C3CC9FC;
+	Mon,  2 Mar 2026 13:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Sa0eumLa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="z+bGIWNS";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="p/KXgvPs";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FZQ/Ame9"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="JKZVwZw/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BED336495A
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Mar 2026 13:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772456500; cv=none; b=gdMFV3er2vaR+6Jwm677xqUjQkQy9Lseg1zv1hhATAOsscSsJFXcz0+/vmDaOt1Q7+H7OAyORln54cNuhaBeN/ACdVfxapPK6fR7rjvtXMmWvBDXABe1JpQXTz6t83XYkwEiIA+pOS3QXdqH1NC3CKvDD2zMzrDqeVPFBdu02pI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772456500; c=relaxed/simple;
-	bh=xGwSV26LdCjiNLhVbbZlN+97mEotcPLH1qgtIlOwu0s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L/OeIsCLo0+xB6koFkv90UTJH7Sbv3inR+X3Hpo4jvpOoU15A1fyR1sQL6b+wf1y2iAmPwmdZ9k7hFl1CjwEljU6zuluRIPbMnfCEBi/DE4i0OYftZnKyQrqRAdwhb+rOyYIRMF/Pe8sobLQZzxonAMrIC7cK6pRCt6PYw1NiFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Sa0eumLa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=z+bGIWNS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=p/KXgvPs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FZQ/Ame9; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6063C3E71B;
-	Mon,  2 Mar 2026 13:01:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1772456496; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=veDmyBVTWr5b7pSCd1QFkoCpBzq0+j/LESeohDLDHy4=;
-	b=Sa0eumLaJeBR5mLZ4afeMWYmxWUZ6PTmIRcmrOKazeUGqxa04Q/t4KzNbFe0KjEkEMXpeP
-	uI7Sg6KXmaiOhIibv+t2aAtdNoVOy83Q1yyC11cBTjlwYeia5UBVc9TDwAe6sUfMQGGkYg
-	yUqoGmTsBwov3Ok/hINs5z3oLRZ7W7g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1772456496;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=veDmyBVTWr5b7pSCd1QFkoCpBzq0+j/LESeohDLDHy4=;
-	b=z+bGIWNS5lIoqQ0qevO80196eirz12+NtcwLvBCs+UxoQP/oPfA7u0XGw+J8imhf8JkPz+
-	UPH3jDps4cWugaBw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1772456493; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=veDmyBVTWr5b7pSCd1QFkoCpBzq0+j/LESeohDLDHy4=;
-	b=p/KXgvPsHgJIEhyAMxziR3IRqhbHmjwtiH7FzJl8dL1oi9h6a0uLiIc2SAGxu2FZWKnfsy
-	kergXLW8zoQTnbVxpU6IYQ+p+Q1r5V7oJriXSg1NkC9A0mK3PRyrcr+mYZPiQb5nJ4KXge
-	THPtqbFlnpLHGOZenjPFW4xS6BQqyBE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1772456493;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=veDmyBVTWr5b7pSCd1QFkoCpBzq0+j/LESeohDLDHy4=;
-	b=FZQ/Ame9DtN+xIy8pjv/131WN/5jM2thsSUOpDdpSGP90eAyITMLJeEWd64z9Lr+p6SXfo
-	Zy+5dJt2aGg+hqDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 560513EA69;
-	Mon,  2 Mar 2026 13:01:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dGT4FC2KpWkiWwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 02 Mar 2026 13:01:33 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0D2E1A0A0B; Mon,  2 Mar 2026 14:01:33 +0100 (CET)
-Date: Mon, 2 Mar 2026 14:01:33 +0100
-From: Jan Kara <jack@suse.cz>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com, 
-	brauner@kernel.org, jack@suse.cz, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH] ext4: avoid infinite loops caused by data conflicts
-Message-ID: <4x3xixojbclwq45cpitmylbhis4ya4g3sugtnmj2yzv6avngqb@5xkwu6l467rm>
-References: <699ebd11.a00a0220.21906d.0005.GAE@google.com>
- <tencent_4C5966F83C65375A97D236684A6C75237609@qq.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F393B3C0D
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Mar 2026 13:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.181
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772457015; cv=pass; b=hKP1jgsylNr+uGCe6jJk/CPupW72dNvG9z0nFjAl7eo7zxzJJYla+jUE+y2y31Z9VNBLcpMwf5DzpGBVNS6FHVMVvDErKkkZWx0XyttsI+yPTbLqEv3hXu7TR3KGQd1mvUhMbgpmrDdaDzCiob3MqNrWQUgaCb0mYf/npx7SeUc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772457015; c=relaxed/simple;
+	bh=Ksz8OwQoJjwiki5w9Te5otX/+tgrm32ehBP+y00qL38=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t3Wtl47/HTZ3joNsgB8mfr55G+8cQaClCmTHAGP+aVDoHOQdM2NgQCVQfTbjaUMVOxaVFjvSZmKfGiMdae9muFm4ffJe9k8anBa7tU968MOxFFS1ZCq8cykurzOxOWDUm4V5r5xdKhVTI1kyovo8REPDzv97ncH7D8BnltC/oOQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=JKZVwZw/; arc=pass smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-503347dea84so50929621cf.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2026 05:10:12 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772457012; cv=none;
+        d=google.com; s=arc-20240605;
+        b=DIc4eIHHdbC4H3CqNasSQYWyaBunjsFv51WiMsgrmendItxegRENVrUmWh8wBY4Xxc
+         9IpAx34fyN6RAav9M5PoJLZfKQlDmZiynDATHAH4lGlGZiSx5w/rIrElxLB51fSS95r7
+         1FP+ZPxxlMy8HRngH9/6KS2ZXc4Yg8sIYU+YOhapGIuxeK02uuTghlsZ4KEkhJDUXlpU
+         Ejt7tkVKrQNNxaYzqkBCD7lZDyguiaW9tBjK8c/rRmfn+vsSFbgyu77yW+R4UFmUkHS9
+         NNVri8znSEmaFzx5qPS1tz8J7YaO++ycrhsQm4/TXXIBZftTvI/S4o1VTcyncyXhi8fj
+         n+lQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=yCykOgsZd5+39Ruq/TC9BPanTCyxkc5loRrEIysX2iA=;
+        fh=ulp5+SAB8BflR3ZmWXhNYJyx0dUOvcLxAcxtaRDoto8=;
+        b=D3j3HzOVpMds0AdN0ixhV/eV45hB8fjueJ0MoVlR2kiUSbiGkHnDiCMhiB4qbNjf/A
+         6FQ/MZxQfzRYoz+yYCg1CeWxqTwDAY049jtlJeSan8AxmPrhQK0WXNXmyMB3YwO4Fh+G
+         ypQyLSqGn6rXZO4DqccXg75gCkDYrvdX7nPUahV4WXO2t+c9SZeN3uySyArbEX3M5LGU
+         jlgg0Uq0hb62XyYYZcwv4kyQzuZlodrXKVakNDVdXWyjC1U7gfdZoCaDav1EkPKHHVbo
+         I1ot45XrJZIwiosNOk8EAvkgHp9GFwsCNsCdc/JgIHbm5e/QEP2KqFwSKT9TngnXCaO2
+         IdsQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1772457012; x=1773061812; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=yCykOgsZd5+39Ruq/TC9BPanTCyxkc5loRrEIysX2iA=;
+        b=JKZVwZw/oaycI4RDtlWmkoIraHxgx6xHp+jDgFGqxlTvK1zs4TJNnpIPJWEH6+URlk
+         sQz0cf4++43czKupZHZ/UFt+Kwvyg+iy8Xb0fW1xrbaw5AKT1LxBMRHJs0PLXRxDD0Z9
+         uYIwoRdjW7w9OlaySanYHi/rLFBxpoY/fjAK0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772457012; x=1773061812;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yCykOgsZd5+39Ruq/TC9BPanTCyxkc5loRrEIysX2iA=;
+        b=BCSbYZZs+p0vb72cgqvKeeFHRi/5Hvvov6pARGkZZfBx1d/6No5l+9n7QQwbSCV1gD
+         +ap815A2htPU5r20DAeTsnVQyfA5ciplCHwOl4SEW6z1/ZaU7vY/csD51LHo9RU42LEM
+         3ho2iI7RAvM7NrqjdmtXkLqBgNT+mJdrq0AYudBekTbJzafb4DPVy2kfl/LkWd+rsrfP
+         OdzWT6PZnqhCh7UfujUSnvVwS+26hvnFq4QYCvYPvNJmeyJvFlZfBgv9WDVSB7Qa6JUe
+         s4UiUqlPFp0EnXPHg4h8lhvJYz14lOiZtJrIKtU62W2Me7Ae4/hNLBLWTi6OOgB1kkGm
+         gZ7g==
+X-Forwarded-Encrypted: i=1; AJvYcCX73TYAyBzskxPxlXlp2LBWxg5aQtBS1dcEDtI7cJDrqsz9DuLxxDxC0lISyD6CjC96dtZcCKwEX45OuHKe@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd8MpXp/fRZL0mpbOZ+I9b+Me8VqT95I6Kzhv54YEuG/8LwOJy
+	qu+n3I+F84ExXiBwfnY8DaBad1WWSZJ2S/Nf/jmJzQat6EmxrW4HdpCtBhsfD2rdHU80qt2t5zs
+	HGS3XaBmZnV3oHH4bcczQIsUuRkYCIS0FAHn+eLeUeg==
+X-Gm-Gg: ATEYQzzAnC+ti7lcPNqVvTckUvmEXoxAU/ZA6cZ+9VJa8iEFvFZNaZozphQGw0BhyFO
+	351QivtA69dq+81Q6vtYASN9T9CDZBFlGRjazlMbiqhXQg4zY/w8dTCldaMn6V3CpxwEXTENi4D
+	KP/8Bsu5FtAnkbvRKvWyIJ7rgLd/qA8QY0hte1WxrmII90oYqihreEyxYqQ4jT0B7Ed8KBn9lUw
+	pgyraH7LMM8ZIIEWc6PYDZWf0PutC1xeeHIJoxTD+1TM3Lp7EL1n31yiJmXhpJl2C14xHlT+pkI
+	fTgMif1BvQ==
+X-Received: by 2002:a05:622a:4d2:b0:503:42a4:96fb with SMTP id
+ d75a77b69052e-507528d6928mr170189501cf.65.1772457011655; Mon, 02 Mar 2026
+ 05:10:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_4C5966F83C65375A97D236684A6C75237609@qq.com>
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
-X-Spam-Level: 
+References: <20260120224449.1847176-1-joannelkoong@gmail.com>
+In-Reply-To: <20260120224449.1847176-1-joannelkoong@gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 2 Mar 2026 14:10:00 +0100
+X-Gm-Features: AaiRm51JDUWRF-Hpjrk-95Lhnfwkfxd17Ra5kmf02jAYPY90Lu2jZUIscLdIW9w
+Message-ID: <CAJfpegvg8R7tiERDa3D=k_jxKGMU5B8i8GBd4SJSqqYC8=hn=Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] fuse: clean up offset and page count calculations
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: jefflexu@linux.alibaba.com, luochunsheng@ustc.edu, djwong@kernel.org, 
+	horst@birthelmer.de, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.34 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
+	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78891-lists,linux-fsdevel=lfdr.de];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,appspotmail.com:email,qq.com:email,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,suse.cz:dkim,suse.com:email];
-	DMARC_NA(0.00)[suse.cz];
+	FREEMAIL_TO(0.00)[gmail.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[qq.com];
+	TAGGED_FROM(0.00)[bounces-78892-lists,linux-fsdevel=lfdr.de];
+	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.998];
-	TAGGED_RCPT(0.00)[linux-fsdevel,1659aaaaa8d9d11265d7];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: 563561D9773
+	RCPT_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[szeredi.hu:+];
+	NEURAL_HAM(-0.00)[-0.993];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,mail.gmail.com:mid,szeredi.hu:dkim]
+X-Rspamd-Queue-Id: F0CBF1D9834
 X-Rspamd-Action: no action
 
-On Sun 01-03-26 18:12:47, Edward Adam Davis wrote:
-> In the execution paths of mkdir and openat, there are two different
-> structures, struct ext4_xattr_header and struct ext4_dir_entry_2,
-> that both reference the same buffer head.
-> 
-> In the mkdir path, ext4_add_entry() first sets the rec_len member of
-> the struct ext4_dir_entry_2 to 2048, and then sets the file_type value
-> to 2 in add_dirent_to_buf()->ext4_insert_dentry()->ext4_set_de_type().
+On Tue, 20 Jan 2026 at 23:51, Joanne Koong <joannelkoong@gmail.com> wrote:
+>
+> This patchset aims to simplify the folio parsing logic in fuse_notify_store()
+> and fuse_retrieve() and use standard kernel helper macros for common
+> calculations:
+>  * offset_in_folio() for large folio offset calculations
+>  * DIV_ROUND_UP() for page count calculations
+>  * offset_in_page() for page offset calculations
+>
+> The 1st patch (outarg offset and size validation) is needed for the 2nd patch
+> (simplify logic in fuse_notify_store()/fuse_retrieve()) in order to use
+> "loff_t pos" for file position tracking.
+>
+> No functional changes intended.
+>
+> This patchset is on top of Jingbo's patch in [1].
 
-If I understand it right, the filesystem is corrupted so that directory
-block of some directory is also pointed to as xattr block of some inode.
-The right question to investigate here is why the block passed validation
-as both xattr block and directory block - that needs explanation. Likely
-metadata checksums were disabled and with some effort we could then create
-a block that will be both valid directory block and valid xattr block. If
-that is indeed the case, this is game over and we can't fix this in ext4
-(the kernel just doesn't have enough resources to validate against such
-cases) - enable metadata checksums if you need to protect against such
-corruptions.
+Applied, thanks.
 
-Your attempt at a "fix" changes the on disk filesystem format. I don't
-think you've put too much thought into that, did you?
-
-								Honza
-
-> This causes the h_refcount value in the other struct ext4_xattr_header,
-> which references the same buffer head, to be too large in the openat
-> path.
-> 
-> The above causes ext4_xattr_block_set() to enter an infinite loop about
-> "inserted" and cannot release the inode lock, ultimately leading to the
-> 143s blocking problem mentioned in [1].
-> 
-> When accessing the ext4_xattr_header structure in xattr, the accessed
-> buffer head data is placed after ext4_dir_entry_2 to prevent data
-> collisions caused by data overlap.
-> 
-> [1]
-> INFO: task syz.0.17:5995 blocked for more than 143 seconds.
-> Call Trace:
->  inode_lock_nested include/linux/fs.h:1073 [inline]
->  __start_dirop fs/namei.c:2923 [inline]
->  start_dirop fs/namei.c:2934 [inline]
-> 
-> Reported-by: syzbot+512459401510e2a9a39f@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=1659aaaaa8d9d11265d7
-> Tested-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
-> Reported-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=512459401510e2a9a39f
-> Tested-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> ---
->  fs/ext4/ext4.h  | 2 ++
->  fs/ext4/xattr.c | 2 +-
->  fs/ext4/xattr.h | 3 ++-
->  3 files changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 293f698b7042..4b72da4d646f 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -2425,6 +2425,8 @@ struct ext4_dir_entry_2 {
->  	char	name[EXT4_NAME_LEN];	/* File name */
->  };
->  
-> +#define DIFF_AREA_DE_XH sizeof(struct ext4_dir_entry_2)
-> +
->  /*
->   * Access the hashes at the end of ext4_dir_entry_2
->   */
-> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-> index 7bf9ba19a89d..313c460a93c5 100644
-> --- a/fs/ext4/xattr.c
-> +++ b/fs/ext4/xattr.c
-> @@ -2160,7 +2160,7 @@ ext4_xattr_block_set(handle_t *handle, struct inode *inode,
->  				error = -EIO;
->  				goto getblk_failed;
->  			}
-> -			memcpy(new_bh->b_data, s->base, new_bh->b_size);
-> +			memcpy(new_bh->b_data + DIFF_AREA_DE_XH, s->base, new_bh->b_size);
->  			ext4_xattr_block_csum_set(inode, new_bh);
->  			set_buffer_uptodate(new_bh);
->  			unlock_buffer(new_bh);
-> diff --git a/fs/ext4/xattr.h b/fs/ext4/xattr.h
-> index 1fedf44d4fb6..4a28023c72e8 100644
-> --- a/fs/ext4/xattr.h
-> +++ b/fs/ext4/xattr.h
-> @@ -8,6 +8,7 @@
->  */
->  
->  #include <linux/xattr.h>
-> +#include "ext4.h"
->  
->  /* Magic value in attribute blocks */
->  #define EXT4_XATTR_MAGIC		0xEA020000
-> @@ -90,7 +91,7 @@ struct ext4_xattr_entry {
->  #define EXT4_XATTR_MIN_LARGE_EA_SIZE(b)					\
->  	((b) - EXT4_XATTR_LEN(3) - sizeof(struct ext4_xattr_header) - 4)
->  
-> -#define BHDR(bh) ((struct ext4_xattr_header *)((bh)->b_data))
-> +#define BHDR(bh) ((struct ext4_xattr_header *)((bh)->b_data + DIFF_AREA_DE_XH))
->  #define ENTRY(ptr) ((struct ext4_xattr_entry *)(ptr))
->  #define BFIRST(bh) ENTRY(BHDR(bh)+1)
->  #define IS_LAST_ENTRY(entry) (*(__u32 *)(entry) == 0)
-> -- 
-> 2.43.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Miklos
 
