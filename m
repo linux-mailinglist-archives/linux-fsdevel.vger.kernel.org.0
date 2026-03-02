@@ -1,177 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-78931-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-78932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GKqyHKKtpWmpDgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-78931-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 16:32:50 +0100
+	id gMwcKJ6wpWkiEgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-78932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 16:45:34 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id E13A51DBE4F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 16:32:49 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC1BC1DC1AF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 16:45:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 43560304179C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 15:30:30 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id CC04630C2230
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 15:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7D640B6E4;
-	Mon,  2 Mar 2026 15:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE274413237;
+	Mon,  2 Mar 2026 15:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="RTnXYSBh"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NpcLcN9z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA3D283FE5
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Mar 2026 15:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.219.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772465425; cv=pass; b=JTy6aqWPyF4rEV7rmX9c4U0OA9uXdcOMuE4BmK0YXze0v+F8YU9owOKMVgKsGPOGVW6NceRtrDMlsxVrKgNyhSZwFyM2P+XFjb8zASEafemsqPyijos7r2dE340evNkgDRQzUEzwTuHyZGuDlneG2q+LDQ6JYifCsLyEY1J6ROo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772465425; c=relaxed/simple;
-	bh=mms126za9iLHNwrF72eB+7varQYLykUK/b/Sq06P2pE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s9t2cDyvpcHnU7BBFJiecO5xP1tbzmw4vst1Vefr9GyqZ4jhdIpVBWP+KPQRL+D8Pn4Xj9xRGBZt2n/qog2R/Bz4vEsmo7z21ZEK6fYF9K7yehMbq/c2lJsj9lanXYsMVTSSEBiV0zbcbuZQIdNOFygx8LS55D2sJnam1afFMys=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=RTnXYSBh; arc=pass smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-899d6b7b073so39189376d6.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2026 07:30:22 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772465422; cv=none;
-        d=google.com; s=arc-20240605;
-        b=j16gQseMZQ1Os1Y1KnIoilfgXM4lLEsDxExEQxZJxIwhwlyzhXVX+1KUeEzroqzTtL
-         YfOnS0iC4MsYYLHW6IJJnGuoWNlhcf+tguUcJXsj7R2VowNTGcnkeKwYhzxVf75tp58+
-         fKaWFqQwJTenFAKRLsxWEZ1mSnfEQGD4dE9Ejuvb01bw/a53MfxiQpMeh7Any1e085xM
-         H14S7qn1x/lfKOUWuh0TGW1QyeBhXK2/SVAT5p3hE2FbICU198YRAqbWSnH9rJKLztQ3
-         xp8Rpq3maaCtACPjDANAfDIhffrGRiBpIsfG4v5ZwmxhF1xNS4nQeV6OJvEkH3v95VOq
-         j5eg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=g4xSZKFapO2O9A9ZxJoFZiNBm6w1mF43104yNFAWcMs=;
-        fh=H3hpzC+llMBGDJvgG1B0oJQ4qBPO/7EhX3DRDDb/Mck=;
-        b=J7v6y/oG7m//7YLhtoT1smMrBuZjLlZUr7MngF1SD3USWMmGQoMsslV5yRjEWOxVP8
-         fylDSdLr76cXDAA2sRYY0qF9i2G7FTN7W9i6UP524jJ/fRGtD0GG+Hj/hw53h92n7O6I
-         dzFAW1EKOYNuCFlbyUa748ShAQn3Bw+WlOZuithWkCgSzvIlzGmJpUkoCKjxQMLg5Iya
-         +m6WmDhdfGbWPHjzDkIu4VIvnWwDQjLUAkPYFYMJH8Wikjy+XxIM5qiIqqW/+U1Vyekg
-         V7nt73fTrXUGS0JiFrEWBlfk47s923K84sgiUCFDinHUJ9TCOsvjpwSjWb9pSxuT4AfP
-         4L5A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0F2411605
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Mar 2026 15:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772466106; cv=none; b=E44FIStC3hKaYBPyaDvfhAPMLKtGnBoNPtwKH0gROGUOxDq/Oqz8/GCh/TAFHFsVPSYl7C7zMi4Wn39k0yc5jsWZbnmWKcVCWLj3CULM4XgwsrA+jd6XxznNfJ00l2tKix/H6qT2R9WP//5dtixhOOHopswtSu2Vnn93MXiy3yE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772466106; c=relaxed/simple;
+	bh=V5eDYyeSzEe01Qy0X2d3YjmdmOm2DlobDKTfwH81yIk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=NUsio2EFPgOjY1KiADrTXK43zEWSZELS+uhK9+s/LVdjtEw7KI9iDtap/fCjWfMmAJKQaLUQloL4uADIpejBat9EP4bZphEEnEYVjmnSmXbLVeOy1gnlRy/0/4YZAMyuuIuvvhdAXSEbSPQNmtx5YwDurOh/EE3rPAZKDmc6/ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NpcLcN9z; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4830e7c6131so47836495e9.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2026 07:41:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1772465422; x=1773070222; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=g4xSZKFapO2O9A9ZxJoFZiNBm6w1mF43104yNFAWcMs=;
-        b=RTnXYSBhUIQlRLRFkdhpTSX47VKi6koN6XWNeR5vSniU3FzVIM3Ugoa5Y6r78bE07/
-         yWTP+DVof9Cv2kBHAPB/c6DcutHMYVTRmw0CtPag2fxCR0+oK37NV+FpMH+9ON4MLfzk
-         R92muZkP8hO7VBWosvGK51x1rT4yohQn14beU=
+        d=google.com; s=20230601; t=1772466103; x=1773070903; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fvJ4Pj0Wo9ryI9xJ6mJ9OBJG9CVcmeBhutvadxQnZZs=;
+        b=NpcLcN9zaHs6viT1xkKDJ6JmpmAjvhKns6ydmfiwCNU5XOvLSWikyNvN/hsLBDVKJz
+         CQQPekhDUK//hEnOaLL8NjKhpzzxiWvoWaI4iDzJQ6VvtfYDpc2SIo7ODSRQiiQb7rqY
+         T9pBkMdn8THxrSV2LAPfXGfKwuuA6tvQsEkDmBikv2i/8u0CaDqNDDwZ4e1s1FsnJO69
+         W3EqubJd3HDoLvp5I9MGEIOo2Qcwmg2YaPYpkcCM/kWWdJ5gcy7yhiwmQqY4q76okx0C
+         xa7i0vCr56hW1eHA53+8TLarCTCI/Ivx3qE0J7nXzkaUQbXbHUIOfhT7j+CJYJPjammY
+         XWeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772465422; x=1773070222;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g4xSZKFapO2O9A9ZxJoFZiNBm6w1mF43104yNFAWcMs=;
-        b=ONo1OEobO77O6Xf8i5xHvevzLLm4riZSTZP21x8lH5ZDgneyUuju3uhRdsomSlOJwH
-         qR+XcTy+StCgRjADXgd8Qz2B9WpsM8KPyLIm4wbTbMk5S5b1l3vAjEV+7WBQnRFalCz/
-         KDSFTYv3Jl8tsGs9Kd6u55RXgPqUDNdO+7J/nnhUNWUIrb5NLLw8EInElnFRCzuNCzqD
-         1Ss07SQXZoykVsLqQCdnwBE2pVN/pPEr+F0Dy0NMS0g7OfsRu4BR3YSd7/yo2lPg1Dd2
-         l/w7YEEtGqJLOAqz3IYFinoZQn9c1+ioy7trvogiwcllzPVInWGCisvXfYa3FBu7Dyeg
-         BvIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUq3SSl4NNByeUFZkbi6HJ7Vc9WlmysvCMEeA0+wEGVM8VJwhlPIeL+KIocyXcWB9PpYEpsUdSB6zyXE6mE@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUyDaTbBl3t2nim3q8bYxDEiL3x7Siz79SGcxUVOgVd8fYtTdh
-	YB5MVU1251WeKWiXBLVDNVLYmr33zvfp1LA2I7eb+WUorB/ZRoX5nl+wDAGyNYwF6rZrZkiQqL8
-	tc+YBKD8H0JD8XgTHmkGWTydm5b2Szjs9dulm+UwV9Q==
-X-Gm-Gg: ATEYQzzq0CxhIMtakmPAvehTM0l+wP5Apt/J+blZ4yM1OjcHZzcyYPXx3Ze4JGOtPDQ
-	tSQ6I2jQDf9QTaFh0e/Cl2dt0KyIO4IJ9bH3YGd2PIpWrI2synxyTUBeHnZmX3Fo9tHmNv1w0/G
-	I7QM0W4BjYP/xCRMeMHYt9J0c42P5UL93WtD6VZaztgeqNMmRsriDxfH7LyCXOZXK0zQSWlbQsP
-	BS55KLdv1nW9xuaMDdQq1m8E1tReCjkKuBIb2A4lRaJwIl+l4H3dyfbkM6iXFQhUe+EPEmfP7el
-	FopLc4yU8g==
-X-Received: by 2002:ac8:5891:0:b0:4f4:d29a:40e7 with SMTP id
- d75a77b69052e-507528f9969mr151028611cf.74.1772465420823; Mon, 02 Mar 2026
- 07:30:20 -0800 (PST)
+        d=1e100.net; s=20230601; t=1772466103; x=1773070903;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fvJ4Pj0Wo9ryI9xJ6mJ9OBJG9CVcmeBhutvadxQnZZs=;
+        b=K7IhXFGddw+DJZXHtSXcfPQi72iQaDl9ovS9qlwWAVWK+3BJmPlRnlbK2FCRK9DbKn
+         yic+rafsRbLgtgPqt4c8SRXtmwu4z79cjtGBD91V4JvRRbhXsmztynr0A35ZQPGC3Mob
+         jcbuKIyuZCfNyhH4Hci3DDDfeoOUYMR+zVtNu5wkPM1cq+NQyE9okQY+PPfVMFjnME7l
+         GPApDC1p8A8FFvPQSwIv4WlQ8ihyA6UGxjab9FF7KhhmIIBF5AxXX/+01Oa+friPIV8Y
+         9rLoZ3WDINrGvCVEsnYP8FNEBlRLEyiU1k6alpgWVIh/A8MI44OlF2amm2hSZlgA6L/y
+         xRkg==
+X-Forwarded-Encrypted: i=1; AJvYcCXFUqQX/aZDY3VDaYfD37ondIRkVVHEVANp9NQLB7IsB+n/CeDA9DEpFRbJBbqMFpwbfSnJiJGthr+EmP95@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxeoe7uBYVeJTV5Sa9OJFoTISBo4EIbG2Bn295jaTJqiEPrGsiz
+	HMrNOA9Vj4qcf8hTqeDltnND/xhTFBgn76PEQmcb/jDzASsSv7MM0hcFBtwViNLP0rsIS4U8vBF
+	It0/muIimNds87zTZmQ==
+X-Received: from wmby19.prod.google.com ([2002:a05:600c:c053:b0:480:690c:88de])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:3b18:b0:483:7432:a761 with SMTP id 5b1f17b1804b1-483c9bc558bmr213622465e9.24.1772466102970;
+ Mon, 02 Mar 2026 07:41:42 -0800 (PST)
+Date: Mon, 2 Mar 2026 15:41:42 +0000
+In-Reply-To: <5f8dcb7f-9e4f-4484-b160-3a9ce541d63c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <69917e0d.050a0220.340abe.02e2.GAE@google.com> <20260216144830.48804-1-luis@igalia.com>
-In-Reply-To: <20260216144830.48804-1-luis@igalia.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 2 Mar 2026 16:30:09 +0100
-X-Gm-Features: AaiRm53VfBAx1rFzZyDHGbxzcM1ZDZcp_CPrhlwQVAbzRu9pqZbcKRVmKooWwi0
-Message-ID: <CAJfpeguHmoPz=T0LD4JTpa=Kc8ah3oZrQmD8XOnzfA8bDiSeig@mail.gmail.com>
-Subject: Re: [PATCH] fuse: fix uninit-value in fuse_dentry_revalidate()
-To: Luis Henriques <luis@igalia.com>
-Cc: mszeredi@redhat.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	syzbot+fdebb2dc960aa56c600a@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-X-Rspamd-Queue-Id: E13A51DBE4F
+Mime-Version: 1.0
+References: <20260227200848.114019-1-david@kernel.org> <20260227200848.114019-3-david@kernel.org>
+ <aaLh2BxSgC9Jl5iS@google.com> <8a27e9ac-2025-4724-a46d-0a7c90894ba7@kernel.org>
+ <aaVf5gv4XjV6Ddt-@google.com> <f2f3a8a1-3dbf-4ef9-a89a-a6ec20791d1c@kernel.org>
+ <aaVnifbdxKhBddQp@google.com> <5f8dcb7f-9e4f-4484-b160-3a9ce541d63c@kernel.org>
+Message-ID: <aaWvtn48X8UizaaN@google.com>
+Subject: Re: [PATCH v1 02/16] mm/memory: remove "zap_details" parameter from zap_page_range_single()
+From: Alice Ryhl <aliceryhl@google.com>
+To: "David Hildenbrand (Arm)" <david@kernel.org>
+Cc: linux-kernel@vger.kernel.org, 
+	"linux-mm @ kvack . org" <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@kernel.org>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, David Rientjes <rientjes@google.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, 
+	Vasily Gorbik <gor@linux.ibm.com>, Jarkko Sakkinen <jarkko@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Arve =?utf-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, 
+	Christian Brauner <brauner@kernel.org>, Carlos Llamas <cmllamas@google.com>, Ian Abbott <abbotti@mev.co.uk>, 
+	H Hartley Sweeten <hsweeten@visionengravers.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, 
+	Dimitri Sivanich <dimitri.sivanich@hpe.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Andy Lutomirski <luto@kernel.org>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, Eric Dumazet <edumazet@google.com>, 
+	Neal Cardwell <ncardwell@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org, 
+	linux-s390@vger.kernel.org, linux-sgx@vger.kernel.org, 
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-rdma@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="utf-8"
+X-Rspamd-Queue-Id: EC1BC1DC1AF
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
-	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+X-Spamd-Result: default: False [-1.66 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MV_CASE(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
+	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-78931-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kvack.org,linux-foundation.org,oracle.com,kernel.org,google.com,suse.com,suse.de,linux.dev,infradead.org,linux.ibm.com,ellerman.id.au,redhat.com,alien8.de,linuxfoundation.org,android.com,mev.co.uk,visionengravers.com,linux.intel.com,intel.com,ursulin.net,gmail.com,ffwll.ch,ziepe.ca,hpe.com,arndb.de,iogearbox.net,arm.com,davemloft.net,lists.ozlabs.org,lists.freedesktop.org];
+	TAGGED_FROM(0.00)[bounces-78932-lists,linux-fsdevel=lfdr.de];
+	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
+	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[szeredi.hu:+];
-	NEURAL_HAM(-0.00)[-0.999];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	TAGGED_RCPT(0.00)[linux-fsdevel,fdebb2dc960aa56c600a];
+	DKIM_TRACE(0.00)[google.com:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[igalia.com:email,tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,mail.gmail.com:mid,appspotmail.com:email]
+	RCPT_COUNT_GT_50(0.00)[73];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[aliceryhl@google.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	NEURAL_HAM(-0.00)[-0.998];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On Mon, 16 Feb 2026 at 15:48, Luis Henriques <luis@igalia.com> wrote:
->
-> fuse_dentry_revalidate() may be called with a dentry that didn't had
-> ->d_time initialised.  The issue was found with KMSAN, where lookup_open()
-> calls __d_alloc(), followed by d_revalidate(), as shown below:
->
-> =====================================================
-> BUG: KMSAN: uninit-value in fuse_dentry_revalidate+0x150/0x13d0 fs/fuse/dir.c:394
->  fuse_dentry_revalidate+0x150/0x13d0 fs/fuse/dir.c:394
->  d_revalidate fs/namei.c:1030 [inline]
->  lookup_open fs/namei.c:4405 [inline]
->  open_last_lookups fs/namei.c:4583 [inline]
->  path_openat+0x1614/0x64c0 fs/namei.c:4827
->  do_file_open+0x2aa/0x680 fs/namei.c:4859
-> [...]
->
-> Uninit was created at:
->  slab_post_alloc_hook mm/slub.c:4466 [inline]
->  slab_alloc_node mm/slub.c:4788 [inline]
->  kmem_cache_alloc_lru_noprof+0x382/0x1280 mm/slub.c:4807
->  __d_alloc+0x55/0xa00 fs/dcache.c:1740
->  d_alloc_parallel+0x99/0x2740 fs/dcache.c:2604
->  lookup_open fs/namei.c:4398 [inline]
->  open_last_lookups fs/namei.c:4583 [inline]
->  path_openat+0x135f/0x64c0 fs/namei.c:4827
->  do_file_open+0x2aa/0x680 fs/namei.c:4859
-> [...]
-> =====================================================
->
-> Reported-by: syzbot+fdebb2dc960aa56c600a@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/69917e0d.050a0220.340abe.02e2.GAE@google.com
-> Fixes: 2396356a945b ("fuse: add more control over cache invalidation behaviour")
-> Signed-off-by: Luis Henriques <luis@igalia.com>
+On Mon, Mar 02, 2026 at 04:01:44PM +0100, David Hildenbrand (Arm) wrote:
+> On 3/2/26 11:33, Alice Ryhl wrote:
+> > On Mon, Mar 02, 2026 at 11:27:40AM +0100, David Hildenbrand (Arm) wrote:
+> >> On 3/2/26 11:01, Alice Ryhl wrote:
+> >>>
+> >>> Well, rustfmt comes with the compiler, and it would be ideal to build
+> >>> test changes before sending them :)
+> >>
+> >> At least on Ubuntu on my notebook where I do most of the coding+patch
+> >> submissions it's a separate package?
+> >>
+> >> I do all my builds on a different (more powerful) machine where the
+> >> whole rust machinery's in place. Further, build bots that run on my
+> >> private branches did not report any issues.
+> > 
+> > There are some build bots that check for rustfmt, though not all of
+> > them.
+> > 
+> >>> But no worries, I took care of testing it. Thanks for taking the time to
+> >>> update the Rust code as well.
+> >>
+> >> I just did an allyesconfig and it does not report any warnings.
+> >>
+> >> So apparently, rustfmt problems not result in the compiler complaining?
+> >>
+> >> Or something else is off here that rust/kernel/mm/virt.rs won't get
+> >> compiled on my machine, even with allyesconfig. I can definitely see
+> >> some RUSTC stuff happening in the logs, like
+> >>
+> >> 	RUSTC L rust/kernel.o
+> >>
+> >> Thanks for the review and for pointing out rustfmt!
+> > 
+> > Similar to kerneldoc and other similar targets, formatting isn't checked
+> > in the normal build, but make can be invoked on the rustfmtcheck target
+> > to check it.
+> 
+> Thanks adding that to my cross-compile chain.
 
-Applied, thanks.
+Awesome, thanks!
 
-Miklos
+It's not relevant in this patch, but another thing that may be useful is
+to add CLIPPY=1 to the make invocation when building normally. This
+causes additional warnings to be checked using a tool called clippy.
+
+Alice
 
