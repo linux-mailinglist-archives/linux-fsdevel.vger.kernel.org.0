@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-79039-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79040-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 4GbYElsBpml5IwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79039-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:30:03 +0100
+	id AGd+OHoApml5IwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79040-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:26:18 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD0F1E30AC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:30:02 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 876F11E2D50
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 02 Mar 2026 22:26:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 861933078171
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 21:14:06 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A9ED5335AC01
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2026 21:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 207453C5E81;
-	Mon,  2 Mar 2026 20:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1BD3C7224;
+	Mon,  2 Mar 2026 20:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U64fZHux"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a8erYOQo"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726E839F18E;
-	Mon,  2 Mar 2026 20:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0793C6A35;
+	Mon,  2 Mar 2026 20:43:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772484178; cv=none; b=VR+Tr0MHBuAqhMNCX8f3lyVap7reTpZrXyfw/4QgDmUInVejS5C3uWFQj9jcwDsDAlOKA4syNHfYUZlq0nJOrZU3mlc4Pg2WUUP8V18a7uU22cXaKirX6xHNjHhXoKfDgGa21MLQhvVoLSmQ1s87e8VK8eOa+uG9VkmPDbj15g4=
+	t=1772484192; cv=none; b=jjYLVeVgLy53JigM9+gugob4ja3yGO+iRtL3dGmVSBbKOqDsbVgLg+/V3ynZivD7lKNOHDJVlqA38AIHolErGydcDcfahQmXcPxHmJ6fvjbF3pZeUZBWPglWEvEXa0nrpMEGj9wlgzlfFehL4x4mylDkIIOPwLm73onPFw+RhSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772484178; c=relaxed/simple;
-	bh=az5/UfgR48DhHcdtOz5xQudKTVsY7dUyG5/iejsoF3Q=;
+	s=arc-20240116; t=1772484192; c=relaxed/simple;
+	bh=FCaNd3pHlGf86M70GmPN/2h+0/BSndhawfzqYvem1rw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=E7tJS6Q4aEfBppZw0v8bI1juQ9NnYRMkC1Q5RNTzhUybHYwBtTT3V/sqPv3xtdnvVqtfzVYQLLIDiU0VXdmGBBgjyTMH1ElU21kgpGv1ff7qM+IbCXppWpsBNLQ4kLzO6ffj6n7hL0LowvpAKrfeYwTuDlXYGv6vo/nGOvI7M3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U64fZHux; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14CA9C2BC87;
-	Mon,  2 Mar 2026 20:42:44 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=p9ICZR/KM7i6Uz/A9yExUYukNfiTff4YJ+ZwoD3tj4koyHl4rfZiDDIbgN2HKdURodnp/CEVVXSVRTwpff/QG1RwVY3YccgoDPA4EIUGRkJIGPvdbe7s9kN1J4CH5aS6i6saTSfRkV8aaA6mXd/+FHttmyxXj+jpP9Cds9jRlpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a8erYOQo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E43EC19425;
+	Mon,  2 Mar 2026 20:42:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772484178;
-	bh=az5/UfgR48DhHcdtOz5xQudKTVsY7dUyG5/iejsoF3Q=;
+	s=k20201202; t=1772484192;
+	bh=FCaNd3pHlGf86M70GmPN/2h+0/BSndhawfzqYvem1rw=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=U64fZHuxQT3j2g9YM2j7e/vbcbDBvajdnUXKwQIjuM3WFcIX/1QkPqF5sUYX3qHHz
-	 Mb4JEexSPcZ+WRvsCPNifVFsOfIy/CB/Z/Glo/3zoEdMwflqDdpFDmrISqab44Dg0k
-	 xXkLYaFAC5AyCROU+yxO1j/kVfIKnLHxzCW/grvhs8R6WgbTQJYhsMfGiX511FLGj7
-	 G4AsHVkltVKQ3I9t+dgV/Uvo1wOyaHk3xXC3zcnK/CFBb4vsWNY+qK1nFlQBeXjm99
-	 1DAM06ER88Zk2V8P4cduXVwHJgbcmFSUq0hqqz8MmZdSkmBf6enZg5hHpsT1vwSIXL
-	 Q8/gXJBezzM+Q==
+	b=a8erYOQoCeZ4W4SsKPy6/MjVlXR7g69i4wbgWBsm4HI5CR/90JTSi3KGCpH64F2cq
+	 5KYYQ8lChrVsy4lZ1JRloEwtGxpF43U70cVxjwumOtq+7DXaDBRvr4C1CxSbn4AX26
+	 +gVeG0c3n3ZLtNb9i3VJiV8bBy1zKas6/u57Kcj+BjqfRnLLuxm/w0Ilats1EctoS5
+	 mO5yXafS6AX2PWuTvlJBBQ9vVkekTrE6uxK5cqmpcEnqCkiuink+of/l0tqRdUZ75u
+	 sne00ytw34bZb06iCSujnQvm2M6EHmxg3n+razSMYdNY5R3AMIN+RA3Teg2DEZPfE/
+	 Ki0AiqBAN+RDQ==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 02 Mar 2026 15:24:59 -0500
-Subject: [PATCH v2 075/110] cachefiles: replace PRIino with %llu/%llx
- format strings
+Date: Mon, 02 Mar 2026 15:25:00 -0500
+Subject: [PATCH v2 076/110] ceph: replace PRIino with %llu/%llx format
+ strings
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260302-iino-u64-v2-75-e5388800dae0@kernel.org>
+Message-Id: <20260302-iino-u64-v2-76-e5388800dae0@kernel.org>
 References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
 In-Reply-To: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -171,34 +171,34 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-sctp@vger.kernel.org, bpf@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3200; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=az5/UfgR48DhHcdtOz5xQudKTVsY7dUyG5/iejsoF3Q=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBppfIDvrM/TGfOFWGOUqzfIyuwAF6e1qhVhF+Yh
- Qv8S2GtC/mJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaXyAwAKCRAADmhBGVaC
- FX1hEACqbYeHwrURpMMogt8p9UTcZ6PyKhws+kg8vAResb4l8L4XKPbalHZif6Y08h58t/KgmbN
- AkeZNtvuSQBICx9k2yue0Kg1DC5VB163feX+p8iHl4d9W61xhIx9hc9MIZSo48OyYobj5dZJmxd
- saqzyRL+cpFK11qSphNjtHv5QicR5807/BTwqicaoAcc+0wG6Wwww9xIM0EepTkrs/YczUYJthe
- CFXtU18q3Df2UomQg5hEepZS074QE5VH1iwVIbkLo8aGKHjwI9Qhyaoz0GVV6/T5Kzaj0l+B05c
- j17C+65SAsnLhabenAbtSuH2PiV/K+GgKI+EVd1UCeFO4Tndlo8CF2lkIbzEr+uccKkSpo83bdW
- 1IqkMQiNWhkDchA4mi2HgqQkwzX49TTnlMxF0uqpVnSgNpRHcBbuzBK1sMTrd8O3aeQdNTYDTQY
- 8vvN3iiFDN/D86PtCY1nYl3+mxGdVATt9O9oaUxAi/8s3QI8OK5uXim0mOLMv42sx06Ff63wTCZ
- Gmz7zDOigm9j99CSyK87xQ0wkrLHj1wnv59TUkj378+ps4zBidsrXd3JPdFWl9EVxhMq0P9irT8
- CmZSS5ry0AXxlvqeLQoCk7RzUsNUi9i7238avFyp3g91NNOpuEYTCknceTCWgjP5GtOz3vvQVY3
- JkCvUHLgEBDZ2+A==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1325; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=FCaNd3pHlGf86M70GmPN/2h+0/BSndhawfzqYvem1rw=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBppfID+1/UHZA4NPHPLnw/+H+1taDd3t+Ga5qZd
+ qZRYbF9vRuJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaXyAwAKCRAADmhBGVaC
+ FWh4D/wJ+yIb2cpCiPiJ8w1tdyHCbSXHupm6zq31jic18FwvKTcyujLdAcMJbbJiY3gw6BuOzw2
+ Cg8L9GAH2nYnXa2JqZ4OztG6Od2Udffiv0UHbZyU+xx6VyV1Upr0hQWKwCMchPy3vjczDBqaIII
+ C5vQc6cueJrt59r6TLCm2ehoYphk+juAj0U93SMafU4M4v08zpTagoXR5ybYfdGTV7c33q4U8GI
+ bMcSmZ7R13/DzvXCxjDko049T8rsEzgVNhwB0n9Ox73Ng+/rcHGMLRWiUR1nWhmIrlyBnxcdyhY
+ XKW8z6gW8zCLrKTSNrL+yRmVeCdpLjzZ/RMfTvmBJle5co30tXFChyLfNRBe7/Zw9S6sk4MIDe1
+ 5ISjP94k54Zh3/pC5eYsLzkivQb4t/ho3QTTP5L1lEsOXc4gDvAiHnF8S561Xz26NIRUoTUw56T
+ Rwnxti+HromqTX968WDtdOxhp/oqUL2zfij0+p04SwmQF85SHwrOTGAkZwqmtJ2eDYwqB+nvcJ/
+ ssLak2UCmta+IiPJr8fq8hAvaa7TtWXxQ4StKOBxj5wwQY9QVqvC3ldqD/zNHKC/bq4Q0zBB63G
+ AkkloOzcAGI1uwVBcnfQYsLv+yhDtfrnEV610eBHY8K0AQM4pP+3IX7g7piHYEb2VarMVnS16R8
+ jYHNDYgzKNO0NbQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
-X-Rspamd-Queue-Id: EBD0F1E30AC
+X-Rspamd-Queue-Id: 876F11E2D50
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79039-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79040-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de,yaina.de,holtmann.org,hartkopp.net,pengutronix.de,secunet.com,gondor.apana.org.au,fomichev.me,iogearbox.net];
@@ -206,7 +206,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	TO_DN_SOME(0.00)[];
 	RCPT_COUNT_GT_50(0.00)[172];
 	PRECEDENCE_BULK(0.00)[];
@@ -216,89 +216,39 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
 Now that i_ino is u64 and the PRIino format macro has been removed,
-replace all uses in cachefiles with the concrete format strings.
+replace all uses in ceph with the concrete format strings.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/cachefiles/namei.c | 12 ++++++------
- fs/cachefiles/xattr.c |  2 +-
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ fs/ceph/crypto.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-index ace111f29c6fa006b69a0808764b60a0074db229..4fdf7687aacb8285ae38d9b5d7e5129897b3ca03 100644
---- a/fs/cachefiles/namei.c
-+++ b/fs/cachefiles/namei.c
-@@ -147,7 +147,7 @@ struct dentry *cachefiles_get_directory(struct cachefiles_cache *cache,
- 		}
- 		ASSERT(d_backing_inode(subdir));
+diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
+index 718c194ba5d8ce22c6a5d1dd687ec3761263e7e1..64d2407592772ed61fb95b62401db194112f48a8 100644
+--- a/fs/ceph/crypto.c
++++ b/fs/ceph/crypto.c
+@@ -272,7 +272,7 @@ int ceph_encode_encrypted_dname(struct inode *parent, char *buf, int elen)
+ 	/* To understand the 240 limit, see CEPH_NOHASH_NAME_MAX comments */
+ 	WARN_ON(elen > 240);
+ 	if (dir != parent) // leading _ is already there; append _<inum>
+-		elen += 1 + sprintf(p + elen, "_%" PRIino "u", dir->i_ino);
++		elen += 1 + sprintf(p + elen, "_%llu", dir->i_ino);
  
--		_debug("mkdir -> %pd{ino=%" PRIino "u}",
-+		_debug("mkdir -> %pd{ino=%llu}",
- 		       subdir, d_backing_inode(subdir)->i_ino);
- 		if (_is_new)
- 			*_is_new = true;
-@@ -158,7 +158,7 @@ struct dentry *cachefiles_get_directory(struct cachefiles_cache *cache,
- 	end_creating_keep(subdir);
+ out:
+ 	kfree(cryptbuf);
+@@ -377,7 +377,7 @@ int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscrypt_str *tname,
+ 	if (!ret && (dir != fname->dir)) {
+ 		char tmp_buf[BASE64_CHARS(NAME_MAX)];
  
- 	if (!__cachefiles_mark_inode_in_use(NULL, d_inode(subdir))) {
--		pr_notice("cachefiles: Inode already in use: %pd (B=%" PRIino "x)\n",
-+		pr_notice("cachefiles: Inode already in use: %pd (B=%llx)\n",
- 			  subdir, d_inode(subdir)->i_ino);
- 		goto mark_error;
- 	}
-@@ -183,7 +183,7 @@ struct dentry *cachefiles_get_directory(struct cachefiles_cache *cache,
- 	    !d_backing_inode(subdir)->i_op->unlink)
- 		goto check_error;
- 
--	_leave(" = [%" PRIino "u]", d_backing_inode(subdir)->i_ino);
-+	_leave(" = [%llu]", d_backing_inode(subdir)->i_ino);
- 	return subdir;
- 
- check_error:
-@@ -529,7 +529,7 @@ static bool cachefiles_create_file(struct cachefiles_object *object)
- 
- 	set_bit(FSCACHE_COOKIE_NEEDS_UPDATE, &object->cookie->flags);
- 	set_bit(CACHEFILES_OBJECT_USING_TMPFILE, &object->flags);
--	_debug("create -> %pD{ino=%" PRIino "u}", file, file_inode(file)->i_ino);
-+	_debug("create -> %pD{ino=%llu}", file, file_inode(file)->i_ino);
- 	object->file = file;
- 	return true;
- }
-@@ -549,7 +549,7 @@ static bool cachefiles_open_file(struct cachefiles_object *object,
- 	_enter("%pd", dentry);
- 
- 	if (!cachefiles_mark_inode_in_use(object, d_inode(dentry))) {
--		pr_notice("cachefiles: Inode already in use: %pd (B=%" PRIino "x)\n",
-+		pr_notice("cachefiles: Inode already in use: %pd (B=%llx)\n",
- 			  dentry, d_inode(dentry)->i_ino);
- 		return false;
- 	}
-@@ -657,7 +657,7 @@ bool cachefiles_look_up_object(struct cachefiles_object *object)
- 	if (!ret)
- 		return false;
- 
--	_leave(" = t [%" PRIino "u]", file_inode(object->file)->i_ino);
-+	_leave(" = t [%llu]", file_inode(object->file)->i_ino);
- 	return true;
- 
- new_file:
-diff --git a/fs/cachefiles/xattr.c b/fs/cachefiles/xattr.c
-index 1cfeadc4f8f0b95ce861a2faf5b7b41b8156cf47..f8ae78b3f7b6d368526a86b454bf0febd1ccc509 100644
---- a/fs/cachefiles/xattr.c
-+++ b/fs/cachefiles/xattr.c
-@@ -179,7 +179,7 @@ int cachefiles_remove_object_xattr(struct cachefiles_cache *cache,
- 			ret = 0;
- 		else if (ret != -ENOMEM)
- 			cachefiles_io_error(cache,
--					    "Can't remove xattr from %" PRIino "u"
-+					    "Can't remove xattr from %llu"
- 					    " (error %d)",
- 					    d_backing_inode(dentry)->i_ino, -ret);
- 	}
+-		name_len = snprintf(tmp_buf, sizeof(tmp_buf), "_%.*s_%" PRIino "u",
++		name_len = snprintf(tmp_buf, sizeof(tmp_buf), "_%.*s_%llu",
+ 				    oname->len, oname->name, dir->i_ino);
+ 		memcpy(oname->name, tmp_buf, name_len);
+ 		oname->len = name_len;
 
 -- 
 2.53.0
