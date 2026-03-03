@@ -1,98 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-79169-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +HCBLtS5pmn2TAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79169-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 11:37:08 +0100
+	id wOyREUS6pmn2TAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 11:39:00 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id E43A01ECBD5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 11:37:07 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B03721ECCAA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 11:38:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 6C1CF3026D9F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 10:36:30 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 0128330584FE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 10:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8958439D6C9;
-	Tue,  3 Mar 2026 10:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="riRJ8NW+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="f30DNEh2";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="riRJ8NW+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="f30DNEh2"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1913B38229F;
+	Tue,  3 Mar 2026 10:36:35 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4F63947A0
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Mar 2026 10:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AB53822B5
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Mar 2026 10:36:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772534189; cv=none; b=f8OFdeAQCxYXirIBwvYgWuuf32ZET8n722gp/hccqPBJhe1t2fsJG0rPjh5Vc5Kjmca9JnfOnWUbUzUYK5JIlYpLf4g1xH1IHn6OcODUBPOY2SOL/Isiew0HTKUmUI4PijRLniUlqcAXOzVMeRRx6ej9eioXvNRSJh6dKUn8eT8=
+	t=1772534194; cv=none; b=VWJoVa5ILig0ApAP8Yt55K4tHnebMPd2z2QS8K/P0M2GRN/Pni/JxKnMLNsIF4chHTclo8igGVy8PifhtORMlXaMwZ9bZPnbGFqTJ0ZZd4mvkPD/UbClufbHwUC57SmC0dJ8yQ/DA65enjoyRDgVlbofFeObITDdYTb03JQqQBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772534189; c=relaxed/simple;
-	bh=w1z6jnxF8yDzKQW95qXVLGcI3yol4PvG2FoQtSuAD3M=;
+	s=arc-20240116; t=1772534194; c=relaxed/simple;
+	bh=glK5IwI5bzBvc6wGANg8E++2uCF5SfKIYMDofG/EJec=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=me/NZs+AWAdvBLxJ/XjU3diJTA9NP4TGOl6g+rAAsJIHgx56gckf6kFat4LKgvwozIrBnUQiJgcRjmOtn/mSC0FsuXdUsg07OXv4WUKii72vF9AEEp/Rr97x5HnUZQ/vSlSSq9avv2KDP2NFPB/HhEp2chgH632V2xKeS8D6Va4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=riRJ8NW+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=f30DNEh2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=riRJ8NW+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=f30DNEh2; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=rhhoRje/r9qCbOuXwa1rk/Gun99gRENUoWfBC9gUoxUcQFLYuAwQL6i0LP/UP6cc0vqXA7Mf+FrbdM6IJXL0YgIeTYqWF+fPDLPXkDRvs8vpaaQqnere6gsuL6PoccBx76QgnJJNUZcfmeUaUt+S9ZL7Bv2asIGhwmXY/RUFoj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 649573F93D;
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7CFE03F8F3;
 	Tue,  3 Mar 2026 10:34:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1772534085; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g8kyywLHolUFfflmeKoQmwdoShpEfRfGPbaWvTfEWyg=;
-	b=riRJ8NW+V1zZx8cER/1x1sr8pnsKHIaIEIx/c05/7IhYddMIYhuBNB1YeexWxKoiQEsyD7
-	mXtVQzMuEF4htuZU8Dv5ODkB5ct1+hD8cb1vr5ua86U8Vqc4Pszk3VqqOBLf/mGm3+/J9u
-	5cUnoWpr+mXwJp46KaWZZY5yiKRosj4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1772534085;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g8kyywLHolUFfflmeKoQmwdoShpEfRfGPbaWvTfEWyg=;
-	b=f30DNEh2hU2XMQ+xlXR4PJS2MO4i4h5WSF36OjO18kXAC9PPALuN454QGTgM9ci/Y2IZVF
-	Z0KSrzaLupvc61CQ==
 Authentication-Results: smtp-out1.suse.de;
 	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1772534085; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g8kyywLHolUFfflmeKoQmwdoShpEfRfGPbaWvTfEWyg=;
-	b=riRJ8NW+V1zZx8cER/1x1sr8pnsKHIaIEIx/c05/7IhYddMIYhuBNB1YeexWxKoiQEsyD7
-	mXtVQzMuEF4htuZU8Dv5ODkB5ct1+hD8cb1vr5ua86U8Vqc4Pszk3VqqOBLf/mGm3+/J9u
-	5cUnoWpr+mXwJp46KaWZZY5yiKRosj4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1772534085;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g8kyywLHolUFfflmeKoQmwdoShpEfRfGPbaWvTfEWyg=;
-	b=f30DNEh2hU2XMQ+xlXR4PJS2MO4i4h5WSF36OjO18kXAC9PPALuN454QGTgM9ci/Y2IZVF
-	Z0KSrzaLupvc61CQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 59FC03EA6F;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 67C213EA69;
 	Tue,  3 Mar 2026 10:34:45 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VL3cFUW5pmmXFQAAD6G6ig
+	id wgBcGUW5pmmdFQAAD6G6ig
 	(envelope-from <jack@suse.cz>); Tue, 03 Mar 2026 10:34:45 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 35DD4A0B7D; Tue,  3 Mar 2026 11:34:41 +0100 (CET)
+	id 3E25DA0B7E; Tue,  3 Mar 2026 11:34:41 +0100 (CET)
 From: Jan Kara <jack@suse.cz>
 To: <linux-fsdevel@vger.kernel.org>
 Cc: Christian Brauner <brauner@kernel.org>,
@@ -109,9 +68,9 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	linux-aio@kvack.org,
 	Benjamin LaHaise <bcrl@kvack.org>,
 	Jan Kara <jack@suse.cz>
-Subject: [PATCH 28/32] minix: Track metadata bhs in fs-private inode part
-Date: Tue,  3 Mar 2026 11:34:17 +0100
-Message-ID: <20260303103406.4355-60-jack@suse.cz>
+Subject: [PATCH 29/32] ext4: Track metadata bhs in fs-private inode part
+Date: Tue,  3 Mar 2026 11:34:18 +0100
+Message-ID: <20260303103406.4355-61-jack@suse.cz>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260303101717.27224-1-jack@suse.cz>
 References: <20260303101717.27224-1-jack@suse.cz>
@@ -121,127 +80,180 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2840; i=jack@suse.cz; h=from:subject; bh=w1z6jnxF8yDzKQW95qXVLGcI3yol4PvG2FoQtSuAD3M=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBpprk2v2FfAPa1w9f7A49GkDXcSeq/sH/iUnnvR jcCiWxatWiJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCaaa5NgAKCRCcnaoHP2RA 2fMjCAC2dbhicKhyynE4JWWF61bmiCpPMpGAK4sf7cvJyVAxew2gXZFeKUCnksLJWiqIa2IcejS wrjZW+nVCA9RMis6u/+vQ9JVCdCcKDwwmlD2EBfj7TNmerBc9slRwdKESJrpOMXCh54ge6J8m2a chM5bCBeenSjKH+a6BpbBFoQIQNvG8xsu8m7q/S66uGG7MyXYxHTudyjoxrGO0huJ13UQd9jaZl DGhwTyyFI+fZZ7Mctuvij+ZdwlaUXK6CGjJTuZwE9yTjDpRNw6y5tl6HCayh8XW5NKwonRXfsM1 AMX68dkZN5OALYJfmcyZLrQ3/8X52nXd7TZwuSOb9+ZZVkRG
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4816; i=jack@suse.cz; h=from:subject; bh=glK5IwI5bzBvc6wGANg8E++2uCF5SfKIYMDofG/EJec=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBpprk2eXk3gBLtLKTK6vnw0UxDVHoLdffj9Gncu VMs27zm3eaJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCaaa5NgAKCRCcnaoHP2RA 2eMXCACdnE5C1+/lCrGBS99f+cu5Lf4A/gsWSmltB4nZv30ejF4l0epIRPudvmCG0shOIBrkbop +Agkd5u6WzuU/wwY9G/tkZ1vHkxjclfBkREyGftqS6GlfgCwB/PyG+2We/pB1jI0jLriALb3I+w PiKUunQNDYy0QCSziRKPT1DMJSZZcC50ZNQ2e5Kyu9+5AN+kc2WyzJN8T8E6YHunCupUbJ6xgI6 2SvnkBVq2TB6QhV8RybU+648wxdMqHNHcEblqWitBWiXlJGiUX6TwmVNFws9q/avHoDE/zOyKCq 3aRO0APtNPg5S0P2XTORKdcfJTlGHrcnT92ouNVEFoHOJhxr
 X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -5.30
-X-Spam-Level: 
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
 X-Spam-Flag: NO
-X-Rspamd-Queue-Id: E43A01ECBD5
+X-Spam-Score: -4.00
+X-Spam-Level: 
+X-Rspamd-Queue-Id: B03721ECCAA
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [1.34 / 15.00];
+X-Spamd-Result: default: False [1.54 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	TAGGED_FROM(0.00)[bounces-79169-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,ZenIV.linux.org.uk,vger.kernel.org,mit.edu,gmail.com,suse.com,mail.parknet.co.jp,linux.dev,suse.de,kvack.org,suse.cz];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-79170-lists,linux-fsdevel=lfdr.de];
 	DMARC_NA(0.00)[suse.cz];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	FREEMAIL_CC(0.00)[kernel.org,ZenIV.linux.org.uk,vger.kernel.org,mit.edu,gmail.com,suse.com,mail.parknet.co.jp,linux.dev,suse.de,kvack.org,suse.cz];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
+	R_DKIM_NA(0.00)[];
+	NEURAL_HAM(-0.00)[-0.860];
 	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo,suse.cz:dkim,suse.cz:email,suse.cz:mid];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	NEURAL_HAM(-0.00)[-0.999];
 	TO_DN_SOME(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	RCVD_COUNT_SEVEN(0.00)[7]
 X-Rspamd-Action: no action
 
-Track metadata bhs for an inode in fs-private part of the inode.
+Track metadata bhs for an inode in fs-private part of the inode. We need
+the tracking only for nojournal mode so this is somewhat wasteful. We
+can relatively easily make the mapping_metadata_bhs struct dynamically
+allocated similarly to how we treat jbd2_inode but let's leave that for
+ext4 specific series once the dust settles a bit.
 
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/minix/file.c  | 1 +
- fs/minix/inode.c | 8 ++++++++
- fs/minix/minix.h | 2 ++
- fs/minix/namei.c | 1 +
- 4 files changed, 12 insertions(+)
+ fs/ext4/ext4.h    | 4 +++-
+ fs/ext4/file.c    | 1 +
+ fs/ext4/inode.c   | 2 +-
+ fs/ext4/namei.c   | 2 ++
+ fs/ext4/super.c   | 6 ++++++
+ fs/ext4/symlink.c | 3 +++
+ 6 files changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/fs/minix/file.c b/fs/minix/file.c
-index dca7ac71f049..b3abe380634a 100644
---- a/fs/minix/file.c
-+++ b/fs/minix/file.c
-@@ -50,4 +50,5 @@ static int minix_setattr(struct mnt_idmap *idmap,
- const struct inode_operations minix_file_inode_operations = {
- 	.setattr	= minix_setattr,
- 	.getattr	= minix_getattr,
-+	.get_metadata_bhs = minix_get_metadata_bhs,
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 293f698b7042..a829e5da67af 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -1121,6 +1121,7 @@ struct ext4_inode_info {
+ 	struct rw_semaphore i_data_sem;
+ 	struct inode vfs_inode;
+ 	struct jbd2_inode *jinode;
++	struct mapping_metadata_bhs i_metadata_bhs;
+ 
+ 	/*
+ 	 * File creation time. Its function is same as that of
+@@ -3203,8 +3204,9 @@ extern void ext4_mark_group_bitmap_corrupted(struct super_block *sb,
+ 					     unsigned int flags);
+ extern unsigned int ext4_num_base_meta_blocks(struct super_block *sb,
+ 					      ext4_group_t block_group);
+-extern void print_daily_error_info(struct timer_list *t);
++struct mapping_metadata_bhs *ext4_get_metadata_bhs(struct inode *inode);
+ 
++extern void print_daily_error_info(struct timer_list *t);
+ extern __printf(7, 8)
+ void __ext4_error(struct super_block *, const char *, unsigned int, bool,
+ 		  int, __u64, const char *, ...);
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index f1dc5ce791a7..3d433f50524b 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -987,5 +987,6 @@ const struct inode_operations ext4_file_inode_operations = {
+ 	.fiemap		= ext4_fiemap,
+ 	.fileattr_get	= ext4_fileattr_get,
+ 	.fileattr_set	= ext4_fileattr_set,
++	.get_metadata_bhs = ext4_get_metadata_bhs,
  };
-diff --git a/fs/minix/inode.c b/fs/minix/inode.c
-index ab7c06efb139..20abbe21a632 100644
---- a/fs/minix/inode.c
-+++ b/fs/minix/inode.c
-@@ -85,6 +85,8 @@ static struct inode *minix_alloc_inode(struct super_block *sb)
- 	ei = alloc_inode_sb(sb, minix_inode_cachep, GFP_KERNEL);
- 	if (!ei)
- 		return NULL;
+ 
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 011cb2eb16a2..eead6c5c2366 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3436,7 +3436,7 @@ static bool ext4_inode_datasync_dirty(struct inode *inode)
+ 	}
+ 
+ 	/* Any metadata buffers to write? */
+-	if (mmb_has_buffers(&inode->i_mapping->i_metadata_bhs))
++	if (mmb_has_buffers(&EXT4_I(inode)->i_metadata_bhs))
+ 		return true;
+ 	return inode_state_read_once(inode) & I_DIRTY_DATASYNC;
+ }
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index c4b5e252af0e..4d2cae140b71 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -4228,6 +4228,7 @@ const struct inode_operations ext4_dir_inode_operations = {
+ 	.fiemap         = ext4_fiemap,
+ 	.fileattr_get	= ext4_fileattr_get,
+ 	.fileattr_set	= ext4_fileattr_set,
++	.get_metadata_bhs = ext4_get_metadata_bhs,
+ };
+ 
+ const struct inode_operations ext4_special_inode_operations = {
+@@ -4236,4 +4237,5 @@ const struct inode_operations ext4_special_inode_operations = {
+ 	.listxattr	= ext4_listxattr,
+ 	.get_inode_acl	= ext4_get_acl,
+ 	.set_acl	= ext4_set_acl,
++	.get_metadata_bhs = ext4_get_metadata_bhs,
+ };
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index ea827b0ecc8d..4b9eb86b03e2 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1428,6 +1428,7 @@ static struct inode *ext4_alloc_inode(struct super_block *sb)
+ 	INIT_WORK(&ei->i_rsv_conversion_work, ext4_end_io_rsv_work);
+ 	ext4_fc_init_inode(&ei->vfs_inode);
+ 	spin_lock_init(&ei->i_fc_lock);
 +	mmb_init(&ei->i_metadata_bhs);
-+
  	return &ei->vfs_inode;
  }
  
-@@ -122,6 +124,11 @@ static void destroy_inodecache(void)
- 	kmem_cache_destroy(minix_inode_cachep);
+@@ -1521,6 +1522,11 @@ static void destroy_inodecache(void)
+ 	kmem_cache_destroy(ext4_inode_cachep);
  }
  
-+struct mapping_metadata_bhs *minix_get_metadata_bhs(struct inode *inode)
++struct mapping_metadata_bhs *ext4_get_metadata_bhs(struct inode *inode)
 +{
-+	return &minix_i(inode)->i_metadata_bhs;
++	return &EXT4_I(inode)->i_metadata_bhs;
 +}
 +
- static const struct super_operations minix_sops = {
- 	.alloc_inode	= minix_alloc_inode,
- 	.free_inode	= minix_free_in_core_inode,
-@@ -502,6 +509,7 @@ static const struct address_space_operations minix_aops = {
- static const struct inode_operations minix_symlink_inode_operations = {
- 	.get_link	= page_get_link,
- 	.getattr	= minix_getattr,
-+	.get_metadata_bhs = minix_get_metadata_bhs,
+ void ext4_clear_inode(struct inode *inode)
+ {
+ 	ext4_fc_del(inode);
+diff --git a/fs/ext4/symlink.c b/fs/ext4/symlink.c
+index 645240cc0229..53ec8daf4cae 100644
+--- a/fs/ext4/symlink.c
++++ b/fs/ext4/symlink.c
+@@ -119,6 +119,7 @@ const struct inode_operations ext4_encrypted_symlink_inode_operations = {
+ 	.setattr	= ext4_setattr,
+ 	.getattr	= ext4_encrypted_symlink_getattr,
+ 	.listxattr	= ext4_listxattr,
++	.get_metadata_bhs = ext4_get_metadata_bhs,
  };
  
- void minix_set_inode(struct inode *inode, dev_t rdev)
-diff --git a/fs/minix/minix.h b/fs/minix/minix.h
-index 7e1f652f16d3..38981a30ac99 100644
---- a/fs/minix/minix.h
-+++ b/fs/minix/minix.h
-@@ -19,6 +19,7 @@ struct minix_inode_info {
- 		__u16 i1_data[16];
- 		__u32 i2_data[16];
- 	} u;
-+	struct mapping_metadata_bhs i_metadata_bhs;
- 	struct inode vfs_inode;
+ const struct inode_operations ext4_symlink_inode_operations = {
+@@ -126,6 +127,7 @@ const struct inode_operations ext4_symlink_inode_operations = {
+ 	.setattr	= ext4_setattr,
+ 	.getattr	= ext4_getattr,
+ 	.listxattr	= ext4_listxattr,
++	.get_metadata_bhs = ext4_get_metadata_bhs,
  };
  
-@@ -57,6 +58,7 @@ unsigned long minix_count_free_blocks(struct super_block *sb);
- int minix_getattr(struct mnt_idmap *, const struct path *,
- 		struct kstat *, u32, unsigned int);
- int minix_prepare_chunk(struct folio *folio, loff_t pos, unsigned len);
-+struct mapping_metadata_bhs *minix_get_metadata_bhs(struct inode *inode);
- 
- extern void V1_minix_truncate(struct inode *);
- extern void V2_minix_truncate(struct inode *);
-diff --git a/fs/minix/namei.c b/fs/minix/namei.c
-index 263e4ba8b1c8..e31e84a677eb 100644
---- a/fs/minix/namei.c
-+++ b/fs/minix/namei.c
-@@ -288,4 +288,5 @@ const struct inode_operations minix_dir_inode_operations = {
- 	.rename		= minix_rename,
- 	.getattr	= minix_getattr,
- 	.tmpfile	= minix_tmpfile,
-+	.get_metadata_bhs = minix_get_metadata_bhs,
+ const struct inode_operations ext4_fast_symlink_inode_operations = {
+@@ -133,4 +135,5 @@ const struct inode_operations ext4_fast_symlink_inode_operations = {
+ 	.setattr	= ext4_setattr,
+ 	.getattr	= ext4_getattr,
+ 	.listxattr	= ext4_listxattr,
++	.get_metadata_bhs = ext4_get_metadata_bhs,
  };
 -- 
 2.51.0
