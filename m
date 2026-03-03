@@ -1,213 +1,343 @@
-Return-Path: <linux-fsdevel+bounces-79111-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79112-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id MI3jGFJkpmnxPAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79111-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 05:32:18 +0100
+	id gC2NJFtqpmlRPgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79112-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 05:58:03 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AC891E8DD2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 05:32:17 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B76F71E914C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 05:58:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 730183015BAF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 04:32:14 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 335453055D43
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 04:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3596537CD37;
-	Tue,  3 Mar 2026 04:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D38373C02;
+	Tue,  3 Mar 2026 04:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hev-cc.20230601.gappssmtp.com header.i=@hev-cc.20230601.gappssmtp.com header.b="DU9z7B63"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d7lPLTMW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8187725DB1C
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Mar 2026 04:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.177
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772512332; cv=pass; b=qQZiBMyDhxNmKwarVXtUuIdDnNhZPJ7Ybu/cu+Blz+wPQIifgFv/Izfg4Ulu7GNMwXtpbkr8wmI3o13xUcs2sgpmy5B7KJ08zi3Y2hBhuROAcGstC2aIuvKXT+qva6ZjhxiicRTCFunVwasOZdhl2UlmkWIfV29Y8D6rOoDG1JE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772512332; c=relaxed/simple;
-	bh=6w/G9HagsxRSvdT2x9/q/VQ4/NrLZOBn1E2lWDQQiqs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZOd0Yxg0dypTdG45kCWDBgL9n+Ur7ZB6l0cWNzQIeooUeKTKJUw3kzFIhyMjAFrriC+iEMLspAkV8Js60NyzZSpgkXddYnAjGktWPsA81QPN2aiB41El9HxPTHOTQKW5hYj4U4qCa/UoFiqvaMfeZK7f0W3U2fRc1RtB/UM/aWs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hev.cc; spf=pass smtp.mailfrom=hev.cc; dkim=pass (2048-bit key) header.d=hev-cc.20230601.gappssmtp.com header.i=@hev-cc.20230601.gappssmtp.com header.b=DU9z7B63; arc=pass smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hev.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hev.cc
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-79628fb5c05so40437897b3.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2026 20:32:11 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772512330; cv=none;
-        d=google.com; s=arc-20240605;
-        b=kvpynT7ULQUK2oBm8ATESEdbt75BURtlA+1BG62wrREArRczVdnlWCUc4TGKAWVvfQ
-         rO/kEDhZ7XS7wgLDdZxhxTbir+INGIp643vy9tIq2p5dA8I05ZH5yFOl+w1vHWEUYo9c
-         f7cv4PP1PDdsP5bXLBWby3AEQ1uoXuR14XUdJzcWCiYvhocZTM/OTy7eIv4sNytptRPl
-         iChslyYDxWuVJFgKvwvmv1xxQ0D9Zc92DCvj0iRqU5wA7ziVkBQKaP7TUie2n1u0ljfK
-         3q/8rAgyCB62kx3GpuOYwHDn5AFYyCp8+YemvFJu+Up+JfhUP2Yt2CeK+oqXFcBC+HDM
-         +SjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=vGFounTaPfTh3BSvvZSUHOsDY6NUzCCD/Stg39Oh89o=;
-        fh=k0VyJXdGmjXQhayUGYxoSm5dD851XOYBP4k5SEk/570=;
-        b=fCkBGY/dOWR+/u0IgltpTqksJuufPS9Hx2G3NQGKoS0IpcBGl5hOOrC7fA8rzVZyYX
-         NUZoIit6pNTgtwHzkESSPh4zazwIo/fodylYRIn+f6mNjnJZ9+AAKQjwDwPRRjoqvBfC
-         17/xiCwE0iDLrVFu2NkH+L7O9Exf4qPWR9xqFPY7khIVNryoTfbxsf2p1oyVHX3R+fjq
-         WFfDWaBRl6ntZNkZi8XuvANxnmv+6mtPQBlzERBs/lmK5gbbrMtyXUdKVStvVNWZgLwV
-         kFElK0cwUJ1d3kWqbkYECw436K+lH0upigejFJDde6ouTMs/BQoGW0iVm+XKONnmFK4+
-         /p7A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hev-cc.20230601.gappssmtp.com; s=20230601; t=1772512330; x=1773117130; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vGFounTaPfTh3BSvvZSUHOsDY6NUzCCD/Stg39Oh89o=;
-        b=DU9z7B63H/zefNd3BqoBtXceBKfqJn+2xro0uDYc5uRdUsr63z9wUA4l0/RoDJo3fK
-         F4OLZn8+oZey918Xw/3u+tYfPV/F1NlqKdOLDtBsux2jETs+UvXQ47ODbsygFwLE6Gxy
-         oXm9GG4zZXzPZGASb6vgj+r6+ZKWqHSgGwJmkl+3p7e4aBlcjaQfDt9LmMJ6z+ZYyfNk
-         SSbb7xkOySxoLbZ387IrYzAkphxjy/dPpV7Jyq3bID59KQUZ46U49437Y8spUlEfjKeF
-         mIGtj+65MMDNjdYTPiVk9eKQ8A3fBp+tynXlRNPFStOJCLcWM9NXhP0gZfV38jgaXXcz
-         4H5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772512330; x=1773117130;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=vGFounTaPfTh3BSvvZSUHOsDY6NUzCCD/Stg39Oh89o=;
-        b=Z1AFkX9iOYFFQ6NzEVCih4CHxXbhd2Jlng3iiD9t/Q7qzcP4JBUhjSudDcGkmLOEaX
-         Cs+Ja695m1JFKN339atdOulaJS3pPaKqL+jLo3+sWUa4/Cn1dhe9INxYt7TqH4oZRQ0w
-         LiUu2XWQXwAauZGyBjbczybPTFwT8XqlWWaqZ7+9+3nrBs1zky4GDs1rcgdrlI2v5+6I
-         pDgkZTNK1ukMoM/vita3PjPYkuSz3MVmbVR24Ulw42MfTk/koMCqN5FVXnbJvuT0dIwJ
-         ZwBRMZPFJB5DgKoMHx/Ajn87wqJFyIILdj5qLLT3mettQ8JkZZ2eaU/D2IS7C7AFa79l
-         C/Gg==
-X-Forwarded-Encrypted: i=1; AJvYcCWtO9kAARJCEyLdxdHVJ/ou6BXh69HAYUcOB3lHSwit3q8AgZSUs61f4XWHwClS/4nNYrX/tDzntwlqh4bI@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKzapbJLa6ixU2G5G/nx9RiN6eqGt1wnI8FOenwi8pRImC7inF
-	+pRV1nTyxVVIMSlPozwUB9njywJPeZSmpe3k0fdHGY+s2qiJ4ib6WKgPvU/WHmoy7+fRmt6wGFS
-	NAb2QobvBHmq8OcFmK6dzn6P+L7Rv1X7ZN06KbfbQYg==
-X-Gm-Gg: ATEYQzxX9e7VK6HDKd2TSIWFwDVcUrbUX9eWzGyi/XeJQWQzHkEAakYoI/QgKooT82u
-	k0yrIj4vFNAQ2OMiumbiX0ZaapRfd0RgETp4k9vsyNhTAaDb3sQjBOJ8a0600lSvYpylBEM8iIX
-	f1V0yzh8mWJxpVvtByz2A/vu+1JpED/kCRPP85JYKskHq/OkCObeYcfXbJHbfNsowYCUh9Co5lD
-	C0J3gyzijQWqSkLV7KEFrgoKBjx1nc79GtI3bHLqkYmZitiwECe3QcqT7dF6k0hANlFifsQyBmo
-	2wDPZ9kDSPhUWdECKEULqp+0oaxXxeizbbd8ZNrerw==
-X-Received: by 2002:a05:690c:6612:b0:796:31ce:6026 with SMTP id
- 00721157ae682-798854c24aamr125016587b3.16.1772512330401; Mon, 02 Mar 2026
- 20:32:10 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4107333D6E1
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Mar 2026 04:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772513876; cv=none; b=IdVDOZpZ7AkkEcdh4/hMjiDY6wapJOtyMlvojiGH+IGzDP5Sz4Q+l7nSCvx7hjbOe5OkctSYRj54KE/tPdGZC2GaBxLcaTErKHpWlahMXHYfZQTV66gMWdJzbPDytznWIIJRgDtDVgXQmV8Z7Q+FRRrJdxkLtDzLwTX2ZqHctmA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772513876; c=relaxed/simple;
+	bh=l1tTb6ZqedZB1tYs/ZhQDppfd20EPa/78nVI1xlrSng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TT04Hn8ptcYtPlcnQuDQpq9pJmlxCzcMgm7C2xM/2O6HASCH3OodeLgifV6skh+928j+Nncc4Hs4zeJjr9NXbXES5IJvMxEzVk5inBTd9TOpMYVE1VQtHjGhNT1g+uX6BoHR/lv/rQXzoz8qxQ64ieq0q8abmP9uKk/s7H6bcNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d7lPLTMW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D902CC116C6;
+	Tue,  3 Mar 2026 04:57:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772513875;
+	bh=l1tTb6ZqedZB1tYs/ZhQDppfd20EPa/78nVI1xlrSng=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d7lPLTMWy1sPC0uSJO6see0YV5l8/T8bRigX8kqc9icxTLy+agEvk+kYnQEgiWCM7
+	 21q3xGLwAxZ28eXeqsfuQbKRcWaFnFDZuM/X1aKOGLFXrFPjUCo3c59h3fx14xx5aj
+	 YxlFwz/RUgzMEos547uXJROdaEDM0FL2mJ5R5hNw/zJ2raROLxTLVxpviFGCXlUXrk
+	 CLGhghAvBnhvXmNoSXJyrwQ08XSeHbDTKJJOejIRb48zubwy8MzgaqIADtrTwAUt77
+	 NqKGOhoq1uWSO9KXDbdq8BMLq0jf6hBLy869ESAYnrOjrc5YwYI/AJEz+tbviA3yQc
+	 +2u77QWAqn5aA==
+Date: Mon, 2 Mar 2026 20:57:55 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: John Groves <john@groves.net>, Amir Goldstein <amir73il@gmail.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	"f-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	Bernd Schubert <bernd@bsbernd.com>,
+	Luis Henriques <luis@igalia.com>,
+	Horst Birthelmer <horst@birthelmer.de>
+Subject: Re: [LSF/MM/BPF TOPIC] Where is fuse going? API cleanup,
+ restructuring and more
+Message-ID: <20260303045755.GN13829@frogsfrogsfrogs>
+References: <aYQNcagFg6-Yz1Fw@groves.net>
+ <20260204190649.GB7693@frogsfrogsfrogs>
+ <0100019c2bdca8b7-b1760667-a4e6-4a52-b976-9f039e65b976-000000@email.amazonses.com>
+ <CAOQ4uxhzaTAw_sHVfY05HdLiB7f6Qu3GMZSBuPkmmsua0kqJBQ@mail.gmail.com>
+ <20260206055247.GF7693@frogsfrogsfrogs>
+ <aYZOVWXGxagpCYw5@groves.net>
+ <CAJnrk1Za2SdCkpJ=sZR8LJ1qvBn8dd3CCsH=PvMrg=_0Jv+40Q@mail.gmail.com>
+ <CAJnrk1YMqDKA5gDZasrxGjJtfdbhmjxX5uhUv=OSPyA=G5EE+Q@mail.gmail.com>
+ <20260221003756.GD11076@frogsfrogsfrogs>
+ <CAJnrk1ZJksW=uz1itdh+zoaQBo_XQ4ZSF13BSnZXMie5pBCvYA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260302155046.286650-1-r@hev.cc> <aaW-x-HVQpSuPRA1@casper.infradead.org>
-In-Reply-To: <aaW-x-HVQpSuPRA1@casper.infradead.org>
-From: hev <r@hev.cc>
-Date: Tue, 3 Mar 2026 12:31:59 +0800
-X-Gm-Features: AaiRm53mvWIuAt2Ru8-fwHAqfutzxjaU88asfjV6R2vdeAh35ONU4AEXTH4oT_I
-Message-ID: <CAHirt9j-appZ+Mn=8AoG=SW3Lrqi2ajdZDGp8yYWiBWkzBbQ9g@mail.gmail.com>
-Subject: Re: [RFC PATCH] binfmt_elf: Align eligible read-only PT_LOAD segments
- to PMD_SIZE for THP
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Kees Cook <kees@kernel.org>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Rspamd-Queue-Id: 5AC891E8DD2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1ZJksW=uz1itdh+zoaQBo_XQ4ZSF13BSnZXMie5pBCvYA@mail.gmail.com>
+X-Rspamd-Queue-Id: B76F71E914C
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
-	R_DKIM_ALLOW(-0.20)[hev-cc.20230601.gappssmtp.com:s=20230601];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DMARC_NA(0.00)[hev.cc];
-	TAGGED_FROM(0.00)[bounces-79111-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79112-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[hev-cc.20230601.gappssmtp.com:+];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[r@hev.cc,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
+	FREEMAIL_TO(0.00)[gmail.com];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:email,sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo,mail.gmail.com:mid]
+	FREEMAIL_CC(0.00)[groves.net,gmail.com,szeredi.hu,lists.linux-foundation.org,vger.kernel.org,bsbernd.com,igalia.com,birthelmer.de];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo];
+	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	NEURAL_HAM(-0.00)[-0.316];
+	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	SUBJECT_HAS_QUESTION(0.00)[]
 X-Rspamd-Action: no action
 
-On Tue, Mar 3, 2026 at 12:46=E2=80=AFAM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Mon, Mar 02, 2026 at 11:50:46PM +0800, WANG Rui wrote:
-> > +config ELF_RO_LOAD_THP_ALIGNMENT
-> > +     bool "Align read-only ELF load segments for THP (EXPERIMENTAL)"
-> > +     depends on READ_ONLY_THP_FOR_FS
->
-> This doesn't deserve a config option.
+On Thu, Feb 26, 2026 at 12:21:43PM -0800, Joanne Koong wrote:
+> On Fri, Feb 20, 2026 at 4:37 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> > On Wed, Feb 11, 2026 at 08:46:26PM -0800, Joanne Koong wrote:
+> > > On Fri, Feb 6, 2026 at 4:22 PM Joanne Koong <joannelkoong@gmail.com> wrote:
+> > > >
+> > > > On Fri, Feb 6, 2026 at 12:48 PM John Groves <john@groves.net> wrote:
+> > > > >
+> > > > > On 26/02/05 09:52PM, Darrick J. Wong wrote:
+> > > > > > On Thu, Feb 05, 2026 at 10:27:52AM +0100, Amir Goldstein wrote:
+> > > > > > > On Thu, Feb 5, 2026 at 4:33 AM John Groves <john@jagalactic.com> wrote:
+> > > > > > > >
+> > > > > > > > On 26/02/04 11:06AM, Darrick J. Wong wrote:
+> > > > > > > >
+> > > > > > > > [ ... ]
+> > > > > > > >
+> > > > > > > > > >  - famfs: export distributed memory
+> > > > > > > > >
+> > > > > > > > > This has been, uh, hanging out for an extraordinarily long time.
+> > > > > > > >
+> > > > > > > > Um, *yeah*. Although a significant part of that time was on me, because
+> > > > > > > > getting it ported into fuse was kinda hard, my users and I are hoping we
+> > > > > > > > can get this upstreamed fairly soon now. I'm hoping that after the 6.19
+> > > > > > > > merge window dust settles we can negotiate any needed changes etc. and
+> > > > > > > > shoot for the 7.0 merge window.
+> > > > > >
+> > > > > > I think we've all missed getting merged for 7.0 since 6.19 will be
+> > > > > > released in 3 days. :/
+> > > > > >
+> > > > > > (Granted most of the maintainers I know are /much/ less conservative
+> > > > > > than I was about the schedule)
+> > > > >
+> > > > > Doh - right you are...
+> > > > >
+> > > > > >
+> > > > > > > I think that the work on famfs is setting an example, and I very much
+> > > > > > > hope it will be a good example, of how improving existing infrastructure
+> > > > > > > (FUSE) is a better contribution than adding another fs to the pile.
+> > > > > >
+> > > > > > Yeah.  Joanne and I spent a couple of days this week coprogramming a
+> > > > > > prototype of a way for famfs to create BPF programs to handle
+> > > > > > INTERLEAVED_EXTENT files.  We might be ready to show that off in a
+> > > > > > couple of weeks, and that might be a way to clear up the
+> > > > > > GET_FMAP/IOMAP_BEGIN logjam at last.
+> > > > >
+> > > > > I'd love to learn more about this; happy to do a call if that's a
+> > > > > good way to get me briefed.
+> > > > >
+> > > > > I [generally but not specifically] understand how this could avoid
+> > > > > GET_FMAP, but not GET_DAXDEV.
+> > > > >
+> > > > > But I'm not sure it could (or should) avoid dax_iomap_rw() and
+> > > > > dax_iomap_fault(). The thing is that those call my begin() function
+> > > > > to resolve an offset in a file to an offset on a daxdev, and then
+> > > > > dax completes the fault or memcpy. In that dance, famfs never knows
+> > > > > the kernel address of the memory at all (also true of xfs in fs-dax
+> > > > > mode, unless that's changed fairly recently). I think that's a pretty
+> > > > > decent interface all in all.
+> > > > >
+> > > > > Also: dunno whether y'all have looked at the dax patches in the famfs
+> > > > > series, but the solution to working with Alistair's folio-ification
+> > > > > and cleanup of the dax layer (which set me back months) was to create
+> > > > > drivers/dax/fsdev.c, which, when bound to a daxdev in place of
+> > > > > drivers/dax/device.c, configures folios & pages compatibly with
+> > > > > fs-dax. So I kinda think I need the dax_iomap* interface.
+> > > > >
+> > > > > As usual, if I'm overlooking something let me know...
+> > > >
+> > > > Hi John,
+> > > >
+> > > > The conversation started [1] on Darrick's containerization patchset
+> > > > about using bpf to a) avoid extra requests / context switching for
+> > > > ->iomap_begin and ->iomap_end calls and b) offload what would
+> > > > otherwise have to be hard-coded kernel logic into userspace, which
+> > > > gives userspace more flexibility / control with updating the logic and
+> > > > is less of a maintenance burden for fuse. There was some musing [2]
+> > > > about whether with bpf infrastructure added, it would allow famfs to
+> > > > move all famfs-specific logic to userspace/bpf.
+> > > >
+> > > > I agree that it makes sense for famfs to go through dax iomap
+> > > > interfaces. imo it seems cleanest if fuse has a generic iomap
+> > > > interface with iomap dax going through that plumbing, and any
+> > > > famfs-specific logic that would be needed beyond that (eg computing
+> > > > the interleaved mappings) being moved to custom famfs bpf programs. I
+> > > > started trying to implement this yesterday afternoon because I wanted
+> > > > to make sure it would actually be doable for the famfs logic before
+> > > > bringing it up and I didn't want to derail your project. So far I only
+> > > > have the general iomap interface for fuse added with dax operations
+> > > > going through dax_iomap* and haven't tried out integrating the famfs
+> > > > GET_FMAP/GET_DAXDEV bpf program part yet but I'm planning/hoping to
+> > > > get to that early next week. The work I did with Darrick this week was
+> > > > on getting a server's bpf programs hooked up to fuse through bpf links
+> > > > and Darrick has fleshed that out and gotten that working now. If it
+> > > > turns out famfs can go through a generic iomap fuse plumbing layer,
+> > > > I'd be curious to hear your thoughts on which approach you'd prefer.
+> > >
+> > > I put together a quick prototype to test this out - this is what it
+> > > looks like with fuse having a generic iomap interface that supports
+> > > dax [1], and the famfs custom logic moved to a bpf program [2]. I
+> >
+> > The bpf maps that you've used to upload per-inode data into the kernel
+> > is a /much/ cleaner method than custom-compiling C into BPF at runtime!
+> > You can statically compile the BPF object code into the fuse server,
+> > which means that (a) you can take advantage of the bpftool skeletons,
+> > and (b) you can in theory vendor-sign the BPF code if and when that
+> > becomes a requirement.
+> >
+> > I think that's way better than having to put vmlinux.h and
+> > fuse_iomap_bpf.h on the deployed system.  Though there's one hitch in
+> > example/Makefile:
+> >
+> > vmlinux.h:
+> >         $(BPFTOOL) btf dump file /sys/kernel/btf/vmlinux format c > $@
+> >
+> > The build system isn't necessarily running the same kernel as the deploy
+> > images.  It might be for Meta, but it's not unheard of for our build
+> > system to be running (say) OL10+UEK8 kernel, but the build target is OL8
+> > and UEK7.
+> >
+> > There doesn't seem to be any standardization across distros for where a
+> > vmlinux.h file might be found.  Fedora puts it under
+> > /usr/src/$unamestuf, Debian puts it in /usr/include/$gcc_triple, and I
+> > guess SUSE doesn't ship it at all?
+> >
+> > That's going to be a headache for deployment as I've been muttering for
+> > a couple of weeks now. :(
+> 
+> I don't think this is an issue because bpf does dynamic btf-based
+> relocations (CO-RE) at load time [1]. On the target machine, when
+> libbpf loads the bpf object it will read the machine's btf and patch
+> any offsets in bytecode and load the fixed-up version into the kernel.
+> All that's needed on the target machine for CO-RE is
+> CONFIG_DEBUG_INFO_BTF=y which is enabled by default on mainstream
+> distributions. I think this addresses the deployment headache you've
+> been running into?
 
-This optimization is not entirely free. Increasing PT_LOAD alignment
-can waste virtual address space, which is especially significant on
-32-bit systems, and it also reduces ASLR entropy by limiting the
-number of possible load addresses.
+Not really -- CO-RE does indeed work quite nicely to smooth over layout
+changes in C structures between a BPF program and the kernel it's being
+loaded into (thanks, whoever came up with that!) but the problem I have
+is how you /get/ those definitions into clang in the first place.
 
-In addition, coarser alignment may have secondary microarchitectural
-effects (eg. on indirect branch prediction), depending on the
-workload. Because this change affects address space layout and
-security-related properties, providing users with a way to opt out is
-reasonable, rather than making it completely unconditional. This
-behavior fits naturally under READ_ONLY_THP_FOR_FS.
+I was under the impression from many of the bpf examples that you're
+supposed to #include a distro-provided "vmlinux.h", but there doesn't
+seem to be a standard way to find that file.  Most -dev packages provide
+a pkgconfig file that give you the appropriate CFLAGS/LDFLAGS to add,
+but apparently this is not the case for BPF...?
 
->
-> > +#if defined(CONFIG_ELF_RO_LOAD_THP_ALIGNMENT) && PMD_SIZE <=3D SZ_32M
->
-> Why 32MB?  This is weird and not justified anywhere.
+Perhaps it's the case that distro packages that are building BPF
+programs simply add a build dependency on the package providing
+vmlinux.h (e.g. Build-Depends: linux-bpf-dev on Debian) and patch in
+"CFLAGS=-I/some/path" as needed?
 
-The 32MB limit is intended as a practical upper bound. With 16KB base
-pages, which are commonly used on some 64-bit architectures, PMD_SIZE
-is 32MB. Larger PMD sizes (eg. 128MB or more with 32KB pages) exist
-but represent relatively extreme configurations where alignment costs,
-virtual address space padding, and ASLR entropy loss grow
-disproportionately relative to the expected THP benefit.
+I suppose for a dynamically generated and compiled BPF program, one
+could just "bpftool skel" the /sys/kernel/btf files, capture the output,
+and "#include </dev/fd/XXX>" the results.  Honestly that sounds better
+than trusting some weird system package.
 
-On 32-bit systems, this issue is even more pronounced: PMD_SIZE can
-reach 128MB or 256MB depending on configuration, which is clearly
-unreasonable as an alignment requirement given the already constrained
-virtual address space. The cap therefore avoids these pathological
-cases while still covering all realistic and widely deployed PMD huge
-page sizes.
+But maybe dynamic compilation is a totally stupid idea.  I did grow up
+in the era of mshtml email wreaking havoc, after all...
 
-Thanks,
-Rui
+--D
 
->
-> > +                     if (hugepage_global_always() && !(cmds[i].p_flags=
- & PF_W)
-> > +                             && IS_ALIGNED(cmds[i].p_vaddr | cmds[i].p=
-_offset, PMD_SIZE)
-> > +                             && cmds[i].p_filesz >=3D PMD_SIZE && p_al=
-ign < PMD_SIZE)
-> > +                             p_align =3D PMD_SIZE;
->
-> Normal style is to put the '&&' at the end of the line:
->
->                         if (!(cmds[i].p_flags & PF_W) &&
->                             IS_ALIGNED(cmds[i].p_vaddr | cmds[i].p_offset=
-, PMD_SIZE) &&
->                             cmds[i].p_filesz >=3D PMD_SIZE && p_align < P=
-MD_SIZE))
->                                 p_align =3D PMD_SIZE;
->
-> But this conditional is too complex to be at this level of indentation.
-> Factor it out into a helper:
->
->                         if (align_to_pmd(cmds) && p_align < PMD_SIZE)
->                                 p_align =3D PMD_SIZE;
->
+> Thanks,
+> Joanne
+> 
+> [1] https://docs.ebpf.io/concepts/core/
+> 
+> >
+> > Maybe we could reduce the fuse-iomap bpf definitions to use only
+> > cardinal types and the types that iomap itself defines.  That might not
+> > be too hard right now because bpf functions reuse structures from
+> > include/uapi/fuse.h, which currently use uint{8,16,32,64}_t.  It'll get
+> > harder if that __uintXX_t -> __uXX transition actually happens.
+> >
+> > But getting back to the famfs bpf stuff, I think doing the interleaved
+> > mappings via BPF gives the famfs server a lot more flexibility in terms
+> > of what it can do when future hardware arrives with even weirder
+> > configurations.
+> >
+> > --D
+> >
+> > > didn't change much, I just moved around your famfs code to the bpf
+> > > side. The kernel side changes are in [3] and the libfuse changes are
+> > > in [4].
+> > >
+> > > For testing out the prototype, I hooked it up to passthrough_hp to
+> > > test running the bpf program and verify that it is able to find the
+> > > extent from the bpf map. In my opinion, this makes the fuse side
+> > > infrastructure cleaner and more extendable for other servers that will
+> > > want to go through dax iomap in the future, but I think this also has
+> > > a few benefits for famfs. Instead of needing to issue a FUSE_GET_FMAP
+> > > request after a file is opened, the server can directly populate the
+> > > metadata map from userspace with the mapping info when it processes
+> > > the FUSE_OPEN request, which gets rid of the roundtrip cost. The
+> > > server can dynamically update the metadata at any time from userspace
+> > > if the mapping info needs to change in the future. For setting up the
+> > > daxdevs, I moved your logic to the init side, where the server passes
+> > > the daxdev info upfront through an IOMAP_CONFIG exchange with the
+> > > kernel initializing the daxdevs based off that info. I think this will
+> > > also make deploying future updates for famfs easier, as updating the
+> > > logic won't need to go through the upstream kernel mailing list
+> > > process and deploying updates won't require a new kernel release.
+> > >
+> > > These are just my two cents based on my (cursory) understanding of
+> > > famfs. Just wanted to float this alternative approach in case it's
+> > > useful.
+> > >
+> > > Thanks,
+> > > Joanne
+> > >
+> > > [1] https://github.com/joannekoong/linux/commit/b8f9d284a6955391f00f576d890e1c1ccc943cfd
+> > > [2] https://github.com/joannekoong/libfuse/commit/444fa27fa9fd2118a0dc332933197faf9bbf25aa
+> > > [3] https://github.com/joannekoong/linux/commits/prototype_generic_iomap_dax/
+> > > [4] https://github.com/joannekoong/libfuse/commits/famfs_bpf/
+> > >
+> > > >
+> > > > Thanks,
+> > > > Joanne
+> > > >
+> > > > [1] https://lore.kernel.org/linux-fsdevel/CAJnrk1bxhw2u0qwjw0dJPGdmxEXbcEyKn-=iFrszqof2c8wGCA@mail.gmail.com/t/#md1b8003a109760d8ee1d5397e053673c1978ed4d
+> > > > [2] https://lore.kernel.org/linux-fsdevel/CAJnrk1bxhw2u0qwjw0dJPGdmxEXbcEyKn-=iFrszqof2c8wGCA@mail.gmail.com/t/#u
+> > > >
+> > > > >
+> > > > > Regards,
+> > > > > John
+> > > > >
+> > >
+> 
 
