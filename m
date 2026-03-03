@@ -1,278 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-79110-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79111-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QPSjExljpmmYPAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79110-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 05:27:05 +0100
+	id MI3jGFJkpmnxPAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79111-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 05:32:18 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA1C91E8D2F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 05:27:04 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AC891E8DD2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 05:32:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8F7FD30B6D4D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 04:25:54 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 730183015BAF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 04:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E72D38236F;
-	Tue,  3 Mar 2026 04:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3596537CD37;
+	Tue,  3 Mar 2026 04:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VVZLSXMX"
+	dkim=pass (2048-bit key) header.d=hev-cc.20230601.gappssmtp.com header.i=@hev-cc.20230601.gappssmtp.com header.b="DU9z7B63"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A669520A5C4;
-	Tue,  3 Mar 2026 04:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772511947; cv=none; b=GPcG6PhNkCkpbY+2r+EUc0EOQ3FaCEMOr1cYfOyLLIzW+KVUSIzpdn+Rh9xtLhkQOuvDFQL8o0sEEzMuOyZvg2n/P8avW7gxVHG+ubLuSDU31J4EYZmSCGxIzXv8rfLd0E+yRaTYkMhz49MLg+RgnS2ATMP3ycwhhvqgCE9RSYU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772511947; c=relaxed/simple;
-	bh=YZ/dFxr/gaxWgfEt0nAZiUh8L3hzuSp8PgioG8bdfOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sxm1OEmSD5TkLnoFufnPA9S8l8AXZMxBt9i8U7AigmYzo0E9se5HroODTdkbP/Gvm2mgFrT8ISJUZWYs3gQKb2ouzMreTtTaPB0lZ30hLyZ7n6n59+9Sy8e7RMlTs2nt4unqaar6uaE8DD8rETU9NyEHhnLuD2nD+PeTVpn3/7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VVZLSXMX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F1C2C116C6;
-	Tue,  3 Mar 2026 04:25:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772511947;
-	bh=YZ/dFxr/gaxWgfEt0nAZiUh8L3hzuSp8PgioG8bdfOI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VVZLSXMX/ADYwgzUdgl96oTTyoWKtSsqBFyZjRHPhr3+Le570J67X1VARch7tnhrc
-	 jLMxK9WyIuv5g2RTTf67P6eMJopf19ZEik5sLXK6jqbxU64ctIOV1XX4j6Kn+Q33Nu
-	 yQYGo2cQykg/FleyBJM4gSOzSojW07vqpkIpYgN8n19BYunsJ2Ud2G/HmvpxbPcrq4
-	 pzDmiTteXofRQDx0O66dq6F/dhJKF3yUgl8c6/qCtRRe/JhIVvnMyTg8YHSGrA3GHZ
-	 /1eA+v+KmU3ne6r8EbcoV1FFXQPxOQNpH/iFU+LVJ9yxO/ol1CYuEdDyLwooDdAzOZ
-	 srZwZE76Q+8tw==
-Date: Mon, 2 Mar 2026 20:25:46 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Theodore Tso <tytso@mit.edu>
-Cc: Jeff Layton <jlayton@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	David Hildenbrand <david@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	Steve French <sfrench@samba.org>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Bharath SM <bharathsm@microsoft.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-	Viacheslav Dubeyko <slava@dubeyko.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	David Sterba <dsterba@suse.com>,
-	Marc Dionne <marc.dionne@auristor.com>, Ian Kent <raven@themaw.net>,
-	Luis de Bethencourt <luisbg@kernel.org>,
-	Salah Triki <salah.triki@gmail.com>,
-	"Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Alex Markuze <amarkuze@redhat.com>,
-	Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
-	Nicolas Pitre <nico@fluxnic.net>, Tyler Hicks <code@tyhicks.com>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Yangtao Li <frank.li@vivo.com>,
-	Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Dave Kleikamp <shaggy@kernel.org>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Mike Marshall <hubcap@omnibond.com>,
-	Martin Brandenburg <martin@omnibond.com>,
-	Miklos Szeredi <miklos@szeredi.hu>, Anders Larsen <al@alarsen.net>,
-	Zhihao Cheng <chengzhihao1@huawei.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Naohiro Aota <naohiro.aota@wdc.com>,
-	Johannes Thumshirn <jth@kernel.org>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Willem de Bruijn <willemb@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Martin Schiller <ms@dev.tdt.de>, Eric Paris <eparis@redhat.com>,
-	Joerg Reuter <jreuter@yaina.de>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Oliver Hartkopp <socketcan@hartkopp.net>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	David Ahern <dsahern@kernel.org>,
-	Neal Cardwell <ncardwell@google.com>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Remi Denis-Courmont <courmisch@gmail.com>,
-	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-	Xin Long <lucien.xin@gmail.com>,
-	Magnus Karlsson <magnus.karlsson@intel.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
-	fsverity@lists.linux.dev, linux-mm@kvack.org, netfs@lists.linux.dev,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org, linux-nilfs@vger.kernel.org,
-	v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-	autofs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	codalist@telemann.coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-	linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net,
-	ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
-	devel@lists.orangefs.org, linux-unionfs@vger.kernel.org,
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-	linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-	netdev@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-fscrypt@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-hams@vger.kernel.org, linux-x25@vger.kernel.org,
-	audit@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-	linux-can@vger.kernel.org, linux-sctp@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH v2 001/110] vfs: introduce kino_t typedef and PRIino
- format macro
-Message-ID: <20260303042546.GF13868@frogsfrogsfrogs>
-References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
- <20260302-iino-u64-v2-1-e5388800dae0@kernel.org>
- <20260303012556.GA6520@macsyma-wired.lan>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8187725DB1C
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Mar 2026 04:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.177
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772512332; cv=pass; b=qQZiBMyDhxNmKwarVXtUuIdDnNhZPJ7Ybu/cu+Blz+wPQIifgFv/Izfg4Ulu7GNMwXtpbkr8wmI3o13xUcs2sgpmy5B7KJ08zi3Y2hBhuROAcGstC2aIuvKXT+qva6ZjhxiicRTCFunVwasOZdhl2UlmkWIfV29Y8D6rOoDG1JE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772512332; c=relaxed/simple;
+	bh=6w/G9HagsxRSvdT2x9/q/VQ4/NrLZOBn1E2lWDQQiqs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZOd0Yxg0dypTdG45kCWDBgL9n+Ur7ZB6l0cWNzQIeooUeKTKJUw3kzFIhyMjAFrriC+iEMLspAkV8Js60NyzZSpgkXddYnAjGktWPsA81QPN2aiB41El9HxPTHOTQKW5hYj4U4qCa/UoFiqvaMfeZK7f0W3U2fRc1RtB/UM/aWs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hev.cc; spf=pass smtp.mailfrom=hev.cc; dkim=pass (2048-bit key) header.d=hev-cc.20230601.gappssmtp.com header.i=@hev-cc.20230601.gappssmtp.com header.b=DU9z7B63; arc=pass smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hev.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hev.cc
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-79628fb5c05so40437897b3.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2026 20:32:11 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772512330; cv=none;
+        d=google.com; s=arc-20240605;
+        b=kvpynT7ULQUK2oBm8ATESEdbt75BURtlA+1BG62wrREArRczVdnlWCUc4TGKAWVvfQ
+         rO/kEDhZ7XS7wgLDdZxhxTbir+INGIp643vy9tIq2p5dA8I05ZH5yFOl+w1vHWEUYo9c
+         f7cv4PP1PDdsP5bXLBWby3AEQ1uoXuR14XUdJzcWCiYvhocZTM/OTy7eIv4sNytptRPl
+         iChslyYDxWuVJFgKvwvmv1xxQ0D9Zc92DCvj0iRqU5wA7ziVkBQKaP7TUie2n1u0ljfK
+         3q/8rAgyCB62kx3GpuOYwHDn5AFYyCp8+YemvFJu+Up+JfhUP2Yt2CeK+oqXFcBC+HDM
+         +SjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=vGFounTaPfTh3BSvvZSUHOsDY6NUzCCD/Stg39Oh89o=;
+        fh=k0VyJXdGmjXQhayUGYxoSm5dD851XOYBP4k5SEk/570=;
+        b=fCkBGY/dOWR+/u0IgltpTqksJuufPS9Hx2G3NQGKoS0IpcBGl5hOOrC7fA8rzVZyYX
+         NUZoIit6pNTgtwHzkESSPh4zazwIo/fodylYRIn+f6mNjnJZ9+AAKQjwDwPRRjoqvBfC
+         17/xiCwE0iDLrVFu2NkH+L7O9Exf4qPWR9xqFPY7khIVNryoTfbxsf2p1oyVHX3R+fjq
+         WFfDWaBRl6ntZNkZi8XuvANxnmv+6mtPQBlzERBs/lmK5gbbrMtyXUdKVStvVNWZgLwV
+         kFElK0cwUJ1d3kWqbkYECw436K+lH0upigejFJDde6ouTMs/BQoGW0iVm+XKONnmFK4+
+         /p7A==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=hev-cc.20230601.gappssmtp.com; s=20230601; t=1772512330; x=1773117130; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vGFounTaPfTh3BSvvZSUHOsDY6NUzCCD/Stg39Oh89o=;
+        b=DU9z7B63H/zefNd3BqoBtXceBKfqJn+2xro0uDYc5uRdUsr63z9wUA4l0/RoDJo3fK
+         F4OLZn8+oZey918Xw/3u+tYfPV/F1NlqKdOLDtBsux2jETs+UvXQ47ODbsygFwLE6Gxy
+         oXm9GG4zZXzPZGASb6vgj+r6+ZKWqHSgGwJmkl+3p7e4aBlcjaQfDt9LmMJ6z+ZYyfNk
+         SSbb7xkOySxoLbZ387IrYzAkphxjy/dPpV7Jyq3bID59KQUZ46U49437Y8spUlEfjKeF
+         mIGtj+65MMDNjdYTPiVk9eKQ8A3fBp+tynXlRNPFStOJCLcWM9NXhP0gZfV38jgaXXcz
+         4H5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772512330; x=1773117130;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=vGFounTaPfTh3BSvvZSUHOsDY6NUzCCD/Stg39Oh89o=;
+        b=Z1AFkX9iOYFFQ6NzEVCih4CHxXbhd2Jlng3iiD9t/Q7qzcP4JBUhjSudDcGkmLOEaX
+         Cs+Ja695m1JFKN339atdOulaJS3pPaKqL+jLo3+sWUa4/Cn1dhe9INxYt7TqH4oZRQ0w
+         LiUu2XWQXwAauZGyBjbczybPTFwT8XqlWWaqZ7+9+3nrBs1zky4GDs1rcgdrlI2v5+6I
+         pDgkZTNK1ukMoM/vita3PjPYkuSz3MVmbVR24Ulw42MfTk/koMCqN5FVXnbJvuT0dIwJ
+         ZwBRMZPFJB5DgKoMHx/Ajn87wqJFyIILdj5qLLT3mettQ8JkZZ2eaU/D2IS7C7AFa79l
+         C/Gg==
+X-Forwarded-Encrypted: i=1; AJvYcCWtO9kAARJCEyLdxdHVJ/ou6BXh69HAYUcOB3lHSwit3q8AgZSUs61f4XWHwClS/4nNYrX/tDzntwlqh4bI@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKzapbJLa6ixU2G5G/nx9RiN6eqGt1wnI8FOenwi8pRImC7inF
+	+pRV1nTyxVVIMSlPozwUB9njywJPeZSmpe3k0fdHGY+s2qiJ4ib6WKgPvU/WHmoy7+fRmt6wGFS
+	NAb2QobvBHmq8OcFmK6dzn6P+L7Rv1X7ZN06KbfbQYg==
+X-Gm-Gg: ATEYQzxX9e7VK6HDKd2TSIWFwDVcUrbUX9eWzGyi/XeJQWQzHkEAakYoI/QgKooT82u
+	k0yrIj4vFNAQ2OMiumbiX0ZaapRfd0RgETp4k9vsyNhTAaDb3sQjBOJ8a0600lSvYpylBEM8iIX
+	f1V0yzh8mWJxpVvtByz2A/vu+1JpED/kCRPP85JYKskHq/OkCObeYcfXbJHbfNsowYCUh9Co5lD
+	C0J3gyzijQWqSkLV7KEFrgoKBjx1nc79GtI3bHLqkYmZitiwECe3QcqT7dF6k0hANlFifsQyBmo
+	2wDPZ9kDSPhUWdECKEULqp+0oaxXxeizbbd8ZNrerw==
+X-Received: by 2002:a05:690c:6612:b0:796:31ce:6026 with SMTP id
+ 00721157ae682-798854c24aamr125016587b3.16.1772512330401; Mon, 02 Mar 2026
+ 20:32:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260303012556.GA6520@macsyma-wired.lan>
-X-Rspamd-Queue-Id: AA1C91E8D2F
+References: <20260302155046.286650-1-r@hev.cc> <aaW-x-HVQpSuPRA1@casper.infradead.org>
+In-Reply-To: <aaW-x-HVQpSuPRA1@casper.infradead.org>
+From: hev <r@hev.cc>
+Date: Tue, 3 Mar 2026 12:31:59 +0800
+X-Gm-Features: AaiRm53mvWIuAt2Ru8-fwHAqfutzxjaU88asfjV6R2vdeAh35ONU4AEXTH4oT_I
+Message-ID: <CAHirt9j-appZ+Mn=8AoG=SW3Lrqi2ajdZDGp8yYWiBWkzBbQ9g@mail.gmail.com>
+Subject: Re: [RFC PATCH] binfmt_elf: Align eligible read-only PT_LOAD segments
+ to PMD_SIZE for THP
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Kees Cook <kees@kernel.org>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Queue-Id: 5AC891E8DD2
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+X-Spamd-Result: default: False [-1.66 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_DKIM_ALLOW(-0.20)[hev-cc.20230601.gappssmtp.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79110-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DMARC_NA(0.00)[hev.cc];
+	TAGGED_FROM(0.00)[bounces-79111-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de,yaina.de,holtmann.org,hartkopp.net,pengutronix.de,secunet.com,gondor.apana.org.au,fomichev.me,iogearbox.net,vger.kernel.org,lists.linux.dev,kvack.org,lists.sourceforge.net,lists.samba.org,lists.infradead.org,telemann.coda.cs.cmu.edu,lists.orangefs.org,lists.ubuntu.com,lists.freedesktop.org,lists.linaro.o
- rg];
-	RCVD_COUNT_THREE(0.00)[4];
-	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[hev-cc.20230601.gappssmtp.com:+];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[171];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	NEURAL_HAM(-0.00)[-0.998];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[r@hev.cc,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-0.999];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	TO_DN_SOME(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:email,sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo,mail.gmail.com:mid]
 X-Rspamd-Action: no action
 
-On Mon, Mar 02, 2026 at 08:25:56PM -0500, Theodore Tso wrote:
-> On Mon, Mar 02, 2026 at 03:23:45PM -0500, Jeff Layton wrote:
-> > The PRIino macro is a length modifier, not a complete format specifier.
-> > It is used as: "%" PRIino "u" for decimal, "%" PRIino "x" for hex, etc.
-> > This follows the pattern used by userspace PRIu64/PRIx64 macros.
-> 
-> For the record, I really hate the inttypes.h format specifiers, but I
-> agree that we should forward the example of the C99 spec, for better
-> or for worse.
-> 
-> That being said, the userspace PRIu64, et. al macros are complete
-> format specifiers, not just a length modifier.  And I think this
-> results in less ugly format specifiers in our kernel code.
+On Tue, Mar 3, 2026 at 12:46=E2=80=AFAM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Mon, Mar 02, 2026 at 11:50:46PM +0800, WANG Rui wrote:
+> > +config ELF_RO_LOAD_THP_ALIGNMENT
+> > +     bool "Align read-only ELF load segments for THP (EXPERIMENTAL)"
+> > +     depends on READ_ONLY_THP_FOR_FS
+>
+> This doesn't deserve a config option.
 
-Yeah, I don't like "ino=%" PRIino "u, lolz\n" either.  I'd rather have
-the whole format in the PRIino definition -- it /is/ unsigned long
-after all.
+This optimization is not entirely free. Increasing PT_LOAD alignment
+can waste virtual address space, which is especially significant on
+32-bit systems, and it also reduces ASLR entropy by limiting the
+number of possible load addresses.
 
---D
+In addition, coarser alignment may have secondary microarchitectural
+effects (eg. on indirect branch prediction), depending on the
+workload. Because this change affects address space layout and
+security-related properties, providing users with a way to opt out is
+reasonable, rather than making it completely unconditional. This
+behavior fits naturally under READ_ONLY_THP_FOR_FS.
 
-> ---- cut here ---
-> #!/bin/sh
-> cat <<EOF > /tmp/blah.c
-> #include <inttypes.h>
-> #include <stdio.h>
-> 
-> int main(int arg, char **argv)
-> {
->         printf("PRIu64 is %s\n", PRIu64);
->         printf("PRId64 is %s\n", PRId64);
->         printf("PRIx64 is %s\n", PRIx64);
->         return 0;
-> }
-> EOF
-> 
-> clang -m32 -o /tmp/blah /tmp/blah.c
-> /tmp/blah
-> ---- cut here ---
-> 
-> % /tmp/blah.sh
-> PRIu64 is llu
-> PRId64 is lld
-> PRIx64 is llx
-> 
-> Thanks!
-> 
-> 						- Ted
+>
+> > +#if defined(CONFIG_ELF_RO_LOAD_THP_ALIGNMENT) && PMD_SIZE <=3D SZ_32M
+>
+> Why 32MB?  This is weird and not justified anywhere.
+
+The 32MB limit is intended as a practical upper bound. With 16KB base
+pages, which are commonly used on some 64-bit architectures, PMD_SIZE
+is 32MB. Larger PMD sizes (eg. 128MB or more with 32KB pages) exist
+but represent relatively extreme configurations where alignment costs,
+virtual address space padding, and ASLR entropy loss grow
+disproportionately relative to the expected THP benefit.
+
+On 32-bit systems, this issue is even more pronounced: PMD_SIZE can
+reach 128MB or 256MB depending on configuration, which is clearly
+unreasonable as an alignment requirement given the already constrained
+virtual address space. The cap therefore avoids these pathological
+cases while still covering all realistic and widely deployed PMD huge
+page sizes.
+
+Thanks,
+Rui
+
+>
+> > +                     if (hugepage_global_always() && !(cmds[i].p_flags=
+ & PF_W)
+> > +                             && IS_ALIGNED(cmds[i].p_vaddr | cmds[i].p=
+_offset, PMD_SIZE)
+> > +                             && cmds[i].p_filesz >=3D PMD_SIZE && p_al=
+ign < PMD_SIZE)
+> > +                             p_align =3D PMD_SIZE;
+>
+> Normal style is to put the '&&' at the end of the line:
+>
+>                         if (!(cmds[i].p_flags & PF_W) &&
+>                             IS_ALIGNED(cmds[i].p_vaddr | cmds[i].p_offset=
+, PMD_SIZE) &&
+>                             cmds[i].p_filesz >=3D PMD_SIZE && p_align < P=
+MD_SIZE))
+>                                 p_align =3D PMD_SIZE;
+>
+> But this conditional is too complex to be at this level of indentation.
+> Factor it out into a helper:
+>
+>                         if (align_to_pmd(cmds) && p_align < PMD_SIZE)
+>                                 p_align =3D PMD_SIZE;
+>
 
