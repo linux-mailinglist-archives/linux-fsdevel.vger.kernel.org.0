@@ -1,53 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-79230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QGdHB03opmlWZgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 14:55:25 +0100
+	id CA0lG2fopmlWZgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 14:55:51 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id D11181F0D1A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 14:55:24 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 051DF1F0D47
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 14:55:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id B419E3072BCE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 13:51:41 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 8B2663077145
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 13:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE9936655B;
-	Tue,  3 Mar 2026 13:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBC836605F;
+	Tue,  3 Mar 2026 13:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QNFivJpM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I6UJFgX3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACA3364EB6;
-	Tue,  3 Mar 2026 13:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FC6368976;
+	Tue,  3 Mar 2026 13:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772545785; cv=none; b=GU74ru1KyH12vbnqNcbPl9xcLL3t+MekciykuOcjVQrlj1UGd6mW6yde382D3G8geM5BIcjygFFuCS38CZoedsPknegXWtXrS8+uC+CUM616TmcGnrr6S4ZatVFTYtcSjlMIAA17xVx8Xj2wb2nv/7H4IO6bu8bc6aqzxSeQEqs=
+	t=1772545788; cv=none; b=ZQDcXrCcaBUjeZ2LkfU8QXCVCRqsMVTJ1ZqHTT4r2WQKKSW578m2I2f+ARJFDBIYtAAZVWr2t9Ew7qgMIRhqlReVXXKPrQuBfIdD+ZmcgCAHXBH/sxYujpQSqPir+qLEi3o30kg9HIaKmZJWERiwAM8KNPZVBnIkDw24kDlqRQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772545785; c=relaxed/simple;
-	bh=aX5gO+5Iccj0yV9V7P8CAMTUIqqZ5nyE5IExGpNekTs=;
+	s=arc-20240116; t=1772545788; c=relaxed/simple;
+	bh=xWc1SYhagsFIDcFD1Ftyff0sKkkiatJdtEEz/BrQlu0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XylETVTSoELyG4DP7/qGy2gFDKiLWbZ8fBPiQn0Nc0XTJMUw4+01lwSXiLVvjrY3Rolw4KuuZSljh+/Xi76bWyDuu2uzTOjUaFhSboRSZek6OLCsFd0ZB8bQIvEYwQkxvBrnyWAqIgPo6O4vIVgXwxx4ffz13+lHXe7TjH4FEro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QNFivJpM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 531C0C19422;
-	Tue,  3 Mar 2026 13:49:43 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=nERYc3aYMJwyk12gPZIYxWWBtSPL3Vl6pZSlR8XvQ21kh6zIWV1R0LoLo5i8JE64C676+KluLBLdQE0hVMLdMuos73BQsi1pbFew8jTRdrrTfVl4NrYdAya71hORf38Bi8eInehBkbpTW6cR+KLj3jjh/T3dP17jKw5uoOam5uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I6UJFgX3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4117C2BCAF;
+	Tue,  3 Mar 2026 13:49:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772545785;
-	bh=aX5gO+5Iccj0yV9V7P8CAMTUIqqZ5nyE5IExGpNekTs=;
+	s=k20201202; t=1772545787;
+	bh=xWc1SYhagsFIDcFD1Ftyff0sKkkiatJdtEEz/BrQlu0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=QNFivJpM+sQAYYx7A87jfUjL+KMzaYWq4mkENqshivLyyPIwBOLwWsPgRw7/wsB3p
-	 AjavOKSZb3bBecr7N5SohB578iL3sbWa0szbCVaKxdd/y8t8WRHrNTiw/BBvXXF4o0
-	 HbzdiPGzGJfw9j/kQclF9k7e0piJfv+mevs+Xa1uXMGwtqHuvUnC9NdrrtxRFYZjQL
-	 09wEoXwIrYD+c+fqANzERhLR7/9TZByCAHLWNcBwS80VQp2N4sxO5cC3nHh08yR5MS
-	 QvgssH7l+uW9Ruy9rcDL0v4RkFW980HRJ9BG2WUo4Xyt3SWju/D7ZsBOivATzGTbvv
-	 WBi7MyhuZ6ZnA==
+	b=I6UJFgX3ETgpJRUabnKnCKeS3y3BTYQTmNPCdjeYA1TUGdjIaWFp12INNy9U0iJ6b
+	 3OwaymS1YWZWJc+Yey3dZads/5t7Xaj2ozzOz95rdt17n5TZOA6Bm1L3ZT5fYx45Ti
+	 E/nVWlnY/l/WkBGCl3NH6rUtMnZtAXoL3/blXOa9QkE4FSSOCh4ArUJbBiaEJvlN7L
+	 vQToiagtJH+XTpkGGGZrN7j8BpmAf4lWL/MhQw5SBa25sllxCLJeqyVZUmY2sF1vx5
+	 VqdMeXHFVTOvxombxAbi9hR0fOfAnIdM6tCZPophF3NMDPMis693dtFv/NIZg1RIdD
+	 F/GsnxciPK2uQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 03 Mar 2026 14:49:21 +0100
-Subject: [PATCH RFC DRAFT POC 10/11] tree-wide: make all kthread path
- lookups to use LOOKUP_IN_INIT
+Date: Tue, 03 Mar 2026 14:49:22 +0100
+Subject: [PATCH RFC DRAFT POC 11/11] fs: isolate all kthreads in nullfs
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260303-work-kthread-nullfs-v1-10-87e559b94375@kernel.org>
+Message-Id: <20260303-work-kthread-nullfs-v1-11-87e559b94375@kernel.org>
 References: <20260303-work-kthread-nullfs-v1-0-87e559b94375@kernel.org>
 In-Reply-To: <20260303-work-kthread-nullfs-v1-0-87e559b94375@kernel.org>
 To: linux-fsdevel@vger.kernel.org, 
@@ -66,25 +65,25 @@ Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
  Tejun Heo <tj@kernel.org>, Jann Horn <jannh@google.com>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-47773
-X-Developer-Signature: v=1; a=openpgp-sha256; l=14803; i=brauner@kernel.org;
- h=from:subject:message-id; bh=aX5gO+5Iccj0yV9V7P8CAMTUIqqZ5nyE5IExGpNekTs=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQue3bvzLr6rfOSt7wwYwr7Ue+yzpmBv4HLaf89v21TG
- VqYPhV3dZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExkuycjwxf7vt41vzTyIz7y
- rrxsfE7YJTHoxMfMmZ+dnt/VMTqxYRUjw2HR+ULdAftN1drnHFm7+VOaZXf66knip5X3OT+s4FF
- bzgcA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9100; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=xWc1SYhagsFIDcFD1Ftyff0sKkkiatJdtEEz/BrQlu0=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQue3bP7UYr29pnt0xuprRP+CBQtHDqiyubtk7xFlPVN
+ P70VNz2QEcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBE3rEw/JU+ccosULbBSqdX
+ 4a1Y7OXOcieXetebbQXCtatcp67KTGRkmLFyzoQDffON2K2Cs6TcPSUkXX0uaK577SV5knv7n3x
+ JbgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-X-Rspamd-Queue-Id: D11181F0D1A
+X-Rspamd-Queue-Id: 051DF1F0D47
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79230-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79231-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -96,7 +95,7 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
 	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[9];
@@ -104,404 +103,284 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-In preparation to isolate all kthreads in nullfs convert all lookups
-performed from kthread context to use LOOKUP_IN_INIT. This will make
-them all perform the relevant lookup operation in init's filesystem
-state.
+Leave all kthreads isolated in nullfs and move userspace init into its
+separate fs_struct that any kthread can grab on demand to perform
+lookup. This isolates kthreads from userspace filesystem state quite a
+bit and makes it hard for anyone to mess up when performing filesystem
+operations from kthreads. Without LOOKUP_IN_INIT they will just not be
+able to do anything at all: no lookup or creation.
 
-This should be switched to individual commits for easy bisectability but
-right now it serves to illustrate the idea without creating a massive
-patchbomb.
+Add a new struct kernel_clone_args extension that allows to create a
+task that shares init's filesystem state. This is only going to be used
+by user_mode_thread() which execute stuff in init's filesystem state.
+That concept should go away.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- drivers/block/rnbd/rnbd-srv.c     |  2 +-
- drivers/char/misc_minor_kunit.c   |  2 +-
- drivers/crypto/ccp/sev-dev.c      |  4 +---
- drivers/target/target_core_alua.c |  2 +-
- drivers/target/target_core_pr.c   |  2 +-
- fs/btrfs/volumes.c                |  6 +++++-
- fs/coredump.c                     |  6 ++----
- fs/init.c                         | 23 ++++++++++++-----------
- fs/kernel_read_file.c             |  4 +---
- fs/namei.c                        |  2 +-
- fs/nfs/blocklayout/dev.c          |  4 ++--
- fs/smb/server/mgmt/share_config.c |  3 ++-
- fs/smb/server/smb2pdu.c           |  2 +-
- fs/smb/server/vfs.c               |  6 ++++--
- init/initramfs.c                  |  4 ++--
- init/initramfs_test.c             |  4 ++--
- net/unix/af_unix.c                |  4 +---
- 17 files changed, 40 insertions(+), 40 deletions(-)
+ fs/fs_struct.c             | 49 +++++++++++++++++++++++++++++++++++++++++++---
+ fs/namei.c                 |  4 ++--
+ fs/namespace.c             |  4 ----
+ include/linux/fs_struct.h  |  1 +
+ include/linux/init_task.h  |  1 +
+ include/linux/sched/task.h |  1 +
+ init/main.c                | 10 +++++++++-
+ kernel/fork.c              | 26 +++++++++++++++++++++---
+ 8 files changed, 83 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/block/rnbd/rnbd-srv.c b/drivers/block/rnbd/rnbd-srv.c
-index 10e8c438bb43..6796aee9a2f0 100644
---- a/drivers/block/rnbd/rnbd-srv.c
-+++ b/drivers/block/rnbd/rnbd-srv.c
-@@ -734,7 +734,7 @@ static int process_msg_open(struct rnbd_srv_session *srv_sess,
- 		goto reject;
- 	}
- 
--	bdev_file = bdev_file_open_by_path(full_path, open_flags, NULL, NULL);
-+	bdev_file = bdev_file_open_init(full_path, open_flags, NULL, NULL);
- 	if (IS_ERR(bdev_file)) {
- 		ret = PTR_ERR(bdev_file);
- 		pr_err("Opening device '%s' on session %s failed, failed to open the block device, err: %pe\n",
-diff --git a/drivers/char/misc_minor_kunit.c b/drivers/char/misc_minor_kunit.c
-index e930c78e1ef9..8af1377c42f9 100644
---- a/drivers/char/misc_minor_kunit.c
-+++ b/drivers/char/misc_minor_kunit.c
-@@ -165,7 +165,7 @@ static void __init miscdev_test_can_open(struct kunit *test, struct miscdevice *
- 	if (ret != 0)
- 		KUNIT_FAIL(test, "failed to create node\n");
- 
--	filp = filp_open(devname, O_RDONLY, 0);
-+	filp = filp_open_init(devname, O_RDONLY, 0);
- 	if (IS_ERR(filp))
- 		KUNIT_FAIL(test, "failed to open misc device: %ld\n", PTR_ERR(filp));
- 	else
-diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
-index 096f993974d1..92971671fa9d 100644
---- a/drivers/crypto/ccp/sev-dev.c
-+++ b/drivers/crypto/ccp/sev-dev.c
-@@ -262,9 +262,7 @@ static struct file *open_file_as_root(const char *filename, int flags, umode_t m
- {
- 	struct path root __free(path_put) = {};
- 
--	task_lock(&init_task);
--	get_fs_root(init_task.fs, &root);
--	task_unlock(&init_task);
-+	init_root(&root);
- 
- 	CLASS(prepare_creds, cred)();
- 	if (!cred)
-diff --git a/drivers/target/target_core_alua.c b/drivers/target/target_core_alua.c
-index 10250aca5a81..d23390d1b6ab 100644
---- a/drivers/target/target_core_alua.c
-+++ b/drivers/target/target_core_alua.c
-@@ -856,7 +856,7 @@ static int core_alua_write_tpg_metadata(
- 	unsigned char *md_buf,
- 	u32 md_buf_len)
- {
--	struct file *file = filp_open(path, O_RDWR | O_CREAT | O_TRUNC, 0600);
-+	struct file *file = filp_open_init(path, O_RDWR | O_CREAT | O_TRUNC, 0600);
- 	loff_t pos = 0;
- 	int ret;
- 
-diff --git a/drivers/target/target_core_pr.c b/drivers/target/target_core_pr.c
-index f88e63aefcd8..7ad6b534ccc6 100644
---- a/drivers/target/target_core_pr.c
-+++ b/drivers/target/target_core_pr.c
-@@ -1969,7 +1969,7 @@ static int __core_scsi3_write_aptpl_to_file(
- 	if (!path)
- 		return -ENOMEM;
- 
--	file = filp_open(path, flags, 0600);
-+	file = filp_open_init(path, flags, 0600);
- 	if (IS_ERR(file)) {
- 		pr_err("filp_open(%s) for APTPL metadata"
- 			" failed\n", path);
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 6fb0c4cd50ff..8baeacca01da 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -2119,8 +2119,12 @@ static int btrfs_add_dev_item(struct btrfs_trans_handle *trans,
- static void update_dev_time(const char *device_path)
- {
- 	struct path path;
-+	unsigned int flags = LOOKUP_FOLLOW;
- 
--	if (!kern_path(device_path, LOOKUP_FOLLOW, &path)) {
-+	if (tsk_is_kthread(current))
-+		flags |= LOOKUP_IN_INIT;
-+
-+	if (!kern_path(device_path, flags, &path)) {
- 		vfs_utimes(&path, NULL);
- 		path_put(&path);
- 	}
-diff --git a/fs/coredump.c b/fs/coredump.c
-index 550a1553f6cb..1e631c5d2076 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -919,13 +919,11 @@ static bool coredump_file(struct core_name *cn, struct coredump_params *cprm,
- 		 * with a fully qualified path" rule is to control where
- 		 * coredumps may be placed using root privileges,
- 		 * current->fs->root must not be used. Instead, use the
--		 * root directory of init_task.
-+		 * root directory of PID 1.
- 		 */
- 		struct path root;
- 
--		task_lock(&init_task);
--		get_fs_root(init_task.fs, &root);
--		task_unlock(&init_task);
-+		init_root(&root);
- 		file = file_open_root(&root, cn->corename, open_flags, 0600);
- 		path_put(&root);
- 	} else {
-diff --git a/fs/init.c b/fs/init.c
-index a79872d5af3b..eb224e945328 100644
---- a/fs/init.c
-+++ b/fs/init.c
-@@ -12,6 +12,7 @@
- #include <linux/init_syscalls.h>
- #include <linux/security.h>
+diff --git a/fs/fs_struct.c b/fs/fs_struct.c
+index 64b5840131cb..164139c27380 100644
+--- a/fs/fs_struct.c
++++ b/fs/fs_struct.c
+@@ -8,6 +8,7 @@
+ #include <linux/fs_struct.h>
+ #include <linux/init_task.h>
  #include "internal.h"
 +#include "mount.h"
  
- int __init init_pivot_root(const char *new_root, const char *put_old)
+ /*
+  * Replace the fs->{rootmnt,root} with {mnt,dentry}. Put the old values.
+@@ -160,13 +161,30 @@ EXPORT_SYMBOL_GPL(unshare_fs_struct);
+  * fs_struct state. Breaking that contract sucks for both sides.
+  * So just don't bother with extra work for this. No sane init
+  * system should ever do this.
++ *
++ * On older kernels if PID 1 unshared its filesystem state with us the
++ * kernel simply used the stale fs_struct state implicitly pinning
++ * anything that PID 1 had last used. Even if PID 1 might've moved on to
++ * some completely different fs_struct state and might've even unmounted
++ * the old root.
++ *
++ * This has hilarious consequences: Think continuing to dump coredump
++ * state into an implicitly pinned directory somewhere. Calling random
++ * binaries in the old rootfs via usermodehelpers.
++ *
++ * Be aggressive about this: We simply reject operating on stale
++ * fs_struct state by reverting to nullfs. Every kworker that does
++ * lookups after this point will fail. Every usermodehelper call will
++ * fail. Tough luck but let's be kind and emit a warning to userspace.
+  */
+ static inline bool nullfs_userspace_init(void)
  {
-@@ -102,7 +103,7 @@ int __init init_chown(const char *filename, uid_t user, gid_t group, int flags)
- 	struct path path;
- 	int error;
+ 	struct fs_struct *fs = current->fs;
  
--	error = kern_path(filename, lookup_flags, &path);
-+	error = kern_path(filename, lookup_flags | LOOKUP_IN_INIT, &path);
- 	if (error)
- 		return error;
- 	error = mnt_want_write(path.mnt);
-@@ -119,7 +120,7 @@ int __init init_chmod(const char *filename, umode_t mode)
- 	struct path path;
- 	int error;
+-	if (unlikely(current->pid == 1) && fs != &init_fs) {
++	if (unlikely(current->pid == 1) && fs != &userspace_init_fs) {
+ 		pr_warn("VFS: Pid 1 stopped sharing filesystem state\n");
++		set_fs_root(&userspace_init_fs, &init_fs.root);
++		set_fs_pwd(&userspace_init_fs, &init_fs.root);
+ 		return true;
+ 	}
  
--	error = kern_path(filename, LOOKUP_FOLLOW, &path);
-+	error = kern_path(filename, LOOKUP_FOLLOW | LOOKUP_IN_INIT, &path);
- 	if (error)
- 		return error;
- 	error = chmod_common(&path, mode);
-@@ -132,7 +133,7 @@ int __init init_eaccess(const char *filename)
- 	struct path path;
- 	int error;
+@@ -186,7 +204,9 @@ struct fs_struct *switch_fs_struct(struct fs_struct *new_fs)
+ 		new_fs = fs;
+ 	read_sequnlock_excl(&fs->seq);
  
--	error = kern_path(filename, LOOKUP_FOLLOW, &path);
-+	error = kern_path(filename, LOOKUP_FOLLOW | LOOKUP_IN_INIT, &path);
- 	if (error)
- 		return error;
- 	error = path_permission(&path, MAY_ACCESS);
-@@ -146,7 +147,7 @@ int __init init_stat(const char *filename, struct kstat *stat, int flags)
- 	struct path path;
- 	int error;
- 
--	error = kern_path(filename, lookup_flags, &path);
-+	error = kern_path(filename, lookup_flags | LOOKUP_IN_INIT, &path);
- 	if (error)
- 		return error;
- 	error = vfs_getattr(&path, stat, STATX_BASIC_STATS,
-@@ -158,39 +159,39 @@ int __init init_stat(const char *filename, struct kstat *stat, int flags)
- int __init init_mknod(const char *filename, umode_t mode, unsigned int dev)
- {
- 	CLASS(filename_kernel, name)(filename);
--	return filename_mknodat(AT_FDCWD, name, mode, dev, 0);
-+	return filename_mknodat(AT_FDCWD, name, mode, dev, LOOKUP_IN_INIT);
+-	nullfs_userspace_init();
++	/* one reference belongs to us */
++	if (nullfs_userspace_init())
++		return NULL;
+ 	return new_fs;
  }
  
- int __init init_link(const char *oldname, const char *newname)
+@@ -197,8 +217,31 @@ struct fs_struct init_fs = {
+ 	.umask		= 0022,
+ };
+ 
++struct fs_struct userspace_init_fs = {
++	.users		= 1,
++	.seq		= __SEQLOCK_UNLOCKED(userspace_init_fs.seq),
++	.umask		= 0022,
++};
++
+ void init_root(struct path *root)
  {
- 	CLASS(filename_kernel, old)(oldname);
- 	CLASS(filename_kernel, new)(newname);
--	return filename_linkat(AT_FDCWD, old, AT_FDCWD, new, 0, 0);
-+	return filename_linkat(AT_FDCWD, old, AT_FDCWD, new, 0, LOOKUP_IN_INIT);
+-	get_fs_root(&init_fs, root);
++	get_fs_root(&userspace_init_fs, root);
  }
- 
- int __init init_symlink(const char *oldname, const char *newname)
- {
- 	CLASS(filename_kernel, old)(oldname);
- 	CLASS(filename_kernel, new)(newname);
--	return filename_symlinkat(old, AT_FDCWD, new, 0);
-+	return filename_symlinkat(old, AT_FDCWD, new, LOOKUP_IN_INIT);
- }
- 
- int __init init_unlink(const char *pathname)
- {
- 	CLASS(filename_kernel, name)(pathname);
--	return filename_unlinkat(AT_FDCWD, name, 0);
-+	return filename_unlinkat(AT_FDCWD, name, LOOKUP_IN_INIT);
- }
- 
- int __init init_mkdir(const char *pathname, umode_t mode)
- {
- 	CLASS(filename_kernel, name)(pathname);
--	return filename_mkdirat(AT_FDCWD, name, mode, 0);
-+	return filename_mkdirat(AT_FDCWD, name, mode, LOOKUP_IN_INIT);
- }
- 
- int __init init_rmdir(const char *pathname)
- {
- 	CLASS(filename_kernel, name)(pathname);
--	return filename_rmdir(AT_FDCWD, name, 0);
-+	return filename_rmdir(AT_FDCWD, name, LOOKUP_IN_INIT);
- }
- 
- int __init init_utimes(char *filename, struct timespec64 *ts)
-@@ -198,7 +199,7 @@ int __init init_utimes(char *filename, struct timespec64 *ts)
- 	struct path path;
- 	int error;
- 
--	error = kern_path(filename, 0, &path);
-+	error = kern_path(filename, LOOKUP_IN_INIT, &path);
- 	if (error)
- 		return error;
- 	error = vfs_utimes(&path, ts);
-diff --git a/fs/kernel_read_file.c b/fs/kernel_read_file.c
-index de32c95d823d..00bbe0757ad3 100644
---- a/fs/kernel_read_file.c
-+++ b/fs/kernel_read_file.c
-@@ -156,9 +156,7 @@ ssize_t kernel_read_file_from_path_initns(const char *path, loff_t offset,
- 	if (!path || !*path)
- 		return -EINVAL;
- 
--	task_lock(&init_task);
--	get_fs_root(init_task.fs, &root);
--	task_unlock(&init_task);
-+	init_root(&root);
- 
- 	file = file_open_root(&root, path, O_RDONLY, 0);
- 	path_put(&root);
+ EXPORT_SYMBOL_GPL(init_root);
++
++void __init init_userspace_fs(void)
++{
++	struct mount *m;
++	struct path root;
++
++	/* Move PID 1 from nullfs into the initramfs. */
++	m = topmost_overmount(current->nsproxy->mnt_ns->root);
++	root.mnt = &m->mnt;
++	root.dentry = root.mnt->mnt_root;
++
++	VFS_WARN_ON_ONCE(current->fs != &init_fs);
++	VFS_WARN_ON_ONCE(current->pid != 1);
++	set_fs_root(&userspace_init_fs, &root);
++	set_fs_pwd(&userspace_init_fs, &root);
++	switch_fs_struct(&userspace_init_fs);
++}
 diff --git a/fs/namei.c b/fs/namei.c
-index 5cf407aad5b3..976b1e9f7032 100644
+index 976b1e9f7032..6cc53040e9eb 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -4906,7 +4906,7 @@ static struct dentry *filename_create(int dfd, struct filename *name,
- 	struct dentry *dentry = ERR_PTR(-EEXIST);
- 	struct qstr last;
- 	bool want_dir = lookup_flags & LOOKUP_DIRECTORY;
--	unsigned int reval_flag = lookup_flags & LOOKUP_REVAL;
-+	unsigned int reval_flag = lookup_flags & (LOOKUP_REVAL | LOOKUP_IN_INIT);
- 	unsigned int create_flags = LOOKUP_CREATE | LOOKUP_EXCL;
- 	int type;
- 	int error;
-diff --git a/fs/nfs/blocklayout/dev.c b/fs/nfs/blocklayout/dev.c
-index cc6327d97a91..32dee716237a 100644
---- a/fs/nfs/blocklayout/dev.c
-+++ b/fs/nfs/blocklayout/dev.c
-@@ -370,8 +370,8 @@ bl_open_path(struct pnfs_block_volume *v, const char *prefix)
- 	if (!devname)
- 		return ERR_PTR(-ENOMEM);
+@@ -1102,7 +1102,7 @@ static int set_root(struct nameidata *nd)
+ 	struct fs_struct *fs;
  
--	bdev_file = bdev_file_open_by_path(devname, BLK_OPEN_READ | BLK_OPEN_WRITE,
--					NULL, NULL);
-+	bdev_file = bdev_file_open_init(devname, BLK_OPEN_READ | BLK_OPEN_WRITE,
-+				       NULL, NULL);
- 	if (IS_ERR(bdev_file)) {
- 		dprintk("failed to open device %s (%ld)\n",
- 			devname, PTR_ERR(bdev_file));
-diff --git a/fs/smb/server/mgmt/share_config.c b/fs/smb/server/mgmt/share_config.c
-index 53f44ff4d376..2deefdc242a8 100644
---- a/fs/smb/server/mgmt/share_config.c
-+++ b/fs/smb/server/mgmt/share_config.c
-@@ -189,7 +189,8 @@ static struct ksmbd_share_config *share_config_request(struct ksmbd_work *work,
- 				goto out;
- 			}
+ 	if (nd->flags & LOOKUP_IN_INIT)
+-		fs = &init_fs;
++		fs = &userspace_init_fs;
+ 	else
+ 		fs = current->fs;
  
--			ret = kern_path(share->path, 0, &share->vfs_path);
-+			ret = kern_path(share->path, LOOKUP_IN_INIT,
-+					&share->vfs_path);
- 			ksmbd_revert_fsids(work);
- 			if (ret) {
- 				ksmbd_debug(SMB, "failed to access '%s'\n",
-diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index 95901a78951c..8e89fb9a8c35 100644
---- a/fs/smb/server/smb2pdu.c
-+++ b/fs/smb/server/smb2pdu.c
-@@ -5462,7 +5462,7 @@ static int smb2_get_info_filesystem(struct ksmbd_work *work,
- 	if (!share->path)
- 		return -EIO;
+@@ -2724,7 +2724,7 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+ 		struct fs_struct *fs;
  
--	rc = kern_path(share->path, LOOKUP_NO_SYMLINKS, &path);
-+	rc = kern_path(share->path, LOOKUP_NO_SYMLINKS | LOOKUP_IN_INIT, &path);
- 	if (rc) {
- 		pr_err("cannot create vfs path\n");
- 		return -EIO;
-diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-index d08973b288e5..2e64ed65dcca 100644
---- a/fs/smb/server/vfs.c
-+++ b/fs/smb/server/vfs.c
-@@ -62,6 +62,7 @@ static int ksmbd_vfs_path_lookup(struct ksmbd_share_config *share_conf,
- 	if (pathname[0] == '\0') {
- 		pathname = share_conf->path;
- 		root_share_path = NULL;
-+		flags |= LOOKUP_IN_INIT;
- 	} else {
- 		flags |= LOOKUP_BENEATH;
- 	}
-@@ -622,7 +623,7 @@ int ksmbd_vfs_link(struct ksmbd_work *work, const char *oldname,
- 	if (ksmbd_override_fsids(work))
- 		return -ENOMEM;
+ 		if (nd->flags & LOOKUP_IN_INIT)
+-			fs = &init_fs;
++			fs = &userspace_init_fs;
+ 		else
+ 			fs = current->fs;
  
--	err = kern_path(oldname, LOOKUP_NO_SYMLINKS, &oldpath);
-+	err = kern_path(oldname, LOOKUP_NO_SYMLINKS | LOOKUP_IN_INIT, &oldpath);
- 	if (err) {
- 		pr_err("cannot get linux path for %s, err = %d\n",
- 		       oldname, err);
-@@ -1258,7 +1259,8 @@ struct dentry *ksmbd_vfs_kern_path_create(struct ksmbd_work *work,
- 	if (!abs_name)
- 		return ERR_PTR(-ENOMEM);
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 854f4fc66469..10056ac1dcd2 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -6190,10 +6190,6 @@ static void __init init_mount_tree(void)
  
--	dent = start_creating_path(AT_FDCWD, abs_name, path, flags);
-+	dent = start_creating_path(AT_FDCWD, abs_name, path,
-+				   flags | LOOKUP_IN_INIT);
- 	kfree(abs_name);
- 	return dent;
+ 	init_task.nsproxy->mnt_ns = &init_mnt_ns;
+ 	get_mnt_ns(&init_mnt_ns);
+-
+-	/* The root and pwd always point to the mutable rootfs. */
+-	root.mnt	= mnt;
+-	root.dentry	= mnt->mnt_root;
+ 	set_fs_pwd(current->fs, &root);
+ 	set_fs_root(current->fs, &root);
+ 
+diff --git a/include/linux/fs_struct.h b/include/linux/fs_struct.h
+index 8ff1acd8389d..5c40fdc39550 100644
+--- a/include/linux/fs_struct.h
++++ b/include/linux/fs_struct.h
+@@ -50,5 +50,6 @@ static inline int current_umask(void)
  }
-diff --git a/init/initramfs.c b/init/initramfs.c
-index 139baed06589..f44d772f960b 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -382,7 +382,7 @@ static int __init do_name(void)
- 			int openflags = O_WRONLY|O_CREAT|O_LARGEFILE;
- 			if (ml != 1)
- 				openflags |= O_TRUNC;
--			wfile = filp_open(collected, openflags, mode);
-+			wfile = filp_open_init(collected, openflags, mode);
- 			if (IS_ERR(wfile))
- 				return 0;
- 			wfile_pos = 0;
-@@ -702,7 +702,7 @@ static void __init populate_initrd_image(char *err)
  
- 	printk(KERN_INFO "rootfs image is not initramfs (%s); looks like an initrd\n",
- 			err);
--	file = filp_open("/initrd.image", O_WRONLY|O_CREAT|O_LARGEFILE, 0700);
-+	file = filp_open_init("/initrd.image", O_WRONLY|O_CREAT|O_LARGEFILE, 0700);
- 	if (IS_ERR(file))
- 		return;
+ void init_root(struct path *root);
++void __init init_userspace_fs(void);
  
-diff --git a/init/initramfs_test.c b/init/initramfs_test.c
-index 2ce38d9a8fd0..9415b9cfb9d3 100644
---- a/init/initramfs_test.c
-+++ b/init/initramfs_test.c
-@@ -224,7 +224,7 @@ static void __init initramfs_test_data(struct kunit *test)
- 	err = unpack_to_rootfs(cpio_srcbuf, len);
- 	KUNIT_EXPECT_NULL(test, err);
+ #endif /* _LINUX_FS_STRUCT_H */
+diff --git a/include/linux/init_task.h b/include/linux/init_task.h
+index a6cb241ea00c..f27f88598394 100644
+--- a/include/linux/init_task.h
++++ b/include/linux/init_task.h
+@@ -24,6 +24,7 @@
  
--	file = filp_open(c[0].fname, O_RDONLY, 0);
-+	file = filp_open_init(c[0].fname, O_RDONLY, 0);
- 	if (IS_ERR(file)) {
- 		KUNIT_FAIL(test, "open failed");
- 		goto out;
-@@ -430,7 +430,7 @@ static void __init initramfs_test_fname_pad(struct kunit *test)
- 	err = unpack_to_rootfs(tbufs->cpio_srcbuf, len);
- 	KUNIT_EXPECT_NULL(test, err);
+ extern struct files_struct init_files;
+ extern struct fs_struct init_fs;
++extern struct fs_struct userspace_init_fs;
+ extern struct nsproxy init_nsproxy;
  
--	file = filp_open(c[0].fname, O_RDONLY, 0);
-+	file = filp_open_init(c[0].fname, O_RDONLY, 0);
- 	if (IS_ERR(file)) {
- 		KUNIT_FAIL(test, "open failed");
- 		goto out;
-diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-index 3756a93dc63a..6f370cb44afe 100644
---- a/net/unix/af_unix.c
-+++ b/net/unix/af_unix.c
-@@ -1200,9 +1200,7 @@ static struct sock *unix_find_bsd(struct sockaddr_un *sunaddr, int addr_len,
- 	if (flags & SOCK_COREDUMP) {
- 		struct path root;
+ #ifndef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
+diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+index 41ed884cffc9..e0c1ca8c6a18 100644
+--- a/include/linux/sched/task.h
++++ b/include/linux/sched/task.h
+@@ -31,6 +31,7 @@ struct kernel_clone_args {
+ 	u32 io_thread:1;
+ 	u32 user_worker:1;
+ 	u32 no_files:1;
++	u32 umh:1;
+ 	unsigned long stack;
+ 	unsigned long stack_size;
+ 	unsigned long tls;
+diff --git a/init/main.c b/init/main.c
+index 1cb395dd94e4..ca0d0914c63e 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -102,6 +102,7 @@
+ #include <linux/stackdepot.h>
+ #include <linux/randomize_kstack.h>
+ #include <linux/pidfs.h>
++#include <linux/fs_struct.h>
+ #include <linux/ptdump.h>
+ #include <linux/time_namespace.h>
+ #include <linux/unaligned.h>
+@@ -713,6 +714,11 @@ static __initdata DECLARE_COMPLETION(kthreadd_done);
  
--		task_lock(&init_task);
--		get_fs_root(init_task.fs, &root);
--		task_unlock(&init_task);
-+		init_root(&root);
+ static noinline void __ref __noreturn rest_init(void)
+ {
++	struct kernel_clone_args init_args = {
++		.flags		= (CLONE_FS | CLONE_VM | CLONE_UNTRACED),
++		.fn		= kernel_init,
++		.fn_arg		= NULL,
++	};
+ 	struct task_struct *tsk;
+ 	int pid;
  
- 		scoped_with_kernel_creds()
- 			err = vfs_path_lookup(root.dentry, root.mnt, sunaddr->sun_path,
+@@ -722,7 +728,7 @@ static noinline void __ref __noreturn rest_init(void)
+ 	 * the init task will end up wanting to create kthreads, which, if
+ 	 * we schedule it before we create kthreadd, will OOPS.
+ 	 */
+-	pid = user_mode_thread(kernel_init, NULL, CLONE_FS);
++	pid = kernel_clone(&init_args);
+ 	/*
+ 	 * Pin init on the boot CPU. Task migration is not properly working
+ 	 * until sched_init_smp() has been run. It will set the allowed
+@@ -1574,6 +1580,8 @@ static int __ref kernel_init(void *unused)
+ {
+ 	int ret;
+ 
++	init_userspace_fs();
++
+ 	/*
+ 	 * Wait until kthreadd is all set-up.
+ 	 */
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 583078c69bbd..121538f58272 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1590,9 +1590,28 @@ static int copy_mm(u64 clone_flags, struct task_struct *tsk)
+ 	return 0;
+ }
+ 
+-static int copy_fs(u64 clone_flags, struct task_struct *tsk)
++static int copy_fs(u64 clone_flags, struct task_struct *tsk, bool umh)
+ {
+-	struct fs_struct *fs = current->fs;
++	struct fs_struct *fs;
++
++	/*
++	 * Usermodehelper may use userspace_init_fs filesystem state but
++	 * they don't get to create mount namespaces, share the
++	 * filesystem state, or be started from a non-initial mount
++	 * namespace.
++	 */
++	if (umh) {
++		if (clone_flags & (CLONE_NEWNS | CLONE_FS))
++			return -EINVAL;
++		if (current->nsproxy->mnt_ns != &init_mnt_ns)
++			return -EINVAL;
++	}
++
++	if (umh)
++		fs = &userspace_init_fs;
++	else
++		fs = current->fs;
++
+ 	if (clone_flags & CLONE_FS) {
+ 		/* tsk->fs is already what we want */
+ 		read_seqlock_excl(&fs->seq);
+@@ -2211,7 +2230,7 @@ __latent_entropy struct task_struct *copy_process(
+ 	retval = copy_files(clone_flags, p, args->no_files);
+ 	if (retval)
+ 		goto bad_fork_cleanup_semundo;
+-	retval = copy_fs(clone_flags, p);
++	retval = copy_fs(clone_flags, p, args->umh);
+ 	if (retval)
+ 		goto bad_fork_cleanup_files;
+ 	retval = copy_sighand(clone_flags, p);
+@@ -2725,6 +2744,7 @@ pid_t user_mode_thread(int (*fn)(void *), void *arg, unsigned long flags)
+ 		.exit_signal	= (flags & CSIGNAL),
+ 		.fn		= fn,
+ 		.fn_arg		= arg,
++		.umh		= 1,
+ 	};
+ 
+ 	return kernel_clone(&args);
 
 -- 
 2.47.3
