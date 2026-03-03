@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-79217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79218-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cOHpGQPlpmlkZAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 14:41:23 +0100
+	id QAOkHX3lpmnjZAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79218-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 14:43:25 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC09E1F0795
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 14:41:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D172A1F0896
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 14:43:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C754A30CB89B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 13:38:12 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C07F0312A33C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 13:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DAB33F5B4;
-	Tue,  3 Mar 2026 13:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F5F428841;
+	Tue,  3 Mar 2026 13:38:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C+NAzkUg"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kr8/nkhx"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E7E27AC31;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2EFF282F3C;
 	Tue,  3 Mar 2026 13:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772545086; cv=none; b=R8JbZxEpsZ7f87L+WSNb7mbFYLYPblcSvskCXGRDcXzwwEJYj/7YcN7Vu3EquTyuxHWHMXzFfAiJpguPj8AeO+d9ha51UTy9n3tZyq39JA35+bxW3muuKhjJP9qCE6XrfSCtG2EErjtUCPd/prhbeTOMPbz1YC2WlMzp0aVacoc=
+	t=1772545087; cv=none; b=JKGOroN9FvSAzapFSP5HNQLs5JPE2gzzKb78eWwoYRoIhecSiNB2nmXExco3D1ir5edCe0gygLP7OxDh7ecq8MEHQGa31n/5I1lwnckFpeN1aNmcCLnnp8v2kstOXqmRHlQ5LrwMQEstCvmYEiWgOD874vMYAxVVtp1Bkq0LnBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772545086; c=relaxed/simple;
-	bh=PUXhAzVyDg5opgkKNFU6JDJ0GnFs4fQn60ZJlvuuzq4=;
+	s=arc-20240116; t=1772545087; c=relaxed/simple;
+	bh=g6dp72cMnl+ETCGwYZDoCa36CM+G8BtdVLnZENo16j0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iydiijkJmAjhNPWZGpQa+DIaaVStJuGbrS8VDEcZXOK67lymeuISDBmD01E/Uio+8xsFbGdLEGf8GZSbrzDKFg+fSrUcATNjzuUne2hLPK5wQ1rhQIymDe/SmgKcHqCTaWU02Rs2RRRP/d5aHV/GB4UN589UshE6LWmwJClVbXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=C+NAzkUg; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qyo1pTsnT8vpNSCmk/MHtMJNFMjw2ehZhtdXzmxt6dpOkw4DpjPbH73z5ycSuAx6hc8qRDuZ9a8Va98sWBS+pzXTDYzQMK2xagDzaguq0P825ZBN/+p5JGn30uX31FmbthK3x5DLkPYDYIW/L4Y0agyGZd8HN8wRIZmTBC1pF/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kr8/nkhx; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Tk3uESbdvJBK0ZQDjaLs3gOQpD471/ds7fVyav3aEqM=; b=C+NAzkUgUxjxJBynLnQ11RqjfR
-	zbYsG/zy2ofectzScTg6NHncmcu0JStQWd88qwniMwEHPUDMrzeu5AbPFjRTOGOusjBgApX2iupEQ
-	4TSFZW7l8R1upfRlXqKLi4RgyAdnukQQvbYPR1dAqrxxpUxnOkbsrwTNYlBbOrqkyVi4QvfAA8Hbw
-	HJt/UXrH+SdGFi54kJW0+OTTU2dVCgOBYq2an1JkF/fBKXqVFdbNMcBaFcL7O/j1sFF7d0sWaEROA
-	h3pRPEd5DrrHSXCFjh0Qfque8DSpJNMUn053UKYZ0bE9iWOzQNS+w/08ekbSH5pMrlzHr3N0R0CUZ
-	4DO7FRhQ==;
+	bh=0i9fNykMCPIYLtg51f50XyVAFwwkJeuAbf20SWgL8IA=; b=kr8/nkhxdG+BacNcKTfIO4XZUB
+	i7xk70hVnj0kN38gmr0dlJaLre+m1Y8Keo9ymYXIoBcHww1Y+hPC00/UHvb56kw8vUZqxa+/jNahq
+	lo1JvQxucy9KP5YYl3BJvCvBlMRiI1+7TOS9UDCexOCQT4oO0dZF73KEk82auTfbqI7G3klcW7KCl
+	2+/df6PJTgQ4/8fk1VMkhG3bXi2ZmyKmmwEvzbL37VowoKQNKhueKgAd+dHU0zICZvWhtvA8HARA1
+	eICbHHpV2VmmTUNzGuvTIFriiMF2hmXCPYb4u7czBRvmuy0jRezd2uDvibuCdhD4GO+QcG9vVwW4n
+	DD/PLaWQ==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vxPvS-0000000FEic-3CMP;
-	Tue, 03 Mar 2026 13:36:38 +0000
-Date: Tue, 3 Mar 2026 05:36:38 -0800
+	id 1vxPvy-0000000FEmU-04pf;
+	Tue, 03 Mar 2026 13:37:10 +0000
+Date: Tue, 3 Mar 2026 05:37:09 -0800
 From: Christoph Hellwig <hch@infradead.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Theodore Tso <tytso@mit.edu>, Jeff Layton <jlayton@kernel.org>,
+To: Jeff Layton <jlayton@kernel.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Theodore Tso <tytso@mit.edu>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
 	Steven Rostedt <rostedt@goodmis.org>,
@@ -184,11 +184,12 @@ Cc: Theodore Tso <tytso@mit.edu>, Jeff Layton <jlayton@kernel.org>,
 	bpf@vger.kernel.org
 Subject: Re: [PATCH v2 001/110] vfs: introduce kino_t typedef and PRIino
  format macro
-Message-ID: <aabj5o1x4T-bRmro@infradead.org>
+Message-ID: <aabkBadGzo7IZpSU@infradead.org>
 References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
  <20260302-iino-u64-v2-1-e5388800dae0@kernel.org>
  <20260303012556.GA6520@macsyma-wired.lan>
  <20260303042546.GF13868@frogsfrogsfrogs>
+ <33228005140684201de2ca0c157441d3b6a06413.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -197,9 +198,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260303042546.GF13868@frogsfrogsfrogs>
+In-Reply-To: <33228005140684201de2ca0c157441d3b6a06413.camel@kernel.org>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Rspamd-Queue-Id: BC09E1F0795
+X-Rspamd-Queue-Id: D172A1F0896
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
@@ -210,9 +211,9 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[mit.edu,kernel.org,zeniv.linux.org.uk,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de,yaina.de,holtmann.org,hartkopp.net,pengutronix.de,secunet.com,gondor.apana.org.au,fomichev.me,iogearbox.net,vger.kernel.org,lists.linux.dev,kvack.org,lists.sourceforge.net,lists.samba.org,lists.infradead.org,telemann.coda.cs.cmu.edu,lists.orangefs.org,lists.ubuntu.com,lists.freedesktop.org,lists.
+	FREEMAIL_CC(0.00)[kernel.org,mit.edu,zeniv.linux.org.uk,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de,yaina.de,holtmann.org,hartkopp.net,pengutronix.de,secunet.com,gondor.apana.org.au,fomichev.me,iogearbox.net,vger.kernel.org,lists.linux.dev,kvack.org,lists.sourceforge.net,lists.samba.org,lists.infradead.org,telemann.coda.cs.cmu.edu,lists.orangefs.org,lists.ubuntu.com,lists.freedesktop.org,lists.
  linaro.org];
-	TAGGED_FROM(0.00)[bounces-79217-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79218-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	RCVD_TLS_LAST(0.00)[];
@@ -229,20 +230,14 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROM(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:dkim,infradead.org:mid,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,infradead.org:dkim,infradead.org:mid]
 X-Rspamd-Action: no action
 
-On Mon, Mar 02, 2026 at 08:25:46PM -0800, Darrick J. Wong wrote:
-> > That being said, the userspace PRIu64, et. al macros are complete
-> > format specifiers, not just a length modifier.  And I think this
-> > results in less ugly format specifiers in our kernel code.
-> 
-> Yeah, I don't like "ino=%" PRIino "u, lolz\n" either.  I'd rather have
-> the whole format in the PRIino definition -- it /is/ unsigned long
-> after all.
+On Tue, Mar 03, 2026 at 05:53:39AM -0500, Jeff Layton wrote:
+> Like I said to Ted, this is just temporary scaffolding for the change.
+> The PRIino macro is removed in the end. Given that, perhaps you can
+> overlook the bikeshed's color in this instance?
 
-Just drop the bloody macro and the pointless micro-splitting of the
-change.  After this the inode is always 64-bit and we can just use
-normal ll specifiers without messing things up.
+So why add it in the first place?  
 
 
