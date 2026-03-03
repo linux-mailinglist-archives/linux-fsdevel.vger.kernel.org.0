@@ -1,214 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-79171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 4A1+IOm6pmk7TAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 11:41:45 +0100
+	id kCKDLny7pmk7TAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 11:44:12 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1992C1ECD95
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 11:41:45 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BC6A1ECE37
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 11:44:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2764B3180F4E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 10:36:41 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0C2AE312CBAD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 10:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED7D39B949;
-	Tue,  3 Mar 2026 10:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PDz6JRWj";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Gz7qITFv";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PDz6JRWj";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Gz7qITFv"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD6339B949;
+	Tue,  3 Mar 2026 10:39:10 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp02-ext3.udag.de (smtp02-ext3.udag.de [62.146.106.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834D3386437
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Mar 2026 10:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE494386C2C;
+	Tue,  3 Mar 2026 10:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.146.106.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772534199; cv=none; b=Gn632Iwm5A6/xvV8q7FKBP9YbVM/4yUI91X5mU/Zj9Ru9LflfscgRG8Y7YPTRJYBoECmL5POenBh89SFGIuFy5EFOyZev+oheg3WqKsm8chDJCN9mJO8g037Z+0DmU6KPh9t4QWujkI+AXPwG3fzv1onTpzXX7/sDwjPzbPg380=
+	t=1772534350; cv=none; b=FHWhXYuSE1d0VkZTKpBTg/W9fTbzSefawJHQOV9pw/R5ySJEnH470RkWpFUs5rZ5YvF9FVzW5j/P3RXVoWGRBJ+GvIbIEIzi76IJzs4nDAdpIF6+eIoTM+hzZypNmzfnTpO2NjmQHscH11J9MpHfgKue5XMp55cwC871n5aKJAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772534199; c=relaxed/simple;
-	bh=KGtDrC9rNzTK65SQ8Oe7H9Ud9xEAArRJg33A6iQt0U0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=B+p3uYF2eTj2Q1wgnyb3OE7TK5Iv9gsTwYT6M7ZV/mOgqNB4+5oZyr3w90YxPK5zN//i+Sm92AJSlPLyZAzxpkXUhZs3NXxhrWf0XyWXMw+YgxWk/HdNQD151c2/ttSSVHktdVKdKpkfNQe14Rs51uymBOudIn8IMvQuI21rQ8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PDz6JRWj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Gz7qITFv; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PDz6JRWj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Gz7qITFv; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7DDEA3F90D;
-	Tue,  3 Mar 2026 10:34:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1772534085; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZJwm4fvAg3a1hOEhycwe2FUYXuHnKvYj9968NDPJOws=;
-	b=PDz6JRWjSeQ890kGuvn9Ph3Oi9gtVV75wuen0eIC/mXNKQGoQxwSBjYdpl7p80YHjXOdCR
-	QvAXuk3IkmlmHuPhyD4zb2nHhmjfM+eR+GE9hifa3adtlblT9qFmnPhqvjXVVG4l58jNyz
-	VxHPfyz0cN5Wn2xVAqi+jo/jPSzHpGk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1772534085;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZJwm4fvAg3a1hOEhycwe2FUYXuHnKvYj9968NDPJOws=;
-	b=Gz7qITFvIJY6misgdjIAVQ1WndNK0+d38+baDQ3JpzKnvkyCNN/CXIM+W3BWuPlCNupEuB
-	lLHuW+/doPxx85CQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1772534085; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZJwm4fvAg3a1hOEhycwe2FUYXuHnKvYj9968NDPJOws=;
-	b=PDz6JRWjSeQ890kGuvn9Ph3Oi9gtVV75wuen0eIC/mXNKQGoQxwSBjYdpl7p80YHjXOdCR
-	QvAXuk3IkmlmHuPhyD4zb2nHhmjfM+eR+GE9hifa3adtlblT9qFmnPhqvjXVVG4l58jNyz
-	VxHPfyz0cN5Wn2xVAqi+jo/jPSzHpGk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1772534085;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZJwm4fvAg3a1hOEhycwe2FUYXuHnKvYj9968NDPJOws=;
-	b=Gz7qITFvIJY6misgdjIAVQ1WndNK0+d38+baDQ3JpzKnvkyCNN/CXIM+W3BWuPlCNupEuB
-	lLHuW+/doPxx85CQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 74BE23EA6E;
-	Tue,  3 Mar 2026 10:34:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id DFGAHEW5pmmlFQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 03 Mar 2026 10:34:45 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 59132A0B82; Tue,  3 Mar 2026 11:34:41 +0100 (CET)
-From: Jan Kara <jack@suse.cz>
-To: <linux-fsdevel@vger.kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@ZenIV.linux.org.uk>,
-	<linux-ext4@vger.kernel.org>,
-	Ted Tso <tytso@mit.edu>,
-	"Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
-	David Sterba <dsterba@suse.com>,
-	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	David Hildenbrand <david@kernel.org>,
-	linux-mm@kvack.org,
-	linux-aio@kvack.org,
-	Benjamin LaHaise <bcrl@kvack.org>,
-	Jan Kara <jack@suse.cz>
-Subject: [PATCH 32/32] fs: Drop i_private_list from address_space
-Date: Tue,  3 Mar 2026 11:34:21 +0100
-Message-ID: <20260303103406.4355-64-jack@suse.cz>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260303101717.27224-1-jack@suse.cz>
-References: <20260303101717.27224-1-jack@suse.cz>
+	s=arc-20240116; t=1772534350; c=relaxed/simple;
+	bh=N7I4QZKEp36Fw+Gs6ImjixeyhbUmgJY170gjUUXyrtc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lnoEKOO6DW6n+NPiJ/kwq049haad8Pm7raRWkn3ONZK2imqEdAnm7OxR33S15MOH0mgPIrilUoc/ya0tOhY0bZcIvS2eoeq0FwmYdjBtAwJc7IztyqsIfjYrZgvw8arcC/EhOsMD8Fegi+QZURdCoDZ98y+9vjn/AFGv16d+wA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de; spf=pass smtp.mailfrom=birthelmer.de; arc=none smtp.client-ip=62.146.106.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birthelmer.de
+Received: from localhost (200-143-067-156.ip-addr.inexio.net [156.67.143.200])
+	by smtp02-ext3.udag.de (Postfix) with ESMTPA id 1FD34E05C3;
+	Tue,  3 Mar 2026 11:38:58 +0100 (CET)
+Authentication-Results: smtp02-ext3.udag.de;
+	auth=pass smtp.auth=birthelmercom-0001 smtp.mailfrom=horst@birthelmer.de
+Date: Tue, 3 Mar 2026 11:38:57 +0100
+From: Horst Birthelmer <horst@birthelmer.de>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, 
+	Bernd Schubert <bschubert@ddn.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	Horst Birthelmer <horst@birthelmer.com>, Luis Henriques <luis@igalia.com>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Horst Birthelmer <hbirthelmer@ddn.com>
+Subject: Re: Re: [PATCH v6 3/3] fuse: add an implementation of open+getattr
+Message-ID: <aaa4oXWKKaaY2RJW@fedora.fritz.box>
+References: <20260226-fuse-compounds-upstream-v6-3-8585c5fcd2fc@ddn.com>
+ <CAJnrk1ZsvtZh9vZoN=ca_wrs5enTfAQeNBYppOzZH=c+ARaP3Q@mail.gmail.com>
+ <aaFJEeeeDrdqSEX9@fedora.fritz.box>
+ <CAJnrk1ZiKyi4jVN=mP2N-27nmcf929jsN7u6LhzdYePiEzJWaA@mail.gmail.com>
+ <CAJnrk1ZQN6vGog2p_CsOh=C=O_jg6qHgXA0s4dKsgNbZycN2Cg@mail.gmail.com>
+ <aaKiWhdfLqF0qI3w@fedora.fritz.box>
+ <CAJnrk1bHSRxiKNefNH_SUq1E93Ysnyk-POjh5GWxy+=8BewKtA@mail.gmail.com>
+ <62edc506-2b0c-4470-8bdd-ee2d7fcc1cf1@ddn.com>
+ <20260303050614.GO13829@frogsfrogsfrogs>
+ <CAJfpegtTdL5Sxjtm3cKu9ZuYwceCfa2bX15Q3Wr_GQ2JNb84EA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1755; i=jack@suse.cz; h=from:subject; bh=KGtDrC9rNzTK65SQ8Oe7H9Ud9xEAArRJg33A6iQt0U0=; b=kA0DAAgBnJ2qBz9kQNkByyZiAGmmuTmiwKupnqCllCbgGVKgOMHk8s5SOF8d/mNwYbZRpubyN okBMwQAAQgAHRYhBKtZ0SvWnjKKtVUoHJydqgc/ZEDZBQJpprk5AAoJEJydqgc/ZEDZAigIAPAg aLhOjvAkhogRp0PsPfiAlvNv8YRXMwIUjSIqMVAVwFc9REL4+R/6NFJ4gCRMGYFlHOC4aiMszpE UhueKj0QF0yqOeimbTOxxJ4HM3FWc2ur/GMmzFeJWrzhICzX09nA7/6Hprn8HNFifoXIakkxFc9 9twj3/r1SUkgyxIJp/2OBbYiE3rtCR+eEdZdPQ9H+4W2G6nh48oBHafwjhTisOiNQU7nNMUxk81 j4ACfRGlNgQs4+nSQK9oqCnaxhuwyww22NWbsYcINd7RbAgUaUDydVNDDXw6s0L4ZqXj57PIlyo XL4jg8Q4WkKImKMYn4iUBtJnDjfg0FkWiPEaVKw=
-X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
-Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -5.30
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 1992C1ECD95
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegtTdL5Sxjtm3cKu9ZuYwceCfa2bX15Q3Wr_GQ2JNb84EA@mail.gmail.com>
+X-Rspamd-Queue-Id: 2BC6A1ECE37
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [1.34 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [-1.36 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
+	DMARC_POLICY_SOFTFAIL(0.10)[birthelmer.de : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
 	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	TAGGED_FROM(0.00)[bounces-79171-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,ZenIV.linux.org.uk,vger.kernel.org,mit.edu,gmail.com,suse.com,mail.parknet.co.jp,linux.dev,suse.de,kvack.org,suse.cz];
+	TAGGED_FROM(0.00)[bounces-79172-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[kernel.org,ddn.com,gmail.com,birthelmer.com,igalia.com,vger.kernel.org];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DMARC_NA(0.00)[suse.cz];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCVD_TLS_LAST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	MISSING_XM_UA(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.cz:mid,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	NEURAL_HAM(-0.00)[-0.999];
 	TO_DN_SOME(0.00)[];
+	NEURAL_HAM(-0.00)[-0.691];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[horst@birthelmer.de,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	R_DKIM_NA(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[9];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[7]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,fedora.fritz.box:mid]
 X-Rspamd-Action: no action
 
-Nobody is using i_private_list anymore. Remove it.
+On Tue, Mar 03, 2026 at 11:03:14AM +0100, Miklos Szeredi wrote:
+> On Tue, 3 Mar 2026 at 06:06, Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> > On Mon, Mar 02, 2026 at 09:03:26PM +0100, Bernd Schubert wrote:
+> > >
+> > > On 3/2/26 19:56, Joanne Koong wrote:
+> 
+> > > > The overhead for the server to fetch the attributes may be nontrivial
+> > > > (eg may require stat()). I really don't think we can assume the data
+> > > > is locally cached somewhere. Why always compound the getattr to the
+> > > > open instead of only compounding the getattr when the attributes are
+> > > > actually invalid?
+> > > >
+> > > > But maybe I'm wrong here and this is the preferable way of doing it.
+> > > > Miklos, could you provide your input on this?
+> 
+> Yes, it makes sense to refresh attributes only when necessary.
+> 
 
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/inode.c         | 2 --
- include/linux/fs.h | 2 --
- 2 files changed, 4 deletions(-)
+OK, I will add a 'compound flag' for optional operations and don't
+execute those, when the fuse server does not support compounds.
 
-diff --git a/fs/inode.c b/fs/inode.c
-index d5774e627a9c..a8f019078fab 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -481,7 +481,6 @@ static void __address_space_init_once(struct address_space *mapping)
- {
- 	xa_init_flags(&mapping->i_pages, XA_FLAGS_LOCK_IRQ | XA_FLAGS_ACCOUNT);
- 	init_rwsem(&mapping->i_mmap_rwsem);
--	INIT_LIST_HEAD(&mapping->i_private_list);
- 	spin_lock_init(&mapping->i_private_lock);
- 	mapping->i_mmap = RB_ROOT_CACHED;
- }
-@@ -795,7 +794,6 @@ void clear_inode(struct inode *inode)
- 	 * nor even WARN_ON(!mapping_empty).
- 	 */
- 	xa_unlock_irq(&inode->i_data.i_pages);
--	BUG_ON(!list_empty(&inode->i_data.i_private_list));
- 	BUG_ON(!(inode_state_read_once(inode) & I_FREEING));
- 	BUG_ON(inode_state_read_once(inode) & I_CLEAR);
- 	BUG_ON(!list_empty(&inode->i_wb_list));
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 1611d8ce4b66..adad21e31cfc 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -470,7 +470,6 @@ struct mapping_metadata_bhs {
-  * @flags: Error bits and flags (AS_*).
-  * @wb_err: The most recent error which has occurred.
-  * @i_private_lock: For use by the owner of the address_space.
-- * @i_private_list: For use by the owner of the address_space.
-  */
- struct address_space {
- 	struct inode		*host;
-@@ -489,7 +488,6 @@ struct address_space {
- 	unsigned long		flags;
- 	errseq_t		wb_err;
- 	spinlock_t		i_private_lock;
--	struct list_head	i_private_list;
- 	struct rw_semaphore	i_mmap_rwsem;
- } __attribute__((aligned(sizeof(long)))) __randomize_layout;
- 	/*
--- 
-2.51.0
+This way we can always send the open+getattr, but if the fuse server
+does not process this as a compound (aka. it would be costly to do it), 
+we only resend the FUSE_OPEN. Thus the current behavior does not change
+and we can profit from fuse servers that actually have the possibility to
+give us the attributes.
 
+We can take a look at when to fetch the attributes in another context for
+the other cases.
+
+> 
+> Thanks,
+> Miklos
+> 
+
+Thanks,
+Horst
 
