@@ -1,236 +1,245 @@
-Return-Path: <linux-fsdevel+bounces-79134-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79135-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id qIH6DRaypmn9SgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79134-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 11:04:06 +0100
+	id wIgxCH6ypmn9SgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79135-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 11:05:50 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9BF41EC463
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 11:04:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E216A1EC537
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 11:05:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 28F5F3031209
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 10:04:00 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 1904B303206E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 10:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF5F369206;
-	Tue,  3 Mar 2026 10:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA405390CA8;
+	Tue,  3 Mar 2026 10:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N6ILPFjt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF3A390219
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Mar 2026 10:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772532236; cv=none; b=S9bwBuHqbmOWpodHmezbLobZ3IG82h1xwSxUAZ7KPpaFDohAb07l7e5/ajZZ6jGs9QimvVwnkMXWT/4MlOxElwtZImPWM1Tjuc28+zNL77lOE+aAjfsi1aEBoJOgecJ8vb2qHEwDDZX+Ju795Z5BEdKyfFlXXNjau8Nd3nAUxkU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772532236; c=relaxed/simple;
-	bh=KGFR6GPIehO6zIdn2CFtuE4synSr/5rzwVcLZPCowm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YdviRQ7/6pP5vjq9LZBuC3+1wT0b1W5pJKthWsbrPQp/uiLimbw4Ysg92VBzZNm7P83l6Ae32HLVzZbce8JGmpoZGahmJKTvxwZFQeesHtk5rWn2Xkskg8NuEVRZH0kpN1ts3daBoRTkSyON4WeHAcHqVfO9JZTd0J1gVpQzIoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1vxMbR-0007dp-7S; Tue, 03 Mar 2026 11:03:45 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1vxMbP-003WdD-12;
-	Tue, 03 Mar 2026 11:03:44 +0100
-Received: from pengutronix.de (p4ffb2dc6.dip0.t-ipconnect.de [79.251.45.198])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 23B2F4F64B1;
-	Tue, 03 Mar 2026 10:03:43 +0000 (UTC)
-Date: Tue, 3 Mar 2026 11:03:42 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>, 
-	Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>, 
-	Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
-	David Hildenbrand <david@kernel.org>, David Howells <dhowells@redhat.com>, 
-	Paulo Alcantara <pc@manguebit.org>, Andreas Dilger <adilger.kernel@dilger.ca>, 
-	Jan Kara <jack@suse.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, 
-	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
-	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
-	Steve French <sfrench@samba.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
-	Shyam Prasad N <sprasad@microsoft.com>, Bharath SM <bharathsm@microsoft.com>, 
-	Alexander Aring <alex.aring@gmail.com>, Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
-	Viacheslav Dubeyko <slava@dubeyko.com>, Eric Van Hensbergen <ericvh@kernel.org>, 
-	Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Christian Schoenebeck <linux_oss@crudebyte.com>, David Sterba <dsterba@suse.com>, 
-	Marc Dionne <marc.dionne@auristor.com>, Ian Kent <raven@themaw.net>, 
-	Luis de Bethencourt <luisbg@kernel.org>, Salah Triki <salah.triki@gmail.com>, 
-	"Tigran A. Aivazian" <aivazian.tigran@gmail.com>, Ilya Dryomov <idryomov@gmail.com>, 
-	Alex Markuze <amarkuze@redhat.com>, Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu, 
-	Nicolas Pitre <nico@fluxnic.net>, Tyler Hicks <code@tyhicks.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Yangtao Li <frank.li@vivo.com>, 
-	Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, David Woodhouse <dwmw2@infradead.org>, 
-	Richard Weinberger <richard@nod.at>, Dave Kleikamp <shaggy@kernel.org>, 
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
-	Joseph Qi <joseph.qi@linux.alibaba.com>, Mike Marshall <hubcap@omnibond.com>, 
-	Martin Brandenburg <martin@omnibond.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Anders Larsen <al@alarsen.net>, Zhihao Cheng <chengzhihao1@huawei.com>, 
-	Damien Le Moal <dlemoal@kernel.org>, Naohiro Aota <naohiro.aota@wdc.com>, 
-	Johannes Thumshirn <jth@kernel.org>, John Johansen <john.johansen@canonical.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>, 
-	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Simon Horman <horms@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Martin Schiller <ms@dev.tdt.de>, Eric Paris <eparis@redhat.com>, 
-	Joerg Reuter <jreuter@yaina.de>, Marcel Holtmann <marcel@holtmann.org>, 
-	Johan Hedberg <johan.hedberg@gmail.com>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-	Oliver Hartkopp <socketcan@hartkopp.net>, David Ahern <dsahern@kernel.org>, 
-	Neal Cardwell <ncardwell@google.com>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Remi Denis-Courmont <courmisch@gmail.com>, 
-	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>, Xin Long <lucien.xin@gmail.com>, 
-	Magnus Karlsson <magnus.karlsson@intel.com>, Maciej Fijalkowski <maciej.fijalkowski@intel.com>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, nvdimm@lists.linux.dev, fsverity@lists.linux.dev, 
-	linux-mm@kvack.org, netfs@lists.linux.dev, linux-ext4@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, linux-nilfs@vger.kernel.org, v9fs@lists.linux.dev, 
-	linux-afs@lists.infradead.org, autofs@vger.kernel.org, ceph-devel@vger.kernel.org, 
-	codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	jfs-discussion@lists.sourceforge.net, ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev, 
-	devel@lists.orangefs.org, linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, selinux@vger.kernel.org, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
-	linaro-mm-sig@lists.linaro.org, netdev@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-fscrypt@vger.kernel.org, linux-xfs@vger.kernel.org, linux-hams@vger.kernel.org, 
-	linux-x25@vger.kernel.org, audit@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
-	linux-can@vger.kernel.org, linux-sctp@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v2 004/110] net: change sock.sk_ino and sock_i_ino() to
- u64
-Message-ID: <20260303-tall-fictional-tench-7c5f66-mkl@pengutronix.de>
-X-AI: stop_reason: "refusal"
-References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
- <20260302-iino-u64-v2-4-e5388800dae0@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC15390C80
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Mar 2026 10:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772532317; cv=pass; b=WU5qaZjj1MUxfeoKUCNVi4bqhKviolPlHQgJBa1Gavx3uAiy63YBiihoIiBiQmkdu2A1JSVl5F2ipQZfkmjN30LkzraY93c4xXpzwMGNzLOsn7V9Fc702sp7k8RgqYBAPmaYUyq5kGKhrsM8XmsJ2QPGaKESqKWnLp052cYjrB8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772532317; c=relaxed/simple;
+	bh=FF5mEIEGh0HZZFyvixB3fMhRNkwoGsnlYjqzgDE2qTM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KXomUgWbXnj5Es1CeQl7pzVv+dEpMKFRIAj0x0WnWW3qWcBbm4LIi4eVNDkYwpOhk9fC8MRk6Vg/9Go1BJZjm6R2Ntu4rkogHw5DqdWA8CDguM2l58VJ5STqwm2ElAaR9PviK6JO+h3SBR4iR66KRHdZRIywTINK2UZtWd79zpY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N6ILPFjt; arc=pass smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b8f97c626aaso956978366b.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Mar 2026 02:05:15 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772532314; cv=none;
+        d=google.com; s=arc-20240605;
+        b=F1zXVrchtJsXcJdZ1nJ6OmO5V9+xjMHCrbIoXGVKUbzmuZxPCbU1JZYna89TD5Rwv3
+         3aJBZeIfuUFv5DXrnFeJhm5IJUL3tDErPxNPADd4xIDXlf+KTqX/AAIIgP0I9TL8X+oM
+         k5NmK9yOXeF9znCWpr4omzjaKfZoJW3I+gAAjsWjM+4JGKGGX/sP879UJsUq54hiYm/t
+         X4c84o4yoYCaogtI0tCp6Jytpo+2h3yb1d+bkDoCfri25Eo7w8dwUq8QbI7dF/sirodJ
+         TVuVOEjI7LukK9sZK+iV6iJIN0UP58zh+BOBzrB1r28/DMMMEoMkSi7ZYEenaVwawHb4
+         A8aA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=kHSH1EXHRJ1pRbanfJB4m4S6VzDdBvpxoJUaB+XaYv4=;
+        fh=vPJcTsOoNh7XbocZYRPkXyM+t4RHY4J6f5/DS7+O9Ng=;
+        b=KDGnPP0otDhqIuJ9qCgAZhowgUr4OZ2Bpl79OrMomqxnGSe1TX49SuBCZkzAPp++ko
+         FmRQ6qSRwQXKbZbNlq1nti+OrUwqiI6gNeabv2ufqQBmQ2YxLRlF2IFMFhuzm1TTYWmW
+         kQD/TY9eLzDD2TwpL7sYmKkttk8szfDqyqUmfi+w23V97LTMIm7e/thcWevtIlTjtaZD
+         awF+w+OFB7fI++Rp44aCXXV3aJ5zzkSp78tOxH8622KFGi0Kwu9TIMcifaMDRNNFZAe8
+         FkSdIsGD552nJVdRtBCt1C2hrC31/k2e526aW1mZsCSGmoilGtjs86ObS/T74LsHuZ9e
+         wpUg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772532314; x=1773137114; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kHSH1EXHRJ1pRbanfJB4m4S6VzDdBvpxoJUaB+XaYv4=;
+        b=N6ILPFjtkWS8qNa0X01jpLGo39WbctzpxNSEnx0muRiL2I4ofdACM3eJaJoTyYaYSK
+         8LWjwshfAdKcsqkVEZ3N2lkAjHJ2W/x6waucqzmCITzMVGXg/sO9r6I5R4Q08j+/rIDM
+         NiIyx4rTKyQbZQV9wQOcyh9WTx/VxoUQr+6JCWR4EgTRfZj/RfblB1mSvGoxow51Ir/2
+         kjgGDhrI0MnHCR45UhioBa0Byb/45qu/q0srYxOvXJ2uu8MSUKMW1Q3eyjI8119/qxL6
+         jQsjKSTe7Ziyklhh6F/O95dnK9BwFLFh+jYz7Mmaqs+ciKkE4f1C5YSbNOsvVlOYaxTE
+         n1Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772532314; x=1773137114;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=kHSH1EXHRJ1pRbanfJB4m4S6VzDdBvpxoJUaB+XaYv4=;
+        b=Towlm9wU2q5X7Oz703fpyG+MzcYp6fmRigNi1pu7vopkIL8S+ha8ItpCd6T3WK8x/B
+         nYjSPZLbjdUfsB6i5Wj19Bk2Lw3dHAlNRkeoOMeSrNjBzhMG3G9Nm6hoYUSGUknePXlw
+         Lhoc7qjd0QJh04gCGqNkaq7RjyL6zmRWyH+0U9kRtG04yMNi7S1BNceMU4tcrj67+DzR
+         lLwz/V5liZD2eSoOgTLkN8sZ7nxvDRMAAxTZ/CZnefqaJLjzfIYvzRqVLKgPilIdgzgd
+         cFZbCWfWA/Rf+N0IZ8bPRsdG/Gp8tiHC+kT5zhS5c+RHAqhK0TEJH7IPsnsscZykneKM
+         qSyg==
+X-Forwarded-Encrypted: i=1; AJvYcCX4HTu5JRAvPS1Ty4EcZBAq9GSZWTlw1qkOx20Gw1ekqAvQCsW/1s1X6tdaIy/JNVKioapOfp1XzPMgPi8t@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKPobgMBMmzb6FpJrlxzMYaN8kjpW/veFyNBgqzYsV52un8Sw/
+	i5/ecxTBRt943138099WpuOaU6/SIqlLOnMV6qeIsrdpdudNlUbuzlEfpsPkIA2IH2DYtE3B4j4
+	eSP8w/Ps+TM3SWUr+MElv9Vi8gxD4QfY=
+X-Gm-Gg: ATEYQzw/0hRMzZYG/3DsswMqz3ed1QNS5+etsdkQxafBmlfnZRuR4mvMOf+AJvLRb3+
+	FJBaYHJx2qyeRNHR1C7VJsEHT4z86LoQErBJIING7eF3RYy9ZLpeGHzNTYXn57kFVCipJ/zhVmo
+	5z2I02vfmqVmEMVtspnnGo36eBXTZcs4iIRHUXQ1GVjBRHwvLueYXyw6M32qdMOASX7yi03iecJ
+	crlEjWD90WWscTvWDy6qZXMJohP5pCQ9nSs54hyGyyRZKkZUO4pAbJ7bQy5MTZsfgvOZRpLiGuS
+	axf8JmpSWEXjKZxa1a0eG/tJA/3UttYikgFXEiEYqRJ8HXBwKsE=
+X-Received: by 2002:a17:907:1c90:b0:b93:892a:e82b with SMTP id
+ a640c23a62f3a-b93892ae9f8mr829328466b.51.1772532313580; Tue, 03 Mar 2026
+ 02:05:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="w7xntzjnabubqe7a"
-Content-Disposition: inline
-In-Reply-To: <20260302-iino-u64-v2-4-e5388800dae0@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-fsdevel@vger.kernel.org
-X-Rspamd-Queue-Id: D9BF41EC463
+References: <20260302183741.1308767-1-amir73il@gmail.com> <20260302183741.1308767-3-amir73il@gmail.com>
+ <fc9c776f-bc8b-4081-ad9e-b4ebc40b9974@oracle.com>
+In-Reply-To: <fc9c776f-bc8b-4081-ad9e-b4ebc40b9974@oracle.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 3 Mar 2026 11:05:01 +0100
+X-Gm-Features: AaiRm50JW8u5aKJRHT2V2yu_EISEop3hPQHSbC7vKTFkKrUro1J3ryi88Jg9bYI
+Message-ID: <CAOQ4uxjHeUBfFLwahmaHj+ZKq=CxQGShi1-m_HQuWSjMa=f1-A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fs: use simple_end_creating helper to consolidate
+ fsnotify hooks
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Jeff Layton <jlayton@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org, 
+	NeilBrown <neil@brown.name>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Queue-Id: E216A1EC537
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.06 / 15.00];
-	SIGNED_PGP(-2.00)[];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
-	MIME_GOOD(-0.20)[multipart/signed,text/plain];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
+	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de,yaina.de,holtmann.org,hartkopp.net,secunet.com,gondor.apana.org.au,fomichev.me,iogearbox.net,vger.kernel.org,lists.linux.dev,kvack.org,lists.sourceforge.net,lists.samba.org,lists.infradead.org,coda.cs.cmu.edu,lists.orangefs.org,lists.ubuntu.com,lists.freedesktop.org,lists.linaro.org];
-	TAGGED_FROM(0.00)[bounces-79134-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-79135-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+,1:+,2:~];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DMARC_NA(0.00)[pengutronix.de];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[mkl@pengutronix.de,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
 	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	RCPT_COUNT_GT_50(0.00)[171];
-	R_DKIM_NA(0.00)[];
-	NEURAL_HAM(-0.00)[-0.703];
+	MISSING_XM_UA(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[amir73il@gmail.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo,pengutronix.de:mid,pengutronix.de:email,pengutronix.de:url]
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,oracle.com:email,sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-
---w7xntzjnabubqe7a
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 004/110] net: change sock.sk_ino and sock_i_ino() to
- u64
-MIME-Version: 1.0
-
-On 02.03.2026 15:23:48, Jeff Layton wrote:
-> inode->i_ino is being converted to a u64. sock.sk_ino (which caches the
-> inode number) must also be widened to avoid truncation on 32-bit
-> architectures where unsigned long is only 32 bits.
+On Mon, Mar 2, 2026 at 11:28=E2=80=AFPM Chuck Lever <chuck.lever@oracle.com=
+> wrote:
 >
-> Change sk_ino from unsigned long to u64, and update the return type
-> of sock_i_ino() to match. Fix all format strings that print the
-> result of sock_i_ino() (%lu -> %llu), and widen the intermediate
-> variables and function parameters in the diag modules that were
-> using int to hold the inode number.
+> On 3/2/26 1:37 PM, Amir Goldstein wrote:
+> > Add simple_end_creating() helper which combines fsnotify_create/mkdir()
+> > hook and simple_done_creating().
+> >
+> > Use the new helper to consolidate this pattern in several pseudo fs
+> > which had open coded fsnotify_create/mkdir() hooks:
+> > binderfs, debugfs, nfsctl, tracefs, rpc_pipefs.
+> >
+> > For those filesystems, the paired fsnotify_delete() hook is already
+> > inside the library helper simple_recursive_removal().
+> >
+> > Note that in debugfs_create_symlink(), the fsnotify hook was missing,
+> > so the missing hook is fixed by this change.
+> >
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 >
-> Note that the UAPI socket diag structures (inet_diag_msg.idiag_inode,
-> unix_diag_msg.udiag_ino, etc.) are all __u32 and cannot be changed
-> without breaking the ABI. The assignments to those fields will
-> silently truncate, which is the existing behavior.
+> > diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+> > index e9acd2cd602cb..6e600d52b66d0 100644
+> > --- a/fs/nfsd/nfsctl.c
+> > +++ b/fs/nfsd/nfsctl.c
+> > @@ -17,7 +17,6 @@
+> >  #include <linux/sunrpc/rpc_pipe_fs.h>
+> >  #include <linux/sunrpc/svc.h>
+> >  #include <linux/module.h>
+> > -#include <linux/fsnotify.h>
+> >  #include <linux/nfslocalio.h>
+> >
+> >  #include "idmap.h"
+> > @@ -1146,8 +1145,7 @@ static struct dentry *nfsd_mkdir(struct dentry *p=
+arent, struct nfsdfs_client *nc
+> >       }
+> >       d_make_persistent(dentry, inode);
+> >       inc_nlink(dir);
+> > -     fsnotify_mkdir(dir, dentry);
+> > -     simple_done_creating(dentry);
+> > +     simple_end_creating(dentry);
+> >       return dentry;  // borrowed
+> >  }
+> >
+> > @@ -1178,8 +1176,7 @@ static void _nfsd_symlink(struct dentry *parent, =
+const char *name,
+> >       inode->i_size =3D strlen(content);
+> >
+> >       d_make_persistent(dentry, inode);
+> > -     fsnotify_create(dir, dentry);
+> > -     simple_done_creating(dentry);
+> > +     simple_end_creating(dentry);
+> >  }
+> >  #else
+> >  static inline void _nfsd_symlink(struct dentry *parent, const char *na=
+me,
+> > @@ -1219,7 +1216,6 @@ static int nfsdfs_create_files(struct dentry *roo=
+t,
+> >                               struct nfsdfs_client *ncl,
+> >                               struct dentry **fdentries)
+> >  {
+> > -     struct inode *dir =3D d_inode(root);
+> >       struct dentry *dentry;
+> >
+> >       for (int i =3D 0; files->name && files->name[0]; i++, files++) {
+> > @@ -1236,10 +1232,9 @@ static int nfsdfs_create_files(struct dentry *ro=
+ot,
+> >               inode->i_fop =3D files->ops;
+> >               inode->i_private =3D ncl;
+> >               d_make_persistent(dentry, inode);
+> > -             fsnotify_create(dir, dentry);
+> >               if (fdentries)
+> >                       fdentries[i] =3D dentry; // borrowed
+> > -             simple_done_creating(dentry);
+> > +             simple_end_creating(dentry);
+> >       }
+> >       return 0;
+> >  }
 >
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  net/can/bcm.c                | 2 +-
+> For the NFSD hunks:
+>
+> Acked-by: Chuck Lever <chuck.lever@oracle.com>
 
-Acked-by: Marc Kleine-Budde <mkl@pengutronix.de> # for net/can
+FWIW, you are technically also CCed for the sunrpc hunk ;)
 
-regards,
-Marc
+BTW, forgot to CC Neil and mention this patch:
+https://lore.kernel.org/linux-fsdevel/20260224222542.3458677-5-neilb@ownmai=
+l.net/
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+Since simple_done_creating() starts using end_creating()
+so should simple_end_creating().
+I will change that in v2 after waiting for more feedback on v1.
 
---w7xntzjnabubqe7a
-Content-Type: application/pgp-signature; name="signature.asc"
+I don't want to get into naming discussion - I will just say that I wanted
+to avoid renaming simple_done_creating() to avoid unneeded churn.
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSl+MghEFFAdY3pYJLMOmT6rpmt0gUCaaax+QAKCRDMOmT6rpmt
-0hl7AQCzPgPTWe6ol8KwtKBDfHnqkx4Ku1cIiwlQY4Hnx5jz1wD5ASVd5abGOb50
-lF4hQNIazRvyjJwKRF+va5JwX/SN2go=
-=y8vr
------END PGP SIGNATURE-----
-
---w7xntzjnabubqe7a--
+Thanks,
+Amir.
 
