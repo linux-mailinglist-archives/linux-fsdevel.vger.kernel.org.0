@@ -1,183 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-79132-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iAT3NUeypmn9SgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79132-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 11:04:55 +0100
+	id SFm2DP+xpmn9SgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 11:03:43 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 518EA1EC4CD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 11:04:55 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id A60121EC437
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 11:03:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E72863069D6A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 10:03:29 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 9E20F305D49E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 10:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021A438C2C2;
-	Tue,  3 Mar 2026 10:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3552C38F646;
+	Tue,  3 Mar 2026 10:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="H1utAUfO"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2jteI5+y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68E63090C4
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Mar 2026 10:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.182
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772532208; cv=pass; b=kVcMwpl7CEVVxB0k3BP6409vhKWF9xyb1DyiIyypJm2NoVJfqg7KJGkuxVuruhVugGoEJXx8GlibI3dFJVvKWSJfKgzAV0MQag7oeN7oDV8aq82FF3c5mmBtZ+HDgkJE4w32bR0c/tbW0PYwxSUwUSi7/4XsId50SfdKRKgxuss=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772532208; c=relaxed/simple;
-	bh=bJddSQHV3cmyNBdgCt0Tpkb51xqy29f3L8nYqaygHjU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eztqlVGyIZxGKpZCrOk8I2/rgu7D8F1NU0LgH1nNn/8aiBTv0UkAFBy/X6u47cTHz76sOxJN4qVw0GrENxm4lUHEInCBL/7XpUm4llZCz4U5Rd+/N6/6xwDGDowVEITl4Yy7v/d/J/y0cstObVnPrYqatG/D2wB4Dg/aRcAJJUQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=H1utAUfO; arc=pass smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-503347e8715so68457971cf.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Mar 2026 02:03:26 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772532205; cv=none;
-        d=google.com; s=arc-20240605;
-        b=G7BP1u9Ny5WzlVfI8FMPJDm9pK1MYEJIav9cedDLXeDexqRhOtHr7BeGjC9xyjAP4D
-         omq6ASRlQZhnc2w16fH8YbpiV1de8HkGgdhDp052z6VX5BlOSBURgHAPpRLk9o1YvWu4
-         PAuw2LttIH6BIa7oS/BEGTAUEtSDigqvIADoGneho5/ipqJuJIwtr4buXRfIg6hZmTjS
-         7MNj8jt1nljItTXKwA9IgVHWZDUquj8X1JD5gycohT9RIphvn64485esoAEPRvyaqHco
-         5BLQ4xDLtFhW9IRgKNs9tqLiVrPq6dIeqXYEUStKp/x7im1dqqC8NLBHNc7YOeZD1hb7
-         jHQA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=fqKbdCQ8+UdKoJi5n0ECG0VzPITc4UXTWZmmaN0BCgc=;
-        fh=KqpBzQ/sAAVGQw/2nXUtRoEDCNKv0AaBh54I64ng1Ds=;
-        b=Et6KwE/0wOdrTums6Tggk3Z8vwt3HpW9Nq1sk1SftgafLjCNVssw0/ozxCerJPGVg/
-         VYiC4AJFass9LxXQ00eMjR1gC7kAiUrc0VwyfYd88lVsphN/fkXRDtIGWbebQwIaBkzv
-         Hkg3u5rh9s3Zh7Zxmx2538f0eG2h2snkdeGOlYPCUFDpPQz46DoLIDHhIpqTRDCZJIIW
-         aaYXbrE912koR1vPt3apug8+v4SlO4NQpf9JF3UGPu384/7oma9ALEv83jKdsjlcXLAb
-         K7pRN0m+JN1i47UQlEpFiz4KnbehwW4Zqz6FKm0T8144w7nE+lK8EZNh4kxXKAJgOXQp
-         yeOw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62BC5342CB1
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Mar 2026 10:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772532213; cv=none; b=RkrBlKUvtIf/J27eM42AuqB8nTSs/O/HzEuyCedDTVy9d95FEv6+pLLD7KUENUIfyZY+mD6yAsGBQkR7qKXBT4CGj+vA2i94JLdbtVb86TzNAjwpogWBKPy2WLMlsM/cbk8RLQ77jGlDBXj2WDrYjRT1DNXWTSyq/9/H5DhZ1Wc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772532213; c=relaxed/simple;
+	bh=Ri37r6lRKI7G97uvFg7gwfrqJ3Arh5NFP7hfQncx8u4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=OkM6NHHzEVjwLp0/mDghjkLjZarM6QvmCOU8yO6lccJQQaGtjpj+es4HIfs+TBcYX2oYGFROvzG9sR+2dDI1RbV4oyVMuNeb990/CmTq49SskRRB0+XEqE04mR7cGzv4GH9smElbIirObbSfMYxwn8qWUxqU2lnuSyG8f4prIXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2jteI5+y; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4837c597cd5so33411425e9.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Mar 2026 02:03:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1772532205; x=1773137005; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fqKbdCQ8+UdKoJi5n0ECG0VzPITc4UXTWZmmaN0BCgc=;
-        b=H1utAUfOOaJbfkTBUFkEA/XPLiGclh/XLpjtrkQGQkmYWZSZYJgouIJnTjfV8BkqWR
-         /lA8xRrkaauodyihK+JewMqJZnW0d7lO2A1KYl03b+nnH5IuBwlSvy3wBdYqA8ZTxUok
-         OeQD+Vy7kVpFF8ueUrEbBNhz0NwGRjSZBRp40=
+        d=google.com; s=20230601; t=1772532211; x=1773137011; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Uo0BvlSCCQO1H56qeOpP1FHOwzHeeIJR1gsWs48q5kE=;
+        b=2jteI5+yLg81kTDUldCYghQXsmm2KxPnQTNK/MYU86//q7bOtgJK1201MD28cmE0Ap
+         Boi37LVu4LDzUxYKLJedDJKu6m7gWpVPfbwLphWmH4TDduK8PwHPCf0lZIS9dF6lFr+e
+         QVgJvPAZMuPmyiJraPt/2QA05pH+AOWQUECGAgmj+HMjW8/us9r19MCdLI9LR/3WR7oi
+         IV/T1zK5J5zSvHq2njTfX+2sTNhXGReSo5LCUDgymWnqdipyTbIcDMGCNbciba1SO4Mq
+         l68qEtSxYn4FlfUAzi8DyVMEWcB55ScJmvYXogMlbAwp31D6lOGuw7PcvWEtWZqjYgde
+         cT2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772532205; x=1773137005;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fqKbdCQ8+UdKoJi5n0ECG0VzPITc4UXTWZmmaN0BCgc=;
-        b=tneRTMLlS2Hg4RKXJVuGt1B4jmzUloDugfME6aZkAU/uNWjqX4uAyNBaRlF9iTLkdZ
-         ABhNIBYhgjh2aInWPIHO2YRQ3hSB1dcj/D1CupFCRH5x7cNza8pbArTcxwNzPVQai4mx
-         SeiM87pRX5jdTvvMlkMN7wnLjW15JmHH2vMauomaqGF/sWjY4H+8xHJ4M9HM0Knz3uMH
-         fcVNOhsw5hPRbpm/3dI0sOF1p8s8TTbapvR+yoOpflbNAQd9TFuAtMidqELJhUMZ5Ay4
-         /CtpuzxO7KbtJX2k1WUSFPou8H4nO3AaVjdOXp844UjZHYpdr1HvWnfteLlUrBTEWt8r
-         ZYIg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDDT6+Ek+D9YqRm6D7p/ye5DsiWPy/xzTkutKiN1n8F5LSFtxocXv38Flr2wi3mfXpYV1ceN6RxmviO4hf@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNxYg7fr0OPtu17Lnj8+XMTWVXfCu00MCQO2YFD0xpQFbLh5tJ
-	3DcYbtHK7gJjIcj2QAsKuKakaa2yflfJzh7fGIpMfhdZqpa6aMTSwbl0nhSsDhqhD8Y1J36Sdxd
-	ZrQE/JxZe0ywnZKLemuN6IQvbKXdl+XC3mbyYaVueKQ==
-X-Gm-Gg: ATEYQzxy62huxr0bYUux/5nB1lifd0OLRzHyKggfUc5h4UXV05FKY+O1miQNGa/oFx/
-	3lzIq5ZQoxCMiG8/P0lWC9f+E3tuWht3lfAo3pN9ckhuKfsEhqPgCdlYqU3UdutEc3iyARSF8j0
-	UOim83Im8pUbSd8gxer8rT9py/3iaOTes89Vq8yKeJ8x3aErTE7Q95djR0OBmmTbsa6I/8+v+h4
-	bABE4kEvxQ+b1MAtOGdLcAxcpgxmTUxduFe7wOmPuwnf1fXM0v3r43y3W9CvL3aUJ6WPsBqzvBI
-	BvLQGkZaCa9lOc6fk1K5
-X-Received: by 2002:a05:622a:452:b0:4ee:2200:40a0 with SMTP id
- d75a77b69052e-5075273a9d3mr205817531cf.3.1772532205451; Tue, 03 Mar 2026
- 02:03:25 -0800 (PST)
+        d=1e100.net; s=20230601; t=1772532211; x=1773137011;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Uo0BvlSCCQO1H56qeOpP1FHOwzHeeIJR1gsWs48q5kE=;
+        b=W64ZiuY5jpDH20b0W7GkL/cBm0BTCxwzCIRt7OBKNHEFvkjQk5o/dXzdV0SiZX9gc0
+         KXLJTfTXcIuR0o7MwI2dNtKImOtwDpZTxlR/56Dd0cRFZxcWkrL4u3yKJfHFbsoCtlc8
+         U9x+/9bLEkNBq71z3aBqec5eqRSxtldTR8n4l8QNyzpwBT0E0uXxk6elZaCCTDuErecG
+         6GhN8nFz5YUbuOGufnTGLYLDUb0MED1N1c5DiWLL7qqYAWaG1jHNp3uTq7+rsoryHkVi
+         LSmpRNvm1mN7LENESfTaFgy5H9dC23vT2Bzz4zWHB8Ieo/fuKie4vt8UJPcbfKK3tI2G
+         Mhig==
+X-Forwarded-Encrypted: i=1; AJvYcCXtAXpS+VTESHASn4RxcYA/eY6MUvWs977208nEfoFKbu5h00Y/4/3LJ0KzrSXYwRMsQh0r9SVUKY/kDO0t@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlN9i9Not2+E5sf1PMzflmnOKfcVKI5MM5prMrL3AfRihAOCnI
+	acSrVeuD9GgPE5y0RtjMnLkGcERg5kfdz3U8hLDmC1G+7A4c7rcouhQJzW1vhqqwk1FZI1N9GWB
+	ll7iMvUDKofe9DtMMMA==
+X-Received: from wmxb5-n2.prod.google.com ([2002:a05:600d:8445:20b0:47d:5bef:a379])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:3106:b0:47a:7fd0:9eea with SMTP id 5b1f17b1804b1-483c9ba610fmr254853465e9.3.1772532210581;
+ Tue, 03 Mar 2026 02:03:30 -0800 (PST)
+Date: Tue,  3 Mar 2026 10:03:28 +0000
+In-Reply-To: <20260226-ungeziefer-erzfeind-13425179c7b2@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20260226-fuse-compounds-upstream-v6-0-8585c5fcd2fc@ddn.com>
- <20260226-fuse-compounds-upstream-v6-3-8585c5fcd2fc@ddn.com>
- <CAJnrk1ZsvtZh9vZoN=ca_wrs5enTfAQeNBYppOzZH=c+ARaP3Q@mail.gmail.com>
- <aaFJEeeeDrdqSEX9@fedora.fritz.box> <CAJnrk1ZiKyi4jVN=mP2N-27nmcf929jsN7u6LhzdYePiEzJWaA@mail.gmail.com>
- <CAJnrk1ZQN6vGog2p_CsOh=C=O_jg6qHgXA0s4dKsgNbZycN2Cg@mail.gmail.com>
- <aaKiWhdfLqF0qI3w@fedora.fritz.box> <CAJnrk1bHSRxiKNefNH_SUq1E93Ysnyk-POjh5GWxy+=8BewKtA@mail.gmail.com>
- <62edc506-2b0c-4470-8bdd-ee2d7fcc1cf1@ddn.com> <20260303050614.GO13829@frogsfrogsfrogs>
-In-Reply-To: <20260303050614.GO13829@frogsfrogsfrogs>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 3 Mar 2026 11:03:14 +0100
-X-Gm-Features: AaiRm53AOzV-PCcqSp2zv05xcrIQwPyzvJuFW4bCPHf-j2PJcUT7kDrZXFeMSP8
-Message-ID: <CAJfpegtTdL5Sxjtm3cKu9ZuYwceCfa2bX15Q3Wr_GQ2JNb84EA@mail.gmail.com>
-Subject: Re: [PATCH v6 3/3] fuse: add an implementation of open+getattr
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Bernd Schubert <bschubert@ddn.com>, Joanne Koong <joannelkoong@gmail.com>, 
-	Horst Birthelmer <horst@birthelmer.de>, Horst Birthelmer <horst@birthelmer.com>, 
-	Luis Henriques <luis@igalia.com>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Horst Birthelmer <hbirthelmer@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Rspamd-Queue-Id: 518EA1EC4CD
+Mime-Version: 1.0
+References: <20260226-ungeziefer-erzfeind-13425179c7b2@brauner>
+X-Mailer: git-send-email 2.53.0.473.g4a7958ca14-goog
+Message-ID: <20260303100328.1378655-1-aliceryhl@google.com>
+Subject: Re: make_task_dead() & kthread_exit()
+From: Alice Ryhl <aliceryhl@google.com>
+To: brauner@kernel.org
+Cc: broonie@kernel.org, davidgow@google.com, gtucker@gtucker.io, jack@suse.cz, 
+	kunit-dev@googlegroups.com, linux-fsdevel@vger.kernel.org, mjguzik@gmail.com, 
+	tj@kernel.org, torvalds@linux-foundation.org, viro@zeniv.linux.org.uk, 
+	Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
+X-Rspamd-Queue-Id: A60121EC437
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[szeredi.hu,quarantine];
-	R_DKIM_ALLOW(-0.20)[szeredi.hu:s=google];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_CONTAINS_FROM(1.00)[];
+	MV_CASE(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[ddn.com,gmail.com,birthelmer.de,birthelmer.com,igalia.com,vger.kernel.org];
-	TAGGED_FROM(0.00)[bounces-79132-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-79133-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[szeredi.hu:+];
-	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FREEMAIL_CC(0.00)[kernel.org,google.com,gtucker.io,suse.cz,googlegroups.com,vger.kernel.org,gmail.com,linux-foundation.org,zeniv.linux.org.uk];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[miklos@szeredi.hu,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.992];
+	FROM_NEQ_ENVFROM(0.00)[aliceryhl@google.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[google.com:+];
+	NEURAL_HAM(-0.00)[-0.999];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,szeredi.hu:dkim,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On Tue, 3 Mar 2026 at 06:06, Darrick J. Wong <djwong@kernel.org> wrote:
->
-> On Mon, Mar 02, 2026 at 09:03:26PM +0100, Bernd Schubert wrote:
-> >
-> > On 3/2/26 19:56, Joanne Koong wrote:
+Christian Brauner <brauner@kernel.org> writes:
+> Oh nice.
+> I was kinda hoping Tejun would jump on this one and so just pointed to
+> one potential way to fix it but didn't really spend time on it.
+> 
+> Anyway, let's just take what you proposed and slap a commit message on
+> it. Fwiw, init_task does have ->worker_private it just gets set later
+> during sched_init():
+> 
+>           /*
+>            * The idle task doesn't need the kthread struct to function, but it
+>            * is dressed up as a per-CPU kthread and thus needs to play the part
+>            * if we want to avoid special-casing it in code that deals with per-CPU
+>            * kthreads.
+>            */
+>           WARN_ON(!set_kthread_struct(current));
+> 
+> I think that @current here is misleading. When sched_init() runs it
+> should be single-threaded still and current == &init_task. So that
+> set_kthread_struct(current) call sets @init_task's worker_private iiuc.
+> 
+> Patch appended. I'll stuff it into vfs.fixes.
 
-> > > The overhead for the server to fetch the attributes may be nontrivial
-> > > (eg may require stat()). I really don't think we can assume the data
-> > > is locally cached somewhere. Why always compound the getattr to the
-> > > open instead of only compounding the getattr when the attributes are
-> > > actually invalid?
-> > >
-> > > But maybe I'm wrong here and this is the preferable way of doing it.
-> > > Miklos, could you provide your input on this?
+welp, I guess you get another one here:
 
-Yes, it makes sense to refresh attributes only when necessary.
+Tested-by: Alice Ryhl <aliceryhl@google.com>
 
-> I wonder, since O_APPEND writes supposedly reposition the file position
-> to i_size before every write, can we enlarge the write reply so that the
-> fuse server could tell the client what i_size is supposed to be after
-> every write?  Or perhaps add a notification so a network filesystem
-> could try to keep the kernel uptodate after another node appends to a
-> file?
+from:
+https://lore.kernel.org/all/aaaxK5gFWN70WmMn@google.com/
 
-This can be done with FUSE_NOTIFY_INVAL_INODE.
-
-Still racy.  If need to have perfect O_APPEND semantics,
-FOPEN_DIRECT_IO is currently the only option.
-
-It would be nice to have some sort of delegation/lease mechanism in
-the fuse protocol to allow caching when remote is not modifying (which
-is the common case usually) but force uncached I/O when there's
-concurrent modification.
-
-Thanks,
-Miklos
+Alice
 
