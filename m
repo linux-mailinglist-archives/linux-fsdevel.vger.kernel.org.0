@@ -1,96 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-79195-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79196-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KFIuOXPPpmntWQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79195-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 13:09:23 +0100
+	id 8OWeNU3Jpmk0TwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79196-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 12:43:09 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41A9D1EF0CE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 13:09:23 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9047D1EE4A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 12:43:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 59FC5328B9FE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 11:34:59 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 9784930FB955
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 11:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9AAE480DF8;
-	Tue,  3 Mar 2026 11:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A8E481244;
+	Tue,  3 Mar 2026 11:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fEXOztVO";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ad20VPIn";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fEXOztVO";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ad20VPIn"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EmOx0lKI";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xHcfN5qP";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EmOx0lKI";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xHcfN5qP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5EA42F575
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Mar 2026 11:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF8E3E5ECF
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Mar 2026 11:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772537326; cv=none; b=Ob5qVCVTZ8MFh9ToIz3iP3HuXstMJPvAw2a5I+xrKsWWAfSbccUWsYCBvtYi0RgG6UMhO71IIGVedNh3GTyyb/fLkj7hx6v4CdFPvgm/0rb9Ocipr7DCLtSVXw8H09rD/Y/5lZpdrB814PziEfq3m80R4rCIA86m3WrTQjMtN78=
+	t=1772537395; cv=none; b=Z6zYC7yuUpVPkDSDWZtK9X09nCFRShSIs+RJKYrUbvmnuaUKIKqh5BEUi3PFjRH8L4PSjTbP9KaWVfvFOoznsBBgcegkklC8xQiRwacRYwc+T24aoDzgU/vGDiqeSOoEKYBiaTqqmrvSP+9XVA+lejjyNpFamBqSMBy5B+U5v8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772537326; c=relaxed/simple;
-	bh=2yUHgfpwqIjD1Wbeky/Q7PLOMLKHos43H6nM9xy8f9Q=;
+	s=arc-20240116; t=1772537395; c=relaxed/simple;
+	bh=2j2dCDOXJNwbbryREM56L7jF+oDUNLNzVlMha/k15zQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g29Y95uUiQ5HwXYCRpJrF0dCuCyVV4f/OSuIul2vjly6Wpv8J/8VF3fgG9ebCI8HiUhUeMfM6hhhbUVkhDeXIGILlyayR7T3tJzKd6tRMdZ+obXkQll3aqwJzhN4wxzFuxafldaDWCGQEt+UxbT7hJG4M7lV6FpkTS4RP8lsLdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fEXOztVO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ad20VPIn; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fEXOztVO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ad20VPIn; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=PoX9SQ+95XPp+MAoWEEuJ03yQHwGNur5tVPw1CdeajQDo6XhxfIVOpphZ45iA1ZE73AjpBM/9B+OfznXLt8nSNeYPARh+VDGlNE9eQpu81A7c/6TwID6Kfhv4hxkdJQZvVH2a0OY+pLU1HCBhkgG7QTtcq5i4o1gK6b5DJHI4JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EmOx0lKI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xHcfN5qP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EmOx0lKI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xHcfN5qP; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C2F213F88E;
-	Tue,  3 Mar 2026 11:28:39 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id F3EEF5BDF1;
+	Tue,  3 Mar 2026 11:29:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1772537319; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1772537389; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GkHTsnDKFExgY8Au+TUPe9t6sWfT7+a6ilcs+U5rAUE=;
-	b=fEXOztVOKD2qgJoSDqRYj2maw63mQN1pQGsPg8NJrgzpr/MvTIPD+EuevJT7jug3uemKot
-	oebss8+e/dImwjKXHbIQjmd1rX1+M6GJPut4AyD5HekQQQXPEus4BRm7mQYZpfiPgaTUid
-	XdP5mYJ/yfrTjNL16hXXVhi0RNC92+E=
+	bh=4cYw8VD7aleVcghFQ9+p/b6r3CSegw4nIvkNduu063c=;
+	b=EmOx0lKIT3N1EWFaJ+qXMxOLK6ewXQRsG1S7uUHtrrsyZKCuKpQq1d5e/B2EI4OLCk5Zsx
+	+HBoagECsN1Bb9zjUfycxKVXPSLBGZkIFVk4nMkH3R6KfTwyB4g5jdsFjHwwqdmwDk0gjC
+	SGJcEP7zorePK8+w5QgsfvCtqorcOsM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1772537319;
+	s=susede2_ed25519; t=1772537389;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GkHTsnDKFExgY8Au+TUPe9t6sWfT7+a6ilcs+U5rAUE=;
-	b=Ad20VPInkYdokox7vsd/AlgP9Dz2ZvPGCFqfdQGUXqy2xSut3DM3LsLphj8fUC4AG2k07U
-	WSLbkumuH3clnoAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=fEXOztVO;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Ad20VPIn
+	bh=4cYw8VD7aleVcghFQ9+p/b6r3CSegw4nIvkNduu063c=;
+	b=xHcfN5qP49v6i+SF5MTzOV+1zpFdvaekhWZ8tV1V6SJgevJciM4Bcy5z5W/57zxlA2cda8
+	32g45NoTRnMkZkCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1772537319; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1772537389; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GkHTsnDKFExgY8Au+TUPe9t6sWfT7+a6ilcs+U5rAUE=;
-	b=fEXOztVOKD2qgJoSDqRYj2maw63mQN1pQGsPg8NJrgzpr/MvTIPD+EuevJT7jug3uemKot
-	oebss8+e/dImwjKXHbIQjmd1rX1+M6GJPut4AyD5HekQQQXPEus4BRm7mQYZpfiPgaTUid
-	XdP5mYJ/yfrTjNL16hXXVhi0RNC92+E=
+	bh=4cYw8VD7aleVcghFQ9+p/b6r3CSegw4nIvkNduu063c=;
+	b=EmOx0lKIT3N1EWFaJ+qXMxOLK6ewXQRsG1S7uUHtrrsyZKCuKpQq1d5e/B2EI4OLCk5Zsx
+	+HBoagECsN1Bb9zjUfycxKVXPSLBGZkIFVk4nMkH3R6KfTwyB4g5jdsFjHwwqdmwDk0gjC
+	SGJcEP7zorePK8+w5QgsfvCtqorcOsM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1772537319;
+	s=susede2_ed25519; t=1772537389;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GkHTsnDKFExgY8Au+TUPe9t6sWfT7+a6ilcs+U5rAUE=;
-	b=Ad20VPInkYdokox7vsd/AlgP9Dz2ZvPGCFqfdQGUXqy2xSut3DM3LsLphj8fUC4AG2k07U
-	WSLbkumuH3clnoAQ==
+	bh=4cYw8VD7aleVcghFQ9+p/b6r3CSegw4nIvkNduu063c=;
+	b=xHcfN5qP49v6i+SF5MTzOV+1zpFdvaekhWZ8tV1V6SJgevJciM4Bcy5z5W/57zxlA2cda8
+	32g45NoTRnMkZkCg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B40783EA6D;
-	Tue,  3 Mar 2026 11:28:39 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E36B83EA6E;
+	Tue,  3 Mar 2026 11:29:48 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2OvtK+fFpmmsTgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 03 Mar 2026 11:28:39 +0000
+	id bsyHNyzGpmkQUAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 03 Mar 2026 11:29:48 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 6FE61A0A1B; Tue,  3 Mar 2026 12:28:31 +0100 (CET)
-Date: Tue, 3 Mar 2026 12:28:31 +0100
+	id 9BC70A0A1B; Tue,  3 Mar 2026 12:29:48 +0100 (CET)
+Date: Tue, 3 Mar 2026 12:29:48 +0100
 From: Jan Kara <jack@suse.cz>
 To: Jeff Layton <jlayton@kernel.org>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -169,10 +168,10 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
 	linux-fscrypt@vger.kernel.org, linux-xfs@vger.kernel.org, linux-hams@vger.kernel.org, 
 	linux-x25@vger.kernel.org, audit@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
 	linux-can@vger.kernel.org, linux-sctp@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v2 059/110] vfs: use PRIino format for i_ino
-Message-ID: <mtsi6ueq2rz2kjwsc7hesxpck7amge2zjqdeptzf5jom26sdo2@z4t6nryzbley>
+Subject: Re: [PATCH v2 060/110] vfs: change kino_t from unsigned long to u64
+Message-ID: <yfjlanmzvvyuea5qeqnozxtb4ubpkdev3o7ibwmmoo3oczthtu@27zcimxovqjh>
 References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
- <20260302-iino-u64-v2-59-e5388800dae0@kernel.org>
+ <20260302-iino-u64-v2-60-e5388800dae0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -181,49 +180,62 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260302-iino-u64-v2-59-e5388800dae0@kernel.org>
-X-Spamd-Bar: /
-X-Spam-Flag: NO
-X-Spam-Score: -0.51
+In-Reply-To: <20260302-iino-u64-v2-60-e5388800dae0@kernel.org>
+X-Spam-Score: -0.30
 X-Spam-Level: 
-X-Rspamd-Queue-Id: 41A9D1EF0CE
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 9047D1EE4A6
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [0.34 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
 	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79195-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,suse.com:email];
+	TAGGED_FROM(0.00)[bounces-79196-lists,linux-fsdevel=lfdr.de];
+	FROM_HAS_DN(0.00)[];
 	DMARC_NA(0.00)[suse.cz];
 	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de,yaina.de,holtmann.org,hartkopp.net,pengutronix.de,secunet.com,gondor.apana.org.au,fomichev.me,iogearbox.net,vger.kernel.org,lists.linux.dev,kvack.org,lists.sourceforge.net,lists.samba.org,lists.infradead.org,coda.cs.cmu.edu,lists.orangefs.org,lists.ubuntu.com,lists.freedesktop.org,lists.linaro.or
  g];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[suse.cz:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[172];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[172];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
 	NEURAL_HAM(-0.00)[-0.999];
-	TO_DN_SOME(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	RCVD_COUNT_SEVEN(0.00)[7]
 X-Rspamd-Action: no action
 
-On Mon 02-03-26 15:24:43, Jeff Layton wrote:
-> Convert i_ino format strings in pipe, dcache, fserror, and eventpoll to
-> use the PRIino format macro and update the 0UL literal in dcache to
-> (kino_t)0.
+On Mon 02-03-26 15:24:44, Jeff Layton wrote:
+> Change kino_t from unsigned long to u64, and update PRIino from "l"
+> to "ll" accordingly. This is the actual type widening of i_ino.
+> 
+> All format strings have already been converted to use PRIino, so this
+> change compiles warning-free on both 32-bit and 64-bit architectures.
+> 
+> On 64-bit architectures, unsigned long is already 64 bits, so this is
+> effectively a type alias change with no runtime impact. On 32-bit
+> architectures, this widens i_ino from 32 to 64 bits, allowing
+> filesystems like NFS, CIFS, XFS, Ceph, and FUSE to store their native
+> 64-bit inode numbers without folding/hashing.
+> 
+> The VFS already handles 64-bit inode numbers in kstat.ino (u64) and
+> statx.stx_ino (__u64). The existing overflow checks in cp_new_stat(),
+> cp_old_stat(), and cp_compat_stat() handle narrowing to 32-bit st_ino
+> with -EOVERFLOW, so userspace ABI is preserved.
+> 
+> struct inode will grow by 4 bytes on 32-bit architectures.
 > 
 > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
@@ -234,69 +246,24 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 								Honza
 
 > ---
->  fs/dcache.c    | 4 ++--
->  fs/eventpoll.c | 2 +-
->  fs/fserror.c   | 2 +-
->  fs/pipe.c      | 2 +-
->  4 files changed, 5 insertions(+), 5 deletions(-)
+>  include/linux/fs.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index 24f4f3acaa8cffd6f98124eec38c1a92d6c9fd8e..13fb3e89cba7442c9bed74c41ca18be5e43e28c9 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -1637,11 +1637,11 @@ static enum d_walk_ret umount_check(void *_data, struct dentry *dentry)
->  	if (dentry == _data && dentry->d_lockref.count == 1)
->  		return D_WALK_CONTINUE;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index d0c4789838b5852111583a3e4cced88999496e68..4193817e02e8bf94f29514ca43379af21f37ac61 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -758,8 +758,8 @@ struct inode_state_flags {
+>  	enum inode_state_flags_enum __state;
+>  };
 >  
-> -	WARN(1, "BUG: Dentry %p{i=%lx,n=%pd} "
-> +	WARN(1, "BUG: Dentry %p{i=%" PRIino "x,n=%pd} "
->  			" still in use (%d) [unmount of %s %s]\n",
->  		       dentry,
->  		       dentry->d_inode ?
-> -		       dentry->d_inode->i_ino : 0UL,
-> +		       dentry->d_inode->i_ino : (kino_t)0,
->  		       dentry,
->  		       dentry->d_lockref.count,
->  		       dentry->d_sb->s_type->name,
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index 5714e900567c499739bb205f43bb6bf73f7ebe54..90fd92425492221d13bd0cf067d47579bb407a01 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -1080,7 +1080,7 @@ static void ep_show_fdinfo(struct seq_file *m, struct file *f)
->  		struct inode *inode = file_inode(epi->ffd.file);
+> -typedef unsigned long	kino_t;
+> -#define PRIino		"l"
+> +typedef u64		kino_t;
+> +#define PRIino		"ll"
 >  
->  		seq_printf(m, "tfd: %8d events: %8x data: %16llx "
-> -			   " pos:%lli ino:%lx sdev:%x\n",
-> +			   " pos:%lli ino:%" PRIino "x sdev:%x\n",
->  			   epi->ffd.fd, epi->event.events,
->  			   (long long)epi->event.data,
->  			   (long long)epi->ffd.file->f_pos,
-> diff --git a/fs/fserror.c b/fs/fserror.c
-> index 06ca86adab9b769dfb72ec58b9e51627abee5152..b685b329b5956a639c41b25c42cfff16e6e5ab6e 100644
-> --- a/fs/fserror.c
-> +++ b/fs/fserror.c
-> @@ -176,7 +176,7 @@ void fserror_report(struct super_block *sb, struct inode *inode,
->  lost:
->  	if (inode)
->  		pr_err_ratelimited(
-> - "%s: lost file I/O error report for ino %lu type %u pos 0x%llx len 0x%llx error %d",
-> + "%s: lost file I/O error report for ino %" PRIino "u type %u pos 0x%llx len 0x%llx error %d",
->  		       sb->s_id, inode->i_ino, type, pos, len, error);
->  	else
->  		pr_err_ratelimited(
-> diff --git a/fs/pipe.c b/fs/pipe.c
-> index b44a756c0b4165edc2801b2290bf35480245d7a6..311928e8713989747605fd79f653e36d27ce8c0e 100644
-> --- a/fs/pipe.c
-> +++ b/fs/pipe.c
-> @@ -873,7 +873,7 @@ static struct vfsmount *pipe_mnt __ro_after_init;
->   */
->  static char *pipefs_dname(struct dentry *dentry, char *buffer, int buflen)
->  {
-> -	return dynamic_dname(buffer, buflen, "pipe:[%lu]",
-> +	return dynamic_dname(buffer, buflen, "pipe:[%" PRIino "u]",
->  				d_inode(dentry)->i_ino);
->  }
->  
+>  /*
+>   * Keep mostly read-only and often accessed (especially for
 > 
 > -- 
 > 2.53.0
